@@ -1,0 +1,61 @@
+<header class="site-header" id="site-header" role="banner">
+  <div class="header-inner">
+    <!-- Logo -->
+    <a href="/" class="header-logo" aria-label="{{ shop.name }} - Startseite">
+      WZIYA <span>SPORT</span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="header-nav" role="navigation" aria-label="Hauptnavigation">
+      <a href="/">Home</a>
+      <a href="/collections/all">Shop</a>
+      <a href="/pages/about">Über Uns</a>
+      <a href="/pages/kontakt">Kontakt</a>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <!-- Search (optional) -->
+      <a href="/search" class="cart-link" aria-label="Suche" style="position:relative;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </a>
+
+      <!-- Cart -->
+      <a href="/cart" class="cart-link" aria-label="Warenkorb - {{ cart.item_count }} Artikel" style="position:relative;">
+        <svg class="cart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 01-8 0"></path>
+        </svg>
+        <span class="cart-count" id="cart-count">{{ cart.item_count }}</span>
+      </a>
+
+      <!-- Hamburger -->
+      <button class="hamburger" id="hamburger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Navigation Overlay -->
+<nav class="mobile-nav" id="mobile-nav" role="navigation" aria-label="Mobile Navigation" aria-hidden="true">
+  <a href="/" onclick="this.closest('#mobile-nav').classList.remove('active')">Home</a>
+  <a href="/collections/all">Shop</a>
+  <a href="/pages/about">Über Uns</a>
+  <a href="/pages/kontakt">Kontakt</a>
+  <a href="/cart" style="color: var(--primary);">Warenkorb ({{ cart.item_count }})</a>
+</nav>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [],
+  "blocks": []
+}
+{% endschema %}

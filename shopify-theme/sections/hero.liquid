@@ -1,0 +1,138 @@
+<section class="hero-section" id="hero">
+  <!-- Background -->
+  <div class="hero-bg">
+    {% if section.settings.background_image %}
+      <img
+        class="hero-bg-image"
+        src="{{ section.settings.background_image | img_url: '1920x1080', crop: 'center' }}"
+        alt="Hero Background"
+        loading="eager"
+      >
+    {% else %}
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,#0a0a0a 0%,#0d1a0d 50%,#0a0a1a 100%);"></div>
+    {% endif %}
+    <div class="hero-bg-gradient"></div>
+    <div class="hero-overlay"></div>
+  </div>
+
+  <!-- Particles -->
+  <div class="hero-particles" aria-hidden="true">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="hero-content container">
+    <div class="hero-tag">NEW COLLECTION 2025</div>
+
+    <h1 class="hero-title">
+      {% if section.settings.heading != blank %}
+        {{ section.settings.heading | newline_to_br }}
+      {% else %}
+        UNLEASH YOUR<br>
+        <span class="line-2">POTENTIAL</span>
+      {% endif %}
+    </h1>
+
+    {% if section.settings.subheading != blank %}
+      <p class="hero-subtitle">{{ section.settings.subheading }}</p>
+    {% else %}
+      <p class="hero-subtitle">Premium Sportswear für Athleten, die gewinnen wollen.</p>
+    {% endif %}
+
+    <div class="hero-buttons">
+      {% if section.settings.button_text != blank %}
+        <a href="{{ section.settings.button_link | default: '/collections/all' }}" class="btn btn-primary">
+          {{ section.settings.button_text }}
+        </a>
+      {% else %}
+        <a href="/collections/all" class="btn btn-primary">JETZT SHOPPEN</a>
+      {% endif %}
+
+      {% if section.settings.button2_text != blank %}
+        <a href="{{ section.settings.button2_link | default: '/pages/about' }}" class="btn btn-secondary">
+          {{ section.settings.button2_text }}
+        </a>
+      {% else %}
+        <a href="/pages/about" class="btn btn-secondary">MEHR ERFAHREN</a>
+      {% endif %}
+    </div>
+
+    <div class="hero-stats">
+      <div>
+        <span class="hero-stat-number">500+</span>
+        <span class="hero-stat-label">Produkte</span>
+      </div>
+      <div>
+        <span class="hero-stat-number">10K+</span>
+        <span class="hero-stat-label">Zufriedene Kunden</span>
+      </div>
+      <div>
+        <span class="hero-stat-number">100%</span>
+        <span class="hero-stat-label">Premium Qualität</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll hint -->
+  <div class="hero-scroll-hint" aria-hidden="true">
+    <div class="scroll-line"></div>
+    <span>SCROLL</span>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Überschrift",
+      "default": "UNLEASH YOUR\nPOTENTIAL"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Unterüberschrift",
+      "default": "Premium Sportswear für Athleten, die gewinnen wollen."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button 1 Text",
+      "default": "JETZT SHOPPEN"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button 1 Link"
+    },
+    {
+      "type": "text",
+      "id": "button2_text",
+      "label": "Button 2 Text",
+      "default": "MEHR ERFAHREN"
+    },
+    {
+      "type": "url",
+      "id": "button2_link",
+      "label": "Button 2 Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Hintergrundbild"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero"
+    }
+  ]
+}
+{% endschema %}

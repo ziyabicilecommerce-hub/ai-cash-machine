@@ -1,0 +1,262 @@
+<div class="product-page">
+  <div class="container">
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span>/</span>
+      {% if product.collections.first %}
+        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+      {% else %}
+        <a href="/collections/all">Shop</a>
+      {% endif %}
+      <span>/</span>
+      <span style="color:var(--text);">{{ product.title }}</span>
+    </nav>
+
+    <!-- Product Layout -->
+    <div class="product-layout">
+      <!-- Gallery -->
+      <div class="product-gallery">
+        <div class="product-main-image">
+          {% if product.featured_image %}
+            <img
+              id="product-main-img"
+              src="{{ product.featured_image | img_url: '800x800', crop: 'center' }}"
+              alt="{{ product.featured_image.alt | escape | default: product.title }}"
+              width="800"
+              height="800"
+            >
+          {% else %}
+            <div class="product-image-placeholder" style="height:100%;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/>
+              </svg>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Thumbnails -->
+        {% if product.images.size > 1 %}
+          <div class="product-thumbs">
+            {% for image in product.images %}
+              <div
+                class="product-thumb {% if forloop.first %}active{% endif %}"
+                data-src="{{ image | img_url: '800x800', crop: 'center' }}"
+                aria-label="Produktbild {{ forloop.index }}"
+              >
+                <img
+                  src="{{ image | img_url: '150x150', crop: 'center' }}"
+                  alt="{{ image.alt | escape | default: product.title }}"
+                  width="72"
+                  height="72"
+                  loading="lazy"
+                >
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-info">
+        {% if product.vendor %}
+          <div class="product-vendor">{{ product.vendor }}</div>
+        {% endif %}
+
+        <h1 class="product-title">{{ product.title }}</h1>
+
+        <!-- Price -->
+        <div class="product-price-wrap">
+          <span class="product-price" id="product-price">
+            {{ product.selected_or_first_available_variant.price | money }}
+          </span>
+          {% if product.compare_at_price > product.price %}
+            <span class="product-price-compare">{{ product.compare_at_price | money }}</span>
+            {% assign savings_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price %}
+            <span class="product-sale-badge">-{{ savings_pct }}%</span>
+          {% endif %}
+        </div>
+
+        <div class="product-divider"></div>
+
+        <!-- Add to Cart Form -->
+        <form id="add-to-cart-form" action="/cart/add" method="post" enctype="multipart/form-data">
+
+          <!-- Variant Selectors -->
+          {% unless product.has_only_default_variant %}
+            {% for option in product.options_with_values %}
+              <div style="margin-bottom:24px;">
+                <div class="product-option-label">
+                  {{ option.name }}: <span>{{ option.selected_value }}</span>
+                </div>
+
+                {% if option.name == 'Größe' or option.name == 'Size' or option.name == 'Farbe' or option.name == 'Color' %}
+                  <div class="variant-radios">
+                    {% for value in option.values %}
+                      <input
+                        class="variant-radio"
+                        type="radio"
+                        id="option-{{ option.position }}-{{ forloop.index }}"
+                        name="option-{{ option.position }}"
+                        value="{{ value }}"
+                        {% if value == option.selected_value %}checked{% endif %}
+                      >
+                      <label class="variant-radio-label" for="option-{{ option.position }}-{{ forloop.index }}">
+                        {{ value }}
+                      </label>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <select class="variant-select" name="option-{{ option.position }}">
+                    {% for value in option.values %}
+                      <option value="{{ value }}" {% if value == option.selected_value %}selected{% endif %}>
+                        {{ value }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                {% endif %}
+              </div>
+            {% endfor %}
+
+            <!-- Hidden variant selector -->
+            <select id="variant-select" name="id" style="display:none;">
+              {% for variant in product.variants %}
+                <option
+                  value="{{ variant.id }}"
+                  {% if variant == product.selected_or_first_available_variant %}selected{% endif %}
+                  data-price="{{ variant.price }}"
+                  {% unless variant.available %}disabled{% endunless %}
+                >
+                  {{ variant.title }} - {{ variant.price | money }}
+                </option>
+              {% endfor %}
+            </select>
+
+          {% else %}
+            <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+          {% endunless %}
+
+          <!-- Quantity -->
+          <div class="quantity-wrap">
+            <div class="product-option-label">Menge</div>
+            <div class="quantity-selector">
+              <button type="button" class="quantity-btn" id="qty-minus" aria-label="Menge verringern">−</button>
+              <input
+                class="quantity-input"
+                type="number"
+                id="quantity-input"
+                name="quantity"
+                value="1"
+                min="1"
+                max="99"
+                aria-label="Menge"
+              >
+              <button type="button" class="quantity-btn" id="qty-plus" aria-label="Menge erhöhen">+</button>
+            </div>
+          </div>
+
+          <!-- Add to Cart Button -->
+          {% if product.available %}
+            <button
+              type="submit"
+              class="add-to-cart-btn"
+              id="add-to-cart-btn"
+              data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+              aria-label="{{ product.title }} in den Warenkorb legen"
+            >
+              IN DEN WARENKORB
+            </button>
+          {% else %}
+            <button type="button" class="add-to-cart-btn" disabled>
+              AUSVERKAUFT
+            </button>
+          {% endif %}
+
+          <!-- Buy Now -->
+          {% if product.available %}
+            <a
+              href="/checkout?variant={{ product.selected_or_first_available_variant.id }}&quantity=1"
+              class="btn btn-secondary"
+              style="width:100%;text-align:center;font-size:18px;padding:14px;"
+            >
+              JETZT KAUFEN
+            </a>
+          {% endif %}
+        </form>
+
+        <!-- Trust Badges -->
+        <div class="trust-badges">
+          <div class="trust-badge">
+            <span class="trust-badge-icon">🚚</span>
+            <span>Kostenloser Versand ab 50€</span>
+          </div>
+          <div class="trust-badge">
+            <span class="trust-badge-icon">↩️</span>
+            <span>30 Tage Rückgabe</span>
+          </div>
+          <div class="trust-badge">
+            <span class="trust-badge-icon">🔒</span>
+            <span>Sichere Zahlung</span>
+          </div>
+          <div class="trust-badge">
+            <span class="trust-badge-icon">⭐</span>
+            <span>Premium Qualität</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Tabs -->
+    <div class="product-tabs">
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="description">Beschreibung</button>
+        <button class="tab-btn" data-tab="details">Details & Pflege</button>
+        <button class="tab-btn" data-tab="shipping">Versand & Rückgabe</button>
+      </div>
+
+      <div class="tab-content active" id="tab-description">
+        {% if product.description != blank %}
+          <div class="page-content" style="padding:0;background:transparent;">
+            {{ product.description }}
+          </div>
+        {% else %}
+          <p style="color:var(--text-muted);">Keine Beschreibung vorhanden.</p>
+        {% endif %}
+      </div>
+
+      <div class="tab-content" id="tab-details">
+        <p style="color:var(--text-muted);">
+          <strong style="color:var(--text);">Material:</strong> Hochwertige Sportfaser-Mischung<br>
+          Maschinenwaschbar bei 30°C<br>
+          Nicht im Trockner trocknen<br>
+          Nicht bleichen<br>
+          Schonend bügeln (niedrige Temperatur)
+        </p>
+        <p style="color:var(--text-muted);margin-top:16px;">
+          Alle Maße sind Richtwerte. Wir empfehlen, bei Unklarheiten eine Größe größer zu wählen.
+        </p>
+      </div>
+
+      <div class="tab-content" id="tab-shipping">
+        <p style="color:var(--text-muted);">
+          <strong style="color:var(--text);">Kostenloser Versand</strong> ab einem Bestellwert von 50€.
+        </p>
+        <p style="color:var(--text-muted);margin-top:12px;">
+          <strong style="color:var(--text);">Lieferzeit:</strong> 3-5 Werktage (Deutschland)
+        </p>
+        <p style="color:var(--text-muted);margin-top:12px;">
+          <strong style="color:var(--text);">Rückgabe:</strong> Wir akzeptieren Retouren innerhalb von 30 Tagen nach Erhalt der Ware. Die Artikel müssen unbenutzt und in Originalverpackung zurückgeschickt werden.
+        </p>
+        <p style="color:var(--text-muted);margin-top:12px;">
+          Kontakt: <a href="mailto:ziyabicilecommerce@gmail.com" style="color:var(--primary);">ziyabicilecommerce@gmail.com</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Variant data for JS -->
+<script>
+  window.productVariants = {{ product.variants | json }};
+</script>

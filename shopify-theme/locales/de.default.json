@@ -1,0 +1,129 @@
+{
+  "general": {
+    "cart": {
+      "title": "Warenkorb",
+      "empty": "Dein Warenkorb ist leer",
+      "checkout": "Zur Kasse",
+      "continue_shopping": "Weiter einkaufen",
+      "update": "Warenkorb aktualisieren",
+      "remove": "Entfernen",
+      "subtotal": "Zwischensumme",
+      "shipping": "Versand",
+      "total": "Gesamtbetrag",
+      "taxes_and_shipping": "inkl. MwSt. Versandkosten werden beim Checkout berechnet.",
+      "discount": "Rabatt",
+      "add_discount": "Gutscheincode hinzufügen",
+      "apply_discount": "Einlösen",
+      "item_count": {
+        "one": "1 Artikel",
+        "other": "{{ count }} Artikel"
+      }
+    },
+    "search": {
+      "title": "Suche",
+      "placeholder": "Produkte suchen...",
+      "results": "Suchergebnisse für",
+      "no_results": "Keine Ergebnisse für",
+      "submit": "Suchen"
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "placeholder": "E-Mail-Adresse eingeben",
+      "submit": "Abonnieren",
+      "success": "Danke für deine Anmeldung!"
+    },
+    "close": "Schließen",
+    "required": "Pflichtfeld",
+    "loading": "Laden...",
+    "go_to_checkout": "Zur Kasse →"
+  },
+  "product": {
+    "add_to_cart": "In den Warenkorb",
+    "sold_out": "Ausverkauft",
+    "unavailable": "Nicht verfügbar",
+    "buy_now": "Jetzt kaufen",
+    "quantity": "Menge",
+    "description": "Beschreibung",
+    "details": "Details",
+    "size_guide": "Größentabelle",
+    "share": "Teilen",
+    "vendor": "Marke",
+    "sku": "Artikelnummer",
+    "type": "Typ",
+    "compare_at": "Normalpreis",
+    "price": "Preis",
+    "sale": "Sale",
+    "new": "Neu",
+    "from": "Ab",
+    "reviews": {
+      "title": "Bewertungen",
+      "no_reviews": "Noch keine Bewertungen",
+      "write_review": "Bewertung schreiben"
+    }
+  },
+  "collection": {
+    "title": "Kollektion",
+    "all_products": "Alle Produkte",
+    "products_count": {
+      "one": "1 Produkt",
+      "other": "{{ count }} Produkte"
+    },
+    "sort_by": "Sortieren nach",
+    "sort": {
+      "featured": "Empfohlen",
+      "best_selling": "Meistverkauft",
+      "title_ascending": "Name A–Z",
+      "title_descending": "Name Z–A",
+      "price_ascending": "Preis: Aufsteigend",
+      "price_descending": "Preis: Absteigend",
+      "created_ascending": "Älteste zuerst",
+      "created_descending": "Neueste zuerst"
+    },
+    "filter": "Filtern",
+    "no_products": "Keine Produkte gefunden"
+  },
+  "pagination": {
+    "previous": "Zurück",
+    "next": "Weiter",
+    "page": "Seite",
+    "of": "von"
+  },
+  "not_found": {
+    "title": "Seite nicht gefunden",
+    "message": "Diese Seite existiert nicht. Vielleicht hast du dich vertippt oder der Link ist veraltet.",
+    "back_home": "Zurück zur Startseite"
+  },
+  "accessibility": {
+    "skip_to_content": "Zum Inhalt springen",
+    "open_menu": "Menü öffnen",
+    "close_menu": "Menü schließen",
+    "open_cart": "Warenkorb öffnen",
+    "close_cart": "Warenkorb schließen",
+    "increase_quantity": "Menge erhöhen",
+    "decrease_quantity": "Menge verringern"
+  },
+  "footer": {
+    "copyright": "© {{ year }} {{ shop }}. Alle Rechte vorbehalten.",
+    "powered_by": "Betrieben von Shopify"
+  },
+  "account": {
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "forgot_password": "Passwort vergessen?",
+    "title": "Mein Konto",
+    "orders": "Meine Bestellungen",
+    "no_orders": "Du hast noch keine Bestellungen aufgegeben."
+  },
+  "customer": {
+    "order": {
+      "title": "Bestellung",
+      "date": "Datum",
+      "status": "Status",
+      "total": "Gesamtbetrag",
+      "details": "Details ansehen"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "heading": "UNLEASH YOUR\nPOTENTIAL",
+        "subheading": "Premium Sportswear für Athleten, die gewinnen wollen.",
+        "button_text": "JETZT SHOPPEN",
+        "button_link": "/collections/all",
+        "button2_text": "MEHR ERFAHREN",
+        "button2_link": "/pages/about"
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "NEUE KOLLEKTION",
+        "collection": "frontpage"
+      }
+    },
+    "about-preview": {
+      "type": "about-preview",
+      "settings": {
+        "heading": "WIR SIND WZIYA SPORT",
+        "text": "Gegründet mit der Leidenschaft, Athleten das beste Gear zu geben. Wir glauben, dass Performance und Style keine Kompromisse kennen sollten. WZIYA SPORT steht für Qualität, Innovation und den unbedingten Willen zu gewinnen.",
+        "button_text": "MEHR ÜBER UNS",
+        "button_link": "/pages/about"
+      }
+    }
+  },
+  "order": ["hero", "featured-collection", "about-preview"]
+}

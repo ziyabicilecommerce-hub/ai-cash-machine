@@ -1,0 +1,28 @@
+<section class="section">
+  <div class="container">
+    <div class="cta-banner">
+      <div class="cta-banner__content">
+        <span class="badge badge--green" style="margin-bottom:16px">Limitiertes Angebot</span>
+        <h2>{{ section.settings.title | default: 'BEREIT ZUM NÄCHSTEN LEVEL?' }}</h2>
+        <p>{{ section.settings.text | default: 'Melde dich für unseren Newsletter an und bekomme 10% auf deine erste Bestellung.' }}</p>
+        <div class="cta-banner__actions">
+          <a href="{{ section.settings.cta_url | default: '/collections/all' }}" class="btn btn--primary btn--lg">{{ section.settings.cta_text | default: 'Jetzt Shoppen' }}</a>
+          <a href="/pages/about" class="btn btn--outline-white btn--lg">Mehr erfahren</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "CTA Banner",
+  "settings": [
+    {"type": "text", "id": "title", "label": "Titel"},
+    {"type": "textarea", "id": "text", "label": "Text"},
+    {"type": "text", "id": "cta_text", "label": "Button Text", "default": "Jetzt Shoppen"},
+    {"type": "url", "id": "cta_url", "label": "Button Link"}
+  ],
+  "presets": [{"name": "CTA Banner"}]
+}
+{% endschema %}

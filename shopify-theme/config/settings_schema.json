@@ -1,0 +1,167 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "WZIYA SPORT",
+    "theme_version": "1.0.0",
+    "theme_author": "Wzia Bicil",
+    "theme_documentation_url": "https://wziyasport.de",
+    "theme_support_url": "mailto:ziyabicilecommerce@gmail.com"
+  },
+  {
+    "name": "Farben",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primärfarbe (Neon Grün)",
+        "default": "#00ff87"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Sekundärfarbe (Elektrisch Blau)",
+        "default": "#0066ff"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Hintergrundfarbe",
+        "default": "#0a0a0a"
+      },
+      {
+        "type": "color",
+        "id": "color_background_2",
+        "label": "Hintergrundfarbe 2",
+        "default": "#111111"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Textfarbe",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_text_muted",
+        "label": "Gedämpfte Textfarbe",
+        "default": "#888888"
+      }
+    ]
+  },
+  {
+    "name": "Schriften",
+    "settings": [
+      {
+        "type": "select",
+        "id": "font_heading",
+        "label": "Überschriften-Schriftart",
+        "options": [
+          { "value": "Bebas Neue", "label": "Bebas Neue" },
+          { "value": "Impact", "label": "Impact" },
+          { "value": "Arial Black", "label": "Arial Black" }
+        ],
+        "default": "Bebas Neue"
+      },
+      {
+        "type": "select",
+        "id": "font_body",
+        "label": "Fließtext-Schriftart",
+        "options": [
+          { "value": "Inter", "label": "Inter" },
+          { "value": "Roboto", "label": "Roboto" },
+          { "value": "Open Sans", "label": "Open Sans" }
+        ],
+        "default": "Inter"
+      }
+    ]
+  },
+  {
+    "name": "Logo & Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon"
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Logo Breite (px)",
+        "min": 100,
+        "max": 400,
+        "step": 10,
+        "unit": "px",
+        "default": 200
+      }
+    ]
+  },
+  {
+    "name": "Social Media",
+    "settings": [
+      {
+        "type": "url",
+        "id": "instagram_url",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "url",
+        "id": "facebook_url",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "url",
+        "id": "tiktok_url",
+        "label": "TikTok URL"
+      },
+      {
+        "type": "url",
+        "id": "youtube_url",
+        "label": "YouTube URL"
+      }
+    ]
+  },
+  {
+    "name": "Ankündigungsleiste",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_announcement",
+        "label": "Ankündigungsleiste anzeigen",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "announcement_text",
+        "label": "Ankündigungstext",
+        "default": "🔥 Kostenloser Versand ab 50€ | SALE bis zu 30% Rabatt"
+      },
+      {
+        "type": "color",
+        "id": "announcement_bg",
+        "label": "Hintergrundfarbe",
+        "default": "#00ff87"
+      },
+      {
+        "type": "color",
+        "id": "announcement_color",
+        "label": "Textfarbe",
+        "default": "#000000"
+      }
+    ]
+  },
+  {
+    "name": "Checkout",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "checkout_logo",
+        "label": "Checkout Logo"
+      }
+    ]
+  }
+]

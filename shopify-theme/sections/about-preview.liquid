@@ -1,0 +1,104 @@
+<section class="about-preview section-padding">
+  <div class="container">
+    <div class="about-preview-inner">
+      <!-- Content -->
+      <div class="about-preview-content animate-on-scroll">
+        <div class="about-preview-label">Über WZIYA SPORT</div>
+        <h2 class="about-preview-heading">
+          {% if section.settings.heading != blank %}
+            {{ section.settings.heading }}
+          {% else %}
+            WIR SIND<br>WZIYA SPORT
+          {% endif %}
+        </h2>
+        <p class="about-preview-text">
+          {% if section.settings.text != blank %}
+            {{ section.settings.text }}
+          {% else %}
+            Gegründet mit der Leidenschaft, jedem Athleten das beste Equipment zu bieten. Wir glauben, dass Performance und Style keine Kompromisse kennen sollten.
+          {% endif %}
+        </p>
+
+        <ul class="about-checklist">
+          <li>
+            <span class="checklist-icon">✓</span>
+            Höchste Qualität – Geprüfte Premium-Materialien
+          </li>
+          <li>
+            <span class="checklist-icon">✓</span>
+            Für alle Athleten – Anfänger bis Profi
+          </li>
+          <li>
+            <span class="checklist-icon">✓</span>
+            Nachhaltig & Modern – Zukunftsorientiertes Design
+          </li>
+          <li>
+            <span class="checklist-icon">✓</span>
+            Schnelle Lieferung – Direkt zu dir nach Hause
+          </li>
+        </ul>
+
+        <a href="{{ section.settings.button_link | default: '/pages/about' }}" class="btn btn-outline">
+          {{ section.settings.button_text | default: 'MEHR ÜBER UNS' }}
+        </a>
+      </div>
+
+      <!-- Image -->
+      <div class="about-preview-image animate-on-scroll delay-2">
+        {% if section.settings.image %}
+          <img
+            src="{{ section.settings.image | img_url: '800x1000', crop: 'center' }}"
+            alt="{{ section.settings.image.alt | default: 'WZIYA SPORT' }}"
+            loading="lazy"
+            style="width:100%;height:100%;object-fit:cover;border-radius:8px;border:1px solid var(--border);"
+          >
+        {% else %}
+          <div class="about-image-placeholder">
+            <div class="about-image-text">WZIYA<br>SPORT</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About Preview",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Überschrift",
+      "default": "WIR SIND WZIYA SPORT"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Gegründet mit der Leidenschaft, Athleten das beste Gear zu geben. Wir glauben, dass Performance und Style keine Kompromisse kennen sollten."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "MEHR ÜBER UNS"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Bild"
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Preview"
+    }
+  ]
+}
+{% endschema %}
