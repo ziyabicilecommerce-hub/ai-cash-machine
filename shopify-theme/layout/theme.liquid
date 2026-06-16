@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>
+    {% if template == 'index' %}{{ shop.name }} &mdash; {{ shop.description }}{% elsif template == '404' %}Seite nicht gefunden &mdash; {{ shop.name }}{% else %}{{ page_title }} &mdash; {{ shop.name }}{% endif %}
+  </title>
+  {% if page_description %}<meta name="description" content="{{ page_description | escape }}">{% endif %}
+  <link rel="canonical" href="{{ canonical_url }}">
+  {% if settings.favicon %}<link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">{% endif %}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+  {{ content_for_header }}
+
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  <style>
+    :root {
+      --primary: #00ff87;
+      --secondary: #0066ff;
+      --bg: #0a0a0a;
+      --bg2: #111111;
+      --bg3: #1a1a1a;
+      --text: #ffffff;
+      --text-muted: #888888;
+      --border: #222222;
+      --glow-green: 0 0 20px rgba(0,255,135,0.5);
+      --glow-blue: 0 0 20px rgba(0,102,255,0.5);
+      --font-heading: 'Bebas Neue', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --radius: 4px;
+      --transition: all 0.3s ease;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    ul, ol {
+      list-style: none;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
+
+    input, select, textarea {
+      font-family: inherit;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-padding {
+      padding: 80px 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 32px;
+      font-family: var(--font-heading);
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      border-radius: var(--radius);
+      transition: var(--transition);
+      cursor: pointer;
+      border: 2px solid transparent;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--primary);
+      box-shadow: var(--glow-green);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--secondary);
+      color: var(--secondary);
+      box-shadow: var(--glow-blue);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary);
+      color: #000;
+      box-shadow: var(--glow-green);
+    }
+
+    .text-neon {
+      color: var(--primary);
+    }
+
+    .text-blue {
+      color: var(--secondary);
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(36px, 6vw, 72px);
+      color: var(--text);
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 600px;
+    }
+
+    .section-header {
+      margin-bottom: 48px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .section-padding { padding: 48px 0; }
+      .container { padding: 0 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .animate-on-scroll.delay-1 { transition-delay: 0.1s; }
+    .animate-on-scroll.delay-2 { transition-delay: 0.2s; }
+    .animate-on-scroll.delay-3 { transition-delay: 0.3s; }
+    .animate-on-scroll.delay-4 { transition-delay: 0.4s; }
+
+    /* Neon divider */
+    .neon-divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
+      margin: 0;
+    }
+
+    /* Glow text */
+    .glow-text {
+      text-shadow: 0 0 30px rgba(0,255,135,0.6), 0 0 60px rgba(0,255,135,0.3);
+    }
+
+    /* Page main */
+    main {
+      min-height: 70vh;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+    /* Selection */
+    ::selection { background: var(--primary); color: #000; }
+
+    /* Flash messages */
+    .flash-message {
+      padding: 12px 24px;
+      background: var(--bg3);
+      border-left: 3px solid var(--primary);
+      margin-bottom: 16px;
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+      padding: 16px 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .breadcrumbs a { color: var(--text-muted); transition: color 0.2s; }
+    .breadcrumbs a:hover { color: var(--primary); }
+    .breadcrumbs span { margin: 0 8px; }
+
+    /* Skip to content */
+    .skip-to-content {
+      position: absolute;
+      top: -100px;
+      left: 16px;
+      background: var(--primary);
+      color: #000;
+      padding: 8px 16px;
+      z-index: 9999;
+      font-family: var(--font-heading);
+      border-radius: var(--radius);
+    }
+    .skip-to-content:focus { top: 16px; }
+
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .loading-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg3);
+      border: 1px solid var(--primary);
+      color: var(--text);
+      padding: 16px 24px;
+      border-radius: var(--radius);
+      z-index: 9999;
+      font-size: 14px;
+      transform: translateX(120%);
+      transition: transform 0.4s ease;
+      box-shadow: var(--glow-green);
+    }
+    .toast.show { transform: translateX(0); }
+
+    /* Page content (for non-section templates) */
+    .page-content {
+      background: var(--bg2);
+      padding: 64px 0;
+    }
+
+    .page-content h1 {
+      font-size: clamp(32px, 5vw, 64px);
+      margin-bottom: 32px;
+      color: var(--primary);
+    }
+
+    .page-content h2 {
+      font-size: clamp(24px, 3vw, 40px);
+      margin-top: 40px;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .page-content h3 {
+      font-size: 22px;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      color: var(--secondary);
+    }
+
+    .page-content p {
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.8;
+    }
+
+    .page-content ul, .page-content ol {
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      padding-left: 24px;
+    }
+
+    .page-content ul { list-style: disc; }
+    .page-content ol { list-style: decimal; }
+
+    .page-content li { margin-bottom: 8px; }
+
+    .page-content a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .page-content a:hover { color: var(--secondary); }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Zum Inhalt springen</a>
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  {% section 'header' %}
+
+  <main id="main-content">
+    {{ content_for_layout }}
+  </main>
+
+  {% section 'footer' %}
+
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+</body>
+</html>
