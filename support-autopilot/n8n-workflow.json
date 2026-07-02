@@ -1,0 +1,145 @@
+{
+  "name": "Support-Autopilot (Claude)",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": { "item": [ { "mode": "everyMinute" } ] },
+        "simple": false,
+        "filters": { "labelIds": ["INBOX"], "readStatus": "unread" }
+      },
+      "name": "Neue Support-Mail",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [-160, 300],
+      "id": "trigger-gmail",
+      "notes": "Löst bei jeder neuen ungelesenen Mail im Support-Postfach aus. Alternativ IMAP-Trigger für Nicht-Gmail-Kunden."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "x-api-key", "value": "={{ $env.ANTHROPIC_API_KEY }}" },
+          { "name": "anthropic-version", "value": "2023-06-01" },
+          { "name": "content-type", "value": "application/json" }
+        ] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-haiku-4-5-20251001\",\n  \"max_tokens\": 400,\n  \"system\": \"<<< HIER PROMPT 1 (Klassifizierung) EINFÜGEN, Kontext-Block pro Kunde anpassen >>>\",\n  \"messages\": [ { \"role\": \"user\", \"content\": {{ JSON.stringify($json.snippet || $json.text || '') }} } ]\n}",
+        "options": {}
+      },
+      "name": "Claude: Klassifizieren",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [80, 300],
+      "id": "http-classify",
+      "notes": "Prompt 1. Günstiges Modell. Gibt striktes JSON zurück."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude-Antwort (JSON-String) robust parsen\nconst raw = $input.first().json.content?.[0]?.text ?? '{}';\nlet parsed;\ntry { parsed = JSON.parse(raw.match(/\\{[\\s\\S]*\\}/)?.[0] ?? raw); }\ncatch (e) { parsed = { kategorie: 'sonstiges', auto_entwurf_moeglich: false, eskalation_noetig: true, begruendung: 'Parsing fehlgeschlagen' }; }\n// Original-Mail durchreichen\nconst mail = $('Neue Support-Mail').first().json;\nreturn [{ json: { ...parsed, _email: mail.snippet || mail.text || '', _from: mail.from, _subject: mail.subject, _threadId: mail.threadId } }];"
+      },
+      "name": "JSON parsen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 300],
+      "id": "code-parse"
+    },
+    {
+      "parameters": {
+        "rules": { "values": [
+          { "conditions": { "options": { "caseSensitive": true }, "conditions": [ { "leftValue": "={{ $json.auto_entwurf_moeglich }}", "rightValue": true, "operator": { "type": "boolean", "operation": "true" } } ] }, "outputKey": "Auto-Entwurf" },
+          { "conditions": { "options": { "caseSensitive": true }, "conditions": [ { "leftValue": "={{ $json.eskalation_noetig }}", "rightValue": true, "operator": { "type": "boolean", "operation": "true" } } ] }, "outputKey": "Eskalation" }
+        ] },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "name": "Verzweigen",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [520, 300],
+      "id": "switch-route"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "x-api-key", "value": "={{ $env.ANTHROPIC_API_KEY }}" },
+          { "name": "anthropic-version", "value": "2023-06-01" },
+          { "name": "content-type", "value": "application/json" }
+        ] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-opus-4-8\",\n  \"max_tokens\": 800,\n  \"system\": \"<<< HIER PROMPT 2 (Antwort-Entwurf) EINFÜGEN, Wissensbasis pro Kunde anpassen >>>\",\n  \"messages\": [ { \"role\": \"user\", \"content\": {{ JSON.stringify($json._email) }} } ]\n}",
+        "options": {}
+      },
+      "name": "Claude: Entwurf schreiben",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 180],
+      "id": "http-draft",
+      "notes": "Prompt 2. Qualitätsmodell."
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ 'Re: ' + $('JSON parsen').first().json._subject }}",
+        "message": "={{ $json.content[0].text }}",
+        "options": { "threadId": "={{ $('JSON parsen').first().json._threadId }}", "sendTo": "={{ $('JSON parsen').first().json._from }}" }
+      },
+      "name": "Gmail-Entwurf anlegen",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [1020, 180],
+      "id": "gmail-draft",
+      "notes": "ENTWURF – kein Auto-Versand. Mensch klickt Senden. Verkaufsargument: 100% menschlich geprüft."
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": { "__rl": true, "value": "#support-eskalation", "mode": "name" },
+        "text": "=🚨 Mail braucht einen Menschen\nVon: {{ $json._from }}\nBetreff: {{ $json._subject }}\nKategorie: {{ $json.kategorie }} | Stimmung: {{ $json.stimmung }}\nGrund: {{ $json.begruendung }}",
+        "otherOptions": {}
+      },
+      "name": "Team benachrichtigen",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [780, 420],
+      "id": "slack-escalate",
+      "notes": "Statt Slack geht auch E-Mail/Telegram. Eskalationen landen beim Menschen."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "<<< GOOGLE-SHEET-ID >>>", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "Log", "mode": "name" },
+        "columns": { "mappingMode": "defineBelow", "value": {
+          "Datum": "={{ $now.toISO() }}",
+          "Von": "={{ $json._from }}",
+          "Kategorie": "={{ $json.kategorie }}",
+          "Dringlichkeit": "={{ $json.dringlichkeit }}",
+          "Aktion": "={{ $json.auto_entwurf_moeglich ? 'Entwurf erstellt' : 'Eskaliert' }}"
+        } }
+      },
+      "name": "Ins Log schreiben",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1020, 300],
+      "id": "sheets-log",
+      "notes": "Reporting-Basis. Aus diesem Log baust du den monatlichen Kunden-Report ('X Mails bearbeitet, Y h gespart')."
+    }
+  ],
+  "connections": {
+    "Neue Support-Mail": { "main": [ [ { "node": "Claude: Klassifizieren", "type": "main", "index": 0 } ] ] },
+    "Claude: Klassifizieren": { "main": [ [ { "node": "JSON parsen", "type": "main", "index": 0 } ] ] },
+    "JSON parsen": { "main": [ [ { "node": "Verzweigen", "type": "main", "index": 0 } ] ] },
+    "Verzweigen": { "main": [ [ { "node": "Claude: Entwurf schreiben", "type": "main", "index": 0 } ], [ { "node": "Team benachrichtigen", "type": "main", "index": 0 } ] ] },
+    "Claude: Entwurf schreiben": { "main": [ [ { "node": "Gmail-Entwurf anlegen", "type": "main", "index": 0 }, { "node": "Ins Log schreiben", "type": "main", "index": 0 } ] ] },
+    "Team benachrichtigen": { "main": [ [ { "node": "Ins Log schreiben", "type": "main", "index": 0 } ] ] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}
