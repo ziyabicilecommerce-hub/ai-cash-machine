@@ -1,8 +1,8 @@
-# 🤖💰 E-Com Marketing-Autopilot — 18 n8n-Workflows
+# 🤖💰 E-Com Marketing-Autopilot — 19 n8n-Workflows
 
-**18 fertige n8n-Workflows, die dein Shop-Marketing komplett auf Autopilot stellen — inklusive KI-Ads-Manager, KI-Marketing-Chef, Kampagnen-Maschine und Multi-Plattform-Poster.**
+**19 fertige n8n-Workflows, die dein Shop-Marketing komplett auf Autopilot stellen — inklusive KI-Ads-Manager, KI-Marketing-Chef, Kampagnen-Maschine und Multi-Plattform-Poster.**
 
-> 🚀 **Neu hier?** Lies zuerst [`REICH-IN-60-TAGEN.md`](REICH-IN-60-TAGEN.md) — der komplette 60-Tage-Fahrplan, wie du mit wenig Startkapital und nur dem Handy dieses System zum Laufen bringst.
+> 🚀 **Neu hier?** Lies zuerst [`REICH-IN-60-TAGEN.md`](REICH-IN-60-TAGEN.md) (der 60-Tage-Fahrplan mit wenig Startkapital und nur dem Handy) und danach [`MASTERPLAN.md`](MASTERPLAN.md) (in welcher Reihenfolge du die 19 Workflows aktivierst).
 Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst deine Website an.
 
 ---
@@ -29,6 +29,7 @@ Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst dei
 | 16 | 🎁 **Cross-Sell-Radar** | 14 Tage nach dem Kauf: Claude schaut, was der Kunde gekauft hat, wählt aus deinem Katalog 1–2 wirklich passende Ergänzungsprodukte und schreibt eine persönliche Empfehlung | täglich 15:00 | Der zweite Kauf kostet dich 0 € Werbung — reine Marge |
 | 17 | 💥 **Promo-Kampagnen-Maschine** | Alle 14 Tage eine komplette Werbe-E-Mail-Kampagne an deine Kundenliste (nur Empfänger mit Marketing-Einwilligung!) — der Kampagnen-Typ rotiert automatisch: Flash-Sale, Bestseller-Spotlight, Insider-Tipp, Geheimer Sale, Neuheiten-Drop | alle 14 Tage 10:00 | Regelmäßige Kampagnen an Bestandskunden sind der profitabelste Umsatzhebel überhaupt |
 | 18 | 🌍 **Multi-Plattform-Poster** | Täglich EIN Kern-Inhalt, nativ übersetzt für 7 Plattformen: TikTok, IG Reel + Story, Facebook, Pinterest, YouTube Short, X — copy-paste-fertig per Mail. Facebook kann auf Wunsch sogar **vollautomatisch** posten | täglich 16:00 | Überall präsent sein, ohne 7x Arbeit zu machen |
+| 19 | 🗓️ **Saison-Planer** | Am 25. jeden Monats: kompletter Marketing-Kalender für den Folgemonat — Saison-Events im DACH-Raum, 4 Wochenthemen, 2 Promo-Aktionen mit Datum & Mechanik, Content-Highlights, E-Mail-Plan, Monatsziel | monatlich am 25. | Wer den Monat plant, bevor er beginnt, gewinnt ihn |
 
 ---
 
@@ -69,7 +70,7 @@ Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst dei
 
 ### Schritt 4: In n8n einrichten (5 Min)
 
-1. n8n öffnen → **Workflows → Import from File** → alle 18 Dateien aus `workflows/` importieren
+1. n8n öffnen → **Workflows → Import from File** → alle 19 Dateien aus `workflows/` importieren
    ⚠️ **Wichtig:** Aktiviere ENTWEDER 01 (Warenkorb-Retter, einfach) ODER 15 (Warenkorb-Sequenz 3.0, Profi) — nie beide gleichzeitig, sonst bekommen Kunden doppelte Mails!
 2. In jedem Workflow den Node **„⚙️ Setup"** öffnen und deine Werte eintragen (SHOP, Token, Keys, E-Mails, Nische, Zielgruppe…)
 3. **SMTP-Zugangsdaten** anlegen (für die E-Mail-Workflows 01, 02, 04, 05, 07, 09, 10, 12, 13, 15, 16, 17, 18):
