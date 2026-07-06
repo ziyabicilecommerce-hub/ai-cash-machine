@@ -1,0 +1,176 @@
+{
+  "name": "18 · Multi-Plattform-Poster 🌍📣",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 1, "triggerAtHour": 16, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "⏰ Täglich 16:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "SHOP_URL", "value": "https://meinshop.de", "type": "string" },
+            { "id": "s06", "name": "SHOP_NISCHE", "value": "z.B. Fitness-Zubehoer fuer Zuhause", "type": "string" },
+            { "id": "s07", "name": "ZIELGRUPPE", "value": "z.B. Frauen 20-35, sportlich, kaufen ueber TikTok/Insta", "type": "string" },
+            { "id": "s08", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s09", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" },
+            { "id": "s10", "name": "TELEGRAM_BOT_TOKEN", "value": "123456:ABC-HIER_DEIN_BOT_TOKEN", "type": "string" },
+            { "id": "s11", "name": "TELEGRAM_CHAT_ID", "value": "HIER_DEINE_CHAT_ID", "type": "string" },
+            { "id": "s12", "name": "FB_PAGE_ID", "value": "", "type": "string" },
+            { "id": "s13", "name": "FB_PAGE_TOKEN", "value": "", "type": "string" },
+            { "id": "s14", "name": "AUTO_POST_FACEBOOK", "value": "nein", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/orders.json?status=any&limit=250&created_at_min=' + encodeURIComponent($now.minus({ days: 14 }).toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-orders",
+      "name": "📥 Bestseller ermitteln",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const setup = $('⚙️ Setup').first().json;\nconst orders = ($json.orders || []).filter(o => !o.cancelled_at);\nconst produkte = {};\nfor (const o of orders) {\n  for (const li of (o.line_items || [])) produkte[li.title] = (produkte[li.title] || 0) + li.quantity;\n}\nconst top = Object.entries(produkte).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([n]) => n);\nconst topText = top.length ? top.join(', ') : '(noch keine Verkaeufe - nutze die Nische)';\n\n// Taeglich rotierendes Kern-Thema, damit nicht jeden Tag dasselbe kommt\nconst themen = [\n  'Ergebnis/Transformation zeigen',\n  'Haeufigster Fehler der Zielgruppe',\n  'Produkt im Alltag (POV-Style)',\n  'Frage/Debatte starten (Engagement)',\n  'Mini-Tutorial mit dem Produkt',\n  'Kundenstimme/Review nacherzaehlen',\n  'Zahlen/Fakten, die ueberraschen'\n];\nconst thema = themen[new Date().getDay()];\n\nconst prompt = 'Du bist Multi-Plattform-Social-Media-Manager fuer den Onlineshop \"' + setup.SHOP_NAME + '\" (Nische: ' + setup.SHOP_NISCHE + ', Zielgruppe: ' + setup.ZIELGRUPPE + ', Shop: ' + setup.SHOP_URL + ').\\n' +\n  'Bestseller: ' + topText + '\\nKern-Thema heute: ' + thema + '\\n\\n' +\n  'Erstelle das komplette Posting-Paket fuer HEUTE - EIN Kern-Inhalt, fuer jede Plattform nativ uebersetzt (nicht kopiert!), alles auf Deutsch:\\n\\n' +\n  '1. TIKTOK: Hook (max 10 Woerter) + 20-30s Skript (Szene fuer Szene) + 4 Hashtags + Sound-Idee\\n' +\n  '2. INSTAGRAM REEL: Angepasster Hook + Caption mit CTA + 5 Hashtags\\n' +\n  '3. INSTAGRAM STORY: 2-Slide-Idee mit Interaktions-Sticker (Umfrage/Slider)\\n' +\n  '4. FACEBOOK: Laengerer Post (60-100 Woerter, Story-Stil, 1 Emoji-Absatztrenner, Link zum Shop)\\n' +\n  '5. PINTEREST: Pin-Titel (max 60 Zeichen) + Beschreibung (max 200 Zeichen, SEO-Keywords der Nische)\\n' +\n  '6. YOUTUBE SHORT: Titel + 25s Skript (kann das TikTok-Skript adaptieren)\\n' +\n  '7. X/TWITTER: 2 Tweets (einer frech/meinungsstark, einer mit Mehrwert)\\n\\n' +\n  'Antworte NUR mit validem JSON, ohne Markdown-Codeblock:\\n' +\n  '{\"facebook_post\": \"<nur der reine Facebook-Text>\", \"html\": \"<das GESAMTE Paket als sauberes HTML mit h2 pro Plattform, copy-paste-freundlich, ohne html/body-Geruest>\"}';\n\nreturn [{ json: { prompt, thema } }];"
+      },
+      "id": "build-prompt",
+      "name": "🧠 Tages-Thema + Bestseller",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 4000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-posts",
+      "name": "🤖 Claude baut alle Posts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst text = (blocks.find(b => b.type === 'text') || {}).text || '';\nlet daten;\ntry {\n  daten = JSON.parse(text.replace(/```json|```/g, '').trim());\n} catch (e) {\n  daten = { facebook_post: '', html: '<pre style=\"white-space:pre-wrap;font-family:sans-serif;\">' + text + '</pre>' };\n}\nconst setup = $('⚙️ Setup').first().json;\nconst thema = $('🧠 Tages-Thema + Bestseller').item.json.thema;\nreturn { json: {\n  betreff: '🌍 Dein Posting-Paket fuer heute (' + thema + ')',\n  email_html: '<div style=\"font-family:sans-serif;max-width:640px;margin:0 auto;\">' + daten.html + '</div>',\n  facebook_post: daten.facebook_post || '',\n  telegram_text: '🌍 MULTI-PLATTFORM-POSTER · ' + setup.SHOP_NAME + '\\n\\nDein Posting-Paket fuer heute (' + thema + ') liegt im Postfach! 📬\\n7 Plattformen, copy-paste-fertig: TikTok, IG Reel + Story, Facebook, Pinterest, YouTube Short, X.' + (setup.AUTO_POST_FACEBOOK === 'ja' && setup.FB_PAGE_ID ? '\\n\\n🤖 Facebook-Post geht automatisch raus!' : '')\n}};"
+      },
+      "id": "parse-posts",
+      "name": "📦 Paket verpacken",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $('⚙️ Setup').first().json.OWNER_EMAIL }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-mail",
+      "name": "📧 Paket per E-Mail",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1320, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.telegram.org/bot' + $('⚙️ Setup').first().json.TELEGRAM_BOT_TOKEN + '/sendMessage' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $('⚙️ Setup').first().json.TELEGRAM_CHAT_ID, text: $json.telegram_text }) }}",
+        "options": {}
+      },
+      "id": "telegram-info",
+      "name": "📲 Info aufs Handy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1540, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const setup = $('⚙️ Setup').first().json;\nconst daten = $('📦 Paket verpacken').first().json;\nif (setup.AUTO_POST_FACEBOOK !== 'ja') return [];\nif (!setup.FB_PAGE_ID || !setup.FB_PAGE_TOKEN) return [];\nif (!daten.facebook_post) return [];\nreturn [{ json: { facebook_post: daten.facebook_post } }];"
+      },
+      "id": "fb-gate",
+      "name": "🚦 Auto-Post erlaubt?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1760, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v21.0/' + $('⚙️ Setup').first().json.FB_PAGE_ID + '/feed' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ message: $json.facebook_post, access_token: $('⚙️ Setup').first().json.FB_PAGE_TOKEN }) }}",
+        "options": {}
+      },
+      "id": "fb-post",
+      "name": "📘 Facebook: automatisch posten",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1980, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Täglich 16:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "📥 Bestseller ermitteln", "type": "main", "index": 0 }]] },
+    "📥 Bestseller ermitteln": { "main": [[{ "node": "🧠 Tages-Thema + Bestseller", "type": "main", "index": 0 }]] },
+    "🧠 Tages-Thema + Bestseller": { "main": [[{ "node": "🤖 Claude baut alle Posts", "type": "main", "index": 0 }]] },
+    "🤖 Claude baut alle Posts": { "main": [[{ "node": "📦 Paket verpacken", "type": "main", "index": 0 }]] },
+    "📦 Paket verpacken": { "main": [[{ "node": "📧 Paket per E-Mail", "type": "main", "index": 0 }]] },
+    "📧 Paket per E-Mail": { "main": [[{ "node": "📲 Info aufs Handy", "type": "main", "index": 0 }]] },
+    "📲 Info aufs Handy": { "main": [[{ "node": "🚦 Auto-Post erlaubt?", "type": "main", "index": 0 }]] },
+    "🚦 Auto-Post erlaubt?": { "main": [[{ "node": "📘 Facebook: automatisch posten", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

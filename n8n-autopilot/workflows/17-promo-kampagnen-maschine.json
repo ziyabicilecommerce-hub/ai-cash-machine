@@ -1,0 +1,149 @@
+{
+  "name": "17 · Promo-Kampagnen-Maschine 💥📧",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 14, "triggerAtHour": 10, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-14d",
+      "name": "⏰ Alle 14 Tage 10:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "SHOP_URL", "value": "https://meinshop.de", "type": "string" },
+            { "id": "s06", "name": "SHOP_NISCHE", "value": "z.B. Fitness-Zubehoer fuer Zuhause", "type": "string" },
+            { "id": "s07", "name": "ZIELGRUPPE", "value": "z.B. Frauen 20-35, sportlich, kaufen ueber TikTok/Insta", "type": "string" },
+            { "id": "s08", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s09", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" },
+            { "id": "s10", "name": "KAMPAGNEN_RABATT_CODE", "value": "BOOM20", "type": "string" },
+            { "id": "s11", "name": "RABATT_PROZENT", "value": "20", "type": "string" },
+            { "id": "s12", "name": "MAX_EMPFAENGER", "value": "200", "type": "string" },
+            { "id": "s13", "name": "TEST_MODE", "value": "ja", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/products.json?limit=50&fields=id,title,handle,variants' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-products",
+      "name": "🛍️ Produkte holen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/customers.json?limit=250&fields=id,email,first_name,email_marketing_consent,accepts_marketing' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-customers",
+      "name": "👥 Kundenliste holen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sd = $getWorkflowStaticData('global');\nsd.kampagnenZaehler = (sd.kampagnenZaehler || 0) + 1;\nconst setup = $('⚙️ Setup').first().json;\n\n// Kampagnen-Typ rotiert automatisch - jede Kampagne fuehlt sich anders an\nconst typen = [\n  { name: 'Flash-Sale', idee: '48h-Blitzangebot mit dem Rabattcode, harte Deadline, Countdown-Gefuehl' },\n  { name: 'Bestseller-Spotlight', idee: 'Das beliebteste Produkt feiern: warum es alle lieben, Social-Proof-Gefuehl, Code als Bonus' },\n  { name: 'Insider-Tipp', idee: 'Wertvoller Nischen-Tipp im Zentrum (echter Mehrwert!), Produkt nur elegant nebenbei, Code als Belohnung fuers Lesen' },\n  { name: 'Geheimer Sale', idee: 'Nur-fuer-Abonnenten-Deal: exklusiv, verknappt, \"nicht auf der Website beworben\"' },\n  { name: 'Neuheiten-Drop', idee: 'Neuste Produkte wie einen Launch inszenieren, Erste-sein-Gefuehl, Code fuer Early Birds' }\n];\nconst typ = typen[(sd.kampagnenZaehler - 1) % typen.length];\n\nconst produkte = (($('🛍️ Produkte holen').first().json.products) || [])\n  .slice(0, 15)\n  .map(p => '- ' + p.title + ' (' + setup.SHOP_URL + '/products/' + p.handle + ', ' + (((p.variants || [])[0] || {}).price || '?') + ')');\n\nconst prompt = 'Du bist E-Mail-Marketing-Profi fuer den Onlineshop \"' + setup.SHOP_NAME + '\" (Nische: ' + setup.SHOP_NISCHE + ', Zielgruppe: ' + setup.ZIELGRUPPE + ').\\n\\n' +\n  'KAMPAGNEN-TYP heute: ' + typ.name + ' -> ' + typ.idee + '\\n' +\n  'Rabattcode: ' + setup.KAMPAGNEN_RABATT_CODE + ' (' + setup.RABATT_PROZENT + '%)\\n\\n' +\n  'Produktkatalog (Auszug):\\n' + produkte.join('\\n') + '\\n\\n' +\n  'Schreibe die komplette Kampagnen-E-Mail auf Deutsch (Du-Form):\\n' +\n  '- Betreff: maximal 45 Zeichen, neugierig machend, zum Kampagnen-Typ passend\\n' +\n  '- Der Platzhalter {{VORNAME}} soll im HTML genau einmal fuer die persoenliche Anrede stehen\\n' +\n  '- 1-2 konkrete Produkte aus dem Katalog mit Links einbauen\\n' +\n  '- EIN klarer CTA-Button (als <a> mit Inline-Button-Styling)\\n' +\n  '- Rabattcode prominent, Deadline erzeugen\\n' +\n  '- Unten kleiner Footer-Hinweis: \"Du bekommst diese Mail als Kunde von ' + setup.SHOP_NAME + '. Antworte mit STOP zum Abmelden.\"\\n' +\n  '- Mobiltaugliches HTML mit Inline-CSS, kein Spam-Vokabular (kein GRATIS!!!, keine Grossbuchstaben-Waende)\\n' +\n  'Antworte NUR mit validem JSON, ohne Markdown-Codeblock: {\"betreff\": \"...\", \"html\": \"...\"}';\n\nreturn [{ json: { prompt, kampagnen_typ: typ.name } }];"
+      },
+      "id": "build-campaign",
+      "name": "🧠 Kampagne planen (rotiert)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 3500, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-campaign",
+      "name": "🤖 Claude schreibt die Kampagne",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const blocks = ($input.first().json.content) || [];\nconst text = (blocks.find(b => b.type === 'text') || {}).text || '';\nlet daten;\ntry {\n  daten = JSON.parse(text.replace(/```json|```/g, '').trim());\n} catch (e) {\n  daten = { betreff: 'Nur fuer dich 👀', html: text };\n}\nconst setup = $('⚙️ Setup').first().json;\nconst maxEmpf = parseInt(setup.MAX_EMPFAENGER || 200);\n\n// Nur Kunden mit Marketing-Einwilligung!\nconst kunden = (($('👥 Kundenliste holen').first().json.customers) || []).filter(k => {\n  if (!k.email) return false;\n  if (k.email_marketing_consent) return k.email_marketing_consent.state === 'subscribed';\n  return k.accepts_marketing === true;\n}).slice(0, maxEmpf);\n\nif (setup.TEST_MODE === 'ja') {\n  return [{ json: {\n    empfaenger: setup.OWNER_EMAIL,\n    betreff: '[TEST · Kampagne haette ' + kunden.length + ' Empfaenger] ' + daten.betreff,\n    email_html: daten.html.split('{{VORNAME}}').join('Testkunde')\n  }}];\n}\n\nreturn kunden.map(k => ({ json: {\n  empfaenger: k.email,\n  betreff: daten.betreff,\n  email_html: daten.html.split('{{VORNAME}}').join(k.first_name || 'du')\n}}));"
+      },
+      "id": "fanout",
+      "name": "📦 Personalisieren & verteilen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $json.empfaenger }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-mail",
+      "name": "📧 Kampagne senden",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1540, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Alle 14 Tage 10:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "🛍️ Produkte holen", "type": "main", "index": 0 }]] },
+    "🛍️ Produkte holen": { "main": [[{ "node": "👥 Kundenliste holen", "type": "main", "index": 0 }]] },
+    "👥 Kundenliste holen": { "main": [[{ "node": "🧠 Kampagne planen (rotiert)", "type": "main", "index": 0 }]] },
+    "🧠 Kampagne planen (rotiert)": { "main": [[{ "node": "🤖 Claude schreibt die Kampagne", "type": "main", "index": 0 }]] },
+    "🤖 Claude schreibt die Kampagne": { "main": [[{ "node": "📦 Personalisieren & verteilen", "type": "main", "index": 0 }]] },
+    "📦 Personalisieren & verteilen": { "main": [[{ "node": "📧 Kampagne senden", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

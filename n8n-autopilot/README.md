@@ -1,6 +1,8 @@
-# 🤖💰 E-Com Marketing-Autopilot — 14 n8n-Workflows
+# 🤖💰 E-Com Marketing-Autopilot — 18 n8n-Workflows
 
-**14 fertige n8n-Workflows, die dein Shop-Marketing komplett auf Autopilot stellen — inklusive KI-Ads-Manager und deinem persönlichen KI-Marketing-Chef.**
+**18 fertige n8n-Workflows, die dein Shop-Marketing komplett auf Autopilot stellen — inklusive KI-Ads-Manager, KI-Marketing-Chef, Kampagnen-Maschine und Multi-Plattform-Poster.**
+
+> 🚀 **Neu hier?** Lies zuerst [`REICH-IN-60-TAGEN.md`](REICH-IN-60-TAGEN.md) — der komplette 60-Tage-Fahrplan, wie du mit wenig Startkapital und nur dem Handy dieses System zum Laufen bringst.
 Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst deine Website an.
 
 ---
@@ -23,6 +25,10 @@ Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst dei
 | 12 | 🧠 **Marketing-Chef (KI-CMO)** | Dein persönlicher Marketing-Chef: vergleicht Woche vs. Vorwoche, checkt dein Monatsziel, gibt dir 3 Prioritäten, Budget-Verteilung, 1 Wachstums-Experiment und 1 Stopp-Empfehlung — voll ausformuliert per Mail + Kurzfassung per Telegram | sonntags 18:00 | Wie ein CMO für 100k im Jahr — nur dass deiner Cent-Beträge kostet |
 | 13 | 🤝 **Willkommens-Booster** | Jeder Erstkäufer bekommt am Tag nach dem Kauf eine herzliche Willkommens-Mail mit Profi-Tipp zum gekauften Produkt + Social-Follow-Einladung — bewusst OHNE Verkaufsdruck | täglich 09:30 | Die erste Mail nach dem Erstkauf entscheidet, ob jemand Stammkunde wird |
 | 14 | 🕵️ **Preis-Spion** | Beobachtet täglich die Produktseiten deiner Konkurrenten, merkt sich die Preise und schlägt Alarm, sobald jemand den Preis ändert oder einen Sale startet | täglich 06:00 | Du erfährst von Preiskämpfen, bevor sie dich Umsatz kosten |
+| 15 | 🔥 **Warenkorb-Sequenz 3.0** | Die Profi-Version des Warenkorb-Retters: 3-stufige Eskalation — 1h (sanfte Service-Erinnerung ohne Rabatt), 24h (Rabattcode), 72h (letzte Chance mit Deadline). Merkt sich pro Warenkorb, welche Stufe schon raus ist | stündlich | Mehrstufige Sequenzen holen 2–3x mehr Warenkörbe zurück als eine einzelne Mail |
+| 16 | 🎁 **Cross-Sell-Radar** | 14 Tage nach dem Kauf: Claude schaut, was der Kunde gekauft hat, wählt aus deinem Katalog 1–2 wirklich passende Ergänzungsprodukte und schreibt eine persönliche Empfehlung | täglich 15:00 | Der zweite Kauf kostet dich 0 € Werbung — reine Marge |
+| 17 | 💥 **Promo-Kampagnen-Maschine** | Alle 14 Tage eine komplette Werbe-E-Mail-Kampagne an deine Kundenliste (nur Empfänger mit Marketing-Einwilligung!) — der Kampagnen-Typ rotiert automatisch: Flash-Sale, Bestseller-Spotlight, Insider-Tipp, Geheimer Sale, Neuheiten-Drop | alle 14 Tage 10:00 | Regelmäßige Kampagnen an Bestandskunden sind der profitabelste Umsatzhebel überhaupt |
+| 18 | 🌍 **Multi-Plattform-Poster** | Täglich EIN Kern-Inhalt, nativ übersetzt für 7 Plattformen: TikTok, IG Reel + Story, Facebook, Pinterest, YouTube Short, X — copy-paste-fertig per Mail. Facebook kann auf Wunsch sogar **vollautomatisch** posten | täglich 16:00 | Überall präsent sein, ohne 7x Arbeit zu machen |
 
 ---
 
@@ -63,9 +69,10 @@ Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst dei
 
 ### Schritt 4: In n8n einrichten (5 Min)
 
-1. n8n öffnen → **Workflows → Import from File** → alle 14 Dateien aus `workflows/` importieren
+1. n8n öffnen → **Workflows → Import from File** → alle 18 Dateien aus `workflows/` importieren
+   ⚠️ **Wichtig:** Aktiviere ENTWEDER 01 (Warenkorb-Retter, einfach) ODER 15 (Warenkorb-Sequenz 3.0, Profi) — nie beide gleichzeitig, sonst bekommen Kunden doppelte Mails!
 2. In jedem Workflow den Node **„⚙️ Setup"** öffnen und deine Werte eintragen (SHOP, Token, Keys, E-Mails, Nische, Zielgruppe…)
-3. **SMTP-Zugangsdaten** anlegen (für die E-Mail-Workflows 01, 02, 04, 05, 07, 09, 10, 12, 13):
+3. **SMTP-Zugangsdaten** anlegen (für die E-Mail-Workflows 01, 02, 04, 05, 07, 09, 10, 12, 13, 15, 16, 17, 18):
    n8n → Credentials → **SMTP** → Daten deines Mail-Anbieters eintragen
    (bei Gmail: App-Passwort nutzen; besser: der SMTP deiner Shop-Domain für gute Zustellbarkeit)
 4. **IMAP-Zugangsdaten** anlegen (nur für 02 · KI-Kundenservice):
@@ -74,7 +81,7 @@ Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst dei
 
 ### Schritt 5: Testen → Scharfschalten
 
-1. Workflows **01, 02, 04, 05, 10, 13** haben im Setup ein Feld **`TEST_MODE`** = `ja`
+1. Workflows **01, 02, 04, 05, 10, 13, 15, 16, 17** haben im Setup ein Feld **`TEST_MODE`** = `ja`
    → Alle Kunden-Mails gehen erstmal **an DICH** statt an Kunden. So prüfst du Qualität ohne Risiko.
 2. Jeden Workflow einmal manuell ausführen (**Test Workflow**-Button) und Ergebnis prüfen
 3. Wenn alles gut aussieht: `TEST_MODE` auf `nein` stellen
@@ -109,6 +116,8 @@ Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst dei
 - **Workflow 01 (Warenkorb) & 04 (Bewertung):** Mails an Kunden im Kontext ihrer Bestellung sind i.d.R. okay — Impressum + Abmeldehinweis in die Mail gehört trotzdem dazu (Claude baut auf Anweisung einen Footer ein, wenn du es im Prompt ergänzt)
 - **Workflow 05 (Winback) mit Werbe-Charakter:** sauber ist es, wenn die Kunden beim Kauf dem E-Mail-Marketing zugestimmt haben (Shopify-Checkout-Häkchen). Prüf das kurz.
 - **Workflow 09** sendet bewusst nur einen **Entwurf an dich** — den verschickst du über dein Newsletter-Tool mit sauberer Empfängerliste.
+- **Workflow 17 (Promo-Kampagnen)** filtert automatisch: Es werden **nur Kunden mit Marketing-Einwilligung** angeschrieben (Shopify-Feld `email_marketing_consent = subscribed`). Zusätzlich begrenzt `MAX_EMPFAENGER` die Aussendung, damit dein SMTP-Anbieter dich nicht als Spammer einstuft — bei größeren Listen lieber ein Profi-Tool (Klaviyo/Brevo) mit dem generierten HTML füttern.
+- **Workflow 18 (Facebook-Auto-Post)** postet nur auf DEINE eigene Facebook-Seite — dafür brauchst du einen Page-Access-Token mit `pages_manage_posts` (gleiche Meta-App wie beim Ads-Manager).
 
 ---
 
