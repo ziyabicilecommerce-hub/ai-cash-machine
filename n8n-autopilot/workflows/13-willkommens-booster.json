@@ -1,0 +1,130 @@
+{
+  "name": "13 · Willkommens-Booster 🤝✨",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 1, "triggerAtHour": 9, "triggerAtMinute": 30 }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "⏰ Täglich 09:30",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "SHOP_NISCHE", "value": "z.B. Fitness-Zubehoer fuer Zuhause", "type": "string" },
+            { "id": "s06", "name": "VERSANDZEIT", "value": "2-4 Werktage", "type": "string" },
+            { "id": "s07", "name": "INSTAGRAM_HANDLE", "value": "@meinshop", "type": "string" },
+            { "id": "s08", "name": "TIKTOK_HANDLE", "value": "@meinshop", "type": "string" },
+            { "id": "s09", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s10", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" },
+            { "id": "s11", "name": "TEST_MODE", "value": "ja", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/orders.json?status=any&limit=250&created_at_min=' + encodeURIComponent($now.minus({ days: 1 }).startOf('day').toISO()) + '&created_at_max=' + encodeURIComponent($now.startOf('day').toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-orders",
+      "name": "📥 Bestellungen von gestern",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sd = $getWorkflowStaticData('global');\nsd.begruesst = sd.begruesst || [];\nconst setup = $('⚙️ Setup').first().json;\nconst orders = ($json.orders || []).filter(o => !o.cancelled_at && o.email && o.customer);\nconst raus = [];\n\nfor (const o of orders) {\n  // Nur ERSTKAEUFER (orders_count == 1 heisst: das war die erste Bestellung)\n  if (parseInt(o.customer.orders_count || 0) > 1) continue;\n  if (sd.begruesst.includes(o.id)) continue;\n  sd.begruesst.push(o.id);\n\n  const vorname = o.customer.first_name || '';\n  const artikel = (o.line_items || []).map(li => li.title).slice(0, 3).join(', ');\n\n  const prompt = 'Du schreibst im Namen des Gruenders vom Onlineshop \"' + setup.SHOP_NAME + '\" (Nische: ' + setup.SHOP_NISCHE + ').\\n' +\n    'Der Kunde hat GESTERN zum ERSTEN Mal bestellt. Schreibe die Willkommens-Mail auf Deutsch (Du-Form), maximal 140 Woerter:\\n\\n' +\n    'Daten:\\n- Vorname: ' + (vorname || 'unbekannt (neutral anreden)') + '\\n- Bestellt: ' + artikel + '\\n- Versandzeit: ' + setup.VERSANDZEIT + '\\n- Instagram: ' + setup.INSTAGRAM_HANDLE + '\\n- TikTok: ' + setup.TIKTOK_HANDLE + '\\n\\n' +\n    'Aufbau:\\n' +\n    '1. Herzlicher Willkommens-Moment (er ist jetzt Teil der Community)\\n' +\n    '2. Was passiert jetzt: Paket kommt in ' + setup.VERSANDZEIT + '\\n' +\n    '3. Ein ehrlicher Profi-Tipp, wie er aus dem gekauften Produkt das Maximum rausholt (passend zum Artikel!)\\n' +\n    '4. Einladung, auf Instagram/TikTok zu folgen (mit den Handles)\\n' +\n    'KEIN Rabattcode, KEIN Upselling - er hat gerade erst gekauft, es geht nur um ein gutes Gefuehl. Klingt wie vom Gruender persoenlich. Schlichtes, mobiltaugliches HTML mit Inline-CSS.\\n' +\n    'Antworte NUR mit validem JSON, ohne Markdown-Codeblock: {\"betreff\": \"...\", \"html\": \"...\"}';\n\n  raus.push({ json: { order_id: o.id, email: o.email, vorname, artikel, prompt } });\n}\n\nif (sd.begruesst.length > 2000) sd.begruesst = sd.begruesst.slice(-2000);\nreturn raus;"
+      },
+      "id": "filter-first",
+      "name": "🧠 Erstkäufer finden",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 2000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-welcome",
+      "name": "🤖 Claude schreibt Willkommens-Mail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst text = (blocks.find(b => b.type === 'text') || {}).text || '';\nlet daten;\ntry {\n  daten = JSON.parse(text.replace(/```json|```/g, '').trim());\n} catch (e) {\n  daten = { betreff: 'Willkommen in der Familie! 🎉', html: text };\n}\nconst orig = $('🧠 Erstkäufer finden').item.json;\nconst setup = $('⚙️ Setup').first().json;\nconst empfaenger = setup.TEST_MODE === 'ja' ? setup.OWNER_EMAIL : orig.email;\nreturn { json: {\n  empfaenger,\n  betreff: (setup.TEST_MODE === 'ja' ? '[TEST] ' : '') + daten.betreff,\n  email_html: daten.html\n}};"
+      },
+      "id": "parse-welcome",
+      "name": "📦 Antwort parsen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $json.empfaenger }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-mail",
+      "name": "📧 E-Mail senden",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Täglich 09:30": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "📥 Bestellungen von gestern", "type": "main", "index": 0 }]] },
+    "📥 Bestellungen von gestern": { "main": [[{ "node": "🧠 Erstkäufer finden", "type": "main", "index": 0 }]] },
+    "🧠 Erstkäufer finden": { "main": [[{ "node": "🤖 Claude schreibt Willkommens-Mail", "type": "main", "index": 0 }]] },
+    "🤖 Claude schreibt Willkommens-Mail": { "main": [[{ "node": "📦 Antwort parsen", "type": "main", "index": 0 }]] },
+    "📦 Antwort parsen": { "main": [[{ "node": "📧 E-Mail senden", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

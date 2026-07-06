@@ -1,0 +1,147 @@
+{
+  "name": "10 · VIP-Radar 👑💎",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 1, "triggerAtHour": 12, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "⏰ Täglich 12:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s06", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" },
+            { "id": "s07", "name": "VIP_UMSATZ_SCHWELLE", "value": "150", "type": "string" },
+            { "id": "s08", "name": "VIP_BESTELLUNGEN_SCHWELLE", "value": "3", "type": "string" },
+            { "id": "s09", "name": "VIP_RABATT_CODE", "value": "VIP20", "type": "string" },
+            { "id": "s10", "name": "TELEGRAM_BOT_TOKEN", "value": "123456:ABC-HIER_DEIN_BOT_TOKEN", "type": "string" },
+            { "id": "s11", "name": "TELEGRAM_CHAT_ID", "value": "HIER_DEINE_CHAT_ID", "type": "string" },
+            { "id": "s12", "name": "TEST_MODE", "value": "ja", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/orders.json?status=any&limit=250&created_at_min=' + encodeURIComponent($now.minus({ days: 1 }).startOf('day').toISO()) + '&created_at_max=' + encodeURIComponent($now.startOf('day').toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-orders",
+      "name": "📥 Bestellungen von gestern",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sd = $getWorkflowStaticData('global');\nsd.vips = sd.vips || [];\nconst setup = $('⚙️ Setup').first().json;\nconst orders = ($json.orders || []).filter(o => !o.cancelled_at && o.email && o.customer);\nconst umsatzSchwelle = parseFloat(setup.VIP_UMSATZ_SCHWELLE);\nconst bestellSchwelle = parseInt(setup.VIP_BESTELLUNGEN_SCHWELLE);\nconst raus = [];\n\nfor (const o of orders) {\n  const k = o.customer;\n  const totalSpent = parseFloat(k.total_spent || 0);\n  const ordersCount = parseInt(k.orders_count || 0);\n  const istVip = totalSpent >= umsatzSchwelle || ordersCount >= bestellSchwelle;\n  if (!istVip) continue;\n  if (sd.vips.includes(k.id)) continue; // war schon VIP\n  sd.vips.push(k.id);\n\n  const artikel = (o.line_items || []).map(li => li.title).slice(0, 3).join(', ');\n  const prompt = 'Du schreibst im Namen des Gruenders vom Onlineshop \"' + setup.SHOP_NAME + '\".\\n' +\n    'Dieser Kunde ist gerade offiziell VIP geworden: ' + ordersCount + ' Bestellungen, ' + totalSpent.toFixed(0) + ' Gesamtumsatz. Letzte Bestellung: ' + artikel + '.\\n\\n' +\n    'Schreibe eine PERSOENLICHE Dankes-E-Mail auf Deutsch (Du-Form), maximal 120 Woerter:\\n' +\n    '- Klingt wie vom Gruender persoenlich getippt, NICHT wie Marketing\\n' +\n    '- Ehrlicher Dank, dass er/sie immer wieder kauft\\n' +\n    '- Vorname: ' + (k.first_name || 'unbekannt (neutral anreden)') + '\\n' +\n    '- Als Dankeschoen: exklusiver VIP-Code ' + setup.VIP_RABATT_CODE + ' (dauerhaft gueltig, nur fuer ihn/sie)\\n' +\n    '- Frage am Ende: \"Was koennen wir besser machen?\" (echte Antworten erwuenscht)\\n' +\n    '- Schlichtes HTML, wenig Styling, wie eine normale persoenliche Mail\\n' +\n    'Antworte NUR mit validem JSON, ohne Markdown-Codeblock: {\"betreff\": \"...\", \"html\": \"...\"}';\n\n  raus.push({ json: {\n    email: o.email,\n    vorname: k.first_name || '',\n    total_spent: totalSpent.toFixed(2),\n    orders_count: ordersCount,\n    prompt\n  }});\n}\n\nif (sd.vips.length > 5000) sd.vips = sd.vips.slice(-5000);\nreturn raus;"
+      },
+      "id": "detect-vip",
+      "name": "👑 Neue VIPs erkennen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 1500, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-vip",
+      "name": "🤖 Claude schreibt Dankes-Mail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst text = (blocks.find(b => b.type === 'text') || {}).text || '';\nlet daten;\ntry {\n  daten = JSON.parse(text.replace(/```json|```/g, '').trim());\n} catch (e) {\n  daten = { betreff: 'Danke, dass du dabei bist 💛', html: text };\n}\nconst orig = $('👑 Neue VIPs erkennen').item.json;\nconst setup = $('⚙️ Setup').first().json;\nconst empfaenger = setup.TEST_MODE === 'ja' ? setup.OWNER_EMAIL : orig.email;\n\nconst telegram_text = '👑 NEUER VIP-KUNDE!\\n\\n' +\n  'Name: ' + (orig.vorname || '?') + '\\nE-Mail: ' + orig.email + '\\n' +\n  'Bestellungen: ' + orig.orders_count + '\\nGesamtumsatz: ' + orig.total_spent + '\\n\\n' +\n  'Persoenliche Dankes-Mail wurde ' + (setup.TEST_MODE === 'ja' ? 'im TEST-MODUS an dich' : 'automatisch an den Kunden') + ' gesendet. 💌';\n\nreturn { json: {\n  empfaenger,\n  betreff: (setup.TEST_MODE === 'ja' ? '[TEST] ' : '') + daten.betreff,\n  email_html: daten.html,\n  telegram_text\n}};"
+      },
+      "id": "parse-vip",
+      "name": "📦 Antwort parsen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $json.empfaenger }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-mail",
+      "name": "📧 Dankes-Mail senden",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1320, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.telegram.org/bot' + $('⚙️ Setup').first().json.TELEGRAM_BOT_TOKEN + '/sendMessage' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $('⚙️ Setup').first().json.TELEGRAM_CHAT_ID, text: $json.telegram_text }) }}",
+        "options": {}
+      },
+      "id": "telegram-vip",
+      "name": "📲 VIP-Alarm an dich",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1540, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Täglich 12:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "📥 Bestellungen von gestern", "type": "main", "index": 0 }]] },
+    "📥 Bestellungen von gestern": { "main": [[{ "node": "👑 Neue VIPs erkennen", "type": "main", "index": 0 }]] },
+    "👑 Neue VIPs erkennen": { "main": [[{ "node": "🤖 Claude schreibt Dankes-Mail", "type": "main", "index": 0 }]] },
+    "🤖 Claude schreibt Dankes-Mail": { "main": [[{ "node": "📦 Antwort parsen", "type": "main", "index": 0 }]] },
+    "📦 Antwort parsen": { "main": [[{ "node": "📧 Dankes-Mail senden", "type": "main", "index": 0 }]] },
+    "📧 Dankes-Mail senden": { "main": [[{ "node": "📲 VIP-Alarm an dich", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

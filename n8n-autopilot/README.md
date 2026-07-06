@@ -1,6 +1,6 @@
-# 🤖💰 E-Com Marketing-Autopilot — 9 n8n-Workflows
+# 🤖💰 E-Com Marketing-Autopilot — 14 n8n-Workflows
 
-**9 fertige n8n-Workflows, die dein Shop-Marketing komplett auf Autopilot stellen.**
+**14 fertige n8n-Workflows, die dein Shop-Marketing komplett auf Autopilot stellen — inklusive KI-Ads-Manager und deinem persönlichen KI-Marketing-Chef.**
 Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst deine Website an.
 
 ---
@@ -18,6 +18,11 @@ Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst dei
 | 07 | 🎯 **Ad-Fabrik** | Analysiert deine Top-Produkte der letzten 30 Tage und baut das komplette Werbe-Paket: 5 Hooks, 2 UGC-Skripte, Meta-Ad-Texte, Targeting-Ideen, A/B-Test der Woche | montags 09:00 | Fertige Ads aus deinen ECHTEN Verkaufsdaten statt Bauchgefühl |
 | 08 | 🔭 **Trend-Scout** | Scannt täglich die heißesten E-Com-Diskussionen im Netz und destilliert daraus 3 konkrete Chancen für DEINE Nische | täglich 07:00 | Du siehst Trends bevor die Konkurrenz sie sieht |
 | 09 | 📰 **Newsletter-Autopilot** | Schreibt jeden Donnerstag deinen kompletten Wochen-Newsletter (70% Mehrwert, 30% Verkauf) aus deinem Produktkatalog + Bestsellern | donnerstags 09:00 | E-Mail ist der profitabelste Marketing-Kanal überhaupt — jetzt kostet er dich 2 Min/Woche |
+| 10 | 👑 **VIP-Radar** | Erkennt automatisch deine besten Kunden (Umsatz/Bestellanzahl über Schwelle) und schickt ihnen eine persönliche Dankes-Mail vom „Gründer" + VIP-Code. Du kriegst einen Telegram-Alarm | täglich 12:00 | 20% deiner Kunden machen 80% deines Umsatzes — die musst du wie Könige behandeln |
+| 11 | 🎛️ **Ads-Manager** | Zieht täglich deine Meta-Ads-Performance, bewertet jede Ad (💀 killen / 🚀 skalieren / 👀 beobachten), erkennt Muster bei Gewinnern & Verlierern, schlägt Budgets vor — und kann Geldverbrenner auf Wunsch **automatisch pausieren** | täglich 08:30 | Schlechte Ads verbrennen Geld im Schlaf — der hier schläft nie |
+| 12 | 🧠 **Marketing-Chef (KI-CMO)** | Dein persönlicher Marketing-Chef: vergleicht Woche vs. Vorwoche, checkt dein Monatsziel, gibt dir 3 Prioritäten, Budget-Verteilung, 1 Wachstums-Experiment und 1 Stopp-Empfehlung — voll ausformuliert per Mail + Kurzfassung per Telegram | sonntags 18:00 | Wie ein CMO für 100k im Jahr — nur dass deiner Cent-Beträge kostet |
+| 13 | 🤝 **Willkommens-Booster** | Jeder Erstkäufer bekommt am Tag nach dem Kauf eine herzliche Willkommens-Mail mit Profi-Tipp zum gekauften Produkt + Social-Follow-Einladung — bewusst OHNE Verkaufsdruck | täglich 09:30 | Die erste Mail nach dem Erstkauf entscheidet, ob jemand Stammkunde wird |
+| 14 | 🕵️ **Preis-Spion** | Beobachtet täglich die Produktseiten deiner Konkurrenten, merkt sich die Preise und schlägt Alarm, sobald jemand den Preis ändert oder einen Sale startet | täglich 06:00 | Du erfährst von Preiskämpfen, bevor sie dich Umsatz kosten |
 
 ---
 
@@ -47,11 +52,20 @@ Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst dei
 2. Deinem neuen Bot irgendeine Nachricht schicken (wichtig, sonst darf er dir nicht schreiben!)
 3. Im Browser öffnen: `https://api.telegram.org/bot<DEIN_TOKEN>/getUpdates` → in der Antwort steht `"chat":{"id":123456789}` → das ist deine **Chat-ID**
 
+### Schritt 3b: Meta-Ads-Token holen (nur für Workflow 11 · Ads-Manager, 5 Min)
+
+1. [developers.facebook.com](https://developers.facebook.com) → **Meine Apps → App erstellen** (Typ: Business)
+2. Produkt **Marketing API** hinzufügen
+3. **Werkzeuge → Graph API Explorer** → deine App auswählen → Berechtigungen `ads_read` und `ads_management` anfordern → **Access Token generieren**
+4. Token verlängern: **Werkzeuge → Access Token Debugger** → „Verlängern" (60 Tage gültig; für dauerhaft: System-User-Token im Business Manager anlegen)
+5. Deine **Werbekonto-ID** findest du im [Ads Manager](https://adsmanager.facebook.com) oben links (nur die Zahlen, ohne `act_`)
+6. ⚠️ `AUTO_PAUSE` steht standardmäßig auf `nein` — der Workflow gibt dann nur Empfehlungen. Erst auf `ja` stellen, wenn du ihm nach ein paar Tagen vertraust. Für Auto-Pause braucht der Token `ads_management`.
+
 ### Schritt 4: In n8n einrichten (5 Min)
 
-1. n8n öffnen → **Workflows → Import from File** → alle 9 Dateien aus `workflows/` importieren
+1. n8n öffnen → **Workflows → Import from File** → alle 14 Dateien aus `workflows/` importieren
 2. In jedem Workflow den Node **„⚙️ Setup"** öffnen und deine Werte eintragen (SHOP, Token, Keys, E-Mails, Nische, Zielgruppe…)
-3. **SMTP-Zugangsdaten** anlegen (für die E-Mail-Workflows 01, 02, 04, 05, 07, 09):
+3. **SMTP-Zugangsdaten** anlegen (für die E-Mail-Workflows 01, 02, 04, 05, 07, 09, 10, 12, 13):
    n8n → Credentials → **SMTP** → Daten deines Mail-Anbieters eintragen
    (bei Gmail: App-Passwort nutzen; besser: der SMTP deiner Shop-Domain für gute Zustellbarkeit)
 4. **IMAP-Zugangsdaten** anlegen (nur für 02 · KI-Kundenservice):
@@ -60,7 +74,7 @@ Importieren → Keys eintragen → aktivieren → läuft. Nichts davon fasst dei
 
 ### Schritt 5: Testen → Scharfschalten
 
-1. Workflows **01, 02, 04, 05** haben im Setup ein Feld **`TEST_MODE`** = `ja`
+1. Workflows **01, 02, 04, 05, 10, 13** haben im Setup ein Feld **`TEST_MODE`** = `ja`
    → Alle Kunden-Mails gehen erstmal **an DICH** statt an Kunden. So prüfst du Qualität ohne Risiko.
 2. Jeden Workflow einmal manuell ausführen (**Test Workflow**-Button) und Ergebnis prüfen
 3. Wenn alles gut aussieht: `TEST_MODE` auf `nein` stellen

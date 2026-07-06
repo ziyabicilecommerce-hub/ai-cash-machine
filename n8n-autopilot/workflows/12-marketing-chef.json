@@ -1,0 +1,165 @@
+{
+  "name": "12 · Marketing-Chef (KI-CMO) 🧠👔",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "weeks", "weeksInterval": 1, "triggerAtDay": [0], "triggerAtHour": 18, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-weekly",
+      "name": "⏰ Jeden Sonntag 18:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "SHOP_NISCHE", "value": "z.B. Fitness-Zubehoer fuer Zuhause", "type": "string" },
+            { "id": "s06", "name": "ZIELGRUPPE", "value": "z.B. Frauen 20-35, sportlich, kaufen ueber TikTok/Insta", "type": "string" },
+            { "id": "s07", "name": "MONATSZIEL_UMSATZ", "value": "10000", "type": "string" },
+            { "id": "s08", "name": "MARKETING_BUDGET_MONAT", "value": "1500", "type": "string" },
+            { "id": "s09", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s10", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" },
+            { "id": "s11", "name": "TELEGRAM_BOT_TOKEN", "value": "123456:ABC-HIER_DEIN_BOT_TOKEN", "type": "string" },
+            { "id": "s12", "name": "TELEGRAM_CHAT_ID", "value": "HIER_DEINE_CHAT_ID", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/orders.json?status=any&limit=250&created_at_min=' + encodeURIComponent($now.minus({ days: 7 }).toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-week",
+      "name": "📥 Diese Woche",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/orders.json?status=any&limit=250&created_at_min=' + encodeURIComponent($now.minus({ days: 14 }).toISO()) + '&created_at_max=' + encodeURIComponent($now.minus({ days: 7 }).toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-lastweek",
+      "name": "📥 Vorwoche",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const setup = $('⚙️ Setup').first().json;\n\nfunction statistik(orders) {\n  orders = (orders || []).filter(o => !o.cancelled_at);\n  let umsatz = 0;\n  let neukunden = 0;\n  let stammkunden = 0;\n  const produkte = {};\n  for (const o of orders) {\n    umsatz += parseFloat(o.total_price || 0);\n    if (o.customer && parseInt(o.customer.orders_count || 1) <= 1) neukunden++; else stammkunden++;\n    for (const li of (o.line_items || [])) produkte[li.title] = (produkte[li.title] || 0) + li.quantity;\n  }\n  const top = Object.entries(produkte).sort((a, b) => b[1] - a[1]).slice(0, 5)\n    .map(([n, m]) => n + ' (' + m + 'x)').join(', ');\n  return { umsatz, anzahl: orders.length, aov: orders.length ? umsatz / orders.length : 0, neukunden, stammkunden, top };\n}\n\nconst woche = statistik($('📥 Diese Woche').first().json.orders);\nconst vorwoche = statistik($('📥 Vorwoche').first().json.orders);\n\nfunction delta(a, b) {\n  if (!b) return a > 0 ? '+∞' : '0%';\n  return ((a - b) / b * 100).toFixed(0) + '%';\n}\n\nconst daten = 'DIESE WOCHE: Umsatz ' + woche.umsatz.toFixed(2) + ' | Bestellungen ' + woche.anzahl + ' | AOV ' + woche.aov.toFixed(2) + ' | Neukunden ' + woche.neukunden + ' | Stammkunden ' + woche.stammkunden + '\\n' +\n  'VORWOCHE: Umsatz ' + vorwoche.umsatz.toFixed(2) + ' | Bestellungen ' + vorwoche.anzahl + ' | AOV ' + vorwoche.aov.toFixed(2) + '\\n' +\n  'VERAENDERUNG: Umsatz ' + delta(woche.umsatz, vorwoche.umsatz) + ' | Bestellungen ' + delta(woche.anzahl, vorwoche.anzahl) + '\\n' +\n  'TOP-PRODUKTE: ' + (woche.top || 'keine') + '\\n' +\n  'MONATSZIEL: ' + setup.MONATSZIEL_UMSATZ + ' Umsatz | MARKETING-BUDGET: ' + setup.MARKETING_BUDGET_MONAT + '/Monat';\n\nconst prompt = 'Du bist der CMO (Marketing-Chef) vom Onlineshop \"' + setup.SHOP_NAME + '\" (Nische: ' + setup.SHOP_NISCHE + ', Zielgruppe: ' + setup.ZIELGRUPPE + '). ' +\n  'Der Gruender ist Solo-Unternehmer mit wenig Zeit. Du bist erfahren, direkt und sagst auch unbequeme Wahrheiten.\\n\\n' +\n  'WOCHENDATEN:\\n' + daten + '\\n\\n' +\n  'Schreibe dein woechentliches CMO-Briefing fuer die kommende Woche, auf Deutsch (Du-Form):\\n' +\n  '1. LAGEBERICHT: Wo stehen wir? Sind wir auf Kurs zum Monatsziel? (ehrlich rechnen!)\\n' +\n  '2. DIE 3 PRIORITAETEN der Woche (konkret, mit Zeitaufwand-Schaetzung, wichtigste zuerst)\\n' +\n  '3. BUDGET-EMPFEHLUNG: Wie das Marketing-Budget diese Woche aufteilen (Ads / Content / Sonstiges) und warum\\n' +\n  '4. EIN WACHSTUMS-EXPERIMENT fuer die Woche (Hypothese, Umsetzung, Erfolgskriterium)\\n' +\n  '5. STOPP-LISTE: Eine Sache, die der Gruender diese Woche NICHT tun sollte (Zeitfresser/Ablenkung)\\n\\n' +\n  'Antworte NUR mit validem JSON, ohne Markdown-Codeblock:\\n' +\n  '{\"telegram_kurz\": \"<max 800 Zeichen Kurzfassung: Lage in 2 Saetzen + die 3 Prioritaeten als Stichpunkte>\", \"html\": \"<das volle Briefing als sauberes HTML mit h2/h3, Listen, ohne html/body-Geruest>\"}';\n\nreturn [{ json: { prompt } }];"
+      },
+      "id": "compare",
+      "name": "🧮 Wochen vergleichen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 4000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-cmo",
+      "name": "🤖 Claude: CMO-Briefing",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst text = (blocks.find(b => b.type === 'text') || {}).text || '';\nlet daten;\ntry {\n  daten = JSON.parse(text.replace(/```json|```/g, '').trim());\n} catch (e) {\n  daten = { telegram_kurz: text.slice(0, 800), html: '<pre style=\"white-space:pre-wrap;font-family:sans-serif;\">' + text + '</pre>' };\n}\nconst setup = $('⚙️ Setup').first().json;\nreturn { json: {\n  betreff: '🧠 CMO-Briefing fuer die Woche · ' + setup.SHOP_NAME,\n  email_html: '<div style=\"font-family:sans-serif;max-width:640px;margin:0 auto;\">' + daten.html + '</div>',\n  telegram_text: '🧠 CMO-BRIEFING · ' + setup.SHOP_NAME + '\\n━━━━━━━━━━━━━━━━━━\\n\\n' + daten.telegram_kurz + '\\n\\n📧 Das volle Briefing liegt in deinem Postfach.'\n}};"
+      },
+      "id": "parse-cmo",
+      "name": "📦 Briefing verpacken",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $('⚙️ Setup').first().json.OWNER_EMAIL }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-mail",
+      "name": "📧 Volles Briefing per E-Mail",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1540, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.telegram.org/bot' + $('⚙️ Setup').first().json.TELEGRAM_BOT_TOKEN + '/sendMessage' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $('⚙️ Setup').first().json.TELEGRAM_CHAT_ID, text: $json.telegram_text }) }}",
+        "options": {}
+      },
+      "id": "telegram-short",
+      "name": "📲 Kurzfassung aufs Handy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1760, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Jeden Sonntag 18:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "📥 Diese Woche", "type": "main", "index": 0 }]] },
+    "📥 Diese Woche": { "main": [[{ "node": "📥 Vorwoche", "type": "main", "index": 0 }]] },
+    "📥 Vorwoche": { "main": [[{ "node": "🧮 Wochen vergleichen", "type": "main", "index": 0 }]] },
+    "🧮 Wochen vergleichen": { "main": [[{ "node": "🤖 Claude: CMO-Briefing", "type": "main", "index": 0 }]] },
+    "🤖 Claude: CMO-Briefing": { "main": [[{ "node": "📦 Briefing verpacken", "type": "main", "index": 0 }]] },
+    "📦 Briefing verpacken": { "main": [[{ "node": "📧 Volles Briefing per E-Mail", "type": "main", "index": 0 }]] },
+    "📧 Volles Briefing per E-Mail": { "main": [[{ "node": "📲 Kurzfassung aufs Handy", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

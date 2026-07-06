@@ -1,0 +1,189 @@
+{
+  "name": "11 · Ads-Manager 🎛️🚨",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 1, "triggerAtHour": 8, "triggerAtMinute": 30 }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "⏰ Täglich 08:30",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "META_ACCESS_TOKEN", "value": "HIER_DEIN_META_TOKEN", "type": "string" },
+            { "id": "s02", "name": "META_AD_ACCOUNT_ID", "value": "NUR_ZAHLEN_z.B._1234567890", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "ROAS_ZIEL", "value": "2.0", "type": "string" },
+            { "id": "s06", "name": "MIN_SPEND_FUER_BEWERTUNG", "value": "10", "type": "string" },
+            { "id": "s07", "name": "AUTO_PAUSE", "value": "nein", "type": "string" },
+            { "id": "s08", "name": "TELEGRAM_BOT_TOKEN", "value": "123456:ABC-HIER_DEIN_BOT_TOKEN", "type": "string" },
+            { "id": "s09", "name": "TELEGRAM_CHAT_ID", "value": "HIER_DEINE_CHAT_ID", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://graph.facebook.com/v21.0/act_' + $('⚙️ Setup').first().json.META_AD_ACCOUNT_ID + '/insights?level=ad&date_preset=yesterday&fields=ad_id,ad_name,adset_name,campaign_name,spend,impressions,clicks,ctr,cpc,actions,action_values&limit=100&access_token=' + $('⚙️ Setup').first().json.META_ACCESS_TOKEN }}",
+        "options": {}
+      },
+      "id": "get-insights",
+      "name": "📥 Meta Ads-Daten von gestern",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const setup = $('⚙️ Setup').first().json;\nconst ads = $json.data || [];\nconst roasZiel = parseFloat(setup.ROAS_ZIEL);\nconst minSpend = parseFloat(setup.MIN_SPEND_FUER_BEWERTUNG);\n\nfunction kaeufe(a) {\n  const x = (a.actions || []).find(v => v.action_type === 'purchase' || v.action_type === 'omni_purchase' || v.action_type === 'offsite_conversion.fb_pixel_purchase');\n  return x ? parseFloat(x.value) : 0;\n}\nfunction umsatz(a) {\n  const x = (a.action_values || []).find(v => v.action_type === 'purchase' || v.action_type === 'omni_purchase' || v.action_type === 'offsite_conversion.fb_pixel_purchase');\n  return x ? parseFloat(x.value) : 0;\n}\n\nconst bewertet = [];\nconst killListe = [];\nfor (const a of ads) {\n  const spend = parseFloat(a.spend || 0);\n  const rev = umsatz(a);\n  const k = kaeufe(a);\n  const roas = spend > 0 ? rev / spend : 0;\n  let status = '👀 BEOBACHTEN';\n  if (spend >= minSpend && roas >= roasZiel) status = '🚀 SKALIEREN';\n  if (spend >= minSpend && roas < 1) {\n    status = '💀 KILLEN';\n    killListe.push({ ad_id: a.ad_id, ad_name: a.ad_name, spend: spend.toFixed(2), roas: roas.toFixed(2) });\n  }\n  bewertet.push('- [' + status + '] \"' + a.ad_name + '\" (Kampagne: ' + a.campaign_name + ') | Spend: ' + spend.toFixed(2) + ' | Kaeufe: ' + k + ' | Umsatz: ' + rev.toFixed(2) + ' | ROAS: ' + roas.toFixed(2) + ' | CTR: ' + (a.ctr || '0') + '% | CPC: ' + (a.cpc || '0'));\n}\n\nif (bewertet.length === 0) {\n  return [{ json: { prompt: '', keine_ads: true, kill_liste: [], telegram_text: '🎛️ ADS-MANAGER · ' + setup.SHOP_NAME + '\\n\\nGestern liefen keine Ads (oder noch keine Daten). Nichts zu tun. ✌️' } }];\n}\n\nconst prompt = 'Du bist Senior Media Buyer und managst die Meta-Ads vom Onlineshop \"' + setup.SHOP_NAME + '\". Ziel-ROAS: ' + roasZiel + '. Hier die Performance von GESTERN (vorklassifiziert):\\n\\n' +\n  bewertet.join('\\n') + '\\n\\n' +\n  'Gib mir dein taegliches Ads-Briefing auf Deutsch:\\n' +\n  '1. LAGE in einem Satz (Gesamtspend vs. Gesamtumsatz, laeuft es?)\\n' +\n  '2. ENTSCHEIDUNGEN pro auffaelliger Ad: killen / skalieren (+20-30% Budget) / beobachten - mit 1-Satz-Begruendung. Bei Skalier-Kandidaten: konkreter Budget-Vorschlag.\\n' +\n  '3. MUSTER: Was haben die Gewinner gemeinsam, was die Verlierer? (Hook? Zielgruppe? Format?)\\n' +\n  '4. EIN Test fuer morgen.\\n' +\n  'Sei knapp und direkt, keine Floskeln. Klartext ohne Markdown-Codeblock, Emojis als Trenner.';\n\nreturn [{ json: { prompt, keine_ads: false, kill_liste: killListe } }];"
+      },
+      "id": "analyze-ads",
+      "name": "🧮 Ads bewerten",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.keine_ads ? 'ja' : 'nein' }}",
+              "rightValue": "nein",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-ads",
+      "name": "❓ Gab es Ads?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 2500, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-briefing",
+      "name": "🤖 Claude: Media-Buyer-Briefing",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, -120]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst briefing = (blocks.find(b => b.type === 'text') || {}).text || '';\nconst setup = $('⚙️ Setup').first().json;\nconst analyse = $('🧮 Ads bewerten').first().json;\nconst killListe = analyse.kill_liste || [];\n\nlet killInfo = '';\nif (killListe.length > 0) {\n  killInfo = '\\n\\n💀 Kill-Kandidaten (ROAS unter 1):\\n' + killListe.map(k => '- ' + k.ad_name + ' (Spend ' + k.spend + ', ROAS ' + k.roas + ')').join('\\n');\n  killInfo += setup.AUTO_PAUSE === 'ja'\n    ? '\\n\\n🤖 AUTO-PAUSE ist AN: Diese Ads werden jetzt automatisch pausiert!'\n    : '\\n\\nℹ️ AUTO_PAUSE steht auf \"nein\" - ich pausiere nichts, nur Empfehlung.';\n}\n\nconst voll = '🎛️ ADS-MANAGER · ' + setup.SHOP_NAME + '\\n━━━━━━━━━━━━━━━━━━\\n\\n' + briefing + killInfo;\nconst teile = [];\nfor (let i = 0; i < voll.length; i += 3900) teile.push(voll.slice(i, i + 3900));\nreturn teile.map(t => ({ json: { telegram_text: t } }));"
+      },
+      "id": "build-briefing",
+      "name": "📦 Briefing bauen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, -120]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.telegram.org/bot' + $('⚙️ Setup').first().json.TELEGRAM_BOT_TOKEN + '/sendMessage' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $('⚙️ Setup').first().json.TELEGRAM_CHAT_ID, text: $json.telegram_text }) }}",
+        "options": {}
+      },
+      "id": "telegram-briefing",
+      "name": "📲 Briefing aufs Handy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1540, -120]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Nur wenn AUTO_PAUSE = ja: ein Item pro zu pausierender Ad\nconst setup = $('⚙️ Setup').first().json;\nif (setup.AUTO_PAUSE !== 'ja') return [];\nconst killListe = $('🧮 Ads bewerten').first().json.kill_liste || [];\nreturn killListe.map(k => ({ json: k }));"
+      },
+      "id": "kill-list",
+      "name": "💀 Kill-Liste vorbereiten",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1760, -120]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v21.0/' + $json.ad_id + '?status=PAUSED&access_token=' + $('⚙️ Setup').first().json.META_ACCESS_TOKEN }}",
+        "options": {}
+      },
+      "id": "pause-ad",
+      "name": "⏸️ Ad automatisch pausieren",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1980, -120]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.telegram.org/bot' + $('⚙️ Setup').first().json.TELEGRAM_BOT_TOKEN + '/sendMessage' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $('⚙️ Setup').first().json.TELEGRAM_CHAT_ID, text: $json.telegram_text }) }}",
+        "options": {}
+      },
+      "id": "telegram-noads",
+      "name": "📲 Info: keine Ads",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 160]
+    }
+  ],
+  "connections": {
+    "⏰ Täglich 08:30": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "📥 Meta Ads-Daten von gestern", "type": "main", "index": 0 }]] },
+    "📥 Meta Ads-Daten von gestern": { "main": [[{ "node": "🧮 Ads bewerten", "type": "main", "index": 0 }]] },
+    "🧮 Ads bewerten": { "main": [[{ "node": "❓ Gab es Ads?", "type": "main", "index": 0 }]] },
+    "❓ Gab es Ads?": {
+      "main": [
+        [{ "node": "🤖 Claude: Media-Buyer-Briefing", "type": "main", "index": 0 }],
+        [{ "node": "📲 Info: keine Ads", "type": "main", "index": 0 }]
+      ]
+    },
+    "🤖 Claude: Media-Buyer-Briefing": { "main": [[{ "node": "📦 Briefing bauen", "type": "main", "index": 0 }]] },
+    "📦 Briefing bauen": { "main": [[{ "node": "📲 Briefing aufs Handy", "type": "main", "index": 0 }]] },
+    "📲 Briefing aufs Handy": { "main": [[{ "node": "💀 Kill-Liste vorbereiten", "type": "main", "index": 0 }]] },
+    "💀 Kill-Liste vorbereiten": { "main": [[{ "node": "⏸️ Ad automatisch pausieren", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

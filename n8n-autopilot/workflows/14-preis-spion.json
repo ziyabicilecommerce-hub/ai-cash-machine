@@ -1,0 +1,142 @@
+{
+  "name": "14 · Preis-Spion 🕵️💶",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 1, "triggerAtHour": 6, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "⏰ Täglich 06:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s02", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s03", "name": "KONKURRENT_URLS", "value": "https://konkurrent1.de/products/produkt-a, https://konkurrent2.de/products/produkt-b", "type": "string" },
+            { "id": "s04", "name": "TELEGRAM_BOT_TOKEN", "value": "123456:ABC-HIER_DEIN_BOT_TOKEN", "type": "string" },
+            { "id": "s05", "name": "TELEGRAM_CHAT_ID", "value": "HIER_DEINE_CHAT_ID", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const setup = $('⚙️ Setup').first().json;\nconst urls = (setup.KONKURRENT_URLS || '').split(',').map(u => u.trim()).filter(u => u.startsWith('http'));\nreturn urls.map(url => ({ json: { url } }));"
+      },
+      "id": "split-urls",
+      "name": "🔗 URLs aufteilen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "User-Agent", "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36" }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "fetch-page",
+      "name": "🌐 Konkurrenz-Seite laden",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const url = $('🔗 URLs aufteilen').item.json.url;\nconst html = ($json.data || '').toString();\n// HTML grob zu Text eindampfen, damit der Prompt klein bleibt\nconst text = html\n  .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n  .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n  .replace(/<[^>]+>/g, ' ')\n  .replace(/\\s+/g, ' ')\n  .slice(0, 12000);\n\nconst prompt = 'Hier der Textinhalt einer Produktseite eines Konkurrenten (' + url + '):\\n\\n' + text + '\\n\\n' +\n  'Extrahiere: Produktname und aktueller Verkaufspreis (der Preis, den ein Kunde JETZT zahlen wuerde - bei Streichpreisen der reduzierte). Falls ein Rabatt/Sale erkennbar ist, nenne ihn.\\n' +\n  'Antworte NUR mit validem JSON, ohne Markdown-Codeblock: {\"produkt\": \"...\", \"preis\": \"29.99\", \"waehrung\": \"EUR\", \"sale\": \"ja|nein\", \"sale_info\": \"...\"}\\n' +\n  'Wenn kein Preis erkennbar ist: {\"produkt\": \"unbekannt\", \"preis\": \"\", \"waehrung\": \"\", \"sale\": \"nein\", \"sale_info\": \"\"}';\n\nreturn { json: { url, prompt } };"
+      },
+      "id": "prep-page",
+      "name": "🧠 Seite aufbereiten",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 500, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-extract",
+      "name": "🤖 Claude liest den Preis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sd = $getWorkflowStaticData('global');\nsd.preise = sd.preise || {};\nconst eingaben = $('🧠 Seite aufbereiten').all();\nconst antworten = $input.all();\nconst zeilen = [];\nlet alarm = false;\n\nfor (let i = 0; i < antworten.length; i++) {\n  const url = (eingaben[i] || { json: {} }).json.url || '?';\n  const blocks = antworten[i].json.content || [];\n  const text = (blocks.find(b => b.type === 'text') || {}).text || '';\n  let d;\n  try { d = JSON.parse(text.replace(/```json|```/g, '').trim()); }\n  catch (e) { d = { produkt: 'unbekannt', preis: '', sale: 'nein', sale_info: '' }; }\n\n  const alt = sd.preise[url];\n  const neu = d.preis;\n  let zeile = '• ' + d.produkt + '\\n  ' + (neu ? neu + ' ' + (d.waehrung || '') : 'Preis nicht lesbar');\n\n  if (alt && neu && alt !== neu) {\n    const altF = parseFloat(alt); const neuF = parseFloat(neu);\n    const pfeil = neuF < altF ? '📉 GESENKT' : '📈 ERHOEHT';\n    zeile += '\\n  ⚡ ' + pfeil + ': vorher ' + alt + ' -> jetzt ' + neu;\n    alarm = true;\n  }\n  if (d.sale === 'ja') { zeile += '\\n  🔥 SALE: ' + (d.sale_info || 'aktiv'); alarm = true; }\n  zeile += '\\n  ' + url;\n  zeilen.push(zeile);\n  if (neu) sd.preise[url] = neu;\n}\n\nconst setup = $('⚙️ Setup').first().json;\nconst kopf = (alarm ? '🚨 PREIS-SPION: BEWEGUNG BEI DER KONKURRENZ!' : '🕵️ PREIS-SPION: Alles ruhig.') + '\\n' + setup.SHOP_NAME + '\\n━━━━━━━━━━━━━━━━━━\\n\\n';\nreturn [{ json: { telegram_text: kopf + zeilen.join('\\n\\n') } }];"
+      },
+      "id": "compare-prices",
+      "name": "🧮 Preise vergleichen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.telegram.org/bot' + $('⚙️ Setup').first().json.TELEGRAM_BOT_TOKEN + '/sendMessage' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $('⚙️ Setup').first().json.TELEGRAM_CHAT_ID, text: $json.telegram_text }) }}",
+        "options": {}
+      },
+      "id": "telegram-prices",
+      "name": "📲 Spionage-Bericht aufs Handy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1540, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Täglich 06:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "🔗 URLs aufteilen", "type": "main", "index": 0 }]] },
+    "🔗 URLs aufteilen": { "main": [[{ "node": "🌐 Konkurrenz-Seite laden", "type": "main", "index": 0 }]] },
+    "🌐 Konkurrenz-Seite laden": { "main": [[{ "node": "🧠 Seite aufbereiten", "type": "main", "index": 0 }]] },
+    "🧠 Seite aufbereiten": { "main": [[{ "node": "🤖 Claude liest den Preis", "type": "main", "index": 0 }]] },
+    "🤖 Claude liest den Preis": { "main": [[{ "node": "🧮 Preise vergleichen", "type": "main", "index": 0 }]] },
+    "🧮 Preise vergleichen": { "main": [[{ "node": "📲 Spionage-Bericht aufs Handy", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}
