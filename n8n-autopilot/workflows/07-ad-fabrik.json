@@ -1,0 +1,127 @@
+{
+  "name": "07 · Ad-Fabrik 🎯🏭",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "weeks", "weeksInterval": 1, "triggerAtDay": [1], "triggerAtHour": 9, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-weekly",
+      "name": "⏰ Jeden Montag 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "SHOP_NISCHE", "value": "z.B. Fitness-Zubehoer fuer Zuhause", "type": "string" },
+            { "id": "s06", "name": "ZIELGRUPPE", "value": "z.B. Frauen 20-35, sportlich, kaufen ueber TikTok/Insta", "type": "string" },
+            { "id": "s07", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s08", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/orders.json?status=any&limit=250&created_at_min=' + encodeURIComponent($now.minus({ days: 30 }).toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-orders",
+      "name": "📥 Verkäufe der letzten 30 Tage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const setup = $('⚙️ Setup').first().json;\nconst orders = ($json.orders || []).filter(o => !o.cancelled_at);\nconst produkte = {};\nfor (const o of orders) {\n  for (const li of (o.line_items || [])) {\n    if (!produkte[li.title]) produkte[li.title] = { menge: 0, umsatz: 0 };\n    produkte[li.title].menge += li.quantity;\n    produkte[li.title].umsatz += parseFloat(li.price || 0) * li.quantity;\n  }\n}\nconst top = Object.entries(produkte)\n  .sort((a, b) => b[1].umsatz - a[1].umsatz)\n  .slice(0, 3)\n  .map(([name, d], i) => (i + 1) + '. ' + name + ' (' + d.menge + ' verkauft, ' + d.umsatz.toFixed(0) + ' Umsatz)');\nconst topText = top.length ? top.join('\\n') : '(noch keine Verkaeufe - erstelle Ads fuer die Nische allgemein)';\n\nconst prompt = 'Du bist Direct-Response-Werbetexter (Meta + TikTok Ads) fuer den Onlineshop \"' + setup.SHOP_NAME + '\" (Nische: ' + setup.SHOP_NISCHE + ').\\n' +\n  'Zielgruppe: ' + setup.ZIELGRUPPE + '\\n\\n' +\n  'Top-Produkte der letzten 30 Tage:\\n' + topText + '\\n\\n' +\n  'Erstelle fuer das UMSATZSTAERKSTE Produkt das komplette Ad-Paket der Woche, auf Deutsch:\\n\\n' +\n  '1. FUENF Werbe-Hooks (verschiedene Winkel: Schmerzpunkt, Neugier, Social Proof, Angebot, Kontrast/Mythos)\\n' +\n  '2. ZWEI TikTok/Reels UGC-Skripte (je 25-35s, Szene fuer Szene mit gesprochenem Text - klingen wie echte Kunden, nicht wie Werbung)\\n' +\n  '3. EINE Meta-Ad: Primary Text (AIDA, max 120 Woerter) + 3 Headlines (max 40 Zeichen) + Beschreibung\\n' +\n  '4. DREI Targeting-Ideen (Interessen/Verhalten fuer Meta, Kurzbegruendung)\\n' +\n  '5. EIN A/B-Test-Vorschlag fuer diese Woche (was testen, warum, Erfolgskriterium)\\n\\n' +\n  'Antworte als sauberes HTML (h2/h3-Ueberschriften, Listen, kein <html>/<body>-Geruest, kein Markdown-Codeblock) - es wird direkt als E-Mail verschickt.';\n\nreturn [{ json: { prompt } }];"
+      },
+      "id": "build-prompt",
+      "name": "🧠 Bestseller analysieren",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 4000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-ads",
+      "name": "🤖 Claude baut das Ad-Paket",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst html = (blocks.find(b => b.type === 'text') || {}).text || '';\nconst setup = $('⚙️ Setup').first().json;\nreturn { json: {\n  betreff: '🎯 Ad-Fabrik: Dein Werbe-Paket fuer diese Woche (' + setup.SHOP_NAME + ')',\n  email_html: '<div style=\"font-family:sans-serif;max-width:640px;margin:0 auto;\">' + html.replace(/```html|```/g, '') + '</div>'\n}};"
+      },
+      "id": "parse-ads",
+      "name": "📦 E-Mail bauen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $('⚙️ Setup').first().json.OWNER_EMAIL }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-mail",
+      "name": "📧 Ad-Paket an dich senden",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Jeden Montag 09:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "📥 Verkäufe der letzten 30 Tage", "type": "main", "index": 0 }]] },
+    "📥 Verkäufe der letzten 30 Tage": { "main": [[{ "node": "🧠 Bestseller analysieren", "type": "main", "index": 0 }]] },
+    "🧠 Bestseller analysieren": { "main": [[{ "node": "🤖 Claude baut das Ad-Paket", "type": "main", "index": 0 }]] },
+    "🤖 Claude baut das Ad-Paket": { "main": [[{ "node": "📦 E-Mail bauen", "type": "main", "index": 0 }]] },
+    "📦 E-Mail bauen": { "main": [[{ "node": "📧 Ad-Paket an dich senden", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

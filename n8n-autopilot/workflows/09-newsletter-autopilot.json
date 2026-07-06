@@ -1,0 +1,146 @@
+{
+  "name": "09 · Newsletter-Autopilot 📰🚀",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "weeks", "weeksInterval": 1, "triggerAtDay": [4], "triggerAtHour": 9, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-weekly",
+      "name": "⏰ Jeden Donnerstag 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "SHOP_URL", "value": "https://meinshop.de", "type": "string" },
+            { "id": "s06", "name": "SHOP_NISCHE", "value": "z.B. Fitness-Zubehoer fuer Zuhause", "type": "string" },
+            { "id": "s07", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s08", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" },
+            { "id": "s09", "name": "NEWSLETTER_RABATT_CODE", "value": "", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/products.json?limit=50&fields=id,title,handle,product_type,tags,variants' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-products",
+      "name": "🛍️ Produkte holen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/orders.json?status=any&limit=250&created_at_min=' + encodeURIComponent($now.minus({ days: 7 }).toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-orders",
+      "name": "📥 Verkäufe der Woche",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const setup = $('⚙️ Setup').first().json;\nconst produkte = ($('🛍️ Produkte holen').first().json.products || [])\n  .slice(0, 20)\n  .map(p => '- ' + p.title + ' (' + setup.SHOP_URL + '/products/' + p.handle + ', ab ' + (((p.variants || [])[0] || {}).price || '?') + ')');\n\nconst orders = ($json.orders || []).filter(o => !o.cancelled_at);\nconst verkauft = {};\nfor (const o of orders) {\n  for (const li of (o.line_items || [])) verkauft[li.title] = (verkauft[li.title] || 0) + li.quantity;\n}\nconst topWoche = Object.entries(verkauft).sort((a, b) => b[1] - a[1]).slice(0, 3)\n  .map(([name, menge]) => '- ' + name + ' (' + menge + 'x diese Woche)');\n\nconst prompt = 'Du bist Newsletter-Texter fuer den Onlineshop \"' + setup.SHOP_NAME + '\" (Nische: ' + setup.SHOP_NISCHE + ').\\n\\n' +\n  'Produktkatalog (Auszug):\\n' + produkte.join('\\n') + '\\n\\n' +\n  'Bestseller dieser Woche:\\n' + (topWoche.length ? topWoche.join('\\n') : '(keine Verkaeufe diese Woche)') + '\\n\\n' +\n  (setup.NEWSLETTER_RABATT_CODE ? 'Rabattcode fuer den Newsletter: ' + setup.NEWSLETTER_RABATT_CODE + '\\n\\n' : '') +\n  'Schreibe den kompletten Wochen-Newsletter auf Deutsch (Du-Form):\\n' +\n  '1. Betreffzeile (neugierig machend, max 45 Zeichen) + Preheader (max 80 Zeichen)\\n' +\n  '2. Aufhaenger: kurzer, persoenlicher Einstieg mit echtem Mehrwert zur Nische (Tipp, Insight oder Mini-Story - KEIN reines Verkaufen)\\n' +\n  '3. Produkt-Spotlight: 1-2 Produkte aus dem Katalog natuerlich einbinden, mit Link\\n' +\n  '4. Klarer CTA-Button (als <a> mit Inline-Button-Styling)\\n' +\n  (setup.NEWSLETTER_RABATT_CODE ? '5. Rabattcode elegant einbauen\\n' : '') +\n  '\\nVerhaeltnis: 70% Mehrwert, 30% Verkauf. Mobiltaugliches HTML mit Inline-CSS.\\n' +\n  'Antworte NUR mit validem JSON, ohne Markdown-Codeblock: {\"betreff\": \"...\", \"preheader\": \"...\", \"html\": \"<komplettes Newsletter-HTML>\"}';\n\nreturn [{ json: { prompt } }];"
+      },
+      "id": "build-prompt",
+      "name": "🧠 Daten kombinieren",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 4000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-newsletter",
+      "name": "🤖 Claude schreibt Newsletter",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst text = (blocks.find(b => b.type === 'text') || {}).text || '';\nlet daten;\ntry {\n  daten = JSON.parse(text.replace(/```json|```/g, '').trim());\n} catch (e) {\n  daten = { betreff: 'Dein Wochen-Newsletter (Entwurf)', preheader: '', html: text };\n}\nconst setup = $('⚙️ Setup').first().json;\nconst hinweis = '<div style=\"background:#fef3c7;border:1px solid #f59e0b;padding:12px;border-radius:8px;font-family:sans-serif;font-size:13px;margin-bottom:20px;\">' +\n  '📰 <b>Newsletter-Entwurf</b> - Betreff: <b>' + daten.betreff + '</b> · Preheader: ' + (daten.preheader || '-') +\n  '<br>Gegenlesen, in dein E-Mail-Tool (Shopify Email / Klaviyo / Mailchimp) kopieren und an deine Liste senden. 2 Minuten Arbeit.</div>';\nreturn { json: {\n  betreff: '📰 Newsletter-Entwurf fuer diese Woche: ' + daten.betreff,\n  email_html: hinweis + daten.html\n}};"
+      },
+      "id": "parse-newsletter",
+      "name": "📦 Entwurf verpacken",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $('⚙️ Setup').first().json.OWNER_EMAIL }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-draft",
+      "name": "📧 Entwurf an dich senden",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1540, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Jeden Donnerstag 09:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "🛍️ Produkte holen", "type": "main", "index": 0 }]] },
+    "🛍️ Produkte holen": { "main": [[{ "node": "📥 Verkäufe der Woche", "type": "main", "index": 0 }]] },
+    "📥 Verkäufe der Woche": { "main": [[{ "node": "🧠 Daten kombinieren", "type": "main", "index": 0 }]] },
+    "🧠 Daten kombinieren": { "main": [[{ "node": "🤖 Claude schreibt Newsletter", "type": "main", "index": 0 }]] },
+    "🤖 Claude schreibt Newsletter": { "main": [[{ "node": "📦 Entwurf verpacken", "type": "main", "index": 0 }]] },
+    "📦 Entwurf verpacken": { "main": [[{ "node": "📧 Entwurf an dich senden", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}
