@@ -3,109 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Z.E.R.O. — dein KI-Assistent</title>
+<title>Z.E.R.O. — Neural Core</title>
 <style>
   :root{
-    --bg:#02060f; --bg2:#040b1c;
-    --cyan:#39d7ff; --cyan-dim:#1a6d86;
-    --ice:#bfeeff; --ink:#7fb7cc;
-    --grid:rgba(57,215,255,.06);
-    --panel:rgba(6,20,38,.55); --line:rgba(57,215,255,.22);
-    --live:#38ffb0; --idle:#4a6b78; --warn:#ffb347; --hot:#ff5a7a;
-    --glow:0 0 12px rgba(57,215,255,.55);
+    --bg:#010512; --cyan:#4fdcff; --ice:#dff6ff; --ink:#6f9fb8;
+    --panel:rgba(6,20,38,.5); --line:rgba(79,220,255,.22);
+    --live:#43ffc0; --idle:#456; --hot:#ff5f86;
+    --glow:0 0 14px rgba(79,220,255,.6);
     --font:"SF Mono","Cascadia Code","JetBrains Mono",Consolas,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ice);font-family:var(--font);-webkit-tap-highlight-color:transparent}
-  #stage{position:fixed;inset:0}
+  html,body{height:100%;overflow:hidden;background:#010512;color:var(--ice);font-family:var(--font);-webkit-tap-highlight-color:transparent}
+  #stage{position:fixed;inset:0;background:
+    radial-gradient(120% 90% at 50% 46%, #08245c 0%, #04123a 34%, #020a22 62%, #010512 100%)}
   canvas{position:absolute;inset:0;width:100%;height:100%}
   .scan{position:fixed;inset:0;pointer-events:none;z-index:5;
-    background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.14) 3px 4px);
-    mix-blend-mode:multiply;opacity:.5}
-  .vignette{position:fixed;inset:0;pointer-events:none;z-index:4;
-    background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.7) 100%)}
+    background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.13) 3px 4px);mix-blend-mode:multiply;opacity:.45}
+  .vig{position:fixed;inset:0;pointer-events:none;z-index:4;
+    background:radial-gradient(ellipse at center,transparent 45%,rgba(0,3,12,.72) 100%)}
 
-  .hud{position:fixed;inset:0;z-index:10;pointer-events:none;padding:16px}
-  .corner{position:absolute;font-size:11px;letter-spacing:.12em;color:var(--cyan);text-shadow:var(--glow);text-transform:uppercase}
-  .tl{top:16px;left:18px}.tr{top:16px;right:18px;text-align:right}
-  .corner b{color:var(--ice);font-size:15px;letter-spacing:.28em}
-  .corner .sub{color:var(--ink);font-size:10px;margin-top:3px;letter-spacing:.16em}
-  .bracket::before,.bracket::after{content:"";position:absolute;width:14px;height:14px;border:1px solid var(--cyan);opacity:.6}
-  .tl.bracket::before{top:-6px;left:-8px;border-right:0;border-bottom:0}
-  .tr.bracket::after{top:-6px;right:-8px;border-left:0;border-bottom:0}
+  .hud{position:fixed;inset:0;z-index:10;pointer-events:none}
+  .corner{position:absolute;font-size:11px;letter-spacing:.14em;color:var(--cyan);text-shadow:var(--glow);text-transform:uppercase}
+  .tl{top:18px;left:20px}.tr{top:18px;right:20px;text-align:right}
+  .corner b{display:block;color:var(--ice);font-size:16px;letter-spacing:.42em;margin-bottom:3px}
+  .corner .sub{color:var(--ink);font-size:9.5px;letter-spacing:.18em}
+  .brk::before,.brk::after{content:"";position:absolute;width:16px;height:16px;border:1.5px solid var(--cyan);opacity:.55}
+  .tl.brk::before{top:-7px;left:-9px;border-right:0;border-bottom:0}
+  .tr.brk::after{top:-7px;right:-9px;border-left:0;border-bottom:0}
 
-  /* Cortex-Panel rechts */
-  .cortex{position:absolute;top:64px;right:18px;width:210px;pointer-events:none}
-  .cortex h3{font-size:10px;color:var(--ink);letter-spacing:.2em;margin-bottom:8px;text-align:right}
-  .row{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:3px 0;font-size:10.5px;letter-spacing:.08em}
-  .row .nm{color:var(--ink);min-width:96px;text-align:right;text-transform:uppercase}
-  .row .st{color:var(--idle);min-width:44px;text-align:left;font-size:9px}
-  .dot{width:6px;height:6px;border-radius:50%;background:var(--idle);flex:none}
-  .row.on .dot{background:var(--live);box-shadow:0 0 8px var(--live)}
+  .cortex{position:absolute;top:70px;right:20px;width:216px;pointer-events:none}
+  .cortex h3{font-size:9.5px;color:var(--ink);letter-spacing:.22em;margin-bottom:9px;text-align:right}
+  .row{display:flex;align-items:center;justify-content:flex-end;gap:9px;padding:3.5px 0;font-size:10.5px;letter-spacing:.06em}
+  .row .nm{color:var(--ink);min-width:100px;text-align:right;text-transform:uppercase}
+  .row .st{color:var(--idle);min-width:46px;text-align:left;font-size:8.5px;letter-spacing:.1em}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--idle);flex:none;transition:.2s}
+  .row.on .dot{background:var(--live);box-shadow:0 0 9px var(--live)}
   .row.on .st{color:var(--live)}
-  .row.hot .dot{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  .row.hot .dot{background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
   .row.hot .st{color:var(--cyan)}
 
-  /* linkes Status-Panel */
-  .sys{position:absolute;top:64px;left:18px;width:190px;pointer-events:none;font-size:10px}
-  .sys .bar{height:5px;border:1px solid var(--line);border-radius:3px;margin:4px 0 10px;overflow:hidden;background:rgba(0,0,0,.3)}
-  .sys .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));box-shadow:var(--glow);width:60%}
-  .sys .lbl{color:var(--ink);letter-spacing:.14em;text-transform:uppercase}
+  .sys{position:absolute;top:70px;left:20px;width:194px;pointer-events:none;font-size:9.5px}
+  .sys .lbl{color:var(--ink);letter-spacing:.16em;text-transform:uppercase}
+  .sys .bar{height:5px;border:1px solid var(--line);border-radius:3px;margin:4px 0 11px;overflow:hidden;background:rgba(0,0,0,.3)}
+  .sys .bar i{display:block;height:100%;background:linear-gradient(90deg,rgba(79,220,255,.3),var(--cyan));box-shadow:var(--glow)}
 
-  /* Zentraler Zustand + Transkript */
-  .center{position:absolute;left:0;right:0;bottom:120px;text-align:center;pointer-events:none;padding:0 24px}
-  .state{font-size:12px;letter-spacing:.35em;color:var(--cyan);text-shadow:var(--glow);text-transform:uppercase;margin-bottom:10px;min-height:16px}
-  .transcript{font-size:clamp(15px,2.4vw,22px);color:var(--ice);max-width:760px;margin:0 auto;line-height:1.4;min-height:1.4em;text-shadow:0 0 18px rgba(57,215,255,.25)}
-  .reply{font-size:clamp(13px,2vw,18px);color:var(--ink);max-width:720px;margin:10px auto 0;line-height:1.5;max-height:26vh;overflow:auto}
+  .center{position:absolute;left:0;right:0;bottom:128px;text-align:center;pointer-events:none;padding:0 26px}
+  .state{font-size:11px;letter-spacing:.4em;color:var(--cyan);text-shadow:var(--glow);text-transform:uppercase;margin-bottom:12px;min-height:14px}
+  .transcript{font-size:clamp(15px,2.5vw,23px);color:var(--ice);max-width:780px;margin:0 auto;line-height:1.4;min-height:1.4em;text-shadow:0 0 20px rgba(79,220,255,.35)}
+  .reply{font-size:clamp(13px,2vw,17px);color:#a9d8ea;max-width:720px;margin:11px auto 0;line-height:1.5;max-height:24vh;overflow:auto}
 
-  /* Steuerleiste unten */
-  .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;justify-content:center;gap:14px;padding:18px 16px 26px}
-  .mic{position:relative;width:74px;height:74px;border-radius:50%;border:1px solid var(--line);
-    background:radial-gradient(circle at 50% 40%,rgba(57,215,255,.16),rgba(4,11,28,.7));
-    color:var(--ice);font-family:var(--font);font-size:11px;letter-spacing:.1em;cursor:pointer;
-    display:grid;place-items:center;transition:transform .12s,box-shadow .2s;pointer-events:auto}
-  .mic svg{width:30px;height:30px;fill:var(--cyan);filter:drop-shadow(var(--glow))}
+  .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;justify-content:center;gap:16px;padding:18px 16px 28px}
+  .mic{position:relative;width:78px;height:78px;border-radius:50%;border:1.5px solid var(--line);
+    background:radial-gradient(circle at 50% 38%,rgba(79,220,255,.18),rgba(4,11,28,.7));
+    color:var(--ice);font-family:var(--font);cursor:pointer;display:grid;place-items:center;transition:transform .12s,box-shadow .2s;pointer-events:auto}
+  .mic svg{width:32px;height:32px;fill:var(--cyan);filter:drop-shadow(var(--glow))}
   .mic:active{transform:scale(.94)}
-  .mic.live{box-shadow:0 0 0 0 rgba(56,255,176,.5);animation:pulse 1.3s infinite;border-color:var(--live)}
+  .mic.live{border-color:var(--live);animation:pulse 1.25s infinite}
   .mic.live svg{fill:var(--live)}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(56,255,176,.45)}70%{box-shadow:0 0 0 22px rgba(56,255,176,0)}100%{box-shadow:0 0 0 0 rgba(56,255,176,0)}}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(67,255,192,.45)}70%{box-shadow:0 0 0 24px rgba(67,255,192,0)}100%{box-shadow:0 0 0 0 rgba(67,255,192,0)}}
   .ctrlbtn{pointer-events:auto;background:var(--panel);border:1px solid var(--line);color:var(--ink);
-    font-family:var(--font);font-size:11px;letter-spacing:.08em;padding:10px 14px;border-radius:10px;cursor:pointer;text-transform:uppercase}
+    font-family:var(--font);font-size:11px;letter-spacing:.08em;padding:11px 15px;border-radius:11px;cursor:pointer;text-transform:uppercase}
   .ctrlbtn:hover{color:var(--cyan);border-color:var(--cyan)}
-  .hint{position:fixed;bottom:104px;left:0;right:0;text-align:center;font-size:10px;color:var(--idle);letter-spacing:.1em;z-index:20;pointer-events:none}
+  .hint{position:fixed;bottom:108px;left:0;right:0;text-align:center;font-size:10px;color:var(--idle);letter-spacing:.1em;z-index:20;pointer-events:none}
 
-  /* Settings */
-  .modal{position:fixed;inset:0;z-index:50;background:rgba(2,6,15,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal{position:fixed;inset:0;z-index:50;background:rgba(1,5,18,.84);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:20px}
   .modal.show{display:flex}
-  .card{width:min(440px,94vw);background:linear-gradient(180deg,var(--bg2),var(--bg));border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 0 40px rgba(57,215,255,.15)}
-  .card h2{font-size:14px;letter-spacing:.18em;color:var(--cyan);text-shadow:var(--glow);margin-bottom:4px;text-transform:uppercase}
-  .card p.d{font-size:11px;color:var(--ink);margin-bottom:16px;line-height:1.5}
+  .card{width:min(444px,94vw);background:linear-gradient(180deg,#061633,#020a22);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 0 46px rgba(79,220,255,.16)}
+  .card h2{font-size:14px;letter-spacing:.2em;color:var(--cyan);text-shadow:var(--glow);margin-bottom:4px;text-transform:uppercase}
+  .card p.d{font-size:11px;color:var(--ink);margin-bottom:17px;line-height:1.5}
   .fld{margin-bottom:14px}
-  .fld label{display:block;font-size:10px;color:var(--ink);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px}
+  .fld label{display:block;font-size:9.5px;color:var(--ink);letter-spacing:.16em;text-transform:uppercase;margin-bottom:5px}
   .fld input,.fld textarea,.fld select{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:8px;color:var(--ice);
-    font-family:var(--font);font-size:12px;padding:9px 11px;outline:none}
-  .fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(57,215,255,.15)}
-  .fld textarea{min-height:70px;resize:vertical;line-height:1.4}
-  .save{width:100%;margin-top:4px;background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));color:#02131b;font-weight:700;
-    border:0;border-radius:9px;padding:12px;font-family:var(--font);font-size:12px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
-  .save:active{transform:scale(.98)}
-  .card .note{font-size:10px;color:var(--idle);margin-top:12px;line-height:1.5}
+    font-family:var(--font);font-size:12px;padding:10px 12px;outline:none}
+  .fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(79,220,255,.15)}
+  .fld textarea{min-height:72px;resize:vertical;line-height:1.4}
+  .save{width:100%;margin-top:4px;background:linear-gradient(90deg,rgba(79,220,255,.35),var(--cyan));color:#02131b;font-weight:700;
+    border:0;border-radius:9px;padding:13px;font-family:var(--font);font-size:12px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
+  .card .note{font-size:10px;color:var(--idle);margin-top:13px;line-height:1.5}
   .card a{color:var(--cyan)}
   .err{color:var(--hot);font-size:11px;margin-top:10px;min-height:14px;text-align:center}
-  @media(max-width:560px){
-    .cortex{width:150px;top:60px}.row .nm{min-width:70px;font-size:9.5px}
-    .sys{display:none}.center{bottom:150px}
-  }
+  @media(max-width:600px){ .cortex{width:150px;top:64px}.row .nm{min-width:72px;font-size:9px}.sys{display:none}.center{bottom:150px} }
 </style>
 </head>
 <body>
 <div id="stage"><canvas id="net"></canvas></div>
-<div class="vignette"></div>
+<div class="vig"></div>
 <div class="scan"></div>
 
 <div class="hud">
-  <div class="corner tl bracket"><b id="astName">Z.E.R.O.</b><div class="sub">NEURAL CORE · <span id="conn">OFFLINE</span></div></div>
-  <div class="corner tr bracket"><b id="listenState">STANDBY</b><div class="sub" id="clock">--:--:--</div></div>
+  <div class="corner tl brk"><b id="astName">Z.E.R.O.</b><span class="sub">NEURAL CORE · <span id="conn">OFFLINE</span></span></div>
+  <div class="corner tr brk"><b id="listenState">STANDBY</b><span class="sub" id="clock">--:--:--</span></div>
 
   <div class="sys">
     <div class="lbl">Core Load</div><div class="bar"><i id="barA" style="width:38%"></i></div>
@@ -143,255 +130,254 @@
   <button class="ctrlbtn" id="muteBtn">🔊 Stimme</button>
 </div>
 
-<!-- Setup -->
 <div class="modal" id="modal">
   <div class="card">
     <h2>System-Setup</h2>
-    <p class="d">Damit dein Assistent denken kann, braucht er deinen Claude-Schlüssel. Er wird nur lokal in deinem Browser gespeichert — geht an niemanden sonst.</p>
+    <p class="d">Damit dein Assistent denken und sprechen kann, braucht er deinen Claude-Schlüssel. Er wird nur lokal in deinem Browser gespeichert.</p>
     <div class="fld"><label>Claude API-Key (sk-ant-…)</label><input id="inKey" type="password" placeholder="sk-ant-..." autocomplete="off"></div>
     <div class="fld"><label>Name des Assistenten</label><input id="inName" type="text" placeholder="Z.E.R.O." maxlength="14"></div>
     <div class="fld"><label>Modell</label>
       <select id="inModel">
         <option value="claude-opus-4-8">Claude Opus 4.8 — am schlausten</option>
         <option value="claude-sonnet-4-6">Claude Sonnet 4.6 — schneller</option>
-        <option value="claude-haiku-4-5">Claude Haiku 4.5 — am schnellsten/günstig</option>
-      </select>
-    </div>
-    <div class="fld"><label>Persönlichkeit / Auftrag (System-Prompt)</label>
+        <option value="claude-haiku-4-5">Claude Haiku 4.5 — am schnellsten</option>
+      </select></div>
+    <div class="fld"><label>Persönlichkeit / Auftrag</label>
       <textarea id="inSys" placeholder="Du bist mein persönlicher Assistent für meinen E-Com-Shop..."></textarea></div>
-    <div class="fld"><label>Sprache erkennen</label>
+    <div class="fld"><label>Sprache</label>
       <select id="inLang"><option value="de-DE">Deutsch</option><option value="en-US">English</option></select></div>
     <button class="save" id="saveBtn">Speichern & Aktivieren</button>
     <div class="err" id="modalErr"></div>
-    <div class="note">Key holen: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys.<br>
-      Mikro & Stimme laufen am besten in Chrome (Handy & PC).</div>
+    <div class="note">Key holen: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys.<br>Mikro & Stimme laufen am besten in Chrome.</div>
   </div>
 </div>
 
 <script>
-/* ---------- Persistenz ---------- */
+/* ============ Persistenz ============ */
 const LS = {
   key:  localStorage.getItem('z_key')  || '',
   name: localStorage.getItem('z_name') || 'Z.E.R.O.',
   model:localStorage.getItem('z_model')|| 'claude-opus-4-8',
-  sys:  localStorage.getItem('z_sys')  || 'Du bist Z.E.R.O., ein ruhiger, extrem kompetenter persönlicher KI-Assistent im Stil von JARVIS. Antworte kurz, klar und auf Deutsch. Du hilfst beim Aufbau und Betrieb von E-Commerce-Shops: Marketing, Zahlen, Ideen, Entscheidungen. Sprich den Nutzer mit "Sir" oder direkt an, bleib sachlich und schnell.',
+  sys:  localStorage.getItem('z_sys')  || 'Du bist Z.E.R.O., ein ruhiger, extrem kompetenter persönlicher KI-Assistent im Stil von JARVIS. Antworte kurz, klar und auf Deutsch. Du hilfst beim Aufbau und Betrieb von E-Commerce-Shops: Marketing, Zahlen, Ideen, Entscheidungen. Bleib sachlich, schnell und souverän.',
   lang: localStorage.getItem('z_lang') || 'de-DE',
   mute: localStorage.getItem('z_mute') === '1'
 };
+const $=s=>document.querySelector(s);
+const micBtn=$('#micBtn'),stateText=$('#stateText'),transcriptEl=$('#transcript'),replyEl=$('#reply'),
+      listenState=$('#listenState'),connEl=$('#conn'),modal=$('#modal'),hintEl=$('#hint');
+const rows={}; document.querySelectorAll('.cortex .row').forEach(r=>rows[r.dataset.k]=r);
+setInterval(()=>{$('#clock').textContent=new Date().toLocaleTimeString('de-DE')},1000);
 
-/* ---------- DOM ---------- */
-const $ = s=>document.querySelector(s);
-const micBtn=$('#micBtn'), stateText=$('#stateText'), transcriptEl=$('#transcript'),
-      replyEl=$('#reply'), listenState=$('#listenState'), connEl=$('#conn'),
-      modal=$('#modal'), hintEl=$('#hint');
-const rows = {}; document.querySelectorAll('.cortex .row').forEach(r=>rows[r.dataset.k]=r);
-
-/* ---------- Uhr ---------- */
-setInterval(()=>{ $('#clock').textContent = new Date().toLocaleTimeString('de-DE'); },1000);
-
-/* ---------- Cortex-Animation ---------- */
+/* ============ Cortex ============ */
 function cortex(mode){
-  const map = {
-    idle:   [],
-    listen: ['lan','ass','fea'],
-    think:  ['pre','con','ass','hip','fea','mot'],
-    speak:  ['pro','tts','lan','cer']
-  };
-  const on = new Set(map[mode]||[]);
-  for(const k in rows){
-    const r=rows[k]; r.classList.remove('on','hot');
-    const st=r.querySelector('.st');
-    if(on.has(k)){ r.classList.add(mode==='think'?'hot':'on'); st.textContent = mode==='think'?'sync':'live'; }
-    else { st.textContent='idle'; }
-  }
+  const map={idle:[],listen:['lan','ass','fea'],think:['pre','con','ass','hip','fea','mot'],speak:['pro','tts','lan','cer']};
+  const on=new Set(map[mode]||[]);
+  for(const k in rows){const r=rows[k],st=r.querySelector('.st');r.classList.remove('on','hot');
+    if(on.has(k)){r.classList.add(mode==='think'?'hot':'on');st.textContent=mode==='think'?'sync':'live';}else st.textContent='idle';}
 }
 
-/* ---------- Neuronales Netz (Canvas) ---------- */
-const cv=$('#net'), ctx=cv.getContext('2d');
-let W,H,DPR,nodes=[],edges=[],pulses=[],energy=0.25,hue=0;
-function resize(){ DPR=Math.min(devicePixelRatio||1,2); W=cv.width=innerWidth*DPR; H=cv.height=innerHeight*DPR; build(); }
+/* ============ NEURAL HEAD (Canvas) ============ */
+const cv=$('#net'),ctx=cv.getContext('2d');
+let W,H,DPR,CX,CY,SC,core=[],tendrils=[],pulses=[],energy=0.3,tGlobal=0;
+
+/* Kopf-Profil (nach links schauend), normalisierte Punkte 0..1 */
+const PROFILE=[
+ [0.62,0.10],[0.50,0.09],[0.40,0.11],[0.32,0.16],[0.27,0.24],[0.24,0.33],
+ [0.22,0.40],[0.18,0.45],[0.15,0.50],[0.19,0.545],[0.235,0.55],[0.225,0.60],
+ [0.235,0.655],[0.29,0.68],[0.28,0.72],[0.285,0.775],[0.33,0.82],[0.40,0.85],
+ [0.36,0.90],[0.42,0.93],
+ [0.60,0.94],[0.72,0.90],[0.80,0.82],[0.855,0.70],[0.875,0.56],[0.865,0.42],
+ [0.82,0.28],[0.75,0.17],[0.68,0.12],[0.62,0.10]
+];
+function lerp(a,b,t){return a+(b-a)*t}
+function onProfile(t){ // t 0..1 entlang Polylinie
+  const n=PROFILE.length-1,f=t*n,i=Math.min(n-1,Math.floor(f)),k=f-i;
+  return [lerp(PROFILE[i][0],PROFILE[i+1][0],k),lerp(PROFILE[i][1],PROFILE[i+1][1],k)];
+}
+function toScreen(p){return [CX+(p[0]-0.5)*SC, CY+(p[1]-0.5)*SC]}
+
+function regionColor(nx,ny){
+  // Farbe je nach Position -> wie im TikTok: oben rot/orange, vorne cyan/weiß, unten magenta/lila, hinten grün/gold
+  const ang=Math.atan2(ny-0.5,nx-0.5);
+  const deg=(ang*180/Math.PI+360)%360;
+  if(deg>200&&deg<290) return [8,95,62];       // oben-rechts -> rot/orange (Bild: oben)
+  if(deg>=290||deg<20)  return [280,90,66];     // rechts/hinten -> magenta/lila? tweak
+  if(deg>=20&&deg<95)   return [140,90,62];      // unten -> grün
+  return [190,100,66];                           // vorne/links -> cyan
+}
 function build(){
-  nodes=[]; edges=[];
-  const N = innerWidth<560?70:120;
-  const cx=W/2, cy=H*0.47, R=Math.min(W,H)*0.34;
-  for(let i=0;i<N;i++){
-    // grob gehirn-/kopfförmig: radiale Wolke + Tendrils
-    const a=Math.random()*Math.PI*2;
-    const rr=Math.pow(Math.random(),0.6)*R*(0.55+0.6*Math.random());
-    const squish = 1 - 0.25*Math.cos(a); // leicht kopfförmig
-    nodes.push({
-      x:cx+Math.cos(a)*rr, y:cy+Math.sin(a)*rr*squish,
-      ox:0, oy:0, ph:Math.random()*Math.PI*2, sp:0.4+Math.random()*0.9,
-      r:(Math.random()*1.6+0.8)*DPR
-    });
+  core=[];tendrils=[];pulses=[];
+  // Kern-Filamente entlang & innerhalb des Profils
+  const CORE=innerWidth<600?150:240;
+  for(let i=0;i<CORE;i++){
+    const t=Math.random();
+    let p=onProfile(t);
+    const inset=Math.random()*0.5; // manche nach innen
+    const nx=lerp(p[0],0.5+ (p[0]-0.5)*0.15 ,inset*0.6);
+    const ny=lerp(p[1],0.5,inset*0.55);
+    core.push({nx,ny,ph:Math.random()*6.28,sp:0.5+Math.random()*1.1,r:(Math.random()*1.5+0.6)});
   }
-  // Kanten zu nächsten Nachbarn
-  for(let i=0;i<N;i++){
-    const d=[];
-    for(let j=0;j<N;j++) if(i!==j){ const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y; d.push([dx*dx+dy*dy,j]); }
-    d.sort((a,b)=>a[0]-b[0]);
-    const k=2+((Math.random()*2)|0);
-    for(let m=0;m<k;m++) edges.push([i,d[m][1]]);
+  // Tendrils: von der Silhouette nach außen, verzweigt
+  const NT=innerWidth<600?46:74;
+  for(let i=0;i<NT;i++){
+    const t=i/NT + Math.random()*0.01;
+    let p=onProfile(t);
+    const outDir=[p[0]-0.5,p[1]-0.5];
+    const L=Math.hypot(...outDir)||1; outDir[0]/=L;outDir[1]/=L;
+    const col=regionColor(p[0],p[1]);
+    const pts=[[p[0],p[1]]];
+    let cur=[p[0],p[1]], dir=[outDir[0],outDir[1]];
+    const segs=4+((Math.random()*5)|0);
+    const step=0.02+Math.random()*0.05;
+    for(let s=0;s<segs;s++){
+      dir[0]+=(Math.random()-0.5)*0.5; dir[1]+=(Math.random()-0.5)*0.5;
+      const d=Math.hypot(...dir)||1; dir[0]/=d;dir[1]/=d;
+      cur=[cur[0]+dir[0]*step, cur[1]+dir[1]*step];
+      pts.push([cur[0],cur[1]]);
+    }
+    tendrils.push({pts,col,w:0.6+Math.random()*1.1,seed:Math.random()*6.28});
   }
 }
-function spawnPulse(){ if(edges.length) pulses.push({e:edges[(Math.random()*edges.length)|0], t:0, sp:0.012+Math.random()*0.03}); }
+function resize(){DPR=Math.min(devicePixelRatio||1,2);W=cv.width=innerWidth*DPR;H=cv.height=innerHeight*DPR;
+  CX=W*0.5;CY=H*0.46;SC=Math.min(W,H)*0.82;build();}
+function spawn(){ if(tendrils.length) pulses.push({tr:(Math.random()*tendrils.length)|0,t:0,sp:0.02+Math.random()*0.05,core:Math.random()<0.4}); }
+
 function draw(){
-  ctx.clearRect(0,0,W,H);
-  hue += 0.15;
-  const t=performance.now()*0.001;
-  // sanfte Bewegung
-  for(const n of nodes){ n.ox=Math.cos(t*n.sp+n.ph)*3*DPR; n.oy=Math.sin(t*n.sp*0.9+n.ph)*3*DPR; }
-  // Kanten
-  ctx.lineWidth=DPR*0.6;
-  for(const [i,j] of edges){
-    const a=nodes[i], b=nodes[j];
-    const g=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
-    const c1=`hsla(${190+20*Math.sin(hue*0.01+i)},100%,65%,0.10)`;
-    g.strokeStyle;
-    ctx.strokeStyle=c1;
-    ctx.beginPath(); ctx.moveTo(a.x+a.ox,a.y+a.oy); ctx.lineTo(b.x+b.ox,b.y+b.oy); ctx.stroke();
+  tGlobal+=0.016;
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle='rgba(1,5,18,0.32)'; ctx.fillRect(0,0,W,H); // Trails
+  ctx.globalCompositeOperation='lighter';
+
+  // Tendrils
+  for(const tr of tendrils){
+    const [h,s,l]=tr.col;
+    ctx.strokeStyle=`hsla(${h},${s}%,${l}%,0.14)`;
+    ctx.lineWidth=tr.w*DPR;
+    ctx.beginPath();
+    for(let i=0;i<tr.pts.length;i++){
+      const wob=Math.sin(tGlobal*1.2+tr.seed+i*0.6)*0.006;
+      const sp=toScreen([tr.pts[i][0]+wob,tr.pts[i][1]+wob]);
+      i?ctx.lineTo(sp[0],sp[1]):ctx.moveTo(sp[0],sp[1]);
+    }
+    ctx.stroke();
+    // Endpunkt-Glow
+    const ep=toScreen(tr.pts[tr.pts.length-1]);
+    ctx.beginPath();ctx.arc(ep[0],ep[1],DPR*1.6,0,7);
+    ctx.fillStyle=`hsla(${h},${s}%,${l+10}%,0.5)`;ctx.fill();
   }
-  // Pulse entlang Kanten
-  for(let p=pulses.length-1;p>=0;p--){
-    const pu=pulses[p]; pu.t+=pu.sp*(0.5+energy*2);
-    if(pu.t>=1){ pulses.splice(p,1); continue; }
-    const a=nodes[pu.e[0]], b=nodes[pu.e[1]];
-    const x=a.x+(b.x-a.x)*pu.t, y=a.y+(b.y-a.y)*pu.t;
-    const hh=(hue*2+pu.e[0]*7)%360;
-    ctx.beginPath(); ctx.arc(x,y,DPR*2.2,0,7);
-    ctx.fillStyle=`hsla(${160+hh*0.2},100%,70%,0.9)`;
-    ctx.shadowColor=`hsla(${160+hh*0.2},100%,70%,1)`; ctx.shadowBlur=12*DPR;
-    ctx.fill(); ctx.shadowBlur=0;
+
+  // Kern-Filamente (heller, dichter)
+  for(const c of core){
+    const g=0.5+0.5*Math.sin(tGlobal*2+c.ph);
+    const wob=Math.sin(tGlobal*c.sp+c.ph)*0.004;
+    const sp=toScreen([c.nx+wob,c.ny+wob]);
+    ctx.beginPath();ctx.arc(sp[0],sp[1],c.r*DPR*(1+g*0.7),0,7);
+    ctx.fillStyle=`hsla(195,100%,${70+g*22}%,${0.35+g*0.5})`;
+    ctx.fill();
   }
-  // Knoten
-  for(const n of nodes){
-    const glow = 0.5+0.5*Math.sin(t*2+n.ph);
-    ctx.beginPath(); ctx.arc(n.x+n.ox,n.y+n.oy,n.r*(1+glow*0.6),0,7);
-    ctx.fillStyle=`hsla(190,100%,${60+glow*25}%,${0.5+glow*0.4})`;
-    ctx.shadowColor='rgba(57,215,255,.8)'; ctx.shadowBlur=6*DPR; ctx.fill(); ctx.shadowBlur=0;
+  // Kern-Verbindungen (leichte weiße Fäden)
+  ctx.lineWidth=0.5*DPR; ctx.strokeStyle='rgba(200,240,255,0.05)';
+  for(let i=0;i<core.length;i+=2){
+    const a=core[i],b=core[(i*7+3)%core.length];
+    const sa=toScreen([a.nx,a.ny]),sb=toScreen([b.nx,b.ny]);
+    const dx=sa[0]-sb[0],dy=sa[1]-sb[1];
+    if(dx*dx+dy*dy<(SC*0.13)*(SC*0.13)){ctx.beginPath();ctx.moveTo(sa[0],sa[1]);ctx.lineTo(sb[0],sb[1]);ctx.stroke();}
   }
-  // Puls-Spawnrate abhängig von Energie
-  if(Math.random()<0.15+energy*0.7) spawnPulse();
+
+  // Pulse
+  for(let i=pulses.length-1;i>=0;i--){
+    const pu=pulses[i]; pu.t+=pu.sp*(0.5+energy*2.2);
+    if(pu.t>=1){pulses.splice(i,1);continue;}
+    const tr=tendrils[pu.tr]; if(!tr)continue;
+    const f=pu.t*(tr.pts.length-1),idx=Math.min(tr.pts.length-2,Math.floor(f)),k=f-idx;
+    const p=[lerp(tr.pts[idx][0],tr.pts[idx+1][0],k),lerp(tr.pts[idx][1],tr.pts[idx+1][1],k)];
+    const sp=toScreen(p),[h,s,l]=tr.col;
+    ctx.beginPath();ctx.arc(sp[0],sp[1],DPR*2.4,0,7);
+    ctx.fillStyle=`hsla(${h},${s}%,${Math.min(88,l+22)}%,0.95)`;
+    ctx.shadowColor=`hsla(${h},${s}%,${l+15}%,1)`;ctx.shadowBlur=14*DPR;ctx.fill();ctx.shadowBlur=0;
+  }
+  if(Math.random()<0.25+energy*0.9) spawn();
   requestAnimationFrame(draw);
 }
-addEventListener('resize',resize); resize(); draw();
+addEventListener('resize',resize);resize();draw();
 
-/* ---------- Zustände ---------- */
+/* ============ Zustände ============ */
 function setState(mode,label){
   cortex(mode);
-  energy = mode==='think'?1 : mode==='speak'?0.7 : mode==='listen'?0.5 : 0.25;
-  stateText.textContent = label || {idle:'Bereit',listen:'Ich höre…',think:'Ich denke nach…',speak:'Antwort läuft…'}[mode];
-  listenState.textContent = {idle:'STANDBY',listen:'LISTENING',think:'PROCESSING',speak:'SPEAKING'}[mode];
+  energy=mode==='think'?1:mode==='speak'?0.75:mode==='listen'?0.55:0.3;
+  stateText.textContent=label||{idle:'Bereit',listen:'Ich höre…',think:'Ich denke nach…',speak:'Antwort läuft…'}[mode];
+  listenState.textContent={idle:'STANDBY',listen:'LISTENING',think:'PROCESSING',speak:'SPEAKING'}[mode];
 }
 
-/* ---------- Spracherkennung ---------- */
-const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
-let rec=null, listening=false, holdMode=false;
+/* ============ Spracherkennung ============ */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null,listening=false,holdMode=false;
 function initRec(){
-  if(!SR){ hintEl.textContent='⚠ Dein Browser kann kein Mikro-Sprechen — nutze Chrome. (Tippen zum Text-Chat geht trotzdem via Setup.)'; return; }
-  rec=new SR(); rec.lang=LS.lang; rec.interimResults=true; rec.continuous=false;
-  rec.onresult=e=>{
-    let txt=''; for(let i=e.resultIndex;i<e.results.length;i++) txt+=e.results[i][0].transcript;
-    transcriptEl.textContent=txt;
-  };
-  rec.onend=()=>{
-    listening=false; micBtn.classList.remove('live');
-    const q=transcriptEl.textContent.trim();
-    if(q){ ask(q); } else { setState('idle'); }
-  };
-  rec.onerror=ev=>{ listening=false; micBtn.classList.remove('live');
-    if(ev.error==='not-allowed') setState('idle','Mikro blockiert — erlaube den Zugriff'); else setState('idle'); };
+  if(!SR){hintEl.textContent='⚠ Dieser Browser kann kein Mikro-Sprechen — nutze Chrome.';return;}
+  rec=new SR();rec.lang=LS.lang;rec.interimResults=true;rec.continuous=false;
+  rec.onresult=e=>{let t='';for(let i=e.resultIndex;i<e.results.length;i++)t+=e.results[i][0].transcript;transcriptEl.textContent=t;};
+  rec.onend=()=>{listening=false;micBtn.classList.remove('live');const q=transcriptEl.textContent.trim();q?ask(q):setState('idle');};
+  rec.onerror=ev=>{listening=false;micBtn.classList.remove('live');setState('idle',ev.error==='not-allowed'?'Mikro blockiert — erlaube den Zugriff':'Bereit');};
 }
 function startListen(){
-  if(!LS.key){ openModal('Erst deinen Claude-Key eintragen 👇'); return; }
-  if(!rec){ initRec(); if(!rec) return; }
-  if(listening) return;
-  replyEl.textContent=''; transcriptEl.textContent='';
-  try{ rec.lang=LS.lang; rec.start(); listening=true; micBtn.classList.add('live'); setState('listen'); }
-  catch(_){}
+  if(!LS.key){openModal('Erst deinen Claude-Key eintragen 👇');return;}
+  if(!rec){initRec();if(!rec)return;}
+  if(listening)return; replyEl.textContent='';transcriptEl.textContent='';
+  try{rec.lang=LS.lang;rec.start();listening=true;micBtn.classList.add('live');setState('listen');}catch(_){}
 }
-function stopListen(){ if(rec&&listening){ try{rec.stop()}catch(_){} } }
+function stopListen(){if(rec&&listening){try{rec.stop()}catch(_){}}}
 
-/* ---------- Claude fragen ---------- */
+/* ============ Claude ============ */
 const history=[];
 async function ask(q){
-  transcriptEl.textContent=q; setState('think');
-  history.push({role:'user',content:q});
+  transcriptEl.textContent=q;setState('think');history.push({role:'user',content:q});
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{
-        'content-type':'application/json',
-        'x-api-key':LS.key,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({
-        model:LS.model, max_tokens:1024, system:LS.sys,
-        messages:history.slice(-12)
-      })
-    });
-    if(!r.ok){ const e=await r.text(); throw new Error(r.status+' '+e.slice(0,120)); }
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'content-type':'application/json','x-api-key':LS.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:LS.model,max_tokens:1024,system:LS.sys,messages:history.slice(-12)})});
+    if(!r.ok){const e=await r.text();throw new Error(r.status+' '+e.slice(0,120));}
     const data=await r.json();
-    const text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join(' ').trim() || '…';
-    history.push({role:'assistant',content:text});
-    replyEl.textContent=text; setState('speak'); speak(text);
-  }catch(err){
-    setState('idle','Fehler'); replyEl.textContent='⚠ '+err.message;
-    if((''+err).includes('401')) openModal('Key ungültig — bitte prüfen.');
-  }
+    const text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join(' ').trim()||'…';
+    history.push({role:'assistant',content:text});replyEl.textContent=text;setState('speak');speak(text);
+  }catch(err){setState('idle','Fehler');replyEl.textContent='⚠ '+err.message;if((''+err).includes('401'))openModal('Key ungültig — bitte prüfen.');}
 }
 
-/* ---------- Sprachausgabe ---------- */
+/* ============ TTS ============ */
 function speak(text){
-  if(LS.mute || !window.speechSynthesis){ setTimeout(()=>setState('idle'),400); return; }
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang=LS.lang; u.rate=1.03; u.pitch=0.95;
-  const vs=speechSynthesis.getVoices().filter(v=>v.lang.startsWith(LS.lang.slice(0,2)));
-  if(vs[0]) u.voice=vs[0];
-  u.onend=()=>setState('idle');
-  speechSynthesis.cancel(); speechSynthesis.speak(u);
+  if(LS.mute||!window.speechSynthesis){setTimeout(()=>setState('idle'),400);return;}
+  const u=new SpeechSynthesisUtterance(text);u.lang=LS.lang;u.rate=1.03;u.pitch=0.95;
+  const vs=speechSynthesis.getVoices().filter(v=>v.lang.startsWith(LS.lang.slice(0,2)));if(vs[0])u.voice=vs[0];
+  u.onend=()=>setState('idle');speechSynthesis.cancel();speechSynthesis.speak(u);
 }
 
-/* ---------- Mic-Button: Tippen ODER Halten ---------- */
-let holdTimer=null, held=false;
-micBtn.addEventListener('pointerdown',()=>{ held=false; holdTimer=setTimeout(()=>{held=true;holdMode=true;startListen();},220); });
-micBtn.addEventListener('pointerup',()=>{ clearTimeout(holdTimer);
-  if(held){ holdMode=false; stopListen(); }
-  else { listening?stopListen():startListen(); } });
-micBtn.addEventListener('pointerleave',()=>{ if(holdMode){ clearTimeout(holdTimer); stopListen(); holdMode=false; } });
+/* ============ Mic-Button ============ */
+let holdTimer=null,held=false;
+micBtn.addEventListener('pointerdown',()=>{held=false;holdTimer=setTimeout(()=>{held=true;holdMode=true;startListen();},220);});
+micBtn.addEventListener('pointerup',()=>{clearTimeout(holdTimer);if(held){holdMode=false;stopListen();}else{listening?stopListen():startListen();}});
+micBtn.addEventListener('pointerleave',()=>{if(holdMode){clearTimeout(holdTimer);stopListen();holdMode=false;}});
 
-/* ---------- Setup-Modal ---------- */
-function openModal(msg){ modal.classList.add('show');
-  $('#inKey').value=LS.key; $('#inName').value=LS.name; $('#inModel').value=LS.model;
-  $('#inSys').value=LS.sys; $('#inLang').value=LS.lang; $('#modalErr').textContent=msg||''; }
+/* ============ Setup ============ */
+function openModal(msg){modal.classList.add('show');$('#inKey').value=LS.key;$('#inName').value=LS.name;$('#inModel').value=LS.model;$('#inSys').value=LS.sys;$('#inLang').value=LS.lang;$('#modalErr').textContent=msg||'';}
 $('#settingsBtn').onclick=()=>openModal();
 $('#saveBtn').onclick=()=>{
   const k=$('#inKey').value.trim();
-  if(k && !k.startsWith('sk-ant-')){ $('#modalErr').textContent='Der Key sollte mit sk-ant- anfangen.'; return; }
-  LS.key=k; LS.name=$('#inName').value.trim()||'Z.E.R.O.'; LS.model=$('#inModel').value;
-  LS.sys=$('#inSys').value.trim(); LS.lang=$('#inLang').value;
-  localStorage.setItem('z_key',LS.key); localStorage.setItem('z_name',LS.name);
-  localStorage.setItem('z_model',LS.model); localStorage.setItem('z_sys',LS.sys);
-  localStorage.setItem('z_lang',LS.lang);
-  $('#astName').textContent=LS.name.toUpperCase();
-  connEl.textContent=LS.key?'CONNECTED':'OFFLINE';
-  if(rec) rec.lang=LS.lang;
-  modal.classList.remove('show');
-  if(LS.key){ setState('idle','Aktiviert — tippe aufs Mikro'); }
+  if(k&&!k.startsWith('sk-ant-')){$('#modalErr').textContent='Der Key sollte mit sk-ant- anfangen.';return;}
+  LS.key=k;LS.name=$('#inName').value.trim()||'Z.E.R.O.';LS.model=$('#inModel').value;LS.sys=$('#inSys').value.trim();LS.lang=$('#inLang').value;
+  localStorage.setItem('z_key',LS.key);localStorage.setItem('z_name',LS.name);localStorage.setItem('z_model',LS.model);localStorage.setItem('z_sys',LS.sys);localStorage.setItem('z_lang',LS.lang);
+  $('#astName').textContent=LS.name.toUpperCase();connEl.textContent=LS.key?'CONNECTED':'OFFLINE';if(rec)rec.lang=LS.lang;
+  modal.classList.remove('show');if(LS.key)setState('idle','Aktiviert — tippe aufs Mikro');
 };
-modal.addEventListener('click',e=>{ if(e.target===modal) modal.classList.remove('show'); });
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show');});
 
-/* ---------- Mute ---------- */
-function paintMute(){ $('#muteBtn').textContent = LS.mute?'🔇 Stumm':'🔊 Stimme'; }
-$('#muteBtn').onclick=()=>{ LS.mute=!LS.mute; localStorage.setItem('z_mute',LS.mute?'1':'0'); paintMute(); if(LS.mute) speechSynthesis.cancel(); };
+/* ============ Mute ============ */
+function paintMute(){$('#muteBtn').textContent=LS.mute?'🔇 Stumm':'🔊 Stimme';}
+$('#muteBtn').onclick=()=>{LS.mute=!LS.mute;localStorage.setItem('z_mute',LS.mute?'1':'0');paintMute();if(LS.mute)speechSynthesis.cancel();};
 
-/* ---------- Init ---------- */
-$('#astName').textContent=LS.name.toUpperCase();
-connEl.textContent=LS.key?'CONNECTED':'OFFLINE';
-paintMute(); initRec(); setState('idle');
-if(!LS.key) openModal('Willkommen. Trage deinen Claude-Key ein, dann kann ich sprechen.');
-if(window.speechSynthesis) speechSynthesis.onvoiceschanged=()=>{};
+/* ============ Init ============ */
+$('#astName').textContent=LS.name.toUpperCase();connEl.textContent=LS.key?'CONNECTED':'OFFLINE';
+paintMute();initRec();setState('idle');
+if(!LS.key)openModal('Willkommen. Trage deinen Claude-Key ein, dann kann ich sprechen.');
+if(window.speechSynthesis)speechSynthesis.onvoiceschanged=()=>{};
 </script>
 </body>
 </html>
