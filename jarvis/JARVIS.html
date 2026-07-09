@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Z.E.R.O. — dein KI-Assistent</title>
+<style>
+  :root{
+    --bg:#02060f; --bg2:#040b1c;
+    --cyan:#39d7ff; --cyan-dim:#1a6d86;
+    --ice:#bfeeff; --ink:#7fb7cc;
+    --grid:rgba(57,215,255,.06);
+    --panel:rgba(6,20,38,.55); --line:rgba(57,215,255,.22);
+    --live:#38ffb0; --idle:#4a6b78; --warn:#ffb347; --hot:#ff5a7a;
+    --glow:0 0 12px rgba(57,215,255,.55);
+    --font:"SF Mono","Cascadia Code","JetBrains Mono",Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ice);font-family:var(--font);-webkit-tap-highlight-color:transparent}
+  #stage{position:fixed;inset:0}
+  canvas{position:absolute;inset:0;width:100%;height:100%}
+  .scan{position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.14) 3px 4px);
+    mix-blend-mode:multiply;opacity:.5}
+  .vignette{position:fixed;inset:0;pointer-events:none;z-index:4;
+    background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.7) 100%)}
+
+  .hud{position:fixed;inset:0;z-index:10;pointer-events:none;padding:16px}
+  .corner{position:absolute;font-size:11px;letter-spacing:.12em;color:var(--cyan);text-shadow:var(--glow);text-transform:uppercase}
+  .tl{top:16px;left:18px}.tr{top:16px;right:18px;text-align:right}
+  .corner b{color:var(--ice);font-size:15px;letter-spacing:.28em}
+  .corner .sub{color:var(--ink);font-size:10px;margin-top:3px;letter-spacing:.16em}
+  .bracket::before,.bracket::after{content:"";position:absolute;width:14px;height:14px;border:1px solid var(--cyan);opacity:.6}
+  .tl.bracket::before{top:-6px;left:-8px;border-right:0;border-bottom:0}
+  .tr.bracket::after{top:-6px;right:-8px;border-left:0;border-bottom:0}
+
+  /* Cortex-Panel rechts */
+  .cortex{position:absolute;top:64px;right:18px;width:210px;pointer-events:none}
+  .cortex h3{font-size:10px;color:var(--ink);letter-spacing:.2em;margin-bottom:8px;text-align:right}
+  .row{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:3px 0;font-size:10.5px;letter-spacing:.08em}
+  .row .nm{color:var(--ink);min-width:96px;text-align:right;text-transform:uppercase}
+  .row .st{color:var(--idle);min-width:44px;text-align:left;font-size:9px}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--idle);flex:none}
+  .row.on .dot{background:var(--live);box-shadow:0 0 8px var(--live)}
+  .row.on .st{color:var(--live)}
+  .row.hot .dot{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  .row.hot .st{color:var(--cyan)}
+
+  /* linkes Status-Panel */
+  .sys{position:absolute;top:64px;left:18px;width:190px;pointer-events:none;font-size:10px}
+  .sys .bar{height:5px;border:1px solid var(--line);border-radius:3px;margin:4px 0 10px;overflow:hidden;background:rgba(0,0,0,.3)}
+  .sys .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));box-shadow:var(--glow);width:60%}
+  .sys .lbl{color:var(--ink);letter-spacing:.14em;text-transform:uppercase}
+
+  /* Zentraler Zustand + Transkript */
+  .center{position:absolute;left:0;right:0;bottom:120px;text-align:center;pointer-events:none;padding:0 24px}
+  .state{font-size:12px;letter-spacing:.35em;color:var(--cyan);text-shadow:var(--glow);text-transform:uppercase;margin-bottom:10px;min-height:16px}
+  .transcript{font-size:clamp(15px,2.4vw,22px);color:var(--ice);max-width:760px;margin:0 auto;line-height:1.4;min-height:1.4em;text-shadow:0 0 18px rgba(57,215,255,.25)}
+  .reply{font-size:clamp(13px,2vw,18px);color:var(--ink);max-width:720px;margin:10px auto 0;line-height:1.5;max-height:26vh;overflow:auto}
+
+  /* Steuerleiste unten */
+  .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;justify-content:center;gap:14px;padding:18px 16px 26px}
+  .mic{position:relative;width:74px;height:74px;border-radius:50%;border:1px solid var(--line);
+    background:radial-gradient(circle at 50% 40%,rgba(57,215,255,.16),rgba(4,11,28,.7));
+    color:var(--ice);font-family:var(--font);font-size:11px;letter-spacing:.1em;cursor:pointer;
+    display:grid;place-items:center;transition:transform .12s,box-shadow .2s;pointer-events:auto}
+  .mic svg{width:30px;height:30px;fill:var(--cyan);filter:drop-shadow(var(--glow))}
+  .mic:active{transform:scale(.94)}
+  .mic.live{box-shadow:0 0 0 0 rgba(56,255,176,.5);animation:pulse 1.3s infinite;border-color:var(--live)}
+  .mic.live svg{fill:var(--live)}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(56,255,176,.45)}70%{box-shadow:0 0 0 22px rgba(56,255,176,0)}100%{box-shadow:0 0 0 0 rgba(56,255,176,0)}}
+  .ctrlbtn{pointer-events:auto;background:var(--panel);border:1px solid var(--line);color:var(--ink);
+    font-family:var(--font);font-size:11px;letter-spacing:.08em;padding:10px 14px;border-radius:10px;cursor:pointer;text-transform:uppercase}
+  .ctrlbtn:hover{color:var(--cyan);border-color:var(--cyan)}
+  .hint{position:fixed;bottom:104px;left:0;right:0;text-align:center;font-size:10px;color:var(--idle);letter-spacing:.1em;z-index:20;pointer-events:none}
+
+  /* Settings */
+  .modal{position:fixed;inset:0;z-index:50;background:rgba(2,6,15,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.show{display:flex}
+  .card{width:min(440px,94vw);background:linear-gradient(180deg,var(--bg2),var(--bg));border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 0 40px rgba(57,215,255,.15)}
+  .card h2{font-size:14px;letter-spacing:.18em;color:var(--cyan);text-shadow:var(--glow);margin-bottom:4px;text-transform:uppercase}
+  .card p.d{font-size:11px;color:var(--ink);margin-bottom:16px;line-height:1.5}
+  .fld{margin-bottom:14px}
+  .fld label{display:block;font-size:10px;color:var(--ink);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px}
+  .fld input,.fld textarea,.fld select{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:8px;color:var(--ice);
+    font-family:var(--font);font-size:12px;padding:9px 11px;outline:none}
+  .fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(57,215,255,.15)}
+  .fld textarea{min-height:70px;resize:vertical;line-height:1.4}
+  .save{width:100%;margin-top:4px;background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));color:#02131b;font-weight:700;
+    border:0;border-radius:9px;padding:12px;font-family:var(--font);font-size:12px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
+  .save:active{transform:scale(.98)}
+  .card .note{font-size:10px;color:var(--idle);margin-top:12px;line-height:1.5}
+  .card a{color:var(--cyan)}
+  .err{color:var(--hot);font-size:11px;margin-top:10px;min-height:14px;text-align:center}
+  @media(max-width:560px){
+    .cortex{width:150px;top:60px}.row .nm{min-width:70px;font-size:9.5px}
+    .sys{display:none}.center{bottom:150px}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="net"></canvas></div>
+<div class="vignette"></div>
+<div class="scan"></div>
+
+<div class="hud">
+  <div class="corner tl bracket"><b id="astName">Z.E.R.O.</b><div class="sub">NEURAL CORE · <span id="conn">OFFLINE</span></div></div>
+  <div class="corner tr bracket"><b id="listenState">STANDBY</b><div class="sub" id="clock">--:--:--</div></div>
+
+  <div class="sys">
+    <div class="lbl">Core Load</div><div class="bar"><i id="barA" style="width:38%"></i></div>
+    <div class="lbl">Memory</div><div class="bar"><i id="barB" style="width:64%"></i></div>
+    <div class="lbl">Signal</div><div class="bar"><i id="barC" style="width:52%"></i></div>
+  </div>
+
+  <div class="cortex">
+    <h3>CORTEX STATUS</h3>
+    <div class="row" data-k="pre"><span class="nm">Prefrontal</span><span class="st">idle</span><span class="dot"></span></div>
+    <div class="row" data-k="mot"><span class="nm">Motor</span><span class="st">idle</span><span class="dot"></span></div>
+    <div class="row" data-k="con"><span class="nm">Concept</span><span class="st">idle</span><span class="dot"></span></div>
+    <div class="row" data-k="ass"><span class="nm">Association</span><span class="st">idle</span><span class="dot"></span></div>
+    <div class="row" data-k="pro"><span class="nm">Production</span><span class="st">idle</span><span class="dot"></span></div>
+    <div class="row" data-k="fea"><span class="nm">Feature</span><span class="st">idle</span><span class="dot"></span></div>
+    <div class="row" data-k="hip"><span class="nm">Hippocampus</span><span class="st">idle</span><span class="dot"></span></div>
+    <div class="row" data-k="lan"><span class="nm">Language</span><span class="st">idle</span><span class="dot"></span></div>
+    <div class="row" data-k="cer"><span class="nm">Cerebellum</span><span class="st">idle</span><span class="dot"></span></div>
+    <div class="row" data-k="tts"><span class="nm">TTS</span><span class="st">idle</span><span class="dot"></span></div>
+  </div>
+
+  <div class="center">
+    <div class="state" id="stateText">Tippe auf das Mikro und sprich</div>
+    <div class="transcript" id="transcript"></div>
+    <div class="reply" id="reply"></div>
+  </div>
+</div>
+
+<div class="hint" id="hint">Halte gedrückt zum Sprechen · oder tippe zum Starten/Stoppen</div>
+<div class="dock">
+  <button class="ctrlbtn" id="settingsBtn">⚙ Setup</button>
+  <button class="mic" id="micBtn" aria-label="Sprechen">
+    <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg>
+  </button>
+  <button class="ctrlbtn" id="muteBtn">🔊 Stimme</button>
+</div>
+
+<!-- Setup -->
+<div class="modal" id="modal">
+  <div class="card">
+    <h2>System-Setup</h2>
+    <p class="d">Damit dein Assistent denken kann, braucht er deinen Claude-Schlüssel. Er wird nur lokal in deinem Browser gespeichert — geht an niemanden sonst.</p>
+    <div class="fld"><label>Claude API-Key (sk-ant-…)</label><input id="inKey" type="password" placeholder="sk-ant-..." autocomplete="off"></div>
+    <div class="fld"><label>Name des Assistenten</label><input id="inName" type="text" placeholder="Z.E.R.O." maxlength="14"></div>
+    <div class="fld"><label>Modell</label>
+      <select id="inModel">
+        <option value="claude-opus-4-8">Claude Opus 4.8 — am schlausten</option>
+        <option value="claude-sonnet-4-6">Claude Sonnet 4.6 — schneller</option>
+        <option value="claude-haiku-4-5">Claude Haiku 4.5 — am schnellsten/günstig</option>
+      </select>
+    </div>
+    <div class="fld"><label>Persönlichkeit / Auftrag (System-Prompt)</label>
+      <textarea id="inSys" placeholder="Du bist mein persönlicher Assistent für meinen E-Com-Shop..."></textarea></div>
+    <div class="fld"><label>Sprache erkennen</label>
+      <select id="inLang"><option value="de-DE">Deutsch</option><option value="en-US">English</option></select></div>
+    <button class="save" id="saveBtn">Speichern & Aktivieren</button>
+    <div class="err" id="modalErr"></div>
+    <div class="note">Key holen: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys.<br>
+      Mikro & Stimme laufen am besten in Chrome (Handy & PC).</div>
+  </div>
+</div>
+
+<script>
+/* ---------- Persistenz ---------- */
+const LS = {
+  key:  localStorage.getItem('z_key')  || '',
+  name: localStorage.getItem('z_name') || 'Z.E.R.O.',
+  model:localStorage.getItem('z_model')|| 'claude-opus-4-8',
+  sys:  localStorage.getItem('z_sys')  || 'Du bist Z.E.R.O., ein ruhiger, extrem kompetenter persönlicher KI-Assistent im Stil von JARVIS. Antworte kurz, klar und auf Deutsch. Du hilfst beim Aufbau und Betrieb von E-Commerce-Shops: Marketing, Zahlen, Ideen, Entscheidungen. Sprich den Nutzer mit "Sir" oder direkt an, bleib sachlich und schnell.',
+  lang: localStorage.getItem('z_lang') || 'de-DE',
+  mute: localStorage.getItem('z_mute') === '1'
+};
+
+/* ---------- DOM ---------- */
+const $ = s=>document.querySelector(s);
+const micBtn=$('#micBtn'), stateText=$('#stateText'), transcriptEl=$('#transcript'),
+      replyEl=$('#reply'), listenState=$('#listenState'), connEl=$('#conn'),
+      modal=$('#modal'), hintEl=$('#hint');
+const rows = {}; document.querySelectorAll('.cortex .row').forEach(r=>rows[r.dataset.k]=r);
+
+/* ---------- Uhr ---------- */
+setInterval(()=>{ $('#clock').textContent = new Date().toLocaleTimeString('de-DE'); },1000);
+
+/* ---------- Cortex-Animation ---------- */
+function cortex(mode){
+  const map = {
+    idle:   [],
+    listen: ['lan','ass','fea'],
+    think:  ['pre','con','ass','hip','fea','mot'],
+    speak:  ['pro','tts','lan','cer']
+  };
+  const on = new Set(map[mode]||[]);
+  for(const k in rows){
+    const r=rows[k]; r.classList.remove('on','hot');
+    const st=r.querySelector('.st');
+    if(on.has(k)){ r.classList.add(mode==='think'?'hot':'on'); st.textContent = mode==='think'?'sync':'live'; }
+    else { st.textContent='idle'; }
+  }
+}
+
+/* ---------- Neuronales Netz (Canvas) ---------- */
+const cv=$('#net'), ctx=cv.getContext('2d');
+let W,H,DPR,nodes=[],edges=[],pulses=[],energy=0.25,hue=0;
+function resize(){ DPR=Math.min(devicePixelRatio||1,2); W=cv.width=innerWidth*DPR; H=cv.height=innerHeight*DPR; build(); }
+function build(){
+  nodes=[]; edges=[];
+  const N = innerWidth<560?70:120;
+  const cx=W/2, cy=H*0.47, R=Math.min(W,H)*0.34;
+  for(let i=0;i<N;i++){
+    // grob gehirn-/kopfförmig: radiale Wolke + Tendrils
+    const a=Math.random()*Math.PI*2;
+    const rr=Math.pow(Math.random(),0.6)*R*(0.55+0.6*Math.random());
+    const squish = 1 - 0.25*Math.cos(a); // leicht kopfförmig
+    nodes.push({
+      x:cx+Math.cos(a)*rr, y:cy+Math.sin(a)*rr*squish,
+      ox:0, oy:0, ph:Math.random()*Math.PI*2, sp:0.4+Math.random()*0.9,
+      r:(Math.random()*1.6+0.8)*DPR
+    });
+  }
+  // Kanten zu nächsten Nachbarn
+  for(let i=0;i<N;i++){
+    const d=[];
+    for(let j=0;j<N;j++) if(i!==j){ const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y; d.push([dx*dx+dy*dy,j]); }
+    d.sort((a,b)=>a[0]-b[0]);
+    const k=2+((Math.random()*2)|0);
+    for(let m=0;m<k;m++) edges.push([i,d[m][1]]);
+  }
+}
+function spawnPulse(){ if(edges.length) pulses.push({e:edges[(Math.random()*edges.length)|0], t:0, sp:0.012+Math.random()*0.03}); }
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  hue += 0.15;
+  const t=performance.now()*0.001;
+  // sanfte Bewegung
+  for(const n of nodes){ n.ox=Math.cos(t*n.sp+n.ph)*3*DPR; n.oy=Math.sin(t*n.sp*0.9+n.ph)*3*DPR; }
+  // Kanten
+  ctx.lineWidth=DPR*0.6;
+  for(const [i,j] of edges){
+    const a=nodes[i], b=nodes[j];
+    const g=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
+    const c1=`hsla(${190+20*Math.sin(hue*0.01+i)},100%,65%,0.10)`;
+    g.strokeStyle;
+    ctx.strokeStyle=c1;
+    ctx.beginPath(); ctx.moveTo(a.x+a.ox,a.y+a.oy); ctx.lineTo(b.x+b.ox,b.y+b.oy); ctx.stroke();
+  }
+  // Pulse entlang Kanten
+  for(let p=pulses.length-1;p>=0;p--){
+    const pu=pulses[p]; pu.t+=pu.sp*(0.5+energy*2);
+    if(pu.t>=1){ pulses.splice(p,1); continue; }
+    const a=nodes[pu.e[0]], b=nodes[pu.e[1]];
+    const x=a.x+(b.x-a.x)*pu.t, y=a.y+(b.y-a.y)*pu.t;
+    const hh=(hue*2+pu.e[0]*7)%360;
+    ctx.beginPath(); ctx.arc(x,y,DPR*2.2,0,7);
+    ctx.fillStyle=`hsla(${160+hh*0.2},100%,70%,0.9)`;
+    ctx.shadowColor=`hsla(${160+hh*0.2},100%,70%,1)`; ctx.shadowBlur=12*DPR;
+    ctx.fill(); ctx.shadowBlur=0;
+  }
+  // Knoten
+  for(const n of nodes){
+    const glow = 0.5+0.5*Math.sin(t*2+n.ph);
+    ctx.beginPath(); ctx.arc(n.x+n.ox,n.y+n.oy,n.r*(1+glow*0.6),0,7);
+    ctx.fillStyle=`hsla(190,100%,${60+glow*25}%,${0.5+glow*0.4})`;
+    ctx.shadowColor='rgba(57,215,255,.8)'; ctx.shadowBlur=6*DPR; ctx.fill(); ctx.shadowBlur=0;
+  }
+  // Puls-Spawnrate abhängig von Energie
+  if(Math.random()<0.15+energy*0.7) spawnPulse();
+  requestAnimationFrame(draw);
+}
+addEventListener('resize',resize); resize(); draw();
+
+/* ---------- Zustände ---------- */
+function setState(mode,label){
+  cortex(mode);
+  energy = mode==='think'?1 : mode==='speak'?0.7 : mode==='listen'?0.5 : 0.25;
+  stateText.textContent = label || {idle:'Bereit',listen:'Ich höre…',think:'Ich denke nach…',speak:'Antwort läuft…'}[mode];
+  listenState.textContent = {idle:'STANDBY',listen:'LISTENING',think:'PROCESSING',speak:'SPEAKING'}[mode];
+}
+
+/* ---------- Spracherkennung ---------- */
+const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null, listening=false, holdMode=false;
+function initRec(){
+  if(!SR){ hintEl.textContent='⚠ Dein Browser kann kein Mikro-Sprechen — nutze Chrome. (Tippen zum Text-Chat geht trotzdem via Setup.)'; return; }
+  rec=new SR(); rec.lang=LS.lang; rec.interimResults=true; rec.continuous=false;
+  rec.onresult=e=>{
+    let txt=''; for(let i=e.resultIndex;i<e.results.length;i++) txt+=e.results[i][0].transcript;
+    transcriptEl.textContent=txt;
+  };
+  rec.onend=()=>{
+    listening=false; micBtn.classList.remove('live');
+    const q=transcriptEl.textContent.trim();
+    if(q){ ask(q); } else { setState('idle'); }
+  };
+  rec.onerror=ev=>{ listening=false; micBtn.classList.remove('live');
+    if(ev.error==='not-allowed') setState('idle','Mikro blockiert — erlaube den Zugriff'); else setState('idle'); };
+}
+function startListen(){
+  if(!LS.key){ openModal('Erst deinen Claude-Key eintragen 👇'); return; }
+  if(!rec){ initRec(); if(!rec) return; }
+  if(listening) return;
+  replyEl.textContent=''; transcriptEl.textContent='';
+  try{ rec.lang=LS.lang; rec.start(); listening=true; micBtn.classList.add('live'); setState('listen'); }
+  catch(_){}
+}
+function stopListen(){ if(rec&&listening){ try{rec.stop()}catch(_){} } }
+
+/* ---------- Claude fragen ---------- */
+const history=[];
+async function ask(q){
+  transcriptEl.textContent=q; setState('think');
+  history.push({role:'user',content:q});
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'content-type':'application/json',
+        'x-api-key':LS.key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:LS.model, max_tokens:1024, system:LS.sys,
+        messages:history.slice(-12)
+      })
+    });
+    if(!r.ok){ const e=await r.text(); throw new Error(r.status+' '+e.slice(0,120)); }
+    const data=await r.json();
+    const text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join(' ').trim() || '…';
+    history.push({role:'assistant',content:text});
+    replyEl.textContent=text; setState('speak'); speak(text);
+  }catch(err){
+    setState('idle','Fehler'); replyEl.textContent='⚠ '+err.message;
+    if((''+err).includes('401')) openModal('Key ungültig — bitte prüfen.');
+  }
+}
+
+/* ---------- Sprachausgabe ---------- */
+function speak(text){
+  if(LS.mute || !window.speechSynthesis){ setTimeout(()=>setState('idle'),400); return; }
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=LS.lang; u.rate=1.03; u.pitch=0.95;
+  const vs=speechSynthesis.getVoices().filter(v=>v.lang.startsWith(LS.lang.slice(0,2)));
+  if(vs[0]) u.voice=vs[0];
+  u.onend=()=>setState('idle');
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+/* ---------- Mic-Button: Tippen ODER Halten ---------- */
+let holdTimer=null, held=false;
+micBtn.addEventListener('pointerdown',()=>{ held=false; holdTimer=setTimeout(()=>{held=true;holdMode=true;startListen();},220); });
+micBtn.addEventListener('pointerup',()=>{ clearTimeout(holdTimer);
+  if(held){ holdMode=false; stopListen(); }
+  else { listening?stopListen():startListen(); } });
+micBtn.addEventListener('pointerleave',()=>{ if(holdMode){ clearTimeout(holdTimer); stopListen(); holdMode=false; } });
+
+/* ---------- Setup-Modal ---------- */
+function openModal(msg){ modal.classList.add('show');
+  $('#inKey').value=LS.key; $('#inName').value=LS.name; $('#inModel').value=LS.model;
+  $('#inSys').value=LS.sys; $('#inLang').value=LS.lang; $('#modalErr').textContent=msg||''; }
+$('#settingsBtn').onclick=()=>openModal();
+$('#saveBtn').onclick=()=>{
+  const k=$('#inKey').value.trim();
+  if(k && !k.startsWith('sk-ant-')){ $('#modalErr').textContent='Der Key sollte mit sk-ant- anfangen.'; return; }
+  LS.key=k; LS.name=$('#inName').value.trim()||'Z.E.R.O.'; LS.model=$('#inModel').value;
+  LS.sys=$('#inSys').value.trim(); LS.lang=$('#inLang').value;
+  localStorage.setItem('z_key',LS.key); localStorage.setItem('z_name',LS.name);
+  localStorage.setItem('z_model',LS.model); localStorage.setItem('z_sys',LS.sys);
+  localStorage.setItem('z_lang',LS.lang);
+  $('#astName').textContent=LS.name.toUpperCase();
+  connEl.textContent=LS.key?'CONNECTED':'OFFLINE';
+  if(rec) rec.lang=LS.lang;
+  modal.classList.remove('show');
+  if(LS.key){ setState('idle','Aktiviert — tippe aufs Mikro'); }
+};
+modal.addEventListener('click',e=>{ if(e.target===modal) modal.classList.remove('show'); });
+
+/* ---------- Mute ---------- */
+function paintMute(){ $('#muteBtn').textContent = LS.mute?'🔇 Stumm':'🔊 Stimme'; }
+$('#muteBtn').onclick=()=>{ LS.mute=!LS.mute; localStorage.setItem('z_mute',LS.mute?'1':'0'); paintMute(); if(LS.mute) speechSynthesis.cancel(); };
+
+/* ---------- Init ---------- */
+$('#astName').textContent=LS.name.toUpperCase();
+connEl.textContent=LS.key?'CONNECTED':'OFFLINE';
+paintMute(); initRec(); setState('idle');
+if(!LS.key) openModal('Willkommen. Trage deinen Claude-Key ein, dann kann ich sprechen.');
+if(window.speechSynthesis) speechSynthesis.onvoiceschanged=()=>{};
+</script>
+</body>
+</html>
