@@ -64,7 +64,15 @@
   .ctrlbtn{pointer-events:auto;background:var(--panel);border:1px solid var(--line);color:var(--ink);
     font-family:var(--font);font-size:11px;letter-spacing:.08em;padding:11px 15px;border-radius:11px;cursor:pointer;text-transform:uppercase}
   .ctrlbtn:hover{color:var(--cyan);border-color:var(--cyan)}
-  .hint{position:fixed;bottom:108px;left:0;right:0;text-align:center;font-size:10px;color:var(--idle);letter-spacing:.1em;z-index:20;pointer-events:none}
+  .typebar{position:fixed;left:0;right:0;bottom:104px;z-index:20;display:flex;justify-content:center;gap:8px;padding:0 16px}
+  .typebar input{width:min(560px,92vw);background:rgba(3,12,30,.75);border:1px solid var(--line);border-radius:24px;
+    color:var(--ice);font-family:var(--font);font-size:13px;padding:12px 16px;outline:none;pointer-events:auto}
+  .typebar input:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(79,220,255,.15)}
+  .typebar input::placeholder{color:var(--idle)}
+  .typebar button{pointer-events:auto;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);
+    background:radial-gradient(circle at 50% 40%,rgba(79,220,255,.2),rgba(4,11,28,.7));color:var(--cyan);
+    font-size:16px;cursor:pointer;flex:none}
+  .typebar button:active{transform:scale(.94)}
 
   .modal{position:fixed;inset:0;z-index:50;background:rgba(1,5,18,.84);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:20px}
   .modal.show{display:flex}
@@ -115,13 +123,16 @@
   </div>
 
   <div class="center">
-    <div class="state" id="stateText">Tippe auf das Mikro und sprich</div>
+    <div class="state" id="stateText">Schreib unten rein oder drück das Mikro</div>
     <div class="transcript" id="transcript"></div>
     <div class="reply" id="reply"></div>
   </div>
 </div>
 
-<div class="hint" id="hint">Halte gedrückt zum Sprechen · oder tippe zum Starten/Stoppen</div>
+<div class="typebar" id="typebar">
+  <input id="typeIn" type="text" placeholder="Schreib deinem Assistenten…  (Enter zum Senden)" autocomplete="off">
+  <button id="sendBtn" aria-label="Senden">➤</button>
+</div>
 <div class="dock">
   <button class="ctrlbtn" id="settingsBtn">⚙ Setup</button>
   <button class="mic" id="micBtn" aria-label="Sprechen">
@@ -164,7 +175,7 @@ const LS = {
 };
 const $=s=>document.querySelector(s);
 const micBtn=$('#micBtn'),stateText=$('#stateText'),transcriptEl=$('#transcript'),replyEl=$('#reply'),
-      listenState=$('#listenState'),connEl=$('#conn'),modal=$('#modal'),hintEl=$('#hint');
+      listenState=$('#listenState'),connEl=$('#conn'),modal=$('#modal');
 const rows={}; document.querySelectorAll('.cortex .row').forEach(r=>rows[r.dataset.k]=r);
 setInterval(()=>{$('#clock').textContent=new Date().toLocaleTimeString('de-DE')},1000);
 
@@ -313,7 +324,7 @@ function setState(mode,label){
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let rec=null,listening=false,holdMode=false;
 function initRec(){
-  if(!SR){hintEl.textContent='⚠ Dieser Browser kann kein Mikro-Sprechen — nutze Chrome.';return;}
+  if(!SR){ document.querySelector('#typeIn').placeholder='Kein Mikro hier (iPhone) — schreib einfach rein…'; return; }
   rec=new SR();rec.lang=LS.lang;rec.interimResults=true;rec.continuous=false;
   rec.onresult=e=>{let t='';for(let i=e.resultIndex;i<e.results.length;i++)t+=e.results[i][0].transcript;transcriptEl.textContent=t;};
   rec.onend=()=>{listening=false;micBtn.classList.remove('live');const q=transcriptEl.textContent.trim();q?ask(q):setState('idle');};
@@ -355,6 +366,16 @@ let holdTimer=null,held=false;
 micBtn.addEventListener('pointerdown',()=>{held=false;holdTimer=setTimeout(()=>{held=true;holdMode=true;startListen();},220);});
 micBtn.addEventListener('pointerup',()=>{clearTimeout(holdTimer);if(held){holdMode=false;stopListen();}else{listening?stopListen():startListen();}});
 micBtn.addEventListener('pointerleave',()=>{if(holdMode){clearTimeout(holdTimer);stopListen();holdMode=false;}});
+
+/* ============ Tipp-Feld ============ */
+const typeIn=$('#typeIn');
+function sendTyped(){
+  const q=typeIn.value.trim(); if(!q) return;
+  if(!LS.key){ openModal('Erst deinen Claude-Key eintragen 👇'); return; }
+  typeIn.value=''; replyEl.textContent=''; ask(q);
+}
+$('#sendBtn').onclick=sendTyped;
+typeIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); sendTyped(); } });
 
 /* ============ Setup ============ */
 function openModal(msg){modal.classList.add('show');$('#inKey').value=LS.key;$('#inName').value=LS.name;$('#inModel').value=LS.model;$('#inSys').value=LS.sys;$('#inLang').value=LS.lang;$('#modalErr').textContent=msg||'';}
