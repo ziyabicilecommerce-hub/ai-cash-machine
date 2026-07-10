@@ -57,3 +57,7 @@ Keine Fake-Reviews/Fake-Scarcity hinzugefügt.
 - **Newsletter:** Seitliches "CLUB"-Watermark, schräger Rabatt-Chip
 - **FAQ:** Startnummern 01–06 in Orange vor jeder Frage, Orange-Kante bei Hover, "FAQ"-Watermark
 - Alle Watermarks/Effekte auf Mobil deaktiviert (Performance bleibt)
+
+## V6 — 3D-Hintergrund
+- **Three.js 3D-Szene im Hero:** rotierender Volt-Drahtgitter-Torus-Knoten + orangener Ikosaeder-Kristall + 50 schwebende Volt-Partikel, Kamera folgt sanft der Maus
+- Nur Desktop (>900px, pointer:fine), lazy nach Idle geladen (Handy lädt die ~600KB nie), pausiert außerhalb des Viewports & bei verstecktem Tab, respektiert reduced-motion
