@@ -49,3 +49,11 @@ Keine Fake-Reviews/Fake-Scarcity hinzugefügt.
 ## V4 — FINAL: Announcement-Ticker + Speed-Paket
 - **Announcement-Bar V3:** Fester Volt-Flag "GAME ON" links + endlos laufender Ticker (Gratis Versand ▸ 6–10 Werktage ▸ 30 Tage Geld-zurück ▸ SSL ▸ 10% Newsletter), Fade-Kanten, transform-only (mobilfreundlich), reduced-motion-safe
 - **Speed-Paket:** F1-Loader nur beim ersten Besuch pro Session (sessionStorage) — Folgeseiten laden sofort; Reveals 0.5s, Stagger enger, Buttons 0.2s, Karten 0.22s, Marquee-Bänder schneller (17s/21s)
+
+## V5 — Spannungs-Paket (alle Sections aufgedreht)
+- **Stats-Counter:** Panel mit Riesen-Watermark "POWER", Grid-Textur, 4 Bento-Karten mit abgeschnittenen Ecken, hochzählenden Anton-Zahlen (Count-Up), Startnummern 01–04, animierter Volt-Orange-Balken bei Hover
+- **Features-Bar:** Bento-Karten mit Outline-Startnummern, Volt-Icon-Chips (kippen bei Hover auf Volt-Füllung), Orange-Ecke bei Hover
+- **CTA-Banner:** Poster-Format — Riesen-Outline-Watermark "LEVEL UP" (rotiert), Ecken-Brackets Volt/Orange, XXL-Titel, pulsierender Mega-CTA, Hazard-Strip
+- **Newsletter:** Seitliches "CLUB"-Watermark, schräger Rabatt-Chip
+- **FAQ:** Startnummern 01–06 in Orange vor jeder Frage, Orange-Kante bei Hover, "FAQ"-Watermark
+- Alle Watermarks/Effekte auf Mobil deaktiviert (Performance bleibt)
