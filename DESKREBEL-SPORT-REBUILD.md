@@ -61,3 +61,13 @@ Keine Fake-Reviews/Fake-Scarcity hinzugefügt.
 ## V6 — 3D-Hintergrund
 - **Three.js 3D-Szene im Hero:** rotierender Volt-Drahtgitter-Torus-Knoten + orangener Ikosaeder-Kristall + 50 schwebende Volt-Partikel, Kamera folgt sanft der Maus
 - Nur Desktop (>900px, pointer:fine), lazy nach Idle geladen (Handy lädt die ~600KB nie), pausiert außerhalb des Viewports & bei verstecktem Tab, respektiert reduced-motion
+
+## V7 — Sport-3D auf JEDER Seite, jede anders
+- Globales Three.js-System im Layout (statt nur Hero), Szene je nach Seitentyp:
+  - **Startseite:** springender Volt-Drahtgitter-Ball (mit Squash beim Aufprall) + rotierende Orange-Hantel + Speed-Linien
+  - **Produktseite:** große Hantel macht Curls (schwingt + hebt) + Volt-Energie-Ring
+  - **Kollektion:** Speed-Tunnel (90 schnelle Linien) + rotierende Renn-Ringe, Ball läuft auf der Bahn
+  - **Warenkorb:** schwingende Orange-Kettlebell + Volt-Ring
+  - **Alle anderen Seiten:** kreisender Ball + pulsierender Volt-Ring
+- Hero-eigener Tech-3D-Canvas (Torus-Knoten) entfernt; Hero-Hintergrund halbtransparent, damit die globale Szene durchscheint
+- Guards überall: nur Desktop >900px, lazy nach Idle, Pause bei verstecktem Tab, reduced-motion
