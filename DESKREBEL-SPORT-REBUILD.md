@@ -39,3 +39,9 @@ Keine Fake-Reviews/Fake-Scarcity hinzugefügt.
 - **Typo-Upgrade:** Barlow Condensed für Buttons/Nav (Sport-Sekundärschrift zu Anton)
 - **Animations-Engine:** Count-Up-Zahlen (data-countup), gestaffelte Reveals, prefers-reduced-motion überall respektiert
 - **Lieferzeit überall 6–10 Werktage** (EU 10–14): Announcement, Hero, Ticker, Features, Social-Proof, Stats, Brand-Promise, FAQ, Produktseite
+
+## V3 — Mobile-Rettung + Finish
+- **Handy-Absturz gefixt:** Vollbild-Canvas läuft nur noch auf Desktop (>900px, pointer:fine); alle backdrop-filter-Blurs, animierte drop-shadows/Filter, Parallax, Streaks, Watermark, Grain auf Mobil deaktiviert (GPU-Killer). Desktop behält alles. Canvas pausiert zusätzlich bei verstecktem Tab.
+- **„Sofort kaufen" entfernt** (Produktseite, per display:none global)
+- **Header mobil abgesichert:** solide Farbe statt Blur, höhere CSS-Spezifität erzwingt Sichtbarkeit
+- **Sport-Boost:** Hazard-Tape-Streifen (Volt/Orange diagonal) an Features-Bar & Footer, Section-Labels jetzt schräg (skewX) in Barlow Condensed
