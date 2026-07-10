@@ -30,3 +30,12 @@ Duplikat vom 1. Juli) vom Gold/Mint-Luxus-Look auf einen Sport-Performance-Look.
 
 Warenkorb, Produktseite und Popups (Welcome/Morning) werden über `dr-sport.css` mitgezogen.
 Keine Fake-Reviews/Fake-Scarcity hinzugefügt.
+
+## V2 — ui-ux-pro-max Pass (100M Polish + Fixes)
+- **Header-Fix:** `.dr-header-force` erzwingt Sichtbarkeit (fixed, Glas-Blur, z-index 1001, animierte Volt-Linie unten) — Header kann nicht mehr verschwinden
+- **Hero V5:** Echtes Produktbild rechts (Product-Picker-Setting + Auto-Fallback), schwebend mit Orbit-Ringen, Scan-Line, Preis-Karte mit MVP-Tag; choreografierte Eingangsanimation (Index → Tag → Zeile 1 → Zeile 2 → Sub → Buttons → Stats)
+- **Canvas-Hintergrund jetzt auf ALLEN Seiten** (auch Startseite: Volt-Konstellation)
+- **Produktseite WOW:** Conic-Glow-Galerie, Ecken-Brackets, Scan-Line, Bild-Crossfade bei Thumbnail-Wechsel, pulsierender Kauf-Button mit Shine, Sticky-Kaufleiste (mobil) via IntersectionObserver
+- **Typo-Upgrade:** Barlow Condensed für Buttons/Nav (Sport-Sekundärschrift zu Anton)
+- **Animations-Engine:** Count-Up-Zahlen (data-countup), gestaffelte Reveals, prefers-reduced-motion überall respektiert
+- **Lieferzeit überall 6–10 Werktage** (EU 10–14): Announcement, Hero, Ticker, Features, Social-Proof, Stats, Brand-Promise, FAQ, Produktseite
