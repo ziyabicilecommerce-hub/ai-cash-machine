@@ -71,3 +71,9 @@ Keine Fake-Reviews/Fake-Scarcity hinzugefügt.
   - **Alle anderen Seiten:** kreisender Ball + pulsierender Volt-Ring
 - Hero-eigener Tech-3D-Canvas (Torus-Knoten) entfernt; Hero-Hintergrund halbtransparent, damit die globale Szene durchscheint
 - Guards überall: nur Desktop >900px, lazy nach Idle, Pause bei verstecktem Tab, reduced-motion
+
+## V8 — Eigene Identität pro Seite (keine Seite gleich)
+- **Produktseite = BLAZE EDITION:** komplette Seite kippt auf Orange als Hauptfarbe (Volt wird Akzent) via :root-Override in der Section, "TRAIN"-Outline-Watermark, Blaze-Edition-Chip, orange Galerie-Effekte, weißer ATC-Text
+- **Kollektion = RACE DAY / ARENA:** großer Arena-Header mit "ARENA"-Watermark, oranger Schräg-Slice, Riesen-Anton-Titel, Produktzahl als Volt-Startnummer ("X Produkte am Start"), Hazard-Streifen unterm Header
+- **Warenkorb = FINISH LINE:** Zielflaggen-Checker-Band oben + im Summary-Panel, "FINISH"-Watermark, oranges "FINAL LAP"-Label, Checkout-Button heißt "ZUR ZIELLINIE →", abgeschrägtes Summary-Panel
+- Startseite bleibt Volt-dominant → jede Hauptseite hat jetzt eine eigene Farb-/Design-Identität + eigene 3D-Szene
