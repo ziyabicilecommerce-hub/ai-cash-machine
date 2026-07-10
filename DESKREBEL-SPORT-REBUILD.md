@@ -45,3 +45,7 @@ Keine Fake-Reviews/Fake-Scarcity hinzugefügt.
 - **„Sofort kaufen" entfernt** (Produktseite, per display:none global)
 - **Header mobil abgesichert:** solide Farbe statt Blur, höhere CSS-Spezifität erzwingt Sichtbarkeit
 - **Sport-Boost:** Hazard-Tape-Streifen (Volt/Orange diagonal) an Features-Bar & Footer, Section-Labels jetzt schräg (skewX) in Barlow Condensed
+
+## V4 — FINAL: Announcement-Ticker + Speed-Paket
+- **Announcement-Bar V3:** Fester Volt-Flag "GAME ON" links + endlos laufender Ticker (Gratis Versand ▸ 6–10 Werktage ▸ 30 Tage Geld-zurück ▸ SSL ▸ 10% Newsletter), Fade-Kanten, transform-only (mobilfreundlich), reduced-motion-safe
+- **Speed-Paket:** F1-Loader nur beim ersten Besuch pro Session (sessionStorage) — Folgeseiten laden sofort; Reveals 0.5s, Stagger enger, Buttons 0.2s, Karten 0.22s, Marquee-Bänder schneller (17s/21s)
