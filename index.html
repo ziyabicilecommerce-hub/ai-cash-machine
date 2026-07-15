@@ -254,6 +254,17 @@
   .icon-btn.on{background:rgba(52,245,162,.12);border-color:var(--green)}
   footer{border-top:1px solid var(--line2);padding:36px clamp(16px,4vw,48px);text-align:center;color:var(--mut2);font-size:12.5px;font-family:var(--mono)}
   footer b{color:var(--green)}
+
+  /* ---------- mobile perf: cut GPU/battery load that crashes mobile tabs ---------- */
+  @media(max-width:760px), (hover:none){
+    nav{backdrop-filter:none;background:rgba(4,7,12,.94)}
+    .beam{display:none}
+    .grid{animation:none}
+    .scanline{display:none}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms!important;animation-iteration-count:1!important}
+  }
 </style>
 </head>
 <body>
@@ -625,6 +636,19 @@ Was bauen wir heute? 🚀</div>
 </footer>
 
 <script>
+/* ============ MOBILE PERF: pause SVG animations when tab hidden ============ */
+(function () {
+  const robotSvg = document.querySelector('svg.robot');
+  if (!robotSvg || typeof robotSvg.pauseAnimations !== 'function') return;
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      robotSvg.pauseAnimations();
+    } else {
+      robotSvg.unpauseAnimations();
+    }
+  });
+})();
+
 /* ============ AI ENGINE ============ */
 async function askAI(system, user, maxTokens = 1600) {
   const apiUrl = window.location.hostname === 'localhost'
