@@ -298,7 +298,7 @@
   <div class="core-wrap">
     <div class="core">
       <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
-      <svg class="robot" viewBox="0 0 300 440" fill="none">
+      <svg class="robot" viewBox="0 0 300 440" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs>
           <radialGradient id="bgGlow" cx=".5" cy=".45" r=".55">
             <stop offset="0" stop-color="rgba(52,245,162,.30)"/><stop offset=".6" stop-color="rgba(61,220,255,.10)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/>
@@ -371,11 +371,17 @@
         <circle cx="58" cy="348" r="1.6" fill="#3ddcff" opacity=".5"><animate attributeName="cy" values="348;376;348" dur="7.5s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;.05;.5" dur="7.5s" repeatCount="indefinite"/></circle>
 
         <!-- BODY: wide aura pass -->
-        <use href="#bod" stroke="url(#rim)" stroke-width="11" filter="url(#b8)" opacity=".30"/>
+        <g stroke="url(#rim)" stroke-width="11" filter="url(#b8)" opacity=".30">
+          <use xlink:href="#bod"/>
+        </g>
         <!-- BODY: tight glow pass -->
-        <use href="#bod" fill="#060a0f" stroke="url(#rim)" stroke-width="4.5" filter="url(#b3)" opacity=".95"/>
+        <g fill="#060a0f" stroke="url(#rim)" stroke-width="4.5" filter="url(#b3)" opacity=".95">
+          <use xlink:href="#bod"/>
+        </g>
         <!-- BODY: crisp pass (re-fills on top, leaves outer glow as backlight) -->
-        <use href="#bod" fill="url(#bodyD)" stroke="rgba(190,255,230,.45)" stroke-width="1"/>
+        <g fill="url(#bodyD)" stroke="rgba(190,255,230,.45)" stroke-width="1">
+          <use xlink:href="#bod"/>
+        </g>
 
         <!-- panel detail lines -->
         <g stroke="rgba(140,240,255,.20)" stroke-width="1" fill="none">
