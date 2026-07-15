@@ -96,12 +96,11 @@
 
   /* ---------- hero visual: AI core ---------- */
   .core-wrap{position:relative;height:min(560px,70vw);display:flex;align-items:center;justify-content:center}
-  .core{position:relative;width:190px;height:190px;display:flex;align-items:center;justify-content:center}
-  .core .nucleus{width:104px;height:104px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%,#bffce4,var(--green) 45%,#0b6b46 90%);
-    box-shadow:0 0 60px rgba(52,245,162,.6),0 0 140px rgba(61,220,255,.25),inset 0 0 30px rgba(255,255,255,.35);
-    animation:breathe 3.2s ease-in-out infinite}
-  @keyframes breathe{50%{transform:scale(1.07);box-shadow:0 0 90px rgba(52,245,162,.8),0 0 180px rgba(61,220,255,.35),inset 0 0 30px rgba(255,255,255,.35)}}
+  .core{position:relative;width:230px;height:230px;display:flex;align-items:center;justify-content:center}
+  .robot{position:absolute;left:50%;top:50%;height:min(420px,64vw);transform:translate(-50%,-50%);
+    filter:drop-shadow(0 0 26px rgba(52,245,162,.35)) drop-shadow(0 0 60px rgba(61,220,255,.15));
+    animation:botFloat 5s ease-in-out infinite;z-index:2}
+  @keyframes botFloat{50%{transform:translate(-50%,-53%)}}
   .ring{position:absolute;border-radius:50%;border:1px solid rgba(52,245,162,.35);inset:0;animation:spin 9s linear infinite}
   .ring.r2{inset:-34px;border-color:rgba(61,220,255,.25);border-style:dashed;animation-duration:16s;animation-direction:reverse}
   .ring.r3{inset:-72px;border-color:rgba(91,140,255,.18);animation-duration:26s}
@@ -288,7 +287,86 @@
   <div class="core-wrap">
     <div class="core">
       <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
-      <div class="nucleus"></div>
+      <svg class="robot" viewBox="0 0 220 364" fill="none">
+        <defs>
+          <linearGradient id="bodyG" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#39485a"/><stop offset=".55" stop-color="#1a2431"/><stop offset="1" stop-color="#0b1219"/>
+          </linearGradient>
+          <linearGradient id="rimG" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#34f5a2"/><stop offset="1" stop-color="#3ddcff"/>
+          </linearGradient>
+          <radialGradient id="coreG" cx=".4" cy=".35" r=".9">
+            <stop offset="0" stop-color="#c8ffe9"/><stop offset=".5" stop-color="#34f5a2"/><stop offset="1" stop-color="#0a5c3d"/>
+          </radialGradient>
+          <linearGradient id="visorG" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#34f5a2"/><stop offset="1" stop-color="#3ddcff"/>
+          </linearGradient>
+        </defs>
+        <!-- ground glow -->
+        <ellipse cx="110" cy="348" rx="62" ry="9" fill="rgba(52,245,162,.16)">
+          <animate attributeName="rx" values="62;70;62" dur="5s" repeatCount="indefinite"/>
+        </ellipse>
+        <!-- antenna -->
+        <line x1="110" y1="18" x2="110" y2="8" stroke="url(#rimG)" stroke-width="2"/>
+        <circle cx="110" cy="6" r="3.2" fill="#34f5a2">
+          <animate attributeName="opacity" values="1;.3;1" dur="1.6s" repeatCount="indefinite"/>
+        </circle>
+        <!-- head -->
+        <rect x="82" y="18" width="56" height="46" rx="23" fill="url(#bodyG)" stroke="url(#rimG)" stroke-width="1.4"/>
+        <circle cx="79" cy="41" r="4.5" fill="#101822" stroke="#34f5a2" stroke-width="1"/>
+        <circle cx="141" cy="41" r="4.5" fill="#101822" stroke="#3ddcff" stroke-width="1"/>
+        <!-- visor -->
+        <rect x="90" y="31" width="40" height="19" rx="9.5" fill="#04101a" stroke="rgba(61,220,255,.5)" stroke-width="1"/>
+        <circle cx="102" cy="40.5" r="3.6" fill="url(#visorG)">
+          <animate attributeName="opacity" values="1;1;.15;1" keyTimes="0;.85;.92;1" dur="3.4s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="118" cy="40.5" r="3.6" fill="url(#visorG)">
+          <animate attributeName="opacity" values="1;1;.15;1" keyTimes="0;.85;.92;1" dur="3.4s" repeatCount="indefinite"/>
+        </circle>
+        <!-- neck -->
+        <rect x="101" y="63" width="18" height="10" rx="4" fill="#101822" stroke="rgba(52,245,162,.3)" stroke-width="1"/>
+        <!-- shoulder bar -->
+        <rect x="66" y="72" width="88" height="18" rx="9" fill="url(#bodyG)" stroke="url(#rimG)" stroke-width="1.3"/>
+        <!-- chest -->
+        <path d="M76 84 L144 84 L137 150 Q110 161 83 150 Z" fill="url(#bodyG)" stroke="url(#rimG)" stroke-width="1.3"/>
+        <path d="M84 94 L136 94" stroke="rgba(61,220,255,.25)" stroke-width="1"/>
+        <path d="M87 134 L133 134" stroke="rgba(52,245,162,.2)" stroke-width="1"/>
+        <!-- chest core -->
+        <circle cx="110" cy="114" r="16" fill="none" stroke="rgba(52,245,162,.45)" stroke-width="1.4">
+          <animate attributeName="r" values="16;19;16" dur="2.6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".8;.25;.8" dur="2.6s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="110" cy="114" r="11" fill="url(#coreG)">
+          <animate attributeName="r" values="11;12.5;11" dur="2.6s" repeatCount="indefinite"/>
+        </circle>
+        <!-- abdomen -->
+        <rect x="92" y="156" width="36" height="24" rx="9" fill="url(#bodyG)" stroke="rgba(94,234,212,.35)" stroke-width="1.2"/>
+        <!-- shoulder joints -->
+        <circle cx="62" cy="82" r="11" fill="#141e2a" stroke="url(#rimG)" stroke-width="1.3"/>
+        <circle cx="158" cy="82" r="11" fill="#141e2a" stroke="url(#rimG)" stroke-width="1.3"/>
+        <!-- arms -->
+        <rect x="50" y="92" width="17" height="44" rx="8.5" fill="url(#bodyG)" stroke="rgba(94,234,212,.35)" stroke-width="1.2" transform="rotate(7 58 92)"/>
+        <rect x="153" y="92" width="17" height="44" rx="8.5" fill="url(#bodyG)" stroke="rgba(94,234,212,.35)" stroke-width="1.2" transform="rotate(-7 162 92)"/>
+        <circle cx="52" cy="142" r="7.5" fill="#141e2a" stroke="rgba(52,245,162,.5)" stroke-width="1.2"/>
+        <circle cx="168" cy="142" r="7.5" fill="#141e2a" stroke="rgba(52,245,162,.5)" stroke-width="1.2"/>
+        <rect x="43" y="148" width="15" height="42" rx="7.5" fill="url(#bodyG)" stroke="rgba(94,234,212,.35)" stroke-width="1.2" transform="rotate(4 50 148)"/>
+        <rect x="162" y="148" width="15" height="42" rx="7.5" fill="url(#bodyG)" stroke="rgba(94,234,212,.35)" stroke-width="1.2" transform="rotate(-4 170 148)"/>
+        <circle cx="47" cy="198" r="8" fill="#182330" stroke="url(#rimG)" stroke-width="1.2"/>
+        <circle cx="173" cy="198" r="8" fill="#182330" stroke="url(#rimG)" stroke-width="1.2"/>
+        <!-- pelvis -->
+        <rect x="88" y="184" width="44" height="18" rx="9" fill="url(#bodyG)" stroke="url(#rimG)" stroke-width="1.2"/>
+        <circle cx="98" cy="208" r="8.5" fill="#141e2a" stroke="rgba(52,245,162,.5)" stroke-width="1.2"/>
+        <circle cx="122" cy="208" r="8.5" fill="#141e2a" stroke="rgba(52,245,162,.5)" stroke-width="1.2"/>
+        <!-- legs -->
+        <rect x="89" y="212" width="18" height="54" rx="9" fill="url(#bodyG)" stroke="rgba(94,234,212,.35)" stroke-width="1.2"/>
+        <rect x="113" y="212" width="18" height="54" rx="9" fill="url(#bodyG)" stroke="rgba(94,234,212,.35)" stroke-width="1.2"/>
+        <circle cx="98" cy="272" r="7.5" fill="#141e2a" stroke="rgba(61,220,255,.5)" stroke-width="1.2"/>
+        <circle cx="122" cy="272" r="7.5" fill="#141e2a" stroke="rgba(61,220,255,.5)" stroke-width="1.2"/>
+        <rect x="90" y="278" width="16" height="50" rx="8" fill="url(#bodyG)" stroke="rgba(94,234,212,.35)" stroke-width="1.2"/>
+        <rect x="114" y="278" width="16" height="50" rx="8" fill="url(#bodyG)" stroke="rgba(94,234,212,.35)" stroke-width="1.2"/>
+        <rect x="82" y="328" width="28" height="13" rx="6.5" fill="#141e2a" stroke="url(#rimG)" stroke-width="1.2"/>
+        <rect x="110" y="328" width="28" height="13" rx="6.5" fill="#141e2a" stroke="url(#rimG)" stroke-width="1.2"/>
+      </svg>
     </div>
     <div class="fcard fc1">
       <div class="fh"><span class="ic">🎯</span>Product Scan</div>
