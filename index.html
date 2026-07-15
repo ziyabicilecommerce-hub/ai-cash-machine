@@ -97,7 +97,7 @@
   /* ---------- hero visual: AI core ---------- */
   .core-wrap{position:relative;height:min(560px,70vw);display:flex;align-items:center;justify-content:center}
   .core{position:relative;width:230px;height:230px;display:flex;align-items:center;justify-content:center}
-  .robot{position:absolute;left:50%;top:50%;height:min(470px,68vw);transform:translate(-50%,-50%);
+  .robot{position:absolute;left:50%;top:50%;height:min(520px,72vw);transform:translate(-50%,-50%);
     filter:drop-shadow(0 0 34px rgba(52,245,162,.45)) drop-shadow(0 0 90px rgba(61,220,255,.22));
     animation:botFloat 5s ease-in-out infinite;z-index:2}
   @keyframes botFloat{50%{transform:translate(-50%,-53%)}}
@@ -298,129 +298,128 @@
   <div class="core-wrap">
     <div class="core">
       <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
-      <svg class="robot" viewBox="0 0 260 420" fill="none">
+      <svg class="robot" viewBox="0 0 300 440" fill="none">
         <defs>
           <radialGradient id="bgGlow" cx=".5" cy=".45" r=".55">
-            <stop offset="0" stop-color="rgba(52,245,162,.28)"/><stop offset=".6" stop-color="rgba(61,220,255,.10)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/>
+            <stop offset="0" stop-color="rgba(52,245,162,.30)"/><stop offset=".6" stop-color="rgba(61,220,255,.10)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/>
           </radialGradient>
-          <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#2c3a4c"/><stop offset=".45" stop-color="#141d29"/><stop offset="1" stop-color="#070c13"/>
+          <linearGradient id="bodyD" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1d2733"/><stop offset=".5" stop-color="#0d141d"/><stop offset="1" stop-color="#070b11"/>
           </linearGradient>
-          <radialGradient id="ballG" cx=".35" cy=".3" r="1">
-            <stop offset="0" stop-color="#48596e"/><stop offset=".5" stop-color="#17212e"/><stop offset="1" stop-color="#080d14"/>
-          </radialGradient>
           <linearGradient id="rim" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#34f5a2"/><stop offset="1" stop-color="#3ddcff"/>
+            <stop offset="0" stop-color="#34f5a2"/><stop offset=".5" stop-color="#8dfce4"/><stop offset="1" stop-color="#3ddcff"/>
           </linearGradient>
-          <radialGradient id="coreG" cx=".4" cy=".35" r=".9">
-            <stop offset="0" stop-color="#d9ffee"/><stop offset=".45" stop-color="#34f5a2"/><stop offset="1" stop-color="#065c3c"/>
+          <radialGradient id="headChrome" cx=".38" cy=".22" r="1">
+            <stop offset="0" stop-color="#f4fffb"/><stop offset=".22" stop-color="#b9d9d6"/><stop offset=".48" stop-color="#3d5361"/><stop offset=".78" stop-color="#131d27"/><stop offset="1" stop-color="#070b10"/>
           </radialGradient>
-          <linearGradient id="visorSheen" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="rgba(120,220,255,.25)"/><stop offset=".4" stop-color="rgba(6,16,26,.9)"/><stop offset="1" stop-color="#02070d"/>
-          </linearGradient>
+          <radialGradient id="coreG" cx=".4" cy=".35" r=".9">
+            <stop offset="0" stop-color="#e6fff4"/><stop offset=".45" stop-color="#34f5a2"/><stop offset="1" stop-color="#065c3c"/>
+          </radialGradient>
+          <filter id="b3" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"/></filter>
+          <filter id="b8" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="8"/></filter>
+          <filter id="b5" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+
+          <g id="bod">
+            <!-- neck & traps -->
+            <path d="M136 76 L164 76 L160 92 L140 92 Z"/>
+            <!-- torso: barrel chest tapering to waist -->
+            <path d="M103 102 C110 87 190 87 197 102 C203 113 201 130 197 148 C192 170 176 186 150 190 C124 186 108 170 103 148 C99 130 97 113 103 102 Z"/>
+            <!-- abs -->
+            <path d="M129 189 L171 189 L166 224 L134 224 Z"/>
+            <!-- pelvis -->
+            <path d="M126 224 L174 224 L178 243 C166 255 134 255 122 243 Z"/>
+            <!-- shoulders -->
+            <circle cx="97" cy="109" r="21"/><circle cx="203" cy="109" r="21"/>
+            <!-- upper arms -->
+            <rect x="76" y="121" width="26" height="58" rx="13" transform="rotate(10 89 121)"/>
+            <rect x="198" y="121" width="26" height="58" rx="13" transform="rotate(-10 211 121)"/>
+            <!-- elbows -->
+            <circle cx="77" cy="186" r="10"/><circle cx="223" cy="186" r="10"/>
+            <!-- forearms -->
+            <rect x="61" y="192" width="22" height="54" rx="11" transform="rotate(6 72 192)"/>
+            <rect x="217" y="192" width="22" height="54" rx="11" transform="rotate(-6 228 192)"/>
+            <!-- hands -->
+            <rect x="55" y="248" width="20" height="26" rx="9" transform="rotate(4 65 248)"/>
+            <rect x="225" y="248" width="20" height="26" rx="9" transform="rotate(-4 235 248)"/>
+            <!-- hips -->
+            <circle cx="134" cy="257" r="11"/><circle cx="166" cy="257" r="11"/>
+            <!-- thighs -->
+            <rect x="119" y="261" width="28" height="71" rx="14"/>
+            <rect x="153" y="261" width="28" height="71" rx="14"/>
+            <!-- knees -->
+            <circle cx="133" cy="336" r="10"/><circle cx="167" cy="336" r="10"/>
+            <!-- shins -->
+            <rect x="121" y="342" width="24" height="63" rx="11.5"/>
+            <rect x="155" y="342" width="24" height="63" rx="11.5"/>
+            <!-- feet -->
+            <path d="M112 405 L146 405 L148 418 C136 423 116 423 110 418 Z"/>
+            <path d="M154 405 L188 405 L190 418 C182 423 162 423 152 418 Z"/>
+          </g>
         </defs>
 
-        <!-- back glow -->
-        <ellipse cx="130" cy="200" rx="125" ry="185" fill="url(#bgGlow)">
-          <animate attributeName="opacity" values="1;.65;1" dur="4.5s" repeatCount="indefinite"/>
+        <!-- ambience -->
+        <ellipse cx="150" cy="210" rx="145" ry="200" fill="url(#bgGlow)">
+          <animate attributeName="opacity" values="1;.6;1" dur="4.5s" repeatCount="indefinite"/>
         </ellipse>
-        <!-- ground -->
-        <ellipse cx="130" cy="400" rx="78" ry="10" fill="rgba(52,245,162,.18)">
-          <animate attributeName="rx" values="78;88;78" dur="5s" repeatCount="indefinite"/>
+        <ellipse cx="150" cy="424" rx="92" ry="11" fill="rgba(52,245,162,.20)">
+          <animate attributeName="rx" values="92;104;92" dur="5s" repeatCount="indefinite"/>
         </ellipse>
-        <ellipse cx="130" cy="400" rx="40" ry="5" fill="rgba(61,220,255,.22)"/>
+        <ellipse cx="150" cy="424" rx="46" ry="5" fill="rgba(61,220,255,.25)"/>
+        <circle cx="46" cy="160" r="2" fill="#34f5a2" opacity=".7"><animate attributeName="cy" values="160;126;160" dur="6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".7;.1;.7" dur="6s" repeatCount="indefinite"/></circle>
+        <circle cx="258" cy="128" r="1.7" fill="#3ddcff" opacity=".6"><animate attributeName="cy" values="128;95;128" dur="7s" repeatCount="indefinite"/><animate attributeName="opacity" values=".6;.1;.6" dur="7s" repeatCount="indefinite"/></circle>
+        <circle cx="242" cy="318" r="2.3" fill="#34f5a2" opacity=".5"><animate attributeName="cy" values="318;286;318" dur="8s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;.05;.5" dur="8s" repeatCount="indefinite"/></circle>
+        <circle cx="58" cy="348" r="1.6" fill="#3ddcff" opacity=".5"><animate attributeName="cy" values="348;376;348" dur="7.5s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;.05;.5" dur="7.5s" repeatCount="indefinite"/></circle>
 
-        <!-- particles -->
-        <circle cx="40" cy="150" r="2" fill="#34f5a2" opacity=".7"><animate attributeName="cy" values="150;120;150" dur="6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".7;.1;.7" dur="6s" repeatCount="indefinite"/></circle>
-        <circle cx="222" cy="120" r="1.6" fill="#3ddcff" opacity=".6"><animate attributeName="cy" values="120;90;120" dur="7s" repeatCount="indefinite"/><animate attributeName="opacity" values=".6;.1;.6" dur="7s" repeatCount="indefinite"/></circle>
-        <circle cx="206" cy="300" r="2.2" fill="#34f5a2" opacity=".5"><animate attributeName="cy" values="300;270;300" dur="8s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;.05;.5" dur="8s" repeatCount="indefinite"/></circle>
-        <circle cx="52" cy="330" r="1.5" fill="#3ddcff" opacity=".5"><animate attributeName="cy" values="330;356;330" dur="7.5s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;.05;.5" dur="7.5s" repeatCount="indefinite"/></circle>
+        <!-- BODY: wide aura pass -->
+        <use href="#bod" stroke="url(#rim)" stroke-width="11" filter="url(#b8)" opacity=".30"/>
+        <!-- BODY: tight glow pass -->
+        <use href="#bod" fill="#060a0f" stroke="url(#rim)" stroke-width="4.5" filter="url(#b3)" opacity=".95"/>
+        <!-- BODY: crisp pass (re-fills on top, leaves outer glow as backlight) -->
+        <use href="#bod" fill="url(#bodyD)" stroke="rgba(190,255,230,.45)" stroke-width="1"/>
 
-        <!-- ===== HEAD ===== -->
-        <line x1="130" y1="16" x2="130" y2="6" stroke="url(#rim)" stroke-width="2"/>
-        <circle cx="130" cy="5" r="3" fill="#34f5a2"><animate attributeName="opacity" values="1;.25;1" dur="1.4s" repeatCount="indefinite"/></circle>
-        <rect x="94" y="14" width="72" height="62" rx="31" fill="url(#chrome)" stroke="url(#rim)" stroke-width="1.6"/>
-        <ellipse cx="114" cy="24" rx="20" ry="6" fill="rgba(255,255,255,.16)" transform="rotate(-10 114 24)"/>
-        <rect x="85" y="34" width="9" height="24" rx="4.5" fill="url(#ballG)" stroke="rgba(52,245,162,.5)" stroke-width="1"/>
-        <rect x="166" y="34" width="9" height="24" rx="4.5" fill="url(#ballG)" stroke="rgba(61,220,255,.5)" stroke-width="1"/>
-        <!-- visor -->
-        <rect x="103" y="27" width="54" height="40" rx="20" fill="url(#visorSheen)" stroke="rgba(61,220,255,.55)" stroke-width="1.2"/>
-        <rect x="115" y="44" width="12" height="4.5" rx="2.25" fill="url(#rim)">
-          <animate attributeName="opacity" values="1;1;.1;1" keyTimes="0;.86;.93;1" dur="3.6s" repeatCount="indefinite"/>
-        </rect>
-        <rect x="133" y="44" width="12" height="4.5" rx="2.25" fill="url(#rim)">
-          <animate attributeName="opacity" values="1;1;.1;1" keyTimes="0;.86;.93;1" dur="3.6s" repeatCount="indefinite"/>
-        </rect>
-        <rect x="106" y="31" width="48" height="1.6" rx=".8" fill="rgba(61,220,255,.7)">
-          <animate attributeName="y" values="31;62;31" dur="4.2s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values=".8;.15;.8" dur="4.2s" repeatCount="indefinite"/>
-        </rect>
-
-        <!-- neck -->
-        <rect x="120" y="76" width="20" height="12" rx="5" fill="#0c1420" stroke="rgba(52,245,162,.35)" stroke-width="1"/>
-        <ellipse cx="130" cy="90" rx="17" ry="5" fill="#0a121c" stroke="rgba(94,234,212,.3)" stroke-width="1"/>
-
-        <!-- ===== TORSO ===== -->
-        <path d="M83 100 C83 91 94 87 106 87 L154 87 C166 87 177 91 177 100 L172 158 C170 180 154 194 130 194 C106 194 90 180 88 158 Z"
-              fill="url(#chrome)" stroke="url(#rim)" stroke-width="1.5"/>
-        <ellipse cx="107" cy="99" rx="26" ry="7" fill="rgba(255,255,255,.10)" transform="rotate(-8 107 99)"/>
-        <path d="M96 104 L164 104" stroke="rgba(61,220,255,.3)" stroke-width="1.2"/>
-        <path d="M96 174 C108 183 152 183 164 174" stroke="rgba(52,245,162,.25)" stroke-width="1.2" fill="none"/>
-        <g stroke="rgba(61,220,255,.4)" stroke-width="1.6" stroke-linecap="round">
-          <line x1="97" y1="120" x2="97" y2="136"/><line x1="103" y1="118" x2="103" y2="140"/>
-          <line x1="163" y1="120" x2="163" y2="136"/><line x1="157" y1="118" x2="157" y2="140"/>
+        <!-- panel detail lines -->
+        <g stroke="rgba(140,240,255,.20)" stroke-width="1" fill="none">
+          <path d="M150 100 L150 146"/>
+          <path d="M118 118 C132 128 168 128 182 118"/>
+          <path d="M136 198 L164 198"/><path d="M137 208 L163 208"/>
+          <path d="M126 280 L126 314"/><path d="M174 280 L174 314"/>
         </g>
+        <!-- specular highlights -->
+        <g filter="url(#b3)">
+          <ellipse cx="88" cy="96" rx="11" ry="4.5" fill="rgba(233,255,246,.55)" transform="rotate(-24 88 96)"/>
+          <ellipse cx="212" cy="96" rx="11" ry="4.5" fill="rgba(190,246,255,.55)" transform="rotate(24 212 96)"/>
+          <ellipse cx="121" cy="103" rx="17" ry="5" fill="rgba(233,255,246,.16)" transform="rotate(-9 121 103)"/>
+          <ellipse cx="179" cy="103" rx="17" ry="5" fill="rgba(190,246,255,.14)" transform="rotate(9 179 103)"/>
+          <ellipse cx="128" cy="270" rx="6" ry="13" fill="rgba(233,255,246,.13)"/>
+          <ellipse cx="162" cy="270" rx="6" ry="13" fill="rgba(190,246,255,.11)"/>
+          <ellipse cx="86" cy="132" rx="4" ry="14" fill="rgba(52,245,162,.30)" transform="rotate(10 86 132)"/>
+          <ellipse cx="214" cy="132" rx="4" ry="14" fill="rgba(61,220,255,.30)" transform="rotate(-10 214 132)"/>
+        </g>
+
         <!-- chest core -->
-        <circle cx="130" cy="134" r="20" fill="none" stroke="rgba(52,245,162,.4)" stroke-width="1.4">
-          <animate attributeName="r" values="20;24;20" dur="2.4s" repeatCount="indefinite"/>
+        <circle cx="150" cy="146" r="17" fill="none" stroke="rgba(52,245,162,.45)" stroke-width="1.4">
+          <animate attributeName="r" values="17;21;17" dur="2.4s" repeatCount="indefinite"/>
           <animate attributeName="opacity" values=".9;.15;.9" dur="2.4s" repeatCount="indefinite"/>
         </circle>
-        <circle cx="130" cy="134" r="14" fill="#0a1420" stroke="url(#rim)" stroke-width="1.4"/>
-        <circle cx="130" cy="134" r="9" fill="url(#coreG)">
-          <animate attributeName="r" values="9;10.5;9" dur="2.4s" repeatCount="indefinite"/>
+        <circle cx="150" cy="146" r="12" fill="#0a1420" stroke="url(#rim)" stroke-width="1.3"/>
+        <circle cx="150" cy="146" r="7.5" fill="url(#coreG)">
+          <animate attributeName="r" values="7.5;9;7.5" dur="2.4s" repeatCount="indefinite"/>
         </circle>
 
-        <!-- waist -->
-        <path d="M110 194 L150 194 L146 216 L114 216 Z" fill="url(#chrome)" stroke="rgba(94,234,212,.35)" stroke-width="1.2"/>
-        <rect x="116" y="202" width="28" height="3" rx="1.5" fill="url(#rim)" opacity=".7">
-          <animate attributeName="opacity" values=".7;.25;.7" dur="2s" repeatCount="indefinite"/>
-        </rect>
-        <!-- pelvis -->
-        <rect x="102" y="216" width="56" height="24" rx="12" fill="url(#chrome)" stroke="url(#rim)" stroke-width="1.3"/>
-
-        <!-- ===== ARMS ===== -->
-        <circle cx="80" cy="102" r="16" fill="url(#ballG)" stroke="url(#rim)" stroke-width="1.4"/>
-        <circle cx="180" cy="102" r="16" fill="url(#ballG)" stroke="url(#rim)" stroke-width="1.4"/>
-        <ellipse cx="75" cy="96" rx="7" ry="4" fill="rgba(255,255,255,.18)" transform="rotate(-25 75 96)"/>
-        <ellipse cx="175" cy="96" rx="7" ry="4" fill="rgba(255,255,255,.18)" transform="rotate(-25 175 96)"/>
-        <rect x="64" y="112" width="19" height="54" rx="9.5" fill="url(#chrome)" stroke="rgba(94,234,212,.35)" stroke-width="1.2" transform="rotate(9 73 112)"/>
-        <rect x="177" y="112" width="19" height="54" rx="9.5" fill="url(#chrome)" stroke="rgba(94,234,212,.35)" stroke-width="1.2" transform="rotate(-9 187 112)"/>
-        <circle cx="64" cy="172" r="9" fill="url(#ballG)" stroke="rgba(52,245,162,.55)" stroke-width="1.2"/>
-        <circle cx="196" cy="172" r="9" fill="url(#ballG)" stroke="rgba(52,245,162,.55)" stroke-width="1.2"/>
-        <rect x="52" y="178" width="17" height="50" rx="8.5" fill="url(#chrome)" stroke="rgba(94,234,212,.35)" stroke-width="1.2" transform="rotate(5 60 178)"/>
-        <rect x="191" y="178" width="17" height="50" rx="8.5" fill="url(#chrome)" stroke="rgba(94,234,212,.35)" stroke-width="1.2" transform="rotate(-5 200 178)"/>
-        <rect x="49" y="228" width="16" height="20" rx="7" fill="url(#ballG)" stroke="url(#rim)" stroke-width="1.2"/>
-        <rect x="195" y="228" width="16" height="20" rx="7" fill="url(#ballG)" stroke="url(#rim)" stroke-width="1.2"/>
-
-        <!-- ===== LEGS ===== -->
-        <circle cx="114" cy="244" r="10" fill="url(#ballG)" stroke="rgba(52,245,162,.5)" stroke-width="1.2"/>
-        <circle cx="146" cy="244" r="10" fill="url(#ballG)" stroke="rgba(52,245,162,.5)" stroke-width="1.2"/>
-        <rect x="103" y="250" width="21" height="62" rx="10.5" fill="url(#chrome)" stroke="rgba(94,234,212,.35)" stroke-width="1.2"/>
-        <rect x="136" y="250" width="21" height="62" rx="10.5" fill="url(#chrome)" stroke="rgba(94,234,212,.35)" stroke-width="1.2"/>
-        <ellipse cx="110" cy="258" rx="6" ry="12" fill="rgba(255,255,255,.08)"/>
-        <ellipse cx="143" cy="258" rx="6" ry="12" fill="rgba(255,255,255,.08)"/>
-        <circle cx="113.5" cy="316" r="8.5" fill="url(#ballG)" stroke="rgba(61,220,255,.55)" stroke-width="1.2"/>
-        <circle cx="146.5" cy="316" r="8.5" fill="url(#ballG)" stroke="rgba(61,220,255,.55)" stroke-width="1.2"/>
-        <rect x="104" y="322" width="18" height="56" rx="9" fill="url(#chrome)" stroke="rgba(94,234,212,.35)" stroke-width="1.2"/>
-        <rect x="138" y="322" width="18" height="56" rx="9" fill="url(#chrome)" stroke="rgba(94,234,212,.35)" stroke-width="1.2"/>
-        <rect x="111" y="330" width="3" height="34" rx="1.5" fill="url(#rim)" opacity=".8">
-          <animate attributeName="opacity" values=".8;.3;.8" dur="2.2s" repeatCount="indefinite"/>
-        </rect>
-        <rect x="145" y="330" width="3" height="34" rx="1.5" fill="url(#rim)" opacity=".8">
-          <animate attributeName="opacity" values=".8;.3;.8" dur="2.2s" repeatCount="indefinite"/>
-        </rect>
-        <rect x="94" y="378" width="34" height="14" rx="7" fill="url(#ballG)" stroke="url(#rim)" stroke-width="1.3"/>
-        <rect x="132" y="378" width="34" height="14" rx="7" fill="url(#ballG)" stroke="url(#rim)" stroke-width="1.3"/>
+        <!-- HEAD: polished chrome -->
+        <ellipse cx="150" cy="50" rx="30" ry="33" fill="url(#rim)" filter="url(#b5)" opacity=".45"/>
+        <ellipse cx="150" cy="50" rx="29" ry="32" fill="url(#headChrome)" stroke="rgba(190,255,230,.5)" stroke-width="1"/>
+        <ellipse cx="138" cy="30" rx="13" ry="6" fill="rgba(244,255,251,.9)" transform="rotate(-16 138 30)" filter="url(#b3)"/>
+        <ellipse cx="170" cy="42" rx="4" ry="10" fill="rgba(160,235,255,.4)" filter="url(#b3)"/>
+        <!-- face -->
+        <ellipse cx="150" cy="57" rx="17" ry="12.5" fill="#04080d" stroke="rgba(61,220,255,.45)" stroke-width="1"/>
+        <circle cx="143" cy="56" r="3" fill="url(#rim)">
+          <animate attributeName="opacity" values="1;1;.1;1" keyTimes="0;.86;.93;1" dur="3.6s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="157" cy="56" r="3" fill="url(#rim)">
+          <animate attributeName="opacity" values="1;1;.1;1" keyTimes="0;.86;.93;1" dur="3.6s" repeatCount="indefinite"/>
+        </circle>
+        <path d="M144 64 Q150 67 156 64" stroke="rgba(61,220,255,.5)" stroke-width="1" fill="none"/>
       </svg>
     </div>
     <div class="fcard fc1">
