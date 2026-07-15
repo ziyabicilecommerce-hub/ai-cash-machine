@@ -627,20 +627,13 @@ Was bauen wir heute? 🚀</div>
 <script>
 /* ============ AI ENGINE ============ */
 async function askAI(system, user, maxTokens = 1600) {
-  let apiKey = localStorage.getItem('claude_api_key');
-  if (!apiKey) {
-    apiKey = prompt('🔑 Claude API Key eingeben:\n(sk-ant-...)');
-    if (!apiKey) throw new Error('API Key erforderlich');
-    localStorage.setItem('claude_api_key', apiKey);
-  }
+  const apiUrl = window.location.hostname === 'localhost'
+    ? 'http://localhost:3000/api/claude'
+    : '/api/claude';
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch(apiUrl, {
     method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01'
-    },
+    headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
       model: 'claude-sonnet-5',
       max_tokens: maxTokens,
