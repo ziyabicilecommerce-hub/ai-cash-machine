@@ -261,6 +261,11 @@
     .beam{display:none}
     .grid{animation:none}
     .scanline{display:none}
+    .robot{animation:none;filter:drop-shadow(0 0 20px rgba(52,245,162,.35))}
+    .ring{animation:none}
+    .ring.r3{display:none}
+    .fcard{animation:none;backdrop-filter:none;box-shadow:0 6px 16px rgba(0,0,0,.4)}
+    .aura-pass{display:none}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation-duration:.001ms!important;animation-iteration-count:1!important}
@@ -387,7 +392,7 @@
         <circle cx="58" cy="348" r="1.6" fill="#3ddcff" opacity=".5"><animate attributeName="cy" values="348;376;348" dur="7.5s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;.05;.5" dur="7.5s" repeatCount="indefinite"/></circle>
 
         <!-- BODY: wide aura pass -->
-        <g stroke="url(#rim)" stroke-width="11" filter="url(#b8)" opacity=".30">
+        <g class="aura-pass" stroke="url(#rim)" stroke-width="11" filter="url(#b8)" opacity=".30">
           <use xlink:href="#bod"/>
         </g>
         <!-- BODY: tight glow pass -->
