@@ -627,7 +627,11 @@ Was bauen wir heute? 🚀</div>
 <script>
 /* ============ AI ENGINE ============ */
 async function askAI(system, user, maxTokens = 1600) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const proxyUrl = window.location.hostname === 'localhost'
+    ? 'http://localhost:3000/api/claude'
+    : 'https://cashmachine-proxy.onrender.com/api/claude';
+
+  const res = await fetch(proxyUrl, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
