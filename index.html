@@ -627,13 +627,20 @@ Was bauen wir heute? 🚀</div>
 <script>
 /* ============ AI ENGINE ============ */
 async function askAI(system, user, maxTokens = 1600) {
-  const proxyUrl = window.location.hostname === 'localhost'
-    ? 'http://localhost:3000/api/claude'
-    : 'https://cashmachine-proxy.onrender.com/api/claude';
+  let apiKey = localStorage.getItem('claude_api_key');
+  if (!apiKey) {
+    apiKey = prompt('🔑 Claude API Key eingeben:\n(sk-ant-...)');
+    if (!apiKey) throw new Error('API Key erforderlich');
+    localStorage.setItem('claude_api_key', apiKey);
+  }
 
-  const res = await fetch(proxyUrl, {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01'
+    },
     body: JSON.stringify({
       model: 'claude-sonnet-5',
       max_tokens: maxTokens,
@@ -641,7 +648,10 @@ async function askAI(system, user, maxTokens = 1600) {
       messages: [{ role: 'user', content: user }]
     })
   });
-  if (!res.ok) throw new Error('Engine-Fehler ' + res.status);
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error('Engine-Fehler: ' + (err.error?.message || res.status));
+  }
   const data = await res.json();
   return data.content.map(b => b.text || '').join('');
 }
