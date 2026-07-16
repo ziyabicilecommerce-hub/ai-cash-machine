@@ -415,9 +415,91 @@
         }
         buildBrain();
 
+        // Ambient background starfield
+        let stars = [];
+        function buildStars() {
+            stars = [];
+            const rand = seededRand(7);
+            const count = 140;
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: rand(),
+                    y: rand(),
+                    size: 0.4 + rand() * 1.2,
+                    phase: rand() * Math.PI * 2,
+                    speed: 0.3 + rand() * 0.8,
+                    drift: (rand() - 0.5) * 0.0003
+                });
+            }
+        }
+        buildStars();
+
+        function drawStars(w, h, t) {
+            for (let s of stars) {
+                s.x += s.drift;
+                if (s.x > 1) s.x = 0;
+                if (s.x < 0) s.x = 1;
+                const tw = 0.3 + 0.5 * Math.abs(Math.sin(t * s.speed + s.phase));
+                ctx.fillStyle = `rgba(180, 220, 255, ${tw * 0.6})`;
+                ctx.beginPath();
+                ctx.arc(s.x * w, s.y * h, s.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Lightning arcs jumping between distant clusters
+        let lightningBolts = [];
+        let lastBoltTime = -10;
+
+        function spawnLightning(t) {
+            const rand = Math.random;
+            const c1 = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
+            let c2 = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
+            if (c2 === c1) c2 = CLUSTERS[(CLUSTERS.indexOf(c1) + 1) % CLUSTERS.length];
+
+            const segments = 7;
+            const pts = [];
+            for (let s = 0; s <= segments; s++) {
+                const lerpT = s / segments;
+                const baseX = c1.cx + (c2.cx - c1.cx) * lerpT;
+                const baseY = c1.cy + (c2.cy - c1.cy) * lerpT;
+                const jitter = s === 0 || s === segments ? 0 : (rand() - 0.5) * 0.25;
+                pts.push({ nx: baseX + jitter, ny: baseY + (rand() - 0.5) * 0.15 });
+            }
+            lightningBolts.push({ pts, born: t });
+        }
+
+        function drawLightning(centerX, centerY, scale, t) {
+            const boltInterval = isSpeaking ? 0.9 : 3.5;
+            if (t - lastBoltTime > boltInterval) {
+                spawnLightning(t);
+                lastBoltTime = t;
+            }
+            lightningBolts = lightningBolts.filter(b => t - b.born < 0.35);
+
+            for (let b of lightningBolts) {
+                const age = (t - b.born) / 0.35;
+                const alpha = (1 - age) * 0.85;
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = 'rgb(220, 245, 255)';
+                ctx.strokeStyle = `rgba(220, 245, 255, ${alpha})`;
+                ctx.lineWidth = 1.4;
+                ctx.beginPath();
+                b.pts.forEach((p, idx) => {
+                    const x = centerX + p.nx * scale;
+                    const y = centerY + p.ny * scale;
+                    if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+        }
+
         function drawBrain(centerX, centerY, scale, t) {
             const energyBoost = isSpeaking ? 1 + energyLevel * 0.9 : 1;
             const globalPulse = isSpeaking ? 1.4 + energyLevel * 0.8 : 1;
+
+            drawLightning(centerX, centerY, scale, t);
 
             // Expanding energy rings from the core (sonar pulse)
             if (t - lastRingTime > (isSpeaking ? 0.5 : 1.8)) {
@@ -511,11 +593,16 @@
         let animT = 0;
         function animate() {
             ctx.fillStyle = '#030512';
-            ctx.fillRect(0, 0, canvas.width / window.devicePixelRatio, canvas.height / window.devicePixelRatio);
+            const w = canvas.width / window.devicePixelRatio;
+            const h = canvas.height / window.devicePixelRatio;
+            ctx.fillRect(0, 0, w, h);
 
-            const centerX = canvas.width / window.devicePixelRatio / 2;
-            const centerY = canvas.height / window.devicePixelRatio / 2 - 20;
-            const scale = Math.min(centerX, centerY) * 0.68;
+            drawStars(w, h, animT);
+
+            const centerX = w / 2;
+            const centerY = h / 2 - 20;
+            const breathe = 1 + 0.035 * Math.sin(animT * 0.35);
+            const scale = Math.min(centerX, centerY) * 0.68 * breathe;
 
             animT += 0.016;
 
@@ -525,7 +612,12 @@
                 energyLevel *= 0.95;
             }
 
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(Math.sin(animT * 0.12) * 0.05);
+            ctx.translate(-centerX, -centerY);
             drawBrain(centerX, centerY, scale, animT);
+            ctx.restore();
 
             requestAnimationFrame(animate);
         }
