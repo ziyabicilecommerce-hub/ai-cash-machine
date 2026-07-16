@@ -451,48 +451,90 @@
         let lightningBolts = [];
         let lastBoltTime = -10;
 
+        function buildFractalBolt(x1, y1, x2, y2, rand, depth) {
+            const segments = 7;
+            const pts = [];
+            for (let s = 0; s <= segments; s++) {
+                const lerpT = s / segments;
+                const baseX = x1 + (x2 - x1) * lerpT;
+                const baseY = y1 + (y2 - y1) * lerpT;
+                const jitter = s === 0 || s === segments ? 0 : (rand() - 0.5) * 0.25;
+                pts.push({ nx: baseX + jitter, ny: baseY + (rand() - 0.5) * 0.15 });
+            }
+            const branches = [];
+            if (depth > 0) {
+                const branchCount = 1 + Math.floor(rand() * 2);
+                for (let b = 0; b < branchCount; b++) {
+                    const originIdx = 2 + Math.floor(rand() * (pts.length - 4));
+                    const origin = pts[originIdx];
+                    const branchAngle = rand() * Math.PI * 2;
+                    const branchLen = 0.15 + rand() * 0.2;
+                    const endX = origin.nx + Math.cos(branchAngle) * branchLen;
+                    const endY = origin.ny + Math.sin(branchAngle) * branchLen;
+                    branches.push(buildFractalBolt(origin.nx, origin.ny, endX, endY, rand, depth - 1));
+                }
+            }
+            return { pts, branches };
+        }
+
         function spawnLightning(t) {
             const rand = Math.random;
             const c1 = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
             let c2 = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
             if (c2 === c1) c2 = CLUSTERS[(CLUSTERS.indexOf(c1) + 1) % CLUSTERS.length];
 
-            const segments = 7;
-            const pts = [];
-            for (let s = 0; s <= segments; s++) {
-                const lerpT = s / segments;
-                const baseX = c1.cx + (c2.cx - c1.cx) * lerpT;
-                const baseY = c1.cy + (c2.cy - c1.cy) * lerpT;
-                const jitter = s === 0 || s === segments ? 0 : (rand() - 0.5) * 0.25;
-                pts.push({ nx: baseX + jitter, ny: baseY + (rand() - 0.5) * 0.15 });
+            const bolt = buildFractalBolt(c1.cx, c1.cy, c2.cx, c2.cy, rand, 1);
+            lightningBolts.push({ ...bolt, born: t });
+
+            if (isSpeaking && rand() > 0.5) {
+                let c3 = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
+                let c4 = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
+                if (c4 === c3) c4 = CLUSTERS[(CLUSTERS.indexOf(c3) + 1) % CLUSTERS.length];
+                const bolt2 = buildFractalBolt(c3.cx, c3.cy, c4.cx, c4.cy, rand, 1);
+                lightningBolts.push({ ...bolt2, born: t + 0.02 });
             }
-            lightningBolts.push({ pts, born: t });
+        }
+
+        function strokeBoltSegment(bolt, centerX, centerY, scale, alpha) {
+            ctx.strokeStyle = `rgba(220, 245, 255, ${alpha})`;
+            ctx.lineWidth = 1.4;
+            ctx.beginPath();
+            bolt.pts.forEach((p, idx) => {
+                const x = centerX + p.nx * scale;
+                const y = centerY + p.ny * scale;
+                if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            for (let branch of bolt.branches || []) {
+                ctx.strokeStyle = `rgba(200, 235, 255, ${alpha * 0.6})`;
+                ctx.lineWidth = 0.9;
+                ctx.beginPath();
+                branch.pts.forEach((p, idx) => {
+                    const x = centerX + p.nx * scale;
+                    const y = centerY + p.ny * scale;
+                    if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+            }
         }
 
         function drawLightning(centerX, centerY, scale, t) {
-            const boltInterval = isSpeaking ? 0.9 : 3.5;
+            const boltInterval = isSpeaking ? 0.6 : 3.5;
             if (t - lastBoltTime > boltInterval) {
                 spawnLightning(t);
                 lastBoltTime = t;
             }
             lightningBolts = lightningBolts.filter(b => t - b.born < 0.35);
 
+            ctx.shadowBlur = 14;
+            ctx.shadowColor = 'rgb(220, 245, 255)';
             for (let b of lightningBolts) {
-                const age = (t - b.born) / 0.35;
-                const alpha = (1 - age) * 0.85;
-                ctx.shadowBlur = 12;
-                ctx.shadowColor = 'rgb(220, 245, 255)';
-                ctx.strokeStyle = `rgba(220, 245, 255, ${alpha})`;
-                ctx.lineWidth = 1.4;
-                ctx.beginPath();
-                b.pts.forEach((p, idx) => {
-                    const x = centerX + p.nx * scale;
-                    const y = centerY + p.ny * scale;
-                    if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-                });
-                ctx.stroke();
-                ctx.shadowBlur = 0;
+                const age = Math.max(0, (t - b.born) / 0.35);
+                const alpha = (1 - age) * 0.9;
+                strokeBoltSegment(b, centerX, centerY, scale, alpha);
             }
+            ctx.shadowBlur = 0;
         }
 
         // Rotating radar sweep
@@ -524,12 +566,14 @@
         // Supernova core bursts — big periodic explosion pulses
         let novaBursts = [];
         let lastNovaTime = -100;
+        let screenShake = 0;
 
         function drawNovaBursts(centerX, centerY, scale, t) {
             const novaInterval = isSpeaking ? 4 : 9;
             if (t - lastNovaTime > novaInterval) {
                 novaBursts.push({ born: t });
                 lastNovaTime = t;
+                screenShake = 1;
             }
             novaBursts = novaBursts.filter(n => t - n.born < 1.6);
             for (let n of novaBursts) {
@@ -554,6 +598,18 @@
                     ctx.beginPath();
                     ctx.arc(centerX, centerY, scale * 0.9, 0, Math.PI * 2);
                     ctx.fill();
+
+                    // Chromatic split glitch — red/blue ghost rings offset from the flash
+                    const glitchOffset = (1 - age / 0.15) * 6;
+                    ctx.strokeStyle = `rgba(255, 70, 90, ${flashAlpha * 0.5})`;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.arc(centerX - glitchOffset, centerY, radius * 0.6, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.strokeStyle = `rgba(70, 140, 255, ${flashAlpha * 0.5})`;
+                    ctx.beginPath();
+                    ctx.arc(centerX + glitchOffset, centerY, radius * 0.6, 0, Math.PI * 2);
+                    ctx.stroke();
                 }
             }
         }
@@ -691,8 +747,12 @@
                 energyLevel *= 0.95;
             }
 
+            screenShake *= 0.88;
+            const shakeX = (Math.random() - 0.5) * screenShake * 10;
+            const shakeY = (Math.random() - 0.5) * screenShake * 10;
+
             ctx.save();
-            ctx.translate(centerX, centerY);
+            ctx.translate(centerX + shakeX, centerY + shakeY);
             ctx.rotate(Math.sin(animT * 0.12) * 0.05);
             ctx.translate(-centerX, -centerY);
             drawBrain(centerX, centerY, scale, animT);
