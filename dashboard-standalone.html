@@ -460,10 +460,10 @@
         // Cluster regions: main (cyan), cortex (red/pink, upper), predictor (teal/green, lower-left),
         // associative (purple/magenta, lower-right)
         const CLUSTERS = [
-            { name: 'main',      color: [125, 220, 255], count: 380, cx: 0,    cy: 0.05, rx: 0.85, ry: 0.75 },
-            { name: 'cortex',    color: [255, 70, 120],  count: 110, cx: 0.05, cy: -0.75, rx: 0.42,  ry: 0.3 },
-            { name: 'predictor', color: [70, 255, 190],  count: 100, cx: -0.35, cy: 0.7,  rx: 0.38,  ry: 0.32 },
-            { name: 'assoc',     color: [200, 100, 255], count: 95,  cx: 0.45, cy: 0.65,  rx: 0.4,  ry: 0.32 }
+            { name: 'main',      color: [150, 235, 255], count: 380, cx: 0,    cy: 0.05, rx: 0.85, ry: 0.75 },
+            { name: 'cortex',    color: [255, 40, 110],  count: 110, cx: 0.05, cy: -0.75, rx: 0.42,  ry: 0.3 },
+            { name: 'predictor', color: [50, 255, 180],  count: 100, cx: -0.35, cy: 0.7,  rx: 0.38,  ry: 0.32 },
+            { name: 'assoc',     color: [220, 90, 255],  count: 95,  cx: 0.45, cy: 0.65,  rx: 0.4,  ry: 0.32 }
         ];
 
         let brainPoints = [];
@@ -499,7 +499,7 @@
                         cluster: cluster.name,
                         phase: rand() * Math.PI * 2,
                         speed: 0.5 + rand() * 1.5,
-                        size: 1 + rand() * 2.2,
+                        size: 1.4 + rand() * 2.8,
                         flashPhase: rand() * 100
                     });
                 }
@@ -686,7 +686,7 @@
         }
 
         function drawLightning(centerX, centerY, scale, t) {
-            const boltInterval = isSpeaking ? 0.6 : 3.5;
+            const boltInterval = isSpeaking ? 0.5 : 2.2;
             if (t - lastBoltTime > boltInterval) {
                 spawnLightning(t);
                 lastBoltTime = t;
@@ -705,7 +705,7 @@
 
         // Rotating radar sweep
         function drawRadarSweep(centerX, centerY, scale, t) {
-            const angle = t * 0.4;
+            const angle = t * 0.6;
             const sweepGradient = ctx.createConicGradient
                 ? ctx.createConicGradient(angle, centerX, centerY)
                 : null;
@@ -779,7 +779,7 @@
         let screenShake = 0;
 
         function drawNovaBursts(centerX, centerY, scale, t) {
-            const novaInterval = isSpeaking ? 4 : 9;
+            const novaInterval = isSpeaking ? 3 : 6;
             if (t - lastNovaTime > novaInterval) {
                 novaBursts.push({ born: t });
                 lastNovaTime = t;
@@ -851,26 +851,29 @@
             }
 
             // Synapse mesh (glowing web between nearby nodes)
-            ctx.lineWidth = 0.8;
+            ctx.lineWidth = 1.1;
+            ctx.shadowBlur = 3;
             for (let link of synapseLinks) {
                 const pulse = 0.4 + 0.35 * Math.sin(t * link.speed + link.phase);
                 const ax = centerX + link.a.nx * scale, ay = centerY + link.a.ny * scale;
                 const bx = centerX + link.b.nx * scale, by = centerY + link.b.ny * scale;
-                ctx.strokeStyle = `rgba(${link.color[0]}, ${link.color[1]}, ${link.color[2]}, ${(0.08 + pulse * 0.22) * globalPulse})`;
+                ctx.strokeStyle = `rgba(${link.color[0]}, ${link.color[1]}, ${link.color[2]}, ${Math.min(1, (0.25 + pulse * 0.4) * globalPulse)})`;
+                ctx.shadowColor = `rgb(${link.color[0]}, ${link.color[1]}, ${link.color[2]})`;
                 ctx.beginPath();
                 ctx.moveTo(ax, ay);
                 ctx.lineTo(bx, by);
                 ctx.stroke();
             }
+            ctx.shadowBlur = 0;
 
             // Dendrite branches with glow
-            ctx.shadowBlur = 6;
+            ctx.shadowBlur = 10;
             for (let d of dendrites) {
                 const pulse = 0.3 + 0.3 * Math.sin(t * d.speed + d.phase);
-                const col = `rgba(${d.color[0]}, ${d.color[1]}, ${d.color[2]}, ${(0.18 + pulse * 0.22) * globalPulse})`;
+                const col = `rgba(${d.color[0]}, ${d.color[1]}, ${d.color[2]}, ${Math.min(1, (0.4 + pulse * 0.4) * globalPulse)})`;
                 ctx.strokeStyle = col;
                 ctx.shadowColor = `rgb(${d.color[0]}, ${d.color[1]}, ${d.color[2]})`;
-                ctx.lineWidth = 1.2;
+                ctx.lineWidth = 1.8;
                 ctx.beginPath();
                 d.pts.forEach((p, idx) => {
                     const x = centerX + p.nx * scale;
@@ -894,14 +897,14 @@
             ctx.shadowBlur = 0;
 
             // Point cloud with glow bloom + occasional synapse flashes + micro-particle sparks
-            ctx.shadowBlur = 8;
+            ctx.shadowBlur = 12;
             for (let p of brainPoints) {
                 const pulse = 0.55 + 0.45 * Math.sin(t * p.speed + p.phase);
                 const isFlashing = Math.sin(t * 2 + p.flashPhase) > 0.985;
                 const flash = isFlashing ? 1.8 : 1;
                 const x = centerX + p.nx * scale;
                 const y = centerY + p.ny * scale;
-                const alpha = Math.min(1, (0.5 + pulse * 0.5) * flash);
+                const alpha = Math.min(1, (0.75 + pulse * 0.5) * flash);
                 ctx.shadowColor = `rgb(${p.color[0]}, ${p.color[1]}, ${p.color[2]})`;
                 ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${alpha})`;
                 ctx.beginPath();
@@ -924,9 +927,9 @@
             ctx.shadowBlur = 0;
 
             // Layered core glow — bigger, brighter, slowly cycling hue
-            const coreAlpha = isSpeaking ? 0.65 + energyLevel * 0.35 : 0.4 + 0.15 * Math.sin(t * 1.2);
+            const coreAlpha = isSpeaking ? 0.85 + energyLevel * 0.5 : 0.6 + 0.2 * Math.sin(t * 1.2);
             const hue = 195 + Math.sin(t * 0.15) * 25;
-            for (const [r, a] of [[0.65, 0.28], [0.4, 0.4], [0.2, 0.55]]) {
+            for (const [r, a] of [[0.65, 0.4], [0.4, 0.55], [0.2, 0.75]]) {
                 const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, scale * r * globalPulse);
                 gradient.addColorStop(0, `hsla(${hue}, 90%, 78%, ${coreAlpha * a})`);
                 gradient.addColorStop(1, `hsla(${hue}, 90%, 78%, 0)`);
@@ -953,7 +956,7 @@
                 ? Math.abs(Math.sin((sinceBlink / blinkDuration) * Math.PI))
                 : 1;
 
-            const baseRadius = scale * 0.09;
+            const baseRadius = scale * 0.13;
             const dilation = isSpeaking ? 1 + energyLevel * 0.5 : 1 + 0.08 * Math.sin(t * 0.9);
             const irisRadius = baseRadius * dilation * blinkFactor;
             const pupilRadius = irisRadius * 0.42;
@@ -1012,8 +1015,8 @@
 
             const centerX = w / 2;
             const centerY = h / 2 - 20;
-            const breathe = 1 + 0.035 * Math.sin(animT * 0.35);
-            const scale = Math.min(centerX, centerY) * 0.68 * breathe;
+            const breathe = 1 + 0.06 * Math.sin(animT * 0.6);
+            const scale = Math.min(centerX, centerY) * 0.85 * breathe;
 
             animT += 0.016;
 
