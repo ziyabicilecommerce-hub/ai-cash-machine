@@ -2,28 +2,93 @@
 """
 J.A.R.V.I.S. local bridge server.
 
-Serves dashboard.html and exposes a POST /ask endpoint that runs
-your message through the local Claude Code CLI (`claude -p`) and
+Serves dashboard.html and exposes a POST /ask endpoint that sends
+your message to the Anthropic API (using your own API key) and
 returns the reply as JSON. The dashboard's chat box and mic button
 talk to this server.
 
 Requirements:
 - Python 3.8+
-- Claude Code CLI installed and logged in (`claude` command available)
+- An Anthropic API key from https://console.anthropic.com
 
-Run:
-    python3 server.py
+Setup:
+    macOS/Linux:
+        export ANTHROPIC_API_KEY="sk-ant-your-key-here"
+        python3 server.py
+
+    Windows (PowerShell):
+        $env:ANTHROPIC_API_KEY="sk-ant-your-key-here"
+        python server.py
+
 Then open:
     http://localhost:8765/dashboard.html
+
+Note: this bills your Anthropic Console balance per request (pay-as-you-go
+API pricing), separate from a Claude Pro/Max subscription.
 """
 
 import json
-import subprocess
+import os
+import urllib.error
+import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
 PORT = 8765
 DIRECTORY = Path(__file__).parent
+ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages"
+MODEL = "claude-sonnet-5"
+API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+
+JARVIS_SYSTEM_PROMPT = (
+    "You are J.A.R.V.I.S., a witty, composed British AI assistant running "
+    "a business command center dashboard. Keep replies short (2-4 sentences), "
+    "helpful, and address the user respectfully."
+)
+
+
+def call_anthropic(message: str) -> str:
+    if not API_KEY:
+        return (
+            "Kein ANTHROPIC_API_KEY gesetzt. Setze ihn in deinem Terminal mit "
+            "'export ANTHROPIC_API_KEY=\"sk-ant-...\"' und starte server.py neu."
+        )
+
+    payload = json.dumps({
+        "model": MODEL,
+        "max_tokens": 300,
+        "system": JARVIS_SYSTEM_PROMPT,
+        "messages": [{"role": "user", "content": message}],
+    }).encode("utf-8")
+
+    request = urllib.request.Request(
+        ANTHROPIC_API_URL,
+        data=payload,
+        method="POST",
+        headers={
+            "Content-Type": "application/json",
+            "x-api-key": API_KEY,
+            "anthropic-version": "2023-06-01",
+        },
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            body = json.loads(response.read().decode("utf-8"))
+            parts = body.get("content", [])
+            text = "".join(p.get("text", "") for p in parts if p.get("type") == "text")
+            return text.strip() or "Keine Antwort erhalten."
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="ignore")
+        if exc.code == 401:
+            return "API-Key ungültig. Prüfe ANTHROPIC_API_KEY in deinem Terminal."
+        if exc.code == 429:
+            return "Rate-Limit erreicht oder Guthaben aufgebraucht. Prüfe dein Konto auf console.anthropic.com."
+        return f"API-Fehler ({exc.code}): {detail[:200]}"
+    except urllib.error.URLError as exc:
+        return f"Netzwerkfehler: {exc.reason}"
+    except Exception as exc:
+        return f"Fehler: {exc}"
 
 
 class JarvisHandler(BaseHTTPRequestHandler):
@@ -62,21 +127,7 @@ class JarvisHandler(BaseHTTPRequestHandler):
             self._send_json(400, {"error": "empty message"})
             return
 
-        try:
-            result = subprocess.run(
-                ["claude", "-p", message],
-                capture_output=True,
-                text=True,
-                timeout=120,
-            )
-            reply = result.stdout.strip() or "Keine Antwort erhalten."
-        except FileNotFoundError:
-            reply = "Claude Code CLI nicht gefunden. Installiere mit: npm install -g @anthropic-ai/claude-code"
-        except subprocess.TimeoutExpired:
-            reply = "Zeitüberschreitung — die Anfrage hat zu lange gedauert."
-        except Exception as exc:
-            reply = f"Fehler: {exc}"
-
+        reply = call_anthropic(message)
         self._send_json(200, {"reply": reply})
 
     def do_GET(self):
@@ -108,6 +159,11 @@ class JarvisHandler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    if not API_KEY:
+        print("WARNUNG: ANTHROPIC_API_KEY ist nicht gesetzt.")
+        print('Setze ihn mit: export ANTHROPIC_API_KEY="sk-ant-..."')
+        print()
+
     server = HTTPServer(("localhost", PORT), JarvisHandler)
     print(f"J.A.R.V.I.S. server running at http://localhost:{PORT}/dashboard.html")
     print("Press Ctrl+C to stop.")
