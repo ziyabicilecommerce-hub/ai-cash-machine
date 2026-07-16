@@ -495,10 +495,75 @@
             }
         }
 
+        // Rotating radar sweep
+        function drawRadarSweep(centerX, centerY, scale, t) {
+            const angle = t * 0.4;
+            const sweepGradient = ctx.createConicGradient
+                ? ctx.createConicGradient(angle, centerX, centerY)
+                : null;
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            const sweepWidth = 0.5;
+            ctx.arc(centerX, centerY, scale * 1.35, angle, angle + sweepWidth);
+            ctx.closePath();
+            const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, scale * 1.35);
+            grad.addColorStop(0, 'rgba(130, 225, 255, 0.10)');
+            grad.addColorStop(1, 'rgba(130, 225, 255, 0)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(160, 230, 255, 0.25)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX + Math.cos(angle) * scale * 1.35, centerY + Math.sin(angle) * scale * 1.35);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // Supernova core bursts — big periodic explosion pulses
+        let novaBursts = [];
+        let lastNovaTime = -100;
+
+        function drawNovaBursts(centerX, centerY, scale, t) {
+            const novaInterval = isSpeaking ? 4 : 9;
+            if (t - lastNovaTime > novaInterval) {
+                novaBursts.push({ born: t });
+                lastNovaTime = t;
+            }
+            novaBursts = novaBursts.filter(n => t - n.born < 1.6);
+            for (let n of novaBursts) {
+                const age = (t - n.born) / 1.6;
+                const radius = scale * (0.1 + age * 2.2);
+                const alpha = Math.max(0, (1 - age) * 0.5);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.lineWidth = 2.5 * (1 - age) + 0.5;
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = 'rgb(190, 235, 255)';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                if (age < 0.15) {
+                    const flashAlpha = (1 - age / 0.15) * 0.4;
+                    const flash = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, scale * 0.9);
+                    flash.addColorStop(0, `rgba(255, 255, 255, ${flashAlpha})`);
+                    flash.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                    ctx.fillStyle = flash;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, scale * 0.9, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+
         function drawBrain(centerX, centerY, scale, t) {
             const energyBoost = isSpeaking ? 1 + energyLevel * 0.9 : 1;
             const globalPulse = isSpeaking ? 1.4 + energyLevel * 0.8 : 1;
 
+            drawRadarSweep(centerX, centerY, scale, t);
+            drawNovaBursts(centerX, centerY, scale, t);
             drawLightning(centerX, centerY, scale, t);
 
             // Expanding energy rings from the core (sonar pulse)
@@ -561,11 +626,12 @@
             }
             ctx.shadowBlur = 0;
 
-            // Point cloud with glow bloom + occasional synapse flashes
+            // Point cloud with glow bloom + occasional synapse flashes + micro-particle sparks
             ctx.shadowBlur = 8;
             for (let p of brainPoints) {
                 const pulse = 0.55 + 0.45 * Math.sin(t * p.speed + p.phase);
-                const flash = Math.sin(t * 2 + p.flashPhase) > 0.985 ? 1.8 : 1;
+                const isFlashing = Math.sin(t * 2 + p.flashPhase) > 0.985;
+                const flash = isFlashing ? 1.8 : 1;
                 const x = centerX + p.nx * scale;
                 const y = centerY + p.ny * scale;
                 const alpha = Math.min(1, (0.5 + pulse * 0.5) * flash);
@@ -574,6 +640,19 @@
                 ctx.beginPath();
                 ctx.arc(x, y, p.size * energyBoost * flash, 0, Math.PI * 2);
                 ctx.fill();
+
+                if (isFlashing) {
+                    for (let k = 0; k < 3; k++) {
+                        const sparkAngle = (k / 3) * Math.PI * 2 + p.flashPhase;
+                        const sparkDist = p.size * 3.5;
+                        const sx = x + Math.cos(sparkAngle) * sparkDist;
+                        const sy = y + Math.sin(sparkAngle) * sparkDist;
+                        ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, 0.5)`;
+                        ctx.beginPath();
+                        ctx.arc(sx, sy, 0.7, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
             }
             ctx.shadowBlur = 0;
 
