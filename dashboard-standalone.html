@@ -447,6 +447,43 @@
             }
         }
 
+        // Meteor streaks crossing the background
+        let meteors = [];
+        let lastMeteorTime = -10;
+
+        function drawMeteors(w, h, t) {
+            const meteorInterval = isSpeaking ? 2.5 : 5;
+            if (t - lastMeteorTime > meteorInterval && Math.random() > 0.4) {
+                const startX = Math.random() * w * 0.6;
+                const startY = Math.random() * h * 0.4;
+                meteors.push({
+                    x: startX, y: startY,
+                    vx: 220 + Math.random() * 180,
+                    vy: 90 + Math.random() * 90,
+                    born: t, life: 0.9
+                });
+                lastMeteorTime = t;
+            }
+            meteors = meteors.filter(m => t - m.born < m.life);
+            for (let m of meteors) {
+                const age = (t - m.born) / m.life;
+                const alpha = Math.sin(age * Math.PI) * 0.8;
+                const x = m.x + m.vx * (t - m.born);
+                const y = m.y + m.vy * (t - m.born);
+                const tailX = x - m.vx * 0.06;
+                const tailY = y - m.vy * 0.06;
+                const grad = ctx.createLinearGradient(tailX, tailY, x, y);
+                grad.addColorStop(0, `rgba(200, 230, 255, 0)`);
+                grad.addColorStop(1, `rgba(220, 240, 255, ${alpha})`);
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(tailX, tailY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+        }
+
         // Lightning arcs jumping between distant clusters
         let lightningBolts = [];
         let lastBoltTime = -10;
@@ -563,6 +600,50 @@
             ctx.restore();
         }
 
+        // Rotating hexagonal targeting frame around the whole structure
+        function drawTargetFrame(centerX, centerY, scale, t) {
+            const sides = 6;
+            const outerR = scale * 1.55;
+            const rotation = t * 0.08;
+
+            ctx.save();
+            ctx.strokeStyle = 'rgba(150, 225, 255, 0.28)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let i = 0; i <= sides; i++) {
+                const a = rotation + (i / sides) * Math.PI * 2;
+                const x = centerX + Math.cos(a) * outerR;
+                const y = centerY + Math.sin(a) * outerR;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Corner tick marks at each hex vertex
+            for (let i = 0; i < sides; i++) {
+                const a = rotation + (i / sides) * Math.PI * 2;
+                const x = centerX + Math.cos(a) * outerR;
+                const y = centerY + Math.sin(a) * outerR;
+                ctx.fillStyle = 'rgba(190, 235, 255, 0.5)';
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Counter-rotating inner hex outline
+            ctx.strokeStyle = 'rgba(150, 225, 255, 0.15)';
+            ctx.beginPath();
+            const innerR = scale * 1.42;
+            const innerRotation = -t * 0.05;
+            for (let i = 0; i <= sides; i++) {
+                const a = innerRotation + (i / sides) * Math.PI * 2;
+                const x = centerX + Math.cos(a) * innerR;
+                const y = centerY + Math.sin(a) * innerR;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.restore();
+        }
+
         // Supernova core bursts — big periodic explosion pulses
         let novaBursts = [];
         let lastNovaTime = -100;
@@ -618,6 +699,7 @@
             const energyBoost = isSpeaking ? 1 + energyLevel * 0.9 : 1;
             const globalPulse = isSpeaking ? 1.4 + energyLevel * 0.8 : 1;
 
+            drawTargetFrame(centerX, centerY, scale, t);
             drawRadarSweep(centerX, centerY, scale, t);
             drawNovaBursts(centerX, centerY, scale, t);
             drawLightning(centerX, centerY, scale, t);
@@ -712,12 +794,13 @@
             }
             ctx.shadowBlur = 0;
 
-            // Layered core glow — bigger and brighter
+            // Layered core glow — bigger, brighter, slowly cycling hue
             const coreAlpha = isSpeaking ? 0.65 + energyLevel * 0.35 : 0.4 + 0.15 * Math.sin(t * 1.2);
+            const hue = 195 + Math.sin(t * 0.15) * 25;
             for (const [r, a] of [[0.65, 0.28], [0.4, 0.4], [0.2, 0.55]]) {
                 const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, scale * r * globalPulse);
-                gradient.addColorStop(0, `rgba(160, 230, 255, ${coreAlpha * a})`);
-                gradient.addColorStop(1, 'rgba(160, 230, 255, 0)');
+                gradient.addColorStop(0, `hsla(${hue}, 90%, 78%, ${coreAlpha * a})`);
+                gradient.addColorStop(1, `hsla(${hue}, 90%, 78%, 0)`);
                 ctx.fillStyle = gradient;
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, scale * r * globalPulse, 0, Math.PI * 2);
@@ -733,6 +816,7 @@
             ctx.fillRect(0, 0, w, h);
 
             drawStars(w, h, animT);
+            drawMeteors(w, h, animT);
 
             const centerX = w / 2;
             const centerY = h / 2 - 20;
