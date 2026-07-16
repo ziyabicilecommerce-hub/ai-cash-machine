@@ -527,9 +527,6 @@
                 <input type="text" class="chat-input" id="chatInput" placeholder="Schreib etwas an Jarvis..." autocomplete="off">
                 <button class="send-button" id="sendButton" title="Senden">➤</button>
             </div>
-            <div class="mic-warning" id="micWarning" style="display: none;">
-                Server nicht erreichbar — starte server.py lokal (siehe README)
-            </div>
         </div>
 
         <div class="bottom-section">
@@ -870,7 +867,6 @@
         const chatInput = document.getElementById('chatInput');
         const sendButton = document.getElementById('sendButton');
         const micButton = document.getElementById('micButton');
-        const micWarning = document.getElementById('micWarning');
 
         function addChatMessage(text, sender) {
             const msg = document.createElement('div');
@@ -898,26 +894,32 @@
             window.speechSynthesis.speak(utterance);
         }
 
+        const JARVIS_SYSTEM_PROMPT = "You are J.A.R.V.I.S., a witty, composed British AI assistant running a business command center dashboard. Keep replies short (2-4 sentences), helpful, and address the user respectfully.";
+
         async function askJarvis(text) {
             addChatMessage(text, 'user');
             chatInput.value = '';
 
             try {
-                const response = await fetch('/ask', {
+                const response = await fetch('/api/claude', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text })
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-5',
+                        max_tokens: 300,
+                        system: JARVIS_SYSTEM_PROMPT,
+                        messages: [{ role: 'user', content: text }]
+                    })
                 });
 
                 if (!response.ok) throw new Error('Server error');
 
                 const data = await response.json();
-                addChatMessage(data.reply, 'jarvis');
-                speak(data.reply);
-                micWarning.style.display = 'none';
+                const reply = (data.content && data.content[0] && data.content[0].text) || data.reply || 'Keine Antwort erhalten.';
+                addChatMessage(reply, 'jarvis');
+                speak(reply);
             } catch (err) {
-                addChatMessage('Kann den lokalen Server nicht erreichen. Starte server.py (siehe README).', 'error');
-                micWarning.style.display = 'block';
+                addChatMessage('Verbindung fehlgeschlagen. Bitte versuch es nochmal.', 'error');
             }
         }
 
