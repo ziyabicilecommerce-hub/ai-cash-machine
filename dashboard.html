@@ -332,21 +332,145 @@
         }
 
         /* Scrollbar styling */
-        .activity-log::-webkit-scrollbar {
+        .activity-log::-webkit-scrollbar,
+        .chat-log::-webkit-scrollbar {
             width: 6px;
         }
 
-        .activity-log::-webkit-scrollbar-track {
+        .activity-log::-webkit-scrollbar-track,
+        .chat-log::-webkit-scrollbar-track {
             background: rgba(0, 212, 255, 0.05);
         }
 
-        .activity-log::-webkit-scrollbar-thumb {
+        .activity-log::-webkit-scrollbar-thumb,
+        .chat-log::-webkit-scrollbar-thumb {
             background: rgba(0, 212, 255, 0.3);
             border-radius: 3px;
         }
 
-        .activity-log::-webkit-scrollbar-thumb:hover {
+        .activity-log::-webkit-scrollbar-thumb:hover,
+        .chat-log::-webkit-scrollbar-thumb:hover {
             background: rgba(0, 212, 255, 0.5);
+        }
+
+        /* Chat panel */
+        .chat-panel {
+            position: absolute;
+            bottom: 200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 520px;
+            max-width: 80vw;
+            z-index: 20;
+            pointer-events: auto;
+        }
+
+        .chat-log {
+            max-height: 180px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            font-size: 12px;
+            line-height: 1.6;
+            font-family: 'Share Tech Mono', monospace;
+            padding: 0 4px;
+        }
+
+        .chat-msg {
+            margin-bottom: 8px;
+            opacity: 0;
+            animation: fadeIn 0.4s ease-in forwards;
+        }
+
+        .chat-msg.user {
+            color: #ffffff;
+            text-shadow: 0 0 6px rgba(255,255,255,0.4);
+        }
+
+        .chat-msg.user::before {
+            content: "YOU > ";
+            color: #00ffaa;
+            opacity: 0.8;
+        }
+
+        .chat-msg.jarvis {
+            color: #00d4ff;
+            text-shadow: 0 0 8px #00d4ff;
+        }
+
+        .chat-msg.jarvis::before {
+            content: "JARVIS > ";
+            color: #00d4ff;
+            opacity: 0.8;
+        }
+
+        .chat-msg.error {
+            color: #ff5566;
+            text-shadow: 0 0 8px #ff5566;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            padding: 10px 14px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            outline: none;
+            border-radius: 2px;
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.15);
+        }
+
+        .chat-input::placeholder {
+            color: rgba(0, 212, 255, 0.4);
+        }
+
+        .chat-input:focus {
+            box-shadow: 0 0 18px rgba(0, 212, 255, 0.4);
+        }
+
+        .mic-button, .send-button {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            text-shadow: 0 0 8px #00d4ff;
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .mic-button:hover, .send-button:hover {
+            background: rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .mic-button.listening {
+            background: rgba(255, 60, 60, 0.2);
+            border-color: #ff3c3c;
+            color: #ff3c3c;
+            animation: blink 0.8s infinite;
+        }
+
+        .mic-warning {
+            font-size: 10px;
+            color: #ffaa00;
+            text-align: center;
+            margin-top: 6px;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -393,6 +517,18 @@
                 <div class="stat-bar">
                     <div class="stat-bar-fill" id="stat3" style="width: 45%;"></div>
                 </div>
+            </div>
+        </div>
+
+        <div class="chat-panel">
+            <div class="chat-log" id="chatLog"></div>
+            <div class="chat-input-row">
+                <button class="mic-button" id="micButton" title="Sprich mit Jarvis">🎤</button>
+                <input type="text" class="chat-input" id="chatInput" placeholder="Schreib etwas an Jarvis..." autocomplete="off">
+                <button class="send-button" id="sendButton" title="Senden">➤</button>
+            </div>
+            <div class="mic-warning" id="micWarning" style="display: none;">
+                Server nicht erreichbar — starte server.py lokal (siehe README)
             </div>
         </div>
 
@@ -702,6 +838,118 @@
                 });
             }
         });
+
+        // ===== CHAT / VOICE INTERACTION =====
+        const chatLog = document.getElementById('chatLog');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+        const micButton = document.getElementById('micButton');
+        const micWarning = document.getElementById('micWarning');
+
+        function addChatMessage(text, sender) {
+            const msg = document.createElement('div');
+            msg.className = `chat-msg ${sender}`;
+            msg.textContent = text;
+            chatLog.appendChild(msg);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        function speak(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-GB';
+            utterance.rate = 1.0;
+            utterance.pitch = 0.9;
+
+            const voices = window.speechSynthesis.getVoices();
+            const britishVoice = voices.find(v => v.lang === 'en-GB') || voices.find(v => v.lang.startsWith('en'));
+            if (britishVoice) utterance.voice = britishVoice;
+
+            utterance.onstart = () => { isSpeaking = true; };
+            utterance.onend = () => { isSpeaking = false; };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        async function askJarvis(text) {
+            addChatMessage(text, 'user');
+            chatInput.value = '';
+
+            try {
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+
+                if (!response.ok) throw new Error('Server error');
+
+                const data = await response.json();
+                addChatMessage(data.reply, 'jarvis');
+                speak(data.reply);
+                micWarning.style.display = 'none';
+            } catch (err) {
+                addChatMessage('Kann den lokalen Server nicht erreichen. Starte server.py (siehe README).', 'error');
+                micWarning.style.display = 'block';
+            }
+        }
+
+        sendButton.addEventListener('click', () => {
+            const text = chatInput.value.trim();
+            if (text) askJarvis(text);
+        });
+
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const text = chatInput.value.trim();
+                if (text) askJarvis(text);
+            }
+        });
+
+        // Voice input via Web Speech API
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let isListening = false;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'de-DE';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                isListening = true;
+                micButton.classList.add('listening');
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                micButton.classList.remove('listening');
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                askJarvis(transcript);
+            };
+
+            recognition.onerror = () => {
+                isListening = false;
+                micButton.classList.remove('listening');
+            };
+
+            micButton.addEventListener('click', () => {
+                if (isListening) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                }
+            });
+        } else {
+            micButton.addEventListener('click', () => {
+                addChatMessage('Dein Browser unterstützt keine Spracherkennung. Nutze Chrome oder Edge.', 'error');
+            });
+        }
 
         // Initialize
         updateClock();
