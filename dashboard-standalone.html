@@ -256,9 +256,99 @@
         .chat-log::-webkit-scrollbar { width: 5px; }
         .chat-log::-webkit-scrollbar-track { background: rgba(111,224,255,0.05); }
         .chat-log::-webkit-scrollbar-thumb { background: rgba(111,224,255,0.3); border-radius: 3px; }
+
+        .boot-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #010208;
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Share Tech Mono', monospace;
+            transition: opacity 0.6s ease-out;
+        }
+
+        .boot-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .boot-lines {
+            width: 420px;
+            max-width: 80vw;
+            min-height: 200px;
+        }
+
+        .boot-line {
+            font-size: 12px;
+            color: #6fe0ff;
+            letter-spacing: 1px;
+            opacity: 0;
+            margin-bottom: 8px;
+            text-shadow: 0 0 6px rgba(111,224,255,0.5);
+        }
+
+        .boot-line.shown { opacity: 0.85; }
+        .boot-line.ok { color: #3ef2a0; }
+
+        .boot-bar-track {
+            width: 100%;
+            height: 3px;
+            background: rgba(111,224,255,0.1);
+            margin-top: 18px;
+            overflow: hidden;
+        }
+
+        .boot-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6fe0ff, #ffffff);
+            box-shadow: 0 0 10px rgba(111,224,255,0.8);
+            transition: width 2.2s linear;
+        }
+
+        .boot-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            letter-spacing: 6px;
+            color: #eaf8ff;
+            text-shadow: 0 0 16px rgba(111,224,255,0.8);
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: bootTitleIn 0.8s ease-out forwards;
+        }
+
+        @keyframes bootTitleIn {
+            from { opacity: 0; letter-spacing: 14px; }
+            to { opacity: 1; letter-spacing: 6px; }
+        }
+
+        .boot-scanline {
+            position: absolute;
+            left: 0; right: 0;
+            height: 2px;
+            background: rgba(111,224,255,0.4);
+            box-shadow: 0 0 12px rgba(111,224,255,0.7);
+            animation: bootScan 1.6s ease-in-out infinite;
+        }
+
+        @keyframes bootScan {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
     </style>
 </head>
 <body>
+    <div class="boot-overlay" id="bootOverlay">
+        <div class="boot-scanline"></div>
+        <div class="boot-title">J.A.R.V.I.S</div>
+        <div class="boot-lines" id="bootLines"></div>
+        <div class="boot-bar-track"><div class="boot-bar-fill" id="bootBar"></div></div>
+    </div>
+
     <canvas id="canvas"></canvas>
 
     <div class="hud-container">
@@ -979,11 +1069,51 @@
             });
         }
 
+        // ===== BOOT SEQUENCE =====
+        const bootOverlay = document.getElementById('bootOverlay');
+        const bootLinesEl = document.getElementById('bootLines');
+        const bootBar = document.getElementById('bootBar');
+
+        const bootSequence = [
+            'INITIALIZING J.A.R.V.I.S CORE...',
+            'LOADING NEURAL LATTICE... 685 NODES',
+            'CALIBRATING CORTEX CLUSTERS...',
+            'PREFRONTAL ... MOTOR ... CONCEPT ... OK',
+            'ASSOCIATIVE ... SENSORY ... FEATURE ... OK',
+            'PREDICTIVE ... MEMORY ... CONFIG ... OK',
+            'ESTABLISHING SYNAPSE MESH...',
+            'ARMING DEFENSE GRID...',
+            'NEURAL LINK ESTABLISHED.'
+        ];
+
+        function runBootSequence() {
+            let delay = 120;
+            bootBar.style.width = '100%';
+            bootSequence.forEach((line, i) => {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'boot-line' + (i === bootSequence.length - 1 ? ' ok' : '');
+                    el.textContent = '> ' + line;
+                    bootLinesEl.appendChild(el);
+                    requestAnimationFrame(() => el.classList.add('shown'));
+                }, delay);
+                delay += 220 + Math.random() * 120;
+            });
+
+            setTimeout(() => {
+                novaBursts.push({ born: animT });
+                screenShake = 1.4;
+                bootOverlay.classList.add('hidden');
+                setTimeout(() => bootOverlay.remove(), 700);
+            }, delay + 300);
+        }
+
         // Initialize
         updateClock();
         setInterval(updateClock, 1000);
         loadJarvisData();
         animate();
+        runBootSequence();
     </script>
 </body>
 </html>
