@@ -239,6 +239,39 @@
 
         .mic-button:hover, .send-button:hover { opacity: 1; }
 
+        .waveform {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .waveform span {
+            display: block;
+            width: 2px;
+            height: 4px;
+            background: #6fe0ff;
+            border-radius: 1px;
+            box-shadow: 0 0 4px rgba(111,224,255,0.6);
+            transition: height 0.1s ease-out;
+        }
+
+        .telemetry {
+            position: absolute;
+            font-size: 8px;
+            font-family: 'Share Tech Mono', monospace;
+            color: rgba(150, 225, 255, 0.45);
+            letter-spacing: 0.5px;
+            z-index: 9;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .telemetry.tl { top: 175px; left: 20px; }
+        .telemetry.tr { top: 175px; right: 240px; text-align: right; }
+        .telemetry.bl { bottom: 200px; left: 20px; }
+
         .scanlines {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
@@ -363,6 +396,9 @@
             <div class="avatar-orb"></div>
         </div>
 
+        <div class="telemetry tl" id="telemetryTl"></div>
+        <div class="telemetry bl" id="telemetryBl"></div>
+
         <div class="status-panel">
             <div class="status-panel-title">CORTEX STATUS</div>
             <div class="status-row status-live"><span><span class="dot"></span>PREFRONTAL</span><span>LIVE</span></div>
@@ -386,6 +422,9 @@
                 <div class="listening-bar">
                     <span class="mic-dot" id="micDot"></span>
                     <span class="listening-label" id="listeningLabel">LISTENING FOR "HEY JARVIS"</span>
+                    <div class="waveform" id="waveform">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
                     <input type="text" class="chat-input" id="chatInput" placeholder="Type to J.A.R.V.I.S..." autocomplete="off">
                     <button class="mic-button" id="micButton" title="Voice">🎤</button>
                     <button class="send-button" id="sendButton" title="Send">➤</button>
@@ -1131,6 +1170,48 @@
                 addChatMessage('Dein Browser unterstützt keine Spracherkennung. Nutze Chrome oder Edge.', 'error');
             });
         }
+
+        // ===== WAVEFORM VISUALIZER =====
+        const waveformBars = document.querySelectorAll('#waveform span');
+        function updateWaveform() {
+            waveformBars.forEach((bar, i) => {
+                let h;
+                if (isSpeaking) {
+                    h = 4 + Math.abs(Math.sin(animT * (5 + i * 1.3) + i)) * 12 * (0.6 + energyLevel * 0.6);
+                } else {
+                    h = 3 + Math.abs(Math.sin(animT * 1.5 + i * 0.8)) * 2;
+                }
+                bar.style.height = h + 'px';
+            });
+            requestAnimationFrame(updateWaveform);
+        }
+        updateWaveform();
+
+        // ===== TELEMETRY READOUTS =====
+        const telemetryTl = document.getElementById('telemetryTl');
+        const telemetryBl = document.getElementById('telemetryBl');
+
+        function updateTelemetry() {
+            const t = animT;
+            const lat = (34.05 + Math.sin(t * 0.05) * 0.002).toFixed(4);
+            const lon = (-118.24 + Math.cos(t * 0.04) * 0.002).toFixed(4);
+            const load = Math.round(38 + Math.abs(Math.sin(t * 0.2)) * 40 + (isSpeaking ? energyLevel * 20 : 0));
+            const throughput = Math.round(1200 + Math.abs(Math.sin(t * 0.3)) * 800);
+            const nodes = 685;
+            const synapses = 685 * 2;
+
+            telemetryTl.innerHTML =
+                `LAT ${lat} LON ${lon}<br>` +
+                `NODES ${nodes} / SYNAPSES ${synapses}<br>` +
+                `CORE LOAD ${load}%`;
+
+            telemetryBl.innerHTML =
+                `THROUGHPUT ${throughput} OPS/S<br>` +
+                `UPTIME ${Math.floor(t / 3600)}:${String(Math.floor((t % 3600) / 60)).padStart(2,'0')}:${String(Math.floor(t % 60)).padStart(2,'0')}`;
+
+            requestAnimationFrame(updateTelemetry);
+        }
+        updateTelemetry();
 
         // ===== BOOT SEQUENCE =====
         const bootOverlay = document.getElementById('bootOverlay');
