@@ -331,14 +331,17 @@
         // Cluster regions: main (cyan), cortex (red/pink, upper), predictor (teal/green, lower-left),
         // associative (purple/magenta, lower-right)
         const CLUSTERS = [
-            { name: 'main',      color: [125, 220, 255], count: 220, cx: 0,    cy: 0.05, rx: 0.85, ry: 0.75 },
-            { name: 'cortex',    color: [255, 100, 130], count: 60,  cx: 0.05, cy: -0.75, rx: 0.4,  ry: 0.28 },
-            { name: 'predictor', color: [90, 245, 190],  count: 55,  cx: -0.35, cy: 0.7,  rx: 0.35,  ry: 0.3 },
-            { name: 'assoc',     color: [190, 120, 255], count: 50,  cx: 0.45, cy: 0.65,  rx: 0.38,  ry: 0.3 }
+            { name: 'main',      color: [125, 220, 255], count: 380, cx: 0,    cy: 0.05, rx: 0.85, ry: 0.75 },
+            { name: 'cortex',    color: [255, 70, 120],  count: 110, cx: 0.05, cy: -0.75, rx: 0.42,  ry: 0.3 },
+            { name: 'predictor', color: [70, 255, 190],  count: 100, cx: -0.35, cy: 0.7,  rx: 0.38,  ry: 0.32 },
+            { name: 'assoc',     color: [200, 100, 255], count: 95,  cx: 0.45, cy: 0.65,  rx: 0.4,  ry: 0.32 }
         ];
 
         let brainPoints = [];
         let dendrites = [];
+        let synapseLinks = [];
+        let pulseRings = [];
+        let lastRingTime = 0;
 
         function seededRand(seed) {
             let s = seed;
@@ -351,6 +354,7 @@
         function buildBrain() {
             brainPoints = [];
             dendrites = [];
+            synapseLinks = [];
             const rand = seededRand(42);
 
             CLUSTERS.forEach(cluster => {
@@ -366,18 +370,34 @@
                         cluster: cluster.name,
                         phase: rand() * Math.PI * 2,
                         speed: 0.5 + rand() * 1.5,
-                        size: 0.8 + rand() * 1.6
+                        size: 1 + rand() * 2.2,
+                        flashPhase: rand() * 100
                     });
                 }
             });
 
+            // Nearest-neighbor synapse mesh within each cluster
+            CLUSTERS.forEach(cluster => {
+                const members = brainPoints.filter(p => p.cluster === cluster.name);
+                members.forEach((p, i) => {
+                    const dists = members
+                        .map((q, j) => ({ j, d: (p.nx - q.nx) ** 2 + (p.ny - q.ny) ** 2 }))
+                        .filter(o => o.j !== i)
+                        .sort((a, b) => a.d - b.d)
+                        .slice(0, 2);
+                    dists.forEach(o => {
+                        synapseLinks.push({ a: p, b: members[o.j], color: cluster.color, phase: rand() * Math.PI * 2, speed: 0.4 + rand() * 0.8 });
+                    });
+                });
+            });
+
             // Dendrite branches radiating from the core outward
-            const branchCount = 46;
+            const branchCount = 90;
             for (let i = 0; i < branchCount; i++) {
                 const baseAngle = rand() * Math.PI * 2;
                 const baseDist = 0.15 + rand() * 0.25;
-                const length = 0.5 + rand() * 0.9;
-                const curve = (rand() - 0.5) * 1.2;
+                const length = 0.5 + rand() * 1.0;
+                const curve = (rand() - 0.5) * 1.4;
                 const segments = 5 + Math.floor(rand() * 4);
                 const pts = [];
                 for (let s = 0; s <= segments; s++) {
@@ -390,17 +410,53 @@
                     });
                 }
                 const clusterPick = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
-                dendrites.push({ pts, color: clusterPick.color, phase: rand() * Math.PI * 2, speed: 0.3 + rand() * 0.6 });
+                dendrites.push({ pts, color: clusterPick.color, phase: rand() * Math.PI * 2, speed: 0.3 + rand() * 0.7 });
             }
         }
         buildBrain();
 
         function drawBrain(centerX, centerY, scale, t) {
-            // Dendrite branches (drawn behind points)
+            const energyBoost = isSpeaking ? 1 + energyLevel * 0.9 : 1;
+            const globalPulse = isSpeaking ? 1.4 + energyLevel * 0.8 : 1;
+
+            // Expanding energy rings from the core (sonar pulse)
+            if (t - lastRingTime > (isSpeaking ? 0.5 : 1.8)) {
+                pulseRings.push({ born: t });
+                lastRingTime = t;
+            }
+            pulseRings = pulseRings.filter(r => t - r.born < 2.2);
+            for (let r of pulseRings) {
+                const age = (t - r.born) / 2.2;
+                const radius = scale * (0.15 + age * 1.3);
+                const alpha = (1 - age) * 0.35;
+                ctx.strokeStyle = `rgba(130, 225, 255, ${alpha})`;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Synapse mesh (glowing web between nearby nodes)
+            ctx.lineWidth = 0.8;
+            for (let link of synapseLinks) {
+                const pulse = 0.4 + 0.35 * Math.sin(t * link.speed + link.phase);
+                const ax = centerX + link.a.nx * scale, ay = centerY + link.a.ny * scale;
+                const bx = centerX + link.b.nx * scale, by = centerY + link.b.ny * scale;
+                ctx.strokeStyle = `rgba(${link.color[0]}, ${link.color[1]}, ${link.color[2]}, ${(0.08 + pulse * 0.22) * globalPulse})`;
+                ctx.beginPath();
+                ctx.moveTo(ax, ay);
+                ctx.lineTo(bx, by);
+                ctx.stroke();
+            }
+
+            // Dendrite branches with glow
+            ctx.shadowBlur = 6;
             for (let d of dendrites) {
-                const pulse = 0.3 + 0.25 * Math.sin(t * d.speed + d.phase);
-                ctx.strokeStyle = `rgba(${d.color[0]}, ${d.color[1]}, ${d.color[2]}, ${0.12 + pulse * 0.15})`;
-                ctx.lineWidth = 1;
+                const pulse = 0.3 + 0.3 * Math.sin(t * d.speed + d.phase);
+                const col = `rgba(${d.color[0]}, ${d.color[1]}, ${d.color[2]}, ${(0.18 + pulse * 0.22) * globalPulse})`;
+                ctx.strokeStyle = col;
+                ctx.shadowColor = `rgb(${d.color[0]}, ${d.color[1]}, ${d.color[2]})`;
+                ctx.lineWidth = 1.2;
                 ctx.beginPath();
                 d.pts.forEach((p, idx) => {
                     const x = centerX + p.nx * scale;
@@ -409,42 +465,47 @@
                 });
                 ctx.stroke();
 
-                // Traveling pulse dot along the branch
-                const travelT = (t * 0.15 * d.speed + d.phase) % 1;
+                const travelT = (t * 0.22 * d.speed + d.phase) % 1;
                 const idx = Math.min(d.pts.length - 1, Math.floor(travelT * d.pts.length));
                 const p = d.pts[idx];
                 if (p) {
                     const x = centerX + p.nx * scale;
                     const y = centerY + p.ny * scale;
-                    ctx.fillStyle = `rgba(${d.color[0]}, ${d.color[1]}, ${d.color[2]}, 0.8)`;
+                    ctx.fillStyle = `rgba(${d.color[0]}, ${d.color[1]}, ${d.color[2]}, 0.95)`;
                     ctx.beginPath();
-                    ctx.arc(x, y, 1.4, 0, Math.PI * 2);
+                    ctx.arc(x, y, 1.8 * energyBoost, 0, Math.PI * 2);
                     ctx.fill();
                 }
             }
+            ctx.shadowBlur = 0;
 
-            // Point cloud
+            // Point cloud with glow bloom + occasional synapse flashes
+            ctx.shadowBlur = 8;
             for (let p of brainPoints) {
-                const pulse = 0.6 + 0.4 * Math.sin(t * p.speed + p.phase);
-                const energyBoost = isSpeaking ? 1 + energyLevel * 0.6 : 1;
+                const pulse = 0.55 + 0.45 * Math.sin(t * p.speed + p.phase);
+                const flash = Math.sin(t * 2 + p.flashPhase) > 0.985 ? 1.8 : 1;
                 const x = centerX + p.nx * scale;
                 const y = centerY + p.ny * scale;
-                const alpha = 0.45 + pulse * 0.4;
+                const alpha = Math.min(1, (0.5 + pulse * 0.5) * flash);
+                ctx.shadowColor = `rgb(${p.color[0]}, ${p.color[1]}, ${p.color[2]})`;
                 ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${alpha})`;
                 ctx.beginPath();
-                ctx.arc(x, y, p.size * energyBoost, 0, Math.PI * 2);
+                ctx.arc(x, y, p.size * energyBoost * flash, 0, Math.PI * 2);
                 ctx.fill();
             }
+            ctx.shadowBlur = 0;
 
-            // Core glow
-            const coreAlpha = isSpeaking ? 0.5 + energyLevel * 0.3 : 0.3 + 0.1 * Math.sin(t * 1.2);
-            const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, scale * 0.5);
-            gradient.addColorStop(0, `rgba(140, 225, 255, ${coreAlpha * 0.35})`);
-            gradient.addColorStop(1, 'rgba(140, 225, 255, 0)');
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, scale * 0.5, 0, Math.PI * 2);
-            ctx.fill();
+            // Layered core glow — bigger and brighter
+            const coreAlpha = isSpeaking ? 0.65 + energyLevel * 0.35 : 0.4 + 0.15 * Math.sin(t * 1.2);
+            for (const [r, a] of [[0.65, 0.28], [0.4, 0.4], [0.2, 0.55]]) {
+                const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, scale * r * globalPulse);
+                gradient.addColorStop(0, `rgba(160, 230, 255, ${coreAlpha * a})`);
+                gradient.addColorStop(1, 'rgba(160, 230, 255, 0)');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, scale * r * globalPulse, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
 
         let animT = 0;
@@ -454,7 +515,7 @@
 
             const centerX = canvas.width / window.devicePixelRatio / 2;
             const centerY = canvas.height / window.devicePixelRatio / 2 - 20;
-            const scale = Math.min(centerX, centerY) * 0.55;
+            const scale = Math.min(centerX, centerY) * 0.68;
 
             animT += 0.016;
 
