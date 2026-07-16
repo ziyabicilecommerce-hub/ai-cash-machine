@@ -891,6 +891,69 @@
                 ctx.arc(centerX, centerY, scale * r * globalPulse, 0, Math.PI * 2);
                 ctx.fill();
             }
+
+            drawCoreEye(centerX, centerY, scale, t, hue);
+        }
+
+        // Reactive iris/eye at the very center — dilates with energy, blinks occasionally
+        let lastBlinkTime = -100;
+        let blinkDuration = 0;
+
+        function drawCoreEye(centerX, centerY, scale, t, hue) {
+            if (t - lastBlinkTime > 4.5 + Math.sin(t * 0.3) * 2) {
+                lastBlinkTime = t;
+                blinkDuration = 0.18;
+            }
+            const sinceBlink = t - lastBlinkTime;
+            const blinkFactor = sinceBlink < blinkDuration
+                ? Math.abs(Math.sin((sinceBlink / blinkDuration) * Math.PI))
+                : 1;
+
+            const baseRadius = scale * 0.09;
+            const dilation = isSpeaking ? 1 + energyLevel * 0.5 : 1 + 0.08 * Math.sin(t * 0.9);
+            const irisRadius = baseRadius * dilation * blinkFactor;
+            const pupilRadius = irisRadius * 0.42;
+
+            if (irisRadius < 0.5) return;
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(centerX - irisRadius, centerY - irisRadius * blinkFactor, irisRadius * 2, irisRadius * 2 * blinkFactor);
+            ctx.clip();
+
+            const irisGrad = ctx.createRadialGradient(centerX, centerY, pupilRadius, centerX, centerY, irisRadius);
+            irisGrad.addColorStop(0, `hsla(${hue}, 95%, 60%, 0.95)`);
+            irisGrad.addColorStop(0.7, `hsla(${hue + 15}, 95%, 45%, 0.9)`);
+            irisGrad.addColorStop(1, `hsla(${hue}, 90%, 30%, 0.7)`);
+            ctx.fillStyle = irisGrad;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, irisRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Iris striations
+            ctx.strokeStyle = `hsla(${hue}, 100%, 85%, 0.3)`;
+            ctx.lineWidth = 0.6;
+            for (let i = 0; i < 16; i++) {
+                const a = (i / 16) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX + Math.cos(a) * pupilRadius, centerY + Math.sin(a) * pupilRadius);
+                ctx.lineTo(centerX + Math.cos(a) * irisRadius, centerY + Math.sin(a) * irisRadius);
+                ctx.stroke();
+            }
+
+            // Pupil
+            ctx.fillStyle = 'rgba(2, 4, 10, 0.95)';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, pupilRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+
+            // Bright specular highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+            ctx.beginPath();
+            ctx.arc(centerX - irisRadius * 0.3, centerY - irisRadius * 0.3, irisRadius * 0.14, 0, Math.PI * 2);
+            ctx.fill();
         }
 
         let animT = 0;
