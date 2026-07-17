@@ -375,7 +375,7 @@
         <div class="top-left">
             <div class="top-left-title">J.A.R.V.I.S</div>
             <div class="top-left-subtitle">GALAXY LINK — CONNECTED</div>
-            <div class="top-left-meta" id="dateMeta">CASH MACHINE · LISTENING v1.0</div>
+            <div class="top-left-meta" id="dateMeta">CASH MACHINE · HÖRT ZU v1.0</div>
         </div>
 
         <div class="top-right">
@@ -407,7 +407,7 @@
                 <div class="chat-log" id="chatLog"></div>
                 <div class="listening-bar">
                     <span class="mic-dot" id="micDot"></span>
-                    <span class="listening-label" id="listeningLabel">LISTENING FOR "HEY JARVIS"</span>
+                    <span class="listening-label" id="listeningLabel">HÖRT AUF "HEY JARVIS"</span>
                     <div class="waveform" id="waveform">
                         <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
                     </div>
@@ -741,18 +741,18 @@
             if (!('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-GB';
+            utterance.lang = 'de-DE';
             utterance.rate = 1.0;
             utterance.pitch = 0.9;
             const voices = window.speechSynthesis.getVoices();
-            const britishVoice = voices.find(v => v.lang === 'en-GB') || voices.find(v => v.lang.startsWith('en'));
-            if (britishVoice) utterance.voice = britishVoice;
-            utterance.onstart = () => { isSpeaking = true; listeningLabel.textContent = 'SPEAKING...'; };
-            utterance.onend = () => { isSpeaking = false; listeningLabel.textContent = 'LISTENING FOR "HEY JARVIS"'; };
+            const germanVoice = voices.find(v => v.lang === 'de-DE') || voices.find(v => v.lang.startsWith('de'));
+            if (germanVoice) utterance.voice = germanVoice;
+            utterance.onstart = () => { isSpeaking = true; listeningLabel.textContent = 'SPRICHT...'; };
+            utterance.onend = () => { isSpeaking = false; listeningLabel.textContent = 'HÖRT AUF "HEY JARVIS"'; };
             window.speechSynthesis.speak(utterance);
         }
 
-        const JARVIS_SYSTEM_PROMPT = "You are J.A.R.V.I.S., a witty, composed British AI assistant running a business command center dashboard. You are also a highly capable software engineer and web developer: you can write, explain, and debug code in any language, and design/build full websites (HTML/CSS/JS, React, backends, APIs) on request. When asked to code, provide complete, working code in markdown code blocks. For business/dashboard questions keep replies short (2-4 sentences); for coding requests, be as thorough as needed to deliver working code. Always address the user respectfully.";
+        const JARVIS_SYSTEM_PROMPT = "Du bist J.A.R.V.I.S., ein witziger, souveräner AI-Assistent, der ein Business Command Center betreibt. Antworte IMMER auf Deutsch, locker aber kompetent. Du bist außerdem ein hochkompetenter Software-Entwickler und Webentwickler: Du kannst Code in jeder Sprache schreiben, erklären und debuggen, und komplette Websites (HTML/CSS/JS, React, Backends, APIs) auf Anfrage designen und bauen. Bei Coding-Anfragen liefere vollständigen, funktionierenden Code in Markdown-Codeblöcken. Bei Business/Dashboard-Fragen halte Antworten kurz (2-4 Sätze); bei Coding-Anfragen sei so ausführlich wie nötig, um funktionierenden Code zu liefern. Sprich den User respektvoll an.";
         const JARVIS_API_KEY = "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";
 
         async function askJarvis(text) {
@@ -812,12 +812,12 @@
             recognition.onstart = () => {
                 isListening = true;
                 micDot.classList.add('listening');
-                listeningLabel.textContent = 'LISTENING...';
+                listeningLabel.textContent = 'HÖRT ZU...';
             };
             recognition.onend = () => {
                 isListening = false;
                 micDot.classList.remove('listening');
-                if (!isSpeaking) listeningLabel.textContent = 'LISTENING FOR "HEY JARVIS"';
+                if (!isSpeaking) listeningLabel.textContent = 'HÖRT AUF "HEY JARVIS"';
             };
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
