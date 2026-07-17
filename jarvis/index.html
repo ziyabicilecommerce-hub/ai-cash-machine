@@ -706,11 +706,29 @@
         const listeningLabel = document.getElementById('listeningLabel');
         const transcriptLine = document.getElementById('transcriptLine');
 
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function formatMessage(text) {
+            const parts = text.split(/```(\w*)\n?([\s\S]*?)```/g);
+            let html = '';
+            for (let i = 0; i < parts.length; i += 3) {
+                html += escapeHtml(parts[i]).replace(/\n/g, '<br>');
+                if (parts[i + 2] !== undefined) {
+                    html += `<pre style="white-space:pre-wrap;background:rgba(111,224,255,0.08);border:1px solid rgba(111,224,255,0.25);border-radius:8px;padding:10px;margin:8px 0;overflow-x:auto;font-size:11px;color:#eaf8ff;"><code>${escapeHtml(parts[i + 2])}</code></pre>`;
+                }
+            }
+            return html;
+        }
+
         function addChatMessage(text, sender) {
             chatLog.classList.add('has-messages');
             const msg = document.createElement('div');
             msg.className = `chat-msg ${sender}`;
-            msg.textContent = text;
+            msg.innerHTML = formatMessage(text);
             chatLog.appendChild(msg);
             chatLog.scrollTop = chatLog.scrollHeight;
             transcriptLine.textContent = text;
@@ -734,7 +752,7 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        const JARVIS_SYSTEM_PROMPT = "You are J.A.R.V.I.S., a witty, composed British AI assistant running a business command center dashboard. Keep replies short (2-4 sentences), helpful, and address the user respectfully.";
+        const JARVIS_SYSTEM_PROMPT = "You are J.A.R.V.I.S., a witty, composed British AI assistant running a business command center dashboard. You are also a highly capable software engineer and web developer: you can write, explain, and debug code in any language, and design/build full websites (HTML/CSS/JS, React, backends, APIs) on request. When asked to code, provide complete, working code in markdown code blocks. For business/dashboard questions keep replies short (2-4 sentences); for coding requests, be as thorough as needed to deliver working code. Always address the user respectfully.";
         const JARVIS_API_KEY = "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";
 
         async function askJarvis(text) {
@@ -752,7 +770,7 @@
                     },
                     body: JSON.stringify({
                         model: 'claude-sonnet-5',
-                        max_tokens: 300,
+                        max_tokens: 4096,
                         system: JARVIS_SYSTEM_PROMPT,
                         messages: [{ role: 'user', content: text }]
                     })
