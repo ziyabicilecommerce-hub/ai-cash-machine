@@ -576,6 +576,7 @@
         const ctx = canvas.getContext('2d');
         let isSpeaking = false;
         let energyLevel = 0.4;
+        let coreMoodColor = { r: 255, g: 150, b: 60 };
 
         function resizeCanvas() {
             canvas.width = window.innerWidth * window.devicePixelRatio;
@@ -665,21 +666,60 @@
         function drawCore(centerX, centerY, scale, t) {
             const pulse = 1 + 0.05 * Math.sin(t * 0.5) + (isSpeaking ? energyLevel * 0.15 : 0);
             const r = scale * 0.16 * pulse;
+            const c = coreMoodColor;
 
+            // wide ambient glow, tinted by mood
             const outer = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, r * 5);
-            outer.addColorStop(0, 'rgba(255, 200, 120, 0.55)');
-            outer.addColorStop(0.3, 'rgba(255, 120, 60, 0.22)');
-            outer.addColorStop(1, 'rgba(255, 80, 40, 0)');
+            outer.addColorStop(0, `rgba(${c.r}, ${c.g}, ${c.b}, 0.55)`);
+            outer.addColorStop(0.3, `rgba(${c.r}, ${c.g}, ${c.b}, 0.22)`);
+            outer.addColorStop(1, `rgba(${c.r}, ${c.g}, ${c.b}, 0)`);
             ctx.fillStyle = outer;
             ctx.beginPath();
             ctx.arc(centerX, centerY, r * 5, 0, Math.PI * 2);
             ctx.fill();
 
+            // rotating energy spikes radiating from the core
+            const spikeCount = 10;
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(t * 0.25);
+            for (let i = 0; i < spikeCount; i++) {
+                const angle = (i / spikeCount) * Math.PI * 2;
+                const flicker = 0.5 + 0.5 * Math.abs(Math.sin(t * 3 + i * 1.7));
+                const spikeLen = r * (1.4 + flicker * 0.9 + (isSpeaking ? energyLevel * 0.6 : 0));
+                const grad = ctx.createLinearGradient(0, 0, Math.cos(angle) * spikeLen, Math.sin(angle) * spikeLen);
+                grad.addColorStop(0, `rgba(${c.r}, ${c.g}, ${c.b}, ${0.5 * flicker})`);
+                grad.addColorStop(1, `rgba(${c.r}, ${c.g}, ${c.b}, 0)`);
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = 1.4;
+                ctx.beginPath();
+                ctx.moveTo(Math.cos(angle) * r * 0.9, Math.sin(angle) * r * 0.9);
+                ctx.lineTo(Math.cos(angle) * spikeLen, Math.sin(angle) * spikeLen);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // thin rotating iris rings around the core
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            for (let ring = 0; ring < 2; ring++) {
+                ctx.rotate((ring === 0 ? 1 : -1.6) * 0.01);
+                ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${0.35 - ring * 0.12})`;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([6, 10]);
+                ctx.beginPath();
+                ctx.arc(0, 0, r * (1.25 + ring * 0.28), 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+            ctx.restore();
+
+            // molten core body
             const core = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, r);
             core.addColorStop(0, '#fffdf2');
-            core.addColorStop(0.4, '#ffe9b0');
-            core.addColorStop(0.75, '#ff9a4d');
-            core.addColorStop(1, 'rgba(255, 80, 40, 0)');
+            core.addColorStop(0.4, `rgba(${Math.min(255,c.r+20)}, ${Math.min(255,c.g+80)}, ${Math.min(255,c.b+40)}, 1)`);
+            core.addColorStop(0.75, `rgb(${c.r}, ${c.g}, ${c.b})`);
+            core.addColorStop(1, `rgba(${c.r}, ${c.g}, ${c.b}, 0)`);
             ctx.fillStyle = core;
             ctx.beginPath();
             ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
@@ -956,6 +996,12 @@
             avatarOrb.classList.remove('mood-happy', 'mood-serious', 'mood-alert');
             if (mood !== 'neutral') avatarOrb.classList.add('mood-' + mood);
             moodLabel.textContent = 'MOOD: ' + { neutral: 'NEUTRAL', happy: 'BEGEISTERT', serious: 'ERNST', alert: 'ALARM' }[mood];
+            coreMoodColor = {
+                neutral: { r: 255, g: 150, b: 60 },
+                happy: { r: 90, g: 255, b: 160 },
+                serious: { r: 255, g: 190, b: 60 },
+                alert: { r: 255, g: 70, b: 90 }
+            }[mood];
         }
 
         async function askJarvis(text) {
