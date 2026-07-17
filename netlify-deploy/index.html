@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S. Neural Link</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #030512;
+            font-family: 'Share Tech Mono', monospace;
+            color: #5fd8ff;
+        }
+
+        canvas { display: block; width: 100%; height: 100%; }
+
+        .hud-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .top-left {
+            position: absolute;
+            top: 32px; left: 36px;
+            color: #6fe0ff;
+            text-shadow: 0 0 10px rgba(111,224,255,0.6);
+            z-index: 10;
+        }
+
+        .top-left-title {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+        }
+
+        .top-left-subtitle {
+            font-size: 10px;
+            letter-spacing: 2px;
+            opacity: 0.75;
+            font-family: 'Share Tech Mono', monospace;
+            margin-top: 4px;
+        }
+
+        .top-left-meta {
+            font-size: 9px;
+            opacity: 0.4;
+            font-family: 'Share Tech Mono', monospace;
+            margin-top: 3px;
+            letter-spacing: 1px;
+        }
+
+        .top-right {
+            position: absolute;
+            top: 32px; right: 36px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 10;
+        }
+
+        .clock {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #6fe0ff;
+            text-shadow: 0 0 10px rgba(111,224,255,0.6);
+        }
+
+        .avatar-orb {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #7fe8ff, #0d3a52 70%);
+            box-shadow: 0 0 14px rgba(111,224,255,0.7), inset 0 0 6px rgba(255,255,255,0.4);
+            border: 1px solid rgba(111,224,255,0.5);
+        }
+
+        .status-panel {
+            position: absolute;
+            top: 130px; right: 36px;
+            width: 190px;
+            z-index: 10;
+        }
+
+        .status-panel-title {
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: #6fe0ff;
+            opacity: 0.7;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 1px;
+            padding: 4px 0;
+            color: #a9e8ff;
+            opacity: 0.85;
+        }
+
+        .status-row .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-live { color: #3ef2a0; }
+        .status-live .dot { background: #3ef2a0; box-shadow: 0 0 6px #3ef2a0; }
+        .status-planned { color: #ffc55c; }
+        .status-planned .dot { background: #ffc55c; box-shadow: 0 0 6px #ffc55c; animation: blink 1.2s infinite; }
+
+        @keyframes blink { 0%,49%,100%{opacity:1} 50%,99%{opacity:0.3} }
+
+        .bottom-section {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: linear-gradient(to top, rgba(3,5,18,0.96), transparent);
+            padding: 22px 40px 26px;
+            z-index: 10;
+        }
+
+        .transcript-line {
+            text-align: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            color: #eaf8ff;
+            opacity: 0;
+            margin-bottom: 16px;
+            min-height: 20px;
+            text-shadow: 0 0 8px rgba(111,224,255,0.4);
+            animation: fadeIn 0.6s ease-in forwards;
+        }
+
+        @keyframes fadeIn { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+        .chat-panel {
+            max-width: 640px;
+            margin: 0 auto;
+            pointer-events: auto;
+        }
+
+        .chat-log {
+            max-height: 130px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            font-size: 11px;
+            line-height: 1.6;
+            font-family: 'Share Tech Mono', monospace;
+            padding: 0 4px;
+            display: none;
+        }
+
+        .chat-log.has-messages { display: block; }
+
+        .chat-msg { margin-bottom: 6px; opacity: 0; animation: fadeIn 0.4s ease-in forwards; }
+        .chat-msg.user { color: #ffffff; }
+        .chat-msg.user::before { content: "YOU > "; color: #3ef2a0; opacity: 0.8; }
+        .chat-msg.jarvis { color: #6fe0ff; text-shadow: 0 0 8px rgba(111,224,255,0.5); }
+        .chat-msg.jarvis::before { content: "J.A.R.V.I.S > "; color: #6fe0ff; opacity: 0.8; }
+        .chat-msg.error { color: #ff6b81; }
+
+        .listening-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(111,224,255,0.35);
+            border-radius: 20px;
+            padding: 10px 18px;
+            background: rgba(111,224,255,0.05);
+            box-shadow: 0 0 16px rgba(111,224,255,0.12);
+        }
+
+        .mic-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #3ef2a0;
+            box-shadow: 0 0 8px #3ef2a0;
+            flex-shrink: 0;
+        }
+
+        .mic-dot.listening { background: #ff6b81; box-shadow: 0 0 10px #ff6b81; animation: blink 0.7s infinite; }
+
+        .listening-label {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: #9fdcf5;
+            font-family: 'Share Tech Mono', monospace;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #eaf8ff;
+            padding: 4px 8px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .chat-input::placeholder { color: rgba(111,224,255,0.35); }
+
+        .mic-button, .send-button {
+            background: none;
+            border: none;
+            color: #6fe0ff;
+            cursor: pointer;
+            font-size: 15px;
+            flex-shrink: 0;
+            opacity: 0.85;
+        }
+
+        .mic-button:hover, .send-button:hover { opacity: 1; }
+
+        .waveform {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .waveform span {
+            display: block;
+            width: 2px;
+            height: 4px;
+            background: #6fe0ff;
+            border-radius: 1px;
+            box-shadow: 0 0 4px rgba(111,224,255,0.6);
+            transition: height 0.1s ease-out;
+        }
+
+        .telemetry {
+            position: absolute;
+            font-size: 8px;
+            font-family: 'Share Tech Mono', monospace;
+            color: rgba(150, 225, 255, 0.45);
+            letter-spacing: 0.5px;
+            z-index: 9;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .telemetry.tl { top: 175px; left: 20px; }
+        .telemetry.tr { top: 175px; right: 240px; text-align: right; }
+        .telemetry.bl { bottom: 200px; left: 20px; }
+
+        .scanlines {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 2px);
+            z-index: 100;
+        }
+
+        .vignette {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+            z-index: 99;
+        }
+
+        .chat-log::-webkit-scrollbar { width: 5px; }
+        .chat-log::-webkit-scrollbar-track { background: rgba(111,224,255,0.05); }
+        .chat-log::-webkit-scrollbar-thumb { background: rgba(111,224,255,0.3); border-radius: 3px; }
+
+        .boot-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #010208;
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Share Tech Mono', monospace;
+            transition: opacity 0.6s ease-out;
+        }
+
+        .boot-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .boot-lines {
+            width: 420px;
+            max-width: 80vw;
+            min-height: 200px;
+        }
+
+        .boot-line {
+            font-size: 12px;
+            color: #6fe0ff;
+            letter-spacing: 1px;
+            opacity: 0;
+            margin-bottom: 8px;
+            text-shadow: 0 0 6px rgba(111,224,255,0.5);
+        }
+
+        .boot-line.shown { opacity: 0.85; }
+        .boot-line.ok { color: #3ef2a0; }
+
+        .boot-bar-track {
+            width: 100%;
+            height: 3px;
+            background: rgba(111,224,255,0.1);
+            margin-top: 18px;
+            overflow: hidden;
+        }
+
+        .boot-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6fe0ff, #ffffff);
+            box-shadow: 0 0 10px rgba(111,224,255,0.8);
+            transition: width 2.2s linear;
+        }
+
+        .boot-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            letter-spacing: 6px;
+            color: #eaf8ff;
+            text-shadow: 0 0 16px rgba(111,224,255,0.8);
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: bootTitleIn 0.8s ease-out forwards;
+        }
+
+        @keyframes bootTitleIn {
+            from { opacity: 0; letter-spacing: 14px; }
+            to { opacity: 1; letter-spacing: 6px; }
+        }
+
+        .boot-scanline {
+            position: absolute;
+            left: 0; right: 0;
+            height: 2px;
+            background: rgba(111,224,255,0.4);
+            box-shadow: 0 0 12px rgba(111,224,255,0.7);
+            animation: bootScan 1.6s ease-in-out infinite;
+        }
+
+        @keyframes bootScan {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="boot-overlay" id="bootOverlay">
+        <div class="boot-scanline"></div>
+        <div class="boot-title">J.A.R.V.I.S</div>
+        <div class="boot-lines" id="bootLines"></div>
+        <div class="boot-bar-track"><div class="boot-bar-fill" id="bootBar"></div></div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="hud-container">
+        <div class="top-left">
+            <div class="top-left-title">J.A.R.V.I.S</div>
+            <div class="top-left-subtitle">GALAXY LINK — CONNECTED</div>
+            <div class="top-left-meta" id="dateMeta">CASH MACHINE · LISTENING v1.0</div>
+        </div>
+
+        <div class="top-right">
+            <div class="clock" id="clock">20:30:34</div>
+            <div class="avatar-orb"></div>
+        </div>
+
+        <div class="telemetry tl" id="telemetryTl"></div>
+        <div class="telemetry bl" id="telemetryBl"></div>
+
+        <div class="status-panel">
+            <div class="status-panel-title">SYSTEM STATUS</div>
+            <div class="status-row status-live"><span><span class="dot"></span>REVENUE STREAM</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>LEAD PIPELINE</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>MARKET DATA</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>CASH FLOW</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>INVENTORY VAULT</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>CUSTOMER BASE</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>AI CORE</span><span>LIVE</span></div>
+            <div class="status-row status-planned"><span><span class="dot"></span>SECURITY GRID</span><span>PLANNED</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>ORDER QUEUE</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>AUTOMATION</span><span>LIVE</span></div>
+        </div>
+
+        <div class="bottom-section">
+            <div class="transcript-line" id="transcriptLine">good evening, could you give me a recap on the business please</div>
+
+            <div class="chat-panel">
+                <div class="chat-log" id="chatLog"></div>
+                <div class="listening-bar">
+                    <span class="mic-dot" id="micDot"></span>
+                    <span class="listening-label" id="listeningLabel">LISTENING FOR "HEY JARVIS"</span>
+                    <div class="waveform" id="waveform">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Type to J.A.R.V.I.S..." autocomplete="off">
+                    <button class="mic-button" id="micButton" title="Voice">🎤</button>
+                    <button class="send-button" id="sendButton" title="Send">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="vignette"></div>
+    <div class="scanlines"></div>
+
+    <script src="jarvis_data.js"></script>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let isSpeaking = false;
+        let energyLevel = 0.4;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth * window.devicePixelRatio;
+            canvas.height = window.innerHeight * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function seededRand(seed) {
+            let s = seed;
+            return function() {
+                s = (s * 9301 + 49297) % 233280;
+                return s / 233280;
+            };
+        }
+
+        // ===== Ambient starfield =====
+        let stars = [];
+        function buildStars() {
+            stars = [];
+            const rand = seededRand(7);
+            const count = 160;
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: rand(),
+                    y: rand(),
+                    size: 0.4 + rand() * 1.3,
+                    phase: rand() * Math.PI * 2,
+                    speed: 0.3 + rand() * 0.8
+                });
+            }
+        }
+        buildStars();
+
+        function drawStars(w, h, t) {
+            for (let s of stars) {
+                const tw = 0.3 + 0.5 * Math.abs(Math.sin(t * s.speed + s.phase));
+                ctx.fillStyle = `rgba(200, 215, 255, ${tw * 0.6})`;
+                ctx.beginPath();
+                ctx.arc(s.x * w, s.y * h, s.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // ===== Galaxy core (glowing sun) =====
+        function drawCore(centerX, centerY, scale, t) {
+            const pulse = 1 + 0.05 * Math.sin(t * 0.5) + (isSpeaking ? energyLevel * 0.15 : 0);
+            const r = scale * 0.16 * pulse;
+
+            const outer = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, r * 5);
+            outer.addColorStop(0, 'rgba(255, 200, 120, 0.45)');
+            outer.addColorStop(0.3, 'rgba(255, 120, 60, 0.16)');
+            outer.addColorStop(1, 'rgba(255, 80, 40, 0)');
+            ctx.fillStyle = outer;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, r * 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            const core = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, r);
+            core.addColorStop(0, '#fffdf2');
+            core.addColorStop(0.4, '#ffe9b0');
+            core.addColorStop(0.75, '#ff9a4d');
+            core.addColorStop(1, 'rgba(255, 80, 40, 0)');
+            ctx.fillStyle = core;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // ===== Accretion ring — dust ring around the core =====
+        let ringParticles = [];
+        function buildRing() {
+            ringParticles = [];
+            const rand = seededRand(21);
+            const count = 130;
+            for (let i = 0; i < count; i++) {
+                const angle0 = rand() * Math.PI * 2;
+                const radiusFactor = 0.26 + rand() * 0.16;
+                const tilt = 0.32 + rand() * 0.08;
+                const warm = rand() > 0.35;
+                ringParticles.push({
+                    angle0, radiusFactor, tilt,
+                    size: 0.7 + rand() * 1.5,
+                    color: warm ? [255, 130 + Math.floor(rand() * 60), 60 + Math.floor(rand() * 40)] : [255, 255, 255]
+                });
+            }
+        }
+        buildRing();
+
+        function drawRing(centerX, centerY, scale, t) {
+            const speedBoost = isSpeaking ? 1 + energyLevel * 0.6 : 1;
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = 'rgb(255, 140, 70)';
+            for (let p of ringParticles) {
+                const angle = p.angle0 + t * 0.06 * speedBoost;
+                const r = scale * p.radiusFactor;
+                const x = centerX + Math.cos(angle) * r;
+                const y = centerY + Math.sin(angle) * r * p.tilt;
+                ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, 0.75)`;
+                ctx.beginPath();
+                ctx.arc(x, y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0;
+        }
+
+        // ===== Constellation nodes — business data points orbiting the core =====
+        const NODE_LABELS = [
+            'REVENUE STREAM', 'LEAD PIPELINE', 'MARKET DATA', 'CASH FLOW',
+            'INVENTORY VAULT', 'CUSTOMER BASE', 'AI CORE', 'SECURITY GRID',
+            'ORDER QUEUE', 'GROWTH ENGINE', 'ANALYTICS', 'AUTOMATION'
+        ];
+
+        let nodes = [];
+        function buildNodes() {
+            nodes = [];
+            const rand = seededRand(88);
+            NODE_LABELS.forEach((label, i) => {
+                const angle = (i / NODE_LABELS.length) * Math.PI * 2 + rand() * 0.4;
+                const dist = 0.42 + rand() * 0.55;
+                const warm = rand() > 0.6;
+                nodes.push({
+                    label,
+                    angle0: angle,
+                    distFactor: dist,
+                    tilt: 0.55 + rand() * 0.15,
+                    color: warm ? [255, 150, 90] : (rand() > 0.5 ? [150, 210, 255] : [200, 165, 255]),
+                    phase: rand() * Math.PI * 2
+                });
+            });
+        }
+        buildNodes();
+
+        function drawConstellation(centerX, centerY, scale, t) {
+            const rot = t * 0.015;
+            const positions = nodes.map(n => {
+                const angle = n.angle0 + rot;
+                const r = scale * n.distFactor;
+                return {
+                    x: centerX + Math.cos(angle) * r,
+                    y: centerY + Math.sin(angle) * r * n.tilt,
+                    node: n
+                };
+            });
+
+            ctx.strokeStyle = 'rgba(180, 200, 230, 0.16)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let p of positions) {
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(p.x, p.y);
+            }
+            ctx.stroke();
+
+            ctx.shadowBlur = 8;
+            for (let p of positions) {
+                const c = p.node.color;
+                const twinkle = 0.6 + 0.4 * Math.sin(t * 0.8 + p.node.phase);
+                ctx.shadowColor = `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+                ctx.fillStyle = `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${twinkle})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0;
+
+            ctx.font = '9px "Share Tech Mono", monospace';
+            ctx.textBaseline = 'middle';
+            for (let p of positions) {
+                const c = p.node.color;
+                ctx.fillStyle = `rgba(${c[0]}, ${c[1]}, ${c[2]}, 0.75)`;
+                const rightSide = p.x >= centerX;
+                ctx.textAlign = rightSide ? 'left' : 'right';
+                ctx.fillText(p.node.label, p.x + (rightSide ? 8 : -8), p.y);
+            }
+        }
+
+        function drawGalaxy(centerX, centerY, scale, t) {
+            drawRing(centerX, centerY, scale, t);
+            drawConstellation(centerX, centerY, scale, t);
+            drawCore(centerX, centerY, scale, t);
+        }
+
+        let animT = 0;
+        function animate() {
+            ctx.fillStyle = '#020208';
+            const w = canvas.width / window.devicePixelRatio;
+            const h = canvas.height / window.devicePixelRatio;
+            ctx.fillRect(0, 0, w, h);
+
+            drawStars(w, h, animT);
+
+            const centerX = w / 2;
+            const centerY = h / 2 - 20;
+            const scale = Math.min(centerX, centerY) * 0.85;
+
+            animT += 0.016;
+
+            if (isSpeaking) {
+                energyLevel = 0.5 + Math.abs(Math.sin(animT * 8)) * 0.5;
+            } else {
+                energyLevel *= 0.95;
+            }
+
+            drawGalaxy(centerX, centerY, scale, animT);
+
+            requestAnimationFrame(animate);
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+        }
+
+        function loadJarvisData() {
+            if (typeof window.JARVIS_DATA !== 'undefined') {
+                const data = window.JARVIS_DATA;
+                if (data.greeting) {
+                    document.getElementById('transcriptLine').textContent =
+                        data.transcript || 'good evening, could you give me a recap on the business please';
+                }
+            }
+        }
+
+        // ===== CHAT / VOICE =====
+        const chatLog = document.getElementById('chatLog');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+        const micButton = document.getElementById('micButton');
+        const micDot = document.getElementById('micDot');
+        const listeningLabel = document.getElementById('listeningLabel');
+        const transcriptLine = document.getElementById('transcriptLine');
+
+        function addChatMessage(text, sender) {
+            chatLog.classList.add('has-messages');
+            const msg = document.createElement('div');
+            msg.className = `chat-msg ${sender}`;
+            msg.textContent = text;
+            chatLog.appendChild(msg);
+            chatLog.scrollTop = chatLog.scrollHeight;
+            transcriptLine.textContent = text;
+            transcriptLine.style.animation = 'none';
+            void transcriptLine.offsetWidth;
+            transcriptLine.style.animation = 'fadeIn 0.6s ease-in forwards';
+        }
+
+        function speak(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-GB';
+            utterance.rate = 1.0;
+            utterance.pitch = 0.9;
+            const voices = window.speechSynthesis.getVoices();
+            const britishVoice = voices.find(v => v.lang === 'en-GB') || voices.find(v => v.lang.startsWith('en'));
+            if (britishVoice) utterance.voice = britishVoice;
+            utterance.onstart = () => { isSpeaking = true; listeningLabel.textContent = 'SPEAKING...'; };
+            utterance.onend = () => { isSpeaking = false; listeningLabel.textContent = 'LISTENING FOR "HEY JARVIS"'; };
+            window.speechSynthesis.speak(utterance);
+        }
+
+        const JARVIS_SYSTEM_PROMPT = "You are J.A.R.V.I.S., a witty, composed British AI assistant running a business command center dashboard. Keep replies short (2-4 sentences), helpful, and address the user respectfully.";
+
+        async function askJarvis(text) {
+            addChatMessage(text, 'user');
+            chatInput.value = '';
+
+            try {
+                const response = await fetch('/api/claude', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-5',
+                        max_tokens: 300,
+                        system: JARVIS_SYSTEM_PROMPT,
+                        messages: [{ role: 'user', content: text }]
+                    })
+                });
+
+                if (!response.ok) throw new Error('Server error');
+
+                const data = await response.json();
+                const reply = (data.content && data.content[0] && data.content[0].text) || data.reply || 'Keine Antwort erhalten.';
+                addChatMessage(reply, 'jarvis');
+                speak(reply);
+            } catch (err) {
+                addChatMessage('Verbindung fehlgeschlagen. Bitte versuch es nochmal.', 'error');
+            }
+        }
+
+        sendButton.addEventListener('click', () => {
+            const text = chatInput.value.trim();
+            if (text) askJarvis(text);
+        });
+
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const text = chatInput.value.trim();
+                if (text) askJarvis(text);
+            }
+        });
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let isListening = false;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'de-DE';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                isListening = true;
+                micDot.classList.add('listening');
+                listeningLabel.textContent = 'LISTENING...';
+            };
+            recognition.onend = () => {
+                isListening = false;
+                micDot.classList.remove('listening');
+                if (!isSpeaking) listeningLabel.textContent = 'LISTENING FOR "HEY JARVIS"';
+            };
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                askJarvis(transcript);
+            };
+            recognition.onerror = () => {
+                isListening = false;
+                micDot.classList.remove('listening');
+            };
+
+            micButton.addEventListener('click', () => {
+                if (isListening) recognition.stop(); else recognition.start();
+            });
+        } else {
+            micButton.addEventListener('click', () => {
+                addChatMessage('Dein Browser unterstützt keine Spracherkennung. Nutze Chrome oder Edge.', 'error');
+            });
+        }
+
+        // ===== WAVEFORM VISUALIZER =====
+        const waveformBars = document.querySelectorAll('#waveform span');
+        function updateWaveform() {
+            waveformBars.forEach((bar, i) => {
+                let h;
+                if (isSpeaking) {
+                    h = 4 + Math.abs(Math.sin(animT * (5 + i * 1.3) + i)) * 12 * (0.6 + energyLevel * 0.6);
+                } else {
+                    h = 3 + Math.abs(Math.sin(animT * 1.5 + i * 0.8)) * 2;
+                }
+                bar.style.height = h + 'px';
+            });
+            requestAnimationFrame(updateWaveform);
+        }
+        updateWaveform();
+
+        // ===== TELEMETRY READOUTS =====
+        const telemetryTl = document.getElementById('telemetryTl');
+        const telemetryBl = document.getElementById('telemetryBl');
+
+        function updateTelemetry() {
+            const t = animT;
+            const lat = (34.05 + Math.sin(t * 0.05) * 0.002).toFixed(4);
+            const lon = (-118.24 + Math.cos(t * 0.04) * 0.002).toFixed(4);
+            const load = Math.round(38 + Math.abs(Math.sin(t * 0.2)) * 40 + (isSpeaking ? energyLevel * 20 : 0));
+            const throughput = Math.round(1200 + Math.abs(Math.sin(t * 0.3)) * 800);
+
+            telemetryTl.innerHTML =
+                `LAT ${lat} LON ${lon}<br>` +
+                `NODES ${NODE_LABELS.length} / LINKS ${NODE_LABELS.length}<br>` +
+                `CORE LOAD ${load}%`;
+
+            telemetryBl.innerHTML =
+                `THROUGHPUT ${throughput} OPS/S<br>` +
+                `UPTIME ${Math.floor(t / 3600)}:${String(Math.floor((t % 3600) / 60)).padStart(2,'0')}:${String(Math.floor(t % 60)).padStart(2,'0')}`;
+
+            requestAnimationFrame(updateTelemetry);
+        }
+        updateTelemetry();
+
+        // ===== BOOT SEQUENCE =====
+        const bootOverlay = document.getElementById('bootOverlay');
+        const bootLinesEl = document.getElementById('bootLines');
+        const bootBar = document.getElementById('bootBar');
+
+        const bootSequence = [
+            'INITIALIZING J.A.R.V.I.S CORE...',
+            'LOADING GALAXY MAP... 12 NODES',
+            'CALIBRATING DATA CONSTELLATION...',
+            'REVENUE ... LEADS ... MARKET ... OK',
+            'CASH FLOW ... INVENTORY ... CUSTOMERS ... OK',
+            'AI CORE ... ORDERS ... AUTOMATION ... OK',
+            'ESTABLISHING ORBIT LINKS...',
+            'ARMING DEFENSE GRID...',
+            'GALAXY LINK ESTABLISHED.'
+        ];
+
+        function runBootSequence() {
+            let delay = 120;
+            bootBar.style.width = '100%';
+            bootSequence.forEach((line, i) => {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'boot-line' + (i === bootSequence.length - 1 ? ' ok' : '');
+                    el.textContent = '> ' + line;
+                    bootLinesEl.appendChild(el);
+                    requestAnimationFrame(() => el.classList.add('shown'));
+                }, delay);
+                delay += 220 + Math.random() * 120;
+            });
+
+            setTimeout(() => {
+                bootOverlay.classList.add('hidden');
+                setTimeout(() => bootOverlay.remove(), 700);
+            }, delay + 300);
+        }
+
+        // Initialize
+        updateClock();
+        setInterval(updateClock, 1000);
+        loadJarvisData();
+        animate();
+        runBootSequence();
+    </script>
+</body>
+</html>
