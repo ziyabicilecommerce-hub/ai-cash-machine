@@ -286,6 +286,18 @@
             z-index: 99;
         }
 
+        .flash-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background: #eaf8ff;
+            opacity: 0;
+            z-index: 600;
+            transition: opacity 0.28s ease-out;
+        }
+
+        .flash-overlay.active { opacity: 0.7; transition: opacity 0.05s ease-out; }
+
         .chat-log::-webkit-scrollbar { width: 5px; }
         .chat-log::-webkit-scrollbar-track { background: rgba(111,224,255,0.05); }
         .chat-log::-webkit-scrollbar-thumb { background: rgba(111,224,255,0.3); border-radius: 3px; }
@@ -435,6 +447,7 @@
 
     <div class="vignette"></div>
     <div class="scanlines"></div>
+    <div class="flash-overlay" id="flashOverlay"></div>
 
     <script src="jarvis_data.js"></script>
     <script>
@@ -815,6 +828,12 @@
         let novaBursts = [];
         let lastNovaTime = -100;
         let screenShake = 0;
+        let novaZoomPunch = 0;
+        const flashOverlay = document.getElementById('flashOverlay');
+        function triggerFlash() {
+            flashOverlay.classList.add('active');
+            setTimeout(() => flashOverlay.classList.remove('active'), 60);
+        }
 
         function drawNovaBursts(centerX, centerY, scale, t) {
             const novaInterval = isSpeaking ? 3 : 6;
@@ -827,6 +846,8 @@
                 novaBursts.push({ born: t, shrapnel });
                 lastNovaTime = t;
                 screenShake = 1;
+                novaZoomPunch = 1;
+                triggerFlash();
             }
             novaBursts = novaBursts.filter(n => t - n.born < 1.6);
             for (let n of novaBursts) {
@@ -1088,7 +1109,8 @@
             drawMeteors(w, h, animT);
 
             const breathe = 1 + 0.06 * Math.sin(animT * 0.6);
-            const scale = Math.min(centerX, centerY) * 0.85 * breathe;
+            novaZoomPunch *= 0.86;
+            const scale = Math.min(centerX, centerY) * 0.85 * breathe * (1 + novaZoomPunch * 0.15);
 
             animT += 0.016;
 
@@ -1322,6 +1344,8 @@
             setTimeout(() => {
                 novaBursts.push({ born: animT });
                 screenShake = 1.4;
+                novaZoomPunch = 1.4;
+                triggerFlash();
                 bootOverlay.classList.add('hidden');
                 setTimeout(() => bootOverlay.remove(), 700);
             }, delay + 300);
