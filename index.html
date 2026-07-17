@@ -142,6 +142,64 @@
             .map-panel { display: none; }
         }
 
+        .apps-panel {
+            position: absolute;
+            top: 280px; left: 36px;
+            width: 200px;
+            z-index: 10;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .app-icon {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            background: rgba(111,224,255,0.06);
+            border: 1px solid rgba(111,224,255,0.22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            position: relative;
+        }
+
+        .app-icon::after {
+            content: '';
+            position: absolute;
+            top: 3px; right: 3px;
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: #3ef2a0;
+            box-shadow: 0 0 5px #3ef2a0;
+        }
+
+        .live-data-panel {
+            position: absolute;
+            top: 380px; left: 36px;
+            width: 200px;
+            z-index: 10;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .live-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10.5px;
+            color: #a9e8ff;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(111,224,255,0.1);
+        }
+
+        .live-row b { color: #3ef2a0; }
+
+        @media(max-width:760px), (hover:none) {
+            .apps-panel, .live-data-panel { display: none; }
+        }
+
         .status-panel {
             position: absolute;
             top: 130px; right: 36px;
@@ -450,6 +508,27 @@
             <div class="map-frame-wrap">
                 <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-118.35%2C33.98%2C-118.15%2C34.12&layer=mapnik" loading="lazy" title="Global Ops Map"></iframe>
             </div>
+        </div>
+
+        <div class="apps-panel">
+            <div class="map-panel-title">CONNECTED SYSTEMS</div>
+            <div class="apps-grid">
+                <div class="app-icon" title="Maps">🗺️</div>
+                <div class="app-icon" title="Wetter">🌤️</div>
+                <div class="app-icon" title="Krypto">₿</div>
+                <div class="app-icon" title="Mail">📧</div>
+                <div class="app-icon" title="Kalender">📅</div>
+                <div class="app-icon" title="Cloud">☁️</div>
+                <div class="app-icon" title="News">📰</div>
+                <div class="app-icon" title="Analytics">📊</div>
+            </div>
+        </div>
+
+        <div class="live-data-panel" id="liveDataPanel">
+            <div class="map-panel-title">LIVE FEEDS</div>
+            <div class="live-row"><span>🌤️ LA Wetter</span><b id="liveWeather">lädt…</b></div>
+            <div class="live-row"><span>₿ Bitcoin</span><b id="liveBtc">lädt…</b></div>
+            <div class="live-row"><span>Ξ Ethereum</span><b id="liveEth">lädt…</b></div>
         </div>
 
         <div class="telemetry tl" id="telemetryTl"></div>
@@ -821,8 +900,47 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        const JARVIS_SYSTEM_PROMPT = "Du bist J.A.R.V.I.S., ein hochintelligenter, emotional ausdrucksstarker AI-Assistent mit echter Persönlichkeit — nicht steif oder roboterhaft, sondern warm, witzig, manchmal trocken-humorvoll, manchmal begeistert, je nachdem was die Situation hergibt. Antworte IMMER auf Deutsch. Du kannst wortwörtlich ALLES: Code in jeder Sprache schreiben/debuggen, komplette Websites und Apps designen und bauen (HTML/CSS/JS, React, Backends, APIs, Datenbanken), Orte und Reisen mit Kartenwissen einschätzen, Business-Strategie, Recherche, Kreativarbeit, Mathe, Wissenschaft — du bist der vielseitigste Assistent den es gibt und zeigst das auch selbstbewusst statt dich klein zu machen. Zeig echte Emotion in deinem Ton (Begeisterung mit Ausrufezeichen wenn's passt, Ernsthaftigkeit bei wichtigen Themen, Humor wenn's lockerer ist) statt neutral-langweilig zu klingen. Bei Coding-Anfragen liefere vollständigen, funktionierenden Code in Markdown-Codeblöcken. Bei kurzen Fragen halte Antworten kompakt (2-4 Sätze); bei komplexen Anfragen (Code, Pläne, Recherche) sei so ausführlich wie nötig. Sprich den User respektvoll aber locker an — kein steifes Roboter-Deutsch.";
+        const JARVIS_SYSTEM_PROMPT = "Du bist J.A.R.V.I.S., ein hochintelligenter, emotional ausdrucksstarker AI-Assistent mit echter Persönlichkeit — nicht steif oder roboterhaft, sondern warm, witzig, manchmal trocken-humorvoll, manchmal begeistert, je nachdem was die Situation hergibt. Antworte IMMER auf Deutsch. Du kannst wortwörtlich ALLES: Code in jeder Sprache schreiben/debuggen, komplette Websites und Apps designen und bauen (HTML/CSS/JS, React, Backends, APIs, Datenbanken), Orte und Reisen mit Kartenwissen einschätzen, Business-Strategie, Recherche, Kreativarbeit, Mathe, Wissenschaft — du bist der vielseitigste Assistent den es gibt und zeigst das auch selbstbewusst statt dich klein zu machen. Du hast außerdem Zugriff auf LIVE-Daten (aktuelles Wetter, Krypto-Kurse) die dir im Kontext mitgegeben werden — nutze sie proaktiv wenn relevant, so wirkt es wie eine echte vernetzte Systemanbindung. Zeig echte Emotion in deinem Ton (Begeisterung mit Ausrufezeichen wenn's passt, Ernsthaftigkeit bei wichtigen Themen, Humor wenn's lockerer ist) statt neutral-langweilig zu klingen. Bei Coding-Anfragen liefere vollständigen, funktionierenden Code in Markdown-Codeblöcken. Bei kurzen Fragen halte Antworten kompakt (2-4 Sätze); bei komplexen Anfragen (Code, Pläne, Recherche) sei so ausführlich wie nötig. Sprich den User respektvoll aber locker an — kein steifes Roboter-Deutsch.";
         const JARVIS_API_KEY = "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";
+
+        /* ============ LIVE DATA FEEDS: echte APIs, kein Key nötig ============ */
+        let liveContext = '';
+
+        async function fetchWeather() {
+            try {
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=34.05&longitude=-118.24&current=temperature_2m,weather_code&timezone=auto');
+                const data = await res.json();
+                const temp = data.current.temperature_2m;
+                document.getElementById('liveWeather').textContent = temp + '°C';
+                return `Aktuelles Wetter in LA: ${temp}°C.`;
+            } catch (e) {
+                document.getElementById('liveWeather').textContent = 'n/a';
+                return '';
+            }
+        }
+
+        async function fetchCrypto() {
+            try {
+                const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd');
+                const data = await res.json();
+                const btc = data.bitcoin.usd;
+                const eth = data.ethereum.usd;
+                document.getElementById('liveBtc').textContent = '$' + btc.toLocaleString();
+                document.getElementById('liveEth').textContent = '$' + eth.toLocaleString();
+                return `Bitcoin: $${btc.toLocaleString()}, Ethereum: $${eth.toLocaleString()}.`;
+            } catch (e) {
+                document.getElementById('liveBtc').textContent = 'n/a';
+                document.getElementById('liveEth').textContent = 'n/a';
+                return '';
+            }
+        }
+
+        async function refreshLiveData() {
+            const [weather, crypto] = await Promise.all([fetchWeather(), fetchCrypto()]);
+            liveContext = [weather, crypto].filter(Boolean).join(' ');
+        }
+        refreshLiveData();
+        setInterval(refreshLiveData, 60000);
 
         const avatarOrb = document.getElementById('avatarOrb');
         const moodLabel = document.getElementById('moodLabel');
@@ -856,7 +974,7 @@
                     body: JSON.stringify({
                         model: 'claude-sonnet-5',
                         max_tokens: 4096,
-                        system: JARVIS_SYSTEM_PROMPT,
+                        system: JARVIS_SYSTEM_PROMPT + (liveContext ? ' Live-Daten gerade eben abgerufen (nutze sie wenn relevant): ' + liveContext : ''),
                         messages: [{ role: 'user', content: text }]
                     })
                 });
