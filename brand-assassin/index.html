@@ -423,15 +423,25 @@
           <ellipse cx="214" cy="132" rx="4" ry="14" fill="rgba(61,220,255,.30)" transform="rotate(-10 214 132)"/>
         </g>
 
-        <!-- chest core -->
-        <circle cx="150" cy="146" r="17" fill="none" stroke="rgba(52,245,162,.45)" stroke-width="1.4">
-          <animate attributeName="r" values="17;21;17" dur="2.4s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values=".9;.15;.9" dur="2.4s" repeatCount="indefinite"/>
-        </circle>
-        <circle cx="150" cy="146" r="12" fill="#0a1420" stroke="url(#rim)" stroke-width="1.3"/>
-        <circle cx="150" cy="146" r="7.5" fill="url(#coreG)">
-          <animate attributeName="r" values="7.5;9;7.5" dur="2.4s" repeatCount="indefinite"/>
-        </circle>
+        <!-- chest core: reactor upgrade -->
+        <g transform="translate(150 146)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="7s" repeatCount="indefinite"/>
+            <circle r="25" fill="none" stroke="url(#rim)" stroke-width="1" stroke-dasharray="2 6" opacity=".5"/>
+          </g>
+          <g>
+            <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="11s" repeatCount="indefinite"/>
+            <circle r="30" fill="none" stroke="rgba(61,220,255,.3)" stroke-width="1" stroke-dasharray="1 9" opacity=".4"/>
+          </g>
+          <circle r="17" fill="none" stroke="rgba(52,245,162,.45)" stroke-width="1.4">
+            <animate attributeName="r" values="17;21;17" dur="2.4s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values=".9;.15;.9" dur="2.4s" repeatCount="indefinite"/>
+          </circle>
+          <circle r="12" fill="#0a1420" stroke="url(#rim)" stroke-width="1.3"/>
+          <circle r="7.5" fill="url(#coreG)">
+            <animate attributeName="r" values="7.5;9;7.5" dur="2.4s" repeatCount="indefinite"/>
+          </circle>
+        </g>
 
         <!-- HEAD: polished chrome -->
         <ellipse cx="150" cy="50" rx="30" ry="33" fill="url(#rim)" filter="url(#b5)" opacity=".45"/>
@@ -490,7 +500,7 @@
   </div>
 </header>
 
-<div class="ticker"><span>PRODUCT SCAN <b>·</b> CREATIVE CHECK <b>·</b> MARKT INTELLIGENCE <b>·</b> BRAND AUDIT <b>·</b> STRATEGIST LIVE <b>·</b> 250+ PRÜFPARAMETER <b>·</b> ENGINE ONLINE ⚡ <b>·</b> PRODUCT SCAN <b>·</b> CREATIVE CHECK <b>·</b> MARKT INTELLIGENCE <b>·</b> BRAND AUDIT <b>·</b> STRATEGIST LIVE <b>·</b> 250+ PRÜFPARAMETER <b>·</b> ENGINE ONLINE ⚡ <b>·</b> </span></div>
+<div class="ticker"><span id="tickerContent">PRODUCT SCAN <b>·</b> CREATIVE CHECK <b>·</b> MARKT INTELLIGENCE <b>·</b> BRAND AUDIT <b>·</b> STRATEGIST LIVE <b>·</b> 250+ PRÜFPARAMETER <b>·</b> ENGINE ONLINE ⚡ <b>·</b> PRODUCT SCAN <b>·</b> CREATIVE CHECK <b>·</b> MARKT INTELLIGENCE <b>·</b> BRAND AUDIT <b>·</b> STRATEGIST LIVE <b>·</b> 250+ PRÜFPARAMETER <b>·</b> ENGINE ONLINE ⚡ <b>·</b> </span></div>
 
 <!-- ================= OPERATOR CONSOLE ================= -->
 <section id="console">
@@ -610,6 +620,8 @@ Was bauen wir heute? 🚀</div>
       <span class="chip" onclick="quickAsk('Erstell mir einen 7-Tage Content-Plan für meine Brand')">📅 7-Tage Content-Plan</span>
       <span class="chip" onclick="quickAsk('Wie skaliere ich von 100€ auf 1000€ Tagesumsatz?')">📈 Skalierungs-Plan</span>
       <span class="chip" onclick="quickAsk('Schreib mir eine Ad-Copy die konvertiert')">✍️ Ad-Copy</span>
+      <span class="chip" onclick="quickAsk('Gib mir 15 relevante Instagram/TikTok Hashtags plus eine knackige Caption für mein Produkt')">🏷️ Hashtags & Caption</span>
+      <span class="chip" onclick="quickAsk('Analysiere meine Konkurrenz und zeig mir 3 Wege wie ich mich abhebe')">🥊 Konkurrenz-Check</span>
     </div>
     <div class="chat-input">
       <button class="icon-btn" id="mic-btn" onclick="toggleMic()" title="Sprachmemo aufnehmen">🎤</button>
@@ -652,6 +664,31 @@ Was bauen wir heute? 🚀</div>
       robotSvg.unpauseAnimations();
     }
   });
+})();
+
+/* ============ LIVE MARKT-TICKER: echte Krypto- & Devisenkurse ============ */
+(function () {
+  const tickerEl = document.getElementById('tickerContent');
+  if (!tickerEl) return;
+  const baseText = tickerEl.textContent;
+
+  async function loadLiveTicker() {
+    try {
+      const [cryptoRes, fxRes] = await Promise.all([
+        fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd'),
+        fetch('https://api.frankfurter.app/latest?from=EUR&to=USD')
+      ]);
+      const crypto = await cryptoRes.json();
+      const fx = await fxRes.json();
+      const btc = crypto.bitcoin.usd.toLocaleString();
+      const eth = crypto.ethereum.usd.toLocaleString();
+      const eurUsd = fx.rates.USD.toFixed(4);
+      const liveBit = `₿ BTC $${btc} <b>·</b> Ξ ETH $${eth} <b>·</b> EUR/USD ${eurUsd} <b>·</b> `;
+      tickerEl.innerHTML = liveBit + liveBit + baseText;
+    } catch (e) { /* Ticker bleibt bei statischem Text falls Feeds nicht erreichbar */ }
+  }
+  loadLiveTicker();
+  setInterval(loadLiveTicker, 90000);
 })();
 
 /* ============ AI ENGINE ============ */
