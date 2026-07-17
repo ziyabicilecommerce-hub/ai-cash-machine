@@ -123,19 +123,6 @@
 
         @keyframes blink { 0%,49%,100%{opacity:1} 50%,99%{opacity:0.3} }
 
-        .cluster-label {
-            position: absolute;
-            font-size: 9px;
-            font-family: 'Share Tech Mono', monospace;
-            letter-spacing: 1px;
-            padding: 2px 8px;
-            border: 1px solid;
-            border-radius: 2px;
-            z-index: 8;
-            white-space: nowrap;
-            opacity: 0.85;
-        }
-
         .bottom-section {
             position: absolute;
             bottom: 0; left: 0; right: 0;
@@ -286,18 +273,6 @@
             z-index: 99;
         }
 
-        .flash-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            background: #eaf8ff;
-            opacity: 0;
-            z-index: 600;
-            transition: opacity 0.28s ease-out;
-        }
-
-        .flash-overlay.active { opacity: 0.7; transition: opacity 0.05s ease-out; }
-
         .chat-log::-webkit-scrollbar { width: 5px; }
         .chat-log::-webkit-scrollbar-track { background: rgba(111,224,255,0.05); }
         .chat-log::-webkit-scrollbar-thumb { background: rgba(111,224,255,0.3); border-radius: 3px; }
@@ -399,7 +374,7 @@
     <div class="hud-container">
         <div class="top-left">
             <div class="top-left-title">J.A.R.V.I.S</div>
-            <div class="top-left-subtitle">NEURAL LINK — CONNECTED</div>
+            <div class="top-left-subtitle">GALAXY LINK — CONNECTED</div>
             <div class="top-left-meta" id="dateMeta">CASH MACHINE · LISTENING v1.0</div>
         </div>
 
@@ -412,18 +387,17 @@
         <div class="telemetry bl" id="telemetryBl"></div>
 
         <div class="status-panel">
-            <div class="status-panel-title">CORTEX STATUS</div>
-            <div class="status-row status-live"><span><span class="dot"></span>PREFRONTAL</span><span>LIVE</span></div>
-            <div class="status-row status-live"><span><span class="dot"></span>MOTOR</span><span>LIVE</span></div>
-            <div class="status-row status-live"><span><span class="dot"></span>CONCEPT</span><span>LIVE</span></div>
-            <div class="status-row status-live"><span><span class="dot"></span>ASSOCIATIVE</span><span>LIVE</span></div>
-            <div class="status-row status-live"><span><span class="dot"></span>SENSORY</span><span>LIVE</span></div>
-            <div class="status-row status-live"><span><span class="dot"></span>FEATURE</span><span>LIVE</span></div>
-            <div class="status-row status-live"><span><span class="dot"></span>PREDICTIVE</span><span>LIVE</span></div>
-            <div class="status-row status-live"><span><span class="dot"></span>MEMORY</span><span>LIVE</span></div>
-            <div class="status-row status-planned"><span><span class="dot"></span>REFLEX ARC</span><span>PLANNED</span></div>
-            <div class="status-row status-live"><span><span class="dot"></span>CONFIG</span><span>LIVE</span></div>
-            <div class="status-row status-live"><span><span class="dot"></span>FTS</span><span>LIVE</span></div>
+            <div class="status-panel-title">SYSTEM STATUS</div>
+            <div class="status-row status-live"><span><span class="dot"></span>REVENUE STREAM</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>LEAD PIPELINE</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>MARKET DATA</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>CASH FLOW</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>INVENTORY VAULT</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>CUSTOMER BASE</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>AI CORE</span><span>LIVE</span></div>
+            <div class="status-row status-planned"><span><span class="dot"></span>SECURITY GRID</span><span>PLANNED</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>ORDER QUEUE</span><span>LIVE</span></div>
+            <div class="status-row status-live"><span><span class="dot"></span>AUTOMATION</span><span>LIVE</span></div>
         </div>
 
         <div class="bottom-section">
@@ -447,7 +421,6 @@
 
     <div class="vignette"></div>
     <div class="scanlines"></div>
-    <div class="flash-overlay" id="flashOverlay"></div>
 
     <script src="jarvis_data.js"></script>
     <script>
@@ -462,24 +435,7 @@
             ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
         }
         resizeCanvas();
-        window.addEventListener('resize', () => { resizeCanvas(); buildBrain(); });
-
-        // ===== Brain-shaped neural network =====
-        // Cluster regions: main (cyan), cortex (red/pink, upper), predictor (teal/green, lower-left),
-        // associative (purple/magenta, lower-right)
-        const CLUSTERS = [
-            { name: 'main',      color: [150, 235, 255], count: 380, cx: 0,    cy: 0.05, rx: 0.85, ry: 0.75 },
-            { name: 'cortex',    color: [255, 40, 110],  count: 110, cx: 0.05, cy: -0.75, rx: 0.42,  ry: 0.3 },
-            { name: 'predictor', color: [50, 255, 180],  count: 100, cx: -0.35, cy: 0.7,  rx: 0.38,  ry: 0.32 },
-            { name: 'assoc',     color: [220, 90, 255],  count: 95,  cx: 0.45, cy: 0.65,  rx: 0.4,  ry: 0.32 }
-        ];
-
-        let brainPoints = [];
-        let dendrites = [];
-        let synapseLinks = [];
-        let orbitParticles = [];
-        let pulseRings = [];
-        let lastRingTime = 0;
+        window.addEventListener('resize', resizeCanvas);
 
         function seededRand(seed) {
             let s = seed;
@@ -489,96 +445,19 @@
             };
         }
 
-        function buildBrain() {
-            brainPoints = [];
-            dendrites = [];
-            synapseLinks = [];
-            const rand = seededRand(42);
-
-            CLUSTERS.forEach(cluster => {
-                for (let i = 0; i < cluster.count; i++) {
-                    const angle = rand() * Math.PI * 2;
-                    const dist = Math.pow(rand(), 0.5);
-                    const wobble = 0.85 + rand() * 0.3;
-                    const nx = cluster.cx + Math.cos(angle) * dist * cluster.rx * wobble;
-                    const ny = cluster.cy + Math.sin(angle) * dist * cluster.ry * wobble;
-                    brainPoints.push({
-                        nx, ny,
-                        color: cluster.color,
-                        cluster: cluster.name,
-                        phase: rand() * Math.PI * 2,
-                        speed: 0.5 + rand() * 1.5,
-                        size: 1.4 + rand() * 2.8,
-                        flashPhase: rand() * 100
-                    });
-                }
-            });
-
-            // Nearest-neighbor synapse mesh within each cluster
-            CLUSTERS.forEach(cluster => {
-                const members = brainPoints.filter(p => p.cluster === cluster.name);
-                members.forEach((p, i) => {
-                    const dists = members
-                        .map((q, j) => ({ j, d: (p.nx - q.nx) ** 2 + (p.ny - q.ny) ** 2 }))
-                        .filter(o => o.j !== i)
-                        .sort((a, b) => a.d - b.d)
-                        .slice(0, 2);
-                    dists.forEach(o => {
-                        synapseLinks.push({ a: p, b: members[o.j], color: cluster.color, phase: rand() * Math.PI * 2, speed: 0.4 + rand() * 0.8 });
-                    });
-                });
-            });
-
-            // Dendrite branches radiating from the core outward
-            const branchCount = 90;
-            for (let i = 0; i < branchCount; i++) {
-                const baseAngle = rand() * Math.PI * 2;
-                const baseDist = 0.15 + rand() * 0.25;
-                const length = 0.5 + rand() * 1.0;
-                const curve = (rand() - 0.5) * 1.4;
-                const segments = 5 + Math.floor(rand() * 4);
-                const pts = [];
-                for (let s = 0; s <= segments; s++) {
-                    const t = s / segments;
-                    const d = baseDist + length * t;
-                    const angle = baseAngle + curve * t * t;
-                    pts.push({
-                        nx: Math.cos(angle) * d,
-                        ny: Math.sin(angle) * d * 0.85
-                    });
-                }
-                const clusterPick = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
-                dendrites.push({ pts, color: clusterPick.color, phase: rand() * Math.PI * 2, speed: 0.3 + rand() * 0.7 });
-            }
-
-            // Orbiting halo particles ringing the whole structure
-            orbitParticles = [];
-            const orbitCount = 90;
-            for (let i = 0; i < orbitCount; i++) {
-                const angle0 = rand() * Math.PI * 2;
-                const radiusFactor = 1.55 + rand() * 0.4;
-                const tilt = 0.32 + rand() * 0.18;
-                const speed = (rand() > 0.5 ? 1 : -1) * (0.1 + rand() * 0.2);
-                const clusterPick = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
-                orbitParticles.push({ angle0, radiusFactor, tilt, speed, size: 0.9 + rand() * 1.8, color: clusterPick.color, phase: rand() * Math.PI * 2 });
-            }
-        }
-        buildBrain();
-
-        // Ambient background starfield
+        // ===== Ambient starfield =====
         let stars = [];
         function buildStars() {
             stars = [];
             const rand = seededRand(7);
-            const count = 140;
+            const count = 160;
             for (let i = 0; i < count; i++) {
                 stars.push({
                     x: rand(),
                     y: rand(),
-                    size: 0.4 + rand() * 1.2,
+                    size: 0.4 + rand() * 1.3,
                     phase: rand() * Math.PI * 2,
-                    speed: 0.3 + rand() * 0.8,
-                    drift: (rand() - 0.5) * 0.0003
+                    speed: 0.3 + rand() * 0.8
                 });
             }
         }
@@ -586,531 +465,165 @@
 
         function drawStars(w, h, t) {
             for (let s of stars) {
-                s.x += s.drift;
-                if (s.x > 1) s.x = 0;
-                if (s.x < 0) s.x = 1;
                 const tw = 0.3 + 0.5 * Math.abs(Math.sin(t * s.speed + s.phase));
-                ctx.fillStyle = `rgba(180, 220, 255, ${tw * 0.6})`;
+                ctx.fillStyle = `rgba(200, 215, 255, ${tw * 0.6})`;
                 ctx.beginPath();
                 ctx.arc(s.x * w, s.y * h, s.size, 0, Math.PI * 2);
                 ctx.fill();
             }
         }
 
-        // Meteor streaks crossing the background
-        let meteors = [];
-        let lastMeteorTime = -10;
+        // ===== Galaxy core (glowing sun) =====
+        function drawCore(centerX, centerY, scale, t) {
+            const pulse = 1 + 0.05 * Math.sin(t * 0.5) + (isSpeaking ? energyLevel * 0.15 : 0);
+            const r = scale * 0.16 * pulse;
 
-        function drawMeteors(w, h, t) {
-            const meteorInterval = isSpeaking ? 2.5 : 5;
-            if (t - lastMeteorTime > meteorInterval && Math.random() > 0.4) {
-                const startX = Math.random() * w * 0.6;
-                const startY = Math.random() * h * 0.4;
-                meteors.push({
-                    x: startX, y: startY,
-                    vx: 220 + Math.random() * 180,
-                    vy: 90 + Math.random() * 90,
-                    born: t, life: 0.9
-                });
-                lastMeteorTime = t;
-            }
-            meteors = meteors.filter(m => t - m.born < m.life);
-            for (let m of meteors) {
-                const age = (t - m.born) / m.life;
-                const alpha = Math.sin(age * Math.PI) * 0.8;
-                const x = m.x + m.vx * (t - m.born);
-                const y = m.y + m.vy * (t - m.born);
-                const tailX = x - m.vx * 0.06;
-                const tailY = y - m.vy * 0.06;
-                const grad = ctx.createLinearGradient(tailX, tailY, x, y);
-                grad.addColorStop(0, `rgba(200, 230, 255, 0)`);
-                grad.addColorStop(1, `rgba(220, 240, 255, ${alpha})`);
-                ctx.strokeStyle = grad;
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.moveTo(tailX, tailY);
-                ctx.lineTo(x, y);
-                ctx.stroke();
-            }
-        }
-
-        // Lightning arcs jumping between distant clusters
-        let lightningBolts = [];
-        let lastBoltTime = -10;
-
-        function buildFractalBolt(x1, y1, x2, y2, rand, depth) {
-            const segments = 7;
-            const pts = [];
-            for (let s = 0; s <= segments; s++) {
-                const lerpT = s / segments;
-                const baseX = x1 + (x2 - x1) * lerpT;
-                const baseY = y1 + (y2 - y1) * lerpT;
-                const jitter = s === 0 || s === segments ? 0 : (rand() - 0.5) * 0.25;
-                pts.push({ nx: baseX + jitter, ny: baseY + (rand() - 0.5) * 0.15 });
-            }
-            const branches = [];
-            if (depth > 0) {
-                const branchCount = 1 + Math.floor(rand() * 2);
-                for (let b = 0; b < branchCount; b++) {
-                    const originIdx = 2 + Math.floor(rand() * (pts.length - 4));
-                    const origin = pts[originIdx];
-                    const branchAngle = rand() * Math.PI * 2;
-                    const branchLen = 0.15 + rand() * 0.2;
-                    const endX = origin.nx + Math.cos(branchAngle) * branchLen;
-                    const endY = origin.ny + Math.sin(branchAngle) * branchLen;
-                    branches.push(buildFractalBolt(origin.nx, origin.ny, endX, endY, rand, depth - 1));
-                }
-            }
-            return { pts, branches };
-        }
-
-        function spawnLightning(t) {
-            const rand = Math.random;
-            const c1 = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
-            let c2 = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
-            if (c2 === c1) c2 = CLUSTERS[(CLUSTERS.indexOf(c1) + 1) % CLUSTERS.length];
-
-            const bolt = buildFractalBolt(c1.cx, c1.cy, c2.cx, c2.cy, rand, 1);
-            lightningBolts.push({ ...bolt, born: t });
-
-            if (isSpeaking && rand() > 0.5) {
-                let c3 = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
-                let c4 = CLUSTERS[Math.floor(rand() * CLUSTERS.length)];
-                if (c4 === c3) c4 = CLUSTERS[(CLUSTERS.indexOf(c3) + 1) % CLUSTERS.length];
-                const bolt2 = buildFractalBolt(c3.cx, c3.cy, c4.cx, c4.cy, rand, 1);
-                lightningBolts.push({ ...bolt2, born: t + 0.02 });
-            }
-        }
-
-        function strokeBoltSegment(bolt, centerX, centerY, scale, alpha) {
-            ctx.strokeStyle = `rgba(220, 245, 255, ${alpha})`;
-            ctx.lineWidth = 1.4;
+            const outer = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, r * 5);
+            outer.addColorStop(0, 'rgba(255, 200, 120, 0.45)');
+            outer.addColorStop(0.3, 'rgba(255, 120, 60, 0.16)');
+            outer.addColorStop(1, 'rgba(255, 80, 40, 0)');
+            ctx.fillStyle = outer;
             ctx.beginPath();
-            bolt.pts.forEach((p, idx) => {
-                const x = centerX + p.nx * scale;
-                const y = centerY + p.ny * scale;
-                if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-            });
-            ctx.stroke();
-
-            for (let branch of bolt.branches || []) {
-                ctx.strokeStyle = `rgba(200, 235, 255, ${alpha * 0.6})`;
-                ctx.lineWidth = 0.9;
-                ctx.beginPath();
-                branch.pts.forEach((p, idx) => {
-                    const x = centerX + p.nx * scale;
-                    const y = centerY + p.ny * scale;
-                    if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-                });
-                ctx.stroke();
-            }
-        }
-
-        function drawLightning(centerX, centerY, scale, t) {
-            const boltInterval = isSpeaking ? 0.5 : 2.2;
-            if (t - lastBoltTime > boltInterval) {
-                spawnLightning(t);
-                lastBoltTime = t;
-            }
-            lightningBolts = lightningBolts.filter(b => t - b.born < 0.35);
-
-            ctx.shadowBlur = 14;
-            ctx.shadowColor = 'rgb(220, 245, 255)';
-            for (let b of lightningBolts) {
-                const age = Math.max(0, (t - b.born) / 0.35);
-                const alpha = (1 - age) * 0.9;
-                strokeBoltSegment(b, centerX, centerY, scale, alpha);
-            }
-            ctx.shadowBlur = 0;
-        }
-
-        // Rotating radar sweep
-        function drawRadarSweep(centerX, centerY, scale, t) {
-            const angle = t * 0.6;
-            const sweepGradient = ctx.createConicGradient
-                ? ctx.createConicGradient(angle, centerX, centerY)
-                : null;
-            ctx.save();
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            const sweepWidth = 0.5;
-            ctx.arc(centerX, centerY, scale * 1.35, angle, angle + sweepWidth);
-            ctx.closePath();
-            const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, scale * 1.35);
-            grad.addColorStop(0, 'rgba(130, 225, 255, 0.10)');
-            grad.addColorStop(1, 'rgba(130, 225, 255, 0)');
-            ctx.fillStyle = grad;
+            ctx.arc(centerX, centerY, r * 5, 0, Math.PI * 2);
             ctx.fill();
-            ctx.strokeStyle = 'rgba(160, 230, 255, 0.25)';
-            ctx.lineWidth = 1;
+
+            const core = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, r);
+            core.addColorStop(0, '#fffdf2');
+            core.addColorStop(0.4, '#ffe9b0');
+            core.addColorStop(0.75, '#ff9a4d');
+            core.addColorStop(1, 'rgba(255, 80, 40, 0)');
+            ctx.fillStyle = core;
             ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.lineTo(centerX + Math.cos(angle) * scale * 1.35, centerY + Math.sin(angle) * scale * 1.35);
-            ctx.stroke();
-            ctx.restore();
+            ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
+            ctx.fill();
         }
 
-        // Orbiting halo ring of glowing particles circling the whole brain
-        function drawOrbitRing(centerX, centerY, scale, t) {
-            const speedBoost = isSpeaking ? 1 + energyLevel * 1.2 : 1;
-            for (let p of orbitParticles) {
-                const angle = p.angle0 + t * p.speed * speedBoost;
+        // ===== Accretion ring — dust ring around the core =====
+        let ringParticles = [];
+        function buildRing() {
+            ringParticles = [];
+            const rand = seededRand(21);
+            const count = 130;
+            for (let i = 0; i < count; i++) {
+                const angle0 = rand() * Math.PI * 2;
+                const radiusFactor = 0.26 + rand() * 0.16;
+                const tilt = 0.32 + rand() * 0.08;
+                const warm = rand() > 0.35;
+                ringParticles.push({
+                    angle0, radiusFactor, tilt,
+                    size: 0.7 + rand() * 1.5,
+                    color: warm ? [255, 130 + Math.floor(rand() * 60), 60 + Math.floor(rand() * 40)] : [255, 255, 255]
+                });
+            }
+        }
+        buildRing();
+
+        function drawRing(centerX, centerY, scale, t) {
+            const speedBoost = isSpeaking ? 1 + energyLevel * 0.6 : 1;
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = 'rgb(255, 140, 70)';
+            for (let p of ringParticles) {
+                const angle = p.angle0 + t * 0.06 * speedBoost;
                 const r = scale * p.radiusFactor;
                 const x = centerX + Math.cos(angle) * r;
                 const y = centerY + Math.sin(angle) * r * p.tilt;
-                const twinkle = 0.5 + 0.5 * Math.sin(t * 2 + p.phase);
-
-                const trailAngle = angle - p.speed * speedBoost * 0.2;
-                const tx = centerX + Math.cos(trailAngle) * r;
-                const ty = centerY + Math.sin(trailAngle) * r * p.tilt;
-                ctx.strokeStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, 0.3)`;
-                ctx.lineWidth = p.size * 0.7;
-                ctx.beginPath();
-                ctx.moveTo(tx, ty);
-                ctx.lineTo(x, y);
-                ctx.stroke();
-
-                ctx.shadowBlur = 9;
-                ctx.shadowColor = `rgb(${p.color[0]}, ${p.color[1]}, ${p.color[2]})`;
-                ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${0.45 + twinkle * 0.5})`;
+                ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, 0.75)`;
                 ctx.beginPath();
                 ctx.arc(x, y, p.size, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.shadowBlur = 0;
             }
+            ctx.shadowBlur = 0;
         }
 
-        // Rotating hexagonal targeting frame around the whole structure
-        function drawTargetFrame(centerX, centerY, scale, t) {
-            const sides = 6;
-            const outerR = scale * 1.55;
-            const rotation = t * 0.08;
+        // ===== Constellation nodes — business data points orbiting the core =====
+        const NODE_LABELS = [
+            'REVENUE STREAM', 'LEAD PIPELINE', 'MARKET DATA', 'CASH FLOW',
+            'INVENTORY VAULT', 'CUSTOMER BASE', 'AI CORE', 'SECURITY GRID',
+            'ORDER QUEUE', 'GROWTH ENGINE', 'ANALYTICS', 'AUTOMATION'
+        ];
 
-            ctx.save();
-            ctx.strokeStyle = 'rgba(150, 225, 255, 0.28)';
+        let nodes = [];
+        function buildNodes() {
+            nodes = [];
+            const rand = seededRand(88);
+            NODE_LABELS.forEach((label, i) => {
+                const angle = (i / NODE_LABELS.length) * Math.PI * 2 + rand() * 0.4;
+                const dist = 0.42 + rand() * 0.55;
+                const warm = rand() > 0.6;
+                nodes.push({
+                    label,
+                    angle0: angle,
+                    distFactor: dist,
+                    tilt: 0.55 + rand() * 0.15,
+                    color: warm ? [255, 150, 90] : (rand() > 0.5 ? [150, 210, 255] : [200, 165, 255]),
+                    phase: rand() * Math.PI * 2
+                });
+            });
+        }
+        buildNodes();
+
+        function drawConstellation(centerX, centerY, scale, t) {
+            const rot = t * 0.015;
+            const positions = nodes.map(n => {
+                const angle = n.angle0 + rot;
+                const r = scale * n.distFactor;
+                return {
+                    x: centerX + Math.cos(angle) * r,
+                    y: centerY + Math.sin(angle) * r * n.tilt,
+                    node: n
+                };
+            });
+
+            ctx.strokeStyle = 'rgba(180, 200, 230, 0.16)';
             ctx.lineWidth = 1;
             ctx.beginPath();
-            for (let i = 0; i <= sides; i++) {
-                const a = rotation + (i / sides) * Math.PI * 2;
-                const x = centerX + Math.cos(a) * outerR;
-                const y = centerY + Math.sin(a) * outerR;
-                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            for (let p of positions) {
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(p.x, p.y);
             }
             ctx.stroke();
 
-            // Corner tick marks at each hex vertex
-            for (let i = 0; i < sides; i++) {
-                const a = rotation + (i / sides) * Math.PI * 2;
-                const x = centerX + Math.cos(a) * outerR;
-                const y = centerY + Math.sin(a) * outerR;
-                ctx.fillStyle = 'rgba(190, 235, 255, 0.5)';
+            ctx.shadowBlur = 8;
+            for (let p of positions) {
+                const c = p.node.color;
+                const twinkle = 0.6 + 0.4 * Math.sin(t * 0.8 + p.node.phase);
+                ctx.shadowColor = `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+                ctx.fillStyle = `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${twinkle})`;
                 ctx.beginPath();
-                ctx.arc(x, y, 2, 0, Math.PI * 2);
+                ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2);
                 ctx.fill();
-            }
-
-            // Counter-rotating inner hex outline
-            ctx.strokeStyle = 'rgba(150, 225, 255, 0.15)';
-            ctx.beginPath();
-            const innerR = scale * 1.42;
-            const innerRotation = -t * 0.05;
-            for (let i = 0; i <= sides; i++) {
-                const a = innerRotation + (i / sides) * Math.PI * 2;
-                const x = centerX + Math.cos(a) * innerR;
-                const y = centerY + Math.sin(a) * innerR;
-                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-            ctx.restore();
-        }
-
-        // Supernova core bursts — big periodic explosion pulses
-        let novaBursts = [];
-        let lastNovaTime = -100;
-        let screenShake = 0;
-        let novaZoomPunch = 0;
-        const flashOverlay = document.getElementById('flashOverlay');
-        function triggerFlash() {
-            flashOverlay.classList.add('active');
-            setTimeout(() => flashOverlay.classList.remove('active'), 60);
-        }
-
-        function drawNovaBursts(centerX, centerY, scale, t) {
-            const novaInterval = isSpeaking ? 3 : 6;
-            if (t - lastNovaTime > novaInterval) {
-                const shrapnel = [];
-                const shrapCount = 24;
-                for (let i = 0; i < shrapCount; i++) {
-                    shrapnel.push({ angle: Math.random() * Math.PI * 2, speed: 0.6 + Math.random() * 0.9 });
-                }
-                novaBursts.push({ born: t, shrapnel });
-                lastNovaTime = t;
-                screenShake = 1;
-                novaZoomPunch = 1;
-                triggerFlash();
-            }
-            novaBursts = novaBursts.filter(n => t - n.born < 1.6);
-            for (let n of novaBursts) {
-                const age = (t - n.born) / 1.6;
-                const radius = scale * (0.1 + age * 2.2);
-                const alpha = Math.max(0, (1 - age) * 0.5);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-                ctx.lineWidth = 2.5 * (1 - age) + 0.5;
-                ctx.shadowBlur = 20;
-                ctx.shadowColor = 'rgb(190, 235, 255)';
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-                ctx.stroke();
-                ctx.shadowBlur = 0;
-
-                const shrapAlpha = Math.max(0, (1 - age) * 0.85);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${shrapAlpha})`;
-                ctx.lineWidth = 1.3;
-                ctx.shadowBlur = 6;
-                ctx.shadowColor = 'rgb(220, 240, 255)';
-                for (let sh of n.shrapnel || []) {
-                    const dist = scale * (0.15 + age * 2.6) * sh.speed;
-                    const tailDist = Math.max(0, dist - scale * 0.3);
-                    const sx = centerX + Math.cos(sh.angle) * dist;
-                    const sy = centerY + Math.sin(sh.angle) * dist;
-                    const tx = centerX + Math.cos(sh.angle) * tailDist;
-                    const ty = centerY + Math.sin(sh.angle) * tailDist;
-                    ctx.beginPath();
-                    ctx.moveTo(tx, ty);
-                    ctx.lineTo(sx, sy);
-                    ctx.stroke();
-                }
-                ctx.shadowBlur = 0;
-
-                if (age < 0.15) {
-                    const flashAlpha = (1 - age / 0.15) * 0.4;
-                    const flash = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, scale * 0.9);
-                    flash.addColorStop(0, `rgba(255, 255, 255, ${flashAlpha})`);
-                    flash.addColorStop(1, 'rgba(255, 255, 255, 0)');
-                    ctx.fillStyle = flash;
-                    ctx.beginPath();
-                    ctx.arc(centerX, centerY, scale * 0.9, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Chromatic split glitch — red/blue ghost rings offset from the flash
-                    const glitchOffset = (1 - age / 0.15) * 6;
-                    ctx.strokeStyle = `rgba(255, 70, 90, ${flashAlpha * 0.5})`;
-                    ctx.lineWidth = 1.5;
-                    ctx.beginPath();
-                    ctx.arc(centerX - glitchOffset, centerY, radius * 0.6, 0, Math.PI * 2);
-                    ctx.stroke();
-                    ctx.strokeStyle = `rgba(70, 140, 255, ${flashAlpha * 0.5})`;
-                    ctx.beginPath();
-                    ctx.arc(centerX + glitchOffset, centerY, radius * 0.6, 0, Math.PI * 2);
-                    ctx.stroke();
-                }
-            }
-        }
-
-        function drawBrain(centerX, centerY, scale, t) {
-            const energyBoost = isSpeaking ? 1 + energyLevel * 0.9 : 1;
-            const globalPulse = isSpeaking ? 1.4 + energyLevel * 0.8 : 1;
-
-            drawTargetFrame(centerX, centerY, scale, t);
-            drawRadarSweep(centerX, centerY, scale, t);
-            drawOrbitRing(centerX, centerY, scale, t);
-            drawNovaBursts(centerX, centerY, scale, t);
-            drawLightning(centerX, centerY, scale, t);
-
-            // Expanding energy rings from the core (sonar pulse)
-            if (t - lastRingTime > (isSpeaking ? 0.5 : 1.8)) {
-                pulseRings.push({ born: t });
-                lastRingTime = t;
-            }
-            pulseRings = pulseRings.filter(r => t - r.born < 2.2);
-            for (let r of pulseRings) {
-                const age = (t - r.born) / 2.2;
-                const radius = scale * (0.15 + age * 1.3);
-                const alpha = (1 - age) * 0.35;
-                ctx.strokeStyle = `rgba(130, 225, 255, ${alpha})`;
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-                ctx.stroke();
-            }
-
-            // Synapse mesh (glowing web between nearby nodes)
-            ctx.lineWidth = 1.1;
-            ctx.shadowBlur = 3;
-            for (let link of synapseLinks) {
-                const pulse = 0.4 + 0.35 * Math.sin(t * link.speed + link.phase);
-                const ax = centerX + link.a.nx * scale, ay = centerY + link.a.ny * scale;
-                const bx = centerX + link.b.nx * scale, by = centerY + link.b.ny * scale;
-                ctx.strokeStyle = `rgba(${link.color[0]}, ${link.color[1]}, ${link.color[2]}, ${Math.min(1, (0.25 + pulse * 0.4) * globalPulse)})`;
-                ctx.shadowColor = `rgb(${link.color[0]}, ${link.color[1]}, ${link.color[2]})`;
-                ctx.beginPath();
-                ctx.moveTo(ax, ay);
-                ctx.lineTo(bx, by);
-                ctx.stroke();
             }
             ctx.shadowBlur = 0;
 
-            // Dendrite branches with glow
-            ctx.shadowBlur = 10;
-            for (let d of dendrites) {
-                const pulse = 0.3 + 0.3 * Math.sin(t * d.speed + d.phase);
-                const col = `rgba(${d.color[0]}, ${d.color[1]}, ${d.color[2]}, ${Math.min(1, (0.4 + pulse * 0.4) * globalPulse)})`;
-                ctx.strokeStyle = col;
-                ctx.shadowColor = `rgb(${d.color[0]}, ${d.color[1]}, ${d.color[2]})`;
-                ctx.lineWidth = 1.8;
-                ctx.beginPath();
-                d.pts.forEach((p, idx) => {
-                    const x = centerX + p.nx * scale;
-                    const y = centerY + p.ny * scale;
-                    if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-                });
-                ctx.stroke();
-
-                const travelT = (t * 0.22 * d.speed + d.phase) % 1;
-                const idx = Math.min(d.pts.length - 1, Math.floor(travelT * d.pts.length));
-                const p = d.pts[idx];
-                if (p) {
-                    const x = centerX + p.nx * scale;
-                    const y = centerY + p.ny * scale;
-                    ctx.fillStyle = `rgba(${d.color[0]}, ${d.color[1]}, ${d.color[2]}, 0.95)`;
-                    ctx.beginPath();
-                    ctx.arc(x, y, 1.8 * energyBoost, 0, Math.PI * 2);
-                    ctx.fill();
-                }
+            ctx.font = '9px "Share Tech Mono", monospace';
+            ctx.textBaseline = 'middle';
+            for (let p of positions) {
+                const c = p.node.color;
+                ctx.fillStyle = `rgba(${c[0]}, ${c[1]}, ${c[2]}, 0.75)`;
+                const rightSide = p.x >= centerX;
+                ctx.textAlign = rightSide ? 'left' : 'right';
+                ctx.fillText(p.node.label, p.x + (rightSide ? 8 : -8), p.y);
             }
-            ctx.shadowBlur = 0;
-
-            // Point cloud with glow bloom + occasional synapse flashes + micro-particle sparks
-            ctx.shadowBlur = 12;
-            for (let p of brainPoints) {
-                const pulse = 0.55 + 0.45 * Math.sin(t * p.speed + p.phase);
-                const isFlashing = Math.sin(t * 2 + p.flashPhase) > 0.985;
-                const flash = isFlashing ? 1.8 : 1;
-                const x = centerX + p.nx * scale;
-                const y = centerY + p.ny * scale;
-                const alpha = Math.min(1, (0.75 + pulse * 0.5) * flash);
-                ctx.shadowColor = `rgb(${p.color[0]}, ${p.color[1]}, ${p.color[2]})`;
-                ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${alpha})`;
-                ctx.beginPath();
-                ctx.arc(x, y, p.size * energyBoost * flash, 0, Math.PI * 2);
-                ctx.fill();
-
-                if (isFlashing) {
-                    for (let k = 0; k < 3; k++) {
-                        const sparkAngle = (k / 3) * Math.PI * 2 + p.flashPhase;
-                        const sparkDist = p.size * 3.5;
-                        const sx = x + Math.cos(sparkAngle) * sparkDist;
-                        const sy = y + Math.sin(sparkAngle) * sparkDist;
-                        ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, 0.5)`;
-                        ctx.beginPath();
-                        ctx.arc(sx, sy, 0.7, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                }
-            }
-            ctx.shadowBlur = 0;
-
-            // Layered core glow — bigger, brighter, slowly cycling hue
-            const coreAlpha = isSpeaking ? 0.85 + energyLevel * 0.5 : 0.6 + 0.2 * Math.sin(t * 1.2);
-            const hue = 195 + Math.sin(t * 0.15) * 25;
-            for (const [r, a] of [[0.65, 0.4], [0.4, 0.55], [0.2, 0.75]]) {
-                const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, scale * r * globalPulse);
-                gradient.addColorStop(0, `hsla(${hue}, 90%, 78%, ${coreAlpha * a})`);
-                gradient.addColorStop(1, `hsla(${hue}, 90%, 78%, 0)`);
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, scale * r * globalPulse, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            drawCoreEye(centerX, centerY, scale, t, hue);
         }
 
-        // Reactive iris/eye at the very center — dilates with energy, blinks occasionally
-        let lastBlinkTime = -100;
-        let blinkDuration = 0;
-
-        function drawCoreEye(centerX, centerY, scale, t, hue) {
-            if (t - lastBlinkTime > 4.5 + Math.sin(t * 0.3) * 2) {
-                lastBlinkTime = t;
-                blinkDuration = 0.18;
-            }
-            const sinceBlink = t - lastBlinkTime;
-            const blinkFactor = sinceBlink < blinkDuration
-                ? Math.abs(Math.sin((sinceBlink / blinkDuration) * Math.PI))
-                : 1;
-
-            const baseRadius = scale * 0.13;
-            const dilation = isSpeaking ? 1 + energyLevel * 0.5 : 1 + 0.08 * Math.sin(t * 0.9);
-            const irisRadius = baseRadius * dilation * blinkFactor;
-            const pupilRadius = irisRadius * 0.42;
-
-            if (irisRadius < 0.5) return;
-
-            ctx.save();
-            ctx.beginPath();
-            ctx.rect(centerX - irisRadius, centerY - irisRadius * blinkFactor, irisRadius * 2, irisRadius * 2 * blinkFactor);
-            ctx.clip();
-
-            const irisGrad = ctx.createRadialGradient(centerX, centerY, pupilRadius, centerX, centerY, irisRadius);
-            irisGrad.addColorStop(0, `hsla(${hue}, 95%, 60%, 0.95)`);
-            irisGrad.addColorStop(0.7, `hsla(${hue + 15}, 95%, 45%, 0.9)`);
-            irisGrad.addColorStop(1, `hsla(${hue}, 90%, 30%, 0.7)`);
-            ctx.fillStyle = irisGrad;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, irisRadius, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Iris striations
-            ctx.strokeStyle = `hsla(${hue}, 100%, 85%, 0.3)`;
-            ctx.lineWidth = 0.6;
-            for (let i = 0; i < 16; i++) {
-                const a = (i / 16) * Math.PI * 2;
-                ctx.beginPath();
-                ctx.moveTo(centerX + Math.cos(a) * pupilRadius, centerY + Math.sin(a) * pupilRadius);
-                ctx.lineTo(centerX + Math.cos(a) * irisRadius, centerY + Math.sin(a) * irisRadius);
-                ctx.stroke();
-            }
-
-            // Pupil
-            ctx.fillStyle = 'rgba(2, 4, 10, 0.95)';
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, pupilRadius, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.restore();
-
-            // Bright specular highlight
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
-            ctx.beginPath();
-            ctx.arc(centerX - irisRadius * 0.3, centerY - irisRadius * 0.3, irisRadius * 0.14, 0, Math.PI * 2);
-            ctx.fill();
+        function drawGalaxy(centerX, centerY, scale, t) {
+            drawRing(centerX, centerY, scale, t);
+            drawConstellation(centerX, centerY, scale, t);
+            drawCore(centerX, centerY, scale, t);
         }
 
         let animT = 0;
         function animate() {
-            ctx.fillStyle = '#030512';
+            ctx.fillStyle = '#020208';
             const w = canvas.width / window.devicePixelRatio;
             const h = canvas.height / window.devicePixelRatio;
             ctx.fillRect(0, 0, w, h);
 
+            drawStars(w, h, animT);
+
             const centerX = w / 2;
             const centerY = h / 2 - 20;
-
-            const bgHue = 195 + Math.sin(animT * 0.15) * 25;
-            const bgPulseAlpha = isSpeaking ? 0.16 + energyLevel * 0.12 : 0.06 + 0.04 * Math.sin(animT * 0.6);
-            const bgWash = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, Math.max(w, h) * 0.75);
-            bgWash.addColorStop(0, `hsla(${bgHue}, 90%, 60%, ${bgPulseAlpha})`);
-            bgWash.addColorStop(1, 'hsla(220, 90%, 20%, 0)');
-            ctx.fillStyle = bgWash;
-            ctx.fillRect(0, 0, w, h);
-
-            drawStars(w, h, animT);
-            drawMeteors(w, h, animT);
-
-            const breathe = 1 + 0.06 * Math.sin(animT * 0.6);
-            novaZoomPunch *= 0.86;
-            const scale = Math.min(centerX, centerY) * 0.85 * breathe * (1 + novaZoomPunch * 0.15);
+            const scale = Math.min(centerX, centerY) * 0.85;
 
             animT += 0.016;
 
@@ -1120,16 +633,7 @@
                 energyLevel *= 0.95;
             }
 
-            screenShake *= 0.88;
-            const shakeX = (Math.random() - 0.5) * screenShake * 10;
-            const shakeY = (Math.random() - 0.5) * screenShake * 10;
-
-            ctx.save();
-            ctx.translate(centerX + shakeX, centerY + shakeY);
-            ctx.rotate(Math.sin(animT * 0.12) * 0.05);
-            ctx.translate(-centerX, -centerY);
-            drawBrain(centerX, centerY, scale, animT);
-            ctx.restore();
+            drawGalaxy(centerX, centerY, scale, animT);
 
             requestAnimationFrame(animate);
         }
@@ -1294,12 +798,10 @@
             const lon = (-118.24 + Math.cos(t * 0.04) * 0.002).toFixed(4);
             const load = Math.round(38 + Math.abs(Math.sin(t * 0.2)) * 40 + (isSpeaking ? energyLevel * 20 : 0));
             const throughput = Math.round(1200 + Math.abs(Math.sin(t * 0.3)) * 800);
-            const nodes = 685;
-            const synapses = 685 * 2;
 
             telemetryTl.innerHTML =
                 `LAT ${lat} LON ${lon}<br>` +
-                `NODES ${nodes} / SYNAPSES ${synapses}<br>` +
+                `NODES ${NODE_LABELS.length} / LINKS ${NODE_LABELS.length}<br>` +
                 `CORE LOAD ${load}%`;
 
             telemetryBl.innerHTML =
@@ -1317,14 +819,14 @@
 
         const bootSequence = [
             'INITIALIZING J.A.R.V.I.S CORE...',
-            'LOADING NEURAL LATTICE... 685 NODES',
-            'CALIBRATING CORTEX CLUSTERS...',
-            'PREFRONTAL ... MOTOR ... CONCEPT ... OK',
-            'ASSOCIATIVE ... SENSORY ... FEATURE ... OK',
-            'PREDICTIVE ... MEMORY ... CONFIG ... OK',
-            'ESTABLISHING SYNAPSE MESH...',
+            'LOADING GALAXY MAP... 12 NODES',
+            'CALIBRATING DATA CONSTELLATION...',
+            'REVENUE ... LEADS ... MARKET ... OK',
+            'CASH FLOW ... INVENTORY ... CUSTOMERS ... OK',
+            'AI CORE ... ORDERS ... AUTOMATION ... OK',
+            'ESTABLISHING ORBIT LINKS...',
             'ARMING DEFENSE GRID...',
-            'NEURAL LINK ESTABLISHED.'
+            'GALAXY LINK ESTABLISHED.'
         ];
 
         function runBootSequence() {
@@ -1342,10 +844,6 @@
             });
 
             setTimeout(() => {
-                novaBursts.push({ born: animT });
-                screenShake = 1.4;
-                novaZoomPunch = 1.4;
-                triggerFlash();
                 bootOverlay.classList.add('hidden');
                 setTimeout(() => bootOverlay.remove(), 700);
             }, delay + 300);
