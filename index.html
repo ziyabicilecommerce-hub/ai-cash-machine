@@ -79,6 +79,67 @@
             background: radial-gradient(circle at 35% 30%, #7fe8ff, #0d3a52 70%);
             box-shadow: 0 0 14px rgba(111,224,255,0.7), inset 0 0 6px rgba(255,255,255,0.4);
             border: 1px solid rgba(111,224,255,0.5);
+            transition: box-shadow 0.6s ease, background 0.6s ease;
+        }
+
+        .avatar-orb.mood-happy { background: radial-gradient(circle at 35% 30%, #a8ffcf, #0d5230 70%); box-shadow: 0 0 18px rgba(52,245,162,0.8), inset 0 0 6px rgba(255,255,255,0.5); }
+        .avatar-orb.mood-serious { background: radial-gradient(circle at 35% 30%, #ffd08a, #5a2f0d 70%); box-shadow: 0 0 18px rgba(255,180,90,0.8), inset 0 0 6px rgba(255,255,255,0.5); }
+        .avatar-orb.mood-alert { background: radial-gradient(circle at 35% 30%, #ffb0b8, #5a0d18 70%); box-shadow: 0 0 18px rgba(255,90,110,0.8), inset 0 0 6px rgba(255,255,255,0.5); }
+
+        .mood-label {
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            color: rgba(150,225,255,0.55);
+            font-family: 'Share Tech Mono', monospace;
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        .map-panel {
+            position: absolute;
+            top: 130px; left: 36px;
+            width: 200px;
+            z-index: 10;
+        }
+
+        .map-panel-title {
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: #6fe0ff;
+            opacity: 0.7;
+            margin-bottom: 8px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .map-frame-wrap {
+            width: 100%;
+            height: 130px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(111,224,255,0.3);
+            box-shadow: 0 0 16px rgba(111,224,255,0.15), inset 0 0 20px rgba(0,0,0,0.4);
+            position: relative;
+            pointer-events: auto;
+        }
+
+        .map-frame-wrap iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            filter: invert(0.92) hue-rotate(180deg) brightness(0.9) contrast(1.1) saturate(0.6);
+            display: block;
+        }
+
+        .map-frame-wrap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(3,5,18,0.5) 100%);
+            pointer-events: none;
+        }
+
+        @media(max-width:760px), (hover:none) {
+            .map-panel { display: none; }
         }
 
         .status-panel {
@@ -380,7 +441,15 @@
 
         <div class="top-right">
             <div class="clock" id="clock">20:30:34</div>
-            <div class="avatar-orb"></div>
+            <div class="avatar-orb" id="avatarOrb"></div>
+        </div>
+        <div class="mood-label" id="moodLabel" style="position:absolute;top:70px;right:36px;">MOOD: NEUTRAL</div>
+
+        <div class="map-panel">
+            <div class="map-panel-title">GLOBAL OPS MAP</div>
+            <div class="map-frame-wrap">
+                <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-118.35%2C33.98%2C-118.15%2C34.12&layer=mapnik" loading="lazy" title="Global Ops Map"></iframe>
+            </div>
         </div>
 
         <div class="telemetry tl" id="telemetryTl"></div>
@@ -450,7 +519,7 @@
         function buildStars() {
             stars = [];
             const rand = seededRand(7);
-            const count = 160;
+            const count = 260;
             for (let i = 0; i < count; i++) {
                 stars.push({
                     x: rand(),
@@ -499,7 +568,7 @@
 
         function drawNebula(w, h, t) {
             for (let n of nebulaBlobs) {
-                const alpha = 0.05 + 0.03 * Math.sin(t * n.speed + n.phase);
+                const alpha = 0.09 + 0.06 * Math.sin(t * n.speed + n.phase);
                 const cx = n.x * w;
                 const cy = n.y * h;
                 const r = n.radius * Math.max(w, h);
@@ -752,8 +821,24 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        const JARVIS_SYSTEM_PROMPT = "Du bist J.A.R.V.I.S., ein witziger, souveräner AI-Assistent, der ein Business Command Center betreibt. Antworte IMMER auf Deutsch, locker aber kompetent. Du bist außerdem ein hochkompetenter Software-Entwickler und Webentwickler: Du kannst Code in jeder Sprache schreiben, erklären und debuggen, und komplette Websites (HTML/CSS/JS, React, Backends, APIs) auf Anfrage designen und bauen. Bei Coding-Anfragen liefere vollständigen, funktionierenden Code in Markdown-Codeblöcken. Bei Business/Dashboard-Fragen halte Antworten kurz (2-4 Sätze); bei Coding-Anfragen sei so ausführlich wie nötig, um funktionierenden Code zu liefern. Sprich den User respektvoll an.";
+        const JARVIS_SYSTEM_PROMPT = "Du bist J.A.R.V.I.S., ein hochintelligenter, emotional ausdrucksstarker AI-Assistent mit echter Persönlichkeit — nicht steif oder roboterhaft, sondern warm, witzig, manchmal trocken-humorvoll, manchmal begeistert, je nachdem was die Situation hergibt. Antworte IMMER auf Deutsch. Du kannst wortwörtlich ALLES: Code in jeder Sprache schreiben/debuggen, komplette Websites und Apps designen und bauen (HTML/CSS/JS, React, Backends, APIs, Datenbanken), Orte und Reisen mit Kartenwissen einschätzen, Business-Strategie, Recherche, Kreativarbeit, Mathe, Wissenschaft — du bist der vielseitigste Assistent den es gibt und zeigst das auch selbstbewusst statt dich klein zu machen. Zeig echte Emotion in deinem Ton (Begeisterung mit Ausrufezeichen wenn's passt, Ernsthaftigkeit bei wichtigen Themen, Humor wenn's lockerer ist) statt neutral-langweilig zu klingen. Bei Coding-Anfragen liefere vollständigen, funktionierenden Code in Markdown-Codeblöcken. Bei kurzen Fragen halte Antworten kompakt (2-4 Sätze); bei komplexen Anfragen (Code, Pläne, Recherche) sei so ausführlich wie nötig. Sprich den User respektvoll aber locker an — kein steifes Roboter-Deutsch.";
         const JARVIS_API_KEY = "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";
+
+        const avatarOrb = document.getElementById('avatarOrb');
+        const moodLabel = document.getElementById('moodLabel');
+        function updateMood(text) {
+            const t = text.toLowerCase();
+            const happyWords = ['super', 'genial', 'klasse', 'geil', 'top', 'stark', '!', 'freu', 'krass', 'perfekt'];
+            const seriousWords = ['achtung', 'wichtig', 'vorsicht', 'risiko', 'problem', 'kritisch'];
+            const alertWords = ['fehler', 'gefahr', 'dringend', 'sofort', 'warnung'];
+            let mood = 'neutral';
+            if (alertWords.some(w => t.includes(w))) mood = 'alert';
+            else if (seriousWords.some(w => t.includes(w))) mood = 'serious';
+            else if (happyWords.some(w => t.includes(w))) mood = 'happy';
+            avatarOrb.classList.remove('mood-happy', 'mood-serious', 'mood-alert');
+            if (mood !== 'neutral') avatarOrb.classList.add('mood-' + mood);
+            moodLabel.textContent = 'MOOD: ' + { neutral: 'NEUTRAL', happy: 'BEGEISTERT', serious: 'ERNST', alert: 'ALARM' }[mood];
+        }
 
         async function askJarvis(text) {
             addChatMessage(text, 'user');
@@ -781,6 +866,7 @@
                 const data = await response.json();
                 const reply = (data.content && data.content[0] && data.content[0].text) || data.reply || 'Keine Antwort erhalten.';
                 addChatMessage(reply, 'jarvis');
+                updateMood(reply);
                 speak(reply);
             } catch (err) {
                 addChatMessage('Verbindung fehlgeschlagen. Bitte versuch es nochmal.', 'error');
