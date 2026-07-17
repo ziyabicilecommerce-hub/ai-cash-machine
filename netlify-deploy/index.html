@@ -473,14 +473,54 @@
             }
         }
 
+        // ===== Nebula haze — soft colored clouds drifting in the background =====
+        let nebulaBlobs = [];
+        function buildNebula() {
+            nebulaBlobs = [];
+            const rand = seededRand(33);
+            const palette = [
+                [255, 110, 90],
+                [130, 90, 255],
+                [90, 180, 255],
+                [255, 160, 60]
+            ];
+            for (let i = 0; i < 4; i++) {
+                nebulaBlobs.push({
+                    x: 0.15 + rand() * 0.7,
+                    y: 0.15 + rand() * 0.7,
+                    radius: 0.28 + rand() * 0.18,
+                    color: palette[i % palette.length],
+                    phase: rand() * Math.PI * 2,
+                    speed: 0.05 + rand() * 0.05
+                });
+            }
+        }
+        buildNebula();
+
+        function drawNebula(w, h, t) {
+            for (let n of nebulaBlobs) {
+                const alpha = 0.05 + 0.03 * Math.sin(t * n.speed + n.phase);
+                const cx = n.x * w;
+                const cy = n.y * h;
+                const r = n.radius * Math.max(w, h);
+                const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+                grad.addColorStop(0, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, ${alpha})`);
+                grad.addColorStop(1, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, 0)`);
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
         // ===== Galaxy core (glowing sun) =====
         function drawCore(centerX, centerY, scale, t) {
             const pulse = 1 + 0.05 * Math.sin(t * 0.5) + (isSpeaking ? energyLevel * 0.15 : 0);
             const r = scale * 0.16 * pulse;
 
             const outer = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, r * 5);
-            outer.addColorStop(0, 'rgba(255, 200, 120, 0.45)');
-            outer.addColorStop(0.3, 'rgba(255, 120, 60, 0.16)');
+            outer.addColorStop(0, 'rgba(255, 200, 120, 0.55)');
+            outer.addColorStop(0.3, 'rgba(255, 120, 60, 0.22)');
             outer.addColorStop(1, 'rgba(255, 80, 40, 0)');
             ctx.fillStyle = outer;
             ctx.beginPath();
@@ -520,7 +560,7 @@
 
         function drawRing(centerX, centerY, scale, t) {
             const speedBoost = isSpeaking ? 1 + energyLevel * 0.6 : 1;
-            ctx.shadowBlur = 6;
+            ctx.shadowBlur = 8;
             ctx.shadowColor = 'rgb(255, 140, 70)';
             for (let p of ringParticles) {
                 const angle = p.angle0 + t * 0.06 * speedBoost;
@@ -619,6 +659,7 @@
             const h = canvas.height / window.devicePixelRatio;
             ctx.fillRect(0, 0, w, h);
 
+            drawNebula(w, h, animT);
             drawStars(w, h, animT);
 
             const centerX = w / 2;
