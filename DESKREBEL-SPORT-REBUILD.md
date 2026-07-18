@@ -77,3 +77,12 @@ Keine Fake-Reviews/Fake-Scarcity hinzugefügt.
 - **Kollektion = RACE DAY / ARENA:** großer Arena-Header mit "ARENA"-Watermark, oranger Schräg-Slice, Riesen-Anton-Titel, Produktzahl als Volt-Startnummer ("X Produkte am Start"), Hazard-Streifen unterm Header
 - **Warenkorb = FINISH LINE:** Zielflaggen-Checker-Band oben + im Summary-Panel, "FINISH"-Watermark, oranges "FINAL LAP"-Label, Checkout-Button heißt "ZUR ZIELLINIE →", abgeschrägtes Summary-Panel
 - Startseite bleibt Volt-dominant → jede Hauptseite hat jetzt eine eigene Farb-/Design-Identität + eigene 3D-Szene
+
+## V9 — Fehlersuche & Abmahn-Fixes (neues Duplikat 197584617799, erstellt 10.7. 19:07)
+- **Versand-Seite (page.versand):** Lieferzeiten 2–5/5–10 → 6–10/10–14 Werktage korrigiert (widersprach dem restlichen Shop = Irreführungsrisiko), Anton-Typo, Stand Juli 2026
+- **FAQ-Seite (page.faq):** gleiche Lieferzeit-Korrektur, Anton/Barlow-Typo, Volt-Header
+- **Morning-Popup:** Fake-Dringlichkeit entfernt ("Nur heute", "Gültig bis 12 Uhr" bei täglicher Wiederholung) → ehrlicher "MORGEN-BONUS" mit echtem aktivem Code REBEL20, Sport-Typo
+- **Testimonials:** erfundene Bewertungen (Namen, "4.9/5.0", "3.100+ Bewertungen") komplett ersetzt durch ehrliche Zusagen-Sektion (Geld-zurück, Tracking, Support, Mängelhaftung)
+- **Welcome-Popup:** zeigte nicht existierenden Code "WELCOME10" → auf echten aktiven Code **WILLKOMMEN10** korrigiert, Sport-Typo
+- Rabattcode-Verifikation gegen Shopify: REBEL20 ✔ aktiv, WILLKOMMEN10 ✔ aktiv
+- Hinweis: Shopify-Theme-Update "Version 4.1.3" NICHT einspielen — würde die Custom-Sport-Edition überschreiben
