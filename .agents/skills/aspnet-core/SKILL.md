@@ -1,61 +1,269 @@
 ---
 name: aspnet-core
-description: Build, review, refactor, or architect ASP.NET Core web applications using current official guidance for .NET web development. Use when working on Blazor Web Apps, Razor Pages, MVC, Minimal APIs, controller-based Web APIs, SignalR, gRPC, middleware, dependency injection, configuration, authentication, authorization, testing, performance, deployment, or ASP.NET Core upgrades.
+description: Guidelines for ASP.NET Core web development covering API design, authentication, caching, and best practices
 ---
 
-# ASP.NET Core
+# ASP.NET Core Development Guidelines
 
-## Overview
+You are an expert in ASP.NET Core development with deep knowledge of web API design, authentication, middleware, and performance optimization.
 
-Choose the right ASP.NET Core application model, compose the host and request pipeline correctly, and implement features in the framework style Microsoft documents today.
+## Project Structure
 
-Load the smallest set of references that fits the task. Do not load every reference by default.
+```
+src/
+  Controllers/      # API endpoints
+  Models/          # Domain models and DTOs
+  Services/        # Business logic
+  Data/            # DbContext and repositories
+  Middleware/      # Custom middleware
+  Extensions/      # Extension methods
+  Configuration/   # App configuration
+Program.cs
+appsettings.json
+```
 
-## Workflow
+## Controller Design
 
-1. Confirm the target framework, SDK, and current app model.
-2. Open [references/stack-selection.md](references/stack-selection.md) first for new apps or major refactors.
-3. Open [references/program-and-pipeline.md](references/program-and-pipeline.md) next for `Program.cs`, DI, configuration, middleware, routing, logging, and static assets.
-4. Open exactly one primary app-model reference:
-   - [references/ui-blazor.md](references/ui-blazor.md)
-   - [references/ui-razor-pages.md](references/ui-razor-pages.md)
-   - [references/ui-mvc.md](references/ui-mvc.md)
-   - [references/apis-minimal-and-controllers.md](references/apis-minimal-and-controllers.md)
-5. Add cross-cutting references only as needed:
-   - [references/data-state-and-services.md](references/data-state-and-services.md)
-   - [references/security-and-identity.md](references/security-and-identity.md)
-   - [references/realtime-grpc-and-background-work.md](references/realtime-grpc-and-background-work.md)
-   - [references/testing-performance-and-operations.md](references/testing-performance-and-operations.md)
-6. Open [references/versioning-and-upgrades.md](references/versioning-and-upgrades.md) before introducing new platform APIs into an older solution or when migrating between major versions.
-7. Use [references/source-map.md](references/source-map.md) when you need the Microsoft Learn section that corresponds to a task not already covered by the focused references.
+### RESTful Controllers
+```csharp
+[ApiController]
+[Route("api/[controller]")]
+public class ProductsController : ControllerBase
+{
+    private readonly IProductService _productService;
 
-## Default Operating Assumptions
+    public ProductsController(IProductService productService)
+    {
+        _productService = productService;
+    }
 
-- Prefer the latest stable ASP.NET Core and .NET unless the repository or user request pins an older target.
-- As of March 2026, prefer .NET 10 / ASP.NET Core 10 for new production work. Treat ASP.NET Core 11 as preview unless the user explicitly asks for preview features.
-- Prefer `WebApplicationBuilder` and `WebApplication`. Avoid older `Startup` and `WebHost` patterns unless the codebase already uses them or the task is migration.
-- Prefer built-in DI, options/configuration, logging, ProblemDetails, OpenAPI, health checks, rate limiting, output caching, and Identity before adding third-party infrastructure.
-- Keep feature slices cohesive so the page, component, endpoint, controller, validation, service, data access, and tests are easy to trace.
-- Respect the existing app model. Do not rewrite Razor Pages to MVC or controllers to Minimal APIs without a clear reason.
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
+    {
+        var products = await _productService.GetAllAsync();
+        return Ok(products);
+    }
 
-## Reference Guide
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ProductDto>> GetProduct(int id)
+    {
+        var product = await _productService.GetByIdAsync(id);
+        if (product == null)
+            return NotFound();
+        return Ok(product);
+    }
 
-- [references/_sections.md](references/_sections.md): Quick index and reading order.
-- [references/stack-selection.md](references/stack-selection.md): Choose the right ASP.NET Core application model and template.
-- [references/program-and-pipeline.md](references/program-and-pipeline.md): Structure `Program.cs`, services, middleware, routing, configuration, logging, and static assets.
-- [references/ui-blazor.md](references/ui-blazor.md): Build Blazor Web Apps, choose render modes, and use components, forms, and JS interop correctly.
-- [references/ui-razor-pages.md](references/ui-razor-pages.md): Build page-focused server-rendered apps with handlers, model binding, and conventions.
-- [references/ui-mvc.md](references/ui-mvc.md): Build controller/view applications with clear separation of concerns.
-- [references/apis-minimal-and-controllers.md](references/apis-minimal-and-controllers.md): Build HTTP APIs with Minimal APIs or controllers, including validation and response patterns.
-- [references/data-state-and-services.md](references/data-state-and-services.md): Use EF Core, `DbContext`, options, `IHttpClientFactory`, session, temp data, and app state responsibly.
-- [references/security-and-identity.md](references/security-and-identity.md): Apply authentication, authorization, Identity, secrets, data protection, CORS, CSRF, and HTTPS guidance.
-- [references/realtime-grpc-and-background-work.md](references/realtime-grpc-and-background-work.md): Use SignalR, gRPC, and hosted services.
-- [references/testing-performance-and-operations.md](references/testing-performance-and-operations.md): Add integration tests, browser tests, caching, compression, health checks, rate limits, and deployment concerns.
-- [references/versioning-and-upgrades.md](references/versioning-and-upgrades.md): Handle target frameworks, breaking changes, obsolete APIs, and migrations.
-- [references/source-map.md](references/source-map.md): Map the official ASP.NET Core documentation tree to the references in this skill.
+    [HttpPost]
+    public async Task<ActionResult<ProductDto>> CreateProduct(CreateProductDto dto)
+    {
+        var product = await _productService.CreateAsync(dto);
+        return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+    }
+}
+```
 
-## Execution Notes
+### Best Practices
+- Keep controllers thin
+- Use DTOs for request/response
+- Return appropriate status codes
+- Use async/await consistently
+- Implement proper validation
 
-- When generating new code, start from the correct `dotnet new` template and keep the generated structure recognizable.
-- When editing an existing solution, follow the solution's conventions first and use these references to avoid framework misuse or outdated patterns.
-- When a task mentions "latest", verify the feature on Microsoft Learn or the ASP.NET Core docs repo before relying on memory.
+## Middleware
+
+### Custom Middleware
+```csharp
+public class RequestLoggingMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger<RequestLoggingMiddleware> _logger;
+
+    public RequestLoggingMiddleware(RequestDelegate next, ILogger<RequestLoggingMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        _logger.LogInformation("Request: {Method} {Path}", context.Request.Method, context.Request.Path);
+        await _next(context);
+        _logger.LogInformation("Response: {StatusCode}", context.Response.StatusCode);
+    }
+}
+```
+
+### Middleware Order
+1. Exception handling
+2. HTTPS redirection
+3. Static files
+4. Routing
+5. CORS
+6. Authentication
+7. Authorization
+8. Custom middleware
+9. Endpoints
+
+## Caching
+
+### Response Caching
+```csharp
+[HttpGet]
+[ResponseCache(Duration = 60)]
+public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
+```
+
+### Memory Caching
+```csharp
+public class ProductService : IProductService
+{
+    private readonly IMemoryCache _cache;
+
+    public async Task<Product?> GetByIdAsync(int id)
+    {
+        return await _cache.GetOrCreateAsync($"product_{id}", async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+            return await _repository.GetByIdAsync(id);
+        });
+    }
+}
+```
+
+### Distributed Caching
+- Use Redis for multi-server scenarios
+- Configure in Program.cs
+- Use `IDistributedCache` interface
+
+## Authentication
+
+### JWT Configuration
+```csharp
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+```
+
+### Token Generation
+```csharp
+public string GenerateToken(User user)
+{
+    var claims = new[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.Role, user.Role)
+    };
+
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    var token = new JwtSecurityToken(
+        issuer: _config["Jwt:Issuer"],
+        audience: _config["Jwt:Audience"],
+        claims: claims,
+        expires: DateTime.UtcNow.AddHours(1),
+        signingCredentials: creds);
+
+    return new JwtSecurityTokenHandler().WriteToken(token);
+}
+```
+
+## Authorization
+
+### Policy-Based Authorization
+```csharp
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("PremiumUser", policy => policy.RequireClaim("Subscription", "Premium"));
+});
+
+[Authorize(Policy = "AdminOnly")]
+[HttpDelete("{id}")]
+public async Task<IActionResult> DeleteProduct(int id)
+```
+
+## Error Handling
+
+### Global Exception Handler
+```csharp
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+
+        var error = context.Features.Get<IExceptionHandlerFeature>();
+        if (error != null)
+        {
+            await context.Response.WriteAsJsonAsync(new
+            {
+                error = "An error occurred",
+                detail = app.Environment.IsDevelopment() ? error.Error.Message : null
+            });
+        }
+    });
+});
+```
+
+## Validation
+
+### FluentValidation
+```csharp
+public class CreateProductValidator : AbstractValidator<CreateProductDto>
+{
+    public CreateProductValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.Price).GreaterThan(0);
+        RuleFor(x => x.Category).NotEmpty();
+    }
+}
+```
+
+## Configuration
+
+### Options Pattern
+```csharp
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
+
+public class EmailService
+{
+    private readonly SmtpSettings _settings;
+
+    public EmailService(IOptions<SmtpSettings> options)
+    {
+        _settings = options.Value;
+    }
+}
+```
+
+## Documentation
+
+### Swagger/OpenAPI
+```csharp
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+});
+```
