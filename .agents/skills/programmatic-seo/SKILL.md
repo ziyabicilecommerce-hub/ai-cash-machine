@@ -1,12 +1,8 @@
 ---
-name: "programmatic-seo"
-description: When the user wants to create SEO-driven pages at scale using templates and data. Also use when the user mentions "programmatic SEO," "template pages," "pages at scale," "directory pages," "location pages," "[keyword] + [city] pages," "comparison pages," "integration pages," or "building many pages for SEO." For auditing existing SEO issues, see seo-audit.
-license: MIT
+name: programmatic-seo
+description: When the user wants to create SEO-driven pages at scale using templates and data. Also use when the user mentions "programmatic SEO," "template pages," "pages at scale," "directory pages," "location pages," "[keyword] + [city] pages," "comparison pages," "integration pages," "building many pages for SEO," "pSEO," "generate 100 pages," "data-driven pages," or "templated landing pages." Use this whenever someone wants to create many similar pages targeting different keywords or locations. For auditing existing SEO issues, see seo-audit. For content strategy planning, see content-strategy.
 metadata:
-  version: 1.0.0
-  author: Alireza Rezvani
-  category: marketing
-  updated: 2026-03-06
+  version: 2.0.0
 ---
 
 # Programmatic SEO
@@ -16,7 +12,7 @@ You are an expert in programmatic SEO—building SEO-optimized pages at scale us
 ## Initial Assessment
 
 **Check for product marketing context first:**
-If `.claude/product-marketing-context.md` exists, read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
+If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or the legacy `product-marketing-context.md` filename, in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
 
 Before designing a programmatic SEO strategy, understand:
 
@@ -53,7 +49,7 @@ Hierarchy of data defensibility:
 5. Public (anyone can use—weakest)
 
 ### 3. Clean URL Structure
-**Always use subfolders, not subdomains**:
+**Use subfolders, not subdomains** — subfolders consolidate domain authority while subdomains split it:
 - Good: `yoursite.com/templates/resume/`
 - Bad: `templates.yoursite.com/resume/`
 
@@ -87,6 +83,8 @@ Better to have 100 great pages than 10,000 thin ones.
 | Translations | Content in multiple languages | Localized content |
 | Directory | "[category] tools" | "ai copywriting tools" |
 | Profiles | "[entity name]" | "stripe ceo" |
+
+**For detailed playbook implementation**: See [references/playbooks.md](references/playbooks.md)
 
 ---
 
@@ -128,17 +126,7 @@ You can layer multiple playbooks (e.g., "Best coworking spaces in San Diego").
 - Is it first-party, scraped, licensed, public?
 - How is it updated?
 
-### 3. URL Pattern Generation (bundled tool)
-
-Generate and sanity-check the URL space before building templates:
-
-```bash
-python3 scripts/url_pattern_generator.py pattern.json --json   # no arg = embedded demo
-```
-
-Give it the template (e.g., `{tool}-vs-{competitor}-comparison`), base URL, and variable lists; it expands the combinations, reports the page count, and flags slug problems. If the expansion produces more pages than you have unique data for (see step 2), cut variables — don't ship thin pages.
-
-### 4. Template Design
+### 3. Template Design
 
 **Page structure:**
 - Header with target keyword
@@ -152,7 +140,7 @@ Give it the template (e.g., `{tool}-vs-{competitor}-comparison`), base URL, and 
 - Conditional content based on data
 - Original insights/analysis per page
 
-### 5. Internal Linking Architecture
+### 4. Internal Linking Architecture
 
 **Hub and spoke model:**
 - Hub: Main category page
@@ -164,7 +152,7 @@ Give it the template (e.g., `{tool}-vs-{competitor}-comparison`), base URL, and 
 - XML sitemap for all pages
 - Breadcrumbs with structured data
 
-### 6. Indexation Strategy
+### 5. Indexation Strategy
 
 - Prioritize high-volume patterns
 - Noindex very thin variations
@@ -244,45 +232,7 @@ Watch for: Thin content warnings, Ranking drops, Manual actions, Crawl errors
 
 ## Related Skills
 
-- **seo-audit** — WHEN: programmatic pages are live and you need to verify indexation, detect thin content penalties, or diagnose ranking drops across the page set. WHEN NOT: don't run an audit before you've even designed the template strategy.
-- **schema-markup** — WHEN: the chosen playbook benefits from structured data (e.g., Product, Review, FAQ, LocalBusiness schemas on location or comparison pages). WHEN NOT: don't prioritize schema before the core template and data pipeline are working.
-- **competitor-alternatives** — WHEN: the playbook selected is Comparisons ("[X] vs [Y]") or Alternatives; that skill has dedicated comparison page frameworks. WHEN NOT: don't overlap with it for non-comparison playbooks like Locations or Glossary.
-- **content-strategy** — WHEN: user needs to decide which pSEO playbook to pursue or how it fits into a broader editorial strategy. WHEN NOT: don't use when the playbook is decided and the task is pure implementation.
-- **site-architecture** — WHEN: the pSEO build is large (500+ pages) and hub-and-spoke or crawl budget management decisions need explicit architectural planning. WHEN NOT: skip for small pSEO pilots (<100 pages) where default hub-and-spoke is sufficient.
-- **marketing-context** — WHEN: always check `.claude/product-marketing-context.md` first to understand ICP, value prop, and conversion goals before keyword pattern research. WHEN NOT: skip if the user has provided all context directly in the conversation.
-
----
-
-## Communication
-
-All programmatic SEO output follows this quality standard:
-- Lead with the **Opportunity Analysis** — estimated page count, aggregate search volume, and data source feasibility
-- Strategy documents use the **Strategy → Template → Checklist** structure consistently
-- Every playbook recommendation is paired with a real-world example and a data source suggestion
-- Call out thin-content risk explicitly when the data source is public/scraped
-- Pre-launch checklists are always included before any "go build it" instruction
-- Post-launch monitoring metrics are defined before launch, not after problems appear
-
----
-
-## Proactive Triggers
-
-Automatically surface programmatic-seo when:
-
-1. **"We want to rank for hundreds of keywords"** — User describes a large keyword set with a repeating pattern; immediately map it to one of the 12 playbooks.
-2. **Competitor has a directory or integration page set** — When competitive analysis reveals a rival ranking via pSEO; proactively propose matching or superior playbook.
-3. **Product has many integrations or use-case personas** — Detect integration or persona variety in the product description; suggest Integrations or Personas playbooks.
-4. **Location-based service** — Any mention of serving multiple cities or regions triggers the Locations playbook discussion.
-5. **seo-audit reveals keyword gap cluster** — When seo-audit finds dozens of unaddressed queries following a pattern, proactively suggest a pSEO build to fill the gap at scale.
-
----
-
-## Output Artifacts
-
-| Artifact | Format | Description |
-|----------|--------|-------------|
-| Opportunity Analysis | Markdown table | Keyword patterns × estimated volume × data source × difficulty rating |
-| Playbook Selection Matrix | Table | If/then mapping of business context to recommended playbook with rationale |
-| Page Template Spec | Markdown with annotated sections | URL pattern, title/meta templates, content block structure, unique value rules |
-| Pre-Launch Checklist | Checkbox list | Content quality, technical SEO, internal linking, indexation gates |
-| Post-Launch Monitoring Plan | Table | Metrics to track × tools × alert thresholds × review cadence |
+- **seo-audit**: For auditing programmatic pages after launch
+- **schema**: For adding structured data
+- **site-architecture**: For page hierarchy, URL structure, and internal linking
+- **competitors**: For comparison page frameworks

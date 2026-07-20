@@ -1,170 +1,213 @@
-# Platform Specs — Ad Copy Character Limits and Format Requirements
+# Platform Specs Reference
 
-Full specifications for each major ad platform. Use this when generating or validating ad copy.
+Complete character limits, format requirements, and best practices for each ad platform.
 
 ---
 
 ## Google Ads
 
-### Responsive Search Ads (RSA)
-| Element | Limit | Count | Notes |
-|---------|-------|-------|-------|
-| Headline | 30 chars | Up to 15 (min 3) | At least 3 unique, Google mixes them |
-| Description | 90 chars | Up to 4 (min 2) | Google selects 2 to show |
-| Display URL path | 15 chars each | 2 path fields | Auto-appended to domain |
-| Final URL | No char limit | 1 | Must match domain in display URL |
+### Responsive Search Ads (RSAs)
 
-**Pinning:** You can pin headlines to position 1, 2, or 3. Only pin when critical (e.g., brand name, compliance disclaimer). Pinning reduces Google's optimization.
+| Element | Character Limit | Required | Notes |
+|---------|----------------|----------|-------|
+| Headline | 30 chars | 3 minimum, 15 max | Any 3 may be shown together |
+| Description | 90 chars | 2 minimum, 4 max | Any 2 may be shown together |
+| Display path 1 | 15 chars | Optional | Appears after domain in URL |
+| Display path 2 | 15 chars | Optional | Appears after path 1 |
+| Final URL | No limit | Required | Landing page URL |
 
-**Ad Strength:** Google scores RSAs: Poor / Average / Good / Excellent. Target "Good" or "Excellent" by:
-- Using all 15 headline slots
-- Making headlines unique (no repeats, no same keywords)
-- Including your main keyword in at least 3 headlines
-- Using descriptions that complement, not repeat, headlines
+**Combination rules:**
+- Google selects up to 3 headlines and 2 descriptions to show
+- Headlines appear separated by " | " or stacked
+- Any headline can appear in any position unless pinned
+- Pinning reduces Google's ability to optimize — use sparingly
 
-### Performance Max (PMax)
-| Element | Limit | Count |
-|---------|-------|-------|
-| Headline | 30 chars | Up to 5 |
-| Long headline | 90 chars | Up to 5 |
-| Description | 90 chars | Up to 5 |
-| Short description | 60 chars | 1 |
+**Pinning strategy:**
+- Pin your brand name to position 1 if brand guidelines require it
+- Pin your strongest CTA to position 2 or 3
+- Leave most headlines unpinned for machine learning
 
-### Display Ads (Responsive)
-| Element | Limit | Count |
-|---------|-------|-------|
-| Short headline | 30 chars | 1 |
-| Long headline | 90 chars | 1 |
-| Description | 90 chars | 1 |
-| Business name | 25 chars | 1 |
+**Headline mix recommendation (15 headlines):**
+- 3-4 keyword-focused (match search intent)
+- 3-4 benefit-focused (what they get)
+- 2-3 social proof (numbers, awards, customers)
+- 2-3 CTA-focused (action to take)
+- 1-2 differentiators (why you over competitors)
+- 1 brand name headline
 
----
+**Description mix recommendation (4 descriptions):**
+- 1 benefit + proof point
+- 1 feature + outcome
+- 1 social proof + CTA
+- 1 urgency/offer + CTA (if applicable)
 
-## Meta (Facebook & Instagram)
+### Performance Max
 
-### Feed Ads (Single Image / Carousel)
-| Element | Limit | Notes |
-|---------|-------|-------|
-| Primary text | 125 chars (preview) / 2200 max | First 125 shown before "See more" |
-| Headline | 40 chars | Shown below image |
-| Description | 30 chars | Optional, below headline |
-| Link description | 20 chars | URL preview |
+| Element | Character Limit | Notes |
+|---------|----------------|-------|
+| Headline | 30 chars (5 required) | Short headlines for various placements |
+| Long headline | 90 chars (5 required) | Used in display, video, discover |
+| Description | 90 chars (1 required, 5 max) | Accompany various ad formats |
+| Business name | 25 chars | Required |
 
-**Image text:** Meta's old ">20% text = reduced distribution" rule was retired in 2021 and is no longer enforced — but text-light images still tend to outperform text-heavy ones, so keep image text minimal as a best practice and put copy in the primary text field.
+### Display Ads
 
-### Story / Reel Ads
-| Element | Limit | Notes |
-|---------|-------|-------|
-| Primary text overlay | 90 chars | Auto-placed if used |
-| No traditional headline | — | Overlay text is the copy |
-
-### Carousel Ads
-| Element | Limit | Notes |
-|---------|-------|-------|
-| Primary text | 125 chars (preview) | Shared across cards |
-| Headline per card | 40 chars | Each card has own headline |
-| Description per card | 20 chars | Optional |
-| Cards | 2–10 | |
-
-**Rejection triggers (Meta):**
-- "Facebook" or "Instagram" in ad copy
-- Guarantees of specific financial outcomes ("Make $10k/month")
-- Before/after comparison (health/beauty)
-- Excessive use of first-person pronouns targeting users ("you," "your" in a way that implies personal attributes)
-- ALL CAPS in any significant portion
-- Exaggerated health claims
-- Click-bait phrasing ("You won't believe...", "Click to find out...")
+| Element | Character Limit |
+|---------|----------------|
+| Headline | 30 chars |
+| Long headline | 90 chars |
+| Description | 90 chars |
+| Business name | 25 chars |
 
 ---
 
-## LinkedIn
+## Meta Ads (Facebook & Instagram)
 
-### Sponsored Content (Single Image)
-| Element | Limit | Notes |
-|---------|-------|-------|
-| Intro text | 150 chars (preview) / 600 max | First 150 visible before "See more" |
-| Headline | 70 chars | |
-| Description | 100 chars | Optional |
+### Single Image / Video / Carousel
 
-### Message Ads (InMail)
-| Element | Limit | Notes |
-|---------|-------|-------|
-| Subject line | 60 chars | |
-| Body | 1,500 chars | First 500 most critical |
-| CTA button | 20 chars | |
+| Element | Recommended | Maximum | Notes |
+|---------|-------------|---------|-------|
+| Primary text | 125 chars | 2,200 chars | Text above image; truncated after ~125 |
+| Headline | 40 chars | 255 chars | Below image; truncated after ~40 |
+| Description | 30 chars | 255 chars | Below headline; may not show |
+| URL display link | 40 chars | N/A | Optional custom display URL |
 
-### Conversation Ads
-| Element | Limit | Notes |
-|---------|-------|-------|
-| Intro message | 500 chars | |
-| CTA per branch | 25 chars | Up to 5 buttons |
-| Message body per branch | 500 chars | |
+**Placement-specific notes:**
+- **Feed**: All elements show; primary text most visible
+- **Stories/Reels**: Primary text overlaid; keep under 72 chars
+- **Right column**: Only headline visible; skip description
+- **Audience Network**: Varies by publisher
 
-**LinkedIn-specific rules:**
-- No "Click here" as standalone CTA
-- Keep image text minimal — text-heavy creative underperforms in feed (best practice, not an enforced rejection rule)
-- No misleading job descriptions or recruitment bait
-- Avoid generic corporate language — LinkedIn users are saturated with it
-- B2B works better when you lead with a specific insight or stat, not a product pitch
+**Best practices:**
+- Front-load the hook in primary text (first 125 chars)
+- Use line breaks for readability in longer primary text
+- Emojis: test, but don't overuse — 1-2 per ad max
+- Questions in primary text increase engagement
+- Headline should be a clear CTA or value statement
 
----
+### Lead Ads (Instant Form)
 
-## Twitter/X
-
-### Promoted Tweets
-| Element | Limit | Notes |
-|---------|-------|-------|
-| Tweet text | 280 chars total | URL counts as 23 chars |
-| Usable copy | ~257 chars | After URL deduction |
-| Image | Any ratio | 1200×628 recommended |
-
-**Twitter-specific notes:**
-- Copy + URL + image works in the feed
-- Lead with the hook — first 15 words matter most (above-the-fold on mobile)
-- Hashtags are optional for paid — they distract from the CTA
+| Element | Limit |
+|---------|-------|
+| Greeting headline | 60 chars |
+| Greeting description | 360 chars |
+| Privacy policy text | 200 chars |
 
 ---
 
-## TikTok
+## LinkedIn Ads
+
+### Single Image Ad
+
+| Element | Recommended | Maximum | Notes |
+|---------|-------------|---------|-------|
+| Intro text | 150 chars | 600 chars | Above the image; truncated after ~150 |
+| Headline | 70 chars | 200 chars | Below the image |
+| Description | 100 chars | 300 chars | Only shows on Audience Network |
+
+### Carousel Ad
+
+| Element | Limit |
+|---------|-------|
+| Intro text | 255 chars |
+| Card headline | 45 chars |
+| Card count | 2-10 cards |
+
+### Message Ad (InMail)
+
+| Element | Limit |
+|---------|-------|
+| Subject line | 60 chars |
+| Message body | 1,500 chars |
+| CTA button | 20 chars |
+
+### Text Ad
+
+| Element | Limit |
+|---------|-------|
+| Headline | 25 chars |
+| Description | 75 chars |
+
+**LinkedIn-specific guidelines:**
+- Professional tone, but not boring
+- Use job-specific language the audience recognizes
+- Statistics and data points perform well
+- Avoid consumer-style hype ("Amazing!" "Incredible!")
+- First-person testimonials from peers resonate
+
+---
+
+## TikTok Ads
 
 ### In-Feed Ads
+
+| Element | Recommended | Maximum | Notes |
+|---------|-------------|---------|-------|
+| Ad text | 80 chars | 100 chars | Above the video |
+| Display name | N/A | 40 chars | Brand name |
+| CTA button | Platform options | Predefined | Select from TikTok's options |
+
+### Spark Ads (Boosted Organic)
+
+| Element | Notes |
+|---------|-------|
+| Caption | Uses original post caption |
+| CTA button | Added by advertiser |
+| Display name | Original creator's handle |
+
+**TikTok-specific guidelines:**
+- Native content outperforms polished ads
+- First 2 seconds determine if they watch
+- Use trending sounds and formats
+- Text overlay is essential (most watch with sound off)
+- Vertical video only (9:16)
+
+---
+
+## Twitter/X Ads
+
+### Promoted Tweets
+
 | Element | Limit | Notes |
 |---------|-------|-------|
-| Ad text / caption | 100 chars | Overlaid on video |
-| Video length | 5–60 seconds (optimal 15–30s) | |
-| Mention/hashtag | Avoid branded hashtags | Policy restriction |
+| Tweet text | 280 chars | Full tweet with image/video |
+| Card headline | 70 chars | Website card |
+| Card description | 200 chars | Website card |
 
-**TikTok-specific notes:**
-- Hook must land in the first 3 seconds — after that, thumb stops
-- Native-feeling content outperforms polished ads (not always better to use brand assets)
-- Text on screen increases time-watched
-- CTA button text: "Shop Now," "Learn More," "Download," "Sign Up" are options
+### Website Cards
 
----
+| Element | Limit |
+|---------|-------|
+| Headline | 70 chars |
+| Description | 200 chars |
 
-## Common Rejection Triggers (All Platforms)
-
-| Trigger | Why It Gets Rejected | Fix |
-|---------|---------------------|-----|
-| ALL CAPS words | Flagged as aggressive/spam | Use title case or sentence case |
-| Excessive punctuation | !!!, ???, ... — looks spammy | One at most |
-| "#1" claims | Superlatives require proof | Remove or qualify |
-| "Guaranteed" | Financial/result guarantees restricted | "Proven to" or show results data |
-| Trademarked terms | Platform + competitor names | Remove or get written permission |
-| Profanity | Obvious | Remove |
-| "Click here" | Considered low-quality bait | Use specific CTA |
-| Personal attributes | "You are depressed," "For single people" | Rephrase without identifying attributes |
-| Misleading discounts | "90% off" without context | Substantiate or remove |
+**Twitter/X-specific guidelines:**
+- Conversational, casual tone
+- Short sentences work best
+- One clear message per tweet
+- Hashtags: 1-2 max (0 is often better for ads)
+- Threads can work for consideration-stage content
 
 ---
 
-## Platform Comparison — Which Platform for Which Creative?
+## Character Counting Tips
 
-| Use case | Best platform | Why |
-|----------|-------------|-----|
-| High intent, search-driven | Google Search RSA | Users are already looking |
-| Visual product with broad audience | Meta Feed | Best visual reach, lowest CPM for B2C |
-| B2B decision-makers | LinkedIn | Job title + company size targeting |
-| Young consumer audience, viral potential | TikTok | Organic-native feel, high engagement |
-| Real-time relevance, news-adjacent | Twitter/X | Timely content performs |
-| Retargeting across the web | Google Display | Broad reach, cheap retargeting |
+- **Spaces count** as characters on all platforms
+- **Emojis** count as 1-2 characters depending on platform
+- **Special characters** (|, &, etc.) count as 1 character
+- **URLs** in body text count against limits
+- **Dynamic keyword insertion** (`{KeyWord:default}`) can exceed limits — set safe defaults
+- Always verify in the platform's ad preview before launching
+
+---
+
+## Multi-Platform Creative Adaptation
+
+When creating for multiple platforms simultaneously, start with the most restrictive format:
+
+1. **Google Search headlines** (30 chars) — forces the tightest messaging
+2. **Expand to Meta headlines** (40 chars) — add a word or two
+3. **Expand to LinkedIn intro text** (150 chars) — add context and proof
+4. **Expand to Meta primary text** (125+ chars) — full hook and value prop
+
+This cascading approach ensures your core message works everywhere, then gets enriched for platforms that allow more space.
