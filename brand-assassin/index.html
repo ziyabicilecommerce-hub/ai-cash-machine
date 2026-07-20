@@ -214,6 +214,19 @@
     background:rgba(61,220,255,.12);color:var(--cyan);font-family:var(--mono);font-size:9.5px;display:flex;align-items:center;justify-content:center}
   .err{color:var(--red);font-size:13px;text-align:center;padding:30px 10px}
 
+  /* ---------- content fabrik ---------- */
+  .cf-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:700px){.cf-grid{grid-template-columns:1fr}}
+  .cf-card{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:18px;position:relative;display:flex;flex-direction:column;gap:10px}
+  .cf-card .cf-num{position:absolute;top:14px;right:16px;font-family:var(--mono);font-size:10px;color:var(--mut2);letter-spacing:.1em}
+  .cf-hook{font-weight:700;font-size:14px;color:var(--green)}
+  .cf-caption{font-size:13px;color:var(--txt);line-height:1.5;white-space:pre-wrap}
+  .cf-hashtags{font-size:12px;color:var(--cyan);word-break:break-word}
+  .cf-copy{align-self:flex-start;background:rgba(52,245,162,.1);border:1px solid rgba(52,245,162,.3);color:var(--green);
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;padding:7px 14px;border-radius:99px;cursor:pointer;transition:.2s}
+  .cf-copy:hover{background:rgba(52,245,162,.2)}
+  .cf-copy.copied{background:var(--green);color:#04140c;border-color:var(--green)}
+
   /* ---------- chat ---------- */
   .chat-shell{background:var(--panel);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55);display:flex;flex-direction:column;height:600px}
   .chat-log{flex:1;overflow-y:auto;padding:26px;display:flex;flex-direction:column;gap:16px}
@@ -524,6 +537,7 @@
       <button class="tab" data-tab="creative" onclick="switchTab('creative')">🎨 Creative Check</button>
       <button class="tab" data-tab="market" onclick="switchTab('market')">📈 Markt Check</button>
       <button class="tab" data-tab="brand" onclick="switchTab('brand')">🚀 Brand Audit</button>
+      <button class="tab" data-tab="content" onclick="switchTab('content')">🏭 Content-Fabrik</button>
     </div>
 
     <!-- product scan -->
@@ -591,6 +605,32 @@
       </div>
       <div class="result" id="res-brand">
         <div class="empty"><div class="big">🚀</div>Beschreibe deine Brand — die Engine liefert<br>Positionierungs-Score &amp; Wachstums-Moves.</div>
+      </div>
+    </div>
+
+    <!-- content fabrik -->
+    <div class="panel" id="panel-content">
+      <div class="form">
+        <h3>Content-Fabrik</h3>
+        <div class="hint">Spuckt dir auf Knopfdruck mehrere fertige, postfähige Social-Posts aus — Hook, Caption &amp; Hashtags.</div>
+        <label>Produkt / Thema</label>
+        <input id="cf-topic" placeholder="z.B. LED Hundehalsband, Posture Corrector, dein Content-Thema …">
+        <label>Plattform</label>
+        <select id="cf-platform">
+          <option>Instagram</option><option>TikTok</option><option>Facebook</option><option>LinkedIn</option>
+        </select>
+        <label>Ton</label>
+        <select id="cf-tone">
+          <option>Locker &amp; verkäuferisch</option><option>Witzig / Meme-artig</option><option>Professionell / seriös</option><option>Emotional / storytelling</option>
+        </select>
+        <label>Anzahl Posts</label>
+        <select id="cf-count">
+          <option value="3">3 Posts</option><option value="5" selected>5 Posts</option><option value="10">10 Posts</option>
+        </select>
+        <button class="btn btn-primary run-btn" onclick="runContentFabrik()">🏭 Content generieren</button>
+      </div>
+      <div class="result" id="res-content">
+        <div class="empty"><div class="big">🏭</div>Gib ein Thema ein — die Fabrik liefert dir<br>mehrere fertige Posts zum sofort Posten.</div>
       </div>
     </div>
   </div>
@@ -737,7 +777,8 @@ const loadLines = {
   scan: ['Scanne Produkt-Signale …', 'Prüfe Marge & Sättigung …', 'Berechne Trend-Kurve …', 'Erstelle Launch-Plan …'],
   creative: ['Zerlege Hook-Struktur …', 'Messe Problem-Klarheit …', 'Bewerte CTA-Power …', 'Schreibe Verbesserungen …'],
   market: ['Scanne Nachfrage-Trends …', 'Analysiere Konkurrenz-Dichte …', 'Prüfe Timing-Fenster …', 'Erstelle Einstiegsplan …'],
-  brand: ['Lese Positionierung …', 'Vergleiche Unterscheidbarkeit …', 'Messe Preis-Power …', 'Baue Wachstums-Moves …']
+  brand: ['Lese Positionierung …', 'Vergleiche Unterscheidbarkeit …', 'Messe Preis-Power …', 'Baue Wachstums-Moves …'],
+  content: ['Brainstorme Hooks …', 'Schreibe Captions …', 'Recherchiere Hashtags …', 'Poliere Feinschliff …']
 };
 let loadTimer = null;
 function showLoading(el, kind) {
@@ -854,6 +895,47 @@ async function runBrand() {
       'Du bist ein Brand-Stratege (Positionierung, DTC, Social-First Brands). Du auditierst Brands nach Positionierung, Unterscheidbarkeit, Zielgruppen-Fit und Preis-Power. ' + JSON_RULES + ' Metrics müssen sein: Positionierung, Unterscheidbarkeit, Zielgruppen-Fit, Preis-Power. In "plan" stehen konkrete Wachstums-Moves für die nächsten 30 Tage.',
       `Brand: ${document.getElementById('br-name').value || 'ohne Namen'}\nBeschreibung: ${d}`);
     stopLoading(); renderResult(el, parseJSON(raw), 'Brand-Stärken', 'Brand-Lücken');
+  } catch (e) { stopLoading(); renderError(el, e); }
+}
+
+function renderContentBatch(el, posts) {
+  el.innerHTML = `<div class="cf-grid">${posts.map((p, i) => `
+    <div class="cf-card">
+      <span class="cf-num">#${i + 1}</span>
+      <div class="cf-hook">${esc(p.hook)}</div>
+      <div class="cf-caption">${esc(p.caption)}</div>
+      <div class="cf-hashtags">${(p.hashtags || []).map(h => esc(h.startsWith('#') ? h : '#' + h)).join(' ')}</div>
+      <button class="cf-copy" onclick="copyPost(this, ${i})">📋 Kopieren</button>
+    </div>`).join('')}</div>`;
+  window._cfPosts = posts;
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyPost(btn, i) {
+  const p = window._cfPosts[i];
+  const text = p.hook + '\n\n' + p.caption + '\n\n' + (p.hashtags || []).map(h => h.startsWith('#') ? h : '#' + h).join(' ');
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Kopiert!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Kopieren'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+async function runContentFabrik() {
+  const topic = document.getElementById('cf-topic').value.trim();
+  if (!topic) { document.getElementById('cf-topic').focus(); return; }
+  const el = document.getElementById('res-content');
+  const count = document.getElementById('cf-count').value;
+  const platform = document.getElementById('cf-platform').value;
+  const tone = document.getElementById('cf-tone').value;
+  showLoading(el, 'content');
+  try {
+    const raw = await askAI(
+      `Du bist ein Social-Media-Content-Creator für E-Commerce/Brand-Marketing. Du schreibst sofort postfähige ${platform}-Posts im Ton "${tone}". Antworte NUR mit validem JSON, kein Markdown drumherum, alle Texte auf Deutsch. Format: {"posts":[{"hook":"<knackige erste Zeile / Aufhänger>","caption":"<vollständige Caption, 2-5 Sätze, mit CTA am Ende>","hashtags":["<8-12 relevante Hashtags ohne # im String oder mit #, beides ok>"]} x ${count}]}. Jeder Post muss sich klar von den anderen unterscheiden (anderer Winkel: Problem/Lösung, Social Proof, Humor, FOMO, Story, etc.).`,
+      `Produkt/Thema: ${topic}`, 3000);
+    const parsed = parseJSON(raw);
+    stopLoading();
+    renderContentBatch(el, parsed.posts);
   } catch (e) { stopLoading(); renderError(el, e); }
 }
 
