@@ -1,0 +1,7 @@
+---
+description: When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover. Also use when the user mentions \"content strategy,\" \"what should I write about,\" \"content ideas,\" \"blog strategy,\" \"topic clusters,\" or \"content planning.\" For writing indiv
+---
+
+Apply the **content-strategy** skill to the request below. Follow the full instructions in `.claude/skills/content-strategy/SKILL.md`.
+
+Request: $ARGUMENTS

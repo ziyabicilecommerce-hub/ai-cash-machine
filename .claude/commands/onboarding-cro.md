@@ -1,0 +1,7 @@
+---
+description: When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value. Also use when the user mentions "onboarding flow," "activation rate," "user activation," "first-run experience," "empty states," "onboarding checklist," "aha moment," or "new user experie
+---
+
+Apply the **onboarding-cro** skill to the request below. Follow the full instructions in `.claude/skills/onboarding-cro/SKILL.md`.
+
+Request: $ARGUMENTS
