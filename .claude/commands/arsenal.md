@@ -7,13 +7,21 @@ description: The master index of the entire marketing arsenal — 160 specialize
 
 The complete command center. Everything the user has built, in one place. When invoked, show this overview and help the user pick the right weapon for their goal.
 
-## ⚡ START HERE — Tools that produce real output
+## 🏆 THE FINALE 3 — capstone commands
 
 | Command | What it does |
 |---------|--------------|
-| `/campaign-generator` | **Live interactive tool** — type a product, watch a full battle plan build itself in-browser (headlines, offer, sales letter, VSL, money math). Export PDF / copy. |
+| `/launch-machine` | **One command, full launch** — brief → battle plan → live tool → real landing page → Higgsfield video assets. End to end. |
+| `/landing-forge` | Brief → a **real, deployable, conversion-optimized landing page** (actual HTML), published as an artifact. |
+| `/money-audit` | **Ruthless revenue-leak audit** of an existing funnel — leaks ranked by severity, fixes ranked by dollar impact. |
+
+## ⚡ TOOLS — produce real output
+
+| Command | What it does |
+|---------|--------------|
+| `/campaign-generator` | **Live interactive tool** — type a product, watch a full battle plan build itself in-browser (headlines, offer, sales letter, VSL, Higgsfield prompts, money math). Export PDF / copy. |
 | `/battle-plan` | Generates a polished **visual dossier** for a product, published as an artifact. |
-| `/legendary-engine` | Terminal/CLI version — runs `engine.js`, outputs full plan or `--json`. |
+| `/legendary-engine` | Terminal/CLI version — runs `engine.js`, outputs full plan, `--json`, or `--landing`. |
 
 ## 👑 ORCHESTRATION SWARMS — many agents at once
 
@@ -62,4 +70,4 @@ Run any single one: `/psychopath-agent-001` … `/psychopath-agent-160`
    - Want one specific skill → the matching `/psychopath-agent-NNN`
 3. Offer to run it for them right now.
 
-**Total: 160 agents · 16 tiers · a real generating engine · a live interactive tool.**
+**Total: 160 agents · 16 tiers · a real generating engine · a live interactive tool · real landing-page output · 3 capstone commands.**
