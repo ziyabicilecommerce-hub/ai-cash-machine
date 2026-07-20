@@ -144,6 +144,48 @@ function viralConcepts(b) {
 }
 
 // ---------------------------------------------------------------------------
+// 153 — Influence Scientist: objection handlers via the 7 principles
+// ---------------------------------------------------------------------------
+function objectionHandlers(b) {
+  const { dreamOutcome, audience, painPoint, price } = b;
+  return [
+    { objection: `"It's too expensive."`, principle: 'Anchoring + Value', answer: `Compared to another year of ${painPoint}? ${money(price)} once vs. the ongoing cost of staying stuck. The stack is worth 10x the price.` },
+    { objection: `"Will it work for me?"`, principle: 'Social Proof', answer: `It already worked for ${audience} in your exact situation — see the case-study library. Same starting point, same result.` },
+    { objection: `"I don't have time."`, principle: 'Effort reduction', answer: `The Quick-Start gets your first win in 48 hours. Done-for-you templates mean you follow, not figure out.` },
+    { objection: `"What if I fail?"`, principle: 'Risk reversal', answer: `You can't. Follow the plan 90 days — if you don't reach ${dreamOutcome}, we work with you free until you do.` },
+    { objection: `"I've tried things before."`, principle: 'Reframe / Authority', answer: `Those weren't built on the exact mechanism this uses. This is reverse-engineered from what actually works — not recycled advice.` },
+    { objection: `"I need to think about it."`, principle: 'Scarcity + Loss aversion', answer: `The bonuses (worth thousands) disappear at the deadline. "Thinking about it" usually means staying exactly where you are.` },
+    { objection: `"Is this legit?"`, principle: 'Authority + Unity', answer: `Built for ${audience}, by people who've done it. Real proof, real guarantee, real community. You're not buying alone.` },
+  ];
+}
+
+// ---------------------------------------------------------------------------
+// 156 — Behavioral Economist: pricing tiers with decoy
+// ---------------------------------------------------------------------------
+function pricingTiers(b) {
+  const { price, dreamOutcome } = b;
+  return [
+    { name: 'Starter', price: Math.round(price * 0.6), features: ['Core system', 'Templates', 'Community'], badge: null },
+    { name: 'Pro', price, features: ['Everything in Starter', 'Quick-Start', 'Live Q&A', 'Case-study vault', 'All guarantees'], badge: 'MOST POPULAR', recommended: true },
+    { name: 'Elite (decoy anchor)', price: price * 4, features: ['Everything in Pro', '1:1 coaching', `Personal ${dreamOutcome} plan`, 'Priority access'], badge: null },
+  ];
+}
+
+// ---------------------------------------------------------------------------
+// 101-105 — Platform Assassins: ad copy per platform
+// ---------------------------------------------------------------------------
+function adCopy(b) {
+  const { dreamOutcome, audience, painPoint } = b;
+  return [
+    { platform: 'TikTok/Reels', hook: `POV: you finally stopped ${painPoint} 👀`, body: `Here's the exact system ${audience} use to get ${dreamOutcome} →`, cta: 'Watch how' },
+    { platform: 'Meta (FB/IG)', hook: `${audience}: the ${dreamOutcome} shortcut nobody's talking about`, body: `Stop ${painPoint}. This is the boring, repeatable system that actually works.`, cta: 'Learn more' },
+    { platform: 'Google Search', hook: `Get ${dreamOutcome} — 90-Day System`, body: `Built for ${audience}. Risk-free guarantee. Start today.`, cta: 'Get started' },
+    { platform: 'YouTube', hook: `I reverse-engineered ${dreamOutcome}`, body: `The blueprint ${audience} wish they'd found sooner. Full breakdown inside.`, cta: 'Watch free' },
+    { platform: 'LinkedIn', hook: `Why most ${audience} never reach ${dreamOutcome}`, body: `It's not effort — it's the mechanism. Here's the fix.`, cta: 'See the system' },
+  ];
+}
+
+// ---------------------------------------------------------------------------
 // 156/160 — Conversion math + projected impact
 // ---------------------------------------------------------------------------
 function conversionMath(b) {
@@ -176,6 +218,9 @@ function battlePlan(brief) {
     valueLadder: valueLadder(b),
     emailSequence: emailSequence(b),
     viral: viralConcepts(b),
+    objections: objectionHandlers(b),
+    pricing: pricingTiers(b),
+    ads: adCopy(b),
     math: conversionMath(b),
   };
 }
@@ -221,6 +266,16 @@ function render(plan) {
   L.push('🦠 VIRAL CONCEPTS (Agent 158, STEPPS)');
   plan.viral.forEach((v) => L.push(`   • ${v.concept}  [${v.drivers.join(', ')}]`));
   L.push('');
+  L.push('🛡️  OBJECTION HANDLERS (Agent 153, 7 principles)');
+  plan.objections.forEach((o) => L.push(`   ${o.objection}  → [${o.principle}] ${o.answer}`));
+  L.push('');
+  L.push('💵 PRICING TIERS (Agent 156, decoy architecture)');
+  plan.pricing.forEach((t) =>
+    L.push(`   ${t.name.padEnd(22)} ${money(t.price)}${t.badge ? '  ★ ' + t.badge : ''}`));
+  L.push('');
+  L.push('📱 AD COPY BY PLATFORM (Agents 101-105)');
+  plan.ads.forEach((a) => L.push(`   [${a.platform}] ${a.hook}  |  CTA: ${a.cta}`));
+  L.push('');
   L.push('📊 CONVERSION MATH (Agent 160)');
   const m = plan.math;
   L.push(`   Now: ${(m.current.rate * 100).toFixed(2)}%  →  ${m.current.sales} sales  →  ${money(m.current.revenue)}`);
@@ -248,13 +303,18 @@ module.exports = { battlePlan, render, validateBrief, headlines, grandSlamOffer,
 
 if (require.main === module) {
   let brief = DEMO_BRIEF;
-  const arg = process.argv[2];
+  const arg = process.argv.slice(2).find((a) => !a.startsWith('--'));
   if (arg) {
     try { brief = JSON.parse(arg); }
     catch (e) { console.error('Invalid JSON brief:', e.message); process.exit(1); }
   }
   try {
-    console.log(render(battlePlan(brief)));
+    const plan = battlePlan(brief);
+    if (process.argv.includes('--json')) {
+      console.log(JSON.stringify(plan, null, 2));
+    } else {
+      console.log(render(plan));
+    }
   } catch (e) {
     console.error('Error:', e.message);
     process.exit(1);
