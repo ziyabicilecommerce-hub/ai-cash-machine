@@ -278,6 +278,98 @@ function higgsfieldPrompts(b) {
 }
 
 // ---------------------------------------------------------------------------
+// 021 — Landing Page Architect: a real, deployable landing page (HTML string)
+// ---------------------------------------------------------------------------
+function landingPage(b) {
+  const v = validateBrief(b);
+  const o = grandSlamOffer(v);
+  const hl = headlines(v);
+  const objs = objectionHandlers(v);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const bonusRows = o.bonuses.map((x) => `        <li><span>${esc(x.name)}</span><b>${money(x.value)}</b></li>`).join('\n');
+  const faqRows = objs.slice(0, 6).map((x) => `      <details><summary>${esc(x.objection.replace(/"/g, ''))}</summary><p>${esc(x.answer)}</p></details>`).join('\n');
+  return `<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(v.product)} — ${esc(v.dreamOutcome)}</title>
+<style>
+  :root{--bg:#0f1013;--panel:#16181d;--ink:#ece7da;--soft:#a5a192;--gold:#c9a24b;--green:#4fb07a;--line:#262a31;--serif:Georgia,serif;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:48px 20px 80px}
+  .eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);text-align:center;margin-bottom:16px}
+  h1{font-family:var(--serif);font-size:clamp(30px,6vw,50px);line-height:1.1;text-align:center;margin:0 0 16px;text-wrap:balance}
+  .sub{font-size:19px;color:var(--soft);text-align:center;max-width:56ch;margin:0 auto 32px}
+  .cta{display:block;width:fit-content;margin:0 auto;background:linear-gradient(180deg,#e0bc66,var(--gold));color:#16181d;font-weight:700;font-size:18px;padding:16px 40px;border-radius:12px;text-decoration:none;box-shadow:0 6px 24px rgba(201,162,75,.35)}
+  .cta:hover{filter:brightness(1.06)}
+  .cta-sub{text-align:center;font-size:13px;color:var(--soft);margin-top:12px}
+  section{margin-top:64px}
+  h2{font-family:var(--serif);font-size:clamp(22px,4vw,32px);text-align:center;margin:0 0 24px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px}
+  .stack{list-style:none;padding:0;margin:0}
+  .stack li{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--line)}
+  .stack li:last-child{border-bottom:0}.stack b{font-variant-numeric:tabular-nums;color:var(--gold)}
+  .total{display:flex;justify-content:space-between;padding-top:16px;margin-top:8px;border-top:2px solid var(--ink);font-family:var(--serif);font-size:20px}
+  .price-box{text-align:center;margin-top:28px}
+  .price-old{color:var(--soft);text-decoration:line-through;font-size:20px}
+  .price-now{font-family:var(--serif);font-size:52px;color:var(--gold);font-weight:700;line-height:1}
+  .guarantee{border-left:3px solid var(--green);padding:18px 22px;background:var(--panel);border-radius:0 12px 12px 0;color:var(--soft)}
+  .guarantee b{color:var(--ink)}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-bottom:10px}
+  summary{cursor:pointer;font-family:var(--serif);font-size:17px}
+  details p{color:var(--soft);margin:10px 0 0}
+  footer{margin-top:64px;text-align:center;color:var(--soft);font-size:13px}
+  @media(prefers-color-scheme:light){:root{--bg:#f6f2e9;--panel:#fff;--ink:#1a1a1e;--soft:#55524b;--gold:#a9812e;--green:#2f8f5b;--line:#e4decf}}
+</style></head><body>
+<div class="wrap">
+  <div class="eyebrow">For ${esc(v.audience)}</div>
+  <h1>${esc(hl[0].t)}</h1>
+  <p class="sub">${esc(v.product)} is the system that delivers ${esc(v.dreamOutcome)} — without ${esc(v.painPoint)}.</p>
+  <a class="cta" href="#offer">Get ${esc(v.dreamOutcome)} →</a>
+  <p class="cta-sub">90-day guarantee · instant access</p>
+
+  <section>
+    <h2>You've been handed the wrong map</h2>
+    <div class="card"><p style="margin:0;color:var(--soft)">You've been told to just push harder and "stay consistent." And you have. But you're still stuck ${esc(v.painPoint)} while others pull ahead. It's not effort — it's the mechanism. ${esc(v.product)} fixes exactly that.</p></div>
+  </section>
+
+  <section id="offer">
+    <h2>Everything you get</h2>
+    <div class="card">
+      <ul class="stack">
+        <li><span>${esc(o.core.name)} (core system)</span><b>${money(o.core.value)}</b></li>
+${bonusRows}
+        <li class="total"><span>Total value</span><b>${money(o.stackValue)}</b></li>
+      </ul>
+      <div class="price-box">
+        <div class="price-old">${money(o.stackValue)}</div>
+        <div class="price-now">${money(v.price)}</div>
+        <a class="cta" href="#" style="margin-top:20px">Yes — I want ${esc(v.dreamOutcome)}</a>
+        <p class="cta-sub">That's ${o.ratio}× the value · bonuses end soon</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>You risk nothing</h2>
+    <div class="guarantee"><b>90-day guarantee.</b> Follow the plan for 90 days and if you don't reach ${esc(v.dreamOutcome)}, we work with you free until you do. The only way to lose is to keep doing what you're doing.</div>
+  </section>
+
+  <section>
+    <h2>Questions?</h2>
+${faqRows}
+  </section>
+
+  <section style="text-align:center">
+    <h2>Two choices</h2>
+    <p class="sub">Keep ${esc(v.painPoint)} — or start the system that makes ${esc(v.dreamOutcome)} inevitable.</p>
+    <a class="cta" href="#">Start now →</a>
+  </section>
+
+  <footer>${esc(v.product)} · Built with the Legendary Engine</footer>
+</div></body></html>`;
+}
+
+// ---------------------------------------------------------------------------
 // Orchestration — the Grand Master battle plan
 // ---------------------------------------------------------------------------
 function battlePlan(brief) {
@@ -394,7 +486,7 @@ const DEMO_BRIEF = {
   traffic: 12000,
 };
 
-module.exports = { battlePlan, render, validateBrief, headlines, grandSlamOffer, conversionMath };
+module.exports = { battlePlan, render, validateBrief, headlines, grandSlamOffer, conversionMath, landingPage };
 
 if (require.main === module) {
   let brief = DEMO_BRIEF;
@@ -404,11 +496,12 @@ if (require.main === module) {
     catch (e) { console.error('Invalid JSON brief:', e.message); process.exit(1); }
   }
   try {
-    const plan = battlePlan(brief);
-    if (process.argv.includes('--json')) {
-      console.log(JSON.stringify(plan, null, 2));
+    if (process.argv.includes('--landing')) {
+      console.log(landingPage(brief));
+    } else if (process.argv.includes('--json')) {
+      console.log(JSON.stringify(battlePlan(brief), null, 2));
     } else {
-      console.log(render(plan));
+      console.log(render(battlePlan(brief)));
     }
   } catch (e) {
     console.error('Error:', e.message);
