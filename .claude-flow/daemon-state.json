@@ -1,15 +1,15 @@
 {
   "running": true,
-  "startedAt": "2026-07-20T22:50:00.145Z",
+  "startedAt": "2026-07-20T23:12:27.347Z",
   "workers": {
     "map": {
-      "runCount": 47,
-      "successCount": 47,
+      "runCount": 48,
+      "successCount": 48,
       "failureCount": 0,
-      "averageDurationMs": 3.148936170212765,
-      "lastRun": "2026-07-20T22:54:13.729Z",
-      "lastStartedAt": "2026-07-20T22:54:13.728Z",
-      "nextRun": "2026-07-20T23:09:13.730Z",
+      "averageDurationMs": 3.2708333333333326,
+      "lastRun": "2026-07-20T23:09:13.750Z",
+      "lastStartedAt": "2026-07-20T23:09:13.742Z",
+      "nextRun": "2026-07-20T23:24:13.750Z",
       "isRunning": false
     },
     "audit": {
@@ -19,7 +19,7 @@
       "averageDurationMs": 2.4242424242424243,
       "lastRun": "2026-07-20T23:02:00.160Z",
       "lastStartedAt": "2026-07-20T23:02:00.159Z",
-      "nextRun": "2026-07-20T23:02:00.154Z",
+      "nextRun": "2026-07-20T23:14:27.347Z",
       "isRunning": false
     },
     "optimize": {
@@ -29,7 +29,7 @@
       "averageDurationMs": 2.8260869565217392,
       "lastRun": "2026-07-20T22:58:13.733Z",
       "lastStartedAt": "2026-07-20T22:58:13.730Z",
-      "nextRun": "2026-07-20T23:13:13.734Z",
+      "nextRun": "2026-07-20T23:16:27.347Z",
       "isRunning": false
     },
     "consolidate": {
@@ -39,7 +39,7 @@
       "averageDurationMs": 15.642857142857144,
       "lastRun": "2026-07-20T22:56:00.242Z",
       "lastStartedAt": "2026-07-20T22:56:00.208Z",
-      "nextRun": "2026-07-20T23:26:00.243Z",
+      "nextRun": "2026-07-20T23:26:00.242Z",
       "isRunning": false
     },
     "testgaps": {
@@ -49,7 +49,7 @@
       "averageDurationMs": 4.548387096774194,
       "lastRun": "2026-07-20T22:58:00.150Z",
       "lastStartedAt": "2026-07-20T22:58:00.149Z",
-      "nextRun": "2026-07-20T23:18:00.151Z",
+      "nextRun": "2026-07-20T23:20:27.347Z",
       "isRunning": false
     },
     "backup": {
@@ -175,5 +175,5 @@
       }
     ]
   },
-  "savedAt": "2026-07-20T23:02:00.160Z"
+  "savedAt": "2026-07-20T23:12:27.348Z"
 }
