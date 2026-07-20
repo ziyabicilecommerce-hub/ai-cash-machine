@@ -203,6 +203,51 @@ function conversionMath(b) {
 }
 
 // ---------------------------------------------------------------------------
+// 152 — Direct-Response Legend: full long-form sales letter
+// ---------------------------------------------------------------------------
+function salesLetter(b) {
+  const { product, audience, dreamOutcome, painPoint, price } = b;
+  const top = headlines(b)[0].t;
+  const o = grandSlamOffer(b);
+  return {
+    headline: top,
+    deck: `The proven system that gets ${audience} to ${dreamOutcome} — even if you've tried everything and you're sick of ${painPoint}.`,
+    sections: [
+      { h: 'Lead', body: `If you're a ${audience.replace(/s$/, '')} who's tired of ${painPoint}, this will be the most important page you read this year. Because in the next few minutes I'm going to show you the exact system behind ${dreamOutcome} — and why it has nothing to do with working harder.` },
+      { h: 'Problem', body: `Let's be honest. You've been told to just push harder, grind more, "stay consistent." And you have. But you're still stuck ${painPoint}, watching other ${audience} pull ahead while you spin your wheels. It's not your fault — you were handed the wrong map.` },
+      { h: 'Solution / Mechanism', body: `${product} works because it fixes the real bottleneck — not effort, but the mechanism. It's reverse-engineered from ${audience} who actually reached ${dreamOutcome}, distilled into a repeatable 90-day system you follow step by step.` },
+      { h: 'Proof', body: `This isn't theory. ${audience} in your exact situation used this to go from ${painPoint} to ${dreamOutcome} — the case-study library shows the receipts. Same starting line as you. Same result waiting.` },
+      { h: 'Offer', body: `Here's everything you get: the full ${product} system (worth ${money(o.core.value)}), plus ${o.bonuses.length} bonuses worth ${money(o.stackValue - o.core.value)} — total value ${money(o.stackValue)}. Yours today for ${money(price)}. That's ${o.ratio}x value.` },
+      { h: 'Guarantee', body: `And you risk nothing: follow the plan for 90 days and if you don't reach ${dreamOutcome}, we work with you free until you do. The only way to lose is to keep doing what you're doing.` },
+      { h: 'Scarcity', body: `The bonuses (worth ${money(o.stackValue - o.core.value)}) are only guaranteed until the deadline. After that, the price goes up and the bonuses are gone.` },
+      { h: 'Close / CTA', body: `You have two choices. Keep ${painPoint} and hope it changes on its own. Or start the system that makes ${dreamOutcome} inevitable. Click below and let's get your first win in the next 48 hours.` },
+    ],
+    ps: [
+      `P.S. Remember — you get ${money(o.stackValue)} in value for ${money(price)}, backed by a guarantee that means you literally cannot lose. But the bonuses disappear at the deadline. Act now.`,
+      `P.P.S. Still unsure? That feeling is exactly what's kept you ${painPoint}. ${dreamOutcome} starts with one decision. Make it.`,
+    ],
+  };
+}
+
+// ---------------------------------------------------------------------------
+// 134 — VSL Master: video sales letter script (PAS arc, timed)
+// ---------------------------------------------------------------------------
+function vslScript(b) {
+  const { product, audience, dreamOutcome, painPoint, price } = b;
+  const o = grandSlamOffer(b);
+  return [
+    { time: '0:00-0:15', beat: 'Hook', line: `If you're a ${audience.replace(/s$/, '')} who wants ${dreamOutcome} but you're stuck ${painPoint} — stop scrolling. The next 3 minutes could change your income forever.` },
+    { time: '0:15-0:45', beat: 'Callout + Problem', line: `You've tried the courses, the hustle, the "just be consistent" advice. And you're still exactly where you started. Here's the uncomfortable truth about why.` },
+    { time: '0:45-1:30', beat: 'Agitate', line: `Every month you stay ${painPoint}, it costs you — not just money, but time you'll never get back, and the version of your life where you already have ${dreamOutcome}.` },
+    { time: '1:30-2:15', beat: 'Solution / Epiphany', line: `Then I discovered it's not about effort at all — it's the mechanism. That became ${product}: a 90-day system reverse-engineered from ${audience} who actually made it.` },
+    { time: '2:15-2:45', beat: 'Proof', line: `It's already worked for ${audience} in your exact spot. Real people, real results, same starting point as you.` },
+    { time: '2:45-3:15', beat: 'Offer', line: `You get the full system plus ${o.bonuses.length} bonuses — ${money(o.stackValue)} of value — for just ${money(price)}. That's ${o.ratio}x.` },
+    { time: '3:15-3:35', beat: 'Guarantee', line: `And you're protected: reach ${dreamOutcome} in 90 days or we work with you free until you do. Zero risk.` },
+    { time: '3:35-4:00', beat: 'Urgency + CTA', line: `But the bonuses vanish at the deadline. Click the button, get your first win in 48 hours, and finally leave ${painPoint} behind.` },
+  ];
+}
+
+// ---------------------------------------------------------------------------
 // Orchestration — the Grand Master battle plan
 // ---------------------------------------------------------------------------
 function battlePlan(brief) {
@@ -221,6 +266,8 @@ function battlePlan(brief) {
     objections: objectionHandlers(b),
     pricing: pricingTiers(b),
     ads: adCopy(b),
+    salesLetter: salesLetter(b),
+    vsl: vslScript(b),
     math: conversionMath(b),
   };
 }
@@ -275,6 +322,17 @@ function render(plan) {
   L.push('');
   L.push('📱 AD COPY BY PLATFORM (Agents 101-105)');
   plan.ads.forEach((a) => L.push(`   [${a.platform}] ${a.hook}  |  CTA: ${a.cta}`));
+  L.push('');
+  L.push('📜 SALES LETTER (Agent 152)');
+  L.push(`   HEADLINE: ${plan.salesLetter.headline}`);
+  L.push(`   ${plan.salesLetter.deck}`);
+  plan.salesLetter.sections.forEach((s) => {
+    L.push(`   [${s.h}] ${s.body}`);
+  });
+  plan.salesLetter.ps.forEach((p) => L.push(`   ${p}`));
+  L.push('');
+  L.push('🎥 VSL SCRIPT (Agent 134)');
+  plan.vsl.forEach((v) => L.push(`   ${v.time.padEnd(11)} ${v.beat.padEnd(20)} ${v.line}`));
   L.push('');
   L.push('📊 CONVERSION MATH (Agent 160)');
   const m = plan.math;

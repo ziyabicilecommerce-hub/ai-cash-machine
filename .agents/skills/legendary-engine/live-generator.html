@@ -143,7 +143,23 @@
   .viral-txt { font-size: 14.5px; }
   .viral-drivers { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .05em; margin-top: 4px; }
 
+  .letter { padding: clamp(20px,3vw,32px); }
+  .letter-hl { font-family: var(--serif); font-size: clamp(20px,3vw,27px); font-weight: 600; line-height: 1.25; letter-spacing: -.01em; color: var(--gold); text-wrap: balance; }
+  .letter-deck { font-family: var(--serif); font-size: 17px; font-style: italic; color: var(--ink-soft); margin: 12px 0 22px; padding-bottom: 20px; border-bottom: 1px solid var(--line-soft); }
+  .letter-block { display: grid; grid-template-columns: 110px 1fr; gap: 18px; padding: 12px 0; }
+  @media (max-width: 640px){ .letter-block { grid-template-columns: 1fr; gap: 4px; } }
+  .letter-tag { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--gold); padding-top: 5px; }
+  .letter-block p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--ink); }
+  .letter-ps { margin: 8px 0 0; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 14px; color: var(--ink-soft); }
+  .letter-ps + .letter-ps { border-top: 0; padding-top: 6px; }
+
   .toolbar { position: sticky; top: 0; z-index: 5; display: flex; justify-content: flex-end; padding: 8px 0; }
+  @media print {
+    .deck, .toolbar, footer { display: none !important; }
+    body { background: #fff; color: #111; }
+    section { opacity: 1 !important; transform: none !important; break-inside: avoid; }
+    .panel { box-shadow: none; border-color: #ccc; }
+  }
   .theme-btn { background: var(--panel); border: 1px solid var(--line); color: var(--ink-soft); border-radius: 8px; padding: 7px 12px; font-family: var(--mono); font-size: 11px; }
   footer { margin-top: 66px; padding-top: 22px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
 </style>
@@ -173,6 +189,8 @@
     <div class="actions">
       <button class="btn-primary" id="generate">⚡ Generate Battle Plan</button>
       <button class="btn-ghost" id="surprise">🎲 Surprise me</button>
+      <button class="btn-ghost" id="export">📄 Export PDF</button>
+      <button class="btn-ghost" id="copy">📋 Copy plan</button>
       <span class="hint">runs 100% in your browser</span>
     </div>
   </div>
@@ -264,6 +282,40 @@ function viral(b){ var d=b.dream,a=b.audience,p=b.pain; return [
   ["Public badge / streak members show off","Public · Social currency"],
   ["The \"one number\" challenge people screenshot and share","Practical value · Public"]
 ];}
+function salesLetter(b){
+  var pr=b.product,a=b.audience,d=b.dream,p=b.pain,price=b.price;
+  var o=offer(b), sing=a.replace(/s$/,"");
+  return {
+    headline: headlines(b)[0].t,
+    deck: "The proven system that gets "+a+" to "+d+" — even if you've tried everything and you're sick of "+p+".",
+    sections: [
+      ["Lead","If you're a "+sing+" who's tired of "+p+", this will be the most important page you read this year. In the next few minutes I'll show you the exact system behind "+d+" — and why it has nothing to do with working harder."],
+      ["Problem","You've been told to push harder, grind more, \"stay consistent.\" And you have. But you're still stuck "+p+", watching other "+a+" pull ahead. It's not your fault — you were handed the wrong map."],
+      ["Solution / Mechanism",pr+" works because it fixes the real bottleneck — not effort, but the mechanism. It's reverse-engineered from "+a+" who actually reached "+d+", distilled into a repeatable 90-day system."],
+      ["Proof","This isn't theory. "+a+" in your exact situation used this to go from "+p+" to "+d+" — the case-study library shows the receipts. Same starting line, same result waiting."],
+      ["Offer","Everything you get: the full "+pr+" system (worth "+money(o.core.value)+"), plus "+o.bonuses.length+" bonuses worth "+money(o.stack-o.core.value)+" — total value "+money(o.stack)+". Yours today for "+money(price)+". That's "+o.ratio+"× value."],
+      ["Guarantee","You risk nothing: follow the plan 90 days and if you don't reach "+d+", we work with you free until you do. The only way to lose is to keep doing what you're doing."],
+      ["Scarcity","The bonuses (worth "+money(o.stack-o.core.value)+") are only guaranteed until the deadline. After that, the price goes up and the bonuses are gone."],
+      ["Close / CTA","Two choices: keep "+p+" and hope it changes — or start the system that makes "+d+" inevitable. Click below and get your first win in the next 48 hours."]
+    ],
+    ps: [
+      "P.S. You get "+money(o.stack)+" in value for "+money(price)+", backed by a guarantee that means you literally cannot lose. But the bonuses disappear at the deadline. Act now.",
+      "P.P.S. Still unsure? That feeling is exactly what's kept you "+p+". "+cap(d)+" starts with one decision. Make it."
+    ]
+  };
+}
+function vsl(b){ var pr=b.product,a=b.audience,d=b.dream,p=b.pain,price=b.price; var o=offer(b), sing=a.replace(/s$/,"");
+  return [
+    ["0:00–0:15","Hook","If you're a "+sing+" who wants "+d+" but you're stuck "+p+" — stop scrolling. The next 3 minutes could change your income forever."],
+    ["0:15–0:45","Callout + Problem","You've tried the courses, the hustle, the \"just be consistent\" advice. And you're still exactly where you started. Here's the uncomfortable truth about why."],
+    ["0:45–1:30","Agitate","Every month you stay "+p+", it costs you — time you'll never get back, and the version of your life where you already have "+d+"."],
+    ["1:30–2:15","Solution / Epiphany","Then I discovered it's not about effort — it's the mechanism. That became "+pr+": a 90-day system reverse-engineered from "+a+" who actually made it."],
+    ["2:15–2:45","Proof","It's already worked for "+a+" in your exact spot. Real people, real results, same starting point as you."],
+    ["2:45–3:15","Offer","You get the full system plus "+o.bonuses.length+" bonuses — "+money(o.stack)+" of value — for just "+money(price)+". That's "+o.ratio+"×."],
+    ["3:15–3:35","Guarantee","And you're protected: reach "+d+" in 90 days or we work with you free until you do. Zero risk."],
+    ["3:35–4:00","Urgency + CTA","But the bonuses vanish at the deadline. Click the button, get your first win in 48 hours, and finally leave "+p+" behind."]
+  ];
+}
 function ladder(b){ var d=b.dream,pr=b.product,price=b.price; return [
   ["Bait (free)",0,"Free guide: \"3 Moves To "+d+"\""],
   ["Frontend (tripwire)",Math.max(7,Math.round(price*0.05)),pr+" mini-course"],
@@ -369,8 +421,24 @@ function build(b) {
       return '<div class="panel ad"><div class="ad-plat">'+esc(a[0])+'</div><div class="ad-hook">'+esc(a[1])+'</div><div class="ad-cta">CTA · '+esc(a[2])+'</div></div>';
     }).join("")+'</div>');
 
-  // 09 viral
-  H += sec("09","Viral Engine","Agent 158 · STEPPS",
+  // 09 sales letter
+  var sl = salesLetter(b);
+  H += sec("09","The Sales Letter","Agent 152 · Salesmanship in print",
+    '<div class="panel letter">'+
+      '<div class="letter-hl">'+esc(sl.headline)+'</div>'+
+      '<div class="letter-deck">'+esc(sl.deck)+'</div>'+
+      sl.sections.map(function(s){ return '<div class="letter-block"><span class="letter-tag">'+esc(s[0])+'</span><p>'+esc(s[1])+'</p></div>'; }).join("")+
+      sl.ps.map(function(x){ return '<p class="letter-ps">'+esc(x)+'</p>'; }).join("")+
+    '</div>');
+
+  // 10 vsl
+  H += sec("10","VSL Script","Agent 134 · 4-minute video sales letter",
+    '<div class="panel timeline">'+vsl(b).map(function(v){
+      return '<div class="tl-row"><div class="tl-day">'+esc(v[0])+'</div><div><div class="tl-subj">'+esc(v[1])+'</div><div class="tl-goal">'+esc(v[2])+'</div></div></div>';
+    }).join("")+'</div>');
+
+  // 11 viral
+  H += sec("11","Viral Engine","Agent 158 · STEPPS",
     '<div class="panel">'+viral(b).map(function(v){
       return '<div class="viral"><span class="viral-dot">◆</span><div><div class="viral-txt">'+esc(v[0])+'</div><div class="viral-drivers">'+esc(v[1])+'</div></div></div>';
     }).join("")+'</div>');
@@ -428,6 +496,47 @@ $("generate").addEventListener("click", function(){ build(readBrief()); });
 $("surprise").addEventListener("click", function(){ applyPreset(PRESETS[Math.floor(Math.random()*PRESETS.length)]); build(readBrief()); });
 document.querySelectorAll(".deck input").forEach(function(inp){
   inp.addEventListener("keydown", function(e){ if(e.key==="Enter") build(readBrief()); });
+});
+
+// export to PDF (via print dialog)
+$("export").addEventListener("click", function(){ window.print(); });
+
+// copy full plan as plain text
+$("copy").addEventListener("click", function(){
+  var b = readBrief(), o = offer(b), m = math(b), sl = salesLetter(b);
+  var lines = [];
+  lines.push("CAMPAIGN BATTLE PLAN — " + b.product);
+  lines.push("Audience: " + b.audience + " | Dream: " + b.dream + " | Price: " + money(b.price));
+  lines.push("");
+  lines.push("POSITIONING:");
+  lines.push("For " + b.audience + ", " + b.product + " delivers " + b.dream + " without " + b.pain + ".");
+  lines.push("");
+  lines.push("TOP HEADLINES:");
+  headlines(b).slice(0,8).forEach(function(h){ lines.push("  [" + h.score.toFixed(1) + "] " + h.t); });
+  lines.push("");
+  lines.push("GRAND SLAM OFFER (" + o.ratio + "x value): " + money(o.stack) + " stack for " + money(o.price));
+  o.bonuses.forEach(function(x){ lines.push("  + " + x.name + " (" + money(x.value) + ")"); });
+  lines.push("");
+  lines.push("7-DAY EMAILS:");
+  emails(b).forEach(function(e){ lines.push("  Day " + e[0] + ": " + e[1]); });
+  lines.push("");
+  lines.push("SALES LETTER:");
+  lines.push("  " + sl.headline);
+  sl.sections.forEach(function(s){ lines.push("  [" + s[0] + "] " + s[1]); });
+  sl.ps.forEach(function(x){ lines.push("  " + x); });
+  lines.push("");
+  lines.push("VSL SCRIPT:");
+  vsl(b).forEach(function(v){ lines.push("  " + v[0] + " " + v[1] + ": " + v[2]); });
+  lines.push("");
+  lines.push("CONVERSION MATH:");
+  lines.push("  Now: " + (m.cur.rate*100).toFixed(2) + "% -> " + money(m.cur.rev));
+  m.proj.forEach(function(p){ lines.push("  " + p.label + ": " + (p.rate*100).toFixed(2) + "% -> " + money(p.rev) + " (+" + money(p.lift) + ")"); });
+  var text = lines.join("\n");
+  var btn = $("copy");
+  function done(ok){ btn.textContent = ok ? "✓ Copied!" : "⚠ Select+copy"; setTimeout(function(){ btn.textContent = "📋 Copy plan"; }, 1800); }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ done(false); });
+  } else { done(false); }
 });
 
 // theme toggle
