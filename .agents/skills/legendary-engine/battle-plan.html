@@ -1,0 +1,404 @@
+<title>AI Cash Machine — Campaign Battle Plan</title>
+<style>
+  :root {
+    --bg: #F6F2E9; --panel: #FFFFFF; --panel-2: #FBF8F1;
+    --ink: #1A1A1E; --ink-soft: #55524B; --ink-faint: #8A867C;
+    --line: #E4DECF; --line-soft: #EEE9DC;
+    --gold: #A9812E; --gold-bright: #C9A24B;
+    --green: #2F8F5B; --clay: #A9482F;
+    --shadow: 0 1px 2px rgba(26,26,30,.04), 0 8px 24px rgba(26,26,30,.06);
+    --serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0F1013; --panel: #16181D; --panel-2: #1B1E24;
+      --ink: #ECE7DA; --ink-soft: #A5A192; --ink-faint: #726E63;
+      --line: #262A31; --line-soft: #20242A;
+      --gold: #C9A24B; --gold-bright: #E0BC66;
+      --green: #4FB07A; --clay: #C96A4E;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #F6F2E9; --panel: #FFFFFF; --panel-2: #FBF8F1;
+    --ink: #1A1A1E; --ink-soft: #55524B; --ink-faint: #8A867C;
+    --line: #E4DECF; --line-soft: #EEE9DC;
+    --gold: #A9812E; --gold-bright: #C9A24B; --green: #2F8F5B; --clay: #A9482F;
+    --shadow: 0 1px 2px rgba(26,26,30,.04), 0 8px 24px rgba(26,26,30,.06);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F1013; --panel: #16181D; --panel-2: #1B1E24;
+    --ink: #ECE7DA; --ink-soft: #A5A192; --ink-faint: #726E63;
+    --line: #262A31; --line-soft: #20242A;
+    --gold: #C9A24B; --gold-bright: #E0BC66; --green: #4FB07A; --clay: #C96A4E;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: clamp(20px, 5vw, 56px) clamp(16px, 4vw, 40px) 80px; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--gold);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 22px;
+  }
+  .eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  h1 {
+    font-family: var(--serif); font-weight: 600;
+    font-size: clamp(34px, 6vw, 62px); line-height: 1.02;
+    letter-spacing: -.015em; margin: 0 0 18px; text-wrap: balance;
+  }
+  h1 .accent { color: var(--gold); font-style: italic; }
+  .dek {
+    font-size: clamp(16px, 2.2vw, 19px); color: var(--ink-soft);
+    max-width: 62ch; margin: 0 0 8px;
+  }
+  .meta {
+    font-family: var(--mono); font-size: 12px; color: var(--ink-faint);
+    display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 20px;
+    padding-top: 18px; border-top: 1px solid var(--line);
+  }
+  .meta b { color: var(--ink-soft); font-weight: 600; }
+
+  section { margin-top: clamp(40px, 7vw, 68px); }
+  .sec-head {
+    display: flex; align-items: baseline; gap: 14px; margin-bottom: 22px;
+  }
+  .sec-num {
+    font-family: var(--mono); font-size: 12px; color: var(--gold);
+    letter-spacing: .1em;
+  }
+  .sec-title {
+    font-family: var(--serif); font-size: clamp(22px, 3.4vw, 30px);
+    font-weight: 600; letter-spacing: -.01em; margin: 0;
+  }
+  .sec-by { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-left: auto; letter-spacing: .05em; }
+
+  .panel {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; box-shadow: var(--shadow);
+  }
+
+  /* Hero money ladder */
+  .ladder { padding: clamp(20px, 3vw, 30px); }
+  .ladder-row {
+    display: grid; grid-template-columns: 120px 1fr auto; align-items: center;
+    gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line-soft);
+  }
+  .ladder-row:last-child { border-bottom: 0; }
+  .ladder-label { font-size: 13px; color: var(--ink-soft); }
+  .ladder-label small { display: block; font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
+  .bar-track { height: 30px; background: var(--panel-2); border-radius: 6px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); }
+  .bar-fill.now { background: var(--ink-faint); opacity: .5; }
+  .bar-fill.peak { background: linear-gradient(90deg, var(--green), var(--gold-bright)); }
+  .ladder-val { font-family: var(--mono); font-weight: 600; font-size: 16px; font-variant-numeric: tabular-nums; text-align: right; }
+  .ladder-val small { display: block; color: var(--green); font-size: 12px; font-weight: 400; }
+
+  /* Headlines */
+  .hl-list { display: flex; flex-direction: column; gap: 2px; }
+  .hl {
+    display: grid; grid-template-columns: 52px 1fr; gap: 16px; align-items: start;
+    padding: 16px; border-radius: 10px; transition: background .15s;
+  }
+  .hl:hover { background: var(--panel-2); }
+  .hl-score {
+    font-family: var(--mono); font-weight: 600; font-size: 15px; color: var(--gold);
+    font-variant-numeric: tabular-nums; padding-top: 2px;
+  }
+  .hl-text { font-family: var(--serif); font-size: 18px; line-height: 1.35; letter-spacing: -.005em; }
+  .hl-angle { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .08em; margin-top: 5px; }
+
+  /* Offer ledger */
+  .offer-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; }
+  @media (max-width: 720px) { .offer-grid { grid-template-columns: 1fr; } }
+  .ledger { padding: 22px; }
+  .ledger-row { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line-soft); }
+  .ledger-row:last-child { border-bottom: 0; }
+  .ledger-name { font-size: 14px; }
+  .ledger-name small { display: block; color: var(--clay); font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; margin-top: 3px; }
+  .ledger-val { font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ledger-total { display: flex; justify-content: space-between; padding-top: 14px; margin-top: 6px; border-top: 2px solid var(--ink); font-family: var(--serif); font-size: 18px; }
+  .ratio-card {
+    padding: 26px; display: flex; flex-direction: column; justify-content: center;
+    align-items: center; text-align: center; background: var(--panel-2);
+  }
+  .ratio-big { font-family: var(--serif); font-weight: 700; font-size: clamp(56px, 12vw, 84px); line-height: .9; color: var(--gold); letter-spacing: -.03em; }
+  .ratio-lbl { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-soft); margin-top: 10px; }
+  .ratio-sub { font-size: 13px; color: var(--ink-faint); margin-top: 14px; }
+  .ratio-sub b { color: var(--ink); font-family: var(--mono); }
+
+  /* Pricing */
+  .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 720px) { .price-grid { grid-template-columns: 1fr; } }
+  .tier { padding: 22px; position: relative; display: flex; flex-direction: column; }
+  .tier.rec { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), var(--shadow); }
+  .tier-badge { position: absolute; top: -10px; left: 22px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; background: var(--gold); color: #fff; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+  :root[data-theme="dark"] .tier-badge { color: #16181D; }
+  @media (prefers-color-scheme: dark) { .tier-badge { color: #16181D; } }
+  .tier-name { font-family: var(--serif); font-size: 19px; margin-bottom: 4px; }
+  .tier-price { font-family: var(--mono); font-weight: 700; font-size: 30px; font-variant-numeric: tabular-nums; margin: 6px 0 16px; }
+  .tier-feat { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 9px; font-size: 13.5px; color: var(--ink-soft); }
+  .tier-feat li { padding-left: 20px; position: relative; }
+  .tier-feat li::before { content: "→"; position: absolute; left: 0; color: var(--gold); }
+
+  /* Timeline */
+  .timeline { padding: 22px; }
+  .tl-row { display: grid; grid-template-columns: 70px 1fr; gap: 18px; padding: 12px 0; border-bottom: 1px solid var(--line-soft); }
+  .tl-row:last-child { border-bottom: 0; }
+  .tl-day { font-family: var(--mono); font-size: 12px; color: var(--gold); letter-spacing: .05em; padding-top: 2px; }
+  .tl-subj { font-family: var(--serif); font-size: 16px; }
+  .tl-goal { font-size: 12.5px; color: var(--ink-faint); margin-top: 3px; }
+
+  /* Objections + two-col cards */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+  .obj { padding: 18px; }
+  .obj-q { font-family: var(--serif); font-size: 16px; color: var(--clay); margin-bottom: 8px; }
+  .obj-p { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-faint); margin-bottom: 6px; }
+  .obj-a { font-size: 13.5px; color: var(--ink-soft); }
+
+  .ad { padding: 16px 18px; }
+  .ad-plat { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+  .ad-hook { font-family: var(--serif); font-size: 15.5px; line-height: 1.35; }
+  .ad-cta { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-top: 8px; }
+
+  .viral-list { display: flex; flex-direction: column; gap: 2px; }
+  .viral { display: flex; gap: 14px; align-items: baseline; padding: 13px 16px; border-radius: 8px; }
+  .viral:hover { background: var(--panel-2); }
+  .viral-dot { color: var(--gold); font-size: 12px; }
+  .viral-txt { font-size: 14.5px; }
+  .viral-drivers { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .05em; margin-top: 4px; }
+
+  .pos-panel { padding: 26px; border-left: 3px solid var(--gold); }
+  .pos-word { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .pos-stmt { font-family: var(--serif); font-size: clamp(18px, 2.6vw, 22px); line-height: 1.4; }
+
+  footer { margin-top: 70px; padding-top: 24px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Campaign Battle Plan · Confidential</div>
+    <h1>AI Cash Machine<br><span class="accent">world-class</span> go-to-market</h1>
+    <p class="dek">A full campaign dossier generated by the Legendary Engine — positioning, offer, copy, funnel, and revenue math, built from the frameworks of the ten greatest marketing minds.</p>
+    <div class="meta">
+      <span><b>Audience:</b> solo founders</span>
+      <span><b>Dream:</b> $10K/month on autopilot</span>
+      <span><b>Price:</b> $497</span>
+      <span><b>Traffic:</b> 12,000/mo</span>
+      <span><b>Now:</b> 0.80% CVR</span>
+    </div>
+  </header>
+
+  <!-- MONEY LADDER -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2 class="sec-title">The Money Ladder</h2>
+      <span class="sec-by">Agent 160 · Conversion Math</span>
+    </div>
+    <div class="panel ladder">
+      <div class="ladder-row">
+        <div class="ladder-label">Today<small>0.80% CVR</small></div>
+        <div class="bar-track"><div class="bar-fill now" style="width:20%"></div></div>
+        <div class="ladder-val">$47,712<small>&nbsp;</small></div>
+      </div>
+      <div class="ladder-row">
+        <div class="ladder-label">Conservative<small>1.60% · 2×</small></div>
+        <div class="bar-track"><div class="bar-fill" style="width:40%"></div></div>
+        <div class="ladder-val">$95,424<small>+$47,712</small></div>
+      </div>
+      <div class="ladder-row">
+        <div class="ladder-label">Realistic<small>2.80% · 3.5×</small></div>
+        <div class="bar-track"><div class="bar-fill" style="width:70%"></div></div>
+        <div class="ladder-val">$166,992<small>+$119,280</small></div>
+      </div>
+      <div class="ladder-row">
+        <div class="ladder-label">Aggressive<small>4.00% · 5×</small></div>
+        <div class="bar-track"><div class="bar-fill peak" style="width:100%"></div></div>
+        <div class="ladder-val">$238,560<small>+$190,848</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POSITIONING -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2 class="sec-title">Positioning</h2>
+      <span class="sec-by">Agent 157 · Own One Word</span>
+    </div>
+    <div class="panel pos-panel">
+      <div class="pos-word">The word we own: the $10K-on-autopilot machine</div>
+      <p class="pos-stmt" style="margin:0;">For solo founders, AI Cash Machine is the system that delivers <span class="accent" style="color:var(--gold);font-style:italic;">$10K/month on autopilot</span> — without trading hours for dollars — unlike generic alternatives that just pile on information overload.</p>
+    </div>
+  </section>
+
+  <!-- HEADLINES -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2 class="sec-title">Top Headlines</h2>
+      <span class="sec-by">Agent 152 · Ranked by pull</span>
+    </div>
+    <div class="panel hl-list">
+      <div class="hl"><div class="hl-score">9.6</div><div><div class="hl-text">How solo founders get $10K/month on autopilot — without trading hours for dollars</div><div class="hl-angle">Benefit + objection removal</div></div></div>
+      <div class="hl"><div class="hl-score">9.5</div><div><div class="hl-text">Warning: don't try to get $10K/month on autopilot until you read this</div><div class="hl-angle">Pattern interrupt + curiosity</div></div></div>
+      <div class="hl"><div class="hl-score">9.4</div><div><div class="hl-text">$10K/month on autopilot in 90 days — or you don't pay</div><div class="hl-angle">Risk reversal in headline</div></div></div>
+      <div class="hl"><div class="hl-score">9.4</div><div><div class="hl-text">The machine that turns trading hours for dollars into $10K/month on autopilot</div><div class="hl-angle">Transformation</div></div></div>
+      <div class="hl"><div class="hl-score">9.3</div><div><div class="hl-text">Give me 20 minutes and I'll give you $10K/month on autopilot</div><div class="hl-angle">Time-bound promise</div></div></div>
+      <div class="hl"><div class="hl-score">9.2</div><div><div class="hl-text">I reverse-engineered $10K/month on autopilot. Here's the blueprint.</div><div class="hl-angle">Authority + specificity</div></div></div>
+      <div class="hl"><div class="hl-score">9.1</div><div><div class="hl-text">Why most solo founders fail at $10K/month (and the 3-step fix)</div><div class="hl-angle">Problem + mechanism</div></div></div>
+    </div>
+  </section>
+
+  <!-- OFFER -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2 class="sec-title">The Grand Slam Offer</h2>
+      <span class="sec-by">Agent 151 · Value Equation</span>
+    </div>
+    <div class="offer-grid">
+      <div class="panel ledger">
+        <div class="ledger-row"><div class="ledger-name">Core: AI Cash Machine system</div><div class="ledger-val">$2,485</div></div>
+        <div class="ledger-row"><div class="ledger-name">Quick-Start (first win in 48h)<small>kills time-delay objection</small></div><div class="ledger-val">$746</div></div>
+        <div class="ledger-row"><div class="ledger-name">Done-for-you templates & swipe files<small>kills effort objection</small></div><div class="ledger-val">$994</div></div>
+        <div class="ledger-row"><div class="ledger-name">Private community + weekly live Q&amp;A<small>kills "what if I get stuck"</small></div><div class="ledger-val">$1,491</div></div>
+        <div class="ledger-row"><div class="ledger-name">Anti-time-trap troubleshooting vault<small>kills fear-of-failure</small></div><div class="ledger-val">$596</div></div>
+        <div class="ledger-row"><div class="ledger-name">Case-study library: founders who did it<small>kills "will it work for me"</small></div><div class="ledger-val">$497</div></div>
+        <div class="ledger-total"><span>Total value</span><span>$6,809</span></div>
+      </div>
+      <div class="panel ratio-card">
+        <div class="ratio-big">13.7×</div>
+        <div class="ratio-lbl">Value-to-price</div>
+        <div class="ratio-sub"><b>$6,809</b> stack<br>for <b>$497</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2 class="sec-title">Pricing Architecture</h2>
+      <span class="sec-by">Agent 156 · Decoy effect</span>
+    </div>
+    <div class="price-grid">
+      <div class="panel tier">
+        <div class="tier-name">Starter</div>
+        <div class="tier-price">$298</div>
+        <ul class="tier-feat"><li>Core system</li><li>Templates</li><li>Community</li></ul>
+      </div>
+      <div class="panel tier rec">
+        <span class="tier-badge">Most popular</span>
+        <div class="tier-name">Pro</div>
+        <div class="tier-price">$497</div>
+        <ul class="tier-feat"><li>Everything in Starter</li><li>Quick-Start</li><li>Live Q&amp;A</li><li>Case-study vault</li><li>All guarantees</li></ul>
+      </div>
+      <div class="panel tier">
+        <div class="tier-name">Elite</div>
+        <div class="tier-price">$1,988</div>
+        <ul class="tier-feat"><li>Everything in Pro</li><li>1:1 coaching</li><li>Personal plan</li><li>Priority access</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMAIL TIMELINE -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <h2 class="sec-title">7-Day Launch Sequence</h2>
+      <span class="sec-by">Agent 154 · Epiphany Bridge</span>
+    </div>
+    <div class="panel timeline">
+      <div class="tl-row"><div class="tl-day">Day 0</div><div><div class="tl-subj">"Your $10K/month on autopilot starts now"</div><div class="tl-goal">Deliver lead magnet + set the epiphany</div></div></div>
+      <div class="tl-row"><div class="tl-day">Day 1</div><div><div class="tl-subj">"The real reason you're still trading hours for dollars"</div><div class="tl-goal">Break false belief #1 — the vehicle</div></div></div>
+      <div class="tl-row"><div class="tl-day">Day 2</div><div><div class="tl-subj">"But will it work for ME?"</div><div class="tl-goal">Break false belief #2 — themselves</div></div></div>
+      <div class="tl-row"><div class="tl-day">Day 3</div><div><div class="tl-subj">"What's really stopping you"</div><div class="tl-goal">Break false belief #3 — external</div></div></div>
+      <div class="tl-row"><div class="tl-day">Day 4</div><div><div class="tl-subj">"Introducing AI Cash Machine"</div><div class="tl-goal">Present the Grand Slam Offer</div></div></div>
+      <div class="tl-row"><div class="tl-day">Day 5</div><div><div class="tl-subj">"The bonuses disappear at midnight"</div><div class="tl-goal">Urgency — real deadline</div></div></div>
+      <div class="tl-row"><div class="tl-day">Day 6</div><div><div class="tl-subj">"Last chance for $10K/month on autopilot"</div><div class="tl-goal">Close + loss aversion</div></div></div>
+    </div>
+  </section>
+
+  <!-- OBJECTIONS -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">07</span>
+      <h2 class="sec-title">Objection Handlers</h2>
+      <span class="sec-by">Agent 153 · 7 Principles</span>
+    </div>
+    <div class="two-col">
+      <div class="panel obj"><div class="obj-q">"It's too expensive."</div><div class="obj-p">Anchoring + Value</div><div class="obj-a">Compared to another year of trading hours for dollars? $497 once vs. the ongoing cost of staying stuck. The stack is worth 10× the price.</div></div>
+      <div class="panel obj"><div class="obj-q">"Will it work for me?"</div><div class="obj-p">Social Proof</div><div class="obj-a">It already worked for solo founders in your exact situation — see the case-study library. Same start, same result.</div></div>
+      <div class="panel obj"><div class="obj-q">"I don't have time."</div><div class="obj-p">Effort reduction</div><div class="obj-a">The Quick-Start gets your first win in 48 hours. Done-for-you templates mean you follow, not figure out.</div></div>
+      <div class="panel obj"><div class="obj-q">"What if I fail?"</div><div class="obj-p">Risk reversal</div><div class="obj-a">You can't. Follow the plan 90 days — if you don't reach $10K/month, we work with you free until you do.</div></div>
+      <div class="panel obj"><div class="obj-q">"I need to think about it."</div><div class="obj-p">Scarcity + Loss aversion</div><div class="obj-a">The bonuses (worth thousands) disappear at the deadline. "Thinking about it" usually means staying exactly where you are.</div></div>
+      <div class="panel obj"><div class="obj-q">"Is this legit?"</div><div class="obj-p">Authority + Unity</div><div class="obj-a">Built for solo founders, by people who've done it. Real proof, real guarantee, real community. You're not buying alone.</div></div>
+    </div>
+  </section>
+
+  <!-- AD COPY -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">08</span>
+      <h2 class="sec-title">Ad Copy by Platform</h2>
+      <span class="sec-by">Agents 101–105 · Platform Assassins</span>
+    </div>
+    <div class="two-col">
+      <div class="panel ad"><div class="ad-plat">TikTok / Reels</div><div class="ad-hook">POV: you finally stopped trading hours for dollars 👀</div><div class="ad-cta">CTA · Watch how</div></div>
+      <div class="panel ad"><div class="ad-plat">Meta · FB/IG</div><div class="ad-hook">Solo founders: the $10K/month shortcut nobody's talking about</div><div class="ad-cta">CTA · Learn more</div></div>
+      <div class="panel ad"><div class="ad-plat">Google Search</div><div class="ad-hook">Get $10K/month on autopilot — 90-day system</div><div class="ad-cta">CTA · Get started</div></div>
+      <div class="panel ad"><div class="ad-plat">YouTube</div><div class="ad-hook">I reverse-engineered $10K/month on autopilot</div><div class="ad-cta">CTA · Watch free</div></div>
+      <div class="panel ad"><div class="ad-plat">LinkedIn</div><div class="ad-hook">Why most solo founders never reach $10K/month</div><div class="ad-cta">CTA · See the system</div></div>
+    </div>
+  </section>
+
+  <!-- VIRAL -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">09</span>
+      <h2 class="sec-title">Viral Engine</h2>
+      <span class="sec-by">Agent 158 · STEPPS</span>
+    </div>
+    <div class="panel viral-list">
+      <div class="viral"><span class="viral-dot">◆</span><div><div class="viral-txt">Shareable stat card: "% of solo founders who never reach $10K — here's why"</div><div class="viral-drivers">Social currency · Practical value</div></div></div>
+      <div class="viral"><span class="viral-dot">◆</span><div><div class="viral-txt">A daily-life trigger phrase tying a common moment to "$10K on autopilot"</div><div class="viral-drivers">Triggers</div></div></div>
+      <div class="viral"><span class="viral-dot">◆</span><div><div class="viral-txt">Awe-driven transformation reel: trading hours for dollars → $10K/month in 30s</div><div class="viral-drivers">Emotion (awe) · Stories</div></div></div>
+      <div class="viral"><span class="viral-dot">◆</span><div><div class="viral-txt">Public badge / streak members show off</div><div class="viral-drivers">Public · Social currency</div></div></div>
+      <div class="viral"><span class="viral-dot">◆</span><div><div class="viral-txt">The "one number" challenge people screenshot and share</div><div class="viral-drivers">Practical value · Public</div></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Generated by the Legendary Engine · agents 151–160</span>
+    <span>AI Cash Machine · Campaign Battle Plan</span>
+  </footer>
+</div>
+
+<script>
+  // Animate the money-ladder bars on load, unless reduced motion is requested.
+  (function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var bars = document.querySelectorAll('.bar-fill');
+    bars.forEach(function (b) {
+      var target = b.style.width;
+      if (reduce) return;
+      b.style.width = '0%';
+      b.style.transition = 'width 1s cubic-bezier(.2,.7,.2,1)';
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { b.style.width = target; });
+      });
+    });
+  })();
+</script>

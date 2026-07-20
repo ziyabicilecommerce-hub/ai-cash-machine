@@ -1,0 +1,24 @@
+{
+  "name": "50-psycho-agents-catalogue",
+  "version": "1.0.0",
+  "description": "50 Psycho-Agents + 5000 Sub-Agents. No breaks. No mercy. Forever.",
+  "main": "master-orchestrator.js",
+  "scripts": {
+    "spawn": "node master-orchestrator.js",
+    "dashboard": "node master-orchestrator.js | grep -A 20 'DASHBOARD'",
+    "report": "node master-orchestrator.js | tail -50"
+  },
+  "keywords": [
+    "psycho-agents",
+    "5000-workers",
+    "no-breaks",
+    "marketing",
+    "ruthless",
+    "unlimited"
+  ],
+  "author": "Claude Code",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

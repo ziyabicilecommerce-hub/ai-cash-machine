@@ -1,0 +1,588 @@
+<title>AI Cash Machine — Live Campaign Generator</title>
+<style>
+  :root {
+    --bg: #0F1013; --panel: #16181D; --panel-2: #1B1E24; --panel-3: #22262E;
+    --ink: #ECE7DA; --ink-soft: #A5A192; --ink-faint: #726E63;
+    --line: #262A31; --line-soft: #20242A;
+    --gold: #C9A24B; --gold-bright: #E0BC66; --green: #4FB07A; --clay: #C96A4E;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.4);
+    --serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+  }
+  :root[data-theme="light"] {
+    --bg: #F6F2E9; --panel: #FFFFFF; --panel-2: #FBF8F1; --panel-3: #F1ECDF;
+    --ink: #1A1A1E; --ink-soft: #55524B; --ink-faint: #8A867C;
+    --line: #E4DECF; --line-soft: #EEE9DC;
+    --gold: #A9812E; --gold-bright: #C9A24B; --green: #2F8F5B; --clay: #A9482F;
+    --shadow: 0 1px 2px rgba(26,26,30,.04), 0 8px 24px rgba(26,26,30,.08);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #F6F2E9; --panel: #FFFFFF; --panel-2: #FBF8F1; --panel-3: #F1ECDF;
+      --ink: #1A1A1E; --ink-soft: #55524B; --ink-faint: #8A867C;
+      --line: #E4DECF; --line-soft: #EEE9DC;
+      --gold: #A9812E; --gold-bright: #C9A24B; --green: #2F8F5B; --clay: #A9482F;
+      --shadow: 0 1px 2px rgba(26,26,30,.04), 0 8px 24px rgba(26,26,30,.08);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: clamp(18px,4vw,44px) clamp(14px,4vw,36px) 90px; }
+
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(30px,5.5vw,54px); line-height: 1.03; letter-spacing: -.015em; margin: 0 0 12px; text-wrap: balance; }
+  h1 .accent { color: var(--gold); font-style: italic; }
+  .dek { font-size: clamp(15px,2vw,18px); color: var(--ink-soft); max-width: 60ch; margin: 0; }
+
+  /* Control deck */
+  .deck { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: clamp(18px,3vw,28px); margin-top: 30px; }
+  .deck-title { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 18px; }
+  .fields { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 18px; }
+  @media (max-width: 640px) { .fields { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.wide { grid-column: 1 / -1; }
+  .field label { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
+  .field input { background: var(--panel-2); border: 1px solid var(--line); border-radius: 9px; padding: 11px 13px; color: var(--ink); font-family: var(--sans); font-size: 15px; transition: border-color .15s, box-shadow .15s; }
+  .field input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 22%, transparent); }
+  .field input::placeholder { color: var(--ink-faint); }
+  .row3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px 18px; grid-column: 1 / -1; }
+  @media (max-width: 640px) { .row3 { grid-template-columns: 1fr; } }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; align-items: center; }
+  button { font-family: var(--sans); font-size: 15px; font-weight: 600; border-radius: 10px; cursor: pointer; border: 1px solid transparent; transition: transform .1s, filter .15s, background .15s; }
+  button:active { transform: translateY(1px); }
+  .btn-primary { background: linear-gradient(180deg, var(--gold-bright), var(--gold)); color: #16181D; padding: 13px 26px; box-shadow: 0 4px 14px color-mix(in srgb, var(--gold) 35%, transparent); }
+  .btn-primary:hover { filter: brightness(1.06); }
+  .btn-ghost { background: transparent; color: var(--ink-soft); border-color: var(--line); padding: 13px 18px; }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--ink-faint); }
+  .hint { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-left: auto; }
+
+  /* Output */
+  #out { margin-top: 8px; }
+  #out[hidden] { display: none; }
+  section { margin-top: clamp(34px,6vw,58px); opacity: 0; transform: translateY(14px); }
+  section.in { opacity: 1; transform: none; transition: opacity .5s ease, transform .5s ease; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 12px; color: var(--gold); letter-spacing: .1em; }
+  .sec-title { font-family: var(--serif); font-size: clamp(21px,3.2vw,29px); font-weight: 600; letter-spacing: -.01em; margin: 0; }
+  .sec-by { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-left: auto; letter-spacing: .05em; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+
+  .ladder { padding: clamp(18px,3vw,28px); }
+  .ladder-row { display: grid; grid-template-columns: 130px 1fr auto; align-items: center; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--line-soft); }
+  .ladder-row:last-child { border-bottom: 0; }
+  .ladder-label { font-size: 13px; color: var(--ink-soft); }
+  .ladder-label small { display: block; font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
+  .bar-track { height: 30px; background: var(--panel-2); border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; width: 0; border-radius: 6px; background: linear-gradient(90deg,var(--gold),var(--gold-bright)); transition: width 1.1s cubic-bezier(.2,.7,.2,1); }
+  .bar-fill.now { background: var(--ink-faint); opacity: .5; }
+  .bar-fill.peak { background: linear-gradient(90deg,var(--green),var(--gold-bright)); }
+  .ladder-val { font-family: var(--mono); font-weight: 600; font-size: 16px; font-variant-numeric: tabular-nums; text-align: right; }
+  .ladder-val small { display: block; color: var(--green); font-size: 12px; font-weight: 400; }
+
+  .pos-panel { padding: 24px; border-left: 3px solid var(--gold); }
+  .pos-word { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .pos-stmt { font-family: var(--serif); font-size: clamp(17px,2.4vw,21px); line-height: 1.4; margin: 0; }
+  .pos-stmt em { color: var(--gold); }
+
+  .hl { display: grid; grid-template-columns: 52px 1fr; gap: 16px; padding: 15px 16px; border-radius: 10px; }
+  .hl:hover { background: var(--panel-2); }
+  .hl-score { font-family: var(--mono); font-weight: 600; font-size: 15px; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .hl-text { font-family: var(--serif); font-size: 17.5px; line-height: 1.35; }
+  .hl-angle { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .07em; margin-top: 5px; }
+
+  .offer-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; }
+  @media (max-width:720px){ .offer-grid{ grid-template-columns: 1fr; } }
+  .ledger { padding: 22px; }
+  .ledger-row { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--line-soft); }
+  .ledger-row:last-child { border-bottom: 0; }
+  .ledger-name { font-size: 14px; }
+  .ledger-name small { display: block; color: var(--clay); font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
+  .ledger-val { font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ledger-total { display: flex; justify-content: space-between; padding-top: 13px; margin-top: 5px; border-top: 2px solid var(--ink); font-family: var(--serif); font-size: 18px; }
+  .ratio-card { padding: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--panel-2); }
+  .ratio-big { font-family: var(--serif); font-weight: 700; font-size: clamp(52px,11vw,80px); line-height: .9; color: var(--gold); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .ratio-lbl { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-soft); margin-top: 10px; }
+  .ratio-sub { font-size: 13px; color: var(--ink-faint); margin-top: 12px; }
+  .ratio-sub b { color: var(--ink); font-family: var(--mono); }
+
+  .price-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  @media (max-width:720px){ .price-grid{ grid-template-columns: 1fr; } }
+  .tier { padding: 22px; position: relative; }
+  .tier.rec { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), var(--shadow); }
+  .tier-badge { position: absolute; top: -10px; left: 22px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; background: var(--gold); color: #16181D; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+  .tier-name { font-family: var(--serif); font-size: 19px; margin-bottom: 4px; }
+  .tier-price { font-family: var(--mono); font-weight: 700; font-size: 30px; font-variant-numeric: tabular-nums; margin: 6px 0 16px; }
+  .tier-feat { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; color: var(--ink-soft); }
+  .tier-feat li { padding-left: 20px; position: relative; }
+  .tier-feat li::before { content: "→"; position: absolute; left: 0; color: var(--gold); }
+
+  .timeline { padding: 22px; }
+  .tl-row { display: grid; grid-template-columns: 70px 1fr; gap: 18px; padding: 11px 0; border-bottom: 1px solid var(--line-soft); }
+  .tl-row:last-child { border-bottom: 0; }
+  .tl-day { font-family: var(--mono); font-size: 12px; color: var(--gold); padding-top: 2px; }
+  .tl-subj { font-family: var(--serif); font-size: 16px; }
+  .tl-goal { font-size: 12.5px; color: var(--ink-faint); margin-top: 3px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width:720px){ .two-col{ grid-template-columns: 1fr; } }
+  .obj { padding: 18px; }
+  .obj-q { font-family: var(--serif); font-size: 16px; color: var(--clay); margin-bottom: 8px; }
+  .obj-p { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-faint); margin-bottom: 6px; }
+  .obj-a { font-size: 13.5px; color: var(--ink-soft); }
+  .ad { padding: 16px 18px; }
+  .ad-plat { font-family: var(--mono); font-size: 11px; letter-spacing: .07em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+  .ad-hook { font-family: var(--serif); font-size: 15.5px; line-height: 1.35; }
+  .ad-cta { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-top: 8px; }
+  .viral { display: flex; gap: 14px; align-items: baseline; padding: 13px 16px; border-radius: 8px; }
+  .viral:hover { background: var(--panel-2); }
+  .viral-dot { color: var(--gold); font-size: 12px; }
+  .viral-txt { font-size: 14.5px; }
+  .viral-drivers { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .05em; margin-top: 4px; }
+
+  .hf { padding: 18px; }
+  .hf-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+  .hf-type { font-family: var(--serif); font-size: 16px; }
+  .hf-copy { background: transparent; border: 1px solid var(--line); color: var(--ink-soft); border-radius: 7px; padding: 5px 11px; font-family: var(--mono); font-size: 11px; }
+  .hf-copy:hover { border-color: var(--gold); color: var(--gold); }
+  .hf-meta { font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em; color: var(--gold); text-transform: uppercase; margin-bottom: 10px; }
+  .hf-prompt { font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); }
+
+  .letter { padding: clamp(20px,3vw,32px); }
+  .letter-hl { font-family: var(--serif); font-size: clamp(20px,3vw,27px); font-weight: 600; line-height: 1.25; letter-spacing: -.01em; color: var(--gold); text-wrap: balance; }
+  .letter-deck { font-family: var(--serif); font-size: 17px; font-style: italic; color: var(--ink-soft); margin: 12px 0 22px; padding-bottom: 20px; border-bottom: 1px solid var(--line-soft); }
+  .letter-block { display: grid; grid-template-columns: 110px 1fr; gap: 18px; padding: 12px 0; }
+  @media (max-width: 640px){ .letter-block { grid-template-columns: 1fr; gap: 4px; } }
+  .letter-tag { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--gold); padding-top: 5px; }
+  .letter-block p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--ink); }
+  .letter-ps { margin: 8px 0 0; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 14px; color: var(--ink-soft); }
+  .letter-ps + .letter-ps { border-top: 0; padding-top: 6px; }
+
+  .toolbar { position: sticky; top: 0; z-index: 5; display: flex; justify-content: flex-end; padding: 8px 0; }
+  @media print {
+    .deck, .toolbar, footer { display: none !important; }
+    body { background: #fff; color: #111; }
+    section { opacity: 1 !important; transform: none !important; break-inside: avoid; }
+    .panel { box-shadow: none; border-color: #ccc; }
+  }
+  .theme-btn { background: var(--panel); border: 1px solid var(--line); color: var(--ink-soft); border-radius: 8px; padding: 7px 12px; font-family: var(--mono); font-size: 11px; }
+  footer { margin-top: 66px; padding-top: 22px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+</style>
+
+<div class="wrap">
+  <div class="toolbar"><button class="theme-btn" id="themeToggle">◐ theme</button></div>
+
+  <header>
+    <div class="eyebrow">Legendary Engine · Live Generator</div>
+    <h1>Type your product.<br>Watch a <span class="accent">world-class</span> campaign build itself.</h1>
+    <p class="dek">Ten legendary marketing frameworks, running live in your browser. Enter a brief, hit generate, and the full battle plan — positioning, offer, copy, funnel, and revenue math — assembles in front of you.</p>
+  </header>
+
+  <div class="deck">
+    <div class="deck-title">◆ Campaign Brief</div>
+    <div class="fields">
+      <div class="field"><label for="product">Product</label><input id="product" value="AI Cash Machine" placeholder="What you sell"></div>
+      <div class="field"><label for="audience">Audience</label><input id="audience" value="solo founders" placeholder="Who it's for"></div>
+      <div class="field wide"><label for="dream">Dream outcome</label><input id="dream" value="$10K/month on autopilot" placeholder="The result they crave"></div>
+      <div class="field wide"><label for="pain">Pain point</label><input id="pain" value="trading hours for dollars" placeholder="What they're stuck in"></div>
+      <div class="row3">
+        <div class="field"><label for="price">Price ($)</label><input id="price" type="number" value="497" min="1"></div>
+        <div class="field"><label for="cvr">Current CVR (%)</label><input id="cvr" type="number" value="0.8" step="0.1" min="0.01"></div>
+        <div class="field"><label for="traffic">Traffic / mo</label><input id="traffic" type="number" value="12000" min="1"></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="generate">⚡ Generate Battle Plan</button>
+      <button class="btn-ghost" id="surprise">🎲 Surprise me</button>
+      <button class="btn-ghost" id="export">📄 Export PDF</button>
+      <button class="btn-ghost" id="copy">📋 Copy plan</button>
+      <span class="hint">runs 100% in your browser</span>
+    </div>
+  </div>
+
+  <div id="out" hidden></div>
+
+  <footer>
+    <span>Legendary Engine · agents 151–160</span>
+    <span id="footBrief">AI Cash Machine</span>
+  </footer>
+</div>
+
+<script>
+"use strict";
+// ---------- helpers ----------
+var $ = function (id) { return document.getElementById(id); };
+var money = function (n) { return "$" + Math.round(n).toLocaleString("en-US"); };
+var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;" })[c]; }); };
+var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
+var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// ---------- the engine (ported client-side) ----------
+function headlines(b) {
+  var d=b.dream, a=b.audience, p=b.pain, pr=b.product;
+  var t=[
+    ["How "+a+" get "+d+" — without "+p, "benefit + objection removal", 9.6],
+    ["Warning: don't try to get "+d+" until you read this", "pattern interrupt + curiosity", 9.5],
+    [d+" in 90 days — or you don't pay", "risk reversal in headline", 9.4],
+    ["The "+pr+" that turns "+p+" into "+d, "transformation", 9.4],
+    ["Give me 20 minutes and I'll give you "+d, "time-bound promise", 9.3],
+    [cap(a)+": here's exactly how to get "+d+" this month", "specific + direct call-out", 9.2],
+    ["I reverse-engineered "+d+". Here's the blueprint.", "authority + specificity", 9.2],
+    ["Why most "+a+" fail at "+d+" (and the 3-step fix)", "problem + mechanism", 9.1],
+    ["From "+p+" to "+d+" — my exact playbook", "transformation + proof", 9.1],
+    ["They laughed when I promised "+d+" — until it happened", "story + social proof", 9.0],
+    ["Get "+d+" while everyone else is still "+p, "FOMO + status", 9.0],
+    ["The ugly truth about why you still haven't got "+d, "contrarian + curiosity", 8.9],
+    ["Stop "+p+". Start "+d+".", "command + contrast", 8.8],
+    ["The 1 skill separating "+a+" who win from everyone else", "curiosity + status", 8.8]
+  ];
+  return t.map(function(x){return {t:x[0],angle:x[1],score:x[2]};}).sort(function(m,n){return n.score-m.score;});
+}
+function offer(b) {
+  var pr=b.product, d=b.dream, a=b.audience, p=b.pain, price=b.price;
+  var core={name:pr+" system", value:price*5};
+  var bonuses=[
+    {name:"Quick-Start (first win in 48h)", value:Math.round(price*1.5), kills:"time-delay objection"},
+    {name:"Done-for-you templates & swipe files", value:Math.round(price*2), kills:"effort objection"},
+    {name:"Private community + weekly live Q&A", value:Math.round(price*3), kills:"\"what if I get stuck\""},
+    {name:"Anti-"+p+" troubleshooting vault", value:Math.round(price*1.2), kills:"fear-of-failure"},
+    {name:"Case-study library: "+a+" who did it", value:Math.round(price*1), kills:"\"will it work for me\""}
+  ];
+  var stack=core.value+bonuses.reduce(function(s,x){return s+x.value;},0);
+  return {core:core, bonuses:bonuses, stack:stack, price:price, ratio:(stack/price).toFixed(1)};
+}
+function pricing(b){ var p=b.price,d=b.dream; return [
+  {name:"Starter", price:Math.round(p*0.6), feats:["Core system","Templates","Community"], rec:false},
+  {name:"Pro", price:p, feats:["Everything in Starter","Quick-Start","Live Q&A","Case-study vault","All guarantees"], rec:true},
+  {name:"Elite", price:p*4, feats:["Everything in Pro","1:1 coaching","Personal "+d+" plan","Priority access"], rec:false}
+];}
+function emails(b){ var d=b.dream,p=b.pain,pr=b.product,a=b.audience; return [
+  [0,"Your "+d+" starts now","Deliver lead magnet + set the epiphany"],
+  [1,"The real reason you're still "+p,"Break false belief #1 — the vehicle"],
+  [2,"But will it work for ME?","Break false belief #2 — themselves"],
+  [3,"What's really stopping you","Break false belief #3 — external"],
+  [4,"Introducing "+pr,"Present the Grand Slam Offer"],
+  [5,"The bonuses disappear at midnight","Urgency — real deadline"],
+  [6,"Last chance for "+d,"Close + loss aversion"]
+];}
+function objections(b){ var d=b.dream,a=b.audience,p=b.pain,pr=b.price; return [
+  ["\"It's too expensive.\"","Anchoring + Value","Compared to another year of "+p+"? "+money(pr)+" once vs. the ongoing cost of staying stuck. The stack is worth 10× the price."],
+  ["\"Will it work for me?\"","Social Proof","It already worked for "+a+" in your exact situation — see the case-study library. Same start, same result."],
+  ["\"I don't have time.\"","Effort reduction","The Quick-Start gets your first win in 48 hours. Done-for-you templates mean you follow, not figure out."],
+  ["\"What if I fail?\"","Risk reversal","You can't. Follow the plan 90 days — if you don't reach "+d+", we work with you free until you do."],
+  ["\"I need to think about it.\"","Scarcity + Loss aversion","The bonuses (worth thousands) disappear at the deadline. \"Thinking about it\" usually means staying exactly where you are."],
+  ["\"Is this legit?\"","Authority + Unity","Built for "+a+", by people who've done it. Real proof, real guarantee, real community. You're not buying alone."]
+];}
+function ads(b){ var d=b.dream,a=b.audience,p=b.pain; return [
+  ["TikTok / Reels","POV: you finally stopped "+p+" 👀","Watch how"],
+  ["Meta · FB/IG",cap(a)+": the "+d+" shortcut nobody's talking about","Learn more"],
+  ["Google Search","Get "+d+" — 90-day system","Get started"],
+  ["YouTube","I reverse-engineered "+d,"Watch free"],
+  ["LinkedIn","Why most "+a+" never reach "+d,"See the system"]
+];}
+function viral(b){ var d=b.dream,a=b.audience,p=b.pain; return [
+  ["Shareable stat card: \"% of "+a+" who never reach "+d+" — here's why\"","Social currency · Practical value"],
+  ["A daily-life trigger phrase tying a common moment to "+d,"Triggers"],
+  ["Awe-driven transformation reel: "+p+" → "+d+" in 30s","Emotion (awe) · Stories"],
+  ["Public badge / streak members show off","Public · Social currency"],
+  ["The \"one number\" challenge people screenshot and share","Practical value · Public"]
+];}
+function salesLetter(b){
+  var pr=b.product,a=b.audience,d=b.dream,p=b.pain,price=b.price;
+  var o=offer(b), sing=a.replace(/s$/,"");
+  return {
+    headline: headlines(b)[0].t,
+    deck: "The proven system that gets "+a+" to "+d+" — even if you've tried everything and you're sick of "+p+".",
+    sections: [
+      ["Lead","If you're a "+sing+" who's tired of "+p+", this will be the most important page you read this year. In the next few minutes I'll show you the exact system behind "+d+" — and why it has nothing to do with working harder."],
+      ["Problem","You've been told to push harder, grind more, \"stay consistent.\" And you have. But you're still stuck "+p+", watching other "+a+" pull ahead. It's not your fault — you were handed the wrong map."],
+      ["Solution / Mechanism",pr+" works because it fixes the real bottleneck — not effort, but the mechanism. It's reverse-engineered from "+a+" who actually reached "+d+", distilled into a repeatable 90-day system."],
+      ["Proof","This isn't theory. "+a+" in your exact situation used this to go from "+p+" to "+d+" — the case-study library shows the receipts. Same starting line, same result waiting."],
+      ["Offer","Everything you get: the full "+pr+" system (worth "+money(o.core.value)+"), plus "+o.bonuses.length+" bonuses worth "+money(o.stack-o.core.value)+" — total value "+money(o.stack)+". Yours today for "+money(price)+". That's "+o.ratio+"× value."],
+      ["Guarantee","You risk nothing: follow the plan 90 days and if you don't reach "+d+", we work with you free until you do. The only way to lose is to keep doing what you're doing."],
+      ["Scarcity","The bonuses (worth "+money(o.stack-o.core.value)+") are only guaranteed until the deadline. After that, the price goes up and the bonuses are gone."],
+      ["Close / CTA","Two choices: keep "+p+" and hope it changes — or start the system that makes "+d+" inevitable. Click below and get your first win in the next 48 hours."]
+    ],
+    ps: [
+      "P.S. You get "+money(o.stack)+" in value for "+money(price)+", backed by a guarantee that means you literally cannot lose. But the bonuses disappear at the deadline. Act now.",
+      "P.P.S. Still unsure? That feeling is exactly what's kept you "+p+". "+cap(d)+" starts with one decision. Make it."
+    ]
+  };
+}
+function vsl(b){ var pr=b.product,a=b.audience,d=b.dream,p=b.pain,price=b.price; var o=offer(b), sing=a.replace(/s$/,"");
+  return [
+    ["0:00–0:15","Hook","If you're a "+sing+" who wants "+d+" but you're stuck "+p+" — stop scrolling. The next 3 minutes could change your income forever."],
+    ["0:15–0:45","Callout + Problem","You've tried the courses, the hustle, the \"just be consistent\" advice. And you're still exactly where you started. Here's the uncomfortable truth about why."],
+    ["0:45–1:30","Agitate","Every month you stay "+p+", it costs you — time you'll never get back, and the version of your life where you already have "+d+"."],
+    ["1:30–2:15","Solution / Epiphany","Then I discovered it's not about effort — it's the mechanism. That became "+pr+": a 90-day system reverse-engineered from "+a+" who actually made it."],
+    ["2:15–2:45","Proof","It's already worked for "+a+" in your exact spot. Real people, real results, same starting point as you."],
+    ["2:45–3:15","Offer","You get the full system plus "+o.bonuses.length+" bonuses — "+money(o.stack)+" of value — for just "+money(price)+". That's "+o.ratio+"×."],
+    ["3:15–3:35","Guarantee","And you're protected: reach "+d+" in 90 days or we work with you free until you do. Zero risk."],
+    ["3:35–4:00","Urgency + CTA","But the bonuses vanish at the deadline. Click the button, get your first win in 48 hours, and finally leave "+p+" behind."]
+  ];
+}
+function higgsfield(b){ var pr=b.product,a=b.audience,d=b.dream,p=b.pain, sing=a.replace(/s$/,""); var hl=headlines(b);
+  return [
+    ["Hero image","generate_image · 16:9","Cinematic hero shot for \""+pr+"\": a confident "+sing+" experiencing "+d+", warm golden lighting, shallow depth of field, aspirational and premium, photorealistic, negative space on the right for headline text."],
+    ["Hook video 1","generate_video · 9:16 · 5-8s","Vertical scroll-stopping opener: dramatic pattern interrupt visualizing \""+hl[0].t+"\". Fast punchy motion, bold on-screen text, high contrast, TikTok/Reels native energy, hook in the first 1 second."],
+    ["Hook video 2 (pain→gain)","generate_video · 9:16 · 8-12s","Transformation reel: split visual of "+p+" (dull, gray, stuck) morphing into "+d+" (bright, dynamic, free). Satisfying transition, emotional arc, uplifting music cue, on-screen caption."],
+    ["Testimonial video","generate_video · 9:16 · 10-15s","Authentic UGC-style testimonial: a relatable "+sing+" speaking to camera about reaching "+d+", natural handheld feel, real lighting, subtle captions, trustworthy not polished."],
+    ["Urgency graphic","generate_image · 1:1","Bold urgency graphic for \""+pr+"\": countdown/scarcity motif (\"bonuses end soon\"), high-contrast red and gold, punchy typography space, thumb-stopping, designed for stories/ads."]
+  ];
+}
+function ladder(b){ var d=b.dream,pr=b.product,price=b.price; return [
+  ["Bait (free)",0,"Free guide: \"3 Moves To "+d+"\""],
+  ["Frontend (tripwire)",Math.max(7,Math.round(price*0.05)),pr+" mini-course"],
+  ["Core offer",price,pr+" (full)"],
+  ["Backend (high-ticket)",price*10,"1:1 "+d+" coaching"],
+  ["Continuity",Math.round(price*0.1)+"/mo","Membership / ongoing support"]
+];}
+function math(b){ var r=b.cvr, tr=b.traffic, price=b.price;
+  var cur={rate:r, sales:Math.round(tr*r), rev:Math.round(tr*r*price)};
+  var mult=[["Conservative",2],["Realistic",3.5],["Aggressive",5]];
+  var proj=mult.map(function(m){ var rate=r*m[1]; var rev=Math.round(tr*rate*price);
+    return {label:m[0]+" ("+m[1]+"×)", rate:rate, sales:Math.round(tr*rate), rev:rev, lift:rev-cur.rev}; });
+  return {cur:cur, proj:proj};
+}
+
+// ---------- count-up animation ----------
+function countUp(el, to, opts) {
+  opts = opts || {};
+  var dur = reduceMotion ? 0 : (opts.dur || 900);
+  var pre = opts.pre || "", suf = opts.suf || "", dec = opts.dec || 0;
+  if (dur === 0) { el.textContent = pre + to.toLocaleString("en-US",{minimumFractionDigits:dec,maximumFractionDigits:dec}) + suf; return; }
+  var start = performance.now();
+  function frame(now) {
+    var t = Math.min(1, (now - start) / dur);
+    var e = 1 - Math.pow(1 - t, 3);
+    var v = to * e;
+    el.textContent = pre + (dec ? v.toFixed(dec) : Math.round(v).toLocaleString("en-US")) + suf;
+    if (t < 1) requestAnimationFrame(frame);
+    else el.textContent = pre + to.toLocaleString("en-US",{minimumFractionDigits:dec,maximumFractionDigits:dec}) + suf;
+  }
+  requestAnimationFrame(frame);
+}
+
+// ---------- render ----------
+function readBrief() {
+  var price = Math.max(1, +$("price").value || 1);
+  var cvr = Math.max(0.0001, (+$("cvr").value || 0.8) / 100);
+  var traffic = Math.max(1, +$("traffic").value || 1);
+  return {
+    product: ($("product").value || "Your Product").trim(),
+    audience: ($("audience").value || "your audience").trim(),
+    dream: ($("dream").value || "their dream outcome").trim(),
+    pain: ($("pain").value || "staying stuck").trim(),
+    price: price, cvr: cvr, traffic: traffic
+  };
+}
+
+function build(b) {
+  var m = math(b), o = offer(b);
+  var maxRev = m.proj[m.proj.length-1].rev;
+  var pctOf = function (v) { return Math.max(4, Math.round((v / maxRev) * 100)); };
+  var H = "";
+
+  // 01 money ladder
+  H += sec("01","The Money Ladder","Agent 160 · Conversion Math",
+    '<div class="panel ladder">'+
+      ladderRow("Today", b.cvr, m.cur.rev, "now", pctOf(m.cur.rev), null)+
+      m.proj.map(function(p){ return ladderRow(p.label.split(" ")[0], p.rate, p.rev, p===m.proj[m.proj.length-1]?"peak":"", pctOf(p.rev), p.lift); }).join("")+
+    '</div>');
+
+  // 02 positioning
+  H += sec("02","Positioning","Agent 157 · Own One Word",
+    '<div class="panel pos-panel"><div class="pos-word">The word we own: the '+esc(b.dream)+' '+esc(b.product)+'</div>'+
+    '<p class="pos-stmt">For '+esc(b.audience)+', '+esc(b.product)+' is the system that delivers <em>'+esc(b.dream)+'</em> — without '+esc(b.pain)+' — unlike generic alternatives that just pile on information overload.</p></div>');
+
+  // 03 headlines
+  H += sec("03","Top Headlines","Agent 152 · Ranked by pull",
+    '<div class="panel">'+headlines(b).slice(0,8).map(function(h){
+      return '<div class="hl"><div class="hl-score">'+h.score.toFixed(1)+'</div><div><div class="hl-text">'+esc(h.t)+'</div><div class="hl-angle">'+esc(h.angle)+'</div></div></div>';
+    }).join("")+'</div>');
+
+  // 04 offer
+  H += sec("04","The Grand Slam Offer","Agent 151 · Value Equation",
+    '<div class="offer-grid"><div class="panel ledger">'+
+      '<div class="ledger-row"><div class="ledger-name">Core: '+esc(o.core.name)+'</div><div class="ledger-val">'+money(o.core.value)+'</div></div>'+
+      o.bonuses.map(function(x){ return '<div class="ledger-row"><div class="ledger-name">'+esc(x.name)+'<small>kills '+esc(x.kills)+'</small></div><div class="ledger-val">'+money(x.value)+'</div></div>'; }).join("")+
+      '<div class="ledger-total"><span>Total value</span><span>'+money(o.stack)+'</span></div>'+
+    '</div><div class="panel ratio-card"><div class="ratio-big" id="ratioBig">0×</div><div class="ratio-lbl">Value-to-price</div><div class="ratio-sub"><b>'+money(o.stack)+'</b> stack<br>for <b>'+money(o.price)+'</b></div></div></div>');
+
+  // 05 pricing
+  H += sec("05","Pricing Architecture","Agent 156 · Decoy effect",
+    '<div class="price-grid">'+pricing(b).map(function(t){
+      return '<div class="panel tier'+(t.rec?' rec':'')+'">'+(t.rec?'<span class="tier-badge">Most popular</span>':'')+
+      '<div class="tier-name">'+esc(t.name)+'</div><div class="tier-price">'+money(t.price)+'</div>'+
+      '<ul class="tier-feat">'+t.feats.map(function(f){return '<li>'+esc(f)+'</li>';}).join("")+'</ul></div>';
+    }).join("")+'</div>');
+
+  // 06 emails
+  H += sec("06","7-Day Launch Sequence","Agent 154 · Epiphany Bridge",
+    '<div class="panel timeline">'+emails(b).map(function(e){
+      return '<div class="tl-row"><div class="tl-day">Day '+e[0]+'</div><div><div class="tl-subj">"'+esc(e[1])+'"</div><div class="tl-goal">'+esc(e[2])+'</div></div></div>';
+    }).join("")+'</div>');
+
+  // 07 objections
+  H += sec("07","Objection Handlers","Agent 153 · 7 Principles",
+    '<div class="two-col">'+objections(b).map(function(x){
+      return '<div class="panel obj"><div class="obj-q">'+esc(x[0])+'</div><div class="obj-p">'+esc(x[1])+'</div><div class="obj-a">'+esc(x[2])+'</div></div>';
+    }).join("")+'</div>');
+
+  // 08 ads
+  H += sec("08","Ad Copy by Platform","Agents 101–105 · Platform Assassins",
+    '<div class="two-col">'+ads(b).map(function(a){
+      return '<div class="panel ad"><div class="ad-plat">'+esc(a[0])+'</div><div class="ad-hook">'+esc(a[1])+'</div><div class="ad-cta">CTA · '+esc(a[2])+'</div></div>';
+    }).join("")+'</div>');
+
+  // 09 sales letter
+  var sl = salesLetter(b);
+  H += sec("09","The Sales Letter","Agent 152 · Salesmanship in print",
+    '<div class="panel letter">'+
+      '<div class="letter-hl">'+esc(sl.headline)+'</div>'+
+      '<div class="letter-deck">'+esc(sl.deck)+'</div>'+
+      sl.sections.map(function(s){ return '<div class="letter-block"><span class="letter-tag">'+esc(s[0])+'</span><p>'+esc(s[1])+'</p></div>'; }).join("")+
+      sl.ps.map(function(x){ return '<p class="letter-ps">'+esc(x)+'</p>'; }).join("")+
+    '</div>');
+
+  // 10 vsl
+  H += sec("10","VSL Script","Agent 134 · 4-minute video sales letter",
+    '<div class="panel timeline">'+vsl(b).map(function(v){
+      return '<div class="tl-row"><div class="tl-day">'+esc(v[0])+'</div><div><div class="tl-subj">'+esc(v[1])+'</div><div class="tl-goal">'+esc(v[2])+'</div></div></div>';
+    }).join("")+'</div>');
+
+  // 11 viral
+  H += sec("11","Viral Engine","Agent 158 · STEPPS",
+    '<div class="panel">'+viral(b).map(function(v){
+      return '<div class="viral"><span class="viral-dot">◆</span><div><div class="viral-txt">'+esc(v[0])+'</div><div class="viral-drivers">'+esc(v[1])+'</div></div></div>';
+    }).join("")+'</div>');
+
+  // 12 higgsfield asset prompts
+  H += sec("12","Visual Asset Prompts","Agents 018/078 · Higgsfield-ready",
+    '<div class="two-col">'+higgsfield(b).map(function(h){
+      return '<div class="panel hf"><div class="hf-head"><span class="hf-type">'+esc(h[0])+'</span><button class="hf-copy" data-prompt="'+esc(h[2])+'">copy</button></div>'+
+      '<div class="hf-meta">'+esc(h[1])+'</div><div class="hf-prompt">'+esc(h[2])+'</div></div>';
+    }).join("")+'</div>');
+
+  var out = $("out");
+  out.innerHTML = H;
+  out.hidden = false;
+  $("footBrief").textContent = b.product;
+
+  // reveal sections + animate
+  var secs = out.querySelectorAll("section");
+  secs.forEach(function (s, i) {
+    setTimeout(function () {
+      s.classList.add("in");
+      // animate bars in this section
+      s.querySelectorAll(".bar-fill").forEach(function (bar) {
+        var w = bar.getAttribute("data-w"); if (w) requestAnimationFrame(function(){ bar.style.width = w + "%"; });
+      });
+      // animate ladder values
+      s.querySelectorAll("[data-count]").forEach(function (el) {
+        countUp(el, +el.getAttribute("data-count"), { pre: "$" });
+      });
+    }, reduceMotion ? 0 : i * 90);
+  });
+
+  // ratio count-up
+  var rb = $("ratioBig");
+  if (rb) setTimeout(function(){ countUp(rb, +o.ratio, { suf: "×", dec: 1 }); }, reduceMotion ? 0 : 300);
+
+  // per-prompt copy buttons (Higgsfield section)
+  out.querySelectorAll(".hf-copy").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var txt = btn.getAttribute("data-prompt");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(function () {
+          btn.textContent = "✓ copied"; setTimeout(function () { btn.textContent = "copy"; }, 1500);
+        });
+      }
+    });
+  });
+
+  // scroll to output
+  if (!reduceMotion) $("out").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function ladderRow(label, rate, rev, cls, pct, lift) {
+  return '<div class="ladder-row"><div class="ladder-label">'+esc(label)+'<small>'+(rate*100).toFixed(2)+'% CVR</small></div>'+
+    '<div class="bar-track"><div class="bar-fill '+cls+'" data-w="'+pct+'"></div></div>'+
+    '<div class="ladder-val"><span data-count="'+rev+'">$0</span>'+(lift!=null?'<small>+'+money(lift)+'</small>':'<small>&nbsp;</small>')+'</div></div>';
+}
+function sec(num, title, by, body) {
+  return '<section><div class="sec-head"><span class="sec-num">'+num+'</span><h2 class="sec-title">'+esc(title)+'</h2><span class="sec-by">'+esc(by)+'</span></div>'+body+'</section>';
+}
+
+// ---------- surprise presets ----------
+var PRESETS = [
+  {product:"FitCoach AI", audience:"busy dads", dream:"lose 20 lbs by summer", pain:"no time to train", price:97, cvr:1.2, traffic:8000},
+  {product:"CodeLaunch", audience:"junior devs", dream:"a $120K remote job", pain:"getting ghosted by recruiters", price:299, cvr:0.9, traffic:15000},
+  {product:"CreatorFuel", audience:"tired 9-to-5ers", dream:"1M followers and brand deals", pain:"posting into the void", price:197, cvr:1.5, traffic:25000},
+  {product:"DealDesk Pro", audience:"B2B founders", dream:"a predictable sales pipeline", pain:"feast-or-famine revenue", price:997, cvr:0.6, traffic:5000},
+  {product:"ZenHost", audience:"Airbnb hosts", dream:"$8K/month passive rental income", pain:"empty calendars", price:397, cvr:1.1, traffic:9000}
+];
+function applyPreset(p){ $("product").value=p.product; $("audience").value=p.audience; $("dream").value=p.dream; $("pain").value=p.pain; $("price").value=p.price; $("cvr").value=p.cvr; $("traffic").value=p.traffic; }
+
+// ---------- wire up ----------
+$("generate").addEventListener("click", function(){ build(readBrief()); });
+$("surprise").addEventListener("click", function(){ applyPreset(PRESETS[Math.floor(Math.random()*PRESETS.length)]); build(readBrief()); });
+document.querySelectorAll(".deck input").forEach(function(inp){
+  inp.addEventListener("keydown", function(e){ if(e.key==="Enter") build(readBrief()); });
+});
+
+// export to PDF (via print dialog)
+$("export").addEventListener("click", function(){ window.print(); });
+
+// copy full plan as plain text
+$("copy").addEventListener("click", function(){
+  var b = readBrief(), o = offer(b), m = math(b), sl = salesLetter(b);
+  var lines = [];
+  lines.push("CAMPAIGN BATTLE PLAN — " + b.product);
+  lines.push("Audience: " + b.audience + " | Dream: " + b.dream + " | Price: " + money(b.price));
+  lines.push("");
+  lines.push("POSITIONING:");
+  lines.push("For " + b.audience + ", " + b.product + " delivers " + b.dream + " without " + b.pain + ".");
+  lines.push("");
+  lines.push("TOP HEADLINES:");
+  headlines(b).slice(0,8).forEach(function(h){ lines.push("  [" + h.score.toFixed(1) + "] " + h.t); });
+  lines.push("");
+  lines.push("GRAND SLAM OFFER (" + o.ratio + "x value): " + money(o.stack) + " stack for " + money(o.price));
+  o.bonuses.forEach(function(x){ lines.push("  + " + x.name + " (" + money(x.value) + ")"); });
+  lines.push("");
+  lines.push("7-DAY EMAILS:");
+  emails(b).forEach(function(e){ lines.push("  Day " + e[0] + ": " + e[1]); });
+  lines.push("");
+  lines.push("SALES LETTER:");
+  lines.push("  " + sl.headline);
+  sl.sections.forEach(function(s){ lines.push("  [" + s[0] + "] " + s[1]); });
+  sl.ps.forEach(function(x){ lines.push("  " + x); });
+  lines.push("");
+  lines.push("VSL SCRIPT:");
+  vsl(b).forEach(function(v){ lines.push("  " + v[0] + " " + v[1] + ": " + v[2]); });
+  lines.push("");
+  lines.push("CONVERSION MATH:");
+  lines.push("  Now: " + (m.cur.rate*100).toFixed(2) + "% -> " + money(m.cur.rev));
+  m.proj.forEach(function(p){ lines.push("  " + p.label + ": " + (p.rate*100).toFixed(2) + "% -> " + money(p.rev) + " (+" + money(p.lift) + ")"); });
+  var text = lines.join("\n");
+  var btn = $("copy");
+  function done(ok){ btn.textContent = ok ? "✓ Copied!" : "⚠ Select+copy"; setTimeout(function(){ btn.textContent = "📋 Copy plan"; }, 1800); }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ done(false); });
+  } else { done(false); }
+});
+
+// theme toggle
+$("themeToggle").addEventListener("click", function(){
+  var root = document.documentElement;
+  var cur = root.getAttribute("data-theme");
+  var next = cur === "dark" ? "light" : cur === "light" ? "dark" : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "dark");
+  root.setAttribute("data-theme", next);
+});
+
+// auto-generate the demo on first load
+build(readBrief());
+</script>

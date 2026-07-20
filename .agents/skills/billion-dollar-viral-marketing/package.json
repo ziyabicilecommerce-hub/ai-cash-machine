@@ -1,0 +1,25 @@
+{
+  "name": "billion-dollar-viral-marketing",
+  "version": "1.0.0",
+  "description": "AI-powered viral marketing campaign generator for e-books, courses, SaaS, and physical products",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js",
+    "generate": "node index.js"
+  },
+  "keywords": [
+    "marketing",
+    "viral",
+    "e-book",
+    "course",
+    "saas",
+    "product-launch",
+    "content-strategy",
+    "higgsfield",
+    "ai-marketing"
+  ],
+  "author": "Claude Code",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

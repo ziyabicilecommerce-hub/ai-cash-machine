@@ -1,0 +1,12 @@
+{
+  "name": "brutal-web-designer",
+  "version": "1.0.0",
+  "description": "Conversion-obsessed landing page designer. Fuck aesthetics, maximize conversions.",
+  "main": "generator.js",
+  "scripts": {
+    "generate": "node generator.js"
+  },
+  "keywords": ["web-design", "cro", "landing-page", "conversion", "design"],
+  "author": "Claude Code",
+  "license": "MIT"
+}
