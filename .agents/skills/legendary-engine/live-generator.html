@@ -143,6 +143,14 @@
   .viral-txt { font-size: 14.5px; }
   .viral-drivers { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .05em; margin-top: 4px; }
 
+  .hf { padding: 18px; }
+  .hf-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+  .hf-type { font-family: var(--serif); font-size: 16px; }
+  .hf-copy { background: transparent; border: 1px solid var(--line); color: var(--ink-soft); border-radius: 7px; padding: 5px 11px; font-family: var(--mono); font-size: 11px; }
+  .hf-copy:hover { border-color: var(--gold); color: var(--gold); }
+  .hf-meta { font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em; color: var(--gold); text-transform: uppercase; margin-bottom: 10px; }
+  .hf-prompt { font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); }
+
   .letter { padding: clamp(20px,3vw,32px); }
   .letter-hl { font-family: var(--serif); font-size: clamp(20px,3vw,27px); font-weight: 600; line-height: 1.25; letter-spacing: -.01em; color: var(--gold); text-wrap: balance; }
   .letter-deck { font-family: var(--serif); font-size: 17px; font-style: italic; color: var(--ink-soft); margin: 12px 0 22px; padding-bottom: 20px; border-bottom: 1px solid var(--line-soft); }
@@ -316,6 +324,15 @@ function vsl(b){ var pr=b.product,a=b.audience,d=b.dream,p=b.pain,price=b.price;
     ["3:35–4:00","Urgency + CTA","But the bonuses vanish at the deadline. Click the button, get your first win in 48 hours, and finally leave "+p+" behind."]
   ];
 }
+function higgsfield(b){ var pr=b.product,a=b.audience,d=b.dream,p=b.pain, sing=a.replace(/s$/,""); var hl=headlines(b);
+  return [
+    ["Hero image","generate_image · 16:9","Cinematic hero shot for \""+pr+"\": a confident "+sing+" experiencing "+d+", warm golden lighting, shallow depth of field, aspirational and premium, photorealistic, negative space on the right for headline text."],
+    ["Hook video 1","generate_video · 9:16 · 5-8s","Vertical scroll-stopping opener: dramatic pattern interrupt visualizing \""+hl[0].t+"\". Fast punchy motion, bold on-screen text, high contrast, TikTok/Reels native energy, hook in the first 1 second."],
+    ["Hook video 2 (pain→gain)","generate_video · 9:16 · 8-12s","Transformation reel: split visual of "+p+" (dull, gray, stuck) morphing into "+d+" (bright, dynamic, free). Satisfying transition, emotional arc, uplifting music cue, on-screen caption."],
+    ["Testimonial video","generate_video · 9:16 · 10-15s","Authentic UGC-style testimonial: a relatable "+sing+" speaking to camera about reaching "+d+", natural handheld feel, real lighting, subtle captions, trustworthy not polished."],
+    ["Urgency graphic","generate_image · 1:1","Bold urgency graphic for \""+pr+"\": countdown/scarcity motif (\"bonuses end soon\"), high-contrast red and gold, punchy typography space, thumb-stopping, designed for stories/ads."]
+  ];
+}
 function ladder(b){ var d=b.dream,pr=b.product,price=b.price; return [
   ["Bait (free)",0,"Free guide: \"3 Moves To "+d+"\""],
   ["Frontend (tripwire)",Math.max(7,Math.round(price*0.05)),pr+" mini-course"],
@@ -443,6 +460,13 @@ function build(b) {
       return '<div class="viral"><span class="viral-dot">◆</span><div><div class="viral-txt">'+esc(v[0])+'</div><div class="viral-drivers">'+esc(v[1])+'</div></div></div>';
     }).join("")+'</div>');
 
+  // 12 higgsfield asset prompts
+  H += sec("12","Visual Asset Prompts","Agents 018/078 · Higgsfield-ready",
+    '<div class="two-col">'+higgsfield(b).map(function(h){
+      return '<div class="panel hf"><div class="hf-head"><span class="hf-type">'+esc(h[0])+'</span><button class="hf-copy" data-prompt="'+esc(h[2])+'">copy</button></div>'+
+      '<div class="hf-meta">'+esc(h[1])+'</div><div class="hf-prompt">'+esc(h[2])+'</div></div>';
+    }).join("")+'</div>');
+
   var out = $("out");
   out.innerHTML = H;
   out.hidden = false;
@@ -467,6 +491,18 @@ function build(b) {
   // ratio count-up
   var rb = $("ratioBig");
   if (rb) setTimeout(function(){ countUp(rb, +o.ratio, { suf: "×", dec: 1 }); }, reduceMotion ? 0 : 300);
+
+  // per-prompt copy buttons (Higgsfield section)
+  out.querySelectorAll(".hf-copy").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var txt = btn.getAttribute("data-prompt");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(function () {
+          btn.textContent = "✓ copied"; setTimeout(function () { btn.textContent = "copy"; }, 1500);
+        });
+      }
+    });
+  });
 
   // scroll to output
   if (!reduceMotion) $("out").scrollIntoView({ behavior: "smooth", block: "start" });

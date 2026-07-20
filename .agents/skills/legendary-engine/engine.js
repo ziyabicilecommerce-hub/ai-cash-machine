@@ -248,6 +248,36 @@ function vslScript(b) {
 }
 
 // ---------------------------------------------------------------------------
+// 018/078 — Higgsfield asset prompts (hero image + hook videos + graphics)
+// ---------------------------------------------------------------------------
+function higgsfieldPrompts(b) {
+  const { product, audience, dreamOutcome, painPoint } = b;
+  const hl = headlines(b);
+  return [
+    {
+      type: 'Hero image', tool: 'generate_image', aspect: '16:9',
+      prompt: `Cinematic hero shot for "${product}": a confident ${audience.replace(/s$/, '')} experiencing ${dreamOutcome}, warm golden lighting, shallow depth of field, aspirational and premium, photorealistic, negative space on the right for headline text.`,
+    },
+    {
+      type: 'Hook video 1', tool: 'generate_video', aspect: '9:16', duration: '5-8s',
+      prompt: `Vertical scroll-stopping opener: dramatic pattern interrupt visualizing "${hl[0].t}". Fast punchy motion, bold on-screen text, high contrast, TikTok/Reels native energy, hook in the first 1 second.`,
+    },
+    {
+      type: 'Hook video 2 (pain→gain)', tool: 'generate_video', aspect: '9:16', duration: '8-12s',
+      prompt: `Transformation reel: split visual of ${painPoint} (dull, gray, stuck) morphing into ${dreamOutcome} (bright, dynamic, free). Satisfying transition, emotional arc, uplifting music cue, on-screen caption.`,
+    },
+    {
+      type: 'Testimonial video', tool: 'generate_video', aspect: '9:16', duration: '10-15s',
+      prompt: `Authentic UGC-style testimonial: a relatable ${audience.replace(/s$/, '')} speaking to camera about reaching ${dreamOutcome}, natural handheld feel, real lighting, subtle captions, trustworthy not polished.`,
+    },
+    {
+      type: 'Urgency graphic', tool: 'generate_image', aspect: '1:1',
+      prompt: `Bold urgency graphic for "${product}": countdown/scarcity motif ("bonuses end soon"), high-contrast red and gold, punchy typography space, thumb-stopping, designed for stories/ads.`,
+    },
+  ];
+}
+
+// ---------------------------------------------------------------------------
 // Orchestration — the Grand Master battle plan
 // ---------------------------------------------------------------------------
 function battlePlan(brief) {
@@ -268,6 +298,7 @@ function battlePlan(brief) {
     ads: adCopy(b),
     salesLetter: salesLetter(b),
     vsl: vslScript(b),
+    higgsfield: higgsfieldPrompts(b),
     math: conversionMath(b),
   };
 }
@@ -333,6 +364,12 @@ function render(plan) {
   L.push('');
   L.push('🎥 VSL SCRIPT (Agent 134)');
   plan.vsl.forEach((v) => L.push(`   ${v.time.padEnd(11)} ${v.beat.padEnd(20)} ${v.line}`));
+  L.push('');
+  L.push('🎬 HIGGSFIELD ASSET PROMPTS (Agents 018/078)');
+  plan.higgsfield.forEach((h) => {
+    L.push(`   [${h.type}] ${h.tool} · ${h.aspect}${h.duration ? ' · ' + h.duration : ''}`);
+    L.push(`     ${h.prompt}`);
+  });
   L.push('');
   L.push('📊 CONVERSION MATH (Agent 160)');
   const m = plan.math;
