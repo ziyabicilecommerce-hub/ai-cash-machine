@@ -1,3 +1,8 @@
+---
+name: "500-agent-marketing-swarm"
+description: "Ultimate parallel analysis machine. Launches 500 specialized agents (300 active) that simultaneously analyze websites, test copy, identify barriers, audit competitors, generate campaigns, and provide A/B testing strategy. Delivers unified 20-page marketing report in 20-25 minutes."
+---
+
 # 500-Agent Marketing Specialist Swarm - The Ultimate Parallel Analysis Machine
 
 **Launch 300 specialized agents simultaneously. Analyze EVERYTHING. Find ALL errors. Optimize ruthlessly.**

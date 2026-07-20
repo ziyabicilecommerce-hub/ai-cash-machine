@@ -1,3 +1,8 @@
+---
+name: "billion-dollar-viral-marketing"
+description: "Viral marketing campaign engine using 7-step framework. Generates positioning narratives, content calendars, email sequences, TikTok/Reels/Shorts scripts, and Higgsfield video/image assets for explosive product launches and sustainable growth."
+---
+
 # Billion Dollar Viral Marketing
 
 Generate viral marketing campaigns for any product using AI-powered content creation. Works with e-books, digital products, physical products, and SaaS.

@@ -8,29 +8,29 @@
       "failureCount": 0,
       "averageDurationMs": 4.416666666666667,
       "isRunning": false,
-      "nextRun": "2026-07-20T00:22:52.814Z",
+      "nextRun": "2026-07-20T00:37:52.816Z",
       "lastStartedAt": "2026-07-20T00:22:52.814Z",
       "lastRun": "2026-07-20T00:22:52.816Z"
     },
     "audit": {
-      "runCount": 17,
-      "successCount": 17,
+      "runCount": 18,
+      "successCount": 18,
       "failureCount": 0,
-      "averageDurationMs": 3.0588235294117645,
+      "averageDurationMs": 2.9444444444444446,
       "isRunning": false,
       "nextRun": "2026-07-20T00:29:52.878Z",
-      "lastStartedAt": "2026-07-20T00:19:52.877Z",
-      "lastRun": "2026-07-20T00:19:52.878Z"
+      "lastStartedAt": "2026-07-20T00:29:52.879Z",
+      "lastRun": "2026-07-20T00:29:52.880Z"
     },
     "optimize": {
-      "runCount": 11,
-      "successCount": 11,
+      "runCount": 12,
+      "successCount": 12,
       "failureCount": 0,
-      "averageDurationMs": 3.5454545454545454,
+      "averageDurationMs": 3.5833333333333335,
       "isRunning": false,
-      "nextRun": "2026-07-20T00:26:52.781Z",
-      "lastStartedAt": "2026-07-20T00:11:52.778Z",
-      "lastRun": "2026-07-20T00:11:52.780Z"
+      "nextRun": "2026-07-20T00:41:52.788Z",
+      "lastStartedAt": "2026-07-20T00:26:52.783Z",
+      "lastRun": "2026-07-20T00:26:52.787Z"
     },
     "consolidate": {
       "runCount": 6,
@@ -43,14 +43,14 @@
       "lastRun": "2026-07-20T00:13:52.819Z"
     },
     "testgaps": {
-      "runCount": 8,
-      "successCount": 8,
+      "runCount": 9,
+      "successCount": 9,
       "failureCount": 0,
-      "averageDurationMs": 5.125,
+      "averageDurationMs": 5.888888888888889,
       "isRunning": false,
-      "nextRun": "2026-07-20T00:25:52.792Z",
-      "lastStartedAt": "2026-07-20T00:05:52.791Z",
-      "lastRun": "2026-07-20T00:05:52.792Z"
+      "nextRun": "2026-07-20T00:45:52.815Z",
+      "lastStartedAt": "2026-07-20T00:25:52.802Z",
+      "lastRun": "2026-07-20T00:25:52.814Z"
     },
     "backup": {
       "runCount": 1,
@@ -175,5 +175,5 @@
       }
     ]
   },
-  "savedAt": "2026-07-20T00:22:52.816Z"
+  "savedAt": "2026-07-20T00:29:52.881Z"
 }
