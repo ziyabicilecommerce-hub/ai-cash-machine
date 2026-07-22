@@ -1,0 +1,15 @@
+{
+  "name": "500-agent-marketing-swarm",
+  "version": "1.0.0",
+  "description": "Launch 500 specialized marketing agents in parallel. Complete website autopsy, error finding, competitor analysis, campaign generation.",
+  "main": "orchestrator.js",
+  "scripts": {
+    "orchestrate": "node orchestrator.js"
+  },
+  "keywords": ["multi-agent", "marketing", "swarm", "ruflo", "orchestration", "parallel"],
+  "author": "Claude Code",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
