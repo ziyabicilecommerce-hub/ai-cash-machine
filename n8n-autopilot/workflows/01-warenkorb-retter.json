@@ -1,0 +1,129 @@
+{
+  "name": "01 · Warenkorb-Retter 🛒💰",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "minutes", "minutesInterval": 30 }
+          ]
+        }
+      },
+      "id": "trigger-30min",
+      "name": "⏰ Alle 30 Minuten",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "SHOP_URL", "value": "https://meinshop.de", "type": "string" },
+            { "id": "s06", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s07", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" },
+            { "id": "s08", "name": "RABATT_CODE", "value": "COMEBACK10", "type": "string" },
+            { "id": "s09", "name": "RABATT_PROZENT", "value": "10", "type": "string" },
+            { "id": "s10", "name": "TEST_MODE", "value": "ja", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/checkouts.json?limit=50&status=open' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-checkouts",
+      "name": "🛒 Offene Warenkörbe holen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sd = $getWorkflowStaticData('global');\nsd.bearbeitet = sd.bearbeitet || [];\nconst setup = $('⚙️ Setup').first().json;\nconst checkouts = $json.checkouts || [];\nconst jetzt = Date.now();\nconst raus = [];\n\nfor (const c of checkouts) {\n  if (!c.email) continue;\n  if (sd.bearbeitet.includes(c.id)) continue;\n  const alterMs = jetzt - new Date(c.created_at).getTime();\n  // Nur Warenkörbe zwischen 1h und 24h alt\n  if (alterMs < 60 * 60 * 1000 || alterMs > 24 * 60 * 60 * 1000) continue;\n\n  const artikel = (c.line_items || []).map(li => li.quantity + 'x ' + li.title).join(', ');\n  const vorname = (c.customer && c.customer.first_name) || '';\n\n  const prompt = 'Du bist E-Mail-Marketing-Profi fuer den Onlineshop \"' + setup.SHOP_NAME + '\".\\n' +\n    'Ein Kunde hat seinen Warenkorb stehen lassen. Schreibe eine kurze, persoenliche Rueckhol-E-Mail auf Deutsch (Du-Form), maximal 120 Woerter Text.\\n\\n' +\n    'Daten:\\n' +\n    '- Vorname: ' + (vorname || 'unbekannt (dann neutral anreden)') + '\\n' +\n    '- Artikel im Warenkorb: ' + artikel + '\\n' +\n    '- Warenwert: ' + c.total_price + ' ' + c.currency + '\\n' +\n    '- Rabattcode: ' + setup.RABATT_CODE + ' (' + setup.RABATT_PROZENT + '% Rabatt)\\n' +\n    '- Checkout-Link: ' + c.abandoned_checkout_url + '\\n\\n' +\n    'Anforderungen: Rabattcode prominent zeigen, ein klarer Call-to-Action-Button (als <a> mit Inline-Button-Styling) der zum Checkout-Link fuehrt, leichte Dringlichkeit (Code nur 24h gueltig), kein Spam-Ton, mobiltauglich mit Inline-CSS.\\n' +\n    'Antworte NUR mit validem JSON, ohne Markdown-Codeblock: {\"betreff\": \"...\", \"html\": \"<komplettes E-Mail-HTML>\"}';\n\n  raus.push({ json: {\n    checkout_id: c.id,\n    email: c.email,\n    vorname: vorname,\n    summe: c.total_price + ' ' + c.currency,\n    prompt: prompt\n  }});\n  sd.bearbeitet.push(c.id);\n}\n\nif (sd.bearbeitet.length > 500) sd.bearbeitet = sd.bearbeitet.slice(-500);\nreturn raus;"
+      },
+      "id": "filter-prep",
+      "name": "🧠 Filtern & Prompt bauen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 2000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-mail",
+      "name": "🤖 Claude schreibt die E-Mail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst text = (blocks.find(b => b.type === 'text') || {}).text || '';\nlet daten;\ntry {\n  daten = JSON.parse(text.replace(/```json|```/g, '').trim());\n} catch (e) {\n  daten = { betreff: 'Du hast etwas im Warenkorb vergessen 🛒', html: text };\n}\nconst orig = $('🧠 Filtern & Prompt bauen').item.json;\nconst setup = $('⚙️ Setup').first().json;\nconst empfaenger = setup.TEST_MODE === 'ja' ? setup.OWNER_EMAIL : orig.email;\nreturn { json: {\n  empfaenger: empfaenger,\n  betreff: (setup.TEST_MODE === 'ja' ? '[TEST] ' : '') + daten.betreff,\n  email_html: daten.html\n}};"
+      },
+      "id": "parse-mail",
+      "name": "📦 Antwort parsen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $json.empfaenger }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-mail",
+      "name": "📧 E-Mail senden",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Alle 30 Minuten": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "🛒 Offene Warenkörbe holen", "type": "main", "index": 0 }]] },
+    "🛒 Offene Warenkörbe holen": { "main": [[{ "node": "🧠 Filtern & Prompt bauen", "type": "main", "index": 0 }]] },
+    "🧠 Filtern & Prompt bauen": { "main": [[{ "node": "🤖 Claude schreibt die E-Mail", "type": "main", "index": 0 }]] },
+    "🤖 Claude schreibt die E-Mail": { "main": [[{ "node": "📦 Antwort parsen", "type": "main", "index": 0 }]] },
+    "📦 Antwort parsen": { "main": [[{ "node": "📧 E-Mail senden", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

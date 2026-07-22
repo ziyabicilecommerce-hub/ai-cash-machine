@@ -1,0 +1,127 @@
+{
+  "name": "03 · Gewinn-Radar 📊☀️",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 1, "triggerAtHour": 8, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "⏰ Täglich 08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "TELEGRAM_BOT_TOKEN", "value": "123456:ABC-HIER_DEIN_BOT_TOKEN", "type": "string" },
+            { "id": "s06", "name": "TELEGRAM_CHAT_ID", "value": "HIER_DEINE_CHAT_ID", "type": "string" },
+            { "id": "s07", "name": "WERBEKOSTEN_PRO_TAG", "value": "0", "type": "string" },
+            { "id": "s08", "name": "PRODUKTKOSTEN_PROZENT", "value": "30", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/orders.json?status=any&limit=250&created_at_min=' + encodeURIComponent($now.minus({ days: 1 }).startOf('day').toISO()) + '&created_at_max=' + encodeURIComponent($now.startOf('day').toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-orders",
+      "name": "📥 Bestellungen von gestern",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const setup = $('⚙️ Setup').first().json;\nconst orders = ($json.orders || []).filter(o => !o.cancelled_at);\n\nlet umsatz = 0;\nlet retourenWert = 0;\nconst produkte = {};\nlet waehrung = 'EUR';\n\nfor (const o of orders) {\n  umsatz += parseFloat(o.total_price || 0);\n  waehrung = o.currency || waehrung;\n  for (const r of (o.refunds || [])) {\n    for (const t of (r.transactions || [])) retourenWert += parseFloat(t.amount || 0);\n  }\n  for (const li of (o.line_items || [])) {\n    produkte[li.title] = (produkte[li.title] || 0) + li.quantity;\n  }\n}\n\nconst anzahl = orders.length;\nconst aov = anzahl ? (umsatz / anzahl) : 0;\nconst top = Object.entries(produkte).sort((a, b) => b[1] - a[1]).slice(0, 5)\n  .map(([name, menge], i) => (i + 1) + '. ' + name + ' (' + menge + 'x)').join('\\n');\n\nconst werbekosten = parseFloat(setup.WERBEKOSTEN_PRO_TAG || 0);\nconst produktkosten = umsatz * (parseFloat(setup.PRODUKTKOSTEN_PROZENT || 0) / 100);\nconst geschaetzterGewinn = umsatz - retourenWert - werbekosten - produktkosten;\n\nconst zahlen = 'Umsatz: ' + umsatz.toFixed(2) + ' ' + waehrung + '\\n' +\n  'Bestellungen: ' + anzahl + '\\n' +\n  'Durchschnittlicher Bestellwert: ' + aov.toFixed(2) + ' ' + waehrung + '\\n' +\n  'Erstattungen: ' + retourenWert.toFixed(2) + ' ' + waehrung + '\\n' +\n  'Werbekosten (dein Wert): ' + werbekosten.toFixed(2) + ' ' + waehrung + '\\n' +\n  'Geschaetzter Gewinn: ' + geschaetzterGewinn.toFixed(2) + ' ' + waehrung + '\\n\\n' +\n  'Top-Produkte:\\n' + (top || 'keine Verkaeufe');\n\nconst prompt = 'Du bist E-Commerce-Berater fuer den Shop \"' + setup.SHOP_NAME + '\".\\n' +\n  'Hier die Zahlen von gestern:\\n\\n' + zahlen + '\\n\\n' +\n  'Gib genau 3 kurze, KONKRETE Handlungsempfehlungen fuer heute (jeweils 1-2 Saetze, direkt umsetzbar, keine Floskeln). Nummeriert 1-3, auf Deutsch, Du-Form. Antworte nur mit den 3 Punkten.';\n\nreturn [{ json: { zahlen, prompt } }];"
+      },
+      "id": "calc",
+      "name": "🧮 Zahlen berechnen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 1000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-tips",
+      "name": "🤖 Claude gibt 3 Tipps",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst tipps = (blocks.find(b => b.type === 'text') || {}).text || '';\nconst zahlen = $('🧮 Zahlen berechnen').item.json.zahlen;\nconst setup = $('⚙️ Setup').first().json;\n\nconst telegram_text = '📊 GEWINN-RADAR · ' + setup.SHOP_NAME + '\\n' +\n  'Gestern:\\n\\n' + zahlen + '\\n\\n💡 Deine 3 Moves fuer heute:\\n' + tipps;\n\nreturn { json: { telegram_text } };"
+      },
+      "id": "build-report",
+      "name": "📦 Report bauen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.telegram.org/bot' + $('⚙️ Setup').first().json.TELEGRAM_BOT_TOKEN + '/sendMessage' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $('⚙️ Setup').first().json.TELEGRAM_CHAT_ID, text: $json.telegram_text }) }}",
+        "options": {}
+      },
+      "id": "telegram-report",
+      "name": "📲 Report per Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Täglich 08:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "📥 Bestellungen von gestern", "type": "main", "index": 0 }]] },
+    "📥 Bestellungen von gestern": { "main": [[{ "node": "🧮 Zahlen berechnen", "type": "main", "index": 0 }]] },
+    "🧮 Zahlen berechnen": { "main": [[{ "node": "🤖 Claude gibt 3 Tipps", "type": "main", "index": 0 }]] },
+    "🤖 Claude gibt 3 Tipps": { "main": [[{ "node": "📦 Report bauen", "type": "main", "index": 0 }]] },
+    "📦 Report bauen": { "main": [[{ "node": "📲 Report per Telegram", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

@@ -1,0 +1,129 @@
+{
+  "name": "15 · Warenkorb-Sequenz 3.0 🛒🔥",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "hours", "hoursInterval": 1 }
+          ]
+        }
+      },
+      "id": "trigger-hourly",
+      "name": "⏰ Stündlich",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "SHOP_URL", "value": "https://meinshop.de", "type": "string" },
+            { "id": "s06", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s07", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" },
+            { "id": "s08", "name": "RABATT_CODE", "value": "COMEBACK10", "type": "string" },
+            { "id": "s09", "name": "RABATT_PROZENT", "value": "10", "type": "string" },
+            { "id": "s10", "name": "TEST_MODE", "value": "ja", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/checkouts.json?limit=100&status=open&created_at_min=' + encodeURIComponent($now.minus({ days: 4 }).toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-checkouts",
+      "name": "🛒 Offene Warenkörbe holen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sd = $getWorkflowStaticData('global');\nsd.stufen = sd.stufen || {};\nconst setup = $('⚙️ Setup').first().json;\nconst checkouts = $json.checkouts || [];\nconst jetzt = Date.now();\nconst raus = [];\n\nfor (const c of checkouts) {\n  if (!c.email) continue;\n  const alterH = (jetzt - new Date(c.created_at).getTime()) / 3600000;\n  const eintrag = sd.stufen[c.id] || { stufe: 0, ts: jetzt };\n\n  // Welche Stufe ist jetzt faellig?\n  let stufe = 0;\n  if (alterH >= 72 && eintrag.stufe < 3) stufe = 3;\n  else if (alterH >= 24 && eintrag.stufe < 2) stufe = 2;\n  else if (alterH >= 1 && eintrag.stufe < 1) stufe = 1;\n  if (stufe === 0) continue;\n  if (alterH > 96) continue; // zu alt, Sequenz beendet\n\n  const artikel = (c.line_items || []).map(li => li.quantity + 'x ' + li.title).join(', ');\n  const vorname = (c.customer && c.customer.first_name) || '';\n  const basis = 'Du bist E-Mail-Marketing-Profi fuer den Onlineshop \"' + setup.SHOP_NAME + '\".\\n' +\n    'Kunde: ' + (vorname || 'unbekannt (neutral anreden)') + ' | Warenkorb: ' + artikel + ' | Wert: ' + c.total_price + ' ' + c.currency + ' | Checkout-Link: ' + c.abandoned_checkout_url + '\\n\\n';\n\n  let anweisung = '';\n  if (stufe === 1) {\n    anweisung = 'STUFE 1 (1h nach Abbruch - sanfte Erinnerung, KEIN Rabatt!):\\n' +\n      'Schreibe eine kurze, hilfsbereite Erinnerung auf Deutsch (Du-Form), max 80 Woerter. Ton: \"Dein Warenkorb wartet auf dich - gab es ein Problem beim Bestellen? Antworte einfach auf diese Mail, wir helfen sofort.\" Kein Verkaufsdruck, wirkt wie aufmerksamer Service. EIN Button (als <a> mit Inline-Button-Styling) zurueck zum Checkout.';\n  } else if (stufe === 2) {\n    anweisung = 'STUFE 2 (24h nach Abbruch - jetzt kommt der Anreiz):\\n' +\n      'Schreibe eine Rueckhol-Mail auf Deutsch (Du-Form), max 110 Woerter. Jetzt den Rabattcode ' + setup.RABATT_CODE + ' (' + setup.RABATT_PROZENT + '%) prominent als kleines Dankeschoen anbieten, Code 48h gueltig. Beziehe dich charmant darauf, dass die Artikel noch reserviert sind. EIN Button zum Checkout.';\n  } else {\n    anweisung = 'STUFE 3 (72h nach Abbruch - letzte Chance):\\n' +\n      'Schreibe die finale Mail auf Deutsch (Du-Form), max 90 Woerter. Ehrliche letzte Erinnerung: Der Code ' + setup.RABATT_CODE + ' laeuft heute ab, danach raeumen wir den Warenkorb. Echte Dringlichkeit ohne Drama, ein Hauch Humor erlaubt (\"wir wollen ja nicht anhaenglich wirken, aber...\"). EIN Button zum Checkout.';\n  }\n\n  const prompt = basis + anweisung + '\\nMobiltaugliches HTML mit Inline-CSS. Antworte NUR mit validem JSON, ohne Markdown-Codeblock: {\"betreff\": \"...\", \"html\": \"...\"}';\n\n  raus.push({ json: { checkout_id: c.id, email: c.email, stufe, prompt } });\n  sd.stufen[c.id] = { stufe, ts: jetzt };\n}\n\n// Aufraeumen: Eintraege aelter als 7 Tage loeschen\nfor (const [id, e] of Object.entries(sd.stufen)) {\n  if (jetzt - e.ts > 7 * 24 * 3600000) delete sd.stufen[id];\n}\nreturn raus;"
+      },
+      "id": "stage-engine",
+      "name": "🧠 Stufen-Logik (1h/24h/72h)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 2000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-mail",
+      "name": "🤖 Claude schreibt Stufen-Mail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst text = (blocks.find(b => b.type === 'text') || {}).text || '';\nlet daten;\ntry {\n  daten = JSON.parse(text.replace(/```json|```/g, '').trim());\n} catch (e) {\n  daten = { betreff: 'Dein Warenkorb wartet 🛒', html: text };\n}\nconst orig = $('🧠 Stufen-Logik (1h/24h/72h)').item.json;\nconst setup = $('⚙️ Setup').first().json;\nconst empfaenger = setup.TEST_MODE === 'ja' ? setup.OWNER_EMAIL : orig.email;\nreturn { json: {\n  empfaenger,\n  betreff: (setup.TEST_MODE === 'ja' ? '[TEST · Stufe ' + orig.stufe + '] ' : '') + daten.betreff,\n  email_html: daten.html\n}};"
+      },
+      "id": "parse-mail",
+      "name": "📦 Antwort parsen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $json.empfaenger }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-mail",
+      "name": "📧 E-Mail senden",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Stündlich": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "🛒 Offene Warenkörbe holen", "type": "main", "index": 0 }]] },
+    "🛒 Offene Warenkörbe holen": { "main": [[{ "node": "🧠 Stufen-Logik (1h/24h/72h)", "type": "main", "index": 0 }]] },
+    "🧠 Stufen-Logik (1h/24h/72h)": { "main": [[{ "node": "🤖 Claude schreibt Stufen-Mail", "type": "main", "index": 0 }]] },
+    "🤖 Claude schreibt Stufen-Mail": { "main": [[{ "node": "📦 Antwort parsen", "type": "main", "index": 0 }]] },
+    "📦 Antwort parsen": { "main": [[{ "node": "📧 E-Mail senden", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

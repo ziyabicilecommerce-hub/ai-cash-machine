@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dein Autopilot-Tag — so sieht's live aus</title>
+<style>
+  :root {
+    --bg: #f4f6f3;
+    --surface: #ffffff;
+    --ink: #17211b;
+    --ink-soft: #4c5a51;
+    --ink-faint: #7d8a81;
+    --line: #dde3dd;
+    --accent: #1f8f5a;
+    --accent-soft: #e3f2e9;
+    --amber: #b97f1e;
+    --amber-soft: #f7edd8;
+    --phone-bg: #e9ede8;
+    --bubble-in: #ffffff;
+    --bubble-line: #dfe5df;
+    --node-bg: #ffffff;
+    --canvas: #eef1ec;
+    --canvas-dot: #d3dad2;
+    --shadow: 0 1px 2px rgba(23,33,27,.06), 0 8px 24px rgba(23,33,27,.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10150f;
+      --surface: #1a211a;
+      --ink: #e8ede7;
+      --ink-soft: #aeb8ad;
+      --ink-faint: #79847a;
+      --line: #2b332a;
+      --accent: #4cc98a;
+      --accent-soft: #1d3328;
+      --amber: #dcaa4a;
+      --amber-soft: #362b14;
+      --phone-bg: #141a13;
+      --bubble-in: #232c23;
+      --bubble-line: #313b30;
+      --node-bg: #232c23;
+      --canvas: #161c15;
+      --canvas-dot: #263024;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10150f; --surface: #1a211a; --ink: #e8ede7; --ink-soft: #aeb8ad;
+    --ink-faint: #79847a; --line: #2b332a; --accent: #4cc98a; --accent-soft: #1d3328;
+    --amber: #dcaa4a; --amber-soft: #362b14; --phone-bg: #141a13; --bubble-in: #232c23;
+    --bubble-line: #313b30; --node-bg: #232c23; --canvas: #161c15; --canvas-dot: #263024;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+  :root[data-theme="light"] {
+    --bg: #f4f6f3; --surface: #ffffff; --ink: #17211b; --ink-soft: #4c5a51;
+    --ink-faint: #7d8a81; --line: #dde3dd; --accent: #1f8f5a; --accent-soft: #e3f2e9;
+    --amber: #b97f1e; --amber-soft: #f7edd8; --phone-bg: #e9ede8; --bubble-in: #ffffff;
+    --bubble-line: #dfe5df; --node-bg: #ffffff; --canvas: #eef1ec; --canvas-dot: #d3dad2;
+    --shadow: 0 1px 2px rgba(23,33,27,.06), 0 8px 24px rgba(23,33,27,.07);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 48px 20px 80px; }
+
+  .eyebrow {
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin-bottom: 10px;
+  }
+  h1 {
+    font-size: clamp(30px, 5.5vw, 42px); line-height: 1.12; margin: 0 0 14px;
+    font-weight: 800; letter-spacing: -.015em; text-wrap: balance;
+  }
+  .lede { color: var(--ink-soft); max-width: 58ch; margin: 0 0 8px; }
+
+  section { margin-top: 56px; }
+  h2 { font-size: 21px; margin: 0 0 4px; font-weight: 700; letter-spacing: -.01em; }
+  .sub { color: var(--ink-faint); font-size: 14px; margin: 0 0 20px; }
+
+  .zeit {
+    display: inline-block; font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
+    font-size: 12px; font-weight: 600; color: var(--accent);
+    background: var(--accent-soft); border-radius: 4px; padding: 2px 8px; margin-bottom: 8px;
+  }
+
+  /* ---------- Telegram-Handy ---------- */
+  .phone {
+    background: var(--phone-bg); border: 1px solid var(--line); border-radius: 22px;
+    padding: 14px 12px 18px; box-shadow: var(--shadow); max-width: 420px;
+  }
+  .phone-head {
+    display: flex; align-items: center; gap: 10px; padding: 2px 6px 12px;
+    border-bottom: 1px solid var(--line); margin-bottom: 12px;
+  }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--accent);
+    color: #fff; display: grid; place-items: center; font-size: 17px; flex: none;
+  }
+  .phone-head b { font-size: 14px; display: block; line-height: 1.2; }
+  .phone-head span { font-size: 12px; color: var(--accent); }
+  .msgs { display: flex; flex-direction: column; gap: 10px; }
+  .msg {
+    background: var(--bubble-in); border: 1px solid var(--bubble-line);
+    border-radius: 4px 14px 14px 14px; padding: 10px 12px; font-size: 13px; line-height: 1.5;
+    white-space: pre-line;
+  }
+  .msg .von { font-size: 11px; font-weight: 700; color: var(--accent); display: block; margin-bottom: 3px; }
+  .msg .uhr { float: right; font-size: 10px; color: var(--ink-faint); margin: 6px 0 0 8px; }
+
+  /* ---------- E-Mail ---------- */
+  .mail {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: var(--shadow); overflow: hidden; max-width: 520px;
+  }
+  .mail-kopf { padding: 14px 18px; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .mail-kopf .betreff { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .mail-kopf div span { color: var(--ink-faint); }
+  .mail-body { padding: 20px 18px 24px; font-size: 14px; }
+  .mail-body p { margin: 0 0 12px; max-width: 52ch; }
+  .rabatt {
+    display: inline-block; border: 1.5px dashed var(--amber); color: var(--amber);
+    background: var(--amber-soft); font-family: "SF Mono", Consolas, monospace;
+    font-weight: 700; font-size: 14px; padding: 6px 14px; border-radius: 8px; margin: 4px 0 14px;
+  }
+  .knopf {
+    display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+    font-weight: 700; font-size: 14px; padding: 11px 22px; border-radius: 9px;
+  }
+  .mail-fuss { font-size: 11px; color: var(--ink-faint); margin-top: 18px; }
+
+  /* ---------- n8n-Canvas ---------- */
+  .canvas-scroll { overflow-x: auto; border-radius: 14px; }
+  .canvas {
+    background: var(--canvas);
+    background-image: radial-gradient(var(--canvas-dot) 1px, transparent 1px);
+    background-size: 18px 18px;
+    border: 1px solid var(--line); border-radius: 14px;
+    padding: 26px 22px; display: flex; align-items: center; gap: 0; min-width: max-content;
+  }
+  .node {
+    background: var(--node-bg); border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 14px; text-align: center; box-shadow: var(--shadow); flex: none; width: 118px;
+  }
+  .node .ico { font-size: 21px; display: block; }
+  .node .nm { font-size: 10.5px; font-weight: 600; line-height: 1.3; display: block; margin-top: 5px; color: var(--ink-soft); }
+  .node.start { border-color: var(--accent); }
+  .kabel { width: 34px; height: 2px; background: var(--accent); flex: none; opacity: .65; }
+  .aktiv {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 14px;
+    font-size: 13px; font-weight: 700; color: var(--accent);
+  }
+  .schalter {
+    width: 34px; height: 19px; background: var(--accent); border-radius: 20px; position: relative; flex: none;
+  }
+  .schalter::after {
+    content: ""; position: absolute; right: 2.5px; top: 2.5px; width: 14px; height: 14px;
+    background: #fff; border-radius: 50%;
+  }
+
+  /* ---------- Checkliste ---------- */
+  .schritte { display: flex; flex-direction: column; gap: 10px; counter-reset: s; }
+  .schritt {
+    display: flex; gap: 14px; align-items: flex-start; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px;
+  }
+  .schritt::before {
+    counter-increment: s; content: counter(s);
+    width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff;
+    display: grid; place-items: center; font-size: 13px; font-weight: 800; flex: none; margin-top: 2px;
+  }
+  .schritt b { display: block; font-size: 15px; }
+  .schritt p { margin: 2px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+  .schritt .dauer {
+    margin-left: auto; flex: none; font-family: "SF Mono", Consolas, monospace;
+    font-size: 11px; color: var(--ink-faint); padding-top: 4px;
+  }
+  .hinweis {
+    margin-top: 18px; border-left: 3px solid var(--amber); background: var(--amber-soft);
+    padding: 12px 16px; border-radius: 0 10px 10px 0; font-size: 13.5px; color: var(--ink);
+  }
+  .hinweis b { color: var(--amber); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Vorschau · E-Com Marketing-Autopilot</div>
+  <h1>So sieht ein ganz normaler Dienstag aus, wenn die Maschine läuft</h1>
+  <p class="lede">Du machst: nichts. Die 19 Workflows arbeiten seit 6 Uhr morgens. Das hier landet automatisch auf deinem Handy, in den Postfächern deiner Kunden — und du siehst in n8n nur grüne Häkchen.</p>
+
+  <section>
+    <span class="zeit">06:00 – 08:37 Uhr</span>
+    <h2>📲 Dein Handy, während du noch schläfst</h2>
+    <p class="sub">Echte Beispiel-Nachrichten, so wie deine Workflows sie per Telegram schicken</p>
+    <div class="phone">
+      <div class="phone-head">
+        <div class="avatar">🤖</div>
+        <div><b>Mein Shop · Autopilot-Bot</b><span>online</span></div>
+      </div>
+      <div class="msgs">
+        <div class="msg"><span class="von">🕵️ Preis-Spion</span>🚨 BEWEGUNG BEI DER KONKURRENZ!
+• Resistance-Band Set Pro
+  📉 GESENKT: vorher 34,99 → jetzt 27,99
+  🔥 SALE: „Nur diese Woche"<span class="uhr">06:00</span></div>
+        <div class="msg"><span class="von">🔭 Trend-Scout</span>TOP-SIGNAL: TikTok-Shop-Käufe über „Einrichtungs-Videos" explodieren gerade in deiner Nische.
+Chance 1 (Score 8/10): Dreh heute ein „Home-Gym unter 2m²"-Video mit deinem Bestseller …<span class="uhr">07:00</span></div>
+        <div class="msg"><span class="von">🎬 Content-Kanone</span>📅 Heutiger Winkel: Vorher-Nachher
+Hook 1: „Mein Rücken nach 30 Tagen damit – unglaublich"
+Hook 2: „Das hätte ich mir 2 Jahre früher kaufen sollen" …
++ komplettes 25s-Skript zum Abfilmen<span class="uhr">07:30</span></div>
+        <div class="msg"><span class="von">📊 Gewinn-Radar</span>Gestern:
+Umsatz: 487,60 EUR · 14 Bestellungen
+Ø Bestellwert: 34,83 EUR
+Geschätzter Gewinn: 201,40 EUR
+
+💡 Move 1: Dein Bundle lag 3x im Warenkorb, wurde aber nie gekauft — teste heute −10 % nur aufs Bundle …<span class="uhr">08:00</span></div>
+        <div class="msg"><span class="von">🎛️ Ads-Manager</span>LAGE: 62,10 € Spend → 189,44 € Umsatz (ROAS 3,05) ✅
+🚀 SKALIEREN: „Hook_Ruecken_V2" (ROAS 4,7) → Budget +25 %
+💀 KILLEN: „Broad_Test_3" (11,20 € Spend, 0 Käufe) — pausiert.
+MUSTER: Deine POV-Hooks schlagen alles.<span class="uhr">08:30</span></div>
+        <div class="msg"><span class="von">👑 VIP-Radar</span>NEUER VIP-KUNDE!
+Sarah M. · 4. Bestellung · 212,50 € Gesamtumsatz
+Persönliche Dankes-Mail wurde automatisch gesendet 💌<span class="uhr">12:00</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="zeit">gestern 14:12 Uhr · vollautomatisch</span>
+    <h2>📧 Was deine Kundin bekommt, ohne dass du es merkst</h2>
+    <p class="sub">Warenkorb-Sequenz Stufe 2 — Claude hat diese Mail individuell für ihren Warenkorb geschrieben</p>
+    <div class="mail">
+      <div class="mail-kopf">
+        <div class="betreff">Lena, deine Yoga-Matte wartet noch auf dich 🧘</div>
+        <div><span>Von:</span> Mein Shop &lt;hallo@meinshop.de&gt;</div>
+        <div><span>An:</span> lena.k@gmail.com</div>
+      </div>
+      <div class="mail-body">
+        <p>Hey Lena,</p>
+        <p>deine Premium-Yoga-Matte in Salbeigrün liegt noch im Warenkorb — und ehrlich: Sie gehört auf deinen Boden, nicht in unseren.</p>
+        <p>Als kleines Dankeschön fürs Wiederkommen:</p>
+        <div class="rabatt">COMEBACK10 · −10 %</div><br>
+        <a class="knopf" href="#">Bestellung abschließen →</a>
+        <p class="mail-fuss">Der Code ist 48 Stunden gültig. Fragen? Antworte einfach auf diese Mail — ein Mensch (na gut: fast) liest mit.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="zeit">n8n · Ansicht nach dem Import</span>
+    <h2>⚙️ So sieht ein Workflow in n8n aus</h2>
+    <p class="sub">Beispiel Warenkorb-Sequenz 3.0 — jede Kachel ist ein Node, fertig verbunden. Du füllst nur die ⚙️-Kachel aus.</p>
+    <div class="canvas-scroll">
+      <div class="canvas">
+        <div class="node start"><span class="ico">⏰</span><span class="nm">Stündlich</span></div>
+        <div class="kabel"></div>
+        <div class="node"><span class="ico">⚙️</span><span class="nm">Setup<br>(deine Keys)</span></div>
+        <div class="kabel"></div>
+        <div class="node"><span class="ico">🛒</span><span class="nm">Warenkörbe<br>holen</span></div>
+        <div class="kabel"></div>
+        <div class="node"><span class="ico">🧠</span><span class="nm">Stufen-Logik<br>1h / 24h / 72h</span></div>
+        <div class="kabel"></div>
+        <div class="node"><span class="ico">🤖</span><span class="nm">Claude schreibt<br>die Mail</span></div>
+        <div class="kabel"></div>
+        <div class="node"><span class="ico">📧</span><span class="nm">E-Mail<br>senden</span></div>
+      </div>
+    </div>
+    <div class="aktiv"><span class="schalter"></span> Active — läuft ab jetzt von allein</div>
+  </section>
+
+  <section>
+    <h2>✅ Und ja: Du musst sie „nur" in n8n einfügen — plus 3 Handgriffe</h2>
+    <p class="sub">Einmalig, insgesamt ca. 20–30 Minuten für alles. Danach fasst du nichts mehr an.</p>
+    <div class="schritte">
+      <div class="schritt"><div><b>Importieren</b><p>n8n → Workflows → „Import from File" → JSON-Datei auswählen. Der komplette Workflow erscheint fertig verbunden, wie oben im Bild.</p></div><span class="dauer">~30 Sek/Datei</span></div>
+      <div class="schritt"><div><b>⚙️ Setup-Kachel ausfüllen</b><p>In jedem Workflow einmal die Setup-Kachel öffnen und deine Werte eintragen: Shop-Name, Shopify-Token, Claude-Key, Telegram, Nische. Copy-paste, kein Code.</p></div><span class="dauer">~1 Min/Datei</span></div>
+      <div class="schritt"><div><b>E-Mail-Zugang hinterlegen (einmalig)</b><p>n8n → Credentials → SMTP (dein Mail-Postfach zum Senden). Nur für Workflow 02 zusätzlich IMAP (Posteingang lesen). Alle Workflows teilen sich diese Zugangsdaten.</p></div><span class="dauer">~5 Min einmalig</span></div>
+      <div class="schritt"><div><b>Testen → Active schalten</b><p>Einmal auf „Test Workflow" drücken, Ergebnis anschauen (TEST_MODE schickt alles an dich statt an Kunden), dann oben rechts den Schalter auf Active — fertig.</p></div><span class="dauer">~1 Min/Datei</span></div>
+    </div>
+    <div class="hinweis"><b>Wichtig:</b> Nicht alle 19 auf einmal! Der MASTERPLAN sagt dir, welche 4 in Woche&nbsp;1 zuerst kommen (Gewinn-Radar, Warenkorb-Sequenz, Willkommens-Booster, Trend-Scout). Und: Workflow 01 ODER 15 aktivieren — nie beide, sonst gibt's doppelte Mails.</div>
+  </section>
+</div>
+</body>
+</html>

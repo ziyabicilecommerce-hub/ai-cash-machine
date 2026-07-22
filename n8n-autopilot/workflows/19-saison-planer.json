@@ -1,0 +1,127 @@
+{
+  "name": "19 · Saison-Planer 🗓️🎯",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "months", "monthsInterval": 1, "triggerAtDayOfMonth": 25, "triggerAtHour": 9, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-monthly",
+      "name": "⏰ Am 25. jeden Monats 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "SHOP_NISCHE", "value": "z.B. Fitness-Zubehoer fuer Zuhause", "type": "string" },
+            { "id": "s06", "name": "ZIELGRUPPE", "value": "z.B. Frauen 20-35, sportlich, kaufen ueber TikTok/Insta", "type": "string" },
+            { "id": "s07", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s08", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/orders.json?status=any&limit=250&created_at_min=' + encodeURIComponent($now.minus({ days: 30 }).toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-orders",
+      "name": "📥 Verkäufe der letzten 30 Tage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const setup = $('⚙️ Setup').first().json;\nconst orders = ($json.orders || []).filter(o => !o.cancelled_at);\nconst produkte = {};\nlet umsatz = 0;\nfor (const o of orders) {\n  umsatz += parseFloat(o.total_price || 0);\n  for (const li of (o.line_items || [])) produkte[li.title] = (produkte[li.title] || 0) + li.quantity;\n}\nconst top = Object.entries(produkte).sort((a, b) => b[1] - a[1]).slice(0, 5)\n  .map(([n, m]) => n + ' (' + m + 'x)').join(', ');\n\nconst monate = ['Januar','Februar','Maerz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];\nconst jetzt = new Date();\nconst folgemonatIndex = (jetzt.getMonth() + 1) % 12;\nconst folgemonat = monate[folgemonatIndex];\nconst jahr = folgemonatIndex === 0 ? jetzt.getFullYear() + 1 : jetzt.getFullYear();\n\nconst prompt = 'Du bist Marketing-Stratege fuer den Onlineshop \"' + setup.SHOP_NAME + '\" (Nische: ' + setup.SHOP_NISCHE + ', Zielgruppe: ' + setup.ZIELGRUPPE + ', Markt: Deutschland/DACH).\\n' +\n  'Letzte 30 Tage: ' + orders.length + ' Bestellungen, ' + umsatz.toFixed(0) + ' Umsatz. Top-Produkte: ' + (top || 'keine') + '\\n\\n' +\n  'Erstelle den kompletten MARKETING-KALENDER fuer ' + folgemonat + ' ' + jahr + ', auf Deutsch:\\n\\n' +\n  '1. SAISON-CHECK: Welche Feiertage, Saison-Momente, Shopping-Events und kulturellen Anlaesse gibt es im ' + folgemonat + ' im DACH-Raum, die fuer diese Nische relevant sind? (auch inoffizielle wie Aktionstage, Wetterwechsel, Gehaltseingaenge am Monatsanfang/-ende)\\n' +\n  '2. WOCHENPLAN: Fuer jede der 4 Wochen ein Marketing-Thema mit Content-Fokus (an die Saison-Momente angedockt)\\n' +\n  '3. ZWEI PROMO-AKTIONEN: mit konkretem Datum, Mechanik (Rabatt/Bundle/Gratis-Versand), Begruendung und passendem Rabattcode-Vorschlag\\n' +\n  '4. CONTENT-HIGHLIGHTS: 5 konkrete Video-/Post-Ideen, die den Monat besonders machen\\n' +\n  '5. E-MAIL-PLAN: Welche Mails in welcher Woche (passt zu den Promos)\\n' +\n  '6. MONATSZIEL-VORSCHLAG: realistisches Umsatzziel basierend auf den letzten 30 Tagen (+X%), mit kurzer Rechnung\\n\\n' +\n  'Antworte als sauberes HTML (h2/h3, Listen, Tabellen wo sinnvoll, ohne html/body-Geruest, kein Markdown-Codeblock) - wird direkt als E-Mail verschickt.';\n\nreturn [{ json: { prompt, folgemonat: folgemonat + ' ' + jahr } }];"
+      },
+      "id": "build-prompt",
+      "name": "🧠 Folgemonat + Datenbasis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 5000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-plan",
+      "name": "🤖 Claude plant den Monat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst html = (blocks.find(b => b.type === 'text') || {}).text || '';\nconst setup = $('⚙️ Setup').first().json;\nconst monat = $('🧠 Folgemonat + Datenbasis').item.json.folgemonat;\nreturn { json: {\n  betreff: '🗓️ Dein Marketing-Kalender fuer ' + monat + ' · ' + setup.SHOP_NAME,\n  email_html: '<div style=\"font-family:sans-serif;max-width:640px;margin:0 auto;\">' + html.replace(/```html|```/g, '') + '</div>'\n}};"
+      },
+      "id": "parse-plan",
+      "name": "📦 Kalender verpacken",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $('⚙️ Setup').first().json.OWNER_EMAIL }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-mail",
+      "name": "📧 Kalender an dich senden",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Am 25. jeden Monats 09:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "📥 Verkäufe der letzten 30 Tage", "type": "main", "index": 0 }]] },
+    "📥 Verkäufe der letzten 30 Tage": { "main": [[{ "node": "🧠 Folgemonat + Datenbasis", "type": "main", "index": 0 }]] },
+    "🧠 Folgemonat + Datenbasis": { "main": [[{ "node": "🤖 Claude plant den Monat", "type": "main", "index": 0 }]] },
+    "🤖 Claude plant den Monat": { "main": [[{ "node": "📦 Kalender verpacken", "type": "main", "index": 0 }]] },
+    "📦 Kalender verpacken": { "main": [[{ "node": "📧 Kalender an dich senden", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

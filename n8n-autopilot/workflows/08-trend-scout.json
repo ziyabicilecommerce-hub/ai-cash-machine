@@ -1,0 +1,124 @@
+{
+  "name": "08 · Trend-Scout 🔭📈",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 1, "triggerAtHour": 7, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "⏰ Täglich 07:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s02", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s03", "name": "SHOP_NISCHE", "value": "z.B. Fitness-Zubehoer fuer Zuhause", "type": "string" },
+            { "id": "s04", "name": "TELEGRAM_BOT_TOKEN", "value": "123456:ABC-HIER_DEIN_BOT_TOKEN", "type": "string" },
+            { "id": "s05", "name": "TELEGRAM_CHAT_ID", "value": "HIER_DEINE_CHAT_ID", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://www.reddit.com/r/ecommerce+dropship+shopify+EntrepreneurRideAlong/top.json?t=day&limit=25",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "User-Agent", "value": "n8n-trend-scout/1.0" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-reddit",
+      "name": "🌐 Reddit-Trends holen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const setup = $('⚙️ Setup').first().json;\nconst posts = (($json.data || {}).children || [])\n  .map(c => c.data)\n  .filter(p => p && p.title)\n  .slice(0, 20)\n  .map(p => '- [' + (p.score || 0) + ' Upvotes, r/' + p.subreddit + '] ' + p.title + (p.selftext ? ' :: ' + p.selftext.replace(/\\s+/g, ' ').slice(0, 200) : ''));\n\nconst prompt = 'Du bist E-Commerce-Trend-Analyst fuer den Shop \"' + setup.SHOP_NAME + '\" (Nische: ' + setup.SHOP_NISCHE + ').\\n\\n' +\n  'Hier die heissesten E-Commerce-Diskussionen der letzten 24h auf Reddit:\\n\\n' + posts.join('\\n') + '\\n\\n' +\n  'Analysiere das und gib mir auf Deutsch:\\n\\n' +\n  '1. TOP-SIGNAL: Der eine Trend/Insight aus den Posts, der fuer meine Nische am relevantesten ist (2-3 Saetze warum)\\n' +\n  '2. DREI konkrete Chancen fuer meinen Shop (je: Was? Warum jetzt? Erster Schritt heute? Score 1-10)\\n' +\n  '3. EINE Warnung: Fehler/Risiko, das gerade viele Shop-Betreiber machen laut den Posts\\n\\n' +\n  'Sei brutal ehrlich und konkret, keine Floskeln. Wenn die Posts nichts Relevantes hergeben, sag das ehrlich und gib stattdessen einen zeitlosen Wachstums-Tipp fuer die Nische. Formatiere kompakt mit Emojis als Trenner, Klartext ohne Markdown-Codeblock.';\n\nreturn [{ json: { prompt } }];"
+      },
+      "id": "build-prompt",
+      "name": "🧠 Posts aufbereiten",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 2500, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-analyse",
+      "name": "🤖 Claude analysiert Trends",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst analyse = (blocks.find(b => b.type === 'text') || {}).text || '';\nconst setup = $('⚙️ Setup').first().json;\nconst voll = '🔭 TREND-SCOUT · ' + setup.SHOP_NAME + '\\n━━━━━━━━━━━━━━━━━━\\n\\n' + analyse;\nconst teile = [];\nfor (let i = 0; i < voll.length; i += 3900) teile.push(voll.slice(i, i + 3900));\nreturn teile.map(t => ({ json: { telegram_text: t } }));"
+      },
+      "id": "build-message",
+      "name": "📦 Nachricht vorbereiten",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.telegram.org/bot' + $('⚙️ Setup').first().json.TELEGRAM_BOT_TOKEN + '/sendMessage' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $('⚙️ Setup').first().json.TELEGRAM_CHAT_ID, text: $json.telegram_text }) }}",
+        "options": {}
+      },
+      "id": "telegram-trends",
+      "name": "📲 Trends aufs Handy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Täglich 07:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "🌐 Reddit-Trends holen", "type": "main", "index": 0 }]] },
+    "🌐 Reddit-Trends holen": { "main": [[{ "node": "🧠 Posts aufbereiten", "type": "main", "index": 0 }]] },
+    "🧠 Posts aufbereiten": { "main": [[{ "node": "🤖 Claude analysiert Trends", "type": "main", "index": 0 }]] },
+    "🤖 Claude analysiert Trends": { "main": [[{ "node": "📦 Nachricht vorbereiten", "type": "main", "index": 0 }]] },
+    "📦 Nachricht vorbereiten": { "main": [[{ "node": "📲 Trends aufs Handy", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

@@ -1,0 +1,154 @@
+{
+  "name": "02 · KI-Kundenservice 🤖📬",
+  "nodes": [
+    {
+      "parameters": {
+        "postProcessAction": "read",
+        "options": {}
+      },
+      "id": "imap-trigger",
+      "name": "📬 Neue Kunden-E-Mail (IMAP)",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "ABSENDER_EMAIL", "value": "support@meinshop.de", "type": "string" },
+            { "id": "s06", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" },
+            { "id": "s07", "name": "ANSPRACHE", "value": "du", "type": "string" },
+            { "id": "s08", "name": "VERSANDZEIT", "value": "2-4 Werktage", "type": "string" },
+            { "id": "s09", "name": "RETOURE_TAGE", "value": "14", "type": "string" },
+            { "id": "s10", "name": "TELEGRAM_BOT_TOKEN", "value": "123456:ABC-HIER_DEIN_BOT_TOKEN", "type": "string" },
+            { "id": "s11", "name": "TELEGRAM_CHAT_ID", "value": "HIER_DEINE_CHAT_ID", "type": "string" },
+            { "id": "s12", "name": "TEST_MODE", "value": "ja", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const setup = $('⚙️ Setup').first().json;\nconst mail = $('📬 Neue Kunden-E-Mail (IMAP)').item.json;\nconst von = mail.from || '';\nconst betreff = mail.subject || '(kein Betreff)';\nconst text = (mail.textPlain || mail.textHtml || '').toString().slice(0, 4000);\n\n// Absender-E-Mail aus dem From-Feld extrahieren\nconst m = von.toString().match(/[\\w.+-]+@[\\w-]+\\.[\\w.]+/);\nconst kundeEmail = m ? m[0] : '';\n\nconst prompt = 'Du bist der Kundenservice des Onlineshops \"' + setup.SHOP_NAME + '\". ' +\n  (setup.ANSPRACHE === 'du' ? 'Duze den Kunden.' : 'Sieze den Kunden.') + '\\n\\n' +\n  'Shop-Infos:\\n- Versandzeit: ' + setup.VERSANDZEIT + '\\n- Rueckgaberecht: ' + setup.RETOURE_TAGE + ' Tage\\n\\n' +\n  'Eingegangene Kunden-E-Mail:\\nVon: ' + von + '\\nBetreff: ' + betreff + '\\n\\n' + text + '\\n\\n' +\n  'Aufgaben:\\n' +\n  '1. Klassifiziere die E-Mail: versand | retoure | produktfrage | beschwerde | sonstiges\\n' +\n  '2. Entscheide, ob ein Mensch uebernehmen muss (braucht_mensch = \"ja\" bei: Rechtsthemen, Drohungen, Rueckbuchungen/Chargebacks, sehr wuetenden Kunden, individuellen Sonderfaellen, oder wenn du Bestelldaten braeuchtest die du nicht hast). Standardfragen (Versandzeit, Retoure-Ablauf, allgemeine Produktfragen) beantwortest du selbst.\\n' +\n  '3. Schreibe eine freundliche, hilfreiche Antwort-E-Mail auf Deutsch als sauberes HTML (Inline-CSS, kurz und klar). Erfinde KEINE Fakten, keine Tracking-Nummern, keine Bestelldetails.\\n\\n' +\n  'Antworte NUR mit validem JSON, ohne Markdown-Codeblock:\\n' +\n  '{\"kategorie\": \"...\", \"braucht_mensch\": \"ja|nein\", \"betreff\": \"Re: ...\", \"antwort_html\": \"...\"}';\n\nreturn { json: { kunde_email: kundeEmail, original_betreff: betreff, original_text: text.slice(0, 800), prompt: prompt } };"
+      },
+      "id": "build-prompt",
+      "name": "🧠 Prompt bauen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 2500, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-answer",
+      "name": "🤖 Claude analysiert & antwortet",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst text = (blocks.find(b => b.type === 'text') || {}).text || '';\nlet daten;\ntry {\n  daten = JSON.parse(text.replace(/```json|```/g, '').trim());\n} catch (e) {\n  daten = { kategorie: 'sonstiges', braucht_mensch: 'ja', betreff: 'Re: Ihre Anfrage', antwort_html: text };\n}\nconst orig = $('🧠 Prompt bauen').item.json;\nconst setup = $('⚙️ Setup').first().json;\n\nconst telegram_text = '🚨 KUNDENSERVICE - Mensch gebraucht!\\n\\n' +\n  'Von: ' + orig.kunde_email + '\\n' +\n  'Kategorie: ' + daten.kategorie + '\\n' +\n  'Betreff: ' + orig.original_betreff + '\\n\\n' +\n  'Nachricht:\\n' + orig.original_text + '\\n\\n' +\n  '--- Claude-Entwurf (nicht gesendet) ---\\n' +\n  (daten.antwort_html || '').replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' ').slice(0, 1200);\n\nconst empfaenger = setup.TEST_MODE === 'ja' ? setup.OWNER_EMAIL : orig.kunde_email;\n\nreturn { json: {\n  braucht_mensch: daten.braucht_mensch === 'ja' ? 'ja' : 'nein',\n  kategorie: daten.kategorie,\n  empfaenger: empfaenger,\n  betreff: (setup.TEST_MODE === 'ja' ? '[TEST] ' : '') + (daten.betreff || 'Re: ' + orig.original_betreff),\n  antwort_html: daten.antwort_html || '',\n  telegram_text: telegram_text\n}};"
+      },
+      "id": "parse-answer",
+      "name": "📦 Antwort parsen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.braucht_mensch }}",
+              "rightValue": "ja",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-human",
+      "name": "❓ Braucht ein Mensch?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.telegram.org/bot' + $('⚙️ Setup').first().json.TELEGRAM_BOT_TOKEN + '/sendMessage' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $('⚙️ Setup').first().json.TELEGRAM_CHAT_ID, text: $json.telegram_text }) }}",
+        "options": {}
+      },
+      "id": "telegram-alert",
+      "name": "🚨 Telegram-Alarm an dich",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, -120]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $json.empfaenger }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.antwort_html }}",
+        "options": {}
+      },
+      "id": "send-auto-reply",
+      "name": "📧 Auto-Antwort senden",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1320, 120]
+    }
+  ],
+  "connections": {
+    "📬 Neue Kunden-E-Mail (IMAP)": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "🧠 Prompt bauen", "type": "main", "index": 0 }]] },
+    "🧠 Prompt bauen": { "main": [[{ "node": "🤖 Claude analysiert & antwortet", "type": "main", "index": 0 }]] },
+    "🤖 Claude analysiert & antwortet": { "main": [[{ "node": "📦 Antwort parsen", "type": "main", "index": 0 }]] },
+    "📦 Antwort parsen": { "main": [[{ "node": "❓ Braucht ein Mensch?", "type": "main", "index": 0 }]] },
+    "❓ Braucht ein Mensch?": {
+      "main": [
+        [{ "node": "🚨 Telegram-Alarm an dich", "type": "main", "index": 0 }],
+        [{ "node": "📧 Auto-Antwort senden", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

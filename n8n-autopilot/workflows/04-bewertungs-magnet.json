@@ -1,0 +1,128 @@
+{
+  "name": "04 · Bewertungs-Magnet ⭐🧲",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 1, "triggerAtHour": 10, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "⏰ Täglich 10:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s06", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" },
+            { "id": "s07", "name": "BEWERTUNG_LINK", "value": "https://meinshop.de/pages/bewertung", "type": "string" },
+            { "id": "s08", "name": "TAGE_NACH_BESTELLUNG", "value": "7", "type": "string" },
+            { "id": "s09", "name": "TEST_MODE", "value": "ja", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/orders.json?status=any&fulfillment_status=shipped&limit=250&created_at_min=' + encodeURIComponent($now.minus({ days: parseInt($('⚙️ Setup').first().json.TAGE_NACH_BESTELLUNG) + 1 }).startOf('day').toISO()) + '&created_at_max=' + encodeURIComponent($now.minus({ days: parseInt($('⚙️ Setup').first().json.TAGE_NACH_BESTELLUNG) }).startOf('day').toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-orders",
+      "name": "📦 Versendete Bestellungen holen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sd = $getWorkflowStaticData('global');\nsd.angefragt = sd.angefragt || [];\nconst setup = $('⚙️ Setup').first().json;\nconst orders = ($json.orders || []).filter(o => !o.cancelled_at && o.email);\nconst raus = [];\n\nfor (const o of orders) {\n  if (sd.angefragt.includes(o.id)) continue;\n  const vorname = (o.customer && o.customer.first_name) || '';\n  const artikel = (o.line_items || []).map(li => li.title).slice(0, 3).join(', ');\n\n  const prompt = 'Du bist E-Mail-Marketing-Profi fuer den Onlineshop \"' + setup.SHOP_NAME + '\".\\n' +\n    'Der Kunde hat vor ' + setup.TAGE_NACH_BESTELLUNG + ' Tagen bestellt und die Ware erhalten. Schreibe eine kurze, herzliche Bewertungs-Anfrage auf Deutsch (Du-Form), maximal 100 Woerter.\\n\\n' +\n    'Daten:\\n- Vorname: ' + (vorname || 'unbekannt (neutral anreden)') + '\\n- Gekaufte Artikel: ' + artikel + '\\n- Bewertungs-Link: ' + setup.BEWERTUNG_LINK + '\\n\\n' +\n    'Anforderungen: Ehrlich fragen wie zufrieden er ist, EIN klarer Button (als <a> mit Inline-Button-Styling) zum Bewertungs-Link, erwaehne dass es nur 60 Sekunden dauert. Extra-Kick: Bitte ihn, ein Foto/Video mit dem Produkt zu posten und den Shop zu markieren. Kein Betteln, kein Spam-Ton. Mobiltaugliches HTML mit Inline-CSS.\\n' +\n    'Antworte NUR mit validem JSON, ohne Markdown-Codeblock: {\"betreff\": \"...\", \"html\": \"<komplettes E-Mail-HTML>\"}';\n\n  raus.push({ json: { order_id: o.id, email: o.email, vorname, artikel, prompt } });\n  sd.angefragt.push(o.id);\n}\n\nif (sd.angefragt.length > 1000) sd.angefragt = sd.angefragt.slice(-1000);\nreturn raus;"
+      },
+      "id": "filter-prep",
+      "name": "🧠 Filtern & Prompt bauen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 2000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-mail",
+      "name": "🤖 Claude schreibt die Anfrage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst text = (blocks.find(b => b.type === 'text') || {}).text || '';\nlet daten;\ntry {\n  daten = JSON.parse(text.replace(/```json|```/g, '').trim());\n} catch (e) {\n  daten = { betreff: 'Wie zufrieden bist du? ⭐', html: text };\n}\nconst orig = $('🧠 Filtern & Prompt bauen').item.json;\nconst setup = $('⚙️ Setup').first().json;\nconst empfaenger = setup.TEST_MODE === 'ja' ? setup.OWNER_EMAIL : orig.email;\nreturn { json: {\n  empfaenger,\n  betreff: (setup.TEST_MODE === 'ja' ? '[TEST] ' : '') + daten.betreff,\n  email_html: daten.html\n}};"
+      },
+      "id": "parse-mail",
+      "name": "📦 Antwort parsen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $json.empfaenger }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-mail",
+      "name": "📧 E-Mail senden",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Täglich 10:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "📦 Versendete Bestellungen holen", "type": "main", "index": 0 }]] },
+    "📦 Versendete Bestellungen holen": { "main": [[{ "node": "🧠 Filtern & Prompt bauen", "type": "main", "index": 0 }]] },
+    "🧠 Filtern & Prompt bauen": { "main": [[{ "node": "🤖 Claude schreibt die Anfrage", "type": "main", "index": 0 }]] },
+    "🤖 Claude schreibt die Anfrage": { "main": [[{ "node": "📦 Antwort parsen", "type": "main", "index": 0 }]] },
+    "📦 Antwort parsen": { "main": [[{ "node": "📧 E-Mail senden", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

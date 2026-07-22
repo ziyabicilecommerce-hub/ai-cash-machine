@@ -1,0 +1,160 @@
+{
+  "name": "05 · Winback-Maschine 🔄💶",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 1, "triggerAtHour": 11, "triggerAtMinute": 0 }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "⏰ Täglich 11:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s01", "name": "SHOP", "value": "dein-shop-subdomain", "type": "string" },
+            { "id": "s02", "name": "SHOPIFY_TOKEN", "value": "shpat_HIER_DEIN_TOKEN", "type": "string" },
+            { "id": "s03", "name": "ANTHROPIC_API_KEY", "value": "sk-ant-HIER_DEIN_KEY", "type": "string" },
+            { "id": "s04", "name": "SHOP_NAME", "value": "Mein Shop", "type": "string" },
+            { "id": "s05", "name": "SHOP_URL", "value": "https://meinshop.de", "type": "string" },
+            { "id": "s06", "name": "ABSENDER_EMAIL", "value": "hallo@meinshop.de", "type": "string" },
+            { "id": "s07", "name": "OWNER_EMAIL", "value": "deine@email.de", "type": "string" },
+            { "id": "s08", "name": "WINBACK_TAGE", "value": "60", "type": "string" },
+            { "id": "s09", "name": "WINBACK_RABATT_CODE", "value": "WILLKOMMEN15", "type": "string" },
+            { "id": "s10", "name": "WINBACK_RABATT_PROZENT", "value": "15", "type": "string" },
+            { "id": "s11", "name": "TEST_MODE", "value": "ja", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setup",
+      "name": "⚙️ Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/orders.json?status=any&limit=250&created_at_min=' + encodeURIComponent($now.minus({ days: parseInt($('⚙️ Setup').first().json.WINBACK_TAGE) + 1 }).startOf('day').toISO()) + '&created_at_max=' + encodeURIComponent($now.minus({ days: parseInt($('⚙️ Setup').first().json.WINBACK_TAGE) }).startOf('day').toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-old-orders",
+      "name": "📥 Bestellungen von vor X Tagen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Kandidaten sammeln: Kunden, die vor WINBACK_TAGE Tagen gekauft haben\nconst setup = $('⚙️ Setup').first().json;\nconst orders = ($json.orders || []).filter(o => !o.cancelled_at && o.email && o.customer);\nconst kandidaten = {};\nfor (const o of orders) {\n  if (!kandidaten[o.email]) {\n    kandidaten[o.email] = {\n      customer_id: o.customer.id,\n      email: o.email,\n      vorname: o.customer.first_name || '',\n      artikel: (o.line_items || []).map(li => li.title).slice(0, 3).join(', '),\n      alte_order_id: o.id\n    };\n  }\n}\nreturn Object.values(kandidaten).map(k => ({ json: k }));"
+      },
+      "id": "collect-candidates",
+      "name": "🧠 Kandidaten sammeln",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://' + $('⚙️ Setup').first().json.SHOP + '.myshopify.com/admin/api/2024-10/customers/' + $json.customer_id + '/orders.json?status=any&limit=10&created_at_min=' + encodeURIComponent($now.minus({ days: parseInt($('⚙️ Setup').first().json.WINBACK_TAGE) - 1 }).toISO()) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $('⚙️ Setup').first().json.SHOPIFY_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "check-recent",
+      "name": "🔍 Hat er seitdem gekauft?",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Nur Kunden behalten, die seitdem NICHT mehr gekauft haben + Dedup\nconst sd = $getWorkflowStaticData('global');\nsd.winback = sd.winback || [];\nconst setup = $('⚙️ Setup').first().json;\nconst kandidat = $('🧠 Kandidaten sammeln').item.json;\nconst neuereBestellungen = ($json.orders || []).filter(o => !o.cancelled_at);\n\nif (neuereBestellungen.length > 0) return null; // hat wieder gekauft -> kein Winback\nif (sd.winback.includes(kandidat.email)) return null; // schon angeschrieben\nsd.winback.push(kandidat.email);\nif (sd.winback.length > 2000) sd.winback = sd.winback.slice(-2000);\n\nconst prompt = 'Du bist E-Mail-Marketing-Profi fuer den Onlineshop \"' + setup.SHOP_NAME + '\".\\n' +\n  'Dieser Kunde hat vor ' + setup.WINBACK_TAGE + ' Tagen gekauft und seitdem nichts mehr bestellt. Schreibe eine Winback-E-Mail auf Deutsch (Du-Form), maximal 130 Woerter.\\n\\n' +\n  'Daten:\\n- Vorname: ' + (kandidat.vorname || 'unbekannt (neutral anreden)') + '\\n- Damals gekauft: ' + kandidat.artikel + '\\n- Shop-Link: ' + setup.SHOP_URL + '\\n- Rabattcode: ' + setup.WINBACK_RABATT_CODE + ' (' + setup.WINBACK_RABATT_PROZENT + '%)\\n\\n' +\n  'Anforderungen: \"Wir vermissen dich\"-Vibe ohne cringe zu sein, beziehe dich auf den damaligen Kauf, Rabattcode als Dankeschoen praesentieren, EIN klarer Button (als <a> mit Inline-Button-Styling) zum Shop, leichte Dringlichkeit (Code 7 Tage gueltig). Mobiltaugliches HTML mit Inline-CSS.\\n' +\n  'Antworte NUR mit validem JSON, ohne Markdown-Codeblock: {\"betreff\": \"...\", \"html\": \"<komplettes E-Mail-HTML>\"}';\n\nreturn { json: { email: kandidat.email, vorname: kandidat.vorname, prompt } };"
+      },
+      "id": "filter-inactive",
+      "name": "🧹 Inaktive filtern & Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('⚙️ Setup').first().json.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 2000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "claude-winback",
+      "name": "🤖 Claude schreibt Winback-Mail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const blocks = $json.content || [];\nconst text = (blocks.find(b => b.type === 'text') || {}).text || '';\nlet daten;\ntry {\n  daten = JSON.parse(text.replace(/```json|```/g, '').trim());\n} catch (e) {\n  daten = { betreff: 'Wir vermissen dich! 💛', html: text };\n}\nconst orig = $('🧹 Inaktive filtern & Prompt').item.json;\nconst setup = $('⚙️ Setup').first().json;\nconst empfaenger = setup.TEST_MODE === 'ja' ? setup.OWNER_EMAIL : orig.email;\nreturn { json: {\n  empfaenger,\n  betreff: (setup.TEST_MODE === 'ja' ? '[TEST] ' : '') + daten.betreff,\n  email_html: daten.html\n}};"
+      },
+      "id": "parse-mail",
+      "name": "📦 Antwort parsen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1540, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('⚙️ Setup').first().json.ABSENDER_EMAIL }}",
+        "toEmail": "={{ $json.empfaenger }}",
+        "subject": "={{ $json.betreff }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}",
+        "options": {}
+      },
+      "id": "send-mail",
+      "name": "📧 E-Mail senden",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1760, 0]
+    }
+  ],
+  "connections": {
+    "⏰ Täglich 11:00": { "main": [[{ "node": "⚙️ Setup", "type": "main", "index": 0 }]] },
+    "⚙️ Setup": { "main": [[{ "node": "📥 Bestellungen von vor X Tagen", "type": "main", "index": 0 }]] },
+    "📥 Bestellungen von vor X Tagen": { "main": [[{ "node": "🧠 Kandidaten sammeln", "type": "main", "index": 0 }]] },
+    "🧠 Kandidaten sammeln": { "main": [[{ "node": "🔍 Hat er seitdem gekauft?", "type": "main", "index": 0 }]] },
+    "🔍 Hat er seitdem gekauft?": { "main": [[{ "node": "🧹 Inaktive filtern & Prompt", "type": "main", "index": 0 }]] },
+    "🧹 Inaktive filtern & Prompt": { "main": [[{ "node": "🤖 Claude schreibt Winback-Mail", "type": "main", "index": 0 }]] },
+    "🤖 Claude schreibt Winback-Mail": { "main": [[{ "node": "📦 Antwort parsen", "type": "main", "index": 0 }]] },
+    "📦 Antwort parsen": { "main": [[{ "node": "📧 E-Mail senden", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}
