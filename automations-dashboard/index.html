@@ -4,92 +4,188 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CASHMACHINE AUTOMATIONS · Control Center</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<meta name="color-scheme" content="dark">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html, body { background:#030512; color:#c9edff; font-family:'Share Tech Mono', monospace; min-height:100%; }
-  body { background:
-      radial-gradient(ellipse at 20% -10%, rgba(111,224,255,0.10), transparent 45%),
-      radial-gradient(ellipse at 90% 0%, rgba(62,242,160,0.06), transparent 40%),
-      #030512;
+  :root {
+    --bg: #020617;
+    --cyan: #6fe0ff;
+    --green: #3ef2a0;
+    --amber: #ffc55c;
+    --red: #ff6b81;
   }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  html, body { background:var(--bg); color:#c9edff; font-family:'JetBrains Mono','Share Tech Mono', monospace; min-height:100%; overflow-x:hidden; }
   a { color:inherit; }
+  ::selection { background: rgba(111,224,255,0.3); color:#fff; }
 
+  /* ---------- animated backdrop ---------- */
+  .bg-fx { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .bg-grid {
+    position:absolute; inset:-2px;
+    background-image:
+      linear-gradient(rgba(111,224,255,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(111,224,255,0.07) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%);
+    animation: gridDrift 30s linear infinite;
+  }
+  @keyframes gridDrift { from { transform: translateY(0); } to { transform: translateY(42px); } }
+  .bg-glow {
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 700px 400px at 15% -5%, rgba(111,224,255,0.16), transparent 60%),
+      radial-gradient(ellipse 600px 500px at 100% 10%, rgba(183,107,255,0.12), transparent 60%),
+      radial-gradient(ellipse 500px 400px at 50% 100%, rgba(62,242,160,0.08), transparent 60%);
+  }
+  .scanline {
+    position:absolute; left:0; right:0; height:140px;
+    background: linear-gradient(rgba(111,224,255,0), rgba(111,224,255,0.05) 45%, rgba(111,224,255,0.10) 50%, rgba(111,224,255,0.05) 55%, rgba(111,224,255,0));
+    animation: scan 9s linear infinite;
+  }
+  @keyframes scan { 0% { top:-140px; } 100% { top:100%; } }
+  .noise {
+    position:absolute; inset:0; opacity:.025; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  main, header, nav, footer { position:relative; z-index:1; }
+
+  /* ---------- hero ---------- */
   header.hero {
-    padding: 56px 24px 40px;
+    padding: 64px 24px 44px;
     text-align:center;
     border-bottom: 1px solid rgba(111,224,255,0.15);
   }
-  header.hero .eyebrow {
-    font-family:'Orbitron', sans-serif;
-    font-size:12px; letter-spacing:4px; color:#3ef2a0;
+  .live-badge {
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:'Orbitron', sans-serif; font-size:11px; letter-spacing:3px;
+    color:var(--green); border:1px solid rgba(62,242,160,0.4);
+    padding:5px 14px; border-radius:20px; background:rgba(62,242,160,0.06);
     text-shadow:0 0 8px rgba(62,242,160,0.6);
   }
-  header.hero h1 {
-    font-family:'Orbitron', sans-serif;
-    font-size: clamp(28px, 5vw, 48px);
-    margin: 10px 0 14px;
-    color:#eaf8ff;
-    text-shadow: 0 0 18px rgba(111,224,255,0.45);
-    letter-spacing: 1px;
+  .live-badge .pulse-dot {
+    width:7px; height:7px; border-radius:50%; background:var(--green);
+    box-shadow:0 0 8px var(--green);
+    animation: dotPulse 1.6s ease-in-out infinite;
   }
+  @keyframes dotPulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.4; transform:scale(0.7); } }
+
+  h1.glitch {
+    font-family:'Orbitron', sans-serif;
+    font-size: clamp(34px, 6.5vw, 62px);
+    margin: 18px 0 16px;
+    letter-spacing: 1px;
+    position:relative;
+    color:#eaf8ff;
+    text-shadow: 0 0 22px rgba(111,224,255,0.5), 0 0 60px rgba(111,224,255,0.15);
+    display:inline-block;
+  }
+  h1.glitch::before, h1.glitch::after {
+    content: attr(data-text);
+    position:absolute; left:0; top:0; width:100%;
+    background: linear-gradient(180deg, transparent, transparent);
+    -webkit-background-clip:text;
+    overflow:hidden; clip-path: inset(0 0 0 0);
+  }
+  h1.glitch::before { color: var(--cyan); animation: glitchTop 6s infinite linear; left:2px; text-shadow:none; }
+  h1.glitch::after { color: #ff5f9e; animation: glitchBot 6.4s infinite linear; left:-2px; text-shadow:none; }
+  @keyframes glitchTop {
+    0%, 92%, 100% { clip-path: inset(0 0 100% 0); opacity:0; }
+    93% { clip-path: inset(10% 0 60% 0); opacity:.8; transform:translateX(-2px); }
+    95% { clip-path: inset(55% 0 15% 0); opacity:.8; transform:translateX(2px); }
+    97% { clip-path: inset(20% 0 70% 0); opacity:.6; transform:translateX(-1px); }
+  }
+  @keyframes glitchBot {
+    0%, 90%, 100% { clip-path: inset(100% 0 0 0); opacity:0; }
+    91% { clip-path: inset(70% 0 5% 0); opacity:.7; transform:translateX(2px); }
+    94% { clip-path: inset(30% 0 50% 0); opacity:.7; transform:translateX(-2px); }
+    96% { clip-path: inset(80% 0 2% 0); opacity:.5; transform:translateX(1px); }
+  }
+
   header.hero p.sub {
     max-width: 640px; margin: 0 auto; color: rgba(190,230,255,0.75);
-    font-size: 14px; line-height: 1.6;
+    font-size: 14px; line-height: 1.7;
   }
   .stats-row {
-    display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:28px;
+    display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:32px;
   }
   .stat {
     background: rgba(111,224,255,0.06);
     border: 1px solid rgba(111,224,255,0.2);
     border-radius: 10px;
-    padding: 12px 20px;
+    padding: 14px 22px;
     min-width: 120px;
+    position:relative;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
   }
-  .stat .n { font-family:'Orbitron', sans-serif; font-size:22px; color:#6fe0ff; }
-  .stat .l { font-size:11px; color:rgba(190,230,255,0.6); margin-top:2px; }
+  .stat:hover { transform: translateY(-3px); border-color: rgba(111,224,255,0.55); box-shadow:0 10px 26px rgba(0,0,0,0.4), 0 0 18px rgba(111,224,255,0.18); }
+  .stat .n { font-family:'Orbitron', sans-serif; font-size:24px; color:#6fe0ff; text-shadow:0 0 12px rgba(111,224,255,0.4); font-variant-numeric: tabular-nums; }
+  .stat .l { font-size:10.5px; color:rgba(190,230,255,0.6); margin-top:3px; letter-spacing:.5px; }
 
   nav.crumbs {
-    text-align:center; padding: 14px 24px 0; font-size:12px;
+    text-align:center; padding: 16px 24px 0; font-size:12px;
     color: rgba(190,230,255,0.55);
   }
-  nav.crumbs a { color:#6fe0ff; text-decoration:none; border-bottom:1px dotted rgba(111,224,255,0.4); }
+  nav.crumbs a { color:#6fe0ff; text-decoration:none; border-bottom:1px dotted rgba(111,224,255,0.4); transition: color .15s ease, border-color .15s ease; }
+  nav.crumbs a:hover { color:#fff; border-color:#fff; }
 
-  main { max-width: 1180px; margin: 0 auto; padding: 32px 20px 80px; }
+  /* ---------- ticker ---------- */
+  .ticker-wrap {
+    border-bottom: 1px solid rgba(111,224,255,0.12);
+    background: rgba(111,224,255,0.03);
+    overflow:hidden; white-space:nowrap; padding: 9px 0;
+    margin-top: 30px;
+  }
+  .ticker-track {
+    display:inline-flex; gap:40px;
+    animation: tickerScroll 38s linear infinite;
+    font-size: 11.5px; color: rgba(190,230,255,0.55); letter-spacing:.4px;
+  }
+  .ticker-track span { display:inline-flex; align-items:center; gap:8px; }
+  .ticker-track b { color:var(--green); }
+  @keyframes tickerScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 40px 20px 90px; }
 
   .controls {
     display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;
-    margin-bottom: 28px;
+    margin-bottom: 32px;
   }
+  .search-wrap { position:relative; flex: 1 1 260px; max-width: 340px; }
+  .search-wrap .ic { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:15px; height:15px; color: rgba(190,230,255,0.4); }
   #search {
-    flex: 1 1 260px; max-width: 340px;
+    width:100%;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(111,224,255,0.25);
-    color: #eaf8ff; font-family:'Share Tech Mono', monospace;
-    padding: 10px 14px; border-radius: 8px; font-size: 13px;
-    outline: none;
+    color: #eaf8ff; font-family:'JetBrains Mono', monospace;
+    padding: 11px 14px 11px 36px; border-radius: 8px; font-size: 13px;
+    outline: none; transition: border-color .15s ease, box-shadow .15s ease;
   }
-  #search:focus { border-color:#6fe0ff; box-shadow:0 0 0 2px rgba(111,224,255,0.15); }
+  #search:focus { border-color:#6fe0ff; box-shadow:0 0 0 3px rgba(111,224,255,0.15); }
   #search::placeholder { color: rgba(190,230,255,0.4); }
 
   .filter-btn {
+    display:inline-flex; align-items:center; gap:7px;
     background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(111,224,255,0.2);
+    border: 1px solid rgba(111,224,255,0.18);
     color: rgba(190,230,255,0.8);
-    font-family:'Share Tech Mono', monospace;
+    font-family:'JetBrains Mono', monospace;
     font-size: 12px;
-    padding: 9px 14px;
+    padding: 9px 15px;
     border-radius: 20px;
     cursor: pointer;
-    transition: all .15s ease;
+    transition: all .18s ease;
   }
-  .filter-btn:hover { border-color:#6fe0ff; color:#eaf8ff; }
+  .filter-btn .ic { width:13px; height:13px; }
+  .filter-btn:hover { border-color: var(--accent, #6fe0ff); color:#eaf8ff; transform: translateY(-1px); }
   .filter-btn.active {
-    background: rgba(111,224,255,0.15);
-    border-color:#6fe0ff; color:#eaf8ff;
-    box-shadow: 0 0 12px rgba(111,224,255,0.25);
+    background: color-mix(in srgb, var(--accent, #6fe0ff) 18%, transparent);
+    border-color: var(--accent, #6fe0ff); color:#fff;
+    box-shadow: 0 0 16px color-mix(in srgb, var(--accent, #6fe0ff) 45%, transparent);
   }
+  .filter-btn.active .ic { color: var(--accent, #6fe0ff); }
 
   .grid {
     display:grid;
@@ -98,60 +194,82 @@
   }
 
   .card {
-    background: rgba(111,224,255,0.045);
-    border: 1px solid rgba(111,224,255,0.16);
+    background: linear-gradient(180deg, rgba(111,224,255,0.05), rgba(111,224,255,0.02));
+    border: 1px solid rgba(111,224,255,0.14);
+    border-left: 3px solid var(--accent, #6fe0ff);
     border-radius: 12px;
-    padding: 16px 18px;
+    padding: 17px 18px;
     display:flex; flex-direction:column; gap:8px;
-    transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+    position:relative;
+    isolation:isolate;
+    opacity:0; transform: translateY(18px);
+    transition: transform .35s cubic-bezier(.16,.8,.3,1), border-color .2s ease, box-shadow .2s ease, opacity .35s ease;
   }
-  .card:hover {
-    border-color: rgba(111,224,255,0.45);
-    box-shadow: 0 4px 22px rgba(0,0,0,0.35), 0 0 14px rgba(111,224,255,0.12);
-    transform: translateY(-2px);
+  .card.in-view { opacity:1; transform:translateY(0); }
+  .card-glow {
+    position:absolute; inset:0; border-radius:12px; z-index:-1;
+    background: radial-gradient(160px 90px at 20% 0%, color-mix(in srgb, var(--accent, #6fe0ff) 20%, transparent), transparent 70%);
+    opacity:0; transition: opacity .25s ease;
   }
+  .card:hover { transform: translateY(-4px) scale(1.015); border-color: color-mix(in srgb, var(--accent,#6fe0ff) 65%, rgba(111,224,255,0.2)); box-shadow: 0 14px 30px rgba(0,0,0,0.45), 0 0 22px color-mix(in srgb, var(--accent,#6fe0ff) 25%, transparent); }
+  .card:hover .card-glow { opacity:1; }
+
   .card-top { display:flex; justify-content:space-between; align-items:center; }
   .num {
-    font-family:'Orbitron', sans-serif; font-size:11px; color:#030512;
-    background:#6fe0ff; padding:2px 8px; border-radius:6px; font-weight:700;
+    font-family:'Orbitron', sans-serif; font-size:11px; color:#020617;
+    background: var(--accent, #6fe0ff); padding:2px 8px; border-radius:6px; font-weight:700;
+    box-shadow: 0 0 10px color-mix(in srgb, var(--accent,#6fe0ff) 60%, transparent);
   }
-  .cat-tag { font-size:10.5px; color: rgba(190,230,255,0.55); }
-  .card h3 { font-size:15px; color:#eaf8ff; font-family:'Share Tech Mono', monospace; letter-spacing:.2px; }
+  .cat-tag { font-size:10.5px; color: var(--accent, rgba(190,230,255,0.55)); display:inline-flex; align-items:center; gap:5px; }
+  .card h3 { font-size:15px; color:#eaf8ff; font-family:'JetBrains Mono', monospace; letter-spacing:.2px; }
   .card p.desc { font-size:12.5px; color: rgba(190,230,255,0.7); line-height:1.5; flex-grow:1; }
-  .card-bottom { display:flex; justify-content:space-between; align-items:center; margin-top:4px; }
-  .schedule { font-size:11.5px; color:#ffc55c; display:flex; align-items:center; gap:6px; }
-  .schedule .dot { width:6px; height:6px; border-radius:50%; background:#ffc55c; box-shadow:0 0 6px #ffc55c; }
-  .links { display:flex; gap:10px; }
+  .card-bottom { display:flex; justify-content:space-between; align-items:center; margin-top:4px; gap:8px; flex-wrap:wrap; }
+  .schedule { font-size:11.5px; color:var(--amber); display:flex; align-items:center; gap:6px; }
+  .schedule .ic-clock { width:13px; height:13px; }
+  .links { display:flex; gap:14px; }
   .links a {
+    display:inline-flex; align-items:center; gap:4px;
     font-size:11px; text-decoration:none; color:#6fe0ff;
     border-bottom: 1px solid rgba(111,224,255,0.35);
-    padding-bottom: 1px;
+    padding-bottom: 1px; transition: color .15s ease, border-color .15s ease, transform .15s ease;
   }
-  .links a:hover { color:#eaf8ff; border-color:#eaf8ff; }
+  .links a .ic { width:12px; height:12px; }
+  .links a:hover { color:#fff; border-color:#fff; transform: translateY(-1px); }
+
+  .ic { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
 
   .empty-state {
-    display:none; text-align:center; padding: 60px 20px; color: rgba(190,230,255,0.5);
+    display:none; text-align:center; padding: 70px 20px; color: rgba(190,230,255,0.5);
     font-size:13px;
   }
 
   section.setup {
-    max-width: 900px; margin: 60px auto 0; padding: 26px 24px;
+    max-width: 900px; margin: 64px auto 0; padding: 26px 24px;
     background: rgba(255,197,92,0.06);
     border: 1px solid rgba(255,197,92,0.3);
     border-radius: 12px;
+    position:relative; overflow:hidden;
   }
-  section.setup h2 { font-family:'Orbitron', sans-serif; font-size:16px; color:#ffc55c; margin-bottom:10px; }
-  section.setup p { font-size:13px; line-height:1.7; color: rgba(230,225,210,0.85); }
-  section.setup a { color:#ffc55c; text-decoration:underline; }
+  section.setup::before {
+    content:''; position:absolute; top:0; left:0; width:3px; height:100%;
+    background: var(--amber); box-shadow:0 0 12px var(--amber);
+  }
+  section.setup h2 { font-family:'Orbitron', sans-serif; font-size:16px; color:var(--amber); margin-bottom:10px; letter-spacing:.5px; }
+  section.setup p { font-size:13px; line-height:1.75; color: rgba(230,225,210,0.85); }
+  section.setup a { color:var(--amber); text-decoration:underline; }
   section.setup code {
     background: rgba(0,0,0,0.35); padding:2px 6px; border-radius:4px; font-size:12px;
   }
 
   footer {
-    text-align:center; padding: 30px 20px 50px; font-size:11.5px;
+    text-align:center; padding: 34px 20px 54px; font-size:11.5px;
     color: rgba(190,230,255,0.4);
   }
   footer a { color: rgba(190,230,255,0.6); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
 
   @media (max-width:520px) {
     .card-bottom { flex-direction:column; align-items:flex-start; gap:8px; }
@@ -160,9 +278,31 @@
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="ic-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+    <symbol id="ic-megaphone" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></symbol>
+    <symbol id="ic-trend" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></symbol>
+    <symbol id="ic-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+    <symbol id="ic-box" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
+    <symbol id="ic-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+    <symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+    <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+    <symbol id="ic-bolt" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+    <symbol id="ic-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+  </defs>
+</svg>
+
+<div class="bg-fx">
+  <div class="bg-glow"></div>
+  <div class="bg-grid"></div>
+  <div class="scanline"></div>
+  <div class="noise"></div>
+</div>
+
 <header class="hero">
-  <div class="eyebrow">CASHMACHINE AI · AUTOMATIONS</div>
-  <h1>Control Center</h1>
+  <span class="live-badge"><span class="pulse-dot"></span>SYSTEM ONLINE · 46 AGENTS AKTIV</span>
+  <h1 class="glitch" data-text="CONTROL CENTER">CONTROL CENTER</h1>
   <p class="sub">
     46 KI-Automationen für den Shop — vollständiger Ersatz für n8n.
     Läuft komplett auf GitHub Actions, ohne monatliche Subscription.
@@ -170,9 +310,9 @@
     Judge.me und Telegram sind direkt angebunden.
   </p>
   <div class="stats-row">
-    <div class="stat"><div class="n">46</div><div class="l">Automationen</div></div>
+    <div class="stat"><div class="n" data-count="46">0</div><div class="l">Automationen</div></div>
     <div class="stat"><div class="n">0&nbsp;€</div><div class="l">n8n-Kosten</div></div>
-    <div class="stat"><div class="n">6</div><div class="l">Kategorien</div></div>
+    <div class="stat"><div class="n" data-count="6">0</div><div class="l">Kategorien</div></div>
     <div class="stat"><div class="n">24/7</div><div class="l">Cron auf GitHub</div></div>
   </div>
 </header>
@@ -183,706 +323,761 @@
   <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/README.md" target="_blank" rel="noopener">Setup-Doku (Secrets)</a>
 </nav>
 
+<div class="ticker-wrap">
+  <div class="ticker-track" id="ticker">
+    <!-- duplicated in JS for seamless loop -->
+  </div>
+</div>
+
 <main>
   <div class="controls">
-    <input id="search" type="text" placeholder="Suche: z.B. VIP, Ads, Retoure…">
+    <div class="search-wrap">
+      <svg class="ic"><use href="#ic-search"/></svg>
+      <input id="search" type="text" placeholder="Suche: z.B. VIP, Ads, Retoure…">
+    </div>
     <button class="filter-btn active" data-filter="all">Alle</button>
-        <button class="filter-btn" data-filter="Bewertungen">⭐ Bewertungen</button>
-        <button class="filter-btn" data-filter="Content & Marketing">🎨 Content & Marketing</button>
-        <button class="filter-btn" data-filter="Kunden & Bindung">💌 Kunden & Bindung</button>
-        <button class="filter-btn" data-filter="Lager & Ops">📦 Lager & Ops</button>
-        <button class="filter-btn" data-filter="Meta Ads">📈 Meta Ads</button>
-        <button class="filter-btn" data-filter="Strategie & Reports">🧭 Strategie & Reports</button>
+        <button class="filter-btn" data-filter="Kunden & Bindung" style="--accent:#ff4d94"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</button>
+        <button class="filter-btn" data-filter="Content & Marketing" style="--accent:#b76bff"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</button>
+        <button class="filter-btn" data-filter="Meta Ads" style="--accent:#33e29b"><svg class="ic"><use href="#ic-trend"/></svg>Meta Ads</button>
+        <button class="filter-btn" data-filter="Bewertungen" style="--accent:#ffce4a"><svg class="ic"><use href="#ic-star"/></svg>Bewertungen</button>
+        <button class="filter-btn" data-filter="Lager & Ops" style="--accent:#4fc3ff"><svg class="ic"><use href="#ic-box"/></svg>Lager & Ops</button>
+        <button class="filter-btn" data-filter="Strategie & Reports" style="--accent:#ff8a3d"><svg class="ic"><use href="#ic-compass"/></svg>Strategie & Reports</button>
   </div>
 
   <div class="grid" id="grid">
-      <article class="card" data-cat="Strategie & Reports" data-search="gewinn-radar tägliche gewinn- und umsatz-kennzahlen auf einen blick. strategie & reports">
+      <article class="card" style="--accent:#ff8a3d" data-cat="Strategie & Reports" data-search="gewinn-radar tägliche gewinn- und umsatz-kennzahlen auf einen blick. strategie & reports">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">01</span>
-          <span class="cat-tag">🧭 Strategie & Reports</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-compass"/></svg>Strategie & Reports</span>
         </div>
         <h3>Gewinn-Radar</h3>
         <p class="desc">Tägliche Gewinn- und Umsatz-Kennzahlen auf einen Blick.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 08:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 08:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-01-gewinn-radar.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/01-gewinn-radar.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-01-gewinn-radar.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/01-gewinn-radar.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Kunden & Bindung" data-search="ki-kundenservice liest neue kunden-mails per imap, claude beantwortet, eskalation per telegram. kunden & bindung">
+      <article class="card" style="--accent:#ff4d94" data-cat="Kunden & Bindung" data-search="ki-kundenservice liest neue kunden-mails per imap, claude beantwortet, eskalation per telegram. kunden & bindung">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">02</span>
-          <span class="cat-tag">💌 Kunden & Bindung</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</span>
         </div>
         <h3>KI-Kundenservice</h3>
         <p class="desc">Liest neue Kunden-Mails per IMAP, Claude beantwortet, Eskalation per Telegram.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>alle 10 Min</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>alle 10 Min</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-02-ki-kundenservice.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/02-ki-kundenservice.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-02-ki-kundenservice.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/02-ki-kundenservice.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Bewertungen" data-search="bewertungs-magnet fragt zufriedene käufer aktiv nach einer bewertung. bewertungen">
+      <article class="card" style="--accent:#ffce4a" data-cat="Bewertungen" data-search="bewertungs-magnet fragt zufriedene käufer aktiv nach einer bewertung. bewertungen">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">04</span>
-          <span class="cat-tag">⭐ Bewertungen</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-star"/></svg>Bewertungen</span>
         </div>
         <h3>Bewertungs-Magnet</h3>
         <p class="desc">Fragt zufriedene Käufer aktiv nach einer Bewertung.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 10:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 10:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-04-bewertungs-magnet.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/04-bewertungs-magnet.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-04-bewertungs-magnet.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/04-bewertungs-magnet.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Kunden & Bindung" data-search="winback-maschine reaktiviert kunden, die länger nicht mehr bestellt haben. kunden & bindung">
+      <article class="card" style="--accent:#ff4d94" data-cat="Kunden & Bindung" data-search="winback-maschine reaktiviert kunden, die länger nicht mehr bestellt haben. kunden & bindung">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">05</span>
-          <span class="cat-tag">💌 Kunden & Bindung</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</span>
         </div>
         <h3>Winback-Maschine</h3>
         <p class="desc">Reaktiviert Kunden, die länger nicht mehr bestellt haben.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 11:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 11:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-05-winback-maschine.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/05-winback-maschine.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-05-winback-maschine.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/05-winback-maschine.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="content-kanone tägliche social-content-ideen für den shop. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="content-kanone tägliche social-content-ideen für den shop. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">06</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>Content-Kanone</h3>
         <p class="desc">Tägliche Social-Content-Ideen für den Shop.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 07:30</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 07:30</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-06-content-kanone.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/06-content-kanone.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-06-content-kanone.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/06-content-kanone.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="ad-fabrik wöchentliche ad-konzepte für neue kampagnen. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="ad-fabrik wöchentliche ad-konzepte für neue kampagnen. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">07</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>Ad-Fabrik</h3>
         <p class="desc">Wöchentliche Ad-Konzepte für neue Kampagnen.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>montags 09:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>montags 09:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-07-ad-fabrik.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/07-ad-fabrik.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-07-ad-fabrik.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/07-ad-fabrik.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="trend-scout scannt reddit-trends passend zur nische. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="trend-scout scannt reddit-trends passend zur nische. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">08</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>Trend-Scout</h3>
         <p class="desc">Scannt Reddit-Trends passend zur Nische.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 07:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 07:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-08-trend-scout.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/08-trend-scout.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-08-trend-scout.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/08-trend-scout.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="newsletter-autopilot baut wöchentlich einen fertigen newsletter. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="newsletter-autopilot baut wöchentlich einen fertigen newsletter. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">09</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>Newsletter-Autopilot</h3>
         <p class="desc">Baut wöchentlich einen fertigen Newsletter.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>donnerstags 09:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>donnerstags 09:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-09-newsletter-autopilot.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/09-newsletter-autopilot.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-09-newsletter-autopilot.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/09-newsletter-autopilot.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Kunden & Bindung" data-search="vip-radar erkennt neue vip-kunden und dankt ihnen persönlich. kunden & bindung">
+      <article class="card" style="--accent:#ff4d94" data-cat="Kunden & Bindung" data-search="vip-radar erkennt neue vip-kunden und dankt ihnen persönlich. kunden & bindung">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">10</span>
-          <span class="cat-tag">💌 Kunden & Bindung</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</span>
         </div>
         <h3>VIP-Radar</h3>
         <p class="desc">Erkennt neue VIP-Kunden und dankt ihnen persönlich.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 12:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 12:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-10-vip-radar.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/10-vip-radar.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-10-vip-radar.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/10-vip-radar.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Meta Ads" data-search="ads-manager tägliche übersicht über die meta-ads-performance. meta ads">
+      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="ads-manager tägliche übersicht über die meta-ads-performance. meta ads">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">11</span>
-          <span class="cat-tag">📈 Meta Ads</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-trend"/></svg>Meta Ads</span>
         </div>
         <h3>Ads-Manager</h3>
         <p class="desc">Tägliche Übersicht über die Meta-Ads-Performance.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 08:30</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 08:30</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-11-ads-manager.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/11-ads-manager.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-11-ads-manager.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/11-ads-manager.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Strategie & Reports" data-search="marketing-chef (ki-cmo) wöchentliche marketing-strategie wie von einem ki-cmo. strategie & reports">
+      <article class="card" style="--accent:#ff8a3d" data-cat="Strategie & Reports" data-search="marketing-chef (ki-cmo) wöchentliche marketing-strategie wie von einem ki-cmo. strategie & reports">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">12</span>
-          <span class="cat-tag">🧭 Strategie & Reports</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-compass"/></svg>Strategie & Reports</span>
         </div>
         <h3>Marketing-Chef (KI-CMO)</h3>
         <p class="desc">Wöchentliche Marketing-Strategie wie von einem KI-CMO.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>sonntags 18:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>sonntags 18:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-12-marketing-chef-cmo.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/12-marketing-chef-cmo.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-12-marketing-chef-cmo.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/12-marketing-chef-cmo.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Kunden & Bindung" data-search="willkommens-booster persönliche willkommens-mail für neukunden. kunden & bindung">
+      <article class="card" style="--accent:#ff4d94" data-cat="Kunden & Bindung" data-search="willkommens-booster persönliche willkommens-mail für neukunden. kunden & bindung">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">13</span>
-          <span class="cat-tag">💌 Kunden & Bindung</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</span>
         </div>
         <h3>Willkommens-Booster</h3>
         <p class="desc">Persönliche Willkommens-Mail für Neukunden.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 09:30</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 09:30</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-13-willkommens-booster.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/13-willkommens-booster.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-13-willkommens-booster.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/13-willkommens-booster.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Lager & Ops" data-search="preis-spion beobachtet konkurrenz-preise täglich. lager & ops">
+      <article class="card" style="--accent:#4fc3ff" data-cat="Lager & Ops" data-search="preis-spion beobachtet konkurrenz-preise täglich. lager & ops">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">14</span>
-          <span class="cat-tag">📦 Lager & Ops</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-box"/></svg>Lager & Ops</span>
         </div>
         <h3>Preis-Spion</h3>
         <p class="desc">Beobachtet Konkurrenz-Preise täglich.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 06:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 06:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-14-preis-spion.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/14-preis-spion.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-14-preis-spion.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/14-preis-spion.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Kunden & Bindung" data-search="warenkorb-sequenz 3.0 holt warenkorbabbrecher mit einer mail-sequenz zurück. kunden & bindung">
+      <article class="card" style="--accent:#ff4d94" data-cat="Kunden & Bindung" data-search="warenkorb-sequenz 3.0 holt warenkorbabbrecher mit einer mail-sequenz zurück. kunden & bindung">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">15</span>
-          <span class="cat-tag">💌 Kunden & Bindung</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</span>
         </div>
         <h3>Warenkorb-Sequenz 3.0</h3>
         <p class="desc">Holt Warenkorbabbrecher mit einer Mail-Sequenz zurück.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>stündlich</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>stündlich</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-15-warenkorb-sequenz.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/15-warenkorb-sequenz.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-15-warenkorb-sequenz.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/15-warenkorb-sequenz.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Lager & Ops" data-search="cross-sell-radar findet passende zusatzverkauf-empfehlungen. lager & ops">
+      <article class="card" style="--accent:#4fc3ff" data-cat="Lager & Ops" data-search="cross-sell-radar findet passende zusatzverkauf-empfehlungen. lager & ops">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">16</span>
-          <span class="cat-tag">📦 Lager & Ops</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-box"/></svg>Lager & Ops</span>
         </div>
         <h3>Cross-Sell-Radar</h3>
         <p class="desc">Findet passende Zusatzverkauf-Empfehlungen.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 15:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 15:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-16-cross-sell-radar.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/16-cross-sell-radar.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-16-cross-sell-radar.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/16-cross-sell-radar.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="promo-kampagnen-maschine baut regelmäßig neue rabatt-kampagnen-ideen. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="promo-kampagnen-maschine baut regelmäßig neue rabatt-kampagnen-ideen. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">17</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>Promo-Kampagnen-Maschine</h3>
         <p class="desc">Baut regelmäßig neue Rabatt-Kampagnen-Ideen.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>alle 14 Tage 10:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>alle 14 Tage 10:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-17-promo-kampagnen-maschine.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/17-promo-kampagnen-maschine.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-17-promo-kampagnen-maschine.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/17-promo-kampagnen-maschine.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="multi-plattform-poster erstellt social-posts für mehrere plattformen gleichzeitig. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="multi-plattform-poster erstellt social-posts für mehrere plattformen gleichzeitig. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">18</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>Multi-Plattform-Poster</h3>
         <p class="desc">Erstellt Social-Posts für mehrere Plattformen gleichzeitig.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 16:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 16:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-18-multi-plattform-poster.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/18-multi-plattform-poster.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-18-multi-plattform-poster.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/18-multi-plattform-poster.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="saison-planer plant die marketing-saison im voraus. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="saison-planer plant die marketing-saison im voraus. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">19</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>Saison-Planer</h3>
         <p class="desc">Plant die Marketing-Saison im Voraus.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>25. jeden Monats 09:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>25. jeden Monats 09:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-19-saison-planer.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/19-saison-planer.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-19-saison-planer.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/19-saison-planer.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Lager & Ops" data-search="lager-wächter warnt frühzeitig vor knappem lagerbestand. lager & ops">
+      <article class="card" style="--accent:#4fc3ff" data-cat="Lager & Ops" data-search="lager-wächter warnt frühzeitig vor knappem lagerbestand. lager & ops">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">20</span>
-          <span class="cat-tag">📦 Lager & Ops</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-box"/></svg>Lager & Ops</span>
         </div>
         <h3>Lager-Wächter</h3>
         <p class="desc">Warnt frühzeitig vor knappem Lagerbestand.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 07:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 07:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-20-lager-waechter.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/20-lager-waechter.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-20-lager-waechter.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/20-lager-waechter.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Lager & Ops" data-search="retouren-detektiv erkennt auffällige retouren-muster. lager & ops">
+      <article class="card" style="--accent:#4fc3ff" data-cat="Lager & Ops" data-search="retouren-detektiv erkennt auffällige retouren-muster. lager & ops">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">21</span>
-          <span class="cat-tag">📦 Lager & Ops</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-box"/></svg>Lager & Ops</span>
         </div>
         <h3>Retouren-Detektiv</h3>
         <p class="desc">Erkennt auffällige Retouren-Muster.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>montags 09:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>montags 09:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-21-retouren-detektiv.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/21-retouren-detektiv.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-21-retouren-detektiv.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/21-retouren-detektiv.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Lager & Ops" data-search="dead-stock-räumer hilft ladenhüter gezielt abzuverkaufen. lager & ops">
+      <article class="card" style="--accent:#4fc3ff" data-cat="Lager & Ops" data-search="dead-stock-räumer hilft ladenhüter gezielt abzuverkaufen. lager & ops">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">22</span>
-          <span class="cat-tag">📦 Lager & Ops</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-box"/></svg>Lager & Ops</span>
         </div>
         <h3>Dead-Stock-Räumer</h3>
         <p class="desc">Hilft Ladenhüter gezielt abzuverkaufen.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>mittwochs 09:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>mittwochs 09:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-22-dead-stock-raeumer.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/22-dead-stock-raeumer.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-22-dead-stock-raeumer.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/22-dead-stock-raeumer.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Kunden & Bindung" data-search="kunden-jubiläum feiert kundschafts-jubiläen mit einer persönlichen mail. kunden & bindung">
+      <article class="card" style="--accent:#ff4d94" data-cat="Kunden & Bindung" data-search="kunden-jubiläum feiert kundschafts-jubiläen mit einer persönlichen mail. kunden & bindung">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">23</span>
-          <span class="cat-tag">💌 Kunden & Bindung</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</span>
         </div>
         <h3>Kunden-Jubiläum</h3>
         <p class="desc">Feiert Kundschafts-Jubiläen mit einer persönlichen Mail.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 10:30</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 10:30</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-23-kunden-jubilaeum.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/23-kunden-jubilaeum.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-23-kunden-jubilaeum.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/23-kunden-jubilaeum.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="bundle-bauer schlägt neue produktbundles vor. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="bundle-bauer schlägt neue produktbundles vor. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">24</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>Bundle-Bauer</h3>
         <p class="desc">Schlägt neue Produktbundles vor.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>freitags 10:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>freitags 10:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-24-bundle-bauer.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/24-bundle-bauer.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-24-bundle-bauer.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/24-bundle-bauer.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="wetter-marketing nutzt aktuelles wetter für passende marketing-ideen. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="wetter-marketing nutzt aktuelles wetter für passende marketing-ideen. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">25</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>Wetter-Marketing</h3>
         <p class="desc">Nutzt aktuelles Wetter für passende Marketing-Ideen.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 08:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 08:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-25-wetter-marketing.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/25-wetter-marketing.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-25-wetter-marketing.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/25-wetter-marketing.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Kunden & Bindung" data-search="schläfer-wecker weckt inaktive kunden mit einem gezielten anstoß. kunden & bindung">
+      <article class="card" style="--accent:#ff4d94" data-cat="Kunden & Bindung" data-search="schläfer-wecker weckt inaktive kunden mit einem gezielten anstoß. kunden & bindung">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">26</span>
-          <span class="cat-tag">💌 Kunden & Bindung</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</span>
         </div>
         <h3>Schläfer-Wecker</h3>
         <p class="desc">Weckt inaktive Kunden mit einem gezielten Anstoß.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 11:30</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 11:30</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-26-schlaefer-wecker.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/26-schlaefer-wecker.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-26-schlaefer-wecker.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/26-schlaefer-wecker.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Strategie & Reports" data-search="wochen-sieger-report wöchentlicher report zu den bestseller-produkten. strategie & reports">
+      <article class="card" style="--accent:#ff8a3d" data-cat="Strategie & Reports" data-search="wochen-sieger-report wöchentlicher report zu den bestseller-produkten. strategie & reports">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">27</span>
-          <span class="cat-tag">🧭 Strategie & Reports</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-compass"/></svg>Strategie & Reports</span>
         </div>
         <h3>Wochen-Sieger-Report</h3>
         <p class="desc">Wöchentlicher Report zu den Bestseller-Produkten.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>sonntags 19:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>sonntags 19:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-27-wochen-sieger-report.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/27-wochen-sieger-report.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-27-wochen-sieger-report.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/27-wochen-sieger-report.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="seo-text-doktor verbessert produkttexte für bessere seo-performance. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="seo-text-doktor verbessert produkttexte für bessere seo-performance. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">28</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>SEO-Text-Doktor</h3>
         <p class="desc">Verbessert Produkttexte für bessere SEO-Performance.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>dienstags 09:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>dienstags 09:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-28-seo-text-doktor.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/28-seo-text-doktor.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-28-seo-text-doktor.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/28-seo-text-doktor.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Kunden & Bindung" data-search="zahlungs-retter rettet fehlgeschlagene zahlungen mit einer erinnerung. kunden & bindung">
+      <article class="card" style="--accent:#ff4d94" data-cat="Kunden & Bindung" data-search="zahlungs-retter rettet fehlgeschlagene zahlungen mit einer erinnerung. kunden & bindung">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">29</span>
-          <span class="cat-tag">💌 Kunden & Bindung</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</span>
         </div>
         <h3>Zahlungs-Retter</h3>
         <p class="desc">Rettet fehlgeschlagene Zahlungen mit einer Erinnerung.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 14:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 14:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-29-zahlungs-retter.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/29-zahlungs-retter.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-29-zahlungs-retter.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/29-zahlungs-retter.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Bewertungen" data-search="bewertungs-antwort-bot beantwortet neue kundenbewertungen automatisch. bewertungen">
+      <article class="card" style="--accent:#ffce4a" data-cat="Bewertungen" data-search="bewertungs-antwort-bot beantwortet neue kundenbewertungen automatisch. bewertungen">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">30</span>
-          <span class="cat-tag">⭐ Bewertungen</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-star"/></svg>Bewertungen</span>
         </div>
         <h3>Bewertungs-Antwort-Bot</h3>
         <p class="desc">Beantwortet neue Kundenbewertungen automatisch.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 13:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 13:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-30-bewertungs-antwort-bot.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/30-bewertungs-antwort-bot.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-30-bewertungs-antwort-bot.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/30-bewertungs-antwort-bot.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Strategie & Reports" data-search="umsatz-prognose wöchentliche umsatzprognose auf basis der verkaufsdaten. strategie & reports">
+      <article class="card" style="--accent:#ff8a3d" data-cat="Strategie & Reports" data-search="umsatz-prognose wöchentliche umsatzprognose auf basis der verkaufsdaten. strategie & reports">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">31</span>
-          <span class="cat-tag">🧭 Strategie & Reports</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-compass"/></svg>Strategie & Reports</span>
         </div>
         <h3>Umsatz-Prognose</h3>
         <p class="desc">Wöchentliche Umsatzprognose auf Basis der Verkaufsdaten.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>sonntags 20:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>sonntags 20:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-31-umsatz-prognose.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/31-umsatz-prognose.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-31-umsatz-prognose.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/31-umsatz-prognose.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="ugc-anfrage-automat bittet treue kunden aktiv um foto/video-content. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="ugc-anfrage-automat bittet treue kunden aktiv um foto/video-content. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">32</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>UGC-Anfrage-Automat</h3>
         <p class="desc">Bittet treue Kunden aktiv um Foto/Video-Content.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 15:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 15:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-32-ugc-anfrage-automat.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/32-ugc-anfrage-automat.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-32-ugc-anfrage-automat.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/32-ugc-anfrage-automat.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="feiertags-radar erkennt nahende feiertage und schlägt aktionen vor. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="feiertags-radar erkennt nahende feiertage und schlägt aktionen vor. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">33</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>Feiertags-Radar</h3>
         <p class="desc">Erkennt nahende Feiertage und schlägt Aktionen vor.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 07:15</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 07:15</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-33-feiertags-radar.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/33-feiertags-radar.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-33-feiertags-radar.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/33-feiertags-radar.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Strategie & Reports" data-search="neukunden-quellen-report analysiert, welche kanäle neue kunden bringen. strategie & reports">
+      <article class="card" style="--accent:#ff8a3d" data-cat="Strategie & Reports" data-search="neukunden-quellen-report analysiert, welche kanäle neue kunden bringen. strategie & reports">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">34</span>
-          <span class="cat-tag">🧭 Strategie & Reports</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-compass"/></svg>Strategie & Reports</span>
         </div>
         <h3>Neukunden-Quellen-Report</h3>
         <p class="desc">Analysiert, welche Kanäle neue Kunden bringen.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>montags 08:30</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>montags 08:30</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-34-neukunden-quellen-report.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/34-neukunden-quellen-report.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-34-neukunden-quellen-report.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/34-neukunden-quellen-report.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="lead-magnet-maschine liefert wöchentlich neue lead-gen-ideen. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="lead-magnet-maschine liefert wöchentlich neue lead-gen-ideen. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">35</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>Lead-Magnet-Maschine</h3>
         <p class="desc">Liefert wöchentlich neue Lead-Gen-Ideen.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>montags 08:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>montags 08:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-35-lead-magnet-maschine.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/35-lead-magnet-maschine.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-35-lead-magnet-maschine.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/35-lead-magnet-maschine.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="faq-bauer baut eine komplette, verkaufsfördernde faq-sektion. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="faq-bauer baut eine komplette, verkaufsfördernde faq-sektion. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">36</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>FAQ-Bauer</h3>
         <p class="desc">Baut eine komplette, verkaufsfördernde FAQ-Sektion.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>donnerstags 08:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>donnerstags 08:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-36-faq-bauer.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/36-faq-bauer.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-36-faq-bauer.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/36-faq-bauer.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Meta Ads" data-search="static-ad-fabrik xl produziert viele static-ad-konzepte am fließband. meta ads">
+      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="static-ad-fabrik xl produziert viele static-ad-konzepte am fließband. meta ads">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">37</span>
-          <span class="cat-tag">📈 Meta Ads</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-trend"/></svg>Meta Ads</span>
         </div>
         <h3>Static-Ad-Fabrik XL</h3>
         <p class="desc">Produziert viele Static-Ad-Konzepte am Fließband.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>dienstags 07:30</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>dienstags 07:30</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-37-static-ad-fabrik-xl.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/37-static-ad-fabrik-xl.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-37-static-ad-fabrik-xl.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/37-static-ad-fabrik-xl.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Content & Marketing" data-search="ugc-video-skript-fabrik schreibt kurze video-skripte für tiktok/reels. content & marketing">
+      <article class="card" style="--accent:#b76bff" data-cat="Content & Marketing" data-search="ugc-video-skript-fabrik schreibt kurze video-skripte für tiktok/reels. content & marketing">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">38</span>
-          <span class="cat-tag">🎨 Content & Marketing</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</span>
         </div>
         <h3>UGC-Video-Skript-Fabrik</h3>
         <p class="desc">Schreibt kurze Video-Skripte für TikTok/Reels.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>mittwochs 07:30</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>mittwochs 07:30</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-38-ugc-video-skript-fabrik.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/38-ugc-video-skript-fabrik.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-38-ugc-video-skript-fabrik.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/38-ugc-video-skript-fabrik.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Kunden & Bindung" data-search="nachbestell-erinnerung erinnert kunden freundlich an eine nachbestellung. kunden & bindung">
+      <article class="card" style="--accent:#ff4d94" data-cat="Kunden & Bindung" data-search="nachbestell-erinnerung erinnert kunden freundlich an eine nachbestellung. kunden & bindung">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">39</span>
-          <span class="cat-tag">💌 Kunden & Bindung</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</span>
         </div>
         <h3>Nachbestell-Erinnerung</h3>
         <p class="desc">Erinnert Kunden freundlich an eine Nachbestellung.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 09:45</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 09:45</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-39-nachbestell-erinnerung.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/39-nachbestell-erinnerung.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-39-nachbestell-erinnerung.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/39-nachbestell-erinnerung.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Kunden & Bindung" data-search="kunden-feedback-sammler fragt kunden persönlich nach zufriedenheit und wünschen. kunden & bindung">
+      <article class="card" style="--accent:#ff4d94" data-cat="Kunden & Bindung" data-search="kunden-feedback-sammler fragt kunden persönlich nach zufriedenheit und wünschen. kunden & bindung">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">40</span>
-          <span class="cat-tag">💌 Kunden & Bindung</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</span>
         </div>
         <h3>Kunden-Feedback-Sammler</h3>
         <p class="desc">Fragt Kunden persönlich nach Zufriedenheit und Wünschen.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 16:30</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 16:30</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-40-kunden-feedback-sammler.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/40-kunden-feedback-sammler.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-40-kunden-feedback-sammler.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/40-kunden-feedback-sammler.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Kunden & Bindung" data-search="post-purchase-sofort-upsell schlägt frischen käufern sofort ein passendes zusatzprodukt vor. kunden & bindung">
+      <article class="card" style="--accent:#ff4d94" data-cat="Kunden & Bindung" data-search="post-purchase-sofort-upsell schlägt frischen käufern sofort ein passendes zusatzprodukt vor. kunden & bindung">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">41</span>
-          <span class="cat-tag">💌 Kunden & Bindung</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</span>
         </div>
         <h3>Post-Purchase-Sofort-Upsell</h3>
         <p class="desc">Schlägt frischen Käufern sofort ein passendes Zusatzprodukt vor.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>stündlich</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>stündlich</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-41-post-purchase-sofort-upsell.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/41-post-purchase-sofort-upsell.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-41-post-purchase-sofort-upsell.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/41-post-purchase-sofort-upsell.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Meta Ads" data-search="meta-ads-auto-skalierer erhöht automatisch das budget von ad-sets, die gut laufen. meta ads">
+      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="meta-ads-auto-skalierer erhöht automatisch das budget von ad-sets, die gut laufen. meta ads">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">42</span>
-          <span class="cat-tag">📈 Meta Ads</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-trend"/></svg>Meta Ads</span>
         </div>
         <h3>Meta-Ads-Auto-Skalierer</h3>
         <p class="desc">Erhöht automatisch das Budget von Ad-Sets, die gut laufen.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>täglich 08:45</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>täglich 08:45</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-42-meta-ads-auto-skalierer.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/42-meta-ads-auto-skalierer.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-42-meta-ads-auto-skalierer.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/42-meta-ads-auto-skalierer.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Meta Ads" data-search="meta-ads-notbremse schlägt alarm (und stoppt optional) bei schlechtem roas. meta ads">
+      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="meta-ads-notbremse schlägt alarm (und stoppt optional) bei schlechtem roas. meta ads">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">43</span>
-          <span class="cat-tag">📈 Meta Ads</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-trend"/></svg>Meta Ads</span>
         </div>
         <h3>Meta-Ads-Notbremse</h3>
         <p class="desc">Schlägt Alarm (und stoppt optional) bei schlechtem ROAS.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>alle 3 Stunden</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>alle 3 Stunden</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-43-meta-ads-notbremse.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/43-meta-ads-notbremse.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-43-meta-ads-notbremse.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/43-meta-ads-notbremse.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Meta Ads" data-search="winning-ad neue creatives baut neue varianten der aktuell besten ad. meta ads">
+      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="winning-ad neue creatives baut neue varianten der aktuell besten ad. meta ads">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">44</span>
-          <span class="cat-tag">📈 Meta Ads</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-trend"/></svg>Meta Ads</span>
         </div>
         <h3>Winning-Ad neue Creatives</h3>
         <p class="desc">Baut neue Varianten der aktuell besten Ad.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>montags 07:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>montags 07:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-44-winning-ad-neue-creatives.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/44-winning-ad-neue-creatives.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-44-winning-ad-neue-creatives.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/44-winning-ad-neue-creatives.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Meta Ads" data-search="meta-lookalike-futter schickt top-kunden (gehasht) an meta für lookalike-zielgruppen. meta ads">
+      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="meta-lookalike-futter schickt top-kunden (gehasht) an meta für lookalike-zielgruppen. meta ads">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">45</span>
-          <span class="cat-tag">📈 Meta Ads</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-trend"/></svg>Meta Ads</span>
         </div>
         <h3>Meta-Lookalike-Futter</h3>
         <p class="desc">Schickt Top-Kunden (gehasht) an Meta für Lookalike-Zielgruppen.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>montags 06:30</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>montags 06:30</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-45-meta-lookalike-futter.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/45-meta-lookalike-futter.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-45-meta-lookalike-futter.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/45-meta-lookalike-futter.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Strategie & Reports" data-search="großbestellung-radar meldet sofort ungewöhnlich große bestellungen. strategie & reports">
+      <article class="card" style="--accent:#ff8a3d" data-cat="Strategie & Reports" data-search="großbestellung-radar meldet sofort ungewöhnlich große bestellungen. strategie & reports">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">46</span>
-          <span class="cat-tag">🧭 Strategie & Reports</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-compass"/></svg>Strategie & Reports</span>
         </div>
         <h3>Großbestellung-Radar</h3>
         <p class="desc">Meldet sofort ungewöhnlich große Bestellungen.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>stündlich</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>stündlich</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-46-grossbestellung-radar.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/46-grossbestellung-radar.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-46-grossbestellung-radar.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/46-grossbestellung-radar.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
-      <article class="card" data-cat="Strategie & Reports" data-search="länder-expansions-scout empfiehlt monatlich den nächsten expansionsmarkt. strategie & reports">
+      <article class="card" style="--accent:#ff8a3d" data-cat="Strategie & Reports" data-search="länder-expansions-scout empfiehlt monatlich den nächsten expansionsmarkt. strategie & reports">
+        <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">47</span>
-          <span class="cat-tag">🧭 Strategie & Reports</span>
+          <span class="cat-tag"><svg class="ic"><use href="#ic-compass"/></svg>Strategie & Reports</span>
         </div>
         <h3>Länder-Expansions-Scout</h3>
         <p class="desc">Empfiehlt monatlich den nächsten Expansionsmarkt.</p>
         <div class="card-bottom">
-          <span class="schedule"><span class="dot"></span>1. jeden Monats 09:00</span>
+          <span class="schedule"><svg class="ic ic-clock"><use href="#ic-clock"/></svg>1. jeden Monats 09:00</span>
           <div class="links">
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-47-laender-expansions-scout.yml" target="_blank" rel="noopener">Actions</a>
-            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/47-laender-expansions-scout.mjs" target="_blank" rel="noopener">Code</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-47-laender-expansions-scout.yml" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-bolt"/></svg>Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/47-laender-expansions-scout.mjs" target="_blank" rel="noopener"><svg class="ic"><use href="#ic-code"/></svg>Code</a>
           </div>
         </div>
       </article>
@@ -891,10 +1086,10 @@
   <p class="empty-state" id="empty">Keine Automation gefunden.</p>
 
   <section class="setup">
-    <h2>Einmalig einrichten</h2>
+    <h2>&#9889; Einmalig einrichten</h2>
     <p>
-      Jede Karte verlinkt direkt auf ihren GitHub-Actions-Workflow (manuell testen über
-      „Run workflow") und ihren Quellcode. Bevor die Automationen live laufen, im Repo unter
+      Jede Karte verlinkt direkt auf ihren GitHub-Actions-Workflow („Actions" — dort manuell testen über
+      „Run workflow") und ihren Quellcode („Code"). Bevor die Automationen live laufen, im Repo unter
       <code>Settings → Secrets and variables → Actions</code> die nötigen Secrets eintragen
       (SHOP, SHOPIFY_TOKEN, ANTHROPIC_API_KEY, OWNER_EMAIL, RESEND_API_KEY, TEST_MODE …).
       Volle Liste und Erklärung in der
@@ -909,6 +1104,13 @@
 </footer>
 
 <script>
+  // ---------- ticker: build seamless scrolling list of automation names ----------
+  const names = Array.from(document.querySelectorAll('.card h3')).map(h => h.textContent);
+  const tickerEl = document.getElementById('ticker');
+  const tickerItems = names.map(n => `<span><b>&#9679;</b> ${n}</span>`).join('');
+  tickerEl.innerHTML = tickerItems + tickerItems; // duplicate for seamless loop
+
+  // ---------- search + category filter ----------
   const search = document.getElementById('search');
   const grid = document.getElementById('grid');
   const cards = Array.from(grid.querySelectorAll('.card'));
@@ -937,6 +1139,50 @@
       activeFilter = btn.dataset.filter;
       applyFilters();
     });
+  });
+
+  // ---------- scroll-reveal stagger for cards ----------
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) {
+    cards.forEach(c => c.classList.add('in-view'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const delay = Math.min(parseInt(el.dataset.i || 0, 10) % 8, 8) * 45;
+          setTimeout(() => el.classList.add('in-view'), delay);
+          io.unobserve(el);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    cards.forEach((c, i) => { c.dataset.i = i; io.observe(c); });
+  }
+
+  // ---------- count-up stat numbers ----------
+  document.querySelectorAll('.n[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count, 10);
+    let started = false;
+    const startCount = () => {
+      if (started) return;
+      started = true;
+      const duration = 900;
+      const t0 = performance.now();
+      function tick(now) {
+        const p = Math.min((now - t0) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(eased * target);
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    };
+    if (reduceMotion) { el.textContent = target; }
+    else {
+      const statIo = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { startCount(); statIo.disconnect(); } });
+      }, { threshold: 0.5 });
+      statIo.observe(el);
+    }
   });
 </script>
 
