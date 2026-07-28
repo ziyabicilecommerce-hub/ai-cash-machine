@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE AUTOMATIONS · Control Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { background:#030512; color:#c9edff; font-family:'Share Tech Mono', monospace; min-height:100%; }
+  body { background:
+      radial-gradient(ellipse at 20% -10%, rgba(111,224,255,0.10), transparent 45%),
+      radial-gradient(ellipse at 90% 0%, rgba(62,242,160,0.06), transparent 40%),
+      #030512;
+  }
+  a { color:inherit; }
+
+  header.hero {
+    padding: 56px 24px 40px;
+    text-align:center;
+    border-bottom: 1px solid rgba(111,224,255,0.15);
+  }
+  header.hero .eyebrow {
+    font-family:'Orbitron', sans-serif;
+    font-size:12px; letter-spacing:4px; color:#3ef2a0;
+    text-shadow:0 0 8px rgba(62,242,160,0.6);
+  }
+  header.hero h1 {
+    font-family:'Orbitron', sans-serif;
+    font-size: clamp(28px, 5vw, 48px);
+    margin: 10px 0 14px;
+    color:#eaf8ff;
+    text-shadow: 0 0 18px rgba(111,224,255,0.45);
+    letter-spacing: 1px;
+  }
+  header.hero p.sub {
+    max-width: 640px; margin: 0 auto; color: rgba(190,230,255,0.75);
+    font-size: 14px; line-height: 1.6;
+  }
+  .stats-row {
+    display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:28px;
+  }
+  .stat {
+    background: rgba(111,224,255,0.06);
+    border: 1px solid rgba(111,224,255,0.2);
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 120px;
+  }
+  .stat .n { font-family:'Orbitron', sans-serif; font-size:22px; color:#6fe0ff; }
+  .stat .l { font-size:11px; color:rgba(190,230,255,0.6); margin-top:2px; }
+
+  nav.crumbs {
+    text-align:center; padding: 14px 24px 0; font-size:12px;
+    color: rgba(190,230,255,0.55);
+  }
+  nav.crumbs a { color:#6fe0ff; text-decoration:none; border-bottom:1px dotted rgba(111,224,255,0.4); }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  .controls {
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;
+    margin-bottom: 28px;
+  }
+  #search {
+    flex: 1 1 260px; max-width: 340px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(111,224,255,0.25);
+    color: #eaf8ff; font-family:'Share Tech Mono', monospace;
+    padding: 10px 14px; border-radius: 8px; font-size: 13px;
+    outline: none;
+  }
+  #search:focus { border-color:#6fe0ff; box-shadow:0 0 0 2px rgba(111,224,255,0.15); }
+  #search::placeholder { color: rgba(190,230,255,0.4); }
+
+  .filter-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(111,224,255,0.2);
+    color: rgba(190,230,255,0.8);
+    font-family:'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 9px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .filter-btn:hover { border-color:#6fe0ff; color:#eaf8ff; }
+  .filter-btn.active {
+    background: rgba(111,224,255,0.15);
+    border-color:#6fe0ff; color:#eaf8ff;
+    box-shadow: 0 0 12px rgba(111,224,255,0.25);
+  }
+
+  .grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    background: rgba(111,224,255,0.045);
+    border: 1px solid rgba(111,224,255,0.16);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display:flex; flex-direction:column; gap:8px;
+    transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+  }
+  .card:hover {
+    border-color: rgba(111,224,255,0.45);
+    box-shadow: 0 4px 22px rgba(0,0,0,0.35), 0 0 14px rgba(111,224,255,0.12);
+    transform: translateY(-2px);
+  }
+  .card-top { display:flex; justify-content:space-between; align-items:center; }
+  .num {
+    font-family:'Orbitron', sans-serif; font-size:11px; color:#030512;
+    background:#6fe0ff; padding:2px 8px; border-radius:6px; font-weight:700;
+  }
+  .cat-tag { font-size:10.5px; color: rgba(190,230,255,0.55); }
+  .card h3 { font-size:15px; color:#eaf8ff; font-family:'Share Tech Mono', monospace; letter-spacing:.2px; }
+  .card p.desc { font-size:12.5px; color: rgba(190,230,255,0.7); line-height:1.5; flex-grow:1; }
+  .card-bottom { display:flex; justify-content:space-between; align-items:center; margin-top:4px; }
+  .schedule { font-size:11.5px; color:#ffc55c; display:flex; align-items:center; gap:6px; }
+  .schedule .dot { width:6px; height:6px; border-radius:50%; background:#ffc55c; box-shadow:0 0 6px #ffc55c; }
+  .links { display:flex; gap:10px; }
+  .links a {
+    font-size:11px; text-decoration:none; color:#6fe0ff;
+    border-bottom: 1px solid rgba(111,224,255,0.35);
+    padding-bottom: 1px;
+  }
+  .links a:hover { color:#eaf8ff; border-color:#eaf8ff; }
+
+  .empty-state {
+    display:none; text-align:center; padding: 60px 20px; color: rgba(190,230,255,0.5);
+    font-size:13px;
+  }
+
+  section.setup {
+    max-width: 900px; margin: 60px auto 0; padding: 26px 24px;
+    background: rgba(255,197,92,0.06);
+    border: 1px solid rgba(255,197,92,0.3);
+    border-radius: 12px;
+  }
+  section.setup h2 { font-family:'Orbitron', sans-serif; font-size:16px; color:#ffc55c; margin-bottom:10px; }
+  section.setup p { font-size:13px; line-height:1.7; color: rgba(230,225,210,0.85); }
+  section.setup a { color:#ffc55c; text-decoration:underline; }
+  section.setup code {
+    background: rgba(0,0,0,0.35); padding:2px 6px; border-radius:4px; font-size:12px;
+  }
+
+  footer {
+    text-align:center; padding: 30px 20px 50px; font-size:11.5px;
+    color: rgba(190,230,255,0.4);
+  }
+  footer a { color: rgba(190,230,255,0.6); }
+
+  @media (max-width:520px) {
+    .card-bottom { flex-direction:column; align-items:flex-start; gap:8px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">CASHMACHINE AI · AUTOMATIONS</div>
+  <h1>Control Center</h1>
+  <p class="sub">
+    46 KI-Automationen für den Shop — vollständiger Ersatz für n8n.
+    Läuft komplett auf GitHub Actions, ohne monatliche Subscription.
+    Claude schreibt Mails, Reports und Ad-Konzepte; Shopify, Meta Ads,
+    Judge.me und Telegram sind direkt angebunden.
+  </p>
+  <div class="stats-row">
+    <div class="stat"><div class="n">46</div><div class="l">Automationen</div></div>
+    <div class="stat"><div class="n">0&nbsp;€</div><div class="l">n8n-Kosten</div></div>
+    <div class="stat"><div class="n">6</div><div class="l">Kategorien</div></div>
+    <div class="stat"><div class="n">24/7</div><div class="l">Cron auf GitHub</div></div>
+  </div>
+</header>
+
+<nav class="crumbs">
+  <a href="../">← CASHMACHINE AI / Jarvis</a> &nbsp;·&nbsp;
+  <a href="../brand-assassin/">Brand Assassin</a> &nbsp;·&nbsp;
+  <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/README.md" target="_blank" rel="noopener">Setup-Doku (Secrets)</a>
+</nav>
+
+<main>
+  <div class="controls">
+    <input id="search" type="text" placeholder="Suche: z.B. VIP, Ads, Retoure…">
+    <button class="filter-btn active" data-filter="all">Alle</button>
+        <button class="filter-btn" data-filter="Bewertungen">⭐ Bewertungen</button>
+        <button class="filter-btn" data-filter="Content & Marketing">🎨 Content & Marketing</button>
+        <button class="filter-btn" data-filter="Kunden & Bindung">💌 Kunden & Bindung</button>
+        <button class="filter-btn" data-filter="Lager & Ops">📦 Lager & Ops</button>
+        <button class="filter-btn" data-filter="Meta Ads">📈 Meta Ads</button>
+        <button class="filter-btn" data-filter="Strategie & Reports">🧭 Strategie & Reports</button>
+  </div>
+
+  <div class="grid" id="grid">
+      <article class="card" data-cat="Strategie & Reports" data-search="gewinn-radar tägliche gewinn- und umsatz-kennzahlen auf einen blick. strategie & reports">
+        <div class="card-top">
+          <span class="num">01</span>
+          <span class="cat-tag">🧭 Strategie & Reports</span>
+        </div>
+        <h3>Gewinn-Radar</h3>
+        <p class="desc">Tägliche Gewinn- und Umsatz-Kennzahlen auf einen Blick.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 08:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-01-gewinn-radar.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/01-gewinn-radar.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Kunden & Bindung" data-search="ki-kundenservice liest neue kunden-mails per imap, claude beantwortet, eskalation per telegram. kunden & bindung">
+        <div class="card-top">
+          <span class="num">02</span>
+          <span class="cat-tag">💌 Kunden & Bindung</span>
+        </div>
+        <h3>KI-Kundenservice</h3>
+        <p class="desc">Liest neue Kunden-Mails per IMAP, Claude beantwortet, Eskalation per Telegram.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>alle 10 Min</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-02-ki-kundenservice.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/02-ki-kundenservice.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Bewertungen" data-search="bewertungs-magnet fragt zufriedene käufer aktiv nach einer bewertung. bewertungen">
+        <div class="card-top">
+          <span class="num">04</span>
+          <span class="cat-tag">⭐ Bewertungen</span>
+        </div>
+        <h3>Bewertungs-Magnet</h3>
+        <p class="desc">Fragt zufriedene Käufer aktiv nach einer Bewertung.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 10:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-04-bewertungs-magnet.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/04-bewertungs-magnet.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Kunden & Bindung" data-search="winback-maschine reaktiviert kunden, die länger nicht mehr bestellt haben. kunden & bindung">
+        <div class="card-top">
+          <span class="num">05</span>
+          <span class="cat-tag">💌 Kunden & Bindung</span>
+        </div>
+        <h3>Winback-Maschine</h3>
+        <p class="desc">Reaktiviert Kunden, die länger nicht mehr bestellt haben.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 11:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-05-winback-maschine.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/05-winback-maschine.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="content-kanone tägliche social-content-ideen für den shop. content & marketing">
+        <div class="card-top">
+          <span class="num">06</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>Content-Kanone</h3>
+        <p class="desc">Tägliche Social-Content-Ideen für den Shop.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 07:30</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-06-content-kanone.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/06-content-kanone.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="ad-fabrik wöchentliche ad-konzepte für neue kampagnen. content & marketing">
+        <div class="card-top">
+          <span class="num">07</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>Ad-Fabrik</h3>
+        <p class="desc">Wöchentliche Ad-Konzepte für neue Kampagnen.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>montags 09:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-07-ad-fabrik.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/07-ad-fabrik.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="trend-scout scannt reddit-trends passend zur nische. content & marketing">
+        <div class="card-top">
+          <span class="num">08</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>Trend-Scout</h3>
+        <p class="desc">Scannt Reddit-Trends passend zur Nische.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 07:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-08-trend-scout.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/08-trend-scout.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="newsletter-autopilot baut wöchentlich einen fertigen newsletter. content & marketing">
+        <div class="card-top">
+          <span class="num">09</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>Newsletter-Autopilot</h3>
+        <p class="desc">Baut wöchentlich einen fertigen Newsletter.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>donnerstags 09:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-09-newsletter-autopilot.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/09-newsletter-autopilot.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Kunden & Bindung" data-search="vip-radar erkennt neue vip-kunden und dankt ihnen persönlich. kunden & bindung">
+        <div class="card-top">
+          <span class="num">10</span>
+          <span class="cat-tag">💌 Kunden & Bindung</span>
+        </div>
+        <h3>VIP-Radar</h3>
+        <p class="desc">Erkennt neue VIP-Kunden und dankt ihnen persönlich.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 12:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-10-vip-radar.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/10-vip-radar.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Meta Ads" data-search="ads-manager tägliche übersicht über die meta-ads-performance. meta ads">
+        <div class="card-top">
+          <span class="num">11</span>
+          <span class="cat-tag">📈 Meta Ads</span>
+        </div>
+        <h3>Ads-Manager</h3>
+        <p class="desc">Tägliche Übersicht über die Meta-Ads-Performance.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 08:30</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-11-ads-manager.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/11-ads-manager.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Strategie & Reports" data-search="marketing-chef (ki-cmo) wöchentliche marketing-strategie wie von einem ki-cmo. strategie & reports">
+        <div class="card-top">
+          <span class="num">12</span>
+          <span class="cat-tag">🧭 Strategie & Reports</span>
+        </div>
+        <h3>Marketing-Chef (KI-CMO)</h3>
+        <p class="desc">Wöchentliche Marketing-Strategie wie von einem KI-CMO.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>sonntags 18:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-12-marketing-chef-cmo.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/12-marketing-chef-cmo.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Kunden & Bindung" data-search="willkommens-booster persönliche willkommens-mail für neukunden. kunden & bindung">
+        <div class="card-top">
+          <span class="num">13</span>
+          <span class="cat-tag">💌 Kunden & Bindung</span>
+        </div>
+        <h3>Willkommens-Booster</h3>
+        <p class="desc">Persönliche Willkommens-Mail für Neukunden.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 09:30</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-13-willkommens-booster.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/13-willkommens-booster.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Lager & Ops" data-search="preis-spion beobachtet konkurrenz-preise täglich. lager & ops">
+        <div class="card-top">
+          <span class="num">14</span>
+          <span class="cat-tag">📦 Lager & Ops</span>
+        </div>
+        <h3>Preis-Spion</h3>
+        <p class="desc">Beobachtet Konkurrenz-Preise täglich.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 06:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-14-preis-spion.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/14-preis-spion.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Kunden & Bindung" data-search="warenkorb-sequenz 3.0 holt warenkorbabbrecher mit einer mail-sequenz zurück. kunden & bindung">
+        <div class="card-top">
+          <span class="num">15</span>
+          <span class="cat-tag">💌 Kunden & Bindung</span>
+        </div>
+        <h3>Warenkorb-Sequenz 3.0</h3>
+        <p class="desc">Holt Warenkorbabbrecher mit einer Mail-Sequenz zurück.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>stündlich</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-15-warenkorb-sequenz.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/15-warenkorb-sequenz.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Lager & Ops" data-search="cross-sell-radar findet passende zusatzverkauf-empfehlungen. lager & ops">
+        <div class="card-top">
+          <span class="num">16</span>
+          <span class="cat-tag">📦 Lager & Ops</span>
+        </div>
+        <h3>Cross-Sell-Radar</h3>
+        <p class="desc">Findet passende Zusatzverkauf-Empfehlungen.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 15:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-16-cross-sell-radar.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/16-cross-sell-radar.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="promo-kampagnen-maschine baut regelmäßig neue rabatt-kampagnen-ideen. content & marketing">
+        <div class="card-top">
+          <span class="num">17</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>Promo-Kampagnen-Maschine</h3>
+        <p class="desc">Baut regelmäßig neue Rabatt-Kampagnen-Ideen.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>alle 14 Tage 10:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-17-promo-kampagnen-maschine.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/17-promo-kampagnen-maschine.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="multi-plattform-poster erstellt social-posts für mehrere plattformen gleichzeitig. content & marketing">
+        <div class="card-top">
+          <span class="num">18</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>Multi-Plattform-Poster</h3>
+        <p class="desc">Erstellt Social-Posts für mehrere Plattformen gleichzeitig.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 16:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-18-multi-plattform-poster.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/18-multi-plattform-poster.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="saison-planer plant die marketing-saison im voraus. content & marketing">
+        <div class="card-top">
+          <span class="num">19</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>Saison-Planer</h3>
+        <p class="desc">Plant die Marketing-Saison im Voraus.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>25. jeden Monats 09:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-19-saison-planer.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/19-saison-planer.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Lager & Ops" data-search="lager-wächter warnt frühzeitig vor knappem lagerbestand. lager & ops">
+        <div class="card-top">
+          <span class="num">20</span>
+          <span class="cat-tag">📦 Lager & Ops</span>
+        </div>
+        <h3>Lager-Wächter</h3>
+        <p class="desc">Warnt frühzeitig vor knappem Lagerbestand.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 07:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-20-lager-waechter.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/20-lager-waechter.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Lager & Ops" data-search="retouren-detektiv erkennt auffällige retouren-muster. lager & ops">
+        <div class="card-top">
+          <span class="num">21</span>
+          <span class="cat-tag">📦 Lager & Ops</span>
+        </div>
+        <h3>Retouren-Detektiv</h3>
+        <p class="desc">Erkennt auffällige Retouren-Muster.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>montags 09:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-21-retouren-detektiv.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/21-retouren-detektiv.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Lager & Ops" data-search="dead-stock-räumer hilft ladenhüter gezielt abzuverkaufen. lager & ops">
+        <div class="card-top">
+          <span class="num">22</span>
+          <span class="cat-tag">📦 Lager & Ops</span>
+        </div>
+        <h3>Dead-Stock-Räumer</h3>
+        <p class="desc">Hilft Ladenhüter gezielt abzuverkaufen.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>mittwochs 09:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-22-dead-stock-raeumer.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/22-dead-stock-raeumer.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Kunden & Bindung" data-search="kunden-jubiläum feiert kundschafts-jubiläen mit einer persönlichen mail. kunden & bindung">
+        <div class="card-top">
+          <span class="num">23</span>
+          <span class="cat-tag">💌 Kunden & Bindung</span>
+        </div>
+        <h3>Kunden-Jubiläum</h3>
+        <p class="desc">Feiert Kundschafts-Jubiläen mit einer persönlichen Mail.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 10:30</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-23-kunden-jubilaeum.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/23-kunden-jubilaeum.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="bundle-bauer schlägt neue produktbundles vor. content & marketing">
+        <div class="card-top">
+          <span class="num">24</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>Bundle-Bauer</h3>
+        <p class="desc">Schlägt neue Produktbundles vor.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>freitags 10:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-24-bundle-bauer.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/24-bundle-bauer.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="wetter-marketing nutzt aktuelles wetter für passende marketing-ideen. content & marketing">
+        <div class="card-top">
+          <span class="num">25</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>Wetter-Marketing</h3>
+        <p class="desc">Nutzt aktuelles Wetter für passende Marketing-Ideen.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 08:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-25-wetter-marketing.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/25-wetter-marketing.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Kunden & Bindung" data-search="schläfer-wecker weckt inaktive kunden mit einem gezielten anstoß. kunden & bindung">
+        <div class="card-top">
+          <span class="num">26</span>
+          <span class="cat-tag">💌 Kunden & Bindung</span>
+        </div>
+        <h3>Schläfer-Wecker</h3>
+        <p class="desc">Weckt inaktive Kunden mit einem gezielten Anstoß.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 11:30</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-26-schlaefer-wecker.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/26-schlaefer-wecker.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Strategie & Reports" data-search="wochen-sieger-report wöchentlicher report zu den bestseller-produkten. strategie & reports">
+        <div class="card-top">
+          <span class="num">27</span>
+          <span class="cat-tag">🧭 Strategie & Reports</span>
+        </div>
+        <h3>Wochen-Sieger-Report</h3>
+        <p class="desc">Wöchentlicher Report zu den Bestseller-Produkten.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>sonntags 19:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-27-wochen-sieger-report.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/27-wochen-sieger-report.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="seo-text-doktor verbessert produkttexte für bessere seo-performance. content & marketing">
+        <div class="card-top">
+          <span class="num">28</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>SEO-Text-Doktor</h3>
+        <p class="desc">Verbessert Produkttexte für bessere SEO-Performance.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>dienstags 09:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-28-seo-text-doktor.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/28-seo-text-doktor.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Kunden & Bindung" data-search="zahlungs-retter rettet fehlgeschlagene zahlungen mit einer erinnerung. kunden & bindung">
+        <div class="card-top">
+          <span class="num">29</span>
+          <span class="cat-tag">💌 Kunden & Bindung</span>
+        </div>
+        <h3>Zahlungs-Retter</h3>
+        <p class="desc">Rettet fehlgeschlagene Zahlungen mit einer Erinnerung.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 14:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-29-zahlungs-retter.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/29-zahlungs-retter.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Bewertungen" data-search="bewertungs-antwort-bot beantwortet neue kundenbewertungen automatisch. bewertungen">
+        <div class="card-top">
+          <span class="num">30</span>
+          <span class="cat-tag">⭐ Bewertungen</span>
+        </div>
+        <h3>Bewertungs-Antwort-Bot</h3>
+        <p class="desc">Beantwortet neue Kundenbewertungen automatisch.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 13:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-30-bewertungs-antwort-bot.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/30-bewertungs-antwort-bot.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Strategie & Reports" data-search="umsatz-prognose wöchentliche umsatzprognose auf basis der verkaufsdaten. strategie & reports">
+        <div class="card-top">
+          <span class="num">31</span>
+          <span class="cat-tag">🧭 Strategie & Reports</span>
+        </div>
+        <h3>Umsatz-Prognose</h3>
+        <p class="desc">Wöchentliche Umsatzprognose auf Basis der Verkaufsdaten.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>sonntags 20:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-31-umsatz-prognose.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/31-umsatz-prognose.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="ugc-anfrage-automat bittet treue kunden aktiv um foto/video-content. content & marketing">
+        <div class="card-top">
+          <span class="num">32</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>UGC-Anfrage-Automat</h3>
+        <p class="desc">Bittet treue Kunden aktiv um Foto/Video-Content.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 15:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-32-ugc-anfrage-automat.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/32-ugc-anfrage-automat.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="feiertags-radar erkennt nahende feiertage und schlägt aktionen vor. content & marketing">
+        <div class="card-top">
+          <span class="num">33</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>Feiertags-Radar</h3>
+        <p class="desc">Erkennt nahende Feiertage und schlägt Aktionen vor.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 07:15</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-33-feiertags-radar.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/33-feiertags-radar.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Strategie & Reports" data-search="neukunden-quellen-report analysiert, welche kanäle neue kunden bringen. strategie & reports">
+        <div class="card-top">
+          <span class="num">34</span>
+          <span class="cat-tag">🧭 Strategie & Reports</span>
+        </div>
+        <h3>Neukunden-Quellen-Report</h3>
+        <p class="desc">Analysiert, welche Kanäle neue Kunden bringen.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>montags 08:30</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-34-neukunden-quellen-report.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/34-neukunden-quellen-report.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="lead-magnet-maschine liefert wöchentlich neue lead-gen-ideen. content & marketing">
+        <div class="card-top">
+          <span class="num">35</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>Lead-Magnet-Maschine</h3>
+        <p class="desc">Liefert wöchentlich neue Lead-Gen-Ideen.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>montags 08:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-35-lead-magnet-maschine.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/35-lead-magnet-maschine.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="faq-bauer baut eine komplette, verkaufsfördernde faq-sektion. content & marketing">
+        <div class="card-top">
+          <span class="num">36</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>FAQ-Bauer</h3>
+        <p class="desc">Baut eine komplette, verkaufsfördernde FAQ-Sektion.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>donnerstags 08:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-36-faq-bauer.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/36-faq-bauer.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Meta Ads" data-search="static-ad-fabrik xl produziert viele static-ad-konzepte am fließband. meta ads">
+        <div class="card-top">
+          <span class="num">37</span>
+          <span class="cat-tag">📈 Meta Ads</span>
+        </div>
+        <h3>Static-Ad-Fabrik XL</h3>
+        <p class="desc">Produziert viele Static-Ad-Konzepte am Fließband.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>dienstags 07:30</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-37-static-ad-fabrik-xl.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/37-static-ad-fabrik-xl.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Content & Marketing" data-search="ugc-video-skript-fabrik schreibt kurze video-skripte für tiktok/reels. content & marketing">
+        <div class="card-top">
+          <span class="num">38</span>
+          <span class="cat-tag">🎨 Content & Marketing</span>
+        </div>
+        <h3>UGC-Video-Skript-Fabrik</h3>
+        <p class="desc">Schreibt kurze Video-Skripte für TikTok/Reels.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>mittwochs 07:30</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-38-ugc-video-skript-fabrik.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/38-ugc-video-skript-fabrik.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Kunden & Bindung" data-search="nachbestell-erinnerung erinnert kunden freundlich an eine nachbestellung. kunden & bindung">
+        <div class="card-top">
+          <span class="num">39</span>
+          <span class="cat-tag">💌 Kunden & Bindung</span>
+        </div>
+        <h3>Nachbestell-Erinnerung</h3>
+        <p class="desc">Erinnert Kunden freundlich an eine Nachbestellung.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 09:45</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-39-nachbestell-erinnerung.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/39-nachbestell-erinnerung.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Kunden & Bindung" data-search="kunden-feedback-sammler fragt kunden persönlich nach zufriedenheit und wünschen. kunden & bindung">
+        <div class="card-top">
+          <span class="num">40</span>
+          <span class="cat-tag">💌 Kunden & Bindung</span>
+        </div>
+        <h3>Kunden-Feedback-Sammler</h3>
+        <p class="desc">Fragt Kunden persönlich nach Zufriedenheit und Wünschen.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 16:30</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-40-kunden-feedback-sammler.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/40-kunden-feedback-sammler.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Kunden & Bindung" data-search="post-purchase-sofort-upsell schlägt frischen käufern sofort ein passendes zusatzprodukt vor. kunden & bindung">
+        <div class="card-top">
+          <span class="num">41</span>
+          <span class="cat-tag">💌 Kunden & Bindung</span>
+        </div>
+        <h3>Post-Purchase-Sofort-Upsell</h3>
+        <p class="desc">Schlägt frischen Käufern sofort ein passendes Zusatzprodukt vor.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>stündlich</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-41-post-purchase-sofort-upsell.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/41-post-purchase-sofort-upsell.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Meta Ads" data-search="meta-ads-auto-skalierer erhöht automatisch das budget von ad-sets, die gut laufen. meta ads">
+        <div class="card-top">
+          <span class="num">42</span>
+          <span class="cat-tag">📈 Meta Ads</span>
+        </div>
+        <h3>Meta-Ads-Auto-Skalierer</h3>
+        <p class="desc">Erhöht automatisch das Budget von Ad-Sets, die gut laufen.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>täglich 08:45</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-42-meta-ads-auto-skalierer.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/42-meta-ads-auto-skalierer.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Meta Ads" data-search="meta-ads-notbremse schlägt alarm (und stoppt optional) bei schlechtem roas. meta ads">
+        <div class="card-top">
+          <span class="num">43</span>
+          <span class="cat-tag">📈 Meta Ads</span>
+        </div>
+        <h3>Meta-Ads-Notbremse</h3>
+        <p class="desc">Schlägt Alarm (und stoppt optional) bei schlechtem ROAS.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>alle 3 Stunden</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-43-meta-ads-notbremse.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/43-meta-ads-notbremse.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Meta Ads" data-search="winning-ad neue creatives baut neue varianten der aktuell besten ad. meta ads">
+        <div class="card-top">
+          <span class="num">44</span>
+          <span class="cat-tag">📈 Meta Ads</span>
+        </div>
+        <h3>Winning-Ad neue Creatives</h3>
+        <p class="desc">Baut neue Varianten der aktuell besten Ad.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>montags 07:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-44-winning-ad-neue-creatives.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/44-winning-ad-neue-creatives.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Meta Ads" data-search="meta-lookalike-futter schickt top-kunden (gehasht) an meta für lookalike-zielgruppen. meta ads">
+        <div class="card-top">
+          <span class="num">45</span>
+          <span class="cat-tag">📈 Meta Ads</span>
+        </div>
+        <h3>Meta-Lookalike-Futter</h3>
+        <p class="desc">Schickt Top-Kunden (gehasht) an Meta für Lookalike-Zielgruppen.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>montags 06:30</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-45-meta-lookalike-futter.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/45-meta-lookalike-futter.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Strategie & Reports" data-search="großbestellung-radar meldet sofort ungewöhnlich große bestellungen. strategie & reports">
+        <div class="card-top">
+          <span class="num">46</span>
+          <span class="cat-tag">🧭 Strategie & Reports</span>
+        </div>
+        <h3>Großbestellung-Radar</h3>
+        <p class="desc">Meldet sofort ungewöhnlich große Bestellungen.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>stündlich</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-46-grossbestellung-radar.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/46-grossbestellung-radar.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-cat="Strategie & Reports" data-search="länder-expansions-scout empfiehlt monatlich den nächsten expansionsmarkt. strategie & reports">
+        <div class="card-top">
+          <span class="num">47</span>
+          <span class="cat-tag">🧭 Strategie & Reports</span>
+        </div>
+        <h3>Länder-Expansions-Scout</h3>
+        <p class="desc">Empfiehlt monatlich den nächsten Expansionsmarkt.</p>
+        <div class="card-bottom">
+          <span class="schedule"><span class="dot"></span>1. jeden Monats 09:00</span>
+          <div class="links">
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-47-laender-expansions-scout.yml" target="_blank" rel="noopener">Actions</a>
+            <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/47-laender-expansions-scout.mjs" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>
+      </article>
+  </div>
+
+  <p class="empty-state" id="empty">Keine Automation gefunden.</p>
+
+  <section class="setup">
+    <h2>Einmalig einrichten</h2>
+    <p>
+      Jede Karte verlinkt direkt auf ihren GitHub-Actions-Workflow (manuell testen über
+      „Run workflow") und ihren Quellcode. Bevor die Automationen live laufen, im Repo unter
+      <code>Settings → Secrets and variables → Actions</code> die nötigen Secrets eintragen
+      (SHOP, SHOPIFY_TOKEN, ANTHROPIC_API_KEY, OWNER_EMAIL, RESEND_API_KEY, TEST_MODE …).
+      Volle Liste und Erklärung in der
+      <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/README.md" target="_blank" rel="noopener">README</a>.
+      Mit <code>TEST_MODE=ja</code> gehen alle Kunden-Mails testweise an dich, bevor irgendwas live an echte Kunden geht.
+    </p>
+  </section>
+</main>
+
+<footer>
+  CASHMACHINE AI — Automations Control Center · Daten &amp; Ausführung laufen ausschließlich in deinem eigenen GitHub-Repo.
+</footer>
+
+<script>
+  const search = document.getElementById('search');
+  const grid = document.getElementById('grid');
+  const cards = Array.from(grid.querySelectorAll('.card'));
+  const empty = document.getElementById('empty');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  let activeFilter = 'all';
+
+  function applyFilters() {
+    const q = search.value.trim().toLowerCase();
+    let visible = 0;
+    cards.forEach(c => {
+      const matchesCat = activeFilter === 'all' || c.dataset.cat === activeFilter;
+      const matchesSearch = !q || c.dataset.search.includes(q);
+      const show = matchesCat && matchesSearch;
+      c.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    empty.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  search.addEventListener('input', applyFilters);
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      applyFilters();
+    });
+  });
+</script>
+
+</body>
+</html>
