@@ -10,6 +10,15 @@ export async function getAdInsights({ level = 'ad', datePreset = 'yesterday', fi
   return data.data || [];
 }
 
+export async function getAdSets({ fields, effectiveStatus, limit = 200 } = {}) {
+  let url = `https://graph.facebook.com/${API_VERSION}/act_${config.META_AD_ACCOUNT_ID}/adsets?fields=${fields}&limit=${limit}&access_token=${config.META_ACCESS_TOKEN}`;
+  if (effectiveStatus) url += `&effective_status=${encodeURIComponent(JSON.stringify(effectiveStatus))}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Meta Ads API Fehler ${res.status}: ${await res.text()}`);
+  const data = await res.json();
+  return data.data || [];
+}
+
 export function purchaseCount(ad) {
   const x = (ad.actions || []).find((v) =>
     ['purchase', 'omni_purchase', 'offsite_conversion.fb_pixel_purchase'].includes(v.action_type)
@@ -35,6 +44,17 @@ export async function updateAdSetBudget(adSetId, dailyBudgetCents) {
   const url = `https://graph.facebook.com/${API_VERSION}/${adSetId}?daily_budget=${Math.round(dailyBudgetCents)}&access_token=${config.META_ACCESS_TOKEN}`;
   const res = await fetch(url, { method: 'POST' });
   if (!res.ok) throw new Error(`Meta Ads Budget-Update Fehler ${res.status}: ${await res.text()}`);
+  return res.json();
+}
+
+export async function sendCustomAudienceUsers(audienceId, schema, data) {
+  const url = `https://graph.facebook.com/${API_VERSION}/${audienceId}/users?access_token=${config.META_ACCESS_TOKEN}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ payload: { schema, data } }),
+  });
+  if (!res.ok) throw new Error(`Meta Custom-Audience Fehler ${res.status}: ${await res.text()}`);
   return res.json();
 }
 
