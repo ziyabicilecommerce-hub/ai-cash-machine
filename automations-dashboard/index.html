@@ -311,7 +311,14 @@
   footer a { color: rgba(190,230,255,0.6); }
 
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    /* Turn off large-scale / looping decorative motion, but keep hover & click
+       feedback snappy -- killing ALL transitions makes the UI feel unresponsive,
+       not calmer. */
+    .bg-grid, .scanline, .ticker-track, h1.glitch::before, h1.glitch::after,
+    .live-badge .pulse-dot, .log-caret, .cursor-blink {
+      animation: none !important;
+    }
+    .card { opacity:1 !important; transform:none !important; }
   }
 
   @media (max-width:520px) {
