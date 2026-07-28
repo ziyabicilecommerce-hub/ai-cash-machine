@@ -49,6 +49,26 @@
     position:absolute; inset:0; opacity:.025; mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
+  .spotlight {
+    position:absolute; inset:0;
+    background: radial-gradient(480px circle at var(--mx,50%) var(--my,20%), rgba(111,224,255,0.10), transparent 62%);
+    transition: background .08s linear;
+  }
+
+  /* ---------- boot sequence ---------- */
+  .boot-overlay {
+    position:fixed; inset:0; z-index:50; background:#020617;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace; color:var(--green);
+    transition: opacity .5s ease, visibility .5s ease;
+  }
+  .boot-overlay.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+  .boot-lines { width:min(560px, 90vw); font-size:13px; line-height:1.9; }
+  .boot-lines .ln { opacity:0; white-space:pre; }
+  .boot-lines .ln.show { opacity:1; }
+  .boot-lines .ok { color:var(--green); }
+  .boot-lines .cursor-blink { display:inline-block; width:8px; height:14px; background:var(--green); margin-left:2px; animation: blink .8s steps(1) infinite; vertical-align:-2px; }
+  @keyframes blink { 50% { opacity:0; } }
 
   main, header, nav, footer { position:relative; z-index:1; }
 
@@ -124,6 +144,25 @@
   .stat .n { font-family:'Orbitron', sans-serif; font-size:24px; color:#6fe0ff; text-shadow:0 0 12px rgba(111,224,255,0.4); font-variant-numeric: tabular-nums; }
   .stat .l { font-size:10.5px; color:rgba(190,230,255,0.6); margin-top:3px; letter-spacing:.5px; }
 
+  /* ---------- live log panel ---------- */
+  .log-panel {
+    max-width: 560px; margin: 26px auto 0;
+    background: rgba(2,6,23,0.6);
+    border: 1px solid rgba(62,242,160,0.25);
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align:left;
+    font-size: 12px;
+    box-shadow: inset 0 0 24px rgba(62,242,160,0.04);
+  }
+  .log-panel .log-title { font-size:10px; letter-spacing:2px; color:rgba(62,242,160,0.6); margin-bottom:7px; font-family:'Orbitron', sans-serif; }
+  .log-line { color: rgba(190,230,255,0.75); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition: opacity .3s ease; }
+  .log-line.fade { opacity:0; }
+  .log-line .tag-ok { color:var(--green); }
+  .log-line .tag-run { color:var(--cyan); }
+  .log-line .tc { color: rgba(190,230,255,0.35); margin-right:8px; }
+  .log-caret { display:inline-block; width:7px; height:13px; background:var(--green); vertical-align:-2px; animation: blink .9s steps(1) infinite; margin-left:2px; }
+
   nav.crumbs {
     text-align:center; padding: 16px 24px 0; font-size:12px;
     color: rgba(190,230,255,0.55);
@@ -191,6 +230,7 @@
     display:grid;
     grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
     gap: 16px;
+    perspective: 1200px;
   }
 
   .card {
@@ -202,9 +242,12 @@
     display:flex; flex-direction:column; gap:8px;
     position:relative;
     isolation:isolate;
+    transform-style: preserve-3d;
+    will-change: transform;
     opacity:0; transform: translateY(18px);
     transition: transform .35s cubic-bezier(.16,.8,.3,1), border-color .2s ease, box-shadow .2s ease, opacity .35s ease;
   }
+  .card.tilting { transition: border-color .2s ease, box-shadow .2s ease; }
   .card.in-view { opacity:1; transform:translateY(0); }
   .card-glow {
     position:absolute; inset:0; border-radius:12px; z-index:-1;
@@ -278,6 +321,15 @@
 </head>
 <body>
 
+<div class="boot-overlay" id="bootOverlay">
+  <div class="boot-lines" id="bootLines">
+    <div class="ln">&gt; connecting to github.com/ziyabicilecommerce-hub/ai-cash-machine ...</div>
+    <div class="ln">&gt; loading 46 automation agents <span class="ok">[OK]</span></div>
+    <div class="ln">&gt; verifying cron schedules <span class="ok">[OK]</span></div>
+    <div class="ln">&gt; CASHMACHINE CONTROL CENTER<span class="cursor-blink"></span></div>
+  </div>
+</div>
+
 <svg width="0" height="0" style="position:absolute">
   <defs>
     <symbol id="ic-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
@@ -298,6 +350,7 @@
   <div class="bg-grid"></div>
   <div class="scanline"></div>
   <div class="noise"></div>
+  <div class="spotlight" id="spotlight"></div>
 </div>
 
 <header class="hero">
@@ -314,6 +367,10 @@
     <div class="stat"><div class="n">0&nbsp;€</div><div class="l">n8n-Kosten</div></div>
     <div class="stat"><div class="n" data-count="6">0</div><div class="l">Kategorien</div></div>
     <div class="stat"><div class="n">24/7</div><div class="l">Cron auf GitHub</div></div>
+  </div>
+  <div class="log-panel">
+    <div class="log-title">LIVE SYSTEM LOG</div>
+    <div class="log-line" id="logLine">&nbsp;<span class="log-caret"></span></div>
   </div>
 </header>
 
@@ -1104,6 +1161,44 @@
 </footer>
 
 <script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // ---------- boot sequence (skips on repeat visits / reduced motion) ----------
+  const bootOverlay = document.getElementById('bootOverlay');
+  if (reduceMotion || sessionStorage.getItem('cmx_booted') === '1') {
+    bootOverlay.classList.add('hidden');
+    bootOverlay.remove();
+  } else {
+    const lines = bootOverlay.querySelectorAll('.ln');
+    lines.forEach((ln, i) => setTimeout(() => ln.classList.add('show'), 220 * i));
+    const finish = () => {
+      bootOverlay.classList.add('hidden');
+      sessionStorage.setItem('cmx_booted', '1');
+      setTimeout(() => bootOverlay.remove(), 550);
+    };
+    setTimeout(finish, 220 * lines.length + 500);
+    bootOverlay.addEventListener('click', finish, { once: true });
+  }
+
+  // ---------- cursor spotlight ----------
+  if (canHover && !reduceMotion) {
+    const spotlight = document.getElementById('spotlight');
+    let rafPending = false, mx = 50, my = 20;
+    window.addEventListener('mousemove', (e) => {
+      mx = (e.clientX / window.innerWidth) * 100;
+      my = (e.clientY / window.innerHeight) * 100;
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(() => {
+          spotlight.style.setProperty('--mx', mx + '%');
+          spotlight.style.setProperty('--my', my + '%');
+          rafPending = false;
+        });
+      }
+    });
+  }
+
   // ---------- ticker: build seamless scrolling list of automation names ----------
   const names = Array.from(document.querySelectorAll('.card h3')).map(h => h.textContent);
   const tickerEl = document.getElementById('ticker');
@@ -1142,7 +1237,6 @@
   });
 
   // ---------- scroll-reveal stagger for cards ----------
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) {
     cards.forEach(c => c.classList.add('in-view'));
   } else {
@@ -1184,6 +1278,51 @@
       statIo.observe(el);
     }
   });
+
+  // ---------- 3D card tilt on hover (pointer:fine only) ----------
+  if (canHover && !reduceMotion) {
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width;
+        const py = (e.clientY - r.top) / r.height;
+        const rx = (py - 0.5) * -10;
+        const ry = (px - 0.5) * 10;
+        card.classList.add('tilting');
+        card.style.transform = `translateY(-4px) scale(1.02) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.classList.remove('tilting');
+        card.style.transform = '';
+      });
+    });
+  }
+
+  // ---------- live system log ticker ----------
+  const logLine = document.getElementById('logLine');
+  const logMessages = cards.map(c => {
+    const num = c.querySelector('.num').textContent.trim();
+    const title = c.querySelector('h3').textContent.trim();
+    const sched = c.querySelector('.schedule').textContent.trim();
+    const verb = Math.random() > 0.5 ? 'tag-ok' : 'tag-run';
+    const label = verb === 'tag-ok' ? 'OK' : 'SCHEDULED';
+    return `<span class="tc">[${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}]</span><span class="${verb}">[${label}]</span> ${num}-${title} &middot; ${sched}`;
+  });
+  let logIdx = Math.floor(Math.random() * logMessages.length);
+  function showLog(i) {
+    logLine.innerHTML = logMessages[i] + '<span class="log-caret"></span>';
+  }
+  showLog(logIdx);
+  if (!reduceMotion) {
+    setInterval(() => {
+      logLine.classList.add('fade');
+      setTimeout(() => {
+        logIdx = (logIdx + 1) % logMessages.length;
+        showLog(logIdx);
+        logLine.classList.remove('fade');
+      }, 300);
+    }, 2600);
+  }
 </script>
 
 </body>
