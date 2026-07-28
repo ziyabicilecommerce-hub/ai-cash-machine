@@ -1,10 +1,13 @@
-name: Deploy Jarvis to GitHub Pages
+name: Deploy Site to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
+      - 'index.html'
       - 'jarvis/**'
+      - 'brand-assassin/**'
+      - 'automations-dashboard/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
 
@@ -26,12 +29,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Assemble public site
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          cp -r jarvis _site/jarvis
+          cp -r brand-assassin _site/brand-assassin
+          cp -r automations-dashboard _site/automations-dashboard
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'jarvis'
+          path: '_site'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
