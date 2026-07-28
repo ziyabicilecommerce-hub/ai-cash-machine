@@ -1,0 +1,13 @@
+name: "05 · Winback-Maschine"
+
+on:
+  schedule:
+    - cron: '0 11 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/05-winback-maschine.mjs
+    secrets: inherit

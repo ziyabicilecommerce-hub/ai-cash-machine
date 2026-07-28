@@ -1,0 +1,13 @@
+name: "25 · Wetter-Marketing"
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/25-wetter-marketing.mjs
+    secrets: inherit

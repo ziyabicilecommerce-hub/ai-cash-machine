@@ -1,0 +1,13 @@
+name: "20 · Lager-Wächter"
+
+on:
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/20-lager-waechter.mjs
+    secrets: inherit

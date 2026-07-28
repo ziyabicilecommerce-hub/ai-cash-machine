@@ -1,0 +1,13 @@
+name: "24 · Bundle-Bauer"
+
+on:
+  schedule:
+    - cron: '0 10 * * 5'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/24-bundle-bauer.mjs
+    secrets: inherit

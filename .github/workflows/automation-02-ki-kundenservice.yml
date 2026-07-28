@@ -1,0 +1,13 @@
+name: "02 · KI-Kundenservice"
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/02-ki-kundenservice.mjs
+    secrets: inherit

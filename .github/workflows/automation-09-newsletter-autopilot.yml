@@ -1,0 +1,13 @@
+name: "09 · Newsletter-Autopilot"
+
+on:
+  schedule:
+    - cron: '0 9 * * 4'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/09-newsletter-autopilot.mjs
+    secrets: inherit

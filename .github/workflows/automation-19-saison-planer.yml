@@ -1,0 +1,13 @@
+name: "19 · Saison-Planer"
+
+on:
+  schedule:
+    - cron: '0 9 25 * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/19-saison-planer.mjs
+    secrets: inherit

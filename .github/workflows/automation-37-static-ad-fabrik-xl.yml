@@ -1,0 +1,13 @@
+name: "37 · Static-Ad-Fabrik XL"
+
+on:
+  schedule:
+    - cron: '30 7 * * 2'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/37-static-ad-fabrik-xl.mjs
+    secrets: inherit

@@ -1,0 +1,13 @@
+name: "43 · Meta-Ads-Notbremse"
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/43-meta-ads-notbremse.mjs
+    secrets: inherit

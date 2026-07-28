@@ -1,0 +1,13 @@
+name: "42 · Meta-Ads-Auto-Skalierer"
+
+on:
+  schedule:
+    - cron: '45 8 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/42-meta-ads-auto-skalierer.mjs
+    secrets: inherit

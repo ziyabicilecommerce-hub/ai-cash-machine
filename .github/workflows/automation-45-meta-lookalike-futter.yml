@@ -1,0 +1,13 @@
+name: "45 · Meta-Lookalike-Futter"
+
+on:
+  schedule:
+    - cron: '30 6 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/45-meta-lookalike-futter.mjs
+    secrets: inherit

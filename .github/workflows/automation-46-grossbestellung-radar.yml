@@ -1,0 +1,13 @@
+name: "46 · Großbestellung-Radar"
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/46-grossbestellung-radar.mjs
+    secrets: inherit

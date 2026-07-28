@@ -1,0 +1,13 @@
+name: "38 · UGC-Video-Skript-Fabrik"
+
+on:
+  schedule:
+    - cron: '30 7 * * 3'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/38-ugc-video-skript-fabrik.mjs
+    secrets: inherit

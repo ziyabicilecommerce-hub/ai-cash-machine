@@ -1,0 +1,13 @@
+name: "26 · Schläfer-Wecker"
+
+on:
+  schedule:
+    - cron: '30 11 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/26-schlaefer-wecker.mjs
+    secrets: inherit

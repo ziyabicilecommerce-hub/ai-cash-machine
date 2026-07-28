@@ -1,0 +1,13 @@
+name: "11 · Ads-Manager"
+
+on:
+  schedule:
+    - cron: '30 8 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/11-ads-manager.mjs
+    secrets: inherit

@@ -1,0 +1,119 @@
+name: Automation Runner (shared)
+
+on:
+  workflow_call:
+    inputs:
+      script:
+        description: 'Pfad zum Automation-Script, z.B. automations/01-gewinn-radar.mjs'
+        required: true
+        type: string
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Dependencies installieren
+        run: npm ci --no-audit --no-fund
+
+      - name: Automation ausführen
+        run: node ${{ inputs.script }}
+        env:
+          SHOP: ${{ secrets.SHOP }}
+          SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SHOP_NAME: ${{ secrets.SHOP_NAME }}
+          SHOP_URL: ${{ secrets.SHOP_URL }}
+          SHOP_NISCHE: ${{ secrets.SHOP_NISCHE }}
+          ABSENDER_EMAIL: ${{ secrets.ABSENDER_EMAIL }}
+          OWNER_EMAIL: ${{ secrets.OWNER_EMAIL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TEST_MODE: ${{ secrets.TEST_MODE }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          META_AD_ACCOUNT_ID: ${{ secrets.META_AD_ACCOUNT_ID }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          CUSTOM_AUDIENCE_ID: ${{ secrets.CUSTOM_AUDIENCE_ID }}
+          JUDGEME_API_TOKEN: ${{ secrets.JUDGEME_API_TOKEN }}
+          JUDGEME_SHOP_DOMAIN: ${{ secrets.JUDGEME_SHOP_DOMAIN }}
+          LAT: ${{ secrets.LAT }}
+          LON: ${{ secrets.LON }}
+          IMAP_HOST: ${{ secrets.IMAP_HOST }}
+          IMAP_PORT: ${{ secrets.IMAP_PORT }}
+          IMAP_USER: ${{ secrets.IMAP_USER }}
+          IMAP_PASSWORD: ${{ secrets.IMAP_PASSWORD }}
+          VIP_UMSATZ_SCHWELLE: ${{ secrets.VIP_UMSATZ_SCHWELLE }}
+          VIP_BESTELLUNGEN_SCHWELLE: ${{ secrets.VIP_BESTELLUNGEN_SCHWELLE }}
+          VIP_RABATT_CODE: ${{ secrets.VIP_RABATT_CODE }}
+          WINBACK_TAGE: ${{ secrets.WINBACK_TAGE }}
+          WINBACK_RABATT_CODE: ${{ secrets.WINBACK_RABATT_CODE }}
+          WINBACK_RABATT_PROZENT: ${{ secrets.WINBACK_RABATT_PROZENT }}
+          NACHBESTELL_TAGE: ${{ secrets.NACHBESTELL_TAGE }}
+          NACHBESTELL_RABATT_CODE: ${{ secrets.NACHBESTELL_RABATT_CODE }}
+          SCHLAEFER_RABATT_CODE: ${{ secrets.SCHLAEFER_RABATT_CODE }}
+          JUBILAEUM_RABATT_CODE: ${{ secrets.JUBILAEUM_RABATT_CODE }}
+          NEWSLETTER_RABATT_CODE: ${{ secrets.NEWSLETTER_RABATT_CODE }}
+          UPSELL_RABATT_CODE: ${{ secrets.UPSELL_RABATT_CODE }}
+          RABATT_CODE: ${{ secrets.RABATT_CODE }}
+          RABATT_PROZENT: ${{ secrets.RABATT_PROZENT }}
+          KAMPAGNEN_RABATT_CODE: ${{ secrets.KAMPAGNEN_RABATT_CODE }}
+          MIN_UMSATZ: ${{ secrets.MIN_UMSATZ }}
+          MIN_BESTELLUNGEN: ${{ secrets.MIN_BESTELLUNGEN }}
+          GROSS_SCHWELLE_WERT: ${{ secrets.GROSS_SCHWELLE_WERT }}
+          GROSS_SCHWELLE_MENGE: ${{ secrets.GROSS_SCHWELLE_MENGE }}
+          RETOURE_TAGE: ${{ secrets.RETOURE_TAGE }}
+          KAUF_VOR_TAGEN: ${{ secrets.KAUF_VOR_TAGEN }}
+          TAGE_NACH_BESTELLUNG: ${{ secrets.TAGE_NACH_BESTELLUNG }}
+          FRAGE_TAGE: ${{ secrets.FRAGE_TAGE }}
+          UGC_BELOHNUNG: ${{ secrets.UGC_BELOHNUNG }}
+          BEWERTUNG_LINK: ${{ secrets.BEWERTUNG_LINK }}
+          FEEDBACK_ANREIZ: ${{ secrets.FEEDBACK_ANREIZ }}
+          MIN_SPEND_FUER_BEWERTUNG: ${{ secrets.MIN_SPEND_FUER_BEWERTUNG }}
+          MAX_EMPFAENGER: ${{ secrets.MAX_EMPFAENGER }}
+          MIN_TEXTLAENGE: ${{ secrets.MIN_TEXTLAENGE }}
+          ANZAHL_ADS: ${{ secrets.ANZAHL_ADS }}
+          ANZAHL_SKRIPTE: ${{ secrets.ANZAHL_SKRIPTE }}
+          ZIELGRUPPE: ${{ secrets.ZIELGRUPPE }}
+          ANSPRACHE: ${{ secrets.ANSPRACHE }}
+          MARKETING_BUDGET_MONAT: ${{ secrets.MARKETING_BUDGET_MONAT }}
+          MONATSZIEL_UMSATZ: ${{ secrets.MONATSZIEL_UMSATZ }}
+          WERBEKOSTEN_PRO_TAG: ${{ secrets.WERBEKOSTEN_PRO_TAG }}
+          MIN_SPEND: ${{ secrets.MIN_SPEND }}
+          MIN_SPEND_HEUTE: ${{ secrets.MIN_SPEND_HEUTE }}
+          ROAS_ZIEL: ${{ secrets.ROAS_ZIEL }}
+          KRITISCHER_ROAS: ${{ secrets.KRITISCHER_ROAS }}
+          SKALIER_PROZENT: ${{ secrets.SKALIER_PROZENT }}
+          MAX_TAGESBUDGET: ${{ secrets.MAX_TAGESBUDGET }}
+          AUTO_SKALIEREN: ${{ secrets.AUTO_SKALIEREN }}
+          AUTO_PAUSE: ${{ secrets.AUTO_PAUSE }}
+          AUTO_STOP: ${{ secrets.AUTO_STOP }}
+          AUTO_POST_FACEBOOK: ${{ secrets.AUTO_POST_FACEBOOK }}
+          KONKURRENT_URLS: ${{ secrets.KONKURRENT_URLS }}
+          HEIMATMARKT: ${{ secrets.HEIMATMARKT }}
+          LAND_CODE: ${{ secrets.LAND_CODE }}
+          REGION: ${{ secrets.REGION }}
+          INSTAGRAM_HANDLE: ${{ secrets.INSTAGRAM_HANDLE }}
+          TIKTOK_HANDLE: ${{ secrets.TIKTOK_HANDLE }}
+          VORLAUF_TAGE: ${{ secrets.VORLAUF_TAGE }}
+          VERSANDZEIT: ${{ secrets.VERSANDZEIT }}
+          REICHWEITE_TAGE_WARNUNG: ${{ secrets.REICHWEITE_TAGE_WARNUNG }}
+          PRODUKTKOSTEN_PROZENT: ${{ secrets.PRODUKTKOSTEN_PROZENT }}
+
+      - name: State-Änderungen committen
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add automations/state/ 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update automation state [skip ci]"
+            git push
+          fi

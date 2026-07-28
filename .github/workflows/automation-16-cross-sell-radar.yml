@@ -1,0 +1,13 @@
+name: "16 · Cross-Sell-Radar"
+
+on:
+  schedule:
+    - cron: '0 15 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/16-cross-sell-radar.mjs
+    secrets: inherit

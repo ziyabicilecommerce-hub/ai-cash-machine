@@ -1,0 +1,13 @@
+name: "01 · Gewinn-Radar"
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/01-gewinn-radar.mjs
+    secrets: inherit

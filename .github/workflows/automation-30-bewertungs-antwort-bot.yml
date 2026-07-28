@@ -1,0 +1,13 @@
+name: "30 · Bewertungs-Antwort-Bot"
+
+on:
+  schedule:
+    - cron: '0 13 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/30-bewertungs-antwort-bot.mjs
+    secrets: inherit

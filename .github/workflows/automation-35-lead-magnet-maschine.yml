@@ -1,0 +1,13 @@
+name: "35 · Lead-Magnet-Maschine"
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/35-lead-magnet-maschine.mjs
+    secrets: inherit
