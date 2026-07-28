@@ -38,6 +38,12 @@ export async function getCustomers(params = {}) {
   return data.customers || [];
 }
 
+export async function getCheckouts(params = {}) {
+  const qs = new URLSearchParams({ limit: '100', status: 'open', ...params }).toString();
+  const data = await shopifyRequest(`/checkouts.json?${qs}`);
+  return data.checkouts || [];
+}
+
 export async function getProducts(params = {}) {
   const qs = new URLSearchParams({ limit: '250', ...params }).toString();
   const data = await shopifyRequest(`/products.json?${qs}`);
