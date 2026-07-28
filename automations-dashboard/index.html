@@ -226,6 +226,114 @@
   }
   .filter-btn.active .ic { color: var(--accent, #6fe0ff); }
 
+  /* ---------- scroll progress bar ---------- */
+  .scroll-progress {
+    position:fixed; top:0; left:0; height:2px; width:0%;
+    background: linear-gradient(90deg, var(--cyan), var(--green), var(--amber));
+    z-index:60; box-shadow:0 0 8px rgba(111,224,255,0.7);
+    transition: width .08s linear;
+  }
+
+  /* ---------- hero orbit visualization ---------- */
+  .orbit-wrap {
+    display:flex; align-items:center; justify-content:center; gap:28px;
+    flex-wrap:wrap; margin-top:38px;
+  }
+  .orbit-canvas-box { position:relative; width:280px; height:280px; flex-shrink:0; }
+  .orbit-canvas-box canvas { position:absolute; inset:0; cursor:pointer; }
+  .orbit-tooltip {
+    position:absolute; pointer-events:none; z-index:5;
+    background:#020617; border:1px solid rgba(111,224,255,0.4);
+    padding:6px 10px; border-radius:6px; font-size:11px; white-space:nowrap;
+    opacity:0; transition:opacity .15s ease; transform:translate(-50%,-130%);
+  }
+  .orbit-legend { display:flex; flex-direction:column; gap:8px; text-align:left; }
+  .orbit-legend-item {
+    display:flex; align-items:center; gap:8px; font-size:11.5px; cursor:pointer;
+    color: rgba(190,230,255,0.7); padding:4px 8px; border-radius:6px;
+    transition: background .15s ease, color .15s ease;
+  }
+  .orbit-legend-item:hover { background: rgba(111,224,255,0.06); color:#eaf8ff; }
+  .orbit-legend-dot { width:9px; height:9px; border-radius:50%; background:var(--dot,#6fe0ff); box-shadow:0 0 8px var(--dot,#6fe0ff); flex-shrink:0; }
+  .orbit-legend-item b { color:#eaf8ff; font-variant-numeric:tabular-nums; margin-left:auto; }
+
+  /* ---------- command palette ---------- */
+  .cmdk-overlay {
+    position:fixed; inset:0; z-index:70; background:rgba(2,6,23,0.7);
+    backdrop-filter: blur(3px);
+    display:flex; align-items:flex-start; justify-content:center; padding-top:12vh;
+    opacity:0; visibility:hidden; transition: opacity .18s ease, visibility .18s ease;
+  }
+  .cmdk-overlay.open { opacity:1; visibility:visible; }
+  .cmdk-box {
+    width:min(560px,90vw); background:#0a1120; border:1px solid rgba(111,224,255,0.35);
+    border-radius:12px; box-shadow:0 24px 60px rgba(0,0,0,0.6), 0 0 30px rgba(111,224,255,0.12);
+    overflow:hidden; transform:translateY(-8px); transition:transform .18s ease;
+  }
+  .cmdk-overlay.open .cmdk-box { transform:translateY(0); }
+  .cmdk-input-row { display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid rgba(111,224,255,0.15); }
+  .cmdk-input-row .ic { width:16px; height:16px; color: rgba(190,230,255,0.5); }
+  #cmdkInput {
+    flex:1; background:none; border:none; outline:none; color:#eaf8ff;
+    font-family:'JetBrains Mono', monospace; font-size:14px;
+  }
+  #cmdkInput::placeholder { color: rgba(190,230,255,0.35); }
+  .cmdk-hint { font-size:10.5px; color: rgba(190,230,255,0.35); border:1px solid rgba(190,230,255,0.2); padding:2px 6px; border-radius:4px; }
+  .cmdk-results { max-height:52vh; overflow-y:auto; padding:6px; }
+  .cmdk-item {
+    display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px;
+    cursor:pointer; font-size:13px; color: rgba(190,230,255,0.85);
+  }
+  .cmdk-item .num { flex-shrink:0; }
+  .cmdk-item .cmdk-sched { margin-left:auto; font-size:11px; color:var(--amber); }
+  .cmdk-item.sel, .cmdk-item:hover { background: rgba(111,224,255,0.1); }
+  .cmdk-empty { padding:20px; text-align:center; color: rgba(190,230,255,0.4); font-size:12.5px; }
+
+  /* ---------- card detail modal ---------- */
+  .modal-overlay {
+    position:fixed; inset:0; z-index:70; background:rgba(2,6,23,0.75);
+    backdrop-filter: blur(3px);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    opacity:0; visibility:hidden; transition: opacity .2s ease, visibility .2s ease;
+  }
+  .modal-overlay.open { opacity:1; visibility:visible; }
+  .modal-box {
+    width:min(480px,92vw); background:#0a1120;
+    border:1px solid var(--accent,#6fe0ff); border-radius:14px;
+    padding:28px; position:relative;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.6), 0 0 40px color-mix(in srgb, var(--accent,#6fe0ff) 30%, transparent);
+    transform:scale(.96); transition:transform .2s cubic-bezier(.16,.8,.3,1);
+  }
+  .modal-overlay.open .modal-box { transform:scale(1); }
+  .modal-box::before, .modal-box::after { content:''; position:absolute; width:18px; height:18px; border-color:var(--accent,#6fe0ff); }
+  .modal-box::before { top:-1px; left:-1px; border-top:2px solid; border-left:2px solid; border-radius:8px 0 0 0; }
+  .modal-box::after { bottom:-1px; right:-1px; border-bottom:2px solid; border-right:2px solid; border-radius:0 0 8px 0; }
+  .modal-close {
+    position:absolute; top:16px; right:16px; width:28px; height:28px; border-radius:50%;
+    background:rgba(111,224,255,0.08); border:1px solid rgba(111,224,255,0.2);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:#c9edff;
+  }
+  .modal-close:hover { background:rgba(111,224,255,0.18); }
+  .modal-close .ic { width:14px; height:14px; }
+  .modal-icon-badge {
+    width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    background: color-mix(in srgb, var(--accent,#6fe0ff) 15%, transparent);
+    border:1px solid var(--accent,#6fe0ff); margin-bottom:16px;
+  }
+  .modal-icon-badge .ic { width:26px; height:26px; color:var(--accent,#6fe0ff); }
+  .modal-box h2 { font-family:'Orbitron', sans-serif; font-size:20px; color:#eaf8ff; margin-bottom:6px; }
+  .modal-cat { font-size:11.5px; color:var(--accent,#6fe0ff); display:flex; align-items:center; gap:6px; margin-bottom:14px; }
+  .modal-desc { font-size:13.5px; line-height:1.7; color: rgba(190,230,255,0.8); margin-bottom:18px; }
+  .modal-meta { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--amber); margin-bottom:20px; }
+  .modal-actions { display:flex; gap:10px; flex-wrap:wrap; }
+  .modal-actions a {
+    display:inline-flex; align-items:center; gap:7px; font-size:12.5px; text-decoration:none;
+    padding:9px 16px; border-radius:8px; border:1px solid var(--accent,#6fe0ff); color:#eaf8ff;
+    transition: background .15s ease;
+  }
+  .modal-actions a:hover { background: color-mix(in srgb, var(--accent,#6fe0ff) 18%, transparent); }
+  .modal-actions a .ic { width:14px; height:14px; }
+
   .grid {
     display:grid;
     grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
@@ -248,6 +356,11 @@
     transition: transform .35s cubic-bezier(.16,.8,.3,1), border-color .2s ease, box-shadow .2s ease, opacity .35s ease;
   }
   .card.tilting { transition: border-color .2s ease, box-shadow .2s ease; }
+  .card.highlight-pulse { animation: highlightPulse 1.6s ease; }
+  @keyframes highlightPulse {
+    0%, 100% { box-shadow:none; }
+    25% { box-shadow: 0 0 0 3px var(--accent,#6fe0ff), 0 0 40px var(--accent,#6fe0ff); }
+  }
   .card.in-view { opacity:1; transform:translateY(0); }
   .card-glow {
     position:absolute; inset:0; border-radius:12px; z-index:-1;
@@ -328,6 +441,8 @@
 </head>
 <body>
 
+<div class="scroll-progress" id="scrollProgress"></div>
+
 <div class="boot-overlay" id="bootOverlay">
   <div class="boot-lines" id="bootLines">
     <div class="ln">&gt; connecting to github.com/ziyabicilecommerce-hub/ai-cash-machine ...</div>
@@ -349,6 +464,7 @@
     <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
     <symbol id="ic-bolt" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
     <symbol id="ic-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+    <symbol id="ic-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
   </defs>
 </svg>
 
@@ -375,6 +491,15 @@
     <div class="stat"><div class="n" data-count="6">0</div><div class="l">Kategorien</div></div>
     <div class="stat"><div class="n">24/7</div><div class="l">Cron auf GitHub</div></div>
   </div>
+
+  <div class="orbit-wrap">
+    <div class="orbit-canvas-box">
+      <canvas id="orbitCanvas" width="280" height="280" aria-hidden="true"></canvas>
+      <div class="orbit-tooltip" id="orbitTooltip"></div>
+    </div>
+    <div class="orbit-legend" id="orbitLegend"></div>
+  </div>
+
   <div class="log-panel">
     <div class="log-title">LIVE SYSTEM LOG</div>
     <div class="log-line" id="logLine">&nbsp;<span class="log-caret"></span></div>
@@ -385,6 +510,8 @@
   <a href="../">← CASHMACHINE AI / Jarvis</a> &nbsp;·&nbsp;
   <a href="../brand-assassin/">Brand Assassin</a> &nbsp;·&nbsp;
   <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/README.md" target="_blank" rel="noopener">Setup-Doku (Secrets)</a>
+  &nbsp;·&nbsp;
+  <span class="cmdk-hint" style="opacity:.7">Strg/Cmd+K für Schnellsuche</span>
 </nav>
 
 <div class="ticker-wrap">
@@ -402,8 +529,8 @@
     <button class="filter-btn active" data-filter="all">Alle</button>
         <button class="filter-btn" data-filter="Kunden & Bindung" style="--accent:#ff4d94"><svg class="ic"><use href="#ic-heart"/></svg>Kunden & Bindung</button>
         <button class="filter-btn" data-filter="Content & Marketing" style="--accent:#b76bff"><svg class="ic"><use href="#ic-megaphone"/></svg>Content & Marketing</button>
-        <button class="filter-btn" data-filter="Meta Ads" style="--accent:#33e29b"><svg class="ic"><use href="#ic-trend"/></svg>Meta Ads</button>
-        <button class="filter-btn" data-filter="Bewertungen" style="--accent:#ffce4a"><svg class="ic"><use href="#ic-star"/></svg>Bewertungen</button>
+        <button class="filter-btn" data-filter="Meta Ads" style="--accent:#22c98a"><svg class="ic"><use href="#ic-trend"/></svg>Meta Ads</button>
+        <button class="filter-btn" data-filter="Bewertungen" style="--accent:#ffc233"><svg class="ic"><use href="#ic-star"/></svg>Bewertungen</button>
         <button class="filter-btn" data-filter="Lager & Ops" style="--accent:#4fc3ff"><svg class="ic"><use href="#ic-box"/></svg>Lager & Ops</button>
         <button class="filter-btn" data-filter="Strategie & Reports" style="--accent:#ff8a3d"><svg class="ic"><use href="#ic-compass"/></svg>Strategie & Reports</button>
   </div>
@@ -441,7 +568,7 @@
           </div>
         </div>
       </article>
-      <article class="card" style="--accent:#ffce4a" data-cat="Bewertungen" data-search="bewertungs-magnet fragt zufriedene käufer aktiv nach einer bewertung. bewertungen">
+      <article class="card" style="--accent:#ffc233" data-cat="Bewertungen" data-search="bewertungs-magnet fragt zufriedene käufer aktiv nach einer bewertung. bewertungen">
         <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">04</span>
@@ -553,7 +680,7 @@
           </div>
         </div>
       </article>
-      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="ads-manager tägliche übersicht über die meta-ads-performance. meta ads">
+      <article class="card" style="--accent:#22c98a" data-cat="Meta Ads" data-search="ads-manager tägliche übersicht über die meta-ads-performance. meta ads">
         <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">11</span>
@@ -857,7 +984,7 @@
           </div>
         </div>
       </article>
-      <article class="card" style="--accent:#ffce4a" data-cat="Bewertungen" data-search="bewertungs-antwort-bot beantwortet neue kundenbewertungen automatisch. bewertungen">
+      <article class="card" style="--accent:#ffc233" data-cat="Bewertungen" data-search="bewertungs-antwort-bot beantwortet neue kundenbewertungen automatisch. bewertungen">
         <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">30</span>
@@ -969,7 +1096,7 @@
           </div>
         </div>
       </article>
-      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="static-ad-fabrik xl produziert viele static-ad-konzepte am fließband. meta ads">
+      <article class="card" style="--accent:#22c98a" data-cat="Meta Ads" data-search="static-ad-fabrik xl produziert viele static-ad-konzepte am fließband. meta ads">
         <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">37</span>
@@ -1049,7 +1176,7 @@
           </div>
         </div>
       </article>
-      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="meta-ads-auto-skalierer erhöht automatisch das budget von ad-sets, die gut laufen. meta ads">
+      <article class="card" style="--accent:#22c98a" data-cat="Meta Ads" data-search="meta-ads-auto-skalierer erhöht automatisch das budget von ad-sets, die gut laufen. meta ads">
         <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">42</span>
@@ -1065,7 +1192,7 @@
           </div>
         </div>
       </article>
-      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="meta-ads-notbremse schlägt alarm (und stoppt optional) bei schlechtem roas. meta ads">
+      <article class="card" style="--accent:#22c98a" data-cat="Meta Ads" data-search="meta-ads-notbremse schlägt alarm (und stoppt optional) bei schlechtem roas. meta ads">
         <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">43</span>
@@ -1081,7 +1208,7 @@
           </div>
         </div>
       </article>
-      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="winning-ad neue creatives baut neue varianten der aktuell besten ad. meta ads">
+      <article class="card" style="--accent:#22c98a" data-cat="Meta Ads" data-search="winning-ad neue creatives baut neue varianten der aktuell besten ad. meta ads">
         <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">44</span>
@@ -1097,7 +1224,7 @@
           </div>
         </div>
       </article>
-      <article class="card" style="--accent:#33e29b" data-cat="Meta Ads" data-search="meta-lookalike-futter schickt top-kunden (gehasht) an meta für lookalike-zielgruppen. meta ads">
+      <article class="card" style="--accent:#22c98a" data-cat="Meta Ads" data-search="meta-lookalike-futter schickt top-kunden (gehasht) an meta für lookalike-zielgruppen. meta ads">
         <div class="card-glow"></div>
         <div class="card-top">
           <span class="num">45</span>
@@ -1166,6 +1293,29 @@
 <footer>
   CASHMACHINE AI — Automations Control Center · Daten &amp; Ausführung laufen ausschließlich in deinem eigenen GitHub-Repo.
 </footer>
+
+<div class="cmdk-overlay" id="cmdkOverlay">
+  <div class="cmdk-box">
+    <div class="cmdk-input-row">
+      <svg class="ic"><use href="#ic-search"/></svg>
+      <input id="cmdkInput" type="text" placeholder="Automation suchen … (Name, Kategorie, Zeitplan)">
+      <span class="cmdk-hint">ESC</span>
+    </div>
+    <div class="cmdk-results" id="cmdkResults"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-close" id="modalClose"><svg class="ic"><use href="#ic-x"/></svg></div>
+    <div class="modal-icon-badge"><svg class="ic" id="modalIcon"></svg></div>
+    <h2 id="modalTitle"></h2>
+    <div class="modal-cat" id="modalCat"></div>
+    <p class="modal-desc" id="modalDesc"></p>
+    <div class="modal-meta"><svg class="ic ic-clock"><use href="#ic-clock"/></svg><span id="modalSched"></span></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
 
 <script>
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1242,6 +1392,268 @@
       applyFilters();
     });
   });
+
+  function jumpToCategory(catName) {
+    const btn = Array.from(filterBtns).find(b => b.dataset.filter === catName);
+    if (btn) btn.click();
+    grid.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  // ---------- scroll progress bar ----------
+  (function initScrollProgress() {
+    const bar = document.getElementById('scrollProgress');
+    let ticking = false;
+    function update() {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+      bar.style.width = pct + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) { requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+    update();
+  })();
+
+  // ---------- hero orbit visualization ----------
+  (function initOrbit() {
+    const canvas = document.getElementById('orbitCanvas');
+    const tooltip = document.getElementById('orbitTooltip');
+    const legendEl = document.getElementById('orbitLegend');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const size = 280;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    ctx.scale(dpr, dpr);
+
+    const catData = Array.from(filterBtns).filter(b => b.dataset.filter !== 'all').map(b => ({
+      name: b.dataset.filter,
+      accent: b.style.getPropertyValue('--accent') || '#6fe0ff',
+      count: cards.filter(c => c.dataset.cat === b.dataset.filter).length,
+    }));
+
+    const cx = size / 2, cy = size / 2, orbitR = 100;
+    const maxCount = Math.max(...catData.map(d => d.count));
+    const nodes = catData.map((d, i) => ({
+      ...d,
+      angle: (i / catData.length) * Math.PI * 2 - Math.PI / 2,
+      r: 9 + Math.sqrt(d.count / maxCount) * 13,
+      x: 0, y: 0,
+    }));
+
+    let t = 0, hoverIdx = -1;
+
+    function draw() {
+      ctx.clearRect(0, 0, size, size);
+      nodes.forEach((n, i) => {
+        const angle = n.angle + t;
+        n.x = cx + Math.cos(angle) * orbitR;
+        n.y = cy + Math.sin(angle) * orbitR;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(n.x, n.y);
+        ctx.strokeStyle = i === hoverIdx ? n.accent : 'rgba(111,224,255,0.15)';
+        ctx.lineWidth = i === hoverIdx ? 1.6 : 1;
+        ctx.stroke();
+      });
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, orbitR, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(111,224,255,0.12)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      const coreR = 30;
+      const grad = ctx.createRadialGradient(cx, cy, 2, cx, cy, coreR);
+      grad.addColorStop(0, 'rgba(111,224,255,0.9)');
+      grad.addColorStop(1, 'rgba(111,224,255,0.05)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#6fe0ff';
+      ctx.stroke();
+      ctx.fillStyle = '#eaf8ff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = "700 15px 'Orbitron', sans-serif";
+      ctx.fillText('46', cx, cy - 5);
+      ctx.font = "9px 'JetBrains Mono', monospace";
+      ctx.fillStyle = 'rgba(190,230,255,0.6)';
+      ctx.fillText('AGENTS', cx, cy + 11);
+
+      nodes.forEach((n, i) => {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fillStyle = n.accent;
+        ctx.shadowColor = n.accent;
+        ctx.shadowBlur = i === hoverIdx ? 18 : 8;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        if (i === hoverIdx) {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r + 4, 0, Math.PI * 2);
+          ctx.strokeStyle = n.accent;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+      });
+    }
+
+    function animate() {
+      if (!reduceMotion) t += 0.0016;
+      draw();
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    function nodeAt(x, y) {
+      return nodes.findIndex(n => Math.hypot(n.x - x, n.y - y) <= n.r + 4);
+    }
+    canvas.addEventListener('mousemove', (e) => {
+      const r = canvas.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      const idx = nodeAt(x, y);
+      hoverIdx = idx;
+      canvas.style.cursor = idx >= 0 ? 'pointer' : 'default';
+      if (idx >= 0) {
+        const n = nodes[idx];
+        tooltip.textContent = `${n.name} · ${n.count}`;
+        tooltip.style.left = n.x + 'px';
+        tooltip.style.top = n.y + 'px';
+        tooltip.style.opacity = '1';
+      } else {
+        tooltip.style.opacity = '0';
+      }
+    });
+    canvas.addEventListener('mouseleave', () => { hoverIdx = -1; tooltip.style.opacity = '0'; });
+    canvas.addEventListener('click', (e) => {
+      const r = canvas.getBoundingClientRect();
+      const idx = nodeAt(e.clientX - r.left, e.clientY - r.top);
+      if (idx >= 0) jumpToCategory(nodes[idx].name);
+    });
+
+    legendEl.innerHTML = catData.map(d => `
+      <div class="orbit-legend-item" data-cat="${d.name}" style="--dot:${d.accent}">
+        <span class="orbit-legend-dot"></span>${d.name}<b>${d.count}</b>
+      </div>
+    `).join('');
+    legendEl.querySelectorAll('.orbit-legend-item').forEach(item => {
+      item.addEventListener('click', () => jumpToCategory(item.dataset.cat));
+    });
+  })();
+
+  // ---------- command palette (Ctrl/Cmd+K, or "/") ----------
+  (function initCmdk() {
+    const overlay = document.getElementById('cmdkOverlay');
+    const input = document.getElementById('cmdkInput');
+    const results = document.getElementById('cmdkResults');
+    let selIdx = 0, filtered = [];
+
+    function render(q) {
+      const query = q.trim().toLowerCase();
+      filtered = cards.filter(c => !query || c.dataset.search.includes(query));
+      if (filtered.length === 0) {
+        results.innerHTML = '<div class="cmdk-empty">Keine Treffer.</div>';
+        return;
+      }
+      selIdx = 0;
+      results.innerHTML = filtered.slice(0, 12).map((c, i) => {
+        const num = c.querySelector('.num').textContent;
+        const title = c.querySelector('h3').textContent;
+        const sched = c.querySelector('.schedule').textContent.trim();
+        const accent = c.style.getPropertyValue('--accent');
+        return `<div class="cmdk-item${i === 0 ? ' sel' : ''}" data-idx="${i}"><span class="num" style="background:${accent}">${num}</span>${title}<span class="cmdk-sched">${sched}</span></div>`;
+      }).join('');
+    }
+
+    function open() {
+      overlay.classList.add('open');
+      input.value = '';
+      render('');
+      setTimeout(() => input.focus(), 50);
+    }
+    function close() { overlay.classList.remove('open'); }
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        overlay.classList.contains('open') ? close() : open();
+      } else if (e.key === 'Escape' && overlay.classList.contains('open')) {
+        close();
+      } else if (e.key === '/' && document.activeElement !== input && document.activeElement !== search) {
+        e.preventDefault();
+        open();
+      }
+    });
+
+    input.addEventListener('input', () => render(input.value));
+    input.addEventListener('keydown', (e) => {
+      const items = results.querySelectorAll('.cmdk-item');
+      if (e.key === 'ArrowDown') { e.preventDefault(); selIdx = Math.min(selIdx + 1, items.length - 1); updateSel(items); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); selIdx = Math.max(selIdx - 1, 0); updateSel(items); }
+      else if (e.key === 'Enter') { e.preventDefault(); if (filtered[selIdx]) selectCard(filtered[selIdx]); }
+    });
+    function updateSel(items) {
+      items.forEach((el, i) => el.classList.toggle('sel', i === selIdx));
+      items[selIdx] && items[selIdx].scrollIntoView({ block: 'nearest' });
+    }
+    results.addEventListener('click', (e) => {
+      const item = e.target.closest('.cmdk-item');
+      if (!item) return;
+      selectCard(filtered[parseInt(item.dataset.idx, 10)]);
+    });
+    function selectCard(card) {
+      close();
+      filterBtns.forEach(b => b.classList.remove('active'));
+      document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+      activeFilter = 'all';
+      applyFilters();
+      card.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+      card.classList.add('highlight-pulse');
+      setTimeout(() => card.classList.remove('highlight-pulse'), 1600);
+    }
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+  })();
+
+  // ---------- card detail modal ----------
+  (function initModal() {
+    const overlay = document.getElementById('modalOverlay');
+    const box = document.getElementById('modalBox');
+    const closeBtn = document.getElementById('modalClose');
+    const iconMap = {
+      'Kunden & Bindung': 'ic-heart', 'Content & Marketing': 'ic-megaphone', 'Meta Ads': 'ic-trend',
+      'Bewertungen': 'ic-star', 'Lager & Ops': 'ic-box', 'Strategie & Reports': 'ic-compass',
+    };
+
+    cards.forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return;
+        const accent = card.style.getPropertyValue('--accent');
+        const cat = card.dataset.cat;
+        const icon = iconMap[cat] || 'ic-compass';
+        box.style.setProperty('--accent', accent);
+        document.getElementById('modalIcon').innerHTML = `<use href="#${icon}"/>`;
+        document.getElementById('modalTitle').textContent = `${card.querySelector('.num').textContent} · ${card.querySelector('h3').textContent}`;
+        document.getElementById('modalCat').innerHTML = `<svg class="ic"><use href="#${icon}"/></svg>${cat}`;
+        document.getElementById('modalDesc').textContent = card.querySelector('.desc').textContent;
+        document.getElementById('modalSched').textContent = card.querySelector('.schedule').textContent.trim();
+        document.getElementById('modalActions').innerHTML = Array.from(card.querySelectorAll('.links a')).map(a => a.outerHTML).join('');
+        overlay.classList.add('open');
+      });
+    });
+
+    function close() { overlay.classList.remove('open'); }
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  })();
 
   // ---------- scroll-reveal stagger for cards ----------
   if (reduceMotion) {
