@@ -1,0 +1,13 @@
+name: "34 · Neukunden-Quellen-Report"
+
+on:
+  schedule:
+    - cron: '30 8 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/34-neukunden-quellen-report.mjs
+    secrets: inherit

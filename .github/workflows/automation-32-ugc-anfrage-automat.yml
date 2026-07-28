@@ -1,0 +1,13 @@
+name: "32 · UGC-Anfrage-Automat"
+
+on:
+  schedule:
+    - cron: '0 15 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/32-ugc-anfrage-automat.mjs
+    secrets: inherit

@@ -1,0 +1,13 @@
+name: "40 · Kunden-Feedback-Sammler"
+
+on:
+  schedule:
+    - cron: '30 16 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/40-kunden-feedback-sammler.mjs
+    secrets: inherit

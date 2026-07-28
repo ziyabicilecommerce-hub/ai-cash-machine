@@ -1,0 +1,13 @@
+name: "18 · Multi-Plattform-Poster"
+
+on:
+  schedule:
+    - cron: '0 16 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/18-multi-plattform-poster.mjs
+    secrets: inherit

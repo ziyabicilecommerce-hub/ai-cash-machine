@@ -1,0 +1,13 @@
+name: "14 · Preis-Spion"
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/14-preis-spion.mjs
+    secrets: inherit

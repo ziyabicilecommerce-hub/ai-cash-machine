@@ -1,0 +1,13 @@
+name: "33 · Feiertags-Radar"
+
+on:
+  schedule:
+    - cron: '15 7 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/33-feiertags-radar.mjs
+    secrets: inherit

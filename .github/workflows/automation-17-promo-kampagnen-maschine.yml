@@ -1,0 +1,13 @@
+name: "17 · Promo-Kampagnen-Maschine"
+
+on:
+  schedule:
+    - cron: '0 10 1,15 * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/17-promo-kampagnen-maschine.mjs
+    secrets: inherit

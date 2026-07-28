@@ -1,0 +1,13 @@
+name: "39 · Nachbestell-Erinnerung"
+
+on:
+  schedule:
+    - cron: '45 9 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/39-nachbestell-erinnerung.mjs
+    secrets: inherit

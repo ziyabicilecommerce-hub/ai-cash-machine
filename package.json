@@ -3,5 +3,9 @@
   "version": "1.0.0",
   "engines": {
     "node": "24.x"
+  },
+  "dependencies": {
+    "imapflow": "^1.0.171",
+    "mailparser": "^3.7.2"
   }
 }

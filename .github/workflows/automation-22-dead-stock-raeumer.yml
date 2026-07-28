@@ -1,0 +1,13 @@
+name: "22 · Dead-Stock-Räumer"
+
+on:
+  schedule:
+    - cron: '0 9 * * 3'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/22-dead-stock-raeumer.mjs
+    secrets: inherit

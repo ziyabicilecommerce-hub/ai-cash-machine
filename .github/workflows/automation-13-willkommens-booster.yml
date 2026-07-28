@@ -1,0 +1,13 @@
+name: "13 · Willkommens-Booster"
+
+on:
+  schedule:
+    - cron: '30 9 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/13-willkommens-booster.mjs
+    secrets: inherit

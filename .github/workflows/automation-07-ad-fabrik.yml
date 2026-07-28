@@ -1,0 +1,13 @@
+name: "07 · Ad-Fabrik"
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/07-ad-fabrik.mjs
+    secrets: inherit

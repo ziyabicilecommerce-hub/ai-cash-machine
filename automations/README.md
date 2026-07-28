@@ -1,0 +1,151 @@
+# Shop-Automatisierungen (n8n-Ersatz)
+
+46 Marketing-/Ops-Automationen für den Shopify-Shop, die vorher als n8n-Workflows
+liefen. Jetzt: Node.js-Skripte (`automations/*.mjs`) + GitHub Actions Cron
+(`.github/workflows/automation-*.yml`) — läuft komplett auf GitHub, keine
+n8n-Subscription nötig.
+
+## Wie es funktioniert
+
+- Jedes Skript entspricht 1:1 einem alten n8n-Workflow (Nummer im Dateinamen).
+- `.github/workflows/_automation-runner.yml` ist der gemeinsame "Motor": checkt
+  den Code aus, installiert Dependencies, setzt alle Secrets als Umgebungs­variablen
+  und führt das jeweilige Skript aus.
+- Jede `automation-NN-*.yml`-Datei ist nur ein dünner "Aufrufer" mit dem
+  originalen Zeitplan (Cron) des n8n-Workflows + `workflow_dispatch` zum
+  manuellen Testen (Tab "Actions" → Workflow auswählen → "Run workflow").
+- Alle Cron-Zeiten sind in UTC hinterlegt und übernehmen die Uhrzeit, die im
+  n8n-Workflow stand (unverändert als UTC interpretiert — bei Bedarf in der
+  jeweiligen `.yml`-Datei die `cron:`-Zeile anpassen).
+- Zustand, der sich n8n über `$getWorkflowStaticData` gemerkt hat (z.B. "diesen
+  Kunden schon gefragt"), liegt jetzt in `automations/state/*.json`. Der
+  Runner committet Änderungen daran automatisch zurück ins Repo.
+- `TEST_MODE=ja` (siehe Secrets unten) schickt alle Kunden-Mails an
+  `OWNER_EMAIL` mit `[TEST]`-Betreff, statt an echte Kunden — zum Testen ohne
+  Risiko.
+- Einzelne Automation abschalten: in GitHub → Actions → den Workflow öffnen →
+  "..." → "Disable workflow". Kein Löschen nötig.
+
+## Einmalig einzurichten: GitHub Secrets
+
+Repo → **Settings → Secrets and variables → Actions → New repository secret**.
+Nur die Secrets setzen, die für die genutzten Automationen relevant sind —
+alle anderen haben sinnvolle Defaults in `automations/lib/config.mjs` und
+können weggelassen werden (leerer Secret-Wert wird automatisch mit dem
+Default aufgefüllt).
+
+### Pflicht (fast alle Automationen brauchen das)
+
+| Secret | Beschreibung |
+|---|---|
+| `SHOP` | Shopify-Subdomain, z.B. `mein-shop` (aus `mein-shop.myshopify.com`) |
+| `SHOPIFY_TOKEN` | Shopify Admin API Access Token (`shpat_...`) |
+| `ANTHROPIC_API_KEY` | Claude API Key (`sk-ant-...`) |
+| `SHOP_NAME` | Anzeigename des Shops in Mails/Reports |
+| `OWNER_EMAIL` | Deine eigene E-Mail (Reports, Alarme, TEST_MODE-Ziel) |
+| `ABSENDER_EMAIL` | Absenderadresse für Kunden-Mails |
+| `RESEND_API_KEY` | API-Key von resend.com — versendet die E-Mails. Ohne Key: Mails werden nur geloggt, nicht verschickt |
+| `TEST_MODE` | `ja` = alle Kunden-Mails gehen testweise an dich; `nein` = live an echte Kunden |
+
+### Optional, je nach genutzten Automationen
+
+**Shop-Kontext (Texte/Prompts):**
+`SHOP_URL`, `SHOP_NISCHE`, `ZIELGRUPPE`, `ANSPRACHE`, `VERSANDZEIT`,
+`RETOURE_TAGE`, `HEIMATMARKT`, `LAND_CODE`, `REGION`, `INSTAGRAM_HANDLE`,
+`TIKTOK_HANDLE`
+
+**Telegram-Alarme** (VIP-Radar, Notbremse, Großbestellung-Radar, ...):
+`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` — ohne diese Secrets werden
+Telegram-Nachrichten übersprungen (nur geloggt), kein Fehler.
+
+**Meta/Facebook Ads** (Ads-Manager, Auto-Skalierer, Notbremse, Lookalike-Futter,
+Winning-Ad-Creatives):
+`META_ACCESS_TOKEN`, `META_AD_ACCOUNT_ID`, `FB_PAGE_ID`, `FB_PAGE_TOKEN`,
+`CUSTOM_AUDIENCE_ID`
+
+**Judge.me Bewertungen** (Bewertungs-Magnet, Bewertungs-Antwort-Bot):
+`JUDGEME_API_TOKEN`, `JUDGEME_SHOP_DOMAIN`
+
+**Wetter-Marketing:**
+`LAT`, `LON` (Standort-Koordinaten, Default: Berlin)
+
+**KI-Kundenservice** (liest Postfach per IMAP):
+`IMAP_HOST`, `IMAP_PORT`, `IMAP_USER`, `IMAP_PASSWORD`
+
+**Geschäfts-Schwellwerte / Rabattcodes** (alle mit funktionierenden Defaults,
+nur bei Bedarf überschreiben):
+`VIP_UMSATZ_SCHWELLE`, `VIP_BESTELLUNGEN_SCHWELLE`, `VIP_RABATT_CODE`,
+`WINBACK_TAGE`, `WINBACK_RABATT_CODE`, `WINBACK_RABATT_PROZENT`,
+`NACHBESTELL_TAGE`, `NACHBESTELL_RABATT_CODE`, `SCHLAEFER_RABATT_CODE`,
+`JUBILAEUM_RABATT_CODE`, `NEWSLETTER_RABATT_CODE`, `UPSELL_RABATT_CODE`,
+`RABATT_CODE`, `RABATT_PROZENT`, `KAMPAGNEN_RABATT_CODE`, `MIN_UMSATZ`,
+`MIN_BESTELLUNGEN`, `GROSS_SCHWELLE_WERT`, `GROSS_SCHWELLE_MENGE`,
+`KAUF_VOR_TAGEN`, `TAGE_NACH_BESTELLUNG`, `FRAGE_TAGE`, `UGC_BELOHNUNG`,
+`BEWERTUNG_LINK`, `FEEDBACK_ANREIZ`, `MIN_SPEND_FUER_BEWERTUNG`,
+`MAX_EMPFAENGER`, `MIN_TEXTLAENGE`, `ANZAHL_ADS`, `ANZAHL_SKRIPTE`,
+`MARKETING_BUDGET_MONAT`, `MONATSZIEL_UMSATZ`, `WERBEKOSTEN_PRO_TAG`,
+`MIN_SPEND`, `MIN_SPEND_HEUTE`, `ROAS_ZIEL`, `KRITISCHER_ROAS`,
+`SKALIER_PROZENT`, `MAX_TAGESBUDGET`, `AUTO_SKALIEREN`, `AUTO_PAUSE`,
+`AUTO_STOP`, `AUTO_POST_FACEBOOK`, `KONKURRENT_URLS`, `VORLAUF_TAGE`,
+`REICHWEITE_TAGE_WARNUNG`, `PRODUKTKOSTEN_PROZENT`
+
+Alle Standardwerte stehen in `automations/lib/config.mjs`.
+
+`AUTO_SKALIEREN`, `AUTO_STOP`, `AUTO_PAUSE`, `AUTO_POST_FACEBOOK`: stehen per
+Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
+Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
+ändern bzw. Ads zu pausieren.
+
+## Die 46 Automationen
+
+| Nr | Skript | Zeitplan (UTC) | Zweck |
+|---|---|---|---|
+| 01 | Gewinn-Radar | täglich 08:00 | tägliche Gewinn-/Umsatz-Kennzahlen |
+| 02 | KI-Kundenservice | alle 10 Min | IMAP-Postfach lesen, Claude antwortet, Eskalation an Telegram |
+| 04 | Bewertungs-Magnet | täglich 10:00 | fragt zufriedene Käufer nach Bewertungen |
+| 05 | Winback-Maschine | täglich 11:00 | reaktiviert inaktive Kunden |
+| 06 | Content-Kanone | täglich 07:30 | Social-Content-Ideen |
+| 07 | Ad-Fabrik | montags 09:00 | Ad-Konzepte pro Woche |
+| 08 | Trend-Scout | täglich 07:00 | Reddit-Trends für die Nische |
+| 09 | Newsletter-Autopilot | donnerstags 09:00 | wöchentlicher Newsletter |
+| 10 | VIP-Radar | täglich 12:00 | erkennt neue VIP-Kunden, dankt persönlich |
+| 11 | Ads-Manager | täglich 08:30 | Ad-Performance-Übersicht |
+| 12 | Marketing-Chef (KI-CMO) | sonntags 18:00 | Wochenstrategie |
+| 13 | Willkommens-Booster | täglich 09:30 | Willkommens-Mail für Neukunden |
+| 14 | Preis-Spion | täglich 06:00 | Konkurrenz-Preisbeobachtung |
+| 15 | Warenkorb-Sequenz 3.0 | stündlich | Warenkorbabbrecher-Mails |
+| 16 | Cross-Sell-Radar | täglich 15:00 | Zusatzverkauf-Empfehlungen |
+| 17 | Promo-Kampagnen-Maschine | alle 14 Tage | Rabattkampagnen-Ideen |
+| 18 | Multi-Plattform-Poster | täglich 16:00 | Social-Posts für mehrere Plattformen |
+| 19 | Saison-Planer | 25. jedes Monats | saisonale Planung |
+| 20 | Lager-Wächter | täglich 07:00 | Lagerbestand-Warnungen |
+| 21 | Retouren-Detektiv | montags 09:00 | Retouren-Muster erkennen |
+| 22 | Dead-Stock-Räumer | mittwochs 09:00 | Ladenhüter abverkaufen |
+| 23 | Kunden-Jubiläum | täglich 10:30 | Kundschafts-Jubiläen feiern |
+| 24 | Bundle-Bauer | freitags 10:00 | Produktbundles vorschlagen |
+| 25 | Wetter-Marketing | täglich 08:00 | wetterbasiertes Marketing |
+| 26 | Schläfer-Wecker | täglich 11:30 | inaktive Kunden reaktivieren |
+| 27 | Wochen-Sieger-Report | sonntags 19:00 | wöchentlicher Bestseller-Report |
+| 28 | SEO-Text-Doktor | dienstags 09:00 | SEO-Textverbesserungen |
+| 29 | Zahlungs-Retter | täglich 14:00 | fehlgeschlagene Zahlungen retten |
+| 30 | Bewertungs-Antwort-Bot | täglich 13:00 | beantwortet Kundenbewertungen |
+| 31 | Umsatz-Prognose | sonntags 20:00 | Umsatzprognose |
+| 32 | UGC-Anfrage-Automat | täglich 15:00 | bittet treue Kunden um UGC |
+| 33 | Feiertags-Radar | täglich 07:15 | erkennt nahende Feiertage |
+| 34 | Neukunden-Quellen-Report | montags 08:30 | Traffic-Quellen-Analyse |
+| 35 | Lead-Magnet-Maschine | montags 08:00 | Lead-Gen-Ideen |
+| 36 | FAQ-Bauer | donnerstags 08:00 | FAQ-Sektion generieren |
+| 37 | Static-Ad-Fabrik XL | dienstags 07:30 | viele Static-Ad-Konzepte |
+| 38 | UGC-Video-Skript-Fabrik | mittwochs 07:30 | Video-Skripte |
+| 39 | Nachbestell-Erinnerung | täglich 09:45 | Nachbestell-Erinnerungen |
+| 40 | Kunden-Feedback-Sammler | täglich 16:30 | Feedback einholen |
+| 41 | Post-Purchase-Sofort-Upsell | stündlich | Upsell direkt nach Kauf |
+| 42 | Meta-Ads-Auto-Skalierer | täglich 08:45 | skaliert gute Ad-Sets |
+| 43 | Meta-Ads-Notbremse | alle 3 Stunden | stoppt Ads bei schlechtem ROAS |
+| 44 | Winning-Ad neue Creatives | montags 07:00 | neue Varianten der besten Ad |
+| 45 | Meta-Lookalike-Futter | montags 06:30 | Top-Kunden an Meta für Lookalikes |
+| 46 | Großbestellung-Radar | stündlich | Alarm bei Großbestellungen |
+| 47 | Länder-Expansions-Scout | 1. jedes Monats | Expansionsmarkt-Empfehlung |
+
+**Nicht übernommen:** Workflow 48 ("Review zu Werbung") war in der
+Export-Datei korrupt (0 Byte) und konnte nicht wiederhergestellt werden.

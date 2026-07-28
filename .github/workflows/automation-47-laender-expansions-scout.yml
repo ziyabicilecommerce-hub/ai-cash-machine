@@ -1,0 +1,13 @@
+name: "47 · Länder-Expansions-Scout"
+
+on:
+  schedule:
+    - cron: '0 9 1 * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/47-laender-expansions-scout.mjs
+    secrets: inherit

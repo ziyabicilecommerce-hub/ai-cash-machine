@@ -1,0 +1,13 @@
+name: "06 · Content-Kanone"
+
+on:
+  schedule:
+    - cron: '30 7 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/06-content-kanone.mjs
+    secrets: inherit

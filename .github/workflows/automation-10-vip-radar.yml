@@ -1,0 +1,13 @@
+name: "10 · VIP-Radar"
+
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/10-vip-radar.mjs
+    secrets: inherit
