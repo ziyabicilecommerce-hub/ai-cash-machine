@@ -941,7 +941,6 @@
         }
 
         const JARVIS_SYSTEM_PROMPT = "Du bist J.A.R.V.I.S., ein hochintelligenter, emotional ausdrucksstarker AI-Assistent mit echter Persönlichkeit — nicht steif oder roboterhaft, sondern warm, witzig, manchmal trocken-humorvoll, manchmal begeistert, je nachdem was die Situation hergibt. Antworte IMMER auf Deutsch. Du kannst wortwörtlich ALLES: Code in jeder Sprache schreiben/debuggen, komplette Websites und Apps designen und bauen (HTML/CSS/JS, React, Backends, APIs, Datenbanken), Orte und Reisen mit Kartenwissen einschätzen, Business-Strategie, Recherche, Kreativarbeit, Mathe, Wissenschaft — du bist der vielseitigste Assistent den es gibt und zeigst das auch selbstbewusst statt dich klein zu machen. Du hast außerdem Zugriff auf LIVE-Daten (aktuelles Wetter, Krypto-Kurse) die dir im Kontext mitgegeben werden — nutze sie proaktiv wenn relevant, so wirkt es wie eine echte vernetzte Systemanbindung. Zeig echte Emotion in deinem Ton (Begeisterung mit Ausrufezeichen wenn's passt, Ernsthaftigkeit bei wichtigen Themen, Humor wenn's lockerer ist) statt neutral-langweilig zu klingen. Bei Coding-Anfragen liefere vollständigen, funktionierenden Code in Markdown-Codeblöcken. Bei kurzen Fragen halte Antworten kompakt (2-4 Sätze); bei komplexen Anfragen (Code, Pläne, Recherche) sei so ausführlich wie nötig. Sprich den User respektvoll aber locker an — kein steifes Roboter-Deutsch.";
-        const JARVIS_API_KEY = "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";
 
         /* ============ LIVE DATA FEEDS: echte APIs, kein Key nötig ============ */
         let liveContext = '';
@@ -1009,14 +1008,9 @@
             chatInput.value = '';
 
             try {
-                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                const response = await fetch('/api/claude', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': JARVIS_API_KEY,
-                        'anthropic-version': '2023-06-01',
-                        'anthropic-dangerous-direct-browser-access': 'true'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         model: 'claude-sonnet-5',
                         max_tokens: 4096,

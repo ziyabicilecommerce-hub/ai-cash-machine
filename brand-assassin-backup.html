@@ -655,17 +655,10 @@ Was bauen wir heute? 🚀</div>
 })();
 
 /* ============ AI ENGINE ============ */
-const BRAND_ASSASSIN_API_KEY = "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";
-
 async function askAI(system, user, maxTokens = 1600) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('/api/claude', {
     method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': BRAND_ASSASSIN_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
+    headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
       model: 'claude-sonnet-5',
       max_tokens: maxTokens,
@@ -853,14 +846,9 @@ async function sendChat() {
   chatBusy = true;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/claude', {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-api-key': BRAND_ASSASSIN_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-5',
         max_tokens: 900,
