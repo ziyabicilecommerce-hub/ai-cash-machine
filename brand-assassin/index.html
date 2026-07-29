@@ -363,8 +363,8 @@
       <span class="chip" onclick="location.hash='strategist'">🧠 Brand Strategist</span>
     </div>
     <div class="stats">
-      <div class="stat"><div class="n">4<em>+</em></div><div class="l">Analyse-Module</div></div>
-      <div class="stat"><div class="n">250<em>+</em></div><div class="l">Prüfparameter</div></div>
+      <div class="stat"><div class="n"><span class="cnt" data-count="4">0</span><em>+</em></div><div class="l">Analyse-Module</div></div>
+      <div class="stat"><div class="n"><span class="cnt" data-count="250">0</span><em>+</em></div><div class="l">Prüfparameter</div></div>
       <div class="stat"><div class="n"><em>1</em></div><div class="l">Klarer Launch-Plan</div></div>
       <div class="stat"><div class="n">24/<em>7</em></div><div class="l">Live AI-Engine</div></div>
     </div>
@@ -753,6 +753,33 @@ Was bauen wir heute? 🚀</div>
         rafPending = false;
       });
     }
+  });
+})();
+
+/* ============ COUNT-UP STAT NUMBERS ============ */
+(function () {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.cnt[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count, 10);
+    if (reduceMotion) { el.textContent = target; return; }
+    let started = false;
+    function startCount() {
+      if (started) return;
+      started = true;
+      const duration = 900;
+      const t0 = performance.now();
+      function tick(now) {
+        const p = Math.min((now - t0) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(eased * target);
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { startCount(); io.disconnect(); } });
+    }, { threshold: 0.5 });
+    io.observe(el);
   });
 })();
 
