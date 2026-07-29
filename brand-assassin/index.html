@@ -95,6 +95,7 @@
   .chip{font-size:12px;font-family:var(--mono);color:var(--mut);border:1px solid var(--line2);
     padding:7px 14px;clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);background:rgba(255,255,255,.02);display:inline-flex;gap:7px;align-items:center;cursor:pointer;transition:.2s}
   .chip:hover{color:var(--green);border-color:var(--line)}
+  .chip:focus-visible{outline:2px solid var(--green);outline-offset:2px;color:var(--green);border-color:var(--line)}
   .stats{display:flex;gap:clamp(20px,4vw,48px);margin-top:44px;flex-wrap:wrap}
   .stat .n{font-size:clamp(26px,3vw,36px);font-weight:800;font-family:var(--mono);color:var(--txt)}
   .stat .n em{color:var(--green);font-style:normal}
@@ -1051,6 +1052,15 @@ function speak(text) {
   if (v) u.voice = v;
   speechSynthesis.speak(u);
 }
+
+/* ============ ACCESSIBILITY: make onclick-only chips keyboard-operable ============ */
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.setAttribute('role', 'button');
+  chip.setAttribute('tabindex', '0');
+  chip.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); chip.click(); }
+  });
+});
 </script>
 </body>
 </html>

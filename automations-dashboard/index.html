@@ -272,6 +272,7 @@
     transition: background .15s ease, color .15s ease;
   }
   .orbit-legend-item:hover { background: rgba(111,224,255,0.06); color:#eaf8ff; }
+  .orbit-legend-item:focus-visible { outline: 2px solid var(--dot, #6fe0ff); outline-offset: 2px; background: rgba(111,224,255,0.06); color:#eaf8ff; }
   .orbit-legend-dot { width:9px; height:9px; border-radius:50%; background:var(--dot,#6fe0ff); box-shadow:0 0 8px var(--dot,#6fe0ff); flex-shrink:0; }
   .orbit-legend-item b { color:#eaf8ff; font-variant-numeric:tabular-nums; margin-left:auto; }
 
@@ -1562,12 +1563,15 @@
     });
 
     legendEl.innerHTML = catData.map(d => `
-      <div class="orbit-legend-item" data-cat="${d.name}" style="--dot:${d.accent}">
+      <div class="orbit-legend-item" data-cat="${d.name}" style="--dot:${d.accent}" role="button" tabindex="0" aria-label="Nach ${d.name} filtern (${d.count} Automationen)">
         <span class="orbit-legend-dot"></span>${d.name}<b>${d.count}</b>
       </div>
     `).join('');
     legendEl.querySelectorAll('.orbit-legend-item').forEach(item => {
       item.addEventListener('click', () => jumpToCategory(item.dataset.cat));
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jumpToCategory(item.dataset.cat); }
+      });
     });
   })();
 
