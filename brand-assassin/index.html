@@ -542,16 +542,16 @@
       <span class="title">CASHMACHINE://OPERATOR-CONSOLE</span>
       <span class="live">ENGINE ONLINE</span>
     </div>
-    <div class="tabs">
-      <button class="tab active" data-tab="scan" onclick="switchTab('scan')">🎯 Product Scan</button>
-      <button class="tab" data-tab="creative" onclick="switchTab('creative')">🎨 Creative Check</button>
-      <button class="tab" data-tab="market" onclick="switchTab('market')">📈 Markt Check</button>
-      <button class="tab" data-tab="brand" onclick="switchTab('brand')">🚀 Brand Audit</button>
-      <button class="tab" data-tab="content" onclick="switchTab('content')">🏭 Content-Fabrik</button>
+    <div class="tabs" role="tablist" aria-label="Operator Console Module">
+      <button class="tab active" id="tab-scan" role="tab" aria-selected="true" aria-controls="panel-scan" data-tab="scan" onclick="switchTab('scan')">🎯 Product Scan</button>
+      <button class="tab" id="tab-creative" role="tab" aria-selected="false" aria-controls="panel-creative" data-tab="creative" onclick="switchTab('creative')">🎨 Creative Check</button>
+      <button class="tab" id="tab-market" role="tab" aria-selected="false" aria-controls="panel-market" data-tab="market" onclick="switchTab('market')">📈 Markt Check</button>
+      <button class="tab" id="tab-brand" role="tab" aria-selected="false" aria-controls="panel-brand" data-tab="brand" onclick="switchTab('brand')">🚀 Brand Audit</button>
+      <button class="tab" id="tab-content" role="tab" aria-selected="false" aria-controls="panel-content" data-tab="content" onclick="switchTab('content')">🏭 Content-Fabrik</button>
     </div>
 
     <!-- product scan -->
-    <div class="panel active" id="panel-scan">
+    <div class="panel active" id="panel-scan" role="tabpanel" aria-labelledby="tab-scan">
       <div class="form">
         <h3>Product Scan</h3>
         <div class="hint">Bewertet Marge, Trend, Sättigung, Wow-Faktor &amp; Skalierbarkeit — mit Launch-Plan.</div>
@@ -569,7 +569,7 @@
     </div>
 
     <!-- creative check -->
-    <div class="panel" id="panel-creative">
+    <div class="panel" id="panel-creative" role="tabpanel" aria-labelledby="tab-creative">
       <div class="form">
         <h3>Creative Check</h3>
         <div class="hint">Zerlegt Hook, Problem-Klarheit, Angebot &amp; CTA deines Ad-Textes / Skripts.</div>
@@ -587,7 +587,7 @@
     </div>
 
     <!-- market check -->
-    <div class="panel" id="panel-market">
+    <div class="panel" id="panel-market" role="tabpanel" aria-labelledby="tab-market">
       <div class="form">
         <h3>Markt Check</h3>
         <div class="hint">Analysiert Nachfrage, Konkurrenz, Timing &amp; Einstiegschancen deiner Nische.</div>
@@ -603,7 +603,7 @@
     </div>
 
     <!-- brand audit -->
-    <div class="panel" id="panel-brand">
+    <div class="panel" id="panel-brand" role="tabpanel" aria-labelledby="tab-brand">
       <div class="form">
         <h3>Brand Audit</h3>
         <div class="hint">Bewertet Positionierung, Unterscheidbarkeit &amp; Wachstumspotenzial deiner Brand.</div>
@@ -619,7 +619,7 @@
     </div>
 
     <!-- content fabrik -->
-    <div class="panel" id="panel-content">
+    <div class="panel" id="panel-content" role="tabpanel" aria-labelledby="tab-content">
       <div class="form">
         <h3>Content-Fabrik</h3>
         <div class="hint">Spuckt dir auf Knopfdruck mehrere fertige, postfähige Social-Posts aus — Hook, Caption &amp; Hashtags.</div>
@@ -770,10 +770,33 @@ function parseJSON(raw) {
 
 /* ============ TABS ============ */
 function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.tab').forEach(t => {
+    const isActive = t.dataset.tab === name;
+    t.classList.toggle('active', isActive);
+    t.setAttribute('aria-selected', String(isActive));
+  });
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
 }
 function goTab(name) { location.hash = 'console'; switchTab(name); }
+
+/* ============ ACCESSIBILITY: arrow-key navigation between tabs ============ */
+document.querySelectorAll('[role="tablist"]').forEach(tablist => {
+  const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+  tablist.addEventListener('keydown', (e) => {
+    const idx = tabs.indexOf(document.activeElement);
+    if (idx === -1) return;
+    let next = null;
+    if (e.key === 'ArrowRight') next = tabs[(idx + 1) % tabs.length];
+    else if (e.key === 'ArrowLeft') next = tabs[(idx - 1 + tabs.length) % tabs.length];
+    else if (e.key === 'Home') next = tabs[0];
+    else if (e.key === 'End') next = tabs[tabs.length - 1];
+    if (next) {
+      e.preventDefault();
+      next.focus();
+      switchTab(next.dataset.tab);
+    }
+  });
+});
 
 /* ============ LOADING ============ */
 const loadLines = {
