@@ -57,6 +57,23 @@
             letter-spacing: 1px;
         }
 
+        .hud-nav {
+            margin-top: 10px;
+            display: flex;
+            gap: 14px;
+            pointer-events: auto;
+        }
+        .hud-nav a {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            color: rgba(111,224,255,0.55);
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(111,224,255,0.35);
+            transition: color .15s ease, border-color .15s ease;
+        }
+        .hud-nav a:hover { color: #eaf8ff; border-color: #eaf8ff; }
+
         .top-right {
             position: absolute;
             top: 32px; right: 36px;
@@ -518,6 +535,10 @@
             <div class="top-left-title">J.A.R.V.I.S</div>
             <div class="top-left-subtitle">GALAXY LINK — CONNECTED</div>
             <div class="top-left-meta" id="dateMeta">CASH MACHINE · HÖRT ZU v1.0</div>
+            <div class="hud-nav">
+                <a href="brand-assassin/">BRAND ASSASSIN →</a>
+                <a href="automations-dashboard/">AUTOMATIONS →</a>
+            </div>
         </div>
 
         <div class="top-right">
