@@ -39,6 +39,29 @@
             font-weight: 900;
             letter-spacing: 5px;
             text-shadow: 0 0 14px rgba(111,224,255,0.8), 0 0 40px rgba(111,224,255,0.3);
+            position: relative;
+            display: inline-block;
+        }
+        .top-left-title::before, .top-left-title::after {
+            content: attr(data-text);
+            position: absolute; left: 0; top: 0; width: 100%;
+            overflow: hidden;
+            clip-path: inset(0 0 100% 0);
+            text-shadow: none;
+        }
+        .top-left-title::before { color: #6fe0ff; animation: jarvisGlitchTop 7s infinite linear; left: 2px; }
+        .top-left-title::after { color: #ff5f9e; animation: jarvisGlitchBot 7.4s infinite linear; left: -2px; }
+        @keyframes jarvisGlitchTop {
+            0%, 92%, 100% { clip-path: inset(0 0 100% 0); opacity: 0; }
+            93% { clip-path: inset(10% 0 60% 0); opacity: .8; transform: translateX(-2px); }
+            95% { clip-path: inset(55% 0 15% 0); opacity: .8; transform: translateX(2px); }
+            97% { clip-path: inset(20% 0 70% 0); opacity: .6; transform: translateX(-1px); }
+        }
+        @keyframes jarvisGlitchBot {
+            0%, 90%, 100% { clip-path: inset(100% 0 0 0); opacity: 0; }
+            91% { clip-path: inset(70% 0 5% 0); opacity: .7; transform: translateX(2px); }
+            94% { clip-path: inset(30% 0 50% 0); opacity: .7; transform: translateX(-2px); }
+            96% { clip-path: inset(80% 0 2% 0); opacity: .5; transform: translateX(1px); }
         }
 
         .top-left-subtitle {
@@ -421,7 +444,7 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .crt-flicker, .mic-dot.listening, .status-planned .dot { animation: none !important; }
+            .crt-flicker, .mic-dot.listening, .status-planned .dot, .top-left-title::before, .top-left-title::after { animation: none !important; }
         }
 
         .vignette {
@@ -532,7 +555,7 @@
 
     <div class="hud-container">
         <div class="top-left">
-            <div class="top-left-title">J.A.R.V.I.S</div>
+            <div class="top-left-title" data-text="J.A.R.V.I.S">J.A.R.V.I.S</div>
             <div class="top-left-subtitle">GALAXY LINK — CONNECTED</div>
             <div class="top-left-meta" id="dateMeta">CASH MACHINE · HÖRT ZU v1.0</div>
             <div class="hud-nav">
