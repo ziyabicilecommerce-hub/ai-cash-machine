@@ -35,9 +35,10 @@
         }
 
         .top-left-title {
-            font-size: 24px;
+            font-size: 30px;
             font-weight: 900;
-            letter-spacing: 4px;
+            letter-spacing: 5px;
+            text-shadow: 0 0 14px rgba(111,224,255,0.8), 0 0 40px rgba(111,224,255,0.3);
         }
 
         .top-left-subtitle {
@@ -114,10 +115,10 @@
         .map-frame-wrap {
             width: 100%;
             height: 130px;
-            border-radius: 10px;
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
             overflow: hidden;
             border: 1px solid rgba(111,224,255,0.3);
-            box-shadow: 0 0 16px rgba(111,224,255,0.15), inset 0 0 20px rgba(0,0,0,0.4);
+            box-shadow: 0 0 20px rgba(111,224,255,0.22), inset 0 0 20px rgba(0,0,0,0.4);
             position: relative;
             pointer-events: auto;
         }
@@ -157,7 +158,7 @@
 
         .app-icon {
             aspect-ratio: 1;
-            border-radius: 8px;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
             background: rgba(111,224,255,0.06);
             border: 1px solid rgba(111,224,255,0.22);
             display: flex;
@@ -165,7 +166,9 @@
             justify-content: center;
             font-size: 15px;
             position: relative;
+            transition: border-color .15s ease, background .15s ease;
         }
+        .app-icon:hover { border-color: rgba(111,224,255,0.6); background: rgba(111,224,255,0.14); }
 
         .app-icon::after {
             content: '';
@@ -295,11 +298,13 @@
             align-items: center;
             gap: 12px;
             border: 1px solid rgba(111,224,255,0.35);
-            border-radius: 20px;
+            clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
             padding: 10px 18px;
-            background: rgba(111,224,255,0.05);
-            box-shadow: 0 0 16px rgba(111,224,255,0.12);
+            background: rgba(111,224,255,0.06);
+            box-shadow: 0 0 22px rgba(111,224,255,0.18);
+            transition: box-shadow .2s ease, border-color .2s ease;
         }
+        .listening-bar:focus-within { border-color: rgba(111,224,255,0.7); box-shadow: 0 0 30px rgba(111,224,255,0.3); }
 
         .mic-dot {
             width: 8px; height: 8px;
@@ -385,6 +390,23 @@
             z-index: 100;
         }
 
+        .crt-flicker {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; background: #000; opacity: 0;
+            animation: crtFlicker 6.5s infinite steps(1); z-index: 101;
+        }
+        @keyframes crtFlicker {
+            0%, 96%, 100% { opacity: 0; }
+            96.4% { opacity: .05; }
+            96.8% { opacity: 0; }
+            97.6% { opacity: .08; }
+            98% { opacity: 0; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .crt-flicker, .mic-dot.listening, .status-planned .dot { animation: none !important; }
+        }
+
         .vignette {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
@@ -450,10 +472,11 @@
 
         .boot-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 22px;
-            letter-spacing: 6px;
+            font-weight: 900;
+            font-size: 30px;
+            letter-spacing: 8px;
             color: #eaf8ff;
-            text-shadow: 0 0 16px rgba(111,224,255,0.8);
+            text-shadow: 0 0 22px rgba(111,224,255,0.9), 0 0 60px rgba(111,224,255,0.35);
             margin-bottom: 20px;
             opacity: 0;
             animation: bootTitleIn 0.8s ease-out forwards;
@@ -569,6 +592,7 @@
 
     <div class="vignette"></div>
     <div class="scanlines"></div>
+    <div class="crt-flicker"></div>
 
     <script src="jarvis_data.js"></script>
     <script>
