@@ -352,6 +352,34 @@
     text-shadow:0 0 20px var(--green),0 0 60px var(--green);
     animation:overridePulse 1s ease-in-out infinite}
   @keyframes overridePulse{0%,100%{opacity:1}50%{opacity:.55}}
+
+  /* ---------- API key modal ---------- */
+  .key-modal-overlay{position:fixed;inset:0;z-index:600;background:rgba(2,5,12,.82);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity .25s ease,visibility .25s ease}
+  .key-modal-overlay.open{opacity:1;visibility:visible;pointer-events:auto}
+  .key-modal{width:min(420px,90vw);background:#060b16;
+    border:1px solid var(--line);box-shadow:0 0 40px rgba(52,245,162,.18);
+    clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+    padding:24px}
+  .key-modal h3{color:var(--green);font-size:16px;letter-spacing:1px;margin-bottom:10px}
+  .key-modal p{font-size:12.5px;color:var(--mut);line-height:1.6;margin-bottom:16px}
+  .key-modal input{width:100%;background:rgba(52,245,162,.06);border:1px solid var(--line);
+    color:var(--txt);font-family:var(--mono);font-size:13px;
+    padding:10px 12px;margin-bottom:16px;outline:none}
+  .key-modal input:focus{border-color:var(--green)}
+  .key-modal-actions{display:flex;justify-content:space-between;align-items:center}
+  .key-modal-actions a{color:var(--mut);font-size:12px;text-decoration:none;border-bottom:1px dotted var(--mut)}
+  .key-modal-actions a:hover{color:var(--txt)}
+  .key-modal-actions button{background:rgba(52,245,162,.15);border:1px solid var(--green);color:var(--txt);
+    font-family:inherit;font-weight:700;font-size:13px;padding:8px 18px;cursor:pointer;
+    clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+  .key-modal-actions button:hover{background:rgba(52,245,162,.3)}
+  .key-gear{background:none;border:1px solid var(--line);color:var(--green);
+    width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;
+    display:flex;align-items:center;justify-content:center}
+  .key-gear:hover{border-color:var(--green);background:rgba(52,245,162,.1)}
 </style>
 </head>
 <body>
@@ -383,8 +411,21 @@
     <a href="../">Jarvis</a>
     <a href="../automations-dashboard/">Automations</a>
   </div>
+  <button class="key-gear" id="keyGearBtn" title="Anthropic API-Key einstellen" aria-label="Anthropic API-Key einstellen">⚙</button>
   <a class="nav-cta" href="#console">Scan starten</a>
 </nav>
+
+<div class="key-modal-overlay" id="keyModalOverlay">
+  <div class="key-modal" id="keyModalBox" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
+    <h3 id="keyModalTitle">Anthropic API-Key</h3>
+    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Anthropic gesendet — nie an einen anderen Server.</p>
+    <input type="password" id="keyModalInput" placeholder="sk-ant-api03-..." aria-label="Anthropic API-Key" autocomplete="off">
+    <div class="key-modal-actions">
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Key holen →</a>
+      <button id="keyModalSave" type="button">Speichern</button>
+    </div>
+  </div>
+</div>
 
 <!-- ================= HERO ================= -->
 <header class="hero">
@@ -780,6 +821,84 @@ Was bauen wir heute? 🚀</div>
 </footer>
 
 <script>
+/* ============ CLAUDE API KEY (bring-your-own-key, stored locally) ============ */
+const CLAUDE_KEY_STORAGE = 'cmx_claude_key';
+function getClaudeKey() { return localStorage.getItem(CLAUDE_KEY_STORAGE); }
+
+const keyModalOverlay = document.getElementById('keyModalOverlay');
+const keyModalInput = document.getElementById('keyModalInput');
+const keyModalSave = document.getElementById('keyModalSave');
+const keyGearBtn = document.getElementById('keyGearBtn');
+let keyModalLastTrigger = null;
+let keyModalResolve = null;
+
+function closeKeyModal() {
+  keyModalOverlay.classList.remove('open');
+  if (keyModalLastTrigger) keyModalLastTrigger.focus();
+}
+
+function openKeyModal(triggerEl) {
+  keyModalLastTrigger = triggerEl || document.activeElement;
+  keyModalInput.value = getClaudeKey() || '';
+  keyModalOverlay.classList.add('open');
+  setTimeout(() => keyModalInput.focus(), 50);
+}
+
+function requestClaudeKey() {
+  return new Promise((resolve) => {
+    keyModalResolve = resolve;
+    openKeyModal();
+  });
+}
+
+keyModalSave.addEventListener('click', () => {
+  const val = keyModalInput.value.trim();
+  if (!val) return;
+  localStorage.setItem(CLAUDE_KEY_STORAGE, val);
+  closeKeyModal();
+  if (keyModalResolve) { keyModalResolve(val); keyModalResolve = null; }
+});
+
+keyModalInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') keyModalSave.click();
+});
+
+keyGearBtn.addEventListener('click', () => openKeyModal(keyGearBtn));
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && keyModalOverlay.classList.contains('open')) closeKeyModal();
+  if (e.key === 'Tab' && keyModalOverlay.classList.contains('open')) {
+    const focusable = keyModalOverlay.querySelectorAll('input, button, a[href]');
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+});
+
+async function callClaudeDirect(body) {
+  let key = getClaudeKey();
+  if (!key) key = await requestClaudeKey();
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify(body)
+  });
+  if (res.status === 401) {
+    localStorage.removeItem(CLAUDE_KEY_STORAGE);
+    throw new Error('API-Key ungültig. Bitte über das ⚙ Symbol prüfen.');
+  }
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error('Engine-Fehler: ' + (err.error?.message || res.status));
+  }
+  return res.json();
+}
+
 /* ============ KONAMI EASTER EGG: matrix rain override ============ */
 (function () {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -969,21 +1088,12 @@ Was bauen wir heute? 🚀</div>
 
 /* ============ AI ENGINE ============ */
 async function askAI(system, user, maxTokens = 1600) {
-  const res = await fetch('/api/claude', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-5',
-      max_tokens: maxTokens,
-      system: system,
-      messages: [{ role: 'user', content: user }]
-    })
+  const data = await callClaudeDirect({
+    model: 'claude-sonnet-5',
+    max_tokens: maxTokens,
+    system: system,
+    messages: [{ role: 'user', content: user }]
   });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error('Engine-Fehler: ' + (err.error?.message || res.status));
-  }
-  const data = await res.json();
   return data.content.map(b => b.text || '').join('');
 }
 
@@ -1224,21 +1334,12 @@ async function sendChat() {
   chatBusy = true;
 
   try {
-    const res = await fetch('/api/claude', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-5',
-        max_tokens: 900,
-        system: 'Du bist der "Brand Strategist" der CASHMACHINE AI Operator Suite — ein energiegeladener, brutal ehrlicher Marketing-Co-Pilot für E-Commerce, Social Media und Brand Building. Sprich Deutsch, locker aber kompetent (der User sagt "Bruder" — du darfst das auch). Gib IMMER konkrete, sofort umsetzbare Antworten: echte Hook-Beispiele, echte Pläne mit Zahlen, keine generischen Ratschläge. Halte Antworten kompakt (max ~200 Wörter), nutze **fett** für die wichtigsten Punkte und Zeilenumbrüche für Struktur. Wenn dir Infos zur Brand fehlen, mach trotzdem einen starken Vorschlag und frag EINE gezielte Rückfrage am Ende.',
-        messages: chatHistory.slice(-12)
-      })
+    const data = await callClaudeDirect({
+      model: 'claude-sonnet-5',
+      max_tokens: 900,
+      system: 'Du bist der "Brand Strategist" der CASHMACHINE AI Operator Suite — ein energiegeladener, brutal ehrlicher Marketing-Co-Pilot für E-Commerce, Social Media und Brand Building. Sprich Deutsch, locker aber kompetent (der User sagt "Bruder" — du darfst das auch). Gib IMMER konkrete, sofort umsetzbare Antworten: echte Hook-Beispiele, echte Pläne mit Zahlen, keine generischen Ratschläge. Halte Antworten kompakt (max ~200 Wörter), nutze **fett** für die wichtigsten Punkte und Zeilenumbrüche für Struktur. Wenn dir Infos zur Brand fehlen, mach trotzdem einen starken Vorschlag und frag EINE gezielte Rückfrage am Ende.',
+      messages: chatHistory.slice(-12)
     });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error?.message || ('Engine-Fehler ' + res.status));
-    }
-    const data = await res.json();
     const answer = data.content.map(b => b.text || '').join('');
     chatHistory.push({ role: 'assistant', content: answer });
     typing.remove();
