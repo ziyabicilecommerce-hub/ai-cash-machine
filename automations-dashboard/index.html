@@ -432,9 +432,11 @@
   .ic { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
 
   .empty-state {
-    display:none; text-align:center; padding: 70px 20px; color: rgba(190,230,255,0.5);
-    font-size:13px;
+    display:none; text-align:center; padding: 70px 20px;
+    font-family: 'JetBrains Mono', monospace;
   }
+  .empty-state .line1 { color: var(--cyan, #6fe0ff); font-size: 15px; letter-spacing: .04em; }
+  .empty-state .line2 { color: rgba(190,230,255,0.45); font-size: 12px; margin-top: 8px; }
 
   section.setup {
     max-width: 900px; margin: 64px auto 0; padding: 26px 24px;
@@ -1333,7 +1335,10 @@
       </article>
   </div>
 
-  <p class="empty-state" id="empty">Keine Automation gefunden.</p>
+  <div class="empty-state" id="empty">
+    <div class="line1">&gt; grep -i "<span id="emptyQuery">*</span>" automations.db<span class="cursor-blink"></span></div>
+    <div class="line2">0 Treffer — versuch's mit einem anderen Suchbegriff oder Filter.</div>
+  </div>
 
   <section class="setup">
     <h2>&#9889; Einmalig einrichten</h2>
@@ -1477,6 +1482,9 @@
       if (show) visible++;
     });
     empty.style.display = visible === 0 ? 'block' : 'none';
+    if (visible === 0) {
+      document.getElementById('emptyQuery').textContent = q || activeFilter;
+    }
   }
 
   search.addEventListener('input', applyFilters);
