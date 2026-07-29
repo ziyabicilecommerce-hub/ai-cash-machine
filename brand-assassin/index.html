@@ -320,9 +320,31 @@
   @media(prefers-reduced-motion:reduce){
     *{animation-duration:.001ms!important;animation-iteration-count:1!important}
   }
+
+  /* ---------- boot sequence ---------- */
+  .boot-overlay{position:fixed;inset:0;z-index:200;background:#04070c;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);color:var(--green);
+    transition:opacity .5s ease,visibility .5s ease}
+  .boot-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
+  .boot-lines{width:min(560px,90vw);font-size:13px;line-height:1.9}
+  .boot-lines .ln{opacity:0;white-space:pre}
+  .boot-lines .ln.show{opacity:1}
+  .boot-lines .ok{color:var(--green)}
+  .boot-lines .cursor-blink{display:inline-block;width:8px;height:14px;background:var(--green);margin-left:2px;animation:bootBlink .8s steps(1) infinite;vertical-align:-2px}
+  @keyframes bootBlink{50%{opacity:0}}
 </style>
 </head>
 <body>
+
+<div class="boot-overlay" id="bootOverlay">
+  <div class="boot-lines" id="bootLines">
+    <div class="ln">&gt; initializing operator suite v2 ...</div>
+    <div class="ln">&gt; loading product / market / brand / creative modules <span class="ok">[OK]</span></div>
+    <div class="ln">&gt; connecting strategist engine <span class="ok">[OK]</span></div>
+    <div class="ln">&gt; CASHMACHINE AI — BEREIT<span class="cursor-blink"></span></div>
+  </div>
+</div>
 
 <div class="bgfx"><div class="grid"></div><div class="scanline"></div></div>
 <div class="spotlight" id="spotlight"></div>
@@ -734,6 +756,27 @@ Was bauen wir heute? 🚀</div>
 </footer>
 
 <script>
+/* ============ BOOT SEQUENCE ============ */
+(function () {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const bootOverlay = document.getElementById('bootOverlay');
+  if (!bootOverlay) return;
+  if (reduceMotion || sessionStorage.getItem('cmx_booted') === '1') {
+    bootOverlay.classList.add('hidden');
+    bootOverlay.remove();
+    return;
+  }
+  const lines = bootOverlay.querySelectorAll('.ln');
+  lines.forEach((ln, i) => setTimeout(() => ln.classList.add('show'), 220 * i));
+  const finish = () => {
+    bootOverlay.classList.add('hidden');
+    sessionStorage.setItem('cmx_booted', '1');
+    setTimeout(() => bootOverlay.remove(), 550);
+  };
+  setTimeout(finish, 220 * lines.length + 500);
+  bootOverlay.addEventListener('click', finish, { once: true });
+})();
+
 /* ============ CURSOR SPOTLIGHT ============ */
 (function () {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
