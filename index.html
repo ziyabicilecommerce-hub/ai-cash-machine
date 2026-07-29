@@ -445,6 +445,15 @@
 
         @media (prefers-reduced-motion: reduce) {
             .crt-flicker, .mic-dot.listening, .status-planned .dot, .top-left-title::before, .top-left-title::after { animation: none !important; }
+            .spotlight { display: none !important; }
+        }
+
+        .spotlight {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background: radial-gradient(560px circle at var(--mx,50%) var(--my,40%), rgba(111,224,255,0.10), transparent 62%);
+            transition: background .08s linear;
+            z-index: 5;
         }
 
         .vignette {
@@ -634,11 +643,33 @@
         </div>
     </div>
 
+    <div class="spotlight" id="spotlight"></div>
     <div class="vignette"></div>
     <div class="scanlines"></div>
     <div class="crt-flicker"></div>
 
     <script>
+        (function () {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+            if (!canHover || reduceMotion) return;
+            const spotlight = document.getElementById('spotlight');
+            if (!spotlight) return;
+            let rafPending = false, mx = 50, my = 40;
+            window.addEventListener('mousemove', (e) => {
+                mx = (e.clientX / window.innerWidth) * 100;
+                my = (e.clientY / window.innerHeight) * 100;
+                if (!rafPending) {
+                    rafPending = true;
+                    requestAnimationFrame(() => {
+                        spotlight.style.setProperty('--mx', mx + '%');
+                        spotlight.style.setProperty('--my', my + '%');
+                        rafPending = false;
+                    });
+                }
+            });
+        })();
+
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let isSpeaking = false;

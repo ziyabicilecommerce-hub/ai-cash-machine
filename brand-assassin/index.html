@@ -50,6 +50,9 @@
   @keyframes scan{to{top:120%}}
   .crt-flicker{position:fixed;inset:0;z-index:90;pointer-events:none;background:#000;opacity:0;
     animation:crtFlicker 6.5s infinite steps(1)}
+  .spotlight{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(560px circle at var(--mx,50%) var(--my,20%),rgba(52,245,162,.09),transparent 62%);
+    transition:background .08s linear}
   @keyframes crtFlicker{0%,96%,100%{opacity:0}96.4%{opacity:.05}96.8%{opacity:0}97.6%{opacity:.08}98%{opacity:0}}
 
   /* ---------- nav ---------- */
@@ -307,6 +310,7 @@
     .beam{display:none}
     .grid{animation:none}
     .scanline{display:none}
+    .spotlight{display:none}
     .robot{animation:none;filter:drop-shadow(0 0 20px rgba(52,245,162,.35))}
     .ring{animation:none}
     .ring.r3{display:none}
@@ -321,6 +325,7 @@
 <body>
 
 <div class="bgfx"><div class="grid"></div><div class="scanline"></div></div>
+<div class="spotlight" id="spotlight"></div>
 <div class="crt-flicker"></div>
 
 <nav>
@@ -729,6 +734,28 @@ Was bauen wir heute? 🚀</div>
 </footer>
 
 <script>
+/* ============ CURSOR SPOTLIGHT ============ */
+(function () {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (!canHover || reduceMotion) return;
+  const spotlight = document.getElementById('spotlight');
+  if (!spotlight) return;
+  let rafPending = false, mx = 50, my = 20;
+  window.addEventListener('mousemove', (e) => {
+    mx = (e.clientX / window.innerWidth) * 100;
+    my = (e.clientY / window.innerHeight) * 100;
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(() => {
+        spotlight.style.setProperty('--mx', mx + '%');
+        spotlight.style.setProperty('--my', my + '%');
+        rafPending = false;
+      });
+    }
+  });
+})();
+
 /* ============ MOBILE PERF: pause SVG animations when tab hidden ============ */
 (function () {
   const robotSvg = document.querySelector('svg.robot');
