@@ -474,11 +474,32 @@
   @media (max-width:520px) {
     .card-bottom { flex-direction:column; align-items:flex-start; gap:8px; }
   }
+
+  /* ---------- konami easter egg ---------- */
+  .override-overlay {
+    position: fixed; inset: 0; z-index: 9998; background: #000;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity .4s ease;
+  }
+  .override-overlay.show { opacity: 1; }
+  .override-overlay canvas { position: absolute; inset: 0; }
+  .override-text {
+    position: relative; font-family: 'Orbitron', sans-serif; font-weight: 900;
+    font-size: clamp(28px, 6vw, 64px); letter-spacing: 4px; color: var(--green);
+    text-shadow: 0 0 20px var(--green), 0 0 60px var(--green);
+    animation: overridePulse 1s ease-in-out infinite;
+  }
+  @keyframes overridePulse { 0%,100% { opacity:1; } 50% { opacity:.55; } }
 </style>
 </head>
 <body>
 
 <div class="scroll-progress" id="scrollProgress"></div>
+
+<div class="override-overlay" id="overrideOverlay">
+  <canvas id="overrideCanvas"></canvas>
+  <div class="override-text">SYSTEM OVERRIDE</div>
+</div>
 
 <div class="boot-overlay" id="bootOverlay">
   <div class="boot-lines" id="bootLines">
@@ -1854,6 +1875,60 @@
       }, 300);
     }, 2600);
   }
+
+  // ---------- konami easter egg: full-screen matrix rain override ----------
+  (function () {
+    if (reduceMotion) return;
+    const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+    let buffer = [];
+    const overlay = document.getElementById('overrideOverlay');
+    const canvas = document.getElementById('overrideCanvas');
+    if (!overlay || !canvas) return;
+    const ctx = canvas.getContext('2d');
+    let rainInterval = null;
+
+    function startRain() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const cols = Math.floor(canvas.width / 18);
+      const drops = new Array(cols).fill(0);
+      const chars = 'アイウエオカキクケコサシスセソ0123456789ABCDEF';
+      rainInterval = setInterval(() => {
+        ctx.fillStyle = 'rgba(0,0,0,0.08)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#22c98a';
+        ctx.font = '16px monospace';
+        drops.forEach((y, i) => {
+          const ch = chars[Math.floor(Math.random() * chars.length)];
+          ctx.fillText(ch, i * 18, y * 18);
+          drops[i] = (y * 18 > canvas.height && Math.random() > 0.975) ? 0 : y + 1;
+        });
+      }, 40);
+    }
+
+    function stopRain() {
+      if (rainInterval) { clearInterval(rainInterval); rainInterval = null; }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function trigger() {
+      overlay.classList.add('show');
+      startRain();
+      setTimeout(() => {
+        overlay.classList.remove('show');
+        setTimeout(stopRain, 400);
+      }, 3200);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      buffer.push(e.key);
+      if (buffer.length > KONAMI.length) buffer.shift();
+      if (buffer.length === KONAMI.length && buffer.every((k, i) => k === KONAMI[i])) {
+        buffer = [];
+        trigger();
+      }
+    });
+  })();
 </script>
 
 </body>

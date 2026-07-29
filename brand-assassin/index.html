@@ -333,9 +333,26 @@
   .boot-lines .ok{color:var(--green)}
   .boot-lines .cursor-blink{display:inline-block;width:8px;height:14px;background:var(--green);margin-left:2px;animation:bootBlink .8s steps(1) infinite;vertical-align:-2px}
   @keyframes bootBlink{50%{opacity:0}}
+
+  /* ---------- konami easter egg ---------- */
+  .override-overlay{position:fixed;inset:0;z-index:9998;background:#000;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;transition:opacity .4s ease}
+  .override-overlay.show{opacity:1}
+  .override-overlay canvas{position:absolute;inset:0}
+  .override-text{position:relative;font-family:var(--mono);font-weight:700;
+    font-size:clamp(24px,5vw,52px);letter-spacing:4px;color:var(--green);
+    text-shadow:0 0 20px var(--green),0 0 60px var(--green);
+    animation:overridePulse 1s ease-in-out infinite}
+  @keyframes overridePulse{0%,100%{opacity:1}50%{opacity:.55}}
 </style>
 </head>
 <body>
+
+<div class="override-overlay" id="overrideOverlay">
+  <canvas id="overrideCanvas"></canvas>
+  <div class="override-text">SYSTEM OVERRIDE</div>
+</div>
 
 <div class="boot-overlay" id="bootOverlay">
   <div class="boot-lines" id="bootLines">
@@ -756,6 +773,60 @@ Was bauen wir heute? 🚀</div>
 </footer>
 
 <script>
+/* ============ KONAMI EASTER EGG: matrix rain override ============ */
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let buffer = [];
+  const overlay = document.getElementById('overrideOverlay');
+  const eggCanvas = document.getElementById('overrideCanvas');
+  if (!overlay || !eggCanvas) return;
+  const eggCtx = eggCanvas.getContext('2d');
+  let rainInterval = null;
+
+  function startRain() {
+    eggCanvas.width = window.innerWidth;
+    eggCanvas.height = window.innerHeight;
+    const cols = Math.floor(eggCanvas.width / 18);
+    const drops = new Array(cols).fill(0);
+    const chars = 'アイウエオカキクケコサシスセソ0123456789ABCDEF';
+    rainInterval = setInterval(() => {
+      eggCtx.fillStyle = 'rgba(0,0,0,0.08)';
+      eggCtx.fillRect(0, 0, eggCanvas.width, eggCanvas.height);
+      eggCtx.fillStyle = '#34f5a2';
+      eggCtx.font = '16px monospace';
+      drops.forEach((y, i) => {
+        const ch = chars[Math.floor(Math.random() * chars.length)];
+        eggCtx.fillText(ch, i * 18, y * 18);
+        drops[i] = (y * 18 > eggCanvas.height && Math.random() > 0.975) ? 0 : y + 1;
+      });
+    }, 40);
+  }
+
+  function stopRain() {
+    if (rainInterval) { clearInterval(rainInterval); rainInterval = null; }
+    eggCtx.clearRect(0, 0, eggCanvas.width, eggCanvas.height);
+  }
+
+  function trigger() {
+    overlay.classList.add('show');
+    startRain();
+    setTimeout(() => {
+      overlay.classList.remove('show');
+      setTimeout(stopRain, 400);
+    }, 3200);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    buffer.push(e.key);
+    if (buffer.length > KONAMI.length) buffer.shift();
+    if (buffer.length === KONAMI.length && buffer.every((k, i) => k === KONAMI[i])) {
+      buffer = [];
+      trigger();
+    }
+  });
+})();
+
 /* ============ BOOT SEQUENCE ============ */
 (function () {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
