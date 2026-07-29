@@ -555,11 +555,11 @@
       <div class="form">
         <h3>Product Scan</h3>
         <div class="hint">Bewertet Marge, Trend, Sättigung, Wow-Faktor &amp; Skalierbarkeit — mit Launch-Plan.</div>
-        <label>Produkt</label>
+        <label for="scan-product">Produkt</label>
         <input id="scan-product" placeholder="z.B. Magnetische Wimpern, LED Hundehalsband, Posture Corrector …">
-        <label>Zielgruppe (optional)</label>
+        <label for="scan-audience">Zielgruppe (optional)</label>
         <input id="scan-audience" placeholder="z.B. Frauen 18–35, Hundebesitzer, Büroarbeiter …">
-        <label>Verkaufspreis (optional)</label>
+        <label for="scan-price">Verkaufspreis (optional)</label>
         <input id="scan-price" placeholder="z.B. 29,99 €">
         <button class="btn btn-primary run-btn" onclick="runScan()">⚡ Scan starten</button>
       </div>
@@ -573,9 +573,9 @@
       <div class="form">
         <h3>Creative Check</h3>
         <div class="hint">Zerlegt Hook, Problem-Klarheit, Angebot &amp; CTA deines Ad-Textes / Skripts.</div>
-        <label>Ad-Text / Hook / Skript</label>
+        <label for="cre-text">Ad-Text / Hook / Skript</label>
         <textarea id="cre-text" style="min-height:150px" placeholder="Füge hier deinen Ad-Text, TikTok-Hook oder dein Video-Skript ein …"></textarea>
-        <label>Plattform</label>
+        <label for="cre-platform">Plattform</label>
         <select id="cre-platform">
           <option>TikTok</option><option>Instagram Reels</option><option>Facebook Ads</option><option>YouTube Shorts</option><option>Google Ads</option>
         </select>
@@ -591,9 +591,9 @@
       <div class="form">
         <h3>Markt Check</h3>
         <div class="hint">Analysiert Nachfrage, Konkurrenz, Timing &amp; Einstiegschancen deiner Nische.</div>
-        <label>Nische / Markt</label>
+        <label for="mkt-niche">Nische / Markt</label>
         <input id="mkt-niche" placeholder="z.B. Home-Gym Equipment, Anime Merch, Smart Sleep Gadgets …">
-        <label>Land / Region</label>
+        <label for="mkt-region">Land / Region</label>
         <input id="mkt-region" placeholder="z.B. Deutschland / DACH" value="DACH (DE, AT, CH)">
         <button class="btn btn-primary run-btn" onclick="runMarket()">⚡ Markt scannen</button>
       </div>
@@ -607,9 +607,9 @@
       <div class="form">
         <h3>Brand Audit</h3>
         <div class="hint">Bewertet Positionierung, Unterscheidbarkeit &amp; Wachstumspotenzial deiner Brand.</div>
-        <label>Brand-Name</label>
+        <label for="br-name">Brand-Name</label>
         <input id="br-name" placeholder="Deine Brand">
-        <label>Was verkaufst du &amp; an wen?</label>
+        <label for="br-desc">Was verkaufst du &amp; an wen?</label>
         <textarea id="br-desc" placeholder="Beschreibe kurz dein Angebot, deine Zielgruppe und was dich besonders macht …"></textarea>
         <button class="btn btn-primary run-btn" onclick="runBrand()">⚡ Audit starten</button>
       </div>
@@ -623,17 +623,17 @@
       <div class="form">
         <h3>Content-Fabrik</h3>
         <div class="hint">Spuckt dir auf Knopfdruck mehrere fertige, postfähige Social-Posts aus — Hook, Caption &amp; Hashtags.</div>
-        <label>Produkt / Thema</label>
+        <label for="cf-topic">Produkt / Thema</label>
         <input id="cf-topic" placeholder="z.B. LED Hundehalsband, Posture Corrector, dein Content-Thema …">
-        <label>Plattform</label>
+        <label for="cf-platform">Plattform</label>
         <select id="cf-platform">
           <option>Instagram</option><option>TikTok</option><option>Facebook</option><option>LinkedIn</option>
         </select>
-        <label>Ton</label>
+        <label for="cf-tone">Ton</label>
         <select id="cf-tone">
           <option>Locker &amp; verkäuferisch</option><option>Witzig / Meme-artig</option><option>Professionell / seriös</option><option>Emotional / storytelling</option>
         </select>
-        <label>Anzahl Posts</label>
+        <label for="cf-count">Anzahl Posts</label>
         <select id="cf-count">
           <option value="3">3 Posts</option><option value="5" selected>5 Posts</option><option value="10">10 Posts</option>
         </select>
@@ -675,7 +675,7 @@ Was bauen wir heute? 🚀</div>
     </div>
     <div class="chat-input">
       <button class="icon-btn" id="mic-btn" onclick="toggleMic()" title="Sprachmemo aufnehmen" aria-label="Sprachmemo aufnehmen" aria-pressed="false">🎤</button>
-      <input id="chat-in" placeholder="Frag den Strategist irgendwas — oder sprich per 🎤 …" onkeydown="if(event.key==='Enter')sendChat()">
+      <input id="chat-in" aria-label="Nachricht an den Strategist" placeholder="Frag den Strategist irgendwas — oder sprich per 🎤 …" onkeydown="if(event.key==='Enter')sendChat()">
       <button class="icon-btn" id="tts-btn" onclick="toggleTTS()" title="Bot liest Antworten laut vor" aria-label="Antworten vorlesen" aria-pressed="false">🔊</button>
       <button class="btn btn-primary" onclick="sendChat()" aria-label="Nachricht senden">Senden ⚡</button>
     </div>
