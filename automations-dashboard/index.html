@@ -1359,6 +1359,25 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
+  // ---------- spark burst (click feedback) ----------
+  function sparkBurst(x, y, color) {
+    if (reduceMotion) return;
+    const count = 10;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:4px;height:4px;margin:-2px;border-radius:50%;background:${color};pointer-events:none;z-index:9999;box-shadow:0 0 6px ${color};`;
+      document.body.appendChild(p);
+      const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+      const dist = 34 + Math.random() * 36;
+      const dx = Math.cos(angle) * dist, dy = Math.sin(angle) * dist;
+      const anim = p.animate([
+        { transform: 'translate(0,0)', opacity: 1 },
+        { transform: `translate(${dx}px, ${dy}px)`, opacity: 0 }
+      ], { duration: 480 + Math.random() * 260, easing: 'cubic-bezier(.16,.8,.3,1)' });
+      anim.onfinish = () => p.remove();
+    }
+  }
+
   // ---------- shared focus-trap helper for modal-style overlays ----------
   function trapFocus(container, overlay) {
     const FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -1441,11 +1460,13 @@
 
   search.addEventListener('input', applyFilters);
   filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
       filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeFilter = btn.dataset.filter;
       applyFilters();
+      const accent = getComputedStyle(btn).getPropertyValue('--accent').trim() || '#6fe0ff';
+      sparkBurst(e.clientX, e.clientY, accent);
     });
   });
 
