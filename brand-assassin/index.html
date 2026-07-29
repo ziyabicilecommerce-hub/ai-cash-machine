@@ -673,10 +673,10 @@ Was bauen wir heute? 🚀</div>
       <span class="chip" onclick="quickAsk('Analysiere meine Konkurrenz und zeig mir 3 Wege wie ich mich abhebe')">🥊 Konkurrenz-Check</span>
     </div>
     <div class="chat-input">
-      <button class="icon-btn" id="mic-btn" onclick="toggleMic()" title="Sprachmemo aufnehmen">🎤</button>
+      <button class="icon-btn" id="mic-btn" onclick="toggleMic()" title="Sprachmemo aufnehmen" aria-label="Sprachmemo aufnehmen" aria-pressed="false">🎤</button>
       <input id="chat-in" placeholder="Frag den Strategist irgendwas — oder sprich per 🎤 …" onkeydown="if(event.key==='Enter')sendChat()">
-      <button class="icon-btn" id="tts-btn" onclick="toggleTTS()" title="Bot liest Antworten laut vor">🔊</button>
-      <button class="btn btn-primary" onclick="sendChat()">Senden ⚡</button>
+      <button class="icon-btn" id="tts-btn" onclick="toggleTTS()" title="Bot liest Antworten laut vor" aria-label="Antworten vorlesen" aria-pressed="false">🔊</button>
+      <button class="btn btn-primary" onclick="sendChat()" aria-label="Nachricht senden">Senden ⚡</button>
     </div>
   </div>
 </section>
@@ -1021,10 +1021,10 @@ function toggleMic() {
   recog.lang = 'de-DE';
   recog.interimResults = true;
   recog.continuous = false;
-  recog.onstart = () => { recOn = true; btn.classList.add('rec'); inp.placeholder = '🔴 Ich höre zu … sprich einfach!'; };
+  recog.onstart = () => { recOn = true; btn.classList.add('rec'); btn.setAttribute('aria-pressed', 'true'); inp.placeholder = '🔴 Ich höre zu … sprich einfach!'; };
   recog.onresult = e => { let t = ''; for (const r of e.results) t += r[0].transcript; inp.value = t; };
   recog.onend = () => {
-    recOn = false; btn.classList.remove('rec');
+    recOn = false; btn.classList.remove('rec'); btn.setAttribute('aria-pressed', 'false');
     inp.placeholder = 'Frag den Strategist irgendwas — oder sprich per 🎤 …';
     if (inp.value.trim()) sendChat();
   };
@@ -1034,7 +1034,9 @@ function toggleMic() {
 
 function toggleTTS() {
   ttsOn = !ttsOn;
-  document.getElementById('tts-btn').classList.toggle('on', ttsOn);
+  const btn = document.getElementById('tts-btn');
+  btn.classList.toggle('on', ttsOn);
+  btn.setAttribute('aria-pressed', String(ttsOn));
   if (!ttsOn && window.speechSynthesis) speechSynthesis.cancel();
   if (ttsOn) speak('Voice aktiviert. Ich lese dir ab jetzt alle Antworten vor.');
 }

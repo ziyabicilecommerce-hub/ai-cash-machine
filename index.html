@@ -604,8 +604,8 @@
                         <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
                     </div>
                     <input type="text" class="chat-input" id="chatInput" placeholder="Type to J.A.R.V.I.S..." autocomplete="off">
-                    <button class="mic-button" id="micButton" title="Voice">🎤</button>
-                    <button class="send-button" id="sendButton" title="Send">➤</button>
+                    <button class="mic-button" id="micButton" title="Voice" aria-label="Spracheingabe starten" aria-pressed="false">🎤</button>
+                    <button class="send-button" id="sendButton" title="Send" aria-label="Nachricht senden">➤</button>
                 </div>
             </div>
         </div>
@@ -1100,11 +1100,13 @@
             recognition.onstart = () => {
                 isListening = true;
                 micDot.classList.add('listening');
+                micButton.setAttribute('aria-pressed', 'true');
                 listeningLabel.textContent = 'HÖRT ZU...';
             };
             recognition.onend = () => {
                 isListening = false;
                 micDot.classList.remove('listening');
+                micButton.setAttribute('aria-pressed', 'false');
                 if (!isSpeaking) listeningLabel.textContent = 'HÖRT AUF "HEY JARVIS"';
             };
             recognition.onresult = (event) => {
@@ -1114,6 +1116,7 @@
             recognition.onerror = () => {
                 isListening = false;
                 micDot.classList.remove('listening');
+                micButton.setAttribute('aria-pressed', 'false');
             };
 
             micButton.addEventListener('click', () => {
