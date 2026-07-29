@@ -333,8 +333,10 @@
     position:absolute; top:16px; right:16px; width:28px; height:28px; border-radius:50%;
     background:rgba(111,224,255,0.08); border:1px solid rgba(111,224,255,0.2);
     display:flex; align-items:center; justify-content:center; cursor:pointer; color:#c9edff;
+    font: inherit; padding: 0; -webkit-appearance: none; appearance: none;
   }
   .modal-close:hover { background:rgba(111,224,255,0.18); }
+  .modal-close:focus-visible { outline: 2px solid #6fe0ff; outline-offset: 2px; }
   .modal-close .ic { width:14px; height:14px; }
   .modal-icon-badge {
     width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center;
@@ -389,8 +391,9 @@
     background: radial-gradient(160px 90px at 20% 0%, color-mix(in srgb, var(--accent, #6fe0ff) 20%, transparent), transparent 70%);
     opacity:0; transition: opacity .25s ease;
   }
-  .card:hover { transform: translateY(-4px) scale(1.015); border-color: color-mix(in srgb, var(--accent,#6fe0ff) 80%, rgba(111,224,255,0.2)); box-shadow: 0 16px 36px rgba(0,0,0,0.5), 0 0 32px color-mix(in srgb, var(--accent,#6fe0ff) 40%, transparent); }
-  .card:hover .card-glow { opacity:1; }
+  .card:hover, .card:focus-visible { transform: translateY(-4px) scale(1.015); border-color: color-mix(in srgb, var(--accent,#6fe0ff) 80%, rgba(111,224,255,0.2)); box-shadow: 0 16px 36px rgba(0,0,0,0.5), 0 0 32px color-mix(in srgb, var(--accent,#6fe0ff) 40%, transparent); }
+  .card:hover .card-glow, .card:focus-visible .card-glow { opacity:1; }
+  .card:focus-visible { outline: 2px solid var(--accent, #6fe0ff); outline-offset: 3px; }
 
   .card-top { display:flex; justify-content:space-between; align-items:center; }
   .num {
@@ -1331,7 +1334,7 @@
 
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box" id="modalBox">
-    <div class="modal-close" id="modalClose"><svg class="ic"><use href="#ic-x"/></svg></div>
+    <button class="modal-close" id="modalClose" aria-label="Schließen"><svg class="ic"><use href="#ic-x"/></svg></button>
     <div class="modal-icon-badge"><svg class="ic" id="modalIcon"></svg></div>
     <h2 id="modalTitle"></h2>
     <div class="modal-cat" id="modalCat"></div>
@@ -1344,6 +1347,24 @@
 <script>
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // ---------- shared focus-trap helper for modal-style overlays ----------
+  function trapFocus(container, overlay) {
+    const FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    function handleKeydown(e) {
+      if (e.key !== 'Tab' || !overlay.classList.contains('open')) return;
+      const focusable = Array.from(container.querySelectorAll(FOCUSABLE)).filter(el => el.offsetParent !== null);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    }
+    document.addEventListener('keydown', handleKeydown);
+  }
 
   // ---------- boot sequence (skips on repeat visits / reduced motion) ----------
   const bootOverlay = document.getElementById('bootOverlay');
@@ -1578,9 +1599,15 @@
   // ---------- command palette (Ctrl/Cmd+K, or "/") ----------
   (function initCmdk() {
     const overlay = document.getElementById('cmdkOverlay');
+    const cmdkBox = overlay.querySelector('.cmdk-box');
     const input = document.getElementById('cmdkInput');
     const results = document.getElementById('cmdkResults');
     let selIdx = 0, filtered = [];
+    let cmdkTrigger = null;
+    cmdkBox.setAttribute('role', 'dialog');
+    cmdkBox.setAttribute('aria-modal', 'true');
+    cmdkBox.setAttribute('aria-label', 'Automation-Schnellsuche');
+    trapFocus(cmdkBox, overlay);
 
     function render(q) {
       const query = q.trim().toLowerCase();
@@ -1600,12 +1627,16 @@
     }
 
     function open() {
+      cmdkTrigger = document.activeElement;
       overlay.classList.add('open');
       input.value = '';
       render('');
       setTimeout(() => input.focus(), 50);
     }
-    function close() { overlay.classList.remove('open'); }
+    function close() {
+      overlay.classList.remove('open');
+      if (cmdkTrigger && typeof cmdkTrigger.focus === 'function') cmdkTrigger.focus();
+    }
 
     window.addEventListener('keydown', (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -1657,29 +1688,51 @@
       'Kunden & Bindung': 'ic-heart', 'Content & Marketing': 'ic-megaphone', 'Meta Ads': 'ic-trend',
       'Bewertungen': 'ic-star', 'Lager & Ops': 'ic-box', 'Strategie & Reports': 'ic-compass',
     };
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    box.setAttribute('aria-labelledby', 'modalTitle');
+    let lastTrigger = null;
+    trapFocus(box, overlay);
+
+    function openModalFor(card) {
+      lastTrigger = card;
+      const accent = card.style.getPropertyValue('--accent');
+      const cat = card.dataset.cat;
+      const icon = iconMap[cat] || 'ic-compass';
+      box.style.setProperty('--accent', accent);
+      document.getElementById('modalIcon').innerHTML = `<use href="#${icon}"/>`;
+      document.getElementById('modalTitle').textContent = `${card.querySelector('.num').textContent} · ${card.querySelector('h3').textContent}`;
+      document.getElementById('modalCat').innerHTML = `<svg class="ic"><use href="#${icon}"/></svg>${cat}`;
+      document.getElementById('modalDesc').textContent = card.querySelector('.desc').textContent;
+      document.getElementById('modalSched').textContent = card.querySelector('.schedule').textContent.trim();
+      document.getElementById('modalActions').innerHTML = Array.from(card.querySelectorAll('.links a')).map(a => a.outerHTML).join('');
+      overlay.classList.add('open');
+      setTimeout(() => closeBtn.focus(), 50);
+    }
 
     cards.forEach(card => {
       card.style.cursor = 'pointer';
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', `${card.querySelector('.num').textContent} ${card.querySelector('h3').textContent} - Details öffnen`);
       card.addEventListener('click', (e) => {
         if (e.target.closest('a')) return;
-        const accent = card.style.getPropertyValue('--accent');
-        const cat = card.dataset.cat;
-        const icon = iconMap[cat] || 'ic-compass';
-        box.style.setProperty('--accent', accent);
-        document.getElementById('modalIcon').innerHTML = `<use href="#${icon}"/>`;
-        document.getElementById('modalTitle').textContent = `${card.querySelector('.num').textContent} · ${card.querySelector('h3').textContent}`;
-        document.getElementById('modalCat').innerHTML = `<svg class="ic"><use href="#${icon}"/></svg>${cat}`;
-        document.getElementById('modalDesc').textContent = card.querySelector('.desc').textContent;
-        document.getElementById('modalSched').textContent = card.querySelector('.schedule').textContent.trim();
-        document.getElementById('modalActions').innerHTML = Array.from(card.querySelectorAll('.links a')).map(a => a.outerHTML).join('');
-        overlay.classList.add('open');
+        openModalFor(card);
+      });
+      card.addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('a')) {
+          e.preventDefault();
+          openModalFor(card);
+        }
       });
     });
 
-    function close() { overlay.classList.remove('open'); }
+    function close() {
+      overlay.classList.remove('open');
+      if (lastTrigger) lastTrigger.focus();
+    }
     closeBtn.addEventListener('click', close);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
-    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) close(); });
   })();
 
   // ---------- scroll-reveal stagger for cards ----------
