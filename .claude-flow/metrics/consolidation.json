@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-22T18:42:45.731Z",
+  "timestamp": "2026-07-29T09:55:01.892Z",
   "distillationEnabled": true,
   "patternsConsolidated": 0,
   "memoryCleaned": 0,
@@ -12,5 +12,5 @@
   "namespaces": [],
   "dryRun": false,
   "corrupt": false,
-  "skipped": "better-sqlite3 unavailable"
+  "skipped": "target table episodes missing (agentdb schema not initialised)"
 }
