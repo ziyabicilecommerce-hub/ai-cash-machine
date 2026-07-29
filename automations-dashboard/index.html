@@ -385,6 +385,17 @@
     25% { box-shadow: 0 0 0 3px var(--accent,#6fe0ff), 0 0 40px var(--accent,#6fe0ff); }
   }
   .card.in-view { opacity:1; transform:translateY(0); }
+  .card::before {
+    content:'';
+    position:absolute; inset:0; z-index:5;
+    background: linear-gradient(115deg, transparent 42%, color-mix(in srgb, var(--accent,#6fe0ff) 65%, white 25%) 50%, transparent 58%);
+    mix-blend-mode: overlay;
+    transform: translateX(-160%);
+    opacity:0;
+    pointer-events:none;
+    transition: transform .8s cubic-bezier(.16,.8,.3,1), opacity .2s ease;
+  }
+  .card:hover::before, .card:focus-visible::before { transform: translateX(160%); opacity:1; }
   .card-glow {
     position:absolute; inset:0; z-index:-1;
     clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
