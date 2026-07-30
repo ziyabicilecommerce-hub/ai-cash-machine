@@ -284,7 +284,10 @@
 
   /* ---------- feature grid ---------- */
   .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
-  .feat{background:var(--panel);border:1px solid var(--line2);clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));padding:26px;transition:.25s;position:relative;overflow:hidden}
+  .feat{background:var(--panel);border:1px solid var(--line2);clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));padding:26px;position:relative;overflow:hidden;
+    opacity:0;transform:translateY(24px);
+    transition:border-color .25s,box-shadow .25s,transform .4s cubic-bezier(.16,.8,.3,1),opacity .4s ease}
+  .feat.in-view{opacity:1;transform:translateY(0)}
   .feat:hover{border-color:var(--line);transform:translateY(-4px);box-shadow:0 16px 36px rgba(0,0,0,.4), 0 0 26px rgba(52,245,162,.15)}
   .feat::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
     background:linear-gradient(115deg,transparent 42%,rgba(52,245,162,.5) 50%,transparent 58%);
@@ -972,6 +975,28 @@ async function callClaudeDirect(body) {
   };
   setTimeout(finish, 220 * lines.length + 500);
   bootOverlay.addEventListener('click', finish, { once: true });
+})();
+
+/* ============ SCROLL-REVEAL STAGGER FOR FEATURE GRID ============ */
+(function () {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const feats = document.querySelectorAll('.feat');
+  if (!feats.length) return;
+  if (reduceMotion) {
+    feats.forEach(f => f.classList.add('in-view'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const delay = Math.min(parseInt(el.dataset.i || 0, 10), 8) * 60;
+        setTimeout(() => el.classList.add('in-view'), delay);
+        io.unobserve(el);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  feats.forEach((f, i) => { f.dataset.i = i; io.observe(f); });
 })();
 
 /* ============ CURSOR SPOTLIGHT ============ */
