@@ -1,0 +1,210 @@
+<title>CASHMACHINE AI — Ein System. Kein Abo-Chaos mehr.</title>
+<style>
+  :root{
+    --bg:#04070c; --bg2:#070d16;
+    --panel:rgba(13,22,35,.72); --panel-solid:#0c1522;
+    --line:rgba(94,234,212,.16); --line2:rgba(255,255,255,.08);
+    --green:#34f5a2; --cyan:#3ddcff; --blue:#5b8cff; --amber:#ffc757; --red:#ff6b81;
+    --txt:#e8f1f8; --mut:#8fa3b8; --mut2:#5d7188;
+    --glow-g:0 0 24px rgba(52,245,162,.35);
+    --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--txt);font-family:var(--font);line-height:1.6;overflow-x:hidden}
+  ::selection{background:rgba(52,245,162,.3)}
+  .bgfx{position:fixed;inset:0;z-index:-2;background:
+    radial-gradient(1200px 800px at 80% -10%,rgba(61,220,255,.08),transparent 60%),
+    radial-gradient(1000px 700px at 10% 110%,rgba(52,245,162,.07),transparent 60%),var(--bg)}
+  .grid{position:fixed;inset:-2px;z-index:-1;
+    background-image:linear-gradient(rgba(94,234,212,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(94,234,212,.05) 1px,transparent 1px);
+    background-size:56px 56px;mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 30%,transparent 75%)}
+
+  .chamf{clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px))}
+  .chamf-sm{clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px);background:rgba(4,7,12,.75);backdrop-filter:blur(16px);border-bottom:1px solid var(--line2)}
+  .logo{font-family:var(--mono);font-weight:700;letter-spacing:.06em;font-size:15px}
+  .logo b{color:var(--green)}
+  .demo-badge{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--amber);
+    border:1px solid rgba(255,199,87,.4);padding:4px 10px;border-radius:20px}
+
+  header.hero{min-height:96svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:120px 20px 60px;max-width:900px;margin:0 auto}
+  .kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;
+    color:var(--green);border:1px solid var(--line);padding:6px 14px;border-radius:20px;margin-bottom:22px}
+  .kicker::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:var(--glow-g);animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.4;transform:scale(.8)}}
+  h1{font-size:clamp(32px,6vw,64px);font-weight:900;letter-spacing:-.02em;line-height:1.06;margin-bottom:20px}
+  h1 .accent{background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:17px;color:var(--mut);max-width:600px;margin:0 auto 34px}
+  .sub b{color:var(--txt)}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+  .btn{font-weight:700;font-size:14.5px;padding:14px 26px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:.2s}
+  .btn-primary{color:#04140c;background:linear-gradient(90deg,var(--green),var(--cyan));box-shadow:var(--glow-g)}
+  .btn-primary:hover{box-shadow:0 0 42px rgba(52,245,162,.6);transform:translateY(-2px)}
+  .btn-ghost{color:var(--txt);background:rgba(255,255,255,.04);border:1px solid var(--line2)}
+  .btn-ghost:hover{border-color:var(--line)}
+  .trust-row{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--mut2)}
+  .trust-row span{color:var(--green);font-weight:700}
+
+  section{padding:80px 20px;max-width:1080px;margin:0 auto}
+  .section-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--cyan);text-align:center;margin-bottom:10px}
+  h2{font-size:clamp(26px,4vw,40px);font-weight:800;text-align:center;margin-bottom:14px;letter-spacing:-.01em}
+  .section-sub{text-align:center;color:var(--mut);max-width:560px;margin:0 auto 46px;font-size:15px}
+
+  .pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:20px}
+  .pain{background:var(--panel);border:1px solid var(--line2);padding:22px}
+  .pain .x{color:var(--red);font-family:var(--mono);font-size:13px;margin-bottom:8px}
+  .pain p{font-size:14px;color:var(--mut)}
+
+  .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+  .pillar{background:var(--panel);border:1px solid var(--line2);padding:28px;position:relative;overflow:hidden;transition:.25s}
+  .pillar:hover{border-color:var(--line);transform:translateY(-4px);box-shadow:0 16px 36px rgba(0,0,0,.4)}
+  .pillar .tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mut2);margin-bottom:14px}
+  .pillar h3{font-size:19px;margin-bottom:10px}
+  .pillar p{font-size:13.5px;color:var(--mut);margin-bottom:16px}
+  .pillar ul{list-style:none;font-size:13px;color:var(--txt)}
+  .pillar li{padding:5px 0;padding-left:20px;position:relative}
+  .pillar li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700}
+  .pillar.p1{border-top:2px solid var(--cyan)}
+  .pillar.p2{border-top:2px solid var(--green)}
+  .pillar.p3{border-top:2px solid var(--blue)}
+
+  .offer-box{background:var(--panel-solid);border:1px solid var(--line);padding:40px clamp(20px,5vw,50px);position:relative}
+  .stack-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line2);font-size:14.5px}
+  .stack-row:last-of-type{border-bottom:none}
+  .stack-row b{color:var(--txt)}
+  .stack-row .val{color:var(--mut2);font-family:var(--mono);text-decoration:line-through}
+  .total-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:20px;padding-top:20px;border-top:1px dashed var(--line)}
+  .total-row .label{font-size:14px;color:var(--mut)}
+  .total-row .price{font-size:42px;font-weight:900;color:var(--green)}
+  .total-row .price em{font-size:16px;font-weight:600;color:var(--mut2);font-style:normal}
+  .demo-note{font-family:var(--mono);font-size:11px;color:var(--amber);text-align:center;margin-top:18px;
+    border:1px dashed rgba(255,199,87,.35);padding:8px 12px}
+
+  .faq{max-width:720px;margin:0 auto}
+  .faq-item{background:var(--panel);border:1px solid var(--line2);padding:18px 22px;margin-bottom:10px}
+  .faq-item b{display:block;margin-bottom:6px;font-size:14.5px}
+  .faq-item p{font-size:13.5px;color:var(--mut)}
+
+  .final-cta{text-align:center;padding:80px 20px}
+  .final-cta h2{margin-bottom:24px}
+
+  footer{border-top:1px solid var(--line2);padding:34px 20px;text-align:center;color:var(--mut2);font-size:12px;font-family:var(--mono)}
+  footer b{color:var(--green)}
+
+  @media(max-width:700px){.trust-row{flex-direction:column;gap:8px}}
+</style>
+
+<div class="bgfx"></div>
+<div class="grid"></div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;AI</b></div>
+  <div class="demo-badge">DEMO-PITCH · Platzhalterzahlen</div>
+</nav>
+
+<header class="hero">
+  <div class="kicker">3-IN-1 AI SUITE · GITHUB-NATIV · 0€ INFRASTRUKTUR</div>
+  <h1>Dein Shop läuft.<br><span class="accent">Auch wenn du schläfst.</span></h1>
+  <p class="sub">Ein Sprachassistent, ein Marketing-Operator und <b>46 Automationen</b>, die sonst 5 verschiedene teure Tools jonglieren würden — ersetzt durch ein System, das komplett auf GitHub Actions läuft. Kein eigener Server, kein n8n-Abo.</p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="#offer">⚡ Preise ansehen →</a>
+    <a class="btn btn-ghost" href="#pillars">▶ Was es kann</a>
+  </div>
+  <div class="trust-row">
+    <div><span>46</span> Automationen</div>
+    <div><span>0€</span> n8n-Kosten</div>
+    <div><span>24/7</span> Cron auf GitHub</div>
+    <div><span>3</span> Apps, ein System</div>
+  </div>
+</header>
+
+<section>
+  <div class="section-kicker">DAS PROBLEM</div>
+  <h2>Du zahlst für Chaos, nicht für Ergebnisse</h2>
+  <p class="section-sub">Die meisten Solo-Gründer jonglieren fünf Abos gleichzeitig — und trotzdem bleibt die Hälfte der Arbeit an ihnen hängen.</p>
+  <div class="pain-grid">
+    <div class="pain chamf-sm"><div class="x">✕ n8n-Abo</div><p>Monatliche Kosten nur fürs Verknüpfen von Tools, die eigentlich zusammengehören.</p></div>
+    <div class="pain chamf-sm"><div class="x">✕ Kein Überblick</div><p>Umsatz, Bestellungen, Kundenservice — alles in getrennten Tabs, nirgendwo zusammengeführt.</p></div>
+    <div class="pain chamf-sm"><div class="x">✕ Manuelle Handarbeit</div><p>Content, Antworten, Reports — jede Woche von Hand, statt dass es einfach passiert.</p></div>
+  </div>
+</section>
+
+<section id="pillars">
+  <div class="section-kicker">DIE LÖSUNG</div>
+  <h2>Drei Systeme. Eine Suite.</h2>
+  <p class="section-sub">Kein Feature-Wildwuchs — drei klar abgegrenzte Werkzeuge, die zusammen dein ganzes Business abdecken.</p>
+  <div class="pillars">
+    <div class="pillar chamf p1">
+      <div class="tag">01 · VOICE-HUD</div>
+      <h3>Jarvis</h3>
+      <p>Dein persönlicher Sprachassistent mit Live-Business-Übersicht — frag einfach, statt zu suchen.</p>
+      <ul>
+        <li>Sprachsteuerung per Mikrofon</li>
+        <li>Live-Zahlen auf einen Blick</li>
+        <li>Direkter Zugriff auf die anderen 2 Apps</li>
+      </ul>
+    </div>
+    <div class="pillar chamf p2">
+      <div class="tag">02 · MARKETING-OPERATOR</div>
+      <h3>Brand Assassin</h3>
+      <p>Product-Scans, Creative-Checks, Markt-Analysen und ein Strategist-Chat — mit echten AI-Scores statt Bauchgefühl.</p>
+      <ul>
+        <li>Produkt- &amp; Marktanalyse in Sekunden</li>
+        <li>Konkreter Launch-Plan statt vager Tipps</li>
+        <li>24/7 Marketing-Co-Pilot zum Chatten</li>
+      </ul>
+    </div>
+    <div class="pillar chamf p3">
+      <div class="tag">03 · AUTOMATIONS</div>
+      <h3>Control Center</h3>
+      <p>46 Automationen für Kundenservice, Content, Bewertungen, Winback und mehr — laufen 24/7 auf GitHub Actions.</p>
+      <ul>
+        <li>0€ Infrastruktur-Kosten</li>
+        <li>Läuft komplett ohne n8n</li>
+        <li>Jede Automation einzeln an/aus schaltbar</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="offer">
+  <div class="section-kicker">DAS ANGEBOT</div>
+  <h2>Was du bekommst</h2>
+  <div class="offer-box chamf">
+    <div class="stack-row"><b>Jarvis Voice-HUD</b><span class="val">Wert: 79€/Mo</span></div>
+    <div class="stack-row"><b>Brand Assassin Operator Suite</b><span class="val">Wert: 129€/Mo</span></div>
+    <div class="stack-row"><b>46-Automation Control Center</b><span class="val">Wert: 149€/Mo</span></div>
+    <div class="stack-row"><b>Setup-Guide + Secrets-Doku</b><span class="val">Wert: 39€</span></div>
+    <div class="total-row">
+      <div class="label">Gesamtwert 396€ — heute für</div>
+      <div class="price">49€<em>/Monat</em></div>
+    </div>
+  </div>
+  <div class="demo-note">⚠ DEMO-ZAHLEN — Preis, Werte und Angebot sind Platzhalter für dieses Pitch-Beispiel, keine echten Konditionen.</div>
+</section>
+
+<section>
+  <div class="section-kicker">FRAGEN</div>
+  <h2>Bevor du fragst</h2>
+  <div class="faq">
+    <div class="faq-item chamf-sm"><b>Brauche ich eigene Server?</b><p>Nein. Alles läuft auf GitHub Pages (die Apps) und GitHub Actions (die Automationen) — beides kostenlos in den Standard-Limits.</p></div>
+    <div class="faq-item chamf-sm"><b>Muss ich programmieren können?</b><p>Nein. Secrets einmal in den GitHub-Repo-Einstellungen eintragen, danach läuft alles automatisch.</p></div>
+    <div class="faq-item chamf-sm"><b>Was, wenn ich nur einen Teil will?</b><p>Jede der 46 Automationen ist einzeln an- und abschaltbar — du nutzt nur, was du brauchst.</p></div>
+  </div>
+</section>
+
+<div class="final-cta">
+  <h2>Bereit, das Chaos zu beenden?</h2>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="#offer">⚡ Jetzt starten</a>
+  </div>
+</div>
+
+<footer>
+  <b>CASHMACHINE AI</b> · Demo-Pitch erstellt mit der Legendary-Engine-Struktur, Copy handgeschrieben statt Template-Mashup
+</footer>
