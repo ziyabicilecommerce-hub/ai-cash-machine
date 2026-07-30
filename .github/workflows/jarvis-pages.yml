@@ -8,6 +8,7 @@ on:
       - 'jarvis/**'
       - 'brand-assassin/**'
       - 'automations-dashboard/**'
+      - 'finance-cockpit/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
 
@@ -37,6 +38,7 @@ jobs:
           cp -r jarvis _site/jarvis
           cp -r brand-assassin _site/brand-assassin
           cp -r automations-dashboard _site/automations-dashboard
+          cp -r finance-cockpit _site/finance-cockpit
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
