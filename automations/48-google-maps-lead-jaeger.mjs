@@ -15,6 +15,9 @@ const STATE_NAME = 'lead-jaeger-state';
 const MAX_GEPRUEFTE_HISTORIE = 5000;
 const FETCH_TIMEOUT_MS = 8000;
 const PAGES_BASE_URL = 'https://ziyabicilecommerce-hub.github.io/ai-cash-machine';
+// WhatsApp Cloud API begrenzt Text-Nachrichten auf 4096 Zeichen - mit
+// Sicherheitsabstand für den Kopftext splitten wir vorher in mehrere Nachrichten.
+const WHATSAPP_MAX_CHARS = 3500;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PREVIEW_DIR = join(__dirname, '..', 'lead-previews');
@@ -49,6 +52,24 @@ function erkenneUnechteWebsite(url) {
   } catch {
     return null;
   }
+}
+
+function chunkZeilen(zeilen, maxChars) {
+  const chunks = [];
+  let current = [];
+  let currentLength = 0;
+  for (const zeile of zeilen) {
+    const zusatz = zeile.length + 2;
+    if (current.length && currentLength + zusatz > maxChars) {
+      chunks.push(current);
+      current = [];
+      currentLength = 0;
+    }
+    current.push(zeile);
+    currentLength += zusatz;
+  }
+  if (current.length) chunks.push(current);
+  return chunks;
 }
 
 async function checkWebsiteQualitaet(url) {
@@ -149,8 +170,13 @@ async function main() {
     return teile.join('\n');
   });
 
-  const nachricht = `🎯 ${leads.length} neue Website-Verkaufs-Leads:\n\n${zeilen.join('\n\n')}`;
-  await notifyWhatsapp(nachricht);
+  const chunks = chunkZeilen(zeilen, WHATSAPP_MAX_CHARS);
+  for (let i = 0; i < chunks.length; i++) {
+    const kopf = chunks.length > 1
+      ? `🎯 ${leads.length} neue Website-Verkaufs-Leads (Teil ${i + 1}/${chunks.length}):`
+      : `🎯 ${leads.length} neue Website-Verkaufs-Leads:`;
+    await notifyWhatsapp(`${kopf}\n\n${chunks[i].join('\n\n')}`);
+  }
 
   console.log(`[48-lead-jaeger] ${leads.length} neue Leads per WhatsApp verschickt.`);
 }
