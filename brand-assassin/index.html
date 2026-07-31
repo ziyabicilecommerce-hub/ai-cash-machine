@@ -383,6 +383,11 @@
     width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;
     display:flex;align-items:center;justify-content:center}
   .key-gear:hover{border-color:var(--green);background:rgba(52,245,162,.1)}
+  .usage-badge{position:fixed;bottom:14px;right:16px;z-index:40;font-family:var(--mono);font-size:10px;
+    letter-spacing:.04em;color:var(--mut2);background:rgba(4,7,12,.75);border:1px solid var(--line2);
+    padding:5px 10px;pointer-events:none;backdrop-filter:blur(4px)}
+  .usage-badge.warn{color:var(--amber);border-color:rgba(255,199,87,.35)}
+  @media(max-width:760px){.usage-badge{display:none}}
 </style>
 </head>
 <body>
@@ -404,6 +409,7 @@
 <div class="bgfx"><div class="grid"></div><div class="scanline"></div></div>
 <div class="spotlight" id="spotlight"></div>
 <div class="crt-flicker"></div>
+<div class="usage-badge" id="usageBadge">Heute: 0 Anfragen · ~0 Tokens</div>
 
 <nav>
   <div class="logo"><span class="dot"></span>CASHMACHINE<b>&nbsp;AI</b></div>
@@ -900,8 +906,38 @@ async function callClaudeDirect(body) {
     const err = await res.json().catch(() => ({}));
     throw new Error('Engine-Fehler: ' + (err.error?.message || res.status));
   }
-  return res.json();
+  const data = await res.json();
+  if (data.usage) trackTokenUsage(data.usage);
+  return data;
 }
+
+/* ============ TOKEN USAGE TRACKER ============ */
+const USAGE_STORAGE = 'cmx_token_usage';
+const USAGE_WARN_THRESHOLD = 150000;
+function todayKey() { return new Date().toISOString().slice(0, 10); }
+function getUsageToday() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(USAGE_STORAGE) || '{}');
+    if (stored.date !== todayKey()) return { date: todayKey(), requests: 0, tokens: 0 };
+    return stored;
+  } catch { return { date: todayKey(), requests: 0, tokens: 0 }; }
+}
+function trackTokenUsage(usage) {
+  const today = getUsageToday();
+  today.requests += 1;
+  today.tokens += (usage.input_tokens || 0) + (usage.output_tokens || 0);
+  localStorage.setItem(USAGE_STORAGE, JSON.stringify(today));
+  renderUsageBadge(today);
+}
+function renderUsageBadge(today) {
+  const badge = document.getElementById('usageBadge');
+  if (!badge) return;
+  today = today || getUsageToday();
+  badge.textContent = `Heute: ${today.requests} Anfragen · ~${today.tokens.toLocaleString('de-DE')} Tokens`;
+  badge.classList.toggle('warn', today.tokens >= USAGE_WARN_THRESHOLD);
+  badge.title = today.tokens >= USAGE_WARN_THRESHOLD ? 'Hoher Verbrauch heute — dein eigener API-Key wird stärker belastet.' : '';
+}
+renderUsageBadge();
 
 /* ============ KONAMI EASTER EGG: matrix rain override ============ */
 (function () {

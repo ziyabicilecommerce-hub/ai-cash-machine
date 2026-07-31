@@ -143,6 +143,20 @@
             margin-top: 2px;
         }
 
+        .usage-badge {
+            font-size: 8px;
+            letter-spacing: 1px;
+            color: rgba(150,225,255,0.4);
+            font-family: 'Share Tech Mono', monospace;
+            text-align: right;
+        }
+        .usage-badge.warn {
+            color: #ffb066;
+        }
+        @media (max-width: 480px) {
+            .usage-badge { display: none; }
+        }
+
         .map-panel {
             position: absolute;
             top: 130px; left: 36px;
@@ -667,6 +681,7 @@
             </div>
         </div>
         <div class="mood-label" id="moodLabel" style="position:absolute;top:70px;right:36px;">MOOD: NEUTRAL</div>
+        <div class="usage-badge" id="usageBadge" style="position:absolute;top:86px;right:36px;">Heute: 0 Anfragen · ~0 Tokens</div>
 
         <div class="map-panel">
             <div class="map-panel-title">GLOBAL OPS MAP</div>
@@ -831,8 +846,38 @@
                 throw new Error('invalid_key');
             }
             if (!response.ok) throw new Error('api_error');
-            return response.json();
+            const data = await response.json();
+            if (data.usage) trackTokenUsage(data.usage);
+            return data;
         }
+
+        // ===== TOKEN USAGE TRACKER =====
+        const USAGE_STORAGE = 'cmx_token_usage';
+        const USAGE_WARN_THRESHOLD = 150000;
+        function todayKey() { return new Date().toISOString().slice(0, 10); }
+        function getUsageToday() {
+            try {
+                const stored = JSON.parse(localStorage.getItem(USAGE_STORAGE) || '{}');
+                if (stored.date !== todayKey()) return { date: todayKey(), requests: 0, tokens: 0 };
+                return stored;
+            } catch { return { date: todayKey(), requests: 0, tokens: 0 }; }
+        }
+        function trackTokenUsage(usage) {
+            const today = getUsageToday();
+            today.requests += 1;
+            today.tokens += (usage.input_tokens || 0) + (usage.output_tokens || 0);
+            localStorage.setItem(USAGE_STORAGE, JSON.stringify(today));
+            renderUsageBadge(today);
+        }
+        function renderUsageBadge(today) {
+            const badge = document.getElementById('usageBadge');
+            if (!badge) return;
+            today = today || getUsageToday();
+            badge.textContent = `Heute: ${today.requests} Anfragen · ~${today.tokens.toLocaleString('de-DE')} Tokens`;
+            badge.classList.toggle('warn', today.tokens >= USAGE_WARN_THRESHOLD);
+            badge.title = today.tokens >= USAGE_WARN_THRESHOLD ? 'Hoher Verbrauch heute — dein eigener API-Key wird stärker belastet.' : '';
+        }
+        renderUsageBadge();
 
         // ===== SPARK BURST (click feedback) =====
         const sparkReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
