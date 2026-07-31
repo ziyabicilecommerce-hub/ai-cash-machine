@@ -20,6 +20,9 @@ n8n-Subscription nötig.
 - Zustand, der sich n8n über `$getWorkflowStaticData` gemerkt hat (z.B. "diesen
   Kunden schon gefragt"), liegt jetzt in `automations/state/*.json`. Der
   Runner committet Änderungen daran automatisch zurück ins Repo.
+- `01-gewinn-radar.mjs` schreibt zusätzlich einen rollierenden 90-Tage-Verlauf
+  nach `finance-cockpit/data.json` — das speist die **Finance Cockpit**-App
+  (`finance-cockpit/index.html`) direkt, ohne API-Key oder Server.
 - `TEST_MODE=ja` (siehe Secrets unten) schickt alle Kunden-Mails an
   `OWNER_EMAIL` mit `[TEST]`-Betreff, statt an echte Kunden — zum Testen ohne
   Risiko.
@@ -100,7 +103,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
-| 01 | Gewinn-Radar | täglich 08:00 | tägliche Gewinn-/Umsatz-Kennzahlen |
+| 01 | Gewinn-Radar | täglich 08:00 | tägliche Gewinn-/Umsatz-Kennzahlen, speist auch Finance Cockpit |
 | 02 | KI-Kundenservice | alle 10 Min | IMAP-Postfach lesen, Claude antwortet, Eskalation an Telegram |
 | 04 | Bewertungs-Magnet | täglich 10:00 | fragt zufriedene Käufer nach Bewertungen |
 | 05 | Winback-Maschine | täglich 11:00 | reaktiviert inaktive Kunden |
