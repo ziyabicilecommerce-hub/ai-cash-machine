@@ -9,6 +9,7 @@ on:
       - 'brand-assassin/**'
       - 'automations-dashboard/**'
       - 'finance-cockpit/**'
+      - 'oracle/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
 
@@ -39,6 +40,7 @@ jobs:
           cp -r brand-assassin _site/brand-assassin
           cp -r automations-dashboard _site/automations-dashboard
           cp -r finance-cockpit _site/finance-cockpit
+          cp -r oracle _site/oracle
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
