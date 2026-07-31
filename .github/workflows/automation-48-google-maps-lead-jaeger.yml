@@ -1,0 +1,13 @@
+name: "48 · Google-Maps-Lead-Jäger"
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/48-google-maps-lead-jaeger.mjs
+    secrets: inherit
