@@ -27,6 +27,30 @@ function branchAusSuchbegriff(begriff) {
   return begriff.split(/\s+in\s+/i)[0].trim() || 'Unternehmen';
 }
 
+// Google Places trägt bei vielen Kleinunternehmen als "website" nur eine
+// Social-Media-Seite oder einen kostenlosen Baukasten-Auftritt ein - das ist
+// keine echte eigene Website und damit trotzdem ein Lead.
+const KEINE_ECHTE_WEBSITE_HOSTS = {
+  'facebook.com': 'Facebook-Seite',
+  'instagram.com': 'Instagram-Profil',
+  'business.site': 'kostenloser Google Business Site',
+  'linktr.ee': 'Linktree-Seite',
+  'wa.me': 'WhatsApp-Link',
+  'g.page': 'Google-Maps-Kurzlink',
+};
+
+function erkenneUnechteWebsite(url) {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '');
+    for (const [domain, label] of Object.entries(KEINE_ECHTE_WEBSITE_HOSTS)) {
+      if (host === domain || host.endsWith(`.${domain}`)) return label;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 async function checkWebsiteQualitaet(url) {
   try {
     const controller = new AbortController();
@@ -73,8 +97,12 @@ async function main() {
       const details = await getPlaceDetails(ort.place_id);
       let grund = null;
 
+      const unechteWebsite = details.website ? erkenneUnechteWebsite(details.website) : null;
+
       if (!details.website) {
         grund = 'keine Website';
+      } else if (unechteWebsite) {
+        grund = `keine echte Website (nur ${unechteWebsite})`;
       } else {
         const qualitaetsGrund = await checkWebsiteQualitaet(details.website);
         if (qualitaetsGrund) grund = `schlechte Website (${qualitaetsGrund})`;
