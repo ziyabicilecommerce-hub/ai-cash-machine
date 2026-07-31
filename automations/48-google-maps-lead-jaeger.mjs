@@ -2,17 +2,29 @@
 // Neu, kein n8n-Workflow · Zeitplan: täglich, siehe automation-48-google-maps-lead-jaeger.yml
 // Sucht per Google Places nach Firmen, prüft ob eine Website fehlt oder schlecht ist,
 // und schickt neue Treffer per WhatsApp - Kontaktaufnahme übernimmt der Nutzer selbst.
+import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { searchPlaces, getPlaceDetails } from './lib/googlePlaces.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { loadState, saveState } from './lib/state.mjs';
+import { buildLeadPreviewHtml, slugifyLead } from './lib/leadPreview.mjs';
 
 const STATE_NAME = 'lead-jaeger-state';
 const MAX_GESENDETE_HISTORIE = 500;
 const FETCH_TIMEOUT_MS = 8000;
+const PAGES_BASE_URL = 'https://ziyabicilecommerce-hub.github.io/ai-cash-machine';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const PREVIEW_DIR = join(__dirname, '..', 'lead-previews');
 
 function parseSuchbegriffe() {
   return config.LEAD_SUCHBEGRIFFE.split(',').map((s) => s.trim()).filter(Boolean);
+}
+
+function branchAusSuchbegriff(begriff) {
+  return begriff.split(/\s+in\s+/i)[0].trim() || 'Unternehmen';
 }
 
 async function checkWebsiteQualitaet(url) {
@@ -51,6 +63,7 @@ async function main() {
 
   for (const begriff of suchbegriffe) {
     if (leads.length >= maxProLauf) break;
+    const branche = branchAusSuchbegriff(begriff);
     const treffer = await searchPlaces(begriff);
 
     for (const ort of treffer) {
@@ -73,8 +86,12 @@ async function main() {
         name: details.name || ort.name || 'Unbekannt',
         adresse: details.formatted_address || ort.formatted_address || '',
         telefon: details.formatted_phone_number || '',
+        bewertung: details.rating || null,
+        bewertungenAnzahl: details.user_ratings_total || 0,
+        branche,
         grund,
         mapsUrl: details.url || '',
+        placeId: ort.place_id,
       });
       bereitsGesendet.add(ort.place_id);
     }
@@ -85,10 +102,18 @@ async function main() {
     return;
   }
 
+  if (!existsSync(PREVIEW_DIR)) mkdirSync(PREVIEW_DIR, { recursive: true });
+  for (const lead of leads) {
+    const slug = slugifyLead(lead.name, lead.placeId);
+    writeFileSync(join(PREVIEW_DIR, `${slug}.html`), buildLeadPreviewHtml(lead));
+    lead.previewUrl = `${PAGES_BASE_URL}/lead-previews/${slug}.html`;
+  }
+
   const zeilen = leads.map((l, i) => {
     const teile = [`${i + 1}. *${l.name}*`, l.grund];
     if (l.adresse) teile.push(l.adresse);
     if (l.telefon) teile.push(`Tel: ${l.telefon}`);
+    teile.push(`Website-Entwurf: ${l.previewUrl}`);
     if (l.mapsUrl) teile.push(l.mapsUrl);
     return teile.join('\n');
   });

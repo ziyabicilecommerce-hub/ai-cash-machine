@@ -88,6 +88,13 @@ sein). Ohne `WHATSAPP_ACCESS_TOKEN`/`WHATSAPP_PHONE_NUMBER_ID`/`WHATSAPP_TO_NUMB
 wird die Nachricht nur geloggt, kein Fehler. Ohne `LEAD_SUCHBEGRIFFE` läuft die
 Automation gar nicht erst los.
 
+Für jeden gefundenen Lead wird zusätzlich ein kleiner Website-Entwurf generiert
+(`lead-previews/<slug>.html`, mit Name/Branche/Adresse/Telefon/Bewertung
+befüllt) und live über GitHub Pages ausgeliefert
+(`https://ziyabicilecommerce-hub.github.io/ai-cash-machine/lead-previews/...`).
+Der Link steht direkt in der WhatsApp-Nachricht — so hast du beim Anschreiben
+schon etwas Vorzeigbares statt einer kalten Anfrage.
+
 **Geschäfts-Schwellwerte / Rabattcodes** (alle mit funktionierenden Defaults,
 nur bei Bedarf überschreiben):
 `VIP_UMSATZ_SCHWELLE`, `VIP_BESTELLUNGEN_SCHWELLE`, `VIP_RABATT_CODE`,
