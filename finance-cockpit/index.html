@@ -91,6 +91,10 @@
   @keyframes glitchTop { 0%,92%,100%{clip-path:inset(0 0 100% 0);opacity:0} 93%{clip-path:inset(10% 0 60% 0);opacity:.8;transform:translateX(-2px)} 95%{clip-path:inset(55% 0 15% 0);opacity:.8;transform:translateX(2px)} 97%{clip-path:inset(20% 0 70% 0);opacity:.6;transform:translateX(-1px)} }
   @keyframes glitchBot { 0%,90%,100%{clip-path:inset(100% 0 0 0);opacity:0} 91%{clip-path:inset(70% 0 5% 0);opacity:.7;transform:translateX(2px)} 94%{clip-path:inset(30% 0 50% 0);opacity:.7;transform:translateX(-2px)} 96%{clip-path:inset(80% 0 2% 0);opacity:.5;transform:translateX(1px)} }
   .sub { font-size:15px; color:var(--mut); max-width:560px; }
+  .last-updated { font-family:var(--mono); font-size:11.5px; color:var(--mut2); margin-top:18px; }
+  .last-updated.stale { color:var(--red); }
+  .last-updated .dot { display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:6px; background:var(--green); }
+  .last-updated.stale .dot { background:var(--red); }
 
   section { padding:50px 20px; max-width:1080px; margin:0 auto; }
   .section-kicker { font-family:var(--mono); font-size:11px; letter-spacing:.16em; color:var(--cyan); text-align:center; margin-bottom:10px; }
@@ -193,6 +197,7 @@
   <div class="kicker">LIVE AUS GEWINN-RADAR · TÄGLICH 08:00 UHR</div>
   <h1 class="glitch" data-text="FINANCE COCKPIT">FINANCE COCKPIT</h1>
   <p class="sub">Umsatz, Bestellungen und geschätzter Gewinn — direkt aus den echten Shopify-Zahlen, jeden Tag automatisch fortgeschrieben. Kein manuelles Reporting.</p>
+  <div id="lastUpdated" class="last-updated" style="display:none"></div>
 </header>
 
 <section id="content">
@@ -330,6 +335,19 @@
       if (p < 1) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
+  }
+
+  function renderLastUpdated(updatedAt) {
+    const el = document.getElementById('lastUpdated');
+    if (!updatedAt) return;
+    const d = new Date(updatedAt);
+    if (isNaN(d.getTime())) return;
+    const ageHours = (Date.now() - d.getTime()) / 3600000;
+    const isStale = ageHours > 36;
+    const dateStr = d.toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    el.innerHTML = `<span class="dot"></span>Zuletzt aktualisiert: ${dateStr}${isStale ? ' — läuft seit über 36h nicht mehr, Automation prüfen' : ''}`;
+    el.classList.toggle('stale', isStale);
+    el.style.display = 'block';
   }
 
   function renderStats(history) {
@@ -542,6 +560,7 @@
       if (!history.length) throw new Error('empty history');
       document.getElementById('dataContent').style.display = 'block';
       document.getElementById('historyDays').textContent = history.length;
+      renderLastUpdated(data.updatedAt);
       renderStats(history);
       renderChart(history);
       renderTable(history);
