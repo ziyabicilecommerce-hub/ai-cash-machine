@@ -12,7 +12,7 @@ import { loadState, saveState } from './lib/state.mjs';
 import { buildLeadPreviewHtml, slugifyLead } from './lib/leadPreview.mjs';
 
 const STATE_NAME = 'lead-jaeger-state';
-const MAX_GESENDETE_HISTORIE = 500;
+const MAX_GEPRUEFTE_HISTORIE = 5000;
 const FETCH_TIMEOUT_MS = 8000;
 const PAGES_BASE_URL = 'https://ziyabicilecommerce-hub.github.io/ai-cash-machine';
 
@@ -80,7 +80,7 @@ async function main() {
   }
 
   const state = loadState(STATE_NAME);
-  const bereitsGesendet = new Set(state.gesendet || []);
+  const bereitsGeprueft = new Set(state.geprueft || []);
   const maxProLauf = parseInt(config.LEAD_MAX_PRO_LAUF, 10) || 15;
 
   const leads = [];
@@ -92,9 +92,10 @@ async function main() {
 
     for (const ort of treffer) {
       if (leads.length >= maxProLauf) break;
-      if (!ort.place_id || bereitsGesendet.has(ort.place_id)) continue;
+      if (!ort.place_id || bereitsGeprueft.has(ort.place_id)) continue;
 
       const details = await getPlaceDetails(ort.place_id);
+      bereitsGeprueft.add(ort.place_id);
       let grund = null;
 
       const unechteWebsite = details.website ? erkenneUnechteWebsite(details.website) : null;
@@ -121,9 +122,11 @@ async function main() {
         mapsUrl: details.url || '',
         placeId: ort.place_id,
       });
-      bereitsGesendet.add(ort.place_id);
     }
   }
+
+  const historie = [...bereitsGeprueft].slice(-MAX_GEPRUEFTE_HISTORIE);
+  saveState(STATE_NAME, { geprueft: historie });
 
   if (!leads.length) {
     console.log('[48-lead-jaeger] Keine neuen Leads gefunden.');
@@ -148,9 +151,6 @@ async function main() {
 
   const nachricht = `🎯 ${leads.length} neue Website-Verkaufs-Leads:\n\n${zeilen.join('\n\n')}`;
   await notifyWhatsapp(nachricht);
-
-  const historie = [...bereitsGesendet].slice(-MAX_GESENDETE_HISTORIE);
-  saveState(STATE_NAME, { gesendet: historie });
 
   console.log(`[48-lead-jaeger] ${leads.length} neue Leads per WhatsApp verschickt.`);
 }
