@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE CLOSER</title>
+<meta name="description" content="AI-Verkaufstrainer — pitche live gegen einen simulierten, skeptischen Kleinunternehmer und bekomm danach Score + konkretes Coaching von der KI.">
+<meta property="og:title" content="CASHMACHINE CLOSER">
+<meta property="og:description" content="Übe deinen Website-Verkaufs-Pitch gegen einen echten Einwand-Profi.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%2314060a%27/%3E%3Cpath%20d%3D%27M18%2034l10%2010%2018-22%27%20fill%3D%27none%27%20stroke%3D%27%23ff3b5c%27%20stroke-width%3D%275%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27/%3E%3C/svg%3E">
+<meta name="twitter:card" content="summary">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%2314060a%27/%3E%3Cpath%20d%3D%27M18%2034l10%2010%2018-22%27%20fill%3D%27none%27%20stroke%3D%27%23ff3b5c%27%20stroke-width%3D%275%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #14060a; --panel: rgba(45,16,22,.5); --panel-solid: #200a0f;
+    --crimson: #ff3b5c; --cyan: #6fe0ff; --green: #34f5a2; --amber: #ffc757;
+    --line: rgba(255,59,92,.22); --line2: rgba(255,255,255,.07);
+    --txt: #fbeef1; --mut: rgba(245,220,225,.62); --mut2: rgba(245,220,225,.4);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+  ::selection { background:rgba(255,59,92,.3); }
+
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(255,59,92,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,59,92,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 30%,transparent 75%);
+    animation:gridDrift 24s linear infinite; }
+  @keyframes gridDrift { to { background-position:56px 56px; } }
+  .spotlight { position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:radial-gradient(560px circle at var(--mx,50%) var(--my,20%),rgba(255,59,92,.08),transparent 62%);
+    transition:background .08s linear; }
+  .crt-flicker { position:fixed; inset:0; z-index:90; pointer-events:none; background:#000; opacity:0;
+    animation:crtFlicker 6.5s infinite steps(1); }
+  @keyframes crtFlicker { 0%,96%,100%{opacity:0} 96.4%{opacity:.05} 96.8%{opacity:0} 97.6%{opacity:.08} 98%{opacity:0} }
+
+  @media(prefers-reduced-motion:reduce){ *{animation-duration:.001ms!important;animation-iteration-count:1!important} }
+
+  /* ---------- intro ---------- */
+  .intro-overlay { position:fixed; inset:0; z-index:300; background:#000;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono);
+    transition:opacity .6s ease, visibility .6s ease; }
+  .intro-overlay.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+  .intro-lines { width:min(600px,90vw); }
+  .intro-line { font-size:14px; color:var(--crimson); opacity:0; margin-bottom:10px; letter-spacing:.04em; min-height:1.4em; white-space:pre; }
+  .intro-line.show { opacity:1; }
+  .intro-cursor { display:inline-block; width:8px; height:14px; background:var(--crimson); margin-left:2px; animation:blink .8s steps(1) infinite; vertical-align:-2px; }
+  @keyframes blink { 50%{opacity:0} }
+
+  /* ---------- konami easter egg ---------- */
+  .override-overlay { position:fixed; inset:0; z-index:9998; background:#000;
+    display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .4s ease; }
+  .override-overlay.show { opacity:1; }
+  .override-overlay canvas { position:absolute; inset:0; }
+  .override-text { position:relative; font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(28px,6vw,64px);
+    letter-spacing:4px; color:var(--crimson); text-shadow:0 0 20px var(--crimson),0 0 60px var(--crimson); animation:overridePulse 1s ease-in-out infinite; }
+  @keyframes overridePulse { 0%,100%{opacity:1} 50%{opacity:.55} }
+
+  /* ---------- API key modal ---------- */
+  .key-modal-overlay { position:fixed; inset:0; z-index:600; background:rgba(20,6,10,.85);
+    display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .25s ease, visibility .25s ease; }
+  .key-modal-overlay.open { opacity:1; visibility:visible; pointer-events:auto; }
+  .key-modal { width:min(420px,90vw); background:#1a0810; border:1px solid var(--line);
+    box-shadow:0 0 40px rgba(255,59,92,.18); clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px)); padding:24px; }
+  .key-modal h3 { color:var(--crimson); font-size:16px; letter-spacing:1px; margin-bottom:10px; }
+  .key-modal p { font-size:12.5px; color:var(--mut); line-height:1.6; margin-bottom:16px; }
+  .key-modal input { width:100%; background:rgba(255,59,92,.06); border:1px solid var(--line);
+    color:var(--txt); font-family:var(--mono); font-size:13px; padding:10px 12px; margin-bottom:16px; outline:none; }
+  .key-modal input:focus { border-color:var(--crimson); }
+  .key-modal-actions { display:flex; justify-content:space-between; align-items:center; }
+  .key-modal-actions a { color:var(--mut); font-size:12px; text-decoration:none; border-bottom:1px dotted var(--mut); }
+  .key-modal-actions a:hover { color:var(--txt); }
+  .key-modal-actions button { background:rgba(255,59,92,.18); border:1px solid var(--crimson); color:var(--txt);
+    font-family:inherit; font-weight:700; font-size:13px; padding:8px 18px; cursor:pointer;
+    clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); }
+  .key-modal-actions button:hover { background:rgba(255,59,92,.32); }
+  .key-gear { background:none; border:1px solid var(--line); color:var(--crimson);
+    width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:13px;
+    display:flex; align-items:center; justify-content:center; }
+  .key-gear:hover { border-color:var(--crimson); background:rgba(255,59,92,.1); }
+
+  /* ---------- nav ---------- */
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(20,6,10,.75); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:15px; }
+  .logo b { color:var(--crimson); }
+  .nav-links { display:flex; align-items:center; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; transition:.15s; }
+  .nav-links a:hover { color:var(--crimson); }
+  @media(max-width:900px){ .nav-links a:not(.usage-inline){ display:none; } }
+
+  main, header, section { position:relative; z-index:1; }
+
+  header.hero { min-height:48svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:120px 20px 30px; max-width:900px; margin:0 auto; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--crimson); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:20px; }
+  .kicker::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--crimson); box-shadow:0 0 10px var(--crimson); animation:pulse 1.6s infinite; }
+  @keyframes pulse { 50%{opacity:.4;transform:scale(.8)} }
+
+  h1.glitch { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(28px,6vw,52px); letter-spacing:2px;
+    position:relative; color:#fff3f4; text-shadow:0 0 24px rgba(255,59,92,.6),0 0 70px rgba(255,59,92,.2); display:inline-block; margin-bottom:14px; }
+  h1.glitch::before, h1.glitch::after { content:attr(data-text); position:absolute; left:0; top:0; width:100%; overflow:hidden;
+    clip-path:inset(0 0 100% 0); text-shadow:none; }
+  h1.glitch::before { color:var(--crimson); animation:glitchTop 7s infinite linear; left:2px; }
+  h1.glitch::after { color:var(--cyan); animation:glitchBot 7.4s infinite linear; left:-2px; }
+  @keyframes glitchTop { 0%,92%,100%{clip-path:inset(0 0 100% 0);opacity:0} 93%{clip-path:inset(10% 0 60% 0);opacity:.8;transform:translateX(-2px)} 95%{clip-path:inset(55% 0 15% 0);opacity:.8;transform:translateX(2px)} 97%{clip-path:inset(20% 0 70% 0);opacity:.6;transform:translateX(-1px)} }
+  @keyframes glitchBot { 0%,90%,100%{clip-path:inset(100% 0 0 0);opacity:0} 91%{clip-path:inset(70% 0 5% 0);opacity:.7;transform:translateX(2px)} 94%{clip-path:inset(30% 0 50% 0);opacity:.7;transform:translateX(-2px)} 96%{clip-path:inset(80% 0 2% 0);opacity:.5;transform:translateX(1px)} }
+  .sub { font-size:14.5px; color:var(--mut); max-width:540px; }
+
+  section { padding:20px 20px 60px; max-width:760px; margin:0 auto; }
+
+  .panel { background:var(--panel); border:1px solid var(--line);
+    clip-path:polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+    padding:clamp(20px,4vw,34px); margin-bottom:20px; }
+  .panel h2 { font-family:var(--mono); font-size:12px; letter-spacing:.14em; color:var(--crimson); margin-bottom:16px; }
+  .panel h2::before { content:'▸ '; }
+
+  .field { margin-bottom:16px; }
+  .field label { display:block; font-family:var(--mono); font-size:11px; color:var(--mut2); letter-spacing:.06em; margin-bottom:6px; }
+  .field select, .field textarea { width:100%; background:rgba(255,59,92,.06); border:1px solid var(--line2);
+    color:var(--txt); font-family:inherit; font-size:14px; padding:10px 12px; outline:none; resize:vertical; }
+  .field select:focus, .field textarea:focus { border-color:var(--crimson); }
+  .diff-row { display:flex; gap:8px; }
+  .diff-btn { flex:1; background:rgba(255,59,92,.06); border:1px solid var(--line2); color:var(--mut);
+    font-family:var(--mono); font-size:12px; padding:9px; cursor:pointer; transition:.15s; }
+  .diff-btn.active { border-color:var(--crimson); color:var(--crimson); background:rgba(255,59,92,.15); }
+
+  .btn-primary { background:rgba(255,59,92,.18); border:1px solid var(--crimson); color:var(--txt);
+    font-family:inherit; font-weight:700; font-size:14px; padding:12px 24px; cursor:pointer; width:100%;
+    clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px)); transition:.15s; }
+  .btn-primary:hover:not(:disabled) { background:rgba(255,59,92,.32); }
+  .btn-primary:disabled { opacity:.4; cursor:default; }
+
+  /* ---------- chat ---------- */
+  .chat-log { display:flex; flex-direction:column; gap:12px; max-height:52vh; overflow-y:auto; margin-bottom:16px; padding-right:4px; }
+  .msg { max-width:82%; padding:10px 14px; font-size:14.5px; line-height:1.55; opacity:0; transform:translateY(6px); animation:msgIn .3s ease forwards; }
+  @keyframes msgIn { to { opacity:1; transform:translateY(0); } }
+  .msg.me { align-self:flex-end; background:rgba(255,59,92,.16); border:1px solid var(--line); }
+  .msg.kunde { align-self:flex-start; background:rgba(255,255,255,.05); border:1px solid var(--line2); }
+  .msg .who { display:block; font-family:var(--mono); font-size:9px; letter-spacing:.1em; color:var(--mut2); margin-bottom:4px; }
+  .typing { align-self:flex-start; font-family:var(--mono); font-size:12px; color:var(--mut2); }
+  .typing span { animation:typingDot 1.2s infinite; }
+  .typing span:nth-child(2){animation-delay:.2s} .typing span:nth-child(3){animation-delay:.4s}
+  @keyframes typingDot { 0%,60%,100%{opacity:.25} 30%{opacity:1} }
+
+  .chat-input-row { display:flex; gap:8px; }
+  .chat-input-row input { flex:1; background:rgba(255,59,92,.06); border:1px solid var(--line2); color:var(--txt);
+    font-family:inherit; font-size:14px; padding:11px 14px; outline:none; }
+  .chat-input-row input:focus { border-color:var(--crimson); }
+  .chat-input-row button { background:rgba(255,59,92,.2); border:1px solid var(--crimson); color:var(--txt);
+    font-family:var(--mono); font-size:13px; padding:0 18px; cursor:pointer; }
+  .chat-input-row button:hover:not(:disabled) { background:rgba(255,59,92,.34); }
+  .chat-input-row button:disabled { opacity:.4; cursor:default; }
+  .end-row { margin-top:12px; text-align:center; }
+  .end-row button { background:none; border:1px solid var(--line2); color:var(--mut); font-family:var(--mono); font-size:11.5px;
+    padding:8px 16px; cursor:pointer; }
+  .end-row button:hover { border-color:var(--crimson); color:var(--crimson); }
+
+  /* ---------- score ---------- */
+  .score-hero { text-align:center; padding:10px 0 22px; }
+  .score-num { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(48px,10vw,72px); color:var(--crimson);
+    text-shadow:0 0 30px rgba(255,59,92,.5); line-height:1; }
+  .score-rank { font-family:var(--mono); font-size:13px; letter-spacing:.1em; color:var(--mut); margin-top:6px; }
+  .score-cols { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px; }
+  @media(max-width:600px){ .score-cols{ grid-template-columns:1fr; } }
+  .score-col h3 { font-family:var(--mono); font-size:11px; letter-spacing:.1em; margin-bottom:10px; }
+  .score-col.staerken h3 { color:var(--green); }
+  .score-col.verbesserungen h3 { color:var(--amber); }
+  .score-col ul { list-style:none; }
+  .score-col li { font-size:13.5px; color:var(--mut); margin-bottom:8px; padding-left:16px; position:relative; }
+  .score-col.staerken li::before { content:'+'; position:absolute; left:0; color:var(--green); font-weight:700; }
+  .score-col.verbesserungen li::before { content:'→'; position:absolute; left:0; color:var(--amber); }
+  .killer-box { margin-top:18px; background:rgba(255,59,92,.08); border:1px solid var(--line); padding:14px 16px; }
+  .killer-box .label { font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--crimson); margin-bottom:6px; }
+  .killer-box p { font-size:14.5px; font-style:italic; }
+
+  .history-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+  .history-chip { font-family:var(--mono); font-size:11px; color:var(--mut2); background:rgba(255,255,255,.04); border:1px solid var(--line2); padding:5px 10px; }
+  .history-chip b { color:var(--crimson); }
+
+  .gen-state { text-align:center; padding:30px 20px; font-family:var(--mono); }
+  .gen-state .line1 { color:var(--crimson); font-size:15px; }
+  .gen-state .line2 { color:var(--mut2); font-size:12px; margin-top:8px; }
+  .gen-spinner { display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--crimson); margin-right:8px;
+    animation:genPulse 1s ease-in-out infinite; }
+  @keyframes genPulse { 0%,100%{opacity:.3;transform:scale(.8)} 50%{opacity:1;transform:scale(1.2)} }
+
+  footer { border-top:1px solid var(--line2); padding:34px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--crimson); text-decoration:none; margin:0 8px; }
+  footer a:hover { text-decoration:underline; }
+
+  .usage-badge { position:fixed; bottom:14px; right:16px; z-index:40; font-family:var(--mono); font-size:10px;
+    letter-spacing:.04em; color:var(--mut2); background:rgba(20,6,10,.75); border:1px solid var(--line2);
+    padding:5px 10px; pointer-events:none; backdrop-filter:blur(4px); }
+  .usage-badge.warn { color:var(--amber); border-color:rgba(255,199,87,.35); }
+  @media(max-width:760px){ .usage-badge{ display:none; } }
+</style>
+</head>
+<body>
+
+<div class="intro-overlay" id="introOverlay">
+  <div class="intro-lines" id="introLines">
+    <div class="intro-line">&gt; LOADING SPARRING PARTNER...</div>
+    <div class="intro-line">&gt; EINWAND-PROFIL WIRD SIMULIERT...</div>
+    <div class="intro-line">&gt; CASHMACHINE CLOSER ONLINE<span class="intro-cursor"></span></div>
+  </div>
+</div>
+
+<div class="override-overlay" id="overrideOverlay">
+  <canvas id="overrideCanvas"></canvas>
+  <div class="override-text">SYSTEM OVERRIDE</div>
+</div>
+
+<div class="bg-grid"></div>
+<div class="spotlight" id="spotlight"></div>
+<div class="crt-flicker"></div>
+<div class="usage-badge" id="usageBadge">Heute: 0 Anfragen · ~0 Tokens</div>
+
+<div class="key-modal-overlay" id="keyModalOverlay">
+  <div class="key-modal" id="keyModalBox" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
+    <h3 id="keyModalTitle">Anthropic API-Key</h3>
+    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Anthropic gesendet — nie an einen anderen Server.</p>
+    <input type="password" id="keyModalInput" placeholder="sk-ant-api03-..." aria-label="Anthropic API-Key" autocomplete="off">
+    <div class="key-modal-actions">
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Key holen →</a>
+      <button id="keyModalSave" type="button">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;CLOSER</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../brand-assassin/">Brand Assassin</a>
+    <a href="../automations-dashboard/">Automations</a>
+    <a href="../finance-cockpit/">Finance</a>
+    <a href="../oracle/">Oracle</a>
+    <button class="key-gear" id="keyGearBtn" title="Anthropic API-Key einstellen" aria-label="Anthropic API-Key einstellen">⚙</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="kicker">AI-VERKAUFSTRAINER · ÜBE GEGEN EINEN EINWAND-PROFI</div>
+  <h1 class="glitch" data-text="CLOSER">CLOSER</h1>
+  <p class="sub">Pitch live gegen einen simulierten, skeptischen Kleinunternehmer — echte Einwände, keine Schonhaltung. Danach: Score, Stärken, Verbesserungen und ein besserer Opener von der KI. Der fehlende Schritt zwischen Lead-Jäger und echtem Verkauf.</p>
+</header>
+
+<section id="content">
+
+  <div class="panel" id="setupPanel">
+    <h2>Gegner konfigurieren</h2>
+    <div class="field">
+      <label for="brancheSelect">Branche</label>
+      <select id="brancheSelect">
+        <option value="Frisör/Beauty-Salon">Frisör / Beauty-Salon</option>
+        <option value="Restaurant/Gastro">Restaurant / Gastro</option>
+        <option value="Handwerksbetrieb">Handwerksbetrieb (Bau, Elektro, ...)</option>
+        <option value="Einzelhandel">Einzelhandel</option>
+        <option value="Fitness/Beauty-Studio">Fitness- / Beauty-Studio</option>
+        <option value="Sonstiges">Sonstiges (unten beschreiben)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Schwierigkeit</label>
+      <div class="diff-row">
+        <button type="button" class="diff-btn" data-diff="leicht">Leicht</button>
+        <button type="button" class="diff-btn active" data-diff="mittel">Mittel</button>
+        <button type="button" class="diff-btn" data-diff="hart">Hart</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="contextInput">Kontext (optional — z.B. aus einer Lead-Jäger-Nachricht kopiert)</label>
+      <textarea id="contextInput" rows="2" placeholder="z.B. Frisör Müller, hat aktuell nur eine Facebook-Seite als Website"></textarea>
+    </div>
+    <button type="button" class="btn-primary" id="startBtn">Pitch starten</button>
+  </div>
+
+  <div class="panel" id="chatPanel" style="display:none">
+    <h2 id="chatHeading">Live-Pitch</h2>
+    <div class="chat-log" id="chatLog"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Deine Nachricht an den Kunden..." aria-label="Deine Pitch-Nachricht">
+      <button type="button" id="sendBtn">Senden</button>
+    </div>
+    <div class="end-row">
+      <button type="button" id="endBtn">Pitch beenden &amp; bewerten →</button>
+    </div>
+  </div>
+
+  <div class="panel gen-state" id="genState" style="display:none">
+    <div class="line1"><span class="gen-spinner"></span>Coach wertet dein Gespräch aus...</div>
+    <div class="line2">Einmalige Anfrage an deinen eigenen Claude-Key.</div>
+  </div>
+
+  <div class="panel" id="scorePanel" style="display:none">
+    <h2>Auswertung</h2>
+    <div class="score-hero">
+      <div class="score-num" id="scoreNum">–</div>
+      <div class="score-rank" id="scoreRank">–</div>
+    </div>
+    <div class="score-cols">
+      <div class="score-col staerken"><h3>STÄRKEN</h3><ul id="staerkenList"></ul></div>
+      <div class="score-col verbesserungen"><h3>VERBESSERUNGEN</h3><ul id="verbesserungenList"></ul></div>
+    </div>
+    <div class="killer-box">
+      <div class="label">BESSERER OPENER FÜR DIESEN KUNDEN</div>
+      <p id="killerText">–</p>
+    </div>
+    <div class="history-row" id="historyRow"></div>
+    <div class="end-row" style="margin-top:22px">
+      <button type="button" id="retryBtn">↻ Neuer Versuch</button>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  <b>CASHMACHINE CLOSER</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../brand-assassin/">Brand Assassin</a>·<a href="../automations-dashboard/">Automations</a>·<a href="../finance-cockpit/">Finance</a>·<a href="../oracle/">Oracle</a>
+</footer>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // ---------- intro ----------
+  const introOverlay = document.getElementById('introOverlay');
+  if (reduceMotion || sessionStorage.getItem('cmx_closer_intro') === '1') {
+    introOverlay.classList.add('hidden');
+    introOverlay.remove();
+  } else {
+    const lines = introOverlay.querySelectorAll('.intro-line');
+    lines.forEach((ln, i) => setTimeout(() => ln.classList.add('show'), 280 * i));
+    const finish = () => {
+      introOverlay.classList.add('hidden');
+      sessionStorage.setItem('cmx_closer_intro', '1');
+      setTimeout(() => introOverlay.remove(), 650);
+    };
+    setTimeout(finish, 280 * lines.length + 600);
+    introOverlay.addEventListener('click', finish, { once: true });
+  }
+
+  // ---------- cursor spotlight ----------
+  if (canHover && !reduceMotion) {
+    const spotlight = document.getElementById('spotlight');
+    let rafPending = false, mx = 50, my = 20;
+    window.addEventListener('mousemove', (e) => {
+      mx = (e.clientX / window.innerWidth) * 100;
+      my = (e.clientY / window.innerHeight) * 100;
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(() => {
+          spotlight.style.setProperty('--mx', mx + '%');
+          spotlight.style.setProperty('--my', my + '%');
+          rafPending = false;
+        });
+      }
+    });
+  }
+
+  // ---------- konami easter egg ----------
+  (function () {
+    if (reduceMotion) return;
+    const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+    let buffer = [];
+    const overlay = document.getElementById('overrideOverlay');
+    const canvas = document.getElementById('overrideCanvas');
+    const ctx = canvas.getContext('2d');
+    let rainInterval = null;
+    function startRain() {
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+      const cols = Math.floor(canvas.width / 18);
+      const drops = new Array(cols).fill(0);
+      const chars = 'アイウエオカキクケコ0123456789%$';
+      rainInterval = setInterval(() => {
+        ctx.fillStyle = 'rgba(0,0,0,0.08)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ff3b5c';
+        ctx.font = '16px monospace';
+        drops.forEach((y, i) => {
+          ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 18, y * 18);
+          drops[i] = (y * 18 > canvas.height && Math.random() > 0.975) ? 0 : y + 1;
+        });
+      }, 40);
+    }
+    function stopRain() { if (rainInterval) { clearInterval(rainInterval); rainInterval = null; } ctx.clearRect(0,0,canvas.width,canvas.height); }
+    function trigger() {
+      overlay.classList.add('show'); startRain();
+      setTimeout(() => { overlay.classList.remove('show'); setTimeout(stopRain, 400); }, 3200);
+    }
+    document.addEventListener('keydown', (e) => {
+      buffer.push(e.key);
+      if (buffer.length > KONAMI.length) buffer.shift();
+      if (buffer.length === KONAMI.length && buffer.every((k, i) => k === KONAMI[i])) { buffer = []; trigger(); }
+    });
+  })();
+
+  // ===== CLAUDE API KEY (bring-your-own-key, stored locally) =====
+  const CLAUDE_KEY_STORAGE = 'cmx_claude_key';
+  function getClaudeKey() { return localStorage.getItem(CLAUDE_KEY_STORAGE); }
+
+  const keyModalOverlay = document.getElementById('keyModalOverlay');
+  const keyModalInput = document.getElementById('keyModalInput');
+  const keyModalSave = document.getElementById('keyModalSave');
+  const keyGearBtn = document.getElementById('keyGearBtn');
+  let keyModalLastTrigger = null;
+  let keyModalResolve = null;
+
+  function closeKeyModal() {
+    keyModalOverlay.classList.remove('open');
+    if (keyModalLastTrigger) keyModalLastTrigger.focus();
+  }
+  function openKeyModal(triggerEl) {
+    keyModalLastTrigger = triggerEl || document.activeElement;
+    keyModalInput.value = getClaudeKey() || '';
+    keyModalOverlay.classList.add('open');
+    setTimeout(() => keyModalInput.focus(), 50);
+  }
+  function requestClaudeKey() {
+    return new Promise((resolve) => { keyModalResolve = resolve; openKeyModal(); });
+  }
+  keyModalSave.addEventListener('click', () => {
+    const val = keyModalInput.value.trim();
+    if (!val) return;
+    localStorage.setItem(CLAUDE_KEY_STORAGE, val);
+    closeKeyModal();
+    if (keyModalResolve) { keyModalResolve(val); keyModalResolve = null; }
+  });
+  keyModalInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') keyModalSave.click(); });
+  keyGearBtn.addEventListener('click', () => openKeyModal(keyGearBtn));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && keyModalOverlay.classList.contains('open')) closeKeyModal();
+    if (e.key === 'Tab' && keyModalOverlay.classList.contains('open')) {
+      const focusable = keyModalOverlay.querySelectorAll('input, button, a[href]');
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  // ===== TOKEN USAGE TRACKER (shared key with the other apps) =====
+  const USAGE_STORAGE = 'cmx_token_usage';
+  const USAGE_WARN_THRESHOLD = 150000;
+  function todayKey() { return new Date().toISOString().slice(0, 10); }
+  function getUsageToday() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(USAGE_STORAGE) || '{}');
+      if (stored.date !== todayKey()) return { date: todayKey(), requests: 0, tokens: 0 };
+      return stored;
+    } catch { return { date: todayKey(), requests: 0, tokens: 0 }; }
+  }
+  function trackTokenUsage(usage) {
+    const today = getUsageToday();
+    today.requests += 1;
+    today.tokens += (usage.input_tokens || 0) + (usage.output_tokens || 0);
+    localStorage.setItem(USAGE_STORAGE, JSON.stringify(today));
+    renderUsageBadge(today);
+  }
+  function renderUsageBadge(today) {
+    const badge = document.getElementById('usageBadge');
+    if (!badge) return;
+    today = today || getUsageToday();
+    badge.textContent = `Heute: ${today.requests} Anfragen · ~${today.tokens.toLocaleString('de-DE')} Tokens`;
+    badge.classList.toggle('warn', today.tokens >= USAGE_WARN_THRESHOLD);
+  }
+  renderUsageBadge();
+
+  async function callClaude(body) {
+    let key = getClaudeKey();
+    if (!key) key = await requestClaudeKey();
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify(body)
+    });
+    if (response.status === 401) {
+      localStorage.removeItem(CLAUDE_KEY_STORAGE);
+      throw new Error('invalid_key');
+    }
+    if (!response.ok) throw new Error('api_error');
+    const data = await response.json();
+    if (data.usage) trackTokenUsage(data.usage);
+    return data;
+  }
+
+  // ===== PERSONA SETUP =====
+  const DIFF_LABELS = {
+    leicht: 'Ist grundsätzlich offen und interessiert, hört zu, hat aber 1-2 einfache Nachfragen (z.B. Preis oder Dauer). Lässt sich von einer klaren, freundlichen Antwort überzeugen.',
+    mittel: 'Ist skeptisch und beschäftigt, bringt 2-3 typische Einwände (Preis, Zeitaufwand, "brauch ich nicht, läuft doch auch so"). Lässt sich aber von konkreten, auf das eigene Geschäft bezogenen Argumenten überzeugen.',
+    hart: 'Ist genervt von ständiger Kaltakquise, unterbricht kurz angebunden, bringt harte Einwände (Vertrauen/Betrugsverdacht, Preis, "schon zu viele solche Nachrichten bekommen"). Lenkt nur ein, wenn die Antwort wirklich einen konkreten, glaubwürdigen Nutzen für das eigene Geschäft nennt.',
+  };
+
+  let selectedDiff = 'mittel';
+  document.querySelectorAll('.diff-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedDiff = btn.dataset.diff;
+    });
+  });
+
+  let conversation = [];
+  let currentPersonaSystem = '';
+  let currentBranche = '';
+
+  function buildPersonaSystem(branche, diff, context) {
+    return `Du spielst in einem Verkaufstraining die Rolle eines/einer Inhaber:in eines kleinen Unternehmens aus der Branche "${branche}".${context ? ' Zusätzlicher Kontext: ' + context + '.' : ''}\n\nPersönlichkeit: ${DIFF_LABELS[diff]}\n\nEin Fremder (ein Website-Verkäufer) schreibt dir gerade eine Nachricht. Antworte AUSSCHLIESSLICH als dieser Kunde, in natürlicher, knapper Umgangssprache (wie eine echte Chat-Nachricht), maximal 2-3 Sätze pro Antwort. Bleib konsequent in der Rolle. Sag niemals, dass du eine KI bist oder eine Rolle spielst. Lass dich nur überzeugen, wenn ein konkreter Nutzen für DEIN Geschäft genannt wird.`;
+  }
+
+  function addMsg(role, text) {
+    const log = document.getElementById('chatLog');
+    const div = document.createElement('div');
+    div.className = 'msg ' + (role === 'user' ? 'me' : 'kunde');
+    div.innerHTML = `<span class="who">${role === 'user' ? 'DU' : 'KUNDE'}</span>${text.replace(/</g,'&lt;')}`;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function showTyping() {
+    const log = document.getElementById('chatLog');
+    const div = document.createElement('div');
+    div.className = 'msg kunde typing';
+    div.id = 'typingIndicator';
+    div.innerHTML = '<span class="who">KUNDE</span><span>●</span><span>●</span><span>●</span>';
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+  function hideTyping() {
+    const el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+  }
+
+  document.getElementById('startBtn').addEventListener('click', () => {
+    currentBranche = document.getElementById('brancheSelect').value;
+    const context = document.getElementById('contextInput').value.trim();
+    currentPersonaSystem = buildPersonaSystem(currentBranche, selectedDiff, context);
+    conversation = [];
+    document.getElementById('chatLog').innerHTML = '';
+    document.getElementById('setupPanel').style.display = 'none';
+    document.getElementById('scorePanel').style.display = 'none';
+    document.getElementById('chatPanel').style.display = 'block';
+    document.getElementById('chatHeading').textContent = `Live-Pitch — ${currentBranche} (${selectedDiff})`;
+    document.getElementById('chatInput').focus();
+  });
+
+  async function sendPitchMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    document.getElementById('sendBtn').disabled = true;
+    addMsg('user', text);
+    conversation.push({ role: 'user', content: text });
+    showTyping();
+    try {
+      const data = await callClaude({
+        model: 'claude-sonnet-5',
+        max_tokens: 200,
+        system: currentPersonaSystem,
+        messages: conversation
+      });
+      const reply = (data.content && data.content[0] && data.content[0].text) || '...';
+      conversation.push({ role: 'assistant', content: reply });
+      hideTyping();
+      addMsg('assistant', reply);
+    } catch (err) {
+      hideTyping();
+      addMsg('assistant', err.message === 'invalid_key' ? '[API-Key ungültig — über ⚙ prüfen]' : '[Fehler — bitte nochmal versuchen]');
+    }
+    document.getElementById('sendBtn').disabled = false;
+    document.getElementById('chatInput').focus();
+  }
+  document.getElementById('sendBtn').addEventListener('click', sendPitchMessage);
+  document.getElementById('chatInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendPitchMessage(); });
+
+  // ===== COACHING / SCORE =====
+  const COACH_SYSTEM = `Du bist ein erfahrener Verkaufscoach für B2B-Kaltakquise (Website-Verkauf an lokale Kleinunternehmen). Du bekommst ein komplettes Pitch-Gespräch zwischen einem Verkäufer und einem simulierten Kunden. Bewerte NUR die Leistung des Verkäufers, ehrlich und konkret, auf Deutsch.\n\nAntworte NUR in exakt diesem Format, eine Angabe pro Zeile, kein Markdown, keine Einleitung:\nSCORE: [Zahl 0-100]\nSTAERKE1: ...\nSTAERKE2: ...\nSTAERKE3: ...\nVERBESSERUNG1: ...\nVERBESSERUNG2: ...\nVERBESSERUNG3: ...\nKILLER: [ein konkreter, besserer Eröffnungssatz speziell für diesen Kunden]`;
+
+  function parseCoaching(text) {
+    const out = { score: 0, staerken: [], verbesserungen: [], killer: '' };
+    text.split('\n').forEach(line => {
+      let m;
+      if ((m = line.match(/^SCORE:\s*(\d+)/i))) out.score = Math.max(0, Math.min(100, parseInt(m[1], 10)));
+      else if ((m = line.match(/^STAERKE\d:\s*(.*)$/i))) out.staerken.push(m[1].trim());
+      else if ((m = line.match(/^VERBESSERUNG\d:\s*(.*)$/i))) out.verbesserungen.push(m[1].trim());
+      else if ((m = line.match(/^KILLER:\s*(.*)$/i))) out.killer = m[1].trim();
+    });
+    return out;
+  }
+
+  function rankForScore(score) {
+    if (score >= 90) return 'DEAL-MASCHINE 🏆';
+    if (score >= 75) return 'CLOSER 🔥';
+    if (score >= 55) return 'VERKÄUFER 💪';
+    if (score >= 35) return 'LEHRLING 🌱';
+    return 'ZURÜCK ANS SKRIPT 📚';
+  }
+
+  const SCORE_HISTORY_KEY = 'cmx_closer_scores';
+  function saveScoreHistory(branche, score) {
+    let hist = [];
+    try { hist = JSON.parse(localStorage.getItem(SCORE_HISTORY_KEY) || '[]'); } catch {}
+    hist.push({ date: new Date().toISOString().slice(0, 10), branche, score });
+    hist = hist.slice(-20);
+    localStorage.setItem(SCORE_HISTORY_KEY, JSON.stringify(hist));
+    return hist;
+  }
+  function renderHistory(hist) {
+    const row = document.getElementById('historyRow');
+    row.innerHTML = hist.slice(-8).reverse().map(h => `<span class="history-chip">${h.date} · ${h.branche.split('/')[0]} · <b>${h.score}</b></span>`).join('');
+  }
+
+  async function endPitchAndScore() {
+    document.getElementById('chatPanel').style.display = 'none';
+    document.getElementById('genState').style.display = 'block';
+    const transcript = conversation.map(m => (m.role === 'user' ? 'VERKÄUFER: ' : 'KUNDE: ') + m.content).join('\n');
+    try {
+      const data = await callClaude({
+        model: 'claude-sonnet-5',
+        max_tokens: 600,
+        system: COACH_SYSTEM,
+        messages: [{ role: 'user', content: `Branche des Kunden: ${currentBranche}\n\nGesprächsverlauf:\n${transcript}` }]
+      });
+      const text = (data.content && data.content[0] && data.content[0].text) || '';
+      const result = parseCoaching(text);
+      document.getElementById('genState').style.display = 'none';
+      document.getElementById('scorePanel').style.display = 'block';
+      document.getElementById('scoreNum').textContent = result.score;
+      document.getElementById('scoreRank').textContent = rankForScore(result.score);
+      document.getElementById('staerkenList').innerHTML = result.staerken.map(s => `<li>${s}</li>`).join('') || '<li>–</li>';
+      document.getElementById('verbesserungenList').innerHTML = result.verbesserungen.map(s => `<li>${s}</li>`).join('') || '<li>–</li>';
+      document.getElementById('killerText').textContent = result.killer || '–';
+      const hist = saveScoreHistory(currentBranche, result.score);
+      renderHistory(hist);
+    } catch (err) {
+      document.getElementById('genState').innerHTML = `<div class="line1">Fehler bei der Auswertung</div><div class="line2">${err.message === 'invalid_key' ? 'API-Key ungültig — über das ⚙ Symbol prüfen.' : 'Bitte erneut versuchen.'}</div>`;
+    }
+  }
+  document.getElementById('endBtn').addEventListener('click', () => {
+    if (!conversation.length) return;
+    endPitchAndScore();
+  });
+
+  document.getElementById('retryBtn').addEventListener('click', () => {
+    document.getElementById('scorePanel').style.display = 'none';
+    document.getElementById('setupPanel').style.display = 'block';
+  });
+
+  try {
+    renderHistory(JSON.parse(localStorage.getItem(SCORE_HISTORY_KEY) || '[]'));
+  } catch {}
+</script>
+</body>
+</html>
