@@ -269,9 +269,9 @@
     <div class="field">
       <label>Schwierigkeit</label>
       <div class="diff-row">
-        <button type="button" class="diff-btn" data-diff="leicht">Leicht</button>
-        <button type="button" class="diff-btn active" data-diff="mittel">Mittel</button>
-        <button type="button" class="diff-btn" data-diff="hart">Hart</button>
+        <button type="button" class="diff-btn" data-diff="leicht" aria-pressed="false">Leicht</button>
+        <button type="button" class="diff-btn active" data-diff="mittel" aria-pressed="true">Mittel</button>
+        <button type="button" class="diff-btn" data-diff="hart" aria-pressed="false">Hart</button>
       </div>
     </div>
     <div class="field">
@@ -504,8 +504,9 @@
   let selectedDiff = 'mittel';
   document.querySelectorAll('.diff-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.diff-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
       selectedDiff = btn.dataset.diff;
     });
   });
