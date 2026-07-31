@@ -11,6 +11,7 @@ on:
       - 'finance-cockpit/**'
       - 'oracle/**'
       - 'lead-previews/**'
+      - 'closer/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
 
@@ -44,6 +45,7 @@ jobs:
           cp -r oracle _site/oracle
           mkdir -p lead-previews
           cp -r lead-previews _site/lead-previews
+          cp -r closer _site/closer
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
