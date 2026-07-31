@@ -425,16 +425,44 @@
     return sections;
   }
 
+  const DECRYPT_CHARS = '!<>-_\\/[]{}—=+*^?#$%&アイウエオカキクケコ';
+  function decryptReveal(el, finalText, duration) {
+    if (reduceMotion) { el.textContent = finalText; return; }
+    const len = finalText.length;
+    const totalFrames = Math.max(1, Math.round(duration / 28));
+    let frame = 0;
+    const interval = setInterval(() => {
+      frame++;
+      const revealCount = Math.floor((frame / totalFrames) * len);
+      let out = '';
+      for (let i = 0; i < len; i++) {
+        if (i < revealCount || finalText[i] === ' ') out += finalText[i];
+        else out += DECRYPT_CHARS[Math.floor(Math.random() * DECRYPT_CHARS.length)];
+      }
+      el.textContent = out;
+      if (frame >= totalFrames) { el.textContent = finalText; clearInterval(interval); }
+    }, 28);
+  }
+
   function renderBriefing(sections, dateStr, cached) {
     document.getElementById('briefingDate').textContent = dateStr + (cached ? ' (gecached)' : '');
-    document.getElementById('secLage').textContent = sections.lage || '–';
-    document.getElementById('secAnalyse').textContent = sections.analyse || '–';
-    document.getElementById('secBefehl').textContent = sections.befehl || '–';
-    document.getElementById('secPrognose').textContent = sections.prognose || '–';
     document.getElementById('genState').style.display = 'none';
     document.getElementById('briefingContent').style.display = 'block';
+
+    const order = [
+      { el: document.getElementById('secLage'), text: sections.lage || '–' },
+      { el: document.getElementById('secAnalyse'), text: sections.analyse || '–' },
+      { el: document.getElementById('secBefehl'), text: sections.befehl || '–' },
+      { el: document.getElementById('secPrognose'), text: sections.prognose || '–' },
+    ];
     const parts = document.querySelectorAll('.briefing-section');
-    parts.forEach((el, i) => setTimeout(() => el.classList.add('show'), reduceMotion ? 0 : i * 150));
+    parts.forEach((el, i) => {
+      const delay = reduceMotion ? 0 : i * 300;
+      setTimeout(() => {
+        el.classList.add('show');
+        decryptReveal(order[i].el, order[i].text, 550);
+      }, delay);
+    });
   }
 
   async function generateBriefing(latest, trendPct, isStale, force) {
