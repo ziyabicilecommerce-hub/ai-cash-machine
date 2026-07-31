@@ -75,6 +75,19 @@ Winning-Ad-Creatives):
 **KI-Kundenservice** (liest Postfach per IMAP):
 `IMAP_HOST`, `IMAP_PORT`, `IMAP_USER`, `IMAP_PASSWORD`
 
+**Google-Maps-Lead-Jäger** (findet Firmen ohne/mit schlechter Website zum
+Website-Verkauf, schickt Treffer per WhatsApp):
+`GOOGLE_PLACES_API_KEY` (Google Cloud Console → Places API aktivieren, Billing
+nötig), `LEAD_SUCHBEGRIFFE` (kommagetrennte Suchen, z.B.
+`Frisör in Hamburg Altona, Restaurant in Köln Ehrenfeld`), `LEAD_MAX_PRO_LAUF`
+(Default `15`, deckelt Kosten/Nachrichtenlänge pro Lauf),
+`WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID` (aus Meta for Developers →
+WhatsApp → API-Setup), `WHATSAPP_TO_NUMBER` (deine eigene Nummer im Format
+`491701234567`, ohne `+`, muss in der Meta-App als Test-Empfänger hinterlegt
+sein). Ohne `WHATSAPP_ACCESS_TOKEN`/`WHATSAPP_PHONE_NUMBER_ID`/`WHATSAPP_TO_NUMBER`
+wird die Nachricht nur geloggt, kein Fehler. Ohne `LEAD_SUCHBEGRIFFE` läuft die
+Automation gar nicht erst los.
+
 **Geschäfts-Schwellwerte / Rabattcodes** (alle mit funktionierenden Defaults,
 nur bei Bedarf überschreiben):
 `VIP_UMSATZ_SCHWELLE`, `VIP_BESTELLUNGEN_SCHWELLE`, `VIP_RABATT_CODE`,
@@ -99,7 +112,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 46 Automationen
+## Die 47 Automationen (46 aus n8n + 1 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -149,6 +162,9 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 45 | Meta-Lookalike-Futter | montags 06:30 | Top-Kunden an Meta für Lookalikes |
 | 46 | Großbestellung-Radar | stündlich | Alarm bei Großbestellungen |
 | 47 | Länder-Expansions-Scout | 1. jedes Monats | Expansionsmarkt-Empfehlung |
+| 48 | Google-Maps-Lead-Jäger | täglich 08:00 | findet Firmen ohne/mit schlechter Website, meldet per WhatsApp |
 
-**Nicht übernommen:** Workflow 48 ("Review zu Werbung") war in der
-Export-Datei korrupt (0 Byte) und konnte nicht wiederhergestellt werden.
+**Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
+Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
+wiederhergestellt werden. Die freie Nummer wurde für den neuen, nicht aus n8n
+stammenden Google-Maps-Lead-Jäger vergeben.

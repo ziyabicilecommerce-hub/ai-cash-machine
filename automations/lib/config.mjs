@@ -21,6 +21,16 @@ export const config = {
   FB_PAGE_TOKEN: process.env.FB_PAGE_TOKEN || '',
   CUSTOM_AUDIENCE_ID: process.env.CUSTOM_AUDIENCE_ID || '',
 
+  // WhatsApp Cloud API (Lead-Jäger)
+  WHATSAPP_ACCESS_TOKEN: process.env.WHATSAPP_ACCESS_TOKEN || '',
+  WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID || '',
+  WHATSAPP_TO_NUMBER: process.env.WHATSAPP_TO_NUMBER || '',
+
+  // Google Places (Lead-Jäger)
+  GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY || '',
+  LEAD_SUCHBEGRIFFE: process.env.LEAD_SUCHBEGRIFFE || '',
+  LEAD_MAX_PRO_LAUF: process.env.LEAD_MAX_PRO_LAUF || '15',
+
   // Judge.me Bewertungen
   JUDGEME_API_TOKEN: process.env.JUDGEME_API_TOKEN || '',
   JUDGEME_SHOP_DOMAIN: process.env.JUDGEME_SHOP_DOMAIN || '',
