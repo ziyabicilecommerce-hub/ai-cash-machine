@@ -26,8 +26,8 @@ export const config = {
   WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID || '',
   WHATSAPP_TO_NUMBER: process.env.WHATSAPP_TO_NUMBER || '',
 
-  // Google Places (Lead-Jäger)
-  GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY || '',
+  // Google Maps via Composio (Lead-Jäger) - kein eigener Google-Cloud-Billing-Account nötig
+  COMPOSIO_API_KEY: process.env.COMPOSIO_API_KEY || '',
   LEAD_SUCHBEGRIFFE: process.env.LEAD_SUCHBEGRIFFE || '',
   LEAD_MAX_PRO_LAUF: process.env.LEAD_MAX_PRO_LAUF || '15',
 
