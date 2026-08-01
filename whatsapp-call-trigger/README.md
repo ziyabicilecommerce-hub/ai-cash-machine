@@ -59,9 +59,15 @@ Worker ist dafür minimal (kostenloser Tier, keine Kreditkarte nötig).
 6. **Vapi-Account** (vapi.ai) einrichten:
    - Assistenten anlegen, Prompt mit `{{name}}`, `{{branche}}`, `{{grund}}`,
      `{{previewUrl}}` als Platzhaltern (werden pro Anruf vom Worker befüllt).
-   - Anruf-Telefonnummer einrichten/importieren — prüfe vorher, ob Vapi/dein
-     Telefonie-Anbieter Anrufe an deutsche Nummern unterstützt.
-   - API-Key, Assistant-ID und Phone-Number-ID aus dem Dashboard entnehmen.
+   - **Anrufe nach Deutschland:** Vapis eigene kostenlose Nummern sind nur für
+     US-Anrufe nutzbar. Für Anrufe an deutsche Nummern brauchst du zusätzlich
+     einen [Twilio](https://twilio.com)-Account, dort eine deutsche
+     Telefonnummer kaufen/verifizieren, und diese dann über Vapi →
+     Phone Numbers → Import (oder den `/phone-numbers/import`-Endpunkt) mit
+     deinen Twilio-Zugangsdaten importieren. Erst danach taucht die Nummer im
+     Vapi-Dashboard als nutzbare `phoneNumberId` auf.
+   - API-Key, Assistant-ID und Phone-Number-ID (die importierte Twilio-Nummer)
+     aus dem Dashboard entnehmen.
 
 Ohne dieses Setup läuft der Lead-Jäger unverändert weiter (findet Leads,
 schickt WhatsApp) — nur der automatische Rückruf bei einer Antwort bleibt
