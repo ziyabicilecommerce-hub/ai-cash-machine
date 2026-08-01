@@ -6,7 +6,7 @@
 // TRADING_PAPER_MODE=nein wird wirklich gehandelt. Siehe automations/README.md
 // für die vollständige Erklärung der Sicherheitsgrenzen.
 import { config } from './lib/config.mjs';
-import { getKlines, placeMarketBuy, placeMarketSell } from './lib/binance.mjs';
+import { getKlines, getMinNotional, placeMarketBuy, placeMarketSell } from './lib/binance.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -95,6 +95,19 @@ async function main() {
       console.log('[49-trading-bot] Tagesverlust-Grenze erreicht - kein neuer Einstieg heute.');
     } else if (crossUp) {
       const investBetrag = (state.kapital * maxPositionProzent) / 100;
+      const minNotional = await getMinNotional(symbol);
+
+      if (minNotional !== null && investBetrag < minNotional) {
+        console.log(`[49-trading-bot] Kaufsignal übersprungen: ${investBetrag.toFixed(2)} USDT liegt unter Binances Mindest-Ordergröße (${minNotional.toFixed(2)} USDT für ${symbol}).`);
+        await notifyWhatsapp(
+          `⚠️ Trading-Bot: Kaufsignal erkannt, aber übersprungen - dein Kapital (${state.kapital.toFixed(2)} USDT, ` +
+          `${maxPositionProzent}% davon = ${investBetrag.toFixed(2)} USDT pro Trade) liegt unter Binances Mindest-Ordergröße ` +
+          `von ${minNotional.toFixed(2)} USDT für ${symbol}. Erhöhe TRADING_KAPITAL_USDT oder TRADING_MAX_POSITION_PROZENT.`,
+        );
+        saveState(STATE_NAME, state);
+        return;
+      }
+
       let qty, tatsaechlicherPreis;
       if (paperModus) {
         qty = investBetrag / preis;
