@@ -66,3 +66,14 @@ Worker ist dafür minimal (kostenloser Tier, keine Kreditkarte nötig).
 Ohne dieses Setup läuft der Lead-Jäger unverändert weiter (findet Leads,
 schickt WhatsApp) — nur der automatische Rückruf bei einer Antwort bleibt
 inaktiv, bis der Worker deployt ist.
+
+## Bekannte Einschränkung: GitHub-Raw-Caching
+
+`raw.githubusercontent.com` cached Dateien serverseitig für einige Minuten,
+unabhängig vom `cf.cacheTtl: 0` im Worker (das betrifft nur Cloudflares
+eigenen Edge-Cache, nicht GitHubs CDN davor). Antwortet eine Firma innerhalb
+weniger Minuten, nachdem der Lead-Jäger sie zum ersten Mal in
+`leads-warten-auf-antwort.json` veröffentlicht hat, kann es sein, dass der
+Worker noch eine veraltete Version der Liste sieht und den Anruf verpasst.
+In der Praxis selten relevant (Firmen antworten meist nicht sekundenschnell),
+aber gut zu wissen: eine zweite Antwort kurz danach greift wieder normal.
