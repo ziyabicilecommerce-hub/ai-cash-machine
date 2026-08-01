@@ -1,12 +1,14 @@
 // Google-Maps-Lead-Jäger - findet Firmen ohne (gute) Website zum Website-Verkauf
 // Neu, kein n8n-Workflow · Zeitplan: täglich, siehe automation-48-google-maps-lead-jaeger.yml
-// Sucht per Google Places nach Firmen, prüft ob eine Website fehlt oder schlecht ist,
-// und schickt neue Treffer per WhatsApp - Kontaktaufnahme übernimmt der Nutzer selbst.
+// Sucht per Google Maps (über die bestehende Composio-Verbindung, kein eigener
+// Google-Cloud-Billing-Account nötig) nach Firmen, prüft ob eine Website fehlt
+// oder schlecht ist, und schickt neue Treffer per WhatsApp - Kontaktaufnahme
+// übernimmt der Nutzer selbst.
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
-import { searchPlaces, getPlaceDetails } from './lib/googlePlaces.mjs';
+import { searchPlaces } from './lib/composioMaps.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 import { buildLeadPreviewHtml, slugifyLead } from './lib/leadPreview.mjs';
@@ -109,39 +111,38 @@ async function main() {
   for (const begriff of suchbegriffe) {
     if (leads.length >= maxProLauf) break;
     const branche = branchAusSuchbegriff(begriff);
-    const treffer = await searchPlaces(begriff);
+    const treffer = await searchPlaces(begriff, Math.min(maxProLauf, 20));
 
     for (const ort of treffer) {
       if (leads.length >= maxProLauf) break;
-      if (!ort.place_id || bereitsGeprueft.has(ort.place_id)) continue;
+      if (!ort.id || bereitsGeprueft.has(ort.id)) continue;
+      bereitsGeprueft.add(ort.id);
 
-      const details = await getPlaceDetails(ort.place_id);
-      bereitsGeprueft.add(ort.place_id);
+      const website = ort.websiteUri || '';
+      const unechteWebsite = website ? erkenneUnechteWebsite(website) : null;
       let grund = null;
 
-      const unechteWebsite = details.website ? erkenneUnechteWebsite(details.website) : null;
-
-      if (!details.website) {
+      if (!website) {
         grund = 'keine Website';
       } else if (unechteWebsite) {
         grund = `keine echte Website (nur ${unechteWebsite})`;
       } else {
-        const qualitaetsGrund = await checkWebsiteQualitaet(details.website);
+        const qualitaetsGrund = await checkWebsiteQualitaet(website);
         if (qualitaetsGrund) grund = `schlechte Website (${qualitaetsGrund})`;
       }
 
       if (!grund) continue;
 
       leads.push({
-        name: details.name || ort.name || 'Unbekannt',
-        adresse: details.formatted_address || ort.formatted_address || '',
-        telefon: details.formatted_phone_number || '',
-        bewertung: details.rating || null,
-        bewertungenAnzahl: details.user_ratings_total || 0,
+        name: (ort.displayName && ort.displayName.text) || 'Unbekannt',
+        adresse: ort.formattedAddress || '',
+        telefon: ort.nationalPhoneNumber || '',
+        bewertung: ort.rating || null,
+        bewertungenAnzahl: ort.userRatingCount || 0,
         branche,
         grund,
-        mapsUrl: details.url || '',
-        placeId: ort.place_id,
+        mapsUrl: ort.googleMapsUri || '',
+        placeId: ort.id,
       });
     }
   }

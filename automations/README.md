@@ -77,8 +77,9 @@ Winning-Ad-Creatives):
 
 **Google-Maps-Lead-Jäger** (findet Firmen ohne/mit schlechter Website zum
 Website-Verkauf, schickt Treffer per WhatsApp):
-`GOOGLE_PLACES_API_KEY` (Google Cloud Console → Places API aktivieren, Billing
-nötig), `LEAD_SUCHBEGRIFFE` (kommagetrennte Suchen, z.B.
+`COMPOSIO_API_KEY` (composio.dev → Settings → API Keys; nutzt die dort bereits
+verbundene `google_maps`-Verbindung — kein eigener Google-Cloud-Projekt/
+Billing-Account nötig), `LEAD_SUCHBEGRIFFE` (kommagetrennte Suchen, z.B.
 `Frisör in Hamburg Altona, Restaurant in Köln Ehrenfeld`), `LEAD_MAX_PRO_LAUF`
 (Default `15`, deckelt Kosten/Nachrichtenlänge pro Lauf),
 `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID` (aus Meta for Developers →
