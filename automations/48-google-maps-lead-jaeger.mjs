@@ -32,6 +32,41 @@ function branchAusSuchbegriff(begriff) {
   return begriff.split(/\s+in\s+/i)[0].trim() || 'Unternehmen';
 }
 
+// Normalisiert eine deutsche Telefonnummer auf reine Ziffern im internationalen
+// Format (ohne "+"), damit sie mit dem "from"-Feld eingehender WhatsApp-
+// Nachrichten verglichen werden kann (der Anruf-Trigger-Worker macht das gleiche).
+function normalizeTelefonDE(raw) {
+  const digits = String(raw || '').replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.startsWith('49')) return digits;
+  if (digits.startsWith('0')) return '49' + digits.slice(1);
+  return digits;
+}
+
+const WARTELISTE_STATE_NAME = 'leads-warten-auf-antwort';
+const MAX_WARTELISTE = 300;
+
+// Veröffentlicht die Leads mit Telefonnummer, damit der Cloudflare-Worker
+// (whatsapp-call-trigger/) erkennen kann, welcher eingehenden WhatsApp-Antwort
+// welcher Lead zugeordnet ist, und dafür einen Vapi-Anruf auslösen kann.
+function aktualisiereWarteliste(neueLeads) {
+  const bestehende = loadState(WARTELISTE_STATE_NAME).leads || [];
+  const neueEintraege = neueLeads
+    .filter((l) => l.telefon)
+    .map((l) => ({
+      telefonNormalisiert: normalizeTelefonDE(l.telefon),
+      name: l.name,
+      branche: l.branche,
+      grund: l.grund,
+      previewUrl: l.previewUrl,
+      hinzugefuegtAm: new Date().toISOString().slice(0, 10),
+    }))
+    .filter((l) => l.telefonNormalisiert);
+
+  const kombiniert = [...bestehende, ...neueEintraege].slice(-MAX_WARTELISTE);
+  saveState(WARTELISTE_STATE_NAME, { leads: kombiniert });
+}
+
 // Google Places trägt bei vielen Kleinunternehmen als "website" nur eine
 // Social-Media-Seite oder einen kostenlosen Baukasten-Auftritt ein - das ist
 // keine echte eigene Website und damit trotzdem ein Lead.
@@ -161,6 +196,8 @@ async function main() {
     writeFileSync(join(PREVIEW_DIR, `${slug}.html`), buildLeadPreviewHtml(lead));
     lead.previewUrl = `${PAGES_BASE_URL}/lead-previews/${slug}.html`;
   }
+
+  aktualisiereWarteliste(leads);
 
   const zeilen = leads.map((l, i) => {
     const teile = [`${i + 1}. *${l.name}*`, l.grund];
