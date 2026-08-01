@@ -13,6 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    concurrency:
+      # Serialisiert überlappende Läufe DERSELBEN Automation (z.B. wenn ein Lauf
+      # länger dauert als der Cron-Abstand) - cancel-in-progress:false, damit ein
+      # bereits laufender Auftrag (z.B. eine gerade platzierte Trading-Order)
+      # niemals mitten in der Ausführung abgebrochen wird, sondern der nächste
+      # Lauf einfach wartet.
+      group: automation-${{ inputs.script }}
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
 
