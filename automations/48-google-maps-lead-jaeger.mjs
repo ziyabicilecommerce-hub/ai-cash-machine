@@ -92,7 +92,21 @@ function erkenneUnechteWebsite(url) {
   }
 }
 
+// Google Business Profile-Einträge werden von den Firmen selbst gepflegt -
+// "website" ist damit externe, nicht vertrauenswürdige Eingabe. Nur http(s)
+// zulassen, bevor die Automation ungefragt einen Request dorthin schickt
+// (schützt z.B. vor file:/gopher:-URLs oder anderen unerwarteten Schemes).
+function istOeffentlicheHttpUrl(url) {
+  try {
+    const protokoll = new URL(url).protocol;
+    return protokoll === 'http:' || protokoll === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 async function checkWebsiteQualitaet(url) {
+  if (!istOeffentlicheHttpUrl(url)) return null;
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
