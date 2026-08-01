@@ -26,6 +26,20 @@ export const config = {
   WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID || '',
   WHATSAPP_TO_NUMBER: process.env.WHATSAPP_TO_NUMBER || '',
 
+  // Trading-Bot (Binance Spot, kein Hebel/Margin - maximaler Verlust ist immer
+  // das eingesetzte Kapital, nie mehr)
+  BINANCE_API_KEY: process.env.BINANCE_API_KEY || '',
+  BINANCE_API_SECRET: process.env.BINANCE_API_SECRET || '',
+  TRADING_PAPER_MODE: process.env.TRADING_PAPER_MODE || 'ja',
+  TRADING_SYMBOL: process.env.TRADING_SYMBOL || 'BTCUSDT',
+  TRADING_KAPITAL_USDT: process.env.TRADING_KAPITAL_USDT || '100',
+  TRADING_MAX_POSITION_PROZENT: process.env.TRADING_MAX_POSITION_PROZENT || '25',
+  TRADING_MAX_TAGESVERLUST_PROZENT: process.env.TRADING_MAX_TAGESVERLUST_PROZENT || '5',
+  TRADING_MAX_GESAMTVERLUST_PROZENT: process.env.TRADING_MAX_GESAMTVERLUST_PROZENT || '20',
+  TRADING_STOP_LOSS_PROZENT: process.env.TRADING_STOP_LOSS_PROZENT || '3',
+  TRADING_EMA_SCHNELL: process.env.TRADING_EMA_SCHNELL || '9',
+  TRADING_EMA_LANGSAM: process.env.TRADING_EMA_LANGSAM || '21',
+
   // Google Maps via Composio (Lead-Jäger) - kein eigener Google-Cloud-Billing-Account nötig
   COMPOSIO_API_KEY: process.env.COMPOSIO_API_KEY || '',
   LEAD_SUCHBEGRIFFE: process.env.LEAD_SUCHBEGRIFFE || '',

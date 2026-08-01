@@ -1,0 +1,13 @@
+name: "49 · Trading-Bot (Krypto Spot)"
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/49-trading-bot.mjs
+    secrets: inherit
