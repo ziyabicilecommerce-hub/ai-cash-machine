@@ -18,23 +18,27 @@ async function main() {
   const maxProLauf = parseInt(config.PUMP_MAX_PRO_LAUF, 10) || 10;
 
   const state = loadState(STATE_NAME);
-  const letzteAlarme = state.alarme || {};
+  const jetzt = Date.now();
+
+  // Abgelaufene Cooldown-Einträge entfernen - sie blockieren ohnehin nichts
+  // mehr, würden aber sonst für immer im State liegen bleiben.
+  const letzteAlarme = {};
+  for (const [symbol, zeitpunkt] of Object.entries(state.alarme || {})) {
+    if (jetzt - new Date(zeitpunkt).getTime() < cooldownMs) letzteAlarme[symbol] = zeitpunkt;
+  }
 
   const tickers = await getAllTickers24hr();
-  const jetzt = Date.now();
 
   const kandidaten = tickers
     .filter((t) => t.symbol.endsWith(quoteWaehrung))
     .filter((t) => t.quoteVolume >= minVolumen)
     .filter((t) => t.priceChangePercent >= schwelleProzent)
-    .filter((t) => {
-      const letzterAlarm = letzteAlarme[t.symbol];
-      return !letzterAlarm || jetzt - new Date(letzterAlarm).getTime() >= cooldownMs;
-    })
+    .filter((t) => !letzteAlarme[t.symbol])
     .sort((a, b) => b.priceChangePercent - a.priceChangePercent)
     .slice(0, maxProLauf);
 
   if (!kandidaten.length) {
+    saveState(STATE_NAME, { alarme: letzteAlarme });
     console.log('[50-pump-scanner] Keine neuen Pumps über der Schwelle gefunden.');
     return;
   }
