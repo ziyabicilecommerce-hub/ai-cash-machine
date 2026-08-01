@@ -1,0 +1,20 @@
+name = "cashmachine-whatsapp-call-trigger"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# KV-Namespace zum Merken "diese Nummer wurde schon angerufen" (verhindert
+# Doppel-Anrufe, wenn dieselbe Firma mehrfach antwortet). Nach dem Erstellen
+# via `wrangler kv namespace create CALLED_LEADS` die zurückgegebene id hier
+# eintragen.
+[[kv_namespaces]]
+binding = "CALLED_LEADS"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+# Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
+#   WHATSAPP_VERIFY_TOKEN   (frei wählbarer String, gleicher Wert wie im Meta-App-Dashboard)
+#   WHATSAPP_ACCESS_TOKEN   (gleicher Wert wie das GitHub Secret der Automation)
+#   WHATSAPP_PHONE_NUMBER_ID (gleicher Wert wie das GitHub Secret der Automation)
+#   WHATSAPP_TO_NUMBER      (gleicher Wert wie das GitHub Secret der Automation)
+#   VAPI_API_KEY            (aus dem Vapi-Dashboard)
+#   VAPI_ASSISTANT_ID       (aus dem Vapi-Dashboard, der konfigurierte Anruf-Assistent)
+#   VAPI_PHONE_NUMBER_ID    (aus dem Vapi-Dashboard, die Anruf-Nummer)

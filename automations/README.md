@@ -96,6 +96,14 @@ befüllt) und live über GitHub Pages ausgeliefert
 Der Link steht direkt in der WhatsApp-Nachricht — so hast du beim Anschreiben
 schon etwas Vorzeigbares statt einer kalten Anfrage.
 
+Zusätzlich veröffentlicht der Lead-Jäger jeden Lead mit Telefonnummer in
+`automations/state/leads-warten-auf-antwort.json`. Antwortet die Firma auf
+WhatsApp, löst `whatsapp-call-trigger/` (ein separat zu deployender Cloudflare
+Worker, siehe dessen README) automatisch einen KI-Telefonanruf über Vapi aus —
+**bewusst nur nach einer Antwort**, nicht vorher, aus rechtlichen Gründen
+(unerlaubte automatisierte Kaltakquise-Anrufe, UWG §7). Ohne dieses separate
+Setup läuft der Lead-Jäger unverändert weiter, nur der Rückruf bleibt inaktiv.
+
 **Geschäfts-Schwellwerte / Rabattcodes** (alle mit funktionierenden Defaults,
 nur bei Bedarf überschreiben):
 `VIP_UMSATZ_SCHWELLE`, `VIP_BESTELLUNGEN_SCHWELLE`, `VIP_RABATT_CODE`,
