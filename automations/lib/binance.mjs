@@ -33,6 +33,18 @@ export async function getKlines(symbol, interval, limit = 100) {
   return data.map((k) => ({ close: parseFloat(k[4]) }));
 }
 
+// Öffentliche Symbol-Regeln - u.a. die Mindest-Ordergröße (NOTIONAL bzw. das
+// ältere MIN_NOTIONAL), damit der Bot bei zu kleinem Kapital vorher klar warnt
+// statt einen kryptischen Binance-Fehler zu bekommen.
+export async function getMinNotional(symbol) {
+  const res = await fetch(`${BASE_URL}/api/v3/exchangeInfo?symbol=${symbol}`);
+  if (!res.ok) throw new Error(`Binance ExchangeInfo-Fehler: ${res.status}`);
+  const data = await res.json();
+  const filters = (data.symbols && data.symbols[0] && data.symbols[0].filters) || [];
+  const filter = filters.find((f) => f.filterType === 'NOTIONAL' || f.filterType === 'MIN_NOTIONAL');
+  return filter ? parseFloat(filter.minNotional) : null;
+}
+
 export async function getAccountBalance(asset) {
   const data = await signedRequest('/api/v3/account');
   const bal = (data.balances || []).find((b) => b.asset === asset);
