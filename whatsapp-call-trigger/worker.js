@@ -84,8 +84,16 @@ async function handleIncomingMessage(fromRaw, env) {
 
   const erfolgreich = await placeVapiCall(lead, env);
   if (erfolgreich) {
+    // Dedupe-Marker zuerst setzen, dann erst (best-effort) benachrichtigen -
+    // schlägt notifyOwner fehl (z.B. WhatsApp kurz down), ist der Anruf trotzdem
+    // korrekt als "erledigt" vermerkt und wird bei einer Meta-Webhook-Wiederholung
+    // nicht doppelt ausgelöst.
     await env.CALLED_LEADS.put(telefonNormalisiert, new Date().toISOString(), { expirationTtl: KV_TTL_SECONDS });
-    await notifyOwner(`📞 ${lead.name} hat geantwortet - Vapi ruft jetzt an.`, env);
+    try {
+      await notifyOwner(`📞 ${lead.name} hat geantwortet - Vapi ruft jetzt an.`, env);
+    } catch (err) {
+      console.error('[notifyOwner] Fehler:', err);
+    }
   }
 }
 
@@ -113,7 +121,14 @@ export default {
 
       const messages = body?.entry?.[0]?.changes?.[0]?.value?.messages || [];
       for (const msg of messages) {
-        if (msg?.from) await handleIncomingMessage(msg.from, env);
+        if (!msg?.from) continue;
+        try {
+          await handleIncomingMessage(msg.from, env);
+        } catch (err) {
+          // Ein Fehler bei einer Nachricht darf nicht verhindern, dass weitere
+          // Nachrichten im selben Webhook-Batch verarbeitet werden.
+          console.error('[handleIncomingMessage] Fehler:', err);
+        }
       }
       return new Response('OK', { status: 200 });
     }
