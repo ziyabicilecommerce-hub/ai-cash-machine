@@ -104,6 +104,27 @@ Worker, siehe dessen README) automatisch einen KI-Telefonanruf über Vapi aus �
 (unerlaubte automatisierte Kaltakquise-Anrufe, UWG §7). Ohne dieses separate
 Setup läuft der Lead-Jäger unverändert weiter, nur der Rückruf bleibt inaktiv.
 
+**⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
+Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
+(Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
+Auszahlungsrechte**), `TRADING_PAPER_MODE` (Default `ja` = simuliert, kein
+echtes Geld; erst bewusst auf `nein` stellen, wenn die Strategie sich im
+Paper-Modus bewährt hat), `TRADING_SYMBOL` (Default `BTCUSDT`),
+`TRADING_KAPITAL_USDT` (dem Bot zugewiesenes Kapital, Default `100`),
+`TRADING_MAX_POSITION_PROZENT` (max. Kapitalanteil pro Trade, Default `25`),
+`TRADING_MAX_TAGESVERLUST_PROZENT` (stoppt neue Einstiege für den Rest des
+Tages, Default `5`), `TRADING_MAX_GESAMTVERLUST_PROZENT` (Kill-Switch - Bot
+stoppt sich komplett und dauerhaft, Default `20`), `TRADING_STOP_LOSS_PROZENT`
+(Default `3`), `TRADING_EMA_SCHNELL`/`TRADING_EMA_LANGSAM` (EMA-Crossover-
+Strategie, Default `9`/`21`).
+
+Handelt ausschließlich Spot (kein Hebel/Margin) - der maximal mögliche Verlust
+ist immer nur das zugewiesene Kapital, nie mehr. Der Kill-Switch bei
+`TRADING_MAX_GESAMTVERLUST_PROZENT` ist **dauerhaft**: nach dem Auslösen
+bleibt der Bot inaktiv, bis `automations/state/trading-bot-state.json` manuell
+gelöscht/zurückgesetzt wird - bewusst kein automatisches Wiederanlaufen nach
+einem großen Verlust.
+
 **Geschäfts-Schwellwerte / Rabattcodes** (alle mit funktionierenden Defaults,
 nur bei Bedarf überschreiben):
 `VIP_UMSATZ_SCHWELLE`, `VIP_BESTELLUNGEN_SCHWELLE`, `VIP_RABATT_CODE`,
@@ -128,7 +149,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 47 Automationen (46 aus n8n + 1 neue)
+## Die 48 Automationen (46 aus n8n + 2 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -179,6 +200,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 46 | Großbestellung-Radar | stündlich | Alarm bei Großbestellungen |
 | 47 | Länder-Expansions-Scout | 1. jedes Monats | Expansionsmarkt-Empfehlung |
 | 48 | Google-Maps-Lead-Jäger | täglich 08:00 | findet Firmen ohne/mit schlechter Website, meldet per WhatsApp |
+| 49 | ⚠️ Trading-Bot | alle 15 Min | Krypto-Spot-Handel (EMA-Crossover), Paper-Modus per Default |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
