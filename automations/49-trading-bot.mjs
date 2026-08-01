@@ -160,7 +160,18 @@ async function main() {
   console.log(`[49-trading-bot] Lauf abgeschlossen. Kapital: ${state.kapital.toFixed(2)} USDT, Position: ${state.position ? 'offen' : 'keine'}.`);
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
   console.error('[49-trading-bot] Fehler:', err);
+  // Bei echtem Geld darf ein fehlgeschlagener Kauf/Verkauf (z.B. abgelehnte
+  // Order, Netzwerkfehler) nicht nur im GitHub-Actions-Log verschwinden -
+  // sonst merkt niemand, dass gerade z.B. ein Stop-Loss NICHT ausgeführt wurde.
+  try {
+    await notifyWhatsapp(
+      `🛑 Trading-Bot: Lauf mit Fehler abgebrochen - ${err.message || err}. ` +
+      `Eine Order (Ein- oder Ausstieg) wurde dadurch möglicherweise NICHT ausgeführt. Bitte Binance-Konto und automations/state/trading-bot-state.json manuell prüfen.`,
+    );
+  } catch (notifyErr) {
+    console.error('[49-trading-bot] Zusätzlich: WhatsApp-Fehlerbenachrichtigung fehlgeschlagen:', notifyErr);
+  }
   process.exit(1);
 });
