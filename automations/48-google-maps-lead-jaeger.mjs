@@ -12,6 +12,7 @@ import { searchPlaces } from './lib/composioMaps.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 import { buildLeadPreviewHtml, slugifyLead } from './lib/leadPreview.mjs';
+import { chunkZeilen } from './lib/whatsappChunk.mjs';
 
 const STATE_NAME = 'lead-jaeger-state';
 const MAX_GEPRUEFTE_HISTORIE = 5000;
@@ -89,24 +90,6 @@ function erkenneUnechteWebsite(url) {
   } catch {
     return null;
   }
-}
-
-function chunkZeilen(zeilen, maxChars) {
-  const chunks = [];
-  let current = [];
-  let currentLength = 0;
-  for (const zeile of zeilen) {
-    const zusatz = zeile.length + 2;
-    if (current.length && currentLength + zusatz > maxChars) {
-      chunks.push(current);
-      current = [];
-      currentLength = 0;
-    }
-    current.push(zeile);
-    currentLength += zusatz;
-  }
-  if (current.length) chunks.push(current);
-  return chunks;
 }
 
 async function checkWebsiteQualitaet(url) {

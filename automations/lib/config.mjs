@@ -40,6 +40,13 @@ export const config = {
   TRADING_EMA_SCHNELL: process.env.TRADING_EMA_SCHNELL || '9',
   TRADING_EMA_LANGSAM: process.env.TRADING_EMA_LANGSAM || '21',
 
+  // Pump-Scanner (reiner Alarm, kein Handel)
+  PUMP_QUOTE_WAEHRUNG: process.env.PUMP_QUOTE_WAEHRUNG || 'USDT',
+  PUMP_SCHWELLE_PROZENT: process.env.PUMP_SCHWELLE_PROZENT || '15',
+  PUMP_MIN_VOLUMEN_USDT: process.env.PUMP_MIN_VOLUMEN_USDT || '1000000',
+  PUMP_COOLDOWN_STUNDEN: process.env.PUMP_COOLDOWN_STUNDEN || '6',
+  PUMP_MAX_PRO_LAUF: process.env.PUMP_MAX_PRO_LAUF || '10',
+
   // Google Maps via Composio (Lead-Jäger) - kein eigener Google-Cloud-Billing-Account nötig
   COMPOSIO_API_KEY: process.env.COMPOSIO_API_KEY || '',
   LEAD_SUCHBEGRIFFE: process.env.LEAD_SUCHBEGRIFFE || '',

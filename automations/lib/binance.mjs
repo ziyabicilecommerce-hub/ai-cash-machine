@@ -33,6 +33,20 @@ export async function getKlines(symbol, interval, limit = 100) {
   return data.map((k) => ({ close: parseFloat(k[4]) }));
 }
 
+// 24h-Statistik für ALLE Binance-Symbole in einem Call - kein API-Key nötig.
+// Grundlage für den Pump-Scanner (welche Coins gerade stark steigen).
+export async function getAllTickers24hr() {
+  const res = await fetch(`${BASE_URL}/api/v3/ticker/24hr`);
+  if (!res.ok) throw new Error(`Binance Ticker-Fehler: ${res.status}`);
+  const data = await res.json();
+  return data.map((t) => ({
+    symbol: t.symbol,
+    priceChangePercent: parseFloat(t.priceChangePercent),
+    lastPrice: parseFloat(t.lastPrice),
+    quoteVolume: parseFloat(t.quoteVolume),
+  }));
+}
+
 // Öffentliche Symbol-Regeln - u.a. die Mindest-Ordergröße (NOTIONAL bzw. das
 // ältere MIN_NOTIONAL), damit der Bot bei zu kleinem Kapital vorher klar warnt
 // statt einen kryptischen Binance-Fehler zu bekommen.
