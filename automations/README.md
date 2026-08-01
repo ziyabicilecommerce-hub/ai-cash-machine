@@ -125,6 +125,17 @@ bleibt der Bot inaktiv, bis `automations/state/trading-bot-state.json` manuell
 gelöscht/zurückgesetzt wird - bewusst kein automatisches Wiederanlaufen nach
 einem großen Verlust.
 
+**🚀 Pump-Scanner** (reiner Alarm, kein Handel - meldet per WhatsApp, wenn
+eine Kryptowährung gerade stark steigt): `PUMP_QUOTE_WAEHRUNG` (Default
+`USDT`, nur Paare gegen diese Währung werden geprüft), `PUMP_SCHWELLE_PROZENT`
+(Mindest-24h-Kursanstieg für einen Alarm, Default `15`),
+`PUMP_MIN_VOLUMEN_USDT` (Mindest-24h-Handelsvolumen, filtert illiquide/
+manipulierbare Micro-Caps raus, Default `1000000`), `PUMP_COOLDOWN_STUNDEN`
+(kein erneuter Alarm für dieselbe Münze innerhalb dieser Zeit, Default `6`),
+`PUMP_MAX_PRO_LAUF` (Default `10`). Braucht **keinen** `BINANCE_API_KEY` -
+nutzt ausschließlich Binances öffentliche 24h-Ticker-Daten, kein Account
+nötig. Läuft unabhängig vom Trading-Bot und handelt selbst nichts.
+
 **Geschäfts-Schwellwerte / Rabattcodes** (alle mit funktionierenden Defaults,
 nur bei Bedarf überschreiben):
 `VIP_UMSATZ_SCHWELLE`, `VIP_BESTELLUNGEN_SCHWELLE`, `VIP_RABATT_CODE`,
@@ -149,7 +160,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 48 Automationen (46 aus n8n + 2 neue)
+## Die 49 Automationen (46 aus n8n + 3 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -201,6 +212,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 47 | Länder-Expansions-Scout | 1. jedes Monats | Expansionsmarkt-Empfehlung |
 | 48 | Google-Maps-Lead-Jäger | täglich 08:00 | findet Firmen ohne/mit schlechter Website, meldet per WhatsApp |
 | 49 | ⚠️ Trading-Bot | alle 15 Min | Krypto-Spot-Handel (EMA-Crossover), Paper-Modus per Default |
+| 50 | 🚀 Pump-Scanner | alle 15 Min | Alarm per WhatsApp, wenn eine Kryptowährung stark steigt (kein Handel) |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht

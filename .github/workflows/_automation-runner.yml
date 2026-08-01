@@ -130,6 +130,11 @@ jobs:
           TRADING_STOP_LOSS_PROZENT: ${{ secrets.TRADING_STOP_LOSS_PROZENT }}
           TRADING_EMA_SCHNELL: ${{ secrets.TRADING_EMA_SCHNELL }}
           TRADING_EMA_LANGSAM: ${{ secrets.TRADING_EMA_LANGSAM }}
+          PUMP_QUOTE_WAEHRUNG: ${{ secrets.PUMP_QUOTE_WAEHRUNG }}
+          PUMP_SCHWELLE_PROZENT: ${{ secrets.PUMP_SCHWELLE_PROZENT }}
+          PUMP_MIN_VOLUMEN_USDT: ${{ secrets.PUMP_MIN_VOLUMEN_USDT }}
+          PUMP_COOLDOWN_STUNDEN: ${{ secrets.PUMP_COOLDOWN_STUNDEN }}
+          PUMP_MAX_PRO_LAUF: ${{ secrets.PUMP_MAX_PRO_LAUF }}
           LEAD_SUCHBEGRIFFE: ${{ secrets.LEAD_SUCHBEGRIFFE }}
           LEAD_MAX_PRO_LAUF: ${{ secrets.LEAD_MAX_PRO_LAUF }}
 

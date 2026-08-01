@@ -1,0 +1,13 @@
+name: "50 · Pump-Scanner"
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/50-pump-scanner.mjs
+    secrets: inherit
