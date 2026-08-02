@@ -37,6 +37,7 @@ jobs:
           SHOP: ${{ secrets.SHOP }}
           SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_MAX_TOKENS_PRO_TAG: ${{ secrets.CLAUDE_MAX_TOKENS_PRO_TAG }}
           SHOP_NAME: ${{ secrets.SHOP_NAME }}
           SHOP_URL: ${{ secrets.SHOP_URL }}
           SHOP_NISCHE: ${{ secrets.SHOP_NISCHE }}
