@@ -1,8 +1,11 @@
 name: "50 · Pump-Scanner"
 
+# Kein schedule-Trigger mehr: Binance blockiert die IP-Bereiche der
+# GitHub-Actions-Runner (HTTP 451) - dieser Scanner kann von hier aus nie
+# erfolgreich Daten abrufen. Noch kein Cloudflare-Worker-Ersatz gebaut (im
+# Gegensatz zum Trading-Bot, siehe trading-bot-worker/) - bei Bedarf gleiches
+# Muster nachbauen. Bleibt hier als Referenz/manuell testbar.
 on:
-  schedule:
-    - cron: '*/15 * * * *'
   workflow_dispatch: {}
 
 permissions:

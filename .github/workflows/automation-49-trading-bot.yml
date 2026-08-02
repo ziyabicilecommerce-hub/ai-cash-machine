@@ -1,8 +1,10 @@
 name: "49 · Trading-Bot (Krypto Spot)"
 
+# Kein schedule-Trigger mehr: Binance blockiert die IP-Bereiche der
+# GitHub-Actions-Runner (HTTP 451) - dieser Bot kann von hier aus nie
+# erfolgreich handeln. Der echte Betrieb läuft über trading-bot-worker/
+# (Cloudflare Worker). Dieses Skript bleibt als Referenz/manuell testbar.
 on:
-  schedule:
-    - cron: '*/15 * * * *'
   workflow_dispatch: {}
 
 permissions:
