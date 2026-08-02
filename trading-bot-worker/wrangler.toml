@@ -1,0 +1,36 @@
+name = "cashmachine-trading-bot"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# Läuft alle 15 Minuten - wie der GitHub-Actions-Bot vorher, nur eben von
+# Cloudflares Edge-Netzwerk aus statt aus einem von Binance blockierten
+# GitHub-Actions-IP-Bereich.
+[triggers]
+crons = ["*/15 * * * *"]
+
+# State pro Symbol (Kapital, offene Position, Kill-Switch). Nach dem Erstellen
+# via `wrangler kv namespace create TRADING_STATE` die zurückgegebene id hier
+# eintragen.
+[[kv_namespaces]]
+binding = "TRADING_STATE"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+# Nicht-geheime Konfiguration - kann hier direkt stehen (kein Secret).
+[vars]
+TRADING_SYMBOLS = "BTCUSDT"
+TRADING_PAPER_MODE = "ja"
+TRADING_KAPITAL_USDT = "100"
+TRADING_MAX_POSITION_PROZENT = "25"
+TRADING_MAX_TAGESVERLUST_PROZENT = "5"
+TRADING_MAX_GESAMTVERLUST_PROZENT = "20"
+TRADING_STOP_LOSS_PROZENT = "3"
+TRADING_EMA_SCHNELL = "9"
+TRADING_EMA_LANGSAM = "21"
+
+# Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
+#   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)
+#   BINANCE_API_SECRET
+#   WHATSAPP_ACCESS_TOKEN  (gleicher Wert wie bei den anderen Automationen, optional)
+#   WHATSAPP_PHONE_NUMBER_ID
+#   WHATSAPP_TO_NUMBER
+#   TRIGGER_SECRET         (frei erfundener String, schützt den manuellen Test-Aufruf)
