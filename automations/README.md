@@ -44,6 +44,7 @@ Default aufgefüllt).
 | `SHOP` | Shopify-Subdomain, z.B. `mein-shop` (aus `mein-shop.myshopify.com`) |
 | `SHOPIFY_TOKEN` | Shopify Admin API Access Token (`shpat_...`) |
 | `ANTHROPIC_API_KEY` | Claude API Key (`sk-ant-...`) |
+| `CLAUDE_MAX_TOKENS_PRO_TAG` | Optional, Default `300000`. Tages-Obergrenze für Claude-Tokenverbrauch über ALLE Automationen zusammen (Sicherheitsnetz gegen Bugs/unerwartet hohe Kosten). Bei Erreichen: einmalige Telegram/WhatsApp-Warnung, weitere Claude-Aufrufe pausieren bis zum nächsten Tag. `0` oder leer = kein Limit. |
 | `SHOP_NAME` | Anzeigename des Shops in Mails/Reports |
 | `OWNER_EMAIL` | Deine eigene E-Mail (Reports, Alarme, TEST_MODE-Ziel) |
 | `ABSENDER_EMAIL` | Absenderadresse für Kunden-Mails |

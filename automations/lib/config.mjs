@@ -4,6 +4,9 @@ export const config = {
   SHOP: process.env.SHOP || '',
   SHOPIFY_TOKEN: process.env.SHOPIFY_TOKEN || '',
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
+  // Tages-Obergrenze für Claude-Tokenverbrauch über alle Automationen hinweg
+  // (Input+Output zusammen). '0' oder leer = kein Limit.
+  CLAUDE_MAX_TOKENS_PRO_TAG: process.env.CLAUDE_MAX_TOKENS_PRO_TAG || '300000',
   SHOP_NAME: process.env.SHOP_NAME || 'Mein Shop',
   SHOP_URL: process.env.SHOP_URL || '',
   SHOP_NISCHE: process.env.SHOP_NISCHE || '',
