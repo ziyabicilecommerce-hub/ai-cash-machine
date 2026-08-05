@@ -138,6 +138,8 @@ jobs:
           PUMP_MAX_PRO_LAUF: ${{ secrets.PUMP_MAX_PRO_LAUF }}
           LEAD_SUCHBEGRIFFE: ${{ secrets.LEAD_SUCHBEGRIFFE }}
           LEAD_MAX_PRO_LAUF: ${{ secrets.LEAD_MAX_PRO_LAUF }}
+          PRODUCT_HUNTER_NISCHEN: ${{ secrets.PRODUCT_HUNTER_NISCHEN }}
+          PRODUCT_HUNTER_ANZAHL_PRO_NISCHE: ${{ secrets.PRODUCT_HUNTER_ANZAHL_PRO_NISCHE }}
 
       - name: State-Änderungen committen
         run: |

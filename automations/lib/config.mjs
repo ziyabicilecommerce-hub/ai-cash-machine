@@ -55,6 +55,10 @@ export const config = {
   LEAD_SUCHBEGRIFFE: process.env.LEAD_SUCHBEGRIFFE || '',
   LEAD_MAX_PRO_LAUF: process.env.LEAD_MAX_PRO_LAUF || '15',
 
+  // Product-Hunter (Produktrecherche, Claude-Einschätzung statt Live-Trenddaten)
+  PRODUCT_HUNTER_NISCHEN: process.env.PRODUCT_HUNTER_NISCHEN || '',
+  PRODUCT_HUNTER_ANZAHL_PRO_NISCHE: process.env.PRODUCT_HUNTER_ANZAHL_PRO_NISCHE || '3',
+
   // Judge.me Bewertungen
   JUDGEME_API_TOKEN: process.env.JUDGEME_API_TOKEN || '',
   JUDGEME_SHOP_DOMAIN: process.env.JUDGEME_SHOP_DOMAIN || '',
