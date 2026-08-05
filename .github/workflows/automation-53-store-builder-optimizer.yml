@@ -1,0 +1,16 @@
+name: "53 · Store Builder & Optimizer"
+
+on:
+  schedule:
+    - cron: '0 8 * * 5'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/53-store-builder-optimizer.mjs
+    secrets: inherit

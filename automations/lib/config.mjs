@@ -64,6 +64,10 @@ export const config = {
   CREATIVE_STUDIO_ANZAHL_PRODUKTE: process.env.CREATIVE_STUDIO_ANZAHL_PRODUKTE || '1',
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
 
+  // Store Builder & Optimizer (legt Produktseiten als Shopify-Entwurf an, prüft die Live-Storefront)
+  STORE_BUILDER_PRODUKTE: process.env.STORE_BUILDER_PRODUKTE || '',
+  STORE_BUILDER_ANZAHL_PRODUKTE: process.env.STORE_BUILDER_ANZAHL_PRODUKTE || '1',
+
   // Judge.me Bewertungen
   JUDGEME_API_TOKEN: process.env.JUDGEME_API_TOKEN || '',
   JUDGEME_SHOP_DOMAIN: process.env.JUDGEME_SHOP_DOMAIN || '',
