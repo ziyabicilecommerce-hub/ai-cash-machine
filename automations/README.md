@@ -226,6 +226,21 @@ mit demselben Prompt/JSON-Format wie in der App. **Jarvis** hat als reiner
 Chat-Hub keinen vergleichbaren wiederkehrenden Task - sein automatisches
 Gegenstück ist bereits die App Oracle (tägliches Briefing).
 
+**🔮 Oracle Auto-Briefing** (tägliches Briefing aus der Oracle-App
+automatisch, per WhatsApp): keine neuen Secrets, liest
+`finance-cockpit/data.json` (von #01 Gewinn-Radar gefüllt) und nutzt die
+üblichen `ANTHROPIC_API_KEY`/`WHATSAPP_*`. Läuft 30 Minuten nach dem
+Gewinn-Radar, damit die Daten schon aktuell sind. Ohne `data.json` (Gewinn-
+Radar noch nie gelaufen) überspringt sich die Automation selbst. Nutzt
+exakt denselben Prompt (LAGE/ANALYSE/BEFEHL/PROGNOSE) wie `buildPrompt()`
+in `oracle/index.html` - die App selbst bleibt unverändert live, inkl.
+"Neu generieren"-Button.
+
+**Hinweis zu Closer:** bleibt bewusst rein interaktiv. Es ist ein
+Live-Rollenspiel-Verkaufstraining ohne festen Input (anders als Oracles
+Finanzzahlen oder Brand Assassins Nische) - ein automatisch generiertes
+Übungsgespräch hätte keinen sinnvollen Nutzen zum passiven Empfangen.
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -309,7 +324,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 57 Automationen (46 aus n8n + 11 neue)
+## Die 58 Automationen (46 aus n8n + 12 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -370,6 +385,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 56 | 📈 Ad Commander | montags 08:00 | Kampagnen-Portfolio-Übersicht (Meta) mit Budget-Umschichtungs-Empfehlung zwischen Kampagnen; TikTok noch nicht angebunden |
 | 57 | ❤️ CRM & Retention Engine | dienstags 09:00 | segmentiert den Kundenstamm (VIP/At-Risk/treu/neu/ruhend), personalisierte Angebote für die wertvollsten inaktiven Kunden + optional SMS |
 | 58 | 🎯 Brand Assassin Auto-Scan | donnerstags 08:00 | lässt den Markt-Scan aus der Brand-Assassin-App automatisch für SHOP_NISCHE laufen, gleicher Prompt/Score wie in der App |
+| 59 | 🔮 Oracle Auto-Briefing | täglich 08:30 | lässt das tägliche KI-Briefing aus der Oracle-App automatisch laufen und per WhatsApp verschicken, gleicher Prompt wie in der App |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
