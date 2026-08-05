@@ -1,5 +1,7 @@
-// KI-Kundenservice - liest neue Kunden-E-Mails per IMAP, lässt Claude antworten,
-// eskaliert Sonderfälle per Telegram an dich.
+// KI-Kundenservice (= "Customer Support AI") - liest neue Kunden-E-Mails per
+// IMAP, gleicht die ECHTE Bestellung des Kunden ab (Shopify, per E-Mail-
+// Adresse), lässt Claude mit echten Fakten antworten, und eskaliert
+// Sonderfälle sowohl per Telegram als auch als echtes GitHub-Issue-Ticket.
 // Original: n8n Workflow "02_KI_Kundenservice" · Trigger: neue IMAP-E-Mail (hier: alle 10 Min gepollt)
 import { ImapFlow } from 'imapflow';
 import { simpleParser } from 'mailparser';
@@ -7,6 +9,8 @@ import { config, isTestMode } from './lib/config.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
+import { getOrders } from './lib/shopify.mjs';
+import { erstelleTicket } from './lib/githubIssues.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
 const NL = '\n';
@@ -51,16 +55,44 @@ async function fetchNewEmails() {
   return neu;
 }
 
-function buildPrompt(mail) {
+// Sucht die letzte Bestellung des Kunden per E-Mail-Adresse - damit Claude
+// mit ECHTEN Fakten antworten kann (Status, Artikel, Tracking) statt nur
+// generischer Versand-/Retoure-Policy.
+export async function findeLetzteBestellung(kundeEmail) {
+  if (!kundeEmail) return null;
+  try {
+    const orders = await getOrders({ email: kundeEmail, limit: '5', status: 'any' });
+    if (!orders.length) return null;
+    const letzte = orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+    const fulfillment = (letzte.fulfillments || [])[0];
+    return {
+      bestellnummer: letzte.order_number || letzte.id,
+      status: letzte.fulfillment_status || 'unfulfilled',
+      artikel: (letzte.line_items || []).map((li) => `${li.quantity}x ${li.title}`).join(', '),
+      trackingNummer: fulfillment ? fulfillment.tracking_number : null,
+      trackingUrl: fulfillment ? fulfillment.tracking_url : null,
+      bestelltAm: letzte.created_at,
+    };
+  } catch (err) {
+    console.error('[02-ki-kundenservice] Bestellabgleich fehlgeschlagen:', err.message);
+    return null;
+  }
+}
+
+export function buildPrompt(mail, bestellung) {
   const von = mail.from || '';
   const betreff = mail.subject;
   const text = (mail.textPlain || '').toString().slice(0, 4000);
   const m = von.match(/[\w.+-]+@[\w-]+\.[\w.]+/);
   const kundeEmail = m ? m[0] : '';
 
+  const bestellInfo = bestellung
+    ? `${NL}${NL}ECHTE Bestelldaten dieses Kunden (nutze diese, keine anderen Zahlen erfinden):${NL}Bestellnummer: ${bestellung.bestellnummer}${NL}Status: ${bestellung.status}${NL}Artikel: ${bestellung.artikel}${NL}Tracking: ${bestellung.trackingNummer ? `${bestellung.trackingNummer} (${bestellung.trackingUrl || 'kein Link'})` : 'noch kein Tracking vorhanden'}${NL}Bestellt am: ${bestellung.bestelltAm}`
+    : `${NL}${NL}Keine passende Bestellung zu dieser E-Mail-Adresse gefunden - erfinde KEINE Bestelldaten, frage im Zweifel nach der Bestellnummer.`;
+
   const prompt = `Du bist der Kundenservice des Onlineshops "${config.SHOP_NAME}". ${
     config.ANSPRACHE === 'du' ? 'Duze den Kunden.' : 'Sieze den Kunden.'
-  }${NL}${NL}Shop-Infos:${NL}- Versandzeit: ${config.VERSANDZEIT}${NL}- Rückgaberecht: ${config.RETOURE_TAGE} Tage${NL}${NL}Eingegangene Kunden-E-Mail:${NL}Von: ${von}${NL}Betreff: ${betreff}${NL}${NL}${text}${NL}${NL}Aufgaben:${NL}1. Klassifiziere die E-Mail: versand | retoure | produktfrage | beschwerde | sonstiges${NL}2. Entscheide, ob ein Mensch übernehmen muss (braucht_mensch = "ja" bei: Rechtsthemen, Drohungen, Rückbuchungen/Chargebacks, sehr wütenden Kunden, individuellen Sonderfällen, oder wenn du Bestelldaten bräuchtest die du nicht hast). Standardfragen (Versandzeit, Retoure-Ablauf, allgemeine Produktfragen) beantwortest du selbst.${NL}3. Schreibe eine freundliche, hilfreiche Antwort-E-Mail auf Deutsch als sauberes HTML (Inline-CSS, kurz und klar). Erfinde KEINE Fakten, keine Tracking-Nummern, keine Bestelldetails.${NL}${NL}Antworte NUR mit validem JSON, ohne Markdown:${NL}{"kategorie": "...", "braucht_mensch": "ja|nein", "betreff": "Re: ...", "antwort_html": "..."}`;
+  }${NL}${NL}Shop-Infos:${NL}- Versandzeit: ${config.VERSANDZEIT}${NL}- Rückgaberecht: ${config.RETOURE_TAGE} Tage${bestellInfo}${NL}${NL}Eingegangene Kunden-E-Mail:${NL}Von: ${von}${NL}Betreff: ${betreff}${NL}${NL}${text}${NL}${NL}Aufgaben:${NL}1. Klassifiziere die E-Mail: versand | retoure | produktfrage | beschwerde | sonstiges${NL}2. Entscheide, ob ein Mensch übernehmen muss (braucht_mensch = "ja" bei: Rechtsthemen, Drohungen, Rückbuchungen/Chargebacks, sehr wütenden Kunden, individuellen Sonderfällen, oder wenn du Bestelldaten bräuchtest die du nicht hast). Standardfragen (Versandzeit, Retoure-Ablauf, allgemeine Produktfragen, Bestellstatus/Tracking WENN oben Bestelldaten vorhanden sind) beantwortest du selbst.${NL}3. Schreibe eine freundliche, hilfreiche Antwort-E-Mail auf Deutsch als sauberes HTML (Inline-CSS, kurz und klar). Nutze NUR die oben angegebenen echten Bestelldaten, erfinde KEINE Fakten, keine Tracking-Nummern, keine Bestelldetails.${NL}${NL}Antworte NUR mit validem JSON, ohne Markdown:${NL}{"kategorie": "...", "braucht_mensch": "ja|nein", "betreff": "Re: ...", "antwort_html": "..."}`;
 
   return { prompt, kundeEmail, betreff, text: text.slice(0, 800) };
 }
@@ -70,7 +102,9 @@ async function main() {
   console.log(`[02-ki-kundenservice] ${mails.length} neue E-Mail(s)`);
 
   for (const mail of mails) {
-    const { prompt, kundeEmail, betreff, text } = buildPrompt(mail);
+    const m = (mail.from || '').match(/[\w.+-]+@[\w-]+\.[\w.]+/);
+    const bestellung = await findeLetzteBestellung(m ? m[0] : '');
+    const { prompt, kundeEmail, betreff, text } = buildPrompt(mail, bestellung);
     const antwort = await askClaude(prompt, { maxTokens: 2500 });
     const daten = parseJsonFromText(antwort, {
       kategorie: 'sonstiges',
@@ -80,14 +114,22 @@ async function main() {
     });
 
     const nurText = (daten.antwort_html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 1200);
-    const telegramText = `KUNDENSERVICE - Mensch gebraucht!${NL}${NL}Von: ${kundeEmail}${NL}Kategorie: ${daten.kategorie}${NL}Betreff: ${betreff}${NL}${NL}Nachricht:${NL}${text}${NL}${NL}--- Claude-Entwurf (nicht gesendet) ---${NL}${nurText}`;
-
-    const empfaenger = isTestMode() ? config.OWNER_EMAIL : kundeEmail;
-    const finalBetreff = daten.betreff || `Re: ${betreff}`;
 
     if (daten.braucht_mensch === 'ja') {
+      const bestellZeile = bestellung
+        ? `Bestellung #${bestellung.bestellnummer} (${bestellung.status}), Artikel: ${bestellung.artikel}`
+        : 'Keine passende Bestellung gefunden';
+      const telegramText = `KUNDENSERVICE - Mensch gebraucht!${NL}${NL}Von: ${kundeEmail}${NL}Kategorie: ${daten.kategorie}${NL}Betreff: ${betreff}${NL}${bestellZeile}${NL}${NL}Nachricht:${NL}${text}${NL}${NL}--- Claude-Entwurf (nicht gesendet) ---${NL}${nurText}`;
       await notifyTelegram(telegramText);
+
+      await erstelleTicket({
+        title: `[Kundenservice] ${daten.kategorie}: ${betreff}`,
+        body: `**Von:** ${kundeEmail}\n**Kategorie:** ${daten.kategorie}\n**${bestellZeile}**\n\n**Nachricht:**\n${text}\n\n---\n**Claude-Entwurf (nicht automatisch gesendet, von einem Menschen prüfen):**\n${nurText}`,
+        labels: ['kundenservice', daten.kategorie],
+      });
     } else {
+      const empfaenger = isTestMode() ? config.OWNER_EMAIL : kundeEmail;
+      const finalBetreff = daten.betreff || `Re: ${betreff}`;
       await sendEmail({ to: empfaenger, subject: finalBetreff, html: daten.antwort_html || '' });
     }
   }

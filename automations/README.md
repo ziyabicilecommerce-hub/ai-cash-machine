@@ -73,8 +73,17 @@ Winning-Ad-Creatives):
 **Wetter-Marketing:**
 `LAT`, `LON` (Standort-Koordinaten, Default: Berlin)
 
-**KI-Kundenservice** (liest Postfach per IMAP):
-`IMAP_HOST`, `IMAP_PORT`, `IMAP_USER`, `IMAP_PASSWORD`
+**KI-Kundenservice / "Customer Support AI"** (liest Postfach per IMAP,
+gleicht die echte Bestellung des Kunden bei Shopify ab, erstellt bei
+Eskalation ein echtes GitHub-Issue-Ticket zusätzlich zum Telegram-Ping):
+`IMAP_HOST`, `IMAP_PORT`, `IMAP_USER`, `IMAP_PASSWORD`. Braucht zusätzlich
+`SHOP`/`SHOPIFY_TOKEN` (für den Bestellabgleich, meist ohnehin schon
+gesetzt). Die Ticket-Erstellung braucht **keinen zusätzlichen Secret** -
+`GITHUB_TOKEN` wird von GitHub Actions automatisch bereitgestellt, der
+Workflow (`automation-02-ki-kundenservice.yml`) hat dafür bewusst zusätzlich
+`issues: write` angefordert (als einziger von allen 56 Workflows - Prinzip
+der geringsten Rechte). Tickets landen als Issues mit Label `kundenservice`
+in diesem Repo.
 
 **Google-Maps-Lead-Jäger** (findet Firmen ohne/mit schlechter Website zum
 Website-Verkauf, schickt Treffer per WhatsApp):
@@ -256,7 +265,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
 | 01 | Gewinn-Radar | täglich 08:00 | tägliche Gewinn-/Umsatz-Kennzahlen, speist auch Finance Cockpit |
-| 02 | KI-Kundenservice | alle 10 Min | IMAP-Postfach lesen, Claude antwortet, Eskalation an Telegram |
+| 02 | KI-Kundenservice ("Customer Support AI") | alle 10 Min | IMAP-Postfach lesen, echter Bestellabgleich, Claude antwortet, Eskalation per Telegram + echtes GitHub-Issue-Ticket |
 | 04 | Bewertungs-Magnet | täglich 10:00 | fragt zufriedene Käufer nach Bewertungen |
 | 05 | Winback-Maschine | täglich 11:00 | reaktiviert inaktive Kunden |
 | 06 | Content-Kanone | täglich 07:30 | Social-Content-Ideen |
