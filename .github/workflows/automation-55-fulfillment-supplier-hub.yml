@@ -1,0 +1,16 @@
+name: "55 · Fulfillment & Supplier Hub"
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/55-fulfillment-supplier-hub.mjs
+    secrets: inherit

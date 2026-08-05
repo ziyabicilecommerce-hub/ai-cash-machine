@@ -146,6 +146,7 @@ jobs:
           STORE_BUILDER_PRODUKTE: ${{ secrets.STORE_BUILDER_PRODUKTE }}
           STORE_BUILDER_ANZAHL_PRODUKTE: ${{ secrets.STORE_BUILDER_ANZAHL_PRODUKTE }}
           COMPLIANCE_GUARD_MAX_PRO_LAUF: ${{ secrets.COMPLIANCE_GUARD_MAX_PRO_LAUF }}
+          FULFILLMENT_VERZUG_STUNDEN: ${{ secrets.FULFILLMENT_VERZUG_STUNDEN }}
 
       - name: State-Änderungen committen
         run: |
