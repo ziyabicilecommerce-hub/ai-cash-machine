@@ -13,6 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # Nur nutzbar, wenn der Aufrufer (automation-NN-*.yml) das auch selbst
+      # gewährt (z.B. für #02 KI-Kundenservice, das echte GitHub-Issue-
+      # Tickets erstellt) - reusable workflows können nie mehr Rechte
+      # bekommen, als der Aufrufer selbst hat.
+      issues: write
     concurrency:
       # Serialisiert überlappende Läufe DERSELBEN Automation (z.B. wenn ein Lauf
       # länger dauert als der Cron-Abstand) - cancel-in-progress:false, damit ein
@@ -34,6 +39,7 @@ jobs:
       - name: Automation ausführen
         run: node ${{ inputs.script }}
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHOP: ${{ secrets.SHOP }}
           SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
