@@ -144,6 +144,20 @@ sind - ein einfacher Heuristik-Check, kein vollständiger SEO-/A11y-Audit.
 Bundle-Ideen aus echten Kaufdaten gibt es bereits separat in #24
 Bundle-Bauer.
 
+**🛡️ Compliance Guard** (prüft Produkte auf mögliche Compliance-Themen -
+**ausdrücklich keine Rechtsberatung, nur Hinweise/Checkliste**):
+`COMPLIANCE_GUARD_MAX_PRO_LAUF` (wie viele neue/ungeprüfte Produkte pro Lauf
+geprüft werden, Default `20`). Braucht `SHOP`/`SHOPIFY_TOKEN` (liest den
+echten Produktkatalog). Prüft auf CE/WEEE/Batterien-Themen bei Elektronik,
+Verpackungsgesetz/LUCID-Erinnerung, Textilkennzeichnung, und riskante
+Werbeaussagen/Health-Claims ("heilt", "garantiert" o.ä.). Jede Nachricht
+enthält den Disclaimer, dass dies keine rechtsverbindliche Aussage ist -
+bei echten Zweifeln immer einen Fachanwalt/Steuerberater fragen. Ergänzt
+(nicht dupliziert) den Store Optimizer (#53), der die Pflichtseiten-
+Verlinkung auf der Startseite prüft - Compliance Guard schaut auf
+Produkt-Ebene. Merkt sich geprüfte Produkte dauerhaft (kein Re-Check bei
+unveränderten Produkten).
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -212,7 +226,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 52 Automationen (46 aus n8n + 6 neue)
+## Die 53 Automationen (46 aus n8n + 7 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -268,6 +282,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 51 | 🔎 Product Hunter | montags 08:00 | schlägt konkrete Produktideen vor, bewertet Nachfrage/Konkurrenz/Marge/Trend/Lieferzeit/Risiko (Claude-Einschätzung, keine Live-Trenddaten) |
 | 52 | 🎥 Creative Studio | mittwochs 08:00 | Ad-Kreativ-Paket pro Produkt: Hooks, Ad-Copy, UGC-Idee, Bild-Prompts + optional echte Bildgenerierung |
 | 53 | 🛒 Store Builder & Optimizer | freitags 08:00 | legt Produktseiten als Shopify-Entwurf an + prüft die Live-Storefront auf Geschwindigkeit/Vertrauen/Conversion-Basics |
+| 54 | 🛡️ Compliance Guard | 1. jedes Monats | prüft Produkte auf CE/WEEE/Verpackung/Werbeaussagen-Themen - nur Hinweise/Checkliste, KEINE Rechtsberatung |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
