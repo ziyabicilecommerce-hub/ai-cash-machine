@@ -1,0 +1,16 @@
+name: "54 · Compliance Guard"
+
+on:
+  schedule:
+    - cron: '0 8 1 * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/54-compliance-guard.mjs
+    secrets: inherit

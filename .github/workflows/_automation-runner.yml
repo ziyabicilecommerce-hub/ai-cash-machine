@@ -145,6 +145,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           STORE_BUILDER_PRODUKTE: ${{ secrets.STORE_BUILDER_PRODUKTE }}
           STORE_BUILDER_ANZAHL_PRODUKTE: ${{ secrets.STORE_BUILDER_ANZAHL_PRODUKTE }}
+          COMPLIANCE_GUARD_MAX_PRO_LAUF: ${{ secrets.COMPLIANCE_GUARD_MAX_PRO_LAUF }}
 
       - name: State-Änderungen committen
         run: |

@@ -68,6 +68,9 @@ export const config = {
   STORE_BUILDER_PRODUKTE: process.env.STORE_BUILDER_PRODUKTE || '',
   STORE_BUILDER_ANZAHL_PRODUKTE: process.env.STORE_BUILDER_ANZAHL_PRODUKTE || '1',
 
+  // Compliance Guard (nur Warnungen/Checklisten, keine Rechtsberatung)
+  COMPLIANCE_GUARD_MAX_PRO_LAUF: process.env.COMPLIANCE_GUARD_MAX_PRO_LAUF || '20',
+
   // Judge.me Bewertungen
   JUDGEME_API_TOKEN: process.env.JUDGEME_API_TOKEN || '',
   JUDGEME_SHOP_DOMAIN: process.env.JUDGEME_SHOP_DOMAIN || '',
