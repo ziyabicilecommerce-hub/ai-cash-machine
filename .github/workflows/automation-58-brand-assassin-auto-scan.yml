@@ -1,0 +1,16 @@
+name: "58 · Brand Assassin Auto-Scan"
+
+on:
+  schedule:
+    - cron: '0 8 * * 4'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/58-brand-assassin-auto-scan.mjs
+    secrets: inherit

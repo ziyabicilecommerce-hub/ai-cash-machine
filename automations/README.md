@@ -212,6 +212,20 @@ wenigen wertvollsten Fälle reserviert, kein Massen-SMS-Versand. Ein Kunde
 wird höchstens alle 90 Tage erneut kontaktiert (kein Spam bei wiederholten
 Läufen).
 
+**🎯 Brand Assassin Auto-Scan** (Markt-Scan aus der Brand-Assassin-App
+automatisch, wöchentlich): keine neuen Secrets, nutzt `SHOP_NISCHE`
+(bereits vorhanden) und die üblichen `ANTHROPIC_API_KEY`/`WHATSAPP_*`.
+Ohne `SHOP_NISCHE` überspringt sich die Automation selbst.
+
+Wichtig zur Einordnung: **Brand Assassin selbst bleibt unverändert live und
+interaktiv** - Product Scan, Creative-Analyse und Brand-Audit brauchen
+jeweils eine konkrete Eingabe (welches Produkt, welcher Ad-Text, welche
+Brand) und können deshalb nicht "von selbst" laufen. Nur der Markt-Scan hat
+mit `SHOP_NISCHE` einen sinnvollen Fixwert und läuft deshalb automatisch,
+mit demselben Prompt/JSON-Format wie in der App. **Jarvis** hat als reiner
+Chat-Hub keinen vergleichbaren wiederkehrenden Task - sein automatisches
+Gegenstück ist bereits die App Oracle (tägliches Briefing).
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -295,7 +309,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 56 Automationen (46 aus n8n + 10 neue)
+## Die 57 Automationen (46 aus n8n + 11 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -355,6 +369,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 55 | 📦 Fulfillment & Supplier Hub | täglich 09:00 | erkennt verzögerte Bestellungen, Zustellungsprobleme und rankt Lieferanten - nutzt nur die bestehende Shopify-Verbindung |
 | 56 | 📈 Ad Commander | montags 08:00 | Kampagnen-Portfolio-Übersicht (Meta) mit Budget-Umschichtungs-Empfehlung zwischen Kampagnen; TikTok noch nicht angebunden |
 | 57 | ❤️ CRM & Retention Engine | dienstags 09:00 | segmentiert den Kundenstamm (VIP/At-Risk/treu/neu/ruhend), personalisierte Angebote für die wertvollsten inaktiven Kunden + optional SMS |
+| 58 | 🎯 Brand Assassin Auto-Scan | donnerstags 08:00 | lässt den Markt-Scan aus der Brand-Assassin-App automatisch für SHOP_NISCHE laufen, gleicher Prompt/Score wie in der App |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
