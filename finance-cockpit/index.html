@@ -356,11 +356,18 @@
     const today = history[history.length - 1];
     const prev = history.length > 1 ? history[history.length - 2] : null;
     const row = document.getElementById('statsRow');
+    const hatNettoGewinn = today.nettoGewinn !== undefined;
     const items = [
-      { label: 'Umsatz (letzter Tag)', value: today.umsatz, prevValue: prev?.umsatz, money: true },
+      { label: 'Umsatz (letzter Tag, brutto)', value: today.umsatz, prevValue: prev?.umsatz, money: true },
       { label: 'Bestellungen', value: today.bestellungen, prevValue: prev?.bestellungen, money: false },
       { label: 'Ø Bestellwert', value: today.aov, prevValue: prev?.aov, money: true },
-      { label: 'Geschätzter Gewinn', value: today.gewinn, prevValue: prev?.gewinn, money: true, signed: true },
+      {
+        label: hatNettoGewinn ? 'Echter Nettogewinn (geschätzt)' : 'Geschätzter Gewinn',
+        value: hatNettoGewinn ? today.nettoGewinn : today.gewinn,
+        prevValue: hatNettoGewinn ? prev?.nettoGewinn : prev?.gewinn,
+        money: true,
+        signed: true,
+      },
     ];
     row.innerHTML = items.map((it, i) => {
       let deltaHtml = '';
@@ -390,7 +397,7 @@
     const plotW = W - padL - padR, plotH = H - padT - padB;
 
     const umsatzVals = history.map(h => h.umsatz);
-    const gewinnVals = history.map(h => h.gewinn);
+    const gewinnVals = history.map(h => h.nettoGewinn !== undefined ? h.nettoGewinn : h.gewinn);
     const allVals = umsatzVals.concat(gewinnVals);
     const maxV = Math.max(...allVals, 1);
     const minV = Math.min(...allVals, 0);
@@ -450,7 +457,8 @@
         let closest = 0, closestDist = Infinity;
         history.forEach((h, i) => { const d = Math.abs(xFor(i) - mxPos); if (d < closestDist) { closestDist = d; closest = i; } });
         const h = history[closest];
-        tooltip.innerHTML = `<b>${fmtDate(h.datum)}</b><br>Umsatz: ${fmtMoney(h.umsatz, h.waehrung)}<br>Gewinn: ${fmtMoney(h.gewinn, h.waehrung)}`;
+        const hGewinn = h.nettoGewinn !== undefined ? h.nettoGewinn : h.gewinn;
+        tooltip.innerHTML = `<b>${fmtDate(h.datum)}</b><br>Umsatz: ${fmtMoney(h.umsatz, h.waehrung)}<br>Gewinn: ${fmtMoney(hGewinn, h.waehrung)}`;
         tooltip.style.left = Math.min(xFor(closest) + 12, rect.width - 160) + 'px';
         tooltip.style.top = '8px';
         tooltip.classList.add('show');
@@ -463,13 +471,16 @@
 
   function renderTable(history) {
     const tbody = document.getElementById('historyTableBody');
-    tbody.innerHTML = history.slice().reverse().map(h => `
+    tbody.innerHTML = history.slice().reverse().map(h => {
+      const hGewinn = h.nettoGewinn !== undefined ? h.nettoGewinn : h.gewinn;
+      return `
       <tr>
         <td>${fmtDate(h.datum)}</td>
         <td>${fmtMoney(h.umsatz, h.waehrung)}</td>
-        <td class="${h.gewinn >= 0 ? 'gewinn-pos' : 'gewinn-neg'}">${fmtMoney(h.gewinn, h.waehrung)}</td>
+        <td class="${hGewinn >= 0 ? 'gewinn-pos' : 'gewinn-neg'}">${fmtMoney(hGewinn, h.waehrung)}</td>
         <td>${h.bestellungen}</td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
 
     const toggle = document.getElementById('tableToggle');
     const wrap = document.getElementById('tableWrap');
@@ -487,13 +498,26 @@
     const box = document.getElementById('breakdownBox');
     const cur = latestDay.waehrung;
     const produktkosten = Math.max(0, latestDay.umsatz - latestDay.retouren - latestDay.werbekosten - latestDay.gewinn);
+    // Gebühren/Steuer-Anteil gibt's erst seit der Profit-&-Tax-Erweiterung -
+    // bei älteren History-Einträgen (vor dem Update) fallen sie einfach weg,
+    // statt "undefined" anzuzeigen.
+    const gebuehren = latestDay.gebuehren || 0;
+    const steuerAnteil = latestDay.steuerAnteil || 0;
+    const hatErweiterteDaten = latestDay.nettoGewinn !== undefined;
+    const endGewinn = hatErweiterteDaten ? latestDay.nettoGewinn : latestDay.gewinn;
+
     const rows = [
-      { label: 'Umsatz', value: latestDay.umsatz, cls: 'plus' },
+      { label: 'Umsatz (brutto)', value: latestDay.umsatz, cls: 'plus' },
       { label: '− Retouren', value: -latestDay.retouren, cls: 'minus' },
       { label: '− Werbekosten', value: -latestDay.werbekosten, cls: 'minus' },
       { label: '− Produktkosten (geschätzt)', value: -produktkosten, cls: 'minus' },
-      { label: '= Geschätzter Gewinn', value: latestDay.gewinn, cls: 'total' },
     ];
+    if (hatErweiterteDaten) {
+      rows.push({ label: '− Zahlungsgebühren (geschätzt)', value: -gebuehren, cls: 'minus' });
+      rows.push({ label: '− Umsatzsteuer-Anteil (geschätzt)', value: -steuerAnteil, cls: 'minus' });
+    }
+    rows.push({ label: hatErweiterteDaten ? '= Echter Nettogewinn (geschätzt)' : '= Geschätzter Gewinn', value: endGewinn, cls: 'total' });
+
     box.innerHTML = rows.map(r => `
       <div class="breakdown-row">
         <span>${r.label}</span>
@@ -502,10 +526,12 @@
 
     const total = latestDay.umsatz || 1;
     const segments = [
-      { v: Math.max(0, latestDay.gewinn), color: 'var(--green)' },
+      { v: Math.max(0, endGewinn), color: 'var(--green)' },
       { v: latestDay.retouren, color: 'var(--red)' },
       { v: latestDay.werbekosten, color: 'var(--cyan)' },
       { v: produktkosten, color: 'var(--amber)' },
+      { v: gebuehren, color: 'var(--mut2)' },
+      { v: steuerAnteil, color: 'var(--mut)' },
     ];
     const bar = document.createElement('div');
     bar.className = 'breakdown-bar';
@@ -530,6 +556,7 @@
         <div class="rank">0${i + 1}</div>
         <div class="name">${p.name}</div>
         <div class="qty">${p.menge}× verkauft</div>
+        ${p.nettoGewinnGeschaetzt !== undefined ? `<div class="qty" style="color:var(--green)">≈ ${fmtMoney(p.nettoGewinnGeschaetzt, latestDay.waehrung)} Nettogewinn (geschätzt)</div>` : ''}
       </div>`).join('');
 
     const cards = grid.querySelectorAll('.product-card');

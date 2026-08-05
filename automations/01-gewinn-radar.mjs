@@ -46,26 +46,48 @@ async function main() {
       for (const t of r.transactions || []) retourenWert += parseFloat(t.amount || 0);
     }
     for (const li of o.line_items || []) {
-      produkte[li.title] = (produkte[li.title] || 0) + li.quantity;
+      if (!produkte[li.title]) produkte[li.title] = { menge: 0, umsatz: 0 };
+      produkte[li.title].menge += li.quantity;
+      produkte[li.title].umsatz += parseFloat(li.price || 0) * li.quantity;
     }
   }
 
   const anzahl = orders.length;
   const aov = anzahl ? umsatz / anzahl : 0;
-  const topEntries = Object.entries(produkte).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  const top = topEntries.map((e, i) => `${i + 1}. ${e[0]} (${e[1]}x)`).join(NL);
+  const topEntries = Object.entries(produkte).sort((a, b) => b[1].menge - a[1].menge).slice(0, 5);
+  const top = topEntries.map((e, i) => `${i + 1}. ${e[0]} (${e[1].menge}x)`).join(NL);
 
   const werbekosten = parseFloat(config.WERBEKOSTEN_PRO_TAG || 0);
-  const produktkosten = umsatz * (parseFloat(config.PRODUKTKOSTEN_PROZENT || 0) / 100);
+  const produktkostenProzent = parseFloat(config.PRODUKTKOSTEN_PROZENT || 0);
+  const produktkosten = umsatz * (produktkostenProzent / 100);
+
+  // Zahlungsgebühren (Shopify Payments/Stripe-typisch: Prozent + Fixbetrag pro Bestellung)
+  // und Umsatzsteuer-Anteil (Umsatz ist brutto, d.h. inkl. MwSt - die gehört
+  // ans Finanzamt, nicht zum echten Gewinn) - beides bisher NICHT abgezogen.
+  const zahlungsgebuehrProzent = parseFloat(config.ZAHLUNGSGEBUEHR_PROZENT || '0');
+  const zahlungsgebuehrFix = parseFloat(config.ZAHLUNGSGEBUEHR_FIX_CENT || '0') / 100;
+  const gebuehren = umsatz * (zahlungsgebuehrProzent / 100) + anzahl * zahlungsgebuehrFix;
+
+  const umsatzsteuerProzent = parseFloat(config.UMSATZSTEUER_PROZENT || '0');
+  const nettoUmsatz = umsatzsteuerProzent > 0 ? umsatz / (1 + umsatzsteuerProzent / 100) : umsatz;
+  const steuerAnteil = umsatz - nettoUmsatz;
+
   const gewinn = umsatz - retourenWert - werbekosten - produktkosten;
+  const nettoGewinnNachGebuehrenUndSteuer = gewinn - gebuehren - steuerAnteil;
+
+  // Gesamt-Kostenquote (Produktkosten + Gebühren + Steuer-Anteil, relativ zum
+  // Umsatz) - Basis für die Nettogewinn-Schätzung pro Produkt unten.
+  const kostenquote = umsatz > 0 ? 1 - (nettoGewinnNachGebuehrenUndSteuer + werbekosten + retourenWert) / umsatz : 0;
 
   const zahlen = [
-    `Umsatz: ${umsatz.toFixed(2)} ${waehrung}`,
+    `Umsatz (brutto): ${umsatz.toFixed(2)} ${waehrung}`,
     `Bestellungen: ${anzahl}`,
     `Durchschnittlicher Bestellwert: ${aov.toFixed(2)} ${waehrung}`,
     `Erstattungen: ${retourenWert.toFixed(2)} ${waehrung}`,
     `Werbekosten: ${werbekosten.toFixed(2)} ${waehrung}`,
-    `Geschätzter Gewinn: ${gewinn.toFixed(2)} ${waehrung}`,
+    `Zahlungsgebühren (geschätzt): ${gebuehren.toFixed(2)} ${waehrung}`,
+    `Umsatzsteuer-Anteil (geschätzt): ${steuerAnteil.toFixed(2)} ${waehrung}`,
+    `Echter Nettogewinn (geschätzt): ${nettoGewinnNachGebuehrenUndSteuer.toFixed(2)} ${waehrung}`,
     '',
     'Top-Produkte:',
     top || 'keine Verkäufe',
@@ -78,9 +100,17 @@ async function main() {
     aov: Number(aov.toFixed(2)),
     retouren: Number(retourenWert.toFixed(2)),
     werbekosten: Number(werbekosten.toFixed(2)),
+    gebuehren: Number(gebuehren.toFixed(2)),
+    steuerAnteil: Number(steuerAnteil.toFixed(2)),
     gewinn: Number(gewinn.toFixed(2)),
+    nettoGewinn: Number(nettoGewinnNachGebuehrenUndSteuer.toFixed(2)),
     waehrung,
-    topProdukte: topEntries.map(([name, menge]) => ({ name, menge })),
+    topProdukte: topEntries.map(([name, daten]) => ({
+      name,
+      menge: daten.menge,
+      umsatz: Number(daten.umsatz.toFixed(2)),
+      nettoGewinnGeschaetzt: Number((daten.umsatz * (1 - kostenquote)).toFixed(2)),
+    })),
   });
 
   const prompt = `Du bist E-Commerce-Berater für den Shop "${config.SHOP_NAME}".${NL}Hier die Zahlen von gestern:${NL}${NL}${zahlen}${NL}${NL}Gib genau 3 kurze, KONKRETE Handlungsempfehlungen für heute (jeweils 1-2 Sätze, direkt umsetzbar, keine Floskeln). Nummeriert 1-3, auf Deutsch, Du-Form. Antworte nur mit den 3 Punkten.`;
