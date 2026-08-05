@@ -59,6 +59,11 @@ export const config = {
   PRODUCT_HUNTER_NISCHEN: process.env.PRODUCT_HUNTER_NISCHEN || '',
   PRODUCT_HUNTER_ANZAHL_PRO_NISCHE: process.env.PRODUCT_HUNTER_ANZAHL_PRO_NISCHE || '3',
 
+  // Creative Studio (Ad-Kreativ-Pakete: Hooks, Ad-Copy, Bild-Prompts, optional echte Bildgenerierung)
+  CREATIVE_STUDIO_PRODUKTE: process.env.CREATIVE_STUDIO_PRODUKTE || '',
+  CREATIVE_STUDIO_ANZAHL_PRODUKTE: process.env.CREATIVE_STUDIO_ANZAHL_PRODUKTE || '1',
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+
   // Judge.me Bewertungen
   JUDGEME_API_TOKEN: process.env.JUDGEME_API_TOKEN || '',
   JUDGEME_SHOP_DOMAIN: process.env.JUDGEME_SHOP_DOMAIN || '',

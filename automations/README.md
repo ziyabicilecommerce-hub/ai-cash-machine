@@ -112,6 +112,22 @@ Live-Trenddaten): `PRODUCT_HUNTER_NISCHEN` (kommagetrennt, z.B. `Küche,Fitness,
 `WHATSAPP_TO_NUMBER` wie die anderen WhatsApp-Automationen. Merkt sich bereits
 vorgeschlagene Produkte, damit nicht jede Woche dieselben Ideen kommen.
 
+**🎥 Creative Studio** (Ad-Kreativ-Paket pro Produkt: Hooks, Ad-Copy,
+UGC-Idee, Bild-Prompts): `CREATIVE_STUDIO_PRODUKTE` (kommagetrennt, z.B.
+`Faltbare Klimmzugstange,Silikon-Küchenmatte XL` — ohne diesen Wert werden
+automatisch die zuletzt vom Product Hunter vorgeschlagenen Produkte
+genutzt), `CREATIVE_STUDIO_ANZAHL_PRODUKTE` (wie viele Produkte pro Lauf
+bearbeitet werden, Default `1`). Merkt sich bereits bearbeitete Produkte.
+
+Echte Bildgenerierung ist **optional**: mit `OPENAI_API_KEY` (platform.openai.com)
+generiert die Automation tatsächlich ein Bild (DALL-E 3) aus dem ersten
+Bild-Prompt und schickt es direkt per WhatsApp. Ohne Key liefert sie
+trotzdem das komplette Text-Paket inkl. beider Bild-Prompts zum manuellen
+Einsetzen in ein beliebiges Bildtool - kein Fehler, nur reduzierter
+Funktionsumfang. Schlägt die Bildgenerierung fehl (z.B. abgelehnter Prompt),
+kommt eine Warnung statt eines Absturzes, das Text-Paket wird trotzdem
+verschickt.
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -180,7 +196,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 50 Automationen (46 aus n8n + 4 neue)
+## Die 51 Automationen (46 aus n8n + 5 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -234,6 +250,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 49 | ⚠️ Trading-Bot | manuell (Referenz) | Krypto-Spot-Handel (EMA-Crossover), Paper-Modus per Default. **Läuft produktiv als Cloudflare Worker**, siehe `trading-bot-worker/` - GitHub Actions wird von Binance blockiert (HTTP 451) |
 | 50 | 🚀 Pump-Scanner | manuell (Referenz) | Alarm per WhatsApp, wenn eine Kryptowährung stark steigt (kein Handel). Gleicher Binance-IP-Block wie #49, noch kein Cloudflare-Ersatz gebaut |
 | 51 | 🔎 Product Hunter | montags 08:00 | schlägt konkrete Produktideen vor, bewertet Nachfrage/Konkurrenz/Marge/Trend/Lieferzeit/Risiko (Claude-Einschätzung, keine Live-Trenddaten) |
+| 52 | 🎥 Creative Studio | mittwochs 08:00 | Ad-Kreativ-Paket pro Produkt: Hooks, Ad-Copy, UGC-Idee, Bild-Prompts + optional echte Bildgenerierung |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
