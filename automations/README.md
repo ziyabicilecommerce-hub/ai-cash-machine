@@ -171,6 +171,18 @@ Verzögerungshäufigkeit. Lagerbestand-Warnungen gibt es bereits separat in
 Dropshipping-Anbieter (CJ Dropshipping, Zendrop etc.) müsste dessen
 API-Key ergänzt werden - aktuell bewusst ohne, um nichts vorzutäuschen.
 
+**📈 Ad Commander** (Kampagnen-Portfolio-Übersicht + Budget-Umschichtungs-
+Empfehlung): nutzt dieselben `META_ACCESS_TOKEN`/`META_AD_ACCOUNT_ID` wie
+die anderen Meta-Automationen, keine zusätzlichen Secrets. Anders als #11
+Ads-Manager (bewertet einzelne ADS) und #42 Auto-Skalierer (Budget pro
+AD-SET) schaut Ad Commander auf KAMPAGNEN-Ebene und schlägt vor, Budget von
+schwachen zu starken Kampagnen zu verschieben. **TikTok Ads ist noch nicht
+angebunden** - TikToks Marketing-API-Vertrag wurde nicht verifiziert
+(anders als Meta/Binance/OpenAI, deren Endpunkte bekannt/geprüft sind).
+Lieber offen und in jeder Nachricht sichtbar als raten und stillschweigend
+falsche Felder verwenden. Bei echtem TikTok-Ads-Account und Bedarf
+nachrüstbar.
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -239,7 +251,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 54 Automationen (46 aus n8n + 8 neue)
+## Die 55 Automationen (46 aus n8n + 9 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -297,6 +309,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 53 | 🛒 Store Builder & Optimizer | freitags 08:00 | legt Produktseiten als Shopify-Entwurf an + prüft die Live-Storefront auf Geschwindigkeit/Vertrauen/Conversion-Basics |
 | 54 | 🛡️ Compliance Guard | 1. jedes Monats | prüft Produkte auf CE/WEEE/Verpackung/Werbeaussagen-Themen - nur Hinweise/Checkliste, KEINE Rechtsberatung |
 | 55 | 📦 Fulfillment & Supplier Hub | täglich 09:00 | erkennt verzögerte Bestellungen, Zustellungsprobleme und rankt Lieferanten - nutzt nur die bestehende Shopify-Verbindung |
+| 56 | 📈 Ad Commander | montags 08:00 | Kampagnen-Portfolio-Übersicht (Meta) mit Budget-Umschichtungs-Empfehlung zwischen Kampagnen; TikTok noch nicht angebunden |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
