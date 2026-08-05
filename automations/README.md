@@ -105,6 +105,13 @@ Worker, siehe dessen README) automatisch einen KI-Telefonanruf über Vapi aus �
 (unerlaubte automatisierte Kaltakquise-Anrufe, UWG §7). Ohne dieses separate
 Setup läuft der Lead-Jäger unverändert weiter, nur der Rückruf bleibt inaktiv.
 
+**🔎 Product Hunter** (schlägt Produktideen vor, Claude-Einschätzung statt
+Live-Trenddaten): `PRODUCT_HUNTER_NISCHEN` (kommagetrennt, z.B. `Küche,Fitness,Haustier`
+— fällt ohne diesen Wert auf `SHOP_NISCHE` zurück), `PRODUCT_HUNTER_ANZAHL_PRO_NISCHE`
+(Default `3`). Nutzt `WHATSAPP_ACCESS_TOKEN`/`WHATSAPP_PHONE_NUMBER_ID`/
+`WHATSAPP_TO_NUMBER` wie die anderen WhatsApp-Automationen. Merkt sich bereits
+vorgeschlagene Produkte, damit nicht jede Woche dieselben Ideen kommen.
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -126,6 +133,13 @@ bleibt der Bot inaktiv, bis `automations/state/trading-bot-state.json` manuell
 gelöscht/zurückgesetzt wird - bewusst kein automatisches Wiederanlaufen nach
 einem großen Verlust.
 
+**Wichtig:** Binance blockiert die IP-Bereiche der GitHub-Actions-Runner
+(HTTP 451) - dieses Skript kann von hier aus nie erfolgreich handeln, daher
+hat #49 keinen Zeitplan mehr (nur `workflow_dispatch` zum manuellen Testen/
+als Referenz). Der echte Betrieb läuft über `trading-bot-worker/` (Cloudflare
+Worker, gleiche Sicherheitsgrenzen, zusätzlich Multi-Coin-fähig) - siehe
+dessen README für Setup.
+
 **🚀 Pump-Scanner** (reiner Alarm, kein Handel - meldet per WhatsApp, wenn
 eine Kryptowährung gerade stark steigt): `PUMP_QUOTE_WAEHRUNG` (Default
 `USDT`, nur Paare gegen diese Währung werden geprüft), `PUMP_SCHWELLE_PROZENT`
@@ -136,6 +150,11 @@ manipulierbare Micro-Caps raus, Default `1000000`), `PUMP_COOLDOWN_STUNDEN`
 `PUMP_MAX_PRO_LAUF` (Default `10`). Braucht **keinen** `BINANCE_API_KEY` -
 nutzt ausschließlich Binances öffentliche 24h-Ticker-Daten, kein Account
 nötig. Läuft unabhängig vom Trading-Bot und handelt selbst nichts.
+
+Gleicher Binance-IP-Block wie beim Trading-Bot - auch hier kein Zeitplan mehr,
+nur `workflow_dispatch`. Noch kein Cloudflare-Worker-Ersatz gebaut (im
+Gegensatz zum Trading-Bot); bei Bedarf gleiches Muster wie
+`trading-bot-worker/` nachbauen.
 
 **Geschäfts-Schwellwerte / Rabattcodes** (alle mit funktionierenden Defaults,
 nur bei Bedarf überschreiben):
@@ -161,7 +180,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 49 Automationen (46 aus n8n + 3 neue)
+## Die 50 Automationen (46 aus n8n + 4 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -212,8 +231,9 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 46 | Großbestellung-Radar | stündlich | Alarm bei Großbestellungen |
 | 47 | Länder-Expansions-Scout | 1. jedes Monats | Expansionsmarkt-Empfehlung |
 | 48 | Google-Maps-Lead-Jäger | täglich 08:00 | findet Firmen ohne/mit schlechter Website, meldet per WhatsApp |
-| 49 | ⚠️ Trading-Bot | alle 15 Min | Krypto-Spot-Handel (EMA-Crossover), Paper-Modus per Default |
-| 50 | 🚀 Pump-Scanner | alle 15 Min | Alarm per WhatsApp, wenn eine Kryptowährung stark steigt (kein Handel) |
+| 49 | ⚠️ Trading-Bot | manuell (Referenz) | Krypto-Spot-Handel (EMA-Crossover), Paper-Modus per Default. **Läuft produktiv als Cloudflare Worker**, siehe `trading-bot-worker/` - GitHub Actions wird von Binance blockiert (HTTP 451) |
+| 50 | 🚀 Pump-Scanner | manuell (Referenz) | Alarm per WhatsApp, wenn eine Kryptowährung stark steigt (kein Handel). Gleicher Binance-IP-Block wie #49, noch kein Cloudflare-Ersatz gebaut |
+| 51 | 🔎 Product Hunter | montags 08:00 | schlägt konkrete Produktideen vor, bewertet Nachfrage/Konkurrenz/Marge/Trend/Lieferzeit/Risiko (Claude-Einschätzung, keine Live-Trenddaten) |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
