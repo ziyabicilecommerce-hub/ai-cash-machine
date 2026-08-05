@@ -147,6 +147,11 @@ export const config = {
   VERSANDZEIT: process.env.VERSANDZEIT || '2-4 Werktage',
   REICHWEITE_TAGE_WARNUNG: process.env.REICHWEITE_TAGE_WARNUNG || '14',
   PRODUKTKOSTEN_PROZENT: process.env.PRODUKTKOSTEN_PROZENT || '40',
+
+  // Profit & Tax Center (Finance-Cockpit-Erweiterung: Gebühren, Steuern, echter Nettogewinn)
+  ZAHLUNGSGEBUEHR_PROZENT: process.env.ZAHLUNGSGEBUEHR_PROZENT || '2.5',
+  ZAHLUNGSGEBUEHR_FIX_CENT: process.env.ZAHLUNGSGEBUEHR_FIX_CENT || '25',
+  UMSATZSTEUER_PROZENT: process.env.UMSATZSTEUER_PROZENT || '19',
 };
 
 export function isTestMode() {

@@ -273,6 +273,21 @@ nur bei Bedarf überschreiben):
 `AUTO_STOP`, `AUTO_POST_FACEBOOK`, `KONKURRENT_URLS`, `VORLAUF_TAGE`,
 `REICHWEITE_TAGE_WARNUNG`, `PRODUKTKOSTEN_PROZENT`
 
+**Profit & Tax Center** (Finance-Cockpit-Erweiterung um Gebühren/Steuern -
+achter Baustein des 9-Systeme-Wunschs, keine eigene Automation sondern
+Ausbau von #01 Gewinn-Radar + `finance-cockpit/`): `ZAHLUNGSGEBUEHR_PROZENT`
+(Default `2.5`, typischer Shopify-Payments-/Stripe-Satz),
+`ZAHLUNGSGEBUEHR_FIX_CENT` (Default `25`, Fixgebühr pro Bestellung in Cent),
+`UMSATZSTEUER_PROZENT` (Default `19`, deutscher Regelsteuersatz - der
+Umsatz aus Shopify ist brutto inkl. MwSt., die gehört ans Finanzamt statt
+zum echten Gewinn). Alles wie gehabt nur Schätzwerte auf Basis dieser
+Prozentsätze, keine echte Buchhaltung - für exakte Zahlen bitte
+Steuerberater/echte Buchhaltungssoftware nutzen. Finance Cockpit zeigt
+jetzt zusätzlich Gebühren/Steuer-Anteil in der Aufschlüsselung und einen
+geschätzten Nettogewinn pro Top-Produkt. Ältere `finance-cockpit/data.json`-
+Einträge ohne diese Felder werden weiterhin korrekt angezeigt (Fallback auf
+den alten `gewinn`-Wert).
+
 Alle Standardwerte stehen in `automations/lib/config.mjs`.
 
 `AUTO_SKALIEREN`, `AUTO_STOP`, `AUTO_PAUSE`, `AUTO_POST_FACEBOOK`: stehen per
@@ -284,7 +299,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
-| 01 | Gewinn-Radar | täglich 08:00 | tägliche Gewinn-/Umsatz-Kennzahlen, speist auch Finance Cockpit |
+| 01 | Gewinn-Radar / "Profit & Tax Center" | täglich 08:00 | tägliche Gewinn-/Umsatz-Kennzahlen inkl. Zahlungsgebühren, Umsatzsteuer-Anteil und echtem Nettogewinn pro Produkt - speist Finance Cockpit |
 | 02 | KI-Kundenservice ("Customer Support AI") | alle 10 Min | IMAP-Postfach lesen, echter Bestellabgleich, Claude antwortet, Eskalation per Telegram + echtes GitHub-Issue-Ticket |
 | 04 | Bewertungs-Magnet | täglich 10:00 | fragt zufriedene Käufer nach Bewertungen |
 | 05 | Winback-Maschine | täglich 11:00 | reaktiviert inaktive Kunden |
