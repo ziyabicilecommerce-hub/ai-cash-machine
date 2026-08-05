@@ -83,6 +83,27 @@ export async function createDiscountCode({ title, code, valueType, value, usageL
   return discount.discount_code;
 }
 
+// Legt ein Produkt IMMER als Entwurf an (status: 'draft') - erscheint nicht
+// automatisch im Shop, der Gründer muss es bewusst selbst veröffentlichen.
+export async function createProduct({ title, bodyHtml, productType, tags, seoTitle, seoDescription, price }) {
+  const data = await shopifyRequest('/products.json', {
+    method: 'POST',
+    body: {
+      product: {
+        title,
+        body_html: bodyHtml,
+        product_type: productType || '',
+        tags: tags || '',
+        status: 'draft',
+        metafields_global_title_tag: seoTitle || undefined,
+        metafields_global_description_tag: seoDescription || undefined,
+        variants: price ? [{ price: String(price) }] : undefined,
+      },
+    },
+  });
+  return data.product;
+}
+
 export async function getShopifyReviews() {
   // Shopify hat keine native Review-API - siehe judgeme.mjs für Judge.me Integration
   return [];

@@ -143,6 +143,8 @@ jobs:
           CREATIVE_STUDIO_PRODUKTE: ${{ secrets.CREATIVE_STUDIO_PRODUKTE }}
           CREATIVE_STUDIO_ANZAHL_PRODUKTE: ${{ secrets.CREATIVE_STUDIO_ANZAHL_PRODUKTE }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          STORE_BUILDER_PRODUKTE: ${{ secrets.STORE_BUILDER_PRODUKTE }}
+          STORE_BUILDER_ANZAHL_PRODUKTE: ${{ secrets.STORE_BUILDER_ANZAHL_PRODUKTE }}
 
       - name: State-Änderungen committen
         run: |

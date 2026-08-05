@@ -128,6 +128,22 @@ Funktionsumfang. Schlägt die Bildgenerierung fehl (z.B. abgelehnter Prompt),
 kommt eine Warnung statt eines Absturzes, das Text-Paket wird trotzdem
 verschickt.
 
+**🛒 Store Builder & Optimizer** (legt Produktseiten als Shopify-Entwurf an,
+prüft die Live-Storefront): `STORE_BUILDER_PRODUKTE` (kommagetrennt — ohne
+diesen Wert automatisch die zuletzt vom Product Hunter vorgeschlagenen
+Produkte), `STORE_BUILDER_ANZAHL_PRODUKTE` (Default `1`). Braucht `SHOP` +
+`SHOPIFY_TOKEN` (wie die meisten Automationen) sowie Schreibrechte für
+Produkte im Shopify Admin API Access Token. Neu angelegte Produkte werden
+**immer als Entwurf** (`status: draft`) erstellt - erscheinen nie
+automatisch im Shop, du musst sie bewusst selbst veröffentlichen.
+
+Der Optimizer-Teil prüft zusätzlich `SHOP_URL` (deine echte Live-Storefront,
+nicht die Admin-API) auf Ladezeit, HTTPS, Mobile-Tauglichkeit und ob
+Impressum/AGB/Datenschutz/Kontakt/Bewertungen auf der Startseite verlinkt
+sind - ein einfacher Heuristik-Check, kein vollständiger SEO-/A11y-Audit.
+Bundle-Ideen aus echten Kaufdaten gibt es bereits separat in #24
+Bundle-Bauer.
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -196,7 +212,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 51 Automationen (46 aus n8n + 5 neue)
+## Die 52 Automationen (46 aus n8n + 6 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -251,6 +267,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 50 | 🚀 Pump-Scanner | manuell (Referenz) | Alarm per WhatsApp, wenn eine Kryptowährung stark steigt (kein Handel). Gleicher Binance-IP-Block wie #49, noch kein Cloudflare-Ersatz gebaut |
 | 51 | 🔎 Product Hunter | montags 08:00 | schlägt konkrete Produktideen vor, bewertet Nachfrage/Konkurrenz/Marge/Trend/Lieferzeit/Risiko (Claude-Einschätzung, keine Live-Trenddaten) |
 | 52 | 🎥 Creative Studio | mittwochs 08:00 | Ad-Kreativ-Paket pro Produkt: Hooks, Ad-Copy, UGC-Idee, Bild-Prompts + optional echte Bildgenerierung |
+| 53 | 🛒 Store Builder & Optimizer | freitags 08:00 | legt Produktseiten als Shopify-Entwurf an + prüft die Live-Storefront auf Geschwindigkeit/Vertrauen/Conversion-Basics |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
