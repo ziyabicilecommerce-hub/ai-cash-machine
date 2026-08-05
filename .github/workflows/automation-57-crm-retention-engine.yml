@@ -1,0 +1,16 @@
+name: "57 · CRM & Retention Engine"
+
+on:
+  schedule:
+    - cron: '0 9 * * 2'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/57-crm-retention-engine.mjs
+    secrets: inherit
