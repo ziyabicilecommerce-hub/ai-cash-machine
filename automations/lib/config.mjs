@@ -71,6 +71,9 @@ export const config = {
   // Compliance Guard (nur Warnungen/Checklisten, keine Rechtsberatung)
   COMPLIANCE_GUARD_MAX_PRO_LAUF: process.env.COMPLIANCE_GUARD_MAX_PRO_LAUF || '20',
 
+  // Fulfillment & Supplier Hub (nutzt nur die bestehende Shopify-Verbindung)
+  FULFILLMENT_VERZUG_STUNDEN: process.env.FULFILLMENT_VERZUG_STUNDEN || '48',
+
   // Judge.me Bewertungen
   JUDGEME_API_TOKEN: process.env.JUDGEME_API_TOKEN || '',
   JUDGEME_SHOP_DOMAIN: process.env.JUDGEME_SHOP_DOMAIN || '',

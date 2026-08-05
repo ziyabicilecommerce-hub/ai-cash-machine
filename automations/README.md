@@ -158,6 +158,19 @@ Verlinkung auf der Startseite prüft - Compliance Guard schaut auf
 Produkt-Ebene. Merkt sich geprüfte Produkte dauerhaft (kein Re-Check bei
 unveränderten Produkten).
 
+**📦 Fulfillment & Supplier Hub** (verzögerte Bestellungen, Zustellungs-
+probleme, Lieferanten-Ranking): `FULFILLMENT_VERZUG_STUNDEN` (ab wann eine
+unbearbeitete Bestellung als verzögert gilt, Default `48`). Braucht nur
+`SHOP`/`SHOPIFY_TOKEN` - **keinen separaten Dropshipping-/Fulfillment-API-
+Zugang**. Nutzt Shopifys eigene Felder: `fulfillment_status` für offene
+Bestellungen, `shipment_status` pro Sendung (von Shopify automatisch für
+viele Versanddienste getrackt) für gescheiterte Zustellungen, und das
+Produkt-Feld `vendor` für ein einfaches Lieferanten-Ranking nach
+Verzögerungshäufigkeit. Lagerbestand-Warnungen gibt es bereits separat in
+#20 Lager-Wächter. Für eine tiefere Anbindung an einen konkreten
+Dropshipping-Anbieter (CJ Dropshipping, Zendrop etc.) müsste dessen
+API-Key ergänzt werden - aktuell bewusst ohne, um nichts vorzutäuschen.
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -226,7 +239,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 53 Automationen (46 aus n8n + 7 neue)
+## Die 54 Automationen (46 aus n8n + 8 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -283,6 +296,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 52 | 🎥 Creative Studio | mittwochs 08:00 | Ad-Kreativ-Paket pro Produkt: Hooks, Ad-Copy, UGC-Idee, Bild-Prompts + optional echte Bildgenerierung |
 | 53 | 🛒 Store Builder & Optimizer | freitags 08:00 | legt Produktseiten als Shopify-Entwurf an + prüft die Live-Storefront auf Geschwindigkeit/Vertrauen/Conversion-Basics |
 | 54 | 🛡️ Compliance Guard | 1. jedes Monats | prüft Produkte auf CE/WEEE/Verpackung/Werbeaussagen-Themen - nur Hinweise/Checkliste, KEINE Rechtsberatung |
+| 55 | 📦 Fulfillment & Supplier Hub | täglich 09:00 | erkennt verzögerte Bestellungen, Zustellungsprobleme und rankt Lieferanten - nutzt nur die bestehende Shopify-Verbindung |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
