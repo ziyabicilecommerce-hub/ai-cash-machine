@@ -140,6 +140,9 @@ jobs:
           LEAD_MAX_PRO_LAUF: ${{ secrets.LEAD_MAX_PRO_LAUF }}
           PRODUCT_HUNTER_NISCHEN: ${{ secrets.PRODUCT_HUNTER_NISCHEN }}
           PRODUCT_HUNTER_ANZAHL_PRO_NISCHE: ${{ secrets.PRODUCT_HUNTER_ANZAHL_PRO_NISCHE }}
+          CREATIVE_STUDIO_PRODUKTE: ${{ secrets.CREATIVE_STUDIO_PRODUKTE }}
+          CREATIVE_STUDIO_ANZAHL_PRODUKTE: ${{ secrets.CREATIVE_STUDIO_ANZAHL_PRODUKTE }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: State-Änderungen committen
         run: |
