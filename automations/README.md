@@ -192,6 +192,26 @@ Lieber offen und in jeder Nachricht sichtbar als raten und stillschweigend
 falsche Felder verwenden. Bei echtem TikTok-Ads-Account und Bedarf
 nachrüstbar.
 
+**❤️ CRM & Retention Engine** (Kundenstamm-Segmentierung + personalisierte
+At-Risk-Angebote): `CRM_AT_RISK_TAGE` (ab wann ein wertvoller Kunde als
+gefährdet gilt, Default `45`), `CRM_SMS_TOP_N` (wie viele der wertvollsten
+At-Risk-Kunden zusätzlich per SMS angeschrieben werden, Default `3`),
+`CRM_MAX_PRO_LAUF` (Default `10`). Nutzt `VIP_UMSATZ_SCHWELLE` (bereits
+vorhanden) für die Werteinteilung. Braucht `SHOP`/`SHOPIFY_TOKEN`.
+
+Anders als #05 Winback-Maschine (schickt ALLEN Inaktiven denselben
+Rabattcode) segmentiert dieses Skript den GESAMTEN Kundenstamm nach
+Customer-Lifetime-Value und schickt nur den wertvollsten gefährdeten
+Kunden ein individuell auf sie zugeschnittenes Angebot. Wöchentlicher
+Kundenstamm-Digest per WhatsApp (VIP/At-Risk/Neu/Ruhend-Zahlen).
+
+**SMS ist optional** (erste SMS-Fähigkeit der Suite, via Twilio):
+`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER`. Ohne diese
+Secrets läuft alles normal weiter, nur eben ohne SMS - bewusst nur für die
+wenigen wertvollsten Fälle reserviert, kein Massen-SMS-Versand. Ein Kunde
+wird höchstens alle 90 Tage erneut kontaktiert (kein Spam bei wiederholten
+Läufen).
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -260,7 +280,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 55 Automationen (46 aus n8n + 9 neue)
+## Die 56 Automationen (46 aus n8n + 10 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -319,6 +339,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 54 | 🛡️ Compliance Guard | 1. jedes Monats | prüft Produkte auf CE/WEEE/Verpackung/Werbeaussagen-Themen - nur Hinweise/Checkliste, KEINE Rechtsberatung |
 | 55 | 📦 Fulfillment & Supplier Hub | täglich 09:00 | erkennt verzögerte Bestellungen, Zustellungsprobleme und rankt Lieferanten - nutzt nur die bestehende Shopify-Verbindung |
 | 56 | 📈 Ad Commander | montags 08:00 | Kampagnen-Portfolio-Übersicht (Meta) mit Budget-Umschichtungs-Empfehlung zwischen Kampagnen; TikTok noch nicht angebunden |
+| 57 | ❤️ CRM & Retention Engine | dienstags 09:00 | segmentiert den Kundenstamm (VIP/At-Risk/treu/neu/ruhend), personalisierte Angebote für die wertvollsten inaktiven Kunden + optional SMS |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht

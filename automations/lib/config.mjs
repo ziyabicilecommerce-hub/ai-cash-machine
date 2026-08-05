@@ -74,6 +74,14 @@ export const config = {
   // Fulfillment & Supplier Hub (nutzt nur die bestehende Shopify-Verbindung)
   FULFILLMENT_VERZUG_STUNDEN: process.env.FULFILLMENT_VERZUG_STUNDEN || '48',
 
+  // CRM & Retention Engine (Kundenstamm-Segmentierung, personalisierte At-Risk-Angebote)
+  CRM_AT_RISK_TAGE: process.env.CRM_AT_RISK_TAGE || '45',
+  CRM_SMS_TOP_N: process.env.CRM_SMS_TOP_N || '3',
+  CRM_MAX_PRO_LAUF: process.env.CRM_MAX_PRO_LAUF || '10',
+  TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || '',
+  TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || '',
+  TWILIO_FROM_NUMBER: process.env.TWILIO_FROM_NUMBER || '',
+
   // Judge.me Bewertungen
   JUDGEME_API_TOKEN: process.env.JUDGEME_API_TOKEN || '',
   JUDGEME_SHOP_DOMAIN: process.env.JUDGEME_SHOP_DOMAIN || '',

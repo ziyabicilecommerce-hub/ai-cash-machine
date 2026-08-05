@@ -153,6 +153,12 @@ jobs:
           STORE_BUILDER_ANZAHL_PRODUKTE: ${{ secrets.STORE_BUILDER_ANZAHL_PRODUKTE }}
           COMPLIANCE_GUARD_MAX_PRO_LAUF: ${{ secrets.COMPLIANCE_GUARD_MAX_PRO_LAUF }}
           FULFILLMENT_VERZUG_STUNDEN: ${{ secrets.FULFILLMENT_VERZUG_STUNDEN }}
+          CRM_AT_RISK_TAGE: ${{ secrets.CRM_AT_RISK_TAGE }}
+          CRM_SMS_TOP_N: ${{ secrets.CRM_SMS_TOP_N }}
+          CRM_MAX_PRO_LAUF: ${{ secrets.CRM_MAX_PRO_LAUF }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_FROM_NUMBER: ${{ secrets.TWILIO_FROM_NUMBER }}
 
       - name: State-Änderungen committen
         run: |
