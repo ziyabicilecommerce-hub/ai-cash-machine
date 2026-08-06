@@ -255,6 +255,17 @@ Shopify-API-Fehler), wird das als "keine Daten" markiert statt die ganze
 Automation abstürzen zu lassen - die anderen Bereiche laufen normal weiter.
 Läuft abends (20:00 UTC), nach den meisten anderen Automationen.
 
+**💬 Kunden-Chat-Agent** (kein Eintrag in der Tabelle unten - läuft wie der
+Trading-Bot als eigener Cloudflare Worker, nicht als GitHub-Actions-
+Automation): siehe `customer-agent-worker/README.md`. Beantwortet allgemeine
+Kundenfragen auf der Website (Versand, Rückgabe, Produkte) über ein
+einbettbares Chat-Widget. Läuft serverseitig, damit der `ANTHROPIC_API_KEY`
+des Shop-Besitzers nie im Browser fremder Besucher landet (anders als die
+BYOK-Apps Jarvis/Brand Assassin/Oracle/Closer, die nur der Shop-Besitzer
+selbst nutzt). Erfindet nie Bestell-/Kontodaten, verweist dafür an
+`SUPPORT_EMAIL`. Pro-Besucher-Rate-Limit + globales Tages-Token-Budget über
+Cloudflare KV, CORS auf die eigene Shop-Domain beschränkt.
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
