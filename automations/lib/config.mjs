@@ -152,6 +152,32 @@ export const config = {
   ZAHLUNGSGEBUEHR_PROZENT: process.env.ZAHLUNGSGEBUEHR_PROZENT || '2.5',
   ZAHLUNGSGEBUEHR_FIX_CENT: process.env.ZAHLUNGSGEBUEHR_FIX_CENT || '25',
   UMSATZSTEUER_PROZENT: process.env.UMSATZSTEUER_PROZENT || '19',
+
+  // Pricing-Agent (echte Preisänderungen basierend auf Verkaufstempo) - wie
+  // AUTO_SKALIEREN bei den Ads standardmäßig AUS, nur Empfehlung bis bewusst aktiviert.
+  AUTO_PREISANPASSUNG: process.env.AUTO_PREISANPASSUNG || 'nein',
+  PREIS_MAX_AENDERUNG_PROZENT: process.env.PREIS_MAX_AENDERUNG_PROZENT || '15',
+  PREIS_MIN_MARGE_PROZENT: process.env.PREIS_MIN_MARGE_PROZENT || '20',
+  PRICING_AGENT_MAX_PRO_LAUF: process.env.PRICING_AGENT_MAX_PRO_LAUF || '20',
+
+  // Risk-Guard-Agent (Bestell-Risikoprüfung - taggt nur, storniert nie automatisch)
+  RISK_GUARD_MIN_BESTELLWERT: process.env.RISK_GUARD_MIN_BESTELLWERT || '50',
+  RISK_GUARD_MAX_PRO_LAUF: process.env.RISK_GUARD_MAX_PRO_LAUF || '20',
+
+  // Reorder-Agent (automatische Nachbestell-Anfrage beim Lieferanten)
+  AUTO_BESTELLUNG_SENDEN: process.env.AUTO_BESTELLUNG_SENDEN || 'nein',
+  SUPPLIER_EMAIL: process.env.SUPPLIER_EMAIL || '',
+  REORDER_PUFFER_TAGE: process.env.REORDER_PUFFER_TAGE || '30',
+  REORDER_LIEFERZEIT_TAGE: process.env.REORDER_LIEFERZEIT_TAGE || '14',
+
+  // Ads-Autopilot-Agent (führt Budget-Umschichtung zwischen Ad-Sets wirklich aus)
+  AUTO_BUDGET_UMSCHICHTEN: process.env.AUTO_BUDGET_UMSCHICHTEN || 'nein',
+  ADS_AUTOPILOT_MAX_SHIFT_PROZENT: process.env.ADS_AUTOPILOT_MAX_SHIFT_PROZENT || '15',
+  ADS_AUTOPILOT_MIN_SPEND: process.env.ADS_AUTOPILOT_MIN_SPEND || '15',
+
+  // Inventory-Guardian-Agent (stoppt Überverkauf bei Bestand 0) - Default AN,
+  // da rein schützend/reversibel (im Gegensatz zu Preis-/Budget-Änderungen).
+  AUTO_UEBERVERKAUF_STOPPEN: process.env.AUTO_UEBERVERKAUF_STOPPEN || 'ja',
 };
 
 export function isTestMode() {

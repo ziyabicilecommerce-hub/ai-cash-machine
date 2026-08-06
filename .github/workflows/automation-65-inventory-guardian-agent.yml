@@ -1,0 +1,16 @@
+name: "65 · Inventory-Guardian-Agent"
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/65-inventory-guardian-agent.mjs
+    secrets: inherit

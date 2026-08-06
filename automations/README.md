@@ -349,7 +349,56 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 59 Automationen (46 aus n8n + 13 neue)
+## Die 5 neuen Agenten (#61-65) - echte Handlungsmacht statt nur Empfehlung
+
+Unterschied zu den meisten anderen Automationen: diese hier SCHREIBEN
+selbstständig in Shopify/Meta/E-Mail, statt nur einen Bericht zu schicken -
+deshalb "Agenten". Wie schon bei `AUTO_SKALIEREN` (#42) etabliert: alles, was
+echtes Geld bewegt (Preise, Ad-Budgets, Nachbestellungen), steht per Default
+auf `nein`/nur-Empfehlung und muss bewusst aktiviert werden. Alles rein
+Schützende/Reversible (Inventory-Guardian) ist per Default AN. Nichts hier
+storniert jemals automatisch eine Bestellung oder gibt eine Zahlung frei.
+
+**💰 Pricing-Agent** (#61, täglich 06:45): passt Verkaufspreise anhand des
+Verkaufstempos an - schnelldrehende Artikel (Reichweite unter
+`REICHWEITE_TAGE_WARNUNG`) werden vorsichtig teurer, 14 Tage unverkaufte
+Artikel vorsichtig günstiger. Harte Preisuntergrenze über den echten
+Shopify-Einkaufspreis (falls hinterlegt, sonst Schätzung über
+`PRODUKTKOSTEN_PROZENT`) + `PREIS_MIN_MARGE_PROZENT` - der Agent unterbietet
+nie die eigene Marge. Max. Änderung pro Lauf: `PREIS_MAX_AENDERUNG_PROZENT`
+(Default 15%). Gate: `AUTO_PREISANPASSUNG` (Default `nein`).
+
+**🚨 Risk-Guard-Agent** (#62, alle 2 Stunden): prüft neue Bestellungen ab
+`RISK_GUARD_MIN_BESTELLWERT` auf Betrugssignale (Rechnungs-/Lieferland-
+Mismatch, ungewöhnlich hohe Erstbestellung), lässt Claude die Risikostufe
+einschätzen, markiert verdächtige Bestellungen mit einem echten Shopify-Tag
+(`risiko-pruefung`) + erstellt ein GitHub-Ticket + Alarm. **Storniert oder
+hält NIE automatisch eine Bestellung zurück** - nur Tag + Mensch alarmieren,
+bewusst kein `AUTO_*`-Schalter nötig, da nicht-destruktiv.
+
+**📦 Reorder-Agent** (#63, täglich 07:45): erkennt Artikel, die vor
+Eintreffen einer Nachbestellung (`REORDER_LIEFERZEIT_TAGE`) ausverkauft
+wären, berechnet die nötige Menge (`REORDER_PUFFER_TAGE` Sicherheitspuffer)
+und schickt eine echte Bestell-Mail an `SUPPLIER_EMAIL`. Merkt sich bereits
+angefragte Artikel, um den Lieferanten nicht mit Wiederholungen zu spammen.
+Gate: `AUTO_BESTELLUNG_SENDEN` (Default `nein`).
+
+**📊 Ads-Autopilot-Agent** (#64, täglich 09:00): schichtet Budget vom
+schwächsten zum stärksten aktiven Meta-Ad-Set um (max.
+`ADS_AUTOPILOT_MAX_SHIFT_PROZENT`, nie unter eine Mindest-Budget-Grenze).
+Ergänzt #42 (erhöht nur, nimmt nichts weg) und #43 (stoppt nur) - ist der
+einzige, der wirklich zwischen Ad-Sets umverteilt, statt nur zu skalieren
+oder zu stoppen. Gate: `AUTO_BUDGET_UMSCHICHTEN` (Default `nein`).
+
+**🛡️ Inventory-Guardian-Agent** (#65, alle 3 Stunden): stoppt echten
+Überverkauf - wenn eine Variante auf Bestand 0 fällt, aber Shopify sie wegen
+`inventory_policy=continue` trotzdem weiterverkaufen würde, schaltet der
+Agent auf `deny` um. Sobald wieder Bestand da ist, macht er die Änderung
+automatisch rückgängig (exakt die ursprüngliche Einstellung, gespeichert im
+State). Gate: `AUTO_UEBERVERKAUF_STOPPEN` (Default `ja` - rein schützend und
+reversibel, anders als die geld-bewegenden Agenten oben).
+
+## Die 64 Automationen (46 aus n8n + 18 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -412,6 +461,11 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 58 | 🎯 Brand Assassin Auto-Scan | donnerstags 08:00 | lässt den Markt-Scan aus der Brand-Assassin-App automatisch für SHOP_NISCHE laufen, gleicher Prompt/Score wie in der App |
 | 59 | 🔮 Oracle Auto-Briefing | täglich 08:30 | lässt das tägliche KI-Briefing aus der Oracle-App automatisch laufen und per WhatsApp verschicken, gleicher Prompt wie in der App |
 | 60 | 👔 Chef-Agent | täglich 20:00 | fasst Finanzen/Fulfillment/Kundenstamm zu EINER priorisierten Tagesansage zusammen statt einzelner Automations-Nachrichten |
+| 61 | 💰 Pricing-Agent | täglich 06:45 | passt echte Verkaufspreise ans Verkaufstempo an (rauf bei Schnelldrehern, runter bei Ladenhütern), harte Marge-Untergrenze |
+| 62 | 🚨 Risk-Guard-Agent | alle 2 Stunden | prüft neue Bestellungen auf Betrugssignale, markiert Verdachtsfälle mit echtem Shopify-Tag + Ticket - storniert nie automatisch |
+| 63 | 📦 Reorder-Agent | täglich 07:45 | erkennt drohende Ausverkäufe vor Lieferzeit-Ende, schickt echte Nachbestell-Mail an den Lieferanten |
+| 64 | 📊 Ads-Autopilot-Agent | täglich 09:00 | schichtet Meta-Ad-Budget vom schwächsten zum stärksten aktiven Ad-Set wirklich um (nicht nur Empfehlung) |
+| 65 | 🛡️ Inventory-Guardian-Agent | alle 3 Stunden | stoppt echten Überverkauf bei Bestand 0, gibt automatisch wieder frei sobald Nachschub da ist |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
