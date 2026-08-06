@@ -24,7 +24,6 @@ import { chunkZeilen } from './lib/whatsappChunk.mjs';
 const NL = '\n';
 const WHATSAPP_MAX_CHARS = 3500;
 const VERKAUFSTEMPO_TAGE = 14;
-const SCHNELLLAEUFER_REICHWEITE_TAGE = parseFloat(process.env.REICHWEITE_TAGE_WARNUNG || '10');
 
 async function ermittleKosten(variante, preis) {
   if (variante.inventory_item_id) {
@@ -45,6 +44,7 @@ async function main() {
   const maxAenderung = parseFloat(config.PREIS_MAX_AENDERUNG_PROZENT || '15') / 100;
   const minMarge = parseFloat(config.PREIS_MIN_MARGE_PROZENT || '20') / 100;
   const maxProLauf = parseInt(config.PRICING_AGENT_MAX_PRO_LAUF || '20', 10);
+  const schnelllaeuferReichweiteTage = parseFloat(config.REICHWEITE_TAGE_WARNUNG || '14');
 
   const vorNTagen = new Date();
   vorNTagen.setDate(vorNTagen.getDate() - VERKAUFSTEMPO_TAGE);
@@ -74,7 +74,7 @@ async function main() {
       let richtung = null;
       if (bestand > 0 && proTag > 0) {
         const reichweite = bestand / proTag;
-        if (reichweite <= SCHNELLLAEUFER_REICHWEITE_TAGE) richtung = 'hoch';
+        if (reichweite <= schnelllaeuferReichweiteTage) richtung = 'hoch';
       } else if (bestand > 0 && proTag === 0) {
         richtung = 'runter';
       }
