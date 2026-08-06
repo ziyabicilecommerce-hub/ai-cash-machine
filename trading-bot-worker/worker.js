@@ -177,6 +177,14 @@ async function runSymbol(env, symbol, startKapital, cfg) {
       } else {
         const order = await placeMarketBuy(env, symbol, investBetrag);
         qty = parseFloat(order.executedQty);
+        // Binance kann eine Order mit HTTP 200 zurückgeben, ohne dass sie
+        // (vollständig) ausgeführt wurde (status "EXPIRED", executedQty "0").
+        // Ungeprüft würde qty=0 zu entryPreis=NaN führen und der Stop-Loss
+        // (preis <= NaN ist immer false) wäre für immer wirkungslos, ohne
+        // dass es jemand merkt - lieber laut abbrechen als das.
+        if (!(qty > 0) || order.status !== 'FILLED') {
+          throw new Error(`Kauf-Order für ${symbol} wurde nicht vollständig ausgeführt (status=${order.status}, executedQty=${order.executedQty}) - kein Einstieg gebucht.`);
+        }
         tatsaechlicherPreis = parseFloat(order.cummulativeQuoteQty) / qty;
       }
       state.position = { qty, entryPreis: tatsaechlicherPreis, einstiegAm: new Date().toISOString() };
@@ -190,6 +198,13 @@ async function runSymbol(env, symbol, startKapital, cfg) {
         erloes = state.position.qty * preis;
       } else {
         const order = await placeMarketSell(env, symbol, state.position.qty);
+        // Gleiche Absicherung wie beim Kauf: ohne Fill-Check könnte eine nicht
+        // ausgeführte Verkauf-Order fälschlich als geschlossene Position mit
+        // erloes=0 verbucht werden, während die echte Position bei Binance
+        // weiterläuft.
+        if (!(parseFloat(order.executedQty) > 0) || order.status !== 'FILLED') {
+          throw new Error(`Verkauf-Order für ${symbol} wurde nicht vollständig ausgeführt (status=${order.status}, executedQty=${order.executedQty}) - Position bleibt im State offen, bitte Binance-Konto manuell prüfen.`);
+        }
         erloes = parseFloat(order.cummulativeQuoteQty);
       }
       const einsatz = state.position.qty * state.position.entryPreis;

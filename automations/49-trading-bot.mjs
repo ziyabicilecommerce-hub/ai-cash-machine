@@ -115,6 +115,17 @@ async function main() {
       } else {
         const order = await placeMarketBuy(symbol, investBetrag);
         qty = parseFloat(order.executedQty);
+        // Binance kann eine Order mit HTTP 200 zurückgeben, ohne dass sie
+        // (vollständig) ausgeführt wurde (z.B. status "EXPIRED" bei extremer
+        // Volatilität/fehlender Liquidität, executedQty "0"). Ungeprüft würde
+        // das qty=0 und damit entryPreis=NaN erzeugen - der Stop-Loss-Check
+        // (preis <= NaN ist immer false) wäre dann für IMMER wirkungslos,
+        // ohne dass irgendwer etwas davon merkt. Lieber laut abbrechen
+        // (main().catch() alarmiert per WhatsApp) als eine Position mit
+        // kaputtem Einstiegspreis zu buchen.
+        if (!(qty > 0) || order.status !== 'FILLED') {
+          throw new Error(`Kauf-Order für ${symbol} wurde nicht vollständig ausgeführt (status=${order.status}, executedQty=${order.executedQty}) - kein Einstieg gebucht.`);
+        }
         tatsaechlicherPreis = parseFloat(order.cummulativeQuoteQty) / qty;
       }
       state.position = { qty, entryPreis: tatsaechlicherPreis, einstiegAm: new Date().toISOString() };
@@ -133,6 +144,13 @@ async function main() {
         erloes = state.position.qty * preis;
       } else {
         const order = await placeMarketSell(symbol, state.position.qty);
+        // Gleiche Absicherung wie beim Kauf: ohne Fill-Check könnte eine nicht
+        // ausgeführte Verkauf-Order fälschlich als geschlossene Position mit
+        // erloes=0 verbucht werden (kompletter Kapitalverlust nur im State,
+        // während die echte Position bei Binance weiterläuft).
+        if (!(parseFloat(order.executedQty) > 0) || order.status !== 'FILLED') {
+          throw new Error(`Verkauf-Order für ${symbol} wurde nicht vollständig ausgeführt (status=${order.status}, executedQty=${order.executedQty}) - Position bleibt im State offen, bitte Binance-Konto manuell prüfen.`);
+        }
         erloes = parseFloat(order.cummulativeQuoteQty);
       }
       const einsatz = state.position.qty * state.position.entryPreis;
