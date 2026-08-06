@@ -16,7 +16,14 @@ import { loadState, saveState } from './lib/state.mjs';
 const NL = '\n';
 const STATE_KEY = '02-ki-kundenservice';
 
-async function fetchNewEmails() {
+// Markiert NUR die Kandidaten-UIDs, die diese Automation überhaupt schon
+// einmal gesehen hat (verhindert, dass dieselbe E-Mail bei jedem 10-Minuten-
+// Lauf neu heruntergeladen wird) - NICHT, dass sie bereits beantwortet wurde.
+// Das eigentliche "beantwortet"-Tracking passiert in main(), erst NACH
+// erfolgreicher Verarbeitung - sonst würde eine E-Mail, deren Verarbeitung
+// mitten im Lauf fehlschlägt (Claude-/Resend-Ausfall), fälschlich als erledigt
+// markiert und nie beantwortet, obwohl sie schon als "gesehen" abgespeichert wäre.
+async function fetchNewEmails(state) {
   const client = new ImapFlow({
     host: process.env.IMAP_HOST,
     port: Number(process.env.IMAP_PORT || 993),
@@ -25,7 +32,6 @@ async function fetchNewEmails() {
     logger: false,
   });
 
-  const state = loadState(STATE_KEY);
   const seenUids = new Set(state.seenUids || []);
   const neu = [];
 
@@ -43,15 +49,12 @@ async function fetchNewEmails() {
         subject: parsed.subject || '(kein Betreff)',
         textPlain: parsed.text || parsed.html || '',
       });
-      seenUids.add(uid);
     }
   } finally {
     lock.release();
   }
   await client.logout();
 
-  state.seenUids = Array.from(seenUids).slice(-2000);
-  saveState(STATE_KEY, state);
   return neu;
 }
 
@@ -98,40 +101,68 @@ export function buildPrompt(mail, bestellung) {
 }
 
 async function main() {
-  const mails = await fetchNewEmails();
+  const state = loadState(STATE_KEY);
+  state.seenUids = state.seenUids || [];
+  const seenSet = new Set(state.seenUids);
+
+  const mails = await fetchNewEmails(state);
   console.log(`[02-ki-kundenservice] ${mails.length} neue E-Mail(s)`);
 
+  let erledigt = 0;
+  let fehlgeschlagen = 0;
+
   for (const mail of mails) {
-    const m = (mail.from || '').match(/[\w.+-]+@[\w-]+\.[\w.]+/);
-    const bestellung = await findeLetzteBestellung(m ? m[0] : '');
-    const { prompt, kundeEmail, betreff, text } = buildPrompt(mail, bestellung);
-    const antwort = await askClaude(prompt, { maxTokens: 2500 });
-    const daten = parseJsonFromText(antwort, {
-      kategorie: 'sonstiges',
-      braucht_mensch: 'ja',
-      betreff: 'Re: Ihre Anfrage',
-      antwort_html: antwort,
-    });
-
-    const nurText = (daten.antwort_html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 1200);
-
-    if (daten.braucht_mensch === 'ja') {
-      const bestellZeile = bestellung
-        ? `Bestellung #${bestellung.bestellnummer} (${bestellung.status}), Artikel: ${bestellung.artikel}`
-        : 'Keine passende Bestellung gefunden';
-      const telegramText = `KUNDENSERVICE - Mensch gebraucht!${NL}${NL}Von: ${kundeEmail}${NL}Kategorie: ${daten.kategorie}${NL}Betreff: ${betreff}${NL}${bestellZeile}${NL}${NL}Nachricht:${NL}${text}${NL}${NL}--- Claude-Entwurf (nicht gesendet) ---${NL}${nurText}`;
-      await notifyTelegram(telegramText);
-
-      await erstelleTicket({
-        title: `[Kundenservice] ${daten.kategorie}: ${betreff}`,
-        body: `**Von:** ${kundeEmail}\n**Kategorie:** ${daten.kategorie}\n**${bestellZeile}**\n\n**Nachricht:**\n${text}\n\n---\n**Claude-Entwurf (nicht automatisch gesendet, von einem Menschen prüfen):**\n${nurText}`,
-        labels: ['kundenservice', daten.kategorie],
+    try {
+      const m = (mail.from || '').match(/[\w.+-]+@[\w-]+\.[\w.]+/);
+      const bestellung = await findeLetzteBestellung(m ? m[0] : '');
+      const { prompt, kundeEmail, betreff, text } = buildPrompt(mail, bestellung);
+      const antwort = await askClaude(prompt, { maxTokens: 2500 });
+      const daten = parseJsonFromText(antwort, {
+        kategorie: 'sonstiges',
+        braucht_mensch: 'ja',
+        betreff: 'Re: Ihre Anfrage',
+        antwort_html: antwort,
       });
-    } else {
-      const empfaenger = isTestMode() ? config.OWNER_EMAIL : kundeEmail;
-      const finalBetreff = daten.betreff || `Re: ${betreff}`;
-      await sendEmail({ to: empfaenger, subject: finalBetreff, html: daten.antwort_html || '' });
+
+      const nurText = (daten.antwort_html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 1200);
+
+      if (daten.braucht_mensch === 'ja') {
+        const bestellZeile = bestellung
+          ? `Bestellung #${bestellung.bestellnummer} (${bestellung.status}), Artikel: ${bestellung.artikel}`
+          : 'Keine passende Bestellung gefunden';
+        const telegramText = `KUNDENSERVICE - Mensch gebraucht!${NL}${NL}Von: ${kundeEmail}${NL}Kategorie: ${daten.kategorie}${NL}Betreff: ${betreff}${NL}${bestellZeile}${NL}${NL}Nachricht:${NL}${text}${NL}${NL}--- Claude-Entwurf (nicht gesendet) ---${NL}${nurText}`;
+        await notifyTelegram(telegramText);
+
+        await erstelleTicket({
+          title: `[Kundenservice] ${daten.kategorie}: ${betreff}`,
+          body: `**Von:** ${kundeEmail}\n**Kategorie:** ${daten.kategorie}\n**${bestellZeile}**\n\n**Nachricht:**\n${text}\n\n---\n**Claude-Entwurf (nicht automatisch gesendet, von einem Menschen prüfen):**\n${nurText}`,
+          labels: ['kundenservice', daten.kategorie],
+        });
+      } else {
+        const empfaenger = isTestMode() ? config.OWNER_EMAIL : kundeEmail;
+        const finalBetreff = daten.betreff || `Re: ${betreff}`;
+        await sendEmail({ to: empfaenger, subject: finalBetreff, html: daten.antwort_html || '' });
+      }
+
+      // Erst NACH erfolgreicher Beantwortung/Eskalation als "seen" markieren
+      // und sofort speichern - damit eine spätere E-Mail im selben Batch,
+      // die fehlschlägt, diesen Erfolg nicht rückgängig macht.
+      seenSet.add(mail.uid);
+      state.seenUids = Array.from(seenSet).slice(-2000);
+      saveState(STATE_KEY, state);
+      erledigt++;
+    } catch (err) {
+      // NICHT als seen markieren - wird beim nächsten Lauf (10 Min später)
+      // automatisch erneut versucht. Andere E-Mails im selben Batch werden
+      // trotzdem weiterverarbeitet, statt dass ein einzelner Fehler den
+      // ganzen restlichen Batch blockiert.
+      fehlgeschlagen++;
+      console.error(`[02-ki-kundenservice] Verarbeitung von E-Mail (UID ${mail.uid}) fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
     }
+  }
+
+  if (fehlgeschlagen > 0) {
+    console.log(`[02-ki-kundenservice] ${erledigt} erledigt, ${fehlgeschlagen} fehlgeschlagen (Retry beim nächsten Lauf)`);
   }
 }
 

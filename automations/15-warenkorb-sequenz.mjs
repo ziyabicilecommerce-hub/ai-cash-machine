@@ -50,16 +50,24 @@ async function main() {
     else if (alterH >= 1 && eintrag.stufe < 1) stufe = 1;
     if (stufe === 0 || alterH > 96) continue;
 
-    const prompt = buildPrompt(c, stufe);
-    const antwort = await askClaude(prompt, { maxTokens: 2000 });
-    const daten = parseJsonFromText(antwort, { betreff: 'Dein Warenkorb wartet', html: antwort });
+    try {
+      const prompt = buildPrompt(c, stufe);
+      const antwort = await askClaude(prompt, { maxTokens: 2000 });
+      const daten = parseJsonFromText(antwort, { betreff: 'Dein Warenkorb wartet', html: antwort });
 
-    const empfaenger = isTestMode() ? config.OWNER_EMAIL : c.email;
-    const betreff = isTestMode() ? `[TEST Stufe ${stufe}] ${daten.betreff}` : daten.betreff;
-    await sendEmail({ to: empfaenger, subject: betreff, html: daten.html });
+      const empfaenger = isTestMode() ? config.OWNER_EMAIL : c.email;
+      const betreff = isTestMode() ? `[TEST Stufe ${stufe}] ${daten.betreff}` : daten.betreff;
+      await sendEmail({ to: empfaenger, subject: betreff, html: daten.html });
 
-    state.stufen[c.id] = { stufe, ts: jetzt };
-    versendet++;
+      // Erst NACH erfolgreichem Versand die Stufe markieren und sofort speichern -
+      // schlägt ein späterer Checkout im selben Lauf fehl, geht dieser Erfolg nicht
+      // verloren (sonst würde der nächste Lauf dieselbe Stufe nochmal versenden).
+      state.stufen[c.id] = { stufe, ts: jetzt };
+      saveState(STATE_KEY, state);
+      versendet++;
+    } catch (err) {
+      console.error(`[15-warenkorb-sequenz] Checkout ${c.id} fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
+    }
   }
 
   for (const id of Object.keys(state.stufen)) {
@@ -67,7 +75,7 @@ async function main() {
   }
   saveState(STATE_KEY, state);
 
-  console.log(`[15-warenkorb-sequenz] ${versendet} Erinnerung(en) versendet`);
+  console.log(`[15-warenkorb-sequenz] ${versendet}/${checkouts.length} Erinnerung(en) versendet`);
 }
 
 main().catch((err) => {

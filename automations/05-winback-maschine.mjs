@@ -11,11 +11,13 @@ const STATE_KEY = '05-winback-maschine';
 
 async function main() {
   const tage = parseInt(config.WINBACK_TAGE || '60');
+  // Fenster [heute-tage, heute-tage+1) - erfasst Bestellungen, die GENAU vor
+  // "tage" Tagen aufgegeben wurden (gleiche Konvention wie 10-vip-radar.mjs).
   const von = new Date();
-  von.setDate(von.getDate() - (tage + 1));
+  von.setDate(von.getDate() - tage);
   von.setHours(0, 0, 0, 0);
   const bis = new Date();
-  bis.setDate(bis.getDate() - tage);
+  bis.setDate(bis.getDate() - (tage - 1));
   bis.setHours(0, 0, 0, 0);
 
   const orders = (
@@ -34,25 +36,33 @@ async function main() {
     if (gesehen.has(o.email)) continue;
     gesehen.add(o.email);
     if (state.winback.includes(o.email)) continue;
-    state.winback.push(o.email);
-    verarbeitet++;
 
-    const vorname = o.customer.first_name || '';
-    const artikel = (o.line_items || []).map((li) => li.title).slice(0, 3).join(', ');
+    try {
+      const vorname = o.customer.first_name || '';
+      const artikel = (o.line_items || []).map((li) => li.title).slice(0, 3).join(', ');
 
-    const prompt = `Du bist E-Mail-Marketing-Profi für den Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde hat vor ${tage} Tagen gekauft und seitdem nichts mehr bestellt. Schreibe eine Winback-Mail auf Deutsch (Du-Form), max 130 Wörter.${NL}Vorname: ${vorname || 'unbekannt (neutral anreden)'}${NL}Damals gekauft: ${artikel}${NL}Shop-Link: ${config.SHOP_URL}${NL}Rabattcode: ${config.WINBACK_RABATT_CODE} (${config.WINBACK_RABATT_PROZENT}%)${NL}${NL}Anforderungen: wir-vermissen-dich-Vibe ohne cringe, beziehe dich auf den damaligen Kauf, Rabattcode als Dankeschön, EIN Button zum Shop, leichte Dringlichkeit (Code 7 Tage gültig). Mobiltaugliches HTML mit Inline-CSS.${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
+      const prompt = `Du bist E-Mail-Marketing-Profi für den Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde hat vor ${tage} Tagen gekauft und seitdem nichts mehr bestellt. Schreibe eine Winback-Mail auf Deutsch (Du-Form), max 130 Wörter.${NL}Vorname: ${vorname || 'unbekannt (neutral anreden)'}${NL}Damals gekauft: ${artikel}${NL}Shop-Link: ${config.SHOP_URL}${NL}Rabattcode: ${config.WINBACK_RABATT_CODE} (${config.WINBACK_RABATT_PROZENT}%)${NL}${NL}Anforderungen: wir-vermissen-dich-Vibe ohne cringe, beziehe dich auf den damaligen Kauf, Rabattcode als Dankeschön, EIN Button zum Shop, leichte Dringlichkeit (Code 7 Tage gültig). Mobiltaugliches HTML mit Inline-CSS.${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-    const antwort = await askClaude(prompt, { maxTokens: 2000 });
-    const daten = parseJsonFromText(antwort, { betreff: 'Wir vermissen dich!', html: antwort });
+      const antwort = await askClaude(prompt, { maxTokens: 2000 });
+      const daten = parseJsonFromText(antwort, { betreff: 'Wir vermissen dich!', html: antwort });
 
-    const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;
-    await sendEmail({ to: empfaenger, subject: daten.betreff, html: daten.html });
+      const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;
+      await sendEmail({ to: empfaenger, subject: daten.betreff, html: daten.html });
+
+      // Erst NACH erfolgreichem Versand als "winback" markieren und sofort
+      // speichern - schlägt eine spätere Bestellung im selben Lauf fehl, geht
+      // dieser Erfolg nicht verloren (sonst würde der nächste Lauf denselben
+      // Kunden nochmal anschreiben).
+      state.winback.push(o.email);
+      if (state.winback.length > 3000) state.winback = state.winback.slice(-3000);
+      saveState(STATE_KEY, state);
+      verarbeitet++;
+    } catch (err) {
+      console.error(`[05-winback-maschine] Kunde ${o.email} fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
+    }
   }
 
-  if (state.winback.length > 3000) state.winback = state.winback.slice(-3000);
-  saveState(STATE_KEY, state);
-
-  console.log(`[05-winback-maschine] ${verarbeitet} Kunde(n) angeschrieben`);
+  console.log(`[05-winback-maschine] ${verarbeitet}/${orders.length} Kunde(n) angeschrieben`);
 }
 
 main().catch((err) => {

@@ -92,6 +92,14 @@ Antworte NUR mit validem JSON, ohne Markdown:
     return teile.join('\n');
   });
 
+  // Historie SOFORT nach der Ideengenerierung speichern, nicht erst nach dem
+  // WhatsApp-Versand - ein Netzwerkfehler beim Senden (notifyWhatsapp() wirft
+  // bei einem echten fetch()-Fehler) soll nicht dazu führen, dass dieselben
+  // Produktideen nächste Woche nochmal vorgeschlagen (und erneut mit Tokens
+  // bezahlt) werden.
+  const historie = [...bereitsVorgeschlagen, ...neueProdukte.map((p) => p.name)].slice(-MAX_HISTORIE);
+  saveState(STATE_NAME, { vorgeschlagen: historie });
+
   const chunks = chunkZeilen(zeilen, WHATSAPP_MAX_CHARS);
   for (let i = 0; i < chunks.length; i++) {
     const kopf = chunks.length > 1
@@ -99,9 +107,6 @@ Antworte NUR mit validem JSON, ohne Markdown:
       : `🔎 ${neueProdukte.length} neue Produktidee${neueProdukte.length > 1 ? 'n' : ''}:`;
     await notifyWhatsapp(`${kopf}\n\n${chunks[i].join('\n\n')}`);
   }
-
-  const historie = [...bereitsVorgeschlagen, ...neueProdukte.map((p) => p.name)].slice(-MAX_HISTORIE);
-  saveState(STATE_NAME, { vorgeschlagen: historie });
 
   console.log(`[51-product-hunter] ${neueProdukte.length} neue Produktidee(n) per WhatsApp verschickt.`);
 }

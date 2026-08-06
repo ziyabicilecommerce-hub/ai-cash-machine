@@ -51,8 +51,10 @@ async function main() {
     return;
   }
 
+  let verarbeitet = 0;
   for (const produkt of neueProdukte) {
-    const prompt = `Du bist Performance-Marketing-Creative-Director für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}, Zielgruppe: ${config.ZIELGRUPPE || 'nicht spezifiziert'}).
+    try {
+      const prompt = `Du bist Performance-Marketing-Creative-Director für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}, Zielgruppe: ${config.ZIELGRUPPE || 'nicht spezifiziert'}).
 
 PRODUKT: ${produkt}
 
@@ -65,46 +67,55 @@ Baue das komplette Ad-Kreativ-Paket auf Deutsch:
 Antworte NUR mit validem JSON, ohne Markdown:
 {"hooks": ["...", "...", "..."], "ad_copy": [{"angle": "...", "headline": "...", "text": "...", "cta": "..."}], "ugc_idee": "...", "bild_prompts": ["...", "..."]}`;
 
-    const antwort = await askClaude(prompt, { maxTokens: 3000 });
-    const daten = parseJsonFromText(antwort, { hooks: [], ad_copy: [], ugc_idee: '', bild_prompts: [] });
+      const antwort = await askClaude(prompt, { maxTokens: 3000 });
+      const daten = parseJsonFromText(antwort, { hooks: [], ad_copy: [], ugc_idee: '', bild_prompts: [] });
 
-    const zeilen = [
-      `🎥 *Creative-Paket: ${produkt}*`,
-      daten.hooks.length ? `*Hooks:*\n${daten.hooks.map((h, i) => `${i + 1}. ${h}`).join('\n')}` : '',
-      daten.ad_copy.length
-        ? `*Ad-Copy:*\n${daten.ad_copy.map((a) => `[${a.angle}]\n${a.headline}\n${a.text}\nCTA: ${a.cta}`).join('\n\n')}`
-        : '',
-      daten.ugc_idee ? `*UGC-Idee:*\n${daten.ugc_idee}` : '',
-      daten.bild_prompts.length ? `*Bild-Prompts:*\n${daten.bild_prompts.map((p, i) => `${i + 1}. ${p}`).join('\n')}` : '',
-    ].filter(Boolean);
+      const zeilen = [
+        `🎥 *Creative-Paket: ${produkt}*`,
+        daten.hooks.length ? `*Hooks:*\n${daten.hooks.map((h, i) => `${i + 1}. ${h}`).join('\n')}` : '',
+        daten.ad_copy.length
+          ? `*Ad-Copy:*\n${daten.ad_copy.map((a) => `[${a.angle}]\n${a.headline}\n${a.text}\nCTA: ${a.cta}`).join('\n\n')}`
+          : '',
+        daten.ugc_idee ? `*UGC-Idee:*\n${daten.ugc_idee}` : '',
+        daten.bild_prompts.length ? `*Bild-Prompts:*\n${daten.bild_prompts.map((p, i) => `${i + 1}. ${p}`).join('\n')}` : '',
+      ].filter(Boolean);
 
-    let bildFehler = null;
-    if (daten.bild_prompts.length) {
-      try {
-        const bildUrl = await generiereBild(daten.bild_prompts[0]);
-        if (bildUrl) {
-          await notifyWhatsappBild(bildUrl, `Generiertes Bild für: ${produkt}`);
-        } else {
-          zeilen.push('(Bildgenerierung übersprungen - kein OPENAI_API_KEY konfiguriert, Prompts oben manuell nutzbar)');
+      let bildFehler = null;
+      if (daten.bild_prompts.length) {
+        try {
+          const bildUrl = await generiereBild(daten.bild_prompts[0]);
+          if (bildUrl) {
+            await notifyWhatsappBild(bildUrl, `Generiertes Bild für: ${produkt}`);
+          } else {
+            zeilen.push('(Bildgenerierung übersprungen - kein OPENAI_API_KEY konfiguriert, Prompts oben manuell nutzbar)');
+          }
+        } catch (err) {
+          bildFehler = err;
+          zeilen.push(`⚠️ Bildgenerierung fehlgeschlagen: ${err.message} - Prompts oben trotzdem manuell nutzbar.`);
         }
-      } catch (err) {
-        bildFehler = err;
-        zeilen.push(`⚠️ Bildgenerierung fehlgeschlagen: ${err.message} - Prompts oben trotzdem manuell nutzbar.`);
       }
-    }
 
-    const chunks = chunkZeilen(zeilen, WHATSAPP_MAX_CHARS);
-    for (const chunk of chunks) {
-      await notifyWhatsapp(chunk.join('\n\n'));
-    }
+      const chunks = chunkZeilen(zeilen, WHATSAPP_MAX_CHARS);
+      for (const chunk of chunks) {
+        await notifyWhatsapp(chunk.join('\n\n'));
+      }
 
-    if (bildFehler) console.error(`[52-creative-studio] Bildgenerierung für "${produkt}" fehlgeschlagen:`, bildFehler);
+      if (bildFehler) console.error(`[52-creative-studio] Bildgenerierung für "${produkt}" fehlgeschlagen:`, bildFehler);
+
+      // Erst NACH erfolgreichem Versand als "bearbeitet" markieren und sofort
+      // speichern - schlägt ein späteres Produkt im selben Lauf fehl, geht
+      // dieser Erfolg nicht verloren (sonst würde das Paket nächste Woche
+      // nochmal generiert und erneut mit Tokens bezahlt).
+      bereitsBearbeitet.add(produkt);
+      const historie = [...bereitsBearbeitet].slice(-MAX_HISTORIE);
+      saveState(STATE_NAME, { bearbeitet: historie });
+      verarbeitet++;
+    } catch (err) {
+      console.error(`[52-creative-studio] Produkt "${produkt}" fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
+    }
   }
 
-  const historie = [...bereitsBearbeitet, ...neueProdukte].slice(-MAX_HISTORIE);
-  saveState(STATE_NAME, { bearbeitet: historie });
-
-  console.log(`[52-creative-studio] ${neueProdukte.length} Creative-Paket(e) versendet.`);
+  console.log(`[52-creative-studio] ${verarbeitet}/${neueProdukte.length} Creative-Paket(e) versendet.`);
 }
 
 main().catch((err) => {

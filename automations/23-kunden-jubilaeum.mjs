@@ -30,25 +30,33 @@ async function main() {
 
   for (const k of kunden) {
     if (state.gefeiert.includes(k.id)) continue;
-    state.gefeiert.push(k.id);
-    verarbeitet++;
 
-    const gesamt = parseFloat(k.total_spent || 0).toFixed(0);
-    const bestellungen = parseInt(k.orders_count || 0);
+    try {
+      const gesamt = parseFloat(k.total_spent || 0).toFixed(0);
+      const bestellungen = parseInt(k.orders_count || 0);
 
-    const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde ist heute genau 1 Jahr dabei (erster Kontakt vor einem Jahr). Bisher ${bestellungen} Bestellungen, ${gesamt} Gesamtumsatz.${NL}${NL}Schreibe eine warme, kurze Jubiläums-E-Mail auf Deutsch (Du-Form), max 110 Wörter:${NL}- Vorname: ${k.first_name || 'unbekannt (neutral anreden)'}${NL}- Feiere das 1-jährige "Shop-Jubiläum" persönlich und ehrlich, kein Marketing-Sprech${NL}- Kleines Dankeschön: Gutschein-Code ${config.JUBILAEUM_RABATT_CODE}${NL}- Schlichtes, persönliches HTML, wenig Styling${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
+      const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde ist heute genau 1 Jahr dabei (erster Kontakt vor einem Jahr). Bisher ${bestellungen} Bestellungen, ${gesamt} Gesamtumsatz.${NL}${NL}Schreibe eine warme, kurze Jubiläums-E-Mail auf Deutsch (Du-Form), max 110 Wörter:${NL}- Vorname: ${k.first_name || 'unbekannt (neutral anreden)'}${NL}- Feiere das 1-jährige "Shop-Jubiläum" persönlich und ehrlich, kein Marketing-Sprech${NL}- Kleines Dankeschön: Gutschein-Code ${config.JUBILAEUM_RABATT_CODE}${NL}- Schlichtes, persönliches HTML, wenig Styling${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-    const antwort = await askClaude(prompt, { maxTokens: 1200 });
-    const daten = parseJsonFromText(antwort, { betreff: 'Ein Jahr - danke dir!', html: antwort });
+      const antwort = await askClaude(prompt, { maxTokens: 1200 });
+      const daten = parseJsonFromText(antwort, { betreff: 'Ein Jahr - danke dir!', html: antwort });
 
-    const empfaenger = isTestMode() ? config.OWNER_EMAIL : k.email;
-    await sendEmail({ to: empfaenger, subject: daten.betreff, html: daten.html });
+      const empfaenger = isTestMode() ? config.OWNER_EMAIL : k.email;
+      await sendEmail({ to: empfaenger, subject: daten.betreff, html: daten.html });
+
+      // Erst NACH erfolgreichem Versand als "gefeiert" markieren und sofort
+      // speichern - schlägt ein späterer Kunde im selben Lauf fehl, geht dieser
+      // Erfolg nicht verloren (sonst würde der nächste Lauf denselben Kunden
+      // nochmal anschreiben).
+      state.gefeiert.push(k.id);
+      if (state.gefeiert.length > 8000) state.gefeiert = state.gefeiert.slice(-8000);
+      saveState(STATE_KEY, state);
+      verarbeitet++;
+    } catch (err) {
+      console.error(`[23-kunden-jubilaeum] Kunde ${k.id} fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
+    }
   }
 
-  if (state.gefeiert.length > 8000) state.gefeiert = state.gefeiert.slice(-8000);
-  saveState(STATE_KEY, state);
-
-  console.log(`[23-kunden-jubilaeum] ${verarbeitet} Jubiläum(s)-Mail(s) versendet`);
+  console.log(`[23-kunden-jubilaeum] ${verarbeitet}/${kunden.length} Jubiläum(s)-Mail(s) versendet`);
 }
 
 main().catch((err) => {

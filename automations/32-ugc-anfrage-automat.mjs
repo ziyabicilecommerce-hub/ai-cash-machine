@@ -33,24 +33,32 @@ async function main() {
     const k = o.customer;
     if (parseInt(k.orders_count || 1) < minBest) continue;
     if (state.gefragt.includes(k.id)) continue;
-    state.gefragt.push(k.id);
-    verarbeitet++;
 
-    const artikel = (o.line_items || []).map((li) => li.title).slice(0, 2).join(', ');
+    try {
+      const artikel = (o.line_items || []).map((li) => li.title).slice(0, 2).join(', ');
 
-    const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde ist ein echter Fan (${k.orders_count} Bestellungen). Letzter Kauf: ${artikel || 'diverses'}.${NL}${NL}Bitte ihn um ein kurzes Foto oder Video (UGC) mit dem Produkt, das der Shop für Social Media/Ads nutzen darf.${NL}Schreibe eine lockere, persönliche E-Mail auf Deutsch (Du-Form), max 120 Wörter:${NL}- Vorname: ${k.first_name || 'unbekannt (neutral anreden)'}${NL}- Ehrliches Kompliment (er kauft immer wieder), dann die Bitte um ein echtes Foto/Video im Alltag${NL}- Als Dankeschön: ${config.UGC_BELOHNUNG}${NL}- Super einfach machen: einfach auf diese Mail antworten und Datei anhängen${NL}- Locker, kein Corporate-Ton, schlichtes HTML${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
+      const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde ist ein echter Fan (${k.orders_count} Bestellungen). Letzter Kauf: ${artikel || 'diverses'}.${NL}${NL}Bitte ihn um ein kurzes Foto oder Video (UGC) mit dem Produkt, das der Shop für Social Media/Ads nutzen darf.${NL}Schreibe eine lockere, persönliche E-Mail auf Deutsch (Du-Form), max 120 Wörter:${NL}- Vorname: ${k.first_name || 'unbekannt (neutral anreden)'}${NL}- Ehrliches Kompliment (er kauft immer wieder), dann die Bitte um ein echtes Foto/Video im Alltag${NL}- Als Dankeschön: ${config.UGC_BELOHNUNG}${NL}- Super einfach machen: einfach auf diese Mail antworten und Datei anhängen${NL}- Locker, kein Corporate-Ton, schlichtes HTML${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-    const antwort = await askClaude(prompt, { maxTokens: 1200 });
-    const daten = parseJsonFromText(antwort, { betreff: 'Kleine Bitte an dich', html: antwort });
+      const antwort = await askClaude(prompt, { maxTokens: 1200 });
+      const daten = parseJsonFromText(antwort, { betreff: 'Kleine Bitte an dich', html: antwort });
 
-    const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;
-    await sendEmail({ to: empfaenger, subject: daten.betreff, html: daten.html });
+      const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;
+      await sendEmail({ to: empfaenger, subject: daten.betreff, html: daten.html });
+
+      // Erst NACH erfolgreichem Versand als "gefragt" markieren und sofort
+      // speichern - schlägt ein späterer Kunde im selben Lauf fehl, geht dieser
+      // Erfolg nicht verloren (sonst würde der nächste Lauf denselben Kunden
+      // nochmal anschreiben).
+      state.gefragt.push(k.id);
+      if (state.gefragt.length > 8000) state.gefragt = state.gefragt.slice(-8000);
+      saveState(STATE_KEY, state);
+      verarbeitet++;
+    } catch (err) {
+      console.error(`[32-ugc-anfrage-automat] Kunde ${k.id} fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
+    }
   }
 
-  if (state.gefragt.length > 8000) state.gefragt = state.gefragt.slice(-8000);
-  saveState(STATE_KEY, state);
-
-  console.log(`[32-ugc-anfrage-automat] ${verarbeitet} UGC-Anfrage(n) versendet`);
+  console.log(`[32-ugc-anfrage-automat] ${verarbeitet}/${orders.length} UGC-Anfrage(n) versendet`);
 }
 
 main().catch((err) => {

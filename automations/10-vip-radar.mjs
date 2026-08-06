@@ -38,28 +38,35 @@ async function main() {
     const istVip = totalSpent >= umsatzSchwelle || ordersCount >= bestellSchwelle;
     if (!istVip) continue;
     if (state.vips.includes(k.id)) continue;
-    state.vips.push(k.id);
-    neueVips++;
 
-    const artikel = (o.line_items || []).map((li) => li.title).slice(0, 3).join(', ');
+    try {
+      const artikel = (o.line_items || []).map((li) => li.title).slice(0, 3).join(', ');
 
-    const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde ist gerade offiziell VIP geworden: ${ordersCount} Bestellungen, ${totalSpent.toFixed(0)} Gesamtumsatz. Letzte Bestellung: ${artikel}.${NL}${NL}Schreibe eine PERSÖNLICHE Dankes-E-Mail auf Deutsch (Du-Form), maximal 120 Wörter:${NL}- Klingt wie vom Gründer persönlich getippt, NICHT wie Marketing${NL}- Ehrlicher Dank, dass er/sie immer wieder kauft${NL}- Vorname: ${k.first_name || 'unbekannt (neutral anreden)'}${NL}- Als Dankeschön: exklusiver VIP-Code ${config.VIP_RABATT_CODE} (dauerhaft gültig, nur für ihn/sie)${NL}- Frage am Ende: Was können wir besser machen? (echte Antworten erwünscht)${NL}- Schlichtes HTML, wenig Styling, wie eine normale persönliche Mail${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
+      const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde ist gerade offiziell VIP geworden: ${ordersCount} Bestellungen, ${totalSpent.toFixed(0)} Gesamtumsatz. Letzte Bestellung: ${artikel}.${NL}${NL}Schreibe eine PERSÖNLICHE Dankes-E-Mail auf Deutsch (Du-Form), maximal 120 Wörter:${NL}- Klingt wie vom Gründer persönlich getippt, NICHT wie Marketing${NL}- Ehrlicher Dank, dass er/sie immer wieder kauft${NL}- Vorname: ${k.first_name || 'unbekannt (neutral anreden)'}${NL}- Als Dankeschön: exklusiver VIP-Code ${config.VIP_RABATT_CODE} (dauerhaft gültig, nur für ihn/sie)${NL}- Frage am Ende: Was können wir besser machen? (echte Antworten erwünscht)${NL}- Schlichtes HTML, wenig Styling, wie eine normale persönliche Mail${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-    const antwort = await askClaude(prompt, { maxTokens: 1500 });
-    const daten = parseJsonFromText(antwort, { betreff: 'Danke, dass du dabei bist', html: antwort });
+      const antwort = await askClaude(prompt, { maxTokens: 1500 });
+      const daten = parseJsonFromText(antwort, { betreff: 'Danke, dass du dabei bist', html: antwort });
 
-    const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;
-    const betreff = (isTestMode() ? '[TEST] ' : '') + daten.betreff;
-    await sendEmail({ to: empfaenger, subject: betreff, html: daten.html });
+      const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;
+      const betreff = (isTestMode() ? '[TEST] ' : '') + daten.betreff;
+      await sendEmail({ to: empfaenger, subject: betreff, html: daten.html });
 
-    const telegramText = `NEUER VIP-KUNDE!${NL}${NL}Name: ${k.first_name || '?'}${NL}E-Mail: ${o.email}${NL}Bestellungen: ${ordersCount}${NL}Gesamtumsatz: ${totalSpent.toFixed(2)}${NL}${NL}Persönliche Dankes-Mail wurde ${isTestMode() ? 'im TEST-MODUS an dich' : 'automatisch an den Kunden'} gesendet.`;
-    await notifyTelegram(telegramText);
+      const telegramText = `NEUER VIP-KUNDE!${NL}${NL}Name: ${k.first_name || '?'}${NL}E-Mail: ${o.email}${NL}Bestellungen: ${ordersCount}${NL}Gesamtumsatz: ${totalSpent.toFixed(2)}${NL}${NL}Persönliche Dankes-Mail wurde ${isTestMode() ? 'im TEST-MODUS an dich' : 'automatisch an den Kunden'} gesendet.`;
+      await notifyTelegram(telegramText);
+
+      // Erst NACH erfolgreichem Versand als VIP markieren und sofort speichern -
+      // schlägt ein späterer Kunde im selben Lauf fehl, geht dieser Erfolg nicht
+      // verloren (sonst würde der nächste Lauf denselben Kunden nochmal anschreiben).
+      state.vips.push(k.id);
+      if (state.vips.length > 5000) state.vips = state.vips.slice(-5000);
+      saveState(STATE_KEY, state);
+      neueVips++;
+    } catch (err) {
+      console.error(`[10-vip-radar] Kunde ${k.id} fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
+    }
   }
 
-  if (state.vips.length > 5000) state.vips = state.vips.slice(-5000);
-  saveState(STATE_KEY, state);
-
-  console.log(`[10-vip-radar] ${neueVips} neue VIP(s) erkannt`);
+  console.log(`[10-vip-radar] ${neueVips}/${orders.length} neue VIP(s) erkannt`);
 }
 
 main().catch((err) => {

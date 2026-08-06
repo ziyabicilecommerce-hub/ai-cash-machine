@@ -68,9 +68,6 @@ async function main() {
     }
   }
 
-  const historie = [...bereitsGemeldet, ...neueMeldungen].slice(-MAX_HISTORIE);
-  saveState(STATE_NAME, { gemeldet: historie });
-
   if (!verzoegert.length && !zustellungsProbleme.length) {
     console.log('[55-fulfillment-supplier-hub] Keine neuen Verzögerungen oder Zustellungsprobleme.');
     return;
@@ -97,6 +94,12 @@ async function main() {
       : `📦 Fulfillment & Supplier Hub:`;
     await notifyWhatsapp(`${kopf}\n\n${chunks[i].join('\n\n')}`);
   }
+
+  // Erst NACH erfolgreichem Versand als "gemeldet" markieren - sonst würde
+  // ein Netzwerkfehler beim Senden ein Problem für immer stumm schalten,
+  // ohne dass es je tatsächlich kommuniziert wurde.
+  const historie = [...bereitsGemeldet, ...neueMeldungen].slice(-MAX_HISTORIE);
+  saveState(STATE_NAME, { gemeldet: historie });
 
   console.log(`[55-fulfillment-supplier-hub] ${verzoegert.length} Verzögerung(en), ${zustellungsProbleme.length} Zustellungsproblem(e) gemeldet.`);
 }

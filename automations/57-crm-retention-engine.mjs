@@ -93,13 +93,22 @@ async function main() {
   let angeschrieben = 0;
   let perSms = 0;
 
+  // Einträge, die viel länger als KONTAKT_ABSTAND_TAGE zurückliegen, sperren
+  // ohnehin nichts mehr (siehe Filter oben) - ohne Aufräumen würde der State
+  // für längst inaktive/gelöschte Kunden unbegrenzt weiterwachsen.
+  const AUFRAEUM_SCHWELLE_TAGE = KONTAKT_ABSTAND_TAGE * 4;
+  for (const kundenId of Object.keys(letzterKontakt)) {
+    if (tageSeit(letzterKontakt[kundenId]) > AUFRAEUM_SCHWELLE_TAGE) delete letzterKontakt[kundenId];
+  }
+
   for (let i = 0; i < behandelbar.length; i++) {
     const k = behandelbar[i];
-    const umsatz = parseFloat(k.total_spent || 0);
-    const bestellungen = parseInt(k.orders_count || 0, 10);
-    const vorname = k.first_name || '';
+    try {
+      const umsatz = parseFloat(k.total_spent || 0);
+      const bestellungen = parseInt(k.orders_count || 0, 10);
+      const vorname = k.first_name || '';
 
-    const prompt = `Du bist CRM-/Retention-Stratege für den Onlineshop "${config.SHOP_NAME}". Dieser Kunde ist SEHR wertvoll (Gesamtumsatz bisher: ${umsatz.toFixed(2)} EUR, ${bestellungen} Bestellungen), hat aber seit über ${atRiskTage} Tagen nichts mehr gekauft - besonders schade, ihn zu verlieren.
+      const prompt = `Du bist CRM-/Retention-Stratege für den Onlineshop "${config.SHOP_NAME}". Dieser Kunde ist SEHR wertvoll (Gesamtumsatz bisher: ${umsatz.toFixed(2)} EUR, ${bestellungen} Bestellungen), hat aber seit über ${atRiskTage} Tagen nichts mehr gekauft - besonders schade, ihn zu verlieren.
 
 Vorname: ${vorname || 'unbekannt (neutral anreden)'}
 Bisheriger Gesamtumsatz: ${umsatz.toFixed(2)} EUR
@@ -109,24 +118,30 @@ Schreibe ein PERSÖNLICHES Rückgewinnungs-Angebot auf Deutsch (Du-Form), das se
 Antworte NUR mit validem JSON, ohne Markdown:
 {"betreff": "...", "html": "...", "sms_text": "kurze SMS-Version, max 300 Zeichen inkl. Rabattcode, ohne HTML"}`;
 
-    const antwort = await askClaude(prompt, { maxTokens: 2000 });
-    const daten = parseJsonFromText(antwort, null);
-    if (!daten || !daten.html) continue;
+      const antwort = await askClaude(prompt, { maxTokens: 2000 });
+      const daten = parseJsonFromText(antwort, null);
+      if (!daten || !daten.html) continue;
 
-    const empfaenger = isTestMode() ? config.OWNER_EMAIL : k.email;
-    await sendEmail({ to: empfaenger, subject: daten.betreff || 'Ein persönliches Angebot für dich', html: daten.html });
-    angeschrieben++;
+      const empfaenger = isTestMode() ? config.OWNER_EMAIL : k.email;
+      await sendEmail({ to: empfaenger, subject: daten.betreff || 'Ein persönliches Angebot für dich', html: daten.html });
+      angeschrieben++;
 
-    if (i < smsTopN && k.phone && daten.sms_text) {
-      await sendeSms(k.phone, daten.sms_text);
-      perSms++;
+      if (i < smsTopN && k.phone && daten.sms_text) {
+        await sendeSms(k.phone, daten.sms_text);
+        perSms++;
+      }
+
+      // Erst NACH erfolgreichem Versand als kontaktiert markieren und sofort
+      // speichern - schlägt ein späterer Kunde im selben Lauf fehl, geht
+      // dieser Erfolg nicht verloren (sonst würde der nächste Lauf denselben
+      // High-Value-Kunden nochmal anschreiben).
+      letzterKontakt[k.id] = new Date(jetzt).toISOString();
+      state.letzterKontakt = letzterKontakt;
+      saveState(STATE_NAME, state);
+    } catch (err) {
+      console.error(`[57-crm-retention-engine] Kunde ${k.id} fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
     }
-
-    letzterKontakt[k.id] = new Date(jetzt).toISOString();
   }
-
-  state.letzterKontakt = letzterKontakt;
-  saveState(STATE_NAME, state);
 
   const digest = [
     `❤️ *CRM & Retention Engine* - wöchentlicher Kundenstamm-Überblick`,

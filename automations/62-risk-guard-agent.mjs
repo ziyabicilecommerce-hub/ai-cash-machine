@@ -81,32 +81,43 @@ async function main() {
 
   for (let i = 0; i < kandidaten.length; i++) {
     const { order } = kandidaten[i];
-    state.geprueft.push(order.id);
     const bewertung = Array.isArray(bewertungen) ? bewertungen[i] : null;
     const stufe = bewertung?.stufe || 'mittel'; // ohne gültige Claude-Antwort lieber vorsichtig als blind durchwinken
     const begruendung = bewertung?.begruendung || 'Claude-Bewertung nicht verfügbar - heuristisch markiert.';
 
+    // Claude hat diese Bestellung bereits bewertet (ein einziger Batch-Aufruf
+    // oben) - "geprüft" markieren wir deshalb IMMER, unabhängig vom Ergebnis
+    // der folgenden Schritte, damit sie nicht bei jedem Lauf erneut (und
+    // erneut mit Tokens) bewertet wird. Sofort speichern, damit ein Fehler
+    // bei einer SPÄTEREN Bestellung im selben Batch diesen Fortschritt nicht
+    // rückgängig macht.
+    state.geprueft.push(order.id);
+    if (state.geprueft.length > 3000) state.geprueft = state.geprueft.slice(-3000);
+    saveState(STATE_KEY, state);
+
     if (stufe === 'niedrig') continue;
 
-    const neueTags = [order.tags, RISIKO_TAG].filter(Boolean).join(', ');
     try {
+      const neueTags = [order.tags, RISIKO_TAG].filter(Boolean).join(', ');
       await updateOrder(order.id, { tags: neueTags });
       neuMarkiert++;
+
+      zeilen.push(`- #${order.order_number} | ${stufe.toUpperCase()} | ${order.total_price} ${order.currency} | ${begruendung}`);
+
+      await erstelleTicket({
+        title: `[Risk-Guard] Bestellung #${order.order_number} - Risiko ${stufe}`,
+        body: `**Wert:** ${order.total_price} ${order.currency}\n**Kunde:** ${order.email || 'unbekannt'}\n**Risikostufe:** ${stufe}\n**Begründung:** ${begruendung}\n\n**Automatisch erkannte Signale:**\n${kandidaten[i].gruende.map((g) => `- ${g}`).join('\n')}\n\n_Bestellung wurde NICHT storniert oder zurückgehalten - nur mit Tag "${RISIKO_TAG}" markiert. Bitte manuell prüfen._`,
+        labels: ['risk-guard', `risiko-${stufe}`],
+      });
     } catch (err) {
-      console.error(`[62-risk-guard-agent] Tag konnte nicht gesetzt werden für #${order.order_number}:`, err.message);
+      // Tag oder Ticket fehlgeschlagen - da die Bestellung oben bereits als
+      // "geprüft" markiert wurde (echter Tag könnte teilweise gesetzt sein),
+      // NICHT die ganze Automation abbrechen. Nächster Lauf würde diese
+      // Bestellung sonst wegen des Tag-Checks überspringen, ohne dass je ein
+      // Ticket entstanden ist - deshalb hier wenigstens laut alarmieren.
+      console.error(`[62-risk-guard-agent] Tag/Ticket fehlgeschlagen für #${order.order_number}:`, err.message || err);
     }
-
-    zeilen.push(`- #${order.order_number} | ${stufe.toUpperCase()} | ${order.total_price} ${order.currency} | ${begruendung}`);
-
-    await erstelleTicket({
-      title: `[Risk-Guard] Bestellung #${order.order_number} - Risiko ${stufe}`,
-      body: `**Wert:** ${order.total_price} ${order.currency}\n**Kunde:** ${order.email || 'unbekannt'}\n**Risikostufe:** ${stufe}\n**Begründung:** ${begruendung}\n\n**Automatisch erkannte Signale:**\n${kandidaten[i].gruende.map((g) => `- ${g}`).join('\n')}\n\n_Bestellung wurde NICHT storniert oder zurückgehalten - nur mit Tag "${RISIKO_TAG}" markiert. Bitte manuell prüfen._`,
-      labels: ['risk-guard', `risiko-${stufe}`],
-    });
   }
-
-  if (state.geprueft.length > 3000) state.geprueft = state.geprueft.slice(-3000);
-  saveState(STATE_KEY, state);
 
   if (zeilen.length) {
     const text = `🚨 RISK-GUARD-AGENT - ${config.SHOP_NAME}${NL}--------------------${NL}${zeilen.join(NL)}${NL}${NL}Bestellungen wurden markiert (Tag "${RISIKO_TAG}"), NICHT storniert. Bitte manuell prüfen.`;
