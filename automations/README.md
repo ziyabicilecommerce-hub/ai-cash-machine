@@ -241,6 +241,20 @@ Live-Rollenspiel-Verkaufstraining ohne festen Input (anders als Oracles
 Finanzzahlen oder Brand Assassins Nische) - ein automatisch generiertes
 Übungsgespräch hätte keinen sinnvollen Nutzen zum passiven Empfangen.
 
+**👔 Chef-Agent** (fasst Finanzen/Fulfillment/Kundenstamm zu EINER
+Tagesansage zusammen, statt einzelner Nachrichten aus jeder Automation):
+keine neuen Secrets, nutzt `SHOP`/`SHOPIFY_TOKEN` + die üblichen
+`ANTHROPIC_API_KEY`/`WHATSAPP_*` sowie bereits vorhandene Schwellwerte
+(`FULFILLMENT_VERZUG_STUNDEN`, `VIP_UMSATZ_SCHWELLE`, `CRM_AT_RISK_TAGE`).
+Berechnet die 3 wichtigsten Signale FRISCH aus Shopify + dem stabilen
+`finance-cockpit/data.json`-Format (bewusst NICHT an interne State-Dateien
+anderer Automationen gekoppelt, um nicht bei jeder dortigen Änderung zu
+brechen). Trifft eine echte Priorisierungs-Entscheidung ("worauf es heute
+ankommt"), nicht nur eine Zahlen-Liste. Fällt ein Bereich aus (z.B.
+Shopify-API-Fehler), wird das als "keine Daten" markiert statt die ganze
+Automation abstürzen zu lassen - die anderen Bereiche laufen normal weiter.
+Läuft abends (20:00 UTC), nach den meisten anderen Automationen.
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -324,7 +338,7 @@ Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
 Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 ändern bzw. Ads zu pausieren.
 
-## Die 58 Automationen (46 aus n8n + 12 neue)
+## Die 59 Automationen (46 aus n8n + 13 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -386,6 +400,7 @@ Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
 | 57 | ❤️ CRM & Retention Engine | dienstags 09:00 | segmentiert den Kundenstamm (VIP/At-Risk/treu/neu/ruhend), personalisierte Angebote für die wertvollsten inaktiven Kunden + optional SMS |
 | 58 | 🎯 Brand Assassin Auto-Scan | donnerstags 08:00 | lässt den Markt-Scan aus der Brand-Assassin-App automatisch für SHOP_NISCHE laufen, gleicher Prompt/Score wie in der App |
 | 59 | 🔮 Oracle Auto-Briefing | täglich 08:30 | lässt das tägliche KI-Briefing aus der Oracle-App automatisch laufen und per WhatsApp verschicken, gleicher Prompt wie in der App |
+| 60 | 👔 Chef-Agent | täglich 20:00 | fasst Finanzen/Fulfillment/Kundenstamm zu EINER priorisierten Tagesansage zusammen statt einzelner Automations-Nachrichten |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
