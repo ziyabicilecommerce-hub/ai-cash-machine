@@ -410,7 +410,75 @@ Einmal-Ereignis wie #10 VIP-Radar), Punktestand lebt im eigenen State
 Schalter nötig - die Rabattcodes sind einmalig, prozentual und kosten den
 Shop nichts, bis ein Kunde sie tatsächlich einlöst.
 
-## Die 65 Automationen (46 aus n8n + 19 neue)
+## 10 weitere Automationen (#67-76)
+
+**🎟️ Gift-Card-Kompensations-Agent** (#67, täglich 11:00): erkennt echte
+Service-Fehler (sehr lange unbearbeitete Bestellung ab
+`GIFTCARD_VERZUG_STUNDEN`, Default 96h - deutlich strenger als Fulfillment
+Hubs 48h, oder eine laut Shopify gescheiterte Zustellung) und erstellt
+proaktiv einen echten Shopify-Gutschein (`GIFTCARD_KOMPENSATION_WERT`) als
+Wiedergutmachung, bevor der Kunde sich überhaupt beschweren muss. Gate:
+`AUTO_GUTSCHEIN_SENDEN` (Default `nein`).
+
+**📝 Sonderwunsch-Flagger** (#68, alle 2 Stunden): liest echte
+Bestellnotizen (Geschenkverpackung, Express-Wunsch, Kärtchen-Text) und
+meldet sie gebündelt, damit beim Verpacken nichts übersehen wird. Rein
+meldend.
+
+**⚖️ DSGVO-Anfragen-Wächter** (#69, alle 2 Stunden): liest dasselbe
+Postfach wie #02 KI-Kundenservice (eigener, unabhängiger Zustand), erkennt
+aber NUR fristkritische Datenschutz-Anfragen (Auskunft/Löschung/
+Widerspruch) und eskaliert sofort mit Frist-Hinweis (`DSGVO_FRIST_TAGE`,
+Default 30 Tage) - beantwortet oder löscht selbst nichts, das bleibt
+bewusst Menschenwerk.
+
+**🚀 Produkt-Launch-Hype-Agent** (#70, alle 3 Stunden): merkt automatisch,
+wenn ein Produkt neu auf "aktiv" gesetzt wird (egal ob manuell oder über
+#53 Store Builder), und verschickt eine echte Launch-Ankündigung an die
+Newsletter-Liste (`LAUNCH_HYPE_MAX_EMPFAENGER`). Erstlauf liest nur den
+Bestand ein, kein rückwirkendes Hype für Altprodukte.
+
+**📉 Margen-Erosions-Wächter** (#71, täglich 06:15): vergleicht den echten
+Shopify-Einkaufspreis jeder Variante mit dem zuletzt bekannten Wert - steigt
+er deutlich (`MARGE_WARNUNG_SCHWELLE_PROZENT`), der Verkaufspreis aber
+nicht mit, warnt der Agent, bevor die Marge unbemerkt wegschmilzt. Rein
+meldend, ändert selbst keine Preise (das bleibt dem Pricing-Agent
+vorbehalten).
+
+**🔗 Broken-Link-Guardian** (#72, täglich 05:00): ruft die echten
+Produktseiten-URLs im eigenen Shop auf (`BROKEN_LINK_MAX_PRODUKTE`) und
+meldet, welche nicht mehr erreichbar sind.
+
+**🪞 Duplikat-Listing-Detektor** (#73, montags 08:15): vergleicht alle
+aktiven Produkttitel per lokal berechneter Textähnlichkeit
+(`DUPLIKAT_AEHNLICHKEIT_SCHWELLE`) - kein Claude-Aufruf nötig, kostet keine
+Tokens - und meldet fast-identische Doppel-Listings.
+
+**💸 Refund-Concierge-Agent** (#74, alle 2 Stunden): übernimmt die
+Mehrschritt-Arbeit einer echten Shopify-Erstattung, aber NUR für
+Bestellungen, die ein Mensch im Shopify-Adminbereich mit dem Tag
+"erstattung-genehmigt" markiert hat UND unter `REFUND_MAX_BETRAG` liegen.
+Bewusst kein vollautomatischer Beschwerde-Agent - der Mensch entscheidet
+WAS erstattet wird, der Agent nur WIE. Gate: `AUTO_ERSTATTUNG_GENEHMIGEN`
+(Default `nein`).
+
+**🌍 Übersetzungs-Entwurf-Agent** (#75, dienstags 09:15): übersetzt
+Produkttexte für neue Zielmärkte (`TRANSLATION_ZIELSPRACHEN`, z.B. "en,fr")
+und schickt den Entwurf per Mail - schreibt bewusst NICHT direkt in
+Shopifys Translate-&-Adapt-API zurück (deren genauer GraphQL-Vertrag wurde
+nicht gegen einen echten Account verifiziert, gleiches Prinzip wie bei
+TikTok Ads in #56).
+
+**🎯 Nie-Gekauft-Konverter** (#76, mittwochs 10:15): findet Newsletter-
+Abonnenten, die seit `NIEGEKAUFT_TAGE_ALS_ABONNENT` Tagen dabei sind, aber
+noch NIE bestellt haben, und schickt einen speziellen Erstkauf-Anreiz -
+schließt die Top-of-Funnel-Lücke, die weder #05 Winback (zielt auf
+Ex-Käufer) noch #13 Willkommens-Booster (zielt auf frische Erstkäufer)
+abdecken.
+
+Alle Standardwerte stehen in `automations/lib/config.mjs`.
+
+## Die 75 Automationen (46 aus n8n + 29 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -479,6 +547,16 @@ Shop nichts, bis ein Kunde sie tatsächlich einlöst.
 | 64 | 📊 Ads-Autopilot-Agent | täglich 09:00 | schichtet Meta-Ad-Budget vom schwächsten zum stärksten aktiven Ad-Set wirklich um (nicht nur Empfehlung) |
 | 65 | 🛡️ Inventory-Guardian-Agent | alle 3 Stunden | stoppt echten Überverkauf bei Bestand 0, gibt automatisch wieder frei sobald Nachschub da ist |
 | 66 | 🎁 Treue-Punkte-Engine | täglich 10:00 | echtes Punkteprogramm - Umsatz sammelt Punkte, bei Schwelle wird ein echter Shopify-Rabattcode erstellt und per Mail verschickt |
+| 67 | 🎟️ Gift-Card-Kompensations-Agent | täglich 11:00 | echte Gutscheine bei echten Service-Fehlern (langer Verzug/gescheiterte Zustellung), bevor sich der Kunde beschwert |
+| 68 | 📝 Sonderwunsch-Flagger | alle 2 Stunden | findet Bestellnotizen (Geschenkverpackung, Express etc.), die beim Verpacken sonst übersehen werden |
+| 69 | ⚖️ DSGVO-Anfragen-Wächter | alle 2 Stunden | erkennt fristkritische Datenschutz-Anfragen in der Support-Inbox, eskaliert sofort mit Frist |
+| 70 | 🚀 Produkt-Launch-Hype-Agent | alle 3 Stunden | erkennt draft→aktiv Produktwechsel, verschickt echte Launch-Ankündigung an die Newsletter-Liste |
+| 71 | 📉 Margen-Erosions-Wächter | täglich 06:15 | warnt, wenn Einkaufspreise steigen, aber der Verkaufspreis nicht mitzieht |
+| 72 | 🔗 Broken-Link-Guardian | täglich 05:00 | ruft echte Produktseiten-URLs auf und meldet, welche nicht mehr erreichbar sind |
+| 73 | 🪞 Duplikat-Listing-Detektor | montags 08:15 | findet fast-identische Produkt-Titel im Katalog per Textähnlichkeit, ohne Claude-Aufruf |
+| 74 | 💸 Refund-Concierge-Agent | alle 2 Stunden | bearbeitet kleine, per Tag freigegebene Erstattungen automatisch, mit Obergrenze |
+| 75 | 🌍 Übersetzungs-Entwurf-Agent | dienstags 09:15 | übersetzt Produkttexte für neue Zielmärkte als Entwurf per Mail |
+| 76 | 🎯 Nie-Gekauft-Konverter | mittwochs 10:15 | Newsletter-Abonnenten, die noch nie bestellt haben, bekommen einen Erstkauf-Anreiz |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht

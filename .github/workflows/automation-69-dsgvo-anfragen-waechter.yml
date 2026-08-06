@@ -1,0 +1,17 @@
+name: "69 · DSGVO-Anfragen-Wächter"
+
+on:
+  schedule:
+    - cron: '45 */2 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/69-dsgvo-anfragen-waechter.mjs
+    secrets: inherit
