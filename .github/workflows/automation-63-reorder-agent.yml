@@ -1,0 +1,16 @@
+name: "63 · Reorder-Agent"
+
+on:
+  schedule:
+    - cron: '45 7 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/63-reorder-agent.mjs
+    secrets: inherit

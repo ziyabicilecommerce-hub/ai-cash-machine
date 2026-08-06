@@ -1,0 +1,16 @@
+name: "64 · Ads-Autopilot-Agent"
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/64-ads-autopilot-agent.mjs
+    secrets: inherit

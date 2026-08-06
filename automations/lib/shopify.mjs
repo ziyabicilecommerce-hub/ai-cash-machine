@@ -104,6 +104,36 @@ export async function createProduct({ title, bodyHtml, productType, tags, seoTit
   return data.product;
 }
 
+// Generische Varianten-Aktualisierung - genutzt für echte Preisänderungen
+// (Pricing-Agent) und Überverkaufs-Schutz (Inventory-Guardian-Agent, setzt
+// inventory_policy auf 'deny').
+export async function updateVariant(variantId, fields) {
+  const data = await shopifyRequest(`/variants/${variantId}.json`, {
+    method: 'PUT',
+    body: { variant: { id: variantId, ...fields } },
+  });
+  return data.variant;
+}
+
+// Einkaufspreis eines Artikels, falls im Shopify-Lagerartikel hinterlegt -
+// für den Pricing-Agent, um eine echte Preisuntergrenze zu berechnen statt
+// nur mit dem geschätzten PRODUKTKOSTEN_PROZENT zu arbeiten.
+export async function getInventoryItem(inventoryItemId) {
+  const data = await shopifyRequest(`/inventory_items/${inventoryItemId}.json`);
+  return data.inventory_item;
+}
+
+// Generische Bestell-Aktualisierung - genutzt vom Risk-Guard-Agent, um
+// verdächtige Bestellungen mit einem echten Shopify-Tag zu markieren
+// (nicht-destruktiv, jederzeit vom Gründer entfernbar).
+export async function updateOrder(orderId, fields) {
+  const data = await shopifyRequest(`/orders/${orderId}.json`, {
+    method: 'PUT',
+    body: { order: { id: orderId, ...fields } },
+  });
+  return data.order;
+}
+
 export async function getShopifyReviews() {
   // Shopify hat keine native Review-API - siehe judgeme.mjs für Judge.me Integration
   return [];
