@@ -398,7 +398,19 @@ automatisch rückgängig (exakt die ursprüngliche Einstellung, gespeichert im
 State). Gate: `AUTO_UEBERVERKAUF_STOPPEN` (Default `ja` - rein schützend und
 reversibel, anders als die geld-bewegenden Agenten oben).
 
-## Die 64 Automationen (46 aus n8n + 18 neue)
+**🎁 Treue-Punkte-Engine** (#66, täglich 10:00): echtes Kundenbindungs-
+Programm - jeder Euro Umsatz zählt als Punkte (`LOYALTY_PUNKTE_PRO_EURO`),
+sobald ein Kunde `LOYALTY_SCHWELLE_PUNKTE` erreicht, erstellt der Agent
+einen ECHTEN, einmalig gültigen Shopify-Rabattcode
+(`LOYALTY_BELOHNUNG_PROZENT`) und schickt ihn per E-Mail zu - die erste
+Automation, die die seit langem im Code liegende `createDiscountCode()`
+tatsächlich nutzt. Läuft kontinuierlich für jeden Kunden mit (kein
+Einmal-Ereignis wie #10 VIP-Radar), Punktestand lebt im eigenen State
+(Shopify hat kein natives Punkte-Feld ohne Zusatz-App). Kein `AUTO_*`-
+Schalter nötig - die Rabattcodes sind einmalig, prozentual und kosten den
+Shop nichts, bis ein Kunde sie tatsächlich einlöst.
+
+## Die 65 Automationen (46 aus n8n + 19 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -466,6 +478,7 @@ reversibel, anders als die geld-bewegenden Agenten oben).
 | 63 | 📦 Reorder-Agent | täglich 07:45 | erkennt drohende Ausverkäufe vor Lieferzeit-Ende, schickt echte Nachbestell-Mail an den Lieferanten |
 | 64 | 📊 Ads-Autopilot-Agent | täglich 09:00 | schichtet Meta-Ad-Budget vom schwächsten zum stärksten aktiven Ad-Set wirklich um (nicht nur Empfehlung) |
 | 65 | 🛡️ Inventory-Guardian-Agent | alle 3 Stunden | stoppt echten Überverkauf bei Bestand 0, gibt automatisch wieder frei sobald Nachschub da ist |
+| 66 | 🎁 Treue-Punkte-Engine | täglich 10:00 | echtes Punkteprogramm - Umsatz sammelt Punkte, bei Schwelle wird ein echter Shopify-Rabattcode erstellt und per Mail verschickt |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht

@@ -1,0 +1,21 @@
+name: "66 · Treue-Punkte-Engine"
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  # issues: write ist nötig, weil der geteilte _automation-runner.yml das auf
+  # Job-Ebene anfordert (für #02/#62) - fehlt es hier, schlägt der GESAMTE
+  # Lauf mit startup_failure fehl, auch wenn dieses Skript selbst nie ein
+  # GitHub-Issue erstellt (siehe Commit "Fix critical regression").
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/66-loyalty-punkte-engine.mjs
+    secrets: inherit

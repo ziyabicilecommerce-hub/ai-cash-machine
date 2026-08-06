@@ -178,6 +178,11 @@ export const config = {
   // Inventory-Guardian-Agent (stoppt Überverkauf bei Bestand 0) - Default AN,
   // da rein schützend/reversibel (im Gegensatz zu Preis-/Budget-Änderungen).
   AUTO_UEBERVERKAUF_STOPPEN: process.env.AUTO_UEBERVERKAUF_STOPPEN || 'ja',
+
+  // Treue-Punkte-Engine (echte Shopify-Rabattcodes als Belohnung)
+  LOYALTY_PUNKTE_PRO_EURO: process.env.LOYALTY_PUNKTE_PRO_EURO || '1',
+  LOYALTY_SCHWELLE_PUNKTE: process.env.LOYALTY_SCHWELLE_PUNKTE || '100',
+  LOYALTY_BELOHNUNG_PROZENT: process.env.LOYALTY_BELOHNUNG_PROZENT || '15',
 };
 
 export function isTestMode() {
