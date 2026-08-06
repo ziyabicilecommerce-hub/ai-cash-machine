@@ -178,6 +178,16 @@ jobs:
           AUTO_UEBERVERKAUF_STOPPEN: ${{ secrets.AUTO_UEBERVERKAUF_STOPPEN }}
 
       - name: State-Änderungen committen
+        # if: always() ist wichtig - läuft ein Skript mitten in einer Kunden-
+        # Batch (E-Mails/Bestellungen/Warenkorb-Reminder) auf einen Fehler
+        # (z.B. transienter Claude-/Resend-Ausfall, oder das geteilte
+        # CLAUDE_MAX_TOKENS_PRO_TAG-Budget wird mitten im Lauf erreicht),
+        # würde dieser Schritt sonst standardmäßig übersprungen (nur bei
+        # success()) - dann geht der bereits lokal auf Platte geschriebene
+        # Fortschritt (bereits kontaktierte Kunden) verloren und der nächste
+        # Lauf kontaktiert dieselben Kunden nochmal, weil der alte State
+        # nie committet wurde.
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
