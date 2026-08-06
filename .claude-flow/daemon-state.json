@@ -9,36 +9,36 @@
       "averageDurationMs": 5.1142857142857165,
       "lastRun": "2026-08-06T17:02:53.509Z",
       "lastStartedAt": "2026-08-06T17:02:53.507Z",
-      "nextRun": "2026-08-06T17:02:53.504Z",
+      "nextRun": "2026-08-06T17:17:53.510Z",
       "isRunning": false
     },
     "audit": {
-      "runCount": 136,
-      "successCount": 136,
+      "runCount": 137,
+      "successCount": 137,
       "failureCount": 0,
-      "averageDurationMs": 5.9338235294117645,
-      "lastRun": "2026-08-05T22:14:51.860Z",
-      "lastStartedAt": "2026-08-05T22:14:51.813Z",
-      "nextRun": "2026-08-06T17:04:53.504Z",
+      "averageDurationMs": 5.905109489051095,
+      "lastRun": "2026-08-06T17:04:53.511Z",
+      "lastStartedAt": "2026-08-06T17:04:53.509Z",
+      "nextRun": "2026-08-06T17:14:53.512Z",
       "isRunning": false
     },
     "optimize": {
-      "runCount": 96,
-      "successCount": 96,
+      "runCount": 97,
+      "successCount": 97,
       "failureCount": 0,
-      "averageDurationMs": 7.874999999999999,
-      "lastRun": "2026-08-05T22:16:51.803Z",
-      "lastStartedAt": "2026-08-05T22:16:51.796Z",
-      "nextRun": "2026-08-06T17:06:53.504Z",
+      "averageDurationMs": 7.938144329896906,
+      "lastRun": "2026-08-06T17:06:53.533Z",
+      "lastStartedAt": "2026-08-06T17:06:53.520Z",
+      "nextRun": "2026-08-06T17:21:53.534Z",
       "isRunning": false
     },
     "consolidate": {
-      "runCount": 57,
-      "successCount": 57,
+      "runCount": 58,
+      "successCount": 58,
       "failureCount": 0,
-      "averageDurationMs": 351.8947368421052,
-      "lastRun": "2026-08-05T22:18:52.612Z",
-      "lastStartedAt": "2026-08-05T22:18:51.792Z",
+      "averageDurationMs": 357.7931034482758,
+      "lastRun": "2026-08-06T17:08:54.204Z",
+      "lastStartedAt": "2026-08-06T17:08:53.510Z",
       "nextRun": "2026-08-06T17:08:53.504Z",
       "isRunning": false
     },
@@ -175,5 +175,5 @@
       }
     ]
   },
-  "savedAt": "2026-08-06T17:02:53.509Z"
+  "savedAt": "2026-08-06T17:08:54.204Z"
 }
