@@ -28,22 +28,30 @@ async function main() {
     const menge = (o.line_items || []).reduce((s, li) => s + (li.quantity || 0), 0);
     const istGross = wert >= schwelleWert || menge >= schwelleMenge;
     if (!istGross) continue;
-    state.gemeldet.push(o.id);
-    gemeldetAnzahl++;
 
-    const name = `${(o.customer && o.customer.first_name) || ''} ${(o.customer && o.customer.last_name) || ''}`.trim();
-    const ordersCount = (o.customer && o.customer.orders_count) || 1;
-    const artikel = (o.line_items || []).map((li) => `${li.quantity}x ${li.title}`).join(', ');
+    try {
+      const name = `${(o.customer && o.customer.first_name) || ''} ${(o.customer && o.customer.last_name) || ''}`.trim();
+      const ordersCount = (o.customer && o.customer.orders_count) || 1;
+      const artikel = (o.line_items || []).map((li) => `${li.quantity}x ${li.title}`).join(', ');
 
-    const text = `GROSSBESTELLUNG! - ${config.SHOP_NAME}${NL}--------------------${NL}Bestellung: ${o.name || `#${o.order_number}`}${NL}Wert: ${wert.toFixed(2)} ${o.currency || ''} | Menge: ${menge} Artikel${NL}Kunde: ${name} (${o.email || 'keine Mail'})${NL}Bestellungen bisher: ${ordersCount}${NL}Artikel: ${artikel}${NL}${NL}TIPP: Persönlich anschreiben, bedanken, nach Großbedarf/Wiederbestellung fragen (B2B/Abo/Rabatt für Menge).`;
+      const text = `GROSSBESTELLUNG! - ${config.SHOP_NAME}${NL}--------------------${NL}Bestellung: ${o.name || `#${o.order_number}`}${NL}Wert: ${wert.toFixed(2)} ${o.currency || ''} | Menge: ${menge} Artikel${NL}Kunde: ${name} (${o.email || 'keine Mail'})${NL}Bestellungen bisher: ${ordersCount}${NL}Artikel: ${artikel}${NL}${NL}TIPP: Persönlich anschreiben, bedanken, nach Großbedarf/Wiederbestellung fragen (B2B/Abo/Rabatt für Menge).`;
 
-    await notifyTelegram(text);
+      await notifyTelegram(text);
+
+      // Erst NACH erfolgreicher Meldung als "gemeldet" markieren und sofort
+      // speichern - schlägt eine spätere Bestellung im selben Lauf fehl, geht
+      // diese Meldung nicht verloren (sonst würde der nächste Lauf dieselbe
+      // Bestellung nochmal melden).
+      state.gemeldet.push(o.id);
+      if (state.gemeldet.length > 8000) state.gemeldet = state.gemeldet.slice(-8000);
+      saveState(STATE_KEY, state);
+      gemeldetAnzahl++;
+    } catch (err) {
+      console.error(`[46-grossbestellung-radar] Bestellung ${o.id} fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
+    }
   }
 
-  if (state.gemeldet.length > 8000) state.gemeldet = state.gemeldet.slice(-8000);
-  saveState(STATE_KEY, state);
-
-  console.log(`[46-grossbestellung-radar] ${gemeldetAnzahl} Großbestellung(en) gemeldet`);
+  console.log(`[46-grossbestellung-radar] ${gemeldetAnzahl}/${orders.length} Großbestellung(en) gemeldet`);
 }
 
 main().catch((err) => {

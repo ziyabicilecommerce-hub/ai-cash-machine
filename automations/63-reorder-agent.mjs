@@ -43,6 +43,20 @@ async function main() {
   state.letzteAnfrage = state.letzteAnfrage || {};
   const jetzt = Date.now();
 
+  // Einträge, die viel länger als jede realistische Lieferzeit zurückliegen,
+  // sperren ohnehin nichts mehr (siehe Dedup-Check unten) - ohne Aufräumen
+  // würde der State für längst restockte/eingestellte Produkte unbegrenzt
+  // weiterwachsen.
+  const AUFRAEUM_SCHWELLE_MS = 180 * 86400000;
+  let aufgeraeumt = false;
+  for (const [variantId, ts] of Object.entries(state.letzteAnfrage)) {
+    if (jetzt - ts > AUFRAEUM_SCHWELLE_MS) {
+      delete state.letzteAnfrage[variantId];
+      aufgeraeumt = true;
+    }
+  }
+  if (aufgeraeumt) saveState(STATE_KEY, state);
+
   const kandidaten = [];
   for (const p of produkte) {
     for (const v of p.variants || []) {

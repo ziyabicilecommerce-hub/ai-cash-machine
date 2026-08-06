@@ -56,10 +56,15 @@ async function main() {
   await notifyTelegram(text);
 
   if (autoAn) {
+    // Nach JEDER einzelnen Änderung sofort speichern (nicht erst nach beiden
+    // Schleifen) - falls ein späterer Artikel einen unerwarteten Fehler wirft,
+    // gehen die bereits erfolgreich umgesetzten Änderungen dieses Laufs nicht
+    // verloren.
     for (const k of neuGestoppt) {
       try {
         await updateVariant(k.variantId, { inventory_policy: 'deny' });
         state.gestoppt[k.variantId] = k.ursprung;
+        saveState(STATE_KEY, state);
       } catch (err) {
         console.error(`[65-inventory-guardian-agent] Konnte "${k.name}" nicht stoppen:`, err.message);
       }
@@ -68,11 +73,11 @@ async function main() {
       try {
         await updateVariant(k.variantId, { inventory_policy: k.ursprung });
         delete state.gestoppt[k.variantId];
+        saveState(STATE_KEY, state);
       } catch (err) {
         console.error(`[65-inventory-guardian-agent] Konnte "${k.name}" nicht freigeben:`, err.message);
       }
     }
-    saveState(STATE_KEY, state);
   }
 
   console.log(`[65-inventory-guardian-agent] ${neuGestoppt.length} gestoppt, ${wiederFreigegeben.length} freigegeben, autoAn=${autoAn}.`);

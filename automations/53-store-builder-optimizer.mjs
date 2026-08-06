@@ -91,43 +91,56 @@ async function main() {
   const neueProdukte = produkte.filter((p) => !bereitsGebaut.has(p)).slice(0, anzahl);
 
   const nachrichten = [];
+  let verarbeitet = 0;
 
   for (const produkt of neueProdukte) {
-    const seite = await baueProduktseite(produkt);
-    if (!seite || !seite.title) {
-      nachrichten.push(`⚠️ Store Builder: Konnte keine Produktseite für "${produkt}" erzeugen (ungültige Claude-Antwort).`);
-      continue;
-    }
-
-    let angelegtHinweis;
     try {
-      const shopifyProdukt = await createProduct({
-        title: seite.title,
-        bodyHtml: seite.body_html,
-        productType: config.SHOP_NISCHE,
-        tags: seite.tags,
-        seoTitle: seite.seo_title,
-        seoDescription: seite.seo_description,
-        price: seite.vorgeschlagener_preis,
-      });
-      const adminUrl = config.SHOP ? `https://${config.SHOP}.myshopify.com/admin/products/${shopifyProdukt.id}` : '(SHOP nicht konfiguriert)';
-      angelegtHinweis = `✅ Als ENTWURF in Shopify angelegt: ${adminUrl}\nBitte prüfen und bewusst veröffentlichen - geht nie automatisch live.`;
+      const seite = await baueProduktseite(produkt);
+      if (!seite || !seite.title) {
+        nachrichten.push(`⚠️ Store Builder: Konnte keine Produktseite für "${produkt}" erzeugen (ungültige Claude-Antwort).`);
+        // Bewusst NICHT als "gebaut" markieren - eine ungültige Antwort ist
+        // kein Erfolg, der nächste Lauf soll es erneut versuchen.
+        continue;
+      }
+
+      let angelegtHinweis;
+      try {
+        const shopifyProdukt = await createProduct({
+          title: seite.title,
+          bodyHtml: seite.body_html,
+          productType: config.SHOP_NISCHE,
+          tags: seite.tags,
+          seoTitle: seite.seo_title,
+          seoDescription: seite.seo_description,
+          price: seite.vorgeschlagener_preis,
+        });
+        const adminUrl = config.SHOP ? `https://${config.SHOP}.myshopify.com/admin/products/${shopifyProdukt.id}` : '(SHOP nicht konfiguriert)';
+        angelegtHinweis = `✅ Als ENTWURF in Shopify angelegt: ${adminUrl}\nBitte prüfen und bewusst veröffentlichen - geht nie automatisch live.`;
+      } catch (err) {
+        angelegtHinweis = `⚠️ Konnte nicht in Shopify angelegt werden (${err.message}). Text unten manuell nutzbar.`;
+      }
+
+      nachrichten.push(
+        [
+          `🛒 *Store Builder: ${seite.title}*`,
+          `Vorschlag-Preis: ${seite.vorgeschlagener_preis} EUR · Tags: ${seite.tags}`,
+          `SEO: ${seite.seo_title} — ${seite.seo_description}`,
+          angelegtHinweis,
+        ].join('\n'),
+      );
+
+      // Erst NACH erfolgreicher Verarbeitung als "gebaut" markieren und sofort
+      // speichern - schlägt ein späteres Produkt im selben Lauf fehl, geht
+      // dieser Erfolg nicht verloren (sonst würde nächste Woche ein ZWEITER
+      // Shopify-Entwurf für dasselbe Produkt angelegt).
+      bereitsGebaut.add(produkt);
+      const historie = [...bereitsGebaut].slice(-MAX_HISTORIE);
+      saveState(STATE_NAME, { gebaut: historie });
+      verarbeitet++;
     } catch (err) {
-      angelegtHinweis = `⚠️ Konnte nicht in Shopify angelegt werden (${err.message}). Text unten manuell nutzbar.`;
+      console.error(`[53-store-builder-optimizer] Produkt "${produkt}" fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
     }
-
-    nachrichten.push(
-      [
-        `🛒 *Store Builder: ${seite.title}*`,
-        `Vorschlag-Preis: ${seite.vorgeschlagener_preis} EUR · Tags: ${seite.tags}`,
-        `SEO: ${seite.seo_title} — ${seite.seo_description}`,
-        angelegtHinweis,
-      ].join('\n'),
-    );
   }
-
-  const historie = [...bereitsGebaut, ...neueProdukte].slice(-MAX_HISTORIE);
-  saveState(STATE_NAME, { gebaut: historie });
 
   const storefrontBericht = await pruefeStorefront();
   if (storefrontBericht) {
@@ -158,7 +171,7 @@ async function main() {
     await notifyWhatsapp(chunk.join('\n\n'));
   }
 
-  console.log(`[53-store-builder-optimizer] ${neueProdukte.length} Produktseite(n) gebaut, Storefront-Check ${storefrontBericht ? 'durchgeführt' : 'übersprungen'}.`);
+  console.log(`[53-store-builder-optimizer] ${verarbeitet}/${neueProdukte.length} Produktseite(n) gebaut, Storefront-Check ${storefrontBericht ? 'durchgeführt' : 'übersprungen'}.`);
 }
 
 main().catch((err) => {

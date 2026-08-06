@@ -32,25 +32,33 @@ async function main() {
   for (const o of orders) {
     const kid = (o.customer && o.customer.id) || o.email;
     if (state.befragt.includes(kid)) continue;
-    state.befragt.push(kid);
-    verarbeitet++;
 
-    const vorname = (o.customer && o.customer.first_name) || '';
-    const artikel = (o.line_items || []).map((li) => li.title).slice(0, 2).join(', ');
+    try {
+      const vorname = (o.customer && o.customer.first_name) || '';
+      const artikel = (o.line_items || []).map((li) => li.title).slice(0, 2).join(', ');
 
-    const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde hat vor ${tage} Tagen gekauft (${artikel || 'diverses'}) und das Produkt inzwischen genutzt.${NL}${NL}Schreibe eine kurze, ehrliche Feedback-Mail auf Deutsch (Du-Form), max 100 Wörter:${NL}- Vorname: ${vorname || 'unbekannt (neutral anreden)'}${NL}- Klingt wie eine echte persönliche Frage vom Gründer, NICHT wie eine Umfrage-Maschine${NL}- Frage GENAU 2 Dinge: (1) Wie zufrieden warst du? (2) Was sollen wir als nächstes ins Sortiment nehmen / was fehlt dir noch?${NL}- Bitte einfach auf diese Mail zu antworten${NL}- Als Dankeschön fürs Antworten: ${config.FEEDBACK_ANREIZ}${NL}- Ganz schlichtes, persönliches HTML (fast wie eine normale Mail)${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
+      const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde hat vor ${tage} Tagen gekauft (${artikel || 'diverses'}) und das Produkt inzwischen genutzt.${NL}${NL}Schreibe eine kurze, ehrliche Feedback-Mail auf Deutsch (Du-Form), max 100 Wörter:${NL}- Vorname: ${vorname || 'unbekannt (neutral anreden)'}${NL}- Klingt wie eine echte persönliche Frage vom Gründer, NICHT wie eine Umfrage-Maschine${NL}- Frage GENAU 2 Dinge: (1) Wie zufrieden warst du? (2) Was sollen wir als nächstes ins Sortiment nehmen / was fehlt dir noch?${NL}- Bitte einfach auf diese Mail zu antworten${NL}- Als Dankeschön fürs Antworten: ${config.FEEDBACK_ANREIZ}${NL}- Ganz schlichtes, persönliches HTML (fast wie eine normale Mail)${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-    const antwort = await askClaude(prompt, { maxTokens: 1000 });
-    const daten = parseJsonFromText(antwort, { betreff: 'Kurze Frage an dich', html: antwort });
+      const antwort = await askClaude(prompt, { maxTokens: 1000 });
+      const daten = parseJsonFromText(antwort, { betreff: 'Kurze Frage an dich', html: antwort });
 
-    const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;
-    await sendEmail({ to: empfaenger, subject: daten.betreff, html: daten.html });
+      const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;
+      await sendEmail({ to: empfaenger, subject: daten.betreff, html: daten.html });
+
+      // Erst NACH erfolgreichem Versand als "befragt" markieren und sofort
+      // speichern - schlägt eine spätere Bestellung im selben Lauf fehl, geht
+      // dieser Erfolg nicht verloren (sonst würde der nächste Lauf denselben
+      // Kunden nochmal anschreiben).
+      state.befragt.push(kid);
+      if (state.befragt.length > 8000) state.befragt = state.befragt.slice(-8000);
+      saveState(STATE_KEY, state);
+      verarbeitet++;
+    } catch (err) {
+      console.error(`[40-kunden-feedback-sammler] Kunde ${kid} fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
+    }
   }
 
-  if (state.befragt.length > 8000) state.befragt = state.befragt.slice(-8000);
-  saveState(STATE_KEY, state);
-
-  console.log(`[40-kunden-feedback-sammler] ${verarbeitet} Feedback-Mail(s) versendet`);
+  console.log(`[40-kunden-feedback-sammler] ${verarbeitet}/${orders.length} Feedback-Mail(s) versendet`);
 }
 
 main().catch((err) => {

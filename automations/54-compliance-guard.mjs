@@ -35,8 +35,6 @@ async function main() {
   const maxProLauf = parseInt(config.COMPLIANCE_GUARD_MAX_PRO_LAUF, 10) || 20;
 
   const neueProdukte = alleProdukte.filter((p) => !bereitsGeprueft.has(p.id)).slice(0, maxProLauf);
-  for (const p of alleProdukte) bereitsGeprueft.add(p.id);
-  saveState(STATE_NAME, { geprueft: [...bereitsGeprueft].slice(-MAX_HISTORIE) });
 
   if (!neueProdukte.length) {
     console.log('[54-compliance-guard] Keine neuen/ungeprüften Produkte.');
@@ -68,6 +66,12 @@ Antworte NUR mit validem JSON, ohne Markdown:
   const antwort = await askClaude(prompt, { maxTokens: 3000 });
   const daten = parseJsonFromText(antwort, { hinweise: [] });
   const hinweise = Array.isArray(daten.hinweise) ? daten.hinweise : [];
+
+  // Erst NACH der erfolgreichen Claude-Prüfung als "geprüft" markieren - vorher
+  // wären Produkte bei einem Claude-Fehler fälschlich als geprüft abgehakt,
+  // ohne dass je ein echtes Ergebnis für sie existiert (nie wieder geprüft).
+  for (const p of neueProdukte) bereitsGeprueft.add(p.id);
+  saveState(STATE_NAME, { geprueft: [...bereitsGeprueft].slice(-MAX_HISTORIE) });
 
   if (!hinweise.length) {
     await notifyWhatsapp(`🛡️ *Compliance Guard*: ${neueProdukte.length} Produkt(e) geprüft, keine auffälligen Themen gefunden.\n\n${DISCLAIMER}`);
