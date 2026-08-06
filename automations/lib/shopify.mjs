@@ -134,6 +134,49 @@ export async function updateOrder(orderId, fields) {
   return data.order;
 }
 
+// Echter Shopify-Gutschein (anderes Instrument als ein Rabattcode - direkt
+// als Guthaben einlösbar, nicht an einen Bestellwert-Prozentsatz gekoppelt).
+// Für den Gift-Card-Kompensations-Agent.
+export async function createGiftCard({ initialValue, note, recipientEmail }) {
+  const data = await shopifyRequest('/gift_cards.json', {
+    method: 'POST',
+    body: {
+      gift_card: {
+        initial_value: String(initialValue),
+        note: note || undefined,
+        recipient_attributes: recipientEmail ? { email: recipientEmail } : undefined,
+      },
+    },
+  });
+  return data.gift_card;
+}
+
+// Zweistufige Shopify-Erstattung: erst /calculate (liefert die exakten
+// Transaktions-Beträge, die Shopify selbst berechnet - NIE selbst
+// nachrechnen), dann die echte Erstattungs-Buchung. Für den
+// Refund-Concierge-Agent.
+export async function berechneErstattung(orderId, refundLineItems) {
+  const data = await shopifyRequest(`/orders/${orderId}/refunds/calculate.json`, {
+    method: 'POST',
+    body: { refund: { refund_line_items: refundLineItems, shipping: { full_refund: true } } },
+  });
+  return data.refund;
+}
+
+export async function buucheErstattung(orderId, berechneteErstattung, note) {
+  const data = await shopifyRequest(`/orders/${orderId}/refunds.json`, {
+    method: 'POST',
+    body: {
+      refund: {
+        ...berechneteErstattung,
+        note: note || berechneteErstattung.note,
+        notify: true,
+      },
+    },
+  });
+  return data.refund;
+}
+
 export async function getShopifyReviews() {
   // Shopify hat keine native Review-API - siehe judgeme.mjs für Judge.me Integration
   return [];

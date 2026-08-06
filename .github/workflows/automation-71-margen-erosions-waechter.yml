@@ -1,0 +1,17 @@
+name: "71 · Margen-Erosions-Wächter"
+
+on:
+  schedule:
+    - cron: '15 6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/71-margen-erosions-waechter.mjs
+    secrets: inherit

@@ -1,0 +1,17 @@
+name: "68 · Sonderwunsch-Flagger"
+
+on:
+  schedule:
+    - cron: '15 */2 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/68-sonderwunsch-flagger.mjs
+    secrets: inherit

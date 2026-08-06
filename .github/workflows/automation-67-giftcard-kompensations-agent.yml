@@ -1,0 +1,20 @@
+name: "67 · Gift-Card-Kompensations-Agent"
+
+on:
+  schedule:
+    - cron: '0 11 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  # issues: write ist nötig, weil der geteilte _automation-runner.yml das auf
+  # Job-Ebene anfordert - fehlt es hier, schlägt der GESAMTE Lauf mit
+  # startup_failure fehl, auch wenn dieses Skript kein GitHub-Issue erstellt.
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/67-giftcard-kompensations-agent.mjs
+    secrets: inherit

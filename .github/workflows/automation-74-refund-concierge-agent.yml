@@ -1,0 +1,17 @@
+name: "74 · Refund-Concierge-Agent"
+
+on:
+  schedule:
+    - cron: '10 */2 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/74-refund-concierge-agent.mjs
+    secrets: inherit

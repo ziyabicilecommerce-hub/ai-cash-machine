@@ -183,6 +183,39 @@ export const config = {
   LOYALTY_PUNKTE_PRO_EURO: process.env.LOYALTY_PUNKTE_PRO_EURO || '1',
   LOYALTY_SCHWELLE_PUNKTE: process.env.LOYALTY_SCHWELLE_PUNKTE || '100',
   LOYALTY_BELOHNUNG_PROZENT: process.env.LOYALTY_BELOHNUNG_PROZENT || '15',
+
+  // Gift-Card-Kompensations-Agent (echte Gutscheine bei echten Service-Fehlern)
+  AUTO_GUTSCHEIN_SENDEN: process.env.AUTO_GUTSCHEIN_SENDEN || 'nein',
+  GIFTCARD_KOMPENSATION_WERT: process.env.GIFTCARD_KOMPENSATION_WERT || '10',
+  GIFTCARD_VERZUG_STUNDEN: process.env.GIFTCARD_VERZUG_STUNDEN || '96',
+
+  // DSGVO-Anfragen-Wächter
+  DSGVO_FRIST_TAGE: process.env.DSGVO_FRIST_TAGE || '30',
+
+  // Produkt-Launch-Hype-Agent
+  LAUNCH_HYPE_MAX_EMPFAENGER: process.env.LAUNCH_HYPE_MAX_EMPFAENGER || '200',
+
+  // Margen-Erosions-Wächter
+  MARGE_WARNUNG_SCHWELLE_PROZENT: process.env.MARGE_WARNUNG_SCHWELLE_PROZENT || '10',
+
+  // Broken-Link-Guardian
+  BROKEN_LINK_MAX_PRODUKTE: process.env.BROKEN_LINK_MAX_PRODUKTE || '30',
+
+  // Duplikat-Listing-Detektor
+  DUPLIKAT_AEHNLICHKEIT_SCHWELLE: process.env.DUPLIKAT_AEHNLICHKEIT_SCHWELLE || '0.85',
+
+  // Refund-Concierge-Agent (echte, kleine Erstattungen - Default AUS)
+  AUTO_ERSTATTUNG_GENEHMIGEN: process.env.AUTO_ERSTATTUNG_GENEHMIGEN || 'nein',
+  REFUND_MAX_BETRAG: process.env.REFUND_MAX_BETRAG || '30',
+
+  // Übersetzungs-Entwurf-Agent
+  TRANSLATION_ZIELSPRACHEN: process.env.TRANSLATION_ZIELSPRACHEN || '',
+  TRANSLATION_MAX_PRODUKTE: process.env.TRANSLATION_MAX_PRODUKTE || '5',
+
+  // Nie-Gekauft-Konverter
+  NIEGEKAUFT_TAGE_ALS_ABONNENT: process.env.NIEGEKAUFT_TAGE_ALS_ABONNENT || '14',
+  NIEGEKAUFT_RABATT_CODE: process.env.NIEGEKAUFT_RABATT_CODE || 'WILLKOMMEN15',
+  NIEGEKAUFT_MAX_PRO_LAUF: process.env.NIEGEKAUFT_MAX_PRO_LAUF || '50',
 };
 
 export function isTestMode() {

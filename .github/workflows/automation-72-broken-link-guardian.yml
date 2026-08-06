@@ -1,0 +1,17 @@
+name: "72 · Broken-Link-Guardian"
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/72-broken-link-guardian.mjs
+    secrets: inherit

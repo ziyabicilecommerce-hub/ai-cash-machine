@@ -1,0 +1,17 @@
+name: "73 · Duplikat-Listing-Detektor"
+
+on:
+  schedule:
+    - cron: '15 8 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/73-duplikat-listing-detektor.mjs
+    secrets: inherit
