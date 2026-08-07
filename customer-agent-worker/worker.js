@@ -22,6 +22,8 @@ const MODEL = 'claude-sonnet-5';
 const MAX_ANTWORT_TOKENS = 500;
 const MAX_NACHRICHTEN_HISTORIE = 12; // letzte N Nachrichten (User+Assistant zusammen)
 const MAX_NACHRICHT_ZEICHEN = 1500;
+const STOREFRONT_API_VERSION = '2025-01';
+const KATALOG_CACHE_KEY = 'katalog:cache';
 
 function heute() {
   return new Date().toISOString().slice(0, 10);
@@ -69,19 +71,87 @@ async function aktualisiereTagesBudget(env, tokens) {
   await env.CHAT_STATE.put(key, String(bisher + tokens), { expirationTtl: 172800 });
 }
 
-function buildSystemPrompt(env) {
+// Holt den aktuellen Produktkatalog über die öffentliche Shopify Storefront
+// API (KEIN Admin-API-Key nötig - der Storefront-Token ist von Shopify
+// bewusst für die client-seitige Nutzung freigegeben, hier läuft er trotzdem
+// serverseitig mit, damit der Worker den Aufruf selbst cachen kann). Ergebnis
+// wird in KV zwischengespeichert, damit nicht jede Chat-Nachricht einen
+// eigenen Storefront-Aufruf auslöst. Scheitert der Aufruf, gibt die Funktion
+// null zurück - der Chat läuft dann einfach ohne Katalog-Kontext weiter,
+// bricht aber nie deswegen ab.
+async function holeKatalog(env) {
+  if (!env.SHOPIFY_STORE_DOMAIN || !env.SHOPIFY_STOREFRONT_TOKEN) return null;
+
+  try {
+    const cached = await env.CHAT_STATE.get(KATALOG_CACHE_KEY, 'json');
+    if (cached) return cached;
+
+    const maxProdukte = parseInt(env.KATALOG_MAX_PRODUKTE || '25', 10);
+    const query = `query Katalog($erste: Int!) {
+      products(first: $erste, sortKey: BEST_SELLING) {
+        edges { node { title handle description priceRange { minVariantPrice { amount currencyCode } } } }
+      }
+    }`;
+
+    const res = await fetch(`https://${env.SHOPIFY_STORE_DOMAIN}/api/${STOREFRONT_API_VERSION}/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': env.SHOPIFY_STOREFRONT_TOKEN,
+      },
+      body: JSON.stringify({ query, variables: { erste: maxProdukte } }),
+    });
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const basisUrl = (env.SHOP_PUBLIC_URL || `https://${env.SHOPIFY_STORE_DOMAIN}`).replace(/\/$/, '');
+    const produkte = (data?.data?.products?.edges || [])
+      .map(({ node }) => ({
+        titel: node.title,
+        url: `${basisUrl}/products/${node.handle}`,
+        preis: node.priceRange?.minVariantPrice
+          ? `${node.priceRange.minVariantPrice.amount} ${node.priceRange.minVariantPrice.currencyCode}`
+          : null,
+        beschreibung: (node.description || '').slice(0, 140),
+      }))
+      .filter((p) => p.titel);
+
+    const ttl = parseInt(env.KATALOG_CACHE_TTL_SEKUNDEN || '1800', 10);
+    await env.CHAT_STATE.put(KATALOG_CACHE_KEY, JSON.stringify(produkte), { expirationTtl: ttl });
+    return produkte;
+  } catch (err) {
+    console.error('[customer-agent] Katalog-Fetch-Fehler:', err);
+    return null;
+  }
+}
+
+function buildSystemPrompt(env, katalog) {
   const shopName = env.SHOP_NAME || 'diesem Shop';
   const nische = env.SHOP_NISCHE ? ` (${env.SHOP_NISCHE})` : '';
   const versand = env.VERSANDZEIT || 'in der Regel wenige Werktage';
   const retoure = env.RETOURE_TAGE || '14';
   const supportEmail = env.SUPPORT_EMAIL || null;
 
-  return [
+  const teile = [
     `Du bist der Kunden-Chat-Assistent von "${shopName}"${nische} auf dessen Website. Du bist freundlich, kurz und hilfsbereit, auf Deutsch, Du-Form.`,
     `Allgemeine Shop-Infos, die du nennen darfst: Versandzeit ${versand}. Rückgaberecht ${retoure} Tage.`,
-    `Sehr wichtig: Du hast KEINEN Zugriff auf echte Bestelldaten, Kontodaten oder Lagerbestände dieses Gesprächs. Erfinde NIEMALS eine Bestellnummer, einen Lieferstatus, eine Tracking-Nummer oder einen konkreten Preis, den du nicht sicher weißt. Bei allem, was eine echte Bestellung, ein Konto oder eine Reklamation betrifft, sagst du das ehrlich und verweist an den menschlichen Support${supportEmail ? ` (${supportEmail})` : ''}.`,
-    `Bei allgemeinen Fragen zu Produkten, Versand, Rückgabe oder dem Shop allgemein hilfst du direkt und normal weiter. Halte Antworten kurz (max. 3-4 Sätze), außer der Kunde bittet explizit um mehr Details.`,
-  ].join('\n\n');
+    `Sehr wichtig: Du hast KEINEN Zugriff auf echte Bestelldaten, Kontodaten oder Lagerbestände dieses Gesprächs. Erfinde NIEMALS eine Bestellnummer, einen Lieferstatus, eine Tracking-Nummer. Bei allem, was eine echte Bestellung, ein Konto oder eine Reklamation betrifft, sagst du das ehrlich und verweist an den menschlichen Support${supportEmail ? ` (${supportEmail})` : ''}.`,
+    `Halte Antworten kurz (max. 3-4 Sätze), außer der Kunde bittet explizit um mehr Details.`,
+  ];
+
+  if (katalog && katalog.length) {
+    const zeilen = katalog
+      .map((p) => `- ${p.titel}${p.preis ? ` (${p.preis})` : ''}: ${p.url}${p.beschreibung ? ` — ${p.beschreibung}` : ''}`)
+      .join('\n');
+    teile.push(
+      `Aktueller Produktkatalog (echte Preise/Links - empfiehl AUSSCHLIESSLICH Produkte aus dieser Liste, erfinde niemals andere):\n${zeilen}`,
+      `Wenn ein Besucher unsicher wirkt, nach einer Empfehlung fragt oder Interesse an einer Kategorie zeigt, schlage aktiv 1-2 passende Produkte aus der Liste oben vor (mit Preis und Link) statt nur abzuwarten. Geh auf typische Kaufeinwände (Preis, Lieferzeit, Vertrauen) ehrlich mit den echten Angaben oben ein - sei dabei beratend, nie aufdringlich oder reißerisch.`,
+    );
+  } else {
+    teile.push(`Bei allgemeinen Fragen zu Produkten, Versand, Rückgabe oder dem Shop allgemein hilfst du direkt und normal weiter.`);
+  }
+
+  return teile.join('\n\n');
 }
 
 function bereinigeNachrichten(rohNachrichten) {
@@ -132,6 +202,8 @@ async function handleChat(request, env) {
     return new Response(JSON.stringify({ error: 'Chat ist nicht konfiguriert (ANTHROPIC_API_KEY fehlt)' }), { status: 503, headers: { ...cors, 'content-type': 'application/json' } });
   }
 
+  const katalog = await holeKatalog(env);
+
   const anthropicRes = await fetch(ANTHROPIC_URL, {
     method: 'POST',
     headers: {
@@ -142,7 +214,7 @@ async function handleChat(request, env) {
     body: JSON.stringify({
       model: MODEL,
       max_tokens: MAX_ANTWORT_TOKENS,
-      system: buildSystemPrompt(env),
+      system: buildSystemPrompt(env, katalog),
       messages: nachrichten,
     }),
   });

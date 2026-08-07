@@ -194,6 +194,9 @@ jobs:
           NIEGEKAUFT_TAGE_ALS_ABONNENT: ${{ secrets.NIEGEKAUFT_TAGE_ALS_ABONNENT }}
           NIEGEKAUFT_RABATT_CODE: ${{ secrets.NIEGEKAUFT_RABATT_CODE }}
           NIEGEKAUFT_MAX_PRO_LAUF: ${{ secrets.NIEGEKAUFT_MAX_PRO_LAUF }}
+          AGENTIC_READINESS_MIN_BESCHREIBUNG_ZEICHEN: ${{ secrets.AGENTIC_READINESS_MIN_BESCHREIBUNG_ZEICHEN }}
+          AGENTIC_READINESS_SCHWELLE: ${{ secrets.AGENTIC_READINESS_SCHWELLE }}
+          AGENTIC_READINESS_MAX_PRODUKTE_IM_REPORT: ${{ secrets.AGENTIC_READINESS_MAX_PRODUKTE_IM_REPORT }}
 
       - name: State-Änderungen committen
         # if: always() ist wichtig - läuft ein Skript mitten in einer Kunden-
