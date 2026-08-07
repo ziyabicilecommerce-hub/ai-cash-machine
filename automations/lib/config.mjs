@@ -225,6 +225,9 @@ export const config = {
   // PayPal-Beleg-Agent (Zahlungs-/Liefernachweise für PayPal-Kontoprüfungen)
   PAYPAL_BELEG_LOOKBACK_TAGE: process.env.PAYPAL_BELEG_LOOKBACK_TAGE || '14',
   PAYPAL_BELEG_MAX_PRO_LAUF: process.env.PAYPAL_BELEG_MAX_PRO_LAUF || '30',
+
+  // Wrapped-Generator (wöchentlicher Shop-Rückblick im Story-Format)
+  WRAPPED_ZEITRAUM_TAGE: process.env.WRAPPED_ZEITRAUM_TAGE || '7',
 };
 
 export function isTestMode() {

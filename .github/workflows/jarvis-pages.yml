@@ -17,6 +17,7 @@ on:
       - 'forecast/**'
       - 'setup/**'
       - 'paypal-belege/**'
+      - 'wrapped/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
 
@@ -56,6 +57,7 @@ jobs:
           cp -r forecast _site/forecast
           cp -r setup _site/setup
           cp -r paypal-belege _site/paypal-belege
+          cp -r wrapped _site/wrapped
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

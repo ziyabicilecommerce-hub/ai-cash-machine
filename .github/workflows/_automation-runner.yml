@@ -199,6 +199,7 @@ jobs:
           AGENTIC_READINESS_MAX_PRODUKTE_IM_REPORT: ${{ secrets.AGENTIC_READINESS_MAX_PRODUKTE_IM_REPORT }}
           PAYPAL_BELEG_LOOKBACK_TAGE: ${{ secrets.PAYPAL_BELEG_LOOKBACK_TAGE }}
           PAYPAL_BELEG_MAX_PRO_LAUF: ${{ secrets.PAYPAL_BELEG_MAX_PRO_LAUF }}
+          WRAPPED_ZEITRAUM_TAGE: ${{ secrets.WRAPPED_ZEITRAUM_TAGE }}
 
       - name: State-Änderungen committen
         # if: always() ist wichtig - läuft ein Skript mitten in einer Kunden-
@@ -214,7 +215,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add automations/state/ finance-cockpit/data.json lead-previews/ paypal-belege/ 2>/dev/null || true
+          git add automations/state/ finance-cockpit/data.json lead-previews/ paypal-belege/ wrapped/ 2>/dev/null || true
           if ! git diff --cached --quiet; then
             git commit -m "chore: update automation state [skip ci]"
             git push
