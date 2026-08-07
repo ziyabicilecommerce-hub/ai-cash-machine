@@ -1,15 +1,15 @@
 {
-  "running": false,
-  "startedAt": "2026-08-07T15:38:15.721Z",
+  "running": true,
+  "startedAt": "2026-08-07T16:00:15.475Z",
   "workers": {
     "map": {
-      "runCount": 112,
-      "successCount": 112,
+      "runCount": 113,
+      "successCount": 113,
       "failureCount": 0,
-      "averageDurationMs": 5.250000000000002,
-      "lastRun": "2026-08-07T11:20:27.573Z",
-      "lastStartedAt": "2026-08-07T11:20:27.570Z",
-      "nextRun": "2026-08-07T15:53:15.725Z",
+      "averageDurationMs": 5.2212389380531,
+      "lastRun": "2026-08-07T16:00:15.483Z",
+      "lastStartedAt": "2026-08-07T16:00:15.481Z",
+      "nextRun": "2026-08-07T16:00:15.476Z",
       "isRunning": false
     },
     "audit": {
@@ -19,7 +19,7 @@
       "averageDurationMs": 6.376712328767126,
       "lastRun": "2026-08-07T11:22:27.696Z",
       "lastStartedAt": "2026-08-07T11:22:27.674Z",
-      "nextRun": "2026-08-07T15:40:15.722Z",
+      "nextRun": "2026-08-07T16:02:15.476Z",
       "isRunning": false
     },
     "optimize": {
@@ -29,7 +29,7 @@
       "averageDurationMs": 9.134615384615385,
       "lastRun": "2026-08-07T11:28:13.791Z",
       "lastStartedAt": "2026-08-07T11:28:13.785Z",
-      "nextRun": "2026-08-07T15:42:15.722Z",
+      "nextRun": "2026-08-07T16:04:15.476Z",
       "isRunning": false
     },
     "consolidate": {
@@ -39,7 +39,7 @@
       "averageDurationMs": 372.36065573770486,
       "lastRun": "2026-08-07T11:00:14.337Z",
       "lastStartedAt": "2026-08-07T11:00:14.311Z",
-      "nextRun": "2026-08-07T15:44:15.722Z",
+      "nextRun": "2026-08-07T16:06:15.476Z",
       "isRunning": false
     },
     "testgaps": {
@@ -49,7 +49,7 @@
       "averageDurationMs": 6.432835820895522,
       "lastRun": "2026-08-07T11:17:04.538Z",
       "lastStartedAt": "2026-08-07T11:17:04.535Z",
-      "nextRun": "2026-08-07T15:46:15.722Z",
+      "nextRun": "2026-08-07T16:08:15.476Z",
       "isRunning": false
     },
     "backup": {
@@ -175,5 +175,5 @@
       }
     ]
   },
-  "savedAt": "2026-08-07T15:39:15.729Z"
+  "savedAt": "2026-08-07T16:00:15.483Z"
 }
