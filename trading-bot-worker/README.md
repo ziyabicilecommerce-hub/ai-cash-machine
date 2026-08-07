@@ -87,6 +87,28 @@ jeder Order verifiziert der Adapter den tatsächlichen Ausführungsstatus
 fehl, wird laut ein Fehler geworfen statt stillschweigend eine Position zu
 buchen, die es gar nicht gibt.
 
+## Zweite Strategie: Bollinger-Mean-Reversion
+
+Bisher gab es nur eine Strategie (EMA-Crossover — kauft bei Trendwechsel nach
+oben, verkauft bei Trendwechsel nach unten). Jetzt gibt es eine zweite Wahl,
+über `TRADING_STRATEGIE`:
+
+- **`ema-crossover`** (Default, unverändertes Verhalten): folgt Trends,
+  funktioniert am besten in klar trendenden Märkten.
+- **`bollinger-mean-reversion`**: kauft, wenn der Kurs unter das untere
+  Bollinger-Band (`TRADING_BOLLINGER_PERIODE`, Default 20 Kerzen;
+  `TRADING_BOLLINGER_STDDEV`, Default 2 Standardabweichungen) fällt — Wette
+  auf Rückkehr zum Mittelwert statt auf einen Trend. Verkauft, sobald der
+  Kurs den Mittelwert wieder erreicht. Eher geeignet für seitwärts laufende,
+  oszillierende Märkte, in denen EMA-Crossover viele Fehlsignale produziert.
+
+Stop-Loss, Trailing-Stop, Tagesverlust-Sperre und Kill-Switch gelten bei
+beiden Strategien identisch — die Risiko-Grenzen sind strategieunabhängig.
+
+**Welche Strategie passt besser?** Kommt auf das Symbol und die Marktphase
+an — es gibt keine pauschal "beste" Strategie für immer. Deshalb: vor jeder
+Umstellung mit dem Backtest beide direkt vergleichen (siehe unten).
+
 ## Backtesting — Strategie VOR echtem Geld gegen echte Kursdaten testen
 
 `backtest.mjs` lädt echte historische 15-Minuten-Kerzen von Binance und
@@ -98,6 +120,8 @@ kein Risiko, dass Backtest und Live-Bot unterschiedliche Dinge tun.
 node backtest.mjs BTCUSDT 90
 # oder mit eigener Konfiguration, gleiche Variablennamen wie in wrangler.toml:
 TRADING_RSI_UEBERKAUFT=70 TRADING_TRAILING_STOP_AB_PROZENT=2 node backtest.mjs BTCUSDT 180
+# beide Strategien direkt gegeneinander vergleichen:
+node backtest.mjs BTCUSDT 90 --vergleiche
 ```
 
 Ausgabe: Gesamt-Return, Vergleich mit simplem Buy&Hold, maximaler Drawdown,

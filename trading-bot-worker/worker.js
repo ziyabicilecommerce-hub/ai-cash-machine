@@ -412,11 +412,19 @@ function readConfig(env) {
   const gesamtKapital = parseFloat(env.TRADING_KAPITAL_USDT || '100');
   const exchange = (env.TRADING_EXCHANGE || 'binance').trim().toLowerCase();
   if (!EXCHANGES[exchange]) throw new Error(`Unbekannte TRADING_EXCHANGE "${exchange}" - unterstützt: ${Object.keys(EXCHANGES).join(', ')}`);
+  const strategie = (env.TRADING_STRATEGIE || 'ema-crossover').trim();
+  if (strategie !== 'ema-crossover' && strategie !== 'bollinger-mean-reversion') {
+    throw new Error(`Unbekannte TRADING_STRATEGIE "${strategie}" - unterstützt: ema-crossover, bollinger-mean-reversion`);
+  }
   return {
     exchange,
     symbols,
     startKapitalProSymbol: gesamtKapital / symbols.length,
     paperModus: (env.TRADING_PAPER_MODE || 'ja') !== 'nein',
+    // Default 'ema-crossover' = unverändertes Verhalten ggü. vorherigen Versionen.
+    strategie,
+    bollingerPeriode: parseInt(env.TRADING_BOLLINGER_PERIODE || '20', 10),
+    bollingerStdDev: parseFloat(env.TRADING_BOLLINGER_STDDEV || '2'),
     maxPositionProzent: parseFloat(env.TRADING_MAX_POSITION_PROZENT || '25'),
     maxTagesverlustProzent: parseFloat(env.TRADING_MAX_TAGESVERLUST_PROZENT || '5'),
     maxGesamtverlustProzent: parseFloat(env.TRADING_MAX_GESAMTVERLUST_PROZENT || '20'),

@@ -48,8 +48,29 @@ export function atrSeries(highs, lows, closes, period) {
   return atr;
 }
 
+// Gleitender Mittelwert + oberes/unteres Band (Mittelwert ± stdDevMultiplikator
+// Standardabweichungen) über die letzten `period` Kerzen. null, solange nicht
+// genug Kerzen vorliegen.
+export function bollingerSeries(closes, period, stdDevMultiplikator) {
+  const mittel = new Array(closes.length).fill(null);
+  const oberesBand = new Array(closes.length).fill(null);
+  const unteresBand = new Array(closes.length).fill(null);
+  for (let i = period - 1; i < closes.length; i++) {
+    const fenster = closes.slice(i - period + 1, i + 1);
+    const avg = fenster.reduce((a, b) => a + b, 0) / period;
+    const variance = fenster.reduce((a, b) => a + (b - avg) ** 2, 0) / period;
+    const stdDev = Math.sqrt(variance);
+    mittel[i] = avg;
+    oberesBand[i] = avg + stdDevMultiplikator * stdDev;
+    unteresBand[i] = avg - stdDevMultiplikator * stdDev;
+  }
+  return { mittel, oberesBand, unteresBand };
+}
+
 // Berechnet aus einem Fenster von Kerzen (closes/highs/lows, letzter Eintrag
-// = aktuelle Kerze) alle für die Entscheidung nötigen Indikator-Werte.
+// = aktuelle Kerze) alle für die Entscheidung nötigen Indikator-Werte, für
+// beide unterstützten Strategien (cfg.strategie: 'ema-crossover' [Default]
+// oder 'bollinger-mean-reversion').
 export function berechneIndikatoren(closes, highs, lows, cfg) {
   const fastSeries = emaSeries(closes, cfg.emaSchnell);
   const slowSeries = emaSeries(closes, cfg.emaLangsam);
@@ -61,22 +82,46 @@ export function berechneIndikatoren(closes, highs, lows, cfg) {
   const preis = closes[n - 1];
   const rsiJetzt = rsi[n - 1];
   const atrJetzt = atr[n - 1];
-  return {
+
+  const ergebnis = {
     crossUp: diffVorher <= 0 && diffJetzt > 0,
     crossDown: diffVorher >= 0 && diffJetzt < 0,
     preis,
     rsiJetzt,
     atrJetzt,
     volatilitaetProzent: atrJetzt !== null ? (atrJetzt / preis) * 100 : null,
+    bollingerMittel: null,
+    bollingerOben: null,
+    bollingerUnten: null,
   };
+
+  if (cfg.strategie === 'bollinger-mean-reversion') {
+    const { mittel, oberesBand, unteresBand } = bollingerSeries(closes, cfg.bollingerPeriode, cfg.bollingerStdDev);
+    ergebnis.bollingerMittel = mittel[n - 1];
+    ergebnis.bollingerOben = oberesBand[n - 1];
+    ergebnis.bollingerUnten = unteresBand[n - 1];
+  }
+
+  return ergebnis;
 }
 
 // Liefert null (nicht kaufen) oder { investBetrag } (in Quote-Währung, z.B. USDT).
 export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute }) {
-  const { crossUp, rsiJetzt, volatilitaetProzent } = indikatoren;
+  if (handelsSperreHeute || !positionenPlatzFrei) return null;
+
+  const { rsiJetzt, volatilitaetProzent } = indikatoren;
   const rsiOk = cfg.rsiUeberkauft <= 0 || rsiJetzt === null || rsiJetzt < cfg.rsiUeberkauft;
-  const volaOk = cfg.minVolatilitaetProzent <= 0 || volatilitaetProzent === null || volatilitaetProzent >= cfg.minVolatilitaetProzent;
-  if (handelsSperreHeute || !crossUp || !rsiOk || !volaOk || !positionenPlatzFrei) return null;
+  let signalOk;
+
+  if (cfg.strategie === 'bollinger-mean-reversion') {
+    // Einstieg, wenn der Kurs unter das untere Band fällt (überverkauft) -
+    // Wette auf Rückkehr zum Mittelwert, statt auf einen Trend.
+    signalOk = indikatoren.bollingerUnten !== null && indikatoren.preis <= indikatoren.bollingerUnten && rsiOk;
+  } else {
+    const volaOk = cfg.minVolatilitaetProzent <= 0 || volatilitaetProzent === null || volatilitaetProzent >= cfg.minVolatilitaetProzent;
+    signalOk = indikatoren.crossUp && rsiOk && volaOk;
+  }
+  if (!signalOk) return null;
 
   let investBetrag = (kapital * cfg.maxPositionProzent) / 100;
   if (cfg.volaSizing && volatilitaetProzent !== null && volatilitaetProzent > 0) {
@@ -88,8 +133,10 @@ export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei,
 
 // Liefert { verkaufen, grund, hoechsterPreisSeitEinstieg }. hoechsterPreisSeitEinstieg
 // muss auch bei verkaufen=false zurückgeschrieben werden (Trailing-Stop-Basis).
+// Stop-Loss/Trailing-Stop gelten als Risiko-Grenze IMMER, unabhängig von der
+// Strategie - nur das "normale" Ausstiegssignal unterscheidet sich.
 export function entscheideVerkauf({ position, cfg, indikatoren }) {
-  const { crossDown, preis } = indikatoren;
+  const { preis } = indikatoren;
   const hoechsterPreisSeitEinstieg = Math.max(position.hoechsterPreisSeitEinstieg || position.entryPreis, preis);
   const fixedStopLossPreis = position.entryPreis * (1 - cfg.stopLossProzent / 100);
   const gewinnProzentSeitEinstieg = ((hoechsterPreisSeitEinstieg - position.entryPreis) / position.entryPreis) * 100;
@@ -98,7 +145,15 @@ export function entscheideVerkauf({ position, cfg, indikatoren }) {
     ? Math.max(fixedStopLossPreis, hoechsterPreisSeitEinstieg * (1 - cfg.stopLossProzent / 100))
     : fixedStopLossPreis;
 
-  const verkaufen = crossDown || preis <= stopLossPreis;
-  const grund = preis <= stopLossPreis ? (trailingAktiv ? 'Trailing-Stop' : 'Stop-Loss') : 'EMA-Crossover';
-  return { verkaufen, grund, hoechsterPreisSeitEinstieg };
+  if (preis <= stopLossPreis) {
+    return { verkaufen: true, grund: trailingAktiv ? 'Trailing-Stop' : 'Stop-Loss', hoechsterPreisSeitEinstieg };
+  }
+
+  if (cfg.strategie === 'bollinger-mean-reversion') {
+    // Ziel erreicht, sobald der Kurs zurück zum Mittelwert (oder darüber) ist.
+    const zielErreicht = indikatoren.bollingerMittel !== null && preis >= indikatoren.bollingerMittel;
+    return { verkaufen: zielErreicht, grund: 'Mittelband erreicht', hoechsterPreisSeitEinstieg };
+  }
+
+  return { verkaufen: indikatoren.crossDown, grund: 'EMA-Crossover', hoechsterPreisSeitEinstieg };
 }

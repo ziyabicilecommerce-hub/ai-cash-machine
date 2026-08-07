@@ -41,6 +41,16 @@ TRADING_VOLA_SIZING_MIN_FAKTOR = "0.25"
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # TRADING_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 
+# Zweite Strategie zur Wahl (Default "ema-crossover" = unverändertes Verhalten).
+# "bollinger-mean-reversion": kauft, wenn der Kurs unter das untere
+# Bollinger-Band fällt (überverkauft), verkauft beim Rücksprung zum
+# Mittelwert - eher für seitwärts laufende statt trendende Märkte geeignet.
+# VOR dem Umschalten unbedingt beide mit `node backtest.mjs SYMBOL TAGE
+# --vergleiche` gegeneinander testen, siehe README.
+# TRADING_STRATEGIE = "bollinger-mean-reversion"
+# TRADING_BOLLINGER_PERIODE = "20"
+# TRADING_BOLLINGER_STDDEV = "2"
+
 # Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
 #   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)
 #   BINANCE_API_SECRET
