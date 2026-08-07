@@ -43,6 +43,8 @@
 // damit ein bereits laufender Bot durch dieses Update nicht plötzlich anders
 // handelt, ohne dass das bewusst konfiguriert wurde.
 
+import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from './lib/strategie.mjs';
+
 const KLINES_LIMIT = 100;
 
 // ================= KRYPTO / SIGNIERUNG (Web Crypto API) =================
@@ -219,50 +221,6 @@ const krakenAdapter = {
 
 const EXCHANGES = { binance: binanceAdapter, kraken: krakenAdapter };
 
-// ================= INDIKATOREN (reine lokale Berechnung, kein API-Call) =================
-
-function emaSeries(closes, period) {
-  const k = 2 / (period + 1);
-  const out = [closes[0]];
-  for (let i = 1; i < closes.length; i++) out.push(closes[i] * k + out[i - 1] * (1 - k));
-  return out;
-}
-
-function rsiSeries(closes, period) {
-  const rsi = new Array(closes.length).fill(null);
-  if (closes.length <= period) return rsi;
-  let gains = 0, losses = 0;
-  for (let i = 1; i <= period; i++) {
-    const diff = closes[i] - closes[i - 1];
-    if (diff >= 0) gains += diff; else losses -= diff;
-  }
-  let avgGain = gains / period, avgLoss = losses / period;
-  rsi[period] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss);
-  for (let i = period + 1; i < closes.length; i++) {
-    const diff = closes[i] - closes[i - 1];
-    const gain = diff > 0 ? diff : 0;
-    const loss = diff < 0 ? -diff : 0;
-    avgGain = (avgGain * (period - 1) + gain) / period;
-    avgLoss = (avgLoss * (period - 1) + loss) / period;
-    rsi[i] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss);
-  }
-  return rsi;
-}
-
-function atrSeries(highs, lows, closes, period) {
-  const trs = [highs[0] - lows[0]];
-  for (let i = 1; i < closes.length; i++) {
-    trs.push(Math.max(highs[i] - lows[i], Math.abs(highs[i] - closes[i - 1]), Math.abs(lows[i] - closes[i - 1])));
-  }
-  const atr = new Array(trs.length).fill(null);
-  if (trs.length < period) return atr;
-  let sum = 0;
-  for (let i = 0; i < period; i++) sum += trs[i];
-  atr[period - 1] = sum / period;
-  for (let i = period; i < trs.length; i++) atr[i] = (atr[i - 1] * (period - 1) + trs[i]) / period;
-  return atr;
-}
-
 // ================= WHATSAPP =================
 
 async function notifyWhatsapp(env, text) {
@@ -287,6 +245,8 @@ function heute() {
   return new Date().toISOString().slice(0, 10);
 }
 
+const MAX_TRADES_IM_STATE = 50;
+
 function initialerState(startKapital) {
   return {
     position: null,
@@ -296,6 +256,7 @@ function initialerState(startKapital) {
     letzterTag: heute(),
     killSwitchAktiv: false,
     killSwitchBenachrichtigt: false,
+    trades: [],
   };
 }
 
@@ -304,7 +265,9 @@ async function loadState(env, symbol, startKapital) {
   if (!raw) return initialerState(startKapital);
   try {
     const parsed = JSON.parse(raw);
-    return parsed.startKapital ? parsed : initialerState(startKapital);
+    if (!parsed.startKapital) return initialerState(startKapital);
+    if (!Array.isArray(parsed.trades)) parsed.trades = [];
+    return parsed;
   } catch {
     return initialerState(startKapital);
   }
@@ -346,35 +309,16 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
   const { closes, highs, lows } = await exchange.getKlines(symbol);
   if (closes.length < cfg.emaLangsam + 2) return;
 
-  const fastSeries = emaSeries(closes, cfg.emaSchnell);
-  const slowSeries = emaSeries(closes, cfg.emaLangsam);
-  const rsi = rsiSeries(closes, cfg.rsiPeriode);
-  const atr = atrSeries(highs, lows, closes, 14);
-  const n = closes.length;
-  const diffJetzt = fastSeries[n - 1] - slowSeries[n - 1];
-  const diffVorher = fastSeries[n - 2] - slowSeries[n - 2];
-  const crossUp = diffVorher <= 0 && diffJetzt > 0;
-  const crossDown = diffVorher >= 0 && diffJetzt < 0;
-  const preis = closes[n - 1];
-  const rsiJetzt = rsi[n - 1];
-  const atrJetzt = atr[n - 1];
-  const volatilitaetProzent = atrJetzt !== null ? (atrJetzt / preis) * 100 : null;
-
+  const indikatoren = berechneIndikatoren(closes, highs, lows, cfg);
+  const { preis } = indikatoren;
   const handelsSperreHeute = state.heutigerVerlustUsdt <= -(state.kapital * cfg.maxTagesverlustProzent) / 100;
 
   if (!state.position) {
-    const rsiOk = cfg.rsiUeberkauft <= 0 || rsiJetzt === null || rsiJetzt < cfg.rsiUeberkauft;
-    const volaOk = cfg.minVolatilitaetProzent <= 0 || volatilitaetProzent === null || volatilitaetProzent >= cfg.minVolatilitaetProzent;
     const positionenPlatzFrei = offenePositionenVorLauf < cfg.maxGleichzeitigePositionen;
+    const kauf = entscheideKauf({ kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute });
 
-    if (!handelsSperreHeute && crossUp && rsiOk && volaOk && positionenPlatzFrei) {
-      let investBetrag = (state.kapital * cfg.maxPositionProzent) / 100;
-
-      if (cfg.volaSizing && volatilitaetProzent !== null && volatilitaetProzent > 0) {
-        const skalierung = Math.max(cfg.volaSizingMinFaktor, Math.min(1, cfg.volaSizingReferenzProzent / volatilitaetProzent));
-        investBetrag *= skalierung;
-      }
-
+    if (kauf) {
+      const { investBetrag } = kauf;
       const minNotional = await exchange.getMinNotionalUsdt(symbol, preis);
       if (minNotional !== null && investBetrag < minNotional) {
         await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - ${investBetrag.toFixed(2)} USDT liegt unter der Mindest-Ordergröße (${minNotional.toFixed(2)} USDT).`);
@@ -395,15 +339,10 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       await notifyWhatsapp(env, `📈 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Einstieg ${symbol} @ ${tatsaechlicherPreis.toFixed(2)} (${investBetrag.toFixed(2)} USDT eingesetzt${cfg.volaSizing ? `, Vola-Sizing aktiv` : ''}).`);
     }
   } else {
-    state.position.hoechsterPreisSeitEinstieg = Math.max(state.position.hoechsterPreisSeitEinstieg || state.position.entryPreis, preis);
-    const fixedStopLossPreis = state.position.entryPreis * (1 - cfg.stopLossProzent / 100);
-    const gewinnProzentSeitEinstieg = ((state.position.hoechsterPreisSeitEinstieg - state.position.entryPreis) / state.position.entryPreis) * 100;
-    const trailingAktiv = cfg.trailingStopAbProzent > 0 && gewinnProzentSeitEinstieg >= cfg.trailingStopAbProzent;
-    const stopLossPreis = trailingAktiv
-      ? Math.max(fixedStopLossPreis, state.position.hoechsterPreisSeitEinstieg * (1 - cfg.stopLossProzent / 100))
-      : fixedStopLossPreis;
+    const verkauf = entscheideVerkauf({ position: state.position, cfg, indikatoren });
+    state.position.hoechsterPreisSeitEinstieg = verkauf.hoechsterPreisSeitEinstieg;
 
-    if (crossDown || preis <= stopLossPreis) {
+    if (verkauf.verkaufen) {
       let erloes;
       if (cfg.paperModus) {
         erloes = state.position.qty * preis;
@@ -413,11 +352,22 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       }
       const einsatz = state.position.qty * state.position.entryPreis;
       const gewinnVerlust = erloes - einsatz;
+      const gewinnProzent = (gewinnVerlust / einsatz) * 100;
       state.kapital += gewinnVerlust;
       state.heutigerVerlustUsdt += Math.min(0, gewinnVerlust);
 
-      const grund = preis <= stopLossPreis ? (trailingAktiv ? 'Trailing-Stop' : 'Stop-Loss') : 'EMA-Crossover';
-      await notifyWhatsapp(env, `📉 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Ausstieg ${symbol} @ ${preis.toFixed(2)} (${grund}). ${gewinnVerlust >= 0 ? 'Gewinn' : 'Verlust'}: ${gewinnVerlust.toFixed(2)} USDT. Kapital jetzt: ${state.kapital.toFixed(2)} USDT.`);
+      state.trades.push({
+        entryPreis: state.position.entryPreis,
+        exitPreis: preis,
+        gewinnVerlustUsdt: gewinnVerlust,
+        gewinnProzent,
+        grund: verkauf.grund,
+        einstiegAm: state.position.einstiegAm,
+        ausstiegAm: new Date().toISOString(),
+      });
+      if (state.trades.length > MAX_TRADES_IM_STATE) state.trades = state.trades.slice(-MAX_TRADES_IM_STATE);
+
+      await notifyWhatsapp(env, `📉 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Ausstieg ${symbol} @ ${preis.toFixed(2)} (${verkauf.grund}). ${gewinnVerlust >= 0 ? 'Gewinn' : 'Verlust'}: ${gewinnVerlust.toFixed(2)} USDT. Kapital jetzt: ${state.kapital.toFixed(2)} USDT.`);
       state.position = null;
 
       const gesamtVerlustProzent = ((state.kapital - state.startKapital) / state.startKapital) * 100;
@@ -512,6 +462,19 @@ async function runAll(env) {
 
 // ================= READ-ONLY STATUS (fürs Dashboard, kann nie traden) =================
 
+// Reine Kennzahlen aus der Trade-Historie - keine Prognose, nur "was ist
+// bisher passiert" (letzte MAX_TRADES_IM_STATE abgeschlossenen Trades).
+function berechneTradeStats(trades) {
+  if (!trades.length) return { anzahlTrades: 0, winRateProzent: null, avgGewinnProzent: null };
+  const gewinnTrades = trades.filter((t) => t.gewinnVerlustUsdt > 0).length;
+  const avgGewinnProzent = trades.reduce((sum, t) => sum + t.gewinnProzent, 0) / trades.length;
+  return {
+    anzahlTrades: trades.length,
+    winRateProzent: (gewinnTrades / trades.length) * 100,
+    avgGewinnProzent,
+  };
+}
+
 async function buildStatus(env) {
   const cfg = readConfig(env);
   const symbole = [];
@@ -526,6 +489,7 @@ async function buildStatus(env) {
       startKapital: state.startKapital,
       heutigerVerlustUsdt: state.heutigerVerlustUsdt,
       killSwitchAktiv: state.killSwitchAktiv,
+      tradeStats: berechneTradeStats(state.trades || []),
     });
   }
   return { updatedAt: new Date().toISOString(), exchange: cfg.exchange, paperModus: cfg.paperModus, symbole };

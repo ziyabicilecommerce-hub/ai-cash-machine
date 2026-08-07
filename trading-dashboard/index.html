@@ -217,6 +217,9 @@
           <div class="row"><span>Kapital</span><b>${fmtUsdt(s.kapital)}</b></div>
           <div class="row"><span>P&amp;L gesamt</span><b class="${pnlCls}">${pnl >= 0 ? '+' : ''}${fmtUsdt(pnl)} (${pnlProzent >= 0 ? '+' : ''}${pnlProzent.toFixed(1)}%)</b></div>
           <div class="row"><span>Verlust heute</span><b class="${s.heutigerVerlustUsdt < 0 ? 'down' : ''}">${fmtUsdt(s.heutigerVerlustUsdt)}</b></div>
+          ${s.tradeStats && s.tradeStats.anzahlTrades > 0 ? `
+          <div class="row"><span>Win-Rate (letzte ${s.tradeStats.anzahlTrades})</span><b class="${s.tradeStats.winRateProzent >= 50 ? 'up' : 'down'}">${s.tradeStats.winRateProzent.toFixed(0)}%</b></div>
+          <div class="row"><span>Ø Gewinn/Verlust</span><b class="${s.tradeStats.avgGewinnProzent >= 0 ? 'up' : 'down'}">${s.tradeStats.avgGewinnProzent >= 0 ? '+' : ''}${s.tradeStats.avgGewinnProzent.toFixed(2)}%</b></div>` : ''}
           ${s.position
             ? `<div class="pos-tag open">Position offen @ ${Number(s.position.entryPreis).toFixed(2)} · ${Number(s.position.qty).toFixed(6)} Stück</div>`
             : `<div class="pos-tag">Keine offene Position</div>`}

@@ -87,6 +87,38 @@ jeder Order verifiziert der Adapter den tatsächlichen Ausführungsstatus
 fehl, wird laut ein Fehler geworfen statt stillschweigend eine Position zu
 buchen, die es gar nicht gibt.
 
+## Backtesting — Strategie VOR echtem Geld gegen echte Kursdaten testen
+
+`backtest.mjs` lädt echte historische 15-Minuten-Kerzen von Binance und
+simuliert damit die exakt gleiche Strategie-Logik (`lib/strategie.mjs`), die
+auch der Live-Worker verwendet — kein separates Nachbauen der Regeln, also
+kein Risiko, dass Backtest und Live-Bot unterschiedliche Dinge tun.
+
+```bash
+node backtest.mjs BTCUSDT 90
+# oder mit eigener Konfiguration, gleiche Variablennamen wie in wrangler.toml:
+TRADING_RSI_UEBERKAUFT=70 TRADING_TRAILING_STOP_AB_PROZENT=2 node backtest.mjs BTCUSDT 180
+```
+
+Ausgabe: Gesamt-Return, Vergleich mit simplem Buy&Hold, maximaler Drawdown,
+Anzahl Trades, Win-Rate, durchschnittlicher Gewinn/Verlust pro Trade.
+
+**Wichtig, unmissverständlich:** Eine gute Backtest-Performance ist **keine
+Garantie** für die Zukunft — Märkte verändern sich, vergangene Muster
+wiederholen sich nicht zwangsläufig. Der Backtest ist ein Werkzeug, um eine
+Konfiguration mit echten Daten zu prüfen, BEVOR man sie mit echtem Geld
+laufen lässt — kein Versprechen auf Gewinn. Vor jedem Umstieg von
+`TRADING_PAPER_MODE="ja"` auf `"nein"` zusätzlich mindestens ein paar Wochen
+im Paper-Modus live beobachten.
+
+## Trade-Historie & Win-Rate im Dashboard
+
+Jeder abgeschlossene Trade (Ausstieg) wird jetzt im State gespeichert
+(die letzten 50 pro Symbol). Der `/status`-Endpoint liefert daraus pro Symbol
+`tradeStats` (Win-Rate, Anzahl Trades, Ø Gewinn/Verlust) — das
+`trading-dashboard/` zeigt das direkt in der Symbol-Karte an, sobald der
+erste Trade abgeschlossen ist. Kein zusätzliches Setup nötig.
+
 ## Tägliche WhatsApp-Zusammenfassung
 
 Zusätzlich zu den Alarmen bei einzelnen Ereignissen (Einstieg, Ausstieg,
