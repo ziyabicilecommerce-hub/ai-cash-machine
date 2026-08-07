@@ -12,6 +12,7 @@ on:
       - 'oracle/**'
       - 'lead-previews/**'
       - 'closer/**'
+      - 'pulse/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
 
@@ -46,6 +47,7 @@ jobs:
           mkdir -p lead-previews
           cp -r lead-previews _site/lead-previews
           cp -r closer _site/closer
+          cp -r pulse _site/pulse
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
