@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>CASHMACHINE PAYPAL-BELEGE</title>
+<meta name="description" content="Übersicht aller automatisch erstellten Zahlungs- und Liefernachweise für per PayPal bezahlte Bestellungen — für den Fall einer PayPal-Kontoprüfung oder Reklamation.">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060a14; --panel: rgba(0,48,135,.12); --panel-solid: #0a1020;
+    --blue: #4d8fff; --green: #34f5a2; --amber: #ffc757;
+    --line: rgba(77,143,255,.22); --line2: rgba(255,255,255,.07);
+    --txt: #e9edf7; --mut: rgba(220,228,245,.62); --mut2: rgba(220,228,245,.4);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; }
+
+  header { padding:40px 20px 20px; text-align:center; max-width:800px; margin:0 auto; }
+  h1 { font-family:var(--mono); font-weight:700; font-size:22px; letter-spacing:.04em; margin-bottom:8px; color:var(--blue); }
+  .sub { font-size:13px; color:var(--mut); }
+
+  section { padding:0 20px 60px; max-width:1000px; margin:0 auto; }
+
+  .toolbar { margin:20px 0; }
+  .toolbar input { width:100%; max-width:360px; background:var(--panel-solid); border:1px solid var(--line2); color:var(--txt);
+    font-family:var(--mono); font-size:13px; padding:9px 12px; outline:none; }
+  .toolbar input:focus { border-color:var(--blue); }
+
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  thead th { text-align:left; padding:10px 12px; color:var(--mut2); font-family:var(--mono); font-size:11px; text-transform:uppercase; border-bottom:1px solid var(--line2); }
+  tbody td { padding:10px 12px; border-bottom:1px solid var(--line2); }
+  tbody tr:hover { background:var(--panel); }
+  tbody a { color:var(--blue); text-decoration:none; }
+  tbody a:hover { text-decoration:underline; }
+  .status { font-family:var(--mono); font-size:11px; padding:2px 8px; border-radius:20px; }
+  .status.fulfilled { color:var(--green); background:rgba(52,245,162,.1); }
+  .status.other { color:var(--amber); background:rgba(255,199,87,.1); }
+
+  .empty-state { text-align:center; padding:60px 20px; font-family:var(--mono); color:var(--mut2); }
+  .count-note { font-family:var(--mono); font-size:12px; color:var(--mut2); margin-bottom:14px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧾 PAYPAL-BELEGE</h1>
+  <p class="sub">Automatisch erstellte Zahlungs- und Liefernachweise für per PayPal bezahlte Bestellungen — zum Vorzeigen bei einer PayPal-Kontoprüfung oder Reklamation. Nicht öffentlich verlinkt, nur per direktem Link erreichbar.</p>
+</header>
+
+<section>
+  <div class="toolbar">
+    <input type="text" id="searchInput" placeholder="Suche nach Bestellnummer...">
+  </div>
+  <div class="count-note" id="countNote"></div>
+  <table id="belegeTable" style="display:none">
+    <thead><tr><th>Bestellung</th><th>Datum</th><th>Betrag</th><th>Versandstatus</th><th></th></tr></thead>
+    <tbody id="belegeBody"></tbody>
+  </table>
+  <div class="empty-state" id="emptyState" style="display:none">Noch keine Belege erstellt — sobald die erste per PayPal bezahlte Bestellung erkannt wird, taucht sie hier auf.</div>
+</section>
+
+<script>
+  const fmtDatum = (iso) => { try { return new Date(iso).toLocaleDateString('de-DE'); } catch { return iso; } };
+  const fmtGeld = (n, cur) => Number(n || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + (cur || 'EUR');
+
+  let alleBelege = [];
+
+  function render(filter) {
+    const f = (filter || '').toLowerCase();
+    const gefiltert = alleBelege.filter((b) => !f || b.orderName.toLowerCase().includes(f));
+    document.getElementById('countNote').textContent = `${gefiltert.length} von ${alleBelege.length} Beleg(en)`;
+    document.getElementById('belegeBody').innerHTML = gefiltert.map((b) => `
+      <tr>
+        <td>${b.orderName}</td>
+        <td>${fmtDatum(b.bestelltAm)}</td>
+        <td>${fmtGeld(b.betrag, b.waehrung)}</td>
+        <td><span class="status ${b.versandstatus === 'fulfilled' ? 'fulfilled' : 'other'}">${b.versandstatus}</span></td>
+        <td><a href="${b.url}" target="_blank" rel="noopener">Öffnen →</a></td>
+      </tr>`).join('');
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => render(e.target.value));
+
+  fetch('./manifest.json', { cache: 'no-store' })
+    .then((res) => { if (!res.ok) throw new Error('no manifest'); return res.json(); })
+    .then((data) => {
+      alleBelege = data.belege || [];
+      if (!alleBelege.length) {
+        document.getElementById('emptyState').style.display = 'block';
+        return;
+      }
+      document.getElementById('belegeTable').style.display = 'table';
+      render('');
+    })
+    .catch(() => {
+      document.getElementById('emptyState').style.display = 'block';
+    });
+</script>
+</body>
+</html>

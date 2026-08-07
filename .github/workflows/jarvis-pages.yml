@@ -16,6 +16,7 @@ on:
       - 'trading-dashboard/**'
       - 'forecast/**'
       - 'setup/**'
+      - 'paypal-belege/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
 
@@ -54,6 +55,7 @@ jobs:
           cp -r trading-dashboard _site/trading-dashboard
           cp -r forecast _site/forecast
           cp -r setup _site/setup
+          cp -r paypal-belege _site/paypal-belege
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
