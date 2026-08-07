@@ -42,6 +42,9 @@ function aktualisiereTagesBudget(state, usage) {
 }
 
 export async function askClaude(prompt, { maxTokens = 1500, system, model = 'claude-sonnet-5' } = {}) {
+  if (!config.ANTHROPIC_API_KEY) {
+    throw new Error('ANTHROPIC_API_KEY-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe setup/ App oder automations/README.md).');
+  }
   const budgetState = await pruefeTagesBudget();
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
