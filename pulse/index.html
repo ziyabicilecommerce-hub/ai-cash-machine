@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE PULSE</title>
+<meta name="description" content="Frag alles über dein Business — ein Chat, der deine echten Umsatz- und Gewinnzahlen aus dem Finance Cockpit kennt und direkt antwortet, statt nur ein tägliches Briefing zu zeigen.">
+<meta property="og:title" content="CASHMACHINE PULSE">
+<meta property="og:description" content="Ein Chat, der deine echten Zahlen kennt.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%230a0d08%27/%3E%3Cpath%20d%3D%27M6%2032h12l6-16%208%2032%206-24%208%2016h12%27%20fill%3D%27none%27%20stroke%3D%27%23ffb020%27%20stroke-width%3D%273%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27/%3E%3C/svg%3E">
+<meta name="twitter:card" content="summary">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%230a0d08%27/%3E%3Cpath%20d%3D%27M6%2032h12l6-16%208%2032%206-24%208%2016h12%27%20fill%3D%27none%27%20stroke%3D%27%23ffb020%27%20stroke-width%3D%273%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d08; --panel: rgba(22,30,15,.5); --panel-solid: #131a0e;
+    --amber: #ffb020; --cyan: #6fe0ff; --green: #34f5a2; --red: #ff6b81;
+    --line: rgba(255,176,32,.22); --line2: rgba(255,255,255,.07);
+    --txt: #f4f0e6; --mut: rgba(240,232,210,.62); --mut2: rgba(240,232,210,.4);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+  ::selection { background:rgba(255,176,32,.3); }
+
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(255,176,32,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,176,32,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 30%,transparent 75%); }
+
+  @media(prefers-reduced-motion:reduce){ *{animation-duration:.001ms!important;animation-iteration-count:1!important} }
+
+  /* ---------- API key modal (identical contract to Oracle/Jarvis/Closer) ---------- */
+  .key-modal-overlay { position:fixed; inset:0; z-index:600; background:rgba(6,10,4,.85);
+    display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .25s ease, visibility .25s ease; }
+  .key-modal-overlay.open { opacity:1; visibility:visible; pointer-events:auto; }
+  .key-modal { width:min(420px,90vw); background:#10150c; border:1px solid var(--line);
+    box-shadow:0 0 40px rgba(255,176,32,.16); clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px)); padding:24px; }
+  .key-modal h3 { color:var(--amber); font-size:16px; letter-spacing:1px; margin-bottom:10px; }
+  .key-modal p { font-size:12.5px; color:var(--mut); line-height:1.6; margin-bottom:16px; }
+  .key-modal input { width:100%; background:rgba(255,176,32,.06); border:1px solid var(--line);
+    color:var(--txt); font-family:var(--mono); font-size:13px; padding:10px 12px; margin-bottom:16px; outline:none; }
+  .key-modal input:focus { border-color:var(--amber); }
+  .key-modal-actions { display:flex; justify-content:space-between; align-items:center; }
+  .key-modal-actions a { color:var(--mut); font-size:12px; text-decoration:none; border-bottom:1px dotted var(--mut); }
+  .key-modal-actions a:hover { color:var(--txt); }
+  .key-modal-actions button { background:rgba(255,176,32,.18); border:1px solid var(--amber); color:var(--txt);
+    font-family:inherit; font-weight:700; font-size:13px; padding:8px 18px; cursor:pointer;
+    clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); }
+  .key-modal-actions button:hover { background:rgba(255,176,32,.32); }
+  .key-gear { background:none; border:1px solid var(--line); color:var(--amber);
+    width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:13px;
+    display:flex; align-items:center; justify-content:center; }
+  .key-gear:hover { border-color:var(--amber); background:rgba(255,176,32,.1); }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(10,13,8,.75); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:15px; }
+  .logo b { color:var(--amber); }
+  .nav-links { display:flex; align-items:center; gap:18px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; transition:.15s; }
+  .nav-links a:hover { color:var(--amber); }
+  @media(max-width:860px){ .nav-links a:not(.usage-inline){ display:none; } }
+
+  main, header, section { position:relative; z-index:1; }
+
+  header.hero { min-height:38svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:110px 20px 20px; max-width:900px; margin:0 auto; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--amber); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:20px; }
+  .kicker::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--amber); box-shadow:0 0 10px var(--amber); animation:pulse 1.2s infinite; }
+  @keyframes pulse { 50%{opacity:.35;transform:scale(.75)} }
+
+  h1.glitch { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(26px,5.5vw,46px); letter-spacing:2px;
+    color:#faf5e8; text-shadow:0 0 24px rgba(255,176,32,.5),0 0 70px rgba(255,176,32,.15); margin-bottom:12px; }
+  .sub { font-size:14px; color:var(--mut); max-width:520px; }
+
+  section { padding:10px 20px 60px; max-width:840px; margin:0 auto; }
+
+  .stats-row { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:22px; }
+  .stat-mini { background:var(--panel); border:1px solid var(--line2); padding:10px 18px; text-align:center; font-family:var(--mono); min-width:110px; }
+  .stat-mini .n { font-size:16px; font-weight:700; color:var(--amber); }
+  .stat-mini .n.up { color:var(--green); } .stat-mini .n.down { color:var(--red); }
+  .stat-mini .l { font-size:9px; color:var(--mut2); letter-spacing:.06em; margin-top:2px; }
+
+  .pulse-box { background:var(--panel); border:1px solid var(--line);
+    clip-path:polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+    display:flex; flex-direction:column; height:min(560px,68vh); overflow:hidden; }
+
+  .chat-log { flex:1; overflow-y:auto; padding:20px clamp(14px,3vw,26px); display:flex; flex-direction:column; gap:14px; }
+  .msg { max-width:88%; font-size:14px; line-height:1.6; }
+  .msg.user { align-self:flex-end; text-align:right; }
+  .msg .bubble { display:inline-block; padding:10px 14px; border-radius:2px; }
+  .msg.user .bubble { background:rgba(255,176,32,.14); border:1px solid var(--line); color:var(--txt); }
+  .msg.assistant .bubble { background:var(--panel-solid); border:1px solid var(--line2); color:var(--txt); white-space:pre-wrap; }
+  .msg.assistant.pending .bubble { color:var(--mut2); }
+  .msg .who { font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; color:var(--mut2); margin-bottom:4px; display:block; }
+
+  .chips { display:flex; flex-wrap:wrap; gap:8px; padding:0 clamp(14px,3vw,26px) 14px; }
+  .chip { font-family:var(--mono); font-size:11.5px; color:var(--mut); background:rgba(255,176,32,.06);
+    border:1px solid var(--line2); padding:6px 12px; cursor:pointer; transition:.15s; }
+  .chip:hover { border-color:var(--amber); color:var(--amber); }
+
+  .chat-form { display:flex; align-items:center; gap:8px; border-top:1px solid var(--line2); padding:12px clamp(10px,3vw,20px); background:rgba(0,0,0,.15); }
+  .chat-form textarea { flex:1; resize:none; background:rgba(255,176,32,.05); border:1px solid var(--line2); color:var(--txt);
+    font-family:inherit; font-size:14px; padding:10px 12px; outline:none; max-height:100px; }
+  .chat-form textarea:focus { border-color:var(--amber); }
+  .mic-btn, .send-btn { background:rgba(255,176,32,.14); border:1px solid var(--amber); color:var(--amber);
+    width:38px; height:38px; flex-shrink:0; cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center;
+    clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px)); }
+  .mic-btn:hover, .send-btn:hover:not(:disabled) { background:rgba(255,176,32,.28); }
+  .mic-btn.listening { background:var(--red); border-color:var(--red); color:#1a0508; animation:micPulse 1s infinite; }
+  @keyframes micPulse { 50%{opacity:.6} }
+  .send-btn:disabled { opacity:.4; cursor:default; }
+
+  .empty-state { text-align:center; padding:50px 20px; font-family:var(--mono); margin:auto; }
+  .empty-state .line1 { color:var(--amber); font-size:15px; }
+  .empty-state .line2 { color:var(--mut2); font-size:12px; margin-top:8px; }
+
+  footer { border-top:1px solid var(--line2); padding:34px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--amber); text-decoration:none; margin:0 8px; }
+  footer a:hover { text-decoration:underline; }
+
+  .usage-badge { position:fixed; bottom:14px; right:16px; z-index:40; font-family:var(--mono); font-size:10px;
+    letter-spacing:.04em; color:var(--mut2); background:rgba(10,13,8,.75); border:1px solid var(--line2);
+    padding:5px 10px; pointer-events:none; backdrop-filter:blur(4px); }
+  .usage-badge.warn { color:var(--red); border-color:rgba(255,107,129,.35); }
+  @media(max-width:760px){ .usage-badge{ display:none; } }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="usage-badge" id="usageBadge">Heute: 0 Anfragen · ~0 Tokens</div>
+
+<div class="key-modal-overlay" id="keyModalOverlay">
+  <div class="key-modal" id="keyModalBox" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
+    <h3 id="keyModalTitle">Anthropic API-Key</h3>
+    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Anthropic gesendet — nie an einen anderen Server.</p>
+    <input type="password" id="keyModalInput" placeholder="sk-ant-api03-..." aria-label="Anthropic API-Key" autocomplete="off">
+    <div class="key-modal-actions">
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Key holen →</a>
+      <button id="keyModalSave" type="button">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;PULSE</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../oracle/">Oracle</a>
+    <a href="../brand-assassin/">Brand Assassin</a>
+    <a href="../finance-cockpit/">Finance</a>
+    <a href="../automations-dashboard/">Automations</a>
+    <button class="key-gear" id="keyGearBtn" title="Anthropic API-Key einstellen" aria-label="Anthropic API-Key einstellen">⚙</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="kicker">LIVE Q&amp;A · GESPEIST AUS ECHTEN ZAHLEN</div>
+  <h1 class="glitch">PULSE</h1>
+  <p class="sub">Frag direkt, statt zu warten — ein Chat, der deine echten Umsatz-, Gewinn- und Bestellzahlen aus dem Finance Cockpit kennt und sofort antwortet.</p>
+</header>
+
+<section>
+  <div class="stats-row" id="statsRow" style="display:none"></div>
+
+  <div class="pulse-box">
+    <div class="chat-log" id="chatLog">
+      <div class="empty-state" id="emptyState">
+        <div class="line1">&gt; awaiting finance-cockpit data</div>
+        <div class="line2">Sobald die erste Gewinn-Radar-Automation läuft (täglich 08:00 Uhr), kann Pulse deine Fragen beantworten.</div>
+      </div>
+    </div>
+    <div class="chips" id="chipsRow" style="display:none"></div>
+    <form class="chat-form" id="chatForm" style="display:none">
+      <textarea id="chatInput" rows="1" placeholder="Frag was über dein Business..." maxlength="2000"></textarea>
+      <button type="button" class="mic-btn" id="micBtn" title="Spracheingabe" aria-label="Spracheingabe" style="display:none">🎤</button>
+      <button type="submit" class="send-btn" id="sendBtn" title="Senden" aria-label="Senden">➤</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <b>CASHMACHINE PULSE</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../oracle/">Oracle</a>·<a href="../brand-assassin/">Brand Assassin</a>·<a href="../finance-cockpit/">Finance</a>·<a href="../automations-dashboard/">Automations</a>
+</footer>
+
+<script>
+  // ===== CLAUDE API KEY (bring-your-own-key, stored locally, shared contract with the other apps) =====
+  const CLAUDE_KEY_STORAGE = 'cmx_claude_key';
+  function getClaudeKey() { return localStorage.getItem(CLAUDE_KEY_STORAGE); }
+
+  const keyModalOverlay = document.getElementById('keyModalOverlay');
+  const keyModalInput = document.getElementById('keyModalInput');
+  const keyModalSave = document.getElementById('keyModalSave');
+  const keyGearBtn = document.getElementById('keyGearBtn');
+  let keyModalLastTrigger = null;
+  let keyModalResolve = null;
+
+  function closeKeyModal() {
+    keyModalOverlay.classList.remove('open');
+    if (keyModalLastTrigger) keyModalLastTrigger.focus();
+  }
+  function openKeyModal(triggerEl) {
+    keyModalLastTrigger = triggerEl || document.activeElement;
+    keyModalInput.value = getClaudeKey() || '';
+    keyModalOverlay.classList.add('open');
+    setTimeout(() => keyModalInput.focus(), 50);
+  }
+  function requestClaudeKey() {
+    return new Promise((resolve) => { keyModalResolve = resolve; openKeyModal(); });
+  }
+  keyModalSave.addEventListener('click', () => {
+    const val = keyModalInput.value.trim();
+    if (!val) return;
+    localStorage.setItem(CLAUDE_KEY_STORAGE, val);
+    closeKeyModal();
+    if (keyModalResolve) { keyModalResolve(val); keyModalResolve = null; }
+  });
+  keyModalInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') keyModalSave.click(); });
+  keyGearBtn.addEventListener('click', () => openKeyModal(keyGearBtn));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && keyModalOverlay.classList.contains('open')) closeKeyModal();
+  });
+
+  // ===== TOKEN USAGE TRACKER (shared key with the other apps) =====
+  const USAGE_STORAGE = 'cmx_token_usage';
+  const USAGE_WARN_THRESHOLD = 150000;
+  function todayKey() { return new Date().toISOString().slice(0, 10); }
+  function getUsageToday() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(USAGE_STORAGE) || '{}');
+      if (stored.date !== todayKey()) return { date: todayKey(), requests: 0, tokens: 0 };
+      return stored;
+    } catch { return { date: todayKey(), requests: 0, tokens: 0 }; }
+  }
+  function trackTokenUsage(usage) {
+    const today = getUsageToday();
+    today.requests += 1;
+    today.tokens += (usage.input_tokens || 0) + (usage.output_tokens || 0);
+    localStorage.setItem(USAGE_STORAGE, JSON.stringify(today));
+    renderUsageBadge(today);
+  }
+  function renderUsageBadge(today) {
+    const badge = document.getElementById('usageBadge');
+    if (!badge) return;
+    today = today || getUsageToday();
+    badge.textContent = `Heute: ${today.requests} Anfragen · ~${today.tokens.toLocaleString('de-DE')} Tokens`;
+    badge.classList.toggle('warn', today.tokens >= USAGE_WARN_THRESHOLD);
+  }
+  renderUsageBadge();
+
+  async function callClaude(body) {
+    let key = getClaudeKey();
+    if (!key) key = await requestClaudeKey();
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify(body)
+    });
+    if (response.status === 401) {
+      localStorage.removeItem(CLAUDE_KEY_STORAGE);
+      throw new Error('invalid_key');
+    }
+    if (!response.ok) throw new Error('api_error');
+    const data = await response.json();
+    if (data.usage) trackTokenUsage(data.usage);
+    return data;
+  }
+
+  // ===== FINANCE CONTEXT =====
+  const fmtMoney = (n, cur) => (n ?? 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + (cur || 'EUR');
+  let financeData = null;
+  let systemPrompt = '';
+
+  function buildSystemPrompt(data) {
+    const NL = '\n';
+    const history = data.history || [];
+    const recent = history.slice(-14);
+    const latest = recent[recent.length - 1];
+    const zeilen = recent.map((h) => `${h.datum}: Umsatz ${fmtMoney(h.umsatz, h.waehrung)}, Gewinn ${fmtMoney(h.gewinn, h.waehrung)}, ${h.bestellungen} Bestellungen, Top: ${(h.topProdukte && h.topProdukte[0]) ? h.topProdukte[0].name : '–'}`).join(NL);
+
+    return [
+      `Du bist der Live-Business-Analyst von "${data.shopName || 'diesem Shop'}", Teil der CASHMACHINE AI Suite. Du beantwortest Fragen zum Geschäft direkt, kurz und auf Deutsch (Du-Form) — kein Geschwafel, keine Allgemeinplätze.`,
+      `Echte Zahlen der letzten ${recent.length} erfassten Tage (aus dem Finance Cockpit, automatisch aus Shopify berechnet):${NL}${zeilen}`,
+      `Letzter erfasster Tag: ${latest ? latest.datum : 'unbekannt'}. Aktualisiert: ${data.updatedAt || 'unbekannt'}.`,
+      `Nutze IMMER die echten Zahlen oben für deine Antworten, erfinde nie Werte, die nicht drinstehen. Wenn eine Frage Daten braucht, die hier nicht vorhanden sind (z.B. einzelne Kundennamen, Bestandsdaten, Marketingkanäle), sag das ehrlich statt zu raten. Halte Antworten kurz (2-5 Sätze), außer explizit um mehr Details gebeten wird.`,
+    ].join(NL + NL);
+  }
+
+  // ===== CHAT =====
+  const chatLog = document.getElementById('chatLog');
+  const chatForm = document.getElementById('chatForm');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const chipsRow = document.getElementById('chipsRow');
+  let verlauf = [];
+
+  function addMessage(role, text, pending) {
+    const wrap = document.createElement('div');
+    wrap.className = `msg ${role}${pending ? ' pending' : ''}`;
+    wrap.innerHTML = `<span class="who">${role === 'user' ? 'DU' : 'PULSE'}</span><span class="bubble"></span>`;
+    wrap.querySelector('.bubble').textContent = text;
+    chatLog.appendChild(wrap);
+    chatLog.scrollTop = chatLog.scrollHeight;
+    return wrap;
+  }
+
+  async function sendMessage(text) {
+    if (!text || !financeData) return;
+    document.getElementById('emptyState')?.remove();
+    addMessage('user', text);
+    verlauf.push({ role: 'user', content: text });
+    sendBtn.disabled = true;
+    const pendingEl = addMessage('assistant', 'Analysiert...', true);
+
+    try {
+      const data = await callClaude({
+        model: 'claude-sonnet-5',
+        max_tokens: 600,
+        system: systemPrompt,
+        messages: verlauf.slice(-16),
+      });
+      const reply = (data.content || []).map((b) => b.text || '').join('').trim() || 'Dazu fällt mir gerade nichts ein.';
+      pendingEl.querySelector('.bubble').textContent = reply;
+      pendingEl.classList.remove('pending');
+      verlauf.push({ role: 'assistant', content: reply });
+    } catch (err) {
+      pendingEl.querySelector('.bubble').textContent = err.message === 'invalid_key'
+        ? 'API-Key ungültig — über das ⚙ Symbol prüfen.'
+        : 'Technisches Problem — bitte nochmal versuchen.';
+      pendingEl.classList.remove('pending');
+    } finally {
+      sendBtn.disabled = false;
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+  }
+
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = chatInput.value.trim();
+    if (!text) return;
+    chatInput.value = '';
+    sendMessage(text);
+  });
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatForm.requestSubmit(); }
+  });
+
+  const VORSCHLAEGE = [
+    'Wie lief die letzte Woche?',
+    'Was ist gerade mein Bestseller?',
+    'Worauf sollte ich heute achten?',
+    'Steigt oder sinkt mein Gewinn gerade?',
+  ];
+  function renderChips() {
+    chipsRow.innerHTML = VORSCHLAEGE.map((v) => `<span class="chip">${v}</span>`).join('');
+    chipsRow.querySelectorAll('.chip').forEach((chip) => {
+      chip.addEventListener('click', () => sendMessage(chip.textContent));
+    });
+    chipsRow.style.display = 'flex';
+  }
+
+  // ===== VOICE INPUT (optional, same Web Speech API pattern as Jarvis) =====
+  const micBtn = document.getElementById('micBtn');
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'de-DE';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    let isListening = false;
+    recognition.onstart = () => { isListening = true; micBtn.classList.add('listening'); };
+    recognition.onend = () => { isListening = false; micBtn.classList.remove('listening'); };
+    recognition.onresult = (event) => { sendMessage(event.results[0][0].transcript); };
+    recognition.onerror = () => { isListening = false; micBtn.classList.remove('listening'); };
+    micBtn.style.display = 'flex';
+    micBtn.addEventListener('click', () => { if (isListening) recognition.stop(); else recognition.start(); });
+  }
+
+  // ===== STATS STRIP =====
+  function renderStats(latest, trendPct) {
+    const box = document.getElementById('statsRow');
+    const trendCls = trendPct === null ? '' : trendPct >= 0 ? 'up' : 'down';
+    const trendTxt = trendPct === null ? '' : ` (${trendPct >= 0 ? '+' : ''}${trendPct.toFixed(1)}%)`;
+    box.innerHTML = `
+      <div class="stat-mini"><div class="n ${trendCls}">${fmtMoney(latest.umsatz, latest.waehrung)}${trendTxt}</div><div class="l">UMSATZ (LETZTER TAG)</div></div>
+      <div class="stat-mini"><div class="n">${fmtMoney(latest.gewinn, latest.waehrung)}</div><div class="l">GEWINN</div></div>
+      <div class="stat-mini"><div class="n">${latest.bestellungen}</div><div class="l">BESTELLUNGEN</div></div>`;
+    box.style.display = 'flex';
+  }
+
+  fetch('../finance-cockpit/data.json', { cache: 'no-store' })
+    .then((res) => { if (!res.ok) throw new Error('no data'); return res.json(); })
+    .then((data) => {
+      const history = (data.history || []).filter((h) => h && h.datum);
+      if (!history.length) throw new Error('empty history');
+      financeData = data;
+      systemPrompt = buildSystemPrompt(data);
+
+      const latest = history[history.length - 1];
+      let trendPct = null;
+      if (history.length >= 4) {
+        const prior = history.slice(0, -1).slice(-7);
+        const avg = prior.reduce((s, h) => s + h.umsatz, 0) / prior.length;
+        if (avg > 0) trendPct = ((latest.umsatz - avg) / avg) * 100;
+      }
+      renderStats(latest, trendPct);
+      renderChips();
+      chatForm.style.display = 'flex';
+    })
+    .catch(() => {
+      // emptyState bleibt sichtbar, Chat-Formular bleibt versteckt
+    });
+</script>
+</body>
+</html>
