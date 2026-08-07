@@ -4,6 +4,20 @@ Ein echter Kunden-Chat-Agent für die Shopify-Website — als Widget einbettbar
 (`widget.js`), beantwortet von einem Cloudflare Worker (`worker.js`), der
 serverseitig mit Claude spricht.
 
+## Verkaufsberater-Modus (optional)
+
+Trägst du `SHOPIFY_STORE_DOMAIN` und `SHOPIFY_STOREFRONT_TOKEN` in
+`wrangler.toml` ein, holt sich der Worker den echten, aktuellen
+Produktkatalog über die öffentliche Shopify-Storefront-API (Titel, Preis,
+Link, Kurzbeschreibung; gecacht für `KATALOG_CACHE_TTL_SEKUNDEN`, Default 30
+Minuten) und gibt ihn Claude als Kontext mit. Der Chat empfiehlt dann aktiv
+passende Produkte mit echtem Preis/Link und geht auf Kaufeinwände (Preis,
+Lieferzeit, Vertrauen) ein — statt nur zu antworten, wenn gefragt wird. Ohne
+diese beiden Werte läuft der Chat unverändert als reiner Support-Assistent
+weiter. Der Assistent darf dabei ausschließlich Produkte aus dem echten
+Katalog nennen, nie welche erfinden — die harte Regel gegen erfundene
+Bestell-/Kontodaten (siehe unten) gilt unverändert weiter.
+
 ## Warum kein Browser-Direktaufruf wie bei Jarvis/Brand Assassin/Oracle/Closer?
 
 Jene Apps sind **BYOK** (bring-your-own-key): jeder Nutzer trägt seinen

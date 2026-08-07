@@ -255,16 +255,32 @@ Shopify-API-Fehler), wird das als "keine Daten" markiert statt die ganze
 Automation abstürzen zu lassen - die anderen Bereiche laufen normal weiter.
 Läuft abends (20:00 UTC), nach den meisten anderen Automationen.
 
-**💬 Kunden-Chat-Agent** (kein Eintrag in der Tabelle unten - läuft wie der
-Trading-Bot als eigener Cloudflare Worker, nicht als GitHub-Actions-
-Automation): siehe `customer-agent-worker/README.md`. Beantwortet allgemeine
-Kundenfragen auf der Website (Versand, Rückgabe, Produkte) über ein
-einbettbares Chat-Widget. Läuft serverseitig, damit der `ANTHROPIC_API_KEY`
-des Shop-Besitzers nie im Browser fremder Besucher landet (anders als die
-BYOK-Apps Jarvis/Brand Assassin/Oracle/Closer, die nur der Shop-Besitzer
-selbst nutzt). Erfindet nie Bestell-/Kontodaten, verweist dafür an
-`SUPPORT_EMAIL`. Pro-Besucher-Rate-Limit + globales Tages-Token-Budget über
-Cloudflare KV, CORS auf die eigene Shop-Domain beschränkt.
+**💬 Kunden-Chat-Agent / Live-KI-Verkaufsberater** (kein Eintrag in der
+Tabelle unten - läuft wie der Trading-Bot als eigener Cloudflare Worker,
+nicht als GitHub-Actions-Automation): siehe `customer-agent-worker/README.md`.
+Beantwortet allgemeine Kundenfragen auf der Website (Versand, Rückgabe,
+Produkte) über ein einbettbares Chat-Widget. Läuft serverseitig, damit der
+`ANTHROPIC_API_KEY` des Shop-Besitzers nie im Browser fremder Besucher landet
+(anders als die BYOK-Apps Jarvis/Brand Assassin/Oracle/Closer, die nur der
+Shop-Besitzer selbst nutzt). Erfindet nie Bestell-/Kontodaten, verweist dafür
+an `SUPPORT_EMAIL`. Pro-Besucher-Rate-Limit + globales Tages-Token-Budget über
+Cloudflare KV, CORS auf die eigene Shop-Domain beschränkt. Optional (mit
+`SHOPIFY_STORE_DOMAIN`/`SHOPIFY_STOREFRONT_TOKEN`) holt sich der Chat den
+echten, gecachten Produktkatalog über die öffentliche Shopify-Storefront-API
+und empfiehlt aktiv passende Produkte mit echtem Preis/Link statt nur
+abzuwarten - ein echter Live-Verkaufsberater statt reinem Support-Fallback,
+weiterhin ohne erfundene Produkte oder Daten.
+
+**🤖 Agentic-Checkout-Readiness-Agent** (prüft, ob der Katalog überhaupt von
+KI-Einkaufsagenten wie ChatGPT Instant Checkout oder Perplexity Shopping
+gefunden und verstanden werden kann): bewertet jedes aktive Produkt nach
+Titellänge, Beschreibungslänge, Bild, gültigem Preis, Produktkategorie und
+Verfügbarkeit zu einem Score 0-100, meldet den Katalog-Gesamtscore mit
+Trend zur Vorwoche plus die schwächsten Produkte samt konkreter Mängel.
+Rein prüfend - ändert nichts an Produkten, da sich die Agentic-Commerce-
+Protokolle selbst noch in Bewegung befinden und wir nicht an einem
+ungeprüften Feed-Format herumraten wollen (gleiches Prinzip wie beim
+Übersetzungs-Entwurf-Agent).
 
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
@@ -478,7 +494,7 @@ abdecken.
 
 Alle Standardwerte stehen in `automations/lib/config.mjs`.
 
-## Die 75 Automationen (46 aus n8n + 29 neue)
+## Die 76 Automationen (46 aus n8n + 30 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -557,6 +573,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 74 | 💸 Refund-Concierge-Agent | alle 2 Stunden | bearbeitet kleine, per Tag freigegebene Erstattungen automatisch, mit Obergrenze |
 | 75 | 🌍 Übersetzungs-Entwurf-Agent | dienstags 09:15 | übersetzt Produkttexte für neue Zielmärkte als Entwurf per Mail |
 | 76 | 🎯 Nie-Gekauft-Konverter | mittwochs 10:15 | Newsletter-Abonnenten, die noch nie bestellt haben, bekommen einen Erstkauf-Anreiz |
+| 77 | 🤖 Agentic-Checkout-Readiness-Agent | sonntags 09:30 | prüft, ob der Katalog für KI-Einkaufsagenten (ChatGPT, Perplexity) auffindbar/verständlich ist, meldet Score + schwächste Produkte |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht

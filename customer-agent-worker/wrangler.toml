@@ -22,6 +22,23 @@ ALLOWED_ORIGINS = "https://deinshop.myshopify.com"
 RATE_LIMIT_PRO_STUNDE = "20"
 MAX_TOKENS_PRO_TAG = "200000"
 
+# Optional: echter Produktkatalog für den Chat (Verkaufsberater-Modus).
+# Ohne diese beiden Werte antwortet der Chat weiter wie bisher als reiner
+# Support-Assistent, nur ohne Produktempfehlungen.
+# SHOPIFY_STORE_DOMAIN = deine *.myshopify.com-Domain (nicht die Custom-Domain).
+# SHOPIFY_STOREFRONT_TOKEN = Storefront-API-Token (Shopify Admin → Apps →
+#   eigene App → Storefront-API-Berechtigungen → "unauthenticated_read_product_listings").
+# Dieser Token ist von Shopify bewusst für client-seitige Nutzung freigegeben,
+# also KEIN Secret wie ANTHROPIC_API_KEY - trotzdem läuft er hier serverseitig
+# im Worker, damit der Katalog gecacht werden kann.
+SHOPIFY_STORE_DOMAIN = ""
+SHOPIFY_STOREFRONT_TOKEN = ""
+# Basis-URL für Produktlinks im Chat, falls abweichend von SHOPIFY_STORE_DOMAIN
+# (z.B. eigene Domain statt *.myshopify.com). Leer = SHOPIFY_STORE_DOMAIN.
+SHOP_PUBLIC_URL = ""
+KATALOG_MAX_PRODUKTE = "25"
+KATALOG_CACHE_TTL_SEKUNDEN = "1800"
+
 # Secret NICHT hier eintragen - per `wrangler secret put ANTHROPIC_API_KEY` setzen.
 # Das ist der Key des SHOP-BESITZERS, wird NIE an den Browser ausgeliefert -
 # der Browser spricht nur mit diesem Worker, der Worker spricht mit Anthropic.
