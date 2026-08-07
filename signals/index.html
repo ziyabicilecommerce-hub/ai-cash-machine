@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE SIGNALS</title>
+<meta name="description" content="Markt-Copilot fürs manuelle Trading — live Kursdaten, dieselben Indikatoren wie der Trading-Bot (EMA-Trend, RSI, Volatilität) für beliebige Coins, plus eine Klartext-Einschätzung von Claude. Keine automatische Ausführung, keine Anlageberatung.">
+<meta property="og:title" content="CASHMACHINE SIGNALS">
+<meta property="og:description" content="Live-Marktindikatoren + Klartext-Einschätzung, für jeden Coin.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23060810%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2718%27%20fill%3D%27none%27%20stroke%3D%27%235b8cff%27%20stroke-width%3D%272.5%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%277%27%20fill%3D%27%235b8cff%27/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23060810%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2718%27%20fill%3D%27none%27%20stroke%3D%27%235b8cff%27%20stroke-width%3D%272.5%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%277%27%20fill%3D%27%235b8cff%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060810; --panel: rgba(16,22,40,.55); --panel-solid: #0c1122;
+    --blue: #5b8cff; --cyan: #6fe0ff; --green: #34f5a2; --red: #ff6b81; --amber: #ffc757;
+    --line: rgba(91,140,255,.22); --line2: rgba(255,255,255,.07);
+    --txt: #ecf0fb; --mut: rgba(220,228,250,.62); --mut2: rgba(220,228,250,.4);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+  ::selection { background:rgba(91,140,255,.3); }
+
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(91,140,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(91,140,255,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 30%,transparent 75%); }
+
+  .key-modal-overlay { position:fixed; inset:0; z-index:600; background:rgba(3,4,10,.88);
+    display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .25s ease, visibility .25s ease; }
+  .key-modal-overlay.open { opacity:1; visibility:visible; pointer-events:auto; }
+  .key-modal { width:min(420px,90vw); background:#0a0e1c; border:1px solid var(--line);
+    box-shadow:0 0 40px rgba(91,140,255,.16); clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px)); padding:24px; }
+  .key-modal h3 { color:var(--blue); font-size:16px; letter-spacing:1px; margin-bottom:10px; }
+  .key-modal p { font-size:12.5px; color:var(--mut); line-height:1.6; margin-bottom:16px; }
+  .key-modal input { width:100%; background:rgba(91,140,255,.06); border:1px solid var(--line);
+    color:var(--txt); font-family:var(--mono); font-size:13px; padding:10px 12px; margin-bottom:16px; outline:none; }
+  .key-modal input:focus { border-color:var(--blue); }
+  .key-modal-actions { display:flex; justify-content:space-between; align-items:center; }
+  .key-modal-actions a { color:var(--mut); font-size:12px; text-decoration:none; border-bottom:1px dotted var(--mut); }
+  .key-modal-actions button { background:rgba(91,140,255,.18); border:1px solid var(--blue); color:var(--txt);
+    font-family:inherit; font-weight:700; font-size:13px; padding:8px 18px; cursor:pointer;
+    clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); }
+  .key-modal-actions button:hover { background:rgba(91,140,255,.32); }
+  .key-gear { background:none; border:1px solid var(--line); color:var(--blue);
+    width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:13px;
+    display:flex; align-items:center; justify-content:center; }
+  .key-gear:hover { border-color:var(--blue); background:rgba(91,140,255,.1); }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(6,8,16,.8); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--blue); }
+  .nav-links { display:flex; align-items:center; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--blue); }
+  @media(max-width:900px){ .nav-links a { display:none; } }
+
+  header.hero { min-height:32svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:110px 20px 16px; max-width:900px; margin:0 auto; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--blue); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:16px; }
+  .kicker::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--blue); box-shadow:0 0 10px var(--blue); animation:pulse 1.4s infinite; }
+  @keyframes pulse { 50%{opacity:.35;transform:scale(.75)} }
+  h1 { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(24px,5vw,42px); letter-spacing:2px; color:#f4f7ff;
+    text-shadow:0 0 24px rgba(91,140,255,.4); margin-bottom:10px; }
+  .sub { font-size:13.5px; color:var(--mut); max-width:540px; }
+
+  .disclaimer { max-width:840px; margin:0 auto 20px; padding:12px 18px; background:rgba(255,199,87,.08);
+    border:1px solid rgba(255,199,87,.28); font-size:12px; color:var(--amber); text-align:center; font-family:var(--mono); }
+
+  section { padding:0 20px 60px; max-width:1080px; margin:0 auto; }
+
+  .watchlist-form { display:flex; gap:8px; margin-bottom:20px; max-width:420px; }
+  .watchlist-form input { flex:1; background:rgba(91,140,255,.06); border:1px solid var(--line2); color:var(--txt);
+    font-family:var(--mono); font-size:13px; padding:9px 12px; outline:none; text-transform:uppercase; }
+  .watchlist-form input:focus { border-color:var(--blue); }
+  .watchlist-form button { background:rgba(91,140,255,.16); border:1px solid var(--blue); color:var(--txt);
+    font-family:inherit; font-weight:700; font-size:13px; padding:9px 18px; cursor:pointer; }
+  .watchlist-form button:hover { background:rgba(91,140,255,.3); }
+
+  .cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+  .card { background:var(--panel); border:1px solid var(--line2);
+    clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); padding:18px; }
+  .card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .card-top .sym { font-family:var(--mono); font-weight:700; font-size:15px; }
+  .card-top .remove-btn { background:none; border:none; color:var(--mut2); cursor:pointer; font-size:15px; }
+  .card-top .remove-btn:hover { color:var(--red); }
+  .price { font-family:var(--mono); font-size:20px; font-weight:700; margin-bottom:12px; }
+  .badges { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+  .badge { font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; padding:4px 9px; border-radius:20px; border:1px solid; }
+  .badge.bull { color:var(--green); border-color:rgba(52,245,162,.35); background:rgba(52,245,162,.08); }
+  .badge.bear { color:var(--red); border-color:rgba(255,107,129,.35); background:rgba(255,107,129,.08); }
+  .badge.neutral { color:var(--mut); border-color:var(--line2); background:rgba(255,255,255,.03); }
+  .badge.rsi-high { color:var(--red); border-color:rgba(255,107,129,.35); background:rgba(255,107,129,.08); }
+  .badge.rsi-low { color:var(--green); border-color:rgba(52,245,162,.35); background:rgba(52,245,162,.08); }
+  .badge.rsi-mid { color:var(--mut); border-color:var(--line2); background:rgba(255,255,255,.03); }
+  .row { display:flex; justify-content:space-between; font-size:12px; color:var(--mut); padding:3px 0; }
+  .row b { color:var(--txt); font-family:var(--mono); }
+  .analyze-btn { margin-top:10px; width:100%; background:rgba(91,140,255,.12); border:1px solid var(--line); color:var(--blue);
+    font-family:inherit; font-weight:700; font-size:12px; padding:8px; cursor:pointer; }
+  .analyze-btn:hover:not(:disabled) { background:rgba(91,140,255,.24); }
+  .analyze-btn:disabled { opacity:.5; cursor:default; }
+  .analysis { margin-top:10px; font-size:12.5px; color:var(--txt); line-height:1.5; padding:10px; background:var(--panel-solid); border:1px solid var(--line2); white-space:pre-wrap; }
+  .card.loading .price, .card.loading .badges { opacity:.3; }
+  .card.error { border-color:rgba(255,107,129,.4); }
+  .card-error-msg { font-size:12px; color:var(--red); font-family:var(--mono); }
+
+  .empty-hint { text-align:center; padding:40px 20px; font-family:var(--mono); color:var(--mut2); font-size:13px; }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--blue); text-decoration:none; margin:0 8px; }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<div class="key-modal-overlay" id="keyModalOverlay">
+  <div class="key-modal" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
+    <h3 id="keyModalTitle">Anthropic API-Key</h3>
+    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Anthropic gesendet — nur für die Klartext-Einschätzung nötig, die Marktdaten selbst kommen direkt von Binance, kein Key dafür nötig.</p>
+    <input type="password" id="keyModalInput" placeholder="sk-ant-api03-..." aria-label="Anthropic API-Key" autocomplete="off">
+    <div class="key-modal-actions">
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Key holen →</a>
+      <button id="keyModalSave" type="button">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;SIGNALS</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../pulse/">Pulse</a>
+    <a href="../trading-dashboard/">Trading</a>
+    <a href="../automations-dashboard/">Automations</a>
+    <button class="key-gear" id="keyGearBtn" title="Anthropic API-Key einstellen" aria-label="Anthropic API-Key einstellen">⚙</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="kicker">MARKT-COPILOT · LIVE INDIKATOREN</div>
+  <h1>SIGNALS</h1>
+  <p class="sub">Live-Marktdaten für beliebige Coins, dieselben Indikatoren wie der Trading-Bot (EMA-Trend, RSI, Volatilität) — plus eine Klartext-Einschätzung von Claude. Für deine eigene manuelle Entscheidung.</p>
+</header>
+
+<div class="disclaimer">⚠️ Keine Anlageberatung, keine Erfolgsgarantie. Führt selbst NIE einen Trade aus — reine Information für deine eigene Entscheidung.</div>
+
+<section>
+  <form class="watchlist-form" id="watchlistForm">
+    <input type="text" id="symbolInput" placeholder="z.B. BTCUSDT" maxlength="20">
+    <button type="submit">+ Hinzufügen</button>
+  </form>
+
+  <div class="cards" id="cards"></div>
+  <div class="empty-hint" id="emptyHint" style="display:none">Noch keine Coins in der Watchlist — oben ein Symbol hinzufügen, z.B. <code>BTCUSDT</code>, <code>ETHUSDT</code>, <code>SOLUSDT</code> (Binance-Notation).</div>
+</section>
+
+<footer>
+  <b>CASHMACHINE SIGNALS</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../pulse/">Pulse</a>·<a href="../trading-dashboard/">Trading</a>·<a href="../automations-dashboard/">Automations</a>
+</footer>
+
+<script>
+  // ===== CLAUDE API KEY (BYOK, gleicher Vertrag wie Jarvis/Oracle/Pulse) =====
+  const CLAUDE_KEY_STORAGE = 'cmx_claude_key';
+  function getClaudeKey() { return localStorage.getItem(CLAUDE_KEY_STORAGE); }
+  const keyModalOverlay = document.getElementById('keyModalOverlay');
+  const keyModalInput = document.getElementById('keyModalInput');
+  const keyModalSave = document.getElementById('keyModalSave');
+  const keyGearBtn = document.getElementById('keyGearBtn');
+  let keyModalResolve = null;
+  function openKeyModal() {
+    keyModalInput.value = getClaudeKey() || '';
+    keyModalOverlay.classList.add('open');
+    setTimeout(() => keyModalInput.focus(), 50);
+  }
+  function closeKeyModal() { keyModalOverlay.classList.remove('open'); }
+  function requestClaudeKey() { return new Promise((resolve) => { keyModalResolve = resolve; openKeyModal(); }); }
+  keyModalSave.addEventListener('click', () => {
+    const val = keyModalInput.value.trim();
+    if (!val) return;
+    localStorage.setItem(CLAUDE_KEY_STORAGE, val);
+    closeKeyModal();
+    if (keyModalResolve) { keyModalResolve(val); keyModalResolve = null; }
+  });
+  keyModalInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') keyModalSave.click(); });
+  keyGearBtn.addEventListener('click', openKeyModal);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && keyModalOverlay.classList.contains('open')) closeKeyModal(); });
+
+  async function callClaude(body) {
+    let key = getClaudeKey();
+    if (!key) key = await requestClaudeKey();
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify(body),
+    });
+    if (response.status === 401) { localStorage.removeItem(CLAUDE_KEY_STORAGE); throw new Error('invalid_key'); }
+    if (!response.ok) throw new Error('api_error');
+    return response.json();
+  }
+
+  // ===== INDIKATOREN (identische Formeln wie trading-bot-worker/worker.js) =====
+  function emaSeries(closes, period) {
+    const k = 2 / (period + 1);
+    const out = [closes[0]];
+    for (let i = 1; i < closes.length; i++) out.push(closes[i] * k + out[i - 1] * (1 - k));
+    return out;
+  }
+  function rsiSeries(closes, period) {
+    const rsi = new Array(closes.length).fill(null);
+    if (closes.length <= period) return rsi;
+    let gains = 0, losses = 0;
+    for (let i = 1; i <= period; i++) { const d = closes[i] - closes[i - 1]; if (d >= 0) gains += d; else losses -= d; }
+    let avgGain = gains / period, avgLoss = losses / period;
+    rsi[period] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss);
+    for (let i = period + 1; i < closes.length; i++) {
+      const d = closes[i] - closes[i - 1]; const g = d > 0 ? d : 0; const l = d < 0 ? -d : 0;
+      avgGain = (avgGain * (period - 1) + g) / period; avgLoss = (avgLoss * (period - 1) + l) / period;
+      rsi[i] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss);
+    }
+    return rsi;
+  }
+  function atrSeries(highs, lows, closes, period) {
+    const trs = [highs[0] - lows[0]];
+    for (let i = 1; i < closes.length; i++) trs.push(Math.max(highs[i] - lows[i], Math.abs(highs[i] - closes[i - 1]), Math.abs(lows[i] - closes[i - 1])));
+    const atr = new Array(trs.length).fill(null);
+    if (trs.length < period) return atr;
+    let sum = 0;
+    for (let i = 0; i < period; i++) sum += trs[i];
+    atr[period - 1] = sum / period;
+    for (let i = period; i < trs.length; i++) atr[i] = (atr[i - 1] * (period - 1) + trs[i]) / period;
+    return atr;
+  }
+
+  async function fetchIndikatoren(symbol) {
+    const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=15m&limit=100`);
+    if (!res.ok) throw new Error(res.status === 400 ? 'Unbekanntes Symbol' : `Binance-Fehler ${res.status}`);
+    const data = await res.json();
+    if (!Array.isArray(data) || !data.length) throw new Error('Keine Daten');
+    const closes = data.map((k) => parseFloat(k[4]));
+    const highs = data.map((k) => parseFloat(k[2]));
+    const lows = data.map((k) => parseFloat(k[3]));
+    const n = closes.length;
+    const fast = emaSeries(closes, 9), slow = emaSeries(closes, 21);
+    const rsi = rsiSeries(closes, 14);
+    const atr = atrSeries(highs, lows, closes, 14);
+    const preis = closes[n - 1];
+    const trendDiff = fast[n - 1] - slow[n - 1];
+    const trendDiffProzent = (trendDiff / preis) * 100;
+    return {
+      symbol, preis,
+      trend: trendDiffProzent > 0.05 ? 'bull' : trendDiffProzent < -0.05 ? 'bear' : 'neutral',
+      trendDiffProzent,
+      rsi: rsi[n - 1],
+      volatilitaetProzent: atr[n - 1] !== null ? (atr[n - 1] / preis) * 100 : null,
+    };
+  }
+
+  // ===== WATCHLIST =====
+  const WATCHLIST_STORAGE = 'cmx_signals_watchlist';
+  function getWatchlist() {
+    try { return JSON.parse(localStorage.getItem(WATCHLIST_STORAGE) || '[]'); } catch { return []; }
+  }
+  function saveWatchlist(list) { localStorage.setItem(WATCHLIST_STORAGE, JSON.stringify(list)); }
+
+  const fmtPreis = (n) => n.toLocaleString('de-DE', { minimumFractionDigits: n < 1 ? 6 : 2, maximumFractionDigits: n < 1 ? 6 : 2 });
+  const rsiZone = (rsi) => rsi === null ? { cls: 'rsi-mid', label: 'RSI –' } : rsi >= 70 ? { cls: 'rsi-high', label: `RSI ${rsi.toFixed(0)} · überkauft` } : rsi <= 30 ? { cls: 'rsi-low', label: `RSI ${rsi.toFixed(0)} · überverkauft` } : { cls: 'rsi-mid', label: `RSI ${rsi.toFixed(0)} · neutral` };
+  const trendBadge = (trend) => trend === 'bull' ? { cls: 'bull', label: '↑ EMA bullish' } : trend === 'bear' ? { cls: 'bear', label: '↓ EMA bearish' } : { cls: 'neutral', label: '→ EMA neutral' };
+
+  function cardHtml(symbol) {
+    return `
+      <div class="card loading" id="card-${symbol}" data-symbol="${symbol}">
+        <div class="card-top"><span class="sym">${symbol}</span><button class="remove-btn" data-remove="${symbol}" title="Entfernen">✕</button></div>
+        <div class="price">…</div>
+        <div class="badges"></div>
+        <div class="row"><span>Volatilität (ATR)</span><b class="vola">–</b></div>
+        <button class="analyze-btn" data-analyze="${symbol}" disabled>Klartext-Einschätzung</button>
+        <div class="analysis-slot"></div>
+      </div>`;
+  }
+
+  const dataCache = {};
+
+  async function refreshCard(symbol) {
+    const card = document.getElementById(`card-${symbol}`);
+    if (!card) return;
+    card.classList.add('loading');
+    card.classList.remove('error');
+    try {
+      const d = await fetchIndikatoren(symbol);
+      dataCache[symbol] = d;
+      card.classList.remove('loading');
+      card.querySelector('.price').textContent = fmtPreis(d.preis) + ' USDT';
+      const tb = trendBadge(d.trend);
+      const rz = rsiZone(d.rsi);
+      card.querySelector('.badges').innerHTML = `<span class="badge ${tb.cls}">${tb.label}</span><span class="badge ${rz.cls}">${rz.label}</span>`;
+      card.querySelector('.vola').textContent = d.volatilitaetProzent !== null ? d.volatilitaetProzent.toFixed(2) + '%' : '–';
+      card.querySelector('.analyze-btn').disabled = false;
+    } catch (err) {
+      card.classList.remove('loading');
+      card.classList.add('error');
+      card.querySelector('.badges').innerHTML = `<span class="card-error-msg">${err.message || 'Fehler beim Laden'}</span>`;
+    }
+  }
+
+  function renderCards() {
+    const list = getWatchlist();
+    const box = document.getElementById('cards');
+    document.getElementById('emptyHint').style.display = list.length ? 'none' : 'block';
+    box.innerHTML = list.map(cardHtml).join('');
+    list.forEach(refreshCard);
+  }
+
+  document.getElementById('watchlistForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = document.getElementById('symbolInput');
+    const symbol = input.value.trim().toUpperCase();
+    if (!symbol) return;
+    const list = getWatchlist();
+    if (!list.includes(symbol)) { list.push(symbol); saveWatchlist(list); renderCards(); }
+    input.value = '';
+  });
+
+  document.getElementById('cards').addEventListener('click', async (e) => {
+    const removeSymbol = e.target.getAttribute('data-remove');
+    if (removeSymbol) {
+      saveWatchlist(getWatchlist().filter((s) => s !== removeSymbol));
+      renderCards();
+      return;
+    }
+    const analyzeSymbol = e.target.getAttribute('data-analyze');
+    if (analyzeSymbol) {
+      const d = dataCache[analyzeSymbol];
+      if (!d) return;
+      const btn = e.target;
+      const card = document.getElementById(`card-${analyzeSymbol}`);
+      const slot = card.querySelector('.analysis-slot');
+      btn.disabled = true;
+      btn.textContent = 'Analysiert...';
+      slot.innerHTML = '';
+      try {
+        const prompt = `Du bist ein nüchterner Marktanalyst für Krypto-Spot-Trading. ECHTE aktuelle Werte für ${d.symbol} (15-Minuten-Kerzen, gerade eben von Binance abgerufen):\n- Preis: ${fmtPreis(d.preis)} USDT\n- EMA(9)/EMA(21)-Trend: ${d.trend === 'bull' ? 'EMA9 über EMA21 (bullish)' : d.trend === 'bear' ? 'EMA9 unter EMA21 (bearish)' : 'nahe beieinander (neutral/unentschieden)'}\n- RSI(14): ${d.rsi !== null ? d.rsi.toFixed(1) : 'n/a'}\n- Volatilität (ATR14 als % vom Preis): ${d.volatilitaetProzent !== null ? d.volatilitaetProzent.toFixed(2) + '%' : 'n/a'}\n\nGib eine kurze, nüchterne Einschätzung (3-4 Sätze, Deutsch, Du-Form) für jemanden, der manuell (nicht automatisiert) traden will: was sagen diese drei Werte zusammen aus, welches Risiko ist gerade erhöht (z.B. überkauft + hohe Volatilität = Vorsicht), worauf würde ein erfahrener Trader jetzt achten. Erfinde KEINE zusätzlichen Zahlen, nutze nur die drei oben genannten Werte. Keine konkrete Kauf-/Verkaufsempfehlung, das ist keine Anlageberatung - nur eine Einordnung der Lage.`;
+        const data = await callClaude({ model: 'claude-sonnet-5', max_tokens: 350, messages: [{ role: 'user', content: prompt }] });
+        const text = (data.content || []).map((b) => b.text || '').join('').trim() || 'Keine Einschätzung erhalten.';
+        slot.innerHTML = `<div class="analysis">${text}</div>`;
+      } catch (err) {
+        slot.innerHTML = `<div class="analysis card-error-msg">${err.message === 'invalid_key' ? 'API-Key ungültig — über das ⚙ Symbol prüfen.' : 'Fehler bei der Analyse, bitte nochmal versuchen.'}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Klartext-Einschätzung';
+      }
+    }
+  });
+
+  if (!getWatchlist().length) saveWatchlist(['BTCUSDT', 'ETHUSDT']);
+  renderCards();
+  setInterval(() => getWatchlist().forEach(refreshCard), 60000);
+</script>
+</body>
+</html>
