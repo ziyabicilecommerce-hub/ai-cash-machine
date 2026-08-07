@@ -6,73 +6,260 @@
 // abfragen, obwohl der Workflow selbst korrekt lief. Cloudflare Workers
 // laufen am globalen Edge-Netzwerk und sind davon i.d.R. nicht betroffen.
 //
-// Gleiche Sicherheitsmechanismen wie der GitHub-Actions-Bot, unverändert:
-// Paper-Modus per Default, Spot-only (kein Hebel), Stop-Loss pro Trade,
-// Tagesverlust-Handelssperre, dauerhafter Gesamtverlust-Kill-Switch,
-// Mindest-Ordergröße-Check vor jedem Kauf.
+// Gleiche Grund-Sicherheitsmechanismen wie vorher, unverändert: Paper-Modus
+// per Default, Spot-only (kein Hebel), Stop-Loss pro Trade, Tagesverlust-
+// Handelssperre, dauerhafter Gesamtverlust-Kill-Switch, Mindest-Ordergröße-
+// Check vor jedem Kauf, mehrere Symbole mit unabhängigem Kapital-Anteil.
 //
-// NEU gegenüber der GitHub-Actions-Version: mehrere Symbole gleichzeitig.
-// Jedes Symbol bekommt sein EIGENES, unabhängiges Kapital (TRADING_KAPITAL_USDT
-// wird durch die Anzahl Symbole geteilt) und seinen eigenen State/Kill-Switch -
-// dein Gesamtrisiko bleibt exakt so hoch wie konfiguriert, egal wie viele
-// Coins du hinzufügst.
+// NEU in diesem Ausbau:
+// 1. RSI-Überkauft-Filter + ATR-Mindest-Volatilitätsfilter gegen die
+//    klassische Schwäche eines reinen EMA-Crossovers: viele kleine
+//    Fehlsignale (Whipsaws) in ruhigen/seitwärts laufenden Märkten.
+// 2. Optionaler Trailing-Stop-Loss (Default AUS): sobald eine Position im
+//    Plus liegt, zieht der Stop-Loss mit dem höchsten seit Einstieg
+//    gesehenen Preis mit, statt starr am Einstiegspreis zu kleben - sichert
+//    Gewinne statt sie bei einer Umkehr komplett wieder herzugeben.
+// 3. Optionale volatilitätsbasierte Positionsgröße (Default AUS): bei hoher
+//    Volatilität wird automatisch WENIGER eingesetzt als beim konfigurierten
+//    Maximum - kann das Risiko nur SENKEN, nie über TRADING_MAX_POSITION_PROZENT
+//    hinaus erhöhen.
+// 4. Max-gleichzeitige-Positionen-Grenze (Default = Anzahl Symbole, also
+//    unverändertes Verhalten): begrenzt, wie viele Symbole gleichzeitig eine
+//    offene Position haben dürfen - reduziert das Klumpenrisiko, dass bei
+//    einem marktweiten Crash alle Coins gleichzeitig einbrechen.
+// 5. Exchange-Abstraktion mit Binance- UND Kraken-Adapter (TRADING_EXCHANGE).
+//    Der Kraken-Adapter wurde in dieser Umgebung NICHT gegen ein echtes
+//    Kraken-Konto getestet (kein Zugang hier) - vor Live-Einsatz zwingend
+//    zuerst im Paper-Modus laufen lassen und die WhatsApp-Meldungen der
+//    ersten paar Läufe genau prüfen.
+// 6. GET /status - rein lesender Endpoint (eigenes Secret STATUS_READ_KEY)
+//    für das Live-Dashboard, kann NIE einen Trade auslösen.
+//
+// Alle neuen Risiko-Features sind standardmäßig AUS bzw. verhaltensneutral,
+// damit ein bereits laufender Bot durch dieses Update nicht plötzlich anders
+// handelt, ohne dass das bewusst konfiguriert wurde.
 
-const BASE_URL = 'https://api.binance.com';
-const INTERVAL = '15m';
 const KLINES_LIMIT = 100;
+
+// ================= KRYPTO / SIGNIERUNG (Web Crypto API) =================
 
 function hexFromBuffer(buf) {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 async function hmacSha256Hex(secret, message) {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
-  );
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message));
   return hexFromBuffer(sig);
 }
 
-async function signedRequest(env, path, params = {}, method = 'GET') {
-  const fullParams = { ...params, timestamp: Date.now(), recvWindow: '10000' };
-  const query = new URLSearchParams(fullParams).toString();
-  const signature = await hmacSha256Hex(env.BINANCE_API_SECRET, query);
-  const res = await fetch(`${BASE_URL}${path}?${query}&signature=${signature}`, {
-    method,
-    headers: { 'X-MBX-APIKEY': env.BINANCE_API_KEY },
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(`Binance-Fehler (${res.status}): ${data.msg || JSON.stringify(data)}`);
-  return data;
+function base64Decode(b64) {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
 }
 
-async function getKlines(symbol) {
-  const res = await fetch(`${BASE_URL}/api/v3/klines?symbol=${symbol}&interval=${INTERVAL}&limit=${KLINES_LIMIT}`);
-  if (!res.ok) throw new Error(`Binance Klines-Fehler: ${res.status}`);
-  const data = await res.json();
-  return data.map((k) => parseFloat(k[4]));
+function base64Encode(buf) {
+  const bytes = new Uint8Array(buf);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
 }
 
-async function getMinNotional(symbol) {
-  const res = await fetch(`${BASE_URL}/api/v3/exchangeInfo?symbol=${symbol}`);
-  if (!res.ok) throw new Error(`Binance ExchangeInfo-Fehler: ${res.status}`);
-  const data = await res.json();
-  const filters = (data.symbols && data.symbols[0] && data.symbols[0].filters) || [];
-  const filter = filters.find((f) => f.filterType === 'NOTIONAL' || f.filterType === 'MIN_NOTIONAL');
-  return filter ? parseFloat(filter.minNotional) : null;
+async function krakenSign(path, nonce, postdata, secretBase64) {
+  const encoder = new TextEncoder();
+  const sha256Digest = await crypto.subtle.digest('SHA-256', encoder.encode(nonce + postdata));
+  const pathBytes = encoder.encode(path);
+  const message = new Uint8Array(pathBytes.length + sha256Digest.byteLength);
+  message.set(pathBytes, 0);
+  message.set(new Uint8Array(sha256Digest), pathBytes.length);
+  const key = await crypto.subtle.importKey('raw', base64Decode(secretBase64), { name: 'HMAC', hash: 'SHA-512' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, message);
+  return base64Encode(sig);
 }
 
-async function placeMarketBuy(env, symbol, quoteOrderQtyUsdt) {
-  return signedRequest(env, '/api/v3/order', { symbol, side: 'BUY', type: 'MARKET', quoteOrderQty: quoteOrderQtyUsdt.toFixed(2) }, 'POST');
+// ================= EXCHANGE-ADAPTER =================
+// Jeder Adapter liefert dieselbe Schnittstelle, damit runSymbol() unabhängig
+// von der konkreten Börse bleibt: getKlines, getMinNotionalUsdt, placeMarketBuy
+// (liefert {qty, preis}, wirft bei jeder Unklarheit über den Order-Status
+// einen Fehler statt zu raten), placeMarketSell (liefert {erloes}).
+
+const binanceAdapter = {
+  name: 'binance',
+  baseUrl: 'https://api.binance.com',
+
+  async signedRequest(env, path, params = {}, method = 'GET') {
+    const fullParams = { ...params, timestamp: Date.now(), recvWindow: '10000' };
+    const query = new URLSearchParams(fullParams).toString();
+    const signature = await hmacSha256Hex(env.BINANCE_API_SECRET, query);
+    const res = await fetch(`${this.baseUrl}${path}?${query}&signature=${signature}`, {
+      method,
+      headers: { 'X-MBX-APIKEY': env.BINANCE_API_KEY },
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(`Binance-Fehler (${res.status}): ${data.msg || JSON.stringify(data)}`);
+    return data;
+  },
+
+  async getKlines(symbol) {
+    const res = await fetch(`${this.baseUrl}/api/v3/klines?symbol=${symbol}&interval=15m&limit=${KLINES_LIMIT}`);
+    if (!res.ok) throw new Error(`Binance Klines-Fehler: ${res.status}`);
+    const data = await res.json();
+    return {
+      closes: data.map((k) => parseFloat(k[4])),
+      highs: data.map((k) => parseFloat(k[2])),
+      lows: data.map((k) => parseFloat(k[3])),
+    };
+  },
+
+  async getMinNotionalUsdt(symbol) {
+    const res = await fetch(`${this.baseUrl}/api/v3/exchangeInfo?symbol=${symbol}`);
+    if (!res.ok) throw new Error(`Binance ExchangeInfo-Fehler: ${res.status}`);
+    const data = await res.json();
+    const filters = (data.symbols && data.symbols[0] && data.symbols[0].filters) || [];
+    const filter = filters.find((f) => f.filterType === 'NOTIONAL' || f.filterType === 'MIN_NOTIONAL');
+    return filter ? parseFloat(filter.minNotional) : null;
+  },
+
+  async placeMarketBuy(env, symbol, quoteUsdt) {
+    const order = await this.signedRequest(env, '/api/v3/order', { symbol, side: 'BUY', type: 'MARKET', quoteOrderQty: quoteUsdt.toFixed(2) }, 'POST');
+    const qty = parseFloat(order.executedQty);
+    // Binance kann eine Order mit HTTP 200 zurückgeben, ohne dass sie
+    // (vollständig) ausgeführt wurde (status "EXPIRED", executedQty "0").
+    if (!(qty > 0) || order.status !== 'FILLED') {
+      throw new Error(`Binance-Kauf für ${symbol} nicht vollständig ausgeführt (status=${order.status}, executedQty=${order.executedQty}) - kein Einstieg gebucht.`);
+    }
+    return { qty, preis: parseFloat(order.cummulativeQuoteQty) / qty };
+  },
+
+  async placeMarketSell(env, symbol, qty) {
+    const order = await this.signedRequest(env, '/api/v3/order', { symbol, side: 'SELL', type: 'MARKET', quantity: String(qty) }, 'POST');
+    if (!(parseFloat(order.executedQty) > 0) || order.status !== 'FILLED') {
+      throw new Error(`Binance-Verkauf für ${symbol} nicht vollständig ausgeführt (status=${order.status}, executedQty=${order.executedQty}) - Position bleibt im State offen, bitte Konto manuell prüfen.`);
+    }
+    return { erloes: parseFloat(order.cummulativeQuoteQty) };
+  },
+};
+
+const krakenAdapter = {
+  name: 'kraken',
+  baseUrl: 'https://api.kraken.com',
+
+  async privateRequest(env, path, params = {}) {
+    const nonce = String(Date.now() * 1000);
+    const postdata = new URLSearchParams({ nonce, ...params }).toString();
+    const signature = await krakenSign(path, nonce, postdata, env.KRAKEN_API_SECRET);
+    const res = await fetch(`${this.baseUrl}${path}`, {
+      method: 'POST',
+      headers: { 'API-Key': env.KRAKEN_API_KEY, 'API-Sign': signature, 'content-type': 'application/x-www-form-urlencoded' },
+      body: postdata,
+    });
+    const data = await res.json();
+    if (data.error && data.error.length) throw new Error(`Kraken-Fehler: ${data.error.join(', ')}`);
+    return data.result;
+  },
+
+  async getKlines(symbol) {
+    const res = await fetch(`${this.baseUrl}/0/public/OHLC?pair=${symbol}&interval=15`);
+    if (!res.ok) throw new Error(`Kraken OHLC-Fehler: ${res.status}`);
+    const data = await res.json();
+    if (data.error && data.error.length) throw new Error(`Kraken-Fehler: ${data.error.join(', ')}`);
+    const resultKey = Object.keys(data.result || {}).find((k) => k !== 'last');
+    const rows = (resultKey && data.result[resultKey]) || [];
+    return {
+      closes: rows.map((r) => parseFloat(r[4])),
+      highs: rows.map((r) => parseFloat(r[2])),
+      lows: rows.map((r) => parseFloat(r[3])),
+    };
+  },
+
+  async getMinNotionalUsdt(symbol, referencePreis) {
+    const res = await fetch(`${this.baseUrl}/0/public/AssetPairs?pair=${symbol}`);
+    if (!res.ok) throw new Error(`Kraken AssetPairs-Fehler: ${res.status}`);
+    const data = await res.json();
+    if (data.error && data.error.length) throw new Error(`Kraken-Fehler: ${data.error.join(', ')}`);
+    const key = Object.keys(data.result || {})[0];
+    const ordermin = key && data.result[key] ? parseFloat(data.result[key].ordermin) : null;
+    return ordermin && referencePreis ? ordermin * referencePreis : null;
+  },
+
+  async placeMarketBuy(env, symbol, quoteUsdt, referencePreis) {
+    // Kraken kennt anders als Binance kein "kaufe für X USDT" - nur Menge in
+    // der Basiswährung. Menge wird aus dem zuletzt bekannten Preis geschätzt,
+    // der TATSÄCHLICHE Ausführungspreis wird danach über QueryOrders verifiziert.
+    const volumeApprox = quoteUsdt / referencePreis;
+    const result = await this.privateRequest(env, '/0/private/AddOrder', { pair: symbol, type: 'buy', ordertype: 'market', volume: volumeApprox.toFixed(8) });
+    const txid = result && result.txid && result.txid[0];
+    if (!txid) throw new Error(`Kraken-Kauf für ${symbol}: keine Order-ID zurückbekommen, Status unklar - kein Einstieg gebucht.`);
+    const info = await this.privateRequest(env, '/0/private/QueryOrders', { txid });
+    const order = info && info[txid];
+    if (!order || order.status !== 'closed' || !(parseFloat(order.vol_exec) > 0)) {
+      throw new Error(`Kraken-Kauf für ${symbol} nicht bestätigt ausgeführt (status=${order && order.status}) - kein Einstieg gebucht.`);
+    }
+    return { qty: parseFloat(order.vol_exec), preis: parseFloat(order.price) };
+  },
+
+  async placeMarketSell(env, symbol, qty) {
+    const result = await this.privateRequest(env, '/0/private/AddOrder', { pair: symbol, type: 'sell', ordertype: 'market', volume: String(qty) });
+    const txid = result && result.txid && result.txid[0];
+    if (!txid) throw new Error(`Kraken-Verkauf für ${symbol}: keine Order-ID zurückbekommen, Status unklar - Position bleibt im State offen, bitte Konto manuell prüfen.`);
+    const info = await this.privateRequest(env, '/0/private/QueryOrders', { txid });
+    const order = info && info[txid];
+    if (!order || order.status !== 'closed' || !(parseFloat(order.vol_exec) > 0)) {
+      throw new Error(`Kraken-Verkauf für ${symbol} nicht bestätigt ausgeführt (status=${order && order.status}) - Position bleibt im State offen, bitte Konto manuell prüfen.`);
+    }
+    return { erloes: parseFloat(order.vol_exec) * parseFloat(order.price) };
+  },
+};
+
+const EXCHANGES = { binance: binanceAdapter, kraken: krakenAdapter };
+
+// ================= INDIKATOREN (reine lokale Berechnung, kein API-Call) =================
+
+function emaSeries(closes, period) {
+  const k = 2 / (period + 1);
+  const out = [closes[0]];
+  for (let i = 1; i < closes.length; i++) out.push(closes[i] * k + out[i - 1] * (1 - k));
+  return out;
 }
 
-async function placeMarketSell(env, symbol, quantity) {
-  return signedRequest(env, '/api/v3/order', { symbol, side: 'SELL', type: 'MARKET', quantity: String(quantity) }, 'POST');
+function rsiSeries(closes, period) {
+  const rsi = new Array(closes.length).fill(null);
+  if (closes.length <= period) return rsi;
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const diff = closes[i] - closes[i - 1];
+    if (diff >= 0) gains += diff; else losses -= diff;
+  }
+  let avgGain = gains / period, avgLoss = losses / period;
+  rsi[period] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss);
+  for (let i = period + 1; i < closes.length; i++) {
+    const diff = closes[i] - closes[i - 1];
+    const gain = diff > 0 ? diff : 0;
+    const loss = diff < 0 ? -diff : 0;
+    avgGain = (avgGain * (period - 1) + gain) / period;
+    avgLoss = (avgLoss * (period - 1) + loss) / period;
+    rsi[i] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss);
+  }
+  return rsi;
 }
+
+function atrSeries(highs, lows, closes, period) {
+  const trs = [highs[0] - lows[0]];
+  for (let i = 1; i < closes.length; i++) {
+    trs.push(Math.max(highs[i] - lows[i], Math.abs(highs[i] - closes[i - 1]), Math.abs(lows[i] - closes[i - 1])));
+  }
+  const atr = new Array(trs.length).fill(null);
+  if (trs.length < period) return atr;
+  let sum = 0;
+  for (let i = 0; i < period; i++) sum += trs[i];
+  atr[period - 1] = sum / period;
+  for (let i = period; i < trs.length; i++) atr[i] = (atr[i - 1] * (period - 1) + trs[i]) / period;
+  return atr;
+}
+
+// ================= WHATSAPP =================
 
 async function notifyWhatsapp(env, text) {
   if (!env.WHATSAPP_ACCESS_TOKEN || !env.WHATSAPP_PHONE_NUMBER_ID || !env.WHATSAPP_TO_NUMBER) {
@@ -90,12 +277,7 @@ async function notifyWhatsapp(env, text) {
   }
 }
 
-function emaSeries(closes, period) {
-  const k = 2 / (period + 1);
-  const out = [closes[0]];
-  for (let i = 1; i < closes.length; i++) out.push(closes[i] * k + out[i - 1] * (1 - k));
-  return out;
-}
+// ================= STATE =================
 
 function heute() {
   return new Date().toISOString().slice(0, 10);
@@ -128,7 +310,19 @@ async function saveState(env, symbol, state) {
   await env.TRADING_STATE.put(`state:${symbol}`, JSON.stringify(state));
 }
 
-async function runSymbol(env, symbol, startKapital, cfg) {
+async function zaehleOffenePositionen(env, symbols, startKapitalProSymbol) {
+  let anzahl = 0;
+  for (const symbol of symbols) {
+    const state = await loadState(env, symbol, startKapitalProSymbol);
+    if (state.position) anzahl++;
+  }
+  return anzahl;
+}
+
+// ================= HANDELSLOGIK =================
+
+async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf) {
+  const exchange = EXCHANGES[cfg.exchange];
   let state = await loadState(env, symbol, startKapital);
 
   if (state.letzterTag !== heute()) {
@@ -145,27 +339,41 @@ async function runSymbol(env, symbol, startKapital, cfg) {
     return;
   }
 
-  const closes = await getKlines(symbol);
+  const { closes, highs, lows } = await exchange.getKlines(symbol);
   if (closes.length < cfg.emaLangsam + 2) return;
 
   const fastSeries = emaSeries(closes, cfg.emaSchnell);
   const slowSeries = emaSeries(closes, cfg.emaLangsam);
+  const rsi = rsiSeries(closes, cfg.rsiPeriode);
+  const atr = atrSeries(highs, lows, closes, 14);
   const n = closes.length;
   const diffJetzt = fastSeries[n - 1] - slowSeries[n - 1];
   const diffVorher = fastSeries[n - 2] - slowSeries[n - 2];
   const crossUp = diffVorher <= 0 && diffJetzt > 0;
   const crossDown = diffVorher >= 0 && diffJetzt < 0;
   const preis = closes[n - 1];
+  const rsiJetzt = rsi[n - 1];
+  const atrJetzt = atr[n - 1];
+  const volatilitaetProzent = atrJetzt !== null ? (atrJetzt / preis) * 100 : null;
 
   const handelsSperreHeute = state.heutigerVerlustUsdt <= -(state.kapital * cfg.maxTagesverlustProzent) / 100;
 
   if (!state.position) {
-    if (!handelsSperreHeute && crossUp) {
-      const investBetrag = (state.kapital * cfg.maxPositionProzent) / 100;
-      const minNotional = await getMinNotional(symbol);
+    const rsiOk = cfg.rsiUeberkauft <= 0 || rsiJetzt === null || rsiJetzt < cfg.rsiUeberkauft;
+    const volaOk = cfg.minVolatilitaetProzent <= 0 || volatilitaetProzent === null || volatilitaetProzent >= cfg.minVolatilitaetProzent;
+    const positionenPlatzFrei = offenePositionenVorLauf < cfg.maxGleichzeitigePositionen;
 
+    if (!handelsSperreHeute && crossUp && rsiOk && volaOk && positionenPlatzFrei) {
+      let investBetrag = (state.kapital * cfg.maxPositionProzent) / 100;
+
+      if (cfg.volaSizing && volatilitaetProzent !== null && volatilitaetProzent > 0) {
+        const skalierung = Math.max(cfg.volaSizingMinFaktor, Math.min(1, cfg.volaSizingReferenzProzent / volatilitaetProzent));
+        investBetrag *= skalierung;
+      }
+
+      const minNotional = await exchange.getMinNotionalUsdt(symbol, preis);
       if (minNotional !== null && investBetrag < minNotional) {
-        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - ${investBetrag.toFixed(2)} USDT liegt unter Binances Mindest-Ordergröße (${minNotional.toFixed(2)} USDT).`);
+        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - ${investBetrag.toFixed(2)} USDT liegt unter der Mindest-Ordergröße (${minNotional.toFixed(2)} USDT).`);
         await saveState(env, symbol, state);
         return;
       }
@@ -175,45 +383,37 @@ async function runSymbol(env, symbol, startKapital, cfg) {
         qty = investBetrag / preis;
         tatsaechlicherPreis = preis;
       } else {
-        const order = await placeMarketBuy(env, symbol, investBetrag);
-        qty = parseFloat(order.executedQty);
-        // Binance kann eine Order mit HTTP 200 zurückgeben, ohne dass sie
-        // (vollständig) ausgeführt wurde (status "EXPIRED", executedQty "0").
-        // Ungeprüft würde qty=0 zu entryPreis=NaN führen und der Stop-Loss
-        // (preis <= NaN ist immer false) wäre für immer wirkungslos, ohne
-        // dass es jemand merkt - lieber laut abbrechen als das.
-        if (!(qty > 0) || order.status !== 'FILLED') {
-          throw new Error(`Kauf-Order für ${symbol} wurde nicht vollständig ausgeführt (status=${order.status}, executedQty=${order.executedQty}) - kein Einstieg gebucht.`);
-        }
-        tatsaechlicherPreis = parseFloat(order.cummulativeQuoteQty) / qty;
+        const order = await exchange.placeMarketBuy(env, symbol, investBetrag, preis);
+        qty = order.qty;
+        tatsaechlicherPreis = order.preis;
       }
-      state.position = { qty, entryPreis: tatsaechlicherPreis, einstiegAm: new Date().toISOString() };
-      await notifyWhatsapp(env, `📈 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Einstieg ${symbol} @ ${tatsaechlicherPreis.toFixed(2)} USDT (${investBetrag.toFixed(2)} USDT eingesetzt).`);
+      state.position = { qty, entryPreis: tatsaechlicherPreis, hoechsterPreisSeitEinstieg: tatsaechlicherPreis, einstiegAm: new Date().toISOString() };
+      await notifyWhatsapp(env, `📈 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Einstieg ${symbol} @ ${tatsaechlicherPreis.toFixed(2)} (${investBetrag.toFixed(2)} USDT eingesetzt${cfg.volaSizing ? `, Vola-Sizing aktiv` : ''}).`);
     }
   } else {
-    const stopLossPreis = state.position.entryPreis * (1 - cfg.stopLossProzent / 100);
+    state.position.hoechsterPreisSeitEinstieg = Math.max(state.position.hoechsterPreisSeitEinstieg || state.position.entryPreis, preis);
+    const fixedStopLossPreis = state.position.entryPreis * (1 - cfg.stopLossProzent / 100);
+    const gewinnProzentSeitEinstieg = ((state.position.hoechsterPreisSeitEinstieg - state.position.entryPreis) / state.position.entryPreis) * 100;
+    const trailingAktiv = cfg.trailingStopAbProzent > 0 && gewinnProzentSeitEinstieg >= cfg.trailingStopAbProzent;
+    const stopLossPreis = trailingAktiv
+      ? Math.max(fixedStopLossPreis, state.position.hoechsterPreisSeitEinstieg * (1 - cfg.stopLossProzent / 100))
+      : fixedStopLossPreis;
+
     if (crossDown || preis <= stopLossPreis) {
       let erloes;
       if (cfg.paperModus) {
         erloes = state.position.qty * preis;
       } else {
-        const order = await placeMarketSell(env, symbol, state.position.qty);
-        // Gleiche Absicherung wie beim Kauf: ohne Fill-Check könnte eine nicht
-        // ausgeführte Verkauf-Order fälschlich als geschlossene Position mit
-        // erloes=0 verbucht werden, während die echte Position bei Binance
-        // weiterläuft.
-        if (!(parseFloat(order.executedQty) > 0) || order.status !== 'FILLED') {
-          throw new Error(`Verkauf-Order für ${symbol} wurde nicht vollständig ausgeführt (status=${order.status}, executedQty=${order.executedQty}) - Position bleibt im State offen, bitte Binance-Konto manuell prüfen.`);
-        }
-        erloes = parseFloat(order.cummulativeQuoteQty);
+        const order = await exchange.placeMarketSell(env, symbol, state.position.qty);
+        erloes = order.erloes;
       }
       const einsatz = state.position.qty * state.position.entryPreis;
       const gewinnVerlust = erloes - einsatz;
       state.kapital += gewinnVerlust;
       state.heutigerVerlustUsdt += Math.min(0, gewinnVerlust);
 
-      const grund = preis <= stopLossPreis ? 'Stop-Loss' : 'EMA-Crossover';
-      await notifyWhatsapp(env, `📉 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Ausstieg ${symbol} @ ${preis.toFixed(2)} USDT (${grund}). ${gewinnVerlust >= 0 ? 'Gewinn' : 'Verlust'}: ${gewinnVerlust.toFixed(2)} USDT. Kapital jetzt: ${state.kapital.toFixed(2)} USDT.`);
+      const grund = preis <= stopLossPreis ? (trailingAktiv ? 'Trailing-Stop' : 'Stop-Loss') : 'EMA-Crossover';
+      await notifyWhatsapp(env, `📉 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Ausstieg ${symbol} @ ${preis.toFixed(2)} (${grund}). ${gewinnVerlust >= 0 ? 'Gewinn' : 'Verlust'}: ${gewinnVerlust.toFixed(2)} USDT. Kapital jetzt: ${state.kapital.toFixed(2)} USDT.`);
       state.position = null;
 
       const gesamtVerlustProzent = ((state.kapital - state.startKapital) / state.startKapital) * 100;
@@ -227,7 +427,10 @@ async function runSymbol(env, symbol, startKapital, cfg) {
 function readConfig(env) {
   const symbols = (env.TRADING_SYMBOLS || 'BTCUSDT').split(',').map((s) => s.trim()).filter(Boolean);
   const gesamtKapital = parseFloat(env.TRADING_KAPITAL_USDT || '100');
+  const exchange = (env.TRADING_EXCHANGE || 'binance').trim().toLowerCase();
+  if (!EXCHANGES[exchange]) throw new Error(`Unbekannte TRADING_EXCHANGE "${exchange}" - unterstützt: ${Object.keys(EXCHANGES).join(', ')}`);
   return {
+    exchange,
     symbols,
     startKapitalProSymbol: gesamtKapital / symbols.length,
     paperModus: (env.TRADING_PAPER_MODE || 'ja') !== 'nein',
@@ -237,19 +440,57 @@ function readConfig(env) {
     stopLossProzent: parseFloat(env.TRADING_STOP_LOSS_PROZENT || '3'),
     emaSchnell: parseInt(env.TRADING_EMA_SCHNELL || '9', 10),
     emaLangsam: parseInt(env.TRADING_EMA_LANGSAM || '21', 10),
+    rsiPeriode: parseInt(env.TRADING_RSI_PERIODE || '14', 10),
+    // 0 = Filter deaktiviert (Default), damit ein bestehendes Setup nicht
+    // durch dieses Update ungefragt anders handelt.
+    rsiUeberkauft: parseFloat(env.TRADING_RSI_UEBERKAUFT || '0'),
+    minVolatilitaetProzent: parseFloat(env.TRADING_MIN_VOLATILITAET_PROZENT || '0'),
+    trailingStopAbProzent: parseFloat(env.TRADING_TRAILING_STOP_AB_PROZENT || '0'),
+    volaSizing: (env.TRADING_VOLA_SIZING || 'nein') === 'ja',
+    volaSizingReferenzProzent: parseFloat(env.TRADING_VOLA_SIZING_REFERENZ_PROZENT || '2'),
+    volaSizingMinFaktor: parseFloat(env.TRADING_VOLA_SIZING_MIN_FAKTOR || '0.25'),
+    maxGleichzeitigePositionen: env.TRADING_MAX_GLEICHZEITIGE_POSITIONEN
+      ? parseInt(env.TRADING_MAX_GLEICHZEITIGE_POSITIONEN, 10)
+      : symbols.length,
   };
 }
 
 async function runAll(env) {
   const cfg = readConfig(env);
+  let offenePositionen = await zaehleOffenePositionen(env, cfg.symbols, cfg.startKapitalProSymbol);
   for (const symbol of cfg.symbols) {
     try {
-      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfg);
+      const hatteVorherPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
+      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfg, offenePositionen);
+      const hatJetztPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
+      if (!hatteVorherPosition && hatJetztPosition) offenePositionen++;
+      if (hatteVorherPosition && !hatJetztPosition) offenePositionen--;
     } catch (err) {
       console.error(`[trading-bot] Fehler bei ${symbol}:`, err);
-      await notifyWhatsapp(env, `🛑 Trading-Bot (${symbol}): Lauf mit Fehler abgebrochen - ${err.message || err}. Eine Order wurde dadurch möglicherweise NICHT ausgeführt, bitte Binance-Konto manuell prüfen.`);
+      await notifyWhatsapp(env, `🛑 Trading-Bot (${symbol}): Lauf mit Fehler abgebrochen - ${err.message || err}. Eine Order wurde dadurch möglicherweise NICHT ausgeführt, bitte Konto manuell prüfen.`);
     }
   }
+}
+
+// ================= READ-ONLY STATUS (fürs Dashboard, kann nie traden) =================
+
+async function buildStatus(env) {
+  const cfg = readConfig(env);
+  const symbole = [];
+  for (const symbol of cfg.symbols) {
+    const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
+    symbole.push({
+      symbol,
+      exchange: cfg.exchange,
+      paperModus: cfg.paperModus,
+      position: state.position,
+      kapital: state.kapital,
+      startKapital: state.startKapital,
+      heutigerVerlustUsdt: state.heutigerVerlustUsdt,
+      killSwitchAktiv: state.killSwitchAktiv,
+    });
+  }
+  return { updatedAt: new Date().toISOString(), exchange: cfg.exchange, paperModus: cfg.paperModus, symbole };
 }
 
 export default {
@@ -258,6 +499,18 @@ export default {
   },
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (url.pathname === '/status' && request.method === 'GET') {
+      if (!env.STATUS_READ_KEY || url.searchParams.get('key') !== env.STATUS_READ_KEY) {
+        return new Response('Forbidden', { status: 403 });
+      }
+      const status = await buildStatus(env);
+      return new Response(JSON.stringify(status), {
+        status: 200,
+        headers: { 'content-type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+
     // Manuelles Auslösen nur mit korrektem Trigger-Secret - sonst könnte
     // jeder, der die öffentliche Worker-URL kennt, echte Trades auslösen.
     if (url.searchParams.get('key') !== env.TRIGGER_SECRET || !env.TRIGGER_SECRET) {

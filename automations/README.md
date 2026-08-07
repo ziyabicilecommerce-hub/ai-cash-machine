@@ -307,8 +307,10 @@ einem großen Verlust.
 (HTTP 451) - dieses Skript kann von hier aus nie erfolgreich handeln, daher
 hat #49 keinen Zeitplan mehr (nur `workflow_dispatch` zum manuellen Testen/
 als Referenz). Der echte Betrieb läuft über `trading-bot-worker/` (Cloudflare
-Worker, gleiche Sicherheitsgrenzen, zusätzlich Multi-Coin-fähig) - siehe
-dessen README für Setup.
+Worker, gleiche Sicherheitsgrenzen, zusätzlich Multi-Coin-fähig, wahlweise
+Binance oder Kraken, optionale RSI-/Volatilitäts-Filter gegen EMA-Whipsaws,
+Trailing-Stop, volatilitätsbasierte Positionsgröße, sowie ein rein lesendes
+Live-Dashboard unter `trading-dashboard/`) - siehe dessen README für Setup.
 
 **🚀 Pump-Scanner** (reiner Alarm, kein Handel - meldet per WhatsApp, wenn
 eine Kryptowährung gerade stark steigt): `PUMP_QUOTE_WAEHRUNG` (Default

@@ -33,8 +33,72 @@ Alle bisherigen Sicherheitsmechanismen bleiben unverändert, pro Symbol:
   Symbol eingesetzte Kapital.
 - Stop-Loss pro Trade, Tagesverlust-Handelssperre, dauerhafter
   Gesamtverlust-Kill-Switch, Mindest-Ordergröße-Check vor jedem Kauf.
-- Bei einer fehlgeschlagenen Order (z.B. Binance-Fehler) kommt sofort ein
+- Bei einer fehlgeschlagenen Order (z.B. Börsen-Fehler) kommt sofort ein
   WhatsApp-Alarm, statt dass der Fehler unbemerkt bleibt.
+
+## Bessere Strategie + mehr Risiko-Kontrollen (alle standardmäßig AUS)
+
+Der reine EMA(9/21)-Crossover neigt in seitwärts laufenden Märkten zu vielen
+kleinen Fehlsignalen ("Whipsaws"). Diese Filter sind optional zuschaltbar,
+per Default deaktiviert (0 bzw. "nein"), damit ein bereits laufendes Setup
+durch dieses Update nicht ungefragt anders handelt:
+
+- **`TRADING_RSI_UEBERKAUFT`** (Default `0` = aus): Kauft nicht, wenn der
+  RSI(`TRADING_RSI_PERIODE`, Default 14) beim Crossover über diesem Wert
+  liegt — verhindert den Einstieg in einen bereits überhitzten Rally kurz vor
+  einer Korrektur. Sinnvoller Wert z.B. `70`.
+- **`TRADING_MIN_VOLATILITAET_PROZENT`** (Default `0` = aus): Kauft nicht,
+  wenn die aktuelle Volatilität (ATR(14) als % vom Preis) unter diesem Wert
+  liegt — verhindert Trades in toten, seitwärts laufenden Märkten, wo ein
+  EMA-Crossover kaum Aussagekraft hat. Sinnvoller Wert z.B. `0.5`.
+- **`TRADING_TRAILING_STOP_AB_PROZENT`** (Default `0` = aus): Sobald eine
+  Position seit Einstieg um mindestens diesen Wert im Plus war, zieht der
+  Stop-Loss mit dem höchsten seither gesehenen Preis mit statt starr am
+  Einstiegspreis zu kleben — sichert einen Teil des Gewinns, statt ihn bei
+  einer Umkehr komplett wieder herzugeben. Sinnvoller Wert z.B. `2`.
+- **`TRADING_VOLA_SIZING`** (Default `nein`): Setzt bei hoher Volatilität
+  automatisch WENIGER Kapital pro Trade ein als das konfigurierte Maximum
+  (`TRADING_VOLA_SIZING_REFERENZ_PROZENT` = "normale" Volatilität,
+  `TRADING_VOLA_SIZING_MIN_FAKTOR` = wie tief die Positionsgröße bei sehr
+  hoher Volatilität maximal sinken darf, Default `0.25` = nie unter 25% der
+  normalen Größe). Kann das Risiko nur SENKEN, niemals über
+  `TRADING_MAX_POSITION_PROZENT` hinaus erhöhen.
+- **`TRADING_MAX_GLEICHZEITIGE_POSITIONEN`** (Default = Anzahl Symbole, also
+  keine zusätzliche Grenze): begrenzt, wie viele Symbole gleichzeitig eine
+  offene Position haben dürfen — reduziert das Klumpenrisiko eines
+  marktweiten Krypto-Crashs, bei dem sonst alle Coins gleichzeitig fallen.
+
+## Zweite Börse: Kraken
+
+Neben Binance (`TRADING_EXCHANGE = "binance"`, Default) unterstützt der
+Worker jetzt auch **Kraken** (`TRADING_EXCHANGE = "kraken"`). Beide teilen
+sich dieselbe Handelslogik/Risiko-Kontrollen — nur die Order-Ausführung
+läuft über einen eigenen Adapter, da Kraken andere Symbol-Namen (z.B.
+`XBTUSDT` statt `BTCUSDT`) und ein anderes Signatur-Verfahren
+(HMAC-SHA512 statt HMAC-SHA256) nutzt.
+
+**Wichtig:** Der Kraken-Adapter konnte in dieser Entwicklungsumgebung nicht
+gegen ein echtes Kraken-Konto getestet werden (kein Zugang hier) — nur die
+Signatur-/Parsing-Logik gegen Krakens öffentlich dokumentiertes API-Format.
+Vor echtem Geldeinsatz zwingend zuerst mit `TRADING_PAPER_MODE = "ja"`
+laufen lassen und die ersten paar WhatsApp-Meldungen genau prüfen. Bei
+jeder Order verifiziert der Adapter den tatsächlichen Ausführungsstatus
+über `QueryOrders`, statt eine Ausführung einfach anzunehmen — schlägt das
+fehl, wird laut ein Fehler geworfen statt stillschweigend eine Position zu
+buchen, die es gar nicht gibt.
+
+## Live-Dashboard (rein lesend)
+
+Der Worker hat jetzt einen `GET /status`-Endpoint (eigenes Secret
+`STATUS_READ_KEY`, unabhängig von `TRIGGER_SECRET`), der pro Symbol
+Position, Kapital, P&L und Kill-Switch-Status als JSON liefert — **kann
+niemals einen Trade auslösen**, reine Leseoperation.
+
+Die zugehörige App `trading-dashboard/` (im Hauptrepo, live unter
+`https://ziyabicilecommerce-hub.github.io/ai-cash-machine/trading-dashboard/`)
+zeigt diese Daten live an: Worker-URL + `STATUS_READ_KEY` einmal übers ⚙
+Symbol eintragen (bleibt nur im eigenen Browser, localStorage), danach
+Auto-Refresh alle 30 Sekunden.
 
 ## Einmaliges Setup
 
@@ -52,15 +116,22 @@ Alle bisherigen Sicherheitsmechanismen bleiben unverändert, pro Symbol:
    ```bash
    wrangler secret put BINANCE_API_KEY
    wrangler secret put BINANCE_API_SECRET
+   # Nur falls TRADING_EXCHANGE = "kraken":
+   # wrangler secret put KRAKEN_API_KEY
+   # wrangler secret put KRAKEN_API_SECRET
    wrangler secret put WHATSAPP_ACCESS_TOKEN
    wrangler secret put WHATSAPP_PHONE_NUMBER_ID
    wrangler secret put WHATSAPP_TO_NUMBER
    wrangler secret put TRIGGER_SECRET
+   wrangler secret put STATUS_READ_KEY
    ```
-   **Beim Binance-API-Key: nur Spot-Trading-Rechte aktivieren, NIEMALS
-   Auszahlungsrechte.** Das gilt genauso wie beim GitHub-Actions-Bot.
-   `TRIGGER_SECRET` ist ein frei erfundener String, der den manuellen
-   Test-Aufruf (`?key=...`) vor Fremdzugriff schützt.
+   **Beim Binance-/Kraken-API-Key: nur Spot-Trading-Rechte aktivieren,
+   NIEMALS Auszahlungsrechte.** `TRIGGER_SECRET` ist ein frei erfundener
+   String, der den manuellen Test-Aufruf (`?key=...`) vor Fremdzugriff
+   schützt. `STATUS_READ_KEY` ist ein ANDERER frei erfundener String für den
+   rein lesenden `/status`-Endpoint (fürs Dashboard) — bewusst getrennt von
+   `TRIGGER_SECRET`, damit dieser Key auch dann keinen Trade auslösen kann,
+   wenn er versehentlich weitergegeben wird.
 5. Deployen:
    ```bash
    wrangler deploy
