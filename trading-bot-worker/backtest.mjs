@@ -11,20 +11,29 @@
 //   node backtest.mjs BTCUSDT 90
 //   (Symbol, Anzahl Tage zurück - Default 90)
 //
+// Beide Strategien direkt gegeneinander vergleichen (empfohlen, bevor man
+// sich für eine entscheidet):
+//   node backtest.mjs BTCUSDT 90 --vergleiche
+//
 // Alle TRADING_*-Umgebungsvariablen aus wrangler.toml funktionieren hier
 // genauso (gleiche Namen), damit man exakt seine eigene Konfiguration testen
 // kann, z.B.:
 //   TRADING_RSI_UEBERKAUFT=70 TRADING_TRAILING_STOP_AB_PROZENT=2 node backtest.mjs BTCUSDT 180
+//   TRADING_STRATEGIE=bollinger-mean-reversion node backtest.mjs BTCUSDT 90
 
 import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from './lib/strategie.mjs';
 
 const BINANCE_BASE = 'https://api.binance.com';
 const KLINES_PRO_REQUEST = 1000;
-const FENSTER_FUER_INDIKATOREN = 60; // genug Vorlauf für EMA(21)/RSI(14)/ATR(14)
+const FENSTER_FUER_INDIKATOREN = 60; // genug Vorlauf für EMA(21)/RSI(14)/ATR(14)/Bollinger(20)
 
-function readConfig() {
+function readConfig(strategieOverride) {
   const env = process.env;
+  const strategie = strategieOverride || env.TRADING_STRATEGIE || 'ema-crossover';
   return {
+    strategie,
+    bollingerPeriode: parseInt(env.TRADING_BOLLINGER_PERIODE || '20', 10),
+    bollingerStdDev: parseFloat(env.TRADING_BOLLINGER_STDDEV || '2'),
     maxPositionProzent: parseFloat(env.TRADING_MAX_POSITION_PROZENT || '25'),
     maxTagesverlustProzent: parseFloat(env.TRADING_MAX_TAGESVERLUST_PROZENT || '5'),
     maxGesamtverlustProzent: parseFloat(env.TRADING_MAX_GESAMTVERLUST_PROZENT || '20'),
@@ -141,27 +150,31 @@ function simuliere(symbol, closes, highs, lows, zeiten, cfg, startKapital) {
   return { kapitalEnde: kapital, trades, equityKurve };
 }
 
-function formatiereBericht(symbol, tageZurueck, startKapital, ergebnis, buyAndHoldProzent) {
+function berechneKennzahlen(startKapital, ergebnis) {
   const { kapitalEnde, trades, equityKurve } = ergebnis;
   const gewinnTrades = trades.filter((t) => t.gewinnVerlustUsdt > 0);
-  const winRate = trades.length ? (gewinnTrades.length / trades.length) * 100 : null;
-  const gesamtReturnProzent = ((kapitalEnde - startKapital) / startKapital) * 100;
-  const maxDrawdown = berechneMaxDrawdownProzent(equityKurve);
-  const avgGewinnProzent = trades.length ? trades.reduce((s, t) => s + t.gewinnProzent, 0) / trades.length : null;
+  return {
+    winRate: trades.length ? (gewinnTrades.length / trades.length) * 100 : null,
+    gesamtReturnProzent: ((kapitalEnde - startKapital) / startKapital) * 100,
+    maxDrawdown: berechneMaxDrawdownProzent(equityKurve),
+    avgGewinnProzent: trades.length ? trades.reduce((s, t) => s + t.gewinnProzent, 0) / trades.length : null,
+    anzahlTrades: trades.length,
+    kapitalEnde,
+  };
+}
 
+function formatiereBericht(symbol, tageZurueck, strategie, startKapital, ergebnis, buyAndHoldProzent) {
+  const k = berechneKennzahlen(startKapital, ergebnis);
   const zeilen = [
-    `\n=== Backtest ${symbol} — letzte ${tageZurueck} Tage (15m-Kerzen) ===`,
+    `\n=== Backtest ${symbol} — Strategie "${strategie}" — letzte ${tageZurueck} Tage (15m-Kerzen) ===`,
     `Startkapital:        ${startKapital.toFixed(2)} USDT`,
-    `Endkapital:           ${kapitalEnde.toFixed(2)} USDT`,
-    `Gesamt-Return:        ${gesamtReturnProzent >= 0 ? '+' : ''}${gesamtReturnProzent.toFixed(2)}%`,
+    `Endkapital:           ${k.kapitalEnde.toFixed(2)} USDT`,
+    `Gesamt-Return:        ${k.gesamtReturnProzent >= 0 ? '+' : ''}${k.gesamtReturnProzent.toFixed(2)}%`,
     `Buy & Hold im Vergleich: ${buyAndHoldProzent >= 0 ? '+' : ''}${buyAndHoldProzent.toFixed(2)}%`,
-    `Max. Drawdown:        -${maxDrawdown.toFixed(2)}%`,
-    `Anzahl Trades:        ${trades.length}`,
-    `Win-Rate:             ${winRate !== null ? winRate.toFixed(1) + '%' : '– (keine Trades)'}`,
-    `Ø Gewinn/Verlust:     ${avgGewinnProzent !== null ? (avgGewinnProzent >= 0 ? '+' : '') + avgGewinnProzent.toFixed(2) + '%' : '–'}`,
-    `\n⚠️  Vergangene Performance ist KEINE Garantie für die Zukunft. Vor jedem`,
-    `    Umstieg auf TRADING_PAPER_MODE="nein" zusätzlich mindestens ein paar`,
-    `    Wochen im Paper-Modus live beobachten.`,
+    `Max. Drawdown:        -${k.maxDrawdown.toFixed(2)}%`,
+    `Anzahl Trades:        ${k.anzahlTrades}`,
+    `Win-Rate:             ${k.winRate !== null ? k.winRate.toFixed(1) + '%' : '– (keine Trades)'}`,
+    `Ø Gewinn/Verlust:     ${k.avgGewinnProzent !== null ? (k.avgGewinnProzent >= 0 ? '+' : '') + k.avgGewinnProzent.toFixed(2) + '%' : '–'}`,
   ];
   return zeilen.join('\n');
 }
@@ -169,8 +182,8 @@ function formatiereBericht(symbol, tageZurueck, startKapital, ergebnis, buyAndHo
 async function main() {
   const symbol = process.argv[2] || 'BTCUSDT';
   const tageZurueck = parseInt(process.argv[3] || '90', 10);
+  const vergleiche = process.argv.includes('--vergleiche');
   const startKapital = parseFloat(process.env.TRADING_KAPITAL_USDT || '100');
-  const cfg = readConfig();
 
   console.log(`Lade ${tageZurueck} Tage 15m-Kerzen für ${symbol} von Binance...`);
   const { closes, highs, lows, zeiten } = await ladeKlines(symbol, tageZurueck);
@@ -178,11 +191,26 @@ async function main() {
     console.error(`Zu wenig Kerzen geladen (${closes.length}) — Symbol oder Zeitraum prüfen.`);
     process.exit(1);
   }
-
-  const ergebnis = simuliere(symbol, closes, highs, lows, zeiten, cfg, startKapital);
   const buyAndHoldProzent = ((closes[closes.length - 1] - closes[FENSTER_FUER_INDIKATOREN]) / closes[FENSTER_FUER_INDIKATOREN]) * 100;
 
-  console.log(formatiereBericht(symbol, tageZurueck, startKapital, ergebnis, buyAndHoldProzent));
+  const strategien = vergleiche ? ['ema-crossover', 'bollinger-mean-reversion'] : [readConfig().strategie];
+  const kennzahlenProStrategie = {};
+  for (const strategie of strategien) {
+    const cfg = readConfig(strategie);
+    const ergebnis = simuliere(symbol, closes, highs, lows, zeiten, cfg, startKapital);
+    console.log(formatiereBericht(symbol, tageZurueck, strategie, startKapital, ergebnis, buyAndHoldProzent));
+    kennzahlenProStrategie[strategie] = berechneKennzahlen(startKapital, ergebnis);
+  }
+
+  if (vergleiche) {
+    const [a, b] = strategien;
+    const gewinner = kennzahlenProStrategie[a].gesamtReturnProzent >= kennzahlenProStrategie[b].gesamtReturnProzent ? a : b;
+    console.log(`\n>>> Für ${symbol} in diesem Zeitraum besser abgeschnitten: "${gewinner}"`);
+  }
+
+  console.log(`\n⚠️  Vergangene Performance ist KEINE Garantie für die Zukunft. Vor jedem`);
+  console.log(`    Umstieg auf TRADING_PAPER_MODE="nein" zusätzlich mindestens ein paar`);
+  console.log(`    Wochen im Paper-Modus live beobachten.`);
 }
 
 main().catch((err) => {
