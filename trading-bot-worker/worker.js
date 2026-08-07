@@ -34,6 +34,10 @@
 //    ersten paar Läufe genau prüfen.
 // 6. GET /status - rein lesender Endpoint (eigenes Secret STATUS_READ_KEY)
 //    für das Live-Dashboard, kann NIE einen Trade auslösen.
+// 7. Tägliche WhatsApp-Zusammenfassung (einmal pro Kalendertag, automatisch
+//    beim ersten Lauf nach Mitternacht UTC): Gesamtkapital, Gesamt-P&L in %,
+//    offene Positionen, Kill-Switch-Status - damit man NICHT mehr aktiv das
+//    Dashboard öffnen muss, um zu wissen, ob alles normal läuft.
 //
 // Alle neuen Risiko-Features sind standardmäßig AUS bzw. verhaltensneutral,
 // damit ein bereits laufender Bot durch dieses Update nicht plötzlich anders
@@ -424,6 +428,35 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
   await saveState(env, symbol, state);
 }
 
+// Einmal pro Kalendertag eine WhatsApp-Zusammenfassung über alle Symbole,
+// statt dass man selbst das Dashboard aufrufen muss, um zu sehen ob alles
+// normal läuft. Läuft "nebenbei" im ohnehin alle 15 Minuten laufenden Cron -
+// verschickt aber wirklich nur einmal pro Tag (KV-Marke digest:letzterTag).
+async function pruefeUndSendeTagesZusammenfassung(env, cfg) {
+  const heuteStr = heute();
+  const letzte = await env.TRADING_STATE.get('digest:letzterTag');
+  if (letzte === heuteStr) return;
+
+  let gesamtKapitalJetzt = 0, gesamtStartKapital = 0, offenePositionen = 0;
+  const killSwitchSymbole = [];
+  for (const symbol of cfg.symbols) {
+    const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
+    gesamtKapitalJetzt += state.kapital;
+    gesamtStartKapital += state.startKapital;
+    if (state.position) offenePositionen++;
+    if (state.killSwitchAktiv) killSwitchSymbole.push(symbol);
+  }
+  const gesamtProzent = gesamtStartKapital > 0 ? ((gesamtKapitalJetzt - gesamtStartKapital) / gesamtStartKapital) * 100 : 0;
+
+  const text = `📊 Trading-Bot Tages-Update (${cfg.paperModus ? 'PAPER' : 'LIVE'}, ${cfg.exchange}):\n` +
+    `Kapital gesamt: ${gesamtKapitalJetzt.toFixed(2)} USDT (Start: ${gesamtStartKapital.toFixed(2)} USDT, ${gesamtProzent >= 0 ? '+' : ''}${gesamtProzent.toFixed(2)}%)\n` +
+    `Offene Positionen: ${offenePositionen}/${cfg.symbols.length}` +
+    (killSwitchSymbole.length ? `\n🛑 Kill-Switch aktiv bei: ${killSwitchSymbole.join(', ')}` : '');
+
+  await notifyWhatsapp(env, text);
+  await env.TRADING_STATE.put('digest:letzterTag', heuteStr);
+}
+
 function readConfig(env) {
   const symbols = (env.TRADING_SYMBOLS || 'BTCUSDT').split(',').map((s) => s.trim()).filter(Boolean);
   const gesamtKapital = parseFloat(env.TRADING_KAPITAL_USDT || '100');
@@ -469,6 +502,11 @@ async function runAll(env) {
       console.error(`[trading-bot] Fehler bei ${symbol}:`, err);
       await notifyWhatsapp(env, `🛑 Trading-Bot (${symbol}): Lauf mit Fehler abgebrochen - ${err.message || err}. Eine Order wurde dadurch möglicherweise NICHT ausgeführt, bitte Konto manuell prüfen.`);
     }
+  }
+  try {
+    await pruefeUndSendeTagesZusammenfassung(env, cfg);
+  } catch (err) {
+    console.error('[trading-bot] Fehler bei Tages-Zusammenfassung:', err);
   }
 }
 

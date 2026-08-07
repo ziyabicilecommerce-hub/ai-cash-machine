@@ -87,6 +87,17 @@ jeder Order verifiziert der Adapter den tatsächlichen Ausführungsstatus
 fehl, wird laut ein Fehler geworfen statt stillschweigend eine Position zu
 buchen, die es gar nicht gibt.
 
+## Tägliche WhatsApp-Zusammenfassung
+
+Zusätzlich zu den Alarmen bei einzelnen Ereignissen (Einstieg, Ausstieg,
+Kill-Switch, Fehler) verschickt der Worker jetzt **einmal pro Kalendertag**
+automatisch eine Zusammenfassung über alle Symbole zusammen: Gesamtkapital,
+Gesamt-P&L in %, wie viele Positionen gerade offen sind, und ob irgendwo der
+Kill-Switch aktiv ist. Damit reicht diese eine WhatsApp-Nachricht am Tag, um
+zu wissen ob alles normal läuft — das Dashboard muss man nur noch öffnen,
+wenn man mehr Details sehen will. Braucht kein zusätzliches Setup, läuft im
+selben 15-Minuten-Cron mit (verschickt aber wirklich nur einmal pro Tag).
+
 ## Live-Dashboard (rein lesend)
 
 Der Worker hat jetzt einen `GET /status`-Endpoint (eigenes Secret
