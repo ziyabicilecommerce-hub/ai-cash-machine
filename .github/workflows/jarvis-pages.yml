@@ -13,6 +13,7 @@ on:
       - 'lead-previews/**'
       - 'closer/**'
       - 'pulse/**'
+      - 'trading-dashboard/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
 
@@ -48,6 +49,7 @@ jobs:
           cp -r lead-previews _site/lead-previews
           cp -r closer _site/closer
           cp -r pulse _site/pulse
+          cp -r trading-dashboard _site/trading-dashboard
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

@@ -17,6 +17,7 @@ id = "REPLACE_WITH_KV_NAMESPACE_ID"
 
 # Nicht-geheime Konfiguration - kann hier direkt stehen (kein Secret).
 [vars]
+TRADING_EXCHANGE = "binance"
 TRADING_SYMBOLS = "BTCUSDT"
 TRADING_PAPER_MODE = "ja"
 TRADING_KAPITAL_USDT = "100"
@@ -27,10 +28,29 @@ TRADING_STOP_LOSS_PROZENT = "3"
 TRADING_EMA_SCHNELL = "9"
 TRADING_EMA_LANGSAM = "21"
 
+# Neue Risiko-/Strategie-Features - alle standardmäßig AUS bzw. verhaltensneutral
+# (0 = deaktiviert), damit dieses Update ein bereits laufendes Setup nicht
+# ungefragt anders handeln lässt. Siehe README für die genaue Wirkung jedes Werts.
+TRADING_RSI_PERIODE = "14"
+TRADING_RSI_UEBERKAUFT = "0"
+TRADING_MIN_VOLATILITAET_PROZENT = "0"
+TRADING_TRAILING_STOP_AB_PROZENT = "0"
+TRADING_VOLA_SIZING = "nein"
+TRADING_VOLA_SIZING_REFERENZ_PROZENT = "2"
+TRADING_VOLA_SIZING_MIN_FAKTOR = "0.25"
+# Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
+# TRADING_MAX_GLEICHZEITIGE_POSITIONEN = "2"
+
 # Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
 #   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)
 #   BINANCE_API_SECRET
+#   KRAKEN_API_KEY         (nur falls TRADING_EXCHANGE = "kraken")
+#   KRAKEN_API_SECRET
 #   WHATSAPP_ACCESS_TOKEN  (gleicher Wert wie bei den anderen Automationen, optional)
 #   WHATSAPP_PHONE_NUMBER_ID
 #   WHATSAPP_TO_NUMBER
 #   TRIGGER_SECRET         (frei erfundener String, schützt den manuellen Test-Aufruf)
+#   STATUS_READ_KEY        (frei erfundener String, schützt den rein lesenden
+#                            /status-Endpoint fürs Trading-Dashboard - ANDERER
+#                            Wert als TRIGGER_SECRET, da dieser weiterverteilt
+#                            werden könnte, ohne dass damit Trades ausgelöst werden können)
