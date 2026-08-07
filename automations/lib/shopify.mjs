@@ -6,7 +6,21 @@ function baseUrl() {
   return `https://${config.SHOP}.myshopify.com/admin/api/${API_VERSION}`;
 }
 
+// Ohne diese Prüfung schlägt ein fehlendes SHOP/SHOPIFY_TOKEN-Secret erst
+// tief in der DNS-Auflösung fehl ("getaddrinfo ENOTFOUND .myshopify.com")
+// oder mit einem generischen Shopify-401 - beides in den Actions-Logs kaum
+// verständlich. Diese Prüfung macht sofort klar, welches Secret fehlt.
+function pruefeShopifyConfig() {
+  if (!config.SHOP) {
+    throw new Error('SHOP-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe setup/ App oder automations/README.md).');
+  }
+  if (!config.SHOPIFY_TOKEN) {
+    throw new Error('SHOPIFY_TOKEN-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe setup/ App oder automations/README.md).');
+  }
+}
+
 async function shopifyRequest(path, { method = 'GET', body } = {}) {
+  pruefeShopifyConfig();
   const res = await fetch(`${baseUrl()}${path}`, {
     method,
     headers: {
