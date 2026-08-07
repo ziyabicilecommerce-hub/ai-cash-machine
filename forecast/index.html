@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE FORECAST</title>
+<meta name="description" content="Was-wäre-wenn-Gewinn-Simulator — zieh an zwei Reglern (Umsatz, Werbebudget) und sieh live, was mit deinem Gewinn passiert, berechnet aus deinen echten Kosten-Verhältnissen der letzten 30 Tage. Reine Rechenhilfe, keine Vorhersage.">
+<meta property="og:title" content="CASHMACHINE FORECAST">
+<meta property="og:description" content="Live-Gewinn-Simulator auf Basis deiner echten Zahlen.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23090816%27/%3E%3Cpath%20d%3D%27M10%2046l10-8%208%206%2014-18%2012%2010%27%20fill%3D%27none%27%20stroke%3D%27%237c8cff%27%20stroke-width%3D%273%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23090816%27/%3E%3Cpath%20d%3D%27M10%2046l10-8%208%206%2014-18%2012%2010%27%20fill%3D%27none%27%20stroke%3D%27%237c8cff%27%20stroke-width%3D%273%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #090816; --panel: rgba(24,20,45,.5); --panel-solid: #12102420;
+    --indigo: #7c8cff; --cyan: #6fe0ff; --green: #34f5a2; --red: #ff6b81; --amber: #ffc757;
+    --line: rgba(124,140,255,.22); --line2: rgba(255,255,255,.07);
+    --txt: #ece9fb; --mut: rgba(222,218,245,.62); --mut2: rgba(222,218,245,.4);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+  ::selection { background:rgba(124,140,255,.3); }
+
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(124,140,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(124,140,255,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 30%,transparent 75%); }
+
+  .key-modal-overlay { position:fixed; inset:0; z-index:600; background:rgba(4,3,10,.88);
+    display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .25s ease, visibility .25s ease; }
+  .key-modal-overlay.open { opacity:1; visibility:visible; pointer-events:auto; }
+  .key-modal { width:min(420px,90vw); background:#0e0c1e; border:1px solid var(--line);
+    box-shadow:0 0 40px rgba(124,140,255,.16); clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px)); padding:24px; }
+  .key-modal h3 { color:var(--indigo); font-size:16px; letter-spacing:1px; margin-bottom:10px; }
+  .key-modal p { font-size:12.5px; color:var(--mut); line-height:1.6; margin-bottom:16px; }
+  .key-modal input { width:100%; background:rgba(124,140,255,.06); border:1px solid var(--line);
+    color:var(--txt); font-family:var(--mono); font-size:13px; padding:10px 12px; margin-bottom:16px; outline:none; }
+  .key-modal input:focus { border-color:var(--indigo); }
+  .key-modal-actions { display:flex; justify-content:space-between; align-items:center; }
+  .key-modal-actions a { color:var(--mut); font-size:12px; text-decoration:none; border-bottom:1px dotted var(--mut); }
+  .key-modal-actions button { background:rgba(124,140,255,.18); border:1px solid var(--indigo); color:var(--txt);
+    font-family:inherit; font-weight:700; font-size:13px; padding:8px 18px; cursor:pointer;
+    clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); }
+  .key-modal-actions button:hover { background:rgba(124,140,255,.32); }
+  .key-gear { background:none; border:1px solid var(--line); color:var(--indigo);
+    width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:13px;
+    display:flex; align-items:center; justify-content:center; }
+  .key-gear:hover { border-color:var(--indigo); background:rgba(124,140,255,.1); }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(9,8,22,.8); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--indigo); }
+  .nav-links { display:flex; align-items:center; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--indigo); }
+  @media(max-width:900px){ .nav-links a { display:none; } }
+
+  header.hero { min-height:32svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:110px 20px 16px; max-width:900px; margin:0 auto; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--indigo); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:16px; }
+  .kicker::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--indigo); box-shadow:0 0 10px var(--indigo); animation:pulse 1.4s infinite; }
+  @keyframes pulse { 50%{opacity:.35;transform:scale(.75)} }
+  h1 { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(24px,5vw,42px); letter-spacing:2px; color:#f4f3ff;
+    text-shadow:0 0 24px rgba(124,140,255,.4); margin-bottom:10px; }
+  .sub { font-size:13.5px; color:var(--mut); max-width:560px; }
+
+  .disclaimer { max-width:840px; margin:0 auto 22px; padding:12px 18px; background:rgba(255,199,87,.08);
+    border:1px solid rgba(255,199,87,.28); font-size:12px; color:var(--amber); text-align:center; font-family:var(--mono); }
+
+  section { padding:0 20px 60px; max-width:900px; margin:0 auto; }
+
+  .empty-state { text-align:center; padding:60px 20px; font-family:var(--mono); }
+  .empty-state .line1 { color:var(--indigo); font-size:15px; }
+  .empty-state .line2 { color:var(--mut2); font-size:12px; margin-top:8px; }
+
+  .sim-box { background:var(--panel); border:1px solid var(--line);
+    clip-path:polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); padding:clamp(20px,4vw,34px); }
+
+  .baseline-note { font-family:var(--mono); font-size:11px; color:var(--mut2); text-align:center; margin-bottom:22px; }
+
+  .slider-group { margin-bottom:26px; }
+  .slider-group label { display:flex; justify-content:space-between; font-family:var(--mono); font-size:12.5px; color:var(--mut); margin-bottom:8px; }
+  .slider-group label .val { color:var(--indigo); font-weight:700; }
+  .slider-group input[type="range"] { width:100%; accent-color:var(--indigo); height:6px; }
+  .slider-presets { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .slider-presets button { font-family:var(--mono); font-size:10.5px; color:var(--mut); background:rgba(124,140,255,.06);
+    border:1px solid var(--line2); padding:4px 10px; cursor:pointer; }
+  .slider-presets button:hover { border-color:var(--indigo); color:var(--indigo); }
+  .slider-presets button.active { background:rgba(124,140,255,.2); border-color:var(--indigo); color:var(--indigo); }
+
+  .compare { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:26px 0; }
+  .compare-card { background:var(--panel-solid); border:1px solid var(--line2); padding:16px; text-align:center; }
+  .compare-card .l { font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--mut2); margin-bottom:8px; }
+  .compare-card .n { font-family:var(--mono); font-size:22px; font-weight:700; }
+  .compare-card.sim .n { color:var(--indigo); }
+  .bar-wrap { height:8px; background:rgba(255,255,255,.06); margin-top:10px; overflow:hidden; }
+  .bar { height:100%; transition:width .25s ease, background .25s ease; }
+  .bar.base { background:var(--mut2); }
+  .bar.sim.up { background:var(--green); }
+  .bar.sim.down { background:var(--red); }
+
+  .delta-row { text-align:center; font-family:var(--mono); font-size:14px; margin-bottom:22px; }
+  .delta-row b.up { color:var(--green); } .delta-row b.down { color:var(--red); }
+
+  .monthly-note { text-align:center; font-size:12px; color:var(--mut2); font-family:var(--mono); margin-bottom:22px; }
+
+  .explain-btn { display:block; margin:0 auto; background:rgba(124,140,255,.14); border:1px solid var(--indigo); color:var(--txt);
+    font-family:inherit; font-weight:700; font-size:13px; padding:10px 22px; cursor:pointer; }
+  .explain-btn:hover:not(:disabled) { background:rgba(124,140,255,.28); }
+  .explain-btn:disabled { opacity:.5; cursor:default; }
+  .explanation { margin-top:16px; font-size:13.5px; color:var(--txt); line-height:1.6; padding:14px; background:var(--panel-solid); border:1px solid var(--line2); white-space:pre-wrap; }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--indigo); text-decoration:none; margin:0 8px; }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<div class="key-modal-overlay" id="keyModalOverlay">
+  <div class="key-modal" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
+    <h3 id="keyModalTitle">Anthropic API-Key</h3>
+    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Anthropic gesendet — nur für die optionale Erklärung nötig, die Berechnung selbst läuft komplett lokal ohne Key.</p>
+    <input type="password" id="keyModalInput" placeholder="sk-ant-api03-..." aria-label="Anthropic API-Key" autocomplete="off">
+    <div class="key-modal-actions">
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Key holen →</a>
+      <button id="keyModalSave" type="button">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;FORECAST</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../oracle/">Oracle</a>
+    <a href="../pulse/">Pulse</a>
+    <a href="../finance-cockpit/">Finance</a>
+    <a href="../automations-dashboard/">Automations</a>
+    <button class="key-gear" id="keyGearBtn" title="Anthropic API-Key einstellen" aria-label="Anthropic API-Key einstellen">⚙</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="kicker">LIVE WAS-WÄRE-WENN-SIMULATOR</div>
+  <h1>FORECAST</h1>
+  <p class="sub">Zieh an den Reglern und sieh sofort, was mit deinem Gewinn passiert — berechnet aus deinen echten Kosten-Verhältnissen der letzten 30 Tage, nicht aus erfundenen Annahmen.</p>
+</header>
+
+<div class="disclaimer">⚠️ Reine Rechenhilfe auf Basis deiner echten Kostenquoten — KEINE Vorhersage. Ob sich dein echter Umsatz oder Werbebudget tatsächlich so ändert, hängt von echten Markteffekten ab, die dieses Modell nicht kennt.</div>
+
+<section>
+  <div id="emptyState" class="empty-state" style="display:none">
+    <div class="line1">&gt; awaiting finance-cockpit data</div>
+    <div class="line2">Sobald die erste Gewinn-Radar-Automation läuft (täglich 08:00 Uhr), kann Forecast mit deinen echten Zahlen simulieren.</div>
+  </div>
+
+  <div id="simBox" class="sim-box" style="display:none">
+    <div class="baseline-note" id="baselineNote"></div>
+
+    <div class="slider-group">
+      <label>Umsatz-Szenario <span class="val" id="umsatzVal">+0%</span></label>
+      <input type="range" id="umsatzSlider" min="-80" max="200" value="0" step="5">
+      <div class="slider-presets" data-target="umsatz">
+        <button data-val="-30">-30%</button><button data-val="-10">-10%</button><button data-val="0" class="active">Basis</button>
+        <button data-val="10">+10%</button><button data-val="30">+30%</button><button data-val="100">+100%</button>
+      </div>
+    </div>
+
+    <div class="slider-group">
+      <label>Werbebudget-Szenario <span class="val" id="werbeVal">+0%</span></label>
+      <input type="range" id="werbeSlider" min="-100" max="300" value="0" step="5">
+      <div class="slider-presets" data-target="werbe">
+        <button data-val="-50">-50%</button><button data-val="-20">-20%</button><button data-val="0" class="active">Basis</button>
+        <button data-val="20">+20%</button><button data-val="50">+50%</button><button data-val="100">+100%</button>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="compare-card base">
+        <div class="l">Ø AKTUELL / TAG</div>
+        <div class="n" id="baseGewinn">–</div>
+        <div class="bar-wrap"><div class="bar base" id="baseBar" style="width:50%"></div></div>
+      </div>
+      <div class="compare-card sim">
+        <div class="l">SIMULIERT / TAG</div>
+        <div class="n" id="simGewinn">–</div>
+        <div class="bar-wrap"><div class="bar sim" id="simBar" style="width:50%"></div></div>
+      </div>
+    </div>
+
+    <div class="delta-row" id="deltaRow"></div>
+    <div class="monthly-note" id="monthlyNote"></div>
+
+    <button class="explain-btn" id="explainBtn" type="button">Szenario in Worten erklären</button>
+    <div id="explanationSlot"></div>
+  </div>
+</section>
+
+<footer>
+  <b>CASHMACHINE FORECAST</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../oracle/">Oracle</a>·<a href="../pulse/">Pulse</a>·<a href="../finance-cockpit/">Finance</a>·<a href="../automations-dashboard/">Automations</a>
+</footer>
+
+<script>
+  // ===== CLAUDE API KEY (BYOK, gleicher Vertrag wie Jarvis/Oracle/Pulse) =====
+  const CLAUDE_KEY_STORAGE = 'cmx_claude_key';
+  function getClaudeKey() { return localStorage.getItem(CLAUDE_KEY_STORAGE); }
+  const keyModalOverlay = document.getElementById('keyModalOverlay');
+  const keyModalInput = document.getElementById('keyModalInput');
+  const keyModalSave = document.getElementById('keyModalSave');
+  const keyGearBtn = document.getElementById('keyGearBtn');
+  let keyModalResolve = null;
+  function openKeyModal() { keyModalInput.value = getClaudeKey() || ''; keyModalOverlay.classList.add('open'); setTimeout(() => keyModalInput.focus(), 50); }
+  function closeKeyModal() { keyModalOverlay.classList.remove('open'); }
+  function requestClaudeKey() { return new Promise((resolve) => { keyModalResolve = resolve; openKeyModal(); }); }
+  keyModalSave.addEventListener('click', () => {
+    const val = keyModalInput.value.trim();
+    if (!val) return;
+    localStorage.setItem(CLAUDE_KEY_STORAGE, val);
+    closeKeyModal();
+    if (keyModalResolve) { keyModalResolve(val); keyModalResolve = null; }
+  });
+  keyModalInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') keyModalSave.click(); });
+  keyGearBtn.addEventListener('click', openKeyModal);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && keyModalOverlay.classList.contains('open')) closeKeyModal(); });
+
+  async function callClaude(body) {
+    let key = getClaudeKey();
+    if (!key) key = await requestClaudeKey();
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify(body),
+    });
+    if (response.status === 401) { localStorage.removeItem(CLAUDE_KEY_STORAGE); throw new Error('invalid_key'); }
+    if (!response.ok) throw new Error('api_error');
+    return response.json();
+  }
+
+  // ===== BASELINE AUS ECHTEN DATEN =====
+  const fmtMoney = (n, cur) => (n ?? 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + (cur || 'EUR');
+  let baseline = null;
+
+  function berechneBaseline(data) {
+    const history = (data.history || []).filter((h) => h && h.datum && h.umsatz > 0).slice(-30);
+    if (!history.length) return null;
+    const avg = (key) => history.reduce((s, h) => s + (h[key] || 0), 0) / history.length;
+    const avgUmsatz = avg('umsatz');
+    const avgWerbekosten = avg('werbekosten');
+    const avgGebuehren = avg('gebuehren');
+    const avgSteuerAnteil = avg('steuerAnteil');
+    const avgRetouren = avg('retouren');
+    const avgNettoGewinn = avg('nettoGewinn');
+    return {
+      tage: history.length,
+      waehrung: history[history.length - 1].waehrung || 'EUR',
+      avgUmsatz, avgWerbekosten, avgGebuehren, avgSteuerAnteil, avgRetouren, avgNettoGewinn,
+      gebuehrenAnteil: avgUmsatz > 0 ? avgGebuehren / avgUmsatz : 0,
+      steuerAnteilProzent: avgUmsatz > 0 ? avgSteuerAnteil / avgUmsatz : 0,
+      retourenAnteil: avgUmsatz > 0 ? avgRetouren / avgUmsatz : 0,
+    };
+  }
+
+  function simuliere(b, umsatzSlider, werbeSlider) {
+    const neuerUmsatz = b.avgUmsatz * (1 + umsatzSlider / 100);
+    const neueWerbekosten = b.avgWerbekosten * (1 + werbeSlider / 100);
+    const neueGebuehren = neuerUmsatz * b.gebuehrenAnteil;
+    const neueSteuer = neuerUmsatz * b.steuerAnteilProzent;
+    const neueRetouren = neuerUmsatz * b.retourenAnteil;
+    const neuerGewinn = neuerUmsatz - neueWerbekosten - neueGebuehren - neueSteuer - neueRetouren;
+    return { neuerUmsatz, neueWerbekosten, neueGebuehren, neueSteuer, neueRetouren, neuerGewinn };
+  }
+
+  function render() {
+    if (!baseline) return;
+    const umsatzSlider = parseInt(document.getElementById('umsatzSlider').value, 10);
+    const werbeSlider = parseInt(document.getElementById('werbeSlider').value, 10);
+    document.getElementById('umsatzVal').textContent = (umsatzSlider >= 0 ? '+' : '') + umsatzSlider + '%';
+    document.getElementById('werbeVal').textContent = (werbeSlider >= 0 ? '+' : '') + werbeSlider + '%';
+
+    const sim = simuliere(baseline, umsatzSlider, werbeSlider);
+    document.getElementById('baseGewinn').textContent = fmtMoney(baseline.avgNettoGewinn, baseline.waehrung);
+    document.getElementById('simGewinn').textContent = fmtMoney(sim.neuerGewinn, baseline.waehrung);
+
+    const maxAbs = Math.max(Math.abs(baseline.avgNettoGewinn), Math.abs(sim.neuerGewinn), 1);
+    document.getElementById('baseBar').style.width = Math.min(100, (Math.abs(baseline.avgNettoGewinn) / maxAbs) * 100) + '%';
+    const simBar = document.getElementById('simBar');
+    simBar.style.width = Math.min(100, (Math.abs(sim.neuerGewinn) / maxAbs) * 100) + '%';
+    simBar.classList.toggle('up', sim.neuerGewinn >= baseline.avgNettoGewinn);
+    simBar.classList.toggle('down', sim.neuerGewinn < baseline.avgNettoGewinn);
+
+    const delta = sim.neuerGewinn - baseline.avgNettoGewinn;
+    const deltaProzent = baseline.avgNettoGewinn !== 0 ? (delta / Math.abs(baseline.avgNettoGewinn)) * 100 : 0;
+    document.getElementById('deltaRow').innerHTML = `Δ Gewinn/Tag: <b class="${delta >= 0 ? 'up' : 'down'}">${delta >= 0 ? '+' : ''}${fmtMoney(delta, baseline.waehrung)} (${deltaProzent >= 0 ? '+' : ''}${deltaProzent.toFixed(1)}%)</b>`;
+    document.getElementById('monthlyNote').textContent = `Hochgerechnet auf 30 Tage: ${fmtMoney(sim.neuerGewinn * 30, baseline.waehrung)} Gewinn/Monat statt ${fmtMoney(baseline.avgNettoGewinn * 30, baseline.waehrung)} (nur lineare Hochrechnung, keine Saisonalität berücksichtigt)`;
+
+    window._forecastAktuellesSzenario = { baseline, umsatzSlider, werbeSlider, sim };
+  }
+
+  function setupSlider(id, presetsSelector) {
+    const slider = document.getElementById(id);
+    slider.addEventListener('input', () => { syncPresetActive(id, presetsSelector); render(); });
+    document.querySelectorAll(presetsSelector + ' button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        slider.value = btn.getAttribute('data-val');
+        syncPresetActive(id, presetsSelector);
+        render();
+      });
+    });
+  }
+  function syncPresetActive(id, presetsSelector) {
+    const slider = document.getElementById(id);
+    document.querySelectorAll(presetsSelector + ' button').forEach((btn) => {
+      btn.classList.toggle('active', btn.getAttribute('data-val') === slider.value);
+    });
+  }
+
+  document.getElementById('explainBtn').addEventListener('click', async () => {
+    const ctx = window._forecastAktuellesSzenario;
+    if (!ctx) return;
+    const btn = document.getElementById('explainBtn');
+    const slot = document.getElementById('explanationSlot');
+    btn.disabled = true;
+    btn.textContent = 'Erklärt...';
+    slot.innerHTML = '';
+    try {
+      const prompt = `Du bist ein nüchterner Business-Analyst. Hier ist eine ECHTE Was-wäre-wenn-Rechnung (keine Vorhersage, reine Arithmetik) für einen Shopify-Shop, basierend auf den echten Durchschnittswerten der letzten ${ctx.baseline.tage} Tage:\n\nAKTUELL (Ø/Tag): Umsatz ${fmtMoney(ctx.baseline.avgUmsatz, ctx.baseline.waehrung)}, Werbekosten ${fmtMoney(ctx.baseline.avgWerbekosten, ctx.baseline.waehrung)}, Nettogewinn ${fmtMoney(ctx.baseline.avgNettoGewinn, ctx.baseline.waehrung)}.\n\nSIMULIERTES SZENARIO: Umsatz ${ctx.umsatzSlider >= 0 ? '+' : ''}${ctx.umsatzSlider}%, Werbebudget ${ctx.werbeSlider >= 0 ? '+' : ''}${ctx.werbeSlider}% → neuer Umsatz ${fmtMoney(ctx.sim.neuerUmsatz, ctx.baseline.waehrung)}, neue Werbekosten ${fmtMoney(ctx.sim.neueWerbekosten, ctx.baseline.waehrung)}, neuer Nettogewinn ${fmtMoney(ctx.sim.neuerGewinn, ctx.baseline.waehrung)}.\n\nErkläre dieses Szenario in 3-4 kurzen Sätzen (Deutsch, Du-Form): was die Zahlen konkret bedeuten und worauf der Shop-Besitzer achten sollte, WENN er versuchen würde, das real umzusetzen. Betone, dass dies eine reine Rechnung mit den aktuellen Kostenquoten ist, keine Garantie, dass sich Umsatz oder Werbebudget tatsächlich so verhalten. Erfinde keine zusätzlichen Zahlen.`;
+      const data = await callClaude({ model: 'claude-sonnet-5', max_tokens: 350, messages: [{ role: 'user', content: prompt }] });
+      const text = (data.content || []).map((b) => b.text || '').join('').trim() || 'Keine Erklärung erhalten.';
+      slot.innerHTML = `<div class="explanation">${text}</div>`;
+    } catch (err) {
+      slot.innerHTML = `<div class="explanation">${err.message === 'invalid_key' ? 'API-Key ungültig — über das ⚙ Symbol prüfen.' : 'Fehler bei der Erklärung, bitte nochmal versuchen.'}</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Szenario in Worten erklären';
+    }
+  });
+
+  setupSlider('umsatzSlider', '.slider-presets[data-target="umsatz"]');
+  setupSlider('werbeSlider', '.slider-presets[data-target="werbe"]');
+
+  fetch('../finance-cockpit/data.json', { cache: 'no-store' })
+    .then((res) => { if (!res.ok) throw new Error('no data'); return res.json(); })
+    .then((data) => {
+      baseline = berechneBaseline(data);
+      if (!baseline) throw new Error('empty history');
+      document.getElementById('baselineNote').textContent = `Basis: Ø der letzten ${baseline.tage} erfassten Tage aus deinem echten Finance Cockpit`;
+      document.getElementById('simBox').style.display = 'block';
+      render();
+    })
+    .catch(() => {
+      document.getElementById('emptyState').style.display = 'block';
+    });
+</script>
+</body>
+</html>
