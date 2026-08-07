@@ -282,6 +282,18 @@ Protokolle selbst noch in Bewegung befinden und wir nicht an einem
 ungeprüften Feed-Format herumraten wollen (gleiches Prinzip wie beim
 Übersetzungs-Entwurf-Agent).
 
+**🧾 PayPal-Beleg-Agent** (`PAYPAL_BELEG_LOOKBACK_TAGE` Default `14`,
+`PAYPAL_BELEG_MAX_PRO_LAUF` Default `30`): erkennt Bestellungen mit
+`payment_gateway_names` = PayPal aus den letzten X Tagen, erstellt pro
+Bestellung eine eigenständige, druckbare HTML-Seite unter `paypal-belege/`
+mit Kunde/Lieferadresse, Artikeln, Zahlungsstatus und Versand-Tracking -
+für den Fall, dass PayPal bei einer Reklamation oder Kontoprüfung einen
+Nachweis über echte Lieferung verlangt. Übersicht aller Belege unter
+`paypal-belege/index.html` (durchsuchbar, liest `manifest.json`). Rein
+dokumentierend - ändert nichts an Bestellungen, sendet nichts an PayPal.
+Die Seiten sind nicht öffentlich verlinkt, nur per direktem Link
+erreichbar (kommt per Telegram-Meldung bei jedem neuen Beleg).
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -496,7 +508,7 @@ abdecken.
 
 Alle Standardwerte stehen in `automations/lib/config.mjs`.
 
-## Die 76 Automationen (46 aus n8n + 30 neue)
+## Die 77 Automationen (46 aus n8n + 31 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -576,6 +588,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 75 | 🌍 Übersetzungs-Entwurf-Agent | dienstags 09:15 | übersetzt Produkttexte für neue Zielmärkte als Entwurf per Mail |
 | 76 | 🎯 Nie-Gekauft-Konverter | mittwochs 10:15 | Newsletter-Abonnenten, die noch nie bestellt haben, bekommen einen Erstkauf-Anreiz |
 | 77 | 🤖 Agentic-Checkout-Readiness-Agent | sonntags 09:30 | prüft, ob der Katalog für KI-Einkaufsagenten (ChatGPT, Perplexity) auffindbar/verständlich ist, meldet Score + schwächste Produkte |
+| 78 | 🧾 PayPal-Beleg-Agent | täglich 06:30 | erstellt für jede per PayPal bezahlte Bestellung einen druckbaren Zahlungs-/Liefernachweis (Kunde, Artikel, Tracking) für PayPal-Kontoprüfungen |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
