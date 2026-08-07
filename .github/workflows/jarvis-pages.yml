@@ -15,6 +15,7 @@ on:
       - 'pulse/**'
       - 'trading-dashboard/**'
       - 'forecast/**'
+      - 'setup/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
 
@@ -52,6 +53,7 @@ jobs:
           cp -r pulse _site/pulse
           cp -r trading-dashboard _site/trading-dashboard
           cp -r forecast _site/forecast
+          cp -r setup _site/setup
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

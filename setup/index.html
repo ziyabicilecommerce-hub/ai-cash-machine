@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE SETUP</title>
+<meta name="description" content="Geführte Checkliste für die einmalige Einrichtung — direkte Links, ein Häkchen pro Schritt, Fortschritt gespeichert. Trägt nichts automatisch ein, macht nur den Überblick so einfach wie möglich.">
+<meta property="og:title" content="CASHMACHINE SETUP">
+<meta property="og:description" content="Die wenigen nötigen Schritte, so einfach wie möglich.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23140a05%27/%3E%3Cpath%20d%3D%27M18%2034l10%2010%2018-20%27%20fill%3D%27none%27%20stroke%3D%27%23ff8a3d%27%20stroke-width%3D%274%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23140a05%27/%3E%3Cpath%20d%3D%27M18%2034l10%2010%2018-20%27%20fill%3D%27none%27%20stroke%3D%27%23ff8a3d%27%20stroke-width%3D%274%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #140a05; --panel: rgba(40,22,10,.5); --panel-solid: #1c110a;
+    --orange: #ff8a3d; --green: #34f5a2; --red: #ff6b81; --amber: #ffc757; --cyan: #6fe0ff;
+    --line: rgba(255,138,61,.24); --line2: rgba(255,255,255,.07);
+    --txt: #fbf2ea; --mut: rgba(245,225,210,.62); --mut2: rgba(245,225,210,.4);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+  ::selection { background:rgba(255,138,61,.3); }
+
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(255,138,61,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,138,61,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 30%,transparent 75%); }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(20,10,5,.8); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--orange); }
+  .nav-links { display:flex; align-items:center; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--orange); }
+  @media(max-width:820px){ .nav-links a { display:none; } }
+
+  header.hero { min-height:32svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:110px 20px 16px; max-width:900px; margin:0 auto; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--orange); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:16px; }
+  .kicker::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--orange); box-shadow:0 0 10px var(--orange); animation:pulse 1.4s infinite; }
+  @keyframes pulse { 50%{opacity:.35;transform:scale(.75)} }
+  h1 { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(24px,5vw,42px); letter-spacing:2px; color:#fff8f2;
+    text-shadow:0 0 24px rgba(255,138,61,.4); margin-bottom:10px; }
+  .sub { font-size:13.5px; color:var(--mut); max-width:560px; }
+
+  .honesty-note { max-width:840px; margin:0 auto 22px; padding:12px 18px; background:rgba(111,224,255,.06);
+    border:1px solid rgba(111,224,255,.22); font-size:12px; color:var(--cyan); text-align:center; font-family:var(--mono); }
+
+  section { padding:0 20px 60px; max-width:760px; margin:0 auto; }
+
+  .progress-wrap { margin-bottom:26px; }
+  .progress-label { display:flex; justify-content:space-between; font-family:var(--mono); font-size:12px; color:var(--mut); margin-bottom:8px; }
+  .progress-bar-track { height:10px; background:rgba(255,255,255,.06); overflow:hidden; }
+  .progress-bar-fill { height:100%; background:linear-gradient(90deg,var(--orange),var(--amber)); transition:width .3s ease; }
+
+  .done-banner { display:none; text-align:center; padding:20px; margin-bottom:24px; background:rgba(52,245,162,.08);
+    border:1px solid rgba(52,245,162,.3); font-family:var(--mono); color:var(--green); }
+  .done-banner.show { display:block; }
+
+  .step { background:var(--panel); border:1px solid var(--line2); margin-bottom:12px;
+    clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); padding:16px 18px;
+    display:flex; gap:14px; align-items:flex-start; transition:.2s; }
+  .step.checked { opacity:.5; border-color:rgba(52,245,162,.25); }
+  .step input[type="checkbox"] { width:20px; height:20px; margin-top:2px; accent-color:var(--green); cursor:pointer; flex-shrink:0; }
+  .step-body { flex:1; }
+  .step-title { font-family:var(--mono); font-weight:700; font-size:14px; color:var(--orange); margin-bottom:4px; }
+  .step.checked .step-title { color:var(--mut); text-decoration:line-through; }
+  .step-desc { font-size:13px; color:var(--mut); margin-bottom:8px; }
+  .step-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .step-actions a { font-family:var(--mono); font-size:11.5px; color:var(--cyan); text-decoration:none; border-bottom:1px dotted var(--cyan); }
+  .step-actions a:hover { color:#fff; }
+  .step-hint { font-family:var(--mono); font-size:11px; color:var(--mut2); background:rgba(0,0,0,.2); padding:3px 8px; }
+
+  .optional-toggle { text-align:center; margin:30px 0 14px; }
+  .optional-toggle button { background:none; border:1px solid var(--line2); color:var(--mut); font-family:var(--mono);
+    font-size:12px; padding:8px 16px; cursor:pointer; }
+  .optional-toggle button:hover { border-color:var(--orange); color:var(--orange); }
+  #optionalSection { display:none; }
+  #optionalSection.show { display:block; }
+  .optional-note { font-size:12.5px; color:var(--mut); text-align:center; margin-bottom:16px; }
+
+  .reset-link { text-align:center; margin-top:20px; }
+  .reset-link button { background:none; border:none; color:var(--mut2); font-family:var(--mono); font-size:11px; cursor:pointer; text-decoration:underline; }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--orange); text-decoration:none; margin:0 8px; }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;SETUP</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../oracle/">Oracle</a>
+    <a href="../automations-dashboard/">Automations</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="kicker">EINMALIGE EINRICHTUNG · CA. 10 MINUTEN</div>
+  <h1>SETUP</h1>
+  <p class="sub">Nur diese 8 Schritte, dann laufen alle Automationen. Direkte Links, ein Häkchen pro Schritt, dein Fortschritt bleibt gespeichert.</p>
+</header>
+
+<div class="honesty-note">ℹ️ Diese Seite trägt nichts automatisch für dich ein — sie merkt sich nur deinen Fortschritt in diesem Browser und bringt dich per Klick direkt an die richtige Stelle. Die Werte selbst musst du jeweils kopieren und dort einfügen.</div>
+
+<section>
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Fortschritt</span><span id="progressText">0/8</span></div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="done-banner" id="doneBanner">✅ Alle Pflicht-Schritte erledigt — die Automationen können jetzt laufen. Optional kannst du unten noch Zusatz-Secrets für bestimmte Automationen eintragen.</div>
+
+  <div id="steps"></div>
+
+  <div class="optional-toggle">
+    <button id="optionalToggleBtn" type="button">+ Optionale Secrets anzeigen (Telegram, Meta Ads, WhatsApp, ...)</button>
+  </div>
+  <div id="optionalSection">
+    <p class="optional-note">Diese sind nur nötig, wenn du bestimmte Automationen nutzen willst — ohne sie läuft der Großteil trotzdem. Komplette Liste mit allen ~70 optionalen Secrets: <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/automations/README.md" target="_blank" rel="noopener" style="color:var(--cyan)">automations/README.md</a></p>
+    <div id="optionalSteps"></div>
+  </div>
+
+  <div class="reset-link"><button id="resetBtn" type="button">Fortschritt zurücksetzen</button></div>
+</section>
+
+<footer>
+  <b>CASHMACHINE SETUP</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../oracle/">Oracle</a>·<a href="../automations-dashboard/">Automations</a>
+</footer>
+
+<script>
+  const GITHUB_SECRET_URL = 'https://github.com/ziyabicilecommerce-hub/ai-cash-machine/settings/secrets/actions/new';
+
+  const PFLICHT_SCHRITTE = [
+    { id: 'SHOP', title: 'SHOP', desc: 'Deine Shopify-Subdomain — bei mein-shop.myshopify.com ist das "mein-shop".', hint: 'z.B. mein-shop', link: null },
+    { id: 'SHOPIFY_TOKEN', title: 'SHOPIFY_TOKEN', desc: 'Shopify Admin → Einstellungen → Apps und Vertriebskanäle → App-Entwicklung → App erstellen → Admin-API-Zugriffsbereiche freigeben → Token wird einmalig angezeigt.', hint: 'shpat_...', link: null },
+    { id: 'ANTHROPIC_API_KEY', title: 'ANTHROPIC_API_KEY', desc: 'Dein Claude-API-Key für alle Text-Automationen.', hint: 'sk-ant-...', link: 'https://console.anthropic.com/settings/keys' },
+    { id: 'SHOP_NAME', title: 'SHOP_NAME', desc: 'Anzeigename deines Shops in Mails/Reports — frei wählbar.', hint: 'z.B. Mein Shop', link: null },
+    { id: 'OWNER_EMAIL', title: 'OWNER_EMAIL', desc: 'Deine eigene Mailadresse — dahin gehen Reports, Alarme, Test-Mails.', hint: 'du@example.com', link: null },
+    { id: 'ABSENDER_EMAIL', title: 'ABSENDER_EMAIL', desc: 'Adresse, von der Kunden-Mails aus verschickt werden.', hint: 'service@dein-shop.de', link: null },
+    { id: 'RESEND_API_KEY', title: 'RESEND_API_KEY', desc: 'Versanddienst für alle Mails — kostenloses Kontingent reicht am Anfang.', hint: 're_...', link: 'https://resend.com/api-keys' },
+    { id: 'TEST_MODE', title: 'TEST_MODE', desc: 'Auf "ja" lassen, bis du bereit bist — dann gehen alle Kunden-Mails testweise nur an dich.', hint: 'ja', link: null },
+  ];
+
+  const OPTIONAL_SCHRITTE = [
+    { id: 'TELEGRAM_BOT_TOKEN', title: 'TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID', desc: 'Für Alarme (VIP-Radar, Risk-Guard, etc.) direkt per Telegram statt nur Mail.', hint: '', link: 'https://core.telegram.org/bots#how-do-i-create-a-bot' },
+    { id: 'META_ACCESS_TOKEN', title: 'META_ACCESS_TOKEN + META_AD_ACCOUNT_ID', desc: 'Für alle Meta/Facebook-Ads-Automationen (Auto-Skalierer, Notbremse, ...).', hint: '', link: 'https://developers.facebook.com/apps/' },
+    { id: 'WHATSAPP_ACCESS_TOKEN', title: 'WHATSAPP_ACCESS_TOKEN + Co.', desc: 'Für WhatsApp-Alarme (Lead-Jäger, Product Hunter, ...).', hint: '', link: 'https://developers.facebook.com/docs/whatsapp/cloud-api/get-started' },
+    { id: 'JUDGEME_API_TOKEN', title: 'JUDGEME_API_TOKEN + JUDGEME_SHOP_DOMAIN', desc: 'Für Bewertungs-Automationen, falls du Judge.me nutzt.', hint: '', link: null },
+  ];
+
+  const STORAGE_KEY = 'cmx_setup_progress';
+  function getProgress() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+  }
+  function saveProgress(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
+
+  function stepHtml(step) {
+    return `
+      <label class="step" id="step-${step.id}">
+        <input type="checkbox" data-id="${step.id}">
+        <div class="step-body">
+          <div class="step-title">${step.title}</div>
+          <div class="step-desc">${step.desc}</div>
+          <div class="step-actions">
+            ${step.link ? `<a href="${step.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Key holen →</a>` : ''}
+            <a href="${GITHUB_SECRET_URL}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Bei GitHub eintragen →</a>
+            ${step.hint ? `<span class="step-hint">${step.hint}</span>` : ''}
+          </div>
+        </div>
+      </label>`;
+  }
+
+  function render() {
+    const progress = getProgress();
+    document.getElementById('steps').innerHTML = PFLICHT_SCHRITTE.map(stepHtml).join('');
+    document.getElementById('optionalSteps').innerHTML = OPTIONAL_SCHRITTE.map(stepHtml).join('');
+
+    [...PFLICHT_SCHRITTE, ...OPTIONAL_SCHRITTE].forEach((step) => {
+      const cb = document.querySelector(`#step-${step.id} input`);
+      cb.checked = !!progress[step.id];
+      document.getElementById(`step-${step.id}`).classList.toggle('checked', cb.checked);
+      cb.addEventListener('change', () => {
+        const p = getProgress();
+        p[step.id] = cb.checked;
+        saveProgress(p);
+        document.getElementById(`step-${step.id}`).classList.toggle('checked', cb.checked);
+        updateProgressBar();
+      });
+    });
+    updateProgressBar();
+  }
+
+  function updateProgressBar() {
+    const progress = getProgress();
+    const done = PFLICHT_SCHRITTE.filter((s) => progress[s.id]).length;
+    document.getElementById('progressText').textContent = `${done}/${PFLICHT_SCHRITTE.length}`;
+    document.getElementById('progressFill').style.width = `${(done / PFLICHT_SCHRITTE.length) * 100}%`;
+    document.getElementById('doneBanner').classList.toggle('show', done === PFLICHT_SCHRITTE.length);
+  }
+
+  document.getElementById('optionalToggleBtn').addEventListener('click', (e) => {
+    const section = document.getElementById('optionalSection');
+    section.classList.toggle('show');
+    e.target.textContent = section.classList.contains('show')
+      ? '− Optionale Secrets ausblenden'
+      : '+ Optionale Secrets anzeigen (Telegram, Meta Ads, WhatsApp, ...)';
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (confirm('Fortschritt wirklich zurücksetzen? Das löscht nur die Häkchen hier im Browser, keine echten Secrets.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      render();
+    }
+  });
+
+  render();
+</script>
+</body>
+</html>
