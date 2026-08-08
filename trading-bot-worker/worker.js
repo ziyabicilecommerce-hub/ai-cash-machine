@@ -307,7 +307,11 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
   }
 
   const { closes, highs, lows } = await exchange.getKlines(symbol);
-  if (closes.length < cfg.emaLangsam + 2) return;
+  // Genug Vorlauf für die Indikatoren ALLER Strategien prüfen, nicht nur
+  // EMA - sonst würde z.B. donchianEntryPeriode=50 stillschweigend mit zu
+  // wenig Historie rechnen, statt einfach diesen Lauf zu überspringen.
+  const benoetigteKerzen = Math.max(cfg.emaLangsam, cfg.bollingerPeriode, cfg.donchianEntryPeriode) + 2;
+  if (closes.length < benoetigteKerzen) return;
 
   const indikatoren = berechneIndikatoren(closes, highs, lows, cfg);
   const { preis } = indikatoren;
@@ -413,8 +417,9 @@ function readConfig(env) {
   const exchange = (env.TRADING_EXCHANGE || 'binance').trim().toLowerCase();
   if (!EXCHANGES[exchange]) throw new Error(`Unbekannte TRADING_EXCHANGE "${exchange}" - unterstützt: ${Object.keys(EXCHANGES).join(', ')}`);
   const strategie = (env.TRADING_STRATEGIE || 'ema-crossover').trim();
-  if (strategie !== 'ema-crossover' && strategie !== 'bollinger-mean-reversion') {
-    throw new Error(`Unbekannte TRADING_STRATEGIE "${strategie}" - unterstützt: ema-crossover, bollinger-mean-reversion`);
+  const GUELTIGE_STRATEGIEN = ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout'];
+  if (!GUELTIGE_STRATEGIEN.includes(strategie)) {
+    throw new Error(`Unbekannte TRADING_STRATEGIE "${strategie}" - unterstützt: ${GUELTIGE_STRATEGIEN.join(', ')}`);
   }
   return {
     exchange,
@@ -425,6 +430,8 @@ function readConfig(env) {
     strategie,
     bollingerPeriode: parseInt(env.TRADING_BOLLINGER_PERIODE || '20', 10),
     bollingerStdDev: parseFloat(env.TRADING_BOLLINGER_STDDEV || '2'),
+    donchianEntryPeriode: parseInt(env.TRADING_DONCHIAN_ENTRY_PERIODE || '20', 10),
+    donchianExitPeriode: parseInt(env.TRADING_DONCHIAN_EXIT_PERIODE || '10', 10),
     maxPositionProzent: parseFloat(env.TRADING_MAX_POSITION_PROZENT || '25'),
     maxTagesverlustProzent: parseFloat(env.TRADING_MAX_TAGESVERLUST_PROZENT || '5'),
     maxGesamtverlustProzent: parseFloat(env.TRADING_MAX_GESAMTVERLUST_PROZENT || '20'),

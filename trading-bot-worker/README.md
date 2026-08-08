@@ -87,27 +87,38 @@ jeder Order verifiziert der Adapter den tatsächlichen Ausführungsstatus
 fehl, wird laut ein Fehler geworfen statt stillschweigend eine Position zu
 buchen, die es gar nicht gibt.
 
-## Zweite Strategie: Bollinger-Mean-Reversion
+## Drei Strategien zur Wahl
 
-Bisher gab es nur eine Strategie (EMA-Crossover — kauft bei Trendwechsel nach
-oben, verkauft bei Trendwechsel nach unten). Jetzt gibt es eine zweite Wahl,
-über `TRADING_STRATEGIE`:
+`TRADING_STRATEGIE` schaltet zwischen den drei klassischen Familien
+systematischer Handelsstrategien um:
 
-- **`ema-crossover`** (Default, unverändertes Verhalten): folgt Trends,
-  funktioniert am besten in klar trendenden Märkten.
-- **`bollinger-mean-reversion`**: kauft, wenn der Kurs unter das untere
-  Bollinger-Band (`TRADING_BOLLINGER_PERIODE`, Default 20 Kerzen;
-  `TRADING_BOLLINGER_STDDEV`, Default 2 Standardabweichungen) fällt — Wette
-  auf Rückkehr zum Mittelwert statt auf einen Trend. Verkauft, sobald der
-  Kurs den Mittelwert wieder erreicht. Eher geeignet für seitwärts laufende,
-  oszillierende Märkte, in denen EMA-Crossover viele Fehlsignale produziert.
+- **`ema-crossover`** (Default, unverändertes Verhalten) — **Trendfolge**:
+  kauft bei Trendwechsel nach oben, verkauft bei Trendwechsel nach unten.
+  Funktioniert am besten in klar trendenden Märkten.
+- **`bollinger-mean-reversion`** — **Mean-Reversion**: kauft, wenn der Kurs
+  unter das untere Bollinger-Band (`TRADING_BOLLINGER_PERIODE`, Default 20
+  Kerzen; `TRADING_BOLLINGER_STDDEV`, Default 2 Standardabweichungen) fällt
+  — Wette auf Rückkehr zum Mittelwert statt auf einen Trend. Verkauft,
+  sobald der Kurs den Mittelwert wieder erreicht. Eher geeignet für
+  seitwärts laufende, oszillierende Märkte, in denen EMA-Crossover viele
+  Fehlsignale produziert.
+- **`donchian-breakout`** — **Breakout** (klassischer "Turtle Trader"-
+  Ansatz): kauft, wenn der Kurs über das höchste Hoch der letzten
+  `TRADING_DONCHIAN_ENTRY_PERIODE`-Kerzen ausbricht (Default 20) — Wette auf
+  einen NEUEN, gerade erst startenden Trend. Verkauft über einen kürzeren
+  Ausstiegs-Kanal (`TRADING_DONCHIAN_EXIT_PERIODE`, Default 10 Kerzen),
+  damit ein laufender Trend nicht beim ersten kleinen Rücksetzer verkauft
+  wird, ein echter Trendbruch aber zügig erkannt wird.
 
 Stop-Loss, Trailing-Stop, Tagesverlust-Sperre und Kill-Switch gelten bei
-beiden Strategien identisch — die Risiko-Grenzen sind strategieunabhängig.
+allen drei Strategien identisch — die Risiko-Grenzen sind strategieunabhängig.
 
 **Welche Strategie passt besser?** Kommt auf das Symbol und die Marktphase
-an — es gibt keine pauschal "beste" Strategie für immer. Deshalb: vor jeder
-Umstellung mit dem Backtest beide direkt vergleichen (siehe unten).
+an — es gibt keine pauschal "beste" Strategie für immer, deshalb auch drei
+statt einer. Vor jeder Umstellung alle drei mit dem Backtest direkt
+vergleichen (siehe unten), oder interaktiv mit echten Charts im
+**CASHMACHINE STRATEGY LAB** (`strategy-lab/` im Hauptrepo, live unter
+`https://ziyabicilecommerce-hub.github.io/ai-cash-machine/strategy-lab/`).
 
 ## Backtesting — Strategie VOR echtem Geld gegen echte Kursdaten testen
 
@@ -120,7 +131,7 @@ kein Risiko, dass Backtest und Live-Bot unterschiedliche Dinge tun.
 node backtest.mjs BTCUSDT 90
 # oder mit eigener Konfiguration, gleiche Variablennamen wie in wrangler.toml:
 TRADING_RSI_UEBERKAUFT=70 TRADING_TRAILING_STOP_AB_PROZENT=2 node backtest.mjs BTCUSDT 180
-# beide Strategien direkt gegeneinander vergleichen:
+# alle drei Strategien direkt gegeneinander vergleichen:
 node backtest.mjs BTCUSDT 90 --vergleiche
 ```
 

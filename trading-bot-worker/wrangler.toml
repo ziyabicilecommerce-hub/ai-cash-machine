@@ -41,15 +41,23 @@ TRADING_VOLA_SIZING_MIN_FAKTOR = "0.25"
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # TRADING_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 
-# Zweite Strategie zur Wahl (Default "ema-crossover" = unverändertes Verhalten).
+# Drei Strategien zur Wahl (Default "ema-crossover" = unverändertes Verhalten):
 # "bollinger-mean-reversion": kauft, wenn der Kurs unter das untere
 # Bollinger-Band fällt (überverkauft), verkauft beim Rücksprung zum
 # Mittelwert - eher für seitwärts laufende statt trendende Märkte geeignet.
-# VOR dem Umschalten unbedingt beide mit `node backtest.mjs SYMBOL TAGE
-# --vergleiche` gegeneinander testen, siehe README.
+# "donchian-breakout": kauft, wenn der Kurs über das höchste Hoch der
+# letzten TRADING_DONCHIAN_ENTRY_PERIODE-Kerzen ausbricht (klassischer
+# "Turtle Trader"-Breakout), verkauft über einen kürzeren Ausstiegs-Kanal
+# (TRADING_DONCHIAN_EXIT_PERIODE) - eher für neue, gerade erst startende
+# Trends geeignet, nicht für seitwärts laufende Märkte.
+# VOR dem Umschalten unbedingt alle drei mit `node backtest.mjs SYMBOL TAGE
+# --vergleiche` gegeneinander testen, siehe README - oder interaktiv im
+# CASHMACHINE STRATEGY LAB (strategy-lab/ im Hauptrepo).
 # TRADING_STRATEGIE = "bollinger-mean-reversion"
 # TRADING_BOLLINGER_PERIODE = "20"
 # TRADING_BOLLINGER_STDDEV = "2"
+# TRADING_DONCHIAN_ENTRY_PERIODE = "20"
+# TRADING_DONCHIAN_EXIT_PERIODE = "10"
 
 # Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
 #   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)

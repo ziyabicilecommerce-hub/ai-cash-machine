@@ -99,7 +99,7 @@
 
 <header class="hero">
   <h1>📊 STRATEGY LAB</h1>
-  <p class="sub">Teste EMA-Crossover und Bollinger-Mean-Reversion gegen echte historische Binance-Kurse — mit exakt derselben Strategie-Logik, die auch der Live-Trading-Bot verwendet. Direkt im Browser, kein Server.</p>
+  <p class="sub">Teste Trendfolge (EMA-Crossover), Mean-Reversion (Bollinger) und Breakout (Donchian) gegen echte historische Binance-Kurse — mit exakt derselben Strategie-Logik, die auch der Live-Trading-Bot verwendet. Direkt im Browser, kein Server.</p>
 </header>
 
 <div class="disclaimer">⚠️ Backtests zeigen, wie eine Strategie in der Vergangenheit abgeschnitten hätte — das ist KEINE Garantie für die Zukunft und keine Anlageberatung. Vor echtem Geldeinsatz immer zuerst im Paper-Modus laufen lassen.</div>
@@ -112,8 +112,9 @@
       <div class="field"><label for="kapital">Startkapital (USDT)</label><input type="number" id="kapital" value="1000" min="10"></div>
       <div class="field"><label for="strategie">Strategie</label>
         <select id="strategie">
-          <option value="ema-crossover">EMA-Crossover</option>
+          <option value="ema-crossover">EMA-Crossover (Trendfolge)</option>
           <option value="bollinger-mean-reversion">Bollinger-Mean-Reversion</option>
+          <option value="donchian-breakout">Donchian-Breakout</option>
         </select>
       </div>
       <div class="field"><label for="stopLoss">Stop-Loss %</label><input type="number" id="stopLoss" value="3" min="0.1" step="0.1"></div>
@@ -130,9 +131,13 @@
       <div class="field"><label for="bollingerPeriode">Bollinger-Periode</label><input type="number" id="bollingerPeriode" value="20" min="5"></div>
       <div class="field"><label for="bollingerStdDev">Bollinger Std-Dev</label><input type="number" id="bollingerStdDev" value="2" min="0.5" step="0.1"></div>
     </div>
+    <div class="strategy-params" id="paramsDonchian">
+      <div class="field"><label for="donchianEntryPeriode">Donchian Einstiegs-Periode</label><input type="number" id="donchianEntryPeriode" value="20" min="5"></div>
+      <div class="field"><label for="donchianExitPeriode">Donchian Ausstiegs-Periode</label><input type="number" id="donchianExitPeriode" value="10" min="3"></div>
+    </div>
 
     <div class="controls-bottom">
-      <label class="checkbox-row"><input type="checkbox" id="vergleichen"> Beide Strategien direkt vergleichen</label>
+      <label class="checkbox-row"><input type="checkbox" id="vergleichen"> Alle drei Strategien direkt vergleichen</label>
       <button class="run-btn" id="runBtn">Backtest starten →</button>
     </div>
   </div>
@@ -177,7 +182,7 @@
   const BINANCE_BASE = 'https://api.binance.com';
   const KLINES_PRO_REQUEST = 1000;
   const FENSTER_FUER_INDIKATOREN = 60;
-  const FARBEN = { a: '#6fe0ff', b: '#ffc757' };
+  const FARBEN = { 'ema-crossover': '#6fe0ff', 'bollinger-mean-reversion': '#ffc757', 'donchian-breakout': '#c084fc' };
 
   const fmtGeld = (n) => Number(n || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const fmtDatum = (ms) => new Date(ms).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
@@ -185,6 +190,7 @@
   document.getElementById('strategie').addEventListener('change', (e) => {
     document.getElementById('paramsEma').classList.toggle('show', e.target.value === 'ema-crossover');
     document.getElementById('paramsBollinger').classList.toggle('show', e.target.value === 'bollinger-mean-reversion');
+    document.getElementById('paramsDonchian').classList.toggle('show', e.target.value === 'donchian-breakout');
   });
   document.getElementById('paramsEma').classList.add('show');
 
@@ -206,6 +212,8 @@
       volaSizingMinFaktor: 0.25,
       bollingerPeriode: parseInt(document.getElementById('bollingerPeriode').value, 10) || 20,
       bollingerStdDev: parseFloat(document.getElementById('bollingerStdDev').value) || 2,
+      donchianEntryPeriode: parseInt(document.getElementById('donchianEntryPeriode').value, 10) || 20,
+      donchianExitPeriode: parseInt(document.getElementById('donchianExitPeriode').value, 10) || 10,
       maxGleichzeitigePositionen: 1,
     };
   }
@@ -366,7 +374,7 @@
 
       statusLine.textContent = 'Simuliere Strategie...';
       const buyAndHoldProzent = ((closes[closes.length - 1] - closes[FENSTER_FUER_INDIKATOREN]) / closes[FENSTER_FUER_INDIKATOREN]) * 100;
-      const strategien = vergleichen ? ['ema-crossover', 'bollinger-mean-reversion'] : [document.getElementById('strategie').value];
+      const strategien = vergleichen ? ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout'] : [document.getElementById('strategie').value];
       const ergebnisse = strategien.map((s) => ({ strategie: s, ergebnis: simuliere(closes, highs, lows, zeiten, leseConfig(s), startKapital) }));
 
       document.getElementById('statsGrid').innerHTML = '';
@@ -379,16 +387,16 @@
       results.classList.add('show');
 
       const preisSerie = closes.slice(FENSTER_FUER_INDIKATOREN).map((c, i) => ({ x: i, y: c }));
-      zeichneLinienChart(document.getElementById('priceChart'), [{ farbe: FARBEN.a, werte: preisSerie }], { markerTrades: ergebnisse[0].ergebnis.trades });
-      document.getElementById('priceLegend').innerHTML = `<span><span class="dot" style="background:${FARBEN.a}"></span>${symbol} Kurs</span><span><span class="dot" style="background:#34f5a2"></span>Einstieg / Ausstieg (Gewinn)</span><span><span class="dot" style="background:#ff6b81"></span>Ausstieg (Verlust)</span>`;
+      zeichneLinienChart(document.getElementById('priceChart'), [{ farbe: FARBEN[ergebnisse[0].strategie], werte: preisSerie }], { markerTrades: ergebnisse[0].ergebnis.trades });
+      document.getElementById('priceLegend').innerHTML = `<span><span class="dot" style="background:${FARBEN[ergebnisse[0].strategie]}"></span>${symbol} Kurs</span><span><span class="dot" style="background:#34f5a2"></span>Einstieg / Ausstieg (Gewinn)</span><span><span class="dot" style="background:#ff6b81"></span>Ausstieg (Verlust)</span>`;
 
-      const equitySerien = ergebnisse.map((e, i) => ({
-        farbe: i === 0 ? FARBEN.a : FARBEN.b,
+      const equitySerien = ergebnisse.map((e) => ({
+        farbe: FARBEN[e.strategie],
         werte: e.ergebnis.equityKurve.map((p, idx) => ({ x: idx, y: p.wert })),
       }));
       zeichneLinienChart(document.getElementById('equityChart'), equitySerien);
-      document.getElementById('equityLegend').innerHTML = ergebnisse.map((e, i) =>
-        `<span><span class="dot" style="background:${i === 0 ? FARBEN.a : FARBEN.b}"></span>${e.strategie}</span>`
+      document.getElementById('equityLegend').innerHTML = ergebnisse.map((e) =>
+        `<span><span class="dot" style="background:${FARBEN[e.strategie]}"></span>${e.strategie}</span>`
       ).join('') + `<span><span class="dot" style="background:var(--mut2)"></span>Startkapital: ${fmtGeld(startKapital)} USDT</span>`;
 
       const alleTrades = ergebnisse.flatMap((e) => e.ergebnis.trades.map((t) => ({ ...t, strategie: e.strategie })));

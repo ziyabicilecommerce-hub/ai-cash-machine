@@ -11,8 +11,8 @@
 //   node backtest.mjs BTCUSDT 90
 //   (Symbol, Anzahl Tage zurück - Default 90)
 //
-// Beide Strategien direkt gegeneinander vergleichen (empfohlen, bevor man
-// sich für eine entscheidet):
+// Alle drei Strategien direkt gegeneinander vergleichen (empfohlen, bevor
+// man sich für eine entscheidet):
 //   node backtest.mjs BTCUSDT 90 --vergleiche
 //
 // Alle TRADING_*-Umgebungsvariablen aus wrangler.toml funktionieren hier
@@ -25,7 +25,7 @@ import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from './lib/st
 
 const BINANCE_BASE = 'https://api.binance.com';
 const KLINES_PRO_REQUEST = 1000;
-const FENSTER_FUER_INDIKATOREN = 60; // genug Vorlauf für EMA(21)/RSI(14)/ATR(14)/Bollinger(20)
+const FENSTER_FUER_INDIKATOREN = 60; // genug Vorlauf für EMA(21)/RSI(14)/ATR(14)/Bollinger(20)/Donchian(20)
 
 function readConfig(strategieOverride) {
   const env = process.env;
@@ -34,6 +34,8 @@ function readConfig(strategieOverride) {
     strategie,
     bollingerPeriode: parseInt(env.TRADING_BOLLINGER_PERIODE || '20', 10),
     bollingerStdDev: parseFloat(env.TRADING_BOLLINGER_STDDEV || '2'),
+    donchianEntryPeriode: parseInt(env.TRADING_DONCHIAN_ENTRY_PERIODE || '20', 10),
+    donchianExitPeriode: parseInt(env.TRADING_DONCHIAN_EXIT_PERIODE || '10', 10),
     maxPositionProzent: parseFloat(env.TRADING_MAX_POSITION_PROZENT || '25'),
     maxTagesverlustProzent: parseFloat(env.TRADING_MAX_TAGESVERLUST_PROZENT || '5'),
     maxGesamtverlustProzent: parseFloat(env.TRADING_MAX_GESAMTVERLUST_PROZENT || '20'),
@@ -193,7 +195,7 @@ async function main() {
   }
   const buyAndHoldProzent = ((closes[closes.length - 1] - closes[FENSTER_FUER_INDIKATOREN]) / closes[FENSTER_FUER_INDIKATOREN]) * 100;
 
-  const strategien = vergleiche ? ['ema-crossover', 'bollinger-mean-reversion'] : [readConfig().strategie];
+  const strategien = vergleiche ? ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout'] : [readConfig().strategie];
   const kennzahlenProStrategie = {};
   for (const strategie of strategien) {
     const cfg = readConfig(strategie);
@@ -203,8 +205,9 @@ async function main() {
   }
 
   if (vergleiche) {
-    const [a, b] = strategien;
-    const gewinner = kennzahlenProStrategie[a].gesamtReturnProzent >= kennzahlenProStrategie[b].gesamtReturnProzent ? a : b;
+    const gewinner = strategien.reduce((best, s) =>
+      kennzahlenProStrategie[s].gesamtReturnProzent > kennzahlenProStrategie[best].gesamtReturnProzent ? s : best
+    );
     console.log(`\n>>> Für ${symbol} in diesem Zeitraum besser abgeschnitten: "${gewinner}"`);
   }
 

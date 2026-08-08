@@ -67,10 +67,26 @@ export function bollingerSeries(closes, period, stdDevMultiplikator) {
   return { mittel, oberesBand, unteresBand };
 }
 
+// Höchster Höchstkurs / tiefster Tiefstkurs der letzten `period` Kerzen VOR
+// der aktuellen (Index i selbst zählt nicht mit) - klassischer Donchian-
+// Kanal für Breakout-Strategien ("Turtle Trader"): Ausbruch = aktueller
+// Kurs schließt ÜBER dem höchsten Hoch der jüngsten Vergangenheit.
+export function donchianKanal(highs, lows, index, period) {
+  const start = index - period;
+  if (start < 0) return { oben: null, unten: null };
+  let oben = -Infinity, unten = Infinity;
+  for (let i = start; i < index; i++) {
+    oben = Math.max(oben, highs[i]);
+    unten = Math.min(unten, lows[i]);
+  }
+  return { oben, unten };
+}
+
 // Berechnet aus einem Fenster von Kerzen (closes/highs/lows, letzter Eintrag
 // = aktuelle Kerze) alle für die Entscheidung nötigen Indikator-Werte, für
-// beide unterstützten Strategien (cfg.strategie: 'ema-crossover' [Default]
-// oder 'bollinger-mean-reversion').
+// alle drei unterstützten Strategien (cfg.strategie: 'ema-crossover'
+// [Default, Trendfolge], 'bollinger-mean-reversion' [Rückkehr zum
+// Mittelwert] oder 'donchian-breakout' [Ausbruch aus der jüngsten Spanne]).
 export function berechneIndikatoren(closes, highs, lows, cfg) {
   const fastSeries = emaSeries(closes, cfg.emaSchnell);
   const slowSeries = emaSeries(closes, cfg.emaLangsam);
@@ -93,6 +109,8 @@ export function berechneIndikatoren(closes, highs, lows, cfg) {
     bollingerMittel: null,
     bollingerOben: null,
     bollingerUnten: null,
+    donchianEinstiegOben: null,
+    donchianAusstiegUnten: null,
   };
 
   if (cfg.strategie === 'bollinger-mean-reversion') {
@@ -100,6 +118,11 @@ export function berechneIndikatoren(closes, highs, lows, cfg) {
     ergebnis.bollingerMittel = mittel[n - 1];
     ergebnis.bollingerOben = oberesBand[n - 1];
     ergebnis.bollingerUnten = unteresBand[n - 1];
+  }
+
+  if (cfg.strategie === 'donchian-breakout') {
+    ergebnis.donchianEinstiegOben = donchianKanal(highs, lows, n - 1, cfg.donchianEntryPeriode).oben;
+    ergebnis.donchianAusstiegUnten = donchianKanal(highs, lows, n - 1, cfg.donchianExitPeriode).unten;
   }
 
   return ergebnis;
@@ -117,6 +140,11 @@ export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei,
     // Einstieg, wenn der Kurs unter das untere Band fällt (überverkauft) -
     // Wette auf Rückkehr zum Mittelwert, statt auf einen Trend.
     signalOk = indikatoren.bollingerUnten !== null && indikatoren.preis <= indikatoren.bollingerUnten && rsiOk;
+  } else if (cfg.strategie === 'donchian-breakout') {
+    // Einstieg, wenn der Kurs über das höchste Hoch der letzten
+    // donchianEntryPeriode-Kerzen ausbricht - Wette auf einen NEUEN Trend,
+    // statt auf eine Rückkehr zum Mittelwert oder einen bereits laufenden.
+    signalOk = indikatoren.donchianEinstiegOben !== null && indikatoren.preis > indikatoren.donchianEinstiegOben && rsiOk;
   } else {
     const volaOk = cfg.minVolatilitaetProzent <= 0 || volatilitaetProzent === null || volatilitaetProzent >= cfg.minVolatilitaetProzent;
     signalOk = indikatoren.crossUp && rsiOk && volaOk;
@@ -153,6 +181,14 @@ export function entscheideVerkauf({ position, cfg, indikatoren }) {
     // Ziel erreicht, sobald der Kurs zurück zum Mittelwert (oder darüber) ist.
     const zielErreicht = indikatoren.bollingerMittel !== null && preis >= indikatoren.bollingerMittel;
     return { verkaufen: zielErreicht, grund: 'Mittelband erreicht', hoechsterPreisSeitEinstieg };
+  }
+
+  if (cfg.strategie === 'donchian-breakout') {
+    // Klassischer Turtle-Ausstieg: kürzerer Kanal als beim Einstieg, damit
+    // ein laufender Trend nicht sofort beim ersten kleinen Rücksetzer
+    // verkauft wird, aber ein echter Trendbruch trotzdem zügig erkannt wird.
+    const ausstieg = indikatoren.donchianAusstiegUnten !== null && preis < indikatoren.donchianAusstiegUnten;
+    return { verkaufen: ausstieg, grund: 'Donchian-Ausstieg', hoechsterPreisSeitEinstieg };
   }
 
   return { verkaufen: indikatoren.crossDown, grund: 'EMA-Crossover', hoechsterPreisSeitEinstieg };
