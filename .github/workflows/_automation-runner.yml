@@ -200,6 +200,7 @@ jobs:
           PAYPAL_BELEG_LOOKBACK_TAGE: ${{ secrets.PAYPAL_BELEG_LOOKBACK_TAGE }}
           PAYPAL_BELEG_MAX_PRO_LAUF: ${{ secrets.PAYPAL_BELEG_MAX_PRO_LAUF }}
           WRAPPED_ZEITRAUM_TAGE: ${{ secrets.WRAPPED_ZEITRAUM_TAGE }}
+          EMAILS_PAUSIERT: ${{ secrets.EMAILS_PAUSIERT }}
 
       - name: State-Änderungen committen
         # if: always() ist wichtig - läuft ein Skript mitten in einer Kunden-
