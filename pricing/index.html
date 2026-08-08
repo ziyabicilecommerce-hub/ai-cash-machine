@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE PREIS-KALKULATOR</title>
+<meta name="description" content="Berechnet aus Einkaufspreis, Zahlungsgebühren, Umsatzsteuer und Werbekosten-Annahme den richtigen Verkaufspreis — bevor ein neues Produkt live geht. Reine Berechnung, keine Daten verlassen den Browser.">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060b08; --panel: rgba(16,32,22,.55); --panel-solid: #0a1610;
+    --green: #34f5a2; --gold: #ffd166; --red: #ff6b81; --mut: rgba(220,240,228,.62); --mut2: rgba(220,240,228,.4);
+    --line: rgba(52,245,162,.2); --line2: rgba(255,255,255,.07); --txt: #ecfaf2;
+    --mono: 'JetBrains Mono', ui-monospace, monospace; --orb: 'Orbitron', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; }
+
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(52,245,162,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(52,245,162,.05) 1px,transparent 1px);
+    background-size:52px 52px; mask-image:radial-gradient(ellipse 90% 60% at 50% 10%,#000 30%,transparent 80%); }
+
+  nav { position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(6,11,8,.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--orb); font-weight:900; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--green); }
+  .nav-links { display:flex; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--green); }
+  @media(max-width:760px){ .nav-links a { display:none; } }
+
+  header.hero { padding:50px 20px 10px; text-align:center; max-width:700px; margin:0 auto; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--green); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:16px; }
+  h1 { font-family:var(--orb); font-weight:900; font-size:clamp(22px,5vw,34px); letter-spacing:1px; margin-bottom:10px; }
+  .sub { font-size:13.5px; color:var(--mut); }
+
+  section { padding:30px 20px 70px; max-width:1000px; margin:0 auto; }
+  .layout { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
+  @media(max-width:800px){ .layout { grid-template-columns:1fr; } }
+
+  .panel { background:var(--panel); border:1px solid var(--line2); padding:22px;
+    clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); }
+  .panel h2 { font-family:var(--mono); font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--mut2); margin-bottom:16px; }
+
+  .field { margin-bottom:14px; }
+  .field label { display:block; font-size:12.5px; color:var(--mut); margin-bottom:5px; }
+  .field .row { display:flex; align-items:center; gap:8px; }
+  .field input { width:100%; background:var(--panel-solid); border:1px solid var(--line2); color:var(--txt);
+    font-family:var(--mono); font-size:14px; padding:9px 11px; outline:none; }
+  .field input:focus { border-color:var(--green); }
+  .field .unit { font-family:var(--mono); font-size:12px; color:var(--mut2); white-space:nowrap; }
+
+  .mode-toggle { display:flex; gap:8px; margin-bottom:18px; }
+  .mode-btn { flex:1; background:var(--panel-solid); border:1px solid var(--line2); color:var(--mut);
+    font-family:var(--mono); font-size:11.5px; padding:9px; cursor:pointer; text-align:center; }
+  .mode-btn.active { border-color:var(--green); color:var(--green); background:rgba(52,245,162,.08); }
+
+  .result-headline { text-align:center; padding:20px 0 24px; border-bottom:1px solid var(--line2); margin-bottom:18px; }
+  .result-headline .label { font-family:var(--mono); font-size:11px; color:var(--mut2); letter-spacing:.1em; text-transform:uppercase; }
+  .result-headline .price { font-family:var(--orb); font-weight:900; font-size:clamp(34px,7vw,48px); color:var(--green); margin:6px 0; }
+  .result-headline .price small { font-family:var(--mono); font-size:16px; color:var(--mut2); }
+
+  .breakdown-row { display:flex; justify-content:space-between; font-size:13px; color:var(--mut); padding:7px 0; border-bottom:1px solid var(--line2); }
+  .breakdown-row b { color:var(--txt); font-family:var(--mono); }
+  .breakdown-row.profit b { color:var(--green); }
+  .breakdown-row.warn b { color:var(--red); }
+
+  .test-price { margin-top:20px; padding-top:16px; border-top:1px dashed var(--line2); }
+  .test-price label { display:block; font-size:12.5px; color:var(--mut); margin-bottom:8px; }
+  .test-price input { width:100%; background:var(--panel-solid); border:1px solid var(--line); color:var(--gold);
+    font-family:var(--orb); font-weight:700; font-size:20px; padding:10px 12px; outline:none; text-align:center; }
+  .test-result { text-align:center; margin-top:10px; font-family:var(--mono); font-size:13px; color:var(--mut); }
+  .test-result b { color:var(--txt); }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--green); text-decoration:none; margin:0 8px; }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;PREIS</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../finance-cockpit/">Finance</a>
+    <a href="../forecast/">Forecast</a>
+    <a href="../agents/">Agents</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="kicker">REINE BERECHNUNG · KEINE DATEN VERLASSEN DEN BROWSER</div>
+  <h1>💶 PREIS-KALKULATOR</h1>
+  <p class="sub">Bevor ein neues Produkt live geht: welcher Verkaufspreis bringt wirklich die Marge, die du willst — nach Zahlungsgebühren, Umsatzsteuer und einer realistischen Werbekosten-Annahme?</p>
+</header>
+
+<section>
+  <div class="layout">
+    <div class="panel">
+      <h2>Eingaben</h2>
+
+      <div class="field">
+        <label for="ek">Einkaufspreis pro Stück</label>
+        <div class="row"><input type="number" id="ek" value="12" min="0" step="0.01"><span class="unit">€</span></div>
+      </div>
+      <div class="field">
+        <label for="versand">Versandkosten pro Stück</label>
+        <div class="row"><input type="number" id="versand" value="3" min="0" step="0.01"><span class="unit">€</span></div>
+      </div>
+      <div class="field">
+        <label for="gebuehrProzent">Zahlungsgebühr (Shopify Payments/Stripe-typisch)</label>
+        <div class="row"><input type="number" id="gebuehrProzent" value="2.9" min="0" step="0.1"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label for="gebuehrFix">Zahlungsgebühr Fixbetrag pro Bestellung</label>
+        <div class="row"><input type="number" id="gebuehrFix" value="0.30" min="0" step="0.01"><span class="unit">€</span></div>
+      </div>
+      <div class="field">
+        <label for="mwst">Umsatzsteuer (im Verkaufspreis enthalten)</label>
+        <div class="row"><input type="number" id="mwst" value="19" min="0" step="1"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label for="werbekosten">Werbekosten-Annahme (Anteil vom Umsatz)</label>
+        <div class="row"><input type="number" id="werbekosten" value="15" min="0" step="1"><span class="unit">%</span></div>
+      </div>
+
+      <div class="mode-toggle">
+        <div class="mode-btn active" data-mode="marge">Ziel: Marge in %</div>
+        <div class="mode-btn" data-mode="gewinn">Ziel: Gewinn in €</div>
+      </div>
+      <div class="field" id="zielFeld">
+        <label for="ziel">Ziel-Nettomarge (vom Verkaufspreis)</label>
+        <div class="row"><input type="number" id="ziel" value="20" min="0" step="1"><span class="unit" id="zielUnit">%</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Ergebnis</h2>
+      <div class="result-headline">
+        <div class="label">Empfohlener Verkaufspreis</div>
+        <div class="price" id="ergebnisPreis">–</div>
+        <div class="label">brutto, inkl. Umsatzsteuer</div>
+      </div>
+
+      <div class="breakdown-row"><span>Produktkosten (EK + Versand)</span><b id="bdKosten">–</b></div>
+      <div class="breakdown-row"><span>Umsatzsteuer-Anteil</span><b id="bdSteuer">–</b></div>
+      <div class="breakdown-row"><span>Zahlungsgebühr</span><b id="bdGebuehr">–</b></div>
+      <div class="breakdown-row"><span>Werbekosten-Annahme</span><b id="bdWerbekosten">–</b></div>
+      <div class="breakdown-row profit"><span>Gewinn pro Stück</span><b id="bdGewinn">–</b></div>
+      <div class="breakdown-row" id="bdWarnRow" style="display:none"><span></span><b id="bdWarn"></b></div>
+
+      <div class="test-price">
+        <label for="testPreis">Alternativen Preis testen (z.B. Konkurrenzpreis)</label>
+        <input type="number" id="testPreis" step="0.01" placeholder="0.00 €">
+        <div class="test-result" id="testResult"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <b>CASHMACHINE PREIS-KALKULATOR</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../finance-cockpit/">Finance</a>·<a href="../forecast/">Forecast</a>·<a href="../agents/">Agents</a>
+</footer>
+
+<script>
+  const STORAGE_KEY = 'cmx_pricing_inputs';
+  const fmtGeld = (n) => (Number.isFinite(n) ? n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €' : '–');
+  const fmtProzent = (n) => (Number.isFinite(n) ? n.toLocaleString('de-DE', { maximumFractionDigits: 1 }) + '%' : '–');
+
+  const ids = ['ek', 'versand', 'gebuehrProzent', 'gebuehrFix', 'mwst', 'werbekosten', 'ziel'];
+  let modus = 'marge';
+
+  function ladeGespeicherteWerte() {
+    try {
+      const gespeichert = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      ids.forEach((id) => { if (gespeichert[id] !== undefined) document.getElementById(id).value = gespeichert[id]; });
+      if (gespeichert.modus) modus = gespeichert.modus;
+    } catch { /* ignorieren, Defaults bleiben */ }
+  }
+
+  function speichereWerte() {
+    const werte = {};
+    ids.forEach((id) => { werte[id] = document.getElementById(id).value; });
+    werte.modus = modus;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(werte));
+  }
+
+  // Kern-Formel: Verkaufspreis (brutto, VP) so berechnen, dass nach Abzug von
+  // Umsatzsteuer-Anteil, Zahlungsgebühr (% + Fix) und Werbekosten-Annahme
+  // (% vom Umsatz) die Ziel-Marge bzw. der Ziel-Gewinn übrig bleibt.
+  // k = Anteil vom Bruttopreis, der NICHT durch Steuer/Gebühr/Werbung
+  // aufgezehrt wird (die %-Anteile skalieren alle mit VP, deshalb linear lösbar).
+  function berechne() {
+    const ek = parseFloat(document.getElementById('ek').value) || 0;
+    const versand = parseFloat(document.getElementById('versand').value) || 0;
+    const gebuehrProzent = (parseFloat(document.getElementById('gebuehrProzent').value) || 0) / 100;
+    const gebuehrFix = parseFloat(document.getElementById('gebuehrFix').value) || 0;
+    const mwst = (parseFloat(document.getElementById('mwst').value) || 0) / 100;
+    const werbekosten = (parseFloat(document.getElementById('werbekosten').value) || 0) / 100;
+    const ziel = parseFloat(document.getElementById('ziel').value) || 0;
+    const kosten = ek + versand;
+
+    const k = 1 / (1 + mwst) - gebuehrProzent - werbekosten;
+
+    let vp;
+    if (modus === 'marge') {
+      const m = ziel / 100;
+      vp = (gebuehrFix + kosten) / (k - m);
+    } else {
+      vp = (ziel + gebuehrFix + kosten) / k;
+    }
+
+    return { vp, ek, versand, kosten, gebuehrProzent, gebuehrFix, mwst, werbekosten, k };
+  }
+
+  function zeigeAufschluesselungFuer(vp, cfg) {
+    const nettoUmsatz = vp / (1 + cfg.mwst);
+    const steuerAnteil = vp - nettoUmsatz;
+    const gebuehr = vp * cfg.gebuehrProzent + cfg.gebuehrFix;
+    const werbekostenBetrag = vp * cfg.werbekosten;
+    const gewinn = nettoUmsatz - gebuehr - werbekostenBetrag - cfg.kosten;
+    const margeProzent = vp > 0 ? (gewinn / vp) * 100 : 0;
+    return { steuerAnteil, gebuehr, werbekostenBetrag, gewinn, margeProzent };
+  }
+
+  function render() {
+    const cfg = berechne();
+    const gueltig = Number.isFinite(cfg.vp) && cfg.vp > 0 && cfg.k > 0;
+
+    document.getElementById('bdWarnRow').style.display = 'none';
+    if (!gueltig) {
+      document.getElementById('ergebnisPreis').textContent = '–';
+      document.getElementById('bdWarnRow').style.display = 'flex';
+      document.getElementById('bdWarn').textContent = 'Ziel-Marge zu hoch für diese Kostenstruktur - Gebühren/Steuer/Werbekosten fressen mehr als 100% auf. Werte reduzieren.';
+      ['bdKosten', 'bdSteuer', 'bdGebuehr', 'bdWerbekosten', 'bdGewinn'].forEach((id) => document.getElementById(id).textContent = '–');
+      return;
+    }
+
+    const auf = zeigeAufschluesselungFuer(cfg.vp, cfg);
+    document.getElementById('ergebnisPreis').textContent = fmtGeld(cfg.vp);
+    document.getElementById('bdKosten').textContent = fmtGeld(cfg.kosten);
+    document.getElementById('bdSteuer').textContent = fmtGeld(auf.steuerAnteil);
+    document.getElementById('bdGebuehr').textContent = fmtGeld(auf.gebuehr);
+    document.getElementById('bdWerbekosten').textContent = fmtGeld(auf.werbekostenBetrag);
+    document.getElementById('bdGewinn').textContent = `${fmtGeld(auf.gewinn)} (${fmtProzent(auf.margeProzent)})`;
+
+    if (!document.getElementById('testPreis').dataset.touched) {
+      document.getElementById('testPreis').value = cfg.vp.toFixed(2);
+    }
+    renderTestPreis(cfg);
+    speichereWerte();
+  }
+
+  function renderTestPreis(cfg) {
+    const testVp = parseFloat(document.getElementById('testPreis').value);
+    if (!Number.isFinite(testVp) || testVp <= 0) {
+      document.getElementById('testResult').textContent = '';
+      return;
+    }
+    const auf = zeigeAufschluesselungFuer(testVp, cfg);
+    const farbe = auf.gewinn >= 0 ? 'var(--green)' : 'var(--red)';
+    document.getElementById('testResult').innerHTML =
+      `Bei ${fmtGeld(testVp)}: <b style="color:${farbe}">${fmtGeld(auf.gewinn)} Gewinn/Stück</b> (${fmtProzent(auf.margeProzent)} Marge)`;
+  }
+
+  document.querySelectorAll('.mode-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mode-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      modus = btn.dataset.mode;
+      document.getElementById('zielFeld').querySelector('label').textContent =
+        modus === 'marge' ? 'Ziel-Nettomarge (vom Verkaufspreis)' : 'Ziel-Gewinn pro Stück';
+      document.getElementById('zielUnit').textContent = modus === 'marge' ? '%' : '€';
+      document.getElementById('ziel').value = modus === 'marge' ? '20' : '5';
+      document.getElementById('testPreis').removeAttribute('data-touched');
+      render();
+    });
+  });
+
+  ids.forEach((id) => document.getElementById(id).addEventListener('input', render));
+  document.getElementById('testPreis').addEventListener('input', (e) => {
+    e.target.dataset.touched = '1';
+    renderTestPreis(berechne());
+  });
+
+  ladeGespeicherteWerte();
+  document.querySelectorAll('.mode-btn').forEach((b) => b.classList.toggle('active', b.dataset.mode === modus));
+  if (modus === 'gewinn') {
+    document.getElementById('zielFeld').querySelector('label').textContent = 'Ziel-Gewinn pro Stück';
+    document.getElementById('zielUnit').textContent = '€';
+  }
+  render();
+</script>
+</body>
+</html>
