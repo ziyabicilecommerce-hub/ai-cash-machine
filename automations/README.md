@@ -305,6 +305,15 @@ sonstigen dunklen Cyberpunk-Look der Suite - bewusst als kleines,
 feierliches Extra gedacht statt als weiteres Dashboard. Verschickt den
 Link per Telegram, sobald ein neuer Rückblick fertig ist.
 
+**🤖 Agenten-Status-Sammler**: fragt für jede der anderen `automation-NN-*.yml`-
+Workflows den letzten GitHub-Actions-Lauf ab (`actions: read`, eigener,
+nicht über den geteilten `_automation-runner.yml` laufender Workflow, um die
+Berechtigungen der anderen 79 Automationen nicht anzufassen) und schreibt
+`agents/data.json`. Speist die neue `agents/` App - eine Live-Übersicht
+aller Agenten mit echtem Status (erfolgreich/fehlgeschlagen/läuft/nie
+gelaufen), durchsuchbar und filterbar, kein Fake-Status. Rein lesend -
+ändert nichts an den anderen Workflows.
+
 **⚠️ Trading-Bot** (Krypto-Spot-Handel, echtes finanzielles Risiko - keine
 Anlageberatung, keine Erfolgsgarantie): `BINANCE_API_KEY`, `BINANCE_API_SECRET`
 (Binance → API-Verwaltung; **nur Spot-Trading-Rechte aktivieren, niemals
@@ -519,7 +528,7 @@ abdecken.
 
 Alle Standardwerte stehen in `automations/lib/config.mjs`.
 
-## Die 78 Automationen (46 aus n8n + 32 neue)
+## Die 79 Automationen (46 aus n8n + 33 neue)
 
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
@@ -601,6 +610,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 77 | 🤖 Agentic-Checkout-Readiness-Agent | sonntags 09:30 | prüft, ob der Katalog für KI-Einkaufsagenten (ChatGPT, Perplexity) auffindbar/verständlich ist, meldet Score + schwächste Produkte |
 | 78 | 🧾 PayPal-Beleg-Agent | täglich 06:30 | erstellt für jede per PayPal bezahlte Bestellung einen druckbaren Zahlungs-/Liefernachweis (Kunde, Artikel, Tracking) für PayPal-Kontoprüfungen |
 | 79 | 🎉 Wrapped-Generator | montags 07:00 | baut aus den Finance-Cockpit-Daten einen wöchentlichen Shop-Rückblick im Story-Format (Umsatz, bester Tag, Top-Produkt, Wachstum) |
+| 80 | 🤖 Agenten-Status-Sammler | alle 6 Stunden | fragt den echten Live-Status aller anderen Automationen aus der GitHub Actions API ab, speist die "CASHMACHINE AGENTS"-Übersicht |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht

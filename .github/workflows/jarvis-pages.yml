@@ -18,6 +18,7 @@ on:
       - 'setup/**'
       - 'paypal-belege/**'
       - 'wrapped/**'
+      - 'agents/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
 
@@ -58,6 +59,7 @@ jobs:
           cp -r setup _site/setup
           cp -r paypal-belege _site/paypal-belege
           cp -r wrapped _site/wrapped
+          cp -r agents _site/agents
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

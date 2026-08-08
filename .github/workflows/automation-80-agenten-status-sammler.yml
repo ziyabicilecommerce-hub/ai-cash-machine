@@ -1,0 +1,50 @@
+name: "80 · Agenten-Status-Sammler"
+
+# Läuft bewusst NICHT über den geteilten _automation-runner.yml, obwohl das
+# sonst überall in diesem Repo der Standard ist: dieses Skript braucht
+# zusätzlich "actions: read" (um den Live-Status aller anderen Workflows
+# per GitHub API abzufragen), und reusable-workflow-Permissions werden auf
+# den job-weiten Block in _automation-runner.yml angewendet - das hätte
+# bedeutet, ALLE 79 anderen automation-NN-*.yml-Caller müssten ebenfalls
+# "actions: read" deklarieren, sonst würden sie mit startup_failure
+# scheitern (exakt das gleiche Muster wie beim "issues: write"-Fallstrick).
+# Ein eigenständiger Workflow mit eigenen, engeren Permissions ist hier das
+# sicherere Vorgehen - betrifft nur diesen einen Workflow.
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Dependencies installieren
+        run: npm ci --no-audit --no-fund
+
+      - name: Agenten-Status sammeln
+        run: node automations/80-agenten-status-sammler.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: State-Änderungen committen
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add agents/ 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update agents status [skip ci]"
+            git push
+          fi
