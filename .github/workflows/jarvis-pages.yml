@@ -20,6 +20,8 @@ on:
       - 'wrapped/**'
       - 'agents/**'
       - 'pricing/**'
+      - 'strategy-lab/**'
+      - 'trading-bot-worker/lib/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
 
@@ -62,6 +64,9 @@ jobs:
           cp -r wrapped _site/wrapped
           cp -r agents _site/agents
           cp -r pricing _site/pricing
+          cp -r strategy-lab _site/strategy-lab
+          mkdir -p _site/trading-bot-worker
+          cp -r trading-bot-worker/lib _site/trading-bot-worker/lib
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

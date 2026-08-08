@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE STRATEGY LAB</title>
+<meta name="description" content="Interaktives Backtesting-Labor mit echten Binance-Kursdaten — testet die exakt gleiche Strategie-Logik, die auch der Live-Trading-Bot nutzt, direkt im Browser mit echten Charts.">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050b0c; --panel: rgba(10,26,28,.55); --panel-solid: #0a1618;
+    --cyan: #6fe0ff; --green: #34f5a2; --red: #ff6b81; --amber: #ffc757;
+    --line: rgba(111,224,255,.2); --line2: rgba(255,255,255,.08);
+    --txt: #e8f7fa; --mut: rgba(215,240,245,.62); --mut2: rgba(215,240,245,.38);
+    --mono: 'JetBrains Mono', ui-monospace, monospace; --orb: 'Orbitron', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; }
+
+  nav { position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(5,11,12,.88); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--orb); font-weight:900; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--cyan); }
+  .nav-links { display:flex; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--cyan); }
+  @media(max-width:800px){ .nav-links a { display:none; } }
+
+  header.hero { padding:44px 20px 8px; text-align:center; max-width:760px; margin:0 auto; }
+  h1 { font-family:var(--orb); font-weight:900; font-size:clamp(22px,5vw,34px); letter-spacing:1px; margin-bottom:10px; }
+  .sub { font-size:13.5px; color:var(--mut); }
+
+  .disclaimer { max-width:760px; margin:20px auto 0; padding:12px 18px; background:rgba(255,199,87,.08);
+    border:1px solid rgba(255,199,87,.3); font-size:12px; color:var(--amber); text-align:center; }
+
+  section { padding:26px 20px 70px; max-width:1180px; margin:0 auto; }
+
+  .controls { background:var(--panel); border:1px solid var(--line2); padding:20px; margin-bottom:20px;
+    clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); }
+  .controls-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin-bottom:14px; }
+  .field label { display:block; font-size:11px; color:var(--mut2); font-family:var(--mono); text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px; }
+  .field input, .field select { width:100%; background:var(--panel-solid); border:1px solid var(--line2); color:var(--txt);
+    font-family:var(--mono); font-size:13px; padding:8px 10px; outline:none; }
+  .field input:focus, .field select:focus { border-color:var(--cyan); }
+  .strategy-params { display:none; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin-bottom:14px;
+    padding-top:14px; border-top:1px dashed var(--line2); }
+  .strategy-params.show { display:grid; }
+  .controls-bottom { display:flex; flex-wrap:wrap; align-items:center; gap:16px; justify-content:space-between; }
+  .checkbox-row { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--mut); }
+  .checkbox-row input { width:auto; }
+  .run-btn { background:rgba(111,224,255,.16); border:1px solid var(--cyan); color:var(--txt); font-family:var(--orb);
+    font-weight:700; font-size:13.5px; padding:12px 30px; cursor:pointer; letter-spacing:.04em; }
+  .run-btn:hover { background:rgba(111,224,255,.3); }
+  .run-btn:disabled { opacity:.5; cursor:not-allowed; }
+
+  .status-line { font-family:var(--mono); font-size:12.5px; color:var(--mut2); text-align:center; padding:16px; }
+  .status-line.error { color:var(--red); }
+
+  .results { display:none; }
+  .results.show { display:block; }
+
+  .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:20px; }
+  .stat-card { background:var(--panel); border:1px solid var(--line2); padding:14px; text-align:center; }
+  .stat-card .l { font-family:var(--mono); font-size:10px; color:var(--mut2); text-transform:uppercase; letter-spacing:.06em; }
+  .stat-card .v { font-family:var(--orb); font-weight:900; font-size:19px; margin-top:6px; }
+  .stat-card .v.up { color:var(--green); } .stat-card .v.down { color:var(--red); }
+  .stat-card .sub2 { font-family:var(--mono); font-size:10.5px; color:var(--mut2); margin-top:3px; }
+
+  .chart-panel { background:var(--panel); border:1px solid var(--line2); padding:18px; margin-bottom:16px; }
+  .chart-panel h3 { font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--mut2); margin-bottom:12px; }
+  .chart-panel canvas { width:100%; height:260px; display:block; }
+  .legend { display:flex; gap:16px; font-family:var(--mono); font-size:11px; color:var(--mut); margin-top:10px; flex-wrap:wrap; }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .legend .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+
+  .trades-panel { background:var(--panel); border:1px solid var(--line2); padding:18px; }
+  .trades-panel h3 { font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--mut2); margin-bottom:12px; }
+  table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  thead th { text-align:left; padding:8px 10px; color:var(--mut2); font-family:var(--mono); font-size:10.5px; text-transform:uppercase; border-bottom:1px solid var(--line2); }
+  tbody td { padding:7px 10px; border-bottom:1px solid var(--line2); font-family:var(--mono); }
+  tbody td.up { color:var(--green); } tbody td.down { color:var(--red); }
+  .trades-scroll { max-height:320px; overflow-y:auto; }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--cyan); text-decoration:none; margin:0 8px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;STRATEGY LAB</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../trading-dashboard/">Trading</a>
+    <a href="../pricing/">Preis</a>
+    <a href="../agents/">Agents</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <h1>📊 STRATEGY LAB</h1>
+  <p class="sub">Teste EMA-Crossover und Bollinger-Mean-Reversion gegen echte historische Binance-Kurse — mit exakt derselben Strategie-Logik, die auch der Live-Trading-Bot verwendet. Direkt im Browser, kein Server.</p>
+</header>
+
+<div class="disclaimer">⚠️ Backtests zeigen, wie eine Strategie in der Vergangenheit abgeschnitten hätte — das ist KEINE Garantie für die Zukunft und keine Anlageberatung. Vor echtem Geldeinsatz immer zuerst im Paper-Modus laufen lassen.</div>
+
+<section>
+  <div class="controls">
+    <div class="controls-grid">
+      <div class="field"><label for="symbol">Symbol</label><input type="text" id="symbol" value="BTCUSDT"></div>
+      <div class="field"><label for="tage">Zeitraum (Tage)</label><input type="number" id="tage" value="90" min="7" max="365"></div>
+      <div class="field"><label for="kapital">Startkapital (USDT)</label><input type="number" id="kapital" value="1000" min="10"></div>
+      <div class="field"><label for="strategie">Strategie</label>
+        <select id="strategie">
+          <option value="ema-crossover">EMA-Crossover</option>
+          <option value="bollinger-mean-reversion">Bollinger-Mean-Reversion</option>
+        </select>
+      </div>
+      <div class="field"><label for="stopLoss">Stop-Loss %</label><input type="number" id="stopLoss" value="3" min="0.1" step="0.1"></div>
+      <div class="field"><label for="maxPosition">Max. Position %</label><input type="number" id="maxPosition" value="25" min="1" max="100"></div>
+    </div>
+
+    <div class="strategy-params" id="paramsEma">
+      <div class="field"><label for="emaSchnell">EMA Schnell</label><input type="number" id="emaSchnell" value="9" min="2"></div>
+      <div class="field"><label for="emaLangsam">EMA Langsam</label><input type="number" id="emaLangsam" value="21" min="3"></div>
+      <div class="field"><label for="rsiUeberkauft">RSI-Filter (0=aus)</label><input type="number" id="rsiUeberkauft" value="0" min="0" max="100"></div>
+      <div class="field"><label for="trailingStop">Trailing-Stop % (0=aus)</label><input type="number" id="trailingStop" value="0" min="0" step="0.5"></div>
+    </div>
+    <div class="strategy-params" id="paramsBollinger">
+      <div class="field"><label for="bollingerPeriode">Bollinger-Periode</label><input type="number" id="bollingerPeriode" value="20" min="5"></div>
+      <div class="field"><label for="bollingerStdDev">Bollinger Std-Dev</label><input type="number" id="bollingerStdDev" value="2" min="0.5" step="0.1"></div>
+    </div>
+
+    <div class="controls-bottom">
+      <label class="checkbox-row"><input type="checkbox" id="vergleichen"> Beide Strategien direkt vergleichen</label>
+      <button class="run-btn" id="runBtn">Backtest starten →</button>
+    </div>
+  </div>
+
+  <div class="status-line" id="statusLine"></div>
+
+  <div class="results" id="results">
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="chart-panel">
+      <h3>Kursverlauf mit Ein-/Ausstiegen</h3>
+      <canvas id="priceChart"></canvas>
+      <div class="legend" id="priceLegend"></div>
+    </div>
+
+    <div class="chart-panel">
+      <h3>Equity-Kurve (Kapitalverlauf)</h3>
+      <canvas id="equityChart"></canvas>
+      <div class="legend" id="equityLegend"></div>
+    </div>
+
+    <div class="trades-panel">
+      <h3>Trade-Log</h3>
+      <div class="trades-scroll">
+        <table>
+          <thead><tr><th>Einstieg</th><th>Ausstieg</th><th>Entry</th><th>Exit</th><th>Grund</th><th>Gewinn/Verlust</th></tr></thead>
+          <tbody id="tradesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <b>CASHMACHINE STRATEGY LAB</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../trading-dashboard/">Trading</a>·<a href="../pricing/">Preis</a>·<a href="../agents/">Agents</a>
+</footer>
+
+<script type="module">
+  import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from '../trading-bot-worker/lib/strategie.mjs';
+
+  const BINANCE_BASE = 'https://api.binance.com';
+  const KLINES_PRO_REQUEST = 1000;
+  const FENSTER_FUER_INDIKATOREN = 60;
+  const FARBEN = { a: '#6fe0ff', b: '#ffc757' };
+
+  const fmtGeld = (n) => Number(n || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmtDatum = (ms) => new Date(ms).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+
+  document.getElementById('strategie').addEventListener('change', (e) => {
+    document.getElementById('paramsEma').classList.toggle('show', e.target.value === 'ema-crossover');
+    document.getElementById('paramsBollinger').classList.toggle('show', e.target.value === 'bollinger-mean-reversion');
+  });
+  document.getElementById('paramsEma').classList.add('show');
+
+  function leseConfig(strategieOverride) {
+    return {
+      strategie: strategieOverride || document.getElementById('strategie').value,
+      maxPositionProzent: parseFloat(document.getElementById('maxPosition').value) || 25,
+      maxTagesverlustProzent: 100, // im Lab bewusst nicht künstlich begrenzt - Fokus liegt auf der Signal-Qualität
+      maxGesamtverlustProzent: 100,
+      stopLossProzent: parseFloat(document.getElementById('stopLoss').value) || 3,
+      emaSchnell: parseInt(document.getElementById('emaSchnell').value, 10) || 9,
+      emaLangsam: parseInt(document.getElementById('emaLangsam').value, 10) || 21,
+      rsiPeriode: 14,
+      rsiUeberkauft: parseFloat(document.getElementById('rsiUeberkauft').value) || 0,
+      minVolatilitaetProzent: 0,
+      trailingStopAbProzent: parseFloat(document.getElementById('trailingStop').value) || 0,
+      volaSizing: false,
+      volaSizingReferenzProzent: 2,
+      volaSizingMinFaktor: 0.25,
+      bollingerPeriode: parseInt(document.getElementById('bollingerPeriode').value, 10) || 20,
+      bollingerStdDev: parseFloat(document.getElementById('bollingerStdDev').value) || 2,
+      maxGleichzeitigePositionen: 1,
+    };
+  }
+
+  async function ladeKlines(symbol, tageZurueck, onProgress) {
+    const bisJetzt = Date.now();
+    const startZeit = bisJetzt - tageZurueck * 24 * 60 * 60 * 1000;
+    const alleKlines = [];
+    let cursor = startZeit;
+
+    while (cursor < bisJetzt) {
+      const url = `${BINANCE_BASE}/api/v3/klines?symbol=${symbol}&interval=15m&startTime=${cursor}&limit=${KLINES_PRO_REQUEST}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Binance-Fehler ${res.status}: ${await res.text()}`);
+      const batch = await res.json();
+      if (!batch.length) break;
+      alleKlines.push(...batch);
+      onProgress?.(alleKlines.length);
+      const letzteOffenZeit = batch[batch.length - 1][0];
+      if (letzteOffenZeit <= cursor) break;
+      cursor = letzteOffenZeit + 1;
+      if (batch.length < KLINES_PRO_REQUEST) break;
+    }
+
+    return {
+      closes: alleKlines.map((k) => parseFloat(k[4])),
+      highs: alleKlines.map((k) => parseFloat(k[2])),
+      lows: alleKlines.map((k) => parseFloat(k[3])),
+      zeiten: alleKlines.map((k) => k[0]),
+    };
+  }
+
+  function berechneMaxDrawdownProzent(equityKurve) {
+    let peak = equityKurve[0], maxDrawdown = 0;
+    for (const wert of equityKurve) {
+      peak = Math.max(peak, wert);
+      maxDrawdown = Math.max(maxDrawdown, ((peak - wert) / peak) * 100);
+    }
+    return maxDrawdown;
+  }
+
+  function simuliere(closes, highs, lows, zeiten, cfg, startKapital) {
+    let kapital = startKapital, position = null;
+    const trades = [];
+    const equityKurve = [{ zeit: zeiten[FENSTER_FUER_INDIKATOREN], wert: kapital }];
+
+    for (let i = FENSTER_FUER_INDIKATOREN; i < closes.length; i++) {
+      const fensterCloses = closes.slice(0, i + 1), fensterHighs = highs.slice(0, i + 1), fensterLows = lows.slice(0, i + 1);
+      const indikatoren = berechneIndikatoren(fensterCloses, fensterHighs, fensterLows, cfg);
+      const { preis } = indikatoren;
+
+      if (!position) {
+        const kauf = entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei: true, handelsSperreHeute: false });
+        if (kauf) {
+          const qty = kauf.investBetrag / preis;
+          position = { qty, entryPreis: preis, hoechsterPreisSeitEinstieg: preis, einstiegAm: zeiten[i], einstiegIndex: i };
+        }
+      } else {
+        const verkauf = entscheideVerkauf({ position, cfg, indikatoren });
+        position.hoechsterPreisSeitEinstieg = verkauf.hoechsterPreisSeitEinstieg;
+        if (verkauf.verkaufen) {
+          const einsatz = position.qty * position.entryPreis;
+          const gewinnVerlust = position.qty * preis - einsatz;
+          kapital += gewinnVerlust;
+          trades.push({
+            einstiegAm: position.einstiegAm, ausstiegAm: zeiten[i], einstiegIndex: position.einstiegIndex, ausstiegIndex: i,
+            entryPreis: position.entryPreis, exitPreis: preis, gewinnVerlustUsdt: gewinnVerlust,
+            gewinnProzent: (gewinnVerlust / einsatz) * 100, grund: verkauf.grund,
+          });
+          position = null;
+        }
+      }
+      equityKurve.push({ zeit: zeiten[i], wert: position ? kapital + position.qty * (preis - position.entryPreis) : kapital });
+    }
+
+    return { kapitalEnde: kapital, trades, equityKurve };
+  }
+
+  function zeichneLinienChart(canvas, serien, { markerTrades } = {}) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const w = rect.width, h = rect.height, pad = 8;
+    ctx.clearRect(0, 0, w, h);
+
+    const alleWerte = serien.flatMap((s) => s.werte.map((p) => p.y));
+    const min = Math.min(...alleWerte), max = Math.max(...alleWerte);
+    const spanne = max - min || 1;
+    const n = serien[0].werte.length;
+    const x = (i) => pad + (i / (n - 1)) * (w - pad * 2);
+    const y = (v) => h - pad - ((v - min) / spanne) * (h - pad * 2);
+
+    ctx.strokeStyle = 'rgba(255,255,255,.06)';
+    ctx.lineWidth = 1;
+    for (let gy = 0; gy <= 4; gy++) {
+      const yy = pad + (gy / 4) * (h - pad * 2);
+      ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(w, yy); ctx.stroke();
+    }
+
+    for (const serie of serien) {
+      ctx.strokeStyle = serie.farbe; ctx.lineWidth = 1.8; ctx.beginPath();
+      serie.werte.forEach((p, i) => { const px = x(i), py = y(p.y); i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py); });
+      ctx.stroke();
+    }
+
+    if (markerTrades) {
+      for (const t of markerTrades) {
+        const gewinn = t.gewinnVerlustUsdt >= 0;
+        const xi = x(t.einstiegIndex - FENSTER_FUER_INDIKATOREN), xo = x(t.ausstiegIndex - FENSTER_FUER_INDIKATOREN);
+        const yi = y(serien[0].werte[t.einstiegIndex - FENSTER_FUER_INDIKATOREN]?.y ?? serien[0].werte[0].y);
+        const yo = y(serien[0].werte[t.ausstiegIndex - FENSTER_FUER_INDIKATOREN]?.y ?? serien[0].werte[0].y);
+        ctx.fillStyle = '#34f5a2';
+        ctx.beginPath(); ctx.moveTo(xi, yi - 6); ctx.lineTo(xi - 4, yi + 2); ctx.lineTo(xi + 4, yi + 2); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = gewinn ? '#34f5a2' : '#ff6b81';
+        ctx.beginPath(); ctx.moveTo(xo, yo + 6); ctx.lineTo(xo - 4, yo - 2); ctx.lineTo(xo + 4, yo - 2); ctx.closePath(); ctx.fill();
+      }
+    }
+  }
+
+  function renderStats(container, label, ergebnis, startKapital, buyAndHoldProzent) {
+    const gesamtReturn = ((ergebnis.kapitalEnde - startKapital) / startKapital) * 100;
+    const drawdown = berechneMaxDrawdownProzent(ergebnis.equityKurve.map((p) => p.wert));
+    const gewinnTrades = ergebnis.trades.filter((t) => t.gewinnVerlustUsdt > 0);
+    const winRate = ergebnis.trades.length ? (gewinnTrades.length / ergebnis.trades.length) * 100 : null;
+    const karten = [
+      { l: label ? `Return (${label})` : 'Gesamt-Return', v: `${gesamtReturn >= 0 ? '+' : ''}${gesamtReturn.toFixed(2)}%`, cls: gesamtReturn >= 0 ? 'up' : 'down' },
+      { l: 'Buy & Hold', v: `${buyAndHoldProzent >= 0 ? '+' : ''}${buyAndHoldProzent.toFixed(2)}%` },
+      { l: 'Max. Drawdown', v: `-${drawdown.toFixed(2)}%`, cls: 'down' },
+      { l: 'Trades', v: String(ergebnis.trades.length) },
+      { l: 'Win-Rate', v: winRate !== null ? `${winRate.toFixed(1)}%` : '–' },
+      { l: 'Endkapital', v: `${fmtGeld(ergebnis.kapitalEnde)} USDT` },
+    ];
+    container.innerHTML += karten.map((k) => `<div class="stat-card"><div class="l">${k.l}</div><div class="v ${k.cls || ''}">${k.v}</div></div>`).join('');
+  }
+
+  document.getElementById('runBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('runBtn');
+    const statusLine = document.getElementById('statusLine');
+    const results = document.getElementById('results');
+    btn.disabled = true;
+    results.classList.remove('show');
+    statusLine.classList.remove('error');
+
+    try {
+      const symbol = document.getElementById('symbol').value.trim().toUpperCase() || 'BTCUSDT';
+      const tage = parseInt(document.getElementById('tage').value, 10) || 90;
+      const startKapital = parseFloat(document.getElementById('kapital').value) || 1000;
+      const vergleichen = document.getElementById('vergleichen').checked;
+
+      statusLine.textContent = `Lade ${tage} Tage 15m-Kerzen für ${symbol} von Binance...`;
+      const { closes, highs, lows, zeiten } = await ladeKlines(symbol, tage, (n) => { statusLine.textContent = `Lade Kerzen für ${symbol}... (${n} geladen)`; });
+
+      if (closes.length < FENSTER_FUER_INDIKATOREN + 2) {
+        throw new Error(`Zu wenig Kerzen geladen (${closes.length}) — Symbol oder Zeitraum prüfen.`);
+      }
+
+      statusLine.textContent = 'Simuliere Strategie...';
+      const buyAndHoldProzent = ((closes[closes.length - 1] - closes[FENSTER_FUER_INDIKATOREN]) / closes[FENSTER_FUER_INDIKATOREN]) * 100;
+      const strategien = vergleichen ? ['ema-crossover', 'bollinger-mean-reversion'] : [document.getElementById('strategie').value];
+      const ergebnisse = strategien.map((s) => ({ strategie: s, ergebnis: simuliere(closes, highs, lows, zeiten, leseConfig(s), startKapital) }));
+
+      document.getElementById('statsGrid').innerHTML = '';
+      ergebnisse.forEach(({ strategie, ergebnis }) => renderStats(document.getElementById('statsGrid'), vergleichen ? strategie : null, ergebnis, startKapital, buyAndHoldProzent));
+
+      // WICHTIG: results muss sichtbar sein, BEVOR die Canvas-Charts gezeichnet
+      // werden - ein Canvas in einem display:none-Container hat eine
+      // getBoundingClientRect()-Breite/Höhe von 0, das Chart würde sonst leer bleiben.
+      statusLine.textContent = '';
+      results.classList.add('show');
+
+      const preisSerie = closes.slice(FENSTER_FUER_INDIKATOREN).map((c, i) => ({ x: i, y: c }));
+      zeichneLinienChart(document.getElementById('priceChart'), [{ farbe: FARBEN.a, werte: preisSerie }], { markerTrades: ergebnisse[0].ergebnis.trades });
+      document.getElementById('priceLegend').innerHTML = `<span><span class="dot" style="background:${FARBEN.a}"></span>${symbol} Kurs</span><span><span class="dot" style="background:#34f5a2"></span>Einstieg / Ausstieg (Gewinn)</span><span><span class="dot" style="background:#ff6b81"></span>Ausstieg (Verlust)</span>`;
+
+      const equitySerien = ergebnisse.map((e, i) => ({
+        farbe: i === 0 ? FARBEN.a : FARBEN.b,
+        werte: e.ergebnis.equityKurve.map((p, idx) => ({ x: idx, y: p.wert })),
+      }));
+      zeichneLinienChart(document.getElementById('equityChart'), equitySerien);
+      document.getElementById('equityLegend').innerHTML = ergebnisse.map((e, i) =>
+        `<span><span class="dot" style="background:${i === 0 ? FARBEN.a : FARBEN.b}"></span>${e.strategie}</span>`
+      ).join('') + `<span><span class="dot" style="background:var(--mut2)"></span>Startkapital: ${fmtGeld(startKapital)} USDT</span>`;
+
+      const alleTrades = ergebnisse.flatMap((e) => e.ergebnis.trades.map((t) => ({ ...t, strategie: e.strategie })));
+      alleTrades.sort((a, b) => a.ausstiegIndex - b.ausstiegIndex);
+      document.getElementById('tradesBody').innerHTML = alleTrades.length
+        ? alleTrades.map((t) => `<tr>
+            <td>${fmtDatum(t.einstiegAm)}</td><td>${fmtDatum(t.ausstiegAm)}</td>
+            <td>${t.entryPreis.toFixed(2)}</td><td>${t.exitPreis.toFixed(2)}</td>
+            <td>${t.grund}${vergleichen ? ' · ' + t.strategie : ''}</td>
+            <td class="${t.gewinnVerlustUsdt >= 0 ? 'up' : 'down'}">${t.gewinnVerlustUsdt >= 0 ? '+' : ''}${fmtGeld(t.gewinnVerlustUsdt)} (${t.gewinnProzent.toFixed(2)}%)</td>
+          </tr>`).join('')
+        : '<tr><td colspan="6" style="text-align:center;color:var(--mut2)">Keine Trades in diesem Zeitraum ausgelöst.</td></tr>';
+    } catch (err) {
+      statusLine.classList.add('error');
+      statusLine.textContent = `Fehler: ${err.message} — falls das ein Netzwerk-/CORS-Fehler ist, blockiert dein Browser/Netzwerk eventuell den direkten Zugriff auf api.binance.com.`;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
