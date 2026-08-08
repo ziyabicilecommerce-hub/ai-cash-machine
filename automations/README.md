@@ -50,6 +50,7 @@ Default aufgefüllt).
 | `ABSENDER_EMAIL` | Absenderadresse für Kunden-Mails |
 | `RESEND_API_KEY` | API-Key von resend.com — versendet die E-Mails. Ohne Key: Mails werden nur geloggt, nicht verschickt |
 | `TEST_MODE` | `ja` = alle Kunden-Mails gehen testweise an dich; `nein` = live an echte Kunden |
+| `EMAILS_PAUSIERT` | Optional, Default `nein`. `ja` = **globale Notbremse** — stoppt JEDEN E-Mail-Versand aus ALLEN Automationen sofort (wird nur noch geloggt, nicht verschickt). Praktisch, um kurzfristig "Ruhe" zu haben, ohne einzelne Automationen abzuschalten oder Code zu ändern. Einfach den Secret-Wert auf `nein` setzen (oder löschen), sobald wieder E-Mails raus sollen. |
 
 ### Optional, je nach genutzten Automationen
 

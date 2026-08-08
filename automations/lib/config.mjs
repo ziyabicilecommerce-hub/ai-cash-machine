@@ -228,8 +228,17 @@ export const config = {
 
   // Wrapped-Generator (wöchentlicher Shop-Rückblick im Story-Format)
   WRAPPED_ZEITRAUM_TAGE: process.env.WRAPPED_ZEITRAUM_TAGE || '7',
+
+  // Globale E-Mail-Pause - stoppt JEDEN E-Mail-Versand aus allen Automationen,
+  // ohne einzelne Automationen abzuschalten oder Code zu ändern. Selbst
+  // gesteuert über GitHub Secrets (Default 'nein' = unverändertes Verhalten).
+  EMAILS_PAUSIERT: process.env.EMAILS_PAUSIERT || 'nein',
 };
 
 export function isTestMode() {
   return config.TEST_MODE === 'ja';
+}
+
+export function sindEmailsPausiert() {
+  return config.EMAILS_PAUSIERT === 'ja';
 }
