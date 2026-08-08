@@ -240,5 +240,5 @@ export function isTestMode() {
 }
 
 export function sindEmailsPausiert() {
-  return config.EMAILS_PAUSIERT === 'ja';
+  return String(config.EMAILS_PAUSIERT || '').trim().toLowerCase() === 'ja';
 }
