@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE ARENA</title>
+<meta name="description" content="4 Strategien. 1 Markt. Nur eine gewinnt. Live-Wettkampf zwischen EMA-Crossover, Bollinger-Mean-Reversion, Donchian-Breakout und Buy-&amp;-Hold — echte Binance-Kurse, exakt dieselbe Strategie-Logik wie der Live-Trading-Bot, live weiterlaufend.">
+<meta property="og:title" content="CASHMACHINE ARENA">
+<meta property="og:description" content="Welche Strategie gewinnt gerade? Live-Wettkampf auf echten Kursen.">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050408; --panel: rgba(16,10,26,.55); --panel-solid: #0d0816;
+    --cyan: #6fe0ff; --green: #34f5a2; --red: #ff6b81; --amber: #ffc757; --purple: #c084fc; --gold: #ffd76f;
+    --line: rgba(192,132,252,.22); --line2: rgba(255,255,255,.08);
+    --txt: #f1e9fa; --mut: rgba(228,215,245,.62); --mut2: rgba(228,215,245,.38);
+    --mono: 'JetBrains Mono', ui-monospace, monospace; --orb: 'Orbitron', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:
+      radial-gradient(ellipse 1000px 600px at 50% -10%, rgba(192,132,252,.12), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 100% 100%, rgba(111,224,255,.06), transparent 60%),
+      var(--bg);
+    color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; min-height:100vh; overflow-x:hidden;
+  }
+
+  nav { position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(5,4,8,.88); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--orb); font-weight:900; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--purple); }
+  .nav-links { display:flex; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--purple); }
+  @media(max-width:820px){ .nav-links a { display:none; } }
+
+  header.hero { padding:44px 20px 8px; text-align:center; max-width:820px; margin:0 auto; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--gold); border:1px solid rgba(255,215,111,.35); padding:6px 16px; border-radius:20px; margin-bottom:16px; }
+  .kicker::before { content:'🏆'; }
+  h1 { font-family:var(--orb); font-weight:900; font-size:clamp(24px,6vw,40px); letter-spacing:1px; margin-bottom:10px;
+    text-shadow:0 0 30px rgba(192,132,252,.35); }
+  .sub { font-size:13.5px; color:var(--mut); }
+
+  .disclaimer { max-width:820px; margin:20px auto 0; padding:12px 18px; background:rgba(255,199,87,.08);
+    border:1px solid rgba(255,199,87,.3); font-size:12px; color:var(--amber); text-align:center; }
+
+  section { padding:26px 20px 70px; max-width:1180px; margin:0 auto; }
+
+  .controls { background:var(--panel); border:1px solid var(--line2); padding:18px;
+    clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); margin-bottom:20px; }
+  .controls-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; margin-bottom:14px; }
+  .field label { display:block; font-size:11px; color:var(--mut2); font-family:var(--mono); text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px; }
+  .field input { width:100%; background:var(--panel-solid); border:1px solid var(--line2); color:var(--txt);
+    font-family:var(--mono); font-size:13px; padding:8px 10px; outline:none; }
+  .field input:focus { border-color:var(--purple); }
+  .controls-bottom { display:flex; flex-wrap:wrap; align-items:center; gap:16px; justify-content:space-between;
+    padding-top:14px; border-top:1px dashed var(--line2); }
+  .checkbox-row { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--mut); font-family:var(--mono); }
+  .checkbox-row input { width:auto; }
+  .run-btn { background:rgba(192,132,252,.18); border:1px solid var(--purple); color:var(--txt); font-family:var(--orb);
+    font-weight:700; font-size:13.5px; padding:12px 30px; cursor:pointer; letter-spacing:.04em; }
+  .run-btn:hover { background:rgba(192,132,252,.32); }
+  .run-btn:disabled { opacity:.5; cursor:not-allowed; }
+
+  .status-line { font-family:var(--mono); font-size:12.5px; color:var(--mut2); text-align:center; padding:14px 0 4px; }
+  .status-line.error { color:var(--red); }
+
+  .arena { display:none; }
+  .arena.show { display:block; }
+
+  .lane { position:relative; background:var(--panel-solid); border:1px solid var(--line2); margin-bottom:10px;
+    padding:14px 16px; overflow:hidden; }
+  .lane.leader { border-color:var(--gold); box-shadow:0 0 24px rgba(255,215,111,.25); }
+  .lane-fill { position:absolute; inset:0; width:0%; z-index:0; opacity:.16; transition:width 1s cubic-bezier(.2,.8,.2,1); }
+  .lane-content { position:relative; z-index:1; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .lane-rank { font-family:var(--orb); font-weight:900; font-size:20px; width:32px; text-align:center; }
+  .lane-icon { font-size:22px; }
+  .lane-name { font-family:var(--orb); font-weight:900; font-size:14px; letter-spacing:.03em; min-width:150px; }
+  .lane-name small { display:block; font-family:var(--mono); font-weight:400; font-size:10px; color:var(--mut2); letter-spacing:.05em; }
+  .lane-stats { display:flex; gap:18px; margin-left:auto; font-family:var(--mono); font-size:12px; color:var(--mut); flex-wrap:wrap; }
+  .lane-stats b { display:block; font-size:15px; }
+  .lane-return.up { color:var(--green); } .lane-return.down { color:var(--red); }
+
+  .chart-panel { background:var(--panel); border:1px solid var(--line2); padding:18px; margin:20px 0 16px; }
+  .chart-panel h3 { font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--mut2); margin-bottom:12px; }
+  .chart-panel canvas { width:100%; height:280px; display:block; }
+  .legend { display:flex; gap:16px; font-family:var(--mono); font-size:11px; color:var(--mut); margin-top:10px; flex-wrap:wrap; }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .legend .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+
+  .feed-panel { background:var(--panel); border:1px solid var(--line2); padding:18px; }
+  .feed-panel h3 { font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--mut2); margin-bottom:12px; }
+  .feed { max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; }
+  .feed-entry { font-family:var(--mono); font-size:12px; padding:7px 10px; border-left:2px solid var(--line2); color:var(--mut); animation:feedIn .3s ease; }
+  .feed-entry.win { border-color:var(--green); color:var(--green); }
+  .feed-entry.loss { border-color:var(--red); color:var(--red); }
+  .feed-entry.lead { border-color:var(--gold); color:var(--gold); font-weight:700; }
+  .feed-entry.entry { border-color:var(--cyan); color:var(--cyan); }
+  .feed-time { color:var(--mut2); margin-right:8px; }
+  @keyframes feedIn { from{ opacity:0; transform:translateX(-6px); } to{ opacity:1; transform:translateX(0); } }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--purple); text-decoration:none; margin:0 8px; }
+
+  @keyframes confettiFall { to { transform:translateY(110vh) rotate(540deg); opacity:0; } }
+  .confetti { position:fixed; top:-20px; z-index:999; pointer-events:none; animation:confettiFall linear forwards; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;ARENA</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../trading-dashboard/">Trading</a>
+    <a href="../strategy-lab/">Strategy Lab</a>
+    <a href="../pricing/">Preis</a>
+    <a href="../agents/">Agents</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="kicker">LIVE STRATEGIE-KAMPF</div>
+  <h1>🏆 CASHMACHINE ARENA</h1>
+  <p class="sub">4 Strategien, derselbe Markt, dasselbe Startkapital. EMA-Crossover, Bollinger-Mean-Reversion und Donchian-Breakout — exakt dieselbe Logik wie der Live-Trading-Bot — treten gegen simplen Buy-&amp;-Hold an. Wer führt gerade? Schau zu, während es live weiterläuft.</p>
+</header>
+
+<div class="disclaimer">⚠️ Simuliertes Paper-Trading auf echten historischen + laufenden Binance-Kursen. Kein echtes Geld, keine Anlageberatung — reiner Strategie-Vergleich zur Veranschaulichung, keine Garantie für die Zukunft.</div>
+
+<section>
+  <div class="controls">
+    <div class="controls-grid">
+      <div class="field"><label for="symbol">Symbol</label><input type="text" id="symbol" value="BTCUSDT"></div>
+      <div class="field"><label for="tage">Zeitraum (Tage)</label><input type="number" id="tage" value="14" min="3" max="90"></div>
+      <div class="field"><label for="kapital">Startkapital je Fighter</label><input type="number" id="kapital" value="1000" min="10"></div>
+    </div>
+    <div class="controls-bottom">
+      <label class="checkbox-row"><input type="checkbox" id="liveToggle" checked> Live weiterlaufen (alle 60s neue Kerzen einbauen)</label>
+      <button class="run-btn" id="startBtn">Kampf starten →</button>
+    </div>
+  </div>
+
+  <div class="status-line" id="statusLine"></div>
+
+  <div class="arena" id="arena">
+    <div id="lanes"></div>
+
+    <div class="chart-panel">
+      <h3>Kapitalverlauf im Wettkampf</h3>
+      <canvas id="equityChart"></canvas>
+      <div class="legend" id="equityLegend"></div>
+    </div>
+
+    <div class="feed-panel">
+      <h3>⚡ Live-Ticker</h3>
+      <div class="feed" id="feed"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <b>CASHMACHINE ARENA</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../trading-dashboard/">Trading</a>·<a href="../strategy-lab/">Strategy Lab</a>·<a href="../pricing/">Preis</a>·<a href="../agents/">Agents</a>
+</footer>
+
+<script type="module">
+import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from '../trading-bot-worker/lib/strategie.mjs';
+
+const BINANCE_BASE = 'https://api.binance.com';
+const KLINES_PRO_REQUEST = 1000;
+const FENSTER_FUER_INDIKATOREN = 60;
+const LIVE_INTERVALL_MS = 60000;
+const MIN_KERZEN_ZWISCHEN_FUEHRUNGSWECHSEL = 8;
+const MAX_FEED_EINTRAEGE = 80;
+
+const FIGHTERS = [
+  { key: 'ema-crossover', name: 'TREND-HUNTER', desc: 'EMA-Crossover', farbe: '#6fe0ff', icon: '⚡' },
+  { key: 'bollinger-mean-reversion', name: 'MEAN-SNIPER', desc: 'Bollinger-Mean-Reversion', farbe: '#ffc757', icon: '🎯' },
+  { key: 'donchian-breakout', name: 'BREAKOUT-BEAST', desc: 'Donchian-Breakout', farbe: '#c084fc', icon: '🐗' },
+  { key: 'buy-and-hold', name: 'HODL-BARON', desc: 'Nur kaufen & halten', farbe: '#34f5a2', icon: '👑' },
+];
+
+let liveTimerId = null;
+let gezeigteEreignisse = new Set();
+let letzterFuehrer = null;
+
+const $ = (id) => document.getElementById(id);
+const fmtGeld = (n) => Number(n || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtProz = (p) => `${p >= 0 ? '+' : ''}${p.toFixed(2)}%`;
+const fmtZeit = (ms) => new Date(ms).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+function basisConfig(strategie) {
+  return {
+    strategie, maxPositionProzent: 100, maxTagesverlustProzent: 100, maxGesamtverlustProzent: 100,
+    stopLossProzent: 5, emaSchnell: 9, emaLangsam: 21, rsiPeriode: 14, rsiUeberkauft: 0,
+    minVolatilitaetProzent: 0, trailingStopAbProzent: 0, volaSizing: false, volaSizingReferenzProzent: 2,
+    volaSizingMinFaktor: .25, bollingerPeriode: 20, bollingerStdDev: 2, donchianEntryPeriode: 20,
+    donchianExitPeriode: 10, maxGleichzeitigePositionen: 1,
+  };
+}
+
+async function ladeKlines(symbol, tageZurueck) {
+  const bisJetzt = Date.now();
+  const startZeit = bisJetzt - tageZurueck * 24 * 60 * 60 * 1000;
+  const alle = [];
+  let cursor = startZeit;
+  while (cursor < bisJetzt) {
+    const url = `${BINANCE_BASE}/api/v3/klines?symbol=${symbol}&interval=15m&startTime=${cursor}&limit=${KLINES_PRO_REQUEST}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Binance-Fehler ${res.status}`);
+    const batch = await res.json();
+    if (!batch.length) break;
+    alle.push(...batch);
+    const letzteOffenZeit = batch[batch.length - 1][0];
+    if (letzteOffenZeit <= cursor) break;
+    cursor = letzteOffenZeit + 1;
+    if (batch.length < KLINES_PRO_REQUEST) break;
+  }
+  return {
+    closes: alle.map((k) => parseFloat(k[4])),
+    highs: alle.map((k) => parseFloat(k[2])),
+    lows: alle.map((k) => parseFloat(k[3])),
+    zeiten: alle.map((k) => k[0]),
+  };
+}
+
+// Identische Simulationslogik wie im Strategy Lab - läuft die reale
+// Entscheidungslogik des Live-Bots (entscheideKauf/entscheideVerkauf) Kerze
+// für Kerze durch, statt nur Endergebnisse zu schätzen.
+function simuliereStrategie(closes, highs, lows, zeiten, cfg, startKapital) {
+  let kapital = startKapital, position = null;
+  const trades = [];
+  const equityKurve = [{ zeit: zeiten[FENSTER_FUER_INDIKATOREN], wert: kapital }];
+
+  for (let i = FENSTER_FUER_INDIKATOREN; i < closes.length; i++) {
+    const fensterCloses = closes.slice(0, i + 1), fensterHighs = highs.slice(0, i + 1), fensterLows = lows.slice(0, i + 1);
+    const indikatoren = berechneIndikatoren(fensterCloses, fensterHighs, fensterLows, cfg);
+    const { preis } = indikatoren;
+
+    if (!position) {
+      const kauf = entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei: true, handelsSperreHeute: false });
+      if (kauf) {
+        const qty = kauf.investBetrag / preis;
+        position = { qty, entryPreis: preis, hoechsterPreisSeitEinstieg: preis, einstiegAm: zeiten[i], einstiegIndex: i };
+        trades.push({ typ: 'einstieg', zeit: zeiten[i], preis });
+      }
+    } else {
+      const verkauf = entscheideVerkauf({ position, cfg, indikatoren });
+      position.hoechsterPreisSeitEinstieg = verkauf.hoechsterPreisSeitEinstieg;
+      if (verkauf.verkaufen) {
+        const einsatz = position.qty * position.entryPreis;
+        const gewinnVerlust = position.qty * preis - einsatz;
+        kapital += gewinnVerlust;
+        trades.push({
+          typ: 'ausstieg', zeit: zeiten[i], preis, grund: verkauf.grund,
+          gewinnProzent: (gewinnVerlust / einsatz) * 100,
+        });
+        position = null;
+      }
+    }
+    equityKurve.push({ zeit: zeiten[i], wert: position ? kapital + position.qty * (preis - position.entryPreis) : kapital });
+  }
+
+  return { kapitalEnde: equityKurve[equityKurve.length - 1].wert, trades, equityKurve };
+}
+
+function simuliereBuyHold(closes, zeiten, startKapital) {
+  const qty = startKapital / closes[FENSTER_FUER_INDIKATOREN];
+  const equityKurve = [];
+  for (let i = FENSTER_FUER_INDIKATOREN; i < closes.length; i++) {
+    equityKurve.push({ zeit: zeiten[i], wert: qty * closes[i] });
+  }
+  return {
+    kapitalEnde: equityKurve[equityKurve.length - 1].wert,
+    trades: [{ typ: 'einstieg', zeit: zeiten[FENSTER_FUER_INDIKATOREN], preis: closes[FENSTER_FUER_INDIKATOREN] }],
+    equityKurve,
+  };
+}
+
+function simuliereAlle(closes, highs, lows, zeiten, startKapital) {
+  return FIGHTERS.map((f) => {
+    const ergebnis = f.key === 'buy-and-hold'
+      ? simuliereBuyHold(closes, zeiten, startKapital)
+      : simuliereStrategie(closes, highs, lows, zeiten, basisConfig(f.key), startKapital);
+    const returnProzent = ((ergebnis.kapitalEnde - startKapital) / startKapital) * 100;
+    return { fighter: f, ...ergebnis, returnProzent };
+  });
+}
+
+function baueEreignisse(ergebnisse) {
+  const ereignisse = [];
+  for (const r of ergebnisse) {
+    for (const t of r.trades) {
+      if (t.typ === 'einstieg') {
+        ereignisse.push({ zeit: t.zeit, art: 'entry', text: `${r.fighter.icon} ${r.fighter.name} steigt bei ${fmtGeld(t.preis)} ein`, key: `${r.fighter.key}-e-${t.zeit}` });
+      } else {
+        const win = t.gewinnProzent >= 0;
+        ereignisse.push({
+          zeit: t.zeit, art: win ? 'win' : 'loss',
+          text: `${win ? '✅' : '❌'} ${r.fighter.icon} ${r.fighter.name} schließt ${fmtProz(t.gewinnProzent)} (${t.grund})`,
+          key: `${r.fighter.key}-x-${t.zeit}`,
+        });
+      }
+    }
+  }
+
+  // Führungswechsel: an jedem gemeinsamen Zeitpunkt vergleichen, wer vorne liegt.
+  const laenge = Math.min(...ergebnisse.map((r) => r.equityKurve.length));
+  let aktuellerFuehrer = null, letzterWechselIndex = -Infinity;
+  for (let i = 0; i < laenge; i++) {
+    let bester = ergebnisse[0], besterWert = -Infinity;
+    for (const r of ergebnisse) {
+      if (r.equityKurve[i].wert > besterWert) { besterWert = r.equityKurve[i].wert; bester = r; }
+    }
+    if (bester.fighter.key !== aktuellerFuehrer && i - letzterWechselIndex >= MIN_KERZEN_ZWISCHEN_FUEHRUNGSWECHSEL) {
+      aktuellerFuehrer = bester.fighter.key;
+      letzterWechselIndex = i;
+      ereignisse.push({
+        zeit: ergebnisse[0].equityKurve[i].zeit, art: 'lead',
+        text: `👑 FÜHRUNGSWECHSEL: ${bester.fighter.icon} ${bester.fighter.name} übernimmt Platz 1!`,
+        key: `lead-${i}`,
+      });
+    } else if (bester.fighter.key !== aktuellerFuehrer) {
+      aktuellerFuehrer = bester.fighter.key;
+    }
+  }
+
+  ereignisse.sort((a, b) => a.zeit - b.zeit);
+  return ereignisse;
+}
+
+function renderLanes(ergebnisse) {
+  const maxReturn = Math.max(...ergebnisse.map((r) => r.returnProzent));
+  const minReturn = Math.min(...ergebnisse.map((r) => r.returnProzent));
+  const spanne = maxReturn - minReturn || 1;
+  const sortiert = [...ergebnisse].sort((a, b) => b.returnProzent - a.returnProzent);
+
+  $('lanes').innerHTML = sortiert.map((r, idx) => {
+    const rank = idx + 1;
+    const medaille = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '4️⃣';
+    const fillProzent = Math.max(4, ((r.returnProzent - minReturn) / spanne) * 100);
+    const gewinnTrades = r.trades.filter((t) => t.typ === 'ausstieg' && t.gewinnProzent > 0).length;
+    const gesamtTrades = r.trades.filter((t) => t.typ === 'ausstieg').length;
+    const winRate = gesamtTrades ? ((gewinnTrades / gesamtTrades) * 100).toFixed(0) : '–';
+    return `<div class="lane ${rank === 1 ? 'leader' : ''}">
+      <div class="lane-fill" style="width:${fillProzent}%; background:${r.fighter.farbe}"></div>
+      <div class="lane-content">
+        <div class="lane-rank">${medaille}</div>
+        <div class="lane-icon">${r.fighter.icon}</div>
+        <div class="lane-name">${r.fighter.name}<small>${r.fighter.desc}</small></div>
+        <div class="lane-stats">
+          <span>Return<b class="lane-return ${r.returnProzent >= 0 ? 'up' : 'down'}">${fmtProz(r.returnProzent)}</b></span>
+          <span>Kapital<b>${fmtGeld(r.kapitalEnde)}</b></span>
+          <span>Trades<b>${gesamtTrades}</b></span>
+          <span>Winrate<b>${winRate}${gesamtTrades ? '%' : ''}</b></span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return sortiert[0].fighter.key;
+}
+
+function zeichneEquityChart(ergebnisse) {
+  const canvas = $('equityChart');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const w = rect.width, h = rect.height, pad = 8;
+  ctx.clearRect(0, 0, w, h);
+
+  const alleWerte = ergebnisse.flatMap((r) => r.equityKurve.map((p) => p.wert));
+  const min = Math.min(...alleWerte), max = Math.max(...alleWerte), spanne = max - min || 1;
+  const n = Math.min(...ergebnisse.map((r) => r.equityKurve.length));
+  const x = (i) => pad + (i / (n - 1)) * (w - pad * 2);
+  const y = (v) => h - pad - ((v - min) / spanne) * (h - pad * 2);
+
+  ctx.strokeStyle = 'rgba(255,255,255,.06)'; ctx.lineWidth = 1;
+  for (let gy = 0; gy <= 4; gy++) {
+    const yy = pad + (gy / 4) * (h - pad * 2);
+    ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(w, yy); ctx.stroke();
+  }
+
+  for (const r of ergebnisse) {
+    ctx.strokeStyle = r.fighter.farbe; ctx.lineWidth = 2; ctx.beginPath();
+    r.equityKurve.slice(0, n).forEach((p, i) => {
+      const px = x(i), py = y(p.wert);
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+  }
+
+  $('equityLegend').innerHTML = ergebnisse.map((r) => `<span><i class="dot" style="background:${r.fighter.farbe}"></i>${r.fighter.name} (${fmtProz(r.returnProzent)})</span>`).join('');
+}
+
+function fuegeFeedEintraege(ereignisse) {
+  const feed = $('feed');
+  const neu = ereignisse.filter((e) => !gezeigteEreignisse.has(e.key));
+  for (const e of neu) {
+    gezeigteEreignisse.add(e.key);
+    const div = document.createElement('div');
+    div.className = `feed-entry ${e.art}`;
+    div.innerHTML = `<span class="feed-time">${fmtZeit(e.zeit)}</span>${e.text}`;
+    feed.appendChild(div);
+  }
+  while (feed.children.length > MAX_FEED_EINTRAEGE) feed.removeChild(feed.firstChild);
+  if (neu.length) feed.scrollTop = feed.scrollHeight;
+}
+
+function beep(hoch) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [hoch ? 660 : 440, hoch ? 990 : 330].forEach((freq, i) => {
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.frequency.value = freq; osc.type = 'sine';
+      osc.connect(gain); gain.connect(ctx.destination);
+      const start = ctx.currentTime + i * 0.12;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.22, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.28);
+      osc.start(start); osc.stop(start + 0.3);
+    });
+  } catch { /* Web Audio evtl. blockiert - kein Beep, kein Fehler nötig */ }
+}
+
+function konfetti() {
+  const farben = ['#6fe0ff', '#ffc757', '#c084fc', '#34f5a2', '#ffd76f'];
+  for (let i = 0; i < 40; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    el.style.left = `${Math.random() * 100}vw`;
+    el.style.width = el.style.height = `${6 + Math.random() * 6}px`;
+    el.style.background = farben[Math.floor(Math.random() * farben.length)];
+    el.style.animationDuration = `${2 + Math.random() * 1.5}s`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+}
+
+async function kampfDurchlauf() {
+  const symbol = $('symbol').value.trim().toUpperCase();
+  const tage = parseInt($('tage').value, 10) || 14;
+  const kapital = parseFloat($('kapital').value) || 1000;
+
+  $('statusLine').className = 'status-line';
+  $('statusLine').textContent = `Lade Kursdaten für ${symbol} (${tage} Tage) …`;
+  $('startBtn').disabled = true;
+
+  try {
+    const { closes, highs, lows, zeiten } = await ladeKlines(symbol, tage);
+    if (closes.length < FENSTER_FUER_INDIKATOREN + 10) throw new Error('Zu wenig Kursdaten für diesen Zeitraum.');
+
+    const ergebnisse = simuliereAlle(closes, highs, lows, zeiten, kapital);
+    const ereignisse = baueEreignisse(ergebnisse);
+
+    $('arena').classList.add('show');
+    const fuehrer = renderLanes(ergebnisse);
+    zeichneEquityChart(ergebnisse);
+    fuegeFeedEintraege(ereignisse);
+
+    if (letzterFuehrer !== null && fuehrer !== letzterFuehrer) {
+      konfetti(); beep(true);
+    }
+    letzterFuehrer = fuehrer;
+
+    $('statusLine').textContent = `Letzte Aktualisierung: ${new Date().toLocaleTimeString('de-DE')} · ${closes.length} Kerzen · ${symbol}`;
+  } catch (err) {
+    $('statusLine').className = 'status-line error';
+    $('statusLine').textContent = `Fehler: ${err.message} — falls das ein Netzwerk-/CORS-Fehler ist, blockiert dein Browser/Netzwerk eventuell den direkten Zugriff auf api.binance.com.`;
+  } finally {
+    $('startBtn').disabled = false;
+  }
+}
+
+function planeLive() {
+  if (liveTimerId) clearInterval(liveTimerId);
+  if ($('liveToggle').checked) liveTimerId = setInterval(kampfDurchlauf, LIVE_INTERVALL_MS);
+}
+
+$('startBtn').addEventListener('click', async () => {
+  gezeigteEreignisse = new Set();
+  letzterFuehrer = null;
+  $('feed').innerHTML = '';
+  await kampfDurchlauf();
+  planeLive();
+});
+$('liveToggle').addEventListener('change', planeLive);
+</script>
+</body>
+</html>
