@@ -43,6 +43,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[19-saison-planer] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[19-saison-planer] Fehler:', err);
   process.exit(1);
 });

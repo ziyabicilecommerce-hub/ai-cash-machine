@@ -117,6 +117,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[66-loyalty-punkte-engine] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[66-loyalty-punkte-engine] Fehler:', err);
   process.exit(1);
 });

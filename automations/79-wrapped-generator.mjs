@@ -93,6 +93,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[79-wrapped-generator] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[79-wrapped-generator] Fehler:', err);
   process.exit(1);
 });

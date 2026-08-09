@@ -105,6 +105,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[63-reorder-agent] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[63-reorder-agent] Fehler:', err);
   process.exit(1);
 });

@@ -42,6 +42,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[25-wetter-marketing] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[25-wetter-marketing] Fehler:', err);
   process.exit(1);
 });

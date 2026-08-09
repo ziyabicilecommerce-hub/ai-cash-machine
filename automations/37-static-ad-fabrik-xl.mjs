@@ -42,6 +42,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[37-static-ad-fabrik-xl] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[37-static-ad-fabrik-xl] Fehler:', err);
   process.exit(1);
 });

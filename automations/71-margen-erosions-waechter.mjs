@@ -80,6 +80,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[71-margen-erosions-waechter] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[71-margen-erosions-waechter] Fehler:', err);
   process.exit(1);
 });

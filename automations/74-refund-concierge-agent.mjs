@@ -92,6 +92,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[74-refund-concierge-agent] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[74-refund-concierge-agent] Fehler:', err);
   process.exit(1);
 });

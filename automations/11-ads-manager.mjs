@@ -70,6 +70,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[11-ads-manager] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[11-ads-manager] Fehler:', err);
   process.exit(1);
 });

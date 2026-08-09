@@ -44,6 +44,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[44-winning-ad-neue-creatives] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[44-winning-ad-neue-creatives] Fehler:', err);
   process.exit(1);
 });

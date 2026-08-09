@@ -1,4 +1,4 @@
-import { config } from './config.mjs';
+import { config, ueberspringenWerfen } from './config.mjs';
 
 const API_VERSION = '2024-10';
 
@@ -12,10 +12,10 @@ function baseUrl() {
 // verständlich. Diese Prüfung macht sofort klar, welches Secret fehlt.
 function pruefeShopifyConfig() {
   if (!config.SHOP) {
-    throw new Error('SHOP-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe setup/ App oder automations/README.md).');
+    ueberspringenWerfen('SHOP-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe setup/ App oder automations/README.md).');
   }
   if (!config.SHOPIFY_TOKEN) {
-    throw new Error('SHOPIFY_TOKEN-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe setup/ App oder automations/README.md).');
+    ueberspringenWerfen('SHOPIFY_TOKEN-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe setup/ App oder automations/README.md).');
   }
 }
 

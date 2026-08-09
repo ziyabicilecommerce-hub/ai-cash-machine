@@ -119,6 +119,10 @@ Antworte NUR mit validem JSON, ohne Markdown:
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[52-creative-studio] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[52-creative-studio] Fehler:', err);
   process.exit(1);
 });

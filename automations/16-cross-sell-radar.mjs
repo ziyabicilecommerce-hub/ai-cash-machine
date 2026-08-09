@@ -69,6 +69,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[16-cross-sell-radar] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[16-cross-sell-radar] Fehler:', err);
   process.exit(1);
 });

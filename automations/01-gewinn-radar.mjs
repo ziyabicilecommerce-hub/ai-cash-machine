@@ -124,6 +124,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[01-gewinn-radar] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[01-gewinn-radar] Fehler:', err);
   process.exit(1);
 });

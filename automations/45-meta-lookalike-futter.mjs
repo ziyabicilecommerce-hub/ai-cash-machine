@@ -33,6 +33,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[45-meta-lookalike-futter] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[45-meta-lookalike-futter] Fehler:', err);
   process.exit(1);
 });

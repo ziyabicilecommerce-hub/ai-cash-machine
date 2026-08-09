@@ -128,6 +128,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[62-risk-guard-agent] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[62-risk-guard-agent] Fehler:', err);
   process.exit(1);
 });

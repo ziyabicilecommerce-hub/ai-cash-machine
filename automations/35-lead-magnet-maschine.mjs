@@ -30,6 +30,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[35-lead-magnet-maschine] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[35-lead-magnet-maschine] Fehler:', err);
   process.exit(1);
 });

@@ -105,6 +105,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[55-fulfillment-supplier-hub] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[55-fulfillment-supplier-hub] Fehler:', err);
   process.exit(1);
 });

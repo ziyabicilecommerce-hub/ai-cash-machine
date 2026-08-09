@@ -65,6 +65,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[17-promo-kampagnen-maschine] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[17-promo-kampagnen-maschine] Fehler:', err);
   process.exit(1);
 });

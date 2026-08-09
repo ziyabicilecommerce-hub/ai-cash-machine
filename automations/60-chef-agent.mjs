@@ -117,6 +117,10 @@ Antworte NUR mit validem JSON, ohne Markdown:
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[60-chef-agent] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[60-chef-agent] Fehler:', err);
   process.exit(1);
 });

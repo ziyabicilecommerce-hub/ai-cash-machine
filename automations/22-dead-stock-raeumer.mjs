@@ -65,6 +65,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[22-dead-stock-raeumer] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[22-dead-stock-raeumer] Fehler:', err);
   process.exit(1);
 });

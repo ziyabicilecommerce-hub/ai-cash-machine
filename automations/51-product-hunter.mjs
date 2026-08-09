@@ -112,6 +112,10 @@ Antworte NUR mit validem JSON, ohne Markdown:
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[51-product-hunter] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[51-product-hunter] Fehler:', err);
   process.exit(1);
 });

@@ -61,6 +61,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[26-schlaefer-wecker] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[26-schlaefer-wecker] Fehler:', err);
   process.exit(1);
 });

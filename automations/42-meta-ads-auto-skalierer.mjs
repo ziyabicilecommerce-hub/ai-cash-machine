@@ -56,6 +56,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[42-meta-ads-auto-skalierer] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[42-meta-ads-auto-skalierer] Fehler:', err);
   process.exit(1);
 });

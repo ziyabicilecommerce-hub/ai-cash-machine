@@ -52,6 +52,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[58-brand-assassin-auto-scan] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[58-brand-assassin-auto-scan] Fehler:', err);
   process.exit(1);
 });

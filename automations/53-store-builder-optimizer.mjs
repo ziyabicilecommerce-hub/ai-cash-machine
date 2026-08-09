@@ -175,6 +175,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[53-store-builder-optimizer] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[53-store-builder-optimizer] Fehler:', err);
   process.exit(1);
 });

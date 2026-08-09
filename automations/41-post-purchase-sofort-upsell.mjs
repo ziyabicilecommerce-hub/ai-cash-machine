@@ -61,6 +61,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[41-post-purchase-sofort-upsell] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[41-post-purchase-sofort-upsell] Fehler:', err);
   process.exit(1);
 });

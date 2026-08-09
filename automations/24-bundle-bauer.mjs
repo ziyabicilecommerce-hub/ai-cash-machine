@@ -53,6 +53,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[24-bundle-bauer] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[24-bundle-bauer] Fehler:', err);
   process.exit(1);
 });

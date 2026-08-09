@@ -61,6 +61,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[20-lager-waechter] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[20-lager-waechter] Fehler:', err);
   process.exit(1);
 });

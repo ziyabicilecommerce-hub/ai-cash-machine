@@ -46,6 +46,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[28-seo-text-doktor] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[28-seo-text-doktor] Fehler:', err);
   process.exit(1);
 });

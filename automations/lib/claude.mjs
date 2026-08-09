@@ -1,4 +1,4 @@
-import { config } from './config.mjs';
+import { config, ueberspringenWerfen } from './config.mjs';
 import { loadState, saveState } from './state.mjs';
 import { notifyTelegram } from './telegram.mjs';
 import { notifyWhatsapp } from './whatsapp.mjs';
@@ -29,7 +29,7 @@ async function pruefeTagesBudget() {
       state.limitBenachrichtigt = true;
       saveState(BUDGET_STATE_NAME, state);
     }
-    throw new Error('Claude-Tageslimit erreicht (CLAUDE_MAX_TOKENS_PRO_TAG) - Aufruf übersprungen.');
+    ueberspringenWerfen('Claude-Tageslimit erreicht (CLAUDE_MAX_TOKENS_PRO_TAG) - Aufruf übersprungen.');
   }
 
   return state;
@@ -43,7 +43,7 @@ function aktualisiereTagesBudget(state, usage) {
 
 export async function askClaude(prompt, { maxTokens = 1500, system, model = 'claude-sonnet-5' } = {}) {
   if (!config.ANTHROPIC_API_KEY) {
-    throw new Error('ANTHROPIC_API_KEY-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe setup/ App oder automations/README.md).');
+    ueberspringenWerfen('ANTHROPIC_API_KEY-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe setup/ App oder automations/README.md).');
   }
   const budgetState = await pruefeTagesBudget();
 

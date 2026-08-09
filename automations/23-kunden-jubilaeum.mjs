@@ -60,6 +60,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[23-kunden-jubilaeum] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[23-kunden-jubilaeum] Fehler:', err);
   process.exit(1);
 });

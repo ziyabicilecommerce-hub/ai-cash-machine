@@ -63,6 +63,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[04-bewertungs-magnet] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[04-bewertungs-magnet] Fehler:', err);
   process.exit(1);
 });

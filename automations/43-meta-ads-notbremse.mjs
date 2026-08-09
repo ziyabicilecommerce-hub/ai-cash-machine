@@ -43,6 +43,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[43-meta-ads-notbremse] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[43-meta-ads-notbremse] Fehler:', err);
   process.exit(1);
 });

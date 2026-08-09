@@ -65,6 +65,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[29-zahlungs-retter] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[29-zahlungs-retter] Fehler:', err);
   process.exit(1);
 });

@@ -70,6 +70,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[80-agenten-status-sammler] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[80-agenten-status-sammler] Fehler:', err);
   process.exit(1);
 });

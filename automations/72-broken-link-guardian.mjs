@@ -86,6 +86,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[72-broken-link-guardian] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[72-broken-link-guardian] Fehler:', err);
   process.exit(1);
 });

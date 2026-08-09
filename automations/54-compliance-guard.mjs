@@ -92,6 +92,10 @@ Antworte NUR mit validem JSON, ohne Markdown:
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[54-compliance-guard] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[54-compliance-guard] Fehler:', err);
   process.exit(1);
 });

@@ -67,6 +67,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[14-preis-spion] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[14-preis-spion] Fehler:', err);
   process.exit(1);
 });

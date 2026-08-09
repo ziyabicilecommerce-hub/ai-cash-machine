@@ -1,4 +1,4 @@
-import { config } from './config.mjs';
+import { config, ueberspringenWerfen } from './config.mjs';
 
 const API_VERSION = 'v21.0';
 
@@ -8,10 +8,10 @@ const API_VERSION = 'v21.0';
 // Hinweis, welches Secret fehlt.
 function pruefeMetaConfig({ brauchtAdAccount = false } = {}) {
   if (!config.META_ACCESS_TOKEN) {
-    throw new Error('META_ACCESS_TOKEN-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe automations/README.md).');
+    ueberspringenWerfen('META_ACCESS_TOKEN-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe automations/README.md).');
   }
   if (brauchtAdAccount && !config.META_AD_ACCOUNT_ID) {
-    throw new Error('META_AD_ACCOUNT_ID-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe automations/README.md).');
+    ueberspringenWerfen('META_AD_ACCOUNT_ID-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe automations/README.md).');
   }
 }
 

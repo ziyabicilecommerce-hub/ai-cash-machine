@@ -54,6 +54,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[21-retouren-detektiv] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[21-retouren-detektiv] Fehler:', err);
   process.exit(1);
 });

@@ -55,6 +55,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[46-grossbestellung-radar] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[46-grossbestellung-radar] Fehler:', err);
   process.exit(1);
 });

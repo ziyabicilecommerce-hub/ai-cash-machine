@@ -52,6 +52,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[13-willkommens-booster] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[13-willkommens-booster] Fehler:', err);
   process.exit(1);
 });

@@ -39,6 +39,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[47-laender-expansions-scout] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[47-laender-expansions-scout] Fehler:', err);
   process.exit(1);
 });

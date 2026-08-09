@@ -40,6 +40,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[07-ad-fabrik] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[07-ad-fabrik] Fehler:', err);
   process.exit(1);
 });

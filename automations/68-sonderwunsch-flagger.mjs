@@ -66,6 +66,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[68-sonderwunsch-flagger] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[68-sonderwunsch-flagger] Fehler:', err);
   process.exit(1);
 });

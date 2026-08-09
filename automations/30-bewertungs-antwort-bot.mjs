@@ -58,6 +58,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[30-bewertungs-antwort-bot] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[30-bewertungs-antwort-bot] Fehler:', err);
   process.exit(1);
 });

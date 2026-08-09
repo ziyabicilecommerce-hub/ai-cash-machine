@@ -133,6 +133,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[61-pricing-agent] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[61-pricing-agent] Fehler:', err);
   process.exit(1);
 });

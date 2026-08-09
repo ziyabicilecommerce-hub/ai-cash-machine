@@ -94,6 +94,10 @@ Antworte NUR mit validem JSON, ohne Markdown:
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[56-ad-commander] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[56-ad-commander] Fehler:', err);
   process.exit(1);
 });

@@ -83,6 +83,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[70-produkt-launch-hype-agent] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[70-produkt-launch-hype-agent] Fehler:', err);
   process.exit(1);
 });

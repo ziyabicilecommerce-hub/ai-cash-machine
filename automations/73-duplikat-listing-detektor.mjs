@@ -93,6 +93,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[73-duplikat-listing-detektor] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[73-duplikat-listing-detektor] Fehler:', err);
   process.exit(1);
 });

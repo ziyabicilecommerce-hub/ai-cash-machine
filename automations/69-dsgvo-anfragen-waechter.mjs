@@ -11,7 +11,7 @@
 // Menschenwerk (bei DSGVO-Anfragen zu automatisieren wäre fahrlässig).
 import { ImapFlow } from 'imapflow';
 import { simpleParser } from 'mailparser';
-import { config } from './lib/config.mjs';
+import { config, ueberspringenWerfen } from './lib/config.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { erstelleTicket } from './lib/githubIssues.mjs';
@@ -20,7 +20,17 @@ import { loadState, saveState } from './lib/state.mjs';
 const NL = '\n';
 const STATE_KEY = '69-dsgvo-anfragen-waechter';
 
+// Ohne diese Prüfung schlägt ein fehlendes IMAP_HOST-Secret erst tief in der
+// TCP-Verbindung fehl ("ECONNREFUSED 127.0.0.1:993" - ImapFlow verbindet sich
+// mit localhost, wenn host undefined ist) statt mit einem klaren Hinweis.
+function pruefeImapConfig() {
+  if (!process.env.IMAP_HOST || !process.env.IMAP_USER || !process.env.IMAP_PASSWORD) {
+    ueberspringenWerfen('IMAP_HOST/IMAP_USER/IMAP_PASSWORD-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe setup/ App oder automations/README.md).');
+  }
+}
+
 async function fetchUngeleseneMails(seenUids) {
+  pruefeImapConfig();
   const client = new ImapFlow({
     host: process.env.IMAP_HOST,
     port: Number(process.env.IMAP_PORT || 993),
@@ -107,6 +117,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[69-dsgvo-anfragen-waechter] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[69-dsgvo-anfragen-waechter] Fehler:', err);
   process.exit(1);
 });

@@ -155,6 +155,10 @@ Antworte NUR mit validem JSON, ohne Markdown:
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[57-crm-retention-engine] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[57-crm-retention-engine] Fehler:', err);
   process.exit(1);
 });

@@ -5,7 +5,7 @@
 // Original: n8n Workflow "02_KI_Kundenservice" · Trigger: neue IMAP-E-Mail (hier: alle 10 Min gepollt)
 import { ImapFlow } from 'imapflow';
 import { simpleParser } from 'mailparser';
-import { config, isTestMode } from './lib/config.mjs';
+import { config, isTestMode, ueberspringenWerfen } from './lib/config.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
@@ -23,7 +23,17 @@ const STATE_KEY = '02-ki-kundenservice';
 // erfolgreicher Verarbeitung - sonst würde eine E-Mail, deren Verarbeitung
 // mitten im Lauf fehlschlägt (Claude-/Resend-Ausfall), fälschlich als erledigt
 // markiert und nie beantwortet, obwohl sie schon als "gesehen" abgespeichert wäre.
+// Ohne diese Prüfung schlägt ein fehlendes IMAP_HOST-Secret erst tief in der
+// TCP-Verbindung fehl ("ECONNREFUSED 127.0.0.1:993" - ImapFlow verbindet sich
+// mit localhost, wenn host undefined ist) statt mit einem klaren Hinweis.
+function pruefeImapConfig() {
+  if (!process.env.IMAP_HOST || !process.env.IMAP_USER || !process.env.IMAP_PASSWORD) {
+    ueberspringenWerfen('IMAP_HOST/IMAP_USER/IMAP_PASSWORD-Secret ist nicht gesetzt - bitte in GitHub → Settings → Secrets and variables → Actions eintragen (siehe setup/ App oder automations/README.md).');
+  }
+}
+
 async function fetchNewEmails(state) {
+  pruefeImapConfig();
   const client = new ImapFlow({
     host: process.env.IMAP_HOST,
     port: Number(process.env.IMAP_PORT || 993),
@@ -167,6 +177,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[02-ki-kundenservice] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[02-ki-kundenservice] Fehler:', err);
   process.exit(1);
 });

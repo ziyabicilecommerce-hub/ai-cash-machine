@@ -242,3 +242,16 @@ export function isTestMode() {
 export function sindEmailsPausiert() {
   return String(config.EMAILS_PAUSIERT || '').trim().toLowerCase() === 'ja';
 }
+
+// Wird geworfen statt eines normalen Error, wenn ein Lauf NICHT wegen eines
+// echten Bugs abbricht, sondern weil ein Pflicht-Secret noch fehlt (Setup
+// nicht abgeschlossen) oder ein absichtliches Tageslimit erreicht ist. Der
+// main().catch()-Block jeder Automation prüft err.uebersprungen und beendet
+// den Prozess dann mit Exit-Code 0 statt 1 - so zählt GitHub Actions den Lauf
+// nicht als fehlgeschlagen und verschickt keine Fehlschlag-Benachrichtigung,
+// bis das Setup wirklich abgeschlossen ist.
+export function ueberspringenWerfen(nachricht) {
+  const err = new Error(nachricht);
+  err.uebersprungen = true;
+  throw err;
+}

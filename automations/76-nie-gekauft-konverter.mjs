@@ -72,6 +72,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[76-nie-gekauft-konverter] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[76-nie-gekauft-konverter] Fehler:', err);
   process.exit(1);
 });

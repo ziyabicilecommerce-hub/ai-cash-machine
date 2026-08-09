@@ -62,6 +62,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[40-kunden-feedback-sammler] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[40-kunden-feedback-sammler] Fehler:', err);
   process.exit(1);
 });

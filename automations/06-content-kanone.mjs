@@ -48,6 +48,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[06-content-kanone] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[06-content-kanone] Fehler:', err);
   process.exit(1);
 });

@@ -55,6 +55,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[27-wochen-sieger-report] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[27-wochen-sieger-report] Fehler:', err);
   process.exit(1);
 });

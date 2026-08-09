@@ -86,6 +86,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[64-ads-autopilot-agent] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[64-ads-autopilot-agent] Fehler:', err);
   process.exit(1);
 });

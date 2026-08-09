@@ -66,6 +66,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[18-multi-plattform-poster] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[18-multi-plattform-poster] Fehler:', err);
   process.exit(1);
 });

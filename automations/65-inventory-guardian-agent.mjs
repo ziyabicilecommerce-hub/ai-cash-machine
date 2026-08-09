@@ -84,6 +84,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[65-inventory-guardian-agent] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[65-inventory-guardian-agent] Fehler:', err);
   process.exit(1);
 });

@@ -70,6 +70,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[10-vip-radar] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[10-vip-radar] Fehler:', err);
   process.exit(1);
 });

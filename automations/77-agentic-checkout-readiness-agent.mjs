@@ -126,6 +126,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err?.uebersprungen) {
+    console.log('[77-agentic-checkout-readiness-agent] Übersprungen:', err.message);
+    process.exit(0);
+  }
   console.error('[77-agentic-checkout-readiness-agent] Fehler:', err);
   process.exit(1);
 });
