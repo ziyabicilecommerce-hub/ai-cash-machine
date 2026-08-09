@@ -165,6 +165,12 @@
 </style>
 </head>
 <body>
+<style>
+.cm-secrets-btn{position:fixed;top:12px;right:12px;z-index:99999;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(3,5,18,.88);backdrop-filter:blur(8px);border:1px solid #3ef2a0;color:#3ef2a0;font:600 13px/1 -apple-system,system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 12px rgba(0,0,0,.4);}
+.cm-secrets-btn:hover{background:#3ef2a0;color:#030512;}
+@media (max-width:480px){.cm-secrets-btn{padding:8px 10px;font-size:0;}.cm-secrets-btn::after{content:"🔑";font-size:16px;}}
+</style>
+<a class="cm-secrets-btn" href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/settings/secrets/actions/new" target="_blank" rel="noopener" title="API-Schlüssel bei GitHub eintragen">🔑 API-Schlüssel hinzufügen</a>
 
 <div class="boot-overlay" id="bootOverlay">
   <div class="boot-lines" id="bootLines">
