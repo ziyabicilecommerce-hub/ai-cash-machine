@@ -21,6 +21,7 @@ on:
       - 'agents/**'
       - 'pricing/**'
       - 'strategy-lab/**'
+      - 'mission-control/**'
       - 'trading-bot-worker/lib/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
@@ -65,6 +66,7 @@ jobs:
           cp -r agents _site/agents
           cp -r pricing _site/pricing
           cp -r strategy-lab _site/strategy-lab
+          cp -r mission-control _site/mission-control
           mkdir -p _site/trading-bot-worker
           cp -r trading-bot-worker/lib _site/trading-bot-worker/lib
 

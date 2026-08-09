@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE MISSION CONTROL</title>
+<meta name="description" content="Live-Radar für alle 79 Automationen: wie viele sind einsatzbereit, was blockiert die restlichen, und welches einzelne Secret als nächstes die meisten auf einen Schlag freischaltet.">
+<meta property="og:title" content="CASHMACHINE MISSION CONTROL">
+<meta property="og:description" content="Welches Secret schaltet als nächstes die meisten Automationen frei?">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23030512%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%233ef2a0%27%20stroke-width%3D%274%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%274%27%20fill%3D%27%233ef2a0%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#030512; --panel:rgba(20,28,40,.55); --panel-solid:#0a0f1c;
+    --green:#3ef2a0; --red:#ff6b81; --amber:#ffc55c; --cyan:#6fe0ff;
+    --line:rgba(62,242,160,.24); --line2:rgba(255,255,255,.07);
+    --txt:#eef4f2; --mut:rgba(220,235,230,.62); --mut2:rgba(220,235,230,.4);
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+  ::selection { background:rgba(62,242,160,.3); }
+
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(62,242,160,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(62,242,160,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 30%,transparent 75%); }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(3,5,18,.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--green); }
+  .nav-links { display:flex; align-items:center; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--green); }
+  @media(max-width:820px){ .nav-links a { display:none; } }
+
+  header.hero { min-height:30svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:110px 20px 16px; max-width:920px; margin:0 auto; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--green); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:16px; }
+  .kicker::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green); animation:pulse 1.4s infinite; }
+  @keyframes pulse { 50%{opacity:.35;transform:scale(.75)} }
+  h1 { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(22px,5vw,40px); letter-spacing:2px; color:#f4fffb;
+    text-shadow:0 0 24px rgba(62,242,160,.35); margin-bottom:10px; }
+  .sub { font-size:13.5px; color:var(--mut); max-width:580px; }
+
+  section { padding:0 20px 60px; max-width:820px; margin:0 auto; }
+
+  .score-card { display:flex; align-items:center; gap:22px; padding:24px; margin-bottom:20px;
+    background:var(--panel); border:1px solid var(--line); }
+  .score-ring { position:relative; width:96px; height:96px; flex-shrink:0; }
+  .score-ring svg { transform:rotate(-90deg); }
+  .score-ring circle { fill:none; stroke-width:8; }
+  .score-ring .track { stroke:rgba(255,255,255,.08); }
+  .score-ring .fill { stroke:var(--green); stroke-linecap:round; transition:stroke-dashoffset .4s ease; }
+  .score-num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-weight:700; font-size:20px; color:var(--green); }
+  .score-body h2 { font-family:'Orbitron',sans-serif; font-size:18px; margin-bottom:4px; }
+  .score-body p { font-size:13px; color:var(--mut); }
+  .score-body b { color:var(--green); }
+
+  .impact-card { padding:18px 20px; margin-bottom:22px; background:rgba(62,242,160,.06); border:1px solid var(--line); }
+  .impact-card.hidden { display:none; }
+  .impact-label { font-family:var(--mono); font-size:11px; letter-spacing:.12em; color:var(--green); margin-bottom:8px; }
+  .impact-title { font-family:'Orbitron',sans-serif; font-size:16px; margin-bottom:6px; }
+  .impact-desc { font-size:13px; color:var(--mut); margin-bottom:12px; }
+  .impact-actions { display:flex; gap:10px; flex-wrap:wrap; }
+  .impact-actions a, .impact-actions button { font-family:var(--mono); font-size:12px; padding:8px 14px; text-decoration:none;
+    border:1px solid var(--green); color:var(--green); background:none; cursor:pointer; }
+  .impact-actions a:hover, .impact-actions button:hover { background:var(--green); color:#030512; }
+
+  .all-done { display:none; text-align:center; padding:22px; margin-bottom:22px; background:rgba(62,242,160,.08);
+    border:1px solid rgba(62,242,160,.35); font-family:var(--mono); color:var(--green); }
+  .all-done.show { display:block; }
+
+  .secrets-toggle { text-align:center; margin:8px 0 20px; }
+  .secrets-toggle button { background:none; border:1px solid var(--line2); color:var(--mut); font-family:var(--mono);
+    font-size:12px; padding:8px 16px; cursor:pointer; }
+  .secrets-toggle button:hover { border-color:var(--green); color:var(--green); }
+  #secretsSection { display:none; margin-bottom:24px; }
+  #secretsSection.show { display:block; }
+  .sec-row { display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--panel); border:1px solid var(--line2); margin-bottom:8px; }
+  .sec-row input { width:18px; height:18px; accent-color:var(--green); cursor:pointer; flex-shrink:0; }
+  .sec-row.checked { opacity:.5; }
+  .sec-name { font-family:var(--mono); font-size:13px; flex:1; }
+  .sec-count { font-family:var(--mono); font-size:11px; color:var(--mut2); }
+
+  .filter-row { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+  .filter-row button { font-family:var(--mono); font-size:11.5px; padding:6px 12px; background:none; border:1px solid var(--line2);
+    color:var(--mut); cursor:pointer; }
+  .filter-row button.active { border-color:var(--green); color:var(--green); }
+
+  .auto-list { display:flex; flex-direction:column; gap:6px; }
+  .auto-row { display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--panel); border:1px solid var(--line2); font-size:13px; }
+  .auto-row.ready { border-color:rgba(62,242,160,.3); }
+  .auto-num { font-family:var(--mono); color:var(--mut2); font-size:11.5px; width:24px; flex-shrink:0; }
+  .auto-title { flex:1; }
+  .auto-status { font-family:var(--mono); font-size:11px; flex-shrink:0; }
+  .auto-status.ready { color:var(--green); }
+  .auto-status.locked { color:var(--amber); }
+  .auto-missing { font-family:var(--mono); font-size:10.5px; color:var(--mut2); }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--green); text-decoration:none; margin:0 8px; }
+</style>
+</head>
+<body>
+<style>
+.cm-secrets-btn{position:fixed;top:12px;right:12px;z-index:99999;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(3,5,18,.88);backdrop-filter:blur(8px);border:1px solid #3ef2a0;color:#3ef2a0;font:600 13px/1 -apple-system,system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 12px rgba(0,0,0,.4);}
+.cm-secrets-btn:hover{background:#3ef2a0;color:#030512;}
+@media (max-width:480px){.cm-secrets-btn{padding:8px 10px;font-size:0;}.cm-secrets-btn::after{content:"🔑";font-size:16px;}}
+</style>
+<a class="cm-secrets-btn" href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/settings/secrets/actions/new" target="_blank" rel="noopener" title="API-Schlüssel bei GitHub eintragen">🔑 API-Schlüssel hinzufügen</a>
+
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;MISSION CONTROL</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../setup/">Setup</a>
+    <a href="../automations-dashboard/">Automations</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="kicker">LIVE-EINSATZBEREITSCHAFT · 79 AUTOMATIONEN</div>
+  <h1>MISSION CONTROL</h1>
+  <p class="sub">Nicht nur ob eine Automation läuft — sondern welches EINE Secret als nächstes die meisten auf einen Schlag freischaltet. Dein Fortschritt ist mit der Setup-Checkliste verknüpft.</p>
+</header>
+
+<section>
+  <div class="score-card">
+    <div class="score-ring">
+      <svg width="96" height="96">
+        <circle class="track" cx="48" cy="48" r="42"></circle>
+        <circle class="fill" id="scoreCircle" cx="48" cy="48" r="42" stroke-dasharray="264" stroke-dashoffset="264"></circle>
+      </svg>
+      <div class="score-num" id="scoreNum">0%</div>
+    </div>
+    <div class="score-body">
+      <h2 id="scoreHeadline">0 von 79 einsatzbereit</h2>
+      <p>Automationen, deren Pflicht-Secrets laut deiner Checkliste vollständig gesetzt sind. Der Rest läuft dank des Skip-Fixes einfach still weiter, ohne dich mit Fehler-Mails zu nerven — bis du bereit bist.</p>
+    </div>
+  </div>
+
+  <div class="impact-card" id="impactCard">
+    <div class="impact-label">GRÖSSTER NÄCHSTER HEBEL</div>
+    <div class="impact-title" id="impactTitle">–</div>
+    <div class="impact-desc" id="impactDesc">–</div>
+    <div class="impact-actions">
+      <button type="button" id="impactCheckBtn">Als gesetzt markieren</button>
+      <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/settings/secrets/actions/new" target="_blank" rel="noopener">Bei GitHub eintragen →</a>
+    </div>
+  </div>
+
+  <div class="all-done" id="allDone">🚀 Alle Pflicht-Secrets gesetzt — sämtliche 79 Automationen sind bereit zu laufen.</div>
+
+  <div class="secrets-toggle">
+    <button id="secretsToggleBtn" type="button">+ Alle benötigten Secrets einzeln anzeigen/abhaken</button>
+  </div>
+  <div id="secretsSection"></div>
+
+  <div class="filter-row" id="filterRow">
+    <button data-f="all" class="active">Alle 79</button>
+    <button data-f="ready">✅ Bereit</button>
+    <button data-f="locked">🔒 Gesperrt</button>
+  </div>
+  <div class="auto-list" id="autoList"></div>
+</section>
+
+<footer>
+  <b>CASHMACHINE MISSION CONTROL</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../setup/">Setup</a>·<a href="../automations-dashboard/">Automations</a>
+</footer>
+
+<script>
+  const GITHUB_SECRET_URL = 'https://github.com/ziyabicilecommerce-hub/ai-cash-machine/settings/secrets/actions/new';
+  const STORAGE_KEY = 'cmx_setup_progress'; // geteilt mit der Setup-App - einmal abhaken, überall sichtbar
+
+  const AUTOMATIONEN = [
+    {n:"01",t:"Gewinn-Radar",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"02",t:"KI-Kundenservice",r:["ANTHROPIC_API_KEY", "IMAP_HOST", "IMAP_PASSWORD", "IMAP_USER", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"04",t:"Bewertungs-Magnet",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"05",t:"Winback-Maschine",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"06",t:"Content-Kanone",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"07",t:"Ad-Fabrik",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"08",t:"Trend-Scout",r:["ANTHROPIC_API_KEY"]},
+    {n:"09",t:"Newsletter-Autopilot",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"10",t:"VIP-Radar",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"11",t:"Ads-Manager",r:["ANTHROPIC_API_KEY", "META_ACCESS_TOKEN", "META_AD_ACCOUNT_ID"]},
+    {n:"12",t:"Marketing-Chef-CMO",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"13",t:"Willkommens-Booster",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"14",t:"Preis-Spion",r:["ANTHROPIC_API_KEY"]},
+    {n:"15",t:"Warenkorb-Sequenz",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"16",t:"Cross-Sell-Radar",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"17",t:"Promo-Kampagnen-Maschine",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"18",t:"Multi-Plattform-Poster",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"19",t:"Saison-Planer",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"20",t:"Lager-Wächter",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"21",t:"Retouren-Detektiv",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"22",t:"Dead-Stock-Räumer",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"23",t:"Kunden-Jubiläum",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"24",t:"Bundle-Bauer",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"25",t:"Wetter-Marketing",r:["ANTHROPIC_API_KEY"]},
+    {n:"26",t:"Schläfer-Wecker",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"27",t:"Wochen-Sieger-Report",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"28",t:"SEO-Text-Doktor",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"29",t:"Zahlungs-Retter",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"30",t:"Bewertungs-Antwort-Bot",r:["ANTHROPIC_API_KEY", "JUDGEME_API_TOKEN", "JUDGEME_SHOP_DOMAIN"]},
+    {n:"31",t:"Umsatz-Prognose",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"32",t:"UGC-Anfrage-Automat",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"33",t:"Feiertags-Radar",r:["ANTHROPIC_API_KEY"]},
+    {n:"34",t:"Neukunden-Quellen-Report",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"35",t:"Lead-Magnet-Maschine",r:["ANTHROPIC_API_KEY"]},
+    {n:"36",t:"FAQ-Bauer",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"37",t:"Static-Ad-Fabrik-XL",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"38",t:"UGC-Video-Skript-Fabrik",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"39",t:"Nachbestell-Erinnerung",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"40",t:"Kunden-Feedback-Sammler",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"41",t:"Post-Purchase-Sofort-Upsell",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"42",t:"Meta-Ads-Auto-Skalierer",r:["META_ACCESS_TOKEN", "META_AD_ACCOUNT_ID"]},
+    {n:"43",t:"Meta-Ads-Notbremse",r:["META_ACCESS_TOKEN", "META_AD_ACCOUNT_ID"]},
+    {n:"44",t:"Winning-Ad-Neue-Creatives",r:["ANTHROPIC_API_KEY", "META_ACCESS_TOKEN", "META_AD_ACCOUNT_ID"]},
+    {n:"45",t:"Meta-Lookalike-Futter",r:["META_ACCESS_TOKEN", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"46",t:"Großbestellung-Radar",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"47",t:"Länder-Expansions-Scout",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"48",t:"Google-Maps-Lead-Jäger",r:["COMPOSIO_API_KEY"]},
+    {n:"49",t:"Trading-Bot",r:[]},
+    {n:"50",t:"Pump-Scanner",r:[]},
+    {n:"51",t:"Product-Hunter",r:["ANTHROPIC_API_KEY"]},
+    {n:"52",t:"Creative-Studio",r:["ANTHROPIC_API_KEY", "OPENAI_API_KEY"]},
+    {n:"53",t:"Store-Builder-Optimizer",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"54",t:"Compliance-Guard",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"55",t:"Fulfillment-Supplier-Hub",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"56",t:"Ad-Commander",r:["ANTHROPIC_API_KEY", "META_ACCESS_TOKEN", "META_AD_ACCOUNT_ID"]},
+    {n:"57",t:"CRM-Retention-Engine",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"58",t:"Brand-Assassin-Auto-Scan",r:["ANTHROPIC_API_KEY"]},
+    {n:"59",t:"Oracle-Auto-Briefing",r:["ANTHROPIC_API_KEY"]},
+    {n:"60",t:"Chef-Agent",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"61",t:"Pricing-Agent",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"62",t:"Risk-Guard-Agent",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"63",t:"Reorder-Agent",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"64",t:"Ads-Autopilot-Agent",r:["META_ACCESS_TOKEN", "META_AD_ACCOUNT_ID"]},
+    {n:"65",t:"Inventory-Guardian-Agent",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"66",t:"Loyalty-Punkte-Engine",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"67",t:"Giftcard-Kompensations-Agent",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"68",t:"Sonderwunsch-Flagger",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"69",t:"DSGVO-Anfragen-Wächter",r:["ANTHROPIC_API_KEY", "IMAP_HOST", "IMAP_PASSWORD", "IMAP_USER"]},
+    {n:"70",t:"Produkt-Launch-Hype-Agent",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"71",t:"Margen-Erosions-Wächter",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"72",t:"Broken-Link-Guardian",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"73",t:"Duplikat-Listing-Detektor",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"74",t:"Refund-Concierge-Agent",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"75",t:"Übersetzungs-Entwurf-Agent",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"76",t:"Nie-Gekauft-Konverter",r:["ANTHROPIC_API_KEY", "SHOP", "SHOPIFY_TOKEN"]},
+    {n:"77",t:"Agentic-Checkout-Readiness-Agent",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"78",t:"Paypal-Beleg-Agent",r:["SHOP", "SHOPIFY_TOKEN"]},
+    {n:"79",t:"Wrapped-Generator",r:[]},
+    {n:"80",t:"Agenten-Status-Sammler",r:[]}
+  ];
+
+  function getProgress() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+  }
+  function saveProgress(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
+
+  function fehlendeSecrets(auto, progress) {
+    return auto.r.filter((s) => !progress[s]);
+  }
+
+  function alleSecrets() {
+    const set = new Set();
+    AUTOMATIONEN.forEach((a) => a.r.forEach((s) => set.add(s)));
+    return [...set].sort();
+  }
+
+  function berechneHebel(progress) {
+    // Für jedes noch nicht gesetzte Secret zwei Zahlen: (a) wie viele AKTUELL
+    // gesperrte Automationen brauchen es überhaupt (blockiert - der eigentliche
+    // Hebel, auch wenn manche davon noch weitere Secrets brauchen), und
+    // (b) wie viele werden dadurch SOFORT komplett startklar, weil es ihr
+    // letztes fehlendes Secret war. Sortiert nach (a), damit z.B. SHOP/
+    // SHOPIFY_TOKEN (blockieren die meisten) oben stehen statt untergehen,
+    // nur weil sie selten die EINZIGE fehlende Zutat sind.
+    const gesperrte = AUTOMATIONEN.filter((a) => fehlendeSecrets(a, progress).length > 0);
+    const blockiert = {};
+    const sofortFrei = {};
+    gesperrte.forEach((a) => {
+      const fehlend = fehlendeSecrets(a, progress);
+      fehlend.forEach((s) => { blockiert[s] = (blockiert[s] || 0) + 1; });
+      if (fehlend.length === 1) {
+        sofortFrei[fehlend[0]] = (sofortFrei[fehlend[0]] || 0) + 1;
+      }
+    });
+    const sorted = Object.entries(blockiert).sort((a, b) => b[1] - a[1]);
+    if (!sorted.length) return null;
+    const [secret, anzahlBlockiert] = sorted[0];
+    return { secret, anzahlBlockiert, anzahlSofortFrei: sofortFrei[secret] || 0 };
+  }
+
+  function render() {
+    const progress = getProgress();
+    const ready = AUTOMATIONEN.filter((a) => fehlendeSecrets(a, progress).length === 0);
+    const total = AUTOMATIONEN.length;
+    const pct = Math.round((ready.length / total) * 100);
+
+    document.getElementById('scoreNum').textContent = pct + '%';
+    document.getElementById('scoreHeadline').textContent = `${ready.length} von ${total} einsatzbereit`;
+    const circumference = 264;
+    document.getElementById('scoreCircle').setAttribute('stroke-dashoffset', circumference - (circumference * pct) / 100);
+
+    document.getElementById('allDone').classList.toggle('show', ready.length === total);
+    document.getElementById('impactCard').classList.toggle('hidden', ready.length === total);
+
+    if (ready.length < total) {
+      const hebel = berechneHebel(progress);
+      if (hebel) {
+        const { secret, anzahlBlockiert, anzahlSofortFrei } = hebel;
+        document.getElementById('impactTitle').textContent = secret;
+        const sofortSatz = anzahlSofortFrei > 0
+          ? ` ${anzahlSofortFrei} davon ${anzahlSofortFrei === 1 ? 'wird' : 'werden'} dadurch SOFORT komplett startklar.`
+          : ' Die übrigen brauchen danach noch mindestens ein weiteres Secret.';
+        document.getElementById('impactDesc').textContent =
+          `${anzahlBlockiert} von ${total - ready.length} noch gesperrten Automationen brauchen dieses Secret.${sofortSatz}`;
+        document.getElementById('impactCheckBtn').onclick = () => {
+          const p = getProgress();
+          p[secret] = true;
+          saveProgress(p);
+          render();
+        };
+      }
+    }
+
+    renderSecrets(progress);
+    renderAutoList(progress, document.querySelector('#filterRow button.active')?.dataset.f || 'all');
+  }
+
+  function renderSecrets(progress) {
+    const secrets = alleSecrets();
+    const counts = {};
+    AUTOMATIONEN.forEach((a) => a.r.forEach((s) => { counts[s] = (counts[s] || 0) + 1; }));
+    document.getElementById('secretsSection').innerHTML = secrets.map((s) => `
+      <label class="sec-row ${progress[s] ? 'checked' : ''}" id="sec-${s}">
+        <input type="checkbox" data-secret="${s}" ${progress[s] ? 'checked' : ''}>
+        <span class="sec-name">${s}</span>
+        <span class="sec-count">nötig für ${counts[s]}</span>
+      </label>`).join('');
+    document.querySelectorAll('#secretsSection input').forEach((cb) => {
+      cb.addEventListener('change', () => {
+        const p = getProgress();
+        p[cb.dataset.secret] = cb.checked;
+        saveProgress(p);
+        render();
+      });
+    });
+  }
+
+  function renderAutoList(progress, filter) {
+    const rows = AUTOMATIONEN.map((a) => {
+      const fehlend = fehlendeSecrets(a, progress);
+      const isReady = fehlend.length === 0;
+      if (filter === 'ready' && !isReady) return '';
+      if (filter === 'locked' && isReady) return '';
+      return `
+        <div class="auto-row ${isReady ? 'ready' : ''}">
+          <span class="auto-num">#${a.n}</span>
+          <span class="auto-title">${a.t}</span>
+          ${isReady
+            ? '<span class="auto-status ready">✅ bereit</span>'
+            : `<span class="auto-missing">fehlt: ${fehlend.join(', ')}</span><span class="auto-status locked">🔒</span>`}
+        </div>`;
+    }).join('');
+    document.getElementById('autoList').innerHTML = rows || '<p style="color:var(--mut2);font-size:13px;padding:10px;">Keine Treffer.</p>';
+  }
+
+  document.getElementById('secretsToggleBtn').addEventListener('click', (e) => {
+    const section = document.getElementById('secretsSection');
+    section.classList.toggle('show');
+    e.target.textContent = section.classList.contains('show')
+      ? '− Secrets-Liste ausblenden'
+      : '+ Alle benötigten Secrets einzeln anzeigen/abhaken';
+  });
+
+  document.getElementById('filterRow').addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    document.querySelectorAll('#filterRow button').forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderAutoList(getProgress(), btn.dataset.f);
+  });
+
+  render();
+</script>
+</body>
+</html>
