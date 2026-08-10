@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE SOCIAL POSTER</title>
+<meta name="description" content="Archiv aller täglich generierten Social-Media-Pakete (TikTok, Instagram, Facebook, Pinterest, YouTube, X) - zeigt live, was wirklich automatisch gepostet wurde statt nur Entwurf zu sein.">
+<meta property="og:title" content="CASHMACHINE SOCIAL POSTER">
+<meta property="og:description" content="Was wurde heute wirklich live gepostet - und was ist nur Entwurf?">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23030512%27/%3E%3Cpath%20d%3D%27M16%2032a16%2016%200%200%201%2032%200%27%20fill%3D%27none%27%20stroke%3D%27%233ef2a0%27%20stroke-width%3D%274%27%20stroke-linecap%3D%27round%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%275%27%20fill%3D%27%233ef2a0%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#030512; --panel:rgba(20,28,40,.55); --panel-solid:#0a0f1c;
+    --green:#3ef2a0; --red:#ff6b81; --amber:#ffc55c; --cyan:#6fe0ff;
+    --line:rgba(62,242,160,.24); --line2:rgba(255,255,255,.07);
+    --txt:#eef4f2; --mut:rgba(220,235,230,.62); --mut2:rgba(220,235,230,.4);
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+  ::selection { background:rgba(62,242,160,.3); }
+
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(62,242,160,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(62,242,160,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 30%,transparent 75%); }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(3,5,18,.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--green); }
+  .nav-links { display:flex; align-items:center; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--green); }
+  @media(max-width:820px){ .nav-links a { display:none; } }
+
+  header.hero { min-height:28svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:110px 20px 16px; max-width:820px; margin:0 auto; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--green); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:16px; }
+  .kicker::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green); animation:pulse 1.4s infinite; }
+  @keyframes pulse { 50%{opacity:.35;transform:scale(.75)} }
+  h1 { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(22px,5vw,38px); letter-spacing:2px; color:#f4fffb;
+    text-shadow:0 0 24px rgba(62,242,160,.35); margin-bottom:10px; }
+  .sub { font-size:13.5px; color:var(--mut); max-width:580px; }
+
+  section { padding:0 20px 60px; max-width:780px; margin:0 auto; }
+
+  .paket-card { background:var(--panel); border:1px solid var(--line2); margin-bottom:16px; overflow:hidden; }
+  .paket-head { padding:16px 18px; display:flex; flex-wrap:wrap; align-items:center; gap:10px; cursor:pointer; }
+  .paket-datum { font-family:var(--mono); font-size:12px; color:var(--mut2); }
+  .paket-thema { font-weight:700; font-size:14px; flex:1; min-width:160px; }
+  .badge { font-family:var(--mono); font-size:11px; padding:4px 10px; border-radius:20px; white-space:nowrap; }
+  .badge.live { background:rgba(62,242,160,.12); border:1px solid rgba(62,242,160,.4); color:var(--green); }
+  .badge.entwurf { background:rgba(255,255,255,.05); border:1px solid var(--line2); color:var(--mut2); }
+  .badge.fehler { background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.4); color:var(--red); }
+  .paket-toggle { font-family:var(--mono); font-size:11px; color:var(--cyan); }
+  .paket-body { display:none; padding:0 18px 18px; border-top:1px solid var(--line2); }
+  .paket-body.show { display:block; }
+  .paket-body-inner { padding-top:14px; font-size:13.5px; }
+  .paket-body-inner h2 { font-family:var(--mono); font-size:13px; color:var(--green); margin:16px 0 6px; text-transform:uppercase; letter-spacing:.06em; }
+  .paket-body-inner h2:first-child { margin-top:0; }
+  .paket-body-inner p, .paket-body-inner li { color:var(--mut); }
+  .paket-links { display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; }
+  .paket-links a { font-family:var(--mono); font-size:11.5px; color:var(--cyan); text-decoration:none; border-bottom:1px dotted var(--cyan); }
+
+  .empty-wrap { min-height:80svh; display:flex; align-items:center; justify-content:center; padding:120px 20px 40px; }
+  .empty-box { text-align:center; max-width:480px; }
+  .empty-box .emoji { font-size:44px; margin-bottom:16px; }
+  .empty-box h1 { font-family:'Orbitron',sans-serif; font-size:20px; margin-bottom:10px; }
+  .empty-box p { font-size:13.5px; color:var(--mut); }
+  .empty-box a { color:var(--green); }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--green); text-decoration:none; margin:0 8px; }
+</style>
+</head>
+<body>
+<style>
+.cm-secrets-btn{position:fixed;top:12px;right:12px;z-index:99999;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(3,5,18,.88);backdrop-filter:blur(8px);border:1px solid #3ef2a0;color:#3ef2a0;font:600 13px/1 -apple-system,system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 12px rgba(0,0,0,.4);}
+.cm-secrets-btn:hover{background:#3ef2a0;color:#030512;}
+@media (max-width:480px){.cm-secrets-btn{padding:8px 10px;font-size:0;}.cm-secrets-btn::after{content:"🔑";font-size:16px;}}
+</style>
+<a class="cm-secrets-btn" href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/settings/secrets/actions/new" target="_blank" rel="noopener" title="API-Schlüssel bei GitHub eintragen">🔑 API-Schlüssel hinzufügen</a>
+
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;SOCIAL POSTER</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../mission-control/">Mission Control</a>
+    <a href="../automations-dashboard/">Automations</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="kicker" id="kicker">SOCIAL-POSTING-ARCHIV</div>
+  <h1>SOCIAL POSTER</h1>
+  <p class="sub">Jedes Tagespaket von Automation #18, mit ehrlichem Status: was ist WIRKLICH live auf Facebook/Instagram gepostet, was ist nur Entwurf zum Copy-Paste.</p>
+</header>
+
+<section id="listSection">
+  <div id="paketListe"></div>
+</section>
+
+<footer>
+  <b>CASHMACHINE SOCIAL POSTER</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../mission-control/">Mission Control</a>·<a href="../automations-dashboard/">Automations</a>
+</footer>
+
+<script>
+  function fmtDatum(iso) {
+    try { return new Date(iso).toLocaleString('de-DE', { day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' }); }
+    catch { return iso; }
+  }
+
+  function badge(status, plattform) {
+    if (!status || !status.aktiv) return `<span class="badge entwurf">${plattform}: nur Entwurf</span>`;
+    if (status.gepostet) {
+      const link = status.url ? ` (<a href="${status.url}" target="_blank" rel="noopener" style="color:inherit">Post ansehen</a>)` : '';
+      return `<span class="badge live">✅ ${plattform}: live gepostet${link}</span>`;
+    }
+    return `<span class="badge fehler">⚠️ ${plattform}: Versuch fehlgeschlagen</span>`;
+  }
+
+  function paketCardHtml(p, i) {
+    return `
+      <div class="paket-card">
+        <div class="paket-head" data-toggle="${i}">
+          <span class="paket-datum">${fmtDatum(p.datum)}</span>
+          <span class="paket-thema">${p.thema || ''}</span>
+          ${badge(p.facebook, 'Facebook')}
+          ${badge(p.instagram, 'Instagram')}
+          <span class="paket-toggle">Paket anzeigen ▾</span>
+        </div>
+        <div class="paket-body" id="body-${i}">
+          <div class="paket-body-inner">${p.html || '<p>Kein Inhalt gespeichert.</p>'}</div>
+          ${p.instagram && p.instagram.bildUrl ? `<div class="paket-links"><a href="${p.instagram.bildUrl}" target="_blank" rel="noopener">Instagram-Produktfoto ansehen →</a></div>` : ''}
+        </div>
+      </div>`;
+  }
+
+  function render(data) {
+    const pakete = data.pakete || [];
+    if (!pakete.length) { zeigeEmptyState(); return; }
+    document.getElementById('kicker').textContent = `${pakete.length} PAKET${pakete.length === 1 ? '' : 'E'} IM ARCHIV`;
+    document.getElementById('paketListe').innerHTML = pakete.map(paketCardHtml).join('');
+    document.querySelectorAll('[data-toggle]').forEach((head) => {
+      head.addEventListener('click', () => {
+        const body = document.getElementById(`body-${head.dataset.toggle}`);
+        body.classList.toggle('show');
+      });
+    });
+  }
+
+  function zeigeEmptyState() {
+    document.getElementById('listSection').innerHTML = `
+      <div class="empty-wrap">
+        <div class="empty-box">
+          <div class="emoji">📮</div>
+          <h1>NOCH KEIN PAKET</h1>
+          <p>Hier erscheint jedes Tagespaket, sobald der Multi-Plattform-Poster (#18) mindestens einmal gelaufen ist (braucht ANTHROPIC_API_KEY + SHOP + SHOPIFY_TOKEN). Facebook/Instagram posten sich zusätzlich automatisch, sobald AUTO_POST_FACEBOOK bzw. AUTO_POST_INSTAGRAM auf "ja" stehen.<br><br><a href="../mission-control/">→ Mission Control</a> zeigt, welche Secrets dafür noch fehlen.<br><a href="../">← Zurück zu Jarvis</a></p>
+        </div>
+      </div>`;
+  }
+
+  fetch('./manifest.json', { cache: 'no-store' })
+    .then((res) => { if (!res.ok) throw new Error('no data'); return res.json(); })
+    .then((data) => render(data))
+    .catch(() => zeigeEmptyState());
+</script>
+</body>
+</html>

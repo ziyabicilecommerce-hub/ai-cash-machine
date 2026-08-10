@@ -9,13 +9,21 @@
 // Developer-App (Wochen-Prozess, kein Self-Service) UND ein fertiges
 // Video-Asset - diese Codebase hat keine Video-Erstellung, nur Text/Bild.
 // Ein "automatischer" TikTok-Post wäre also nur Fassade, kein echtes Feature.
+import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { getOrdersSince, getProducts } from './lib/shopify.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
+import { loadState, saveState } from './lib/state.mjs';
 
 const NL = '\n';
+const STATE_KEY = '18-multi-plattform-poster';
+const MAX_HISTORIE = 60;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const POSTER_DIR = join(__dirname, '..', 'social-poster');
 
 const THEMEN = [
   'Ergebnis/Transformation zeigen',
@@ -27,14 +35,25 @@ const THEMEN = [
   'Zahlen/Fakten, die überraschen',
 ];
 
+// Liefert immer ein Status-Objekt zurück (auch wenn deaktiviert/fehlgeschlagen)
+// - die Social-Poster-App zeigt daraus an, was WIRKLICH live ging statt nur
+// Entwurf war.
 async function postFacebook(text) {
-  if (config.AUTO_POST_FACEBOOK !== 'ja' || !config.FB_PAGE_ID || !config.FB_PAGE_TOKEN || !text) return;
+  if (config.AUTO_POST_FACEBOOK !== 'ja' || !config.FB_PAGE_ID || !config.FB_PAGE_TOKEN || !text) {
+    return { aktiv: false, gepostet: false };
+  }
   const res = await fetch(`https://graph.facebook.com/v21.0/${config.FB_PAGE_ID}/feed`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ message: text, access_token: config.FB_PAGE_TOKEN }),
   });
-  if (!res.ok) console.error('[18-multi-plattform-poster] Facebook-Post-Fehler:', await res.text());
+  if (!res.ok) {
+    const fehlertext = await res.text();
+    console.error('[18-multi-plattform-poster] Facebook-Post-Fehler:', fehlertext);
+    return { aktiv: true, gepostet: false, fehler: fehlertext.slice(0, 300) };
+  }
+  const data = await res.json();
+  return { aktiv: true, gepostet: true, postId: data.id, url: `https://www.facebook.com/${data.id}` };
 }
 
 // Instagrams Graph API verlangt zwingend ein Bild/Video (reine Text-Posts
@@ -43,7 +62,9 @@ async function postFacebook(text) {
 // garantiert vorhanden (solange das Produkt eins hat) und näher am
 // tatsächlichen Produkt als eine generische Illustration.
 async function postInstagram(imageUrl, caption) {
-  if (config.AUTO_POST_INSTAGRAM !== 'ja' || !config.INSTAGRAM_BUSINESS_ACCOUNT_ID || !config.META_ACCESS_TOKEN || !imageUrl || !caption) return;
+  if (config.AUTO_POST_INSTAGRAM !== 'ja' || !config.INSTAGRAM_BUSINESS_ACCOUNT_ID || !config.META_ACCESS_TOKEN || !imageUrl || !caption) {
+    return { aktiv: false, gepostet: false };
+  }
 
   const containerRes = await fetch(`https://graph.facebook.com/v21.0/${config.INSTAGRAM_BUSINESS_ACCOUNT_ID}/media`, {
     method: 'POST',
@@ -51,8 +72,9 @@ async function postInstagram(imageUrl, caption) {
     body: JSON.stringify({ image_url: imageUrl, caption, access_token: config.META_ACCESS_TOKEN }),
   });
   if (!containerRes.ok) {
-    console.error('[18-multi-plattform-poster] Instagram-Container-Fehler:', await containerRes.text());
-    return;
+    const fehlertext = await containerRes.text();
+    console.error('[18-multi-plattform-poster] Instagram-Container-Fehler:', fehlertext);
+    return { aktiv: true, gepostet: false, fehler: fehlertext.slice(0, 300) };
   }
   const container = await containerRes.json();
 
@@ -61,7 +83,13 @@ async function postInstagram(imageUrl, caption) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ creation_id: container.id, access_token: config.META_ACCESS_TOKEN }),
   });
-  if (!publishRes.ok) console.error('[18-multi-plattform-poster] Instagram-Publish-Fehler:', await publishRes.text());
+  if (!publishRes.ok) {
+    const fehlertext = await publishRes.text();
+    console.error('[18-multi-plattform-poster] Instagram-Publish-Fehler:', fehlertext);
+    return { aktiv: true, gepostet: false, fehler: fehlertext.slice(0, 300) };
+  }
+  const data = await publishRes.json();
+  return { aktiv: true, gepostet: true, postId: data.id };
 }
 
 // Sucht ein Produktfoto für den heutigen Instagram-Post - bevorzugt eines
@@ -78,6 +106,23 @@ async function findeProduktBild(bestsellerTitel) {
   const bestseller = mitBild.find((p) => bestsellerTitel.includes(p.title));
   const treffer = bestseller || mitBild[0];
   return treffer ? { url: treffer.images[0].src, titel: treffer.title } : null;
+}
+
+// Schreibt jeden Lauf in eine dauerhafte Historie (state/) UND als
+// öffentliches manifest.json in social-poster/ - für die gleichnamige App,
+// die zeigt, was tatsächlich live gepostet wurde statt nur Entwurf zu sein.
+function schreibeSocialPosterEintrag(eintrag) {
+  const state = loadState(STATE_KEY);
+  state.pakete = state.pakete || [];
+  state.pakete.unshift({ datum: new Date().toISOString(), ...eintrag });
+  if (state.pakete.length > MAX_HISTORIE) state.pakete = state.pakete.slice(0, MAX_HISTORIE);
+  saveState(STATE_KEY, state);
+
+  if (!existsSync(POSTER_DIR)) mkdirSync(POSTER_DIR, { recursive: true });
+  writeFileSync(
+    join(POSTER_DIR, 'manifest.json'),
+    JSON.stringify({ updatedAt: new Date().toISOString(), pakete: state.pakete }, null, 2)
+  );
 }
 
 async function main() {
@@ -118,8 +163,18 @@ async function main() {
     `MULTI-PLATTFORM-POSTER - ${config.SHOP_NAME}${NL}${NL}Dein Posting-Paket für heute (${thema}) liegt im Postfach!${NL}7 Plattformen, copy-paste-fertig: TikTok, IG Reel + Story, Facebook, Pinterest, YouTube Short, X.${autoHinweis}`
   );
 
-  await postFacebook(daten.facebook_post);
-  if (produktBild) await postInstagram(produktBild.url, daten.instagram_caption);
+  const facebookErgebnis = await postFacebook(daten.facebook_post);
+  const instagramErgebnis = produktBild
+    ? await postInstagram(produktBild.url, daten.instagram_caption)
+    : { aktiv: false, gepostet: false };
+
+  schreibeSocialPosterEintrag({
+    thema,
+    topText,
+    html: daten.html,
+    facebook: facebookErgebnis,
+    instagram: { ...instagramErgebnis, produktTitel: produktBild?.titel || null, bildUrl: produktBild?.url || null },
+  });
 
   console.log('[18-multi-plattform-poster] Posting-Paket versendet');
 }
