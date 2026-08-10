@@ -23,6 +23,7 @@ export const config = {
   FB_PAGE_ID: process.env.FB_PAGE_ID || '',
   FB_PAGE_TOKEN: process.env.FB_PAGE_TOKEN || '',
   CUSTOM_AUDIENCE_ID: process.env.CUSTOM_AUDIENCE_ID || '',
+  INSTAGRAM_BUSINESS_ACCOUNT_ID: process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID || '',
 
   // WhatsApp Cloud API (Lead-Jäger)
   WHATSAPP_ACCESS_TOKEN: process.env.WHATSAPP_ACCESS_TOKEN || '',
@@ -137,6 +138,7 @@ export const config = {
   AUTO_PAUSE: process.env.AUTO_PAUSE || 'nein',
   AUTO_STOP: process.env.AUTO_STOP || 'nein',
   AUTO_POST_FACEBOOK: process.env.AUTO_POST_FACEBOOK || 'nein',
+  AUTO_POST_INSTAGRAM: process.env.AUTO_POST_INSTAGRAM || 'nein',
   KONKURRENT_URLS: process.env.KONKURRENT_URLS || '',
   HEIMATMARKT: process.env.HEIMATMARKT || 'DE',
   LAND_CODE: process.env.LAND_CODE || 'DE',

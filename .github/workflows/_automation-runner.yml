@@ -58,6 +58,7 @@ jobs:
           FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
           FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
           CUSTOM_AUDIENCE_ID: ${{ secrets.CUSTOM_AUDIENCE_ID }}
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
           JUDGEME_API_TOKEN: ${{ secrets.JUDGEME_API_TOKEN }}
           JUDGEME_SHOP_DOMAIN: ${{ secrets.JUDGEME_SHOP_DOMAIN }}
           LAT: ${{ secrets.LAT }}
@@ -112,6 +113,7 @@ jobs:
           AUTO_PAUSE: ${{ secrets.AUTO_PAUSE }}
           AUTO_STOP: ${{ secrets.AUTO_STOP }}
           AUTO_POST_FACEBOOK: ${{ secrets.AUTO_POST_FACEBOOK }}
+          AUTO_POST_INSTAGRAM: ${{ secrets.AUTO_POST_INSTAGRAM }}
           KONKURRENT_URLS: ${{ secrets.KONKURRENT_URLS }}
           HEIMATMARKT: ${{ secrets.HEIMATMARKT }}
           LAND_CODE: ${{ secrets.LAND_CODE }}

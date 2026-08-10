@@ -68,6 +68,12 @@ Winning-Ad-Creatives):
 `META_ACCESS_TOKEN`, `META_AD_ACCOUNT_ID`, `FB_PAGE_ID`, `FB_PAGE_TOKEN`,
 `CUSTOM_AUDIENCE_ID`
 
+**Echtes Facebook-/Instagram-Auto-Posting** (Multi-Plattform-Poster, #18):
+`AUTO_POST_FACEBOOK`+`FB_PAGE_ID`+`FB_PAGE_TOKEN` für Facebook,
+`AUTO_POST_INSTAGRAM`+`INSTAGRAM_BUSINESS_ACCOUNT_ID`+`META_ACCESS_TOKEN`
+für Instagram (Business-Konto nötig, Bild kommt automatisch aus Shopify).
+Ohne diese Secrets bleibt #18 wie gehabt ein reiner Text-Entwurf per Mail.
+
 **Judge.me Bewertungen** (Bewertungs-Magnet, Bewertungs-Antwort-Bot):
 `JUDGEME_API_TOKEN`, `JUDGEME_SHOP_DOMAIN`
 
@@ -375,7 +381,8 @@ nur bei Bedarf überschreiben):
 `MARKETING_BUDGET_MONAT`, `MONATSZIEL_UMSATZ`, `WERBEKOSTEN_PRO_TAG`,
 `MIN_SPEND`, `MIN_SPEND_HEUTE`, `ROAS_ZIEL`, `KRITISCHER_ROAS`,
 `SKALIER_PROZENT`, `MAX_TAGESBUDGET`, `AUTO_SKALIEREN`, `AUTO_PAUSE`,
-`AUTO_STOP`, `AUTO_POST_FACEBOOK`, `KONKURRENT_URLS`, `VORLAUF_TAGE`,
+`AUTO_STOP`, `AUTO_POST_FACEBOOK`, `AUTO_POST_INSTAGRAM`,
+`INSTAGRAM_BUSINESS_ACCOUNT_ID`, `KONKURRENT_URLS`, `VORLAUF_TAGE`,
 `REICHWEITE_TAGE_WARNUNG`, `PRODUKTKOSTEN_PROZENT`
 
 **Profit & Tax Center** (Finance-Cockpit-Erweiterung um Gebühren/Steuern -
@@ -395,10 +402,26 @@ den alten `gewinn`-Wert).
 
 Alle Standardwerte stehen in `automations/lib/config.mjs`.
 
-`AUTO_SKALIEREN`, `AUTO_STOP`, `AUTO_PAUSE`, `AUTO_POST_FACEBOOK`: stehen per
-Default auf `nein` (nur Empfehlung/Alarm, nichts wird automatisch verändert).
-Erst auf `ja` setzen, wenn du den Automationen vertraust, echte Budgets zu
-ändern bzw. Ads zu pausieren.
+`AUTO_SKALIEREN`, `AUTO_STOP`, `AUTO_PAUSE`, `AUTO_POST_FACEBOOK`,
+`AUTO_POST_INSTAGRAM`: stehen per Default auf `nein` (nur Empfehlung/Alarm,
+nichts wird automatisch verändert). Erst auf `ja` setzen, wenn du den
+Automationen vertraust, echte Budgets zu ändern bzw. Posts/Ads live zu
+schalten.
+
+**Echtes Social-Media-Auto-Posting (#18 Multi-Plattform-Poster):**
+Facebook (reiner Text) und Instagram (Produktfoto + KI-Caption) posten
+wirklich selbst, sobald `AUTO_POST_FACEBOOK`/`AUTO_POST_INSTAGRAM` auf `ja`
+stehen und die zugehörigen Secrets gesetzt sind (`FB_PAGE_ID`+
+`FB_PAGE_TOKEN` bzw. `INSTAGRAM_BUSINESS_ACCOUNT_ID`+`META_ACCESS_TOKEN`,
+letzteres wird bereits für Meta Ads gebraucht). Instagram nutzt dafür immer
+ein echtes Produktfoto aus Shopify (kein KI-generiertes Bild) - reine
+Text-Posts sind bei Instagram technisch nicht möglich.
+**TikTok, Pinterest, YouTube, X bleiben bewusst Text-Entwürfe zum
+Copy-Paste**, kein Auto-Posting: TikToks Content-Posting-API verlangt
+zusätzlich eine von TikTok geprüfte Developer-App (kein Self-Service,
+dauert je nach TikTok Tage bis Wochen) UND ein fertiges Video-Asset - diese
+Codebase hat keine Video-Erstellung. Ein "automatisches" TikTok-Posting
+ohne echtes Video wäre nur Fassade.
 
 ## Die 5 neuen Agenten (#61-65) - echte Handlungsmacht statt nur Empfehlung
 
@@ -549,7 +572,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 15 | Warenkorb-Sequenz 3.0 | stündlich | Warenkorbabbrecher-Mails |
 | 16 | Cross-Sell-Radar | täglich 15:00 | Zusatzverkauf-Empfehlungen |
 | 17 | Promo-Kampagnen-Maschine | alle 14 Tage | Rabattkampagnen-Ideen |
-| 18 | Multi-Plattform-Poster | täglich 16:00 | Social-Posts für mehrere Plattformen |
+| 18 | Multi-Plattform-Poster | täglich 16:00 | Social-Posts für 7 Plattformen; Facebook + Instagram posten sich mit `AUTO_POST_*`-Secrets wirklich selbst |
 | 19 | Saison-Planer | 25. jedes Monats | saisonale Planung |
 | 20 | Lager-Wächter | täglich 07:00 | Lagerbestand-Warnungen |
 | 21 | Retouren-Detektiv | montags 09:00 | Retouren-Muster erkennen |

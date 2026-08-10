@@ -1,7 +1,16 @@
 // Multi-Plattform-Poster - tägliches Posting-Paket für 7 Plattformen (TikTok, IG, FB, Pinterest, YT, X)
 // Original: n8n Workflow "18_Multi_Plattform_Poster" · Zeitplan: täglich 16:00
+//
+// ECHTES Auto-Posting gibt es hier nur für Facebook (Text) und Instagram
+// (Bild+Caption) - beide über die Meta Graph API, die stabil und ohne
+// App-Review für bereits verifizierte Business-Konten nutzbar ist. TikTok,
+// Pinterest, YouTube, X bleiben bewusst reine Text-Entwürfe zum Copy-Paste:
+// TikToks Content-Posting-API verlangt zusätzlich ein von TikTok geprüftes
+// Developer-App (Wochen-Prozess, kein Self-Service) UND ein fertiges
+// Video-Asset - diese Codebase hat keine Video-Erstellung, nur Text/Bild.
+// Ein "automatischer" TikTok-Post wäre also nur Fassade, kein echtes Feature.
 import { config } from './lib/config.mjs';
-import { getOrdersSince } from './lib/shopify.mjs';
+import { getOrdersSince, getProducts } from './lib/shopify.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
@@ -28,6 +37,49 @@ async function postFacebook(text) {
   if (!res.ok) console.error('[18-multi-plattform-poster] Facebook-Post-Fehler:', await res.text());
 }
 
+// Instagrams Graph API verlangt zwingend ein Bild/Video (reine Text-Posts
+// gibt es dort nicht, anders als bei Facebook oben) - nutzt deshalb das
+// echte Produktfoto aus Shopify statt ein KI-Bild zu erzeugen: kostenlos,
+// garantiert vorhanden (solange das Produkt eins hat) und näher am
+// tatsächlichen Produkt als eine generische Illustration.
+async function postInstagram(imageUrl, caption) {
+  if (config.AUTO_POST_INSTAGRAM !== 'ja' || !config.INSTAGRAM_BUSINESS_ACCOUNT_ID || !config.META_ACCESS_TOKEN || !imageUrl || !caption) return;
+
+  const containerRes = await fetch(`https://graph.facebook.com/v21.0/${config.INSTAGRAM_BUSINESS_ACCOUNT_ID}/media`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image_url: imageUrl, caption, access_token: config.META_ACCESS_TOKEN }),
+  });
+  if (!containerRes.ok) {
+    console.error('[18-multi-plattform-poster] Instagram-Container-Fehler:', await containerRes.text());
+    return;
+  }
+  const container = await containerRes.json();
+
+  const publishRes = await fetch(`https://graph.facebook.com/v21.0/${config.INSTAGRAM_BUSINESS_ACCOUNT_ID}/media_publish`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ creation_id: container.id, access_token: config.META_ACCESS_TOKEN }),
+  });
+  if (!publishRes.ok) console.error('[18-multi-plattform-poster] Instagram-Publish-Fehler:', await publishRes.text());
+}
+
+// Sucht ein Produktfoto für den heutigen Instagram-Post - bevorzugt eines
+// der Bestseller-Produkte, sonst irgendein aktives Produkt mit Bild.
+async function findeProduktBild(bestsellerTitel) {
+  let produkte;
+  try {
+    produkte = await getProducts({ status: 'active', limit: '50' });
+  } catch (err) {
+    console.error('[18-multi-plattform-poster] Produktsuche für Instagram-Bild fehlgeschlagen:', err.message || err);
+    return null;
+  }
+  const mitBild = produkte.filter((p) => p.images && p.images[0] && p.images[0].src);
+  const bestseller = mitBild.find((p) => bestsellerTitel.includes(p.title));
+  const treffer = bestseller || mitBild[0];
+  return treffer ? { url: treffer.images[0].src, titel: treffer.title } : null;
+}
+
 async function main() {
   const vor14Tagen = new Date();
   vor14Tagen.setDate(vor14Tagen.getDate() - 14);
@@ -40,15 +92,21 @@ async function main() {
   const topText = top.length ? top.join(', ') : '(noch keine Verkäufe - nutze die Nische)';
   const thema = THEMEN[new Date().getDay()];
 
-  const prompt = `Du bist Multi-Plattform-Social-Media-Manager für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}, Zielgruppe: ${config.ZIELGRUPPE}, Shop: ${config.SHOP_URL}).${NL}Bestseller: ${topText}${NL}Kern-Thema heute: ${thema}${NL}${NL}Erstelle das komplette Posting-Paket für HEUTE - EIN Kern-Inhalt, für jede Plattform nativ übersetzt (nicht kopiert!), alles auf Deutsch:${NL}${NL}1. TIKTOK: Hook (max 10 Wörter) + 20-30s Skript (Szene für Szene) + 4 Hashtags + Sound-Idee${NL}2. INSTAGRAM REEL: Angepasster Hook + Caption mit CTA + 5 Hashtags${NL}3. INSTAGRAM STORY: 2-Slide-Idee mit Interaktions-Sticker (Umfrage/Slider)${NL}4. FACEBOOK: Längerer Post (60-100 Wörter, Story-Stil, 1 Emoji-Absatztrenner, Link zum Shop)${NL}5. PINTEREST: Pin-Titel (max 60 Zeichen) + Beschreibung (max 200 Zeichen, SEO-Keywords der Nische)${NL}6. YOUTUBE SHORT: Titel + 25s Skript (kann das TikTok-Skript adaptieren)${NL}7. X/TWITTER: 2 Tweets (einer frech/meinungsstark, einer mit Mehrwert)${NL}${NL}Antworte NUR mit validem JSON, ohne Markdown:${NL}{"facebook_post": "<nur der reine Facebook-Text>", "html": "<das GESAMTE Paket als sauberes HTML mit h2 pro Plattform, copy-paste-freundlich, ohne html/body-Gerüst>"}`;
+  const prompt = `Du bist Multi-Plattform-Social-Media-Manager für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}, Zielgruppe: ${config.ZIELGRUPPE}, Shop: ${config.SHOP_URL}).${NL}Bestseller: ${topText}${NL}Kern-Thema heute: ${thema}${NL}${NL}Erstelle das komplette Posting-Paket für HEUTE - EIN Kern-Inhalt, für jede Plattform nativ übersetzt (nicht kopiert!), alles auf Deutsch:${NL}${NL}1. TIKTOK: Hook (max 10 Wörter) + 20-30s Skript (Szene für Szene) + 4 Hashtags + Sound-Idee${NL}2. INSTAGRAM REEL: Angepasster Hook + Caption mit CTA + 5 Hashtags${NL}3. INSTAGRAM STORY: 2-Slide-Idee mit Interaktions-Sticker (Umfrage/Slider)${NL}4. FACEBOOK: Längerer Post (60-100 Wörter, Story-Stil, 1 Emoji-Absatztrenner, Link zum Shop)${NL}5. PINTEREST: Pin-Titel (max 60 Zeichen) + Beschreibung (max 200 Zeichen, SEO-Keywords der Nische)${NL}6. YOUTUBE SHORT: Titel + 25s Skript (kann das TikTok-Skript adaptieren)${NL}7. X/TWITTER: 2 Tweets (einer frech/meinungsstark, einer mit Mehrwert)${NL}8. INSTAGRAM FEED-POST (für ein STATISCHES Produktfoto, kein Reel): eine eigenständige, direkt postbare Caption (100-150 Wörter inkl. 5-8 Hashtags am Ende, kein Platzhaltertext, keine eckigen Klammern) - muss für sich allein stehen, ohne Bild-Beschreibung.${NL}${NL}Antworte NUR mit validem JSON, ohne Markdown:${NL}{"facebook_post": "<nur der reine Facebook-Text>", "instagram_caption": "<nur die reine Instagram-Feed-Caption aus Punkt 8, sofort postbar>", "html": "<das GESAMTE Paket als sauberes HTML mit h2 pro Plattform, copy-paste-freundlich, ohne html/body-Gerüst>"}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 4000 });
+  const antwort = await askClaude(prompt, { maxTokens: 4500 });
   const daten = parseJsonFromText(antwort, {
     facebook_post: '',
+    instagram_caption: '',
     html: `<pre style="white-space:pre-wrap;font-family:sans-serif;">${antwort}</pre>`,
   });
 
-  const autoHinweis = config.AUTO_POST_FACEBOOK === 'ja' && config.FB_PAGE_ID ? `${NL}${NL}Facebook-Post geht automatisch raus!` : '';
+  const produktBild = config.AUTO_POST_INSTAGRAM === 'ja' ? await findeProduktBild(topText) : null;
+
+  const hinweise = [];
+  if (config.AUTO_POST_FACEBOOK === 'ja' && config.FB_PAGE_ID) hinweise.push('Facebook-Post geht automatisch raus!');
+  if (config.AUTO_POST_INSTAGRAM === 'ja' && produktBild) hinweise.push(`Instagram-Post (Foto: ${produktBild.titel}) geht automatisch raus!`);
+  const autoHinweis = hinweise.length ? `${NL}${NL}${hinweise.join(' ')}` : '';
 
   await sendEmail({
     to: config.OWNER_EMAIL,
@@ -61,6 +119,7 @@ async function main() {
   );
 
   await postFacebook(daten.facebook_post);
+  if (produktBild) await postInstagram(produktBild.url, daten.instagram_caption);
 
   console.log('[18-multi-plattform-poster] Posting-Paket versendet');
 }
