@@ -20,10 +20,17 @@
 // kann, z.B.:
 //   TRADING_RSI_UEBERKAUFT=70 TRADING_TRAILING_STOP_AB_PROZENT=2 node backtest.mjs BTCUSDT 180
 //   TRADING_STRATEGIE=bollinger-mean-reversion node backtest.mjs BTCUSDT 90
+//
+// TRADING_EXCHANGE=kraken lädt die Kerzen von Kraken statt Binance (Symbol
+// dann im Kraken-Format, z.B. XBTUSDT statt BTCUSDT) - sinnvoll, wenn der
+// Live-Worker über TRADING_EXCHANGE=kraken läuft und der Backtest dieselbe
+// Datenquelle nutzen soll:
+//   TRADING_EXCHANGE=kraken node backtest.mjs XBTUSDT 90
 
 import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from './lib/strategie.mjs';
 
 const BINANCE_BASE = 'https://api.binance.com';
+const KRAKEN_BASE = 'https://api.kraken.com';
 const KLINES_PRO_REQUEST = 1000;
 const FENSTER_FUER_INDIKATOREN = 60; // genug Vorlauf für EMA(21)/RSI(14)/ATR(14)/Bollinger(20)/Donchian(20)
 
@@ -53,7 +60,7 @@ function readConfig(strategieOverride) {
   };
 }
 
-async function ladeKlines(symbol, tageZurueck) {
+async function ladeKlinesBinance(symbol, tageZurueck) {
   const bisJetzt = Date.now();
   const startZeit = bisJetzt - tageZurueck * 24 * 60 * 60 * 1000;
   const alleKlines = [];
@@ -78,6 +85,44 @@ async function ladeKlines(symbol, tageZurueck) {
     lows: alleKlines.map((k) => parseFloat(k[3])),
     zeiten: alleKlines.map((k) => k[0]),
   };
+}
+
+// Kraken liefert pro Aufruf max. 720 Kerzen und paginiert über "since"
+// (Unix-Sekunden des letzten zurückgegebenen Kerzen-Zeitstempels), anders als
+// Binance mit startTime/limit - deshalb eigene Pagination-Logik, aber
+// gleiches Rückgabeformat wie ladeKlinesBinance.
+async function ladeKlinesKraken(symbol, tageZurueck) {
+  const bisJetztSek = Math.floor(Date.now() / 1000);
+  const startZeitSek = bisJetztSek - tageZurueck * 24 * 60 * 60;
+  const alleKerzen = [];
+  let sinceSek = startZeitSek;
+
+  while (sinceSek < bisJetztSek) {
+    const url = `${KRAKEN_BASE}/0/public/OHLC?pair=${symbol}&interval=15&since=${sinceSek}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Kraken OHLC-Fehler: ${res.status} ${await res.text()}`);
+    const data = await res.json();
+    if (data.error && data.error.length) throw new Error(`Kraken-Fehler: ${data.error.join(', ')}`);
+    const resultKey = Object.keys(data.result || {}).find((k) => k !== 'last');
+    const batch = (resultKey && data.result[resultKey]) || [];
+    if (!batch.length) break;
+    alleKerzen.push(...batch);
+    const neuesSince = data.result.last;
+    if (!neuesSince || neuesSince <= sinceSek) break; // Sicherheitsnetz gegen Endlos-Schleife
+    sinceSek = neuesSince;
+  }
+
+  return {
+    closes: alleKerzen.map((k) => parseFloat(k[4])),
+    highs: alleKerzen.map((k) => parseFloat(k[2])),
+    lows: alleKerzen.map((k) => parseFloat(k[3])),
+    zeiten: alleKerzen.map((k) => k[0] * 1000),
+  };
+}
+
+async function ladeKlines(exchange, symbol, tageZurueck) {
+  if (exchange === 'kraken') return ladeKlinesKraken(symbol, tageZurueck);
+  return ladeKlinesBinance(symbol, tageZurueck);
 }
 
 function berechneMaxDrawdownProzent(equityKurve) {
@@ -186,9 +231,10 @@ async function main() {
   const tageZurueck = parseInt(process.argv[3] || '90', 10);
   const vergleiche = process.argv.includes('--vergleiche');
   const startKapital = parseFloat(process.env.TRADING_KAPITAL_USDT || '100');
+  const exchange = process.env.TRADING_EXCHANGE || 'binance';
 
-  console.log(`Lade ${tageZurueck} Tage 15m-Kerzen für ${symbol} von Binance...`);
-  const { closes, highs, lows, zeiten } = await ladeKlines(symbol, tageZurueck);
+  console.log(`Lade ${tageZurueck} Tage 15m-Kerzen für ${symbol} von ${exchange === 'kraken' ? 'Kraken' : 'Binance'}...`);
+  const { closes, highs, lows, zeiten } = await ladeKlines(exchange, symbol, tageZurueck);
   if (closes.length < FENSTER_FUER_INDIKATOREN + 2) {
     console.error(`Zu wenig Kerzen geladen (${closes.length}) — Symbol oder Zeitraum prüfen.`);
     process.exit(1);
