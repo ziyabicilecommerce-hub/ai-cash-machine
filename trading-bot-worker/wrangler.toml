@@ -17,8 +17,8 @@ id = "055d3b2d0a514437aec11e888e81c242"
 
 # Nicht-geheime Konfiguration - kann hier direkt stehen (kein Secret).
 [vars]
-TRADING_EXCHANGE = "binance"
-TRADING_SYMBOLS = "BTCUSDT"
+TRADING_EXCHANGE = "kraken"
+TRADING_SYMBOLS = "XBTUSDT"
 TRADING_PAPER_MODE = "ja"
 TRADING_KAPITAL_USDT = "50"
 TRADING_MAX_POSITION_PROZENT = "25"
