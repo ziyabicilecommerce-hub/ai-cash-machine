@@ -129,7 +129,7 @@
 
 <section class="panel show" id="panel-ceo">
   <div class="panel-title">Chef-Agent — Tagesansage</div>
-  <p class="panel-desc">Fasst Finanzen, Fulfillment und Kundenstamm zu EINER Prioritäts-Entscheidung zusammen (Automation #60, täglich abends).</p>
+  <p class="panel-desc">Fasst Finanzen, Fulfillment und Kundenstamm zu EINER Prioritäts-Entscheidung zusammen (Automation #60, täglich abends) — und löst bei überfälligen Bestellungen bzw. inaktiven VIPs automatisch die passende Automation sofort aus, statt nur zu empfehlen.</p>
   <div id="ceoContent"></div>
 </section>
 
@@ -185,13 +185,22 @@
       document.getElementById('ceoContent').innerHTML = emptyHtml('👔', 'Noch keine Tagesansage', 'Erscheint hier, sobald der Chef-Agent (#60) zum ersten Mal gelaufen ist (braucht ANTHROPIC_API_KEY + SHOP + SHOPIFY_TOKEN).');
       return;
     }
-    const html = historie.map((h, i) => `
+    const html = historie.map((h, i) => {
+      const aktionen = h.ausgeloesteAktionen || [];
+      const aktionenHtml = aktionen.length ? `
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line2);">
+          <div class="card-label" style="margin-bottom:6px;">🤖 ORCHESTRATOR HAT GEHANDELT</div>
+          ${aktionen.map((a) => `<p style="margin-bottom:4px;">${a.ausgeloest ? '✅' : '⚠️'} <b>${a.workflow}</b> — ${a.grund}${a.ausgeloest ? ' (sofort gestartet)' : ' (Start fehlgeschlagen, läuft trotzdem zum normalen Zeitplan)'}</p>`).join('')}
+        </div>` : '';
+      return `
       <div class="card ${i === 0 ? 'hero-card' : ''}">
         <span class="card-date">${fmtDatum(h.datum)}</span>
         <div class="card-label">${h.allesGut ? '✅ ALLES IM GRÜNEN BEREICH' : '🎯 PRIORITÄT HEUTE'}</div>
         <p>${h.status || ''}</p>
         <div class="prioritaet">${h.prioritaet || ''}</div>
-      </div>`).join('');
+        ${aktionenHtml}
+      </div>`;
+    }).join('');
     document.getElementById('ceoContent').innerHTML = html;
   }
 

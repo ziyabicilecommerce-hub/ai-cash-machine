@@ -262,6 +262,20 @@ Shopify-API-Fehler), wird das als "keine Daten" markiert statt die ganze
 Automation abstürzen zu lassen - die anderen Bereiche laufen normal weiter.
 Läuft abends (20:00 UTC), nach den meisten anderen Automationen.
 
+**Orchestrator-Erweiterung:** Der Chef-Agent bleibt nicht bei der Empfehlung
+stehen - bei überfälligen Bestellungen löst er automatisch #55 Fulfillment &
+Supplier Hub aus, bei inaktiven VIP-Kunden automatisch #05 Winback-Maschine
+(GitHub-API `workflow_dispatch`, sofort statt erst zum nächsten
+Cron-Zeitplan). WICHTIG: WELCHE Automation ausgelöst wird, entscheidet
+ausschließlich fester Code (feste if-Bedingungen in `60-chef-agent.mjs`),
+NIE Claudes freier Text - so kann die KI die Lage einschätzen, aber nicht
+selbst wählen, welches Skript startet. Für Finanzen-Probleme gibt es
+bewusst KEINEN Auto-Trigger - keine Automation "löst" ein finanzielles
+Problem automatisch, das bleibt Empfehlung. Läuft dafür als eigenständiger
+Workflow (nicht über den geteilten Runner) mit zusätzlich `actions: write`
+- braucht kein neues Secret, `GITHUB_TOKEN` wird von GitHub Actions
+automatisch bereitgestellt.
+
 **💬 Kunden-Chat-Agent / Live-KI-Verkaufsberater** (kein Eintrag in der
 Tabelle unten - läuft wie der Trading-Bot als eigener Cloudflare Worker,
 nicht als GitHub-Actions-Automation): siehe `customer-agent-worker/README.md`.

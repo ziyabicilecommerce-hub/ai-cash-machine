@@ -16,12 +16,31 @@ import { getOrders, getCustomers } from './lib/shopify.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { loadState, saveState } from './lib/state.mjs';
+import { dispatchWorkflow } from './lib/githubActions.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FINANCE_DATA_FILE = join(__dirname, '..', 'finance-cockpit', 'data.json');
 const STATE_KEY = '60-chef-agent';
 const COMMAND_DIR = join(__dirname, '..', 'command');
 const MAX_HISTORIE = 60;
+
+// Deterministische Auslöse-Regeln - bewusst NICHT von Claudes freiem Text
+// abhängig (siehe githubActions.mjs). Nur die 2 Bereiche, für die es eine
+// wirklich passende, sichere Automation gibt: Finanzen hat keine, die
+// automatisch "besser wird", indem man ein Skript startet - das bleibt
+// Empfehlung.
+async function loeseAktionenAus({ fulfillment, kunden }) {
+  const ausgeloest = [];
+  if (fulfillment && fulfillment.verzoegert > 0) {
+    const ergebnis = await dispatchWorkflow('automation-55-fulfillment-supplier-hub.yml');
+    ausgeloest.push({ grund: `${fulfillment.verzoegert} überfällige Bestellung(en)`, workflow: '55 · Fulfillment & Supplier Hub', ...ergebnis });
+  }
+  if (kunden && kunden.atRiskVips > 0) {
+    const ergebnis = await dispatchWorkflow('automation-05-winback-maschine.yml');
+    ausgeloest.push({ grund: `${kunden.atRiskVips} wertvolle Kunde(n) inaktiv`, workflow: '05 · Winback-Maschine', ...ergebnis });
+  }
+  return ausgeloest;
+}
 
 async function ermittleFinanzLage() {
   if (!existsSync(FINANCE_DATA_FILE)) return null;
@@ -118,12 +137,20 @@ Antworte NUR mit validem JSON, ohne Markdown:
 
   await notifyWhatsapp(text);
 
+  const ausgeloesteAktionen = await loeseAktionenAus({ fulfillment, kunden });
+  if (ausgeloesteAktionen.length) {
+    const zeilen = ausgeloesteAktionen.map((a) =>
+      `${a.ausgeloest ? '✅' : '⚠️'} ${a.workflow} — ${a.grund}${a.ausgeloest ? ' (sofort gestartet)' : ' (Start fehlgeschlagen, läuft trotzdem zum normalen Zeitplan)'}`);
+    await notifyWhatsapp(`🤖 *Chef-Agent hat gehandelt:*\n\n${zeilen.join('\n')}`);
+  }
+
   const state = loadState(STATE_KEY);
   state.historie = state.historie || [];
   state.historie.unshift({
     datum: new Date().toISOString(),
     finanzen, fulfillment, kunden,
     status: daten.status, prioritaet: daten.prioritaet, allesGut: !!daten.alles_gut,
+    ausgeloesteAktionen,
   });
   if (state.historie.length > MAX_HISTORIE) state.historie = state.historie.slice(0, MAX_HISTORIE);
   saveState(STATE_KEY, state);
@@ -131,7 +158,7 @@ Antworte NUR mit validem JSON, ohne Markdown:
   if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
   writeFileSync(join(COMMAND_DIR, 'chef-agent.json'), JSON.stringify({ updatedAt: new Date().toISOString(), historie: state.historie }, null, 2));
 
-  console.log('[60-chef-agent] Tagesansage versendet.');
+  console.log(`[60-chef-agent] Tagesansage versendet. ${ausgeloesteAktionen.length} Aktion(en) ausgelöst.`);
 }
 
 main().catch((err) => {

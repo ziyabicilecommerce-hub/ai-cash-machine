@@ -1,5 +1,17 @@
 name: "60 · Chef-Agent"
 
+# Läuft bewusst NICHT über den geteilten _automation-runner.yml, obwohl das
+# sonst überall in diesem Repo der Standard ist: seit dem Orchestrator-Ausbau
+# braucht dieses Skript zusätzlich "actions: write" (um andere Automationen
+# per GitHub API sofort auszulösen), und reusable-workflow-Permissions werden
+# auf den job-weiten Block in _automation-runner.yml angewendet - das hätte
+# bedeutet, ALLE anderen automation-NN-*.yml-Caller müssten ebenfalls
+# "actions: write" deklarieren, sonst würden sie mit startup_failure
+# scheitern (exakt das gleiche Muster wie beim "issues: write"-Fallstrick,
+# siehe auch #80 Agenten-Status-Sammler). Ein eigenständiger Workflow mit
+# eigenen, engeren Permissions ist hier das sicherere Vorgehen - betrifft nur
+# diesen einen Workflow.
+
 on:
   schedule:
     - cron: '0 20 * * *'
@@ -7,11 +19,44 @@ on:
 
 permissions:
   contents: write
-  issues: write
+  actions: write
 
 jobs:
   run:
-    uses: ./.github/workflows/_automation-runner.yml
-    with:
-      script: automations/60-chef-agent.mjs
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Dependencies installieren
+        run: npm ci --no-audit --no-fund
+
+      - name: Chef-Agent ausführen
+        run: node automations/60-chef-agent.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHOP: ${{ secrets.SHOP }}
+          SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_MAX_TOKENS_PRO_TAG: ${{ secrets.CLAUDE_MAX_TOKENS_PRO_TAG }}
+          SHOP_NAME: ${{ secrets.SHOP_NAME }}
+          WHATSAPP_ACCESS_TOKEN: ${{ secrets.WHATSAPP_ACCESS_TOKEN }}
+          WHATSAPP_PHONE_NUMBER_ID: ${{ secrets.WHATSAPP_PHONE_NUMBER_ID }}
+          WHATSAPP_TO_NUMBER: ${{ secrets.WHATSAPP_TO_NUMBER }}
+          FULFILLMENT_VERZUG_STUNDEN: ${{ secrets.FULFILLMENT_VERZUG_STUNDEN }}
+          CRM_AT_RISK_TAGE: ${{ secrets.CRM_AT_RISK_TAGE }}
+          VIP_UMSATZ_SCHWELLE: ${{ secrets.VIP_UMSATZ_SCHWELLE }}
+
+      - name: State-Änderungen committen
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add automations/state/ command/ 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update automation state [skip ci]"
+            git push
+          fi
