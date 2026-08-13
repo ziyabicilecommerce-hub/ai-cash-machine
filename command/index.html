@@ -125,6 +125,7 @@
   <button class="tab-btn" data-tab="product">🔎 Product Research</button>
   <button class="tab-btn" data-tab="ads">📈 Ad Intelligence</button>
   <button class="tab-btn" data-tab="support">🎧 Support</button>
+  <button class="tab-btn" data-tab="chains">🔗 Ketten</button>
 </div>
 
 <section class="panel show" id="panel-ceo">
@@ -155,6 +156,12 @@
   <div class="panel-title">Customer Support</div>
   <p class="panel-desc">Live-Abfrage offener Eskalationen direkt aus GitHub Issues (#02 Kundenservice, #69 DSGVO, #62 Risk-Guard) — kein Key nötig, öffentliche GitHub-API.</p>
   <div id="supportContent"></div>
+</section>
+
+<section class="panel" id="panel-chains">
+  <div class="panel-title">Ketten (Modul-Verknüpfungen)</div>
+  <p class="panel-desc">Automationen, die andere Automationen automatisch auslösen, statt nur zu empfehlen — der Orchestrator in Aktion.</p>
+  <div id="chainsContent"></div>
 </section>
 
 <footer>
@@ -204,28 +211,80 @@
     document.getElementById('ceoContent').innerHTML = html;
   }
 
-  // --- Analytics / Finance Cockpit ---
-  function renderAnalytics(data) {
-    const history = (data && data.history) || [];
-    if (!history.length) {
-      document.getElementById('analyticsContent').innerHTML = emptyHtml('📊', 'Noch keine Zahlen', 'Erscheint, sobald der Gewinn-Radar (#01) mindestens einmal gelaufen ist.');
+  // --- Analytics / Finance Cockpit + KPI-Wahrheit ---
+  // "Zentrale KPI-Wahrheit": statt dass Umsatz/ROAS/Eskalationen über 3 Apps
+  // verstreut jeweils eigene Zahlen zeigen, fasst dieser Block sie an EINER
+  // Stelle zusammen - jede Zahl kommt weiterhin direkt aus ihrer echten
+  // Quelle (kein Vermischen unterschiedlicher Größen zu einer erfundenen
+  // Kennzahl), aber alle stehen nebeneinander statt in 3 Tabs verstreut.
+  function renderAnalytics(financeData, adsData) {
+    const history = (financeData && financeData.history) || [];
+    const adsHistorie = (adsData && adsData.historie) || [];
+    const neuesteAds = adsHistorie[0];
+
+    if (!history.length && !neuesteAds) {
+      document.getElementById('analyticsContent').innerHTML = emptyHtml('📊', 'Noch keine Zahlen', 'Erscheint, sobald der Gewinn-Radar (#01) oder Ad Commander (#56) mindestens einmal gelaufen sind.');
       return;
     }
+
     const latest = history[history.length - 1];
-    const nettoGewinn = latest.nettoGewinn !== undefined ? latest.nettoGewinn : latest.gewinn;
-    const waehrung = latest.waehrung || 'EUR';
+    const nettoGewinn = latest ? (latest.nettoGewinn !== undefined ? latest.nettoGewinn : latest.gewinn) : null;
+    const waehrung = (latest && latest.waehrung) || 'EUR';
+
+    const wahrheitBoxen = [
+      latest ? `<div class="kpi-box"><div class="kpi-num">${(latest.umsatz || 0).toFixed(0)}</div><div class="kpi-label">UMSATZ ${waehrung}</div></div>` : '',
+      latest ? `<div class="kpi-box"><div class="kpi-num">${(nettoGewinn || 0).toFixed(0)}</div><div class="kpi-label">NETTOGEWINN ${waehrung}</div></div>` : '',
+      neuesteAds ? `<div class="kpi-box"><div class="kpi-num" style="color:${neuesteAds.gesamtRoas >= 1 ? 'var(--green)' : 'var(--red)'}">${neuesteAds.gesamtRoas.toFixed(2)}</div><div class="kpi-label">AD-ROAS (7 TAGE)</div></div>` : '',
+      `<div class="kpi-box"><div class="kpi-num" id="kpiTruthSupport">…</div><div class="kpi-label">OFFENE ESKALATIONEN</div></div>`,
+    ].filter(Boolean).join('');
+
     let kpiHtml = `
-      <div class="kpi-grid">
-        <div class="kpi-box"><div class="kpi-num">${(latest.umsatz || 0).toFixed(0)}</div><div class="kpi-label">UMSATZ ${waehrung} (${fmtDatumKurz(latest.datum)})</div></div>
-        <div class="kpi-box"><div class="kpi-num">${(nettoGewinn || 0).toFixed(0)}</div><div class="kpi-label">NETTOGEWINN ${waehrung}</div></div>
-        <div class="kpi-box"><div class="kpi-num">${history.length}</div><div class="kpi-label">TAGE ERFASST</div></div>
+      <div style="margin-bottom:24px;">
+        <div class="card-label" style="margin-bottom:10px;">💎 ZENTRALE KPI-WAHRHEIT</div>
+        <div class="kpi-grid">${wahrheitBoxen}</div>
       </div>`;
-    const letzte7 = history.slice(-7).reverse();
-    kpiHtml += letzte7.map((h) => {
-      const ng = h.nettoGewinn !== undefined ? h.nettoGewinn : h.gewinn;
-      return `<div class="card"><span class="card-date">${fmtDatumKurz(h.datum)}</span><div class="card-label">TAG</div><p>Umsatz ${(h.umsatz || 0).toFixed(2)} ${h.waehrung || waehrung} · Nettogewinn ${(ng || 0).toFixed(2)} ${h.waehrung || waehrung}</p></div>`;
-    }).join('');
+
+    if (history.length) {
+      const letzte7 = history.slice(-7).reverse();
+      kpiHtml += `<div class="card-label" style="margin-bottom:10px;">TAGESVERLAUF (FINANCE COCKPIT)</div>`;
+      kpiHtml += letzte7.map((h) => {
+        const ng = h.nettoGewinn !== undefined ? h.nettoGewinn : h.gewinn;
+        return `<div class="card"><span class="card-date">${fmtDatumKurz(h.datum)}</span><div class="card-label">TAG</div><p>Umsatz ${(h.umsatz || 0).toFixed(2)} ${h.waehrung || waehrung} · Nettogewinn ${(ng || 0).toFixed(2)} ${h.waehrung || waehrung}</p></div>`;
+      }).join('');
+    }
     document.getElementById('analyticsContent').innerHTML = kpiHtml;
+  }
+
+  // --- Ketten (Modul-Verknüpfungen) ---
+  function renderChains(data) {
+    const definitionen = (data && data.definitionen) || [];
+    const log = (data && data.log) || [];
+    if (!definitionen.length) {
+      document.getElementById('chainsContent').innerHTML = emptyHtml('🔗', 'Noch keine Ketten konfiguriert', '');
+      return;
+    }
+    const letzterProKette = {};
+    log.forEach((e) => {
+      const key = `${e.von}→${e.nach}`;
+      if (!letzterProKette[key]) letzterProKette[key] = e;
+    });
+    const defHtml = definitionen.map((d) => {
+      const letzte = letzterProKette[`${d.von}→${d.nach}`];
+      const status = letzte
+        ? `<span class="badge ${letzte.ausgeloest ? 'live' : 'fehler'}">${letzte.ausgeloest ? '✅' : '⚠️'} zuletzt ${fmtDatumKurz(letzte.datum)}</span>`
+        : `<span class="badge entwurf">noch nie gefeuert</span>`;
+      return `
+        <div class="card">
+          <div class="card-label">${d.von} → ${d.nach}</div>
+          <p>Bedingung: ${d.bedingung}</p>
+          ${status}
+        </div>`;
+    }).join('');
+    const logHtml = log.length ? `
+      <div class="card-label" style="margin:20px 0 10px;">LETZTE AUSLÖSUNGEN</div>
+      ${log.slice(0, 15).map((e) => `<div class="issue-row"><span class="issue-tag">${e.ausgeloest ? 'OK' : 'FEHLER'}</span><span style="flex:1">${e.von} → ${e.nach} — ${e.grund}</span><span class="card-date" style="float:none">${fmtDatumKurz(e.datum)}</span></div>`).join('')}
+    ` : '';
+    document.getElementById('chainsContent').innerHTML = defHtml + logHtml;
   }
 
   // --- Product Research ---
@@ -283,8 +342,12 @@
       }));
       const alle = ergebnisse.flat().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       renderSupport(alle);
+      const kpiTruthEl = document.getElementById('kpiTruthSupport');
+      if (kpiTruthEl) kpiTruthEl.textContent = alle.length;
     } catch (err) {
       document.getElementById('supportContent').innerHTML = emptyHtml('🎧', 'Live-Abfrage fehlgeschlagen', 'GitHub-API gerade nicht erreichbar - später nochmal versuchen.');
+      const kpiTruthEl = document.getElementById('kpiTruthSupport');
+      if (kpiTruthEl) kpiTruthEl.textContent = '?';
     }
   }
 
@@ -312,11 +375,13 @@
     ladeJson('../finance-cockpit/data.json'),
     ladeJson('./product-hunter.json'),
     ladeJson('./ad-commander.json'),
-  ]).then(([ceo, analytics, product, ads]) => {
+    ladeJson('./chains.json'),
+  ]).then(([ceo, analytics, product, ads, chains]) => {
     renderCeo(ceo);
-    renderAnalytics(analytics);
+    renderAnalytics(analytics, ads);
     renderProduct(product);
     renderAds(ads);
+    renderChains(chains);
   });
   ladeSupport();
 

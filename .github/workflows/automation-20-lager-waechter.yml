@@ -1,5 +1,13 @@
 name: "20 · Lager-Wächter"
 
+# Eigenständiger Workflow statt geteiltem _automation-runner.yml, seit dieses
+# Skript den Reorder-Agent (#63) bei kritischem Bestand direkt auslöst und
+# dafür zusätzlich "actions: write" braucht - reusable-workflow-Permissions
+# gelten für den job-weiten Block im geteilten Runner, das hätte bedeutet,
+# ALLE anderen automation-NN-*.yml-Caller müssten "actions: write" ebenfalls
+# deklarieren (gleiches Muster wie #60 Chef-Agent und #80 Agenten-Status-
+# Sammler, dort ausführlich begründet).
+
 on:
   schedule:
     - cron: '0 7 * * *'
@@ -7,11 +15,41 @@ on:
 
 permissions:
   contents: write
-  issues: write
+  actions: write
 
 jobs:
   run:
-    uses: ./.github/workflows/_automation-runner.yml
-    with:
-      script: automations/20-lager-waechter.mjs
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Dependencies installieren
+        run: npm ci --no-audit --no-fund
+
+      - name: Lager-Wächter ausführen
+        run: node automations/20-lager-waechter.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHOP: ${{ secrets.SHOP }}
+          SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_MAX_TOKENS_PRO_TAG: ${{ secrets.CLAUDE_MAX_TOKENS_PRO_TAG }}
+          SHOP_NAME: ${{ secrets.SHOP_NAME }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          REICHWEITE_TAGE_WARNUNG: ${{ secrets.REICHWEITE_TAGE_WARNUNG }}
+
+      - name: State-Änderungen committen
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add automations/state/ command/ 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update automation state [skip ci]"
+            git push
+          fi

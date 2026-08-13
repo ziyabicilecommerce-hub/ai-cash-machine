@@ -4,6 +4,7 @@ import { config } from './lib/config.mjs';
 import { getProducts, getOrdersSince } from './lib/shopify.mjs';
 import { askClaude } from './lib/claude.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
+import { loeseKetteAus } from './lib/chains.mjs';
 
 const NL = '\n';
 
@@ -56,6 +57,16 @@ async function main() {
 
   const rat = await askClaude(prompt, { maxTokens: 1500 });
   await notifyTelegram(`LAGER-WÄCHTER - ${config.SHOP_NAME}${NL}--------------------${NL}${NL}${rat}`);
+
+  if (kritisch.length > 0 || ausverkauft.length > 0) {
+    const grund = ausverkauft.length
+      ? `${ausverkauft.length} ausverkauft, ${kritisch.length} kritisch niedrig`
+      : `${kritisch.length} Artikel kritisch niedrig`;
+    await loeseKetteAus({
+      von: '20 · Lager-Wächter', nach: '63 · Reorder-Agent',
+      workflowDatei: 'automation-63-reorder-agent.yml', grund,
+    });
+  }
 
   console.log(`[20-lager-waechter] ${kritisch.length} kritisch, ${ausverkauft.length} ausverkauft`);
 }

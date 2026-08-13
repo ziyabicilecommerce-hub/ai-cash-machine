@@ -16,7 +16,7 @@ import { getOrders, getCustomers } from './lib/shopify.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { loadState, saveState } from './lib/state.mjs';
-import { dispatchWorkflow } from './lib/githubActions.mjs';
+import { loeseKetteAus } from './lib/chains.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FINANCE_DATA_FILE = join(__dirname, '..', 'finance-cockpit', 'data.json');
@@ -32,12 +32,20 @@ const MAX_HISTORIE = 60;
 async function loeseAktionenAus({ fulfillment, kunden }) {
   const ausgeloest = [];
   if (fulfillment && fulfillment.verzoegert > 0) {
-    const ergebnis = await dispatchWorkflow('automation-55-fulfillment-supplier-hub.yml');
-    ausgeloest.push({ grund: `${fulfillment.verzoegert} überfällige Bestellung(en)`, workflow: '55 · Fulfillment & Supplier Hub', ...ergebnis });
+    const grund = `${fulfillment.verzoegert} überfällige Bestellung(en)`;
+    const ergebnis = await loeseKetteAus({
+      von: '60 · Chef-Agent', nach: '55 · Fulfillment & Supplier Hub',
+      workflowDatei: 'automation-55-fulfillment-supplier-hub.yml', grund,
+    });
+    ausgeloest.push({ grund, workflow: '55 · Fulfillment & Supplier Hub', ...ergebnis });
   }
   if (kunden && kunden.atRiskVips > 0) {
-    const ergebnis = await dispatchWorkflow('automation-05-winback-maschine.yml');
-    ausgeloest.push({ grund: `${kunden.atRiskVips} wertvolle Kunde(n) inaktiv`, workflow: '05 · Winback-Maschine', ...ergebnis });
+    const grund = `${kunden.atRiskVips} wertvolle Kunde(n) inaktiv`;
+    const ergebnis = await loeseKetteAus({
+      von: '60 · Chef-Agent', nach: '05 · Winback-Maschine',
+      workflowDatei: 'automation-05-winback-maschine.yml', grund,
+    });
+    ausgeloest.push({ grund, workflow: '05 · Winback-Maschine', ...ergebnis });
   }
   return ausgeloest;
 }
