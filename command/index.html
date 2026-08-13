@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE COMMAND</title>
+<meta name="description" content="CEO-Kommandozentrale: Chef-Agent-Tagesansage, Analytics/KPI, Product Research, Ad Intelligence und Customer Support — 5 Bereiche, eine Seite, echte Daten aus den Automationen.">
+<meta property="og:title" content="CASHMACHINE COMMAND">
+<meta property="og:description" content="5 Bereiche, eine Seite: Chef-Agent, Analytics, Product Research, Ad Intelligence, Customer Support.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23030512%27/%3E%3Crect%20x%3D%2716%27%20y%3D%2716%27%20width%3D%2732%27%20height%3D%2732%27%20fill%3D%27none%27%20stroke%3D%27%233ef2a0%27%20stroke-width%3D%274%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%277%27%20fill%3D%27%233ef2a0%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#030512; --panel:rgba(20,28,40,.55); --panel-solid:#0a0f1c;
+    --green:#3ef2a0; --red:#ff6b81; --amber:#ffc55c; --cyan:#6fe0ff;
+    --line:rgba(62,242,160,.24); --line2:rgba(255,255,255,.07);
+    --txt:#eef4f2; --mut:rgba(220,235,230,.62); --mut2:rgba(220,235,230,.4);
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+  ::selection { background:rgba(62,242,160,.3); }
+
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(62,242,160,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(62,242,160,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 15%,#000 30%,transparent 78%); }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(3,5,18,.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--green); }
+  .nav-links { display:flex; align-items:center; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--green); }
+  @media(max-width:820px){ .nav-links a { display:none; } }
+
+  header.hero { min-height:26svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:110px 20px 16px; max-width:820px; margin:0 auto; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--green); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:16px; }
+  .kicker::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green); animation:pulse 1.4s infinite; }
+  @keyframes pulse { 50%{opacity:.35;transform:scale(.75)} }
+  h1 { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(24px,5vw,40px); letter-spacing:2px; color:#f4fffb;
+    text-shadow:0 0 24px rgba(62,242,160,.35); margin-bottom:10px; }
+  .sub { font-size:13.5px; color:var(--mut); max-width:580px; }
+
+  .tabs { position:sticky; top:57px; z-index:40; display:flex; gap:6px; overflow-x:auto; padding:12px 20px;
+    background:rgba(3,5,18,.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--line2); }
+  .tab-btn { flex-shrink:0; font-family:var(--mono); font-size:12px; padding:8px 14px; background:none;
+    border:1px solid var(--line2); color:var(--mut); cursor:pointer; white-space:nowrap; }
+  .tab-btn.active { border-color:var(--green); color:var(--green); background:rgba(62,242,160,.08); }
+
+  section.panel { display:none; padding:28px 20px 60px; max-width:820px; margin:0 auto; }
+  section.panel.show { display:block; }
+  .panel-title { font-family:'Orbitron',sans-serif; font-size:18px; margin-bottom:6px; }
+  .panel-desc { font-size:12.5px; color:var(--mut); margin-bottom:20px; }
+
+  .card { background:var(--panel); border:1px solid var(--line2); padding:18px 20px; margin-bottom:14px; }
+  .card.hero-card { border-color:var(--line); }
+  .card-label { font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--green); margin-bottom:8px; }
+  .card-date { font-family:var(--mono); font-size:11px; color:var(--mut2); float:right; }
+  .card p { font-size:13.5px; color:var(--mut); margin-bottom:8px; }
+  .card .prioritaet { font-size:14px; color:var(--txt); font-weight:600; }
+  .badge-good { color:var(--green); }
+  .badge-bad { color:var(--amber); }
+
+  .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:20px; }
+  .kpi-box { background:var(--panel); border:1px solid var(--line2); padding:16px; text-align:center; }
+  .kpi-num { font-family:'Orbitron',sans-serif; font-size:22px; color:var(--green); }
+  .kpi-label { font-family:var(--mono); font-size:10.5px; color:var(--mut2); margin-top:4px; }
+
+  .prod-row { background:var(--panel); border:1px solid var(--line2); padding:14px 18px; margin-bottom:10px; }
+  .prod-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  .prod-name { font-weight:700; font-size:14px; }
+  .prod-score { font-family:var(--mono); color:var(--green); font-size:13px; }
+  .prod-scores { font-family:var(--mono); font-size:10.5px; color:var(--mut2); margin-bottom:6px; }
+  .prod-begr { font-size:12.5px; color:var(--mut); }
+  .prod-warn { font-size:12px; color:var(--amber); margin-top:6px; }
+
+  table.ad-table { width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:12px; }
+  table.ad-table th, table.ad-table td { padding:8px 10px; border-bottom:1px solid var(--line2); text-align:left; }
+  table.ad-table th { font-family:var(--mono); font-size:10.5px; color:var(--mut2); }
+
+  .issue-row { display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--panel); border:1px solid var(--line2); margin-bottom:8px; font-size:13px; }
+  .issue-tag { font-family:var(--mono); font-size:10.5px; padding:3px 8px; border-radius:20px; background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.35); color:var(--red); }
+  .issue-row a { color:var(--txt); text-decoration:none; flex:1; }
+  .issue-row a:hover { color:var(--green); }
+
+  .empty { text-align:center; padding:40px 20px; color:var(--mut2); font-size:13px; }
+  .empty .emoji { font-size:32px; margin-bottom:10px; }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px 50px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--green); text-decoration:none; margin:0 8px; }
+</style>
+</head>
+<body>
+<style>
+.cm-secrets-btn{position:fixed;top:12px;right:12px;z-index:99999;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(3,5,18,.88);backdrop-filter:blur(8px);border:1px solid #3ef2a0;color:#3ef2a0;font:600 13px/1 -apple-system,system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 12px rgba(0,0,0,.4);}
+.cm-secrets-btn:hover{background:#3ef2a0;color:#030512;}
+@media (max-width:480px){.cm-secrets-btn{padding:8px 10px;font-size:0;}.cm-secrets-btn::after{content:"🔑";font-size:16px;}}
+</style>
+<a class="cm-secrets-btn" href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/settings/secrets/actions/new" target="_blank" rel="noopener" title="API-Schlüssel bei GitHub eintragen">🔑 API-Schlüssel hinzufügen</a>
+
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;COMMAND</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../mission-control/">Mission Control</a>
+    <a href="../empire/">Empire</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="kicker">CEO-KOMMANDOZENTRALE</div>
+  <h1>COMMAND</h1>
+  <p class="sub">5 Bereiche, eine Seite: Chef-Agent-Tagesansage, Analytics/KPI, Product Research, Ad Intelligence, Customer Support — jeweils echte Daten aus den zugehörigen Automationen, kein Fake.</p>
+</header>
+
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="ceo">👔 CEO</button>
+  <button class="tab-btn" data-tab="analytics">📊 Analytics</button>
+  <button class="tab-btn" data-tab="product">🔎 Product Research</button>
+  <button class="tab-btn" data-tab="ads">📈 Ad Intelligence</button>
+  <button class="tab-btn" data-tab="support">🎧 Support</button>
+</div>
+
+<section class="panel show" id="panel-ceo">
+  <div class="panel-title">Chef-Agent — Tagesansage</div>
+  <p class="panel-desc">Fasst Finanzen, Fulfillment und Kundenstamm zu EINER Prioritäts-Entscheidung zusammen (Automation #60, täglich abends).</p>
+  <div id="ceoContent"></div>
+</section>
+
+<section class="panel" id="panel-analytics">
+  <div class="panel-title">Analytics / KPI</div>
+  <p class="panel-desc">Die letzten Kennzahlen aus dem Finance Cockpit (Automation #01 Gewinn-Radar).</p>
+  <div id="analyticsContent"></div>
+</section>
+
+<section class="panel" id="panel-product">
+  <div class="panel-title">Product Research</div>
+  <p class="panel-desc">Bewertete Produktideen aus dem Product Hunter (Automation #51), sortiert nach Gesamt-Score.</p>
+  <div id="productContent"></div>
+</section>
+
+<section class="panel" id="panel-ads">
+  <div class="panel-title">Ad Intelligence</div>
+  <p class="panel-desc">Kampagnen-Portfolio + Budget-Empfehlung aus dem Ad Commander (Automation #56, wöchentlich).</p>
+  <div id="adsContent"></div>
+</section>
+
+<section class="panel" id="panel-support">
+  <div class="panel-title">Customer Support</div>
+  <p class="panel-desc">Live-Abfrage offener Eskalationen direkt aus GitHub Issues (#02 Kundenservice, #69 DSGVO, #62 Risk-Guard) — kein Key nötig, öffentliche GitHub-API.</p>
+  <div id="supportContent"></div>
+</section>
+
+<footer>
+  <b>CASHMACHINE COMMAND</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../mission-control/">Mission Control</a>·<a href="../empire/">Empire</a>
+</footer>
+
+<script>
+  const REPO = 'ziyabicilecommerce-hub/ai-cash-machine';
+
+  function fmtDatum(iso) {
+    try { return new Date(iso).toLocaleString('de-DE', { day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' }); }
+    catch { return iso; }
+  }
+  function fmtDatumKurz(iso) {
+    try { return new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: 'long' }); }
+    catch { return iso; }
+  }
+
+  function emptyHtml(emoji, titel, text) {
+    return `<div class="empty"><div class="emoji">${emoji}</div><div style="font-weight:700;color:var(--txt);margin-bottom:6px;">${titel}</div><p>${text}</p></div>`;
+  }
+
+  // --- CEO / Chef-Agent ---
+  function renderCeo(data) {
+    const historie = (data && data.historie) || [];
+    if (!historie.length) {
+      document.getElementById('ceoContent').innerHTML = emptyHtml('👔', 'Noch keine Tagesansage', 'Erscheint hier, sobald der Chef-Agent (#60) zum ersten Mal gelaufen ist (braucht ANTHROPIC_API_KEY + SHOP + SHOPIFY_TOKEN).');
+      return;
+    }
+    const html = historie.map((h, i) => `
+      <div class="card ${i === 0 ? 'hero-card' : ''}">
+        <span class="card-date">${fmtDatum(h.datum)}</span>
+        <div class="card-label">${h.allesGut ? '✅ ALLES IM GRÜNEN BEREICH' : '🎯 PRIORITÄT HEUTE'}</div>
+        <p>${h.status || ''}</p>
+        <div class="prioritaet">${h.prioritaet || ''}</div>
+      </div>`).join('');
+    document.getElementById('ceoContent').innerHTML = html;
+  }
+
+  // --- Analytics / Finance Cockpit ---
+  function renderAnalytics(data) {
+    const history = (data && data.history) || [];
+    if (!history.length) {
+      document.getElementById('analyticsContent').innerHTML = emptyHtml('📊', 'Noch keine Zahlen', 'Erscheint, sobald der Gewinn-Radar (#01) mindestens einmal gelaufen ist.');
+      return;
+    }
+    const latest = history[history.length - 1];
+    const nettoGewinn = latest.nettoGewinn !== undefined ? latest.nettoGewinn : latest.gewinn;
+    const waehrung = latest.waehrung || 'EUR';
+    let kpiHtml = `
+      <div class="kpi-grid">
+        <div class="kpi-box"><div class="kpi-num">${(latest.umsatz || 0).toFixed(0)}</div><div class="kpi-label">UMSATZ ${waehrung} (${fmtDatumKurz(latest.datum)})</div></div>
+        <div class="kpi-box"><div class="kpi-num">${(nettoGewinn || 0).toFixed(0)}</div><div class="kpi-label">NETTOGEWINN ${waehrung}</div></div>
+        <div class="kpi-box"><div class="kpi-num">${history.length}</div><div class="kpi-label">TAGE ERFASST</div></div>
+      </div>`;
+    const letzte7 = history.slice(-7).reverse();
+    kpiHtml += letzte7.map((h) => {
+      const ng = h.nettoGewinn !== undefined ? h.nettoGewinn : h.gewinn;
+      return `<div class="card"><span class="card-date">${fmtDatumKurz(h.datum)}</span><div class="card-label">TAG</div><p>Umsatz ${(h.umsatz || 0).toFixed(2)} ${h.waehrung || waehrung} · Nettogewinn ${(ng || 0).toFixed(2)} ${h.waehrung || waehrung}</p></div>`;
+    }).join('');
+    document.getElementById('analyticsContent').innerHTML = kpiHtml;
+  }
+
+  // --- Product Research ---
+  function renderProduct(data) {
+    const produkte = (data && data.produkte) || [];
+    if (!produkte.length) {
+      document.getElementById('productContent').innerHTML = emptyHtml('🔎', 'Noch keine Produktideen', 'Erscheint, sobald der Product Hunter (#51) zum ersten Mal gelaufen ist (braucht ANTHROPIC_API_KEY + PRODUCT_HUNTER_NISCHEN oder SHOP_NISCHE).');
+      return;
+    }
+    const sortiert = [...produkte].sort((a, b) => (b.gesamtScore || 0) - (a.gesamtScore || 0));
+    document.getElementById('productContent').innerHTML = sortiert.map((p) => `
+      <div class="prod-row">
+        <div class="prod-top"><span class="prod-name">${p.name}</span><span class="prod-score">Score ${p.gesamtScore}/10</span></div>
+        <div class="prod-scores">${p.nische} · Nachfrage ${p.nachfrage} · Konkurrenz ${p.konkurrenz} · Marge ${p.marge} · Trend ${p.trend} · Lieferzeit ${p.lieferzeit} · Risiko ${p.risiko}</div>
+        <div class="prod-begr">${p.begruendung || ''}</div>
+        ${p.warnung ? `<div class="prod-warn">⚠️ ${p.warnung}</div>` : ''}
+      </div>`).join('');
+  }
+
+  // --- Ad Intelligence ---
+  function renderAds(data) {
+    const historie = (data && data.historie) || [];
+    if (!historie.length) {
+      document.getElementById('adsContent').innerHTML = emptyHtml('📈', 'Noch keine Kampagnen-Daten', 'Erscheint, sobald der Ad Commander (#56) zum ersten Mal gelaufen ist (braucht META_ACCESS_TOKEN + META_AD_ACCOUNT_ID + aktive Meta-Kampagnen).');
+      return;
+    }
+    const neueste = historie[0];
+    const rows = (neueste.kampagnen || []).map((k) => `
+      <tr><td>${k.name}</td><td>${k.spend.toFixed(2)}</td><td>${k.umsatz.toFixed(2)}</td><td style="color:${k.roas >= 1 ? 'var(--green)' : 'var(--red)'}">${k.roas.toFixed(2)}</td></tr>`).join('');
+    document.getElementById('adsContent').innerHTML = `
+      <div class="card hero-card">
+        <span class="card-date">${fmtDatum(neueste.datum)}</span>
+        <div class="card-label">GESAMT LETZTE 7 TAGE</div>
+        <p>Spend ${neueste.gesamtSpend.toFixed(2)} · Umsatz ${neueste.gesamtUmsatz.toFixed(2)} · ROAS ${neueste.gesamtRoas.toFixed(2)}</p>
+        <div class="prioritaet">${neueste.empfehlung || ''}</div>
+      </div>
+      <table class="ad-table"><thead><tr><th>Kampagne</th><th>Spend</th><th>Umsatz</th><th>ROAS</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  // --- Customer Support (live GitHub API) ---
+  async function ladeSupport() {
+    const labels = [
+      { label: 'kundenservice', tag: 'Kundenservice' },
+      { label: 'dsgvo', tag: 'DSGVO' },
+      { label: 'risk-guard', tag: 'Risk-Guard' },
+    ];
+    try {
+      const ergebnisse = await Promise.all(labels.map(async (l) => {
+        const res = await fetch(`https://api.github.com/repos/${REPO}/issues?labels=${encodeURIComponent(l.label)}&state=open&per_page=30`, {
+          headers: { Accept: 'application/vnd.github+json' },
+        });
+        if (!res.ok) return [];
+        const issues = await res.json();
+        return issues.map((i) => ({ ...i, tag: l.tag }));
+      }));
+      const alle = ergebnisse.flat().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      renderSupport(alle);
+    } catch (err) {
+      document.getElementById('supportContent').innerHTML = emptyHtml('🎧', 'Live-Abfrage fehlgeschlagen', 'GitHub-API gerade nicht erreichbar - später nochmal versuchen.');
+    }
+  }
+
+  function renderSupport(issues) {
+    const kpiHtml = `<div class="kpi-grid"><div class="kpi-box"><div class="kpi-num">${issues.length}</div><div class="kpi-label">OFFENE ESKALATIONEN</div></div></div>`;
+    if (!issues.length) {
+      document.getElementById('supportContent').innerHTML = kpiHtml + emptyHtml('✅', 'Keine offenen Eskalationen', 'Entweder läuft alles glatt, oder #02/#69/#62 sind noch nicht gelaufen.');
+      return;
+    }
+    const rows = issues.map((i) => `
+      <div class="issue-row">
+        <span class="issue-tag">${i.tag}</span>
+        <a href="${i.html_url}" target="_blank" rel="noopener">${i.title}</a>
+        <span class="card-date" style="float:none">${fmtDatumKurz(i.created_at)}</span>
+      </div>`).join('');
+    document.getElementById('supportContent').innerHTML = kpiHtml + rows;
+  }
+
+  function ladeJson(pfad) {
+    return fetch(pfad, { cache: 'no-store' }).then((res) => (res.ok ? res.json() : null)).catch(() => null);
+  }
+
+  Promise.all([
+    ladeJson('./chef-agent.json'),
+    ladeJson('../finance-cockpit/data.json'),
+    ladeJson('./product-hunter.json'),
+    ladeJson('./ad-commander.json'),
+  ]).then(([ceo, analytics, product, ads]) => {
+    renderCeo(ceo);
+    renderAnalytics(analytics);
+    renderProduct(product);
+    renderAds(ads);
+  });
+  ladeSupport();
+
+  document.getElementById('tabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach((p) => p.classList.remove('show'));
+    btn.classList.add('active');
+    document.getElementById(`panel-${btn.dataset.tab}`).classList.add('show');
+  });
+</script>
+</body>
+</html>

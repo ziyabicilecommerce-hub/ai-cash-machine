@@ -13,13 +13,21 @@
 // Code gegen bekannte, geprüfte Endpunkte gebaut ist) - das lieber offen
 // lassen als raten und stillschweigend falsche Felder verwenden. Bei Bedarf
 // mit echtem TikTok-Ads-Account nachrüsten.
+import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { getAdInsights } from './lib/meta.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { chunkZeilen } from './lib/whatsappChunk.mjs';
+import { loadState, saveState } from './lib/state.mjs';
 
 const WHATSAPP_MAX_CHARS = 3500;
+const STATE_KEY = '56-ad-commander';
+const MAX_HISTORIE = 40;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const COMMAND_DIR = join(__dirname, '..', 'command');
 
 function purchaseValueAgg(row) {
   const x = (row.action_values || []).find((v) =>
@@ -89,6 +97,17 @@ Antworte NUR mit validem JSON, ohne Markdown:
   for (const chunk of chunks) {
     await notifyWhatsapp(chunk.join('\n\n'));
   }
+
+  const state = loadState(STATE_KEY);
+  state.historie = state.historie || [];
+  state.historie.unshift({
+    datum: new Date().toISOString(), kampagnen, gesamtSpend, gesamtUmsatz, gesamtRoas, empfehlung: daten.empfehlung,
+  });
+  if (state.historie.length > MAX_HISTORIE) state.historie = state.historie.slice(0, MAX_HISTORIE);
+  saveState(STATE_KEY, state);
+
+  if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
+  writeFileSync(join(COMMAND_DIR, 'ad-commander.json'), JSON.stringify({ updatedAt: new Date().toISOString(), historie: state.historie }, null, 2));
 
   console.log(`[56-ad-commander] ${kampagnen.length} Kampagne(n) analysiert, Gesamt-ROAS ${gesamtRoas.toFixed(2)}.`);
 }

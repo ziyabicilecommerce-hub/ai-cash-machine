@@ -24,6 +24,7 @@ on:
       - 'mission-control/**'
       - 'social-poster/**'
       - 'empire/**'
+      - 'command/**'
       - 'trading-bot-worker/lib/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
@@ -71,6 +72,7 @@ jobs:
           cp -r mission-control _site/mission-control
           cp -r social-poster _site/social-poster
           cp -r empire _site/empire
+          cp -r command _site/command
           mkdir -p _site/trading-bot-worker
           cp -r trading-bot-worker/lib _site/trading-bot-worker/lib
 

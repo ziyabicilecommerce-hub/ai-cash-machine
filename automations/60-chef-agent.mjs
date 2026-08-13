@@ -8,16 +8,20 @@
 // gekoppelt (würde bei jeder Änderung dort brechen) - berechnet die
 // wichtigsten Signale frisch aus Shopify + liest nur das stabile,
 // etablierte finance-cockpit/data.json-Format.
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { getOrders, getCustomers } from './lib/shopify.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
+import { loadState, saveState } from './lib/state.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FINANCE_DATA_FILE = join(__dirname, '..', 'finance-cockpit', 'data.json');
+const STATE_KEY = '60-chef-agent';
+const COMMAND_DIR = join(__dirname, '..', 'command');
+const MAX_HISTORIE = 60;
 
 async function ermittleFinanzLage() {
   if (!existsSync(FINANCE_DATA_FILE)) return null;
@@ -113,6 +117,20 @@ Antworte NUR mit validem JSON, ohne Markdown:
   ].join('\n\n');
 
   await notifyWhatsapp(text);
+
+  const state = loadState(STATE_KEY);
+  state.historie = state.historie || [];
+  state.historie.unshift({
+    datum: new Date().toISOString(),
+    finanzen, fulfillment, kunden,
+    status: daten.status, prioritaet: daten.prioritaet, allesGut: !!daten.alles_gut,
+  });
+  if (state.historie.length > MAX_HISTORIE) state.historie = state.historie.slice(0, MAX_HISTORIE);
+  saveState(STATE_KEY, state);
+
+  if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
+  writeFileSync(join(COMMAND_DIR, 'chef-agent.json'), JSON.stringify({ updatedAt: new Date().toISOString(), historie: state.historie }, null, 2));
+
   console.log('[60-chef-agent] Tagesansage versendet.');
 }
 
