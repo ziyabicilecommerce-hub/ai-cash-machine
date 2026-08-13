@@ -122,10 +122,12 @@ vergleichen (siehe unten), oder interaktiv mit echten Charts im
 
 ## Backtesting — Strategie VOR echtem Geld gegen echte Kursdaten testen
 
-`backtest.mjs` lädt echte historische 15-Minuten-Kerzen von Binance und
-simuliert damit die exakt gleiche Strategie-Logik (`lib/strategie.mjs`), die
-auch der Live-Worker verwendet — kein separates Nachbauen der Regeln, also
-kein Risiko, dass Backtest und Live-Bot unterschiedliche Dinge tun.
+`backtest.mjs` lädt echte historische 15-Minuten-Kerzen (per Default von
+Binance, mit `TRADING_EXCHANGE=kraken` alternativ von Kraken - gleicher
+Name/gleiches Verhalten wie beim Live-Worker) und simuliert damit die exakt
+gleiche Strategie-Logik (`lib/strategie.mjs`), die auch der Live-Worker
+verwendet — kein separates Nachbauen der Regeln, also kein Risiko, dass
+Backtest und Live-Bot unterschiedliche Dinge tun.
 
 ```bash
 node backtest.mjs BTCUSDT 90
@@ -133,6 +135,8 @@ node backtest.mjs BTCUSDT 90
 TRADING_RSI_UEBERKAUFT=70 TRADING_TRAILING_STOP_AB_PROZENT=2 node backtest.mjs BTCUSDT 180
 # alle drei Strategien direkt gegeneinander vergleichen:
 node backtest.mjs BTCUSDT 90 --vergleiche
+# mit Kraken-Daten statt Binance (Kraken-Symbolname beachten, z.B. XBTUSDT statt BTCUSDT):
+TRADING_EXCHANGE=kraken node backtest.mjs XBTUSDT 90 --vergleiche
 ```
 
 Ausgabe: Gesamt-Return, Vergleich mit simplem Buy&Hold, maximaler Drawdown,
