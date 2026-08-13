@@ -94,6 +94,17 @@
   .pos-tag.open { border-color:rgba(52,245,162,.35); color:var(--green); }
   .kill-banner { margin-top:10px; font-family:var(--mono); font-size:11px; color:var(--red); }
 
+  .history { margin-top:14px; border-top:1px solid var(--line2); padding-top:10px; }
+  .history summary { cursor:pointer; font-family:var(--mono); font-size:11px; color:var(--mut2); letter-spacing:.05em; list-style:none; }
+  .history summary::-webkit-details-marker { display:none; }
+  .history summary::before { content:'▸ '; color:var(--cyan); }
+  .history[open] summary::before { content:'▾ '; }
+  .history-list { margin-top:8px; display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; }
+  .trade-row { display:flex; justify-content:space-between; align-items:center; font-family:var(--mono); font-size:10.5px;
+    padding:5px 7px; background:rgba(255,255,255,.02); border:1px solid var(--line2); }
+  .trade-row .grund { color:var(--mut2); }
+  .trade-row .pl.up { color:var(--green); } .trade-row .pl.down { color:var(--red); }
+
   .empty-state { text-align:center; padding:60px 20px; font-family:var(--mono); }
   .empty-state .line1 { color:var(--cyan); font-size:15px; }
   .empty-state .line2 { color:var(--mut2); font-size:12px; margin-top:8px; max-width:480px; margin-left:auto; margin-right:auto; }
@@ -220,6 +231,7 @@
             <span class="badge ${s.paperModus ? 'paper' : 'live'}">${s.paperModus ? 'PAPER' : 'LIVE'}</span>
           </div>
           <div class="row"><span>Börse</span><b>${s.exchange || '–'}</b></div>
+          <div class="row"><span>Strategie</span><b>${s.strategie || 'ema-crossover'}</b></div>
           <div class="row"><span>Kapital</span><b>${fmtUsdt(s.kapital)}</b></div>
           <div class="row"><span>P&amp;L gesamt</span><b class="${pnlCls}">${pnl >= 0 ? '+' : ''}${fmtUsdt(pnl)} (${pnlProzent >= 0 ? '+' : ''}${pnlProzent.toFixed(1)}%)</b></div>
           <div class="row"><span>Verlust heute</span><b class="${s.heutigerVerlustUsdt < 0 ? 'down' : ''}">${fmtUsdt(s.heutigerVerlustUsdt)}</b></div>
@@ -230,6 +242,18 @@
             ? `<div class="pos-tag open">Position offen @ ${Number(s.position.entryPreis).toFixed(2)} · ${Number(s.position.qty).toFixed(6)} Stück</div>`
             : `<div class="pos-tag">Keine offene Position</div>`}
           ${s.killSwitchAktiv ? `<div class="kill-banner">🛑 KILL-SWITCH AKTIV — Bot handelt dieses Symbol nicht mehr</div>` : ''}
+          ${s.letzteTrades && s.letzteTrades.length ? `
+          <details class="history">
+            <summary>Letzte ${s.letzteTrades.length} Trades</summary>
+            <div class="history-list">
+              ${s.letzteTrades.map((t) => `
+                <div class="trade-row">
+                  <span class="grund">${t.grund || '–'}</span>
+                  <span>${Number(t.entryPreis).toFixed(2)} → ${Number(t.exitPreis).toFixed(2)}</span>
+                  <span class="pl ${t.gewinnVerlustUsdt >= 0 ? 'up' : 'down'}">${t.gewinnVerlustUsdt >= 0 ? '+' : ''}${Number(t.gewinnVerlustUsdt).toFixed(2)} (${t.gewinnProzent >= 0 ? '+' : ''}${Number(t.gewinnProzent).toFixed(1)}%)</span>
+                </div>`).join('')}
+            </div>
+          </details>` : ''}
         </div>`;
     }).join('');
   }
