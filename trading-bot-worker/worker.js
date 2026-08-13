@@ -498,6 +498,7 @@ async function buildStatus(env) {
     symbole.push({
       symbol,
       exchange: cfg.exchange,
+      strategie: cfg.strategie,
       paperModus: cfg.paperModus,
       position: state.position,
       kapital: state.kapital,
