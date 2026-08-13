@@ -34,7 +34,7 @@ TRADING_EMA_LANGSAM = "21"
 TRADING_RSI_PERIODE = "14"
 TRADING_RSI_UEBERKAUFT = "0"
 TRADING_MIN_VOLATILITAET_PROZENT = "0"
-TRADING_TRAILING_STOP_AB_PROZENT = "0"
+TRADING_TRAILING_STOP_AB_PROZENT = "2"
 TRADING_VOLA_SIZING = "nein"
 TRADING_VOLA_SIZING_REFERENZ_PROZENT = "2"
 TRADING_VOLA_SIZING_MIN_FAKTOR = "0.25"
@@ -53,11 +53,11 @@ TRADING_VOLA_SIZING_MIN_FAKTOR = "0.25"
 # VOR dem Umschalten unbedingt alle drei mit `node backtest.mjs SYMBOL TAGE
 # --vergleiche` gegeneinander testen, siehe README - oder interaktiv im
 # CASHMACHINE STRATEGY LAB (strategy-lab/ im Hauptrepo).
-# TRADING_STRATEGIE = "bollinger-mean-reversion"
+TRADING_STRATEGIE = "donchian-breakout"
 # TRADING_BOLLINGER_PERIODE = "20"
 # TRADING_BOLLINGER_STDDEV = "2"
-# TRADING_DONCHIAN_ENTRY_PERIODE = "20"
-# TRADING_DONCHIAN_EXIT_PERIODE = "10"
+TRADING_DONCHIAN_ENTRY_PERIODE = "20"
+TRADING_DONCHIAN_EXIT_PERIODE = "10"
 
 # Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
 #   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)
