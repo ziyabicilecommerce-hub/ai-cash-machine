@@ -53,9 +53,9 @@ TRADING_VOLA_SIZING_MIN_FAKTOR = "0.25"
 # VOR dem Umschalten unbedingt alle drei mit `node backtest.mjs SYMBOL TAGE
 # --vergleiche` gegeneinander testen, siehe README - oder interaktiv im
 # CASHMACHINE STRATEGY LAB (strategy-lab/ im Hauptrepo).
-TRADING_STRATEGIE = "ema-crossover"
-# TRADING_BOLLINGER_PERIODE = "20"
-# TRADING_BOLLINGER_STDDEV = "2"
+TRADING_STRATEGIE = "bollinger-mean-reversion"
+TRADING_BOLLINGER_PERIODE = "20"
+TRADING_BOLLINGER_STDDEV = "2"
 # TRADING_DONCHIAN_ENTRY_PERIODE = "20"
 # TRADING_DONCHIAN_EXIT_PERIODE = "10"
 
