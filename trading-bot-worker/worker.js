@@ -506,6 +506,7 @@ async function buildStatus(env) {
       heutigerVerlustUsdt: state.heutigerVerlustUsdt,
       killSwitchAktiv: state.killSwitchAktiv,
       tradeStats: berechneTradeStats(state.trades || []),
+      letzteTrades: (state.trades || []).slice(-10).reverse(),
     });
   }
   return { updatedAt: new Date().toISOString(), exchange: cfg.exchange, paperModus: cfg.paperModus, symbole };
