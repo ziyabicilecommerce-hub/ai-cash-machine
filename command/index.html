@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CASHMACHINE COMMAND</title>
-<meta name="description" content="CEO-Kommandozentrale: Chef-Agent-Tagesansage, Analytics/KPI, Product Research, Ad Intelligence und Customer Support — 5 Bereiche, eine Seite, echte Daten aus den Automationen.">
+<meta name="description" content="Die eine End-App: Chef-Agent-Tagesansage, Analytics/KPI, Product Research, Ad Intelligence, Customer Support, Ketten und das komplette Automations-Cockpit — 7 Bereiche, eine Seite, echte Daten, nichts ausgelassen.">
 <meta property="og:title" content="CASHMACHINE COMMAND">
-<meta property="og:description" content="5 Bereiche, eine Seite: Chef-Agent, Analytics, Product Research, Ad Intelligence, Customer Support.">
+<meta property="og:description" content="7 Bereiche, eine Seite: Chef-Agent, Analytics, Product Research, Ad Intelligence, Support, Ketten, Cockpit.">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23030512%27/%3E%3Crect%20x%3D%2716%27%20y%3D%2716%27%20width%3D%2732%27%20height%3D%2732%27%20fill%3D%27none%27%20stroke%3D%27%233ef2a0%27%20stroke-width%3D%274%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%277%27%20fill%3D%27%233ef2a0%27/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -90,6 +90,51 @@
   .empty { text-align:center; padding:40px 20px; color:var(--mut2); font-size:13px; }
   .empty .emoji { font-size:32px; margin-bottom:10px; }
 
+  /* --- Cockpit-Tab --- */
+  .chart-card { background:var(--panel); border:1px solid var(--line2); padding:18px 18px 10px; margin-bottom:20px; }
+  .chart-svg { width:100%; height:150px; display:block; overflow:visible; }
+  .chart-bar { fill:var(--green); }
+  .chart-bar:hover { fill:#5bffb8; }
+
+  .urgent-row { display:flex; flex-direction:column; gap:3px; padding:12px 16px; background:rgba(255,197,92,.06); border:1px solid rgba(255,197,92,.3); margin-bottom:8px; }
+  .urgent-top { display:flex; justify-content:space-between; gap:10px; font-size:13.5px; font-weight:700; color:var(--amber); }
+  .urgent-quelle { font-family:var(--mono); font-size:10px; color:var(--mut2); }
+  .urgent-detail { font-size:12.5px; color:var(--mut); }
+
+  .controls { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+  .search-input { flex:1; min-width:180px; background:var(--panel-solid); border:1px solid var(--line2); color:var(--txt);
+    padding:9px 12px; font-family:var(--mono); font-size:12.5px; }
+  .search-input:focus { outline:none; border-color:var(--green); }
+  .filter-chip { font-family:var(--mono); font-size:11.5px; padding:7px 13px; background:none; border:1px solid var(--line2);
+    color:var(--mut); cursor:pointer; white-space:nowrap; }
+  .filter-chip.active { border-color:var(--green); color:var(--green); background:rgba(62,242,160,.08); }
+
+  .table-wrap { overflow-x:auto; border:1px solid var(--line2); }
+  table.cockpit-table { width:100%; border-collapse:collapse; font-size:12.5px; min-width:760px; }
+  table.cockpit-table th, table.cockpit-table td { padding:10px 12px; border-bottom:1px solid var(--line2); text-align:left; vertical-align:top; }
+  table.cockpit-table th { font-family:var(--mono); font-size:10.5px; color:var(--mut2); background:var(--panel-solid); position:sticky; top:0; cursor:pointer; user-select:none; white-space:nowrap; }
+  table.cockpit-table th:hover { color:var(--green); }
+  table.cockpit-table th .arrow { opacity:.6; margin-left:3px; }
+  table.cockpit-table td.num { font-family:var(--mono); color:var(--mut2); }
+  table.cockpit-table tr:hover td { background:rgba(62,242,160,.04); }
+  .status-pill { font-family:var(--mono); font-size:10.5px; padding:3px 9px; border-radius:20px; white-space:nowrap; display:inline-block; }
+  .status-ok { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
+  .status-fehler { color:var(--red); background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.35); }
+  .status-nie-gelaufen { color:var(--amber); background:rgba(255,197,92,.1); border:1px solid rgba(255,197,92,.35); }
+  .verb-tag { font-family:var(--mono); font-size:10px; color:var(--cyan); background:rgba(111,224,255,.08); border:1px solid rgba(111,224,255,.25); padding:2px 6px; border-radius:10px; margin:1px 3px 1px 0; display:inline-block; }
+  .sofort-cell { color:var(--amber); font-size:12px; }
+  .row-link { color:var(--mut); text-decoration:none; }
+  .row-link:hover { color:var(--green); }
+  .reliability { display:flex; gap:3px; }
+  .reliability span { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .rel-success { background:var(--green); }
+  .rel-failure { background:var(--red); }
+  .rel-other { background:var(--mut2); }
+  .rel-empty { color:var(--mut2); font-family:var(--mono); font-size:11px; }
+  .note { font-size:11.5px; color:var(--mut2); margin-top:10px; }
+  .result-count { font-family:var(--mono); font-size:11px; color:var(--mut2); }
+  .section-title-inline { font-family:'Orbitron',sans-serif; font-size:15px; margin:22px 0 12px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+
   footer { border-top:1px solid var(--line2); padding:30px 20px 50px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
   footer a { color:var(--green); text-decoration:none; margin:0 8px; }
 </style>
@@ -114,9 +159,9 @@
 </nav>
 
 <header class="hero">
-  <div class="kicker">CEO-KOMMANDOZENTRALE</div>
+  <div class="kicker">DIE EINE END-APP</div>
   <h1>COMMAND</h1>
-  <p class="sub">5 Bereiche, eine Seite: Chef-Agent-Tagesansage, Analytics/KPI, Product Research, Ad Intelligence, Customer Support — jeweils echte Daten aus den zugehörigen Automationen, kein Fake.</p>
+  <p class="sub">7 Bereiche, eine Seite, alles drin: Chef-Agent-Tagesansage, Analytics/KPI, Product Research, Ad Intelligence, Customer Support, Ketten und das komplette Automations-Cockpit — jeweils echte Daten aus den zugehörigen Automationen, kein Fake.</p>
 </header>
 
 <div class="tabs" id="tabs">
@@ -126,6 +171,7 @@
   <button class="tab-btn" data-tab="ads">📈 Ad Intelligence</button>
   <button class="tab-btn" data-tab="support">🎧 Support</button>
   <button class="tab-btn" data-tab="chains">🔗 Ketten</button>
+  <button class="tab-btn" data-tab="cockpit">🛰️ Cockpit</button>
 </div>
 
 <section class="panel show" id="panel-ceo">
@@ -162,6 +208,12 @@
   <div class="panel-title">Ketten (Modul-Verknüpfungen)</div>
   <p class="panel-desc">Automationen, die andere Automationen automatisch auslösen, statt nur zu empfehlen — der Orchestrator in Aktion.</p>
   <div id="chainsContent"></div>
+</section>
+
+<section class="panel" id="panel-cockpit">
+  <div class="panel-title">Cockpit — alles auseinandergenommen</div>
+  <p class="panel-desc">Status jeder einzelnen Automation (#80/#81), Kosten-Trend, Zuverlässigkeit der letzten Läufe, und was JETZT Aufmerksamkeit braucht — die komplette Maschine, ein Blick.</p>
+  <div id="cockpitContent"></div>
 </section>
 
 <footer>
@@ -366,6 +418,187 @@
     document.getElementById('supportContent').innerHTML = kpiHtml + rows;
   }
 
+  // --- Cockpit (Status/Kosten/Zuverlässigkeit aller Automationen) ---
+  let cockpitData = null;
+  let cockpitSortKey = 'status';
+  let cockpitSortDir = 1;
+  let cockpitFilterStatus = 'alle';
+  let cockpitSearchQuery = '';
+
+  function fmtTag(iso) {
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+  }
+
+  function cockpitStatusLabel(status) {
+    if (status === 'ok') return '✅ OK';
+    if (status === 'fehler') return '❌ Fehler';
+    if (status === 'nie-gelaufen') return '⚠️ Nie gelaufen';
+    return status;
+  }
+
+  function cockpitStatusRang(status) {
+    if (status === 'fehler') return 0;
+    if (status === 'nie-gelaufen') return 1;
+    return 2;
+  }
+
+  function renderReliability(verlauf) {
+    if (!verlauf || !verlauf.length) return '<span class="rel-empty">–</span>';
+    const dots = verlauf.slice(0, 5).map((c) => {
+      const cls = c === 'success' ? 'rel-success' : c === 'failure' ? 'rel-failure' : 'rel-other';
+      return `<span class="${cls}" title="${c || 'unbekannt'}"></span>`;
+    }).join('');
+    return `<div class="reliability">${dots}</div>`;
+  }
+
+  function renderCockpitChart(verlauf) {
+    if (!verlauf || verlauf.length < 2) return '';
+    const werte = verlauf.map((e) => e.geschaetzteKostenEurHeute || 0);
+    const max = Math.max(...werte, 0.01);
+    const w = 100 / verlauf.length;
+    const barW = Math.min(w * 0.55, 4);
+    let svg = `<svg class="chart-svg" viewBox="0 0 100 40" preserveAspectRatio="none">`;
+    verlauf.forEach((e, i) => {
+      const h = Math.max((e.geschaetzteKostenEurHeute || 0) / max * 34, 0.6);
+      const x = i * w + (w - barW) / 2;
+      const y = 36 - h;
+      svg += `<rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barW.toFixed(2)}" height="${h.toFixed(2)}" rx="0.8"><title>${fmtTag(e.datum)}: ~${(e.geschaetzteKostenEurHeute || 0).toFixed(2)} €</title></rect>`;
+    });
+    svg += `</svg><div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--mut2);margin-top:4px;">
+      <span>${fmtTag(verlauf[0].datum)}</span><span>${fmtTag(verlauf[verlauf.length - 1].datum)}</span>
+    </div>`;
+    return svg;
+  }
+
+  function cockpitGefilterteAutomationen() {
+    let liste = [...(cockpitData.automationen || [])];
+    if (cockpitFilterStatus !== 'alle') liste = liste.filter((a) => a.status === cockpitFilterStatus);
+    if (cockpitSearchQuery.trim()) {
+      const q = cockpitSearchQuery.trim().toLowerCase();
+      liste = liste.filter((a) => a.name.toLowerCase().includes(q) || String(a.nummer).includes(q));
+    }
+    liste.sort((a, b) => {
+      let cmp = 0;
+      if (cockpitSortKey === 'status') cmp = cockpitStatusRang(a.status) - cockpitStatusRang(b.status);
+      else if (cockpitSortKey === 'nummer') cmp = (a.nummer || 999) - (b.nummer || 999);
+      else if (cockpitSortKey === 'name') cmp = a.name.localeCompare(b.name);
+      else if (cockpitSortKey === 'letzterLauf') cmp = new Date(a.letzterLauf?.startedAt || 0) - new Date(b.letzterLauf?.startedAt || 0);
+      if (cmp === 0) cmp = (a.nummer || 999) - (b.nummer || 999);
+      return cmp * cockpitSortDir;
+    });
+    return liste;
+  }
+
+  function setCockpitSort(key) {
+    if (cockpitSortKey === key) cockpitSortDir *= -1;
+    else { cockpitSortKey = key; cockpitSortDir = 1; }
+    renderCockpitTable();
+  }
+
+  function setCockpitFilter(status) {
+    cockpitFilterStatus = status;
+    renderCockpitTable();
+  }
+
+  function renderCockpitTable() {
+    const liste = cockpitGefilterteAutomationen();
+    const tbody = document.getElementById('cockpitTableBody');
+    const countEl = document.getElementById('cockpitResultCount');
+    countEl.textContent = `${liste.length} von ${cockpitData.automationen.length}`;
+
+    tbody.innerHTML = liste.length ? liste.map((a) => `
+      <tr>
+        <td class="num">${a.nummer ?? '–'}</td>
+        <td>${a.workflowUrl ? `<a class="row-link" href="${a.workflowUrl}" target="_blank" rel="noopener">${a.name}</a>` : a.name}</td>
+        <td><span class="status-pill status-${a.status}">${cockpitStatusLabel(a.status)}</span></td>
+        <td>${renderReliability(a.verlauf)}</td>
+        <td class="num">${a.letzterLauf ? fmtDatum(a.letzterLauf.startedAt) : '–'}</td>
+        <td>${(a.verbindungen || []).map((v) => `<span class="verb-tag">${v}</span>`).join('') || '–'}</td>
+        <td class="sofort-cell">${a.sofortNoetig || '–'}</td>
+      </tr>`).join('') : `<tr><td colspan="7"><div class="empty" style="padding:24px;">Keine Treffer.</div></td></tr>`;
+
+    document.querySelectorAll('#panel-cockpit th[data-sort]').forEach((th) => {
+      const arrow = th.querySelector('.arrow');
+      arrow.textContent = th.dataset.sort === cockpitSortKey ? (cockpitSortDir === 1 ? '▲' : '▼') : '';
+    });
+    document.querySelectorAll('#panel-cockpit .filter-chip').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.status === cockpitFilterStatus);
+    });
+  }
+
+  function renderCockpit(data) {
+    cockpitData = data;
+    const el = document.getElementById('cockpitContent');
+    if (!data || !data.automationen || !data.automationen.length) {
+      el.innerHTML = emptyHtml('🛰️', 'Noch keine Daten', 'Erscheint, sobald der Agenten-Status-Sammler (#80) und das Kosten-Cockpit (#81) einmal gelaufen sind.');
+      return;
+    }
+
+    const anzahlHandlungsbedarf = data.automationen.filter((a) => a.status !== 'ok').length;
+    const anzahlFehler = data.automationen.filter((a) => a.status === 'fehler').length;
+    const anzahlNieGelaufen = data.automationen.filter((a) => a.status === 'nie-gelaufen').length;
+    const kosten = data.kosten || {};
+
+    let html = '<div class="kpi-grid">';
+    html += `<div class="kpi-box"><div class="kpi-num">${data.automationen.length}</div><div class="kpi-label">AUTOMATIONEN GESAMT</div></div>`;
+    html += `<div class="kpi-box"><div class="kpi-num" style="${anzahlHandlungsbedarf > 0 ? 'color:var(--amber)' : ''}">${anzahlHandlungsbedarf}</div><div class="kpi-label">BRAUCHEN AUFMERKSAMKEIT</div></div>`;
+    html += `<div class="kpi-box"><div class="kpi-num">${(kosten.tokenHeute || 0).toLocaleString('de-DE')}</div><div class="kpi-label">CLAUDE-TOKEN HEUTE</div></div>`;
+    html += `<div class="kpi-box"><div class="kpi-num">~${(kosten.geschaetzteKostenEurHeute || 0).toFixed(2)} €</div><div class="kpi-label">GESCHÄTZT HEUTE</div></div>`;
+    html += `<div class="kpi-box"><div class="kpi-num">~${(kosten.monatsProjektionEur || 0).toFixed(0)} €</div><div class="kpi-label">MONATS-PROJEKTION</div></div>`;
+    html += '</div>';
+
+    if (kosten.verlauf && kosten.verlauf.length >= 2) {
+      html += '<div class="section-title-inline">📈 Kosten-Trend</div>';
+      html += `<div class="chart-card">${renderCockpitChart(kosten.verlauf)}</div>`;
+    }
+
+    html += '<div class="section-title-inline">🚨 Sofort nötig</div>';
+    html += (data.sofortNoetig && data.sofortNoetig.length)
+      ? data.sofortNoetig.map((s) => `
+        <div class="urgent-row">
+          <div class="urgent-top"><span>${s.titel}</span><span class="urgent-quelle">${s.quelle}</span></div>
+          <div class="urgent-detail">${s.detail || ''}</div>
+        </div>`).join('')
+      : '<div class="empty" style="padding:20px;"><div class="emoji">✅</div>Alles im grünen Bereich.</div>';
+
+    html += `<div class="section-title-inline">📋 Alle Automationen <span class="result-count" id="cockpitResultCount"></span></div>`;
+    html += `<div class="controls">
+      <input class="search-input" id="cockpitSearchInput" type="text" placeholder="Suche nach Name oder Nummer…">
+      <button class="filter-chip" data-status="alle">Alle (${data.automationen.length})</button>
+      <button class="filter-chip" data-status="fehler">❌ Fehler (${anzahlFehler})</button>
+      <button class="filter-chip" data-status="nie-gelaufen">⚠️ Nie gelaufen (${anzahlNieGelaufen})</button>
+      <button class="filter-chip" data-status="ok">✅ OK (${data.automationen.length - anzahlHandlungsbedarf})</button>
+    </div>`;
+
+    html += '<div class="table-wrap"><table class="cockpit-table"><thead><tr>' +
+      '<th data-sort="nummer">#<span class="arrow"></span></th>' +
+      '<th data-sort="name">Name<span class="arrow"></span></th>' +
+      '<th data-sort="status">Status<span class="arrow"></span></th>' +
+      '<th>Letzte 5 Läufe</th>' +
+      '<th data-sort="letzterLauf">Zuletzt<span class="arrow"></span></th>' +
+      '<th>Verbindungen</th><th>Sofort nötig</th>' +
+      '</tr></thead><tbody id="cockpitTableBody"></tbody></table></div>';
+
+    html += '<p class="note">Kosten sind eine grobe Schätzung, keine exakte Abrechnung — echte Zahlen stehen in der Anthropic Console. "OK" heißt, der letzte Lauf ist ohne Absturz durchgelaufen, das garantiert nicht, dass alle nötigen Secrets gesetzt sind.</p>';
+    html += `<p class="note">Stand: ${fmtDatum(data.updatedAt)}</p>`;
+
+    el.innerHTML = html;
+
+    document.getElementById('cockpitSearchInput').addEventListener('input', (e) => {
+      cockpitSearchQuery = e.target.value;
+      renderCockpitTable();
+    });
+    document.querySelectorAll('#panel-cockpit .filter-chip').forEach((btn) => {
+      btn.addEventListener('click', () => setCockpitFilter(btn.dataset.status));
+    });
+    document.querySelectorAll('#panel-cockpit th[data-sort]').forEach((th) => {
+      th.addEventListener('click', () => setCockpitSort(th.dataset.sort));
+    });
+
+    renderCockpitTable();
+  }
+
   function ladeJson(pfad) {
     return fetch(pfad, { cache: 'no-store' }).then((res) => (res.ok ? res.json() : null)).catch(() => null);
   }
@@ -376,12 +609,14 @@
     ladeJson('./product-hunter.json'),
     ladeJson('./ad-commander.json'),
     ladeJson('./chains.json'),
-  ]).then(([ceo, analytics, product, ads, chains]) => {
+    ladeJson('../cockpit/data.json'),
+  ]).then(([ceo, analytics, product, ads, chains, cockpit]) => {
     renderCeo(ceo);
     renderAnalytics(analytics, ads);
     renderProduct(product);
     renderAds(ads);
     renderChains(chains);
+    renderCockpit(cockpit);
   });
   ladeSupport();
 
