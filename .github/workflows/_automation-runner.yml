@@ -148,6 +148,7 @@ jobs:
           LEAD_MAX_PRO_LAUF: ${{ secrets.LEAD_MAX_PRO_LAUF }}
           PRODUCT_HUNTER_NISCHEN: ${{ secrets.PRODUCT_HUNTER_NISCHEN }}
           PRODUCT_HUNTER_ANZAHL_PRO_NISCHE: ${{ secrets.PRODUCT_HUNTER_ANZAHL_PRO_NISCHE }}
+          BRAND_SCOUT_ANZAHL_IDEEN: ${{ secrets.BRAND_SCOUT_ANZAHL_IDEEN }}
           CREATIVE_STUDIO_PRODUKTE: ${{ secrets.CREATIVE_STUDIO_PRODUKTE }}
           CREATIVE_STUDIO_ANZAHL_PRODUKTE: ${{ secrets.CREATIVE_STUDIO_ANZAHL_PRODUKTE }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -226,7 +227,7 @@ jobs:
           # sind - dadurch wurde bisher STILL gar nichts committet, sobald
           # auch nur EINER der 8 Pfade noch fehlte (z.B. weil eine andere
           # Automation mangels Secrets noch nie gelaufen ist).
-          for pfad in automations/state/ finance-cockpit/data.json lead-previews/ paypal-belege/ wrapped/ social-poster/ command/ cockpit/; do
+          for pfad in automations/state/ finance-cockpit/data.json lead-previews/ paypal-belege/ wrapped/ social-poster/ command/ cockpit/ brand-scout/data.json; do
             git add "$pfad" 2>/dev/null || true
           done
           if ! git diff --cached --quiet; then

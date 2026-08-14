@@ -60,6 +60,10 @@ export const config = {
   PRODUCT_HUNTER_NISCHEN: process.env.PRODUCT_HUNTER_NISCHEN || '',
   PRODUCT_HUNTER_ANZAHL_PRO_NISCHE: process.env.PRODUCT_HUNTER_ANZAHL_PRO_NISCHE || '3',
 
+  // Brand Scout (Marken-DNA aus dem echten Sortiment ableiten, statt aus
+  // manuell eingetragener Nische - braucht kein zusätzliches Secret)
+  BRAND_SCOUT_ANZAHL_IDEEN: process.env.BRAND_SCOUT_ANZAHL_IDEEN || '6',
+
   // Creative Studio (Ad-Kreativ-Pakete: Hooks, Ad-Copy, Bild-Prompts, optional echte Bildgenerierung)
   CREATIVE_STUDIO_PRODUKTE: process.env.CREATIVE_STUDIO_PRODUKTE || '',
   CREATIVE_STUDIO_ANZAHL_PRODUKTE: process.env.CREATIVE_STUDIO_ANZAHL_PRODUKTE || '1',

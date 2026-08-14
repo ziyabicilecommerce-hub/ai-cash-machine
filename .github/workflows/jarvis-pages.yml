@@ -26,6 +26,7 @@ on:
       - 'empire/**'
       - 'command/**'
       - 'cockpit/**'
+      - 'brand-scout/**'
       - 'trading-bot-worker/lib/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
@@ -75,6 +76,7 @@ jobs:
           cp -r empire _site/empire
           cp -r command _site/command
           cp -r cockpit _site/cockpit
+          cp -r brand-scout _site/brand-scout
           mkdir -p _site/trading-bot-worker
           cp -r trading-bot-worker/lib _site/trading-bot-worker/lib
 
