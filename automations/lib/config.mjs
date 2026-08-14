@@ -172,6 +172,11 @@ export const config = {
   REORDER_PUFFER_TAGE: process.env.REORDER_PUFFER_TAGE || '30',
   REORDER_LIEFERZEIT_TAGE: process.env.REORDER_LIEFERZEIT_TAGE || '14',
 
+  // Lieferanten-Zahlungs-Wächter (WhatsApp-Erinnerung, wenn eine per
+  // Reorder-Agent ausgelöste Nachbestellung fällig zur Zahlung wird)
+  LIEFERANTEN_ZAHLUNGSZIEL_TAGE: process.env.LIEFERANTEN_ZAHLUNGSZIEL_TAGE || '30',
+  ZAHLUNGS_ERINNERUNG_TAGE_VORHER: process.env.ZAHLUNGS_ERINNERUNG_TAGE_VORHER || '3',
+
   // Ads-Autopilot-Agent (führt Budget-Umschichtung zwischen Ad-Sets wirklich aus)
   AUTO_BUDGET_UMSCHICHTEN: process.env.AUTO_BUDGET_UMSCHICHTEN || 'nein',
   ADS_AUTOPILOT_MAX_SHIFT_PROZENT: process.env.ADS_AUTOPILOT_MAX_SHIFT_PROZENT || '15',

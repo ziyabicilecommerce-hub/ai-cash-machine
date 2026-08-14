@@ -20,7 +20,9 @@ import { loadState, saveState } from './lib/state.mjs';
 
 const NL = '\n';
 const STATE_KEY = '63-reorder-agent';
+const ZAHLUNGEN_STATE_KEY = 'lieferanten-zahlungen';
 const VERKAUFSTEMPO_TAGE = 30;
+const MAX_ZAHLUNGEN = 100;
 
 async function main() {
   const lieferzeit = parseFloat(config.REORDER_LIEFERZEIT_TAGE || '14');
@@ -99,6 +101,26 @@ async function main() {
 
     for (const k of kandidaten) state.letzteAnfrage[k.variantId] = jetzt;
     saveState(STATE_KEY, state);
+
+    // Shopify kennt keine Lieferanten-Rechnungen/Zahlungsziele - der einzige
+    // echte, automatisch verfügbare Anker ist der Moment der Nachbestellung
+    // selbst. Übliches B2B-Zahlungsziel (LIEFERANTEN_ZAHLUNGSZIEL_TAGE) wird
+    // als Fälligkeitsdatum angenommen, damit der Zahlungs-Wächter (#82) eine
+    // WhatsApp-Erinnerung schicken kann, statt dass es beim Gründer untergeht.
+    const zahlungsziel = parseFloat(config.LIEFERANTEN_ZAHLUNGSZIEL_TAGE || '30');
+    const zahlungenState = loadState(ZAHLUNGEN_STATE_KEY);
+    zahlungenState.faellig = zahlungenState.faellig || [];
+    zahlungenState.faellig.push({
+      lieferant: config.SUPPLIER_EMAIL,
+      artikel: kandidaten.map((k) => `${k.menge}x ${k.name}`),
+      bestelltAm: new Date(jetzt).toISOString(),
+      faelligAm: new Date(jetzt + zahlungsziel * 86400000).toISOString(),
+      benachrichtigt: false,
+    });
+    if (zahlungenState.faellig.length > MAX_ZAHLUNGEN) {
+      zahlungenState.faellig = zahlungenState.faellig.slice(-MAX_ZAHLUNGEN);
+    }
+    saveState(ZAHLUNGEN_STATE_KEY, zahlungenState);
   }
 
   console.log(`[63-reorder-agent] ${kandidaten.length} Artikel ${autoSenden && config.SUPPLIER_EMAIL ? 'nachbestellt' : 'empfohlen'}.`);
