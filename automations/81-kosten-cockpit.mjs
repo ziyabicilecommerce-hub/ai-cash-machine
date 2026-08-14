@@ -8,13 +8,15 @@ import { readFileSync, readdirSync, writeFileSync, existsSync, mkdirSync } from 
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
-import { loadState } from './lib/state.mjs';
+import { loadState, saveState } from './lib/state.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const AGENTS_DATA_FILE = join(__dirname, '..', 'agents', 'data.json');
 const CHEF_AGENT_FILE = join(__dirname, '..', 'command', 'chef-agent.json');
 const CHAINS_FILE = join(__dirname, '..', 'command', 'chains.json');
 const COCKPIT_DIR = join(__dirname, '..', 'cockpit');
+const KOSTEN_VERLAUF_STATE = 'kosten-cockpit-verlauf';
+const MAX_VERLAUF_TAGE = 30;
 
 // Welche lib/*.mjs-Datei braucht welche externe Verbindung (=Secrets) - so
 // muss diese Liste nicht von Hand gepflegt werden, sondern wird direkt aus
@@ -51,6 +53,23 @@ function ermittleVerbindungen(dateiInhalt) {
   return [...gefunden];
 }
 
+function heute() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+// Pflegt eine rollierende Tageshistorie der Kosten (heutiger Eintrag wird bei
+// mehrfachen Läufen am selben Tag überschrieben, nicht dupliziert) - macht
+// aus dem reinen "heute"-Snapshot einen echten Trend statt nur einer Zahl.
+function aktualisiereKostenVerlauf(tokenHeute, geschaetzteKostenEurHeute) {
+  const state = loadState(KOSTEN_VERLAUF_STATE);
+  const verlauf = (state.verlauf || []).filter((e) => e.datum !== heute());
+  verlauf.push({ datum: heute(), tokenHeute, geschaetzteKostenEurHeute });
+  verlauf.sort((a, b) => a.datum.localeCompare(b.datum));
+  const gekuerzt = verlauf.slice(-MAX_VERLAUF_TAGE);
+  saveState(KOSTEN_VERLAUF_STATE, { verlauf: gekuerzt });
+  return gekuerzt;
+}
+
 async function main() {
   const agentenStatus = leseJson(AGENTS_DATA_FILE);
   const budgetState = loadState('claude-budget-state');
@@ -85,7 +104,10 @@ async function main() {
         sofortNoetig = 'Letzter Lauf fehlgeschlagen - Action-Log ansehen.';
       }
 
-      return { nummer: a.nummer, name: a.name, verbindungen, status, letzterLauf: a.letzterLauf, sofortNoetig, workflowUrl: a.workflowUrl };
+      return {
+        nummer: a.nummer, name: a.name, verbindungen, status, letzterLauf: a.letzterLauf,
+        sofortNoetig, workflowUrl: a.workflowUrl, verlauf: a.verlauf || [],
+      };
     })
     .sort((x, y) => (x.nummer || 999) - (y.nummer || 999));
 
@@ -108,10 +130,23 @@ async function main() {
   }
 
   const tokenHeute = budgetState?.tokenHeute || 0;
+  const geschaetzteKostenEurHeute = Math.round((tokenHeute / 1_000_000) * EUR_PRO_MIO_TOKEN * 100) / 100;
+  const kostenVerlauf = aktualisiereKostenVerlauf(tokenHeute, geschaetzteKostenEurHeute);
+
+  // Monats-Projektion: Durchschnitt der bisher bekannten Tage (nicht nur
+  // heute) * 30 - stabiler als eine Hochrechnung aus einem einzelnen Tag,
+  // der zufällig sehr ruhig oder sehr aktiv war.
+  const tageMitDaten = kostenVerlauf.filter((e) => e.geschaetzteKostenEurHeute > 0);
+  const durchschnittProTag = tageMitDaten.length
+    ? tageMitDaten.reduce((s, e) => s + e.geschaetzteKostenEurHeute, 0) / tageMitDaten.length
+    : geschaetzteKostenEurHeute;
+
   const kosten = {
     tokenHeute,
     limit: parseInt(config.CLAUDE_MAX_TOKENS_PRO_TAG, 10) || null,
-    geschaetzteKostenEurHeute: Math.round((tokenHeute / 1_000_000) * EUR_PRO_MIO_TOKEN * 100) / 100,
+    geschaetzteKostenEurHeute,
+    monatsProjektionEur: Math.round(durchschnittProTag * 30 * 100) / 100,
+    verlauf: kostenVerlauf,
   };
 
   if (!existsSync(COCKPIT_DIR)) mkdirSync(COCKPIT_DIR, { recursive: true });
