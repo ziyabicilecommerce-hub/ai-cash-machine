@@ -218,7 +218,15 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add automations/state/ finance-cockpit/data.json lead-previews/ paypal-belege/ wrapped/ social-poster/ command/ cockpit/ 2>/dev/null || true
+          # Jeder Pfad EINZELN, nicht in einem gemeinsamen "git add a b c" -
+          # git bricht bei einem einzigen nicht-existierenden Pfad die GESAMTE
+          # Kommando-Zeile ab (exit 128), auch wenn die anderen Pfade gültig
+          # sind - dadurch wurde bisher STILL gar nichts committet, sobald
+          # auch nur EINER der 8 Pfade noch fehlte (z.B. weil eine andere
+          # Automation mangels Secrets noch nie gelaufen ist).
+          for pfad in automations/state/ finance-cockpit/data.json lead-previews/ paypal-belege/ wrapped/ social-poster/ command/ cockpit/; do
+            git add "$pfad" 2>/dev/null || true
+          done
           if ! git diff --cached --quiet; then
             git commit -m "chore: update automation state [skip ci]"
             git push
