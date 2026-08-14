@@ -25,6 +25,7 @@ on:
       - 'social-poster/**'
       - 'empire/**'
       - 'command/**'
+      - 'cockpit/**'
       - 'trading-bot-worker/lib/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
