@@ -1,0 +1,1515 @@
+{
+  "updatedAt": "2026-08-14T11:05:16.504Z",
+  "kosten": {
+    "tokenHeute": 0,
+    "limit": 300000,
+    "geschaetzteKostenEurHeute": 0,
+    "monatsProjektionEur": 0,
+    "verlauf": [
+      {
+        "datum": "2026-08-14",
+        "tokenHeute": 0,
+        "geschaetzteKostenEurHeute": 0
+      }
+    ]
+  },
+  "sofortNoetig": [
+    {
+      "titel": "7 Automation(en) brauchen Aufmerksamkeit",
+      "detail": "Nie gelaufen oder letzter Lauf fehlgeschlagen - siehe Tabelle.",
+      "quelle": "Cockpit"
+    }
+  ],
+  "automationen": [
+    {
+      "nummer": 1,
+      "name": "Gewinn-Radar",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T09:18:00Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31685948288"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-01-gewinn-radar.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 2,
+      "name": "KI-Kundenservice",
+      "verbindungen": [
+        "Anthropic Claude",
+        "E-Mail (Resend)",
+        "Telegram",
+        "Shopify"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T05:57:08Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31774638949"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-02-ki-kundenservice.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 4,
+      "name": "Bewertungs-Magnet",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T10:50:07Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31692848209"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-04-bewertungs-magnet.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 5,
+      "name": "Winback-Maschine",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T11:49:24Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31697200226"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-05-winback-maschine.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 6,
+      "name": "Content-Kanone",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T08:51:10Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31683909548"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-06-content-kanone.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 7,
+      "name": "Ad-Fabrik",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-10T10:09:16Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31377877228"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-07-ad-fabrik.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 8,
+      "name": "Trend-Scout",
+      "verbindungen": [
+        "Anthropic Claude",
+        "Telegram"
+      ],
+      "status": "fehler",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "failure",
+        "startedAt": "2026-08-13T08:15:53Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31681294096"
+      },
+      "sofortNoetig": "Letzter Lauf fehlgeschlagen - Action-Log ansehen.",
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-08-trend-scout.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 9,
+      "name": "Newsletter-Autopilot",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T09:51:27Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31688480639"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-09-newsletter-autopilot.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 10,
+      "name": "VIP-Radar",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T13:19:25Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31704329956"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-10-vip-radar.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 11,
+      "name": "Ads-Manager",
+      "verbindungen": [
+        "Meta Ads",
+        "Anthropic Claude",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T09:39:45Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31687610713"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-11-ads-manager.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 12,
+      "name": "Marketing-Chef (KI-CMO)",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-09T18:21:07Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31328809184"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-12-marketing-chef-cmo.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 13,
+      "name": "Willkommens-Booster",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T10:32:24Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31691533466"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-13-willkommens-booster.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 14,
+      "name": "Preis-Spion",
+      "verbindungen": [
+        "Anthropic Claude",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T07:03:09Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31778461766"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-14-preis-spion.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 15,
+      "name": "Warenkorb-Sequenz 3.0",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T07:07:32Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31778739231"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-15-warenkorb-sequenz.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 16,
+      "name": "Cross-Sell-Radar",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T15:54:22Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31717909420"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-16-cross-sell-radar.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 17,
+      "name": "Promo-Kampagnen-Maschine",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "startup_failure",
+        "startedAt": "2026-08-01T11:10:36Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/30697179713"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-17-promo-kampagnen-maschine.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 18,
+      "name": "Multi-Plattform-Poster",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T16:54:32Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31723045049"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-18-multi-plattform-poster.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 19,
+      "name": "Saison-Planer",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "nie-gelaufen",
+      "letzterLauf": null,
+      "sofortNoetig": "Noch nie gelaufen - prüfen ob Shopify, Anthropic Claude, E-Mail (Resend) als GitHub-Secrets gesetzt sind.",
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-19-saison-planer.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 20,
+      "name": "Lager-Wächter",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T08:09:25Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31680815665"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-20-lager-waechter.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 21,
+      "name": "Retouren-Detektiv",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-10T10:25:01Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31379027196"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-21-retouren-detektiv.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 22,
+      "name": "Dead-Stock-Räumer",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-12T09:59:58Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31585441131"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-22-dead-stock-raeumer.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 23,
+      "name": "Kunden-Jubiläum",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T11:14:43Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31694637173"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-23-kunden-jubilaeum.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 24,
+      "name": "Bundle-Bauer",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "fehler",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "failure",
+        "startedAt": "2026-08-07T10:44:27Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31171281829"
+      },
+      "sofortNoetig": "Letzter Lauf fehlgeschlagen - Action-Log ansehen.",
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-24-bundle-bauer.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 25,
+      "name": "Wetter-Marketing",
+      "verbindungen": [
+        "Anthropic Claude",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T09:07:33Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31685163178"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-25-wetter-marketing.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 26,
+      "name": "Schläfer-Wecker",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T12:04:54Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31698385685"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-26-schlaefer-wecker.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 27,
+      "name": "Wochen-Sieger-Report",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-09T19:39:20Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31332211956"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-27-wochen-sieger-report.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 28,
+      "name": "SEO-Text-Doktor",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-11T09:50:53Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31479545902"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-28-seo-text-doktor.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 29,
+      "name": "Zahlungs-Retter",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T14:48:43Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31712002815"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-29-zahlungs-retter.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 30,
+      "name": "Bewertungs-Antwort-Bot",
+      "verbindungen": [
+        "Judge.me",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T14:20:54Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31709698340"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-30-bewertungs-antwort-bot.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 31,
+      "name": "Umsatz-Prognose",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-09T20:25:11Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31334204008"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-31-umsatz-prognose.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 32,
+      "name": "UGC-Anfrage-Automat",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T15:51:46Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31717676575"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-32-ugc-anfrage-automat.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 33,
+      "name": "Feiertags-Radar",
+      "verbindungen": [
+        "Anthropic Claude",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T08:42:50Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31683278567"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-33-feiertags-radar.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 34,
+      "name": "Neukunden-Quellen-Report",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-10T09:56:00Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31376879404"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-34-neukunden-quellen-report.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 35,
+      "name": "Lead-Magnet-Maschine",
+      "verbindungen": [
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-10T09:06:29Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31373059636"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-35-lead-magnet-maschine.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 36,
+      "name": "FAQ-Bauer",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T08:58:39Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31684479850"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-36-faq-bauer.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 37,
+      "name": "Static-Ad-Fabrik XL",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-11T08:29:41Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31473446430"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-37-static-ad-fabrik-xl.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 38,
+      "name": "UGC-Video-Skript-Fabrik",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-12T08:45:09Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31579759335"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-38-ugc-video-skript-fabrik.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 39,
+      "name": "Nachbestell-Erinnerung",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T10:42:41Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31692301456"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-39-nachbestell-erinnerung.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 40,
+      "name": "Kunden-Feedback-Sammler",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T17:25:08Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31725603770"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-40-kunden-feedback-sammler.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 41,
+      "name": "Post-Purchase-Sofort-Upsell",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T06:14:56Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31775633707"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-41-post-purchase-sofort-upsell.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 42,
+      "name": "Meta-Ads-Auto-Skalierer",
+      "verbindungen": [
+        "Meta Ads",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T09:46:03Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31688080997"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-42-meta-ads-auto-skalierer.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 43,
+      "name": "Meta-Ads-Notbremse",
+      "verbindungen": [
+        "Meta Ads",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T04:53:04Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31771246727"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-43-meta-ads-notbremse.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 44,
+      "name": "Winning-Ad neue Creatives",
+      "verbindungen": [
+        "Meta Ads",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-10T08:26:38Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31370085885"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-44-winning-ad-neue-creatives.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 45,
+      "name": "Meta-Lookalike-Futter",
+      "verbindungen": [
+        "Shopify",
+        "Meta Ads",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-10T08:11:44Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31368993974"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-45-meta-lookalike-futter.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 46,
+      "name": "Großbestellung-Radar",
+      "verbindungen": [
+        "Shopify",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T06:11:09Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31775427738"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-46-grossbestellung-radar.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 47,
+      "name": "Länder-Expansions-Scout",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "startup_failure",
+        "startedAt": "2026-08-01T10:41:12Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/30696190612"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-47-laender-expansions-scout.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 48,
+      "name": "Google-Maps-Lead-Jäger",
+      "verbindungen": [
+        "Composio/Maps",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T08:58:11Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31684443520"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-48-google-maps-lead-jaeger.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 49,
+      "name": "Trading-Bot (Krypto Spot)",
+      "verbindungen": [
+        "Binance",
+        "WhatsApp"
+      ],
+      "status": "fehler",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "failure",
+        "startedAt": "2026-08-02T14:19:48Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/30751858725"
+      },
+      "sofortNoetig": "Letzter Lauf fehlgeschlagen - Action-Log ansehen.",
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-49-trading-bot.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 50,
+      "name": "Pump-Scanner",
+      "verbindungen": [
+        "Binance",
+        "WhatsApp"
+      ],
+      "status": "fehler",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "failure",
+        "startedAt": "2026-08-02T13:56:38Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/30751012132"
+      },
+      "sofortNoetig": "Letzter Lauf fehlgeschlagen - Action-Log ansehen.",
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-50-pump-scanner.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 51,
+      "name": "Product Hunter",
+      "verbindungen": [
+        "Anthropic Claude",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-10T09:03:17Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31372817362"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-51-product-hunter.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 52,
+      "name": "Creative Studio",
+      "verbindungen": [
+        "Anthropic Claude",
+        "WhatsApp",
+        "OpenAI (Bilder)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-12T09:08:03Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31581529002"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-52-creative-studio.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 53,
+      "name": "Store Builder & Optimizer",
+      "verbindungen": [
+        "Anthropic Claude",
+        "Shopify",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-07T09:05:23Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31164417360"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-53-store-builder-optimizer.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 54,
+      "name": "Compliance Guard",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "WhatsApp"
+      ],
+      "status": "nie-gelaufen",
+      "letzterLauf": null,
+      "sofortNoetig": "Noch nie gelaufen - prüfen ob Shopify, Anthropic Claude, WhatsApp als GitHub-Secrets gesetzt sind.",
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-54-compliance-guard.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 55,
+      "name": "Fulfillment & Supplier Hub",
+      "verbindungen": [
+        "Shopify",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T09:57:25Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31688933382"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-55-fulfillment-supplier-hub.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 56,
+      "name": "Ad Commander",
+      "verbindungen": [
+        "Meta Ads",
+        "Anthropic Claude",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-10T09:19:11Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31374026083"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-56-ad-commander.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 57,
+      "name": "CRM & Retention Engine",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)",
+        "Twilio SMS",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-11T09:59:30Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31480186611"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-57-crm-retention-engine.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 58,
+      "name": "Brand Assassin Auto-Scan",
+      "verbindungen": [
+        "Anthropic Claude",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T09:03:51Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31684876586"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-58-brand-assassin-auto-scan.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 59,
+      "name": "Oracle Auto-Briefing",
+      "verbindungen": [
+        "Anthropic Claude",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T09:40:25Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31687661187"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-59-oracle-auto-briefing.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 60,
+      "name": "Chef-Agent",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T20:29:13Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31741097261"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-60-chef-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 61,
+      "name": "Pricing-Agent",
+      "verbindungen": [
+        "Shopify",
+        "Telegram",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T08:04:55Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31680486504"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-61-pricing-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 62,
+      "name": "Risk-Guard-Agent",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "Telegram",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T07:01:37Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31778363646"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-62-risk-guard-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 63,
+      "name": "Reorder-Agent",
+      "verbindungen": [
+        "Shopify",
+        "E-Mail (Resend)",
+        "Telegram",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T08:55:09Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31684211298"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-63-reorder-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 64,
+      "name": "Ads-Autopilot-Agent",
+      "verbindungen": [
+        "Meta Ads",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T10:16:06Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31690331635"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-64-ads-autopilot-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 65,
+      "name": "Inventory-Guardian-Agent",
+      "verbindungen": [
+        "Shopify",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T07:04:32Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31778546614"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-65-inventory-guardian-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 66,
+      "name": "Treue-Punkte-Engine",
+      "verbindungen": [
+        "Shopify",
+        "E-Mail (Resend)",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T10:54:47Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31693191618"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-66-loyalty-punkte-engine.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 67,
+      "name": "Gift-Card-Kompensations-Agent",
+      "verbindungen": [
+        "Shopify",
+        "E-Mail (Resend)",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T11:39:32Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31696476797"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-67-giftcard-kompensations-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 68,
+      "name": "Sonderwunsch-Flagger",
+      "verbindungen": [
+        "Shopify",
+        "Telegram",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T05:46:02Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31774047562"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-68-sonderwunsch-flagger.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 69,
+      "name": "DSGVO-Anfragen-Wächter",
+      "verbindungen": [
+        "Anthropic Claude",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T06:03:58Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31775021248"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-69-dsgvo-anfragen-waechter.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 70,
+      "name": "Produkt-Launch-Hype-Agent",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T05:15:55Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31772454875"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-70-produkt-launch-hype-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 71,
+      "name": "Margen-Erosions-Wächter",
+      "verbindungen": [
+        "Shopify",
+        "Telegram",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T07:53:08Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31679636284"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-71-margen-erosions-waechter.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 72,
+      "name": "Broken-Link-Guardian",
+      "verbindungen": [
+        "Shopify",
+        "Telegram",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T06:06:28Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31775165678"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-72-broken-link-guardian.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 73,
+      "name": "Duplikat-Listing-Detektor",
+      "verbindungen": [
+        "Shopify",
+        "Telegram",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-10T09:49:17Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31376377398"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-73-duplikat-listing-detektor.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 74,
+      "name": "Refund-Concierge-Agent",
+      "verbindungen": [
+        "Shopify",
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T05:43:23Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31773903559"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-74-refund-concierge-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 75,
+      "name": "Übersetzungs-Entwurf-Agent",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-11T10:08:32Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31480884135"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-75-uebersetzungs-entwurf-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 76,
+      "name": "Nie-Gekauft-Konverter",
+      "verbindungen": [
+        "Shopify",
+        "Anthropic Claude",
+        "E-Mail (Resend)"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-12T11:10:30Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31590670467"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-76-nie-gekauft-konverter.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 77,
+      "name": "Agentic-Checkout-Readiness-Agent",
+      "verbindungen": [
+        "Shopify",
+        "Telegram",
+        "WhatsApp"
+      ],
+      "status": "fehler",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "failure",
+        "startedAt": "2026-08-09T10:05:10Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31307476490"
+      },
+      "sofortNoetig": "Letzter Lauf fehlgeschlagen - Action-Log ansehen.",
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-77-agentic-checkout-readiness-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 78,
+      "name": "PayPal-Beleg-Agent",
+      "verbindungen": [
+        "Shopify",
+        "Telegram",
+        "WhatsApp"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-13T08:00:53Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31680198054"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-78-paypal-beleg-agent.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 79,
+      "name": "Wrapped-Generator",
+      "verbindungen": [
+        "Telegram"
+      ],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-10T08:45:14Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31371467572"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-79-wrapped-generator.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 80,
+      "name": "Agenten-Status-Sammler",
+      "verbindungen": [],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": "2026-08-14T07:27:26Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31779992953"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-80-agenten-status-sammler.yml",
+      "verlauf": []
+    },
+    {
+      "nummer": 81,
+      "name": "Kosten-Cockpit",
+      "verbindungen": [],
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-08-14T03:02:23Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/31765563255"
+      },
+      "sofortNoetig": null,
+      "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-81-kosten-cockpit.yml",
+      "verlauf": []
+    }
+  ]
+}
