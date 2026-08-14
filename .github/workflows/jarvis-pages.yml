@@ -73,6 +73,7 @@ jobs:
           cp -r social-poster _site/social-poster
           cp -r empire _site/empire
           cp -r command _site/command
+          cp -r cockpit _site/cockpit
           mkdir -p _site/trading-bot-worker
           cp -r trading-bot-worker/lib _site/trading-bot-worker/lib
 
