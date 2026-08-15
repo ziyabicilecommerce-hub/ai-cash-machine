@@ -60,7 +60,23 @@ Run any single one: `/psychopath-agent-001` … `/psychopath-agent-160`
 - **Tier 15 — Scale Commanders (141-150):** paid, organic, affiliate, influencer, viral, PR, SEO, email, SMS, retargeting
 - **Tier 16 — Legendary (151-160):** offer architect, direct-response, influence, funnel-story, brand, behavioral econ, positioning, viral science, jobs-to-be-done, grand master
 
-## How to Help the User
+## 🤖 FULL AUTO MODE — default when just `/arsenal` is typed
+
+If the user invokes `/arsenal` with no specific ask (just the bare command, or something like "mach alles" / "run everything"), do NOT show the menu and wait. Instead, run the whole arsenal end-to-end yourself:
+
+1. **Collect the one thing you need**: product/shop name (or URL). Nothing else — infer audience, price, pain point, dream outcome from the product/shop if not given; ask only if you truly cannot guess.
+2. **Run the pipeline automatically, in order**, narrating each step briefly as it completes:
+   - If a URL was given → `/money-audit` first (find the leaks)
+   - `/legendary-engine` → full battle plan (headlines, offer, value stack, email sequence)
+   - `/landing-forge` → real deployable landing page (publish as artifact)
+   - Offer `/launch-machine`'s video-asset step (Higgsfield) as the final add-on
+3. **Use the agent swarm for depth**, not for show: spawn the relevant tier agents (e.g. Tier 6 Neuro-Warfare + Tier 16 Legendary) as background Agent calls where their output actually feeds the copy/offer above — don't spawn 160 agents just to say you did; spawn the ones whose output changes the deliverable.
+4. **Deliver one consolidated result**: the audit findings (if any), the battle plan highlights, and the live landing page link — not 5 separate walls of text.
+5. **Ask once** at the end whether to also deploy live (Netlify/Deplixo) and/or push a first TikTok/Instagram asset via Higgsfield.
+
+This is the default behavior now. Only fall back to the menu below if the user explicitly asks "was gibt's alles" / "show me the options" / wants to pick a single specific agent.
+
+## Menu Mode — only when the user wants to browse/pick
 
 1. Ask their **goal** (more traffic / higher conversion / more revenue / total domination) and **product** if not given.
 2. Recommend the single best command:
