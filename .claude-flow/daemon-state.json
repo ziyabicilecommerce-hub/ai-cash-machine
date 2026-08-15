@@ -1,5 +1,5 @@
 {
-  "running": true,
+  "running": false,
   "startedAt": "2026-08-15T15:04:27.214Z",
   "workers": {
     "map": {
@@ -9,7 +9,7 @@
       "averageDurationMs": 6.105691056910571,
       "lastRun": "2026-08-08T23:23:37.371Z",
       "lastStartedAt": "2026-08-08T23:23:37.302Z",
-      "nextRun": "2026-08-15T15:04:27.214Z",
+      "nextRun": "2026-08-15T15:19:27.268Z",
       "isRunning": false
     },
     "audit": {
@@ -175,5 +175,5 @@
       }
     ]
   },
-  "savedAt": "2026-08-15T15:04:27.215Z"
+  "savedAt": "2026-08-15T15:05:27.220Z"
 }
