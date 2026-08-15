@@ -1,0 +1,20 @@
+name: "81 · Insider-Buy-Radar"
+
+# Läuft werktags einmal täglich - SEC EDGAR ist eine öffentliche US-
+# Behörden-Datenquelle ohne IP-Sperren (anders als Binance/Kraken, siehe
+# #49/#50), läuft von GitHub Actions aus problemlos.
+on:
+  schedule:
+    - cron: '0 22 * * 1-5' # 22:00 UTC, Mo-Fr - nach US-Börsenschluss, wenn die meisten Form-4-Meldungen des Tages eingegangen sind
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/81-insider-buy-radar.mjs
+    secrets: inherit

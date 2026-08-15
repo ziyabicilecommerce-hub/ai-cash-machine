@@ -367,6 +367,30 @@ nur `workflow_dispatch`. Noch kein Cloudflare-Worker-Ersatz gebaut (im
 Gegensatz zum Trading-Bot); bei Bedarf gleiches Muster wie
 `trading-bot-worker/` nachbauen.
 
+**🕵️ Insider-Buy-Radar** (reiner Report, kein Handel - meldet per WhatsApp
+auffällige US-Insider-Aktienkäufe): scannt täglich SECs öffentlichen
+"Daily Index" auf neue Form-4-Meldungen (US-Börsenaufsicht, Firmen-Insider
+MÜSSEN dort melden, wenn sie eigene Aktien kaufen/verkaufen), filtert auf
+Formular-Code "P" (echte offene Markt-Käufe, keine Options-Ausübungen/
+Zuteilungen/Geschenke) und meldet, wenn entweder eine Einzelsumme über
+`INSIDER_MIN_KAUFWERT_USD` (Default `100000`) liegt, oder mindestens
+`INSIDER_MIN_INSIDER_ANZAHL` (Default `2`) verschiedene Insider derselben
+Firma am selben Tag gekauft haben ("Cluster-Kauf" - historisch das stärkere
+Signal). `INSIDER_ANZAHL_FILINGS_PRO_LAUF` (Default `1500`) begrenzt, wie
+viele Meldungen pro Lauf tief analysiert werden (Sicherheitsventil, ein
+normaler Handelstag hat ca. 800-1500 Form-4-Meldungen und wird komplett
+abgedeckt) - ein eventueller Rest wird beim nächsten Lauf nachgeholt statt
+übersprungen. Braucht **keinen** API-Key - SEC EDGAR ist komplett frei
+zugänglich, verlangt nur einen erkennbaren User-Agent (`OWNER_EMAIL`
+wird dafür automatisch mitgenutzt, falls gesetzt).
+
+**Wichtig, unmissverständlich:** reine Information, KEINE Kaufempfehlung -
+Insider-Käufe sind ein schwaches statistisches Signal, keine Garantie, und
+die Meldung selbst kommt mit 1-2 Werktagen SEC-Meldefrist, ist also nie
+Echtzeit-Information. Anders als Binance/Kraken blockiert SEC EDGAR
+GitHub-Actions-Runner nicht - läuft werktags automatisch per Cron
+(`22:00 UTC`, nach US-Börsenschluss).
+
 **Geschäfts-Schwellwerte / Rabattcodes** (alle mit funktionierenden Defaults,
 nur bei Bedarf überschreiben):
 `VIP_UMSATZ_SCHWELLE`, `VIP_BESTELLUNGEN_SCHWELLE`, `VIP_RABATT_CODE`,
@@ -635,6 +659,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 78 | 🧾 PayPal-Beleg-Agent | täglich 06:30 | erstellt für jede per PayPal bezahlte Bestellung einen druckbaren Zahlungs-/Liefernachweis (Kunde, Artikel, Tracking) für PayPal-Kontoprüfungen |
 | 79 | 🎉 Wrapped-Generator | montags 07:00 | baut aus den Finance-Cockpit-Daten einen wöchentlichen Shop-Rückblick im Story-Format (Umsatz, bester Tag, Top-Produkt, Wachstum) |
 | 80 | 🤖 Agenten-Status-Sammler | alle 6 Stunden | fragt den echten Live-Status aller anderen Automationen aus der GitHub Actions API ab, speist die "CASHMACHINE AGENTS"-Übersicht |
+| 81 | 🕵️ Insider-Buy-Radar | werktags 22:00 UTC | scannt SECs öffentliche Form-4-Meldungen (US-Insider-Käufe) auf auffällige Einzelkäufe oder Cluster-Käufe mehrerer Insider, meldet per WhatsApp - reiner Report, KEIN automatischer Handel, KEIN API-Key nötig (SEC EDGAR ist frei zugänglich) |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
