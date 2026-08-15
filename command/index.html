@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CASHMACHINE COMMAND</title>
-<meta name="description" content="Die eine End-App: Chef-Agent-Tagesansage, Analytics/KPI, Product Research, Ad Intelligence, Customer Support, Ketten und das komplette Automations-Cockpit — 7 Bereiche, eine Seite, echte Daten, nichts ausgelassen.">
+<meta name="description" content="Das eine System: Chef-Agent, Analytics, Product Research, Ad Intelligence, Support, Ketten, Cockpit, Recap, Belege, Social, Brand, Referral, Autopilot-Status und Zugriff auf jedes Tool — alles auf einer Seite, echte Daten, nichts ausgelassen.">
 <meta property="og:title" content="CASHMACHINE COMMAND">
-<meta property="og:description" content="7 Bereiche, eine Seite: Chef-Agent, Analytics, Product Research, Ad Intelligence, Support, Ketten, Cockpit.">
+<meta property="og:description" content="Alles auf einer Seite: die komplette CASHMACHINE-Suite als ein System.">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23030512%27/%3E%3Crect%20x%3D%2716%27%20y%3D%2716%27%20width%3D%2732%27%20height%3D%2732%27%20fill%3D%27none%27%20stroke%3D%27%233ef2a0%27%20stroke-width%3D%274%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%277%27%20fill%3D%27%233ef2a0%27/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -135,6 +135,40 @@
   .result-count { font-family:var(--mono); font-size:11px; color:var(--mut2); }
   .section-title-inline { font-family:'Orbitron',sans-serif; font-size:15px; margin:22px 0 12px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 
+  /* --- Recap/Belege/Social/Referral-Tabs --- */
+  .stat-hero { text-align:center; padding:8px 0 20px; }
+  .stat-hero-num { font-family:'Orbitron',sans-serif; font-size:42px; color:var(--green); text-shadow:0 0 20px rgba(62,242,160,.3); }
+  .stat-hero-label { font-family:var(--mono); font-size:11px; color:var(--mut2); letter-spacing:.1em; margin-top:4px; }
+  .growth-pill { display:inline-block; font-family:var(--mono); font-size:12px; padding:4px 12px; border-radius:20px; margin-top:10px; }
+  .growth-up { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
+  .growth-down { color:var(--red); background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.35); }
+
+  .beleg-row, .social-row, .ref-row { display:flex; justify-content:space-between; align-items:center; gap:12px;
+    background:var(--panel); border:1px solid var(--line2); padding:12px 16px; margin-bottom:8px; font-size:13px; flex-wrap:wrap; }
+  .beleg-row a { color:var(--txt); text-decoration:none; }
+  .beleg-row a:hover { color:var(--green); }
+  .platform-badge { font-family:var(--mono); font-size:10px; padding:2px 8px; border-radius:10px; margin-right:6px; }
+  .platform-ok { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
+  .platform-fail { color:var(--red); background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.35); }
+  .platform-off { color:var(--mut2); background:rgba(255,255,255,.04); border:1px solid var(--line2); }
+
+  /* --- Autopilot-Tab --- */
+  .autopilot-row { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; background:var(--panel);
+    border:1px solid var(--line2); padding:14px 18px; margin-bottom:10px; flex-wrap:wrap; }
+  .autopilot-name { font-family:var(--mono); font-size:12.5px; font-weight:700; }
+  .autopilot-desc { font-size:12.5px; color:var(--mut); margin-top:4px; max-width:520px; }
+  .autopilot-state { font-family:var(--mono); font-size:11px; padding:4px 11px; border-radius:20px; white-space:nowrap; }
+  .state-an { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
+  .state-aus { color:var(--mut2); background:rgba(255,255,255,.04); border:1px solid var(--line2); }
+
+  /* --- Tools/Launchpad-Tab --- */
+  .tool-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+  .tool-card { background:var(--panel); border:1px solid var(--line2); padding:16px 18px; text-decoration:none; color:var(--txt); display:block; transition:border-color .15s; }
+  .tool-card:hover { border-color:var(--green); }
+  .tool-emoji { font-size:20px; margin-bottom:8px; display:block; }
+  .tool-name { font-weight:700; font-size:14px; margin-bottom:4px; }
+  .tool-desc { font-size:12px; color:var(--mut); }
+
   footer { border-top:1px solid var(--line2); padding:30px 20px 50px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
   footer a { color:var(--green); text-decoration:none; margin:0 8px; }
 </style>
@@ -159,9 +193,9 @@
 </nav>
 
 <header class="hero">
-  <div class="kicker">DIE EINE END-APP</div>
+  <div class="kicker">DAS EINE SYSTEM</div>
   <h1>COMMAND</h1>
-  <p class="sub">7 Bereiche, eine Seite, alles drin: Chef-Agent-Tagesansage, Analytics/KPI, Product Research, Ad Intelligence, Customer Support, Ketten und das komplette Automations-Cockpit — jeweils echte Daten aus den zugehörigen Automationen, kein Fake.</p>
+  <p class="sub">Die komplette CASHMACHINE-Suite als EIN System auf EINER Seite: jede Kennzahl, jede Automation, jedes Werkzeug — echte Daten, nichts ausgelassen, auf Autopilot ausbaubar.</p>
 </header>
 
 <div class="tabs" id="tabs">
@@ -172,6 +206,13 @@
   <button class="tab-btn" data-tab="support">🎧 Support</button>
   <button class="tab-btn" data-tab="chains">🔗 Ketten</button>
   <button class="tab-btn" data-tab="cockpit">🛰️ Cockpit</button>
+  <button class="tab-btn" data-tab="brand">🧬 Brand</button>
+  <button class="tab-btn" data-tab="referral">👯 Referral</button>
+  <button class="tab-btn" data-tab="social">📮 Social</button>
+  <button class="tab-btn" data-tab="belege">🧾 Belege</button>
+  <button class="tab-btn" data-tab="recap">🎉 Recap</button>
+  <button class="tab-btn" data-tab="autopilot">🚀 Autopilot</button>
+  <button class="tab-btn" data-tab="tools">🧰 Alle Tools</button>
 </div>
 
 <section class="panel show" id="panel-ceo">
@@ -216,8 +257,50 @@
   <div id="cockpitContent"></div>
 </section>
 
+<section class="panel" id="panel-brand">
+  <div class="panel-title">Brand — Marken-DNA & neue Produkte</div>
+  <p class="panel-desc">Aus dem ECHTEN Sortiment abgeleitete Marken-DNA + markentreue neue Produktideen (Automation #83, wöchentlich).</p>
+  <div id="brandContent"></div>
+</section>
+
+<section class="panel" id="panel-referral">
+  <div class="panel-title">Referral — Freunde werben Freunde</div>
+  <p class="panel-desc">Persönliche Empfehlungscodes + automatische Dank-Rabatte für Kunden, die neue Käufer bringen (Automation #84, täglich).</p>
+  <div id="referralContent"></div>
+</section>
+
+<section class="panel" id="panel-social">
+  <div class="panel-title">Social — was wirklich live gepostet wurde</div>
+  <p class="panel-desc">Archiv des Multi-Plattform-Posters (#18) mit echtem Live-Status pro Plattform, nicht nur Entwurf.</p>
+  <div id="socialContent"></div>
+</section>
+
+<section class="panel" id="panel-belege">
+  <div class="panel-title">Belege — Zahlungs-/Liefernachweise</div>
+  <p class="panel-desc">Automatisch erstellte PayPal-Belege für Kontoprüfungen (Automation #78).</p>
+  <div id="belegeContent"></div>
+</section>
+
+<section class="panel" id="panel-recap">
+  <div class="panel-title">Recap — Wochen-Rückblick</div>
+  <p class="panel-desc">Der letzte "Spotify Wrapped"-Style Wochen-Rückblick (Automation #79, montags).</p>
+  <div id="recapContent"></div>
+</section>
+
+<section class="panel" id="panel-autopilot">
+  <div class="panel-title">Autopilot — was läuft von selbst?</div>
+  <p class="panel-desc">Jeder AUTO_*-Schalter der Suite an einer Stelle: was heute schon vollautomatisch passiert, was nur empfiehlt und bei "ja" umgestellt werden kann. Alles per GitHub-Secret gesteuert.</p>
+  <div id="autopilotContent"></div>
+</section>
+
+<section class="panel" id="panel-tools">
+  <div class="panel-title">Alle Tools</div>
+  <p class="panel-desc">Die restlichen Apps der Suite — interaktive Werkzeuge (Chat, Voice, Backtesting, Rechner), die als eigene Seite mehr Sinn ergeben als als Daten-Tab. Von hier aus ist jedes erreichbar.</p>
+  <div id="toolsContent"></div>
+</section>
+
 <footer>
-  <b>CASHMACHINE COMMAND</b> · Teil der CASHMACHINE AI Suite ·
+  <b>CASHMACHINE COMMAND</b> · das eine System der CASHMACHINE AI Suite ·
   <a href="../">Jarvis</a>·<a href="../mission-control/">Mission Control</a>·<a href="../empire/">Empire</a>
 </footer>
 
@@ -599,6 +682,191 @@
     renderCockpitTable();
   }
 
+  // --- Brand (Marken-DNA + markentreue Produkte, Automation #83) ---
+  function fitBadge(fit) {
+    const n = fit || 0;
+    const cls = n >= 8 ? 'status-ok' : n >= 5 ? 'status-nie-gelaufen' : 'status-fehler';
+    return `<span class="status-pill ${cls}" style="margin-left:8px;">Markenfit ${n}/10</span>`;
+  }
+
+  function renderBrand(data) {
+    const el = document.getElementById('brandContent');
+    if (!data || !data.markenDna || !(data.produkte || []).length) {
+      el.innerHTML = emptyHtml('🧬', 'Noch keine Marken-DNA', 'Erscheint, sobald Brand Scout (#83) zum ersten Mal gelaufen ist.');
+      return;
+    }
+    const dna = data.markenDna;
+    let html = `
+      <div class="card hero-card">
+        <div class="card-label">🧬 DEINE MARKEN-DNA</div>
+        <p><b>Kernkategorien:</b> ${dna.kernkategorien || '–'}</p>
+        <p><b>Preislage:</b> ${dna.preislage || '–'}</p>
+        <p><b>Zielgruppe:</b> ${dna.zielgruppe || '–'}</p>
+        <p><b>Stil:</b> ${dna.stil || '–'}</p>
+      </div>`;
+    const sortiert = [...data.produkte].sort((a, b) => (b.gesamtScore || 0) - (a.gesamtScore || 0));
+    html += sortiert.map((p) => `
+      <div class="prod-row">
+        <div class="prod-top"><span class="prod-name">${p.name}${fitBadge(p.markenfit)}</span><span class="prod-score">Score ${p.gesamtScore}/10</span></div>
+        <div class="prod-scores">Nachfrage ${p.nachfrage || 0} · Konkurrenz ${p.konkurrenz || 0} · Marge ${p.marge || 0} · Trend ${p.trend || 0} · Lieferzeit ${p.lieferzeit || 0} · Risiko ${p.risiko || 0}</div>
+        <div class="prod-begr">${p.begruendung || ''}</div>
+        ${p.warnung ? `<div class="prod-warn">⚠️ ${p.warnung}</div>` : ''}
+      </div>`).join('');
+    el.innerHTML = html;
+  }
+
+  // --- Referral (Freunde werben Freunde, Automation #84) ---
+  function renderReferral(data) {
+    const el = document.getElementById('referralContent');
+    if (!data || !data.gesamtCodesVergeben) {
+      el.innerHTML = emptyHtml('👯', 'Noch kein Empfehlungsprogramm aktiv', 'Erscheint, sobald Freunde-werben-Freunde (#84) zum ersten Mal gelaufen ist.');
+      return;
+    }
+    let html = `<div class="kpi-grid">
+      <div class="kpi-box"><div class="kpi-num">${data.gesamtCodesVergeben}</div><div class="kpi-label">CODES VERGEBEN</div></div>
+      <div class="kpi-box"><div class="kpi-num">${data.gesamtBelohnungen}</div><div class="kpi-label">EINGELÖST & BELOHNT</div></div>
+      <div class="kpi-box"><div class="kpi-num">${data.rabattFuerFreund}%</div><div class="kpi-label">RABATT FÜR FREUND</div></div>
+      <div class="kpi-box"><div class="kpi-num">${data.belohnungProzent}%</div><div class="kpi-label">DANK-RABATT FÜR WERBER</div></div>
+    </div>`;
+    const belohnungen = data.letzteBelohnungen || [];
+    if (belohnungen.length) {
+      html += '<div class="section-title-inline">Letzte Empfehlungen</div>';
+      html += belohnungen.map((b) => `
+        <div class="ref-row">
+          <span>Werber ${b.werberId} → geworben: ${b.geworbenerKunde}</span>
+          <span class="card-date" style="float:none">${fmtDatumKurz(b.datum)}</span>
+        </div>`).join('');
+    } else {
+      html += emptyHtml('✅', 'Noch keine Einlösung', 'Codes sind vergeben, aber noch hat kein neuer Kunde damit bestellt.');
+    }
+    el.innerHTML = html;
+  }
+
+  // --- Social (Multi-Plattform-Poster Live-Status, Automation #18) ---
+  function plattformBadge(name, ergebnis) {
+    if (!ergebnis || !ergebnis.aktiv) return `<span class="platform-badge platform-off">${name} aus</span>`;
+    if (ergebnis.gepostet) return `<span class="platform-badge platform-ok">${name} ✓</span>`;
+    return `<span class="platform-badge platform-fail">${name} ✗</span>`;
+  }
+
+  function renderSocial(data) {
+    const el = document.getElementById('socialContent');
+    const pakete = (data && data.pakete) || [];
+    if (!pakete.length) {
+      el.innerHTML = emptyHtml('📮', 'Noch keine Posting-Pakete', 'Erscheint, sobald der Multi-Plattform-Poster (#18) zum ersten Mal gelaufen ist.');
+      return;
+    }
+    el.innerHTML = pakete.slice(0, 20).map((p) => `
+      <div class="card">
+        <span class="card-date">${fmtDatumKurz(p.datum)}</span>
+        <div class="card-label">${p.thema || 'Tagesthema'}</div>
+        <p>${(p.topText || '').slice(0, 160)}${(p.topText || '').length > 160 ? '…' : ''}</p>
+        <div>${plattformBadge('Facebook', p.facebook)}${plattformBadge('Instagram', p.instagram)}</div>
+      </div>`).join('');
+  }
+
+  // --- Belege (PayPal-Zahlungsnachweise, Automation #78) ---
+  function renderBelege(data) {
+    const el = document.getElementById('belegeContent');
+    const belege = (data && data.belege) || [];
+    if (!belege.length) {
+      el.innerHTML = emptyHtml('🧾', 'Noch keine Belege', 'Erscheint, sobald der PayPal-Beleg-Agent (#78) zum ersten Mal gelaufen ist.');
+      return;
+    }
+    el.innerHTML = belege.slice(0, 30).map((b) => `
+      <div class="beleg-row">
+        <a href="${b.url}" target="_blank" rel="noopener">${b.orderName}</a>
+        <span>${b.betrag} ${b.waehrung} · ${b.versandstatus}</span>
+        <span class="card-date" style="float:none">${fmtDatumKurz(b.bestelltAm)}</span>
+      </div>`).join('');
+  }
+
+  // --- Recap (Wochen-Rückblick, Automation #79) ---
+  function renderRecap(data) {
+    const el = document.getElementById('recapContent');
+    if (!data || !data.generatedAt) {
+      el.innerHTML = emptyHtml('🎉', 'Noch kein Rückblick', 'Erscheint, sobald der Wrapped-Generator (#79) zum ersten Mal gelaufen ist (braucht mind. 2 Tage Finance-Cockpit-Historie).');
+      return;
+    }
+    const wachstumHtml = data.wachstumProzent === null || data.wachstumProzent === undefined ? '' :
+      `<span class="growth-pill ${data.wachstumProzent >= 0 ? 'growth-up' : 'growth-down'}">${data.wachstumProzent >= 0 ? '📈 +' : '📉 '}${data.wachstumProzent}% ggü. Vorwoche</span>`;
+    el.innerHTML = `
+      <div class="stat-hero">
+        <div class="stat-hero-num">${data.umsatz.toFixed(0)} ${data.waehrung}</div>
+        <div class="stat-hero-label">UMSATZ · ${fmtDatumKurz(data.zeitraumVon)} – ${fmtDatumKurz(data.zeitraumBis)}</div>
+        ${wachstumHtml}
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-box"><div class="kpi-num">${data.bestellungen}</div><div class="kpi-label">BESTELLUNGEN</div></div>
+        <div class="kpi-box"><div class="kpi-num">${data.nettoGewinn.toFixed(0)}</div><div class="kpi-label">NETTOGEWINN ${data.waehrung}</div></div>
+        <div class="kpi-box"><div class="kpi-num">${data.aov.toFixed(0)}</div><div class="kpi-label">Ø WARENKORB</div></div>
+      </div>
+      ${data.bestTag ? `<div class="card"><div class="card-label">BESTER TAG</div><p>${fmtDatumKurz(data.bestTag.datum)} — ${data.bestTag.umsatz.toFixed(2)} ${data.waehrung}</p></div>` : ''}
+      ${data.topProdukt ? `<div class="card"><div class="card-label">TOP-PRODUKT</div><p>${data.topProdukt.name} — ${data.topProdukt.menge}x verkauft</p></div>` : ''}
+      <p class="note">Stand: ${fmtDatum(data.generatedAt)}</p>`;
+  }
+
+  // --- Autopilot (alle AUTO_*-Schalter der Suite an einer Stelle) ---
+  const AUTOPILOT_SCHALTER = [
+    { name: 'AUTO_SKALIEREN', quelle: '#42 Meta-Ads-Auto-Skalierer', desc: 'Erhöht das Budget performanter Ad-Sets automatisch statt nur zu empfehlen.', standard: 'nein' },
+    { name: 'AUTO_PAUSE', quelle: '#43 Meta-Ads-Notbremse', desc: 'Pausiert schlecht laufende Ad-Sets automatisch.', standard: 'nein' },
+    { name: 'AUTO_STOP', quelle: '#43 Meta-Ads-Notbremse', desc: 'Stoppt komplett entgleiste Kampagnen automatisch.', standard: 'nein' },
+    { name: 'AUTO_POST_FACEBOOK', quelle: '#18 Multi-Plattform-Poster', desc: 'Postet den Tagesbeitrag wirklich auf Facebook statt nur Entwurf zu erstellen.', standard: 'nein' },
+    { name: 'AUTO_POST_INSTAGRAM', quelle: '#18 Multi-Plattform-Poster', desc: 'Postet Bild+Caption wirklich auf Instagram statt nur Entwurf zu erstellen.', standard: 'nein' },
+    { name: 'AUTO_PREISANPASSUNG', quelle: '#61 Pricing-Agent', desc: 'Ändert Verkaufspreise basierend auf Verkaufstempo wirklich, statt nur zu empfehlen.', standard: 'nein' },
+    { name: 'AUTO_BESTELLUNG_SENDEN', quelle: '#63 Reorder-Agent', desc: 'Schickt Nachbestell-Mails wirklich an den Lieferanten - löst auch #82 Zahlungs-Erinnerungen aus.', standard: 'nein' },
+    { name: 'AUTO_BUDGET_UMSCHICHTEN', quelle: '#64 Ads-Autopilot-Agent', desc: 'Verschiebt Ad-Budget zwischen Ad-Sets wirklich, statt nur zu empfehlen.', standard: 'nein' },
+    { name: 'AUTO_UEBERVERKAUF_STOPPEN', quelle: '#65 Inventory-Guardian-Agent', desc: 'Stoppt automatisch den Verkauf bei Bestand 0 - schützend/reversibel, daher als einziger Schalter standardmäßig AN.', standard: 'ja' },
+    { name: 'AUTO_GUTSCHEIN_SENDEN', quelle: '#67 Gift-Card-Kompensations-Agent', desc: 'Verschickt echte Gutscheine bei erkannten Service-Fehlern automatisch.', standard: 'nein' },
+    { name: 'AUTO_ERSTATTUNG_GENEHMIGEN', quelle: '#74 Refund-Concierge-Agent', desc: 'Genehmigt kleine Erstattungen automatisch (bis REFUND_MAX_BETRAG).', standard: 'nein' },
+  ];
+
+  function renderAutopilot(agentenAnzahl) {
+    const el = document.getElementById('autopilotContent');
+    const anAnzahl = AUTOPILOT_SCHALTER.filter((s) => s.standard === 'ja').length;
+    let html = `<div class="kpi-grid">
+      <div class="kpi-box"><div class="kpi-num">${AUTOPILOT_SCHALTER.length}</div><div class="kpi-label">AUTOPILOT-SCHALTER</div></div>
+      <div class="kpi-box"><div class="kpi-num">${anAnzahl}</div><div class="kpi-label">STANDARDMÄSSIG AN</div></div>
+      <div class="kpi-box"><div class="kpi-num">${AUTOPILOT_SCHALTER.length - anAnzahl}</div><div class="kpi-label">NUR EMPFEHLUNG BIS DU SIE ANSCHALTEST</div></div>
+    </div>`;
+    html += AUTOPILOT_SCHALTER.map((s) => `
+      <div class="autopilot-row">
+        <div>
+          <div class="autopilot-name">${s.name} <span style="color:var(--mut2);font-weight:400;">(${s.quelle})</span></div>
+          <div class="autopilot-desc">${s.desc}</div>
+        </div>
+        <span class="autopilot-state ${s.standard === 'ja' ? 'state-an' : 'state-aus'}">${s.standard === 'ja' ? '✅ Standard: AN' : '⏸️ Standard: AUS'}</span>
+      </div>`).join('');
+    html += `<p class="note">Jeder Schalter wird als GitHub-Secret gesetzt (Wert "ja" = an). Alle 11 auf "ja" = die Suite trifft und führt selbst Entscheidungen aus statt nur zu empfehlen - bewusst standardmäßig vorsichtig, damit du erst vertraust bevor du loslässt.</p>`;
+    el.innerHTML = html;
+  }
+
+  // --- Alle Tools (Launchpad zu den restlichen, echt interaktiven Apps) ---
+  const WEITERE_TOOLS = [
+    { emoji: '🧠', name: 'Jarvis', desc: 'Voice-HUD-Assistent, zentrale Steuerung der Suite.', href: '../' },
+    { emoji: '🗡️', name: 'Brand Assassin', desc: 'Product Research, Creative Analyzer, Markt-Intelligence.', href: '../brand-assassin/' },
+    { emoji: '💬', name: 'Pulse', desc: 'Chat über dein Business, gespeist mit echten Zahlen.', href: '../pulse/' },
+    { emoji: '🎯', name: 'Closer', desc: 'KI-Verkaufstrainer — pitche gegen einen simulierten Kunden.', href: '../closer/' },
+    { emoji: '🔮', name: 'Oracle', desc: 'Tägliches AI-Briefing im Lagebericht-Stil.', href: '../oracle/' },
+    { emoji: '🎛️', name: 'Forecast', desc: 'Was-wäre-wenn-Gewinn-Simulator mit zwei Reglern.', href: '../forecast/' },
+    { emoji: '📈', name: 'Trading Dashboard', desc: 'Live-Übersicht über den Krypto-Trading-Bot.', href: '../trading-dashboard/' },
+    { emoji: '🧪', name: 'Strategy Lab', desc: 'Backtesting-Labor mit echten Binance-Kursdaten.', href: '../strategy-lab/' },
+    { emoji: '🧮', name: 'Preis-Kalkulator', desc: 'Errechnet den richtigen Verkaufspreis aus allen Kosten.', href: '../pricing/' },
+    { emoji: '✅', name: 'Setup', desc: 'Geführte Checkliste für die einmalige Einrichtung.', href: '../setup/' },
+    { emoji: '🛰️', name: 'Mission Control', desc: 'Live-Radar: welches Secret schaltet die meisten Automationen frei.', href: '../mission-control/' },
+    { emoji: '🤖', name: 'Agents', desc: 'Live-Status aller KI-Agenten, direkt aus GitHub Actions.', href: '../agents/' },
+    { emoji: '🌐', name: 'Empire', desc: 'Die komplette App-Übersicht der Suite.', href: '../empire/' },
+  ];
+
+  function renderTools() {
+    document.getElementById('toolsContent').innerHTML = `<div class="tool-grid">${WEITERE_TOOLS.map((t) => `
+      <a class="tool-card" href="${t.href}">
+        <span class="tool-emoji">${t.emoji}</span>
+        <div class="tool-name">${t.name}</div>
+        <div class="tool-desc">${t.desc}</div>
+      </a>`).join('')}</div>`;
+  }
+
   function ladeJson(pfad) {
     return fetch(pfad, { cache: 'no-store' }).then((res) => (res.ok ? res.json() : null)).catch(() => null);
   }
@@ -610,14 +878,26 @@
     ladeJson('./ad-commander.json'),
     ladeJson('./chains.json'),
     ladeJson('../cockpit/data.json'),
-  ]).then(([ceo, analytics, product, ads, chains, cockpit]) => {
+    ladeJson('../brand-scout/data.json'),
+    ladeJson('./referral.json'),
+    ladeJson('../social-poster/manifest.json'),
+    ladeJson('../paypal-belege/manifest.json'),
+    ladeJson('../wrapped/data.json'),
+  ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap]) => {
     renderCeo(ceo);
     renderAnalytics(analytics, ads);
     renderProduct(product);
     renderAds(ads);
     renderChains(chains);
     renderCockpit(cockpit);
+    renderBrand(brand);
+    renderReferral(referral);
+    renderSocial(social);
+    renderBelege(belege);
+    renderRecap(recap);
   });
+  renderAutopilot();
+  renderTools();
   ladeSupport();
 
   document.getElementById('tabs').addEventListener('click', (e) => {

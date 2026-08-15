@@ -8,6 +8,9 @@
 // Unterscheidet sich von #66 (belohnt EIGENEN Umsatz eines Kunden): hier
 // zählt nur, ob ein ANDERER, neuer Kunde über den Code bestellt hat -
 // Selbst-Einlösung durch den Werber wird beim Belohnen ausgefiltert.
+import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { config, isTestMode } from './lib/config.mjs';
 import { getCustomers, getOrdersSince, createDiscountCode } from './lib/shopify.mjs';
 import { sendEmail } from './lib/email.mjs';
@@ -19,7 +22,10 @@ const STATE_KEY = '84-freunde-werben-freunde';
 const LOOKBACK_TAGE = 45;
 const MAX_NEUE_CODES_PRO_LAUF = 20;
 const MAX_HISTORIE = 5000;
+const MAX_BELOHNUNGS_HISTORIE = 50;
 const CODE_PREFIX = 'FREUND';
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const COMMAND_DIR = join(__dirname, '..', 'command');
 
 function generiereReferralCode(customerId) {
   return `${CODE_PREFIX}-${customerId}`;
@@ -38,6 +44,7 @@ async function main() {
   const state = loadState(STATE_KEY);
   state.codeProKunde = state.codeProKunde || {};
   state.belohnteBestellungen = state.belohnteBestellungen || [];
+  state.belohnungsHistorie = state.belohnungsHistorie || [];
   const bereitsBelohnt = new Set(state.belohnteBestellungen);
 
   // TEIL 1 - persönliche Empfehlungscodes an Kunden vergeben, die noch
@@ -134,10 +141,25 @@ async function main() {
 
       belohnungenAusgestellt++;
       belohnungsZeilen.push(`- Werber ${werberId} (${werberEmail}) → Code ${code} (${belohnungProzent}%), geworben: ${o.email}`);
+      state.belohnungsHistorie.unshift({ datum: new Date().toISOString(), werberId, code, belohnungProzent, geworbenerKunde: o.email });
+      if (state.belohnungsHistorie.length > MAX_BELOHNUNGS_HISTORIE) {
+        state.belohnungsHistorie = state.belohnungsHistorie.slice(0, MAX_BELOHNUNGS_HISTORIE);
+      }
+      saveState(STATE_KEY, state);
     } catch (err) {
       console.error(`[84-freunde-werben-freunde] Fehler bei Belohnung für Werber ${werberId}:`, err.message || err);
     }
   }
+
+  if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
+  writeFileSync(join(COMMAND_DIR, 'referral.json'), JSON.stringify({
+    updatedAt: new Date().toISOString(),
+    gesamtCodesVergeben: Object.keys(state.codeProKunde).length,
+    gesamtBelohnungen: state.belohnungsHistorie.length,
+    rabattFuerFreund,
+    belohnungProzent,
+    letzteBelohnungen: state.belohnungsHistorie,
+  }, null, 2));
 
   const text = [
     `👯 Freunde-werben-Freunde - ${config.SHOP_NAME}`,
