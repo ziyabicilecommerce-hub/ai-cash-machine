@@ -161,6 +161,25 @@
   .state-an { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
   .state-aus { color:var(--mut2); background:rgba(255,255,255,.04); border:1px solid var(--line2); }
 
+  /* --- System-Health-Badge (Hero) --- */
+  .health-badge { display:inline-flex; align-items:center; gap:10px; margin-top:18px; padding:10px 22px;
+    background:var(--panel); border:1px solid var(--line); font-family:var(--mono); }
+  .health-ring { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; flex-shrink:0; }
+  .health-ring.h-good { background:conic-gradient(var(--green) calc(var(--pct) * 1%), rgba(255,255,255,.08) 0); color:var(--green); }
+  .health-ring.h-warn { background:conic-gradient(var(--amber) calc(var(--pct) * 1%), rgba(255,255,255,.08) 0); color:var(--amber); }
+  .health-ring.h-bad { background:conic-gradient(var(--red) calc(var(--pct) * 1%), rgba(255,255,255,.08) 0); color:var(--red); }
+  .health-ring::before { content:''; position:absolute; }
+  .health-text { text-align:left; font-size:12px; color:var(--mut); }
+  .health-text b { color:var(--txt); font-size:13px; }
+
+  /* --- Activity-Feed-Tab --- */
+  .activity-row { display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--line2); }
+  .activity-icon { font-size:16px; flex-shrink:0; width:24px; text-align:center; }
+  .activity-body { flex:1; font-size:13px; color:var(--txt); }
+  .activity-src { font-family:var(--mono); font-size:10px; color:var(--mut2); margin-top:2px; }
+  .activity-time { font-family:var(--mono); font-size:11px; color:var(--mut2); white-space:nowrap; }
+
   /* --- Tools/Launchpad-Tab --- */
   .tool-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
   .tool-card { background:var(--panel); border:1px solid var(--line2); padding:16px 18px; text-decoration:none; color:var(--txt); display:block; transition:border-color .15s; }
@@ -196,10 +215,12 @@
   <div class="kicker">DAS EINE SYSTEM</div>
   <h1>COMMAND</h1>
   <p class="sub">Die komplette CASHMACHINE-Suite als EIN System auf EINER Seite: jede Kennzahl, jede Automation, jedes Werkzeug — echte Daten, nichts ausgelassen, auf Autopilot ausbaubar.</p>
+  <div id="healthBadgeWrap"></div>
 </header>
 
 <div class="tabs" id="tabs">
   <button class="tab-btn active" data-tab="ceo">👔 CEO</button>
+  <button class="tab-btn" data-tab="activity">📡 Activity</button>
   <button class="tab-btn" data-tab="analytics">📊 Analytics</button>
   <button class="tab-btn" data-tab="product">🔎 Product Research</button>
   <button class="tab-btn" data-tab="ads">📈 Ad Intelligence</button>
@@ -219,6 +240,12 @@
   <div class="panel-title">Chef-Agent — Tagesansage</div>
   <p class="panel-desc">Fasst Finanzen, Fulfillment und Kundenstamm zu EINER Prioritäts-Entscheidung zusammen (Automation #60, täglich abends) — und löst bei überfälligen Bestellungen bzw. inaktiven VIPs automatisch die passende Automation sofort aus, statt nur zu empfehlen.</p>
   <div id="ceoContent"></div>
+</section>
+
+<section class="panel" id="panel-activity">
+  <div class="panel-title">Activity — der Puls des ganzen Systems</div>
+  <p class="panel-desc">Alles, was gerade wirklich passiert ist, chronologisch aus allen Bereichen zusammengeführt: ausgelöste Ketten, Empfehlungs-Einlösungen, veröffentlichte Posts, neue Produktideen, Chef-Agent-Prioritäten — EIN Feed statt sieben Tabs einzeln durchklicken.</p>
+  <div id="activityContent"></div>
 </section>
 
 <section class="panel" id="panel-analytics">
@@ -479,6 +506,7 @@
       renderSupport(alle);
       const kpiTruthEl = document.getElementById('kpiTruthSupport');
       if (kpiTruthEl) kpiTruthEl.textContent = alle.length;
+      renderHealthBadge(letzterCockpitStand, alle.length);
     } catch (err) {
       document.getElementById('supportContent').innerHTML = emptyHtml('🎧', 'Live-Abfrage fehlgeschlagen', 'GitHub-API gerade nicht erreichbar - später nochmal versuchen.');
       const kpiTruthEl = document.getElementById('kpiTruthSupport');
@@ -867,38 +895,116 @@
       </a>`).join('')}</div>`;
   }
 
+  // --- System-Health-Score (Hero-Badge) ---
+  // Bewusst EIN kombinierter Wert, aber transparent nachvollziehbar (kein
+  // Blackbox-Score) - gewichtet Automations-Gesundheit am stärksten (80%),
+  // da das der objektivste, messbare Teil ist; Eskalationen ziehen leicht ab.
+  function renderHealthBadge(cockpit, eskalationenAnzahl) {
+    if (!cockpit) return; // Cockpit-Daten noch nicht geladen - laufenden Badge-Stand nicht mit leer überschreiben
+    const wrap = document.getElementById('healthBadgeWrap');
+    const automationen = cockpit.automationen || [];
+    if (!automationen.length) { wrap.innerHTML = ''; return; }
+
+    const okAnzahl = automationen.filter((a) => a.status === 'ok').length;
+    const automationsPct = (okAnzahl / automationen.length) * 100;
+    const eskalationenAbzug = Math.min((eskalationenAnzahl || 0) * 2, 20);
+    const score = Math.max(0, Math.round(automationsPct * 0.8 + (100 - eskalationenAbzug) * 0.2));
+
+    const klasse = score >= 80 ? 'h-good' : score >= 50 ? 'h-warn' : 'h-bad';
+    wrap.innerHTML = `
+      <div class="health-badge">
+        <div class="health-ring ${klasse}" style="--pct:${score};position:relative;">
+          <span style="position:relative;z-index:1;background:var(--bg);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;">${score}</span>
+        </div>
+        <div class="health-text">SYSTEM-HEALTH<br><b>${okAnzahl}/${automationen.length} Automationen ok</b> · ${eskalationenAnzahl || 0} offene Eskalation${eskalationenAnzahl === 1 ? '' : 'en'}</div>
+      </div>`;
+  }
+
+  // --- Activity-Feed (alles chronologisch zusammengeführt) ---
+  function renderActivity(chains, referral, social, ceo, brand, product) {
+    const el = document.getElementById('activityContent');
+    const ereignisse = [];
+
+    for (const e of (chains && chains.log) || []) {
+      ereignisse.push({ datum: e.datum, icon: e.ausgeloest ? '🔗' : '⚠️', text: `${e.von} → ${e.nach} — ${e.grund}`, quelle: 'Ketten' });
+    }
+    for (const b of (referral && referral.letzteBelohnungen) || []) {
+      ereignisse.push({ datum: b.datum, icon: '👯', text: `Empfehlung eingelöst: ${b.geworbenerKunde} (Werber ${b.werberId})`, quelle: 'Referral' });
+    }
+    for (const p of (social && social.pakete) || []) {
+      const plattformen = [p.facebook?.gepostet && 'Facebook', p.instagram?.gepostet && 'Instagram'].filter(Boolean);
+      if (plattformen.length) ereignisse.push({ datum: p.datum, icon: '📮', text: `Post veröffentlicht auf ${plattformen.join(' + ')}: "${p.thema}"`, quelle: 'Social' });
+    }
+    const letzteCeo = (ceo && ceo.historie && ceo.historie[0]) || null;
+    if (letzteCeo) ereignisse.push({ datum: letzteCeo.datum, icon: '👔', text: letzteCeo.allesGut ? 'Alles im grünen Bereich' : letzteCeo.prioritaet, quelle: 'Chef-Agent' });
+    for (const p of ((brand && brand.produkte) || []).slice(0, 10)) {
+      if (p.gefundenAm) ereignisse.push({ datum: p.gefundenAm, icon: '🧬', text: `Neue markentreue Produktidee: ${p.name}`, quelle: 'Brand Scout' });
+    }
+    for (const p of ((product && product.produkte) || []).slice(0, 10)) {
+      if (p.gefundenAm) ereignisse.push({ datum: p.gefundenAm, icon: '🔎', text: `Neue Produktidee: ${p.name}`, quelle: 'Product Hunter' });
+    }
+
+    ereignisse.sort((a, b) => new Date(b.datum) - new Date(a.datum));
+
+    if (!ereignisse.length) {
+      el.innerHTML = emptyHtml('📡', 'Noch keine Aktivität', 'Erscheint, sobald die ersten Automationen gelaufen sind.');
+      return;
+    }
+    el.innerHTML = ereignisse.slice(0, 40).map((e) => `
+      <div class="activity-row">
+        <span class="activity-icon">${e.icon}</span>
+        <div class="activity-body">${e.text}<div class="activity-src">${e.quelle}</div></div>
+        <span class="activity-time">${fmtDatumKurz(e.datum)}</span>
+      </div>`).join('');
+  }
+
   function ladeJson(pfad) {
     return fetch(pfad, { cache: 'no-store' }).then((res) => (res.ok ? res.json() : null)).catch(() => null);
   }
 
-  Promise.all([
-    ladeJson('./chef-agent.json'),
-    ladeJson('../finance-cockpit/data.json'),
-    ladeJson('./product-hunter.json'),
-    ladeJson('./ad-commander.json'),
-    ladeJson('./chains.json'),
-    ladeJson('../cockpit/data.json'),
-    ladeJson('../brand-scout/data.json'),
-    ladeJson('./referral.json'),
-    ladeJson('../social-poster/manifest.json'),
-    ladeJson('../paypal-belege/manifest.json'),
-    ladeJson('../wrapped/data.json'),
-  ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap]) => {
-    renderCeo(ceo);
-    renderAnalytics(analytics, ads);
-    renderProduct(product);
-    renderAds(ads);
-    renderChains(chains);
-    renderCockpit(cockpit);
-    renderBrand(brand);
-    renderReferral(referral);
-    renderSocial(social);
-    renderBelege(belege);
-    renderRecap(recap);
-  });
+  let letzterCockpitStand = null;
+
+  // Lädt alle Datenquellen neu und rendert alle Tabs - einmal beim Laden und
+  // danach alle 60s, damit sich die Seite wie ein echtes Live-System anfühlt
+  // statt dass man manuell neu laden muss.
+  function ladeAlles() {
+    Promise.all([
+      ladeJson('./chef-agent.json'),
+      ladeJson('../finance-cockpit/data.json'),
+      ladeJson('./product-hunter.json'),
+      ladeJson('./ad-commander.json'),
+      ladeJson('./chains.json'),
+      ladeJson('../cockpit/data.json'),
+      ladeJson('../brand-scout/data.json'),
+      ladeJson('./referral.json'),
+      ladeJson('../social-poster/manifest.json'),
+      ladeJson('../paypal-belege/manifest.json'),
+      ladeJson('../wrapped/data.json'),
+    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap]) => {
+      renderCeo(ceo);
+      renderAnalytics(analytics, ads);
+      renderProduct(product);
+      renderAds(ads);
+      renderChains(chains);
+      renderCockpit(cockpit);
+      renderBrand(brand);
+      renderReferral(referral);
+      renderSocial(social);
+      renderBelege(belege);
+      renderRecap(recap);
+      renderActivity(chains, referral, social, ceo, brand, product);
+      letzterCockpitStand = cockpit;
+      const eskalationenEl = document.getElementById('kpiTruthSupport');
+      const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
+      renderHealthBadge(cockpit, eskalationenAnzahl);
+    });
+  }
+
+  ladeAlles();
   renderAutopilot();
   renderTools();
   ladeSupport();
+  setInterval(() => { ladeAlles(); ladeSupport(); }, 60000);
 
   document.getElementById('tabs').addEventListener('click', (e) => {
     const btn = e.target.closest('.tab-btn');
