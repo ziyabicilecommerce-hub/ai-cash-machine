@@ -195,6 +195,12 @@ export const config = {
   LOYALTY_SCHWELLE_PUNKTE: process.env.LOYALTY_SCHWELLE_PUNKTE || '100',
   LOYALTY_BELOHNUNG_PROZENT: process.env.LOYALTY_BELOHNUNG_PROZENT || '15',
 
+  // Freunde-werben-Freunde (Empfehlungsprogramm, echte Shopify-Rabattcodes
+  // auf beiden Seiten - für den geworbenen Freund UND als Dank für den Werber)
+  REFERRAL_RABATT_PROZENT: process.env.REFERRAL_RABATT_PROZENT || '10',
+  REFERRAL_BELOHNUNG_PROZENT: process.env.REFERRAL_BELOHNUNG_PROZENT || '15',
+  REFERRAL_CODE_MAX_EINLOESUNGEN: process.env.REFERRAL_CODE_MAX_EINLOESUNGEN || '20',
+
   // Gift-Card-Kompensations-Agent (echte Gutscheine bei echten Service-Fehlern)
   AUTO_GUTSCHEIN_SENDEN: process.env.AUTO_GUTSCHEIN_SENDEN || 'nein',
   GIFTCARD_KOMPENSATION_WERT: process.env.GIFTCARD_KOMPENSATION_WERT || '10',
