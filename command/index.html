@@ -180,6 +180,23 @@
   .activity-src { font-family:var(--mono); font-size:10px; color:var(--mut2); margin-top:2px; }
   .activity-time { font-family:var(--mono); font-size:11px; color:var(--mut2); white-space:nowrap; }
 
+  /* --- System-Map-Tab --- */
+  .map-wrap { position:relative; background:var(--panel); border:1px solid var(--line); overflow:hidden; }
+  .map-svg { width:100%; height:auto; display:block; }
+  .map-node { cursor:pointer; }
+  .map-node circle.dot { transition:r .15s; }
+  .map-node:hover circle.dot { r:7; }
+  .map-node text { font-family:var(--mono); font-size:5px; fill:var(--mut2); pointer-events:none; }
+  .map-center-ring { fill:none; stroke:var(--line); stroke-width:.4; }
+  .map-center-label { font-family:'Orbitron',sans-serif; font-size:5.5px; fill:var(--green); text-anchor:middle; letter-spacing:.05em; }
+  .map-chain-line { fill:none; stroke:var(--green); stroke-width:.6; opacity:.55; stroke-dasharray:2 2; animation:mapflow 1.2s linear infinite; }
+  @keyframes mapflow { to { stroke-dashoffset:-4; } }
+  .map-legend { display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; font-family:var(--mono); font-size:11px; color:var(--mut2); }
+  .map-legend span { display:inline-flex; align-items:center; gap:6px; }
+  .map-legend i { width:9px; height:9px; border-radius:50%; display:inline-block; }
+  #mapTooltip { position:absolute; pointer-events:none; background:var(--panel-solid); border:1px solid var(--line);
+    padding:6px 10px; font-family:var(--mono); font-size:11px; color:var(--txt); white-space:nowrap; opacity:0; transition:opacity .1s; z-index:5; }
+
   /* --- Tools/Launchpad-Tab --- */
   .tool-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
   .tool-card { background:var(--panel); border:1px solid var(--line2); padding:16px 18px; text-decoration:none; color:var(--txt); display:block; transition:border-color .15s; }
@@ -221,6 +238,7 @@
 <div class="tabs" id="tabs">
   <button class="tab-btn active" data-tab="ceo">👔 CEO</button>
   <button class="tab-btn" data-tab="activity">📡 Activity</button>
+  <button class="tab-btn" data-tab="map">🧠 System-Map</button>
   <button class="tab-btn" data-tab="analytics">📊 Analytics</button>
   <button class="tab-btn" data-tab="product">🔎 Product Research</button>
   <button class="tab-btn" data-tab="ads">📈 Ad Intelligence</button>
@@ -246,6 +264,12 @@
   <div class="panel-title">Activity — der Puls des ganzen Systems</div>
   <p class="panel-desc">Alles, was gerade wirklich passiert ist, chronologisch aus allen Bereichen zusammengeführt: ausgelöste Ketten, Empfehlungs-Einlösungen, veröffentlichte Posts, neue Produktideen, Chef-Agent-Prioritäten — EIN Feed statt sieben Tabs einzeln durchklicken.</p>
   <div id="activityContent"></div>
+</section>
+
+<section class="panel" id="panel-map">
+  <div class="panel-title">System-Map — die ganze Maschine als Bild</div>
+  <p class="panel-desc">Jede Automation als Punkt, echter Status als Farbe (grün=ok, rot=Fehler, gelb=nie gelaufen), die Ketten als pulsierende Linien dazwischen — dein komplettes System auf einen Blick, live aus #80/#81/Ketten.</p>
+  <div id="mapContent"></div>
 </section>
 
 <section class="panel" id="panel-analytics">
@@ -958,6 +982,83 @@
       </div>`).join('');
   }
 
+  // --- System-Map (radiale Live-Visualisierung aller Automationen + Ketten) ---
+  function mapStatusColor(status) {
+    if (status === 'fehler') return '#ff6b81';
+    if (status === 'nie-gelaufen') return '#ffc55c';
+    return '#3ef2a0';
+  }
+
+  function renderMap(cockpit, chains) {
+    const el = document.getElementById('mapContent');
+    const automationen = (cockpit && cockpit.automationen) || [];
+    if (!automationen.length) {
+      el.innerHTML = emptyHtml('🧠', 'Noch keine Karte', 'Erscheint, sobald der Agenten-Status-Sammler (#80) einmal gelaufen ist.');
+      return;
+    }
+
+    const W = 400, H = 400, CX = 200, CY = 200, R = 165;
+    const positionen = {};
+    automationen.forEach((a, i) => {
+      const winkel = (i / automationen.length) * Math.PI * 2 - Math.PI / 2;
+      positionen[`${a.nummer} · ${a.name}`] = {
+        x: CX + R * Math.cos(winkel),
+        y: CY + R * Math.sin(winkel),
+        a,
+      };
+    });
+
+    let svg = `<svg class="map-svg" viewBox="0 0 ${W} ${H}" id="mapSvg">`;
+    svg += `<circle class="map-center-ring" cx="${CX}" cy="${CY}" r="${R}"/>`;
+    svg += `<circle class="map-center-ring" cx="${CX}" cy="${CY}" r="34" fill="rgba(62,242,160,.06)"/>`;
+    svg += `<text class="map-center-label" x="${CX}" y="${CY - 2}">CASH</text><text class="map-center-label" x="${CX}" y="${CY + 6}">MACHINE</text>`;
+
+    // Ketten als pulsierende Linien zwischen den beteiligten Knoten
+    for (const def of (chains && chains.definitionen) || []) {
+      const von = positionen[def.von];
+      const nach = positionen[def.nach];
+      if (!von || !nach) continue;
+      const mx = (von.x + nach.x) / 2 + (CY - (von.y + nach.y) / 2) * 0.15;
+      const my = (von.y + nach.y) / 2 + ((von.x + nach.x) / 2 - CX) * -0.15;
+      svg += `<path class="map-chain-line" d="M${von.x.toFixed(1)},${von.y.toFixed(1)} Q${mx.toFixed(1)},${my.toFixed(1)} ${nach.x.toFixed(1)},${nach.y.toFixed(1)}"/>`;
+    }
+
+    for (const [key, pos] of Object.entries(positionen)) {
+      const farbe = mapStatusColor(pos.a.status);
+      svg += `<g class="map-node" data-name="${pos.a.name}" data-nummer="${pos.a.nummer}" data-status="${pos.a.status}" transform="translate(${pos.x.toFixed(1)},${pos.y.toFixed(1)})">
+        <circle class="dot" r="4.2" fill="${farbe}" stroke="var(--bg)" stroke-width="1"/>
+      </g>`;
+    }
+    svg += '</svg>';
+
+    el.innerHTML = `
+      <div class="map-wrap">
+        ${svg}
+        <div id="mapTooltip"></div>
+      </div>
+      <div class="map-legend">
+        <span><i style="background:#3ef2a0"></i>OK (${automationen.filter((a) => a.status === 'ok').length})</span>
+        <span><i style="background:#ffc55c"></i>Nie gelaufen (${automationen.filter((a) => a.status === 'nie-gelaufen').length})</span>
+        <span><i style="background:#ff6b81"></i>Fehler (${automationen.filter((a) => a.status === 'fehler').length})</span>
+        <span style="color:var(--green)">┄┄ ${((chains && chains.definitionen) || []).length} aktive Kette(n)</span>
+      </div>
+      <p class="note">${automationen.length} Automationen im Kreis um den Kern - jeder Punkt ist eine echte Automation, jede gestrichelte Linie eine Kette (#20/#60 lösen andere Module direkt aus). Antippen/Hovern zeigt den Namen.</p>`;
+
+    const tooltip = document.getElementById('mapTooltip');
+    document.querySelectorAll('#mapSvg .map-node').forEach((node) => {
+      const zeigeTooltip = (evt) => {
+        tooltip.textContent = `#${node.dataset.nummer} ${node.dataset.name} — ${node.dataset.status}`;
+        tooltip.style.opacity = '1';
+        const rect = document.getElementById('mapContent').getBoundingClientRect();
+        tooltip.style.left = `${evt.clientX - rect.left + 12}px`;
+        tooltip.style.top = `${evt.clientY - rect.top + 12}px`;
+      };
+      node.addEventListener('mousemove', zeigeTooltip);
+      node.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+      node.addEventListener('click', zeigeTooltip);
+    });
+  }
+
   function ladeJson(pfad) {
     return fetch(pfad, { cache: 'no-store' }).then((res) => (res.ok ? res.json() : null)).catch(() => null);
   }
@@ -993,6 +1094,7 @@
       renderBelege(belege);
       renderRecap(recap);
       renderActivity(chains, referral, social, ceo, brand, product);
+      renderMap(cockpit, chains);
       letzterCockpitStand = cockpit;
       const eskalationenEl = document.getElementById('kpiTruthSupport');
       const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
