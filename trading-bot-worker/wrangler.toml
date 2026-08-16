@@ -47,6 +47,13 @@ TRADING_VOLA_SIZING_MIN_FAKTOR = "0.25"
 TRADING_COINGECKO_FILTER = "ja"
 TRADING_COINGECKO_MIN_24H_PROZENT = "0"
 
+# Fear & Greed Index-Filter (kein API-Key nötig, öffentliche API): verwirft
+# ein Kaufsignal, wenn der Gesamtmarkt laut Index "Extreme Greed" zeigt
+# (Wert >= 80) - Kontra-Signal gegen Euphorie-Käufe. Markweiter Wert, gilt
+# für alle Coins gleich, nur einmal pro Lauf abgefragt.
+TRADING_FNG_FILTER = "ja"
+TRADING_FNG_MAX_WERT = "80"
+
 # Drei Strategien zur Wahl (Default "ema-crossover" = unverändertes Verhalten):
 # "bollinger-mean-reversion": kauft, wenn der Kurs unter das untere
 # Bollinger-Band fällt (überverkauft), verkauft beim Rücksprung zum

@@ -252,6 +252,26 @@ async function ladeCoingecko24hChange(symbol) {
   }
 }
 
+// ================= FEAR & GREED INDEX (optionaler markweiter Kauf-Filter) =================
+// Anders als der CoinGecko-Filter (pro Coin, 24h-Kursänderung) ist das ein
+// EIN EINZIGER Wert für den GESAMTEN Kryptomarkt (0=Extreme Fear,
+// 100=Extreme Greed) - deshalb nur einmal pro Lauf abgefragt, nicht pro
+// Symbol. Passend zur bollinger-mean-reversion-Strategie (kauft gezielt
+// Dips): blockiert NICHT bei Angst (das ist genau die Marktlage, in der
+// die Strategie kaufen soll), sondern bei "Extreme Greed" - klassisches
+// Kontra-Signal gegen Euphorie-Käufe kurz vor einem möglichen Top.
+async function ladeFearGreedIndex() {
+  try {
+    const res = await fetch('https://api.alternative.me/fng/?limit=1');
+    if (!res.ok) return null;
+    const data = await res.json();
+    const wert = data && data.data && data.data[0] && parseInt(data.data[0].value, 10);
+    return Number.isFinite(wert) ? wert : null;
+  } catch {
+    return null; // Ausfall darf den Bot nie blockieren, nur den Filter deaktivieren
+  }
+}
+
 // ================= WHATSAPP =================
 
 async function notifyWhatsapp(env, text) {
@@ -319,7 +339,7 @@ async function zaehleOffenePositionen(env, symbols, startKapitalProSymbol) {
 
 // ================= HANDELSLOGIK =================
 
-async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf) {
+async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, fearGreedWert) {
   const exchange = EXCHANGES[cfg.exchange];
   let state = await loadState(env, symbol, startKapital);
 
@@ -351,6 +371,12 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
   if (!state.position) {
     const positionenPlatzFrei = offenePositionenVorLauf < cfg.maxGleichzeitigePositionen;
     const kauf = entscheideKauf({ kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute });
+
+    if (kauf && cfg.fngFilter && fearGreedWert !== null && fearGreedWert >= cfg.fngMaxWert) {
+      await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - Fear & Greed Index bei ${fearGreedWert} (Extreme Greed ab ${cfg.fngMaxWert}), Markt wirkt überhitzt.`);
+      await saveState(env, symbol, state);
+      return;
+    }
 
     if (kauf && cfg.coingeckoFilter) {
       const change24hProzent = await ladeCoingecko24hChange(symbol);
@@ -496,16 +522,22 @@ function readConfig(env) {
     // Default AUS, damit ein bereits laufendes Setup nicht ungefragt anders handelt.
     coingeckoFilter: (env.TRADING_COINGECKO_FILTER || 'nein') === 'ja',
     coingeckoMin24hProzent: parseFloat(env.TRADING_COINGECKO_MIN_24H_PROZENT || '0'),
+    fngFilter: (env.TRADING_FNG_FILTER || 'nein') === 'ja',
+    fngMaxWert: parseFloat(env.TRADING_FNG_MAX_WERT || '80'),
   };
 }
 
 async function runAll(env) {
   const cfg = readConfig(env);
   let offenePositionen = await zaehleOffenePositionen(env, cfg.symbols, cfg.startKapitalProSymbol);
+  // Nur EINMAL pro Lauf abgefragt (marktweiter Wert, gilt für alle Symbole
+  // gleich) statt pro Symbol - spart Anfragen und ist konsistent für alle
+  // Coins in diesem Lauf.
+  const fearGreedWert = cfg.fngFilter ? await ladeFearGreedIndex() : null;
   for (const symbol of cfg.symbols) {
     try {
       const hatteVorherPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
-      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfg, offenePositionen);
+      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfg, offenePositionen, fearGreedWert);
       const hatJetztPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
       if (!hatteVorherPosition && hatJetztPosition) offenePositionen++;
       if (hatteVorherPosition && !hatJetztPosition) offenePositionen--;
