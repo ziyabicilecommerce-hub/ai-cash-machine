@@ -239,6 +239,20 @@ zeigt diese Daten live an: Worker-URL + `STATUS_READ_KEY` einmal übers ⚙
 Symbol eintragen (bleibt nur im eigenen Browser, localStorage), danach
 Auto-Refresh alle 30 Sekunden.
 
+## Live-Setup-Checkliste (rein informativ, bewegt nie Geld)
+
+Die App `trading-live-setup/` (im Hauptrepo, live unter
+`https://ziyabicilecommerce-hub.github.io/ai-cash-machine/trading-live-setup/`,
+verlinkt vom Trading-Dashboard) zeigt Schritt für Schritt, was für den
+Umstieg von Paper- auf Live-Trading nötig ist: Kraken-Konto anlegen,
+einzahlen, API-Key mit **nur Spot-Trading-Rechten** (nie Auszahlung)
+erstellen, als Cloudflare-Secret setzen, `TRADING_PAPER_MODE` umstellen.
+Zeigt oben den aktuellen Bot-Modus (liest denselben `/status`-Endpoint wie
+das Dashboard). **Wichtig:** Ein-/Auszahlungen und die API-Key-Erstellung
+laufen ausschließlich auf Krakens eigener Seite — diese App verarbeitet
+selbst nirgends Geld oder Zahlungsdaten, sie verlinkt nur dorthin und
+erklärt die Reihenfolge.
+
 ## Einmaliges Setup
 
 1. **Cloudflare-Account** (kostenlos) + [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/).
