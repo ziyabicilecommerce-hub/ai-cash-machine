@@ -565,6 +565,7 @@
       const kpiTruthEl = document.getElementById('kpiTruthSupport');
       if (kpiTruthEl) kpiTruthEl.textContent = alle.length;
       renderHealthBadge(letzterCockpitStand, alle.length);
+      updateAppBadge(alle.length);
     } catch (err) {
       document.getElementById('supportContent').innerHTML = emptyHtml('🎧', 'Live-Abfrage fehlgeschlagen', 'GitHub-API gerade nicht erreichbar - später nochmal versuchen.');
       const kpiTruthEl = document.getElementById('kpiTruthSupport');
@@ -1236,6 +1237,16 @@
       cmdkSchliessen();
     }
   });
+
+  // App-Icon-Badge: offene Eskalationen als echte Zahl auf dem installierten
+  // App-Icon (Badging API) - nur unterstützt, wenn Command als PWA läuft.
+  function updateAppBadge(anzahl) {
+    if (!('setAppBadge' in navigator)) return;
+    try {
+      if (anzahl > 0) navigator.setAppBadge(anzahl).catch(() => {});
+      else navigator.clearAppBadge().catch(() => {});
+    } catch (err) { /* Badging API in diesem Browser nicht verfügbar */ }
+  }
 
   // PWA: Service Worker registrieren + "Als App installieren"-Button nur
   // zeigen, wenn der Browser das (per beforeinstallprompt) auch anbietet.
