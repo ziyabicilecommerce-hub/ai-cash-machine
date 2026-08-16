@@ -507,10 +507,14 @@
   function renderBreakdown(latestDay) {
     const box = document.getElementById('breakdownBox');
     const cur = latestDay.waehrung;
-    const produktkosten = Math.max(0, latestDay.umsatz - latestDay.retouren - latestDay.werbekosten - latestDay.gewinn);
-    // Gebühren/Steuer-Anteil gibt's erst seit der Profit-&-Tax-Erweiterung -
-    // bei älteren History-Einträgen (vor dem Update) fallen sie einfach weg,
-    // statt "undefined" anzuzeigen.
+    // Seit der Versand/Produktkosten-Erweiterung stehen beide Posten direkt
+    // im Snapshot - bei älteren History-Einträgen (vor dem Update) wird
+    // Produktkosten wie bisher grob rückgerechnet, Versand fällt weg statt
+    // "undefined" anzuzeigen.
+    const hatEchteProduktkosten = latestDay.produktkosten !== undefined;
+    const produktkosten = hatEchteProduktkosten ? latestDay.produktkosten
+      : Math.max(0, latestDay.umsatz - latestDay.retouren - latestDay.werbekosten - latestDay.gewinn);
+    const versandkosten = latestDay.versandkosten || 0;
     const gebuehren = latestDay.gebuehren || 0;
     const steuerAnteil = latestDay.steuerAnteil || 0;
     const hatErweiterteDaten = latestDay.nettoGewinn !== undefined;
@@ -520,8 +524,9 @@
       { label: 'Umsatz (brutto)', value: latestDay.umsatz, cls: 'plus' },
       { label: '− Retouren', value: -latestDay.retouren, cls: 'minus' },
       { label: '− Werbekosten', value: -latestDay.werbekosten, cls: 'minus' },
-      { label: '− Produktkosten (geschätzt)', value: -produktkosten, cls: 'minus' },
+      { label: hatEchteProduktkosten ? '− Produktkosten' : '− Produktkosten (geschätzt)', value: -produktkosten, cls: 'minus' },
     ];
+    if (versandkosten > 0) rows.push({ label: '− Versand', value: -versandkosten, cls: 'minus' });
     if (hatErweiterteDaten) {
       rows.push({ label: '− Zahlungsgebühren (geschätzt)', value: -gebuehren, cls: 'minus' });
       rows.push({ label: '− Umsatzsteuer-Anteil (geschätzt)', value: -steuerAnteil, cls: 'minus' });
@@ -540,6 +545,7 @@
       { v: latestDay.retouren, color: 'var(--red)' },
       { v: latestDay.werbekosten, color: 'var(--cyan)' },
       { v: produktkosten, color: 'var(--amber)' },
+      { v: versandkosten, color: '#c084fc' },
       { v: gebuehren, color: 'var(--mut2)' },
       { v: steuerAnteil, color: 'var(--mut)' },
     ];
