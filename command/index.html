@@ -207,6 +207,24 @@
 
   footer { border-top:1px solid var(--line2); padding:30px 20px 50px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
   footer a { color:var(--green); text-decoration:none; margin:0 8px; }
+
+  /* --- Command-Palette (⌘K) --- */
+  .cmdk-btn { font-family:var(--mono); font-size:12px; color:var(--mut); background:none; border:1px solid var(--line2);
+    padding:6px 12px; cursor:pointer; display:flex; align-items:center; gap:8px; }
+  .cmdk-btn:hover { border-color:var(--green); color:var(--green); }
+  .cmdk-btn kbd { font-family:var(--mono); font-size:10px; padding:1px 5px; border:1px solid var(--line2); border-radius:3px; color:var(--mut2); }
+  .cmdk-overlay { position:fixed; inset:0; z-index:200; background:rgba(3,5,18,.75); backdrop-filter:blur(4px);
+    display:none; align-items:flex-start; justify-content:center; padding-top:min(14vh,120px); }
+  .cmdk-overlay.show { display:flex; }
+  .cmdk-box { width:min(560px,90vw); background:var(--panel-solid); border:1px solid var(--line); box-shadow:0 20px 60px rgba(0,0,0,.5); max-height:70vh; display:flex; flex-direction:column; }
+  .cmdk-input { width:100%; background:none; border:none; border-bottom:1px solid var(--line2); color:var(--txt);
+    font-family:var(--mono); font-size:15px; padding:16px 18px; outline:none; }
+  .cmdk-list { overflow-y:auto; padding:6px; }
+  .cmdk-item { display:flex; align-items:center; gap:12px; padding:10px 12px; cursor:pointer; font-size:13.5px; color:var(--txt); }
+  .cmdk-item .cmdk-emoji { font-size:16px; width:22px; text-align:center; }
+  .cmdk-item .cmdk-sub { font-family:var(--mono); font-size:10.5px; color:var(--mut2); margin-left:auto; }
+  .cmdk-item.active { background:rgba(62,242,160,.1); }
+  .cmdk-empty { padding:20px; text-align:center; color:var(--mut2); font-size:13px; }
 </style>
 </head>
 <body>
@@ -222,11 +240,19 @@
 <nav>
   <div class="logo">CASHMACHINE<b>&nbsp;COMMAND</b></div>
   <div class="nav-links">
+    <button class="cmdk-btn" id="cmdkOpenBtn">🔎 Springe zu… <kbd>⌘K</kbd></button>
     <a href="../">Jarvis</a>
     <a href="../mission-control/">Mission Control</a>
     <a href="../empire/">Empire</a>
   </div>
 </nav>
+
+<div class="cmdk-overlay" id="cmdkOverlay">
+  <div class="cmdk-box">
+    <input class="cmdk-input" id="cmdkInput" type="text" placeholder="Tab oder Tool suchen… (z.B. Cockpit, Pulse, Autopilot)">
+    <div class="cmdk-list" id="cmdkList"></div>
+  </div>
+</div>
 
 <header class="hero">
   <div class="kicker">DAS EINE SYSTEM</div>
@@ -1108,13 +1134,99 @@
   ladeSupport();
   setInterval(() => { ladeAlles(); ladeSupport(); }, 60000);
 
-  document.getElementById('tabs').addEventListener('click', (e) => {
-    const btn = e.target.closest('.tab-btn');
-    if (!btn) return;
+  function switchTab(tabId) {
+    const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    const panel = document.getElementById(`panel-${tabId}`);
+    if (!btn || !panel) return;
     document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
     document.querySelectorAll('.panel').forEach((p) => p.classList.remove('show'));
     btn.classList.add('active');
-    document.getElementById(`panel-${btn.dataset.tab}`).classList.add('show');
+    panel.classList.add('show');
+    btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }
+
+  document.getElementById('tabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    switchTab(btn.dataset.tab);
+  });
+
+  // --- Command-Palette (⌘K) - schneller Sprung zu jedem Tab + jedem externen Tool ---
+  const CMDK_EINTRAEGE = [
+    ...Array.from(document.querySelectorAll('.tab-btn')).map((btn) => {
+      const text = btn.textContent.trim();
+      const emoji = text.split(' ')[0];
+      const label = text.slice(emoji.length).trim();
+      return { emoji, label, typ: 'tab', tab: btn.dataset.tab };
+    }),
+    ...WEITERE_TOOLS.map((t) => ({ emoji: t.emoji, label: t.name, typ: 'link', href: t.href, sub: t.desc })),
+  ];
+
+  let cmdkAktiverIndex = 0;
+  let cmdkGefiltert = CMDK_EINTRAEGE;
+
+  function cmdkRender() {
+    const list = document.getElementById('cmdkList');
+    if (!cmdkGefiltert.length) {
+      list.innerHTML = '<div class="cmdk-empty">Keine Treffer.</div>';
+      return;
+    }
+    list.innerHTML = cmdkGefiltert.map((e, i) => `
+      <div class="cmdk-item ${i === cmdkAktiverIndex ? 'active' : ''}" data-index="${i}">
+        <span class="cmdk-emoji">${e.emoji}</span>
+        <span>${e.label}</span>
+        <span class="cmdk-sub">${e.typ === 'tab' ? 'Tab' : 'externes Tool'}</span>
+      </div>`).join('');
+  }
+
+  function cmdkAusfuehren(eintrag) {
+    if (!eintrag) return;
+    if (eintrag.typ === 'tab') switchTab(eintrag.tab);
+    else window.location.href = eintrag.href;
+    cmdkSchliessen();
+  }
+
+  function cmdkOeffnen() {
+    document.getElementById('cmdkOverlay').classList.add('show');
+    const input = document.getElementById('cmdkInput');
+    input.value = '';
+    cmdkGefiltert = CMDK_EINTRAEGE;
+    cmdkAktiverIndex = 0;
+    cmdkRender();
+    input.focus();
+  }
+
+  function cmdkSchliessen() {
+    document.getElementById('cmdkOverlay').classList.remove('show');
+  }
+
+  document.getElementById('cmdkOpenBtn').addEventListener('click', cmdkOeffnen);
+  document.getElementById('cmdkOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'cmdkOverlay') cmdkSchliessen();
+  });
+  document.getElementById('cmdkInput').addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    cmdkGefiltert = q ? CMDK_EINTRAEGE.filter((x) => x.label.toLowerCase().includes(q)) : CMDK_EINTRAEGE;
+    cmdkAktiverIndex = 0;
+    cmdkRender();
+  });
+  document.getElementById('cmdkList').addEventListener('click', (e) => {
+    const item = e.target.closest('.cmdk-item');
+    if (item) cmdkAusfuehren(cmdkGefiltert[parseInt(item.dataset.index, 10)]);
+  });
+  document.getElementById('cmdkInput').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); cmdkAktiverIndex = Math.min(cmdkAktiverIndex + 1, cmdkGefiltert.length - 1); cmdkRender(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); cmdkAktiverIndex = Math.max(cmdkAktiverIndex - 1, 0); cmdkRender(); }
+    else if (e.key === 'Enter') { e.preventDefault(); cmdkAusfuehren(cmdkGefiltert[cmdkAktiverIndex]); }
+    else if (e.key === 'Escape') cmdkSchliessen();
+  });
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      cmdkOeffnen();
+    } else if (e.key === 'Escape') {
+      cmdkSchliessen();
+    }
   });
 </script>
 </body>
