@@ -55,8 +55,20 @@
   .nav-links a:hover { color:var(--green); }
   @media(max-width:820px){ .nav-links a { display:none; } }
 
+  /* --- Live-Ticker-Band (unter der Nav, immer sichtbar) --- */
+  .ticker-tape { position:fixed; top:57px; left:0; right:0; z-index:45; height:26px; overflow:hidden;
+    background:rgba(3,5,18,.92); border-bottom:1px solid var(--line2); }
+  .ticker-track { display:flex; width:max-content; gap:36px; white-space:nowrap; padding:0 18px;
+    animation:tickerScroll 38s linear infinite; align-items:center; height:26px; }
+  .ticker-track span.ticker-item { font-family:var(--mono); font-size:11px; color:var(--mut); display:inline-flex; align-items:center; gap:6px; }
+  .ticker-track span.ticker-item b { color:var(--green); font-weight:600; }
+  @keyframes tickerScroll { to { transform:translateX(-50%); } }
+  @media (prefers-reduced-motion:reduce) { .ticker-track { animation:none; } }
+
   header.hero { position:relative; min-height:26svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:110px 20px 16px; max-width:820px; margin:0 auto; }
+    text-align:center; padding:136px 20px 16px; max-width:820px; margin:0 auto; }
+  .hero-spotlight { position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:radial-gradient(360px circle at var(--mx,50%) var(--my,15%), rgba(111,224,255,.10), transparent 68%); }
   header.hero::before { content:''; position:absolute; top:52%; left:50%; width:560px; height:560px; max-width:140vw;
     transform:translate(-50%,-58%); background:radial-gradient(circle,rgba(62,242,160,.15),transparent 65%);
     pointer-events:none; z-index:-1; animation:coreGlow 5s ease-in-out infinite; }
@@ -83,7 +95,7 @@
   @media (prefers-reduced-motion:reduce) { h1 { animation:none; } }
   .sub { font-size:13.5px; color:var(--mut); max-width:580px; }
 
-  .tabs { position:sticky; top:57px; z-index:40; display:flex; gap:6px; overflow-x:auto; padding:12px 20px;
+  .tabs { position:sticky; top:83px; z-index:40; display:flex; gap:6px; overflow-x:auto; padding:12px 20px;
     background:rgba(3,5,18,.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--line2); }
   .tab-btn { flex-shrink:0; font-family:var(--mono); font-size:12px; padding:8px 16px; background:none; border-radius:22px;
     border:1px solid var(--line2); color:var(--mut); cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,box-shadow .15s,transform .1s,background .15s; }
@@ -309,6 +321,8 @@
   </div>
 </nav>
 
+<div class="ticker-tape"><div class="ticker-track" id="tickerTrack"></div></div>
+
 <div class="cmdk-overlay" id="cmdkOverlay">
   <div class="cmdk-box">
     <input class="cmdk-input" id="cmdkInput" type="text" placeholder="Tab oder Tool suchen… (z.B. Cockpit, Pulse, Autopilot)">
@@ -316,7 +330,8 @@
   </div>
 </div>
 
-<header class="hero">
+<header class="hero" id="heroEl">
+  <div class="hero-spotlight"></div>
   <div class="kicker">DAS EINE SYSTEM</div>
   <h1>COMMAND</h1>
   <p class="sub">Die komplette CASHMACHINE-Suite als EIN System auf EINER Seite: jede Kennzahl, jede Automation, jedes Werkzeug — echte Daten, nichts ausgelassen, auf Autopilot ausbaubar.</p>
@@ -1042,17 +1057,68 @@
     wrap.innerHTML = `
       <div class="health-badge">
         <div class="health-ring ${klasse}" style="--pct:${score};position:relative;">
-          <span style="position:relative;z-index:1;background:var(--bg);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;">${score}</span>
+          <span id="healthRingNum" style="position:relative;z-index:1;background:var(--bg);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;">0</span>
         </div>
         <div class="health-text">SYSTEM-HEALTH<br><b>${okAnzahl}/${automationen.length} Automationen ok</b> · ${eskalationenAnzahl || 0} offene Eskalation${eskalationenAnzahl === 1 ? '' : 'en'}</div>
       </div>
       <div class="hero-ticker">
         <div class="hero-ticker-item"><div class="hero-ticker-num">${okAnzahl}/${automationen.length}</div><div class="hero-ticker-label">AUTOMATIONEN OK</div></div>
-        <div class="hero-ticker-item"><div class="hero-ticker-num" style="${eskFarbe}">${eskalationenAnzahl || 0}</div><div class="hero-ticker-label">ESKALATIONEN</div></div>
-        <div class="hero-ticker-item"><div class="hero-ticker-num" style="color:var(--cyan);text-shadow:0 0 12px rgba(111,224,255,.4);">${kettenHeute}</div><div class="hero-ticker-label">KETTEN HEUTE</div></div>
-        <div class="hero-ticker-item"><div class="hero-ticker-num">${score}</div><div class="hero-ticker-label">HEALTH-SCORE</div></div>
+        <div class="hero-ticker-item"><div class="hero-ticker-num" id="tickerEsk" style="${eskFarbe}">0</div><div class="hero-ticker-label">ESKALATIONEN</div></div>
+        <div class="hero-ticker-item"><div class="hero-ticker-num" id="tickerKetten" style="color:var(--cyan);text-shadow:0 0 12px rgba(111,224,255,.4);">0</div><div class="hero-ticker-label">KETTEN HEUTE</div></div>
+        <div class="hero-ticker-item"><div class="hero-ticker-num" id="tickerScore">0</div><div class="hero-ticker-label">HEALTH-SCORE</div></div>
       </div>`;
+
+    animateCount(document.getElementById('healthRingNum'), score);
+    animateCount(document.getElementById('tickerEsk'), eskalationenAnzahl || 0);
+    animateCount(document.getElementById('tickerKetten'), kettenHeute);
+    animateCount(document.getElementById('tickerScore'), score);
   }
+
+  // Zahlen zählen sanft von ihrem aktuellen Stand zum neuen Wert hoch, statt
+  // beim 60s-Refresh einfach zu springen - fühlt sich "lebendig" an.
+  function animateCount(el, target, duration = 700) {
+    if (!el) return;
+    const start = parseInt(el.textContent, 10) || 0;
+    if (start === target) { el.textContent = target; return; }
+    const t0 = performance.now();
+    (function tick(now) {
+      const p = Math.min((now - t0) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(start + (target - start) * eased);
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  // --- Live-Ticker-Band (Nachrichten-Streifen unter der Nav) ---
+  const TICKER_FUELLTEXTE = [
+    '⚡ CASHMACHINE COMMAND — alle Systeme auf Autopilot ausbaubar',
+    '🛰️ 84 Automationen laufen im Hintergrund über GitHub Actions',
+    '🧠 Chef-Agent fasst täglich Finanzen, Fulfillment und Kundenstamm zusammen',
+    '🔒 Alle Daten bleiben in deinem eigenen GitHub-Repo',
+  ];
+  function renderTickerTape(chains) {
+    const track = document.getElementById('tickerTrack');
+    if (!track) return;
+    const kettenItems = ((chains && chains.log) || []).slice(0, 8).map((e) =>
+      `${e.ausgeloest ? '🔗' : '⚠️'} <b>${e.von}</b> → <b>${e.nach}</b> — ${e.grund}`);
+    const items = kettenItems.length ? kettenItems : TICKER_FUELLTEXTE;
+    // Content wird verdoppelt + Animation läuft exakt bis -50%, damit die
+    // Schleife nahtlos wirkt (kein sichtbarer Sprung am Ende).
+    while (items.length < 6) items.push(...TICKER_FUELLTEXTE);
+    const html = items.map((t) => `<span class="ticker-item">${t}</span>`).join('');
+    track.innerHTML = html + html;
+  }
+
+  // --- Maus-Spotlight im Hero ---
+  (function initHeroSpotlight() {
+    const hero = document.getElementById('heroEl');
+    if (!hero || window.matchMedia('(pointer:coarse)').matches) return;
+    hero.addEventListener('mousemove', (e) => {
+      const rect = hero.getBoundingClientRect();
+      hero.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`);
+      hero.style.setProperty('--my', `${((e.clientY - rect.top) / rect.height) * 100}%`);
+    });
+  })();
 
   // --- Activity-Feed (alles chronologisch zusammengeführt) ---
   function renderActivity(chains, referral, social, ceo, brand, product) {
@@ -1208,6 +1274,7 @@
       renderRecap(recap);
       renderActivity(chains, referral, social, ceo, brand, product);
       renderMap(cockpit, chains);
+      renderTickerTape(chains);
       letzterCockpitStand = cockpit;
       letzteChains = chains;
       const eskalationenEl = document.getElementById('kpiTruthSupport');
