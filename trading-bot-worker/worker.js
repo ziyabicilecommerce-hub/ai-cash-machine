@@ -221,6 +221,37 @@ const krakenAdapter = {
 
 const EXCHANGES = { binance: binanceAdapter, kraken: krakenAdapter };
 
+// ================= COINGECKO (optionaler Kauf-Filter, kein Key nötig) =================
+// Zusätzliche, unabhängige Bestätigung vor einem Kauf: CoinGecko nutzt einen
+// eigenen Datenfeed/Berechnung (nicht dieselbe Quelle wie die Exchange-Klines),
+// verwirft ein Kaufsignal, wenn der Coin laut CoinGecko in den letzten 24h
+// bereits im Minus steht - reduziert das Risiko, in einen fallenden Markt
+// hinein zu kaufen, nur weil die Strategie auf Kraken-Daten allein ein Signal sieht.
+const COINGECKO_IDS = {
+  XBTUSDT: 'bitcoin',
+  ETHUSDT: 'ethereum',
+  SOLUSDT: 'solana',
+  XRPUSDT: 'ripple',
+  ADAUSDT: 'cardano',
+  DOGEUSDT: 'dogecoin',
+  DOTUSDT: 'polkadot',
+  LTCUSDT: 'litecoin',
+};
+
+async function ladeCoingecko24hChange(symbol) {
+  const id = COINGECKO_IDS[symbol];
+  if (!id) return null; // kein Mapping für dieses Symbol - Filter wird nicht angewendet
+  try {
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd&include_24hr_change=true`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const change = data && data[id] && data[id].usd_24h_change;
+    return typeof change === 'number' ? change : null;
+  } catch {
+    return null; // CoinGecko-Ausfall darf den Bot nie blockieren, nur den Filter deaktivieren
+  }
+}
+
 // ================= WHATSAPP =================
 
 async function notifyWhatsapp(env, text) {
@@ -320,6 +351,18 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
   if (!state.position) {
     const positionenPlatzFrei = offenePositionenVorLauf < cfg.maxGleichzeitigePositionen;
     const kauf = entscheideKauf({ kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute });
+
+    if (kauf && cfg.coingeckoFilter) {
+      const change24hProzent = await ladeCoingecko24hChange(symbol);
+      // null = kein CoinGecko-Mapping für dieses Symbol oder Abruf fehlgeschlagen -
+      // Filter dann NICHT blockierend, sonst würde eine CoinGecko-Störung den Bot
+      // lahmlegen, obwohl die eigentliche Strategie ein gültiges Signal hat.
+      if (change24hProzent !== null && change24hProzent < cfg.coingeckoMin24hProzent) {
+        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - CoinGecko-24h-Änderung ${change24hProzent.toFixed(2)}% liegt unter dem Filter-Minimum (${cfg.coingeckoMin24hProzent}%).`);
+        await saveState(env, symbol, state);
+        return;
+      }
+    }
 
     if (kauf) {
       const { investBetrag } = kauf;
@@ -450,6 +493,9 @@ function readConfig(env) {
     maxGleichzeitigePositionen: env.TRADING_MAX_GLEICHZEITIGE_POSITIONEN
       ? parseInt(env.TRADING_MAX_GLEICHZEITIGE_POSITIONEN, 10)
       : symbols.length,
+    // Default AUS, damit ein bereits laufendes Setup nicht ungefragt anders handelt.
+    coingeckoFilter: (env.TRADING_COINGECKO_FILTER || 'nein') === 'ja',
+    coingeckoMin24hProzent: parseFloat(env.TRADING_COINGECKO_MIN_24H_PROZENT || '0'),
   };
 }
 

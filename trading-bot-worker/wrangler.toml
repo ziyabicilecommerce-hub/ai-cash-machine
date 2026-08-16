@@ -18,9 +18,9 @@ id = "055d3b2d0a514437aec11e888e81c242"
 # Nicht-geheime Konfiguration - kann hier direkt stehen (kein Secret).
 [vars]
 TRADING_EXCHANGE = "kraken"
-TRADING_SYMBOLS = "XBTUSDT,ETHUSDT,SOLUSDT,XRPUSDT"
+TRADING_SYMBOLS = "XBTUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,DOGEUSDT,DOTUSDT,LTCUSDT"
 TRADING_PAPER_MODE = "ja"
-TRADING_KAPITAL_USDT = "50"
+TRADING_KAPITAL_USDT = "100"
 TRADING_MAX_POSITION_PROZENT = "25"
 TRADING_MAX_TAGESVERLUST_PROZENT = "5"
 TRADING_MAX_GESAMTVERLUST_PROZENT = "20"
@@ -40,6 +40,12 @@ TRADING_VOLA_SIZING_REFERENZ_PROZENT = "2"
 TRADING_VOLA_SIZING_MIN_FAKTOR = "0.25"
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # TRADING_MAX_GLEICHZEITIGE_POSITIONEN = "2"
+
+# CoinGecko-Kauf-Filter (kein API-Key nötig, öffentliche API): verwirft ein
+# Kaufsignal, wenn der Coin laut CoinGecko in den letzten 24h im Minus steht -
+# unabhängige Zweitbestätigung neben den Kraken-Kursdaten.
+TRADING_COINGECKO_FILTER = "ja"
+TRADING_COINGECKO_MIN_24H_PROZENT = "0"
 
 # Drei Strategien zur Wahl (Default "ema-crossover" = unverändertes Verhalten):
 # "bollinger-mean-reversion": kauft, wenn der Kurs unter das untere
