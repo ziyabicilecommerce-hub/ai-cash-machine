@@ -41,6 +41,7 @@ function readConfig(strategieOverride) {
     maxTagesverlustProzent: parseFloat(env.TRADING_MAX_TAGESVERLUST_PROZENT || '5'),
     maxGesamtverlustProzent: parseFloat(env.TRADING_MAX_GESAMTVERLUST_PROZENT || '20'),
     stopLossProzent: parseFloat(env.TRADING_STOP_LOSS_PROZENT || '3'),
+    takeProfitProzent: parseFloat(env.TRADING_TAKE_PROFIT_PROZENT || '0'),
     emaSchnell: parseInt(env.TRADING_EMA_SCHNELL || '9', 10),
     emaLangsam: parseInt(env.TRADING_EMA_LANGSAM || '21', 10),
     rsiPeriode: parseInt(env.TRADING_RSI_PERIODE || '14', 10),

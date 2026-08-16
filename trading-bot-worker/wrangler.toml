@@ -25,6 +25,7 @@ TRADING_MAX_POSITION_PROZENT = "25"
 TRADING_MAX_TAGESVERLUST_PROZENT = "5"
 TRADING_MAX_GESAMTVERLUST_PROZENT = "20"
 TRADING_STOP_LOSS_PROZENT = "3"
+TRADING_TAKE_PROFIT_PROZENT = "5"
 TRADING_EMA_SCHNELL = "9"
 TRADING_EMA_LANGSAM = "21"
 
@@ -53,6 +54,13 @@ TRADING_COINGECKO_MIN_24H_PROZENT = "0"
 # für alle Coins gleich, nur einmal pro Lauf abgefragt.
 TRADING_FNG_FILTER = "ja"
 TRADING_FNG_MAX_WERT = "80"
+
+# Mehrfach-Zeitrahmen-Bestätigung: verwirft ein Kaufsignal, wenn der
+# übergeordnete Trend (Default 4h = 240 Minuten, EMA9 vs. EMA21) abwärts
+# zeigt - vermeidet Käufe gegen einen größeren Abwärtstrend, nur weil das
+# kurzfristige 15m-Signal gerade anspringt.
+TRADING_MTF_FILTER = "ja"
+TRADING_MTF_INTERVAL_MINUTEN = "240"
 
 # Drei Strategien zur Wahl (Default "ema-crossover" = unverändertes Verhalten):
 # "bollinger-mean-reversion": kauft, wenn der Kurs unter das untere

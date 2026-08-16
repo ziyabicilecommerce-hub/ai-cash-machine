@@ -161,8 +161,8 @@ export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei,
 
 // Liefert { verkaufen, grund, hoechsterPreisSeitEinstieg }. hoechsterPreisSeitEinstieg
 // muss auch bei verkaufen=false zurückgeschrieben werden (Trailing-Stop-Basis).
-// Stop-Loss/Trailing-Stop gelten als Risiko-Grenze IMMER, unabhängig von der
-// Strategie - nur das "normale" Ausstiegssignal unterscheidet sich.
+// Stop-Loss/Trailing-Stop/Take-Profit gelten als Risiko-/Gewinn-Grenze IMMER,
+// unabhängig von der Strategie - nur das "normale" Ausstiegssignal unterscheidet sich.
 export function entscheideVerkauf({ position, cfg, indikatoren }) {
   const { preis } = indikatoren;
   const hoechsterPreisSeitEinstieg = Math.max(position.hoechsterPreisSeitEinstieg || position.entryPreis, preis);
@@ -175,6 +175,19 @@ export function entscheideVerkauf({ position, cfg, indikatoren }) {
 
   if (preis <= stopLossPreis) {
     return { verkaufen: true, grund: trailingAktiv ? 'Trailing-Stop' : 'Stop-Loss', hoechsterPreisSeitEinstieg };
+  }
+
+  // Festes Gewinnziel (Default 0 = aus): sichert einen Trade sofort ab,
+  // sobald er X% im Plus ist, statt auf ein strategie-eigenes Ausstiegs-
+  // signal zu warten - kann bei einer schnellen Umkehr Gewinn sichern, den
+  // man sonst (z.B. bei bollinger-mean-reversion bis zum Mittelband) wieder
+  // hergeben würde. Nur relevant, wenn niedriger als der Trailing-Stop
+  // greifen würde - dann gewinnt ohnehin das zuerst erreichte Kriterium.
+  if (cfg.takeProfitProzent > 0) {
+    const takeProfitPreis = position.entryPreis * (1 + cfg.takeProfitProzent / 100);
+    if (preis >= takeProfitPreis) {
+      return { verkaufen: true, grund: 'Take-Profit', hoechsterPreisSeitEinstieg };
+    }
   }
 
   if (cfg.strategie === 'bollinger-mean-reversion') {

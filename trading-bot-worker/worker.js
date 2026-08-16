@@ -43,7 +43,7 @@
 // damit ein bereits laufender Bot durch dieses Update nicht plötzlich anders
 // handelt, ohne dass das bewusst konfiguriert wurde.
 
-import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from './lib/strategie.mjs';
+import { berechneIndikatoren, entscheideKauf, entscheideVerkauf, emaSeries } from './lib/strategie.mjs';
 
 const KLINES_LIMIT = 100;
 
@@ -108,8 +108,10 @@ const binanceAdapter = {
     return data;
   },
 
-  async getKlines(symbol) {
-    const res = await fetch(`${this.baseUrl}/api/v3/klines?symbol=${symbol}&interval=15m&limit=${KLINES_LIMIT}`);
+  async getKlines(symbol, intervalMinuten = 15) {
+    const intervalMap = { 15: '15m', 240: '4h' };
+    const interval = intervalMap[intervalMinuten] || '15m';
+    const res = await fetch(`${this.baseUrl}/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${KLINES_LIMIT}`);
     if (!res.ok) throw new Error(`Binance Klines-Fehler: ${res.status}`);
     const data = await res.json();
     return {
@@ -166,8 +168,8 @@ const krakenAdapter = {
     return data.result;
   },
 
-  async getKlines(symbol) {
-    const res = await fetch(`${this.baseUrl}/0/public/OHLC?pair=${symbol}&interval=15`);
+  async getKlines(symbol, intervalMinuten = 15) {
+    const res = await fetch(`${this.baseUrl}/0/public/OHLC?pair=${symbol}&interval=${intervalMinuten}`);
     if (!res.ok) throw new Error(`Kraken OHLC-Fehler: ${res.status}`);
     const data = await res.json();
     if (data.error && data.error.length) throw new Error(`Kraken-Fehler: ${data.error.join(', ')}`);
@@ -272,6 +274,27 @@ async function ladeFearGreedIndex() {
   }
 }
 
+// ================= MEHRFACH-ZEITRAHMEN-BESTÄTIGUNG (optional) =================
+// Prüft zusätzlich zum 15m-Signal einen deutlich längeren Zeitrahmen (Default
+// 4h), um Käufe gegen den übergeordneten Trend zu vermeiden - klassisches
+// Problem reiner 15m-Strategien: ein kurzfristiges Signal kann mitten in
+// einem größeren Abwärtstrend auftreten. Bewertet den 4h-Trend über EMA9 vs.
+// EMA21 (gleiche Logik wie ema-crossover, nur auf einem größeren Zeitfenster) -
+// Aufwärtstrend = EMA9 > EMA21.
+async function hoehererZeitrahmenIstAufwaerts(exchange, symbol, cfg) {
+  try {
+    const { closes } = await exchange.getKlines(symbol, cfg.mtfIntervalMinuten);
+    const benoetigt = cfg.emaLangsam + 2;
+    if (closes.length < benoetigt) return true; // zu wenig Historie - Filter nicht blockierend anwenden
+    const fastSeries = emaSeries(closes, cfg.emaSchnell);
+    const slowSeries = emaSeries(closes, cfg.emaLangsam);
+    const n = closes.length - 1;
+    return fastSeries[n] > slowSeries[n];
+  } catch {
+    return true; // Ausfall darf den Bot nie blockieren, nur den Filter deaktivieren
+  }
+}
+
 // ================= WHATSAPP =================
 
 async function notifyWhatsapp(env, text) {
@@ -371,6 +394,15 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
   if (!state.position) {
     const positionenPlatzFrei = offenePositionenVorLauf < cfg.maxGleichzeitigePositionen;
     const kauf = entscheideKauf({ kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute });
+
+    if (kauf && cfg.mtfFilter) {
+      const aufwaerts = await hoehererZeitrahmenIstAufwaerts(exchange, symbol, cfg);
+      if (!aufwaerts) {
+        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - ${cfg.mtfIntervalMinuten / 60}h-Trend zeigt abwärts (EMA9 < EMA21).`);
+        await saveState(env, symbol, state);
+        return;
+      }
+    }
 
     if (kauf && cfg.fngFilter && fearGreedWert !== null && fearGreedWert >= cfg.fngMaxWert) {
       await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - Fear & Greed Index bei ${fearGreedWert} (Extreme Greed ab ${cfg.fngMaxWert}), Markt wirkt überhitzt.`);
@@ -480,6 +512,60 @@ async function pruefeUndSendeTagesZusammenfassung(env, cfg) {
   await env.TRADING_STATE.put('digest:letzterTag', heuteStr);
 }
 
+// ISO-Kalenderwoche als Schlüssel (Jahr-KW), bleibt über Jahreswechsel hinweg eindeutig.
+function wochenSchluessel(datum) {
+  const d = new Date(Date.UTC(datum.getUTCFullYear(), datum.getUTCMonth(), datum.getUTCDate()));
+  const tagNummer = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - tagNummer);
+  const jahresStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const kw = Math.ceil((((d - jahresStart) / 86400000) + 1) / 7);
+  return `${d.getUTCFullYear()}-KW${String(kw).padStart(2, '0')}`;
+}
+
+// Einmal pro Kalenderwoche (montags) ein ausführlicherer Rückblick als das
+// tägliche Update: P&L nur der letzten 7 Tage, bester/schlechtester Coin,
+// Win-Rate-Trend - damit man nicht mehr manuell im Dashboard nachschauen muss,
+// wie die Woche insgesamt lief. KV-Marke digest:letzteWoche verhindert
+// Mehrfachversand bei mehreren Montags-Läufen.
+async function pruefeUndSendeWochenZusammenfassung(env, cfg) {
+  const jetzt = new Date();
+  if (jetzt.getUTCDay() !== 1) return; // nur montags prüfen
+  const aktuelleWoche = wochenSchluessel(jetzt);
+  const letzte = await env.TRADING_STATE.get('digest:letzteWoche');
+  if (letzte === aktuelleWoche) return;
+
+  const seitZeitpunkt = jetzt.getTime() - 7 * 24 * 60 * 60 * 1000;
+  let gesamtKapitalJetzt = 0, gesamtStartKapital = 0;
+  const proSymbolPL = [];
+  const allTradesDieseWoche = [];
+  for (const symbol of cfg.symbols) {
+    const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
+    gesamtKapitalJetzt += state.kapital;
+    gesamtStartKapital += state.startKapital;
+    const tradesDieseWoche = (state.trades || []).filter((t) => new Date(t.ausstiegAm).getTime() >= seitZeitpunkt);
+    const plDieseWoche = tradesDieseWoche.reduce((sum, t) => sum + t.gewinnVerlustUsdt, 0);
+    proSymbolPL.push({ symbol, plDieseWoche, anzahlTrades: tradesDieseWoche.length });
+    allTradesDieseWoche.push(...tradesDieseWoche);
+  }
+  const gesamtProzent = gesamtStartKapital > 0 ? ((gesamtKapitalJetzt - gesamtStartKapital) / gesamtStartKapital) * 100 : 0;
+  const statsWoche = berechneTradeStats(allTradesDieseWoche);
+
+  const gehandelt = proSymbolPL.filter((s) => s.anzahlTrades > 0).sort((a, b) => b.plDieseWoche - a.plDieseWoche);
+  const bester = gehandelt[0];
+  const schlechtester = gehandelt.length > 1 ? gehandelt[gehandelt.length - 1] : null;
+
+  const zeilen = [
+    `📅 Trading-Bot Wochen-Rückblick (${cfg.paperModus ? 'PAPER' : 'LIVE'}, ${cfg.exchange}):`,
+    `Kapital gesamt: ${gesamtKapitalJetzt.toFixed(2)} USDT (${gesamtProzent >= 0 ? '+' : ''}${gesamtProzent.toFixed(2)}% seit Start)`,
+    `Trades diese Woche: ${allTradesDieseWoche.length}${statsWoche.winRateProzent !== null ? ` (Win-Rate ${statsWoche.winRateProzent.toFixed(0)}%)` : ''}`,
+  ];
+  if (bester) zeilen.push(`🏆 Bester Coin: ${bester.symbol} (${bester.plDieseWoche >= 0 ? '+' : ''}${bester.plDieseWoche.toFixed(2)} USDT)`);
+  if (schlechtester) zeilen.push(`📉 Schlechtester Coin: ${schlechtester.symbol} (${schlechtester.plDieseWoche >= 0 ? '+' : ''}${schlechtester.plDieseWoche.toFixed(2)} USDT)`);
+
+  await notifyWhatsapp(env, zeilen.join('\n'));
+  await env.TRADING_STATE.put('digest:letzteWoche', aktuelleWoche);
+}
+
 function readConfig(env) {
   const symbols = (env.TRADING_SYMBOLS || 'BTCUSDT').split(',').map((s) => s.trim()).filter(Boolean);
   const gesamtKapital = parseFloat(env.TRADING_KAPITAL_USDT || '100');
@@ -505,6 +591,8 @@ function readConfig(env) {
     maxTagesverlustProzent: parseFloat(env.TRADING_MAX_TAGESVERLUST_PROZENT || '5'),
     maxGesamtverlustProzent: parseFloat(env.TRADING_MAX_GESAMTVERLUST_PROZENT || '20'),
     stopLossProzent: parseFloat(env.TRADING_STOP_LOSS_PROZENT || '3'),
+    // Default 0 = aus, damit ein bestehendes Setup nicht ungefragt anders handelt.
+    takeProfitProzent: parseFloat(env.TRADING_TAKE_PROFIT_PROZENT || '0'),
     emaSchnell: parseInt(env.TRADING_EMA_SCHNELL || '9', 10),
     emaLangsam: parseInt(env.TRADING_EMA_LANGSAM || '21', 10),
     rsiPeriode: parseInt(env.TRADING_RSI_PERIODE || '14', 10),
@@ -524,6 +612,8 @@ function readConfig(env) {
     coingeckoMin24hProzent: parseFloat(env.TRADING_COINGECKO_MIN_24H_PROZENT || '0'),
     fngFilter: (env.TRADING_FNG_FILTER || 'nein') === 'ja',
     fngMaxWert: parseFloat(env.TRADING_FNG_MAX_WERT || '80'),
+    mtfFilter: (env.TRADING_MTF_FILTER || 'nein') === 'ja',
+    mtfIntervalMinuten: parseInt(env.TRADING_MTF_INTERVAL_MINUTEN || '240', 10),
   };
 }
 
@@ -550,6 +640,11 @@ async function runAll(env) {
     await pruefeUndSendeTagesZusammenfassung(env, cfg);
   } catch (err) {
     console.error('[trading-bot] Fehler bei Tages-Zusammenfassung:', err);
+  }
+  try {
+    await pruefeUndSendeWochenZusammenfassung(env, cfg);
+  } catch (err) {
+    console.error('[trading-bot] Fehler bei Wochen-Zusammenfassung:', err);
   }
 }
 
