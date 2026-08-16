@@ -249,6 +249,7 @@
   <div class="nav-links">
     <button class="cmdk-btn" id="cmdkOpenBtn">🔎 Springe zu… <kbd>⌘K</kbd></button>
     <button class="cmdk-btn" id="installBtn" style="display:none;">📲 Als App installieren</button>
+    <button class="cmdk-btn" id="notifyBtn" style="display:none;">🔔 Benachrichtigungen an</button>
     <a href="../">Jarvis</a>
     <a href="../mission-control/">Mission Control</a>
     <a href="../empire/">Empire</a>
@@ -566,6 +567,10 @@
       if (kpiTruthEl) kpiTruthEl.textContent = alle.length;
       renderHealthBadge(letzterCockpitStand, alle.length);
       updateAppBadge(alle.length);
+      if (vorherigeEskalationenAnzahl !== null && alle.length > vorherigeEskalationenAnzahl) {
+        notifyBrowser('🎧 Neue Eskalation', `${alle.length - vorherigeEskalationenAnzahl} neue offene Eskalation(en) - jetzt prüfen.`, 'support');
+      }
+      vorherigeEskalationenAnzahl = alle.length;
     } catch (err) {
       document.getElementById('supportContent').innerHTML = emptyHtml('🎧', 'Live-Abfrage fehlgeschlagen', 'GitHub-API gerade nicht erreichbar - später nochmal versuchen.');
       const kpiTruthEl = document.getElementById('kpiTruthSupport');
@@ -1099,6 +1104,8 @@
   }
 
   let letzterCockpitStand = null;
+  let letzteChainZeit = null;
+  let vorherigeEskalationenAnzahl = null;
 
   // Lädt alle Datenquellen neu und rendert alle Tabs - einmal beim Laden und
   // danach alle 60s, damit sich die Seite wie ein echtes Live-System anfühlt
@@ -1134,6 +1141,12 @@
       const eskalationenEl = document.getElementById('kpiTruthSupport');
       const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
       renderHealthBadge(cockpit, eskalationenAnzahl);
+
+      const neuesteKette = chains && Array.isArray(chains.log) && chains.log.length ? chains.log[0] : null;
+      if (neuesteKette && neuesteKette.ausgeloest && letzteChainZeit !== null && neuesteKette.datum !== letzteChainZeit) {
+        notifyBrowser('🔗 Kette ausgelöst', `${neuesteKette.von} → ${neuesteKette.nach}: ${neuesteKette.grund}`, 'chains');
+      }
+      if (neuesteKette) letzteChainZeit = neuesteKette.datum;
     });
   }
 
@@ -1237,6 +1250,32 @@
       cmdkSchliessen();
     }
   });
+
+  // Echte Browser-Benachrichtigungen bei neuen Eskalationen/Ketten-Auslösungen
+  // - rein clientseitig (kein Push-Server nötig), nur aktiv wenn der Nutzer
+  // explizit zugestimmt hat. Klick auf die Notification springt zum Tab.
+  function notifyBrowser(titel, body, tabId) {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    try {
+      const n = new Notification(titel, { body, icon: './icon-192.png', badge: './icon-192.png' });
+      n.onclick = () => { window.focus(); switchTab(tabId); n.close(); };
+    } catch (err) { /* Notifications in diesem Kontext nicht verfügbar */ }
+  }
+
+  (function initNotifyBtn() {
+    const btn = document.getElementById('notifyBtn');
+    if (!('Notification' in window)) return;
+    const aktualisiereBtn = () => {
+      btn.style.display = Notification.permission === 'denied' ? 'none' : '';
+      btn.textContent = Notification.permission === 'granted' ? '🔔 Benachrichtigungen an' : '🔕 Benachrichtigungen aktivieren';
+    };
+    aktualisiereBtn();
+    btn.addEventListener('click', async () => {
+      if (Notification.permission === 'granted') return;
+      await Notification.requestPermission();
+      aktualisiereBtn();
+    });
+  })();
 
   // App-Icon-Badge: offene Eskalationen als echte Zahl auf dem installierten
   // App-Icon (Badging API) - nur unterstützt, wenn Command als PWA läuft.
