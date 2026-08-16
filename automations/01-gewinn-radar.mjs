@@ -60,6 +60,8 @@ async function main() {
   const werbekosten = parseFloat(config.WERBEKOSTEN_PRO_TAG || 0);
   const produktkostenProzent = parseFloat(config.PRODUKTKOSTEN_PROZENT || 0);
   const produktkosten = umsatz * (produktkostenProzent / 100);
+  const versandkostenProBestellung = parseFloat(config.VERSANDKOSTEN_PRO_BESTELLUNG || 0);
+  const versandkosten = anzahl * versandkostenProBestellung;
 
   // Zahlungsgebühren (Shopify Payments/Stripe-typisch: Prozent + Fixbetrag pro Bestellung)
   // und Umsatzsteuer-Anteil (Umsatz ist brutto, d.h. inkl. MwSt - die gehört
@@ -72,21 +74,23 @@ async function main() {
   const nettoUmsatz = umsatzsteuerProzent > 0 ? umsatz / (1 + umsatzsteuerProzent / 100) : umsatz;
   const steuerAnteil = umsatz - nettoUmsatz;
 
-  const gewinn = umsatz - retourenWert - werbekosten - produktkosten;
+  const gewinn = umsatz - retourenWert - werbekosten - produktkosten - versandkosten;
   const nettoGewinnNachGebuehrenUndSteuer = gewinn - gebuehren - steuerAnteil;
 
-  // Gesamt-Kostenquote (Produktkosten + Gebühren + Steuer-Anteil, relativ zum
-  // Umsatz) - Basis für die Nettogewinn-Schätzung pro Produkt unten.
+  // Gesamt-Kostenquote (Produktkosten + Versand + Gebühren + Steuer-Anteil,
+  // relativ zum Umsatz) - Basis für die Nettogewinn-Schätzung pro Produkt unten.
   const kostenquote = umsatz > 0 ? 1 - (nettoGewinnNachGebuehrenUndSteuer + werbekosten + retourenWert) / umsatz : 0;
 
   const zahlen = [
     `Umsatz (brutto): ${umsatz.toFixed(2)} ${waehrung}`,
     `Bestellungen: ${anzahl}`,
     `Durchschnittlicher Bestellwert: ${aov.toFixed(2)} ${waehrung}`,
-    `Erstattungen: ${retourenWert.toFixed(2)} ${waehrung}`,
+    `Produktkosten (geschätzt): ${produktkosten.toFixed(2)} ${waehrung}`,
+    `Versandkosten (geschätzt): ${versandkosten.toFixed(2)} ${waehrung}`,
     `Werbekosten: ${werbekosten.toFixed(2)} ${waehrung}`,
     `Zahlungsgebühren (geschätzt): ${gebuehren.toFixed(2)} ${waehrung}`,
     `Umsatzsteuer-Anteil (geschätzt): ${steuerAnteil.toFixed(2)} ${waehrung}`,
+    `Erstattungen: ${retourenWert.toFixed(2)} ${waehrung}`,
     `Echter Nettogewinn (geschätzt): ${nettoGewinnNachGebuehrenUndSteuer.toFixed(2)} ${waehrung}`,
     '',
     'Top-Produkte:',
@@ -98,6 +102,8 @@ async function main() {
     umsatz: Number(umsatz.toFixed(2)),
     bestellungen: anzahl,
     aov: Number(aov.toFixed(2)),
+    produktkosten: Number(produktkosten.toFixed(2)),
+    versandkosten: Number(versandkosten.toFixed(2)),
     retouren: Number(retourenWert.toFixed(2)),
     werbekosten: Number(werbekosten.toFixed(2)),
     gebuehren: Number(gebuehren.toFixed(2)),
