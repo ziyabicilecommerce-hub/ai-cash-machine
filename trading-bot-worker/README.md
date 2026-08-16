@@ -183,9 +183,16 @@ Strategie ein Kaufsignal verwerfen — jede für sich standardmäßig konfigurie
 fällt bei einem Ausfall der jeweiligen API immer "offen" (blockiert den Bot
 nie dauerhaft, nur den einzelnen Filter für diesen Lauf):
 
-- **`TRADING_COINGECKO_FILTER`** (`ja`/`nein`): verwirft den Kauf, wenn
-  CoinGecko den Coin in den letzten 24h im Minus zeigt — unabhängige
-  Zweitbestätigung neben den Kraken-Kursdaten, öffentliche API.
+- **`TRADING_COINGECKO_FILTER`** (`ja`/`nein`): verwirft den Kauf, wenn der
+  **Durchschnitt aus CoinGecko + CoinPaprika** den Coin in den letzten 24h
+  im Minus zeigt — zwei unabhängige, öffentliche Quellen gemittelt statt
+  einzeln als separate Hürden verdrahtet (würde Käufe sonst doppelt
+  erschweren). Ist nur eine der beiden Quellen erreichbar, wird trotzdem
+  gewertet; fallen beide aus, blockiert der Filter nicht. CoinCap wurde
+  ebenfalls geprüft, war aus dieser Umgebung aber wiederholt nicht
+  erreichbar (bekanntes Zuverlässigkeitsproblem) — CoinPaprika stattdessen
+  gewählt, funktioniert zuverlässig und liefert sogar mehr Zeitfenster pro
+  Abfrage.
 - **`TRADING_FNG_FILTER`** (`ja`/`nein`) + `TRADING_FNG_MAX_WERT` (Default
   `80`): verwirft den Kauf bei "Extreme Greed" im
   [Fear & Greed Index](https://alternative.me/crypto/fear-and-greed-index/) —

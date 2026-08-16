@@ -254,6 +254,50 @@ async function ladeCoingecko24hChange(symbol) {
   }
 }
 
+// Zweite, unabhängige Datenquelle für dieselbe Art von Bestätigung
+// (24h-Kursänderung) - bewusst NICHT als zusätzlicher, eigener UND-Filter
+// verdrahtet (das würde Käufe nur noch seltener machen), sondern mit
+// CoinGecko zu einem Durchschnitt gemittelt (ladePreisBestaetigung24h unten) -
+// robuster gegen einen einzelnen abweichenden/fehlerhaften Datenpunkt, ohne
+// die Kauf-Hürde ein zweites Mal zu erhöhen. CoinCap (ursprünglich angefragt)
+// war von hier aus nicht erreichbar (wiederholt CONNECT-Fehler) - CoinPaprika
+// als funktionierende, ebenfalls kostenlose Alternative gewählt.
+const COINPAPRIKA_IDS = {
+  XBTUSDT: 'btc-bitcoin',
+  ETHUSDT: 'eth-ethereum',
+  SOLUSDT: 'sol-solana',
+  XRPUSDT: 'xrp-xrp',
+  ADAUSDT: 'ada-cardano',
+  DOGEUSDT: 'doge-dogecoin',
+  DOTUSDT: 'dot-polkadot',
+  LTCUSDT: 'ltc-litecoin',
+};
+
+async function ladeCoinpaprika24hChange(symbol) {
+  const id = COINPAPRIKA_IDS[symbol];
+  if (!id) return null;
+  try {
+    const res = await fetch(`https://api.coinpaprika.com/v1/tickers/${id}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const change = data && data.quotes && data.quotes.USD && data.quotes.USD.percent_change_24h;
+    return typeof change === 'number' ? change : null;
+  } catch {
+    return null;
+  }
+}
+
+// Mittelt CoinGecko + CoinPaprika (beide parallel abgefragt). Ist nur EINE
+// Quelle erreichbar, wird nur die genutzt statt den Filter auszuschalten -
+// erst wenn BEIDE ausfallen, ist das Ergebnis null (Filter dann nicht
+// blockierend, siehe Aufrufstelle in runSymbol).
+async function ladePreisBestaetigung24h(symbol) {
+  const [coingecko, coinpaprika] = await Promise.all([ladeCoingecko24hChange(symbol), ladeCoinpaprika24hChange(symbol)]);
+  const werte = [coingecko, coinpaprika].filter((w) => typeof w === 'number');
+  if (!werte.length) return null;
+  return werte.reduce((sum, w) => sum + w, 0) / werte.length;
+}
+
 // ================= FEAR & GREED INDEX (optionaler markweiter Kauf-Filter) =================
 // Anders als der CoinGecko-Filter (pro Coin, 24h-Kursänderung) ist das ein
 // EIN EINZIGER Wert für den GESAMTEN Kryptomarkt (0=Extreme Fear,
@@ -411,12 +455,13 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
     }
 
     if (kauf && cfg.coingeckoFilter) {
-      const change24hProzent = await ladeCoingecko24hChange(symbol);
-      // null = kein CoinGecko-Mapping für dieses Symbol oder Abruf fehlgeschlagen -
-      // Filter dann NICHT blockierend, sonst würde eine CoinGecko-Störung den Bot
-      // lahmlegen, obwohl die eigentliche Strategie ein gültiges Signal hat.
+      const change24hProzent = await ladePreisBestaetigung24h(symbol);
+      // null = kein Mapping für dieses Symbol oder BEIDE Quellen (CoinGecko +
+      // CoinPaprika) nicht erreichbar - Filter dann NICHT blockierend, sonst
+      // würde ein Datenausfall den Bot lahmlegen, obwohl die eigentliche
+      // Strategie ein gültiges Signal hat.
       if (change24hProzent !== null && change24hProzent < cfg.coingeckoMin24hProzent) {
-        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - CoinGecko-24h-Änderung ${change24hProzent.toFixed(2)}% liegt unter dem Filter-Minimum (${cfg.coingeckoMin24hProzent}%).`);
+        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - 24h-Änderung (Ø CoinGecko/CoinPaprika) ${change24hProzent.toFixed(2)}% liegt unter dem Filter-Minimum (${cfg.coingeckoMin24hProzent}%).`);
         await saveState(env, symbol, state);
         return;
       }
