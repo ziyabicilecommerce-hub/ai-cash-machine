@@ -244,6 +244,20 @@
   .today-item b { display:block; font-family:'Orbitron',sans-serif; font-size:20px; color:var(--green); text-shadow:0 0 14px rgba(62,242,160,.4); }
   .today-item span { font-family:var(--mono); font-size:10px; color:var(--mut2); }
 
+  /* --- "Warum"-Entscheidungshistorie (Pricing-Agent) --- */
+  .why-row { background:var(--panel); border:1px solid var(--line2); padding:14px 18px; margin-bottom:10px; }
+  .why-top { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+  .why-preis { font-family:var(--mono); font-size:13.5px; font-weight:700; }
+  .why-preis .arrow { color:var(--mut2); margin:0 4px; }
+  .why-tag { font-family:var(--mono); font-size:10px; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .why-tag.tag-hoch { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
+  .why-tag.tag-runter { color:var(--amber); background:rgba(255,197,92,.1); border:1px solid rgba(255,197,92,.35); }
+  .why-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:8px; font-size:12px; }
+  .why-grid b { color:var(--mut2); font-family:var(--mono); font-size:10px; display:block; margin-bottom:2px; letter-spacing:.05em; }
+  .why-grid span { color:var(--txt); }
+  .risiko-niedrig { color:var(--green); }
+  .risiko-mittel { color:var(--amber); }
+
   /* --- Profit-Wasserfall --- */
   .waterfall-card { background:var(--panel); border:1px solid var(--line2); padding:6px 20px; margin-bottom:20px; }
   .wf-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; font-size:13px; border-bottom:1px solid var(--line2); }
@@ -480,6 +494,7 @@
   <div class="panel-title">Autopilot — was läuft von selbst?</div>
   <p class="panel-desc">Jeder AUTO_*-Schalter der Suite an einer Stelle: was heute schon vollautomatisch passiert, was nur empfiehlt und bei "ja" umgestellt werden kann. Alles per GitHub-Secret gesteuert.</p>
   <div id="autopilotContent"></div>
+  <div id="pricingHistorieContent"></div>
 </section>
 
 <section class="panel" id="panel-tools">
@@ -1125,6 +1140,33 @@
     el.innerHTML = html;
   }
 
+  // "Warum" bei jeder Preis-Entscheidung - nicht nur "Preis geändert", sondern
+  // Grund, Risiko-Einschätzung und erwartete Auswirkung transparent daneben,
+  // damit die Entscheidung nachvollziehbar ist statt eine Blackbox.
+  function renderPricingHistorie(data) {
+    const el = document.getElementById('pricingHistorieContent');
+    const historie = (data && data.historie) || [];
+    if (!historie.length) {
+      el.innerHTML = `<div class="section-title-inline">🧮 PREIS-ENTSCHEIDUNGEN MIT BEGRÜNDUNG</div>` +
+        emptyHtml('🧮', 'Noch keine Preis-Entscheidung', 'Erscheint, sobald der Pricing-Agent (#61) eine Preisänderung empfiehlt oder ausführt.');
+      return;
+    }
+    const rows = historie.slice(0, 15).map((a) => `
+      <div class="why-row">
+        <div class="why-top">
+          <div class="why-preis">${a.name}: ${a.alt.toFixed(2)} €<span class="arrow">→</span>${a.neu.toFixed(2)} €</div>
+          <span class="why-tag ${a.richtung === 'hoch' ? 'tag-hoch' : 'tag-runter'}">${a.richtung === 'hoch' ? '📈 RAUF' : '📉 RUNTER'}${a.ausgefuehrt ? ' · LIVE GEÄNDERT' : ' · NUR EMPFOHLEN'}</span>
+        </div>
+        <div class="why-grid">
+          <div><b>GRUND</b><span>${a.grund}</span></div>
+          <div><b>RISIKO</b><span class="risiko-${a.risiko}">${a.risiko === 'niedrig' ? 'niedrig' : 'mittel'}</span></div>
+          <div><b>ERWARTETE AUSWIRKUNG</b><span>${a.erwarteteAuswirkung}</span></div>
+        </div>
+        <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(a.datum)}</div>
+      </div>`).join('');
+    el.innerHTML = `<div class="section-title-inline">🧮 PREIS-ENTSCHEIDUNGEN MIT BEGRÜNDUNG</div>${rows}`;
+  }
+
   // --- Alle Tools (Launchpad zu den restlichen, echt interaktiven Apps) ---
   const WEITERE_TOOLS = [
     { emoji: '🧠', name: 'Jarvis', desc: 'Voice-HUD-Assistent, zentrale Steuerung der Suite.', href: '../' },
@@ -1446,8 +1488,10 @@
       ladeJson('../paypal-belege/manifest.json'),
       ladeJson('../wrapped/data.json'),
       ladeJson('./autopilot-status.json'),
-    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus]) => {
+      ladeJson('./pricing-agent.json'),
+    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie]) => {
       renderCeo(ceo, chains, referral, social);
+      renderPricingHistorie(pricingHistorie);
       renderAnalytics(analytics, ads);
       renderProduct(product);
       renderAds(ads);
