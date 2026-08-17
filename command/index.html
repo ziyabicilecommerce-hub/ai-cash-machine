@@ -230,6 +230,17 @@
   .state-an { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
   .state-aus { color:var(--mut2); background:rgba(255,255,255,.04); border:1px solid var(--line2); }
 
+  /* --- Kill-Switch-Banner --- */
+  .killswitch-banner { display:flex; align-items:center; gap:16px; padding:18px 22px; margin-bottom:20px; border:1px solid; }
+  .killswitch-banner.ks-ruhig { border-color:rgba(62,242,160,.4); background:rgba(62,242,160,.05); }
+  .killswitch-banner.ks-alarm { border-color:rgba(255,107,129,.5); background:rgba(255,107,129,.08); animation:ksPulse 1.6s ease-in-out infinite; }
+  @keyframes ksPulse { 50% { box-shadow:0 0 30px rgba(255,107,129,.35); } }
+  .ks-icon { font-size:28px; flex-shrink:0; }
+  .ks-headline { font-family:'Orbitron',sans-serif; font-size:15px; }
+  .ks-ruhig .ks-headline { color:var(--green); }
+  .ks-alarm .ks-headline { color:var(--red); }
+  .ks-sub { font-size:12px; color:var(--mut); margin-top:2px; }
+
   /* --- Autonomy-Level-Regler --- */
   .autonomy-gauge { background:var(--panel); border:1px solid var(--line); padding:20px; margin-bottom:20px; text-align:center; }
   .autonomy-track { display:flex; gap:6px; margin-bottom:14px; }
@@ -493,6 +504,7 @@
 <section class="panel" id="panel-autopilot">
   <div class="panel-title">Autopilot — was läuft von selbst?</div>
   <p class="panel-desc">Jeder AUTO_*-Schalter der Suite an einer Stelle: was heute schon vollautomatisch passiert, was nur empfiehlt und bei "ja" umgestellt werden kann. Alles per GitHub-Secret gesteuert.</p>
+  <div id="killSwitchContent"></div>
   <div id="autopilotContent"></div>
   <div id="pricingHistorieContent"></div>
 </section>
@@ -1089,6 +1101,66 @@
     { name: 'AUTO_ERSTATTUNG_GENEHMIGEN', quelle: '#74 Refund-Concierge-Agent', desc: 'Genehmigt kleine Erstattungen automatisch (bis REFUND_MAX_BETRAG).', standard: 'nein' },
   ];
 
+  // Vereinheitlichter Kill-Switch: fasst 2 unabhängige Sicherheits-Checks
+  // (Ads-Notbremse #43, Refund-Spike-Alarm #01) + den Überverkauf-Schutz
+  // (#65, präventiv) an EINER Stelle zusammen, statt in 3 verschiedenen
+  // WhatsApp-Nachrichten versteckt zu sein.
+  function renderKillSwitch(adsNotbremse, refundAlarm, autopilotStatus) {
+    const el = document.getElementById('killSwitchContent');
+    const adsAusgeloest = !!(adsNotbremse && adsNotbremse.ausgeloest);
+    const refundAusgeloest = !!(refundAlarm && refundAlarm.ausgeloest);
+    const irgendeinAlarm = adsAusgeloest || refundAusgeloest;
+    const ueberverkaufSchalter = autopilotStatus && Array.isArray(autopilotStatus.schalter)
+      ? autopilotStatus.schalter.find((s) => s.name === 'AUTO_UEBERVERKAUF_STOPPEN') : null;
+    const ueberverkaufArmed = ueberverkaufSchalter ? ueberverkaufSchalter.an : true; // Standard ist AN
+
+    const zeilen = [];
+    if (adsNotbremse) {
+      zeilen.push({
+        titel: 'Ads-Notbremse (#43)',
+        status: adsAusgeloest ? '🛑 AUSGELÖST' : '🟢 ruhig',
+        detail: `ROAS ${adsNotbremse.roas} (kritisch: unter ${adsNotbremse.kritischerRoas}) · Spend heute ${adsNotbremse.spend} · ${adsNotbremse.autoStopAn ? (adsAusgeloest ? `${adsNotbremse.adsetsPausiert} Ad-Set(s) automatisch pausiert` : 'AUTO_STOP an') : 'AUTO_STOP aus - nur Alarm, nichts pausiert'}`,
+        ausgeloest: adsAusgeloest,
+      });
+    }
+    if (refundAlarm) {
+      zeilen.push({
+        titel: 'Refund-Spike-Alarm (#01)',
+        status: refundAusgeloest ? '🛑 AUSGELÖST' : '🟢 ruhig',
+        detail: `Erstattungen gestern: ${refundAlarm.retouren.toFixed(2)} ${refundAlarm.waehrung || ''} · 14-Tage-Schnitt: ${refundAlarm.baseline14Tage.toFixed(2)} ${refundAlarm.waehrung || ''}`,
+        ausgeloest: refundAusgeloest,
+      });
+    }
+    zeilen.push({
+      titel: 'Überverkauf-Schutz (#65)',
+      status: ueberverkaufArmed ? '🛡️ scharf' : '⏸️ aus',
+      detail: ueberverkaufArmed ? 'Stoppt automatisch den Verkauf, sobald ein Artikel Bestand 0 erreicht.' : 'AUTO_UEBERVERKAUF_STOPPEN steht auf nein - kein präventiver Schutz aktiv.',
+      ausgeloest: false,
+    });
+
+    if (!adsNotbremse && !refundAlarm) {
+      el.innerHTML = `<p class="note">🛑 Kill-Switch erscheint hier, sobald #43 Ads-Notbremse oder #01 Gewinn-Radar (Refund-Alarm) einmal gelaufen sind.</p>`;
+      return;
+    }
+
+    el.innerHTML = `
+      <div class="killswitch-banner ${irgendeinAlarm ? 'ks-alarm' : 'ks-ruhig'}">
+        <div class="ks-icon">${irgendeinAlarm ? '🛑' : '🟢'}</div>
+        <div>
+          <div class="ks-headline">${irgendeinAlarm ? 'KILL-SWITCH AUSGELÖST' : 'KILL-SWITCH: ALLES RUHIG'}</div>
+          <div class="ks-sub">Überwacht Ad-Spend/ROAS und Refund-Spikes automatisch, rund um die Uhr.</div>
+        </div>
+      </div>
+      ${zeilen.map((z) => `
+      <div class="autopilot-row">
+        <div>
+          <div class="autopilot-name">${z.titel}</div>
+          <div class="autopilot-desc">${z.detail}</div>
+        </div>
+        <span class="autopilot-state" style="${z.ausgeloest ? 'color:var(--red);background:rgba(255,107,129,.1);border:1px solid rgba(255,107,129,.35);' : 'color:var(--green);background:rgba(62,242,160,.1);border:1px solid rgba(62,242,160,.35);'}">${z.status}</span>
+      </div>`).join('')}`;
+  }
+
   // 4 Autonomy-Level, direkt aus der ANZAHL tatsächlich aktiver AUTO_*-
   // Schalter abgeleitet (nicht frei erfunden) - deckungsgleich mit den in
   // #85 Autopilot-Status gemeldeten echten Secret-Zuständen (nur ja/nein,
@@ -1489,9 +1561,12 @@
       ladeJson('../wrapped/data.json'),
       ladeJson('./autopilot-status.json'),
       ladeJson('./pricing-agent.json'),
-    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie]) => {
+      ladeJson('./ads-notbremse.json'),
+      ladeJson('./refund-alarm.json'),
+    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm]) => {
       renderCeo(ceo, chains, referral, social);
       renderPricingHistorie(pricingHistorie);
+      renderKillSwitch(adsNotbremse, refundAlarm, autopilotStatus);
       renderAnalytics(analytics, ads);
       renderProduct(product);
       renderAds(ads);
