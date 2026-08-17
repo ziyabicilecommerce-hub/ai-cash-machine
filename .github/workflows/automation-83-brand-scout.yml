@@ -1,0 +1,20 @@
+name: "83 · Brand Scout"
+
+on:
+  schedule:
+    - cron: '0 9 * * 3'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  # issues: write ist Pflicht, obwohl dieses Skript keine Issues erstellt -
+  # der geteilte _automation-runner.yml fordert es job-weit an, jeder Caller
+  # ohne diese Permission scheitert komplett mit startup_failure (0 Jobs).
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/83-brand-scout.mjs
+    secrets: inherit

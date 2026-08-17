@@ -73,6 +73,10 @@ export const config = {
   PRODUCT_HUNTER_NISCHEN: process.env.PRODUCT_HUNTER_NISCHEN || '',
   PRODUCT_HUNTER_ANZAHL_PRO_NISCHE: process.env.PRODUCT_HUNTER_ANZAHL_PRO_NISCHE || '3',
 
+  // Brand Scout (Marken-DNA aus dem echten Sortiment ableiten, statt aus
+  // manuell eingetragener Nische - braucht kein zusätzliches Secret)
+  BRAND_SCOUT_ANZAHL_IDEEN: process.env.BRAND_SCOUT_ANZAHL_IDEEN || '6',
+
   // Creative Studio (Ad-Kreativ-Pakete: Hooks, Ad-Copy, Bild-Prompts, optional echte Bildgenerierung)
   CREATIVE_STUDIO_PRODUKTE: process.env.CREATIVE_STUDIO_PRODUKTE || '',
   CREATIVE_STUDIO_ANZAHL_PRODUKTE: process.env.CREATIVE_STUDIO_ANZAHL_PRODUKTE || '1',
@@ -185,6 +189,11 @@ export const config = {
   REORDER_PUFFER_TAGE: process.env.REORDER_PUFFER_TAGE || '30',
   REORDER_LIEFERZEIT_TAGE: process.env.REORDER_LIEFERZEIT_TAGE || '14',
 
+  // Lieferanten-Zahlungs-Wächter (WhatsApp-Erinnerung, wenn eine per
+  // Reorder-Agent ausgelöste Nachbestellung fällig zur Zahlung wird)
+  LIEFERANTEN_ZAHLUNGSZIEL_TAGE: process.env.LIEFERANTEN_ZAHLUNGSZIEL_TAGE || '30',
+  ZAHLUNGS_ERINNERUNG_TAGE_VORHER: process.env.ZAHLUNGS_ERINNERUNG_TAGE_VORHER || '3',
+
   // Ads-Autopilot-Agent (führt Budget-Umschichtung zwischen Ad-Sets wirklich aus)
   AUTO_BUDGET_UMSCHICHTEN: process.env.AUTO_BUDGET_UMSCHICHTEN || 'nein',
   ADS_AUTOPILOT_MAX_SHIFT_PROZENT: process.env.ADS_AUTOPILOT_MAX_SHIFT_PROZENT || '15',
@@ -198,6 +207,12 @@ export const config = {
   LOYALTY_PUNKTE_PRO_EURO: process.env.LOYALTY_PUNKTE_PRO_EURO || '1',
   LOYALTY_SCHWELLE_PUNKTE: process.env.LOYALTY_SCHWELLE_PUNKTE || '100',
   LOYALTY_BELOHNUNG_PROZENT: process.env.LOYALTY_BELOHNUNG_PROZENT || '15',
+
+  // Freunde-werben-Freunde (Empfehlungsprogramm, echte Shopify-Rabattcodes
+  // auf beiden Seiten - für den geworbenen Freund UND als Dank für den Werber)
+  REFERRAL_RABATT_PROZENT: process.env.REFERRAL_RABATT_PROZENT || '10',
+  REFERRAL_BELOHNUNG_PROZENT: process.env.REFERRAL_BELOHNUNG_PROZENT || '15',
+  REFERRAL_CODE_MAX_EINLOESUNGEN: process.env.REFERRAL_CODE_MAX_EINLOESUNGEN || '20',
 
   // Gift-Card-Kompensations-Agent (echte Gutscheine bei echten Service-Fehlern)
   AUTO_GUTSCHEIN_SENDEN: process.env.AUTO_GUTSCHEIN_SENDEN || 'nein',

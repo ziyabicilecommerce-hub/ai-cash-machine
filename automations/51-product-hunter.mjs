@@ -8,6 +8,9 @@
 // Trainingswissens - das ist eine fundierte Einschätzung, KEINE live
 // gecrawlten Verkaufszahlen. Für belastbarere Daten später einen echten
 // Trend-API-Key ergänzen (siehe README).
+import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
@@ -16,7 +19,10 @@ import { loadState, saveState } from './lib/state.mjs';
 
 const STATE_NAME = 'product-hunter-state';
 const MAX_HISTORIE = 500;
+const MAX_DETAIL_HISTORIE = 150;
 const WHATSAPP_MAX_CHARS = 3500;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const COMMAND_DIR = join(__dirname, '..', 'command');
 
 function parseNischen() {
   const roh = config.PRODUCT_HUNTER_NISCHEN || config.SHOP_NISCHE || '';
@@ -98,7 +104,17 @@ Antworte NUR mit validem JSON, ohne Markdown:
   // Produktideen nächste Woche nochmal vorgeschlagen (und erneut mit Tokens
   // bezahlt) werden.
   const historie = [...bereitsVorgeschlagen, ...neueProdukte.map((p) => p.name)].slice(-MAX_HISTORIE);
-  saveState(STATE_NAME, { vorgeschlagen: historie });
+  // detailHistorie zusätzlich zur reinen Dedup-Namensliste oben - die App
+  // braucht die vollen Bewertungen (Scores, Begründung, Warnung), nicht nur
+  // "wurde schonmal vorgeschlagen ja/nein".
+  const detailHistorie = [
+    ...neueProdukte.map((p) => ({ ...p, gefundenAm: new Date().toISOString() })),
+    ...(state.detailHistorie || []),
+  ].slice(0, MAX_DETAIL_HISTORIE);
+  saveState(STATE_NAME, { vorgeschlagen: historie, detailHistorie });
+
+  if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
+  writeFileSync(join(COMMAND_DIR, 'product-hunter.json'), JSON.stringify({ updatedAt: new Date().toISOString(), produkte: detailHistorie }, null, 2));
 
   const chunks = chunkZeilen(zeilen, WHATSAPP_MAX_CHARS);
   for (let i = 0; i < chunks.length; i++) {

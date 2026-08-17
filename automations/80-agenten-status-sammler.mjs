@@ -36,9 +36,15 @@ async function main() {
   const agenten = [];
   for (const wf of automationWorkflows) {
     let letzterLauf = null;
+    let verlauf = [];
     try {
-      const runsRes = await githubApi(`/repos/${REPO}/actions/workflows/${wf.id}/runs?per_page=1`);
-      const run = (runsRes.workflow_runs || [])[0];
+      // per_page=5 statt 1: die letzten 5 Läufe ergeben ein Zuverlässigkeits-
+      // Muster (z.B. "4x OK, 1x Fehler" statt nur den aktuellen Snapshot) -
+      // macht flackernde/instabile Automationen sichtbar, die im reinen
+      // Zuletzt-Status untergehen würden.
+      const runsRes = await githubApi(`/repos/${REPO}/actions/workflows/${wf.id}/runs?per_page=5`);
+      const runs = runsRes.workflow_runs || [];
+      const run = runs[0];
       if (run) {
         letzterLauf = {
           status: run.status,
@@ -47,6 +53,7 @@ async function main() {
           htmlUrl: run.html_url,
         };
       }
+      verlauf = runs.map((r) => r.conclusion);
     } catch (err) {
       console.error(`[80-agenten-status-sammler] Konnte Läufe für "${wf.name}" nicht laden:`, err.message);
     }
@@ -57,6 +64,7 @@ async function main() {
       name: nummerMatch ? nummerMatch[2] : wf.name,
       workflowUrl: wf.html_url,
       letzterLauf,
+      verlauf,
     });
   }
 

@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE COMMAND</title>
+<meta name="description" content="Das eine System: Chef-Agent, Analytics, Product Research, Ad Intelligence, Support, Ketten, Cockpit, Recap, Belege, Social, Brand, Referral, Autopilot-Status und Zugriff auf jedes Tool — alles auf einer Seite, echte Daten, nichts ausgelassen.">
+<meta property="og:title" content="CASHMACHINE COMMAND">
+<meta property="og:description" content="Alles auf einer Seite: die komplette CASHMACHINE-Suite als ein System.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23030512%27/%3E%3Crect%20x%3D%2716%27%20y%3D%2716%27%20width%3D%2732%27%20height%3D%2732%27%20fill%3D%27none%27%20stroke%3D%27%233ef2a0%27%20stroke-width%3D%274%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%277%27%20fill%3D%27%233ef2a0%27/%3E%3C/svg%3E">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="theme-color" content="#3ef2a0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Command">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#030512; --panel:rgba(20,28,40,.55); --panel-solid:#0a0f1c;
+    --green:#3ef2a0; --red:#ff6b81; --amber:#ffc55c; --cyan:#6fe0ff;
+    --line:rgba(62,242,160,.24); --line2:rgba(255,255,255,.07);
+    --txt:#eef4f2; --mut:rgba(220,235,230,.62); --mut2:rgba(220,235,230,.4);
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+  ::selection { background:rgba(62,242,160,.3); }
+
+  .bg-canvas { position:fixed; inset:0; z-index:-2; pointer-events:none; }
+
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(62,242,160,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(62,242,160,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 15%,#000 30%,transparent 78%); }
+
+  .bg-orbs { position:fixed; inset:0; z-index:-3; overflow:hidden; }
+  .bg-orbs::before, .bg-orbs::after, .bg-orbs .orb3 { content:''; position:absolute; border-radius:50%; filter:blur(90px); }
+  .bg-orbs::before { width:56vmax; height:56vmax; top:-22%; left:-14%; background:radial-gradient(circle,rgba(62,242,160,.28),transparent 70%);
+    animation:orbFloat 24s ease-in-out infinite alternate; }
+  .bg-orbs::after { width:50vmax; height:50vmax; bottom:-26%; right:-16%; background:radial-gradient(circle,rgba(111,224,255,.22),transparent 70%);
+    animation:orbFloat 28s ease-in-out infinite alternate; animation-delay:-9s; }
+  .bg-orbs .orb3 { width:38vmax; height:38vmax; top:35%; left:60%; background:radial-gradient(circle,rgba(255,197,92,.12),transparent 70%);
+    animation:orbFloat 32s ease-in-out infinite alternate; animation-delay:-18s; }
+  @keyframes orbFloat { 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(7vw,9vh) scale(1.18);} }
+  @media (prefers-reduced-motion:reduce) { .bg-orbs::before, .bg-orbs::after, .bg-orbs .orb3 { animation:none; } }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(3,5,18,.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  nav::after { content:''; position:absolute; left:0; right:0; bottom:-1px; height:1px;
+    background:linear-gradient(90deg,transparent,var(--green),var(--cyan),transparent); opacity:.6; }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--green); text-shadow:0 0 12px rgba(62,242,160,.55); }
+  .nav-links { display:flex; align-items:center; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--green); }
+  @media(max-width:820px){ .nav-links a { display:none; } }
+
+  /* --- Live-Ticker-Band (unter der Nav, immer sichtbar) --- */
+  .ticker-tape { position:fixed; top:57px; left:0; right:0; z-index:45; height:26px; overflow:hidden;
+    background:rgba(3,5,18,.92); border-bottom:1px solid var(--line2); }
+  .ticker-track { display:flex; width:max-content; gap:36px; white-space:nowrap; padding:0 18px;
+    animation:tickerScroll 38s linear infinite; align-items:center; height:26px; }
+  .ticker-track span.ticker-item { font-family:var(--mono); font-size:11px; color:var(--mut); display:inline-flex; align-items:center; gap:6px; }
+  .ticker-track span.ticker-item b { color:var(--green); font-weight:600; }
+  @keyframes tickerScroll { to { transform:translateX(-50%); } }
+  @media (prefers-reduced-motion:reduce) { .ticker-track { animation:none; } }
+
+  header.hero { position:relative; min-height:26svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:136px 20px 16px; max-width:820px; margin:0 auto; }
+  .hero-spotlight { position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:radial-gradient(360px circle at var(--mx,50%) var(--my,15%), rgba(111,224,255,.10), transparent 68%); }
+  header.hero::before { content:''; position:absolute; top:52%; left:50%; width:560px; height:560px; max-width:140vw;
+    transform:translate(-50%,-58%); background:radial-gradient(circle,rgba(62,242,160,.15),transparent 65%);
+    pointer-events:none; z-index:-1; animation:coreGlow 5s ease-in-out infinite; }
+  @keyframes coreGlow { 0%,100%{opacity:.65;} 50%{opacity:1;} }
+  @media (prefers-reduced-motion:reduce) { header.hero::before { animation:none; } }
+
+  .hero-ticker { display:flex; margin-top:22px; border:1px solid var(--line2); background:var(--panel);
+    overflow-x:auto; max-width:100%; }
+  .hero-ticker-item { display:flex; flex-direction:column; align-items:center; gap:3px; padding:12px 22px;
+    border-right:1px solid var(--line2); font-family:var(--mono); flex-shrink:0; }
+  .hero-ticker-item:last-child { border-right:none; }
+  .hero-ticker-num { font-size:17px; font-weight:700; color:var(--green); text-shadow:0 0 12px rgba(62,242,160,.4); }
+  .hero-ticker-label { font-size:9.5px; color:var(--mut2); letter-spacing:.08em; white-space:nowrap; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--green); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:16px;
+    box-shadow:0 0 20px rgba(62,242,160,.15); }
+  .kicker::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green); animation:pulse 1.4s infinite; }
+  @keyframes pulse { 50%{opacity:.35;transform:scale(.75)} }
+  h1 { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(28px,6vw,46px); letter-spacing:3px; margin-bottom:10px;
+    background:linear-gradient(120deg,#f4fffb 8%,var(--green) 38%,var(--cyan) 62%,#f4fffb 92%);
+    background-size:220% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 0 28px rgba(62,242,160,.4)); animation:titleShine 7s linear infinite; }
+  @keyframes titleShine { to { background-position:220% center; } }
+  @media (prefers-reduced-motion:reduce) { h1 { animation:none; } }
+  .sub { font-size:13.5px; color:var(--mut); max-width:580px; }
+
+  .tabs { position:sticky; top:83px; z-index:40; display:flex; gap:6px; overflow-x:auto; padding:12px 20px;
+    background:rgba(3,5,18,.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--line2); }
+  .tab-btn { flex-shrink:0; font-family:var(--mono); font-size:12px; padding:8px 16px; background:none; border-radius:22px;
+    border:1px solid var(--line2); color:var(--mut); cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,box-shadow .15s,transform .1s,background .15s; }
+  .tab-btn:hover { border-color:rgba(62,242,160,.5); color:var(--txt); transform:translateY(-1px); }
+  .tab-btn.active { border-color:var(--green); color:var(--green);
+    background:linear-gradient(135deg,rgba(62,242,160,.16),rgba(111,224,255,.08));
+    box-shadow:0 0 18px rgba(62,242,160,.25),inset 0 0 10px rgba(62,242,160,.08); }
+
+  section.panel { display:none; padding:28px 20px 60px; max-width:820px; margin:0 auto; }
+  section.panel.show { display:block; animation:panelIn .4s ease; }
+  @keyframes panelIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  @media (prefers-reduced-motion:reduce) { section.panel.show { animation:none; } }
+  .panel-title { position:relative; font-family:'Orbitron',sans-serif; font-size:19px; margin-bottom:14px; padding-bottom:12px; }
+  .panel-title::after { content:''; position:absolute; left:0; bottom:0; width:52px; height:2px;
+    background:linear-gradient(90deg,var(--green),var(--cyan)); box-shadow:0 0 8px rgba(62,242,160,.5); }
+  .panel-desc { font-size:12.5px; color:var(--mut); margin-bottom:20px; margin-top:-8px; }
+
+  .card { position:relative; background:var(--panel); border:1px solid var(--line2); padding:18px 20px 18px 24px; margin-bottom:14px;
+    transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease; overflow:hidden; }
+  .card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:linear-gradient(180deg,var(--green),var(--cyan)); opacity:.75; }
+  .card:hover { transform:translateY(-2px); border-color:rgba(62,242,160,.4); box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 0 1px rgba(62,242,160,.1); }
+  .card.hero-card { border-color:var(--line); }
+  .card-label { font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--green); margin-bottom:8px; }
+  .card-date { font-family:var(--mono); font-size:11px; color:var(--mut2); float:right; }
+  .card p { font-size:13.5px; color:var(--mut); margin-bottom:8px; }
+  .card .prioritaet { font-size:14px; color:var(--txt); font-weight:600; }
+  .badge-good { color:var(--green); }
+  .badge-bad { color:var(--amber); }
+
+  .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:20px; }
+  .kpi-box { position:relative; background:var(--panel); border:1px solid var(--line2); padding:19px 16px 16px; text-align:center;
+    overflow:hidden; transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease; }
+  .kpi-box::before { content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,var(--green),var(--cyan)); opacity:.8; }
+  .kpi-box:hover { transform:translateY(-2px); border-color:rgba(62,242,160,.4); box-shadow:0 10px 24px rgba(0,0,0,.3); }
+  .kpi-num { font-family:'Orbitron',sans-serif; font-size:24px; color:var(--green); text-shadow:0 0 18px rgba(62,242,160,.5); }
+  .kpi-label { font-family:var(--mono); font-size:10.5px; color:var(--mut2); margin-top:4px; }
+
+  .prod-row { position:relative; background:var(--panel); border:1px solid var(--line2); padding:14px 18px 14px 20px; margin-bottom:10px; overflow:hidden; }
+  .prod-row::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--green); opacity:.7; }
+  .prod-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  .prod-name { font-weight:700; font-size:14px; }
+  .prod-score { font-family:var(--mono); color:var(--green); font-size:13px; }
+  .prod-scores { font-family:var(--mono); font-size:10.5px; color:var(--mut2); margin-bottom:6px; }
+  .prod-begr { font-size:12.5px; color:var(--mut); }
+  .prod-warn { font-size:12px; color:var(--amber); margin-top:6px; }
+
+  table.ad-table { width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:12px; }
+  table.ad-table th, table.ad-table td { padding:8px 10px; border-bottom:1px solid var(--line2); text-align:left; }
+  table.ad-table th { font-family:var(--mono); font-size:10.5px; color:var(--mut2); }
+
+  .issue-row { position:relative; display:flex; align-items:center; gap:10px; padding:10px 14px 10px 17px; background:var(--panel); border:1px solid var(--line2); margin-bottom:8px; font-size:13px; overflow:hidden; }
+  .issue-row::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--red); opacity:.7; }
+  .issue-tag { font-family:var(--mono); font-size:10.5px; padding:3px 8px; border-radius:20px; background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.35); color:var(--red); }
+  .issue-row a { color:var(--txt); text-decoration:none; flex:1; }
+  .issue-row a:hover { color:var(--green); }
+
+  .empty { text-align:center; padding:40px 20px; color:var(--mut2); font-size:13px; }
+  .empty .emoji { font-size:32px; margin-bottom:10px; }
+
+  /* --- Cockpit-Tab --- */
+  .chart-card { background:var(--panel); border:1px solid var(--line2); padding:18px 18px 10px; margin-bottom:20px; }
+  .chart-svg { width:100%; height:150px; display:block; overflow:visible; }
+  .chart-bar { fill:var(--green); }
+  .chart-bar:hover { fill:#5bffb8; }
+
+  .urgent-row { display:flex; flex-direction:column; gap:3px; padding:12px 16px; background:rgba(255,197,92,.06); border:1px solid rgba(255,197,92,.3); margin-bottom:8px; }
+  .urgent-top { display:flex; justify-content:space-between; gap:10px; font-size:13.5px; font-weight:700; color:var(--amber); }
+  .urgent-quelle { font-family:var(--mono); font-size:10px; color:var(--mut2); }
+  .urgent-detail { font-size:12.5px; color:var(--mut); }
+
+  .controls { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+  .search-input { flex:1; min-width:180px; background:var(--panel-solid); border:1px solid var(--line2); color:var(--txt);
+    padding:9px 12px; font-family:var(--mono); font-size:12.5px; }
+  .search-input:focus { outline:none; border-color:var(--green); }
+  .filter-chip { font-family:var(--mono); font-size:11.5px; padding:7px 13px; background:none; border:1px solid var(--line2);
+    color:var(--mut); cursor:pointer; white-space:nowrap; }
+  .filter-chip.active { border-color:var(--green); color:var(--green); background:rgba(62,242,160,.08); }
+
+  .table-wrap { overflow-x:auto; border:1px solid var(--line2); }
+  table.cockpit-table { width:100%; border-collapse:collapse; font-size:12.5px; min-width:760px; }
+  table.cockpit-table th, table.cockpit-table td { padding:10px 12px; border-bottom:1px solid var(--line2); text-align:left; vertical-align:top; }
+  table.cockpit-table th { font-family:var(--mono); font-size:10.5px; color:var(--mut2); background:var(--panel-solid); position:sticky; top:0; cursor:pointer; user-select:none; white-space:nowrap; }
+  table.cockpit-table th:hover { color:var(--green); }
+  table.cockpit-table th .arrow { opacity:.6; margin-left:3px; }
+  table.cockpit-table td.num { font-family:var(--mono); color:var(--mut2); }
+  table.cockpit-table tr:hover td { background:rgba(62,242,160,.04); }
+  .status-pill { font-family:var(--mono); font-size:10.5px; padding:3px 9px; border-radius:20px; white-space:nowrap; display:inline-block; }
+  .status-ok { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
+  .status-fehler { color:var(--red); background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.35); }
+  .status-nie-gelaufen { color:var(--amber); background:rgba(255,197,92,.1); border:1px solid rgba(255,197,92,.35); }
+  .verb-tag { font-family:var(--mono); font-size:10px; color:var(--cyan); background:rgba(111,224,255,.08); border:1px solid rgba(111,224,255,.25); padding:2px 6px; border-radius:10px; margin:1px 3px 1px 0; display:inline-block; }
+  .sofort-cell { color:var(--amber); font-size:12px; }
+  .row-link { color:var(--mut); text-decoration:none; }
+  .row-link:hover { color:var(--green); }
+  .reliability { display:flex; gap:3px; }
+  .reliability span { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .rel-success { background:var(--green); }
+  .rel-failure { background:var(--red); }
+  .rel-other { background:var(--mut2); }
+  .rel-empty { color:var(--mut2); font-family:var(--mono); font-size:11px; }
+  .note { font-size:11.5px; color:var(--mut2); margin-top:10px; }
+  .result-count { font-family:var(--mono); font-size:11px; color:var(--mut2); }
+  .section-title-inline { font-family:'Orbitron',sans-serif; font-size:15px; margin:22px 0 12px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+
+  /* --- Recap/Belege/Social/Referral-Tabs --- */
+  .stat-hero { text-align:center; padding:8px 0 20px; }
+  .stat-hero-num { font-family:'Orbitron',sans-serif; font-size:42px; color:var(--green); text-shadow:0 0 20px rgba(62,242,160,.3); }
+  .stat-hero-label { font-family:var(--mono); font-size:11px; color:var(--mut2); letter-spacing:.1em; margin-top:4px; }
+  .growth-pill { display:inline-block; font-family:var(--mono); font-size:12px; padding:4px 12px; border-radius:20px; margin-top:10px; }
+  .growth-up { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
+  .growth-down { color:var(--red); background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.35); }
+
+  .beleg-row, .social-row, .ref-row { display:flex; justify-content:space-between; align-items:center; gap:12px;
+    background:var(--panel); border:1px solid var(--line2); padding:12px 16px; margin-bottom:8px; font-size:13px; flex-wrap:wrap; }
+  .beleg-row a { color:var(--txt); text-decoration:none; }
+  .beleg-row a:hover { color:var(--green); }
+  .platform-badge { font-family:var(--mono); font-size:10px; padding:2px 8px; border-radius:10px; margin-right:6px; }
+  .platform-ok { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
+  .platform-fail { color:var(--red); background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.35); }
+  .platform-off { color:var(--mut2); background:rgba(255,255,255,.04); border:1px solid var(--line2); }
+
+  /* --- Autopilot-Tab --- */
+  .autopilot-row { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; background:var(--panel);
+    border:1px solid var(--line2); padding:14px 18px; margin-bottom:10px; flex-wrap:wrap; }
+  .autopilot-name { font-family:var(--mono); font-size:12.5px; font-weight:700; }
+  .autopilot-desc { font-size:12.5px; color:var(--mut); margin-top:4px; max-width:520px; }
+  .autopilot-state { font-family:var(--mono); font-size:11px; padding:4px 11px; border-radius:20px; white-space:nowrap; }
+  .state-an { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
+  .state-aus { color:var(--mut2); background:rgba(255,255,255,.04); border:1px solid var(--line2); }
+
+  /* --- System-Health-Badge (Hero) --- */
+  .health-badge { position:relative; display:inline-flex; align-items:center; gap:10px; margin-top:18px; padding:10px 22px;
+    background:var(--panel); border:1px solid var(--line); font-family:var(--mono); overflow:hidden;
+    box-shadow:0 0 30px rgba(62,242,160,.12); transition:box-shadow .2s; }
+  .health-badge:hover { box-shadow:0 0 40px rgba(62,242,160,.22); }
+  .health-badge::before { content:''; position:absolute; inset:-60%; z-index:0;
+    background:conic-gradient(from 0deg,transparent 0%,rgba(62,242,160,.55) 6%,transparent 14%,transparent 50%,rgba(111,224,255,.4) 56%,transparent 64%);
+    animation:beamSpin 4s linear infinite; opacity:.6; }
+  .health-badge > * { position:relative; z-index:1; }
+  @keyframes beamSpin { to { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion:reduce) { .health-badge::before { animation:none; } }
+  .health-ring { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; flex-shrink:0; }
+  .health-ring.h-good { background:conic-gradient(var(--green) calc(var(--pct) * 1%), rgba(255,255,255,.08) 0); color:var(--green); }
+  .health-ring.h-warn { background:conic-gradient(var(--amber) calc(var(--pct) * 1%), rgba(255,255,255,.08) 0); color:var(--amber); }
+  .health-ring.h-bad { background:conic-gradient(var(--red) calc(var(--pct) * 1%), rgba(255,255,255,.08) 0); color:var(--red); }
+  .health-ring::before { content:''; position:absolute; }
+  .health-text { text-align:left; font-size:12px; color:var(--mut); }
+  .health-text b { color:var(--txt); font-size:13px; }
+
+  /* --- Activity-Feed-Tab --- */
+  .activity-row { display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--line2); }
+  .activity-icon { font-size:16px; flex-shrink:0; width:24px; text-align:center; }
+  .activity-body { flex:1; font-size:13px; color:var(--txt); }
+  .activity-src { font-family:var(--mono); font-size:10px; color:var(--mut2); margin-top:2px; }
+  .activity-time { font-family:var(--mono); font-size:11px; color:var(--mut2); white-space:nowrap; }
+
+  /* --- System-Map-Tab --- */
+  .map-wrap { position:relative; background:var(--panel); border:1px solid var(--line); overflow:hidden; }
+  .map-svg { width:100%; height:auto; display:block; }
+  .map-node { cursor:pointer; }
+  .map-node circle.dot { transition:r .15s; }
+  .map-node:hover circle.dot { r:7; }
+  .map-node text { font-family:var(--mono); font-size:5px; fill:var(--mut2); pointer-events:none; }
+  .map-center-ring { fill:none; stroke:var(--line); stroke-width:.4; }
+  .map-center-label { font-family:'Orbitron',sans-serif; font-size:5.5px; fill:var(--green); text-anchor:middle; letter-spacing:.05em; }
+  .map-chain-line { fill:none; stroke:var(--green); stroke-width:.6; opacity:.55; stroke-dasharray:2 2; animation:mapflow 1.2s linear infinite; }
+  @keyframes mapflow { to { stroke-dashoffset:-4; } }
+  .map-legend { display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; font-family:var(--mono); font-size:11px; color:var(--mut2); }
+  .map-legend span { display:inline-flex; align-items:center; gap:6px; }
+  .map-legend i { width:9px; height:9px; border-radius:50%; display:inline-block; }
+  #mapTooltip { position:absolute; pointer-events:none; background:var(--panel-solid); border:1px solid var(--line);
+    padding:6px 10px; font-family:var(--mono); font-size:11px; color:var(--txt); white-space:nowrap; opacity:0; transition:opacity .1s; z-index:5; }
+
+  /* --- Tools/Launchpad-Tab --- */
+  .tool-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+  .tool-card { background:var(--panel); border:1px solid var(--line2); padding:16px 18px; text-decoration:none; color:var(--txt); display:block;
+    transition:border-color .15s,transform .15s,box-shadow .15s; }
+  .tool-card:hover { border-color:var(--green); transform:translateY(-3px); box-shadow:0 12px 28px rgba(0,0,0,.4),0 0 20px rgba(62,242,160,.15); }
+  .tool-emoji { width:42px; height:42px; display:flex; align-items:center; justify-content:center; border-radius:50%;
+    background:linear-gradient(135deg,rgba(62,242,160,.2),rgba(111,224,255,.1)); border:1px solid var(--line);
+    font-size:19px; margin-bottom:10px; transition:transform .15s; }
+  .tool-card:hover .tool-emoji { transform:scale(1.1) rotate(-4deg); }
+  .tool-name { font-weight:700; font-size:14px; margin-bottom:4px; }
+  .tool-desc { font-size:12px; color:var(--mut); }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px 50px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--green); text-decoration:none; margin:0 8px; }
+
+  /* --- Command-Palette (⌘K) --- */
+  .cmdk-btn { font-family:var(--mono); font-size:12px; color:var(--mut); background:none; border:1px solid var(--line2);
+    padding:6px 12px; cursor:pointer; display:flex; align-items:center; gap:8px; transition:border-color .15s,color .15s,box-shadow .15s; }
+  .cmdk-btn:hover { border-color:var(--green); color:var(--green); box-shadow:0 0 14px rgba(62,242,160,.25); }
+  .cmdk-btn kbd { font-family:var(--mono); font-size:10px; padding:1px 5px; border:1px solid var(--line2); border-radius:3px; color:var(--mut2); }
+  .cmdk-overlay { position:fixed; inset:0; z-index:200; background:rgba(3,5,18,.75); backdrop-filter:blur(4px);
+    display:none; align-items:flex-start; justify-content:center; padding-top:min(14vh,120px); }
+  .cmdk-overlay.show { display:flex; }
+  .cmdk-box { width:min(560px,90vw); background:var(--panel-solid); border:1px solid var(--line); box-shadow:0 20px 60px rgba(0,0,0,.5); max-height:70vh; display:flex; flex-direction:column; }
+  .cmdk-input { width:100%; background:none; border:none; border-bottom:1px solid var(--line2); color:var(--txt);
+    font-family:var(--mono); font-size:15px; padding:16px 18px; outline:none; }
+  .cmdk-list { overflow-y:auto; padding:6px; }
+  .cmdk-item { display:flex; align-items:center; gap:12px; padding:10px 12px; cursor:pointer; font-size:13.5px; color:var(--txt); }
+  .cmdk-item .cmdk-emoji { font-size:16px; width:22px; text-align:center; }
+  .cmdk-item .cmdk-sub { font-family:var(--mono); font-size:10.5px; color:var(--mut2); margin-left:auto; }
+  .cmdk-item.active { background:rgba(62,242,160,.1); }
+  .cmdk-empty { padding:20px; text-align:center; color:var(--mut2); font-size:13px; }
+</style>
+</head>
+<body>
+<style>
+.cm-secrets-btn{position:fixed;top:12px;right:12px;z-index:99999;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(3,5,18,.88);backdrop-filter:blur(8px);border:1px solid #3ef2a0;color:#3ef2a0;font:600 13px/1 -apple-system,system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 12px rgba(0,0,0,.4);}
+.cm-secrets-btn:hover{background:#3ef2a0;color:#030512;}
+@media (max-width:480px){.cm-secrets-btn{padding:8px 10px;font-size:0;}.cm-secrets-btn::after{content:"🔑";font-size:16px;}}
+</style>
+<a class="cm-secrets-btn" href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/settings/secrets/actions/new" target="_blank" rel="noopener" title="API-Schlüssel bei GitHub eintragen">🔑 API-Schlüssel hinzufügen</a>
+
+<div class="bg-orbs"><div class="orb3"></div></div>
+<canvas class="bg-canvas" id="bgCanvas"></canvas>
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;COMMAND</b></div>
+  <div class="nav-links">
+    <button class="cmdk-btn" id="cmdkOpenBtn">🔎 Springe zu… <kbd>⌘K</kbd></button>
+    <button class="cmdk-btn" id="installBtn" style="display:none;">📲 Als App installieren</button>
+    <button class="cmdk-btn" id="notifyBtn" style="display:none;">🔔 Benachrichtigungen an</button>
+    <a href="../">Jarvis</a>
+    <a href="../mission-control/">Mission Control</a>
+    <a href="../empire/">Empire</a>
+  </div>
+</nav>
+
+<div class="ticker-tape"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<div class="cmdk-overlay" id="cmdkOverlay">
+  <div class="cmdk-box">
+    <input class="cmdk-input" id="cmdkInput" type="text" placeholder="Tab oder Tool suchen… (z.B. Cockpit, Pulse, Autopilot)">
+    <div class="cmdk-list" id="cmdkList"></div>
+  </div>
+</div>
+
+<header class="hero" id="heroEl">
+  <div class="hero-spotlight"></div>
+  <div class="kicker">DAS EINE SYSTEM</div>
+  <h1>COMMAND</h1>
+  <p class="sub">Die komplette CASHMACHINE-Suite als EIN System auf EINER Seite: jede Kennzahl, jede Automation, jedes Werkzeug — echte Daten, nichts ausgelassen, auf Autopilot ausbaubar.</p>
+  <div id="healthBadgeWrap"></div>
+</header>
+
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="ceo">👔 CEO</button>
+  <button class="tab-btn" data-tab="activity">📡 Activity</button>
+  <button class="tab-btn" data-tab="map">🧠 System-Map</button>
+  <button class="tab-btn" data-tab="analytics">📊 Analytics</button>
+  <button class="tab-btn" data-tab="product">🔎 Product Research</button>
+  <button class="tab-btn" data-tab="ads">📈 Ad Intelligence</button>
+  <button class="tab-btn" data-tab="support">🎧 Support</button>
+  <button class="tab-btn" data-tab="chains">🔗 Ketten</button>
+  <button class="tab-btn" data-tab="cockpit">🛰️ Cockpit</button>
+  <button class="tab-btn" data-tab="brand">🧬 Brand</button>
+  <button class="tab-btn" data-tab="referral">👯 Referral</button>
+  <button class="tab-btn" data-tab="social">📮 Social</button>
+  <button class="tab-btn" data-tab="belege">🧾 Belege</button>
+  <button class="tab-btn" data-tab="recap">🎉 Recap</button>
+  <button class="tab-btn" data-tab="autopilot">🚀 Autopilot</button>
+  <button class="tab-btn" data-tab="tools">🧰 Alle Tools</button>
+</div>
+
+<section class="panel show" id="panel-ceo">
+  <div class="panel-title">Chef-Agent — Tagesansage</div>
+  <p class="panel-desc">Fasst Finanzen, Fulfillment und Kundenstamm zu EINER Prioritäts-Entscheidung zusammen (Automation #60, täglich abends) — und löst bei überfälligen Bestellungen bzw. inaktiven VIPs automatisch die passende Automation sofort aus, statt nur zu empfehlen.</p>
+  <div id="ceoContent"></div>
+</section>
+
+<section class="panel" id="panel-activity">
+  <div class="panel-title">Activity — der Puls des ganzen Systems</div>
+  <p class="panel-desc">Alles, was gerade wirklich passiert ist, chronologisch aus allen Bereichen zusammengeführt: ausgelöste Ketten, Empfehlungs-Einlösungen, veröffentlichte Posts, neue Produktideen, Chef-Agent-Prioritäten — EIN Feed statt sieben Tabs einzeln durchklicken.</p>
+  <div id="activityContent"></div>
+</section>
+
+<section class="panel" id="panel-map">
+  <div class="panel-title">System-Map — die ganze Maschine als Bild</div>
+  <p class="panel-desc">Jede Automation als Punkt, echter Status als Farbe (grün=ok, rot=Fehler, gelb=nie gelaufen), die Ketten als pulsierende Linien dazwischen — dein komplettes System auf einen Blick, live aus #80/#81/Ketten.</p>
+  <div id="mapContent"></div>
+</section>
+
+<section class="panel" id="panel-analytics">
+  <div class="panel-title">Analytics / KPI</div>
+  <p class="panel-desc">Die letzten Kennzahlen aus dem Finance Cockpit (Automation #01 Gewinn-Radar).</p>
+  <div id="analyticsContent"></div>
+</section>
+
+<section class="panel" id="panel-product">
+  <div class="panel-title">Product Research</div>
+  <p class="panel-desc">Bewertete Produktideen aus dem Product Hunter (Automation #51), sortiert nach Gesamt-Score.</p>
+  <div id="productContent"></div>
+</section>
+
+<section class="panel" id="panel-ads">
+  <div class="panel-title">Ad Intelligence</div>
+  <p class="panel-desc">Kampagnen-Portfolio + Budget-Empfehlung aus dem Ad Commander (Automation #56, wöchentlich).</p>
+  <div id="adsContent"></div>
+</section>
+
+<section class="panel" id="panel-support">
+  <div class="panel-title">Customer Support</div>
+  <p class="panel-desc">Live-Abfrage offener Eskalationen direkt aus GitHub Issues (#02 Kundenservice, #69 DSGVO, #62 Risk-Guard) — kein Key nötig, öffentliche GitHub-API.</p>
+  <div id="supportContent"></div>
+</section>
+
+<section class="panel" id="panel-chains">
+  <div class="panel-title">Ketten (Modul-Verknüpfungen)</div>
+  <p class="panel-desc">Automationen, die andere Automationen automatisch auslösen, statt nur zu empfehlen — der Orchestrator in Aktion.</p>
+  <div id="chainsContent"></div>
+</section>
+
+<section class="panel" id="panel-cockpit">
+  <div class="panel-title">Cockpit — alles auseinandergenommen</div>
+  <p class="panel-desc">Status jeder einzelnen Automation (#80/#81), Kosten-Trend, Zuverlässigkeit der letzten Läufe, und was JETZT Aufmerksamkeit braucht — die komplette Maschine, ein Blick.</p>
+  <div id="cockpitContent"></div>
+</section>
+
+<section class="panel" id="panel-brand">
+  <div class="panel-title">Brand — Marken-DNA & neue Produkte</div>
+  <p class="panel-desc">Aus dem ECHTEN Sortiment abgeleitete Marken-DNA + markentreue neue Produktideen (Automation #83, wöchentlich).</p>
+  <div id="brandContent"></div>
+</section>
+
+<section class="panel" id="panel-referral">
+  <div class="panel-title">Referral — Freunde werben Freunde</div>
+  <p class="panel-desc">Persönliche Empfehlungscodes + automatische Dank-Rabatte für Kunden, die neue Käufer bringen (Automation #84, täglich).</p>
+  <div id="referralContent"></div>
+</section>
+
+<section class="panel" id="panel-social">
+  <div class="panel-title">Social — was wirklich live gepostet wurde</div>
+  <p class="panel-desc">Archiv des Multi-Plattform-Posters (#18) mit echtem Live-Status pro Plattform, nicht nur Entwurf.</p>
+  <div id="socialContent"></div>
+</section>
+
+<section class="panel" id="panel-belege">
+  <div class="panel-title">Belege — Zahlungs-/Liefernachweise</div>
+  <p class="panel-desc">Automatisch erstellte PayPal-Belege für Kontoprüfungen (Automation #78).</p>
+  <div id="belegeContent"></div>
+</section>
+
+<section class="panel" id="panel-recap">
+  <div class="panel-title">Recap — Wochen-Rückblick</div>
+  <p class="panel-desc">Der letzte "Spotify Wrapped"-Style Wochen-Rückblick (Automation #79, montags).</p>
+  <div id="recapContent"></div>
+</section>
+
+<section class="panel" id="panel-autopilot">
+  <div class="panel-title">Autopilot — was läuft von selbst?</div>
+  <p class="panel-desc">Jeder AUTO_*-Schalter der Suite an einer Stelle: was heute schon vollautomatisch passiert, was nur empfiehlt und bei "ja" umgestellt werden kann. Alles per GitHub-Secret gesteuert.</p>
+  <div id="autopilotContent"></div>
+</section>
+
+<section class="panel" id="panel-tools">
+  <div class="panel-title">Alle Tools</div>
+  <p class="panel-desc">Die restlichen Apps der Suite — interaktive Werkzeuge (Chat, Voice, Backtesting, Rechner), die als eigene Seite mehr Sinn ergeben als als Daten-Tab. Von hier aus ist jedes erreichbar.</p>
+  <div id="toolsContent"></div>
+</section>
+
+<footer>
+  <b>CASHMACHINE COMMAND</b> · das eine System der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../mission-control/">Mission Control</a>·<a href="../empire/">Empire</a>
+</footer>
+
+<script>
+  const REPO = 'ziyabicilecommerce-hub/ai-cash-machine';
+
+  function fmtDatum(iso) {
+    try { return new Date(iso).toLocaleString('de-DE', { day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' }); }
+    catch { return iso; }
+  }
+  function fmtDatumKurz(iso) {
+    try { return new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: 'long' }); }
+    catch { return iso; }
+  }
+
+  function emptyHtml(emoji, titel, text) {
+    return `<div class="empty"><div class="emoji">${emoji}</div><div style="font-weight:700;color:var(--txt);margin-bottom:6px;">${titel}</div><p>${text}</p></div>`;
+  }
+
+  // --- CEO / Chef-Agent ---
+  function renderCeo(data) {
+    const historie = (data && data.historie) || [];
+    if (!historie.length) {
+      document.getElementById('ceoContent').innerHTML = emptyHtml('👔', 'Noch keine Tagesansage', 'Erscheint hier, sobald der Chef-Agent (#60) zum ersten Mal gelaufen ist (braucht ANTHROPIC_API_KEY + SHOP + SHOPIFY_TOKEN).');
+      return;
+    }
+    const html = historie.map((h, i) => {
+      const aktionen = h.ausgeloesteAktionen || [];
+      const aktionenHtml = aktionen.length ? `
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line2);">
+          <div class="card-label" style="margin-bottom:6px;">🤖 ORCHESTRATOR HAT GEHANDELT</div>
+          ${aktionen.map((a) => `<p style="margin-bottom:4px;">${a.ausgeloest ? '✅' : '⚠️'} <b>${a.workflow}</b> — ${a.grund}${a.ausgeloest ? ' (sofort gestartet)' : ' (Start fehlgeschlagen, läuft trotzdem zum normalen Zeitplan)'}</p>`).join('')}
+        </div>` : '';
+      return `
+      <div class="card ${i === 0 ? 'hero-card' : ''}">
+        <span class="card-date">${fmtDatum(h.datum)}</span>
+        <div class="card-label">${h.allesGut ? '✅ ALLES IM GRÜNEN BEREICH' : '🎯 PRIORITÄT HEUTE'}</div>
+        <p>${h.status || ''}</p>
+        <div class="prioritaet">${h.prioritaet || ''}</div>
+        ${aktionenHtml}
+      </div>`;
+    }).join('');
+    document.getElementById('ceoContent').innerHTML = html;
+  }
+
+  // --- Analytics / Finance Cockpit + KPI-Wahrheit ---
+  // "Zentrale KPI-Wahrheit": statt dass Umsatz/ROAS/Eskalationen über 3 Apps
+  // verstreut jeweils eigene Zahlen zeigen, fasst dieser Block sie an EINER
+  // Stelle zusammen - jede Zahl kommt weiterhin direkt aus ihrer echten
+  // Quelle (kein Vermischen unterschiedlicher Größen zu einer erfundenen
+  // Kennzahl), aber alle stehen nebeneinander statt in 3 Tabs verstreut.
+  function renderAnalytics(financeData, adsData) {
+    const history = (financeData && financeData.history) || [];
+    const adsHistorie = (adsData && adsData.historie) || [];
+    const neuesteAds = adsHistorie[0];
+
+    if (!history.length && !neuesteAds) {
+      document.getElementById('analyticsContent').innerHTML = emptyHtml('📊', 'Noch keine Zahlen', 'Erscheint, sobald der Gewinn-Radar (#01) oder Ad Commander (#56) mindestens einmal gelaufen sind.');
+      return;
+    }
+
+    const latest = history[history.length - 1];
+    const nettoGewinn = latest ? (latest.nettoGewinn !== undefined ? latest.nettoGewinn : latest.gewinn) : null;
+    const waehrung = (latest && latest.waehrung) || 'EUR';
+
+    const wahrheitBoxen = [
+      latest ? `<div class="kpi-box"><div class="kpi-num">${(latest.umsatz || 0).toFixed(0)}</div><div class="kpi-label">UMSATZ ${waehrung}</div></div>` : '',
+      latest ? `<div class="kpi-box"><div class="kpi-num">${(nettoGewinn || 0).toFixed(0)}</div><div class="kpi-label">NETTOGEWINN ${waehrung}</div></div>` : '',
+      neuesteAds ? `<div class="kpi-box"><div class="kpi-num" style="color:${neuesteAds.gesamtRoas >= 1 ? 'var(--green)' : 'var(--red)'}">${neuesteAds.gesamtRoas.toFixed(2)}</div><div class="kpi-label">AD-ROAS (7 TAGE)</div></div>` : '',
+      `<div class="kpi-box"><div class="kpi-num" id="kpiTruthSupport">…</div><div class="kpi-label">OFFENE ESKALATIONEN</div></div>`,
+    ].filter(Boolean).join('');
+
+    let kpiHtml = `
+      <div style="margin-bottom:24px;">
+        <div class="card-label" style="margin-bottom:10px;">💎 ZENTRALE KPI-WAHRHEIT</div>
+        <div class="kpi-grid">${wahrheitBoxen}</div>
+      </div>`;
+
+    if (history.length) {
+      const letzte7 = history.slice(-7).reverse();
+      kpiHtml += `<div class="card-label" style="margin-bottom:10px;">TAGESVERLAUF (FINANCE COCKPIT)</div>`;
+      kpiHtml += letzte7.map((h) => {
+        const ng = h.nettoGewinn !== undefined ? h.nettoGewinn : h.gewinn;
+        return `<div class="card"><span class="card-date">${fmtDatumKurz(h.datum)}</span><div class="card-label">TAG</div><p>Umsatz ${(h.umsatz || 0).toFixed(2)} ${h.waehrung || waehrung} · Nettogewinn ${(ng || 0).toFixed(2)} ${h.waehrung || waehrung}</p></div>`;
+      }).join('');
+    }
+    document.getElementById('analyticsContent').innerHTML = kpiHtml;
+  }
+
+  // --- Ketten (Modul-Verknüpfungen) ---
+  function renderChains(data) {
+    const definitionen = (data && data.definitionen) || [];
+    const log = (data && data.log) || [];
+    if (!definitionen.length) {
+      document.getElementById('chainsContent').innerHTML = emptyHtml('🔗', 'Noch keine Ketten konfiguriert', '');
+      return;
+    }
+    const letzterProKette = {};
+    log.forEach((e) => {
+      const key = `${e.von}→${e.nach}`;
+      if (!letzterProKette[key]) letzterProKette[key] = e;
+    });
+    const defHtml = definitionen.map((d) => {
+      const letzte = letzterProKette[`${d.von}→${d.nach}`];
+      const status = letzte
+        ? `<span class="badge ${letzte.ausgeloest ? 'live' : 'fehler'}">${letzte.ausgeloest ? '✅' : '⚠️'} zuletzt ${fmtDatumKurz(letzte.datum)}</span>`
+        : `<span class="badge entwurf">noch nie gefeuert</span>`;
+      return `
+        <div class="card">
+          <div class="card-label">${d.von} → ${d.nach}</div>
+          <p>Bedingung: ${d.bedingung}</p>
+          ${status}
+        </div>`;
+    }).join('');
+    const logHtml = log.length ? `
+      <div class="card-label" style="margin:20px 0 10px;">LETZTE AUSLÖSUNGEN</div>
+      ${log.slice(0, 15).map((e) => `<div class="issue-row"><span class="issue-tag">${e.ausgeloest ? 'OK' : 'FEHLER'}</span><span style="flex:1">${e.von} → ${e.nach} — ${e.grund}</span><span class="card-date" style="float:none">${fmtDatumKurz(e.datum)}</span></div>`).join('')}
+    ` : '';
+    document.getElementById('chainsContent').innerHTML = defHtml + logHtml;
+  }
+
+  // --- Product Research ---
+  function renderProduct(data) {
+    const produkte = (data && data.produkte) || [];
+    if (!produkte.length) {
+      document.getElementById('productContent').innerHTML = emptyHtml('🔎', 'Noch keine Produktideen', 'Erscheint, sobald der Product Hunter (#51) zum ersten Mal gelaufen ist (braucht ANTHROPIC_API_KEY + PRODUCT_HUNTER_NISCHEN oder SHOP_NISCHE).');
+      return;
+    }
+    const sortiert = [...produkte].sort((a, b) => (b.gesamtScore || 0) - (a.gesamtScore || 0));
+    document.getElementById('productContent').innerHTML = sortiert.map((p) => `
+      <div class="prod-row">
+        <div class="prod-top"><span class="prod-name">${p.name}</span><span class="prod-score">Score ${p.gesamtScore}/10</span></div>
+        <div class="prod-scores">${p.nische} · Nachfrage ${p.nachfrage} · Konkurrenz ${p.konkurrenz} · Marge ${p.marge} · Trend ${p.trend} · Lieferzeit ${p.lieferzeit} · Risiko ${p.risiko}</div>
+        <div class="prod-begr">${p.begruendung || ''}</div>
+        ${p.warnung ? `<div class="prod-warn">⚠️ ${p.warnung}</div>` : ''}
+      </div>`).join('');
+  }
+
+  // --- Ad Intelligence ---
+  function renderAds(data) {
+    const historie = (data && data.historie) || [];
+    if (!historie.length) {
+      document.getElementById('adsContent').innerHTML = emptyHtml('📈', 'Noch keine Kampagnen-Daten', 'Erscheint, sobald der Ad Commander (#56) zum ersten Mal gelaufen ist (braucht META_ACCESS_TOKEN + META_AD_ACCOUNT_ID + aktive Meta-Kampagnen).');
+      return;
+    }
+    const neueste = historie[0];
+    const rows = (neueste.kampagnen || []).map((k) => `
+      <tr><td>${k.name}</td><td>${k.spend.toFixed(2)}</td><td>${k.umsatz.toFixed(2)}</td><td style="color:${k.roas >= 1 ? 'var(--green)' : 'var(--red)'}">${k.roas.toFixed(2)}</td></tr>`).join('');
+    document.getElementById('adsContent').innerHTML = `
+      <div class="card hero-card">
+        <span class="card-date">${fmtDatum(neueste.datum)}</span>
+        <div class="card-label">GESAMT LETZTE 7 TAGE</div>
+        <p>Spend ${neueste.gesamtSpend.toFixed(2)} · Umsatz ${neueste.gesamtUmsatz.toFixed(2)} · ROAS ${neueste.gesamtRoas.toFixed(2)}</p>
+        <div class="prioritaet">${neueste.empfehlung || ''}</div>
+      </div>
+      <table class="ad-table"><thead><tr><th>Kampagne</th><th>Spend</th><th>Umsatz</th><th>ROAS</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  // --- Customer Support (live GitHub API) ---
+  async function ladeSupport() {
+    const labels = [
+      { label: 'kundenservice', tag: 'Kundenservice' },
+      { label: 'dsgvo', tag: 'DSGVO' },
+      { label: 'risk-guard', tag: 'Risk-Guard' },
+    ];
+    try {
+      const ergebnisse = await Promise.all(labels.map(async (l) => {
+        const res = await fetch(`https://api.github.com/repos/${REPO}/issues?labels=${encodeURIComponent(l.label)}&state=open&per_page=30`, {
+          headers: { Accept: 'application/vnd.github+json' },
+        });
+        if (!res.ok) return [];
+        const issues = await res.json();
+        return issues.map((i) => ({ ...i, tag: l.tag }));
+      }));
+      const alle = ergebnisse.flat().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      renderSupport(alle);
+      const kpiTruthEl = document.getElementById('kpiTruthSupport');
+      if (kpiTruthEl) kpiTruthEl.textContent = alle.length;
+      renderHealthBadge(letzterCockpitStand, alle.length);
+      updateAppBadge(alle.length);
+      if (vorherigeEskalationenAnzahl !== null && alle.length > vorherigeEskalationenAnzahl) {
+        notifyBrowser('🎧 Neue Eskalation', `${alle.length - vorherigeEskalationenAnzahl} neue offene Eskalation(en) - jetzt prüfen.`, 'support');
+      }
+      vorherigeEskalationenAnzahl = alle.length;
+    } catch (err) {
+      document.getElementById('supportContent').innerHTML = emptyHtml('🎧', 'Live-Abfrage fehlgeschlagen', 'GitHub-API gerade nicht erreichbar - später nochmal versuchen.');
+      const kpiTruthEl = document.getElementById('kpiTruthSupport');
+      if (kpiTruthEl) kpiTruthEl.textContent = '?';
+    }
+  }
+
+  function renderSupport(issues) {
+    const kpiHtml = `<div class="kpi-grid"><div class="kpi-box"><div class="kpi-num">${issues.length}</div><div class="kpi-label">OFFENE ESKALATIONEN</div></div></div>`;
+    if (!issues.length) {
+      document.getElementById('supportContent').innerHTML = kpiHtml + emptyHtml('✅', 'Keine offenen Eskalationen', 'Entweder läuft alles glatt, oder #02/#69/#62 sind noch nicht gelaufen.');
+      return;
+    }
+    const rows = issues.map((i) => `
+      <div class="issue-row">
+        <span class="issue-tag">${i.tag}</span>
+        <a href="${i.html_url}" target="_blank" rel="noopener">${i.title}</a>
+        <span class="card-date" style="float:none">${fmtDatumKurz(i.created_at)}</span>
+      </div>`).join('');
+    document.getElementById('supportContent').innerHTML = kpiHtml + rows;
+  }
+
+  // --- Cockpit (Status/Kosten/Zuverlässigkeit aller Automationen) ---
+  let cockpitData = null;
+  let cockpitSortKey = 'status';
+  let cockpitSortDir = 1;
+  let cockpitFilterStatus = 'alle';
+  let cockpitSearchQuery = '';
+
+  function fmtTag(iso) {
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+  }
+
+  function cockpitStatusLabel(status) {
+    if (status === 'ok') return '✅ OK';
+    if (status === 'fehler') return '❌ Fehler';
+    if (status === 'nie-gelaufen') return '⚠️ Nie gelaufen';
+    return status;
+  }
+
+  function cockpitStatusRang(status) {
+    if (status === 'fehler') return 0;
+    if (status === 'nie-gelaufen') return 1;
+    return 2;
+  }
+
+  function renderReliability(verlauf) {
+    if (!verlauf || !verlauf.length) return '<span class="rel-empty">–</span>';
+    const dots = verlauf.slice(0, 5).map((c) => {
+      const cls = c === 'success' ? 'rel-success' : c === 'failure' ? 'rel-failure' : 'rel-other';
+      return `<span class="${cls}" title="${c || 'unbekannt'}"></span>`;
+    }).join('');
+    return `<div class="reliability">${dots}</div>`;
+  }
+
+  function renderCockpitChart(verlauf) {
+    if (!verlauf || verlauf.length < 2) return '';
+    const werte = verlauf.map((e) => e.geschaetzteKostenEurHeute || 0);
+    const max = Math.max(...werte, 0.01);
+    const w = 100 / verlauf.length;
+    const barW = Math.min(w * 0.55, 4);
+    let svg = `<svg class="chart-svg" viewBox="0 0 100 40" preserveAspectRatio="none">`;
+    verlauf.forEach((e, i) => {
+      const h = Math.max((e.geschaetzteKostenEurHeute || 0) / max * 34, 0.6);
+      const x = i * w + (w - barW) / 2;
+      const y = 36 - h;
+      svg += `<rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barW.toFixed(2)}" height="${h.toFixed(2)}" rx="0.8"><title>${fmtTag(e.datum)}: ~${(e.geschaetzteKostenEurHeute || 0).toFixed(2)} €</title></rect>`;
+    });
+    svg += `</svg><div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--mut2);margin-top:4px;">
+      <span>${fmtTag(verlauf[0].datum)}</span><span>${fmtTag(verlauf[verlauf.length - 1].datum)}</span>
+    </div>`;
+    return svg;
+  }
+
+  function cockpitGefilterteAutomationen() {
+    let liste = [...(cockpitData.automationen || [])];
+    if (cockpitFilterStatus !== 'alle') liste = liste.filter((a) => a.status === cockpitFilterStatus);
+    if (cockpitSearchQuery.trim()) {
+      const q = cockpitSearchQuery.trim().toLowerCase();
+      liste = liste.filter((a) => a.name.toLowerCase().includes(q) || String(a.nummer).includes(q));
+    }
+    liste.sort((a, b) => {
+      let cmp = 0;
+      if (cockpitSortKey === 'status') cmp = cockpitStatusRang(a.status) - cockpitStatusRang(b.status);
+      else if (cockpitSortKey === 'nummer') cmp = (a.nummer || 999) - (b.nummer || 999);
+      else if (cockpitSortKey === 'name') cmp = a.name.localeCompare(b.name);
+      else if (cockpitSortKey === 'letzterLauf') cmp = new Date(a.letzterLauf?.startedAt || 0) - new Date(b.letzterLauf?.startedAt || 0);
+      if (cmp === 0) cmp = (a.nummer || 999) - (b.nummer || 999);
+      return cmp * cockpitSortDir;
+    });
+    return liste;
+  }
+
+  function setCockpitSort(key) {
+    if (cockpitSortKey === key) cockpitSortDir *= -1;
+    else { cockpitSortKey = key; cockpitSortDir = 1; }
+    renderCockpitTable();
+  }
+
+  function setCockpitFilter(status) {
+    cockpitFilterStatus = status;
+    renderCockpitTable();
+  }
+
+  function renderCockpitTable() {
+    const liste = cockpitGefilterteAutomationen();
+    const tbody = document.getElementById('cockpitTableBody');
+    const countEl = document.getElementById('cockpitResultCount');
+    countEl.textContent = `${liste.length} von ${cockpitData.automationen.length}`;
+
+    tbody.innerHTML = liste.length ? liste.map((a) => `
+      <tr>
+        <td class="num">${a.nummer ?? '–'}</td>
+        <td>${a.workflowUrl ? `<a class="row-link" href="${a.workflowUrl}" target="_blank" rel="noopener">${a.name}</a>` : a.name}</td>
+        <td><span class="status-pill status-${a.status}">${cockpitStatusLabel(a.status)}</span></td>
+        <td>${renderReliability(a.verlauf)}</td>
+        <td class="num">${a.letzterLauf ? fmtDatum(a.letzterLauf.startedAt) : '–'}</td>
+        <td>${(a.verbindungen || []).map((v) => `<span class="verb-tag">${v}</span>`).join('') || '–'}</td>
+        <td class="sofort-cell">${a.sofortNoetig || '–'}</td>
+      </tr>`).join('') : `<tr><td colspan="7"><div class="empty" style="padding:24px;">Keine Treffer.</div></td></tr>`;
+
+    document.querySelectorAll('#panel-cockpit th[data-sort]').forEach((th) => {
+      const arrow = th.querySelector('.arrow');
+      arrow.textContent = th.dataset.sort === cockpitSortKey ? (cockpitSortDir === 1 ? '▲' : '▼') : '';
+    });
+    document.querySelectorAll('#panel-cockpit .filter-chip').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.status === cockpitFilterStatus);
+    });
+  }
+
+  function renderCockpit(data) {
+    cockpitData = data;
+    const el = document.getElementById('cockpitContent');
+    if (!data || !data.automationen || !data.automationen.length) {
+      el.innerHTML = emptyHtml('🛰️', 'Noch keine Daten', 'Erscheint, sobald der Agenten-Status-Sammler (#80) und das Kosten-Cockpit (#81) einmal gelaufen sind.');
+      return;
+    }
+
+    const anzahlHandlungsbedarf = data.automationen.filter((a) => a.status !== 'ok').length;
+    const anzahlFehler = data.automationen.filter((a) => a.status === 'fehler').length;
+    const anzahlNieGelaufen = data.automationen.filter((a) => a.status === 'nie-gelaufen').length;
+    const kosten = data.kosten || {};
+
+    let html = '<div class="kpi-grid">';
+    html += `<div class="kpi-box"><div class="kpi-num">${data.automationen.length}</div><div class="kpi-label">AUTOMATIONEN GESAMT</div></div>`;
+    html += `<div class="kpi-box"><div class="kpi-num" style="${anzahlHandlungsbedarf > 0 ? 'color:var(--amber)' : ''}">${anzahlHandlungsbedarf}</div><div class="kpi-label">BRAUCHEN AUFMERKSAMKEIT</div></div>`;
+    html += `<div class="kpi-box"><div class="kpi-num">${(kosten.tokenHeute || 0).toLocaleString('de-DE')}</div><div class="kpi-label">CLAUDE-TOKEN HEUTE</div></div>`;
+    html += `<div class="kpi-box"><div class="kpi-num">~${(kosten.geschaetzteKostenEurHeute || 0).toFixed(2)} €</div><div class="kpi-label">GESCHÄTZT HEUTE</div></div>`;
+    html += `<div class="kpi-box"><div class="kpi-num">~${(kosten.monatsProjektionEur || 0).toFixed(0)} €</div><div class="kpi-label">MONATS-PROJEKTION</div></div>`;
+    html += '</div>';
+
+    if (kosten.verlauf && kosten.verlauf.length >= 2) {
+      html += '<div class="section-title-inline">📈 Kosten-Trend</div>';
+      html += `<div class="chart-card">${renderCockpitChart(kosten.verlauf)}</div>`;
+    }
+
+    html += '<div class="section-title-inline">🚨 Sofort nötig</div>';
+    html += (data.sofortNoetig && data.sofortNoetig.length)
+      ? data.sofortNoetig.map((s) => `
+        <div class="urgent-row">
+          <div class="urgent-top"><span>${s.titel}</span><span class="urgent-quelle">${s.quelle}</span></div>
+          <div class="urgent-detail">${s.detail || ''}</div>
+        </div>`).join('')
+      : '<div class="empty" style="padding:20px;"><div class="emoji">✅</div>Alles im grünen Bereich.</div>';
+
+    html += `<div class="section-title-inline">📋 Alle Automationen <span class="result-count" id="cockpitResultCount"></span></div>`;
+    html += `<div class="controls">
+      <input class="search-input" id="cockpitSearchInput" type="text" placeholder="Suche nach Name oder Nummer…">
+      <button class="filter-chip" data-status="alle">Alle (${data.automationen.length})</button>
+      <button class="filter-chip" data-status="fehler">❌ Fehler (${anzahlFehler})</button>
+      <button class="filter-chip" data-status="nie-gelaufen">⚠️ Nie gelaufen (${anzahlNieGelaufen})</button>
+      <button class="filter-chip" data-status="ok">✅ OK (${data.automationen.length - anzahlHandlungsbedarf})</button>
+    </div>`;
+
+    html += '<div class="table-wrap"><table class="cockpit-table"><thead><tr>' +
+      '<th data-sort="nummer">#<span class="arrow"></span></th>' +
+      '<th data-sort="name">Name<span class="arrow"></span></th>' +
+      '<th data-sort="status">Status<span class="arrow"></span></th>' +
+      '<th>Letzte 5 Läufe</th>' +
+      '<th data-sort="letzterLauf">Zuletzt<span class="arrow"></span></th>' +
+      '<th>Verbindungen</th><th>Sofort nötig</th>' +
+      '</tr></thead><tbody id="cockpitTableBody"></tbody></table></div>';
+
+    html += '<p class="note">Kosten sind eine grobe Schätzung, keine exakte Abrechnung — echte Zahlen stehen in der Anthropic Console. "OK" heißt, der letzte Lauf ist ohne Absturz durchgelaufen, das garantiert nicht, dass alle nötigen Secrets gesetzt sind.</p>';
+    html += `<p class="note">Stand: ${fmtDatum(data.updatedAt)}</p>`;
+
+    el.innerHTML = html;
+
+    document.getElementById('cockpitSearchInput').addEventListener('input', (e) => {
+      cockpitSearchQuery = e.target.value;
+      renderCockpitTable();
+    });
+    document.querySelectorAll('#panel-cockpit .filter-chip').forEach((btn) => {
+      btn.addEventListener('click', () => setCockpitFilter(btn.dataset.status));
+    });
+    document.querySelectorAll('#panel-cockpit th[data-sort]').forEach((th) => {
+      th.addEventListener('click', () => setCockpitSort(th.dataset.sort));
+    });
+
+    renderCockpitTable();
+  }
+
+  // --- Brand (Marken-DNA + markentreue Produkte, Automation #83) ---
+  function fitBadge(fit) {
+    const n = fit || 0;
+    const cls = n >= 8 ? 'status-ok' : n >= 5 ? 'status-nie-gelaufen' : 'status-fehler';
+    return `<span class="status-pill ${cls}" style="margin-left:8px;">Markenfit ${n}/10</span>`;
+  }
+
+  function renderBrand(data) {
+    const el = document.getElementById('brandContent');
+    if (!data || !data.markenDna || !(data.produkte || []).length) {
+      el.innerHTML = emptyHtml('🧬', 'Noch keine Marken-DNA', 'Erscheint, sobald Brand Scout (#83) zum ersten Mal gelaufen ist.');
+      return;
+    }
+    const dna = data.markenDna;
+    let html = `
+      <div class="card hero-card">
+        <div class="card-label">🧬 DEINE MARKEN-DNA</div>
+        <p><b>Kernkategorien:</b> ${dna.kernkategorien || '–'}</p>
+        <p><b>Preislage:</b> ${dna.preislage || '–'}</p>
+        <p><b>Zielgruppe:</b> ${dna.zielgruppe || '–'}</p>
+        <p><b>Stil:</b> ${dna.stil || '–'}</p>
+      </div>`;
+    const sortiert = [...data.produkte].sort((a, b) => (b.gesamtScore || 0) - (a.gesamtScore || 0));
+    html += sortiert.map((p) => `
+      <div class="prod-row">
+        <div class="prod-top"><span class="prod-name">${p.name}${fitBadge(p.markenfit)}</span><span class="prod-score">Score ${p.gesamtScore}/10</span></div>
+        <div class="prod-scores">Nachfrage ${p.nachfrage || 0} · Konkurrenz ${p.konkurrenz || 0} · Marge ${p.marge || 0} · Trend ${p.trend || 0} · Lieferzeit ${p.lieferzeit || 0} · Risiko ${p.risiko || 0}</div>
+        <div class="prod-begr">${p.begruendung || ''}</div>
+        ${p.warnung ? `<div class="prod-warn">⚠️ ${p.warnung}</div>` : ''}
+      </div>`).join('');
+    el.innerHTML = html;
+  }
+
+  // --- Referral (Freunde werben Freunde, Automation #84) ---
+  function renderReferral(data) {
+    const el = document.getElementById('referralContent');
+    if (!data || !data.gesamtCodesVergeben) {
+      el.innerHTML = emptyHtml('👯', 'Noch kein Empfehlungsprogramm aktiv', 'Erscheint, sobald Freunde-werben-Freunde (#84) zum ersten Mal gelaufen ist.');
+      return;
+    }
+    let html = `<div class="kpi-grid">
+      <div class="kpi-box"><div class="kpi-num">${data.gesamtCodesVergeben}</div><div class="kpi-label">CODES VERGEBEN</div></div>
+      <div class="kpi-box"><div class="kpi-num">${data.gesamtBelohnungen}</div><div class="kpi-label">EINGELÖST & BELOHNT</div></div>
+      <div class="kpi-box"><div class="kpi-num">${data.rabattFuerFreund}%</div><div class="kpi-label">RABATT FÜR FREUND</div></div>
+      <div class="kpi-box"><div class="kpi-num">${data.belohnungProzent}%</div><div class="kpi-label">DANK-RABATT FÜR WERBER</div></div>
+    </div>`;
+    const belohnungen = data.letzteBelohnungen || [];
+    if (belohnungen.length) {
+      html += '<div class="section-title-inline">Letzte Empfehlungen</div>';
+      html += belohnungen.map((b) => `
+        <div class="ref-row">
+          <span>Werber ${b.werberId} → geworben: ${b.geworbenerKunde}</span>
+          <span class="card-date" style="float:none">${fmtDatumKurz(b.datum)}</span>
+        </div>`).join('');
+    } else {
+      html += emptyHtml('✅', 'Noch keine Einlösung', 'Codes sind vergeben, aber noch hat kein neuer Kunde damit bestellt.');
+    }
+    el.innerHTML = html;
+  }
+
+  // --- Social (Multi-Plattform-Poster Live-Status, Automation #18) ---
+  function plattformBadge(name, ergebnis) {
+    if (!ergebnis || !ergebnis.aktiv) return `<span class="platform-badge platform-off">${name} aus</span>`;
+    if (ergebnis.gepostet) return `<span class="platform-badge platform-ok">${name} ✓</span>`;
+    return `<span class="platform-badge platform-fail">${name} ✗</span>`;
+  }
+
+  function renderSocial(data) {
+    const el = document.getElementById('socialContent');
+    const pakete = (data && data.pakete) || [];
+    if (!pakete.length) {
+      el.innerHTML = emptyHtml('📮', 'Noch keine Posting-Pakete', 'Erscheint, sobald der Multi-Plattform-Poster (#18) zum ersten Mal gelaufen ist.');
+      return;
+    }
+    el.innerHTML = pakete.slice(0, 20).map((p) => `
+      <div class="card">
+        <span class="card-date">${fmtDatumKurz(p.datum)}</span>
+        <div class="card-label">${p.thema || 'Tagesthema'}</div>
+        <p>${(p.topText || '').slice(0, 160)}${(p.topText || '').length > 160 ? '…' : ''}</p>
+        <div>${plattformBadge('Facebook', p.facebook)}${plattformBadge('Instagram', p.instagram)}</div>
+      </div>`).join('');
+  }
+
+  // --- Belege (PayPal-Zahlungsnachweise, Automation #78) ---
+  function renderBelege(data) {
+    const el = document.getElementById('belegeContent');
+    const belege = (data && data.belege) || [];
+    if (!belege.length) {
+      el.innerHTML = emptyHtml('🧾', 'Noch keine Belege', 'Erscheint, sobald der PayPal-Beleg-Agent (#78) zum ersten Mal gelaufen ist.');
+      return;
+    }
+    el.innerHTML = belege.slice(0, 30).map((b) => `
+      <div class="beleg-row">
+        <a href="${b.url}" target="_blank" rel="noopener">${b.orderName}</a>
+        <span>${b.betrag} ${b.waehrung} · ${b.versandstatus}</span>
+        <span class="card-date" style="float:none">${fmtDatumKurz(b.bestelltAm)}</span>
+      </div>`).join('');
+  }
+
+  // --- Recap (Wochen-Rückblick, Automation #79) ---
+  function renderRecap(data) {
+    const el = document.getElementById('recapContent');
+    if (!data || !data.generatedAt) {
+      el.innerHTML = emptyHtml('🎉', 'Noch kein Rückblick', 'Erscheint, sobald der Wrapped-Generator (#79) zum ersten Mal gelaufen ist (braucht mind. 2 Tage Finance-Cockpit-Historie).');
+      return;
+    }
+    const wachstumHtml = data.wachstumProzent === null || data.wachstumProzent === undefined ? '' :
+      `<span class="growth-pill ${data.wachstumProzent >= 0 ? 'growth-up' : 'growth-down'}">${data.wachstumProzent >= 0 ? '📈 +' : '📉 '}${data.wachstumProzent}% ggü. Vorwoche</span>`;
+    el.innerHTML = `
+      <div class="stat-hero">
+        <div class="stat-hero-num">${data.umsatz.toFixed(0)} ${data.waehrung}</div>
+        <div class="stat-hero-label">UMSATZ · ${fmtDatumKurz(data.zeitraumVon)} – ${fmtDatumKurz(data.zeitraumBis)}</div>
+        ${wachstumHtml}
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-box"><div class="kpi-num">${data.bestellungen}</div><div class="kpi-label">BESTELLUNGEN</div></div>
+        <div class="kpi-box"><div class="kpi-num">${data.nettoGewinn.toFixed(0)}</div><div class="kpi-label">NETTOGEWINN ${data.waehrung}</div></div>
+        <div class="kpi-box"><div class="kpi-num">${data.aov.toFixed(0)}</div><div class="kpi-label">Ø WARENKORB</div></div>
+      </div>
+      ${data.bestTag ? `<div class="card"><div class="card-label">BESTER TAG</div><p>${fmtDatumKurz(data.bestTag.datum)} — ${data.bestTag.umsatz.toFixed(2)} ${data.waehrung}</p></div>` : ''}
+      ${data.topProdukt ? `<div class="card"><div class="card-label">TOP-PRODUKT</div><p>${data.topProdukt.name} — ${data.topProdukt.menge}x verkauft</p></div>` : ''}
+      <p class="note">Stand: ${fmtDatum(data.generatedAt)}</p>`;
+  }
+
+  // --- Autopilot (alle AUTO_*-Schalter der Suite an einer Stelle) ---
+  const AUTOPILOT_SCHALTER = [
+    { name: 'AUTO_SKALIEREN', quelle: '#42 Meta-Ads-Auto-Skalierer', desc: 'Erhöht das Budget performanter Ad-Sets automatisch statt nur zu empfehlen.', standard: 'nein' },
+    { name: 'AUTO_PAUSE', quelle: '#43 Meta-Ads-Notbremse', desc: 'Pausiert schlecht laufende Ad-Sets automatisch.', standard: 'nein' },
+    { name: 'AUTO_STOP', quelle: '#43 Meta-Ads-Notbremse', desc: 'Stoppt komplett entgleiste Kampagnen automatisch.', standard: 'nein' },
+    { name: 'AUTO_POST_FACEBOOK', quelle: '#18 Multi-Plattform-Poster', desc: 'Postet den Tagesbeitrag wirklich auf Facebook statt nur Entwurf zu erstellen.', standard: 'nein' },
+    { name: 'AUTO_POST_INSTAGRAM', quelle: '#18 Multi-Plattform-Poster', desc: 'Postet Bild+Caption wirklich auf Instagram statt nur Entwurf zu erstellen.', standard: 'nein' },
+    { name: 'AUTO_PREISANPASSUNG', quelle: '#61 Pricing-Agent', desc: 'Ändert Verkaufspreise basierend auf Verkaufstempo wirklich, statt nur zu empfehlen.', standard: 'nein' },
+    { name: 'AUTO_BESTELLUNG_SENDEN', quelle: '#63 Reorder-Agent', desc: 'Schickt Nachbestell-Mails wirklich an den Lieferanten - löst auch #82 Zahlungs-Erinnerungen aus.', standard: 'nein' },
+    { name: 'AUTO_BUDGET_UMSCHICHTEN', quelle: '#64 Ads-Autopilot-Agent', desc: 'Verschiebt Ad-Budget zwischen Ad-Sets wirklich, statt nur zu empfehlen.', standard: 'nein' },
+    { name: 'AUTO_UEBERVERKAUF_STOPPEN', quelle: '#65 Inventory-Guardian-Agent', desc: 'Stoppt automatisch den Verkauf bei Bestand 0 - schützend/reversibel, daher als einziger Schalter standardmäßig AN.', standard: 'ja' },
+    { name: 'AUTO_GUTSCHEIN_SENDEN', quelle: '#67 Gift-Card-Kompensations-Agent', desc: 'Verschickt echte Gutscheine bei erkannten Service-Fehlern automatisch.', standard: 'nein' },
+    { name: 'AUTO_ERSTATTUNG_GENEHMIGEN', quelle: '#74 Refund-Concierge-Agent', desc: 'Genehmigt kleine Erstattungen automatisch (bis REFUND_MAX_BETRAG).', standard: 'nein' },
+  ];
+
+  function renderAutopilot(agentenAnzahl) {
+    const el = document.getElementById('autopilotContent');
+    const anAnzahl = AUTOPILOT_SCHALTER.filter((s) => s.standard === 'ja').length;
+    let html = `<div class="kpi-grid">
+      <div class="kpi-box"><div class="kpi-num">${AUTOPILOT_SCHALTER.length}</div><div class="kpi-label">AUTOPILOT-SCHALTER</div></div>
+      <div class="kpi-box"><div class="kpi-num">${anAnzahl}</div><div class="kpi-label">STANDARDMÄSSIG AN</div></div>
+      <div class="kpi-box"><div class="kpi-num">${AUTOPILOT_SCHALTER.length - anAnzahl}</div><div class="kpi-label">NUR EMPFEHLUNG BIS DU SIE ANSCHALTEST</div></div>
+    </div>`;
+    html += AUTOPILOT_SCHALTER.map((s) => `
+      <div class="autopilot-row">
+        <div>
+          <div class="autopilot-name">${s.name} <span style="color:var(--mut2);font-weight:400;">(${s.quelle})</span></div>
+          <div class="autopilot-desc">${s.desc}</div>
+        </div>
+        <span class="autopilot-state ${s.standard === 'ja' ? 'state-an' : 'state-aus'}">${s.standard === 'ja' ? '✅ Standard: AN' : '⏸️ Standard: AUS'}</span>
+      </div>`).join('');
+    html += `<p class="note">Jeder Schalter wird als GitHub-Secret gesetzt (Wert "ja" = an). Alle 11 auf "ja" = die Suite trifft und führt selbst Entscheidungen aus statt nur zu empfehlen - bewusst standardmäßig vorsichtig, damit du erst vertraust bevor du loslässt.</p>`;
+    el.innerHTML = html;
+  }
+
+  // --- Alle Tools (Launchpad zu den restlichen, echt interaktiven Apps) ---
+  const WEITERE_TOOLS = [
+    { emoji: '🧠', name: 'Jarvis', desc: 'Voice-HUD-Assistent, zentrale Steuerung der Suite.', href: '../' },
+    { emoji: '🗡️', name: 'Brand Assassin', desc: 'Product Research, Creative Analyzer, Markt-Intelligence.', href: '../brand-assassin/' },
+    { emoji: '🧬', name: 'Brand Scout', desc: 'Marken-DNA aus echten Shop-Daten + markentreue neue Produktideen.', href: '../brand-scout/' },
+    { emoji: '💬', name: 'Pulse', desc: 'Chat über dein Business, gespeist mit echten Zahlen.', href: '../pulse/' },
+    { emoji: '🎯', name: 'Closer', desc: 'KI-Verkaufstrainer — pitche gegen einen simulierten Kunden.', href: '../closer/' },
+    { emoji: '🔮', name: 'Oracle', desc: 'Tägliches AI-Briefing im Lagebericht-Stil.', href: '../oracle/' },
+    { emoji: '🎛️', name: 'Forecast', desc: 'Was-wäre-wenn-Gewinn-Simulator mit zwei Reglern.', href: '../forecast/' },
+    { emoji: '📈', name: 'Trading Dashboard', desc: 'Live-Übersicht über den Krypto-Trading-Bot.', href: '../trading-dashboard/' },
+    { emoji: '🧪', name: 'Strategy Lab', desc: 'Backtesting-Labor mit echten Binance-Kursdaten.', href: '../strategy-lab/' },
+    { emoji: '🧮', name: 'Preis-Kalkulator', desc: 'Errechnet den richtigen Verkaufspreis aus allen Kosten.', href: '../pricing/' },
+    { emoji: '✅', name: 'Setup', desc: 'Geführte Checkliste für die einmalige Einrichtung.', href: '../setup/' },
+    { emoji: '🛰️', name: 'Mission Control', desc: 'Live-Radar: welches Secret schaltet die meisten Automationen frei.', href: '../mission-control/' },
+    { emoji: '🤖', name: 'Agents', desc: 'Live-Status aller KI-Agenten, direkt aus GitHub Actions.', href: '../agents/' },
+    { emoji: '⚙️', name: 'Automations-Dashboard', desc: '84 KI-Automationen im Überblick — kompletter n8n-Ersatz.', href: '../automations-dashboard/' },
+    { emoji: '🛰️', name: 'Finance-Cockpit', desc: 'Umsatz, Marge und Gewinn-Trend auf einen Blick — täglich automatisch aktualisiert.', href: '../finance-cockpit/' },
+    { emoji: '🎛️', name: 'Cockpit', desc: 'Alle Automationen, Kosten-Trend und Handlungsbedarf auf einen Blick.', href: '../cockpit/' },
+    { emoji: '📮', name: 'Social Poster', desc: 'Was wurde heute wirklich live gepostet - und was ist nur Entwurf?', href: '../social-poster/' },
+    { emoji: '🧾', name: 'PayPal-Belege', desc: 'Alle automatisch erstellten Zahlungs- und Liefernachweise für PayPal-Bestellungen.', href: '../paypal-belege/' },
+    { emoji: '🎉', name: 'Wrapped', desc: 'Dein wöchentlicher Shop-Rückblick im Story-Format.', href: '../wrapped/' },
+    { emoji: '🌐', name: 'Empire', desc: 'Die komplette App-Übersicht der Suite.', href: '../empire/' },
+  ];
+
+  function renderTools() {
+    document.getElementById('toolsContent').innerHTML = `<div class="tool-grid">${WEITERE_TOOLS.map((t) => `
+      <a class="tool-card" href="${t.href}">
+        <span class="tool-emoji">${t.emoji}</span>
+        <div class="tool-name">${t.name}</div>
+        <div class="tool-desc">${t.desc}</div>
+      </a>`).join('')}</div>`;
+  }
+
+  // --- System-Health-Score (Hero-Badge) ---
+  // Bewusst EIN kombinierter Wert, aber transparent nachvollziehbar (kein
+  // Blackbox-Score) - gewichtet Automations-Gesundheit am stärksten (80%),
+  // da das der objektivste, messbare Teil ist; Eskalationen ziehen leicht ab.
+  function renderHealthBadge(cockpit, eskalationenAnzahl) {
+    if (!cockpit) return; // Cockpit-Daten noch nicht geladen - laufenden Badge-Stand nicht mit leer überschreiben
+    const wrap = document.getElementById('healthBadgeWrap');
+    const automationen = cockpit.automationen || [];
+    if (!automationen.length) { wrap.innerHTML = ''; return; }
+
+    const okAnzahl = automationen.filter((a) => a.status === 'ok').length;
+    const automationsPct = (okAnzahl / automationen.length) * 100;
+    const eskalationenAbzug = Math.min((eskalationenAnzahl || 0) * 2, 20);
+    const score = Math.max(0, Math.round(automationsPct * 0.8 + (100 - eskalationenAbzug) * 0.2));
+    const klasse = score >= 80 ? 'h-good' : score >= 50 ? 'h-warn' : 'h-bad';
+
+    const heuteStr = new Date().toISOString().slice(0, 10);
+    const kettenHeute = ((letzteChains && letzteChains.log) || []).filter((e) => e.ausgeloest && (e.datum || '').slice(0, 10) === heuteStr).length;
+    const eskFarbe = eskalationenAnzahl ? 'color:var(--amber);text-shadow:0 0 12px rgba(255,197,92,.4);' : '';
+
+    wrap.innerHTML = `
+      <div class="health-badge">
+        <div class="health-ring ${klasse}" style="--pct:${score};position:relative;">
+          <span id="healthRingNum" style="position:relative;z-index:1;background:var(--bg);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;">0</span>
+        </div>
+        <div class="health-text">SYSTEM-HEALTH<br><b>${okAnzahl}/${automationen.length} Automationen ok</b> · ${eskalationenAnzahl || 0} offene Eskalation${eskalationenAnzahl === 1 ? '' : 'en'}</div>
+      </div>
+      <div class="hero-ticker">
+        <div class="hero-ticker-item"><div class="hero-ticker-num">${okAnzahl}/${automationen.length}</div><div class="hero-ticker-label">AUTOMATIONEN OK</div></div>
+        <div class="hero-ticker-item"><div class="hero-ticker-num" id="tickerEsk" style="${eskFarbe}">0</div><div class="hero-ticker-label">ESKALATIONEN</div></div>
+        <div class="hero-ticker-item"><div class="hero-ticker-num" id="tickerKetten" style="color:var(--cyan);text-shadow:0 0 12px rgba(111,224,255,.4);">0</div><div class="hero-ticker-label">KETTEN HEUTE</div></div>
+        <div class="hero-ticker-item"><div class="hero-ticker-num" id="tickerScore">0</div><div class="hero-ticker-label">HEALTH-SCORE</div></div>
+      </div>`;
+
+    animateCount(document.getElementById('healthRingNum'), score);
+    animateCount(document.getElementById('tickerEsk'), eskalationenAnzahl || 0);
+    animateCount(document.getElementById('tickerKetten'), kettenHeute);
+    animateCount(document.getElementById('tickerScore'), score);
+  }
+
+  // Zahlen zählen sanft von ihrem aktuellen Stand zum neuen Wert hoch, statt
+  // beim 60s-Refresh einfach zu springen - fühlt sich "lebendig" an.
+  function animateCount(el, target, duration = 700) {
+    if (!el) return;
+    const start = parseInt(el.textContent, 10) || 0;
+    if (start === target) { el.textContent = target; return; }
+    const t0 = performance.now();
+    (function tick(now) {
+      const p = Math.min((now - t0) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(start + (target - start) * eased);
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  // --- Live-Ticker-Band (Nachrichten-Streifen unter der Nav) ---
+  const TICKER_FUELLTEXTE = [
+    '⚡ CASHMACHINE COMMAND — alle Systeme auf Autopilot ausbaubar',
+    '🛰️ 84 Automationen laufen im Hintergrund über GitHub Actions',
+    '🧠 Chef-Agent fasst täglich Finanzen, Fulfillment und Kundenstamm zusammen',
+    '🔒 Alle Daten bleiben in deinem eigenen GitHub-Repo',
+  ];
+  function renderTickerTape(chains) {
+    const track = document.getElementById('tickerTrack');
+    if (!track) return;
+    const kettenItems = ((chains && chains.log) || []).slice(0, 8).map((e) =>
+      `${e.ausgeloest ? '🔗' : '⚠️'} <b>${e.von}</b> → <b>${e.nach}</b> — ${e.grund}`);
+    const items = kettenItems.length ? kettenItems : TICKER_FUELLTEXTE;
+    // Content wird verdoppelt + Animation läuft exakt bis -50%, damit die
+    // Schleife nahtlos wirkt (kein sichtbarer Sprung am Ende).
+    while (items.length < 6) items.push(...TICKER_FUELLTEXTE);
+    const html = items.map((t) => `<span class="ticker-item">${t}</span>`).join('');
+    track.innerHTML = html + html;
+  }
+
+  // --- Partikel-Netzwerk im Hintergrund (leichtgewichtiges Canvas, pausiert
+  // im Hintergrund-Tab, respektiert prefers-reduced-motion) ---
+  (function initParticleNetwork() {
+    const canvas = document.getElementById('bgCanvas');
+    if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const ctx = canvas.getContext('2d');
+    let w, h, particles, running = false;
+    const ANZAHL = Math.max(24, Math.min(60, Math.floor((window.innerWidth * window.innerHeight) / 24000)));
+    const VERBINDUNGS_RADIUS = 130;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    function init() {
+      resize();
+      particles = Array.from({ length: ANZAHL }, () => ({
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.28, vy: (Math.random() - 0.5) * 0.28,
+      }));
+    }
+    function tick() {
+      ctx.clearRect(0, 0, w, h);
+      for (const p of particles) {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+      }
+      for (let i = 0; i < particles.length; i++) {
+        const a = particles[i];
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, 1.3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(62,242,160,.4)';
+        ctx.fill();
+        for (let j = i + 1; j < particles.length; j++) {
+          const b = particles[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < VERBINDUNGS_RADIUS) {
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(62,242,160,${0.14 * (1 - dist / VERBINDUNGS_RADIUS)})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+    function loop() {
+      if (document.hidden) { running = false; return; }
+      tick();
+      requestAnimationFrame(loop);
+    }
+    function start() { if (!running) { running = true; requestAnimationFrame(loop); } }
+    init();
+    window.addEventListener('resize', init);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) start(); });
+    start();
+  })();
+
+  // --- Maus-Spotlight im Hero ---
+  (function initHeroSpotlight() {
+    const hero = document.getElementById('heroEl');
+    if (!hero || window.matchMedia('(pointer:coarse)').matches) return;
+    hero.addEventListener('mousemove', (e) => {
+      const rect = hero.getBoundingClientRect();
+      hero.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`);
+      hero.style.setProperty('--my', `${((e.clientY - rect.top) / rect.height) * 100}%`);
+    });
+  })();
+
+  // --- Activity-Feed (alles chronologisch zusammengeführt) ---
+  function renderActivity(chains, referral, social, ceo, brand, product) {
+    const el = document.getElementById('activityContent');
+    const ereignisse = [];
+
+    for (const e of (chains && chains.log) || []) {
+      ereignisse.push({ datum: e.datum, icon: e.ausgeloest ? '🔗' : '⚠️', text: `${e.von} → ${e.nach} — ${e.grund}`, quelle: 'Ketten' });
+    }
+    for (const b of (referral && referral.letzteBelohnungen) || []) {
+      ereignisse.push({ datum: b.datum, icon: '👯', text: `Empfehlung eingelöst: ${b.geworbenerKunde} (Werber ${b.werberId})`, quelle: 'Referral' });
+    }
+    for (const p of (social && social.pakete) || []) {
+      const plattformen = [p.facebook?.gepostet && 'Facebook', p.instagram?.gepostet && 'Instagram'].filter(Boolean);
+      if (plattformen.length) ereignisse.push({ datum: p.datum, icon: '📮', text: `Post veröffentlicht auf ${plattformen.join(' + ')}: "${p.thema}"`, quelle: 'Social' });
+    }
+    const letzteCeo = (ceo && ceo.historie && ceo.historie[0]) || null;
+    if (letzteCeo) ereignisse.push({ datum: letzteCeo.datum, icon: '👔', text: letzteCeo.allesGut ? 'Alles im grünen Bereich' : letzteCeo.prioritaet, quelle: 'Chef-Agent' });
+    for (const p of ((brand && brand.produkte) || []).slice(0, 10)) {
+      if (p.gefundenAm) ereignisse.push({ datum: p.gefundenAm, icon: '🧬', text: `Neue markentreue Produktidee: ${p.name}`, quelle: 'Brand Scout' });
+    }
+    for (const p of ((product && product.produkte) || []).slice(0, 10)) {
+      if (p.gefundenAm) ereignisse.push({ datum: p.gefundenAm, icon: '🔎', text: `Neue Produktidee: ${p.name}`, quelle: 'Product Hunter' });
+    }
+
+    ereignisse.sort((a, b) => new Date(b.datum) - new Date(a.datum));
+
+    if (!ereignisse.length) {
+      el.innerHTML = emptyHtml('📡', 'Noch keine Aktivität', 'Erscheint, sobald die ersten Automationen gelaufen sind.');
+      return;
+    }
+    el.innerHTML = ereignisse.slice(0, 40).map((e) => `
+      <div class="activity-row">
+        <span class="activity-icon">${e.icon}</span>
+        <div class="activity-body">${e.text}<div class="activity-src">${e.quelle}</div></div>
+        <span class="activity-time">${fmtDatumKurz(e.datum)}</span>
+      </div>`).join('');
+  }
+
+  // --- System-Map (radiale Live-Visualisierung aller Automationen + Ketten) ---
+  function mapStatusColor(status) {
+    if (status === 'fehler') return '#ff6b81';
+    if (status === 'nie-gelaufen') return '#ffc55c';
+    return '#3ef2a0';
+  }
+
+  function renderMap(cockpit, chains) {
+    const el = document.getElementById('mapContent');
+    const automationen = (cockpit && cockpit.automationen) || [];
+    if (!automationen.length) {
+      el.innerHTML = emptyHtml('🧠', 'Noch keine Karte', 'Erscheint, sobald der Agenten-Status-Sammler (#80) einmal gelaufen ist.');
+      return;
+    }
+
+    const W = 400, H = 400, CX = 200, CY = 200, R = 165;
+    const positionen = {};
+    automationen.forEach((a, i) => {
+      const winkel = (i / automationen.length) * Math.PI * 2 - Math.PI / 2;
+      positionen[`${a.nummer} · ${a.name}`] = {
+        x: CX + R * Math.cos(winkel),
+        y: CY + R * Math.sin(winkel),
+        a,
+      };
+    });
+
+    let svg = `<svg class="map-svg" viewBox="0 0 ${W} ${H}" id="mapSvg">`;
+    svg += `<circle class="map-center-ring" cx="${CX}" cy="${CY}" r="${R}"/>`;
+    svg += `<circle class="map-center-ring" cx="${CX}" cy="${CY}" r="34" fill="rgba(62,242,160,.06)"/>`;
+    svg += `<text class="map-center-label" x="${CX}" y="${CY - 2}">CASH</text><text class="map-center-label" x="${CX}" y="${CY + 6}">MACHINE</text>`;
+
+    // Ketten als pulsierende Linien zwischen den beteiligten Knoten
+    for (const def of (chains && chains.definitionen) || []) {
+      const von = positionen[def.von];
+      const nach = positionen[def.nach];
+      if (!von || !nach) continue;
+      const mx = (von.x + nach.x) / 2 + (CY - (von.y + nach.y) / 2) * 0.15;
+      const my = (von.y + nach.y) / 2 + ((von.x + nach.x) / 2 - CX) * -0.15;
+      svg += `<path class="map-chain-line" d="M${von.x.toFixed(1)},${von.y.toFixed(1)} Q${mx.toFixed(1)},${my.toFixed(1)} ${nach.x.toFixed(1)},${nach.y.toFixed(1)}"/>`;
+    }
+
+    for (const [key, pos] of Object.entries(positionen)) {
+      const farbe = mapStatusColor(pos.a.status);
+      svg += `<g class="map-node" data-name="${pos.a.name}" data-nummer="${pos.a.nummer}" data-status="${pos.a.status}" transform="translate(${pos.x.toFixed(1)},${pos.y.toFixed(1)})">
+        <circle class="dot" r="4.2" fill="${farbe}" stroke="var(--bg)" stroke-width="1"/>
+      </g>`;
+    }
+    svg += '</svg>';
+
+    el.innerHTML = `
+      <div class="map-wrap">
+        ${svg}
+        <div id="mapTooltip"></div>
+      </div>
+      <div class="map-legend">
+        <span><i style="background:#3ef2a0"></i>OK (${automationen.filter((a) => a.status === 'ok').length})</span>
+        <span><i style="background:#ffc55c"></i>Nie gelaufen (${automationen.filter((a) => a.status === 'nie-gelaufen').length})</span>
+        <span><i style="background:#ff6b81"></i>Fehler (${automationen.filter((a) => a.status === 'fehler').length})</span>
+        <span style="color:var(--green)">┄┄ ${((chains && chains.definitionen) || []).length} aktive Kette(n)</span>
+      </div>
+      <p class="note">${automationen.length} Automationen im Kreis um den Kern - jeder Punkt ist eine echte Automation, jede gestrichelte Linie eine Kette (#20/#60 lösen andere Module direkt aus). Antippen/Hovern zeigt den Namen.</p>`;
+
+    const tooltip = document.getElementById('mapTooltip');
+    document.querySelectorAll('#mapSvg .map-node').forEach((node) => {
+      const zeigeTooltip = (evt) => {
+        tooltip.textContent = `#${node.dataset.nummer} ${node.dataset.name} — ${node.dataset.status}`;
+        tooltip.style.opacity = '1';
+        const rect = document.getElementById('mapContent').getBoundingClientRect();
+        tooltip.style.left = `${evt.clientX - rect.left + 12}px`;
+        tooltip.style.top = `${evt.clientY - rect.top + 12}px`;
+      };
+      node.addEventListener('mousemove', zeigeTooltip);
+      node.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+      node.addEventListener('click', zeigeTooltip);
+    });
+  }
+
+  function ladeJson(pfad) {
+    return fetch(pfad, { cache: 'no-store' }).then((res) => (res.ok ? res.json() : null)).catch(() => null);
+  }
+
+  let letzterCockpitStand = null;
+  let letzteChains = null;
+  let letzteChainZeit = null;
+  let vorherigeEskalationenAnzahl = null;
+
+  // Lädt alle Datenquellen neu und rendert alle Tabs - einmal beim Laden und
+  // danach alle 60s, damit sich die Seite wie ein echtes Live-System anfühlt
+  // statt dass man manuell neu laden muss.
+  function ladeAlles() {
+    Promise.all([
+      ladeJson('./chef-agent.json'),
+      ladeJson('../finance-cockpit/data.json'),
+      ladeJson('./product-hunter.json'),
+      ladeJson('./ad-commander.json'),
+      ladeJson('./chains.json'),
+      ladeJson('../cockpit/data.json'),
+      ladeJson('../brand-scout/data.json'),
+      ladeJson('./referral.json'),
+      ladeJson('../social-poster/manifest.json'),
+      ladeJson('../paypal-belege/manifest.json'),
+      ladeJson('../wrapped/data.json'),
+    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap]) => {
+      renderCeo(ceo);
+      renderAnalytics(analytics, ads);
+      renderProduct(product);
+      renderAds(ads);
+      renderChains(chains);
+      renderCockpit(cockpit);
+      renderBrand(brand);
+      renderReferral(referral);
+      renderSocial(social);
+      renderBelege(belege);
+      renderRecap(recap);
+      renderActivity(chains, referral, social, ceo, brand, product);
+      renderMap(cockpit, chains);
+      renderTickerTape(chains);
+      letzterCockpitStand = cockpit;
+      letzteChains = chains;
+      const eskalationenEl = document.getElementById('kpiTruthSupport');
+      const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
+      renderHealthBadge(cockpit, eskalationenAnzahl);
+
+      const neuesteKette = chains && Array.isArray(chains.log) && chains.log.length ? chains.log[0] : null;
+      if (neuesteKette && neuesteKette.ausgeloest && letzteChainZeit !== null && neuesteKette.datum !== letzteChainZeit) {
+        notifyBrowser('🔗 Kette ausgelöst', `${neuesteKette.von} → ${neuesteKette.nach}: ${neuesteKette.grund}`, 'chains');
+      }
+      if (neuesteKette) letzteChainZeit = neuesteKette.datum;
+    });
+  }
+
+  ladeAlles();
+  renderAutopilot();
+  renderTools();
+  ladeSupport();
+  setInterval(() => { ladeAlles(); ladeSupport(); }, 60000);
+
+  function switchTab(tabId) {
+    const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    const panel = document.getElementById(`panel-${tabId}`);
+    if (!btn || !panel) return;
+    document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach((p) => p.classList.remove('show'));
+    btn.classList.add('active');
+    panel.classList.add('show');
+    btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }
+
+  document.getElementById('tabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    switchTab(btn.dataset.tab);
+  });
+
+  // --- Command-Palette (⌘K) - schneller Sprung zu jedem Tab + jedem externen Tool ---
+  const CMDK_EINTRAEGE = [
+    ...Array.from(document.querySelectorAll('.tab-btn')).map((btn) => {
+      const text = btn.textContent.trim();
+      const emoji = text.split(' ')[0];
+      const label = text.slice(emoji.length).trim();
+      return { emoji, label, typ: 'tab', tab: btn.dataset.tab };
+    }),
+    ...WEITERE_TOOLS.map((t) => ({ emoji: t.emoji, label: t.name, typ: 'link', href: t.href, sub: t.desc })),
+  ];
+
+  let cmdkAktiverIndex = 0;
+  let cmdkGefiltert = CMDK_EINTRAEGE;
+
+  function cmdkRender() {
+    const list = document.getElementById('cmdkList');
+    if (!cmdkGefiltert.length) {
+      list.innerHTML = '<div class="cmdk-empty">Keine Treffer.</div>';
+      return;
+    }
+    list.innerHTML = cmdkGefiltert.map((e, i) => `
+      <div class="cmdk-item ${i === cmdkAktiverIndex ? 'active' : ''}" data-index="${i}">
+        <span class="cmdk-emoji">${e.emoji}</span>
+        <span>${e.label}</span>
+        <span class="cmdk-sub">${e.typ === 'tab' ? 'Tab' : 'externes Tool'}</span>
+      </div>`).join('');
+  }
+
+  function cmdkAusfuehren(eintrag) {
+    if (!eintrag) return;
+    if (eintrag.typ === 'tab') switchTab(eintrag.tab);
+    else window.location.href = eintrag.href;
+    cmdkSchliessen();
+  }
+
+  function cmdkOeffnen() {
+    document.getElementById('cmdkOverlay').classList.add('show');
+    const input = document.getElementById('cmdkInput');
+    input.value = '';
+    cmdkGefiltert = CMDK_EINTRAEGE;
+    cmdkAktiverIndex = 0;
+    cmdkRender();
+    input.focus();
+  }
+
+  function cmdkSchliessen() {
+    document.getElementById('cmdkOverlay').classList.remove('show');
+  }
+
+  document.getElementById('cmdkOpenBtn').addEventListener('click', cmdkOeffnen);
+  document.getElementById('cmdkOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'cmdkOverlay') cmdkSchliessen();
+  });
+  document.getElementById('cmdkInput').addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    cmdkGefiltert = q ? CMDK_EINTRAEGE.filter((x) => x.label.toLowerCase().includes(q)) : CMDK_EINTRAEGE;
+    cmdkAktiverIndex = 0;
+    cmdkRender();
+  });
+  document.getElementById('cmdkList').addEventListener('click', (e) => {
+    const item = e.target.closest('.cmdk-item');
+    if (item) cmdkAusfuehren(cmdkGefiltert[parseInt(item.dataset.index, 10)]);
+  });
+  document.getElementById('cmdkInput').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); cmdkAktiverIndex = Math.min(cmdkAktiverIndex + 1, cmdkGefiltert.length - 1); cmdkRender(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); cmdkAktiverIndex = Math.max(cmdkAktiverIndex - 1, 0); cmdkRender(); }
+    else if (e.key === 'Enter') { e.preventDefault(); cmdkAusfuehren(cmdkGefiltert[cmdkAktiverIndex]); }
+    else if (e.key === 'Escape') cmdkSchliessen();
+  });
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      cmdkOeffnen();
+    } else if (e.key === 'Escape') {
+      cmdkSchliessen();
+    }
+  });
+
+  // Echte Browser-Benachrichtigungen bei neuen Eskalationen/Ketten-Auslösungen
+  // - rein clientseitig (kein Push-Server nötig), nur aktiv wenn der Nutzer
+  // explizit zugestimmt hat. Klick auf die Notification springt zum Tab.
+  function notifyBrowser(titel, body, tabId) {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    try {
+      const n = new Notification(titel, { body, icon: './icon-192.png', badge: './icon-192.png' });
+      n.onclick = () => { window.focus(); switchTab(tabId); n.close(); };
+    } catch (err) { /* Notifications in diesem Kontext nicht verfügbar */ }
+  }
+
+  (function initNotifyBtn() {
+    const btn = document.getElementById('notifyBtn');
+    if (!('Notification' in window)) return;
+    const aktualisiereBtn = () => {
+      btn.style.display = Notification.permission === 'denied' ? 'none' : '';
+      btn.textContent = Notification.permission === 'granted' ? '🔔 Benachrichtigungen an' : '🔕 Benachrichtigungen aktivieren';
+    };
+    aktualisiereBtn();
+    btn.addEventListener('click', async () => {
+      if (Notification.permission === 'granted') return;
+      await Notification.requestPermission();
+      aktualisiereBtn();
+    });
+  })();
+
+  // App-Icon-Badge: offene Eskalationen als echte Zahl auf dem installierten
+  // App-Icon (Badging API) - nur unterstützt, wenn Command als PWA läuft.
+  function updateAppBadge(anzahl) {
+    if (!('setAppBadge' in navigator)) return;
+    try {
+      if (anzahl > 0) navigator.setAppBadge(anzahl).catch(() => {});
+      else navigator.clearAppBadge().catch(() => {});
+    } catch (err) { /* Badging API in diesem Browser nicht verfügbar */ }
+  }
+
+  // PWA: Service Worker registrieren + "Als App installieren"-Button nur
+  // zeigen, wenn der Browser das (per beforeinstallprompt) auch anbietet.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch((err) => console.warn('[sw] Registrierung fehlgeschlagen:', err));
+    });
+  }
+
+  let installPromptEvent = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    installPromptEvent = e;
+    document.getElementById('installBtn').style.display = '';
+  });
+  document.getElementById('installBtn').addEventListener('click', async () => {
+    if (!installPromptEvent) return;
+    installPromptEvent.prompt();
+    await installPromptEvent.userChoice;
+    installPromptEvent = null;
+    document.getElementById('installBtn').style.display = 'none';
+  });
+  window.addEventListener('appinstalled', () => {
+    document.getElementById('installBtn').style.display = 'none';
+  });
+</script>
+</body>
+</html>
