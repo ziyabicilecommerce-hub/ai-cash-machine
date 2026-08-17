@@ -673,7 +673,14 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 78 | 🧾 PayPal-Beleg-Agent | täglich 06:30 | erstellt für jede per PayPal bezahlte Bestellung einen druckbaren Zahlungs-/Liefernachweis (Kunde, Artikel, Tracking) für PayPal-Kontoprüfungen |
 | 79 | 🎉 Wrapped-Generator | montags 07:00 | baut aus den Finance-Cockpit-Daten einen wöchentlichen Shop-Rückblick im Story-Format (Umsatz, bester Tag, Top-Produkt, Wachstum) |
 | 80 | 🤖 Agenten-Status-Sammler | alle 6 Stunden | fragt den echten Live-Status aller anderen Automationen aus der GitHub Actions API ab, speist die "CASHMACHINE AGENTS"-Übersicht |
+| 81 | 💰 Kosten-Cockpit | alle 6 Stunden | trackt geschätzte Claude-Tokenkosten pro Automation über die Zeit |
+| 82 | 💸 Lieferanten-Zahlungs-Wächter | täglich | erinnert per WhatsApp/Telegram rechtzeitig an fällige Lieferantenzahlungen aus echten Reorder-Bestellungen (#63), einmalig pro Fälligkeit |
+| 83 | 🧬 Brand Scout | wöchentlich | leitet die Marken-DNA aus dem echten Sortiment ab (statt manuell eingetragener Nische) und findet neue, markentreue Produktideen |
+| 84 | 👯 Freunde-werben-Freunde | täglich | echtes Empfehlungsprogramm - jeder Kunde bekommt einen persönlichen Rabattcode, wirbt er einen echten Neukunden, bekommt er automatisch einen Dank-Rabatt |
+| 85 | 🎚️ Autopilot-Status | täglich | veröffentlicht NUR den An/Aus-Zustand der 11 AUTO_*-Schalter (nie die Secret-Werte selbst) für den Live-Autonomy-Level-Regler in Command |
 | 86 | 🕵️ Insider-Buy-Radar | werktags 22:00 UTC | scannt SECs öffentliche Form-4-Meldungen (US-Insider-Käufe) auf auffällige Einzelkäufe oder Cluster-Käufe mehrerer Insider, meldet per WhatsApp - reiner Report, KEIN automatischer Handel, KEIN API-Key nötig (SEC EDGAR ist frei zugänglich) |
+| 87 | 🚀 Opportunity-Radar | täglich | erkennt Produkte mit sprunghaftem Verkaufswachstum ggü. der Vorwoche, rein aus echten eigenen Shopify-Daten, mit knapper Handlungsempfehlung |
+| 88 | 🧪 Split-Test-Agent | täglich | echtes A/B-Testing zwischen Ad-Sets DERSELBEN Meta-Kampagne (Creative-/Zielgruppen-Varianten) - findet klaren Gewinner/Verlierer, pausiert bei Aktivierung den Verlierer, der Gewinner bleibt garantiert aktiv |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
