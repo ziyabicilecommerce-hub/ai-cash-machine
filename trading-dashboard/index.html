@@ -222,6 +222,7 @@
             <span class="badge ${s.paperModus ? 'paper' : 'live'}">${s.paperModus ? 'PAPER' : 'LIVE'}</span>
           </div>
           <div class="row"><span>Börse</span><b>${s.exchange || '–'}</b></div>
+          ${s.strategie ? `<div class="row"><span>Strategie</span><b>${s.strategie}</b></div>` : ''}
           <div class="row"><span>Kapital</span><b>${fmtUsdt(s.kapital)}</b></div>
           <div class="row"><span>P&amp;L gesamt</span><b class="${pnlCls}">${pnl >= 0 ? '+' : ''}${fmtUsdt(pnl)} (${pnlProzent >= 0 ? '+' : ''}${pnlProzent.toFixed(1)}%)</b></div>
           <div class="row"><span>Verlust heute</span><b class="${s.heutigerVerlustUsdt < 0 ? 'down' : ''}">${fmtUsdt(s.heutigerVerlustUsdt)}</b></div>
