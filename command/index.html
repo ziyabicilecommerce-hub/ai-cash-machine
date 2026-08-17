@@ -524,6 +524,7 @@
   <div id="killSwitchContent"></div>
   <div id="autopilotContent"></div>
   <div id="pricingHistorieContent"></div>
+  <div id="splitTestContent"></div>
 </section>
 
 <section class="panel" id="panel-tools">
@@ -1160,6 +1161,7 @@
     { name: 'AUTO_UEBERVERKAUF_STOPPEN', quelle: '#65 Inventory-Guardian-Agent', desc: 'Stoppt automatisch den Verkauf bei Bestand 0 - schützend/reversibel, daher als einziger Schalter standardmäßig AN.', standard: 'ja' },
     { name: 'AUTO_GUTSCHEIN_SENDEN', quelle: '#67 Gift-Card-Kompensations-Agent', desc: 'Verschickt echte Gutscheine bei erkannten Service-Fehlern automatisch.', standard: 'nein' },
     { name: 'AUTO_ERSTATTUNG_GENEHMIGEN', quelle: '#74 Refund-Concierge-Agent', desc: 'Genehmigt kleine Erstattungen automatisch (bis REFUND_MAX_BETRAG).', standard: 'nein' },
+    { name: 'AUTO_SPLIT_TEST_PAUSIEREN', quelle: '#88 Split-Test-Agent', desc: 'Pausiert den klaren Verlierer eines Ad-Set-A/B-Tests automatisch - der Gewinner bleibt immer aktiv.', standard: 'nein' },
   ];
 
   // Vereinheitlichter Kill-Switch: fasst 2 unabhängige Sicherheits-Checks
@@ -1225,12 +1227,15 @@
   // 4 Autonomy-Level, direkt aus der ANZAHL tatsächlich aktiver AUTO_*-
   // Schalter abgeleitet (nicht frei erfunden) - deckungsgleich mit den in
   // #85 Autopilot-Status gemeldeten echten Secret-Zuständen (nur ja/nein,
-  // nie die Secret-Werte selbst).
+  // nie die Secret-Werte selbst). Grenzen skalieren automatisch mit der
+  // Gesamtzahl der Schalter, statt bei jedem neuen AUTO_*-Schalter von Hand
+  // nachgepflegt werden zu müssen.
+  const GESAMT_SCHALTER = AUTOPILOT_SCHALTER.length;
   const AUTONOMY_LEVEL = [
     { min: 0, max: 0, label: 'LEVEL 1 · COPILOT', desc: 'Die KI empfiehlt nur — jede Aktion brauchst du manuell.' },
-    { min: 1, max: 3, label: 'LEVEL 2 · ASSISTED', desc: 'Die KI macht wenige, risikoarme Änderungen automatisch.' },
-    { min: 4, max: 8, label: 'LEVEL 3 · AUTOPILOT', desc: 'Die KI steuert Marketing und Operations weitgehend selbst.' },
-    { min: 9, max: 11, label: 'LEVEL 4 · FULL AUTONOMY', desc: 'Die KI optimiert praktisch alles innerhalb deiner Limits.' },
+    { min: 1, max: Math.max(1, Math.round(GESAMT_SCHALTER * 0.25)), label: 'LEVEL 2 · ASSISTED', desc: 'Die KI macht wenige, risikoarme Änderungen automatisch.' },
+    { min: Math.max(1, Math.round(GESAMT_SCHALTER * 0.25)) + 1, max: Math.round(GESAMT_SCHALTER * 0.7), label: 'LEVEL 3 · AUTOPILOT', desc: 'Die KI steuert Marketing und Operations weitgehend selbst.' },
+    { min: Math.round(GESAMT_SCHALTER * 0.7) + 1, max: GESAMT_SCHALTER, label: 'LEVEL 4 · FULL AUTONOMY', desc: 'Die KI optimiert praktisch alles innerhalb deiner Limits.' },
   ];
   function ermittleAutonomyLevel(anAnzahl) {
     return AUTONOMY_LEVEL.find((l) => anAnzahl >= l.min && anAnzahl <= l.max) || AUTONOMY_LEVEL[0];
@@ -1269,7 +1274,7 @@
         <span class="autopilot-state ${an ? 'state-an' : 'state-aus'}">${an ? (istLive ? '✅ AN' : '✅ Standard: AN') : (istLive ? '⏸️ AUS' : '⏸️ Standard: AUS')}</span>
       </div>`;
     }).join('');
-    html += `<p class="note">Jeder Schalter wird als GitHub-Secret gesetzt (Wert "ja" = an). Alle 11 auf "ja" = Level 4 Full Autonomy - bewusst standardmäßig vorsichtig, damit du erst vertraust bevor du loslässt.</p>`;
+    html += `<p class="note">Jeder Schalter wird als GitHub-Secret gesetzt (Wert "ja" = an). Alle ${gesamt} auf "ja" = Level 4 Full Autonomy - bewusst standardmäßig vorsichtig, damit du erst vertraust bevor du loslässt.</p>`;
     el.innerHTML = html;
   }
 
@@ -1298,6 +1303,33 @@
         <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(a.datum)}</div>
       </div>`).join('');
     el.innerHTML = `<div class="section-title-inline">🧮 PREIS-ENTSCHEIDUNGEN MIT BEGRÜNDUNG</div>${rows}`;
+  }
+
+  // "Warum" bei jedem Split-Test-Ergebnis (#88) - echtes A/B-Testing zwischen
+  // Ad-Sets DERSELBEN Kampagne, nicht nur Gesamt-Account-ROAS.
+  function renderSplitTestHistorie(data) {
+    const el = document.getElementById('splitTestContent');
+    const historie = (data && data.historie) || [];
+    if (!historie.length) {
+      el.innerHTML = `<div class="section-title-inline">🧪 SPLIT-TEST-ERGEBNISSE MIT BEGRÜNDUNG</div>` +
+        emptyHtml('🧪', 'Noch kein Split-Test-Ergebnis', 'Erscheint, sobald der Split-Test-Agent (#88) einen klaren Gewinner/Verlierer innerhalb einer Kampagne findet (braucht mind. 2 Ad-Sets mit genug Spend).');
+      return;
+    }
+    const rows = historie.slice(0, 15).map((e) => `
+      <div class="why-row">
+        <div class="why-top">
+          <div class="why-preis">${e.kampagne}</div>
+          <span class="why-tag ${e.ausgefuehrt ? 'tag-hoch' : 'tag-runter'}">${e.ausgefuehrt ? '✅ VERLIERER PAUSIERT' : '👁️ NUR EMPFOHLEN'}</span>
+        </div>
+        <div class="why-grid">
+          <div><b>GEWINNER</b><span>${e.gewinner.name} — ROAS ${e.gewinner.roas} (${e.gewinner.spend} € Spend)</span></div>
+          <div><b>VERLIERER</b><span>${e.verlierer.name} — ROAS ${e.verlierer.roas} (${e.verlierer.spend} € Spend)</span></div>
+          <div><b>UNTERSCHIED</b><span>${e.unterschiedProzent}% · Risiko <span class="risiko-${e.risiko}">${e.risiko}</span></span></div>
+          <div><b>ERWARTETE AUSWIRKUNG</b><span>${e.erwarteteAuswirkung}</span></div>
+        </div>
+        <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(e.datum)}</div>
+      </div>`).join('');
+    el.innerHTML = `<div class="section-title-inline">🧪 SPLIT-TEST-ERGEBNISSE MIT BEGRÜNDUNG</div>${rows}`;
   }
 
   // --- Alle Tools (Launchpad zu den restlichen, echt interaktiven Apps) ---
@@ -1625,11 +1657,13 @@
       ladeJson('./ads-notbremse.json'),
       ladeJson('./refund-alarm.json'),
       ladeJson('./opportunity-radar.json'),
-    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar]) => {
+      ladeJson('./split-test.json'),
+    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest]) => {
       renderGoalEngine(ceo);
       renderOpportunityRadar(opportunityRadar);
       renderCeo(ceo, chains, referral, social);
       renderPricingHistorie(pricingHistorie);
+      renderSplitTestHistorie(splitTest);
       renderKillSwitch(adsNotbremse, refundAlarm, autopilotStatus);
       renderAnalytics(analytics, ads);
       renderProduct(product);

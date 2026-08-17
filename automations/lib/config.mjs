@@ -252,6 +252,12 @@ export const config = {
 
   // Refund-Concierge-Agent (echte, kleine Erstattungen - Default AUS)
   AUTO_ERSTATTUNG_GENEHMIGEN: process.env.AUTO_ERSTATTUNG_GENEHMIGEN || 'nein',
+
+  // Split-Test-Agent (#88): vergleicht Ad-Sets INNERHALB derselben Kampagne
+  // (Gewinner/Verlierer) statt nur den Gesamt-Account-ROAS zu prüfen
+  AUTO_SPLIT_TEST_PAUSIEREN: process.env.AUTO_SPLIT_TEST_PAUSIEREN || 'nein',
+  SPLIT_TEST_MIN_SPEND_PRO_ADSET: process.env.SPLIT_TEST_MIN_SPEND_PRO_ADSET || '20',
+  SPLIT_TEST_MIN_UNTERSCHIED_PROZENT: process.env.SPLIT_TEST_MIN_UNTERSCHIED_PROZENT || '40',
   REFUND_MAX_BETRAG: process.env.REFUND_MAX_BETRAG || '30',
 
   // Übersetzungs-Entwurf-Agent
