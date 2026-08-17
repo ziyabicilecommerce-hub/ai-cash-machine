@@ -166,6 +166,7 @@ export const config = {
   VERSANDZEIT: process.env.VERSANDZEIT || '2-4 Werktage',
   REICHWEITE_TAGE_WARNUNG: process.env.REICHWEITE_TAGE_WARNUNG || '14',
   PRODUKTKOSTEN_PROZENT: process.env.PRODUKTKOSTEN_PROZENT || '40',
+  VERSANDKOSTEN_PRO_BESTELLUNG: process.env.VERSANDKOSTEN_PRO_BESTELLUNG || '4.90',
 
   // Profit & Tax Center (Finance-Cockpit-Erweiterung: Gebühren, Steuern, echter Nettogewinn)
   ZAHLUNGSGEBUEHR_PROZENT: process.env.ZAHLUNGSGEBUEHR_PROZENT || '2.5',

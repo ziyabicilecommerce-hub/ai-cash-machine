@@ -1,0 +1,51 @@
+{
+  "updatedAt": "2026-08-17T06:51:16.518Z",
+  "schalter": [
+    {
+      "name": "AUTO_SKALIEREN",
+      "an": false
+    },
+    {
+      "name": "AUTO_PAUSE",
+      "an": false
+    },
+    {
+      "name": "AUTO_STOP",
+      "an": false
+    },
+    {
+      "name": "AUTO_POST_FACEBOOK",
+      "an": false
+    },
+    {
+      "name": "AUTO_POST_INSTAGRAM",
+      "an": false
+    },
+    {
+      "name": "AUTO_PREISANPASSUNG",
+      "an": false
+    },
+    {
+      "name": "AUTO_BESTELLUNG_SENDEN",
+      "an": false
+    },
+    {
+      "name": "AUTO_BUDGET_UMSCHICHTEN",
+      "an": false
+    },
+    {
+      "name": "AUTO_UEBERVERKAUF_STOPPEN",
+      "an": true
+    },
+    {
+      "name": "AUTO_GUTSCHEIN_SENDEN",
+      "an": false
+    },
+    {
+      "name": "AUTO_ERSTATTUNG_GENEHMIGEN",
+      "an": false
+    }
+  ],
+  "anAnzahl": 1,
+  "gesamtAnzahl": 11
+}
