@@ -230,6 +230,13 @@
   .state-an { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
   .state-aus { color:var(--mut2); background:rgba(255,255,255,.04); border:1px solid var(--line2); }
 
+  /* --- Goal Engine --- */
+  .goal-card { position:relative; background:var(--panel); border:1px solid var(--line); padding:18px 20px 18px 24px; margin-bottom:20px; overflow:hidden; }
+  .goal-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,var(--amber),var(--green)); }
+  .goal-label { font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--amber); margin-bottom:8px; }
+  .goal-text { font-size:15px; font-weight:600; color:var(--txt); margin-bottom:8px; }
+  .goal-note { font-size:11.5px; color:var(--mut2); }
+
   /* --- Opportunity-Radar --- */
   .opp-row { position:relative; background:var(--panel); border:1px solid rgba(62,242,160,.3); padding:14px 18px 14px 20px; margin-bottom:10px; overflow:hidden; }
   .opp-row::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,var(--green),var(--cyan)); }
@@ -428,6 +435,7 @@
 <section class="panel show" id="panel-ceo">
   <div class="panel-title">Chef-Agent — Tagesansage</div>
   <p class="panel-desc">Fasst Finanzen, Fulfillment und Kundenstamm zu EINER Prioritäts-Entscheidung zusammen (Automation #60, täglich abends) — und löst bei überfälligen Bestellungen bzw. inaktiven VIPs automatisch die passende Automation sofort aus, statt nur zu empfehlen.</p>
+  <div id="goalEngineContent"></div>
   <div id="opportunityContent"></div>
   <div id="ceoContent"></div>
 </section>
@@ -569,6 +577,30 @@
           <div class="today-item"><b>${belohnungenHeute}</b><span>EMPFEHLUNGEN BELOHNT</span></div>
           ${kettenFehler ? `<div class="today-item" style="color:var(--amber);"><b>${kettenFehler}</b><span>KETTEN MIT PROBLEM</span></div>` : ''}
         </div>
+      </div>`;
+  }
+
+  // Goal Engine: zeigt das erklärte Ziel (BUSINESS_ZIEL-Secret), das in die
+  // TEXT-Empfehlungen von Chef-Agent (#60) und Oracle (#59) einfließt.
+  // Steuert bewusst KEINE automatisierten Aktionen direkt - die bleiben an
+  // feste Zahlen-Schwellen gebunden (Sicherheitsprinzip der Suite), sonst
+  // könnte ein missverstandener Freitext-Satz echtes Geld falsch bewegen.
+  function renderGoalEngine(ceoData) {
+    const el = document.getElementById('goalEngineContent');
+    const ziel = ceoData && ceoData.ziel;
+    if (!ziel) {
+      el.innerHTML = `
+        <div class="goal-card">
+          <div class="goal-label">🎯 KEIN ZIEL GESETZT</div>
+          <div class="goal-note">Setze das Secret <code>BUSINESS_ZIEL</code> (z.B. "Maximiere Profit bei maximal 30€ Ad Spend pro Tag") - Chef-Agent und Oracle richten ihre TEXT-Empfehlungen danach aus. Automatisierte Aktionen bleiben weiterhin an feste Zahlen-Schwellen gebunden (z.B. MAX_TAGESBUDGET), nicht an diesen Freitext - ein Ziel-Satz kann kein Geld bewegen.</div>
+        </div>`;
+      return;
+    }
+    el.innerHTML = `
+      <div class="goal-card">
+        <div class="goal-label">🎯 ERKLÄRTES ZIEL</div>
+        <div class="goal-text">"${ziel}"</div>
+        <div class="goal-note">Fließt in die Empfehlungen von Chef-Agent (#60) und Oracle (#59) ein. Steuert keine automatisierten Aktionen direkt - die bleiben an feste Zahlen-Schwellen gebunden.</div>
       </div>`;
   }
 
@@ -1594,6 +1626,7 @@
       ladeJson('./refund-alarm.json'),
       ladeJson('./opportunity-radar.json'),
     ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar]) => {
+      renderGoalEngine(ceo);
       renderOpportunityRadar(opportunityRadar);
       renderCeo(ceo, chains, referral, social);
       renderPricingHistorie(pricingHistorie);

@@ -118,8 +118,11 @@ async function main() {
     kunden ? `KUNDENSTAMM: ${kunden.gesamtKunden} Kunden gesamt, davon ${kunden.atRiskVips} wertvolle Kunden gerade inaktiv (At-Risk)` : 'KUNDENSTAMM: keine Daten',
   ].join('\n');
 
-  const prompt = `Du bist der Chef-Agent (General Manager) für den Onlineshop "${config.SHOP_NAME}". Du bekommst täglich die Lage aus 3 Bereichen und triffst EINE klare Priorisierungs-Entscheidung, statt nur Zahlen aufzulisten - wie ein guter Geschäftsführer, der weiß, worauf es HEUTE ankommt.
+  const ziel = (config.BUSINESS_ZIEL || '').trim();
+  const zielZeile = ziel ? `\nERKLÄRTES ZIEL DES GRÜNDERS: "${ziel}" - gewichte deine Prioritäts-Entscheidung danach. Wenn eine der 3 Bereiche diesem Ziel klar entgegenläuft, sag das explizit.\n` : '';
 
+  const prompt = `Du bist der Chef-Agent (General Manager) für den Onlineshop "${config.SHOP_NAME}". Du bekommst täglich die Lage aus 3 Bereichen und triffst EINE klare Priorisierungs-Entscheidung, statt nur Zahlen aufzulisten - wie ein guter Geschäftsführer, der weiß, worauf es HEUTE ankommt.
+${zielZeile}
 ${bereiche}
 
 Schreibe eine kurze Chef-Ansage auf Deutsch (Du-Form):
@@ -164,7 +167,7 @@ Antworte NUR mit validem JSON, ohne Markdown:
   saveState(STATE_KEY, state);
 
   if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
-  writeFileSync(join(COMMAND_DIR, 'chef-agent.json'), JSON.stringify({ updatedAt: new Date().toISOString(), historie: state.historie }, null, 2));
+  writeFileSync(join(COMMAND_DIR, 'chef-agent.json'), JSON.stringify({ updatedAt: new Date().toISOString(), ziel, historie: state.historie }, null, 2));
 
   console.log(`[60-chef-agent] Tagesansage versendet. ${ausgeloesteAktionen.length} Aktion(en) ausgelöst.`);
 }
