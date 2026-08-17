@@ -122,10 +122,12 @@ vergleichen (siehe unten), oder interaktiv mit echten Charts im
 
 ## Backtesting — Strategie VOR echtem Geld gegen echte Kursdaten testen
 
-`backtest.mjs` lädt echte historische 15-Minuten-Kerzen von Binance und
-simuliert damit die exakt gleiche Strategie-Logik (`lib/strategie.mjs`), die
-auch der Live-Worker verwendet — kein separates Nachbauen der Regeln, also
-kein Risiko, dass Backtest und Live-Bot unterschiedliche Dinge tun.
+`backtest.mjs` lädt echte historische 15-Minuten-Kerzen (per Default von
+Binance, mit `TRADING_EXCHANGE=kraken` alternativ von Kraken - gleicher
+Name/gleiches Verhalten wie beim Live-Worker) und simuliert damit die exakt
+gleiche Strategie-Logik (`lib/strategie.mjs`), die auch der Live-Worker
+verwendet — kein separates Nachbauen der Regeln, also kein Risiko, dass
+Backtest und Live-Bot unterschiedliche Dinge tun.
 
 ```bash
 node backtest.mjs BTCUSDT 90
@@ -133,6 +135,8 @@ node backtest.mjs BTCUSDT 90
 TRADING_RSI_UEBERKAUFT=70 TRADING_TRAILING_STOP_AB_PROZENT=2 node backtest.mjs BTCUSDT 180
 # alle drei Strategien direkt gegeneinander vergleichen:
 node backtest.mjs BTCUSDT 90 --vergleiche
+# mit Kraken-Daten statt Binance (Kraken-Symbolname beachten, z.B. XBTUSDT statt BTCUSDT):
+TRADING_EXCHANGE=kraken node backtest.mjs XBTUSDT 90 --vergleiche
 ```
 
 Ausgabe: Gesamt-Return, Vergleich mit simplem Buy&Hold, maximaler Drawdown,
@@ -165,6 +169,63 @@ zu wissen ob alles normal läuft — das Dashboard muss man nur noch öffnen,
 wenn man mehr Details sehen will. Braucht kein zusätzliches Setup, läuft im
 selben 15-Minuten-Cron mit (verschickt aber wirklich nur einmal pro Tag).
 
+## Wöchentlicher WhatsApp-Rückblick
+
+Zusätzlich zum täglichen Update verschickt der Worker **einmal pro Woche
+(montags)** einen ausführlicheren Rückblick: P&L nur der letzten 7 Tage,
+bester/schlechtester Coin, Win-Rate-Trend über die Woche. Braucht kein
+zusätzliches Setup, läuft im selben 15-Minuten-Cron mit.
+
+## Zusätzliche Kauf-Filter (alle optional, alle ohne API-Key)
+
+Drei unabhängige, kostenlose Datenquellen können zusätzlich zur eigentlichen
+Strategie ein Kaufsignal verwerfen — jede für sich standardmäßig konfigurierbar,
+fällt bei einem Ausfall der jeweiligen API immer "offen" (blockiert den Bot
+nie dauerhaft, nur den einzelnen Filter für diesen Lauf):
+
+- **`TRADING_COINGECKO_FILTER`** (`ja`/`nein`): verwirft den Kauf, wenn der
+  **Durchschnitt aus CoinGecko + CoinPaprika** den Coin in den letzten 24h
+  im Minus zeigt — zwei unabhängige, öffentliche Quellen gemittelt statt
+  einzeln als separate Hürden verdrahtet (würde Käufe sonst doppelt
+  erschweren). Ist nur eine der beiden Quellen erreichbar, wird trotzdem
+  gewertet; fallen beide aus, blockiert der Filter nicht. CoinCap wurde
+  ebenfalls geprüft, war aus dieser Umgebung aber wiederholt nicht
+  erreichbar (bekanntes Zuverlässigkeitsproblem) — CoinPaprika stattdessen
+  gewählt, funktioniert zuverlässig und liefert sogar mehr Zeitfenster pro
+  Abfrage.
+- **`TRADING_FNG_FILTER`** (`ja`/`nein`) + `TRADING_FNG_MAX_WERT` (Default
+  `80`): verwirft den Kauf bei "Extreme Greed" im
+  [Fear & Greed Index](https://alternative.me/crypto/fear-and-greed-index/) —
+  Kontra-Signal gegen Euphorie-Käufe. Markweiter Wert (nicht pro Coin), nur
+  einmal pro Lauf abgefragt. Blockiert bewusst NICHT bei Angst, weil das
+  bei `bollinger-mean-reversion` genau die Marktlage ist, in der die
+  Strategie kaufen soll.
+- **`TRADING_MTF_FILTER`** (`ja`/`nein`) + `TRADING_MTF_INTERVAL_MINUTEN`
+  (Default `240` = 4h): verwirft den Kauf, wenn der übergeordnete Trend
+  (EMA9 vs. EMA21 auf dem längeren Zeitrahmen) abwärts zeigt — vermeidet
+  Käufe gegen einen größeren Trend, nur weil das kurzfristige 15m-Signal
+  gerade anspringt.
+
+**Take-Profit:** `TRADING_TAKE_PROFIT_PROZENT` (Default `5`, `0` = aus)
+verkauft sofort, sobald eine Position um diesen Wert im Plus ist, statt auf
+das strategie-eigene Ausstiegssignal zu warten. Per Backtest geprüft: bei
+`bollinger-mean-reversion` sind einzelne Trades meist kleiner als 5%
+Gewinn — der Default-Wert greift bei dieser Strategie daher praktisch nie,
+ist aber ein sicheres Sicherheitsnetz für größere Ausreißer. Deutlich
+niedrigere Werte (getestet: 0.1%) zeigten in kurzen Backtests uneinheitliche
+Wirkung (auf einem Coin leicht positiv, auf einem anderen neutral) — zu
+wenig Daten für eine verlässliche pauschale Empfehlung, vor jeder Änderung
+selbst mit `backtest.mjs` gegen mehrere Coins/Zeiträume gegentesten.
+
+**Wichtig zum Backtesting dieser drei Filter:** `backtest.mjs` kann aktuell
+nur Signale testen, die sich aus den historischen Kraken-Kursdaten selbst
+ableiten lassen (Strategie, Stop-Loss, Take-Profit). CoinGecko- und Fear &
+Greed-Filter lassen sich nicht rückwirkend exakt nachstellen (keine
+passenden historischen Daten im gleichen Format frei verfügbar) — sie sind
+gegen echte Live-Daten geprüft (lösen korrekt aus, fallen bei Ausfall sauber
+offen), aber NICHT historisch backgetestet. Das im Kopf behalten, bevor man
+sich zu sehr auf sie verlässt.
+
 ## Live-Dashboard (rein lesend)
 
 Der Worker hat jetzt einen `GET /status`-Endpoint (eigenes Secret
@@ -177,6 +238,20 @@ Die zugehörige App `trading-dashboard/` (im Hauptrepo, live unter
 zeigt diese Daten live an: Worker-URL + `STATUS_READ_KEY` einmal übers ⚙
 Symbol eintragen (bleibt nur im eigenen Browser, localStorage), danach
 Auto-Refresh alle 30 Sekunden.
+
+## Live-Setup-Checkliste (rein informativ, bewegt nie Geld)
+
+Die App `trading-live-setup/` (im Hauptrepo, live unter
+`https://ziyabicilecommerce-hub.github.io/ai-cash-machine/trading-live-setup/`,
+verlinkt vom Trading-Dashboard) zeigt Schritt für Schritt, was für den
+Umstieg von Paper- auf Live-Trading nötig ist: Kraken-Konto anlegen,
+einzahlen, API-Key mit **nur Spot-Trading-Rechten** (nie Auszahlung)
+erstellen, als Cloudflare-Secret setzen, `TRADING_PAPER_MODE` umstellen.
+Zeigt oben den aktuellen Bot-Modus (liest denselben `/status`-Endpoint wie
+das Dashboard). **Wichtig:** Ein-/Auszahlungen und die API-Key-Erstellung
+laufen ausschließlich auf Krakens eigener Seite — diese App verarbeitet
+selbst nirgends Geld oder Zahlungsdaten, sie verlinkt nur dorthin und
+erklärt die Reihenfolge.
 
 ## Einmaliges Setup
 

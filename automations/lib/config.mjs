@@ -44,6 +44,19 @@ export const config = {
   TRADING_EMA_SCHNELL: process.env.TRADING_EMA_SCHNELL || '9',
   TRADING_EMA_LANGSAM: process.env.TRADING_EMA_LANGSAM || '21',
 
+  // Insider-Buy-Radar (SEC EDGAR Form 4, reiner Report, kein Handel, kein API-Key nötig)
+  INSIDER_MIN_KAUFWERT_USD: process.env.INSIDER_MIN_KAUFWERT_USD || '100000',
+  INSIDER_MIN_INSIDER_ANZAHL: process.env.INSIDER_MIN_INSIDER_ANZAHL || '2',
+  INSIDER_MAX_PRO_LAUF: process.env.INSIDER_MAX_PRO_LAUF || '10',
+  // Sicherheitsventil: max. Form-4-Meldungen, die pro Lauf tief analysiert
+  // (Ownership-XML geladen) werden - ein normaler Handelstag hat ca. 800-1500,
+  // der Default deckt das komplett ab.
+  INSIDER_ANZAHL_FILINGS_PRO_LAUF: process.env.INSIDER_ANZAHL_FILINGS_PRO_LAUF || '1500',
+  // SEC verlangt zwingend einen User-Agent im Format "Firma Kontakt-Email"
+  // (sonst HTTP 403 "Undeclared Automated Tool") - nutzt automatisch die
+  // ohnehin schon gesetzte OWNER_EMAIL, kein zusätzliches Secret nötig.
+  INSIDER_SEC_USER_AGENT: process.env.INSIDER_SEC_USER_AGENT || `AI-Cash-Machine ${process.env.OWNER_EMAIL || 'admin@example.com'}`,
+
   // Pump-Scanner (reiner Alarm, kein Handel)
   PUMP_QUOTE_WAEHRUNG: process.env.PUMP_QUOTE_WAEHRUNG || 'USDT',
   PUMP_SCHWELLE_PROZENT: process.env.PUMP_SCHWELLE_PROZENT || '15',
