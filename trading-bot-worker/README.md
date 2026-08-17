@@ -120,6 +120,23 @@ vergleichen (siehe unten), oder interaktiv mit echten Charts im
 **CASHMACHINE STRATEGY LAB** (`strategy-lab/` im Hauptrepo, live unter
 `https://ziyabicilecommerce-hub.github.io/ai-cash-machine/strategy-lab/`).
 
+### Pro Symbol eine andere Strategie (Live-Vergleich)
+
+Statt für alle Symbole zwangsläufig dieselbe Strategie zu nutzen, kann
+`TRADING_STRATEGIE_PRO_SYMBOL` einzelnen Symbolen eine abweichende Strategie
+zuweisen — z.B. um live zu beobachten, welche Strategie auf welchem Coin am
+meisten Kapital gewinnt, statt das nur im Backtest zu simulieren. Format:
+
+```
+TRADING_STRATEGIE_PRO_SYMBOL = "XBTUSDT:bollinger-mean-reversion,ETHUSDT:donchian-breakout"
+```
+
+Symbole ohne Eintrag laufen mit dem globalen `TRADING_STRATEGIE`-Default
+weiter. Alle Risiko-Grenzen (Stop-Loss, Take-Profit, Kill-Switch, Filter)
+gelten unabhängig von der gewählten Strategie identisch pro Symbol. Im
+Trading-Dashboard zeigt jede Coin-Karte an, welche Strategie sie gerade
+fährt.
+
 ## Backtesting — Strategie VOR echtem Geld gegen echte Kursdaten testen
 
 `backtest.mjs` lädt echte historische 15-Minuten-Kerzen (per Default von
