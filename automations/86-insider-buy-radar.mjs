@@ -161,14 +161,14 @@ async function main() {
     filings = await ladeTagesindexForm4(gestern);
   }
   if (!filings) {
-    console.log('[85-insider-buy-radar] Kein SEC-Tagesindex für heute/gestern verfügbar (Feiertag/Wochenende?).');
+    console.log('[86-insider-buy-radar] Kein SEC-Tagesindex für heute/gestern verfügbar (Feiertag/Wochenende?).');
     return;
   }
 
   const neueFilings = filings.filter((f) => !bekannteAccessions.has(f.accessionNoDash));
 
   if (!neueFilings.length) {
-    console.log('[85-insider-buy-radar] Keine neuen Form-4-Meldungen seit dem letzten Lauf.');
+    console.log('[86-insider-buy-radar] Keine neuen Form-4-Meldungen seit dem letzten Lauf.');
     return;
   }
 
@@ -188,7 +188,7 @@ async function main() {
     try {
       kaeufe = await ladeKaeufeAusFiling(filing.cik, filing.accessionNoDash);
     } catch (err) {
-      console.error(`[85-insider-buy-radar] Filing ${filing.accessionNoDash} übersprungen:`, err.message || err);
+      console.error(`[86-insider-buy-radar] Filing ${filing.accessionNoDash} übersprungen:`, err.message || err);
     }
     for (const k of kaeufe) {
       const key = k.issuerSymbol;
@@ -211,7 +211,7 @@ async function main() {
   saveState(STATE_NAME, { bekannteAccessions: gekuerzteAccessions, letzterLauf: heute() });
 
   if (!kandidaten.length) {
-    console.log(`[85-insider-buy-radar] ${zuVerarbeiten.length} Form-4-Meldungen geprüft, keine über der Schwelle (min. ${minKaufwertUsd} USD oder ${minInsiderAnzahl}+ Insider).`);
+    console.log(`[86-insider-buy-radar] ${zuVerarbeiten.length} Form-4-Meldungen geprüft, keine über der Schwelle (min. ${minKaufwertUsd} USD oder ${minInsiderAnzahl}+ Insider).`);
     return;
   }
 
@@ -230,14 +230,14 @@ async function main() {
     await notifyWhatsapp(`${kopf}\n\n${chunks[i].join('\n')}\n\n⚠️ Reine Information, keine Kaufempfehlung, kein automatischer Handel. Meldung kann 1-2 Werktage alt sein.`);
   }
 
-  console.log(`[85-insider-buy-radar] ${kandidaten.length} Insider-Kauf-Signal(e) per WhatsApp verschickt (${zuVerarbeiten.length} von ${neueFilings.length} neuen Meldungen geprüft).`);
+  console.log(`[86-insider-buy-radar] ${kandidaten.length} Insider-Kauf-Signal(e) per WhatsApp verschickt (${zuVerarbeiten.length} von ${neueFilings.length} neuen Meldungen geprüft).`);
 }
 
 main().catch((err) => {
   if (err?.uebersprungen) {
-    console.log('[85-insider-buy-radar] Übersprungen:', err.message);
+    console.log('[86-insider-buy-radar] Übersprungen:', err.message);
     process.exit(0);
   }
-  console.error('[85-insider-buy-radar] Fehler:', err);
+  console.error('[86-insider-buy-radar] Fehler:', err);
   process.exit(1);
 });

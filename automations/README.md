@@ -673,7 +673,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 78 | 🧾 PayPal-Beleg-Agent | täglich 06:30 | erstellt für jede per PayPal bezahlte Bestellung einen druckbaren Zahlungs-/Liefernachweis (Kunde, Artikel, Tracking) für PayPal-Kontoprüfungen |
 | 79 | 🎉 Wrapped-Generator | montags 07:00 | baut aus den Finance-Cockpit-Daten einen wöchentlichen Shop-Rückblick im Story-Format (Umsatz, bester Tag, Top-Produkt, Wachstum) |
 | 80 | 🤖 Agenten-Status-Sammler | alle 6 Stunden | fragt den echten Live-Status aller anderen Automationen aus der GitHub Actions API ab, speist die "CASHMACHINE AGENTS"-Übersicht |
-| 85 | 🕵️ Insider-Buy-Radar | werktags 22:00 UTC | scannt SECs öffentliche Form-4-Meldungen (US-Insider-Käufe) auf auffällige Einzelkäufe oder Cluster-Käufe mehrerer Insider, meldet per WhatsApp - reiner Report, KEIN automatischer Handel, KEIN API-Key nötig (SEC EDGAR ist frei zugänglich) |
+| 86 | 🕵️ Insider-Buy-Radar | werktags 22:00 UTC | scannt SECs öffentliche Form-4-Meldungen (US-Insider-Käufe) auf auffällige Einzelkäufe oder Cluster-Käufe mehrerer Insider, meldet per WhatsApp - reiner Report, KEIN automatischer Handel, KEIN API-Key nötig (SEC EDGAR ist frei zugänglich) |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
