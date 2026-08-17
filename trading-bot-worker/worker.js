@@ -611,6 +611,26 @@ async function pruefeUndSendeWochenZusammenfassung(env, cfg) {
   await env.TRADING_STATE.put('digest:letzteWoche', aktuelleWoche);
 }
 
+// Erlaubt jedem Symbol eine ANDERE Strategie als den globalen Default -
+// z.B. um live zu vergleichen, welche Strategie auf welchem Coin am besten
+// abschneidet, statt alle Coins zwangsläufig identisch zu handeln. Format:
+// "XBTUSDT:bollinger-mean-reversion,ETHUSDT:donchian-breakout". Symbole ohne
+// Eintrag fallen auf TRADING_STRATEGIE (den globalen Default) zurück.
+function parseStrategieProSymbol(env, gueltigeStrategien) {
+  const roh = (env.TRADING_STRATEGIE_PRO_SYMBOL || '').trim();
+  const map = {};
+  if (!roh) return map;
+  for (const eintrag of roh.split(',')) {
+    const [symbol, strategie] = eintrag.split(':').map((s) => s.trim());
+    if (!symbol || !strategie) continue;
+    if (!gueltigeStrategien.includes(strategie)) {
+      throw new Error(`Unbekannte Strategie "${strategie}" in TRADING_STRATEGIE_PRO_SYMBOL für ${symbol} - unterstützt: ${gueltigeStrategien.join(', ')}`);
+    }
+    map[symbol] = strategie;
+  }
+  return map;
+}
+
 function readConfig(env) {
   const symbols = (env.TRADING_SYMBOLS || 'BTCUSDT').split(',').map((s) => s.trim()).filter(Boolean);
   const gesamtKapital = parseFloat(env.TRADING_KAPITAL_USDT || '100');
@@ -621,6 +641,7 @@ function readConfig(env) {
   if (!GUELTIGE_STRATEGIEN.includes(strategie)) {
     throw new Error(`Unbekannte TRADING_STRATEGIE "${strategie}" - unterstützt: ${GUELTIGE_STRATEGIEN.join(', ')}`);
   }
+  const strategieProSymbol = parseStrategieProSymbol(env, GUELTIGE_STRATEGIEN);
   return {
     exchange,
     symbols,
@@ -628,6 +649,8 @@ function readConfig(env) {
     paperModus: (env.TRADING_PAPER_MODE || 'ja') !== 'nein',
     // Default 'ema-crossover' = unverändertes Verhalten ggü. vorherigen Versionen.
     strategie,
+    // Pro Symbol individuell überschreibbar, siehe parseStrategieProSymbol.
+    strategieProSymbol,
     bollingerPeriode: parseInt(env.TRADING_BOLLINGER_PERIODE || '20', 10),
     bollingerStdDev: parseFloat(env.TRADING_BOLLINGER_STDDEV || '2'),
     donchianEntryPeriode: parseInt(env.TRADING_DONCHIAN_ENTRY_PERIODE || '20', 10),
@@ -671,8 +694,14 @@ async function runAll(env) {
   const fearGreedWert = cfg.fngFilter ? await ladeFearGreedIndex() : null;
   for (const symbol of cfg.symbols) {
     try {
+      // Pro Symbol ggf. eigene Strategie (siehe strategieProSymbol) statt
+      // zwangsläufig der globalen - alles andere (Filter, Risiko-Limits)
+      // bleibt für alle Symbole identisch.
+      const cfgSymbol = cfg.strategieProSymbol[symbol]
+        ? { ...cfg, strategie: cfg.strategieProSymbol[symbol] }
+        : cfg;
       const hatteVorherPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
-      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfg, offenePositionen, fearGreedWert);
+      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfgSymbol, offenePositionen, fearGreedWert);
       const hatJetztPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
       if (!hatteVorherPosition && hatJetztPosition) offenePositionen++;
       if (hatteVorherPosition && !hatJetztPosition) offenePositionen--;
@@ -717,6 +746,7 @@ async function buildStatus(env) {
       symbol,
       exchange: cfg.exchange,
       paperModus: cfg.paperModus,
+      strategie: cfg.strategieProSymbol[symbol] || cfg.strategie,
       position: state.position,
       kapital: state.kapital,
       startKapital: state.startKapital,

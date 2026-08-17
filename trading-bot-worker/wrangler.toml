@@ -77,8 +77,15 @@ TRADING_MTF_INTERVAL_MINUTEN = "240"
 TRADING_STRATEGIE = "bollinger-mean-reversion"
 TRADING_BOLLINGER_PERIODE = "20"
 TRADING_BOLLINGER_STDDEV = "2"
-# TRADING_DONCHIAN_ENTRY_PERIODE = "20"
-# TRADING_DONCHIAN_EXIT_PERIODE = "10"
+TRADING_DONCHIAN_ENTRY_PERIODE = "20"
+TRADING_DONCHIAN_EXIT_PERIODE = "10"
+
+# Live-Vergleich: statt alle 8 Coins mit der gleichen Strategie laufen zu
+# lassen, fährt jede Dreiergruppe eine andere Strategie - im Dashboard sieht
+# man dann pro Coin, welche Strategie läuft und wer am meisten Kapital
+# gewinnt. TRADING_STRATEGIE (oben) bleibt der Fallback für jeden Coin, der
+# hier nicht aufgeführt ist.
+TRADING_STRATEGIE_PRO_SYMBOL = "XBTUSDT:bollinger-mean-reversion,ETHUSDT:bollinger-mean-reversion,SOLUSDT:bollinger-mean-reversion,XRPUSDT:donchian-breakout,ADAUSDT:donchian-breakout,DOGEUSDT:donchian-breakout,DOTUSDT:ema-crossover,LTCUSDT:ema-crossover"
 
 # Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
 #   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)
