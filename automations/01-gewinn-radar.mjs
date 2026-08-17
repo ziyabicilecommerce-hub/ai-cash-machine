@@ -12,6 +12,7 @@ const NL = '\n';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FINANCE_DATA_FILE = join(__dirname, '..', 'finance-cockpit', 'data.json');
 const FINANCE_HISTORY_TAGE = 90;
+const COMMAND_DIR_REFUND = join(__dirname, '..', 'command');
 
 function updateFinanceCockpitData(snapshot) {
   const dir = dirname(FINANCE_DATA_FILE);
@@ -25,6 +26,29 @@ function updateFinanceCockpitData(snapshot) {
   history.sort((a, b) => a.datum.localeCompare(b.datum));
   if (history.length > FINANCE_HISTORY_TAGE) history = history.slice(-FINANCE_HISTORY_TAGE);
   writeFileSync(FINANCE_DATA_FILE, JSON.stringify({ updatedAt: new Date().toISOString(), shopName: config.SHOP_NAME, history }, null, 2));
+  return history;
+}
+
+// Kill-Switch-Baustein: Refund-Spike-Erkennung. Vergleicht die Erstattungen
+// von gestern mit dem 14-Tage-Schnitt DAVOR - erst ab einem Mindestbetrag
+// (verhindert Fehlalarme bei winzigen Shops) UND einem Vielfachen des
+// Schnitts (verhindert Fehlalarme bei normal schwankenden Werten).
+function ermittleRefundSpike(history, heutigerEintrag) {
+  const minBetrag = parseFloat(config.REFUND_ALARM_MIN_BETRAG || '20');
+  const multiplikator = parseFloat(config.REFUND_ALARM_MULTIPLIKATOR || '3');
+  const vorherige = history.filter((h) => h.datum < heutigerEintrag.datum).slice(-14);
+  const baseline = vorherige.length
+    ? vorherige.reduce((s, h) => s + (h.retouren || 0), 0) / vorherige.length
+    : 0;
+  const schwelle = baseline > 0 ? baseline * multiplikator : minBetrag * 2;
+  const ausgeloest = heutigerEintrag.retouren >= minBetrag && heutigerEintrag.retouren >= schwelle;
+  return {
+    ausgeloest,
+    retouren: heutigerEintrag.retouren,
+    baseline14Tage: Number(baseline.toFixed(2)),
+    multiplikator,
+    waehrung: heutigerEintrag.waehrung,
+  };
 }
 
 async function main() {
@@ -97,7 +121,7 @@ async function main() {
     top || 'keine Verkäufe',
   ].join(NL);
 
-  updateFinanceCockpitData({
+  const heutigerEintrag = {
     datum: gestern.toISOString().slice(0, 10),
     umsatz: Number(umsatz.toFixed(2)),
     bestellungen: anzahl,
@@ -117,7 +141,18 @@ async function main() {
       umsatz: Number(daten.umsatz.toFixed(2)),
       nettoGewinnGeschaetzt: Number((daten.umsatz * (1 - kostenquote)).toFixed(2)),
     })),
-  });
+  };
+  const aktualisierteHistorie = updateFinanceCockpitData(heutigerEintrag);
+
+  const refundSpike = ermittleRefundSpike(aktualisierteHistorie, heutigerEintrag);
+  if (!existsSync(COMMAND_DIR_REFUND)) mkdirSync(COMMAND_DIR_REFUND, { recursive: true });
+  writeFileSync(join(COMMAND_DIR_REFUND, 'refund-alarm.json'), JSON.stringify({
+    updatedAt: new Date().toISOString(),
+    ...refundSpike,
+  }, null, 2));
+  if (refundSpike.ausgeloest) {
+    await notifyTelegram(`🚨 REFUND-ALARM - ${config.SHOP_NAME}${NL}${NL}Gestern ${refundSpike.retouren.toFixed(2)} ${waehrung} Erstattungen - das ist ${refundSpike.baseline14Tage > 0 ? `${(refundSpike.retouren / refundSpike.baseline14Tage).toFixed(1)}x` : 'deutlich mehr als'} der 14-Tage-Schnitt (${refundSpike.baseline14Tage.toFixed(2)} ${waehrung}). Bitte prüfen - könnte auf ein Produkt-/Qualitätsproblem hindeuten.`);
+  }
 
   const prompt = `Du bist E-Commerce-Berater für den Shop "${config.SHOP_NAME}".${NL}Hier die Zahlen von gestern:${NL}${NL}${zahlen}${NL}${NL}Gib genau 3 kurze, KONKRETE Handlungsempfehlungen für heute (jeweils 1-2 Sätze, direkt umsetzbar, keine Floskeln). Nummeriert 1-3, auf Deutsch, Du-Form. Antworte nur mit den 3 Punkten.`;
 

@@ -167,6 +167,9 @@ export const config = {
   REICHWEITE_TAGE_WARNUNG: process.env.REICHWEITE_TAGE_WARNUNG || '14',
   PRODUKTKOSTEN_PROZENT: process.env.PRODUKTKOSTEN_PROZENT || '40',
   VERSANDKOSTEN_PRO_BESTELLUNG: process.env.VERSANDKOSTEN_PRO_BESTELLUNG || '4.90',
+  // Kill-Switch: Refund-Spike-Alarm (Teil von #01 Gewinn-Radar)
+  REFUND_ALARM_MIN_BETRAG: process.env.REFUND_ALARM_MIN_BETRAG || '20',
+  REFUND_ALARM_MULTIPLIKATOR: process.env.REFUND_ALARM_MULTIPLIKATOR || '3',
 
   // Profit & Tax Center (Finance-Cockpit-Erweiterung: Gebühren, Steuern, echter Nettogewinn)
   ZAHLUNGSGEBUEHR_PROZENT: process.env.ZAHLUNGSGEBUEHR_PROZENT || '2.5',
