@@ -175,6 +175,14 @@ export const config = {
   OPPORTUNITY_RADAR_MIN_VERKAEUFE: process.env.OPPORTUNITY_RADAR_MIN_VERKAEUFE || '5',
   OPPORTUNITY_RADAR_WACHSTUM_PROZENT: process.env.OPPORTUNITY_RADAR_WACHSTUM_PROZENT || '50',
 
+  // Goal Engine: freier Zieltext, fließt in die Prompts von Chef-Agent (#60)
+  // und Oracle (#59) ein, damit deren TEXT-Empfehlungen auf dieses Ziel
+  // einzahlen. Steuert bewusst NICHT direkt automatisierte Aktionen (die
+  // bleiben an feste, nachvollziehbare Zahlen-Schwellen gebunden, z.B.
+  // MAX_TAGESBUDGET) - reines Freitext-Ziel darf laut Sicherheitsprinzip der
+  // Suite keine automatisierten Handlungen auslösen.
+  BUSINESS_ZIEL: process.env.BUSINESS_ZIEL || '',
+
   // Profit & Tax Center (Finance-Cockpit-Erweiterung: Gebühren, Steuern, echter Nettogewinn)
   ZAHLUNGSGEBUEHR_PROZENT: process.env.ZAHLUNGSGEBUEHR_PROZENT || '2.5',
   ZAHLUNGSGEBUEHR_FIX_CENT: process.env.ZAHLUNGSGEBUEHR_FIX_CENT || '25',
