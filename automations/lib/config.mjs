@@ -171,6 +171,10 @@ export const config = {
   REFUND_ALARM_MIN_BETRAG: process.env.REFUND_ALARM_MIN_BETRAG || '20',
   REFUND_ALARM_MULTIPLIKATOR: process.env.REFUND_ALARM_MULTIPLIKATOR || '3',
 
+  // Opportunity-Radar (#87): erkennt Produkte mit sprunghaftem Verkaufswachstum
+  OPPORTUNITY_RADAR_MIN_VERKAEUFE: process.env.OPPORTUNITY_RADAR_MIN_VERKAEUFE || '5',
+  OPPORTUNITY_RADAR_WACHSTUM_PROZENT: process.env.OPPORTUNITY_RADAR_WACHSTUM_PROZENT || '50',
+
   // Profit & Tax Center (Finance-Cockpit-Erweiterung: Gebühren, Steuern, echter Nettogewinn)
   ZAHLUNGSGEBUEHR_PROZENT: process.env.ZAHLUNGSGEBUEHR_PROZENT || '2.5',
   ZAHLUNGSGEBUEHR_FIX_CENT: process.env.ZAHLUNGSGEBUEHR_FIX_CENT || '25',

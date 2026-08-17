@@ -230,6 +230,14 @@
   .state-an { color:var(--green); background:rgba(62,242,160,.1); border:1px solid rgba(62,242,160,.35); }
   .state-aus { color:var(--mut2); background:rgba(255,255,255,.04); border:1px solid var(--line2); }
 
+  /* --- Opportunity-Radar --- */
+  .opp-row { position:relative; background:var(--panel); border:1px solid rgba(62,242,160,.3); padding:14px 18px 14px 20px; margin-bottom:10px; overflow:hidden; }
+  .opp-row::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,var(--green),var(--cyan)); }
+  .opp-top { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px; }
+  .opp-name { font-weight:700; font-size:14px; }
+  .opp-growth { font-family:var(--mono); font-size:13px; color:var(--green); text-shadow:0 0 10px rgba(62,242,160,.4); white-space:nowrap; }
+  .opp-detail { font-size:12.5px; color:var(--mut); }
+
   /* --- Kill-Switch-Banner --- */
   .killswitch-banner { display:flex; align-items:center; gap:16px; padding:18px 22px; margin-bottom:20px; border:1px solid; }
   .killswitch-banner.ks-ruhig { border-color:rgba(62,242,160,.4); background:rgba(62,242,160,.05); }
@@ -420,6 +428,7 @@
 <section class="panel show" id="panel-ceo">
   <div class="panel-title">Chef-Agent — Tagesansage</div>
   <p class="panel-desc">Fasst Finanzen, Fulfillment und Kundenstamm zu EINER Prioritäts-Entscheidung zusammen (Automation #60, täglich abends) — und löst bei überfälligen Bestellungen bzw. inaktiven VIPs automatisch die passende Automation sofort aus, statt nur zu empfehlen.</p>
+  <div id="opportunityContent"></div>
   <div id="ceoContent"></div>
 </section>
 
@@ -561,6 +570,26 @@
           ${kettenFehler ? `<div class="today-item" style="color:var(--amber);"><b>${kettenFehler}</b><span>KETTEN MIT PROBLEM</span></div>` : ''}
         </div>
       </div>`;
+  }
+
+  // Nicht nur Probleme, auch Chancen: Produkte mit sprunghaftem Verkaufs-
+  // wachstum ggü. der Vorwoche (#87 Opportunity-Radar) - rein aus echten
+  // Shopify-Verkaufsdaten, keine erfundenen "Konkurrenz fällt"-Signale.
+  function renderOpportunityRadar(data) {
+    const el = document.getElementById('opportunityContent');
+    const chancen = (data && data.chancen) || [];
+    if (!chancen.length) { el.innerHTML = ''; return; }
+    el.innerHTML = `
+      <div class="card-label" style="margin-bottom:10px;">🚀 CHANCEN ERKANNT (LETZTE ${data.fensterTage || 7} TAGE)</div>
+      ${chancen.map((c) => `
+        <div class="opp-row">
+          <div class="opp-top">
+            <span class="opp-name">${c.name}</span>
+            <span class="opp-growth">${c.verkaeufeLetzte7Tage}x${c.wachstumProzent !== null ? ` · +${c.wachstumProzent}%` : ' · neu'}</span>
+          </div>
+          <div class="opp-detail">${c.empfehlung}</div>
+        </div>`).join('')}
+      <p class="note" style="margin-bottom:20px;">Basis: eigene Verkaufsdaten, letzte ${data.fensterTage || 7} vs. vorherige ${data.fensterTage || 7} Tage.</p>`;
   }
 
   function renderCeo(data, chains, referral, social) {
@@ -1563,7 +1592,9 @@
       ladeJson('./pricing-agent.json'),
       ladeJson('./ads-notbremse.json'),
       ladeJson('./refund-alarm.json'),
-    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm]) => {
+      ladeJson('./opportunity-radar.json'),
+    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar]) => {
+      renderOpportunityRadar(opportunityRadar);
       renderCeo(ceo, chains, referral, social);
       renderPricingHistorie(pricingHistorie);
       renderKillSwitch(adsNotbremse, refundAlarm, autopilotStatus);
