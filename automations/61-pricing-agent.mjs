@@ -15,15 +15,23 @@
 // Schätzung - gleiche Konvention wie Gewinn-Radar), und wie bei den
 // Meta-Ads-Automationen standardmäßig NUR EMPFEHLUNG: echte Preisänderungen
 // passieren erst, wenn AUTO_PREISANPASSUNG explizit auf "ja" steht.
+import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { getProducts, getOrdersSince, getInventoryItem, updateVariant } from './lib/shopify.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { chunkZeilen } from './lib/whatsappChunk.mjs';
+import { loadState, saveState } from './lib/state.mjs';
 
 const NL = '\n';
 const WHATSAPP_MAX_CHARS = 3500;
 const VERKAUFSTEMPO_TAGE = 14;
+const STATE_KEY = '61-pricing-agent';
+const MAX_HISTORIE = 60;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const COMMAND_DIR = join(__dirname, '..', 'command');
 
 async function ermittleKosten(variante, preis) {
   if (variante.inventory_item_id) {
@@ -92,6 +100,12 @@ async function main() {
       }
       if (neuerPreis === preis) continue;
 
+      // "Warum" transparent mitliefern statt nur "Preis geändert" - Risiko
+      // und erwartete Auswirkung sind bewusst konservativ hergeleitet (aus
+      // dem tatsächlichen Verkaufstempo), keine erfundene Prognose. Bei
+      // Ladenhütern (0 Verkäufe) gibt es KEINE verlässliche Zahlenbasis für
+      // eine Umsatz-Erwartung - dort bleibt es ehrlich qualitativ.
+      const erwarteteVerkaeufe14Tage = Math.max(1, Math.round(proTag * VERKAUFSTEMPO_TAGE));
       aenderungen.push({
         variantId: v.id,
         name,
@@ -99,12 +113,28 @@ async function main() {
         alt: preis,
         neu: neuerPreis,
         grund: richtung === 'hoch' ? `verkauft sich schnell, reicht nur noch ~${(bestand / proTag).toFixed(1)} Tage` : 'seit 14 Tagen kein Verkauf',
+        risiko: richtung === 'hoch' ? 'niedrig' : 'mittel',
+        erwarteteAuswirkung: richtung === 'hoch'
+          ? `+${((neuerPreis - preis) * erwarteteVerkaeufe14Tage).toFixed(2)} € geschätzter Mehrertrag über 14 Tage bei gleichem Verkaufstempo`
+          : 'räumt liegen gebliebenen Lagerbestand ab - kein verlässlicher Umsatz-Forecast möglich, da seit 14 Tagen 0 Verkäufe',
       });
     }
   }
 
+  const state = loadState(STATE_KEY);
+  state.historie = state.historie || [];
+
+  function veroeffentliche() {
+    if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
+    writeFileSync(join(COMMAND_DIR, 'pricing-agent.json'), JSON.stringify({
+      updatedAt: new Date().toISOString(),
+      historie: state.historie,
+    }, null, 2));
+  }
+
   if (!aenderungen.length) {
     await notifyTelegram(`PRICING-AGENT - ${config.SHOP_NAME}${NL}${NL}Keine Preisänderung heute nötig - Verkaufstempo überall im normalen Bereich.`);
+    veroeffentliche();
     console.log('[61-pricing-agent] Keine Kandidaten.');
     return;
   }
@@ -128,6 +158,12 @@ async function main() {
       }
     }
   }
+
+  const datum = new Date().toISOString();
+  state.historie.unshift(...aenderungen.map((a) => ({ ...a, datum, ausgefuehrt: autoAn })));
+  if (state.historie.length > MAX_HISTORIE) state.historie = state.historie.slice(0, MAX_HISTORIE);
+  saveState(STATE_KEY, state);
+  veroeffentliche();
 
   console.log(`[61-pricing-agent] ${aenderungen.length} Preisänderung(en) ${autoAn ? 'ausgeführt' : 'empfohlen'}.`);
 }
