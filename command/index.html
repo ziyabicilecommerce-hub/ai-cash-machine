@@ -1526,8 +1526,16 @@
     el.innerHTML = `<div class="section-title-inline">🧮 PREIS-ENTSCHEIDUNGEN MIT BEGRÜNDUNG</div>${bilanzHtml}${rows}`;
   }
 
+  const SPLIT_WIRKUNG_TEXT = {
+    gewinner_bestaetigt: { label: '✅ Gewinner weiterhin profitabel', klasse: 'risiko-niedrig' },
+    gewinner_schwaecher: { label: '⚠️ Gewinner seitdem schwächer', klasse: 'risiko-mittel' },
+    keine_daten: { label: '❔ keine Daten seitdem', klasse: 'risiko-mittel' },
+  };
+
   // "Warum" bei jedem Split-Test-Ergebnis (#88) - echtes A/B-Testing zwischen
-  // Ad-Sets DERSELBEN Kampagne, nicht nur Gesamt-Account-ROAS.
+  // Ad-Sets DERSELBEN Kampagne, nicht nur Gesamt-Account-ROAS. Prüft
+  // AUSGEFÜHRTE Pausierungen 7 Tage später gegen die echte Performance des
+  // Gewinners nach, statt nur einmal zu entscheiden und zu vergessen.
   function renderSplitTestHistorie(data) {
     const el = document.getElementById('splitTestContent');
     const historie = (data && data.historie) || [];
@@ -1536,7 +1544,16 @@
         emptyHtml('🧪', 'Noch kein Split-Test-Ergebnis', 'Erscheint, sobald der Split-Test-Agent (#88) einen klaren Gewinner/Verlierer innerhalb einer Kampagne findet (braucht mind. 2 Ad-Sets mit genug Spend).');
       return;
     }
-    const rows = historie.slice(0, 15).map((e) => `
+    const bilanz = data.erfolgsBilanz;
+    const bilanzHtml = bilanz && bilanz.ausgewertet
+      ? `<p class="note" style="margin-bottom:14px;">🎯 Erfolgs-Check: von ${bilanz.ausgewertet} ausgewerteten Pausierungen blieb der Gewinner bei ${bilanz.bestaetigt} weiterhin profitabel, ${bilanz.brauchtBlick} brauchen einen Blick.</p>`
+      : '';
+    const rows = historie.slice(0, 15).map((e) => {
+      const wirkung = e.ausgewertet && SPLIT_WIRKUNG_TEXT[e.wirkung];
+      const wirkungRow = wirkung
+        ? `<div><b>SEITDEM PASSIERT</b><span class="${wirkung.klasse}">${wirkung.label}${e.gewinnerRoasSeitdem !== null ? ` (ROAS ${e.gewinnerRoasSeitdem})` : ''}</span></div>`
+        : e.ausgefuehrt ? `<div><b>SEITDEM PASSIERT</b><span>wird in ${Math.max(0, 7 - Math.floor((Date.now() - new Date(e.datum).getTime()) / 86400000))} Tag(en) geprüft</span></div>` : '';
+      return `
       <div class="why-row">
         <div class="why-top">
           <div class="why-preis">${e.kampagne}</div>
@@ -1547,10 +1564,12 @@
           <div><b>VERLIERER</b><span>${e.verlierer.name} — ROAS ${e.verlierer.roas} (${e.verlierer.spend} € Spend)</span></div>
           <div><b>UNTERSCHIED</b><span>${e.unterschiedProzent}% · Risiko <span class="risiko-${e.risiko}">${e.risiko}</span></span></div>
           <div><b>ERWARTETE AUSWIRKUNG</b><span>${e.erwarteteAuswirkung}</span></div>
+          ${wirkungRow}
         </div>
         <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(e.datum)}</div>
-      </div>`).join('');
-    el.innerHTML = `<div class="section-title-inline">🧪 SPLIT-TEST-ERGEBNISSE MIT BEGRÜNDUNG</div>${rows}`;
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div class="section-title-inline">🧪 SPLIT-TEST-ERGEBNISSE MIT BEGRÜNDUNG</div>${bilanzHtml}${rows}`;
   }
 
   // --- Alle Tools (Launchpad zu den restlichen, echt interaktiven Apps) ---
@@ -1849,6 +1868,10 @@
     if (splitHistorie.length) {
       const e = splitHistorie[0];
       teile.push(`LETZTES SPLIT-TEST-ERGEBNIS (#88, ${fmtDatumKurz(e.datum)}): Kampagne ${e.kampagne} — Gewinner ${e.gewinner.name} (ROAS ${e.gewinner.roas}) vs. Verlierer ${e.verlierer.name} (ROAS ${e.verlierer.roas}), ${e.ausgefuehrt ? 'Verlierer wurde pausiert' : 'nur empfohlen'}.`);
+    }
+    const splitBilanz = c.splitTest && c.splitTest.erfolgsBilanz;
+    if (splitBilanz && splitBilanz.ausgewertet) {
+      teile.push(`ERFOLGS-CHECK SPLIT-TEST-AGENT: Von ${splitBilanz.ausgewertet} ausgewerteten Pausierungen blieb der Gewinner bei ${splitBilanz.bestaetigt} weiterhin profitabel, ${splitBilanz.brauchtBlick} brauchen einen Blick.`);
     }
 
     const automationen = (c.cockpit && c.cockpit.automationen) || [];
