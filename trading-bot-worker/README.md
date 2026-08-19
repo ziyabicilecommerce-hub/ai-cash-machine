@@ -113,14 +113,21 @@ systematischer Handelsstrategien um:
 Stop-Loss, Trailing-Stop, Tagesverlust-Sperre und Kill-Switch gelten bei
 allen drei Strategien identisch — die Risiko-Grenzen sind strategieunabhängig.
 
-**Welche Strategie passt besser?** Kommt auf das Symbol und die Marktphase
-an — es gibt keine pauschal "beste" Strategie für immer, deshalb auch drei
-statt einer. Vor jeder Umstellung alle drei mit dem Backtest direkt
-vergleichen (siehe unten), oder interaktiv mit echten Charts im
-**CASHMACHINE STRATEGY LAB** (`strategy-lab/` im Hauptrepo, live unter
-`https://ziyabicilecommerce-hub.github.io/ai-cash-machine/strategy-lab/`).
+**Welche Strategie passt besser?** Wurde live getestet: alle 8 Coins liefen
+eine Zeit lang mit unterschiedlichen Strategien parallel (siehe Abschnitt
+darunter). Backtest über 90 Tage auf allen 8 Coins zeigt ein klares Bild -
+`bollinger-mean-reversion` schlägt `donchian-breakout`/`ema-crossover` auf
+7 von 8 Coins deutlich (Win-Rate 66-85% statt 15-33%, meist positiver statt
+negativer Return). Deshalb aktuell fahren **alle 8 Coins mit
+bollinger-mean-reversion** (`TRADING_STRATEGIE_PRO_SYMBOL` ist leer,
+`TRADING_BOLLINGER_STDDEV` auf `1.5` statt `2` gestellt - engeres Band,
+löst öfter aus, per Backtest bei gleicher/besserer Win-Rate). Das ist kein
+Naturgesetz - Marktphasen ändern sich, vor jeder erneuten Umstellung wieder
+mit dem Backtest gegentesten (siehe unten), oder interaktiv mit echten
+Charts im **CASHMACHINE STRATEGY LAB** (`strategy-lab/` im Hauptrepo, live
+unter `https://ziyabicilecommerce-hub.github.io/ai-cash-machine/strategy-lab/`).
 
-### Pro Symbol eine andere Strategie (Live-Vergleich)
+### Pro Symbol eine andere Strategie (optional)
 
 Statt für alle Symbole zwangsläufig dieselbe Strategie zu nutzen, kann
 `TRADING_STRATEGIE_PRO_SYMBOL` einzelnen Symbolen eine abweichende Strategie
@@ -132,8 +139,9 @@ TRADING_STRATEGIE_PRO_SYMBOL = "XBTUSDT:bollinger-mean-reversion,ETHUSDT:donchia
 ```
 
 Symbole ohne Eintrag laufen mit dem globalen `TRADING_STRATEGIE`-Default
-weiter. Alle Risiko-Grenzen (Stop-Loss, Take-Profit, Kill-Switch, Filter)
-gelten unabhängig von der gewählten Strategie identisch pro Symbol. Im
+weiter. Leer (aktueller Stand) = alle Symbole nutzen den globalen Default.
+Alle Risiko-Grenzen (Stop-Loss, Take-Profit, Kill-Switch, Filter) gelten
+unabhängig von der gewählten Strategie identisch pro Symbol. Im
 Trading-Dashboard zeigt jede Coin-Karte an, welche Strategie sie gerade
 fährt.
 

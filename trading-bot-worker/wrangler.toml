@@ -109,16 +109,23 @@ TRADING_SPREAD_MAX_PROZENT = "1"
 # CASHMACHINE STRATEGY LAB (strategy-lab/ im Hauptrepo).
 TRADING_STRATEGIE = "bollinger-mean-reversion"
 TRADING_BOLLINGER_PERIODE = "20"
-TRADING_BOLLINGER_STDDEV = "2"
+# 1.5 statt 2 Standardabweichungen = engeres Band = löst öfter aus. Per
+# Backtest (90 Tage, alle 8 Coins) geprüft: deutlich mehr Trades bei
+# gleicher oder besserer Win-Rate ggü. 2 (z.B. ETH: 12→18 Trades, Win-Rate
+# 66,7%→77,8%; BTC: 11→15 Trades, Win-Rate 81,8%→80,0%).
+TRADING_BOLLINGER_STDDEV = "1.5"
 TRADING_DONCHIAN_ENTRY_PERIODE = "20"
 TRADING_DONCHIAN_EXIT_PERIODE = "10"
 
-# Live-Vergleich: statt alle 8 Coins mit der gleichen Strategie laufen zu
-# lassen, fährt jede Dreiergruppe eine andere Strategie - im Dashboard sieht
-# man dann pro Coin, welche Strategie läuft und wer am meisten Kapital
-# gewinnt. TRADING_STRATEGIE (oben) bleibt der Fallback für jeden Coin, der
-# hier nicht aufgeführt ist.
-TRADING_STRATEGIE_PRO_SYMBOL = "XBTUSDT:bollinger-mean-reversion,ETHUSDT:bollinger-mean-reversion,SOLUSDT:bollinger-mean-reversion,XRPUSDT:donchian-breakout,ADAUSDT:donchian-breakout,DOGEUSDT:donchian-breakout,DOTUSDT:ema-crossover,LTCUSDT:ema-crossover"
+# War früher ein Live-Vergleich (jede Dreiergruppe eine andere Strategie).
+# Per Backtest (90 Tage, alle 8 Coins) klar entschieden: bollinger-mean-
+# reversion schlägt donchian-breakout/ema-crossover auf 7 von 8 Coins
+# deutlich (z.B. XRP: -0,5% Return/18,2% Win-Rate mit donchian vs. +0,6%/85%
+# mit bollinger; ADA: -1,9%/28,6% vs. +1,67%/85%; LTC: -0,54%/17,6% mit ema
+# vs. +0,31%/84,2% mit bollinger). Deshalb jetzt leer - alle Coins nutzen
+# den Fallback TRADING_STRATEGIE (oben) statt einer schlechter laufenden
+# Alternative. Format zum späteren Wiederaktivieren: "XBTUSDT:donchian-breakout,...".
+TRADING_STRATEGIE_PRO_SYMBOL = ""
 
 # Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
 #   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)
