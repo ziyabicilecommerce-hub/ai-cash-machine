@@ -314,6 +314,54 @@
   .trd-pos-tag.empty { color:var(--mut2); background:transparent; border-color:var(--line2); }
   .trd-kill-banner { margin-top:10px; font-family:var(--mono); font-size:11px; padding:8px 10px; background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.4); color:var(--red); }
 
+  /* --- AI Command Chat (Ein Chat für alle Module) --- */
+  .ai-key-modal-overlay { position:fixed; inset:0; z-index:600; background:rgba(2,4,10,.88);
+    display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .25s ease, visibility .25s ease; }
+  .ai-key-modal-overlay.open { opacity:1; visibility:visible; pointer-events:auto; }
+  .ai-key-modal { width:min(440px,90vw); background:var(--panel-solid); border:1px solid var(--line);
+    box-shadow:0 0 40px rgba(62,242,160,.14); padding:26px; }
+  .ai-key-modal h3 { color:var(--green); font-size:16px; letter-spacing:1px; margin-bottom:10px; }
+  .ai-key-modal p { font-size:12.5px; color:var(--mut); line-height:1.6; margin-bottom:16px; }
+  .ai-key-modal input { width:100%; background:rgba(62,242,160,.06); border:1px solid var(--line2); color:var(--txt);
+    font-family:var(--mono); font-size:13px; padding:10px 12px; margin-bottom:14px; }
+  .ai-key-modal input:focus { border-color:var(--green); outline:none; }
+  .ai-key-modal-actions { display:flex; justify-content:space-between; align-items:center; }
+  .ai-key-modal-actions a { color:var(--mut); font-size:12px; text-decoration:none; border-bottom:1px dotted var(--mut); }
+  .ai-key-modal-actions a:hover { color:var(--txt); }
+  .ai-key-modal-actions button { background:rgba(62,242,160,.16); border:1px solid var(--green); color:var(--txt);
+    font-family:var(--mono); font-size:12px; padding:9px 18px; cursor:pointer; }
+  .ai-key-modal-actions button:hover { background:rgba(62,242,160,.3); }
+  .ai-chat-box { background:var(--panel); border:1px solid var(--line); display:flex; flex-direction:column;
+    height:min(560px,70vh); overflow:hidden; }
+  .ai-chat-log { flex:1; overflow-y:auto; padding:18px clamp(12px,3vw,24px); display:flex; flex-direction:column; gap:14px; }
+  .ai-msg { max-width:88%; font-size:14px; line-height:1.6; }
+  .ai-msg.user { align-self:flex-end; text-align:right; }
+  .ai-msg .ai-bubble { display:inline-block; padding:10px 14px; border-radius:2px; }
+  .ai-msg.user .ai-bubble { background:rgba(62,242,160,.14); border:1px solid var(--line); color:var(--txt); }
+  .ai-msg.assistant .ai-bubble { background:var(--panel-solid); border:1px solid var(--line2); color:var(--txt); white-space:pre-wrap; }
+  .ai-msg.assistant.pending .ai-bubble { color:var(--mut2); }
+  .ai-msg .ai-who { font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; color:var(--mut2); margin-bottom:4px; display:block; }
+  .ai-empty-state { text-align:center; padding:40px 20px; font-family:var(--mono); margin:auto; }
+  .ai-empty-state .ai-line1 { color:var(--green); font-size:14px; }
+  .ai-empty-state .ai-line2 { color:var(--mut2); font-size:12px; margin-top:8px; }
+  .ai-chips { display:flex; flex-wrap:wrap; gap:8px; padding:0 clamp(12px,3vw,24px) 14px; }
+  .ai-chip { font-family:var(--mono); font-size:11.5px; color:var(--mut); background:rgba(62,242,160,.06);
+    border:1px solid var(--line2); padding:6px 12px; cursor:pointer; transition:.15s; }
+  .ai-chip:hover { border-color:var(--green); color:var(--green); }
+  .ai-chat-form { display:flex; align-items:center; gap:8px; border-top:1px solid var(--line2); padding:12px clamp(10px,3vw,18px); background:rgba(0,0,0,.15); }
+  .ai-chat-form textarea { flex:1; resize:none; background:rgba(62,242,160,.05); border:1px solid var(--line2); color:var(--txt);
+    font-family:'Inter',sans-serif; font-size:13.5px; padding:10px 12px; max-height:120px; }
+  .ai-chat-form textarea:focus { border-color:var(--green); outline:none; }
+  .ai-send-btn { background:rgba(62,242,160,.14); border:1px solid var(--green); color:var(--green);
+    width:38px; height:38px; flex-shrink:0; cursor:pointer; font-size:16px; }
+  .ai-send-btn:hover:not(:disabled) { background:rgba(62,242,160,.28); }
+  .ai-send-btn:disabled { opacity:.4; cursor:default; }
+  .ai-key-gear { background:rgba(62,242,160,.08); border:1px solid var(--line2); color:var(--mut); width:34px; height:34px;
+    cursor:pointer; font-size:14px; margin-left:8px; flex-shrink:0; }
+  .ai-key-gear:hover { border-color:var(--green); color:var(--green); }
+  .ai-usage-note { font-family:var(--mono); font-size:10.5px; color:var(--mut2); margin-top:10px; }
+
   /* --- Profit-Wasserfall --- */
   .waterfall-card { background:var(--panel); border:1px solid var(--line2); padding:6px 20px; margin-bottom:20px; }
   .wf-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; font-size:13px; border-bottom:1px solid var(--line2); }
@@ -414,6 +462,18 @@
 <canvas class="bg-canvas" id="bgCanvas"></canvas>
 <div class="bg-grid"></div>
 
+<div class="ai-key-modal-overlay" id="aiKeyModalOverlay">
+  <div class="ai-key-modal" id="aiKeyModalBox" role="dialog" aria-modal="true" aria-labelledby="aiKeyModalTitle">
+    <h3 id="aiKeyModalTitle">Anthropic API-Key</h3>
+    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Anthropic gesendet — nie an einen anderen Server. Derselbe Key wie in Pulse, Oracle & Co — einmal eintragen, überall nutzbar.</p>
+    <input type="password" id="aiKeyModalInput" placeholder="sk-ant-api03-..." aria-label="Anthropic API-Key" autocomplete="off">
+    <div class="ai-key-modal-actions">
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Key holen →</a>
+      <button id="aiKeyModalSave" type="button">Speichern</button>
+    </div>
+  </div>
+</div>
+
 <nav>
   <div class="logo">CASHMACHINE<b>&nbsp;COMMAND</b></div>
   <div class="nav-links">
@@ -445,6 +505,7 @@
 
 <div class="tabs" id="tabs">
   <button class="tab-btn active" data-tab="ceo">👔 CEO</button>
+  <button class="tab-btn" data-tab="aichat">💬 AI Command</button>
   <button class="tab-btn" data-tab="activity">📡 Activity</button>
   <button class="tab-btn" data-tab="map">🧠 System-Map</button>
   <button class="tab-btn" data-tab="analytics">📊 Analytics</button>
@@ -469,6 +530,26 @@
   <div id="goalEngineContent"></div>
   <div id="opportunityContent"></div>
   <div id="ceoContent"></div>
+</section>
+
+<section class="panel" id="panel-aichat">
+  <div class="panel-title">AI Command — ein Chat für alles</div>
+  <p class="panel-desc">Fragt direkt über ALLE geladenen Module hinweg (Finance, Ads, Produkte, Kill-Switch, Autopilot, Preis-Entscheidungen, Opportunity-Radar, Trading) statt sieben Tabs einzeln durchzuklicken. Bring-your-own-key wie Pulse/Oracle — der Key bleibt im Browser, geht nur direkt an Anthropic.</p>
+  <div class="ai-chat-box">
+    <div class="ai-chat-log" id="aiChatLog">
+      <div class="ai-empty-state" id="aiEmptyState">
+        <div class="ai-line1">&gt; wartet auf geladene Daten</div>
+        <div class="ai-line2">Sobald mindestens ein Modul geladen ist, kannst du direkt fragen — z.B. "Was läuft gerade?" oder "Was muss ich heute machen?".</div>
+      </div>
+    </div>
+    <div class="ai-chips" id="aiChipsRow" style="display:none"></div>
+    <form class="ai-chat-form" id="aiChatForm" style="display:none">
+      <textarea id="aiChatInput" rows="1" placeholder="Frag was über dein ganzes Business..." maxlength="2000"></textarea>
+      <button type="button" class="ai-key-gear" id="aiKeyGearBtn" title="Anthropic API-Key einstellen" aria-label="Anthropic API-Key einstellen">⚙</button>
+      <button type="submit" class="ai-send-btn" id="aiSendBtn" title="Senden" aria-label="Senden">➤</button>
+    </form>
+  </div>
+  <div class="ai-usage-note" id="aiUsageNote"></div>
 </section>
 
 <section class="panel" id="panel-activity">
@@ -1477,6 +1558,7 @@
       const res = await fetch(`${conn.url}/status?key=${encodeURIComponent(conn.key)}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('status ' + res.status);
       const data = await res.json();
+      TRADING_KONTEXT = data;
       el.innerHTML = `
         <p class="note" style="margin-bottom:14px;">Aktualisiert: ${new Date(data.updatedAt).toLocaleTimeString('de-DE')} · <a href="#" id="trdReconnectLink">Verbindung ändern</a></p>
         ${trdRenderReadiness(data.readiness)}
@@ -1503,6 +1585,265 @@
       localStorage.setItem(TRD_STORAGE_KEY, key);
       ladeTrading();
     });
+  }
+
+  // --- AI Command Chat ---
+  // Bring-your-own-key, geteilter Storage-Vertrag mit Pulse/Oracle/den
+  // anderen Apps ('cmx_claude_key', 'cmx_token_usage') - einmal irgendwo
+  // eingetragen, überall nutzbar, nie an einen eigenen Server gesendet.
+  // Bekommt als Kontext ALLE bereits geladenen Command-Module (nicht nur
+  // Finance wie Pulse) - baut den System-Prompt live bei jeder Anfrage neu,
+  // damit er nie veraltete Zahlen zeigt.
+  const AI_CLAUDE_KEY_STORAGE = 'cmx_claude_key';
+  const AI_USAGE_STORAGE = 'cmx_token_usage';
+  const AI_USAGE_WARN_THRESHOLD = 150000;
+  let COMMAND_KONTEXT = {};
+  let TRADING_KONTEXT = null;
+
+  function aiGetClaudeKey() { return localStorage.getItem(AI_CLAUDE_KEY_STORAGE); }
+
+  const aiKeyModalOverlay = document.getElementById('aiKeyModalOverlay');
+  const aiKeyModalInput = document.getElementById('aiKeyModalInput');
+  const aiKeyModalSave = document.getElementById('aiKeyModalSave');
+  const aiKeyGearBtn = document.getElementById('aiKeyGearBtn');
+  let aiKeyModalResolve = null;
+
+  function aiCloseKeyModal() { aiKeyModalOverlay.classList.remove('open'); }
+  function aiOpenKeyModal() {
+    aiKeyModalInput.value = aiGetClaudeKey() || '';
+    aiKeyModalOverlay.classList.add('open');
+    setTimeout(() => aiKeyModalInput.focus(), 50);
+  }
+  function aiRequestClaudeKey() {
+    return new Promise((resolve) => { aiKeyModalResolve = resolve; aiOpenKeyModal(); });
+  }
+  aiKeyModalSave.addEventListener('click', () => {
+    const val = aiKeyModalInput.value.trim();
+    if (!val) return;
+    localStorage.setItem(AI_CLAUDE_KEY_STORAGE, val);
+    aiCloseKeyModal();
+    if (aiKeyModalResolve) { aiKeyModalResolve(val); aiKeyModalResolve = null; }
+  });
+  aiKeyModalInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') aiKeyModalSave.click(); });
+  aiKeyGearBtn.addEventListener('click', aiOpenKeyModal);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && aiKeyModalOverlay.classList.contains('open')) aiCloseKeyModal(); });
+
+  function aiTodayKey() { return new Date().toISOString().slice(0, 10); }
+  function aiGetUsageToday() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(AI_USAGE_STORAGE) || '{}');
+      if (stored.date !== aiTodayKey()) return { date: aiTodayKey(), requests: 0, tokens: 0 };
+      return stored;
+    } catch { return { date: aiTodayKey(), requests: 0, tokens: 0 }; }
+  }
+  function aiTrackTokenUsage(usage) {
+    const today = aiGetUsageToday();
+    today.requests += 1;
+    today.tokens += (usage.input_tokens || 0) + (usage.output_tokens || 0);
+    localStorage.setItem(AI_USAGE_STORAGE, JSON.stringify(today));
+    aiRenderUsageNote(today);
+  }
+  function aiRenderUsageNote(today) {
+    const el = document.getElementById('aiUsageNote');
+    if (!el) return;
+    today = today || aiGetUsageToday();
+    el.textContent = today.requests ? `Heute: ${today.requests} Anfragen · ~${today.tokens.toLocaleString('de-DE')} Tokens` : '';
+    el.style.color = today.tokens >= AI_USAGE_WARN_THRESHOLD ? 'var(--red)' : '';
+  }
+
+  async function aiCallClaude(body) {
+    let key = aiGetClaudeKey();
+    if (!key) key = await aiRequestClaudeKey();
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify(body),
+    });
+    if (response.status === 401) {
+      localStorage.removeItem(AI_CLAUDE_KEY_STORAGE);
+      throw new Error('invalid_key');
+    }
+    if (!response.ok) throw new Error('api_error');
+    const data = await response.json();
+    if (data.usage) aiTrackTokenUsage(data.usage);
+    return data;
+  }
+
+  function aiHatKontext() {
+    const c = COMMAND_KONTEXT;
+    return !!(c && Object.values(c).some((v) => v !== null && v !== undefined));
+  }
+
+  // Baut den System-Prompt live aus allen aktuell geladenen Modulen - nur
+  // echte, bereits woanders im Dashboard angezeigte Werte, nichts erfunden.
+  function aiBuildSystemPrompt() {
+    const NL = '\n';
+    const c = COMMAND_KONTEXT;
+    const teile = [
+      `Du bist COMMAND AI, der zentrale Analyse-Assistent der CASHMACHINE AI Suite. Du kennst alle geladenen Module des Shops (Finance, Ads, Produkte, Kunden, Automationen, Trading) und beantwortest Fragen direkt, kurz und auf Deutsch (Du-Form) - kein Geschwafel, keine Allgemeinplätze. Nutze IMMER nur die echten Daten unten für deine Antworten, erfinde nie Werte. Wenn eine Frage Daten braucht, die hier nicht vorhanden sind, sag das ehrlich statt zu raten. Halte Antworten kurz (2-6 Sätze), außer explizit um mehr Details gebeten wird. Du kannst selbst keine Aktion auslösen - du analysierst nur und schlägst vor, was der Mensch tun oder welchen AUTO_*-Schalter er umlegen könnte.`,
+    ];
+
+    if (c.ceo && c.ceo.ziel) teile.push(`ERKLÄRTES ZIEL: "${c.ceo.ziel}"`);
+
+    const letzteCeo = c.ceo && c.ceo.historie && c.ceo.historie[0];
+    if (letzteCeo) {
+      teile.push(`CHEF-AGENT TAGESANSAGE (${fmtDatumKurz(letzteCeo.datum)}): ${letzteCeo.allesGut ? 'Alles im grünen Bereich.' : `Priorität: ${letzteCeo.prioritaet}`}`);
+    }
+
+    const history = (c.analytics && c.analytics.history) || [];
+    if (history.length) {
+      const letzte7 = history.slice(-7);
+      const latest = letzte7[letzte7.length - 1];
+      const ng = latest.nettoGewinn !== undefined ? latest.nettoGewinn : latest.gewinn;
+      const zeilen = letzte7.map((h) => {
+        const hng = h.nettoGewinn !== undefined ? h.nettoGewinn : h.gewinn;
+        return `${h.datum}: Umsatz ${(h.umsatz || 0).toFixed(2)} ${h.waehrung || 'EUR'}, echter Gewinn ${(hng || 0).toFixed(2)} ${h.waehrung || 'EUR'}, ${h.bestellungen || 0} Bestellungen`;
+      }).join(NL);
+      teile.push(`FINANCE (letzte ${letzte7.length} erfasste Tage, aus Gewinn-Radar #01):${NL}${zeilen}${NL}Letzter erfasster Tag: ${latest.datum}, echter Gewinn (nach Produktkosten/Versand/Werbekosten/Gebühren/Steuer/Retouren): ${(ng || 0).toFixed(2)} ${latest.waehrung || 'EUR'}.`);
+    }
+
+    const adsHistorie = (c.ads && c.ads.historie) || [];
+    if (adsHistorie.length) {
+      const na = adsHistorie[0];
+      teile.push(`AD INTELLIGENCE (letzte 7 Tage, Ad Commander #56): Spend ${na.gesamtSpend.toFixed(2)}, Umsatz ${na.gesamtUmsatz.toFixed(2)}, ROAS ${na.gesamtRoas.toFixed(2)}. Empfehlung: ${na.empfehlung || '–'}`);
+    }
+
+    const produkte = (c.product && c.product.produkte) || [];
+    if (produkte.length) {
+      const top = [...produkte].sort((a, b) => (b.gesamtScore || 0) - (a.gesamtScore || 0)).slice(0, 3);
+      teile.push(`PRODUCT RESEARCH — Top-Ideen (Product Hunter #51): ${top.map((p) => `${p.name} (Score ${p.gesamtScore}/10)`).join(', ')}`);
+    }
+
+    const chancen = (c.opportunityRadar && c.opportunityRadar.chancen) || [];
+    if (chancen.length) {
+      teile.push(`OPPORTUNITY RADAR (#87, letzte ${c.opportunityRadar.fensterTage || 7} Tage): ${chancen.map((ch) => `${ch.name} (${ch.verkaeufeLetzte7Tage}x${ch.wachstumProzent !== null ? `, +${ch.wachstumProzent}%` : ', neu'})`).join('; ')}`);
+    }
+
+    const adsAusgeloest = !!(c.adsNotbremse && c.adsNotbremse.ausgeloest);
+    const refundAusgeloest = !!(c.refundAlarm && c.refundAlarm.ausgeloest);
+    if (c.adsNotbremse || c.refundAlarm) {
+      teile.push(`KILL-SWITCH: Ads-Notbremse (#43) ${adsAusgeloest ? `AUSGELÖST (ROAS ${c.adsNotbremse.roas})` : 'ruhig'}. Refund-Spike-Alarm (#01) ${refundAusgeloest ? `AUSGELÖST (${c.refundAlarm.retouren} vs. Schnitt ${c.refundAlarm.baseline14Tage})` : 'ruhig'}.`);
+    }
+
+    if (c.autopilotStatus && Array.isArray(c.autopilotStatus.schalter)) {
+      const an = c.autopilotStatus.schalter.filter((s) => s.an);
+      teile.push(`AUTOPILOT: ${an.length}/${c.autopilotStatus.schalter.length} AUTO_*-Schalter an${an.length ? ` (${an.map((s) => s.name).join(', ')})` : ''}. Autonomy-Level: ${ermittleAutonomyLevel(an.length).label}.`);
+    }
+
+    const preisHistorie = (c.pricingHistorie && c.pricingHistorie.historie) || [];
+    if (preisHistorie.length) {
+      const p = preisHistorie[0];
+      teile.push(`LETZTE PREIS-ENTSCHEIDUNG (Pricing-Agent #61, ${fmtDatumKurz(p.datum)}): ${p.name} ${p.alt.toFixed(2)}€ → ${p.neu.toFixed(2)}€ (${p.ausgefuehrt ? 'live geändert' : 'nur empfohlen'}). Grund: ${p.grund}`);
+    }
+
+    const splitHistorie = (c.splitTest && c.splitTest.historie) || [];
+    if (splitHistorie.length) {
+      const e = splitHistorie[0];
+      teile.push(`LETZTES SPLIT-TEST-ERGEBNIS (#88, ${fmtDatumKurz(e.datum)}): Kampagne ${e.kampagne} — Gewinner ${e.gewinner.name} (ROAS ${e.gewinner.roas}) vs. Verlierer ${e.verlierer.name} (ROAS ${e.verlierer.roas}), ${e.ausgefuehrt ? 'Verlierer wurde pausiert' : 'nur empfohlen'}.`);
+    }
+
+    const automationen = (c.cockpit && c.cockpit.automationen) || [];
+    if (automationen.length) {
+      const ok = automationen.filter((a) => a.status === 'ok').length;
+      const fehler = automationen.filter((a) => a.status === 'fehler').length;
+      teile.push(`AUTOMATIONEN-GESUNDHEIT (#80/#81): ${automationen.length} Automationen insgesamt, ${ok} ok, ${fehler} mit Fehler.`);
+    }
+
+    const eskEl = document.getElementById('kpiTruthSupport');
+    if (eskEl && eskEl.textContent && eskEl.textContent !== '…' && eskEl.textContent !== '?') {
+      teile.push(`CUSTOMER SUPPORT: ${eskEl.textContent} offene Eskalation(en) (GitHub Issues #02/#69/#62).`);
+    }
+
+    if (TRADING_KONTEXT && Array.isArray(TRADING_KONTEXT.symbole) && TRADING_KONTEXT.symbole.length) {
+      const zeilen = TRADING_KONTEXT.symbole.map((s) => `${s.symbol}: Kapital ${fmtUsdt(s.kapital)}, P&L ${(s.kapital - s.startKapital) >= 0 ? '+' : ''}${fmtUsdt(s.kapital - s.startKapital)}${s.killSwitchAktiv ? ', KILL-SWITCH AKTIV' : ''}`).join(NL);
+      teile.push(`TRADING (Krypto-Bot, ${TRADING_KONTEXT.paperModus ? 'Paper-Modus' : 'LIVE'}):${NL}${zeilen}`);
+    }
+
+    return teile.join(NL + NL);
+  }
+
+  const aiChatLog = document.getElementById('aiChatLog');
+  const aiChatForm = document.getElementById('aiChatForm');
+  const aiChatInput = document.getElementById('aiChatInput');
+  const aiSendBtn = document.getElementById('aiSendBtn');
+  const aiChipsRow = document.getElementById('aiChipsRow');
+  let aiVerlauf = [];
+  let aiChipsGerendert = false;
+
+  function aiAddMessage(role, text, pending) {
+    const wrap = document.createElement('div');
+    wrap.className = `ai-msg ${role}${pending ? ' pending' : ''}`;
+    wrap.innerHTML = `<span class="ai-who">${role === 'user' ? 'DU' : 'COMMAND AI'}</span><span class="ai-bubble"></span>`;
+    wrap.querySelector('.ai-bubble').textContent = text;
+    aiChatLog.appendChild(wrap);
+    aiChatLog.scrollTop = aiChatLog.scrollHeight;
+    return wrap;
+  }
+
+  async function aiSendMessage(text) {
+    if (!text || !aiHatKontext()) return;
+    document.getElementById('aiEmptyState')?.remove();
+    aiAddMessage('user', text);
+    aiVerlauf.push({ role: 'user', content: text });
+    aiSendBtn.disabled = true;
+    const pendingEl = aiAddMessage('assistant', 'Analysiert alle Module...', true);
+    try {
+      const data = await aiCallClaude({
+        model: 'claude-sonnet-5',
+        max_tokens: 700,
+        system: aiBuildSystemPrompt(),
+        messages: aiVerlauf.slice(-16),
+      });
+      const reply = (data.content || []).map((b) => b.text || '').join('').trim() || 'Dazu fällt mir gerade nichts ein.';
+      pendingEl.querySelector('.ai-bubble').textContent = reply;
+      pendingEl.classList.remove('pending');
+      aiVerlauf.push({ role: 'assistant', content: reply });
+    } catch (err) {
+      pendingEl.querySelector('.ai-bubble').textContent = err.message === 'invalid_key'
+        ? 'API-Key ungültig — über das ⚙ Symbol prüfen.'
+        : 'Technisches Problem — bitte nochmal versuchen.';
+      pendingEl.classList.remove('pending');
+    } finally {
+      aiSendBtn.disabled = false;
+      aiChatLog.scrollTop = aiChatLog.scrollHeight;
+    }
+  }
+
+  aiChatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = aiChatInput.value.trim();
+    if (!text) return;
+    aiChatInput.value = '';
+    aiSendMessage(text);
+  });
+  aiChatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); aiChatForm.requestSubmit(); }
+  });
+
+  const AI_VORSCHLAEGE = [
+    'Was läuft gerade?',
+    'Warum ist der Gewinn heute niedriger?',
+    'Welche Produkte soll ich testen?',
+    'Welche Ads soll ich pausieren?',
+    'Was muss ich heute machen?',
+  ];
+  function aiRenderChips() {
+    aiChipsRow.innerHTML = AI_VORSCHLAEGE.map((v) => `<span class="ai-chip">${v}</span>`).join('');
+    aiChipsRow.querySelectorAll('.ai-chip').forEach((chip) => {
+      chip.addEventListener('click', () => aiSendMessage(chip.textContent));
+    });
+    aiChipsRow.style.display = 'flex';
+  }
+
+  function aiUpdatePanel() {
+    if (!aiHatKontext()) return;
+    if (!aiChipsGerendert) { aiRenderChips(); aiChatForm.style.display = 'flex'; aiChipsGerendert = true; }
+    aiRenderUsageNote();
   }
 
   // --- System-Health-Score (Hero-Badge) ---
@@ -1821,6 +2162,8 @@
       renderAutopilot(autopilotStatus);
       letzterCockpitStand = cockpit;
       letzteChains = chains;
+      COMMAND_KONTEXT = { ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest };
+      aiUpdatePanel();
       const eskalationenEl = document.getElementById('kpiTruthSupport');
       const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
       renderHealthBadge(cockpit, eskalationenAnzahl);
