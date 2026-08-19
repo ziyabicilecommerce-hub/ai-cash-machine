@@ -287,13 +287,89 @@ async function ladeCoinpaprika24hChange(symbol) {
   }
 }
 
-// Mittelt CoinGecko + CoinPaprika (beide parallel abgefragt). Ist nur EINE
-// Quelle erreichbar, wird nur die genutzt statt den Filter auszuschalten -
-// erst wenn BEIDE ausfallen, ist das Ergebnis null (Filter dann nicht
-// blockierend, siehe Aufrufstelle in runSymbol).
+// Drei weitere, unabhängige Börsen-Ticker (jeweils kostenlos, kein Key
+// nötig) - liefern die 24h-Kursänderung aus ihrem EIGENEN Orderbuch statt
+// aus CoinGecko/CoinPaprikas aggregierten Daten. Gegen Ausfall/Umbenennung
+// einzelner Quellen genauso abgesichert wie CoinGecko/CoinPaprika: bei
+// Fehler oder fehlendem Mapping einfach null statt den Bot zu blockieren.
+const OKX_IDS = {
+  XBTUSDT: 'BTC-USDT', ETHUSDT: 'ETH-USDT', SOLUSDT: 'SOL-USDT', XRPUSDT: 'XRP-USDT',
+  ADAUSDT: 'ADA-USDT', DOGEUSDT: 'DOGE-USDT', DOTUSDT: 'DOT-USDT', LTCUSDT: 'LTC-USDT',
+};
+
+async function ladeOkx24hChange(symbol) {
+  const instId = OKX_IDS[symbol];
+  if (!instId) return null;
+  try {
+    const res = await fetch(`https://www.okx.com/api/v5/market/ticker?instId=${instId}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const t = data && data.data && data.data[0];
+    const open = t && parseFloat(t.open24h);
+    const last = t && parseFloat(t.last);
+    if (!open || !Number.isFinite(last)) return null;
+    return ((last - open) / open) * 100;
+  } catch {
+    return null;
+  }
+}
+
+const GATEIO_IDS = {
+  XBTUSDT: 'BTC_USDT', ETHUSDT: 'ETH_USDT', SOLUSDT: 'SOL_USDT', XRPUSDT: 'XRP_USDT',
+  ADAUSDT: 'ADA_USDT', DOGEUSDT: 'DOGE_USDT', DOTUSDT: 'DOT_USDT', LTCUSDT: 'LTC_USDT',
+};
+
+async function ladeGateio24hChange(symbol) {
+  const pair = GATEIO_IDS[symbol];
+  if (!pair) return null;
+  try {
+    const res = await fetch(`https://api.gateio.ws/api/v4/spot/tickers?currency_pair=${pair}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const change = data && data[0] && parseFloat(data[0].change_percentage);
+    return Number.isFinite(change) ? change : null;
+  } catch {
+    return null;
+  }
+}
+
+// Bitstamp notiert in USD statt USDT - für eine 24h-PROZENT-Änderung als
+// Zusatzbestätigung ist der kleine Unterschied zwischen beiden irrelevant.
+const BITSTAMP_IDS = {
+  XBTUSDT: 'btcusd', ETHUSDT: 'ethusd', SOLUSDT: 'solusd', XRPUSDT: 'xrpusd',
+  ADAUSDT: 'adausd', DOGEUSDT: 'dogeusd', DOTUSDT: 'dotusd', LTCUSDT: 'ltcusd',
+};
+
+async function ladeBitstamp24hChange(symbol) {
+  const pair = BITSTAMP_IDS[symbol];
+  if (!pair) return null;
+  try {
+    const res = await fetch(`https://www.bitstamp.net/api/v2/ticker/${pair}/`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const change = data && parseFloat(data.percent_change_24);
+    return Number.isFinite(change) ? change : null;
+  } catch {
+    return null;
+  }
+}
+
+// Mittelt bis zu 5 unabhängige Quellen (CoinGecko, CoinPaprika, OKX,
+// Gate.io, Bitstamp), alle parallel abgefragt. Fällt eine oder mehrere aus,
+// wird nur mit den verbliebenen gemittelt statt den Filter auszuschalten -
+// erst wenn ALLE ausfallen, ist das Ergebnis null (Filter dann nicht
+// blockierend, siehe Aufrufstelle in runSymbol). Bewusst als EIN
+// gemittelter Wert statt fünf einzelne UND-Filter, sonst würde jede weitere
+// Quelle Käufe nur noch seltener machen, statt die Bestätigung robuster zu
+// machen.
 async function ladePreisBestaetigung24h(symbol) {
-  const [coingecko, coinpaprika] = await Promise.all([ladeCoingecko24hChange(symbol), ladeCoinpaprika24hChange(symbol)]);
-  const werte = [coingecko, coinpaprika].filter((w) => typeof w === 'number');
+  const werte = (await Promise.all([
+    ladeCoingecko24hChange(symbol),
+    ladeCoinpaprika24hChange(symbol),
+    ladeOkx24hChange(symbol),
+    ladeGateio24hChange(symbol),
+    ladeBitstamp24hChange(symbol),
+  ])).filter((w) => typeof w === 'number');
   if (!werte.length) return null;
   return werte.reduce((sum, w) => sum + w, 0) / werte.length;
 }
@@ -315,6 +391,26 @@ async function ladeFearGreedIndex() {
     return Number.isFinite(wert) ? wert : null;
   } catch {
     return null; // Ausfall darf den Bot nie blockieren, nur den Filter deaktivieren
+  }
+}
+
+// ================= BTC-DOMINANZ-FILTER (optionaler markweiter Kauf-Filter) =================
+// Wie der Fear&Greed-Filter EIN EINZIGER Wert für den ganzen Markt, nur
+// einmal pro Lauf abgefragt. BTC-Dominanz = BTCs Anteil an der gesamten
+// Krypto-Marktkapitalisierung. Steigt sie stark, fließt Kapital gerade
+// bevorzugt in Bitcoin statt in Altcoins ("risk-off" für Alts) - der Filter
+// blockiert deshalb NUR Altcoin-Käufe (nicht BTC selbst) oberhalb der
+// konfigurierten Schwelle. Nutzt dieselbe CoinPaprika-API wie der
+// 24h-Preisfilter oben, andere Endpunkt (global statt pro Coin).
+async function ladeBtcDominanzProzent() {
+  try {
+    const res = await fetch('https://api.coinpaprika.com/v1/global');
+    if (!res.ok) return null;
+    const data = await res.json();
+    const wert = data && data.bitcoin_dominance_percentage;
+    return typeof wert === 'number' ? wert : null;
+  } catch {
+    return null;
   }
 }
 
@@ -406,7 +502,7 @@ async function zaehleOffenePositionen(env, symbols, startKapitalProSymbol) {
 
 // ================= HANDELSLOGIK =================
 
-async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, fearGreedWert) {
+async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, fearGreedWert, btcDominanzProzent) {
   const exchange = EXCHANGES[cfg.exchange];
   let state = await loadState(env, symbol, startKapital);
 
@@ -437,7 +533,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
 
   if (!state.position) {
     const positionenPlatzFrei = offenePositionenVorLauf < cfg.maxGleichzeitigePositionen;
-    const kauf = entscheideKauf({ kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute });
+    const kauf = entscheideKauf({ kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute, kuerzlicheTrades: state.trades });
 
     if (kauf && cfg.mtfFilter) {
       const aufwaerts = await hoehererZeitrahmenIstAufwaerts(exchange, symbol, cfg);
@@ -454,14 +550,23 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       return;
     }
 
+    // Nur Altcoins betroffen (BTC selbst profitiert typischerweise gerade
+    // VON steigender Dominanz, wird also nicht geblockt).
+    const istBtc = COINGECKO_IDS[symbol] === 'bitcoin';
+    if (kauf && cfg.btcDominanzFilter && !istBtc && btcDominanzProzent !== null && btcDominanzProzent >= cfg.btcDominanzMaxProzent) {
+      await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - BTC-Dominanz bei ${btcDominanzProzent.toFixed(1)}% (Schwelle ${cfg.btcDominanzMaxProzent}%), Kapital fließt gerade bevorzugt in Bitcoin statt Altcoins.`);
+      await saveState(env, symbol, state);
+      return;
+    }
+
     if (kauf && cfg.coingeckoFilter) {
       const change24hProzent = await ladePreisBestaetigung24h(symbol);
-      // null = kein Mapping für dieses Symbol oder BEIDE Quellen (CoinGecko +
-      // CoinPaprika) nicht erreichbar - Filter dann NICHT blockierend, sonst
-      // würde ein Datenausfall den Bot lahmlegen, obwohl die eigentliche
-      // Strategie ein gültiges Signal hat.
+      // null = kein Mapping für dieses Symbol oder ALLE Quellen (CoinGecko,
+      // CoinPaprika, OKX, Gate.io, Bitstamp) nicht erreichbar - Filter dann
+      // NICHT blockierend, sonst würde ein Datenausfall den Bot lahmlegen,
+      // obwohl die eigentliche Strategie ein gültiges Signal hat.
       if (change24hProzent !== null && change24hProzent < cfg.coingeckoMin24hProzent) {
-        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - 24h-Änderung (Ø CoinGecko/CoinPaprika) ${change24hProzent.toFixed(2)}% liegt unter dem Filter-Minimum (${cfg.coingeckoMin24hProzent}%).`);
+        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - 24h-Änderung (Ø aus bis zu 5 Börsen) ${change24hProzent.toFixed(2)}% liegt unter dem Filter-Minimum (${cfg.coingeckoMin24hProzent}%).`);
         await saveState(env, symbol, state);
         return;
       }
@@ -583,6 +688,7 @@ async function pruefeUndSendeWochenZusammenfassung(env, cfg) {
   let gesamtKapitalJetzt = 0, gesamtStartKapital = 0;
   const proSymbolPL = [];
   const allTradesDieseWoche = [];
+  const proStrategiePL = {}; // strategie -> { plDieseWoche, anzahlTrades }
   for (const symbol of cfg.symbols) {
     const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
     gesamtKapitalJetzt += state.kapital;
@@ -591,6 +697,11 @@ async function pruefeUndSendeWochenZusammenfassung(env, cfg) {
     const plDieseWoche = tradesDieseWoche.reduce((sum, t) => sum + t.gewinnVerlustUsdt, 0);
     proSymbolPL.push({ symbol, plDieseWoche, anzahlTrades: tradesDieseWoche.length });
     allTradesDieseWoche.push(...tradesDieseWoche);
+
+    const strategie = cfg.strategieProSymbol[symbol] || cfg.strategie;
+    if (!proStrategiePL[strategie]) proStrategiePL[strategie] = { plDieseWoche: 0, anzahlTrades: 0 };
+    proStrategiePL[strategie].plDieseWoche += plDieseWoche;
+    proStrategiePL[strategie].anzahlTrades += tradesDieseWoche.length;
   }
   const gesamtProzent = gesamtStartKapital > 0 ? ((gesamtKapitalJetzt - gesamtStartKapital) / gesamtStartKapital) * 100 : 0;
   const statsWoche = berechneTradeStats(allTradesDieseWoche);
@@ -606,6 +717,17 @@ async function pruefeUndSendeWochenZusammenfassung(env, cfg) {
   ];
   if (bester) zeilen.push(`🏆 Bester Coin: ${bester.symbol} (${bester.plDieseWoche >= 0 ? '+' : ''}${bester.plDieseWoche.toFixed(2)} USDT)`);
   if (schlechtester) zeilen.push(`📉 Schlechtester Coin: ${schlechtester.symbol} (${schlechtester.plDieseWoche >= 0 ? '+' : ''}${schlechtester.plDieseWoche.toFixed(2)} USDT)`);
+
+  // Nur relevant/interessant, wenn wirklich mehr als eine Strategie parallel
+  // läuft (siehe TRADING_STRATEGIE_PRO_SYMBOL) - sonst wäre es identisch
+  // zur Gesamtzeile oben.
+  const strategieGruppen = Object.entries(proStrategiePL);
+  if (strategieGruppen.length > 1) {
+    zeilen.push('📊 Strategie-Vergleich diese Woche:');
+    for (const [strategie, werte] of strategieGruppen.sort((a, b) => b[1].plDieseWoche - a[1].plDieseWoche)) {
+      zeilen.push(`  ${strategie}: ${werte.plDieseWoche >= 0 ? '+' : ''}${werte.plDieseWoche.toFixed(2)} USDT (${werte.anzahlTrades} Trades)`);
+    }
+  }
 
   await notifyWhatsapp(env, zeilen.join('\n'));
   await env.TRADING_STATE.put('digest:letzteWoche', aktuelleWoche);
@@ -682,6 +804,14 @@ function readConfig(env) {
     fngMaxWert: parseFloat(env.TRADING_FNG_MAX_WERT || '80'),
     mtfFilter: (env.TRADING_MTF_FILTER || 'nein') === 'ja',
     mtfIntervalMinuten: parseInt(env.TRADING_MTF_INTERVAL_MINUTEN || '240', 10),
+    btcDominanzFilter: (env.TRADING_BTC_DOMINANZ_FILTER || 'nein') === 'ja',
+    btcDominanzMaxProzent: parseFloat(env.TRADING_BTC_DOMINANZ_MAX_PROZENT || '60'),
+    // Default AUS, damit ein bereits laufendes Setup nicht ungefragt anders
+    // handelt. Skaliert die Positionsgröße NUR nach unten (nie über den
+    // konfigurierten maxPositionProzent hinaus) - siehe strategie.mjs.
+    performanceSizing: (env.TRADING_PERFORMANCE_SIZING || 'nein') === 'ja',
+    performanceSizingMinFaktor: parseFloat(env.TRADING_PERFORMANCE_SIZING_MIN_FAKTOR || '0.5'),
+    performanceSizingMinTrades: parseInt(env.TRADING_PERFORMANCE_SIZING_MIN_TRADES || '5', 10),
   };
 }
 
@@ -692,6 +822,7 @@ async function runAll(env) {
   // gleich) statt pro Symbol - spart Anfragen und ist konsistent für alle
   // Coins in diesem Lauf.
   const fearGreedWert = cfg.fngFilter ? await ladeFearGreedIndex() : null;
+  const btcDominanzProzent = cfg.btcDominanzFilter ? await ladeBtcDominanzProzent() : null;
   for (const symbol of cfg.symbols) {
     try {
       // Pro Symbol ggf. eigene Strategie (siehe strategieProSymbol) statt
@@ -701,7 +832,7 @@ async function runAll(env) {
         ? { ...cfg, strategie: cfg.strategieProSymbol[symbol] }
         : cfg;
       const hatteVorherPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
-      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfgSymbol, offenePositionen, fearGreedWert);
+      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfgSymbol, offenePositionen, fearGreedWert, btcDominanzProzent);
       const hatJetztPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
       if (!hatteVorherPosition && hatJetztPosition) offenePositionen++;
       if (hatteVorherPosition && !hatJetztPosition) offenePositionen--;

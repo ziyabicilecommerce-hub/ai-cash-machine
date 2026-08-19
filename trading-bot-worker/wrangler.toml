@@ -42,9 +42,11 @@ TRADING_VOLA_SIZING_MIN_FAKTOR = "0.25"
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # TRADING_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 
-# CoinGecko-Kauf-Filter (kein API-Key nötig, öffentliche API): verwirft ein
-# Kaufsignal, wenn der Coin laut CoinGecko in den letzten 24h im Minus steht -
-# unabhängige Zweitbestätigung neben den Kraken-Kursdaten.
+# 24h-Preisbestätigung (kein API-Key nötig, alles öffentliche APIs): verwirft
+# ein Kaufsignal, wenn der Coin im Schnitt aus bis zu 5 unabhängigen Quellen
+# (CoinGecko, CoinPaprika, OKX, Gate.io, Bitstamp) in den letzten 24h im
+# Minus steht - unabhängige Zweitbestätigung neben den Kraken-Kursdaten, die
+# den Kauf tatsächlich auslösen.
 TRADING_COINGECKO_FILTER = "ja"
 TRADING_COINGECKO_MIN_24H_PROZENT = "0"
 
@@ -61,6 +63,22 @@ TRADING_FNG_MAX_WERT = "80"
 # kurzfristige 15m-Signal gerade anspringt.
 TRADING_MTF_FILTER = "ja"
 TRADING_MTF_INTERVAL_MINUTEN = "240"
+
+# BTC-Dominanz-Filter (kein API-Key nötig, öffentliche API): verwirft ein
+# Kaufsignal für ALTCOINS (nicht für BTC selbst), wenn BTCs Anteil an der
+# gesamten Krypto-Marktkapitalisierung über der Schwelle liegt - Kapital
+# fließt dann bevorzugt in Bitcoin statt Altcoins.
+TRADING_BTC_DOMINANZ_FILTER = "ja"
+TRADING_BTC_DOMINANZ_MAX_PROZENT = "60"
+
+# Performance-basierte Positionsgröße (kein externer API-Call, nutzt nur die
+# eigene Trade-Historie): reduziert die Positionsgröße für ein Symbol, das
+# zuletzt schlecht lief (Win-Rate < 50%, ab TRADING_PERFORMANCE_SIZING_MIN_TRADES
+# abgeschlossenen Trades) - kann die konfigurierte Positionsgröße NIE
+# überschreiten, nur nach unten anpassen.
+TRADING_PERFORMANCE_SIZING = "ja"
+TRADING_PERFORMANCE_SIZING_MIN_FAKTOR = "0.5"
+TRADING_PERFORMANCE_SIZING_MIN_TRADES = "5"
 
 # Drei Strategien zur Wahl (Default "ema-crossover" = unverändertes Verhalten):
 # "bollinger-mean-reversion": kauft, wenn der Kurs unter das untere
