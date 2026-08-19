@@ -207,6 +207,8 @@ gefährdet gilt, Default `45`), `CRM_SMS_TOP_N` (wie viele der wertvollsten
 At-Risk-Kunden zusätzlich per SMS angeschrieben werden, Default `3`),
 `CRM_MAX_PRO_LAUF` (Default `10`). Nutzt `VIP_UMSATZ_SCHWELLE` (bereits
 vorhanden) für die Werteinteilung. Braucht `SHOP`/`SHOPIFY_TOKEN`.
+Veröffentlicht alle Segmente (Anzahl, Gesamtumsatz, Top-Kunden nach
+Vorname+Umsatz - keine vollen Kontaktdaten) im Kunden-Tab von Command.
 
 Anders als #05 Winback-Maschine (schickt ALLEN Inaktiven denselben
 Rabattcode) segmentiert dieses Skript den GESAMTEN Kundenstamm nach

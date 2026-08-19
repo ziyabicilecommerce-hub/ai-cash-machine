@@ -314,6 +314,22 @@
   .trd-pos-tag.empty { color:var(--mut2); background:transparent; border-color:var(--line2); }
   .trd-kill-banner { margin-top:10px; font-family:var(--mono); font-size:11px; padding:8px 10px; background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.4); color:var(--red); }
 
+  /* --- Kunden-Segmente / LTV (#57 CRM & Retention Engine) --- */
+  .seg-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:20px; }
+  .seg-card { position:relative; background:var(--panel); border:1px solid var(--line2); padding:16px 18px; overflow:hidden; }
+  .seg-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; }
+  .seg-card.seg-vip::before { background:linear-gradient(180deg,#ffc55c,#ff8ad4); }
+  .seg-card.seg-atrisk::before { background:linear-gradient(180deg,var(--red),#ff8ad4); }
+  .seg-card.seg-treu::before { background:linear-gradient(180deg,var(--green),var(--cyan)); }
+  .seg-card.seg-neu::before { background:linear-gradient(180deg,var(--cyan),var(--green)); }
+  .seg-card.seg-einmalig::before { background:var(--line2); }
+  .seg-card.seg-ruhend::before { background:var(--line2); }
+  .seg-label { font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; color:var(--mut2); margin-bottom:6px; }
+  .seg-num { font-family:'Orbitron',sans-serif; font-size:24px; margin-bottom:2px; }
+  .seg-umsatz { font-size:12px; color:var(--mut); }
+  .seg-top-list { margin-top:10px; padding-top:10px; border-top:1px solid var(--line2); font-size:11.5px; }
+  .seg-top-row { display:flex; justify-content:space-between; padding:2px 0; color:var(--mut); }
+
   /* --- AI Command Chat (Ein Chat für alle Module) --- */
   .ai-key-modal-overlay { position:fixed; inset:0; z-index:600; background:rgba(2,4,10,.88);
     display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; pointer-events:none;
@@ -515,6 +531,7 @@
   <button class="tab-btn" data-tab="chains">🔗 Ketten</button>
   <button class="tab-btn" data-tab="cockpit">🛰️ Cockpit</button>
   <button class="tab-btn" data-tab="brand">🧬 Brand</button>
+  <button class="tab-btn" data-tab="kunden">👑 Kunden</button>
   <button class="tab-btn" data-tab="referral">👯 Referral</button>
   <button class="tab-btn" data-tab="social">📮 Social</button>
   <button class="tab-btn" data-tab="belege">🧾 Belege</button>
@@ -604,6 +621,12 @@
   <div class="panel-title">Brand — Marken-DNA & neue Produkte</div>
   <p class="panel-desc">Aus dem ECHTEN Sortiment abgeleitete Marken-DNA + markentreue neue Produktideen (Automation #83, wöchentlich).</p>
   <div id="brandContent"></div>
+</section>
+
+<section class="panel" id="panel-kunden">
+  <div class="panel-title">Kunden — echte Segmente & Lifetime-Value</div>
+  <p class="panel-desc">Der GESAMTE Kundenstamm nach echtem Gesamtumsatz + Aktivität segmentiert (VIP, At-Risk, treu & aktiv, neu, einmalig, ruhend) — Automation #57, wöchentlich. Nur Vorname + Umsatz je Top-Kunde, keine vollen Kontaktdaten.</p>
+  <div id="kundenContent"></div>
 </section>
 
 <section class="panel" id="panel-referral">
@@ -1177,6 +1200,42 @@
         ${p.warnung ? `<div class="prod-warn">⚠️ ${p.warnung}</div>` : ''}
       </div>`).join('');
     el.innerHTML = html;
+  }
+
+  // --- Kunden-Segmente / Lifetime-Value (Automation #57) ---
+  const SEGMENT_DEFS = [
+    { key: 'vip', klasse: 'seg-vip', label: '👑 VIP (AKTIV)' },
+    { key: 'atRisk', klasse: 'seg-atrisk', label: '🚨 AT-RISK (WERTVOLL, INAKTIV)' },
+    { key: 'treuAktiv', klasse: 'seg-treu', label: '💚 TREU & AKTIV' },
+    { key: 'neu', klasse: 'seg-neu', label: '🌱 NEU' },
+    { key: 'einmalig', klasse: 'seg-einmalig', label: '👋 EINMALIG (INAKTIV)' },
+    { key: 'ruhend', klasse: 'seg-ruhend', label: '💤 RUHEND' },
+  ];
+
+  function renderKunden(data) {
+    const el = document.getElementById('kundenContent');
+    if (!data || !data.segmente) {
+      el.innerHTML = emptyHtml('👑', 'Noch keine Kundensegmentierung', 'Erscheint, sobald die CRM & Retention Engine (#57) zum ersten Mal gelaufen ist (wöchentlich, braucht SHOP + SHOPIFY_TOKEN + ANTHROPIC_API_KEY).');
+      return;
+    }
+    const waehrung = 'EUR';
+    const karten = SEGMENT_DEFS.map((def) => {
+      const s = data.segmente[def.key] || { anzahl: 0, gesamtUmsatz: 0, top: [] };
+      const topHtml = (s.top || []).length ? `
+        <div class="seg-top-list">
+          ${s.top.map((k) => `<div class="seg-top-row"><span>${k.vorname}</span><span>${k.umsatz.toFixed(0)} ${waehrung} · ${k.bestellungen}x</span></div>`).join('')}
+        </div>` : '';
+      return `
+        <div class="seg-card ${def.klasse}">
+          <div class="seg-label">${def.label}</div>
+          <div class="seg-num">${s.anzahl}</div>
+          <div class="seg-umsatz">${s.gesamtUmsatz.toFixed(0)} ${waehrung} Gesamtumsatz</div>
+          ${topHtml}
+        </div>`;
+    }).join('');
+    el.innerHTML = `
+      <div class="seg-grid">${karten}</div>
+      <p class="note">Schwellen: ab ${data.vipUmsatzSchwelle} ${waehrung} Gesamtumsatz = wertvoll, ab ${data.atRiskTageSchwelle} Tagen ohne Bestellung = inaktiv. Diesen Lauf ${data.diesenLaufKontaktiert} At-Risk-Kunde(n) persönlich kontaktiert. Aktualisiert: ${fmtDatumKurz(data.updatedAt)}</p>`;
   }
 
   // --- Referral (Freunde werben Freunde, Automation #84) ---
@@ -1779,6 +1838,11 @@
       teile.push(`CUSTOMER SUPPORT: ${eskEl.textContent} offene Eskalation(en) (GitHub Issues #02/#69/#62).`);
     }
 
+    if (c.customerSegmente && c.customerSegmente.segmente) {
+      const s = c.customerSegmente.segmente;
+      teile.push(`KUNDEN-SEGMENTE / LTV (#57, echte Shopify-Daten): VIP ${s.vip.anzahl} (${s.vip.gesamtUmsatz} EUR), At-Risk (wertvoll aber inaktiv) ${s.atRisk.anzahl} (${s.atRisk.gesamtUmsatz} EUR), treu & aktiv ${s.treuAktiv.anzahl}, neu ${s.neu.anzahl}, einmalig ${s.einmalig.anzahl}, ruhend ${s.ruhend.anzahl}.`);
+    }
+
     if (c.socialPerformance && c.socialPerformance.anzahlBeitraege) {
       const sp = c.socialPerformance;
       teile.push(`SOCIAL-PERFORMANCE (#89, letzte ${sp.fensterTage} Tage): ${sp.anzahlBeitraege} echte Facebook/Instagram-Posts, ${sp.gesamtAufrufe} Aufrufe gesamt, ${sp.gesamtLikes} Likes.${sp.topBeitrag ? ` Top-Beitrag: ${sp.topBeitrag.plattform} vom ${fmtDatumKurz(sp.topBeitrag.datum)} mit ${sp.topBeitrag.aufrufe} Aufrufen.` : ''}`);
@@ -2165,7 +2229,8 @@
       ladeJson('./opportunity-radar.json'),
       ladeJson('./split-test.json'),
       ladeJson('../social-poster/performance.json'),
-    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance]) => {
+      ladeJson('./customer-segmente.json'),
+    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente]) => {
       renderGoalEngine(ceo);
       renderOpportunityRadar(opportunityRadar);
       renderCeo(ceo, chains, referral, social, pricingHistorie, splitTest);
@@ -2178,6 +2243,7 @@
       renderChains(chains);
       renderCockpit(cockpit);
       renderBrand(brand);
+      renderKunden(customerSegmente);
       renderReferral(referral);
       renderSocial(social, socialPerformance);
       renderBelege(belege);
@@ -2188,7 +2254,7 @@
       renderAutopilot(autopilotStatus);
       letzterCockpitStand = cockpit;
       letzteChains = chains;
-      COMMAND_KONTEXT = { ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance };
+      COMMAND_KONTEXT = { ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente };
       aiUpdatePanel();
       const eskalationenEl = document.getElementById('kpiTruthSupport');
       const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
