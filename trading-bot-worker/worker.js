@@ -536,6 +536,7 @@ async function zaehleOffenePositionen(env, symbols, startKapitalProSymbol) {
 // ================= HANDELSLOGIK =================
 
 async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, fearGreedWert, btcDominanzProzent) {
+  console.log(`[DEBUG] runSymbol start ${symbol}`);
   const exchange = EXCHANGES[cfg.exchange];
   let state = await loadState(env, symbol, startKapital);
 
@@ -554,11 +555,15 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
   }
 
   const { closes, highs, lows } = await exchange.getKlines(symbol);
+  console.log(`[DEBUG] ${symbol} closes.length=${closes.length}`);
   // Genug Vorlauf für die Indikatoren ALLER Strategien prüfen, nicht nur
   // EMA - sonst würde z.B. donchianEntryPeriode=50 stillschweigend mit zu
   // wenig Historie rechnen, statt einfach diesen Lauf zu überspringen.
   const benoetigteKerzen = Math.max(cfg.emaLangsam, cfg.bollingerPeriode, cfg.donchianEntryPeriode) + 2;
-  if (closes.length < benoetigteKerzen) return;
+  if (closes.length < benoetigteKerzen) {
+    console.log(`[DEBUG] ${symbol} zu wenig Kerzen (${closes.length} < ${benoetigteKerzen}), breche ohne saveState ab`);
+    return;
+  }
 
   const indikatoren = berechneIndikatoren(closes, highs, lows, cfg);
   const { preis } = indikatoren;
@@ -672,7 +677,9 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
     }
   }
 
+  console.log(`[DEBUG] ${symbol} saveState wird aufgerufen, kapital=${state.kapital}`);
   await saveState(env, symbol, state);
+  console.log(`[DEBUG] ${symbol} saveState fertig`);
 }
 
 // Einmal pro Kalendertag eine WhatsApp-Zusammenfassung über alle Symbole,
@@ -878,6 +885,7 @@ function readConfig(env) {
 
 async function runAll(env) {
   const cfg = readConfig(env);
+  console.log(`[DEBUG] runAll start, symbols=${cfg.symbols.join(',')}`);
   let offenePositionen = await zaehleOffenePositionen(env, cfg.symbols, cfg.startKapitalProSymbol);
   // Nur EINMAL pro Lauf abgefragt (marktweiter Wert, gilt für alle Symbole
   // gleich) statt pro Symbol - spart Anfragen und ist konsistent für alle
@@ -912,6 +920,7 @@ async function runAll(env) {
   } catch (err) {
     console.error('[trading-bot] Fehler bei Wochen-Zusammenfassung:', err);
   }
+  console.log('[DEBUG] runAll fertig');
 }
 
 // ================= READ-ONLY STATUS (fürs Dashboard, kann nie traden) =================
@@ -997,6 +1006,7 @@ async function buildStatus(env) {
 
 export default {
   async scheduled(event, env, ctx) {
+    console.log(`[DEBUG] scheduled() aufgerufen, cron=${event.cron}, hasKv=${!!env.TRADING_STATE}`);
     ctx.waitUntil(runAll(env));
   },
   async fetch(request, env) {
