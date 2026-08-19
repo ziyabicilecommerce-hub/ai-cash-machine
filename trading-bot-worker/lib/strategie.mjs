@@ -159,8 +159,17 @@ export function berechnePerformanceFaktor(kuerzlicheTrades, cfg) {
 }
 
 // Liefert null (nicht kaufen) oder { investBetrag } (in Quote-Währung, z.B. USDT).
-export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute, kuerzlicheTrades }) {
+// jetztZeitstempel/cooldownBisZeitstempel (beide in ms seit Epoch, optional)
+// steuern den Cool-Down nach einem Verlust-Trade - siehe cfg.cooldownMinuten.
+export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute, kuerzlicheTrades, jetztZeitstempel, cooldownBisZeitstempel }) {
   if (handelsSperreHeute || !positionenPlatzFrei) return null;
+
+  // Nach einem Verlust-Trade eine Weile pausieren, statt sofort wieder in
+  // dieselben (offenbar gerade ungünstigen) Marktbedingungen zu kaufen -
+  // "Revenge Trading" vermeiden. Default 0 = aus.
+  if (cfg.cooldownMinuten > 0 && cooldownBisZeitstempel && jetztZeitstempel !== undefined && jetztZeitstempel < cooldownBisZeitstempel) {
+    return null;
+  }
 
   const { rsiJetzt, volatilitaetProzent } = indikatoren;
   const rsiOk = cfg.rsiUeberkauft <= 0 || rsiJetzt === null || rsiJetzt < cfg.rsiUeberkauft;
@@ -199,22 +208,36 @@ export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei,
   return { investBetrag };
 }
 
-// Liefert { verkaufen, grund, hoechsterPreisSeitEinstieg }. hoechsterPreisSeitEinstieg
-// muss auch bei verkaufen=false zurückgeschrieben werden (Trailing-Stop-Basis).
-// Stop-Loss/Trailing-Stop/Take-Profit gelten als Risiko-/Gewinn-Grenze IMMER,
-// unabhängig von der Strategie - nur das "normale" Ausstiegssignal unterscheidet sich.
+// Liefert { verkaufen, teilverkauf, teilAnteil, grund, hoechsterPreisSeitEinstieg }.
+// hoechsterPreisSeitEinstieg muss auch bei verkaufen=false zurückgeschrieben
+// werden (Trailing-Stop-Basis). Stop-Loss/Trailing-Stop/Take-Profit gelten
+// als Risiko-/Gewinn-Grenze IMMER, unabhängig von der Strategie - nur das
+// "normale" Ausstiegssignal unterscheidet sich. teilverkauf=true bedeutet:
+// nur teilAnteil (0-1) der Position verkaufen, Rest bleibt mit gleichem
+// Einstiegspreis offen (siehe cfg.partialTakeProfitProzent).
 export function entscheideVerkauf({ position, cfg, indikatoren }) {
   const { preis } = indikatoren;
   const hoechsterPreisSeitEinstieg = Math.max(position.hoechsterPreisSeitEinstieg || position.entryPreis, preis);
-  const fixedStopLossPreis = position.entryPreis * (1 - cfg.stopLossProzent / 100);
+
+  // Dynamischer (ATR-basierter) statt fester prozentualer Stop-Loss-Abstand:
+  // nutzt die Volatilität BEIM EINSTIEG (position.entryAtr, bleibt für die
+  // gesamte Trade-Dauer fix) statt eines starren Prozentsatzes - bei
+  // volatilen Coins ein weiterer Abstand (weniger Fehlausstiege durch
+  // normales Rauschen), bei ruhigen ein engerer. Fällt auf den festen
+  // Prozentsatz zurück, falls kein entryAtr vorliegt (z.B. alte Positionen
+  // von vor diesem Feature).
+  const stopLossAbstand = cfg.dynamischerStopLoss && position.entryAtr
+    ? position.entryAtr * cfg.stopLossAtrMultiplikator
+    : position.entryPreis * (cfg.stopLossProzent / 100);
+  const fixedStopLossPreis = position.entryPreis - stopLossAbstand;
   const gewinnProzentSeitEinstieg = ((hoechsterPreisSeitEinstieg - position.entryPreis) / position.entryPreis) * 100;
   const trailingAktiv = cfg.trailingStopAbProzent > 0 && gewinnProzentSeitEinstieg >= cfg.trailingStopAbProzent;
   const stopLossPreis = trailingAktiv
-    ? Math.max(fixedStopLossPreis, hoechsterPreisSeitEinstieg * (1 - cfg.stopLossProzent / 100))
+    ? Math.max(fixedStopLossPreis, hoechsterPreisSeitEinstieg - stopLossAbstand)
     : fixedStopLossPreis;
 
   if (preis <= stopLossPreis) {
-    return { verkaufen: true, grund: trailingAktiv ? 'Trailing-Stop' : 'Stop-Loss', hoechsterPreisSeitEinstieg };
+    return { verkaufen: true, teilverkauf: false, teilAnteil: null, grund: trailingAktiv ? 'Trailing-Stop' : 'Stop-Loss', hoechsterPreisSeitEinstieg };
   }
 
   // Festes Gewinnziel (Default 0 = aus): sichert einen Trade sofort ab,
@@ -226,14 +249,27 @@ export function entscheideVerkauf({ position, cfg, indikatoren }) {
   if (cfg.takeProfitProzent > 0) {
     const takeProfitPreis = position.entryPreis * (1 + cfg.takeProfitProzent / 100);
     if (preis >= takeProfitPreis) {
-      return { verkaufen: true, grund: 'Take-Profit', hoechsterPreisSeitEinstieg };
+      return { verkaufen: true, teilverkauf: false, teilAnteil: null, grund: 'Take-Profit', hoechsterPreisSeitEinstieg };
+    }
+  }
+
+  // Teil-Gewinnmitnahme (Default 0 = aus): verkauft nur einen Anteil
+  // (cfg.partialTakeProfitAnteil, Default 50%) bei einem NIEDRIGEREN Ziel
+  // als der volle Take-Profit, sichert also früher etwas Gewinn, lässt den
+  // Rest der Position mit unverändertem Einstiegspreis weiterlaufen (Stop-
+  // Loss/Trailing-Stop gelten für den Rest normal weiter). Nur einmal pro
+  // Position (position.teilverkaufGemacht verhindert Mehrfachauslösung).
+  if (cfg.partialTakeProfitProzent > 0 && !position.teilverkaufGemacht) {
+    const partialPreis = position.entryPreis * (1 + cfg.partialTakeProfitProzent / 100);
+    if (preis >= partialPreis) {
+      return { verkaufen: false, teilverkauf: true, teilAnteil: cfg.partialTakeProfitAnteil / 100, grund: 'Teil-Gewinnmitnahme', hoechsterPreisSeitEinstieg };
     }
   }
 
   if (cfg.strategie === 'bollinger-mean-reversion') {
     // Ziel erreicht, sobald der Kurs zurück zum Mittelwert (oder darüber) ist.
     const zielErreicht = indikatoren.bollingerMittel !== null && preis >= indikatoren.bollingerMittel;
-    return { verkaufen: zielErreicht, grund: 'Mittelband erreicht', hoechsterPreisSeitEinstieg };
+    return { verkaufen: zielErreicht, teilverkauf: false, teilAnteil: null, grund: 'Mittelband erreicht', hoechsterPreisSeitEinstieg };
   }
 
   if (cfg.strategie === 'donchian-breakout') {
@@ -241,8 +277,8 @@ export function entscheideVerkauf({ position, cfg, indikatoren }) {
     // ein laufender Trend nicht sofort beim ersten kleinen Rücksetzer
     // verkauft wird, aber ein echter Trendbruch trotzdem zügig erkannt wird.
     const ausstieg = indikatoren.donchianAusstiegUnten !== null && preis < indikatoren.donchianAusstiegUnten;
-    return { verkaufen: ausstieg, grund: 'Donchian-Ausstieg', hoechsterPreisSeitEinstieg };
+    return { verkaufen: ausstieg, teilverkauf: false, teilAnteil: null, grund: 'Donchian-Ausstieg', hoechsterPreisSeitEinstieg };
   }
 
-  return { verkaufen: indikatoren.crossDown, grund: 'EMA-Crossover', hoechsterPreisSeitEinstieg };
+  return { verkaufen: indikatoren.crossDown, teilverkauf: false, teilAnteil: null, grund: 'EMA-Crossover', hoechsterPreisSeitEinstieg };
 }
