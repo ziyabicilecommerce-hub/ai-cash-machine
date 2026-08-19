@@ -190,26 +190,30 @@ selben 15-Minuten-Cron mit (verschickt aber wirklich nur einmal pro Tag).
 
 Zusätzlich zum täglichen Update verschickt der Worker **einmal pro Woche
 (montags)** einen ausführlicheren Rückblick: P&L nur der letzten 7 Tage,
-bester/schlechtester Coin, Win-Rate-Trend über die Woche. Braucht kein
-zusätzliches Setup, läuft im selben 15-Minuten-Cron mit.
+bester/schlechtester Coin, Win-Rate-Trend über die Woche. Läuft mehr als
+eine Strategie parallel (siehe `TRADING_STRATEGIE_PRO_SYMBOL` weiter unten),
+zeigt der Rückblick zusätzlich pro Strategie-Gruppe, wie viel sie diese
+Woche gewonnen/verloren hat — direkter Live-Vergleich, welche Strategie
+gerade am besten abschneidet. Braucht kein zusätzliches Setup, läuft im
+selben 15-Minuten-Cron mit.
 
 ## Zusätzliche Kauf-Filter (alle optional, alle ohne API-Key)
 
-Drei unabhängige, kostenlose Datenquellen können zusätzlich zur eigentlichen
-Strategie ein Kaufsignal verwerfen — jede für sich standardmäßig konfigurierbar,
-fällt bei einem Ausfall der jeweiligen API immer "offen" (blockiert den Bot
-nie dauerhaft, nur den einzelnen Filter für diesen Lauf):
+Mehrere unabhängige, kostenlose Datenquellen können zusätzlich zur
+eigentlichen Strategie ein Kaufsignal verwerfen — jede für sich
+standardmäßig konfigurierbar, fällt bei einem Ausfall der jeweiligen API
+immer "offen" (blockiert den Bot nie dauerhaft, nur den einzelnen Filter
+für diesen Lauf):
 
 - **`TRADING_COINGECKO_FILTER`** (`ja`/`nein`): verwirft den Kauf, wenn der
-  **Durchschnitt aus CoinGecko + CoinPaprika** den Coin in den letzten 24h
-  im Minus zeigt — zwei unabhängige, öffentliche Quellen gemittelt statt
-  einzeln als separate Hürden verdrahtet (würde Käufe sonst doppelt
-  erschweren). Ist nur eine der beiden Quellen erreichbar, wird trotzdem
-  gewertet; fallen beide aus, blockiert der Filter nicht. CoinCap wurde
-  ebenfalls geprüft, war aus dieser Umgebung aber wiederholt nicht
-  erreichbar (bekanntes Zuverlässigkeitsproblem) — CoinPaprika stattdessen
-  gewählt, funktioniert zuverlässig und liefert sogar mehr Zeitfenster pro
-  Abfrage.
+  **Durchschnitt aus bis zu 5 unabhängigen Börsen/Quellen** (CoinGecko,
+  CoinPaprika, OKX, Gate.io, Bitstamp) den Coin in den letzten 24h im Minus
+  zeigt — bewusst gemittelt statt als 5 einzelne Hürden verdrahtet (würde
+  Käufe sonst fast unmöglich machen). Fällt eine oder mehrere Quellen aus,
+  wird mit den verbliebenen gemittelt; fallen ALLE aus, blockiert der
+  Filter nicht. CoinCap wurde ebenfalls geprüft, war aus dieser Umgebung
+  aber wiederholt nicht erreichbar (bekanntes Zuverlässigkeitsproblem);
+  Bybit lieferte hier eine Geo-Sperre — beide deshalb nicht mit drin.
 - **`TRADING_FNG_FILTER`** (`ja`/`nein`) + `TRADING_FNG_MAX_WERT` (Default
   `80`): verwirft den Kauf bei "Extreme Greed" im
   [Fear & Greed Index](https://alternative.me/crypto/fear-and-greed-index/) —
@@ -222,6 +226,25 @@ nie dauerhaft, nur den einzelnen Filter für diesen Lauf):
   (EMA9 vs. EMA21 auf dem längeren Zeitrahmen) abwärts zeigt — vermeidet
   Käufe gegen einen größeren Trend, nur weil das kurzfristige 15m-Signal
   gerade anspringt.
+- **`TRADING_BTC_DOMINANZ_FILTER`** (`ja`/`nein`) +
+  `TRADING_BTC_DOMINANZ_MAX_PROZENT` (Default `60`): verwirft Käufe für
+  **Altcoins** (nicht für BTC selbst), wenn Bitcoins Anteil an der
+  gesamten Krypto-Marktkapitalisierung über der Schwelle liegt — Kapital
+  fließt dann laut Markt bevorzugt in Bitcoin statt Altcoins ("risk-off"
+  für Alts). Markweiter Wert, nur einmal pro Lauf abgefragt (CoinPaprika
+  `/global`).
+
+**Performance-basierte Positionsgröße:** `TRADING_PERFORMANCE_SIZING`
+(`ja`/`nein`) + `TRADING_PERFORMANCE_SIZING_MIN_FAKTOR` (Default `0.5`) +
+`TRADING_PERFORMANCE_SIZING_MIN_TRADES` (Default `5`) — braucht KEINEN
+externen API-Call, nutzt nur die eigene Trade-Historie des Symbols. Liegt
+die Win-Rate der letzten (bis zu 20) Trades unter 50%, wird die
+Positionsgröße für dieses Symbol proportional reduziert (bis zum
+konfigurierten Minimum-Faktor) — kann die konfigurierte
+`TRADING_MAX_POSITION_PROZENT` NIE überschreiten, nur innerhalb dieser
+Grenze nach unten anpassen. Braucht mindestens `TRADING_PERFORMANCE_SIZING_MIN_TRADES`
+abgeschlossene Trades, sonst bleibt der Faktor bei 1.0 (zu wenig Daten für
+ein verlässliches Signal).
 
 **Take-Profit:** `TRADING_TAKE_PROFIT_PROZENT` (Default `5`, `0` = aus)
 verkauft sofort, sobald eine Position um diesen Wert im Plus ist, statt auf
@@ -234,12 +257,14 @@ Wirkung (auf einem Coin leicht positiv, auf einem anderen neutral) — zu
 wenig Daten für eine verlässliche pauschale Empfehlung, vor jeder Änderung
 selbst mit `backtest.mjs` gegen mehrere Coins/Zeiträume gegentesten.
 
-**Wichtig zum Backtesting dieser drei Filter:** `backtest.mjs` kann aktuell
-nur Signale testen, die sich aus den historischen Kraken-Kursdaten selbst
-ableiten lassen (Strategie, Stop-Loss, Take-Profit). CoinGecko- und Fear &
-Greed-Filter lassen sich nicht rückwirkend exakt nachstellen (keine
-passenden historischen Daten im gleichen Format frei verfügbar) — sie sind
-gegen echte Live-Daten geprüft (lösen korrekt aus, fallen bei Ausfall sauber
+**Wichtig zum Backtesting dieser Filter:** `backtest.mjs` kann aktuell nur
+Signale testen, die sich aus den historischen Kraken-Kursdaten selbst
+ableiten lassen (Strategie, Stop-Loss, Take-Profit, Performance-Sizing —
+letzteres braucht keine externe API und läuft im Backtest identisch mit).
+Die 24h-Preisbestätigung, der Fear & Greed-Filter und der BTC-Dominanz-
+Filter lassen sich nicht rückwirkend exakt nachstellen (keine passenden
+historischen Daten im gleichen Format frei verfügbar) — sie sind gegen
+echte Live-Daten geprüft (lösen korrekt aus, fallen bei Ausfall sauber
 offen), aber NICHT historisch backgetestet. Das im Kopf behalten, bevor man
 sich zu sehr auf sie verlässt.
 

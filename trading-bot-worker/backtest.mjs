@@ -51,6 +51,9 @@ function readConfig(strategieOverride) {
     volaSizing: (env.TRADING_VOLA_SIZING || 'nein') === 'ja',
     volaSizingReferenzProzent: parseFloat(env.TRADING_VOLA_SIZING_REFERENZ_PROZENT || '2'),
     volaSizingMinFaktor: parseFloat(env.TRADING_VOLA_SIZING_MIN_FAKTOR || '0.25'),
+    performanceSizing: (env.TRADING_PERFORMANCE_SIZING || 'nein') === 'ja',
+    performanceSizingMinFaktor: parseFloat(env.TRADING_PERFORMANCE_SIZING_MIN_FAKTOR || '0.5'),
+    performanceSizingMinTrades: parseInt(env.TRADING_PERFORMANCE_SIZING_MIN_TRADES || '5', 10),
     maxGleichzeitigePositionen: 1, // Backtest läuft immer pro Symbol einzeln
   };
 }
@@ -154,7 +157,7 @@ function simuliere(symbol, closes, highs, lows, zeiten, cfg, startKapital) {
     const handelsSperreHeute = heutigerVerlustUsdt <= -(kapital * cfg.maxTagesverlustProzent) / 100;
 
     if (!position) {
-      const kauf = entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei: true, handelsSperreHeute });
+      const kauf = entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei: true, handelsSperreHeute, kuerzlicheTrades: trades });
       if (kauf) {
         const qty = kauf.investBetrag / preis;
         position = { qty, entryPreis: preis, hoechsterPreisSeitEinstieg: preis, einstiegAm: zeiten[i] };
