@@ -28,9 +28,10 @@ import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from './lib/st
 import { EXCHANGES } from './lib/exchanges.mjs';
 import { COINGECKO_IDS, ladePreisBestaetigung24h, ladeFearGreedIndex, ladeBtcDominanzProzent, hoehererZeitrahmenIstAufwaerts } from './lib/marktdaten.mjs';
 import { notifyWhatsapp } from './lib/notify.mjs';
-import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen } from './lib/state.mjs';
+import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, saveSystemInfo } from './lib/state.mjs';
 import { pruefeUndSendeTagesZusammenfassung, pruefeUndSendeWochenZusammenfassung, pruefeUndSendeMonatsZusammenfassung, pruefeUndFuehreKapitalRebalancing } from './lib/reports.mjs';
-import { berechneTradeStats, berechneReadiness } from './lib/statistik.mjs';
+import { buildStatus, buildTradesCsv } from './lib/status.mjs';
+import { readConfig } from './lib/config.mjs';
 
 // ================= HANDELSLOGIK =================
 
@@ -217,111 +218,6 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
   await saveState(env, symbol, state);
 }
 
-// Erlaubt jedem Symbol eine ANDERE Strategie als den globalen Default -
-// z.B. um live zu vergleichen, welche Strategie auf welchem Coin am besten
-// abschneidet, statt alle Coins zwangsläufig identisch zu handeln. Format:
-// "XBTUSDT:bollinger-mean-reversion,ETHUSDT:donchian-breakout". Symbole ohne
-// Eintrag fallen auf TRADING_STRATEGIE (den globalen Default) zurück.
-function parseStrategieProSymbol(env, gueltigeStrategien) {
-  const roh = (env.TRADING_STRATEGIE_PRO_SYMBOL || '').trim();
-  const map = {};
-  if (!roh) return map;
-  for (const eintrag of roh.split(',')) {
-    const [symbol, strategie] = eintrag.split(':').map((s) => s.trim());
-    if (!symbol || !strategie) continue;
-    if (!gueltigeStrategien.includes(strategie)) {
-      throw new Error(`Unbekannte Strategie "${strategie}" in TRADING_STRATEGIE_PRO_SYMBOL für ${symbol} - unterstützt: ${gueltigeStrategien.join(', ')}`);
-    }
-    map[symbol] = strategie;
-  }
-  return map;
-}
-
-function readConfig(env) {
-  const symbols = (env.TRADING_SYMBOLS || 'BTCUSDT').split(',').map((s) => s.trim()).filter(Boolean);
-  const gesamtKapital = parseFloat(env.TRADING_KAPITAL_USDT || '100');
-  const exchange = (env.TRADING_EXCHANGE || 'binance').trim().toLowerCase();
-  if (!EXCHANGES[exchange]) throw new Error(`Unbekannte TRADING_EXCHANGE "${exchange}" - unterstützt: ${Object.keys(EXCHANGES).join(', ')}`);
-  const strategie = (env.TRADING_STRATEGIE || 'ema-crossover').trim();
-  const GUELTIGE_STRATEGIEN = ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout'];
-  if (!GUELTIGE_STRATEGIEN.includes(strategie)) {
-    throw new Error(`Unbekannte TRADING_STRATEGIE "${strategie}" - unterstützt: ${GUELTIGE_STRATEGIEN.join(', ')}`);
-  }
-  const strategieProSymbol = parseStrategieProSymbol(env, GUELTIGE_STRATEGIEN);
-  return {
-    exchange,
-    symbols,
-    startKapitalProSymbol: gesamtKapital / symbols.length,
-    paperModus: (env.TRADING_PAPER_MODE || 'ja') !== 'nein',
-    // Default 'ema-crossover' = unverändertes Verhalten ggü. vorherigen Versionen.
-    strategie,
-    // Pro Symbol individuell überschreibbar, siehe parseStrategieProSymbol.
-    strategieProSymbol,
-    bollingerPeriode: parseInt(env.TRADING_BOLLINGER_PERIODE || '20', 10),
-    bollingerStdDev: parseFloat(env.TRADING_BOLLINGER_STDDEV || '2'),
-    donchianEntryPeriode: parseInt(env.TRADING_DONCHIAN_ENTRY_PERIODE || '20', 10),
-    donchianExitPeriode: parseInt(env.TRADING_DONCHIAN_EXIT_PERIODE || '10', 10),
-    maxPositionProzent: parseFloat(env.TRADING_MAX_POSITION_PROZENT || '25'),
-    maxTagesverlustProzent: parseFloat(env.TRADING_MAX_TAGESVERLUST_PROZENT || '5'),
-    maxGesamtverlustProzent: parseFloat(env.TRADING_MAX_GESAMTVERLUST_PROZENT || '20'),
-    stopLossProzent: parseFloat(env.TRADING_STOP_LOSS_PROZENT || '3'),
-    // Default 0 = aus, damit ein bestehendes Setup nicht ungefragt anders handelt.
-    takeProfitProzent: parseFloat(env.TRADING_TAKE_PROFIT_PROZENT || '0'),
-    emaSchnell: parseInt(env.TRADING_EMA_SCHNELL || '9', 10),
-    emaLangsam: parseInt(env.TRADING_EMA_LANGSAM || '21', 10),
-    rsiPeriode: parseInt(env.TRADING_RSI_PERIODE || '14', 10),
-    // 0 = Filter deaktiviert (Default), damit ein bestehendes Setup nicht
-    // durch dieses Update ungefragt anders handelt.
-    rsiUeberkauft: parseFloat(env.TRADING_RSI_UEBERKAUFT || '0'),
-    minVolatilitaetProzent: parseFloat(env.TRADING_MIN_VOLATILITAET_PROZENT || '0'),
-    trailingStopAbProzent: parseFloat(env.TRADING_TRAILING_STOP_AB_PROZENT || '0'),
-    volaSizing: (env.TRADING_VOLA_SIZING || 'nein') === 'ja',
-    volaSizingReferenzProzent: parseFloat(env.TRADING_VOLA_SIZING_REFERENZ_PROZENT || '2'),
-    volaSizingMinFaktor: parseFloat(env.TRADING_VOLA_SIZING_MIN_FAKTOR || '0.25'),
-    maxGleichzeitigePositionen: env.TRADING_MAX_GLEICHZEITIGE_POSITIONEN
-      ? parseInt(env.TRADING_MAX_GLEICHZEITIGE_POSITIONEN, 10)
-      : symbols.length,
-    // Default AUS, damit ein bereits laufendes Setup nicht ungefragt anders handelt.
-    coingeckoFilter: (env.TRADING_COINGECKO_FILTER || 'nein') === 'ja',
-    coingeckoMin24hProzent: parseFloat(env.TRADING_COINGECKO_MIN_24H_PROZENT || '0'),
-    fngFilter: (env.TRADING_FNG_FILTER || 'nein') === 'ja',
-    fngMaxWert: parseFloat(env.TRADING_FNG_MAX_WERT || '80'),
-    mtfFilter: (env.TRADING_MTF_FILTER || 'nein') === 'ja',
-    mtfIntervalMinuten: parseInt(env.TRADING_MTF_INTERVAL_MINUTEN || '240', 10),
-    btcDominanzFilter: (env.TRADING_BTC_DOMINANZ_FILTER || 'nein') === 'ja',
-    btcDominanzMaxProzent: parseFloat(env.TRADING_BTC_DOMINANZ_MAX_PROZENT || '60'),
-    // Default AUS, damit ein bereits laufendes Setup nicht ungefragt anders
-    // handelt. Skaliert die Positionsgröße NUR nach unten (nie über den
-    // konfigurierten maxPositionProzent hinaus) - siehe strategie.mjs.
-    performanceSizing: (env.TRADING_PERFORMANCE_SIZING || 'nein') === 'ja',
-    performanceSizingMinFaktor: parseFloat(env.TRADING_PERFORMANCE_SIZING_MIN_FAKTOR || '0.5'),
-    performanceSizingMinTrades: parseInt(env.TRADING_PERFORMANCE_SIZING_MIN_TRADES || '5', 10),
-    // Default AUS, damit ein bereits laufendes Setup nicht ungefragt anders
-    // handelt. Kein externer API-Call - nutzt dieselben Kerzen wie die
-    // Strategie selbst.
-    flashCrashFilter: (env.TRADING_FLASH_CRASH_FILTER || 'nein') === 'ja',
-    flashCrashFensterKerzen: parseInt(env.TRADING_FLASH_CRASH_FENSTER_KERZEN || '4', 10),
-    flashCrashMaxDropProzent: parseFloat(env.TRADING_FLASH_CRASH_MAX_DROP_PROZENT || '8'),
-    // Spread-Filter: verwirft einen Kauf, wenn der Bid/Ask-Spread an der
-    // Börse gerade ungewöhnlich breit ist (dünne/gestörte Liquidität - oft
-    // ein Begleitsymptom eines Flash-Crashs oder Börsenproblems).
-    spreadFilter: (env.TRADING_SPREAD_FILTER || 'nein') === 'ja',
-    spreadMaxProzent: parseFloat(env.TRADING_SPREAD_MAX_PROZENT || '1'),
-    // Default AUS, damit ein bereits laufendes Setup nicht ungefragt anders
-    // handelt. Verschiebt nur zwischen bereits bestehenden Coin-Kapitalien -
-    // erhöht das Gesamtkapital nie, rührt Stop-Loss/Kill-Switch nicht an.
-    rebalancing: (env.TRADING_REBALANCING || 'nein') === 'ja',
-    rebalancingAnteilProzent: parseFloat(env.TRADING_REBALANCING_ANTEIL_PROZENT || '10'),
-    rebalancingMinTrades: parseInt(env.TRADING_REBALANCING_MIN_TRADES || '5', 10),
-    // Default AUS, alle drei Defaults = unverändertes Verhalten ggü. vorher.
-    dynamischerStopLoss: (env.TRADING_DYNAMISCHER_STOP_LOSS || 'nein') === 'ja',
-    stopLossAtrMultiplikator: parseFloat(env.TRADING_STOP_LOSS_ATR_MULTIPLIKATOR || '2'),
-    cooldownMinuten: parseInt(env.TRADING_COOLDOWN_NACH_VERLUST_MINUTEN || '0', 10),
-    partialTakeProfitProzent: parseFloat(env.TRADING_PARTIAL_TAKE_PROFIT_PROZENT || '0'),
-    partialTakeProfitAnteil: parseFloat(env.TRADING_PARTIAL_TAKE_PROFIT_ANTEIL || '50'),
-  };
-}
-
 async function runAll(env) {
   const cfg = readConfig(env);
   let offenePositionen = await zaehleOffenePositionen(env, cfg.symbols, cfg.startKapitalProSymbol);
@@ -330,6 +226,13 @@ async function runAll(env) {
   // Coins in diesem Lauf.
   const fearGreedWert = cfg.fngFilter ? await ladeFearGreedIndex() : null;
   const btcDominanzProzent = cfg.btcDominanzFilter ? await ladeBtcDominanzProzent() : null;
+  // Für /status zwischengespeichert statt bei jedem Dashboard-Aufruf erneut
+  // extern abzufragen - siehe loadSystemInfo/saveSystemInfo in state.mjs.
+  await saveSystemInfo(env, {
+    letzterLauf: new Date().toISOString(),
+    ...(cfg.fngFilter ? { fearGreedWert, fearGreedZeit: new Date().toISOString() } : {}),
+    ...(cfg.btcDominanzFilter ? { btcDominanzProzent, btcDominanzZeit: new Date().toISOString() } : {}),
+  });
   for (const symbol of cfg.symbols) {
     try {
       // Pro Symbol ggf. eigene Strategie (siehe strategieProSymbol) statt
@@ -368,65 +271,6 @@ async function runAll(env) {
   } catch (err) {
     console.error('[trading-bot] Fehler beim Kapital-Rebalancing:', err);
   }
-}
-
-// ================= READ-ONLY STATUS (fürs Dashboard, kann nie traden) =================
-
-async function buildStatus(env) {
-  const cfg = readConfig(env);
-  const symbole = [];
-  const alleTrades = [];
-  for (const symbol of cfg.symbols) {
-    const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
-    symbole.push({
-      symbol,
-      exchange: cfg.exchange,
-      paperModus: cfg.paperModus,
-      strategie: cfg.strategieProSymbol[symbol] || cfg.strategie,
-      position: state.position,
-      kapital: state.kapital,
-      startKapital: state.startKapital,
-      heutigerVerlustUsdt: state.heutigerVerlustUsdt,
-      killSwitchAktiv: state.killSwitchAktiv,
-      tradeStats: berechneTradeStats(state.trades || []),
-    });
-    alleTrades.push(...(state.trades || []));
-  }
-  return {
-    updatedAt: new Date().toISOString(),
-    exchange: cfg.exchange,
-    paperModus: cfg.paperModus,
-    readiness: berechneReadiness(symbole, alleTrades),
-    symbole,
-  };
-}
-
-// Ein Feld in Anführungszeichen setzen, wenn es Komma/Anführungszeichen/
-// Zeilenumbruch enthält - minimaler, aber korrekter CSV-Quote (RFC 4180).
-function csvFeld(wert) {
-  const text = String(wert ?? '');
-  if (/[",\n]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
-  return text;
-}
-
-// CSV-Export der letzten Trades (bis zu MAX_TRADES_IM_STATE pro Symbol,
-// wie im /status-Endpoint) - für Excel/Google Sheets oder eigene Auswertung
-// außerhalb des Dashboards. Rein lesend, gleiches Secret wie /status.
-async function buildTradesCsv(env) {
-  const cfg = readConfig(env);
-  const kopf = ['symbol', 'strategie', 'einstiegAm', 'ausstiegAm', 'entryPreis', 'exitPreis', 'gewinnVerlustUsdt', 'gewinnProzent', 'grund'];
-  const zeilen = [kopf.join(',')];
-  for (const symbol of cfg.symbols) {
-    const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
-    const strategie = cfg.strategieProSymbol[symbol] || cfg.strategie;
-    for (const t of state.trades || []) {
-      zeilen.push([
-        symbol, strategie, t.einstiegAm, t.ausstiegAm,
-        t.entryPreis, t.exitPreis, t.gewinnVerlustUsdt.toFixed(6), t.gewinnProzent.toFixed(4), t.grund,
-      ].map(csvFeld).join(','));
-    }
-  }
-  return zeilen.join('\n');
 }
 
 export default {
