@@ -489,6 +489,13 @@ Shopify-Einkaufspreis (falls hinterlegt, sonst Schätzung über
 `PRODUKTKOSTEN_PROZENT`) + `PREIS_MIN_MARGE_PROZENT` - der Agent unterbietet
 nie die eigene Marge. Max. Änderung pro Lauf: `PREIS_MAX_AENDERUNG_PROZENT`
 (Default 15%). Gate: `AUTO_PREISANPASSUNG` (Default `nein`).
+Echtes Rückkopplungs-Gedächtnis: 14 Tage nach einer AUSGEFÜHRTEN Änderung
+prüft der Agent die echten Verkäufe des Zeitraums danach nach (kein Zwang -
+läuft automatisch beim nächsten Lauf mit) und markiert die Entscheidung
+ehrlich beobachtend (nicht als erfundene Kausalitäts-Behauptung) als
+"verkauft sich weiterhin"/"Verkäufe gestoppt" bzw. "verkauft sich jetzt"/
+"weiterhin keine Verkäufe" - sichtbar im Autopilot-Tab von Command (Preis-
+Entscheidungen mit Begründung) inkl. Erfolgsbilanz.
 
 **🚨 Risk-Guard-Agent** (#62, alle 2 Stunden): prüft neue Bestellungen ab
 `RISK_GUARD_MIN_BESTELLWERT` auf Betrugssignale (Rechnungs-/Lieferland-
