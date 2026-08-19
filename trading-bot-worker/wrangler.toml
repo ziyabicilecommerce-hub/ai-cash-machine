@@ -163,6 +163,16 @@ TRADING_DONCHIAN_EXIT_PERIODE = "10"
 # Alternative. Format zum späteren Wiederaktivieren: "XBTUSDT:donchian-breakout,...".
 TRADING_STRATEGIE_PRO_SYMBOL = ""
 
+# News-Sentiment-Filter (braucht einen KOSTENLOSEN CRYPTOPANIC_API_KEY als
+# Secret, siehe unten) - verwirft ein Kaufsignal, wenn echte Nutzer auf
+# CryptoPanic die aktuellen News zu diesem Coin überwiegend "bearish"
+# bewertet haben. Anders als alle Filter oben: kommt aus Text/Meinungen,
+# nicht aus Kursdaten. Standardmäßig AUS, weil ohne historisches News-Archiv
+# NICHT wie die anderen Filter per Backtest prüfbar - wer will, aktiviert
+# es bewusst und beobachtet es im Paper-Modus, bevor er es für Echtgeld nutzt.
+TRADING_NEWS_SENTIMENT_FILTER = "nein"
+TRADING_NEWS_SENTIMENT_MIN_PROZENT = "35"
+
 # Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
 #   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)
 #   BINANCE_API_SECRET
@@ -176,3 +186,6 @@ TRADING_STRATEGIE_PRO_SYMBOL = ""
 #                            /status-Endpoint fürs Trading-Dashboard - ANDERER
 #                            Wert als TRIGGER_SECRET, da dieser weiterverteilt
 #                            werden könnte, ohne dass damit Trades ausgelöst werden können)
+#   CRYPTOPANIC_API_KEY    (optional, nur falls TRADING_NEWS_SENTIMENT_FILTER = "ja" -
+#                            kostenloser Key auf cryptopanic.com/developers/api/,
+#                            kein Zahlungsmittel nötig für den Free-Tier)

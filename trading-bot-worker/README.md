@@ -273,6 +273,27 @@ für diesen Lauf):
   direkt die ohnehin verbundene Börse ab (Kraken oder Binance), kein
   zusätzlicher Key nötig.
 
+## News-Sentiment-Filter (optional, braucht kostenlosen API-Key)
+
+- **`TRADING_NEWS_SENTIMENT_FILTER`** (`ja`/`nein`, Default `nein`) +
+  `TRADING_NEWS_SENTIMENT_MIN_PROZENT` (Default `35`): verwirft einen Kauf,
+  wenn echte Nutzer auf [CryptoPanic](https://cryptopanic.com/) die
+  aktuellen News zu diesem Coin überwiegend als "bearish" bewertet haben.
+  Anders als alle Filter oben kommt das Signal nicht aus Kursdaten, sondern
+  aus echtem Community-Sentiment (bullish/bearish-Votes zu jedem Artikel) —
+  eine unabhängige zweite Dimension neben Kurs-Technik. Summiert die
+  Positiv-/Negativ-Stimmen der letzten Artikel zu diesem Coin; liegt der
+  Positiv-Anteil unter der Schwelle, wird der Kauf übersprungen. Ohne Votes
+  zu diesem Coin (noch nichts bewertet) bleibt der Filter wirkungslos statt
+  zu blockieren.
+  Braucht einen **kostenlosen** `CRYPTOPANIC_API_KEY` als Secret (Free-Tier
+  auf [cryptopanic.com/developers/api](https://cryptopanic.com/developers/api/),
+  kein Zahlungsmittel nötig) — ohne Key bleibt der Filter automatisch aus,
+  auch wenn `TRADING_NEWS_SENTIMENT_FILTER = "ja"` gesetzt ist.
+  **Standardmäßig AUS**, weil er sich (wie unten erklärt) nicht per Backtest
+  validieren lässt — wer ihn nutzt, sollte ihn erst eine Weile im
+  Paper-Modus beobachten, bevor er sich fürs Echtgeld darauf verlässt.
+
 **Performance-basierte Positionsgröße:** `TRADING_PERFORMANCE_SIZING`
 (`ja`/`nein`) + `TRADING_PERFORMANCE_SIZING_MIN_FAKTOR` (Default `0.5`) +
 `TRADING_PERFORMANCE_SIZING_MIN_TRADES` (Default `5`) — braucht KEINEN
@@ -301,11 +322,12 @@ Signale testen, die sich aus den historischen Kraken-Kursdaten selbst
 ableiten lassen (Strategie, Stop-Loss, Take-Profit, Performance-Sizing,
 Flash-Crash-Filter — die letzten beiden brauchen keine externe API und
 laufen im Backtest identisch mit). Die 24h-Preisbestätigung, der Fear &
-Greed-Filter, der BTC-Dominanz-Filter und der Spread-Filter lassen sich
-nicht rückwirkend exakt nachstellen (keine passenden historischen Daten im
-gleichen Format frei verfügbar) — sie sind gegen echte Live-Daten geprüft
-(lösen korrekt aus, fallen bei Ausfall sauber offen), aber NICHT historisch
-backgetestet. Das im Kopf behalten, bevor man sich zu sehr auf sie verlässt.
+Greed-Filter, der BTC-Dominanz-Filter, der Spread-Filter und der
+News-Sentiment-Filter lassen sich nicht rückwirkend exakt nachstellen
+(keine passenden historischen Daten im gleichen Format frei verfügbar) —
+sie sind gegen echte Live-Daten geprüft (lösen korrekt aus, fallen bei
+Ausfall sauber offen), aber NICHT historisch backgetestet. Das im Kopf
+behalten, bevor man sich zu sehr auf sie verlässt.
 
 ## Bessere Ausstiegs-Logik & Risiko-Feintuning
 
