@@ -122,5 +122,10 @@ export function readConfig(env) {
     // wirkungslos, aber ohne Fehler.
     newsSentimentFilter: (env.TRADING_NEWS_SENTIMENT_FILTER || 'nein') === 'ja',
     newsSentimentMinProzent: parseFloat(env.TRADING_NEWS_SENTIMENT_MIN_PROZENT || '35'),
+    // Adaptives Lernen - siehe lib/learning.mjs. Default AUS: verändert einen
+    // echten Risiko-Parameter selbstständig, das erst live beobachten bevor
+    // man sich drauf verlässt.
+    adaptivesLernen: (env.TRADING_ADAPTIVES_LERNEN || 'nein') === 'ja',
+    adaptivesLernenMinTrades: parseInt(env.TRADING_ADAPTIVES_LERNEN_MIN_TRADES || '10', 10),
   };
 }

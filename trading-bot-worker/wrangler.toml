@@ -184,6 +184,17 @@ TRADING_STRATEGIE_PRO_SYMBOL = ""
 TRADING_NEWS_SENTIMENT_FILTER = "nein"
 TRADING_NEWS_SENTIMENT_MIN_PROZENT = "35"
 
+# Adaptives Lernen (kein API-Call, nutzt nur die eigene Trade-Historie):
+# passt den Stop-Loss-Prozentsatz pro Symbol einmal pro Woche (montags) an
+# die real beobachtete Verlust-Streuung dieses Coins an, statt für immer
+# beim festen globalen TRADING_STOP_LOSS_PROZENT zu bleiben. Braucht min.
+# TRADING_ADAPTIVES_LERNEN_MIN_TRADES abgeschlossene Verlust-Trades pro
+# Symbol, bleibt sonst inaktiv (globaler Wert gilt). Gebändigt auf 1%-2x den
+# konfigurierten Standard, wirkt nur auf NEU eröffnete Positionen. Default
+# AUS - siehe README für die Sicherheits-Leitplanken im Detail.
+TRADING_ADAPTIVES_LERNEN = "nein"
+TRADING_ADAPTIVES_LERNEN_MIN_TRADES = "10"
+
 # Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
 #   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)
 #   BINANCE_API_SECRET

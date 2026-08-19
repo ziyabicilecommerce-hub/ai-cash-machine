@@ -238,9 +238,13 @@ export function entscheideVerkauf({ position, cfg, indikatoren }) {
   // normales Rauschen), bei ruhigen ein engerer. Fällt auf den festen
   // Prozentsatz zurück, falls kein entryAtr vorliegt (z.B. alte Positionen
   // von vor diesem Feature).
+  // stopLossProzentBenutzt: beim Einstieg eingefroren (siehe worker.js) -
+  // entweder der vom adaptiven Lernen (lib/learning.mjs) vorgeschlagene Wert
+  // für dieses Symbol, oder sonst der global konfigurierte Standard.
+  const stopLossProzentEffektiv = position.stopLossProzentBenutzt ?? cfg.stopLossProzent;
   const stopLossAbstand = cfg.dynamischerStopLoss && position.entryAtr
     ? position.entryAtr * cfg.stopLossAtrMultiplikator
-    : position.entryPreis * (cfg.stopLossProzent / 100);
+    : position.entryPreis * (stopLossProzentEffektiv / 100);
   const fixedStopLossPreis = position.entryPreis - stopLossAbstand;
   const gewinnProzentSeitEinstieg = ((hoechsterPreisSeitEinstieg - position.entryPreis) / position.entryPreis) * 100;
   const trailingAktiv = cfg.trailingStopAbProzent > 0 && gewinnProzentSeitEinstieg >= cfg.trailingStopAbProzent;

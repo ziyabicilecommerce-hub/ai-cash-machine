@@ -15,11 +15,15 @@ handeln, HTTP-/Cron-Einstiegspunkte) und importiert aus `lib/`:
 - **`exchanges.mjs`** — Binance-/Kraken-Adapter (Kerzen, Orders, Spread).
 - **`marktdaten.mjs`** — externe Gratis-Datenquellen (CoinGecko,
   CoinPaprika, OKX, Gate.io, Bitstamp, Fear & Greed, BTC-Dominanz,
-  Mehrfach-Zeitrahmen).
+  Mehrfach-Zeitrahmen, News-Sentiment via CryptoPanic).
 - **`notify.mjs`** — WhatsApp-Versand.
 - **`state.mjs`** — KV-Persistenz pro Symbol (Kapital, Position, Trades).
+- **`config.mjs`** — liest alle `TRADING_*`-Umgebungsvariablen ein.
 - **`reports.mjs`** — Tages-/Wochen-/Monats-Rückblick + Kapital-Rebalancing.
 - **`statistik.mjs`** — Trade-Kennzahlen + Echtgeld-Readiness-Ampel.
+- **`status.mjs`** — baut die Antwort für `/status` und `/export`.
+- **`learning.mjs`** — adaptives Lernen aus der eigenen Trade-Historie
+  (kein KI-Modell, reine Statistik) — siehe unten.
 
 ## Warum ein eigener Worker statt GitHub Actions?
 
@@ -367,6 +371,34 @@ geprüft, bevor sie live gingen:
   Stop-Loss-Abstand. Per Backtest uneinheitlich - auf BTC klar schlechter
   (mehr Fehlausstiege durch normales Rauschen), auf ETH klar besser. Kein
   Coin-übergreifend klarer Vorteil, deshalb standardmäßig AUS.
+
+## Adaptives Lernen (optional, kein API-Call)
+
+- **`TRADING_ADAPTIVES_LERNEN`** (Default `nein`) +
+  `TRADING_ADAPTIVES_LERNEN_MIN_TRADES` (Default `10`): einmal pro Woche
+  (montags, `lib/learning.mjs`) schaut sich der Bot pro Symbol die
+  **eigenen abgeschlossenen Verlust-Trades** an und berechnet daraus einen
+  neuen Stop-Loss-Prozentsatz — den Durchschnitt der tatsächlich erlittenen
+  Verluste dieses Coins, statt für immer beim einen global konfigurierten
+  `TRADING_STOP_LOSS_PROZENT` zu bleiben. **Kein KI-/LLM-Modell** — reine
+  Statistik über die eigene Historie, aber ein echter Lernmechanismus: der
+  Bot passt sein eigenes Risiko-Verhalten an das an, was bei diesem Coin
+  bisher wirklich passiert ist.
+  Sicherheits-Leitplanken: erst ab `TRADING_ADAPTIVES_LERNEN_MIN_TRADES`
+  abgeschlossenen Verlust-Trades für dieses Symbol (sonst zu wenig Daten,
+  bleibt der globale Wert aktiv); niemals unter 1% oder außerhalb des
+  0,5×–2×-Bands um den konfigurierten Standard (verhindert Wegdriften durch
+  einzelne Ausreißer); wirkt sich nur auf **neu eröffnete** Positionen aus
+  (beim Einstieg eingefroren, wie `entryAtr` beim dynamischen Stop-Loss) —
+  eine bereits offene Position wird nie nachträglich verändert; jede
+  Anpassung wird per WhatsApp gemeldet und im Control Center als
+  🧠 "Gelernter Stop-Loss" angezeigt.
+  **Standardmäßig AUS**, weil `backtest.mjs` aktuell einen Lauf mit fixen
+  Parametern simuliert und ein wöchentliches Nachjustieren mitten in der
+  Simulation nicht abbildet — anders als die klassischen Filter oben also
+  NICHT per Backtest validierbar. Wer es nutzt, sollte es erst eine Weile
+  live im Paper-Modus beobachten (Meldungen kommen automatisch per
+  WhatsApp), bevor er sich fürs Echtgeld darauf verlässt.
 
 ## Monats-Rückblick & CSV-Export
 
