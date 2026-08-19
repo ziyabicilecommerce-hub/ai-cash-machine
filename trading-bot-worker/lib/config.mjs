@@ -90,6 +90,16 @@ export function readConfig(env) {
     flashCrashFilter: (env.TRADING_FLASH_CRASH_FILTER || 'nein') === 'ja',
     flashCrashFensterKerzen: parseInt(env.TRADING_FLASH_CRASH_FENSTER_KERZEN || '4', 10),
     flashCrashMaxDropProzent: parseFloat(env.TRADING_FLASH_CRASH_MAX_DROP_PROZENT || '8'),
+    // Marktweite Erweiterung des Flash-Crash-Filters: crasht BTC selbst hart,
+    // pausiert das Käufe für ALLE Coins (nicht nur BTC) in diesem Lauf -
+    // Altcoins fallen in einem BTC-getriebenen Panik-Moment erfahrungsgemäß
+    // mit, oft sogar stärker. Nutzt dieselbe, bereits verifizierte Logik wie
+    // der Pro-Symbol-Filter, nur auf BTCs eigenen Kerzen statt jedem Coin
+    // einzeln - braucht dafür EINEN zusätzlichen Klines-Abruf pro Lauf
+    // (nicht pro Symbol).
+    marktweiterCrashFilter: (env.TRADING_MARKTWEITER_CRASH_FILTER || 'nein') === 'ja',
+    marktweiterCrashFensterKerzen: parseInt(env.TRADING_MARKTWEITER_CRASH_FENSTER_KERZEN || '4', 10),
+    marktweiterCrashMaxDropProzent: parseFloat(env.TRADING_MARKTWEITER_CRASH_MAX_DROP_PROZENT || '10'),
     // Spread-Filter: verwirft einen Kauf, wenn der Bid/Ask-Spread an der
     // Börse gerade ungewöhnlich breit ist (dünne/gestörte Liquidität - oft
     // ein Begleitsymptom eines Flash-Crashs oder Börsenproblems).

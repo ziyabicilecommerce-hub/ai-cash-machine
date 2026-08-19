@@ -90,6 +90,17 @@ TRADING_FLASH_CRASH_FILTER = "ja"
 TRADING_FLASH_CRASH_FENSTER_KERZEN = "4"
 TRADING_FLASH_CRASH_MAX_DROP_PROZENT = "8"
 
+# Marktweite Erweiterung des Flash-Crash-Filters: crasht BTC selbst hart,
+# pausiert das Käufe für ALLE 8 Coins in diesem Lauf (nicht nur BTC) -
+# Altcoins fallen in einem BTC-getriebenen Panik-Moment erfahrungsgemäß mit,
+# oft sogar stärker. Braucht EINEN zusätzlichen Klines-Abruf pro Lauf (nicht
+# pro Symbol), keinen zusätzlichen API-Key. Etwas höhere Schwelle als der
+# Pro-Symbol-Filter (10% statt 8%) - ein marktweiter BTC-Einbruch ist ein
+# selteneres, gewichtigeres Ereignis.
+TRADING_MARKTWEITER_CRASH_FILTER = "ja"
+TRADING_MARKTWEITER_CRASH_FENSTER_KERZEN = "4"
+TRADING_MARKTWEITER_CRASH_MAX_DROP_PROZENT = "10"
+
 # Spread-Filter (kein extra API-Key, nutzt die ohnehin verbundene Börse):
 # verwirft einen Kauf, wenn der Bid/Ask-Spread gerade ungewöhnlich breit ist -
 # oft ein Begleitsymptom eines Flash-Crashs oder Börsenproblems.

@@ -39,8 +39,9 @@ function berechneStopLossTakeProfitPreise(position, cfg) {
 // Grobe Ampel für's Risiko-Panel im Dashboard - dieselbe Logik, die den
 // Kill-Switch/die Tagessperre auch wirklich auslöst, nur zur Anzeige
 // aufbereitet statt neu erfunden.
-function berechneRisikoStatus(symbole, cfg) {
+function berechneRisikoStatus(symbole, cfg, marktweiterCrashAktiv) {
   if (symbole.some((s) => s.killSwitchAktiv)) return 'danger';
+  if (marktweiterCrashAktiv) return 'danger';
   const nahAmTageslimit = symbole.some((s) => {
     if (s.kapital <= 0) return false;
     const verlustProzentHeute = (-s.heutigerVerlustUsdt / s.kapital) * 100;
@@ -161,9 +162,11 @@ export async function buildStatus(env) {
       fearGreedZeit: systemInfo.fearGreedZeit,
       btcDominanzProzent: systemInfo.btcDominanzProzent,
       btcDominanzZeit: systemInfo.btcDominanzZeit,
+      marktweiterCrashAktiv: systemInfo.marktweiterCrashAktiv,
+      marktweiterCrashZeit: systemInfo.marktweiterCrashZeit,
     },
     readiness: berechneReadiness(symbole, alleTrades),
-    risikoStatus: berechneRisikoStatus(symbole, cfg),
+    risikoStatus: berechneRisikoStatus(symbole, cfg, systemInfo.marktweiterCrashAktiv),
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
       maxTagesverlustProzent: cfg.maxTagesverlustProzent,
