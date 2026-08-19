@@ -198,6 +198,50 @@ export async function ladeBtcDominanzProzent() {
   }
 }
 
+// ================= NEWS-SENTIMENT-FILTER (optional, braucht kostenlosen API-Key) =================
+// Anders als alle anderen Filter hier: kein reiner Kursdaten-Blick, sondern
+// ECHTES Community-Sentiment - CryptoPanic lässt echte Nutzer jeden
+// Krypto-News-Artikel als "bullish"/"bearish" bewerten. Wir summieren die
+// Stimmen der letzten Artikel zu einem Coin und blockieren einen Kauf, wenn
+// die Stimmung gerade überwiegend negativ ist - eine Bestätigung, die aus
+// Text/Meinungen kommt statt aus Kursdaten, die alle anderen Filter schon
+// nutzen. Braucht einen KOSTENLOSEN API-Key (CRYPTOPANIC_API_KEY, siehe
+// README) - ohne Key oder ohne Mapping für das Symbol wird der Filter
+// einfach nicht angewendet (null), genau wie bei allen anderen optionalen
+// Datenquellen hier.
+const CRYPTOPANIC_TICKERS = {
+  XBTUSDT: 'BTC', ETHUSDT: 'ETH', SOLUSDT: 'SOL', XRPUSDT: 'XRP',
+  ADAUSDT: 'ADA', DOGEUSDT: 'DOGE', DOTUSDT: 'DOT', LTCUSDT: 'LTC',
+};
+
+// Gibt den Anteil positiver Stimmen (0-100%) aus den letzten CryptoPanic-
+// Artikeln zu diesem Coin zurück, oder null wenn kein Key konfiguriert,
+// kein Mapping existiert, oder (noch) keine Stimmen vorliegen - in all
+// diesen Fällen bleibt der Filter unwirksam statt den Bot zu blockieren.
+export async function ladeNewsSentimentProzent(env, symbol) {
+  const key = env.CRYPTOPANIC_API_KEY;
+  const ticker = CRYPTOPANIC_TICKERS[symbol];
+  if (!key || !ticker) return null;
+  try {
+    const res = await fetch(`https://cryptopanic.com/api/v1/posts/?auth_token=${key}&public=true&currencies=${ticker}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const posts = Array.isArray(data && data.results) ? data.results : [];
+    let positiv = 0, negativ = 0;
+    for (const p of posts) {
+      const votes = p && p.votes;
+      if (!votes) continue;
+      positiv += votes.positive || 0;
+      negativ += votes.negative || 0;
+    }
+    const gesamt = positiv + negativ;
+    if (gesamt === 0) return null; // noch keine Stimmen - kein Urteil möglich
+    return (positiv / gesamt) * 100;
+  } catch {
+    return null; // Ausfall darf den Bot nie blockieren, nur den Filter deaktivieren
+  }
+}
+
 // ================= MEHRFACH-ZEITRAHMEN-BESTÄTIGUNG (optional) =================
 // Prüft zusätzlich zum 15m-Signal einen deutlich längeren Zeitrahmen (Default
 // 4h), um Käufe gegen den übergeordneten Trend zu vermeiden - klassisches

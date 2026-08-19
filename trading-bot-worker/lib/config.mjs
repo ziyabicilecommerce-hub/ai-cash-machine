@@ -107,5 +107,10 @@ export function readConfig(env) {
     cooldownMinuten: parseInt(env.TRADING_COOLDOWN_NACH_VERLUST_MINUTEN || '0', 10),
     partialTakeProfitProzent: parseFloat(env.TRADING_PARTIAL_TAKE_PROFIT_PROZENT || '0'),
     partialTakeProfitAnteil: parseFloat(env.TRADING_PARTIAL_TAKE_PROFIT_ANTEIL || '50'),
+    // Default AUS - braucht zusätzlich einen kostenlosen CRYPTOPANIC_API_KEY
+    // (Secret, siehe README). Ohne Key bleibt der Filter automatisch
+    // wirkungslos, aber ohne Fehler.
+    newsSentimentFilter: (env.TRADING_NEWS_SENTIMENT_FILTER || 'nein') === 'ja',
+    newsSentimentMinProzent: parseFloat(env.TRADING_NEWS_SENTIMENT_MIN_PROZENT || '35'),
   };
 }
