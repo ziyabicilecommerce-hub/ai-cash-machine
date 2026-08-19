@@ -160,7 +160,10 @@
 <section>
   <div class="toolbar" id="toolbar" style="display:none">
     <span id="lastUpdated">–</span>
-    <button class="refresh-btn" id="refreshBtn" type="button">↻ Jetzt aktualisieren</button>
+    <span style="display:flex; gap:8px;">
+      <a class="refresh-btn" id="exportBtn" href="#" style="text-decoration:none; display:inline-block;">⤓ CSV exportieren</a>
+      <button class="refresh-btn" id="refreshBtn" type="button">↻ Jetzt aktualisieren</button>
+    </span>
   </div>
 
   <div id="emptyState" class="empty-state">
@@ -273,6 +276,7 @@
       document.getElementById('emptyState').style.display = 'none';
       document.getElementById('toolbar').style.display = 'flex';
       document.getElementById('lastUpdated').textContent = `Aktualisiert: ${new Date(data.updatedAt).toLocaleTimeString('de-DE')}`;
+      document.getElementById('exportBtn').href = `${conn.url}/export?key=${encodeURIComponent(conn.key)}`;
       renderReadiness(data.readiness);
       renderCards(data);
     } catch (err) {

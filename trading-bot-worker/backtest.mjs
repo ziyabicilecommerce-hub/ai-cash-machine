@@ -57,6 +57,11 @@ function readConfig(strategieOverride) {
     flashCrashFilter: (env.TRADING_FLASH_CRASH_FILTER || 'nein') === 'ja',
     flashCrashFensterKerzen: parseInt(env.TRADING_FLASH_CRASH_FENSTER_KERZEN || '4', 10),
     flashCrashMaxDropProzent: parseFloat(env.TRADING_FLASH_CRASH_MAX_DROP_PROZENT || '8'),
+    dynamischerStopLoss: (env.TRADING_DYNAMISCHER_STOP_LOSS || 'nein') === 'ja',
+    stopLossAtrMultiplikator: parseFloat(env.TRADING_STOP_LOSS_ATR_MULTIPLIKATOR || '2'),
+    cooldownMinuten: parseInt(env.TRADING_COOLDOWN_NACH_VERLUST_MINUTEN || '0', 10),
+    partialTakeProfitProzent: parseFloat(env.TRADING_PARTIAL_TAKE_PROFIT_PROZENT || '0'),
+    partialTakeProfitAnteil: parseFloat(env.TRADING_PARTIAL_TAKE_PROFIT_ANTEIL || '50'),
     maxGleichzeitigePositionen: 1, // Backtest läuft immer pro Symbol einzeln
   };
 }
@@ -142,6 +147,7 @@ function simuliere(symbol, closes, highs, lows, zeiten, cfg, startKapital) {
   let position = null;
   let heutigerVerlustUsdt = 0;
   let letzterTag = null;
+  let cooldownBisZeitstempel = null;
   const trades = [];
   const equityKurve = [kapital];
 
@@ -160,15 +166,36 @@ function simuliere(symbol, closes, highs, lows, zeiten, cfg, startKapital) {
     const handelsSperreHeute = heutigerVerlustUsdt <= -(kapital * cfg.maxTagesverlustProzent) / 100;
 
     if (!position) {
-      const kauf = entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei: true, handelsSperreHeute, kuerzlicheTrades: trades });
+      const kauf = entscheideKauf({
+        kapital, cfg, indikatoren, positionenPlatzFrei: true, handelsSperreHeute, kuerzlicheTrades: trades,
+        jetztZeitstempel: zeiten[i], cooldownBisZeitstempel,
+      });
       if (kauf) {
         const qty = kauf.investBetrag / preis;
-        position = { qty, entryPreis: preis, hoechsterPreisSeitEinstieg: preis, einstiegAm: zeiten[i] };
+        position = { qty, entryPreis: preis, hoechsterPreisSeitEinstieg: preis, einstiegAm: zeiten[i], entryAtr: indikatoren.atrJetzt, teilverkaufGemacht: false };
       }
     } else {
       const verkauf = entscheideVerkauf({ position, cfg, indikatoren });
       position.hoechsterPreisSeitEinstieg = verkauf.hoechsterPreisSeitEinstieg;
-      if (verkauf.verkaufen) {
+      if (verkauf.teilverkauf) {
+        const teilQty = position.qty * verkauf.teilAnteil;
+        const einsatz = teilQty * position.entryPreis;
+        const erloes = teilQty * preis;
+        const gewinnVerlust = erloes - einsatz;
+        kapital += gewinnVerlust;
+        heutigerVerlustUsdt += Math.min(0, gewinnVerlust);
+        trades.push({
+          einstiegAm: position.einstiegAm,
+          ausstiegAm: zeiten[i],
+          entryPreis: position.entryPreis,
+          exitPreis: preis,
+          gewinnVerlustUsdt: gewinnVerlust,
+          gewinnProzent: (gewinnVerlust / einsatz) * 100,
+          grund: verkauf.grund,
+        });
+        position.qty -= teilQty;
+        position.teilverkaufGemacht = true;
+      } else if (verkauf.verkaufen) {
         const einsatz = position.qty * position.entryPreis;
         const erloes = position.qty * preis;
         const gewinnVerlust = erloes - einsatz;
@@ -183,6 +210,9 @@ function simuliere(symbol, closes, highs, lows, zeiten, cfg, startKapital) {
           gewinnProzent: (gewinnVerlust / einsatz) * 100,
           grund: verkauf.grund,
         });
+        if (cfg.cooldownMinuten > 0 && gewinnVerlust < 0) {
+          cooldownBisZeitstempel = zeiten[i] + cfg.cooldownMinuten * 60000;
+        }
         position = null;
 
         const gesamtVerlustProzent = ((kapital - startKapital) / startKapital) * 100;

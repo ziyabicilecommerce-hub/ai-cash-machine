@@ -566,7 +566,10 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
 
   if (!state.position) {
     const positionenPlatzFrei = offenePositionenVorLauf < cfg.maxGleichzeitigePositionen;
-    const kauf = entscheideKauf({ kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute, kuerzlicheTrades: state.trades });
+    const kauf = entscheideKauf({
+      kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute, kuerzlicheTrades: state.trades,
+      jetztZeitstempel: Date.now(), cooldownBisZeitstempel: state.cooldownBisZeitstempel || null,
+    });
 
     if (kauf && cfg.mtfFilter) {
       const aufwaerts = await hoehererZeitrahmenIstAufwaerts(exchange, symbol, cfg);
@@ -632,14 +635,48 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
         qty = order.qty;
         tatsaechlicherPreis = order.preis;
       }
-      state.position = { qty, entryPreis: tatsaechlicherPreis, hoechsterPreisSeitEinstieg: tatsaechlicherPreis, einstiegAm: new Date().toISOString() };
+      state.position = {
+        qty, entryPreis: tatsaechlicherPreis, hoechsterPreisSeitEinstieg: tatsaechlicherPreis, einstiegAm: new Date().toISOString(),
+        entryAtr: indikatoren.atrJetzt, teilverkaufGemacht: false,
+      };
       await notifyWhatsapp(env, `📈 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Einstieg ${symbol} @ ${tatsaechlicherPreis.toFixed(2)} (${investBetrag.toFixed(2)} USDT eingesetzt${cfg.volaSizing ? `, Vola-Sizing aktiv` : ''}).`);
     }
   } else {
     const verkauf = entscheideVerkauf({ position: state.position, cfg, indikatoren });
     state.position.hoechsterPreisSeitEinstieg = verkauf.hoechsterPreisSeitEinstieg;
 
-    if (verkauf.verkaufen) {
+    if (verkauf.teilverkauf) {
+      // Nur einen Anteil der Position verkaufen, Rest bleibt mit gleichem
+      // Einstiegspreis offen - siehe cfg.partialTakeProfitProzent.
+      const teilQty = state.position.qty * verkauf.teilAnteil;
+      let erloes;
+      if (cfg.paperModus) {
+        erloes = teilQty * preis;
+      } else {
+        const order = await exchange.placeMarketSell(env, symbol, teilQty);
+        erloes = order.erloes;
+      }
+      const einsatz = teilQty * state.position.entryPreis;
+      const gewinnVerlust = erloes - einsatz;
+      const gewinnProzent = (gewinnVerlust / einsatz) * 100;
+      state.kapital += gewinnVerlust;
+      state.heutigerVerlustUsdt += Math.min(0, gewinnVerlust);
+
+      state.trades.push({
+        entryPreis: state.position.entryPreis,
+        exitPreis: preis,
+        gewinnVerlustUsdt: gewinnVerlust,
+        gewinnProzent,
+        grund: verkauf.grund,
+        einstiegAm: state.position.einstiegAm,
+        ausstiegAm: new Date().toISOString(),
+      });
+      if (state.trades.length > MAX_TRADES_IM_STATE) state.trades = state.trades.slice(-MAX_TRADES_IM_STATE);
+
+      state.position.qty -= teilQty;
+      state.position.teilverkaufGemacht = true;
+      await notifyWhatsapp(env, `📊 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Teil-Gewinnmitnahme ${symbol} @ ${preis.toFixed(2)} (${(verkauf.teilAnteil * 100).toFixed(0)}% der Position, ${gewinnVerlust.toFixed(2)} USDT Gewinn). Rest der Position läuft weiter, Stop-Loss/Trailing-Stop gelten unverändert.`);
+    } else if (verkauf.verkaufen) {
       let erloes;
       if (cfg.paperModus) {
         erloes = state.position.qty * preis;
@@ -666,6 +703,12 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
 
       await notifyWhatsapp(env, `📉 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Ausstieg ${symbol} @ ${preis.toFixed(2)} (${verkauf.grund}). ${gewinnVerlust >= 0 ? 'Gewinn' : 'Verlust'}: ${gewinnVerlust.toFixed(2)} USDT. Kapital jetzt: ${state.kapital.toFixed(2)} USDT.`);
       state.position = null;
+
+      // Nach einem Verlust-Trade eine Weile pausieren (Default 0 = aus) -
+      // siehe cfg.cooldownMinuten in entscheideKauf.
+      if (cfg.cooldownMinuten > 0 && gewinnVerlust < 0) {
+        state.cooldownBisZeitstempel = Date.now() + cfg.cooldownMinuten * 60000;
+      }
 
       const gesamtVerlustProzent = ((state.kapital - state.startKapital) / state.startKapital) * 100;
       if (gesamtVerlustProzent <= -cfg.maxGesamtverlustProzent) state.killSwitchAktiv = true;
@@ -781,6 +824,49 @@ async function pruefeUndSendeWochenZusammenfassung(env, cfg) {
 
   await notifyWhatsapp(env, zeilen.join('\n'));
   await env.TRADING_STATE.put('digest:letzteWoche', aktuelleWoche);
+}
+
+// Einmal pro Kalendermonat (am 1., analog zum wöchentlichen Rückblick) ein
+// noch weiter herausgezoomtes Bild: Gesamt-P&L des ganzen Monats,
+// bester/schlechtester Coin über den Monat statt nur die Woche. KV-Marke
+// digest:letzterMonat (Format "JJJJ-MM") verhindert Mehrfachversand.
+async function pruefeUndSendeMonatsZusammenfassung(env, cfg) {
+  const jetzt = new Date();
+  if (jetzt.getUTCDate() !== 1) return; // nur am 1. des Monats prüfen
+  const aktuellerMonat = `${jetzt.getUTCFullYear()}-${String(jetzt.getUTCMonth() + 1).padStart(2, '0')}`;
+  const letzter = await env.TRADING_STATE.get('digest:letzterMonat');
+  if (letzter === aktuellerMonat) return;
+
+  const seitZeitpunkt = jetzt.getTime() - 30 * 24 * 60 * 60 * 1000;
+  let gesamtKapitalJetzt = 0, gesamtStartKapital = 0;
+  const proSymbolPL = [];
+  const allTradesDiesenMonat = [];
+  for (const symbol of cfg.symbols) {
+    const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
+    gesamtKapitalJetzt += state.kapital;
+    gesamtStartKapital += state.startKapital;
+    const tradesDiesenMonat = (state.trades || []).filter((t) => new Date(t.ausstiegAm).getTime() >= seitZeitpunkt);
+    const plDiesenMonat = tradesDiesenMonat.reduce((sum, t) => sum + t.gewinnVerlustUsdt, 0);
+    proSymbolPL.push({ symbol, plDiesenMonat, anzahlTrades: tradesDiesenMonat.length });
+    allTradesDiesenMonat.push(...tradesDiesenMonat);
+  }
+  const gesamtProzent = gesamtStartKapital > 0 ? ((gesamtKapitalJetzt - gesamtStartKapital) / gesamtStartKapital) * 100 : 0;
+  const statsMonat = berechneTradeStats(allTradesDiesenMonat);
+
+  const gehandelt = proSymbolPL.filter((s) => s.anzahlTrades > 0).sort((a, b) => b.plDiesenMonat - a.plDiesenMonat);
+  const bester = gehandelt[0];
+  const schlechtester = gehandelt.length > 1 ? gehandelt[gehandelt.length - 1] : null;
+
+  const zeilen = [
+    `🗓️ Trading-Bot Monats-Rückblick (${cfg.paperModus ? 'PAPER' : 'LIVE'}, ${cfg.exchange}):`,
+    `Kapital gesamt: ${gesamtKapitalJetzt.toFixed(2)} USDT (${gesamtProzent >= 0 ? '+' : ''}${gesamtProzent.toFixed(2)}% seit Start)`,
+    `Trades diesen Monat: ${allTradesDiesenMonat.length}${statsMonat.winRateProzent !== null ? ` (Win-Rate ${statsMonat.winRateProzent.toFixed(0)}%)` : ''}`,
+  ];
+  if (bester) zeilen.push(`🏆 Bester Coin: ${bester.symbol} (${bester.plDiesenMonat >= 0 ? '+' : ''}${bester.plDiesenMonat.toFixed(2)} USDT)`);
+  if (schlechtester) zeilen.push(`📉 Schlechtester Coin: ${schlechtester.symbol} (${schlechtester.plDiesenMonat >= 0 ? '+' : ''}${schlechtester.plDiesenMonat.toFixed(2)} USDT)`);
+
+  await notifyWhatsapp(env, zeilen.join('\n'));
+  await env.TRADING_STATE.put('digest:letzterMonat', aktuellerMonat);
 }
 
 // ================= SMART-KAPITAL-REBALANCING (optional, Default AUS) =================
@@ -943,6 +1029,12 @@ function readConfig(env) {
     rebalancing: (env.TRADING_REBALANCING || 'nein') === 'ja',
     rebalancingAnteilProzent: parseFloat(env.TRADING_REBALANCING_ANTEIL_PROZENT || '10'),
     rebalancingMinTrades: parseInt(env.TRADING_REBALANCING_MIN_TRADES || '5', 10),
+    // Default AUS, alle drei Defaults = unverändertes Verhalten ggü. vorher.
+    dynamischerStopLoss: (env.TRADING_DYNAMISCHER_STOP_LOSS || 'nein') === 'ja',
+    stopLossAtrMultiplikator: parseFloat(env.TRADING_STOP_LOSS_ATR_MULTIPLIKATOR || '2'),
+    cooldownMinuten: parseInt(env.TRADING_COOLDOWN_NACH_VERLUST_MINUTEN || '0', 10),
+    partialTakeProfitProzent: parseFloat(env.TRADING_PARTIAL_TAKE_PROFIT_PROZENT || '0'),
+    partialTakeProfitAnteil: parseFloat(env.TRADING_PARTIAL_TAKE_PROFIT_ANTEIL || '50'),
   };
 }
 
@@ -981,6 +1073,11 @@ async function runAll(env) {
     await pruefeUndSendeWochenZusammenfassung(env, cfg);
   } catch (err) {
     console.error('[trading-bot] Fehler bei Wochen-Zusammenfassung:', err);
+  }
+  try {
+    await pruefeUndSendeMonatsZusammenfassung(env, cfg);
+  } catch (err) {
+    console.error('[trading-bot] Fehler bei Monats-Zusammenfassung:', err);
   }
   try {
     await pruefeUndFuehreKapitalRebalancing(env, cfg);
@@ -1070,6 +1167,34 @@ async function buildStatus(env) {
   };
 }
 
+// Ein Feld in Anführungszeichen setzen, wenn es Komma/Anführungszeichen/
+// Zeilenumbruch enthält - minimaler, aber korrekter CSV-Quote (RFC 4180).
+function csvFeld(wert) {
+  const text = String(wert ?? '');
+  if (/[",\n]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
+  return text;
+}
+
+// CSV-Export der letzten Trades (bis zu MAX_TRADES_IM_STATE pro Symbol,
+// wie im /status-Endpoint) - für Excel/Google Sheets oder eigene Auswertung
+// außerhalb des Dashboards. Rein lesend, gleiches Secret wie /status.
+async function buildTradesCsv(env) {
+  const cfg = readConfig(env);
+  const kopf = ['symbol', 'strategie', 'einstiegAm', 'ausstiegAm', 'entryPreis', 'exitPreis', 'gewinnVerlustUsdt', 'gewinnProzent', 'grund'];
+  const zeilen = [kopf.join(',')];
+  for (const symbol of cfg.symbols) {
+    const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
+    const strategie = cfg.strategieProSymbol[symbol] || cfg.strategie;
+    for (const t of state.trades || []) {
+      zeilen.push([
+        symbol, strategie, t.einstiegAm, t.ausstiegAm,
+        t.entryPreis, t.exitPreis, t.gewinnVerlustUsdt.toFixed(6), t.gewinnProzent.toFixed(4), t.grund,
+      ].map(csvFeld).join(','));
+    }
+  }
+  return zeilen.join('\n');
+}
+
 export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(runAll(env));
@@ -1085,6 +1210,23 @@ export default {
       return new Response(JSON.stringify(status), {
         status: 200,
         headers: { 'content-type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+
+    // CSV-Export der Trade-Historie - gleiches Secret wie /status (rein
+    // lesend, kann nie einen Trade auslösen).
+    if (url.pathname === '/export' && request.method === 'GET') {
+      if (!env.STATUS_READ_KEY || url.searchParams.get('key') !== env.STATUS_READ_KEY) {
+        return new Response('Forbidden', { status: 403 });
+      }
+      const csv = await buildTradesCsv(env);
+      return new Response(csv, {
+        status: 200,
+        headers: {
+          'content-type': 'text/csv; charset=utf-8',
+          'content-disposition': 'attachment; filename="trading-bot-trades.csv"',
+          'Access-Control-Allow-Origin': '*',
+        },
       });
     }
 
