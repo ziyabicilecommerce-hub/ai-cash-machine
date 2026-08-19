@@ -65,6 +65,15 @@
   .paket-links { display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; }
   .paket-links a { font-family:var(--mono); font-size:11.5px; color:var(--cyan); text-decoration:none; border-bottom:1px dotted var(--cyan); }
 
+  .perf-card { background:var(--panel); border:1px solid var(--line); padding:18px 20px; margin-bottom:20px; }
+  .perf-label { font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--green); margin-bottom:12px; }
+  .perf-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; margin-bottom:12px; }
+  .perf-box b { display:block; font-family:'Orbitron',sans-serif; font-size:20px; color:var(--green); }
+  .perf-box span { font-family:var(--mono); font-size:10px; color:var(--mut2); }
+  .perf-top { font-size:12.5px; color:var(--mut); border-top:1px solid var(--line2); padding-top:12px; }
+  .perf-note { font-size:11.5px; color:var(--mut2); margin-top:8px; }
+  .badge.perf { background:rgba(111,224,255,.1); border:1px solid rgba(111,224,255,.35); color:var(--cyan); }
+
   .empty-wrap { min-height:80svh; display:flex; align-items:center; justify-content:center; padding:120px 20px 40px; }
   .empty-box { text-align:center; max-width:480px; }
   .empty-box .emoji { font-size:44px; margin-bottom:16px; }
@@ -102,6 +111,7 @@
 </header>
 
 <section id="listSection">
+  <div id="perfContent"></div>
   <div id="paketListe"></div>
 </section>
 
@@ -125,6 +135,17 @@
     return `<span class="badge fehler">⚠️ ${plattform}: Versuch fehlgeschlagen</span>`;
   }
 
+  // Performance-Daten (#89) sind nach postId indiziert, damit jede Paket-
+  // Karte ihre eigenen echten Aufrufe/Likes zeigen kann, statt nur "gepostet".
+  let performanceByPostId = {};
+
+  function perfBadge(postId) {
+    const p = postId && performanceByPostId[postId];
+    if (!p) return '';
+    const aufrufeText = p.aufrufe !== null ? `${p.aufrufe} Aufrufe` : `${p.likes ?? 0} Likes`;
+    return `<span class="badge perf">📊 ${aufrufeText}</span>`;
+  }
+
   function paketCardHtml(p, i) {
     return `
       <div class="paket-card">
@@ -132,7 +153,9 @@
           <span class="paket-datum">${fmtDatum(p.datum)}</span>
           <span class="paket-thema">${p.thema || ''}</span>
           ${badge(p.facebook, 'Facebook')}
+          ${perfBadge(p.facebook && p.facebook.postId)}
           ${badge(p.instagram, 'Instagram')}
+          ${perfBadge(p.instagram && p.instagram.postId)}
           <span class="paket-toggle">Paket anzeigen ▾</span>
         </div>
         <div class="paket-body" id="body-${i}">
@@ -155,6 +178,28 @@
     });
   }
 
+  // Echte Reichweite/Aufrufe der WIRKLICH geposteten Facebook/Instagram-
+  // Beiträge (#89 Social-Performance-Radar) - nur Zahlen, die Meta selbst
+  // liefert, nichts geschätzt oder erfunden.
+  function renderPerformance(perf) {
+    const el = document.getElementById('perfContent');
+    if (!perf || !perf.anzahlBeitraege) { el.innerHTML = ''; return; }
+    performanceByPostId = {};
+    (perf.beitraege || []).forEach((b) => { performanceByPostId[b.postId] = b; });
+    const top = perf.topBeitrag;
+    el.innerHTML = `
+      <div class="perf-card">
+        <div class="perf-label">📊 ECHTE PERFORMANCE (LETZTE ${perf.fensterTage} TAGE, ${perf.anzahlBeitraege} POSTS)</div>
+        <div class="perf-grid">
+          <div class="perf-box"><b>${perf.gesamtAufrufe}</b><span>AUFRUFE GESAMT</span></div>
+          <div class="perf-box"><b>${perf.gesamtLikes}</b><span>LIKES GESAMT</span></div>
+          <div class="perf-box"><b>${perf.gesamtKommentare}</b><span>KOMMENTARE GESAMT</span></div>
+        </div>
+        ${top ? `<div class="perf-top">🏆 Top-Beitrag: <b>${top.plattform}</b> vom ${fmtDatum(top.datum)} — ${top.aufrufe} Aufrufe, ${top.likes ?? 0} Likes${top.url ? ` (<a href="${top.url}" target="_blank" rel="noopener" style="color:var(--cyan)">ansehen</a>)` : ''}</div>` : ''}
+        <div class="perf-note">Direkt aus der Meta Graph API, nur für Posts mit echter Post-ID (Facebook/Instagram, die tatsächlich automatisch live gingen). Aktualisiert: ${fmtDatum(perf.updatedAt)}</div>
+      </div>`;
+  }
+
   function zeigeEmptyState() {
     document.getElementById('listSection').innerHTML = `
       <div class="empty-wrap">
@@ -166,10 +211,14 @@
       </div>`;
   }
 
-  fetch('./manifest.json', { cache: 'no-store' })
-    .then((res) => { if (!res.ok) throw new Error('no data'); return res.json(); })
-    .then((data) => render(data))
-    .catch(() => zeigeEmptyState());
+  Promise.all([
+    fetch('./manifest.json', { cache: 'no-store' }).then((res) => (res.ok ? res.json() : null)).catch(() => null),
+    fetch('./performance.json', { cache: 'no-store' }).then((res) => (res.ok ? res.json() : null)).catch(() => null),
+  ]).then(([data, perf]) => {
+    if (perf) renderPerformance(perf);
+    if (data && data.pakete && data.pakete.length) render(data);
+    else zeigeEmptyState();
+  });
 </script>
 </body>
 </html>

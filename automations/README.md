@@ -681,6 +681,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 86 | 🕵️ Insider-Buy-Radar | werktags 22:00 UTC | scannt SECs öffentliche Form-4-Meldungen (US-Insider-Käufe) auf auffällige Einzelkäufe oder Cluster-Käufe mehrerer Insider, meldet per WhatsApp - reiner Report, KEIN automatischer Handel, KEIN API-Key nötig (SEC EDGAR ist frei zugänglich) |
 | 87 | 🚀 Opportunity-Radar | täglich | erkennt Produkte mit sprunghaftem Verkaufswachstum ggü. der Vorwoche, rein aus echten eigenen Shopify-Daten, mit knapper Handlungsempfehlung |
 | 88 | 🧪 Split-Test-Agent | täglich | echtes A/B-Testing zwischen Ad-Sets DERSELBEN Meta-Kampagne (Creative-/Zielgruppen-Varianten) - findet klaren Gewinner/Verlierer, pausiert bei Aktivierung den Verlierer, der Gewinner bleibt garantiert aktiv |
+| 89 | 📊 Social-Performance-Radar | wöchentlich | misst echte Aufrufe/Likes/Kommentare der tatsächlich automatisch geposteten Facebook-/Instagram-Beiträge (#18) über die Meta Graph API - keine Schätzung, nur was Meta selbst liefert |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht

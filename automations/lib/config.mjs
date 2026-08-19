@@ -260,6 +260,10 @@ export const config = {
   SPLIT_TEST_MIN_UNTERSCHIED_PROZENT: process.env.SPLIT_TEST_MIN_UNTERSCHIED_PROZENT || '40',
   REFUND_MAX_BETRAG: process.env.REFUND_MAX_BETRAG || '30',
 
+  // Social-Performance-Radar (#89): wie viele Tage zurück echte
+  // Facebook/Instagram-Posts (#18) auf Aufrufe/Likes/Kommentare geprüft werden
+  SOCIAL_PERFORMANCE_FENSTER_TAGE: process.env.SOCIAL_PERFORMANCE_FENSTER_TAGE || '30',
+
   // Übersetzungs-Entwurf-Agent
   TRANSLATION_ZIELSPRACHEN: process.env.TRANSLATION_ZIELSPRACHEN || '',
   TRANSLATION_MAX_PRODUKTE: process.env.TRANSLATION_MAX_PRODUKTE || '5',
