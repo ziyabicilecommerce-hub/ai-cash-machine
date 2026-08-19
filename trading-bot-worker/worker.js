@@ -26,7 +26,7 @@
 
 import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from './lib/strategie.mjs';
 import { EXCHANGES } from './lib/exchanges.mjs';
-import { COINGECKO_IDS, ladePreisBestaetigung24h, ladeFearGreedIndex, ladeBtcDominanzProzent, hoehererZeitrahmenIstAufwaerts } from './lib/marktdaten.mjs';
+import { COINGECKO_IDS, ladePreisBestaetigung24h, ladeFearGreedIndex, ladeBtcDominanzProzent, hoehererZeitrahmenIstAufwaerts, ladeNewsSentimentProzent } from './lib/marktdaten.mjs';
 import { notifyWhatsapp } from './lib/notify.mjs';
 import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, saveSystemInfo } from './lib/state.mjs';
 import { pruefeUndSendeTagesZusammenfassung, pruefeUndSendeWochenZusammenfassung, pruefeUndSendeMonatsZusammenfassung, pruefeUndFuehreKapitalRebalancing } from './lib/reports.mjs';
@@ -103,6 +103,17 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       // obwohl die eigentliche Strategie ein gültiges Signal hat.
       if (change24hProzent !== null && change24hProzent < cfg.coingeckoMin24hProzent) {
         await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - 24h-Änderung (Ø aus bis zu 5 Börsen) ${change24hProzent.toFixed(2)}% liegt unter dem Filter-Minimum (${cfg.coingeckoMin24hProzent}%).`);
+        await saveState(env, symbol, state);
+        return;
+      }
+    }
+
+    if (kauf && cfg.newsSentimentFilter) {
+      const sentimentProzent = await ladeNewsSentimentProzent(env, symbol);
+      // null = kein API-Key konfiguriert, kein Mapping, oder noch keine
+      // Stimmen zu diesem Coin - dann nicht blockierend, siehe marktdaten.mjs.
+      if (sentimentProzent !== null && sentimentProzent < cfg.newsSentimentMinProzent) {
+        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - News-Sentiment (CryptoPanic Community-Votes) bei ${sentimentProzent.toFixed(0)}% positiv (Schwelle ${cfg.newsSentimentMinProzent}%), aktuelle Berichterstattung wirkt überwiegend negativ.`);
         await saveState(env, symbol, state);
         return;
       }
