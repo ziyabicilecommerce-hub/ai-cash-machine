@@ -677,7 +677,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
 
 // Einmal pro Kalendertag eine WhatsApp-Zusammenfassung über alle Symbole,
 // statt dass man selbst das Dashboard aufrufen muss, um zu sehen ob alles
-// normal läuft. Läuft "nebenbei" im ohnehin alle 15 Minuten laufenden Cron -
+// normal läuft. Läuft "nebenbei" im ohnehin alle 5 Minuten laufenden Cron -
 // verschickt aber wirklich nur einmal pro Tag (KV-Marke digest:letzterTag).
 async function pruefeUndSendeTagesZusammenfassung(env, cfg) {
   const heuteStr = heute();

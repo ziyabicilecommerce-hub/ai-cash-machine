@@ -192,7 +192,7 @@ Gesamt-P&L in %, wie viele Positionen gerade offen sind, und ob irgendwo der
 Kill-Switch aktiv ist. Damit reicht diese eine WhatsApp-Nachricht am Tag, um
 zu wissen ob alles normal läuft — das Dashboard muss man nur noch öffnen,
 wenn man mehr Details sehen will. Braucht kein zusätzliches Setup, läuft im
-selben 15-Minuten-Cron mit (verschickt aber wirklich nur einmal pro Tag).
+selben 5-Minuten-Cron mit (verschickt aber wirklich nur einmal pro Tag).
 
 ## Wöchentlicher WhatsApp-Rückblick
 
@@ -203,7 +203,7 @@ eine Strategie parallel (siehe `TRADING_STRATEGIE_PRO_SYMBOL` weiter unten),
 zeigt der Rückblick zusätzlich pro Strategie-Gruppe, wie viel sie diese
 Woche gewonnen/verloren hat — direkter Live-Vergleich, welche Strategie
 gerade am besten abschneidet. Braucht kein zusätzliches Setup, läuft im
-selben 15-Minuten-Cron mit.
+selben 5-Minuten-Cron mit.
 
 ## Zusätzliche Kauf-Filter (alle optional, alle ohne API-Key)
 
@@ -378,7 +378,7 @@ erklärt die Reihenfolge.
    ```bash
    wrangler deploy
    ```
-   Der Cron-Trigger (alle 15 Minuten, siehe `wrangler.toml`) läuft danach
+   Der Cron-Trigger (alle 5 Minuten, siehe `wrangler.toml`) läuft danach
    automatisch — kein manueller Aufruf nötig. Zum Testen:
    ```
    https://cashmachine-trading-bot.<dein-account>.workers.dev/?key=<TRIGGER_SECRET>
