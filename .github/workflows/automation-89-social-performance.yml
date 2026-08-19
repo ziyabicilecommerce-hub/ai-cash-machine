@@ -1,0 +1,17 @@
+name: "89 · Social-Performance-Radar"
+
+on:
+  schedule:
+    - cron: '15 9 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/89-social-performance.mjs
+    secrets: inherit

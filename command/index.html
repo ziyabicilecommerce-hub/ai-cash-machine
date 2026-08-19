@@ -1213,14 +1213,33 @@
     return `<span class="platform-badge platform-fail">${name} ✗</span>`;
   }
 
-  function renderSocial(data) {
+  // Echte Reichweite (#89 Social-Performance-Radar) direkt neben dem
+  // Posting-Archiv - nur Zahlen, die Meta selbst für tatsächlich live
+  // gegangene Posts liefert, kein geschätzter Wert.
+  function renderSocialPerformance(perf) {
+    if (!perf || !perf.anzahlBeitraege) return '';
+    const top = perf.topBeitrag;
+    return `
+      <div class="card hero-card" style="margin-bottom:20px;">
+        <div class="card-label">📊 ECHTE PERFORMANCE (LETZTE ${perf.fensterTage} TAGE, ${perf.anzahlBeitraege} POSTS)</div>
+        <div class="kpi-grid">
+          <div class="kpi-box"><div class="kpi-num">${perf.gesamtAufrufe}</div><div class="kpi-label">AUFRUFE GESAMT</div></div>
+          <div class="kpi-box"><div class="kpi-num">${perf.gesamtLikes}</div><div class="kpi-label">LIKES GESAMT</div></div>
+          <div class="kpi-box"><div class="kpi-num">${perf.gesamtKommentare}</div><div class="kpi-label">KOMMENTARE GESAMT</div></div>
+        </div>
+        ${top ? `<p style="margin-top:10px;">🏆 Top-Beitrag: <b>${top.plattform}</b> vom ${fmtDatumKurz(top.datum)} — ${top.aufrufe} Aufrufe, ${top.likes ?? 0} Likes</p>` : ''}
+      </div>`;
+  }
+
+  function renderSocial(data, performance) {
     const el = document.getElementById('socialContent');
     const pakete = (data && data.pakete) || [];
+    const perfHtml = renderSocialPerformance(performance);
     if (!pakete.length) {
-      el.innerHTML = emptyHtml('📮', 'Noch keine Posting-Pakete', 'Erscheint, sobald der Multi-Plattform-Poster (#18) zum ersten Mal gelaufen ist.');
+      el.innerHTML = perfHtml || emptyHtml('📮', 'Noch keine Posting-Pakete', 'Erscheint, sobald der Multi-Plattform-Poster (#18) zum ersten Mal gelaufen ist.');
       return;
     }
-    el.innerHTML = pakete.slice(0, 20).map((p) => `
+    el.innerHTML = perfHtml + pakete.slice(0, 20).map((p) => `
       <div class="card">
         <span class="card-date">${fmtDatumKurz(p.datum)}</span>
         <div class="card-label">${p.thema || 'Tagesthema'}</div>
@@ -1471,7 +1490,7 @@
     { emoji: '✅', name: 'Setup', desc: 'Geführte Checkliste für die einmalige Einrichtung.', href: '../setup/' },
     { emoji: '🛰️', name: 'Mission Control', desc: 'Live-Radar: welches Secret schaltet die meisten Automationen frei.', href: '../mission-control/' },
     { emoji: '🤖', name: 'Agents', desc: 'Live-Status aller KI-Agenten, direkt aus GitHub Actions.', href: '../agents/' },
-    { emoji: '⚙️', name: 'Automations-Dashboard', desc: '87 KI-Automationen im Überblick — kompletter n8n-Ersatz.', href: '../automations-dashboard/' },
+    { emoji: '⚙️', name: 'Automations-Dashboard', desc: '88 KI-Automationen im Überblick — kompletter n8n-Ersatz.', href: '../automations-dashboard/' },
     { emoji: '🛰️', name: 'Finance-Cockpit', desc: 'Umsatz, Marge und Gewinn-Trend auf einen Blick — täglich automatisch aktualisiert.', href: '../finance-cockpit/' },
     { emoji: '🎛️', name: 'Cockpit', desc: 'Alle Automationen, Kosten-Trend und Handlungsbedarf auf einen Blick.', href: '../cockpit/' },
     { emoji: '📮', name: 'Social Poster', desc: 'Was wurde heute wirklich live gepostet - und was ist nur Entwurf?', href: '../social-poster/' },
@@ -1760,6 +1779,11 @@
       teile.push(`CUSTOMER SUPPORT: ${eskEl.textContent} offene Eskalation(en) (GitHub Issues #02/#69/#62).`);
     }
 
+    if (c.socialPerformance && c.socialPerformance.anzahlBeitraege) {
+      const sp = c.socialPerformance;
+      teile.push(`SOCIAL-PERFORMANCE (#89, letzte ${sp.fensterTage} Tage): ${sp.anzahlBeitraege} echte Facebook/Instagram-Posts, ${sp.gesamtAufrufe} Aufrufe gesamt, ${sp.gesamtLikes} Likes.${sp.topBeitrag ? ` Top-Beitrag: ${sp.topBeitrag.plattform} vom ${fmtDatumKurz(sp.topBeitrag.datum)} mit ${sp.topBeitrag.aufrufe} Aufrufen.` : ''}`);
+    }
+
     if (TRADING_KONTEXT && Array.isArray(TRADING_KONTEXT.symbole) && TRADING_KONTEXT.symbole.length) {
       const zeilen = TRADING_KONTEXT.symbole.map((s) => `${s.symbol}: Kapital ${fmtUsdt(s.kapital)}, P&L ${(s.kapital - s.startKapital) >= 0 ? '+' : ''}${fmtUsdt(s.kapital - s.startKapital)}${s.killSwitchAktiv ? ', KILL-SWITCH AKTIV' : ''}`).join(NL);
       teile.push(`TRADING (Krypto-Bot, ${TRADING_KONTEXT.paperModus ? 'Paper-Modus' : 'LIVE'}):${NL}${zeilen}`);
@@ -1905,7 +1929,7 @@
   // --- Live-Ticker-Band (Nachrichten-Streifen unter der Nav) ---
   const TICKER_FUELLTEXTE = [
     '⚡ CASHMACHINE COMMAND — alle Systeme auf Autopilot ausbaubar',
-    '🛰️ 87 Automationen laufen im Hintergrund über GitHub Actions',
+    '🛰️ 88 Automationen laufen im Hintergrund über GitHub Actions',
     '🧠 Chef-Agent fasst täglich Finanzen, Fulfillment und Kundenstamm zusammen',
     '🔒 Alle Daten bleiben in deinem eigenen GitHub-Repo',
   ];
@@ -2140,7 +2164,8 @@
       ladeJson('./refund-alarm.json'),
       ladeJson('./opportunity-radar.json'),
       ladeJson('./split-test.json'),
-    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest]) => {
+      ladeJson('../social-poster/performance.json'),
+    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance]) => {
       renderGoalEngine(ceo);
       renderOpportunityRadar(opportunityRadar);
       renderCeo(ceo, chains, referral, social, pricingHistorie, splitTest);
@@ -2154,7 +2179,7 @@
       renderCockpit(cockpit);
       renderBrand(brand);
       renderReferral(referral);
-      renderSocial(social);
+      renderSocial(social, socialPerformance);
       renderBelege(belege);
       renderRecap(recap);
       renderActivity(chains, referral, social, ceo, brand, product);
@@ -2163,7 +2188,7 @@
       renderAutopilot(autopilotStatus);
       letzterCockpitStand = cockpit;
       letzteChains = chains;
-      COMMAND_KONTEXT = { ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest };
+      COMMAND_KONTEXT = { ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance };
       aiUpdatePanel();
       const eskalationenEl = document.getElementById('kpiTruthSupport');
       const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
