@@ -46,3 +46,24 @@ export async function zaehleOffenePositionen(env, symbols, startKapitalProSymbol
   }
   return anzahl;
 }
+
+// Markweite Werte (Fear&Greed, BTC-Dominanz), die ohnehin schon einmal pro
+// Lauf für die Kauf-Filter geladen werden - hier zwischengespeichert statt
+// bei jedem Dashboard-Aufruf erneut extern abgefragt (würde CoinGecko/
+// CoinPaprika/alternative.me unnötig oft treffen, gerade bei einem
+// Dashboard, das alle 30s aktualisiert). Für /status "gut genug aktuell"
+// (maximal so alt wie der letzte Cron-Lauf, alle 5 Minuten).
+export async function loadSystemInfo(env) {
+  const raw = await env.TRADING_STATE.get('system:info');
+  if (!raw) return { letzterLauf: null, fearGreedWert: null, fearGreedZeit: null, btcDominanzProzent: null, btcDominanzZeit: null };
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return { letzterLauf: null, fearGreedWert: null, fearGreedZeit: null, btcDominanzProzent: null, btcDominanzZeit: null };
+  }
+}
+
+export async function saveSystemInfo(env, patch) {
+  const bisherig = await loadSystemInfo(env);
+  await env.TRADING_STATE.put('system:info', JSON.stringify({ ...bisherig, ...patch }));
+}
