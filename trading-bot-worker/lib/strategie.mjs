@@ -128,8 +128,26 @@ export function berechneIndikatoren(closes, highs, lows, cfg) {
   return ergebnis;
 }
 
+// Reduziert die Positionsgröße für ein Symbol, das zuletzt schlecht lief -
+// NIE über 1.0 hinaus (kann also nie die konfigurierte maxPositionProzent-
+// Grenze überschreiten, nur innerhalb dieser Grenze umverteilen). Braucht
+// mindestens performanceSizingMinTrades abgeschlossene Trades, sonst wird
+// noch nicht reagiert (zu wenig Daten für ein verlässliches Signal) - Faktor
+// dann 1.0 (unverändert). Win-Rate 50% = neutral (Faktor 1.0), darunter
+// linear absinkend bis zum konfigurierten Minimum.
+export function berechnePerformanceFaktor(kuerzlicheTrades, cfg) {
+  if (!cfg.performanceSizing) return 1;
+  const trades = (kuerzlicheTrades || []).slice(-20);
+  if (trades.length < cfg.performanceSizingMinTrades) return 1;
+  const gewinnTrades = trades.filter((t) => t.gewinnVerlustUsdt > 0).length;
+  const winRateProzent = (gewinnTrades / trades.length) * 100;
+  if (winRateProzent >= 50) return 1;
+  const faktor = winRateProzent / 50;
+  return Math.max(cfg.performanceSizingMinFaktor, faktor);
+}
+
 // Liefert null (nicht kaufen) oder { investBetrag } (in Quote-Währung, z.B. USDT).
-export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute }) {
+export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute, kuerzlicheTrades }) {
   if (handelsSperreHeute || !positionenPlatzFrei) return null;
 
   const { rsiJetzt, volatilitaetProzent } = indikatoren;
@@ -156,6 +174,7 @@ export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei,
     const skalierung = Math.max(cfg.volaSizingMinFaktor, Math.min(1, cfg.volaSizingReferenzProzent / volatilitaetProzent));
     investBetrag *= skalierung;
   }
+  investBetrag *= berechnePerformanceFaktor(kuerzlicheTrades, cfg);
   return { investBetrag };
 }
 
