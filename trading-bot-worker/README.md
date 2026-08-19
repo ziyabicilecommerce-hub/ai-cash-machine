@@ -233,6 +233,21 @@ für diesen Lauf):
   fließt dann laut Markt bevorzugt in Bitcoin statt Altcoins ("risk-off"
   für Alts). Markweiter Wert, nur einmal pro Lauf abgefragt (CoinPaprika
   `/global`).
+- **`TRADING_FLASH_CRASH_FILTER`** (`ja`/`nein`) +
+  `TRADING_FLASH_CRASH_FENSTER_KERZEN` (Default `4` = 1h bei 15m-Kerzen) +
+  `TRADING_FLASH_CRASH_MAX_DROP_PROZENT` (Default `8`): pausiert Käufe für
+  ein Symbol, wenn der Kurs innerhalb des Fensters bereits um mehr als die
+  Schwelle gefallen ist — eher ein Flash-Crash/Börsenfehler als eine
+  normale Kaufgelegenheit, besonders wichtig bei `bollinger-mean-reversion`
+  (das "überverkauft" sonst genau in so einem Moment als Kaufsignal
+  missverstehen könnte). Braucht KEINEN externen API-Call, nutzt dieselben
+  Kerzen wie die Strategie selbst.
+- **`TRADING_SPREAD_FILTER`** (`ja`/`nein`) + `TRADING_SPREAD_MAX_PROZENT`
+  (Default `1`): verwirft einen Kauf, wenn der Bid/Ask-Spread an der Börse
+  gerade ungewöhnlich breit ist — oft ein Begleitsymptom eines
+  Flash-Crashs oder Börsenproblems (dünne/gestörte Liquidität). Fragt
+  direkt die ohnehin verbundene Börse ab (Kraken oder Binance), kein
+  zusätzlicher Key nötig.
 
 **Performance-basierte Positionsgröße:** `TRADING_PERFORMANCE_SIZING`
 (`ja`/`nein`) + `TRADING_PERFORMANCE_SIZING_MIN_FAKTOR` (Default `0.5`) +
@@ -259,14 +274,38 @@ selbst mit `backtest.mjs` gegen mehrere Coins/Zeiträume gegentesten.
 
 **Wichtig zum Backtesting dieser Filter:** `backtest.mjs` kann aktuell nur
 Signale testen, die sich aus den historischen Kraken-Kursdaten selbst
-ableiten lassen (Strategie, Stop-Loss, Take-Profit, Performance-Sizing —
-letzteres braucht keine externe API und läuft im Backtest identisch mit).
-Die 24h-Preisbestätigung, der Fear & Greed-Filter und der BTC-Dominanz-
-Filter lassen sich nicht rückwirkend exakt nachstellen (keine passenden
-historischen Daten im gleichen Format frei verfügbar) — sie sind gegen
-echte Live-Daten geprüft (lösen korrekt aus, fallen bei Ausfall sauber
-offen), aber NICHT historisch backgetestet. Das im Kopf behalten, bevor man
-sich zu sehr auf sie verlässt.
+ableiten lassen (Strategie, Stop-Loss, Take-Profit, Performance-Sizing,
+Flash-Crash-Filter — die letzten beiden brauchen keine externe API und
+laufen im Backtest identisch mit). Die 24h-Preisbestätigung, der Fear &
+Greed-Filter, der BTC-Dominanz-Filter und der Spread-Filter lassen sich
+nicht rückwirkend exakt nachstellen (keine passenden historischen Daten im
+gleichen Format frei verfügbar) — sie sind gegen echte Live-Daten geprüft
+(lösen korrekt aus, fallen bei Ausfall sauber offen), aber NICHT historisch
+backgetestet. Das im Kopf behalten, bevor man sich zu sehr auf sie verlässt.
+
+## Echtgeld-Readiness-Ampel
+
+`/status` liefert zusätzlich ein `readiness`-Objekt: eine grobe Ampel
+(🔴 Rot / 🟡 Gelb / 🟢 Grün), ob der Bot nach seinen bisherigen
+Paper-Trade-Zahlen "reif genug" für einen Echtgeld-Test WIRKT. **Keine
+Finanzberatung, keine Erfolgsgarantie** — nur ein Hinweis, berechnet aus
+Daten, die der Bot ohnehin schon hat (Anzahl abgeschlossener Trades,
+Gesamt-Win-Rate, Gesamt-P&L, ob ein Kill-Switch aktiv ist), kein
+zusätzlicher API-Call nötig:
+
+- 🔴 **Rot**: ein Kill-Switch ist aktiv, ODER weniger als 10 abgeschlossene
+  Trades, ODER insgesamt im Minus.
+- 🟡 **Gelb**: mindestens 10 Trades, insgesamt im Plus, aber noch unter 30
+  Trades oder unter 50% Win-Rate — positiv, aber noch zu früh für eine
+  klare Aussage.
+- 🟢 **Grün**: mindestens 30 Trades, mindestens 50% Win-Rate, insgesamt im
+  Plus.
+
+Wird oben im Trading-Dashboard als Banner angezeigt und steht zusätzlich
+einmal pro Woche im WhatsApp-Rückblick. Die Schwellenwerte (10/30 Trades,
+50% Win-Rate) sind bewusst konservativ gewählt, aber willkürlich — eine
+"perfekte" Zahl gibt es nicht, das ist eine grobe Orientierung, keine
+Garantie.
 
 ## Live-Dashboard (rein lesend)
 

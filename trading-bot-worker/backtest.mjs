@@ -54,6 +54,9 @@ function readConfig(strategieOverride) {
     performanceSizing: (env.TRADING_PERFORMANCE_SIZING || 'nein') === 'ja',
     performanceSizingMinFaktor: parseFloat(env.TRADING_PERFORMANCE_SIZING_MIN_FAKTOR || '0.5'),
     performanceSizingMinTrades: parseInt(env.TRADING_PERFORMANCE_SIZING_MIN_TRADES || '5', 10),
+    flashCrashFilter: (env.TRADING_FLASH_CRASH_FILTER || 'nein') === 'ja',
+    flashCrashFensterKerzen: parseInt(env.TRADING_FLASH_CRASH_FENSTER_KERZEN || '4', 10),
+    flashCrashMaxDropProzent: parseFloat(env.TRADING_FLASH_CRASH_MAX_DROP_PROZENT || '8'),
     maxGleichzeitigePositionen: 1, // Backtest läuft immer pro Symbol einzeln
   };
 }

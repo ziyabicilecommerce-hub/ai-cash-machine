@@ -94,6 +94,13 @@
   .pos-tag.open { border-color:rgba(52,245,162,.35); color:var(--green); }
   .kill-banner { margin-top:10px; font-family:var(--mono); font-size:11px; color:var(--red); }
 
+  .readiness-banner { font-family:var(--mono); font-size:12px; padding:14px 16px; margin-bottom:18px; line-height:1.6; }
+  .readiness-banner .titel { font-weight:700; font-size:13px; letter-spacing:.05em; margin-bottom:4px; }
+  .readiness-banner .hinweis { color:var(--mut2); font-size:10.5px; margin-top:8px; }
+  .readiness-banner.rot { background:rgba(255,107,129,.08); border:1px solid rgba(255,107,129,.35); color:var(--red); }
+  .readiness-banner.gelb { background:rgba(255,199,87,.08); border:1px solid rgba(255,199,87,.35); color:var(--amber); }
+  .readiness-banner.gruen { background:rgba(52,245,162,.08); border:1px solid rgba(52,245,162,.35); color:var(--green); }
+
   .empty-state { text-align:center; padding:60px 20px; font-family:var(--mono); }
   .empty-state .line1 { color:var(--cyan); font-size:15px; }
   .empty-state .line2 { color:var(--mut2); font-size:12px; margin-top:8px; max-width:480px; margin-left:auto; margin-right:auto; }
@@ -162,6 +169,8 @@
     <button id="emptyConnectBtn" type="button">Verbinden</button>
   </div>
 
+  <div class="readiness-banner" id="readinessBanner" style="display:none"></div>
+
   <div class="cards" id="cards"></div>
 </section>
 
@@ -209,6 +218,16 @@
 
   const fmtUsdt = (n) => (n ?? 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' USDT';
 
+  function renderReadiness(readiness) {
+    const el = document.getElementById('readinessBanner');
+    if (!readiness) { el.style.display = 'none'; return; }
+    const emoji = { rot: '🔴', gelb: '🟡', gruen: '🟢' }[readiness.ampel] || '⚪';
+    const titel = { rot: 'NICHT BEREIT FÜR ECHTGELD', gelb: 'NOCH BEOBACHTEN', gruen: 'WIRKT BEREIT FÜR EINEN VORSICHTIGEN TEST' }[readiness.ampel] || '';
+    el.className = `readiness-banner ${readiness.ampel}`;
+    el.innerHTML = `<div class="titel">${emoji} Echtgeld-Readiness: ${titel}</div><div>${readiness.grund}</div><div class="hinweis">${readiness.hinweis}</div>`;
+    el.style.display = 'block';
+  }
+
   function renderCards(data) {
     const box = document.getElementById('cards');
     box.innerHTML = data.symbole.map((s) => {
@@ -244,6 +263,7 @@
       document.getElementById('emptyState').style.display = 'block';
       document.getElementById('toolbar').style.display = 'none';
       document.getElementById('cards').innerHTML = '';
+      document.getElementById('readinessBanner').style.display = 'none';
       return;
     }
     try {
@@ -253,11 +273,13 @@
       document.getElementById('emptyState').style.display = 'none';
       document.getElementById('toolbar').style.display = 'flex';
       document.getElementById('lastUpdated').textContent = `Aktualisiert: ${new Date(data.updatedAt).toLocaleTimeString('de-DE')}`;
+      renderReadiness(data.readiness);
       renderCards(data);
     } catch (err) {
       document.getElementById('emptyState').style.display = 'block';
       document.getElementById('emptyState').querySelector('.line1').textContent = '> Verbindung fehlgeschlagen';
       document.getElementById('emptyState').querySelector('.line2').textContent = 'Worker-URL oder STATUS_READ_KEY prüfen (⚙ oben rechts), oder der Worker ist gerade nicht erreichbar.';
+      document.getElementById('readinessBanner').style.display = 'none';
     }
     clearTimeout(refreshTimer);
     refreshTimer = setTimeout(loadStatus, REFRESH_MS);
