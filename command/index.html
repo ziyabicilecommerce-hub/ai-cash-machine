@@ -660,6 +660,7 @@
   <div id="autopilotContent"></div>
   <div id="pricingHistorieContent"></div>
   <div id="splitTestContent"></div>
+  <div id="adsAutopilotContent"></div>
 </section>
 
 <section class="panel" id="panel-trading">
@@ -1572,6 +1573,51 @@
     el.innerHTML = `<div class="section-title-inline">🧪 SPLIT-TEST-ERGEBNISSE MIT BEGRÜNDUNG</div>${bilanzHtml}${rows}`;
   }
 
+  const ADS_WIRKUNG_TEXT = {
+    verstaerkung_bestaetigt: { label: '✅ läuft mit mehr Budget weiter profitabel', klasse: 'risiko-niedrig' },
+    verstaerkung_schwaecher: { label: '⚠️ mit mehr Budget seitdem schwächer', klasse: 'risiko-mittel' },
+    keine_daten: { label: '❔ keine Daten seitdem', klasse: 'risiko-mittel' },
+  };
+
+  // "Warum" bei jeder Budget-Umschichtung (#64 Ads-Autopilot-Agent) - prüft
+  // AUSGEFÜHRTE Verstärkungen 7 Tage später gegen die echte Performance des
+  // verstärkten Ad-Sets nach (größeres Budget kann auch die Effizienz
+  // drücken, das prüft dieser Check statt es einfach anzunehmen).
+  function renderAdsAutopilotHistorie(data) {
+    const el = document.getElementById('adsAutopilotContent');
+    const historie = (data && data.historie) || [];
+    if (!historie.length) {
+      el.innerHTML = `<div class="section-title-inline">📊 BUDGET-UMSCHICHTUNGEN MIT BEGRÜNDUNG</div>` +
+        emptyHtml('📊', 'Noch keine Budget-Umschichtung', 'Erscheint, sobald der Ads-Autopilot-Agent (#64) einen klaren ROAS-Unterschied zwischen zwei Ad-Sets findet.');
+      return;
+    }
+    const bilanz = data.erfolgsBilanz;
+    const bilanzHtml = bilanz && bilanz.ausgewertet
+      ? `<p class="note" style="margin-bottom:14px;">🎯 Erfolgs-Check: von ${bilanz.ausgewertet} ausgewerteten Verstärkungen blieben ${bilanz.bestaetigt} weiterhin profitabel, ${bilanz.brauchtBlick} brauchen einen Blick.</p>`
+      : '';
+    const rows = historie.slice(0, 15).map((e) => {
+      const wirkung = e.ausgewertet && ADS_WIRKUNG_TEXT[e.wirkung];
+      const wirkungRow = wirkung
+        ? `<div><b>SEITDEM PASSIERT</b><span class="${wirkung.klasse}">${wirkung.label}${e.besterRoasSeitdem !== null ? ` (ROAS ${e.besterRoasSeitdem})` : ''}</span></div>`
+        : e.ausgefuehrt ? `<div><b>SEITDEM PASSIERT</b><span>wird in ${Math.max(0, 7 - Math.floor((Date.now() - new Date(e.datum).getTime()) / 86400000))} Tag(en) geprüft</span></div>` : '';
+      return `
+      <div class="why-row">
+        <div class="why-top">
+          <div class="why-preis">${e.bester.name}<span class="arrow">←</span>${e.schwaechster.name}</div>
+          <span class="why-tag ${e.ausgefuehrt ? 'tag-hoch' : 'tag-runter'}">${e.ausgefuehrt ? '✅ LIVE UMGESCHICHTET' : '👁️ NUR EMPFOHLEN'}</span>
+        </div>
+        <div class="why-grid">
+          <div><b>VERSTÄRKT</b><span>${e.bester.name} — ROAS ${e.bester.roas} (${(e.bester.budgetAlt / 100).toFixed(2)} → ${(e.bester.budgetNeu / 100).toFixed(2)} €)</span></div>
+          <div><b>GEKÜRZT</b><span>${e.schwaechster.name} — ROAS ${e.schwaechster.roas} (${(e.schwaechster.budgetAlt / 100).toFixed(2)} → ${(e.schwaechster.budgetNeu / 100).toFixed(2)} €)</span></div>
+          <div><b>ERWARTETE AUSWIRKUNG</b><span>${e.erwarteteAuswirkung}</span></div>
+          ${wirkungRow}
+        </div>
+        <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(e.datum)}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div class="section-title-inline">📊 BUDGET-UMSCHICHTUNGEN MIT BEGRÜNDUNG</div>${bilanzHtml}${rows}`;
+  }
+
   // --- Alle Tools (Launchpad zu den restlichen, echt interaktiven Apps) ---
   const WEITERE_TOOLS = [
     { emoji: '🧠', name: 'Jarvis', desc: 'Voice-HUD-Assistent, zentrale Steuerung der Suite.', href: '../' },
@@ -1872,6 +1918,16 @@
     const splitBilanz = c.splitTest && c.splitTest.erfolgsBilanz;
     if (splitBilanz && splitBilanz.ausgewertet) {
       teile.push(`ERFOLGS-CHECK SPLIT-TEST-AGENT: Von ${splitBilanz.ausgewertet} ausgewerteten Pausierungen blieb der Gewinner bei ${splitBilanz.bestaetigt} weiterhin profitabel, ${splitBilanz.brauchtBlick} brauchen einen Blick.`);
+    }
+
+    const adsAutopilotHistorie = (c.adsAutopilot && c.adsAutopilot.historie) || [];
+    if (adsAutopilotHistorie.length) {
+      const a = adsAutopilotHistorie[0];
+      teile.push(`LETZTE BUDGET-UMSCHICHTUNG (Ads-Autopilot-Agent #64, ${fmtDatumKurz(a.datum)}): ${a.bester.name} (ROAS ${a.bester.roas}) bekommt Budget von ${a.schwaechster.name} (ROAS ${a.schwaechster.roas}), ${a.ausgefuehrt ? 'live umgeschichtet' : 'nur empfohlen'}.`);
+    }
+    const adsAutopilotBilanz = c.adsAutopilot && c.adsAutopilot.erfolgsBilanz;
+    if (adsAutopilotBilanz && adsAutopilotBilanz.ausgewertet) {
+      teile.push(`ERFOLGS-CHECK ADS-AUTOPILOT-AGENT: Von ${adsAutopilotBilanz.ausgewertet} ausgewerteten Budget-Verstärkungen blieben ${adsAutopilotBilanz.bestaetigt} weiterhin profitabel, ${adsAutopilotBilanz.brauchtBlick} brauchen einen Blick.`);
     }
 
     const automationen = (c.cockpit && c.cockpit.automationen) || [];
@@ -2278,12 +2334,14 @@
       ladeJson('./split-test.json'),
       ladeJson('../social-poster/performance.json'),
       ladeJson('./customer-segmente.json'),
-    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente]) => {
+      ladeJson('./ads-autopilot.json'),
+    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente, adsAutopilot]) => {
       renderGoalEngine(ceo);
       renderOpportunityRadar(opportunityRadar);
       renderCeo(ceo, chains, referral, social, pricingHistorie, splitTest);
       renderPricingHistorie(pricingHistorie);
       renderSplitTestHistorie(splitTest);
+      renderAdsAutopilotHistorie(adsAutopilot);
       renderKillSwitch(adsNotbremse, refundAlarm, autopilotStatus);
       renderAnalytics(analytics, ads);
       renderProduct(product);
@@ -2302,7 +2360,7 @@
       renderAutopilot(autopilotStatus);
       letzterCockpitStand = cockpit;
       letzteChains = chains;
-      COMMAND_KONTEXT = { ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente };
+      COMMAND_KONTEXT = { ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente, adsAutopilot };
       aiUpdatePanel();
       const eskalationenEl = document.getElementById('kpiTruthSupport');
       const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
