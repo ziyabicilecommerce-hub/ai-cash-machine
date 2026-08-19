@@ -556,17 +556,19 @@
 
   // --- CEO / Chef-Agent ---
   // Ehrliche Tages-Zusammenfassung, NUR aus tatsächlich vorhandenen Signalen
-  // (Ketten-Log, Referral-Belohnungen, Social-Pakete) - erfindet keine
-  // Kategorien (z.B. "Ads pausiert"/"Tests"), die die Suite noch nicht als
-  // eigene, zählbare Ereignisse trackt.
-  function ermittleHeuteZusammenfassung(chains, referral, social) {
+  // (Ketten-Log, Referral-Belohnungen, Social-Pakete, Pricing-Entscheidungen,
+  // Split-Test-Ergebnisse) - erfindet keine Kategorien, die die Suite noch
+  // nicht als eigene, zählbare Ereignisse trackt.
+  function ermittleHeuteZusammenfassung(chains, referral, social, pricingHistorie, splitTest) {
     const heute = new Date().toISOString().slice(0, 10);
     const kettenHeute = ((chains && chains.log) || []).filter((e) => (e.datum || '').slice(0, 10) === heute);
     const kettenOk = kettenHeute.filter((e) => e.ausgeloest).length;
     const kettenFehler = kettenHeute.length - kettenOk;
     const belohnungenHeute = ((referral && referral.letzteBelohnungen) || []).filter((b) => (b.datum || '').slice(0, 10) === heute).length;
     const socialHeute = ((social && social.pakete) || []).filter((p) => (p.datum || '').slice(0, 10) === heute).length;
-    const gesamt = kettenHeute.length + belohnungenHeute + socialHeute;
+    const preisHeute = ((pricingHistorie && pricingHistorie.historie) || []).filter((a) => (a.datum || '').slice(0, 10) === heute).length;
+    const splitTestHeute = ((splitTest && splitTest.historie) || []).filter((e) => (e.datum || '').slice(0, 10) === heute).length;
+    const gesamt = kettenHeute.length + belohnungenHeute + socialHeute + preisHeute + splitTestHeute;
     if (!gesamt) return '';
     return `
       <div class="card hero-card" style="margin-bottom:20px;">
@@ -576,6 +578,8 @@
           <div class="today-item"><b>${kettenOk}</b><span>KETTEN AUSGELÖST</span></div>
           <div class="today-item"><b>${socialHeute}</b><span>CONTENT-PAKETE</span></div>
           <div class="today-item"><b>${belohnungenHeute}</b><span>EMPFEHLUNGEN BELOHNT</span></div>
+          ${preisHeute ? `<div class="today-item"><b>${preisHeute}</b><span>PREIS-ENTSCHEIDUNGEN</span></div>` : ''}
+          ${splitTestHeute ? `<div class="today-item"><b>${splitTestHeute}</b><span>SPLIT-TEST-ERGEBNISSE</span></div>` : ''}
           ${kettenFehler ? `<div class="today-item" style="color:var(--amber);"><b>${kettenFehler}</b><span>KETTEN MIT PROBLEM</span></div>` : ''}
         </div>
       </div>`;
@@ -625,9 +629,9 @@
       <p class="note" style="margin-bottom:20px;">Basis: eigene Verkaufsdaten, letzte ${data.fensterTage || 7} vs. vorherige ${data.fensterTage || 7} Tage.</p>`;
   }
 
-  function renderCeo(data, chains, referral, social) {
+  function renderCeo(data, chains, referral, social, pricingHistorie, splitTest) {
     const historie = (data && data.historie) || [];
-    const zusammenfassungHtml = ermittleHeuteZusammenfassung(chains, referral, social);
+    const zusammenfassungHtml = ermittleHeuteZusammenfassung(chains, referral, social, pricingHistorie, splitTest);
     if (!historie.length) {
       document.getElementById('ceoContent').innerHTML = zusammenfassungHtml ||
         emptyHtml('👔', 'Noch keine Tagesansage', 'Erscheint hier, sobald der Chef-Agent (#60) zum ersten Mal gelaufen ist (braucht ANTHROPIC_API_KEY + SHOP + SHOPIFY_TOKEN).');
@@ -1662,7 +1666,7 @@
     ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest]) => {
       renderGoalEngine(ceo);
       renderOpportunityRadar(opportunityRadar);
-      renderCeo(ceo, chains, referral, social);
+      renderCeo(ceo, chains, referral, social, pricingHistorie, splitTest);
       renderPricingHistorie(pricingHistorie);
       renderSplitTestHistorie(splitTest);
       renderKillSwitch(adsNotbremse, refundAlarm, autopilotStatus);
