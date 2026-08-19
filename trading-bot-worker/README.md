@@ -113,14 +113,21 @@ systematischer Handelsstrategien um:
 Stop-Loss, Trailing-Stop, Tagesverlust-Sperre und Kill-Switch gelten bei
 allen drei Strategien identisch — die Risiko-Grenzen sind strategieunabhängig.
 
-**Welche Strategie passt besser?** Kommt auf das Symbol und die Marktphase
-an — es gibt keine pauschal "beste" Strategie für immer, deshalb auch drei
-statt einer. Vor jeder Umstellung alle drei mit dem Backtest direkt
-vergleichen (siehe unten), oder interaktiv mit echten Charts im
-**CASHMACHINE STRATEGY LAB** (`strategy-lab/` im Hauptrepo, live unter
-`https://ziyabicilecommerce-hub.github.io/ai-cash-machine/strategy-lab/`).
+**Welche Strategie passt besser?** Wurde live getestet: alle 8 Coins liefen
+eine Zeit lang mit unterschiedlichen Strategien parallel (siehe Abschnitt
+darunter). Backtest über 90 Tage auf allen 8 Coins zeigt ein klares Bild -
+`bollinger-mean-reversion` schlägt `donchian-breakout`/`ema-crossover` auf
+7 von 8 Coins deutlich (Win-Rate 66-85% statt 15-33%, meist positiver statt
+negativer Return). Deshalb aktuell fahren **alle 8 Coins mit
+bollinger-mean-reversion** (`TRADING_STRATEGIE_PRO_SYMBOL` ist leer,
+`TRADING_BOLLINGER_STDDEV` auf `1.5` statt `2` gestellt - engeres Band,
+löst öfter aus, per Backtest bei gleicher/besserer Win-Rate). Das ist kein
+Naturgesetz - Marktphasen ändern sich, vor jeder erneuten Umstellung wieder
+mit dem Backtest gegentesten (siehe unten), oder interaktiv mit echten
+Charts im **CASHMACHINE STRATEGY LAB** (`strategy-lab/` im Hauptrepo, live
+unter `https://ziyabicilecommerce-hub.github.io/ai-cash-machine/strategy-lab/`).
 
-### Pro Symbol eine andere Strategie (Live-Vergleich)
+### Pro Symbol eine andere Strategie (optional)
 
 Statt für alle Symbole zwangsläufig dieselbe Strategie zu nutzen, kann
 `TRADING_STRATEGIE_PRO_SYMBOL` einzelnen Symbolen eine abweichende Strategie
@@ -132,8 +139,9 @@ TRADING_STRATEGIE_PRO_SYMBOL = "XBTUSDT:bollinger-mean-reversion,ETHUSDT:donchia
 ```
 
 Symbole ohne Eintrag laufen mit dem globalen `TRADING_STRATEGIE`-Default
-weiter. Alle Risiko-Grenzen (Stop-Loss, Take-Profit, Kill-Switch, Filter)
-gelten unabhängig von der gewählten Strategie identisch pro Symbol. Im
+weiter. Leer (aktueller Stand) = alle Symbole nutzen den globalen Default.
+Alle Risiko-Grenzen (Stop-Loss, Take-Profit, Kill-Switch, Filter) gelten
+unabhängig von der gewählten Strategie identisch pro Symbol. Im
 Trading-Dashboard zeigt jede Coin-Karte an, welche Strategie sie gerade
 fährt.
 
@@ -184,7 +192,7 @@ Gesamt-P&L in %, wie viele Positionen gerade offen sind, und ob irgendwo der
 Kill-Switch aktiv ist. Damit reicht diese eine WhatsApp-Nachricht am Tag, um
 zu wissen ob alles normal läuft — das Dashboard muss man nur noch öffnen,
 wenn man mehr Details sehen will. Braucht kein zusätzliches Setup, läuft im
-selben 15-Minuten-Cron mit (verschickt aber wirklich nur einmal pro Tag).
+selben 5-Minuten-Cron mit (verschickt aber wirklich nur einmal pro Tag).
 
 ## Wöchentlicher WhatsApp-Rückblick
 
@@ -195,7 +203,7 @@ eine Strategie parallel (siehe `TRADING_STRATEGIE_PRO_SYMBOL` weiter unten),
 zeigt der Rückblick zusätzlich pro Strategie-Gruppe, wie viel sie diese
 Woche gewonnen/verloren hat — direkter Live-Vergleich, welche Strategie
 gerade am besten abschneidet. Braucht kein zusätzliches Setup, läuft im
-selben 15-Minuten-Cron mit.
+selben 5-Minuten-Cron mit.
 
 ## Zusätzliche Kauf-Filter (alle optional, alle ohne API-Key)
 
@@ -233,6 +241,21 @@ für diesen Lauf):
   fließt dann laut Markt bevorzugt in Bitcoin statt Altcoins ("risk-off"
   für Alts). Markweiter Wert, nur einmal pro Lauf abgefragt (CoinPaprika
   `/global`).
+- **`TRADING_FLASH_CRASH_FILTER`** (`ja`/`nein`) +
+  `TRADING_FLASH_CRASH_FENSTER_KERZEN` (Default `4` = 1h bei 15m-Kerzen) +
+  `TRADING_FLASH_CRASH_MAX_DROP_PROZENT` (Default `8`): pausiert Käufe für
+  ein Symbol, wenn der Kurs innerhalb des Fensters bereits um mehr als die
+  Schwelle gefallen ist — eher ein Flash-Crash/Börsenfehler als eine
+  normale Kaufgelegenheit, besonders wichtig bei `bollinger-mean-reversion`
+  (das "überverkauft" sonst genau in so einem Moment als Kaufsignal
+  missverstehen könnte). Braucht KEINEN externen API-Call, nutzt dieselben
+  Kerzen wie die Strategie selbst.
+- **`TRADING_SPREAD_FILTER`** (`ja`/`nein`) + `TRADING_SPREAD_MAX_PROZENT`
+  (Default `1`): verwirft einen Kauf, wenn der Bid/Ask-Spread an der Börse
+  gerade ungewöhnlich breit ist — oft ein Begleitsymptom eines
+  Flash-Crashs oder Börsenproblems (dünne/gestörte Liquidität). Fragt
+  direkt die ohnehin verbundene Börse ab (Kraken oder Binance), kein
+  zusätzlicher Key nötig.
 
 **Performance-basierte Positionsgröße:** `TRADING_PERFORMANCE_SIZING`
 (`ja`/`nein`) + `TRADING_PERFORMANCE_SIZING_MIN_FAKTOR` (Default `0.5`) +
@@ -259,14 +282,38 @@ selbst mit `backtest.mjs` gegen mehrere Coins/Zeiträume gegentesten.
 
 **Wichtig zum Backtesting dieser Filter:** `backtest.mjs` kann aktuell nur
 Signale testen, die sich aus den historischen Kraken-Kursdaten selbst
-ableiten lassen (Strategie, Stop-Loss, Take-Profit, Performance-Sizing —
-letzteres braucht keine externe API und läuft im Backtest identisch mit).
-Die 24h-Preisbestätigung, der Fear & Greed-Filter und der BTC-Dominanz-
-Filter lassen sich nicht rückwirkend exakt nachstellen (keine passenden
-historischen Daten im gleichen Format frei verfügbar) — sie sind gegen
-echte Live-Daten geprüft (lösen korrekt aus, fallen bei Ausfall sauber
-offen), aber NICHT historisch backgetestet. Das im Kopf behalten, bevor man
-sich zu sehr auf sie verlässt.
+ableiten lassen (Strategie, Stop-Loss, Take-Profit, Performance-Sizing,
+Flash-Crash-Filter — die letzten beiden brauchen keine externe API und
+laufen im Backtest identisch mit). Die 24h-Preisbestätigung, der Fear &
+Greed-Filter, der BTC-Dominanz-Filter und der Spread-Filter lassen sich
+nicht rückwirkend exakt nachstellen (keine passenden historischen Daten im
+gleichen Format frei verfügbar) — sie sind gegen echte Live-Daten geprüft
+(lösen korrekt aus, fallen bei Ausfall sauber offen), aber NICHT historisch
+backgetestet. Das im Kopf behalten, bevor man sich zu sehr auf sie verlässt.
+
+## Echtgeld-Readiness-Ampel
+
+`/status` liefert zusätzlich ein `readiness`-Objekt: eine grobe Ampel
+(🔴 Rot / 🟡 Gelb / 🟢 Grün), ob der Bot nach seinen bisherigen
+Paper-Trade-Zahlen "reif genug" für einen Echtgeld-Test WIRKT. **Keine
+Finanzberatung, keine Erfolgsgarantie** — nur ein Hinweis, berechnet aus
+Daten, die der Bot ohnehin schon hat (Anzahl abgeschlossener Trades,
+Gesamt-Win-Rate, Gesamt-P&L, ob ein Kill-Switch aktiv ist), kein
+zusätzlicher API-Call nötig:
+
+- 🔴 **Rot**: ein Kill-Switch ist aktiv, ODER weniger als 10 abgeschlossene
+  Trades, ODER insgesamt im Minus.
+- 🟡 **Gelb**: mindestens 10 Trades, insgesamt im Plus, aber noch unter 30
+  Trades oder unter 50% Win-Rate — positiv, aber noch zu früh für eine
+  klare Aussage.
+- 🟢 **Grün**: mindestens 30 Trades, mindestens 50% Win-Rate, insgesamt im
+  Plus.
+
+Wird oben im Trading-Dashboard als Banner angezeigt und steht zusätzlich
+einmal pro Woche im WhatsApp-Rückblick. Die Schwellenwerte (10/30 Trades,
+50% Win-Rate) sind bewusst konservativ gewählt, aber willkürlich — eine
+"perfekte" Zahl gibt es nicht, das ist eine grobe Orientierung, keine
+Garantie.
 
 ## Live-Dashboard (rein lesend)
 
@@ -331,7 +378,7 @@ erklärt die Reihenfolge.
    ```bash
    wrangler deploy
    ```
-   Der Cron-Trigger (alle 15 Minuten, siehe `wrangler.toml`) läuft danach
+   Der Cron-Trigger (alle 5 Minuten, siehe `wrangler.toml`) läuft danach
    automatisch — kein manueller Aufruf nötig. Zum Testen:
    ```
    https://cashmachine-trading-bot.<dein-account>.workers.dev/?key=<TRIGGER_SECRET>

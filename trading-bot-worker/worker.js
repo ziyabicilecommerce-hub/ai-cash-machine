@@ -130,6 +130,20 @@ const binanceAdapter = {
     return filter ? parseFloat(filter.minNotional) : null;
   },
 
+  async getSpreadProzent(symbol) {
+    try {
+      const res = await fetch(`${this.baseUrl}/api/v3/ticker/bookTicker?symbol=${symbol}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      const ask = parseFloat(data.askPrice);
+      const bid = parseFloat(data.bidPrice);
+      if (!ask || !bid) return null;
+      return ((ask - bid) / bid) * 100;
+    } catch {
+      return null;
+    }
+  },
+
   async placeMarketBuy(env, symbol, quoteUsdt) {
     const order = await this.signedRequest(env, '/api/v3/order', { symbol, side: 'BUY', type: 'MARKET', quoteOrderQty: quoteUsdt.toFixed(2) }, 'POST');
     const qty = parseFloat(order.executedQty);
@@ -190,6 +204,25 @@ const krakenAdapter = {
     const key = Object.keys(data.result || {})[0];
     const ordermin = key && data.result[key] ? parseFloat(data.result[key].ordermin) : null;
     return ordermin && referencePreis ? ordermin * referencePreis : null;
+  },
+
+  // Bid/Ask-Spread in Prozent - null bei Fehler (Filter dann nicht
+  // blockierend, siehe Aufrufstelle in runSymbol).
+  async getSpreadProzent(symbol) {
+    try {
+      const res = await fetch(`${this.baseUrl}/0/public/Ticker?pair=${symbol}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (data.error && data.error.length) return null;
+      const key = Object.keys(data.result || {})[0];
+      const t = key && data.result[key];
+      const ask = t && parseFloat(t.a[0]);
+      const bid = t && parseFloat(t.b[0]);
+      if (!ask || !bid) return null;
+      return ((ask - bid) / bid) * 100;
+    } catch {
+      return null;
+    }
   },
 
   async placeMarketBuy(env, symbol, quoteUsdt, referencePreis) {
@@ -572,6 +605,15 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       }
     }
 
+    if (kauf && cfg.spreadFilter) {
+      const spreadProzent = await exchange.getSpreadProzent(symbol);
+      if (spreadProzent !== null && spreadProzent > cfg.spreadMaxProzent) {
+        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - Bid/Ask-Spread bei ${spreadProzent.toFixed(2)}% (Schwelle ${cfg.spreadMaxProzent}%), Liquidität wirkt gerade gestört.`);
+        await saveState(env, symbol, state);
+        return;
+      }
+    }
+
     if (kauf) {
       const { investBetrag } = kauf;
       const minNotional = await exchange.getMinNotionalUsdt(symbol, preis);
@@ -635,7 +677,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
 
 // Einmal pro Kalendertag eine WhatsApp-Zusammenfassung über alle Symbole,
 // statt dass man selbst das Dashboard aufrufen muss, um zu sehen ob alles
-// normal läuft. Läuft "nebenbei" im ohnehin alle 15 Minuten laufenden Cron -
+// normal läuft. Läuft "nebenbei" im ohnehin alle 5 Minuten laufenden Cron -
 // verschickt aber wirklich nur einmal pro Tag (KV-Marke digest:letzterTag).
 async function pruefeUndSendeTagesZusammenfassung(env, cfg) {
   const heuteStr = heute();
@@ -688,6 +730,8 @@ async function pruefeUndSendeWochenZusammenfassung(env, cfg) {
   let gesamtKapitalJetzt = 0, gesamtStartKapital = 0;
   const proSymbolPL = [];
   const allTradesDieseWoche = [];
+  const alleTradesLifetime = [];
+  const symboleFuerReadiness = [];
   const proStrategiePL = {}; // strategie -> { plDieseWoche, anzahlTrades }
   for (const symbol of cfg.symbols) {
     const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
@@ -697,6 +741,8 @@ async function pruefeUndSendeWochenZusammenfassung(env, cfg) {
     const plDieseWoche = tradesDieseWoche.reduce((sum, t) => sum + t.gewinnVerlustUsdt, 0);
     proSymbolPL.push({ symbol, plDieseWoche, anzahlTrades: tradesDieseWoche.length });
     allTradesDieseWoche.push(...tradesDieseWoche);
+    alleTradesLifetime.push(...(state.trades || []));
+    symboleFuerReadiness.push({ kapital: state.kapital, startKapital: state.startKapital, killSwitchAktiv: state.killSwitchAktiv });
 
     const strategie = cfg.strategieProSymbol[symbol] || cfg.strategie;
     if (!proStrategiePL[strategie]) proStrategiePL[strategie] = { plDieseWoche: 0, anzahlTrades: 0 };
@@ -728,6 +774,10 @@ async function pruefeUndSendeWochenZusammenfassung(env, cfg) {
       zeilen.push(`  ${strategie}: ${werte.plDieseWoche >= 0 ? '+' : ''}${werte.plDieseWoche.toFixed(2)} USDT (${werte.anzahlTrades} Trades)`);
     }
   }
+
+  const readiness = berechneReadiness(symboleFuerReadiness, alleTradesLifetime);
+  const readinessEmoji = { rot: '🔴', gelb: '🟡', gruen: '🟢' }[readiness.ampel];
+  zeilen.push(`${readinessEmoji} Echtgeld-Readiness: ${readiness.ampel.toUpperCase()} - ${readiness.grund}`);
 
   await notifyWhatsapp(env, zeilen.join('\n'));
   await env.TRADING_STATE.put('digest:letzteWoche', aktuelleWoche);
@@ -812,6 +862,17 @@ function readConfig(env) {
     performanceSizing: (env.TRADING_PERFORMANCE_SIZING || 'nein') === 'ja',
     performanceSizingMinFaktor: parseFloat(env.TRADING_PERFORMANCE_SIZING_MIN_FAKTOR || '0.5'),
     performanceSizingMinTrades: parseInt(env.TRADING_PERFORMANCE_SIZING_MIN_TRADES || '5', 10),
+    // Default AUS, damit ein bereits laufendes Setup nicht ungefragt anders
+    // handelt. Kein externer API-Call - nutzt dieselben Kerzen wie die
+    // Strategie selbst.
+    flashCrashFilter: (env.TRADING_FLASH_CRASH_FILTER || 'nein') === 'ja',
+    flashCrashFensterKerzen: parseInt(env.TRADING_FLASH_CRASH_FENSTER_KERZEN || '4', 10),
+    flashCrashMaxDropProzent: parseFloat(env.TRADING_FLASH_CRASH_MAX_DROP_PROZENT || '8'),
+    // Spread-Filter: verwirft einen Kauf, wenn der Bid/Ask-Spread an der
+    // Börse gerade ungewöhnlich breit ist (dünne/gestörte Liquidität - oft
+    // ein Begleitsymptom eines Flash-Crashs oder Börsenproblems).
+    spreadFilter: (env.TRADING_SPREAD_FILTER || 'nein') === 'ja',
+    spreadMaxProzent: parseFloat(env.TRADING_SPREAD_MAX_PROZENT || '1'),
   };
 }
 
@@ -868,9 +929,47 @@ function berechneTradeStats(trades) {
   };
 }
 
+// Grobe Ampel-Einschätzung, ob der Paper-Bot bisher "reif genug" für
+// Echtgeld WIRKT - KEINE Finanzberatung, KEINE Erfolgsgarantie, nur ein
+// Hinweis basierend auf den bisherigen eigenen Paper-Zahlen. Nutzt bewusst
+// NUR Daten, die der Bot selbst schon hat (kein neuer API-Call): Anzahl
+// abgeschlossener Trades, Gesamt-Win-Rate, Gesamt-P&L, ob irgendein Symbol
+// gerade seinen Kill-Switch ausgelöst hat. Ein aktiver Kill-Switch ist
+// IMMER Rot, unabhängig von allem anderen - das war ein echter Verlust bis
+// zur konfigurierten Grenze.
+function berechneReadiness(symbole, alleTrades) {
+  const anzahlTrades = alleTrades.length;
+  const gewinnTradesGesamt = alleTrades.filter((t) => t.gewinnVerlustUsdt > 0).length;
+  const winRateProzent = anzahlTrades > 0 ? (gewinnTradesGesamt / anzahlTrades) * 100 : null;
+  const gesamtKapital = symbole.reduce((sum, s) => sum + s.kapital, 0);
+  const gesamtStartKapital = symbole.reduce((sum, s) => sum + s.startKapital, 0);
+  const gesamtProzent = gesamtStartKapital > 0 ? ((gesamtKapital - gesamtStartKapital) / gesamtStartKapital) * 100 : 0;
+  const killSwitchAktiv = symbole.some((s) => s.killSwitchAktiv);
+
+  let ampel, grund;
+  if (killSwitchAktiv) {
+    ampel = 'rot';
+    grund = 'Mindestens ein Symbol hat gerade seinen Kill-Switch ausgelöst (Gesamtverlust-Grenze erreicht).';
+  } else if (anzahlTrades < 10) {
+    ampel = 'rot';
+    grund = `Erst ${anzahlTrades} abgeschlossene Trades - zu wenig Daten für eine verlässliche Einschätzung (Richtwert: mind. 30).`;
+  } else if (gesamtProzent < 0) {
+    ampel = 'rot';
+    grund = `Insgesamt im Minus (${gesamtProzent.toFixed(1)}%) - noch nicht bereit für Echtgeld.`;
+  } else if (anzahlTrades < 30 || (winRateProzent !== null && winRateProzent < 50)) {
+    ampel = 'gelb';
+    grund = `${anzahlTrades} Trades, Win-Rate ${winRateProzent !== null ? winRateProzent.toFixed(0) : '–'}% - positiv, aber noch nicht genug Daten oder Trefferquote für eine klare Empfehlung.`;
+  } else {
+    ampel = 'gruen';
+    grund = `${anzahlTrades} Trades, Win-Rate ${winRateProzent.toFixed(0)}%, Gesamt ${gesamtProzent >= 0 ? '+' : ''}${gesamtProzent.toFixed(1)}% - wirkt nach bisherigen Paper-Zahlen reif für einen vorsichtigen Echtgeld-Test.`;
+  }
+  return { ampel, grund, anzahlTrades, winRateProzent, gesamtProzent, hinweis: 'Keine Finanzberatung, keine Erfolgsgarantie - nur eine grobe Einschätzung aus den bisherigen Paper-Zahlen.' };
+}
+
 async function buildStatus(env) {
   const cfg = readConfig(env);
   const symbole = [];
+  const alleTrades = [];
   for (const symbol of cfg.symbols) {
     const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
     symbole.push({
@@ -885,8 +984,15 @@ async function buildStatus(env) {
       killSwitchAktiv: state.killSwitchAktiv,
       tradeStats: berechneTradeStats(state.trades || []),
     });
+    alleTrades.push(...(state.trades || []));
   }
-  return { updatedAt: new Date().toISOString(), exchange: cfg.exchange, paperModus: cfg.paperModus, symbole };
+  return {
+    updatedAt: new Date().toISOString(),
+    exchange: cfg.exchange,
+    paperModus: cfg.paperModus,
+    readiness: berechneReadiness(symbole, alleTrades),
+    symbole,
+  };
 }
 
 export default {

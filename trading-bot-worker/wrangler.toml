@@ -2,11 +2,12 @@ name = "cashmachine-trading-bot"
 main = "worker.js"
 compatibility_date = "2025-01-01"
 
-# Läuft alle 15 Minuten - wie der GitHub-Actions-Bot vorher, nur eben von
-# Cloudflares Edge-Netzwerk aus statt aus einem von Binance blockierten
-# GitHub-Actions-IP-Bereich.
+# Läuft alle 5 Minuten (früher alle 15) - reagiert schneller auf neu
+# geschlossene 15m-Kerzen (bis zu 10 Min weniger Verzögerung zwischen
+# Kerze und Reaktion), statt aus einem von Binance blockierten
+# GitHub-Actions-IP-Bereich wie vorher.
 [triggers]
-crons = ["*/15 * * * *"]
+crons = ["*/5 * * * *"]
 
 # State pro Symbol (Kapital, offene Position, Kill-Switch). Nach dem Erstellen
 # via `wrangler kv namespace create TRADING_STATE` die zurückgegebene id hier
@@ -80,6 +81,21 @@ TRADING_PERFORMANCE_SIZING = "ja"
 TRADING_PERFORMANCE_SIZING_MIN_FAKTOR = "0.5"
 TRADING_PERFORMANCE_SIZING_MIN_TRADES = "5"
 
+# Flash-Crash-Schutz (kein API-Call, nutzt dieselben Kerzen wie die
+# Strategie): pausiert Käufe für ein Symbol, wenn der Kurs innerhalb der
+# letzten TRADING_FLASH_CRASH_FENSTER_KERZEN-Kerzen (Default 4 = 1h bei
+# 15m) bereits um mehr als TRADING_FLASH_CRASH_MAX_DROP_PROZENT gefallen ist -
+# eher ein Flash-Crash/Börsenfehler als eine normale Kaufgelegenheit.
+TRADING_FLASH_CRASH_FILTER = "ja"
+TRADING_FLASH_CRASH_FENSTER_KERZEN = "4"
+TRADING_FLASH_CRASH_MAX_DROP_PROZENT = "8"
+
+# Spread-Filter (kein extra API-Key, nutzt die ohnehin verbundene Börse):
+# verwirft einen Kauf, wenn der Bid/Ask-Spread gerade ungewöhnlich breit ist -
+# oft ein Begleitsymptom eines Flash-Crashs oder Börsenproblems.
+TRADING_SPREAD_FILTER = "ja"
+TRADING_SPREAD_MAX_PROZENT = "1"
+
 # Drei Strategien zur Wahl (Default "ema-crossover" = unverändertes Verhalten):
 # "bollinger-mean-reversion": kauft, wenn der Kurs unter das untere
 # Bollinger-Band fällt (überverkauft), verkauft beim Rücksprung zum
@@ -94,16 +110,23 @@ TRADING_PERFORMANCE_SIZING_MIN_TRADES = "5"
 # CASHMACHINE STRATEGY LAB (strategy-lab/ im Hauptrepo).
 TRADING_STRATEGIE = "bollinger-mean-reversion"
 TRADING_BOLLINGER_PERIODE = "20"
-TRADING_BOLLINGER_STDDEV = "2"
+# 1.5 statt 2 Standardabweichungen = engeres Band = löst öfter aus. Per
+# Backtest (90 Tage, alle 8 Coins) geprüft: deutlich mehr Trades bei
+# gleicher oder besserer Win-Rate ggü. 2 (z.B. ETH: 12→18 Trades, Win-Rate
+# 66,7%→77,8%; BTC: 11→15 Trades, Win-Rate 81,8%→80,0%).
+TRADING_BOLLINGER_STDDEV = "1.5"
 TRADING_DONCHIAN_ENTRY_PERIODE = "20"
 TRADING_DONCHIAN_EXIT_PERIODE = "10"
 
-# Live-Vergleich: statt alle 8 Coins mit der gleichen Strategie laufen zu
-# lassen, fährt jede Dreiergruppe eine andere Strategie - im Dashboard sieht
-# man dann pro Coin, welche Strategie läuft und wer am meisten Kapital
-# gewinnt. TRADING_STRATEGIE (oben) bleibt der Fallback für jeden Coin, der
-# hier nicht aufgeführt ist.
-TRADING_STRATEGIE_PRO_SYMBOL = "XBTUSDT:bollinger-mean-reversion,ETHUSDT:bollinger-mean-reversion,SOLUSDT:bollinger-mean-reversion,XRPUSDT:donchian-breakout,ADAUSDT:donchian-breakout,DOGEUSDT:donchian-breakout,DOTUSDT:ema-crossover,LTCUSDT:ema-crossover"
+# War früher ein Live-Vergleich (jede Dreiergruppe eine andere Strategie).
+# Per Backtest (90 Tage, alle 8 Coins) klar entschieden: bollinger-mean-
+# reversion schlägt donchian-breakout/ema-crossover auf 7 von 8 Coins
+# deutlich (z.B. XRP: -0,5% Return/18,2% Win-Rate mit donchian vs. +0,6%/85%
+# mit bollinger; ADA: -1,9%/28,6% vs. +1,67%/85%; LTC: -0,54%/17,6% mit ema
+# vs. +0,31%/84,2% mit bollinger). Deshalb jetzt leer - alle Coins nutzen
+# den Fallback TRADING_STRATEGIE (oben) statt einer schlechter laufenden
+# Alternative. Format zum späteren Wiederaktivieren: "XBTUSDT:donchian-breakout,...".
+TRADING_STRATEGIE_PRO_SYMBOL = ""
 
 # Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
 #   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)
