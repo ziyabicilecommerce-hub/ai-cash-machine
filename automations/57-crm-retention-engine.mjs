@@ -11,6 +11,9 @@
 // wertvollsten At-Risk-Kunden geht zusätzlich eine SMS raus (optional, Twilio)
 // - die erste SMS-Fähigkeit in der Suite, bewusst nur für die wichtigsten
 // Fälle reserviert, nicht für Massenversand.
+import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { config, isTestMode } from './lib/config.mjs';
 import { getCustomers, getOrdersSince } from './lib/shopify.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
@@ -18,6 +21,9 @@ import { sendEmail } from './lib/email.mjs';
 import { sendeSms } from './lib/sms.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { loadState, saveState } from './lib/state.mjs';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const COMMAND_DIR = join(__dirname, '..', 'command');
 
 const STATE_NAME = 'crm-retention-state';
 const KONTAKT_ABSTAND_TAGE = 90;
@@ -69,6 +75,44 @@ function segmentiere(kunden, letzteBestellDaten, atRiskTage, vipUmsatzSchwelle) 
     else segmente.treuAktiv.push(k);
   }
   return segmente;
+}
+
+// Veröffentlicht NUR Aggregate + Vorname (kein voller Kundendatensatz) fürs
+// Command-Dashboard - echte LTV-Segmentierung sichtbar machen, ohne mehr
+// Kundendaten öffentlich preiszugeben als für "wer/wie viele/wie wertvoll"
+// nötig ist. Segment-Reihenfolge nach Wichtigkeit fürs Geschäft.
+function veroeffentlicheSegmente(segmente, atRiskTage, vipUmsatzSchwelle, angeschrieben) {
+  function fasseZusammen(kunden, topN = 8) {
+    const gesamtUmsatz = kunden.reduce((s, k) => s + parseFloat(k.total_spent || 0), 0);
+    const top = [...kunden]
+      .sort((a, b) => parseFloat(b.total_spent || 0) - parseFloat(a.total_spent || 0))
+      .slice(0, topN)
+      .map((k) => ({
+        vorname: k.first_name || 'Kunde',
+        umsatz: Number(parseFloat(k.total_spent || 0).toFixed(2)),
+        bestellungen: parseInt(k.orders_count || 0, 10),
+      }));
+    return { anzahl: kunden.length, gesamtUmsatz: Number(gesamtUmsatz.toFixed(2)), top };
+  }
+
+  if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
+  writeFileSync(
+    join(COMMAND_DIR, 'customer-segmente.json'),
+    JSON.stringify({
+      updatedAt: new Date().toISOString(),
+      atRiskTageSchwelle: atRiskTage,
+      vipUmsatzSchwelle,
+      diesenLaufKontaktiert: angeschrieben,
+      segmente: {
+        vip: fasseZusammen(segmente.vip),
+        atRisk: fasseZusammen(segmente.atRisk),
+        treuAktiv: fasseZusammen(segmente.treuAktiv, 0),
+        neu: fasseZusammen(segmente.neu, 0),
+        einmalig: fasseZusammen(segmente.einmalig, 0),
+        ruhend: fasseZusammen(segmente.ruhend, 0),
+      },
+    }, null, 2)
+  );
 }
 
 async function main() {
@@ -142,6 +186,8 @@ Antworte NUR mit validem JSON, ohne Markdown:
       console.error(`[57-crm-retention-engine] Kunde ${k.id} fehlgeschlagen, wird beim nächsten Lauf erneut versucht:`, err.message || err);
     }
   }
+
+  veroeffentlicheSegmente(segmente, atRiskTage, vipUmsatzSchwelle, angeschrieben);
 
   const digest = [
     `❤️ *CRM & Retention Engine* - wöchentlicher Kundenstamm-Überblick`,
