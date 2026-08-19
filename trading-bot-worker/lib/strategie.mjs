@@ -82,6 +82,21 @@ export function donchianKanal(highs, lows, index, period) {
   return { oben, unten };
 }
 
+// Wie stark ist der Kurs seit dem höchsten Hoch der letzten fensterKerzen-
+// Kerzen bereits gefallen? Negativer Wert = Rückgang in Prozent. Eigene,
+// exportierte Funktion statt nur inline in berechneIndikatoren, damit
+// worker.js dieselbe Logik auch marktweit (auf BTCs eigenen Kerzen statt nur
+// pro Symbol) für den marktweiten Crash-Filter nutzen kann - siehe
+// TRADING_MARKTWEITER_CRASH_FILTER.
+export function berechneFlashCrashDropProzent(closes, highs, fensterKerzen) {
+  const n = closes.length;
+  const fenster = Math.max(1, fensterKerzen || 4);
+  const start = Math.max(0, n - 1 - fenster);
+  const juengstesHoch = Math.max(...highs.slice(start, n));
+  const preis = closes[n - 1];
+  return juengstesHoch > 0 ? ((preis - juengstesHoch) / juengstesHoch) * 100 : 0;
+}
+
 // Berechnet aus einem Fenster von Kerzen (closes/highs/lows, letzter Eintrag
 // = aktuelle Kerze) alle für die Entscheidung nötigen Indikator-Werte, für
 // alle drei unterstützten Strategien (cfg.strategie: 'ema-crossover'
@@ -105,10 +120,7 @@ export function berechneIndikatoren(closes, highs, lows, cfg) {
   // Kerzen, die ohnehin schon geladen sind) - wichtig gerade bei
   // bollinger-mean-reversion, das "überverkauft" sonst genau in einem
   // Flash-Crash/Börsenfehler als Kaufsignal missverstehen könnte.
-  const flashFenster = Math.max(1, cfg.flashCrashFensterKerzen || 4);
-  const flashStart = Math.max(0, n - 1 - flashFenster);
-  const juengstesHoch = Math.max(...highs.slice(flashStart, n));
-  const flashCrashDropProzent = juengstesHoch > 0 ? ((preis - juengstesHoch) / juengstesHoch) * 100 : 0;
+  const flashCrashDropProzent = berechneFlashCrashDropProzent(closes, highs, cfg.flashCrashFensterKerzen);
 
   const ergebnis = {
     crossUp: diffVorher <= 0 && diffJetzt > 0,

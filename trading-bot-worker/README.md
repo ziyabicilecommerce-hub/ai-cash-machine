@@ -272,6 +272,18 @@ für diesen Lauf):
   Flash-Crashs oder Börsenproblems (dünne/gestörte Liquidität). Fragt
   direkt die ohnehin verbundene Börse ab (Kraken oder Binance), kein
   zusätzlicher Key nötig.
+- **`TRADING_MARKTWEITER_CRASH_FILTER`** (`ja`/`nein`, Default `ja`) +
+  `TRADING_MARKTWEITER_CRASH_FENSTER_KERZEN` (Default `4`) +
+  `TRADING_MARKTWEITER_CRASH_MAX_DROP_PROZENT` (Default `10`): marktweite
+  Erweiterung des Flash-Crash-Filters — crasht **BTC selbst** innerhalb des
+  Fensters um mehr als die Schwelle, werden Käufe für **alle** konfigurierten
+  Coins in diesem Lauf pausiert, nicht nur für BTC. Altcoins fallen in einem
+  BTC-getriebenen Panik-Moment erfahrungsgemäß mit, oft sogar stärker als
+  BTC selbst. Braucht einen zusätzlichen Klines-Abruf pro Lauf (einmal, nicht
+  pro Symbol), keinen externen API-Key. Nutzt dieselbe, bereits verifizierte
+  Berechnung wie der Pro-Symbol-Filter, nur auf BTCs eigenen Kerzen. Löst
+  EINE WhatsApp-Warnung pro Lauf aus (nicht pro Coin), und wird im Control
+  Center als 🛑 Marktweiter Crash-Schutz angezeigt.
 
 ## News-Sentiment-Filter (optional, braucht kostenlosen API-Key)
 

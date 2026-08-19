@@ -24,7 +24,7 @@
 // damit ein bereits laufender Bot durch ein Update nicht plötzlich anders
 // handelt, ohne dass das bewusst konfiguriert wurde.
 
-import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from './lib/strategie.mjs';
+import { berechneIndikatoren, entscheideKauf, entscheideVerkauf, berechneFlashCrashDropProzent } from './lib/strategie.mjs';
 import { EXCHANGES } from './lib/exchanges.mjs';
 import { COINGECKO_IDS, ladePreisBestaetigung24h, ladeFearGreedIndex, ladeBtcDominanzProzent, hoehererZeitrahmenIstAufwaerts, ladeNewsSentimentProzent } from './lib/marktdaten.mjs';
 import { notifyWhatsapp } from './lib/notify.mjs';
@@ -35,7 +35,7 @@ import { readConfig } from './lib/config.mjs';
 
 // ================= HANDELSLOGIK =================
 
-async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, fearGreedWert, btcDominanzProzent) {
+async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, fearGreedWert, btcDominanzProzent, marktweiterCrashAktiv) {
   const exchange = EXCHANGES[cfg.exchange];
   let state = await loadState(env, symbol, startKapital);
 
@@ -70,6 +70,16 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute, kuerzlicheTrades: state.trades,
       jetztZeitstempel: Date.now(), cooldownBisZeitstempel: state.cooldownBisZeitstempel || null,
     });
+
+    // Marktweiter Crash-Schutz zuerst (härtester, globalster Filter) - wenn
+    // BTC selbst gerade hart crasht, macht es keinen Unterschied mehr, was
+    // die Coin-eigenen Indikatoren sagen. Kein einzelnes WhatsApp pro Coin
+    // hier (würde bei 8 Symbolen 8x dieselbe Nachricht spammen) - der Alarm
+    // dazu kommt einmalig aus runAll.
+    if (kauf && cfg.marktweiterCrashFilter && marktweiterCrashAktiv) {
+      await saveState(env, symbol, state);
+      return;
+    }
 
     if (kauf && cfg.mtfFilter) {
       const aufwaerts = await hoehererZeitrahmenIstAufwaerts(exchange, symbol, cfg);
@@ -237,12 +247,37 @@ async function runAll(env) {
   // Coins in diesem Lauf.
   const fearGreedWert = cfg.fngFilter ? await ladeFearGreedIndex() : null;
   const btcDominanzProzent = cfg.btcDominanzFilter ? await ladeBtcDominanzProzent() : null;
+
+  // Marktweiter Crash-Schutz: EIN zusätzlicher Klines-Abruf pro Lauf (nicht
+  // pro Symbol) für BTCs eigene Kerzen bei der konfigurierten Börse - crasht
+  // BTC hart, werden Käufe für ALLE Coins in diesem Lauf pausiert (siehe
+  // runSymbol). Findet sich kein BTC-Symbol in TRADING_SYMBOLS oder schlägt
+  // der Abruf fehl, bleibt der Filter einfach unwirksam (nicht blockierend).
+  let marktweiterCrashAktiv = false;
+  let marktweiterCrashDropProzent = null;
+  if (cfg.marktweiterCrashFilter) {
+    const btcSymbol = cfg.symbols.find((s) => COINGECKO_IDS[s] === 'bitcoin');
+    if (btcSymbol) {
+      try {
+        const { closes: btcCloses, highs: btcHighs } = await EXCHANGES[cfg.exchange].getKlines(btcSymbol);
+        marktweiterCrashDropProzent = berechneFlashCrashDropProzent(btcCloses, btcHighs, cfg.marktweiterCrashFensterKerzen);
+        marktweiterCrashAktiv = marktweiterCrashDropProzent <= -cfg.marktweiterCrashMaxDropProzent;
+      } catch (err) {
+        console.error('[trading-bot] Marktweiter-Crash-Check fehlgeschlagen:', err);
+      }
+    }
+  }
+  if (marktweiterCrashAktiv) {
+    await notifyWhatsapp(env, `🛑 Trading-Bot: Marktweiter Flash-Crash erkannt (BTC ${marktweiterCrashDropProzent.toFixed(1)}% in ${cfg.marktweiterCrashFensterKerzen} Kerzen) - Käufe für ALLE Coins in diesem Lauf pausiert.`);
+  }
+
   // Für /status zwischengespeichert statt bei jedem Dashboard-Aufruf erneut
   // extern abzufragen - siehe loadSystemInfo/saveSystemInfo in state.mjs.
   await saveSystemInfo(env, {
     letzterLauf: new Date().toISOString(),
     ...(cfg.fngFilter ? { fearGreedWert, fearGreedZeit: new Date().toISOString() } : {}),
     ...(cfg.btcDominanzFilter ? { btcDominanzProzent, btcDominanzZeit: new Date().toISOString() } : {}),
+    ...(cfg.marktweiterCrashFilter ? { marktweiterCrashAktiv, marktweiterCrashZeit: new Date().toISOString() } : {}),
   });
   for (const symbol of cfg.symbols) {
     try {
@@ -253,7 +288,7 @@ async function runAll(env) {
         ? { ...cfg, strategie: cfg.strategieProSymbol[symbol] }
         : cfg;
       const hatteVorherPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
-      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfgSymbol, offenePositionen, fearGreedWert, btcDominanzProzent);
+      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfgSymbol, offenePositionen, fearGreedWert, btcDominanzProzent, marktweiterCrashAktiv);
       const hatJetztPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
       if (!hatteVorherPosition && hatJetztPosition) offenePositionen++;
       if (hatteVorherPosition && !hatJetztPosition) offenePositionen--;
