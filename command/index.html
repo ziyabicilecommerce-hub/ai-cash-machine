@@ -1481,6 +1481,16 @@
   // "Warum" bei jeder Preis-Entscheidung - nicht nur "Preis geändert", sondern
   // Grund, Risiko-Einschätzung und erwartete Auswirkung transparent daneben,
   // damit die Entscheidung nachvollziehbar ist statt eine Blackbox.
+  const WIRKUNG_TEXT = {
+    verkauft_weiterhin: { label: '✅ verkauft sich weiterhin', klasse: 'risiko-niedrig' },
+    verkaeufe_gestoppt: { label: '⚠️ Verkäufe seitdem gestoppt', klasse: 'risiko-mittel' },
+    verkauft_jetzt: { label: '✅ verkauft sich jetzt wieder', klasse: 'risiko-niedrig' },
+    weiterhin_keine_verkaeufe: { label: '⚠️ weiterhin keine Verkäufe', klasse: 'risiko-mittel' },
+  };
+
+  // Zeigt, ob eine AUSGEFÜHRTE Preisänderung im Vergleichszeitraum danach
+  // wirklich etwas bewirkt hat - der Unterschied zwischen "hat empfohlen und
+  // vergessen" und einem System, das die eigenen Entscheidungen überprüft.
   function renderPricingHistorie(data) {
     const el = document.getElementById('pricingHistorieContent');
     const historie = (data && data.historie) || [];
@@ -1489,7 +1499,16 @@
         emptyHtml('🧮', 'Noch keine Preis-Entscheidung', 'Erscheint, sobald der Pricing-Agent (#61) eine Preisänderung empfiehlt oder ausführt.');
       return;
     }
-    const rows = historie.slice(0, 15).map((a) => `
+    const bilanz = data.erfolgsBilanz;
+    const bilanzHtml = bilanz && bilanz.ausgewertet
+      ? `<p class="note" style="margin-bottom:14px;">🎯 Erfolgs-Check: von ${bilanz.ausgewertet} ausgewerteten Entscheidungen zeigten ${bilanz.positiv} weiterhin echte Verkäufe, ${bilanz.brauchtBlick} brauchen einen Blick (Verkäufe seitdem gestoppt bzw. weiterhin 0).</p>`
+      : '';
+    const rows = historie.slice(0, 15).map((a) => {
+      const wirkung = a.ausgewertet && WIRKUNG_TEXT[a.wirkung];
+      const wirkungRow = wirkung
+        ? `<div><b>SEITDEM PASSIERT</b><span class="${wirkung.klasse}">${wirkung.label} (${a.tatsaechlicheVerkaeufeSeitAenderung}x, ${a.tatsaechlicherUmsatzSeitAenderung.toFixed(2)} €)</span></div>`
+        : a.ausgefuehrt ? `<div><b>SEITDEM PASSIERT</b><span>wird in ${Math.max(0, 14 - Math.floor((Date.now() - new Date(a.datum).getTime()) / 86400000))} Tag(en) geprüft</span></div>` : '';
+      return `
       <div class="why-row">
         <div class="why-top">
           <div class="why-preis">${a.name}: ${a.alt.toFixed(2)} €<span class="arrow">→</span>${a.neu.toFixed(2)} €</div>
@@ -1499,10 +1518,12 @@
           <div><b>GRUND</b><span>${a.grund}</span></div>
           <div><b>RISIKO</b><span class="risiko-${a.risiko}">${a.risiko === 'niedrig' ? 'niedrig' : 'mittel'}</span></div>
           <div><b>ERWARTETE AUSWIRKUNG</b><span>${a.erwarteteAuswirkung}</span></div>
+          ${wirkungRow}
         </div>
         <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(a.datum)}</div>
-      </div>`).join('');
-    el.innerHTML = `<div class="section-title-inline">🧮 PREIS-ENTSCHEIDUNGEN MIT BEGRÜNDUNG</div>${rows}`;
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div class="section-title-inline">🧮 PREIS-ENTSCHEIDUNGEN MIT BEGRÜNDUNG</div>${bilanzHtml}${rows}`;
   }
 
   // "Warum" bei jedem Split-Test-Ergebnis (#88) - echtes A/B-Testing zwischen
@@ -1818,6 +1839,10 @@
     if (preisHistorie.length) {
       const p = preisHistorie[0];
       teile.push(`LETZTE PREIS-ENTSCHEIDUNG (Pricing-Agent #61, ${fmtDatumKurz(p.datum)}): ${p.name} ${p.alt.toFixed(2)}€ → ${p.neu.toFixed(2)}€ (${p.ausgefuehrt ? 'live geändert' : 'nur empfohlen'}). Grund: ${p.grund}`);
+    }
+    const preisBilanz = c.pricingHistorie && c.pricingHistorie.erfolgsBilanz;
+    if (preisBilanz && preisBilanz.ausgewertet) {
+      teile.push(`ERFOLGS-CHECK PRICING-AGENT: Von ${preisBilanz.ausgewertet} ausgewerteten Preisänderungen zeigten ${preisBilanz.positiv} danach weiterhin echte Verkäufe, ${preisBilanz.brauchtBlick} brauchen einen Blick (Verkäufe seitdem gestoppt oder weiterhin 0). Das System prüft eigene Entscheidungen also gegen echte Verkaufsdaten nach, statt nur zu empfehlen und zu vergessen.`);
     }
 
     const splitHistorie = (c.splitTest && c.splitTest.historie) || [];

@@ -30,8 +30,64 @@ const WHATSAPP_MAX_CHARS = 3500;
 const VERKAUFSTEMPO_TAGE = 14;
 const STATE_KEY = '61-pricing-agent';
 const MAX_HISTORIE = 60;
+// Wartezeit, bevor eine AUSGEFÜHRTE Preisänderung gegen echte Verkaufsdaten
+// ausgewertet wird - erst danach ist ein voller Vergleichszeitraum (gleich
+// lang wie das ursprüngliche Verkaufstempo-Fenster) vergangen. Das ist der
+// Unterschied zwischen einem Tool, das nur empfiehlt und vergisst, und
+// einem System, das prüft, ob die eigene Entscheidung wirklich half.
+const AUSWERTUNG_WARTETAGE = 14;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const COMMAND_DIR = join(__dirname, '..', 'command');
+
+function tageSeit(datumStr) {
+  return (Date.now() - new Date(datumStr).getTime()) / (1000 * 3600 * 24);
+}
+
+// Prüft AUSGEFÜHRTE (nicht nur empfohlene) Preisänderungen der letzten Läufe
+// gegen die echten Verkäufe IN GENAU DEM ZEITRAUM danach - keine erfundene
+// Kausalitäts-Behauptung ("der Preis hat X bewirkt"), nur die ehrliche
+// Beobachtung "hat sich seitdem verkauft oder nicht". Holt Bestell-Daten nur,
+// wenn wirklich etwas auszuwerten ist, um unnötige API-Calls zu vermeiden.
+async function werteVergangeneEntscheidungenAus(state) {
+  const faellig = state.historie.filter(
+    (e) => e.ausgefuehrt && !e.ausgewertet && tageSeit(e.datum) >= AUSWERTUNG_WARTETAGE
+  );
+  if (!faellig.length) return;
+
+  const aeltesteDatum = faellig.reduce((min, e) => (e.datum < min ? e.datum : min), faellig[0].datum);
+  let orders;
+  try {
+    orders = (await getOrdersSince(new Date(aeltesteDatum))).filter((o) => !o.cancelled_at);
+  } catch (err) {
+    console.error('[61-pricing-agent] Auswertung übersprungen, Bestellabruf fehlgeschlagen:', err.message);
+    return;
+  }
+
+  for (const e of faellig) {
+    const fensterEnde = new Date(new Date(e.datum).getTime() + AUSWERTUNG_WARTETAGE * 86400000);
+    let verkaeufe = 0;
+    let umsatz = 0;
+    for (const o of orders) {
+      const zeit = new Date(o.created_at);
+      if (zeit < new Date(e.datum) || zeit > fensterEnde) continue;
+      for (const li of o.line_items || []) {
+        if (String(li.variant_id) !== String(e.variantId)) continue;
+        verkaeufe += li.quantity;
+        umsatz += li.quantity * parseFloat(li.price || 0);
+      }
+    }
+    e.ausgewertet = true;
+    e.ausgewertetAm = new Date().toISOString();
+    e.tatsaechlicheVerkaeufeSeitAenderung = verkaeufe;
+    e.tatsaechlicherUmsatzSeitAenderung = Number(umsatz.toFixed(2));
+    if (e.richtung === 'hoch') {
+      e.wirkung = verkaeufe > 0 ? 'verkauft_weiterhin' : 'verkaeufe_gestoppt';
+    } else {
+      e.wirkung = verkaeufe > 0 ? 'verkauft_jetzt' : 'weiterhin_keine_verkaeufe';
+    }
+  }
+  console.log(`[61-pricing-agent] ${faellig.length} vergangene Entscheidung(en) ausgewertet.`);
+}
 
 async function ermittleKosten(variante, preis) {
   if (variante.inventory_item_id) {
@@ -124,11 +180,17 @@ async function main() {
   const state = loadState(STATE_KEY);
   state.historie = state.historie || [];
 
+  await werteVergangeneEntscheidungenAus(state);
+  saveState(STATE_KEY, state);
+
   function veroeffentliche() {
     if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
+    const ausgewertet = state.historie.filter((e) => e.ausgewertet);
+    const positiv = ausgewertet.filter((e) => e.wirkung === 'verkauft_weiterhin' || e.wirkung === 'verkauft_jetzt');
     writeFileSync(join(COMMAND_DIR, 'pricing-agent.json'), JSON.stringify({
       updatedAt: new Date().toISOString(),
       historie: state.historie,
+      erfolgsBilanz: { ausgewertet: ausgewertet.length, positiv: positiv.length, brauchtBlick: ausgewertet.length - positiv.length },
     }, null, 2));
   }
 
