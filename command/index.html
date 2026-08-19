@@ -284,6 +284,36 @@
   .risiko-niedrig { color:var(--green); }
   .risiko-mittel { color:var(--amber); }
 
+  /* --- Trading-Tab (Live-Status aus dem eigenen trading-bot-worker) --- */
+  .trd-connect { background:var(--panel); border:1px dashed var(--line2); padding:22px; text-align:center; margin-bottom:16px; }
+  .trd-connect input { width:100%; max-width:420px; background:rgba(255,255,255,.04); border:1px solid var(--line2); color:var(--txt);
+    font-family:var(--mono); font-size:12.5px; padding:9px 12px; margin:6px 0; }
+  .trd-connect button { font-family:var(--mono); font-size:12px; letter-spacing:.05em; padding:9px 20px; margin-top:8px;
+    background:rgba(62,242,160,.12); border:1px solid var(--green); color:var(--green); cursor:pointer; }
+  .trd-connect button:hover { background:rgba(62,242,160,.22); }
+  .trd-readiness { padding:14px 18px; margin-bottom:16px; border:1px solid var(--line2); background:var(--panel); font-size:13px; }
+  .trd-readiness.rot { border-color:rgba(255,107,129,.4); }
+  .trd-readiness.gelb { border-color:rgba(255,197,92,.4); }
+  .trd-readiness.gruen { border-color:rgba(62,242,160,.4); }
+  .trd-readiness .trd-r-titel { font-family:var(--mono); font-weight:700; margin-bottom:4px; }
+  .trd-readiness .trd-r-hinweis { color:var(--mut2); font-size:11.5px; margin-top:4px; }
+  .trd-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin-bottom:16px; }
+  .trd-card { position:relative; background:var(--panel); border:1px solid var(--line2); padding:16px 18px; overflow:hidden; }
+  .trd-card.kill { border-color:rgba(255,107,129,.5); }
+  .trd-card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .trd-sym { font-family:'Orbitron',sans-serif; font-size:15px; letter-spacing:.03em; }
+  .trd-badge { font-family:var(--mono); font-size:10px; padding:3px 9px; border-radius:20px; }
+  .trd-badge.paper { color:var(--amber); background:rgba(255,197,92,.1); border:1px solid rgba(255,197,92,.35); }
+  .trd-badge.live { color:var(--red); background:rgba(255,107,129,.1); border:1px solid rgba(255,107,129,.4); }
+  .trd-row { display:flex; justify-content:space-between; font-size:12.5px; padding:5px 0; border-bottom:1px solid var(--line2); }
+  .trd-row:last-of-type { border-bottom:none; }
+  .trd-row span:first-child { color:var(--mut2); }
+  .trd-up { color:var(--green); }
+  .trd-down { color:var(--red); }
+  .trd-pos-tag { margin-top:10px; font-family:var(--mono); font-size:11px; padding:6px 10px; background:rgba(111,224,255,.08); border:1px solid rgba(111,224,255,.25); color:var(--cyan); }
+  .trd-pos-tag.empty { color:var(--mut2); background:transparent; border-color:var(--line2); }
+  .trd-kill-banner { margin-top:10px; font-family:var(--mono); font-size:11px; padding:8px 10px; background:rgba(255,107,129,.12); border:1px solid rgba(255,107,129,.4); color:var(--red); }
+
   /* --- Profit-Wasserfall --- */
   .waterfall-card { background:var(--panel); border:1px solid var(--line2); padding:6px 20px; margin-bottom:20px; }
   .wf-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; font-size:13px; border-bottom:1px solid var(--line2); }
@@ -429,6 +459,7 @@
   <button class="tab-btn" data-tab="belege">🧾 Belege</button>
   <button class="tab-btn" data-tab="recap">🎉 Recap</button>
   <button class="tab-btn" data-tab="autopilot">🚀 Autopilot</button>
+  <button class="tab-btn" data-tab="trading">📈 Trading</button>
   <button class="tab-btn" data-tab="tools">🧰 Alle Tools</button>
 </div>
 
@@ -525,6 +556,12 @@
   <div id="autopilotContent"></div>
   <div id="pricingHistorieContent"></div>
   <div id="splitTestContent"></div>
+</section>
+
+<section class="panel" id="panel-trading">
+  <div class="panel-title">Trading — Krypto-Bot live</div>
+  <p class="panel-desc">Live-Status direkt aus deinem eigenen <code>trading-bot-worker</code> (Cloudflare) — Kapital, P&L, offene Positionen, Kill-Switch. Rein lesend, dieselbe Verbindung wie im Trading Dashboard (einmal verbinden, überall sichtbar). Detaillierte Trade-Historie, CSV-Export und Backtesting bleiben im <a href="../trading-dashboard/" target="_blank" rel="noopener">vollen Trading Dashboard</a> — das bildet dieser Tab bewusst nicht nach.</p>
+  <div id="tradingContent"></div>
 </section>
 
 <section class="panel" id="panel-tools">
@@ -1370,6 +1407,104 @@
       </a>`).join('')}</div>`;
   }
 
+  // --- Trading (Live-Status aus dem eigenen trading-bot-worker) ---
+  // Nutzt dieselben localStorage-Schlüssel wie trading-dashboard/index.html:
+  // einmal dort (oder hier) verbunden, überall sichtbar. Rein lesend - der
+  // STATUS_READ_KEY im Worker kann laut worker.js keinen Trade auslösen.
+  const TRD_STORAGE_URL = 'cmx_trading_worker_url';
+  const TRD_STORAGE_KEY = 'cmx_trading_status_key';
+  const fmtUsdt = (n) => (n ?? 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' USDT';
+
+  function trdGetConn() {
+    return { url: localStorage.getItem(TRD_STORAGE_URL) || '', key: localStorage.getItem(TRD_STORAGE_KEY) || '' };
+  }
+
+  function trdRenderConnectForm(fehler) {
+    return `
+      <div class="trd-connect">
+        <div style="font-weight:700;margin-bottom:6px;">🔌 Noch nicht verbunden</div>
+        <p class="note" style="margin-bottom:10px;">Trägt dieselbe Worker-URL + <code>STATUS_READ_KEY</code> ein wie im <a href="../trading-dashboard/" target="_blank" rel="noopener">Trading Dashboard</a> — beide Seiten teilen sich die Verbindung im Browser.</p>
+        ${fehler ? `<p style="color:var(--red);margin-bottom:10px;">${fehler}</p>` : ''}
+        <input type="text" id="trdUrlInput" placeholder="https://cashmachine-trading-bot.dein-account.workers.dev">
+        <input type="text" id="trdKeyInput" placeholder="STATUS_READ_KEY">
+        <br><button id="trdConnectBtn">Verbinden</button>
+      </div>`;
+  }
+
+  function trdRenderReadiness(readiness) {
+    if (!readiness) return '';
+    const emoji = { rot: '🔴', gelb: '🟡', gruen: '🟢' }[readiness.ampel] || '⚪';
+    const titel = { rot: 'NICHT BEREIT FÜR ECHTGELD', gelb: 'NOCH BEOBACHTEN', gruen: 'WIRKT BEREIT FÜR EINEN VORSICHTIGEN TEST' }[readiness.ampel] || '';
+    return `
+      <div class="trd-readiness ${readiness.ampel}">
+        <div class="trd-r-titel">${emoji} Echtgeld-Readiness: ${titel}</div>
+        <div>${readiness.grund}</div>
+        <div class="trd-r-hinweis">${readiness.hinweis}</div>
+      </div>`;
+  }
+
+  function trdRenderCards(data) {
+    return `<div class="trd-grid">${data.symbole.map((s) => {
+      const pnl = s.kapital - s.startKapital;
+      const pnlProzent = s.startKapital ? (pnl / s.startKapital) * 100 : 0;
+      const pnlCls = pnl >= 0 ? 'trd-up' : 'trd-down';
+      return `
+        <div class="trd-card ${s.killSwitchAktiv ? 'kill' : ''}">
+          <div class="trd-card-top">
+            <span class="trd-sym">${s.symbol}</span>
+            <span class="trd-badge ${s.paperModus ? 'paper' : 'live'}">${s.paperModus ? 'PAPER' : 'LIVE'}</span>
+          </div>
+          <div class="trd-row"><span>Börse</span><span>${s.exchange || '–'}</span></div>
+          ${s.strategie ? `<div class="trd-row"><span>Strategie</span><span>${s.strategie}</span></div>` : ''}
+          <div class="trd-row"><span>Kapital</span><span>${fmtUsdt(s.kapital)}</span></div>
+          <div class="trd-row"><span>P&amp;L gesamt</span><span class="${pnlCls}">${pnl >= 0 ? '+' : ''}${fmtUsdt(pnl)} (${pnlProzent >= 0 ? '+' : ''}${pnlProzent.toFixed(1)}%)</span></div>
+          <div class="trd-row"><span>Verlust heute</span><span class="${s.heutigerVerlustUsdt < 0 ? 'trd-down' : ''}">${fmtUsdt(s.heutigerVerlustUsdt)}</span></div>
+          ${s.tradeStats && s.tradeStats.anzahlTrades > 0 ? `
+          <div class="trd-row"><span>Win-Rate (letzte ${s.tradeStats.anzahlTrades})</span><span class="${s.tradeStats.winRateProzent >= 50 ? 'trd-up' : 'trd-down'}">${s.tradeStats.winRateProzent.toFixed(0)}%</span></div>` : ''}
+          ${s.position
+            ? `<div class="trd-pos-tag">Position offen @ ${Number(s.position.entryPreis).toFixed(2)} · ${Number(s.position.qty).toFixed(6)} Stück</div>`
+            : `<div class="trd-pos-tag empty">Keine offene Position</div>`}
+          ${s.killSwitchAktiv ? `<div class="trd-kill-banner">🛑 KILL-SWITCH AKTIV — Bot handelt dieses Symbol nicht mehr</div>` : ''}
+        </div>`;
+    }).join('')}</div>`;
+  }
+
+  async function ladeTrading() {
+    const el = document.getElementById('tradingContent');
+    const conn = trdGetConn();
+    if (!conn.url || !conn.key) { el.innerHTML = trdRenderConnectForm(); trdBindConnectForm(); return; }
+    try {
+      const res = await fetch(`${conn.url}/status?key=${encodeURIComponent(conn.key)}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error('status ' + res.status);
+      const data = await res.json();
+      el.innerHTML = `
+        <p class="note" style="margin-bottom:14px;">Aktualisiert: ${new Date(data.updatedAt).toLocaleTimeString('de-DE')} · <a href="#" id="trdReconnectLink">Verbindung ändern</a></p>
+        ${trdRenderReadiness(data.readiness)}
+        ${trdRenderCards(data)}`;
+      const link = document.getElementById('trdReconnectLink');
+      if (link) link.addEventListener('click', (e) => { e.preventDefault(); el.innerHTML = trdRenderConnectForm(); trdBindConnectForm(); });
+    } catch (err) {
+      el.innerHTML = trdRenderConnectForm('Verbindung fehlgeschlagen — Worker-URL oder STATUS_READ_KEY prüfen, oder der Worker ist gerade nicht erreichbar.');
+      trdBindConnectForm();
+    }
+  }
+
+  function trdBindConnectForm() {
+    const btn = document.getElementById('trdConnectBtn');
+    if (!btn) return;
+    const conn = trdGetConn();
+    document.getElementById('trdUrlInput').value = conn.url;
+    document.getElementById('trdKeyInput').value = conn.key;
+    btn.addEventListener('click', () => {
+      const url = document.getElementById('trdUrlInput').value.trim().replace(/\/$/, '');
+      const key = document.getElementById('trdKeyInput').value.trim();
+      if (!url || !key) return;
+      localStorage.setItem(TRD_STORAGE_URL, url);
+      localStorage.setItem(TRD_STORAGE_KEY, key);
+      ladeTrading();
+    });
+  }
+
   // --- System-Health-Score (Hero-Badge) ---
   // Bewusst EIN kombinierter Wert, aber transparent nachvollziehbar (kein
   // Blackbox-Score) - gewichtet Automations-Gesundheit am stärksten (80%),
@@ -1702,7 +1837,11 @@
   renderAutopilot();
   renderTools();
   ladeSupport();
-  setInterval(() => { ladeAlles(); ladeSupport(); }, 60000);
+  setInterval(() => {
+    ladeAlles();
+    ladeSupport();
+    if (document.getElementById('panel-trading').classList.contains('show')) ladeTrading();
+  }, 60000);
 
   function switchTab(tabId) {
     const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
@@ -1713,6 +1852,7 @@
     btn.classList.add('active');
     panel.classList.add('show');
     btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    if (tabId === 'trading') ladeTrading();
   }
 
   document.getElementById('tabs').addEventListener('click', (e) => {
