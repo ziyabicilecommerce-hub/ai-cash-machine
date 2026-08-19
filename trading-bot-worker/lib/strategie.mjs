@@ -99,6 +99,17 @@ export function berechneIndikatoren(closes, highs, lows, cfg) {
   const rsiJetzt = rsi[n - 1];
   const atrJetzt = atr[n - 1];
 
+  // Flash-Crash-Erkennung: wie stark ist der Kurs seit dem höchsten Hoch der
+  // letzten flashCrashFensterKerzen-Kerzen bereits gefallen? Negativer Wert
+  // = Rückgang in Prozent. Braucht keinen externen API-Call (nutzt dieselben
+  // Kerzen, die ohnehin schon geladen sind) - wichtig gerade bei
+  // bollinger-mean-reversion, das "überverkauft" sonst genau in einem
+  // Flash-Crash/Börsenfehler als Kaufsignal missverstehen könnte.
+  const flashFenster = Math.max(1, cfg.flashCrashFensterKerzen || 4);
+  const flashStart = Math.max(0, n - 1 - flashFenster);
+  const juengstesHoch = Math.max(...highs.slice(flashStart, n));
+  const flashCrashDropProzent = juengstesHoch > 0 ? ((preis - juengstesHoch) / juengstesHoch) * 100 : 0;
+
   const ergebnis = {
     crossUp: diffVorher <= 0 && diffJetzt > 0,
     crossDown: diffVorher >= 0 && diffJetzt < 0,
@@ -106,6 +117,7 @@ export function berechneIndikatoren(closes, highs, lows, cfg) {
     rsiJetzt,
     atrJetzt,
     volatilitaetProzent: atrJetzt !== null ? (atrJetzt / preis) * 100 : null,
+    flashCrashDropProzent,
     bollingerMittel: null,
     bollingerOben: null,
     bollingerUnten: null,
@@ -168,6 +180,15 @@ export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei,
     signalOk = indikatoren.crossUp && rsiOk && volaOk;
   }
   if (!signalOk) return null;
+
+  // Gilt strategieübergreifend (nicht nur für bollinger-mean-reversion, das
+  // am meisten davon profitiert): bricht der Kurs innerhalb weniger Kerzen
+  // extrem ein (Default 8% in 1h bei 15m-Kerzen), ist das eher ein
+  // Flash-Crash/Börsenfehler als eine normale Kaufgelegenheit - Käufe werden
+  // für diesen Lauf pausiert, unabhängig vom sonstigen Signal.
+  if (cfg.flashCrashFilter && indikatoren.flashCrashDropProzent <= -cfg.flashCrashMaxDropProzent) {
+    return null;
+  }
 
   let investBetrag = (kapital * cfg.maxPositionProzent) / 100;
   if (cfg.volaSizing && volatilitaetProzent !== null && volatilitaetProzent > 0) {

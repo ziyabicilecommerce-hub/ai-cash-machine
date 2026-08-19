@@ -80,6 +80,21 @@ TRADING_PERFORMANCE_SIZING = "ja"
 TRADING_PERFORMANCE_SIZING_MIN_FAKTOR = "0.5"
 TRADING_PERFORMANCE_SIZING_MIN_TRADES = "5"
 
+# Flash-Crash-Schutz (kein API-Call, nutzt dieselben Kerzen wie die
+# Strategie): pausiert Käufe für ein Symbol, wenn der Kurs innerhalb der
+# letzten TRADING_FLASH_CRASH_FENSTER_KERZEN-Kerzen (Default 4 = 1h bei
+# 15m) bereits um mehr als TRADING_FLASH_CRASH_MAX_DROP_PROZENT gefallen ist -
+# eher ein Flash-Crash/Börsenfehler als eine normale Kaufgelegenheit.
+TRADING_FLASH_CRASH_FILTER = "ja"
+TRADING_FLASH_CRASH_FENSTER_KERZEN = "4"
+TRADING_FLASH_CRASH_MAX_DROP_PROZENT = "8"
+
+# Spread-Filter (kein extra API-Key, nutzt die ohnehin verbundene Börse):
+# verwirft einen Kauf, wenn der Bid/Ask-Spread gerade ungewöhnlich breit ist -
+# oft ein Begleitsymptom eines Flash-Crashs oder Börsenproblems.
+TRADING_SPREAD_FILTER = "ja"
+TRADING_SPREAD_MAX_PROZENT = "1"
+
 # Drei Strategien zur Wahl (Default "ema-crossover" = unverändertes Verhalten):
 # "bollinger-mean-reversion": kauft, wenn der Kurs unter das untere
 # Bollinger-Band fällt (überverkauft), verkauft beim Rücksprung zum
