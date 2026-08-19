@@ -518,6 +518,10 @@ schwächsten zum stärksten aktiven Meta-Ad-Set um (max.
 Ergänzt #42 (erhöht nur, nimmt nichts weg) und #43 (stoppt nur) - ist der
 einzige, der wirklich zwischen Ad-Sets umverteilt, statt nur zu skalieren
 oder zu stoppen. Gate: `AUTO_BUDGET_UMSCHICHTEN` (Default `nein`).
+Echtes Rückkopplungs-Gedächtnis wie #61/#88: prüft 7 Tage nach einer
+AUSGEFÜHRTEN Verstärkung die echte Performance des verstärkten Ad-Sets im
+Zeitraum danach nach (größeres Budget kann auch die Effizienz drücken) -
+sichtbar im Autopilot-Tab von Command inkl. Erfolgsbilanz.
 
 **🛡️ Inventory-Guardian-Agent** (#65, alle 3 Stunden): stoppt echten
 Überverkauf - wenn eine Variante auf Bestand 0 fällt, aber Shopify sie wegen
