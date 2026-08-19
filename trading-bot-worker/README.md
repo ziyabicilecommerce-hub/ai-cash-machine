@@ -291,6 +291,72 @@ gleichen Format frei verfügbar) — sie sind gegen echte Live-Daten geprüft
 (lösen korrekt aus, fallen bei Ausfall sauber offen), aber NICHT historisch
 backgetestet. Das im Kopf behalten, bevor man sich zu sehr auf sie verlässt.
 
+## Bessere Ausstiegs-Logik & Risiko-Feintuning
+
+Drei weitere optionale Regeln, alle per Backtest gegen echte Kraken-Daten
+geprüft, bevor sie live gingen:
+
+- **`TRADING_COOLDOWN_NACH_VERLUST_MINUTEN`** (Default `60`): pausiert
+  Käufe für ein Symbol eine Weile nach einem Verlust-Trade -
+  "Revenge Trading" vermeiden. Per Backtest bei der aktuellen hohen
+  Win-Rate selten relevant (wenig aufeinanderfolgende Verluste), aber ohne
+  gemessenen Nachteil - deshalb aktiviert.
+- **`TRADING_PARTIAL_TAKE_PROFIT_PROZENT`** (Default `0` = aus) +
+  `TRADING_PARTIAL_TAKE_PROFIT_ANTEIL` (Default `50`): verkauft schon bei
+  einem niedrigeren Ziel einen Anteil der Position, statt auf das volle
+  Ausstiegssignal zu warten - der Rest läuft mit unverändertem
+  Einstiegspreis weiter (Stop-Loss/Trailing-Stop gelten normal weiter).
+  **Echter Trade-off, kein reiner Vorteil:** per Backtest auf 3 von 4
+  getesteten Coins etwas weniger Gesamt-Return (Trades enden öfter knapp
+  am Ziel statt bei größeren Ausreißern) - dafür häufiger/früher
+  realisierte Gewinne. Deshalb standardmäßig AUS, bewusst selbst
+  einschalten, wer diesen Trade-off will.
+- **`TRADING_DYNAMISCHER_STOP_LOSS`** (Default `nein`) +
+  `TRADING_STOP_LOSS_ATR_MULTIPLIKATOR` (Default `2`): nutzt die
+  Volatilität BEIM EINSTIEG (ATR) statt eines festen Prozentsatzes für den
+  Stop-Loss-Abstand. Per Backtest uneinheitlich - auf BTC klar schlechter
+  (mehr Fehlausstiege durch normales Rauschen), auf ETH klar besser. Kein
+  Coin-übergreifend klarer Vorteil, deshalb standardmäßig AUS.
+
+## Monats-Rückblick & CSV-Export
+
+Zusätzlich zum täglichen und wöchentlichen Update verschickt der Worker
+**einmal pro Monat (am 1.)** einen noch weiter herausgezoomten Rückblick:
+Gesamt-P&L des Monats, bester/schlechtester Coin über den Monat.
+
+`GET /export?key=<STATUS_READ_KEY>` liefert die komplette gespeicherte
+Trade-Historie (bis zu den letzten 50 Trades pro Symbol, wie im
+Dashboard) als CSV-Datei zum Download - für Excel/Google Sheets oder
+eigene Auswertung außerhalb des Dashboards. Gleiches Secret wie
+`/status`, rein lesend, kann nie einen Trade auslösen. Im Trading-
+Dashboard ein Klick über den Button "⤓ CSV exportieren".
+
+## Smart-Kapital-Rebalancing (optional, Default AUS)
+
+Ohne Rebalancing startet jeder Coin mit gleich viel Kapital und wächst
+danach nur über seine EIGENEN Trades weiter (Compounding) - ein Coin, der
+konstant schlecht läuft, bekommt nie weniger Spielraum als einer, der
+konstant gut läuft.
+
+`TRADING_REBALANCING` (`ja`/`nein`) schiebt stattdessen einmal pro Woche
+(montags, gleicher Zeitpunkt wie der Wochenrückblick)
+`TRADING_REBALANCING_ANTEIL_PROZENT` (Default `10`) des aktuellen Kapitals
+vom Coin mit der **schlechtesten** Performance zum Coin mit der **besten**
+- "Kapital folgt dem, was gerade funktioniert". Sicherheits-Leitplanken:
+
+- Nur Coins mit mindestens `TRADING_REBALANCING_MIN_TRADES` (Default `5`)
+  abgeschlossenen Trades zählen mit — zu wenig Daten sonst zu verrauscht.
+- Ein Coin mit gerade **offener Position** wird nie angefasst.
+- Verschiebt nur einen PROZENTUALEN Anteil, kein Alles-oder-Nichts — wirkt
+  sich erst über mehrere Wochen spürbar aus, kein abrupter Umschwung.
+- Erhöht das Gesamtkapital NIE, verschiebt nur zwischen den Coins.
+  Stop-Loss, Take-Profit und Kill-Switch bleiben pro Coin unverändert - nur
+  wie viel Kapital für die NÄCHSTE Positionsgröße zur Verfügung steht,
+  ändert sich.
+
+Meldet jede Verschiebung per WhatsApp (Betrag, von welchem Coin zu
+welchem, mit beider Performance in %).
+
 ## Echtgeld-Readiness-Ampel
 
 `/status` liefert zusätzlich ein `readiness`-Objekt: eine grobe Ampel

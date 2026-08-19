@@ -96,6 +96,41 @@ TRADING_FLASH_CRASH_MAX_DROP_PROZENT = "8"
 TRADING_SPREAD_FILTER = "ja"
 TRADING_SPREAD_MAX_PROZENT = "1"
 
+# Smart-Kapital-Rebalancing (kein API-Call, reine State-Umbuchung): schiebt
+# einmal pro Woche (montags) einen Anteil vom Kapital des aktuell
+# schlechtesten Coins zum aktuell besten - "Kapital folgt dem, was
+# funktioniert", statt für immer bei der ursprünglichen Gleichverteilung zu
+# bleiben. Nur Coins mit genug abgeschlossenen Trades und OHNE offene
+# Position zählen mit. Rührt Stop-Loss/Kill-Switch/Take-Profit nicht an.
+TRADING_REBALANCING = "ja"
+TRADING_REBALANCING_ANTEIL_PROZENT = "10"
+TRADING_REBALANCING_MIN_TRADES = "5"
+
+# Cool-Down nach Verlust-Trade (kein API-Call): pausiert Käufe für ein
+# Symbol eine Weile nach einem Verlust-Trade - "Revenge Trading" vermeiden.
+# Per Backtest geprüft: bei der aktuellen hohen Win-Rate (66-91%) selten
+# relevant, aber ein sinnvolles Sicherheitsnetz für choppigere Phasen -
+# keine gemessenen Nachteile, deshalb aktiviert.
+TRADING_COOLDOWN_NACH_VERLUST_MINUTEN = "60"
+
+# Teil-Gewinnmitnahme (kein API-Call): verkauft einen Anteil der Position
+# schon bei einem niedrigeren Ziel, statt auf das volle Ausstiegssignal zu
+# warten - sichert früher etwas Gewinn, "kostet" aber im Backtest auf 3 von
+# 4 getesteten Coins etwas Gesamt-Return (Trades enden im Schnitt öfter
+# knapp am Mittelband statt bei größeren Ausreißern). Echter Trade-off
+# (mehr/früher realisierte Gewinne vs. etwas weniger Gesamt-Return), kein
+# klarer Vorteil wie bei den anderen Features - deshalb standardmäßig AUS,
+# selbst einschalten wer den Trade-off will (z.B. "0.3" für 0,3% Ziel).
+TRADING_PARTIAL_TAKE_PROFIT_PROZENT = "0"
+TRADING_PARTIAL_TAKE_PROFIT_ANTEIL = "50"
+
+# Dynamischer (ATR-basierter statt fester prozentualer) Stop-Loss-Abstand.
+# Per Backtest geprüft: uneinheitlich - auf BTC klar schlechter (mehr
+# Fehlausstiege), auf ETH klar besser. Kein Coin-übergreifend klarer
+# Vorteil, deshalb standardmäßig AUS.
+TRADING_DYNAMISCHER_STOP_LOSS = "nein"
+TRADING_STOP_LOSS_ATR_MULTIPLIKATOR = "2"
+
 # Drei Strategien zur Wahl (Default "ema-crossover" = unverändertes Verhalten):
 # "bollinger-mean-reversion": kauft, wenn der Kurs unter das untere
 # Bollinger-Band fällt (überverkauft), verkauft beim Rücksprung zum
