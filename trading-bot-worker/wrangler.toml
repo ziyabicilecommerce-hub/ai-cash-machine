@@ -96,6 +96,16 @@ TRADING_FLASH_CRASH_MAX_DROP_PROZENT = "8"
 TRADING_SPREAD_FILTER = "ja"
 TRADING_SPREAD_MAX_PROZENT = "1"
 
+# Smart-Kapital-Rebalancing (kein API-Call, reine State-Umbuchung): schiebt
+# einmal pro Woche (montags) einen Anteil vom Kapital des aktuell
+# schlechtesten Coins zum aktuell besten - "Kapital folgt dem, was
+# funktioniert", statt für immer bei der ursprünglichen Gleichverteilung zu
+# bleiben. Nur Coins mit genug abgeschlossenen Trades und OHNE offene
+# Position zählen mit. Rührt Stop-Loss/Kill-Switch/Take-Profit nicht an.
+TRADING_REBALANCING = "ja"
+TRADING_REBALANCING_ANTEIL_PROZENT = "10"
+TRADING_REBALANCING_MIN_TRADES = "5"
+
 # Drei Strategien zur Wahl (Default "ema-crossover" = unverändertes Verhalten):
 # "bollinger-mean-reversion": kauft, wenn der Kurs unter das untere
 # Bollinger-Band fällt (überverkauft), verkauft beim Rücksprung zum

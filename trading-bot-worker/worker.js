@@ -783,6 +783,70 @@ async function pruefeUndSendeWochenZusammenfassung(env, cfg) {
   await env.TRADING_STATE.put('digest:letzteWoche', aktuelleWoche);
 }
 
+// ================= SMART-KAPITAL-REBALANCING (optional, Default AUS) =================
+// Jeder Coin startet mit gleich viel Kapital, wächst danach aber unabhängig
+// über seine eigenen Trades (Compounding). Was OHNE Rebalancing NICHT
+// passiert: ein Coin, der konstant schlecht läuft, bekommt nie WENIGER
+// Spielraum als ein Coin, der konstant gut läuft - beide traden für immer
+// mit ihrem jeweils eigenen (unterschiedlich gewachsenen) Kapital weiter.
+// Dieses Feature schiebt einmal pro Woche (montags, gleicher Tag wie der
+// Wochenrückblick) einen kleinen Anteil vom aktuell SCHLECHTESTEN zum
+// aktuell BESTEN Coin - "Kapital folgt dem, was gerade funktioniert",
+// statt stur bei der ursprünglichen Gleichverteilung zu bleiben.
+//
+// Sicherheits-Leitplanken:
+// - Nur Coins mit mindestens rebalancingMinTrades abgeschlossenen Trades
+//   zählen mit (zu wenig Daten sonst zu verrauscht für eine Entscheidung).
+// - Ein Coin mit gerade OFFENER Position wird nie angefasst (Kapital ist
+//   "in der Position", nicht frei verschiebbar).
+// - Verschiebt nur rebalancingAnteilProzent des AKTUELLEN Kapitals des
+//   schlechtesten Coins (Default 10%) - kein Alles-oder-Nichts, wirkt sich
+//   erst über mehrere Wochen spürbar aus.
+// - Ändert NUR, wie viel Kapital jeder Coin für seine EIGENEN künftigen
+//   Positionsgrößen hat - rührt Stop-Loss/Kill-Switch/Take-Profit nicht an.
+async function pruefeUndFuehreKapitalRebalancing(env, cfg) {
+  if (!cfg.rebalancing) return;
+  const jetzt = new Date();
+  if (jetzt.getUTCDay() !== 1) return; // nur montags, wie der Wochenrückblick
+  const aktuelleWoche = wochenSchluessel(jetzt);
+  const letzte = await env.TRADING_STATE.get('rebalance:letzteWoche');
+  if (letzte === aktuelleWoche) return;
+
+  const states = {};
+  for (const symbol of cfg.symbols) {
+    states[symbol] = await loadState(env, symbol, cfg.startKapitalProSymbol);
+  }
+  const eligible = cfg.symbols
+    .filter((s) => !states[s].position && (states[s].trades || []).length >= cfg.rebalancingMinTrades)
+    .map((s) => ({ symbol: s, pnlProzent: ((states[s].kapital - states[s].startKapital) / states[s].startKapital) * 100 }))
+    .sort((a, b) => b.pnlProzent - a.pnlProzent);
+
+  // Braucht mindestens 2 vergleichbare Coins UND einen echten Unterschied
+  // zwischen ihnen - sonst gäbe es nichts Sinnvolles zu verschieben.
+  if (eligible.length < 2 || eligible[0].pnlProzent <= eligible[eligible.length - 1].pnlProzent) {
+    await env.TRADING_STATE.put('rebalance:letzteWoche', aktuelleWoche);
+    return;
+  }
+
+  const bester = eligible[0];
+  const schlechtester = eligible[eligible.length - 1];
+  const schlechtesterState = states[schlechtester.symbol];
+  const besterState = states[bester.symbol];
+  const betrag = (schlechtesterState.kapital * cfg.rebalancingAnteilProzent) / 100;
+  if (betrag <= 0) {
+    await env.TRADING_STATE.put('rebalance:letzteWoche', aktuelleWoche);
+    return;
+  }
+
+  schlechtesterState.kapital -= betrag;
+  besterState.kapital += betrag;
+  await saveState(env, schlechtester.symbol, schlechtesterState);
+  await saveState(env, bester.symbol, besterState);
+
+  await notifyWhatsapp(env, `🔄 Smart-Rebalancing: ${betrag.toFixed(2)} USDT von ${schlechtester.symbol} (${schlechtester.pnlProzent >= 0 ? '+' : ''}${schlechtester.pnlProzent.toFixed(1)}%) zu ${bester.symbol} (${bester.pnlProzent >= 0 ? '+' : ''}${bester.pnlProzent.toFixed(1)}%) verschoben - Kapital folgt dem, was gerade funktioniert.`);
+  await env.TRADING_STATE.put('rebalance:letzteWoche', aktuelleWoche);
+}
+
 // Erlaubt jedem Symbol eine ANDERE Strategie als den globalen Default -
 // z.B. um live zu vergleichen, welche Strategie auf welchem Coin am besten
 // abschneidet, statt alle Coins zwangsläufig identisch zu handeln. Format:
@@ -873,6 +937,12 @@ function readConfig(env) {
     // ein Begleitsymptom eines Flash-Crashs oder Börsenproblems).
     spreadFilter: (env.TRADING_SPREAD_FILTER || 'nein') === 'ja',
     spreadMaxProzent: parseFloat(env.TRADING_SPREAD_MAX_PROZENT || '1'),
+    // Default AUS, damit ein bereits laufendes Setup nicht ungefragt anders
+    // handelt. Verschiebt nur zwischen bereits bestehenden Coin-Kapitalien -
+    // erhöht das Gesamtkapital nie, rührt Stop-Loss/Kill-Switch nicht an.
+    rebalancing: (env.TRADING_REBALANCING || 'nein') === 'ja',
+    rebalancingAnteilProzent: parseFloat(env.TRADING_REBALANCING_ANTEIL_PROZENT || '10'),
+    rebalancingMinTrades: parseInt(env.TRADING_REBALANCING_MIN_TRADES || '5', 10),
   };
 }
 
@@ -911,6 +981,11 @@ async function runAll(env) {
     await pruefeUndSendeWochenZusammenfassung(env, cfg);
   } catch (err) {
     console.error('[trading-bot] Fehler bei Wochen-Zusammenfassung:', err);
+  }
+  try {
+    await pruefeUndFuehreKapitalRebalancing(env, cfg);
+  } catch (err) {
+    console.error('[trading-bot] Fehler beim Kapital-Rebalancing:', err);
   }
 }
 

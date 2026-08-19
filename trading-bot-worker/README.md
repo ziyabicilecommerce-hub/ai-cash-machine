@@ -291,6 +291,32 @@ gleichen Format frei verfügbar) — sie sind gegen echte Live-Daten geprüft
 (lösen korrekt aus, fallen bei Ausfall sauber offen), aber NICHT historisch
 backgetestet. Das im Kopf behalten, bevor man sich zu sehr auf sie verlässt.
 
+## Smart-Kapital-Rebalancing (optional, Default AUS)
+
+Ohne Rebalancing startet jeder Coin mit gleich viel Kapital und wächst
+danach nur über seine EIGENEN Trades weiter (Compounding) - ein Coin, der
+konstant schlecht läuft, bekommt nie weniger Spielraum als einer, der
+konstant gut läuft.
+
+`TRADING_REBALANCING` (`ja`/`nein`) schiebt stattdessen einmal pro Woche
+(montags, gleicher Zeitpunkt wie der Wochenrückblick)
+`TRADING_REBALANCING_ANTEIL_PROZENT` (Default `10`) des aktuellen Kapitals
+vom Coin mit der **schlechtesten** Performance zum Coin mit der **besten**
+- "Kapital folgt dem, was gerade funktioniert". Sicherheits-Leitplanken:
+
+- Nur Coins mit mindestens `TRADING_REBALANCING_MIN_TRADES` (Default `5`)
+  abgeschlossenen Trades zählen mit — zu wenig Daten sonst zu verrauscht.
+- Ein Coin mit gerade **offener Position** wird nie angefasst.
+- Verschiebt nur einen PROZENTUALEN Anteil, kein Alles-oder-Nichts — wirkt
+  sich erst über mehrere Wochen spürbar aus, kein abrupter Umschwung.
+- Erhöht das Gesamtkapital NIE, verschiebt nur zwischen den Coins.
+  Stop-Loss, Take-Profit und Kill-Switch bleiben pro Coin unverändert - nur
+  wie viel Kapital für die NÄCHSTE Positionsgröße zur Verfügung steht,
+  ändert sich.
+
+Meldet jede Verschiebung per WhatsApp (Betrag, von welchem Coin zu
+welchem, mit beider Performance in %).
+
 ## Echtgeld-Readiness-Ampel
 
 `/status` liefert zusätzlich ein `readiness`-Objekt: eine grobe Ampel
