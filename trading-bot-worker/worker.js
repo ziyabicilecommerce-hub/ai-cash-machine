@@ -30,6 +30,7 @@ import { COINGECKO_IDS, ladePreisBestaetigung24h, ladeFearGreedIndex, ladeBtcDom
 import { notifyWhatsapp } from './lib/notify.mjs';
 import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, saveSystemInfo } from './lib/state.mjs';
 import { pruefeUndSendeTagesZusammenfassung, pruefeUndSendeWochenZusammenfassung, pruefeUndSendeMonatsZusammenfassung, pruefeUndFuehreKapitalRebalancing } from './lib/reports.mjs';
+import { pruefeUndFuehreAdaptivesLernen } from './lib/learning.mjs';
 import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
 
@@ -159,6 +160,10 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       state.position = {
         qty, entryPreis: tatsaechlicherPreis, hoechsterPreisSeitEinstieg: tatsaechlicherPreis, einstiegAm: new Date().toISOString(),
         entryAtr: indikatoren.atrJetzt, teilverkaufGemacht: false,
+        // Beim Einstieg eingefroren (wie entryAtr) - siehe lib/learning.mjs.
+        // Nur relevant, wenn TRADING_ADAPTIVES_LERNEN aktiv ist UND für dieses
+        // Symbol schon ein gelernter Wert vorliegt, sonst der globale Standard.
+        stopLossProzentBenutzt: (cfg.adaptivesLernen && state.gelernterStopLossProzent) ? state.gelernterStopLossProzent : cfg.stopLossProzent,
       };
       await notifyWhatsapp(env, `📈 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Einstieg ${symbol} @ ${tatsaechlicherPreis.toFixed(2)} (${investBetrag.toFixed(2)} USDT eingesetzt${cfg.volaSizing ? `, Vola-Sizing aktiv` : ''}).`);
     }
@@ -316,6 +321,11 @@ async function runAll(env) {
     await pruefeUndFuehreKapitalRebalancing(env, cfg);
   } catch (err) {
     console.error('[trading-bot] Fehler beim Kapital-Rebalancing:', err);
+  }
+  try {
+    await pruefeUndFuehreAdaptivesLernen(env, cfg);
+  } catch (err) {
+    console.error('[trading-bot] Fehler beim adaptiven Lernen:', err);
   }
 }
 

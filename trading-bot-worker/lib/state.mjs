@@ -18,6 +18,9 @@ function initialerState(startKapital) {
     killSwitchAktiv: false,
     killSwitchBenachrichtigt: false,
     trades: [],
+    // Siehe lib/learning.mjs - null solange TRADING_ADAPTIVES_LERNEN aus ist
+    // oder noch nicht genug Verlust-Trades für dieses Symbol vorliegen.
+    gelernterStopLossProzent: null,
   };
 }
 

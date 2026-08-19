@@ -32,8 +32,10 @@ export async function pruefeUndSendeTagesZusammenfassung(env, cfg) {
   await env.TRADING_STATE.put('digest:letzterTag', heuteStr);
 }
 
-// ISO-Kalenderwoche als Schlüssel (Jahr-KW), bleibt über Jahreswechsel hinweg eindeutig.
-function wochenSchluessel(datum) {
+// ISO-Kalenderwoche als Schlüssel (Jahr-KW), bleibt über Jahreswechsel hinweg
+// eindeutig. Exportiert, damit lib/learning.mjs dieselbe "einmal pro Woche"-
+// Logik nutzt statt sie ein zweites Mal zu implementieren.
+export function wochenSchluessel(datum) {
   const d = new Date(Date.UTC(datum.getUTCFullYear(), datum.getUTCMonth(), datum.getUTCDate()));
   const tagNummer = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - tagNummer);

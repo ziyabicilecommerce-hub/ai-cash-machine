@@ -426,6 +426,8 @@
       let posHtml = s.position
         ? `<div class="pos-tag open">Position offen @ ${fmtPreis(s.position.entryPreis)} · ${Number(s.position.qty).toFixed(6)} Stück${s.stopLossPreis ? ` · SL ${fmtPreis(s.stopLossPreis)}` : ''}${s.takeProfitPreis ? ` · TP ${fmtPreis(s.takeProfitPreis)}` : ''}</div>`
         : `<div class="pos-tag">Keine offene Position</div>`;
+      const lernenHtml = s.gelernterStopLossProzent != null
+        ? `<div class="row"><span>🧠 Gelernter Stop-Loss</span><b>${s.gelernterStopLossProzent.toFixed(2)}%</b></div>` : '';
       return `
         <div class="card ${s.killSwitchAktiv ? 'kill' : ''}">
           <div class="card-top">
@@ -438,6 +440,7 @@
           <div class="row"><span>Kapital</span><b>${fmtUsdt(s.kapital)}</b></div>
           <div class="row"><span>P&amp;L gesamt</span><b class="${pnlCls}">${pnl >= 0 ? '+' : ''}${fmtUsdt(pnl)} (${fmtProzent(pnlProzent, 1)})</b></div>
           <div class="row"><span>Verlust heute</span><b class="${s.heutigerVerlustUsdt < 0 ? 'down' : ''}">${fmtUsdt(s.heutigerVerlustUsdt)}</b></div>
+          ${lernenHtml}
           ${s.tradeStats && s.tradeStats.anzahlTrades > 0 ? `
           <div class="row"><span>Win-Rate (letzte ${s.tradeStats.anzahlTrades})</span><b class="${s.tradeStats.winRateProzent >= 50 ? 'up' : 'down'}">${s.tradeStats.winRateProzent.toFixed(0)}%</b></div>
           <div class="row"><span>Profit Factor</span><b class="${(s.profitFactor ?? 1) >= 1 ? 'up' : 'down'}">${s.profitFactor != null ? s.profitFactor.toFixed(2) : '–'}</b></div>
