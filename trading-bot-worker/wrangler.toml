@@ -2,11 +2,12 @@ name = "cashmachine-trading-bot"
 main = "worker.js"
 compatibility_date = "2025-01-01"
 
-# Läuft alle 15 Minuten - wie der GitHub-Actions-Bot vorher, nur eben von
-# Cloudflares Edge-Netzwerk aus statt aus einem von Binance blockierten
-# GitHub-Actions-IP-Bereich.
+# Läuft alle 5 Minuten (früher alle 15) - reagiert schneller auf neu
+# geschlossene 15m-Kerzen (bis zu 10 Min weniger Verzögerung zwischen
+# Kerze und Reaktion), statt aus einem von Binance blockierten
+# GitHub-Actions-IP-Bereich wie vorher.
 [triggers]
-crons = ["*/15 * * * *"]
+crons = ["*/5 * * * *"]
 
 # State pro Symbol (Kapital, offene Position, Kill-Switch). Nach dem Erstellen
 # via `wrangler kv namespace create TRADING_STATE` die zurückgegebene id hier
