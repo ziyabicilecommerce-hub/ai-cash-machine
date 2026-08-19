@@ -71,7 +71,9 @@ Winning-Ad-Creatives):
 **Echtes Facebook-/Instagram-Auto-Posting** (Multi-Plattform-Poster, #18):
 `AUTO_POST_FACEBOOK`+`FB_PAGE_ID`+`FB_PAGE_TOKEN` für Facebook,
 `AUTO_POST_INSTAGRAM`+`INSTAGRAM_BUSINESS_ACCOUNT_ID`+`META_ACCESS_TOKEN`
-für Instagram (Business-Konto nötig, Bild kommt automatisch aus Shopify).
+für Instagram (Business-Konto nötig). Instagram postet als echtes Reel,
+wenn der Shop ein Produktvideo in Shopify hochgeladen hat, sonst als
+Produktfoto - beides kommt automatisch aus Shopify, nie KI-generiert.
 Ohne diese Secrets bleibt #18 wie gehabt ein reiner Text-Entwurf per Mail.
 
 **Judge.me Bewertungen** (Bewertungs-Magnet, Bewertungs-Antwort-Bot):
@@ -447,19 +449,25 @@ Automationen vertraust, echte Budgets zu ändern bzw. Posts/Ads live zu
 schalten.
 
 **Echtes Social-Media-Auto-Posting (#18 Multi-Plattform-Poster):**
-Facebook (reiner Text) und Instagram (Produktfoto + KI-Caption) posten
-wirklich selbst, sobald `AUTO_POST_FACEBOOK`/`AUTO_POST_INSTAGRAM` auf `ja`
-stehen und die zugehörigen Secrets gesetzt sind (`FB_PAGE_ID`+
-`FB_PAGE_TOKEN` bzw. `INSTAGRAM_BUSINESS_ACCOUNT_ID`+`META_ACCESS_TOKEN`,
-letzteres wird bereits für Meta Ads gebraucht). Instagram nutzt dafür immer
-ein echtes Produktfoto aus Shopify (kein KI-generiertes Bild) - reine
-Text-Posts sind bei Instagram technisch nicht möglich.
+Facebook (reiner Text) und Instagram posten wirklich selbst, sobald
+`AUTO_POST_FACEBOOK`/`AUTO_POST_INSTAGRAM` auf `ja` stehen und die
+zugehörigen Secrets gesetzt sind (`FB_PAGE_ID`+`FB_PAGE_TOKEN` bzw.
+`INSTAGRAM_BUSINESS_ACCOUNT_ID`+`META_ACCESS_TOKEN`, letzteres wird bereits
+für Meta Ads gebraucht). Instagram postet als echtes Reel, wenn der Shop
+ein Produktvideo in Shopify hochgeladen hat (per GraphQL gefunden, bevorzugt
+das Bestseller-Produkt), sonst als Foto - beides immer echtes Shopify-Media,
+nie KI-generiert. Reine Text-Posts sind bei Instagram technisch nicht
+möglich.
 **TikTok, Pinterest, YouTube, X bleiben bewusst Text-Entwürfe zum
 Copy-Paste**, kein Auto-Posting: TikToks Content-Posting-API verlangt
 zusätzlich eine von TikTok geprüfte Developer-App (kein Self-Service,
-dauert je nach TikTok Tage bis Wochen) UND ein fertiges Video-Asset - diese
-Codebase hat keine Video-Erstellung. Ein "automatisches" TikTok-Posting
-ohne echtes Video wäre nur Fassade.
+dauert je nach TikTok Tage bis Wochen) - das ist ein reines App-Review-
+Hindernis, kein Video-Problem mehr. Ein "automatisches" TikTok-Posting
+ohne die geprüfte App wäre nur Fassade.
+
+**Aufrufe/Likes/Kommentare für die WIRKLICH geposteten Beiträge (#89
+Social-Performance-Radar):** liest jede Woche echte Meta-Graph-API-Insights
+für die postIds aus #18 aus - keine Schätzung, nur was Meta selbst liefert.
 
 ## Die 5 neuen Agenten (#61-65) - echte Handlungsmacht statt nur Empfehlung
 
