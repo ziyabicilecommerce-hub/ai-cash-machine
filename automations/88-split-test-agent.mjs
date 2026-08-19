@@ -17,8 +17,57 @@ import { loadState, saveState } from './lib/state.mjs';
 const NL = '\n';
 const STATE_KEY = '88-split-test-agent';
 const MAX_HISTORIE = 60;
+// Wartezeit, bevor eine AUSGEFÜHRTE Pausierung gegen die echte Performance
+// des Gewinners in der Woche danach ausgewertet wird - derselbe Rückkopplungs-
+// Gedanke wie beim Pricing-Agent (#61): nicht nur empfehlen und vergessen,
+// sondern prüfen, ob der Gewinner seine Rolle auch weiterhin verdient.
+const AUSWERTUNG_WARTETAGE = 7;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const COMMAND_DIR = join(__dirname, '..', 'command');
+
+function tageSeit(datumStr) {
+  return (Date.now() - new Date(datumStr).getTime()) / (1000 * 3600 * 24);
+}
+
+function isoDatum(d) {
+  return d.toISOString().slice(0, 10);
+}
+
+// Prüft AUSGEFÜHRTE Pausierungen der letzten Woche: lief der GEWINNER (bleibt
+// immer aktiv) in genau den 7 Tagen danach weiterhin profitabel? Beobachtet
+// nur den tatsächlichen ROAS in diesem Zeitraum - keine Behauptung, DASS die
+// Pausierung des Verlierers das bewirkt hat, nur ob die Entscheidung weiterhin
+// gut aussieht.
+async function werteVergangeneEntscheidungenAus(state) {
+  const faellig = state.historie.filter(
+    (e) => e.ausgefuehrt && !e.ausgewertet && e.gewinner.adsetId && tageSeit(e.datum) >= AUSWERTUNG_WARTETAGE
+  );
+  if (!faellig.length) return;
+
+  for (const e of faellig) {
+    const seit = new Date(e.datum);
+    const bis = new Date(seit.getTime() + AUSWERTUNG_WARTETAGE * 86400000);
+    try {
+      const insights = await getAdInsights({
+        level: 'adset',
+        timeRange: { since: isoDatum(seit), until: isoDatum(bis) },
+        fields: 'adset_id,spend,action_values',
+        limit: 50,
+      });
+      const row = insights.find((r) => r.adset_id === e.gewinner.adsetId);
+      const spend = row ? parseFloat(row.spend || 0) : 0;
+      const roasSeitdem = row && spend > 0 ? purchaseValue(row) / spend : null;
+
+      e.ausgewertet = true;
+      e.ausgewertetAm = new Date().toISOString();
+      e.gewinnerRoasSeitdem = roasSeitdem !== null ? Number(roasSeitdem.toFixed(2)) : null;
+      e.wirkung = roasSeitdem === null ? 'keine_daten' : roasSeitdem >= 1 ? 'gewinner_bestaetigt' : 'gewinner_schwaecher';
+    } catch (err) {
+      console.error(`[88-split-test-agent] Auswertung für ${e.kampagne} fehlgeschlagen:`, err.message || err);
+    }
+  }
+  console.log(`[88-split-test-agent] ${faellig.length} vergangene Entscheidung(en) ausgewertet.`);
+}
 
 async function main() {
   const autoAn = config.AUTO_SPLIT_TEST_PAUSIEREN === 'ja';
@@ -73,8 +122,8 @@ async function main() {
 
     ergebnisse.push({
       kampagne: k.name,
-      gewinner: { name: gewinner.name, roas: Number(gewinner.roas.toFixed(2)), spend: Number(gewinner.spend.toFixed(2)) },
-      verlierer: { name: verlierer.name, roas: Number(verlierer.roas.toFixed(2)), spend: Number(verlierer.spend.toFixed(2)) },
+      gewinner: { name: gewinner.name, roas: Number(gewinner.roas.toFixed(2)), spend: Number(gewinner.spend.toFixed(2)), adsetId: gewinner.adsetId },
+      verlierer: { name: verlierer.name, roas: Number(verlierer.roas.toFixed(2)), spend: Number(verlierer.spend.toFixed(2)), adsetId: verlierer.adsetId },
       unterschiedProzent: Math.round(unterschiedProzent * 100),
       risiko: belastbar.length >= 3 || (gewinner.spend + verlierer.spend) >= minSpend * 4 ? 'niedrig' : 'mittel',
       erwarteteAuswirkung: `+${erwarteterMehrertrag.toFixed(2)} € geschätzter Mehrertrag pro Woche, wenn das Verlierer-Budget zum Gewinner wandert`,
@@ -85,17 +134,23 @@ async function main() {
 
   const state = loadState(STATE_KEY);
   state.historie = state.historie || [];
+
+  await werteVergangeneEntscheidungenAus(state);
+
   if (ergebnisse.length) {
     state.historie.unshift(...ergebnisse);
     if (state.historie.length > MAX_HISTORIE) state.historie = state.historie.slice(0, MAX_HISTORIE);
-    saveState(STATE_KEY, state);
   }
+  saveState(STATE_KEY, state);
 
   if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
+  const ausgewertet = state.historie.filter((e) => e.ausgewertet);
+  const bestaetigt = ausgewertet.filter((e) => e.wirkung === 'gewinner_bestaetigt');
   writeFileSync(join(COMMAND_DIR, 'split-test.json'), JSON.stringify({
     updatedAt: new Date().toISOString(),
     autoAn,
     historie: state.historie,
+    erfolgsBilanz: { ausgewertet: ausgewertet.length, bestaetigt: bestaetigt.length, brauchtBlick: ausgewertet.length - bestaetigt.length },
   }, null, 2));
 
   if (!ergebnisse.length) {

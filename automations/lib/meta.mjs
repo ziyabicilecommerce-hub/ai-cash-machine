@@ -15,9 +15,15 @@ function pruefeMetaConfig({ brauchtAdAccount = false } = {}) {
   }
 }
 
-export async function getAdInsights({ level = 'ad', datePreset = 'yesterday', fields, limit = 100 } = {}) {
+// timeRange (optional, {since:'YYYY-MM-DD', until:'YYYY-MM-DD'}) geht vor
+// datePreset - für Fälle, die einen EXAKTEN Zeitraum brauchen statt eines
+// relativen Presets (z.B. "genau die 7 Tage nach dieser einen Entscheidung").
+export async function getAdInsights({ level = 'ad', datePreset = 'yesterday', timeRange, fields, limit = 100 } = {}) {
   pruefeMetaConfig({ brauchtAdAccount: true });
-  const url = `https://graph.facebook.com/${API_VERSION}/act_${config.META_AD_ACCOUNT_ID}/insights?level=${level}&date_preset=${datePreset}&fields=${fields}&limit=${limit}&access_token=${config.META_ACCESS_TOKEN}`;
+  const zeitParam = timeRange
+    ? `time_range=${encodeURIComponent(JSON.stringify(timeRange))}`
+    : `date_preset=${datePreset}`;
+  const url = `https://graph.facebook.com/${API_VERSION}/act_${config.META_AD_ACCOUNT_ID}/insights?level=${level}&${zeitParam}&fields=${fields}&limit=${limit}&access_token=${config.META_ACCESS_TOKEN}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Meta Ads API Fehler ${res.status}: ${await res.text()}`);
   const data = await res.json();
