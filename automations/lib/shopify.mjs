@@ -36,6 +36,69 @@ async function shopifyRequest(path, { method = 'GET', body } = {}) {
   return res.json();
 }
 
+// GraphQL statt REST - nur für Felder, die die REST-API nicht liefert (z.B.
+// Produkt-VIDEOS für #18: die REST-/products.json-Endpoint kennt nur images,
+// Video-Media gibt es dort in der Admin-API ausschließlich über GraphQL.
+async function shopifyGraphQL(query, variables = {}) {
+  pruefeShopifyConfig();
+  const res = await fetch(`${baseUrl()}/graphql.json`, {
+    method: 'POST',
+    headers: {
+      'X-Shopify-Access-Token': config.SHOPIFY_TOKEN,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Shopify GraphQL Fehler ${res.status}: ${text}`);
+  }
+  const data = await res.json();
+  if (data.errors) throw new Error(`Shopify GraphQL Fehler: ${JSON.stringify(data.errors)}`);
+  return data.data;
+}
+
+// Sucht ein ECHTES Produktvideo (vom Shop selbst in Shopify hochgeladen,
+// z.B. über "Media" im Produkt-Editor) - erfindet nie eins. Liefert null,
+// wenn kein aktives Produkt ein Video hat (sehr viele Shops haben keins -
+// das ist der normale, ehrliche Fall, kein Fehler).
+export async function getProductVideoUrl(bestsellerTitel) {
+  const query = `
+    query VideosGesuchtProdukte($cursor: String) {
+      products(first: 50, after: $cursor, query: "status:active") {
+        pageInfo { hasNextPage endCursor }
+        nodes {
+          title
+          media(first: 10) {
+            nodes {
+              ... on Video {
+                sources { url mimeType }
+              }
+            }
+          }
+        }
+      }
+    }`;
+  let cursor = null;
+  const treffer = [];
+  // Bounded auf max. 3 Seiten (150 Produkte) - reicht für praktisch jeden
+  // Shop und verhindert, dass ein sehr großer Katalog den Lauf ewig blockiert.
+  for (let seite = 0; seite < 3; seite++) {
+    const data = await shopifyGraphQL(query, { cursor });
+    for (const p of data.products.nodes) {
+      const video = ((p.media && p.media.nodes) || [])
+        .flatMap((m) => m.sources || [])
+        .find((s) => s.mimeType === 'video/mp4');
+      if (video) treffer.push({ titel: p.title, url: video.url });
+    }
+    if (!data.products.pageInfo.hasNextPage) break;
+    cursor = data.products.pageInfo.endCursor;
+  }
+  if (!treffer.length) return null;
+  const bestseller = treffer.find((t) => bestsellerTitel.includes(t.titel));
+  return bestseller || treffer[0];
+}
+
 export async function getOrders(params = {}) {
   const qs = new URLSearchParams({ status: 'any', limit: '250', ...params }).toString();
   const data = await shopifyRequest(`/orders.json?${qs}`);

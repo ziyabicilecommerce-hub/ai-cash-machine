@@ -128,11 +128,13 @@
 
   function badge(status, plattform) {
     if (!status || !status.aktiv) return `<span class="badge entwurf">${plattform}: nur Entwurf</span>`;
+    const typLabel = status.typ === 'reel' ? ' als 🎬 Reel' : status.typ === 'bild' ? ' als 🖼️ Foto' : '';
     if (status.gepostet) {
       const link = status.url ? ` (<a href="${status.url}" target="_blank" rel="noopener" style="color:inherit">Post ansehen</a>)` : '';
-      return `<span class="badge live">✅ ${plattform}: live gepostet${link}</span>`;
+      return `<span class="badge live">✅ ${plattform}: live gepostet${typLabel}${link}</span>`;
     }
-    return `<span class="badge fehler">⚠️ ${plattform}: Versuch fehlgeschlagen</span>`;
+    const fehlerHinweis = status.fehler ? `: ${status.fehler.slice(0, 80)}` : '';
+    return `<span class="badge fehler">⚠️ ${plattform}: Versuch fehlgeschlagen${fehlerHinweis}</span>`;
   }
 
   // Performance-Daten (#89) sind nach postId indiziert, damit jede Paket-

@@ -2,18 +2,20 @@
 // Original: n8n Workflow "18_Multi_Plattform_Poster" · Zeitplan: täglich 16:00
 //
 // ECHTES Auto-Posting gibt es hier nur für Facebook (Text) und Instagram
-// (Bild+Caption) - beide über die Meta Graph API, die stabil und ohne
-// App-Review für bereits verifizierte Business-Konten nutzbar ist. TikTok,
-// Pinterest, YouTube, X bleiben bewusst reine Text-Entwürfe zum Copy-Paste:
-// TikToks Content-Posting-API verlangt zusätzlich ein von TikTok geprüftes
-// Developer-App (Wochen-Prozess, kein Self-Service) UND ein fertiges
-// Video-Asset - diese Codebase hat keine Video-Erstellung, nur Text/Bild.
-// Ein "automatischer" TikTok-Post wäre also nur Fassade, kein echtes Feature.
+// (als Reel, wenn der Shop ein echtes Produktvideo in Shopify hochgeladen
+// hat, sonst als Bild+Caption) - beide über die Meta Graph API, die stabil
+// und ohne App-Review für bereits verifizierte Business-Konten nutzbar ist.
+// TikTok, Pinterest, YouTube, X bleiben bewusst reine Text-Entwürfe zum
+// Copy-Paste: TikToks Content-Posting-API verlangt zusätzlich ein von TikTok
+// geprüftes Developer-App (Wochen-Prozess, kein Self-Service) - das ist ein
+// echtes App-Review-Hindernis, kein reines Video-Problem mehr, seit dieser
+// Automation Shopify-Produktvideos für Instagram-Reels nutzen kann. Ein
+// "automatischer" TikTok-Post wäre trotzdem nur Fassade ohne die geprüfte App.
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
-import { getOrdersSince, getProducts } from './lib/shopify.mjs';
+import { getOrdersSince, getProducts, getProductVideoUrl } from './lib/shopify.mjs';
 import { askClaude, parseJsonFromText } from './lib/claude.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
@@ -92,6 +94,59 @@ async function postInstagram(imageUrl, caption) {
   return { aktiv: true, gepostet: true, postId: data.id };
 }
 
+// Postet ein ECHTES Instagram-Reel aus einem in Shopify hochgeladenen
+// Produktvideo (siehe getProductVideoUrl) - kein KI-generiertes Video, keine
+// Fassade. Reel-Container brauchen anders als Bild-Container Verarbeitungs-
+// zeit bei Meta, deshalb ein begrenztes Polling (max. ~64s) statt sofort zu
+// publizieren; wird die Verarbeitung nicht rechtzeitig fertig, bricht die
+// Funktion ehrlich mit einem Fehler ab statt eine kaputte Reel zu posten.
+async function postInstagramReel(videoUrl, caption) {
+  if (config.AUTO_POST_INSTAGRAM !== 'ja' || !config.INSTAGRAM_BUSINESS_ACCOUNT_ID || !config.META_ACCESS_TOKEN || !videoUrl || !caption) {
+    return { aktiv: false, gepostet: false };
+  }
+
+  const containerRes = await fetch(`https://graph.facebook.com/v21.0/${config.INSTAGRAM_BUSINESS_ACCOUNT_ID}/media`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ media_type: 'REELS', video_url: videoUrl, caption, access_token: config.META_ACCESS_TOKEN }),
+  });
+  if (!containerRes.ok) {
+    const fehlertext = await containerRes.text();
+    console.error('[18-multi-plattform-poster] Instagram-Reel-Container-Fehler:', fehlertext);
+    return { aktiv: true, gepostet: false, fehler: fehlertext.slice(0, 300) };
+  }
+  const container = await containerRes.json();
+
+  let bereit = false;
+  for (let versuch = 0; versuch < 8; versuch++) {
+    await new Promise((r) => setTimeout(r, 8000));
+    const statusRes = await fetch(`https://graph.facebook.com/v21.0/${container.id}?fields=status_code&access_token=${config.META_ACCESS_TOKEN}`);
+    if (!statusRes.ok) continue;
+    const status = await statusRes.json();
+    if (status.status_code === 'FINISHED') { bereit = true; break; }
+    if (status.status_code === 'ERROR') {
+      console.error('[18-multi-plattform-poster] Instagram-Reel-Verarbeitung fehlgeschlagen');
+      return { aktiv: true, gepostet: false, fehler: 'Meta konnte das Video nicht verarbeiten (status ERROR)' };
+    }
+  }
+  if (!bereit) {
+    return { aktiv: true, gepostet: false, fehler: 'Reel war nach ~64s noch nicht fertig verarbeitet - übersprungen statt kaputt zu posten' };
+  }
+
+  const publishRes = await fetch(`https://graph.facebook.com/v21.0/${config.INSTAGRAM_BUSINESS_ACCOUNT_ID}/media_publish`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ creation_id: container.id, access_token: config.META_ACCESS_TOKEN }),
+  });
+  if (!publishRes.ok) {
+    const fehlertext = await publishRes.text();
+    console.error('[18-multi-plattform-poster] Instagram-Reel-Publish-Fehler:', fehlertext);
+    return { aktiv: true, gepostet: false, fehler: fehlertext.slice(0, 300) };
+  }
+  const data = await publishRes.json();
+  return { aktiv: true, gepostet: true, postId: data.id, typ: 'reel' };
+}
+
 // Sucht ein Produktfoto für den heutigen Instagram-Post - bevorzugt eines
 // der Bestseller-Produkte, sonst irgendein aktives Produkt mit Bild.
 async function findeProduktBild(bestsellerTitel) {
@@ -146,11 +201,22 @@ async function main() {
     html: `<pre style="white-space:pre-wrap;font-family:sans-serif;">${antwort}</pre>`,
   });
 
-  const produktBild = config.AUTO_POST_INSTAGRAM === 'ja' ? await findeProduktBild(topText) : null;
+  // Reel bevorzugt, wenn der Shop ein echtes Produktvideo hat - sonst wie
+  // bisher ein Bild-Post. Nie beides am selben Tag (ein Instagram-Post/Tag).
+  let produktVideo = null;
+  if (config.AUTO_POST_INSTAGRAM === 'ja') {
+    try {
+      produktVideo = await getProductVideoUrl(topText);
+    } catch (err) {
+      console.error('[18-multi-plattform-poster] Produktsuche für Instagram-Reel fehlgeschlagen:', err.message || err);
+    }
+  }
+  const produktBild = config.AUTO_POST_INSTAGRAM === 'ja' && !produktVideo ? await findeProduktBild(topText) : null;
 
   const hinweise = [];
   if (config.AUTO_POST_FACEBOOK === 'ja' && config.FB_PAGE_ID) hinweise.push('Facebook-Post geht automatisch raus!');
-  if (config.AUTO_POST_INSTAGRAM === 'ja' && produktBild) hinweise.push(`Instagram-Post (Foto: ${produktBild.titel}) geht automatisch raus!`);
+  if (config.AUTO_POST_INSTAGRAM === 'ja' && produktVideo) hinweise.push(`Instagram-Reel (Video: ${produktVideo.titel}) geht automatisch raus!`);
+  else if (config.AUTO_POST_INSTAGRAM === 'ja' && produktBild) hinweise.push(`Instagram-Post (Foto: ${produktBild.titel}) geht automatisch raus!`);
   const autoHinweis = hinweise.length ? `${NL}${NL}${hinweise.join(' ')}` : '';
 
   await sendEmail({
@@ -164,16 +230,26 @@ async function main() {
   );
 
   const facebookErgebnis = await postFacebook(daten.facebook_post);
-  const instagramErgebnis = produktBild
-    ? await postInstagram(produktBild.url, daten.instagram_caption)
-    : { aktiv: false, gepostet: false };
+  let instagramErgebnis;
+  if (produktVideo) {
+    instagramErgebnis = await postInstagramReel(produktVideo.url, daten.instagram_caption);
+  } else if (produktBild) {
+    instagramErgebnis = await postInstagram(produktBild.url, daten.instagram_caption);
+  } else {
+    instagramErgebnis = { aktiv: false, gepostet: false };
+  }
 
   schreibeSocialPosterEintrag({
     thema,
     topText,
     html: daten.html,
     facebook: facebookErgebnis,
-    instagram: { ...instagramErgebnis, produktTitel: produktBild?.titel || null, bildUrl: produktBild?.url || null },
+    instagram: {
+      ...instagramErgebnis,
+      typ: produktVideo ? 'reel' : 'bild',
+      produktTitel: produktVideo?.titel || produktBild?.titel || null,
+      bildUrl: produktBild?.url || null,
+    },
   });
 
   console.log('[18-multi-plattform-poster] Posting-Paket versendet');
