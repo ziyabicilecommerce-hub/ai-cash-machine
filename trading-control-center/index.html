@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI CASH MACHINE — TRADING CONTROL CENTER</title>
+<meta name="description" content="Vollständiges, rein lesendes Control Center für den Krypto-Trading-Bot — Portfolio, Live-Marktdaten, Risiko-Engine, Strategien, Trade-Historie und Equity-Kurve. Ausschließlich echte Daten, kein Fake.">
+<meta property="og:title" content="AI CASH MACHINE — TRADING CONTROL CENTER">
+<meta property="og:description" content="Live Control Center des Trading-Bots, rein lesend, nur echte Daten.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23050b0c%27/%3E%3Cpath%20d%3D%27M8%2044l12-14%2010%2010%2018-24%208%209%27%20fill%3D%27none%27%20stroke%3D%27%236fe0ff%27%20stroke-width%3D%273%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050b0c; --panel: rgba(10,26,28,.55); --panel-solid: #0a1618;
+    --cyan: #6fe0ff; --green: #34f5a2; --red: #ff6b81; --amber: #ffc757;
+    --line: rgba(111,224,255,.2); --line2: rgba(255,255,255,.07);
+    --txt: #e8f7fa; --mut: rgba(215,240,245,.6); --mut2: rgba(215,240,245,.38);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+  ::selection { background:rgba(111,224,255,.3); }
+
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(111,224,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(111,224,255,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 30%,transparent 75%); }
+
+  .key-modal-overlay { position:fixed; inset:0; z-index:600; background:rgba(2,6,7,.88);
+    display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .25s ease, visibility .25s ease; }
+  .key-modal-overlay.open { opacity:1; visibility:visible; pointer-events:auto; }
+  .key-modal { width:min(460px,90vw); background:#081214; border:1px solid var(--line);
+    box-shadow:0 0 40px rgba(111,224,255,.14); clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px)); padding:26px; }
+  .key-modal h3 { color:var(--cyan); font-size:16px; letter-spacing:1px; margin-bottom:10px; }
+  .key-modal p { font-size:12.5px; color:var(--mut); line-height:1.6; margin-bottom:14px; }
+  .key-modal label { display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; color:var(--mut2); margin-bottom:5px; }
+  .key-modal input { width:100%; background:rgba(111,224,255,.06); border:1px solid var(--line);
+    color:var(--txt); font-family:var(--mono); font-size:13px; padding:9px 11px; margin-bottom:14px; outline:none; }
+  .key-modal input:focus { border-color:var(--cyan); }
+  .key-modal-actions { display:flex; justify-content:flex-end; }
+  .key-modal-actions button { background:rgba(111,224,255,.16); border:1px solid var(--cyan); color:var(--txt);
+    font-family:inherit; font-weight:700; font-size:13px; padding:9px 20px; cursor:pointer;
+    clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); }
+  .key-modal-actions button:hover { background:rgba(111,224,255,.3); }
+  .key-gear { background:none; border:1px solid var(--line); color:var(--cyan);
+    width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:13px;
+    display:flex; align-items:center; justify-content:center; }
+  .key-gear:hover { border-color:var(--cyan); background:rgba(111,224,255,.1); }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(5,11,12,.8); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--cyan); }
+  .nav-links { display:flex; align-items:center; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--cyan); }
+  @media(max-width:940px){ .nav-links a { display:none; } }
+
+  header.hero { min-height:26svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:100px 20px 16px; max-width:900px; margin:0 auto; }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--cyan); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:18px; }
+  .kicker::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--cyan); box-shadow:0 0 10px var(--cyan); animation:pulse 1.4s infinite; }
+  @keyframes pulse { 50%{opacity:.35;transform:scale(.75)} }
+  h1 { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(22px,4.6vw,38px); letter-spacing:2px; color:#f2fbfd;
+    text-shadow:0 0 24px rgba(111,224,255,.4); margin-bottom:10px; }
+  .sub { font-size:13.5px; color:var(--mut); max-width:560px; }
+
+  section.wrap { padding:10px 20px 20px; max-width:1240px; margin:0 auto; }
+
+  .toolbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px;
+    font-family:var(--mono); font-size:11.5px; color:var(--mut2); }
+  .toolbar .refresh-btn { background:rgba(111,224,255,.1); border:1px solid var(--line2); color:var(--mut);
+    padding:6px 12px; cursor:pointer; font-family:inherit; font-size:11.5px; text-decoration:none; display:inline-block; }
+  .toolbar .refresh-btn:hover { border-color:var(--cyan); color:var(--cyan); }
+
+  .panel-title { font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; color:var(--cyan); margin:26px 0 12px; text-transform:uppercase; }
+  .panel-title:first-child { margin-top:0; }
+
+  .stat-strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px;
+    background:var(--line2); border:1px solid var(--line2); margin-bottom:6px; }
+  .stat-cell { background:var(--panel-solid); padding:16px 14px; }
+  .stat-cell .lbl { font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--mut2); text-transform:uppercase; margin-bottom:6px; }
+  .stat-cell .val { font-family:var(--mono); font-weight:700; font-size:18px; }
+  .stat-cell .val.up { color:var(--green); } .stat-cell .val.down { color:var(--red); }
+
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2 { grid-template-columns:1fr; } }
+
+  .box { background:var(--panel); border:1px solid var(--line2);
+    clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); padding:18px; }
+  .box h4 { font-family:var(--mono); font-size:11.5px; letter-spacing:.1em; color:var(--mut); margin-bottom:12px; text-transform:uppercase; }
+  .row { display:flex; justify-content:space-between; font-size:12.5px; color:var(--mut); padding:4px 0; gap:10px; }
+  .row b { color:var(--txt); font-family:var(--mono); text-align:right; }
+  .row b.up { color:var(--green); } .row b.down { color:var(--red); }
+  .row.sep { border-top:1px dashed var(--line2); margin-top:6px; padding-top:10px; }
+
+  .risk-badge { font-family:var(--mono); font-size:11px; letter-spacing:.06em; padding:4px 10px; border-radius:14px; display:inline-block; }
+  .risk-badge.sicher { background:rgba(52,245,162,.15); color:var(--green); border:1px solid rgba(52,245,162,.35); }
+  .risk-badge.warnung { background:rgba(255,199,87,.15); color:var(--amber); border:1px solid rgba(255,199,87,.35); }
+  .risk-badge.danger { background:rgba(255,107,129,.15); color:var(--red); border:1px solid rgba(255,107,129,.35); }
+
+  .cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; margin-bottom:6px; }
+  .card { background:var(--panel); border:1px solid var(--line2);
+    clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); padding:18px; }
+  .card.kill { border-color:rgba(255,107,129,.5); background:rgba(60,10,18,.35); }
+  .card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .card-top .sym { font-family:var(--mono); font-weight:700; font-size:15px; }
+  .card-top .price { font-family:var(--mono); font-size:13px; color:var(--mut); }
+  .badge { font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; padding:3px 8px; border-radius:20px; }
+  .badge.paper { background:rgba(255,199,87,.15); color:var(--amber); border:1px solid rgba(255,199,87,.3); }
+  .badge.live { background:rgba(255,107,129,.15); color:var(--red); border:1px solid rgba(255,107,129,.3); }
+  .pos-tag { display:inline-block; margin-top:10px; font-family:var(--mono); font-size:11px; padding:5px 10px;
+    background:rgba(111,224,255,.08); border:1px solid var(--line2); }
+  .pos-tag.open { border-color:rgba(52,245,162,.35); color:var(--green); }
+  .kill-banner { margin-top:10px; font-family:var(--mono); font-size:11px; color:var(--red); }
+  .indi-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px 14px; margin:10px 0; padding:10px 0; border-top:1px dashed var(--line2); border-bottom:1px dashed var(--line2); }
+  .indi-grid .ind { font-size:11px; color:var(--mut2); display:flex; justify-content:space-between; }
+  .indi-grid .ind b { color:var(--mut); font-family:var(--mono); font-weight:500; }
+  .card-toggle { background:none; border:none; color:var(--cyan); font-family:var(--mono); font-size:10.5px; cursor:pointer; padding:0; margin-top:8px; }
+
+  .readiness-banner { font-family:var(--mono); font-size:12px; padding:14px 16px; margin-bottom:6px; line-height:1.6; }
+  .readiness-banner .titel { font-weight:700; font-size:13px; letter-spacing:.05em; margin-bottom:4px; }
+  .readiness-banner .hinweis { color:var(--mut2); font-size:10.5px; margin-top:8px; }
+  .readiness-banner.rot { background:rgba(255,107,129,.08); border:1px solid rgba(255,107,129,.35); color:var(--red); }
+  .readiness-banner.gelb { background:rgba(255,199,87,.08); border:1px solid rgba(255,199,87,.35); color:var(--amber); }
+  .readiness-banner.gruen { background:rgba(52,245,162,.08); border:1px solid rgba(52,245,162,.35); color:var(--green); }
+
+  table.datatab { width:100%; border-collapse:collapse; font-family:var(--mono); font-size:11.5px; }
+  table.datatab th { text-align:left; color:var(--mut2); font-weight:500; letter-spacing:.05em; text-transform:uppercase; font-size:9.5px; padding:6px 8px; border-bottom:1px solid var(--line2); }
+  table.datatab td { padding:6px 8px; border-bottom:1px solid var(--line2); color:var(--mut); white-space:nowrap; }
+  table.datatab tbody tr:hover { background:rgba(111,224,255,.04); }
+  .table-scroll { overflow-x:auto; }
+  .up { color:var(--green); } .down { color:var(--red); }
+
+  .equity-svg { width:100%; height:220px; display:block; }
+
+  .health-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; }
+  .health-item { font-family:var(--mono); font-size:12px; display:flex; justify-content:space-between; padding:8px 10px; background:rgba(111,224,255,.04); border:1px solid var(--line2); }
+  .health-item .dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:6px; }
+  .dot.on { background:var(--green); box-shadow:0 0 6px var(--green); }
+  .dot.off { background:var(--red); box-shadow:0 0 6px var(--red); }
+
+  .empty-state { text-align:center; padding:60px 20px; font-family:var(--mono); }
+  .empty-state .line1 { color:var(--cyan); font-size:15px; }
+  .empty-state .line2 { color:var(--mut2); font-size:12px; margin-top:8px; max-width:480px; margin-left:auto; margin-right:auto; }
+  .empty-state button { margin-top:18px; background:rgba(111,224,255,.14); border:1px solid var(--cyan); color:var(--txt);
+    font-family:inherit; font-weight:700; font-size:13px; padding:9px 20px; cursor:pointer; }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--cyan); text-decoration:none; margin:0 8px; }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<div class="key-modal-overlay" id="keyModalOverlay">
+  <div class="key-modal" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
+    <h3 id="keyModalTitle">Trading-Bot verbinden</h3>
+    <p>Diese Werte bleiben nur lokal in deinem Browser (localStorage). Beides findest du in deiner eigenen <code>wrangler.toml</code> / den Cloudflare-Secrets deines <code>trading-bot-worker</code>-Deployments.</p>
+    <label for="workerUrlInput">Worker-URL</label>
+    <input type="text" id="workerUrlInput" placeholder="https://cashmachine-trading-bot.dein-account.workers.dev" autocomplete="off">
+    <label for="statusKeyInput">STATUS_READ_KEY</label>
+    <input type="password" id="statusKeyInput" placeholder="dein-status-read-key" autocomplete="off">
+    <div class="key-modal-actions">
+      <button id="keyModalSave" type="button">Verbinden</button>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;CONTROL CENTER</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../trading-dashboard/">Dashboard</a>
+    <a href="../trading-live-setup/">Live-Setup</a>
+    <a href="../setup/">Setup</a>
+    <button class="key-gear" id="keyGearBtn" title="Verbindung einstellen" aria-label="Verbindung einstellen">⚙</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="kicker">LIVE STATUS · REIN LESEND · NUR ECHTE DATEN</div>
+  <h1>TRADING CONTROL CENTER</h1>
+  <p class="sub">Vollständige Übersicht über Portfolio, Live-Marktdaten, Risiko-Engine, Strategien und Trade-Historie. Jeder Wert hier kommt direkt vom Bot oder der Börse — nichts ist erfunden oder platzhalter, und diese Seite kann NIE einen Trade auslösen.</p>
+</header>
+
+<section class="wrap">
+  <div class="toolbar" id="toolbar" style="display:none">
+    <span id="lastUpdated">–</span>
+    <span style="display:flex; gap:8px;">
+      <a class="refresh-btn" id="exportBtn" href="#">⤓ CSV exportieren</a>
+      <button class="refresh-btn" id="refreshBtn" type="button">↻ Jetzt aktualisieren</button>
+    </span>
+  </div>
+
+  <div id="emptyState" class="empty-state">
+    <div class="line1">&gt; nicht verbunden</div>
+    <div class="line2">Trag die Worker-URL und deinen <code>STATUS_READ_KEY</code> über das ⚙ Symbol oben rechts ein, um die Live-Daten deines Trading-Bots zu sehen.</div>
+    <button id="emptyConnectBtn" type="button">Verbinden</button>
+  </div>
+
+  <div id="content" style="display:none">
+
+    <div class="readiness-banner" id="readinessBanner"></div>
+
+    <div class="panel-title">Portfolio</div>
+    <div class="stat-strip" id="portfolioStrip"></div>
+
+    <div class="grid2" style="margin-top:16px">
+      <div class="box">
+        <h4>Risiko-Engine</h4>
+        <div id="riskBox"></div>
+      </div>
+      <div class="box">
+        <h4>Markt-Signale</h4>
+        <div id="marketSignalsBox"></div>
+      </div>
+    </div>
+
+    <div class="panel-title">Strategie-Vergleich</div>
+    <div class="box">
+      <div class="table-scroll">
+        <table class="datatab" id="strategyTable"></table>
+      </div>
+    </div>
+
+    <div class="panel-title">System Health</div>
+    <div class="box">
+      <div class="health-list" id="healthList"></div>
+    </div>
+
+    <div class="panel-title">Coins</div>
+    <div class="cards" id="cards"></div>
+
+    <div class="panel-title">Equity-Kurve (rekonstruiert aus allen Trades)</div>
+    <div class="box">
+      <svg class="equity-svg" id="equitySvg" viewBox="0 0 1000 220" preserveAspectRatio="none"></svg>
+      <div style="font-family:var(--mono); font-size:10px; color:var(--mut2); margin-top:8px;">Keine sekundengenaue Kurve (die speichert der Bot nicht) — Rekonstruktion aus dem Verlauf aller abgeschlossenen Trades, chronologisch aufsummiert.</div>
+    </div>
+
+    <div class="panel-title">Trade-Historie (alle Symbole)</div>
+    <div class="box">
+      <div class="table-scroll">
+        <table class="datatab" id="tradeTable"></table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <b>CASHMACHINE TRADING CONTROL CENTER</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../trading-dashboard/">Dashboard</a>·<a href="../trading-live-setup/">Live-Setup</a>·<a href="../setup/">Setup</a>
+</footer>
+
+<script>
+  const STORAGE_URL = 'cmx_trading_worker_url';
+  const STORAGE_KEY = 'cmx_trading_status_key';
+  const REFRESH_MS = 30000;
+
+  const overlay = document.getElementById('keyModalOverlay');
+  const workerUrlInput = document.getElementById('workerUrlInput');
+  const statusKeyInput = document.getElementById('statusKeyInput');
+  const keyModalSave = document.getElementById('keyModalSave');
+  const keyGearBtn = document.getElementById('keyGearBtn');
+  const emptyConnectBtn = document.getElementById('emptyConnectBtn');
+
+  function getConn() {
+    return { url: localStorage.getItem(STORAGE_URL) || '', key: localStorage.getItem(STORAGE_KEY) || '' };
+  }
+  function openModal() {
+    const conn = getConn();
+    workerUrlInput.value = conn.url;
+    statusKeyInput.value = conn.key;
+    overlay.classList.add('open');
+    setTimeout(() => workerUrlInput.focus(), 50);
+  }
+  function closeModal() { overlay.classList.remove('open'); }
+  keyGearBtn.addEventListener('click', openModal);
+  emptyConnectBtn.addEventListener('click', openModal);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+
+  keyModalSave.addEventListener('click', () => {
+    const url = workerUrlInput.value.trim().replace(/\/$/, '');
+    const key = statusKeyInput.value.trim();
+    if (!url || !key) return;
+    localStorage.setItem(STORAGE_URL, url);
+    localStorage.setItem(STORAGE_KEY, key);
+    closeModal();
+    loadStatus();
+  });
+
+  const fmtUsdt = (n) => (n ?? 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' USDT';
+  const fmtPreis = (n) => n == null ? '–' : n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 6 });
+  const fmtProzent = (n, digits = 2) => n == null ? '–' : `${n >= 0 ? '+' : ''}${n.toFixed(digits)}%`;
+  const fmtDatum = (iso) => iso ? new Date(iso).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '–';
+  const heuteIso = () => new Date().toISOString().slice(0, 10);
+
+  function fngKlasse(wert) {
+    if (wert == null) return '–';
+    if (wert <= 25) return 'Extreme Angst';
+    if (wert <= 45) return 'Angst';
+    if (wert <= 55) return 'Neutral';
+    if (wert <= 75) return 'Gier';
+    return 'Extreme Gier';
+  }
+
+  function renderReadiness(readiness) {
+    const el = document.getElementById('readinessBanner');
+    if (!readiness) { el.style.display = 'none'; return; }
+    const emoji = { rot: '🔴', gelb: '🟡', gruen: '🟢' }[readiness.ampel] || '⚪';
+    const titel = { rot: 'NICHT BEREIT FÜR ECHTGELD', gelb: 'NOCH BEOBACHTEN', gruen: 'WIRKT BEREIT FÜR EINEN VORSICHTIGEN TEST' }[readiness.ampel] || '';
+    el.className = `readiness-banner ${readiness.ampel}`;
+    el.innerHTML = `<div class="titel">${emoji} Echtgeld-Readiness: ${titel}</div><div>${readiness.grund}</div><div class="hinweis">${readiness.hinweis}</div>`;
+    el.style.display = 'block';
+  }
+
+  function renderPortfolio(data) {
+    const symbole = data.symbole;
+    const gesamtKapital = symbole.reduce((s, x) => s + x.kapital, 0);
+    const gesamtStart = symbole.reduce((s, x) => s + x.startKapital, 0);
+    const totalPl = gesamtKapital - gesamtStart;
+    const totalPlProzent = gesamtStart ? (totalPl / gesamtStart) * 100 : 0;
+    const heute = heuteIso();
+    let heutePl = 0;
+    symbole.forEach((s) => (s.trades || []).forEach((t) => { if ((t.ausstiegAm || '').slice(0, 10) === heute) heutePl += t.gewinnVerlustUsdt; }));
+    const offenePositionen = symbole.filter((s) => s.position).length;
+    const alleTrades = symbole.flatMap((s) => s.trades || []);
+    const gewinnTrades = alleTrades.filter((t) => t.gewinnVerlustUsdt > 0).length;
+    const winRate = alleTrades.length ? (gewinnTrades / alleTrades.length) * 100 : null;
+    const maxDrawdown = symbole.length ? Math.max(...symbole.map((s) => s.maxDrawdownProzent || 0)) : 0;
+    const gewinneGesamt = alleTrades.filter((t) => t.gewinnVerlustUsdt > 0).reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
+    const verlusteGesamt = alleTrades.filter((t) => t.gewinnVerlustUsdt < 0).reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
+    const profitFactor = verlusteGesamt === 0 ? null : gewinneGesamt / Math.abs(verlusteGesamt);
+
+    const cells = [
+      { lbl: 'Balance', val: fmtUsdt(gesamtKapital) },
+      { lbl: 'Gesamt P&L', val: `${totalPl >= 0 ? '+' : ''}${fmtUsdt(totalPl)}`, cls: totalPl >= 0 ? 'up' : 'down' },
+      { lbl: 'Gesamt ROI', val: fmtProzent(totalPlProzent), cls: totalPlProzent >= 0 ? 'up' : 'down' },
+      { lbl: 'Heute P&L', val: `${heutePl >= 0 ? '+' : ''}${fmtUsdt(heutePl)}`, cls: heutePl >= 0 ? 'up' : 'down' },
+      { lbl: 'Offene Positionen', val: `${offenePositionen} / ${symbole.length}` },
+      { lbl: 'Win-Rate gesamt', val: winRate == null ? '–' : `${winRate.toFixed(0)}%`, cls: winRate != null ? (winRate >= 50 ? 'up' : 'down') : '' },
+      { lbl: 'Max Drawdown', val: `${maxDrawdown.toFixed(1)}%`, cls: 'down' },
+      { lbl: 'Profit Factor', val: profitFactor == null ? '–' : profitFactor.toFixed(2), cls: profitFactor != null ? (profitFactor >= 1 ? 'up' : 'down') : '' },
+    ];
+    document.getElementById('portfolioStrip').innerHTML = cells.map((c) =>
+      `<div class="stat-cell"><div class="lbl">${c.lbl}</div><div class="val ${c.cls || ''}">${c.val}</div></div>`
+    ).join('');
+  }
+
+  function renderRisk(data) {
+    const r = data.risiko;
+    const badgeText = { sicher: '🟢 SICHER', warnung: '🟡 BEOBACHTEN', danger: '🔴 GEFAHR' }[data.risikoStatus] || data.risikoStatus;
+    document.getElementById('riskBox').innerHTML = `
+      <div class="row"><span>Status</span><span class="risk-badge ${data.risikoStatus}">${badgeText}</span></div>
+      <div class="row sep"><span>Max. Position / Symbol</span><b>${r.maxPositionProzent}%</b></div>
+      <div class="row"><span>Max. Tagesverlust</span><b>${r.maxTagesverlustProzent}%</b></div>
+      <div class="row"><span>Max. Gesamtverlust (Kill-Switch)</span><b>${r.maxGesamtverlustProzent}%</b></div>
+      <div class="row"><span>Stop-Loss</span><b>${r.stopLossProzent}%</b></div>
+      <div class="row"><span>Take-Profit</span><b>${r.takeProfitProzent > 0 ? r.takeProfitProzent + '%' : 'aus'}</b></div>
+      <div style="font-family:var(--mono); font-size:10px; color:var(--mut2); margin-top:10px;">Kein interaktiver Kill-Switch-Button hier — Moduswechsel läuft ausschließlich über die sichere Live-Setup-Seite.</div>
+    `;
+  }
+
+  function renderMarketSignals(data) {
+    const m = data.marktSignale;
+    document.getElementById('marketSignalsBox').innerHTML = `
+      <div class="row"><span>Fear &amp; Greed Index</span><b>${m.fearGreedWert ?? '–'} ${m.fearGreedWert != null ? '(' + fngKlasse(m.fearGreedWert) + ')' : ''}</b></div>
+      <div class="row"><span>Stand</span><b>${fmtDatum(m.fearGreedZeit)}</b></div>
+      <div class="row sep"><span>BTC-Dominanz</span><b>${m.btcDominanzProzent != null ? m.btcDominanzProzent.toFixed(1) + '%' : '–'}</b></div>
+      <div class="row"><span>Stand</span><b>${fmtDatum(m.btcDominanzZeit)}</b></div>
+      <div style="font-family:var(--mono); font-size:10px; color:var(--mut2); margin-top:10px;">Aus dem Cache des letzten Cron-Laufs (alle 5 Min.) — kein Live-Poll bei jedem Seitenaufruf, um externe APIs zu schonen.</div>
+    `;
+  }
+
+  function renderStrategyTable(data) {
+    const rows = data.strategieVergleich || [];
+    const el = document.getElementById('strategyTable');
+    if (!rows.length) { el.innerHTML = '<tr><td style="padding:10px;color:var(--mut2)">Noch keine Trades.</td></tr>'; return; }
+    el.innerHTML = `
+      <thead><tr><th>Strategie</th><th>Trades</th><th>P&amp;L</th></tr></thead>
+      <tbody>${rows.map((r) => `<tr><td>${r.strategie}</td><td>${r.anzahlTrades}</td><td class="${r.pl >= 0 ? 'up' : 'down'}">${r.pl >= 0 ? '+' : ''}${fmtUsdt(r.pl)}</td></tr>`).join('')}</tbody>
+    `;
+  }
+
+  function renderHealth(data) {
+    const items = [
+      { lbl: 'Trading Worker', on: true },
+      { lbl: 'Börse', on: !!data.exchange, extra: data.exchange },
+      { lbl: 'Modus', on: true, extra: data.paperModus ? 'PAPER' : 'LIVE' },
+      { lbl: 'Letzter Cron-Lauf', on: !!data.letzterCronLauf, extra: fmtDatum(data.letzterCronLauf) },
+      { lbl: 'API-Latenz (Client)', on: true, extra: `${window.__lastLatencyMs ?? '–'} ms` },
+    ];
+    document.getElementById('healthList').innerHTML = items.map((i) =>
+      `<div class="health-item"><span><span class="dot ${i.on ? 'on' : 'off'}"></span>${i.lbl}</span><span>${i.extra ?? (i.on ? 'ONLINE' : 'OFFLINE')}</span></div>`
+    ).join('');
+  }
+
+  function renderCards(data) {
+    const box = document.getElementById('cards');
+    box.innerHTML = data.symbole.map((s, idx) => {
+      const pnl = s.kapital - s.startKapital;
+      const pnlProzent = s.startKapital ? (pnl / s.startKapital) * 100 : 0;
+      const pnlCls = pnl >= 0 ? 'up' : 'down';
+      const ind = s.indikatoren;
+      let indHtml = '';
+      if (ind) {
+        const zeilen = [
+          ['RSI', ind.rsi?.toFixed(1)],
+          ['ATR', ind.atr?.toFixed(4)],
+          [`EMA ${ind.emaSchnellPeriode}`, fmtPreis(ind.emaSchnellWert)],
+          [`EMA ${ind.emaLangsamPeriode}`, fmtPreis(ind.emaLangsamWert)],
+        ];
+        if (ind.bollingerMittel != null) {
+          zeilen.push(['Bollinger Ob.', fmtPreis(ind.bollingerOben)], ['Bollinger Unt.', fmtPreis(ind.bollingerUnten)]);
+        }
+        if (ind.donchianEinstiegOben != null) {
+          zeilen.push(['Donchian Ein.', fmtPreis(ind.donchianEinstiegOben)], ['Donchian Aus.', fmtPreis(ind.donchianAusstiegUnten)]);
+        }
+        indHtml = `<div class="indi-grid">${zeilen.map(([l, v]) => `<div class="ind"><span>${l}</span><b>${v ?? '–'}</b></div>`).join('')}</div>`;
+      }
+      let posHtml = s.position
+        ? `<div class="pos-tag open">Position offen @ ${fmtPreis(s.position.entryPreis)} · ${Number(s.position.qty).toFixed(6)} Stück${s.stopLossPreis ? ` · SL ${fmtPreis(s.stopLossPreis)}` : ''}${s.takeProfitPreis ? ` · TP ${fmtPreis(s.takeProfitPreis)}` : ''}</div>`
+        : `<div class="pos-tag">Keine offene Position</div>`;
+      return `
+        <div class="card ${s.killSwitchAktiv ? 'kill' : ''}">
+          <div class="card-top">
+            <span class="sym">${s.symbol}</span>
+            <span class="price">${fmtPreis(s.preisAktuell)} <span class="${(s.change24hProzent ?? 0) >= 0 ? 'up' : 'down'}">${fmtProzent(s.change24hProzent, 1)}</span></span>
+          </div>
+          <div class="row"><span>Börse / Modus</span><b><span class="badge ${s.paperModus ? 'paper' : 'live'}">${s.paperModus ? 'PAPER' : 'LIVE'}</span> ${s.exchange || ''}</b></div>
+          ${s.strategie ? `<div class="row"><span>Strategie</span><b>${s.strategie}</b></div>` : ''}
+          <div class="row"><span>Spread</span><b>${s.spreadProzent != null ? s.spreadProzent.toFixed(2) + '%' : '–'}</b></div>
+          <div class="row"><span>Kapital</span><b>${fmtUsdt(s.kapital)}</b></div>
+          <div class="row"><span>P&amp;L gesamt</span><b class="${pnlCls}">${pnl >= 0 ? '+' : ''}${fmtUsdt(pnl)} (${fmtProzent(pnlProzent, 1)})</b></div>
+          <div class="row"><span>Verlust heute</span><b class="${s.heutigerVerlustUsdt < 0 ? 'down' : ''}">${fmtUsdt(s.heutigerVerlustUsdt)}</b></div>
+          ${s.tradeStats && s.tradeStats.anzahlTrades > 0 ? `
+          <div class="row"><span>Win-Rate (letzte ${s.tradeStats.anzahlTrades})</span><b class="${s.tradeStats.winRateProzent >= 50 ? 'up' : 'down'}">${s.tradeStats.winRateProzent.toFixed(0)}%</b></div>
+          <div class="row"><span>Profit Factor</span><b class="${(s.profitFactor ?? 1) >= 1 ? 'up' : 'down'}">${s.profitFactor != null ? s.profitFactor.toFixed(2) : '–'}</b></div>
+          <div class="row"><span>Max Drawdown</span><b class="down">${(s.maxDrawdownProzent ?? 0).toFixed(1)}%</b></div>` : ''}
+          ${indHtml}
+          ${posHtml}
+          ${s.killSwitchAktiv ? `<div class="kill-banner">🛑 KILL-SWITCH AKTIV — Bot handelt dieses Symbol nicht mehr</div>` : ''}
+        </div>`;
+    }).join('');
+  }
+
+  function renderEquityCurve(data) {
+    const alleTrades = data.symbole.flatMap((s) => s.trades || []).sort((a, b) => new Date(a.ausstiegAm) - new Date(b.ausstiegAm));
+    const startKapital = data.symbole.reduce((s, x) => s + x.startKapital, 0);
+    const svg = document.getElementById('equitySvg');
+    if (!alleTrades.length) {
+      svg.innerHTML = `<text x="500" y="110" text-anchor="middle" fill="rgba(215,240,245,.38)" font-family="JetBrains Mono" font-size="13">Noch keine abgeschlossenen Trades für eine Kurve.</text>`;
+      return;
+    }
+    let kapital = startKapital;
+    const punkte = [kapital];
+    for (const t of alleTrades) { kapital += t.gewinnVerlustUsdt; punkte.push(kapital); }
+    const min = Math.min(...punkte), max = Math.max(...punkte);
+    const spanne = max - min || 1;
+    const w = 1000, h = 220, pad = 10;
+    const pts = punkte.map((v, i) => {
+      const x = pad + (i / (punkte.length - 1)) * (w - pad * 2);
+      const y = h - pad - ((v - min) / spanne) * (h - pad * 2);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    const steigend = punkte[punkte.length - 1] >= punkte[0];
+    const farbe = steigend ? '#34f5a2' : '#ff6b81';
+    const linie = pts.join(' ');
+    const flaeche = `${pad},${h - pad} ${linie} ${w - pad},${h - pad}`;
+    svg.innerHTML = `
+      <polygon points="${flaeche}" fill="${farbe}" fill-opacity="0.08"></polygon>
+      <polyline points="${linie}" fill="none" stroke="${farbe}" stroke-width="2"></polyline>
+    `;
+  }
+
+  function renderTradeTable(data) {
+    const alleTrades = data.symbole.flatMap((s) => (s.trades || []).map((t) => ({ ...t, symbol: s.symbol })))
+      .sort((a, b) => new Date(b.ausstiegAm) - new Date(a.ausstiegAm))
+      .slice(0, 100);
+    const el = document.getElementById('tradeTable');
+    if (!alleTrades.length) { el.innerHTML = '<tr><td style="padding:10px;color:var(--mut2)">Noch keine abgeschlossenen Trades.</td></tr>'; return; }
+    el.innerHTML = `
+      <thead><tr><th>Symbol</th><th>Ausstieg</th><th>Entry</th><th>Exit</th><th>P&amp;L</th><th>%</th><th>Grund</th></tr></thead>
+      <tbody>${alleTrades.map((t) => `
+        <tr>
+          <td>${t.symbol}</td>
+          <td>${fmtDatum(t.ausstiegAm)}</td>
+          <td>${fmtPreis(t.entryPreis)}</td>
+          <td>${fmtPreis(t.exitPreis)}</td>
+          <td class="${t.gewinnVerlustUsdt >= 0 ? 'up' : 'down'}">${t.gewinnVerlustUsdt >= 0 ? '+' : ''}${fmtUsdt(t.gewinnVerlustUsdt)}</td>
+          <td class="${t.gewinnProzent >= 0 ? 'up' : 'down'}">${fmtProzent(t.gewinnProzent)}</td>
+          <td>${t.grund || '–'}</td>
+        </tr>`).join('')}</tbody>
+    `;
+  }
+
+  let refreshTimer = null;
+  async function loadStatus() {
+    const conn = getConn();
+    if (!conn.url || !conn.key) {
+      document.getElementById('emptyState').style.display = 'block';
+      document.getElementById('content').style.display = 'none';
+      document.getElementById('toolbar').style.display = 'none';
+      return;
+    }
+    try {
+      const t0 = performance.now();
+      const res = await fetch(`${conn.url}/status?key=${encodeURIComponent(conn.key)}`, { cache: 'no-store' });
+      window.__lastLatencyMs = Math.round(performance.now() - t0);
+      if (!res.ok) throw new Error('status ' + res.status);
+      const data = await res.json();
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+      document.getElementById('toolbar').style.display = 'flex';
+      document.getElementById('lastUpdated').textContent = `Aktualisiert: ${new Date(data.updatedAt).toLocaleTimeString('de-DE')}`;
+      document.getElementById('exportBtn').href = `${conn.url}/export?key=${encodeURIComponent(conn.key)}`;
+      renderReadiness(data.readiness);
+      renderPortfolio(data);
+      renderRisk(data);
+      renderMarketSignals(data);
+      renderStrategyTable(data);
+      renderHealth(data);
+      renderCards(data);
+      renderEquityCurve(data);
+      renderTradeTable(data);
+    } catch (err) {
+      document.getElementById('emptyState').style.display = 'block';
+      document.getElementById('content').style.display = 'none';
+      document.getElementById('emptyState').querySelector('.line1').textContent = '> Verbindung fehlgeschlagen';
+      document.getElementById('emptyState').querySelector('.line2').textContent = 'Worker-URL oder STATUS_READ_KEY prüfen (⚙ oben rechts), oder der Worker ist gerade nicht erreichbar.';
+    }
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(loadStatus, REFRESH_MS);
+  }
+
+  document.getElementById('refreshBtn').addEventListener('click', loadStatus);
+  loadStatus();
+</script>
+</body>
+</html>

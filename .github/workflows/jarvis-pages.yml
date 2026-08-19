@@ -14,6 +14,7 @@ on:
       - 'closer/**'
       - 'pulse/**'
       - 'trading-dashboard/**'
+      - 'trading-control-center/**'
       - 'trading-live-setup/**'
       - 'forecast/**'
       - 'setup/**'
@@ -65,6 +66,7 @@ jobs:
           cp -r closer _site/closer
           cp -r pulse _site/pulse
           cp -r trading-dashboard _site/trading-dashboard
+          cp -r trading-control-center _site/trading-control-center
           cp -r trading-live-setup _site/trading-live-setup
           cp -r forecast _site/forecast
           cp -r setup _site/setup
