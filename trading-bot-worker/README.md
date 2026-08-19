@@ -5,6 +5,22 @@ Krypto-Spot-Trading-Bot mit denselben Sicherheitsgrenzen wie
 statt als GitHub-Actions-Automation — **und mit Unterstützung für mehrere
 Kryptowährungen gleichzeitig.**
 
+## Datei-Aufbau
+
+`worker.js` ist der Orchestrator (Konfiguration einlesen, pro Symbol
+handeln, HTTP-/Cron-Einstiegspunkte) und importiert aus `lib/`:
+
+- **`strategie.mjs`** — reine Entscheidungslogik (Kauf/Verkauf-Signale),
+  läuft identisch im Live-Worker UND im Backtest (`backtest.mjs`).
+- **`exchanges.mjs`** — Binance-/Kraken-Adapter (Kerzen, Orders, Spread).
+- **`marktdaten.mjs`** — externe Gratis-Datenquellen (CoinGecko,
+  CoinPaprika, OKX, Gate.io, Bitstamp, Fear & Greed, BTC-Dominanz,
+  Mehrfach-Zeitrahmen).
+- **`notify.mjs`** — WhatsApp-Versand.
+- **`state.mjs`** — KV-Persistenz pro Symbol (Kapital, Position, Trades).
+- **`reports.mjs`** — Tages-/Wochen-/Monats-Rückblick + Kapital-Rebalancing.
+- **`statistik.mjs`** — Trade-Kennzahlen + Echtgeld-Readiness-Ampel.
+
 ## Warum ein eigener Worker statt GitHub Actions?
 
 Der GitHub-Actions-Bot (`automations/49-trading-bot.mjs`) lief technisch
