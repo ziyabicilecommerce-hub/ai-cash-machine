@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE TRADER ROAST</title>
+<meta name="description" content="5 Fragen zu deinem Trading-Verhalten - finde deinen Trader-Archetyp raus und teil deine Roast-Card. Zum Spaß, keine Finanzberatung.">
+<meta property="og:title" content="CASHMACHINE TRADER ROAST">
+<meta property="og:description" content="Welcher Trader-Typ bist du wirklich? 5 Fragen, brutal ehrliche Antwort.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23050b0c%27/%3E%3Ctext%20x%3D%2732%27%20y%3D%2744%27%20font-size%3D%2734%27%20text-anchor%3D%27middle%27%3E%F0%9F%94%A5%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050b0c; --panel: rgba(10,26,28,.6); --panel-solid: #0a1618;
+    --cyan: #6fe0ff; --green: #34f5a2; --red: #ff6b81; --amber: #ffc757;
+    --line: rgba(111,224,255,.2); --line2: rgba(255,255,255,.08);
+    --txt: #e8f7fa; --mut: rgba(215,240,245,.62); --mut2: rgba(215,240,245,.4);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; min-height:100svh; }
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(111,224,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(111,224,255,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 30%,transparent 75%); }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(5,11,12,.8); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--amber); }
+  .nav-links { display:flex; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--cyan); }
+  @media(max-width:700px){ .nav-links a:not(:last-child) { display:none; } }
+
+  main { max-width:640px; margin:0 auto; padding:110px 20px 60px; min-height:100svh; display:flex; flex-direction:column; justify-content:center; }
+
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--amber); border:1px solid rgba(255,199,87,.35); padding:6px 14px; border-radius:20px; margin-bottom:18px; }
+  .kicker::before { content:'🔥'; }
+  h1 { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(26px,6vw,42px); letter-spacing:1px; color:#fff;
+    text-shadow:0 0 24px rgba(255,199,87,.35); margin-bottom:12px; text-align:center; }
+  .sub { font-size:14px; color:var(--mut); text-align:center; max-width:480px; margin:0 auto 30px; }
+
+  .card { background:var(--panel); border:1px solid var(--line2);
+    clip-path:polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px)); padding:28px; }
+
+  .progress { display:flex; gap:6px; margin-bottom:22px; }
+  .progress .dot { flex:1; height:4px; border-radius:3px; background:var(--line2); overflow:hidden; }
+  .progress .dot.done { background:var(--amber); }
+  .progress .dot.active { background:linear-gradient(90deg,var(--amber),var(--line2) 50%); }
+
+  .qnum { font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--amber); margin-bottom:10px; }
+  .question { font-size:19px; font-weight:700; color:#fff; margin-bottom:22px; }
+  .options { display:flex; flex-direction:column; gap:10px; }
+  .opt { text-align:left; background:rgba(111,224,255,.05); border:1px solid var(--line2); color:var(--txt);
+    font-family:inherit; font-size:14.5px; padding:14px 16px; cursor:pointer; transition:.15s; border-radius:2px; }
+  .opt:hover { border-color:var(--amber); background:rgba(255,199,87,.08); transform:translateX(3px); }
+
+  .start-btn, .restart-btn { display:inline-block; background:rgba(255,199,87,.15); border:1px solid var(--amber); color:#fff;
+    font-family:var(--mono); font-weight:700; font-size:14px; padding:14px 28px; cursor:pointer; margin:0 auto; text-decoration:none;
+    clip-path:polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); }
+  .start-btn:hover, .restart-btn:hover { background:rgba(255,199,87,.28); }
+  .center { text-align:center; }
+
+  #resultCanvas { width:100%; max-width:420px; display:block; margin:0 auto 20px; border-radius:4px; box-shadow:0 0 40px rgba(0,0,0,.5); }
+  .result-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+  .action-btn { background:rgba(111,224,255,.12); border:1px solid var(--line); color:var(--txt); font-family:var(--mono);
+    font-size:12.5px; padding:10px 18px; cursor:pointer; border-radius:2px; }
+  .action-btn:hover { border-color:var(--cyan); color:var(--cyan); }
+  .action-btn.amber { border-color:var(--amber); color:var(--amber); }
+  .action-btn.amber:hover { background:rgba(255,199,87,.15); }
+
+  .disclaimer { font-family:var(--mono); font-size:10.5px; color:var(--mut2); text-align:center; margin-top:26px; line-height:1.7; }
+
+  footer { text-align:center; padding:30px 20px; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--amber); text-decoration:none; margin:0 6px; }
+
+  #copyToast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
+    background:var(--panel-solid); border:1px solid var(--cyan); color:var(--txt); font-family:var(--mono); font-size:12.5px;
+    padding:10px 20px; border-radius:20px; transition:.25s; pointer-events:none; z-index:100; }
+  #copyToast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="logo">CASHMACHINE<b>&nbsp;ROAST</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../trading-dashboard/">Trading</a>
+    <a href="../trading-control-center/">Control Center</a>
+  </div>
+</nav>
+
+<main>
+
+  <div id="introScreen">
+    <div class="center">
+      <div class="kicker">5 FRAGEN · 30 SEKUNDEN · BRUTAL EHRLICH</div>
+      <h1>WELCHER TRADER-TYP BIST DU?</h1>
+      <p class="sub">Beantworte 5 Fragen zu deinem Trading-Verhalten. Wir sagen dir schonungslos, was du wirklich für ein Typ bist — und geben dir eine Share-Card zum Angeben oder Schämen.</p>
+    </div>
+    <div class="card center">
+      <button class="start-btn" id="startBtn" type="button">🔥 ROAST MICH</button>
+    </div>
+  </div>
+
+  <div id="quizScreen" style="display:none">
+    <div class="card">
+      <div class="progress" id="progress"></div>
+      <div class="qnum" id="qnum"></div>
+      <div class="question" id="qtext"></div>
+      <div class="options" id="options"></div>
+    </div>
+  </div>
+
+  <div id="resultScreen" style="display:none">
+    <canvas id="resultCanvas" width="1080" height="1080"></canvas>
+    <div class="card">
+      <h1 id="resultTitle" style="font-size:22px; margin-bottom:10px;"></h1>
+      <p id="resultRoast" style="color:var(--mut); font-size:14.5px; margin-bottom:6px;"></p>
+      <p id="resultDetail" style="color:var(--mut2); font-size:12.5px;"></p>
+      <div class="result-actions">
+        <button class="action-btn amber" id="downloadBtn" type="button">⤓ Card herunterladen</button>
+        <button class="action-btn" id="shareBtn" type="button">↗ Ergebnis teilen</button>
+        <button class="action-btn" id="restartBtn" type="button">↻ Nochmal</button>
+      </div>
+    </div>
+    <div class="disclaimer">Nur zum Spaß, basiert auf 5 Multiple-Choice-Fragen — keine Finanzberatung, keine echte Verhaltensanalyse. Dein tatsächliches Trading-Verhalten kennst nur du selbst (oder dein <a href="../trading-control-center/" style="color:var(--amber)">Control Center</a> 👀).</div>
+  </div>
+
+</main>
+
+<footer>
+  <b>CASHMACHINE TRADER ROAST</b> · Teil der CASHMACHINE AI Suite ·
+  <a href="../">Jarvis</a>·<a href="../trading-dashboard/">Trading-Dashboard</a>·<a href="../trading-control-center/">Control Center</a>
+</footer>
+
+<div id="copyToast">Link kopiert!</div>
+
+<script>
+  const FRAGEN = [
+    {
+      text: 'Dein Coin fällt -20% an einem Tag. Was machst du?',
+      antworten: [
+        { text: 'Buy the dip, natürlich mehr kaufen', typ: 'diamond' },
+        { text: 'Sofort alles verkaufen, Panik!', typ: 'paper' },
+        { text: 'Erstmal auf Twitter/X schauen was los ist', typ: 'fomo' },
+        { text: 'Chart alle 2 Minuten refreshen und hoffen', typ: 'daytrader' },
+      ],
+    },
+    {
+      text: 'Wie oft checkst du eigentlich den Kurs?',
+      antworten: [
+        { text: 'Selten, ist mir ehrlich gesagt fast egal', typ: 'diamond' },
+        { text: 'Bei jeder Push-Notification sofort', typ: 'paper' },
+        { text: 'Nur wenn gerade was auf Social Media abgeht', typ: 'fomo' },
+        { text: 'Ständig, ich kann echt nicht aufhören', typ: 'daytrader' },
+      ],
+    },
+    {
+      text: 'Ein neuer Coin pumpt gerade +300% in 24h, alle posten ihn. Du...',
+      antworten: [
+        { text: 'Ignorier ich, zu spät zum Einsteigen', typ: 'diamond' },
+        { text: 'Hab schon vor 2 Tagen wieder verkauft, zu riskant', typ: 'paper' },
+        { text: 'Steig sofort ein, sonst verpass ich es!', typ: 'fomo' },
+        { text: 'Analysier erstmal Chart und Volumen', typ: 'daytrader' },
+      ],
+    },
+    {
+      text: 'Dein Portfolio ist gerade +50% im Plus. Was jetzt?',
+      antworten: [
+        { text: 'Halten, das ist doch erst der Anfang', typ: 'diamond' },
+        { text: 'Sofort alles verkaufen, Gewinn sichern bevor er weg ist', typ: 'paper' },
+        { text: 'Sofort in den nächsten Hype-Coin umschichten', typ: 'fomo' },
+        { text: 'Teilverkauf nach Plan, Rest läuft mit Stop-Loss weiter', typ: 'daytrader' },
+      ],
+    },
+    {
+      text: 'Wie sieht dein typisches Trading-Setup aus?',
+      antworten: [
+        { text: 'Ein Wallet, rein und vergessen', typ: 'diamond' },
+        { text: '5 Exchange-Tabs offen, ständig am Hin-und-her-Wechseln', typ: 'paper' },
+        { text: 'Telegram-Signal-Gruppen und Twitter-Threads', typ: 'fomo' },
+        { text: 'TradingView mit 15 Indikatoren gleichzeitig', typ: 'daytrader' },
+      ],
+    },
+  ];
+
+  const TYPEN = {
+    diamond: {
+      emoji: '💎', titel: 'DIAMOND-HANDS-CHAD', farbe: '#34f5a2',
+      roast: 'Du hältst Bags, die andere längst vergessen haben, mit einer Ruhe, die grenzwertig ist. "Verkaufen? Never heard of her." Entweder wirst du reich oder du erklärst 2031 immer noch, warum du "an das Projekt glaubst".',
+      detail: 'Stärke: eiserne Nerven. Risiko: manchmal ist Loslassen auch eine Strategie.',
+    },
+    paper: {
+      emoji: '😱', titel: 'PAPER-HANDS PANIK-VERKÄUFER', farbe: '#ff6b81',
+      roast: 'Du verkaufst zuverlässig am lokalen Tiefpunkt und kaufst zurück, sobald es wieder teuer ist. Deine Emotionen sind dein größter Gegner, nicht der Markt. Ein Stop-Loss-Plan (statt Bauchgefühl) wäre wahrscheinlich dein bester Trade dieses Jahr.',
+      detail: 'Stärke: Risiko-Bewusstsein. Risiko: Angst trifft die Entscheidungen, nicht ein Plan.',
+    },
+    fomo: {
+      emoji: '🐒', titel: 'FOMO-AFFE', farbe: '#ffc757',
+      roast: 'Du steigst ein, wenn ALLE schon drin sind, und aussteigst, wenn der Hype grad kippt. Twitter ist dein Chart-Analyst. Manchmal geht es gut, meistens bist du der letzte Bus, der noch einsteigt bevor er abfährt.',
+      detail: 'Stärke: schnelle Reaktion auf Trends. Risiko: kaufst systematisch zu spät.',
+    },
+    daytrader: {
+      emoji: '📊', titel: 'CHART-SÜCHTIGER DAYTRADER', farbe: '#6fe0ff',
+      roast: '15 Indikatoren, 5 Zeitfenster, 0 Geduld. Du overtradest dich durch die Gebühren, während ein simpler Plan wahrscheinlich mehr Rendite gebracht hätte als dein 45. Trade diese Woche. Der Chart läuft dir nicht weg, versprochen.',
+      detail: 'Stärke: Marktverständnis. Risiko: Overtrading frisst die Rendite auf.',
+    },
+  };
+
+  let antworten = [];
+  let aktuelleFrage = 0;
+
+  const introScreen = document.getElementById('introScreen');
+  const quizScreen = document.getElementById('quizScreen');
+  const resultScreen = document.getElementById('resultScreen');
+
+  function renderProgress() {
+    const el = document.getElementById('progress');
+    el.innerHTML = FRAGEN.map((_, i) => {
+      const cls = i < aktuelleFrage ? 'done' : (i === aktuelleFrage ? 'active' : '');
+      return `<div class="dot ${cls}"></div>`;
+    }).join('');
+  }
+
+  function renderFrage() {
+    renderProgress();
+    const f = FRAGEN[aktuelleFrage];
+    document.getElementById('qnum').textContent = `FRAGE ${aktuelleFrage + 1} / ${FRAGEN.length}`;
+    document.getElementById('qtext').textContent = f.text;
+    document.getElementById('options').innerHTML = f.antworten.map((a, i) =>
+      `<button class="opt" data-idx="${i}" type="button">${a.text}</button>`
+    ).join('');
+    document.querySelectorAll('.opt').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        antworten.push(f.antworten[parseInt(btn.dataset.idx, 10)].typ);
+        aktuelleFrage++;
+        if (aktuelleFrage < FRAGEN.length) {
+          renderFrage();
+        } else {
+          zeigeErgebnis();
+        }
+      });
+    });
+  }
+
+  function ermittleTyp() {
+    const zaehlung = {};
+    antworten.forEach((t) => { zaehlung[t] = (zaehlung[t] || 0) + 1; });
+    let bester = antworten[0], besterCount = 0;
+    for (const [typ, count] of Object.entries(zaehlung)) {
+      if (count > besterCount) { bester = typ; besterCount = count; }
+    }
+    return bester;
+  }
+
+  function zeichneCard(typ) {
+    const t = TYPEN[typ];
+    const canvas = document.getElementById('resultCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+
+    // Hintergrund
+    const grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, '#050b0c');
+    grad.addColorStop(1, '#0a1618');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid-Textur
+    ctx.strokeStyle = 'rgba(111,224,255,.06)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for (let y = 0; y < h; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+    // Rahmen in Typ-Farbe
+    ctx.strokeStyle = t.farbe;
+    ctx.lineWidth = 4;
+    ctx.strokeRect(24, 24, w - 48, h - 48);
+
+    // Kicker
+    ctx.fillStyle = t.farbe;
+    ctx.font = '600 26px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('CASHMACHINE TRADER ROAST', w / 2, 130);
+
+    // Emoji
+    ctx.font = '160px sans-serif';
+    ctx.fillText(t.emoji, w / 2, 340);
+
+    // Titel
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '900 58px sans-serif';
+    wrapText(ctx, t.titel, w / 2, 440, w - 140, 64);
+
+    // Roast-Text
+    ctx.fillStyle = 'rgba(232,247,250,.85)';
+    ctx.font = '400 30px sans-serif';
+    wrapText(ctx, t.roast, w / 2, 620, w - 160, 42);
+
+    // Footer
+    ctx.fillStyle = 'rgba(215,240,245,.5)';
+    ctx.font = '500 22px monospace';
+    ctx.fillText('Mach den Test selbst → cashmachine trader roast', w / 2, h - 60);
+  }
+
+  function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    let line = '', lines = [];
+    for (const word of words) {
+      const test = line + word + ' ';
+      if (ctx.measureText(test).width > maxWidth && line) {
+        lines.push(line);
+        line = word + ' ';
+      } else {
+        line = test;
+      }
+    }
+    lines.push(line);
+    const startY = y - ((lines.length - 1) * lineHeight) / 2;
+    lines.forEach((l, i) => ctx.fillText(l.trim(), x, startY + i * lineHeight));
+  }
+
+  function zeigeErgebnis() {
+    const typ = ermittleTyp();
+    const t = TYPEN[typ];
+    quizScreen.style.display = 'none';
+    resultScreen.style.display = 'block';
+    document.getElementById('resultTitle').textContent = `${t.emoji} ${t.titel}`;
+    document.getElementById('resultRoast').textContent = t.roast;
+    document.getElementById('resultDetail').textContent = t.detail;
+    zeichneCard(typ);
+
+    document.getElementById('downloadBtn').onclick = () => {
+      const canvas = document.getElementById('resultCanvas');
+      const link = document.createElement('a');
+      link.download = `cashmachine-trader-roast-${typ}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    };
+
+    document.getElementById('shareBtn').onclick = async () => {
+      const shareText = `Mein Trading-Typ laut CASHMACHINE Trader Roast: ${t.emoji} ${t.titel}. Mach den Test selbst:`;
+      const shareUrl = window.location.href;
+      if (navigator.share) {
+        try { await navigator.share({ title: 'CASHMACHINE Trader Roast', text: shareText, url: shareUrl }); return; } catch {}
+      }
+      try {
+        await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+        const toast = document.getElementById('copyToast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+      } catch {}
+    };
+
+    document.getElementById('restartBtn').onclick = starteQuiz;
+  }
+
+  function starteQuiz() {
+    antworten = [];
+    aktuelleFrage = 0;
+    introScreen.style.display = 'none';
+    resultScreen.style.display = 'none';
+    quizScreen.style.display = 'block';
+    renderFrage();
+  }
+
+  document.getElementById('startBtn').addEventListener('click', starteQuiz);
+</script>
+</body>
+</html>
