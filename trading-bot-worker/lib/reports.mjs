@@ -4,7 +4,7 @@
 // Zeitpunkt (KV-Marken verhindern Mehrfachauslösung).
 
 import { heute, loadState, saveState } from './state.mjs';
-import { notifyWhatsapp } from './notify.mjs';
+import { notify } from './notify.mjs';
 import { berechneTradeStats, berechneReadiness } from './statistik.mjs';
 
 export async function pruefeUndSendeTagesZusammenfassung(env, cfg) {
@@ -28,7 +28,7 @@ export async function pruefeUndSendeTagesZusammenfassung(env, cfg) {
     `Offene Positionen: ${offenePositionen}/${cfg.symbols.length}` +
     (killSwitchSymbole.length ? `\n🛑 Kill-Switch aktiv bei: ${killSwitchSymbole.join(', ')}` : '');
 
-  await notifyWhatsapp(env, text);
+  await notify(env, text);
   await env.TRADING_STATE.put('digest:letzterTag', heuteStr);
 }
 
@@ -109,7 +109,7 @@ export async function pruefeUndSendeWochenZusammenfassung(env, cfg) {
   const readinessEmoji = { rot: '🔴', gelb: '🟡', gruen: '🟢' }[readiness.ampel];
   zeilen.push(`${readinessEmoji} Echtgeld-Readiness: ${readiness.ampel.toUpperCase()} - ${readiness.grund}`);
 
-  await notifyWhatsapp(env, zeilen.join('\n'));
+  await notify(env, zeilen.join('\n'));
   await env.TRADING_STATE.put('digest:letzteWoche', aktuelleWoche);
 }
 
@@ -152,7 +152,7 @@ export async function pruefeUndSendeMonatsZusammenfassung(env, cfg) {
   if (bester) zeilen.push(`🏆 Bester Coin: ${bester.symbol} (${bester.plDiesenMonat >= 0 ? '+' : ''}${bester.plDiesenMonat.toFixed(2)} USDT)`);
   if (schlechtester) zeilen.push(`📉 Schlechtester Coin: ${schlechtester.symbol} (${schlechtester.plDiesenMonat >= 0 ? '+' : ''}${schlechtester.plDiesenMonat.toFixed(2)} USDT)`);
 
-  await notifyWhatsapp(env, zeilen.join('\n'));
+  await notify(env, zeilen.join('\n'));
   await env.TRADING_STATE.put('digest:letzterMonat', aktuellerMonat);
 }
 
@@ -216,6 +216,6 @@ export async function pruefeUndFuehreKapitalRebalancing(env, cfg) {
   await saveState(env, schlechtester.symbol, schlechtesterState);
   await saveState(env, bester.symbol, besterState);
 
-  await notifyWhatsapp(env, `🔄 Smart-Rebalancing: ${betrag.toFixed(2)} USDT von ${schlechtester.symbol} (${schlechtester.pnlProzent >= 0 ? '+' : ''}${schlechtester.pnlProzent.toFixed(1)}%) zu ${bester.symbol} (${bester.pnlProzent >= 0 ? '+' : ''}${bester.pnlProzent.toFixed(1)}%) verschoben - Kapital folgt dem, was gerade funktioniert.`);
+  await notify(env, `🔄 Smart-Rebalancing: ${betrag.toFixed(2)} USDT von ${schlechtester.symbol} (${schlechtester.pnlProzent >= 0 ? '+' : ''}${schlechtester.pnlProzent.toFixed(1)}%) zu ${bester.symbol} (${bester.pnlProzent >= 0 ? '+' : ''}${bester.pnlProzent.toFixed(1)}%) verschoben - Kapital folgt dem, was gerade funktioniert.`);
   await env.TRADING_STATE.put('rebalance:letzteWoche', aktuelleWoche);
 }

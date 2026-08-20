@@ -23,7 +23,7 @@
 //   verlässt.
 
 import { loadState, saveState } from './state.mjs';
-import { notifyWhatsapp } from './notify.mjs';
+import { notify } from './notify.mjs';
 import { wochenSchluessel } from './reports.mjs';
 
 // Durchschnittlicher (absoluter) Verlust-Prozentsatz der letzten Verlust-
@@ -59,7 +59,7 @@ export async function pruefeUndFuehreAdaptivesLernen(env, cfg) {
 
     state.gelernterStopLossProzent = neuerWert;
     await saveState(env, symbol, state);
-    await notifyWhatsapp(env, `🧠 Adaptives Lernen (${symbol}): Stop-Loss aus den letzten Verlust-Trades neu berechnet - ${neuerWert.toFixed(2)}% (vorher ${bisherigerWert != null ? bisherigerWert.toFixed(2) + '%' : `${cfg.stopLossProzent}% Standard`}). Gilt ab der nächsten neu eröffneten Position, bestehende Positionen bleiben unverändert.`);
+    await notify(env, `🧠 Adaptives Lernen (${symbol}): Stop-Loss aus den letzten Verlust-Trades neu berechnet - ${neuerWert.toFixed(2)}% (vorher ${bisherigerWert != null ? bisherigerWert.toFixed(2) + '%' : `${cfg.stopLossProzent}% Standard`}). Gilt ab der nächsten neu eröffneten Position, bestehende Positionen bleiben unverändert.`);
   }
 
   await env.TRADING_STATE.put('lernen:letzteWoche', aktuelleWoche);
