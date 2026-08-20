@@ -495,7 +495,10 @@ läuft automatisch beim nächsten Lauf mit) und markiert die Entscheidung
 ehrlich beobachtend (nicht als erfundene Kausalitäts-Behauptung) als
 "verkauft sich weiterhin"/"Verkäufe gestoppt" bzw. "verkauft sich jetzt"/
 "weiterhin keine Verkäufe" - sichtbar im Autopilot-Tab von Command (Preis-
-Entscheidungen mit Begründung) inkl. Erfolgsbilanz.
+Entscheidungen mit Begründung) inkl. Erfolgsbilanz. Selbstbremse: liegt die
+Erfolgsquote der letzten mind. 3 ausgewerteten Entscheidungen unter 40%,
+fällt der Agent den nächsten Lauf automatisch auf reine Empfehlung zurück -
+feste Zahlen-Schwelle im Code, kein KI-Ermessen, kein manueller Reset nötig.
 
 **🚨 Risk-Guard-Agent** (#62, alle 2 Stunden): prüft neue Bestellungen ab
 `RISK_GUARD_MIN_BESTELLWERT` auf Betrugssignale (Rechnungs-/Lieferland-
@@ -515,7 +518,8 @@ Echtes Rückkopplungs-Gedächtnis wie #61/#88/#64: Shopify liefert keine
 historischen Lagerbestände, deshalb notiert der TÄGLICHE Lauf selbst den
 Tiefstand seit jeder Anfrage mit. Nach Lieferzeit+Puffer steht fest, ob es
 trotzdem einen echten Engpass (Bestand <= 0) gab - sichtbar im Autopilot-Tab
-von Command inkl. Erfolgsbilanz.
+von Command inkl. Erfolgsbilanz. Gleiche Selbstbremse wie #61/#88/#64: unter
+40% Erfolgsquote (mind. 3 Muster) heißt automatisch nur noch Empfehlung.
 
 **📊 Ads-Autopilot-Agent** (#64, täglich 09:00): schichtet Budget vom
 schwächsten zum stärksten aktiven Meta-Ad-Set um (max.
@@ -526,7 +530,9 @@ oder zu stoppen. Gate: `AUTO_BUDGET_UMSCHICHTEN` (Default `nein`).
 Echtes Rückkopplungs-Gedächtnis wie #61/#88: prüft 7 Tage nach einer
 AUSGEFÜHRTEN Verstärkung die echte Performance des verstärkten Ad-Sets im
 Zeitraum danach nach (größeres Budget kann auch die Effizienz drücken) -
-sichtbar im Autopilot-Tab von Command inkl. Erfolgsbilanz.
+sichtbar im Autopilot-Tab von Command inkl. Erfolgsbilanz. Gleiche
+Selbstbremse wie #61/#63: unter 40% Erfolgsquote (mind. 3 Muster) heißt
+automatisch nur noch Empfehlung.
 
 **🛡️ Inventory-Guardian-Agent** (#65, alle 3 Stunden): stoppt echten
 Überverkauf - wenn eine Variante auf Bestand 0 fällt, aber Shopify sie wegen

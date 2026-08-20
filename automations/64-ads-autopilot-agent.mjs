@@ -39,6 +39,16 @@ function isoDatum(d) {
   return d.toISOString().slice(0, 10);
 }
 
+// Selbstbremse: feste Zahlen-Schwelle im Code (kein KI-Ermessen) - lief die
+// eigene Erfolgsbilanz zuletzt schlecht, fällt der Agent DIESEN Lauf auf
+// reine Empfehlung zurück, egal was AUTO_BUDGET_UMSCHICHTEN sagt.
+const SELBSTBREMSE_MIN_STICHPROBE = 3;
+const SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS = 0.4;
+function berechneSelbstbremse(ausgewertetAnzahl, positivAnzahl) {
+  if (ausgewertetAnzahl < SELBSTBREMSE_MIN_STICHPROBE) return false;
+  return positivAnzahl / ausgewertetAnzahl < SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS;
+}
+
 // Prüft AUSGEFÜHRTE Budget-Umschichtungen: lief das VERSTÄRKTE Ad-Set (mehr
 // Budget) in den 7 Tagen danach weiterhin profitabel, oder hat die größere
 // Zielgruppe/das größere Budget die Effizienz gedrückt? Reine Beobachtung
@@ -74,7 +84,7 @@ async function werteVergangeneEntscheidungenAus(state) {
   console.log(`[64-ads-autopilot-agent] ${faellig.length} vergangene Entscheidung(en) ausgewertet.`);
 }
 
-function veroeffentliche(state) {
+function veroeffentliche(state, selbstgebremst) {
   if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
   const ausgewertet = state.historie.filter((e) => e.ausgewertet);
   const bestaetigt = ausgewertet.filter((e) => e.wirkung === 'verstaerkung_bestaetigt');
@@ -82,6 +92,7 @@ function veroeffentliche(state) {
     updatedAt: new Date().toISOString(),
     historie: state.historie,
     erfolgsBilanz: { ausgewertet: ausgewertet.length, bestaetigt: bestaetigt.length, brauchtBlick: ausgewertet.length - bestaetigt.length },
+    selbstgebremst,
   }, null, 2));
 }
 
@@ -99,6 +110,11 @@ async function main() {
   state.historie = state.historie || [];
   await werteVergangeneEntscheidungenAus(state);
   saveState(STATE_KEY, state);
+
+  const ausgewertetVorlauf = state.historie.filter((e) => e.ausgewertet);
+  const bestaetigtVorlauf = ausgewertetVorlauf.filter((e) => e.wirkung === 'verstaerkung_bestaetigt');
+  const selbstgebremst = berechneSelbstbremse(ausgewertetVorlauf.length, bestaetigtVorlauf.length);
+  const autoAnEffektiv = autoAn && !selbstgebremst;
 
   const insights = await getAdInsights({
     level: 'adset',
@@ -121,7 +137,7 @@ async function main() {
 
   if (kandidaten.length < 2) {
     console.log(`[64-ads-autopilot-agent] Nur ${kandidaten.length} Ad-Set(s) mit genug Spend - nichts zum Umschichten.`);
-    veroeffentliche(state);
+    veroeffentliche(state, selbstgebremst);
     return;
   }
 
@@ -131,7 +147,7 @@ async function main() {
 
   if (bester.id === schwaechster.id || bester.roas <= schwaechster.roas) {
     console.log('[64-ads-autopilot-agent] Kein klarer Unterschied zwischen bestem und schwächstem Ad-Set - nichts umgeschichtet.');
-    veroeffentliche(state);
+    veroeffentliche(state, selbstgebremst);
     return;
   }
 
@@ -142,18 +158,21 @@ async function main() {
   }
   if (shiftCent <= 0) {
     console.log('[64-ads-autopilot-agent] Schwächstes Ad-Set schon an der Mindest-Budget-Grenze - nichts umgeschichtet.');
-    veroeffentliche(state);
+    veroeffentliche(state, selbstgebremst);
     return;
   }
 
   const besterNeu = bester.budget + shiftCent;
   const schwaechsterFinal = schwaechster.budget - shiftCent;
 
-  const text = `📊 ADS-AUTOPILOT-AGENT - ${config.SHOP_NAME}${NL}--------------------${NL}Bestes Ad-Set: ${bester.name} | ROAS ${bester.roas.toFixed(2)} | Budget ${(bester.budget / 100).toFixed(2)} -> ${(besterNeu / 100).toFixed(2)}${NL}Schwächstes Ad-Set: ${schwaechster.name} | ROAS ${schwaechster.roas.toFixed(2)} | Budget ${(schwaechster.budget / 100).toFixed(2)} -> ${(schwaechsterFinal / 100).toFixed(2)}${NL}${NL}${autoAn ? 'AUTO_BUDGET_UMSCHICHTEN ist AN: Budgets werden jetzt live umgeschichtet!' : 'AUTO_BUDGET_UMSCHICHTEN steht auf nein - nur Empfehlung, ich ändere nichts.'}`;
+  const bremsHinweis = selbstgebremst
+    ? `🛑 SELBSTBREMSE AKTIV: nur ${bestaetigtVorlauf.length}/${ausgewertetVorlauf.length} letzte Verstärkungen liefen gut (< ${Math.round(SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS * 100)}%) - heute NUR Empfehlung, auch wenn AUTO_BUDGET_UMSCHICHTEN an ist.`
+    : autoAnEffektiv ? 'AUTO_BUDGET_UMSCHICHTEN ist AN: Budgets werden jetzt live umgeschichtet!' : 'AUTO_BUDGET_UMSCHICHTEN steht auf nein - nur Empfehlung, ich ändere nichts.';
+  const text = `📊 ADS-AUTOPILOT-AGENT - ${config.SHOP_NAME}${NL}--------------------${NL}Bestes Ad-Set: ${bester.name} | ROAS ${bester.roas.toFixed(2)} | Budget ${(bester.budget / 100).toFixed(2)} -> ${(besterNeu / 100).toFixed(2)}${NL}Schwächstes Ad-Set: ${schwaechster.name} | ROAS ${schwaechster.roas.toFixed(2)} | Budget ${(schwaechster.budget / 100).toFixed(2)} -> ${(schwaechsterFinal / 100).toFixed(2)}${NL}${NL}${bremsHinweis}`;
   await notifyTelegram(text);
 
   let ausgefuehrt = false;
-  if (autoAn) {
+  if (autoAnEffektiv) {
     try {
       await updateAdSetBudget(bester.id, besterNeu);
       await updateAdSetBudget(schwaechster.id, schwaechsterFinal);
@@ -174,9 +193,9 @@ async function main() {
   });
   if (state.historie.length > MAX_HISTORIE) state.historie = state.historie.slice(0, MAX_HISTORIE);
   saveState(STATE_KEY, state);
-  veroeffentliche(state);
+  veroeffentliche(state, selbstgebremst);
 
-  console.log(`[64-ads-autopilot-agent] Shift ${(shiftCent / 100).toFixed(2)} von "${schwaechster.name}" zu "${bester.name}" ${ausgefuehrt ? 'ausgeführt' : 'empfohlen'}.`);
+  console.log(`[64-ads-autopilot-agent] Shift ${(shiftCent / 100).toFixed(2)} von "${schwaechster.name}" zu "${bester.name}" ${ausgefuehrt ? 'ausgeführt' : 'empfohlen'}${selbstgebremst ? ' (selbstgebremst)' : ''}.`);
 }
 
 main().catch((err) => {

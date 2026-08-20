@@ -43,6 +43,19 @@ function tageSeit(datumStr) {
   return (Date.now() - new Date(datumStr).getTime()) / (1000 * 3600 * 24);
 }
 
+// Selbstbremse: feste Zahlen-Schwelle im Code (kein KI-Ermessen, gleiches
+// Sicherheitsprinzip wie überall in der Suite) - lief die eigene Erfolgs-
+// bilanz zuletzt schlecht, fällt der Agent DIESEN Lauf automatisch auf reine
+// Empfehlung zurück, egal was AUTO_PREISANPASSUNG sagt. Kein manueller
+// Reset nötig: verbessert sich die Bilanz wieder, greift die Bremse beim
+// nächsten Lauf von selbst nicht mehr.
+const SELBSTBREMSE_MIN_STICHPROBE = 3;
+const SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS = 0.4;
+function berechneSelbstbremse(ausgewertetAnzahl, positivAnzahl) {
+  if (ausgewertetAnzahl < SELBSTBREMSE_MIN_STICHPROBE) return false;
+  return positivAnzahl / ausgewertetAnzahl < SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS;
+}
+
 // Prüft AUSGEFÜHRTE (nicht nur empfohlene) Preisänderungen der letzten Läufe
 // gegen die echten Verkäufe IN GENAU DEM ZEITRAUM danach - keine erfundene
 // Kausalitäts-Behauptung ("der Preis hat X bewirkt"), nur die ehrliche
@@ -183,6 +196,11 @@ async function main() {
   await werteVergangeneEntscheidungenAus(state);
   saveState(STATE_KEY, state);
 
+  const ausgewertetVorlauf = state.historie.filter((e) => e.ausgewertet);
+  const positivVorlauf = ausgewertetVorlauf.filter((e) => e.wirkung === 'verkauft_weiterhin' || e.wirkung === 'verkauft_jetzt');
+  const selbstgebremst = berechneSelbstbremse(ausgewertetVorlauf.length, positivVorlauf.length);
+  const autoAnEffektiv = autoAn && !selbstgebremst;
+
   function veroeffentliche() {
     if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
     const ausgewertet = state.historie.filter((e) => e.ausgewertet);
@@ -191,6 +209,7 @@ async function main() {
       updatedAt: new Date().toISOString(),
       historie: state.historie,
       erfolgsBilanz: { ausgewertet: ausgewertet.length, positiv: positiv.length, brauchtBlick: ausgewertet.length - positiv.length },
+      selbstgebremst,
     }, null, 2));
   }
 
@@ -204,14 +223,17 @@ async function main() {
   const zeilen = aenderungen.map(
     (a) => `- ${a.name} | ${a.alt.toFixed(2)} -> ${a.neu.toFixed(2)} € (${a.richtung === 'hoch' ? 'RAUF' : 'RUNTER'}) | ${a.grund}`,
   );
-  const kopf = `PRICING-AGENT - ${config.SHOP_NAME}${NL}--------------------${NL}${autoAn ? 'AUTO_PREISANPASSUNG ist AN: Preise werden jetzt live geändert!' : 'AUTO_PREISANPASSUNG steht auf nein - nur Empfehlung, ich ändere nichts.'}${NL}`;
+  const bremsHinweis = selbstgebremst
+    ? `🛑 SELBSTBREMSE AKTIV: nur ${positivVorlauf.length}/${ausgewertetVorlauf.length} letzte Entscheidungen liefen gut (< ${Math.round(SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS * 100)}%) - heute NUR Empfehlung, auch wenn AUTO_PREISANPASSUNG an ist.`
+    : autoAnEffektiv ? 'AUTO_PREISANPASSUNG ist AN: Preise werden jetzt live geändert!' : 'AUTO_PREISANPASSUNG steht auf nein - nur Empfehlung, ich ändere nichts.';
+  const kopf = `PRICING-AGENT - ${config.SHOP_NAME}${NL}--------------------${NL}${bremsHinweis}${NL}`;
 
   for (const chunk of chunkZeilen(zeilen, WHATSAPP_MAX_CHARS - kopf.length)) {
     await notifyWhatsapp(`${kopf}${NL}${chunk.join(NL)}`);
   }
   await notifyTelegram(`${kopf}${NL}${zeilen.join(NL)}`);
 
-  if (autoAn) {
+  if (autoAnEffektiv) {
     for (const a of aenderungen) {
       try {
         await updateVariant(a.variantId, { price: a.neu.toFixed(2) });
@@ -222,12 +244,12 @@ async function main() {
   }
 
   const datum = new Date().toISOString();
-  state.historie.unshift(...aenderungen.map((a) => ({ ...a, datum, ausgefuehrt: autoAn })));
+  state.historie.unshift(...aenderungen.map((a) => ({ ...a, datum, ausgefuehrt: autoAnEffektiv })));
   if (state.historie.length > MAX_HISTORIE) state.historie = state.historie.slice(0, MAX_HISTORIE);
   saveState(STATE_KEY, state);
   veroeffentliche();
 
-  console.log(`[61-pricing-agent] ${aenderungen.length} Preisänderung(en) ${autoAn ? 'ausgeführt' : 'empfohlen'}.`);
+  console.log(`[61-pricing-agent] ${aenderungen.length} Preisänderung(en) ${autoAnEffektiv ? 'ausgeführt' : 'empfohlen'}${selbstgebremst ? ' (selbstgebremst)' : ''}.`);
 }
 
 main().catch((err) => {
