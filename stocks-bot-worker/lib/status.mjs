@@ -1,0 +1,132 @@
+// Baut die Antwort für die rein lesenden Endpoints GET /status und
+// GET /export - kann NIE einen Trade auslösen, nur vorhandenen State lesen
+// plus aktuelle Kerzen/Preis direkt von Alpaca (kostenloser IEX-Feed).
+
+import { getKlines, getSpreadProzent, istMarktOffen } from './alpaca.mjs';
+import { berechneIndikatoren, emaSeries } from './strategie.mjs';
+import { loadState, loadSystemInfo } from './state.mjs';
+import { readConfig } from './config.mjs';
+import { berechneTradeStats, berechneReadiness } from './statistik.mjs';
+
+function berechneStopLossTakeProfitPreise(position, cfg) {
+  if (!position) return { stopLossPreis: null, takeProfitPreis: null };
+  const stopLossAbstand = position.entryPreis * (cfg.stopLossProzent / 100);
+  const stopLossPreis = position.entryPreis - stopLossAbstand;
+  const takeProfitPreis = cfg.takeProfitProzent > 0 ? position.entryPreis * (1 + cfg.takeProfitProzent / 100) : null;
+  return { stopLossPreis, takeProfitPreis };
+}
+
+function berechneProfitFactor(trades) {
+  const gewinne = trades.filter((t) => t.gewinnVerlustUsdt > 0).reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
+  const verluste = trades.filter((t) => t.gewinnVerlustUsdt < 0).reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
+  if (verluste === 0) return null;
+  return gewinne / Math.abs(verluste);
+}
+
+function berechneMaxDrawdownProzent(trades, startKapital) {
+  if (!trades.length) return 0;
+  const sortiert = [...trades].sort((a, b) => new Date(a.ausstiegAm) - new Date(b.ausstiegAm));
+  let kapital = startKapital, peak = startKapital, maxDrawdown = 0;
+  for (const t of sortiert) {
+    kapital += t.gewinnVerlustUsdt;
+    peak = Math.max(peak, kapital);
+    if (peak > 0) maxDrawdown = Math.max(maxDrawdown, ((peak - kapital) / peak) * 100);
+  }
+  return maxDrawdown;
+}
+
+export async function buildStatus(env) {
+  const cfg = readConfig(env);
+  const systemInfo = await loadSystemInfo(env);
+  const marktOffen = await istMarktOffen(env);
+  const symbole = [];
+  const alleTrades = [];
+
+  for (const symbol of cfg.symbols) {
+    const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
+    const trades = state.trades || [];
+    alleTrades.push(...trades);
+
+    let live = { preisAktuell: null, spreadProzent: null, indikatoren: null };
+    try {
+      const { closes, highs, lows } = await getKlines(env, symbol);
+      if (closes.length) {
+        const indikatoren = berechneIndikatoren(closes, highs, lows, cfg);
+        live.preisAktuell = indikatoren.preis;
+        const emaSchnellSeries = emaSeries(closes, cfg.emaSchnell);
+        const emaLangsamSeries = emaSeries(closes, cfg.emaLangsam);
+        live.indikatoren = {
+          rsi: indikatoren.rsiJetzt,
+          atr: indikatoren.atrJetzt,
+          emaSchnellPeriode: cfg.emaSchnell,
+          emaSchnellWert: emaSchnellSeries[emaSchnellSeries.length - 1],
+          emaLangsamPeriode: cfg.emaLangsam,
+          emaLangsamWert: emaLangsamSeries[emaLangsamSeries.length - 1],
+          bollingerMittel: indikatoren.bollingerMittel,
+          bollingerOben: indikatoren.bollingerOben,
+          bollingerUnten: indikatoren.bollingerUnten,
+        };
+      }
+      live.spreadProzent = await getSpreadProzent(env, symbol);
+    } catch (err) {
+      console.error(`[status] Live-Daten für ${symbol} nicht abrufbar:`, err);
+    }
+
+    const { stopLossPreis, takeProfitPreis } = berechneStopLossTakeProfitPreise(state.position, cfg);
+
+    symbole.push({
+      symbol,
+      position: state.position,
+      stopLossPreis,
+      takeProfitPreis,
+      kapital: state.kapital,
+      startKapital: state.startKapital,
+      heutigerVerlustUsdt: state.heutigerVerlustUsdt,
+      killSwitchAktiv: state.killSwitchAktiv,
+      tradeStats: berechneTradeStats(trades),
+      profitFactor: berechneProfitFactor(trades),
+      maxDrawdownProzent: berechneMaxDrawdownProzent(trades, state.startKapital),
+      trades,
+      ...live,
+    });
+  }
+
+  return {
+    updatedAt: new Date().toISOString(),
+    broker: 'alpaca-paper',
+    paperModus: true,
+    marktOffen,
+    letzterCronLauf: systemInfo.letzterLauf,
+    readiness: berechneReadiness(symbole, alleTrades),
+    risiko: {
+      maxPositionProzent: cfg.maxPositionProzent,
+      maxTagesverlustProzent: cfg.maxTagesverlustProzent,
+      maxGesamtverlustProzent: cfg.maxGesamtverlustProzent,
+      stopLossProzent: cfg.stopLossProzent,
+      takeProfitProzent: cfg.takeProfitProzent,
+    },
+    symbole,
+  };
+}
+
+function csvFeld(wert) {
+  const text = String(wert ?? '');
+  if (/[",\n]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
+  return text;
+}
+
+export async function buildTradesCsv(env) {
+  const cfg = readConfig(env);
+  const kopf = ['symbol', 'einstiegAm', 'ausstiegAm', 'entryPreis', 'exitPreis', 'gewinnVerlustUsdt', 'gewinnProzent', 'grund'];
+  const zeilen = [kopf.join(',')];
+  for (const symbol of cfg.symbols) {
+    const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
+    for (const t of state.trades || []) {
+      zeilen.push([
+        symbol, t.einstiegAm, t.ausstiegAm,
+        t.entryPreis, t.exitPreis, t.gewinnVerlustUsdt.toFixed(6), t.gewinnProzent.toFixed(4), t.grund,
+      ].map(csvFeld).join(','));
+    }
+  }
+  return zeilen.join('\n');
+}
