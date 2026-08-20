@@ -48,6 +48,18 @@ vorhanden — die Kern-Risikologik ist identisch zum bewährten Krypto-Bot.
   werden Käufe für ALLE Aktien in diesem Lauf pausiert. SPY selbst wird
   nicht gehandelt, nur als Signal abgefragt. Siehe
   `STOCKS_MARKTWEITER_CRASH_FILTER` in `wrangler.toml`.
+- **Insider-Kauf-Bestätigung** (`lib/insiderbuys.mjs`, kostenlose
+  SEC-EDGAR-Daten, gleiche Parsing-Logik wie
+  `automations/86-insider-buy-radar.mjs`) - der EINZIGE nicht-blockierende
+  Filter im ganzen Projekt: meldeten Firmen-Insider in den letzten
+  `STOCKS_INSIDER_LOOKBACK_TAGE` Tagen echte Käufe (Form 4, Code "P",
+  offener Markt) über `STOCKS_INSIDER_MIN_KAUFWERT_USD`, wird die
+  Positionsgröße um `STOCKS_INSIDER_BOOST_FAKTOR` erhöht (gedeckelt aufs
+  vorhandene Kapital) statt der Kauf verhindert. Läuft höchstens einmal pro
+  Tag pro Symbol (Tages-Cache im State), nicht bei jedem 5-Minuten-Cron -
+  schont SECs Server. **SEC verlangt einen echten, aussagekräftigen
+  User-Agent** (`STOCKS_INSIDER_SEC_USER_AGENT` in `wrangler.toml` anpassen,
+  eigener Kontakt statt des Platzhalters).
 
 **Wichtig: Die Strategie (`bollinger-mean-reversion`) ist für Aktien NOCH
 NICHT per Backtest verifiziert** — `backtest.mjs` im Krypto-Bot lädt bisher

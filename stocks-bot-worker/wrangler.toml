@@ -71,6 +71,18 @@ STOCKS_MARKTWEITER_CRASH_SYMBOL = "SPY"
 STOCKS_MARKTWEITER_CRASH_FENSTER_KERZEN = "4"
 STOCKS_MARKTWEITER_CRASH_MAX_DROP_PROZENT = "5"
 
+# Insider-Kauf-Bestätigung (kein API-Key, öffentliche SEC-EDGAR-Daten,
+# siehe lib/insiderbuys.mjs) - EINZIGER nicht-blockierender Filter hier:
+# meldete SEC Form 4 (offener Markt-Kauf, kein Options-/Zuteilungscode)
+# echte Insider-Käufe über der Mindestsumme in den letzten Tagen, wird die
+# Positionsgröße leicht erhöht statt der Kauf blockiert. SEC verlangt einen
+# aussagekräftigen User-Agent mit echtem Kontakt - bitte unten anpassen.
+STOCKS_INSIDER_BUY_FILTER = "ja"
+STOCKS_INSIDER_SEC_USER_AGENT = "CashMachineStocksBot/1.0 (dein-kontakt@example.com)"
+STOCKS_INSIDER_LOOKBACK_TAGE = "7"
+STOCKS_INSIDER_MIN_KAUFWERT_USD = "100000"
+STOCKS_INSIDER_BOOST_FAKTOR = "1.2"
+
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # STOCKS_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 
