@@ -71,7 +71,18 @@ function werteVerfolgungAus(state, produkte, lieferzeit, puffer) {
   if (ausgewertetAnzahl) console.log(`[63-reorder-agent] ${ausgewertetAnzahl} vergangene Nachbestellung(en) ausgewertet.`);
 }
 
-function veroeffentliche(state) {
+// Selbstbremse: feste Zahlen-Schwelle im Code (kein KI-Ermessen) - lief die
+// eigene Erfolgsbilanz zuletzt schlecht (trotz Nachbestellung häufig Engpass),
+// fällt der Agent DIESEN Lauf auf reine Empfehlung zurück, egal was
+// AUTO_BESTELLUNG_SENDEN sagt.
+const SELBSTBREMSE_MIN_STICHPROBE = 3;
+const SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS = 0.4;
+function berechneSelbstbremse(ausgewertetAnzahl, positivAnzahl) {
+  if (ausgewertetAnzahl < SELBSTBREMSE_MIN_STICHPROBE) return false;
+  return positivAnzahl / ausgewertetAnzahl < SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS;
+}
+
+function veroeffentliche(state, selbstgebremst) {
   if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
   const alle = Object.values(state.verfolgung || {}).sort((a, b) => new Date(b.angefragtAm) - new Date(a.angefragtAm));
   const ausgewertet = alle.filter((e) => e.ausgewertet);
@@ -80,6 +91,7 @@ function veroeffentliche(state) {
     updatedAt: new Date().toISOString(),
     historie: alle.slice(0, MAX_VERFOLGUNG),
     erfolgsBilanz: { ausgewertet: ausgewertet.length, keinEngpass: keinEngpass.length, brauchtBlick: ausgewertet.length - keinEngpass.length },
+    selbstgebremst,
   }, null, 2));
 }
 
@@ -121,6 +133,12 @@ async function main() {
   werteVerfolgungAus(state, produkte, lieferzeit, puffer);
   saveState(STATE_KEY, state);
 
+  const alleVerfolgtVorlauf = Object.values(state.verfolgung || {});
+  const ausgewertetVorlauf = alleVerfolgtVorlauf.filter((e) => e.ausgewertet);
+  const keinEngpassVorlauf = ausgewertetVorlauf.filter((e) => e.wirkung === 'kein_engpass');
+  const selbstgebremst = berechneSelbstbremse(ausgewertetVorlauf.length, keinEngpassVorlauf.length);
+  const autoSendenEffektiv = autoSenden && !selbstgebremst;
+
   const kandidaten = [];
   for (const p of produkte) {
     for (const v of p.variants || []) {
@@ -144,18 +162,21 @@ async function main() {
 
   if (!kandidaten.length) {
     console.log('[63-reorder-agent] Nichts nachzubestellen.');
-    veroeffentliche(state);
+    veroeffentliche(state, selbstgebremst);
     return;
   }
 
   const zeilen = kandidaten.map(
     (k) => `- ${k.name} (SKU ${k.sku}) | Bestand: ${k.bestand} | reicht noch ~${k.reichweite.toFixed(1)} Tage (Lieferzeit: ${lieferzeit}) | Vorschlag: ${k.menge} Stück nachbestellen`,
   );
-  const kopf = `📦 REORDER-AGENT - ${config.SHOP_NAME}${NL}--------------------${NL}${autoSenden && config.SUPPLIER_EMAIL ? 'AUTO_BESTELLUNG_SENDEN ist AN: Nachbestell-Mail geht jetzt an den Lieferanten raus!' : 'Nur Empfehlung - AUTO_BESTELLUNG_SENDEN=nein oder SUPPLIER_EMAIL fehlt, ich verschicke nichts.'}`;
+  const bremsHinweis = selbstgebremst
+    ? `🛑 SELBSTBREMSE AKTIV: nur ${keinEngpassVorlauf.length}/${ausgewertetVorlauf.length} letzte Nachbestellungen liefen ohne Engpass (< ${Math.round(SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS * 100)}%) - heute NUR Empfehlung, auch wenn AUTO_BESTELLUNG_SENDEN an ist. Lieferzeit/Puffer-Einstellungen prüfen.`
+    : autoSendenEffektiv && config.SUPPLIER_EMAIL ? 'AUTO_BESTELLUNG_SENDEN ist AN: Nachbestell-Mail geht jetzt an den Lieferanten raus!' : 'Nur Empfehlung - AUTO_BESTELLUNG_SENDEN=nein oder SUPPLIER_EMAIL fehlt, ich verschicke nichts.';
+  const kopf = `📦 REORDER-AGENT - ${config.SHOP_NAME}${NL}--------------------${NL}${bremsHinweis}`;
   const text = `${kopf}${NL}${NL}${zeilen.join(NL)}`;
   await Promise.all([notifyTelegram(text), notifyWhatsapp(text)]);
 
-  if (autoSenden && config.SUPPLIER_EMAIL) {
+  if (autoSendenEffektiv && config.SUPPLIER_EMAIL) {
     const html = `<p>Hallo,</p><p>bitte folgende Artikel für "${config.SHOP_NAME}" nachliefern:</p><ul>${kandidaten
       .map((k) => `<li>${k.name} - SKU ${k.sku} - <b>${k.menge} Stück</b></li>`)
       .join('')}</ul><p>Automatisch erstellte Nachbestell-Anfrage basierend auf aktuellem Verkaufstempo. Bitte Lieferzeit/Verfügbarkeit bestätigen.</p>`;
@@ -205,8 +226,8 @@ async function main() {
     saveState(ZAHLUNGEN_STATE_KEY, zahlungenState);
   }
 
-  veroeffentliche(state);
-  console.log(`[63-reorder-agent] ${kandidaten.length} Artikel ${autoSenden && config.SUPPLIER_EMAIL ? 'nachbestellt' : 'empfohlen'}.`);
+  veroeffentliche(state, selbstgebremst);
+  console.log(`[63-reorder-agent] ${kandidaten.length} Artikel ${autoSendenEffektiv && config.SUPPLIER_EMAIL ? 'nachbestellt' : 'empfohlen'}${selbstgebremst ? ' (selbstgebremst)' : ''}.`);
 }
 
 main().catch((err) => {

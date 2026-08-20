@@ -697,6 +697,21 @@
     return `<div class="empty"><div class="emoji">${emoji}</div><div style="font-weight:700;color:var(--txt);margin-bottom:6px;">${titel}</div><p>${text}</p></div>`;
   }
 
+  // Selbstbremse: der Agent hat sich SELBST auf reine Empfehlung zurückgestuft,
+  // weil seine eigene Erfolgsbilanz zuletzt unter der festen Schwelle lag -
+  // derselbe visuelle Alarm-Stil wie der Kill-Switch, weil es strukturell
+  // dasselbe ist (ein Sicherheitsmechanismus hat gerade eingegriffen).
+  function selbstbremseBannerHtml(agentName) {
+    return `
+      <div class="killswitch-banner ks-alarm" style="margin-bottom:14px;">
+        <div class="ks-icon">🛑</div>
+        <div>
+          <div class="ks-headline">SELBSTBREMSE AKTIV — ${agentName}</div>
+          <div class="ks-sub">Eigene Erfolgsbilanz lag zuletzt unter der Schwelle — fällt automatisch auf reine Empfehlung zurück, bis sich die Bilanz von selbst wieder erholt.</div>
+        </div>
+      </div>`;
+  }
+
   // --- CEO / Chef-Agent ---
   // Ehrliche Tages-Zusammenfassung, NUR aus tatsächlich vorhandenen Signalen
   // (Ketten-Log, Referral-Belohnungen, Social-Pakete, Pricing-Entscheidungen,
@@ -1525,7 +1540,8 @@
         <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(a.datum)}</div>
       </div>`;
     }).join('');
-    el.innerHTML = `<div class="section-title-inline">🧮 PREIS-ENTSCHEIDUNGEN MIT BEGRÜNDUNG</div>${bilanzHtml}${rows}`;
+    const bremseHtml = data.selbstgebremst ? selbstbremseBannerHtml('Pricing-Agent') : '';
+    el.innerHTML = `<div class="section-title-inline">🧮 PREIS-ENTSCHEIDUNGEN MIT BEGRÜNDUNG</div>${bremseHtml}${bilanzHtml}${rows}`;
   }
 
   const SPLIT_WIRKUNG_TEXT = {
@@ -1571,7 +1587,8 @@
         <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(e.datum)}</div>
       </div>`;
     }).join('');
-    el.innerHTML = `<div class="section-title-inline">🧪 SPLIT-TEST-ERGEBNISSE MIT BEGRÜNDUNG</div>${bilanzHtml}${rows}`;
+    const bremseHtml = data.selbstgebremst ? selbstbremseBannerHtml('Split-Test-Agent') : '';
+    el.innerHTML = `<div class="section-title-inline">🧪 SPLIT-TEST-ERGEBNISSE MIT BEGRÜNDUNG</div>${bremseHtml}${bilanzHtml}${rows}`;
   }
 
   const ADS_WIRKUNG_TEXT = {
@@ -1616,7 +1633,8 @@
         <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(e.datum)}</div>
       </div>`;
     }).join('');
-    el.innerHTML = `<div class="section-title-inline">📊 BUDGET-UMSCHICHTUNGEN MIT BEGRÜNDUNG</div>${bilanzHtml}${rows}`;
+    const bremseHtml = data.selbstgebremst ? selbstbremseBannerHtml('Ads-Autopilot-Agent') : '';
+    el.innerHTML = `<div class="section-title-inline">📊 BUDGET-UMSCHICHTUNGEN MIT BEGRÜNDUNG</div>${bremseHtml}${bilanzHtml}${rows}`;
   }
 
   const REORDER_WIRKUNG_TEXT = {
@@ -1660,7 +1678,8 @@
         <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(e.angefragtAm)}</div>
       </div>`;
     }).join('');
-    el.innerHTML = `<div class="section-title-inline">📦 NACHBESTELLUNGEN MIT BEGRÜNDUNG</div>${bilanzHtml}${rows}`;
+    const bremseHtml = data.selbstgebremst ? selbstbremseBannerHtml('Reorder-Agent') : '';
+    el.innerHTML = `<div class="section-title-inline">📦 NACHBESTELLUNGEN MIT BEGRÜNDUNG</div>${bremseHtml}${bilanzHtml}${rows}`;
   }
 
   // --- Alle Tools (Launchpad zu den restlichen, echt interaktiven Apps) ---
@@ -1952,7 +1971,7 @@
     }
     const preisBilanz = c.pricingHistorie && c.pricingHistorie.erfolgsBilanz;
     if (preisBilanz && preisBilanz.ausgewertet) {
-      teile.push(`ERFOLGS-CHECK PRICING-AGENT: Von ${preisBilanz.ausgewertet} ausgewerteten Preisänderungen zeigten ${preisBilanz.positiv} danach weiterhin echte Verkäufe, ${preisBilanz.brauchtBlick} brauchen einen Blick (Verkäufe seitdem gestoppt oder weiterhin 0). Das System prüft eigene Entscheidungen also gegen echte Verkaufsdaten nach, statt nur zu empfehlen und zu vergessen.`);
+      teile.push(`ERFOLGS-CHECK PRICING-AGENT: Von ${preisBilanz.ausgewertet} ausgewerteten Preisänderungen zeigten ${preisBilanz.positiv} danach weiterhin echte Verkäufe, ${preisBilanz.brauchtBlick} brauchen einen Blick (Verkäufe seitdem gestoppt oder weiterhin 0). Das System prüft eigene Entscheidungen also gegen echte Verkaufsdaten nach, statt nur zu empfehlen und zu vergessen.${c.pricingHistorie.selbstgebremst ? ' 🛑 SELBSTBREMSE AKTIV: der Agent stuft sich wegen der schlechten Bilanz gerade selbst auf reine Empfehlung zurück.' : ''}`);
     }
 
     const splitHistorie = (c.splitTest && c.splitTest.historie) || [];
@@ -1962,7 +1981,7 @@
     }
     const splitBilanz = c.splitTest && c.splitTest.erfolgsBilanz;
     if (splitBilanz && splitBilanz.ausgewertet) {
-      teile.push(`ERFOLGS-CHECK SPLIT-TEST-AGENT: Von ${splitBilanz.ausgewertet} ausgewerteten Pausierungen blieb der Gewinner bei ${splitBilanz.bestaetigt} weiterhin profitabel, ${splitBilanz.brauchtBlick} brauchen einen Blick.`);
+      teile.push(`ERFOLGS-CHECK SPLIT-TEST-AGENT: Von ${splitBilanz.ausgewertet} ausgewerteten Pausierungen blieb der Gewinner bei ${splitBilanz.bestaetigt} weiterhin profitabel, ${splitBilanz.brauchtBlick} brauchen einen Blick.${c.splitTest.selbstgebremst ? ' 🛑 SELBSTBREMSE AKTIV: der Agent stuft sich wegen der schlechten Bilanz gerade selbst auf reine Empfehlung zurück.' : ''}`);
     }
 
     const adsAutopilotHistorie = (c.adsAutopilot && c.adsAutopilot.historie) || [];
@@ -1972,12 +1991,12 @@
     }
     const adsAutopilotBilanz = c.adsAutopilot && c.adsAutopilot.erfolgsBilanz;
     if (adsAutopilotBilanz && adsAutopilotBilanz.ausgewertet) {
-      teile.push(`ERFOLGS-CHECK ADS-AUTOPILOT-AGENT: Von ${adsAutopilotBilanz.ausgewertet} ausgewerteten Budget-Verstärkungen blieben ${adsAutopilotBilanz.bestaetigt} weiterhin profitabel, ${adsAutopilotBilanz.brauchtBlick} brauchen einen Blick.`);
+      teile.push(`ERFOLGS-CHECK ADS-AUTOPILOT-AGENT: Von ${adsAutopilotBilanz.ausgewertet} ausgewerteten Budget-Verstärkungen blieben ${adsAutopilotBilanz.bestaetigt} weiterhin profitabel, ${adsAutopilotBilanz.brauchtBlick} brauchen einen Blick.${c.adsAutopilot.selbstgebremst ? ' 🛑 SELBSTBREMSE AKTIV: der Agent stuft sich wegen der schlechten Bilanz gerade selbst auf reine Empfehlung zurück.' : ''}`);
     }
 
     const reorderBilanz = c.reorder && c.reorder.erfolgsBilanz;
     if (reorderBilanz && reorderBilanz.ausgewertet) {
-      teile.push(`ERFOLGS-CHECK REORDER-AGENT: Von ${reorderBilanz.ausgewertet} ausgewerteten Nachbestellungen blieb bei ${reorderBilanz.keinEngpass} der Bestand durchgehend positiv, ${reorderBilanz.brauchtBlick} hatten trotzdem einen Engpass.`);
+      teile.push(`ERFOLGS-CHECK REORDER-AGENT: Von ${reorderBilanz.ausgewertet} ausgewerteten Nachbestellungen blieb bei ${reorderBilanz.keinEngpass} der Bestand durchgehend positiv, ${reorderBilanz.brauchtBlick} hatten trotzdem einen Engpass.${c.reorder.selbstgebremst ? ' 🛑 SELBSTBREMSE AKTIV: der Agent stuft sich wegen der schlechten Bilanz gerade selbst auf reine Empfehlung zurück.' : ''}`);
     }
 
     const automationen = (c.cockpit && c.cockpit.automationen) || [];

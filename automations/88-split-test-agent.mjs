@@ -33,6 +33,16 @@ function isoDatum(d) {
   return d.toISOString().slice(0, 10);
 }
 
+// Selbstbremse: feste Zahlen-Schwelle im Code (kein KI-Ermessen) - lief die
+// eigene Erfolgsbilanz zuletzt schlecht, fällt der Agent DIESEN Lauf auf
+// reine Empfehlung zurück, egal was AUTO_SPLIT_TEST_PAUSIEREN sagt.
+const SELBSTBREMSE_MIN_STICHPROBE = 3;
+const SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS = 0.4;
+function berechneSelbstbremse(ausgewertetAnzahl, positivAnzahl) {
+  if (ausgewertetAnzahl < SELBSTBREMSE_MIN_STICHPROBE) return false;
+  return positivAnzahl / ausgewertetAnzahl < SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS;
+}
+
 // Prüft AUSGEFÜHRTE Pausierungen der letzten Woche: lief der GEWINNER (bleibt
 // immer aktiv) in genau den 7 Tagen danach weiterhin profitabel? Beobachtet
 // nur den tatsächlichen ROAS in diesem Zeitraum - keine Behauptung, DASS die
@@ -91,6 +101,16 @@ async function main() {
     kampagnen[row.campaign_id].adsets.push(eintrag);
   }
 
+  const state = loadState(STATE_KEY);
+  state.historie = state.historie || [];
+  await werteVergangeneEntscheidungenAus(state);
+  saveState(STATE_KEY, state);
+
+  const ausgewertetVorlauf = state.historie.filter((e) => e.ausgewertet);
+  const bestaetigtVorlauf = ausgewertetVorlauf.filter((e) => e.wirkung === 'gewinner_bestaetigt');
+  const selbstgebremst = berechneSelbstbremse(ausgewertetVorlauf.length, bestaetigtVorlauf.length);
+  const autoAnEffektiv = autoAn && !selbstgebremst;
+
   const ergebnisse = [];
   for (const [campaignId, k] of Object.entries(kampagnen)) {
     // Braucht mind. 2 Ad-Sets mit jeweils genug Spend für einen verlässlichen
@@ -111,7 +131,7 @@ async function main() {
 
     const erwarteterMehrertrag = verlierer.spend * (gewinner.roas - verlierer.roas);
     let pausiert = false;
-    if (autoAn) {
+    if (autoAnEffektiv) {
       try {
         await pauseAd(verlierer.adsetId);
         pausiert = true;
@@ -132,25 +152,21 @@ async function main() {
     });
   }
 
-  const state = loadState(STATE_KEY);
-  state.historie = state.historie || [];
-
-  await werteVergangeneEntscheidungenAus(state);
-
   if (ergebnisse.length) {
     state.historie.unshift(...ergebnisse);
     if (state.historie.length > MAX_HISTORIE) state.historie = state.historie.slice(0, MAX_HISTORIE);
+    saveState(STATE_KEY, state);
   }
-  saveState(STATE_KEY, state);
 
   if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
   const ausgewertet = state.historie.filter((e) => e.ausgewertet);
   const bestaetigt = ausgewertet.filter((e) => e.wirkung === 'gewinner_bestaetigt');
   writeFileSync(join(COMMAND_DIR, 'split-test.json'), JSON.stringify({
     updatedAt: new Date().toISOString(),
-    autoAn,
+    autoAn: autoAnEffektiv,
     historie: state.historie,
     erfolgsBilanz: { ausgewertet: ausgewertet.length, bestaetigt: bestaetigt.length, brauchtBlick: ausgewertet.length - bestaetigt.length },
+    selbstgebremst,
   }, null, 2));
 
   if (!ergebnisse.length) {
@@ -160,9 +176,12 @@ async function main() {
 
   const zeilen = ergebnisse.map((e) =>
     `- ${e.kampagne}: "${e.gewinner.name}" (ROAS ${e.gewinner.roas}) schlägt "${e.verlierer.name}" (ROAS ${e.verlierer.roas}) um ${e.unterschiedProzent}% - ${e.ausgefuehrt ? 'Verlierer pausiert' : 'nur empfohlen'}`);
-  await notifyTelegram(`🧪 SPLIT-TEST-AGENT - ${config.SHOP_NAME}${NL}--------------------${NL}${autoAn ? 'AUTO_SPLIT_TEST_PAUSIEREN ist AN: Verlierer werden automatisch pausiert.' : 'AUTO_SPLIT_TEST_PAUSIEREN steht auf nein - nur Empfehlung.'}${NL}${NL}${zeilen.join(NL)}`);
+  const bremsHinweis = selbstgebremst
+    ? `🛑 SELBSTBREMSE AKTIV: nur ${bestaetigtVorlauf.length}/${ausgewertetVorlauf.length} letzte Pausierungen liefen gut (< ${Math.round(SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS * 100)}%) - heute NUR Empfehlung, auch wenn AUTO_SPLIT_TEST_PAUSIEREN an ist.`
+    : autoAnEffektiv ? 'AUTO_SPLIT_TEST_PAUSIEREN ist AN: Verlierer werden automatisch pausiert.' : 'AUTO_SPLIT_TEST_PAUSIEREN steht auf nein - nur Empfehlung.';
+  await notifyTelegram(`🧪 SPLIT-TEST-AGENT - ${config.SHOP_NAME}${NL}--------------------${NL}${bremsHinweis}${NL}${NL}${zeilen.join(NL)}`);
 
-  console.log(`[88-split-test-agent] ${ergebnisse.length} klare Ergebnis(se), ${ergebnisse.filter((e) => e.ausgefuehrt).length} Verlierer pausiert.`);
+  console.log(`[88-split-test-agent] ${ergebnisse.length} klare Ergebnis(se), ${ergebnisse.filter((e) => e.ausgefuehrt).length} Verlierer pausiert${selbstgebremst ? ' (selbstgebremst)' : ''}.`);
 }
 
 main().catch((err) => {
