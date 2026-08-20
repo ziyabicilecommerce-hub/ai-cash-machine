@@ -24,6 +24,7 @@ import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositione
 import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
 import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtschaftskalender.mjs';
+import { ladeInsiderKaufSignal } from './lib/insiderbuys.mjs';
 
 async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv, marktweiterCrashAktiv) {
   let state = await loadState(env, symbol, startKapital);
@@ -40,6 +41,17 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       await saveState(env, symbol, state);
     }
     return;
+  }
+
+  // Insider-Kauf-Signal höchstens einmal pro Tag aktualisieren (siehe
+  // lib/insiderbuys.mjs) - schont SECs Server, ein Tages-Cache reicht für
+  // ein Signal, das ohnehin nur 1-2 Tage aktuell ist (SEC-Meldefrist).
+  if (cfg.insiderBuyFilter && state.insiderSignalGeprueftAm !== heute()) {
+    const signal = await ladeInsiderKaufSignal(env, symbol, cfg);
+    if (signal !== null) {
+      state.insiderSignal = signal;
+      state.insiderSignalGeprueftAm = heute();
+    }
   }
 
   const { closes, highs, lows } = await getKlines(env, symbol);
@@ -83,7 +95,15 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
     }
 
     if (kauf) {
-      const { investBetrag } = kauf;
+      // Einziger NICHT-blockierender Filter: echte Insider-Käufe (SEC Form 4)
+      // erhöhen die Positionsgröße leicht statt einen Kauf zu verhindern -
+      // gedeckelt aufs vorhandene Kapital, kann also nie mehr investieren als
+      // tatsächlich da ist.
+      const insiderBoostAktiv = cfg.insiderBuyFilter && state.insiderSignal && state.insiderSignal.aktiv;
+      const investBetrag = insiderBoostAktiv
+        ? Math.min(kauf.investBetrag * cfg.insiderBoostFaktor, state.kapital)
+        : kauf.investBetrag;
+
       const minNotional = await getMinNotionalUsdt();
       if (investBetrag < minNotional) {
         await notify(env, `⚠️ Stocks-Bot (${symbol}): Kaufsignal übersprungen - ${investBetrag.toFixed(2)} USD liegt unter der Mindest-Ordergröße (${minNotional.toFixed(2)} USD).`);
@@ -96,7 +116,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
         qty: order.qty, entryPreis: order.preis, hoechsterPreisSeitEinstieg: order.preis, einstiegAm: new Date().toISOString(),
         entryAtr: indikatoren.atrJetzt, teilverkaufGemacht: false,
       };
-      await notify(env, `📈 [PAPER] Stocks-Bot: Einstieg ${symbol} @ ${order.preis.toFixed(2)} (${investBetrag.toFixed(2)} USD eingesetzt).`);
+      await notify(env, `📈 [PAPER] Stocks-Bot: Einstieg ${symbol} @ ${order.preis.toFixed(2)} (${investBetrag.toFixed(2)} USD eingesetzt${insiderBoostAktiv ? `, 🕵️ Insider-Kauf-Boost aktiv (${state.insiderSignal.wertUsd.toLocaleString('de-DE', { maximumFractionDigits: 0 })} USD gemeldete Insider-Käufe)` : ''}).`);
     }
   } else {
     const verkauf = entscheideVerkauf({ position: state.position, cfg, indikatoren });

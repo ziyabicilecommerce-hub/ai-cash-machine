@@ -20,6 +20,10 @@ function initialerState(startKapital) {
     killSwitchAktiv: false,
     killSwitchBenachrichtigt: false,
     trades: [],
+    // Siehe lib/insiderbuys.mjs - einmal täglich aktualisiert, null bis zur
+    // ersten Prüfung.
+    insiderSignal: null,
+    insiderSignalGeprueftAm: null,
   };
 }
 

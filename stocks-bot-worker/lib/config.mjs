@@ -71,5 +71,13 @@ export function readConfig(env) {
     marktweiterCrashSymbol: (env.STOCKS_MARKTWEITER_CRASH_SYMBOL || 'SPY').trim(),
     marktweiterCrashFensterKerzen: parseInt(env.STOCKS_MARKTWEITER_CRASH_FENSTER_KERZEN || '4', 10),
     marktweiterCrashMaxDropProzent: parseFloat(env.STOCKS_MARKTWEITER_CRASH_MAX_DROP_PROZENT || '5'),
+    // Insider-Kauf-Bestätigung (kein API-Key, öffentliche SEC-EDGAR-Daten) -
+    // siehe lib/insiderbuys.mjs. Einziger NICHT-blockierender Filter hier:
+    // erhöht die Positionsgröße leicht statt einen Kauf zu verwerfen.
+    insiderBuyFilter: (env.STOCKS_INSIDER_BUY_FILTER || 'ja') === 'ja',
+    insiderSecUserAgent: env.STOCKS_INSIDER_SEC_USER_AGENT || 'CashMachineStocksBot/1.0 (Kontakt bitte in STOCKS_INSIDER_SEC_USER_AGENT setzen)',
+    insiderLookbackTage: parseInt(env.STOCKS_INSIDER_LOOKBACK_TAGE || '7', 10),
+    insiderMinKaufwertUsd: parseFloat(env.STOCKS_INSIDER_MIN_KAUFWERT_USD || '100000'),
+    insiderBoostFaktor: parseFloat(env.STOCKS_INSIDER_BOOST_FAKTOR || '1.2'),
   };
 }
