@@ -58,7 +58,7 @@ export async function zaehleOffenePositionen(env, symbols, startKapitalProSymbol
 // (maximal so alt wie der letzte Cron-Lauf, alle 5 Minuten).
 export async function loadSystemInfo(env) {
   const raw = await env.TRADING_STATE.get('system:info');
-  const leer = { letzterLauf: null, fearGreedWert: null, fearGreedZeit: null, btcDominanzProzent: null, btcDominanzZeit: null, marktweiterCrashAktiv: false, marktweiterCrashZeit: null };
+  const leer = { letzterLauf: null, fearGreedWert: null, fearGreedZeit: null, btcDominanzProzent: null, btcDominanzZeit: null, marktweiterCrashAktiv: false, marktweiterCrashZeit: null, newsEventAktiv: false, newsEventZeit: null };
   if (!raw) return leer;
   try {
     return { ...leer, ...JSON.parse(raw) };

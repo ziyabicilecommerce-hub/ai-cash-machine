@@ -39,6 +39,13 @@ Tagesverlust-Sperre, Flash-Crash-Schutz, Spread-Filter, Cooldown und
 Performance-Sizing sind alle vorhanden — die Kern-Risikologik ist identisch
 zum bewährten Krypto-Bot.
 
+**Eine Ausnahme: der Wirtschaftskalender-Filter ist von Anfang an dabei**
+(`lib/wirtschaftskalender.mjs`, wortgleich mit der Version im Krypto-Bot) -
+pausiert Käufe für alle Aktien gemeinsam rund um FOMC-Zinsentscheide, CPI-
+und NFP-Termine (kostenlose Quelle, kein API-Key). Gerade bei Aktien
+besonders relevant, da US-Wirtschaftsdaten der klassische Auslöser für
+Kursausschläge sind. Siehe `STOCKS_NEWS_EVENT_FILTER` in `wrangler.toml`.
+
 **Wichtig: Die Strategie (`bollinger-mean-reversion`) ist für Aktien NOCH
 NICHT per Backtest verifiziert** — `backtest.mjs` im Krypto-Bot lädt bisher
 nur Kraken-Kerzen. Vor jedem Vertrauen in die Ergebnisse erst eine Weile im

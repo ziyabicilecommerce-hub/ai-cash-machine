@@ -97,6 +97,8 @@ export async function buildStatus(env) {
     paperModus: true,
     marktOffen,
     letzterCronLauf: systemInfo.letzterLauf,
+    newsEventAktiv: systemInfo.newsEventAktiv,
+    newsEventZeit: systemInfo.newsEventZeit,
     readiness: berechneReadiness(symbole, alleTrades),
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,

@@ -57,5 +57,9 @@ export function readConfig(env) {
     cooldownMinuten: parseInt(env.STOCKS_COOLDOWN_NACH_VERLUST_MINUTEN || '60', 10),
     partialTakeProfitProzent: 0,
     partialTakeProfitAnteil: 50,
+    // Wirtschaftskalender-Filter - siehe lib/wirtschaftskalender.mjs.
+    // Gemeinsames Modul mit trading-bot-worker (Krypto), gleicher Default.
+    newsEventFilter: (env.STOCKS_NEWS_EVENT_FILTER || 'ja') === 'ja',
+    newsEventFensterMinuten: parseInt(env.STOCKS_NEWS_EVENT_FENSTER_MINUTEN || '30', 10),
   };
 }

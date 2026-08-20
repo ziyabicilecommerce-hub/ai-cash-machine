@@ -195,6 +195,16 @@ TRADING_NEWS_SENTIMENT_MIN_PROZENT = "35"
 TRADING_ADAPTIVES_LERNEN = "nein"
 TRADING_ADAPTIVES_LERNEN_MIN_TRADES = "10"
 
+# Wirtschaftskalender-Filter (kein API-Key nötig, öffentliche Gratis-Quelle
+# nfs.faireconomy.media): pausiert Käufe rund um marktbewegende US-
+# Wirtschaftstermine (FOMC/CPI/NFP, "High Impact" USD-Events) - Krypto
+# reagiert auf solche Events oft ähnlich stark wie klassische Märkte.
+# Keine gemessenen Nachteile (wenige, kurze Pausen pro Woche), deshalb
+# standardmäßig an. EIN Abruf pro Cron-Lauf (Rate-Limit der Quelle: max. 2
+# Abrufe pro 5 Minuten insgesamt).
+TRADING_NEWS_EVENT_FILTER = "ja"
+TRADING_NEWS_EVENT_FENSTER_MINUTEN = "30"
+
 # Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
 #   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)
 #   BINANCE_API_SECRET

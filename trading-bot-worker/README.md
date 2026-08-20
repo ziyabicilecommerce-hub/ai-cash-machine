@@ -289,6 +289,23 @@ für diesen Lauf):
   EINE WhatsApp-Warnung pro Lauf aus (nicht pro Coin), und wird im Control
   Center als 🛑 Marktweiter Crash-Schutz angezeigt.
 
+## Wirtschaftskalender-Filter (kein API-Key nötig)
+
+- **`TRADING_NEWS_EVENT_FILTER`** (Default `ja`) +
+  `TRADING_NEWS_EVENT_FENSTER_MINUTEN` (Default `30`): pausiert Käufe für
+  **alle** Coins gemeinsam rund um marktbewegende US-Wirtschaftstermine
+  ("High Impact" USD-Events wie FOMC-Zinsentscheide, CPI, NFP) - jeweils
+  `TRADING_NEWS_EVENT_FENSTER_MINUTEN` davor UND danach. Datenquelle:
+  [nfs.faireconomy.media](https://nfs.faireconomy.media/ff_calendar_thisweek.json),
+  ein öffentlicher, kostenloser JSON-Export des ForexFactory-
+  Wirtschaftskalenders ohne API-Key - weltweit von unzähligen Trading-Bots
+  genutzt. Nur **einmal pro Cron-Lauf** abgerufen (nicht pro Symbol), weil
+  die Quelle selbst ein Rate-Limit hat (max. 2 Abrufe/5 Minuten insgesamt
+  für diese URL). Löst EINE WhatsApp/Telegram-Warnung pro Lauf aus (nicht
+  pro Coin), im Control Center als ⏸️ "Wirtschaftskalender-Pause"
+  angezeigt. Gleiches Modul (fast unverändert) auch im Aktien-Bot
+  (`stocks-bot-worker`) - ein gemeinsames Makro-Risiko-Signal für beide.
+
 ## News-Sentiment-Filter (optional, braucht kostenlosen API-Key)
 
 - **`TRADING_NEWS_SENTIMENT_FILTER`** (`ja`/`nein`, Default `nein`) +
@@ -338,8 +355,9 @@ Signale testen, die sich aus den historischen Kraken-Kursdaten selbst
 ableiten lassen (Strategie, Stop-Loss, Take-Profit, Performance-Sizing,
 Flash-Crash-Filter — die letzten beiden brauchen keine externe API und
 laufen im Backtest identisch mit). Die 24h-Preisbestätigung, der Fear &
-Greed-Filter, der BTC-Dominanz-Filter, der Spread-Filter und der
-News-Sentiment-Filter lassen sich nicht rückwirkend exakt nachstellen
+Greed-Filter, der BTC-Dominanz-Filter, der Spread-Filter, der
+Wirtschaftskalender-Filter und der News-Sentiment-Filter lassen sich nicht
+rückwirkend exakt nachstellen
 (keine passenden historischen Daten im gleichen Format frei verfügbar) —
 sie sind gegen echte Live-Daten geprüft (lösen korrekt aus, fallen bei
 Ausfall sauber offen), aber NICHT historisch backgetestet. Das im Kopf
