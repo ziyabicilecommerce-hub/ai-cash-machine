@@ -28,9 +28,10 @@ function berechne24hChangeAusKlines(closes) {
 
 function berechneStopLossTakeProfitPreise(position, cfg) {
   if (!position) return { stopLossPreis: null, takeProfitPreis: null };
+  const stopLossProzentEffektiv = position.stopLossProzentBenutzt ?? cfg.stopLossProzent;
   const stopLossAbstand = cfg.dynamischerStopLoss && position.entryAtr
     ? position.entryAtr * cfg.stopLossAtrMultiplikator
-    : position.entryPreis * (cfg.stopLossProzent / 100);
+    : position.entryPreis * (stopLossProzentEffektiv / 100);
   const stopLossPreis = position.entryPreis - stopLossAbstand;
   const takeProfitPreis = cfg.takeProfitProzent > 0 ? position.entryPreis * (1 + cfg.takeProfitProzent / 100) : null;
   return { stopLossPreis, takeProfitPreis };
@@ -140,6 +141,7 @@ export async function buildStatus(env) {
       position: state.position,
       stopLossPreis,
       takeProfitPreis,
+      gelernterStopLossProzent: state.gelernterStopLossProzent ?? null,
       kapital: state.kapital,
       startKapital: state.startKapital,
       heutigerVerlustUsdt: state.heutigerVerlustUsdt,

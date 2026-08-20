@@ -15,7 +15,7 @@
 // identisch im Backtest), exchanges.mjs = Binance/Kraken-Adapter,
 // marktdaten.mjs = externe Gratis-Datenquellen (CoinGecko/CoinPaprika/OKX/
 // Gate.io/Bitstamp/Fear&Greed/BTC-Dominanz/Multi-Timeframe), notify.mjs =
-// WhatsApp, state.mjs = KV-Persistenz, reports.mjs = Tages-/Wochen-/Monats-
+// WhatsApp + Telegram, state.mjs = KV-Persistenz, reports.mjs = Tages-/Wochen-/Monats-
 // Rückblick + Kapital-Rebalancing, statistik.mjs = Trade-Kennzahlen +
 // Readiness-Ampel. Diese Datei (worker.js) bleibt der Orchestrator:
 // Konfiguration einlesen, pro Symbol handeln, HTTP-/Cron-Einstiegspunkte.
@@ -27,9 +27,10 @@
 import { berechneIndikatoren, entscheideKauf, entscheideVerkauf, berechneFlashCrashDropProzent } from './lib/strategie.mjs';
 import { EXCHANGES } from './lib/exchanges.mjs';
 import { COINGECKO_IDS, ladePreisBestaetigung24h, ladeFearGreedIndex, ladeBtcDominanzProzent, hoehererZeitrahmenIstAufwaerts, ladeNewsSentimentProzent } from './lib/marktdaten.mjs';
-import { notifyWhatsapp } from './lib/notify.mjs';
+import { notify } from './lib/notify.mjs';
 import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, saveSystemInfo } from './lib/state.mjs';
 import { pruefeUndSendeTagesZusammenfassung, pruefeUndSendeWochenZusammenfassung, pruefeUndSendeMonatsZusammenfassung, pruefeUndFuehreKapitalRebalancing } from './lib/reports.mjs';
+import { pruefeUndFuehreAdaptivesLernen } from './lib/learning.mjs';
 import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
 
@@ -46,7 +47,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
 
   if (state.killSwitchAktiv) {
     if (!state.killSwitchBenachrichtigt) {
-      await notifyWhatsapp(env, `🛑 Trading-Bot (${symbol}) GESTOPPT: Gesamtverlust-Grenze (${cfg.maxGesamtverlustProzent}%) erreicht. Kapital: ${state.kapital.toFixed(2)} USDT (Start: ${state.startKapital.toFixed(2)} USDT). Bleibt aus, bis der State für ${symbol} manuell zurückgesetzt wird.`);
+      await notify(env, `🛑 Trading-Bot (${symbol}) GESTOPPT: Gesamtverlust-Grenze (${cfg.maxGesamtverlustProzent}%) erreicht. Kapital: ${state.kapital.toFixed(2)} USDT (Start: ${state.startKapital.toFixed(2)} USDT). Bleibt aus, bis der State für ${symbol} manuell zurückgesetzt wird.`);
       state.killSwitchBenachrichtigt = true;
       await saveState(env, symbol, state);
     }
@@ -84,14 +85,14 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
     if (kauf && cfg.mtfFilter) {
       const aufwaerts = await hoehererZeitrahmenIstAufwaerts(exchange, symbol, cfg);
       if (!aufwaerts) {
-        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - ${cfg.mtfIntervalMinuten / 60}h-Trend zeigt abwärts (EMA9 < EMA21).`);
+        await notify(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - ${cfg.mtfIntervalMinuten / 60}h-Trend zeigt abwärts (EMA9 < EMA21).`);
         await saveState(env, symbol, state);
         return;
       }
     }
 
     if (kauf && cfg.fngFilter && fearGreedWert !== null && fearGreedWert >= cfg.fngMaxWert) {
-      await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - Fear & Greed Index bei ${fearGreedWert} (Extreme Greed ab ${cfg.fngMaxWert}), Markt wirkt überhitzt.`);
+      await notify(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - Fear & Greed Index bei ${fearGreedWert} (Extreme Greed ab ${cfg.fngMaxWert}), Markt wirkt überhitzt.`);
       await saveState(env, symbol, state);
       return;
     }
@@ -100,7 +101,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
     // VON steigender Dominanz, wird also nicht geblockt).
     const istBtc = COINGECKO_IDS[symbol] === 'bitcoin';
     if (kauf && cfg.btcDominanzFilter && !istBtc && btcDominanzProzent !== null && btcDominanzProzent >= cfg.btcDominanzMaxProzent) {
-      await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - BTC-Dominanz bei ${btcDominanzProzent.toFixed(1)}% (Schwelle ${cfg.btcDominanzMaxProzent}%), Kapital fließt gerade bevorzugt in Bitcoin statt Altcoins.`);
+      await notify(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - BTC-Dominanz bei ${btcDominanzProzent.toFixed(1)}% (Schwelle ${cfg.btcDominanzMaxProzent}%), Kapital fließt gerade bevorzugt in Bitcoin statt Altcoins.`);
       await saveState(env, symbol, state);
       return;
     }
@@ -112,7 +113,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       // NICHT blockierend, sonst würde ein Datenausfall den Bot lahmlegen,
       // obwohl die eigentliche Strategie ein gültiges Signal hat.
       if (change24hProzent !== null && change24hProzent < cfg.coingeckoMin24hProzent) {
-        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - 24h-Änderung (Ø aus bis zu 5 Börsen) ${change24hProzent.toFixed(2)}% liegt unter dem Filter-Minimum (${cfg.coingeckoMin24hProzent}%).`);
+        await notify(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - 24h-Änderung (Ø aus bis zu 5 Börsen) ${change24hProzent.toFixed(2)}% liegt unter dem Filter-Minimum (${cfg.coingeckoMin24hProzent}%).`);
         await saveState(env, symbol, state);
         return;
       }
@@ -123,7 +124,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       // null = kein API-Key konfiguriert, kein Mapping, oder noch keine
       // Stimmen zu diesem Coin - dann nicht blockierend, siehe marktdaten.mjs.
       if (sentimentProzent !== null && sentimentProzent < cfg.newsSentimentMinProzent) {
-        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - News-Sentiment (CryptoPanic Community-Votes) bei ${sentimentProzent.toFixed(0)}% positiv (Schwelle ${cfg.newsSentimentMinProzent}%), aktuelle Berichterstattung wirkt überwiegend negativ.`);
+        await notify(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - News-Sentiment (CryptoPanic Community-Votes) bei ${sentimentProzent.toFixed(0)}% positiv (Schwelle ${cfg.newsSentimentMinProzent}%), aktuelle Berichterstattung wirkt überwiegend negativ.`);
         await saveState(env, symbol, state);
         return;
       }
@@ -132,7 +133,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
     if (kauf && cfg.spreadFilter) {
       const spreadProzent = await exchange.getSpreadProzent(symbol);
       if (spreadProzent !== null && spreadProzent > cfg.spreadMaxProzent) {
-        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - Bid/Ask-Spread bei ${spreadProzent.toFixed(2)}% (Schwelle ${cfg.spreadMaxProzent}%), Liquidität wirkt gerade gestört.`);
+        await notify(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - Bid/Ask-Spread bei ${spreadProzent.toFixed(2)}% (Schwelle ${cfg.spreadMaxProzent}%), Liquidität wirkt gerade gestört.`);
         await saveState(env, symbol, state);
         return;
       }
@@ -142,7 +143,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       const { investBetrag } = kauf;
       const minNotional = await exchange.getMinNotionalUsdt(symbol, preis);
       if (minNotional !== null && investBetrag < minNotional) {
-        await notifyWhatsapp(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - ${investBetrag.toFixed(2)} USDT liegt unter der Mindest-Ordergröße (${minNotional.toFixed(2)} USDT).`);
+        await notify(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - ${investBetrag.toFixed(2)} USDT liegt unter der Mindest-Ordergröße (${minNotional.toFixed(2)} USDT).`);
         await saveState(env, symbol, state);
         return;
       }
@@ -159,8 +160,12 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       state.position = {
         qty, entryPreis: tatsaechlicherPreis, hoechsterPreisSeitEinstieg: tatsaechlicherPreis, einstiegAm: new Date().toISOString(),
         entryAtr: indikatoren.atrJetzt, teilverkaufGemacht: false,
+        // Beim Einstieg eingefroren (wie entryAtr) - siehe lib/learning.mjs.
+        // Nur relevant, wenn TRADING_ADAPTIVES_LERNEN aktiv ist UND für dieses
+        // Symbol schon ein gelernter Wert vorliegt, sonst der globale Standard.
+        stopLossProzentBenutzt: (cfg.adaptivesLernen && state.gelernterStopLossProzent) ? state.gelernterStopLossProzent : cfg.stopLossProzent,
       };
-      await notifyWhatsapp(env, `📈 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Einstieg ${symbol} @ ${tatsaechlicherPreis.toFixed(2)} (${investBetrag.toFixed(2)} USDT eingesetzt${cfg.volaSizing ? `, Vola-Sizing aktiv` : ''}).`);
+      await notify(env, `📈 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Einstieg ${symbol} @ ${tatsaechlicherPreis.toFixed(2)} (${investBetrag.toFixed(2)} USDT eingesetzt${cfg.volaSizing ? `, Vola-Sizing aktiv` : ''}).`);
     }
   } else {
     const verkauf = entscheideVerkauf({ position: state.position, cfg, indikatoren });
@@ -196,7 +201,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
 
       state.position.qty -= teilQty;
       state.position.teilverkaufGemacht = true;
-      await notifyWhatsapp(env, `📊 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Teil-Gewinnmitnahme ${symbol} @ ${preis.toFixed(2)} (${(verkauf.teilAnteil * 100).toFixed(0)}% der Position, ${gewinnVerlust.toFixed(2)} USDT Gewinn). Rest der Position läuft weiter, Stop-Loss/Trailing-Stop gelten unverändert.`);
+      await notify(env, `📊 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Teil-Gewinnmitnahme ${symbol} @ ${preis.toFixed(2)} (${(verkauf.teilAnteil * 100).toFixed(0)}% der Position, ${gewinnVerlust.toFixed(2)} USDT Gewinn). Rest der Position läuft weiter, Stop-Loss/Trailing-Stop gelten unverändert.`);
     } else if (verkauf.verkaufen) {
       let erloes;
       if (cfg.paperModus) {
@@ -222,7 +227,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       });
       if (state.trades.length > MAX_TRADES_IM_STATE) state.trades = state.trades.slice(-MAX_TRADES_IM_STATE);
 
-      await notifyWhatsapp(env, `📉 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Ausstieg ${symbol} @ ${preis.toFixed(2)} (${verkauf.grund}). ${gewinnVerlust >= 0 ? 'Gewinn' : 'Verlust'}: ${gewinnVerlust.toFixed(2)} USDT. Kapital jetzt: ${state.kapital.toFixed(2)} USDT.`);
+      await notify(env, `📉 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Ausstieg ${symbol} @ ${preis.toFixed(2)} (${verkauf.grund}). ${gewinnVerlust >= 0 ? 'Gewinn' : 'Verlust'}: ${gewinnVerlust.toFixed(2)} USDT. Kapital jetzt: ${state.kapital.toFixed(2)} USDT.`);
       state.position = null;
 
       // Nach einem Verlust-Trade eine Weile pausieren (Default 0 = aus) -
@@ -268,7 +273,7 @@ async function runAll(env) {
     }
   }
   if (marktweiterCrashAktiv) {
-    await notifyWhatsapp(env, `🛑 Trading-Bot: Marktweiter Flash-Crash erkannt (BTC ${marktweiterCrashDropProzent.toFixed(1)}% in ${cfg.marktweiterCrashFensterKerzen} Kerzen) - Käufe für ALLE Coins in diesem Lauf pausiert.`);
+    await notify(env, `🛑 Trading-Bot: Marktweiter Flash-Crash erkannt (BTC ${marktweiterCrashDropProzent.toFixed(1)}% in ${cfg.marktweiterCrashFensterKerzen} Kerzen) - Käufe für ALLE Coins in diesem Lauf pausiert.`);
   }
 
   // Für /status zwischengespeichert statt bei jedem Dashboard-Aufruf erneut
@@ -294,7 +299,7 @@ async function runAll(env) {
       if (hatteVorherPosition && !hatJetztPosition) offenePositionen--;
     } catch (err) {
       console.error(`[trading-bot] Fehler bei ${symbol}:`, err);
-      await notifyWhatsapp(env, `🛑 Trading-Bot (${symbol}): Lauf mit Fehler abgebrochen - ${err.message || err}. Eine Order wurde dadurch möglicherweise NICHT ausgeführt, bitte Konto manuell prüfen.`);
+      await notify(env, `🛑 Trading-Bot (${symbol}): Lauf mit Fehler abgebrochen - ${err.message || err}. Eine Order wurde dadurch möglicherweise NICHT ausgeführt, bitte Konto manuell prüfen.`);
     }
   }
   try {
@@ -316,6 +321,11 @@ async function runAll(env) {
     await pruefeUndFuehreKapitalRebalancing(env, cfg);
   } catch (err) {
     console.error('[trading-bot] Fehler beim Kapital-Rebalancing:', err);
+  }
+  try {
+    await pruefeUndFuehreAdaptivesLernen(env, cfg);
+  } catch (err) {
+    console.error('[trading-bot] Fehler beim adaptiven Lernen:', err);
   }
 }
 

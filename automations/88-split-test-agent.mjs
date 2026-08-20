@@ -155,8 +155,8 @@ async function main() {
   if (ergebnisse.length) {
     state.historie.unshift(...ergebnisse);
     if (state.historie.length > MAX_HISTORIE) state.historie = state.historie.slice(0, MAX_HISTORIE);
-    saveState(STATE_KEY, state);
   }
+  saveState(STATE_KEY, state);
 
   if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
   const ausgewertet = state.historie.filter((e) => e.ausgewertet);
