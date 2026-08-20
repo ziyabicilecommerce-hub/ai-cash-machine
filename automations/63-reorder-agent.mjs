@@ -11,6 +11,9 @@
 // schlimmsten Fall eine unerwartete Anfrage, die der Lieferant nachfragt oder
 // der (immer per cc informierte) Gründer selbst storniert - kein automatischer
 // Zahlungsfluss.
+import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { config, isTestMode } from './lib/config.mjs';
 import { getProducts, getOrdersSince } from './lib/shopify.mjs';
 import { sendEmail } from './lib/email.mjs';
@@ -23,6 +26,62 @@ const STATE_KEY = '63-reorder-agent';
 const ZAHLUNGEN_STATE_KEY = 'lieferanten-zahlungen';
 const VERKAUFSTEMPO_TAGE = 30;
 const MAX_ZAHLUNGEN = 100;
+const MAX_VERFOLGUNG = 60;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const COMMAND_DIR = join(__dirname, '..', 'command');
+
+// Shopify hat keine historischen Lagerbestände über eine einfache Abfrage -
+// deshalb baut der TÄGLICHE Lauf selbst eine kleine Zeitreihe auf: für jede
+// offene Nachbestellung wird bei jedem Lauf der aktuelle Bestand mitnotiert
+// (Tiefstand seit Anfrage). Erst wenn Lieferzeit+Puffer vorbei sind, steht
+// fest, ob es zwischenzeitlich einen echten Engpass (Bestand <= 0) gab oder
+// nicht - reine Beobachtung des tatsächlichen Verlaufs, kein Rätselraten.
+function werteVerfolgungAus(state, produkte, lieferzeit, puffer) {
+  state.verfolgung = state.verfolgung || {};
+  const bestandJe = {};
+  for (const p of produkte) {
+    for (const v of p.variants || []) {
+      const b = parseInt(v.inventory_quantity);
+      if (!isNaN(b)) bestandJe[v.id] = b;
+    }
+  }
+
+  const jetzt = Date.now();
+  const evaluationsFensterMs = (lieferzeit + puffer) * 86400000;
+  let ausgewertetAnzahl = 0;
+
+  for (const [variantId, eintrag] of Object.entries(state.verfolgung)) {
+    if (eintrag.ausgewertet) continue;
+    const aktuellerBestand = bestandJe[variantId];
+    if (aktuellerBestand !== undefined) {
+      eintrag.tiefstandSeitAnfrage = Math.min(eintrag.tiefstandSeitAnfrage, aktuellerBestand);
+      eintrag.bestandAktuell = aktuellerBestand;
+    }
+    if (jetzt - new Date(eintrag.angefragtAm).getTime() < evaluationsFensterMs) continue;
+
+    eintrag.ausgewertet = true;
+    eintrag.ausgewertetAm = new Date(jetzt).toISOString();
+    if (aktuellerBestand === undefined) {
+      eintrag.wirkung = 'produkt_nicht_mehr_gefunden'; // z.B. eingestellt/gelöscht - ehrlich statt geraten
+    } else {
+      eintrag.wirkung = eintrag.tiefstandSeitAnfrage <= 0 ? 'engpass_trotzdem' : 'kein_engpass';
+    }
+    ausgewertetAnzahl++;
+  }
+  if (ausgewertetAnzahl) console.log(`[63-reorder-agent] ${ausgewertetAnzahl} vergangene Nachbestellung(en) ausgewertet.`);
+}
+
+function veroeffentliche(state) {
+  if (!existsSync(COMMAND_DIR)) mkdirSync(COMMAND_DIR, { recursive: true });
+  const alle = Object.values(state.verfolgung || {}).sort((a, b) => new Date(b.angefragtAm) - new Date(a.angefragtAm));
+  const ausgewertet = alle.filter((e) => e.ausgewertet);
+  const keinEngpass = ausgewertet.filter((e) => e.wirkung === 'kein_engpass');
+  writeFileSync(join(COMMAND_DIR, 'reorder-agent.json'), JSON.stringify({
+    updatedAt: new Date().toISOString(),
+    historie: alle.slice(0, MAX_VERFOLGUNG),
+    erfolgsBilanz: { ausgewertet: ausgewertet.length, keinEngpass: keinEngpass.length, brauchtBlick: ausgewertet.length - keinEngpass.length },
+  }, null, 2));
+}
 
 async function main() {
   const lieferzeit = parseFloat(config.REORDER_LIEFERZEIT_TAGE || '14');
@@ -59,6 +118,9 @@ async function main() {
   }
   if (aufgeraeumt) saveState(STATE_KEY, state);
 
+  werteVerfolgungAus(state, produkte, lieferzeit, puffer);
+  saveState(STATE_KEY, state);
+
   const kandidaten = [];
   for (const p of produkte) {
     for (const v of p.variants || []) {
@@ -82,6 +144,7 @@ async function main() {
 
   if (!kandidaten.length) {
     console.log('[63-reorder-agent] Nichts nachzubestellen.');
+    veroeffentliche(state);
     return;
   }
 
@@ -99,7 +162,26 @@ async function main() {
     const empfaenger = isTestMode() ? config.OWNER_EMAIL : config.SUPPLIER_EMAIL;
     await sendEmail({ to: empfaenger, subject: `Nachbestellung ${config.SHOP_NAME} - ${kandidaten.length} Artikel`, html });
 
-    for (const k of kandidaten) state.letzteAnfrage[k.variantId] = jetzt;
+    for (const k of kandidaten) {
+      state.letzteAnfrage[k.variantId] = jetzt;
+      state.verfolgung = state.verfolgung || {};
+      state.verfolgung[k.variantId] = {
+        variantId: k.variantId,
+        name: k.name,
+        sku: k.sku,
+        angefragtAm: new Date(jetzt).toISOString(),
+        mengeAngefragt: k.menge,
+        bestandBeiAnfrage: k.bestand,
+        tiefstandSeitAnfrage: k.bestand,
+        bestandAktuell: k.bestand,
+        ausgewertet: false,
+      };
+    }
+    if (Object.keys(state.verfolgung || {}).length > MAX_VERFOLGUNG * 2) {
+      // Nur die neuesten behalten, damit der State nicht unbegrenzt wächst
+      const sortiert = Object.entries(state.verfolgung).sort((a, b) => new Date(b[1].angefragtAm) - new Date(a[1].angefragtAm));
+      state.verfolgung = Object.fromEntries(sortiert.slice(0, MAX_VERFOLGUNG * 2));
+    }
     saveState(STATE_KEY, state);
 
     // Shopify kennt keine Lieferanten-Rechnungen/Zahlungsziele - der einzige
@@ -123,6 +205,7 @@ async function main() {
     saveState(ZAHLUNGEN_STATE_KEY, zahlungenState);
   }
 
+  veroeffentliche(state);
   console.log(`[63-reorder-agent] ${kandidaten.length} Artikel ${autoSenden && config.SUPPLIER_EMAIL ? 'nachbestellt' : 'empfohlen'}.`);
 }
 

@@ -511,6 +511,11 @@ wären, berechnet die nötige Menge (`REORDER_PUFFER_TAGE` Sicherheitspuffer)
 und schickt eine echte Bestell-Mail an `SUPPLIER_EMAIL`. Merkt sich bereits
 angefragte Artikel, um den Lieferanten nicht mit Wiederholungen zu spammen.
 Gate: `AUTO_BESTELLUNG_SENDEN` (Default `nein`).
+Echtes Rückkopplungs-Gedächtnis wie #61/#88/#64: Shopify liefert keine
+historischen Lagerbestände, deshalb notiert der TÄGLICHE Lauf selbst den
+Tiefstand seit jeder Anfrage mit. Nach Lieferzeit+Puffer steht fest, ob es
+trotzdem einen echten Engpass (Bestand <= 0) gab - sichtbar im Autopilot-Tab
+von Command inkl. Erfolgsbilanz.
 
 **📊 Ads-Autopilot-Agent** (#64, täglich 09:00): schichtet Budget vom
 schwächsten zum stärksten aktiven Meta-Ad-Set um (max.

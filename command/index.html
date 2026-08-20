@@ -661,6 +661,7 @@
   <div id="pricingHistorieContent"></div>
   <div id="splitTestContent"></div>
   <div id="adsAutopilotContent"></div>
+  <div id="reorderContent"></div>
 </section>
 
 <section class="panel" id="panel-trading">
@@ -1618,6 +1619,50 @@
     el.innerHTML = `<div class="section-title-inline">📊 BUDGET-UMSCHICHTUNGEN MIT BEGRÜNDUNG</div>${bilanzHtml}${rows}`;
   }
 
+  const REORDER_WIRKUNG_TEXT = {
+    kein_engpass: { label: '✅ kein Engpass — Bestand blieb positiv', klasse: 'risiko-niedrig' },
+    engpass_trotzdem: { label: '⚠️ trotzdem ausverkauft gewesen', klasse: 'risiko-mittel' },
+    produkt_nicht_mehr_gefunden: { label: '❔ Produkt nicht mehr gefunden (evtl. eingestellt)', klasse: 'risiko-mittel' },
+  };
+
+  // "Warum" bei jeder Nachbestellung (#63 Reorder-Agent) - Shopify liefert
+  // keine historischen Lagerbestände, deshalb notiert der TÄGLICHE Lauf
+  // selbst den Tiefstand seit der Anfrage mit. Erst nach Lieferzeit+Puffer
+  // steht fest, ob es zwischenzeitlich einen echten Engpass gab.
+  function renderReorderHistorie(data) {
+    const el = document.getElementById('reorderContent');
+    const historie = (data && data.historie) || [];
+    if (!historie.length) {
+      el.innerHTML = `<div class="section-title-inline">📦 NACHBESTELLUNGEN MIT BEGRÜNDUNG</div>` +
+        emptyHtml('📦', 'Noch keine Nachbestellung', 'Erscheint, sobald der Reorder-Agent (#63) einen Artikel findet, der vor Lieferung ausverkauft wäre.');
+      return;
+    }
+    const bilanz = data.erfolgsBilanz;
+    const bilanzHtml = bilanz && bilanz.ausgewertet
+      ? `<p class="note" style="margin-bottom:14px;">🎯 Erfolgs-Check: von ${bilanz.ausgewertet} ausgewerteten Nachbestellungen blieb bei ${bilanz.keinEngpass} der Bestand durchgehend positiv, ${bilanz.brauchtBlick} hatten trotzdem einen Engpass.</p>`
+      : '';
+    const rows = historie.slice(0, 15).map((e) => {
+      const wirkung = e.ausgewertet && REORDER_WIRKUNG_TEXT[e.wirkung];
+      const wirkungRow = wirkung
+        ? `<div><b>SEITDEM PASSIERT</b><span class="${wirkung.klasse}">${wirkung.label}${e.tiefstandSeitAnfrage !== undefined ? ` (Tiefstand ${e.tiefstandSeitAnfrage})` : ''}</span></div>`
+        : `<div><b>SEITDEM PASSIERT</b><span>wird noch verfolgt (Tiefstand bisher ${e.tiefstandSeitAnfrage})</span></div>`;
+      return `
+      <div class="why-row">
+        <div class="why-top">
+          <div class="why-preis">${e.name} (${e.sku})</div>
+          <span class="why-tag tag-hoch">📦 ${e.mengeAngefragt} STÜCK ANGEFRAGT</span>
+        </div>
+        <div class="why-grid">
+          <div><b>BESTAND BEI ANFRAGE</b><span>${e.bestandBeiAnfrage}</span></div>
+          <div><b>BESTAND AKTUELL</b><span>${e.bestandAktuell}</span></div>
+          ${wirkungRow}
+        </div>
+        <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(e.angefragtAm)}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div class="section-title-inline">📦 NACHBESTELLUNGEN MIT BEGRÜNDUNG</div>${bilanzHtml}${rows}`;
+  }
+
   // --- Alle Tools (Launchpad zu den restlichen, echt interaktiven Apps) ---
   const WEITERE_TOOLS = [
     { emoji: '🧠', name: 'Jarvis', desc: 'Voice-HUD-Assistent, zentrale Steuerung der Suite.', href: '../' },
@@ -1928,6 +1973,11 @@
     const adsAutopilotBilanz = c.adsAutopilot && c.adsAutopilot.erfolgsBilanz;
     if (adsAutopilotBilanz && adsAutopilotBilanz.ausgewertet) {
       teile.push(`ERFOLGS-CHECK ADS-AUTOPILOT-AGENT: Von ${adsAutopilotBilanz.ausgewertet} ausgewerteten Budget-Verstärkungen blieben ${adsAutopilotBilanz.bestaetigt} weiterhin profitabel, ${adsAutopilotBilanz.brauchtBlick} brauchen einen Blick.`);
+    }
+
+    const reorderBilanz = c.reorder && c.reorder.erfolgsBilanz;
+    if (reorderBilanz && reorderBilanz.ausgewertet) {
+      teile.push(`ERFOLGS-CHECK REORDER-AGENT: Von ${reorderBilanz.ausgewertet} ausgewerteten Nachbestellungen blieb bei ${reorderBilanz.keinEngpass} der Bestand durchgehend positiv, ${reorderBilanz.brauchtBlick} hatten trotzdem einen Engpass.`);
     }
 
     const automationen = (c.cockpit && c.cockpit.automationen) || [];
@@ -2335,13 +2385,15 @@
       ladeJson('../social-poster/performance.json'),
       ladeJson('./customer-segmente.json'),
       ladeJson('./ads-autopilot.json'),
-    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente, adsAutopilot]) => {
+      ladeJson('./reorder-agent.json'),
+    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente, adsAutopilot, reorder]) => {
       renderGoalEngine(ceo);
       renderOpportunityRadar(opportunityRadar);
       renderCeo(ceo, chains, referral, social, pricingHistorie, splitTest);
       renderPricingHistorie(pricingHistorie);
       renderSplitTestHistorie(splitTest);
       renderAdsAutopilotHistorie(adsAutopilot);
+      renderReorderHistorie(reorder);
       renderKillSwitch(adsNotbremse, refundAlarm, autopilotStatus);
       renderAnalytics(analytics, ads);
       renderProduct(product);
@@ -2360,7 +2412,7 @@
       renderAutopilot(autopilotStatus);
       letzterCockpitStand = cockpit;
       letzteChains = chains;
-      COMMAND_KONTEXT = { ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente, adsAutopilot };
+      COMMAND_KONTEXT = { ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente, adsAutopilot, reorder };
       aiUpdatePanel();
       const eskalationenEl = document.getElementById('kpiTruthSupport');
       const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
