@@ -309,7 +309,7 @@
 
     document.getElementById('botCards').innerHTML =
       renderBotCard('Krypto-Bot', '₿', 'USDT', conn.crypto, cryptoData, '../trading-control-center/') +
-      renderBotCard('Aktien-Bot', '📈', 'USD', conn.stocks, stocksData, '#');
+      renderBotCard('Aktien-Bot', '📈', 'USD', conn.stocks, stocksData, '../stocks-live-setup/');
 
     clearTimeout(window.__refreshTimer);
     window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
