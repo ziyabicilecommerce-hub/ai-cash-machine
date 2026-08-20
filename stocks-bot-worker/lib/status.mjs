@@ -99,6 +99,8 @@ export async function buildStatus(env) {
     letzterCronLauf: systemInfo.letzterLauf,
     newsEventAktiv: systemInfo.newsEventAktiv,
     newsEventZeit: systemInfo.newsEventZeit,
+    marktweiterCrashAktiv: systemInfo.marktweiterCrashAktiv,
+    marktweiterCrashZeit: systemInfo.marktweiterCrashZeit,
     readiness: berechneReadiness(symbole, alleTrades),
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,

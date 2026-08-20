@@ -17,7 +17,7 @@
 // notify.mjs = WhatsApp/Telegram, statistik.mjs = Trade-Kennzahlen,
 // status.mjs = /status und /export, config.mjs = STOCKS_*-Umgebungsvariablen.
 
-import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from './lib/strategie.mjs';
+import { berechneIndikatoren, entscheideKauf, entscheideVerkauf, berechneFlashCrashDropProzent } from './lib/strategie.mjs';
 import { getKlines, getSpreadProzent, getMinNotionalUsdt, placeMarketBuy, placeMarketSell, istMarktOffen } from './lib/alpaca.mjs';
 import { notify } from './lib/notify.mjs';
 import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, saveSystemInfo } from './lib/state.mjs';
@@ -25,7 +25,7 @@ import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
 import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtschaftskalender.mjs';
 
-async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv) {
+async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv, marktweiterCrashAktiv) {
   let state = await loadState(env, symbol, startKapital);
 
   if (state.letzterTag !== heute()) {
@@ -56,6 +56,14 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute, kuerzlicheTrades: state.trades,
       jetztZeitstempel: Date.now(), cooldownBisZeitstempel: state.cooldownBisZeitstempel || null,
     });
+
+    // Marktweiter Crash-Schutz zuerst (härtester, globalster Filter) - siehe
+    // Pendant im Krypto-Bot. Kein einzelnes WhatsApp pro Symbol, der Alarm
+    // dazu kommt einmalig aus runAll.
+    if (kauf && cfg.marktweiterCrashFilter && marktweiterCrashAktiv) {
+      await saveState(env, symbol, state);
+      return;
+    }
 
     // Wirtschaftskalender: rund um FOMC/CPI/NFP wird nicht neu eingestiegen -
     // gerade für Aktien besonders relevant. Kein einzelnes WhatsApp pro
@@ -154,16 +162,36 @@ async function runAll(env) {
     await notify(env, `🛑 Stocks-Bot: High-Impact-USD-Termin "${naechstesEvent.title}" (${new Date(naechstesEvent.date).toLocaleString('de-DE')}) im ${cfg.newsEventFensterMinuten}-Minuten-Fenster - Käufe für ALLE Aktien in diesem Lauf pausiert.`);
   }
 
+  // Marktweiter Crash-Schutz: EIN zusätzlicher Klines-Abruf pro Lauf (SPY als
+  // Marktindikator, nicht Teil der gehandelten Symbole) - siehe Pendant im
+  // Krypto-Bot (dort BTC). Schlägt der Abruf fehl, bleibt der Filter einfach
+  // unwirksam (nicht blockierend).
+  let marktweiterCrashAktiv = false;
+  let marktweiterCrashDropProzent = null;
+  if (cfg.marktweiterCrashFilter) {
+    try {
+      const { closes: spyCloses, highs: spyHighs } = await getKlines(env, cfg.marktweiterCrashSymbol);
+      marktweiterCrashDropProzent = berechneFlashCrashDropProzent(spyCloses, spyHighs, cfg.marktweiterCrashFensterKerzen);
+      marktweiterCrashAktiv = marktweiterCrashDropProzent <= -cfg.marktweiterCrashMaxDropProzent;
+    } catch (err) {
+      console.error('[stocks-bot] Marktweiter-Crash-Check fehlgeschlagen:', err);
+    }
+  }
+  if (marktweiterCrashAktiv) {
+    await notify(env, `🛑 Stocks-Bot: Marktweiter Crash erkannt (${cfg.marktweiterCrashSymbol} ${marktweiterCrashDropProzent.toFixed(1)}% in ${cfg.marktweiterCrashFensterKerzen} Kerzen) - Käufe für ALLE Aktien in diesem Lauf pausiert.`);
+  }
+
   await saveSystemInfo(env, {
     letzterLauf: new Date().toISOString(), marktOffen,
     ...(cfg.newsEventFilter ? { newsEventAktiv, newsEventZeit: new Date().toISOString() } : {}),
+    ...(cfg.marktweiterCrashFilter ? { marktweiterCrashAktiv, marktweiterCrashZeit: new Date().toISOString() } : {}),
   });
 
   let offenePositionen = await zaehleOffenePositionen(env, cfg.symbols, cfg.startKapitalProSymbol);
   for (const symbol of cfg.symbols) {
     try {
       const hatteVorherPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
-      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfg, offenePositionen, newsEventAktiv);
+      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfg, offenePositionen, newsEventAktiv, marktweiterCrashAktiv);
       const hatJetztPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
       if (!hatteVorherPosition && hatJetztPosition) offenePositionen++;
       if (hatteVorherPosition && !hatJetztPosition) offenePositionen--;

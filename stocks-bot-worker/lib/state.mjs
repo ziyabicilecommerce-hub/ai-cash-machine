@@ -51,7 +51,7 @@ export async function zaehleOffenePositionen(env, symbols, startKapitalProSymbol
 
 export async function loadSystemInfo(env) {
   const raw = await env.STOCKS_STATE.get('system:info');
-  const leer = { letzterLauf: null, marktOffen: null, newsEventAktiv: false, newsEventZeit: null };
+  const leer = { letzterLauf: null, marktOffen: null, newsEventAktiv: false, newsEventZeit: null, marktweiterCrashAktiv: false, marktweiterCrashZeit: null };
   if (!raw) return leer;
   try {
     return { ...leer, ...JSON.parse(raw) };

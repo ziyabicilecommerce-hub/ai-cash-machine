@@ -31,20 +31,23 @@ für Kryptokurse.
 ## Was NOCH NICHT übernommen wurde (bewusst, für einen schlankeren Start)
 
 Anders als der Krypto-Bot hat dieser Wurf (noch) KEINEN Fear&Greed-Filter,
-BTC-Dominanz-Filter, Multi-Timeframe-Filter, News-Sentiment-Filter,
-marktweiten Crash-Schutz oder adaptives Lernen — die sind entweder
-kryptospezifisch (BTC-Dominanz ergibt bei Aktien keinen Sinn) oder wurden
-für einen ersten, überschaubaren Start weggelassen. Stop-Loss, Kill-Switch,
-Tagesverlust-Sperre, Flash-Crash-Schutz, Spread-Filter, Cooldown und
-Performance-Sizing sind alle vorhanden — die Kern-Risikologik ist identisch
-zum bewährten Krypto-Bot.
+BTC-Dominanz-Filter, Multi-Timeframe-Filter, News-Sentiment-Filter oder
+adaptives Lernen — die sind entweder kryptospezifisch (BTC-Dominanz ergibt
+bei Aktien keinen Sinn) oder wurden für einen ersten, überschaubaren Start
+weggelassen. Stop-Loss, Kill-Switch, Tagesverlust-Sperre, Flash-Crash-
+Schutz, Spread-Filter, Cooldown und Performance-Sizing sind alle
+vorhanden — die Kern-Risikologik ist identisch zum bewährten Krypto-Bot.
 
-**Eine Ausnahme: der Wirtschaftskalender-Filter ist von Anfang an dabei**
-(`lib/wirtschaftskalender.mjs`, wortgleich mit der Version im Krypto-Bot) -
-pausiert Käufe für alle Aktien gemeinsam rund um FOMC-Zinsentscheide, CPI-
-und NFP-Termine (kostenlose Quelle, kein API-Key). Gerade bei Aktien
-besonders relevant, da US-Wirtschaftsdaten der klassische Auslöser für
-Kursausschläge sind. Siehe `STOCKS_NEWS_EVENT_FILTER` in `wrangler.toml`.
+**Zwei Ausnahmen, von Anfang an dabei:**
+- **Wirtschaftskalender-Filter** (`lib/wirtschaftskalender.mjs`, wortgleich
+  mit der Version im Krypto-Bot) - pausiert Käufe für alle Aktien gemeinsam
+  rund um FOMC-Zinsentscheide, CPI- und NFP-Termine (kostenlose Quelle,
+  kein API-Key). Siehe `STOCKS_NEWS_EVENT_FILTER` in `wrangler.toml`.
+- **Marktweiter Crash-Schutz** (Pendant zum Krypto-Bot, dort BTC als
+  Signal-Coin) - crasht SPY (S&P-500-ETF, breiter Marktindikator) hart,
+  werden Käufe für ALLE Aktien in diesem Lauf pausiert. SPY selbst wird
+  nicht gehandelt, nur als Signal abgefragt. Siehe
+  `STOCKS_MARKTWEITER_CRASH_FILTER` in `wrangler.toml`.
 
 **Wichtig: Die Strategie (`bollinger-mean-reversion`) ist für Aktien NOCH
 NICHT per Backtest verifiziert** — `backtest.mjs` im Krypto-Bot lädt bisher
