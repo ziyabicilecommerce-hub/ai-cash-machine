@@ -1,0 +1,68 @@
+name = "cashmachine-stocks-bot"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# Alle 5 Minuten, wie der Krypto-Bot - läuft aber nur wirklich, wenn die
+# Börse laut Alpaca gerade offen ist (siehe worker.js runAll). Außerhalb der
+# Handelszeiten ist der Lauf ein einzelner, billiger /v2/clock-Check und
+# beendet sich sofort.
+[triggers]
+crons = ["*/5 * * * *"]
+
+# State pro Symbol (Kapital, offene Position, Kill-Switch) - eigener,
+# unabhängiger KV-Namespace vom Krypto-Bot.
+[[kv_namespaces]]
+binding = "STOCKS_STATE"
+id = "1e78744a331c4e7c812e31c4532da003"
+
+# Nicht-geheime Konfiguration - kann hier direkt stehen (kein Secret).
+[vars]
+STOCKS_SYMBOLS = "AAPL,MSFT,NVDA,AMZN,GOOGL"
+STOCKS_KAPITAL_USD = "50"
+STOCKS_MAX_POSITION_PROZENT = "25"
+STOCKS_MAX_TAGESVERLUST_PROZENT = "5"
+STOCKS_MAX_GESAMTVERLUST_PROZENT = "20"
+STOCKS_STOP_LOSS_PROZENT = "3"
+STOCKS_TAKE_PROFIT_PROZENT = "0"
+STOCKS_EMA_SCHNELL = "9"
+STOCKS_EMA_LANGSAM = "21"
+STOCKS_RSI_PERIODE = "14"
+STOCKS_RSI_UEBERKAUFT = "0"
+
+# Strategie identisch zum Krypto-Bot gewählt (dort per Backtest gegen alle
+# 8 Coins klar am besten) - für Aktien noch NICHT per Backtest verifiziert,
+# da backtest.mjs bisher nur Kraken-Kerzen lädt. Vor dem Live-Umstieg
+# unbedingt zuerst ein paar Wochen im Paper-Modus beobachten.
+STOCKS_STRATEGIE = "bollinger-mean-reversion"
+STOCKS_BOLLINGER_PERIODE = "20"
+STOCKS_BOLLINGER_STDDEV = "2"
+STOCKS_DONCHIAN_ENTRY_PERIODE = "20"
+STOCKS_DONCHIAN_EXIT_PERIODE = "10"
+
+STOCKS_FLASH_CRASH_FILTER = "ja"
+STOCKS_FLASH_CRASH_FENSTER_KERZEN = "4"
+STOCKS_FLASH_CRASH_MAX_DROP_PROZENT = "8"
+STOCKS_SPREAD_FILTER = "ja"
+STOCKS_SPREAD_MAX_PROZENT = "1"
+STOCKS_COOLDOWN_NACH_VERLUST_MINUTEN = "60"
+
+STOCKS_PERFORMANCE_SIZING = "ja"
+STOCKS_PERFORMANCE_SIZING_MIN_FAKTOR = "0.5"
+STOCKS_PERFORMANCE_SIZING_MIN_TRADES = "5"
+
+# Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
+# STOCKS_MAX_GLEICHZEITIGE_POSITIONEN = "2"
+
+# Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
+#   ALPACA_API_KEY         (kostenloser Paper-Trading-Key von alpaca.markets,
+#                            KEINE Kreditkarte/Einzahlung nötig)
+#   ALPACA_API_SECRET
+#   WHATSAPP_ACCESS_TOKEN  (optional, gleicher Wert wie beim Krypto-Bot möglich)
+#   WHATSAPP_PHONE_NUMBER_ID
+#   WHATSAPP_TO_NUMBER
+#   TELEGRAM_BOT_TOKEN     (optional, zweiter/alternativer Kanal)
+#   TELEGRAM_CHAT_ID
+#   TRIGGER_SECRET         (frei erfundener String, schützt den manuellen Test-Aufruf)
+#   STATUS_READ_KEY        (frei erfundener String, schützt den rein lesenden
+#                            /status-Endpoint fürs Dashboard - ANDERER Wert
+#                            als TRIGGER_SECRET)
