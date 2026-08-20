@@ -61,5 +61,15 @@ export function readConfig(env) {
     // Gemeinsames Modul mit trading-bot-worker (Krypto), gleicher Default.
     newsEventFilter: (env.STOCKS_NEWS_EVENT_FILTER || 'ja') === 'ja',
     newsEventFensterMinuten: parseInt(env.STOCKS_NEWS_EVENT_FENSTER_MINUTEN || '30', 10),
+    // Marktweiter Crash-Schutz (Pendant zum Krypto-Bot, dort mit BTC als
+    // Signal-Coin): crasht der Gesamtmarkt (SPY = S&P-500-ETF als breiter
+    // Marktindikator) hart, werden Käufe für ALLE konfigurierten Aktien in
+    // diesem Lauf pausiert - Einzelaktien fallen in einem marktweiten
+    // Ausverkauf erfahrungsgemäß mit. SPY selbst zählt NICHT zu den
+    // gehandelten Symbolen, wird nur als Signal abgefragt.
+    marktweiterCrashFilter: (env.STOCKS_MARKTWEITER_CRASH_FILTER || 'ja') === 'ja',
+    marktweiterCrashSymbol: (env.STOCKS_MARKTWEITER_CRASH_SYMBOL || 'SPY').trim(),
+    marktweiterCrashFensterKerzen: parseInt(env.STOCKS_MARKTWEITER_CRASH_FENSTER_KERZEN || '4', 10),
+    marktweiterCrashMaxDropProzent: parseFloat(env.STOCKS_MARKTWEITER_CRASH_MAX_DROP_PROZENT || '5'),
   };
 }

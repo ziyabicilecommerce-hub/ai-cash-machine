@@ -58,6 +58,19 @@ STOCKS_PERFORMANCE_SIZING_MIN_TRADES = "5"
 STOCKS_NEWS_EVENT_FILTER = "ja"
 STOCKS_NEWS_EVENT_FENSTER_MINUTEN = "30"
 
+# Marktweiter Crash-Schutz (Pendant zum Krypto-Bot, dort BTC als Signal) -
+# crasht SPY (S&P-500-ETF, breiter Marktindikator) hart, werden Käufe für
+# ALLE Aktien in diesem Lauf pausiert. SPY selbst wird nicht gehandelt, nur
+# als Signal abgefragt (ein zusätzlicher Klines-Abruf pro Lauf). Etwas
+# engere Schwelle als beim Krypto-Bot (5% statt 10%) - der breite
+# Aktienmarkt ist strukturell weniger volatil als BTC, ein 5%-Einbruch
+# innerhalb einer Stunde ist bei SPY bereits ein extrem seltenes,
+# gewichtiges Ereignis (Flash-Crash-Territorium).
+STOCKS_MARKTWEITER_CRASH_FILTER = "ja"
+STOCKS_MARKTWEITER_CRASH_SYMBOL = "SPY"
+STOCKS_MARKTWEITER_CRASH_FENSTER_KERZEN = "4"
+STOCKS_MARKTWEITER_CRASH_MAX_DROP_PROZENT = "5"
+
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # STOCKS_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 
