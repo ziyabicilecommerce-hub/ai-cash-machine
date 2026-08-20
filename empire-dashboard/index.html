@@ -108,6 +108,23 @@
 
   footer { border-top:1px solid var(--line2); padding:30px 20px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
   footer a { color:var(--cyan); text-decoration:none; margin:0 8px; }
+
+  .box { background:var(--panel); border:1px solid var(--line2);
+    clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); padding:20px; }
+  .equity-svg { width:100%; height:240px; display:block; }
+  .equity-legend { display:flex; gap:18px; font-family:var(--mono); font-size:11px; color:var(--mut2); margin-top:10px; flex-wrap:wrap; }
+  .equity-legend span { display:flex; align-items:center; gap:6px; }
+  .equity-legend .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+
+  .feed { max-height:420px; overflow-y:auto; font-family:var(--mono); font-size:12px; }
+  .feed-row { display:flex; gap:10px; padding:9px 4px; border-bottom:1px solid var(--line2); align-items:baseline; }
+  .feed-row:last-child { border-bottom:none; }
+  .feed-row .icon { flex-shrink:0; }
+  .feed-row .sym { color:var(--txt); font-weight:700; flex-shrink:0; min-width:52px; }
+  .feed-row .grund { color:var(--mut2); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .feed-row .pnl { flex-shrink:0; font-weight:700; }
+  .feed-row .zeit { color:var(--mut2); flex-shrink:0; font-size:10.5px; }
+  .feed-empty { text-align:center; padding:30px; color:var(--mut2); font-family:var(--mono); font-size:12px; }
 </style>
 </head>
 <body>
@@ -170,6 +187,21 @@
 
     <div class="panel-title">Bots im Einzelnen</div>
     <div class="bot-cards" id="botCards"></div>
+
+    <div class="panel-title">Kombinierte Equity-Kurve (% seit Start)</div>
+    <div class="box">
+      <svg class="equity-svg" id="equitySvg" viewBox="0 0 1000 240" preserveAspectRatio="none"></svg>
+      <div class="equity-legend">
+        <span><span class="dot" style="background:var(--cyan)"></span>Krypto-Bot</span>
+        <span><span class="dot" style="background:var(--green)"></span>Aktien-Bot</span>
+      </div>
+      <div style="font-family:var(--mono); font-size:10px; color:var(--mut2); margin-top:10px;">In Prozent statt absoluten Beträgen, weil USDT (Krypto) und USD (Aktien) unterschiedliche Kapitalbasen sind — Rekonstruktion aus dem chronologischen Trade-Verlauf beider Bots, keine sekundengenaue Kurve.</div>
+    </div>
+
+    <div class="panel-title">Live-Activity-Feed (beide Bots, neueste zuerst)</div>
+    <div class="box">
+      <div class="feed" id="activityFeed"></div>
+    </div>
   </div>
 </section>
 
@@ -311,8 +343,96 @@
       renderBotCard('Krypto-Bot', '₿', 'USDT', conn.crypto, cryptoData, '../trading-control-center/') +
       renderBotCard('Aktien-Bot', '📈', 'USD', conn.stocks, stocksData, '../stocks-live-setup/');
 
+    renderEquityCurve(cryptoData, stocksData);
+    renderActivityFeed(cryptoData, stocksData);
+
     clearTimeout(window.__refreshTimer);
     window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
+  }
+
+  // Rekonstruiert aus der Trade-Reihenfolge eine Prozent-Kurve (Start = 100%),
+  // je Bot getrennt (unterschiedliche Kapitalbasen, siehe Hinweistext) - alle
+  // Punkte beider Kurven werden auf eine gemeinsame X-Skala projiziert
+  // (Index über die Gesamtzahl der jeweiligen Trades), nicht auf echte
+  // Zeitstempel, damit beide Linien im selben Chart vergleichbar bleiben.
+  function berechneProzentKurve(data) {
+    if (!data || data.fehler || !data.symbole) return null;
+    const symbole = data.symbole;
+    const start = symbole.reduce((s, x) => s + x.startKapital, 0);
+    if (!start) return null;
+    const alleTrades = symbole.flatMap((s) => s.trades || []).sort((a, b) => new Date(a.ausstiegAm) - new Date(b.ausstiegAm));
+    if (!alleTrades.length) return null;
+    let kapital = start;
+    const punkte = [100];
+    for (const t of alleTrades) { kapital += t.gewinnVerlustUsdt; punkte.push((kapital / start) * 100); }
+    return punkte;
+  }
+
+  function renderEquityCurve(cryptoData, stocksData) {
+    const svg = document.getElementById('equitySvg');
+    svg.innerHTML = '';
+    const w = 1000, h = 240, pad = 12;
+    const kryptoKurve = berechneProzentKurve(cryptoData);
+    const aktienKurve = berechneProzentKurve(stocksData);
+    if (!kryptoKurve && !aktienKurve) {
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.setAttribute('x', w / 2); t.setAttribute('y', h / 2); t.setAttribute('text-anchor', 'middle');
+      t.setAttribute('fill', 'rgba(215,240,245,.38)'); t.setAttribute('font-family', 'JetBrains Mono'); t.setAttribute('font-size', '13');
+      t.textContent = 'Noch keine abgeschlossenen Trades in einem der Bots.';
+      svg.appendChild(t);
+      return;
+    }
+    // Referenzlinie bei 100% (Startkapital)
+    const refLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    refLine.setAttribute('x1', pad); refLine.setAttribute('x2', w - pad);
+    const alleWerte = [...(kryptoKurve || []), ...(aktienKurve || [])];
+    const gMin = Math.min(...alleWerte, 100), gMax = Math.max(...alleWerte, 100);
+    const gSpanne = (gMax - gMin) || 1;
+    const yRef = h - pad - ((100 - gMin) / gSpanne) * (h - pad * 2);
+    refLine.setAttribute('y1', yRef); refLine.setAttribute('y2', yRef);
+    refLine.setAttribute('stroke', 'rgba(255,255,255,.15)'); refLine.setAttribute('stroke-dasharray', '4,4');
+    svg.appendChild(refLine);
+
+    if (kryptoKurve) zeichneLinieGemeinsam(svg, kryptoKurve, '#6fe0ff', w, h, pad, gMin, gSpanne);
+    if (aktienKurve) zeichneLinieGemeinsam(svg, aktienKurve, '#34f5a2', w, h, pad, gMin, gSpanne);
+  }
+
+  function zeichneLinieGemeinsam(svg, punkte, farbe, w, h, pad, gMin, gSpanne) {
+    const pts = punkte.map((v, i) => {
+      const x = pad + (i / (punkte.length - 1)) * (w - pad * 2);
+      const y = h - pad - ((v - gMin) / gSpanne) * (h - pad * 2);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    line.setAttribute('points', pts.join(' '));
+    line.setAttribute('fill', 'none');
+    line.setAttribute('stroke', farbe);
+    line.setAttribute('stroke-width', '2.5');
+    svg.appendChild(line);
+  }
+
+  function renderActivityFeed(cryptoData, stocksData) {
+    const feed = document.getElementById('activityFeed');
+    const kryptoTrades = (cryptoData && !cryptoData.fehler ? cryptoData.symbole || [] : []).flatMap((s) => (s.trades || []).map((t) => ({ ...t, symbol: s.symbol, bot: 'krypto' })));
+    const aktienTrades = (stocksData && !stocksData.fehler ? stocksData.symbole || [] : []).flatMap((s) => (s.trades || []).map((t) => ({ ...t, symbol: s.symbol, bot: 'aktien' })));
+    const alle = [...kryptoTrades, ...aktienTrades].sort((a, b) => new Date(b.ausstiegAm) - new Date(a.ausstiegAm)).slice(0, 60);
+    if (!alle.length) {
+      feed.innerHTML = '<div class="feed-empty">Noch keine abgeschlossenen Trades.</div>';
+      return;
+    }
+    feed.innerHTML = alle.map((t) => {
+      const icon = t.bot === 'krypto' ? '₿' : '📈';
+      const waehrung = t.bot === 'krypto' ? 'USDT' : 'USD';
+      const zeit = new Date(t.ausstiegAm).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      const pnlCls = t.gewinnVerlustUsdt >= 0 ? 'up' : 'down';
+      return `<div class="feed-row">
+        <span class="icon">${icon}</span>
+        <span class="sym">${t.symbol}</span>
+        <span class="grund">${t.grund || ''}</span>
+        <span class="pnl ${pnlCls}">${t.gewinnVerlustUsdt >= 0 ? '+' : ''}${t.gewinnVerlustUsdt.toFixed(2)} ${waehrung}</span>
+        <span class="zeit">${zeit}</span>
+      </div>`;
+    }).join('');
   }
 
   document.getElementById('refreshBtn').addEventListener('click', loadAll);
