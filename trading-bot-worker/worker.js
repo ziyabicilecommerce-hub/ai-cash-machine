@@ -31,12 +31,13 @@ import { notify } from './lib/notify.mjs';
 import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, saveSystemInfo } from './lib/state.mjs';
 import { pruefeUndSendeTagesZusammenfassung, pruefeUndSendeWochenZusammenfassung, pruefeUndSendeMonatsZusammenfassung, pruefeUndFuehreKapitalRebalancing } from './lib/reports.mjs';
 import { pruefeUndFuehreAdaptivesLernen } from './lib/learning.mjs';
+import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtschaftskalender.mjs';
 import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
 
 // ================= HANDELSLOGIK =================
 
-async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, fearGreedWert, btcDominanzProzent, marktweiterCrashAktiv) {
+async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, fearGreedWert, btcDominanzProzent, marktweiterCrashAktiv, newsEventAktiv) {
   const exchange = EXCHANGES[cfg.exchange];
   let state = await loadState(env, symbol, startKapital);
 
@@ -78,6 +79,14 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
     // hier (würde bei 8 Symbolen 8x dieselbe Nachricht spammen) - der Alarm
     // dazu kommt einmalig aus runAll.
     if (kauf && cfg.marktweiterCrashFilter && marktweiterCrashAktiv) {
+      await saveState(env, symbol, state);
+      return;
+    }
+
+    // Wirtschaftskalender: rund um FOMC/CPI/NFP wird nicht neu eingestiegen -
+    // kein einzelnes WhatsApp pro Coin (würde spammen), der Alarm dazu kommt
+    // einmalig aus runAll.
+    if (kauf && cfg.newsEventFilter && newsEventAktiv) {
       await saveState(env, symbol, state);
       return;
     }
@@ -276,6 +285,20 @@ async function runAll(env) {
     await notify(env, `🛑 Trading-Bot: Marktweiter Flash-Crash erkannt (BTC ${marktweiterCrashDropProzent.toFixed(1)}% in ${cfg.marktweiterCrashFensterKerzen} Kerzen) - Käufe für ALLE Coins in diesem Lauf pausiert.`);
   }
 
+  // Wirtschaftskalender: EIN Abruf pro Lauf (Rate-Limit der Quelle beachten,
+  // siehe lib/wirtschaftskalender.mjs) - pausiert Käufe rund um High-Impact-
+  // USD-Termine (FOMC/CPI/NFP) für ALLE Coins gemeinsam.
+  let newsEventAktiv = false;
+  let naechstesEvent = null;
+  if (cfg.newsEventFilter) {
+    const events = await ladeAnstehendeHighImpactEvents(['USD']);
+    newsEventAktiv = istInEventFenster(events, cfg.newsEventFensterMinuten);
+    if (newsEventAktiv) naechstesEvent = events.find((e) => Math.abs(new Date(e.date).getTime() - Date.now()) <= cfg.newsEventFensterMinuten * 60000);
+  }
+  if (newsEventAktiv && naechstesEvent) {
+    await notify(env, `🛑 Trading-Bot: High-Impact-USD-Termin "${naechstesEvent.title}" (${new Date(naechstesEvent.date).toLocaleString('de-DE')}) im ${cfg.newsEventFensterMinuten}-Minuten-Fenster - Käufe für ALLE Coins in diesem Lauf pausiert.`);
+  }
+
   // Für /status zwischengespeichert statt bei jedem Dashboard-Aufruf erneut
   // extern abzufragen - siehe loadSystemInfo/saveSystemInfo in state.mjs.
   await saveSystemInfo(env, {
@@ -283,6 +306,7 @@ async function runAll(env) {
     ...(cfg.fngFilter ? { fearGreedWert, fearGreedZeit: new Date().toISOString() } : {}),
     ...(cfg.btcDominanzFilter ? { btcDominanzProzent, btcDominanzZeit: new Date().toISOString() } : {}),
     ...(cfg.marktweiterCrashFilter ? { marktweiterCrashAktiv, marktweiterCrashZeit: new Date().toISOString() } : {}),
+    ...(cfg.newsEventFilter ? { newsEventAktiv, newsEventZeit: new Date().toISOString() } : {}),
   });
   for (const symbol of cfg.symbols) {
     try {
@@ -293,7 +317,7 @@ async function runAll(env) {
         ? { ...cfg, strategie: cfg.strategieProSymbol[symbol] }
         : cfg;
       const hatteVorherPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
-      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfgSymbol, offenePositionen, fearGreedWert, btcDominanzProzent, marktweiterCrashAktiv);
+      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfgSymbol, offenePositionen, fearGreedWert, btcDominanzProzent, marktweiterCrashAktiv, newsEventAktiv);
       const hatJetztPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
       if (!hatteVorherPosition && hatJetztPosition) offenePositionen++;
       if (hatteVorherPosition && !hatJetztPosition) offenePositionen--;

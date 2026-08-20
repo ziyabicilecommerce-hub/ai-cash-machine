@@ -23,8 +23,9 @@ import { notify } from './lib/notify.mjs';
 import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, saveSystemInfo } from './lib/state.mjs';
 import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
+import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtschaftskalender.mjs';
 
-async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf) {
+async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv) {
   let state = await loadState(env, symbol, startKapital);
 
   if (state.letzterTag !== heute()) {
@@ -55,6 +56,14 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute, kuerzlicheTrades: state.trades,
       jetztZeitstempel: Date.now(), cooldownBisZeitstempel: state.cooldownBisZeitstempel || null,
     });
+
+    // Wirtschaftskalender: rund um FOMC/CPI/NFP wird nicht neu eingestiegen -
+    // gerade für Aktien besonders relevant. Kein einzelnes WhatsApp pro
+    // Symbol, der Alarm dazu kommt einmalig aus runAll.
+    if (kauf && cfg.newsEventFilter && newsEventAktiv) {
+      await saveState(env, symbol, state);
+      return;
+    }
 
     if (kauf && cfg.spreadFilter) {
       const spreadProzent = await getSpreadProzent(env, symbol);
@@ -126,14 +135,35 @@ async function runAll(env) {
   // Alpaca Market-Orders ohnehin ablehnen/verzögern. Lauf wird sauber
   // übersprungen, kein Fehler.
   const marktOffen = await istMarktOffen(env);
-  await saveSystemInfo(env, { letzterLauf: new Date().toISOString(), marktOffen });
-  if (!marktOffen) return;
+  if (!marktOffen) {
+    await saveSystemInfo(env, { letzterLauf: new Date().toISOString(), marktOffen });
+    return;
+  }
+
+  // Wirtschaftskalender: EIN Abruf pro Lauf (Rate-Limit der Quelle beachten,
+  // siehe lib/wirtschaftskalender.mjs) - pausiert Käufe rund um High-Impact-
+  // USD-Termine (FOMC/CPI/NFP) für ALLE Aktien gemeinsam.
+  let newsEventAktiv = false;
+  let naechstesEvent = null;
+  if (cfg.newsEventFilter) {
+    const events = await ladeAnstehendeHighImpactEvents(['USD']);
+    newsEventAktiv = istInEventFenster(events, cfg.newsEventFensterMinuten);
+    if (newsEventAktiv) naechstesEvent = events.find((e) => Math.abs(new Date(e.date).getTime() - Date.now()) <= cfg.newsEventFensterMinuten * 60000);
+  }
+  if (newsEventAktiv && naechstesEvent) {
+    await notify(env, `🛑 Stocks-Bot: High-Impact-USD-Termin "${naechstesEvent.title}" (${new Date(naechstesEvent.date).toLocaleString('de-DE')}) im ${cfg.newsEventFensterMinuten}-Minuten-Fenster - Käufe für ALLE Aktien in diesem Lauf pausiert.`);
+  }
+
+  await saveSystemInfo(env, {
+    letzterLauf: new Date().toISOString(), marktOffen,
+    ...(cfg.newsEventFilter ? { newsEventAktiv, newsEventZeit: new Date().toISOString() } : {}),
+  });
 
   let offenePositionen = await zaehleOffenePositionen(env, cfg.symbols, cfg.startKapitalProSymbol);
   for (const symbol of cfg.symbols) {
     try {
       const hatteVorherPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
-      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfg, offenePositionen);
+      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfg, offenePositionen, newsEventAktiv);
       const hatJetztPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
       if (!hatteVorherPosition && hatJetztPosition) offenePositionen++;
       if (hatteVorherPosition && !hatJetztPosition) offenePositionen--;

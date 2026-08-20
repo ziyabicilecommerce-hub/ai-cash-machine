@@ -127,5 +127,11 @@ export function readConfig(env) {
     // man sich drauf verlässt.
     adaptivesLernen: (env.TRADING_ADAPTIVES_LERNEN || 'nein') === 'ja',
     adaptivesLernenMinTrades: parseInt(env.TRADING_ADAPTIVES_LERNEN_MIN_TRADES || '10', 10),
+    // Wirtschaftskalender-Filter - siehe lib/wirtschaftskalender.mjs. Kein
+    // API-Key nötig, keine gemessenen Nachteile (pausiert nur kurze
+    // Zeitfenster rund um wenige High-Impact-USD-Events pro Woche),
+    // deshalb standardmäßig an.
+    newsEventFilter: (env.TRADING_NEWS_EVENT_FILTER || 'ja') === 'ja',
+    newsEventFensterMinuten: parseInt(env.TRADING_NEWS_EVENT_FENSTER_MINUTEN || '30', 10),
   };
 }

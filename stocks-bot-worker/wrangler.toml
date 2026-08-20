@@ -50,6 +50,14 @@ STOCKS_PERFORMANCE_SIZING = "ja"
 STOCKS_PERFORMANCE_SIZING_MIN_FAKTOR = "0.5"
 STOCKS_PERFORMANCE_SIZING_MIN_TRADES = "5"
 
+# Wirtschaftskalender-Filter (kein API-Key nötig, öffentliche Gratis-Quelle
+# nfs.faireconomy.media) - gerade für Aktien besonders relevant: pausiert
+# Käufe rund um FOMC/CPI/NFP-Termine. Gemeinsames Modul mit
+# trading-bot-worker (Krypto) - EIN Abruf pro Cron-Lauf, Rate-Limit der
+# Quelle beachten (max. 2 Abrufe/5 Min insgesamt für diese URL).
+STOCKS_NEWS_EVENT_FILTER = "ja"
+STOCKS_NEWS_EVENT_FENSTER_MINUTEN = "30"
+
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # STOCKS_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 
