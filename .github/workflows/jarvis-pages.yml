@@ -17,6 +17,7 @@ on:
       - 'trading-control-center/**'
       - 'trading-live-setup/**'
       - 'trader-roast/**'
+      - 'empire-dashboard/**'
       - 'forecast/**'
       - 'setup/**'
       - 'paypal-belege/**'
@@ -70,6 +71,7 @@ jobs:
           cp -r trading-control-center _site/trading-control-center
           cp -r trading-live-setup _site/trading-live-setup
           cp -r trader-roast _site/trader-roast
+          cp -r empire-dashboard _site/empire-dashboard
           cp -r forecast _site/forecast
           cp -r setup _site/setup
           cp -r paypal-belege _site/paypal-belege
