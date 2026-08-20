@@ -1,0 +1,31 @@
+name = "cashmachine-empire"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# Einmal täglich (20:00 UTC) - kombinierter WhatsApp/Telegram-Report über
+# beide Bots statt zwei getrennter Nachrichten.
+[triggers]
+crons = ["0 20 * * *"]
+
+# BEIDE bereits bestehenden KV-Namespaces (aus trading-bot-worker und
+# stocks-bot-worker) - read-only PER KONVENTION: dieser Worker ruft nie
+# .put() auf einem der beiden Namespaces auf (siehe worker.js). Dieselben
+# IDs wie in trading-bot-worker/wrangler.toml und
+# stocks-bot-worker/wrangler.toml.
+[[kv_namespaces]]
+binding = "TRADING_STATE"
+id = "055d3b2d0a514437aec11e888e81c242"
+
+[[kv_namespaces]]
+binding = "STOCKS_STATE"
+id = "1e78744a331c4e7c812e31c4532da003"
+
+# Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
+#   WHATSAPP_ACCESS_TOKEN  (optional, gleicher Wert wie bei den anderen Bots)
+#   WHATSAPP_PHONE_NUMBER_ID
+#   WHATSAPP_TO_NUMBER
+#   TELEGRAM_BOT_TOKEN     (optional, gleicher Wert wie bei den anderen Bots möglich)
+#   TELEGRAM_CHAT_ID
+#   TRIGGER_SECRET         (frei erfundener String, schützt den manuellen Test-Aufruf)
+#   STATUS_READ_KEY        (frei erfundener String, schützt den rein lesenden
+#                            /status-Endpoint - ANDERER Wert als TRIGGER_SECRET)
