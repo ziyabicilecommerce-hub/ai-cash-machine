@@ -16,7 +16,7 @@ handeln, HTTP-/Cron-Einstiegspunkte) und importiert aus `lib/`:
 - **`marktdaten.mjs`** — externe Gratis-Datenquellen (CoinGecko,
   CoinPaprika, OKX, Gate.io, Bitstamp, Fear & Greed, BTC-Dominanz,
   Mehrfach-Zeitrahmen, News-Sentiment via CryptoPanic).
-- **`notify.mjs`** — WhatsApp-Versand.
+- **`notify.mjs`** — WhatsApp- und Telegram-Versand (beide unabhängig optional).
 - **`state.mjs`** — KV-Persistenz pro Symbol (Kapital, Position, Trades).
 - **`config.mjs`** — liest alle `TRADING_*`-Umgebungsvariablen ein.
 - **`reports.mjs`** — Tages-/Wochen-/Monats-Rückblick + Kapital-Rebalancing.
@@ -512,6 +512,9 @@ erklärt die Reihenfolge.
    wrangler secret put WHATSAPP_ACCESS_TOKEN
    wrangler secret put WHATSAPP_PHONE_NUMBER_ID
    wrangler secret put WHATSAPP_TO_NUMBER
+   # Optional, zweiter/alternativer Benachrichtigungskanal:
+   # wrangler secret put TELEGRAM_BOT_TOKEN
+   # wrangler secret put TELEGRAM_CHAT_ID
    wrangler secret put TRIGGER_SECRET
    wrangler secret put STATUS_READ_KEY
    ```
@@ -522,6 +525,15 @@ erklärt die Reihenfolge.
    rein lesenden `/status`-Endpoint (fürs Dashboard) — bewusst getrennt von
    `TRIGGER_SECRET`, damit dieser Key auch dann keinen Trade auslösen kann,
    wenn er versehentlich weitergegeben wird.
+
+   **Telegram einrichten** (kostenlos, optional): mit
+   [@BotFather](https://t.me/BotFather) in Telegram chatten, `/newbot`
+   senden, den zurückgegebenen Token als `TELEGRAM_BOT_TOKEN` setzen. Die
+   eigene Chat-ID über [@userinfobot](https://t.me/userinfobot) herausfinden
+   (kurz anschreiben, gibt die eigene ID zurück) und als `TELEGRAM_CHAT_ID`
+   setzen. Beide Kanäle laufen unabhängig — nur WhatsApp, nur Telegram, oder
+   beide gleichzeitig sind möglich; fehlt ein Kanal komplett, wird nur
+   geloggt statt gesendet, kein Fehler.
 5. Deployen:
    ```bash
    wrangler deploy

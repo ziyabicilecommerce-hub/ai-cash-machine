@@ -203,6 +203,9 @@ TRADING_ADAPTIVES_LERNEN_MIN_TRADES = "10"
 #   WHATSAPP_ACCESS_TOKEN  (gleicher Wert wie bei den anderen Automationen, optional)
 #   WHATSAPP_PHONE_NUMBER_ID
 #   WHATSAPP_TO_NUMBER
+#   TELEGRAM_BOT_TOKEN     (optional, zweiter/alternativer Kanal - eigenen Bot
+#                            kostenlos über @BotFather in Telegram anlegen)
+#   TELEGRAM_CHAT_ID       (eigene Chat-ID, z.B. über @userinfobot herausfinden)
 #   TRIGGER_SECRET         (frei erfundener String, schützt den manuellen Test-Aufruf)
 #   STATUS_READ_KEY        (frei erfundener String, schützt den rein lesenden
 #                            /status-Endpoint fürs Trading-Dashboard - ANDERER
