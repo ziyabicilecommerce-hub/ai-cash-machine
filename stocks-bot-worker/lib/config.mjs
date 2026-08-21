@@ -45,6 +45,12 @@ export function readConfig(env) {
     performanceSizing: (env.STOCKS_PERFORMANCE_SIZING || 'nein') === 'ja',
     performanceSizingMinFaktor: parseFloat(env.STOCKS_PERFORMANCE_SIZING_MIN_FAKTOR || '0.5'),
     performanceSizingMinTrades: parseInt(env.STOCKS_PERFORMANCE_SIZING_MIN_TRADES || '5', 10),
+    // Adaptives Lernen (Pendant zum Krypto-Bot) - passt den Stop-Loss pro
+    // Symbol periodisch an die real beobachtete Verlust-Streuung an, statt
+    // für immer beim global konfigurierten Wert zu bleiben. Siehe
+    // lib/learning.mjs. Default AUS wie im Krypto-Bot.
+    adaptivesLernen: (env.STOCKS_ADAPTIVES_LERNEN || 'nein') === 'ja',
+    adaptivesLernenMinTrades: parseInt(env.STOCKS_ADAPTIVES_LERNEN_MIN_TRADES || '10', 10),
     // Kein externer API-Call, nutzt dieselben Kerzen wie die Strategie - im
     // Krypto-Bot bewährt, hier standardmäßig ebenfalls an.
     flashCrashFilter: (env.STOCKS_FLASH_CRASH_FILTER || 'ja') === 'ja',

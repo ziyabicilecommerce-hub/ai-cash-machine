@@ -25,6 +25,7 @@ import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
 import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtschaftskalender.mjs';
 import { ladeInsiderKaufSignal } from './lib/insiderbuys.mjs';
+import { pruefeUndFuehreAdaptivesLernen } from './lib/learning.mjs';
 
 async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv, marktweiterCrashAktiv) {
   let state = await loadState(env, symbol, startKapital);
@@ -115,6 +116,10 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       state.position = {
         qty: order.qty, entryPreis: order.preis, hoechsterPreisSeitEinstieg: order.preis, einstiegAm: new Date().toISOString(),
         entryAtr: indikatoren.atrJetzt, teilverkaufGemacht: false,
+        // Beim Einstieg eingefroren (wie entryAtr) - siehe lib/learning.mjs.
+        // Nur relevant, wenn STOCKS_ADAPTIVES_LERNEN aktiv ist UND für dieses
+        // Symbol schon ein gelernter Wert vorliegt, sonst der globale Standard.
+        stopLossProzentBenutzt: (cfg.adaptivesLernen && state.gelernterStopLossProzent) ? state.gelernterStopLossProzent : cfg.stopLossProzent,
       };
       await notify(env, `📈 [PAPER] Stocks-Bot: Einstieg ${symbol} @ ${order.preis.toFixed(2)} (${investBetrag.toFixed(2)} USD eingesetzt${insiderBoostAktiv ? `, 🕵️ Insider-Kauf-Boost aktiv (${state.insiderSignal.wertUsd.toLocaleString('de-DE', { maximumFractionDigits: 0 })} USD gemeldete Insider-Käufe)` : ''}).`);
     }
@@ -219,6 +224,12 @@ async function runAll(env) {
       console.error(`[stocks-bot] Fehler bei ${symbol}:`, err);
       await notify(env, `🛑 Stocks-Bot (${symbol}): Lauf mit Fehler abgebrochen - ${err.message || err}. Eine Order wurde dadurch möglicherweise NICHT ausgeführt, bitte Konto manuell prüfen.`);
     }
+  }
+
+  try {
+    await pruefeUndFuehreAdaptivesLernen(env, cfg);
+  } catch (err) {
+    console.error('[stocks-bot] Fehler beim adaptiven Lernen:', err);
   }
 }
 

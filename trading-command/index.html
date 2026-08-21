@@ -450,6 +450,17 @@
       </div>`;
     }
 
+    const gelernteWerte = [
+      ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).filter((s) => s.gelernterStopLossProzent != null).map((s) => ({ icon: '₿', ...s })) : []),
+      ...(stocksData && !stocksData.fehler ? (stocksData.symbole || []).filter((s) => s.gelernterStopLossProzent != null).map((s) => ({ icon: '📈', ...s })) : []),
+    ];
+    if (gelernteWerte.length) {
+      html += `<div class="card filter-card"><div class="filter-top"><span class="filter-name">🧠 Adaptives Lernen</span></div>
+        <div class="filter-desc">Stop-Loss aus der eigenen Verlust-Historie neu berechnet (nur für Symbole mit genug Daten, wirkt nur auf neu eröffnete Positionen).</div>
+        ${gelernteWerte.map((s) => `<div class="sig-row"><span>${s.icon} ${s.symbol}</span><b style="color:var(--cyan)">${s.gelernterStopLossProzent.toFixed(2)}%</b></div>`).join('')}
+      </div>`;
+    }
+
     const killSwitchAlle = [
       ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).filter((s) => s.killSwitchAktiv).map((s) => `₿ ${s.symbol}`) : []),
       ...(stocksData && !stocksData.fehler ? (stocksData.symbole || []).filter((s) => s.killSwitchAktiv).map((s) => `📈 ${s.symbol}`) : []),
