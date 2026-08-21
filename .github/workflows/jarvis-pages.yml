@@ -18,6 +18,7 @@ on:
       - 'trading-live-setup/**'
       - 'trader-roast/**'
       - 'empire-dashboard/**'
+      - 'trading-command/**'
       - 'stocks-live-setup/**'
       - 'forecast/**'
       - 'setup/**'
@@ -73,6 +74,7 @@ jobs:
           cp -r trading-live-setup _site/trading-live-setup
           cp -r trader-roast _site/trader-roast
           cp -r empire-dashboard _site/empire-dashboard
+          cp -r trading-command _site/trading-command
           cp -r stocks-live-setup _site/stocks-live-setup
           cp -r forecast _site/forecast
           cp -r setup _site/setup
