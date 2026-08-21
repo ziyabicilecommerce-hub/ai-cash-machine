@@ -222,6 +222,15 @@ Jeder abgeschlossene Trade (Ausstieg) wird jetzt im State gespeichert
 `trading-dashboard/` zeigt das direkt in der Symbol-Karte an, sobald der
 erste Trade abgeschlossen ist. Kein zusätzliches Setup nötig.
 
+Zusätzlich liefert `/status` ein Portfolio-weites `portfolioKennzahlen`-
+Objekt (`lib/statistik.mjs`, reine Statistik über die gesamte Trade-
+Historie): Profit Factor, Expectancy pro Trade, Ø Gewinn/Verlust,
+Recovery Factor sowie "Sharpe/Sortino pro Trade" — bewusst NICHT die
+annualisierten Lehrbuch-Kennzahlen (dafür bräuchte es täglich getaktete
+Renditen, Trades sind unregelmäßig getaktet), sondern Ø Rendite / Streuung
+über alle abgeschlossenen Trades, klar so benannt. Trading Command zeigt
+das im Übersicht-Tab.
+
 ## Tägliche WhatsApp-Zusammenfassung
 
 Zusätzlich zu den Alarmen bei einzelnen Ereignissen (Einstieg, Ausstieg,

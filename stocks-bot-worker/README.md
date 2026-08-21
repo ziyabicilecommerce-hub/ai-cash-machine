@@ -144,6 +144,13 @@ verändert nie Kapital oder Position. `/status` liefert es pro Symbol als
   Dashboard-Knopf — soll immer eine bewusste Entscheidung sein.
 - `GET /?key=<TRIGGER_SECRET>` — manueller Test-Lauf.
 
+`/status` liefert zusätzlich ein Portfolio-weites `portfolioKennzahlen`-
+Objekt (`lib/statistik.mjs`, Pendant zum Krypto-Bot, reine Statistik über
+die gesamte Trade-Historie): Profit Factor, Expectancy pro Trade, Ø
+Gewinn/Verlust, Recovery Factor sowie "Sharpe/Sortino pro Trade" (bewusst
+NICHT die annualisierten Lehrbuch-Kennzahlen). Trading Command zeigt das
+im Übersicht-Tab.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch

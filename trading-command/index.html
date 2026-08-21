@@ -261,6 +261,8 @@
   <div class="kpi-grid" id="totalKpis"></div>
   <div class="panel-title">Bots im Einzelnen</div>
   <div class="bot-cards" id="botCards"></div>
+  <div class="panel-title">Performance-Kennzahlen (je Bot, aus der eigenen Trade-Historie)</div>
+  <div id="perfKennzahlen"></div>
 </section>
 
 <section class="panel" id="panel-signale">
@@ -673,6 +675,34 @@
     document.getElementById('botCards').innerHTML =
       renderBotCard('Krypto-Bot', '₿', 'USDT', getConn().crypto, cryptoData, '../trading-control-center/') +
       renderBotCard('Aktien-Bot', '📈', 'USD', getConn().stocks, stocksData, '../stocks-live-setup/');
+    renderPerfKennzahlen(cryptoData, stocksData);
+  }
+
+  const fmtZahl = (n, nachkomma = 2) => n == null ? '–' : n.toFixed(nachkomma);
+
+  function perfCard(name, icon, waehrung, k) {
+    if (!k) return '';
+    return `<div class="card" style="margin-bottom:14px;">
+      <div class="card-top"><span class="card-name">${icon} ${name}</span></div>
+      <div class="kpi-grid" style="margin-bottom:0;">
+        <div class="kpi-box"><div class="kpi-num">${fmtZahl(k.profitFactor)}</div><div class="kpi-label">PROFIT FACTOR</div></div>
+        <div class="kpi-box"><div class="kpi-num ${k.expectancyUsdt < 0 ? 'down' : ''}">${k.expectancyUsdt == null ? '–' : (k.expectancyUsdt >= 0 ? '+' : '') + fmtZahl(k.expectancyUsdt) + ' ' + waehrung}</div><div class="kpi-label">EXPECTANCY / TRADE</div></div>
+        <div class="kpi-box"><div class="kpi-num">${k.avgGewinnUsdt == null ? '–' : '+' + fmtZahl(k.avgGewinnUsdt) + ' ' + waehrung}</div><div class="kpi-label">Ø GEWINN</div></div>
+        <div class="kpi-box"><div class="kpi-num">${k.avgVerlustUsdt == null ? '–' : fmtZahl(k.avgVerlustUsdt) + ' ' + waehrung}</div><div class="kpi-label">Ø VERLUST</div></div>
+        <div class="kpi-box"><div class="kpi-num">${fmtZahl(k.sharpeProTrade)}</div><div class="kpi-label">SHARPE PRO TRADE</div></div>
+        <div class="kpi-box"><div class="kpi-num">${fmtZahl(k.sortinoProTrade)}</div><div class="kpi-label">SORTINO PRO TRADE</div></div>
+        <div class="kpi-box"><div class="kpi-num">${fmtZahl(k.recoveryFactor)}</div><div class="kpi-label">RECOVERY FACTOR</div></div>
+      </div>
+      <div class="note">Sharpe/Sortino "pro Trade" = Ø Rendite / Streuung über alle abgeschlossenen Trades, NICHT die annualisierte Lehrbuch-Kennzahl (dafür bräuchte es täglich getaktete Renditen).</div>
+    </div>`;
+  }
+
+  function renderPerfKennzahlen(cryptoData, stocksData) {
+    const el = document.getElementById('perfKennzahlen');
+    const cK = cryptoData && !cryptoData.fehler ? cryptoData.portfolioKennzahlen : null;
+    const sK = stocksData && !stocksData.fehler ? stocksData.portfolioKennzahlen : null;
+    const html = perfCard('Krypto-Bot', '₿', 'USDT', cK) + perfCard('Aktien-Bot', '📈', 'USD', sK);
+    el.innerHTML = html || '<div class="empty"><div class="emoji">📉</div>Noch keine Daten - erscheint, sobald Bots verbunden sind.</div>';
   }
 
   async function loadAll() {
