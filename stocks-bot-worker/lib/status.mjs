@@ -6,7 +6,7 @@ import { getKlines, getSpreadProzent, istMarktOffen } from './alpaca.mjs';
 import { berechneIndikatoren, emaSeries } from './strategie.mjs';
 import { loadState, loadSystemInfo } from './state.mjs';
 import { readConfig } from './config.mjs';
-import { berechneTradeStats, berechneReadiness } from './statistik.mjs';
+import { berechneTradeStats, berechneReadiness, berechneRisikoKennzahlen } from './statistik.mjs';
 
 function berechneStopLossTakeProfitPreise(position, cfg) {
   if (!position) return { stopLossPreis: null, takeProfitPreis: null };
@@ -113,6 +113,7 @@ export async function buildStatus(env) {
     marktweiterCrashAktiv: systemInfo.marktweiterCrashAktiv,
     marktweiterCrashZeit: systemInfo.marktweiterCrashZeit,
     readiness: berechneReadiness(symbole, alleTrades),
+    portfolioKennzahlen: berechneRisikoKennzahlen(alleTrades),
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
       maxTagesverlustProzent: cfg.maxTagesverlustProzent,

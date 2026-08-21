@@ -52,3 +52,55 @@ export function berechneReadiness(symbole, alleTrades) {
   }
   return { ampel, grund, anzahlTrades, winRateProzent, gesamtProzent, hinweis: 'Keine Finanzberatung, keine Erfolgsgarantie - nur eine grobe Einschätzung aus den bisherigen Paper-Zahlen.' };
 }
+
+function stddev(werte) {
+  if (werte.length < 2) return null;
+  const mittel = werte.reduce((s, w) => s + w, 0) / werte.length;
+  const varianz = werte.reduce((s, w) => s + (w - mittel) ** 2, 0) / (werte.length - 1);
+  return Math.sqrt(varianz);
+}
+
+// Erweiterte Risiko-/Performance-Kennzahlen über die Trade-Historie - reine
+// Statistik, keine Prognose. Sharpe/Sortino sind BEWUSST NICHT die
+// klassischen annualisierten Lehrbuch-Kennzahlen (dafür bräuchte es
+// gleichmäßig getaktete Perioden-Renditen, z.B. täglich - Trades sind
+// unregelmäßig getaktet) - stattdessen eine "pro Trade"-Variante (Ø Rendite
+// pro Trade / Streuung der Rendite über alle abgeschlossenen Trades), klar
+// so benannt (sharpeProTrade/sortinoProTrade), um sie nicht mit der
+// Standard-Definition zu verwechseln.
+export function berechneRisikoKennzahlen(trades) {
+  if (!trades.length) {
+    return { profitFactor: null, expectancyUsdt: null, avgGewinnUsdt: null, avgVerlustUsdt: null, sharpeProTrade: null, sortinoProTrade: null, recoveryFactor: null };
+  }
+  const gewinne = trades.filter((t) => t.gewinnVerlustUsdt > 0);
+  const verluste = trades.filter((t) => t.gewinnVerlustUsdt < 0);
+  const summeGewinne = gewinne.reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
+  const summeVerluste = verluste.reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
+  const profitFactor = summeVerluste === 0 ? null : summeGewinne / Math.abs(summeVerluste);
+  const expectancyUsdt = trades.reduce((s, t) => s + t.gewinnVerlustUsdt, 0) / trades.length;
+  const avgGewinnUsdt = gewinne.length ? summeGewinne / gewinne.length : null;
+  const avgVerlustUsdt = verluste.length ? summeVerluste / verluste.length : null;
+
+  const renditen = trades.map((t) => t.gewinnProzent);
+  const mittelRendite = renditen.reduce((s, r) => s + r, 0) / renditen.length;
+  const streuung = stddev(renditen);
+  const sharpeProTrade = streuung ? mittelRendite / streuung : null;
+  const negativeRenditen = renditen.filter((r) => r < 0);
+  const downsideStreuung = negativeRenditen.length >= 2 ? stddev(negativeRenditen) : null;
+  const sortinoProTrade = downsideStreuung ? mittelRendite / downsideStreuung : null;
+
+  // Recovery Factor: Netto-Ergebnis relativ zum größten Rückgang vom
+  // bisherigen Höchststand (aus der Trade-Reihenfolge rekonstruiert, in
+  // absoluter Währung - unabhängig vom tatsächlichen Kapitalstand).
+  let kapitalReferenz = 0, peak = 0, maxDrawdownUsdt = 0;
+  const sortiert = [...trades].sort((a, b) => new Date(a.ausstiegAm) - new Date(b.ausstiegAm));
+  for (const t of sortiert) {
+    kapitalReferenz += t.gewinnVerlustUsdt;
+    peak = Math.max(peak, kapitalReferenz);
+    maxDrawdownUsdt = Math.max(maxDrawdownUsdt, peak - kapitalReferenz);
+  }
+  const nettoErgebnisUsdt = trades.reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
+  const recoveryFactor = maxDrawdownUsdt > 0 ? nettoErgebnisUsdt / maxDrawdownUsdt : null;
+
+  return { profitFactor, expectancyUsdt, avgGewinnUsdt, avgVerlustUsdt, sharpeProTrade, sortinoProTrade, recoveryFactor };
+}

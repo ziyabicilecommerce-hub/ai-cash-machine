@@ -14,7 +14,7 @@ import { EXCHANGES } from './exchanges.mjs';
 import { berechneIndikatoren, emaSeries } from './strategie.mjs';
 import { loadState, loadSystemInfo } from './state.mjs';
 import { readConfig } from './config.mjs';
-import { berechneTradeStats, berechneReadiness } from './statistik.mjs';
+import { berechneTradeStats, berechneReadiness, berechneRisikoKennzahlen } from './statistik.mjs';
 
 // 15m-Kerzen, 24h zurück = 96 Kerzen. Reine Berechnung aus den ohnehin
 // geladenen Kerzen der Börse selbst - kein zusätzlicher API-Call.
@@ -180,6 +180,7 @@ export async function buildStatus(env) {
       newsEventZeit: systemInfo.newsEventZeit,
     },
     readiness: berechneReadiness(symbole, alleTrades),
+    portfolioKennzahlen: berechneRisikoKennzahlen(alleTrades),
     risikoStatus: berechneRisikoStatus(symbole, cfg, systemInfo.marktweiterCrashAktiv, systemInfo.newsEventAktiv),
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
