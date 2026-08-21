@@ -30,13 +30,13 @@ für Kryptokurse.
 
 ## Was NOCH NICHT übernommen wurde (bewusst, für einen schlankeren Start)
 
-Anders als der Krypto-Bot hat dieser Wurf (noch) KEINEN Fear&Greed-Filter,
-BTC-Dominanz-Filter, Multi-Timeframe-Filter oder News-Sentiment-Filter —
-die sind entweder kryptospezifisch (BTC-Dominanz ergibt bei Aktien keinen
-Sinn) oder wurden für einen ersten, überschaubaren Start weggelassen.
-Stop-Loss, Kill-Switch, Tagesverlust-Sperre, Flash-Crash-Schutz, Spread-
-Filter, Cooldown und Performance-Sizing sind alle vorhanden — die
-Kern-Risikologik ist identisch zum bewährten Krypto-Bot.
+Anders als der Krypto-Bot hat dieser Wurf (noch) KEINEN Fear&Greed-Filter
+oder News-Sentiment-Filter — die sind entweder kryptospezifisch
+(Fear&Greed/BTC-Dominanz ergeben bei Aktien keinen Sinn) oder wurden für
+einen ersten, überschaubaren Start weggelassen. Stop-Loss, Kill-Switch,
+Tagesverlust-Sperre, Flash-Crash-Schutz, Spread-Filter, Cooldown und
+Performance-Sizing sind alle vorhanden — die Kern-Risikologik ist
+identisch zum bewährten Krypto-Bot.
 
 **Ausnahmen, von Anfang an bzw. inzwischen dabei:**
 - **Adaptives Lernen** (`lib/learning.mjs`, wortgleiches Pendant zum
@@ -47,6 +47,13 @@ Kern-Risikologik ist identisch zum bewährten Krypto-Bot.
   `STOCKS_ADAPTIVES_LERNEN_MIN_TRADES` Verlust-Trades aktiv, gedeckelt aufs
   0.5x-2x-Band um den Standardwert, wirkt nur auf neu eröffnete Positionen.
   Default AUS (`STOCKS_ADAPTIVES_LERNEN` in `wrangler.toml`).
+- **Multi-Timeframe-Filter** (`lib/multitimeframe.mjs`, Pendant zum
+  Krypto-Bot) - bestätigt ein Kaufsignal auf dem Trading-Timeframe (15m)
+  nur, wenn der übergeordnete Trend (Default 4h, Alpacas eigener "4Hour"-
+  Timeframe, kein neuer Datenanbieter nötig) ebenfalls aufwärts zeigt
+  (EMA schnell > EMA langsam) - verhindert Käufe gegen den größeren Trend.
+  War im Krypto-Bot NICHT kryptospezifisch, hier nur wegen des schlankeren
+  ersten Starts bisher nicht dabei. Default AUS (`STOCKS_MTF_FILTER`).
 - **Wirtschaftskalender-Filter** (`lib/wirtschaftskalender.mjs`, wortgleich
   mit der Version im Krypto-Bot) - pausiert Käufe für alle Aktien gemeinsam
   rund um FOMC-Zinsentscheide, CPI- und NFP-Termine (kostenlose Quelle,

@@ -51,6 +51,9 @@ export function readConfig(env) {
     // lib/learning.mjs. Default AUS wie im Krypto-Bot.
     adaptivesLernen: (env.STOCKS_ADAPTIVES_LERNEN || 'nein') === 'ja',
     adaptivesLernenMinTrades: parseInt(env.STOCKS_ADAPTIVES_LERNEN_MIN_TRADES || '10', 10),
+    // Multi-Timeframe-Filter (Pendant zum Krypto-Bot) - siehe lib/multitimeframe.mjs.
+    mtfFilter: (env.STOCKS_MTF_FILTER || 'nein') === 'ja',
+    mtfIntervalMinuten: parseInt(env.STOCKS_MTF_INTERVAL_MINUTEN || '240', 10),
     // Kein externer API-Call, nutzt dieselben Kerzen wie die Strategie - im
     // Krypto-Bot bewährt, hier standardmäßig ebenfalls an.
     flashCrashFilter: (env.STOCKS_FLASH_CRASH_FILTER || 'ja') === 'ja',
