@@ -84,6 +84,7 @@ export async function buildStatus(env) {
       heutigerVerlustUsdt: state.heutigerVerlustUsdt,
       killSwitchAktiv: state.killSwitchAktiv,
       insiderSignal: state.insiderSignal,
+      gelernterStopLossProzent: state.gelernterStopLossProzent ?? null,
       tradeStats: berechneTradeStats(trades),
       profitFactor: berechneProfitFactor(trades),
       maxDrawdownProzent: berechneMaxDrawdownProzent(trades, state.startKapital),

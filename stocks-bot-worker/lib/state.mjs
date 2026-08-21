@@ -24,6 +24,10 @@ function initialerState(startKapital) {
     // ersten Prüfung.
     insiderSignal: null,
     insiderSignalGeprueftAm: null,
+    // Siehe lib/learning.mjs - einmal wöchentlich aktualisiert, null bis
+    // genug Verlust-Trades vorliegen. Wirkt sich nur auf NEU eröffnete
+    // Positionen aus (dort beim Einstieg eingefroren).
+    gelernterStopLossProzent: null,
   };
 }
 
