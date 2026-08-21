@@ -102,6 +102,13 @@ STOCKS_AUTO_BACKTEST = "ja"
 # hier eintragen).
 STOCKS_AI_REVIEW = "nein"
 
+# Korrelations-Filter (siehe lib/korrelation.mjs) - verhindert einen neuen
+# Kauf, wenn schon eine Position in einem stark korrelierten Symbol offen
+# ist. Nutzt die wöchentlich vom Auto-Backtest mitberechnete Matrix, kein
+# eigener API-Aufruf. Default AUS.
+STOCKS_KORRELATION_FILTER = "nein"
+STOCKS_KORRELATION_MAX_WERT = "0.85"
+
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # STOCKS_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 

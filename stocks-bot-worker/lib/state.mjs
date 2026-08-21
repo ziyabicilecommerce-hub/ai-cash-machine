@@ -57,6 +57,17 @@ export async function zaehleOffenePositionen(env, symbols, startKapitalProSymbol
   return anzahl;
 }
 
+// Symbole mit aktuell offener Position - für den Korrelations-Filter (siehe
+// lib/korrelation.mjs, Pendant zum Krypto-Bot).
+export async function sammleOffenePositionenSymbole(env, symbols, startKapitalProSymbol) {
+  const offen = [];
+  for (const symbol of symbols) {
+    const state = await loadState(env, symbol, startKapitalProSymbol);
+    if (state.position) offen.push(symbol);
+  }
+  return offen;
+}
+
 export async function loadSystemInfo(env) {
   const raw = await env.STOCKS_STATE.get('system:info');
   const leer = { letzterLauf: null, marktOffen: null, newsEventAktiv: false, newsEventZeit: null, marktweiterCrashAktiv: false, marktweiterCrashZeit: null };

@@ -160,6 +160,14 @@ Trade auslösen. Standardmäßig AUS - Secret setzen und
 wrangler secret put ANTHROPIC_API_KEY
 ```
 
+**Korrelations-Filter** (optional, `lib/korrelation.mjs`, Pendant zum
+Krypto-Bot): der wöchentliche Auto-Backtest berechnet nebenbei (kein
+zusätzlicher API-Aufruf) eine Symbol×Symbol-Korrelationsmatrix, `/status`
+liefert sie als `korrelation`-Feld, Trading Command zeigt sie als Heatmap.
+Optional als Filter: `STOCKS_KORRELATION_FILTER = "ja"` blockiert einen
+neuen Kauf, wenn bereits eine Position in einem stark korrelierten Symbol
+offen ist (`STOCKS_KORRELATION_MAX_WERT`, Default 0.85). Default AUS.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch

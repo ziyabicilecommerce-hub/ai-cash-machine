@@ -50,6 +50,18 @@ export async function zaehleOffenePositionen(env, symbols, startKapitalProSymbol
   return anzahl;
 }
 
+// Symbole mit aktuell offener Position - für den Korrelations-Filter (siehe
+// lib/korrelation.mjs), der vor einem neuen Kauf prüft, ob schon eine stark
+// korrelierte Position offen ist.
+export async function sammleOffenePositionenSymbole(env, symbols, startKapitalProSymbol) {
+  const offen = [];
+  for (const symbol of symbols) {
+    const state = await loadState(env, symbol, startKapitalProSymbol);
+    if (state.position) offen.push(symbol);
+  }
+  return offen;
+}
+
 // Markweite Werte (Fear&Greed, BTC-Dominanz), die ohnehin schon einmal pro
 // Lauf für die Kauf-Filter geladen werden - hier zwischengespeichert statt
 // bei jedem Dashboard-Aufruf erneut extern abgefragt (würde CoinGecko/

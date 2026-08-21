@@ -20,7 +20,7 @@
 import { berechneIndikatoren, entscheideKauf, entscheideVerkauf, berechneFlashCrashDropProzent } from './lib/strategie.mjs';
 import { getKlines, getSpreadProzent, getMinNotionalUsdt, placeMarketBuy, placeMarketSell, istMarktOffen } from './lib/alpaca.mjs';
 import { notify } from './lib/notify.mjs';
-import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, saveSystemInfo } from './lib/state.mjs';
+import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, sammleOffenePositionenSymbole, saveSystemInfo } from './lib/state.mjs';
 import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
 import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtschaftskalender.mjs';
@@ -30,7 +30,7 @@ import { hoehererZeitrahmenIstAufwaerts } from './lib/multitimeframe.mjs';
 import { pruefeUndFuehreAutoBacktest } from './lib/autobacktest.mjs';
 import { pruefeUndFuehreAiReview } from './lib/ai-review.mjs';
 
-async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv, marktweiterCrashAktiv) {
+async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv, marktweiterCrashAktiv, korrelationsMatrix, offenePositionenSymbole) {
   let state = await loadState(env, symbol, startKapital);
 
   if (state.letzterTag !== heute()) {
@@ -105,6 +105,22 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       const spreadProzent = await getSpreadProzent(env, symbol);
       if (spreadProzent !== null && spreadProzent > cfg.spreadMaxProzent) {
         await notify(env, `⚠️ Stocks-Bot (${symbol}): Kaufsignal übersprungen - Bid/Ask-Spread bei ${spreadProzent.toFixed(2)}% (Schwelle ${cfg.spreadMaxProzent}%), Liquidität wirkt gerade gestört.`);
+        await saveState(env, symbol, state);
+        return;
+      }
+    }
+
+    // Konzentrationsrisiko: nicht in ein Symbol einsteigen, das stark mit
+    // einer bereits offenen Position korreliert ist (z.B. mehrere Big-Tech-
+    // Aktien, die real zusammen fallen) - nutzt die wöchentlich vom
+    // Auto-Backtest mitberechnete Matrix, kein zusätzlicher API-Aufruf.
+    if (kauf && cfg.korrelationFilter && korrelationsMatrix && offenePositionenSymbole && offenePositionenSymbole.length) {
+      const zeile = korrelationsMatrix[symbol];
+      const korrelierteOffene = zeile
+        ? offenePositionenSymbole.filter((s) => s !== symbol && zeile[s] != null && zeile[s] >= cfg.korrelationMaxWert)
+        : [];
+      if (korrelierteOffene.length) {
+        await notify(env, `⚠️ Stocks-Bot (${symbol}): Kaufsignal übersprungen - Korrelation ≥${cfg.korrelationMaxWert} zu bereits offener Position (${korrelierteOffene.join(', ')}), Konzentrationsrisiko vermeiden.`);
         await saveState(env, symbol, state);
         return;
       }
@@ -228,13 +244,29 @@ async function runAll(env) {
   });
 
   let offenePositionen = await zaehleOffenePositionen(env, cfg.symbols, cfg.startKapitalProSymbol);
+
+  // Für den Korrelations-Filter EINMAL pro Lauf geladen (nicht pro Symbol) -
+  // die Matrix ändert sich nur wöchentlich.
+  let korrelationsMatrix = null;
+  if (cfg.korrelationFilter) {
+    try {
+      const raw = await env.STOCKS_STATE.get('korrelation:matrix');
+      if (raw) korrelationsMatrix = JSON.parse(raw).matrix;
+    } catch (err) {
+      console.error('[stocks-bot] Korrelationsmatrix konnte nicht geladen werden:', err);
+    }
+  }
+  const offenePositionenSymbole = cfg.korrelationFilter
+    ? await sammleOffenePositionenSymbole(env, cfg.symbols, cfg.startKapitalProSymbol)
+    : [];
+
   for (const symbol of cfg.symbols) {
     try {
       const hatteVorherPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
-      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfg, offenePositionen, newsEventAktiv, marktweiterCrashAktiv);
+      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfg, offenePositionen, newsEventAktiv, marktweiterCrashAktiv, korrelationsMatrix, offenePositionenSymbole);
       const hatJetztPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
-      if (!hatteVorherPosition && hatJetztPosition) offenePositionen++;
-      if (hatteVorherPosition && !hatJetztPosition) offenePositionen--;
+      if (!hatteVorherPosition && hatJetztPosition) { offenePositionen++; offenePositionenSymbole.push(symbol); }
+      if (hatteVorherPosition && !hatJetztPosition) { offenePositionen--; offenePositionenSymbole.splice(offenePositionenSymbole.indexOf(symbol), 1); }
     } catch (err) {
       console.error(`[stocks-bot] Fehler bei ${symbol}:`, err);
       await notify(env, `🛑 Stocks-Bot (${symbol}): Lauf mit Fehler abgebrochen - ${err.message || err}. Eine Order wurde dadurch möglicherweise NICHT ausgeführt, bitte Konto manuell prüfen.`);

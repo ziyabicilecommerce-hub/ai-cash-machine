@@ -110,6 +110,14 @@ export async function buildStatus(env) {
     // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
   }
 
+  let korrelation = null;
+  try {
+    const raw = await env.STOCKS_STATE.get('korrelation:matrix');
+    if (raw) korrelation = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   return {
     updatedAt: new Date().toISOString(),
     broker: 'alpaca-paper',
@@ -123,6 +131,7 @@ export async function buildStatus(env) {
     readiness: berechneReadiness(symbole, alleTrades),
     portfolioKennzahlen: berechneRisikoKennzahlen(alleTrades),
     aiReview,
+    korrelation,
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
       maxTagesverlustProzent: cfg.maxTagesverlustProzent,

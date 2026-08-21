@@ -206,6 +206,13 @@ TRADING_AUTO_BACKTEST = "ja"
 # hier eintragen).
 TRADING_AI_REVIEW = "nein"
 
+# Korrelations-Filter (siehe lib/korrelation.mjs) - verhindert einen neuen
+# Kauf, wenn schon eine Position in einem stark korrelierten Symbol offen
+# ist. Nutzt die wöchentlich vom Auto-Backtest mitberechnete Matrix, kein
+# eigener API-Aufruf. Default AUS wie jeder neue risikoverändernde Filter.
+TRADING_KORRELATION_FILTER = "nein"
+TRADING_KORRELATION_MAX_WERT = "0.85"
+
 # Wirtschaftskalender-Filter (kein API-Key nötig, öffentliche Gratis-Quelle
 # nfs.faireconomy.media): pausiert Käufe rund um marktbewegende US-
 # Wirtschaftstermine (FOMC/CPI/NFP, "High Impact" USD-Events) - Krypto

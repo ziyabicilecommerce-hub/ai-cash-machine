@@ -135,6 +135,14 @@ export function readConfig(env) {
     // Aufruf (Anthropic API), deshalb - anders als Auto-Backtest -
     // standardmäßig AUS. Braucht zusätzlich das ANTHROPIC_API_KEY-Secret.
     aiReview: (env.TRADING_AI_REVIEW || 'nein') === 'ja',
+    // Korrelations-Filter - siehe lib/korrelation.mjs. Verhindert einen neuen
+    // Kauf, wenn schon eine Position in einem stark korrelierten Symbol
+    // offen ist (Konzentrationsrisiko: mehrere "verschiedene" Coins, die
+    // real zusammen fallen). Nutzt die wöchentlich vom Auto-Backtest
+    // mitberechnete Matrix, kein eigener API-Aufruf. Default AUS wie jeder
+    // neue risikoverändernde Filter.
+    korrelationFilter: (env.TRADING_KORRELATION_FILTER || 'nein') === 'ja',
+    korrelationMaxWert: parseFloat(env.TRADING_KORRELATION_MAX_WERT || '0.85'),
     // Wirtschaftskalender-Filter - siehe lib/wirtschaftskalender.mjs. Kein
     // API-Key nötig, keine gemessenen Nachteile (pausiert nur kurze
     // Zeitfenster rund um wenige High-Impact-USD-Events pro Woche),

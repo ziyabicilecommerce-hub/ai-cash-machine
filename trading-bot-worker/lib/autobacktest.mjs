@@ -20,6 +20,7 @@
 
 import { berechneIndikatoren, entscheideKauf, entscheideVerkauf } from './strategie.mjs';
 import { notify } from './notify.mjs';
+import { berechneKorrelationsMatrix } from './korrelation.mjs';
 
 const AUTO_BACKTEST_TAGE = 14;
 const FENSTER_FUER_INDIKATOREN = 60;
@@ -177,10 +178,15 @@ export async function pruefeUndFuehreAutoBacktest(env, cfg) {
   if (letzte === aktuelleWoche) return;
 
   const ergebnisse = [];
+  // closesProSymbol wird NICHT extra für die Korrelation abgerufen - nutzt
+  // dieselben Kerzen, die hier ohnehin schon für den Backtest geladen
+  // werden, statt die externen Anfragen pro Lauf zu verdoppeln.
+  const closesProSymbol = {};
   for (const symbol of cfg.symbols) {
     try {
       const { closes, highs, lows, zeiten } = await ladeKlines(cfg.exchange, symbol, AUTO_BACKTEST_TAGE);
       if (closes.length < FENSTER_FUER_INDIKATOREN + 2) continue;
+      closesProSymbol[symbol] = closes;
       const cfgSymbol = cfg.strategieProSymbol[symbol] ? { ...cfg, strategie: cfg.strategieProSymbol[symbol] } : cfg;
       const ergebnis = simuliere(closes, highs, lows, zeiten, cfgSymbol, REFERENZ_STARTKAPITAL);
       const k = berechneKennzahlen(REFERENZ_STARTKAPITAL, ergebnis);
@@ -197,5 +203,15 @@ export async function pruefeUndFuehreAutoBacktest(env, cfg) {
     const zeilen = ergebnisse.map((e) => `${e.symbol}: ${e.gesamtReturnProzent >= 0 ? '+' : ''}${e.gesamtReturnProzent.toFixed(1)}% (${e.anzahlTrades} Trades${e.winRateProzent != null ? `, Win-Rate ${e.winRateProzent.toFixed(0)}%` : ''})`);
     await notify(env, `🧪 Automatischer Backtest (letzte ${AUTO_BACKTEST_TAGE} Tage, echte Kursdaten):\n${zeilen.join('\n')}`);
   }
+
+  if (Object.keys(closesProSymbol).length >= 2) {
+    try {
+      const matrix = berechneKorrelationsMatrix(closesProSymbol);
+      await env.TRADING_STATE.put('korrelation:matrix', JSON.stringify({ matrix, berechnetAm: jetzt.toISOString(), tageZurueck: AUTO_BACKTEST_TAGE }));
+    } catch (err) {
+      console.error('[trading-bot] Korrelationsmatrix fehlgeschlagen:', err);
+    }
+  }
+
   await env.TRADING_STATE.put('backtest:letzteWoche', aktuelleWoche);
 }
