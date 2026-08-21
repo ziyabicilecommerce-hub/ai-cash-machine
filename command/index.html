@@ -408,6 +408,35 @@
   .health-text { text-align:left; font-size:12px; color:var(--mut); }
   .health-text b { color:var(--txt); font-size:13px; }
 
+  /* --- AI-CEO-Tab: Business Health Score --- */
+  .aiceo-hero { display:flex; align-items:center; gap:28px; padding:26px 28px; margin-bottom:22px;
+    background:var(--panel); border:1px solid var(--line); flex-wrap:wrap; }
+  .aiceo-ring { position:relative; width:128px; height:128px; border-radius:50%; flex-shrink:0; }
+  .aiceo-ring.h-good { background:conic-gradient(var(--green) calc(var(--pct) * 1%), rgba(255,255,255,.07) 0); }
+  .aiceo-ring.h-warn { background:conic-gradient(var(--amber) calc(var(--pct) * 1%), rgba(255,255,255,.07) 0); }
+  .aiceo-ring.h-bad { background:conic-gradient(var(--red) calc(var(--pct) * 1%), rgba(255,255,255,.07) 0); }
+  .aiceo-ring-num { position:absolute; inset:10px; border-radius:50%; background:var(--bg); z-index:1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .aiceo-ring-num span:first-child { font-family:'Orbitron',sans-serif; font-size:32px; line-height:1; }
+  .aiceo-ring-num span:last-child { font-family:var(--mono); font-size:9px; color:var(--mut2); letter-spacing:.1em; margin-top:4px; }
+  .aiceo-ring.h-good .aiceo-ring-num span:first-child { color:var(--green); }
+  .aiceo-ring.h-warn .aiceo-ring-num span:first-child { color:var(--amber); }
+  .aiceo-ring.h-bad .aiceo-ring-num span:first-child { color:var(--red); }
+  .aiceo-hero-text h2 { font-family:'Orbitron',sans-serif; font-size:17px; margin-bottom:8px; }
+  .aiceo-hero-text p { font-size:13px; color:var(--mut); max-width:480px; }
+  .aiceo-factor { display:flex; align-items:center; gap:14px; padding:12px 16px; background:var(--panel);
+    border:1px solid var(--line2); margin-bottom:8px; flex-wrap:wrap; }
+  .aiceo-factor.aiceo-nodata { opacity:.5; }
+  .aiceo-factor-label { width:230px; flex-shrink:0; font-size:12.5px; }
+  .aiceo-factor-weight { font-family:var(--mono); font-size:10px; color:var(--mut2); }
+  .aiceo-factor-bar-track { flex:1; min-width:80px; height:8px; background:rgba(255,255,255,.06); border:1px solid var(--line2); }
+  .aiceo-factor-bar-fill { height:100%; }
+  .aiceo-factor-bar-fill.h-good { background:linear-gradient(90deg,var(--green),var(--cyan)); }
+  .aiceo-factor-bar-fill.h-warn { background:var(--amber); }
+  .aiceo-factor-bar-fill.h-bad { background:var(--red); }
+  .aiceo-factor-detail { width:220px; flex-shrink:0; font-family:var(--mono); font-size:11px; color:var(--mut2); text-align:right; }
+  @media(max-width:640px){ .aiceo-factor-label,.aiceo-factor-detail{width:auto;} }
+
   /* --- Activity-Feed-Tab --- */
   .activity-row { display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--line2); }
   .activity-icon { font-size:16px; flex-shrink:0; width:24px; text-align:center; }
@@ -520,6 +549,7 @@
 </header>
 
 <div class="tabs" id="tabs">
+  <button class="tab-btn" data-tab="aiceo">🧭 AI-CEO</button>
   <button class="tab-btn active" data-tab="ceo">👔 CEO</button>
   <button class="tab-btn" data-tab="aichat">💬 AI Command</button>
   <button class="tab-btn" data-tab="activity">📡 Activity</button>
@@ -540,6 +570,12 @@
   <button class="tab-btn" data-tab="trading">📈 Trading</button>
   <button class="tab-btn" data-tab="tools">🧰 Alle Tools</button>
 </div>
+
+<section class="panel" id="panel-aiceo">
+  <div class="panel-title">AI CEO — Business Health Score</div>
+  <p class="panel-desc">Erster Baustein einer neuen Ebene über allen Modulen (Ecommerce, Ads, Produkte, Trading, Kunden): EINE Kennzahl 0–100, komposit aus echten Signalen, die die Suite selbst schon liefert — keine geschätzten Zahlen, jede Komponente einzeln nachvollziehbar. Wird schrittweise um globalen Notaus-Schalter, Audit-Log und KPI-Scoreboard ausgebaut.</p>
+  <div id="aiCeoHealthContent"></div>
+</section>
 
 <section class="panel show" id="panel-ceo">
   <div class="panel-title">Chef-Agent — Tagesansage</div>
@@ -2113,6 +2149,105 @@
   // Bewusst EIN kombinierter Wert, aber transparent nachvollziehbar (kein
   // Blackbox-Score) - gewichtet Automations-Gesundheit am stärksten (80%),
   // da das der objektivste, messbare Teil ist; Eskalationen ziehen leicht ab.
+  // --- AI-CEO: Business Health Score (komposit aus echten Signalen mehrerer
+  // Module, jede Komponente einzeln nachvollziehbar statt eine erfundene
+  // Einzelzahl - erster Baustein einer wachsenden Ebene über allen Modulen).
+  // Fehlende Datenquellen werden übersprungen, nicht mit erfundenen Werten
+  // aufgefüllt - die Restgewichte verteilen sich einfach neu.
+  function berechneAiCeoFaktoren(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm) {
+    const faktoren = [];
+
+    if (cockpit && Array.isArray(cockpit.automationen) && cockpit.automationen.length) {
+      const okAnzahl = cockpit.automationen.filter((a) => a.status === 'ok').length;
+      const gesamt = cockpit.automationen.length;
+      faktoren.push({ label: 'Automations-Zuverlässigkeit', gewicht: 35, score: (okAnzahl / gesamt) * 100, detail: `${okAnzahl}/${gesamt} Automationen ok` });
+    }
+
+    faktoren.push({
+      label: 'Support & Eskalationen',
+      gewicht: 15,
+      score: Math.max(0, 100 - Math.min((eskalationenAnzahl || 0) * 10, 100)),
+      detail: `${eskalationenAnzahl || 0} offene Eskalation${eskalationenAnzahl === 1 ? '' : 'en'}`,
+    });
+
+    // Wenn ein Handlungs-Agent sich selbst auf reine Empfehlung zurückstuft
+    // (Selbstbremse), ist das ein echtes Warnsignal - seine eigene jüngste
+    // Erfolgsbilanz war schlecht. Nur Agenten zählen, die schon genug echte
+    // Auswertungen haben, um überhaupt ein Urteil zu erlauben.
+    const bremseAgenten = [
+      { data: pricingHistorie }, { data: splitTest }, { data: adsAutopilot }, { data: reorder },
+    ].filter((a) => a.data && a.data.erfolgsBilanz && a.data.erfolgsBilanz.ausgewertet > 0);
+    if (bremseAgenten.length) {
+      const gebremst = bremseAgenten.filter((a) => a.data.selbstgebremst).length;
+      faktoren.push({
+        label: 'Autopilot-Selbstbremsen',
+        gewicht: 20,
+        score: ((bremseAgenten.length - gebremst) / bremseAgenten.length) * 100,
+        detail: `${gebremst}/${bremseAgenten.length} Agent(en) selbstgebremst`,
+      });
+    }
+
+    if (adsNotbremse || refundAlarm) {
+      const geprueft = [adsNotbremse, refundAlarm].filter(Boolean).length;
+      const ausgeloest = [adsNotbremse, refundAlarm].filter((n) => n && n.ausgeloest).length;
+      faktoren.push({
+        label: 'Notbremsen',
+        gewicht: 15,
+        score: ((geprueft - ausgeloest) / geprueft) * 100,
+        detail: ausgeloest ? `${ausgeloest}/${geprueft} Notbremse(n) ausgelöst` : 'alle ruhig',
+      });
+    }
+
+    if (customerSegmente && customerSegmente.segmente) {
+      const s = customerSegmente.segmente;
+      const gesund = (s.vip?.anzahl || 0) + (s.treuAktiv?.anzahl || 0) + (s.neu?.anzahl || 0);
+      const risiko = (s.atRisk?.anzahl || 0) + (s.ruhend?.anzahl || 0) + (s.einmalig?.anzahl || 0);
+      const gesamt = gesund + risiko;
+      if (gesamt > 0) {
+        faktoren.push({ label: 'Kunden-Gesundheit', gewicht: 15, score: (gesund / gesamt) * 100, detail: `${Math.round((gesund / gesamt) * 100)}% aktiv/treu/neu` });
+      }
+    }
+
+    return faktoren;
+  }
+
+  function renderAiCeoHealth(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm) {
+    const el = document.getElementById('aiCeoHealthContent');
+    if (!el) return;
+    const faktoren = berechneAiCeoFaktoren(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm);
+    // "Support & Eskalationen" ist immer dabei (Default 0), zählt allein aber
+    // nicht als echte Datenbasis - erst ab einem zweiten echten Signal zeigt
+    // der Score etwas Sinnvolles, statt bei frisch ausgeliefertem System
+    // fälschlich "100" anzuzeigen.
+    if (faktoren.length < 2) {
+      el.innerHTML = emptyHtml('🧭', 'Noch keine Daten für den Health Score', 'Erscheint, sobald mindestens eine Datenquelle (Cockpit, Autopilot-Agenten, Kill-Switch oder Kundensegmente) einmal gelaufen ist.');
+      return;
+    }
+    const gewichtGesamt = faktoren.reduce((sum, f) => sum + f.gewicht, 0);
+    const score = Math.round(faktoren.reduce((sum, f) => sum + f.score * f.gewicht, 0) / gewichtGesamt);
+    const klasse = score >= 80 ? 'h-good' : score >= 50 ? 'h-warn' : 'h-bad';
+
+    el.innerHTML = `
+      <div class="aiceo-hero">
+        <div class="aiceo-ring ${klasse}" style="--pct:${score}">
+          <div class="aiceo-ring-num"><span>${score}</span><span>HEALTH SCORE</span></div>
+        </div>
+        <div class="aiceo-hero-text">
+          <h2>${score >= 80 ? 'System läuft gesund' : score >= 50 ? 'Läuft, aber ein paar Baustellen' : 'Braucht jetzt Aufmerksamkeit'}</h2>
+          <p>Gewichteter Schnitt aus ${faktoren.length} echten Signalen unten - keine geschätzte Zahl. Fehlt eine Datenquelle noch, wird sie einfach nicht mitgezählt statt mit einem erfundenen Wert aufgefüllt.</p>
+        </div>
+      </div>
+      ${faktoren.map((f) => {
+        const fk = f.score >= 80 ? 'h-good' : f.score >= 50 ? 'h-warn' : 'h-bad';
+        return `
+        <div class="aiceo-factor">
+          <div class="aiceo-factor-label">${f.label} <span class="aiceo-factor-weight">(${Math.round((f.gewicht / gewichtGesamt) * 100)}%)</span></div>
+          <div class="aiceo-factor-bar-track"><div class="aiceo-factor-bar-fill ${fk}" style="width:${Math.round(f.score)}%"></div></div>
+          <div class="aiceo-factor-detail">${f.detail}</div>
+        </div>`;
+      }).join('')}`;
+  }
+
   function renderHealthBadge(cockpit, eskalationenAnzahl) {
     if (!cockpit) return; // Cockpit-Daten noch nicht geladen - laufenden Badge-Stand nicht mit leer überschreiben
     const wrap = document.getElementById('healthBadgeWrap');
@@ -2437,6 +2572,7 @@
       const eskalationenEl = document.getElementById('kpiTruthSupport');
       const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
       renderHealthBadge(cockpit, eskalationenAnzahl);
+      renderAiCeoHealth(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm);
 
       const neuesteKette = chains && Array.isArray(chains.log) && chains.log.length ? chains.log[0] : null;
       if (neuesteKette && neuesteKette.ausgeloest && letzteChainZeit !== null && neuesteKette.datum !== letzteChainZeit) {
