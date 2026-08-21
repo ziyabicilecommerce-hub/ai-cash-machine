@@ -578,6 +578,7 @@
   <div id="criticalEventsContent"></div>
   <div id="kpiScoreboardContent"></div>
   <div id="auditLogContent"></div>
+  <div id="businessAutopsyContent"></div>
 </section>
 
 <section class="panel show" id="panel-ceo">
@@ -2410,6 +2411,91 @@
     el.innerHTML = html;
   }
 
+  // --- AI-CEO: Business Autopsy - "was hat funktioniert, was nicht, warum"
+  // aus den bereits ausgewerteten Entscheidungen der 4 Handlungs-Agenten
+  // (echte wirkung-Klassifikation, keine neue Kausalitäts-Behauptung). Anders
+  // als das Audit-Log (jede Entscheidung chronologisch) ist das hier die
+  // aggregierte Rückschau: Erfolgsquote + je 3 echte Beispiele pro Seite.
+  const AUTOPSY_POSITIV_WIRKUNG = new Set([
+    'verkauft_weiterhin', 'verkauft_jetzt', 'gewinner_bestaetigt', 'verstaerkung_bestaetigt', 'kein_engpass',
+  ]);
+
+  function sammleAutopsyEintraege(pricingHistorie, splitTest, adsAutopilot, reorder) {
+    const eintraege = [];
+
+    for (const a of (pricingHistorie && pricingHistorie.historie) || []) {
+      if (!a.ausgewertet) continue;
+      eintraege.push({
+        agent: 'Pricing-Agent #61', datum: a.datum,
+        aktion: `${a.name}: ${a.alt.toFixed(2)} € → ${a.neu.toFixed(2)} €`,
+        warum: a.grund, wirkung: a.wirkung, positiv: AUTOPSY_POSITIV_WIRKUNG.has(a.wirkung),
+      });
+    }
+    for (const e of (splitTest && splitTest.historie) || []) {
+      if (!e.ausgewertet) continue;
+      eintraege.push({
+        agent: 'Split-Test-Agent #88', datum: e.datum,
+        aktion: `${e.kampagne}: "${e.verlierer.name}" pausiert für "${e.gewinner.name}"`,
+        warum: `${e.unterschiedProzent}% ROAS-Unterschied`, wirkung: e.wirkung, positiv: AUTOPSY_POSITIV_WIRKUNG.has(e.wirkung),
+      });
+    }
+    for (const a of (adsAutopilot && adsAutopilot.historie) || []) {
+      if (!a.ausgewertet) continue;
+      eintraege.push({
+        agent: 'Ads-Autopilot-Agent #64', datum: a.datum,
+        aktion: `${(a.shiftCent / 100).toFixed(2)} € von "${a.schwaechster.name}" zu "${a.bester.name}"`,
+        warum: a.grund, wirkung: a.wirkung, positiv: AUTOPSY_POSITIV_WIRKUNG.has(a.wirkung),
+      });
+    }
+    for (const r of (reorder && reorder.historie) || []) {
+      if (!r.ausgewertet) continue;
+      eintraege.push({
+        agent: 'Reorder-Agent #63', datum: r.angefragtAm,
+        aktion: `${r.mengeAngefragt}x ${r.name} nachbestellt`,
+        warum: `Reichweite bei Bestand ${r.bestandBeiAnfrage} lag unter Lieferzeit+Puffer`, wirkung: r.wirkung, positiv: AUTOPSY_POSITIV_WIRKUNG.has(r.wirkung),
+      });
+    }
+
+    eintraege.sort((a, b) => new Date(b.datum) - new Date(a.datum));
+    return eintraege;
+  }
+
+  function renderBusinessAutopsy(pricingHistorie, splitTest, adsAutopilot, reorder) {
+    const el = document.getElementById('businessAutopsyContent');
+    if (!el) return;
+    const eintraege = sammleAutopsyEintraege(pricingHistorie, splitTest, adsAutopilot, reorder);
+    let html = `<div class="section-title-inline">🔬 AI BUSINESS AUTOPSY — WAS WIRKLICH FUNKTIONIERT HAT</div>`;
+    if (!eintraege.length) {
+      html += emptyHtml('🔬', 'Noch keine ausgewerteten Entscheidungen', 'Erscheint, sobald die Handlungs-Agenten erste ausgeführte Entscheidungen gegen die echten Verkaufs-/Performance-Daten danach ausgewertet haben (dauert je nach Agent 7-14 Tage nach der ersten Ausführung).');
+      el.innerHTML = html;
+      return;
+    }
+    const positiv = eintraege.filter((e) => e.positiv);
+    const negativ = eintraege.filter((e) => !e.positiv);
+
+    html += `
+      <div class="kpi-grid" style="margin-bottom:20px;">
+        <div class="kpi-box"><div class="kpi-num">${eintraege.length}</div><div class="kpi-label">AUSGEWERTETE ENTSCHEIDUNGEN</div></div>
+        <div class="kpi-box"><div class="kpi-num" style="color:var(--green);">${positiv.length}</div><div class="kpi-label">FUNKTIONIERTEN</div></div>
+        <div class="kpi-box"><div class="kpi-num" style="color:var(--red);">${negativ.length}</div><div class="kpi-label">FUNKTIONIERTEN NICHT</div></div>
+        <div class="kpi-box"><div class="kpi-num">${Math.round((positiv.length / eintraege.length) * 100)}%</div><div class="kpi-label">ERFOLGSQUOTE GESAMT</div></div>
+      </div>`;
+
+    const zeile = (e) => `
+      <div class="activity-row">
+        <div class="activity-icon">${e.positiv ? '✅' : '⚠️'}</div>
+        <div class="activity-body">${e.aktion}<div class="activity-src">Grund für die Entscheidung: ${e.warum} · ${e.agent}</div></div>
+        <div class="activity-time">${fmtDatumKurz(e.datum)}</div>
+      </div>`;
+
+    html += `<div class="card-label" style="margin-bottom:10px;">✅ WAS FUNKTIONIERT HAT (${positiv.length})</div>`;
+    html += positiv.length ? positiv.slice(0, 5).map(zeile).join('') : `<p class="note">Noch kein Beispiel.</p>`;
+    html += `<div class="card-label" style="margin:20px 0 10px;">⚠️ WAS NICHT FUNKTIONIERT HAT (${negativ.length})</div>`;
+    html += negativ.length ? negativ.slice(0, 5).map(zeile).join('') : `<p class="note">Noch kein Beispiel.</p>`;
+
+    el.innerHTML = html;
+  }
+
   function renderHealthBadge(cockpit, eskalationenAnzahl) {
     if (!cockpit) return; // Cockpit-Daten noch nicht geladen - laufenden Badge-Stand nicht mit leer überschreiben
     const wrap = document.getElementById('healthBadgeWrap');
@@ -2738,6 +2824,7 @@
       renderCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl);
       renderKpiScoreboard(analytics, ads, cockpit, customerSegmente, eskalationenAnzahl);
       renderAuditLog(pricingHistorie, splitTest, adsAutopilot, reorder);
+      renderBusinessAutopsy(pricingHistorie, splitTest, adsAutopilot, reorder);
 
       const neuesteKette = chains && Array.isArray(chains.log) && chains.log.length ? chains.log[0] : null;
       if (neuesteKette && neuesteKette.ausgeloest && letzteChainZeit !== null && neuesteKette.datum !== letzteChainZeit) {
