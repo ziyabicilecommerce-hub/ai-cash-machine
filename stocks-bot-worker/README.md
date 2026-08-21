@@ -61,12 +61,18 @@ vorhanden — die Kern-Risikologik ist identisch zum bewährten Krypto-Bot.
   User-Agent** (`STOCKS_INSIDER_SEC_USER_AGENT` in `wrangler.toml` anpassen,
   eigener Kontakt statt des Platzhalters).
 
-**Wichtig: Die Strategie (`bollinger-mean-reversion`) ist für Aktien NOCH
-NICHT per Backtest verifiziert** — `backtest.mjs` im Krypto-Bot lädt bisher
-nur Kraken-Kerzen. Vor jedem Vertrauen in die Ergebnisse erst eine Weile im
-Paper-Modus beobachten (auch wenn's technisch schon Paper ist — die
-Frage ist, ob die Strategie bei Aktien überhaupt ähnlich gut funktioniert
-wie bei Krypto, das ist unbewiesen).
+**Backtest gegen echte Alpaca-Kerzen**: `backtest.mjs` (eigene Datei, analog
+zum Krypto-Bot) simuliert die exakt gleiche Entscheidungslogik bar-für-bar
+gegen historische Alpaca-15m-Kerzen (IEX-Feed, gleiche Paper-Keys wie der
+Live-Bot):
+```bash
+ALPACA_API_KEY=... ALPACA_API_SECRET=... node backtest.mjs AAPL 90
+ALPACA_API_KEY=... ALPACA_API_SECRET=... node backtest.mjs AAPL 90 --vergleiche   # alle 3 Strategien
+```
+Ersetzt keine Live-Beobachtung — vergangene Performance ist keine Garantie,
+und Alpacas kostenloser IEX-Feed deckt nur einen Teil des Marktvolumens ab.
+Trotzdem eine echte, datenbasierte Grundlage statt reinem Vertrauen, bevor
+man länger im Paper-Modus beobachtet.
 
 ## Setup
 
