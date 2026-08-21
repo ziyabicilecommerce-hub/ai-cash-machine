@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRADING COMMAND</title>
+<meta name="description" content="Das eine System für beide Paper-Trading-Bots: Übersicht, Signale/Filter, System-Map, Equity-Kurve, Activity-Feed und alle Werkzeuge auf einer Seite. Rein lesend, echte Daten, kann nie einen Trade auslösen.">
+<meta property="og:title" content="TRADING COMMAND">
+<meta property="og:description" content="Krypto- und Aktien-Bot als EIN System auf EINER Seite.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23030512%27/%3E%3Crect%20x%3D%2716%27%20y%3D%2716%27%20width%3D%2732%27%20height%3D%2732%27%20fill%3D%27none%27%20stroke%3D%27%233ef2a0%27%20stroke-width%3D%274%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%277%27%20fill%3D%27%233ef2a0%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#030512; --panel:rgba(20,28,40,.55); --panel-solid:#0a0f1c;
+    --green:#3ef2a0; --red:#ff6b81; --amber:#ffc55c; --cyan:#6fe0ff;
+    --line:rgba(62,242,160,.24); --line2:rgba(255,255,255,.07);
+    --txt:#eef4f2; --mut:rgba(220,235,230,.62); --mut2:rgba(220,235,230,.4);
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+  ::selection { background:rgba(62,242,160,.3); }
+
+  .bg-canvas { position:fixed; inset:0; z-index:-2; pointer-events:none; }
+  .bg-grid { position:fixed; inset:0; z-index:-2;
+    background-image:linear-gradient(rgba(62,242,160,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(62,242,160,.05) 1px,transparent 1px);
+    background-size:56px 56px; mask-image:radial-gradient(ellipse 90% 70% at 50% 15%,#000 30%,transparent 78%); }
+  .bg-orbs { position:fixed; inset:0; z-index:-3; overflow:hidden; }
+  .bg-orbs::before, .bg-orbs::after { content:''; position:absolute; border-radius:50%; filter:blur(90px); }
+  .bg-orbs::before { width:56vmax; height:56vmax; top:-22%; left:-14%; background:radial-gradient(circle,rgba(62,242,160,.26),transparent 70%);
+    animation:orbFloat 24s ease-in-out infinite alternate; }
+  .bg-orbs::after { width:50vmax; height:50vmax; bottom:-26%; right:-16%; background:radial-gradient(circle,rgba(111,224,255,.2),transparent 70%);
+    animation:orbFloat 28s ease-in-out infinite alternate; animation-delay:-9s; }
+  @keyframes orbFloat { 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(7vw,9vh) scale(1.18);} }
+  @media (prefers-reduced-motion:reduce) { .bg-orbs::before, .bg-orbs::after { animation:none; } }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,48px); background:rgba(3,5,18,.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--line2); }
+  nav::after { content:''; position:absolute; left:0; right:0; bottom:-1px; height:1px;
+    background:linear-gradient(90deg,transparent,var(--green),var(--cyan),transparent); opacity:.6; }
+  .logo { font-family:var(--mono); font-weight:700; letter-spacing:.06em; font-size:14px; }
+  .logo b { color:var(--green); text-shadow:0 0 12px rgba(62,242,160,.55); }
+  .nav-links { display:flex; align-items:center; gap:16px; font-size:13px; }
+  .nav-links a { color:var(--mut); text-decoration:none; }
+  .nav-links a:hover { color:var(--green); }
+  @media(max-width:820px){ .nav-links a { display:none; } }
+  .key-gear { background:none; border:1px solid var(--line); color:var(--green); width:28px; height:28px; border-radius:50%;
+    cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+  .ticker-tape { position:fixed; top:57px; left:0; right:0; z-index:45; height:26px; overflow:hidden;
+    background:rgba(3,5,18,.92); border-bottom:1px solid var(--line2); }
+  .ticker-track { display:flex; width:max-content; gap:36px; white-space:nowrap; padding:0 18px;
+    animation:tickerScroll 38s linear infinite; align-items:center; height:26px; }
+  .ticker-track span.ticker-item { font-family:var(--mono); font-size:11px; color:var(--mut); display:inline-flex; align-items:center; gap:6px; }
+  .ticker-track span.ticker-item b { color:var(--green); font-weight:600; }
+  @keyframes tickerScroll { to { transform:translateX(-50%); } }
+  @media (prefers-reduced-motion:reduce) { .ticker-track { animation:none; } }
+
+  header.hero { position:relative; min-height:24svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:136px 20px 16px; max-width:880px; margin:0 auto; }
+  .hero-spotlight { position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:radial-gradient(360px circle at var(--mx,50%) var(--my,15%), rgba(111,224,255,.10), transparent 68%); }
+  header.hero::before { content:''; position:absolute; top:52%; left:50%; width:560px; height:560px; max-width:140vw;
+    transform:translate(-50%,-58%); background:radial-gradient(circle,rgba(62,242,160,.15),transparent 65%);
+    pointer-events:none; z-index:-1; animation:coreGlow 5s ease-in-out infinite; }
+  @keyframes coreGlow { 0%,100%{opacity:.65;} 50%{opacity:1;} }
+  @media (prefers-reduced-motion:reduce) { header.hero::before { animation:none; } }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+    color:var(--green); border:1px solid var(--line); padding:6px 14px; border-radius:20px; margin-bottom:16px;
+    box-shadow:0 0 20px rgba(62,242,160,.15); }
+  .kicker::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green); animation:pulse 1.4s infinite; }
+  @keyframes pulse { 50%{opacity:.35;transform:scale(.75)} }
+  h1 { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(28px,6vw,46px); letter-spacing:3px; margin-bottom:10px;
+    background:linear-gradient(120deg,#f4fffb 8%,var(--green) 38%,var(--cyan) 62%,#f4fffb 92%);
+    background-size:220% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 0 28px rgba(62,242,160,.4)); animation:titleShine 7s linear infinite; }
+  @keyframes titleShine { to { background-position:220% center; } }
+  @media (prefers-reduced-motion:reduce) { h1 { animation:none; } }
+  .sub { font-size:13.5px; color:var(--mut); max-width:600px; }
+
+  .health-badge { position:relative; display:inline-flex; align-items:center; gap:10px; margin-top:18px; padding:10px 22px;
+    background:var(--panel); border:1px solid var(--line); font-family:var(--mono); overflow:hidden;
+    box-shadow:0 0 30px rgba(62,242,160,.12); }
+  .health-badge::before { content:''; position:absolute; inset:-60%; z-index:0;
+    background:conic-gradient(from 0deg,transparent 0%,rgba(62,242,160,.55) 6%,transparent 14%,transparent 50%,rgba(111,224,255,.4) 56%,transparent 64%);
+    animation:beamSpin 4s linear infinite; opacity:.6; }
+  .health-badge > * { position:relative; z-index:1; }
+  @keyframes beamSpin { to { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion:reduce) { .health-badge::before { animation:none; } }
+  .health-ring { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+  .health-ring.h-good { background:conic-gradient(var(--green) calc(var(--pct) * 1%), rgba(255,255,255,.08) 0); color:var(--green); }
+  .health-ring.h-warn { background:conic-gradient(var(--amber) calc(var(--pct) * 1%), rgba(255,255,255,.08) 0); color:var(--amber); }
+  .health-ring.h-bad { background:conic-gradient(var(--red) calc(var(--pct) * 1%), rgba(255,255,255,.08) 0); color:var(--red); }
+  .health-text { text-align:left; font-size:12px; color:var(--mut); }
+  .health-text b { color:var(--txt); font-size:13px; }
+
+  .tabs { position:sticky; top:83px; z-index:40; display:flex; gap:6px; overflow-x:auto; padding:12px 20px;
+    background:rgba(3,5,18,.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--line2); }
+  .tab-btn { flex-shrink:0; font-family:var(--mono); font-size:12px; padding:8px 16px; background:none; border-radius:22px;
+    border:1px solid var(--line2); color:var(--mut); cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,box-shadow .15s,transform .1s,background .15s; }
+  .tab-btn:hover { border-color:rgba(62,242,160,.5); color:var(--txt); transform:translateY(-1px); }
+  .tab-btn.active { border-color:var(--green); color:var(--green);
+    background:linear-gradient(135deg,rgba(62,242,160,.16),rgba(111,224,255,.08));
+    box-shadow:0 0 18px rgba(62,242,160,.25),inset 0 0 10px rgba(62,242,160,.08); }
+
+  section.panel { display:none; padding:28px 20px 60px; max-width:1080px; margin:0 auto; }
+  section.panel.show { display:block; animation:panelIn .4s ease; }
+  @keyframes panelIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  @media (prefers-reduced-motion:reduce) { section.panel.show { animation:none; } }
+  .panel-title { position:relative; font-family:'Orbitron',sans-serif; font-size:19px; margin-bottom:14px; padding-bottom:12px; }
+  .panel-title::after { content:''; position:absolute; left:0; bottom:0; width:52px; height:2px;
+    background:linear-gradient(90deg,var(--green),var(--cyan)); box-shadow:0 0 8px rgba(62,242,160,.5); }
+  .panel-desc { font-size:12.5px; color:var(--mut); margin-bottom:20px; margin-top:-8px; }
+
+  .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:20px; }
+  .kpi-box { position:relative; background:var(--panel); border:1px solid var(--line2); padding:19px 16px 16px; text-align:center; overflow:hidden; }
+  .kpi-box::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--green),var(--cyan)); opacity:.8; }
+  .kpi-num { font-family:'Orbitron',sans-serif; font-size:22px; color:var(--green); text-shadow:0 0 18px rgba(62,242,160,.5); }
+  .kpi-num.down { color:var(--red); text-shadow:0 0 18px rgba(255,107,129,.4); }
+  .kpi-label { font-family:var(--mono); font-size:10.5px; color:var(--mut2); margin-top:4px; }
+
+  .bot-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; margin-bottom:20px; }
+  .card { position:relative; background:var(--panel); border:1px solid var(--line2); padding:18px 20px 18px 24px; overflow:hidden; }
+  .card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,var(--green),var(--cyan)); opacity:.75; }
+  .card.offline { opacity:.55; }
+  .card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .card-name { font-family:var(--mono); font-weight:700; font-size:15px; }
+  .badge { font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; padding:3px 8px; border-radius:20px; }
+  .badge.rot, .badge.danger { background:rgba(255,107,129,.15); color:var(--red); border:1px solid rgba(255,107,129,.35); }
+  .badge.gelb, .badge.warnung { background:rgba(255,197,92,.15); color:var(--amber); border:1px solid rgba(255,197,92,.35); }
+  .badge.gruen, .badge.sicher { background:rgba(62,242,160,.15); color:var(--green); border:1px solid rgba(62,242,160,.35); }
+  .row { display:flex; justify-content:space-between; font-size:12.5px; color:var(--mut); padding:4px 0; }
+  .row b { color:var(--txt); font-family:var(--mono); }
+  .row b.up { color:var(--green); } .row b.down { color:var(--red); }
+  .card-link { display:inline-block; margin-top:12px; font-family:var(--mono); font-size:11px; color:var(--cyan); text-decoration:none; }
+  .card-link:hover { text-decoration:underline; }
+  .connect-hint { font-family:var(--mono); font-size:11px; color:var(--mut2); }
+  .connect-hint button { background:none; border:none; color:var(--cyan); font-family:inherit; font-size:inherit; cursor:pointer; text-decoration:underline; padding:0; }
+
+  .filter-card { margin-bottom:14px; }
+  .filter-top { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; }
+  .filter-name { font-weight:700; font-size:14px; }
+  .filter-desc { font-size:12.5px; color:var(--mut); }
+  .filter-meta { font-family:var(--mono); font-size:10.5px; color:var(--mut2); margin-top:6px; }
+  .sig-row { display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px solid var(--line2); font-size:12.5px; }
+  .sig-row:last-child { border-bottom:none; }
+
+  .box { background:var(--panel); border:1px solid var(--line2); padding:20px; margin-bottom:20px; }
+  .equity-svg { width:100%; height:240px; display:block; }
+  .equity-legend { display:flex; gap:18px; font-family:var(--mono); font-size:11px; color:var(--mut2); margin-top:10px; flex-wrap:wrap; }
+  .equity-legend span { display:flex; align-items:center; gap:6px; }
+  .equity-legend .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+
+  .feed { max-height:460px; overflow-y:auto; font-family:var(--mono); font-size:12px; }
+  .feed-row { display:flex; gap:10px; padding:9px 4px; border-bottom:1px solid var(--line2); align-items:baseline; flex-wrap:wrap; }
+  .feed-row:last-child { border-bottom:none; }
+  .feed-row .sym { color:var(--txt); font-weight:700; flex-shrink:0; min-width:52px; }
+  .feed-row .grund { color:var(--mut2); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .feed-row .pnl { flex-shrink:0; font-weight:700; }
+  .feed-row .pnl.up { color:var(--green); } .feed-row .pnl.down { color:var(--red); }
+  .feed-row .zeit { color:var(--mut2); flex-shrink:0; font-size:10.5px; }
+  .empty { text-align:center; padding:40px 20px; color:var(--mut2); font-size:13px; }
+  .empty .emoji { font-size:32px; margin-bottom:10px; }
+
+  .map-wrap { background:var(--panel); border:1px solid var(--line); overflow:hidden; padding:10px; }
+  .map-svg { width:100%; height:auto; display:block; }
+  .map-node text { font-family:var(--mono); font-size:5.4px; fill:var(--mut2); }
+  .map-node .lbl2 { font-size:4px; fill:var(--mut2); }
+  .map-legend { display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; font-family:var(--mono); font-size:11px; color:var(--mut2); }
+  .map-legend span { display:inline-flex; align-items:center; gap:6px; }
+  .map-legend i { width:9px; height:9px; border-radius:50%; display:inline-block; }
+
+  .tool-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+  .tool-card { background:var(--panel); border:1px solid var(--line2); padding:16px 18px; text-decoration:none; color:var(--txt); display:block;
+    transition:border-color .15s,transform .15s,box-shadow .15s; }
+  .tool-card:hover { border-color:var(--green); transform:translateY(-3px); box-shadow:0 12px 28px rgba(0,0,0,.4),0 0 20px rgba(62,242,160,.15); }
+  .tool-emoji { width:42px; height:42px; display:flex; align-items:center; justify-content:center; border-radius:50%;
+    background:linear-gradient(135deg,rgba(62,242,160,.2),rgba(111,224,255,.1)); border:1px solid var(--line); font-size:19px; margin-bottom:10px; }
+  .tool-name { font-weight:700; font-size:14px; margin-bottom:4px; }
+  .tool-desc { font-size:12px; color:var(--mut); }
+
+  .key-modal-overlay { position:fixed; inset:0; z-index:600; background:rgba(3,5,18,.9);
+    display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .25s ease, visibility .25s ease; overflow-y:auto; padding:30px 16px; }
+  .key-modal-overlay.open { opacity:1; visibility:visible; pointer-events:auto; }
+  .key-modal { width:min(480px,92vw); background:var(--panel-solid); border:1px solid var(--line); box-shadow:0 0 40px rgba(62,242,160,.14); padding:26px; }
+  .key-modal h3 { color:var(--green); font-size:16px; letter-spacing:1px; margin-bottom:6px; }
+  .key-modal .grp-title { font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--amber); margin:18px 0 8px; text-transform:uppercase; }
+  .key-modal p { font-size:12px; color:var(--mut); line-height:1.6; }
+  .key-modal label { display:block; font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--mut2); margin-bottom:4px; margin-top:10px; }
+  .key-modal input { width:100%; background:rgba(62,242,160,.06); border:1px solid var(--line); color:var(--txt);
+    font-family:var(--mono); font-size:12.5px; padding:8px 10px; outline:none; }
+  .key-modal input:focus { border-color:var(--green); }
+  .key-modal-actions { display:flex; justify-content:flex-end; margin-top:20px; }
+  .key-modal-actions button { background:rgba(62,242,160,.16); border:1px solid var(--green); color:var(--txt);
+    font-family:inherit; font-weight:700; font-size:13px; padding:9px 20px; cursor:pointer; }
+  .key-modal-actions button:hover { background:rgba(62,242,160,.3); }
+
+  footer { border-top:1px solid var(--line2); padding:30px 20px 50px; text-align:center; color:var(--mut2); font-size:12px; font-family:var(--mono); }
+  footer a { color:var(--green); text-decoration:none; margin:0 8px; }
+  .note { font-size:11.5px; color:var(--mut2); margin-top:10px; }
+</style>
+</head>
+<body>
+
+<div class="bg-orbs"></div>
+<canvas class="bg-canvas" id="bgCanvas"></canvas>
+<div class="bg-grid"></div>
+
+<div class="key-modal-overlay" id="keyModalOverlay">
+  <div class="key-modal" role="dialog" aria-modal="true">
+    <h3>Bots verbinden</h3>
+    <p>Werte bleiben nur lokal im Browser (localStorage). Beide Bots sind optional — auch nur einer angeschlossen funktioniert.</p>
+    <div class="grp-title">₿ Krypto-Bot</div>
+    <label for="cryptoUrl">Worker-URL</label>
+    <input type="text" id="cryptoUrl" placeholder="https://cashmachine-trading-bot.dein-account.workers.dev" autocomplete="off">
+    <label for="cryptoKey">STATUS_READ_KEY</label>
+    <input type="password" id="cryptoKey" placeholder="dein-status-read-key" autocomplete="off">
+    <div class="grp-title">📈 Aktien-Bot</div>
+    <label for="stocksUrl">Worker-URL</label>
+    <input type="text" id="stocksUrl" placeholder="https://cashmachine-stocks-bot.dein-account.workers.dev" autocomplete="off">
+    <label for="stocksKey">STATUS_READ_KEY</label>
+    <input type="password" id="stocksKey" placeholder="dein-status-read-key" autocomplete="off">
+    <div class="key-modal-actions"><button id="keyModalSave" type="button">Speichern</button></div>
+  </div>
+</div>
+
+<nav>
+  <div class="logo">TRADING<b>&nbsp;COMMAND</b></div>
+  <div class="nav-links">
+    <a href="../">Jarvis</a>
+    <a href="../command/">Command</a>
+    <a href="../empire-dashboard/">Empire</a>
+    <button class="key-gear" id="keyGearBtn" title="Bots verbinden">⚙</button>
+  </div>
+</nav>
+
+<div class="ticker-tape"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<header class="hero" id="heroEl">
+  <div class="hero-spotlight"></div>
+  <div class="kicker">BEIDE BOTS · EIN SYSTEM · REIN LESEND</div>
+  <h1>TRADING COMMAND</h1>
+  <p class="sub">Krypto- und Aktien-Paper-Bot als EIN System auf EINER Seite: Kapital, Filter/Signale, System-Map, Equity-Kurve und Live-Feed — echte Daten direkt aus beiden <code>/status</code>-Endpoints, kann nie einen Trade auslösen.</p>
+  <div id="healthBadgeWrap"></div>
+</header>
+
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="overview">🎯 Übersicht</button>
+  <button class="tab-btn" data-tab="signale">🛡️ Signale &amp; Filter</button>
+  <button class="tab-btn" data-tab="map">🧠 System-Map</button>
+  <button class="tab-btn" data-tab="equity">📈 Equity</button>
+  <button class="tab-btn" data-tab="activity">📡 Activity</button>
+  <button class="tab-btn" data-tab="tools">🧰 Tools</button>
+</div>
+
+<section class="panel show" id="panel-overview">
+  <div class="panel-title">Übersicht — Gesamt (alle verbundenen Bots)</div>
+  <p class="panel-desc">Kapital, P&amp;L und Trades getrennt nach Währung (USDT/USD sind unterschiedliche Kapitalbasen, keine Umrechnung).</p>
+  <div class="kpi-grid" id="totalKpis"></div>
+  <div class="panel-title">Bots im Einzelnen</div>
+  <div class="bot-cards" id="botCards"></div>
+</section>
+
+<section class="panel" id="panel-signale">
+  <div class="panel-title">Signale &amp; Filter — was gerade Käufe beeinflusst</div>
+  <p class="panel-desc">Live-Zustand jedes Filters, direkt aus dem State der beiden Bots — nichts geschätzt, nichts erfunden.</p>
+  <div id="signaleContent"></div>
+</section>
+
+<section class="panel" id="panel-map">
+  <div class="panel-title">System-Map — die Architektur als Bild</div>
+  <p class="panel-desc">Jede Datenquelle, jeder Bot und jeder Filter als Knoten, echter Status als Farbe (grün=sicher, gelb=Warnung, rot=Kill-Switch/Crash).</p>
+  <div class="map-wrap"><svg class="map-svg" id="mapSvg" viewBox="0 0 400 200"></svg></div>
+  <div class="map-legend">
+    <span><i style="background:var(--green)"></i>sicher</span>
+    <span><i style="background:var(--amber)"></i>warnung</span>
+    <span><i style="background:var(--red)"></i>danger / offline</span>
+  </div>
+</section>
+
+<section class="panel" id="panel-equity">
+  <div class="panel-title">Kombinierte Equity-Kurve (% seit Start)</div>
+  <div class="box">
+    <svg class="equity-svg" id="equitySvg" viewBox="0 0 1000 240" preserveAspectRatio="none"></svg>
+    <div class="equity-legend">
+      <span><span class="dot" style="background:var(--cyan)"></span>Krypto-Bot</span>
+      <span><span class="dot" style="background:var(--green)"></span>Aktien-Bot</span>
+    </div>
+    <div class="note">Rekonstruktion aus der chronologischen Trade-Reihenfolge beider Bots, keine sekundengenaue Kurve.</div>
+  </div>
+</section>
+
+<section class="panel" id="panel-activity">
+  <div class="panel-title">Live-Activity-Feed (beide Bots, neueste zuerst)</div>
+  <div class="box"><div class="feed" id="activityFeed"></div></div>
+</section>
+
+<section class="panel" id="panel-tools">
+  <div class="panel-title">Alle Trading-Werkzeuge</div>
+  <p class="panel-desc">Von hier aus ist jedes Trading-Tool der Suite erreichbar.</p>
+  <div class="tool-grid" id="toolsContent"></div>
+</section>
+
+<footer>
+  <b>TRADING COMMAND</b> · das eine System für beide Trading-Bots ·
+  <a href="../">Jarvis</a>·<a href="../command/">Command</a>·<a href="../empire-dashboard/">Empire Dashboard</a>
+</footer>
+
+<script>
+  const REFRESH_MS = 30000;
+  const KEYS = { cryptoUrl:'cmx_trading_worker_url', cryptoKey:'cmx_trading_status_key', stocksUrl:'cmx_stocks_worker_url', stocksKey:'cmx_stocks_status_key' };
+
+  function getConn() {
+    return {
+      crypto: { url: localStorage.getItem(KEYS.cryptoUrl) || '', key: localStorage.getItem(KEYS.cryptoKey) || '' },
+      stocks: { url: localStorage.getItem(KEYS.stocksUrl) || '', key: localStorage.getItem(KEYS.stocksKey) || '' },
+    };
+  }
+  const overlay = document.getElementById('keyModalOverlay');
+  function openModal() {
+    const c = getConn();
+    document.getElementById('cryptoUrl').value = c.crypto.url;
+    document.getElementById('cryptoKey').value = c.crypto.key;
+    document.getElementById('stocksUrl').value = c.stocks.url;
+    document.getElementById('stocksKey').value = c.stocks.key;
+    overlay.classList.add('open');
+  }
+  function closeModal() { overlay.classList.remove('open'); }
+  document.getElementById('keyGearBtn').addEventListener('click', openModal);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+  document.getElementById('keyModalSave').addEventListener('click', () => {
+    const vals = {
+      cryptoUrl: document.getElementById('cryptoUrl').value.trim().replace(/\/$/, ''),
+      cryptoKey: document.getElementById('cryptoKey').value.trim(),
+      stocksUrl: document.getElementById('stocksUrl').value.trim().replace(/\/$/, ''),
+      stocksKey: document.getElementById('stocksKey').value.trim(),
+    };
+    Object.entries(vals).forEach(([k, v]) => { if (v) localStorage.setItem(KEYS[k], v); else localStorage.removeItem(KEYS[k]); });
+    closeModal();
+    loadAll();
+  });
+
+  // --- Tabs ---
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+      document.querySelectorAll('section.panel').forEach((p) => p.classList.remove('show'));
+      btn.classList.add('active');
+      document.getElementById(`panel-${btn.dataset.tab}`).classList.add('show');
+    });
+  });
+
+  const fmtGeld = (n, suffix) => (n ?? 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + suffix;
+  const fmtProzent = (n) => n == null ? '–' : `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`;
+  const fmtDatum = (iso) => { try { return new Date(iso).toLocaleString('de-DE', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }); } catch { return iso; } };
+
+  async function fetchStatus(url, key) {
+    if (!url || !key) return null;
+    try {
+      const res = await fetch(`${url}/status?key=${encodeURIComponent(key)}`, { cache:'no-store' });
+      if (!res.ok) return { fehler:true };
+      return await res.json();
+    } catch { return { fehler:true }; }
+  }
+
+  function summarize(data) {
+    if (!data || data.fehler) return null;
+    const symbole = data.symbole || [];
+    const kapital = symbole.reduce((s, x) => s + x.kapital, 0);
+    const start = symbole.reduce((s, x) => s + x.startKapital, 0);
+    const pl = kapital - start;
+    const plProzent = start ? (pl / start) * 100 : 0;
+    const offenePositionen = symbole.filter((s) => s.position).length;
+    const alleTrades = symbole.flatMap((s) => s.trades || []);
+    const gewinne = alleTrades.filter((t) => t.gewinnVerlustUsdt > 0).length;
+    const winRate = alleTrades.length ? (gewinne / alleTrades.length) * 100 : null;
+    const killSwitchSymbole = symbole.filter((s) => s.killSwitchAktiv).map((s) => s.symbol);
+    return { kapital, start, pl, plProzent, offenePositionen, anzahlSymbole: symbole.length, anzahlTrades: alleTrades.length, winRate, readiness: data.readiness, killSwitchSymbole };
+  }
+
+  function renderBotCard(name, emoji, waehrung, conn, data, link) {
+    if (!conn.url || !conn.key) {
+      return `<div class="card offline"><div class="card-top"><span class="card-name">${emoji} ${name}</span></div>
+        <div class="connect-hint">Nicht verbunden - <button onclick="document.getElementById('keyGearBtn').click()">jetzt verbinden</button></div></div>`;
+    }
+    if (!data) {
+      return `<div class="card offline"><div class="card-top"><span class="card-name">${emoji} ${name}</span></div>
+        <div class="connect-hint">Verbindung fehlgeschlagen - URL/Key prüfen.</div></div>`;
+    }
+    const s = summarize(data);
+    const ampel = s.readiness ? s.readiness.ampel : null;
+    return `<div class="card">
+      <div class="card-top"><span class="card-name">${emoji} ${name}</span>
+        ${ampel ? `<span class="badge ${ampel}">${{ rot:'🔴', gelb:'🟡', gruen:'🟢' }[ampel]} ${ampel.toUpperCase()}</span>` : ''}
+      </div>
+      <div class="row"><span>Kapital</span><b>${fmtGeld(s.kapital, waehrung)}</b></div>
+      <div class="row"><span>P&amp;L gesamt</span><b class="${s.pl >= 0 ? 'up' : 'down'}">${s.pl >= 0 ? '+' : ''}${fmtGeld(s.pl, waehrung)} (${fmtProzent(s.plProzent)})</b></div>
+      <div class="row"><span>Offene Positionen</span><b>${s.offenePositionen} / ${s.anzahlSymbole}</b></div>
+      <div class="row"><span>Trades gesamt</span><b>${s.anzahlTrades}</b></div>
+      ${s.winRate != null ? `<div class="row"><span>Win-Rate</span><b class="${s.winRate >= 50 ? 'up' : 'down'}">${s.winRate.toFixed(0)}%</b></div>` : ''}
+      ${s.killSwitchSymbole.length ? `<div class="row"><span>Kill-Switch aktiv</span><b class="down">${s.killSwitchSymbole.join(', ')}</b></div>` : ''}
+      <a class="card-link" href="${link}">→ Details öffnen</a>
+    </div>`;
+  }
+
+  function sigRow(label, aktiv, meta) {
+    return `<div class="sig-row"><span>${label}</span><span>${aktiv ? '<b style="color:var(--red)">● aktiv</b>' : '<b style="color:var(--green)">○ inaktiv</b>'}${meta ? ` · ${meta}` : ''}</span></div>`;
+  }
+
+  function renderSignale(cryptoData, stocksData) {
+    const el = document.getElementById('signaleContent');
+    if ((!cryptoData || cryptoData.fehler) && (!stocksData || stocksData.fehler)) {
+      el.innerHTML = '<div class="empty"><div class="emoji">🛡️</div>Noch keine Bots verbunden.</div>';
+      return;
+    }
+    let html = '';
+
+    const ms = cryptoData && !cryptoData.fehler ? cryptoData.marktSignale : null;
+    const stocksNews = stocksData && !stocksData.fehler ? stocksData.newsEventAktiv : null;
+    const stocksNewsZeit = stocksData && !stocksData.fehler ? stocksData.newsEventZeit : null;
+    html += `<div class="card filter-card"><div class="filter-top"><span class="filter-name">📰 Wirtschaftskalender-Filter</span></div>
+      <div class="filter-desc">Pausiert Käufe rund um FOMC/CPI/NFP - gemeinsame Quelle für beide Bots.</div>
+      ${ms ? sigRow('Krypto-Bot', ms.newsEventAktiv, ms.newsEventZeit ? fmtDatum(ms.newsEventZeit) : '') : ''}
+      ${stocksData && !stocksData.fehler ? sigRow('Aktien-Bot', stocksNews, stocksNewsZeit ? fmtDatum(stocksNewsZeit) : '') : ''}
+    </div>`;
+
+    html += `<div class="card filter-card"><div class="filter-top"><span class="filter-name">💥 Marktweiter Crash-Schutz</span></div>
+      <div class="filter-desc">BTC-Crash pausiert alle Coins (Krypto) · SPY-Crash pausiert alle Aktien (Aktien).</div>
+      ${ms ? sigRow('Krypto-Bot (BTC-Signal)', ms.marktweiterCrashAktiv, ms.marktweiterCrashZeit ? fmtDatum(ms.marktweiterCrashZeit) : '') : ''}
+      ${stocksData && !stocksData.fehler ? sigRow('Aktien-Bot (SPY-Signal)', stocksData.marktweiterCrashAktiv, stocksData.marktweiterCrashZeit ? fmtDatum(stocksData.marktweiterCrashZeit) : '') : ''}
+    </div>`;
+
+    if (ms && (ms.fearGreedWert != null || ms.btcDominanzProzent != null)) {
+      html += `<div class="card filter-card"><div class="filter-top"><span class="filter-name">😨 Fear &amp; Greed / BTC-Dominanz</span></div>
+        <div class="filter-desc">Nur Krypto-Bot - marktweite Stimmungssignale.</div>
+        <div class="sig-row"><span>Fear &amp; Greed Index</span><b>${ms.fearGreedWert ?? '–'}${ms.fearGreedZeit ? ` · ${fmtDatum(ms.fearGreedZeit)}` : ''}</b></div>
+        <div class="sig-row"><span>BTC-Dominanz</span><b>${ms.btcDominanzProzent != null ? ms.btcDominanzProzent.toFixed(1) + '%' : '–'}${ms.btcDominanzZeit ? ` · ${fmtDatum(ms.btcDominanzZeit)}` : ''}</b></div>
+      </div>`;
+    }
+
+    if (stocksData && !stocksData.fehler) {
+      const insiderAktiv = (stocksData.symbole || []).filter((s) => s.insiderSignal && s.insiderSignal.aktiv);
+      html += `<div class="card filter-card"><div class="filter-top"><span class="filter-name">🕵️ Insider-Kauf-Bestätigung</span></div>
+        <div class="filter-desc">Nur Aktien-Bot - einziger NICHT-blockierender Filter im Projekt, erhöht die Positionsgröße statt zu blockieren.</div>
+        ${insiderAktiv.length
+          ? insiderAktiv.map((s) => `<div class="sig-row"><span>${s.symbol}</span><b style="color:var(--green)">Signal aktiv · ~${(s.insiderSignal.wertUsd || 0).toLocaleString('de-DE', { maximumFractionDigits:0 })} USD gemeldet</b></div>`).join('')
+          : '<div class="sig-row"><span>Aktuell kein Symbol</span><b style="color:var(--mut2)">kein aktives Signal</b></div>'}
+      </div>`;
+    }
+
+    const killSwitchAlle = [
+      ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).filter((s) => s.killSwitchAktiv).map((s) => `₿ ${s.symbol}`) : []),
+      ...(stocksData && !stocksData.fehler ? (stocksData.symbole || []).filter((s) => s.killSwitchAktiv).map((s) => `📈 ${s.symbol}`) : []),
+    ];
+    html += `<div class="card filter-card"><div class="filter-top"><span class="filter-name">⛔ Kill-Switches</span></div>
+      <div class="filter-desc">Symbole, für die der Bot nach Tagesverlust-Grenze aktuell keine neuen Käufe mehr macht.</div>
+      ${killSwitchAlle.length ? killSwitchAlle.map((s) => `<div class="sig-row"><span>${s}</span><b style="color:var(--red)">Kill-Switch aktiv</b></div>`).join('') : '<div class="sig-row"><span>Kein Symbol</span><b style="color:var(--green)">alle frei</b></div>'}
+    </div>`;
+
+    el.innerHTML = html;
+  }
+
+  // --- System-Map ---
+  function mapNode(x, y, r, farbe, label, sublabel) {
+    return `<g class="map-node">
+      <circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${farbe}" stroke-width="0.8"></circle>
+      <circle cx="${x}" cy="${y}" r="${r - 3}" fill="${farbe}" opacity=".14"></circle>
+      <text x="${x}" y="${y + r + 8}" text-anchor="middle">${label}</text>
+      ${sublabel ? `<text class="lbl2" x="${x}" y="${y + r + 14}" text-anchor="middle">${sublabel}</text>` : ''}
+    </g>`;
+  }
+  function mapLine(x1, y1, x2, y2, farbe) {
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${farbe}" stroke-width="0.6" stroke-dasharray="2 2" opacity=".55"></line>`;
+  }
+  function statusFarbe(status) {
+    if (status === 'danger') return '#ff6b81';
+    if (status === 'warnung') return '#ffc55c';
+    return '#3ef2a0';
+  }
+  function renderMap(cryptoData, stocksData) {
+    const svg = document.getElementById('mapSvg');
+    const cOffline = !cryptoData;
+    const sOffline = !stocksData;
+    const cStatus = cOffline || cryptoData.fehler ? null : cryptoData.risikoStatus;
+    const sSymbole = sOffline || stocksData.fehler ? [] : (stocksData.symbole || []);
+    const sStatus = sOffline || stocksData.fehler ? null
+      : (sSymbole.some((s) => s.killSwitchAktiv) || stocksData.marktweiterCrashAktiv ? 'danger' : stocksData.newsEventAktiv ? 'warnung' : 'sicher');
+    const cFarbe = cStatus ? statusFarbe(cStatus) : '#5a6270';
+    const sFarbe = sStatus ? statusFarbe(sStatus) : '#5a6270';
+
+    let svgHtml = '';
+    svgHtml += mapLine(60, 40, 140, 40, '#6fe0ff');
+    svgHtml += mapLine(140, 40, 140, 90, cFarbe);
+    svgHtml += mapLine(140, 90, 90, 130, '#6fe0ff');
+    svgHtml += mapLine(140, 90, 190, 130, cFarbe);
+    svgHtml += mapLine(260, 40, 340, 40, '#3ef2a0');
+    svgHtml += mapLine(260, 40, 260, 90, sFarbe);
+    svgHtml += mapLine(260, 90, 210, 130, '#3ef2a0');
+    svgHtml += mapLine(260, 90, 310, 130, sFarbe);
+    svgHtml += mapLine(140, 90, 260, 90, '#6fe0ff');
+
+    svgHtml += mapNode(60, 40, 12, '#6fe0ff', 'Kraken', 'Marktdaten');
+    svgHtml += mapNode(140, 40, 12, '#6fe0ff', 'Wirtschaftskalender', 'gemeinsam');
+    svgHtml += mapNode(140, 90, 16, cFarbe, 'Crypto-Bot', cOffline ? 'nicht verbunden' : (cryptoData.fehler ? 'Verbindung fehlgeschlagen' : cStatus));
+    svgHtml += mapNode(90, 130, 10, cFarbe, 'BTC-Crash', '');
+    svgHtml += mapNode(190, 130, 10, cFarbe, 'Adaptive Learning', '');
+    svgHtml += mapNode(260, 40, 12, '#3ef2a0', 'Alpaca', 'Marktdaten');
+    svgHtml += mapNode(340, 40, 12, '#3ef2a0', 'SEC EDGAR', 'Insider');
+    svgHtml += mapNode(260, 90, 16, sFarbe, 'Stocks-Bot', sOffline ? 'nicht verbunden' : (stocksData.fehler ? 'Verbindung fehlgeschlagen' : sStatus));
+    svgHtml += mapNode(210, 130, 10, sFarbe, 'SPY-Crash', '');
+    svgHtml += mapNode(310, 130, 10, sFarbe, 'Insider-Buy', '');
+    svg.innerHTML = svgHtml;
+  }
+
+  // --- Equity ---
+  function berechneProzentKurve(data) {
+    if (!data || data.fehler || !data.symbole) return null;
+    const symbole = data.symbole;
+    const start = symbole.reduce((s, x) => s + x.startKapital, 0);
+    if (!start) return null;
+    const alleTrades = symbole.flatMap((s) => s.trades || []).sort((a, b) => new Date(a.ausstiegAm) - new Date(b.ausstiegAm));
+    if (!alleTrades.length) return null;
+    let kapital = start;
+    const punkte = [100];
+    for (const t of alleTrades) { kapital += t.gewinnVerlustUsdt; punkte.push((kapital / start) * 100); }
+    return punkte;
+  }
+  function zeichneLinie(svg, punkte, farbe, w, h, pad, gMin, gSpanne) {
+    const pts = punkte.map((v, i) => {
+      const x = pad + (i / (punkte.length - 1)) * (w - pad * 2);
+      const y = h - pad - ((v - gMin) / gSpanne) * (h - pad * 2);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    line.setAttribute('points', pts.join(' ')); line.setAttribute('fill', 'none');
+    line.setAttribute('stroke', farbe); line.setAttribute('stroke-width', '2.5');
+    svg.appendChild(line);
+  }
+  function renderEquityCurve(cryptoData, stocksData) {
+    const svg = document.getElementById('equitySvg');
+    svg.innerHTML = '';
+    const w = 1000, h = 240, pad = 12;
+    const kryptoKurve = berechneProzentKurve(cryptoData);
+    const aktienKurve = berechneProzentKurve(stocksData);
+    if (!kryptoKurve && !aktienKurve) {
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.setAttribute('x', w / 2); t.setAttribute('y', h / 2); t.setAttribute('text-anchor', 'middle');
+      t.setAttribute('fill', 'rgba(220,235,230,.4)'); t.setAttribute('font-family', 'JetBrains Mono'); t.setAttribute('font-size', '13');
+      t.textContent = 'Noch keine abgeschlossenen Trades in einem der Bots.';
+      svg.appendChild(t);
+      return;
+    }
+    const refLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    const alleWerte = [...(kryptoKurve || []), ...(aktienKurve || [])];
+    const gMin = Math.min(...alleWerte, 100), gMax = Math.max(...alleWerte, 100);
+    const gSpanne = (gMax - gMin) || 1;
+    const yRef = h - pad - ((100 - gMin) / gSpanne) * (h - pad * 2);
+    refLine.setAttribute('x1', pad); refLine.setAttribute('x2', w - pad); refLine.setAttribute('y1', yRef); refLine.setAttribute('y2', yRef);
+    refLine.setAttribute('stroke', 'rgba(255,255,255,.15)'); refLine.setAttribute('stroke-dasharray', '4,4');
+    svg.appendChild(refLine);
+    if (kryptoKurve) zeichneLinie(svg, kryptoKurve, '#6fe0ff', w, h, pad, gMin, gSpanne);
+    if (aktienKurve) zeichneLinie(svg, aktienKurve, '#3ef2a0', w, h, pad, gMin, gSpanne);
+  }
+
+  // --- Activity Feed ---
+  function renderActivityFeed(cryptoData, stocksData) {
+    const feed = document.getElementById('activityFeed');
+    const kryptoTrades = (cryptoData && !cryptoData.fehler ? cryptoData.symbole || [] : []).flatMap((s) => (s.trades || []).map((t) => ({ ...t, symbol:s.symbol, bot:'krypto' })));
+    const aktienTrades = (stocksData && !stocksData.fehler ? stocksData.symbole || [] : []).flatMap((s) => (s.trades || []).map((t) => ({ ...t, symbol:s.symbol, bot:'aktien' })));
+    const alle = [...kryptoTrades, ...aktienTrades].sort((a, b) => new Date(b.ausstiegAm) - new Date(a.ausstiegAm)).slice(0, 80);
+    if (!alle.length) { feed.innerHTML = '<div class="empty"><div class="emoji">📡</div>Noch keine abgeschlossenen Trades.</div>'; return; }
+    feed.innerHTML = alle.map((t) => {
+      const icon = t.bot === 'krypto' ? '₿' : '📈';
+      const waehrung = t.bot === 'krypto' ? 'USDT' : 'USD';
+      const zeit = fmtDatum(t.ausstiegAm);
+      const pnlCls = t.gewinnVerlustUsdt >= 0 ? 'up' : 'down';
+      return `<div class="feed-row"><span>${icon}</span><span class="sym">${t.symbol}</span><span class="grund">${t.grund || ''}</span>
+        <span class="pnl ${pnlCls}">${t.gewinnVerlustUsdt >= 0 ? '+' : ''}${t.gewinnVerlustUsdt.toFixed(2)} ${waehrung}</span>
+        <span class="zeit">${zeit}</span></div>`;
+    }).join('');
+  }
+
+  // --- Ticker ---
+  const TICKER_FUELLTEXTE = [
+    '⚡ TRADING COMMAND — Krypto- und Aktien-Bot als ein System',
+    '🛡️ Wirtschaftskalender-, Crash- und Insider-Filter live überwacht',
+    '🔒 Rein lesend — kann nie selbst einen Trade auslösen',
+    '📡 Alle 30s aktualisiert, direkt aus beiden /status-Endpoints',
+  ];
+  function renderTicker(cryptoData, stocksData) {
+    const track = document.getElementById('tickerTrack');
+    const kryptoTrades = (cryptoData && !cryptoData.fehler ? cryptoData.symbole || [] : []).flatMap((s) => (s.trades || []).map((t) => ({ ...t, symbol:s.symbol, icon:'₿', waehrung:'USDT' })));
+    const aktienTrades = (stocksData && !stocksData.fehler ? stocksData.symbole || [] : []).flatMap((s) => (s.trades || []).map((t) => ({ ...t, symbol:s.symbol, icon:'📈', waehrung:'USD' })));
+    const letzte = [...kryptoTrades, ...aktienTrades].sort((a, b) => new Date(b.ausstiegAm) - new Date(a.ausstiegAm)).slice(0, 10)
+      .map((t) => `${t.icon} <b>${t.symbol}</b> ${t.gewinnVerlustUsdt >= 0 ? '+' : ''}${t.gewinnVerlustUsdt.toFixed(2)} ${t.waehrung} — ${t.grund || ''}`);
+    const items = letzte.length ? letzte : TICKER_FUELLTEXTE;
+    while (items.length < 6) items.push(...TICKER_FUELLTEXTE);
+    const html = items.map((t) => `<span class="ticker-item">${t}</span>`).join('');
+    track.innerHTML = html + html;
+  }
+
+  // --- Health-Badge ---
+  function renderHealthBadge(cryptoData, stocksData) {
+    const wrap = document.getElementById('healthBadgeWrap');
+    const verbunden = [cryptoData, stocksData].filter((d) => d && !d.fehler).length;
+    if (!verbunden) { wrap.innerHTML = ''; return; }
+    const danger = [cryptoData && cryptoData.risikoStatus === 'danger', stocksData && !stocksData.fehler && ((stocksData.symbole || []).some((s) => s.killSwitchAktiv) || stocksData.marktweiterCrashAktiv)].some(Boolean);
+    const warnung = [cryptoData && cryptoData.risikoStatus === 'warnung', stocksData && !stocksData.fehler && stocksData.newsEventAktiv].some(Boolean);
+    const score = danger ? 35 : warnung ? 70 : 100;
+    const klasse = danger ? 'h-bad' : warnung ? 'h-warn' : 'h-good';
+    wrap.innerHTML = `<div class="health-badge">
+      <div class="health-ring ${klasse}" style="--pct:${score}"><span style="background:var(--bg);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;">${score}</span></div>
+      <div class="health-text">SYSTEM-HEALTH<br><b>${verbunden}/2 Bots verbunden</b> · ${danger ? 'Kill-Switch/Crash aktiv' : warnung ? 'Filter pausiert Käufe' : 'alles im grünen Bereich'}</div>
+    </div>`;
+  }
+
+  // --- Tools ---
+  const TOOLS = [
+    { emoji:'📈', name:'Trading Dashboard', desc:'Live-Details zum Krypto-Bot.', href:'../trading-dashboard/' },
+    { emoji:'🎛️', name:'Trading Control Center', desc:'Erweitertes Status-Panel des Krypto-Bots.', href:'../trading-control-center/' },
+    { emoji:'🚀', name:'Trading Live-Setup', desc:'Checkliste für echtes Geld beim Krypto-Bot.', href:'../trading-live-setup/' },
+    { emoji:'🚀', name:'Stocks Live-Setup', desc:'Checkliste für echtes Geld beim Aktien-Bot.', href:'../stocks-live-setup/' },
+    { emoji:'🧪', name:'Strategy Lab', desc:'Backtesting mit echten Kursdaten.', href:'../strategy-lab/' },
+    { emoji:'🔥', name:'Trader Roast', desc:'Welcher Trader-Typ bist du wirklich?', href:'../trader-roast/' },
+    { emoji:'🌐', name:'Empire Dashboard', desc:'Kombinierte Kapital-Übersicht beider Bots.', href:'../empire-dashboard/' },
+    { emoji:'🏛️', name:'Empire-Übersicht', desc:'Die komplette App-Übersicht der Suite.', href:'../empire/' },
+    { emoji:'🧠', name:'Command', desc:'Das eine System der E-Commerce-Suite.', href:'../command/' },
+  ];
+  function renderTools() {
+    document.getElementById('toolsContent').innerHTML = TOOLS.map((t) => `
+      <a class="tool-card" href="${t.href}"><span class="tool-emoji">${t.emoji}</span><div class="tool-name">${t.name}</div><div class="tool-desc">${t.desc}</div></a>`).join('');
+  }
+
+  // --- Übersicht KPIs ---
+  function renderOverview(cryptoData, stocksData) {
+    const cs = summarize(cryptoData);
+    const ss = summarize(stocksData);
+    document.getElementById('totalKpis').innerHTML = `
+      <div class="kpi-box"><div class="kpi-num">${cs ? fmtGeld(cs.kapital, 'USDT') : '–'}</div><div class="kpi-label">KAPITAL KRYPTO</div></div>
+      <div class="kpi-box"><div class="kpi-num">${ss ? fmtGeld(ss.kapital, 'USD') : '–'}</div><div class="kpi-label">KAPITAL AKTIEN</div></div>
+      <div class="kpi-box"><div class="kpi-num ${cs && cs.pl < 0 ? 'down' : ''}">${cs ? (cs.pl >= 0 ? '+' : '') + fmtGeld(cs.pl, 'USDT') : '–'}</div><div class="kpi-label">P&amp;L KRYPTO</div></div>
+      <div class="kpi-box"><div class="kpi-num ${ss && ss.pl < 0 ? 'down' : ''}">${ss ? (ss.pl >= 0 ? '+' : '') + fmtGeld(ss.pl, 'USD') : '–'}</div><div class="kpi-label">P&amp;L AKTIEN</div></div>
+      <div class="kpi-box"><div class="kpi-num">${(cs ? cs.offenePositionen : 0) + (ss ? ss.offenePositionen : 0)}</div><div class="kpi-label">OFFENE POSITIONEN</div></div>
+      <div class="kpi-box"><div class="kpi-num">${(cs ? cs.anzahlTrades : 0) + (ss ? ss.anzahlTrades : 0)}</div><div class="kpi-label">TRADES GESAMT</div></div>
+    `;
+    document.getElementById('botCards').innerHTML =
+      renderBotCard('Krypto-Bot', '₿', 'USDT', getConn().crypto, cryptoData, '../trading-control-center/') +
+      renderBotCard('Aktien-Bot', '📈', 'USD', getConn().stocks, stocksData, '../stocks-live-setup/');
+  }
+
+  async function loadAll() {
+    const conn = getConn();
+    const [cryptoData, stocksData] = await Promise.all([
+      fetchStatus(conn.crypto.url, conn.crypto.key),
+      fetchStatus(conn.stocks.url, conn.stocks.key),
+    ]);
+    renderOverview(cryptoData, stocksData);
+    renderSignale(cryptoData, stocksData);
+    renderMap(cryptoData, stocksData);
+    renderEquityCurve(cryptoData, stocksData);
+    renderActivityFeed(cryptoData, stocksData);
+    renderTicker(cryptoData, stocksData);
+    renderHealthBadge(cryptoData, stocksData);
+    clearTimeout(window.__refreshTimer);
+    window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
+  }
+
+  // --- Partikel-Netzwerk-Hintergrund ---
+  (function initParticleNetwork() {
+    const canvas = document.getElementById('bgCanvas');
+    if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const ctx = canvas.getContext('2d');
+    let w, h, particles, running = false;
+    const ANZAHL = Math.max(24, Math.min(60, Math.floor((window.innerWidth * window.innerHeight) / 24000)));
+    const RADIUS = 130;
+    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+    function init() {
+      resize();
+      particles = Array.from({ length: ANZAHL }, () => ({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - 0.5) * 0.28, vy: (Math.random() - 0.5) * 0.28 }));
+    }
+    function tick() {
+      ctx.clearRect(0, 0, w, h);
+      for (const p of particles) { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > w) p.vx *= -1; if (p.y < 0 || p.y > h) p.vy *= -1; }
+      for (let i = 0; i < particles.length; i++) {
+        const a = particles[i];
+        ctx.beginPath(); ctx.arc(a.x, a.y, 1.3, 0, Math.PI * 2); ctx.fillStyle = 'rgba(62,242,160,.4)'; ctx.fill();
+        for (let j = i + 1; j < particles.length; j++) {
+          const b = particles[j];
+          const dx = a.x - b.x, dy = a.y - b.y, dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < RADIUS) {
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(62,242,160,${0.14 * (1 - dist / RADIUS)})`; ctx.lineWidth = 1; ctx.stroke();
+          }
+        }
+      }
+    }
+    function loop() { if (document.hidden) { running = false; return; } tick(); requestAnimationFrame(loop); }
+    function start() { if (!running) { running = true; requestAnimationFrame(loop); } }
+    init();
+    window.addEventListener('resize', init);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) start(); });
+    start();
+  })();
+
+  (function initHeroSpotlight() {
+    const hero = document.getElementById('heroEl');
+    if (!hero || window.matchMedia('(pointer:coarse)').matches) return;
+    hero.addEventListener('mousemove', (e) => {
+      const r = hero.getBoundingClientRect();
+      hero.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      hero.style.setProperty('--my', `${e.clientY - r.top}px`);
+    });
+  })();
+
+  renderTools();
+  loadAll();
+</script>
+</body>
+</html>
