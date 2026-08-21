@@ -33,6 +33,7 @@ import { pruefeUndSendeTagesZusammenfassung, pruefeUndSendeWochenZusammenfassung
 import { pruefeUndFuehreAdaptivesLernen } from './lib/learning.mjs';
 import { pruefeUndFuehreAutoBacktest } from './lib/autobacktest.mjs';
 import { pruefeUndFuehreAiReview } from './lib/ai-review.mjs';
+import { pruefeUndAktualisiereScanner } from './lib/scanner.mjs';
 import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtschaftskalender.mjs';
 import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
@@ -395,6 +396,11 @@ async function runAll(env) {
     await pruefeUndFuehreAiReview(env, cfg);
   } catch (err) {
     console.error('[trading-bot] Fehler beim AI Trade Review:', err);
+  }
+  try {
+    await pruefeUndAktualisiereScanner(env, cfg);
+  } catch (err) {
+    console.error('[trading-bot] Fehler beim Live Market Scanner:', err);
   }
 }
 

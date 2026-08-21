@@ -65,6 +65,10 @@ export function readConfig(env) {
     // eigener API-Aufruf. Default AUS.
     korrelationFilter: (env.STOCKS_KORRELATION_FILTER || 'nein') === 'ja',
     korrelationMaxWert: parseFloat(env.STOCKS_KORRELATION_MAX_WERT || '0.85'),
+    // Live Market Scanner (Pendant zum Krypto-Bot) - siehe lib/scanner.mjs.
+    // Rein informativ, deshalb standardmäßig an.
+    scanner: (env.STOCKS_SCANNER || 'ja') === 'ja',
+    scannerMomentumSchwelleProzent: parseFloat(env.STOCKS_SCANNER_MOMENTUM_SCHWELLE_PROZENT || '5'),
     // Kein externer API-Call, nutzt dieselben Kerzen wie die Strategie - im
     // Krypto-Bot bewährt, hier standardmäßig ebenfalls an.
     flashCrashFilter: (env.STOCKS_FLASH_CRASH_FILTER || 'ja') === 'ja',

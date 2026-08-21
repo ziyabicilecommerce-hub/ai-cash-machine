@@ -109,6 +109,13 @@ STOCKS_AI_REVIEW = "nein"
 STOCKS_KORRELATION_FILTER = "nein"
 STOCKS_KORRELATION_MAX_WERT = "0.85"
 
+# Live Market Scanner (siehe lib/scanner.mjs) - sucht täglich über die
+# konfigurierten STOCKS_SYMBOLS hinaus nach US-Aktien mit starkem Momentum
+# (Alpacas Movers-Screener, gleiche Keys wie der Live-Bot). Rein informativ,
+# fügt nie automatisch ein Symbol hinzu - deshalb standardmäßig an.
+STOCKS_SCANNER = "ja"
+STOCKS_SCANNER_MOMENTUM_SCHWELLE_PROZENT = "5"
+
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # STOCKS_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 

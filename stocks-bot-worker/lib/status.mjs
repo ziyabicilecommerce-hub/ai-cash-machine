@@ -118,6 +118,14 @@ export async function buildStatus(env) {
     // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
   }
 
+  let scanner = null;
+  try {
+    const raw = await env.STOCKS_STATE.get('scanner:trending');
+    if (raw) scanner = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   return {
     updatedAt: new Date().toISOString(),
     broker: 'alpaca-paper',
@@ -132,6 +140,7 @@ export async function buildStatus(env) {
     portfolioKennzahlen: berechneRisikoKennzahlen(alleTrades),
     aiReview,
     korrelation,
+    scanner,
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
       maxTagesverlustProzent: cfg.maxTagesverlustProzent,

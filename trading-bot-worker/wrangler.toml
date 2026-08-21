@@ -213,6 +213,13 @@ TRADING_AI_REVIEW = "nein"
 TRADING_KORRELATION_FILTER = "nein"
 TRADING_KORRELATION_MAX_WERT = "0.85"
 
+# Live Market Scanner (siehe lib/scanner.mjs) - sucht täglich über die
+# konfigurierten TRADING_SYMBOLS hinaus nach Coins mit starkem Momentum
+# (CoinGecko Top-100, kein API-Key). Rein informativ, fügt nie automatisch
+# ein Symbol hinzu - deshalb standardmäßig an.
+TRADING_SCANNER = "ja"
+TRADING_SCANNER_MOMENTUM_SCHWELLE_7D = "15"
+
 # Wirtschaftskalender-Filter (kein API-Key nötig, öffentliche Gratis-Quelle
 # nfs.faireconomy.media): pausiert Käufe rund um marktbewegende US-
 # Wirtschaftstermine (FOMC/CPI/NFP, "High Impact" USD-Events) - Krypto

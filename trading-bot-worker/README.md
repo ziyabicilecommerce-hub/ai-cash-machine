@@ -252,6 +252,23 @@ Dann `TRADING_AI_REVIEW = "ja"` in `wrangler.toml` setzen und deployen.
 Fehlt das Secret, wird der Check sauber übersprungen statt einen Fehler zu
 werfen.
 
+## Live Market Scanner (`lib/scanner.mjs`)
+
+Der Bot handelt nur die in `TRADING_SYMBOLS` konfigurierten Coins - aber am
+Markt laufen ständig andere Coins mit starkem Momentum. Einmal pro Tag
+durchsucht der Scanner CoinGeckos Top-100-Coins nach Marktkapitalisierung
+(kostenlos, kein API-Key) nach Symbolen AUSSERHALB der eigenen Liste mit
+starker 7-Tage-Rendite (`TRADING_SCANNER_MOMENTUM_SCHWELLE_7D`, Default
+15%) und positivem 24h-Trend. Ergebnis kommt per WhatsApp/Telegram und
+steht in `/status` als `scanner`-Feld (Trading Command zeigt es im
+Signale-Tab).
+
+**Rein informativ** - fügt NIE automatisch ein Symbol zum Bot hinzu.
+Coins ins Portfolio aufzunehmen bleibt bewusst eine manuelle Entscheidung
+(`TRADING_SYMBOLS` in `wrangler.toml` anpassen und deployen), damit nicht
+unbemerkt Kapital in unbeobachtete Coins fließt. Default an
+(`TRADING_SCANNER`), da ohne Verhaltensänderung.
+
 ## Korrelations-Filter (optional, `lib/korrelation.mjs`)
 
 Mehrere "verschiedene" Coins können real stark zusammenhängen (z.B. viele
