@@ -562,11 +562,27 @@ erklärt die Reihenfolge.
    https://cashmachine-trading-bot.<dein-account>.workers.dev/?key=<TRIGGER_SECRET>
    ```
 
-## State zurücksetzen
+## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
-Der State liegt in Cloudflare KV (`TRADING_STATE`, Key `state:<SYMBOL>`),
-nicht mehr in einer Git-Datei. Zum manuellen Zurücksetzen (z.B. nach einem
-ausgelösten Kill-Switch):
+`GET /reset-kill-switch?key=<TRIGGER_SECRET>&symbol=<SYMBOL>` setzt NUR
+`killSwitchAktiv`/`killSwitchBenachrichtigt` zurück — Kapital, Trade-
+Historie und alles vom adaptiven Lernen Gemerkte bleiben unangetastet. Der
+Bot handelt das Symbol ab dem nächsten Cron-Lauf wieder. Gleiches
+`TRIGGER_SECRET` wie der manuelle Test-Lauf, kein neues Secret nötig.
+```
+https://cashmachine-trading-bot.<dein-account>.workers.dev/reset-kill-switch?key=<TRIGGER_SECRET>&symbol=BTCUSDT
+```
+Bewusst **kein** automatischer Reset nach X Tagen und **kein** Knopf im
+Dashboard (das bleibt strikt rein lesend) — der Gesamtverlust-Kill-Switch
+ist die letzte Sicherheitslinie, ein Reset soll immer eine bewusste
+menschliche Entscheidung sein, nachdem man sich die Ursache angeschaut hat.
+
+## State komplett zurücksetzen (Holzhammer, löscht ALLES für das Symbol)
+
+Der State liegt in Cloudflare KV (`TRADING_STATE`, Key `state:<SYMBOL>`).
+Nur nötig, wenn wirklich bei null neu gestartet werden soll — löscht auch
+Trade-Historie und Kapitalstand, nicht nur den Kill-Switch (dafür siehe
+oben):
 ```bash
 wrangler kv key delete --binding=TRADING_STATE "state:BTCUSDT"
 ```

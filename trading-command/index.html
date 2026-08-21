@@ -455,8 +455,9 @@
       ...(stocksData && !stocksData.fehler ? (stocksData.symbole || []).filter((s) => s.killSwitchAktiv).map((s) => `📈 ${s.symbol}`) : []),
     ];
     html += `<div class="card filter-card"><div class="filter-top"><span class="filter-name">⛔ Kill-Switches</span></div>
-      <div class="filter-desc">Symbole, für die der Bot nach Tagesverlust-Grenze aktuell keine neuen Käufe mehr macht.</div>
+      <div class="filter-desc">Symbole, für die der Bot nach Gesamtverlust-Grenze aktuell keine neuen Käufe mehr macht. Bleibt aktiv, bis es bewusst zurückgesetzt wird - kein Automatismus, kein Knopf hier im Dashboard (bleibt strikt rein lesend).</div>
       ${killSwitchAlle.length ? killSwitchAlle.map((s) => `<div class="sig-row"><span>${s}</span><b style="color:var(--red)">Kill-Switch aktiv</b></div>`).join('') : '<div class="sig-row"><span>Kein Symbol</span><b style="color:var(--green)">alle frei</b></div>'}
+      ${killSwitchAlle.length ? '<div class="note">Reset nur bewusst per Worker-Endpoint: <code>/reset-kill-switch?key=&lt;TRIGGER_SECRET&gt;&amp;symbol=&lt;SYMBOL&gt;</code> - siehe README des jeweiligen Bots.</div>' : ''}
     </div>`;
 
     el.innerHTML = html;
