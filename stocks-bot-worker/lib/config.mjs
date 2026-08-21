@@ -60,6 +60,11 @@ export function readConfig(env) {
     // AI Trade Review (Pendant zum Krypto-Bot) - siehe lib/ai-review.mjs.
     // KOSTET ECHTES GELD pro Aufruf (Anthropic API), deshalb Default AUS.
     aiReview: (env.STOCKS_AI_REVIEW || 'nein') === 'ja',
+    // Korrelations-Filter (Pendant zum Krypto-Bot) - siehe lib/korrelation.mjs.
+    // Nutzt die wöchentlich vom Auto-Backtest mitberechnete Matrix, kein
+    // eigener API-Aufruf. Default AUS.
+    korrelationFilter: (env.STOCKS_KORRELATION_FILTER || 'nein') === 'ja',
+    korrelationMaxWert: parseFloat(env.STOCKS_KORRELATION_MAX_WERT || '0.85'),
     // Kein externer API-Call, nutzt dieselben Kerzen wie die Strategie - im
     // Krypto-Bot bewährt, hier standardmäßig ebenfalls an.
     flashCrashFilter: (env.STOCKS_FLASH_CRASH_FILTER || 'ja') === 'ja',

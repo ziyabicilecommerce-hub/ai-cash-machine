@@ -28,7 +28,7 @@ import { berechneIndikatoren, entscheideKauf, entscheideVerkauf, berechneFlashCr
 import { EXCHANGES } from './lib/exchanges.mjs';
 import { COINGECKO_IDS, ladePreisBestaetigung24h, ladeFearGreedIndex, ladeBtcDominanzProzent, hoehererZeitrahmenIstAufwaerts, ladeNewsSentimentProzent } from './lib/marktdaten.mjs';
 import { notify } from './lib/notify.mjs';
-import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, saveSystemInfo } from './lib/state.mjs';
+import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, sammleOffenePositionenSymbole, saveSystemInfo } from './lib/state.mjs';
 import { pruefeUndSendeTagesZusammenfassung, pruefeUndSendeWochenZusammenfassung, pruefeUndSendeMonatsZusammenfassung, pruefeUndFuehreKapitalRebalancing } from './lib/reports.mjs';
 import { pruefeUndFuehreAdaptivesLernen } from './lib/learning.mjs';
 import { pruefeUndFuehreAutoBacktest } from './lib/autobacktest.mjs';
@@ -39,7 +39,7 @@ import { readConfig } from './lib/config.mjs';
 
 // ================= HANDELSLOGIK =================
 
-async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, fearGreedWert, btcDominanzProzent, marktweiterCrashAktiv, newsEventAktiv) {
+async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, fearGreedWert, btcDominanzProzent, marktweiterCrashAktiv, newsEventAktiv, korrelationsMatrix, offenePositionenSymbole) {
   const exchange = EXCHANGES[cfg.exchange];
   let state = await loadState(env, symbol, startKapital);
 
@@ -145,6 +145,22 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       const spreadProzent = await exchange.getSpreadProzent(symbol);
       if (spreadProzent !== null && spreadProzent > cfg.spreadMaxProzent) {
         await notify(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - Bid/Ask-Spread bei ${spreadProzent.toFixed(2)}% (Schwelle ${cfg.spreadMaxProzent}%), Liquidität wirkt gerade gestört.`);
+        await saveState(env, symbol, state);
+        return;
+      }
+    }
+
+    // Konzentrationsrisiko: nicht in ein Symbol einsteigen, das stark mit
+    // einer bereits offenen Position korreliert ist (z.B. mehrere Altcoins,
+    // die real zusammen mit BTC fallen) - nutzt die wöchentlich vom
+    // Auto-Backtest mitberechnete Matrix, kein zusätzlicher API-Aufruf.
+    if (kauf && cfg.korrelationFilter && korrelationsMatrix && offenePositionenSymbole && offenePositionenSymbole.length) {
+      const zeile = korrelationsMatrix[symbol];
+      const korrelierteOffene = zeile
+        ? offenePositionenSymbole.filter((s) => s !== symbol && zeile[s] != null && zeile[s] >= cfg.korrelationMaxWert)
+        : [];
+      if (korrelierteOffene.length) {
+        await notify(env, `⚠️ Trading-Bot (${symbol}): Kaufsignal übersprungen - Korrelation ≥${cfg.korrelationMaxWert} zu bereits offener Position (${korrelierteOffene.join(', ')}), Konzentrationsrisiko vermeiden.`);
         await saveState(env, symbol, state);
         return;
       }
@@ -258,6 +274,23 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
 async function runAll(env) {
   const cfg = readConfig(env);
   let offenePositionen = await zaehleOffenePositionen(env, cfg.symbols, cfg.startKapitalProSymbol);
+
+  // Für den Korrelations-Filter EINMAL pro Lauf geladen (nicht pro Symbol) -
+  // die Matrix ändert sich nur wöchentlich, die offenen Positionen ändern
+  // sich innerhalb des Laufs (siehe Update nach jedem runSymbol unten, hier
+  // reicht der Stand vor dem Lauf).
+  let korrelationsMatrix = null;
+  if (cfg.korrelationFilter) {
+    try {
+      const raw = await env.TRADING_STATE.get('korrelation:matrix');
+      if (raw) korrelationsMatrix = JSON.parse(raw).matrix;
+    } catch (err) {
+      console.error('[trading-bot] Korrelationsmatrix konnte nicht geladen werden:', err);
+    }
+  }
+  const offenePositionenSymbole = cfg.korrelationFilter
+    ? await sammleOffenePositionenSymbole(env, cfg.symbols, cfg.startKapitalProSymbol)
+    : [];
   // Nur EINMAL pro Lauf abgefragt (marktweiter Wert, gilt für alle Symbole
   // gleich) statt pro Symbol - spart Anfragen und ist konsistent für alle
   // Coins in diesem Lauf.
@@ -319,10 +352,10 @@ async function runAll(env) {
         ? { ...cfg, strategie: cfg.strategieProSymbol[symbol] }
         : cfg;
       const hatteVorherPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
-      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfgSymbol, offenePositionen, fearGreedWert, btcDominanzProzent, marktweiterCrashAktiv, newsEventAktiv);
+      await runSymbol(env, symbol, cfg.startKapitalProSymbol, cfgSymbol, offenePositionen, fearGreedWert, btcDominanzProzent, marktweiterCrashAktiv, newsEventAktiv, korrelationsMatrix, offenePositionenSymbole);
       const hatJetztPosition = (await loadState(env, symbol, cfg.startKapitalProSymbol)).position !== null;
-      if (!hatteVorherPosition && hatJetztPosition) offenePositionen++;
-      if (hatteVorherPosition && !hatJetztPosition) offenePositionen--;
+      if (!hatteVorherPosition && hatJetztPosition) { offenePositionen++; offenePositionenSymbole.push(symbol); }
+      if (hatteVorherPosition && !hatJetztPosition) { offenePositionen--; offenePositionenSymbole.splice(offenePositionenSymbole.indexOf(symbol), 1); }
     } catch (err) {
       console.error(`[trading-bot] Fehler bei ${symbol}:`, err);
       await notify(env, `🛑 Trading-Bot (${symbol}): Lauf mit Fehler abgebrochen - ${err.message || err}. Eine Order wurde dadurch möglicherweise NICHT ausgeführt, bitte Konto manuell prüfen.`);

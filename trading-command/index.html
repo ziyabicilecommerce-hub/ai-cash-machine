@@ -412,6 +412,37 @@
     return `<div class="sig-row"><span>${label}</span><span>${aktiv ? '<b style="color:var(--red)">● aktiv</b>' : '<b style="color:var(--green)">○ inaktiv</b>'}${meta ? ` · ${meta}` : ''}</span></div>`;
   }
 
+  // Rot = stark positiv korreliert (Konzentrationsrisiko), grün = wenig/
+  // negativ korreliert (echte Diversifikation), grau = zu wenig Daten.
+  function korrelationsFarbe(wert) {
+    if (wert == null) return 'rgba(220,235,230,.15)';
+    if (wert >= 0.7) return 'rgba(255,107,129,.75)';
+    if (wert >= 0.4) return 'rgba(255,197,92,.6)';
+    if (wert >= 0) return 'rgba(62,242,160,.35)';
+    return 'rgba(111,224,255,.35)';
+  }
+
+  function renderKorrelationCard(botLabel, korrelation) {
+    if (!korrelation || !korrelation.matrix) return '';
+    const symbole = Object.keys(korrelation.matrix);
+    if (symbole.length < 2) return '';
+    let tabelle = '<div style="overflow-x:auto;"><table style="border-collapse:collapse;font-family:var(--mono);font-size:10.5px;margin-top:8px;">';
+    tabelle += '<tr><td></td>' + symbole.map((s) => `<td style="padding:4px 6px;color:var(--mut2);text-align:center;">${s}</td>`).join('') + '</tr>';
+    for (const zeile of symbole) {
+      tabelle += `<tr><td style="padding:4px 6px;color:var(--mut2);">${zeile}</td>`;
+      for (const spalte of symbole) {
+        const wert = korrelation.matrix[zeile][spalte];
+        tabelle += `<td style="padding:4px 6px;text-align:center;background:${korrelationsFarbe(wert)};color:var(--txt);" title="${zeile} × ${spalte}">${wert == null ? '–' : wert.toFixed(2)}</td>`;
+      }
+      tabelle += '</tr>';
+    }
+    tabelle += '</table></div>';
+    return `<div class="card filter-card"><div class="filter-top"><span class="filter-name">🔗 Korrelations-Matrix — ${botLabel}</span></div>
+      <div class="filter-desc">Kursrenditen-Korrelation der letzten ${korrelation.tageZurueck} Tage (Pearson, -1 bis 1) - Stand ${fmtDatum(korrelation.berechnetAm)}. Rot = stark positiv korreliert (Konzentrationsrisiko bei gleichzeitigen Positionen).</div>
+      ${tabelle}
+    </div>`;
+  }
+
   function renderSignale(cryptoData, stocksData) {
     const el = document.getElementById('signaleContent');
     if ((!cryptoData || cryptoData.fehler) && (!stocksData || stocksData.fehler)) {
@@ -476,6 +507,9 @@
         return `<div class="sig-row"><span>${s.icon} ${s.symbol} <span style="color:var(--mut2)">(${b.strategie}, ${fmtDatum(b.berechnetAm)})</span></span><b style="color:${retFarbe};font-family:var(--mono)">${b.gesamtReturnProzent >= 0 ? '+' : ''}${b.gesamtReturnProzent.toFixed(1)}% · ${b.anzahlTrades} Trades${b.winRateProzent != null ? ` · WR ${b.winRateProzent.toFixed(0)}%` : ''} · DD -${b.maxDrawdownProzent.toFixed(1)}%</b></div>`;
       }).join('') : '<div class="sig-row"><span>Noch kein Lauf</span><b style="color:var(--mut2)">erscheint nach dem ersten Montag im 5-Minuten-Cron</b></div>'}
     </div>`;
+
+    html += renderKorrelationCard('₿ Krypto-Bot', cryptoData && !cryptoData.fehler ? cryptoData.korrelation : null);
+    html += renderKorrelationCard('📈 Aktien-Bot', stocksData && !stocksData.fehler ? stocksData.korrelation : null);
 
     const killSwitchAlle = [
       ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).filter((s) => s.killSwitchAktiv).map((s) => `₿ ${s.symbol}`) : []),

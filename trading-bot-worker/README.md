@@ -252,6 +252,23 @@ Dann `TRADING_AI_REVIEW = "ja"` in `wrangler.toml` setzen und deployen.
 Fehlt das Secret, wird der Check sauber übersprungen statt einen Fehler zu
 werfen.
 
+## Korrelations-Filter (optional, `lib/korrelation.mjs`)
+
+Mehrere "verschiedene" Coins können real stark zusammenhängen (z.B. viele
+Altcoins fallen zusammen mit BTC) - mehrere gleichzeitig offene Positionen
+in stark korrelierten Symbolen sind dann kein echtes Diversifikations-,
+sondern ein verstecktes Konzentrationsrisiko. Der wöchentliche Auto-
+Backtest berechnet nebenbei (mit denselben schon geladenen Kerzen, kein
+zusätzlicher API-Aufruf) eine Symbol×Symbol-Korrelationsmatrix und
+speichert sie nach KV. `/status` liefert sie als `korrelation`-Feld,
+Trading Command zeigt sie als Heatmap im Signale-Tab.
+
+Optional als echter Filter nutzbar: `TRADING_KORRELATION_FILTER = "ja"`
+blockiert einen neuen Kauf, wenn bereits eine Position in einem Symbol
+offen ist, dessen Korrelation zum Kandidaten `TRADING_KORRELATION_MAX_WERT`
+(Default 0.85) erreicht oder übersteigt. Default AUS wie jeder neue
+risikoverändernde Filter.
+
 ## Tägliche WhatsApp-Zusammenfassung
 
 Zusätzlich zu den Alarmen bei einzelnen Ereignissen (Einstieg, Ausstieg,
