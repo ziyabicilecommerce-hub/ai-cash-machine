@@ -30,6 +30,7 @@ import { hoehererZeitrahmenIstAufwaerts } from './lib/multitimeframe.mjs';
 import { pruefeUndFuehreAutoBacktest } from './lib/autobacktest.mjs';
 import { pruefeUndFuehreAiReview } from './lib/ai-review.mjs';
 import { pruefeUndAktualisiereScanner } from './lib/scanner.mjs';
+import { pruefeUndAktualisiereMonteCarlo } from './lib/montecarlo.mjs';
 
 async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv, marktweiterCrashAktiv, korrelationsMatrix, offenePositionenSymbole) {
   let state = await loadState(env, symbol, startKapital);
@@ -293,6 +294,11 @@ async function runAll(env) {
     await pruefeUndAktualisiereScanner(env, cfg);
   } catch (err) {
     console.error('[stocks-bot] Fehler beim Live Market Scanner:', err);
+  }
+  try {
+    await pruefeUndAktualisiereMonteCarlo(env, cfg);
+  } catch (err) {
+    console.error('[stocks-bot] Fehler bei der Monte-Carlo-Simulation:', err);
   }
 }
 

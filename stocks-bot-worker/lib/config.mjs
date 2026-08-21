@@ -69,6 +69,10 @@ export function readConfig(env) {
     // Rein informativ, deshalb standardmäßig an.
     scanner: (env.STOCKS_SCANNER || 'ja') === 'ja',
     scannerMomentumSchwelleProzent: parseFloat(env.STOCKS_SCANNER_MOMENTUM_SCHWELLE_PROZENT || '5'),
+    // Monte-Carlo-Simulation der eigenen Trade-Historie (Pendant zum
+    // Krypto-Bot) - siehe lib/montecarlo.mjs. Reine In-Memory-Statistik,
+    // kein API-Call, deshalb standardmäßig an.
+    monteCarlo: (env.STOCKS_MONTE_CARLO || 'ja') === 'ja',
     // Kein externer API-Call, nutzt dieselben Kerzen wie die Strategie - im
     // Krypto-Bot bewährt, hier standardmäßig ebenfalls an.
     flashCrashFilter: (env.STOCKS_FLASH_CRASH_FILTER || 'ja') === 'ja',

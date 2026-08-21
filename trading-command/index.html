@@ -422,6 +422,26 @@
     return 'rgba(111,224,255,.35)';
   }
 
+  function renderMonteCarloCard(botLabel, symbole) {
+    if (!symbole) return '';
+    const mitSimulation = symbole.filter((s) => s.monteCarlo);
+    if (!mitSimulation.length) return '';
+    const zeilen = mitSimulation.map((s) => {
+      const mc = s.monteCarlo;
+      const spannweiteProzent = ((mc.p95 - mc.p5) / mc.startKapital) * 100;
+      const medianProzent = ((mc.p50 - mc.startKapital) / mc.startKapital) * 100;
+      const killFarbe = mc.wahrscheinlichkeitKillSwitchProzent >= 20 ? 'var(--red)' : mc.wahrscheinlichkeitKillSwitchProzent >= 5 ? 'var(--amber)' : 'var(--mut2)';
+      return `<div class="sig-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+        <div style="display:flex;justify-content:space-between;width:100%;"><span>${s.symbol}</span><b style="font-family:var(--mono)">Median ${medianProzent >= 0 ? '+' : ''}${medianProzent.toFixed(1)}% · Spanne ±${(spannweiteProzent / 2).toFixed(1)}%</b></div>
+        <div style="font-family:var(--mono);font-size:10.5px;color:var(--mut2);">${mc.wahrscheinlichkeitProfitabelProzent.toFixed(0)}% der Pfade profitabel · <span style="color:${killFarbe}">${mc.wahrscheinlichkeitKillSwitchProzent.toFixed(0)}% erreichen den Kill-Switch</span> (${mc.anzahlSimulationen} Simulationen, Basis ${mc.basisTrades} echte Trades)</div>
+      </div>`;
+    }).join('');
+    return `<div class="card filter-card"><div class="filter-top"><span class="filter-name">🎲 Zukunfts-Szenarien (Monte-Carlo) — ${botLabel}</span></div>
+      <div class="filter-desc">Bootstrap-Simulation der nächsten 30 Trades aus der eigenen Trade-Historie - KEINE Vorhersage, reine Statistik unter der Annahme, dass künftige Trades sich ähnlich verteilen wie bisherige.</div>
+      ${zeilen}
+    </div>`;
+  }
+
   function renderScannerCard(botLabel, icon, scanner, changeFeld, zeitraumLabel) {
     if (!scanner) return '';
     const treffer = scanner.treffer || [];
@@ -517,6 +537,9 @@
         return `<div class="sig-row"><span>${s.icon} ${s.symbol} <span style="color:var(--mut2)">(${b.strategie}, ${fmtDatum(b.berechnetAm)})</span></span><b style="color:${retFarbe};font-family:var(--mono)">${b.gesamtReturnProzent >= 0 ? '+' : ''}${b.gesamtReturnProzent.toFixed(1)}% · ${b.anzahlTrades} Trades${b.winRateProzent != null ? ` · WR ${b.winRateProzent.toFixed(0)}%` : ''} · DD -${b.maxDrawdownProzent.toFixed(1)}%</b></div>`;
       }).join('') : '<div class="sig-row"><span>Noch kein Lauf</span><b style="color:var(--mut2)">erscheint nach dem ersten Montag im 5-Minuten-Cron</b></div>'}
     </div>`;
+
+    html += renderMonteCarloCard('₿ Krypto-Bot', cryptoData && !cryptoData.fehler ? cryptoData.symbole : null);
+    html += renderMonteCarloCard('📈 Aktien-Bot', stocksData && !stocksData.fehler ? stocksData.symbole : null);
 
     html += renderScannerCard('₿ Krypto-Bot', '🔍', cryptoData && !cryptoData.fehler ? cryptoData.scanner : null, 'change7dProzent', '7T');
     html += renderScannerCard('📈 Aktien-Bot', '🔍', stocksData && !stocksData.fehler ? stocksData.scanner : null, 'changeProzent', 'heute');

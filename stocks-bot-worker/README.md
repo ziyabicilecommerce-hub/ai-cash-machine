@@ -168,6 +168,14 @@ Optional als Filter: `STOCKS_KORRELATION_FILTER = "ja"` blockiert einen
 neuen Kauf, wenn bereits eine Position in einem stark korrelierten Symbol
 offen ist (`STOCKS_KORRELATION_MAX_WERT`, Default 0.85). Default AUS.
 
+**Monte-Carlo-Simulation** (`lib/montecarlo.mjs`, Pendant zum Krypto-Bot):
+wöchentliches Bootstrap-Resampling der eigenen Trade-Historie (2000
+simulierte Pfade der nächsten 30 Trades pro Symbol) - Bandbreite möglicher
+Ergebnisse (Perzentile) statt einer einzelnen Prognose, plus Wahrscheinlich-
+keit für Profitabilität bzw. Kill-Switch. KEINE Vorhersage, reine Statistik,
+erst ab 15 Trades pro Symbol aktiv. `/status` liefert es als `monteCarlo`-
+Feld, Trading Command zeigt es als "🎲 Zukunfts-Szenarien". Default an.
+
 **Live Market Scanner** (`lib/scanner.mjs`, Pendant zum Krypto-Bot): sucht
 einmal pro Tag über Alpacas Movers-Screener (`/v1beta1/screener/stocks/
 movers`, gleiche Keys wie der Live-Bot, kein neues Secret) nach US-Aktien
