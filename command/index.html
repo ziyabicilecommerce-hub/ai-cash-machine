@@ -577,6 +577,7 @@
   <div id="aiCeoHealthContent"></div>
   <div id="criticalEventsContent"></div>
   <div id="kpiScoreboardContent"></div>
+  <div id="auditLogContent"></div>
 </section>
 
 <section class="panel show" id="panel-ceo">
@@ -2344,6 +2345,71 @@
       <p class="note">Trading-Bot-Kennzahlen sind hier bewusst nicht dabei - eigener Tab, eigene Verbindung.</p>`;
   }
 
+  // --- AI-CEO: Audit-Log - jede echte Einzel-Entscheidung der 4 Handlungs-
+  // Agenten chronologisch an einer Stelle (Preisänderung, Pausierung,
+  // Budget-Shift, Nachbestellung), die die Activity-Tab bewusst NICHT
+  // abdeckt (die zeigt Ketten/Referral/Social/CEO/Brand/Product). Jede
+  // Zeile direkt aus der jeweiligen echten historie - nichts zusammengefasst
+  // oder interpretiert.
+  function sammleAuditEintraege(pricingHistorie, splitTest, adsAutopilot, reorder) {
+    const eintraege = [];
+
+    for (const a of (pricingHistorie && pricingHistorie.historie) || []) {
+      eintraege.push({
+        datum: a.datum, icon: '💰',
+        titel: `${a.name}: ${a.alt.toFixed(2)} € → ${a.neu.toFixed(2)} € (${a.richtung === 'hoch' ? 'RAUF' : 'RUNTER'})`,
+        detail: `${a.grund} — ${a.ausgefuehrt ? 'live geändert' : 'nur empfohlen'}`,
+        quelle: 'Pricing-Agent #61',
+      });
+    }
+    for (const e of (splitTest && splitTest.historie) || []) {
+      eintraege.push({
+        datum: e.datum, icon: '🧪',
+        titel: `${e.kampagne}: "${e.gewinner.name}" schlägt "${e.verlierer.name}"`,
+        detail: `${e.unterschiedProzent}% Unterschied — ${e.ausgefuehrt ? 'Verlierer pausiert' : 'nur empfohlen'}`,
+        quelle: 'Split-Test-Agent #88',
+      });
+    }
+    for (const a of (adsAutopilot && adsAutopilot.historie) || []) {
+      eintraege.push({
+        datum: a.datum, icon: '📊',
+        titel: `${a.bester.name} ← ${a.schwaechster.name}: ${(a.shiftCent / 100).toFixed(2)} € umgeschichtet`,
+        detail: `ROAS ${a.bester.roas} vs. ${a.schwaechster.roas} — ${a.ausgefuehrt ? 'live umgeschichtet' : 'nur empfohlen'}`,
+        quelle: 'Ads-Autopilot-Agent #64',
+      });
+    }
+    for (const r of (reorder && reorder.historie) || []) {
+      eintraege.push({
+        datum: r.angefragtAm, icon: '📦',
+        titel: `${r.mengeAngefragt}x ${r.name} nachbestellt (SKU ${r.sku})`,
+        detail: `Bestand bei Anfrage: ${r.bestandBeiAnfrage}`,
+        quelle: 'Reorder-Agent #63',
+      });
+    }
+
+    eintraege.sort((a, b) => new Date(b.datum) - new Date(a.datum));
+    return eintraege;
+  }
+
+  function renderAuditLog(pricingHistorie, splitTest, adsAutopilot, reorder) {
+    const el = document.getElementById('auditLogContent');
+    if (!el) return;
+    const eintraege = sammleAuditEintraege(pricingHistorie, splitTest, adsAutopilot, reorder);
+    let html = `<div class="section-title-inline">📜 AUDIT-LOG — ECHTE ENTSCHEIDUNGEN DER HANDLUNGS-AGENTEN</div>`;
+    if (!eintraege.length) {
+      html += emptyHtml('📜', 'Noch keine Entscheidungen protokolliert', 'Erscheint, sobald Pricing-, Split-Test-, Ads-Autopilot- oder Reorder-Agent zum ersten Mal eine Preisänderung, Pausierung, Budget-Umschichtung oder Nachbestellung vorschlagen bzw. ausführen.');
+    } else {
+      html += eintraege.slice(0, 40).map((e) => `
+        <div class="activity-row">
+          <div class="activity-icon">${e.icon}</div>
+          <div class="activity-body">${e.titel}<div class="activity-src">${e.detail} · ${e.quelle}</div></div>
+          <div class="activity-time">${fmtDatumKurz(e.datum)}</div>
+        </div>`).join('');
+      html += `<p class="note">Zeigt die letzten ${Math.min(40, eintraege.length)} von ${eintraege.length} protokollierten Entscheidungen.</p>`;
+    }
+    el.innerHTML = html;
+  }
+
   function renderHealthBadge(cockpit, eskalationenAnzahl) {
     if (!cockpit) return; // Cockpit-Daten noch nicht geladen - laufenden Badge-Stand nicht mit leer überschreiben
     const wrap = document.getElementById('healthBadgeWrap');
@@ -2671,6 +2737,7 @@
       renderAiCeoHealth(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm);
       renderCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl);
       renderKpiScoreboard(analytics, ads, cockpit, customerSegmente, eskalationenAnzahl);
+      renderAuditLog(pricingHistorie, splitTest, adsAutopilot, reorder);
 
       const neuesteKette = chains && Array.isArray(chains.log) && chains.log.length ? chains.log[0] : null;
       if (neuesteKette && neuesteKette.ausgeloest && letzteChainZeit !== null && neuesteKette.datum !== letzteChainZeit) {
