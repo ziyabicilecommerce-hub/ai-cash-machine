@@ -96,6 +96,12 @@ STOCKS_MTF_INTERVAL_MINUTEN = "240"
 # Kapital/Position, deshalb standardmäßig an.
 STOCKS_AUTO_BACKTEST = "ja"
 
+# AI Trade Review (siehe lib/ai-review.mjs) - KOSTET ECHTES GELD pro Aufruf
+# (Anthropic API, einmal pro Woche wenn "ja"), deshalb Default AUS. Braucht
+# zusätzlich das ANTHROPIC_API_KEY-Secret (per `wrangler secret put`, NICHT
+# hier eintragen).
+STOCKS_AI_REVIEW = "nein"
+
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # STOCKS_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 

@@ -200,6 +200,12 @@ TRADING_ADAPTIVES_LERNEN_MIN_TRADES = "10"
 # deshalb standardmäßig an.
 TRADING_AUTO_BACKTEST = "ja"
 
+# AI Trade Review (siehe lib/ai-review.mjs) - KOSTET ECHTES GELD pro Aufruf
+# (Anthropic API, einmal pro Woche wenn "ja"), deshalb Default AUS. Braucht
+# zusätzlich das ANTHROPIC_API_KEY-Secret (per `wrangler secret put`, NICHT
+# hier eintragen).
+TRADING_AI_REVIEW = "nein"
+
 # Wirtschaftskalender-Filter (kein API-Key nötig, öffentliche Gratis-Quelle
 # nfs.faireconomy.media): pausiert Käufe rund um marktbewegende US-
 # Wirtschaftstermine (FOMC/CPI/NFP, "High Impact" USD-Events) - Krypto
