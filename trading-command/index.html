@@ -422,6 +422,16 @@
     return 'rgba(111,224,255,.35)';
   }
 
+  function renderScannerCard(botLabel, icon, scanner, changeFeld, zeitraumLabel) {
+    if (!scanner) return '';
+    const treffer = scanner.treffer || [];
+    return `<div class="card filter-card"><div class="filter-top"><span class="filter-name">${icon} Live Market Scanner — ${botLabel}</span></div>
+      <div class="filter-desc">Symbole AUSSERHALB der konfigurierten Liste mit starkem Momentum (Stand ${fmtDatum(scanner.berechnetAm)}) - rein informativ, wird nie automatisch gehandelt.</div>
+      ${treffer.length ? treffer.map((t) => `<div class="sig-row"><span>${t.symbol}${t.name ? ` (${t.name})` : ''}</span><b style="color:var(--green);font-family:var(--mono)">+${t[changeFeld].toFixed(1)}% (${zeitraumLabel})</b></div>`).join('')
+        : '<div class="sig-row"><span>Aktuell nichts</span><b style="color:var(--mut2)">kein Symbol über der Momentum-Schwelle</b></div>'}
+    </div>`;
+  }
+
   function renderKorrelationCard(botLabel, korrelation) {
     if (!korrelation || !korrelation.matrix) return '';
     const symbole = Object.keys(korrelation.matrix);
@@ -507,6 +517,9 @@
         return `<div class="sig-row"><span>${s.icon} ${s.symbol} <span style="color:var(--mut2)">(${b.strategie}, ${fmtDatum(b.berechnetAm)})</span></span><b style="color:${retFarbe};font-family:var(--mono)">${b.gesamtReturnProzent >= 0 ? '+' : ''}${b.gesamtReturnProzent.toFixed(1)}% · ${b.anzahlTrades} Trades${b.winRateProzent != null ? ` · WR ${b.winRateProzent.toFixed(0)}%` : ''} · DD -${b.maxDrawdownProzent.toFixed(1)}%</b></div>`;
       }).join('') : '<div class="sig-row"><span>Noch kein Lauf</span><b style="color:var(--mut2)">erscheint nach dem ersten Montag im 5-Minuten-Cron</b></div>'}
     </div>`;
+
+    html += renderScannerCard('₿ Krypto-Bot', '🔍', cryptoData && !cryptoData.fehler ? cryptoData.scanner : null, 'change7dProzent', '7T');
+    html += renderScannerCard('📈 Aktien-Bot', '🔍', stocksData && !stocksData.fehler ? stocksData.scanner : null, 'changeProzent', 'heute');
 
     html += renderKorrelationCard('₿ Krypto-Bot', cryptoData && !cryptoData.fehler ? cryptoData.korrelation : null);
     html += renderKorrelationCard('📈 Aktien-Bot', stocksData && !stocksData.fehler ? stocksData.korrelation : null);

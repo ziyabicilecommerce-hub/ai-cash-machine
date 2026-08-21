@@ -168,6 +168,17 @@ Optional als Filter: `STOCKS_KORRELATION_FILTER = "ja"` blockiert einen
 neuen Kauf, wenn bereits eine Position in einem stark korrelierten Symbol
 offen ist (`STOCKS_KORRELATION_MAX_WERT`, Default 0.85). Default AUS.
 
+**Live Market Scanner** (`lib/scanner.mjs`, Pendant zum Krypto-Bot): sucht
+einmal pro Tag über Alpacas Movers-Screener (`/v1beta1/screener/stocks/
+movers`, gleiche Keys wie der Live-Bot, kein neues Secret) nach US-Aktien
+AUSSERHALB der konfigurierten `STOCKS_SYMBOLS` mit starkem Momentum
+(`STOCKS_SCANNER_MOMENTUM_SCHWELLE_PROZENT`, Default 5%). Rein informativ,
+fügt nie automatisch ein Symbol hinzu. Default an. **Hinweis:** der genaue
+Antwort-Aufbau dieses Alpaca-Endpoints konnte beim Bau nicht live gegen
+ein echtes Konto getestet werden (kein API-Key in der Bau-Umgebung
+verfügbar) - nach dem ersten echten Lauf einmal die Benachrichtigung
+gegenprüfen.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch

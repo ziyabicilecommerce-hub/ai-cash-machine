@@ -180,6 +180,14 @@ export async function buildStatus(env) {
     // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
   }
 
+  let scanner = null;
+  try {
+    const raw = await env.TRADING_STATE.get('scanner:trending');
+    if (raw) scanner = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   return {
     updatedAt: new Date().toISOString(),
     exchange: cfg.exchange,
@@ -199,6 +207,7 @@ export async function buildStatus(env) {
     portfolioKennzahlen: berechneRisikoKennzahlen(alleTrades),
     aiReview,
     korrelation,
+    scanner,
     risikoStatus: berechneRisikoStatus(symbole, cfg, systemInfo.marktweiterCrashAktiv, systemInfo.newsEventAktiv),
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,

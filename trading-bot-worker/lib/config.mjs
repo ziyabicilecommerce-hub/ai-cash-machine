@@ -143,6 +143,11 @@ export function readConfig(env) {
     // neue risikoverändernde Filter.
     korrelationFilter: (env.TRADING_KORRELATION_FILTER || 'nein') === 'ja',
     korrelationMaxWert: parseFloat(env.TRADING_KORRELATION_MAX_WERT || '0.85'),
+    // Live Market Scanner - siehe lib/scanner.mjs. Rein informativ (fügt
+    // NIE automatisch ein Symbol zum Bot hinzu), deshalb standardmäßig an,
+    // wie Auto-Backtest.
+    scanner: (env.TRADING_SCANNER || 'ja') === 'ja',
+    scannerMomentumSchwelle7d: parseFloat(env.TRADING_SCANNER_MOMENTUM_SCHWELLE_7D || '15'),
     // Wirtschaftskalender-Filter - siehe lib/wirtschaftskalender.mjs. Kein
     // API-Key nötig, keine gemessenen Nachteile (pausiert nur kurze
     // Zeitfenster rund um wenige High-Impact-USD-Events pro Woche),
