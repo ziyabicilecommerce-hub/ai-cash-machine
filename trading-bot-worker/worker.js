@@ -388,6 +388,34 @@ export default {
       });
     }
 
+    // Setzt NUR den Kill-Switch EINES Symbols zurück (killSwitchAktiv/
+    // killSwitchBenachrichtigt) - Kapital, Trade-Historie und alles vom
+    // adaptiven Lernen Gemerkte bleiben unangetastet. Bewusst EXPLIZIT und
+    // einzeln pro Symbol statt automatisch nach X Tagen: der Gesamtverlust-
+    // Kill-Switch ist die letzte Sicherheitslinie - ein automatischer Reset
+    // würde eine verlustreiche Konfiguration ohne menschliche Prüfung
+    // wieder scharf schalten. Gleiches TRIGGER_SECRET wie der manuelle
+    // Lauf-Auslöser (kein neues Secret nötig).
+    if (url.pathname === '/reset-kill-switch' && request.method === 'GET') {
+      if (!env.TRIGGER_SECRET || url.searchParams.get('key') !== env.TRIGGER_SECRET) {
+        return new Response('Forbidden', { status: 403 });
+      }
+      const symbol = url.searchParams.get('symbol');
+      const cfg = readConfig(env);
+      if (!symbol || !cfg.symbols.includes(symbol)) {
+        return new Response(`Unbekanntes oder fehlendes ?symbol= - gültig: ${cfg.symbols.join(', ')}`, { status: 400 });
+      }
+      const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
+      if (!state.killSwitchAktiv) {
+        return new Response(`${symbol}: Kill-Switch war nicht aktiv, nichts geändert.`, { status: 200 });
+      }
+      state.killSwitchAktiv = false;
+      state.killSwitchBenachrichtigt = false;
+      await saveState(env, symbol, state);
+      await notify(env, `✅ Trading-Bot (${symbol}): Kill-Switch manuell zurückgesetzt. Kapital: ${state.kapital.toFixed(2)} USDT. Handelt ${symbol} ab dem nächsten Lauf wieder.`);
+      return new Response(`${symbol}: Kill-Switch zurückgesetzt.`, { status: 200 });
+    }
+
     // Manuelles Auslösen nur mit korrektem Trigger-Secret - sonst könnte
     // jeder, der die öffentliche Worker-URL kennt, echte Trades auslösen.
     if (url.searchParams.get('key') !== env.TRIGGER_SECRET || !env.TRIGGER_SECRET) {

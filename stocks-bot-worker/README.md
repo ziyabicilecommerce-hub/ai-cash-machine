@@ -112,7 +112,19 @@ man länger im Paper-Modus beobachtet.
 
 - `GET /status?key=<STATUS_READ_KEY>` — rein lesend, wie beim Krypto-Bot.
 - `GET /export?key=<STATUS_READ_KEY>` — CSV-Export der Trade-Historie.
+- `GET /reset-kill-switch?key=<TRIGGER_SECRET>&symbol=<SYMBOL>` — setzt NUR
+  den Kill-Switch dieses Symbols zurück, Kapital/Trade-Historie/Insider-
+  Signal bleiben unangetastet. Bewusst kein automatischer Reset und kein
+  Dashboard-Knopf — soll immer eine bewusste Entscheidung sein.
 - `GET /?key=<TRIGGER_SECRET>` — manueller Test-Lauf.
+
+## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
+
+Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch
+Trade-Historie und Kapitalstand für das Symbol):
+```bash
+wrangler kv key delete --binding=STOCKS_STATE "state:AAPL"
+```
 
 ## Konfiguration
 
