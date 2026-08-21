@@ -573,8 +573,10 @@
 
 <section class="panel" id="panel-aiceo">
   <div class="panel-title">AI CEO — Business Health Score</div>
-  <p class="panel-desc">Erster Baustein einer neuen Ebene über allen Modulen (Ecommerce, Ads, Produkte, Trading, Kunden): EINE Kennzahl 0–100, komposit aus echten Signalen, die die Suite selbst schon liefert — keine geschätzten Zahlen, jede Komponente einzeln nachvollziehbar. Wird schrittweise um globalen Notaus-Schalter, Audit-Log und KPI-Scoreboard ausgebaut.</p>
+  <p class="panel-desc">Neue Ebene über allen Modulen (Ecommerce, Ads, Produkte, Trading, Kunden): EIN Health Score, EIN Critical-Events-Feed und EIN KPI-Scoreboard, komposit aus echten Signalen, die die Suite selbst schon liefert — keine geschätzten Zahlen, jede Komponente einzeln nachvollziehbar. Ein schreibender globaler Notaus (live von hier aus alle AUTO_*-Schalter kippen) braucht eine eigene Backend-Anbindung und ist bewusst noch nicht Teil davon — hier siehst du live, ob überhaupt etwas brennt.</p>
   <div id="aiCeoHealthContent"></div>
+  <div id="criticalEventsContent"></div>
+  <div id="kpiScoreboardContent"></div>
 </section>
 
 <section class="panel show" id="panel-ceo">
@@ -2248,6 +2250,100 @@
       }).join('')}`;
   }
 
+  // --- AI-CEO: Critical Events Center - alles, was JETZT Aufmerksamkeit
+  // braucht, an einer Stelle (nicht die historische Activity, sondern nur
+  // der aktuell aktive Zustand: ausgelöste Notbremsen, selbstgebremste
+  // Agenten, offene Eskalationen, nie gelaufene/fehlgeschlagene Automationen).
+  function sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl) {
+    const events = [];
+
+    if (adsNotbremse && adsNotbremse.ausgeloest) {
+      events.push({ icon: '🛑', titel: 'Ads-Notbremse ausgelöst (#43)', detail: `ROAS ${adsNotbremse.roas} unter kritischer Schwelle ${adsNotbremse.kritischerRoas}`, alarm: true });
+    }
+    if (refundAlarm && refundAlarm.ausgeloest) {
+      events.push({ icon: '🛑', titel: 'Refund-Spike-Alarm ausgelöst (#01)', detail: `Erstattungen gestern ${refundAlarm.retouren.toFixed(2)} ${refundAlarm.waehrung || ''} vs. 14-Tage-Schnitt ${refundAlarm.baseline14Tage.toFixed(2)} ${refundAlarm.waehrung || ''}`, alarm: true });
+    }
+    [
+      { name: 'Pricing-Agent (#61)', data: pricingHistorie },
+      { name: 'Split-Test-Agent (#88)', data: splitTest },
+      { name: 'Ads-Autopilot-Agent (#64)', data: adsAutopilot },
+      { name: 'Reorder-Agent (#63)', data: reorder },
+    ].forEach((a) => {
+      if (a.data && a.data.selbstgebremst) {
+        events.push({ icon: '🐢', titel: `${a.name} selbstgebremst`, detail: 'Eigene Erfolgsbilanz zuletzt unter der Schwelle - läuft gerade nur auf Empfehlung.', alarm: false });
+      }
+    });
+    if (eskalationenAnzahl > 0) {
+      events.push({ icon: '🎧', titel: `${eskalationenAnzahl} offene Support-Eskalation${eskalationenAnzahl === 1 ? '' : 'en'}`, detail: 'Aus GitHub Issues (#02 Kundenservice, #69 DSGVO, #62 Risk-Guard).', alarm: eskalationenAnzahl > 3 });
+    }
+    for (const item of (cockpit && cockpit.sofortNoetig) || []) {
+      events.push({ icon: '🛰️', titel: item.titel, detail: `${item.detail}${item.quelle ? ` (${item.quelle})` : ''}`, alarm: true });
+    }
+
+    return events;
+  }
+
+  function renderCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl) {
+    const el = document.getElementById('criticalEventsContent');
+    if (!el) return;
+    const events = sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl);
+
+    let html = `<div class="section-title-inline">🚨 CRITICAL EVENTS CENTER</div>`;
+    if (!events.length) {
+      html += `
+        <div class="killswitch-banner ks-ruhig">
+          <div class="ks-icon">🟢</div>
+          <div>
+            <div class="ks-headline">ALLES RUHIG</div>
+            <div class="ks-sub">Keine ausgelöste Notbremse, kein selbstgebremster Agent, keine offene Eskalation, nichts aus dem Cockpit, das sofort Aufmerksamkeit braucht.</div>
+          </div>
+        </div>`;
+    } else {
+      html += events.map((e) => `
+        <div class="autopilot-row">
+          <div>
+            <div class="autopilot-name">${e.icon} ${e.titel}</div>
+            <div class="autopilot-desc">${e.detail}</div>
+          </div>
+          <span class="autopilot-state" style="${e.alarm ? 'color:var(--red);background:rgba(255,107,129,.1);border:1px solid rgba(255,107,129,.35);' : 'color:var(--amber);background:rgba(255,197,92,.1);border:1px solid rgba(255,197,92,.35);'}">${e.alarm ? '🛑 ALARM' : '⚠️ WARNUNG'}</span>
+        </div>`).join('');
+    }
+    el.innerHTML = html;
+  }
+
+  // --- AI-CEO: Global KPI Scoreboard - die wichtigsten Zahlen aus allen
+  // schon geladenen Modulen an einer Stelle, keine neu berechneten/erfundenen
+  // Werte, nur zusammengeführt.
+  function renderKpiScoreboard(analytics, ads, cockpit, customerSegmente, eskalationenAnzahl) {
+    const el = document.getElementById('kpiScoreboardContent');
+    if (!el) return;
+    const history = (analytics && analytics.history) || [];
+    const latest = history[history.length - 1];
+    const adsHistorie = (ads && ads.historie) || [];
+    const neuesteAds = adsHistorie[0];
+    const automationen = (cockpit && cockpit.automationen) || [];
+    const segmente = customerSegmente && customerSegmente.segmente;
+    const kundenGesamt = segmente ? Object.values(segmente).reduce((sum, s) => sum + (s.anzahl || 0), 0) : null;
+    const waehrung = (latest && latest.waehrung) || 'EUR';
+
+    const boxen = [
+      latest ? `<div class="kpi-box"><div class="kpi-num">${(latest.umsatz || 0).toFixed(0)}</div><div class="kpi-label">UMSATZ ${waehrung}</div></div>` : '',
+      latest ? `<div class="kpi-box"><div class="kpi-num">${((latest.nettoGewinn !== undefined ? latest.nettoGewinn : latest.gewinn) || 0).toFixed(0)}</div><div class="kpi-label">NETTOGEWINN ${waehrung}</div></div>` : '',
+      neuesteAds ? `<div class="kpi-box"><div class="kpi-num" style="color:${neuesteAds.gesamtRoas >= 1 ? 'var(--green)' : 'var(--red)'}">${neuesteAds.gesamtRoas.toFixed(2)}</div><div class="kpi-label">AD-ROAS (7 TAGE)</div></div>` : '',
+      automationen.length ? `<div class="kpi-box"><div class="kpi-num">${automationen.filter((a) => a.status === 'ok').length}/${automationen.length}</div><div class="kpi-label">AUTOMATIONEN OK</div></div>` : '',
+      kundenGesamt !== null ? `<div class="kpi-box"><div class="kpi-num">${kundenGesamt}</div><div class="kpi-label">KUNDEN GESAMT</div></div>` : '',
+      `<div class="kpi-box"><div class="kpi-num" style="${eskalationenAnzahl ? 'color:var(--amber);' : ''}">${eskalationenAnzahl || 0}</div><div class="kpi-label">OFFENE ESKALATIONEN</div></div>`,
+    ].filter(Boolean).join('');
+
+    if (!boxen) {
+      el.innerHTML = `<div class="section-title-inline">📋 KPI-SCOREBOARD</div>` +
+        emptyHtml('📋', 'Noch keine Kennzahlen', 'Erscheint, sobald Gewinn-Radar, Ad Commander, Cockpit oder CRM & Retention Engine einmal gelaufen sind.');
+      return;
+    }
+    el.innerHTML = `<div class="section-title-inline">📋 KPI-SCOREBOARD</div><div class="kpi-grid">${boxen}</div>
+      <p class="note">Trading-Bot-Kennzahlen sind hier bewusst nicht dabei - eigener Tab, eigene Verbindung.</p>`;
+  }
+
   function renderHealthBadge(cockpit, eskalationenAnzahl) {
     if (!cockpit) return; // Cockpit-Daten noch nicht geladen - laufenden Badge-Stand nicht mit leer überschreiben
     const wrap = document.getElementById('healthBadgeWrap');
@@ -2573,6 +2669,8 @@
       const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
       renderHealthBadge(cockpit, eskalationenAnzahl);
       renderAiCeoHealth(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm);
+      renderCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl);
+      renderKpiScoreboard(analytics, ads, cockpit, customerSegmente, eskalationenAnzahl);
 
       const neuesteKette = chains && Array.isArray(chains.log) && chains.log.length ? chains.log[0] : null;
       if (neuesteKette && neuesteKette.ausgeloest && letzteChainZeit !== null && neuesteKette.datum !== letzteChainZeit) {
