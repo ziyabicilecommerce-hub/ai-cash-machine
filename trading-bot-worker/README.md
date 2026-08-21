@@ -195,6 +195,25 @@ laufen lässt — kein Versprechen auf Gewinn. Vor jedem Umstieg von
 `TRADING_PAPER_MODE="ja"` auf `"nein"` zusätzlich mindestens ein paar Wochen
 im Paper-Modus live beobachten.
 
+## Automatischer wöchentlicher Backtest-Check (`lib/autobacktest.mjs`)
+
+Läuft von selbst mit, ohne dass man `backtest.mjs` manuell anstoßen muss:
+einmal pro Woche (montags, wie das adaptive Lernen) prüft der Worker jedes
+Symbol gegen die letzten 14 Tage echter Kerzen mit der aktuell
+konfigurierten Strategie und schreibt das Ergebnis (Return, Trades,
+Win-Rate, Max-Drawdown, Buy&Hold-Vergleich) rein informativ nach KV —
+verändert nie Kapital oder Position. `/status` liefert es pro Symbol als
+`autoBacktest`-Feld, Trading Command zeigt es im Signale-Tab an.
+
+Bewusst nur 14 Tage statt der vollen 90 wie bei `backtest.mjs` auf der
+Kommandozeile — hält die Zahl der Binance/Kraken-Anfragen pro Lauf klein
+genug für Cloudflare Workers' Subrequest-Limit (8 Symbole × mehrere
+paginierte Anfragen). Für eine tiefere Analyse über längere Zeiträume
+bleibt `backtest.mjs` (lokal, ohne dieses Limit) die richtige Wahl — dieser
+Check ist ein laufendes "funktioniert die aktuell konfigurierte Strategie
+noch?", kein Ersatz dafür. Default an (`TRADING_AUTO_BACKTEST`), da rein
+informativ und ohne Risiko.
+
 ## Trade-Historie & Win-Rate im Dashboard
 
 Jeder abgeschlossene Trade (Ausstieg) wird jetzt im State gespeichert

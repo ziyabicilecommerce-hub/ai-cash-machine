@@ -54,6 +54,9 @@ export function readConfig(env) {
     // Multi-Timeframe-Filter (Pendant zum Krypto-Bot) - siehe lib/multitimeframe.mjs.
     mtfFilter: (env.STOCKS_MTF_FILTER || 'nein') === 'ja',
     mtfIntervalMinuten: parseInt(env.STOCKS_MTF_INTERVAL_MINUTEN || '240', 10),
+    // Automatischer wöchentlicher Backtest-Check - siehe lib/autobacktest.mjs.
+    // Rein informativ (verändert nie Kapital/Position), deshalb standardmäßig an.
+    autoBacktest: (env.STOCKS_AUTO_BACKTEST || 'ja') === 'ja',
     // Kein externer API-Call, nutzt dieselben Kerzen wie die Strategie - im
     // Krypto-Bot bewährt, hier standardmäßig ebenfalls an.
     flashCrashFilter: (env.STOCKS_FLASH_CRASH_FILTER || 'ja') === 'ja',

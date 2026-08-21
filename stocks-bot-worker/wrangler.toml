@@ -91,6 +91,11 @@ STOCKS_ADAPTIVES_LERNEN_MIN_TRADES = "10"
 STOCKS_MTF_FILTER = "nein"
 STOCKS_MTF_INTERVAL_MINUTEN = "240"
 
+# Automatischer wöchentlicher Backtest-Check (letzte 14 Tage, echte Alpaca-
+# Kerzen) - siehe lib/autobacktest.mjs. Rein informativ, ändert nie
+# Kapital/Position, deshalb standardmäßig an.
+STOCKS_AUTO_BACKTEST = "ja"
+
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # STOCKS_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 

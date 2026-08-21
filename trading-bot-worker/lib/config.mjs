@@ -127,6 +127,10 @@ export function readConfig(env) {
     // man sich drauf verlässt.
     adaptivesLernen: (env.TRADING_ADAPTIVES_LERNEN || 'nein') === 'ja',
     adaptivesLernenMinTrades: parseInt(env.TRADING_ADAPTIVES_LERNEN_MIN_TRADES || '10', 10),
+    // Automatischer wöchentlicher Backtest-Check - siehe lib/autobacktest.mjs.
+    // Rein informativ (verändert nie Kapital/Position), deshalb - anders als
+    // adaptives Lernen - standardmäßig an.
+    autoBacktest: (env.TRADING_AUTO_BACKTEST || 'ja') === 'ja',
     // Wirtschaftskalender-Filter - siehe lib/wirtschaftskalender.mjs. Kein
     // API-Key nötig, keine gemessenen Nachteile (pausiert nur kurze
     // Zeitfenster rund um wenige High-Impact-USD-Events pro Woche),

@@ -461,6 +461,19 @@
       </div>`;
     }
 
+    const backtestErgebnisse = [
+      ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).filter((s) => s.autoBacktest).map((s) => ({ icon: '₿', ...s })) : []),
+      ...(stocksData && !stocksData.fehler ? (stocksData.symbole || []).filter((s) => s.autoBacktest).map((s) => ({ icon: '📈', ...s })) : []),
+    ];
+    html += `<div class="card filter-card"><div class="filter-top"><span class="filter-name">🧪 Automatischer Backtest</span></div>
+      <div class="filter-desc">Wöchentlich (montags) gegen die letzten 14 Tage echter Kursdaten geprüft, mit der aktuell konfigurierten Strategie - rein informativ, verändert nie Kapital oder Position. Für tiefere Analysen über längere Zeiträume: <code>node backtest.mjs</code> lokal im jeweiligen Bot-Ordner.</div>
+      ${backtestErgebnisse.length ? backtestErgebnisse.map((s) => {
+        const b = s.autoBacktest;
+        const retFarbe = b.gesamtReturnProzent >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<div class="sig-row"><span>${s.icon} ${s.symbol} <span style="color:var(--mut2)">(${b.strategie}, ${fmtDatum(b.berechnetAm)})</span></span><b style="color:${retFarbe};font-family:var(--mono)">${b.gesamtReturnProzent >= 0 ? '+' : ''}${b.gesamtReturnProzent.toFixed(1)}% · ${b.anzahlTrades} Trades${b.winRateProzent != null ? ` · WR ${b.winRateProzent.toFixed(0)}%` : ''} · DD -${b.maxDrawdownProzent.toFixed(1)}%</b></div>`;
+      }).join('') : '<div class="sig-row"><span>Noch kein Lauf</span><b style="color:var(--mut2)">erscheint nach dem ersten Montag im 5-Minuten-Cron</b></div>'}
+    </div>`;
+
     const killSwitchAlle = [
       ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).filter((s) => s.killSwitchAktiv).map((s) => `₿ ${s.symbol}`) : []),
       ...(stocksData && !stocksData.fehler ? (stocksData.symbole || []).filter((s) => s.killSwitchAktiv).map((s) => `📈 ${s.symbol}`) : []),

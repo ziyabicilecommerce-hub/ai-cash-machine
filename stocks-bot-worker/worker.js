@@ -27,6 +27,7 @@ import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtsch
 import { ladeInsiderKaufSignal } from './lib/insiderbuys.mjs';
 import { pruefeUndFuehreAdaptivesLernen } from './lib/learning.mjs';
 import { hoehererZeitrahmenIstAufwaerts } from './lib/multitimeframe.mjs';
+import { pruefeUndFuehreAutoBacktest } from './lib/autobacktest.mjs';
 
 async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv, marktweiterCrashAktiv) {
   let state = await loadState(env, symbol, startKapital);
@@ -243,6 +244,11 @@ async function runAll(env) {
     await pruefeUndFuehreAdaptivesLernen(env, cfg);
   } catch (err) {
     console.error('[stocks-bot] Fehler beim adaptiven Lernen:', err);
+  }
+  try {
+    await pruefeUndFuehreAutoBacktest(env, cfg);
+  } catch (err) {
+    console.error('[stocks-bot] Fehler beim automatischen Backtest:', err);
   }
 }
 

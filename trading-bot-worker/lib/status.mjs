@@ -134,6 +134,14 @@ export async function buildStatus(env) {
 
     const { stopLossPreis, takeProfitPreis } = berechneStopLossTakeProfitPreise(state.position, cfgSymbol);
 
+    let autoBacktest = null;
+    try {
+      const raw = await env.TRADING_STATE.get(`backtest:${symbol}`);
+      if (raw) autoBacktest = JSON.parse(raw);
+    } catch {
+      // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+    }
+
     symbole.push({
       symbol,
       exchange: cfg.exchange,
@@ -143,6 +151,7 @@ export async function buildStatus(env) {
       stopLossPreis,
       takeProfitPreis,
       gelernterStopLossProzent: state.gelernterStopLossProzent ?? null,
+      autoBacktest,
       kapital: state.kapital,
       startKapital: state.startKapital,
       heutigerVerlustUsdt: state.heutigerVerlustUsdt,

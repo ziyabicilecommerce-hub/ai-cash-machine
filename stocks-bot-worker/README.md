@@ -89,6 +89,17 @@ und Alpacas kostenloser IEX-Feed deckt nur einen Teil des Marktvolumens ab.
 Trotzdem eine echte, datenbasierte Grundlage statt reinem Vertrauen, bevor
 man länger im Paper-Modus beobachtet.
 
+**Automatischer wöchentlicher Backtest-Check** (`lib/autobacktest.mjs`,
+Pendant zum Krypto-Bot): läuft von selbst mit, ohne `backtest.mjs` manuell
+anzustoßen - einmal pro Woche (montags, wie das adaptive Lernen) prüft der
+Worker jedes Symbol gegen die letzten 14 Tage echter Alpaca-Kerzen mit der
+aktuell konfigurierten Strategie und schreibt das Ergebnis (Return, Trades,
+Win-Rate, Max-Drawdown, Buy&Hold-Vergleich) rein informativ nach KV -
+verändert nie Kapital oder Position. `/status` liefert es pro Symbol als
+`autoBacktest`-Feld, Trading Command zeigt es im Signale-Tab an. Bewusst nur
+14 statt der vollen 90 Tage - für eine tiefere Analyse bleibt `backtest.mjs`
+(lokal) die richtige Wahl. Default an (`STOCKS_AUTO_BACKTEST`).
+
 ## Setup
 
 1. **Cloudflare** (gleicher Account wie der Krypto-Bot funktioniert):
