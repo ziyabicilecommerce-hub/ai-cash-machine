@@ -26,6 +26,9 @@ id = "1e78744a331c4e7c812e31c4532da003"
 #   WHATSAPP_TO_NUMBER
 #   TELEGRAM_BOT_TOKEN     (optional, gleicher Wert wie bei den anderen Bots möglich)
 #   TELEGRAM_CHAT_ID
+#   TELEGRAM_WEBHOOK_SECRET  (frei erfundener String, schützt POST /telegram-webhook -
+#                              siehe README für den setWebhook-Aufruf, der ihn bei
+#                              Telegram hinterlegt. Bereits gesetzt.)
 #   TRIGGER_SECRET         (frei erfundener String, schützt den manuellen Test-Aufruf)
 #   STATUS_READ_KEY        (frei erfundener String, schützt den rein lesenden
 #                            /status-Endpoint - ANDERER Wert als TRIGGER_SECRET)

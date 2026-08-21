@@ -5,7 +5,7 @@
 // Worker ruft NIE .put() auf, kann also strukturell nie einen Trade
 // auslösen oder den State eines Bots verändern).
 //
-// Zwei Aufgaben:
+// Drei Aufgaben:
 // 1. GET /status - EIN kombinierter, rein lesender Endpoint über beide
 //    Bots (Gesamtkapital pro Währung, Gesamt-Trades, kombinierte
 //    Readiness) - liest die KV-Keys direkt statt die /status-Endpoints der
@@ -13,8 +13,14 @@
 // 2. Täglicher Cron - EIN kombinierter WhatsApp/Telegram-Report statt zwei
 //    getrennter Nachrichten von den einzelnen Bots - "das System spricht
 //    mit einer Stimme".
+// 3. POST /telegram-webhook - interaktiver Telegram-Bot: auf Zuruf (/status,
+//    /krypto, /aktien, /hilfe) antworten statt nur einmal täglich zu senden.
+//    Genau wie 1./2. strikt rein lesend - kein Befehl kann je einen Trade
+//    auslösen. Antwortet NUR im eigenen konfigurierten TELEGRAM_CHAT_ID,
+//    damit niemand sonst, der den Bot findet, dein Portfolio abfragen kann.
 
 import { notify } from './lib/notify.mjs';
+import { formatBotDetail, formatKombiniertenStatusKern, formatStatusAntwort, formatHilfe } from './lib/telegram-commands.mjs';
 
 async function ladeAlleStates(kv) {
   const list = await kv.list({ prefix: 'state:' });
@@ -59,15 +65,38 @@ async function buildCombinedStatus(env) {
 
 async function sendeKombiniertenDigest(env) {
   const status = await buildCombinedStatus(env);
-  const zeilen = ['🏛️ CASHMACHINE EMPIRE — Tages-Report (beide Bots):'];
+  const text = `🏛️ CASHMACHINE EMPIRE — Tages-Report (beide Bots):\n${formatKombiniertenStatusKern(status)}`;
+  await notify(env, text);
+}
 
-  zeilen.push(`₿ Krypto: ${status.krypto.kapital.toFixed(2)} USDT (${status.krypto.plProzent >= 0 ? '+' : ''}${status.krypto.plProzent.toFixed(2)}%), ${status.krypto.anzahlTrades} Trades${status.krypto.winRateProzent != null ? `, Win-Rate ${status.krypto.winRateProzent.toFixed(0)}%` : ''}`);
-  zeilen.push(`📈 Aktien: ${status.aktien.kapital.toFixed(2)} USD (${status.aktien.plProzent >= 0 ? '+' : ''}${status.aktien.plProzent.toFixed(2)}%), ${status.aktien.anzahlTrades} Trades${status.aktien.winRateProzent != null ? `, Win-Rate ${status.aktien.winRateProzent.toFixed(0)}%` : ''}`);
+async function sendeTelegramAntwort(env, chatId, text) {
+  if (!env.TELEGRAM_BOT_TOKEN) return;
+  try {
+    await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text }),
+    });
+  } catch (err) {
+    console.error('[telegram-webhook] Antwort fehlgeschlagen:', err);
+  }
+}
 
-  const killSwitches = [...status.krypto.killSwitchSymbole, ...status.aktien.killSwitchSymbole];
-  if (killSwitches.length) zeilen.push(`🛑 Kill-Switch aktiv bei: ${killSwitches.join(', ')}`);
-
-  await notify(env, zeilen.join('\n'));
+// Routet einen eingehenden Befehltext zur passenden Antwort. Unbekannter
+// Text fällt bewusst auf /status zurück (freundlicher Standard statt
+// "Befehl nicht erkannt") - jede Anfrage bekommt eine nützliche Antwort.
+async function verarbeiteTelegramBefehl(env, text) {
+  const befehl = (text || '').trim().split(/\s+/)[0].toLowerCase();
+  if (befehl === '/krypto') {
+    return formatBotDetail(await ladeAlleStates(env.TRADING_STATE), '₿ Krypto-Bot', 'USDT');
+  }
+  if (befehl === '/aktien') {
+    return formatBotDetail(await ladeAlleStates(env.STOCKS_STATE), '📈 Aktien-Bot', 'USD');
+  }
+  if (befehl === '/hilfe' || befehl === '/start' || befehl === '/help') {
+    return formatHilfe();
+  }
+  return formatStatusAntwort(await buildCombinedStatus(env));
 }
 
 export default {
@@ -86,6 +115,32 @@ export default {
         status: 200,
         headers: { 'content-type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
+    }
+
+    if (url.pathname === '/telegram-webhook' && request.method === 'POST') {
+      // Telegrams eigener Webhook-Schutz: beim setWebhook-Aufruf einen
+      // secret_token mitgeben, Telegram schickt ihn dann bei JEDEM Update in
+      // diesem Header zurück - fremde POSTs ohne den Header werden abgelehnt.
+      if (!env.TELEGRAM_WEBHOOK_SECRET || request.headers.get('X-Telegram-Bot-Api-Secret-Token') !== env.TELEGRAM_WEBHOOK_SECRET) {
+        return new Response('Forbidden', { status: 403 });
+      }
+      let update;
+      try {
+        update = await request.json();
+      } catch {
+        return new Response('OK', { status: 200 }); // Telegram erwartet immer 200, sonst wird geretried
+      }
+      const chatId = update.message && update.message.chat && update.message.chat.id;
+      const text = update.message && update.message.text;
+      // Nur im EIGENEN konfigurierten Chat antworten - verhindert, dass
+      // irgendjemand anderes, der den Bot-Namen findet, dein Portfolio per
+      // Nachricht abfragen kann. Kein Fehler nach außen, einfach stumm OK.
+      if (chatId == null || !text || String(chatId) !== String(env.TELEGRAM_CHAT_ID)) {
+        return new Response('OK', { status: 200 });
+      }
+      const antwort = await verarbeiteTelegramBefehl(env, text);
+      await sendeTelegramAntwort(env, chatId, antwort);
+      return new Response('OK', { status: 200 });
     }
 
     // Manueller Test-Auslöser für den Report (rein lesend, kann nie einen
