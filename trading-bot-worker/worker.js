@@ -31,6 +31,7 @@ import { notify } from './lib/notify.mjs';
 import { heute, MAX_TRADES_IM_STATE, loadState, saveState, zaehleOffenePositionen, saveSystemInfo } from './lib/state.mjs';
 import { pruefeUndSendeTagesZusammenfassung, pruefeUndSendeWochenZusammenfassung, pruefeUndSendeMonatsZusammenfassung, pruefeUndFuehreKapitalRebalancing } from './lib/reports.mjs';
 import { pruefeUndFuehreAdaptivesLernen } from './lib/learning.mjs';
+import { pruefeUndFuehreAutoBacktest } from './lib/autobacktest.mjs';
 import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtschaftskalender.mjs';
 import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
@@ -350,6 +351,11 @@ async function runAll(env) {
     await pruefeUndFuehreAdaptivesLernen(env, cfg);
   } catch (err) {
     console.error('[trading-bot] Fehler beim adaptiven Lernen:', err);
+  }
+  try {
+    await pruefeUndFuehreAutoBacktest(env, cfg);
+  } catch (err) {
+    console.error('[trading-bot] Fehler beim automatischen Backtest:', err);
   }
 }
 

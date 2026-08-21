@@ -195,6 +195,11 @@ TRADING_NEWS_SENTIMENT_MIN_PROZENT = "35"
 TRADING_ADAPTIVES_LERNEN = "nein"
 TRADING_ADAPTIVES_LERNEN_MIN_TRADES = "10"
 
+# Automatischer wöchentlicher Backtest-Check (letzte 14 Tage, echte Kerzen) -
+# siehe lib/autobacktest.mjs. Rein informativ, ändert nie Kapital/Position,
+# deshalb standardmäßig an.
+TRADING_AUTO_BACKTEST = "ja"
+
 # Wirtschaftskalender-Filter (kein API-Key nötig, öffentliche Gratis-Quelle
 # nfs.faireconomy.media): pausiert Käufe rund um marktbewegende US-
 # Wirtschaftstermine (FOMC/CPI/NFP, "High Impact" USD-Events) - Krypto
