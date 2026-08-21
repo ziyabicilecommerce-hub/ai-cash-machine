@@ -220,6 +220,10 @@ TRADING_KORRELATION_MAX_WERT = "0.85"
 TRADING_SCANNER = "ja"
 TRADING_SCANNER_MOMENTUM_SCHWELLE_7D = "15"
 
+# Monte-Carlo-Simulation der eigenen Trade-Historie (siehe lib/montecarlo.mjs) -
+# reine Statistik, kein API-Call, deshalb standardmäßig an.
+TRADING_MONTE_CARLO = "ja"
+
 # Wirtschaftskalender-Filter (kein API-Key nötig, öffentliche Gratis-Quelle
 # nfs.faireconomy.media): pausiert Käufe rund um marktbewegende US-
 # Wirtschaftstermine (FOMC/CPI/NFP, "High Impact" USD-Events) - Krypto

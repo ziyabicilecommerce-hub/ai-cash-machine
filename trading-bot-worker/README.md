@@ -252,6 +252,22 @@ Dann `TRADING_AI_REVIEW = "ja"` in `wrangler.toml` setzen und deployen.
 Fehlt das Secret, wird der Check sauber übersprungen statt einen Fehler zu
 werfen.
 
+## Monte-Carlo-Simulation der eigenen Trade-Historie (`lib/montecarlo.mjs`)
+
+Einmal pro Woche zieht der Bot per Bootstrap-Resampling zufällig (mit
+Zurücklegen) aus den eigenen abgeschlossenen Trades jedes Symbols und
+simuliert damit 2000 mögliche Pfade der nächsten 30 Trades. Statt einer
+einzelnen Prognose zeigt das eine Bandbreite (5./25./50./75./95. Perzentil
+des Endkapitals) sowie die Wahrscheinlichkeit, profitabel zu sein bzw. den
+eigenen Kill-Switch zu erreichen. `/status` liefert es pro Symbol als
+`monteCarlo`-Feld, Trading Command zeigt es als "🎲 Zukunfts-Szenarien".
+
+**Unmissverständlich: KEINE Vorhersage.** Reine Statistik unter der
+Annahme, dass künftige Trades sich ähnlich verteilen wie die bisherigen -
+bei Strategie- oder Marktwechseln stimmt das nicht mehr. Erst ab 15
+abgeschlossenen Trades pro Symbol aktiv (weniger Daten = zu unzuverlässig).
+Reine In-Memory-Rechnung, kein API-Call, deshalb standardmäßig an.
+
 ## Live Market Scanner (`lib/scanner.mjs`)
 
 Der Bot handelt nur die in `TRADING_SYMBOLS` konfigurierten Coins - aber am

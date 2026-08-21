@@ -148,6 +148,10 @@ export function readConfig(env) {
     // wie Auto-Backtest.
     scanner: (env.TRADING_SCANNER || 'ja') === 'ja',
     scannerMomentumSchwelle7d: parseFloat(env.TRADING_SCANNER_MOMENTUM_SCHWELLE_7D || '15'),
+    // Monte-Carlo-Simulation der eigenen Trade-Historie - siehe
+    // lib/montecarlo.mjs. Reine In-Memory-Statistik, kein API-Call, deshalb
+    // standardmäßig an wie Auto-Backtest.
+    monteCarlo: (env.TRADING_MONTE_CARLO || 'ja') === 'ja',
     // Wirtschaftskalender-Filter - siehe lib/wirtschaftskalender.mjs. Kein
     // API-Key nötig, keine gemessenen Nachteile (pausiert nur kurze
     // Zeitfenster rund um wenige High-Impact-USD-Events pro Woche),

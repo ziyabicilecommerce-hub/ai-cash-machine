@@ -142,6 +142,14 @@ export async function buildStatus(env) {
       // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
     }
 
+    let monteCarlo = null;
+    try {
+      const raw = await env.TRADING_STATE.get(`montecarlo:${symbol}`);
+      if (raw) monteCarlo = JSON.parse(raw);
+    } catch {
+      // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+    }
+
     symbole.push({
       symbol,
       exchange: cfg.exchange,
@@ -152,6 +160,7 @@ export async function buildStatus(env) {
       takeProfitPreis,
       gelernterStopLossProzent: state.gelernterStopLossProzent ?? null,
       autoBacktest,
+      monteCarlo,
       kapital: state.kapital,
       startKapital: state.startKapital,
       heutigerVerlustUsdt: state.heutigerVerlustUsdt,
