@@ -102,6 +102,14 @@ export async function buildStatus(env) {
     });
   }
 
+  let aiReview = null;
+  try {
+    const raw = await env.STOCKS_STATE.get('ai-review:aktuell');
+    if (raw) aiReview = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   return {
     updatedAt: new Date().toISOString(),
     broker: 'alpaca-paper',
@@ -114,6 +122,7 @@ export async function buildStatus(env) {
     marktweiterCrashZeit: systemInfo.marktweiterCrashZeit,
     readiness: berechneReadiness(symbole, alleTrades),
     portfolioKennzahlen: berechneRisikoKennzahlen(alleTrades),
+    aiReview,
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
       maxTagesverlustProzent: cfg.maxTagesverlustProzent,

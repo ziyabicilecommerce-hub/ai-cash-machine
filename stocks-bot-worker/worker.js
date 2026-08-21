@@ -28,6 +28,7 @@ import { ladeInsiderKaufSignal } from './lib/insiderbuys.mjs';
 import { pruefeUndFuehreAdaptivesLernen } from './lib/learning.mjs';
 import { hoehererZeitrahmenIstAufwaerts } from './lib/multitimeframe.mjs';
 import { pruefeUndFuehreAutoBacktest } from './lib/autobacktest.mjs';
+import { pruefeUndFuehreAiReview } from './lib/ai-review.mjs';
 
 async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv, marktweiterCrashAktiv) {
   let state = await loadState(env, symbol, startKapital);
@@ -249,6 +250,11 @@ async function runAll(env) {
     await pruefeUndFuehreAutoBacktest(env, cfg);
   } catch (err) {
     console.error('[stocks-bot] Fehler beim automatischen Backtest:', err);
+  }
+  try {
+    await pruefeUndFuehreAiReview(env, cfg);
+  } catch (err) {
+    console.error('[stocks-bot] Fehler beim AI Trade Review:', err);
   }
 }
 

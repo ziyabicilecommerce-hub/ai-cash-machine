@@ -57,6 +57,9 @@ export function readConfig(env) {
     // Automatischer wöchentlicher Backtest-Check - siehe lib/autobacktest.mjs.
     // Rein informativ (verändert nie Kapital/Position), deshalb standardmäßig an.
     autoBacktest: (env.STOCKS_AUTO_BACKTEST || 'ja') === 'ja',
+    // AI Trade Review (Pendant zum Krypto-Bot) - siehe lib/ai-review.mjs.
+    // KOSTET ECHTES GELD pro Aufruf (Anthropic API), deshalb Default AUS.
+    aiReview: (env.STOCKS_AI_REVIEW || 'nein') === 'ja',
     // Kein externer API-Call, nutzt dieselben Kerzen wie die Strategie - im
     // Krypto-Bot bewährt, hier standardmäßig ebenfalls an.
     flashCrashFilter: (env.STOCKS_FLASH_CRASH_FILTER || 'ja') === 'ja',

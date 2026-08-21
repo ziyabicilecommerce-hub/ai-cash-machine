@@ -263,6 +263,7 @@
   <div class="bot-cards" id="botCards"></div>
   <div class="panel-title">Performance-Kennzahlen (je Bot, aus der eigenen Trade-Historie)</div>
   <div id="perfKennzahlen"></div>
+  <div id="aiReviewWrap"></div>
 </section>
 
 <section class="panel" id="panel-signale">
@@ -703,6 +704,29 @@
     const sK = stocksData && !stocksData.fehler ? stocksData.portfolioKennzahlen : null;
     const html = perfCard('Krypto-Bot', '₿', 'USDT', cK) + perfCard('Aktien-Bot', '📈', 'USD', sK);
     el.innerHTML = html || '<div class="empty"><div class="emoji">📉</div>Noch keine Daten - erscheint, sobald Bots verbunden sind.</div>';
+    renderAiReview(cryptoData, stocksData);
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function aiReviewCard(name, icon, review) {
+    if (!review) return '';
+    return `<div class="card" style="margin-bottom:14px;">
+      <div class="card-top"><span class="card-name">🤖 AI Trade Review — ${icon} ${name}</span><span class="card-date" style="float:none;color:var(--mut2);font-size:11px;">${fmtDatum(review.erstelltAm)}</span></div>
+      <p style="font-size:13px;color:var(--txt);line-height:1.6;white-space:pre-wrap;">${escapeHtml(review.text)}</p>
+    </div>`;
+  }
+
+  function renderAiReview(cryptoData, stocksData) {
+    const el = document.getElementById('aiReviewWrap');
+    const html = aiReviewCard('Krypto-Bot', '₿', cryptoData && !cryptoData.fehler ? cryptoData.aiReview : null) +
+      aiReviewCard('Aktien-Bot', '📈', stocksData && !stocksData.fehler ? stocksData.aiReview : null);
+    if (!html) { el.innerHTML = ''; return; }
+    el.innerHTML = `<div class="panel-title">AI Trade Review (wöchentlich, optional, kostet echtes Geld pro Aufruf)</div>${html}`;
   }
 
   async function loadAll() {

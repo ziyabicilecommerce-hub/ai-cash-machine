@@ -151,6 +151,15 @@ Gewinn/Verlust, Recovery Factor sowie "Sharpe/Sortino pro Trade" (bewusst
 NICHT die annualisierten Lehrbuch-Kennzahlen). Trading Command zeigt das
 im Übersicht-Tab.
 
+**AI Trade Review** (optional, `lib/ai-review.mjs`, Pendant zum Krypto-Bot,
+KOSTET ECHTES GELD pro Aufruf): lässt Claude einmal pro Woche einen kurzen
+Rückblick über die letzten Trades schreiben. Rein lesend, kann nie einen
+Trade auslösen. Standardmäßig AUS - Secret setzen und
+`STOCKS_AI_REVIEW = "ja"` in `wrangler.toml`:
+```bash
+wrangler secret put ANTHROPIC_API_KEY
+```
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch

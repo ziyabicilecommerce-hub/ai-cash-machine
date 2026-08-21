@@ -164,6 +164,14 @@ export async function buildStatus(env) {
     });
   }
 
+  let aiReview = null;
+  try {
+    const raw = await env.TRADING_STATE.get('ai-review:aktuell');
+    if (raw) aiReview = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   return {
     updatedAt: new Date().toISOString(),
     exchange: cfg.exchange,
@@ -181,6 +189,7 @@ export async function buildStatus(env) {
     },
     readiness: berechneReadiness(symbole, alleTrades),
     portfolioKennzahlen: berechneRisikoKennzahlen(alleTrades),
+    aiReview,
     risikoStatus: berechneRisikoStatus(symbole, cfg, systemInfo.marktweiterCrashAktiv, systemInfo.newsEventAktiv),
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,

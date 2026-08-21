@@ -131,6 +131,10 @@ export function readConfig(env) {
     // Rein informativ (verändert nie Kapital/Position), deshalb - anders als
     // adaptives Lernen - standardmäßig an.
     autoBacktest: (env.TRADING_AUTO_BACKTEST || 'ja') === 'ja',
+    // AI Trade Review - siehe lib/ai-review.mjs. KOSTET ECHTES GELD pro
+    // Aufruf (Anthropic API), deshalb - anders als Auto-Backtest -
+    // standardmäßig AUS. Braucht zusätzlich das ANTHROPIC_API_KEY-Secret.
+    aiReview: (env.TRADING_AI_REVIEW || 'nein') === 'ja',
     // Wirtschaftskalender-Filter - siehe lib/wirtschaftskalender.mjs. Kein
     // API-Key nötig, keine gemessenen Nachteile (pausiert nur kurze
     // Zeitfenster rund um wenige High-Impact-USD-Events pro Woche),

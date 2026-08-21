@@ -231,6 +231,27 @@ Renditen, Trades sind unregelmäßig getaktet), sondern Ø Rendite / Streuung
 über alle abgeschlossenen Trades, klar so benannt. Trading Command zeigt
 das im Übersicht-Tab.
 
+## AI Trade Review (optional, KOSTET ECHTES GELD pro Aufruf)
+
+`lib/ai-review.mjs` lässt Claude (Anthropic API) einmal pro Woche (montags,
+wie adaptives Lernen/Auto-Backtest) einen kurzen, nüchternen Rückblick über
+die letzten abgeschlossenen Trades schreiben — Muster bei Verlusten, ob die
+Strategie angesichts des Auto-Backtests noch stimmig wirkt. Rein lesend:
+kein Code-Pfad in dieser Datei kann einen Trade auslösen oder eine
+Einstellung ändern, nur Text lesen und schreiben. Ergebnis kommt per
+WhatsApp/Telegram und steht in `/status` als `aiReview`-Feld (Trading
+Command zeigt es im Übersicht-Tab).
+
+Anders als Auto-Backtest **standardmäßig AUS**, weil jeder Aufruf echte
+Anthropic-API-Kosten verursacht (begrenzt auf max. 900 Output-Tokens,
+höchstens 1× pro Woche):
+```bash
+wrangler secret put ANTHROPIC_API_KEY   # gleicher Key wie bei den GitHub-Actions-Automationen möglich
+```
+Dann `TRADING_AI_REVIEW = "ja"` in `wrangler.toml` setzen und deployen.
+Fehlt das Secret, wird der Check sauber übersprungen statt einen Fehler zu
+werfen.
+
 ## Tägliche WhatsApp-Zusammenfassung
 
 Zusätzlich zu den Alarmen bei einzelnen Ereignissen (Einstieg, Ausstieg,
