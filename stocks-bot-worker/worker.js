@@ -26,6 +26,7 @@ import { readConfig } from './lib/config.mjs';
 import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtschaftskalender.mjs';
 import { ladeInsiderKaufSignal } from './lib/insiderbuys.mjs';
 import { pruefeUndFuehreAdaptivesLernen } from './lib/learning.mjs';
+import { hoehererZeitrahmenIstAufwaerts } from './lib/multitimeframe.mjs';
 
 async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv, marktweiterCrashAktiv) {
   let state = await loadState(env, symbol, startKapital);
@@ -84,6 +85,18 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
     if (kauf && cfg.newsEventFilter && newsEventAktiv) {
       await saveState(env, symbol, state);
       return;
+    }
+
+    // Multi-Timeframe: nicht gegen den übergeordneten (Default 4h-)Trend
+    // kaufen, auch wenn der Trading-Timeframe (15m) gerade ein Signal zeigt.
+    // Siehe Pendant im Krypto-Bot.
+    if (kauf && cfg.mtfFilter) {
+      const aufwaerts = await hoehererZeitrahmenIstAufwaerts(env, symbol, cfg);
+      if (!aufwaerts) {
+        await notify(env, `⚠️ Stocks-Bot (${symbol}): Kaufsignal übersprungen - ${cfg.mtfIntervalMinuten / 60}h-Trend zeigt abwärts (EMA${cfg.emaSchnell} < EMA${cfg.emaLangsam}).`);
+        await saveState(env, symbol, state);
+        return;
+      }
     }
 
     if (kauf && cfg.spreadFilter) {

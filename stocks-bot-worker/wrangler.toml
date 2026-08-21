@@ -87,6 +87,10 @@ STOCKS_INSIDER_BOOST_FAKTOR = "1.2"
 STOCKS_ADAPTIVES_LERNEN = "nein"
 STOCKS_ADAPTIVES_LERNEN_MIN_TRADES = "10"
 
+# Multi-Timeframe-Filter (Pendant zum Krypto-Bot, siehe lib/multitimeframe.mjs) - Default AUS.
+STOCKS_MTF_FILTER = "nein"
+STOCKS_MTF_INTERVAL_MINUTEN = "240"
+
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # STOCKS_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 
