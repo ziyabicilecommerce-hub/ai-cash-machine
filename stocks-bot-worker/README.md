@@ -133,6 +133,10 @@ verändert nie Kapital oder Position. `/status` liefert es pro Symbol als
    ```bash
    wrangler deploy
    ```
+   **Cron-Frequenz:** jede Minute (siehe `wrangler.toml`, Pendant zum
+   Krypto-Bot) statt alle 5 Minuten - reine Latenz-Verbesserung, ändert
+   NICHT die Strategie selbst. ~5x mehr Worker-Aufrufe/Tag. Zum
+   Zurückstellen: `crons = ["*/5 * * * *"]` in `wrangler.toml`.
 
 ## Endpoints
 

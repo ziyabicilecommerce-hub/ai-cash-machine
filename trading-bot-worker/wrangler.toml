@@ -7,7 +7,7 @@ compatibility_date = "2025-01-01"
 # Kerze und Reaktion), statt aus einem von Binance blockierten
 # GitHub-Actions-IP-Bereich wie vorher.
 [triggers]
-crons = ["*/5 * * * *"]
+crons = ["* * * * *"]
 
 # State pro Symbol (Kapital, offene Position, Kill-Switch). Nach dem Erstellen
 # via `wrangler kv namespace create TRADING_STATE` die zurückgegebene id hier
