@@ -54,6 +54,14 @@ export function purchaseValue(ad) {
   return x ? parseFloat(x.value) : 0;
 }
 
+export async function getAdStatus(adId) {
+  pruefeMetaConfig();
+  const url = `https://graph.facebook.com/${API_VERSION}/${adId}?fields=status,effective_status&access_token=${config.META_ACCESS_TOKEN}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Meta Ads Status-Abfrage Fehler ${res.status}: ${await res.text()}`);
+  return res.json();
+}
+
 export async function pauseAd(adId) {
   pruefeMetaConfig();
   const url = `https://graph.facebook.com/${API_VERSION}/${adId}?status=PAUSED&access_token=${config.META_ACCESS_TOKEN}`;

@@ -192,7 +192,10 @@ API-Key ergänzt werden - aktuell bewusst ohne, um nichts vorzutäuschen.
 **📈 Ad Commander** (Kampagnen-Portfolio-Übersicht + Budget-Umschichtungs-
 Empfehlung): nutzt dieselben `META_ACCESS_TOKEN`/`META_AD_ACCOUNT_ID` wie
 die anderen Meta-Automationen, keine zusätzlichen Secrets. Anders als #11
-Ads-Manager (bewertet einzelne ADS) und #42 Auto-Skalierer (Budget pro
+Ads-Manager (bewertet einzelne ADS, killt via `AUTO_PAUSE` bei ROAS unter 1 -
+echtes Rückkopplungs-Gedächtnis: prüft 14 Tage später, ob der Mensch die
+gekillte Ad wieder aktiviert hat, gleiche Selbstbremse wie die anderen
+Handlungs-Agenten) und #42 Auto-Skalierer (Budget pro
 AD-SET) schaut Ad Commander auf KAMPAGNEN-Ebene und schlägt vor, Budget von
 schwachen zu starken Kampagnen zu verschieben. **TikTok Ads ist noch nicht
 angebunden** - TikToks Marketing-API-Vertrag wurde nicht verifiziert
@@ -566,7 +569,7 @@ Wiedergutmachung, bevor der Kunde sich überhaupt beschweren muss. Gate:
 prüft nach 30 Tagen, ob der Kunde ÜBERHAUPT noch mal bestellt hat (keine
 erfundene Zufriedenheits-Bewertung, nur die ehrliche Beobachtung "kam
 zurück" oder "blieb weg") - sichtbar im Autopilot-Tab von Command inkl.
-Erfolgsbilanz. Gleiche Selbstbremse wie #61/#63/#64/#88/#42: unter 40%
+Erfolgsbilanz. Gleiche Selbstbremse wie #61/#63/#64/#88/#42/#11: unter 40%
 Erfolgsquote (mind. 3 Muster) heißt automatisch nur noch Empfehlung.
 
 **📝 Sonderwunsch-Flagger** (#68, alle 2 Stunden): liest echte
