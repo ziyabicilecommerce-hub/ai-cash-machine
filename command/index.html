@@ -709,6 +709,7 @@
   <div id="autoSkaliererContent"></div>
   <div id="reorderContent"></div>
   <div id="giftcardAgentContent"></div>
+  <div id="adsManagerContent"></div>
 </section>
 
 <section class="panel" id="panel-trading">
@@ -1427,7 +1428,7 @@
   // --- Autopilot (alle AUTO_*-Schalter der Suite an einer Stelle) ---
   const AUTOPILOT_SCHALTER = [
     { name: 'AUTO_SKALIEREN', quelle: '#42 Meta-Ads-Auto-Skalierer', desc: 'Erhöht das Budget performanter Ad-Sets automatisch statt nur zu empfehlen. Prüft ausgeführte Skalierungen 7 Tage später nach und fällt bei schlechter eigener Bilanz von selbst auf reine Empfehlung zurück (Selbstbremse).', standard: 'nein' },
-    { name: 'AUTO_PAUSE', quelle: '#43 Meta-Ads-Notbremse', desc: 'Pausiert schlecht laufende Ad-Sets automatisch.', standard: 'nein' },
+    { name: 'AUTO_PAUSE', quelle: '#11 Ads-Manager', desc: 'Pausiert Ads mit ROAS unter 1 automatisch statt nur zu empfehlen. Prüft 14 Tage später, ob der gekillte Ad vom Menschen wieder aktiviert wurde, und fällt bei schlechter eigener Bilanz von selbst auf reine Empfehlung zurück (Selbstbremse).', standard: 'nein' },
     { name: 'AUTO_STOP', quelle: '#43 Meta-Ads-Notbremse', desc: 'Stoppt komplett entgleiste Kampagnen automatisch.', standard: 'nein' },
     { name: 'AUTO_POST_FACEBOOK', quelle: '#18 Multi-Plattform-Poster', desc: 'Postet den Tagesbeitrag wirklich auf Facebook statt nur Entwurf zu erstellen.', standard: 'nein' },
     { name: 'AUTO_POST_INSTAGRAM', quelle: '#18 Multi-Plattform-Poster', desc: 'Postet wirklich auf Instagram statt nur Entwurf zu erstellen - als echtes Reel bei vorhandenem Produktvideo, sonst als Foto.', standard: 'nein' },
@@ -1831,6 +1832,50 @@
     el.innerHTML = `<div class="section-title-inline">🎟️ KOMPENSATIONEN MIT BEGRÜNDUNG</div>${bremseHtml}${bilanzHtml}${rows}`;
   }
 
+  const ADS_MANAGER_WIRKUNG_TEXT = {
+    kill_bestaetigt: { label: '✅ blieb pausiert (vom Menschen akzeptiert)', klasse: 'risiko-niedrig' },
+    kill_rueckgaengig_gemacht: { label: '⚠️ vom Menschen wieder aktiviert', klasse: 'risiko-mittel' },
+  };
+
+  // "Warum" bei jedem Kill (#11 Ads-Manager) - prüft nach 14 Tagen die einzige
+  // ehrliche, direkt beobachtbare Größe: hat der Shop-Betreiber die gekillte
+  // Ad wieder aktiviert (Widerspruch zur KI) oder blieb sie aus? Keine
+  // erfundene "war der Kill richtig"-Bewertung.
+  function renderAdsManagerHistorie(data) {
+    const el = document.getElementById('adsManagerContent');
+    const historie = (data && data.historie) || [];
+    if (!historie.length) {
+      el.innerHTML = `<div class="section-title-inline">✂️ AD-KILLS MIT BEGRÜNDUNG</div>` +
+        emptyHtml('✂️', 'Noch kein Kill', 'Erscheint, sobald der Ads-Manager (#11) eine Ad mit ROAS unter 1 findet.');
+      return;
+    }
+    const bilanz = data.erfolgsBilanz;
+    const bilanzHtml = bilanz && bilanz.ausgewertet
+      ? `<p class="note" style="margin-bottom:14px;">🎯 Erfolgs-Check: von ${bilanz.ausgewertet} ausgewerteten Kills blieben ${bilanz.bestaetigt} vom Menschen akzeptiert, ${bilanz.brauchtBlick} brauchen einen Blick.</p>`
+      : '';
+    const rows = historie.slice(0, 15).map((e) => {
+      const wirkung = e.ausgewertet && ADS_MANAGER_WIRKUNG_TEXT[e.wirkung];
+      const wirkungRow = wirkung
+        ? `<div><b>SEITDEM PASSIERT</b><span class="${wirkung.klasse}">${wirkung.label}</span></div>`
+        : e.ausgefuehrt ? `<div><b>SEITDEM PASSIERT</b><span>wird in ${Math.max(0, 14 - Math.floor((Date.now() - new Date(e.datum).getTime()) / 86400000))} Tag(en) geprüft</span></div>` : '';
+      return `
+      <div class="why-row">
+        <div class="why-top">
+          <div class="why-preis">${e.name}</div>
+          <span class="why-tag ${e.ausgefuehrt ? 'tag-runter' : 'tag-hoch'}">${e.ausgefuehrt ? '✅ LIVE GEKILLT' : '👁️ NUR EMPFOHLEN'}</span>
+        </div>
+        <div class="why-grid">
+          <div><b>ROAS</b><span>${e.roas}</span></div>
+          <div><b>SPEND</b><span>${e.spend} €</span></div>
+          ${wirkungRow}
+        </div>
+        <div class="card-date" style="float:none;margin-top:8px;">${fmtDatumKurz(e.datum)}</div>
+      </div>`;
+    }).join('');
+    const bremseHtml = data.selbstgebremst ? selbstbremseBannerHtml('Ads-Manager') : '';
+    el.innerHTML = `<div class="section-title-inline">✂️ AD-KILLS MIT BEGRÜNDUNG</div>${bremseHtml}${bilanzHtml}${rows}`;
+  }
+
   // --- Alle Tools (Launchpad zu den restlichen, echt interaktiven Apps) ---
   const WEITERE_TOOLS = [
     { emoji: '🧠', name: 'Jarvis', desc: 'Voice-HUD-Assistent, zentrale Steuerung der Suite.', href: '../' },
@@ -2161,6 +2206,11 @@
       teile.push(`ERFOLGS-CHECK GIFT-CARD-KOMPENSATIONS-AGENT: Von ${giftcardBilanz.ausgewertet} ausgewerteten Kompensationen kamen ${giftcardBilanz.bestaetigt} Kunden seitdem wieder, ${giftcardBilanz.brauchtBlick} brauchen einen Blick.${c.giftcardAgent.selbstgebremst ? ' 🛑 SELBSTBREMSE AKTIV: der Agent stuft sich wegen der schlechten Bilanz gerade selbst auf reine Empfehlung zurück.' : ''}`);
     }
 
+    const adsManagerBilanz = c.adsManager && c.adsManager.erfolgsBilanz;
+    if (adsManagerBilanz && adsManagerBilanz.ausgewertet) {
+      teile.push(`ERFOLGS-CHECK ADS-MANAGER: Von ${adsManagerBilanz.ausgewertet} ausgewerteten Ad-Kills blieben ${adsManagerBilanz.bestaetigt} vom Menschen akzeptiert, ${adsManagerBilanz.brauchtBlick} brauchen einen Blick.${c.adsManager.selbstgebremst ? ' 🛑 SELBSTBREMSE AKTIV: der Agent stuft sich wegen der schlechten Bilanz gerade selbst auf reine Empfehlung zurück.' : ''}`);
+    }
+
     const automationen = (c.cockpit && c.cockpit.automationen) || [];
     if (automationen.length) {
       const ok = automationen.filter((a) => a.status === 'ok').length;
@@ -2279,7 +2329,7 @@
   // Einzelzahl - erster Baustein einer wachsenden Ebene über allen Modulen).
   // Fehlende Datenquellen werden übersprungen, nicht mit erfundenen Werten
   // aufgefüllt - die Restgewichte verteilen sich einfach neu.
-  function berechneAiCeoFaktoren(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm, autoSkalierer, giftcardAgent) {
+  function berechneAiCeoFaktoren(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm, autoSkalierer, giftcardAgent, adsManager) {
     const faktoren = [];
 
     if (cockpit && Array.isArray(cockpit.automationen) && cockpit.automationen.length) {
@@ -2308,6 +2358,7 @@
       { data: reorder, key: 'keinEngpass' },
       { data: autoSkalierer, key: 'bestaetigt' },
       { data: giftcardAgent, key: 'bestaetigt' },
+      { data: adsManager, key: 'bestaetigt' },
     ].filter((a) => a.data && a.data.erfolgsBilanz && a.data.erfolgsBilanz.ausgewertet > 0);
     if (bilanzAgenten.length) {
       const quoten = bilanzAgenten.map((a) => a.data.erfolgsBilanz[a.key] / a.data.erfolgsBilanz.ausgewertet);
@@ -2345,10 +2396,10 @@
     return faktoren;
   }
 
-  function renderAiCeoHealth(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm, autoSkalierer, giftcardAgent) {
+  function renderAiCeoHealth(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm, autoSkalierer, giftcardAgent, adsManager) {
     const el = document.getElementById('aiCeoHealthContent');
     if (!el) return;
-    const faktoren = berechneAiCeoFaktoren(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm, autoSkalierer, giftcardAgent);
+    const faktoren = berechneAiCeoFaktoren(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm, autoSkalierer, giftcardAgent, adsManager);
     // "Support & Eskalationen" ist immer dabei (Default 0), zählt allein aber
     // nicht als echte Datenbasis - erst ab einem zweiten echten Signal zeigt
     // der Score etwas Sinnvolles, statt bei frisch ausgeliefertem System
@@ -2386,7 +2437,7 @@
   // braucht, an einer Stelle (nicht die historische Activity, sondern nur
   // der aktuell aktive Zustand: ausgelöste Notbremsen, selbstgebremste
   // Agenten, offene Eskalationen, nie gelaufene/fehlgeschlagene Automationen).
-  function sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent) {
+  function sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent, adsManager) {
     const events = [];
 
     if (adsNotbremse && adsNotbremse.ausgeloest) {
@@ -2402,6 +2453,7 @@
       { name: 'Reorder-Agent (#63)', data: reorder },
       { name: 'Auto-Skalierer (#42)', data: autoSkalierer },
       { name: 'Gift-Card-Kompensations-Agent (#67)', data: giftcardAgent },
+      { name: 'Ads-Manager (#11)', data: adsManager },
     ].forEach((a) => {
       if (a.data && a.data.selbstgebremst) {
         events.push({ icon: '🐢', titel: `${a.name} selbstgebremst`, detail: 'Eigene Erfolgsbilanz zuletzt unter der Schwelle - läuft gerade nur auf Empfehlung.', alarm: false });
@@ -2417,10 +2469,10 @@
     return events;
   }
 
-  function renderCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent) {
+  function renderCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent, adsManager) {
     const el = document.getElementById('criticalEventsContent');
     if (!el) return;
-    const events = sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent);
+    const events = sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent, adsManager);
 
     let html = `<div class="section-title-inline">🚨 CRITICAL EVENTS CENTER</div>`;
     if (!events.length) {
@@ -2484,7 +2536,7 @@
   // abdeckt (die zeigt Ketten/Referral/Social/CEO/Brand/Product). Jede
   // Zeile direkt aus der jeweiligen echten historie - nichts zusammengefasst
   // oder interpretiert.
-  function sammleAuditEintraege(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent) {
+  function sammleAuditEintraege(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent, adsManager) {
     const eintraege = [];
 
     for (const a of (pricingHistorie && pricingHistorie.historie) || []) {
@@ -2535,15 +2587,23 @@
         quelle: 'Gift-Card-Kompensations-Agent #67',
       });
     }
+    for (const k of (adsManager && adsManager.historie) || []) {
+      eintraege.push({
+        datum: k.datum, icon: '✂️',
+        titel: `${k.name} gekillt (ROAS ${k.roas})`,
+        detail: `Spend ${k.spend} € — ${k.ausgefuehrt ? 'live pausiert' : 'nur empfohlen'}`,
+        quelle: 'Ads-Manager #11',
+      });
+    }
 
     eintraege.sort((a, b) => new Date(b.datum) - new Date(a.datum));
     return eintraege;
   }
 
-  function renderAuditLog(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent) {
+  function renderAuditLog(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent, adsManager) {
     const el = document.getElementById('auditLogContent');
     if (!el) return;
-    const eintraege = sammleAuditEintraege(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent);
+    const eintraege = sammleAuditEintraege(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent, adsManager);
     let html = `<div class="section-title-inline">📜 AUDIT-LOG — ECHTE ENTSCHEIDUNGEN DER HANDLUNGS-AGENTEN</div>`;
     if (!eintraege.length) {
       html += emptyHtml('📜', 'Noch keine Entscheidungen protokolliert', 'Erscheint, sobald Pricing-, Split-Test-, Ads-Autopilot- oder Reorder-Agent zum ersten Mal eine Preisänderung, Pausierung, Budget-Umschichtung oder Nachbestellung vorschlagen bzw. ausführen.');
@@ -2566,10 +2626,10 @@
   // aggregierte Rückschau: Erfolgsquote + je 3 echte Beispiele pro Seite.
   const AUTOPSY_POSITIV_WIRKUNG = new Set([
     'verkauft_weiterhin', 'verkauft_jetzt', 'gewinner_bestaetigt', 'verstaerkung_bestaetigt', 'kein_engpass',
-    'skalierung_bestaetigt', 'kunde_kam_zurueck',
+    'skalierung_bestaetigt', 'kunde_kam_zurueck', 'kill_bestaetigt',
   ]);
 
-  function sammleAutopsyEintraege(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent) {
+  function sammleAutopsyEintraege(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent, adsManager) {
     const eintraege = [];
 
     for (const a of (pricingHistorie && pricingHistorie.historie) || []) {
@@ -2620,15 +2680,23 @@
         warum: g.grund, wirkung: g.wirkung, positiv: AUTOPSY_POSITIV_WIRKUNG.has(g.wirkung),
       });
     }
+    for (const k of (adsManager && adsManager.historie) || []) {
+      if (!k.ausgewertet) continue;
+      eintraege.push({
+        agent: 'Ads-Manager #11', datum: k.datum,
+        aktion: `${k.name} gekillt (ROAS ${k.roas})`,
+        warum: `ROAS ${k.roas} unter 1`, wirkung: k.wirkung, positiv: AUTOPSY_POSITIV_WIRKUNG.has(k.wirkung),
+      });
+    }
 
     eintraege.sort((a, b) => new Date(b.datum) - new Date(a.datum));
     return eintraege;
   }
 
-  function renderBusinessAutopsy(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent) {
+  function renderBusinessAutopsy(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent, adsManager) {
     const el = document.getElementById('businessAutopsyContent');
     if (!el) return;
-    const eintraege = sammleAutopsyEintraege(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent);
+    const eintraege = sammleAutopsyEintraege(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent, adsManager);
     let html = `<div class="section-title-inline">🔬 AI BUSINESS AUTOPSY — WAS WIRKLICH FUNKTIONIERT HAT</div>`;
     if (!eintraege.length) {
       html += emptyHtml('🔬', 'Noch keine ausgewerteten Entscheidungen', 'Erscheint, sobald die Handlungs-Agenten erste ausgeführte Entscheidungen gegen die echten Verkaufs-/Performance-Daten danach ausgewertet haben (dauert je nach Agent 7-14 Tage nach der ersten Ausführung).');
@@ -2861,10 +2929,10 @@
   // zusammenführt. Sortierung ist deterministisch: Alarm vor Warnung vor
   // Chance, innerhalb der Chancen nach echtem Wachstum - keine erfundene
   // KI-Priorität, nur die bereits vorhandenen echten Signale sortiert.
-  function renderPriorityQueue(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, opportunityRadar, autoSkalierer, giftcardAgent) {
+  function renderPriorityQueue(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, opportunityRadar, autoSkalierer, giftcardAgent, adsManager) {
     const el = document.getElementById('priorityQueueContent');
     if (!el) return;
-    const events = sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent);
+    const events = sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent, adsManager);
     const chancen = (opportunityRadar && opportunityRadar.chancen) || [];
 
     const eintraege = [];
@@ -3197,7 +3265,8 @@
       ladeJson('./reorder-agent.json'),
       ladeJson('./auto-skalierer.json'),
       ladeJson('./giftcard-agent.json'),
-    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente, adsAutopilot, reorder, autoSkalierer, giftcardAgent]) => {
+      ladeJson('./ads-manager.json'),
+    ]).then(([ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente, adsAutopilot, reorder, autoSkalierer, giftcardAgent, adsManager]) => {
       renderGoalEngine(ceo);
       renderOpportunityRadar(opportunityRadar);
       renderCeo(ceo, chains, referral, social, pricingHistorie, splitTest);
@@ -3207,6 +3276,7 @@
       renderReorderHistorie(reorder);
       renderAutoSkaliererHistorie(autoSkalierer);
       renderGiftcardAgentHistorie(giftcardAgent);
+      renderAdsManagerHistorie(adsManager);
       renderKillSwitch(adsNotbremse, refundAlarm, autopilotStatus);
       renderAnalytics(analytics, ads);
       renderProduct(product);
@@ -3224,22 +3294,22 @@
       renderAutopilot(autopilotStatus);
       letzterCockpitStand = cockpit;
       letzteChains = chains;
-      COMMAND_KONTEXT = { ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente, adsAutopilot, reorder, autoSkalierer, giftcardAgent };
+      COMMAND_KONTEXT = { ceo, analytics, product, ads, chains, cockpit, brand, referral, social, belege, recap, autopilotStatus, pricingHistorie, adsNotbremse, refundAlarm, opportunityRadar, splitTest, socialPerformance, customerSegmente, adsAutopilot, reorder, autoSkalierer, giftcardAgent, adsManager };
       aiUpdatePanel();
       const eskalationenEl = document.getElementById('kpiTruthSupport');
       const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
       renderHealthBadge(cockpit, eskalationenAnzahl);
-      renderAiCeoHealth(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm, autoSkalierer, giftcardAgent);
+      renderAiCeoHealth(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm, autoSkalierer, giftcardAgent, adsManager);
       renderRiskScore(customerSegmente, reorder, adsNotbremse, cockpit);
-      renderCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent);
-      renderPriorityQueue(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, opportunityRadar, autoSkalierer, giftcardAgent);
+      renderCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent, adsManager);
+      renderPriorityQueue(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, opportunityRadar, autoSkalierer, giftcardAgent, adsManager);
 
       // Echte Browser-Benachrichtigung, sobald ein NEUES Critical Event
       // auftaucht (Notbremse ausgelöst, Automation fehlgeschlagen, ...) -
       // gleiches "nur bei echter Veränderung" Prinzip wie bei Eskalationen/
       // Ketten oben: kein Spam bei jedem 60s-Reload für einen bereits
       // bekannten Alarm, nur beim tatsächlichen Neuauftreten.
-      const aktuelleAlarme = sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent).filter((e) => e.alarm);
+      const aktuelleAlarme = sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, autoSkalierer, giftcardAgent, adsManager).filter((e) => e.alarm);
       renderTickerTape(chains, aktuelleAlarme);
       const aktuelleAlarmSchluessel = new Set(aktuelleAlarme.map((e) => e.titel));
       if (vorherigeAlarmSchluessel !== null) {
@@ -3251,8 +3321,8 @@
       }
       vorherigeAlarmSchluessel = aktuelleAlarmSchluessel;
       renderKpiScoreboard(analytics, ads, cockpit, customerSegmente, eskalationenAnzahl);
-      renderAuditLog(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent);
-      renderBusinessAutopsy(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent);
+      renderAuditLog(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent, adsManager);
+      renderBusinessAutopsy(pricingHistorie, splitTest, adsAutopilot, reorder, autoSkalierer, giftcardAgent, adsManager);
       renderRevenueForecast(analytics);
       renderCostForecast(cockpit);
 
