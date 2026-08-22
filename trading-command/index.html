@@ -358,7 +358,8 @@
   <div class="tool-grid" id="toolsContent"></div>
 
   <div class="panel-title" style="margin-top:32px;">Externe Ressourcen — echt recherchiert, kein Teil der Suite</div>
-  <p class="panel-desc">Zehn Tools/Plattformen, die im echten Trading-Alltag tatsächlich genutzt werden (nicht von uns betrieben, keine Kooperation, keine Empfehlung im Sinne einer Anlageberatung - reine Recherche).</p>
+  <p class="panel-desc">Tools/Plattformen, die im echten Trading-Alltag tatsächlich genutzt werden (nicht von uns betrieben, keine Kooperation, keine Empfehlung im Sinne einer Anlageberatung - reine Recherche, jede URL live geprüft).</p>
+  <input type="text" id="externeToolsSuche" placeholder="🔍 Ressource suchen (z.B. 'Krypto', 'Journal', 'Kalender')…" style="width:100%;max-width:420px;background:var(--panel);border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:13px;padding:10px 14px;border-radius:10px;margin-bottom:16px;outline:none;">
   <div class="tool-grid" id="externeToolsContent"></div>
 </section>
 
@@ -849,11 +850,22 @@
     { emoji:'🪙', name:'CoinMarketCap', desc:'Zweite große Krypto-Datenquelle neben CoinGecko - guter Gegencheck bei Preisen/Rankings.', href:'https://coinmarketcap.com/' },
     { emoji:'💬', name:'StockTwits', desc:'Social-Feed speziell für Trader - Stimmung/Diskussion pro Ticker in Echtzeit.', href:'https://stocktwits.com/' },
     { emoji:'📓', name:'TradeZella', desc:'Trade-Journal-Tool - loggt und analysiert echte (eigene) Trades automatisch, ähnlich unserem Journal-Tab, nur für echte Konten.', href:'https://www.tradezella.com/' },
+    { emoji:'🔍', name:'Etherscan', desc:'Blockchain-Explorer für Ethereum - jede Wallet/Transaktion öffentlich einsehbar, guter Realitäts-Check hinter dem Kurs.', href:'https://etherscan.io/' },
+    { emoji:'🐋', name:'Whale Alert', desc:'Meldet große Krypto-Transfers in Echtzeit - zeigt, wenn "Wale" große Summen bewegen.', href:'https://whale-alert.io/' },
+    { emoji:'🧾', name:'Koinly', desc:'Krypto-Steuer-Tool - rechnet Trade-Historie automatisch in eine steuerliche Übersicht um (Land-abhängig).', href:'https://koinly.io/' },
+    { emoji:'📰', name:'CoinDesk', desc:'Etablierter Krypto-News-Outlet - Einordnung/Hintergrund statt nur Rohdaten.', href:'https://www.coindesk.com/' },
   ];
-  function renderExterneTools() {
-    document.getElementById('externeToolsContent').innerHTML = EXTERNE_TOOLS.map((t) => `
-      <a class="tool-card" href="${t.href}" target="_blank" rel="noopener noreferrer"><span class="tool-emoji">${t.emoji}</span><div class="tool-name">${t.name} ↗</div><div class="tool-desc">${t.desc}</div></a>`).join('');
+  function renderExterneTools(filterText) {
+    const filter = (filterText || '').trim().toLowerCase();
+    const gefiltert = filter
+      ? EXTERNE_TOOLS.filter((t) => t.name.toLowerCase().includes(filter) || t.desc.toLowerCase().includes(filter))
+      : EXTERNE_TOOLS;
+    const el = document.getElementById('externeToolsContent');
+    el.innerHTML = gefiltert.length
+      ? gefiltert.map((t) => `<a class="tool-card" href="${t.href}" target="_blank" rel="noopener noreferrer"><span class="tool-emoji">${t.emoji}</span><div class="tool-name">${t.name} ↗</div><div class="tool-desc">${t.desc}</div></a>`).join('')
+      : '<div class="empty">Nichts gefunden - anderer Suchbegriff?</div>';
   }
+  document.getElementById('externeToolsSuche')?.addEventListener('input', (e) => renderExterneTools(e.target.value));
 
   // --- Übersicht KPIs ---
   function renderOverview(cryptoData, stocksData) {
