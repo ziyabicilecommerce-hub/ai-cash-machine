@@ -7,7 +7,7 @@ compatibility_date = "2025-01-01"
 # Handelszeiten ist der Lauf ein einzelner, billiger /v2/clock-Check und
 # beendet sich sofort.
 [triggers]
-crons = ["*/5 * * * *"]
+crons = ["* * * * *"]
 
 # State pro Symbol (Kapital, offene Position, Kill-Switch) - eigener,
 # unabhängiger KV-Namespace vom Krypto-Bot.

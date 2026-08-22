@@ -708,11 +708,20 @@ erklärt die Reihenfolge.
    ```bash
    wrangler deploy
    ```
-   Der Cron-Trigger (alle 5 Minuten, siehe `wrangler.toml`) läuft danach
+   Der Cron-Trigger (jede Minute, siehe `wrangler.toml`) läuft danach
    automatisch — kein manueller Aufruf nötig. Zum Testen:
    ```
    https://cashmachine-trading-bot.<dein-account>.workers.dev/?key=<TRIGGER_SECRET>
    ```
+   **Cron-Frequenz:** jede Minute statt alle 5 Minuten - der Bot reagiert
+   schneller auf ein Signal, das auf der laufenden 15-Minuten-Kerze schon da
+   ist (bis zu 5x weniger Verzögerung). Ändert NICHT die Strategie selbst
+   (weiterhin 15-Minuten-Kerzen als Basis) - reine Latenz-Verbesserung, kein
+   automatisches "mehr Trades". Bedeutet ~5x mehr Worker-Aufrufe/Tag
+   (ca. 1440 statt 288) und ~5x mehr Börsen-Anfragen - bei Kraken/Binance
+   Public-Endpoints unkritisch, aber bei einem Cloudflare-Metered-Plan
+   spürbar in der Rechnung. Zum Zurückstellen: `crons = ["*/5 * * * *"]`
+   in `wrangler.toml` und neu deployen.
 
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
