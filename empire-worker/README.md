@@ -26,13 +26,19 @@ auslösen, selbst wenn er kompromittiert würde.
 2. **Täglicher Cron (20:00 UTC)** — ein kombinierter WhatsApp/Telegram-
    Report statt zwei getrennter Nachrichten von den einzelnen Bots.
 3. **`POST /telegram-webhook`** — interaktiver Telegram-Bot: schreib dem
-   Bot `/status`, `/krypto`, `/aktien` oder `/hilfe` und bekommst sofort
-   eine Antwort, statt auf den Tages-Report zu warten. Genau wie 1./2.
-   strikt rein lesend (kein `.put()` in dieser Datei) — kein Befehl kann
-   je einen Trade auslösen, egal was geschrieben wird. Antwortet **nur**
-   im eigenen konfigurierten `TELEGRAM_CHAT_ID` — Nachrichten von jedem
-   anderen Chat werden mit stillem `200 OK` ignoriert, damit niemand
-   sonst, der den Bot-Namen findet, dein Portfolio abfragen kann.
+   Bot `/status`, `/krypto`, `/aktien`, `/signale` oder `/hilfe` und
+   bekommst sofort eine Antwort, statt auf den Tages-Report zu warten.
+   `/signale` (`lib/signale.mjs`) liest live aus den KV-Werten, die der
+   wöchentliche Signal-Digest der einzelnen Bots ohnehin schon schreibt
+   (Monte-Carlo-Kill-Switch-Risiko, Strategie-Turnier-Abweichung,
+   Korrelation ≥0.7) — also dieselbe Auswertung wie montags, aber
+   jederzeit abrufbar statt nur einmal pro Woche. Genau wie 1./2. strikt
+   rein lesend (kein `.put()` in dieser Datei) — kein Befehl kann je
+   einen Trade auslösen, egal was geschrieben wird, und keine Antwort ist
+   je eine Kauf-/Verkaufsempfehlung. Antwortet **nur** im eigenen
+   konfigurierten `TELEGRAM_CHAT_ID` — Nachrichten von jedem anderen Chat
+   werden mit stillem `200 OK` ignoriert, damit niemand sonst, der den
+   Bot-Namen findet, dein Portfolio abfragen kann.
 
 ## Setup
 

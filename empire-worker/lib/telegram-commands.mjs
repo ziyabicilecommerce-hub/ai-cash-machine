@@ -46,6 +46,7 @@ export function formatHilfe() {
     '/status — kombinierte Übersicht beider Bots',
     '/krypto — Detail-Status Krypto-Bot (pro Symbol)',
     '/aktien — Detail-Status Aktien-Bot (pro Symbol)',
+    '/signale — Monte-Carlo-Risiko, Strategie-Turnier & Korrelation, live abgerufen (nicht nur montags)',
     '/hilfe — diese Liste',
     '',
     'Rein lesend — kein Befehl hier kann jemals einen Trade auslösen oder',

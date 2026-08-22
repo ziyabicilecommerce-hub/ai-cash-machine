@@ -21,6 +21,7 @@
 
 import { notify } from './lib/notify.mjs';
 import { formatBotDetail, formatKombiniertenStatusKern, formatStatusAntwort, formatHilfe } from './lib/telegram-commands.mjs';
+import { formatSignaleAntwort } from './lib/signale.mjs';
 
 async function ladeAlleStates(kv) {
   const list = await kv.list({ prefix: 'state:' });
@@ -92,6 +93,9 @@ async function verarbeiteTelegramBefehl(env, text) {
   }
   if (befehl === '/aktien') {
     return formatBotDetail(await ladeAlleStates(env.STOCKS_STATE), '📈 Aktien-Bot', 'USD');
+  }
+  if (befehl === '/signale') {
+    return formatSignaleAntwort(env);
   }
   if (befehl === '/hilfe' || befehl === '/start' || befehl === '/help') {
     return formatHilfe();
