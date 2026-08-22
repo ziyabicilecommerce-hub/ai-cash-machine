@@ -649,6 +649,11 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     </div>`;
   }
 
+  // Für Alerts, die Bot-Daten MIT Live-Internet-Daten kombinieren (siehe
+  // renderAlerts) - vom Markt-Loop unten befüllt, unabhängig vom 30s-Poll.
+  let letzteFg = null;
+  let letzteMarkets = null;
+
   async function loadMarketData(cryptoData) {
     const el = document.getElementById('marketGrid');
     const basen = [...new Set((cryptoData && !cryptoData.fehler ? cryptoData.symbole || [] : []).map((s) => basisSymbol(s.symbol)).filter((b) => COINGECKO_IDS[b]))];
@@ -667,11 +672,17 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     const trending = trendingRes.status === 'fulfilled' ? trendingRes.value : null;
     const preise = preisRes.status === 'fulfilled' ? preisRes.value : null;
     const markets = marketsRes.status === 'fulfilled' ? marketsRes.value : null;
+    letzteFg = fg;
+    letzteMarkets = markets;
 
     let html = fearGreedCard(fg) + globalMarketCard(global) + trendingCard(trending);
     html += topMoversCard(markets);
     html += priceCheckCard(cryptoData, preise);
     el.innerHTML = html;
+
+    // Alerts neu berechnen - jetzt mit den frischen Live-Marktdaten (Extreme
+    // Fear&Greed, große Bewegung bei einem eigenen Symbol) kombiniert.
+    renderAlerts(letzteCryptoData, letzteStocksData);
   }
 
   // ---- SCANNER ----
@@ -957,6 +968,24 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
         alerts.push(alertRow('🚦', `${b.icon} ${b.name}: Go-Live-Score im roten Bereich (${b.data.goLiveScore.score}/100).`, 'aktuell'));
       }
     }
+
+    // Live-Internet-Daten als Alert-Quelle mit dazu (Live-Markt-Tab) - macht
+    // aus zwei getrennten Bereichen EIN gemeinsames Warnsystem.
+    if (letzteFg) {
+      const wert = Number(letzteFg.value);
+      const zeit = fmtDatum(new Date(Number(letzteFg.timestamp) * 1000).toISOString());
+      if (wert <= 20) alerts.push(alertRow('😨', `Fear &amp; Greed Index bei ${wert} (Extreme Fear) - Markt wirkt stark ängstlich.`, zeit));
+      else if (wert >= 80) alerts.push(alertRow('🤑', `Fear &amp; Greed Index bei ${wert} (Extreme Greed) - Markt wirkt stark euphorisch.`, zeit));
+    }
+    if (letzteMarkets && cryptoData && !cryptoData.fehler) {
+      const eigeneBasen = new Set((cryptoData.symbole || []).map((s) => basisSymbol(s.symbol)));
+      for (const m of letzteMarkets) {
+        if (eigeneBasen.has(m.symbol.toUpperCase()) && m.price_change_percentage_24h != null && Math.abs(m.price_change_percentage_24h) >= 10) {
+          alerts.push(alertRow('🚀', `<b>${m.symbol.toUpperCase()}</b> (eigenes Symbol) ${m.price_change_percentage_24h >= 0 ? '+' : ''}${m.price_change_percentage_24h.toFixed(1)}% in 24h laut CoinGecko.`, 'aktuell'));
+        }
+      }
+    }
+
     el.innerHTML = `<div class="card full">${alerts.length ? alerts.map((a) => a.html).join('') : '<div class="empty">Keine aktiven Alerts - alles unauffällig.</div>'}</div>`;
     verarbeiteNeueAlerts(alerts.map((a) => a.text));
   }
@@ -985,6 +1014,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 
   // ---- LOAD ALL ----
   let letzteCryptoData = null; // für den Live-Marktdaten-Loop (eigener, langsamerer Zyklus)
+  let letzteStocksData = null;
 
   async function loadAll() {
     const conn = getConn();
@@ -994,6 +1024,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     ]);
     const cryptoData = cryptoRes.data, stocksData = stocksRes.data;
     letzteCryptoData = cryptoData;
+    letzteStocksData = stocksData;
     renderCommandBar(cryptoData, stocksData, cryptoRes.latencyMs, stocksRes.latencyMs);
     renderOverview(cryptoData, stocksData);
     renderHeatmap(cryptoData, stocksData);
