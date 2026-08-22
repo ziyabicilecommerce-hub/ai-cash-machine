@@ -36,6 +36,7 @@ import { pruefeUndFuehreAiReview } from './lib/ai-review.mjs';
 import { pruefeUndAktualisiereScanner } from './lib/scanner.mjs';
 import { pruefeUndAktualisiereMonteCarlo } from './lib/montecarlo.mjs';
 import { pruefeUndSendeSignalDigest } from './lib/signaldigest.mjs';
+import { pruefeUndSpeichereScoreVerlauf } from './lib/scoreverlauf.mjs';
 import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtschaftskalender.mjs';
 import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
@@ -413,6 +414,11 @@ async function runAll(env) {
     await pruefeUndSendeSignalDigest(env, cfg);
   } catch (err) {
     console.error('[trading-bot] Fehler beim Signal-Digest:', err);
+  }
+  try {
+    await pruefeUndSpeichereScoreVerlauf(env, cfg);
+  } catch (err) {
+    console.error('[trading-bot] Fehler beim Score-Verlauf:', err);
   }
 }
 

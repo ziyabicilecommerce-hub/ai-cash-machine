@@ -221,6 +221,13 @@ bereits geschriebener KV-Werte, kein zusätzlicher API-Call.
 **Unmissverständlich: keine Kauf-/Verkaufsempfehlung** - sagt nie "kaufe
 X", nur "diese Woche wurde X gemessen".
 
+**Score-Verlauf** (`lib/scoreverlauf.mjs`, Pendant zum Krypto-Bot): läuft
+als letzter Schritt der Montags-Wartung und speichert einen Schnappschuss
+des Go-Live-Readiness-Scores - macht aus der reinen Momentaufnahme einen
+echten Trend über die letzten 12 Wochen. `/status` liefert die Reihe als
+`goLiveScoreVerlauf`-Feld, Trading Deck zeigt sie als Sparkline. Kein
+zusätzlicher API-Call - der Score braucht keine Live-Kurse.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch
