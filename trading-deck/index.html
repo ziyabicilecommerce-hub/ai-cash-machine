@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TRADING DECK — AI Cash Machine</title>
+
+<style>
+:root{
+  --bg:#05070b;
+  --panel:#0b1018;
+  --panel2:#0f1621;
+  --line:#1c2735;
+  --text:#edf3fa;
+  --muted:#718096;
+  --green:#00ff9c;
+  --yellow:#ffd166;
+  --red:#ff4d67;
+  --blue:#5da9ff;
+  --purple:#9b7cff;
+  --cyan:#00d9ff;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 50% -20%,#142235 0,transparent 40%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+.app{min-height:100vh}
+
+/* TOP BAR */
+.topbar{
+  height:70px; border-bottom:1px solid var(--line); display:flex; align-items:center;
+  justify-content:space-between; padding:0 28px; position:sticky; top:0; z-index:50;
+  background:rgba(5,7,11,.86); backdrop-filter:blur(20px);
+}
+.brand{display:flex; gap:12px; align-items:center; font-weight:900; letter-spacing:1.5px;}
+.logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--green),var(--cyan));
+  color:#00150d; display:grid; place-items:center; font-weight:1000;}
+.topbar-right{display:flex; align-items:center; gap:16px;}
+.topbar-links{display:flex; gap:14px; font-size:11px;}
+.topbar-links a{color:var(--muted); text-decoration:none;}
+.topbar-links a:hover{color:var(--text)}
+.status{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted);}
+.dot{width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 14px var(--green);}
+.dot.yellow{background:var(--yellow); box-shadow:0 0 14px var(--yellow);}
+.dot.red{background:var(--red); box-shadow:0 0 14px var(--red);}
+.gear{border:1px solid var(--line); background:#101824; color:#dbe6f3; width:32px; height:32px; border-radius:8px;}
+.gear:hover{border-color:#35506c}
+
+/* LAYOUT */
+.layout{display:grid; grid-template-columns:230px 1fr;}
+.sidebar{border-right:1px solid var(--line); min-height:calc(100vh - 70px); padding:20px 14px; position:sticky; top:70px; height:calc(100vh - 70px);}
+.nav-title{font-size:10px; color:#465568; letter-spacing:1.5px; margin:12px 10px;}
+.nav button{width:100%; border:0; background:transparent; color:#8492a5; text-align:left; padding:12px 13px; border-radius:10px; margin-bottom:3px;}
+.nav button:hover, .nav button.active{background:#111a26; color:#fff;}
+.main{padding:28px; max-width:1700px; width:100%; margin:auto;}
+
+.hero{display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:24px;}
+.kicker{color:var(--green); font-size:11px; letter-spacing:2px; font-weight:800;}
+h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
+.subtitle{color:var(--muted); font-size:13px;}
+
+/* COMMAND STATUS */
+.command{display:grid; grid-template-columns:1.3fr repeat(4,1fr); gap:10px; margin-bottom:18px;}
+.command-main, .command-item{border:1px solid var(--line); background:linear-gradient(145deg,#0d151f,#080c12); border-radius:14px; padding:17px;}
+.command-main{border-color:#154f3c;}
+.command-label{color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:1px;}
+.command-value{font-size:20px; font-weight:900; margin-top:6px;}
+.green{color:var(--green)} .yellow{color:var(--yellow)} .red{color:var(--red)} .blue{color:var(--blue)} .purple{color:var(--purple)}
+
+/* GRID */
+.grid{display:grid; grid-template-columns:repeat(12,1fr); gap:14px; margin-bottom:14px;}
+.card{grid-column:span 3; background:linear-gradient(145deg,#0c121b,#080c12); border:1px solid var(--line); border-radius:15px; padding:18px;}
+.card.wide{grid-column:span 6} .card.xwide{grid-column:span 8} .card.full{grid-column:1/-1} .card.half{grid-column:span 6}
+.card-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;}
+.card-title{font-weight:800; font-size:13px;}
+.card-meta{color:#526174; font-size:10px;}
+.big{font-size:29px; font-weight:950; letter-spacing:-1px;}
+.metric{color:var(--muted); font-size:11px; margin-top:4px;}
+.progress{height:6px; border-radius:20px; background:#17202c; overflow:hidden; margin-top:14px;}
+.progress > div{height:100%; background:linear-gradient(90deg,var(--green),var(--cyan));}
+.section-label{font-size:11px; color:#465568; letter-spacing:1.5px; text-transform:uppercase; margin:26px 2px 12px; font-weight:800;}
+.section-label:first-child{margin-top:0}
+
+/* AI ANALYST */
+.ai{background:radial-gradient(circle at 80% 0%,rgba(155,124,255,.16),transparent 35%), linear-gradient(145deg,#10131f,#080b12); border-color:#29244b;}
+.ai-score{display:flex; align-items:center; gap:20px;}
+.score{width:92px; height:92px; border-radius:50%; display:grid; place-items:center; font-size:24px; font-weight:950; flex:none;}
+.ai-text h3{margin:0 0 7px;}
+.ai-text p{color:#8592a3; font-size:12px; line-height:1.6; margin:0;}
+.subscore{display:flex; justify-content:space-between; font-size:11px; margin:10px 0 4px;}
+.subscore b{font-family:monospace; color:var(--text);}
+.subscore-desc{font-size:10.5px; color:#5c6a7c; margin-bottom:10px;}
+.quote{margin-top:14px; padding:12px 14px; border-left:2px solid var(--purple); background:rgba(155,124,255,.05); font-size:12px; color:#c3cadb; line-height:1.6; white-space:pre-wrap;}
+
+/* REGIME */
+.regime{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+.regime-item{border:1px solid var(--line); background:#080d14; padding:13px; border-radius:10px;}
+.asset{font-weight:800;}
+.regime-state{font-size:11px; margin-top:7px;}
+
+/* TABLE */
+.table{width:100%; border-collapse:collapse; font-size:11px;}
+.table th{color:#506074; text-align:left; font-size:9px; letter-spacing:1px; text-transform:uppercase; padding:9px 7px; border-bottom:1px solid var(--line);}
+.table td{padding:12px 7px; border-bottom:1px solid #111923;}
+.table-wrap{overflow-x:auto;}
+.badge{display:inline-flex; padding:4px 7px; border-radius:5px; font-size:9px; font-weight:900; letter-spacing:.4px;}
+.badge.green{background:rgba(0,255,156,.09); border:1px solid rgba(0,255,156,.2);}
+.badge.yellow{background:rgba(255,209,102,.08); border:1px solid rgba(255,209,102,.2);}
+.badge.red{background:rgba(255,77,103,.08); border:1px solid rgba(255,77,103,.2);}
+
+/* RISK */
+.risk-row{margin:15px 0;}
+.risk-top{display:flex; justify-content:space-between; font-size:11px;}
+.risk-bar{height:8px; background:#17202b; border-radius:20px; margin-top:8px; overflow:hidden;}
+.risk-bar div{height:100%; border-radius:20px;}
+
+/* BUTTONS */
+.btn{border:1px solid var(--line); background:#101824; color:#dbe6f3; padding:9px 13px; border-radius:8px; font-size:11px; font-weight:800;}
+.btn:hover{border-color:#35506c}
+.btn.primary{background:#0b2b21; border-color:#176c4e; color:var(--green);}
+
+/* JOURNAL */
+.journal{display:flex; flex-direction:column; gap:8px;}
+.trade{display:grid; grid-template-columns:100px 90px 1fr 90px; gap:10px; align-items:center; padding:11px; border:1px solid #141e29; background:#080d14; border-radius:9px; font-size:11px;}
+
+/* ALERTS */
+.alert{display:flex; gap:10px; align-items:flex-start; padding:11px; border-bottom:1px solid #151e29;}
+.alert:last-child{border-bottom:none}
+.alert-icon{font-size:15px;}
+.alert-text{font-size:11px; line-height:1.5;}
+.alert-time{color:#465466; font-size:9px;}
+
+/* HEALTH */
+.health{display:grid; grid-template-columns:repeat(3,1fr); gap:9px;}
+.health-item{background:#080d14; border:1px solid var(--line); border-radius:9px; padding:11px;}
+.health-top{display:flex; justify-content:space-between; font-size:10px;}
+.latency{color:#69788b; font-size:9px; margin-top:7px;}
+
+.empty{color:#465568; font-size:12px; padding:20px 4px;}
+.note{color:#5c6a7c; font-size:10.5px; margin-top:10px; line-height:1.5;}
+
+/* MODAL */
+.modal-overlay{position:fixed; inset:0; z-index:600; background:rgba(3,5,18,.88); display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s, visibility .2s; padding:20px;}
+.modal-overlay.open{opacity:1; visibility:visible; pointer-events:auto;}
+.modal{width:min(460px,92vw); background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px;}
+.modal h3{color:var(--green); font-size:15px; margin:0 0 6px;}
+.modal p{font-size:11.5px; color:var(--muted); line-height:1.6;}
+.modal .grp{font-family:monospace; font-size:10.5px; letter-spacing:.08em; color:var(--yellow); margin:16px 0 8px; text-transform:uppercase;}
+.modal label{display:block; font-size:10px; letter-spacing:.06em; color:#7c8aa0; margin:9px 0 4px;}
+.modal input{width:100%; background:#080d14; border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:7px; outline:none;}
+.modal input:focus{border-color:var(--green)}
+.modal-actions{display:flex; justify-content:flex-end; margin-top:18px;}
+
+/* FOOTER */
+.footer{padding:25px 0 10px; color:#394657; font-size:10px; text-align:center;}
+.footer a{color:var(--green); text-decoration:none; margin:0 6px;}
+
+@media(max-width:1100px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:static; height:auto; min-height:auto; border-right:0; border-bottom:1px solid var(--line);}
+  .nav{display:flex; overflow:auto;}
+  .nav button{white-space:nowrap;}
+  .command{grid-template-columns:1fr 1fr;}
+  .card, .card.wide, .card.xwide, .card.half{grid-column:span 6;}
+}
+@media(max-width:700px){
+  .topbar{padding:0 15px} .main{padding:15px} .hero{display:block} h1{font-size:27px}
+  .command{grid-template-columns:1fr}
+  .card, .card.wide, .card.xwide, .card.half{grid-column:1/-1;}
+  .trade{grid-template-columns:1fr 1fr}
+  .topbar-links{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3>Bots verbinden</h3>
+    <p>Werte bleiben nur lokal im Browser (localStorage) — dieselbe Verbindung wie im Trading Command Dashboard. Beide Bots sind optional.</p>
+    <div class="grp">₿ Krypto-Bot</div>
+    <label for="cryptoUrl">Worker-URL</label>
+    <input type="text" id="cryptoUrl" placeholder="https://cashmachine-trading-bot.dein-account.workers.dev" autocomplete="off">
+    <label for="cryptoKey">STATUS_READ_KEY</label>
+    <input type="password" id="cryptoKey" placeholder="dein-status-read-key" autocomplete="off">
+    <div class="grp">📈 Aktien-Bot</div>
+    <label for="stocksUrl">Worker-URL</label>
+    <input type="text" id="stocksUrl" placeholder="https://cashmachine-stocks-bot.dein-account.workers.dev" autocomplete="off">
+    <label for="stocksKey">STATUS_READ_KEY</label>
+    <input type="password" id="stocksKey" placeholder="dein-status-read-key" autocomplete="off">
+    <div class="modal-actions"><button class="btn primary" id="modalSave" type="button">Speichern</button></div>
+  </div>
+</div>
+
+<div class="app">
+
+<header class="topbar">
+  <div class="brand"><div class="logo">⚡</div><div>AI CASH MACHINE</div></div>
+  <div class="topbar-right">
+    <div class="topbar-links">
+      <a href="../trading-command/">Trading Command</a>
+      <a href="../empire-dashboard/">Empire</a>
+      <a href="../">Jarvis</a>
+    </div>
+    <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">VERBINDE…</span></div>
+    <button class="gear" id="gearBtn" title="Bots verbinden">⚙</button>
+  </div>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="nav-title">COMMAND</div>
+  <div class="nav">
+    <button class="active" data-nav="overview" onclick="scrollToId('overview')">🎯 Overview</button>
+    <button data-nav="analyst" onclick="scrollToId('analyst')">🧠 AI Analyst</button>
+    <button data-nav="scanner" onclick="scrollToId('scanner')">🎯 Scanner</button>
+    <button data-nav="risk" onclick="scrollToId('risk')">🛡️ Risk Center</button>
+    <button data-nav="backtest" onclick="scrollToId('backtest')">🧪 Backtest</button>
+    <button data-nav="journal" onclick="scrollToId('journal')">📝 Journal</button>
+    <button data-nav="alerts" onclick="scrollToId('alerts')">🚨 Alerts</button>
+    <button data-nav="health" onclick="scrollToId('health')">⚙️ Health</button>
+  </div>
+</aside>
+
+<main class="main">
+
+<section class="hero">
+  <div>
+    <div class="kicker">AUTONOMOUS TRADING INTELLIGENCE</div>
+    <h1>TRADING DECK</h1>
+    <div class="subtitle">Ein Instrumentenbrett für beide Paper-Bots — jede Zahl live aus den echten <code>/status</code>-Endpoints, nichts erfunden, nichts simuliert. Rein lesend.</div>
+  </div>
+  <button class="btn primary" id="refreshBtn">↻ REFRESH SYSTEM</button>
+</section>
+
+<section class="command" id="commandBar"></section>
+
+<div class="section-label" id="overview">Overview</div>
+<section class="grid" id="overviewGrid"></section>
+
+<div class="section-label" id="analyst">AI Analyst — Go-Live-Readiness</div>
+<section class="grid" id="analystGrid"></section>
+<div class="grid" id="regimeGrid"></div>
+
+<div class="section-label" id="scanner">Live Market Scanner</div>
+<section class="grid" id="scannerGrid"></section>
+
+<div class="section-label" id="risk">Risk Center</div>
+<section class="grid" id="riskGrid"></section>
+
+<div class="section-label" id="backtest">Auto-Backtest &amp; Strategie-Turnier</div>
+<section class="grid" id="backtestGrid"></section>
+
+<div class="section-label" id="journal">Trade Journal</div>
+<section class="grid" id="journalGrid"></section>
+
+<div class="section-label" id="alerts">Alerts</div>
+<section class="grid" id="alertsGrid"></section>
+
+<div class="section-label" id="health">System Health</div>
+<section class="grid" id="healthGrid"></section>
+
+<div class="footer">
+  <b>TRADING DECK</b> · Instrumentenbrett für beide Bots · rein lesend, kann nie einen Trade auslösen ·
+  <a href="../trading-command/">Trading Command</a>·<a href="../strategy-lab/">Strategy Lab</a>·<a href="../empire-dashboard/">Empire Dashboard</a>
+</div>
+
+</main>
+</div>
+</div>
+
+<script>
+  const REFRESH_MS = 30000;
+  // Dieselben localStorage-Keys wie trading-command/index.html - einmal
+  // verbinden gilt für beide Dashboards.
+  const KEYS = { cryptoUrl:'cmx_trading_worker_url', cryptoKey:'cmx_trading_status_key', stocksUrl:'cmx_stocks_worker_url', stocksKey:'cmx_stocks_status_key' };
+
+  function getConn() {
+    return {
+      crypto: { url: localStorage.getItem(KEYS.cryptoUrl) || '', key: localStorage.getItem(KEYS.cryptoKey) || '' },
+      stocks: { url: localStorage.getItem(KEYS.stocksUrl) || '', key: localStorage.getItem(KEYS.stocksKey) || '' },
+    };
+  }
+
+  const overlay = document.getElementById('modalOverlay');
+  function openModal() {
+    const c = getConn();
+    document.getElementById('cryptoUrl').value = c.crypto.url;
+    document.getElementById('cryptoKey').value = c.crypto.key;
+    document.getElementById('stocksUrl').value = c.stocks.url;
+    document.getElementById('stocksKey').value = c.stocks.key;
+    overlay.classList.add('open');
+  }
+  function closeModal() { overlay.classList.remove('open'); }
+  document.getElementById('gearBtn').addEventListener('click', openModal);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+  document.getElementById('modalSave').addEventListener('click', () => {
+    const vals = {
+      cryptoUrl: document.getElementById('cryptoUrl').value.trim().replace(/\/$/, ''),
+      cryptoKey: document.getElementById('cryptoKey').value.trim(),
+      stocksUrl: document.getElementById('stocksUrl').value.trim().replace(/\/$/, ''),
+      stocksKey: document.getElementById('stocksKey').value.trim(),
+    };
+    Object.entries(vals).forEach(([k, v]) => { if (v) localStorage.setItem(KEYS[k], v); else localStorage.removeItem(KEYS[k]); });
+    closeModal();
+    loadAll();
+  });
+
+  function scrollToId(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // --- Fetch (misst die ECHTE Latenz des Aufrufs, für den Health-Tab) ---
+  async function fetchStatus(url, key) {
+    if (!url || !key) return { data: null, latencyMs: null };
+    const start = performance.now();
+    try {
+      const res = await fetch(`${url}/status?key=${encodeURIComponent(key)}`, { cache: 'no-store' });
+      const latencyMs = Math.round(performance.now() - start);
+      if (!res.ok) return { data: { fehler: true }, latencyMs };
+      return { data: await res.json(), latencyMs };
+    } catch {
+      return { data: { fehler: true }, latencyMs: Math.round(performance.now() - start) };
+    }
+  }
+
+  const fmtGeld = (n, suffix) => (n ?? 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + suffix;
+  const fmtProzent = (n) => n == null ? '–' : `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`;
+  const fmtZahl = (n, nachkomma = 2) => n == null ? '–' : n.toFixed(nachkomma);
+  const fmtDatum = (iso) => { if (!iso) return '–'; try { return new Date(iso).toLocaleString('de-DE', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }); } catch { return iso; } };
+  function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
+
+  function summarize(data) {
+    if (!data || data.fehler) return null;
+    const symbole = data.symbole || [];
+    const kapital = symbole.reduce((s, x) => s + x.kapital, 0);
+    const start = symbole.reduce((s, x) => s + x.startKapital, 0);
+    const pl = kapital - start;
+    const plProzent = start ? (pl / start) * 100 : 0;
+    const offenePositionen = symbole.filter((s) => s.position).length;
+    const alleTrades = symbole.flatMap((s) => s.trades || []);
+    const gewinne = alleTrades.filter((t) => t.gewinnVerlustUsdt > 0).length;
+    const winRate = alleTrades.length ? (gewinne / alleTrades.length) * 100 : null;
+    const maxDrawdownProzent = symbole.length ? Math.max(...symbole.map((s) => s.maxDrawdownProzent || 0)) : 0;
+    const killSwitchSymbole = symbole.filter((s) => s.killSwitchAktiv).map((s) => s.symbol);
+    return { kapital, start, pl, plProzent, offenePositionen, anzahlSymbole: symbole.length, anzahlTrades: alleTrades.length, winRate, maxDrawdownProzent, killSwitchSymbole };
+  }
+
+  // Stocks-Bot liefert kein risikoStatus-Feld direkt (nur der Krypto-Bot
+  // berechnet das serverseitig) - dieselbe Ableitung wie in trading-command's
+  // System-Map, statt etwas zu erfinden.
+  function risikoStatusStocks(data) {
+    if (!data || data.fehler) return null;
+    const symbole = data.symbole || [];
+    if (symbole.some((s) => s.killSwitchAktiv) || data.marktweiterCrashAktiv) return 'danger';
+    if (data.newsEventAktiv) return 'warnung';
+    return 'sicher';
+  }
+
+  // ---- COMMAND BAR ----
+  function renderCommandBar(cryptoData, stocksData, cryptoLatency, stocksLatency) {
+    const el = document.getElementById('commandBar');
+    const verbunden = [cryptoData, stocksData].filter((d) => d && !d.fehler).length;
+    const statusFarbe = verbunden === 2 ? 'green' : verbunden === 1 ? 'yellow' : 'red';
+    const statusLabel = verbunden === 2 ? '● ONLINE' : verbunden === 1 ? '● TEILWEISE' : '● OFFLINE';
+
+    const dot = document.getElementById('statusDot');
+    dot.className = 'dot' + (statusFarbe === 'green' ? '' : statusFarbe === 'yellow' ? ' yellow' : ' red');
+    document.getElementById('statusText').textContent = verbunden === 2 ? 'BEIDE BOTS ONLINE' : verbunden === 1 ? '1/2 BOTS ONLINE' : 'NICHT VERBUNDEN';
+
+    const scores = [cryptoData, stocksData].filter((d) => d && !d.fehler && d.goLiveScore).map((d) => d.goLiveScore.score);
+    const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+
+    const cRisk = cryptoData && !cryptoData.fehler ? cryptoData.risikoStatus : null;
+    const sRisk = risikoStatusStocks(stocksData);
+    const risikoWerte = [cRisk, sRisk].filter(Boolean);
+    const risiko = risikoWerte.includes('danger') ? { label:'HOCH', farbe:'red' } : risikoWerte.includes('warnung') ? { label:'ERHÖHT', farbe:'yellow' } : risikoWerte.length ? { label:'NIEDRIG', farbe:'green' } : { label:'–', farbe:'' };
+
+    const cronZeiten = [cryptoData && !cryptoData.fehler ? cryptoData.letzterCronLauf : null, stocksData && !stocksData.fehler ? stocksData.letzterCronLauf : null].filter(Boolean);
+    const letzterCron = cronZeiten.length ? fmtDatum(cronZeiten.sort().reverse()[0]) : '–';
+
+    el.innerHTML = `
+      <div class="command-main">
+        <div class="command-label">System Status</div>
+        <div class="command-value ${statusFarbe}">${statusLabel}</div>
+      </div>
+      <div class="command-item">
+        <div class="command-label">Ø Go-Live-Score</div>
+        <div class="command-value purple">${avgScore != null ? avgScore + '/100' : '–'}</div>
+      </div>
+      <div class="command-item">
+        <div class="command-label">Risiko</div>
+        <div class="command-value ${risiko.farbe}">${risiko.label}</div>
+      </div>
+      <div class="command-item">
+        <div class="command-label">Letzter Cron-Lauf</div>
+        <div class="command-value blue" style="font-size:14px;">${letzterCron}</div>
+      </div>
+      <div class="command-item">
+        <div class="command-label">Bots</div>
+        <div class="command-value ${verbunden === 2 ? 'green' : verbunden === 1 ? 'yellow' : 'red'}">${verbunden}/2</div>
+      </div>
+    `;
+  }
+
+  // ---- OVERVIEW ----
+  function overviewCard(title, meta, big, bigClass, metric) {
+    return `<div class="card">
+      <div class="card-head"><div class="card-title">${title}</div><div class="card-meta">${meta}</div></div>
+      <div class="big ${bigClass || ''}">${big}</div>
+      <div class="metric">${metric}</div>
+    </div>`;
+  }
+
+  function renderOverview(cryptoData, stocksData) {
+    const el = document.getElementById('overviewGrid');
+    const cs = summarize(cryptoData);
+    const ss = summarize(stocksData);
+    if (!cs && !ss) { el.innerHTML = '<div class="card full"><div class="empty">Noch keine Bots verbunden - ⚙ oben rechts zum Verbinden.</div></div>'; return; }
+    let html = '';
+    html += overviewCard('KAPITAL KRYPTO', 'PAPER', cs ? fmtGeld(cs.kapital, 'USDT') : '–', '', cs ? `${cs.anzahlSymbole} Symbole · ${cs.offenePositionen} offen` : 'nicht verbunden');
+    html += overviewCard('KAPITAL AKTIEN', 'PAPER', ss ? fmtGeld(ss.kapital, 'USD') : '–', '', ss ? `${ss.anzahlSymbole} Symbole · ${ss.offenePositionen} offen` : 'nicht verbunden');
+    html += overviewCard('P&amp;L KRYPTO', 'ALL TIME', cs ? (cs.pl >= 0 ? '+' : '') + fmtGeld(cs.pl, 'USDT') : '–', cs && cs.pl < 0 ? 'red' : 'green', cs ? fmtProzent(cs.plProzent) + ' seit Start' : '–');
+    html += overviewCard('P&amp;L AKTIEN', 'ALL TIME', ss ? (ss.pl >= 0 ? '+' : '') + fmtGeld(ss.pl, 'USD') : '–', ss && ss.pl < 0 ? 'red' : 'green', ss ? fmtProzent(ss.plProzent) + ' seit Start' : '–');
+    html += overviewCard('WIN-RATE KRYPTO', cs ? `${cs.anzahlTrades} TRADES` : '–', cs && cs.winRate != null ? cs.winRate.toFixed(1) + '%' : '–', '', '');
+    html += overviewCard('WIN-RATE AKTIEN', ss ? `${ss.anzahlTrades} TRADES` : '–', ss && ss.winRate != null ? ss.winRate.toFixed(1) + '%' : '–', '', '');
+    html += overviewCard('MAX DRAWDOWN KRYPTO', 'HISTORISCH', cs ? '-' + cs.maxDrawdownProzent.toFixed(1) + '%' : '–', cs && cs.maxDrawdownProzent > 15 ? 'red' : 'yellow', 'Größter Rückgang je Symbol');
+    html += overviewCard('MAX DRAWDOWN AKTIEN', 'HISTORISCH', ss ? '-' + ss.maxDrawdownProzent.toFixed(1) + '%' : '–', ss && ss.maxDrawdownProzent > 15 ? 'red' : 'yellow', 'Größter Rückgang je Symbol');
+    el.innerHTML = html;
+  }
+
+  // ---- AI ANALYST (echter Go-Live-Score, keine erfundene "Marktstimmung") ----
+  function scoreCircleStyle(score, farbe) {
+    const pct = Math.max(0, Math.min(100, score));
+    return `background:radial-gradient(circle at center,#0b1018 57%,transparent 58%), conic-gradient(${farbe} 0 ${pct}%, #1b2030 ${pct}% 100%);`;
+  }
+
+  function analystCard(name, icon, data) {
+    if (!data || data.fehler) return `<div class="card wide ai"><div class="card-head"><div class="card-title">${icon} ${name}</div><div class="badge red">OFFLINE</div></div><div class="empty">Nicht verbunden.</div></div>`;
+    const g = data.goLiveScore;
+    if (!g) return `<div class="card wide ai"><div class="card-head"><div class="card-title">${icon} ${name}</div></div><div class="empty">Noch keine Score-Daten.</div></div>`;
+    const farbe = g.ampel === 'gruen' ? 'var(--green)' : g.ampel === 'gelb' ? 'var(--yellow)' : 'var(--red)';
+    const badgeKlasse = g.ampel === 'gruen' ? 'green' : g.ampel === 'gelb' ? 'yellow' : 'red';
+    const titel = g.ampel === 'gruen' ? 'Konsistent positive Signale' : g.ampel === 'gelb' ? 'Gemischtes Bild' : 'Noch zu früh';
+    const subscores = g.teilwertungen.map((t) => `
+      <div class="subscore"><span>${t.name}</span><b>${t.punkte}/${t.maxPunkte}</b></div>
+      <div class="progress"><div style="width:${(t.punkte / t.maxPunkte) * 100}%"></div></div>
+      <div class="subscore-desc">${t.hinweis}</div>
+    `).join('');
+    const review = data.aiReview ? `<div class="quote">${escapeHtml(data.aiReview.text)}<div style="margin-top:8px;color:#6b7891;font-size:10px;">— AI Trade Review, ${fmtDatum(data.aiReview.erstelltAm)}</div></div>` : '';
+    return `<div class="card wide ai">
+      <div class="card-head"><div class="card-title">🧠 ${icon} ${name}</div><div class="badge ${badgeKlasse}">${g.ampel.toUpperCase()}</div></div>
+      <div class="ai-score">
+        <div class="score" style="${scoreCircleStyle(g.score, farbe)}">${g.score}</div>
+        <div class="ai-text"><h3>${titel}</h3><p>${g.einschaetzung}</p></div>
+      </div>
+      ${subscores}
+      ${review}
+      <div class="note">${g.hinweis}</div>
+    </div>`;
+  }
+
+  function renderAnalyst(cryptoData, stocksData) {
+    const el = document.getElementById('analystGrid');
+    const cOk = cryptoData && !cryptoData.fehler;
+    const sOk = stocksData && !stocksData.fehler;
+    if (!cOk && !sOk) { el.innerHTML = '<div class="card full"><div class="empty">Noch keine Bots verbunden.</div></div>'; return; }
+    el.innerHTML = analystCard('Krypto-Bot', '₿', cOk ? cryptoData : null) + analystCard('Aktien-Bot', '📈', sOk ? stocksData : null);
+
+    // Regime-Grid: ECHTER Trend pro Symbol aus Live-Indikatoren (Preis vs.
+    // langsamer EMA) - keine erfundene Prozent-Konfidenz.
+    const regimeEl = document.getElementById('regimeGrid');
+    const alle = [
+      ...(cOk ? (cryptoData.symbole || []).map((s) => ({ icon:'₿', ...s })) : []),
+      ...(sOk ? (stocksData.symbole || []).map((s) => ({ icon:'📈', ...s })) : []),
+    ].filter((s) => s.indikatoren && s.indikatoren.emaLangsamWert != null && s.preisAktuell != null);
+    if (!alle.length) { regimeEl.innerHTML = ''; return; }
+    const items = alle.map((s) => {
+      const deltaProzent = ((s.preisAktuell - s.indikatoren.emaLangsamWert) / s.indikatoren.emaLangsamWert) * 100;
+      const auf = deltaProzent >= 0;
+      return `<div class="regime-item">
+        <div class="asset">${s.icon} ${s.symbol}</div>
+        <div class="regime-state ${auf ? 'green' : 'red'}">${auf ? 'ÜBER' : 'UNTER'} EMA${s.indikatoren.emaLangsamPeriode} · ${deltaProzent >= 0 ? '+' : ''}${deltaProzent.toFixed(1)}%</div>
+      </div>`;
+    }).join('');
+    regimeEl.innerHTML = `<div class="card full"><div class="card-head"><div class="card-title">TREND PRO SYMBOL</div><div class="card-meta">ECHTE LIVE-INDIKATOREN</div></div><div class="regime">${items}</div></div>`;
+  }
+
+  // ---- SCANNER ----
+  function scannerCard(name, icon, scanner, changeFeld, zeitraumLabel) {
+    if (!scanner) return `<div class="card half"><div class="card-head"><div class="card-title">${icon} ${name}</div></div><div class="empty">Noch keine Scanner-Daten (läuft täglich).</div></div>`;
+    const treffer = scanner.treffer || [];
+    return `<div class="card half">
+      <div class="card-head"><div class="card-title">${icon} ${name}</div><div class="card-meta">${fmtDatum(scanner.berechnetAm)}</div></div>
+      ${treffer.length ? `<div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>Änderung</th></tr></thead><tbody>
+        ${treffer.map((t) => `<tr><td>${t.symbol}${t.name ? ` <span style="color:#526174;">(${t.name})</span>` : ''}</td><td class="green">+${t[changeFeld].toFixed(1)}% (${zeitraumLabel})</td></tr>`).join('')}
+      </tbody></table></div>` : '<div class="empty">Aktuell nichts über der Momentum-Schwelle.</div>'}
+      <div class="note">Symbole AUSSERHALB der konfigurierten Liste - rein informativ, wird nie automatisch gehandelt.</div>
+    </div>`;
+  }
+
+  function renderScanner(cryptoData, stocksData) {
+    const el = document.getElementById('scannerGrid');
+    const cOk = cryptoData && !cryptoData.fehler, sOk = stocksData && !stocksData.fehler;
+    if (!cOk && !sOk) { el.innerHTML = '<div class="card full"><div class="empty">Noch keine Bots verbunden.</div></div>'; return; }
+    el.innerHTML = scannerCard('Krypto-Bot', '₿', cOk ? cryptoData.scanner : null, 'change7dProzent', '7T') +
+      scannerCard('Aktien-Bot', '📈', sOk ? stocksData.scanner : null, 'changeProzent', 'heute');
+  }
+
+  // ---- RISK CENTER ----
+  function riskRow(label, wert, max, einheit) {
+    const anteil = max > 0 ? Math.min(100, (wert / max) * 100) : 0;
+    const farbe = anteil >= 80 ? 'var(--red)' : anteil >= 50 ? 'var(--yellow)' : 'var(--green)';
+    return `<div class="risk-row">
+      <div class="risk-top"><span>${label}</span><b style="font-family:monospace">${wert.toFixed(1)}${einheit} / ${max.toFixed(1)}${einheit}</b></div>
+      <div class="risk-bar"><div style="width:${anteil}%;background:${farbe}"></div></div>
+    </div>`;
+  }
+
+  function riskCard(name, icon, data) {
+    if (!data || data.fehler) return `<div class="card wide"><div class="card-head"><div class="card-title">${icon} ${name}</div></div><div class="empty">Nicht verbunden.</div></div>`;
+    const r = data.risiko;
+    const symbole = data.symbole || [];
+    const heutigerVerlustRows = symbole.filter((s) => s.kapital > 0).map((s) => {
+      const verlustProzentHeute = Math.max(0, (-s.heutigerVerlustUsdt / s.kapital) * 100);
+      return riskRow(`${s.symbol} - Tagesverlust`, verlustProzentHeute, r.maxTagesverlustProzent, '%');
+    }).join('');
+    const killSwitch = symbole.filter((s) => s.killSwitchAktiv);
+    return `<div class="card wide">
+      <div class="card-head"><div class="card-title">${icon} ${name} - Risiko-Limits</div><div class="card-meta">MaxPos ${r.maxPositionProzent}% · SL ${r.stopLossProzent}% · TP ${r.takeProfitProzent || '–'}%</div></div>
+      ${heutigerVerlustRows || '<div class="empty">Keine Symbole.</div>'}
+      ${killSwitch.length ? `<div class="note" style="color:var(--red)">⛔ Kill-Switch aktiv: ${killSwitch.map((s) => s.symbol).join(', ')}</div>` : '<div class="note">Kein Kill-Switch aktiv.</div>'}
+    </div>`;
+  }
+
+  function korrelationsFarbe(wert) {
+    if (wert == null) return 'rgba(220,235,230,.08)';
+    if (wert >= 0.7) return 'rgba(255,77,103,.55)';
+    if (wert >= 0.4) return 'rgba(255,209,102,.4)';
+    if (wert >= 0) return 'rgba(0,255,156,.25)';
+    return 'rgba(93,169,255,.25)';
+  }
+
+  function korrelationCard(name, icon, korrelation) {
+    if (!korrelation || !korrelation.matrix) return '';
+    const symbole = Object.keys(korrelation.matrix);
+    if (symbole.length < 2) return '';
+    let rows = `<tr><th></th>${symbole.map((s) => `<th>${s}</th>`).join('')}</tr>`;
+    for (const zeile of symbole) {
+      rows += `<tr><td style="color:#7c8aa0">${zeile}</td>${symbole.map((s) => {
+        const wert = korrelation.matrix[zeile][s];
+        return `<td style="text-align:center;background:${korrelationsFarbe(wert)}">${wert == null ? '–' : wert.toFixed(2)}</td>`;
+      }).join('')}</tr>`;
+    }
+    return `<div class="card wide"><div class="card-head"><div class="card-title">🔗 ${icon} ${name} - Korrelation</div><div class="card-meta">${korrelation.tageZurueck}T · ${fmtDatum(korrelation.berechnetAm)}</div></div>
+      <div class="table-wrap"><table class="table">${rows}</table></div>
+      <div class="note">Rot = stark positiv korreliert = Konzentrationsrisiko bei gleichzeitig offenen Positionen.</div>
+    </div>`;
+  }
+
+  function renderRisk(cryptoData, stocksData) {
+    const el = document.getElementById('riskGrid');
+    const cOk = cryptoData && !cryptoData.fehler, sOk = stocksData && !stocksData.fehler;
+    if (!cOk && !sOk) { el.innerHTML = '<div class="card full"><div class="empty">Noch keine Bots verbunden.</div></div>'; return; }
+    let html = riskCard('Krypto-Bot', '₿', cOk ? cryptoData : null) + riskCard('Aktien-Bot', '📈', sOk ? stocksData : null);
+    html += korrelationCard('Krypto-Bot', '₿', cOk ? cryptoData.korrelation : null);
+    html += korrelationCard('Aktien-Bot', '📈', sOk ? stocksData.korrelation : null);
+    const marktFilter = [];
+    if (cOk) marktFilter.push({ icon:'₿', name:'Krypto-Bot', crash: cryptoData.marktSignale.marktweiterCrashAktiv, news: cryptoData.marktSignale.newsEventAktiv });
+    if (sOk) marktFilter.push({ icon:'📈', name:'Aktien-Bot', crash: stocksData.marktweiterCrashAktiv, news: stocksData.newsEventAktiv });
+    if (marktFilter.length) {
+      html += `<div class="card full"><div class="card-head"><div class="card-title">💥 Marktweite Filter</div></div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Bot</th><th>Crash-Schutz</th><th>Wirtschaftskalender</th></tr></thead><tbody>
+        ${marktFilter.map((m) => `<tr><td>${m.icon} ${m.name}</td><td class="${m.crash ? 'red' : 'green'}">${m.crash ? '● aktiv' : '○ inaktiv'}</td><td class="${m.news ? 'yellow' : 'green'}">${m.news ? '● aktiv' : '○ inaktiv'}</td></tr>`).join('')}
+        </tbody></table></div>
+      </div>`;
+    }
+    el.innerHTML = html;
+  }
+
+  // ---- BACKTEST & STRATEGIE-TURNIER ----
+  const STRATEGIE_LABEL = { 'ema-crossover':'EMA-Crossover', 'bollinger-mean-reversion':'Bollinger-MR', 'donchian-breakout':'Donchian-BO' };
+  const MEDAILLEN = ['🥇','🥈','🥉'];
+
+  function backtestCard(name, icon, symbole) {
+    if (!symbole) return '';
+    const mit = symbole.filter((s) => s.autoBacktest);
+    if (!mit.length) return `<div class="card full"><div class="card-head"><div class="card-title">${icon} ${name} - Auto-Backtest</div></div><div class="empty">Noch kein Lauf (montags im 5-Minuten-Cron).</div></div>`;
+    const rows = mit.map((s) => {
+      const b = s.autoBacktest;
+      return `<tr><td>${s.symbol}</td><td>${STRATEGIE_LABEL[b.strategie] || b.strategie}</td>
+        <td class="${b.gesamtReturnProzent >= 0 ? 'green' : 'red'}">${b.gesamtReturnProzent >= 0 ? '+' : ''}${b.gesamtReturnProzent.toFixed(1)}%</td>
+        <td>${b.anzahlTrades}</td><td>${b.winRateProzent != null ? b.winRateProzent.toFixed(0) + '%' : '–'}</td>
+        <td class="yellow">-${b.maxDrawdownProzent.toFixed(1)}%</td><td>${fmtDatum(b.berechnetAm)}</td></tr>`;
+    }).join('');
+    return `<div class="card full"><div class="card-head"><div class="card-title">🧪 ${icon} ${name} - Auto-Backtest (letzte 14 Tage, echte Kerzen)</div></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>Strategie</th><th>Return</th><th>Trades</th><th>Win-Rate</th><th>Max DD</th><th>Stand</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </div>`;
+  }
+
+  function turnierCard(name, icon, symbole) {
+    if (!symbole) return '';
+    const mit = symbole.filter((s) => s.strategieTurnier);
+    if (!mit.length) return '';
+    const bloecke = mit.map((s) => {
+      const t = s.strategieTurnier;
+      const zeilen = t.ranking.map((r, i) => `<tr><td>${MEDAILLEN[i] || ''} ${STRATEGIE_LABEL[r.strategie] || r.strategie}${r.strategie === t.aktuelleStrategie ? ' <span class="blue">(live)</span>' : ''}</td>
+        <td class="${r.gesamtReturnProzent >= 0 ? 'green' : 'red'}">${r.gesamtReturnProzent >= 0 ? '+' : ''}${r.gesamtReturnProzent.toFixed(1)}%</td>
+        <td>${r.anzahlTrades}</td><td>${r.winRateProzent != null ? r.winRateProzent.toFixed(0) + '%' : '–'}</td></tr>`).join('');
+      return `<div style="margin-bottom:14px;"><div style="font-size:11px;color:#7c8aa0;margin-bottom:5px;font-weight:700;">${s.symbol}</div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Strategie</th><th>Return</th><th>Trades</th><th>Win-Rate</th></tr></thead><tbody>${zeilen}</tbody></table></div>
+      </div>`;
+    }).join('');
+    return `<div class="card full"><div class="card-head"><div class="card-title">🏆 ${icon} ${name} - Strategie-Turnier</div><div class="card-meta">alle Strategien gegeneinander</div></div>${bloecke}
+      <div class="note">Rein informativ - wechselt NIE automatisch die Live-Strategie.</div>
+    </div>`;
+  }
+
+  function monteCarloCard(name, icon, symbole) {
+    if (!symbole) return '';
+    const mit = symbole.filter((s) => s.monteCarlo);
+    if (!mit.length) return '';
+    const rows = mit.map((s) => {
+      const mc = s.monteCarlo;
+      const medianProzent = ((mc.p50 - mc.startKapital) / mc.startKapital) * 100;
+      const killFarbe = mc.wahrscheinlichkeitKillSwitchProzent >= 20 ? 'red' : mc.wahrscheinlichkeitKillSwitchProzent >= 5 ? 'yellow' : 'green';
+      return `<tr><td>${s.symbol}</td><td>${medianProzent >= 0 ? '+' : ''}${medianProzent.toFixed(1)}%</td>
+        <td class="green">${mc.wahrscheinlichkeitProfitabelProzent.toFixed(0)}%</td>
+        <td class="${killFarbe}">${mc.wahrscheinlichkeitKillSwitchProzent.toFixed(0)}%</td><td>${mc.basisTrades}</td></tr>`;
+    }).join('');
+    return `<div class="card full"><div class="card-head"><div class="card-title">🎲 ${icon} ${name} - Monte-Carlo (2000 Simulationen, 30 Trades)</div></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>Median-Ergebnis</th><th>P(profitabel)</th><th>P(Kill-Switch)</th><th>Basis-Trades</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="note">Bootstrap-Resampling der eigenen Trade-Historie - KEINE Vorhersage, reine Statistik.</div>
+    </div>`;
+  }
+
+  function renderBacktest(cryptoData, stocksData) {
+    const el = document.getElementById('backtestGrid');
+    const cOk = cryptoData && !cryptoData.fehler, sOk = stocksData && !stocksData.fehler;
+    if (!cOk && !sOk) { el.innerHTML = '<div class="card full"><div class="empty">Noch keine Bots verbunden.</div></div>'; return; }
+    let html = backtestCard('Krypto-Bot', '₿', cOk ? cryptoData.symbole : null) + backtestCard('Aktien-Bot', '📈', sOk ? stocksData.symbole : null);
+    html += turnierCard('Krypto-Bot', '₿', cOk ? cryptoData.symbole : null) + turnierCard('Aktien-Bot', '📈', sOk ? stocksData.symbole : null);
+    html += monteCarloCard('Krypto-Bot', '₿', cOk ? cryptoData.symbole : null) + monteCarloCard('Aktien-Bot', '📈', sOk ? stocksData.symbole : null);
+    html += `<div class="card full"><div class="card-head"><div class="card-title">🧬 Eigene Backtests fahren</div></div>
+      <div class="empty">Für individuelle Zeiträume/Parameter gegen echte Kursdaten: <a class="btn" href="../strategy-lab/" style="text-decoration:none;display:inline-block;margin-top:6px;">→ Strategy Lab öffnen</a></div>
+    </div>`;
+    el.innerHTML = html;
+  }
+
+  // ---- JOURNAL ----
+  function renderJournal(cryptoData, stocksData) {
+    const el = document.getElementById('journalGrid');
+    const kryptoTrades = (cryptoData && !cryptoData.fehler ? cryptoData.symbole || [] : []).flatMap((s) => (s.trades || []).map((t) => ({ ...t, symbol:s.symbol, icon:'₿', waehrung:'USDT' })));
+    const aktienTrades = (stocksData && !stocksData.fehler ? stocksData.symbole || [] : []).flatMap((s) => (s.trades || []).map((t) => ({ ...t, symbol:s.symbol, icon:'📈', waehrung:'USD' })));
+    const alle = [...kryptoTrades, ...aktienTrades].sort((a, b) => new Date(b.ausstiegAm) - new Date(a.ausstiegAm)).slice(0, 60);
+    if (!alle.length) { el.innerHTML = '<div class="card full"><div class="empty">Noch keine abgeschlossenen Trades.</div></div>'; return; }
+    const rows = alle.map((t) => `<div class="trade">
+      <span>${t.icon} ${t.symbol}</span>
+      <span class="${t.gewinnVerlustUsdt >= 0 ? 'green' : 'red'}">${t.gewinnVerlustUsdt >= 0 ? '+' : ''}${t.gewinnVerlustUsdt.toFixed(2)} ${t.waehrung}</span>
+      <span style="color:var(--muted)">${t.grund || ''}</span>
+      <span style="color:#526174;text-align:right;">${fmtDatum(t.ausstiegAm)}</span>
+    </div>`).join('');
+    el.innerHTML = `<div class="card full"><div class="journal">${rows}</div></div>`;
+  }
+
+  // ---- ALERTS (alles real, aus echten Feldern abgeleitet) ----
+  function alertRow(icon, text, time) {
+    return `<div class="alert"><span class="alert-icon">${icon}</span><div><div class="alert-text">${text}</div><div class="alert-time">${time}</div></div></div>`;
+  }
+
+  function renderAlerts(cryptoData, stocksData) {
+    const el = document.getElementById('alertsGrid');
+    const alerts = [];
+    const bots = [
+      { icon:'₿', name:'Krypto-Bot', data: cryptoData },
+      { icon:'📈', name:'Aktien-Bot', data: stocksData },
+    ];
+    for (const b of bots) {
+      if (!b.data || b.data.fehler) continue;
+      const symbole = b.data.symbole || [];
+      for (const s of symbole) {
+        if (s.killSwitchAktiv) alerts.push(alertRow('⛔', `${b.icon} <b>${s.symbol}</b>: Kill-Switch aktiv - keine neuen Käufe mehr.`, 'aktuell'));
+      }
+      const crashAktiv = b.data.marktweiterCrashAktiv ?? (b.data.marktSignale && b.data.marktSignale.marktweiterCrashAktiv);
+      if (crashAktiv) alerts.push(alertRow('💥', `${b.icon} ${b.name}: Marktweiter Crash-Schutz aktiv - Käufe pausiert.`, 'aktuell'));
+      const newsAktiv = b.data.newsEventAktiv ?? (b.data.marktSignale && b.data.marktSignale.newsEventAktiv);
+      if (newsAktiv) alerts.push(alertRow('📰', `${b.icon} ${b.name}: Wirtschaftskalender-Filter aktiv - Käufe pausiert.`, 'aktuell'));
+      for (const s of symbole) {
+        if (s.monteCarlo && s.monteCarlo.wahrscheinlichkeitKillSwitchProzent >= 20) {
+          alerts.push(alertRow('🎲', `${b.icon} <b>${s.symbol}</b>: Monte-Carlo sieht ${s.monteCarlo.wahrscheinlichkeitKillSwitchProzent.toFixed(0)}% Wahrscheinlichkeit für Kill-Switch in den nächsten 30 Trades.`, fmtDatum(s.monteCarlo.berechnetAm)));
+        }
+      }
+      if (b.data.korrelation && b.data.korrelation.matrix) {
+        const syms = Object.keys(b.data.korrelation.matrix);
+        for (let i = 0; i < syms.length; i++) for (let j = i + 1; j < syms.length; j++) {
+          const wert = b.data.korrelation.matrix[syms[i]][syms[j]];
+          if (wert != null && Math.abs(wert) >= 0.7) alerts.push(alertRow('🔗', `${b.icon} <b>${syms[i]}</b> &amp; <b>${syms[j]}</b>: Korrelation ${wert.toFixed(2)} - Konzentrationsrisiko bei gleichzeitig offenen Positionen.`, fmtDatum(b.data.korrelation.berechnetAm)));
+        }
+      }
+      if (b.data.goLiveScore && b.data.goLiveScore.ampel === 'rot') {
+        alerts.push(alertRow('🚦', `${b.icon} ${b.name}: Go-Live-Score im roten Bereich (${b.data.goLiveScore.score}/100).`, 'aktuell'));
+      }
+    }
+    el.innerHTML = `<div class="card full">${alerts.length ? alerts.join('') : '<div class="empty">Keine aktiven Alerts - alles unauffällig.</div>'}</div>`;
+  }
+
+  // ---- HEALTH ----
+  function healthItem(name, online, meta, latencyMs) {
+    return `<div class="health-item">
+      <div class="health-top"><span>${name}</span><span class="${online ? 'green' : 'red'}">${online ? '● ONLINE' : '● OFFLINE'}</span></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;">${meta}</div>
+      <div class="latency">${latencyMs != null ? `Antwortzeit: ${latencyMs}ms (echt gemessen)` : ''}</div>
+    </div>`;
+  }
+
+  function renderHealth(cryptoData, stocksData, cryptoLatency, stocksLatency) {
+    const el = document.getElementById('healthGrid');
+    const conn = getConn();
+    const cOk = cryptoData && !cryptoData.fehler, sOk = stocksData && !stocksData.fehler;
+    const items = [];
+    if (conn.crypto.url) items.push(healthItem('₿ Krypto-Bot', cOk, cOk ? `${cryptoData.exchange} · ${cryptoData.paperModus ? 'Paper' : 'Live'} · Cron ${fmtDatum(cryptoData.letzterCronLauf)}` : 'Verbindung fehlgeschlagen', cryptoLatency));
+    else items.push(healthItem('₿ Krypto-Bot', false, 'Nicht verbunden', null));
+    if (conn.stocks.url) items.push(healthItem('📈 Aktien-Bot', sOk, sOk ? `${stocksData.broker} · ${stocksData.marktOffen ? 'Markt offen' : 'Markt geschlossen'} · Cron ${fmtDatum(stocksData.letzterCronLauf)}` : 'Verbindung fehlgeschlagen', stocksLatency));
+    else items.push(healthItem('📈 Aktien-Bot', false, 'Nicht verbunden', null));
+    items.push(healthItem('🖥️ Dashboard', true, `Rein lesend · Auto-Refresh alle ${REFRESH_MS / 1000}s`, null));
+    el.innerHTML = `<div class="card full"><div class="health">${items.join('')}</div></div>`;
+  }
+
+  // ---- LOAD ALL ----
+  async function loadAll() {
+    const conn = getConn();
+    const [cryptoRes, stocksRes] = await Promise.all([
+      fetchStatus(conn.crypto.url, conn.crypto.key),
+      fetchStatus(conn.stocks.url, conn.stocks.key),
+    ]);
+    const cryptoData = cryptoRes.data, stocksData = stocksRes.data;
+    renderCommandBar(cryptoData, stocksData, cryptoRes.latencyMs, stocksRes.latencyMs);
+    renderOverview(cryptoData, stocksData);
+    renderAnalyst(cryptoData, stocksData);
+    renderScanner(cryptoData, stocksData);
+    renderRisk(cryptoData, stocksData);
+    renderBacktest(cryptoData, stocksData);
+    renderJournal(cryptoData, stocksData);
+    renderAlerts(cryptoData, stocksData);
+    renderHealth(cryptoData, stocksData, cryptoRes.latencyMs, stocksRes.latencyMs);
+    clearTimeout(window.__refreshTimer);
+    window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
+  }
+
+  document.getElementById('refreshBtn').addEventListener('click', loadAll);
+
+  // Scroll-Spy: markiert den Nav-Button des sichtbaren Abschnitts als aktiv.
+  (function initScrollSpy() {
+    const ids = ['overview','analyst','scanner','risk','backtest','journal','alerts','health'];
+    const buttons = Object.fromEntries(ids.map((id) => [id, document.querySelector(`[data-nav="${id}"]`)]));
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          Object.values(buttons).forEach((b) => b && b.classList.remove('active'));
+          const btn = buttons[entry.target.id];
+          if (btn) btn.classList.add('active');
+        }
+      }
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    ids.forEach((id) => { const elm = document.getElementById(id); if (elm) observer.observe(elm); });
+  })();
+
+  loadAll();
+</script>
+
+</body>
+</html>
