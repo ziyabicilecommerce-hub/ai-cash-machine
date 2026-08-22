@@ -562,7 +562,12 @@ Service-Fehler (sehr lange unbearbeitete Bestellung ab
 Hubs 48h, oder eine laut Shopify gescheiterte Zustellung) und erstellt
 proaktiv einen echten Shopify-Gutschein (`GIFTCARD_KOMPENSATION_WERT`) als
 Wiedergutmachung, bevor der Kunde sich überhaupt beschweren muss. Gate:
-`AUTO_GUTSCHEIN_SENDEN` (Default `nein`).
+`AUTO_GUTSCHEIN_SENDEN` (Default `nein`). Echtes Rückkopplungs-Gedächtnis:
+prüft nach 30 Tagen, ob der Kunde ÜBERHAUPT noch mal bestellt hat (keine
+erfundene Zufriedenheits-Bewertung, nur die ehrliche Beobachtung "kam
+zurück" oder "blieb weg") - sichtbar im Autopilot-Tab von Command inkl.
+Erfolgsbilanz. Gleiche Selbstbremse wie #61/#63/#64/#88/#42: unter 40%
+Erfolgsquote (mind. 3 Muster) heißt automatisch nur noch Empfehlung.
 
 **📝 Sonderwunsch-Flagger** (#68, alle 2 Stunden): liest echte
 Bestellnotizen (Geschenkverpackung, Express-Wunsch, Kärtchen-Text) und
