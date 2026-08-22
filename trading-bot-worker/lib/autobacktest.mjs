@@ -26,6 +26,7 @@ const AUTO_BACKTEST_TAGE = 14;
 const FENSTER_FUER_INDIKATOREN = 60;
 const REFERENZ_STARTKAPITAL = 100;
 const MAX_SEITEN_PRO_SYMBOL = 8; // Sicherheitsnetz gegen zu viele Subrequests
+const ALLE_STRATEGIEN = ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout'];
 
 function wochenSchluessel(datum) {
   const d = new Date(Date.UTC(datum.getUTCFullYear(), datum.getUTCMonth(), datum.getUTCDate()));
@@ -194,6 +195,21 @@ export async function pruefeUndFuehreAutoBacktest(env, cfg) {
       const eintrag = { symbol, strategie: cfgSymbol.strategie, tageZurueck: AUTO_BACKTEST_TAGE, berechnetAm: jetzt.toISOString(), buyAndHoldProzent, ...k };
       await env.TRADING_STATE.put(`backtest:${symbol}`, JSON.stringify(eintrag));
       ergebnisse.push(eintrag);
+
+      // Strategie-Turnier: dieselben schon geladenen Kerzen genutzt, um ALLE
+      // unterstützten Strategien gegeneinander zu testen (nicht nur die
+      // aktuell konfigurierte) - zeigt, ob eine andere Strategie auf DIESEM
+      // Symbol gerade besser abschneiden würde. Rein informativ: wechselt NIE
+      // automatisch die Live-Strategie, das bleibt eine manuelle Entscheidung
+      // (TRADING_STRATEGIE_PRO_SYMBOL in wrangler.toml).
+      const ranking = ALLE_STRATEGIEN.map((kandidat) => {
+        if (kandidat === cfgSymbol.strategie) return { strategie: kandidat, ...k };
+        const kandidatErgebnis = simuliere(closes, highs, lows, zeiten, { ...cfgSymbol, strategie: kandidat }, REFERENZ_STARTKAPITAL);
+        return { strategie: kandidat, ...berechneKennzahlen(REFERENZ_STARTKAPITAL, kandidatErgebnis) };
+      }).sort((a, b) => b.gesamtReturnProzent - a.gesamtReturnProzent);
+      await env.TRADING_STATE.put(`turnier:${symbol}`, JSON.stringify({
+        symbol, aktuelleStrategie: cfgSymbol.strategie, tageZurueck: AUTO_BACKTEST_TAGE, berechnetAm: jetzt.toISOString(), ranking,
+      }));
     } catch (err) {
       console.error(`[trading-bot] Auto-Backtest ${symbol} fehlgeschlagen:`, err);
     }

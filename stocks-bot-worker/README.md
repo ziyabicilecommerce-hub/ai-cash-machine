@@ -187,6 +187,15 @@ ein echtes Konto getestet werden (kein API-Key in der Bau-Umgebung
 verfügbar) - nach dem ersten echten Lauf einmal die Benachrichtigung
 gegenprüfen.
 
+**Strategie-Turnier** (`turnier:<symbol>`, Teil von `lib/autobacktest.mjs`,
+Pendant zum Krypto-Bot): der wöchentliche Auto-Backtest testet nebenbei
+(kein zusätzlicher API-Aufruf) ALLE drei unterstützten Strategien
+(`ema-crossover`, `bollinger-mean-reversion`, `donchian-breakout`)
+gegeneinander auf jedem Symbol. `/status` liefert die Rangliste als
+`strategieTurnier`-Feld, Trading Command zeigt sie als "🏆
+Strategie-Turnier". **Rein informativ, wechselt NIE automatisch die Live-
+Strategie** - bleibt eine manuelle Entscheidung.
+
 **Go-Live-Readiness-Score** (`berechneGoLiveScore` in `lib/statistik.mjs`,
 Pendant zum Krypto-Bot): zieht Stichprobengröße & Trefferquote, Profit
 Factor & Recovery Factor, Monte-Carlo-Simulation, Auto-Backtest und

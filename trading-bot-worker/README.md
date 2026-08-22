@@ -302,6 +302,22 @@ offen ist, dessen Korrelation zum Kandidaten `TRADING_KORRELATION_MAX_WERT`
 (Default 0.85) erreicht oder übersteigt. Default AUS wie jeder neue
 risikoverändernde Filter.
 
+## Strategie-Turnier (`turnier:<symbol>`, Teil von `lib/autobacktest.mjs`)
+
+Der wöchentliche Auto-Backtest testet nebenbei (mit denselben schon
+geladenen Kerzen, kein zusätzlicher API-Aufruf) ALLE drei unterstützten
+Strategien (`ema-crossover`, `bollinger-mean-reversion`,
+`donchian-breakout`) gegeneinander auf jedem Symbol - nicht nur die
+aktuell konfigurierte. Ergebnis: eine Rangliste pro Symbol
+(Gesamt-Return, Trades, Win-Rate, markiert welche Strategie gerade live
+läuft). `/status` liefert es pro Symbol als `strategieTurnier`-Feld,
+Trading Command zeigt es als "🏆 Strategie-Turnier" im Signale-Tab.
+
+**Rein informativ, wechselt NIE automatisch die Live-Strategie.** Ob eine
+andere Strategie für ein Symbol übernommen wird, bleibt eine manuelle
+Entscheidung (`TRADING_STRATEGIE_PRO_SYMBOL` in `wrangler.toml` anpassen
+und deployen) - kein Automatismus, der unbemerkt das Verhalten ändert.
+
 ## Go-Live-Readiness-Score (`berechneGoLiveScore` in `lib/statistik.mjs`)
 
 Zieht alle oben beschriebenen Signale - Stichprobengröße & Trefferquote,
