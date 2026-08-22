@@ -274,6 +274,9 @@
   <button class="tab-btn" data-tab="equity">📈 Equity</button>
   <button class="tab-btn" data-tab="activity">📡 Activity</button>
   <button class="tab-btn" data-tab="deck">🖥️ Deck</button>
+  <button class="tab-btn" data-tab="dashboard">📈 Dashboard</button>
+  <button class="tab-btn" data-tab="controlcenter">🎛️ Control Center</button>
+  <button class="tab-btn" data-tab="strategylab">🧪 Strategy Lab</button>
   <button class="tab-btn" data-tab="tools">🧰 Tools</button>
 </div>
 
@@ -327,8 +330,26 @@
 
 <section class="panel" id="panel-deck">
   <div class="panel-title">Trading Deck — Instrumentenbrett</div>
-  <p class="panel-desc">Go-Live-Score, Risk Center, Auto-Backtest &amp; Strategie-Turnier, Journal, Alerts, System Health und Live-Internet-Marktdaten (CoinGecko, Fear&amp;Greed) — dieselbe Bot-Verbindung wie hier oben, nur ein Klick tiefer. Zwei Systeme, eine URL.</p>
+  <p class="panel-desc">Go-Live-Score, Risk Center, Auto-Backtest &amp; Strategie-Turnier, Journal, Alerts, System Health und Live-Internet-Marktdaten (CoinGecko, Fear&amp;Greed) — dieselbe Bot-Verbindung wie hier oben, nur ein Klick tiefer. Fünf Systeme, eine URL.</p>
   <iframe id="deckFrame" title="Trading Deck" loading="lazy" style="width:100%;height:82vh;border:0;border-radius:14px;background:#05070b;display:block;"></iframe>
+</section>
+
+<section class="panel" id="panel-dashboard">
+  <div class="panel-title">Trading Dashboard</div>
+  <p class="panel-desc">Live-Details zum Krypto-Bot - eigene, eigenständige Verbindung/Key innerhalb dieses Tools.</p>
+  <iframe id="dashboardFrame" title="Trading Dashboard" loading="lazy" style="width:100%;height:82vh;border:0;border-radius:14px;background:#05070b;display:block;"></iframe>
+</section>
+
+<section class="panel" id="panel-controlcenter">
+  <div class="panel-title">Trading Control Center</div>
+  <p class="panel-desc">Erweitertes Status-Panel des Krypto-Bots - eigene, eigenständige Verbindung/Key innerhalb dieses Tools.</p>
+  <iframe id="controlCenterFrame" title="Trading Control Center" loading="lazy" style="width:100%;height:82vh;border:0;border-radius:14px;background:#05070b;display:block;"></iframe>
+</section>
+
+<section class="panel" id="panel-strategylab">
+  <div class="panel-title">Strategy Lab</div>
+  <p class="panel-desc">Backtesting mit echten Kursdaten, eigene Parameter/Zeiträume - ruft die jeweilige Börse direkt auf, unabhängig von den Bots.</p>
+  <iframe id="strategyLabFrame" title="Strategy Lab" loading="lazy" style="width:100%;height:82vh;border:0;border-radius:14px;background:#05070b;display:block;"></iframe>
 </section>
 
 <section class="panel" id="panel-tools">
@@ -383,11 +404,19 @@
       document.querySelectorAll('section.panel').forEach((p) => p.classList.remove('show'));
       btn.classList.add('active');
       document.getElementById(`panel-${btn.dataset.tab}`).classList.add('show');
-      // Trading Deck erst laden, wenn der Tab wirklich geöffnet wird - nicht
-      // schon beim ersten Seitenaufruf zwei Dashboards parallel pollen lassen.
-      if (btn.dataset.tab === 'deck') {
-        const frame = document.getElementById('deckFrame');
-        if (!frame.src) frame.src = '../trading-deck/';
+      // Eingebettete Tools erst laden, wenn ihr Tab wirklich geöffnet wird -
+      // nicht schon beim ersten Seitenaufruf fünf Dashboards parallel
+      // pollen lassen. Fünf Systeme, eine URL.
+      const eingebettet = {
+        deck: { frameId:'deckFrame', src:'../trading-deck/' },
+        dashboard: { frameId:'dashboardFrame', src:'../trading-dashboard/' },
+        controlcenter: { frameId:'controlCenterFrame', src:'../trading-control-center/' },
+        strategylab: { frameId:'strategyLabFrame', src:'../strategy-lab/' },
+      };
+      const ziel = eingebettet[btn.dataset.tab];
+      if (ziel) {
+        const frame = document.getElementById(ziel.frameId);
+        if (frame && !frame.src) frame.src = ziel.src;
       }
     });
   });
