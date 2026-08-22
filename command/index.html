@@ -577,6 +577,7 @@
   <div id="aiCeoHealthContent"></div>
   <div id="riskScoreContent"></div>
   <div id="criticalEventsContent"></div>
+  <div id="priorityQueueContent"></div>
   <div id="kpiScoreboardContent"></div>
   <div id="auditLogContent"></div>
   <div id="businessAutopsyContent"></div>
@@ -2701,6 +2702,42 @@
       </div>`;
   }
 
+  // --- AI-CEO: Priority Queue - EINE ranglisten-Liste "was zuerst", die
+  // Critical Events (Risiko-Seite) und Opportunity Radar (Chancen-Seite)
+  // zusammenführt. Sortierung ist deterministisch: Alarm vor Warnung vor
+  // Chance, innerhalb der Chancen nach echtem Wachstum - keine erfundene
+  // KI-Priorität, nur die bereits vorhandenen echten Signale sortiert.
+  function renderPriorityQueue(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, opportunityRadar) {
+    const el = document.getElementById('priorityQueueContent');
+    if (!el) return;
+    const events = sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl);
+    const chancen = (opportunityRadar && opportunityRadar.chancen) || [];
+
+    const eintraege = [];
+    for (const e of events) {
+      eintraege.push({ tier: e.alarm ? 0 : 1, icon: e.icon, titel: e.titel, detail: e.detail, tag: e.alarm ? '🛑 SOFORT' : '⚠️ BALD', sortWert: 0 });
+    }
+    for (const c of chancen) {
+      eintraege.push({ tier: 2, icon: '🚀', titel: c.name, detail: c.empfehlung, tag: '🚀 CHANCE', sortWert: -(c.wachstumProzent || 0) });
+    }
+    eintraege.sort((a, b) => a.tier - b.tier || a.sortWert - b.sortWert);
+
+    if (!eintraege.length) {
+      el.innerHTML = `<div class="section-title-inline">🎯 AI PRIORITY QUEUE</div>` +
+        emptyHtml('🎯', 'Nichts, das gerade priorisiert werden muss', 'Erscheint automatisch, sobald ein Critical Event oder eine erkannte Chance vorliegt.');
+      return;
+    }
+    el.innerHTML = `<div class="section-title-inline">🎯 AI PRIORITY QUEUE — WAS ZUERST</div>` +
+      eintraege.slice(0, 10).map((e, i) => `
+      <div class="autopilot-row">
+        <div>
+          <div class="autopilot-name">#${i + 1} ${e.icon} ${e.titel}</div>
+          <div class="autopilot-desc">${e.detail}</div>
+        </div>
+        <span class="autopilot-state" style="${e.tier === 0 ? 'color:var(--red);background:rgba(255,107,129,.1);border:1px solid rgba(255,107,129,.35);' : e.tier === 1 ? 'color:var(--amber);background:rgba(255,197,92,.1);border:1px solid rgba(255,197,92,.35);' : 'color:var(--green);background:rgba(62,242,160,.1);border:1px solid rgba(62,242,160,.35);'}">${e.tag}</span>
+      </div>`).join('');
+  }
+
   function renderHealthBadge(cockpit, eskalationenAnzahl) {
     if (!cockpit) return; // Cockpit-Daten noch nicht geladen - laufenden Badge-Stand nicht mit leer überschreiben
     const wrap = document.getElementById('healthBadgeWrap');
@@ -3028,6 +3065,7 @@
       renderAiCeoHealth(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm);
       renderRiskScore(customerSegmente, reorder, adsNotbremse, cockpit);
       renderCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl);
+      renderPriorityQueue(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, opportunityRadar);
       renderKpiScoreboard(analytics, ads, cockpit, customerSegmente, eskalationenAnzahl);
       renderAuditLog(pricingHistorie, splitTest, adsAutopilot, reorder);
       renderBusinessAutopsy(pricingHistorie, splitTest, adsAutopilot, reorder);
