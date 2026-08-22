@@ -575,6 +575,7 @@
   <div class="panel-title">AI CEO — Business Health Score</div>
   <p class="panel-desc">Neue Ebene über allen Modulen (Ecommerce, Ads, Produkte, Trading, Kunden): EIN Health Score, EIN Critical-Events-Feed und EIN KPI-Scoreboard, komposit aus echten Signalen, die die Suite selbst schon liefert — keine geschätzten Zahlen, jede Komponente einzeln nachvollziehbar. Ein schreibender globaler Notaus (live von hier aus alle AUTO_*-Schalter kippen) braucht eine eigene Backend-Anbindung und ist bewusst noch nicht Teil davon — hier siehst du live, ob überhaupt etwas brennt.</p>
   <div id="aiCeoHealthContent"></div>
+  <div id="riskScoreContent"></div>
   <div id="criticalEventsContent"></div>
   <div id="kpiScoreboardContent"></div>
   <div id="auditLogContent"></div>
@@ -2524,6 +2525,92 @@
     el.innerHTML = html;
   }
 
+  // --- AI-CEO: Global Risk Score - spiegelbildlich zum Health Score, aber
+  // andere Signale: nicht "läuft alles", sondern "wo hängt zu viel dran".
+  // Jeder Faktor 0-100, höher = riskanter, direkt aus echten Zahlen ohne
+  // erfundene Schwellen (z.B. Umsatzanteil, der an At-Risk-Kunden hängt -
+  // keine geschätzte "Abwanderungswahrscheinlichkeit").
+  function berechneRisikoFaktoren(customerSegmente, reorder, adsNotbremse, cockpit) {
+    const faktoren = [];
+
+    if (customerSegmente && customerSegmente.segmente) {
+      const s = customerSegmente.segmente;
+      const gesamtUmsatz = Object.values(s).reduce((sum, seg) => sum + (seg.gesamtUmsatz || 0), 0);
+      if (gesamtUmsatz > 0) {
+        const atRiskAnteil = (s.atRisk?.gesamtUmsatz || 0) / gesamtUmsatz;
+        faktoren.push({
+          label: 'Kunden-Abwanderungsrisiko', gewicht: 30, score: atRiskAnteil * 100,
+          detail: `${Math.round(atRiskAnteil * 100)}% des Umsatzes hängt an inaktiv gewordenen Wert-Kunden`,
+        });
+      }
+    }
+
+    const reorderBilanz = reorder && reorder.erfolgsBilanz;
+    if (reorderBilanz && reorderBilanz.ausgewertet > 0) {
+      const engpassAnteil = reorderBilanz.brauchtBlick / reorderBilanz.ausgewertet;
+      faktoren.push({
+        label: 'Lager-Engpassrisiko', gewicht: 25, score: engpassAnteil * 100,
+        detail: `${reorderBilanz.brauchtBlick}/${reorderBilanz.ausgewertet} Nachbestellungen kamen trotzdem zu spät`,
+      });
+    }
+
+    if (adsNotbremse && typeof adsNotbremse.roas === 'number' && typeof adsNotbremse.kritischerRoas === 'number') {
+      const naeheAnKritisch = adsNotbremse.ausgeloest || adsNotbremse.roas <= 0
+        ? 100
+        : Math.min(100, Math.max(0, (adsNotbremse.kritischerRoas / adsNotbremse.roas) * 100));
+      faktoren.push({
+        label: 'Ads-Notbremsen-Nähe', gewicht: 20, score: naeheAnKritisch,
+        detail: `ROAS ${adsNotbremse.roas} vs. kritisch ${adsNotbremse.kritischerRoas}`,
+      });
+    }
+
+    if (cockpit && Array.isArray(cockpit.automationen) && cockpit.automationen.length) {
+      const nichtOk = cockpit.automationen.filter((a) => a.status !== 'ok').length;
+      faktoren.push({
+        label: 'Automations-Ausfallrisiko', gewicht: 25, score: (nichtOk / cockpit.automationen.length) * 100,
+        detail: `${nichtOk}/${cockpit.automationen.length} Automationen fehlerhaft oder nie gelaufen`,
+      });
+    }
+
+    return faktoren;
+  }
+
+  function renderRiskScore(customerSegmente, reorder, adsNotbremse, cockpit) {
+    const el = document.getElementById('riskScoreContent');
+    if (!el) return;
+    const faktoren = berechneRisikoFaktoren(customerSegmente, reorder, adsNotbremse, cockpit);
+    if (faktoren.length < 2) {
+      el.innerHTML = `<div class="section-title-inline">⚠️ GLOBAL RISK SCORE</div>` +
+        emptyHtml('⚠️', 'Noch keine Daten für den Risk Score', 'Erscheint, sobald mindestens zwei Datenquellen (Kundensegmente, Reorder-Agent, Ads-Notbremse oder Cockpit) einmal gelaufen sind.');
+      return;
+    }
+    const gewichtGesamt = faktoren.reduce((sum, f) => sum + f.gewicht, 0);
+    const score = Math.round(faktoren.reduce((sum, f) => sum + f.score * f.gewicht, 0) / gewichtGesamt);
+    // Umgekehrte Ampel-Logik zum Health Score: hier ist HOCH schlecht.
+    const klasse = score >= 60 ? 'h-bad' : score >= 30 ? 'h-warn' : 'h-good';
+
+    let html = `<div class="section-title-inline">⚠️ GLOBAL RISK SCORE</div>
+      <div class="aiceo-hero">
+        <div class="aiceo-ring ${klasse}" style="--pct:${score}">
+          <div class="aiceo-ring-num"><span>${score}</span><span>RISK SCORE</span></div>
+        </div>
+        <div class="aiceo-hero-text">
+          <h2>${score >= 60 ? 'Reales Risiko - genauer hinschauen' : score >= 30 ? 'Überschaubares Risiko' : 'Niedriges Risiko'}</h2>
+          <p>Gewichteter Schnitt aus ${faktoren.length} echten Risiko-Signalen - je höher, desto mehr hängt gerade an wenigen Punkten (Kunden, Lager, Ads, Automationen). Keine geschätzte Abwanderungs-/Ausfallwahrscheinlichkeit, nur reale Anteile und Abstände.</p>
+        </div>
+      </div>`;
+    html += faktoren.map((f) => {
+      const fk = f.score >= 60 ? 'h-bad' : f.score >= 30 ? 'h-warn' : 'h-good';
+      return `
+      <div class="aiceo-factor">
+        <div class="aiceo-factor-label">${f.label} <span class="aiceo-factor-weight">(${Math.round((f.gewicht / gewichtGesamt) * 100)}%)</span></div>
+        <div class="aiceo-factor-bar-track"><div class="aiceo-factor-bar-fill ${fk}" style="width:${Math.round(f.score)}%"></div></div>
+        <div class="aiceo-factor-detail">${f.detail}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML = html;
+  }
+
   function renderHealthBadge(cockpit, eskalationenAnzahl) {
     if (!cockpit) return; // Cockpit-Daten noch nicht geladen - laufenden Badge-Stand nicht mit leer überschreiben
     const wrap = document.getElementById('healthBadgeWrap');
@@ -2849,6 +2936,7 @@
       const eskalationenAnzahl = eskalationenEl && eskalationenEl.textContent !== '…' && eskalationenEl.textContent !== '?' ? parseInt(eskalationenEl.textContent, 10) : 0;
       renderHealthBadge(cockpit, eskalationenAnzahl);
       renderAiCeoHealth(cockpit, eskalationenAnzahl, pricingHistorie, splitTest, adsAutopilot, reorder, customerSegmente, adsNotbremse, refundAlarm);
+      renderRiskScore(customerSegmente, reorder, adsNotbremse, cockpit);
       renderCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl);
       renderKpiScoreboard(analytics, ads, cockpit, customerSegmente, eskalationenAnzahl);
       renderAuditLog(pricingHistorie, splitTest, adsAutopilot, reorder);
