@@ -356,6 +356,10 @@
   <div class="panel-title">Alle Trading-Werkzeuge</div>
   <p class="panel-desc">Von hier aus ist jedes Trading-Tool der Suite erreichbar.</p>
   <div class="tool-grid" id="toolsContent"></div>
+
+  <div class="panel-title" style="margin-top:32px;">Externe Ressourcen — echt recherchiert, kein Teil der Suite</div>
+  <p class="panel-desc">Zehn Tools/Plattformen, die im echten Trading-Alltag tatsächlich genutzt werden (nicht von uns betrieben, keine Kooperation, keine Empfehlung im Sinne einer Anlageberatung - reine Recherche).</p>
+  <div class="tool-grid" id="externeToolsContent"></div>
 </section>
 
 <footer>
@@ -823,6 +827,26 @@
       <a class="tool-card" href="${t.href}"><span class="tool-emoji">${t.emoji}</span><div class="tool-name">${t.name}</div><div class="tool-desc">${t.desc}</div></a>`).join('');
   }
 
+  // Recherchiert (WebSearch) statt aus dem Gedächtnis geraten - App Store/
+  // Google Play für MunYun geprüft, die anderen sind langjährig etablierte,
+  // öffentlich bekannte Plattformen. Externe Seiten, keine Kooperation.
+  const EXTERNE_TOOLS = [
+    { emoji:'📊', name:'TradingView', desc:'Charting-Plattform, kostenlose Stufe schon sehr umfangreich - viele nutzen nur die.', href:'https://www.tradingview.com/' },
+    { emoji:'📉', name:'MetaTrader 5', desc:'Trading-Plattform, die die meisten Broker direkt unterstützen, mit eigenem Strategie-Tester.', href:'https://www.metatrader5.com/' },
+    { emoji:'🎓', name:'MunYun', desc:'Lern-App fürs Trading-Einmaleins - kurze Lektionen zu Aktien/Krypto/Forex, selbst kein Trading-Tool.', href:'https://munyun.app/' },
+    { emoji:'📰', name:'Forex Factory', desc:'Wirtschaftskalender - genau das, was unser eigener News-Event-Filter im Hintergrund automatisiert nutzt.', href:'https://www.forexfactory.com/' },
+    { emoji:'📰', name:'Investing.com', desc:'Kursdaten, News und Wirtschaftskalender über praktisch jede Anlageklasse hinweg.', href:'https://www.investing.com/' },
+    { emoji:'🗺️', name:'Finviz', desc:'Kostenloser Aktien-Screener und Markt-Heatmap - schneller Überblick, was gerade läuft.', href:'https://finviz.com/' },
+    { emoji:'💰', name:'Yahoo Finance', desc:'Kostenlose Kursdaten, News und ein einfacher Portfolio-Tracker.', href:'https://finance.yahoo.com/' },
+    { emoji:'📖', name:'Investopedia', desc:'Nachschlagewerk für Börsenbegriffe, plus ein kostenloser Trading-Simulator zum risikofreien Üben.', href:'https://www.investopedia.com/' },
+    { emoji:'🥷', name:'NinjaTrader', desc:'Kostenlose Desktop-Plattform mit eigenem Backtesting/Strategie-Tester, v.a. für Futures/Forex.', href:'https://ninjatrader.com/' },
+    { emoji:'🦎', name:'CoinGecko', desc:'Dieselbe Quelle, aus der unser eigener Live-Markt-Tab (Fear &amp; Greed, Top Gainer/Loser) live zieht.', href:'https://www.coingecko.com/' },
+  ];
+  function renderExterneTools() {
+    document.getElementById('externeToolsContent').innerHTML = EXTERNE_TOOLS.map((t) => `
+      <a class="tool-card" href="${t.href}" target="_blank" rel="noopener noreferrer"><span class="tool-emoji">${t.emoji}</span><div class="tool-name">${t.name} ↗</div><div class="tool-desc">${t.desc}</div></a>`).join('');
+  }
+
   // --- Übersicht KPIs ---
   function renderOverview(cryptoData, stocksData) {
     const cs = summarize(cryptoData);
@@ -984,6 +1008,7 @@
   })();
 
   renderTools();
+  renderExterneTools();
   loadAll();
 </script>
 </body>
