@@ -335,6 +335,26 @@ außerhalb dieses Bots (eigener Broker-Account, eigenes KYC). Reine
 In-Memory-Berechnung aus bereits vorhandenen Daten, kein zusätzlicher
 API-Call.
 
+## Wöchentlicher Signal-Digest (`lib/signaldigest.mjs`)
+
+Läuft direkt nach Auto-Backtest und Monte-Carlo-Simulation im selben
+Montags-Lauf und fasst deren Ergebnisse - plus die Korrelationsmatrix -
+zu EINER WhatsApp/Telegram-Nachricht zusammen, statt vier verstreuten
+Infos, die man sich erst im Dashboard zusammensuchen muss:
+
+- Symbole mit ≥20% Monte-Carlo-Kill-Switch-Wahrscheinlichkeit
+- Symbole, bei denen im Strategie-Turnier eine ANDERE Strategie als die
+  aktuell laufende vorne liegt
+- Symbol-Paare mit Korrelation ≥0.7
+
+Reine In-Memory-Zusammenführung bereits geschriebener KV-Werte, kein
+zusätzlicher API-Call. **Unmissverständlich: keine Kauf-/
+Verkaufsempfehlung.** Sagt nie "kaufe X", nur "diese Woche wurde X
+gemessen" - was daraus folgt, bleibt die eigene Entscheidung. Braucht
+einen konfigurierten WhatsApp- und/oder Telegram-Kanal (siehe
+`lib/notify.mjs` unten) - ohne das läuft die Berechnung trotzdem, wird
+aber nur geloggt statt gesendet.
+
 ## Tägliche WhatsApp-Zusammenfassung
 
 Zusätzlich zu den Alarmen bei einzelnen Ereignissen (Einstieg, Ausstieg,
