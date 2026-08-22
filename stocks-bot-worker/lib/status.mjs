@@ -90,6 +90,14 @@ export async function buildStatus(env) {
       // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
     }
 
+    let strategieTurnier = null;
+    try {
+      const raw = await env.STOCKS_STATE.get(`turnier:${symbol}`);
+      if (raw) strategieTurnier = JSON.parse(raw);
+    } catch {
+      // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+    }
+
     symbole.push({
       symbol,
       position: state.position,
@@ -103,6 +111,7 @@ export async function buildStatus(env) {
       gelernterStopLossProzent: state.gelernterStopLossProzent ?? null,
       autoBacktest,
       monteCarlo,
+      strategieTurnier,
       tradeStats: berechneTradeStats(trades),
       profitFactor: berechneProfitFactor(trades),
       maxDrawdownProzent: berechneMaxDrawdownProzent(trades, state.startKapital),

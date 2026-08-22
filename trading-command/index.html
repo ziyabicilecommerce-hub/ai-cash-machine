@@ -466,6 +466,28 @@
     </div>`;
   }
 
+  const STRATEGIE_LABEL = { 'ema-crossover':'EMA-Crossover', 'bollinger-mean-reversion':'Bollinger-Mean-Reversion', 'donchian-breakout':'Donchian-Breakout' };
+  const MEDAILLEN = ['🥇', '🥈', '🥉'];
+
+  function renderTurnierCard(botLabel, symbole) {
+    if (!symbole) return '';
+    const mitTurnier = symbole.filter((s) => s.strategieTurnier);
+    if (!mitTurnier.length) return '';
+    const zeilen = mitTurnier.map((s) => {
+      const t = s.strategieTurnier;
+      const zeilenProStrategie = t.ranking.map((r, i) => {
+        const aktivMarker = r.strategie === t.aktuelleStrategie ? ' <span style="color:var(--cyan)">(live)</span>' : '';
+        const farbe = r.gesamtReturnProzent >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<div class="sig-row"><span>${MEDAILLEN[i] || '　'} ${STRATEGIE_LABEL[r.strategie] || r.strategie}${aktivMarker}</span><b style="color:${farbe};font-family:var(--mono)">${r.gesamtReturnProzent >= 0 ? '+' : ''}${r.gesamtReturnProzent.toFixed(1)}% · ${r.anzahlTrades} Trades${r.winRateProzent != null ? ` · WR ${r.winRateProzent.toFixed(0)}%` : ''}</b></div>`;
+      }).join('');
+      return `<div style="margin-bottom:10px;"><div style="font-family:var(--mono);font-size:12px;color:var(--mut2);margin-bottom:4px;">${s.symbol}</div>${zeilenProStrategie}</div>`;
+    }).join('');
+    return `<div class="card filter-card"><div class="filter-top"><span class="filter-name">🏆 Strategie-Turnier — ${botLabel}</span></div>
+      <div class="filter-desc">Wöchentlich testet der Bot ALLE unterstützten Strategien gegeneinander auf denselben echten Kerzen (letzte 14 Tage) - zeigt, ob aktuell eine andere Strategie besser abschneiden würde. Rein informativ: wechselt NIE automatisch die Live-Strategie.</div>
+      ${zeilen}
+    </div>`;
+  }
+
   function renderScannerCard(botLabel, icon, scanner, changeFeld, zeitraumLabel) {
     if (!scanner) return '';
     const treffer = scanner.treffer || [];
@@ -564,6 +586,9 @@
 
     html += renderMonteCarloCard('₿ Krypto-Bot', cryptoData && !cryptoData.fehler ? cryptoData.symbole : null);
     html += renderMonteCarloCard('📈 Aktien-Bot', stocksData && !stocksData.fehler ? stocksData.symbole : null);
+
+    html += renderTurnierCard('₿ Krypto-Bot', cryptoData && !cryptoData.fehler ? cryptoData.symbole : null);
+    html += renderTurnierCard('📈 Aktien-Bot', stocksData && !stocksData.fehler ? stocksData.symbole : null);
 
     html += renderScannerCard('₿ Krypto-Bot', '🔍', cryptoData && !cryptoData.fehler ? cryptoData.scanner : null, 'change7dProzent', '7T');
     html += renderScannerCard('📈 Aktien-Bot', '🔍', stocksData && !stocksData.fehler ? stocksData.scanner : null, 'changeProzent', 'heute');
