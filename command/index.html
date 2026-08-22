@@ -757,6 +757,18 @@
       </div>`;
   }
 
+  // Adaptive Schwelle: der Agent lernt aus der eigenen echten Erfolgsbilanz -
+  // lief sie gut, wird die Schwelle etwas aggressiver, lief sie schlecht,
+  // etwas vorsichtiger (fest begrenzt, kein KI-Ermessen). Nur sichtbar, wenn
+  // sie gerade wirklich vom Standard abweicht - sonst kein zusätzliches
+  // Rauschen in der Anzeige.
+  function adaptiveSchwelleHtml(adaptiveSchwelle, beschreibung) {
+    if (!adaptiveSchwelle || adaptiveSchwelle.effektivProzent === adaptiveSchwelle.basisProzent) return '';
+    const richtung = adaptiveSchwelle.effektivProzent > adaptiveSchwelle.basisProzent ? 'vorsichtiger' : 'aggressiver';
+    return `
+      <p class="note" style="margin-bottom:14px;">📐 Schwelle heute aus der eigenen Erfolgsbilanz gelernt: ${beschreibung} = ${adaptiveSchwelle.effektivProzent}% statt Standard ${adaptiveSchwelle.basisProzent}% (${richtung} als sonst).</p>`;
+  }
+
   // --- CEO / Chef-Agent ---
   // Ehrliche Tages-Zusammenfassung, NUR aus tatsächlich vorhandenen Signalen
   // (Ketten-Log, Referral-Belohnungen, Social-Pakete, Pricing-Entscheidungen,
@@ -1633,7 +1645,8 @@
       </div>`;
     }).join('');
     const bremseHtml = data.selbstgebremst ? selbstbremseBannerHtml('Split-Test-Agent') : '';
-    el.innerHTML = `<div class="section-title-inline">🧪 SPLIT-TEST-ERGEBNISSE MIT BEGRÜNDUNG</div>${bremseHtml}${bilanzHtml}${rows}`;
+    const schwelleHtml = adaptiveSchwelleHtml(data.adaptiveSchwelle, 'ROAS-Unterschied, um zu handeln');
+    el.innerHTML = `<div class="section-title-inline">🧪 SPLIT-TEST-ERGEBNISSE MIT BEGRÜNDUNG</div>${bremseHtml}${schwelleHtml}${bilanzHtml}${rows}`;
   }
 
   const ADS_WIRKUNG_TEXT = {
@@ -1679,7 +1692,8 @@
       </div>`;
     }).join('');
     const bremseHtml = data.selbstgebremst ? selbstbremseBannerHtml('Ads-Autopilot-Agent') : '';
-    el.innerHTML = `<div class="section-title-inline">📊 BUDGET-UMSCHICHTUNGEN MIT BEGRÜNDUNG</div>${bremseHtml}${bilanzHtml}${rows}`;
+    const schwelleHtml = adaptiveSchwelleHtml(data.adaptiveSchwelle, 'Anteil des Budgets, der pro Lauf verschoben wird');
+    el.innerHTML = `<div class="section-title-inline">📊 BUDGET-UMSCHICHTUNGEN MIT BEGRÜNDUNG</div>${bremseHtml}${schwelleHtml}${bilanzHtml}${rows}`;
   }
 
   const REORDER_WIRKUNG_TEXT = {
@@ -2026,7 +2040,8 @@
     }
     const splitBilanz = c.splitTest && c.splitTest.erfolgsBilanz;
     if (splitBilanz && splitBilanz.ausgewertet) {
-      teile.push(`ERFOLGS-CHECK SPLIT-TEST-AGENT: Von ${splitBilanz.ausgewertet} ausgewerteten Pausierungen blieb der Gewinner bei ${splitBilanz.bestaetigt} weiterhin profitabel, ${splitBilanz.brauchtBlick} brauchen einen Blick.${c.splitTest.selbstgebremst ? ' 🛑 SELBSTBREMSE AKTIV: der Agent stuft sich wegen der schlechten Bilanz gerade selbst auf reine Empfehlung zurück.' : ''}`);
+      const splitSchwelle = c.splitTest.adaptiveSchwelle;
+      teile.push(`ERFOLGS-CHECK SPLIT-TEST-AGENT: Von ${splitBilanz.ausgewertet} ausgewerteten Pausierungen blieb der Gewinner bei ${splitBilanz.bestaetigt} weiterhin profitabel, ${splitBilanz.brauchtBlick} brauchen einen Blick.${c.splitTest.selbstgebremst ? ' 🛑 SELBSTBREMSE AKTIV: der Agent stuft sich wegen der schlechten Bilanz gerade selbst auf reine Empfehlung zurück.' : ''}${splitSchwelle && splitSchwelle.effektivProzent !== splitSchwelle.basisProzent ? ` Adaptive Schwelle heute: ${splitSchwelle.effektivProzent}% statt Standard ${splitSchwelle.basisProzent}% (aus der eigenen Bilanz gelernt).` : ''}`);
     }
 
     const adsAutopilotHistorie = (c.adsAutopilot && c.adsAutopilot.historie) || [];
@@ -2036,7 +2051,8 @@
     }
     const adsAutopilotBilanz = c.adsAutopilot && c.adsAutopilot.erfolgsBilanz;
     if (adsAutopilotBilanz && adsAutopilotBilanz.ausgewertet) {
-      teile.push(`ERFOLGS-CHECK ADS-AUTOPILOT-AGENT: Von ${adsAutopilotBilanz.ausgewertet} ausgewerteten Budget-Verstärkungen blieben ${adsAutopilotBilanz.bestaetigt} weiterhin profitabel, ${adsAutopilotBilanz.brauchtBlick} brauchen einen Blick.${c.adsAutopilot.selbstgebremst ? ' 🛑 SELBSTBREMSE AKTIV: der Agent stuft sich wegen der schlechten Bilanz gerade selbst auf reine Empfehlung zurück.' : ''}`);
+      const adsAutopilotSchwelle = c.adsAutopilot.adaptiveSchwelle;
+      teile.push(`ERFOLGS-CHECK ADS-AUTOPILOT-AGENT: Von ${adsAutopilotBilanz.ausgewertet} ausgewerteten Budget-Verstärkungen blieben ${adsAutopilotBilanz.bestaetigt} weiterhin profitabel, ${adsAutopilotBilanz.brauchtBlick} brauchen einen Blick.${c.adsAutopilot.selbstgebremst ? ' 🛑 SELBSTBREMSE AKTIV: der Agent stuft sich wegen der schlechten Bilanz gerade selbst auf reine Empfehlung zurück.' : ''}${adsAutopilotSchwelle && adsAutopilotSchwelle.effektivProzent !== adsAutopilotSchwelle.basisProzent ? ` Adaptiver Verschiebe-Anteil heute: ${adsAutopilotSchwelle.effektivProzent}% statt Standard ${adsAutopilotSchwelle.basisProzent}% (aus der eigenen Bilanz gelernt).` : ''}`);
     }
 
     const reorderBilanz = c.reorder && c.reorder.erfolgsBilanz;

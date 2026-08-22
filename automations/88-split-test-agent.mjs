@@ -43,6 +43,24 @@ function berechneSelbstbremse(ausgewertetAnzahl, positivAnzahl) {
   return positivAnzahl / ausgewertetAnzahl < SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS;
 }
 
+// Lernt aus der eigenen echten Erfolgsbilanz, statt bei jedem Lauf mit der
+// immer gleichen festen Schwelle zu starten: lief die Bilanz zuletzt gut,
+// reicht beim nächsten Mal ein kleinerer ROAS-Unterschied, um zu handeln
+// (der Agent "traut sich mehr"); lief sie schlecht, braucht er einen
+// GRÖSSEREN Unterschied (vorsichtiger). Feste, direkt aus der echten
+// Erfolgsquote abgeleitete Anpassung in festen Grenzen - kein KI-Ermessen,
+// kann nie unter/über die Grenzen hinauslaufen.
+const ADAPTIV_MIN_STICHPROBE = 3;
+const ADAPTIV_UNTERGRENZE = 0.25;
+const ADAPTIV_OBERGRENZE = 0.6;
+function berechneAdaptiveSchwelle(basis, ausgewertetAnzahl, positivAnzahl) {
+  if (ausgewertetAnzahl < ADAPTIV_MIN_STICHPROBE) return basis;
+  const erfolgsquote = positivAnzahl / ausgewertetAnzahl;
+  if (erfolgsquote >= 0.7) return Math.max(ADAPTIV_UNTERGRENZE, basis - 0.1);
+  if (erfolgsquote < 0.5) return Math.min(ADAPTIV_OBERGRENZE, basis + 0.15);
+  return basis;
+}
+
 // Prüft AUSGEFÜHRTE Pausierungen der letzten Woche: lief der GEWINNER (bleibt
 // immer aktiv) in genau den 7 Tagen danach weiterhin profitabel? Beobachtet
 // nur den tatsächlichen ROAS in diesem Zeitraum - keine Behauptung, DASS die
@@ -82,7 +100,7 @@ async function werteVergangeneEntscheidungenAus(state) {
 async function main() {
   const autoAn = config.AUTO_SPLIT_TEST_PAUSIEREN === 'ja';
   const minSpend = parseFloat(config.SPLIT_TEST_MIN_SPEND_PRO_ADSET || '20');
-  const minUnterschied = parseFloat(config.SPLIT_TEST_MIN_UNTERSCHIED_PROZENT || '40') / 100;
+  const minUnterschiedBasis = parseFloat(config.SPLIT_TEST_MIN_UNTERSCHIED_PROZENT || '40') / 100;
 
   const insights = await getAdInsights({
     level: 'adset',
@@ -110,6 +128,7 @@ async function main() {
   const bestaetigtVorlauf = ausgewertetVorlauf.filter((e) => e.wirkung === 'gewinner_bestaetigt');
   const selbstgebremst = berechneSelbstbremse(ausgewertetVorlauf.length, bestaetigtVorlauf.length);
   const autoAnEffektiv = autoAn && !selbstgebremst;
+  const minUnterschiedEffektiv = berechneAdaptiveSchwelle(minUnterschiedBasis, ausgewertetVorlauf.length, bestaetigtVorlauf.length);
 
   const ergebnisse = [];
   for (const [campaignId, k] of Object.entries(kampagnen)) {
@@ -127,7 +146,7 @@ async function main() {
       ? (gewinner.roas - verlierer.roas) / verlierer.roas
       : 1; // Verlierer hat 0 Käufe trotz Spend -> maximal klarer Unterschied
 
-    if (unterschiedProzent < minUnterschied) continue;
+    if (unterschiedProzent < minUnterschiedEffektiv) continue;
 
     const erwarteterMehrertrag = verlierer.spend * (gewinner.roas - verlierer.roas);
     let pausiert = false;
@@ -167,6 +186,7 @@ async function main() {
     historie: state.historie,
     erfolgsBilanz: { ausgewertet: ausgewertet.length, bestaetigt: bestaetigt.length, brauchtBlick: ausgewertet.length - bestaetigt.length },
     selbstgebremst,
+    adaptiveSchwelle: { basisProzent: Math.round(minUnterschiedBasis * 100), effektivProzent: Math.round(minUnterschiedEffektiv * 100) },
   }, null, 2));
 
   if (!ergebnisse.length) {
@@ -179,9 +199,12 @@ async function main() {
   const bremsHinweis = selbstgebremst
     ? `🛑 SELBSTBREMSE AKTIV: nur ${bestaetigtVorlauf.length}/${ausgewertetVorlauf.length} letzte Pausierungen liefen gut (< ${Math.round(SELBSTBREMSE_ERFOLGSQUOTE_MINDESTENS * 100)}%) - heute NUR Empfehlung, auch wenn AUTO_SPLIT_TEST_PAUSIEREN an ist.`
     : autoAnEffektiv ? 'AUTO_SPLIT_TEST_PAUSIEREN ist AN: Verlierer werden automatisch pausiert.' : 'AUTO_SPLIT_TEST_PAUSIEREN steht auf nein - nur Empfehlung.';
-  await notifyTelegram(`🧪 SPLIT-TEST-AGENT - ${config.SHOP_NAME}${NL}--------------------${NL}${bremsHinweis}${NL}${NL}${zeilen.join(NL)}`);
+  const schwelleHinweis = minUnterschiedEffektiv !== minUnterschiedBasis
+    ? `${NL}📐 Schwelle heute angepasst: ${Math.round(minUnterschiedEffektiv * 100)}% statt Standard ${Math.round(minUnterschiedBasis * 100)}% (aus der eigenen Erfolgsbilanz gelernt).`
+    : '';
+  await notifyTelegram(`🧪 SPLIT-TEST-AGENT - ${config.SHOP_NAME}${NL}--------------------${NL}${bremsHinweis}${schwelleHinweis}${NL}${NL}${zeilen.join(NL)}`);
 
-  console.log(`[88-split-test-agent] ${ergebnisse.length} klare Ergebnis(se), ${ergebnisse.filter((e) => e.ausgefuehrt).length} Verlierer pausiert${selbstgebremst ? ' (selbstgebremst)' : ''}.`);
+  console.log(`[88-split-test-agent] ${ergebnisse.length} klare Ergebnis(se), ${ergebnisse.filter((e) => e.ausgefuehrt).length} Verlierer pausiert${selbstgebremst ? ' (selbstgebremst)' : ''} (Schwelle: ${Math.round(minUnterschiedEffektiv * 100)}%).`);
 }
 
 main().catch((err) => {
