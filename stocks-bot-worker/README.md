@@ -207,6 +207,16 @@ verändert nie Kapital, Position oder Konfiguration. Ob und wann echtes
 Geld eingesetzt wird, bleibt ausschließlich eine eigene Entscheidung
 außerhalb dieses Bots. Reine In-Memory-Berechnung, kein API-Call.
 
+**Wöchentlicher Signal-Digest** (`lib/signaldigest.mjs`, Pendant zum
+Krypto-Bot): läuft direkt nach Auto-Backtest und Monte-Carlo im selben
+Montags-Lauf und fasst deren Ergebnisse plus die Korrelationsmatrix zu
+EINER WhatsApp/Telegram-Nachricht zusammen - Symbole mit ≥20%
+Kill-Switch-Wahrscheinlichkeit, Symbole mit abweichendem Turnier-Sieger,
+Symbol-Paare mit Korrelation ≥0.7. Reine In-Memory-Zusammenführung
+bereits geschriebener KV-Werte, kein zusätzlicher API-Call.
+**Unmissverständlich: keine Kauf-/Verkaufsempfehlung** - sagt nie "kaufe
+X", nur "diese Woche wurde X gemessen".
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch
