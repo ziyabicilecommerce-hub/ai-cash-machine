@@ -580,6 +580,8 @@
   <div id="kpiScoreboardContent"></div>
   <div id="auditLogContent"></div>
   <div id="businessAutopsyContent"></div>
+  <div id="revenueForecastContent"></div>
+  <div id="costForecastContent"></div>
 </section>
 
 <section class="panel" id="panel-ceo">
@@ -2611,6 +2613,94 @@
     el.innerHTML = html;
   }
 
+  // --- AI-CEO: einfacher linearer Trend (kleinste Quadrate) - keine KI-
+  // Prognose, keine Saisonalität, nur die simple Fortschreibung echter
+  // Datenpunkte. Wiederverwendet für Revenue/Cashflow- und Kosten-Forecast.
+  function berechneLinearTrend(punkte) {
+    const n = punkte.length;
+    const sumX = punkte.reduce((s, p) => s + p.x, 0);
+    const sumY = punkte.reduce((s, p) => s + p.y, 0);
+    const sumXY = punkte.reduce((s, p) => s + p.x * p.y, 0);
+    const sumXX = punkte.reduce((s, p) => s + p.x * p.x, 0);
+    const nenner = n * sumXX - sumX * sumX;
+    if (nenner === 0) return { steigung: 0, achsenabschnitt: n ? sumY / n : 0 };
+    const steigung = (n * sumXY - sumX * sumY) / nenner;
+    const achsenabschnitt = (sumY - steigung * sumX) / n;
+    return { steigung, achsenabschnitt };
+  }
+
+  const FORECAST_MIN_TAGE = 5;
+  const FORECAST_TAGE_VORAUS = 7;
+
+  // --- AI-CEO: Revenue- & Cashflow-Forecast - linearer Trend aus der echten
+  // Finance-Cockpit-Historie (#01), keine Garantie, klar als Trend-
+  // Fortschreibung gekennzeichnet statt als KI-Vorhersage verkauft.
+  function renderRevenueForecast(analytics) {
+    const el = document.getElementById('revenueForecastContent');
+    if (!el) return;
+    const history = (analytics && analytics.history) || [];
+    if (history.length < FORECAST_MIN_TAGE) {
+      el.innerHTML = `<div class="section-title-inline">📈 REVENUE- & CASHFLOW-FORECAST</div>` +
+        emptyHtml('📈', 'Noch nicht genug Datenpunkte', `Braucht mindestens ${FORECAST_MIN_TAGE} Tage echte Umsatzdaten aus dem Finance Cockpit (#01), aktuell ${history.length}.`);
+      return;
+    }
+    const waehrung = history[history.length - 1].waehrung || 'EUR';
+    const umsatzPunkte = history.map((h, i) => ({ x: i, y: h.umsatz || 0 }));
+    const gewinnPunkte = history.map((h, i) => ({ x: i, y: (h.nettoGewinn !== undefined ? h.nettoGewinn : h.gewinn) || 0 }));
+
+    const umsatzTrend = berechneLinearTrend(umsatzPunkte);
+    const gewinnTrend = berechneLinearTrend(gewinnPunkte);
+    const letzterIndex = history.length - 1;
+    const umsatzForecast = Math.max(0, umsatzTrend.steigung * (letzterIndex + FORECAST_TAGE_VORAUS) + umsatzTrend.achsenabschnitt);
+    const gewinnForecast = gewinnTrend.steigung * (letzterIndex + FORECAST_TAGE_VORAUS) + gewinnTrend.achsenabschnitt;
+
+    const letzteN = umsatzPunkte.slice(-7);
+    const umsatzSchnitt7 = letzteN.reduce((s, p) => s + p.y, 0) / letzteN.length;
+    const richtung = umsatzTrend.steigung > 0.01 * (umsatzSchnitt7 || 1) ? 'steigend'
+      : umsatzTrend.steigung < -0.01 * (umsatzSchnitt7 || 1) ? 'fallend' : 'stabil';
+    const richtungIcon = richtung === 'steigend' ? '📈' : richtung === 'fallend' ? '📉' : '➡️';
+
+    el.innerHTML = `
+      <div class="section-title-inline">📈 REVENUE- & CASHFLOW-FORECAST</div>
+      <p class="note" style="margin-bottom:14px;">Linearer Trend aus den letzten ${history.length} echten Tagen (Finance Cockpit #01) - keine Garantie, keine Saisonalität, kein KI-Ermessen, nur die simple Fortschreibung der bisherigen Entwicklung.</p>
+      <div class="kpi-grid">
+        <div class="kpi-box"><div class="kpi-num">${umsatzSchnitt7.toFixed(0)} ${waehrung}</div><div class="kpi-label">Ø UMSATZ/TAG (LETZTE 7)</div></div>
+        <div class="kpi-box"><div class="kpi-num" style="color:${umsatzTrend.steigung >= 0 ? 'var(--green)' : 'var(--red)'}">${umsatzForecast.toFixed(0)} ${waehrung}</div><div class="kpi-label">TREND-UMSATZ IN ${FORECAST_TAGE_VORAUS} TAGEN</div></div>
+        <div class="kpi-box"><div class="kpi-num" style="color:${gewinnForecast >= 0 ? 'var(--green)' : 'var(--red)'}">${gewinnForecast.toFixed(0)} ${waehrung}</div><div class="kpi-label">TREND-NETTOGEWINN IN ${FORECAST_TAGE_VORAUS} TAGEN</div></div>
+        <div class="kpi-box"><div class="kpi-num">${richtungIcon}</div><div class="kpi-label">TREND ${richtung.toUpperCase()}</div></div>
+      </div>`;
+  }
+
+  // --- AI-CEO: Kosten-Forecast - gleicher linearer Trend, diesmal auf die
+  // echte Claude-API-Kostenhistorie aus dem Cockpit (#81) angewendet, plus
+  // Näherung ans tägliche Token-Limit als feste, nachvollziehbare Zahl.
+  function renderCostForecast(cockpit) {
+    const el = document.getElementById('costForecastContent');
+    if (!el) return;
+    const kosten = cockpit && cockpit.kosten;
+    const verlauf = (kosten && kosten.verlauf) || [];
+    if (!kosten || verlauf.length < FORECAST_MIN_TAGE) {
+      el.innerHTML = `<div class="section-title-inline">💸 KOSTEN-FORECAST</div>` +
+        emptyHtml('💸', 'Noch nicht genug Datenpunkte', `Braucht mindestens ${FORECAST_MIN_TAGE} Tage Kosten-Historie aus dem Kosten-Cockpit (#81), aktuell ${verlauf.length}.`);
+      return;
+    }
+    const kostenPunkte = verlauf.map((v, i) => ({ x: i, y: v.geschaetzteKostenEurHeute || 0 }));
+    const trend = berechneLinearTrend(kostenPunkte);
+    const letzterIndex = verlauf.length - 1;
+    const kostenForecast = Math.max(0, trend.steigung * (letzterIndex + FORECAST_TAGE_VORAUS) + trend.achsenabschnitt);
+    const tokenLimitAnteil = kosten.limit > 0 ? Math.min(100, Math.round(((kosten.tokenHeute || 0) / kosten.limit) * 100)) : null;
+
+    el.innerHTML = `
+      <div class="section-title-inline">💸 KOSTEN-FORECAST</div>
+      <p class="note" style="margin-bottom:14px;">Gleicher linearer Trend wie beim Revenue-Forecast, hier auf die Claude-API-Kosten der letzten ${verlauf.length} Tage angewendet. Grobe Schätzung, keine exakte Abrechnung - echte Zahlen stehen in der Anthropic Console.</p>
+      <div class="kpi-grid">
+        <div class="kpi-box"><div class="kpi-num">~${(kosten.geschaetzteKostenEurHeute || 0).toFixed(2)} €</div><div class="kpi-label">HEUTE GESCHÄTZT</div></div>
+        <div class="kpi-box"><div class="kpi-num" style="color:${trend.steigung > 0 ? 'var(--amber)' : 'var(--green)'}">~${kostenForecast.toFixed(2)} €</div><div class="kpi-label">TREND IN ${FORECAST_TAGE_VORAUS} TAGEN</div></div>
+        <div class="kpi-box"><div class="kpi-num">~${(kosten.monatsProjektionEur || 0).toFixed(0)} €</div><div class="kpi-label">MONATS-PROJEKTION</div></div>
+        ${tokenLimitAnteil !== null ? `<div class="kpi-box"><div class="kpi-num" style="color:${tokenLimitAnteil >= 80 ? 'var(--red)' : tokenLimitAnteil >= 50 ? 'var(--amber)' : 'var(--green)'}">${tokenLimitAnteil}%</div><div class="kpi-label">TAGES-TOKEN-LIMIT AUSGESCHÖPFT</div></div>` : ''}
+      </div>`;
+  }
+
   function renderHealthBadge(cockpit, eskalationenAnzahl) {
     if (!cockpit) return; // Cockpit-Daten noch nicht geladen - laufenden Badge-Stand nicht mit leer überschreiben
     const wrap = document.getElementById('healthBadgeWrap');
@@ -2941,6 +3031,8 @@
       renderKpiScoreboard(analytics, ads, cockpit, customerSegmente, eskalationenAnzahl);
       renderAuditLog(pricingHistorie, splitTest, adsAutopilot, reorder);
       renderBusinessAutopsy(pricingHistorie, splitTest, adsAutopilot, reorder);
+      renderRevenueForecast(analytics);
+      renderCostForecast(cockpit);
 
       const neuesteKette = chains && Array.isArray(chains.log) && chains.log.length ? chains.log[0] : null;
       if (neuesteKette && neuesteKette.ausgeloest && letzteChainZeit !== null && neuesteKette.datum !== letzteChainZeit) {
