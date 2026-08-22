@@ -187,6 +187,17 @@ ein echtes Konto getestet werden (kein API-Key in der Bau-Umgebung
 verfügbar) - nach dem ersten echten Lauf einmal die Benachrichtigung
 gegenprüfen.
 
+**Go-Live-Readiness-Score** (`berechneGoLiveScore` in `lib/statistik.mjs`,
+Pendant zum Krypto-Bot): zieht Stichprobengröße & Trefferquote, Profit
+Factor & Recovery Factor, Monte-Carlo-Simulation, Auto-Backtest und
+Korrelationsrisiko zu EINER Zahl (0-100) plus Ampel und Teilwertungs-
+Aufschlüsselung zusammen. `/status` liefert es als `goLiveScore`-Feld,
+Trading Command zeigt es prominent im Übersicht-Tab. **Unmissverständlich:
+reine Diagnose, KEINE Empfehlung und KEIN automatischer Trigger** -
+verändert nie Kapital, Position oder Konfiguration. Ob und wann echtes
+Geld eingesetzt wird, bleibt ausschließlich eine eigene Entscheidung
+außerhalb dieses Bots. Reine In-Memory-Berechnung, kein API-Call.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch
