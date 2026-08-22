@@ -226,6 +226,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
   <div class="nav-title">COMMAND</div>
   <div class="nav">
     <button class="active" data-nav="overview" onclick="scrollToId('overview')">🎯 Overview</button>
+    <button data-nav="market" onclick="scrollToId('market')">🌐 Live-Markt</button>
     <button data-nav="analyst" onclick="scrollToId('analyst')">🧠 AI Analyst</button>
     <button data-nav="scanner" onclick="scrollToId('scanner')">🎯 Scanner</button>
     <button data-nav="risk" onclick="scrollToId('risk')">🛡️ Risk Center</button>
@@ -251,6 +252,9 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 
 <div class="section-label" id="overview">Overview</div>
 <section class="grid" id="overviewGrid"></section>
+
+<div class="section-label" id="market">Live-Marktdaten (direkt aus dem Internet, unabhängig vom Bot)</div>
+<section class="grid" id="marketGrid"></section>
 
 <div class="section-label" id="analyst">AI Analyst — Go-Live-Readiness</div>
 <section class="grid" id="analystGrid"></section>
@@ -500,6 +504,120 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     regimeEl.innerHTML = `<div class="card full"><div class="card-head"><div class="card-title">TREND PRO SYMBOL</div><div class="card-meta">ECHTE LIVE-INDIKATOREN</div></div><div class="regime">${items}</div></div>`;
   }
 
+  // ---- LIVE-MARKTDATEN AUS DEM INTERNET (CoinGecko + Alternative.me) ----
+  // Läuft komplett unabhängig von den Bots - direkter Browser-Fetch gegen
+  // öffentliche, kostenlose APIs ohne API-Key. Eigener, langsamerer
+  // Refresh-Zyklus (Rate-Limit der kostenlosen CoinGecko-API respektieren).
+  // Jeder Aufruf einzeln try/catch: schlägt einer fehl, bleiben die anderen
+  // Karten trotzdem echt - nie ein Platzhalter-Wert bei einem Fehler.
+  const MARKET_REFRESH_MS = 60000;
+  const COINGECKO_BASIS = 'https://api.coingecko.com/api/v3';
+  const BASIS_ALIAS = { XBT: 'BTC' };
+  const COINGECKO_IDS = {
+    BTC:'bitcoin', ETH:'ethereum', SOL:'solana', XRP:'ripple', ADA:'cardano', DOGE:'dogecoin',
+    MATIC:'matic-network', POL:'polygon-ecosystem-token', AVAX:'avalanche-2', LINK:'chainlink',
+    DOT:'polkadot', LTC:'litecoin', BCH:'bitcoin-cash', ATOM:'cosmos', UNI:'uniswap', TRX:'tron',
+    SHIB:'shiba-inu', NEAR:'near', APT:'aptos', ARB:'arbitrum', OP:'optimism', SUI:'sui',
+    TON:'the-open-network', BNB:'binancecoin', ETC:'ethereum-classic', FIL:'filecoin',
+    ICP:'internet-computer', HBAR:'hedera-hashgraph', VET:'vechain', ALGO:'algorand', XLM:'stellar',
+    XMR:'monero', AAVE:'aave', MKR:'maker', SAND:'the-sandbox', MANA:'decentraland', GRT:'the-graph',
+    RUNE:'thorchain', INJ:'injective-protocol', TIA:'celestia', SEI:'sei-network', PEPE:'pepe',
+    RENDER:'render-token', FET:'fetch-ai',
+  };
+  function basisSymbol(symbol) {
+    let s = (symbol || '').toUpperCase();
+    for (const q of ['USDT','USDC','BUSD','USD','EUR']) {
+      if (s.endsWith(q) && s.length > q.length) { s = s.slice(0, -q.length); break; }
+    }
+    return BASIS_ALIAS[s] || s;
+  }
+
+  async function holeJson(url, options) {
+    const res = await fetch(url, options);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  }
+
+  function fearGreedCard(fg) {
+    if (!fg) return `<div class="card"><div class="card-head"><div class="card-title">😨 Fear &amp; Greed Index</div></div><div class="empty">Nicht erreichbar (alternative.me).</div></div>`;
+    const wert = Number(fg.value);
+    const farbe = wert >= 55 ? 'green' : wert <= 45 ? 'red' : 'yellow';
+    return `<div class="card">
+      <div class="card-head"><div class="card-title">😨 Fear &amp; Greed Index</div><div class="card-meta">alternative.me</div></div>
+      <div class="big ${farbe}">${wert}</div>
+      <div class="metric">${fg.value_classification} · Stand ${fmtDatum(new Date(Number(fg.timestamp) * 1000).toISOString())}</div>
+      <div class="progress"><div style="width:${wert}%"></div></div>
+    </div>`;
+  }
+
+  function globalMarketCard(g) {
+    if (!g) return `<div class="card wide"><div class="card-head"><div class="card-title">🌍 Globaler Krypto-Markt</div></div><div class="empty">Nicht erreichbar (CoinGecko).</div></div>`;
+    const mcap = g.total_market_cap.usd;
+    const mcapChange = g.market_cap_change_percentage_24h_usd;
+    const vol = g.total_volume.usd;
+    return `<div class="card wide">
+      <div class="card-head"><div class="card-title">🌍 Globaler Krypto-Markt</div><div class="card-meta">CoinGecko, live</div></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+        <div><div class="metric">MARKET CAP</div><div class="big" style="font-size:18px;">$${(mcap / 1e9).toFixed(0)}B</div></div>
+        <div><div class="metric">24H</div><div class="big ${mcapChange >= 0 ? 'green' : 'red'}" style="font-size:18px;">${mcapChange >= 0 ? '+' : ''}${mcapChange.toFixed(2)}%</div></div>
+        <div><div class="metric">BTC DOMINANZ</div><div class="big" style="font-size:18px;">${g.market_cap_percentage.btc.toFixed(1)}%</div></div>
+        <div><div class="metric">24H VOLUMEN</div><div class="big" style="font-size:18px;">$${(vol / 1e9).toFixed(0)}B</div></div>
+      </div>
+    </div>`;
+  }
+
+  function trendingCard(trending) {
+    if (!trending) return `<div class="card wide"><div class="card-head"><div class="card-title">🔥 Trending (CoinGecko)</div></div><div class="empty">Nicht erreichbar.</div></div>`;
+    const coins = (trending.coins || []).slice(0, 7).map((c) => c.item);
+    return `<div class="card wide">
+      <div class="card-head"><div class="card-title">🔥 Trending Coins</div><div class="card-meta">meistgesucht auf CoinGecko, live</div></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        ${coins.map((c) => `<span class="badge green" style="font-weight:700;">#${c.market_cap_rank || '–'} ${c.symbol.toUpperCase()}</span>`).join('')}
+      </div>
+      <div class="note">Aktuell meistgesuchte Coins - kein Kauf-/Verkaufssignal, rein informativ.</div>
+    </div>`;
+  }
+
+  function priceCheckCard(cryptoData, preise) {
+    if (!cryptoData || cryptoData.fehler || !preise) return '';
+    const symbole = (cryptoData.symbole || []).filter((s) => preise[COINGECKO_IDS[basisSymbol(s.symbol)]]);
+    if (!symbole.length) return '';
+    const rows = symbole.map((s) => {
+      const p = preise[COINGECKO_IDS[basisSymbol(s.symbol)]];
+      const abweichungProzent = s.preisAktuell != null ? ((s.preisAktuell - p.usd) / p.usd) * 100 : null;
+      return `<tr><td>${s.symbol}</td><td>$${p.usd.toLocaleString('de-DE')}</td><td class="${p.usd_24h_change >= 0 ? 'green' : 'red'}">${p.usd_24h_change >= 0 ? '+' : ''}${p.usd_24h_change.toFixed(1)}%</td>
+        <td>${s.preisAktuell != null ? '$' + s.preisAktuell.toLocaleString('de-DE') : '–'}</td>
+        <td>${abweichungProzent != null ? (Math.abs(abweichungProzent) < 0.01 ? '≈0%' : `${abweichungProzent >= 0 ? '+' : ''}${abweichungProzent.toFixed(2)}%`) : '–'}</td></tr>`;
+    }).join('');
+    return `<div class="card full">
+      <div class="card-head"><div class="card-title">✅ Live-Preis-Check: Bot vs. Internet</div><div class="card-meta">CoinGecko unabhängig gegengeprüft</div></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>CoinGecko-Preis</th><th>24H (extern)</th><th>Bot-Preis (Börse)</th><th>Abweichung</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="note">Vergleicht den Kraken/Binance-Preis des Bots gegen einen unabhängigen externen Preis - eine kleine Abweichung ist normal (verschiedene Börsen, Zeitversatz), eine große wäre ein Warnsignal.</div>
+    </div>`;
+  }
+
+  async function loadMarketData(cryptoData) {
+    const el = document.getElementById('marketGrid');
+    const basen = [...new Set((cryptoData && !cryptoData.fehler ? cryptoData.symbole || [] : []).map((s) => basisSymbol(s.symbol)).filter((b) => COINGECKO_IDS[b]))];
+    const idListe = basen.map((b) => COINGECKO_IDS[b]);
+
+    const [fgRes, globalRes, trendingRes, preisRes] = await Promise.allSettled([
+      holeJson('https://api.alternative.me/fng/?limit=1'),
+      holeJson(`${COINGECKO_BASIS}/global`),
+      holeJson(`${COINGECKO_BASIS}/search/trending`),
+      idListe.length ? holeJson(`${COINGECKO_BASIS}/simple/price?ids=${idListe.join(',')}&vs_currencies=usd&include_24hr_change=true`) : Promise.resolve(null),
+    ]);
+
+    const fg = fgRes.status === 'fulfilled' ? fgRes.value.data[0] : null;
+    const global = globalRes.status === 'fulfilled' ? globalRes.value.data : null;
+    const trending = trendingRes.status === 'fulfilled' ? trendingRes.value : null;
+    const preise = preisRes.status === 'fulfilled' ? preisRes.value : null;
+
+    let html = fearGreedCard(fg) + globalMarketCard(global) + trendingCard(trending);
+    html += priceCheckCard(cryptoData, preise);
+    el.innerHTML = html;
+  }
+
   // ---- SCANNER ----
   function scannerCard(name, icon, scanner, changeFeld, zeitraumLabel) {
     if (!scanner) return `<div class="card half"><div class="card-head"><div class="card-title">${icon} ${name}</div></div><div class="empty">Noch keine Scanner-Daten (läuft täglich).</div></div>`;
@@ -741,6 +859,8 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
   }
 
   // ---- LOAD ALL ----
+  let letzteCryptoData = null; // für den Live-Marktdaten-Loop (eigener, langsamerer Zyklus)
+
   async function loadAll() {
     const conn = getConn();
     const [cryptoRes, stocksRes] = await Promise.all([
@@ -748,6 +868,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
       fetchStatus(conn.stocks.url, conn.stocks.key),
     ]);
     const cryptoData = cryptoRes.data, stocksData = stocksRes.data;
+    letzteCryptoData = cryptoData;
     renderCommandBar(cryptoData, stocksData, cryptoRes.latencyMs, stocksRes.latencyMs);
     renderOverview(cryptoData, stocksData);
     renderAnalyst(cryptoData, stocksData);
@@ -761,11 +882,19 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
   }
 
-  document.getElementById('refreshBtn').addEventListener('click', loadAll);
+  // Eigener, langsamerer Zyklus (Rate-Limit der kostenlosen CoinGecko-API
+  // respektieren) - unabhängig vom 30s-Bot-Poll oben.
+  async function loadMarketLoop() {
+    await loadMarketData(letzteCryptoData);
+    clearTimeout(window.__marketTimer);
+    window.__marketTimer = setTimeout(loadMarketLoop, MARKET_REFRESH_MS);
+  }
+
+  document.getElementById('refreshBtn').addEventListener('click', () => { loadAll(); loadMarketLoop(); });
 
   // Scroll-Spy: markiert den Nav-Button des sichtbaren Abschnitts als aktiv.
   (function initScrollSpy() {
-    const ids = ['overview','analyst','scanner','risk','backtest','journal','alerts','health'];
+    const ids = ['overview','market','analyst','scanner','risk','backtest','journal','alerts','health'];
     const buttons = Object.fromEntries(ids.map((id) => [id, document.querySelector(`[data-nav="${id}"]`)]));
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
@@ -780,6 +909,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
   })();
 
   loadAll();
+  loadMarketLoop();
 </script>
 
 </body>
