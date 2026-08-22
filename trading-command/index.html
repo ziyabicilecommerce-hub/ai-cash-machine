@@ -121,8 +121,9 @@
   .kpi-label { font-family:var(--mono); font-size:10.5px; color:var(--mut2); margin-top:4px; }
 
   .bot-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; margin-bottom:20px; }
-  .card { position:relative; background:var(--panel); border:1px solid var(--line2); padding:18px 20px 18px 24px; overflow:hidden; }
+  .card { position:relative; background:var(--panel); border:1px solid var(--line2); padding:18px 20px 18px 24px; overflow:hidden; transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease; }
   .card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,var(--green),var(--cyan)); opacity:.75; }
+  .card:hover { transform:translateY(-2px); border-color:rgba(62,242,160,.4); box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 0 1px rgba(62,242,160,.1); }
   .card.offline { opacity:.55; }
   .card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
   .card-name { font-family:var(--mono); font-weight:700; font-size:15px; }
@@ -138,7 +139,16 @@
   .connect-hint { font-family:var(--mono); font-size:11px; color:var(--mut2); }
   .connect-hint button { background:none; border:none; color:var(--cyan); font-family:inherit; font-size:inherit; cursor:pointer; text-decoration:underline; padding:0; }
 
-  .filter-card { margin-bottom:14px; }
+  .filter-card { margin-bottom:0; height:100%; }
+  .signale-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:14px; align-items:start; }
+  .signale-grid .card { animation:cardIn .4s ease backwards; }
+  .signale-grid .card:nth-child(1) { animation-delay:.02s; } .signale-grid .card:nth-child(2) { animation-delay:.06s; }
+  .signale-grid .card:nth-child(3) { animation-delay:.10s; } .signale-grid .card:nth-child(4) { animation-delay:.14s; }
+  .signale-grid .card:nth-child(5) { animation-delay:.18s; } .signale-grid .card:nth-child(6) { animation-delay:.22s; }
+  .signale-grid .card:nth-child(7) { animation-delay:.26s; } .signale-grid .card:nth-child(8) { animation-delay:.30s; }
+  .signale-grid .card:nth-child(9) { animation-delay:.34s; } .signale-grid .card:nth-child(n+10) { animation-delay:.38s; }
+  @keyframes cardIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+  @media (prefers-reduced-motion:reduce) { .signale-grid .card { animation:none; } }
   .filter-top { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; }
   .filter-name { font-weight:700; font-size:14px; }
   .filter-desc { font-size:12.5px; color:var(--mut); }
@@ -262,14 +272,14 @@
   <div class="panel-title">Bots im Einzelnen</div>
   <div class="bot-cards" id="botCards"></div>
   <div class="panel-title">Performance-Kennzahlen (je Bot, aus der eigenen Trade-Historie)</div>
-  <div id="perfKennzahlen"></div>
-  <div id="aiReviewWrap"></div>
+  <div id="perfKennzahlen" class="signale-grid"></div>
+  <div id="aiReviewWrap" class="signale-grid" style="margin-top:14px;"></div>
 </section>
 
 <section class="panel" id="panel-signale">
   <div class="panel-title">Signale &amp; Filter — was gerade Käufe beeinflusst</div>
   <p class="panel-desc">Live-Zustand jedes Filters, direkt aus dem State der beiden Bots — nichts geschätzt, nichts erfunden.</p>
-  <div id="signaleContent"></div>
+  <div id="signaleContent" class="signale-grid"></div>
 </section>
 
 <section class="panel" id="panel-map">
@@ -753,7 +763,7 @@
 
   function perfCard(name, icon, waehrung, k) {
     if (!k) return '';
-    return `<div class="card" style="margin-bottom:14px;">
+    return `<div class="card">
       <div class="card-top"><span class="card-name">${icon} ${name}</span></div>
       <div class="kpi-grid" style="margin-bottom:0;">
         <div class="kpi-box"><div class="kpi-num">${fmtZahl(k.profitFactor)}</div><div class="kpi-label">PROFIT FACTOR</div></div>
@@ -785,7 +795,7 @@
 
   function aiReviewCard(name, icon, review) {
     if (!review) return '';
-    return `<div class="card" style="margin-bottom:14px;">
+    return `<div class="card">
       <div class="card-top"><span class="card-name">🤖 AI Trade Review — ${icon} ${name}</span><span class="card-date" style="float:none;color:var(--mut2);font-size:11px;">${fmtDatum(review.erstelltAm)}</span></div>
       <p style="font-size:13px;color:var(--txt);line-height:1.6;white-space:pre-wrap;">${escapeHtml(review.text)}</p>
     </div>`;
@@ -796,7 +806,7 @@
     const html = aiReviewCard('Krypto-Bot', '₿', cryptoData && !cryptoData.fehler ? cryptoData.aiReview : null) +
       aiReviewCard('Aktien-Bot', '📈', stocksData && !stocksData.fehler ? stocksData.aiReview : null);
     if (!html) { el.innerHTML = ''; return; }
-    el.innerHTML = `<div class="panel-title">AI Trade Review (wöchentlich, optional, kostet echtes Geld pro Aufruf)</div>${html}`;
+    el.innerHTML = `<div class="panel-title" style="grid-column:1/-1;">AI Trade Review (wöchentlich, optional, kostet echtes Geld pro Aufruf)</div>${html}`;
   }
 
   async function loadAll() {
