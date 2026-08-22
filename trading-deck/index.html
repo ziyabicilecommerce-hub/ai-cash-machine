@@ -245,7 +245,10 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     <h1>TRADING DECK</h1>
     <div class="subtitle">Ein Instrumentenbrett für beide Paper-Bots — jede Zahl live aus den echten <code>/status</code>-Endpoints, nichts erfunden, nichts simuliert. Rein lesend.</div>
   </div>
-  <button class="btn primary" id="refreshBtn">↻ REFRESH SYSTEM</button>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <button class="btn" id="notifBtn">🔔 Notifications aktivieren</button>
+    <button class="btn primary" id="refreshBtn">↻ REFRESH SYSTEM</button>
+  </div>
 </section>
 
 <section class="command" id="commandBar"></section>
@@ -578,6 +581,26 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     </div>`;
   }
 
+  function topMoversCard(markets) {
+    if (!markets) return `<div class="card full"><div class="card-head"><div class="card-title">🚀 Top Gainer / Loser (24H)</div></div><div class="empty">Nicht erreichbar (CoinGecko).</div></div>`;
+    const sortiert = [...markets].filter((m) => m.price_change_percentage_24h != null).sort((a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h);
+    const gainer = sortiert.slice(0, 5);
+    const loser = sortiert.slice(-5).reverse();
+    const zeile = (m) => `<tr><td>#${m.market_cap_rank} ${m.symbol.toUpperCase()}</td><td>$${m.current_price.toLocaleString('de-DE', { maximumFractionDigits: m.current_price < 1 ? 6 : 2 })}</td><td class="${m.price_change_percentage_24h >= 0 ? 'green' : 'red'}">${m.price_change_percentage_24h >= 0 ? '+' : ''}${m.price_change_percentage_24h.toFixed(1)}%</td></tr>`;
+    return `<div class="card full">
+      <div class="card-head"><div class="card-title">🚀 Top Gainer / Loser (24H, Top-100 nach Market Cap)</div><div class="card-meta">CoinGecko, live</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div><div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:6px;">GAINER</div>
+          <div class="table-wrap"><table class="table"><tbody>${gainer.map(zeile).join('')}</tbody></table></div>
+        </div>
+        <div><div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:6px;">LOSER</div>
+          <div class="table-wrap"><table class="table"><tbody>${loser.map(zeile).join('')}</tbody></table></div>
+        </div>
+      </div>
+      <div class="note">Nur die 100 größten Coins nach Marktkapitalisierung - kein Kauf-/Verkaufssignal, reine Momentum-Beobachtung. Kleinere Coins können stärkere Ausschläge haben, sind hier aber bewusst nicht dabei (zu viel Rauschen/Risiko für eine Übersicht).</div>
+    </div>`;
+  }
+
   function priceCheckCard(cryptoData, preise) {
     if (!cryptoData || cryptoData.fehler || !preise) return '';
     const symbole = (cryptoData.symbole || []).filter((s) => preise[COINGECKO_IDS[basisSymbol(s.symbol)]]);
@@ -601,19 +624,22 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     const basen = [...new Set((cryptoData && !cryptoData.fehler ? cryptoData.symbole || [] : []).map((s) => basisSymbol(s.symbol)).filter((b) => COINGECKO_IDS[b]))];
     const idListe = basen.map((b) => COINGECKO_IDS[b]);
 
-    const [fgRes, globalRes, trendingRes, preisRes] = await Promise.allSettled([
+    const [fgRes, globalRes, trendingRes, preisRes, marketsRes] = await Promise.allSettled([
       holeJson('https://api.alternative.me/fng/?limit=1'),
       holeJson(`${COINGECKO_BASIS}/global`),
       holeJson(`${COINGECKO_BASIS}/search/trending`),
       idListe.length ? holeJson(`${COINGECKO_BASIS}/simple/price?ids=${idListe.join(',')}&vs_currencies=usd&include_24hr_change=true`) : Promise.resolve(null),
+      holeJson(`${COINGECKO_BASIS}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&price_change_percentage=24h&sparkline=false`),
     ]);
 
     const fg = fgRes.status === 'fulfilled' ? fgRes.value.data[0] : null;
     const global = globalRes.status === 'fulfilled' ? globalRes.value.data : null;
     const trending = trendingRes.status === 'fulfilled' ? trendingRes.value : null;
     const preise = preisRes.status === 'fulfilled' ? preisRes.value : null;
+    const markets = marketsRes.status === 'fulfilled' ? marketsRes.value : null;
 
     let html = fearGreedCard(fg) + globalMarketCard(global) + trendingCard(trending);
+    html += topMoversCard(markets);
     html += priceCheckCard(cryptoData, preise);
     el.innerHTML = html;
   }
@@ -797,7 +823,45 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 
   // ---- ALERTS (alles real, aus echten Feldern abgeleitet) ----
   function alertRow(icon, text, time) {
-    return `<div class="alert"><span class="alert-icon">${icon}</span><div><div class="alert-text">${text}</div><div class="alert-time">${time}</div></div></div>`;
+    const html = `<div class="alert"><span class="alert-icon">${icon}</span><div><div class="alert-text">${text}</div><div class="alert-time">${time}</div></div></div>`;
+    return { html, text: text.replace(/<[^>]+>/g, '') };
+  }
+
+  // ---- Browser-Notifications (echte Notification API, opt-in) ----
+  // Meldet sich nur bei WIRKLICH NEUEN Alerts (Diff gegen den letzten Lauf),
+  // nicht bei jedem 30s-Poll erneut für denselben, bereits bekannten Alert.
+  // Beim allerersten Lauf/Berechtigungserteilung wird die aktuelle Lage nur
+  // als Basis gemerkt, nicht sofort für jeden bestehenden Alert benachrichtigt.
+  let notifPermission = (typeof Notification !== 'undefined') ? Notification.permission : 'unsupported';
+  let bekannteAlertTexte = new Set();
+  let alertBasisGesetzt = false;
+
+  function updateNotifBtn() {
+    const btn = document.getElementById('notifBtn');
+    if (!btn) return;
+    if (notifPermission === 'unsupported') { btn.style.display = 'none'; return; }
+    if (notifPermission === 'granted') { btn.textContent = '🔔 Notifications aktiv'; btn.disabled = true; }
+    else if (notifPermission === 'denied') { btn.textContent = '🔕 Blockiert (Browser-Einstellungen)'; btn.disabled = true; }
+    else { btn.textContent = '🔔 Notifications aktivieren'; btn.disabled = false; }
+  }
+
+  document.getElementById('notifBtn')?.addEventListener('click', async () => {
+    if (typeof Notification === 'undefined') return;
+    notifPermission = await Notification.requestPermission();
+    updateNotifBtn();
+  });
+
+  function verarbeiteNeueAlerts(aktuelleTexte) {
+    const aktuelleSet = new Set(aktuelleTexte);
+    if (alertBasisGesetzt && notifPermission === 'granted') {
+      for (const text of aktuelleTexte) {
+        if (!bekannteAlertTexte.has(text)) {
+          try { new Notification('🚨 Trading Deck — neuer Alert', { body: text }); } catch { /* Browser blockiert evtl. still */ }
+        }
+      }
+    }
+    bekannteAlertTexte = aktuelleSet;
+    alertBasisGesetzt = true;
   }
 
   function renderAlerts(cryptoData, stocksData) {
@@ -833,7 +897,8 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
         alerts.push(alertRow('🚦', `${b.icon} ${b.name}: Go-Live-Score im roten Bereich (${b.data.goLiveScore.score}/100).`, 'aktuell'));
       }
     }
-    el.innerHTML = `<div class="card full">${alerts.length ? alerts.join('') : '<div class="empty">Keine aktiven Alerts - alles unauffällig.</div>'}</div>`;
+    el.innerHTML = `<div class="card full">${alerts.length ? alerts.map((a) => a.html).join('') : '<div class="empty">Keine aktiven Alerts - alles unauffällig.</div>'}</div>`;
+    verarbeiteNeueAlerts(alerts.map((a) => a.text));
   }
 
   // ---- HEALTH ----
@@ -908,6 +973,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     ids.forEach((id) => { const elm = document.getElementById(id); if (elm) observer.observe(elm); });
   })();
 
+  updateNotifBtn();
   loadAll();
   loadMarketLoop();
 </script>
