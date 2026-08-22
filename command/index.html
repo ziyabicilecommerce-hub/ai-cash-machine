@@ -64,6 +64,7 @@
     animation:tickerScroll 38s linear infinite; align-items:center; height:26px; }
   .ticker-track span.ticker-item { font-family:var(--mono); font-size:11px; color:var(--mut); display:inline-flex; align-items:center; gap:6px; }
   .ticker-track span.ticker-item b { color:var(--green); font-weight:600; }
+  .ticker-track span.ticker-item.ticker-alarm b { color:var(--red); }
   @keyframes tickerScroll { to { transform:translateX(-50%); } }
   @media (prefers-reduced-motion:reduce) { .ticker-track { animation:none; } }
 
@@ -2795,16 +2796,25 @@
     '🧠 Chef-Agent fasst täglich Finanzen, Fulfillment und Kundenstamm zusammen',
     '🔒 Alle Daten bleiben in deinem eigenen GitHub-Repo',
   ];
-  function renderTickerTape(chains) {
+  // alarmEvents: aktuelle Critical Events (echte Notbremsen/Selbstbremsen/
+  // Ausfälle) - laufen VOR den Ketten-Events im Ticker, damit man schon beim
+  // Öffnen von Command (egal auf welchem Tab) sofort sieht, was gerade
+  // brennt, ohne erst in den AI-CEO-Tab zu klicken oder Notifications zu
+  // erlauben.
+  function renderTickerTape(chains, alarmEvents) {
     const track = document.getElementById('tickerTrack');
     if (!track) return;
+    const alarmItems = (alarmEvents || []).map((e) =>
+      `<span class="ticker-item ticker-alarm">🛑 <b>${e.titel}</b> — ${e.detail}</span>`);
     const kettenItems = ((chains && chains.log) || []).slice(0, 8).map((e) =>
-      `${e.ausgeloest ? '🔗' : '⚠️'} <b>${e.von}</b> → <b>${e.nach}</b> — ${e.grund}`);
-    const items = kettenItems.length ? kettenItems : TICKER_FUELLTEXTE;
+      `<span class="ticker-item">${e.ausgeloest ? '🔗' : '⚠️'} <b>${e.von}</b> → <b>${e.nach}</b> — ${e.grund}</span>`);
+    let items = [...alarmItems, ...kettenItems];
+    if (!items.length) items = TICKER_FUELLTEXTE.map((t) => `<span class="ticker-item">${t}</span>`);
     // Content wird verdoppelt + Animation läuft exakt bis -50%, damit die
     // Schleife nahtlos wirkt (kein sichtbarer Sprung am Ende).
-    while (items.length < 6) items.push(...TICKER_FUELLTEXTE);
-    const html = items.map((t) => `<span class="ticker-item">${t}</span>`).join('');
+    const fuellItems = TICKER_FUELLTEXTE.map((t) => `<span class="ticker-item">${t}</span>`);
+    while (items.length < 6) items.push(...fuellItems);
+    const html = items.join('');
     track.innerHTML = html + html;
   }
 
@@ -3003,6 +3013,7 @@
   let letzteChains = null;
   let letzteChainZeit = null;
   let vorherigeEskalationenAnzahl = null;
+  let vorherigeAlarmSchluessel = null;
 
   // Lädt alle Datenquellen neu und rendert alle Tabs - einmal beim Laden und
   // danach alle 60s, damit sich die Seite wie ein echtes Live-System anfühlt
@@ -3052,7 +3063,6 @@
       renderRecap(recap);
       renderActivity(chains, referral, social, ceo, brand, product);
       renderMap(cockpit, chains);
-      renderTickerTape(chains);
       renderAutopilot(autopilotStatus);
       letzterCockpitStand = cockpit;
       letzteChains = chains;
@@ -3065,6 +3075,23 @@
       renderRiskScore(customerSegmente, reorder, adsNotbremse, cockpit);
       renderCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl);
       renderPriorityQueue(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl, opportunityRadar);
+
+      // Echte Browser-Benachrichtigung, sobald ein NEUES Critical Event
+      // auftaucht (Notbremse ausgelöst, Automation fehlgeschlagen, ...) -
+      // gleiches "nur bei echter Veränderung" Prinzip wie bei Eskalationen/
+      // Ketten oben: kein Spam bei jedem 60s-Reload für einen bereits
+      // bekannten Alarm, nur beim tatsächlichen Neuauftreten.
+      const aktuelleAlarme = sammleCriticalEvents(cockpit, adsNotbremse, refundAlarm, pricingHistorie, splitTest, adsAutopilot, reorder, eskalationenAnzahl).filter((e) => e.alarm);
+      renderTickerTape(chains, aktuelleAlarme);
+      const aktuelleAlarmSchluessel = new Set(aktuelleAlarme.map((e) => e.titel));
+      if (vorherigeAlarmSchluessel !== null) {
+        for (const e of aktuelleAlarme) {
+          if (!vorherigeAlarmSchluessel.has(e.titel)) {
+            notifyBrowser(`🛑 ${e.titel}`, e.detail, 'aiceo');
+          }
+        }
+      }
+      vorherigeAlarmSchluessel = aktuelleAlarmSchluessel;
       renderKpiScoreboard(analytics, ads, cockpit, customerSegmente, eskalationenAnzahl);
       renderAuditLog(pricingHistorie, splitTest, adsAutopilot, reorder);
       renderBusinessAutopsy(pricingHistorie, splitTest, adsAutopilot, reorder);
