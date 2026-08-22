@@ -198,6 +198,14 @@ export async function buildStatus(env) {
     // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
   }
 
+  let goLiveScoreVerlauf = null;
+  try {
+    const raw = await env.TRADING_STATE.get('scoreverlauf');
+    if (raw) goLiveScoreVerlauf = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   let scanner = null;
   try {
     const raw = await env.TRADING_STATE.get('scanner:trending');
@@ -226,6 +234,7 @@ export async function buildStatus(env) {
     readiness: berechneReadiness(symbole, alleTrades),
     portfolioKennzahlen,
     goLiveScore: berechneGoLiveScore(symbole, alleTrades, portfolioKennzahlen, korrelation),
+    goLiveScoreVerlauf,
     aiReview,
     korrelation,
     scanner,

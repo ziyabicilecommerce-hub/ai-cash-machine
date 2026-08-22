@@ -355,6 +355,20 @@ einen konfigurierten WhatsApp- und/oder Telegram-Kanal (siehe
 `lib/notify.mjs` unten) - ohne das läuft die Berechnung trotzdem, wird
 aber nur geloggt statt gesendet.
 
+## Score-Verlauf (`lib/scoreverlauf.mjs`)
+
+Läuft als letzter Schritt der Montags-Wartung und speichert einen
+Schnappschuss des Go-Live-Readiness-Scores (Zahl + Ampel) - macht aus der
+reinen Momentaufnahme einen echten Trend über die letzten 12 Wochen:
+wird das System über Zeit tatsächlich reifer, oder nicht? `/status`
+liefert die Reihe als `goLiveScoreVerlauf`-Feld, Trading Deck zeigt sie
+als kleine Sparkline im AI-Analyst-Tab (ab 2 gespeicherten Wochen).
+Braucht keine Live-Kurse (der Score selbst basiert nur auf Trade-
+Historie, Auto-Backtest, Monte-Carlo und Korrelation), also kein
+zusätzlicher API-Call - liest nur denselben State/dieselben KV-Werte, die
+Auto-Backtest und Monte-Carlo im selben Lauf ohnehin schon geschrieben
+haben. Älter als 12 Wochen wird verworfen statt unbegrenzt zu wachsen.
+
 ## Tägliche WhatsApp-Zusammenfassung
 
 Zusätzlich zu den Alarmen bei einzelnen Ereignissen (Einstieg, Ausstieg,
