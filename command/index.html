@@ -549,8 +549,8 @@
 </header>
 
 <div class="tabs" id="tabs">
-  <button class="tab-btn" data-tab="aiceo">🧭 AI-CEO</button>
-  <button class="tab-btn active" data-tab="ceo">👔 CEO</button>
+  <button class="tab-btn active" data-tab="aiceo">🧭 AI-CEO</button>
+  <button class="tab-btn" data-tab="ceo">👔 CEO</button>
   <button class="tab-btn" data-tab="aichat">💬 AI Command</button>
   <button class="tab-btn" data-tab="activity">📡 Activity</button>
   <button class="tab-btn" data-tab="map">🧠 System-Map</button>
@@ -571,7 +571,7 @@
   <button class="tab-btn" data-tab="tools">🧰 Alle Tools</button>
 </div>
 
-<section class="panel" id="panel-aiceo">
+<section class="panel show" id="panel-aiceo">
   <div class="panel-title">AI CEO — Business Health Score</div>
   <p class="panel-desc">Neue Ebene über allen Modulen (Ecommerce, Ads, Produkte, Trading, Kunden): EIN Health Score, EIN Critical-Events-Feed und EIN KPI-Scoreboard, komposit aus echten Signalen, die die Suite selbst schon liefert — keine geschätzten Zahlen, jede Komponente einzeln nachvollziehbar. Ein schreibender globaler Notaus (live von hier aus alle AUTO_*-Schalter kippen) braucht eine eigene Backend-Anbindung und ist bewusst noch nicht Teil davon — hier siehst du live, ob überhaupt etwas brennt.</p>
   <div id="aiCeoHealthContent"></div>
@@ -581,7 +581,7 @@
   <div id="businessAutopsyContent"></div>
 </section>
 
-<section class="panel show" id="panel-ceo">
+<section class="panel" id="panel-ceo">
   <div class="panel-title">Chef-Agent — Tagesansage</div>
   <p class="panel-desc">Fasst Finanzen, Fulfillment und Kundenstamm zu EINER Prioritäts-Entscheidung zusammen (Automation #60, täglich abends) — und löst bei überfälligen Bestellungen bzw. inaktiven VIPs automatisch die passende Automation sofort aus, statt nur zu empfehlen.</p>
   <div id="goalEngineContent"></div>
@@ -2173,20 +2173,27 @@
       detail: `${eskalationenAnzahl || 0} offene Eskalation${eskalationenAnzahl === 1 ? '' : 'en'}`,
     });
 
-    // Wenn ein Handlungs-Agent sich selbst auf reine Empfehlung zurückstuft
-    // (Selbstbremse), ist das ein echtes Warnsignal - seine eigene jüngste
-    // Erfolgsbilanz war schlecht. Nur Agenten zählen, die schon genug echte
-    // Auswertungen haben, um überhaupt ein Urteil zu erlauben.
-    const bremseAgenten = [
-      { data: pricingHistorie }, { data: splitTest }, { data: adsAutopilot }, { data: reorder },
+    // Echte Erfolgsquote der Handlungs-Agenten statt nur der binären
+    // Selbstbremse-Ampel: eine Quote knapp über der 40%-Bremsschwelle ist
+    // nicht dasselbe wie 90% - beides zählte vorher gleich als "nicht
+    // gebremst". Jeder Agent geht mit seiner eigenen positiv/ausgewertet-
+    // Quote ein (gleichgewichtet, nicht nach Stichprobengröße), gemittelt
+    // über alle Agenten mit mindestens einer echten Auswertung.
+    const bilanzAgenten = [
+      { data: pricingHistorie, key: 'positiv' },
+      { data: splitTest, key: 'bestaetigt' },
+      { data: adsAutopilot, key: 'bestaetigt' },
+      { data: reorder, key: 'keinEngpass' },
     ].filter((a) => a.data && a.data.erfolgsBilanz && a.data.erfolgsBilanz.ausgewertet > 0);
-    if (bremseAgenten.length) {
-      const gebremst = bremseAgenten.filter((a) => a.data.selbstgebremst).length;
+    if (bilanzAgenten.length) {
+      const quoten = bilanzAgenten.map((a) => a.data.erfolgsBilanz[a.key] / a.data.erfolgsBilanz.ausgewertet);
+      const schnittQuote = quoten.reduce((sum, q) => sum + q, 0) / quoten.length;
+      const gebremst = bilanzAgenten.filter((a) => a.data.selbstgebremst).length;
       faktoren.push({
-        label: 'Autopilot-Selbstbremsen',
+        label: 'Handlungs-Agenten-Erfolgsquote',
         gewicht: 20,
-        score: ((bremseAgenten.length - gebremst) / bremseAgenten.length) * 100,
-        detail: `${gebremst}/${bremseAgenten.length} Agent(en) selbstgebremst`,
+        score: schnittQuote * 100,
+        detail: `Ø ${Math.round(schnittQuote * 100)}% über ${bilanzAgenten.length} Agent(en)${gebremst ? `, ${gebremst} selbstgebremst` : ''}`,
       });
     }
 
@@ -2479,6 +2486,27 @@
         <div class="kpi-box"><div class="kpi-num" style="color:var(--red);">${negativ.length}</div><div class="kpi-label">FUNKTIONIERTEN NICHT</div></div>
         <div class="kpi-box"><div class="kpi-num">${Math.round((positiv.length / eintraege.length) * 100)}%</div><div class="kpi-label">ERFOLGSQUOTE GESAMT</div></div>
       </div>`;
+
+    // Erfolgsquote JE Agent - zeigt, welcher der 4 gerade wirklich gut liegt,
+    // statt nur eine gepoolte Gesamtquote, in der ein schwacher Agent von
+    // drei starken versteckt werden könnte.
+    const jeAgent = {};
+    for (const e of eintraege) {
+      if (!jeAgent[e.agent]) jeAgent[e.agent] = { positiv: 0, gesamt: 0 };
+      jeAgent[e.agent].gesamt++;
+      if (e.positiv) jeAgent[e.agent].positiv++;
+    }
+    const agentZeilen = Object.entries(jeAgent).sort((a, b) => b[1].gesamt - a[1].gesamt).map(([agent, s]) => {
+      const quote = Math.round((s.positiv / s.gesamt) * 100);
+      const klasse = quote >= 80 ? 'h-good' : quote >= 50 ? 'h-warn' : 'h-bad';
+      return `
+      <div class="aiceo-factor">
+        <div class="aiceo-factor-label">${agent}</div>
+        <div class="aiceo-factor-bar-track"><div class="aiceo-factor-bar-fill ${klasse}" style="width:${quote}%"></div></div>
+        <div class="aiceo-factor-detail">${s.positiv}/${s.gesamt} · ${quote}%</div>
+      </div>`;
+    }).join('');
+    html += `<div class="card-label" style="margin-bottom:10px;">📈 ERFOLGSQUOTE JE AGENT</div>${agentZeilen}`;
 
     const zeile = (e) => `
       <div class="activity-row">
