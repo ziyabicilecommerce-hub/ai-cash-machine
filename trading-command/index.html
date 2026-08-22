@@ -133,6 +133,17 @@
   .badge.gruen, .badge.sicher { background:rgba(62,242,160,.15); color:var(--green); border:1px solid rgba(62,242,160,.35); }
   .row { display:flex; justify-content:space-between; font-size:12.5px; color:var(--mut); padding:4px 0; }
   .row b { color:var(--txt); font-family:var(--mono); }
+  .score-num { font-family:'Orbitron',sans-serif; font-size:40px; line-height:1; }
+  .score-num.rot { color:var(--red); text-shadow:0 0 20px rgba(255,107,129,.4); }
+  .score-num.gelb { color:var(--amber); text-shadow:0 0 20px rgba(255,197,92,.4); }
+  .score-num.gruen { color:var(--green); text-shadow:0 0 20px rgba(62,242,160,.5); }
+  .score-teil { margin-top:6px; padding:7px 0; border-bottom:1px solid var(--line2); }
+  .score-teil:last-child { border-bottom:none; }
+  .score-teil-kopf { display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px; }
+  .score-teil-kopf b { font-family:var(--mono); color:var(--txt); }
+  .score-bar { height:5px; border-radius:4px; background:rgba(220,235,230,.1); overflow:hidden; }
+  .score-bar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--cyan),var(--green)); }
+  .score-teil-hinweis { font-size:11px; color:var(--mut2); margin-top:4px; }
   .row b.up { color:var(--green); } .row b.down { color:var(--red); }
   .card-link { display:inline-block; margin-top:12px; font-family:var(--mono); font-size:11px; color:var(--cyan); text-decoration:none; }
   .card-link:hover { text-decoration:underline; }
@@ -269,6 +280,9 @@
   <div class="panel-title">Übersicht — Gesamt (alle verbundenen Bots)</div>
   <p class="panel-desc">Kapital, P&amp;L und Trades getrennt nach Währung (USDT/USD sind unterschiedliche Kapitalbasen, keine Umrechnung).</p>
   <div class="kpi-grid" id="totalKpis"></div>
+  <div class="panel-title">Go-Live-Readiness-Score — alle Signale in einer Zahl</div>
+  <p class="panel-desc">Zieht Trade-Historie, Profit/Recovery Factor, Monte-Carlo-Simulation, Auto-Backtest und Korrelationsrisiko zu EINEM Score (0-100) zusammen. Reine Diagnose — keine Empfehlung, kein Knopf, kein automatischer Trigger. Ob und wann echtes Geld eingesetzt wird, entscheidest ausschließlich du selbst, außerhalb dieses Bots.</p>
+  <div id="goLiveScoreWrap" class="signale-grid"></div>
   <div class="panel-title">Bots im Einzelnen</div>
   <div class="bot-cards" id="botCards"></div>
   <div class="panel-title">Performance-Kennzahlen (je Bot, aus der eigenen Trade-Historie)</div>
@@ -756,7 +770,35 @@
     document.getElementById('botCards').innerHTML =
       renderBotCard('Krypto-Bot', '₿', 'USDT', getConn().crypto, cryptoData, '../trading-control-center/') +
       renderBotCard('Aktien-Bot', '📈', 'USD', getConn().stocks, stocksData, '../stocks-live-setup/');
+    renderGoLiveScore(cryptoData, stocksData);
     renderPerfKennzahlen(cryptoData, stocksData);
+  }
+
+  function goLiveScoreCard(name, icon, g) {
+    if (!g) return '';
+    const emoji = { rot:'🔴', gelb:'🟡', gruen:'🟢' }[g.ampel] || '';
+    return `<div class="card">
+      <div class="card-top"><span class="card-name">${icon} ${name}</span>
+        <span class="badge ${g.ampel}">${emoji} ${g.ampel.toUpperCase()}</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;">
+        <span class="score-num ${g.ampel}">${g.score}</span><span style="color:var(--mut2);font-family:var(--mono);font-size:13px;">/ ${g.maxScore}</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--mut);margin-bottom:6px;">${g.einschaetzung}</div>
+      ${g.teilwertungen.map((t) => `<div class="score-teil">
+        <div class="score-teil-kopf"><span>${t.name}</span><b>${t.punkte} / ${t.maxPunkte}</b></div>
+        <div class="score-bar"><div class="score-bar-fill" style="width:${(t.punkte / t.maxPunkte) * 100}%"></div></div>
+        <div class="score-teil-hinweis">${t.hinweis}</div>
+      </div>`).join('')}
+      <div class="note">${g.hinweis}</div>
+    </div>`;
+  }
+
+  function renderGoLiveScore(cryptoData, stocksData) {
+    const el = document.getElementById('goLiveScoreWrap');
+    const html = goLiveScoreCard('Krypto-Bot', '₿', cryptoData && !cryptoData.fehler ? cryptoData.goLiveScore : null) +
+      goLiveScoreCard('Aktien-Bot', '📈', stocksData && !stocksData.fehler ? stocksData.goLiveScore : null);
+    el.innerHTML = html || '<div class="empty"><div class="emoji">🎯</div>Noch keine Daten - erscheint, sobald Bots verbunden sind.</div>';
   }
 
   const fmtZahl = (n, nachkomma = 2) => n == null ? '–' : n.toFixed(nachkomma);

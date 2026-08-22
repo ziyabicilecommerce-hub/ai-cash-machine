@@ -302,6 +302,23 @@ offen ist, dessen Korrelation zum Kandidaten `TRADING_KORRELATION_MAX_WERT`
 (Default 0.85) erreicht oder übersteigt. Default AUS wie jeder neue
 risikoverändernde Filter.
 
+## Go-Live-Readiness-Score (`berechneGoLiveScore` in `lib/statistik.mjs`)
+
+Zieht alle oben beschriebenen Signale - Stichprobengröße & Trefferquote,
+Profit Factor & Recovery Factor, Monte-Carlo-Simulation, Auto-Backtest
+gegen echte Kerzen und Korrelationsrisiko - zu EINER Zahl (0-100) plus
+Ampel und Teilwertungs-Aufschlüsselung zusammen, statt die Werte einzeln
+lesen zu müssen. `/status` liefert es als `goLiveScore`-Feld, Trading
+Command zeigt es prominent im Übersicht-Tab.
+
+**Unmissverständlich: reine Diagnose, KEINE Empfehlung und KEIN
+automatischer Trigger.** Es verändert nie Kapital, Position oder
+Konfiguration und schaltet nie irgendetwas frei. Ob und wann echtes Geld
+eingesetzt wird, bleibt ausschließlich eine eigene, bewusste Entscheidung
+außerhalb dieses Bots (eigener Broker-Account, eigenes KYC). Reine
+In-Memory-Berechnung aus bereits vorhandenen Daten, kein zusätzlicher
+API-Call.
+
 ## Tägliche WhatsApp-Zusammenfassung
 
 Zusätzlich zu den Alarmen bei einzelnen Ereignissen (Einstieg, Ausstieg,
