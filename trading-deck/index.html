@@ -247,6 +247,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
     <button class="btn" id="notifBtn">🔔 Notifications aktivieren</button>
+    <button class="btn" id="soundBtn">🔊 Sound aus</button>
     <button class="btn primary" id="refreshBtn">↻ REFRESH SYSTEM</button>
   </div>
 </section>
@@ -255,6 +256,9 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 
 <div class="section-label" id="overview">Overview</div>
 <section class="grid" id="overviewGrid"></section>
+
+<div class="section-label">🔥 Portfolio-Heatmap — P&amp;L pro Symbol, beide Bots</div>
+<section class="grid"><div class="card full" id="heatmapGrid"></div></section>
 
 <div class="section-label" id="market">Live-Marktdaten (direkt aus dem Internet, unabhängig vom Bot)</div>
 <section class="grid" id="marketGrid"></section>
@@ -448,6 +452,32 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     html += overviewCard('MAX DRAWDOWN KRYPTO', 'HISTORISCH', cs ? '-' + cs.maxDrawdownProzent.toFixed(1) + '%' : '–', cs && cs.maxDrawdownProzent > 15 ? 'red' : 'yellow', 'Größter Rückgang je Symbol');
     html += overviewCard('MAX DRAWDOWN AKTIEN', 'HISTORISCH', ss ? '-' + ss.maxDrawdownProzent.toFixed(1) + '%' : '–', ss && ss.maxDrawdownProzent > 15 ? 'red' : 'yellow', 'Größter Rückgang je Symbol');
     el.innerHTML = html;
+  }
+
+  // ---- PORTFOLIO-HEATMAP (echtes P&L pro Symbol, beide Bots) ----
+  function heatmapTile(symbol, icon, plProzent, kapital, waehrung) {
+    const magnitude = Math.min(1, Math.abs(plProzent) / 20); // sättigt bei ±20%
+    const farbe = plProzent >= 0 ? `rgba(0,255,156,${0.12 + magnitude * 0.5})` : `rgba(255,77,103,${0.12 + magnitude * 0.5})`;
+    return `<div style="background:${farbe};border:1px solid var(--line);border-radius:10px;padding:14px 10px;text-align:center;">
+      <div style="font-size:11px;color:var(--muted);">${icon} ${symbol}</div>
+      <div style="font-size:19px;font-weight:900;margin-top:4px;" class="${plProzent >= 0 ? 'green' : 'red'}">${plProzent >= 0 ? '+' : ''}${plProzent.toFixed(1)}%</div>
+      <div style="font-size:9.5px;color:var(--muted);margin-top:3px;">${fmtGeld(kapital, waehrung)}</div>
+    </div>`;
+  }
+
+  function renderHeatmap(cryptoData, stocksData) {
+    const el = document.getElementById('heatmapGrid');
+    const symbole = [
+      ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).map((s) => ({ ...s, icon:'₿', waehrung:'USDT' })) : []),
+      ...(stocksData && !stocksData.fehler ? (stocksData.symbole || []).map((s) => ({ ...s, icon:'📈', waehrung:'USD' })) : []),
+    ];
+    if (!symbole.length) { el.innerHTML = '<div class="empty">Noch keine Bots verbunden.</div>'; return; }
+    const tiles = symbole.map((s) => {
+      const plProzent = s.startKapital ? ((s.kapital - s.startKapital) / s.startKapital) * 100 : 0;
+      return heatmapTile(s.symbol, s.icon, plProzent, s.kapital, s.waehrung);
+    }).join('');
+    el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;">${tiles}</div>
+      <div class="note">Grün/Rot-Intensität = Stärke des P&amp;L seit Start dieses Symbols (sättigt bei ±20%) - reine Visualisierung bereits bekannter Zahlen, keine neue Kennzahl.</div>`;
   }
 
   // ---- AI ANALYST (echter Go-Live-Score, keine erfundene "Marktstimmung") ----
@@ -851,13 +881,43 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     updateNotifBtn();
   });
 
+  // Kurzer synthetischer Warnton per Web Audio API (kein Audio-Asset nötig) -
+  // zwei kurze Beeps, spielt nur bei WIRKLICH NEUEN Alerts, nicht bei jedem Poll.
+  let soundAktiv = false;
+  document.getElementById('soundBtn')?.addEventListener('click', () => {
+    soundAktiv = !soundAktiv;
+    document.getElementById('soundBtn').textContent = soundAktiv ? '🔊 Sound an' : '🔊 Sound aus';
+  });
+  function spieleAlertTon() {
+    if (typeof AudioContext === 'undefined' && typeof webkitAudioContext === 'undefined') return;
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.16].forEach((verzoegerung) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.001, ctx.currentTime + verzoegerung);
+        gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + verzoegerung + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + verzoegerung + 0.14);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(ctx.currentTime + verzoegerung);
+        osc.stop(ctx.currentTime + verzoegerung + 0.15);
+      });
+    } catch { /* Browser blockiert Audio evtl. ohne vorherige Nutzer-Interaktion */ }
+  }
+
   function verarbeiteNeueAlerts(aktuelleTexte) {
     const aktuelleSet = new Set(aktuelleTexte);
-    if (alertBasisGesetzt && notifPermission === 'granted') {
-      for (const text of aktuelleTexte) {
-        if (!bekannteAlertTexte.has(text)) {
-          try { new Notification('🚨 Trading Deck — neuer Alert', { body: text }); } catch { /* Browser blockiert evtl. still */ }
+    if (alertBasisGesetzt) {
+      const neu = aktuelleTexte.filter((text) => !bekannteAlertTexte.has(text));
+      if (neu.length) {
+        if (notifPermission === 'granted') {
+          for (const text of neu) {
+            try { new Notification('🚨 Trading Deck — neuer Alert', { body: text }); } catch { /* Browser blockiert evtl. still */ }
+          }
         }
+        if (soundAktiv) spieleAlertTon();
       }
     }
     bekannteAlertTexte = aktuelleSet;
@@ -936,6 +996,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     letzteCryptoData = cryptoData;
     renderCommandBar(cryptoData, stocksData, cryptoRes.latencyMs, stocksRes.latencyMs);
     renderOverview(cryptoData, stocksData);
+    renderHeatmap(cryptoData, stocksData);
     renderAnalyst(cryptoData, stocksData);
     renderScanner(cryptoData, stocksData);
     renderRisk(cryptoData, stocksData);
