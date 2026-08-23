@@ -33,8 +33,14 @@ TRADING_EMA_LANGSAM = "21"
 # Neue Risiko-/Strategie-Features - alle standardmäßig AUS bzw. verhaltensneutral
 # (0 = deaktiviert), damit dieses Update ein bereits laufendes Setup nicht
 # ungefragt anders handeln lässt. Siehe README für die genaue Wirkung jedes Werts.
+# RSI-Überkauft-Filter aktiviert (Schwelle 70, Standard-Grenzwert): blockiert
+# einen Kauf, wenn der RSI schon überkauft ist. Per Backtest (90 Tage, 4
+# Coins) geprüft - hat bei der aktuellen bollinger-mean-reversion-Strategie
+# KEINEN einzigen historischen Trade blockiert (das Bollinger-Signal selbst
+# impliziert schon meist niedrigen RSI), ist also ein reines zusätzliches
+# Sicherheitsnetz für Randfälle ohne gemessenen Nachteil.
 TRADING_RSI_PERIODE = "14"
-TRADING_RSI_UEBERKAUFT = "0"
+TRADING_RSI_UEBERKAUFT = "70"
 TRADING_MIN_VOLATILITAET_PROZENT = "0"
 TRADING_TRAILING_STOP_AB_PROZENT = "2"
 TRADING_VOLA_SIZING = "nein"
@@ -169,10 +175,18 @@ TRADING_DONCHIAN_EXIT_PERIODE = "10"
 # reversion schlägt donchian-breakout/ema-crossover auf 7 von 8 Coins
 # deutlich (z.B. XRP: -0,5% Return/18,2% Win-Rate mit donchian vs. +0,6%/85%
 # mit bollinger; ADA: -1,9%/28,6% vs. +1,67%/85%; LTC: -0,54%/17,6% mit ema
-# vs. +0,31%/84,2% mit bollinger). Deshalb jetzt leer - alle Coins nutzen
-# den Fallback TRADING_STRATEGIE (oben) statt einer schlechter laufenden
-# Alternative. Format zum späteren Wiederaktivieren: "XBTUSDT:donchian-breakout,...".
-TRADING_STRATEGIE_PRO_SYMBOL = ""
+# vs. +0,31%/84,2% mit bollinger). Deshalb Fallback TRADING_STRATEGIE (oben)
+# für die meisten Coins.
+#
+# EINE Ausnahme per Backtest (90 Tage, echte Kraken-Daten) neu geprüft: die
+# neue "ultimate"-Strategie (kombiniert alle 4 anderen per Mehrheitsentscheid)
+# macht auf den meisten Coins gerade GAR KEINE Trades (zu streng - 3-von-4-
+# Übereinstimmung ist selten) - AUSSER auf ETHUSDT, wo sie in 90 Tagen genau
+# 1 Trade gemacht hat, und der war ein Gewinn (+6,88% Gesamt-Return, beste
+# aller 5 Strategien für diesen Coin). Deshalb NUR dort aktiviert, nicht
+# blind für alle Coins - sonst würde der Bot auf den anderen 7 einfach
+# aufhören zu handeln. Format zum Erweitern: "SYMBOL:strategie,SYMBOL2:strategie2".
+TRADING_STRATEGIE_PRO_SYMBOL = "ETHUSDT:ultimate"
 
 # News-Sentiment-Filter (braucht einen KOSTENLOSEN CRYPTOPANIC_API_KEY als
 # Secret, siehe unten) - verwirft ein Kaufsignal, wenn echte Nutzer auf
