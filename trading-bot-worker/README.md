@@ -160,10 +160,11 @@ der optionale Multi-Timeframe-Filter (Default 4h) läuft bei Coinbase-
 Symbolen deshalb näherungsweise auf 6h-Kerzen statt exakt 4h. Nicht
 blockierend, falls das mal fehlschlägt (siehe `hoehererZeitrahmenIstAufwaerts`).
 
-## Drei Strategien zur Wahl
+## Fünf Strategien zur Wahl
 
-`TRADING_STRATEGIE` schaltet zwischen den drei klassischen Familien
-systematischer Handelsstrategien um:
+`TRADING_STRATEGIE` schaltet zwischen fünf Handelsstrategien um: den drei
+klassischen Familien, einer eigenen Day-Trading-Strategie und "ultimate"
+(kombiniert alle vier anderen):
 
 - **`ema-crossover`** (Default, unverändertes Verhalten) — **Trendfolge**:
   kauft bei Trendwechsel nach oben, verkauft bei Trendwechsel nach unten.
@@ -182,9 +183,26 @@ systematischer Handelsstrategien um:
   Ausstiegs-Kanal (`TRADING_DONCHIAN_EXIT_PERIODE`, Default 10 Kerzen),
   damit ein laufender Trend nicht beim ersten kleinen Rücksetzer verkauft
   wird, ein echter Trendbruch aber zügig erkannt wird.
+- **`day-trading`** — **Intraday-Momentum**: kauft bei einem frischen
+  Momentum-Wechsel (RSI kreuzt von unten nach oben durch 50 — "der Kurs
+  kippt gerade auf bullisch"), verkauft entweder beim umgekehrten Signal
+  (RSI kreuzt zurück unter 50) oder — die definierende Eigenschaft dieser
+  Strategie — **spätestens** in den letzten `TRADING_DAY_TRADING_SCHLUSS_
+  PUFFER_MINUTEN` (Default 15) vor Mitternacht UTC, unabhängig vom sonstigen
+  Signal. Kein Übernacht-/Wochenend-Risiko wie bei den anderen vier
+  Strategien, die auch mehrere Tage halten dürfen.
+- **`ultimate`** — **Ensemble aus allen vier anderen**: berechnet bei jedem
+  Lauf die Signale aller vier Einzelstrategien gleichzeitig und
+  kauft/verkauft nur, wenn mindestens **3 von 4 übereinstimmen**
+  (Mehrheitsentscheid, kein neuer Indikator — nur eine Abstimmung über die
+  bereits vorhandenen vier Signale). Deutlich seltenere, dafür breiter
+  bestätigte Ein-/Ausstiege als jede Einzelstrategie für sich. Übernimmt
+  NICHT den erzwungenen Tagesschluss von `day-trading` — die anderen drei
+  Komponenten dürfen bewusst mehrtägig laufen, ein Zwangsschluss würde sie
+  überstimmen.
 
 Stop-Loss, Trailing-Stop, Tagesverlust-Sperre und Kill-Switch gelten bei
-allen drei Strategien identisch — die Risiko-Grenzen sind strategieunabhängig.
+allen fünf Strategien identisch — die Risiko-Grenzen sind strategieunabhängig.
 
 **Welche Strategie passt besser?** Wurde live getestet: alle 8 Coins liefen
 eine Zeit lang mit unterschiedlichen Strategien parallel (siehe Abschnitt
@@ -362,10 +380,10 @@ risikoverändernde Filter.
 ## Strategie-Turnier (`turnier:<symbol>`, Teil von `lib/autobacktest.mjs`)
 
 Der wöchentliche Auto-Backtest testet nebenbei (mit denselben schon
-geladenen Kerzen, kein zusätzlicher API-Aufruf) ALLE drei unterstützten
+geladenen Kerzen, kein zusätzlicher API-Aufruf) ALLE fünf unterstützten
 Strategien (`ema-crossover`, `bollinger-mean-reversion`,
-`donchian-breakout`) gegeneinander auf jedem Symbol - nicht nur die
-aktuell konfigurierte. Ergebnis: eine Rangliste pro Symbol
+`donchian-breakout`, `day-trading`, `ultimate`) gegeneinander auf jedem
+Symbol - nicht nur die aktuell konfigurierte. Ergebnis: eine Rangliste pro Symbol
 (Gesamt-Return, Trades, Win-Rate, markiert welche Strategie gerade live
 läuft). `/status` liefert es pro Symbol als `strategieTurnier`-Feld,
 Trading Command zeigt es als "🏆 Strategie-Turnier" im Signale-Tab.

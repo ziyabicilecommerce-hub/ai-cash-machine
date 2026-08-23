@@ -26,7 +26,7 @@ const AUTO_BACKTEST_TAGE = 14;
 const FENSTER_FUER_INDIKATOREN = 60;
 const REFERENZ_STARTKAPITAL = 100;
 const MAX_SEITEN_PRO_SYMBOL = 8; // Sicherheitsnetz gegen zu viele Subrequests
-const ALLE_STRATEGIEN = ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout'];
+const ALLE_STRATEGIEN = ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout', 'day-trading', 'ultimate'];
 const WALK_FORWARD_FOLDS = 3;
 
 function wochenSchluessel(datum) {
@@ -175,7 +175,7 @@ function simuliere(closes, highs, lows, zeiten, cfg, startKapital) {
         position = { qty, entryPreis: kaufPreisEffektiv, hoechsterPreisSeitEinstieg: preis, einstiegAm: zeiten[i], entryAtr: indikatoren.atrJetzt, teilverkaufGemacht: false };
       }
     } else {
-      const verkauf = entscheideVerkauf({ position, cfg, indikatoren });
+      const verkauf = entscheideVerkauf({ position, cfg, indikatoren, jetztZeitstempel: zeiten[i] });
       position.hoechsterPreisSeitEinstieg = verkauf.hoechsterPreisSeitEinstieg;
       if (verkauf.teilverkauf) {
         const verkaufPreisEffektiv = preis * (1 - slippageFaktor);

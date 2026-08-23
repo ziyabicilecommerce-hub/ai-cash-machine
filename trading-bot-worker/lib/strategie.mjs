@@ -99,9 +99,15 @@ export function berechneFlashCrashDropProzent(closes, highs, fensterKerzen) {
 
 // Berechnet aus einem Fenster von Kerzen (closes/highs/lows, letzter Eintrag
 // = aktuelle Kerze) alle für die Entscheidung nötigen Indikator-Werte, für
-// alle drei unterstützten Strategien (cfg.strategie: 'ema-crossover'
+// alle VIER unterstützten Strategien (cfg.strategie: 'ema-crossover'
 // [Default, Trendfolge], 'bollinger-mean-reversion' [Rückkehr zum
-// Mittelwert] oder 'donchian-breakout' [Ausbruch aus der jüngsten Spanne]).
+// Mittelwert], 'donchian-breakout' [Ausbruch aus der jüngsten Spanne] oder
+// 'day-trading' [schneller RSI-50-Momentum-Wechsel, schließt vor Tagesende])
+// PLUS 'ultimate' (kombiniert alle vier per Mehrheitsentscheid, siehe
+// entscheideKauf/entscheideVerkauf). Bollinger/Donchian werden IMMER
+// berechnet (nicht nur wenn die jeweilige Strategie aktiv ist) - günstige,
+// rein lokale Berechnung ohne zusätzlichen API-Call, aber nötig, damit
+// 'ultimate' alle vier Signale gleichzeitig auswerten kann.
 export function berechneIndikatoren(closes, highs, lows, cfg) {
   const fastSeries = emaSeries(closes, cfg.emaSchnell);
   const slowSeries = emaSeries(closes, cfg.emaLangsam);
@@ -112,6 +118,7 @@ export function berechneIndikatoren(closes, highs, lows, cfg) {
   const diffVorher = fastSeries[n - 2] - slowSeries[n - 2];
   const preis = closes[n - 1];
   const rsiJetzt = rsi[n - 1];
+  const rsiVorher = rsi[n - 2] ?? null;
   const atrJetzt = atr[n - 1];
 
   // Flash-Crash-Erkennung: wie stark ist der Kurs seit dem höchsten Hoch der
@@ -127,6 +134,7 @@ export function berechneIndikatoren(closes, highs, lows, cfg) {
     crossDown: diffVorher >= 0 && diffJetzt < 0,
     preis,
     rsiJetzt,
+    rsiVorher,
     atrJetzt,
     volatilitaetProzent: atrJetzt !== null ? (atrJetzt / preis) * 100 : null,
     flashCrashDropProzent,
@@ -137,19 +145,49 @@ export function berechneIndikatoren(closes, highs, lows, cfg) {
     donchianAusstiegUnten: null,
   };
 
-  if (cfg.strategie === 'bollinger-mean-reversion') {
-    const { mittel, oberesBand, unteresBand } = bollingerSeries(closes, cfg.bollingerPeriode, cfg.bollingerStdDev);
-    ergebnis.bollingerMittel = mittel[n - 1];
-    ergebnis.bollingerOben = oberesBand[n - 1];
-    ergebnis.bollingerUnten = unteresBand[n - 1];
-  }
+  const { mittel, oberesBand, unteresBand } = bollingerSeries(closes, cfg.bollingerPeriode, cfg.bollingerStdDev);
+  ergebnis.bollingerMittel = mittel[n - 1];
+  ergebnis.bollingerOben = oberesBand[n - 1];
+  ergebnis.bollingerUnten = unteresBand[n - 1];
 
-  if (cfg.strategie === 'donchian-breakout') {
-    ergebnis.donchianEinstiegOben = donchianKanal(highs, lows, n - 1, cfg.donchianEntryPeriode).oben;
-    ergebnis.donchianAusstiegUnten = donchianKanal(highs, lows, n - 1, cfg.donchianExitPeriode).unten;
-  }
+  ergebnis.donchianEinstiegOben = donchianKanal(highs, lows, n - 1, cfg.donchianEntryPeriode).oben;
+  ergebnis.donchianAusstiegUnten = donchianKanal(highs, lows, n - 1, cfg.donchianExitPeriode).unten;
 
   return ergebnis;
+}
+
+// ================= SIGNAL-BAUSTEINE (je Strategie ein Einstiegs- und ein
+// Ausstiegssignal) - einzeln nutzbar für die jeweilige Einzelstrategie UND
+// gemeinsam für 'ultimate' (siehe entscheideKauf/entscheideVerkauf unten). =
+
+function signalEmaCrossover(indikatoren, volaOk) {
+  return indikatoren.crossUp && volaOk;
+}
+function signalBollingerMeanReversion(indikatoren) {
+  return indikatoren.bollingerUnten !== null && indikatoren.preis <= indikatoren.bollingerUnten;
+}
+function signalDonchianBreakout(indikatoren) {
+  return indikatoren.donchianEinstiegOben !== null && indikatoren.preis > indikatoren.donchianEinstiegOben;
+}
+// Day-Trading-Einstieg: kein Trendfolge-/Mittelwert-/Ausbruchssignal, sondern
+// ein schneller Momentum-Wechsel - RSI kreuzt von unten nach oben durch 50
+// ("Kurs kippt gerade auf bullisch"), ein klassisches, sehr kurzfristiges
+// Intraday-Signal, unabhängig von den anderen drei Strategie-Ideen.
+function signalDayTrading(indikatoren) {
+  return indikatoren.rsiVorher !== null && indikatoren.rsiVorher < 50 && indikatoren.rsiJetzt !== null && indikatoren.rsiJetzt >= 50;
+}
+
+function exitEmaCrossover(indikatoren) {
+  return indikatoren.crossDown;
+}
+function exitBollingerMeanReversion(indikatoren, preis) {
+  return indikatoren.bollingerMittel !== null && preis >= indikatoren.bollingerMittel;
+}
+function exitDonchianBreakout(indikatoren, preis) {
+  return indikatoren.donchianAusstiegUnten !== null && preis < indikatoren.donchianAusstiegUnten;
+}
+function exitDayTrading(indikatoren) {
+  return indikatoren.rsiVorher !== null && indikatoren.rsiVorher >= 50 && indikatoren.rsiJetzt !== null && indikatoren.rsiJetzt < 50;
 }
 
 // Reduziert die Positionsgröße für ein Symbol, das zuletzt schlecht lief -
@@ -185,20 +223,36 @@ export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei,
 
   const { rsiJetzt, volatilitaetProzent } = indikatoren;
   const rsiOk = cfg.rsiUeberkauft <= 0 || rsiJetzt === null || rsiJetzt < cfg.rsiUeberkauft;
+  const volaOk = cfg.minVolatilitaetProzent <= 0 || volatilitaetProzent === null || volatilitaetProzent >= cfg.minVolatilitaetProzent;
   let signalOk;
 
   if (cfg.strategie === 'bollinger-mean-reversion') {
     // Einstieg, wenn der Kurs unter das untere Band fällt (überverkauft) -
     // Wette auf Rückkehr zum Mittelwert, statt auf einen Trend.
-    signalOk = indikatoren.bollingerUnten !== null && indikatoren.preis <= indikatoren.bollingerUnten && rsiOk;
+    signalOk = signalBollingerMeanReversion(indikatoren) && rsiOk;
   } else if (cfg.strategie === 'donchian-breakout') {
     // Einstieg, wenn der Kurs über das höchste Hoch der letzten
     // donchianEntryPeriode-Kerzen ausbricht - Wette auf einen NEUEN Trend,
     // statt auf eine Rückkehr zum Mittelwert oder einen bereits laufenden.
-    signalOk = indikatoren.donchianEinstiegOben !== null && indikatoren.preis > indikatoren.donchianEinstiegOben && rsiOk;
+    signalOk = signalDonchianBreakout(indikatoren) && rsiOk;
+  } else if (cfg.strategie === 'day-trading') {
+    // Einstieg bei frischem RSI-50-Momentum-Wechsel, siehe signalDayTrading.
+    signalOk = signalDayTrading(indikatoren) && rsiOk;
+  } else if (cfg.strategie === 'ultimate') {
+    // "Ultimate": kombiniert alle 4 Strategien per Mehrheitsentscheid - kauft
+    // nur, wenn mindestens 3 der 4 unabhängigen Signale gleichzeitig ein
+    // Kaufsignal geben. Kein neuer Indikator, nur eine Abstimmung über die
+    // vier bereits vorhandenen Signale - deutlich seltenere, dafür breiter
+    // bestätigte Einstiege als jede einzelne Strategie für sich.
+    const stimmen = [
+      signalEmaCrossover(indikatoren, volaOk),
+      signalBollingerMeanReversion(indikatoren),
+      signalDonchianBreakout(indikatoren),
+      signalDayTrading(indikatoren),
+    ].filter(Boolean).length;
+    signalOk = stimmen >= 3 && rsiOk;
   } else {
-    const volaOk = cfg.minVolatilitaetProzent <= 0 || volatilitaetProzent === null || volatilitaetProzent >= cfg.minVolatilitaetProzent;
-    signalOk = indikatoren.crossUp && rsiOk && volaOk;
+    signalOk = signalEmaCrossover(indikatoren, volaOk) && rsiOk;
   }
   if (!signalOk) return null;
 
@@ -227,7 +281,7 @@ export function entscheideKauf({ kapital, cfg, indikatoren, positionenPlatzFrei,
 // "normale" Ausstiegssignal unterscheidet sich. teilverkauf=true bedeutet:
 // nur teilAnteil (0-1) der Position verkaufen, Rest bleibt mit gleichem
 // Einstiegspreis offen (siehe cfg.partialTakeProfitProzent).
-export function entscheideVerkauf({ position, cfg, indikatoren }) {
+export function entscheideVerkauf({ position, cfg, indikatoren, jetztZeitstempel }) {
   const { preis } = indikatoren;
   const hoechsterPreisSeitEinstieg = Math.max(position.hoechsterPreisSeitEinstieg || position.entryPreis, preis);
 
@@ -271,6 +325,21 @@ export function entscheideVerkauf({ position, cfg, indikatoren }) {
     return { verkaufen: true, teilverkauf: false, teilAnteil: null, grund: stopGrund, hoechsterPreisSeitEinstieg };
   }
 
+  // Day-Trading schließt IMMER vor Tagesende (UTC) - unabhängig vom sonstigen
+  // Signal, das ist die definierende Eigenschaft dieser Strategie (kein
+  // Übernacht-/Wochenend-Risiko wie bei den anderen drei, die tagelang
+  // laufen dürfen). Gilt NUR für die reine 'day-trading'-Strategie, NICHT
+  // für 'ultimate' - das kombiniert die Signale aller vier Strategien, würde
+  // aber mit einem erzwungenen Tagesschluss die anderen drei (bewusst
+  // mehrtägig gehaltenen) Komponenten überstimmen.
+  if (cfg.strategie === 'day-trading') {
+    const zeitpunkt = new Date(jetztZeitstempel ?? Date.now());
+    const minutenBisMitternachtUtc = 24 * 60 - (zeitpunkt.getUTCHours() * 60 + zeitpunkt.getUTCMinutes());
+    if (minutenBisMitternachtUtc <= (cfg.dayTradingSchlussPufferMinuten ?? 15)) {
+      return { verkaufen: true, teilverkauf: false, teilAnteil: null, grund: 'Day-Trading-Tagesschluss', hoechsterPreisSeitEinstieg };
+    }
+  }
+
   // Festes Gewinnziel (Default 0 = aus): sichert einen Trade sofort ab,
   // sobald er X% im Plus ist, statt auf ein strategie-eigenes Ausstiegs-
   // signal zu warten - kann bei einer schnellen Umkehr Gewinn sichern, den
@@ -299,17 +368,33 @@ export function entscheideVerkauf({ position, cfg, indikatoren }) {
 
   if (cfg.strategie === 'bollinger-mean-reversion') {
     // Ziel erreicht, sobald der Kurs zurück zum Mittelwert (oder darüber) ist.
-    const zielErreicht = indikatoren.bollingerMittel !== null && preis >= indikatoren.bollingerMittel;
-    return { verkaufen: zielErreicht, teilverkauf: false, teilAnteil: null, grund: 'Mittelband erreicht', hoechsterPreisSeitEinstieg };
+    return { verkaufen: exitBollingerMeanReversion(indikatoren, preis), teilverkauf: false, teilAnteil: null, grund: 'Mittelband erreicht', hoechsterPreisSeitEinstieg };
   }
 
   if (cfg.strategie === 'donchian-breakout') {
     // Klassischer Turtle-Ausstieg: kürzerer Kanal als beim Einstieg, damit
     // ein laufender Trend nicht sofort beim ersten kleinen Rücksetzer
     // verkauft wird, aber ein echter Trendbruch trotzdem zügig erkannt wird.
-    const ausstieg = indikatoren.donchianAusstiegUnten !== null && preis < indikatoren.donchianAusstiegUnten;
-    return { verkaufen: ausstieg, teilverkauf: false, teilAnteil: null, grund: 'Donchian-Ausstieg', hoechsterPreisSeitEinstieg };
+    return { verkaufen: exitDonchianBreakout(indikatoren, preis), teilverkauf: false, teilAnteil: null, grund: 'Donchian-Ausstieg', hoechsterPreisSeitEinstieg };
   }
 
-  return { verkaufen: indikatoren.crossDown, teilverkauf: false, teilAnteil: null, grund: 'EMA-Crossover', hoechsterPreisSeitEinstieg };
+  if (cfg.strategie === 'day-trading') {
+    // Normales Ausstiegssignal (RSI-50-Momentum kippt zurück) - der
+    // erzwungene Tagesschluss oben greift zusätzlich, unabhängig davon.
+    return { verkaufen: exitDayTrading(indikatoren), teilverkauf: false, teilAnteil: null, grund: 'Day-Trading-Momentum-Ende', hoechsterPreisSeitEinstieg };
+  }
+
+  if (cfg.strategie === 'ultimate') {
+    // Spiegelbild zum Einstieg: verkauft, sobald mindestens 3 der 4
+    // Ausstiegssignale gleichzeitig zutreffen.
+    const stimmen = [
+      exitEmaCrossover(indikatoren),
+      exitBollingerMeanReversion(indikatoren, preis),
+      exitDonchianBreakout(indikatoren, preis),
+      exitDayTrading(indikatoren),
+    ].filter(Boolean).length;
+    return { verkaufen: stimmen >= 3, teilverkauf: false, teilAnteil: null, grund: 'Ultimate-Mehrheitsausstieg', hoechsterPreisSeitEinstieg };
+  }
+
+  return { verkaufen: exitEmaCrossover(indikatoren), teilverkauf: false, teilAnteil: null, grund: 'EMA-Crossover', hoechsterPreisSeitEinstieg };
 }

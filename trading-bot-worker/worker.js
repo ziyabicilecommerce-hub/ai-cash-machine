@@ -201,7 +201,7 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
       await notify(env, `📈 ${cfg.paperModus ? '[PAPER] ' : ''}Trading-Bot: Einstieg ${symbol} @ ${tatsaechlicherPreis.toFixed(2)} (${investBetrag.toFixed(2)} USDT eingesetzt${cfg.volaSizing ? `, Vola-Sizing aktiv` : ''}).`);
     }
   } else {
-    const verkauf = entscheideVerkauf({ position: state.position, cfg, indikatoren });
+    const verkauf = entscheideVerkauf({ position: state.position, cfg, indikatoren, jetztZeitstempel: Date.now() });
     state.position.hoechsterPreisSeitEinstieg = verkauf.hoechsterPreisSeitEinstieg;
 
     if (verkauf.teilverkauf) {
