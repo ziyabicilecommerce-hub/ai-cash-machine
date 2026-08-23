@@ -68,6 +68,19 @@ a{color:inherit}
 .hero{display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:24px;}
 .kicker{color:var(--green); font-size:11px; letter-spacing:2px; font-weight:800;}
 h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
+
+/* Wenn dieses Deck in einem Iframe eingebettet läuft (z.B. Trading Command)
+   ist die eigene Topbar (Branding, "Trading Command"-Link, Status, Zahnrad)
+   komplett doppelt - dieselbe eigene Chrome-Leiste gibt's dort schon einmal.
+   Verbindungs-Settings teilen sich ohnehin denselben localStorage, das
+   Zahnrad hier ist also nicht die einzige Möglichkeit, sie zu setzen.
+   Erkennung per window.self!==window.top im JS-Teil weiter unten. */
+html.embedded .topbar{display:none;}
+html.embedded .sidebar{top:0; height:100vh;}
+html.embedded .hero{margin-bottom:14px;}
+html.embedded .kicker{display:none;}
+html.embedded h1{font-size:20px; margin:0 0 4px;}
+html.embedded .subtitle{display:none;}
 .subtitle{color:var(--muted); font-size:13px;}
 
 /* COMMAND STATUS */
@@ -402,6 +415,13 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 </div>
 
 <script>
+  // Läuft dieses Deck gerade in einem Iframe (z.B. als Deck-Tab in Trading
+  // Command)? Dann eigene Topbar/Hero-Branding verkleinern - siehe CSS
+  // ".embedded"-Regeln oben. window.self!==window.top wirft normalerweise
+  // nichts (reiner Objekt-Vergleich), try/catch trotzdem als Absicherung
+  // gegen seltene, sehr strikte Cross-Origin-Browser-Policies.
+  try { if (window.self !== window.top) document.documentElement.classList.add('embedded'); } catch { document.documentElement.classList.add('embedded'); }
+
   const REFRESH_MS = 30000;
   // Dieselben localStorage-Keys wie trading-command/index.html - einmal
   // verbinden gilt für beide Dashboards.
