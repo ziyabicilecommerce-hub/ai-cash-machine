@@ -297,6 +297,9 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
   </div>
 </section>
 
+<div class="section-label">🏛️ Congress-Trades — legal, aber fühlt sich nicht so an</div>
+<section class="grid"><div class="card full" id="congressTradesWrap"></div></section>
+
 <div class="section-label" id="analyst">AI Analyst — Go-Live-Readiness</div>
 <section class="grid" id="analystGrid"></section>
 <div class="grid" id="regimeGrid"></div>
@@ -914,6 +917,41 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     renderAlerts(letzteCryptoData, letzteStocksData);
   }
 
+  // ---- CONGRESS-TRADES (öffentliche STOCK-Act-Offenlegungen, 100% legal) ----
+  // Läuft nur EINMAL, nicht im 30s/60s-Poll: die Quelle selbst aktualisiert
+  // nur alle 6h, und das kostenlose Kontingent ist auf 100 Anfragen/Tag
+  // begrenzt. Eine einzige "letzte Trades"-Abfrage, clientseitig auf die
+  // eigenen Aktien-Symbole gefiltert statt einer Anfrage pro Symbol.
+  let congressTradesGeladen = false;
+  let letzteCongressTreffer = [];
+  function congressTradeZeile(t) {
+    const farbe = t.trade_type === 'buy' ? 'green' : t.trade_type === 'sell' ? 'red' : '';
+    return `<tr><td>${escapeHtml(t.member)} <span style="color:#526174;">(${escapeHtml(t.chamber)})</span></td><td>${escapeHtml(t.ticker)}</td>
+      <td class="${farbe}">${escapeHtml((t.trade_type || '–').toUpperCase())}</td><td>${escapeHtml(t.amount)}</td>
+      <td>${escapeHtml(t.tx_date)}</td><td>${escapeHtml(t.disclosed)}</td>
+      <td><a href="${t.link}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);">Beleg ↗</a></td></tr>`;
+  }
+  async function ladeCongressTradesEinmalig(stocksData) {
+    if (congressTradesGeladen) return;
+    const eigeneTicker = new Set((stocksData && !stocksData.fehler ? stocksData.symbole || [] : []).map((s) => s.symbol.toUpperCase()));
+    if (!eigeneTicker.size) return; // noch kein Aktien-Bot verbunden - später nochmal versuchen
+    congressTradesGeladen = true;
+    const el = document.getElementById('congressTradesWrap');
+    try {
+      const daten = await holeJson('https://congressinvests.com/trades/recent?limit=100');
+      const treffer = (daten.trades || []).filter((t) => eigeneTicker.has((t.ticker || '').toUpperCase()));
+      letzteCongressTreffer = treffer;
+      el.innerHTML = `<div class="card-head"><div class="card-title">🏛️ US-Congress-Trades bei deinen Aktien-Symbolen</div><div class="card-meta">congressinvests.com, aktualisiert alle 6h</div></div>
+        ${treffer.length ? `<div class="table-wrap"><table class="table"><thead><tr><th>Mitglied</th><th>Symbol</th><th>Typ</th><th>Betrag</th><th>Transaktion</th><th>Offengelegt</th><th>Beleg</th></tr></thead><tbody>${treffer.map(congressTradeZeile).join('')}</tbody></table></div>`
+          : '<div class="empty">Keine Congress-Trades bei deinen aktuell konfigurierten Aktien-Symbolen gefunden.</div>'}
+        <div class="note">100% legal und öffentlich: der US STOCK Act verpflichtet Kongressmitglieder, eigene Wertpapiergeschäfte offenzulegen - das Gegenteil von Insiderhandel, nämlich erzwungene Transparenz. WICHTIG: Offenlegung darf bis zu 45 Tage nach dem echten Trade dauern - das hier ist also NIE ein Echtzeit-Signal, sondern bereits Geschichte, wenn du es siehst. Reine Beobachtung, keine Kauf-/Verkaufsempfehlung, kein "nachkaufen".</div>`;
+      renderAlerts(letzteCryptoData, letzteStocksData);
+    } catch {
+      el.innerHTML = '<div class="empty">Congress-Trades-Quelle gerade nicht erreichbar.</div>';
+      congressTradesGeladen = false; // beim nächsten Versuch nochmal probieren
+    }
+  }
+
   // ---- SCANNER ----
   function scannerCard(name, icon, scanner, changeFeld, zeitraumLabel) {
     if (!scanner) return `<div class="card half"><div class="card-head"><div class="card-title">${icon} ${name}</div></div><div class="empty">Noch keine Scanner-Daten (läuft täglich).</div></div>`;
@@ -1215,6 +1253,16 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
       }
     }
 
+    // Congress-Trades (siehe Live-Markt-Tab) - nur kürzlich offengelegte, um
+    // Alerts nicht dauerhaft mit derselben alten Meldung zu füllen.
+    const heute = new Date();
+    for (const t of letzteCongressTreffer) {
+      const offengelegtVor = (heute - new Date(t.disclosed)) / (1000 * 60 * 60 * 24);
+      if (offengelegtVor >= 0 && offengelegtVor <= 7) {
+        alerts.push(alertRow('🏛️', `${escapeHtml(t.member)} (${escapeHtml(t.chamber)}) hat einen ${escapeHtml((t.trade_type || '').toUpperCase())}-Trade bei <b>${escapeHtml(t.ticker)}</b> offengelegt (eigenes Symbol) - Transaktion war am ${escapeHtml(t.tx_date)}, keine Kauf-/Verkaufsempfehlung.`, escapeHtml(t.disclosed)));
+      }
+    }
+
     el.innerHTML = `<div class="card full">${alerts.length ? alerts.map((a) => a.html).join('') : '<div class="empty">Keine aktiven Alerts - alles unauffällig.</div>'}</div>`;
     verarbeiteNeueAlerts(alerts.map((a) => a.text));
   }
@@ -1266,6 +1314,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     renderJournal(cryptoData, stocksData);
     renderAlerts(cryptoData, stocksData);
     renderHealth(cryptoData, stocksData, cryptoRes.latencyMs, stocksRes.latencyMs);
+    ladeCongressTradesEinmalig(stocksData);
     clearTimeout(window.__refreshTimer);
     window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
   }
