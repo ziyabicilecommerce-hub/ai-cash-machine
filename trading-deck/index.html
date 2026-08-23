@@ -284,6 +284,18 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     <div class="note">Selbe Idee wie Forex Factory (aus deinem Screenshot) - hoch-relevante Termine (Zinsentscheide, Inflationsdaten), genau das, was der News-Event-Filter der Bots automatisiert berücksichtigt.</div>
   </div>
 </section>
+<section class="grid">
+  <div class="card wide">
+    <div class="card-head"><div class="card-title">🗞️ Top Stories</div><div class="card-meta">echtes TradingView-Widget</div></div>
+    <div id="tvNewsWrap" class="tradingview-widget-container" style="height:420px;"></div>
+    <div class="note">Echte Marktnachrichten, live - reine Headlines, keine Bewertung, kein Signal.</div>
+  </div>
+  <div class="card wide">
+    <div class="card-head"><div class="card-title">🌡️ Krypto-Heatmap</div><div class="card-meta">echtes TradingView-Widget, Top-Coins nach Market Cap</div></div>
+    <div id="tvHeatmapWrap" class="tradingview-widget-container" style="height:420px;"></div>
+    <div class="note">Marktweite Sicht (nicht nur deine konfigurierten Symbole) - Größe = Marktkapitalisierung, Farbe = 24h-Änderung. Ergänzt die Portfolio-Heatmap oben, die nur deine eigenen Positionen zeigt.</div>
+  </div>
+</section>
 
 <div class="section-label" id="analyst">AI Analyst — Go-Live-Readiness</div>
 <section class="grid" id="analystGrid"></section>
@@ -630,6 +642,44 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
       height: '100%',
       locale: 'de',
       importanceFilter: '0,1',
+    });
+  }
+
+  // Bewusst NICHT eingebaut: TradingViews "Technical Analysis"-Gauge-Widget -
+  // das zeigt wörtlich "Strong Buy/Buy/Sell/Strong Sell" an. Genau das, was
+  // dieses ganze System nie tun soll (keine Kauf-/Verkaufsempfehlung),
+  // deshalb bewusste Auslassung, kein Vergessen.
+  let tvNewsGeladen = false;
+  function ladeTvNewsEinmalig() {
+    if (tvNewsGeladen) return;
+    tvNewsGeladen = true;
+    ladeTvMiniWidget('tvNewsWrap', 'https://s3.tradingview.com/external-embedding/embed-widget-timeline.js', {
+      feedMode: 'all_symbols',
+      isTransparent: true,
+      displayMode: 'regular',
+      width: '100%',
+      height: '100%',
+      colorTheme: 'dark',
+      locale: 'de',
+    });
+  }
+
+  let tvHeatmapGeladen = false;
+  function ladeTvHeatmapEinmalig() {
+    if (tvHeatmapGeladen) return;
+    tvHeatmapGeladen = true;
+    ladeTvMiniWidget('tvHeatmapWrap', 'https://s3.tradingview.com/external-embedding/embed-widget-crypto-coins-heatmap.js', {
+      dataSource: 'Crypto',
+      blockSize: 'market_cap_calc',
+      blockColor: 'change',
+      locale: 'de',
+      colorTheme: 'dark',
+      hasTopBar: false,
+      isDataSetEnabled: false,
+      isZoomEnabled: true,
+      hasSymbolTooltip: true,
+      width: '100%',
+      height: '100%',
     });
   }
 
@@ -1248,6 +1298,8 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 
   updateNotifBtn();
   ladeTvKalenderEinmalig();
+  ladeTvNewsEinmalig();
+  ladeTvHeatmapEinmalig();
   loadAll();
   loadMarketLoop();
 </script>
