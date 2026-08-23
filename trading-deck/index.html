@@ -253,6 +253,8 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
   </div>
 </section>
 
+<div id="tvTickerTapeWrap" class="tradingview-widget-container" style="margin-bottom:16px;border:1px solid var(--line);border-radius:10px;overflow:hidden;"></div>
+
 <section class="command" id="commandBar"></section>
 
 <div class="section-label" id="overview">Overview</div>
@@ -275,6 +277,13 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 
 <div class="section-label" id="market">Live-Marktdaten (direkt aus dem Internet, unabhängig vom Bot)</div>
 <section class="grid" id="marketGrid"></section>
+<section class="grid">
+  <div class="card full">
+    <div class="card-head"><div class="card-title">📰 Wirtschaftskalender</div><div class="card-meta">echtes TradingView-Widget</div></div>
+    <div id="tvCalendarWrap" class="tradingview-widget-container" style="height:460px;"></div>
+    <div class="note">Selbe Idee wie Forex Factory (aus deinem Screenshot) - hoch-relevante Termine (Zinsentscheide, Inflationsdaten), genau das, was der News-Event-Filter der Bots automatisiert berücksichtigt.</div>
+  </div>
+</section>
 
 <div class="section-label" id="analyst">AI Analyst — Go-Live-Readiness</div>
 <section class="grid" id="analystGrid"></section>
@@ -571,6 +580,58 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     }
   }
   document.getElementById('chartSymbolSelect')?.addEventListener('change', (e) => renderTvChart(e.target.value));
+
+  // ---- WEITERE ECHTE TRADINGVIEW-WIDGETS (Ticker Tape + Wirtschaftskalender) ----
+  // Offizielle "embed-widget-*.js"-Familie: der Container bekommt ein leeres
+  // Ziel-Div PLUS ein <script>-Tag, dessen Text-Inhalt das JSON-Config ist -
+  // das Skript liest seinen eigenen Tag-Inhalt beim Laden aus. Muss per DOM-
+  // API erzeugt/angehängt werden (nicht per innerHTML-String), sonst führt
+  // der Browser das <script> aus Sicherheitsgründen nicht aus.
+  function ladeTvMiniWidget(containerId, scriptSrc, config) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = scriptSrc;
+    script.async = true;
+    script.innerHTML = JSON.stringify(config);
+    container.appendChild(script);
+  }
+
+  let letzteTickerSymbole = '';
+  function renderTvTickerTape(cryptoData, stocksData) {
+    const symbole = [
+      ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).map((s) => ({ proName: tvSymbolAusBot(s.symbol, cryptoData.exchange), title: s.symbol })) : []),
+      ...(stocksData && !stocksData.fehler ? (stocksData.symbole || []).map((s) => ({ proName: tvSymbolAusBot(s.symbol, 'stocks'), title: s.symbol })) : []),
+    ];
+    if (!symbole.length) return;
+    const schluessel = symbole.map((s) => s.proName).join(',');
+    if (schluessel === letzteTickerSymbole) return; // nicht neu laden, wenn sich nichts geändert hat
+    letzteTickerSymbole = schluessel;
+    ladeTvMiniWidget('tvTickerTapeWrap', 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js', {
+      symbols: symbole,
+      showSymbolLogo: true,
+      isTransparent: true,
+      displayMode: 'adaptive',
+      colorTheme: 'dark',
+      locale: 'de',
+    });
+  }
+
+  let tvKalenderGeladen = false;
+  function ladeTvKalenderEinmalig() {
+    if (tvKalenderGeladen) return;
+    tvKalenderGeladen = true;
+    ladeTvMiniWidget('tvCalendarWrap', 'https://s3.tradingview.com/external-embedding/embed-widget-events.js', {
+      colorTheme: 'dark',
+      isTransparent: true,
+      width: '100%',
+      height: '100%',
+      locale: 'de',
+      importanceFilter: '0,1',
+    });
+  }
 
   // ---- AI ANALYST (echter Go-Live-Score, keine erfundene "Marktstimmung") ----
   function scoreCircleStyle(score, farbe) {
@@ -1147,6 +1208,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     renderOverview(cryptoData, stocksData);
     renderHeatmap(cryptoData, stocksData);
     befuelleChartAuswahl(cryptoData, stocksData);
+    renderTvTickerTape(cryptoData, stocksData);
     renderAnalyst(cryptoData, stocksData);
     renderScanner(cryptoData, stocksData);
     renderRisk(cryptoData, stocksData);
@@ -1185,6 +1247,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
   })();
 
   updateNotifBtn();
+  ladeTvKalenderEinmalig();
   loadAll();
   loadMarketLoop();
 </script>
