@@ -108,6 +108,19 @@
   section.panel.show { display:block; animation:panelIn .4s ease; }
   @keyframes panelIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
   @media (prefers-reduced-motion:reduce) { section.panel.show { animation:none; } }
+
+  /* Auf Handys ist der große Hero-Header (Titel + Beschreibung + Health-
+     Badge) reiner Platzverschwender, bevor die eigentlichen Tabs/Inhalte
+     überhaupt sichtbar werden - hier deutlich kompakter, damit man sofort
+     bei den Tabs (z.B. dem Deck) landet statt erst durchscrollen zu müssen. */
+  @media(max-width:700px){
+    header.hero { min-height:auto; padding:96px 16px 10px; }
+    .sub { display:none; }
+    .health-badge { margin-top:10px; padding:7px 14px; gap:8px; }
+    .health-ring { width:26px; height:26px; font-size:10px; }
+    .health-text { font-size:10.5px; }
+    .health-text b { font-size:11.5px; }
+  }
   .panel-title { position:relative; font-family:'Orbitron',sans-serif; font-size:19px; margin-bottom:14px; padding-bottom:12px; }
   .panel-title::after { content:''; position:absolute; left:0; bottom:0; width:52px; height:2px;
     background:linear-gradient(90deg,var(--green),var(--cyan)); box-shadow:0 0 8px rgba(62,242,160,.5); }
