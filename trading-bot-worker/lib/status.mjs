@@ -83,7 +83,6 @@ function berechneMaxDrawdownProzent(trades, startKapital) {
 
 export async function buildStatus(env) {
   const cfg = readConfig(env);
-  const exchange = EXCHANGES[cfg.exchange];
   const systemInfo = await loadSystemInfo(env);
   const symbole = [];
   const alleTrades = [];
@@ -95,6 +94,8 @@ export async function buildStatus(env) {
     const trades = state.trades || [];
     alleTrades.push(...trades);
 
+    const exchangeSymbol = cfg.exchangeProSymbol[symbol] || cfg.exchange;
+    const exchange = EXCHANGES[exchangeSymbol];
     const strategie = cfgSymbol.strategie;
     const plGesamt = trades.reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
     if (!proStrategiePL[strategie]) proStrategiePL[strategie] = { pl: 0, anzahlTrades: 0 };
@@ -160,7 +161,7 @@ export async function buildStatus(env) {
 
     symbole.push({
       symbol,
-      exchange: cfg.exchange,
+      exchange: exchangeSymbol,
       paperModus: cfg.paperModus,
       strategie,
       position: state.position,

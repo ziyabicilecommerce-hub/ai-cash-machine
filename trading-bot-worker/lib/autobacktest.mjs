@@ -90,8 +90,38 @@ async function ladeKlinesKraken(symbol, tageZurueck) {
   };
 }
 
+// Coinbase erlaubt max. 300 Kerzen pro Anfrage (live per curl verifiziert -
+// eine Anfrage über >300 15m-Kerzen liefert HTTP 400 "granularity too small
+// for the requested time range"), deshalb in ~3-Tage-Fenstern (290 Kerzen à
+// 15min ≈ 72,5h) statt Binance/Krakens ~1000er-Seiten paginiert. Antwort
+// kommt NEUESTE ZUERST - wird pro Seite umgedreht, damit "zeiten" wie bei
+// den anderen Börsen chronologisch aufsteigend bleibt.
+async function ladeKlinesCoinbase(symbol, tageZurueck) {
+  const GRANULARITAET_SEKUNDEN = 900;
+  const MAX_KERZEN_PRO_SEITE = 290;
+  const bisJetztSekunden = Math.floor(Date.now() / 1000);
+  let cursorSekunden = bisJetztSekunden - tageZurueck * 24 * 60 * 60;
+  const alleKlines = [];
+  for (let seite = 0; seite < MAX_SEITEN_PRO_SYMBOL && cursorSekunden < bisJetztSekunden; seite++) {
+    const endeSekunden = Math.min(cursorSekunden + MAX_KERZEN_PRO_SEITE * GRANULARITAET_SEKUNDEN, bisJetztSekunden);
+    const url = `https://api.exchange.coinbase.com/products/${symbol}/candles?granularity=${GRANULARITAET_SEKUNDEN}&start=${cursorSekunden}&end=${endeSekunden}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Coinbase Candles-Fehler: ${res.status}`);
+    const batch = await res.json(); // [time, low, high, open, close, volume], neueste zuerst
+    if (batch.length) alleKlines.push(...[...batch].reverse());
+    cursorSekunden = endeSekunden + 1;
+  }
+  return {
+    closes: alleKlines.map((k) => k[4]),
+    highs: alleKlines.map((k) => k[2]),
+    lows: alleKlines.map((k) => k[3]),
+    zeiten: alleKlines.map((k) => k[0] * 1000),
+  };
+}
+
 async function ladeKlines(exchange, symbol, tageZurueck) {
   if (exchange === 'kraken') return ladeKlinesKraken(symbol, tageZurueck);
+  if (exchange === 'coinbase') return ladeKlinesCoinbase(symbol, tageZurueck);
   return ladeKlinesBinance(symbol, tageZurueck);
 }
 
@@ -238,7 +268,7 @@ export async function pruefeUndFuehreAutoBacktest(env, cfg) {
   const closesProSymbol = {};
   for (const symbol of cfg.symbols) {
     try {
-      const { closes, highs, lows, zeiten } = await ladeKlines(cfg.exchange, symbol, AUTO_BACKTEST_TAGE);
+      const { closes, highs, lows, zeiten } = await ladeKlines(cfg.exchangeProSymbol[symbol] || cfg.exchange, symbol, AUTO_BACKTEST_TAGE);
       if (closes.length < FENSTER_FUER_INDIKATOREN + 2) continue;
       closesProSymbol[symbol] = closes;
       const cfgSymbol = cfg.strategieProSymbol[symbol] ? { ...cfg, strategie: cfg.strategieProSymbol[symbol] } : cfg;

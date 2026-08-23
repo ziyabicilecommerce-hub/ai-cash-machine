@@ -107,6 +107,59 @@ jeder Order verifiziert der Adapter den tatsächlichen Ausführungsstatus
 fehl, wird laut ein Fehler geworfen statt stillschweigend eine Position zu
 buchen, die es gar nicht gibt.
 
+## Dritte Börse: Coinbase (+ mehrere Börsen gleichzeitig)
+
+Neben Binance und Kraken unterstützt der Worker jetzt auch **Coinbase**
+(`TRADING_EXCHANGE = "coinbase"`). Symbol-Format bei Coinbase:
+`BTC-USD` statt `BTCUSDT` (Binance) oder `XBTUSDT` (Kraken).
+
+**Mehrere Börsen gleichzeitig** (statt eine global für alle Symbole):
+`TRADING_EXCHANGE_PRO_SYMBOL` erlaubt, einzelnen Symbolen eine ANDERE Börse
+als den globalen Default zuzuweisen — z.B. um einen Teil der Coins
+zusätzlich auf Coinbase zu handeln, ohne einen zweiten Bot/Worker
+aufzusetzen:
+```
+TRADING_SYMBOLS = "BTCUSDT,ETHUSDT,BTC-USD"
+TRADING_EXCHANGE = "binance"
+TRADING_EXCHANGE_PRO_SYMBOL = "BTC-USD:coinbase"
+```
+Hier laufen `BTCUSDT`/`ETHUSDT` weiter über Binance (Default), nur
+`BTC-USD` zusätzlich über Coinbase — eigenes Kapital-Segment, eigene
+Trade-Historie, exakt wie jedes andere Symbol. Jedes Symbol muss im
+Format der jeweiligen Zielbörse eingetragen werden (siehe oben).
+
+**Wichtig, Coinbase-Secrets:** anders als Binance/Kraken (klassisches
+API-Key+Secret-Paar) verlangt Coinbases aktuelle Advanced-Trade-API einen
+**CDP-API-Key** mit JWT(ES256)-Signierung (live per curl verifiziert: die
+Order-Endpoints akzeptieren nur noch einen `Authorization`-Header, keine
+`CB-ACCESS-KEY`-Header wie beim alten, für Coinbase Pro/Exchange
+abgeschalteten Verfahren mehr). Einen Key im
+[Coinbase Developer Platform Portal](https://portal.cdp.coinbase.com/)
+erstellen (Berechtigung "Trade"):
+- `COINBASE_API_KEY` = der Key-Name (`organizations/.../apiKeys/...`)
+- `COINBASE_API_SECRET` = der zugehörige EC-Private-Key im **PKCS8-PEM-
+  Format** (`-----BEGIN PRIVATE KEY-----...`), so wie ihn das Portal für
+  einen neuen Advanced-Trade-Key standardmäßig ausgibt.
+
+Die öffentlichen Marktdaten (Kerzen/Spread/Mindestgröße, worüber der Bot
+seine Kauf-/Verkaufsentscheidung trifft) laufen über Coinbases
+unauthentifizierte Exchange-API und wurden live per curl verifiziert. Die
+JWT-Signierung für echte Order-Platzierung folgt Coinbases offiziell
+dokumentiertem Verfahren, konnte aber — genau wie beim Kraken-Adapter —
+in dieser Entwicklungsumgebung nicht gegen ein echtes Coinbase-Konto
+getestet werden (kein Zugang hier). Vor echtem Geldeinsatz zwingend zuerst
+mit `TRADING_PAPER_MODE = "ja"` laufen lassen und die ersten WhatsApp-
+Meldungen genau prüfen. Bei jeder Order verifiziert der Adapter den
+tatsächlichen Ausführungsstatus über die Order-Historie, statt eine
+Ausführung einfach anzunehmen — schlägt das fehl, wird laut ein Fehler
+geworfen statt stillschweigend eine Position zu buchen, die es gar nicht
+gibt.
+
+Coinbase kennt nur feste Kerzen-Granularitäten (15m/1h/6h/1d, keine 4h) -
+der optionale Multi-Timeframe-Filter (Default 4h) läuft bei Coinbase-
+Symbolen deshalb näherungsweise auf 6h-Kerzen statt exakt 4h. Nicht
+blockierend, falls das mal fehlschlägt (siehe `hoehererZeitrahmenIstAufwaerts`).
+
 ## Drei Strategien zur Wahl
 
 `TRADING_STRATEGIE` schaltet zwischen den drei klassischen Familien
@@ -708,9 +761,15 @@ erklärt die Reihenfolge.
    ```bash
    wrangler secret put BINANCE_API_KEY
    wrangler secret put BINANCE_API_SECRET
-   # Nur falls TRADING_EXCHANGE = "kraken":
+   # Nur falls TRADING_EXCHANGE = "kraken" (oder ein Symbol per
+   # TRADING_EXCHANGE_PRO_SYMBOL auf kraken gesetzt ist):
    # wrangler secret put KRAKEN_API_KEY
    # wrangler secret put KRAKEN_API_SECRET
+   # Nur falls TRADING_EXCHANGE = "coinbase" (oder ein Symbol per
+   # TRADING_EXCHANGE_PRO_SYMBOL auf coinbase gesetzt ist) - siehe
+   # "Dritte Börse: Coinbase" oben für den CDP-Key-Erstellungsweg:
+   # wrangler secret put COINBASE_API_KEY
+   # wrangler secret put COINBASE_API_SECRET
    wrangler secret put WHATSAPP_ACCESS_TOKEN
    wrangler secret put WHATSAPP_PHONE_NUMBER_ID
    wrangler secret put WHATSAPP_TO_NUMBER

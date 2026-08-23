@@ -837,6 +837,7 @@ html.embedded .subtitle{display:none;}
   function tvSymbolAusBot(symbol, exchange) {
     if (exchange === 'binance') return `BINANCE:${symbol}`;
     if (exchange === 'kraken') return `KRAKEN:${symbol}`;
+    if (exchange === 'coinbase') return `COINBASE:${symbol.replace('-', '')}`; // Bot: "BTC-USD", TradingView: "COINBASE:BTCUSD"
     return symbol; // Aktien: TradingView löst viele Ticker auch ohne Exchange-Prefix auf
   }
 
@@ -873,7 +874,7 @@ html.embedded .subtitle{display:none;}
     const select = document.getElementById('chartSymbolSelect');
     if (!select) return;
     const optionen = [
-      ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).map((s) => ({ label: `₿ ${s.symbol}`, tv: tvSymbolAusBot(s.symbol, cryptoData.exchange) })) : []),
+      ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).map((s) => ({ label: `₿ ${s.symbol}`, tv: tvSymbolAusBot(s.symbol, s.exchange || cryptoData.exchange) })) : []),
       ...(stocksData && !stocksData.fehler ? (stocksData.symbole || []).map((s) => ({ label: `📈 ${s.symbol}`, tv: tvSymbolAusBot(s.symbol, 'stocks') })) : []),
     ];
     if (!optionen.length) return;
@@ -911,7 +912,7 @@ html.embedded .subtitle{display:none;}
   let letzteTickerSymbole = '';
   function renderTvTickerTape(cryptoData, stocksData) {
     const symbole = [
-      ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).map((s) => ({ proName: tvSymbolAusBot(s.symbol, cryptoData.exchange), title: s.symbol })) : []),
+      ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).map((s) => ({ proName: tvSymbolAusBot(s.symbol, s.exchange || cryptoData.exchange), title: s.symbol })) : []),
       ...(stocksData && !stocksData.fehler ? (stocksData.symbole || []).map((s) => ({ proName: tvSymbolAusBot(s.symbol, 'stocks'), title: s.symbol })) : []),
     ];
     if (!symbole.length) return;
