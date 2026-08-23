@@ -119,6 +119,26 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 .badge.yellow{background:rgba(255,209,102,.08); border:1px solid rgba(255,209,102,.2);}
 .badge.red{background:rgba(255,77,103,.08); border:1px solid rgba(255,77,103,.2);}
 
+/* ERFOLGE */
+.erfolge-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px;}
+.erfolg{border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center; background:linear-gradient(145deg,#0c121b,#080c12); transition:transform .15s;}
+.erfolg.frei{border-color:rgba(0,255,156,.35); box-shadow:0 0 18px rgba(0,255,156,.08);}
+.erfolg.gesperrt{opacity:.35; filter:grayscale(1);}
+.erfolg .emoji{font-size:26px; display:block; margin-bottom:6px;}
+.erfolg .titel{font-size:11px; font-weight:800; margin-bottom:3px;}
+.erfolg .beschreibung{font-size:9.5px; color:var(--muted); line-height:1.4;}
+.konfetti-partikel{position:fixed; top:-20px; font-size:22px; pointer-events:none; z-index:9999; animation:konfetti-fall linear forwards;}
+@keyframes konfetti-fall{
+  0%{transform:translateY(0) rotate(0deg); opacity:1;}
+  100%{transform:translateY(100vh) rotate(540deg); opacity:0;}
+}
+@keyframes erfolg-pop{
+  0%{transform:scale(1);}
+  30%{transform:scale(1.08);}
+  100%{transform:scale(1);}
+}
+.erfolg.neu{animation:erfolg-pop .5s ease;}
+
 /* RISK */
 .risk-row{margin:15px 0;}
 .risk-top{display:flex; justify-content:space-between; font-size:11px;}
@@ -259,6 +279,9 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 
 <div class="section-label" id="overview">Overview</div>
 <section class="grid" id="overviewGrid"></section>
+
+<div class="section-label">🏅 Erfolge</div>
+<section class="grid"><div class="card full"><div class="erfolge-grid" id="erfolgeGrid"></div></div></section>
 
 <div class="section-label">🔥 Portfolio-Heatmap — P&amp;L pro Symbol, beide Bots</div>
 <section class="grid"><div class="card full" id="heatmapGrid"></div></section>
@@ -418,6 +441,115 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     const maxDrawdownProzent = symbole.length ? Math.max(...symbole.map((s) => s.maxDrawdownProzent || 0)) : 0;
     const killSwitchSymbole = symbole.filter((s) => s.killSwitchAktiv).map((s) => s.symbol);
     return { kapital, start, pl, plProzent, offenePositionen, anzahlSymbole: symbole.length, anzahlTrades: alleTrades.length, winRate, maxDrawdownProzent, killSwitchSymbole };
+  }
+
+  // ---- ERFOLGE (Gamification-Layer - rein clientseitig, rührt nie eine
+  // Order an) ----
+  // Jede Bedingung liest ausschließlich bereits vorhandene, echte Werte aus
+  // cryptoData/stocksData - kein einziger erfundener Wert. Freischalt-Status
+  // liegt in localStorage (pro Browser/Gerät, wie die Verbindungseinstellungen
+  // oben) - beim ersten Laden werden bereits erfüllte Bedingungen SOFORT als
+  // "schon freigeschaltet" markiert, ohne Konfetti (sonst würde jeder
+  // Neustart des Browsers alle Erfolge erneut feiern).
+  const ERFOLGE = [
+    { id: 'erster-trade', emoji: '🎬', titel: 'Erster Trade', beschreibung: 'Mindestens 1 abgeschlossener Paper-Trade.',
+      check: (c) => (c.cs?.anzahlTrades || 0) + (c.ss?.anzahlTrades || 0) >= 1 },
+    { id: 'zehnkaempfer', emoji: '🔟', titel: 'Zehnkämpfer', beschreibung: '10 abgeschlossene Trades insgesamt.',
+      check: (c) => (c.cs?.anzahlTrades || 0) + (c.ss?.anzahlTrades || 0) >= 10 },
+    { id: 'century-club', emoji: '💯', titel: 'Century Club', beschreibung: '100 abgeschlossene Trades insgesamt.',
+      check: (c) => (c.cs?.anzahlTrades || 0) + (c.ss?.anzahlTrades || 0) >= 100 },
+    { id: 'gruenes-licht', emoji: '🟢', titel: 'Grünes Licht', beschreibung: 'Go-Live-Score bei einem Bot auf Grün.',
+      check: (c) => c.cryptoData?.goLiveScore?.ampel === 'gruen' || c.stocksData?.goLiveScore?.ampel === 'gruen' },
+    { id: 'ruhiges-fahrwasser', emoji: '🛡️', titel: 'Ruhiges Fahrwasser', beschreibung: 'Aktuell kein Kill-Switch aktiv, bei mind. 1 Symbol im Einsatz.',
+      check: (c) => ((c.cs?.anzahlSymbole || 0) + (c.ss?.anzahlSymbole || 0) > 0) && !(c.cs?.killSwitchSymbole?.length) && !(c.ss?.killSwitchSymbole?.length) },
+    { id: 'markt-geschlagen', emoji: '📈', titel: 'Den Markt geschlagen', beschreibung: 'Strategie schlägt Kaufen-und-Liegenlassen bei mind. 1 Bot.',
+      check: (c) => [c.cryptoData?.benchmark, c.stocksData?.benchmark].some((b) => b && b.botRenditeProzent > b.buyHoldRenditeProzent) },
+    { id: 'profitabel', emoji: '🎯', titel: 'Profitabel', beschreibung: 'Positiver Gesamtgewinn über beide Bots seit Start.',
+      check: (c) => ((c.cs?.pl || 0) + (c.ss?.pl || 0)) > 0 },
+    { id: 'cool-head', emoji: '🧊', titel: 'Cool Head', beschreibung: 'Max. Drawdown unter 10% bei beiden verbundenen Bots.',
+      check: (c) => (!c.cs || c.cs.maxDrawdownProzent < 10) && (!c.ss || c.ss.maxDrawdownProzent < 10) && (c.cs || c.ss) },
+    { id: 'ambitioniert', emoji: '🚀', titel: 'Ambitioniert', beschreibung: '5 oder mehr Symbole gleichzeitig konfiguriert.',
+      check: (c) => (c.cs?.anzahlSymbole || 0) + (c.ss?.anzahlSymbole || 0) >= 5 },
+    { id: 'enthuellt', emoji: '🕵️', titel: 'Enthüllt', beschreibung: 'Congress- oder SEC-Insider-Trade bei eigenem Symbol gefunden.',
+      check: (c) => (letzteCongressTreffer.length > 0) || (c.stocksData?.insiderTrades?.symbole && Object.keys(c.stocksData.insiderTrades.symbole).length > 0) },
+    { id: 'buffett-beobachter', emoji: '💼', titel: 'Buffett-Beobachter', beschreibung: 'Smart-Money-Daten (SEC Form 13F) mindestens 1x geladen.',
+      check: (c) => !!(c.stocksData?.smartMoney?.investoren?.length) },
+    { id: 'weltmarktbeobachter', emoji: '🌍', titel: 'Weltmarktbeobachter', beschreibung: 'Globale Märkte mindestens 1x geladen.',
+      check: (c) => !!(c.stocksData?.globaleMaerkte?.treffer?.length) },
+  ];
+
+  const ERFOLGE_STORAGE_KEY = 'erfolge:freigeschaltet';
+  let erfolgeBasisGesetzt = false;
+  function ladeFreigeschalteteErfolge() {
+    try { return new Set(JSON.parse(localStorage.getItem(ERFOLGE_STORAGE_KEY) || '[]')); } catch { return new Set(); }
+  }
+  function speichereFreigeschalteteErfolge(set) {
+    try { localStorage.setItem(ERFOLGE_STORAGE_KEY, JSON.stringify([...set])); } catch { /* Storage evtl. voll/blockiert - egal, nur kosmetisch */ }
+  }
+  function feuereKonfetti() {
+    const emojis = ['🎉', '🎊', '⭐', '💫', '🏅'];
+    for (let i = 0; i < 24; i++) {
+      const el = document.createElement('div');
+      el.className = 'konfetti-partikel';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = `${Math.random() * 100}vw`;
+      el.style.animationDuration = `${1.6 + Math.random() * 1.2}s`;
+      el.style.animationDelay = `${Math.random() * 0.4}s`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3200);
+    }
+  }
+  function spieleErfolgTon() {
+    if (typeof AudioContext === 'undefined' && typeof webkitAudioContext === 'undefined') return;
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [523.25, 659.25, 783.99].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        const start = ctx.currentTime + i * 0.09;
+        gain.gain.setValueAtTime(0.001, start);
+        gain.gain.exponentialRampToValueAtTime(0.22, start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.28);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.3);
+      });
+    } catch { /* Browser blockiert Audio evtl. ohne vorherige Nutzer-Interaktion */ }
+  }
+  function renderErfolge(cryptoData, stocksData) {
+    const el = document.getElementById('erfolgeGrid');
+    const ctx = { cryptoData, stocksData, cs: summarize(cryptoData), ss: summarize(stocksData) };
+    const freigeschaltet = ladeFreigeschalteteErfolge();
+    const jetztErfuellt = ERFOLGE.filter((e) => { try { return e.check(ctx); } catch { return false; } }).map((e) => e.id);
+    const neu = erfolgeBasisGesetzt ? jetztErfuellt.filter((id) => !freigeschaltet.has(id)) : [];
+
+    let veraendert = false;
+    for (const id of jetztErfuellt) { if (!freigeschaltet.has(id)) { freigeschaltet.add(id); veraendert = true; } }
+    if (veraendert) speichereFreigeschalteteErfolge(freigeschaltet);
+    erfolgeBasisGesetzt = true;
+
+    el.innerHTML = ERFOLGE.map((e) => {
+      const frei = freigeschaltet.has(e.id);
+      const istNeu = neu.includes(e.id);
+      return `<div class="erfolg ${frei ? 'frei' : 'gesperrt'} ${istNeu ? 'neu' : ''}">
+        <span class="emoji">${frei ? e.emoji : '🔒'}</span>
+        <div class="titel">${escapeHtml(e.titel)}</div>
+        <div class="beschreibung">${escapeHtml(e.beschreibung)}</div>
+      </div>`;
+    }).join('');
+
+    if (neu.length) {
+      feuereKonfetti();
+      if (soundAktiv) spieleErfolgTon();
+      if (notifPermission === 'granted') {
+        for (const id of neu) {
+          const e = ERFOLGE.find((x) => x.id === id);
+          if (e) { try { new Notification(`🏅 Erfolg freigeschaltet: ${e.titel}`, { body: e.beschreibung }); } catch { /* Browser blockiert evtl. still */ } }
+        }
+      }
+    }
   }
 
   // Stocks-Bot liefert kein risikoStatus-Feld direkt (nur der Krypto-Bot
@@ -958,6 +1090,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
           : '<div class="empty">Keine Congress-Trades bei deinen aktuell konfigurierten Aktien-Symbolen gefunden.</div>'}
         <div class="note">100% legal und öffentlich: der US STOCK Act verpflichtet Kongressmitglieder, eigene Wertpapiergeschäfte offenzulegen - das Gegenteil von Insiderhandel, nämlich erzwungene Transparenz. WICHTIG: Offenlegung darf bis zu 45 Tage nach dem echten Trade dauern - das hier ist also NIE ein Echtzeit-Signal, sondern bereits Geschichte, wenn du es siehst. Reine Beobachtung, keine Kauf-/Verkaufsempfehlung, kein "nachkaufen".</div>`;
       renderAlerts(letzteCryptoData, letzteStocksData);
+      renderErfolge(letzteCryptoData, letzteStocksData);
     } catch {
       el.innerHTML = '<div class="empty">Congress-Trades-Quelle gerade nicht erreichbar.</div>';
       congressTradesGeladen = false; // beim nächsten Versuch nochmal probieren
@@ -1472,6 +1605,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     ladeCongressTradesEinmalig(stocksData);
     renderInsiderTrades(stocksData);
     renderSmartMoney(stocksData);
+    renderErfolge(cryptoData, stocksData);
     clearTimeout(window.__refreshTimer);
     window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
   }
