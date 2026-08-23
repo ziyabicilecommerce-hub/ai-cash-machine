@@ -273,6 +273,7 @@
   <button class="tab-btn" data-tab="map">🧠 System-Map</button>
   <button class="tab-btn" data-tab="equity">📈 Equity</button>
   <button class="tab-btn" data-tab="activity">📡 Activity</button>
+  <button class="tab-btn" data-tab="audit">🧾 Audit</button>
   <button class="tab-btn active" data-tab="deck">🖥️ Deck</button>
   <button class="tab-btn" data-tab="dashboard">📈 Dashboard</button>
   <button class="tab-btn" data-tab="controlcenter">🎛️ Control Center</button>
@@ -326,6 +327,12 @@
 <section class="panel" id="panel-activity">
   <div class="panel-title">Live-Activity-Feed (beide Bots, neueste zuerst)</div>
   <div class="box"><div class="feed" id="activityFeed"></div></div>
+</section>
+
+<section class="panel" id="panel-audit">
+  <div class="panel-title">Audit — wann hat welches Subsystem zuletzt gerechnet?</div>
+  <p class="panel-desc">Zeitleiste aus bereits vorhandenen, echten Zeitstempeln beider Bots (AI-Review, Auto-Backtest, Strategie-Turnier, Monte-Carlo, Korrelation, Scanner, Score-Verlauf, Congress-/Insider-/Smart-Money-Trades, Benchmark, letzter Cron-Lauf) - kein neuer Backend-Call, reine Nachvollziehbarkeit. Kein vollständiger Enterprise-Audit-Trail (keine Order-Ebene, keine Signaturen) - dafür bräuchte es eine eigene, serverseitige Audit-Infrastruktur.</p>
+  <div class="box"><div class="feed" id="auditFeed"></div></div>
 </section>
 
 <section class="panel show" id="panel-deck">
@@ -776,6 +783,43 @@
     }).join('');
   }
 
+  // --- Audit (Timeline aus bereits vorhandenen echten Zeitstempeln) ---
+  // Inspiriert vom hochgeladenen "World-Class Trading OS"-Blueprint (Abschnitt
+  // 11/2, "Audit"): dort geht's um einen vollständigen Enterprise-Audit-Trail
+  // mit Order-Ebene, Signaturen etc. - das bauen wir bewusst NICHT (bräuchte
+  // eigene serverseitige Audit-Infrastruktur, Auth, Signierung). Was wir
+  // EHRLICH liefern können: eine Zeitleiste, wann jedes bereits bestehende
+  // Subsystem zuletzt gerechnet hat - komplett aus Feldern, die /status schon
+  // liefert, kein einziger neuer API-Call.
+  function auditEintraege(data, icon, botName) {
+    if (!data || data.fehler) return [];
+    const eintraege = [];
+    const add = (label, zeit) => { if (zeit) eintraege.push({ label: `${icon} ${botName} — ${label}`, zeit }); };
+    add('Cron-Lauf', data.letzterCronLauf);
+    add('AI-Review', data.aiReview && data.aiReview.erstelltAm);
+    add('Korrelationsmatrix', data.korrelation && data.korrelation.berechnetAm);
+    add('Live Market Scanner', data.scanner && data.scanner.berechnetAm);
+    add('Markt-Benchmark', data.benchmark && data.benchmark.datum);
+    if (data.globaleMaerkte) add('Globale Märkte', data.globaleMaerkte.berechnetAm);
+    if (data.insiderTrades) add('SEC Insider-Trades', data.insiderTrades.datum);
+    if (data.smartMoney) add('Smart Money (13F)', data.smartMoney.datum);
+    const scoreVerlauf = data.goLiveScoreVerlauf;
+    if (scoreVerlauf && scoreVerlauf.length) add('Score-Verlauf-Update', scoreVerlauf[scoreVerlauf.length - 1].datum);
+    for (const s of data.symbole || []) {
+      if (s.autoBacktest) add(`Auto-Backtest ${s.symbol}`, s.autoBacktest.berechnetAm);
+      if (s.strategieTurnier) add(`Strategie-Turnier ${s.symbol}`, s.strategieTurnier.berechnetAm);
+      if (s.monteCarlo) add(`Monte-Carlo ${s.symbol}`, s.monteCarlo.berechnetAm);
+    }
+    return eintraege;
+  }
+  function renderAudit(cryptoData, stocksData) {
+    const el = document.getElementById('auditFeed');
+    const alle = [...auditEintraege(cryptoData, '₿', 'Krypto-Bot'), ...auditEintraege(stocksData, '📈', 'Aktien-Bot')]
+      .sort((a, b) => new Date(b.zeit) - new Date(a.zeit));
+    if (!alle.length) { el.innerHTML = '<div class="empty"><div class="emoji">🧾</div>Noch keine Bots verbunden.</div>'; return; }
+    el.innerHTML = alle.map((e) => `<div class="feed-row"><span class="grund">${e.label}</span><span class="zeit">${fmtDatum(e.zeit)}</span></div>`).join('');
+  }
+
   // --- Ticker ---
   const TICKER_FUELLTEXTE = [
     '⚡ TRADING COMMAND — Krypto- und Aktien-Bot als ein System',
@@ -974,6 +1018,7 @@
     renderMap(cryptoData, stocksData);
     renderEquityCurve(cryptoData, stocksData);
     renderActivityFeed(cryptoData, stocksData);
+    renderAudit(cryptoData, stocksData);
     renderTicker(cryptoData, stocksData);
     renderHealthBadge(cryptoData, stocksData);
     clearTimeout(window.__refreshTimer);
