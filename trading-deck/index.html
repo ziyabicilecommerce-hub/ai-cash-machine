@@ -226,6 +226,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
   <div class="nav-title">COMMAND</div>
   <div class="nav">
     <button class="active" data-nav="overview" onclick="scrollToId('overview')">🎯 Overview</button>
+    <button data-nav="chart" onclick="scrollToId('chart')">📊 Live-Chart</button>
     <button data-nav="market" onclick="scrollToId('market')">🌐 Live-Markt</button>
     <button data-nav="analyst" onclick="scrollToId('analyst')">🧠 AI Analyst</button>
     <button data-nav="scanner" onclick="scrollToId('scanner')">🎯 Scanner</button>
@@ -259,6 +260,18 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 
 <div class="section-label">🔥 Portfolio-Heatmap — P&amp;L pro Symbol, beide Bots</div>
 <section class="grid"><div class="card full" id="heatmapGrid"></div></section>
+
+<div class="section-label" id="chart">Live-Chart — echtes TradingView-Widget</div>
+<section class="grid">
+  <div class="card full">
+    <div class="card-head">
+      <div class="card-title">📊 TradingView Advanced Chart</div>
+      <select id="chartSymbolSelect" style="background:#080d14;border:1px solid var(--line);color:var(--text);padding:7px 10px;border-radius:7px;font-size:12px;"></select>
+    </div>
+    <div id="tvChartContainer" style="height:520px;border-radius:10px;overflow:hidden;"></div>
+    <div class="note">Echtes, offizielles TradingView-Widget (kostenlos, ohne Login) - Symbol-Zuordnung ist eine Vermutung aus Börse+Ticker des Bots; falsch geraten? Einfach über die Lupe im Chart selbst den richtigen Ticker suchen.</div>
+  </div>
+</section>
 
 <div class="section-label" id="market">Live-Marktdaten (direkt aus dem Internet, unabhängig vom Bot)</div>
 <section class="grid" id="marketGrid"></section>
@@ -479,6 +492,85 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;">${tiles}</div>
       <div class="note">Grün/Rot-Intensität = Stärke des P&amp;L seit Start dieses Symbols (sättigt bei ±20%) - reine Visualisierung bereits bekannter Zahlen, keine neue Kennzahl.</div>`;
   }
+
+  // ---- LIVE-CHART (echtes, offizielles TradingView-Widget - kostenlos,
+  // ohne Login, offiziell zum Einbetten freigegeben) ----
+  let tvScriptGeladen = false;
+  let tvScriptLaedtGerade = false;
+  let aktuellerChartSymbol = null;
+
+  function ladeTvScript(callback) {
+    if (tvScriptGeladen) { callback(); return; }
+    if (tvScriptLaedtGerade) { setTimeout(() => ladeTvScript(callback), 200); return; }
+    tvScriptLaedtGerade = true;
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/tv.js';
+    script.onload = () => { tvScriptGeladen = true; tvScriptLaedtGerade = false; callback(); };
+    script.onerror = () => {
+      tvScriptLaedtGerade = false;
+      document.getElementById('tvChartContainer').innerHTML = '<div class="empty">TradingView-Skript konnte nicht geladen werden (Netzwerk/Adblocker?).</div>';
+    };
+    document.head.appendChild(script);
+  }
+
+  // Grobe Vermutung TradingView-Symbol aus Bot-Ticker + Börse - TradingView's
+  // eigene Symbol-Suche im Widget (allow_symbol_change) fängt eine falsche
+  // Vermutung ab, deshalb reicht "grob richtig".
+  function tvSymbolAusBot(symbol, exchange) {
+    if (exchange === 'binance') return `BINANCE:${symbol}`;
+    if (exchange === 'kraken') return `KRAKEN:${symbol}`;
+    return symbol; // Aktien: TradingView löst viele Ticker auch ohne Exchange-Prefix auf
+  }
+
+  function renderTvChart(tvSymbol) {
+    if (!tvSymbol || aktuellerChartSymbol === tvSymbol) return;
+    aktuellerChartSymbol = tvSymbol;
+    ladeTvScript(() => {
+      const container = document.getElementById('tvChartContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      const innerDiv = document.createElement('div');
+      innerDiv.id = 'tvWidgetInner';
+      innerDiv.style.height = '100%';
+      container.appendChild(innerDiv);
+      // eslint-disable-next-line no-undef
+      new TradingView.widget({
+        autosize: true,
+        symbol: tvSymbol,
+        interval: '15',
+        timezone: 'Etc/UTC',
+        theme: 'dark',
+        style: '1',
+        locale: 'de_DE',
+        toolbar_bg: '#0b1018',
+        enable_publishing: false,
+        allow_symbol_change: true,
+        hide_side_toolbar: false,
+        container_id: 'tvWidgetInner',
+      });
+    });
+  }
+
+  function befuelleChartAuswahl(cryptoData, stocksData) {
+    const select = document.getElementById('chartSymbolSelect');
+    if (!select) return;
+    const optionen = [
+      ...(cryptoData && !cryptoData.fehler ? (cryptoData.symbole || []).map((s) => ({ label: `₿ ${s.symbol}`, tv: tvSymbolAusBot(s.symbol, cryptoData.exchange) })) : []),
+      ...(stocksData && !stocksData.fehler ? (stocksData.symbole || []).map((s) => ({ label: `📈 ${s.symbol}`, tv: tvSymbolAusBot(s.symbol, 'stocks') })) : []),
+    ];
+    if (!optionen.length) return;
+    // Nur neu aufbauen, wenn sich die Optionen wirklich geändert haben - sonst
+    // springt die Auswahl des Nutzers bei jedem 30s-Poll zurück auf die erste.
+    const aktuelleWerte = Array.from(select.options).map((o) => o.value).join(',');
+    const neueWerte = optionen.map((o) => o.tv).join(',');
+    if (aktuelleWerte !== neueWerte) {
+      select.innerHTML = optionen.map((o) => `<option value="${o.tv}">${o.label}</option>`).join('');
+      renderTvChart(select.value);
+    } else if (!aktuellerChartSymbol) {
+      renderTvChart(select.value);
+    }
+  }
+  document.getElementById('chartSymbolSelect')?.addEventListener('change', (e) => renderTvChart(e.target.value));
 
   // ---- AI ANALYST (echter Go-Live-Score, keine erfundene "Marktstimmung") ----
   function scoreCircleStyle(score, farbe) {
@@ -1054,6 +1146,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     renderCommandBar(cryptoData, stocksData, cryptoRes.latencyMs, stocksRes.latencyMs);
     renderOverview(cryptoData, stocksData);
     renderHeatmap(cryptoData, stocksData);
+    befuelleChartAuswahl(cryptoData, stocksData);
     renderAnalyst(cryptoData, stocksData);
     renderScanner(cryptoData, stocksData);
     renderRisk(cryptoData, stocksData);
@@ -1077,7 +1170,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 
   // Scroll-Spy: markiert den Nav-Button des sichtbaren Abschnitts als aktiv.
   (function initScrollSpy() {
-    const ids = ['overview','market','analyst','scanner','risk','backtest','journal','alerts','health'];
+    const ids = ['overview','chart','market','analyst','scanner','risk','backtest','journal','alerts','health'];
     const buttons = Object.fromEntries(ids.map((id) => [id, document.querySelector(`[data-nav="${id}"]`)]));
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
