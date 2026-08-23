@@ -1093,15 +1093,49 @@ html.embedded .subtitle{display:none;}
     return res.json();
   }
 
-  function fearGreedCard(fg) {
+  // Echte 30-Tage-Historie (alternative.me liefert neueste zuerst - für
+  // eine chronologisch lesbare Sparkline umgedreht) statt nur des
+  // aktuellen Werts - zeigt, ob sich die Marktstimmung gerade Richtung
+  // Angst oder Gier bewegt, nicht nur wo sie JETZT steht.
+  function fngSparklineSvg(historieNeuesteZuerst) {
+    if (!historieNeuesteZuerst || historieNeuesteZuerst.length < 2) return '';
+    const werte = [...historieNeuesteZuerst].reverse().map((h) => Number(h.value));
+    const w = 260, h = 44, pad = 3;
+    const min = Math.min(...werte), max = Math.max(...werte);
+    const spanne = max - min || 1;
+    const punkte = werte.map((v, i) => {
+      const x = pad + (i / (werte.length - 1)) * (w - pad * 2);
+      const y = pad + (1 - (v - min) / spanne) * (h - pad * 2);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+    const letzte = werte[werte.length - 1];
+    const farbe = letzte >= 55 ? 'var(--green)' : letzte <= 45 ? 'var(--red)' : 'var(--yellow)';
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block;max-width:100%;">
+      <polyline points="${punkte}" fill="none" stroke="${farbe}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>`;
+  }
+  function fngTrendVerdikt(historieNeuesteZuerst) {
+    if (!historieNeuesteZuerst || historieNeuesteZuerst.length < 14) return null;
+    const werte = historieNeuesteZuerst.map((h) => Number(h.value));
+    const letzte7 = werte.slice(0, 7).reduce((a, b) => a + b, 0) / 7;
+    const davor7 = werte.slice(7, 14).reduce((a, b) => a + b, 0) / 7;
+    const delta = letzte7 - davor7;
+    if (Math.abs(delta) < 3) return { text: 'Stimmung seitwärts', farbe: 'var(--muted)' };
+    return delta > 0 ? { text: `Richtung Gier (+${delta.toFixed(0)} Punkte ggü. Vorwoche)`, farbe: 'var(--green)' }
+      : { text: `Richtung Angst (${delta.toFixed(0)} Punkte ggü. Vorwoche)`, farbe: 'var(--red)' };
+  }
+  function fearGreedCard(fg, historie) {
     if (!fg) return `<div class="card"><div class="card-head"><div class="card-title">😨 Fear &amp; Greed Index</div></div><div class="empty">Nicht erreichbar (alternative.me).</div></div>`;
     const wert = Number(fg.value);
     const farbe = wert >= 55 ? 'green' : wert <= 45 ? 'red' : 'yellow';
+    const trend = fngTrendVerdikt(historie);
     return `<div class="card">
       <div class="card-head"><div class="card-title">😨 Fear &amp; Greed Index</div><div class="card-meta">alternative.me</div></div>
       <div class="big ${farbe}">${wert}</div>
       <div class="metric">${fg.value_classification} · Stand ${fmtDatum(new Date(Number(fg.timestamp) * 1000).toISOString())}</div>
       <div class="progress"><div style="width:${wert}%"></div></div>
+      ${historie ? `<div style="margin-top:10px;">${fngSparklineSvg(historie)}</div>` : ''}
+      ${trend ? `<div style="font-size:10.5px;margin-top:6px;color:${trend.farbe};">30-Tage-Trend: ${trend.text}</div>` : ''}
     </div>`;
   }
 
@@ -1228,7 +1262,7 @@ html.embedded .subtitle{display:none;}
     const idListe = basen.map((b) => COINGECKO_IDS[b]);
 
     const [fgRes, globalRes, trendingRes, preisRes, marketsRes, whaleRes] = await Promise.allSettled([
-      holeJson('https://api.alternative.me/fng/?limit=1'),
+      holeJson('https://api.alternative.me/fng/?limit=30'),
       holeJson(`${COINGECKO_BASIS}/global`),
       holeJson(`${COINGECKO_BASIS}/search/trending`),
       idListe.length ? holeJson(`${COINGECKO_BASIS}/simple/price?ids=${idListe.join(',')}&vs_currencies=usd&include_24hr_change=true`) : Promise.resolve(null),
@@ -1236,7 +1270,8 @@ html.embedded .subtitle{display:none;}
       holeJson('https://blockchain.info/unconfirmed-transactions?format=json'),
     ]);
 
-    const fg = fgRes.status === 'fulfilled' ? fgRes.value.data[0] : null;
+    const fgHistorie = fgRes.status === 'fulfilled' ? fgRes.value.data : null;
+    const fg = fgHistorie ? fgHistorie[0] : null;
     const global = globalRes.status === 'fulfilled' ? globalRes.value.data : null;
     const trending = trendingRes.status === 'fulfilled' ? trendingRes.value : null;
     const preise = preisRes.status === 'fulfilled' ? preisRes.value : null;
@@ -1244,7 +1279,7 @@ html.embedded .subtitle{display:none;}
     letzteFg = fg;
     letzteMarkets = markets;
 
-    let html = fearGreedCard(fg) + globalMarketCard(global) + trendingCard(trending);
+    let html = fearGreedCard(fg, fgHistorie) + globalMarketCard(global) + trendingCard(trending);
     html += topMoversCard(markets);
     html += cryptoFundamentalsCard(cryptoData, markets);
     html += priceCheckCard(cryptoData, preise);
