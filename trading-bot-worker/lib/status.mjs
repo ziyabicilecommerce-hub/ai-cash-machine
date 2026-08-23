@@ -222,7 +222,8 @@ export async function buildStatus(env) {
     // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
   }
 
-  const portfolioKennzahlen = berechneRisikoKennzahlen(alleTrades);
+  const gesamtStartKapital = symbole.reduce((s, x) => s + x.startKapital, 0);
+  const portfolioKennzahlen = berechneRisikoKennzahlen(alleTrades, gesamtStartKapital);
 
   return {
     updatedAt: new Date().toISOString(),

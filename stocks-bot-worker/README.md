@@ -152,8 +152,12 @@ verändert nie Kapital oder Position. `/status` liefert es pro Symbol als
 Objekt (`lib/statistik.mjs`, Pendant zum Krypto-Bot, reine Statistik über
 die gesamte Trade-Historie): Profit Factor, Expectancy pro Trade, Ø
 Gewinn/Verlust, Recovery Factor sowie "Sharpe/Sortino pro Trade" (bewusst
-NICHT die annualisierten Lehrbuch-Kennzahlen). Trading Command zeigt das
-im Übersicht-Tab.
+NICHT die annualisierten Lehrbuch-Kennzahlen). Zusätzlich CAGR (annualisierte
+Rendite), Calmar Ratio (CAGR / Max Drawdown) sowie annualisierte
+Sharpe/Sortino - hochskaliert über die TATSÄCHLICHE Trade-Frequenz statt
+einer angenommenen festen Periode (Trades sind unregelmäßig getaktet, kein
+1:1-Ersatz für Lehrbuch-Kennzahlen mit täglichen Renditen). Trading Command
+zeigt das im Übersicht-Tab.
 
 **AI Trade Review** (optional, `lib/ai-review.mjs`, Pendant zum Krypto-Bot,
 KOSTET ECHTES GELD pro Aufruf): lässt Claude einmal pro Woche einen kurzen

@@ -228,7 +228,11 @@ Historie): Profit Factor, Expectancy pro Trade, Ø Gewinn/Verlust,
 Recovery Factor sowie "Sharpe/Sortino pro Trade" — bewusst NICHT die
 annualisierten Lehrbuch-Kennzahlen (dafür bräuchte es täglich getaktete
 Renditen, Trades sind unregelmäßig getaktet), sondern Ø Rendite / Streuung
-über alle abgeschlossenen Trades, klar so benannt. Trading Command zeigt
+über alle abgeschlossenen Trades, klar so benannt. Zusätzlich CAGR
+(annualisierte Rendite), Calmar Ratio (CAGR / Max Drawdown) sowie
+annualisierte Sharpe/Sortino — hochskaliert über die tatsächliche
+Trade-Frequenz statt einer angenommenen festen Periode, ebenfalls kein
+1:1-Ersatz für Lehrbuch-Kennzahlen. Trading Command zeigt
 das im Übersicht-Tab.
 
 ## AI Trade Review (optional, KOSTET ECHTES GELD pro Aufruf)
