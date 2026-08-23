@@ -184,6 +184,14 @@ export async function buildStatus(env) {
     // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
   }
 
+  let materialEvents = null;
+  try {
+    const raw = await env.STOCKS_STATE.get('materialevents:letzte');
+    if (raw) materialEvents = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   const portfolioKennzahlen = berechneRisikoKennzahlen(alleTrades);
 
   return {
@@ -207,6 +215,7 @@ export async function buildStatus(env) {
     benchmark,
     globaleMaerkte,
     smartMoney,
+    materialEvents,
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
       maxTagesverlustProzent: cfg.maxTagesverlustProzent,
