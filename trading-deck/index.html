@@ -296,6 +296,7 @@ html.embedded .subtitle{display:none;}
     <button data-nav="insider" onclick="scrollToId('insider')">🕵️ Insider</button>
     <button data-nav="smartmoney" onclick="scrollToId('smartmoney')">💼 Smart Money</button>
     <button data-nav="events" onclick="scrollToId('events')">📰 Events</button>
+    <button data-nav="fundamentals" onclick="scrollToId('fundamentals')">📑 Fundamental</button>
     <button data-nav="benchmark" onclick="scrollToId('benchmark')">🏆 Benchmark</button>
     <button data-nav="analyst" onclick="scrollToId('analyst')">🧠 AI Analyst</button>
     <button data-nav="scanner" onclick="scrollToId('scanner')">🎯 Scanner</button>
@@ -390,6 +391,9 @@ html.embedded .subtitle{display:none;}
 
 <div class="section-label" id="events">📰 Material Events — Firmennews, bevor sie jeder mitbekommt</div>
 <section class="grid"><div class="card full" id="materialEventsWrap"></div></section>
+
+<div class="section-label" id="fundamentals">📑 Fundamentaldaten — echte Zahlen aus SEC-Meldungen</div>
+<section class="grid"><div class="card full" id="fundamentalsWrap"></div></section>
 
 <div class="section-label" id="benchmark">🏆 Bist du besser als 100% der Leute?</div>
 <section class="grid" id="benchmarkGrid"></section>
@@ -1362,6 +1366,35 @@ html.embedded .subtitle{display:none;}
       <div class="note">100% legal und pflichtoffengelegt: börsennotierte Firmen müssen JEDES wesentliche Ereignis (Führungswechsel, Insolvenz, Delisting-Warnung, Übernahme, Kontrollwechsel, gekündigte Großverträge...) innerhalb von nur 4 Werktagen der SEC melden - das genaue Gegenteil von Geheimhaltung. Rot markierte Ereignisse gelten gemeinhin als besonders gravierend. Reine Beobachtung, keine Kauf-/Verkaufsempfehlung.</div>`;
   }
 
+  // ---- FUNDAMENTALDATEN (SEC XBRL Company Facts) ----
+  // Echte, aus 10-K/10-Q-Meldungen extrahierte Kennzahlen. Kommt fertig aus
+  // dem Worker (lib/fundamentals.mjs) - hier wird nur gerendert. BEWUSST
+  // KEIN TRADING-FILTER (siehe Kommentar dort) - reine Anzeige.
+  function fundamentalsZeile(symbol, name, f) {
+    const fmtWert = (usd) => usd == null ? '–' : `$${(Math.abs(usd) / 1e9).toFixed(2)} Mrd.`;
+    const fmtChange = (kennzahl) => kennzahl && kennzahl.veraenderungProzent != null
+      ? `<span class="${kennzahl.veraenderungProzent >= 0 ? 'green' : 'red'}">${kennzahl.veraenderungProzent >= 0 ? '+' : ''}${kennzahl.veraenderungProzent.toFixed(1)}% YoY</span>` : '–';
+    return `<tr><td>${escapeHtml(symbol)} <span style="color:#526174;">(${escapeHtml(name)})</span></td>
+      <td>${fmtWert(f.umsatz && f.umsatz.wert)} ${fmtChange(f.umsatz)}</td>
+      <td>${fmtWert(f.nettogewinn && f.nettogewinn.wert)} ${fmtChange(f.nettogewinn)}</td>
+      <td>${f.eps && f.eps.wert != null ? `$${f.eps.wert.toFixed(2)}` : '–'}</td>
+      <td>${f.umsatz ? escapeHtml(f.umsatz.periodeBis) : (f.nettogewinn ? escapeHtml(f.nettogewinn.periodeBis) : '–')}</td></tr>`;
+  }
+  function renderFundamentals(stocksData) {
+    const el = document.getElementById('fundamentalsWrap');
+    const sOk = stocksData && !stocksData.fehler;
+    const daten = sOk ? stocksData.fundamentals : null;
+    if (!daten || !daten.symbole || !Object.keys(daten.symbole).length) {
+      el.innerHTML = `<div class="card-head"><div class="card-title">📑 Fundamentaldaten (SEC XBRL)</div></div>
+        <div class="empty">${sOk ? 'Noch keine Daten (läuft montags).' : 'Noch kein Aktien-Bot verbunden.'}</div>`;
+      return;
+    }
+    const zeilen = Object.entries(daten.symbole).map(([symbol, f]) => fundamentalsZeile(symbol, f.entityName, f)).join('');
+    el.innerHTML = `<div class="card-head"><div class="card-title">📑 Echte Zahlen aus SEC-Meldungen</div><div class="card-meta">${fmtDatum(daten.datum)}</div></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>Umsatz (Quartal)</th><th>Nettogewinn (Quartal)</th><th>EPS (verwässert)</th><th>Periode bis</th></tr></thead><tbody>${zeilen}</tbody></table></div>
+      <div class="note">Direkt aus den XBRL-Daten der letzten 10-K/10-Q-Meldung der SEC, kein Drittanbieter. YoY = Veränderung zum vergleichbaren Quartal vor einem Jahr. Bewusst KEIN Trading-Filter - nur zur eigenen Einordnung, keine Kauf-/Verkaufsempfehlung. Fehlt ein Wert, konnte er nicht zuverlässig aus den SEC-Daten dieser Firma extrahiert werden (unterschiedliche Firmen nutzen unterschiedliche XBRL-Tags).</div>`;
+  }
+
   // ---- BENCHMARK ("Bist du besser als 100% der Leute?") ----
   // Vergleicht die Paper-Portfolio-Rendite mit simplem Kaufen-und-
   // Liegenlassen derselben Symbole (+ beim Aktien-Bot zusätzlich mit dem
@@ -1520,6 +1553,16 @@ html.embedded .subtitle{display:none;}
   const STRATEGIE_LABEL = { 'ema-crossover':'EMA-Crossover', 'bollinger-mean-reversion':'Bollinger-MR', 'donchian-breakout':'Donchian-BO' };
   const MEDAILLEN = ['🥇','🥈','🥉'];
 
+  function walkForwardBlock(symbol, wf) {
+    if (!wf || !wf.folds || !wf.folds.length) return '';
+    const zeilen = wf.folds.map((f, i) => `<tr><td>Fold ${i + 1}</td>
+      <td class="${f.returnProzent >= 0 ? 'green' : 'red'}">${f.returnProzent >= 0 ? '+' : ''}${f.returnProzent.toFixed(1)}%</td>
+      <td>${f.anzahlTrades}</td><td>${f.winRateProzent != null ? f.winRateProzent.toFixed(0) + '%' : '–'}</td></tr>`).join('');
+    return `<div style="margin-top:10px;">
+      <div style="font-size:10.5px;color:#7c8aa0;margin-bottom:5px;">🔁 Walk-Forward ${symbol}: ${wf.positiveFolds}/${wf.gesamtFolds} Zeitfenster positiv - ${wf.konsistent ? '<span class="green">wirkt konsistent</span>' : '<span class="yellow">Rendite hängt stark an einzelnen Zeitfenstern, Vorsicht vor Overfitting</span>'}</div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Zeitfenster</th><th>Return</th><th>Trades</th><th>Win-Rate</th></tr></thead><tbody>${zeilen}</tbody></table></div>
+    </div>`;
+  }
   function backtestCard(name, icon, symbole) {
     if (!symbole) return '';
     const mit = symbole.filter((s) => s.autoBacktest);
@@ -1531,8 +1574,14 @@ html.embedded .subtitle{display:none;}
         <td>${b.anzahlTrades}</td><td>${b.winRateProzent != null ? b.winRateProzent.toFixed(0) + '%' : '–'}</td>
         <td class="yellow">-${b.maxDrawdownProzent.toFixed(1)}%</td><td>${fmtDatum(b.berechnetAm)}</td></tr>`;
     }).join('');
+    const slippageInfo = mit[0].autoBacktest.slippageProzent != null
+      ? `Simuliert MIT Slippage (${mit[0].autoBacktest.slippageProzent}%) und Gebühren (${mit[0].autoBacktest.gebuehrProzent}%) auf jeden Trade - realistischer als reine Kursbewegung.`
+      : '';
+    const walkForwardBloecke = mit.filter((s) => s.autoBacktest.walkForward).map((s) => walkForwardBlock(s.symbol, s.autoBacktest.walkForward)).join('');
     return `<div class="card full"><div class="card-head"><div class="card-title">🧪 ${icon} ${name} - Auto-Backtest (letzte 14 Tage, echte Kerzen)</div></div>
       <div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>Strategie</th><th>Return</th><th>Trades</th><th>Win-Rate</th><th>Max DD</th><th>Stand</th></tr></thead><tbody>${rows}</tbody></table></div>
+      ${slippageInfo ? `<div class="note">${escapeHtml(slippageInfo)}</div>` : ''}
+      ${walkForwardBloecke}
     </div>`;
   }
 
@@ -1807,6 +1856,7 @@ html.embedded .subtitle{display:none;}
     renderInsiderTrades(stocksData);
     renderSmartMoney(stocksData);
     renderMaterialEvents(stocksData);
+    renderFundamentals(stocksData);
     renderErfolge(cryptoData, stocksData);
     clearTimeout(window.__refreshTimer);
     window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
@@ -1824,7 +1874,7 @@ html.embedded .subtitle{display:none;}
 
   // Scroll-Spy: markiert den Nav-Button des sichtbaren Abschnitts als aktiv.
   (function initScrollSpy() {
-    const ids = ['thermometer','overview','erfolge','chart','market','congress','insider','smartmoney','events','benchmark','analyst','scanner','global','risk','backtest','journal','alerts','health'];
+    const ids = ['thermometer','overview','erfolge','chart','market','congress','insider','smartmoney','events','fundamentals','benchmark','analyst','scanner','global','risk','backtest','journal','alerts','health'];
     const buttons = Object.fromEntries(ids.map((id) => [id, document.querySelector(`[data-nav="${id}"]`)]));
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {

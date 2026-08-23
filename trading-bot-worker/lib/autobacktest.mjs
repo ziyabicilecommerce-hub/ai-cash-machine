@@ -27,6 +27,7 @@ const FENSTER_FUER_INDIKATOREN = 60;
 const REFERENZ_STARTKAPITAL = 100;
 const MAX_SEITEN_PRO_SYMBOL = 8; // Sicherheitsnetz gegen zu viele Subrequests
 const ALLE_STRATEGIEN = ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout'];
+const WALK_FORWARD_FOLDS = 3;
 
 function wochenSchluessel(datum) {
   const d = new Date(Date.UTC(datum.getUTCFullYear(), datum.getUTCMonth(), datum.getUTCDate()));
@@ -104,6 +105,13 @@ function berechneMaxDrawdownProzent(equityKurve) {
   return maxDrawdown;
 }
 
+// Slippage/Gebühren (cfg.backtestSlippageProzent/backtestGebuehrProzent,
+// siehe config.mjs) wirken NUR auf die Ausführungspreise/den Kapitalfluss -
+// die Strategie "sieht" weiterhin den echten Kurs für ihre Entscheidungen
+// (Stop-Loss/Take-Profit/Signale), genau wie live ein echter Bot auch auf
+// Basis des zuletzt bekannten Kurses entscheidet, bevor der tatsächliche
+// Fill etwas schlechter ausfällt. Macht den Backtest realistischer statt
+// reine Kursbewegung ohne Handelskosten zu zeigen.
 function simuliere(closes, highs, lows, zeiten, cfg, startKapital) {
   let kapital = startKapital;
   let position = null;
@@ -111,6 +119,8 @@ function simuliere(closes, highs, lows, zeiten, cfg, startKapital) {
   let letzterTag = null;
   const trades = [];
   const equityKurve = [kapital];
+  const slippageFaktor = (cfg.backtestSlippageProzent || 0) / 100;
+  const gebuehrFaktor = (cfg.backtestGebuehrProzent || 0) / 100;
 
   for (let i = FENSTER_FUER_INDIKATOREN; i < closes.length; i++) {
     const fensterCloses = closes.slice(0, i + 1);
@@ -129,27 +139,33 @@ function simuliere(closes, highs, lows, zeiten, cfg, startKapital) {
         jetztZeitstempel: zeiten[i], cooldownBisZeitstempel: null,
       });
       if (kauf) {
-        const qty = kauf.investBetrag / preis;
-        position = { qty, entryPreis: preis, hoechsterPreisSeitEinstieg: preis, einstiegAm: zeiten[i], entryAtr: indikatoren.atrJetzt, teilverkaufGemacht: false };
+        const kaufPreisEffektiv = preis * (1 + slippageFaktor);
+        const investNetto = kauf.investBetrag * (1 - gebuehrFaktor);
+        const qty = investNetto / kaufPreisEffektiv;
+        position = { qty, entryPreis: kaufPreisEffektiv, hoechsterPreisSeitEinstieg: preis, einstiegAm: zeiten[i], entryAtr: indikatoren.atrJetzt, teilverkaufGemacht: false };
       }
     } else {
       const verkauf = entscheideVerkauf({ position, cfg, indikatoren });
       position.hoechsterPreisSeitEinstieg = verkauf.hoechsterPreisSeitEinstieg;
       if (verkauf.teilverkauf) {
+        const verkaufPreisEffektiv = preis * (1 - slippageFaktor);
         const teilQty = position.qty * verkauf.teilAnteil;
         const einsatz = teilQty * position.entryPreis;
-        const gewinnVerlust = teilQty * preis - einsatz;
+        const erloesNetto = teilQty * verkaufPreisEffektiv * (1 - gebuehrFaktor);
+        const gewinnVerlust = erloesNetto - einsatz;
         kapital += gewinnVerlust;
         heutigerVerlustUsdt += Math.min(0, gewinnVerlust);
-        trades.push({ gewinnVerlustUsdt: gewinnVerlust, gewinnProzent: (gewinnVerlust / einsatz) * 100 });
+        trades.push({ gewinnVerlustUsdt: gewinnVerlust, gewinnProzent: (gewinnVerlust / einsatz) * 100, ausstiegAm: zeiten[i] });
         position.qty -= teilQty;
         position.teilverkaufGemacht = true;
       } else if (verkauf.verkaufen) {
+        const verkaufPreisEffektiv = preis * (1 - slippageFaktor);
         const einsatz = position.qty * position.entryPreis;
-        const gewinnVerlust = position.qty * preis - einsatz;
+        const erloesNetto = position.qty * verkaufPreisEffektiv * (1 - gebuehrFaktor);
+        const gewinnVerlust = erloesNetto - einsatz;
         kapital += gewinnVerlust;
         heutigerVerlustUsdt += Math.min(0, gewinnVerlust);
-        trades.push({ gewinnVerlustUsdt: gewinnVerlust, gewinnProzent: (gewinnVerlust / einsatz) * 100 });
+        trades.push({ gewinnVerlustUsdt: gewinnVerlust, gewinnProzent: (gewinnVerlust / einsatz) * 100, ausstiegAm: zeiten[i] });
         position = null;
         if (((kapital - startKapital) / startKapital) * 100 <= -cfg.maxGesamtverlustProzent) { equityKurve.push(kapital); break; }
       }
@@ -157,6 +173,43 @@ function simuliere(closes, highs, lows, zeiten, cfg, startKapital) {
     equityKurve.push(position ? kapital + position.qty * (preis - position.entryPreis) : kapital);
   }
   return { kapitalEnde: kapital, trades, equityKurve };
+}
+
+// Walk-Forward-Analyse: teilt den bereits simulierten Zeitraum in
+// WALK_FORWARD_FOLDS aufeinanderfolgende Abschnitte und misst die
+// Performance JE Abschnitt separat, statt nur eine einzige Gesamtzahl zu
+// zeigen. Deckt auf, ob die Gesamt-Rendite gleichmäßig entsteht oder nur
+// von einem einzelnen Zeitfenster getragen wird (klassisches Overfitting-
+// Warnsignal) - läuft auf denselben, bereits simulierten Trades, kein
+// zweiter Simulationslauf nötig.
+function walkForwardAnalyse(zeiten, trades, startKapital) {
+  const startZeit = zeiten[FENSTER_FUER_INDIKATOREN];
+  const endZeit = zeiten[zeiten.length - 1];
+  const dauer = endZeit - startZeit;
+  if (!(dauer > 0)) return null;
+  const foldDauer = dauer / WALK_FORWARD_FOLDS;
+
+  const folds = [];
+  let kapitalVorFold = startKapital;
+  for (let f = 0; f < WALK_FORWARD_FOLDS; f++) {
+    const foldStart = startZeit + f * foldDauer;
+    const foldEnde = f === WALK_FORWARD_FOLDS - 1 ? endZeit + 1 : startZeit + (f + 1) * foldDauer;
+    const foldTrades = trades.filter((t) => t.ausstiegAm >= foldStart && t.ausstiegAm < foldEnde);
+    const kapitalNachFold = kapitalVorFold + foldTrades.reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
+    const gewinnTrades = foldTrades.filter((t) => t.gewinnVerlustUsdt > 0);
+    folds.push({
+      von: new Date(foldStart).toISOString(),
+      bis: new Date(Math.min(foldEnde, endZeit)).toISOString(),
+      anzahlTrades: foldTrades.length,
+      winRateProzent: foldTrades.length ? (gewinnTrades.length / foldTrades.length) * 100 : null,
+      returnProzent: kapitalVorFold > 0 ? ((kapitalNachFold - kapitalVorFold) / kapitalVorFold) * 100 : 0,
+    });
+    kapitalVorFold = kapitalNachFold;
+  }
+
+  const positiveFolds = folds.filter((f) => f.returnProzent > 0).length;
+  const konsistent = positiveFolds >= Math.ceil(WALK_FORWARD_FOLDS / 2);
+  return { folds, positiveFolds, gesamtFolds: WALK_FORWARD_FOLDS, konsistent };
 }
 
 function berechneKennzahlen(startKapital, ergebnis) {
@@ -192,7 +245,11 @@ export async function pruefeUndFuehreAutoBacktest(env, cfg) {
       const ergebnis = simuliere(closes, highs, lows, zeiten, cfgSymbol, REFERENZ_STARTKAPITAL);
       const k = berechneKennzahlen(REFERENZ_STARTKAPITAL, ergebnis);
       const buyAndHoldProzent = ((closes[closes.length - 1] - closes[FENSTER_FUER_INDIKATOREN]) / closes[FENSTER_FUER_INDIKATOREN]) * 100;
-      const eintrag = { symbol, strategie: cfgSymbol.strategie, tageZurueck: AUTO_BACKTEST_TAGE, berechnetAm: jetzt.toISOString(), buyAndHoldProzent, ...k };
+      const walkForward = walkForwardAnalyse(zeiten, ergebnis.trades, REFERENZ_STARTKAPITAL);
+      const eintrag = {
+        symbol, strategie: cfgSymbol.strategie, tageZurueck: AUTO_BACKTEST_TAGE, berechnetAm: jetzt.toISOString(), buyAndHoldProzent,
+        slippageProzent: cfg.backtestSlippageProzent, gebuehrProzent: cfg.backtestGebuehrProzent, walkForward, ...k,
+      };
       await env.TRADING_STATE.put(`backtest:${symbol}`, JSON.stringify(eintrag));
       ergebnisse.push(eintrag);
 

@@ -248,12 +248,27 @@ export function entscheideVerkauf({ position, cfg, indikatoren }) {
   const fixedStopLossPreis = position.entryPreis - stopLossAbstand;
   const gewinnProzentSeitEinstieg = ((hoechsterPreisSeitEinstieg - position.entryPreis) / position.entryPreis) * 100;
   const trailingAktiv = cfg.trailingStopAbProzent > 0 && gewinnProzentSeitEinstieg >= cfg.trailingStopAbProzent;
-  const stopLossPreis = trailingAktiv
-    ? Math.max(fixedStopLossPreis, hoechsterPreisSeitEinstieg - stopLossAbstand)
-    : fixedStopLossPreis;
+
+  // Break-even-Stop (Default AUS, cfg.breakEvenAbProzent = 0): unabhängig
+  // vom Trailing-Stop - sobald der Trade einmal um mind. breakEvenAbProzent
+  // im Plus war, darf die Stop-Grenze NIE wieder unter den Einstiegspreis
+  // (+ kleiner Puffer) fallen. Es gilt am Ende immer die höchste der drei
+  // möglichen Grenzen (fest/Trailing/Break-even).
+  const breakEvenAktiv = cfg.breakEvenAbProzent > 0 && gewinnProzentSeitEinstieg >= cfg.breakEvenAbProzent;
+
+  let stopLossPreis = fixedStopLossPreis;
+  let stopGrund = 'Stop-Loss';
+  if (trailingAktiv) {
+    const trailingPreis = hoechsterPreisSeitEinstieg - stopLossAbstand;
+    if (trailingPreis > stopLossPreis) { stopLossPreis = trailingPreis; stopGrund = 'Trailing-Stop'; }
+  }
+  if (breakEvenAktiv) {
+    const breakEvenPreis = position.entryPreis * (1 + cfg.breakEvenPufferProzent / 100);
+    if (breakEvenPreis > stopLossPreis) { stopLossPreis = breakEvenPreis; stopGrund = 'Break-even-Stop'; }
+  }
 
   if (preis <= stopLossPreis) {
-    return { verkaufen: true, teilverkauf: false, teilAnteil: null, grund: trailingAktiv ? 'Trailing-Stop' : 'Stop-Loss', hoechsterPreisSeitEinstieg };
+    return { verkaufen: true, teilverkauf: false, teilAnteil: null, grund: stopGrund, hoechsterPreisSeitEinstieg };
   }
 
   // Festes Gewinnziel (Default 0 = aus): sichert einen Trade sofort ab,
