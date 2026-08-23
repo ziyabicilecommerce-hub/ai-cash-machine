@@ -244,6 +244,17 @@ geparst als `insiderTrades`-Feld, Trading Deck rendert es nur noch.
 verkaufen oft aus Gründen (Steuern, Diversifikation, 10b5-1-Programme),
 die nichts mit ihrer Einschätzung der Aktie zu tun haben.
 
+**Markt-Benchmark** (`lib/benchmark.mjs`, Pendant zum Krypto-Bot): läuft
+ebenfalls in der Montags-Wartung. Zwei Vergleiche: (1) Paper-Portfolio-
+Rendite vs. Kaufen-und-Liegenlassen DERSELBEN Aktien seit dem jeweils
+ersten eigenen Trade, (2) dieselbe Rendite vs. S&P 500 (über SPY, immer
+auf Alpaca abrufbar, egal welche Aktien konfiguriert sind) seit dem
+allerersten Trade - der klassische "durchschnittlicher Investor"-
+Vergleich. `/status` liefert das Ergebnis als `benchmark`-Feld, Trading
+Deck zeigt es im "Bist du besser als 100% der Leute?"-Bereich zusammen
+mit zitierten Studien zur realen Trader-Performance. Reiner Nachher-
+Vergleich, ändert nie eine Order.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch

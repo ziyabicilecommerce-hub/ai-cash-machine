@@ -49,6 +49,27 @@ export async function getMinNotionalUsdt() {
   return 1;
 }
 
+// Für lib/benchmark.mjs: reiner "was hätte Kaufen-und-Liegenlassen seit
+// diesem Datum gebracht" Vergleichswert - kostenloser IEX-Feed, kein
+// zusätzlicher API-Key nötig.
+export async function getBuyHoldRendite(env, symbol, seitDatumIso) {
+  const start = new Date(seitDatumIso).toISOString();
+  const startRes = await fetch(`${DATA_BASE}/v2/stocks/${symbol}/bars?timeframe=1Day&start=${encodeURIComponent(start)}&limit=1&feed=iex&adjustment=raw`, { headers: authHeaders(env) });
+  if (!startRes.ok) throw new Error(`Alpaca Bars-Fehler (Start ${symbol}): ${startRes.status}`);
+  const startData = await startRes.json();
+  const startBar = (startData.bars || [])[0];
+  if (!startBar) return null;
+
+  const aktuellRes = await fetch(`${DATA_BASE}/v2/stocks/${symbol}/bars?timeframe=1Day&limit=1&feed=iex&adjustment=raw`, { headers: authHeaders(env) });
+  if (!aktuellRes.ok) throw new Error(`Alpaca Bars-Fehler (Aktuell ${symbol}): ${aktuellRes.status}`);
+  const aktuellData = await aktuellRes.json();
+  const bars = aktuellData.bars || [];
+  const aktuellBar = bars[bars.length - 1];
+  if (!aktuellBar || !startBar.c || !aktuellBar.c) return null;
+
+  return { startPreis: startBar.c, aktuellPreis: aktuellBar.c, renditeProzent: ((aktuellBar.c / startBar.c) - 1) * 100 };
+}
+
 export async function getSpreadProzent(env, symbol) {
   try {
     const res = await fetch(`${DATA_BASE}/v2/stocks/${symbol}/quotes/latest?feed=iex`, { headers: authHeaders(env) });

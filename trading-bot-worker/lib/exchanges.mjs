@@ -85,6 +85,27 @@ const binanceAdapter = {
     return filter ? parseFloat(filter.minNotional) : null;
   },
 
+  // Für lib/benchmark.mjs: reiner "was hätte Kaufen-und-Liegenlassen seit
+  // diesem Datum gebracht" Vergleichswert - kein zusätzlicher Klines-API-
+  // Key nötig, beides öffentliche Endpoints.
+  async getBuyHoldRendite(symbol, seitDatumIso) {
+    const startMs = new Date(seitDatumIso).getTime();
+    const startRes = await fetch(`${this.baseUrl}/api/v3/klines?symbol=${symbol}&interval=1d&startTime=${startMs}&limit=1`);
+    if (!startRes.ok) throw new Error(`Binance Klines-Fehler (Start): ${startRes.status}`);
+    const startData = await startRes.json();
+    if (!startData.length) return null;
+    const startPreis = parseFloat(startData[0][4]);
+
+    const aktuellRes = await fetch(`${this.baseUrl}/api/v3/klines?symbol=${symbol}&interval=1d&limit=1`);
+    if (!aktuellRes.ok) throw new Error(`Binance Klines-Fehler (Aktuell): ${aktuellRes.status}`);
+    const aktuellData = await aktuellRes.json();
+    if (!aktuellData.length) return null;
+    const aktuellPreis = parseFloat(aktuellData[aktuellData.length - 1][4]);
+
+    if (!startPreis || !aktuellPreis) return null;
+    return { startPreis, aktuellPreis, renditeProzent: ((aktuellPreis / startPreis) - 1) * 100 };
+  },
+
   async getSpreadProzent(symbol) {
     try {
       const res = await fetch(`${this.baseUrl}/api/v3/ticker/bookTicker?symbol=${symbol}`);
@@ -159,6 +180,23 @@ const krakenAdapter = {
     const key = Object.keys(data.result || {})[0];
     const ordermin = key && data.result[key] ? parseFloat(data.result[key].ordermin) : null;
     return ordermin && referencePreis ? ordermin * referencePreis : null;
+  },
+
+  // Für lib/benchmark.mjs: reiner "was hätte Kaufen-und-Liegenlassen seit
+  // diesem Datum gebracht" Vergleichswert - öffentlicher Endpoint, kein Key.
+  async getBuyHoldRendite(symbol, seitDatumIso) {
+    const seitSekunden = Math.floor(new Date(seitDatumIso).getTime() / 1000);
+    const res = await fetch(`${this.baseUrl}/0/public/OHLC?pair=${symbol}&interval=1440&since=${seitSekunden}`);
+    if (!res.ok) throw new Error(`Kraken OHLC-Fehler: ${res.status}`);
+    const data = await res.json();
+    if (data.error && data.error.length) throw new Error(`Kraken-Fehler: ${data.error.join(', ')}`);
+    const resultKey = Object.keys(data.result || {}).find((k) => k !== 'last');
+    const rows = (resultKey && data.result[resultKey]) || [];
+    if (!rows.length) return null;
+    const startPreis = parseFloat(rows[0][4]);
+    const aktuellPreis = parseFloat(rows[rows.length - 1][4]);
+    if (!startPreis || !aktuellPreis) return null;
+    return { startPreis, aktuellPreis, renditeProzent: ((aktuellPreis / startPreis) - 1) * 100 };
   },
 
   // Bid/Ask-Spread in Prozent - null bei Fehler (Filter dann nicht

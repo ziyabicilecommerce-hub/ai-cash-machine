@@ -37,6 +37,7 @@ import { pruefeUndAktualisiereScanner } from './lib/scanner.mjs';
 import { pruefeUndAktualisiereMonteCarlo } from './lib/montecarlo.mjs';
 import { pruefeUndSendeSignalDigest } from './lib/signaldigest.mjs';
 import { pruefeUndSpeichereScoreVerlauf } from './lib/scoreverlauf.mjs';
+import { pruefeUndAktualisiereBenchmark } from './lib/benchmark.mjs';
 import { ladeAnstehendeHighImpactEvents, istInEventFenster } from './lib/wirtschaftskalender.mjs';
 import { buildStatus, buildTradesCsv } from './lib/status.mjs';
 import { readConfig } from './lib/config.mjs';
@@ -419,6 +420,11 @@ async function runAll(env) {
     await pruefeUndSpeichereScoreVerlauf(env, cfg);
   } catch (err) {
     console.error('[trading-bot] Fehler beim Score-Verlauf:', err);
+  }
+  try {
+    await pruefeUndAktualisiereBenchmark(env, cfg);
+  } catch (err) {
+    console.error('[trading-bot] Fehler beim Markt-Benchmark:', err);
   }
 }
 
