@@ -1171,6 +1171,29 @@ html.embedded .subtitle{display:none;}
     </div>`;
   }
 
+  // Krypto-Pendant zur Fundamentaldaten-Karte des Aktien-Bots: Market Cap,
+  // Fully-Diluted-Valuation, Supply und ATH/ATL - alles bereits Teil der
+  // ohnehin geladenen CoinGecko-Top-100-Liste (siehe topMoversCard), kein
+  // zusätzlicher API-Call nötig.
+  function cryptoFundamentalsCard(cryptoData, markets) {
+    if (!cryptoData || cryptoData.fehler || !markets) return '';
+    const treffer = (cryptoData.symbole || []).map((s) => ({ s, m: markets.find((m) => m.id === COINGECKO_IDS[basisSymbol(s.symbol)]) })).filter((t) => t.m);
+    if (!treffer.length) return '';
+    const fmtGross = (n) => n == null ? '–' : n >= 1e9 ? `$${(n / 1e9).toFixed(2)} Mrd.` : `$${(n / 1e6).toFixed(1)} Mio.`;
+    const fmtSupply = (n) => n == null ? '–' : n.toLocaleString('de-DE', { maximumFractionDigits: 0 });
+    const rows = treffer.map(({ s, m }) => {
+      const supplyProzent = m.max_supply ? (m.circulating_supply / m.max_supply) * 100 : null;
+      return `<tr><td>${s.symbol}</td><td>${fmtGross(m.market_cap)}</td><td>${fmtGross(m.fully_diluted_valuation)}</td>
+        <td>${fmtSupply(m.circulating_supply)}${m.max_supply ? ` / ${fmtSupply(m.max_supply)} (${supplyProzent.toFixed(0)}%)` : ' / ∞'}</td>
+        <td class="red">-${Math.abs(m.ath_change_percentage).toFixed(1)}% <span style="color:#526174;">vom ATH ($${m.ath.toLocaleString('de-DE')})</span></td></tr>`;
+    }).join('');
+    return `<div class="card full">
+      <div class="card-head"><div class="card-title">📑 Krypto-Fundamentaldaten</div><div class="card-meta">CoinGecko, live</div></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>Market Cap</th><th>FDV</th><th>Supply (zirkulierend / max)</th><th>Abstand zum ATH</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="note">FDV (Fully-Diluted-Valuation) = Market Cap, wenn die komplette Max-Supply im Umlauf wäre - bei Coins ohne feste Max-Supply (∞) entspricht sie der Market Cap. Reine Beobachtung, keine Kauf-/Verkaufsempfehlung.</div>
+    </div>`;
+  }
+
   // Für Alerts, die Bot-Daten MIT Live-Internet-Daten kombinieren (siehe
   // renderAlerts) - vom Markt-Loop unten befüllt, unabhängig vom 30s-Poll.
   let letzteFg = null;
@@ -1223,6 +1246,7 @@ html.embedded .subtitle{display:none;}
 
     let html = fearGreedCard(fg) + globalMarketCard(global) + trendingCard(trending);
     html += topMoversCard(markets);
+    html += cryptoFundamentalsCard(cryptoData, markets);
     html += priceCheckCard(cryptoData, preise);
     el.innerHTML = html;
 
