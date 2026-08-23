@@ -891,6 +891,26 @@ liegt unter `copytrading:letzte` und wird von `/status` als
 `copyTrading`-Feld ausgeliefert. Trading Deck zeigt es im eigenen
 Abschnitt "🏆 OKX Copy-Trading Leaderboard".
 
+## Preis-Radar (`lib/pricevergleich.mjs`)
+
+Vergleicht den aktuellen Kurs jedes konfigurierten Coins GLEICHZEITIG auf
+allen 3 unterstützten Börsen (Binance, Kraken, Coinbase) - unabhängig
+davon, welche davon der Bot gerade tatsächlich handelt. Nutzt dafür die
+bereits vorhandenen, öffentlichen Exchange-Adapter aus `lib/exchanges.mjs`
+(reine Marktdaten-Endpoints, kein Auth, keine neuen API-Keys nötig). Zeigt,
+ob eine Börse gerade spürbar teurer/günstiger ist als die anderen (der
+bekannte "Coinbase-Premium"-Effekt z.B.) - rein informativ, löst NIE einen
+Trade aus.
+
+Läuft höchstens 1x pro Tag (KV-Key `preisradar:letzterTag`, dieselbe
+Kadenz wie Scanner/Copy-Trading) - bewusst ein tägliches Preisgefälle-Bild
+statt ein Live-Arbitrage-Feed, das wären bei 3 Börsen × 8 Coins pro
+Dashboard-Refresh (alle 30s) zu viele Anfragen an die kostenlosen
+öffentlichen APIs. Ergebnis liegt unter `preisradar:letzte` und wird von
+`/status` als `preisRadar`-Feld ausgeliefert. Trading Deck zeigt es im
+eigenen Abschnitt "💱 Preis-Radar", sortiert nach dem größten Spread
+zuerst, niedrigster Preis grün / höchster rot markiert.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 `GET /reset-kill-switch?key=<TRIGGER_SECRET>&symbol=<SYMBOL>` setzt NUR
