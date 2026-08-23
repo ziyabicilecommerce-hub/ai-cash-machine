@@ -281,6 +281,17 @@ keine offizielle Zuordnung, nur der Firmenname aus der Meldung selbst
 wird gezeigt. Offenlegung darf bis zu 45 Tage nach Quartalsende dauern -
 nie ein Echtzeit-Signal, keine Kauf-/Verkaufsempfehlung.
 
+**Material Events** (`lib/materialevents.mjs`): läuft höchstens 1x pro
+Tag. SEC Form 8-K: börsennotierte Firmen müssen jedes wesentliche
+Ereignis (Führungswechsel, Insolvenz, Delisting-Warnung, Übernahme,
+Kontrollwechsel, gekündigte Großverträge, ...) innerhalb von nur 4
+Werktagen der SEC melden - das genaue Gegenteil von Geheimhaltung.
+Reutzt dieselbe CIK-Auflösung wie Insider-Trades/Insider-Buys, braucht
+KEIN XML-Parsing (die SEC liefert die Item-Codes direkt in der
+Filing-Liste) - deshalb besonders robust und günstig. `/status` liefert
+das Ergebnis als `materialEvents`-Feld. Reine Beobachtung, keine
+Kauf-/Verkaufsempfehlung.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch

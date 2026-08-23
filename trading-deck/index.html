@@ -329,6 +329,9 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 <div class="section-label">💼 Smart Money — was Warren Buffett &amp; Co. gerade tun</div>
 <section class="grid" id="smartMoneyGrid"></section>
 
+<div class="section-label">📰 Material Events — Firmennews, bevor sie jeder mitbekommt</div>
+<section class="grid"><div class="card full" id="materialEventsWrap"></div></section>
+
 <div class="section-label">🏆 Bist du besser als 100% der Leute?</div>
 <section class="grid" id="benchmarkGrid"></section>
 
@@ -1162,6 +1165,32 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
       `<div class="card full"><div class="note">SEC Form 13F: institutionelle Investmentmanager mit über 100 Mio. USD verwaltetem Vermögen müssen JEDES Quartal ihre komplette Aktien-Positionsliste offenlegen - in der Finanzwelt oft "das legale Insider-Wissen" genannt. WICHTIG: Offenlegung darf bis zu 45 Tage nach Quartalsende dauern - die Positionen können sich seitdem längst geändert haben, das ist also Geschichte, kein Echtzeit-Signal. Reine Beobachtung, keine Kauf-/Verkaufsempfehlung. Zuletzt aktualisiert: ${fmtDatum(daten.datum)}.</div></div>`;
   }
 
+  // ---- MATERIAL EVENTS (SEC Form 8-K, Pflicht-Sofortoffenlegung) ----
+  // Börsennotierte Firmen müssen wesentliche Ereignisse (Führungswechsel,
+  // Insolvenz, Delisting-Warnung, Übernahme, Kontrollwechsel...) binnen 4
+  // Werktagen der SEC melden - fühlt sich an wie brandheiße Insider-News,
+  // ist aber Pflicht-Sofortoffenlegung. Kommt fertig aus dem Worker (siehe
+  // lib/materialevents.mjs), hier wird nur gerendert.
+  function materialEventZeile(symbol, e) {
+    const items = e.items.map((i) => `<span class="badge ${i.kritisch ? 'red' : 'yellow'}" style="margin:2px;">${escapeHtml(i.beschreibung)}</span>`).join(' ');
+    return `<tr><td>${escapeHtml(symbol)}</td><td>${items}</td><td>${escapeHtml(e.gemeldetAm)}</td>
+      <td><a href="${e.link}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);">Meldung ↗</a></td></tr>`;
+  }
+  function renderMaterialEvents(stocksData) {
+    const el = document.getElementById('materialEventsWrap');
+    const sOk = stocksData && !stocksData.fehler;
+    const daten = sOk ? stocksData.materialEvents : null;
+    if (!daten || !daten.symbole || !Object.keys(daten.symbole).length) {
+      el.innerHTML = `<div class="card-head"><div class="card-title">📰 Material Events (SEC Form 8-K)</div></div>
+        <div class="empty">${sOk ? 'Noch keine Daten (läuft täglich) oder aktuell keine 8-K-Meldungen bei deinen Symbolen.' : 'Noch kein Aktien-Bot verbunden.'}</div>`;
+      return;
+    }
+    const zeilen = Object.entries(daten.symbole).flatMap(([symbol, eintraege]) => eintraege.map((e) => materialEventZeile(symbol, e))).join('');
+    el.innerHTML = `<div class="card-head"><div class="card-title">📰 Wesentliche Firmenereignisse bei deinen Aktien-Symbolen</div><div class="card-meta">Form 8-K, ${fmtDatum(daten.datum)}</div></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>Ereignis(se)</th><th>Gemeldet</th><th>Beleg</th></tr></thead><tbody>${zeilen}</tbody></table></div>
+      <div class="note">100% legal und pflichtoffengelegt: börsennotierte Firmen müssen JEDES wesentliche Ereignis (Führungswechsel, Insolvenz, Delisting-Warnung, Übernahme, Kontrollwechsel, gekündigte Großverträge...) innerhalb von nur 4 Werktagen der SEC melden - das genaue Gegenteil von Geheimhaltung. Rot markierte Ereignisse gelten gemeinhin als besonders gravierend. Reine Beobachtung, keine Kauf-/Verkaufsempfehlung.</div>`;
+  }
+
   // ---- BENCHMARK ("Bist du besser als 100% der Leute?") ----
   // Vergleicht die Paper-Portfolio-Rendite mit simplem Kaufen-und-
   // Liegenlassen derselben Symbole (+ beim Aktien-Bot zusätzlich mit dem
@@ -1605,6 +1634,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     ladeCongressTradesEinmalig(stocksData);
     renderInsiderTrades(stocksData);
     renderSmartMoney(stocksData);
+    renderMaterialEvents(stocksData);
     renderErfolge(cryptoData, stocksData);
     clearTimeout(window.__refreshTimer);
     window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
