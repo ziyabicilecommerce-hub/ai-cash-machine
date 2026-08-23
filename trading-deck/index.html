@@ -139,6 +139,18 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 }
 .erfolg.neu{animation:erfolg-pop .5s ease;}
 
+/* RISIKO-THERMOMETER */
+.thermo-wrap{display:flex; align-items:center; gap:26px; flex-wrap:wrap;}
+.thermo-ring{width:150px; height:150px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative;}
+.thermo-ring::before{content:''; position:absolute; inset:11px; border-radius:50%; background:var(--panel);}
+.thermo-value{position:relative; font-size:38px; font-weight:900; z-index:1; line-height:1;}
+.thermo-sub{position:relative; font-size:10.5px; color:var(--muted); z-index:1; margin-top:5px; letter-spacing:.5px; text-transform:uppercase;}
+.thermo-info{flex:1; min-width:220px;}
+.thermo-titel{font-size:20px; font-weight:900; margin-bottom:6px;}
+.thermo-faktoren{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+@keyframes thermo-puls{0%,100%{box-shadow:0 0 0 0 rgba(255,77,103,.35);} 50%{box-shadow:0 0 0 14px rgba(255,77,103,0);}}
+.thermo-ring.heiss{animation:thermo-puls 1.8s ease-in-out infinite;}
+
 /* RISK */
 .risk-row{margin:15px 0;}
 .risk-top{display:flex; justify-content:space-between; font-size:11px;}
@@ -248,7 +260,8 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 <aside class="sidebar">
   <div class="nav-title">COMMAND</div>
   <div class="nav">
-    <button class="active" data-nav="overview" onclick="scrollToId('overview')">🎯 Overview</button>
+    <button class="active" data-nav="thermometer" onclick="scrollToId('thermometer')">🌡️ Thermometer</button>
+    <button data-nav="overview" onclick="scrollToId('overview')">🎯 Overview</button>
     <button data-nav="erfolge" onclick="scrollToId('erfolge')">🏅 Erfolge</button>
     <button data-nav="chart" onclick="scrollToId('chart')">📊 Live-Chart</button>
     <button data-nav="market" onclick="scrollToId('market')">🌐 Live-Markt</button>
@@ -286,6 +299,9 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 <div id="tvTickerTapeWrap" class="tradingview-widget-container" style="margin-bottom:16px;border:1px solid var(--line);border-radius:10px;overflow:hidden;"></div>
 
 <section class="command" id="commandBar"></section>
+
+<div class="section-label" id="thermometer">🌡️ Risiko-Thermometer — wie heiß läuft's gerade?</div>
+<section class="grid"><div class="card full" id="thermoWrap"></div></section>
 
 <div class="section-label" id="overview">Overview</div>
 <section class="grid" id="overviewGrid"></section>
@@ -620,6 +636,79 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
         <div class="command-value ${verbunden === 2 ? 'green' : verbunden === 1 ? 'yellow' : 'red'}">${verbunden}/2</div>
       </div>
     `;
+  }
+
+  // ---- RISIKO-THERMOMETER ----
+  // Ein einziger, dramatischer 0-100-Wert, der mehrere bereits vorhandene
+  // Risiko-Signale beider Bots zusammenfasst (Monte-Carlo-Kill-Switch-
+  // Wahrscheinlichkeit, aktive Kill-Switches, Korrelationsrisiko, Crash-/
+  // News-Filter) - reine Zusammenfassung, kein neuer Wert, keine Prognose,
+  // keine Kauf-/Verkaufsempfehlung. Ändert nie eine Order.
+  function berechneRisikoTemperatur(cryptoData, stocksData) {
+    const bots = [cryptoData, stocksData].filter((d) => d && !d.fehler);
+    if (!bots.length) return null;
+
+    const mcWerte = [];
+    let killSwitchAnzahl = 0;
+    let maxKorrelation = 0;
+    let crashAktiv = false, newsAktiv = false;
+
+    for (const d of bots) {
+      for (const s of d.symbole || []) {
+        if (s.monteCarlo && typeof s.monteCarlo.wahrscheinlichkeitKillSwitchProzent === 'number') mcWerte.push(s.monteCarlo.wahrscheinlichkeitKillSwitchProzent);
+        if (s.killSwitchAktiv) killSwitchAnzahl++;
+      }
+      if (d.korrelation && d.korrelation.matrix) {
+        const syms = Object.keys(d.korrelation.matrix);
+        for (let i = 0; i < syms.length; i++) for (let j = i + 1; j < syms.length; j++) {
+          const wert = d.korrelation.matrix[syms[i]][syms[j]];
+          if (wert != null) maxKorrelation = Math.max(maxKorrelation, Math.abs(wert));
+        }
+      }
+      if (d.marktweiterCrashAktiv ?? (d.marktSignale && d.marktSignale.marktweiterCrashAktiv)) crashAktiv = true;
+      if (d.newsEventAktiv ?? (d.marktSignale && d.marktSignale.newsEventAktiv)) newsAktiv = true;
+    }
+
+    const mcDurchschnitt = mcWerte.length ? mcWerte.reduce((a, b) => a + b, 0) / mcWerte.length : 0;
+    let temperatur = mcDurchschnitt;
+    temperatur += Math.min(30, killSwitchAnzahl * 15);
+    if (maxKorrelation >= 0.7) temperatur += 10;
+    if (crashAktiv) temperatur += 10;
+    if (newsAktiv) temperatur += 5;
+    temperatur = Math.min(100, Math.round(temperatur));
+
+    const faktoren = [];
+    if (mcWerte.length) faktoren.push(`Ø ${mcDurchschnitt.toFixed(0)}% Monte-Carlo-Kill-Switch-Risiko`);
+    if (killSwitchAnzahl) faktoren.push(`${killSwitchAnzahl} aktive(r) Kill-Switch`);
+    if (maxKorrelation >= 0.7) faktoren.push(`Korrelation ${maxKorrelation.toFixed(2)} zwischen Symbolen`);
+    if (crashAktiv) faktoren.push('Marktweiter Crash-Schutz aktiv');
+    if (newsAktiv) faktoren.push('Wirtschaftskalender-Filter aktiv');
+    if (!faktoren.length) faktoren.push('Keine erhöhten Risikosignale gefunden');
+
+    return { temperatur, faktoren };
+  }
+  function renderThermometer(cryptoData, stocksData) {
+    const el = document.getElementById('thermoWrap');
+    const daten = berechneRisikoTemperatur(cryptoData, stocksData);
+    if (!daten) { el.innerHTML = '<div class="empty">Noch keine Bots verbunden.</div>'; return; }
+    const { temperatur, faktoren } = daten;
+    const stufe = temperatur >= 67 ? { emoji: '🔥', label: 'HEISS', farbe: 'var(--red)', text: 'Erhöhtes Risiko - mehrere Warnsignale aktiv gleichzeitig.' }
+      : temperatur >= 34 ? { emoji: '🌡️', label: 'WARM', farbe: 'var(--yellow)', text: 'Etwas Vorsicht angebracht - einzelne Risikosignale aktiv.' }
+      : { emoji: '❄️', label: 'KALT', farbe: 'var(--green)', text: 'Entspannt - aktuell keine erhöhten Risikosignale.' };
+    el.innerHTML = `<div class="thermo-wrap">
+      <div class="thermo-ring ${temperatur >= 67 ? 'heiss' : ''}" style="background:conic-gradient(${stufe.farbe} calc(${temperatur} * 1%), rgba(255,255,255,.06) 0);">
+        <div style="text-align:center;">
+          <div class="thermo-value" style="color:${stufe.farbe};">${temperatur}</div>
+          <div class="thermo-sub">/ 100</div>
+        </div>
+      </div>
+      <div class="thermo-info">
+        <div class="thermo-titel">${stufe.emoji} ${stufe.label}</div>
+        <div style="color:var(--muted);font-size:13px;">${stufe.text}</div>
+        <div class="thermo-faktoren">${faktoren.map((f) => `<span class="badge yellow">${escapeHtml(f)}</span>`).join('')}</div>
+        <div class="note" style="margin-top:12px;">Zusammenfassung aus Monte-Carlo-Kill-Switch-Wahrscheinlichkeit, aktiven Kill-Switches, Korrelationsrisiko und Crash-/News-Filtern beider Bots - reine Beobachtung, ändert nie eine Order, keine Kauf-/Verkaufsempfehlung.</div>
+      </div>
+    </div>`;
   }
 
   // ---- OVERVIEW ----
@@ -1628,6 +1717,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     letzteCryptoData = cryptoData;
     letzteStocksData = stocksData;
     renderCommandBar(cryptoData, stocksData, cryptoRes.latencyMs, stocksRes.latencyMs);
+    renderThermometer(cryptoData, stocksData);
     renderOverview(cryptoData, stocksData);
     renderHeatmap(cryptoData, stocksData);
     befuelleChartAuswahl(cryptoData, stocksData);
