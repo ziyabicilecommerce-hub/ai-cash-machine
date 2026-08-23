@@ -300,6 +300,9 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 <div class="section-label">🏛️ Congress-Trades — legal, aber fühlt sich nicht so an</div>
 <section class="grid"><div class="card full" id="congressTradesWrap"></div></section>
 
+<div class="section-label">🕵️ SEC Insider-Trades — legales "Insider-Trading"</div>
+<section class="grid"><div class="card full" id="insiderTradesWrap"></div></section>
+
 <div class="section-label" id="analyst">AI Analyst — Go-Live-Readiness</div>
 <section class="grid" id="analystGrid"></section>
 <div class="grid" id="regimeGrid"></div>
@@ -952,6 +955,35 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     }
   }
 
+  // ---- SEC INSIDER-TRADES (Form 4, 100% legal, pflichtoffengelegt) ----
+  // Anders als Congress-Trades kommt das hier NICHT per Client-Fetch (die
+  // SEC-Archives-Endpoints haben kein CORS für Browser) - der Aktien-Bot
+  // holt und parst die Form-4-Filings serverseitig 1x pro Woche und legt
+  // das Ergebnis in stocksData.insiderTrades ab. Hier wird nur gerendert.
+  function insiderTradeZeilen(symbol, eintrag) {
+    return eintrag.transaktionen.map((t) => {
+      const istKauf = t.code === 'P';
+      return `<tr><td>${escapeHtml(symbol)}</td><td>${escapeHtml(eintrag.owner)} <span style="color:#526174;">(${escapeHtml(eintrag.rolle)})</span></td>
+        <td class="${istKauf ? 'green' : 'red'}">${istKauf ? 'KAUF' : 'VERKAUF'}</td>
+        <td>${t.shares.toLocaleString('de-DE')} Stk.</td><td>$${t.preis.toFixed(2)}</td><td>$${t.wert.toLocaleString('de-DE')}</td>
+        <td>${escapeHtml(t.datum)}</td><td>${escapeHtml(eintrag.filingDatum)}</td></tr>`;
+    }).join('');
+  }
+  function renderInsiderTrades(stocksData) {
+    const el = document.getElementById('insiderTradesWrap');
+    const sOk = stocksData && !stocksData.fehler;
+    const daten = sOk ? stocksData.insiderTrades : null;
+    if (!daten || !daten.symbole || !Object.keys(daten.symbole).length) {
+      el.innerHTML = `<div class="card-head"><div class="card-title">🕵️ SEC Insider-Trades bei deinen Aktien-Symbolen</div></div>
+        <div class="empty">${sOk ? 'Noch keine Daten (läuft montags) oder aktuell keine offenen Käufe/Verkäufe von Insidern bei deinen Symbolen.' : 'Noch kein Aktien-Bot verbunden.'}</div>`;
+      return;
+    }
+    const zeilen = Object.entries(daten.symbole).flatMap(([symbol, eintraege]) => eintraege.flatMap((e) => insiderTradeZeilen(symbol, e))).join('');
+    el.innerHTML = `<div class="card-head"><div class="card-title">🕵️ SEC Insider-Trades bei deinen Aktien-Symbolen</div><div class="card-meta">Form 4, ${fmtDatum(daten.datum)}</div></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>Insider</th><th>Typ</th><th>Menge</th><th>Preis</th><th>Wert</th><th>Transaktion</th><th>Gemeldet</th></tr></thead><tbody>${zeilen}</tbody></table></div>
+      <div class="note">100% legal und pflichtoffengelegt: Führungskräfte/Direktoren müssen JEDEN eigenen Aktienkauf/-verkauf (Section 16) innerhalb von 2 Werktagen der SEC melden - viel schneller als der Congress (bis 45 Tage). Nur echte Käufe/Verkäufe am offenen Markt (keine Aktienpakete/Optionsausübungen). Insider verkaufen oft aus Gründen, die nichts mit ihrer Meinung zur Aktie zu tun haben (Steuern, Diversifikation, geplante 10b5-1-Programme) - reine Beobachtung, keine Kauf-/Verkaufsempfehlung.</div>`;
+  }
+
   // ---- SCANNER ----
   function scannerCard(name, icon, scanner, changeFeld, zeitraumLabel) {
     if (!scanner) return `<div class="card half"><div class="card-head"><div class="card-title">${icon} ${name}</div></div><div class="empty">Noch keine Scanner-Daten (läuft täglich).</div></div>`;
@@ -1263,6 +1295,20 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
       }
     }
 
+    const insiderDaten = stocksData && !stocksData.fehler ? stocksData.insiderTrades : null;
+    if (insiderDaten && insiderDaten.symbole) {
+      for (const [symbol, eintraege] of Object.entries(insiderDaten.symbole)) {
+        for (const e of eintraege) {
+          const gemeldetVor = (heute - new Date(e.filingDatum)) / (1000 * 60 * 60 * 24);
+          if (gemeldetVor < 0 || gemeldetVor > 7) continue;
+          for (const t of e.transaktionen) {
+            const istKauf = t.code === 'P';
+            alerts.push(alertRow(istKauf ? '🕵️💰' : '🕵️', `${escapeHtml(e.owner)} (${escapeHtml(e.rolle)}) hat ${istKauf ? 'einen Kauf' : 'einen Verkauf'} bei <b>${escapeHtml(symbol)}</b> gemeldet - ${t.shares.toLocaleString('de-DE')} Stk. am ${escapeHtml(t.datum)}, keine Kauf-/Verkaufsempfehlung.`, escapeHtml(e.filingDatum)));
+          }
+        }
+      }
+    }
+
     el.innerHTML = `<div class="card full">${alerts.length ? alerts.map((a) => a.html).join('') : '<div class="empty">Keine aktiven Alerts - alles unauffällig.</div>'}</div>`;
     verarbeiteNeueAlerts(alerts.map((a) => a.text));
   }
@@ -1315,6 +1361,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     renderAlerts(cryptoData, stocksData);
     renderHealth(cryptoData, stocksData, cryptoRes.latencyMs, stocksRes.latencyMs);
     ladeCongressTradesEinmalig(stocksData);
+    renderInsiderTrades(stocksData);
     clearTimeout(window.__refreshTimer);
     window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
   }

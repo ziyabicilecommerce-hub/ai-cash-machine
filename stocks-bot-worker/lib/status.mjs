@@ -152,6 +152,14 @@ export async function buildStatus(env) {
     // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
   }
 
+  let insiderTrades = null;
+  try {
+    const raw = await env.STOCKS_STATE.get('insidertrades:letzte');
+    if (raw) insiderTrades = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   const portfolioKennzahlen = berechneRisikoKennzahlen(alleTrades);
 
   return {
@@ -171,6 +179,7 @@ export async function buildStatus(env) {
     aiReview,
     korrelation,
     scanner,
+    insiderTrades,
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
       maxTagesverlustProzent: cfg.maxTagesverlustProzent,
