@@ -296,6 +296,36 @@ Filing-Liste) - deshalb besonders robust und günstig. `/status` liefert
 das Ergebnis als `materialEvents`-Feld. Reine Beobachtung, keine
 Kauf-/Verkaufsempfehlung.
 
+**Break-even-Stop** (`lib/strategie.mjs`, Default AUS): sobald ein Trade
+um mind. `STOCKS_BREAK_EVEN_AB_PROZENT` im Plus war, wird die Stop-Loss-
+Grenze mindestens auf den Einstiegspreis (+ `STOCKS_BREAK_EVEN_PUFFER_
+PROZENT`, Default 0.1%) angehoben - der Trade kann danach nicht mehr mit
+Verlust schließen. Läuft parallel zum bestehenden Trailing-Stop, es gilt
+jeweils die höhere der Grenzen.
+
+**Slippage & Gebühren im Auto-Backtest** (`lib/autobacktest.mjs`):
+Backtest-Trades berücksichtigen jetzt `STOCKS_BACKTEST_SLIPPAGE_PROZENT`
+(Default 0.05%) und `STOCKS_BACKTEST_GEBUEHR_PROZENT` (Default 0% -
+Alpaca-Aktienhandel ist provisionsfrei) auf jeden Ein-/Ausstieg - realis-
+tischere Zahlen statt reiner Kursbewegung ohne Handelskosten. Betrifft
+NUR den Backtest, nie echte Trades.
+
+**Walk-Forward-Testing** (`lib/autobacktest.mjs`): der 14-Tage-Backtest-
+Zeitraum wird zusätzlich in 3 aufeinanderfolgende Zeitfenster geteilt und
+JE Fenster separat ausgewertet (Return, Trades, Win-Rate) - deckt auf, ob
+die Gesamt-Rendite gleichmäßig entsteht oder nur von einem einzelnen
+Zeitfenster getragen wird (Overfitting-Warnsignal). `/status` liefert das
+als `walkForward`-Feld je Symbol in `autoBacktest`, Trading Deck zeigt es
+unter der Backtest-Tabelle.
+
+**Fundamentaldaten** (`lib/fundamentals.mjs`): echte Umsatz-/Nettogewinn-/
+EPS-Zahlen direkt aus den XBRL-Daten der letzten SEC-10-K/10-Q-Meldung,
+kostenlos und ohne API-Key. Läuft höchstens 1x pro Woche (ändert sich nur
+quartalsweise). **Bewusst kein Trading-Filter** - die XBRL-Tag-Zuordnung
+variiert zwischen Firmen, eine ungetestete Kauf-/Verkaufslogik darauf
+aufzubauen wäre fahrlässig. `/status` liefert das als `fundamentals`-Feld,
+Trading Deck zeigt es als eigene Karte.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch

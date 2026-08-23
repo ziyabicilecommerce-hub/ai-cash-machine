@@ -107,5 +107,21 @@ export function readConfig(env) {
     insiderLookbackTage: parseInt(env.STOCKS_INSIDER_LOOKBACK_TAGE || '7', 10),
     insiderMinKaufwertUsd: parseFloat(env.STOCKS_INSIDER_MIN_KAUFWERT_USD || '100000'),
     insiderBoostFaktor: parseFloat(env.STOCKS_INSIDER_BOOST_FAKTOR || '1.2'),
+    // Break-even-Stop (Default AUS): sobald ein Trade um mind. diesen Prozent-
+    // satz im Plus war, wird die Stop-Loss-Grenze mindestens auf den
+    // Einstiegspreis (+ kleiner Puffer) angehoben - der Trade kann danach
+    // nicht mehr mit Verlust schließen. Läuft parallel zum bestehenden
+    // Trailing-Stop (siehe lib/strategie.mjs); es gilt jeweils die höhere
+    // der beiden Grenzen. Betrifft NUR den Stop-Loss, nie den Einstieg.
+    breakEvenAbProzent: parseFloat(env.STOCKS_BREAK_EVEN_AB_PROZENT || '0'),
+    breakEvenPufferProzent: parseFloat(env.STOCKS_BREAK_EVEN_PUFFER_PROZENT || '0.1'),
+    // Slippage & Gebühren im Auto-Backtest (siehe lib/autobacktest.mjs) -
+    // macht die Backtest-Zahlen realistischer statt reine Kursbewegung ohne
+    // Handelskosten zu zeigen. Betrifft NUR den Backtest, nie echte Trades
+    // (die spiegeln echte Fills ohnehin real wider). Alpaca-Aktienhandel ist
+    // provisionsfrei, deshalb Gebühr-Default 0 - Slippage bleibt trotzdem
+    // relevant (Spread/Marktimpact).
+    backtestSlippageProzent: parseFloat(env.STOCKS_BACKTEST_SLIPPAGE_PROZENT || '0.05'),
+    backtestGebuehrProzent: parseFloat(env.STOCKS_BACKTEST_GEBUEHR_PROZENT || '0'),
   };
 }

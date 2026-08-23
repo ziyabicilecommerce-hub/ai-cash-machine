@@ -33,6 +33,7 @@ import { pruefeUndAktualisiereScanner } from './lib/scanner.mjs';
 import { pruefeUndAktualisiereGlobaleMaerkte } from './lib/globalmarkets.mjs';
 import { pruefeUndAktualisiereSmartMoney } from './lib/smartmoney.mjs';
 import { pruefeUndAktualisiereMaterialEvents } from './lib/materialevents.mjs';
+import { pruefeUndAktualisiereFundamentaldaten } from './lib/fundamentals.mjs';
 import { pruefeUndAktualisiereMonteCarlo } from './lib/montecarlo.mjs';
 import { pruefeUndSendeSignalDigest } from './lib/signaldigest.mjs';
 import { pruefeUndSpeichereScoreVerlauf } from './lib/scoreverlauf.mjs';
@@ -311,6 +312,11 @@ async function runAll(env) {
     await pruefeUndAktualisiereMaterialEvents(env, cfg);
   } catch (err) {
     console.error('[stocks-bot] Fehler bei Material-Events (8-K):', err);
+  }
+  try {
+    await pruefeUndAktualisiereFundamentaldaten(env, cfg);
+  } catch (err) {
+    console.error('[stocks-bot] Fehler bei den Fundamentaldaten:', err);
   }
   try {
     await pruefeUndAktualisiereScanner(env, cfg);

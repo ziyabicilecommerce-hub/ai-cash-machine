@@ -755,6 +755,30 @@ erklärt die Reihenfolge.
    spürbar in der Rechnung. Zum Zurückstellen: `crons = ["*/5 * * * *"]`
    in `wrangler.toml` und neu deployen.
 
+## Break-even-Stop, Slippage/Gebühren & Walk-Forward-Testing
+
+**Break-even-Stop** (`lib/strategie.mjs`, Default AUS): sobald ein Trade
+um mind. `TRADING_BREAK_EVEN_AB_PROZENT` im Plus war, wird die Stop-Loss-
+Grenze mindestens auf den Einstiegspreis (+ `TRADING_BREAK_EVEN_PUFFER_
+PROZENT`, Default 0.1%) angehoben - der Trade kann danach nicht mehr mit
+Verlust schließen. Läuft parallel zum bestehenden Trailing-Stop, es gilt
+jeweils die höhere der Grenzen.
+
+**Slippage & Gebühren im Auto-Backtest** (`lib/autobacktest.mjs`):
+Backtest-Trades berücksichtigen jetzt `TRADING_BACKTEST_SLIPPAGE_PROZENT`
+(Default 0.05%) und `TRADING_BACKTEST_GEBUEHR_PROZENT` (Default 0.1% -
+typischer Taker-Fee bei Binance/Kraken) auf jeden Ein-/Ausstieg -
+realistischere Zahlen statt reiner Kursbewegung ohne Handelskosten.
+Betrifft NUR den Backtest, nie echte Trades.
+
+**Walk-Forward-Testing** (`lib/autobacktest.mjs`): der 14-Tage-Backtest-
+Zeitraum wird zusätzlich in 3 aufeinanderfolgende Zeitfenster geteilt und
+JE Fenster separat ausgewertet (Return, Trades, Win-Rate) - deckt auf, ob
+die Gesamt-Rendite gleichmäßig entsteht oder nur von einem einzelnen
+Zeitfenster getragen wird (Overfitting-Warnsignal). `/status` liefert das
+als `walkForward`-Feld je Symbol in `autoBacktest`, Trading Deck zeigt es
+unter der Backtest-Tabelle.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 `GET /reset-kill-switch?key=<TRIGGER_SECRET>&symbol=<SYMBOL>` setzt NUR

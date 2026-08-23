@@ -192,6 +192,14 @@ export async function buildStatus(env) {
     // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
   }
 
+  let fundamentals = null;
+  try {
+    const raw = await env.STOCKS_STATE.get('fundamentals:letzte');
+    if (raw) fundamentals = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   const gesamtStartKapital = symbole.reduce((s, x) => s + x.startKapital, 0);
   const portfolioKennzahlen = berechneRisikoKennzahlen(alleTrades, gesamtStartKapital);
 
@@ -217,6 +225,7 @@ export async function buildStatus(env) {
     globaleMaerkte,
     smartMoney,
     materialEvents,
+    fundamentals,
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
       maxTagesverlustProzent: cfg.maxTagesverlustProzent,

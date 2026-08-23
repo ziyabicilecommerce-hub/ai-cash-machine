@@ -158,5 +158,19 @@ export function readConfig(env) {
     // deshalb standardmäßig an.
     newsEventFilter: (env.TRADING_NEWS_EVENT_FILTER || 'ja') === 'ja',
     newsEventFensterMinuten: parseInt(env.TRADING_NEWS_EVENT_FENSTER_MINUTEN || '30', 10),
+    // Break-even-Stop (Default AUS, Pendant zum Aktien-Bot): sobald ein
+    // Trade um mind. diesen Prozentsatz im Plus war, wird die Stop-Loss-
+    // Grenze mindestens auf den Einstiegspreis (+ kleiner Puffer) angehoben -
+    // der Trade kann danach nicht mehr mit Verlust schließen. Läuft
+    // parallel zum bestehenden Trailing-Stop (siehe lib/strategie.mjs); es
+    // gilt jeweils die höhere der beiden Grenzen.
+    breakEvenAbProzent: parseFloat(env.TRADING_BREAK_EVEN_AB_PROZENT || '0'),
+    breakEvenPufferProzent: parseFloat(env.TRADING_BREAK_EVEN_PUFFER_PROZENT || '0.1'),
+    // Slippage & Gebühren im Auto-Backtest (Pendant zum Aktien-Bot, siehe
+    // lib/autobacktest.mjs) - macht die Backtest-Zahlen realistischer.
+    // Betrifft NUR den Backtest, nie echte Trades. Default-Gebühr 0.1%
+    // entspricht einem typischen Taker-Fee bei Binance/Kraken.
+    backtestSlippageProzent: parseFloat(env.TRADING_BACKTEST_SLIPPAGE_PROZENT || '0.05'),
+    backtestGebuehrProzent: parseFloat(env.TRADING_BACKTEST_GEBUEHR_PROZENT || '0.1'),
   };
 }
