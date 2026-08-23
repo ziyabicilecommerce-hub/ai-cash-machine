@@ -328,6 +328,12 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 <section class="grid" id="marketGrid"></section>
 <section class="grid">
   <div class="card full">
+    <div class="card-head"><div class="card-title">🐋 Whale-Alert — live vom Bitcoin-Netzwerk</div><div class="card-meta">blockchain.info Mempool</div></div>
+    <div id="whaleWrap"><div class="empty">Lädt...</div></div>
+  </div>
+</section>
+<section class="grid">
+  <div class="card full">
     <div class="card-head"><div class="card-title">📰 Wirtschaftskalender</div><div class="card-meta">echtes TradingView-Widget</div></div>
     <div id="tvCalendarWrap" class="tradingview-widget-container" style="height:460px;"></div>
     <div class="note">Selbe Idee wie Forex Factory (aus deinem Screenshot) - hoch-relevante Termine (Zinsentscheide, Inflationsdaten), genau das, was der News-Event-Filter der Bots automatisiert berücksichtigt.</div>
@@ -1132,17 +1138,41 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
   let letzteFg = null;
   let letzteMarkets = null;
 
+  // ---- WHALE-ALERT (echte, unbestätigte BTC-Mempool-Transaktionen) ----
+  // Live vom Bitcoin-Netzwerk selbst - blockchain.info listet die letzten
+  // ~100 gerade unbestätigten Transaktionen, kostenlos, kein API-Key, CORS-
+  // fähig für Browser-Fetch (per curl live geprüft). Die größten Beträge
+  // daraus, sortiert nach Größe. Rein informativ, keine Kauf-/
+  // Verkaufsempfehlung - ein großer Transfer kann alles Mögliche bedeuten
+  // (Börsen-interne Umbuchung, Cold-Storage-Move, OTC-Deal...).
+  function whaleZeile(t, btcPreisUsd) {
+    const usdText = btcPreisUsd ? ` (~$${Math.round(t.btc * btcPreisUsd).toLocaleString('de-DE')})` : '';
+    return `<tr><td>₿ ${t.btc.toFixed(2)} BTC${usdText}</td><td>${escapeHtml(t.hash.slice(0, 10))}…</td>
+      <td>${new Date(t.time * 1000).toLocaleTimeString('de-DE')}</td>
+      <td><a href="https://www.blockchain.com/explorer/transactions/btc/${t.hash}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);">Ansehen ↗</a></td></tr>`;
+  }
+  function renderWhaleAlerts(txs, btcPreisUsd) {
+    const el = document.getElementById('whaleWrap');
+    if (!el) return;
+    if (!txs.length) { el.innerHTML = '<div class="empty">Mempool-Quelle gerade nicht erreichbar.</div>'; return; }
+    const treffer = txs.map((t) => ({ hash: t.hash, time: t.time, btc: (t.out || []).reduce((s, o) => s + o.value, 0) / 1e8 }))
+      .sort((a, b) => b.btc - a.btc).slice(0, 8);
+    el.innerHTML = `<div class="table-wrap"><table class="table"><thead><tr><th>Betrag</th><th>TX-Hash</th><th>Zeit</th><th>Beleg</th></tr></thead><tbody>${treffer.map((t) => whaleZeile(t, btcPreisUsd)).join('')}</tbody></table></div>
+      <div class="note">Live vom Bitcoin-Netzwerk selbst (blockchain.info) - die größten Beträge unter den letzten ~100 gerade unbestätigten (noch nicht im Block bestätigten) Transaktionen. Ein großer Transfer kann alles bedeuten: Börsen-Umbuchung, Cold-Storage-Move, OTC-Deal - reine Beobachtung, keine Kauf-/Verkaufsempfehlung.</div>`;
+  }
+
   async function loadMarketData(cryptoData) {
     const el = document.getElementById('marketGrid');
     const basen = [...new Set((cryptoData && !cryptoData.fehler ? cryptoData.symbole || [] : []).map((s) => basisSymbol(s.symbol)).filter((b) => COINGECKO_IDS[b]))];
     const idListe = basen.map((b) => COINGECKO_IDS[b]);
 
-    const [fgRes, globalRes, trendingRes, preisRes, marketsRes] = await Promise.allSettled([
+    const [fgRes, globalRes, trendingRes, preisRes, marketsRes, whaleRes] = await Promise.allSettled([
       holeJson('https://api.alternative.me/fng/?limit=1'),
       holeJson(`${COINGECKO_BASIS}/global`),
       holeJson(`${COINGECKO_BASIS}/search/trending`),
       idListe.length ? holeJson(`${COINGECKO_BASIS}/simple/price?ids=${idListe.join(',')}&vs_currencies=usd&include_24hr_change=true`) : Promise.resolve(null),
       holeJson(`${COINGECKO_BASIS}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&price_change_percentage=24h&sparkline=false`),
+      holeJson('https://blockchain.info/unconfirmed-transactions?format=json'),
     ]);
 
     const fg = fgRes.status === 'fulfilled' ? fgRes.value.data[0] : null;
@@ -1157,6 +1187,14 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     html += topMoversCard(markets);
     html += priceCheckCard(cryptoData, preise);
     el.innerHTML = html;
+
+    // Whale-Alert: echte, unbestätigte BTC-Mempool-Transaktionen live vom
+    // Bitcoin-Netzwerk (blockchain.info, kostenlos, kein Key, CORS-fähig) -
+    // die größten der letzten ~100 unbestätigten Transaktionen. BTC-Preis
+    // kommt aus derselben CoinGecko-Top-100-Liste wie die Top-Mover-Karte.
+    const btcPreisUsd = markets ? (markets.find((m) => m.id === 'bitcoin') || {}).current_price : null;
+    const whaleTxs = whaleRes.status === 'fulfilled' ? (whaleRes.value.txs || []) : [];
+    renderWhaleAlerts(whaleTxs, btcPreisUsd);
 
     // Alerts neu berechnen - jetzt mit den frischen Live-Marktdaten (Extreme
     // Fear&Greed, große Bewegung bei einem eigenen Symbol) kombiniert.
@@ -1752,7 +1790,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 
   // Scroll-Spy: markiert den Nav-Button des sichtbaren Abschnitts als aktiv.
   (function initScrollSpy() {
-    const ids = ['overview','chart','market','analyst','scanner','risk','backtest','journal','alerts','health'];
+    const ids = ['thermometer','overview','erfolge','chart','market','congress','insider','smartmoney','events','benchmark','analyst','scanner','global','risk','backtest','journal','alerts','health'];
     const buttons = Object.fromEntries(ids.map((id) => [id, document.querySelector(`[data-nav="${id}"]`)]));
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
