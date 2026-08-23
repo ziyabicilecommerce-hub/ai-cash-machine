@@ -296,6 +296,7 @@ html.embedded .subtitle{display:none;}
     <button data-nav="insider" onclick="scrollToId('insider')">🕵️ Insider</button>
     <button data-nav="smartmoney" onclick="scrollToId('smartmoney')">💼 Smart Money</button>
     <button data-nav="copytrading" onclick="scrollToId('copytrading')">🏆 Copy-Trading</button>
+    <button data-nav="preisradar" onclick="scrollToId('preisradar')">💱 Preis-Radar</button>
     <button data-nav="events" onclick="scrollToId('events')">📰 Events</button>
     <button data-nav="fundamentals" onclick="scrollToId('fundamentals')">📑 Fundamental</button>
     <button data-nav="benchmark" onclick="scrollToId('benchmark')">🏆 Benchmark</button>
@@ -392,6 +393,9 @@ html.embedded .subtitle{display:none;}
 
 <div class="section-label" id="copytrading">🏆 OKX Copy-Trading Leaderboard — Platz 1 live mitverfolgen</div>
 <section class="grid"><div class="card full" id="copyTradingWrap"></div></section>
+
+<div class="section-label" id="preisradar">💱 Preis-Radar — derselbe Coin auf 3 Börsen gleichzeitig</div>
+<section class="grid"><div class="card full" id="preisRadarWrap"></div></section>
 
 <div class="section-label" id="events">📰 Material Events — Firmennews, bevor sie jeder mitbekommt</div>
 <section class="grid"><div class="card full" id="materialEventsWrap"></div></section>
@@ -1434,6 +1438,35 @@ html.embedded .subtitle{display:none;}
       <div class="note">100% öffentlich und legal: OKX zeigt Lead-Trader-Positionen ABSICHTLICH, damit die Trader Follower fürs Copy-Trading gewinnen - Opt-in-Transparenz seitens der Trader, kein Datenleck. Zuletzt aktualisiert: ${fmtDatum(daten.datum)}. Reine Beobachtung - das ist NICHT deine eigene Strategie und keine Kauf-/Verkaufsempfehlung. Hebel bis 50x wie hier gezeigt bedeutet extremes Risiko, auch für den Lead-Trader selbst.</div>`;
   }
 
+  // ---- PREIS-RADAR (derselbe Coin auf 3 Börsen gleichzeitig) ----
+  // Vergleicht den Kurs jedes Coins GLEICHZEITIG auf Binance/Kraken/Coinbase -
+  // unabhängig davon, welche Börse der Bot tatsächlich handelt. Zeigt, ob
+  // eine Börse gerade spürbar teurer/günstiger ist als die anderen (der
+  // bekannte "Coinbase-Premium"-Effekt z.B.). Kommt fertig aus dem
+  // Krypto-Bot (siehe lib/pricevergleich.mjs) - hier wird nur gerendert.
+  const BOERSEN_LABEL = { binance: 'Binance', kraken: 'Kraken', coinbase: 'Coinbase' };
+  function preisRadarZeile(e) {
+    const werte = Object.entries(e.preise);
+    const min = Math.min(...werte.map(([, p]) => p));
+    const max = Math.max(...werte.map(([, p]) => p));
+    const preiseHtml = werte.map(([boerse, preis]) => {
+      const farbe = preis === max ? 'red' : preis === min ? 'green' : '';
+      return `<span style="margin-right:16px;">${BOERSEN_LABEL[boerse] || boerse}: <b class="${farbe}">$${preis.toLocaleString('de-DE', { maximumFractionDigits: preis < 1 ? 5 : 2 })}</b></span>`;
+    }).join('');
+    return `<div class="metric" style="margin-bottom:10px;">${escapeHtml(e.basis)}: ${preiseHtml}<span style="color:var(--muted);">Spread: ${e.spreadProzent.toFixed(2)}%</span></div>`;
+  }
+  function renderPreisRadar(cryptoData) {
+    const el = document.getElementById('preisRadarWrap');
+    const cOk = cryptoData && !cryptoData.fehler;
+    const daten = cOk ? cryptoData.preisRadar : null;
+    if (!daten || !daten.ergebnisse || !daten.ergebnisse.length) {
+      el.innerHTML = `<div class="empty">${cOk ? 'Noch keine Daten (läuft täglich).' : 'Noch kein Krypto-Bot verbunden.'}</div>`;
+      return;
+    }
+    el.innerHTML = daten.ergebnisse.map(preisRadarZeile).join('') +
+      `<div class="note">Vergleicht denselben Coin gleichzeitig auf Binance, Kraken und Coinbase - unabhängig davon, welche Börse der Bot tatsächlich handelt. Niedrigster Preis grün, höchster rot markiert. Rein informativ (kein Trade läuft automatisch über den Spread) - höchstens 1x täglich aktualisiert. Zuletzt aktualisiert: ${fmtDatum(daten.datum)}.</div>`;
+  }
+
   // ---- MATERIAL EVENTS (SEC Form 8-K, Pflicht-Sofortoffenlegung) ----
   // Börsennotierte Firmen müssen wesentliche Ereignisse (Führungswechsel,
   // Insolvenz, Delisting-Warnung, Übernahme, Kontrollwechsel...) binnen 4
@@ -1952,6 +1985,7 @@ html.embedded .subtitle{display:none;}
     renderMaterialEvents(stocksData);
     renderFundamentals(stocksData);
     renderCopyTrading(cryptoData);
+    renderPreisRadar(cryptoData);
     renderErfolge(cryptoData, stocksData);
     clearTimeout(window.__refreshTimer);
     window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
@@ -1969,7 +2003,7 @@ html.embedded .subtitle{display:none;}
 
   // Scroll-Spy: markiert den Nav-Button des sichtbaren Abschnitts als aktiv.
   (function initScrollSpy() {
-    const ids = ['thermometer','overview','erfolge','chart','market','congress','insider','smartmoney','copytrading','events','fundamentals','benchmark','analyst','scanner','global','risk','backtest','journal','alerts','health'];
+    const ids = ['thermometer','overview','erfolge','chart','market','congress','insider','smartmoney','copytrading','preisradar','events','fundamentals','benchmark','analyst','scanner','global','risk','backtest','journal','alerts','health'];
     const buttons = Object.fromEntries(ids.map((id) => [id, document.querySelector(`[data-nav="${id}"]`)]));
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
