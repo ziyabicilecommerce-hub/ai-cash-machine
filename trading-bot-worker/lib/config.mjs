@@ -10,6 +10,28 @@ import { EXCHANGES } from './exchanges.mjs';
 // abschneidet, statt alle Coins zwangsläufig identisch zu handeln. Format:
 // "XBTUSDT:bollinger-mean-reversion,ETHUSDT:donchian-breakout". Symbole ohne
 // Eintrag fallen auf TRADING_STRATEGIE (den globalen Default) zurück.
+// Erlaubt jedem Symbol eine ANDERE Börse als den globalen Default - z.B. um
+// zusätzlich zu Binance/Kraken auch auf Coinbase zu handeln, ohne einen
+// zweiten Bot/Worker aufzusetzen. Format: "BTCUSDT:binance,BTC-USD:coinbase".
+// Symbole ohne Eintrag fallen auf TRADING_EXCHANGE (den globalen Default)
+// zurück. Wichtig: das Symbol muss im Format der jeweiligen ZIELBÖRSE
+// eingetragen werden (z.B. "XBTUSDT" für Kraken, "BTC-USD" für Coinbase,
+// "BTCUSDT" für Binance) - siehe TRADING_SYMBOLS.
+function parseExchangeProSymbol(env) {
+  const roh = (env.TRADING_EXCHANGE_PRO_SYMBOL || '').trim();
+  const map = {};
+  if (!roh) return map;
+  for (const eintrag of roh.split(',')) {
+    const [symbol, exchangeName] = eintrag.split(':').map((s) => s.trim());
+    if (!symbol || !exchangeName) continue;
+    if (!EXCHANGES[exchangeName]) {
+      throw new Error(`Unbekannte Börse "${exchangeName}" in TRADING_EXCHANGE_PRO_SYMBOL für ${symbol} - unterstützt: ${Object.keys(EXCHANGES).join(', ')}`);
+    }
+    map[symbol] = exchangeName;
+  }
+  return map;
+}
+
 function parseStrategieProSymbol(env, gueltigeStrategien) {
   const roh = (env.TRADING_STRATEGIE_PRO_SYMBOL || '').trim();
   const map = {};
@@ -36,8 +58,12 @@ export function readConfig(env) {
     throw new Error(`Unbekannte TRADING_STRATEGIE "${strategie}" - unterstützt: ${GUELTIGE_STRATEGIEN.join(', ')}`);
   }
   const strategieProSymbol = parseStrategieProSymbol(env, GUELTIGE_STRATEGIEN);
+  const exchangeProSymbol = parseExchangeProSymbol(env);
   return {
     exchange,
+    // Pro Symbol individuell überschreibbar, siehe parseExchangeProSymbol -
+    // z.B. um einen Teil der Coins zusätzlich auf Coinbase zu handeln.
+    exchangeProSymbol,
     symbols,
     startKapitalProSymbol: gesamtKapital / symbols.length,
     paperModus: (env.TRADING_PAPER_MODE || 'ja') !== 'nein',

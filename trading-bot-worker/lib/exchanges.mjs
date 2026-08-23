@@ -247,4 +247,161 @@ const krakenAdapter = {
   },
 };
 
-export const EXCHANGES = { binance: binanceAdapter, kraken: krakenAdapter };
+// ================= COINBASE =================
+// Öffentliche Marktdaten (Kerzen/Spread/Mindestgröße) laufen über die
+// Coinbase-Exchange-API (api.exchange.coinbase.com) - live per curl
+// verifiziert, kein Auth nötig. Echte Order-Platzierung läuft über die
+// neuere Advanced-Trade-API (api.coinbase.com/api/v3/brokerage): live per
+// curl geprüft, dass diese NUR noch den "Authorization"-Header akzeptiert
+// (kein CB-ACCESS-KEY/SIGN mehr wie früher bei Coinbase Pro) - das ist die
+// von Coinbase dokumentierte JWT(ES256)-Signierung mit einem CDP-API-Key.
+// COINBASE_API_KEY = CDP-Key-Name ("organizations/.../apiKeys/..."),
+// COINBASE_API_SECRET = zugehöriger EC-Private-Key im PKCS8-PEM-Format
+// ("-----BEGIN PRIVATE KEY-----..."), so wie ihn das CDP-Portal für einen
+// neu erstellten Advanced-Trade-Key standardmäßig ausgibt.
+
+function base64UrlEncodeBuf(buf) {
+  const bytes = new Uint8Array(buf);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function base64UrlEncodeStr(str) {
+  return base64UrlEncodeBuf(new TextEncoder().encode(str));
+}
+
+async function importCoinbaseEcPrivateKey(pem) {
+  const b64 = pem.replace(/-----BEGIN [^-]+-----/, '').replace(/-----END [^-]+-----/, '').replace(/\s+/g, '');
+  return crypto.subtle.importKey('pkcs8', base64Decode(b64), { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']);
+}
+
+async function coinbaseJwt(env, method, path) {
+  const keyName = env.COINBASE_API_KEY;
+  const now = Math.floor(Date.now() / 1000);
+  const header = { alg: 'ES256', kid: keyName, typ: 'JWT', nonce: crypto.randomUUID().replace(/-/g, '') };
+  const payload = { sub: keyName, iss: 'cdp', nbf: now, exp: now + 120, uri: `${method} api.coinbase.com${path}` };
+  const signingInput = `${base64UrlEncodeStr(JSON.stringify(header))}.${base64UrlEncodeStr(JSON.stringify(payload))}`;
+  const key = await importCoinbaseEcPrivateKey(env.COINBASE_API_SECRET);
+  const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, new TextEncoder().encode(signingInput));
+  return `${signingInput}.${base64UrlEncodeBuf(sig)}`;
+}
+
+const coinbaseAdapter = {
+  name: 'coinbase',
+  baseUrl: 'https://api.exchange.coinbase.com',
+  tradeBaseUrl: 'https://api.coinbase.com',
+
+  async brokerageRequest(env, path, body, method = 'POST') {
+    const jwt = await coinbaseJwt(env, method, path);
+    const res = await fetch(`${this.tradeBaseUrl}${path}`, {
+      method,
+      headers: { Authorization: `Bearer ${jwt}`, 'content-type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(`Coinbase-Fehler (${res.status}): ${data.message || JSON.stringify(data)}`);
+    return data;
+  },
+
+  async getKlines(symbol, intervalMinuten = 15) {
+    // Coinbase erlaubt nur feste Granularitäten (60/300/900/3600/21600/86400
+    // Sekunden). 900s (15m) trifft den Strategie-Zeitrahmen exakt. Für den
+    // optionalen Multi-Timeframe-Filter (Default 240min/4h) gibt's kein
+    // exaktes Pendant - 21600s (6h) ist die nächstliegende verfügbare
+    // Granularität, keine exakte 4h-Kerze (Filter ist ohnehin nicht
+    // blockierend, siehe hoehererZeitrahmenIstAufwaerts in marktdaten.mjs).
+    const intervalMap = { 15: 900, 240: 21600 };
+    const granularitaet = intervalMap[intervalMinuten] || 900;
+    const res = await fetch(`${this.baseUrl}/products/${symbol}/candles?granularity=${granularitaet}`);
+    if (!res.ok) throw new Error(`Coinbase Candles-Fehler: ${res.status}`);
+    const data = await res.json(); // [time, low, high, open, close, volume], neueste zuerst
+    const aufsteigend = [...data].reverse();
+    return {
+      closes: aufsteigend.map((k) => k[4]),
+      highs: aufsteigend.map((k) => k[2]),
+      lows: aufsteigend.map((k) => k[3]),
+    };
+  },
+
+  async getMinNotionalUsdt(symbol) {
+    const res = await fetch(`${this.baseUrl}/products/${symbol}`);
+    if (!res.ok) throw new Error(`Coinbase Product-Fehler: ${res.status}`);
+    const data = await res.json();
+    // min_market_funds ist bei Coinbase bereits in der Quote-Währung (USD),
+    // anders als Kraken (dort erst mit dem Referenzpreis multiplizieren).
+    return data.min_market_funds ? parseFloat(data.min_market_funds) : null;
+  },
+
+  // Für lib/benchmark.mjs, siehe Binance/Kraken-Pendant oben.
+  async getBuyHoldRendite(symbol, seitDatumIso) {
+    const seitSekunden = Math.floor(new Date(seitDatumIso).getTime() / 1000);
+    const startRes = await fetch(`${this.baseUrl}/products/${symbol}/candles?granularity=86400&start=${seitSekunden}&end=${seitSekunden + 86400}`);
+    if (!startRes.ok) throw new Error(`Coinbase Candles-Fehler (Start): ${startRes.status}`);
+    const startData = await startRes.json();
+    if (!startData.length) return null;
+    const startPreis = startData[startData.length - 1][4]; // älteste Kerze im Fenster
+
+    const aktuellRes = await fetch(`${this.baseUrl}/products/${symbol}/candles?granularity=86400`);
+    if (!aktuellRes.ok) throw new Error(`Coinbase Candles-Fehler (Aktuell): ${aktuellRes.status}`);
+    const aktuellData = await aktuellRes.json();
+    if (!aktuellData.length) return null;
+    const aktuellPreis = aktuellData[0][4]; // neueste Kerze zuerst
+
+    if (!startPreis || !aktuellPreis) return null;
+    return { startPreis, aktuellPreis, renditeProzent: ((aktuellPreis / startPreis) - 1) * 100 };
+  },
+
+  async getSpreadProzent(symbol) {
+    try {
+      const res = await fetch(`${this.baseUrl}/products/${symbol}/book?level=1`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      const ask = data.asks && data.asks[0] && parseFloat(data.asks[0][0]);
+      const bid = data.bids && data.bids[0] && parseFloat(data.bids[0][0]);
+      if (!ask || !bid) return null;
+      return ((ask - bid) / bid) * 100;
+    } catch {
+      return null;
+    }
+  },
+
+  async placeMarketBuy(env, symbol, quoteUsdt) {
+    const body = {
+      client_order_id: crypto.randomUUID(),
+      product_id: symbol,
+      side: 'BUY',
+      order_configuration: { market_market_ioc: { quote_size: quoteUsdt.toFixed(2) } },
+    };
+    const result = await this.brokerageRequest(env, '/api/v3/brokerage/orders', body);
+    const orderId = result.success && result.success_response && result.success_response.order_id;
+    if (!orderId) throw new Error(`Coinbase-Kauf für ${symbol} fehlgeschlagen: ${JSON.stringify(result.error_response || result)} - kein Einstieg gebucht.`);
+    const info = await this.brokerageRequest(env, `/api/v3/brokerage/orders/historical/${orderId}`, null, 'GET');
+    const order = info.order;
+    const qty = order && parseFloat(order.filled_size);
+    if (!order || order.status !== 'FILLED' || !(qty > 0)) {
+      throw new Error(`Coinbase-Kauf für ${symbol} nicht vollständig ausgeführt (status=${order && order.status}) - kein Einstieg gebucht.`);
+    }
+    return { qty, preis: parseFloat(order.average_filled_price) };
+  },
+
+  async placeMarketSell(env, symbol, qty) {
+    const body = {
+      client_order_id: crypto.randomUUID(),
+      product_id: symbol,
+      side: 'SELL',
+      order_configuration: { market_market_ioc: { base_size: String(qty) } },
+    };
+    const result = await this.brokerageRequest(env, '/api/v3/brokerage/orders', body);
+    const orderId = result.success && result.success_response && result.success_response.order_id;
+    if (!orderId) throw new Error(`Coinbase-Verkauf für ${symbol} fehlgeschlagen: ${JSON.stringify(result.error_response || result)} - Position bleibt im State offen, bitte Konto manuell prüfen.`);
+    const info = await this.brokerageRequest(env, `/api/v3/brokerage/orders/historical/${orderId}`, null, 'GET');
+    const order = info.order;
+    if (!order || order.status !== 'FILLED' || !(parseFloat(order.filled_size) > 0)) {
+      throw new Error(`Coinbase-Verkauf für ${symbol} nicht bestätigt ausgeführt (status=${order && order.status}) - Position bleibt im State offen, bitte Konto manuell prüfen.`);
+    }
+    return { erloes: parseFloat(order.filled_value) };
+  },
+};
+
+export const EXCHANGES = { binance: binanceAdapter, kraken: krakenAdapter, coinbase: coinbaseAdapter };

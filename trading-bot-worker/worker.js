@@ -46,7 +46,7 @@ import { readConfig } from './lib/config.mjs';
 // ================= HANDELSLOGIK =================
 
 async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, fearGreedWert, btcDominanzProzent, marktweiterCrashAktiv, newsEventAktiv, korrelationsMatrix, offenePositionenSymbole) {
-  const exchange = EXCHANGES[cfg.exchange];
+  const exchange = EXCHANGES[cfg.exchangeProSymbol[symbol] || cfg.exchange];
   let state = await loadState(env, symbol, startKapital);
 
   if (state.letzterTag !== heute()) {
@@ -314,7 +314,7 @@ async function runAll(env) {
     const btcSymbol = cfg.symbols.find((s) => COINGECKO_IDS[s] === 'bitcoin');
     if (btcSymbol) {
       try {
-        const { closes: btcCloses, highs: btcHighs } = await EXCHANGES[cfg.exchange].getKlines(btcSymbol);
+        const { closes: btcCloses, highs: btcHighs } = await EXCHANGES[cfg.exchangeProSymbol[btcSymbol] || cfg.exchange].getKlines(btcSymbol);
         marktweiterCrashDropProzent = berechneFlashCrashDropProzent(btcCloses, btcHighs, cfg.marktweiterCrashFensterKerzen);
         marktweiterCrashAktiv = marktweiterCrashDropProzent <= -cfg.marktweiterCrashMaxDropProzent;
       } catch (err) {

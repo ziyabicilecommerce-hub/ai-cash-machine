@@ -26,12 +26,12 @@ export async function pruefeUndAktualisiereBenchmark(env, cfg) {
   const letzte = await env.TRADING_STATE.get('benchmark:letzteWoche');
   if (letzte === aktuelleWoche) return;
 
-  const adapter = EXCHANGES[cfg.exchange];
   let gesamtKapital = 0, gesamtStart = 0;
   let startKapitalMitTrades = 0, gewichteteBuyHoldSumme = 0;
   const proSymbol = [];
 
   for (const symbol of cfg.symbols) {
+    const adapter = EXCHANGES[cfg.exchangeProSymbol[symbol] || cfg.exchange];
     const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
     const trades = state.trades || [];
     gesamtKapital += state.kapital;
