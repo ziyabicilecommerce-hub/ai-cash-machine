@@ -971,8 +971,12 @@
         <div class="kpi-box"><div class="kpi-num">${fmtZahl(k.sharpeProTrade)}</div><div class="kpi-label">SHARPE PRO TRADE</div></div>
         <div class="kpi-box"><div class="kpi-num">${fmtZahl(k.sortinoProTrade)}</div><div class="kpi-label">SORTINO PRO TRADE</div></div>
         <div class="kpi-box"><div class="kpi-num">${fmtZahl(k.recoveryFactor)}</div><div class="kpi-label">RECOVERY FACTOR</div></div>
+        <div class="kpi-box"><div class="kpi-num ${k.cagrProzent < 0 ? 'down' : ''}">${k.cagrProzent == null ? '–' : (k.cagrProzent >= 0 ? '+' : '') + fmtZahl(k.cagrProzent, 1) + '%'}</div><div class="kpi-label">CAGR (ANNUALISIERT)</div></div>
+        <div class="kpi-box"><div class="kpi-num">${fmtZahl(k.calmarRatio)}</div><div class="kpi-label">CALMAR RATIO</div></div>
+        <div class="kpi-box"><div class="kpi-num">${fmtZahl(k.sharpeAnnualisiert)}</div><div class="kpi-label">SHARPE ANNUALISIERT</div></div>
+        <div class="kpi-box"><div class="kpi-num">${fmtZahl(k.sortinoAnnualisiert)}</div><div class="kpi-label">SORTINO ANNUALISIERT</div></div>
       </div>
-      <div class="note">Sharpe/Sortino "pro Trade" = Ø Rendite / Streuung über alle abgeschlossenen Trades, NICHT die annualisierte Lehrbuch-Kennzahl (dafür bräuchte es täglich getaktete Renditen).</div>
+      <div class="note">Sharpe/Sortino "pro Trade" = Ø Rendite / Streuung über alle abgeschlossenen Trades. Die annualisierten Varianten skalieren das über die TATSÄCHLICHE Trade-Frequenz (Trades/Jahr) hoch - ehrlicher Näherungswert, keine Lehrbuch-Kennzahl mit täglich getakteten Renditen. CAGR/Calmar brauchen mind. 1 Tag Zeitspanne zwischen erstem und letztem Trade, sonst "–".</div>
     </div>`;
   }
 

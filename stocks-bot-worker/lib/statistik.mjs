@@ -163,9 +163,13 @@ function stddev(werte) {
 // bräuchte es gleichmäßig getaktete Perioden-Renditen - Trades sind
 // unregelmäßig getaktet) - stattdessen eine "pro Trade"-Variante, klar so
 // benannt (sharpeProTrade/sortinoProTrade).
-export function berechneRisikoKennzahlen(trades) {
+// gesamtStartKapital ist OPTIONAL (Standard: undefined) - nur für
+// CAGR/Calmar nötig, alle anderen Aufrufer (ai-review.mjs, scoreverlauf.mjs)
+// übergeben weiterhin nur die Trades, dort bleiben cagrProzent/calmarRatio
+// einfach null statt eine Kapital-Angabe zu erzwingen.
+export function berechneRisikoKennzahlen(trades, gesamtStartKapital) {
   if (!trades.length) {
-    return { profitFactor: null, expectancyUsdt: null, avgGewinnUsdt: null, avgVerlustUsdt: null, sharpeProTrade: null, sortinoProTrade: null, recoveryFactor: null };
+    return { profitFactor: null, expectancyUsdt: null, avgGewinnUsdt: null, avgVerlustUsdt: null, sharpeProTrade: null, sortinoProTrade: null, recoveryFactor: null, sharpeAnnualisiert: null, sortinoAnnualisiert: null, cagrProzent: null, calmarRatio: null };
   }
   const gewinne = trades.filter((t) => t.gewinnVerlustUsdt > 0);
   const verluste = trades.filter((t) => t.gewinnVerlustUsdt < 0);
@@ -194,5 +198,25 @@ export function berechneRisikoKennzahlen(trades) {
   const nettoErgebnisUsdt = trades.reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
   const recoveryFactor = maxDrawdownUsdt > 0 ? nettoErgebnisUsdt / maxDrawdownUsdt : null;
 
-  return { profitFactor, expectancyUsdt, avgGewinnUsdt, avgVerlustUsdt, sharpeProTrade, sortinoProTrade, recoveryFactor };
+  // Annualisierte Kennzahlen (CAGR, Calmar, Sharpe/Sortino skaliert über die
+  // TATSÄCHLICHE Trade-Frequenz statt einer angenommenen festen Periode -
+  // Trades sind unregelmäßig getaktet, das hier ersetzt keine Lehrbuch-
+  // Sharpe mit täglichen Renditen, ist aber ein ehrlicher Näherungswert).
+  let sharpeAnnualisiert = null, sortinoAnnualisiert = null, cagrProzent = null, calmarRatio = null;
+  const spanTage = (new Date(sortiert[sortiert.length - 1].ausstiegAm) - new Date(sortiert[0].einstiegAm)) / 86400000;
+  if (spanTage > 0) {
+    const tradesProJahr = trades.length / (spanTage / 365.25);
+    if (sharpeProTrade !== null) sharpeAnnualisiert = sharpeProTrade * Math.sqrt(tradesProJahr);
+    if (sortinoProTrade !== null) sortinoAnnualisiert = sortinoProTrade * Math.sqrt(tradesProJahr);
+    if (gesamtStartKapital > 0) {
+      const spanJahre = spanTage / 365.25;
+      const endKapital = gesamtStartKapital + nettoErgebnisUsdt;
+      if (endKapital > 0) {
+        cagrProzent = (Math.pow(endKapital / gesamtStartKapital, 1 / spanJahre) - 1) * 100;
+        if (maxDrawdownUsdt > 0) calmarRatio = cagrProzent / ((maxDrawdownUsdt / gesamtStartKapital) * 100);
+      }
+    }
+  }
+
+  return { profitFactor, expectancyUsdt, avgGewinnUsdt, avgVerlustUsdt, sharpeProTrade, sortinoProTrade, recoveryFactor, sharpeAnnualisiert, sortinoAnnualisiert, cagrProzent, calmarRatio };
 }
