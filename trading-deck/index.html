@@ -303,6 +303,9 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 <div class="section-label">🕵️ SEC Insider-Trades — legales "Insider-Trading"</div>
 <section class="grid"><div class="card full" id="insiderTradesWrap"></div></section>
 
+<div class="section-label">🏆 Bist du besser als 100% der Leute?</div>
+<section class="grid" id="benchmarkGrid"></section>
+
 <div class="section-label" id="analyst">AI Analyst — Go-Live-Readiness</div>
 <section class="grid" id="analystGrid"></section>
 <div class="grid" id="regimeGrid"></div>
@@ -984,6 +987,41 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
       <div class="note">100% legal und pflichtoffengelegt: Führungskräfte/Direktoren müssen JEDEN eigenen Aktienkauf/-verkauf (Section 16) innerhalb von 2 Werktagen der SEC melden - viel schneller als der Congress (bis 45 Tage). Nur echte Käufe/Verkäufe am offenen Markt (keine Aktienpakete/Optionsausübungen). Insider verkaufen oft aus Gründen, die nichts mit ihrer Meinung zur Aktie zu tun haben (Steuern, Diversifikation, geplante 10b5-1-Programme) - reine Beobachtung, keine Kauf-/Verkaufsempfehlung.</div>`;
   }
 
+  // ---- BENCHMARK ("Bist du besser als 100% der Leute?") ----
+  // Vergleicht die Paper-Portfolio-Rendite mit simplem Kaufen-und-
+  // Liegenlassen derselben Symbole (+ beim Aktien-Bot zusätzlich mit dem
+  // S&P 500 über SPY) seit dem jeweils ersten eigenen Trade. Alle Zahlen
+  // kommen fertig berechnet aus dem Worker (siehe lib/benchmark.mjs, läuft
+  // montags) - hier wird nur gerendert, kein eigener API-Call nötig.
+  function benchmarkZeile(label, renditeProzent) {
+    const positiv = renditeProzent >= 0;
+    return `<div class="risk-row"><div class="risk-top"><span>${label}</span><b class="${positiv ? 'green' : 'red'}" style="font-family:monospace">${positiv ? '+' : ''}${renditeProzent.toFixed(2)}%</b></div></div>`;
+  }
+  function benchmarkCard(name, icon, data) {
+    if (!data) return `<div class="card half"><div class="card-head"><div class="card-title">${icon} ${name}</div></div><div class="empty">Noch keine Trade-Historie fürs Benchmarking (läuft montags, sobald mind. 1 Trade existiert).</div></div>`;
+    const diff = data.botRenditeProzent - data.buyHoldRenditeProzent;
+    const schlaegtBuyHold = diff > 0;
+    let zeilen = benchmarkZeile('Deine Strategie (Paper)', data.botRenditeProzent) +
+      benchmarkZeile('Kaufen &amp; Liegenlassen (dieselben Symbole)', data.buyHoldRenditeProzent);
+    if (data.spRenditeProzent != null) zeilen += benchmarkZeile('S&amp;P 500 (SPY, seit demselben Datum)', data.spRenditeProzent);
+    return `<div class="card half">
+      <div class="card-head"><div class="card-title">${icon} ${name}</div><div class="card-meta">${fmtDatum(data.datum)}</div></div>
+      ${zeilen}
+      <div class="note">${schlaegtBuyHold ? `✅ Deine Strategie liegt ${Math.abs(diff).toFixed(2)} Prozentpunkte VOR simplem Kaufen-und-Liegenlassen.` : `⚠️ Simples Kaufen-und-Liegenlassen liegt ${Math.abs(diff).toFixed(2)} Prozentpunkte VOR deiner Strategie - aktives Handeln lohnt sich bisher nicht.`} Alles Paper-Trading, kein echtes Geld im Spiel.</div>
+    </div>`;
+  }
+  function renderBenchmark(cryptoData, stocksData) {
+    const el = document.getElementById('benchmarkGrid');
+    const cOk = cryptoData && !cryptoData.fehler, sOk = stocksData && !stocksData.fehler;
+    if (!cOk && !sOk) { el.innerHTML = '<div class="card full"><div class="empty">Noch keine Bots verbunden.</div></div>'; return; }
+    el.innerHTML = benchmarkCard('Krypto-Bot', '₿', cOk ? cryptoData.benchmark : null) +
+      benchmarkCard('Aktien-Bot', '📈', sOk ? stocksData.benchmark : null) +
+      `<div class="card full">
+        <div class="card-head"><div class="card-title">📊 Und der Durchschnitt?</div></div>
+        <div class="note">Mehrfach wiederholte Studien zu echtem Geld an echten Märkten zeichnen ein hartes Bild vom aktiven Handel: Barber &amp; Odean ("Trading Is Hazardous to Your Wealth", 2000) fanden bei US-Privatanlegern, dass die aktivsten Trader den Markt um mehrere Prozentpunkte pro Jahr underperformen - vor allem wegen Kosten und Overtrading. Eine Studie der brasilianischen Börsenaufsicht CVM (Chagas u.a., 2019) fand: von Day-Tradern, die es länger als 300 Tage versuchten, machte am Ende rund 97% Verlust. Keine Garantie und kein 1:1-Vergleich zu diesem Paper-System - aber ein realistischer Maßstab dafür, woran sich "besser als die meisten" überhaupt misst.</div>
+      </div>`;
+  }
+
   // ---- SCANNER ----
   function scannerCard(name, icon, scanner, changeFeld, zeitraumLabel) {
     if (!scanner) return `<div class="card half"><div class="card-head"><div class="card-title">${icon} ${name}</div></div><div class="empty">Noch keine Scanner-Daten (läuft täglich).</div></div>`;
@@ -1354,6 +1392,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     befuelleChartAuswahl(cryptoData, stocksData);
     renderTvTickerTape(cryptoData, stocksData);
     renderAnalyst(cryptoData, stocksData);
+    renderBenchmark(cryptoData, stocksData);
     renderScanner(cryptoData, stocksData);
     renderRisk(cryptoData, stocksData);
     renderBacktest(cryptoData, stocksData);

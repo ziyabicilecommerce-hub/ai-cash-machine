@@ -369,6 +369,20 @@ zusätzlicher API-Call - liest nur denselben State/dieselben KV-Werte, die
 Auto-Backtest und Monte-Carlo im selben Lauf ohnehin schon geschrieben
 haben. Älter als 12 Wochen wird verworfen statt unbegrenzt zu wachsen.
 
+## Markt-Benchmark (`lib/benchmark.mjs`)
+
+Läuft ebenfalls in der Montags-Wartung: vergleicht die eigene Paper-
+Portfolio-Rendite mit simplem Kaufen-und-Liegenlassen DERSELBEN Symbole
+seit dem jeweils ersten eigenen Trade (gewichtet nach Startkapital-
+Anteil) - beantwortet die klassische Frage "hat die aktive Strategie
+überhaupt einen Vorteil gegenüber einfach nur Kaufen"? Nur 2 zusätzliche,
+öffentliche Klines-Abrufe pro konfiguriertem Symbol, 1x pro Woche - kein
+Rate-Limit-Risiko. `/status` liefert das Ergebnis als `benchmark`-Feld,
+Trading Deck zeigt es im "Bist du besser als 100% der Leute?"-Bereich
+zusammen mit dem Aktien-Pendant (dort zusätzlich vs. S&P 500) und
+zitierten Studien zur realen Trader-Performance. Reiner Nachher-
+Vergleich, ändert nie eine Order.
+
 ## Tägliche WhatsApp-Zusammenfassung
 
 Zusätzlich zu den Alarmen bei einzelnen Ereignissen (Einstieg, Ausstieg,

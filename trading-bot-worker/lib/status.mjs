@@ -214,6 +214,14 @@ export async function buildStatus(env) {
     // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
   }
 
+  let benchmark = null;
+  try {
+    const raw = await env.TRADING_STATE.get('benchmark:letzte');
+    if (raw) benchmark = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   const portfolioKennzahlen = berechneRisikoKennzahlen(alleTrades);
 
   return {
@@ -238,6 +246,7 @@ export async function buildStatus(env) {
     aiReview,
     korrelation,
     scanner,
+    benchmark,
     risikoStatus: berechneRisikoStatus(symbole, cfg, systemInfo.marktweiterCrashAktiv, systemInfo.newsEventAktiv),
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
