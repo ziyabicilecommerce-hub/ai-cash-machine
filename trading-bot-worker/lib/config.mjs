@@ -53,7 +53,7 @@ export function readConfig(env) {
   const exchange = (env.TRADING_EXCHANGE || 'binance').trim().toLowerCase();
   if (!EXCHANGES[exchange]) throw new Error(`Unbekannte TRADING_EXCHANGE "${exchange}" - unterstützt: ${Object.keys(EXCHANGES).join(', ')}`);
   const strategie = (env.TRADING_STRATEGIE || 'ema-crossover').trim();
-  const GUELTIGE_STRATEGIEN = ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout'];
+  const GUELTIGE_STRATEGIEN = ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout', 'day-trading', 'ultimate'];
   if (!GUELTIGE_STRATEGIEN.includes(strategie)) {
     throw new Error(`Unbekannte TRADING_STRATEGIE "${strategie}" - unterstützt: ${GUELTIGE_STRATEGIEN.join(', ')}`);
   }
@@ -198,5 +198,10 @@ export function readConfig(env) {
     // entspricht einem typischen Taker-Fee bei Binance/Kraken.
     backtestSlippageProzent: parseFloat(env.TRADING_BACKTEST_SLIPPAGE_PROZENT || '0.05'),
     backtestGebuehrProzent: parseFloat(env.TRADING_BACKTEST_GEBUEHR_PROZENT || '0.1'),
+    // Nur relevant für TRADING_STRATEGIE = "day-trading": Position wird
+    // spätestens in den letzten X Minuten vor Mitternacht UTC zwangsweise
+    // geschlossen (die definierende Eigenschaft dieser Strategie - kein
+    // Übernacht-Risiko). Siehe lib/strategie.mjs entscheideVerkauf.
+    dayTradingSchlussPufferMinuten: parseInt(env.TRADING_DAY_TRADING_SCHLUSS_PUFFER_MINUTEN || '15', 10),
   };
 }

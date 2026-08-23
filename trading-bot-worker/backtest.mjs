@@ -11,8 +11,10 @@
 //   node backtest.mjs BTCUSDT 90
 //   (Symbol, Anzahl Tage zurück - Default 90)
 //
-// Alle drei Strategien direkt gegeneinander vergleichen (empfohlen, bevor
-// man sich für eine entscheidet):
+// Alle fünf Strategien direkt gegeneinander vergleichen (empfohlen, bevor
+// man sich für eine entscheidet) - inkl. "day-trading" (schneller RSI-50-
+// Momentum-Wechsel, schließt vor Tagesende) und "ultimate" (kombiniert alle
+// vier anderen per Mehrheitsentscheid, siehe lib/strategie.mjs):
 //   node backtest.mjs BTCUSDT 90 --vergleiche
 //
 // Alle TRADING_*-Umgebungsvariablen aus wrangler.toml funktionieren hier
@@ -63,6 +65,7 @@ function readConfig(strategieOverride) {
     partialTakeProfitProzent: parseFloat(env.TRADING_PARTIAL_TAKE_PROFIT_PROZENT || '0'),
     partialTakeProfitAnteil: parseFloat(env.TRADING_PARTIAL_TAKE_PROFIT_ANTEIL || '50'),
     maxGleichzeitigePositionen: 1, // Backtest läuft immer pro Symbol einzeln
+    dayTradingSchlussPufferMinuten: parseInt(env.TRADING_DAY_TRADING_SCHLUSS_PUFFER_MINUTEN || '15', 10),
   };
 }
 
@@ -175,7 +178,7 @@ function simuliere(symbol, closes, highs, lows, zeiten, cfg, startKapital) {
         position = { qty, entryPreis: preis, hoechsterPreisSeitEinstieg: preis, einstiegAm: zeiten[i], entryAtr: indikatoren.atrJetzt, teilverkaufGemacht: false };
       }
     } else {
-      const verkauf = entscheideVerkauf({ position, cfg, indikatoren });
+      const verkauf = entscheideVerkauf({ position, cfg, indikatoren, jetztZeitstempel: zeiten[i] });
       position.hoechsterPreisSeitEinstieg = verkauf.hoechsterPreisSeitEinstieg;
       if (verkauf.teilverkauf) {
         const teilQty = position.qty * verkauf.teilAnteil;
@@ -272,7 +275,7 @@ async function main() {
   }
   const buyAndHoldProzent = ((closes[closes.length - 1] - closes[FENSTER_FUER_INDIKATOREN]) / closes[FENSTER_FUER_INDIKATOREN]) * 100;
 
-  const strategien = vergleiche ? ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout'] : [readConfig().strategie];
+  const strategien = vergleiche ? ['ema-crossover', 'bollinger-mean-reversion', 'donchian-breakout', 'day-trading', 'ultimate'] : [readConfig().strategie];
   const kennzahlenProStrategie = {};
   for (const strategie of strategien) {
     const cfg = readConfig(strategie);
