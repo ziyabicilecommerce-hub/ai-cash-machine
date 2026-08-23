@@ -197,7 +197,10 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 }
 @media(max-width:700px){
   .topbar{padding:0 15px} .main{padding:15px} .hero{display:block} h1{font-size:27px}
-  .command{grid-template-columns:1fr}
+  .command{grid-template-columns:1fr 1fr; gap:8px;}
+  .command-main{grid-column:1/-1;}
+  .command-main, .command-item{padding:12px;}
+  .command-value{font-size:16px;}
   .card, .card.wide, .card.xwide, .card.half{grid-column:1/-1;}
   .trade{grid-template-columns:1fr 1fr}
   .topbar-links{display:none}
@@ -246,10 +249,17 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
   <div class="nav-title">COMMAND</div>
   <div class="nav">
     <button class="active" data-nav="overview" onclick="scrollToId('overview')">🎯 Overview</button>
+    <button data-nav="erfolge" onclick="scrollToId('erfolge')">🏅 Erfolge</button>
     <button data-nav="chart" onclick="scrollToId('chart')">📊 Live-Chart</button>
     <button data-nav="market" onclick="scrollToId('market')">🌐 Live-Markt</button>
+    <button data-nav="congress" onclick="scrollToId('congress')">🏛️ Congress</button>
+    <button data-nav="insider" onclick="scrollToId('insider')">🕵️ Insider</button>
+    <button data-nav="smartmoney" onclick="scrollToId('smartmoney')">💼 Smart Money</button>
+    <button data-nav="events" onclick="scrollToId('events')">📰 Events</button>
+    <button data-nav="benchmark" onclick="scrollToId('benchmark')">🏆 Benchmark</button>
     <button data-nav="analyst" onclick="scrollToId('analyst')">🧠 AI Analyst</button>
     <button data-nav="scanner" onclick="scrollToId('scanner')">🎯 Scanner</button>
+    <button data-nav="global" onclick="scrollToId('global')">🌍 Global</button>
     <button data-nav="risk" onclick="scrollToId('risk')">🛡️ Risk Center</button>
     <button data-nav="backtest" onclick="scrollToId('backtest')">🧪 Backtest</button>
     <button data-nav="journal" onclick="scrollToId('journal')">📝 Journal</button>
@@ -280,7 +290,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 <div class="section-label" id="overview">Overview</div>
 <section class="grid" id="overviewGrid"></section>
 
-<div class="section-label">🏅 Erfolge</div>
+<div class="section-label" id="erfolge">🏅 Erfolge</div>
 <section class="grid"><div class="card full"><div class="erfolge-grid" id="erfolgeGrid"></div></div></section>
 
 <div class="section-label">🔥 Portfolio-Heatmap — P&amp;L pro Symbol, beide Bots</div>
@@ -320,19 +330,19 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
   </div>
 </section>
 
-<div class="section-label">🏛️ Congress-Trades — legal, aber fühlt sich nicht so an</div>
+<div class="section-label" id="congress">🏛️ Congress-Trades — legal, aber fühlt sich nicht so an</div>
 <section class="grid"><div class="card full" id="congressTradesWrap"></div></section>
 
-<div class="section-label">🕵️ SEC Insider-Trades — legales "Insider-Trading"</div>
+<div class="section-label" id="insider">🕵️ SEC Insider-Trades — legales "Insider-Trading"</div>
 <section class="grid"><div class="card full" id="insiderTradesWrap"></div></section>
 
-<div class="section-label">💼 Smart Money — was Warren Buffett &amp; Co. gerade tun</div>
+<div class="section-label" id="smartmoney">💼 Smart Money — was Warren Buffett &amp; Co. gerade tun</div>
 <section class="grid" id="smartMoneyGrid"></section>
 
-<div class="section-label">📰 Material Events — Firmennews, bevor sie jeder mitbekommt</div>
+<div class="section-label" id="events">📰 Material Events — Firmennews, bevor sie jeder mitbekommt</div>
 <section class="grid"><div class="card full" id="materialEventsWrap"></div></section>
 
-<div class="section-label">🏆 Bist du besser als 100% der Leute?</div>
+<div class="section-label" id="benchmark">🏆 Bist du besser als 100% der Leute?</div>
 <section class="grid" id="benchmarkGrid"></section>
 
 <div class="section-label" id="analyst">AI Analyst — Go-Live-Readiness</div>
@@ -342,7 +352,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 <div class="section-label" id="scanner">Live Market Scanner</div>
 <section class="grid" id="scannerGrid"></section>
 
-<div class="section-label">🌍 Globale Märkte — internationale Konzerne, US-gelistet</div>
+<div class="section-label" id="global">🌍 Globale Märkte — internationale Konzerne, US-gelistet</div>
 <section class="grid"><div class="card full" id="globalMarketsWrap"></div></section>
 
 <div class="section-label" id="risk">Risk Center</div>
