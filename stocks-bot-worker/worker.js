@@ -30,6 +30,7 @@ import { hoehererZeitrahmenIstAufwaerts } from './lib/multitimeframe.mjs';
 import { pruefeUndFuehreAutoBacktest } from './lib/autobacktest.mjs';
 import { pruefeUndFuehreAiReview } from './lib/ai-review.mjs';
 import { pruefeUndAktualisiereScanner } from './lib/scanner.mjs';
+import { pruefeUndAktualisiereGlobaleMaerkte } from './lib/globalmarkets.mjs';
 import { pruefeUndAktualisiereMonteCarlo } from './lib/montecarlo.mjs';
 import { pruefeUndSendeSignalDigest } from './lib/signaldigest.mjs';
 import { pruefeUndSpeichereScoreVerlauf } from './lib/scoreverlauf.mjs';
@@ -293,6 +294,11 @@ async function runAll(env) {
     await pruefeUndFuehreAiReview(env, cfg);
   } catch (err) {
     console.error('[stocks-bot] Fehler beim AI Trade Review:', err);
+  }
+  try {
+    await pruefeUndAktualisiereGlobaleMaerkte(env);
+  } catch (err) {
+    console.error('[stocks-bot] Fehler bei den Globalen Märkten:', err);
   }
   try {
     await pruefeUndAktualisiereScanner(env, cfg);
