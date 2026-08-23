@@ -34,6 +34,7 @@ import { pruefeUndFuehreAdaptivesLernen } from './lib/learning.mjs';
 import { pruefeUndFuehreAutoBacktest } from './lib/autobacktest.mjs';
 import { pruefeUndFuehreAiReview } from './lib/ai-review.mjs';
 import { pruefeUndAktualisiereScanner } from './lib/scanner.mjs';
+import { pruefeUndAktualisiereCopyTrading } from './lib/copytrading.mjs';
 import { pruefeUndAktualisiereMonteCarlo } from './lib/montecarlo.mjs';
 import { pruefeUndSendeSignalDigest } from './lib/signaldigest.mjs';
 import { pruefeUndSpeichereScoreVerlauf } from './lib/scoreverlauf.mjs';
@@ -405,6 +406,11 @@ async function runAll(env) {
     await pruefeUndAktualisiereScanner(env, cfg);
   } catch (err) {
     console.error('[trading-bot] Fehler beim Live Market Scanner:', err);
+  }
+  try {
+    await pruefeUndAktualisiereCopyTrading(env);
+  } catch (err) {
+    console.error('[trading-bot] Fehler beim OKX Copy-Trading-Leaderboard:', err);
   }
   try {
     await pruefeUndAktualisiereMonteCarlo(env, cfg);
