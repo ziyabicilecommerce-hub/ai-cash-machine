@@ -266,6 +266,21 @@ Symbole zusammen. `/status` liefert das Ergebnis als `globaleMaerkte`-
 Feld. Rein informativ wie der Scanner - fügt NIE automatisch ein Symbol
 zum Bot hinzu.
 
+**Smart Money** (`lib/smartmoney.mjs`): läuft höchstens 1x pro Tag
+(SEC Form 13F kommt ohnehin nur alle ~3 Monate). Institutionelle
+Investmentmanager mit über 100 Mio. USD verwaltetem Vermögen (Warren
+Buffett/Berkshire Hathaway, Michael Burry/Scion, Bill Ackman/Pershing
+Square) müssen jedes Quartal ihre komplette Aktien-Positionsliste
+offenlegen - in der Finanzwelt oft "das legale Insider-Wissen" genannt.
+Vergleicht die neueste 13F-Meldung mit der vorherigen (per CUSIP) und
+zeigt neue Positionen, komplett geschlossene Positionen und größere
+Auf-/Abbauten (≥10%). Marktweit, NICHT auf STOCKS_SYMBOLS gefiltert -
+reiner Marktkontext. `/status` liefert das Ergebnis als `smartMoney`-
+Feld. **Bewusst kein CUSIP→Ticker-Rateraten**: die SEC veröffentlicht
+keine offizielle Zuordnung, nur der Firmenname aus der Meldung selbst
+wird gezeigt. Offenlegung darf bis zu 45 Tage nach Quartalsende dauern -
+nie ein Echtzeit-Signal, keine Kauf-/Verkaufsempfehlung.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch

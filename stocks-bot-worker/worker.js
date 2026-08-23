@@ -31,6 +31,7 @@ import { pruefeUndFuehreAutoBacktest } from './lib/autobacktest.mjs';
 import { pruefeUndFuehreAiReview } from './lib/ai-review.mjs';
 import { pruefeUndAktualisiereScanner } from './lib/scanner.mjs';
 import { pruefeUndAktualisiereGlobaleMaerkte } from './lib/globalmarkets.mjs';
+import { pruefeUndAktualisiereSmartMoney } from './lib/smartmoney.mjs';
 import { pruefeUndAktualisiereMonteCarlo } from './lib/montecarlo.mjs';
 import { pruefeUndSendeSignalDigest } from './lib/signaldigest.mjs';
 import { pruefeUndSpeichereScoreVerlauf } from './lib/scoreverlauf.mjs';
@@ -299,6 +300,11 @@ async function runAll(env) {
     await pruefeUndAktualisiereGlobaleMaerkte(env);
   } catch (err) {
     console.error('[stocks-bot] Fehler bei den Globalen Märkten:', err);
+  }
+  try {
+    await pruefeUndAktualisiereSmartMoney(env, cfg);
+  } catch (err) {
+    console.error('[stocks-bot] Fehler bei Smart Money (13F):', err);
   }
   try {
     await pruefeUndAktualisiereScanner(env, cfg);
