@@ -255,6 +255,17 @@ Deck zeigt es im "Bist du besser als 100% der Leute?"-Bereich zusammen
 mit zitierten Studien zur realen Trader-Performance. Reiner Nachher-
 Vergleich, ändert nie eine Order.
 
+**Globale Märkte** (`lib/globalmarkets.mjs`): läuft täglich, sobald der
+Markt offen ist (Pendant zum Scanner). Alpaca handelt nur US-gelistete
+Wertpapiere - eine echte ausländische Börse wäre eine komplett neue
+Broker-Integration. Ehrlicher Mittelweg: eine feste Liste US-gelisteter
+ADRs großer internationaler Konzerne (SAP, ASML, Novo Nordisk, Nestlé,
+Toyota, Sony, Alibaba, TSMC, Infosys, Sea Limited, Shopify, ...) - über
+denselben Alpaca-Feed abrufbar, ein einziger Snapshot-Call für alle
+Symbole zusammen. `/status` liefert das Ergebnis als `globaleMaerkte`-
+Feld. Rein informativ wie der Scanner - fügt NIE automatisch ein Symbol
+zum Bot hinzu.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch

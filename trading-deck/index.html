@@ -313,6 +313,9 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 <div class="section-label" id="scanner">Live Market Scanner</div>
 <section class="grid" id="scannerGrid"></section>
 
+<div class="section-label">🌍 Globale Märkte — internationale Konzerne, US-gelistet</div>
+<section class="grid"><div class="card full" id="globalMarketsWrap"></div></section>
+
 <div class="section-label" id="risk">Risk Center</div>
 <section class="grid" id="riskGrid"></section>
 
@@ -1043,6 +1046,33 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
       scannerCard('Aktien-Bot', '📈', sOk ? stocksData.scanner : null, 'changeProzent', 'heute');
   }
 
+  // ---- GLOBALE MÄRKTE ("international, der alles mitbekommt") ----
+  // Alpaca (der Paper-Broker des Aktien-Bots) handelt nur US-gelistete
+  // Wertpapiere - echte ausländische Börsen sind darüber nicht erreichbar.
+  // Der ehrliche Weg zu echter globaler Beobachtung: US-gelistete ADRs
+  // großer internationaler Konzerne (siehe lib/globalmarkets.mjs) - reine
+  // Anzeige, fügt NIE automatisch ein Symbol zum Bot hinzu.
+  function globalMarketZeile(t) {
+    const farbe = t.changeProzent == null ? '' : t.changeProzent >= 0 ? 'green' : 'red';
+    return `<tr><td>${escapeHtml(t.land)}</td><td>${escapeHtml(t.name)} <span style="color:#526174;">(${escapeHtml(t.symbol)})</span></td>
+      <td>$${t.aktuellPreis.toFixed(2)}</td>
+      <td class="${farbe}">${t.changeProzent == null ? '–' : `${t.changeProzent >= 0 ? '+' : ''}${t.changeProzent.toFixed(2)}%`}</td></tr>`;
+  }
+  function renderGlobalMarkets(stocksData) {
+    const el = document.getElementById('globalMarketsWrap');
+    const sOk = stocksData && !stocksData.fehler;
+    const daten = sOk ? stocksData.globaleMaerkte : null;
+    if (!daten || !daten.treffer || !daten.treffer.length) {
+      el.innerHTML = `<div class="card-head"><div class="card-title">🌍 Globale Märkte</div></div>
+        <div class="empty">${sOk ? 'Noch keine Daten (läuft täglich, sobald der Markt offen ist).' : 'Noch kein Aktien-Bot verbunden.'}</div>`;
+      return;
+    }
+    const zeilen = daten.treffer.map(globalMarketZeile).join('');
+    el.innerHTML = `<div class="card-head"><div class="card-title">🌍 Große internationale Konzerne</div><div class="card-meta">${fmtDatum(daten.berechnetAm)}</div></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Herkunft</th><th>Konzern</th><th>Preis</th><th>Heute</th></tr></thead><tbody>${zeilen}</tbody></table></div>
+      <div class="note">Ehrlich gesagt: dein Aktien-Bot handelt über Alpaca nur US-gelistete Wertpapiere - eine ECHTE ausländische Börse (London, Frankfurt, Tokio...) ist darüber nicht erreichbar. Das hier sind ADRs (American Depositary Receipts) - dieselben internationalen Konzerne, aber ganz normal in USD an einer US-Börse handelbar, deshalb über denselben Feed abrufbar. Rein informativ, wie der Scanner - kein automatisches Hinzufügen zum Bot.</div>`;
+  }
+
   // ---- RISK CENTER ----
   function riskRow(label, wert, max, einheit) {
     const anteil = max > 0 ? Math.min(100, (wert / max) * 100) : 0;
@@ -1394,6 +1424,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     renderAnalyst(cryptoData, stocksData);
     renderBenchmark(cryptoData, stocksData);
     renderScanner(cryptoData, stocksData);
+    renderGlobalMarkets(stocksData);
     renderRisk(cryptoData, stocksData);
     renderBacktest(cryptoData, stocksData);
     renderJournal(cryptoData, stocksData);

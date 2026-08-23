@@ -168,6 +168,14 @@ export async function buildStatus(env) {
     // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
   }
 
+  let globaleMaerkte = null;
+  try {
+    const raw = await env.STOCKS_STATE.get('globalmarkets:letzte');
+    if (raw) globaleMaerkte = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   const portfolioKennzahlen = berechneRisikoKennzahlen(alleTrades);
 
   return {
@@ -189,6 +197,7 @@ export async function buildStatus(env) {
     scanner,
     insiderTrades,
     benchmark,
+    globaleMaerkte,
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
       maxTagesverlustProzent: cfg.maxTagesverlustProzent,
