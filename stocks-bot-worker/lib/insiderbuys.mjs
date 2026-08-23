@@ -27,7 +27,10 @@ function secHeaders(cfg) {
   return { 'User-Agent': cfg.insiderSecUserAgent, 'Accept-Encoding': 'gzip, deflate' };
 }
 
-async function ladeCikFuerSymbol(env, symbol, cfg) {
+// Exportiert, damit lib/insidertrades.mjs (Dashboard-Anzeige aller
+// Insider-Käufe/-Verkäufe) dieselbe CIK-Auflösung + denselben 30-Tage-Cache
+// wiederverwendet, statt eine zweite Ticker→CIK-Zuordnung zu pflegen.
+export async function ladeCikFuerSymbol(env, symbol, cfg) {
   const cacheKey = `insider:cik:${symbol}`;
   const cached = await env.STOCKS_STATE.get(cacheKey);
   if (cached) return cached || null;

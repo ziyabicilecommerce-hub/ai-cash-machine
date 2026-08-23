@@ -228,6 +228,22 @@ echten Trend über die letzten 12 Wochen. `/status` liefert die Reihe als
 `goLiveScoreVerlauf`-Feld, Trading Deck zeigt sie als Sparkline. Kein
 zusätzlicher API-Call - der Score braucht keine Live-Kurse.
 
+**SEC Insider-Trades** (`lib/insidertrades.mjs`, nur Aktien-Bot - Krypto
+hat keine SEC-Meldepflicht): läuft ebenfalls in der Montags-Wartung.
+Führungskräfte/Direktoren müssen jeden eigenen Aktienkauf/-verkauf
+(Form 4, Section 16 des Securities Exchange Act) innerhalb von 2
+Werktagen offenlegen - kostenlos, ohne API-Key über `data.sec.gov` und
+`www.sec.gov` abrufbar (erfordert nur einen echten User-Agent-Header).
+Nur Transaktionscode P (Kauf) und S (Verkauf) am offenen Markt zählen,
+Aktienpakete/Optionsausübungen/Geschenke werden rausgefiltert. Ticker→CIK-
+Mapping wird 30 Tage lang gecacht. Da `www.sec.gov`/`data.sec.gov` für
+die Archiv-XMLs kein CORS für Browser-Fetches setzen, läuft der komplette
+Abruf serverseitig im Worker - `/status` liefert das Ergebnis fertig
+geparst als `insiderTrades`-Feld, Trading Deck rendert es nur noch.
+**Unmissverständlich: keine Kauf-/Verkaufsempfehlung** - Insider
+verkaufen oft aus Gründen (Steuern, Diversifikation, 10b5-1-Programme),
+die nichts mit ihrer Einschätzung der Aktie zu tun haben.
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 Siehe Endpoint oben. Für einen kompletten Neustart bei null (löscht auch

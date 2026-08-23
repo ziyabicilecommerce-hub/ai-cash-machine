@@ -33,6 +33,7 @@ import { pruefeUndAktualisiereScanner } from './lib/scanner.mjs';
 import { pruefeUndAktualisiereMonteCarlo } from './lib/montecarlo.mjs';
 import { pruefeUndSendeSignalDigest } from './lib/signaldigest.mjs';
 import { pruefeUndSpeichereScoreVerlauf } from './lib/scoreverlauf.mjs';
+import { pruefeUndAktualisiereInsiderTrades } from './lib/insidertrades.mjs';
 
 async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf, newsEventAktiv, marktweiterCrashAktiv, korrelationsMatrix, offenePositionenSymbole) {
   let state = await loadState(env, symbol, startKapital);
@@ -311,6 +312,11 @@ async function runAll(env) {
     await pruefeUndSpeichereScoreVerlauf(env, cfg);
   } catch (err) {
     console.error('[stocks-bot] Fehler beim Score-Verlauf:', err);
+  }
+  try {
+    await pruefeUndAktualisiereInsiderTrades(env, cfg);
+  } catch (err) {
+    console.error('[stocks-bot] Fehler bei den SEC Insider-Trades:', err);
   }
 }
 
