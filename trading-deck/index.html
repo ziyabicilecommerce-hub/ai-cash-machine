@@ -303,6 +303,9 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
 <div class="section-label">🕵️ SEC Insider-Trades — legales "Insider-Trading"</div>
 <section class="grid"><div class="card full" id="insiderTradesWrap"></div></section>
 
+<div class="section-label">💼 Smart Money — was Warren Buffett &amp; Co. gerade tun</div>
+<section class="grid" id="smartMoneyGrid"></section>
+
 <div class="section-label">🏆 Bist du besser als 100% der Leute?</div>
 <section class="grid" id="benchmarkGrid"></section>
 
@@ -990,6 +993,42 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
       <div class="note">100% legal und pflichtoffengelegt: Führungskräfte/Direktoren müssen JEDEN eigenen Aktienkauf/-verkauf (Section 16) innerhalb von 2 Werktagen der SEC melden - viel schneller als der Congress (bis 45 Tage). Nur echte Käufe/Verkäufe am offenen Markt (keine Aktienpakete/Optionsausübungen). Insider verkaufen oft aus Gründen, die nichts mit ihrer Meinung zur Aktie zu tun haben (Steuern, Diversifikation, geplante 10b5-1-Programme) - reine Beobachtung, keine Kauf-/Verkaufsempfehlung.</div>`;
   }
 
+  // ---- SMART MONEY (SEC Form 13F, institutionelle "Superinvestoren") ----
+  // Marktweit, NICHT auf die eigenen Aktien-Symbole gefiltert - Buffetts
+  // Portfolio hat i.d.R. nichts mit den eigenen Symbolen zu tun. Kommt
+  // fertig berechnet aus dem Worker (lib/smartmoney.mjs) - hier wird nur
+  // gerendert, kein eigener API-Call nötig.
+  function smartMoneyBewegungsListe(titel, liste, art) {
+    if (!liste.length) return '';
+    const zeilen = liste.map((p) => {
+      if (art === 'veraendert') {
+        const farbe = p.changeProzent >= 0 ? 'green' : 'red';
+        return `<li>${escapeHtml(p.nameOfIssuer || p.cusip)}: <span class="${farbe}">${p.changeProzent >= 0 ? '+' : ''}${p.changeProzent.toFixed(0)}%</span> (${(p.wertUsd / 1e6).toFixed(1)} Mio. USD)</li>`;
+      }
+      return `<li>${escapeHtml(p.nameOfIssuer || p.cusip)} (${(p.wertUsd / 1e6).toFixed(1)} Mio. USD)</li>`;
+    }).join('');
+    return `<div style="margin-top:10px;"><b>${titel}</b><ul style="margin:6px 0 0 18px;padding:0;">${zeilen}</ul></div>`;
+  }
+  function smartMoneyCard(investor) {
+    return `<div class="card half">
+      <div class="card-head"><div class="card-title">💼 ${escapeHtml(investor.name)}</div><div class="card-meta">Quartal ${escapeHtml(investor.stichtag || '?')}, gemeldet ${fmtDatum(investor.gemeldetAm)}</div></div>
+      ${smartMoneyBewegungsListe('🆕 Neue Positionen', investor.neuePositionen, 'neu') || '<div class="empty">Keine neuen Positionen diese Meldung.</div>'}
+      ${smartMoneyBewegungsListe('📈📉 Größere Auf-/Abbauten (≥10%)', investor.veraenderte, 'veraendert')}
+      ${smartMoneyBewegungsListe('❌ Komplett geschlossen', investor.geschlossenePositionen, 'geschlossen')}
+    </div>`;
+  }
+  function renderSmartMoney(stocksData) {
+    const el = document.getElementById('smartMoneyGrid');
+    const sOk = stocksData && !stocksData.fehler;
+    const daten = sOk ? stocksData.smartMoney : null;
+    if (!daten || !daten.investoren || !daten.investoren.length) {
+      el.innerHTML = `<div class="card full"><div class="empty">${sOk ? 'Noch keine Daten (läuft täglich, 13F kommt nur alle ~3 Monate).' : 'Noch kein Aktien-Bot verbunden.'}</div></div>`;
+      return;
+    }
+    el.innerHTML = daten.investoren.map(smartMoneyCard).join('') +
+      `<div class="card full"><div class="note">SEC Form 13F: institutionelle Investmentmanager mit über 100 Mio. USD verwaltetem Vermögen müssen JEDES Quartal ihre komplette Aktien-Positionsliste offenlegen - in der Finanzwelt oft "das legale Insider-Wissen" genannt. WICHTIG: Offenlegung darf bis zu 45 Tage nach Quartalsende dauern - die Positionen können sich seitdem längst geändert haben, das ist also Geschichte, kein Echtzeit-Signal. Reine Beobachtung, keine Kauf-/Verkaufsempfehlung. Zuletzt aktualisiert: ${fmtDatum(daten.datum)}.</div></div>`;
+  }
+
   // ---- BENCHMARK ("Bist du besser als 100% der Leute?") ----
   // Vergleicht die Paper-Portfolio-Rendite mit simplem Kaufen-und-
   // Liegenlassen derselben Symbole (+ beim Aktien-Bot zusätzlich mit dem
@@ -1432,6 +1471,7 @@ h1{font-size:34px; margin:7px 0; letter-spacing:-1.5px;}
     renderHealth(cryptoData, stocksData, cryptoRes.latencyMs, stocksRes.latencyMs);
     ladeCongressTradesEinmalig(stocksData);
     renderInsiderTrades(stocksData);
+    renderSmartMoney(stocksData);
     clearTimeout(window.__refreshTimer);
     window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
   }
