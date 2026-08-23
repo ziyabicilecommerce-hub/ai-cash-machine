@@ -214,6 +214,14 @@ export async function buildStatus(env) {
     // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
   }
 
+  let copyTrading = null;
+  try {
+    const raw = await env.TRADING_STATE.get('copytrading:letzte');
+    if (raw) copyTrading = JSON.parse(raw);
+  } catch {
+    // Kaputter/fehlender Eintrag - einfach null, kein Fehler fürs Dashboard.
+  }
+
   let benchmark = null;
   try {
     const raw = await env.TRADING_STATE.get('benchmark:letzte');
@@ -247,6 +255,7 @@ export async function buildStatus(env) {
     aiReview,
     korrelation,
     scanner,
+    copyTrading,
     benchmark,
     risikoStatus: berechneRisikoStatus(symbole, cfg, systemInfo.marktweiterCrashAktiv, systemInfo.newsEventAktiv),
     risiko: {

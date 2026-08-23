@@ -295,6 +295,7 @@ html.embedded .subtitle{display:none;}
     <button data-nav="congress" onclick="scrollToId('congress')">🏛️ Congress</button>
     <button data-nav="insider" onclick="scrollToId('insider')">🕵️ Insider</button>
     <button data-nav="smartmoney" onclick="scrollToId('smartmoney')">💼 Smart Money</button>
+    <button data-nav="copytrading" onclick="scrollToId('copytrading')">🏆 Copy-Trading</button>
     <button data-nav="events" onclick="scrollToId('events')">📰 Events</button>
     <button data-nav="fundamentals" onclick="scrollToId('fundamentals')">📑 Fundamental</button>
     <button data-nav="benchmark" onclick="scrollToId('benchmark')">🏆 Benchmark</button>
@@ -388,6 +389,9 @@ html.embedded .subtitle{display:none;}
 
 <div class="section-label" id="smartmoney">💼 Smart Money — was Warren Buffett &amp; Co. gerade tun</div>
 <section class="grid" id="smartMoneyGrid"></section>
+
+<div class="section-label" id="copytrading">🏆 OKX Copy-Trading Leaderboard — Platz 1 live mitverfolgen</div>
+<section class="grid"><div class="card full" id="copyTradingWrap"></div></section>
 
 <div class="section-label" id="events">📰 Material Events — Firmennews, bevor sie jeder mitbekommt</div>
 <section class="grid"><div class="card full" id="materialEventsWrap"></div></section>
@@ -1399,6 +1403,36 @@ html.embedded .subtitle{display:none;}
       `<div class="card full"><div class="note">SEC Form 13F: institutionelle Investmentmanager mit über 100 Mio. USD verwaltetem Vermögen müssen JEDES Quartal ihre komplette Aktien-Positionsliste offenlegen - in der Finanzwelt oft "das legale Insider-Wissen" genannt. WICHTIG: Offenlegung darf bis zu 45 Tage nach Quartalsende dauern - die Positionen können sich seitdem längst geändert haben, das ist also Geschichte, kein Echtzeit-Signal. Reine Beobachtung, keine Kauf-/Verkaufsempfehlung. Zuletzt aktualisiert: ${fmtDatum(daten.datum)}.</div></div>`;
   }
 
+  // ---- OKX COPY-TRADING LEADERBOARD ----
+  // Echte, öffentliche Rangliste der Top-Lead-Trader PLUS deren aktuell
+  // offene Positionen - OKX zeigt das ABSICHTLICH öffentlich, damit
+  // Lead-Trader Follower fürs Copy-Trading gewinnen. Kommt fertig aus dem
+  // Krypto-Bot (siehe lib/copytrading.mjs, kein CORS für Browser-Fetch bei
+  // OKX) - hier wird nur gerendert.
+  function copyTradingPositionZeile(p) {
+    return `<li>${escapeHtml(p.instId)} · ${escapeHtml(p.hebel)}x · Einstieg $${p.einstiegPreis.toLocaleString('de-DE', { maximumFractionDigits: 2 })} → $${p.marktPreis.toLocaleString('de-DE', { maximumFractionDigits: 2 })}
+      <span class="${p.veraenderungProzent >= 0 ? 'green' : 'red'}">${p.veraenderungProzent >= 0 ? '+' : ''}${p.veraenderungProzent.toFixed(1)}%</span></li>`;
+  }
+  function copyTradingCard(t, platz) {
+    return `<div class="card half">
+      <div class="card-head"><div class="card-title">#${platz} ${escapeHtml(t.nickName)}</div><div class="card-meta">${t.copyTraderNum.toLocaleString('de-DE')} Follower · seit ${t.leadDays} Tagen</div></div>
+      <div class="metric">PnL: <span class="${t.pnl >= 0 ? 'green' : 'red'}">${t.pnl >= 0 ? '+' : ''}$${t.pnl.toLocaleString('de-DE', { maximumFractionDigits: 0 })} (${t.pnlRatioProzent >= 0 ? '+' : ''}${t.pnlRatioProzent.toFixed(1)}%)</span> · Win-Rate ${t.winRatioProzent.toFixed(0)}%</div>
+      ${t.positionen.length ? `<ul style="margin:10px 0 0 18px;padding:0;font-size:11px;line-height:1.9;">${t.positionen.map(copyTradingPositionZeile).join('')}</ul>` : '<div class="empty">Aktuell keine öffentlich sichtbaren offenen Positionen.</div>'}
+    </div>`;
+  }
+  function renderCopyTrading(cryptoData) {
+    const el = document.getElementById('copyTradingWrap');
+    const cOk = cryptoData && !cryptoData.fehler;
+    const daten = cOk ? cryptoData.copyTrading : null;
+    if (!daten || !daten.trader || !daten.trader.length) {
+      el.innerHTML = `<div class="empty">${cOk ? 'Noch keine Daten (läuft täglich).' : 'Noch kein Krypto-Bot verbunden.'}</div>`;
+      return;
+    }
+    const karten = daten.trader.map((t, i) => copyTradingCard(t, i + 1)).join('');
+    el.innerHTML = `<div class="grid" style="grid-template-columns:repeat(2,1fr);gap:12px;margin:0 0 12px;padding:0;border:none;">${karten}</div>
+      <div class="note">100% öffentlich und legal: OKX zeigt Lead-Trader-Positionen ABSICHTLICH, damit die Trader Follower fürs Copy-Trading gewinnen - Opt-in-Transparenz seitens der Trader, kein Datenleck. Zuletzt aktualisiert: ${fmtDatum(daten.datum)}. Reine Beobachtung - das ist NICHT deine eigene Strategie und keine Kauf-/Verkaufsempfehlung. Hebel bis 50x wie hier gezeigt bedeutet extremes Risiko, auch für den Lead-Trader selbst.</div>`;
+  }
+
   // ---- MATERIAL EVENTS (SEC Form 8-K, Pflicht-Sofortoffenlegung) ----
   // Börsennotierte Firmen müssen wesentliche Ereignisse (Führungswechsel,
   // Insolvenz, Delisting-Warnung, Übernahme, Kontrollwechsel...) binnen 4
@@ -1916,6 +1950,7 @@ html.embedded .subtitle{display:none;}
     renderSmartMoney(stocksData);
     renderMaterialEvents(stocksData);
     renderFundamentals(stocksData);
+    renderCopyTrading(cryptoData);
     renderErfolge(cryptoData, stocksData);
     clearTimeout(window.__refreshTimer);
     window.__refreshTimer = setTimeout(loadAll, REFRESH_MS);
@@ -1933,7 +1968,7 @@ html.embedded .subtitle{display:none;}
 
   // Scroll-Spy: markiert den Nav-Button des sichtbaren Abschnitts als aktiv.
   (function initScrollSpy() {
-    const ids = ['thermometer','overview','erfolge','chart','market','congress','insider','smartmoney','events','fundamentals','benchmark','analyst','scanner','global','risk','backtest','journal','alerts','health'];
+    const ids = ['thermometer','overview','erfolge','chart','market','congress','insider','smartmoney','copytrading','events','fundamentals','benchmark','analyst','scanner','global','risk','backtest','journal','alerts','health'];
     const buttons = Object.fromEntries(ids.map((id) => [id, document.querySelector(`[data-nav="${id}"]`)]));
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {

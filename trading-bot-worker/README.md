@@ -779,6 +779,41 @@ Zeitfenster getragen wird (Overfitting-Warnsignal). `/status` liefert das
 als `walkForward`-Feld je Symbol in `autoBacktest`, Trading Deck zeigt es
 unter der Backtest-Tabelle.
 
+## OKX Copy-Trading Leaderboard (`lib/copytrading.mjs`)
+
+Zeigt täglich aktualisiert die Top-5 der öffentlichen OKX-Copy-Trading-
+Rangliste (Rang, Nickname, PnL, Win-Rate, Follower-Anzahl) PLUS deren
+aktuell offene Positionen (Instrument, Hebel, Einstiegspreis, Marktpreis,
+Veränderung %). Rein informativ - keine Kauf-/Verkaufsempfehlung und
+nicht die eigene Strategie des Bots.
+
+**Warum das legal ist:** OKX macht Lead-Trader-Positionen ABSICHTLICH
+öffentlich zugänglich, damit Trader damit Follower fürs Copy-Trading
+gewinnen können - Opt-in-Transparenz seitens der Trader, kein Datenleck
+und keine gescrapten privaten Daten. Genutzt werden die offiziellen,
+öffentlichen, unauthentifizierten OKX-v5-Endpoints (kein API-Key nötig):
+
+```
+GET https://www.okx.com/api/v5/copytrading/public-lead-traders?instType=SWAP
+GET https://www.okx.com/api/v5/copytrading/public-current-subpositions?uniqueCode=...
+```
+
+**Kein CORS:** anders als CoinGecko/blockchain.info liefert OKX keine
+`Access-Control-Allow-Origin`-Header (live per curl geprüft) - der Abruf
+läuft deshalb serverseitig im Worker statt direkt aus dem Trading Deck im
+Browser.
+
+**Konsolidierung:** ein Lead-Trader kann für dieselbe Position viele
+"Sub-Positionen" haben (eine je gekoppeltem Follower-Kapitalanteil) -
+`copytrading.mjs` fasst diese pro Instrument zu EINER Position mit
+gewichtetem Durchschnitts-Einstiegspreis zusammen, statt z.B. 100 Zeilen
+für dieselbe Position zu zeigen.
+
+Läuft höchstens 1x pro Tag (KV-Key `copytrading:letzterTag`), Ergebnis
+liegt unter `copytrading:letzte` und wird von `/status` als
+`copyTrading`-Feld ausgeliefert. Trading Deck zeigt es im eigenen
+Abschnitt "🏆 OKX Copy-Trading Leaderboard".
+
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 
 `GET /reset-kill-switch?key=<TRIGGER_SECRET>&symbol=<SYMBOL>` setzt NUR
