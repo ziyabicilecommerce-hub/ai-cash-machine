@@ -794,6 +794,8 @@ erklärt die Reihenfolge.
    # Optional, zweiter/alternativer Benachrichtigungskanal:
    # wrangler secret put TELEGRAM_BOT_TOKEN
    # wrangler secret put TELEGRAM_CHAT_ID
+   # Nur falls Telegram-Befehle genutzt werden sollen (siehe unten):
+   # wrangler secret put TELEGRAM_WEBHOOK_SECRET
    wrangler secret put TRIGGER_SECRET
    wrangler secret put STATUS_READ_KEY
    ```
@@ -910,6 +912,80 @@ Dashboard-Refresh (alle 30s) zu viele Anfragen an die kostenlosen
 `/status` als `preisRadar`-Feld ausgeliefert. Trading Deck zeigt es im
 eigenen Abschnitt "💱 Preis-Radar", sortiert nach dem größten Spread
 zuerst, niedrigster Preis grün / höchster rot markiert.
+
+## Volatilitäts-Ampel
+
+Zeigt auf einen Blick, wie nervös der Krypto-Markt insgesamt gerade ist -
+Durchschnitt der ATR-basierten Volatilität (`volatilitaetProzent`) über
+alle konfigurierten Symbole, aus denselben Live-Kerzen berechnet, die
+ohnehin schon für Preis/Indikatoren geladen werden (kein zusätzlicher
+API-Call). Grobe, bewusst einfache Einordnung, keine wissenschaftliche
+Kennzahl: 🟢 RUHIG (Ø unter 1%), 🟡 NORMAL (1-2,5%), 🔴 UNRUHIG (über
+2,5%) - Schwellen willkürlich, an typischen 15m-Kerzen-ATR-Werten bei
+Krypto orientiert. `/status` liefert es als `marktVolatilitaet`-Feld,
+Trading Deck zeigt es als eigene Kachel im Overview.
+
+## Preis-Alarme (`lib/preisalarm.mjs`)
+
+Schickt eine WhatsApp/Telegram-Nachricht, sobald der Kurs eines Symbols
+eine konfigurierte Schwelle KREUZT - reine Benachrichtigung, ändert NIE
+eine Order. Konfiguration über `TRADING_PREISALARME`, Format
+`"SYMBOL:unter:PREIS,SYMBOL:ueber:PREIS,..."`, z.B.:
+```
+TRADING_PREISALARME = "XBTUSDT:unter:70000,ETHUSDT:ueber:3000"
+```
+Läuft bei JEDEM Cron-Lauf (nutzt den Preis, der ohnehin für die
+Handelsentscheidung geladen wird), triggert aber nur bei einer echten
+Zustandsänderung (vorher auf der anderen Seite der Schwelle, jetzt
+drüber/drunter) - kein Spam, falls der Kurs länger um die Schwelle
+pendelt. Beim allerersten Check zu einem neuen Alarm wird nur der
+Ausgangszustand gespeichert, nicht sofort gemeldet (sonst würde jeder neu
+hinzugefügte Alarm sofort feuern, nur weil er zufällig schon auf der
+Zielseite steht).
+
+## Kombi-Report (Trading Deck, rein clientseitig)
+
+Ein gemeinsamer "📊 Kombi-Report" im Trading Deck fasst BEIDE Bots
+(Krypto + Aktien) zusammen: Gesamtkapital, Gesamt-P&L, Gesamt-Trades,
+welcher Bot gerade besser läuft. Rein clientseitig aus den ohnehin schon
+geladenen `cryptoData`/`stocksData` berechnet - kein neuer Backend-
+Endpoint, kein zusätzlicher API-Call. Krypto läuft in USDT, Aktien in
+USD - für die Summe hier wie 1:1 behandelt (grobe Gesamtübersicht, kein
+echter Wechselkurs). Kein Bot weiß vom anderen, das bleibt so - nur das
+Dashboard kombiniert die Zahlen für die Anzeige.
+
+## Telegram-Befehle (`lib/telegrambefehle.mjs`)
+
+Der Bot reagiert auf eingehende Telegram-Nachrichten statt nur passiv zu
+benachrichtigen:
+- `/status [SYMBOL]` — Kapital, offene Position, Trades (aus dem
+  gespeicherten State, kein Live-Kursabruf für eine schnelle Antwort)
+- `/pause SYMBOL` — stoppt NEUE Käufe für dieses Symbol; eine bereits
+  offene Position wird weiter normal verwaltet (Stop-Loss/Trailing-Stop
+  laufen unverändert weiter)
+- `/resume SYMBOL` — hebt die Pause wieder auf
+- `/help` — Befehlsübersicht
+
+**Sicherheit:** nur Nachrichten von der konfigurierten `TELEGRAM_CHAT_ID`
+werden verarbeitet — jede andere Chat-ID wird ignoriert, damit niemand
+sonst den Bot fernsteuern kann, selbst wenn er den Bot-Namen/Link kennt.
+Der Webhook-Endpoint selbst ist zusätzlich über einen geheimen Header
+abgesichert (`TELEGRAM_WEBHOOK_SECRET`, von Telegram bei jedem Aufruf
+mitgeschickt), nicht über die URL — ein Query-Parameter mit Secret könnte
+in Server-Logs landen, ein Header bei einem POST-Body nicht.
+
+**Einmaliges Setup** (braucht `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`
+UND `TELEGRAM_WEBHOOK_SECRET` als Secrets, siehe oben) - nach dem Deploy
+EINMAL den Webhook bei Telegram registrieren:
+```bash
+curl "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook" \
+  -d "url=https://cashmachine-trading-bot.<dein-account>.workers.dev/telegram-webhook" \
+  -d "secret_token=<TELEGRAM_WEBHOOK_SECRET>"
+```
+Danach reagiert der Bot sofort auf Nachrichten im konfigurierten Chat.
+Ohne diese Registrierung ändert sich nichts am bisherigen Verhalten (der
+Bot benachrichtigt weiter normal per `notify()`, reagiert nur nicht auf
+eingehende Nachrichten).
 
 ## Kill-Switch zurücksetzen (ohne Trade-Historie zu verlieren)
 

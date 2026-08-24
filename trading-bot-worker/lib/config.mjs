@@ -32,6 +32,25 @@ function parseExchangeProSymbol(env) {
   return map;
 }
 
+// Preis-Alarme: schickt eine WhatsApp/Telegram-Nachricht, sobald der Kurs
+// eine konfigurierte Schwelle kreuzt - reine Benachrichtigung, ändert NIE
+// eine Order. Format: "SYMBOL:unter:PREIS,SYMBOL:ueber:PREIS,...", z.B.
+// "XBTUSDT:unter:70000,ETHUSDT:ueber:3000". Ein Symbol kann mehrere Alarme
+// haben (mehrere Einträge mit demselben Symbol).
+function parsePreisalarme(env) {
+  const roh = (env.TRADING_PREISALARME || '').trim();
+  const map = {};
+  if (!roh) return map;
+  for (const eintrag of roh.split(',')) {
+    const [symbol, richtung, preisStr] = eintrag.split(':').map((s) => s.trim());
+    const preis = parseFloat(preisStr);
+    if (!symbol || !['unter', 'ueber'].includes(richtung) || !(preis > 0)) continue;
+    if (!map[symbol]) map[symbol] = [];
+    map[symbol].push({ richtung, preis });
+  }
+  return map;
+}
+
 function parseStrategieProSymbol(env, gueltigeStrategien) {
   const roh = (env.TRADING_STRATEGIE_PRO_SYMBOL || '').trim();
   const map = {};
@@ -203,5 +222,6 @@ export function readConfig(env) {
     // geschlossen (die definierende Eigenschaft dieser Strategie - kein
     // Übernacht-Risiko). Siehe lib/strategie.mjs entscheideVerkauf.
     dayTradingSchlussPufferMinuten: parseInt(env.TRADING_DAY_TRADING_SCHLUSS_PUFFER_MINUTEN || '15', 10),
+    preisalarmeProSymbol: parsePreisalarme(env),
   };
 }

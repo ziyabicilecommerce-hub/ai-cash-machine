@@ -62,6 +62,20 @@ function berechneProfitFactor(trades) {
   return gewinne / Math.abs(verluste);
 }
 
+// Volatilitäts-Ampel: Durchschnitt der ATR-basierten volatilitaetProzent
+// aller Symbole (kommt aus derselben Live-Kerzen-Abfrage, die ohnehin schon
+// für Preis/Indikatoren läuft - kein zusätzlicher API-Call). Grobe, bewusst
+// einfache Einordnung "wie nervös ist der Markt insgesamt gerade", keine
+// wissenschaftliche Kennzahl - Schwellen willkürlich, aber an typischen
+// 15m-Kerzen-ATR-Werten bei Krypto orientiert.
+function berechneMarktVolatilitaet(symbole) {
+  const werte = symbole.map((s) => s.volatilitaetProzent).filter((v) => v != null);
+  if (!werte.length) return { durchschnittProzent: null, ampel: null };
+  const durchschnittProzent = werte.reduce((a, b) => a + b, 0) / werte.length;
+  const ampel = durchschnittProzent < 1 ? 'ruhig' : durchschnittProzent < 2.5 ? 'normal' : 'unruhig';
+  return { durchschnittProzent, ampel };
+}
+
 // Rekonstruiert eine grobe Equity-Kurve aus der Trade-Reihenfolge (Start-
 // kapital + jeweils gewinnVerlustUsdt aufsummiert) und daraus den größten
 // Rückgang vom bisherigen Höchststand - keine Sekunde-für-Sekunde-Kurve
@@ -105,13 +119,14 @@ export async function buildStatus(env) {
     // Live-Werte direkt von der Börse - fällt bei einem Fehler sauber auf
     // null zurück, statt den gesamten /status-Aufruf abzubrechen (ein
     // einzelner Coin mit Börsen-Hänger darf nicht das ganze Dashboard leeren).
-    let live = { preisAktuell: null, change24hProzent: null, spreadProzent: null, indikatoren: null };
+    let live = { preisAktuell: null, change24hProzent: null, spreadProzent: null, volatilitaetProzent: null, indikatoren: null };
     try {
       const { closes, highs, lows } = await exchange.getKlines(symbol);
       if (closes.length) {
         const indikatoren = berechneIndikatoren(closes, highs, lows, cfgSymbol);
         live.preisAktuell = indikatoren.preis;
         live.change24hProzent = berechne24hChangeAusKlines(closes);
+        live.volatilitaetProzent = indikatoren.volatilitaetProzent;
         const emaSchnellSeries = emaSeries(closes, cfgSymbol.emaSchnell);
         const emaLangsamSeries = emaSeries(closes, cfgSymbol.emaLangsam);
         live.indikatoren = {
@@ -175,6 +190,7 @@ export async function buildStatus(env) {
       startKapital: state.startKapital,
       heutigerVerlustUsdt: state.heutigerVerlustUsdt,
       killSwitchAktiv: state.killSwitchAktiv,
+      pausiert: state.pausiert || false,
       tradeStats: berechneTradeStats(trades),
       profitFactor: berechneProfitFactor(trades),
       maxDrawdownProzent: berechneMaxDrawdownProzent(trades, state.startKapital),
@@ -267,6 +283,7 @@ export async function buildStatus(env) {
     copyTrading,
     benchmark,
     preisRadar,
+    marktVolatilitaet: berechneMarktVolatilitaet(symbole),
     risikoStatus: berechneRisikoStatus(symbole, cfg, systemInfo.marktweiterCrashAktiv, systemInfo.newsEventAktiv),
     risiko: {
       maxPositionProzent: cfg.maxPositionProzent,
