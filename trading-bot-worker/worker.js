@@ -36,6 +36,8 @@ import { pruefeUndFuehreAiReview } from './lib/ai-review.mjs';
 import { pruefeUndAktualisiereScanner } from './lib/scanner.mjs';
 import { pruefeUndAktualisiereCopyTrading } from './lib/copytrading.mjs';
 import { pruefeUndAktualisierePreisRadar } from './lib/pricevergleich.mjs';
+import { pruefeUndSendePreisalarme } from './lib/preisalarm.mjs';
+import { verarbeiteTelegramUpdate } from './lib/telegrambefehle.mjs';
 import { pruefeUndAktualisiereMonteCarlo } from './lib/montecarlo.mjs';
 import { pruefeUndSendeSignalDigest } from './lib/signaldigest.mjs';
 import { pruefeUndSpeichereScoreVerlauf } from './lib/scoreverlauf.mjs';
@@ -75,7 +77,21 @@ async function runSymbol(env, symbol, startKapital, cfg, offenePositionenVorLauf
   const { preis } = indikatoren;
   const handelsSperreHeute = state.heutigerVerlustUsdt <= -(state.kapital * cfg.maxTagesverlustProzent) / 100;
 
-  if (!state.position) {
+  // Preis-Alarme: läuft unabhängig von der Kauf-/Verkaufsentscheidung, bei
+  // JEDEM Lauf - reine Benachrichtigung, siehe lib/preisalarm.mjs.
+  const alarmeFuerSymbol = cfg.preisalarmeProSymbol[symbol];
+  if (alarmeFuerSymbol && alarmeFuerSymbol.length) {
+    try {
+      await pruefeUndSendePreisalarme(env, symbol, preis, alarmeFuerSymbol);
+    } catch (err) {
+      console.error(`[trading-bot] Preis-Alarm-Check für ${symbol} fehlgeschlagen:`, err);
+    }
+  }
+
+  // Pausiert per Telegram-Befehl (/pause SYMBOL, siehe lib/telegrambefehle.mjs):
+  // KEINE neuen Käufe, aber eine bereits offene Position wird im else-Zweig
+  // unten normal weiter verwaltet (Stop-Loss/Trailing-Stop laufen weiter).
+  if (!state.position && !state.pausiert) {
     const positionenPlatzFrei = offenePositionenVorLauf < cfg.maxGleichzeitigePositionen;
     const kauf = entscheideKauf({
       kapital: state.kapital, cfg, indikatoren, positionenPlatzFrei, handelsSperreHeute, kuerzlicheTrades: state.trades,
@@ -501,6 +517,32 @@ export default {
       await saveState(env, symbol, state);
       await notify(env, `✅ Trading-Bot (${symbol}): Kill-Switch manuell zurückgesetzt. Kapital: ${state.kapital.toFixed(2)} USDT. Handelt ${symbol} ab dem nächsten Lauf wieder.`);
       return new Response(`${symbol}: Kill-Switch zurückgesetzt.`, { status: 200 });
+    }
+
+    // Telegram-Webhook: Telegram ruft diesen Endpoint bei jeder neuen
+    // Nachricht an den Bot auf (siehe README für die einmalige setWebhook-
+    // Registrierung). Authentifiziert über den geheimen Header, den Telegram
+    // bei jedem Aufruf mitschickt (secret_token bei der Webhook-Registrierung
+    // gesetzt) - NICHT über die URL, da POST-Bodies von Telegram kommen und
+    // eine URL mit Secret in Server-Logs landen könnte. verarbeiteTelegram
+    // Update prüft zusätzlich, dass die Chat-ID wirklich die konfigurierte
+    // Besitzer-Chat-ID ist (siehe lib/telegrambefehle.mjs).
+    if (url.pathname === '/telegram-webhook' && request.method === 'POST') {
+      if (!env.TELEGRAM_WEBHOOK_SECRET || request.headers.get('X-Telegram-Bot-Api-Secret-Token') !== env.TELEGRAM_WEBHOOK_SECRET) {
+        return new Response('Forbidden', { status: 403 });
+      }
+      let update;
+      try {
+        update = await request.json();
+      } catch {
+        return new Response('Bad Request', { status: 400 });
+      }
+      try {
+        await verarbeiteTelegramUpdate(env, update);
+      } catch (err) {
+        console.error('[trading-bot] Telegram-Befehl fehlgeschlagen:', err);
+      }
+      return new Response('OK', { status: 200 });
     }
 
     // Manuelles Auslösen nur mit korrektem Trigger-Secret - sonst könnte

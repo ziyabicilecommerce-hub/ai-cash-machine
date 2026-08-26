@@ -188,6 +188,13 @@ TRADING_DONCHIAN_EXIT_PERIODE = "10"
 # aufhören zu handeln. Format zum Erweitern: "SYMBOL:strategie,SYMBOL2:strategie2".
 TRADING_STRATEGIE_PRO_SYMBOL = "ETHUSDT:ultimate"
 
+# Preis-Alarme: schickt eine WhatsApp/Telegram-Nachricht, sobald der Kurs
+# eine Schwelle KREUZT (nicht bei jedem Lauf, in dem er zufällig drüber/
+# drunter liegt - siehe lib/preisalarm.mjs). Reine Benachrichtigung, ändert
+# NIE eine Order. Format: "SYMBOL:unter:PREIS,SYMBOL:ueber:PREIS,...". Leer
+# (aktueller Stand) = keine Alarme konfiguriert.
+# TRADING_PREISALARME = "XBTUSDT:unter:70000,ETHUSDT:ueber:3000"
+
 # News-Sentiment-Filter (braucht einen KOSTENLOSEN CRYPTOPANIC_API_KEY als
 # Secret, siehe unten) - verwirft ein Kaufsignal, wenn echte Nutzer auf
 # CryptoPanic die aktuellen News zu diesem Coin überwiegend "bearish"

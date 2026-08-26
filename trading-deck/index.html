@@ -289,6 +289,7 @@ html.embedded .subtitle{display:none;}
   <div class="nav">
     <button class="active" data-nav="thermometer" onclick="scrollToId('thermometer')">🌡️ Thermometer</button>
     <button data-nav="overview" onclick="scrollToId('overview')">🎯 Overview</button>
+    <button data-nav="kombireport" onclick="scrollToId('kombireport')">📊 Kombi-Report</button>
     <button data-nav="erfolge" onclick="scrollToId('erfolge')">🏅 Erfolge</button>
     <button data-nav="chart" onclick="scrollToId('chart')">📊 Live-Chart</button>
     <button data-nav="market" onclick="scrollToId('market')">🌐 Live-Markt</button>
@@ -335,6 +336,9 @@ html.embedded .subtitle{display:none;}
 
 <div class="section-label" id="overview">Overview</div>
 <section class="grid" id="overviewGrid"></section>
+
+<div class="section-label" id="kombireport">📊 Kombi-Report — Krypto-Bot + Aktien-Bot zusammen</div>
+<section class="grid"><div class="card full" id="kombiReportWrap"></div></section>
 
 <div class="section-label" id="erfolge">🏅 Erfolge</div>
 <section class="grid"><div class="card full"><div class="erfolge-grid" id="erfolgeGrid"></div></div></section>
@@ -786,7 +790,40 @@ html.embedded .subtitle{display:none;}
     html += overviewCard('WIN-RATE AKTIEN', ss ? `${ss.anzahlTrades} TRADES` : '–', ss && ss.winRate != null ? ss.winRate.toFixed(1) + '%' : '–', '', '');
     html += overviewCard('MAX DRAWDOWN KRYPTO', 'HISTORISCH', cs ? '-' + cs.maxDrawdownProzent.toFixed(1) + '%' : '–', cs && cs.maxDrawdownProzent > 15 ? 'red' : 'yellow', 'Größter Rückgang je Symbol');
     html += overviewCard('MAX DRAWDOWN AKTIEN', 'HISTORISCH', ss ? '-' + ss.maxDrawdownProzent.toFixed(1) + '%' : '–', ss && ss.maxDrawdownProzent > 15 ? 'red' : 'yellow', 'Größter Rückgang je Symbol');
+    const vol = cryptoData && !cryptoData.fehler ? cryptoData.marktVolatilitaet : null;
+    const volAmpel = vol && vol.ampel === 'unruhig' ? { emoji: '🔴', label: 'UNRUHIG', klasse: 'red' }
+      : vol && vol.ampel === 'normal' ? { emoji: '🟡', label: 'NORMAL', klasse: 'yellow' }
+      : vol && vol.ampel === 'ruhig' ? { emoji: '🟢', label: 'RUHIG', klasse: 'green' }
+      : null;
+    html += overviewCard('VOLATILITÄT KRYPTO', 'MARKTWEIT', volAmpel ? `${volAmpel.emoji} ${volAmpel.label}` : '–', volAmpel ? volAmpel.klasse : '', vol && vol.durchschnittProzent != null ? `Ø ${vol.durchschnittProzent.toFixed(2)}% (ATR, alle Coins)` : 'Noch keine Daten');
     el.innerHTML = html;
+  }
+
+  // ---- KOMBI-REPORT (beide Bots zusammen, rein clientseitig aus den
+  // ohnehin schon geladenen cryptoData/stocksData berechnet - kein
+  // zusätzlicher API-Call, kein neuer Backend-Endpoint) ----
+  // WICHTIG: Krypto läuft in USDT, Aktien in USD - für die Summe hier wie
+  // 1:1 behandelt (marktüblich für so eine grobe Gesamtübersicht, aber kein
+  // exakter Wechselkurs).
+  function renderKombiReport(cryptoData, stocksData) {
+    const el = document.getElementById('kombiReportWrap');
+    const cs = summarize(cryptoData);
+    const ss = summarize(stocksData);
+    if (!cs && !ss) { el.innerHTML = '<div class="empty">Noch keine Bots verbunden.</div>'; return; }
+    const gesamtKapital = (cs?.kapital || 0) + (ss?.kapital || 0);
+    const gesamtStart = (cs?.start || 0) + (ss?.start || 0);
+    const gesamtPl = (cs?.pl || 0) + (ss?.pl || 0);
+    const gesamtPlProzent = gesamtStart ? (gesamtPl / gesamtStart) * 100 : 0;
+    const gesamtTrades = (cs?.anzahlTrades || 0) + (ss?.anzahlTrades || 0);
+    let besser = null;
+    if (cs && ss) besser = cs.plProzent === ss.plProzent ? null : (cs.plProzent > ss.plProzent ? '₿ Krypto-Bot' : '📈 Aktien-Bot');
+    el.innerHTML = `<div class="grid" style="grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 14px;padding:0;border:none;">
+        ${overviewCard('GESAMTKAPITAL', 'BEIDE BOTS', fmtGeld(gesamtKapital, 'USD/USDT'), '', `Start: ${fmtGeld(gesamtStart, 'USD/USDT')}`)}
+        ${overviewCard('GESAMT-P&amp;L', 'BEIDE BOTS', (gesamtPl >= 0 ? '+' : '') + fmtGeld(gesamtPl, 'USD/USDT'), gesamtPl < 0 ? 'red' : 'green', fmtProzent(gesamtPlProzent) + ' seit Start')}
+        ${overviewCard('TRADES GESAMT', 'BEIDE BOTS', String(gesamtTrades), '', `${cs ? cs.anzahlTrades : 0} Krypto · ${ss ? ss.anzahlTrades : 0} Aktien`)}
+      </div>
+      <div class="metric">${besser ? `🏆 ${besser} läuft aktuell besser (${fmtProzent((besser === '₿ Krypto-Bot' ? cs : ss).plProzent)} vs. ${fmtProzent((besser === '₿ Krypto-Bot' ? ss : cs).plProzent)})` : (cs && ss ? 'Beide Bots liegen gerade gleichauf.' : 'Braucht beide Bots verbunden für einen Vergleich.')}</div>
+      <div class="note" style="margin-top:12px;">Reine Zusammenfassung bereits bekannter Zahlen (kein neuer Wert, keine neue Anfrage) - Krypto läuft in USDT, Aktien in USD, hier wie 1:1 zusammengerechnet statt mit echtem Wechselkurs. Kein Bot weiß vom anderen - diese Ansicht kombiniert sie nur fürs Dashboard.</div>`;
   }
 
   // ---- PORTFOLIO-HEATMAP (echtes P&L pro Symbol, beide Bots) ----
@@ -1967,6 +2004,7 @@ html.embedded .subtitle{display:none;}
     renderCommandBar(cryptoData, stocksData, cryptoRes.latencyMs, stocksRes.latencyMs);
     renderThermometer(cryptoData, stocksData);
     renderOverview(cryptoData, stocksData);
+    renderKombiReport(cryptoData, stocksData);
     renderHeatmap(cryptoData, stocksData);
     befuelleChartAuswahl(cryptoData, stocksData);
     renderTvTickerTape(cryptoData, stocksData);
@@ -2003,7 +2041,7 @@ html.embedded .subtitle{display:none;}
 
   // Scroll-Spy: markiert den Nav-Button des sichtbaren Abschnitts als aktiv.
   (function initScrollSpy() {
-    const ids = ['thermometer','overview','erfolge','chart','market','congress','insider','smartmoney','copytrading','preisradar','events','fundamentals','benchmark','analyst','scanner','global','risk','backtest','journal','alerts','health'];
+    const ids = ['thermometer','overview','kombireport','erfolge','chart','market','congress','insider','smartmoney','copytrading','preisradar','events','fundamentals','benchmark','analyst','scanner','global','risk','backtest','journal','alerts','health'];
     const buttons = Object.fromEntries(ids.map((id) => [id, document.querySelector(`[data-nav="${id}"]`)]));
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
