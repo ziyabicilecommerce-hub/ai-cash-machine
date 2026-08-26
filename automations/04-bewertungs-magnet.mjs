@@ -2,7 +2,7 @@
 // Original: n8n Workflow "04_Bewertungs_Magnet" · Zeitplan: täglich 10:00
 import { config, isTestMode } from './lib/config.mjs';
 import { getOrders } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -40,7 +40,7 @@ async function main() {
 
       const prompt = `Du bist E-Mail-Marketing-Profi für den Onlineshop "${config.SHOP_NAME}".${NL}Der Kunde hat vor ${tage} Tagen bestellt und die Ware erhalten. Schreibe eine kurze, herzliche Bewertungs-Anfrage auf Deutsch (Du-Form), max 100 Wörter.${NL}Vorname: ${vorname || 'unbekannt (neutral anreden)'}${NL}Gekaufte Artikel: ${artikel}${NL}Bewertungs-Link: ${config.BEWERTUNG_LINK}${NL}${NL}Anforderungen: ehrlich fragen wie zufrieden er ist, EIN klarer Button (als a-Tag mit Inline-Button-Styling) zum Bewertungs-Link, erwähne dass es nur 60 Sekunden dauert. Extra: bitte ihn, ein Foto/Video mit dem Produkt zu posten und den Shop zu markieren. Kein Betteln, kein Spam-Ton. Mobiltaugliches HTML mit Inline-CSS.${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 2000 });
+      const antwort = await askKI(prompt, { maxTokens: 2000 });
       const daten = parseJsonFromText(antwort, { betreff: 'Wie zufrieden bist du?', html: antwort });
 
       const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;

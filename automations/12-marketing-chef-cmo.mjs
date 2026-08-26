@@ -2,7 +2,7 @@
 // Original: n8n Workflow "12_Marketing_Chef_KI_CMO" · Zeitplan: sonntags 18:00
 import { config } from './lib/config.mjs';
 import { getOrders } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 
@@ -48,7 +48,7 @@ async function main() {
 
   const prompt = `Du bist der CMO (Marketing-Chef) vom Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}, Zielgruppe: ${config.ZIELGRUPPE}). Der Gründer ist Solo-Unternehmer mit wenig Zeit. Du bist erfahren, direkt und sagst auch unbequeme Wahrheiten.${NL}${NL}WOCHENDATEN:${NL}${daten}${NL}${NL}Schreibe dein wöchentliches CMO-Briefing für die kommende Woche, auf Deutsch (Du-Form):${NL}1. LAGEBERICHT: Wo stehen wir? Sind wir auf Kurs zum Monatsziel? (ehrlich rechnen!)${NL}2. DIE 3 PRIORITÄTEN der Woche (konkret, mit Zeitaufwand-Schätzung, wichtigste zuerst)${NL}3. BUDGET-EMPFEHLUNG: Wie das Marketing-Budget diese Woche aufteilen (Ads / Content / Sonstiges) und warum${NL}4. EIN WACHSTUMS-EXPERIMENT für die Woche (Hypothese, Umsetzung, Erfolgskriterium)${NL}5. STOPP-LISTE: Eine Sache, die der Gründer diese Woche NICHT tun sollte (Zeitfresser/Ablenkung)${NL}${NL}Antworte NUR mit validem JSON, ohne Markdown:${NL}{"telegram_kurz": "<max 800 Zeichen Kurzfassung: Lage in 2 Sätzen + die 3 Prioritäten als Stichpunkte>", "html": "<das volle Briefing als sauberes HTML mit h2/h3, Listen, ohne html/body-Gerüst>"}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 4000 });
+  const antwort = await askKI(prompt, { maxTokens: 4000 });
   const daten2 = parseJsonFromText(antwort, {
     telegram_kurz: antwort.slice(0, 800),
     html: `<pre style="white-space:pre-wrap;font-family:sans-serif;">${antwort}</pre>`,

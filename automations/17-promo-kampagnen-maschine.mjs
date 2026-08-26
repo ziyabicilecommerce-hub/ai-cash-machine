@@ -2,7 +2,7 @@
 // Original: n8n Workflow "17_Promo_Kampagnen_Maschine" · Zeitplan: alle 14 Tage 10:00
 import { config, isTestMode } from './lib/config.mjs';
 import { getProducts, getCustomers } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -33,7 +33,7 @@ async function main() {
 
   const prompt = `Du bist E-Mail-Marketing-Profi für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}, Zielgruppe: ${config.ZIELGRUPPE}).${NL}${NL}KAMPAGNEN-TYP heute: ${typ.name} -> ${typ.idee}${NL}Rabattcode: ${config.KAMPAGNEN_RABATT_CODE} (${config.RABATT_PROZENT}%)${NL}${NL}Produktkatalog (Auszug):${NL}${produktListe.join(NL)}${NL}${NL}Schreibe die komplette Kampagnen-E-Mail auf Deutsch (Du-Form):${NL}- Betreff: maximal 45 Zeichen, neugierig machend, zum Kampagnen-Typ passend${NL}- Der Platzhalter ${PLATZHALTER} soll im HTML genau einmal für die persönliche Anrede stehen${NL}- 1-2 konkrete Produkte aus dem Katalog mit Links einbauen${NL}- EIN klarer CTA-Button (als <a> mit Inline-Button-Styling)${NL}- Rabattcode prominent, Deadline erzeugen${NL}- Unten kleiner Footer-Hinweis: Du bekommst diese Mail als Kunde von ${config.SHOP_NAME}. Antworte mit STOP zum Abmelden.${NL}- Mobiltaugliches HTML mit Inline-CSS, kein Spam-Vokabular (keine Großbuchstaben-Wände)${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 3500 });
+  const antwort = await askKI(prompt, { maxTokens: 3500 });
   const daten = parseJsonFromText(antwort, { betreff: 'Nur für dich', html: antwort });
 
   const maxEmpfaenger = parseInt(config.MAX_EMPFAENGER || '200');

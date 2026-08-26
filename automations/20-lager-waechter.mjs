@@ -2,7 +2,7 @@
 // Original: n8n Workflow "20_Lager_Wächter" · Zeitplan: täglich 07:00
 import { config } from './lib/config.mjs';
 import { getProducts, getOrdersSince } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { loeseKetteAus } from './lib/chains.mjs';
 
@@ -55,7 +55,7 @@ async function main() {
     }${NL}Gib mir eine kurze, konkrete Nachbestell-Empfehlung auf Deutsch: Was zuerst nachbestellen, grobe Mengen-Idee (für ~30 Tage Puffer), und was der größte Umsatzverlust wäre wenn es leer läuft. Knapp, Klartext ohne Markdown.`;
   }
 
-  const rat = await askClaude(prompt, { maxTokens: 1500 });
+  const rat = await askKI(prompt, { maxTokens: 1500 });
   await notifyTelegram(`LAGER-WÄCHTER - ${config.SHOP_NAME}${NL}--------------------${NL}${NL}${rat}`);
 
   if (kritisch.length > 0 || ausverkauft.length > 0) {

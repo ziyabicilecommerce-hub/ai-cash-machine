@@ -3,10 +3,15 @@
 export const config = {
   SHOP: process.env.SHOP || '',
   SHOPIFY_TOKEN: process.env.SHOPIFY_TOKEN || '',
-  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
-  // Tages-Obergrenze für Claude-Tokenverbrauch über alle Automationen hinweg
-  // (Input+Output zusammen). '0' oder leer = kein Limit.
-  CLAUDE_MAX_TOKENS_PRO_TAG: process.env.CLAUDE_MAX_TOKENS_PRO_TAG || '300000',
+  // Kostenlose Google-Gemini-API statt bezahltem Claude - gleiche Rolle
+  // (Text-/JSON-Generierung für alle Automationen), aber ohne laufende
+  // Kosten. Key kostenlos unter aistudio.google.com/apikey.
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+  GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
+  // Tages-Obergrenze für Gemini-Tokenverbrauch über alle Automationen hinweg
+  // (Input+Output zusammen) - Sicherheitsnetz gegen die kostenlose Stufe
+  // hinaus, falls die mal ein Limit bekommt. '0' oder leer = kein Limit.
+  GEMINI_MAX_TOKENS_PRO_TAG: process.env.GEMINI_MAX_TOKENS_PRO_TAG || '300000',
   SHOP_NAME: process.env.SHOP_NAME || 'Mein Shop',
   SHOP_URL: process.env.SHOP_URL || '',
   SHOP_NISCHE: process.env.SHOP_NISCHE || '',
@@ -69,7 +74,7 @@ export const config = {
   LEAD_SUCHBEGRIFFE: process.env.LEAD_SUCHBEGRIFFE || '',
   LEAD_MAX_PRO_LAUF: process.env.LEAD_MAX_PRO_LAUF || '15',
 
-  // Product-Hunter (Produktrecherche, Claude-Einschätzung statt Live-Trenddaten)
+  // Product-Hunter (Produktrecherche, KI-Einschätzung statt Live-Trenddaten)
   PRODUCT_HUNTER_NISCHEN: process.env.PRODUCT_HUNTER_NISCHEN || '',
   PRODUCT_HUNTER_ANZAHL_PRO_NISCHE: process.env.PRODUCT_HUNTER_ANZAHL_PRO_NISCHE || '3',
 

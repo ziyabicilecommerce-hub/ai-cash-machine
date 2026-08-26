@@ -43,8 +43,9 @@ Default aufgefüllt).
 |---|---|
 | `SHOP` | Shopify-Subdomain, z.B. `mein-shop` (aus `mein-shop.myshopify.com`) |
 | `SHOPIFY_TOKEN` | Shopify Admin API Access Token (`shpat_...`) |
-| `ANTHROPIC_API_KEY` | Claude API Key (`sk-ant-...`) |
-| `CLAUDE_MAX_TOKENS_PRO_TAG` | Optional, Default `300000`. Tages-Obergrenze für Claude-Tokenverbrauch über ALLE Automationen zusammen (Sicherheitsnetz gegen Bugs/unerwartet hohe Kosten). Bei Erreichen: einmalige Telegram/WhatsApp-Warnung, weitere Claude-Aufrufe pausieren bis zum nächsten Tag. `0` oder leer = kein Limit. |
+| `GEMINI_API_KEY` | Kostenloser Google-Gemini-Key (`AIza...`), holbar unter [aistudio.google.com/apikey](https://aistudio.google.com/apikey) - kein Anthropic-Key mehr nötig, keine laufenden Kosten |
+| `GEMINI_MODEL` | Optional, Default `gemini-2.0-flash`. Welches Gemini-Modell die Automationen nutzen. |
+| `GEMINI_MAX_TOKENS_PRO_TAG` | Optional, Default `300000`. Tages-Obergrenze für Gemini-Tokenverbrauch über ALLE Automationen zusammen (Sicherheitsnetz, falls die kostenlose Stufe mal ein Limit bekommt - nicht wegen echter Kosten). Bei Erreichen: einmalige Telegram/WhatsApp-Warnung, weitere KI-Aufrufe pausieren bis zum nächsten Tag. `0` oder leer = kein Limit. |
 | `SHOP_NAME` | Anzeigename des Shops in Mails/Reports |
 | `OWNER_EMAIL` | Deine eigene E-Mail (Reports, Alarme, TEST_MODE-Ziel) |
 | `ABSENDER_EMAIL` | Absenderadresse für Kunden-Mails |
@@ -123,7 +124,7 @@ Worker, siehe dessen README) automatisch einen KI-Telefonanruf über Vapi aus �
 (unerlaubte automatisierte Kaltakquise-Anrufe, UWG §7). Ohne dieses separate
 Setup läuft der Lead-Jäger unverändert weiter, nur der Rückruf bleibt inaktiv.
 
-**🔎 Product Hunter** (schlägt Produktideen vor, Claude-Einschätzung statt
+**🔎 Product Hunter** (schlägt Produktideen vor, KI-Einschätzung statt
 Live-Trenddaten): `PRODUCT_HUNTER_NISCHEN` (kommagetrennt, z.B. `Küche,Fitness,Haustier`
 — fällt ohne diesen Wert auf `SHOP_NISCHE` zurück), `PRODUCT_HUNTER_ANZAHL_PRO_NISCHE`
 (Default `3`). Nutzt `WHATSAPP_ACCESS_TOKEN`/`WHATSAPP_PHONE_NUMBER_ID`/
@@ -228,7 +229,7 @@ Läufen).
 
 **🎯 Brand Assassin Auto-Scan** (Markt-Scan aus der Brand-Assassin-App
 automatisch, wöchentlich): keine neuen Secrets, nutzt `SHOP_NISCHE`
-(bereits vorhanden) und die üblichen `ANTHROPIC_API_KEY`/`WHATSAPP_*`.
+(bereits vorhanden) und die üblichen `GEMINI_API_KEY`/`WHATSAPP_*`.
 Ohne `SHOP_NISCHE` überspringt sich die Automation selbst.
 
 Wichtig zur Einordnung: **Brand Assassin selbst bleibt unverändert live und
@@ -243,7 +244,7 @@ Gegenstück ist bereits die App Oracle (tägliches Briefing).
 **🔮 Oracle Auto-Briefing** (tägliches Briefing aus der Oracle-App
 automatisch, per WhatsApp): keine neuen Secrets, liest
 `finance-cockpit/data.json` (von #01 Gewinn-Radar gefüllt) und nutzt die
-üblichen `ANTHROPIC_API_KEY`/`WHATSAPP_*`. Läuft 30 Minuten nach dem
+üblichen `GEMINI_API_KEY`/`WHATSAPP_*`. Läuft 30 Minuten nach dem
 Gewinn-Radar, damit die Daten schon aktuell sind. Ohne `data.json` (Gewinn-
 Radar noch nie gelaufen) überspringt sich die Automation selbst. Nutzt
 exakt denselben Prompt (LAGE/ANALYSE/BEFEHL/PROGNOSE) wie `buildPrompt()`
@@ -258,7 +259,7 @@ Finanzzahlen oder Brand Assassins Nische) - ein automatisch generiertes
 **👔 Chef-Agent** (fasst Finanzen/Fulfillment/Kundenstamm zu EINER
 Tagesansage zusammen, statt einzelner Nachrichten aus jeder Automation):
 keine neuen Secrets, nutzt `SHOP`/`SHOPIFY_TOKEN` + die üblichen
-`ANTHROPIC_API_KEY`/`WHATSAPP_*` sowie bereits vorhandene Schwellwerte
+`GEMINI_API_KEY`/`WHATSAPP_*` sowie bereits vorhandene Schwellwerte
 (`FULFILLMENT_VERZUG_STUNDEN`, `VIP_UMSATZ_SCHWELLE`, `CRM_AT_RISK_TAGE`).
 Berechnet die 3 wichtigsten Signale FRISCH aus Shopify + dem stabilen
 `finance-cockpit/data.json`-Format (bewusst NICHT an interne State-Dateien
@@ -275,7 +276,7 @@ Supplier Hub aus, bei inaktiven VIP-Kunden automatisch #05 Winback-Maschine
 (GitHub-API `workflow_dispatch`, sofort statt erst zum nächsten
 Cron-Zeitplan). WICHTIG: WELCHE Automation ausgelöst wird, entscheidet
 ausschließlich fester Code (feste if-Bedingungen in `60-chef-agent.mjs`),
-NIE Claudes freier Text - so kann die KI die Lage einschätzen, aber nicht
+NIE freier Text der KI - so kann die KI die Lage einschätzen, aber nicht
 selbst wählen, welches Skript startet. Für Finanzen-Probleme gibt es
 bewusst KEINEN Auto-Trigger - keine Automation "löst" ein finanzielles
 Problem automatisch, das bleibt Empfehlung. Läuft dafür als eigenständiger
@@ -288,7 +289,7 @@ Tabelle unten - läuft wie der Trading-Bot als eigener Cloudflare Worker,
 nicht als GitHub-Actions-Automation): siehe `customer-agent-worker/README.md`.
 Beantwortet allgemeine Kundenfragen auf der Website (Versand, Rückgabe,
 Produkte) über ein einbettbares Chat-Widget. Läuft serverseitig, damit der
-`ANTHROPIC_API_KEY` des Shop-Besitzers nie im Browser fremder Besucher landet
+`GEMINI_API_KEY` des Shop-Besitzers nie im Browser fremder Besucher landet
 (anders als die BYOK-Apps Jarvis/Brand Assassin/Oracle/Closer, die nur der
 Shop-Besitzer selbst nutzt). Erfindet nie Bestell-/Kontodaten, verweist dafür
 an `SUPPORT_EMAIL`. Pro-Besucher-Rate-Limit + globales Tages-Token-Budget über
@@ -505,7 +506,7 @@ feste Zahlen-Schwelle im Code, kein KI-Ermessen, kein manueller Reset nötig.
 
 **🚨 Risk-Guard-Agent** (#62, alle 2 Stunden): prüft neue Bestellungen ab
 `RISK_GUARD_MIN_BESTELLWERT` auf Betrugssignale (Rechnungs-/Lieferland-
-Mismatch, ungewöhnlich hohe Erstbestellung), lässt Claude die Risikostufe
+Mismatch, ungewöhnlich hohe Erstbestellung), lässt die KI die Risikostufe
 einschätzen, markiert verdächtige Bestellungen mit einem echten Shopify-Tag
 (`risiko-pruefung`) + erstellt ein GitHub-Ticket + Alarm. **Storniert oder
 hält NIE automatisch eine Bestellung zurück** - nur Tag + Mensch alarmieren,
@@ -603,7 +604,7 @@ meldet, welche nicht mehr erreichbar sind.
 
 **🪞 Duplikat-Listing-Detektor** (#73, montags 08:15): vergleicht alle
 aktiven Produkttitel per lokal berechneter Textähnlichkeit
-(`DUPLIKAT_AEHNLICHKEIT_SCHWELLE`) - kein Claude-Aufruf nötig, kostet keine
+(`DUPLIKAT_AEHNLICHKEIT_SCHWELLE`) - kein KI-Aufruf nötig, kostet keine
 Tokens - und meldet fast-identische Doppel-Listings.
 
 **💸 Refund-Concierge-Agent** (#74, alle 2 Stunden): übernimmt die
@@ -635,7 +636,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | Nr | Skript | Zeitplan (UTC) | Zweck |
 |---|---|---|---|
 | 01 | Gewinn-Radar / "Profit & Tax Center" | täglich 08:00 | tägliche Gewinn-/Umsatz-Kennzahlen inkl. Zahlungsgebühren, Umsatzsteuer-Anteil und echtem Nettogewinn pro Produkt - speist Finance Cockpit |
-| 02 | KI-Kundenservice ("Customer Support AI") | alle 10 Min | IMAP-Postfach lesen, echter Bestellabgleich, Claude antwortet, Eskalation per Telegram + echtes GitHub-Issue-Ticket |
+| 02 | KI-Kundenservice ("Customer Support AI") | alle 10 Min | IMAP-Postfach lesen, echter Bestellabgleich, KI antwortet, Eskalation per Telegram + echtes GitHub-Issue-Ticket |
 | 04 | Bewertungs-Magnet | täglich 10:00 | fragt zufriedene Käufer nach Bewertungen |
 | 05 | Winback-Maschine | täglich 11:00 | reaktiviert inaktive Kunden |
 | 06 | Content-Kanone | täglich 07:30 | Social-Content-Ideen |
@@ -683,7 +684,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 48 | Google-Maps-Lead-Jäger | täglich 08:00 | findet Firmen ohne/mit schlechter Website, meldet per WhatsApp |
 | 49 | ⚠️ Trading-Bot | manuell (Referenz) | Krypto-Spot-Handel (EMA-Crossover), Paper-Modus per Default. **Läuft produktiv als Cloudflare Worker**, siehe `trading-bot-worker/` - GitHub Actions wird von Binance blockiert (HTTP 451) |
 | 50 | 🚀 Pump-Scanner | manuell (Referenz) | Alarm per WhatsApp, wenn eine Kryptowährung stark steigt (kein Handel). Gleicher Binance-IP-Block wie #49, noch kein Cloudflare-Ersatz gebaut |
-| 51 | 🔎 Product Hunter | montags 08:00 | schlägt konkrete Produktideen vor, bewertet Nachfrage/Konkurrenz/Marge/Trend/Lieferzeit/Risiko (Claude-Einschätzung, keine Live-Trenddaten) |
+| 51 | 🔎 Product Hunter | montags 08:00 | schlägt konkrete Produktideen vor, bewertet Nachfrage/Konkurrenz/Marge/Trend/Lieferzeit/Risiko (KI-Einschätzung, keine Live-Trenddaten) |
 | 52 | 🎥 Creative Studio | mittwochs 08:00 | Ad-Kreativ-Paket pro Produkt: Hooks, Ad-Copy, UGC-Idee, Bild-Prompts + optional echte Bildgenerierung |
 | 53 | 🛒 Store Builder & Optimizer | freitags 08:00 | legt Produktseiten als Shopify-Entwurf an + prüft die Live-Storefront auf Geschwindigkeit/Vertrauen/Conversion-Basics |
 | 54 | 🛡️ Compliance Guard | 1. jedes Monats | prüft Produkte auf CE/WEEE/Verpackung/Werbeaussagen-Themen - nur Hinweise/Checkliste, KEINE Rechtsberatung |
@@ -705,7 +706,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 70 | 🚀 Produkt-Launch-Hype-Agent | alle 3 Stunden | erkennt draft→aktiv Produktwechsel, verschickt echte Launch-Ankündigung an die Newsletter-Liste |
 | 71 | 📉 Margen-Erosions-Wächter | täglich 06:15 | warnt, wenn Einkaufspreise steigen, aber der Verkaufspreis nicht mitzieht |
 | 72 | 🔗 Broken-Link-Guardian | täglich 05:00 | ruft echte Produktseiten-URLs auf und meldet, welche nicht mehr erreichbar sind |
-| 73 | 🪞 Duplikat-Listing-Detektor | montags 08:15 | findet fast-identische Produkt-Titel im Katalog per Textähnlichkeit, ohne Claude-Aufruf |
+| 73 | 🪞 Duplikat-Listing-Detektor | montags 08:15 | findet fast-identische Produkt-Titel im Katalog per Textähnlichkeit, ohne KI-Aufruf |
 | 74 | 💸 Refund-Concierge-Agent | alle 2 Stunden | bearbeitet kleine, per Tag freigegebene Erstattungen automatisch, mit Obergrenze |
 | 75 | 🌍 Übersetzungs-Entwurf-Agent | dienstags 09:15 | übersetzt Produkttexte für neue Zielmärkte als Entwurf per Mail |
 | 76 | 🎯 Nie-Gekauft-Konverter | mittwochs 10:15 | Newsletter-Abonnenten, die noch nie bestellt haben, bekommen einen Erstkauf-Anreiz |
@@ -713,7 +714,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 78 | 🧾 PayPal-Beleg-Agent | täglich 06:30 | erstellt für jede per PayPal bezahlte Bestellung einen druckbaren Zahlungs-/Liefernachweis (Kunde, Artikel, Tracking) für PayPal-Kontoprüfungen |
 | 79 | 🎉 Wrapped-Generator | montags 07:00 | baut aus den Finance-Cockpit-Daten einen wöchentlichen Shop-Rückblick im Story-Format (Umsatz, bester Tag, Top-Produkt, Wachstum) |
 | 80 | 🤖 Agenten-Status-Sammler | alle 6 Stunden | fragt den echten Live-Status aller anderen Automationen aus der GitHub Actions API ab, speist die "CASHMACHINE AGENTS"-Übersicht |
-| 81 | 💰 Kosten-Cockpit | alle 6 Stunden | trackt geschätzte Claude-Tokenkosten pro Automation über die Zeit |
+| 81 | 💰 Kosten-Cockpit | alle 6 Stunden | trackt den Gemini-Tokenverbrauch pro Automation über die Zeit (kostenlose API-Stufe) |
 | 82 | 💸 Lieferanten-Zahlungs-Wächter | täglich | erinnert per WhatsApp/Telegram rechtzeitig an fällige Lieferantenzahlungen aus echten Reorder-Bestellungen (#63), einmalig pro Fälligkeit |
 | 83 | 🧬 Brand Scout | wöchentlich | leitet die Marken-DNA aus dem echten Sortiment ab (statt manuell eingetragener Nische) und findet neue, markentreue Produktideen |
 | 84 | 👯 Freunde-werben-Freunde | täglich | echtes Empfehlungsprogramm - jeder Kunde bekommt einen persönlichen Rabattcode, wirbt er einen echten Neukunden, bekommt er automatisch einen Dank-Rabatt |

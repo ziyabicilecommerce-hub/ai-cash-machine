@@ -10,7 +10,7 @@
 // gezeigt (Newsletter) aber noch NIE wirklich gekauft haben.
 import { config, isTestMode } from './lib/config.mjs';
 import { getCustomers } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -50,7 +50,7 @@ async function main() {
     try {
       const prompt = `Du bist E-Mail-Marketing-Profi für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}).${NL}Dieser Kontakt ist seit über ${tageAlsAbonnent} Tagen Newsletter-Abonnent, hat aber noch NIE bestellt.${NL}Vorname: ${k.first_name || 'unbekannt (neutral anreden)'}${NL}${NL}Schreibe eine kurze, einladende "Worauf wartest du noch?"-Mail auf Deutsch (Du-Form), max 100 Wörter: freundlich neugierig machen (nicht vorwurfsvoll!), EIN konkreter Erstkauf-Anreiz mit Rabattcode ${rabattCode} (15%), EIN klarer CTA-Button zum Shop.${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 1500 });
+      const antwort = await askKI(prompt, { maxTokens: 1500 });
       const daten = parseJsonFromText(antwort, { betreff: 'Worauf wartest du noch?', html: antwort });
 
       const empfaenger = isTestMode() ? config.OWNER_EMAIL : k.email;

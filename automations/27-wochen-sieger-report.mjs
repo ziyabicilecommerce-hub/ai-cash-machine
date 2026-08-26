@@ -2,7 +2,7 @@
 // Original: n8n Workflow "27_Wochen_Sieger_Report" · Zeitplan: sonntags 19:00
 import { config } from './lib/config.mjs';
 import { getOrdersSince } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 
 const NL = '\n';
@@ -47,7 +47,7 @@ async function main() {
 
   const prompt = `Du bist Datencoach für den Onlineshop "${config.SHOP_NAME}". Hier die Sieger-Zahlen der letzten 7 Tage:${NL}${NL}${daten}${NL}${NL}Gib mir kurz und motivierend auf Deutsch (Du-Form):${NL}1. Was lief diese Woche am besten (1-2 Sätze, feier den Sieg)${NL}2. DAS eine Learning: Was sollte der Shop-Besitzer aus dem besten Tag/Uhrzeit/Produkt konkret nächste Woche tun? (z.B. Posts/Ads zur besten Zeit timen)${NL}3. EIN Fokus für nächste Woche${NL}${NL}Maximal 700 Zeichen, Klartext ohne Markdown, Emojis als Trenner.`;
 
-  const learning = await askClaude(prompt, { maxTokens: 1000 });
+  const learning = await askKI(prompt, { maxTokens: 1000 });
 
   await notifyTelegram(`WOCHEN-SIEGER - ${config.SHOP_NAME}${NL}--------------------${NL}${daten}${NL}${NL}${learning}`);
 

@@ -2,7 +2,7 @@
 // Original: n8n Workflow "06_Content_Kanone" · Zeitplan: täglich 07:30
 import { config } from './lib/config.mjs';
 import { getOrdersSince } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 
 const NL = '\n';
@@ -34,7 +34,7 @@ async function main() {
 
   const prompt = `Du bist viraler Social-Media-Stratege für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}).${NL}Zielgruppe: ${config.ZIELGRUPPE}${NL}Bestseller aktuell: ${topText}${NL}Content-Winkel für heute: ${winkel}${NL}${NL}Erstelle das komplette Content-Paket für HEUTE auf Deutsch: (1) DREI TikTok/Reels-Hooks (erste 3 Sekunden, max 12 Wörter, scroll-stoppend). (2) EIN komplettes 20-30s Video-Skript zum besten Hook (Szene für Szene: was man sieht + was gesagt wird). (3) EINE Instagram-Caption (Hook-Zeile, 3-4 kurze Zeilen Story, CTA, 5 Hashtags). (4) EINE Story-Idee mit Interaktions-Element (Umfrage/Slider/Frage). Kein generisches Marketing-Blabla, schreib wie ein Mensch, nutze Muster viraler Videos. Emojis als Abschnittstrenner. Antworte nur mit dem Content-Paket als Klartext, kein Markdown-Codeblock.`;
 
-  const content = await askClaude(prompt, { maxTokens: 3000 });
+  const content = await askKI(prompt, { maxTokens: 3000 });
 
   const kopf = `CONTENT-KANONE · ${config.SHOP_NAME}${NL}Heutiger Winkel: ${winkel}${NL}========${NL}${NL}`;
   const voll = kopf + content;

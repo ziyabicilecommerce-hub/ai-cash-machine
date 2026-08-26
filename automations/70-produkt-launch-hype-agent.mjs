@@ -10,7 +10,7 @@
 // eingelesen (kein rückwirkendes Hype für den kompletten Altbestand).
 import { config, isTestMode } from './lib/config.mjs';
 import { getProducts, getCustomers } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { loadState, saveState } from './lib/state.mjs';
@@ -54,7 +54,7 @@ async function main() {
     try {
       const prompt = `Du bist E-Mail-Marketing-Profi für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}).${NL}${NL}NEUES PRODUKT gerade live gegangen: "${produkt.title}"${NL}Beschreibung (Auszug): ${(produkt.body_html || '').replace(/<[^>]+>/g, ' ').slice(0, 400)}${NL}Link: ${config.SHOP_URL}/products/${produkt.handle}${NL}${NL}Schreibe eine kurze Launch-Ankündigung auf Deutsch (Du-Form), max 100 Wörter: Erste-sein-Gefühl, echte Vorfreude, EIN klarer CTA-Button zum Produkt. Mobiltaugliches HTML mit Inline-CSS.${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 2000 });
+      const antwort = await askKI(prompt, { maxTokens: 2000 });
       const daten = parseJsonFromText(antwort, { betreff: `🚀 Neu: ${produkt.title}`, html: antwort });
 
       if (isTestMode()) {

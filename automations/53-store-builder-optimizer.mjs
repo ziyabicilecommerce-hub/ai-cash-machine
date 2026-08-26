@@ -10,7 +10,7 @@
 // Bundle-Ideen aus echten Kaufdaten gibt es bereits in #24 Bundle-Bauer -
 // hier bewusst nicht dupliziert.
 import { config } from './lib/config.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { createProduct } from './lib/shopify.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { chunkZeilen } from './lib/whatsappChunk.mjs';
@@ -45,7 +45,7 @@ Schreibe eine vollständige Shopify-Produktseite auf Deutsch:
 Antworte NUR mit validem JSON, ohne Markdown:
 {"title": "...", "body_html": "...", "seo_title": "...", "seo_description": "...", "tags": "...", "vorgeschlagener_preis": 0}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 2500 });
+  const antwort = await askKI(prompt, { maxTokens: 2500 });
   return parseJsonFromText(antwort, null);
 }
 
@@ -97,7 +97,7 @@ async function main() {
     try {
       const seite = await baueProduktseite(produkt);
       if (!seite || !seite.title) {
-        nachrichten.push(`⚠️ Store Builder: Konnte keine Produktseite für "${produkt}" erzeugen (ungültige Claude-Antwort).`);
+        nachrichten.push(`⚠️ Store Builder: Konnte keine Produktseite für "${produkt}" erzeugen (ungültige KI-Antwort).`);
         // Bewusst NICHT als "gebaut" markieren - eine ungültige Antwort ist
         // kein Erfolg, der nächste Lauf soll es erneut versuchen.
         continue;

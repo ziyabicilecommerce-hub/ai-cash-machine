@@ -1,12 +1,12 @@
 // KI-Kundenservice (= "Customer Support AI") - liest neue Kunden-E-Mails per
 // IMAP, gleicht die ECHTE Bestellung des Kunden ab (Shopify, per E-Mail-
-// Adresse), lässt Claude mit echten Fakten antworten, und eskaliert
+// Adresse), lässt die KI mit echten Fakten antworten, und eskaliert
 // Sonderfälle sowohl per Telegram als auch als echtes GitHub-Issue-Ticket.
 // Original: n8n Workflow "02_KI_Kundenservice" · Trigger: neue IMAP-E-Mail (hier: alle 10 Min gepollt)
 import { ImapFlow } from 'imapflow';
 import { simpleParser } from 'mailparser';
 import { config, isTestMode, ueberspringenWerfen } from './lib/config.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { getOrders } from './lib/shopify.mjs';
@@ -21,7 +21,7 @@ const STATE_KEY = '02-ki-kundenservice';
 // Lauf neu heruntergeladen wird) - NICHT, dass sie bereits beantwortet wurde.
 // Das eigentliche "beantwortet"-Tracking passiert in main(), erst NACH
 // erfolgreicher Verarbeitung - sonst würde eine E-Mail, deren Verarbeitung
-// mitten im Lauf fehlschlägt (Claude-/Resend-Ausfall), fälschlich als erledigt
+// mitten im Lauf fehlschlägt (Gemini-/Resend-Ausfall), fälschlich als erledigt
 // markiert und nie beantwortet, obwohl sie schon als "gesehen" abgespeichert wäre.
 // Ohne diese Prüfung schlägt ein fehlendes IMAP_HOST-Secret erst tief in der
 // TCP-Verbindung fehl ("ECONNREFUSED 127.0.0.1:993" - ImapFlow verbindet sich
@@ -68,7 +68,7 @@ async function fetchNewEmails(state) {
   return neu;
 }
 
-// Sucht die letzte Bestellung des Kunden per E-Mail-Adresse - damit Claude
+// Sucht die letzte Bestellung des Kunden per E-Mail-Adresse - damit die KI
 // mit ECHTEN Fakten antworten kann (Status, Artikel, Tracking) statt nur
 // generischer Versand-/Retoure-Policy.
 export async function findeLetzteBestellung(kundeEmail) {
@@ -126,7 +126,7 @@ async function main() {
       const m = (mail.from || '').match(/[\w.+-]+@[\w-]+\.[\w.]+/);
       const bestellung = await findeLetzteBestellung(m ? m[0] : '');
       const { prompt, kundeEmail, betreff, text } = buildPrompt(mail, bestellung);
-      const antwort = await askClaude(prompt, { maxTokens: 2500 });
+      const antwort = await askKI(prompt, { maxTokens: 2500 });
       const daten = parseJsonFromText(antwort, {
         kategorie: 'sonstiges',
         braucht_mensch: 'ja',
@@ -140,12 +140,12 @@ async function main() {
         const bestellZeile = bestellung
           ? `Bestellung #${bestellung.bestellnummer} (${bestellung.status}), Artikel: ${bestellung.artikel}`
           : 'Keine passende Bestellung gefunden';
-        const telegramText = `KUNDENSERVICE - Mensch gebraucht!${NL}${NL}Von: ${kundeEmail}${NL}Kategorie: ${daten.kategorie}${NL}Betreff: ${betreff}${NL}${bestellZeile}${NL}${NL}Nachricht:${NL}${text}${NL}${NL}--- Claude-Entwurf (nicht gesendet) ---${NL}${nurText}`;
+        const telegramText = `KUNDENSERVICE - Mensch gebraucht!${NL}${NL}Von: ${kundeEmail}${NL}Kategorie: ${daten.kategorie}${NL}Betreff: ${betreff}${NL}${bestellZeile}${NL}${NL}Nachricht:${NL}${text}${NL}${NL}--- KI-Entwurf (nicht gesendet) ---${NL}${nurText}`;
         await notifyTelegram(telegramText);
 
         await erstelleTicket({
           title: `[Kundenservice] ${daten.kategorie}: ${betreff}`,
-          body: `**Von:** ${kundeEmail}\n**Kategorie:** ${daten.kategorie}\n**${bestellZeile}**\n\n**Nachricht:**\n${text}\n\n---\n**Claude-Entwurf (nicht automatisch gesendet, von einem Menschen prüfen):**\n${nurText}`,
+          body: `**Von:** ${kundeEmail}\n**Kategorie:** ${daten.kategorie}\n**${bestellZeile}**\n\n**Nachricht:**\n${text}\n\n---\n**KI-Entwurf (nicht automatisch gesendet, von einem Menschen prüfen):**\n${nurText}`,
           labels: ['kundenservice', daten.kategorie],
         });
       } else {

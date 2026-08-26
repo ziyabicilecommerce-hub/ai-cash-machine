@@ -2,7 +2,7 @@
 // Original: n8n Workflow "28_SEO_Text_Doktor" · Zeitplan: dienstags 09:00
 import { config } from './lib/config.mjs';
 import { getProducts } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 
 const NL = '\n';
@@ -31,7 +31,7 @@ async function main() {
     prompt = `Du bist SEO-Copywriter für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}, Markt: DACH).${NL}${NL}Diese Produkte haben zu dünne Beschreibungen und ranken deshalb schlecht bei Google:${NL}${liste.join(`${NL}${NL}`)}${NL}${NL}Schreibe für JEDES dieser Produkte eine neue, verkaufsstarke UND SEO-optimierte Produktbeschreibung auf Deutsch:${NL}- 120-200 Wörter, Struktur: Nutzen-Einstieg, 3-4 Bullet-Vorteile, kurzer Anwendungs-/Vertrauensteil, Mini-CTA${NL}- Relevante Keywords der Nische natürlich einbauen (nicht stopfen)${NL}- Pro Produkt zusätzlich: 1 SEO-Meta-Title (max 60 Zeichen) + 1 Meta-Description (max 155 Zeichen)${NL}${NL}Antworte als sauberes HTML mit einem <h2> je Produkt und copy-paste-freundlichen Blöcken, ohne html/body-Gerüst, kein Markdown-Codeblock.`;
   }
 
-  const html = await askClaude(prompt, { maxTokens: 4000 });
+  const html = await askKI(prompt, { maxTokens: 4000 });
 
   const hinweis =
     '<div style="background:#eef2ff;border:1px solid #6366f1;padding:12px;border-radius:8px;font-family:sans-serif;font-size:13px;margin-bottom:20px;">SEO-Text-Doktor: neue Produkttexte unten. In Shopify beim jeweiligen Produkt in die Beschreibung + SEO-Felder (unten auf der Produktseite) einsetzen.</div>';

@@ -2,7 +2,7 @@
 // Original: n8n Workflow "39_Nachbestell_Erinnerung" · Zeitplan: täglich 09:45
 import { config, isTestMode } from './lib/config.mjs';
 import { getOrders } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -38,7 +38,7 @@ async function main() {
 
       const prompt = `Du schreibst im Namen des Onlineshops "${config.SHOP_NAME}".${NL}Dieser Kunde hat vor ${tage} Tagen gekauft: ${artikel || 'diverses'}. Bei Verbrauchsprodukten ist jetzt ein guter Moment für Nachschub.${NL}${NL}Schreibe eine hilfreiche Nachbestell-Erinnerung auf Deutsch (Du-Form), max 110 Wörter:${NL}- Vorname: ${vorname || 'unbekannt (neutral anreden)'}${NL}- Freundlich erinnern, dass der Vorrat langsam zur Neige gehen könnte (nur wenn es ein Verbrauchsprodukt ist - sonst locker als "Zeit für Nachschub/Ergänzung")${NL}- Bequemlichkeit betonen (nie wieder ausgehen, schnell nachbestellt)${NL}- Kleiner Anreiz: Code ${config.NACHBESTELL_RABATT_CODE}${NL}- Schlichtes, freundliches HTML${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 1200 });
+      const antwort = await askKI(prompt, { maxTokens: 1200 });
       const daten = parseJsonFromText(antwort, { betreff: 'Zeit für Nachschub?', html: antwort });
 
       const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;

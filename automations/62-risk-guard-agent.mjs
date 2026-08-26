@@ -11,7 +11,7 @@
 // (anders als Pricing-/Reorder-/Ads-Autopilot-Agent, die echtes Geld bewegen).
 import { config } from './lib/config.mjs';
 import { getOrdersSince, updateOrder } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { erstelleTicket } from './lib/githubIssues.mjs';
@@ -73,7 +73,7 @@ async function main() {
 
   const prompt = `Du bist Risk-/Betrugsprüfer für den Onlineshop "${config.SHOP_NAME}". Hier eine Liste neuer Bestellungen mit automatisch erkannten Auffälligkeiten:${NL}${NL}${liste}${NL}${NL}Bewerte JEDE Bestellung mit einer Risikostufe (niedrig|mittel|hoch) und einer kurzen Begründung auf Deutsch. Sei nicht überängstlich - Rechnungsland != Lieferland ist z.B. bei Geschenken oder Umzügen normal, nur in Kombination mit anderen Signalen wirklich verdächtig.${NL}${NL}Antworte NUR mit validem JSON, ohne Markdown, in der Reihenfolge der Liste oben:${NL}{"bewertungen": [{"stufe": "niedrig|mittel|hoch", "begruendung": "..."}]}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 2000 });
+  const antwort = await askKI(prompt, { maxTokens: 2000 });
   const bewertungen = parseJsonFromText(antwort, {}).bewertungen || null;
 
   const zeilen = [];
@@ -82,10 +82,10 @@ async function main() {
   for (let i = 0; i < kandidaten.length; i++) {
     const { order } = kandidaten[i];
     const bewertung = Array.isArray(bewertungen) ? bewertungen[i] : null;
-    const stufe = bewertung?.stufe || 'mittel'; // ohne gültige Claude-Antwort lieber vorsichtig als blind durchwinken
-    const begruendung = bewertung?.begruendung || 'Claude-Bewertung nicht verfügbar - heuristisch markiert.';
+    const stufe = bewertung?.stufe || 'mittel'; // ohne gültige KI-Antwort lieber vorsichtig als blind durchwinken
+    const begruendung = bewertung?.begruendung || 'KI-Bewertung nicht verfügbar - heuristisch markiert.';
 
-    // Claude hat diese Bestellung bereits bewertet (ein einziger Batch-Aufruf
+    // Die KI hat diese Bestellung bereits bewertet (ein einziger Batch-Aufruf
     // oben) - "geprüft" markieren wir deshalb IMMER, unabhängig vom Ergebnis
     // der folgenden Schritte, damit sie nicht bei jedem Lauf erneut (und
     // erneut mit Tokens) bewertet wird. Sofort speichern, damit ein Fehler

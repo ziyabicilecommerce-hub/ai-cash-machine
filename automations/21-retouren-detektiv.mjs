@@ -2,7 +2,7 @@
 // Original: n8n Workflow "21_Retouren_Detektiv" · Zeitplan: montags 09:00
 import { config } from './lib/config.mjs';
 import { getOrdersSince } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 
 const NL = '\n';
@@ -42,7 +42,7 @@ async function main() {
 
   const prompt = `Du bist Retouren-/Qualitäts-Analyst für den Onlineshop "${config.SHOP_NAME}".${NL}${NL}DATEN:${NL}${daten}${NL}${NL}Analysiere auf Deutsch:${NL}1. EINSCHÄTZUNG der Retourenquote (gut/normal/alarmierend für E-Commerce?)${NL}2. MUSTER: Welche Produkte/Gründe stechen heraus? Was könnte dahinter stecken (Größe, Erwartung, Qualität, Versand)?${NL}3. DIE 3 wirkungsvollsten Maßnahmen, um genau diese Retouren zu senken (konkret: Produkttext, Fotos, Größen-Guide, Verpackung...)${NL}4. Falls Notizen fehlen: kurzer Tipp, wie man Retourengründe sauber erfasst${NL}${NL}Antworte als sauberes HTML (h2/h3, Listen), ohne html/body-Gerüst, kein Markdown-Codeblock.`;
 
-  const html = await askClaude(prompt, { maxTokens: 3000 });
+  const html = await askKI(prompt, { maxTokens: 3000 });
 
   await sendEmail({
     to: config.OWNER_EMAIL,

@@ -4,7 +4,7 @@
 //
 // WICHTIG zur Einordnung: es gibt keinen kostenlosen Zugang zu echten
 // Live-Trenddaten (Google Trends Ads, Jungle Scout o.ä. sind kostenpflichtig).
-// Claude bewertet hier wie ein erfahrener Dropshipping-Scout anhand seines
+// Die KI bewertet hier wie ein erfahrener Dropshipping-Scout anhand seines
 // Trainingswissens - das ist eine fundierte Einschätzung, KEINE live
 // gecrawlten Verkaufszahlen. Für belastbarere Daten später einen echten
 // Trend-API-Key ergänzen (siehe README).
@@ -12,7 +12,7 @@ import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { chunkZeilen } from './lib/whatsappChunk.mjs';
 import { loadState, saveState } from './lib/state.mjs';
@@ -64,7 +64,7 @@ Sei ehrlich und warne explizit, wenn ein Produkt trotz hoher Nachfrage riskant i
 Antworte NUR mit validem JSON, ohne Markdown:
 {"produkte": [{"name": "...", "nische": "...", "nachfrage": 0, "konkurrenz": 0, "marge": 0, "trend": 0, "lieferzeit": 0, "risiko": 0, "begruendung": "2-3 Sätze warum", "warnung": "konkrete Warnung oder leer"}]}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 4000 });
+  const antwort = await askKI(prompt, { maxTokens: 4000 });
   const daten = parseJsonFromText(antwort, { produkte: [] });
   const produkte = Array.isArray(daten.produkte) ? daten.produkte : [];
 

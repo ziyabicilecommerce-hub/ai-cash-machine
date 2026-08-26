@@ -1,7 +1,7 @@
 // Wetter-Marketing - tägliche wetterbasierte Marketing-Idee (spontane Aktionen bei passendem Wetter)
 // Original: n8n Workflow "25_Wetter_Marketing" · Zeitplan: täglich 08:00
 import { config } from './lib/config.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 
 const NL = '\n';
@@ -34,7 +34,7 @@ async function main() {
 
   const prompt = `Du bist kreativer Marketing-Stratege für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}).${NL}${NL}WETTER HEUTE:${NL}${daten}${NL}${NL}Wetter beeinflusst Kauflaune. Gib mir auf Deutsch, knapp und umsetzbar:${NL}1. Passt das heutige Wetter zu einer spontanen Marketing-Aktion für diese Nische? (ehrlich - wenn nein, sag es)${NL}2. Falls ja: EINE konkrete Aktions-Idee (Angebot/Angle/Rabatt) die zum Wetter + zur Nische passt${NL}3. EIN fertiger Social-Media-Hook (1-2 Sätze) mit Wetter-Bezug${NL}4. EINE Betreffzeile für eine schnelle Wetter-Mail (falls sinnvoll)${NL}${NL}Kurz, Klartext ohne Markdown, Emojis als Trenner.`;
 
-  const idee = await askClaude(prompt, { maxTokens: 1200 });
+  const idee = await askKI(prompt, { maxTokens: 1200 });
 
   await notifyTelegram(`WETTER-MARKETING - ${config.SHOP_NAME}${NL}--------------------${NL}${NL}${idee}`);
 

@@ -2,7 +2,7 @@
 // Original: n8n Workflow "34_Neukunden_Quellen_Report" · Zeitplan: montags 08:30
 import { config } from './lib/config.mjs';
 import { getOrdersSince } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 
 const NL = '\n';
@@ -44,7 +44,7 @@ async function main() {
 
   const prompt = `Du bist Traffic-/Growth-Analyst für den Onlineshop "${config.SHOP_NAME}".${NL}${NL}DATEN (letzte 30 Tage):${NL}${daten}${NL}${NL}Analysiere auf Deutsch:${NL}1. Welcher Kanal/welche Quelle bringt das meiste Geld - und welche wird unterschätzt?${NL}2. Wo steckt ungenutztes Potenzial (Kanal mit Bestellungen aber wenig Fokus)?${NL}3. DIE 2 konkreten Maßnahmen für diese Woche, um den stärksten Kanal auszubauen${NL}4. Falls fast alles "direkt/unbekannt" ist: Tipp, wie man Herkunft sauber trackt (UTM/Parameter)${NL}${NL}Antworte als sauberes HTML (h2/h3, Listen), ohne html/body-Gerüst, kein Markdown-Codeblock.`;
 
-  const html = await askClaude(prompt, { maxTokens: 2500 });
+  const html = await askKI(prompt, { maxTokens: 2500 });
 
   await sendEmail({
     to: config.OWNER_EMAIL,

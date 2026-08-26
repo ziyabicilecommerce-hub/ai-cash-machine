@@ -2,7 +2,7 @@
 // Original: n8n Workflow "29_Zahlungs_Retter" · Zeitplan: täglich 14:00
 import { config, isTestMode } from './lib/config.mjs';
 import { getOrders } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -42,7 +42,7 @@ async function main() {
 
       const prompt = `Du bist freundlicher Kundenservice des Onlineshops "${config.SHOP_NAME}".${NL}Diese Bestellung wurde aufgegeben, aber die Zahlung ist noch offen/ausstehend (z.B. Vorkasse/Überweisung noch nicht eingegangen).${NL}Bestellung: ${bestellnr}, Betrag: ${summe} ${waehrung}, Artikel: ${artikel || 'diverses'}.${NL}${NL}Schreibe eine hilfsbereite, KEINE-Mahnung-Erinnerungs-Mail auf Deutsch (Du-Form), max 110 Wörter:${NL}- Vorname: ${vorname || 'unbekannt (neutral anreden)'}${NL}- Freundlich daran erinnern, dass die Zahlung noch aussteht und die Artikel reserviert sind${NL}- Hilfe anbieten, falls bei der Zahlung etwas hakte (einfach auf diese Mail antworten)${NL}- Kein Druck, kein Mahn-Ton - der Kunde WILL ja kaufen${NL}- Schlichtes, freundliches HTML${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 1200 });
+      const antwort = await askKI(prompt, { maxTokens: 1200 });
       const daten = parseJsonFromText(antwort, { betreff: 'Kurze Erinnerung zu deiner Bestellung', html: antwort });
 
       const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;

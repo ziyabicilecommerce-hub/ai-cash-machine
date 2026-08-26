@@ -13,7 +13,7 @@
 // manuellen Einsetzen in ein beliebiges Bildtool - kein Fake, nur ehrlich
 // reduzierter Funktionsumfang ohne Key.
 import { config } from './lib/config.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { notifyWhatsapp, notifyWhatsappBild } from './lib/whatsapp.mjs';
 import { chunkZeilen } from './lib/whatsappChunk.mjs';
 import { generiereBild } from './lib/openaiImage.mjs';
@@ -67,7 +67,7 @@ Baue das komplette Ad-Kreativ-Paket auf Deutsch:
 Antworte NUR mit validem JSON, ohne Markdown:
 {"hooks": ["...", "...", "..."], "ad_copy": [{"angle": "...", "headline": "...", "text": "...", "cta": "..."}], "ugc_idee": "...", "bild_prompts": ["...", "..."]}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 3000 });
+      const antwort = await askKI(prompt, { maxTokens: 3000 });
       const daten = parseJsonFromText(antwort, { hooks: [], ad_copy: [], ugc_idee: '', bild_prompts: [] });
 
       const zeilen = [

@@ -1,7 +1,7 @@
 // Preis-Spion - beobachtet Konkurrenz-Preise täglich und meldet Änderungen/Sales
 // Original: n8n Workflow "14_Preis_Spion" · Zeitplan: täglich 06:00
 import { config } from './lib/config.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -37,7 +37,7 @@ async function main() {
 
     const prompt = `Hier der Textinhalt einer Produktseite eines Konkurrenten (${url}):${NL}${NL}${text}${NL}${NL}Extrahiere: Produktname und aktueller Verkaufspreis (der Preis, den ein Kunde JETZT zahlen würde - bei Streichpreisen der reduzierte). Falls ein Rabatt/Sale erkennbar ist, nenne ihn.${NL}Antworte NUR mit validem JSON, ohne Markdown: {"produkt": "...", "preis": "29.99", "waehrung": "EUR", "sale": "ja|nein", "sale_info": "..."}${NL}Wenn kein Preis erkennbar ist: {"produkt": "unbekannt", "preis": "", "waehrung": "", "sale": "nein", "sale_info": ""}`;
 
-    const antwort = await askClaude(prompt, { maxTokens: 500 });
+    const antwort = await askKI(prompt, { maxTokens: 500 });
     const d = parseJsonFromText(antwort, { produkt: 'unbekannt', preis: '', sale: 'nein', sale_info: '' });
 
     const alt = state.preise[url];

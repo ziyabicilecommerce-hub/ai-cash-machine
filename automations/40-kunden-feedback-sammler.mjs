@@ -2,7 +2,7 @@
 // Original: n8n Workflow "40_Kunden_Feedback_Sammler" · Zeitplan: täglich 16:30
 import { config, isTestMode } from './lib/config.mjs';
 import { getOrders } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -39,7 +39,7 @@ async function main() {
 
       const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde hat vor ${tage} Tagen gekauft (${artikel || 'diverses'}) und das Produkt inzwischen genutzt.${NL}${NL}Schreibe eine kurze, ehrliche Feedback-Mail auf Deutsch (Du-Form), max 100 Wörter:${NL}- Vorname: ${vorname || 'unbekannt (neutral anreden)'}${NL}- Klingt wie eine echte persönliche Frage vom Gründer, NICHT wie eine Umfrage-Maschine${NL}- Frage GENAU 2 Dinge: (1) Wie zufrieden warst du? (2) Was sollen wir als nächstes ins Sortiment nehmen / was fehlt dir noch?${NL}- Bitte einfach auf diese Mail zu antworten${NL}- Als Dankeschön fürs Antworten: ${config.FEEDBACK_ANREIZ}${NL}- Ganz schlichtes, persönliches HTML (fast wie eine normale Mail)${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 1000 });
+      const antwort = await askKI(prompt, { maxTokens: 1000 });
       const daten = parseJsonFromText(antwort, { betreff: 'Kurze Frage an dich', html: antwort });
 
       const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;

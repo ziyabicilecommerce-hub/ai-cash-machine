@@ -2,7 +2,7 @@
 // Original: n8n Workflow "32_UGC_Anfrage_Automat" · Zeitplan: täglich 15:00
 import { config, isTestMode } from './lib/config.mjs';
 import { getOrders } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -39,7 +39,7 @@ async function main() {
 
       const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde ist ein echter Fan (${k.orders_count} Bestellungen). Letzter Kauf: ${artikel || 'diverses'}.${NL}${NL}Bitte ihn um ein kurzes Foto oder Video (UGC) mit dem Produkt, das der Shop für Social Media/Ads nutzen darf.${NL}Schreibe eine lockere, persönliche E-Mail auf Deutsch (Du-Form), max 120 Wörter:${NL}- Vorname: ${k.first_name || 'unbekannt (neutral anreden)'}${NL}- Ehrliches Kompliment (er kauft immer wieder), dann die Bitte um ein echtes Foto/Video im Alltag${NL}- Als Dankeschön: ${config.UGC_BELOHNUNG}${NL}- Super einfach machen: einfach auf diese Mail antworten und Datei anhängen${NL}- Locker, kein Corporate-Ton, schlichtes HTML${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 1200 });
+      const antwort = await askKI(prompt, { maxTokens: 1200 });
       const daten = parseJsonFromText(antwort, { betreff: 'Kleine Bitte an dich', html: antwort });
 
       const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;

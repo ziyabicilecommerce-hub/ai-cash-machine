@@ -2,7 +2,7 @@
 // Original: n8n Workflow "26_Schläfer_Wecker" · Zeitplan: täglich 11:30
 import { config, isTestMode } from './lib/config.mjs';
 import { getOrders } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -38,7 +38,7 @@ async function main() {
 
       const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde hat vor ~90 Tagen zuletzt gekauft (${letzteArtikel || 'diverses'}) und sich seitdem nicht mehr gemeldet. Er droht, ganz abzuwandern.${NL}${NL}Schreibe eine ehrliche "Wir vermissen dich"-Reaktivierungs-E-Mail auf Deutsch (Du-Form), max 130 Wörter:${NL}- Vorname: ${vorname || 'unbekannt (neutral anreden)'}${NL}- Warm, persönlich, kein Bettel-Ton - wie von einem echten Menschen${NL}- Klarer Grund zurückzukommen (was neu/besser ist) + starkes Angebot: Code ${config.SCHLAEFER_RABATT_CODE} (${config.RABATT_PROZENT}%)${NL}- Ein Satz, der Neugier weckt (was er verpasst hat)${NL}- Schlichtes, persönliches HTML${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 1300 });
+      const antwort = await askKI(prompt, { maxTokens: 1300 });
       const daten = parseJsonFromText(antwort, { betreff: 'Wir vermissen dich', html: antwort });
 
       const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;

@@ -2,7 +2,7 @@
 // Original: n8n Workflow "22_Dead_Stock_Räumer" · Zeitplan: mittwochs 09:00
 import { config } from './lib/config.mjs';
 import { getProducts, getOrdersSince } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 
 const NL = '\n';
@@ -53,7 +53,7 @@ async function main() {
     prompt = `Du bist Merchandising-Stratege für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}).${NL}${NL}Diese Artikel sind Ladenhüter (max 1x verkauft in 60 Tagen, aber auf Lager). Insgesamt ~${gesamtGebunden.toFixed(0)} totes Kapital:${NL}${liste.join(NL)}${NL}${NL}Gib mir einen Räumungs-Plan auf Deutsch:${NL}1. Für die größten Kapitalbinder: konkrete Aktion (Rabatt-Höhe, Bundle mit Bestseller, Gratis-Zugabe, aus dem Sortiment nehmen)${NL}2. EINE Räumungs-Kampagnen-Idee ("Lager-Räumung"), die trotzdem zur Marke passt${NL}3. Welche 2-3 Artikel man ganz streichen sollte und warum${NL}4. Merksatz: wie man solche Fehlkäufe im Einkauf künftig vermeidet${NL}${NL}Antworte als sauberes HTML (h2/h3, Listen), ohne html/body-Gerüst, kein Markdown-Codeblock.`;
   }
 
-  const html = await askClaude(prompt, { maxTokens: 3000 });
+  const html = await askKI(prompt, { maxTokens: 3000 });
 
   await sendEmail({
     to: config.OWNER_EMAIL,

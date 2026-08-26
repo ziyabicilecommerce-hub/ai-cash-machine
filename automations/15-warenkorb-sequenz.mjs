@@ -2,7 +2,7 @@
 // Original: n8n Workflow "15_Warenkorb_Sequenz_3_0" · Zeitplan: stündlich
 import { config, isTestMode } from './lib/config.mjs';
 import { getCheckouts } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -52,7 +52,7 @@ async function main() {
 
     try {
       const prompt = buildPrompt(c, stufe);
-      const antwort = await askClaude(prompt, { maxTokens: 2000 });
+      const antwort = await askKI(prompt, { maxTokens: 2000 });
       const daten = parseJsonFromText(antwort, { betreff: 'Dein Warenkorb wartet', html: antwort });
 
       const empfaenger = isTestMode() ? config.OWNER_EMAIL : c.email;
