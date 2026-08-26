@@ -19,6 +19,7 @@
     --mono:'JetBrains Mono', ui-monospace, monospace;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
+  html { overflow-x:hidden; }
   body { background:var(--bg); color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
   ::selection { background:rgba(62,242,160,.3); }
 
@@ -48,7 +49,7 @@
   .key-gear { background:none; border:1px solid var(--line); color:var(--green); width:28px; height:28px; border-radius:50%;
     cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 
-  .ticker-tape { position:fixed; top:57px; left:0; right:0; z-index:45; height:26px; overflow:hidden;
+  .ticker-tape { position:fixed; top:57px; left:0; right:0; z-index:45; height:26px; overflow:hidden; contain:layout;
     background:rgba(3,5,18,.92); border-bottom:1px solid var(--line2); }
   .ticker-track { display:flex; width:max-content; gap:36px; white-space:nowrap; padding:0 18px;
     animation:tickerScroll 38s linear infinite; align-items:center; height:26px; }
@@ -95,7 +96,7 @@
   .health-text { text-align:left; font-size:12px; color:var(--mut); }
   .health-text b { color:var(--txt); font-size:13px; }
 
-  .tabs { position:sticky; top:83px; z-index:40; display:flex; gap:6px; overflow-x:auto; padding:12px 20px;
+  .tabs { position:sticky; top:83px; z-index:40; display:flex; flex-wrap:wrap; gap:6px; padding:12px 20px;
     background:rgba(3,5,18,.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--line2); }
   .tab-btn { flex-shrink:0; font-family:var(--mono); font-size:12px; padding:8px 16px; background:none; border-radius:22px;
     border:1px solid var(--line2); color:var(--mut); cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,box-shadow .15s,transform .1s,background .15s; }
@@ -104,10 +105,16 @@
     background:linear-gradient(135deg,rgba(62,242,160,.16),rgba(111,224,255,.08));
     box-shadow:0 0 18px rgba(62,242,160,.25),inset 0 0 10px rgba(62,242,160,.08); }
 
-  section.panel { display:none; padding:28px 20px 60px; max-width:1080px; margin:0 auto; }
-  section.panel.show { display:block; animation:panelIn .4s ease; }
-  @keyframes panelIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-  @media (prefers-reduced-motion:reduce) { section.panel.show { animation:none; } }
+  /* Alles auf einer scrollbaren Seite statt Tab-Umschaltung - jeder Bereich
+     ist ein eigener, per Klick auf den Titel ein-/ausklappbarer Abschnitt.
+     Die Tab-Leiste oben bleibt als Sprungmarken-Nav bestehen: Klick springt
+     zum Abschnitt UND klappt ihn auf, falls er gerade zu ist. */
+  section.panel { display:block; padding:28px 20px 60px; max-width:1080px; margin:0 auto; scroll-margin-top:170px; }
+  section.panel > .panel-title:first-child { cursor:pointer; user-select:none; display:flex; align-items:center; gap:10px; }
+  section.panel > .panel-title:first-child:hover { color:var(--green); }
+  .panel-chevron { margin-left:auto; font-size:13px; opacity:.6; transition:transform .15s; flex-shrink:0; }
+  section.panel.zu > .panel-title:first-child .panel-chevron { transform:rotate(-90deg); }
+  section.panel.zu > *:not(:first-child) { display:none; }
 
   /* Auf Handys ist der große Hero-Header (Titel + Beschreibung + Health-
      Badge) reiner Platzverschwender, bevor die eigentlichen Tabs/Inhalte
@@ -287,7 +294,7 @@
   <button class="tab-btn" data-tab="equity">📈 Equity</button>
   <button class="tab-btn" data-tab="activity">📡 Activity</button>
   <button class="tab-btn" data-tab="audit">🧾 Audit</button>
-  <button class="tab-btn active" data-tab="deck">🖥️ Deck</button>
+  <button class="tab-btn" data-tab="deck">🖥️ Deck</button>
   <button class="tab-btn" data-tab="dashboard">📈 Dashboard</button>
   <button class="tab-btn" data-tab="controlcenter">🎛️ Control Center</button>
   <button class="tab-btn" data-tab="strategylab">🧪 Strategy Lab</button>
@@ -348,9 +355,9 @@
   <div class="box"><div class="feed" id="auditFeed"></div></div>
 </section>
 
-<section class="panel show" id="panel-deck">
+<section class="panel" id="panel-deck">
   <div class="panel-title">Trading Deck — Instrumentenbrett</div>
-  <p class="panel-desc">Go-Live-Score, Risk Center, Auto-Backtest &amp; Strategie-Turnier, Journal, Alerts, Congress-/Insider-/Smart-Money-Trades, Markt-Benchmark, Erfolge, System Health und Live-Internet-Marktdaten — dieselbe Bot-Verbindung wie oben in der Tab-Leiste. Das ist jetzt die Startansicht: alle Systeme unter einer einzigen URL.</p>
+  <p class="panel-desc">Go-Live-Score, Risk Center, Auto-Backtest &amp; Strategie-Turnier, Journal, Alerts, Congress-/Insider-/Smart-Money-Trades, Markt-Benchmark, Erfolge, System Health und Live-Internet-Marktdaten — dieselbe Bot-Verbindung wie oben in der Tab-Leiste.</p>
   <iframe id="deckFrame" title="Trading Deck" src="../trading-deck/" loading="lazy" style="width:100%;height:82vh;border:0;border-radius:14px;background:#05070b;display:block;"></iframe>
 </section>
 
@@ -422,29 +429,72 @@
     loadAll();
   });
 
-  // --- Tabs ---
-  document.querySelectorAll('.tab-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
-      document.querySelectorAll('section.panel').forEach((p) => p.classList.remove('show'));
-      btn.classList.add('active');
-      document.getElementById(`panel-${btn.dataset.tab}`).classList.add('show');
-      // Eingebettete Tools erst laden, wenn ihr Tab wirklich geöffnet wird -
-      // nicht schon beim ersten Seitenaufruf fünf Dashboards parallel
-      // pollen lassen. Fünf Systeme, eine URL.
-      const eingebettet = {
-        deck: { frameId:'deckFrame', src:'../trading-deck/' },
-        dashboard: { frameId:'dashboardFrame', src:'../trading-dashboard/' },
-        controlcenter: { frameId:'controlCenterFrame', src:'../trading-control-center/' },
-        strategylab: { frameId:'strategyLabFrame', src:'../strategy-lab/' },
-      };
-      const ziel = eingebettet[btn.dataset.tab];
+  // --- Alles auf einer Seite: Abschnitte ein-/ausklappbar statt Tabs ---
+  // Nur eine kleine Auswahl startet offen (Übersicht + Deck, das größte
+  // Instrumentenbrett), der Rest ist eingeklappt - sonst sieht man bei 11
+  // Abschnitten wieder nichts auf einen Blick. Tab-Leiste bleibt als
+  // Sprungmarken-Nav bestehen: Klick springt zum Abschnitt UND klappt ihn
+  // bei Bedarf automatisch auf.
+  const STANDARD_OFFENE_PANELS = ['overview', 'deck'];
+  // Eingebettete Tools erst laden, wenn ihr Abschnitt wirklich aufgeklappt
+  // wird - nicht schon beim ersten Seitenaufruf vier Dashboards parallel
+  // pollen lassen.
+  const EINGEBETTETE_FRAMES = {
+    deck: { frameId:'deckFrame', src:'../trading-deck/' },
+    dashboard: { frameId:'dashboardFrame', src:'../trading-dashboard/' },
+    controlcenter: { frameId:'controlCenterFrame', src:'../trading-control-center/' },
+    strategylab: { frameId:'strategyLabFrame', src:'../strategy-lab/' },
+  };
+
+  function panelOffen(section) { return !section.classList.contains('zu'); }
+  function setPanelOffen(section, offen) {
+    section.classList.toggle('zu', !offen);
+    if (offen) {
+      const ziel = EINGEBETTETE_FRAMES[section.id.replace('panel-', '')];
       if (ziel) {
         const frame = document.getElementById(ziel.frameId);
         if (frame && !frame.src) frame.src = ziel.src;
       }
-    });
+    }
+  }
+  function scrollToPanel(tab) {
+    const section = document.getElementById(`panel-${tab}`);
+    if (!section) return;
+    setPanelOffen(section, true);
+    section.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  document.querySelectorAll('section.panel').forEach((section) => {
+    const titel = section.querySelector(':scope > .panel-title:first-child');
+    if (!titel) return;
+    const chev = document.createElement('span');
+    chev.className = 'panel-chevron';
+    chev.textContent = '▾';
+    titel.appendChild(chev);
+    const tab = section.id.replace('panel-', '');
+    setPanelOffen(section, STANDARD_OFFENE_PANELS.includes(tab));
+    titel.addEventListener('click', () => setPanelOffen(section, !panelOffen(section)));
   });
+
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => scrollToPanel(btn.dataset.tab));
+  });
+
+  // Sprungmarken-Nav markiert per Scroll-Spy, welcher Abschnitt gerade
+  // sichtbar ist - rein optisch, ändert nie den offen/zu-Zustand.
+  (function initScrollSpy() {
+    const buttons = Object.fromEntries([...document.querySelectorAll('.tab-btn')].map((b) => [b.dataset.tab, b]));
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          Object.values(buttons).forEach((b) => b.classList.remove('active'));
+          const tab = entry.target.id.replace('panel-', '');
+          if (buttons[tab]) buttons[tab].classList.add('active');
+        }
+      }
+    }, { rootMargin:'-15% 0px -70% 0px' });
+    document.querySelectorAll('section.panel').forEach((s) => observer.observe(s));
+  })();
 
   const fmtGeld = (n, suffix) => (n ?? 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + suffix;
   const fmtProzent = (n) => n == null ? '–' : `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`;
