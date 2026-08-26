@@ -130,11 +130,11 @@
 
 <div class="key-modal-overlay" id="keyModalOverlay">
   <div class="key-modal" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
-    <h3 id="keyModalTitle">Anthropic API-Key</h3>
-    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Anthropic gesendet — nur für die optionale Erklärung nötig, die Berechnung selbst läuft komplett lokal ohne Key.</p>
-    <input type="password" id="keyModalInput" placeholder="sk-ant-api03-..." aria-label="Anthropic API-Key" autocomplete="off">
+    <h3 id="keyModalTitle">Gemini API-Key</h3>
+    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nur für die optionale Erklärung nötig, die Berechnung selbst läuft komplett lokal ohne Key.</p>
+    <input type="password" id="keyModalInput" placeholder="AIza..." aria-label="Gemini API-Key" autocomplete="off">
     <div class="key-modal-actions">
-      <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Key holen →</a>
+      <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Key holen →</a>
       <button id="keyModalSave" type="button">Speichern</button>
     </div>
   </div>
@@ -148,7 +148,7 @@
     <a href="../pulse/">Pulse</a>
     <a href="../finance-cockpit/">Finance</a>
     <a href="../automations-dashboard/">Automations</a>
-    <button class="key-gear" id="keyGearBtn" title="Anthropic API-Key einstellen" aria-label="Anthropic API-Key einstellen">⚙</button>
+    <button class="key-gear" id="keyGearBtn" title="Gemini API-Key einstellen" aria-label="Gemini API-Key einstellen">⚙</button>
   </div>
 </nav>
 
@@ -214,21 +214,21 @@
 </footer>
 
 <script>
-  // ===== CLAUDE API KEY (BYOK, gleicher Vertrag wie Jarvis/Oracle/Pulse) =====
-  const CLAUDE_KEY_STORAGE = 'cmx_claude_key';
-  function getClaudeKey() { return localStorage.getItem(CLAUDE_KEY_STORAGE); }
+  // ===== GEMINI API KEY (BYOK, gleicher Vertrag wie Jarvis/Oracle/Pulse) =====
+  const GEMINI_KEY_STORAGE = 'cmx_gemini_key';
+  function getGeminiKey() { return localStorage.getItem(GEMINI_KEY_STORAGE); }
   const keyModalOverlay = document.getElementById('keyModalOverlay');
   const keyModalInput = document.getElementById('keyModalInput');
   const keyModalSave = document.getElementById('keyModalSave');
   const keyGearBtn = document.getElementById('keyGearBtn');
   let keyModalResolve = null;
-  function openKeyModal() { keyModalInput.value = getClaudeKey() || ''; keyModalOverlay.classList.add('open'); setTimeout(() => keyModalInput.focus(), 50); }
+  function openKeyModal() { keyModalInput.value = getGeminiKey() || ''; keyModalOverlay.classList.add('open'); setTimeout(() => keyModalInput.focus(), 50); }
   function closeKeyModal() { keyModalOverlay.classList.remove('open'); }
-  function requestClaudeKey() { return new Promise((resolve) => { keyModalResolve = resolve; openKeyModal(); }); }
+  function requestGeminiKey() { return new Promise((resolve) => { keyModalResolve = resolve; openKeyModal(); }); }
   keyModalSave.addEventListener('click', () => {
     const val = keyModalInput.value.trim();
     if (!val) return;
-    localStorage.setItem(CLAUDE_KEY_STORAGE, val);
+    localStorage.setItem(GEMINI_KEY_STORAGE, val);
     closeKeyModal();
     if (keyModalResolve) { keyModalResolve(val); keyModalResolve = null; }
   });
@@ -236,17 +236,33 @@
   keyGearBtn.addEventListener('click', openKeyModal);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && keyModalOverlay.classList.contains('open')) closeKeyModal(); });
 
-  async function callClaude(body) {
-    let key = getClaudeKey();
-    if (!key) key = await requestClaudeKey();
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+  async function callGemini(body) {
+    let key = getGeminiKey();
+    if (!key) key = await requestGeminiKey();
+    const { model, max_tokens, system, messages } = body;
+    const GEMINI_MODEL = 'gemini-2.0-flash';
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify(body),
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        contents: messages.map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })),
+        ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
+        generationConfig: { maxOutputTokens: max_tokens },
+      }),
     });
-    if (response.status === 401) { localStorage.removeItem(CLAUDE_KEY_STORAGE); throw new Error('invalid_key'); }
-    if (!response.ok) throw new Error('api_error');
-    return response.json();
+    if (!response.ok) {
+      const errText = await response.text();
+      if ((response.status === 400 || response.status === 403) && errText.includes('API_KEY_INVALID')) {
+        localStorage.removeItem(GEMINI_KEY_STORAGE);
+        throw new Error('invalid_key');
+      }
+      throw new Error('api_error');
+    }
+    const data = await response.json();
+    return {
+      content: [{ type: 'text', text: (data.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('') }],
+      usage: { input_tokens: data.usageMetadata?.promptTokenCount || 0, output_tokens: data.usageMetadata?.candidatesTokenCount || 0 },
+    };
   }
 
   // ===== BASELINE AUS ECHTEN DATEN =====
@@ -337,7 +353,7 @@
     slot.innerHTML = '';
     try {
       const prompt = `Du bist ein nüchterner Business-Analyst. Hier ist eine ECHTE Was-wäre-wenn-Rechnung (keine Vorhersage, reine Arithmetik) für einen Shopify-Shop, basierend auf den echten Durchschnittswerten der letzten ${ctx.baseline.tage} Tage:\n\nAKTUELL (Ø/Tag): Umsatz ${fmtMoney(ctx.baseline.avgUmsatz, ctx.baseline.waehrung)}, Werbekosten ${fmtMoney(ctx.baseline.avgWerbekosten, ctx.baseline.waehrung)}, Nettogewinn ${fmtMoney(ctx.baseline.avgNettoGewinn, ctx.baseline.waehrung)}.\n\nSIMULIERTES SZENARIO: Umsatz ${ctx.umsatzSlider >= 0 ? '+' : ''}${ctx.umsatzSlider}%, Werbebudget ${ctx.werbeSlider >= 0 ? '+' : ''}${ctx.werbeSlider}% → neuer Umsatz ${fmtMoney(ctx.sim.neuerUmsatz, ctx.baseline.waehrung)}, neue Werbekosten ${fmtMoney(ctx.sim.neueWerbekosten, ctx.baseline.waehrung)}, neuer Nettogewinn ${fmtMoney(ctx.sim.neuerGewinn, ctx.baseline.waehrung)}.\n\nErkläre dieses Szenario in 3-4 kurzen Sätzen (Deutsch, Du-Form): was die Zahlen konkret bedeuten und worauf der Shop-Besitzer achten sollte, WENN er versuchen würde, das real umzusetzen. Betone, dass dies eine reine Rechnung mit den aktuellen Kostenquoten ist, keine Garantie, dass sich Umsatz oder Werbebudget tatsächlich so verhalten. Erfinde keine zusätzlichen Zahlen.`;
-      const data = await callClaude({ model: 'claude-sonnet-5', max_tokens: 350, messages: [{ role: 'user', content: prompt }] });
+      const data = await callGemini({ max_tokens: 350, messages: [{ role: 'user', content: prompt }] });
       const text = (data.content || []).map((b) => b.text || '').join('').trim() || 'Keine Erklärung erhalten.';
       slot.innerHTML = `<div class="explanation">${text}</div>`;
     } catch (err) {

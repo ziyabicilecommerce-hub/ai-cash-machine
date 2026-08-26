@@ -2,7 +2,7 @@
 
 Ein echter Kunden-Chat-Agent für die Shopify-Website — als Widget einbettbar
 (`widget.js`), beantwortet von einem Cloudflare Worker (`worker.js`), der
-serverseitig mit Claude spricht.
+serverseitig mit Google Gemini spricht (kostenlose API-Stufe, kein Anthropic-Key nötig).
 
 ## Verkaufsberater-Modus (optional)
 
@@ -10,7 +10,7 @@ Trägst du `SHOPIFY_STORE_DOMAIN` und `SHOPIFY_STOREFRONT_TOKEN` in
 `wrangler.toml` ein, holt sich der Worker den echten, aktuellen
 Produktkatalog über die öffentliche Shopify-Storefront-API (Titel, Preis,
 Link, Kurzbeschreibung; gecacht für `KATALOG_CACHE_TTL_SEKUNDEN`, Default 30
-Minuten) und gibt ihn Claude als Kontext mit. Der Chat empfiehlt dann aktiv
+Minuten) und gibt ihn der KI als Kontext mit. Der Chat empfiehlt dann aktiv
 passende Produkte mit echtem Preis/Link und geht auf Kaufeinwände (Preis,
 Lieferzeit, Vertrauen) ein — statt nur zu antworten, wenn gefragt wird. Ohne
 diese beiden Werte läuft der Chat unverändert als reiner Support-Assistent
@@ -21,17 +21,18 @@ Bestell-/Kontodaten (siehe unten) gilt unverändert weiter.
 ## Warum kein Browser-Direktaufruf wie bei Jarvis/Brand Assassin/Oracle/Closer?
 
 Jene Apps sind **BYOK** (bring-your-own-key): jeder Nutzer trägt seinen
-**eigenen** Anthropic-Key ein, der nur in seinem eigenen Browser
+**eigenen** Gemini-Key ein, der nur in seinem eigenen Browser
 (`localStorage`) liegt. Das funktioniert, weil nur der Shop-Besitzer selbst
 diese internen Tools benutzt.
 
 Ein Kunden-Chat auf der öffentlichen Website wird aber von **fremden
 Besuchern** bedient. Würde der Chat direkt aus dem Browser mit dem Key des
-Shop-Besitzers gegen `api.anthropic.com` sprechen, läge dieser Key im
-Seitenquelltext — jeder Besucher könnte ihn auslesen und auf Kosten des
-Shop-Besitzers missbrauchen. Deshalb läuft der eigentliche Claude-Aufruf
-**server-seitig in diesem Worker**: Der Key steckt nur als Cloudflare-Secret
-im Worker, der Browser spricht nur mit dem Worker, nie direkt mit Anthropic.
+Shop-Besitzers gegen die Gemini-API sprechen, läge dieser Key im
+Seitenquelltext — jeder Besucher könnte ihn auslesen und die kostenlose
+Stufe des Shop-Besitzers ausschöpfen. Deshalb läuft der eigentliche
+Gemini-Aufruf **server-seitig in diesem Worker**: Der Key steckt nur als
+Cloudflare-Secret im Worker, der Browser spricht nur mit dem Worker, nie
+direkt mit Google.
 
 ## Schutz gegen Kosten-Explosion durch fremde Besucher
 
@@ -41,7 +42,8 @@ im Worker, der Browser spricht nur mit dem Worker, nie direkt mit Anthropic.
 - **Globales Tages-Token-Budget** (`MAX_TOKENS_PRO_TAG`, Default 200.000),
   danach zeigt der Chat ehrlich "gerade nicht verfügbar, bitte per E-Mail" -
   statt unbegrenzt weiterzulaufen. Gleiches Prinzip wie
-  `CLAUDE_MAX_TOKENS_PRO_TAG` bei den GitHub-Actions-Automationen.
+  `GEMINI_MAX_TOKENS_PRO_TAG` bei den GitHub-Actions-Automationen - reines
+  Sicherheitsnetz, da die Gemini-API-Stufe hier ohnehin kostenlos ist.
 - **CORS auf explizite Shop-Domains beschränkt** (`ALLOWED_ORIGINS`) - ohne
   passenden Eintrag lehnt der Worker jede Anfrage mit 403 ab, damit nicht
   irgendeine fremde Seite den Worker (und damit indirekt den Key) für ihr
@@ -69,8 +71,9 @@ im Worker, der Browser spricht nur mit dem Worker, nie direkt mit Anthropic.
      antwortet der Chat niemandem.
 4. Secret setzen (nicht in `wrangler.toml` schreiben):
    ```bash
-   wrangler secret put ANTHROPIC_API_KEY
+   wrangler secret put GEMINI_API_KEY
    ```
+   Kostenloser Key unter [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
    Das ist der Key des Shop-Besitzers — verlässt den Worker nie.
 5. Deployen:
    ```bash

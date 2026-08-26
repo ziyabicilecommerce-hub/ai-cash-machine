@@ -433,17 +433,17 @@
     <a href="../forecast/">Forecast</a>
     <a href="../setup/">Setup</a>
   </div>
-  <button class="key-gear" id="keyGearBtn" title="Anthropic API-Key einstellen" aria-label="Anthropic API-Key einstellen">⚙</button>
+  <button class="key-gear" id="keyGearBtn" title="Gemini API-Key einstellen" aria-label="Gemini API-Key einstellen">⚙</button>
   <a class="nav-cta" href="#console">Scan starten</a>
 </nav>
 
 <div class="key-modal-overlay" id="keyModalOverlay">
   <div class="key-modal" id="keyModalBox" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
-    <h3 id="keyModalTitle">Anthropic API-Key</h3>
-    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Anthropic gesendet — nie an einen anderen Server.</p>
-    <input type="password" id="keyModalInput" placeholder="sk-ant-api03-..." aria-label="Anthropic API-Key" autocomplete="off">
+    <h3 id="keyModalTitle">Gemini API-Key</h3>
+    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nie an einen anderen Server.</p>
+    <input type="password" id="keyModalInput" placeholder="AIza..." aria-label="Gemini API-Key" autocomplete="off">
     <div class="key-modal-actions">
-      <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Key holen →</a>
+      <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Key holen →</a>
       <button id="keyModalSave" type="button">Speichern</button>
     </div>
   </div>
@@ -843,9 +843,9 @@ Was bauen wir heute? 🚀</div>
 </footer>
 
 <script>
-/* ============ CLAUDE API KEY (bring-your-own-key, stored locally) ============ */
-const CLAUDE_KEY_STORAGE = 'cmx_claude_key';
-function getClaudeKey() { return localStorage.getItem(CLAUDE_KEY_STORAGE); }
+/* ============ GEMINI API KEY (bring-your-own-key, stored locally) ============ */
+const GEMINI_KEY_STORAGE = 'cmx_gemini_key';
+function getGeminiKey() { return localStorage.getItem(GEMINI_KEY_STORAGE); }
 
 const keyModalOverlay = document.getElementById('keyModalOverlay');
 const keyModalInput = document.getElementById('keyModalInput');
@@ -861,12 +861,12 @@ function closeKeyModal() {
 
 function openKeyModal(triggerEl) {
   keyModalLastTrigger = triggerEl || document.activeElement;
-  keyModalInput.value = getClaudeKey() || '';
+  keyModalInput.value = getGeminiKey() || '';
   keyModalOverlay.classList.add('open');
   setTimeout(() => keyModalInput.focus(), 50);
 }
 
-function requestClaudeKey() {
+function requestGeminiKey() {
   return new Promise((resolve) => {
     keyModalResolve = resolve;
     openKeyModal();
@@ -876,7 +876,7 @@ function requestClaudeKey() {
 keyModalSave.addEventListener('click', () => {
   const val = keyModalInput.value.trim();
   if (!val) return;
-  localStorage.setItem(CLAUDE_KEY_STORAGE, val);
+  localStorage.setItem(GEMINI_KEY_STORAGE, val);
   closeKeyModal();
   if (keyModalResolve) { keyModalResolve(val); keyModalResolve = null; }
 });
@@ -897,28 +897,42 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-async function callClaudeDirect(body) {
-  let key = getClaudeKey();
-  if (!key) key = await requestClaudeKey();
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+const GEMINI_MODEL = 'gemini-2.0-flash';
+async function callGeminiDirect(body) {
+  let key = getGeminiKey();
+  if (!key) key = await requestGeminiKey();
+  const { max_tokens, system, messages } = body;
+  const geminiBody = {
+    contents: messages.map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })),
+    ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
+    generationConfig: { maxOutputTokens: max_tokens }
+  };
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`, {
     method: 'POST',
     headers: {
-      'content-type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
+      'content-type': 'application/json'
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(geminiBody)
   });
-  if (res.status === 401) {
-    localStorage.removeItem(CLAUDE_KEY_STORAGE);
-    throw new Error('API-Key ungültig. Bitte über das ⚙ Symbol prüfen.');
-  }
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
+    const errText = await res.text().catch(() => '');
+    if ((res.status === 400 || res.status === 403) && errText.includes('API_KEY_INVALID')) {
+      localStorage.removeItem(GEMINI_KEY_STORAGE);
+      throw new Error('API-Key ungültig. Bitte über das ⚙ Symbol prüfen.');
+    }
+    let err = {};
+    try { err = JSON.parse(errText); } catch {}
     throw new Error('Engine-Fehler: ' + (err.error?.message || res.status));
   }
-  const data = await res.json();
+  const geminiData = await res.json();
+  const text = (geminiData.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('');
+  const data = {
+    content: [{ type: 'text', text }],
+    usage: {
+      input_tokens: geminiData.usageMetadata?.promptTokenCount || 0,
+      output_tokens: geminiData.usageMetadata?.candidatesTokenCount || 0
+    }
+  };
   if (data.usage) trackTokenUsage(data.usage);
   return data;
 }
@@ -1162,8 +1176,7 @@ renderUsageBadge();
 
 /* ============ AI ENGINE ============ */
 async function askAI(system, user, maxTokens = 1600) {
-  const data = await callClaudeDirect({
-    model: 'claude-sonnet-5',
+  const data = await callGeminiDirect({
     max_tokens: maxTokens,
     system: system,
     messages: [{ role: 'user', content: user }]
@@ -1408,8 +1421,7 @@ async function sendChat() {
   chatBusy = true;
 
   try {
-    const data = await callClaudeDirect({
-      model: 'claude-sonnet-5',
+    const data = await callGeminiDirect({
       max_tokens: 900,
       system: 'Du bist der "Brand Strategist" der CASHMACHINE AI Operator Suite — ein energiegeladener, brutal ehrlicher Marketing-Co-Pilot für E-Commerce, Social Media und Brand Building. Sprich Deutsch, locker aber kompetent (der User sagt "Bruder" — du darfst das auch). Gib IMMER konkrete, sofort umsetzbare Antworten: echte Hook-Beispiele, echte Pläne mit Zahlen, keine generischen Ratschläge. Halte Antworten kompakt (max ~200 Wörter), nutze **fett** für die wichtigsten Punkte und Zeilenumbrüche für Struktur. Wenn dir Infos zur Brand fehlen, mach trotzdem einen starken Vorschlag und frag EINE gezielte Rückfrage am Ende.',
       messages: chatHistory.slice(-12)
