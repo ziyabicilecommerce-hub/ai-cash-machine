@@ -434,8 +434,14 @@
   // Instrumentenbrett), der Rest ist eingeklappt - sonst sieht man bei 11
   // Abschnitten wieder nichts auf einen Blick. Tab-Leiste bleibt als
   // Sprungmarken-Nav bestehen: Klick springt zum Abschnitt UND klappt ihn
-  // bei Bedarf automatisch auf.
-  const STANDARD_OFFENE_PANELS = ['overview', 'deck'];
+  // bei Bedarf automatisch auf. Auf Laptop/Desktop (mehr Platz, Karten
+  // laufen mehrspaltig) startet zusätzlich "Signale & Filter" offen - die
+  // schweren iFrame-Abschnitte (Dashboard/Control Center/Strategy Lab)
+  // bleiben bewusst IMMER eingeklappt, unabhängig von der Bildschirmgröße,
+  // damit nie mehr als ein eingebettetes Tool ungefragt gleichzeitig lädt.
+  const STANDARD_OFFENE_PANELS = window.matchMedia('(min-width: 1024px)').matches
+    ? ['overview', 'signale', 'deck']
+    : ['overview', 'deck'];
   // Eingebettete Tools erst laden, wenn ihr Abschnitt wirklich aufgeklappt
   // wird - nicht schon beim ersten Seitenaufruf vier Dashboards parallel
   // pollen lassen.
