@@ -102,8 +102,11 @@ html.embedded .subtitle{display:none;}
 .metric{color:var(--muted); font-size:11px; margin-top:4px;}
 .progress{height:6px; border-radius:20px; background:#17202c; overflow:hidden; margin-top:14px;}
 .progress > div{height:100%; background:linear-gradient(90deg,var(--green),var(--cyan));}
-.section-label{font-size:11px; color:#465568; letter-spacing:1.5px; text-transform:uppercase; margin:26px 2px 12px; font-weight:800;}
+.section-label{font-size:11px; color:#465568; letter-spacing:1.5px; text-transform:uppercase; margin:26px 2px 12px; font-weight:800; cursor:pointer; user-select:none; display:flex; align-items:center; gap:8px;}
 .section-label:first-child{margin-top:0}
+.section-label:hover{color:#7c8ba3;}
+.section-chevron{margin-left:auto; font-size:10px; opacity:.6; transition:transform .15s;}
+.section-label.sektion-zu .section-chevron{transform:rotate(-90deg);}
 
 /* AI ANALYST */
 .ai{background:radial-gradient(circle at 80% 0%,rgba(155,124,255,.16),transparent 35%), linear-gradient(145deg,#10131f,#080b12); border-color:#29244b;}
@@ -291,21 +294,33 @@ html.embedded .subtitle{display:none;}
     <button data-nav="overview" onclick="scrollToId('overview')">🎯 Overview</button>
     <button data-nav="kombireport" onclick="scrollToId('kombireport')">📊 Kombi-Report</button>
     <button data-nav="erfolge" onclick="scrollToId('erfolge')">🏅 Erfolge</button>
+  </div>
+  <div class="nav-title">LIVE-DATEN</div>
+  <div class="nav">
     <button data-nav="chart" onclick="scrollToId('chart')">📊 Live-Chart</button>
     <button data-nav="market" onclick="scrollToId('market')">🌐 Live-Markt</button>
+    <button data-nav="preisradar" onclick="scrollToId('preisradar')">💱 Preis-Radar</button>
+    <button data-nav="global" onclick="scrollToId('global')">🌍 Global</button>
+  </div>
+  <div class="nav-title">POLITIK &amp; INSIDER</div>
+  <div class="nav">
     <button data-nav="congress" onclick="scrollToId('congress')">🏛️ Congress</button>
     <button data-nav="insider" onclick="scrollToId('insider')">🕵️ Insider</button>
     <button data-nav="smartmoney" onclick="scrollToId('smartmoney')">💼 Smart Money</button>
     <button data-nav="copytrading" onclick="scrollToId('copytrading')">🏆 Copy-Trading</button>
-    <button data-nav="preisradar" onclick="scrollToId('preisradar')">💱 Preis-Radar</button>
     <button data-nav="events" onclick="scrollToId('events')">📰 Events</button>
     <button data-nav="fundamentals" onclick="scrollToId('fundamentals')">📑 Fundamental</button>
+  </div>
+  <div class="nav-title">ANALYSE</div>
+  <div class="nav">
     <button data-nav="benchmark" onclick="scrollToId('benchmark')">🏆 Benchmark</button>
     <button data-nav="analyst" onclick="scrollToId('analyst')">🧠 AI Analyst</button>
     <button data-nav="scanner" onclick="scrollToId('scanner')">🎯 Scanner</button>
-    <button data-nav="global" onclick="scrollToId('global')">🌍 Global</button>
-    <button data-nav="risk" onclick="scrollToId('risk')">🛡️ Risk Center</button>
     <button data-nav="backtest" onclick="scrollToId('backtest')">🧪 Backtest</button>
+  </div>
+  <div class="nav-title">RISIKO &amp; KONTROLLE</div>
+  <div class="nav">
+    <button data-nav="risk" onclick="scrollToId('risk')">🛡️ Risk Center</button>
     <button data-nav="journal" onclick="scrollToId('journal')">📝 Journal</button>
     <button data-nav="alerts" onclick="scrollToId('alerts')">🚨 Alerts</button>
     <button data-nav="health" onclick="scrollToId('health')">⚙️ Health</button>
@@ -488,8 +503,47 @@ html.embedded .subtitle{display:none;}
     loadAll();
   });
 
+  // ---- SEKTIONEN EIN-/AUSKLAPPBAR ----
+  // Bei 20+ Abschnitten auf einer Seite sieht man ohne das hier praktisch
+  // nichts mehr auf einen Blick - deshalb startet nur eine kleine Auswahl
+  // (die am häufigsten gebrauchten) offen, der Rest ist eingeklappt und
+  // öffnet sich per Klick auf die Überschrift ODER automatisch, wenn über
+  // die Sidebar dorthin gesprungen wird. Reine Anzeige-Logik (CSS display),
+  // rührt nie an den bereits geladenen Daten - beim Aufklappen steht der
+  // Inhalt sofort da, kein erneuter Ladevorgang nötig.
+  const STANDARD_OFFENE_SEKTIONEN = ['thermometer', 'overview', 'kombireport', 'chart'];
+  function sammleSektionsElemente(labelEl) {
+    const elemente = [];
+    let node = labelEl.nextElementSibling;
+    while (node && !node.classList.contains('section-label')) {
+      elemente.push(node);
+      node = node.nextElementSibling;
+    }
+    return elemente;
+  }
+  function istSektionOffen(labelEl) {
+    return !labelEl.classList.contains('sektion-zu');
+  }
+  function setSektionOffen(labelEl, offen) {
+    sammleSektionsElemente(labelEl).forEach((el) => { el.style.display = offen ? '' : 'none'; });
+    labelEl.classList.toggle('sektion-zu', !offen);
+  }
+  function initSektionenToggle() {
+    document.querySelectorAll('.section-label[id]').forEach((label) => {
+      const chev = document.createElement('span');
+      chev.className = 'section-chevron';
+      chev.textContent = '▾';
+      label.appendChild(chev);
+      setSektionOffen(label, STANDARD_OFFENE_SEKTIONEN.includes(label.id));
+      label.addEventListener('click', () => setSektionOffen(label, !istSektionOffen(label)));
+    });
+  }
+
   function scrollToId(id) {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('section-label')) setSektionOffen(el, true);
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   // --- Fetch (misst die ECHTE Latenz des Aufrufs, für den Health-Tab) ---
@@ -2055,6 +2109,7 @@ html.embedded .subtitle{display:none;}
     ids.forEach((id) => { const elm = document.getElementById(id); if (elm) observer.observe(elm); });
   })();
 
+  initSektionenToggle();
   updateNotifBtn();
   ladeTvKalenderEinmalig();
   ladeTvNewsEinmalig();
