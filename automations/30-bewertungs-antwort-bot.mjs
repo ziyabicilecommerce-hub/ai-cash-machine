@@ -2,7 +2,7 @@
 // Original: n8n Workflow "30_Bewertungs_Antwort_Bot" · Zeitplan: täglich 13:00
 import { config } from './lib/config.mjs';
 import { getReviews } from './lib/judgeme.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -32,7 +32,7 @@ async function main() {
 
     const prompt = `Du bist der Gründer/Kundenservice des Onlineshops "${config.SHOP_NAME}" und antwortest öffentlich auf Produktbewertungen.${NL}${NL}NEUE BEWERTUNGEN:${NL}${bloecke.join(`${NL}${NL}`)}${NL}${NL}Schreibe für JEDE Bewertung eine passende, öffentliche Antwort auf Deutsch (Du-Form):${NL}- Bei 4-5 Sternen: herzlich danken, persönlich auf einen Punkt eingehen, kein Verkaufsspam${NL}- Bei 1-3 Sternen: sich ehrlich entschuldigen, Verantwortung übernehmen, konkrete Lösung/Kontakt anbieten - deeskalierend, nie rechtfertigend${NL}- Jede Antwort max 60 Wörter, klingt menschlich, nicht nach Vorlage${NL}${NL}Antworte als sauberes HTML: pro Bewertung ein Block mit der Original-Info (Sterne, Name, Produkt) und darunter deine fertige Antwort zum Kopieren. Ohne html/body-Gerüst, kein Markdown-Codeblock.`;
 
-    const html = await askClaude(prompt, { maxTokens: 3000 });
+    const html = await askKI(prompt, { maxTokens: 3000 });
 
     const hinweis =
       '<div style="background:#ecfdf5;border:1px solid #10b981;padding:12px;border-radius:8px;font-family:sans-serif;font-size:13px;margin-bottom:20px;">Bewertungs-Antwort-Bot: fertige Antwort-Entwürfe unten. In Judge.me beim jeweiligen Review auf Antworten/Reply klicken und einsetzen.</div>';

@@ -11,7 +11,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -51,7 +51,7 @@ async function main() {
   const updatedAt = data.updatedAt ? new Date(data.updatedAt) : null;
   const isStale = updatedAt ? (Date.now() - updatedAt.getTime()) / 3600000 > 36 : false;
 
-  const antwort = await askClaude(buildPrompt(latest, trendPct, isStale), { maxTokens: 500 });
+  const antwort = await askKI(buildPrompt(latest, trendPct, isStale), { maxTokens: 500 });
 
   const sections = { lage: '', analyse: '', befehl: '', prognose: '' };
   const map = { LAGE: 'lage', ANALYSE: 'analyse', BEFEHL: 'befehl', PROGNOSE: 'prognose' };

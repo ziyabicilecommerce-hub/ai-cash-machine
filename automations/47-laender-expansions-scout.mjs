@@ -2,7 +2,7 @@
 // Original: n8n Workflow "47_Länder_Expansions_Scout" · Zeitplan: am 1. jeden Monats 09:00
 import { config } from './lib/config.mjs';
 import { getOrdersSince } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 
 const NL = '\n';
@@ -27,7 +27,7 @@ async function main() {
 
   const prompt = `Du bist Expansions-Stratege für den Onlineshop "${config.SHOP_NAME}" (Heimatmarkt: ${config.HEIMATMARKT}).${NL}${NL}Bestellungen nach Land (letzte 90 Tage):${NL}${daten}${NL}${NL}Analysiere auf Deutsch:${NL}1. Gibt es Länder außerhalb des Heimatmarkts mit überraschend viel Nachfrage? (Chance!)${NL}2. Welches 1 Land würdest du als nächsten Expansionsmarkt empfehlen und warum?${NL}3. Konkrete erste Schritte für diesen Markt (Versand, Sprache/Übersetzung, Zahlungsarten, Währung, rechtliches Grob-Todo)${NL}4. Ein schneller Test, um die Nachfrage dort zu prüfen, bevor man groß investiert${NL}${NL}Antworte als sauberes HTML (h2/h3, Listen), ohne html/body-Gerüst, kein Markdown-Codeblock.`;
 
-  const html = await askClaude(prompt, { maxTokens: 2500 });
+  const html = await askKI(prompt, { maxTokens: 2500 });
 
   await sendEmail({
     to: config.OWNER_EMAIL,

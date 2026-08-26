@@ -2,7 +2,7 @@
 // Original: n8n Workflow "07_Ad_Fabrik" · Zeitplan: montags 09:00
 import { config } from './lib/config.mjs';
 import { getOrdersSince } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 
 const NL = '\n';
@@ -28,7 +28,7 @@ async function main() {
 
   const prompt = `Du bist Direct-Response-Werbetexter (Meta + TikTok Ads) für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}).${NL}Zielgruppe: ${config.ZIELGRUPPE}${NL}${NL}Top-Produkte der letzten 30 Tage:${NL}${topText}${NL}${NL}Erstelle für das UMSATZSTÄRKSTE Produkt das komplette Ad-Paket der Woche auf Deutsch: (1) FÜNF Werbe-Hooks (verschiedene Winkel). (2) ZWEI TikTok/Reels UGC-Skripte (je 25-35s, Szene für Szene, klingen wie echte Kunden). (3) EINE Meta-Ad: Primary Text (AIDA, max 120 Wörter) + 3 Headlines (max 40 Zeichen) + Beschreibung. (4) DREI Targeting-Ideen mit Kurzbegründung. (5) EIN A/B-Test-Vorschlag der Woche. Antworte als sauberes HTML (h2/h3, Listen, kein html/body-Gerüst, kein Markdown-Codeblock).`;
 
-  const html = await askClaude(prompt, { maxTokens: 4000 });
+  const html = await askKI(prompt, { maxTokens: 4000 });
 
   await sendEmail({
     to: config.OWNER_EMAIL,

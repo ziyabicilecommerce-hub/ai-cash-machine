@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { getOrdersSince, getProducts, getProductVideoUrl } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { loadState, saveState } from './lib/state.mjs';
@@ -194,7 +194,7 @@ async function main() {
 
   const prompt = `Du bist Multi-Plattform-Social-Media-Manager für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}, Zielgruppe: ${config.ZIELGRUPPE}, Shop: ${config.SHOP_URL}).${NL}Bestseller: ${topText}${NL}Kern-Thema heute: ${thema}${NL}${NL}Erstelle das komplette Posting-Paket für HEUTE - EIN Kern-Inhalt, für jede Plattform nativ übersetzt (nicht kopiert!), alles auf Deutsch:${NL}${NL}1. TIKTOK: Hook (max 10 Wörter) + 20-30s Skript (Szene für Szene) + 4 Hashtags + Sound-Idee${NL}2. INSTAGRAM REEL: Angepasster Hook + Caption mit CTA + 5 Hashtags${NL}3. INSTAGRAM STORY: 2-Slide-Idee mit Interaktions-Sticker (Umfrage/Slider)${NL}4. FACEBOOK: Längerer Post (60-100 Wörter, Story-Stil, 1 Emoji-Absatztrenner, Link zum Shop)${NL}5. PINTEREST: Pin-Titel (max 60 Zeichen) + Beschreibung (max 200 Zeichen, SEO-Keywords der Nische)${NL}6. YOUTUBE SHORT: Titel + 25s Skript (kann das TikTok-Skript adaptieren)${NL}7. X/TWITTER: 2 Tweets (einer frech/meinungsstark, einer mit Mehrwert)${NL}8. INSTAGRAM FEED-POST (für ein STATISCHES Produktfoto, kein Reel): eine eigenständige, direkt postbare Caption (100-150 Wörter inkl. 5-8 Hashtags am Ende, kein Platzhaltertext, keine eckigen Klammern) - muss für sich allein stehen, ohne Bild-Beschreibung.${NL}${NL}Antworte NUR mit validem JSON, ohne Markdown:${NL}{"facebook_post": "<nur der reine Facebook-Text>", "instagram_caption": "<nur die reine Instagram-Feed-Caption aus Punkt 8, sofort postbar>", "html": "<das GESAMTE Paket als sauberes HTML mit h2 pro Plattform, copy-paste-freundlich, ohne html/body-Gerüst>"}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 4500 });
+  const antwort = await askKI(prompt, { maxTokens: 4500 });
   const daten = parseJsonFromText(antwort, {
     facebook_post: '',
     instagram_caption: '',

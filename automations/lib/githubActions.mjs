@@ -5,7 +5,7 @@
 //
 // Sicherheitsprinzip: WELCHER Workflow ausgelöst wird, entscheidet
 // ausschließlich fester Code (deterministische if-Bedingungen im Aufrufer,
-// z.B. 60-chef-agent.mjs) - NIE ein freier LLM-Textvorschlag. Claude darf die
+// z.B. 60-chef-agent.mjs) - NIE ein freier LLM-Textvorschlag. Die KI darf die
 // Lage einschätzen, aber nicht selbst wählen, welches Skript startet.
 const API_VERSION = '2022-11-28';
 

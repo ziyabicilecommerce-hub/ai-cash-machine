@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { getAdInsights, purchaseCount, purchaseValue, pauseAd, getAdStatus } from './lib/meta.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -122,7 +122,7 @@ async function main() {
 
   const prompt = `Du bist Senior Media Buyer und managst die Meta-Ads vom Onlineshop "${config.SHOP_NAME}". Ziel-ROAS: ${roasZiel}. Hier die Performance von GESTERN (vorklassifiziert):${NL}${NL}${bewertet.join(NL)}${NL}${NL}Gib mir dein tägliches Ads-Briefing auf Deutsch:${NL}1. LAGE in einem Satz (Gesamtspend vs. Gesamtumsatz, läuft es?)${NL}2. ENTSCHEIDUNGEN pro auffälliger Ad: killen / skalieren (+20-30% Budget) / beobachten - mit 1-Satz-Begründung. Bei Skalier-Kandidaten: konkreter Budget-Vorschlag.${NL}3. MUSTER: Was haben die Gewinner gemeinsam, was die Verlierer? (Hook? Zielgruppe? Format?)${NL}4. EIN Test für morgen.${NL}Sei knapp und direkt, keine Floskeln. Klartext ohne Markdown, Emojis als Trenner.`;
 
-  const briefing = await askClaude(prompt, { maxTokens: 2500 });
+  const briefing = await askKI(prompt, { maxTokens: 2500 });
 
   let killInfo = '';
   if (killListe.length > 0) {

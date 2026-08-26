@@ -2,7 +2,7 @@
 // Original: n8n Workflow "13_Willkommens_Booster" · Zeitplan: täglich 09:30
 import { config, isTestMode } from './lib/config.mjs';
 import { getOrdersSince } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -29,7 +29,7 @@ async function main() {
 
       const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}).${NL}Der Kunde hat GESTERN zum ERSTEN Mal bestellt. Schreibe die Willkommens-Mail auf Deutsch (Du-Form), max 140 Wörter.${NL}Vorname: ${vorname || 'unbekannt (neutral anreden)'}${NL}Bestellt: ${artikel}${NL}Versandzeit: ${config.VERSANDZEIT}${NL}Instagram: ${config.INSTAGRAM_HANDLE} TikTok: ${config.TIKTOK_HANDLE}${NL}${NL}Aufbau: (1) herzliches Willkommen, er ist jetzt Teil der Community. (2) Was jetzt passiert: Paket kommt in ${config.VERSANDZEIT}. (3) Ein ehrlicher Profi-Tipp passend zum gekauften Artikel. (4) Einladung, auf Instagram und TikTok zu folgen. KEIN Rabattcode, KEIN Upselling. Klingt wie vom Gründer persönlich. Schlichtes mobiltaugliches HTML mit Inline-CSS.${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 2000 });
+      const antwort = await askKI(prompt, { maxTokens: 2000 });
       const daten = parseJsonFromText(antwort, { betreff: 'Willkommen in der Familie!', html: antwort });
 
       const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;

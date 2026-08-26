@@ -1,8 +1,8 @@
-// Winning-Ad-neue-Creatives - findet wöchentlich die beste Ad (30 Tage) und lässt Claude 5 frische Varianten bauen
+// Winning-Ad-neue-Creatives - findet wöchentlich die beste Ad (30 Tage) und lässt die KI 5 frische Varianten bauen
 // Original: n8n Workflow "44_Winning_Ad_neue_Creatives" · Zeitplan: montags 07:00
 import { config } from './lib/config.mjs';
 import { getAdInsights, purchaseValue } from './lib/meta.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 
 const NL = '\n';
@@ -32,7 +32,7 @@ async function main() {
     prompt = `Du bist Performance-Creative-Director für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}, Zielgruppe: ${config.ZIELGRUPPE}).${NL}${NL}Das ist unsere BESTE Ad der letzten 30 Tage:${NL}- Ad-Name/Angle: ${best.name}${NL}- Kampagne: ${best.kampagne}${NL}- ROAS: ${best.roas.toFixed(2)} | CTR: ${best.ctr || '?'}% | Spend: ${best.spend.toFixed(2)}${NL}${NL}Der Gewinner brennt mit der Zeit aus (Ad-Fatigue). Baue 5 FRISCHE Varianten, die denselben Kern-Winkel weiterdrehen, aber neu wirken:${NL}Für JEDE Variante:${NL}- Neue Angle-Variation (was diesmal anders ist)${NL}- Hook / Primary Text (die ersten Zeilen der Ad)${NL}- Headline (max 8 Wörter)${NL}- Bild-/Video-Idee${NL}- CTA${NL}${NL}Antworte als sauberes HTML: jede Variante als eigene Karte (<div> mit Rahmen, Nummer, gelabelte Felder). Ohne html/body-Gerüst, kein Markdown-Codeblock.`;
   }
 
-  const html = await askClaude(prompt, { maxTokens: 4000 });
+  const html = await askKI(prompt, { maxTokens: 4000 });
 
   await sendEmail({
     to: config.OWNER_EMAIL,

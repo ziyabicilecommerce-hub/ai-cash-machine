@@ -2,7 +2,7 @@
 // Original: n8n Workflow "31_Umsatz_Prognose" · Zeitplan: sonntags 20:00
 import { config } from './lib/config.mjs';
 import { getOrdersSince } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 
 const NL = '\n';
@@ -35,7 +35,7 @@ async function main() {
 
   const prompt = `Du bist Finanz-Coach für den Onlineshop "${config.SHOP_NAME}".${NL}${NL}ZAHLEN:${NL}${daten}${NL}${NL}Gib mir kurz und ehrlich auf Deutsch (Du-Form):${NL}1. Liegen wir auf Kurs, drüber oder drunter? (1 Satz, klare Ansage)${NL}2. Wenn drunter: die 2 realistischsten Hebel, um bis Monatsende aufzuholen${NL}3. Wenn drüber: was jetzt verdoppeln, damit es so bleibt${NL}${NL}Maximal 600 Zeichen, Klartext ohne Markdown, Emojis als Trenner.`;
 
-  const coaching = await askClaude(prompt, { maxTokens: 900 });
+  const coaching = await askKI(prompt, { maxTokens: 900 });
 
   await notifyTelegram(`UMSATZ-PROGNOSE - ${config.SHOP_NAME}${NL}--------------------${NL}${daten}${NL}${NL}${coaching}`);
 

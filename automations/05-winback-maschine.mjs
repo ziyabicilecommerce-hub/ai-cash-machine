@@ -2,7 +2,7 @@
 // Original: n8n Workflow "05_Winback_Maschine" · Zeitplan: täglich 11:00
 import { config, isTestMode } from './lib/config.mjs';
 import { getOrders } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -43,7 +43,7 @@ async function main() {
 
       const prompt = `Du bist E-Mail-Marketing-Profi für den Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde hat vor ${tage} Tagen gekauft und seitdem nichts mehr bestellt. Schreibe eine Winback-Mail auf Deutsch (Du-Form), max 130 Wörter.${NL}Vorname: ${vorname || 'unbekannt (neutral anreden)'}${NL}Damals gekauft: ${artikel}${NL}Shop-Link: ${config.SHOP_URL}${NL}Rabattcode: ${config.WINBACK_RABATT_CODE} (${config.WINBACK_RABATT_PROZENT}%)${NL}${NL}Anforderungen: wir-vermissen-dich-Vibe ohne cringe, beziehe dich auf den damaligen Kauf, Rabattcode als Dankeschön, EIN Button zum Shop, leichte Dringlichkeit (Code 7 Tage gültig). Mobiltaugliches HTML mit Inline-CSS.${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 2000 });
+      const antwort = await askKI(prompt, { maxTokens: 2000 });
       const daten = parseJsonFromText(antwort, { betreff: 'Wir vermissen dich!', html: antwort });
 
       const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;

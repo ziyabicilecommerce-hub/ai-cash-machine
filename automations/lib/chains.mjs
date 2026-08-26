@@ -3,7 +3,7 @@
 // Stelle zeigen kann, welche Verknüpfungen es gibt und wann sie zuletzt
 // gefeuert haben. Nutzt intern dispatchWorkflow() (siehe githubActions.mjs) -
 // dieselbe Sicherheitsregel gilt: welche Kette feuert, entscheidet immer
-// fester Code im Aufrufer, nie Claudes freier Text.
+// fester Code im Aufrufer, nie freier Text der KI.
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';

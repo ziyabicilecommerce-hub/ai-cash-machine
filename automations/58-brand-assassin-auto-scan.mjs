@@ -12,7 +12,7 @@
 // Jarvis hat keinen vergleichbaren wiederkehrenden Task (reiner Chat-Hub) -
 // sein automatisches Gegenstück ist bereits die App Oracle (tägliches Briefing).
 import { config } from './lib/config.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 
 const JSON_RULES = `Antworte NUR mit validem JSON, kein Markdown, keine Erklärung drumherum. Alle Texte auf Deutsch, direkt und ohne Floskeln. Format:
@@ -28,7 +28,7 @@ async function main() {
   const system = `Du bist ein Markt-Analyst für E-Commerce und digitale Produkte. Du bewertest Nischen nach Nachfrage, Konkurrenz-Dichte, Timing und Monetarisierungs-Potenzial. ${JSON_RULES} Metrics müssen sein: Nachfrage, Konkurrenz (10 = wenig Konkurrenz), Timing, Monetarisierung.`;
   const user = `Nische: ${nische}\nRegion: ${config.HEIMATMARKT || 'DACH'}`;
 
-  const antwort = await askClaude(user, { system, maxTokens: 1600 });
+  const antwort = await askKI(user, { system, maxTokens: 1600 });
   const daten = parseJsonFromText(antwort, null);
   if (!daten) {
     console.log('[58-brand-assassin-auto-scan] Ungültige Antwort, kein Report versendet.');

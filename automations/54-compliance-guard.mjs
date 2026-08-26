@@ -5,7 +5,7 @@
 //
 // WICHTIG (siehe auch Disclaimer in jeder Nachricht): das hier sind
 // KEINE rechtsverbindlichen Aussagen und KEINE Rechtsberatung - nur
-// Warnungen/Checklisten-Hinweise auf Basis von Claudes allgemeinem Wissen.
+// Warnungen/Checklisten-Hinweise auf Basis von dem allgemeinen Wissen der KI.
 // Bei echten Zweifeln IMMER einen Fachanwalt/Steuerberater konsultieren.
 //
 // Ergänzt (nicht dupliziert) den Store-Optimizer (#53), der die
@@ -13,7 +13,7 @@
 // prüft - Compliance Guard schaut stattdessen auf PRODUKT-Ebene.
 import { config } from './lib/config.mjs';
 import { getProducts } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { chunkZeilen } from './lib/whatsappChunk.mjs';
 import { loadState, saveState } from './lib/state.mjs';
@@ -63,12 +63,12 @@ Für JEDES Produkt mit mindestens einem Hinweis: liefere den Produktnamen, die b
 Antworte NUR mit validem JSON, ohne Markdown:
 {"hinweise": [{"produkt": "...", "themen": ["...", "..."], "checkliste": "..."}]}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 3000 });
+  const antwort = await askKI(prompt, { maxTokens: 3000 });
   const daten = parseJsonFromText(antwort, { hinweise: [] });
   const hinweise = Array.isArray(daten.hinweise) ? daten.hinweise : [];
 
-  // Erst NACH der erfolgreichen Claude-Prüfung als "geprüft" markieren - vorher
-  // wären Produkte bei einem Claude-Fehler fälschlich als geprüft abgehakt,
+  // Erst NACH der erfolgreichen KI-Prüfung als "geprüft" markieren - vorher
+  // wären Produkte bei einem KI-Fehler fälschlich als geprüft abgehakt,
   // ohne dass je ein echtes Ergebnis für sie existiert (nie wieder geprüft).
   for (const p of neueProdukte) bereitsGeprueft.add(p.id);
   saveState(STATE_NAME, { geprueft: [...bereitsGeprueft].slice(-MAX_HISTORIE) });

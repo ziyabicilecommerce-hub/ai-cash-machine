@@ -36,8 +36,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHOP: ${{ secrets.SHOP }}
           SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          CLAUDE_MAX_TOKENS_PRO_TAG: ${{ secrets.CLAUDE_MAX_TOKENS_PRO_TAG }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
+          GEMINI_MAX_TOKENS_PRO_TAG: ${{ secrets.GEMINI_MAX_TOKENS_PRO_TAG }}
           SHOP_NAME: ${{ secrets.SHOP_NAME }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

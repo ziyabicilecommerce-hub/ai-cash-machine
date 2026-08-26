@@ -12,7 +12,7 @@
 // NEUE Zielmärkte) - dieser Agent liefert dafür die Text-Bausteine.
 import { config } from './lib/config.mjs';
 import { getProducts } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 
@@ -61,7 +61,7 @@ async function main() {
       const sprachname = SPRACHNAMEN[k.sprache] || k.sprache;
       const prompt = `Du bist professioneller E-Commerce-Übersetzer. Übersetze die folgende Shopify-Produktseite ins ${sprachname} - nicht wörtlich, sondern wie ein Muttersprachler-Copywriter für Online-Shops schreiben würde (natürlicher Verkaufston, nicht steif).${NL}${NL}Titel: ${k.produkt.title}${NL}Beschreibung (HTML): ${(k.produkt.body_html || '').slice(0, 1500)}${NL}${NL}Antworte NUR mit validem JSON, ohne Markdown:${NL}{"titel": "...", "beschreibung_html": "...", "seo_titel": "...", "seo_beschreibung": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 2500 });
+      const antwort = await askKI(prompt, { maxTokens: 2500 });
       const daten = parseJsonFromText(antwort, null);
       if (!daten || !daten.titel) {
         console.error(`[75-uebersetzungs-entwurf-agent] Ungültige Übersetzung für "${k.produkt.title}" (${k.sprache}), wird beim nächsten Lauf erneut versucht.`);

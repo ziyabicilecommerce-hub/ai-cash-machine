@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config, isTestMode } from './lib/config.mjs';
 import { getCustomers, getOrdersSince } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { sendeSms } from './lib/sms.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
@@ -162,7 +162,7 @@ Schreibe ein PERSÖNLICHES Rückgewinnungs-Angebot auf Deutsch (Du-Form), das se
 Antworte NUR mit validem JSON, ohne Markdown:
 {"betreff": "...", "html": "...", "sms_text": "kurze SMS-Version, max 300 Zeichen inkl. Rabattcode, ohne HTML"}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 2000 });
+      const antwort = await askKI(prompt, { maxTokens: 2000 });
       const daten = parseJsonFromText(antwort, null);
       if (!daten || !daten.html) continue;
 

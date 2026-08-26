@@ -1,7 +1,7 @@
 // Feiertags-Radar - erkennt nahende Feiertage und schlägt passende Marketing-Aktion vor
 // Original: n8n Workflow "33_Feiertags_Radar" · Zeitplan: täglich 07:15
 import { config } from './lib/config.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 
 const NL = '\n';
@@ -34,7 +34,7 @@ async function main() {
 
   const prompt = `Du bist Marketing-Stratege für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}).${NL}${NL}In ${t.tage} Tagen ist "${t.name}" (${t.datum}).${NL}${NL}Gib mir eine schnelle, konkrete Marketing-Aktion dazu auf Deutsch:${NL}1. Passt dieser Anlass überhaupt zur Nische? (ehrlich - wenn nur schwach, sag wie man trotzdem einen Bezug baut)${NL}2. EINE konkrete Aktions-Idee (Angebot/Bundle/Rabatt-Code-Vorschlag) mit passendem Timing${NL}3. EIN fertiger Social-Hook + 1 E-Mail-Betreff${NL}4. Was JETZT vorbereiten (Countdown: heute noch ${t.tage} Tage)${NL}${NL}Kurz, Klartext ohne Markdown, Emojis als Trenner.`;
 
-  const idee = await askClaude(prompt, { maxTokens: 1200 });
+  const idee = await askKI(prompt, { maxTokens: 1200 });
 
   await notifyTelegram(
     `FEIERTAGS-RADAR - ${config.SHOP_NAME}${NL}In ${t.tage} Tagen: ${t.name}${NL}--------------------${NL}${NL}${idee}`

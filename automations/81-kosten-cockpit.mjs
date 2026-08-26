@@ -1,9 +1,9 @@
 // Kosten-Cockpit - EINE Tabelle mit allem: Status jeder Automation (aus dem
-// Agenten-Status-Sammler #80), welche Verbindungen sie braucht, was heute an
-// Claude-Kosten angefallen ist, und was JETZT Aufmerksamkeit braucht - statt
-// dass man durch 18 Apps klicken muss, um zu sehen was kaputt ist. Neu, kein
-// n8n-Workflow · Zeitplan: alle 6 Stunden (kurz nach #80, damit die Live-
-// Status-Daten frisch sind).
+// Agenten-Status-Sammler #80), welche Verbindungen sie braucht, wie nah der
+// heutige Gemini-Tokenverbrauch am eigenen Sicherheitslimit liegt, und was
+// JETZT Aufmerksamkeit braucht - statt dass man durch 18 Apps klicken muss,
+// um zu sehen was kaputt ist. Neu, kein n8n-Workflow · Zeitplan: alle 6
+// Stunden (kurz nach #80, damit die Live-Status-Daten frisch sind).
 import { readFileSync, readdirSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -22,16 +22,10 @@ const MAX_VERLAUF_TAGE = 30;
 // muss diese Liste nicht von Hand gepflegt werden, sondern wird direkt aus
 // den echten Imports jeder Automation abgeleitet.
 const VERBINDUNGS_LABEL = {
-  shopify: 'Shopify', claude: 'Anthropic Claude', whatsapp: 'WhatsApp', whatsappChunk: 'WhatsApp',
+  shopify: 'Shopify', ki: 'Google Gemini', whatsapp: 'WhatsApp', whatsappChunk: 'WhatsApp',
   telegram: 'Telegram', email: 'E-Mail (Resend)', meta: 'Meta Ads', binance: 'Binance',
   sms: 'Twilio SMS', judgeme: 'Judge.me', openaiImage: 'OpenAI (Bilder)', composioMaps: 'Composio/Maps',
 };
-
-// Grobe Mischkalkulation (Input+Output gemischt) für Claude Sonnet, bewusst
-// konservativ (eher zu hoch) geschätzt - keine exakte Abrechnung, die steht
-// im Anthropic-Console-Billing. Nur gedacht, um ein grobes Gefühl für die
-// Größenordnung zu geben, nicht als Buchhaltungszahl.
-const EUR_PRO_MIO_TOKEN = 8;
 
 function leseJson(pfad) {
   if (!existsSync(pfad)) return null;
@@ -57,13 +51,14 @@ function heute() {
   return new Date().toISOString().slice(0, 10);
 }
 
-// Pflegt eine rollierende Tageshistorie der Kosten (heutiger Eintrag wird bei
-// mehrfachen Läufen am selben Tag überschrieben, nicht dupliziert) - macht
-// aus dem reinen "heute"-Snapshot einen echten Trend statt nur einer Zahl.
-function aktualisiereKostenVerlauf(tokenHeute, geschaetzteKostenEurHeute) {
+// Pflegt eine rollierende Tageshistorie des Tokenverbrauchs (heutiger
+// Eintrag wird bei mehrfachen Läufen am selben Tag überschrieben, nicht
+// dupliziert) - macht aus dem reinen "heute"-Snapshot einen echten Trend
+// statt nur einer Zahl.
+function aktualisiereKostenVerlauf(tokenHeute) {
   const state = loadState(KOSTEN_VERLAUF_STATE);
   const verlauf = (state.verlauf || []).filter((e) => e.datum !== heute());
-  verlauf.push({ datum: heute(), tokenHeute, geschaetzteKostenEurHeute });
+  verlauf.push({ datum: heute(), tokenHeute });
   verlauf.sort((a, b) => a.datum.localeCompare(b.datum));
   const gekuerzt = verlauf.slice(-MAX_VERLAUF_TAGE);
   saveState(KOSTEN_VERLAUF_STATE, { verlauf: gekuerzt });
@@ -72,7 +67,7 @@ function aktualisiereKostenVerlauf(tokenHeute, geschaetzteKostenEurHeute) {
 
 async function main() {
   const agentenStatus = leseJson(AGENTS_DATA_FILE);
-  const budgetState = loadState('claude-budget-state');
+  const budgetState = loadState('gemini-budget-state');
   const chefAgent = leseJson(CHEF_AGENT_FILE);
   const chains = leseJson(CHAINS_FILE);
 
@@ -130,22 +125,11 @@ async function main() {
   }
 
   const tokenHeute = budgetState?.tokenHeute || 0;
-  const geschaetzteKostenEurHeute = Math.round((tokenHeute / 1_000_000) * EUR_PRO_MIO_TOKEN * 100) / 100;
-  const kostenVerlauf = aktualisiereKostenVerlauf(tokenHeute, geschaetzteKostenEurHeute);
-
-  // Monats-Projektion: Durchschnitt der bisher bekannten Tage (nicht nur
-  // heute) * 30 - stabiler als eine Hochrechnung aus einem einzelnen Tag,
-  // der zufällig sehr ruhig oder sehr aktiv war.
-  const tageMitDaten = kostenVerlauf.filter((e) => e.geschaetzteKostenEurHeute > 0);
-  const durchschnittProTag = tageMitDaten.length
-    ? tageMitDaten.reduce((s, e) => s + e.geschaetzteKostenEurHeute, 0) / tageMitDaten.length
-    : geschaetzteKostenEurHeute;
+  const kostenVerlauf = aktualisiereKostenVerlauf(tokenHeute);
 
   const kosten = {
     tokenHeute,
-    limit: parseInt(config.CLAUDE_MAX_TOKENS_PRO_TAG, 10) || null,
-    geschaetzteKostenEurHeute,
-    monatsProjektionEur: Math.round(durchschnittProTag * 30 * 100) / 100,
+    limit: parseInt(config.GEMINI_MAX_TOKENS_PRO_TAG, 10) || null,
     verlauf: kostenVerlauf,
   };
 

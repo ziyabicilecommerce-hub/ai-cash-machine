@@ -2,7 +2,7 @@
 // Original: n8n Workflow "10_VIP_Radar" · Zeitplan: täglich 12:00
 import { config, isTestMode } from './lib/config.mjs';
 import { getOrders } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { loadState, saveState } from './lib/state.mjs';
@@ -44,7 +44,7 @@ async function main() {
 
       const prompt = `Du schreibst im Namen des Gründers vom Onlineshop "${config.SHOP_NAME}".${NL}Dieser Kunde ist gerade offiziell VIP geworden: ${ordersCount} Bestellungen, ${totalSpent.toFixed(0)} Gesamtumsatz. Letzte Bestellung: ${artikel}.${NL}${NL}Schreibe eine PERSÖNLICHE Dankes-E-Mail auf Deutsch (Du-Form), maximal 120 Wörter:${NL}- Klingt wie vom Gründer persönlich getippt, NICHT wie Marketing${NL}- Ehrlicher Dank, dass er/sie immer wieder kauft${NL}- Vorname: ${k.first_name || 'unbekannt (neutral anreden)'}${NL}- Als Dankeschön: exklusiver VIP-Code ${config.VIP_RABATT_CODE} (dauerhaft gültig, nur für ihn/sie)${NL}- Frage am Ende: Was können wir besser machen? (echte Antworten erwünscht)${NL}- Schlichtes HTML, wenig Styling, wie eine normale persönliche Mail${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "html": "..."}`;
 
-      const antwort = await askClaude(prompt, { maxTokens: 1500 });
+      const antwort = await askKI(prompt, { maxTokens: 1500 });
       const daten = parseJsonFromText(antwort, { betreff: 'Danke, dass du dabei bist', html: antwort });
 
       const empfaenger = isTestMode() ? config.OWNER_EMAIL : o.email;

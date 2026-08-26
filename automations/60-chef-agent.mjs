@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { getOrders, getCustomers } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { loadState, saveState } from './lib/state.mjs';
 import { loeseKetteAus } from './lib/chains.mjs';
@@ -24,7 +24,7 @@ const STATE_KEY = '60-chef-agent';
 const COMMAND_DIR = join(__dirname, '..', 'command');
 const MAX_HISTORIE = 60;
 
-// Deterministische Auslöse-Regeln - bewusst NICHT von Claudes freiem Text
+// Deterministische Auslöse-Regeln - bewusst NICHT von dem freien Text der KI
 // abhängig (siehe githubActions.mjs). Nur die 2 Bereiche, für die es eine
 // wirklich passende, sichere Automation gibt: Finanzen hat keine, die
 // automatisch "besser wird", indem man ein Skript startet - das bleibt
@@ -133,7 +133,7 @@ Schreibe eine kurze Chef-Ansage auf Deutsch (Du-Form):
 Antworte NUR mit validem JSON, ohne Markdown:
 {"status": "...", "prioritaet": "...", "alles_gut": true oder false}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 1000 });
+  const antwort = await askKI(prompt, { maxTokens: 1000 });
   const daten = parseJsonFromText(antwort, null);
   if (!daten) {
     console.log('[60-chef-agent] Ungültige Antwort, kein Report versendet.');

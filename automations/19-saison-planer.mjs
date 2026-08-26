@@ -2,7 +2,7 @@
 // Original: n8n Workflow "19_Saison_Planer" · Zeitplan: am 25. jedes Monats, 09:00
 import { config } from './lib/config.mjs';
 import { getOrdersSince } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 
 const NL = '\n';
@@ -31,7 +31,7 @@ async function main() {
 
   const prompt = `Du bist Marketing-Stratege für den Onlineshop "${config.SHOP_NAME}" (Nische: ${config.SHOP_NISCHE}, Zielgruppe: ${config.ZIELGRUPPE}, Markt: DACH).${NL}Letzte 30 Tage: ${orders.length} Bestellungen, ${umsatz.toFixed(0)} Umsatz. Top-Produkte: ${top || 'keine'}${NL}${NL}Erstelle den kompletten MARKETING-KALENDER für ${folgemonat} ${jahr} auf Deutsch: (1) SAISON-CHECK: Feiertage, Saison-Momente, Shopping-Events und Anlässe im ${folgemonat} im DACH-Raum die für diese Nische relevant sind. (2) WOCHENPLAN: für jede der 4 Wochen ein Marketing-Thema. (3) ZWEI PROMO-AKTIONEN mit Datum, Mechanik, Begründung, Rabattcode-Vorschlag. (4) CONTENT-HIGHLIGHTS: 5 konkrete Video-/Post-Ideen. (5) E-MAIL-PLAN: welche Mails in welcher Woche. (6) MONATSZIEL-VORSCHLAG mit kurzer Rechnung. Antworte als sauberes HTML (h2/h3, Listen, kein html/body-Gerüst, kein Markdown-Codeblock).`;
 
-  const html = await askClaude(prompt, { maxTokens: 5000 });
+  const html = await askKI(prompt, { maxTokens: 5000 });
 
   await sendEmail({
     to: config.OWNER_EMAIL,

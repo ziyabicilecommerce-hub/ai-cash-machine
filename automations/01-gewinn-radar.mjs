@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { getOrdersSince } from './lib/shopify.mjs';
-import { askClaude } from './lib/claude.mjs';
+import { askKI } from './lib/ki.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 
 const NL = '\n';
@@ -156,7 +156,7 @@ async function main() {
 
   const prompt = `Du bist E-Commerce-Berater für den Shop "${config.SHOP_NAME}".${NL}Hier die Zahlen von gestern:${NL}${NL}${zahlen}${NL}${NL}Gib genau 3 kurze, KONKRETE Handlungsempfehlungen für heute (jeweils 1-2 Sätze, direkt umsetzbar, keine Floskeln). Nummeriert 1-3, auf Deutsch, Du-Form. Antworte nur mit den 3 Punkten.`;
 
-  const tipps = await askClaude(prompt, { maxTokens: 1000 });
+  const tipps = await askKI(prompt, { maxTokens: 1000 });
 
   const telegramText = `GEWINN-RADAR · ${config.SHOP_NAME}${NL}Gestern:${NL}${NL}${zahlen}${NL}${NL}Deine 3 Moves für heute:${NL}${tipps}`;
 

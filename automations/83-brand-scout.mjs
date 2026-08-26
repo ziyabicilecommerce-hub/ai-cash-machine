@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { getProducts, getOrdersSince } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { chunkZeilen } from './lib/whatsappChunk.mjs';
 import { loadState, saveState } from './lib/state.mjs';
@@ -77,7 +77,7 @@ Sei ehrlich, auch wenn die Marken-DNA unklar wirkt (z.B. sehr gemischtes Sortime
 Antworte NUR mit validem JSON, ohne Markdown:
 {"markenDna": {"kernkategorien": "...", "preislage": "...", "zielgruppe": "...", "stil": "..."}, "produkte": [{"name": "...", "markenfit": 0, "nachfrage": 0, "konkurrenz": 0, "marge": 0, "trend": 0, "lieferzeit": 0, "risiko": 0, "begruendung": "2-3 Sätze warum es zur Marke passt", "warnung": "konkrete Warnung oder leer"}]}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 4000 });
+  const antwort = await askKI(prompt, { maxTokens: 4000 });
   const daten = parseJsonFromText(antwort, null);
   if (!daten || !daten.markenDna) {
     console.log('[83-brand-scout] Ungültige Antwort, kein Report versendet.');

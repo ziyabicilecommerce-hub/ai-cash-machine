@@ -2,7 +2,7 @@
 // Original: n8n Workflow "09_Newsletter_Autopilot" · Zeitplan: donnerstags 09:00
 import { config } from './lib/config.mjs';
 import { getProducts, getOrdersSince } from './lib/shopify.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { sendEmail } from './lib/email.mjs';
 
 const NL = '\n';
@@ -30,7 +30,7 @@ async function main() {
     config.NEWSLETTER_RABATT_CODE ? `5. Rabattcode elegant einbauen${NL}` : ''
   }${NL}Verhältnis: 70% Mehrwert, 30% Verkauf. Mobiltaugliches HTML mit Inline-CSS.${NL}Antworte NUR mit validem JSON, ohne Markdown: {"betreff": "...", "preheader": "...", "html": "<komplettes Newsletter-HTML>"}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 4000 });
+  const antwort = await askKI(prompt, { maxTokens: 4000 });
   const daten = parseJsonFromText(antwort, { betreff: 'Dein Wochen-Newsletter (Entwurf)', preheader: '', html: antwort });
 
   const hinweis = `<div style="background:#fef3c7;border:1px solid #f59e0b;padding:12px;border-radius:8px;font-family:sans-serif;font-size:13px;margin-bottom:20px;">Newsletter-Entwurf - Betreff: <b>${daten.betreff}</b> - Preheader: ${daten.preheader || '-'}<br>Gegenlesen, in dein E-Mail-Tool (Shopify Email / Klaviyo / Mailchimp) kopieren und an deine Liste senden. 2 Minuten Arbeit.</div>`;

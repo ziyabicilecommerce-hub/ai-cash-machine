@@ -12,7 +12,7 @@
 import { ImapFlow } from 'imapflow';
 import { simpleParser } from 'mailparser';
 import { config, ueberspringenWerfen } from './lib/config.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { erstelleTicket } from './lib/githubIssues.mjs';
 import { loadState, saveState } from './lib/state.mjs';
@@ -80,7 +80,7 @@ async function main() {
 
   const prompt = `Du prüfst eingehende E-Mails an den Kundenservice von "${config.SHOP_NAME}" NUR auf eine Sache: ist es eine Datenschutz-/DSGVO-Anfrage (Auskunft über gespeicherte Daten, Löschung der Daten, Widerspruch gegen Verarbeitung, Widerruf einer Einwilligung)? Normale Bestell-/Produktfragen sind KEINE DSGVO-Anfrage, auch wenn sie das Wort "Daten" enthalten (z.B. "meine Lieferdaten").${NL}${NL}${liste}${NL}${NL}Antworte NUR mit validem JSON, ohne Markdown, in der Reihenfolge der Liste oben:${NL}{"bewertungen": [{"ist_dsgvo": true oder false, "kategorie": "auskunft|loeschung|widerspruch|sonstiges", "zusammenfassung": "ein Satz"}]}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 2000 });
+  const antwort = await askKI(prompt, { maxTokens: 2000 });
   const bewertungen = parseJsonFromText(antwort, {}).bewertungen || null;
 
   let dsgvoFaelle = 0;

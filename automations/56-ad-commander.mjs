@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { getAdInsights } from './lib/meta.mjs';
-import { askClaude, parseJsonFromText } from './lib/claude.mjs';
+import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { notifyWhatsapp } from './lib/whatsapp.mjs';
 import { chunkZeilen } from './lib/whatsappChunk.mjs';
 import { loadState, saveState } from './lib/state.mjs';
@@ -82,7 +82,7 @@ Gib eine KONKRETE Budget-Umschichtungs-Empfehlung: von welchen schwachen Kampagn
 Antworte NUR mit validem JSON, ohne Markdown:
 {"empfehlung": "..."}`;
 
-  const antwort = await askClaude(prompt, { maxTokens: 800 });
+  const antwort = await askKI(prompt, { maxTokens: 800 });
   const daten = parseJsonFromText(antwort, { empfehlung: antwort });
 
   const zeilen = [

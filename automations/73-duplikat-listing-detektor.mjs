@@ -1,6 +1,6 @@
 // Duplikat-Listing-Detektor - vergleicht ALLE aktiven Produkttitel
 // paarweise per Textähnlichkeit (Bigramm-Dice-Koeffizient, komplett lokal
-// berechnet - kein Claude-Aufruf nötig, kostet keine Tokens) und meldet
+// berechnet - kein KI-Aufruf nötig, kostet keine Tokens) und meldet
 // fast-identische Produkte, die versehentlich doppelt angelegt wurden oder
 // sich bei SEO/Kunden gegenseitig verwirren. Neu, kein n8n-Workflow ·
 // Zeitplan: wöchentlich.
