@@ -513,7 +513,14 @@ html.embedded .subtitle{display:none;}
   // die Sidebar dorthin gesprungen wird. Reine Anzeige-Logik (CSS display),
   // rührt nie an den bereits geladenen Daten - beim Aufklappen steht der
   // Inhalt sofort da, kein erneuter Ladevorgang nötig.
-  const STANDARD_OFFENE_SEKTIONEN = ['thermometer', 'overview', 'kombireport', 'chart'];
+  // Laptop/Desktop hat spürbar mehr Platz als ein Handy-Bildschirm (Karten
+  // laufen dort in mehreren Spalten statt einzeln untereinander) - deshalb
+  // startet dort eine breitere Auswahl offen, statt dieselben 4 wie mobil.
+  // Bewusst weiterhin NICHT alle 20+ Abschnitte (das war ja gerade das
+  // Problem), nur eine großzügigere "State of the Nation"-Auswahl.
+  const STANDARD_OFFENE_SEKTIONEN = window.matchMedia('(min-width: 1024px)').matches
+    ? ['thermometer', 'overview', 'kombireport', 'erfolge', 'chart', 'market', 'scanner', 'risk']
+    : ['thermometer', 'overview', 'kombireport', 'chart'];
   function sammleSektionsElemente(labelEl) {
     const elemente = [];
     let node = labelEl.nextElementSibling;
