@@ -23,8 +23,10 @@
 
 *{box-sizing:border-box}
 
+html{overflow-x:hidden;}
 body{
   margin:0;
+  overflow-x:hidden;
   background:
     radial-gradient(circle at 50% -20%,#142235 0,transparent 40%),
     var(--bg);
@@ -120,7 +122,7 @@ html.embedded .subtitle{display:none;}
 .quote{margin-top:14px; padding:12px 14px; border-left:2px solid var(--purple); background:rgba(155,124,255,.05); font-size:12px; color:#c3cadb; line-height:1.6; white-space:pre-wrap;}
 
 /* REGIME */
-.regime{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+.regime{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px;}
 .regime-item{border:1px solid var(--line); background:#080d14; padding:13px; border-radius:10px;}
 .asset{font-weight:800;}
 .regime-state{font-size:11px; margin-top:7px;}
@@ -190,7 +192,7 @@ html.embedded .subtitle{display:none;}
 .alert-time{color:#465466; font-size:9px;}
 
 /* HEALTH */
-.health{display:grid; grid-template-columns:repeat(3,1fr); gap:9px;}
+.health{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:9px;}
 .health-item{background:#080d14; border:1px solid var(--line); border-radius:9px; padding:11px;}
 .health-top{display:flex; justify-content:space-between; font-size:10px;}
 .latency{color:#69788b; font-size:9px; margin-top:7px;}
@@ -871,7 +873,7 @@ html.embedded .subtitle{display:none;}
     const gesamtTrades = (cs?.anzahlTrades || 0) + (ss?.anzahlTrades || 0);
     let besser = null;
     if (cs && ss) besser = cs.plProzent === ss.plProzent ? null : (cs.plProzent > ss.plProzent ? '₿ Krypto-Bot' : '📈 Aktien-Bot');
-    el.innerHTML = `<div class="grid" style="grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 14px;padding:0;border:none;">
+    el.innerHTML = `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 14px;padding:0;border:none;">
         ${overviewCard('GESAMTKAPITAL', 'BEIDE BOTS', fmtGeld(gesamtKapital, 'USD/USDT'), '', `Start: ${fmtGeld(gesamtStart, 'USD/USDT')}`)}
         ${overviewCard('GESAMT-P&amp;L', 'BEIDE BOTS', (gesamtPl >= 0 ? '+' : '') + fmtGeld(gesamtPl, 'USD/USDT'), gesamtPl < 0 ? 'red' : 'green', fmtProzent(gesamtPlProzent) + ' seit Start')}
         ${overviewCard('TRADES GESAMT', 'BEIDE BOTS', String(gesamtTrades), '', `${cs ? cs.anzahlTrades : 0} Krypto · ${ss ? ss.anzahlTrades : 0} Aktien`)}
@@ -1246,7 +1248,7 @@ html.embedded .subtitle{display:none;}
     const vol = g.total_volume.usd;
     return `<div class="card wide">
       <div class="card-head"><div class="card-title">🌍 Globaler Krypto-Markt</div><div class="card-meta">CoinGecko, live</div></div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:14px;">
         <div><div class="metric">MARKET CAP</div><div class="big" style="font-size:18px;">$${(mcap / 1e9).toFixed(0)}B</div></div>
         <div><div class="metric">24H</div><div class="big ${mcapChange >= 0 ? 'green' : 'red'}" style="font-size:18px;">${mcapChange >= 0 ? '+' : ''}${mcapChange.toFixed(2)}%</div></div>
         <div><div class="metric">BTC DOMINANZ</div><div class="big" style="font-size:18px;">${g.market_cap_percentage.btc.toFixed(1)}%</div></div>
@@ -1525,7 +1527,7 @@ html.embedded .subtitle{display:none;}
       return;
     }
     const karten = daten.trader.map((t, i) => copyTradingCard(t, i + 1)).join('');
-    el.innerHTML = `<div class="grid" style="grid-template-columns:repeat(2,1fr);gap:12px;margin:0 0 12px;padding:0;border:none;">${karten}</div>
+    el.innerHTML = `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:0 0 12px;padding:0;border:none;">${karten}</div>
       <div class="note">100% öffentlich und legal: OKX zeigt Lead-Trader-Positionen ABSICHTLICH, damit die Trader Follower fürs Copy-Trading gewinnen - Opt-in-Transparenz seitens der Trader, kein Datenleck. Zuletzt aktualisiert: ${fmtDatum(daten.datum)}. Reine Beobachtung - das ist NICHT deine eigene Strategie und keine Kauf-/Verkaufsempfehlung. Hebel bis 50x wie hier gezeigt bedeutet extremes Risiko, auch für den Lead-Trader selbst.</div>`;
   }
 
