@@ -2,23 +2,24 @@
 //
 // Warum ein eigener Worker statt direkt aus dem Browser wie Jarvis/Brand
 // Assassin/Oracle/Closer? Jene Apps sind BYOK (jeder Nutzer bringt seinen
-// EIGENEN Anthropic-Key) - für einen Chat, den fremde Website-Besucher
+// EIGENEN Gemini-Key) - für einen Chat, den fremde Website-Besucher
 // bedienen, würde das den Key des SHOP-BESITZERS an jeden Besucher
-// ausliefern. Deshalb läuft der eigentliche Claude-Aufruf hier serverseitig:
+// ausliefern. Deshalb läuft der eigentliche Gemini-Aufruf hier serverseitig:
 // der Key steckt nur als Cloudflare-Secret im Worker, nie im Browser.
 //
-// Schutz gegen Kosten-Explosion durch fremde Besucher (siehe auch
-// CLAUDE_MAX_TOKENS_PRO_TAG bei den GitHub-Actions-Automationen):
+// Läuft über die dauerhaft kostenlose Gemini-API-Stufe (kein Anthropic-Key,
+// keine laufenden Kosten) - Schutz gegen Ausschöpfen der kostenlosen Stufe
+// durch fremde Besucher (siehe auch GEMINI_MAX_TOKENS_PRO_TAG bei den
+// GitHub-Actions-Automationen):
 // 1. Pro-Besucher-Rate-Limit (Nachrichten/Stunde) über KV.
 // 2. Ein globales Tages-Token-Budget über KV - danach zeigt der Chat eine
 //    ehrliche "gerade nicht verfügbar, bitte E-Mail" Nachricht statt einfach
-//    weiter Geld zu verbrennen.
+//    stillschweigend weiterzulaufen.
 // 3. CORS ist auf explizit erlaubte Shop-Domains beschränkt, damit nicht
 //    irgendeine fremde Seite den Worker (und damit den Key) fürs eigene
 //    Chat-Frontend mitbenutzt.
 
-const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
-const MODEL = 'claude-sonnet-5';
+const GEMINI_MODEL_DEFAULT = 'gemini-2.0-flash';
 const MAX_ANTWORT_TOKENS = 500;
 const MAX_NACHRICHTEN_HISTORIE = 12; // letzte N Nachrichten (User+Assistant zusammen)
 const MAX_NACHRICHT_ZEICHEN = 1500;
@@ -198,42 +199,48 @@ async function handleChat(request, env) {
     );
   }
 
-  if (!env.ANTHROPIC_API_KEY) {
-    return new Response(JSON.stringify({ error: 'Chat ist nicht konfiguriert (ANTHROPIC_API_KEY fehlt)' }), { status: 503, headers: { ...cors, 'content-type': 'application/json' } });
+  if (!env.GEMINI_API_KEY) {
+    return new Response(JSON.stringify({ error: 'Chat ist nicht konfiguriert (GEMINI_API_KEY fehlt)' }), { status: 503, headers: { ...cors, 'content-type': 'application/json' } });
   }
 
   const katalog = await holeKatalog(env);
+  const model = env.GEMINI_MODEL || GEMINI_MODEL_DEFAULT;
 
-  const anthropicRes = await fetch(ANTHROPIC_URL, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': env.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: MAX_ANTWORT_TOKENS,
-      system: buildSystemPrompt(env, katalog),
-      messages: nachrichten,
-    }),
-  });
+  // Gemini kennt keine "assistant"-Rolle wie Anthropic, sondern "model".
+  const contents = nachrichten.map((m) => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }],
+  }));
 
-  if (!anthropicRes.ok) {
-    const fehlerText = await anthropicRes.text();
-    console.error('[customer-agent] Anthropic-Fehler:', anthropicRes.status, fehlerText);
+  const geminiRes = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        contents,
+        systemInstruction: { parts: [{ text: buildSystemPrompt(env, katalog) }] },
+        generationConfig: { maxOutputTokens: MAX_ANTWORT_TOKENS },
+      }),
+    }
+  );
+
+  if (!geminiRes.ok) {
+    const fehlerText = await geminiRes.text();
+    console.error('[customer-agent] Gemini-Fehler:', geminiRes.status, fehlerText);
     return new Response(
       JSON.stringify({ reply: 'Entschuldige, gerade gibt es ein technisches Problem. Bitte versuch es gleich nochmal.' }),
       { status: 200, headers: { ...cors, 'content-type': 'application/json' } },
     );
   }
 
-  const data = await anthropicRes.json();
-  if (data.usage) {
-    await aktualisiereTagesBudget(env, (data.usage.input_tokens || 0) + (data.usage.output_tokens || 0));
+  const data = await geminiRes.json();
+  if (data.usageMetadata) {
+    await aktualisiereTagesBudget(env, (data.usageMetadata.promptTokenCount || 0) + (data.usageMetadata.candidatesTokenCount || 0));
   }
 
-  const reply = (data.content || []).map((block) => block.text || '').join('').trim() || 'Entschuldige, dazu fällt mir gerade nichts ein.';
+  const parts = data.candidates?.[0]?.content?.parts || [];
+  const reply = parts.map((p) => p.text || '').join('').trim() || 'Entschuldige, dazu fällt mir gerade nichts ein.';
   return new Response(JSON.stringify({ reply }), { status: 200, headers: { ...cors, 'content-type': 'application/json' } });
 }
 

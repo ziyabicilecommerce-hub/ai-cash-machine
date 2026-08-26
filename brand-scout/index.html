@@ -126,7 +126,7 @@ function fitBadge(fit) {
 function render(data) {
   const el = document.getElementById('content');
   if (!data || !data.markenDna || !(data.produkte || []).length) {
-    el.innerHTML = '<div class="empty"><div class="emoji">🧬</div><b>Noch keine Marken-DNA</b><br>Erscheint, sobald Brand Scout (#83) zum ersten Mal gelaufen ist (braucht ANTHROPIC_API_KEY + SHOP + SHOPIFY_TOKEN und mindestens ein paar Produkte im Shop).</div>';
+    el.innerHTML = '<div class="empty"><div class="emoji">🧬</div><b>Noch keine Marken-DNA</b><br>Erscheint, sobald Brand Scout (#83) zum ersten Mal gelaufen ist (braucht GEMINI_API_KEY + SHOP + SHOPIFY_TOKEN und mindestens ein paar Produkte im Shop).</div>';
     return;
   }
 

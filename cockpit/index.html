@@ -181,16 +181,16 @@ function renderReliability(verlauf) {
 
 function renderChart(verlauf) {
   if (!verlauf || verlauf.length < 2) return '';
-  const werte = verlauf.map((e) => e.geschaetzteKostenEurHeute || 0);
-  const max = Math.max(...werte, 0.01);
+  const werte = verlauf.map((e) => e.tokenHeute || 0);
+  const max = Math.max(...werte, 1);
   const w = 100 / verlauf.length;
   const barW = Math.min(w * 0.55, 4);
   let svg = `<div class="chart-wrap"><svg class="chart-svg" viewBox="0 0 100 40" preserveAspectRatio="none" id="chartSvg">`;
   verlauf.forEach((e, i) => {
-    const h = Math.max((e.geschaetzteKostenEurHeute || 0) / max * 34, 0.6);
+    const h = Math.max((e.tokenHeute || 0) / max * 34, 0.6);
     const x = i * w + (w - barW) / 2;
     const y = 36 - h;
-    svg += `<rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barW.toFixed(2)}" height="${h.toFixed(2)}" rx="0.8" data-i="${i}"><title>${fmtDatumKurz(e.datum)}: ~${(e.geschaetzteKostenEurHeute || 0).toFixed(2)} €</title></rect>`;
+    svg += `<rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barW.toFixed(2)}" height="${h.toFixed(2)}" rx="0.8" data-i="${i}"><title>${fmtDatumKurz(e.datum)}: ${(e.tokenHeute || 0).toLocaleString('de-DE')} Token</title></rect>`;
   });
   svg += `</svg>`;
   svg += `<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--mut2);margin-top:4px;">
@@ -276,13 +276,15 @@ function render(data) {
   let html = '<div class="kpi-grid">';
   html += `<div class="kpi-box"><div class="kpi-num">${data.automationen.length}</div><div class="kpi-label">AUTOMATIONEN GESAMT</div></div>`;
   html += `<div class="kpi-box"><div class="kpi-num ${anzahlHandlungsbedarf > 0 ? 'warn' : ''}">${anzahlHandlungsbedarf}</div><div class="kpi-label">BRAUCHEN AUFMERKSAMKEIT</div></div>`;
-  html += `<div class="kpi-box"><div class="kpi-num">${(kosten.tokenHeute || 0).toLocaleString('de-DE')}</div><div class="kpi-label">CLAUDE-TOKEN HEUTE</div></div>`;
-  html += `<div class="kpi-box"><div class="kpi-num">~${(kosten.geschaetzteKostenEurHeute || 0).toFixed(2)} €</div><div class="kpi-label">GESCHÄTZT HEUTE</div></div>`;
-  html += `<div class="kpi-box"><div class="kpi-num">~${(kosten.monatsProjektionEur || 0).toFixed(0)} €</div><div class="kpi-label">MONATS-PROJEKTION</div></div>`;
+  const tokenLimitAnteil = kosten.limit > 0 ? Math.min(100, Math.round(((kosten.tokenHeute || 0) / kosten.limit) * 100)) : null;
+  html += `<div class="kpi-box"><div class="kpi-num">${(kosten.tokenHeute || 0).toLocaleString('de-DE')}</div><div class="kpi-label">GEMINI-TOKEN HEUTE (KOSTENLOS)</div></div>`;
+  if (tokenLimitAnteil !== null) {
+    html += `<div class="kpi-box"><div class="kpi-num">${tokenLimitAnteil}%</div><div class="kpi-label">TAGES-SICHERHEITSLIMIT AUSGESCHÖPFT</div></div>`;
+  }
   html += '</div>';
 
   if (kosten.verlauf && kosten.verlauf.length >= 2) {
-    html += '<div class="section-title">📈 Kosten-Trend</div>';
+    html += '<div class="section-title">📈 Token-Verbrauch-Trend</div>';
     html += `<div class="chart-card">${renderChart(kosten.verlauf)}</div>`;
   }
 
@@ -315,7 +317,7 @@ function render(data) {
     '<th>Verbindungen</th><th>Sofort nötig</th>' +
     '</tr></thead><tbody id="tableBody"></tbody></table></div>';
 
-  html += '<p class="note">Kosten sind eine grobe Schätzung (Mischkalkulation), keine exakte Abrechnung — echte Zahlen stehen in der Anthropic Console. "OK" heißt, der letzte Lauf ist ohne Absturz durchgelaufen — das sagt nicht zwingend, dass alle nötigen Secrets gesetzt sind, nur "nie gelaufen"/"Fehler" ist ein sicheres Signal. Die 5 Punkte zeigen die letzten Läufe (grün = OK, rot = Fehler).</p>';
+  html += '<p class="note">Gemini läuft über die kostenlose API-Stufe — kein Euro-Betrag, nur wie nah der Tokenverbrauch am eigenen Sicherheitslimit liegt. "OK" heißt, der letzte Lauf ist ohne Absturz durchgelaufen — das sagt nicht zwingend, dass alle nötigen Secrets gesetzt sind, nur "nie gelaufen"/"Fehler" ist ein sicheres Signal. Die 5 Punkte zeigen die letzten Läufe (grün = OK, rot = Fehler).</p>';
   html += `<p class="note">Stand: ${fmtDatum(data.updatedAt)}</p>`;
 
   el.innerHTML = html;

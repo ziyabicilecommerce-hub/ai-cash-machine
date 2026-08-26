@@ -21,6 +21,8 @@ SUPPORT_EMAIL = ""
 ALLOWED_ORIGINS = "https://deinshop.myshopify.com"
 RATE_LIMIT_PRO_STUNDE = "20"
 MAX_TOKENS_PRO_TAG = "200000"
+# Gemini-Modell für die kostenlose API-Stufe - bei Bedarf anpassen.
+GEMINI_MODEL = "gemini-2.0-flash"
 
 # Optional: echter Produktkatalog für den Chat (Verkaufsberater-Modus).
 # Ohne diese beiden Werte antwortet der Chat weiter wie bisher als reiner
@@ -39,6 +41,7 @@ SHOP_PUBLIC_URL = ""
 KATALOG_MAX_PRODUKTE = "25"
 KATALOG_CACHE_TTL_SEKUNDEN = "1800"
 
-# Secret NICHT hier eintragen - per `wrangler secret put ANTHROPIC_API_KEY` setzen.
-# Das ist der Key des SHOP-BESITZERS, wird NIE an den Browser ausgeliefert -
-# der Browser spricht nur mit diesem Worker, der Worker spricht mit Anthropic.
+# Secret NICHT hier eintragen - per `wrangler secret put GEMINI_API_KEY` setzen.
+# Kostenloser Key unter aistudio.google.com/apikey. Wird NIE an den Browser
+# ausgeliefert - der Browser spricht nur mit diesem Worker, der Worker
+# spricht mit Google Gemini.
