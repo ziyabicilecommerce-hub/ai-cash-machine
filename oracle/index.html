@@ -185,7 +185,7 @@
 <div class="key-modal-overlay" id="keyModalOverlay">
   <div class="key-modal" id="keyModalBox" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
     <h3 id="keyModalTitle">Gemini API-Key (Rückfall)</h3>
-    <p>Dein Browser probiert zuerst ein lokales Modell direkt im Browser (WebGPU) - kein Key nötig. Diese Eingabe brauchst du nur, wenn dein Browser WebGPU nicht unterstützt (z.B. Safari). Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nie an einen anderen Server.</p>
+    <p>Dein Browser probiert zuerst ein lokales Modell direkt im Browser (WebGPU, sonst als zweite Stufe per WASM/CPU) - in beiden Fällen kein Key nötig. Diese Eingabe brauchst du nur in dem sehr seltenen Fall, dass beide lokalen Wege fehlschlagen. Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nie an einen anderen Server.</p>
     <input type="password" id="keyModalInput" placeholder="AIza..." aria-label="Gemini API-Key" autocomplete="off">
     <div class="key-modal-actions">
       <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Key holen →</a>
@@ -436,6 +436,42 @@
     return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
   }
 
+  // ===== WASM-CPU-MODELL (kein Key, kein Server, kein WebGPU nötig) =====
+  // Zweite lokale Stufe für Browser ohne WebGPU (z.B. Safari < 18, ältere
+  // Geräte): läuft komplett per WASM auf der CPU statt der GPU - deutlich
+  // langsamer als WebLLM, aber praktisch überall lauffähig. Modell wird
+  // einmalig heruntergeladen und danach vom Browser gecacht.
+  const WASM_MODEL = 'onnx-community/Qwen2.5-0.5B-Instruct';
+  let wasmPipeline = null;
+  let wasmPipelineLoading = null;
+  let wasmFailed = false;
+
+  async function holeWasmPipeline(onProgress) {
+    if (wasmPipeline) return wasmPipeline;
+    if (!wasmPipelineLoading) {
+      wasmPipelineLoading = (async () => {
+        const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2');
+        wasmPipeline = await pipeline('text-generation', WASM_MODEL, {
+          device: 'wasm',
+          progress_callback: (report) => { if (onProgress) onProgress(report); },
+        });
+        return wasmPipeline;
+      })();
+    }
+    return wasmPipelineLoading;
+  }
+
+  async function callWasm({ system, messages, max_tokens }, onProgress) {
+    const generator = await holeWasmPipeline(onProgress);
+    const chatMessages = [
+      ...(system ? [{ role: 'system', content: system }] : []),
+      ...(messages || []).map((m) => ({ role: m.role, content: m.content })),
+    ];
+    const output = await generator(chatMessages, { max_new_tokens: max_tokens || 512 });
+    const text = output?.[0]?.generated_text?.at(-1)?.content || '';
+    return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
+  }
+
   async function callGeminiFallback(body) {
     const key = getGeminiKey();
     if (!key) throw new Error('kein_webgpu_kein_key');
@@ -479,6 +515,14 @@
       } catch (err) {
         console.error('[callGemini] WebLLM failed, falling back:', err);
         webllmFailed = true;
+      }
+    }
+    if (!wasmFailed) {
+      try {
+        return await callWasm(body, onProgress);
+      } catch (err) {
+        console.error('[callGemini] WASM-Fallback fehlgeschlagen, falle auf Gemini zurück:', err);
+        wasmFailed = true;
       }
     }
     return callGeminiFallback(body);
@@ -572,7 +616,7 @@
       localStorage.setItem(cacheKey, JSON.stringify({ datum: latest.datum, sections }));
       renderBriefing(sections, fmtDate(latest.datum), false);
     } catch (err) {
-      document.getElementById('genState').innerHTML = `<div class="line1">Fehler bei der Generierung</div><div class="line2">${err.message === 'invalid_key' ? 'API-Key ungültig — über das ⚙ Symbol prüfen.' : err.message === 'kein_webgpu_kein_key' ? 'Dieser Browser unterstützt keine lokale KI (WebGPU nötig, z.B. Chrome, Edge oder Safari 18+). Optional: eigenen Gemini-Key übers ⚙ Symbol eintragen.' : 'Bitte über “↑ Neu generieren” erneut versuchen.'}</div>`;
+      document.getElementById('genState').innerHTML = `<div class="line1">Fehler bei der Generierung</div><div class="line2">${err.message === 'invalid_key' ? 'API-Key ungültig — über das ⚙ Symbol prüfen.' : err.message === 'kein_webgpu_kein_key' ? 'Beide lokalen KI-Wege (WebGPU und WASM) sind in diesem Browser fehlgeschlagen. Optional: eigenen Gemini-Key übers ⚙ Symbol eintragen.' : 'Bitte über “↑ Neu generieren” erneut versuchen.'}</div>`;
     }
   }
 
