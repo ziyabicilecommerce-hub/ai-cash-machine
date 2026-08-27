@@ -2033,23 +2033,17 @@
   const aiKeyModalInput = document.getElementById('aiKeyModalInput');
   const aiKeyModalSave = document.getElementById('aiKeyModalSave');
   const aiKeyGearBtn = document.getElementById('aiKeyGearBtn');
-  let aiKeyModalResolve = null;
-
   function aiCloseKeyModal() { aiKeyModalOverlay.classList.remove('open'); }
   function aiOpenKeyModal() {
     aiKeyModalInput.value = aiGetGeminiKey() || '';
     aiKeyModalOverlay.classList.add('open');
     setTimeout(() => aiKeyModalInput.focus(), 50);
   }
-  function aiRequestGeminiKey() {
-    return new Promise((resolve) => { aiKeyModalResolve = resolve; aiOpenKeyModal(); });
-  }
   aiKeyModalSave.addEventListener('click', () => {
     const val = aiKeyModalInput.value.trim();
     if (!val) return;
     localStorage.setItem(AI_GEMINI_KEY_STORAGE, val);
     aiCloseKeyModal();
-    if (aiKeyModalResolve) { aiKeyModalResolve(val); aiKeyModalResolve = null; }
   });
   aiKeyModalInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') aiKeyModalSave.click(); });
   aiKeyGearBtn.addEventListener('click', aiOpenKeyModal);
@@ -2127,8 +2121,8 @@
   }
 
   async function aiCallGemini({ system, messages, max_tokens } = {}) {
-    let key = aiGetGeminiKey();
-    if (!key) key = await aiRequestGeminiKey();
+    const key = aiGetGeminiKey();
+    if (!key) throw new Error('kein_webgpu_kein_key');
     const contents = (messages || []).map((m) => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }],
@@ -2359,6 +2353,8 @@
     } catch (err) {
       pendingEl.querySelector('.ai-bubble').textContent = err.message === 'invalid_key'
         ? 'API-Key ungültig — über das ⚙ Symbol prüfen.'
+        : err.message === 'kein_webgpu_kein_key'
+        ? 'Dieser Browser unterstützt keine lokale KI (WebGPU nötig, z.B. Chrome, Edge oder Safari 18+). Optional: eigenen Gemini-Key übers ⚙ Symbol eintragen.'
         : 'Technisches Problem — bitte nochmal versuchen.';
       pendingEl.classList.remove('pending');
     } finally {

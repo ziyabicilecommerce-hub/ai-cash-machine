@@ -852,7 +852,6 @@ const keyModalInput = document.getElementById('keyModalInput');
 const keyModalSave = document.getElementById('keyModalSave');
 const keyGearBtn = document.getElementById('keyGearBtn');
 let keyModalLastTrigger = null;
-let keyModalResolve = null;
 
 function closeKeyModal() {
   keyModalOverlay.classList.remove('open');
@@ -866,19 +865,11 @@ function openKeyModal(triggerEl) {
   setTimeout(() => keyModalInput.focus(), 50);
 }
 
-function requestGeminiKey() {
-  return new Promise((resolve) => {
-    keyModalResolve = resolve;
-    openKeyModal();
-  });
-}
-
 keyModalSave.addEventListener('click', () => {
   const val = keyModalInput.value.trim();
   if (!val) return;
   localStorage.setItem(GEMINI_KEY_STORAGE, val);
   closeKeyModal();
-  if (keyModalResolve) { keyModalResolve(val); keyModalResolve = null; }
 });
 
 keyModalInput.addEventListener('keydown', (e) => {
@@ -948,8 +939,8 @@ async function callWebllm({ system, messages, max_tokens }, onProgress) {
 
 const GEMINI_MODEL = 'gemini-2.0-flash';
 async function callGeminiDirectFallback(body) {
-  let key = getGeminiKey();
-  if (!key) key = await requestGeminiKey();
+  const key = getGeminiKey();
+  if (!key) throw new Error('Dieser Browser unterstützt keine lokale KI (WebGPU nötig, z.B. Chrome, Edge oder Safari 18+). Optional: eigenen Gemini-Key übers ⚙ Symbol eintragen.');
   const { max_tokens, system, messages } = body;
   const geminiBody = {
     contents: messages.map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })),
