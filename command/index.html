@@ -852,7 +852,7 @@
     const zusammenfassungHtml = ermittleHeuteZusammenfassung(chains, referral, social, pricingHistorie, splitTest);
     if (!historie.length) {
       document.getElementById('ceoContent').innerHTML = zusammenfassungHtml ||
-        emptyHtml('👔', 'Noch keine Tagesansage', 'Erscheint hier, sobald der Chef-Agent (#60) zum ersten Mal gelaufen ist (braucht GEMINI_API_KEY + SHOP + SHOPIFY_TOKEN).');
+        emptyHtml('👔', 'Noch keine Tagesansage', 'Erscheint hier, sobald der Chef-Agent (#60) zum ersten Mal gelaufen ist (braucht SHOP + SHOPIFY_TOKEN).');
       return;
     }
     const html = zusammenfassungHtml + historie.map((h, i) => {
@@ -984,7 +984,7 @@
   function renderProduct(data) {
     const produkte = (data && data.produkte) || [];
     if (!produkte.length) {
-      document.getElementById('productContent').innerHTML = emptyHtml('🔎', 'Noch keine Produktideen', 'Erscheint, sobald der Product Hunter (#51) zum ersten Mal gelaufen ist (braucht GEMINI_API_KEY + PRODUCT_HUNTER_NISCHEN oder SHOP_NISCHE).');
+      document.getElementById('productContent').innerHTML = emptyHtml('🔎', 'Noch keine Produktideen', 'Erscheint, sobald der Product Hunter (#51) zum ersten Mal gelaufen ist (braucht PRODUCT_HUNTER_NISCHEN oder SHOP_NISCHE).');
       return;
     }
     const sortiert = [...produkte].sort((a, b) => (b.gesamtScore || 0) - (a.gesamtScore || 0));
@@ -1191,7 +1191,7 @@
     html += `<div class="kpi-box"><div class="kpi-num">${data.automationen.length}</div><div class="kpi-label">AUTOMATIONEN GESAMT</div></div>`;
     html += `<div class="kpi-box"><div class="kpi-num" style="${anzahlHandlungsbedarf > 0 ? 'color:var(--amber)' : ''}">${anzahlHandlungsbedarf}</div><div class="kpi-label">BRAUCHEN AUFMERKSAMKEIT</div></div>`;
     const tokenLimitAnteilCockpit = kosten.limit > 0 ? Math.min(100, Math.round(((kosten.tokenHeute || 0) / kosten.limit) * 100)) : null;
-    html += `<div class="kpi-box"><div class="kpi-num">${(kosten.tokenHeute || 0).toLocaleString('de-DE')}</div><div class="kpi-label">GEMINI-TOKEN HEUTE (KOSTENLOS)</div></div>`;
+    html += `<div class="kpi-box"><div class="kpi-num">${(kosten.tokenHeute || 0).toLocaleString('de-DE')}</div><div class="kpi-label">LOKALE KI-TOKEN HEUTE (KOSTENLOS)</div></div>`;
     if (tokenLimitAnteilCockpit !== null) {
       html += `<div class="kpi-box"><div class="kpi-num" style="color:${tokenLimitAnteilCockpit >= 80 ? 'var(--red)' : tokenLimitAnteilCockpit >= 50 ? 'var(--amber)' : 'var(--green)'}">${tokenLimitAnteilCockpit}%</div><div class="kpi-label">TAGES-SICHERHEITSLIMIT AUSGESCHÖPFT</div></div>`;
     }
@@ -1294,7 +1294,7 @@
   function renderKunden(data) {
     const el = document.getElementById('kundenContent');
     if (!data || !data.segmente) {
-      el.innerHTML = emptyHtml('👑', 'Noch keine Kundensegmentierung', 'Erscheint, sobald die CRM & Retention Engine (#57) zum ersten Mal gelaufen ist (wöchentlich, braucht SHOP + SHOPIFY_TOKEN + GEMINI_API_KEY).');
+      el.innerHTML = emptyHtml('👑', 'Noch keine Kundensegmentierung', 'Erscheint, sobald die CRM & Retention Engine (#57) zum ersten Mal gelaufen ist (wöchentlich, braucht SHOP + SHOPIFY_TOKEN).');
       return;
     }
     const waehrung = 'EUR';

@@ -30,15 +30,34 @@ jobs:
       - name: Dependencies installieren
         run: npm ci --no-audit --no-fund
 
+      # Lokales Modell statt externer API - kein Key/Account nötig (siehe
+      # automations/lib/ki.mjs).
+      - name: Ollama-Modell-Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ollama/models
+          key: ollama-models-${{ secrets.OLLAMA_MODEL || 'llama3.2:1b' }}
+
+      - name: Ollama installieren und starten
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          ollama serve &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:11434/api/tags >/dev/null && break
+            sleep 1
+          done
+          ollama pull "${OLLAMA_MODEL:-llama3.2:1b}"
+        env:
+          OLLAMA_MODEL: ${{ secrets.OLLAMA_MODEL }}
+
       - name: Lager-Wächter ausführen
         run: node automations/20-lager-waechter.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHOP: ${{ secrets.SHOP }}
           SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
-          GEMINI_MAX_TOKENS_PRO_TAG: ${{ secrets.GEMINI_MAX_TOKENS_PRO_TAG }}
+          OLLAMA_MODEL: ${{ secrets.OLLAMA_MODEL }}
+          OLLAMA_MAX_TOKENS_PRO_TAG: ${{ secrets.OLLAMA_MAX_TOKENS_PRO_TAG }}
           SHOP_NAME: ${{ secrets.SHOP_NAME }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

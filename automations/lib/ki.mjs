@@ -1,25 +1,30 @@
-// Google Gemini statt bezahltem Claude - gleiche Rolle (Text-/JSON-
-// Generierung für alle Automationen), aber über die dauerhaft kostenlose
-// Gemini-API-Stufe (Rate-Limit statt Kosten). Kein eigener Server, keine
-// laufenden Kosten - Key kostenlos unter aistudio.google.com/apikey.
+// Lokales Open-Source-Modell über Ollama statt einer externen API (Claude/
+// Gemini) - läuft direkt im GitHub-Actions-Job selbst (siehe
+// .github/workflows/_automation-runner.yml, das Ollama vor jedem Lauf
+// installiert und startet). Komplett ohne API-Key, ohne Account, ohne
+// Anmeldung irgendwo - bewusster Trade-off des Shop-Betreibers: spürbar
+// schwächere Textqualität als Claude/Gemini und langsamere Automations-
+// Läufe (Modell-Download + CPU-Inferenz ohne GPU), dafür wirklich null
+// externe Abhängigkeit.
 import { config, ueberspringenWerfen } from './config.mjs';
 import { loadState, saveState } from './state.mjs';
 import { notifyTelegram } from './telegram.mjs';
 import { notifyWhatsapp } from './whatsapp.mjs';
 
-const BUDGET_STATE_NAME = 'gemini-budget-state';
-const API_VERSION = 'v1beta';
+const OLLAMA_URL = 'http://localhost:11434';
+const BUDGET_STATE_NAME = 'ollama-budget-state';
 
 function heute() {
   return new Date().toISOString().slice(0, 10);
 }
 
-// Tages-Token-Budget über alle Automationen hinweg, damit ein Bug (z.B. eine
-// Endlosschleife) oder ungewöhnlich hohe Shop-Aktivität nicht unbemerkt weit
-// über die kostenlose Gemini-Stufe hinaus läuft. GEMINI_MAX_TOKENS_PRO_TAG=''
-// bzw. '0' deaktiviert das Limit komplett.
+// Kein echtes Kosten-Limit mehr (Ollama läuft lokal, kostet nichts) - reines
+// Sicherheitsnetz gegen einen Bug (z.B. eine Endlosschleife), der sonst
+// unbemerkt sehr viele CPU-lastige Inferenz-Aufrufe in einem einzigen
+// GitHub-Actions-Job auslösen könnte. OLLAMA_MAX_TOKENS_PRO_TAG='' bzw. '0'
+// deaktiviert das Limit komplett.
 async function pruefeTagesBudget() {
-  const limit = parseInt(config.GEMINI_MAX_TOKENS_PRO_TAG, 10);
+  const limit = parseInt(config.OLLAMA_MAX_TOKENS_PRO_TAG, 10);
   if (!limit) return null;
 
   let state = loadState(BUDGET_STATE_NAME);
@@ -29,53 +34,55 @@ async function pruefeTagesBudget() {
 
   if (state.tokenHeute >= limit) {
     if (!state.limitBenachrichtigt) {
-      const text = `⚠️ Gemini-Tageslimit erreicht: ${state.tokenHeute} von ${limit} Tokens heute verbraucht. Weitere KI-Aufrufe pausieren bis morgen (GEMINI_MAX_TOKENS_PRO_TAG anpassen, falls das zu niedrig ist).`;
+      const text = `⚠️ Tages-Sicherheitslimit erreicht: ${state.tokenHeute} von ${limit} Tokens heute lokal generiert. Weitere KI-Aufrufe pausieren bis morgen (OLLAMA_MAX_TOKENS_PRO_TAG anpassen, falls das zu niedrig ist) - reines Sicherheitsnetz gegen Bugs, kein echtes Kostenlimit.`;
       await Promise.all([notifyTelegram(text), notifyWhatsapp(text)]);
       state.limitBenachrichtigt = true;
       saveState(BUDGET_STATE_NAME, state);
     }
-    ueberspringenWerfen('Gemini-Tageslimit erreicht (GEMINI_MAX_TOKENS_PRO_TAG) - Aufruf übersprungen.');
+    ueberspringenWerfen('Tages-Sicherheitslimit erreicht (OLLAMA_MAX_TOKENS_PRO_TAG) - Aufruf übersprungen.');
   }
 
   return state;
 }
 
-function aktualisiereTagesBudget(state, usageMetadata) {
-  if (!state || !usageMetadata) return;
-  state.tokenHeute += (usageMetadata.promptTokenCount || 0) + (usageMetadata.candidatesTokenCount || 0);
+function aktualisiereTagesBudget(state, promptTokens, antwortTokens) {
+  if (!state) return;
+  state.tokenHeute += (promptTokens || 0) + (antwortTokens || 0);
   saveState(BUDGET_STATE_NAME, state);
 }
 
 export async function askKI(prompt, { maxTokens = 1500, system } = {}) {
-  if (!config.GEMINI_API_KEY) {
-    ueberspringenWerfen('GEMINI_API_KEY-Secret ist nicht gesetzt - kostenlosen Key unter aistudio.google.com/apikey holen und in GitHub → Settings → Secrets and variables → Actions eintragen (siehe automations/README.md).');
-  }
   const budgetState = await pruefeTagesBudget();
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/${API_VERSION}/models/${config.GEMINI_MODEL}:generateContent?key=${config.GEMINI_API_KEY}`,
-    {
+  let res;
+  try {
+    res = await fetch(`${OLLAMA_URL}/api/generate`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
-        generationConfig: { maxOutputTokens: maxTokens },
+        model: config.OLLAMA_MODEL,
+        prompt,
+        ...(system ? { system } : {}),
+        stream: false,
+        options: { num_predict: maxTokens },
       }),
-    }
-  );
+    });
+  } catch (err) {
+    ueberspringenWerfen(`Lokales KI-Modell (Ollama) nicht erreichbar - läuft "ollama serve" auf diesem Rechner? (${err.message})`);
+  }
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Gemini API Fehler ${res.status}: ${text}`);
+    throw new Error(`Ollama-Fehler ${res.status}: ${text}`);
   }
   const data = await res.json();
-  aktualisiereTagesBudget(budgetState, data.usageMetadata);
-  const parts = data.candidates?.[0]?.content?.parts || [];
-  return parts.map((p) => p.text || '').join('');
+  aktualisiereTagesBudget(budgetState, data.prompt_eval_count, data.eval_count);
+  return data.response || '';
 }
 
 // Extrahiert das erste JSON-Objekt aus einem KI-Antworttext (antwortet oft mit
-// Fließtext drumherum, auch wenn im Prompt JSON verlangt wurde).
+// Fließtext drumherum, auch wenn im Prompt JSON verlangt wurde) - bei kleinen
+// lokalen Modellen häufiger nötig als bei Claude/Gemini, da die sich seltener
+// exakt an ein Antwortformat halten.
 export function parseJsonFromText(text, fallback = {}) {
   const start = text.indexOf('{');
   const end = text.lastIndexOf('}');

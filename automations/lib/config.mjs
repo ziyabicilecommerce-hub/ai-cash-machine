@@ -3,15 +3,15 @@
 export const config = {
   SHOP: process.env.SHOP || '',
   SHOPIFY_TOKEN: process.env.SHOPIFY_TOKEN || '',
-  // Kostenlose Google-Gemini-API statt bezahltem Claude - gleiche Rolle
-  // (Text-/JSON-Generierung für alle Automationen), aber ohne laufende
-  // Kosten. Key kostenlos unter aistudio.google.com/apikey.
-  GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
-  GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
-  // Tages-Obergrenze für Gemini-Tokenverbrauch über alle Automationen hinweg
-  // (Input+Output zusammen) - Sicherheitsnetz gegen die kostenlose Stufe
-  // hinaus, falls die mal ein Limit bekommt. '0' oder leer = kein Limit.
-  GEMINI_MAX_TOKENS_PRO_TAG: process.env.GEMINI_MAX_TOKENS_PRO_TAG || '300000',
+  // Lokales Open-Source-Modell über Ollama statt einer externen API - läuft
+  // direkt im GitHub-Actions-Job selbst (siehe _automation-runner.yml),
+  // komplett ohne API-Key, ohne Account, ohne Anmeldung irgendwo.
+  OLLAMA_MODEL: process.env.OLLAMA_MODEL || 'llama3.2:1b',
+  // Tages-Obergrenze für lokal generierte Tokens über alle Automationen
+  // hinweg (Input+Output zusammen) - kein echtes Kostenlimit (Ollama läuft
+  // kostenlos lokal), reines Sicherheitsnetz gegen Bugs/Endlosschleifen.
+  // '0' oder leer = kein Limit.
+  OLLAMA_MAX_TOKENS_PRO_TAG: process.env.OLLAMA_MAX_TOKENS_PRO_TAG || '300000',
   SHOP_NAME: process.env.SHOP_NAME || 'Mein Shop',
   SHOP_URL: process.env.SHOP_URL || '',
   SHOP_NISCHE: process.env.SHOP_NISCHE || '',
