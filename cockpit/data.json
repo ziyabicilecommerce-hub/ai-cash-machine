@@ -1,10 +1,8 @@
 {
-  "updatedAt": "2026-08-26T20:11:33.702Z",
+  "updatedAt": "2026-08-27T09:58:30.315Z",
   "kosten": {
     "tokenHeute": 0,
     "limit": 300000,
-    "geschaetzteKostenEurHeute": 0,
-    "monatsProjektionEur": 0,
     "verlauf": [
       {
         "datum": "2026-08-14",
@@ -70,6 +68,10 @@
         "datum": "2026-08-26",
         "tokenHeute": 0,
         "geschaetzteKostenEurHeute": 0
+      },
+      {
+        "datum": "2026-08-27",
+        "tokenHeute": 0
       }
     ]
   },
@@ -86,7 +88,7 @@
       "name": "Gewinn-Radar",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram"
       ],
       "status": "ok",
@@ -110,7 +112,7 @@
       "nummer": 2,
       "name": "KI-Kundenservice",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)",
         "Telegram",
         "Shopify"
@@ -119,8 +121,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T18:45:52Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33001489385"
+        "startedAt": "2026-08-27T00:52:15Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33028256884"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-02-ki-kundenservice.yml",
@@ -137,7 +139,7 @@
       "name": "Bewertungs-Magnet",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -162,7 +164,7 @@
       "name": "Winback-Maschine",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -187,7 +189,7 @@
       "name": "Content-Kanone",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram"
       ],
       "status": "ok",
@@ -212,7 +214,7 @@
       "name": "Ad-Fabrik",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -235,7 +237,7 @@
       "nummer": 8,
       "name": "Trend-Scout",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram"
       ],
       "status": "fehler",
@@ -260,7 +262,7 @@
       "name": "Newsletter-Autopilot",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -284,7 +286,7 @@
       "name": "VIP-Radar",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)",
         "Telegram"
       ],
@@ -310,7 +312,7 @@
       "name": "Ads-Manager",
       "verbindungen": [
         "Meta Ads",
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram"
       ],
       "status": "ok",
@@ -335,7 +337,7 @@
       "name": "Marketing-Chef (KI-CMO)",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)",
         "Telegram"
       ],
@@ -360,7 +362,7 @@
       "name": "Willkommens-Booster",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -384,7 +386,7 @@
       "nummer": 14,
       "name": "Preis-Spion",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram"
       ],
       "status": "ok",
@@ -409,15 +411,15 @@
       "name": "Warenkorb-Sequenz 3.0",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T18:49:14Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33001790654"
+        "startedAt": "2026-08-27T02:23:17Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33033122202"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-15-warenkorb-sequenz.yml",
@@ -434,7 +436,7 @@
       "name": "Cross-Sell-Radar",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -459,7 +461,7 @@
       "name": "Promo-Kampagnen-Maschine",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -481,7 +483,7 @@
       "name": "Multi-Plattform-Poster",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)",
         "Telegram"
       ],
@@ -507,7 +509,7 @@
       "name": "Saison-Planer",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -528,7 +530,7 @@
       "name": "Lager-Wächter",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram"
       ],
       "status": "ok",
@@ -553,7 +555,7 @@
       "name": "Retouren-Detektiv",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -577,7 +579,7 @@
       "name": "Dead-Stock-Räumer",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -602,7 +604,7 @@
       "name": "Kunden-Jubiläum",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -627,7 +629,7 @@
       "name": "Bundle-Bauer",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -650,7 +652,7 @@
       "nummer": 25,
       "name": "Wetter-Marketing",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram"
       ],
       "status": "ok",
@@ -675,7 +677,7 @@
       "name": "Schläfer-Wecker",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -700,7 +702,7 @@
       "name": "Wochen-Sieger-Report",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram"
       ],
       "status": "ok",
@@ -724,7 +726,7 @@
       "name": "SEO-Text-Doktor",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -748,7 +750,7 @@
       "name": "Zahlungs-Retter",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -773,7 +775,7 @@
       "name": "Bewertungs-Antwort-Bot",
       "verbindungen": [
         "Judge.me",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -798,7 +800,7 @@
       "name": "Umsatz-Prognose",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram"
       ],
       "status": "ok",
@@ -822,7 +824,7 @@
       "name": "UGC-Anfrage-Automat",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -846,7 +848,7 @@
       "nummer": 33,
       "name": "Feiertags-Radar",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram"
       ],
       "status": "ok",
@@ -871,7 +873,7 @@
       "name": "Neukunden-Quellen-Report",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -894,7 +896,7 @@
       "nummer": 35,
       "name": "Lead-Magnet-Maschine",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -918,7 +920,7 @@
       "name": "FAQ-Bauer",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -942,7 +944,7 @@
       "name": "Static-Ad-Fabrik XL",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -966,7 +968,7 @@
       "name": "UGC-Video-Skript-Fabrik",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -991,7 +993,7 @@
       "name": "Nachbestell-Erinnerung",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -1016,7 +1018,7 @@
       "name": "Kunden-Feedback-Sammler",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -1041,15 +1043,15 @@
       "name": "Post-Purchase-Sofort-Upsell",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T19:04:32Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33003195590"
+        "startedAt": "2026-08-27T04:20:49Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33039132673"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-41-post-purchase-sofort-upsell.yml",
@@ -1096,8 +1098,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T16:22:16Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/32987999323"
+        "startedAt": "2026-08-27T00:36:02Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33027383187"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-43-meta-ads-notbremse.yml",
@@ -1114,7 +1116,7 @@
       "name": "Winning-Ad neue Creatives",
       "verbindungen": [
         "Meta Ads",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -1168,8 +1170,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T18:58:53Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33002678012"
+        "startedAt": "2026-08-27T02:53:58Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33034701263"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-46-grossbestellung-radar.yml",
@@ -1186,7 +1188,7 @@
       "name": "Länder-Expansions-Scout",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -1278,7 +1280,7 @@
       "nummer": 51,
       "name": "Product Hunter",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "WhatsApp"
       ],
       "status": "ok",
@@ -1300,7 +1302,7 @@
       "nummer": 52,
       "name": "Creative Studio",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "WhatsApp",
         "OpenAI (Bilder)"
       ],
@@ -1323,7 +1325,7 @@
       "nummer": 53,
       "name": "Store Builder & Optimizer",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "Shopify",
         "WhatsApp"
       ],
@@ -1347,12 +1349,12 @@
       "name": "Compliance Guard",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "WhatsApp"
       ],
       "status": "nie-gelaufen",
       "letzterLauf": null,
-      "sofortNoetig": "Noch nie gelaufen - prüfen ob Shopify, Anthropic Claude, WhatsApp als GitHub-Secrets gesetzt sind.",
+      "sofortNoetig": "Noch nie gelaufen - prüfen ob Shopify, Google Gemini, WhatsApp als GitHub-Secrets gesetzt sind.",
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-54-compliance-guard.yml",
       "verlauf": []
     },
@@ -1385,7 +1387,7 @@
       "name": "Ad Commander",
       "verbindungen": [
         "Meta Ads",
-        "Anthropic Claude",
+        "Google Gemini",
         "WhatsApp"
       ],
       "status": "ok",
@@ -1408,7 +1410,7 @@
       "name": "CRM & Retention Engine",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)",
         "Twilio SMS",
         "WhatsApp"
@@ -1432,7 +1434,7 @@
       "nummer": 58,
       "name": "Brand Assassin Auto-Scan",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "WhatsApp"
       ],
       "status": "ok",
@@ -1454,7 +1456,7 @@
       "nummer": 59,
       "name": "Oracle Auto-Briefing",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "WhatsApp"
       ],
       "status": "ok",
@@ -1479,15 +1481,15 @@
       "name": "Chef-Agent",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "WhatsApp"
       ],
       "status": "ok",
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-25T20:16:10Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/32894361154"
+        "startedAt": "2026-08-26T22:34:12Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33020113648"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-60-chef-agent.yml",
@@ -1529,7 +1531,7 @@
       "name": "Risk-Guard-Agent",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram",
         "WhatsApp"
       ],
@@ -1537,8 +1539,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T19:27:13Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33005222531"
+        "startedAt": "2026-08-27T05:11:01Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33041697903"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-62-risk-guard-agent.yml",
@@ -1611,8 +1613,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T19:30:03Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33005473792"
+        "startedAt": "2026-08-27T00:18:59Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33026424851"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-65-inventory-guardian-agent.yml",
@@ -1686,8 +1688,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T16:58:49Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/32991530110"
+        "startedAt": "2026-08-26T23:32:22Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33023693059"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-68-sonderwunsch-flagger.yml",
@@ -1703,15 +1705,15 @@
       "nummer": 69,
       "name": "DSGVO-Anfragen-Wächter",
       "verbindungen": [
-        "Anthropic Claude",
+        "Google Gemini",
         "Telegram"
       ],
       "status": "ok",
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T18:22:47Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/32999366300"
+        "startedAt": "2026-08-27T03:33:00Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33036700878"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-69-dsgvo-anfragen-waechter.yml",
@@ -1728,7 +1730,7 @@
       "name": "Produkt-Launch-Hype-Agent",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)",
         "Telegram"
       ],
@@ -1736,8 +1738,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T16:36:24Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/32989331878"
+        "startedAt": "2026-08-27T00:58:55Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33028610874"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-70-produkt-launch-hype-agent.yml",
@@ -1833,8 +1835,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T16:54:37Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/32991109245"
+        "startedAt": "2026-08-26T23:22:54Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33023132509"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-74-refund-concierge-agent.yml",
@@ -1851,7 +1853,7 @@
       "name": "Übersetzungs-Entwurf-Agent",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -1874,7 +1876,7 @@
       "name": "Nie-Gekauft-Konverter",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "E-Mail (Resend)"
       ],
       "status": "ok",
@@ -1970,8 +1972,8 @@
       "letzterLauf": {
         "status": "in_progress",
         "conclusion": null,
-        "startedAt": "2026-08-26T19:49:31Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33007204022"
+        "startedAt": "2026-08-27T08:10:44Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33052890483"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-80-agenten-status-sammler.yml",
@@ -1991,8 +1993,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-26T13:27:19Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/32974293995"
+        "startedAt": "2026-08-26T20:11:23Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33009131266"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-81-kosten-cockpit.yml",
@@ -2033,7 +2035,7 @@
       "name": "Brand Scout",
       "verbindungen": [
         "Shopify",
-        "Anthropic Claude",
+        "Google Gemini",
         "WhatsApp"
       ],
       "status": "ok",
@@ -2106,8 +2108,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-08-25T22:12:38Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/32905026628"
+        "startedAt": "2026-08-27T02:18:34Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/33032874396"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-86-insider-buy-radar.yml",
