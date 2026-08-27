@@ -9,6 +9,12 @@ compatibility_date = "2025-01-01"
 binding = "CHAT_STATE"
 id = "REPLACE_WITH_KV_NAMESPACE_ID"
 
+# Cloudflare Workers AI - kein API-Key/Secret nötig, läuft über den
+# ohnehin für den Worker-Deploy nötigen Cloudflare-Account. Kostenlose
+# Kontingent-Stufe, siehe developers.cloudflare.com/workers-ai/platform/pricing.
+[ai]
+binding = "AI"
+
 # Nicht-geheime Konfiguration - kann hier direkt stehen (kein Secret).
 [vars]
 SHOP_NAME = "Mein Shop"
@@ -21,8 +27,8 @@ SUPPORT_EMAIL = ""
 ALLOWED_ORIGINS = "https://deinshop.myshopify.com"
 RATE_LIMIT_PRO_STUNDE = "20"
 MAX_TOKENS_PRO_TAG = "200000"
-# Gemini-Modell für die kostenlose API-Stufe - bei Bedarf anpassen.
-GEMINI_MODEL = "gemini-2.0-flash"
+# Workers-AI-Modell - bei Bedarf anpassen (Liste: developers.cloudflare.com/workers-ai/models/).
+WORKERS_AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
 
 # Optional: echter Produktkatalog für den Chat (Verkaufsberater-Modus).
 # Ohne diese beiden Werte antwortet der Chat weiter wie bisher als reiner
@@ -31,8 +37,8 @@ GEMINI_MODEL = "gemini-2.0-flash"
 # SHOPIFY_STOREFRONT_TOKEN = Storefront-API-Token (Shopify Admin → Apps →
 #   eigene App → Storefront-API-Berechtigungen → "unauthenticated_read_product_listings").
 # Dieser Token ist von Shopify bewusst für client-seitige Nutzung freigegeben,
-# also KEIN Secret wie ANTHROPIC_API_KEY - trotzdem läuft er hier serverseitig
-# im Worker, damit der Katalog gecacht werden kann.
+# also kein echtes Geheimnis - trotzdem läuft er hier serverseitig im Worker,
+# damit der Katalog gecacht werden kann.
 SHOPIFY_STORE_DOMAIN = ""
 SHOPIFY_STOREFRONT_TOKEN = ""
 # Basis-URL für Produktlinks im Chat, falls abweichend von SHOPIFY_STORE_DOMAIN
@@ -41,7 +47,5 @@ SHOP_PUBLIC_URL = ""
 KATALOG_MAX_PRODUKTE = "25"
 KATALOG_CACHE_TTL_SEKUNDEN = "1800"
 
-# Secret NICHT hier eintragen - per `wrangler secret put GEMINI_API_KEY` setzen.
-# Kostenloser Key unter aistudio.google.com/apikey. Wird NIE an den Browser
-# ausgeliefert - der Browser spricht nur mit diesem Worker, der Worker
-# spricht mit Google Gemini.
+# Kein KI-Secret mehr nötig - siehe [ai]-Binding oben. Läuft komplett über
+# den bestehenden Cloudflare-Account, kein separater Key irgendwo.

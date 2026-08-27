@@ -130,8 +130,8 @@
 
 <div class="key-modal-overlay" id="keyModalOverlay">
   <div class="key-modal" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
-    <h3 id="keyModalTitle">Gemini API-Key</h3>
-    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nur für die optionale Erklärung nötig, die Berechnung selbst läuft komplett lokal ohne Key.</p>
+    <h3 id="keyModalTitle">Gemini API-Key (Rückfall)</h3>
+    <p>Dein Browser probiert zuerst ein lokales Modell direkt im Browser (WebGPU) - kein Key nötig. Diese Eingabe brauchst du nur, wenn dein Browser WebGPU nicht unterstützt. Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nur für die optionale Erklärung nötig, die Berechnung selbst läuft komplett lokal ohne Key.</p>
     <input type="password" id="keyModalInput" placeholder="AIza..." aria-label="Gemini API-Key" autocomplete="off">
     <div class="key-modal-actions">
       <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Key holen →</a>
@@ -236,7 +236,55 @@
   keyGearBtn.addEventListener('click', openKeyModal);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && keyModalOverlay.classList.contains('open')) closeKeyModal(); });
 
-  async function callGemini(body) {
+  // Läuft zuerst ganz ohne Key/Server direkt im Browser (WebLLM + WebGPU) -
+  // Modell wird einmalig heruntergeladen und danach vom Browser gecacht.
+  // Nur Browser OHNE WebGPU (z.B. Safari, alte Browser) fallen automatisch
+  // auf den bisherigen Gemini-BYOK-Weg zurück, der deshalb bewusst erhalten
+  // bleibt statt entfernt zu werden.
+  const WEBLLM_MODEL = 'Llama-3.2-1B-Instruct-q4f16_1-MLC';
+  let webllmEngine = null;
+  let webllmEngineLoading = null;
+  let webllmFailed = false;
+
+  // Prüft den ECHTEN Adapter, nicht nur ob die API existiert - manche
+  // Browser/Umgebungen haben die navigator.gpu-API, aber keine tatsächlich
+  // nutzbare GPU dahinter (requestAdapter() liefert dann null).
+  async function hatWebGPU() {
+    if (typeof navigator === 'undefined' || !navigator.gpu) return false;
+    try {
+      const adapter = await navigator.gpu.requestAdapter();
+      return !!adapter;
+    } catch {
+      return false;
+    }
+  }
+
+  async function holeWebllmEngine(onProgress) {
+    if (webllmEngine) return webllmEngine;
+    if (!webllmEngineLoading) {
+      webllmEngineLoading = (async () => {
+        const webllm = await import('https://esm.run/@mlc-ai/web-llm');
+        webllmEngine = await webllm.CreateMLCEngine(WEBLLM_MODEL, {
+          initProgressCallback: (report) => { if (onProgress) onProgress(report); },
+        });
+        return webllmEngine;
+      })();
+    }
+    return webllmEngineLoading;
+  }
+
+  async function callWebllm({ system, messages, max_tokens }, onProgress) {
+    const engine = await holeWebllmEngine(onProgress);
+    const chatMessages = [
+      ...(system ? [{ role: 'system', content: system }] : []),
+      ...(messages || []).map((m) => ({ role: m.role, content: m.content })),
+    ];
+    const completion = await engine.chat.completions.create({ messages: chatMessages, max_tokens });
+    const text = completion.choices?.[0]?.message?.content || '';
+    return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
+  }
+
+  async function callGeminiFallback(body) {
     let key = getGeminiKey();
     if (!key) key = await requestGeminiKey();
     const { model, max_tokens, system, messages } = body;
@@ -263,6 +311,18 @@
       content: [{ type: 'text', text: (data.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('') }],
       usage: { input_tokens: data.usageMetadata?.promptTokenCount || 0, output_tokens: data.usageMetadata?.candidatesTokenCount || 0 },
     };
+  }
+
+  async function callGemini(body, onProgress) {
+    if (!webllmFailed && (await hatWebGPU())) {
+      try {
+        return await callWebllm(body, onProgress);
+      } catch (err) {
+        console.error('[callGemini] WebLLM failed, falling back:', err);
+        webllmFailed = true;
+      }
+    }
+    return callGeminiFallback(body);
   }
 
   // ===== BASELINE AUS ECHTEN DATEN =====
@@ -353,7 +413,9 @@
     slot.innerHTML = '';
     try {
       const prompt = `Du bist ein nüchterner Business-Analyst. Hier ist eine ECHTE Was-wäre-wenn-Rechnung (keine Vorhersage, reine Arithmetik) für einen Shopify-Shop, basierend auf den echten Durchschnittswerten der letzten ${ctx.baseline.tage} Tage:\n\nAKTUELL (Ø/Tag): Umsatz ${fmtMoney(ctx.baseline.avgUmsatz, ctx.baseline.waehrung)}, Werbekosten ${fmtMoney(ctx.baseline.avgWerbekosten, ctx.baseline.waehrung)}, Nettogewinn ${fmtMoney(ctx.baseline.avgNettoGewinn, ctx.baseline.waehrung)}.\n\nSIMULIERTES SZENARIO: Umsatz ${ctx.umsatzSlider >= 0 ? '+' : ''}${ctx.umsatzSlider}%, Werbebudget ${ctx.werbeSlider >= 0 ? '+' : ''}${ctx.werbeSlider}% → neuer Umsatz ${fmtMoney(ctx.sim.neuerUmsatz, ctx.baseline.waehrung)}, neue Werbekosten ${fmtMoney(ctx.sim.neueWerbekosten, ctx.baseline.waehrung)}, neuer Nettogewinn ${fmtMoney(ctx.sim.neuerGewinn, ctx.baseline.waehrung)}.\n\nErkläre dieses Szenario in 3-4 kurzen Sätzen (Deutsch, Du-Form): was die Zahlen konkret bedeuten und worauf der Shop-Besitzer achten sollte, WENN er versuchen würde, das real umzusetzen. Betone, dass dies eine reine Rechnung mit den aktuellen Kostenquoten ist, keine Garantie, dass sich Umsatz oder Werbebudget tatsächlich so verhalten. Erfinde keine zusätzlichen Zahlen.`;
-      const data = await callGemini({ max_tokens: 350, messages: [{ role: 'user', content: prompt }] });
+      const data = await callGemini({ max_tokens: 350, messages: [{ role: 'user', content: prompt }] }, (report) => {
+        btn.textContent = `Lädt lokales Modell (einmalig)… ${Math.round((report.progress || 0) * 100)}%`;
+      });
       const text = (data.content || []).map((b) => b.text || '').join('').trim() || 'Keine Erklärung erhalten.';
       slot.innerHTML = `<div class="explanation">${text}</div>`;
     } catch (err) {

@@ -1,25 +1,27 @@
 // Kunden-Chat-Agent für die Website, als Cloudflare Worker.
 //
 // Warum ein eigener Worker statt direkt aus dem Browser wie Jarvis/Brand
-// Assassin/Oracle/Closer? Jene Apps sind BYOK (jeder Nutzer bringt seinen
-// EIGENEN Gemini-Key) - für einen Chat, den fremde Website-Besucher
-// bedienen, würde das den Key des SHOP-BESITZERS an jeden Besucher
-// ausliefern. Deshalb läuft der eigentliche Gemini-Aufruf hier serverseitig:
-// der Key steckt nur als Cloudflare-Secret im Worker, nie im Browser.
+// Assassin/Oracle/Closer? Jene Apps laufen serverlos direkt im Browser des
+// Besuchers (WebLLM/WebGPU, Gemini nur als Rückfall) - für einen Chat, den
+// FREMDE Website-Besucher bedienen, würde ein serverseitiger Fallback-Key
+// des SHOP-BESITZERS an jeden Besucher ausgeliefert, wenn er im Browser
+// läge. Deshalb läuft der KI-Aufruf hier serverseitig im Worker.
 //
-// Läuft über die dauerhaft kostenlose Gemini-API-Stufe (kein Anthropic-Key,
-// keine laufenden Kosten) - Schutz gegen Ausschöpfen der kostenlosen Stufe
-// durch fremde Besucher (siehe auch GEMINI_MAX_TOKENS_PRO_TAG bei den
-// GitHub-Actions-Automationen):
+// Läuft über Cloudflare Workers AI (env.AI-Binding) statt einer externen
+// API - kein API-Key, kein separates Secret, keine Anmeldung irgendwo
+// zusätzlich zum ohnehin schon nötigen Cloudflare-Account, um den Worker
+// selbst zu deployen. Kostenlose Kontingent-Stufe (siehe
+// developers.cloudflare.com/workers-ai/platform/pricing). Schutz gegen
+// Ausschöpfen der kostenlosen Stufe durch fremde Besucher (siehe auch
+// OLLAMA_MAX_TOKENS_PRO_TAG bei den GitHub-Actions-Automationen):
 // 1. Pro-Besucher-Rate-Limit (Nachrichten/Stunde) über KV.
 // 2. Ein globales Tages-Token-Budget über KV - danach zeigt der Chat eine
 //    ehrliche "gerade nicht verfügbar, bitte E-Mail" Nachricht statt einfach
 //    stillschweigend weiterzulaufen.
 // 3. CORS ist auf explizit erlaubte Shop-Domains beschränkt, damit nicht
-//    irgendeine fremde Seite den Worker (und damit den Key) fürs eigene
-//    Chat-Frontend mitbenutzt.
+//    irgendeine fremde Seite den Worker fürs eigene Chat-Frontend mitbenutzt.
 
-const GEMINI_MODEL_DEFAULT = 'gemini-2.0-flash';
+const WORKERS_AI_MODEL_DEFAULT = '@cf/meta/llama-3.1-8b-instruct';
 const MAX_ANTWORT_TOKENS = 500;
 const MAX_NACHRICHTEN_HISTORIE = 12; // letzte N Nachrichten (User+Assistant zusammen)
 const MAX_NACHRICHT_ZEICHEN = 1500;
@@ -199,48 +201,34 @@ async function handleChat(request, env) {
     );
   }
 
-  if (!env.GEMINI_API_KEY) {
-    return new Response(JSON.stringify({ error: 'Chat ist nicht konfiguriert (GEMINI_API_KEY fehlt)' }), { status: 503, headers: { ...cors, 'content-type': 'application/json' } });
+  if (!env.AI) {
+    return new Response(JSON.stringify({ error: 'Chat ist nicht konfiguriert (AI-Binding fehlt in wrangler.toml)' }), { status: 503, headers: { ...cors, 'content-type': 'application/json' } });
   }
 
   const katalog = await holeKatalog(env);
-  const model = env.GEMINI_MODEL || GEMINI_MODEL_DEFAULT;
+  const model = env.WORKERS_AI_MODEL || WORKERS_AI_MODEL_DEFAULT;
 
-  // Gemini kennt keine "assistant"-Rolle wie Anthropic, sondern "model".
-  const contents = nachrichten.map((m) => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }],
-  }));
+  const messages = [
+    { role: 'system', content: buildSystemPrompt(env, katalog) },
+    ...nachrichten,
+  ];
 
-  const geminiRes = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        contents,
-        systemInstruction: { parts: [{ text: buildSystemPrompt(env, katalog) }] },
-        generationConfig: { maxOutputTokens: MAX_ANTWORT_TOKENS },
-      }),
-    }
-  );
-
-  if (!geminiRes.ok) {
-    const fehlerText = await geminiRes.text();
-    console.error('[customer-agent] Gemini-Fehler:', geminiRes.status, fehlerText);
+  let aiResult;
+  try {
+    aiResult = await env.AI.run(model, { messages, max_tokens: MAX_ANTWORT_TOKENS });
+  } catch (err) {
+    console.error('[customer-agent] Workers-AI-Fehler:', err.message || err);
     return new Response(
       JSON.stringify({ reply: 'Entschuldige, gerade gibt es ein technisches Problem. Bitte versuch es gleich nochmal.' }),
       { status: 200, headers: { ...cors, 'content-type': 'application/json' } },
     );
   }
 
-  const data = await geminiRes.json();
-  if (data.usageMetadata) {
-    await aktualisiereTagesBudget(env, (data.usageMetadata.promptTokenCount || 0) + (data.usageMetadata.candidatesTokenCount || 0));
+  if (aiResult.usage) {
+    await aktualisiereTagesBudget(env, (aiResult.usage.prompt_tokens || 0) + (aiResult.usage.completion_tokens || 0));
   }
 
-  const parts = data.candidates?.[0]?.content?.parts || [];
-  const reply = parts.map((p) => p.text || '').join('').trim() || 'Entschuldige, dazu fällt mir gerade nichts ein.';
+  const reply = (aiResult.response || '').trim() || 'Entschuldige, dazu fällt mir gerade nichts ein.';
   return new Response(JSON.stringify({ reply }), { status: 200, headers: { ...cors, 'content-type': 'application/json' } });
 }
 

@@ -510,8 +510,8 @@
 
 <div class="ai-key-modal-overlay" id="aiKeyModalOverlay">
   <div class="ai-key-modal" id="aiKeyModalBox" role="dialog" aria-modal="true" aria-labelledby="aiKeyModalTitle">
-    <h3 id="aiKeyModalTitle">Gemini API-Key</h3>
-    <p>Kostenloser Google-Gemini-Key, wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nie an einen anderen Server. Derselbe Key wie in Pulse, Oracle & Co — einmal eintragen, überall nutzbar.</p>
+    <h3 id="aiKeyModalTitle">Gemini API-Key (Rückfall)</h3>
+    <p>Dein Browser probiert zuerst ein lokales Modell direkt im Browser (WebGPU) - kein Key nötig. Diese Eingabe brauchst du nur, wenn dein Browser WebGPU nicht unterstützt (z.B. Safari). Kostenloser Google-Gemini-Key, wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nie an einen anderen Server. Derselbe Key wie in Pulse, Oracle & Co — einmal eintragen, überall nutzbar.</p>
     <input type="password" id="aiKeyModalInput" placeholder="AIza..." aria-label="Gemini API-Key" autocomplete="off">
     <div class="ai-key-modal-actions">
       <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Kostenlosen Key holen →</a>
@@ -596,7 +596,7 @@
 
 <section class="panel" id="panel-aichat">
   <div class="panel-title">AI Command — ein Chat für alles</div>
-  <p class="panel-desc">Fragt direkt über ALLE geladenen Module hinweg (Finance, Ads, Produkte, Kill-Switch, Autopilot, Preis-Entscheidungen, Opportunity-Radar, Trading) statt sieben Tabs einzeln durchzuklicken. Bring-your-own-key wie Pulse/Oracle — der Key bleibt im Browser, geht nur direkt an Google.</p>
+  <p class="panel-desc">Fragt direkt über ALLE geladenen Module hinweg (Finance, Ads, Produkte, Kill-Switch, Autopilot, Preis-Entscheidungen, Opportunity-Radar, Trading) statt sieben Tabs einzeln durchzuklicken. Läuft standardmäßig komplett lokal im Browser (kein Key, kein Server) - nur Browser ohne WebGPU brauchen wie bei Pulse/Oracle einen kostenlosen Gemini-Key als Rückfall.</p>
   <div class="ai-chat-box">
     <div class="ai-chat-log" id="aiChatLog">
       <div class="ai-empty-state" id="aiEmptyState">
@@ -2078,7 +2078,55 @@
     el.style.color = today.tokens >= AI_USAGE_WARN_THRESHOLD ? 'var(--red)' : '';
   }
 
-  async function aiCallKI({ system, messages, max_tokens } = {}) {
+  // Läuft zuerst ganz ohne Key/Server direkt im Browser (WebLLM + WebGPU) -
+  // Modell wird einmalig heruntergeladen und danach vom Browser gecacht.
+  // Nur Browser OHNE WebGPU (z.B. Safari, alte Browser) fallen automatisch
+  // auf den bisherigen Gemini-BYOK-Weg zurück, der deshalb bewusst erhalten
+  // bleibt statt entfernt zu werden.
+  const AI_WEBLLM_MODEL = 'Llama-3.2-1B-Instruct-q4f16_1-MLC';
+  let aiWebllmEngine = null;
+  let aiWebllmEngineLaedt = null;
+  let aiWebllmFehlgeschlagen = false;
+
+  // Prüft den ECHTEN Adapter, nicht nur ob die API existiert - manche
+  // Browser/Umgebungen haben die navigator.gpu-API, aber keine tatsächlich
+  // nutzbare GPU dahinter (requestAdapter() liefert dann null).
+  async function aiHatWebGPU() {
+    if (typeof navigator === 'undefined' || !navigator.gpu) return false;
+    try {
+      const adapter = await navigator.gpu.requestAdapter();
+      return !!adapter;
+    } catch {
+      return false;
+    }
+  }
+
+  async function aiHoleWebllmEngine(onProgress) {
+    if (aiWebllmEngine) return aiWebllmEngine;
+    if (!aiWebllmEngineLaedt) {
+      aiWebllmEngineLaedt = (async () => {
+        const webllm = await import('https://esm.run/@mlc-ai/web-llm');
+        aiWebllmEngine = await webllm.CreateMLCEngine(AI_WEBLLM_MODEL, {
+          initProgressCallback: (report) => { if (onProgress) onProgress(report); },
+        });
+        return aiWebllmEngine;
+      })();
+    }
+    return aiWebllmEngineLaedt;
+  }
+
+  async function aiCallWebllm({ system, messages, max_tokens }, onProgress) {
+    const engine = await aiHoleWebllmEngine(onProgress);
+    const chatMessages = [
+      ...(system ? [{ role: 'system', content: system }] : []),
+      ...(messages || []).map((m) => ({ role: m.role, content: m.content })),
+    ];
+    const completion = await engine.chat.completions.create({ messages: chatMessages, max_tokens });
+    const text = completion.choices?.[0]?.message?.content || '';
+    return { content: [{ type: 'text', text }] };
+  }
+
+  async function aiCallGemini({ system, messages, max_tokens } = {}) {
     let key = aiGetGeminiKey();
     if (!key) key = await aiRequestGeminiKey();
     const contents = (messages || []).map((m) => ({
@@ -2114,6 +2162,18 @@
     }
     const parts = data.candidates?.[0]?.content?.parts || [];
     return { content: [{ type: 'text', text: parts.map((p) => p.text || '').join('') }] };
+  }
+
+  async function aiCallKI(body, onProgress) {
+    if (!aiWebllmFehlgeschlagen && (await aiHatWebGPU())) {
+      try {
+        return await aiCallWebllm(body, onProgress);
+      } catch (err) {
+        console.error('[aiCallKI] Lokales Modell fehlgeschlagen, falle auf Gemini zurück:', err);
+        aiWebllmFehlgeschlagen = true;
+      }
+    }
+    return aiCallGemini(body);
   }
 
   function aiHatKontext() {
@@ -2289,6 +2349,8 @@
         max_tokens: 700,
         system: aiBuildSystemPrompt(),
         messages: aiVerlauf.slice(-16),
+      }, (report) => {
+        pendingEl.querySelector('.ai-bubble').textContent = `Lädt lokales Modell (einmalig)… ${Math.round((report.progress || 0) * 100)}%`;
       });
       const reply = (data.content || []).map((b) => b.text || '').join('').trim() || 'Dazu fällt mir gerade nichts ein.';
       pendingEl.querySelector('.ai-bubble').textContent = reply;
