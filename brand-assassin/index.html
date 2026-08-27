@@ -439,8 +439,8 @@
 
 <div class="key-modal-overlay" id="keyModalOverlay">
   <div class="key-modal" id="keyModalBox" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
-    <h3 id="keyModalTitle">Gemini API-Key</h3>
-    <p>Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nie an einen anderen Server.</p>
+    <h3 id="keyModalTitle">Gemini API-Key (Rückfall)</h3>
+    <p>Dein Browser probiert zuerst ein lokales Modell direkt im Browser (WebGPU) - kein Key nötig. Diese Eingabe brauchst du nur, wenn dein Browser WebGPU nicht unterstützt. Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nie an einen anderen Server.</p>
     <input type="password" id="keyModalInput" placeholder="AIza..." aria-label="Gemini API-Key" autocomplete="off">
     <div class="key-modal-actions">
       <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Key holen →</a>
@@ -897,8 +897,57 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+/* ============ LOKALES KI-MODELL IM BROWSER (WebLLM + WebGPU) ============ */
+// Läuft zuerst ganz ohne Key/Server direkt im Browser (WebLLM + WebGPU) -
+// Modell wird einmalig heruntergeladen und danach vom Browser gecacht.
+// Nur Browser OHNE WebGPU (z.B. Safari, alte Browser) fallen automatisch
+// auf den bisherigen Gemini-BYOK-Weg zurück, der deshalb bewusst erhalten
+// bleibt statt entfernt zu werden.
+const WEBLLM_MODEL = 'Llama-3.2-1B-Instruct-q4f16_1-MLC';
+let webllmEngine = null;
+let webllmEngineLoading = null;
+let webllmFailed = false;
+
+// Prüft den ECHTEN Adapter, nicht nur ob die API existiert - manche
+// Browser/Umgebungen haben die navigator.gpu-API, aber keine tatsächlich
+// nutzbare GPU dahinter (requestAdapter() liefert dann null).
+async function hatWebGPU() {
+  if (typeof navigator === 'undefined' || !navigator.gpu) return false;
+  try {
+    const adapter = await navigator.gpu.requestAdapter();
+    return !!adapter;
+  } catch {
+    return false;
+  }
+}
+
+async function holeWebllmEngine(onProgress) {
+  if (webllmEngine) return webllmEngine;
+  if (!webllmEngineLoading) {
+    webllmEngineLoading = (async () => {
+      const webllm = await import('https://esm.run/@mlc-ai/web-llm');
+      webllmEngine = await webllm.CreateMLCEngine(WEBLLM_MODEL, {
+        initProgressCallback: (report) => { if (onProgress) onProgress(report); },
+      });
+      return webllmEngine;
+    })();
+  }
+  return webllmEngineLoading;
+}
+
+async function callWebllm({ system, messages, max_tokens }, onProgress) {
+  const engine = await holeWebllmEngine(onProgress);
+  const chatMessages = [
+    ...(system ? [{ role: 'system', content: system }] : []),
+    ...(messages || []).map((m) => ({ role: m.role, content: m.content })),
+  ];
+  const completion = await engine.chat.completions.create({ messages: chatMessages, max_tokens });
+  const text = completion.choices?.[0]?.message?.content || '';
+  return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
+}
+
 const GEMINI_MODEL = 'gemini-2.0-flash';
-async function callGeminiDirect(body) {
+async function callGeminiDirectFallback(body) {
   let key = getGeminiKey();
   if (!key) key = await requestGeminiKey();
   const { max_tokens, system, messages } = body;
@@ -935,6 +984,18 @@ async function callGeminiDirect(body) {
   };
   if (data.usage) trackTokenUsage(data.usage);
   return data;
+}
+
+async function callGeminiDirect(body, onProgress) {
+  if (!webllmFailed && (await hatWebGPU())) {
+    try {
+      return await callWebllm(body, onProgress);
+    } catch (err) {
+      console.error('[callGeminiDirect] WebLLM failed, falling back:', err);
+      webllmFailed = true;
+    }
+  }
+  return callGeminiDirectFallback(body);
 }
 
 /* ============ TOKEN USAGE TRACKER ============ */
@@ -1425,6 +1486,8 @@ async function sendChat() {
       max_tokens: 900,
       system: 'Du bist der "Brand Strategist" der CASHMACHINE AI Operator Suite — ein energiegeladener, brutal ehrlicher Marketing-Co-Pilot für E-Commerce, Social Media und Brand Building. Sprich Deutsch, locker aber kompetent (der User sagt "Bruder" — du darfst das auch). Gib IMMER konkrete, sofort umsetzbare Antworten: echte Hook-Beispiele, echte Pläne mit Zahlen, keine generischen Ratschläge. Halte Antworten kompakt (max ~200 Wörter), nutze **fett** für die wichtigsten Punkte und Zeilenumbrüche für Struktur. Wenn dir Infos zur Brand fehlen, mach trotzdem einen starken Vorschlag und frag EINE gezielte Rückfrage am Ende.',
       messages: chatHistory.slice(-12)
+    }, (report) => {
+      typing.innerHTML = `<span class="who">STRATEGIST</span><span>Lädt lokales Modell (einmalig)… ${Math.round((report.progress || 0) * 100)}%</span>`;
     });
     const answer = data.content.map(b => b.text || '').join('');
     chatHistory.push({ role: 'assistant', content: answer });
