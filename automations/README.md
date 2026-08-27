@@ -39,13 +39,18 @@ Default aufgefüllt).
 
 ### Pflicht (fast alle Automationen brauchen das)
 
+Kein KI-Key mehr nötig: alle Text-Automationen laufen über ein lokales
+Open-Source-Modell (Ollama), das direkt im GitHub-Actions-Job installiert
+und gestartet wird (siehe `_automation-runner.yml`) - kein API-Key, kein
+Account, keine Anmeldung irgendwo. Bewusster Trade-off: spürbar schwächere
+Textqualität als Claude/Gemini und langsamere Automations-Läufe.
+
 | Secret | Beschreibung |
 |---|---|
 | `SHOP` | Shopify-Subdomain, z.B. `mein-shop` (aus `mein-shop.myshopify.com`) |
 | `SHOPIFY_TOKEN` | Shopify Admin API Access Token (`shpat_...`) |
-| `GEMINI_API_KEY` | Kostenloser Google-Gemini-Key (`AIza...`), holbar unter [aistudio.google.com/apikey](https://aistudio.google.com/apikey) - kein Anthropic-Key mehr nötig, keine laufenden Kosten |
-| `GEMINI_MODEL` | Optional, Default `gemini-2.0-flash`. Welches Gemini-Modell die Automationen nutzen. |
-| `GEMINI_MAX_TOKENS_PRO_TAG` | Optional, Default `300000`. Tages-Obergrenze für Gemini-Tokenverbrauch über ALLE Automationen zusammen (Sicherheitsnetz, falls die kostenlose Stufe mal ein Limit bekommt - nicht wegen echter Kosten). Bei Erreichen: einmalige Telegram/WhatsApp-Warnung, weitere KI-Aufrufe pausieren bis zum nächsten Tag. `0` oder leer = kein Limit. |
+| `OLLAMA_MODEL` | Optional, Default `llama3.2:1b`. Welches lokale Ollama-Modell die Automationen nutzen (Liste: [ollama.com/library](https://ollama.com/library)). |
+| `OLLAMA_MAX_TOKENS_PRO_TAG` | Optional, Default `300000`. Tages-Obergrenze für lokal generierte Tokens über ALLE Automationen zusammen - kein echtes Kostenlimit (läuft kostenlos lokal), reines Sicherheitsnetz gegen Bugs/Endlosschleifen. Bei Erreichen: einmalige Telegram/WhatsApp-Warnung, weitere KI-Aufrufe pausieren bis zum nächsten Tag. `0` oder leer = kein Limit. |
 | `SHOP_NAME` | Anzeigename des Shops in Mails/Reports |
 | `OWNER_EMAIL` | Deine eigene E-Mail (Reports, Alarme, TEST_MODE-Ziel) |
 | `ABSENDER_EMAIL` | Absenderadresse für Kunden-Mails |
@@ -229,7 +234,7 @@ Läufen).
 
 **🎯 Brand Assassin Auto-Scan** (Markt-Scan aus der Brand-Assassin-App
 automatisch, wöchentlich): keine neuen Secrets, nutzt `SHOP_NISCHE`
-(bereits vorhanden) und die üblichen `GEMINI_API_KEY`/`WHATSAPP_*`.
+(bereits vorhanden) und `WHATSAPP_*` - kein KI-Key nötig, läuft lokal ohne Anmeldung.
 Ohne `SHOP_NISCHE` überspringt sich die Automation selbst.
 
 Wichtig zur Einordnung: **Brand Assassin selbst bleibt unverändert live und
@@ -243,8 +248,8 @@ Gegenstück ist bereits die App Oracle (tägliches Briefing).
 
 **🔮 Oracle Auto-Briefing** (tägliches Briefing aus der Oracle-App
 automatisch, per WhatsApp): keine neuen Secrets, liest
-`finance-cockpit/data.json` (von #01 Gewinn-Radar gefüllt) und nutzt die
-üblichen `GEMINI_API_KEY`/`WHATSAPP_*`. Läuft 30 Minuten nach dem
+`finance-cockpit/data.json` (von #01 Gewinn-Radar gefüllt) und nutzt
+`WHATSAPP_*` - kein KI-Key nötig, läuft lokal ohne Anmeldung. Läuft 30 Minuten nach dem
 Gewinn-Radar, damit die Daten schon aktuell sind. Ohne `data.json` (Gewinn-
 Radar noch nie gelaufen) überspringt sich die Automation selbst. Nutzt
 exakt denselben Prompt (LAGE/ANALYSE/BEFEHL/PROGNOSE) wie `buildPrompt()`
@@ -258,8 +263,8 @@ Finanzzahlen oder Brand Assassins Nische) - ein automatisch generiertes
 
 **👔 Chef-Agent** (fasst Finanzen/Fulfillment/Kundenstamm zu EINER
 Tagesansage zusammen, statt einzelner Nachrichten aus jeder Automation):
-keine neuen Secrets, nutzt `SHOP`/`SHOPIFY_TOKEN` + die üblichen
-`GEMINI_API_KEY`/`WHATSAPP_*` sowie bereits vorhandene Schwellwerte
+keine neuen Secrets, nutzt `SHOP`/`SHOPIFY_TOKEN` + `WHATSAPP_*` - kein
+KI-Key nötig, läuft lokal ohne Anmeldung - sowie bereits vorhandene Schwellwerte
 (`FULFILLMENT_VERZUG_STUNDEN`, `VIP_UMSATZ_SCHWELLE`, `CRM_AT_RISK_TAGE`).
 Berechnet die 3 wichtigsten Signale FRISCH aus Shopify + dem stabilen
 `finance-cockpit/data.json`-Format (bewusst NICHT an interne State-Dateien

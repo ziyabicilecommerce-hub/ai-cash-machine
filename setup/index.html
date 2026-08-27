@@ -148,7 +148,6 @@
   const PFLICHT_SCHRITTE = [
     { id: 'SHOP', title: 'SHOP', desc: 'Deine Shopify-Subdomain — bei mein-shop.myshopify.com ist das "mein-shop".', hint: 'z.B. mein-shop', link: null },
     { id: 'SHOPIFY_TOKEN', title: 'SHOPIFY_TOKEN', desc: 'Shopify Admin → Einstellungen → Apps und Vertriebskanäle → App-Entwicklung → App erstellen → Admin-API-Zugriffsbereiche freigeben → Token wird einmalig angezeigt.', hint: 'shpat_...', link: null },
-    { id: 'GEMINI_API_KEY', title: 'GEMINI_API_KEY', desc: 'Dein kostenloser Google-Gemini-Key für alle Text-Automationen — kein Anthropic-Key nötig, keine laufenden Kosten.', hint: 'AIza...', link: 'https://aistudio.google.com/apikey' },
     { id: 'SHOP_NAME', title: 'SHOP_NAME', desc: 'Anzeigename deines Shops in Mails/Reports — frei wählbar.', hint: 'z.B. Mein Shop', link: null },
     { id: 'OWNER_EMAIL', title: 'OWNER_EMAIL', desc: 'Deine eigene Mailadresse — dahin gehen Reports, Alarme, Test-Mails.', hint: 'du@example.com', link: null },
     { id: 'ABSENDER_EMAIL', title: 'ABSENDER_EMAIL', desc: 'Adresse, von der Kunden-Mails aus verschickt werden.', hint: 'service@dein-shop.de', link: null },
@@ -161,6 +160,7 @@
     { id: 'META_ACCESS_TOKEN', title: 'META_ACCESS_TOKEN + META_AD_ACCOUNT_ID', desc: 'Für alle Meta/Facebook-Ads-Automationen (Auto-Skalierer, Notbremse, ...).', hint: '', link: 'https://developers.facebook.com/apps/' },
     { id: 'WHATSAPP_ACCESS_TOKEN', title: 'WHATSAPP_ACCESS_TOKEN + Co.', desc: 'Für WhatsApp-Alarme (Lead-Jäger, Product Hunter, ...).', hint: '', link: 'https://developers.facebook.com/docs/whatsapp/cloud-api/get-started' },
     { id: 'JUDGEME_API_TOKEN', title: 'JUDGEME_API_TOKEN + JUDGEME_SHOP_DOMAIN', desc: 'Für Bewertungs-Automationen, falls du Judge.me nutzt.', hint: '', link: null },
+    { id: 'OLLAMA_MODEL', title: 'OLLAMA_MODEL', desc: 'Alle Text-Automationen laufen mit einem lokalen, kostenlosen Modell (kein Key/Account nötig) — Standard ist llama3.2:1b. Nur setzen, wenn du ein anderes Ollama-Modell willst.', hint: 'z.B. llama3.2:1b', link: 'https://ollama.com/library' },
   ];
 
   const STORAGE_KEY = 'cmx_setup_progress';

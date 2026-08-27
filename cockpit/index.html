@@ -277,7 +277,7 @@ function render(data) {
   html += `<div class="kpi-box"><div class="kpi-num">${data.automationen.length}</div><div class="kpi-label">AUTOMATIONEN GESAMT</div></div>`;
   html += `<div class="kpi-box"><div class="kpi-num ${anzahlHandlungsbedarf > 0 ? 'warn' : ''}">${anzahlHandlungsbedarf}</div><div class="kpi-label">BRAUCHEN AUFMERKSAMKEIT</div></div>`;
   const tokenLimitAnteil = kosten.limit > 0 ? Math.min(100, Math.round(((kosten.tokenHeute || 0) / kosten.limit) * 100)) : null;
-  html += `<div class="kpi-box"><div class="kpi-num">${(kosten.tokenHeute || 0).toLocaleString('de-DE')}</div><div class="kpi-label">GEMINI-TOKEN HEUTE (KOSTENLOS)</div></div>`;
+  html += `<div class="kpi-box"><div class="kpi-num">${(kosten.tokenHeute || 0).toLocaleString('de-DE')}</div><div class="kpi-label">LOKALE KI-TOKEN HEUTE (KOSTENLOS)</div></div>`;
   if (tokenLimitAnteil !== null) {
     html += `<div class="kpi-box"><div class="kpi-num">${tokenLimitAnteil}%</div><div class="kpi-label">TAGES-SICHERHEITSLIMIT AUSGESCHÖPFT</div></div>`;
   }

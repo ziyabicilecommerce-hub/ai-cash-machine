@@ -36,15 +36,39 @@ jobs:
       - name: Dependencies installieren
         run: npm ci --no-audit --no-fund
 
+      # Lokales Open-Source-Modell statt externer API (Claude/Gemini) - läuft
+      # direkt in diesem Job, komplett ohne API-Key/Account/Anmeldung
+      # irgendwo. Bewusster Trade-off: schwächere Textqualität + langsamere
+      # Läufe als bei einer externen API, dafür wirklich null Abhängigkeit
+      # nach außen. Modell-Cache über Runs hinweg, sonst würde JEDER einzelne
+      # Automations-Lauf das ganze Modell (~1GB+) neu herunterladen.
+      - name: Ollama-Modell-Cache
+        id: ollama-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ollama/models
+          key: ollama-models-${{ secrets.OLLAMA_MODEL || 'llama3.2:1b' }}
+
+      - name: Ollama installieren und starten
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          ollama serve &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:11434/api/tags >/dev/null && break
+            sleep 1
+          done
+          ollama pull "${OLLAMA_MODEL:-llama3.2:1b}"
+        env:
+          OLLAMA_MODEL: ${{ secrets.OLLAMA_MODEL }}
+
       - name: Automation ausführen
         run: node ${{ inputs.script }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHOP: ${{ secrets.SHOP }}
           SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
-          GEMINI_MAX_TOKENS_PRO_TAG: ${{ secrets.GEMINI_MAX_TOKENS_PRO_TAG }}
+          OLLAMA_MODEL: ${{ secrets.OLLAMA_MODEL }}
+          OLLAMA_MAX_TOKENS_PRO_TAG: ${{ secrets.OLLAMA_MAX_TOKENS_PRO_TAG }}
           SHOP_NAME: ${{ secrets.SHOP_NAME }}
           SHOP_URL: ${{ secrets.SHOP_URL }}
           SHOP_NISCHE: ${{ secrets.SHOP_NISCHE }}
@@ -228,8 +252,8 @@ jobs:
       - name: State-Änderungen committen
         # if: always() ist wichtig - läuft ein Skript mitten in einer Kunden-
         # Batch (E-Mails/Bestellungen/Warenkorb-Reminder) auf einen Fehler
-        # (z.B. transienter Gemini-/Resend-Ausfall, oder das geteilte
-        # GEMINI_MAX_TOKENS_PRO_TAG-Budget wird mitten im Lauf erreicht),
+        # (z.B. transienter Ollama-/Resend-Ausfall, oder das geteilte
+        # OLLAMA_MAX_TOKENS_PRO_TAG-Sicherheitslimit wird mitten im Lauf erreicht),
         # würde dieser Schritt sonst standardmäßig übersprungen (nur bei
         # success()) - dann geht der bereits lokal auf Platte geschriebene
         # Fortschritt (bereits kontaktierte Kunden) verloren und der nächste
