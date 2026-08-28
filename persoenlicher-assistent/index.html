@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PERSÖNLICHER ASSISTENT</title>
+<meta name="description" content="Alltags-Assistent: Tages-Fokus, To-Dos, Notizen, Erinnerungen. Hat nichts mit Trading oder Geld zu tun, läuft rein lokal im Browser.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2714%27%20fill%3D%27%23120a1f%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%23ffb454%27%20stroke-width%3D%274%27/%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%276%27%20fill%3D%27%23b98bff%27/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0a0713;
+  --panel:#130e20;
+  --panel2:#170f26;
+  --line:#2a2140;
+  --text:#f2eef9;
+  --muted:#8b83a3;
+  --amber:#ffb454;
+  --violet:#b98bff;
+  --rose:#ff7ba9;
+  --green:#5be8a8;
+}
+*{box-sizing:border-box}
+html{overflow-x:hidden;}
+body{
+  margin:0; overflow-x:hidden; min-height:100vh;
+  background:radial-gradient(circle at 50% -10%,#231a3a 0,transparent 45%), var(--bg);
+  color:var(--text); font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+
+.topbar{
+  height:66px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between;
+  padding:0 24px; position:sticky; top:0; z-index:50; background:rgba(10,7,19,.88); backdrop-filter:blur(18px);
+}
+.brand{display:flex; gap:11px; align-items:center; font-weight:900; letter-spacing:1px;}
+.logo{width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,var(--amber),var(--violet));
+  color:#1a0f10; display:grid; place-items:center; font-weight:1000; box-shadow:0 0 20px rgba(185,139,255,.4);
+  animation:logo-puls 3s ease-in-out infinite;}
+@keyframes logo-puls{0%,100%{box-shadow:0 0 14px rgba(185,139,255,.3);} 50%{box-shadow:0 0 26px rgba(185,139,255,.65);}}
+.clock{color:var(--muted); font-size:12px; font-variant-numeric:tabular-nums;}
+.back-link{color:var(--muted); text-decoration:none; font-size:12px; border:1px solid var(--line); padding:7px 12px; border-radius:8px; transition:border-color .15s,color .15s;}
+.back-link:hover{color:var(--text); border-color:var(--violet);}
+@media (prefers-reduced-motion:reduce){.logo{animation:none;}}
+
+.main{padding:28px; max-width:1180px; width:100%; margin:0 auto;}
+.hero{margin-bottom:26px; position:relative;}
+.hero::before{content:''; position:absolute; top:-50px; left:-30px; width:380px; height:200px; z-index:-1;
+  background:radial-gradient(circle,rgba(185,139,255,.16),transparent 70%); pointer-events:none; animation:hero-glow 5s ease-in-out infinite;}
+@keyframes hero-glow{0%,100%{opacity:.5;} 50%{opacity:1;}}
+.kicker{color:var(--violet); font-size:11px; letter-spacing:2px; font-weight:800; text-shadow:0 0 12px rgba(185,139,255,.5);}
+h1{font-size:32px; margin:7px 0; letter-spacing:-1px;
+  background:linear-gradient(120deg,#fff 10%,var(--amber) 40%,var(--violet) 65%,#fff 95%);
+  background-size:250% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:title-shine 7s linear infinite;}
+@keyframes title-shine{to{background-position:250% center;}}
+.subtitle{color:var(--muted); font-size:13px; max-width:560px;}
+@media (prefers-reduced-motion:reduce){h1{animation:none;} .hero::before{animation:none;}}
+
+.grid{display:grid; grid-template-columns:repeat(12,1fr); gap:16px;}
+.card{grid-column:span 12; background:linear-gradient(145deg,#150f24,#0d0918); border:1px solid var(--line); border-radius:16px; padding:20px;
+  position:relative; overflow:hidden; transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;}
+.card::before{content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--amber),var(--violet),var(--rose)); opacity:0; transition:opacity .18s ease;}
+.card:hover{transform:translateY(-3px); border-color:#3a2c58; box-shadow:0 14px 32px -16px rgba(185,139,255,.25);}
+.card:hover::before{opacity:1;}
+@media(min-width:900px){ .card.half{grid-column:span 6;} }
+.card-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:10px;}
+.card-title{font-weight:800; font-size:14px; display:flex; align-items:center; gap:8px;}
+.card-meta{color:#6b6489; font-size:11px;}
+
+/* TAGES-FOKUS */
+.fokus-row{display:flex; align-items:center; gap:10px; margin-bottom:9px;}
+.fokus-num{width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg,var(--amber),var(--rose)); color:#1a0f10;
+  display:grid; place-items:center; font-size:11px; font-weight:900; flex-shrink:0;}
+.fokus-row input{flex:1; background:#0c0815; border:1px solid var(--line); color:var(--text); padding:10px 12px; border-radius:9px; font-size:13px; transition:border-color .15s,box-shadow .15s;}
+.fokus-row input:focus{outline:none; border-color:var(--amber); box-shadow:0 0 0 3px rgba(255,180,84,.15);}
+.fokus-reset{margin-top:8px; font-size:11px; color:var(--muted); background:none; border:none; text-decoration:underline; padding:0;}
+.fokus-reset:hover{color:var(--rose);}
+
+/* FORM ROW */
+.form-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
+.form-row input[type="text"], .form-row textarea{flex:1; min-width:160px; background:#0c0815; border:1px solid var(--line); color:var(--text); padding:10px 12px; border-radius:9px; font-size:13px; transition:border-color .15s,box-shadow .15s;}
+.form-row select, .form-row input[type="date"], .form-row input[type="datetime-local"]{background:#0c0815; border:1px solid var(--line); color:var(--text); padding:10px 10px; border-radius:9px; font-size:12px;}
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus{outline:none; border-color:var(--violet); box-shadow:0 0 0 3px rgba(185,139,255,.15);}
+.form-row textarea{resize:vertical; min-height:40px; width:100%;}
+.btn{border:1px solid var(--line); background:#161022; color:var(--text); padding:10px 16px; border-radius:9px; font-size:12px; font-weight:800; transition:border-color .15s,box-shadow .15s,transform .12s;}
+.btn:hover{border-color:var(--violet); transform:translateY(-1px); box-shadow:0 6px 18px -8px rgba(185,139,255,.45);}
+.btn.primary{background:linear-gradient(135deg,rgba(255,180,84,.16),rgba(185,139,255,.12)); border-color:#4a3a6e; color:var(--amber);}
+.btn.primary:hover{box-shadow:0 6px 20px -8px rgba(255,180,84,.5);}
+
+/* TODO LIST */
+.todo-list{display:flex; flex-direction:column; gap:8px;}
+.todo{display:flex; align-items:center; gap:11px; padding:11px 12px; border:1px solid #201936; background:#0c0815; border-radius:10px; transition:transform .12s,border-color .12s;}
+.todo:hover{border-color:#3a2c58;}
+.todo.erledigt{opacity:.45;}
+.todo.erledigt .todo-text{text-decoration:line-through;}
+.todo-check{width:19px; height:19px; border-radius:6px; border:1.5px solid var(--muted); background:transparent; flex-shrink:0; display:grid; place-items:center; font-size:11px; color:var(--green); transition:border-color .15s,background .15s;}
+.todo-check.on{border-color:var(--green); background:rgba(91,232,168,.12);}
+.todo-text{flex:1; font-size:13px; min-width:0; word-break:break-word;}
+.todo-tags{display:flex; gap:5px; flex-shrink:0; align-items:center;}
+.tag{font-size:9.5px; font-weight:800; letter-spacing:.4px; padding:3px 7px; border-radius:5px; text-transform:uppercase;}
+.tag.prio-hoch{background:rgba(255,123,169,.12); color:var(--rose); border:1px solid rgba(255,123,169,.3);}
+.tag.prio-mittel{background:rgba(255,180,84,.1); color:var(--amber); border:1px solid rgba(255,180,84,.28);}
+.tag.prio-niedrig{background:rgba(139,131,163,.12); color:var(--muted); border:1px solid var(--line);}
+.tag.faellig-ueberfaellig{background:rgba(255,77,77,.14); color:#ff6b6b; border:1px solid rgba(255,77,77,.32);}
+.tag.faellig{background:rgba(111,224,255,.08); color:#6fe0ff; border:1px solid rgba(111,224,255,.25);}
+.todo-del{background:none; border:none; color:var(--muted); font-size:15px; padding:2px 6px; border-radius:6px; flex-shrink:0;}
+.todo-del:hover{color:var(--rose); background:rgba(255,123,169,.08);}
+.empty{color:#514a6e; font-size:12px; padding:14px 4px; text-align:center;}
+
+/* NOTIZEN */
+.note{padding:12px; border:1px solid #201936; background:#0c0815; border-radius:10px; margin-bottom:8px; transition:border-color .12s;}
+.note:hover{border-color:#3a2c58;}
+.note-text{font-size:13px; white-space:pre-wrap; word-break:break-word; margin-bottom:6px;}
+.note-foot{display:flex; justify-content:space-between; align-items:center;}
+.note-time{color:#514a6e; font-size:10.5px;}
+
+/* ERINNERUNGEN */
+.notif-hint{font-size:11px; color:var(--muted); margin-bottom:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.notif-status{padding:3px 9px; border-radius:6px; font-size:10px; font-weight:800; letter-spacing:.3px;}
+.notif-status.on{background:rgba(91,232,168,.12); color:var(--green); border:1px solid rgba(91,232,168,.3);}
+.notif-status.off{background:rgba(255,123,169,.1); color:var(--rose); border:1px solid rgba(255,123,169,.28);}
+.reminder{display:flex; align-items:center; gap:11px; padding:11px 12px; border:1px solid #201936; background:#0c0815; border-radius:10px; margin-bottom:8px; transition:border-color .12s;}
+.reminder:hover{border-color:#3a2c58;}
+.reminder.faellig{border-color:rgba(255,180,84,.4); box-shadow:0 0 16px rgba(255,180,84,.08);}
+.reminder.vorbei{opacity:.4;}
+.reminder-when{font-size:11px; color:var(--violet); font-weight:800; min-width:96px; flex-shrink:0;}
+.reminder-text{flex:1; font-size:13px; min-width:0; word-break:break-word;}
+
+/* COUNTS */
+.counts{display:flex; gap:14px; font-size:11px; color:var(--muted);}
+.counts b{color:var(--text);}
+
+::-webkit-scrollbar{width:10px;}
+::-webkit-scrollbar-thumb{background:#241a3a; border-radius:6px;}
+
+@media(max-width:480px){
+  .todo, .reminder{flex-wrap:wrap;}
+  .todo-text, .reminder-text{flex-basis:100%;}
+  .todo-tags{flex-basis:100%; margin-left:30px;}
+  .form-row select, .form-row input[type="date"], .form-row input[type="datetime-local"]{flex:1;}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><div class="logo">✦</div>PERSÖNLICHER ASSISTENT</div>
+  <div style="display:flex; align-items:center; gap:16px;">
+    <span class="clock" id="clock">–</span>
+    <a class="back-link" href="../trading-command/">← Zurück zu Trading Command</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="hero">
+    <div class="kicker">ALLTAG · KEIN GELD · KEIN TRADING</div>
+    <h1>Dein Tag im Griff</h1>
+    <div class="subtitle">Tages-Fokus, To-Dos, Notizen und Erinnerungen — komplett getrennt vom Rest der Suite. Alles bleibt nur in diesem Browser gespeichert (localStorage), nichts wird irgendwohin geschickt.</div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">🎯 Tages-Fokus — die 3 wichtigsten Dinge heute</div>
+      </div>
+      <div id="fokusRows"></div>
+      <button class="fokus-reset" id="fokusReset">↻ Neuer Tag (Fokus leeren)</button>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">✅ To-Dos</div>
+        <div class="counts" id="todoCounts"></div>
+      </div>
+      <div class="form-row">
+        <input type="text" id="todoInput" placeholder="Was steht an?">
+        <select id="todoKategorie">
+          <option value="Persönlich">Persönlich</option>
+          <option value="Arbeit">Arbeit</option>
+          <option value="Haushalt">Haushalt</option>
+          <option value="Sonstiges">Sonstiges</option>
+        </select>
+        <select id="todoPrio">
+          <option value="mittel">Mittel</option>
+          <option value="hoch">Hoch</option>
+          <option value="niedrig">Niedrig</option>
+        </select>
+        <input type="date" id="todoDatum">
+        <button class="btn primary" id="todoAdd">+ Hinzufügen</button>
+      </div>
+      <div class="todo-list" id="todoList"></div>
+    </div>
+
+    <div class="card half">
+      <div class="card-head">
+        <div class="card-title">📝 Schnellnotizen</div>
+        <div class="card-meta" id="noteCount"></div>
+      </div>
+      <div class="form-row">
+        <textarea id="noteInput" placeholder="Gedanke, Idee, Link, egal was..."></textarea>
+      </div>
+      <div class="form-row"><button class="btn primary" id="noteAdd">+ Notiz speichern</button></div>
+      <div id="noteList"></div>
+    </div>
+
+    <div class="card half">
+      <div class="card-head">
+        <div class="card-title">⏰ Erinnerungen</div>
+        <div class="card-meta" id="reminderCount"></div>
+      </div>
+      <div class="notif-hint">
+        <span id="notifStatus" class="notif-status off">BENACHRICHTIGUNGEN AUS</span>
+        <button class="btn" id="notifBtn">Aktivieren</button>
+        <span>— funktioniert nur, solange dieser Tab offen ist</span>
+      </div>
+      <div class="form-row">
+        <input type="text" id="reminderInput" placeholder="Woran erinnern?">
+      </div>
+      <div class="form-row">
+        <input type="datetime-local" id="reminderZeit">
+        <button class="btn primary" id="reminderAdd">+ Erinnerung setzen</button>
+      </div>
+      <div id="reminderList"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const LS = {
+    fokus: 'pa_tagesfokus',
+    fokusDatum: 'pa_tagesfokus_datum',
+    todos: 'pa_todos',
+    notes: 'pa_notizen',
+    reminders: 'pa_erinnerungen',
+  };
+
+  function heute() { return new Date().toISOString().slice(0, 10); }
+  function load(key, fallback) {
+    try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (err) { return fallback; }
+  }
+  function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // ---- UHR ----
+  function tickClock() {
+    document.getElementById('clock').textContent = new Date().toLocaleString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+  tickClock();
+  setInterval(tickClock, 30000);
+
+  // ---- TAGES-FOKUS (leert sich automatisch an einem neuen Tag) ----
+  function ladeFokus() {
+    const gespeichertAm = localStorage.getItem(LS.fokusDatum);
+    if (gespeichertAm !== heute()) return ['', '', ''];
+    return load(LS.fokus, ['', '', '']);
+  }
+  let fokus = ladeFokus();
+  function renderFokus() {
+    const wrap = document.getElementById('fokusRows');
+    wrap.innerHTML = fokus.map((val, i) => `
+      <div class="fokus-row">
+        <div class="fokus-num">${i + 1}</div>
+        <input type="text" data-idx="${i}" value="${escapeHtml(val)}" placeholder="${i === 0 ? 'Das Wichtigste heute...' : 'Optional...'}">
+      </div>
+    `).join('');
+    wrap.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        fokus[+inp.dataset.idx] = inp.value;
+        save(LS.fokus, fokus);
+        localStorage.setItem(LS.fokusDatum, heute());
+      });
+    });
+  }
+  renderFokus();
+  document.getElementById('fokusReset').addEventListener('click', () => {
+    fokus = ['', '', ''];
+    save(LS.fokus, fokus);
+    localStorage.setItem(LS.fokusDatum, heute());
+    renderFokus();
+  });
+
+  // ---- TODOS ----
+  let todos = load(LS.todos, []);
+  function renderTodos() {
+    const list = document.getElementById('todoList');
+    const offen = todos.filter(t => !t.erledigt).length;
+    document.getElementById('todoCounts').innerHTML = `<span><b>${offen}</b> offen</span><span><b>${todos.length - offen}</b> erledigt</span>`;
+    if (!todos.length) { list.innerHTML = '<div class="empty">Noch nichts zu tun eingetragen.</div>'; return; }
+    const sortiert = [...todos].sort((a, b) => (a.erledigt === b.erledigt) ? 0 : (a.erledigt ? 1 : -1));
+    const heuteStr = heute();
+    list.innerHTML = sortiert.map(t => {
+      let faelligTag = '';
+      if (t.datum && !t.erledigt) {
+        if (t.datum < heuteStr) faelligTag = `<span class="tag faellig-ueberfaellig">Überfällig</span>`;
+        else if (t.datum === heuteStr) faelligTag = `<span class="tag faellig">Heute fällig</span>`;
+        else faelligTag = `<span class="tag faellig">${t.datum.slice(8, 10)}.${t.datum.slice(5, 7)}.</span>`;
+      }
+      return `
+      <div class="todo ${t.erledigt ? 'erledigt' : ''}" data-id="${t.id}">
+        <button class="todo-check ${t.erledigt ? 'on' : ''}" data-action="toggle">${t.erledigt ? '✓' : ''}</button>
+        <div class="todo-text">${escapeHtml(t.text)}</div>
+        <div class="todo-tags">
+          <span class="tag prio-${t.prio}">${t.prio}</span>
+          <span class="tag prio-niedrig">${escapeHtml(t.kategorie)}</span>
+          ${faelligTag}
+        </div>
+        <button class="todo-del" data-action="del">✕</button>
+      </div>`;
+    }).join('');
+    list.querySelectorAll('.todo').forEach(el => {
+      const id = el.dataset.id;
+      el.querySelector('[data-action="toggle"]').addEventListener('click', () => {
+        const t = todos.find(x => x.id === id); t.erledigt = !t.erledigt; save(LS.todos, todos); renderTodos();
+      });
+      el.querySelector('[data-action="del"]').addEventListener('click', () => {
+        todos = todos.filter(x => x.id !== id); save(LS.todos, todos); renderTodos();
+      });
+    });
+  }
+  renderTodos();
+  document.getElementById('todoAdd').addEventListener('click', () => {
+    const inp = document.getElementById('todoInput');
+    const text = inp.value.trim();
+    if (!text) return;
+    todos.push({
+      id: 't' + Date.now() + Math.random().toString(36).slice(2, 7),
+      text, kategorie: document.getElementById('todoKategorie').value,
+      prio: document.getElementById('todoPrio').value,
+      datum: document.getElementById('todoDatum').value || null,
+      erledigt: false,
+    });
+    save(LS.todos, todos);
+    inp.value = ''; document.getElementById('todoDatum').value = '';
+    renderTodos();
+  });
+  document.getElementById('todoInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('todoAdd').click(); });
+
+  // ---- NOTIZEN ----
+  let notes = load(LS.notes, []);
+  function renderNotes() {
+    document.getElementById('noteCount').textContent = notes.length + ' gespeichert';
+    const wrap = document.getElementById('noteList');
+    if (!notes.length) { wrap.innerHTML = '<div class="empty">Noch keine Notizen.</div>'; return; }
+    wrap.innerHTML = [...notes].reverse().map(n => `
+      <div class="note" data-id="${n.id}">
+        <div class="note-text">${escapeHtml(n.text)}</div>
+        <div class="note-foot">
+          <span class="note-time">${new Date(n.zeit).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
+          <button class="todo-del" data-action="del">✕</button>
+        </div>
+      </div>`).join('');
+    wrap.querySelectorAll('.note').forEach(el => {
+      el.querySelector('[data-action="del"]').addEventListener('click', () => {
+        notes = notes.filter(x => x.id !== el.dataset.id); save(LS.notes, notes); renderNotes();
+      });
+    });
+  }
+  renderNotes();
+  document.getElementById('noteAdd').addEventListener('click', () => {
+    const inp = document.getElementById('noteInput');
+    const text = inp.value.trim();
+    if (!text) return;
+    notes.push({ id: 'n' + Date.now() + Math.random().toString(36).slice(2, 7), text, zeit: Date.now() });
+    save(LS.notes, notes);
+    inp.value = '';
+    renderNotes();
+  });
+
+  // ---- ERINNERUNGEN ----
+  let reminders = load(LS.reminders, []);
+  let notifErlaubt = typeof Notification !== 'undefined' && Notification.permission === 'granted';
+  function renderNotifStatus() {
+    const badge = document.getElementById('notifStatus');
+    const btn = document.getElementById('notifBtn');
+    if (typeof Notification === 'undefined') {
+      badge.textContent = 'NICHT UNTERSTÜTZT'; badge.className = 'notif-status off'; btn.style.display = 'none'; return;
+    }
+    if (notifErlaubt) { badge.textContent = 'BENACHRICHTIGUNGEN AN'; badge.className = 'notif-status on'; btn.style.display = 'none'; }
+    else { badge.textContent = 'BENACHRICHTIGUNGEN AUS'; badge.className = 'notif-status off'; btn.style.display = ''; }
+  }
+  renderNotifStatus();
+  document.getElementById('notifBtn').addEventListener('click', () => {
+    Notification.requestPermission().then(perm => { notifErlaubt = perm === 'granted'; renderNotifStatus(); });
+  });
+
+  function renderReminders() {
+    document.getElementById('reminderCount').textContent = reminders.length + ' gesetzt';
+    const wrap = document.getElementById('reminderList');
+    if (!reminders.length) { wrap.innerHTML = '<div class="empty">Noch keine Erinnerungen gesetzt.</div>'; return; }
+    const now = Date.now();
+    const sortiert = [...reminders].sort((a, b) => a.zeit - b.zeit);
+    wrap.innerHTML = sortiert.map(r => {
+      const diffMin = Math.round((r.zeit - now) / 60000);
+      let status = '';
+      let klasse = '';
+      if (diffMin < -2) { status = 'vorbei'; klasse = 'vorbei'; }
+      else if (diffMin <= 0) { status = 'JETZT'; klasse = 'faellig'; }
+      else if (diffMin < 60) { status = `in ${diffMin} Min.`; }
+      else if (diffMin < 1440) { status = `in ${Math.round(diffMin / 60)} Std.`; }
+      else { status = `in ${Math.round(diffMin / 1440)} Tg.`; }
+      return `
+      <div class="reminder ${klasse}" data-id="${r.id}">
+        <div class="reminder-when">${status}</div>
+        <div class="reminder-text">${escapeHtml(r.text)}</div>
+        <button class="todo-del" data-action="del">✕</button>
+      </div>`;
+    }).join('');
+    wrap.querySelectorAll('.reminder').forEach(el => {
+      el.querySelector('[data-action="del"]').addEventListener('click', () => {
+        reminders = reminders.filter(x => x.id !== el.dataset.id); save(LS.reminders, reminders); renderReminders();
+      });
+    });
+  }
+  renderReminders();
+  document.getElementById('reminderAdd').addEventListener('click', () => {
+    const textInp = document.getElementById('reminderInput');
+    const zeitInp = document.getElementById('reminderZeit');
+    const text = textInp.value.trim();
+    if (!text || !zeitInp.value) return;
+    reminders.push({ id: 'r' + Date.now() + Math.random().toString(36).slice(2, 7), text, zeit: new Date(zeitInp.value).getTime(), benachrichtigt: false });
+    save(LS.reminders, reminders);
+    textInp.value = ''; zeitInp.value = '';
+    renderReminders();
+  });
+
+  // Prüft alle 20s, ob eine Erinnerung fällig ist -> Browser-Notification + UI refresh.
+  // Funktioniert nur, solange dieser Tab offen ist (keine Server-Push-Benachrichtigung).
+  setInterval(() => {
+    const now = Date.now();
+    let changed = false;
+    reminders.forEach(r => {
+      if (!r.benachrichtigt && r.zeit <= now && r.zeit > now - 60000) {
+        r.benachrichtigt = true; changed = true;
+        if (notifErlaubt) { try { new Notification('⏰ ' + r.text); } catch (err) {} }
+      }
+    });
+    if (changed) save(LS.reminders, reminders);
+    renderReminders();
+  }, 20000);
+})();
+</script>
+</body>
+</html>
