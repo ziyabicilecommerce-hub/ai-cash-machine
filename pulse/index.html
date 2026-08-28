@@ -311,7 +311,10 @@
   // Geräte): läuft komplett per WASM auf der CPU statt der GPU - deutlich
   // langsamer als WebLLM, aber praktisch überall lauffähig. Modell wird
   // einmalig heruntergeladen und danach vom Browser gecacht.
-  const WASM_MODEL = 'onnx-community/Qwen2.5-0.5B-Instruct';
+  // Bewusst ein sehr kleines Modell (135M statt 0.5B Parameter) und stark
+  // quantisiert (q4) - auf Handy-CPUs zählt hier Tempo mehr als Qualität,
+  // die WebGPU-Stufe deckt die bessere Qualität für Geräte ab, die das können.
+  const WASM_MODEL = 'onnx-community/SmolLM2-135M-Instruct';
   let wasmPipeline = null;
   let wasmPipelineLoading = null;
   let wasmFailed = false;
@@ -323,6 +326,7 @@
         const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2');
         wasmPipeline = await pipeline('text-generation', WASM_MODEL, {
           device: 'wasm',
+          dtype: 'q4',
           progress_callback: (report) => { if (onProgress) onProgress(report); },
         });
         return wasmPipeline;
@@ -337,7 +341,7 @@
       ...(system ? [{ role: 'system', content: system }] : []),
       ...(messages || []).map((m) => ({ role: m.role, content: m.content })),
     ];
-    const output = await generator(chatMessages, { max_new_tokens: max_tokens || 512 });
+    const output = await generator(chatMessages, { max_new_tokens: Math.min(max_tokens || 256, 256) });
     const text = output?.[0]?.generated_text?.at(-1)?.content || '';
     return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
   }
