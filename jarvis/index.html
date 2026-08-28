@@ -753,6 +753,7 @@
 
             <div class="chat-panel">
                 <div class="chat-log" id="chatLog"></div>
+                <div id="aiModusLabel" style="font-size:11px;opacity:0.55;text-align:center;padding:2px 0;letter-spacing:0.5px;"></div>
                 <div class="listening-bar">
                     <span class="mic-dot" id="micDot"></span>
                     <span class="listening-label" id="listeningLabel">HÖRT AUF "HEY JARVIS"</span>
@@ -893,7 +894,10 @@
         // Geräte): läuft komplett per WASM auf der CPU statt der GPU - deutlich
         // langsamer als WebLLM, aber praktisch überall lauffähig. Modell wird
         // einmalig heruntergeladen und danach vom Browser gecacht.
-        const WASM_MODEL = 'onnx-community/Qwen2.5-0.5B-Instruct';
+        // Bewusst ein sehr kleines Modell (135M statt 0.5B Parameter) und stark
+        // quantisiert (q4) - auf Handy-CPUs zählt hier Tempo mehr als Qualität,
+        // die WebGPU-Stufe deckt die bessere Qualität für Geräte ab, die das können.
+        const WASM_MODEL = 'onnx-community/SmolLM2-135M-Instruct';
         let wasmPipeline = null;
         let wasmPipelineLoading = null;
         let wasmFailed = false;
@@ -905,6 +909,7 @@
                     const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2');
                     wasmPipeline = await pipeline('text-generation', WASM_MODEL, {
                         device: 'wasm',
+                        dtype: 'q4',
                         progress_callback: (report) => { if (onProgress) onProgress(report); },
                     });
                     return wasmPipeline;
@@ -919,7 +924,9 @@
                 ...(system ? [{ role: 'system', content: system }] : []),
                 ...(messages || []).map((m) => ({ role: m.role, content: m.content })),
             ];
-            const output = await generator(chatMessages, { max_new_tokens: max_tokens || 512 });
+            // Auf der CPU-Stufe bewusst kürzer antworten (schneller fertig auf
+            // schwachen Geräten) - unabhängig vom für WebGPU/Gemini angefragten Limit.
+            const output = await generator(chatMessages, { max_new_tokens: Math.min(max_tokens || 256, 256) });
             const text = output?.[0]?.generated_text?.at(-1)?.content || '';
             return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
         }
@@ -960,8 +967,16 @@
             return data;
         }
 
+        // Zeigt live an, welche KI-Stufe gerade läuft - direkt sichtbar im Chat,
+        // damit man am Handy nicht Browser/GPU-Details beschreiben muss.
+        function zeigeAiModus(text) {
+            const el = document.getElementById('aiModusLabel');
+            if (el) el.textContent = text;
+        }
+
         async function callGemini(body, onProgress) {
             if (!webllmFailed && (await hatWebGPU())) {
+                zeigeAiModus('⚡ Lokal (GPU/WebGPU)');
                 try {
                     return await callWebllm(body, onProgress);
                 } catch (err) {
@@ -970,6 +985,7 @@
                 }
             }
             if (!wasmFailed) {
+                zeigeAiModus('🐢 Lokal (CPU/WASM) - kein WebGPU erkannt, kann etwas dauern');
                 try {
                     return await callWasm(body, onProgress);
                 } catch (err) {
@@ -977,6 +993,7 @@
                     wasmFailed = true;
                 }
             }
+            zeigeAiModus('☁️ Gemini-Key (Rückfall)');
             return callGeminiFallback(body);
         }
 
