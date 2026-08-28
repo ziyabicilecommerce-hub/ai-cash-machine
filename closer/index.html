@@ -477,6 +477,33 @@
   }
   renderUsageBadge();
 
+  // ===== POLLINATIONS (kostenloser, offener KI-Dienst im Internet - kein
+  // Key, kein eigener Server, läuft bei Pollinations selbst) =====
+  // Wird als ERSTES probiert - server-seitig, also unabhängig vom Gerät
+  // des Nutzers (auch auf schwachen Handys schnell). Anonyme Nutzung ist
+  // rate-limitiert (Pollinations-Doku: ca. 1 Anfrage/15s); bei Fehler oder
+  // Limit fällt die Kette automatisch auf die lokalen Stufen zurück.
+  let pollinationsFailed = false;
+  async function callPollinations({ system, messages, max_tokens }) {
+    const response = await fetch('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        model: 'openai',
+        messages: [
+          ...(system ? [{ role: 'system', content: system }] : []),
+          ...(messages || []).map((m) => ({ role: m.role, content: m.content })),
+        ],
+        max_tokens: max_tokens || 512,
+      }),
+    });
+    if (!response.ok) throw new Error('pollinations_fehler_' + response.status);
+    const data = await response.json();
+    const text = data.choices?.[0]?.message?.content || '';
+    if (!text) throw new Error('pollinations_leere_antwort');
+    return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
+  }
+
   // Läuft zuerst ganz ohne Key/Server direkt im Browser (WebLLM + WebGPU) -
   // Modell wird einmalig heruntergeladen und danach vom Browser gecacht.
   // Nur Browser OHNE WebGPU (z.B. Safari, alte Browser) fallen automatisch
@@ -606,6 +633,15 @@
   }
 
   async function callGemini(body, onProgress) {
+    if (!pollinationsFailed) {
+      zeigeAiModus('🌐 Kostenloser KI-Dienst (Internet, ohne Key)');
+      try {
+        return await callPollinations(body);
+      } catch (err) {
+        console.error('[callGemini] Pollinations fehlgeschlagen, falle auf lokal zurück:', err);
+        pollinationsFailed = true;
+      }
+    }
     if (!webllmFailed && (await hatWebGPU())) {
       zeigeAiModus('⚡ Lokal (GPU/WebGPU)');
       try {

@@ -2071,6 +2071,33 @@
     el.style.color = today.tokens >= AI_USAGE_WARN_THRESHOLD ? 'var(--red)' : '';
   }
 
+  // ===== POLLINATIONS (kostenloser, offener KI-Dienst im Internet - kein
+  // Key, kein eigener Server, läuft bei Pollinations selbst) =====
+  // Wird als ERSTES probiert - server-seitig, also unabhängig vom Gerät
+  // des Nutzers (auch auf schwachen Handys schnell). Anonyme Nutzung ist
+  // rate-limitiert (Pollinations-Doku: ca. 1 Anfrage/15s); bei Fehler oder
+  // Limit fällt die Kette automatisch auf die lokalen Stufen zurück.
+  let aiPollinationsFehlgeschlagen = false;
+  async function aiCallPollinations({ system, messages, max_tokens }) {
+    const response = await fetch('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        model: 'openai',
+        messages: [
+          ...(system ? [{ role: 'system', content: system }] : []),
+          ...(messages || []).map((m) => ({ role: m.role, content: m.content })),
+        ],
+        max_tokens: max_tokens || 512,
+      }),
+    });
+    if (!response.ok) throw new Error('pollinations_fehler_' + response.status);
+    const data = await response.json();
+    const text = data.choices?.[0]?.message?.content || '';
+    if (!text) throw new Error('pollinations_leere_antwort');
+    return { content: [{ type: 'text', text }] };
+  }
+
   // Läuft zuerst ganz ohne Key/Server direkt im Browser (WebLLM + WebGPU) -
   // Modell wird einmalig heruntergeladen und danach vom Browser gecacht.
   // Nur Browser OHNE WebGPU (z.B. Safari, alte Browser) fallen automatisch
@@ -2198,6 +2225,15 @@
   }
 
   async function aiCallKI(body, onProgress, onModus) {
+    if (!aiPollinationsFehlgeschlagen) {
+      if (onModus) onModus('🌐 Kostenloser KI-Dienst (Internet, ohne Key)');
+      try {
+        return await aiCallPollinations(body);
+      } catch (err) {
+        console.error('[aiCallKI] Pollinations fehlgeschlagen, falle auf lokal zurück:', err);
+        aiPollinationsFehlgeschlagen = true;
+      }
+    }
     if (!aiWebllmFehlgeschlagen && (await aiHatWebGPU())) {
       if (onModus) onModus('⚡ Lokal (GPU/WebGPU)');
       try {
