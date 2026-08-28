@@ -350,8 +350,16 @@
     };
   }
 
+  // Zeigt live an, welche KI-Stufe gerade läuft - direkt im Button-Text,
+  // damit man am Handy nicht Browser/GPU-Details beschreiben muss.
+  function zeigeAiModus(text) {
+    const btn = document.getElementById('explainBtn');
+    if (btn) btn.textContent = text;
+  }
+
   async function callGemini(body, onProgress) {
     if (!webllmFailed && (await hatWebGPU())) {
+      zeigeAiModus('⚡ Lokal (GPU)...');
       try {
         return await callWebllm(body, onProgress);
       } catch (err) {
@@ -360,6 +368,7 @@
       }
     }
     if (!wasmFailed) {
+      zeigeAiModus('🐢 Lokal (CPU)...');
       try {
         return await callWasm(body, onProgress);
       } catch (err) {
@@ -367,6 +376,7 @@
         wasmFailed = true;
       }
     }
+    zeigeAiModus('☁️ Gemini-Key...');
     return callGeminiFallback(body);
   }
 

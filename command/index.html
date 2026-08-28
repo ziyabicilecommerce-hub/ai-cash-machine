@@ -2198,8 +2198,9 @@
     return { content: [{ type: 'text', text: parts.map((p) => p.text || '').join('') }] };
   }
 
-  async function aiCallKI(body, onProgress) {
+  async function aiCallKI(body, onProgress, onModus) {
     if (!aiWebllmFehlgeschlagen && (await aiHatWebGPU())) {
+      if (onModus) onModus('⚡ Lokal (GPU/WebGPU)');
       try {
         return await aiCallWebllm(body, onProgress);
       } catch (err) {
@@ -2208,6 +2209,7 @@
       }
     }
     if (!aiWasmFehlgeschlagen) {
+      if (onModus) onModus('🐢 Lokal (CPU/WASM) - kein WebGPU erkannt, kann etwas dauern');
       try {
         return await aiCallWasm(body, onProgress);
       } catch (err) {
@@ -2215,6 +2217,7 @@
         aiWasmFehlgeschlagen = true;
       }
     }
+    if (onModus) onModus('☁️ Gemini-Key (Rückfall)');
     return aiCallGemini(body);
   }
 
@@ -2393,6 +2396,8 @@
         messages: aiVerlauf.slice(-16),
       }, (report) => {
         pendingEl.querySelector('.ai-bubble').textContent = `Lädt lokales Modell (einmalig)… ${Math.round((report.progress || 0) * 100)}%`;
+      }, (modus) => {
+        pendingEl.querySelector('.ai-bubble').textContent = modus;
       });
       const reply = (data.content || []).map((b) => b.text || '').join('').trim() || 'Dazu fällt mir gerade nichts ein.';
       pendingEl.querySelector('.ai-bubble').textContent = reply;

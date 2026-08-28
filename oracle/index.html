@@ -512,8 +512,16 @@
     return result;
   }
 
+  // Zeigt live an, welche KI-Stufe gerade läuft - direkt sichtbar im Status-
+  // Text, damit man am Handy nicht Browser/GPU-Details beschreiben muss.
+  function zeigeAiModus(text) {
+    const el = document.querySelector('#genState .line2');
+    if (el) el.textContent = text;
+  }
+
   async function callGemini(body, onProgress) {
     if (!webllmFailed && (await hatWebGPU())) {
+      zeigeAiModus('⚡ Lokal (GPU/WebGPU)');
       try {
         return await callWebllm(body, onProgress);
       } catch (err) {
@@ -522,6 +530,7 @@
       }
     }
     if (!wasmFailed) {
+      zeigeAiModus('🐢 Lokal (CPU/WASM) - kein WebGPU erkannt, kann etwas dauern');
       try {
         return await callWasm(body, onProgress);
       } catch (err) {
@@ -529,6 +538,7 @@
         wasmFailed = true;
       }
     }
+    zeigeAiModus('☁️ Gemini-Key (Rückfall)');
     return callGeminiFallback(body);
   }
 
