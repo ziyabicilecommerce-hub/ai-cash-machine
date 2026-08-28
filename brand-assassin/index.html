@@ -805,6 +805,7 @@ Frag mich z.B.:
 
 Was bauen wir heute? 🚀</div>
     </div>
+    <div id="aiModusLabel" style="font-size:11px;opacity:0.55;text-align:center;padding:2px 0;letter-spacing:0.5px;"></div>
     <div class="quick-row">
       <span class="chip" onclick="quickAsk('Gib mir 5 virale TikTok-Hooks für mein Produkt')">⚡ 5 virale Hooks</span>
       <span class="chip" onclick="quickAsk('Erstell mir einen 7-Tage Content-Plan für meine Brand')">📅 7-Tage Content-Plan</span>
@@ -1017,8 +1018,16 @@ async function callGeminiDirectFallback(body) {
   return data;
 }
 
+// Zeigt live an, welche KI-Stufe gerade läuft - direkt sichtbar im Chat,
+// damit man am Handy nicht Browser/GPU-Details beschreiben muss.
+function zeigeAiModus(text) {
+  const el = document.getElementById('aiModusLabel');
+  if (el) el.textContent = text;
+}
+
 async function callGeminiDirect(body, onProgress) {
   if (!webllmFailed && (await hatWebGPU())) {
+    zeigeAiModus('⚡ Lokal (GPU/WebGPU)');
     try {
       return await callWebllm(body, onProgress);
     } catch (err) {
@@ -1027,6 +1036,7 @@ async function callGeminiDirect(body, onProgress) {
     }
   }
   if (!wasmFailed) {
+    zeigeAiModus('🐢 Lokal (CPU/WASM) - kein WebGPU erkannt, kann etwas dauern');
     try {
       return await callWasm(body, onProgress);
     } catch (err) {
@@ -1034,6 +1044,7 @@ async function callGeminiDirect(body, onProgress) {
       wasmFailed = true;
     }
   }
+  zeigeAiModus('☁️ Gemini-Key (Rückfall)');
   return callGeminiDirectFallback(body);
 }
 

@@ -185,6 +185,7 @@
       </div>
     </div>
     <div class="chips" id="chipsRow" style="display:none"></div>
+    <div id="aiModusLabel" style="font-size:11px;opacity:0.55;text-align:center;padding:2px 0;letter-spacing:0.5px;"></div>
     <form class="chat-form" id="chatForm" style="display:none">
       <textarea id="chatInput" rows="1" placeholder="Frag was über dein Business..." maxlength="2000"></textarea>
       <button type="button" class="mic-btn" id="micBtn" title="Spracheingabe" aria-label="Spracheingabe" style="display:none">🎤</button>
@@ -382,8 +383,16 @@
     return result;
   }
 
+  // Zeigt live an, welche KI-Stufe gerade läuft - direkt sichtbar im Chat,
+  // damit man am Handy nicht Browser/GPU-Details beschreiben muss.
+  function zeigeAiModus(text) {
+    const el = document.getElementById('aiModusLabel');
+    if (el) el.textContent = text;
+  }
+
   async function callGemini(body, onProgress) {
     if (!webllmFailed && (await hatWebGPU())) {
+      zeigeAiModus('⚡ Lokal (GPU/WebGPU)');
       try {
         return await callWebllm(body, onProgress);
       } catch (err) {
@@ -392,6 +401,7 @@
       }
     }
     if (!wasmFailed) {
+      zeigeAiModus('🐢 Lokal (CPU/WASM) - kein WebGPU erkannt, kann etwas dauern');
       try {
         return await callWasm(body, onProgress);
       } catch (err) {
@@ -399,6 +409,7 @@
         wasmFailed = true;
       }
     }
+    zeigeAiModus('☁️ Gemini-Key (Rückfall)');
     return callGeminiFallback(body);
   }
 
