@@ -131,7 +131,7 @@
 <div class="key-modal-overlay" id="keyModalOverlay">
   <div class="key-modal" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
     <h3 id="keyModalTitle">Gemini API-Key (Rückfall)</h3>
-    <p>Dein Browser probiert zuerst ein lokales Modell direkt im Browser (WebGPU, sonst als zweite Stufe per WASM/CPU) - in beiden Fällen kein Key nötig. Diese Eingabe brauchst du nur in dem sehr seltenen Fall, dass beide lokalen Wege fehlschlagen. Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nur für die optionale Erklärung nötig, die Berechnung selbst läuft komplett lokal ohne Key.</p>
+    <p>Standardmäßig läuft die KI über einen kostenlosen Internet-Dienst - kein Key nötig. Auf PCs mit passendem Browser probiert er zusätzlich ein lokales Modell (auf Handys bewusst deaktiviert, um Abstürze zu vermeiden). Diese Eingabe brauchst du nur, falls beides mal nicht klappt - nur für die optionale Erklärung nötig, die Berechnung selbst läuft komplett lokal ohne Key.</p>
     <input type="password" id="keyModalInput" placeholder="AIza..." aria-label="Gemini API-Key" autocomplete="off">
     <div class="key-modal-actions">
       <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Key holen →</a>
@@ -258,6 +258,13 @@
     const text = data.choices?.[0]?.message?.content || '';
     if (!text) throw new Error('pollinations_leere_antwort');
     return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
+  }
+
+  // Handys haben oft zu wenig RAM für ein ML-Modell im Browser - kann
+  // zum Absturz der ganzen Seite führen statt nur zu einem Fehler.
+  // Deshalb werden WebGPU/WASM auf Handys komplett übersprungen.
+  function istMobilesGeraet() {
+    return /Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(navigator.userAgent);
   }
 
   // Läuft zuerst ganz ohne Key/Server direkt im Browser (WebLLM + WebGPU) -
@@ -394,22 +401,24 @@
         pollinationsFailed = true;
       }
     }
-    if (!webllmFailed && (await hatWebGPU())) {
-      zeigeAiModus('⚡ Lokal (GPU)...');
-      try {
-        return await callWebllm(body, onProgress);
-      } catch (err) {
-        console.error('[callGemini] WebLLM failed, falling back:', err);
-        webllmFailed = true;
+    if (!istMobilesGeraet()) {
+      if (!webllmFailed && (await hatWebGPU())) {
+        zeigeAiModus('⚡ Lokal (GPU)...');
+        try {
+          return await callWebllm(body, onProgress);
+        } catch (err) {
+          console.error('[callGemini] WebLLM failed, falling back:', err);
+          webllmFailed = true;
+        }
       }
-    }
-    if (!wasmFailed) {
-      zeigeAiModus('🐢 Lokal (CPU)...');
-      try {
-        return await callWasm(body, onProgress);
-      } catch (err) {
-        console.error('[callGemini] WASM-Fallback fehlgeschlagen, falle auf Gemini zurück:', err);
-        wasmFailed = true;
+      if (!wasmFailed) {
+        zeigeAiModus('🐢 Lokal (CPU)...');
+        try {
+          return await callWasm(body, onProgress);
+        } catch (err) {
+          console.error('[callGemini] WASM-Fallback fehlgeschlagen, falle auf Gemini zurück:', err);
+          wasmFailed = true;
+        }
       }
     }
     zeigeAiModus('☁️ Gemini-Key...');
@@ -510,7 +519,7 @@
       const text = (data.content || []).map((b) => b.text || '').join('').trim() || 'Keine Erklärung erhalten.';
       slot.innerHTML = `<div class="explanation">${text}</div>`;
     } catch (err) {
-      slot.innerHTML = `<div class="explanation">${err.message === 'invalid_key' ? 'API-Key ungültig — über das ⚙ Symbol prüfen.' : err.message === 'kein_webgpu_kein_key' ? 'Beide lokalen KI-Wege (WebGPU und WASM) sind in diesem Browser fehlgeschlagen. Optional: eigenen Gemini-Key übers ⚙ Symbol eintragen.' : 'Fehler bei der Erklärung, bitte nochmal versuchen.'}</div>`;
+      slot.innerHTML = `<div class="explanation">${err.message === 'invalid_key' ? 'API-Key ungültig — über das ⚙ Symbol prüfen.' : err.message === 'kein_webgpu_kein_key' ? 'Der kostenlose Weg hat gerade nicht geklappt (Internet-Dienst nicht erreichbar, lokales Modell auf diesem Gerät übersprungen oder fehlgeschlagen). Optional: eigenen Gemini-Key übers ⚙ Symbol eintragen.' : 'Fehler bei der Erklärung, bitte nochmal versuchen.'}</div>`;
     } finally {
       btn.disabled = false;
       btn.textContent = 'Szenario in Worten erklären';
