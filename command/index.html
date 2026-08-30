@@ -511,7 +511,7 @@
 <div class="ai-key-modal-overlay" id="aiKeyModalOverlay">
   <div class="ai-key-modal" id="aiKeyModalBox" role="dialog" aria-modal="true" aria-labelledby="aiKeyModalTitle">
     <h3 id="aiKeyModalTitle">Gemini API-Key (Rückfall)</h3>
-    <p>Dein Browser probiert zuerst ein lokales Modell direkt im Browser (WebGPU, sonst als zweite Stufe per WASM/CPU) - in beiden Fällen kein Key nötig. Diese Eingabe brauchst du nur in dem sehr seltenen Fall, dass beide lokalen Wege fehlschlagen. Kostenloser Google-Gemini-Key, wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nie an einen anderen Server. Derselbe Key wie in Pulse, Oracle & Co — einmal eintragen, überall nutzbar.</p>
+    <p>Standardmäßig läuft die KI über einen kostenlosen Internet-Dienst - kein Key nötig. Auf PCs mit passendem Browser probiert er zusätzlich ein lokales Modell (auf Handys bewusst deaktiviert, um Abstürze zu vermeiden). Diese Eingabe brauchst du nur, falls beides mal nicht klappt. Kostenloser Google-Gemini-Key, wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nie an einen anderen Server. Derselbe Key wie in Pulse, Oracle & Co — einmal eintragen, überall nutzbar.</p>
     <input type="password" id="aiKeyModalInput" placeholder="AIza..." aria-label="Gemini API-Key" autocomplete="off">
     <div class="ai-key-modal-actions">
       <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Kostenlosen Key holen →</a>
@@ -2099,6 +2099,13 @@
     return { content: [{ type: 'text', text }] };
   }
 
+  // Handys haben oft zu wenig RAM für ein ML-Modell im Browser - kann
+  // zum Absturz der ganzen Seite führen statt nur zu einem Fehler.
+  // Deshalb werden WebGPU/WASM auf Handys komplett übersprungen.
+  function istMobilesGeraet() {
+    return /Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(navigator.userAgent);
+  }
+
   // Läuft zuerst ganz ohne Key/Server direkt im Browser (WebLLM + WebGPU) -
   // Modell wird einmalig heruntergeladen und danach vom Browser gecacht.
   // Nur Browser OHNE WebGPU (z.B. Safari, alte Browser) fallen automatisch
@@ -2235,22 +2242,24 @@
         aiPollinationsFehlgeschlagen = true;
       }
     }
-    if (!aiWebllmFehlgeschlagen && (await aiHatWebGPU())) {
-      if (onModus) onModus('⚡ Lokal (GPU/WebGPU)');
-      try {
-        return await aiCallWebllm(body, onProgress);
-      } catch (err) {
-        console.error('[aiCallKI] WebLLM fehlgeschlagen, falle auf WASM zurück:', err);
-        aiWebllmFehlgeschlagen = true;
+    if (!istMobilesGeraet()) {
+      if (!aiWebllmFehlgeschlagen && (await aiHatWebGPU())) {
+        if (onModus) onModus('⚡ Lokal (GPU/WebGPU)');
+        try {
+          return await aiCallWebllm(body, onProgress);
+        } catch (err) {
+          console.error('[aiCallKI] WebLLM fehlgeschlagen, falle auf WASM zurück:', err);
+          aiWebllmFehlgeschlagen = true;
+        }
       }
-    }
-    if (!aiWasmFehlgeschlagen) {
-      if (onModus) onModus('🐢 Lokal (CPU/WASM) - kein WebGPU erkannt, kann etwas dauern');
-      try {
-        return await aiCallWasm(body, onProgress);
-      } catch (err) {
-        console.error('[aiCallKI] WASM-Fallback fehlgeschlagen, falle auf Gemini zurück:', err);
-        aiWasmFehlgeschlagen = true;
+      if (!aiWasmFehlgeschlagen) {
+        if (onModus) onModus('🐢 Lokal (CPU/WASM) - kein WebGPU erkannt, kann etwas dauern');
+        try {
+          return await aiCallWasm(body, onProgress);
+        } catch (err) {
+          console.error('[aiCallKI] WASM-Fallback fehlgeschlagen, falle auf Gemini zurück:', err);
+          aiWasmFehlgeschlagen = true;
+        }
       }
     }
     if (onModus) onModus('☁️ Gemini-Key (Rückfall)');
@@ -2443,7 +2452,7 @@
       pendingEl.querySelector('.ai-bubble').textContent = err.message === 'invalid_key'
         ? 'API-Key ungültig — über das ⚙ Symbol prüfen.'
         : err.message === 'kein_webgpu_kein_key'
-        ? 'Beide lokalen KI-Wege (WebGPU und WASM) sind in diesem Browser fehlgeschlagen. Optional: eigenen Gemini-Key übers ⚙ Symbol eintragen.'
+        ? 'Der kostenlose Weg hat gerade nicht geklappt (Internet-Dienst nicht erreichbar, lokales Modell auf diesem Gerät übersprungen oder fehlgeschlagen). Optional: eigenen Gemini-Key übers ⚙ Symbol eintragen.'
         : 'Technisches Problem — bitte nochmal versuchen.';
       pendingEl.classList.remove('pending');
     } finally {
