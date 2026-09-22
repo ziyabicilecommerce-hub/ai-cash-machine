@@ -1,30 +1,28 @@
-// Lokales Open-Source-Modell über Ollama statt einer externen API (Claude/
-// Gemini) - läuft direkt im GitHub-Actions-Job selbst (siehe
-// .github/workflows/_automation-runner.yml, das Ollama vor jedem Lauf
-// installiert und startet). Komplett ohne API-Key, ohne Account, ohne
-// Anmeldung irgendwo - bewusster Trade-off des Shop-Betreibers: spürbar
-// schwächere Textqualität als Claude/Gemini und langsamere Automations-
-// Läufe (Modell-Download + CPU-Inferenz ohne GPU), dafür wirklich null
-// externe Abhängigkeit.
+// Kostenloser KI-Dienst (Pollinations, text.pollinations.ai) statt einer
+// externen API mit Key (Claude/Gemini) - läuft server-seitig bei Pollinations
+// selbst, komplett ohne API-Key, ohne Account, ohne Anmeldung irgendwo. Bis
+// vor kurzem lief das über Ollama direkt im GitHub-Actions-Job (langsamer,
+// schwächere Qualität, brauchte eine lokale Modell-Installation vor jedem
+// Lauf) - Pollinations ist echte, live bestätigt funktionierende
+// Cloud-Inferenz, deshalb schneller und ohne Installations-Overhead.
 import { config, ueberspringenWerfen } from './config.mjs';
 import { loadState, saveState } from './state.mjs';
 import { notifyTelegram } from './telegram.mjs';
 import { notifyWhatsapp } from './whatsapp.mjs';
 
-const OLLAMA_URL = 'http://localhost:11434';
-const BUDGET_STATE_NAME = 'ollama-budget-state';
+const POLLINATIONS_URL = 'https://text.pollinations.ai/openai';
+const BUDGET_STATE_NAME = 'pollinations-budget-state';
 
 function heute() {
   return new Date().toISOString().slice(0, 10);
 }
 
-// Kein echtes Kosten-Limit mehr (Ollama läuft lokal, kostet nichts) - reines
+// Kein echtes Kosten-Limit (Pollinations ist kostenlos) - reines
 // Sicherheitsnetz gegen einen Bug (z.B. eine Endlosschleife), der sonst
-// unbemerkt sehr viele CPU-lastige Inferenz-Aufrufe in einem einzigen
-// GitHub-Actions-Job auslösen könnte. OLLAMA_MAX_TOKENS_PRO_TAG='' bzw. '0'
-// deaktiviert das Limit komplett.
+// unbemerkt sehr viele KI-Aufrufe auslösen könnte. POLLINATIONS_MAX_TOKENS_PRO_TAG=''
+// bzw. '0' deaktiviert das Limit komplett.
 async function pruefeTagesBudget() {
-  const limit = parseInt(config.OLLAMA_MAX_TOKENS_PRO_TAG, 10);
+  const limit = parseInt(config.POLLINATIONS_MAX_TOKENS_PRO_TAG, 10);
   if (!limit) return null;
 
   let state = loadState(BUDGET_STATE_NAME);
@@ -34,12 +32,12 @@ async function pruefeTagesBudget() {
 
   if (state.tokenHeute >= limit) {
     if (!state.limitBenachrichtigt) {
-      const text = `⚠️ Tages-Sicherheitslimit erreicht: ${state.tokenHeute} von ${limit} Tokens heute lokal generiert. Weitere KI-Aufrufe pausieren bis morgen (OLLAMA_MAX_TOKENS_PRO_TAG anpassen, falls das zu niedrig ist) - reines Sicherheitsnetz gegen Bugs, kein echtes Kostenlimit.`;
+      const text = `⚠️ Tages-Sicherheitslimit erreicht: ${state.tokenHeute} von ${limit} Tokens heute über den kostenlosen KI-Dienst generiert. Weitere KI-Aufrufe pausieren bis morgen (POLLINATIONS_MAX_TOKENS_PRO_TAG anpassen, falls das zu niedrig ist) - reines Sicherheitsnetz gegen Bugs, kein echtes Kostenlimit.`;
       await Promise.all([notifyTelegram(text), notifyWhatsapp(text)]);
       state.limitBenachrichtigt = true;
       saveState(BUDGET_STATE_NAME, state);
     }
-    ueberspringenWerfen('Tages-Sicherheitslimit erreicht (OLLAMA_MAX_TOKENS_PRO_TAG) - Aufruf übersprungen.');
+    ueberspringenWerfen('Tages-Sicherheitslimit erreicht (POLLINATIONS_MAX_TOKENS_PRO_TAG) - Aufruf übersprungen.');
   }
 
   return state;
@@ -54,35 +52,46 @@ function aktualisiereTagesBudget(state, promptTokens, antwortTokens) {
 export async function askKI(prompt, { maxTokens = 1500, system } = {}) {
   const budgetState = await pruefeTagesBudget();
 
+  const body = JSON.stringify({
+    model: 'openai',
+    messages: [
+      ...(system ? [{ role: 'system', content: system }] : []),
+      { role: 'user', content: prompt },
+    ],
+    max_tokens: maxTokens,
+  });
+
+  // Anonyme Nutzung ist laut Pollinations rate-limitiert (~1 Anfrage/15s) -
+  // ein einzelner 429 heißt nicht "kaputt", nur "kurz warten".
   let res;
-  try {
-    res = await fetch(`${OLLAMA_URL}/api/generate`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        model: config.OLLAMA_MODEL,
-        prompt,
-        ...(system ? { system } : {}),
-        stream: false,
-        options: { num_predict: maxTokens },
-      }),
-    });
-  } catch (err) {
-    ueberspringenWerfen(`Lokales KI-Modell (Ollama) nicht erreichbar - läuft "ollama serve" auf diesem Rechner? (${err.message})`);
+  for (let versuch = 0; versuch < 2; versuch++) {
+    try {
+      res = await fetch(POLLINATIONS_URL, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body,
+      });
+    } catch (err) {
+      ueberspringenWerfen(`Kostenloser KI-Dienst (Pollinations) nicht erreichbar - Netzwerkproblem im GitHub-Actions-Job? (${err.message})`);
+    }
+    if (res.status === 429 && versuch === 0) {
+      await new Promise((resolve) => setTimeout(resolve, 4000));
+      continue;
+    }
+    break;
   }
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Ollama-Fehler ${res.status}: ${text}`);
+    throw new Error(`Pollinations-Fehler ${res.status}: ${text}`);
   }
   const data = await res.json();
-  aktualisiereTagesBudget(budgetState, data.prompt_eval_count, data.eval_count);
-  return data.response || '';
+  const antwort = data.choices?.[0]?.message?.content || '';
+  aktualisiereTagesBudget(budgetState, data.usage?.prompt_tokens, data.usage?.completion_tokens);
+  return antwort;
 }
 
 // Extrahiert das erste JSON-Objekt aus einem KI-Antworttext (antwortet oft mit
-// Fließtext drumherum, auch wenn im Prompt JSON verlangt wurde) - bei kleinen
-// lokalen Modellen häufiger nötig als bei Claude/Gemini, da die sich seltener
-// exakt an ein Antwortformat halten.
+// Fließtext drumherum, auch wenn im Prompt JSON verlangt wurde).
 export function parseJsonFromText(text, fallback = {}) {
   const start = text.indexOf('{');
   const end = text.lastIndexOf('}');

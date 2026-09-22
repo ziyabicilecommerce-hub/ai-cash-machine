@@ -39,18 +39,16 @@ Default aufgefüllt).
 
 ### Pflicht (fast alle Automationen brauchen das)
 
-Kein KI-Key mehr nötig: alle Text-Automationen laufen über ein lokales
-Open-Source-Modell (Ollama), das direkt im GitHub-Actions-Job installiert
-und gestartet wird (siehe `_automation-runner.yml`) - kein API-Key, kein
-Account, keine Anmeldung irgendwo. Bewusster Trade-off: spürbar schwächere
-Textqualität als Claude/Gemini und langsamere Automations-Läufe.
+Kein KI-Key mehr nötig: alle Text-Automationen laufen über einen
+kostenlosen KI-Dienst (Pollinations), der server-seitig läuft - kein
+API-Key, kein Account, keine Anmeldung irgendwo, keine lokale
+Modell-Installation im GitHub-Actions-Job mehr nötig.
 
 | Secret | Beschreibung |
 |---|---|
 | `SHOP` | Shopify-Subdomain, z.B. `mein-shop` (aus `mein-shop.myshopify.com`) |
 | `SHOPIFY_TOKEN` | Shopify Admin API Access Token (`shpat_...`) |
-| `OLLAMA_MODEL` | Optional, Default `llama3.2:1b`. Welches lokale Ollama-Modell die Automationen nutzen (Liste: [ollama.com/library](https://ollama.com/library)). |
-| `OLLAMA_MAX_TOKENS_PRO_TAG` | Optional, Default `300000`. Tages-Obergrenze für lokal generierte Tokens über ALLE Automationen zusammen - kein echtes Kostenlimit (läuft kostenlos lokal), reines Sicherheitsnetz gegen Bugs/Endlosschleifen. Bei Erreichen: einmalige Telegram/WhatsApp-Warnung, weitere KI-Aufrufe pausieren bis zum nächsten Tag. `0` oder leer = kein Limit. |
+| `POLLINATIONS_MAX_TOKENS_PRO_TAG` | Optional, Default `300000`. Tages-Obergrenze für über den Dienst generierte Tokens über ALLE Automationen zusammen - kein echtes Kostenlimit (Pollinations ist kostenlos), reines Sicherheitsnetz gegen Bugs/Endlosschleifen. Bei Erreichen: einmalige Telegram/WhatsApp-Warnung, weitere KI-Aufrufe pausieren bis zum nächsten Tag. `0` oder leer = kein Limit. |
 | `SHOP_NAME` | Anzeigename des Shops in Mails/Reports |
 | `OWNER_EMAIL` | Deine eigene E-Mail (Reports, Alarme, TEST_MODE-Ziel) |
 | `ABSENDER_EMAIL` | Absenderadresse für Kunden-Mails |

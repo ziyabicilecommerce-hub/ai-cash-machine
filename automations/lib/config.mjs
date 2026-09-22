@@ -3,15 +3,15 @@
 export const config = {
   SHOP: process.env.SHOP || '',
   SHOPIFY_TOKEN: process.env.SHOPIFY_TOKEN || '',
-  // Lokales Open-Source-Modell über Ollama statt einer externen API - läuft
-  // direkt im GitHub-Actions-Job selbst (siehe _automation-runner.yml),
-  // komplett ohne API-Key, ohne Account, ohne Anmeldung irgendwo.
-  OLLAMA_MODEL: process.env.OLLAMA_MODEL || 'llama3.2:1b',
-  // Tages-Obergrenze für lokal generierte Tokens über alle Automationen
-  // hinweg (Input+Output zusammen) - kein echtes Kostenlimit (Ollama läuft
-  // kostenlos lokal), reines Sicherheitsnetz gegen Bugs/Endlosschleifen.
-  // '0' oder leer = kein Limit.
-  OLLAMA_MAX_TOKENS_PRO_TAG: process.env.OLLAMA_MAX_TOKENS_PRO_TAG || '300000',
+  // Kostenloser KI-Dienst (Pollinations) statt einer externen API mit Key -
+  // läuft server-seitig bei Pollinations selbst, ganz ohne API-Key, ohne
+  // Account, ohne Anmeldung irgendwo, keine lokale Modell-Installation im
+  // GitHub-Actions-Job mehr nötig (bis vor kurzem lief das über Ollama).
+  // Tages-Obergrenze für über den Dienst generierte Tokens über alle
+  // Automationen hinweg (Input+Output zusammen) - kein echtes Kostenlimit
+  // (Pollinations ist kostenlos), reines Sicherheitsnetz gegen
+  // Bugs/Endlosschleifen. '0' oder leer = kein Limit.
+  POLLINATIONS_MAX_TOKENS_PRO_TAG: process.env.POLLINATIONS_MAX_TOKENS_PRO_TAG || '300000',
   SHOP_NAME: process.env.SHOP_NAME || 'Mein Shop',
   SHOP_URL: process.env.SHOP_URL || '',
   SHOP_NISCHE: process.env.SHOP_NISCHE || '',
