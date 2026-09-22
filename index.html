@@ -692,7 +692,7 @@
         <div class="key-modal-overlay" id="keyModalOverlay">
             <div class="key-modal" id="keyModalBox" role="dialog" aria-modal="true" aria-labelledby="keyModalTitle">
                 <h3 id="keyModalTitle">Gemini API-Key (Rückfall)</h3>
-                <p>Standardmäßig läuft die KI über einen kostenlosen Internet-Dienst - kein Key nötig. Auf PCs mit passendem Browser probiert er zusätzlich ein lokales Modell (auf Handys bewusst deaktiviert, um Abstürze zu vermeiden). Diese Eingabe brauchst du nur, falls beides mal nicht klappt. Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nie an einen anderen Server.</p>
+                <p>Standardmäßig läuft die KI über einen kostenlosen Internet-Dienst - kein Key nötig. Diese Eingabe brauchst du nur, falls der Dienst mal kurz nicht erreichbar ist. Wird ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an Google gesendet — nie an einen anderen Server.</p>
                 <input type="password" id="keyModalInput" placeholder="AIza..." aria-label="Gemini API-Key" autocomplete="off">
                 <div class="key-modal-actions">
                     <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Key holen →</a>
@@ -1016,26 +1016,12 @@
                     pollinationsFailed = true;
                 }
             }
-            if (!istMobilesGeraet()) {
-                if (!webllmFailed && (await hatWebGPU())) {
-                    zeigeAiModus('⚡ Lokal (GPU/WebGPU)');
-                    try {
-                        return await callWebllm(body, onProgress);
-                    } catch (err) {
-                        console.error('[callGemini] WebLLM failed, falling back:', err);
-                        webllmFailed = true;
-                    }
-                }
-                if (!wasmFailed) {
-                    zeigeAiModus('🐢 Lokal (CPU/WASM) - kein WebGPU erkannt, kann etwas dauern');
-                    try {
-                        return await callWasm(body, onProgress);
-                    } catch (err) {
-                        console.error('[callGemini] WASM-Fallback fehlgeschlagen, falle auf Gemini zurück:', err);
-                        wasmFailed = true;
-                    }
-                }
-            }
+            // Lokales WebGPU/WASM-Modell bewusst deaktiviert: hat auf mehreren
+            // echten Geräten die ganze Seite zum Absturz gebracht (OOM-Kill,
+            // nicht per try/catch abfangbar), und Geräteerkennung per
+            // User-Agent ist zu unzuverlässig (z.B. iPad meldet sich oft als
+            // Desktop-Mac). Kostenloser Weg läuft jetzt ausschließlich über
+            // den sicheren Pollinations-Dienst, kein Absturzrisiko mehr.
             zeigeAiModus('☁️ Gemini-Key (Rückfall)');
             return callGeminiFallback(body);
         }
@@ -1537,7 +1523,7 @@
                 const msg = err.message === 'invalid_key'
                     ? 'API-Key ungültig. Bitte über das ⚙ Symbol prüfen.'
                     : err.message === 'kein_webgpu_kein_key'
-                    ? 'Der kostenlose Weg hat gerade nicht geklappt (Internet-Dienst nicht erreichbar, lokales Modell auf diesem Gerät übersprungen oder fehlgeschlagen). Optional: eigenen Gemini-Key übers ⚙ Symbol eintragen.'
+                    ? 'Der kostenlose Internet-Dienst ist gerade nicht erreichbar. Optional: eigenen Gemini-Key übers ⚙ Symbol eintragen.'
                     : 'Verbindung fehlgeschlagen. Bitte versuch es nochmal.';
                 addChatMessage(msg, 'error');
             }
