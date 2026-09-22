@@ -852,23 +852,35 @@
         // Limit fällt die Kette automatisch auf die lokalen Stufen zurück.
         let pollinationsFailed = false;
         async function callPollinations({ system, messages, max_tokens }) {
-            const response = await fetch('https://text.pollinations.ai/openai', {
-                method: 'POST',
-                headers: { 'content-type': 'application/json' },
-                body: JSON.stringify({
-                    model: 'openai',
-                    messages: [
-                        ...(system ? [{ role: 'system', content: system }] : []),
-                        ...(messages || []).map((m) => ({ role: m.role, content: m.content })),
-                    ],
-                    max_tokens: max_tokens || 512,
-                }),
+            const body = JSON.stringify({
+                model: 'openai',
+                messages: [
+                    ...(system ? [{ role: 'system', content: system }] : []),
+                    ...(messages || []).map((m) => ({ role: m.role, content: m.content })),
+                ],
+                max_tokens: max_tokens || 512,
             });
-            if (!response.ok) throw new Error('pollinations_fehler_' + response.status);
-            const data = await response.json();
-            const text = data.choices?.[0]?.message?.content || '';
-            if (!text) throw new Error('pollinations_leere_antwort');
-            return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
+            // Anonyme Nutzung ist laut Pollinations rate-limitiert (~1 Anfrage/15s) -
+            // ein einzelner 429 heißt nicht "kaputt", nur "kurz warten". Ein
+            // Retry hier verhindert unnötige Rückfälle auf den Gemini-Key nur
+            // weil kurz zuvor schon eine Anfrage lief.
+            for (let versuch = 0; versuch < 2; versuch++) {
+                const response = await fetch('https://text.pollinations.ai/openai', {
+                    method: 'POST',
+                    headers: { 'content-type': 'application/json' },
+                    body,
+                });
+                if (response.status === 429 && versuch === 0) {
+                    await new Promise((resolve) => setTimeout(resolve, 4000));
+                    continue;
+                }
+                if (!response.ok) throw new Error('pollinations_fehler_' + response.status);
+                const data = await response.json();
+                const text = data.choices?.[0]?.message?.content || '';
+                if (!text) throw new Error('pollinations_leere_antwort');
+                return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
+            }
+            throw new Error('pollinations_fehler_429');
         }
 
         // Handys haben oft zu wenig RAM für ein ML-Modell im Browser - kann
