@@ -22,7 +22,12 @@ id = "055d3b2d0a514437aec11e888e81c242"
 [vars]
 TRADING_EXCHANGE = "kraken"
 TRADING_SYMBOLS = "XBTUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,DOGEUSDT,DOTUSDT,LTCUSDT"
-TRADING_KAPITAL_USDT = "50"
+# War 50 (6.25/Coin bei 8 Symbolen) - bei 25% Positionsgröße macht das nur
+# 1.56 USDT pro Trade, unter Krakens Mindest-Ordergröße für praktisch jeden
+# Coin (live bestätigt: SOLUSDT braucht mind. 7.07 USDT). Auf 240 (30/Coin)
+# angehoben, damit auch der teuerste Fall (SOL) mit Puffer klar über der
+# Mindestgröße liegt. Reines Paper-Kapital, kein echtes Geld.
+TRADING_KAPITAL_USDT = "240"
 TRADING_TAKE_PROFIT_PROZENT = "5"
 
 # Neue Risiko-/Strategie-Features - alle standardmäßig AUS bzw. verhaltensneutral
