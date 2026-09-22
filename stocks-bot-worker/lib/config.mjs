@@ -57,6 +57,12 @@ export function readConfig(env) {
     // Automatischer wöchentlicher Backtest-Check - siehe lib/autobacktest.mjs.
     // Rein informativ (verändert nie Kapital/Position), deshalb standardmäßig an.
     autoBacktest: (env.STOCKS_AUTO_BACKTEST || 'ja') === 'ja',
+    // Strategie-Turnier (Teil des Auto-Backtests): simuliert zusätzlich ALLE
+    // Strategien gegeneinander, nicht nur die aktiv konfigurierte - macht den
+    // ohnehin schon schweren Montags-Lauf mehrfach teurer. Default AUS auf
+    // dem Cloudflare-Free-Plan, wo dieser zusätzliche Aufwand Läufe
+    // regelmäßig ins CPU-Limit laufen ließ.
+    autoBacktestTurnier: (env.STOCKS_AUTO_BACKTEST_TURNIER || 'nein') === 'ja',
     // AI Trade Review (Pendant zum Krypto-Bot) - siehe lib/ai-review.mjs.
     // KOSTET ECHTES GELD pro Aufruf (Anthropic API), deshalb Default AUS.
     aiReview: (env.STOCKS_AI_REVIEW || 'nein') === 'ja',

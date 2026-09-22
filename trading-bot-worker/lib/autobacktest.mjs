@@ -288,15 +288,18 @@ export async function pruefeUndFuehreAutoBacktest(env, cfg) {
       // aktuell konfigurierte) - zeigt, ob eine andere Strategie auf DIESEM
       // Symbol gerade besser abschneiden würde. Rein informativ: wechselt NIE
       // automatisch die Live-Strategie, das bleibt eine manuelle Entscheidung
-      // (TRADING_STRATEGIE_PRO_SYMBOL in wrangler.toml).
-      const ranking = ALLE_STRATEGIEN.map((kandidat) => {
-        if (kandidat === cfgSymbol.strategie) return { strategie: kandidat, ...k };
-        const kandidatErgebnis = simuliere(closes, highs, lows, zeiten, { ...cfgSymbol, strategie: kandidat }, REFERENZ_STARTKAPITAL);
-        return { strategie: kandidat, ...berechneKennzahlen(REFERENZ_STARTKAPITAL, kandidatErgebnis) };
-      }).sort((a, b) => b.gesamtReturnProzent - a.gesamtReturnProzent);
-      await env.TRADING_STATE.put(`turnier:${symbol}`, JSON.stringify({
-        symbol, aktuelleStrategie: cfgSymbol.strategie, tageZurueck: AUTO_BACKTEST_TAGE, berechnetAm: jetzt.toISOString(), ranking,
-      }));
+      // (TRADING_STRATEGIE_PRO_SYMBOL in wrangler.toml). Macht den ohnehin
+      // schweren Montags-Lauf grob 5x teurer - siehe cfg.autoBacktestTurnier.
+      if (cfg.autoBacktestTurnier) {
+        const ranking = ALLE_STRATEGIEN.map((kandidat) => {
+          if (kandidat === cfgSymbol.strategie) return { strategie: kandidat, ...k };
+          const kandidatErgebnis = simuliere(closes, highs, lows, zeiten, { ...cfgSymbol, strategie: kandidat }, REFERENZ_STARTKAPITAL);
+          return { strategie: kandidat, ...berechneKennzahlen(REFERENZ_STARTKAPITAL, kandidatErgebnis) };
+        }).sort((a, b) => b.gesamtReturnProzent - a.gesamtReturnProzent);
+        await env.TRADING_STATE.put(`turnier:${symbol}`, JSON.stringify({
+          symbol, aktuelleStrategie: cfgSymbol.strategie, tageZurueck: AUTO_BACKTEST_TAGE, berechnetAm: jetzt.toISOString(), ranking,
+        }));
+      }
     } catch (err) {
       console.error(`[trading-bot] Auto-Backtest ${symbol} fehlgeschlagen:`, err);
     }

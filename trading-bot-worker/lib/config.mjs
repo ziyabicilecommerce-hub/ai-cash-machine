@@ -176,6 +176,14 @@ export function readConfig(env) {
     // Rein informativ (verändert nie Kapital/Position), deshalb - anders als
     // adaptives Lernen - standardmäßig an.
     autoBacktest: (env.TRADING_AUTO_BACKTEST || 'ja') === 'ja',
+    // Strategie-Turnier (Teil des Auto-Backtests): simuliert zusätzlich ALLE
+    // Strategien gegeneinander, nicht nur die aktiv konfigurierte - macht den
+    // ohnehin schon schweren Montags-Lauf grob 5x teurer (5 Strategien x 8
+    // Symbole statt 1x8). Default AUS auf dem Cloudflare-Free-Plan, wo dieser
+    // zusätzliche Aufwand den Lauf regelmäßig ins CPU-Limit laufen ließ -
+    // ohne dieses Feature bleibt der eigentliche Auto-Backtest (prüft NUR die
+    // aktiv genutzte Strategie) erhalten.
+    autoBacktestTurnier: (env.TRADING_AUTO_BACKTEST_TURNIER || 'nein') === 'ja',
     // AI Trade Review - siehe lib/ai-review.mjs. KOSTET ECHTES GELD pro
     // Aufruf (Anthropic API), deshalb - anders als Auto-Backtest -
     // standardmäßig AUS. Braucht zusätzlich das ANTHROPIC_API_KEY-Secret.

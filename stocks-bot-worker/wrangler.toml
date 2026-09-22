@@ -5,9 +5,11 @@ compatibility_date = "2025-01-01"
 # Alle 5 Minuten, wie der Krypto-Bot - läuft aber nur wirklich, wenn die
 # Börse laut Alpaca gerade offen ist (siehe worker.js runAll). Außerhalb der
 # Handelszeiten ist der Lauf ein einzelner, billiger /v2/clock-Check und
-# beendet sich sofort.
+# beendet sich sofort. War kurzzeitig auf jede Minute, zusammen mit dem
+# Krypto-Bot zurückgestellt - der 1-Minuten-Takt hat auf dem Cloudflare-
+# Free-Plan reihenweise Läufe ins CPU-Limit laufen lassen.
 [triggers]
-crons = ["* * * * *"]
+crons = ["*/5 * * * *"]
 
 # State pro Symbol (Kapital, offene Position, Kill-Switch) - eigener,
 # unabhängiger KV-Namespace vom Krypto-Bot.

@@ -2,12 +2,14 @@ name = "cashmachine-trading-bot"
 main = "worker.js"
 compatibility_date = "2025-01-01"
 
-# Läuft alle 5 Minuten (früher alle 15) - reagiert schneller auf neu
-# geschlossene 15m-Kerzen (bis zu 10 Min weniger Verzögerung zwischen
-# Kerze und Reaktion), statt aus einem von Binance blockierten
-# GitHub-Actions-IP-Bereich wie vorher.
+# Zurück auf alle 5 Minuten (war kurzzeitig auf jede Minute) - der 1-Minuten-
+# Takt hat den Worker auf dem Cloudflare-Free-Plan bei JEDEM Lauf ins
+# CPU-Limit laufen lassen ("Exceeded CPU Limit", live per wrangler tail
+# bestätigt) und dabei sogar den Wirtschaftskalender-Abruf über dessen
+# Rate-Limit (max. 2 Anfragen/5 Min laut Anbieter) getrieben. Genau das war
+# die Ursache dafür, dass wochenlang keine neuen Trades mehr zustande kamen.
 [triggers]
-crons = ["* * * * *"]
+crons = ["*/5 * * * *"]
 
 # State pro Symbol (Kapital, offene Position, Kill-Switch). Nach dem Erstellen
 # via `wrangler kv namespace create TRADING_STATE` die zurückgegebene id hier
@@ -20,15 +22,8 @@ id = "055d3b2d0a514437aec11e888e81c242"
 [vars]
 TRADING_EXCHANGE = "kraken"
 TRADING_SYMBOLS = "XBTUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,DOGEUSDT,DOTUSDT,LTCUSDT"
-TRADING_PAPER_MODE = "ja"
 TRADING_KAPITAL_USDT = "50"
-TRADING_MAX_POSITION_PROZENT = "25"
-TRADING_MAX_TAGESVERLUST_PROZENT = "5"
-TRADING_MAX_GESAMTVERLUST_PROZENT = "20"
-TRADING_STOP_LOSS_PROZENT = "3"
 TRADING_TAKE_PROFIT_PROZENT = "5"
-TRADING_EMA_SCHNELL = "9"
-TRADING_EMA_LANGSAM = "21"
 
 # Neue Risiko-/Strategie-Features - alle standardmäßig AUS bzw. verhaltensneutral
 # (0 = deaktiviert), damit dieses Update ein bereits laufendes Setup nicht
@@ -39,13 +34,8 @@ TRADING_EMA_LANGSAM = "21"
 # KEINEN einzigen historischen Trade blockiert (das Bollinger-Signal selbst
 # impliziert schon meist niedrigen RSI), ist also ein reines zusätzliches
 # Sicherheitsnetz für Randfälle ohne gemessenen Nachteil.
-TRADING_RSI_PERIODE = "14"
 TRADING_RSI_UEBERKAUFT = "70"
-TRADING_MIN_VOLATILITAET_PROZENT = "0"
 TRADING_TRAILING_STOP_AB_PROZENT = "2"
-TRADING_VOLA_SIZING = "nein"
-TRADING_VOLA_SIZING_REFERENZ_PROZENT = "2"
-TRADING_VOLA_SIZING_MIN_FAKTOR = "0.25"
 # Leer = keine Grenze (so viele gleichzeitig wie Symbole konfiguriert sind).
 # TRADING_MAX_GLEICHZEITIGE_POSITIONEN = "2"
 
@@ -55,28 +45,24 @@ TRADING_VOLA_SIZING_MIN_FAKTOR = "0.25"
 # Minus steht - unabhängige Zweitbestätigung neben den Kraken-Kursdaten, die
 # den Kauf tatsächlich auslösen.
 TRADING_COINGECKO_FILTER = "ja"
-TRADING_COINGECKO_MIN_24H_PROZENT = "0"
 
 # Fear & Greed Index-Filter (kein API-Key nötig, öffentliche API): verwirft
 # ein Kaufsignal, wenn der Gesamtmarkt laut Index "Extreme Greed" zeigt
 # (Wert >= 80) - Kontra-Signal gegen Euphorie-Käufe. Markweiter Wert, gilt
 # für alle Coins gleich, nur einmal pro Lauf abgefragt.
 TRADING_FNG_FILTER = "ja"
-TRADING_FNG_MAX_WERT = "80"
 
 # Mehrfach-Zeitrahmen-Bestätigung: verwirft ein Kaufsignal, wenn der
 # übergeordnete Trend (Default 4h = 240 Minuten, EMA9 vs. EMA21) abwärts
 # zeigt - vermeidet Käufe gegen einen größeren Abwärtstrend, nur weil das
 # kurzfristige 15m-Signal gerade anspringt.
 TRADING_MTF_FILTER = "ja"
-TRADING_MTF_INTERVAL_MINUTEN = "240"
 
 # BTC-Dominanz-Filter (kein API-Key nötig, öffentliche API): verwirft ein
 # Kaufsignal für ALTCOINS (nicht für BTC selbst), wenn BTCs Anteil an der
 # gesamten Krypto-Marktkapitalisierung über der Schwelle liegt - Kapital
 # fließt dann bevorzugt in Bitcoin statt Altcoins.
 TRADING_BTC_DOMINANZ_FILTER = "ja"
-TRADING_BTC_DOMINANZ_MAX_PROZENT = "60"
 
 # Performance-basierte Positionsgröße (kein externer API-Call, nutzt nur die
 # eigene Trade-Historie): reduziert die Positionsgröße für ein Symbol, das
@@ -84,8 +70,6 @@ TRADING_BTC_DOMINANZ_MAX_PROZENT = "60"
 # abgeschlossenen Trades) - kann die konfigurierte Positionsgröße NIE
 # überschreiten, nur nach unten anpassen.
 TRADING_PERFORMANCE_SIZING = "ja"
-TRADING_PERFORMANCE_SIZING_MIN_FAKTOR = "0.5"
-TRADING_PERFORMANCE_SIZING_MIN_TRADES = "5"
 
 # Flash-Crash-Schutz (kein API-Call, nutzt dieselben Kerzen wie die
 # Strategie): pausiert Käufe für ein Symbol, wenn der Kurs innerhalb der
@@ -93,8 +77,6 @@ TRADING_PERFORMANCE_SIZING_MIN_TRADES = "5"
 # 15m) bereits um mehr als TRADING_FLASH_CRASH_MAX_DROP_PROZENT gefallen ist -
 # eher ein Flash-Crash/Börsenfehler als eine normale Kaufgelegenheit.
 TRADING_FLASH_CRASH_FILTER = "ja"
-TRADING_FLASH_CRASH_FENSTER_KERZEN = "4"
-TRADING_FLASH_CRASH_MAX_DROP_PROZENT = "8"
 
 # Marktweite Erweiterung des Flash-Crash-Filters: crasht BTC selbst hart,
 # pausiert das Käufe für ALLE 8 Coins in diesem Lauf (nicht nur BTC) -
@@ -104,14 +86,11 @@ TRADING_FLASH_CRASH_MAX_DROP_PROZENT = "8"
 # Pro-Symbol-Filter (10% statt 8%) - ein marktweiter BTC-Einbruch ist ein
 # selteneres, gewichtigeres Ereignis.
 TRADING_MARKTWEITER_CRASH_FILTER = "ja"
-TRADING_MARKTWEITER_CRASH_FENSTER_KERZEN = "4"
-TRADING_MARKTWEITER_CRASH_MAX_DROP_PROZENT = "10"
 
 # Spread-Filter (kein extra API-Key, nutzt die ohnehin verbundene Börse):
 # verwirft einen Kauf, wenn der Bid/Ask-Spread gerade ungewöhnlich breit ist -
 # oft ein Begleitsymptom eines Flash-Crashs oder Börsenproblems.
 TRADING_SPREAD_FILTER = "ja"
-TRADING_SPREAD_MAX_PROZENT = "1"
 
 # Smart-Kapital-Rebalancing (kein API-Call, reine State-Umbuchung): schiebt
 # einmal pro Woche (montags) einen Anteil vom Kapital des aktuell
@@ -120,8 +99,6 @@ TRADING_SPREAD_MAX_PROZENT = "1"
 # bleiben. Nur Coins mit genug abgeschlossenen Trades und OHNE offene
 # Position zählen mit. Rührt Stop-Loss/Kill-Switch/Take-Profit nicht an.
 TRADING_REBALANCING = "ja"
-TRADING_REBALANCING_ANTEIL_PROZENT = "10"
-TRADING_REBALANCING_MIN_TRADES = "5"
 
 # Cool-Down nach Verlust-Trade (kein API-Call): pausiert Käufe für ein
 # Symbol eine Weile nach einem Verlust-Trade - "Revenge Trading" vermeiden.
@@ -138,15 +115,11 @@ TRADING_COOLDOWN_NACH_VERLUST_MINUTEN = "60"
 # (mehr/früher realisierte Gewinne vs. etwas weniger Gesamt-Return), kein
 # klarer Vorteil wie bei den anderen Features - deshalb standardmäßig AUS,
 # selbst einschalten wer den Trade-off will (z.B. "0.3" für 0,3% Ziel).
-TRADING_PARTIAL_TAKE_PROFIT_PROZENT = "0"
-TRADING_PARTIAL_TAKE_PROFIT_ANTEIL = "50"
 
 # Dynamischer (ATR-basierter statt fester prozentualer) Stop-Loss-Abstand.
 # Per Backtest geprüft: uneinheitlich - auf BTC klar schlechter (mehr
 # Fehlausstiege), auf ETH klar besser. Kein Coin-übergreifend klarer
 # Vorteil, deshalb standardmäßig AUS.
-TRADING_DYNAMISCHER_STOP_LOSS = "nein"
-TRADING_STOP_LOSS_ATR_MULTIPLIKATOR = "2"
 
 # Drei Strategien zur Wahl (Default "ema-crossover" = unverändertes Verhalten):
 # "bollinger-mean-reversion": kauft, wenn der Kurs unter das untere
@@ -161,14 +134,11 @@ TRADING_STOP_LOSS_ATR_MULTIPLIKATOR = "2"
 # --vergleiche` gegeneinander testen, siehe README - oder interaktiv im
 # CASHMACHINE STRATEGY LAB (strategy-lab/ im Hauptrepo).
 TRADING_STRATEGIE = "bollinger-mean-reversion"
-TRADING_BOLLINGER_PERIODE = "20"
 # 1.5 statt 2 Standardabweichungen = engeres Band = löst öfter aus. Per
 # Backtest (90 Tage, alle 8 Coins) geprüft: deutlich mehr Trades bei
 # gleicher oder besserer Win-Rate ggü. 2 (z.B. ETH: 12→18 Trades, Win-Rate
 # 66,7%→77,8%; BTC: 11→15 Trades, Win-Rate 81,8%→80,0%).
 TRADING_BOLLINGER_STDDEV = "1.5"
-TRADING_DONCHIAN_ENTRY_PERIODE = "20"
-TRADING_DONCHIAN_EXIT_PERIODE = "10"
 
 # War früher ein Live-Vergleich (jede Dreiergruppe eine andere Strategie).
 # Per Backtest (90 Tage, alle 8 Coins) klar entschieden: bollinger-mean-
@@ -202,8 +172,6 @@ TRADING_STRATEGIE_PRO_SYMBOL = "ETHUSDT:ultimate"
 # nicht aus Kursdaten. Standardmäßig AUS, weil ohne historisches News-Archiv
 # NICHT wie die anderen Filter per Backtest prüfbar - wer will, aktiviert
 # es bewusst und beobachtet es im Paper-Modus, bevor er es für Echtgeld nutzt.
-TRADING_NEWS_SENTIMENT_FILTER = "nein"
-TRADING_NEWS_SENTIMENT_MIN_PROZENT = "35"
 
 # Adaptives Lernen (kein API-Call, nutzt nur die eigene Trade-Historie):
 # passt den Stop-Loss-Prozentsatz pro Symbol einmal pro Woche (montags) an
@@ -213,37 +181,28 @@ TRADING_NEWS_SENTIMENT_MIN_PROZENT = "35"
 # Symbol, bleibt sonst inaktiv (globaler Wert gilt). Gebändigt auf 1%-2x den
 # konfigurierten Standard, wirkt nur auf NEU eröffnete Positionen. Default
 # AUS - siehe README für die Sicherheits-Leitplanken im Detail.
-TRADING_ADAPTIVES_LERNEN = "nein"
-TRADING_ADAPTIVES_LERNEN_MIN_TRADES = "10"
 
 # Automatischer wöchentlicher Backtest-Check (letzte 14 Tage, echte Kerzen) -
 # siehe lib/autobacktest.mjs. Rein informativ, ändert nie Kapital/Position,
 # deshalb standardmäßig an.
-TRADING_AUTO_BACKTEST = "ja"
 
 # AI Trade Review (siehe lib/ai-review.mjs) - KOSTET ECHTES GELD pro Aufruf
 # (Anthropic API, einmal pro Woche wenn "ja"), deshalb Default AUS. Braucht
 # zusätzlich das ANTHROPIC_API_KEY-Secret (per `wrangler secret put`, NICHT
 # hier eintragen).
-TRADING_AI_REVIEW = "nein"
 
 # Korrelations-Filter (siehe lib/korrelation.mjs) - verhindert einen neuen
 # Kauf, wenn schon eine Position in einem stark korrelierten Symbol offen
 # ist. Nutzt die wöchentlich vom Auto-Backtest mitberechnete Matrix, kein
 # eigener API-Aufruf. Default AUS wie jeder neue risikoverändernde Filter.
-TRADING_KORRELATION_FILTER = "nein"
-TRADING_KORRELATION_MAX_WERT = "0.85"
 
 # Live Market Scanner (siehe lib/scanner.mjs) - sucht täglich über die
 # konfigurierten TRADING_SYMBOLS hinaus nach Coins mit starkem Momentum
 # (CoinGecko Top-100, kein API-Key). Rein informativ, fügt nie automatisch
 # ein Symbol hinzu - deshalb standardmäßig an.
-TRADING_SCANNER = "ja"
-TRADING_SCANNER_MOMENTUM_SCHWELLE_7D = "15"
 
 # Monte-Carlo-Simulation der eigenen Trade-Historie (siehe lib/montecarlo.mjs) -
 # reine Statistik, kein API-Call, deshalb standardmäßig an.
-TRADING_MONTE_CARLO = "ja"
 
 # Wirtschaftskalender-Filter (kein API-Key nötig, öffentliche Gratis-Quelle
 # nfs.faireconomy.media): pausiert Käufe rund um marktbewegende US-
@@ -252,8 +211,6 @@ TRADING_MONTE_CARLO = "ja"
 # Keine gemessenen Nachteile (wenige, kurze Pausen pro Woche), deshalb
 # standardmäßig an. EIN Abruf pro Cron-Lauf (Rate-Limit der Quelle: max. 2
 # Abrufe pro 5 Minuten insgesamt).
-TRADING_NEWS_EVENT_FILTER = "ja"
-TRADING_NEWS_EVENT_FENSTER_MINUTEN = "30"
 
 # Secrets NICHT hier eintragen - per `wrangler secret put <NAME>` setzen:
 #   BINANCE_API_KEY       (nur Spot-Trading-Rechte, NIEMALS Auszahlungsrechte aktivieren)

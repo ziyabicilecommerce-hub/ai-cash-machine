@@ -202,15 +202,17 @@ export async function pruefeUndFuehreAutoBacktest(env, cfg) {
       // Strategie-Turnier: dieselben schon geladenen Kerzen genutzt, um ALLE
       // unterstützten Strategien gegeneinander zu testen (nicht nur die
       // aktuell konfigurierte) - rein informativ, wechselt NIE automatisch
-      // die Live-Strategie (Pendant zum Krypto-Bot).
-      const ranking = ALLE_STRATEGIEN.map((kandidat) => {
-        if (kandidat === cfg.strategie) return { strategie: kandidat, ...k };
-        const kandidatErgebnis = simuliere(closes, highs, lows, zeiten, { ...cfg, strategie: kandidat }, REFERENZ_STARTKAPITAL);
-        return { strategie: kandidat, ...berechneKennzahlen(REFERENZ_STARTKAPITAL, kandidatErgebnis) };
-      }).sort((a, b) => b.gesamtReturnProzent - a.gesamtReturnProzent);
-      await env.STOCKS_STATE.put(`turnier:${symbol}`, JSON.stringify({
-        symbol, aktuelleStrategie: cfg.strategie, tageZurueck: AUTO_BACKTEST_TAGE, berechnetAm: jetzt.toISOString(), ranking,
-      }));
+      // die Live-Strategie (Pendant zum Krypto-Bot). Siehe cfg.autoBacktestTurnier.
+      if (cfg.autoBacktestTurnier) {
+        const ranking = ALLE_STRATEGIEN.map((kandidat) => {
+          if (kandidat === cfg.strategie) return { strategie: kandidat, ...k };
+          const kandidatErgebnis = simuliere(closes, highs, lows, zeiten, { ...cfg, strategie: kandidat }, REFERENZ_STARTKAPITAL);
+          return { strategie: kandidat, ...berechneKennzahlen(REFERENZ_STARTKAPITAL, kandidatErgebnis) };
+        }).sort((a, b) => b.gesamtReturnProzent - a.gesamtReturnProzent);
+        await env.STOCKS_STATE.put(`turnier:${symbol}`, JSON.stringify({
+          symbol, aktuelleStrategie: cfg.strategie, tageZurueck: AUTO_BACKTEST_TAGE, berechnetAm: jetzt.toISOString(), ranking,
+        }));
+      }
     } catch (err) {
       console.error(`[stocks-bot] Auto-Backtest ${symbol} fehlgeschlagen:`, err);
     }
