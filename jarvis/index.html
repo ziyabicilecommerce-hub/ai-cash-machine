@@ -1447,10 +1447,15 @@
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'de-DE';
             utterance.rate = 1.0;
-            utterance.pitch = 0.9;
             const voices = window.speechSynthesis.getVoices();
-            const germanVoice = voices.find(v => v.lang === 'de-DE') || voices.find(v => v.lang.startsWith('de'));
-            if (germanVoice) utterance.voice = germanVoice;
+            const deVoices = voices.filter(v => v.lang === 'de-DE' || v.lang.startsWith('de'));
+            // Bekannte weibliche Stimmnamen je nach Gerät/Browser (Windows, macOS/iOS, Chrome/Android)
+            const weiblicheNamen = ['katja', 'anna', 'petra', 'helena', 'martina', 'hedda', 'female', 'google deutsch'];
+            const femaleVoice = deVoices.find(v => weiblicheNamen.some(n => v.name.toLowerCase().includes(n)));
+            const chosenVoice = femaleVoice || deVoices[0];
+            if (chosenVoice) utterance.voice = chosenVoice;
+            // Fallback: keine erkennbar weibliche Stimme auf dem Gerät -> Tonlage anheben
+            utterance.pitch = femaleVoice ? 1.05 : 1.3;
             utterance.onstart = () => { isSpeaking = true; listeningLabel.textContent = 'SPRICHT...'; };
             utterance.onend = () => { isSpeaking = false; listeningLabel.textContent = 'HÖRT AUF "HEY JARVIS"'; };
             window.speechSynthesis.speak(utterance);
