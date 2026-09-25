@@ -877,6 +877,11 @@
                 if (!response.ok) throw new Error('pollinations_fehler_' + response.status);
                 const data = await response.json();
                 const text = data.choices?.[0]?.message?.content || '';
+                // Pollinations liefert bei fehlendem Guthaben HTTP 200 mit einer
+                // Fehlermeldung im normalen Antworttext statt eines Fehlerstatus -
+                // ohne diese Prüfung würde die Fehlermeldung als echte KI-Antwort
+                // angezeigt und sogar vorgelesen werden.
+                if (/enough credits/i.test(text)) throw new Error('pollinations_kein_guthaben');
                 if (!text) throw new Error('pollinations_leere_antwort');
                 return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
             }
