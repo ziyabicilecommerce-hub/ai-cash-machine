@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixelKI – Kostenloser KI-Bildgenerator ohne Anmeldung</title>
+<meta name="description" content="Erstelle kostenlos KI-Bilder aus Text – ohne Anmeldung, ohne API-Key. Einfach Prompt eingeben, Bild generieren, herunterladen.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
+<style>
+  :root {
+    --bg: #0b0b10;
+    --panel: #15151d;
+    --border: #262633;
+    --text: #f0f0f5;
+    --muted: #9a9aab;
+    --accent: #7c5cff;
+    --accent2: #ff5ac6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: radial-gradient(circle at top, #1a1a26, var(--bg) 60%);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  header {
+    text-align: center;
+    padding: 40px 16px 20px;
+  }
+  header h1 {
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    margin: 0 0 10px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  header p {
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 24px;
+  }
+  textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0e0e15;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 12px 14px;
+    font-size: 1rem;
+    resize: vertical;
+    font-family: inherit;
+  }
+  textarea:focus { outline: 2px solid var(--accent); }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .chip {
+    background: #1e1e2b;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--text); }
+  .row {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  select {
+    background: #0e0e15;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: inherit;
+  }
+  button.primary {
+    flex: 1;
+    min-width: 160px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  button.primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .quota {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 10px;
+    text-align: center;
+  }
+  .result {
+    margin-top: 20px;
+    text-align: center;
+  }
+  .result img {
+    max-width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: none;
+  }
+  .result img.show { display: inline-block; }
+  .status {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    min-height: 1.2em;
+  }
+  .status.error { color: #ff6b6b; }
+  .pro-box {
+    margin-top: 30px;
+    border: 1px solid var(--accent);
+    background: linear-gradient(135deg, rgba(124,92,255,0.12), rgba(255,90,198,0.08));
+  }
+  .pro-box h2 { margin-top: 0; font-size: 1.2rem; }
+  .pro-box ul { color: var(--muted); padding-left: 20px; line-height: 1.7; }
+  .pro-btn {
+    display: inline-block;
+    margin-top: 10px;
+    background: var(--accent);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .seo-text {
+    margin-top: 50px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+  .seo-text h2 { color: var(--text); font-size: 1.15rem; }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    padding: 30px 16px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎨 PixelKI</h1>
+  <p>Kostenloser KI-Bildgenerator – gib einfach ein, was du sehen willst. Kein Account, kein API-Key, keine Wartezeit.</p>
+</header>
+
+<main>
+  <div class="panel">
+    <textarea id="prompt" placeholder="z.B. ein Astronaut reitet auf einem Pferd im Weltall, digitale Kunst"></textarea>
+    <div class="chips" id="chips"></div>
+    <div class="row">
+      <select id="ratio">
+        <option value="1024x1024">Quadratisch (1:1)</option>
+        <option value="1024x1792">Hochformat (Story/Reel)</option>
+        <option value="1792x1024">Querformat (16:9)</option>
+      </select>
+      <button class="primary" id="generateBtn">Bild erstellen</button>
+    </div>
+    <div class="quota" id="quota"></div>
+    <div class="status" id="status"></div>
+    <div class="result">
+      <img id="resultImg" alt="Generiertes KI-Bild">
+      <div class="row" id="downloadRow" style="display:none; justify-content:center;">
+        <a class="secondary" id="downloadLink" download="pixelki-bild.jpg">⬇ Herunterladen</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel pro-box">
+    <h2>⭐ PixelKI Pro</h2>
+    <ul>
+      <li>Unbegrenzt viele Bilder pro Tag (statt 5 kostenlos)</li>
+      <li>Höhere Auflösung</li>
+      <li>Bevorzugte Generierung (keine Wartezeit bei hoher Auslastung)</li>
+    </ul>
+    <a class="pro-btn" href="#" id="proLink" target="_blank" rel="noopener">Einmalig freischalten</a>
+  </div>
+
+  <div class="seo-text">
+    <h2>Wie funktioniert der KI-Bildgenerator?</h2>
+    <p>PixelKI wandelt deine Textbeschreibung (den sogenannten "Prompt") mit Hilfe künstlicher Intelligenz in ein Bild um. Beschreibe einfach in eigenen Worten, was du sehen möchtest – je genauer die Beschreibung (Stil, Farben, Stimmung, Umgebung), desto besser das Ergebnis. Das Tool ist komplett kostenlos nutzbar, es ist keine Registrierung oder Kreditkarte nötig.</p>
+    <h2>Wofür kann ich die generierten Bilder nutzen?</h2>
+    <p>Die Bilder eignen sich für Social-Media-Posts, Profilbilder, Präsentationen, Moodboards oder einfach zum Ausprobieren. Bitte beachte bei kommerzieller Nutzung die Nutzungsbedingungen des zugrunde liegenden KI-Modells.</p>
+  </div>
+</main>
+
+<footer>
+  Made with PixelKI – Teil des kostenlosen KI-Tool-Netzwerks
+</footer>
+
+<script>
+  const promptEl = document.getElementById('prompt');
+  const chipsEl = document.getElementById('chips');
+  const ratioEl = document.getElementById('ratio');
+  const generateBtn = document.getElementById('generateBtn');
+  const statusEl = document.getElementById('status');
+  const quotaEl = document.getElementById('quota');
+  const resultImg = document.getElementById('resultImg');
+  const downloadRow = document.getElementById('downloadRow');
+  const downloadLink = document.getElementById('downloadLink');
+  const proLink = document.getElementById('proLink');
+
+  // TODO: echten PayPal.me-Link eintragen, sobald bestätigt.
+  proLink.href = 'https://paypal.me/DEINNAME/5EUR';
+
+  const BEISPIELE = [
+    'Astronaut reitet Pferd im Weltall',
+    'Cyberpunk-Stadt bei Nacht, Neonlichter',
+    'Katze als Ritter, Ölgemälde-Stil',
+    'Gemütliches Cafe im Herbst, Aquarell',
+    'Drache über den Bergen, Fantasy-Kunst',
+  ];
+  BEISPIELE.forEach((text) => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.textContent = text;
+    chip.onclick = () => { promptEl.value = text; };
+    chipsEl.appendChild(chip);
+  });
+
+  const FREI_LIMIT_PRO_TAG = 5;
+  const QUOTA_KEY = 'pixelki_quota';
+
+  function heute() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function ladeQuota() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(QUOTA_KEY) || '{}');
+      if (raw.datum !== heute()) return { datum: heute(), anzahl: 0 };
+      return raw;
+    } catch {
+      return { datum: heute(), anzahl: 0 };
+    }
+  }
+
+  function speichereQuota(q) {
+    try { localStorage.setItem(QUOTA_KEY, JSON.stringify(q)); } catch {}
+  }
+
+  function zeigeQuota() {
+    const q = ladeQuota();
+    const rest = Math.max(0, FREI_LIMIT_PRO_TAG - q.anzahl);
+    quotaEl.textContent = `${rest} von ${FREI_LIMIT_PRO_TAG} kostenlosen Bildern heute übrig`;
+    return q;
+  }
+
+  function setStatus(text, isError) {
+    statusEl.textContent = text || '';
+    statusEl.className = 'status' + (isError ? ' error' : '');
+  }
+
+  async function generiereBild() {
+    const prompt = promptEl.value.trim();
+    if (!prompt) {
+      setStatus('Bitte erst eine Bildbeschreibung eingeben.', true);
+      return;
+    }
+
+    const q = ladeQuota();
+    if (q.anzahl >= FREI_LIMIT_PRO_TAG) {
+      setStatus('Tageslimit erreicht. Morgen geht\'s weiter, oder oben Pro freischalten für unbegrenzt.', true);
+      return;
+    }
+
+    const [breite, hoehe] = ratioEl.value.split('x');
+    const seed = Math.floor(Math.random() * 1000000);
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${breite}&height=${hoehe}&seed=${seed}&nologo=true`;
+
+    generateBtn.disabled = true;
+    setStatus('Bild wird erstellt … kann bis zu 20 Sekunden dauern.');
+    resultImg.classList.remove('show');
+    downloadRow.style.display = 'none';
+
+    try {
+      await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = resolve;
+        img.onerror = () => reject(new Error('bild_fehler'));
+        img.src = url;
+      });
+
+      resultImg.src = url;
+      resultImg.classList.add('show');
+      downloadLink.href = url;
+      downloadRow.style.display = 'flex';
+      setStatus('Fertig! Gefällt dir das Ergebnis nicht, einfach nochmal versuchen.');
+
+      q.anzahl += 1;
+      speichereQuota(q);
+      zeigeQuota();
+    } catch (err) {
+      console.error('[PixelKI] Fehler:', err);
+      setStatus('Der kostenlose Bild-Dienst ist gerade überlastet oder nicht erreichbar. Bitte in ein paar Sekunden nochmal versuchen.', true);
+    } finally {
+      generateBtn.disabled = false;
+    }
+  }
+
+  generateBtn.addEventListener('click', generiereBild);
+  promptEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generiereBild();
+  });
+
+  zeigeQuota();
+</script>
+
+</body>
+</html>
