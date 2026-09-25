@@ -1,8 +1,12 @@
 name: "48 · Google-Maps-Lead-Jäger"
 
 on:
-  schedule:
-    - cron: '0 8 * * *'
+  # Zeitplan pausiert (2026-09-25): rechtliche Prüfung nach § 7 UWG steht noch
+  # aus, ob unaufgeforderte Erst-Kontaktaufnahme per WhatsApp an fremde Firmen
+  # zulässig ist. Automation läuft nicht mehr automatisch - Code bleibt
+  # unverändert, Zeitplan einfach wieder einkommentieren, um sie zu reaktivieren.
+  # schedule:
+  #   - cron: '0 8 * * *'
   workflow_dispatch: {}
 
 permissions:
