@@ -534,11 +534,18 @@
       ],
       max_tokens: max_tokens || 512,
     });
-    const response = await fetch('https://api.llm7.io/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'Authorization': 'Bearer unused' },
-      body,
-    });
+    // Anonym max. 1 Anfrage/Sekunde - bei 429 kurz warten statt die
+    // Stufe fuer die ganze Sitzung abzuschalten.
+    let response;
+    for (let versuch = 0; versuch < 3; versuch++) {
+      response = await fetch('https://api.llm7.io/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'Authorization': 'Bearer unused' },
+        body,
+      });
+      if (response.status !== 429) break;
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
     if (!response.ok) throw new Error('llm7_fehler_' + response.status);
     const data = await response.json();
     const text = data.choices?.[0]?.message?.content || '';
