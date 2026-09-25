@@ -11,6 +11,11 @@ import { notifyTelegram } from './telegram.mjs';
 import { notifyWhatsapp } from './whatsapp.mjs';
 
 const POLLINATIONS_URL = 'https://text.pollinations.ai/openai';
+// Zweiter kostenloser, offener KI-Dienst (kein Key, kein Account) - Backup
+// falls Pollinations gerade kein Guthaben mehr hat oder überlastet ist.
+// Anonyme Nutzung laut LLM7-Doku: 500.000 Tokens/Tag, 60 Anfragen/Stunde -
+// eigener, unabhängiger Pool von Pollinations.
+const LLM7_URL = 'https://api.llm7.io/v1/chat/completions';
 const BUDGET_STATE_NAME = 'pollinations-budget-state';
 
 function heute() {
@@ -49,31 +54,16 @@ function aktualisiereTagesBudget(state, promptTokens, antwortTokens) {
   saveState(BUDGET_STATE_NAME, state);
 }
 
-export async function askKI(prompt, { maxTokens = 1500, system } = {}) {
-  const budgetState = await pruefeTagesBudget();
-
-  const body = JSON.stringify({
-    model: 'openai',
-    messages: [
-      ...(system ? [{ role: 'system', content: system }] : []),
-      { role: 'user', content: prompt },
-    ],
-    max_tokens: maxTokens,
-  });
-
+async function rufePollinationsAuf(body) {
   // Anonyme Nutzung ist laut Pollinations rate-limitiert (~1 Anfrage/15s) -
   // ein einzelner 429 heißt nicht "kaputt", nur "kurz warten".
   let res;
   for (let versuch = 0; versuch < 2; versuch++) {
-    try {
-      res = await fetch(POLLINATIONS_URL, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body,
-      });
-    } catch (err) {
-      ueberspringenWerfen(`Kostenloser KI-Dienst (Pollinations) nicht erreichbar - Netzwerkproblem im GitHub-Actions-Job? (${err.message})`);
-    }
+    res = await fetch(POLLINATIONS_URL, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body,
+    });
     if (res.status === 429 && versuch === 0) {
       await new Promise((resolve) => setTimeout(resolve, 4000));
       continue;
@@ -93,8 +83,57 @@ export async function askKI(prompt, { maxTokens = 1500, system } = {}) {
   if (/enough credits/i.test(antwort)) {
     throw new Error('Pollinations meldet fehlendes Guthaben (Antwort enthielt "enough credits" statt echtem Text).');
   }
-  aktualisiereTagesBudget(budgetState, data.usage?.prompt_tokens, data.usage?.completion_tokens);
-  return antwort;
+  if (!antwort) throw new Error('Pollinations lieferte eine leere Antwort.');
+  return { antwort, usage: data.usage };
+}
+
+async function rufeLlm7Auf(promptBody) {
+  const body = JSON.stringify({ ...JSON.parse(promptBody), model: 'gpt-4o-mini' });
+  const res = await fetch(LLM7_URL, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'Authorization': 'Bearer unused' },
+    body,
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`LLM7-Fehler ${res.status}: ${text}`);
+  }
+  const data = await res.json();
+  const antwort = data.choices?.[0]?.message?.content || '';
+  if (/enough credits/i.test(antwort)) {
+    throw new Error('LLM7 meldet fehlendes Guthaben (Antwort enthielt "enough credits" statt echtem Text).');
+  }
+  if (!antwort) throw new Error('LLM7 lieferte eine leere Antwort.');
+  return { antwort, usage: data.usage };
+}
+
+export async function askKI(prompt, { maxTokens = 1500, system } = {}) {
+  const budgetState = await pruefeTagesBudget();
+
+  const body = JSON.stringify({
+    model: 'openai',
+    messages: [
+      ...(system ? [{ role: 'system', content: system }] : []),
+      { role: 'user', content: prompt },
+    ],
+    max_tokens: maxTokens,
+  });
+
+  let ergebnis;
+  try {
+    ergebnis = await rufePollinationsAuf(body);
+  } catch (pollinationsFehler) {
+    try {
+      ergebnis = await rufeLlm7Auf(body);
+    } catch (llm7Fehler) {
+      ueberspringenWerfen(
+        `Beide kostenlosen KI-Dienste nicht verfügbar - Pollinations: ${pollinationsFehler.message}; LLM7: ${llm7Fehler.message}`
+      );
+    }
+  }
+
+  aktualisiereTagesBudget(budgetState, ergebnis.usage?.prompt_tokens, ergebnis.usage?.completion_tokens);
+  return ergebnis.antwort;
 }
 
 // Extrahiert das erste JSON-Objekt aus einem KI-Antworttext (antwortet oft mit
