@@ -80,7 +80,7 @@ async function rufePollinationsAuf(body) {
   // Fehlermeldung im normalen Antworttext statt eines Fehlerstatus - ohne
   // diese Prüfung würde die Fehlermeldung ungeprüft in echte Shop-Texte
   // (Kundenmails, Produktbeschreibungen usw.) landen.
-  if (/enough credits/i.test(antwort)) {
+  if (/enough credits|reached its budget|enter\.pollinations\.ai/i.test(antwort)) {
     throw new Error('Pollinations meldet fehlendes Guthaben (Antwort enthielt "enough credits" statt echtem Text).');
   }
   if (!antwort) throw new Error('Pollinations lieferte eine leere Antwort.');
@@ -88,7 +88,7 @@ async function rufePollinationsAuf(body) {
 }
 
 async function rufeLlm7Auf(promptBody) {
-  const body = JSON.stringify({ ...JSON.parse(promptBody), model: 'gpt-4o-mini' });
+  const body = JSON.stringify({ ...JSON.parse(promptBody), model: 'default' });
   const res = await fetch(LLM7_URL, {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'Authorization': 'Bearer unused' },
@@ -100,7 +100,7 @@ async function rufeLlm7Auf(promptBody) {
   }
   const data = await res.json();
   const antwort = data.choices?.[0]?.message?.content || '';
-  if (/enough credits/i.test(antwort)) {
+  if (/enough credits|reached its budget|enter\.pollinations\.ai/i.test(antwort)) {
     throw new Error('LLM7 meldet fehlendes Guthaben (Antwort enthielt "enough credits" statt echtem Text).');
   }
   if (!antwort) throw new Error('LLM7 lieferte eine leere Antwort.');
