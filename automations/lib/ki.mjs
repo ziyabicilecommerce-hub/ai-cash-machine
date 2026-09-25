@@ -89,11 +89,17 @@ async function rufePollinationsAuf(body) {
 
 async function rufeLlm7Auf(promptBody) {
   const body = JSON.stringify({ ...JSON.parse(promptBody), model: 'default' });
-  const res = await fetch(LLM7_URL, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', 'Authorization': 'Bearer unused' },
-    body,
-  });
+  // Anonym max. 1 Anfrage/Sekunde - bei 429 kurz warten.
+  let res;
+  for (let versuch = 0; versuch < 3; versuch++) {
+    res = await fetch(LLM7_URL, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'Authorization': 'Bearer unused' },
+      body,
+    });
+    if (res.status !== 429) break;
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`LLM7-Fehler ${res.status}: ${text}`);
