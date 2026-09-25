@@ -86,6 +86,13 @@ export async function askKI(prompt, { maxTokens = 1500, system } = {}) {
   }
   const data = await res.json();
   const antwort = data.choices?.[0]?.message?.content || '';
+  // Pollinations liefert bei fehlendem Guthaben HTTP 200 mit einer
+  // Fehlermeldung im normalen Antworttext statt eines Fehlerstatus - ohne
+  // diese Prüfung würde die Fehlermeldung ungeprüft in echte Shop-Texte
+  // (Kundenmails, Produktbeschreibungen usw.) landen.
+  if (/enough credits/i.test(antwort)) {
+    throw new Error('Pollinations meldet fehlendes Guthaben (Antwort enthielt "enough credits" statt echtem Text).');
+  }
   aktualisiereTagesBudget(budgetState, data.usage?.prompt_tokens, data.usage?.completion_tokens);
   return antwort;
 }
