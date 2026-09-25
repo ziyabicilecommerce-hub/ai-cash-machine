@@ -1,0 +1,46 @@
+name: "KI-Diagnose (manuell)"
+
+# Testet die kostenlosen KI-Dienste live aus dem Internet (inkl. CORS-Header
+# für den Browser-Aufruf von github.io), weil das aus der Entwickler-Sandbox
+# heraus nicht möglich ist.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: KI-Dienste testen
+        env:
+          ORIGIN: https://ziyabicilecommerce-hub.github.io
+        run: |
+          BODY='{"model":"openai","messages":[{"role":"user","content":"Sag nur: OK"}],"max_tokens":20}'
+          test_post () {
+            echo "=================== $1"
+            shift
+            curl -sS -m 40 -i "$@" | head -c 1500
+            echo; echo
+          }
+          test_post "POLLINATIONS POST /openai" -X POST https://text.pollinations.ai/openai \
+            -H "Origin: $ORIGIN" -H 'content-type: application/json' -d "$BODY"
+          test_post "POLLINATIONS GET einfach" -H "Origin: $ORIGIN" "https://text.pollinations.ai/Sag%20nur%20OK"
+          test_post "GEN.POLLINATIONS POST" -X POST https://gen.pollinations.ai/v1/chat/completions \
+            -H "Origin: $ORIGIN" -H 'content-type: application/json' -d "$BODY"
+          test_post "LLM7 OPTIONS preflight" -X OPTIONS https://api.llm7.io/v1/chat/completions \
+            -H "Origin: $ORIGIN" -H 'Access-Control-Request-Method: POST' \
+            -H 'Access-Control-Request-Headers: authorization,content-type'
+          test_post "LLM7 POST mit Bearer unused" -X POST https://api.llm7.io/v1/chat/completions \
+            -H "Origin: $ORIGIN" -H 'content-type: application/json' -H 'Authorization: Bearer unused' \
+            -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Sag nur: OK"}],"max_tokens":20}'
+          test_post "LLM7 POST ohne Auth" -X POST https://api.llm7.io/v1/chat/completions \
+            -H "Origin: $ORIGIN" -H 'content-type: application/json' \
+            -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Sag nur: OK"}],"max_tokens":20}'
+          test_post "LLM7 POST default model" -X POST https://api.llm7.io/v1/chat/completions \
+            -H "Origin: $ORIGIN" -H 'content-type: application/json' -H 'Authorization: Bearer unused' \
+            -d '{"model":"default","messages":[{"role":"user","content":"Sag nur: OK"}],"max_tokens":20}'
+          test_post "LLM7 Modelle" -H "Origin: $ORIGIN" https://api.llm7.io/v1/models
+          test_post "DEVTOOLBOX root" -H "Origin: $ORIGIN" https://devtoolbox-api.devtoolbox-api.workers.dev/
