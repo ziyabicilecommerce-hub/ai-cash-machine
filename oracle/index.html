@@ -431,6 +431,33 @@
     throw new Error('pollinations_fehler_429');
   }
 
+  // ===== LLM7 (zweiter kostenloser, offener KI-Dienst - kein Key, kein
+  // Account) ===== Backup falls Pollinations gerade kein Guthaben mehr hat
+  // oder überlastet ist. Anonyme Nutzung laut LLM7-Doku: 500.000 Tokens/Tag,
+  // 60 Anfragen/Stunde - eigener, unabhängiger Pool von Pollinations.
+  let llm7Failed = false;
+  async function callLLM7({ system, messages, max_tokens }) {
+    const body = JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [
+        ...(system ? [{ role: 'system', content: system }] : []),
+        ...(messages || []).map((m) => ({ role: m.role, content: m.content })),
+      ],
+      max_tokens: max_tokens || 512,
+    });
+    const response = await fetch('https://api.llm7.io/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'Authorization': 'Bearer unused' },
+      body,
+    });
+    if (!response.ok) throw new Error('llm7_fehler_' + response.status);
+    const data = await response.json();
+    const text = data.choices?.[0]?.message?.content || '';
+    if (/enough credits/i.test(text)) throw new Error('llm7_kein_guthaben');
+    if (!text) throw new Error('llm7_leere_antwort');
+    return { content: [{ type: 'text', text }], usage: { input_tokens: 0, output_tokens: 0 } };
+  }
+
   // Handys haben oft zu wenig RAM für ein ML-Modell im Browser - kann
   // zum Absturz der ganzen Seite führen statt nur zu einem Fehler.
   // Deshalb werden WebGPU/WASM auf Handys komplett übersprungen.
@@ -575,16 +602,25 @@
       try {
         return await callPollinations(body);
       } catch (err) {
-        console.error('[callGemini] Pollinations fehlgeschlagen, falle auf lokal zurück:', err);
+        console.error('[callGemini] Pollinations fehlgeschlagen, versuche Backup-Dienst:', err);
         pollinationsFailed = true;
+      }
+    }
+    if (!llm7Failed) {
+      zeigeAiModus('🌐 Kostenloser KI-Dienst (Backup, ohne Key)');
+      try {
+        return await callLLM7(body);
+      } catch (err) {
+        console.error('[callGemini] LLM7 fehlgeschlagen, falle auf Gemini-Key zurück:', err);
+        llm7Failed = true;
       }
     }
     // Lokales WebGPU/WASM-Modell bewusst deaktiviert: hat auf mehreren
     // echten Geräten die ganze Seite zum Absturz gebracht (OOM-Kill,
     // nicht per try/catch abfangbar), und Geräteerkennung per
     // User-Agent ist zu unzuverlässig (z.B. iPad meldet sich oft als
-    // Desktop-Mac). Kostenloser Weg läuft jetzt ausschließlich über
-    // den sicheren Pollinations-Dienst, kein Absturzrisiko mehr.
+    // Desktop-Mac). Kostenlose Wege laufen jetzt über Pollinations und LLM7
+    // als Backup, kein Absturzrisiko mehr.
     zeigeAiModus('☁️ Gemini-Key (Rückfall)');
     return callGeminiFallback(body);
   }
