@@ -42,5 +42,6 @@ jobs:
           test_post "LLM7 POST default model" -X POST https://api.llm7.io/v1/chat/completions \
             -H "Origin: $ORIGIN" -H 'content-type: application/json' -H 'Authorization: Bearer unused' \
             -d '{"model":"default","messages":[{"role":"user","content":"Sag nur: OK"}],"max_tokens":20}'
-          test_post "LLM7 Modelle" -H "Origin: $ORIGIN" https://api.llm7.io/v1/models
-          test_post "DEVTOOLBOX root" -H "Origin: $ORIGIN" https://devtoolbox-api.devtoolbox-api.workers.dev/
+          test_post "LLM7 wie Jarvis (System-Prompt, max_tokens 4096)" -X POST https://api.llm7.io/v1/chat/completions \
+            -H "Origin: $ORIGIN" -H 'content-type: application/json' -H 'Authorization: Bearer unused' \
+            -d "{\"model\":\"default\",\"messages\":[{\"role\":\"system\",\"content\":\"Du bist J.A.R.V.I.S., ein deutscher KI-Assistent. Antworte kurz.\"},{\"role\":\"user\",\"content\":\"Hallo Jarvis, wie geht es dir? $(date +%s)\"}],\"max_tokens\":4096}"
