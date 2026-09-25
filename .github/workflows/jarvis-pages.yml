@@ -6,7 +6,6 @@ on:
     paths:
       - 'index.html'
       - 'jarvis/**'
-      - 'pixelki/**'
       - 'brand-assassin/**'
       - 'automations-dashboard/**'
       - 'finance-cockpit/**'
@@ -58,7 +57,6 @@ jobs:
           mkdir -p _site
           cp index.html _site/
           cp -r jarvis _site/jarvis
-          cp -r pixelki _site/pixelki
           cp -r brand-assassin _site/brand-assassin
           cp -r automations-dashboard _site/automations-dashboard
           cp -r finance-cockpit _site/finance-cockpit
