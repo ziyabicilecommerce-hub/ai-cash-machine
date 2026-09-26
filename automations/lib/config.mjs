@@ -294,6 +294,26 @@ export const config = {
   // ohne einzelne Automationen abzuschalten oder Code zu ändern. Selbst
   // gesteuert über GitHub Secrets (Default 'nein' = unverändertes Verhalten).
   EMAILS_PAUSIERT: process.env.EMAILS_PAUSIERT || 'nein',
+
+  // Social-Content-Autopilot (#90): generiert echte Bilder (kostenlos ueber
+  // Pollinations, kein Key) - und daraus optional ein kurzes "Ken Burns"-
+  // Bewegtbild-Video per ffmpeg (in GitHub Actions ubuntu-latest bereits
+  // vorinstalliert, kein zusaetzlicher Dienst/Kosten) - und plant beides
+  // ueber Metricool fuer Instagram/TikTok/YouTube. Laeuft komplett ohne
+  // eigenen Server, nur GitHub Actions + kostenlose oeffentliche APIs.
+  METRICOOL_API_TOKEN: process.env.METRICOOL_API_TOKEN || '',
+  METRICOOL_USER_ID: process.env.METRICOOL_USER_ID || '',
+  METRICOOL_BLOG_ID: process.env.METRICOOL_BLOG_ID || '',
+  METRICOOL_TIMEZONE: process.env.METRICOOL_TIMEZONE || 'Europe/Berlin',
+  METRICOOL_PROVIDERS: process.env.METRICOOL_PROVIDERS || 'instagram,tiktok',
+  SOCIAL_AUTOPILOT_THEMEN: process.env.SOCIAL_AUTOPILOT_THEMEN || '',
+  SOCIAL_AUTOPILOT_ANZAHL_PRO_LAUF: process.env.SOCIAL_AUTOPILOT_ANZAHL_PRO_LAUF || '1',
+  SOCIAL_AUTOPILOT_AUTO_PUBLISH: process.env.SOCIAL_AUTOPILOT_AUTO_PUBLISH || 'nein',
+  // 'bild' oder 'video' - 'video' baut aus dem generierten Bild ein kurzes
+  // Ken-Burns-Bewegtbild (KEIN echtes generatives KI-Video - dafuer braeuchte
+  // es einen kostenpflichtigen Dienst). Pflicht 'video', wenn
+  // METRICOOL_PROVIDERS youtube enthaelt (YouTube verlangt zwingend Video).
+  SOCIAL_AUTOPILOT_MEDIENTYP: process.env.SOCIAL_AUTOPILOT_MEDIENTYP || 'video',
 };
 
 export function isTestMode() {
