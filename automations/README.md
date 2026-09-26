@@ -78,6 +78,22 @@ Winning-Ad-Creatives):
 für Instagram (Business-Konto nötig). Instagram postet als echtes Reel,
 wenn der Shop ein Produktvideo in Shopify hochgeladen hat, sonst als
 Produktfoto - beides kommt automatisch aus Shopify, nie KI-generiert.
+
+**Social-Content-Autopilot** (#90, generiert eigenen KI-Content statt
+bestehender Shopify-Fotos zu nutzen wie #18):
+`METRICOOL_API_TOKEN` (Metricool → Account Settings → API-Bereich → "REST
+API Access token"), `METRICOOL_USER_ID`, `METRICOOL_BLOG_ID` (beide stehen in
+der Metricool-URL `?blogId=...&userId=...`), `METRICOOL_TIMEZONE` (Default
+`Europe/Berlin`), `METRICOOL_PROVIDERS` (Default `instagram,tiktok`, z.B.
+`instagram,tiktok,youtube`), `SOCIAL_AUTOPILOT_THEMEN` (Pflicht -
+kommagetrennte Themen/Produkte, ohne das läuft die Automation leer durch),
+`SOCIAL_AUTOPILOT_ANZAHL_PRO_LAUF` (Default `1`),
+`SOCIAL_AUTOPILOT_MEDIENTYP` (`bild` oder `video`, Default `video` - Video
+baut aus dem generierten Bild ein Ken-Burns-Bewegtbild per ffmpeg, KEIN
+echtes generatives KI-Video), `SOCIAL_AUTOPILOT_AUTO_PUBLISH` (Default
+`nein` - Beiträge landen als Entwurf im Metricool-Planer, `ja` postet
+wirklich live). Bild-/Video-Generierung läuft komplett kostenlos über
+Pollinations + ffmpeg, keine externen Kosten außer Metricool selbst.
 Ohne diese Secrets bleibt #18 wie gehabt ein reiner Text-Entwurf per Mail.
 
 **Judge.me Bewertungen** (Bewertungs-Magnet, Bewertungs-Antwort-Bot):
@@ -150,7 +166,7 @@ Funktionsumfang. Schlägt die Bildgenerierung fehl (z.B. abgelehnter Prompt),
 kommt eine Warnung statt eines Absturzes, das Text-Paket wird trotzdem
 verschickt.
 
-**🛒 Store Builder & Optimizer** (legt Produktseiten als Shopify-Entwurf an,
+**🛍️ Store Builder & Optimizer** (legt Produktseiten als Shopify-Entwurf an,
 prüft die Live-Storefront): `STORE_BUILDER_PRODUKTE` (kommagetrennt — ohne
 diesen Wert automatisch die zuletzt vom Product Hunter vorgeschlagenen
 Produkte), `STORE_BUILDER_ANZAHL_PRODUKTE` (Default `1`). Braucht `SHOP` +
@@ -330,7 +346,7 @@ erreichbar (kommt per Telegram-Meldung bei jedem neuen Beleg).
 Finance-Cockpit-Daten (die der Gewinn-Radar #01 ohnehin täglich sammelt,
 also keine zusätzlichen Shopify-Aufrufe) einen wöchentlichen Shop-Rückblick
 im Story-Format - Gesamtumsatz, Ø Bestellwert, bester Tag, Top-Produkt,
-geschätzter Nettogewinn, Wachstum ggü. der Vorwoche. Live unter `wrapped/`
+geschätzter Nettogewinn, Wachstum ggü. der Vorwoche. Live unter `wrapped/`
 als swipebare Slides (Klick/Tipp links-rechts, Pfeiltasten, Wischen,
 Auto-Advance alle 5s), jede Slide mit eigenem Farbverlauf statt dem
 sonstigen dunklen Cyberpunk-Look der Suite - bewusst als kleines,
@@ -605,8 +621,8 @@ vorbehalten).
 Produktseiten-URLs im eigenen Shop auf (`BROKEN_LINK_MAX_PRODUKTE`) und
 meldet, welche nicht mehr erreichbar sind.
 
-**🪞 Duplikat-Listing-Detektor** (#73, montags 08:15): vergleicht alle
-aktiven Produkttitel per lokal berechneter Textähnlichkeit
+**🧭 Duplikat-Listing-Detektor** (#73, montags 08:15): vergleicht alle
+aktiven Produkttitel per lokal berechneter Textahnlichkeit
 (`DUPLIKAT_AEHNLICHKEIT_SCHWELLE`) - kein KI-Aufruf nötig, kostet keine
 Tokens - und meldet fast-identische Doppel-Listings.
 
@@ -689,7 +705,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 50 | 🚀 Pump-Scanner | manuell (Referenz) | Alarm per WhatsApp, wenn eine Kryptowährung stark steigt (kein Handel). Gleicher Binance-IP-Block wie #49, noch kein Cloudflare-Ersatz gebaut |
 | 51 | 🔎 Product Hunter | montags 08:00 | schlägt konkrete Produktideen vor, bewertet Nachfrage/Konkurrenz/Marge/Trend/Lieferzeit/Risiko (KI-Einschätzung, keine Live-Trenddaten) |
 | 52 | 🎥 Creative Studio | mittwochs 08:00 | Ad-Kreativ-Paket pro Produkt: Hooks, Ad-Copy, UGC-Idee, Bild-Prompts + optional echte Bildgenerierung |
-| 53 | 🛒 Store Builder & Optimizer | freitags 08:00 | legt Produktseiten als Shopify-Entwurf an + prüft die Live-Storefront auf Geschwindigkeit/Vertrauen/Conversion-Basics |
+| 53 | 🛍️ Store Builder & Optimizer | freitags 08:00 | legt Produktseiten als Shopify-Entwurf an + prüft die Live-Storefront auf Geschwindigkeit/Vertrauen/Conversion-Basics |
 | 54 | 🛡️ Compliance Guard | 1. jedes Monats | prüft Produkte auf CE/WEEE/Verpackung/Werbeaussagen-Themen - nur Hinweise/Checkliste, KEINE Rechtsberatung |
 | 55 | 📦 Fulfillment & Supplier Hub | täglich 09:00 | erkennt verzögerte Bestellungen, Zustellungsprobleme und rankt Lieferanten - nutzt nur die bestehende Shopify-Verbindung |
 | 56 | 📈 Ad Commander | montags 08:00 | Kampagnen-Portfolio-Übersicht (Meta) mit Budget-Umschichtungs-Empfehlung zwischen Kampagnen; TikTok noch nicht angebunden |
@@ -709,7 +725,7 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 70 | 🚀 Produkt-Launch-Hype-Agent | alle 3 Stunden | erkennt draft→aktiv Produktwechsel, verschickt echte Launch-Ankündigung an die Newsletter-Liste |
 | 71 | 📉 Margen-Erosions-Wächter | täglich 06:15 | warnt, wenn Einkaufspreise steigen, aber der Verkaufspreis nicht mitzieht |
 | 72 | 🔗 Broken-Link-Guardian | täglich 05:00 | ruft echte Produktseiten-URLs auf und meldet, welche nicht mehr erreichbar sind |
-| 73 | 🪞 Duplikat-Listing-Detektor | montags 08:15 | findet fast-identische Produkt-Titel im Katalog per Textähnlichkeit, ohne KI-Aufruf |
+| 73 | 🧭 Duplikat-Listing-Detektor | montags 08:15 | findet fast-identische Produkt-Titel im Katalog per Textahnlichkeit, ohne KI-Aufruf |
 | 74 | 💸 Refund-Concierge-Agent | alle 2 Stunden | bearbeitet kleine, per Tag freigegebene Erstattungen automatisch, mit Obergrenze |
 | 75 | 🌍 Übersetzungs-Entwurf-Agent | dienstags 09:15 | übersetzt Produkttexte für neue Zielmärkte als Entwurf per Mail |
 | 76 | 🎯 Nie-Gekauft-Konverter | mittwochs 10:15 | Newsletter-Abonnenten, die noch nie bestellt haben, bekommen einen Erstkauf-Anreiz |
@@ -723,9 +739,10 @@ Alle Standardwerte stehen in `automations/lib/config.mjs`.
 | 84 | 👯 Freunde-werben-Freunde | täglich | echtes Empfehlungsprogramm - jeder Kunde bekommt einen persönlichen Rabattcode, wirbt er einen echten Neukunden, bekommt er automatisch einen Dank-Rabatt |
 | 85 | 🎚️ Autopilot-Status | täglich | veröffentlicht NUR den An/Aus-Zustand der 11 AUTO_*-Schalter (nie die Secret-Werte selbst) für den Live-Autonomy-Level-Regler in Command |
 | 86 | 🕵️ Insider-Buy-Radar | werktags 22:00 UTC | scannt SECs öffentliche Form-4-Meldungen (US-Insider-Käufe) auf auffällige Einzelkäufe oder Cluster-Käufe mehrerer Insider, meldet per WhatsApp - reiner Report, KEIN automatischer Handel, KEIN API-Key nötig (SEC EDGAR ist frei zugänglich) |
-| 87 | 🚀 Opportunity-Radar | täglich | erkennt Produkte mit sprunghaftem Verkaufswachstum ggü. der Vorwoche, rein aus echten eigenen Shopify-Daten, mit knapper Handlungsempfehlung |
+| 87 | 🚀 Opportunity-Radar | täglich | erkennt Produkte mit sprunghaftem Verkaufswachstum ggü. der Vorwoche, rein aus echten eigenen Shopify-Daten, mit knapper Handlungsempfehlung |
 | 88 | 🧪 Split-Test-Agent | täglich | echtes A/B-Testing zwischen Ad-Sets DERSELBEN Meta-Kampagne (Creative-/Zielgruppen-Varianten) - findet klaren Gewinner/Verlierer, pausiert bei Aktivierung den Verlierer, der Gewinner bleibt garantiert aktiv |
 | 89 | 📊 Social-Performance-Radar | wöchentlich | misst echte Aufrufe/Likes/Kommentare der tatsächlich automatisch geposteten Facebook-/Instagram-Beiträge (#18) über die Meta Graph API - keine Schätzung, nur was Meta selbst liefert |
+| 90 | 🎬 Social-Content-Autopilot | täglich 08:00 | generiert eigene Bilder/Ken-Burns-Videos per Pollinations+ffmpeg (kostenlos) zu einer Themenliste und plant sie über Metricool für Instagram/TikTok/YouTube - Entwurf-Modus per Default, `ja` bei `SOCIAL_AUTOPILOT_AUTO_PUBLISH` postet live |
 
 **Hinweis zur Nummer 48:** der ursprüngliche n8n-Workflow 48 ("Review zu
 Werbung") war in der Export-Datei korrupt (0 Byte) und konnte nicht
