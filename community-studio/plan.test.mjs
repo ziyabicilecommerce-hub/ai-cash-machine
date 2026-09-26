@@ -1,0 +1,8 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';import {buildPlan,datePlus,planCSV,autolistCSV,csvCell} from './plan.mjs';
+const products=JSON.parse(readFileSync(new URL('./products.json',import.meta.url)));
+test('35 distinct slots, five daily across month boundary',()=>{const plan=buildPlan(products,'2026-09-27');assert.equal(plan.length,35);assert.equal(new Set(plan.map(p=>p.id)).size,35);for(let i=0;i<7;i++)assert.equal(plan.filter(p=>p.day===i).length,5);assert.equal(plan[34].date,'2026-10-03');});
+test('DST change keeps requested local calendar slots',()=>{assert.equal(datePlus('2026-10-24',1),'2026-10-25');assert.equal(datePlus('2026-12-31',1),'2027-01-01');assert.equal(buildPlan(products,'2026-10-24')[5].time,'09:00');});
+test('invalid inputs fail instead of silently scheduling elsewhere',()=>{assert.throws(()=>buildPlan([],'2026-09-27'));assert.throws(()=>buildPlan(products,'2026-02-30'));assert.throws(()=>buildPlan(products,'2026-09-27','bad'));});
+test('video ideas are never exported as image autolist posts',()=>{assert.equal(autolistCSV(buildPlan(products,'2026-09-27','video'),products),'\uFEFF');assert.equal(buildPlan(products,'2026-09-27').filter(x=>x.type==='bild').length,21);});
+test('CSV safely handles quotes, line breaks and spreadsheet formulas',()=>{assert.equal(csvCell('=HYPERLINK("bad")'),'"\'=HYPERLINK(""bad"")"');assert.equal(csvCell('line\n"two"'),'"line\n""two"""');const p=buildPlan(products,'2026-09-27');assert.ok(planCSV(p,products).includes('Europe/Berlin'));assert.ok(autolistCSV(p,products).includes('cdn.shopify.com'));});

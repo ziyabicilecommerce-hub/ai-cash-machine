@@ -30,6 +30,7 @@ on:
       - 'strategy-lab/**'
       - 'mission-control/**'
       - 'social-poster/**'
+      - 'community-studio/**'
       - 'empire/**'
       - 'command/**'
       - 'cockpit/**'
@@ -87,6 +88,7 @@ jobs:
           cp -r strategy-lab _site/strategy-lab
           cp -r mission-control _site/mission-control
           cp -r social-poster _site/social-poster
+          cp -r community-studio _site/community-studio
           cp -r empire _site/empire
           cp -r command _site/command
           cp -r cockpit _site/cockpit
