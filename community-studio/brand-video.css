@@ -1,0 +1,8 @@
+.brand-switch{display:flex;flex-direction:row;align-items:center;gap:10px;font-size:10px;letter-spacing:.8px}
+.brand-switch select{min-width:140px;padding:9px 11px;background:#fffef9}
+#sourceVideo{max-width:100%;border-style:dashed}
+.preview{background:radial-gradient(circle at 50% 35%,#f7f5ed,#d8ddd2 75%)}
+#videoResult{display:grid;gap:10px}
+#videoResult video{max-width:310px;border-radius:12px;box-shadow:0 12px 32px #142a2530}
+#videoResult .button{width:max-content}
+@media(max-width:750px){.brand-switch{gap:5px}.brand-switch select{min-width:110px;padding:8px;font-size:12px}header{gap:10px}header>a{white-space:nowrap}}
