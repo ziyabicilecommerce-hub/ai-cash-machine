@@ -1,6 +1,7 @@
 name: "Diag · Video-Spaces-Scan"
 on:
-  workflow_dispatch: {}
+  push:
+    branches: [diag/video-spaces]
 permissions:
   contents: read
 jobs:
