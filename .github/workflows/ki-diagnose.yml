@@ -14,6 +14,13 @@ jobs:
   diagnose:
     runs-on: ubuntu-latest
     steps:
+      - name: Live-Seiten pruefen
+        run: |
+          for u in automations-dashboard/ command/ jarvis/ ; do
+            echo "=================== $u"
+            curl -sS -m 30 -D - -o body.html "https://ziyabicilecommerce-hub.github.io/ai-cash-machine/$u?nocache=$RANDOM" | grep -iE "^(HTTP|cache-control|age|last-modified|x-cache)"
+            echo "Bytes: $(wc -c < body.html)"; head -c 300 body.html; echo; echo
+          done
       - name: KI-Dienste testen
         env:
           ORIGIN: https://ziyabicilecommerce-hub.github.io
