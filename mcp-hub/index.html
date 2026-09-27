@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE MCP-HUB</title>
+<meta name="description" content="Alle öffentlich gelisteten MCP-Server weltweit – durchsuchbar nach Kategorie, wöchentlich automatisch aktualisiert.">
+<meta name="theme-color" content="#3ef2a0">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#030512; --panel:rgba(20,28,40,.6); --green:#3ef2a0; --cyan:#6fe0ff; --amber:#ffc55c; --red:#ff6b81;
+    --txt:#eef4f2; --mut:rgba(220,235,230,.62); --line:rgba(62,242,160,.24); --line2:rgba(255,255,255,.08);
+    --mono:'JetBrains Mono', ui-monospace, monospace; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:system-ui,-apple-system,sans-serif; line-height:1.5; min-height:100vh;
+    background-image:radial-gradient(ellipse 80% 50% at 50% -10%, rgba(62,242,160,.14), transparent 70%); }
+  header { padding:28px 16px 12px; max-width:1200px; margin:0 auto; }
+  h1 { font-family:'Orbitron',sans-serif; font-size:clamp(22px,5vw,38px); letter-spacing:.04em; }
+  h1 span { color:var(--green); }
+  .sub { color:var(--mut); margin-top:6px; font-size:14px; }
+  .stats { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+  .stat { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px 14px; min-width:120px; }
+  .stat b { display:block; font-family:var(--mono); font-size:22px; color:var(--green); }
+  .stat small { color:var(--mut); font-size:12px; }
+  .controls { position:sticky; top:0; z-index:10; background:rgba(3,5,18,.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--line2); }
+  .controls-inner { max-width:1200px; margin:0 auto; padding:12px 16px; display:flex; flex-direction:column; gap:10px; }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  input[type=search] { flex:1; min-width:200px; background:#0a0f1c; border:1px solid var(--line); color:var(--txt); border-radius:10px;
+    padding:10px 14px; font:inherit; font-size:15px; }
+  input[type=search]:focus { outline:2px solid var(--green); outline-offset:1px; }
+  label.toggle { display:flex; align-items:center; gap:6px; color:var(--mut); font-size:14px; cursor:pointer; white-space:nowrap; }
+  .chips { display:flex; gap:6px; overflow-x:auto; padding-bottom:2px; scrollbar-width:thin; }
+  .chip { flex:none; background:transparent; border:1px solid var(--line2); color:var(--mut); border-radius:999px; padding:6px 12px;
+    font:inherit; font-size:13px; cursor:pointer; white-space:nowrap; }
+  .chip[aria-pressed=true] { border-color:var(--green); color:var(--green); background:rgba(62,242,160,.08); }
+  .chip em { font-style:normal; font-family:var(--mono); opacity:.7; margin-left:4px; }
+  main { max-width:1200px; margin:0 auto; padding:16px; }
+  .info { color:var(--mut); font-size:13px; margin-bottom:12px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line2); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:8px; min-width:0; }
+  .card:hover { border-color:var(--line); }
+  .card h3 { font-size:15px; overflow-wrap:anywhere; }
+  .card .id { font-family:var(--mono); font-size:11px; color:var(--mut); overflow-wrap:anywhere; }
+  .card p { font-size:13px; color:var(--mut); flex:1; overflow-wrap:anywhere; }
+  .badges { display:flex; flex-wrap:wrap; gap:6px; }
+  .badge { font-size:11px; font-family:var(--mono); border-radius:6px; padding:2px 7px; border:1px solid var(--line2); color:var(--mut); }
+  .badge.free { border-color:rgba(62,242,160,.5); color:var(--green); }
+  .badge.key { border-color:rgba(255,197,92,.5); color:var(--amber); }
+  .badge.cat { border-color:rgba(111,224,255,.4); color:var(--cyan); }
+  .actions { display:flex; flex-wrap:wrap; gap:8px; }
+  .actions a, .actions button { font:inherit; font-size:12px; color:var(--green); background:none; border:1px solid var(--line); border-radius:8px;
+    padding:5px 10px; cursor:pointer; text-decoration:none; }
+  .actions a:hover, .actions button:hover { background:rgba(62,242,160,.1); }
+  #more { display:block; margin:20px auto; font:inherit; color:var(--bg); background:var(--green); border:0; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; }
+  .empty { text-align:center; color:var(--mut); padding:40px 0; font-family:var(--mono); }
+  footer { text-align:center; color:var(--mut); font-size:12px; padding:24px 16px 40px; }
+  footer a { color:var(--green); }
+</style>
+</head>
+<body>
+<header>
+  <h1>MCP-<span>HUB</span></h1>
+  <p class="sub">Alle öffentlich gelisteten MCP-Server aus der offiziellen MCP-Registry – nach Kategorie sortiert, wöchentlich automatisch aktualisiert (Automation #91).</p>
+  <div class="stats">
+    <div class="stat"><b id="sAll">…</b><small>MCP-Server</small></div>
+    <div class="stat"><b id="sFree">…</b><small>ohne Key-Pflicht*</small></div>
+    <div class="stat"><b id="sCat">…</b><small>Kategorien</small></div>
+    <div class="stat"><b id="sDate">…</b><small>Stand</small></div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="row">
+      <input type="search" id="q" placeholder="Suchen: video, instagram, shopify, anime …" aria-label="MCP-Server durchsuchen">
+      <label class="toggle"><input type="checkbox" id="free"> nur ohne Key</label>
+    </div>
+    <div class="chips" id="chips" role="toolbar" aria-label="Kategorien"></div>
+  </div>
+</div>
+
+<main>
+  <div class="info" id="info">Katalog wird geladen …</div>
+  <div class="grid" id="grid"></div>
+  <button id="more" hidden>Mehr anzeigen</button>
+</main>
+
+<footer>
+  * „ohne Key-Pflicht“ heißt: Der Registry-Eintrag verlangt keinen API-Key. Manche Dienste wollen trotzdem einen Login (OAuth) oder sind kostenpflichtig – vor dem Einsatz prüfen.<br>
+  Quelle: <a href="https://registry.modelcontextprotocol.io" target="_blank" rel="noopener">registry.modelcontextprotocol.io</a> ·
+  <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-91-mcp-katalog.yml" target="_blank" rel="noopener">Automation #91</a>
+</footer>
+
+<script>
+const LABELS = {
+  'ki-video': '🎬 KI-Video', 'ki-bild': '🖼️ KI-Bild', 'ki-audio': '🎙️ KI-Audio', 'social-media': '📱 Social Media',
+  'e-commerce': '🛒 E-Commerce', 'marketing-seo': '📈 Marketing & SEO', 'email-kommunikation': '✉️ E-Mail & Chat',
+  'web-suche-scraping': '🔎 Web & Scraping', 'finanzen-crypto': '💹 Finanzen & Crypto', 'daten-datenbank': '🗄️ Daten',
+  'ki-llm-agenten': '🤖 KI & Agenten', 'entwicklung': '🛠️ Entwicklung', 'produktivitaet': '✅ Produktivität', 'sonstiges': '📦 Sonstiges',
+};
+const SEITE = 60;
+let alle = [], gefiltert = [], gezeigt = 0, kat = 'alle';
+const $ = (id) => document.getElementById(id);
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+}
+
+function sichereUrl(u) {
+  try { const x = new URL(u); return x.protocol === 'https:' || x.protocol === 'http:' ? x.href : ''; } catch { return ''; }
+}
+
+function karte(s) {
+  const c = el('article', 'card');
+  c.append(el('h3', '', s.n));
+  if (s.id && s.id !== s.n) c.append(el('div', 'id', s.id));
+  c.append(el('p', '', s.d || 'Keine Beschreibung.'));
+  const b = el('div', 'badges');
+  b.append(el('span', 'badge cat', LABELS[s.c] || s.c));
+  b.append(el('span', s.k ? 'badge key' : 'badge free', s.k ? 'Key nötig' : 'ohne Key'));
+  if (s.u) b.append(el('span', 'badge', 'Remote'));
+  if (s.p) b.append(el('span', 'badge', s.p.split(':')[0] || 'Paket'));
+  c.append(b);
+  const a = el('div', 'actions');
+  const repo = sichereUrl(s.r);
+  if (repo) { const l = el('a', '', 'Code'); l.href = repo; l.target = '_blank'; l.rel = 'noopener'; a.append(l); }
+  const ziel = s.u || s.p;
+  if (ziel) {
+    const btn = el('button', '', s.u ? 'URL kopieren' : 'Paket kopieren');
+    btn.type = 'button';
+    btn.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(s.u || s.p.split(':').slice(1).join(':')); btn.textContent = 'Kopiert ✓'; }
+      catch { btn.textContent = 'Kopieren nicht möglich'; }
+    });
+    a.append(btn);
+  }
+  if (a.childElementCount) c.append(a);
+  return c;
+}
+
+function filtern() {
+  const q = $('q').value.trim().toLowerCase();
+  const nurFrei = $('free').checked;
+  const woerter = q.split(/\s+/).filter(Boolean);
+  gefiltert = alle.filter((s) => {
+    if (kat !== 'alle' && s.c !== kat) return false;
+    if (nurFrei && s.k) return false;
+    if (!woerter.length) return true;
+    const t = s._t || (s._t = `${s.n} ${s.id} ${s.d}`.toLowerCase());
+    return woerter.every((w) => t.includes(w));
+  });
+  gezeigt = 0;
+  $('grid').replaceChildren();
+  $('info').textContent = `${gefiltert.length.toLocaleString('de-DE')} Treffer`;
+  mehr();
+}
+
+function mehr() {
+  const frag = document.createDocumentFragment();
+  for (const s of gefiltert.slice(gezeigt, gezeigt + SEITE)) frag.append(karte(s));
+  gezeigt += SEITE;
+  $('grid').append(frag);
+  if (!gefiltert.length) $('grid').append(el('div', 'empty', '0 Treffer – anderen Suchbegriff oder Filter probieren.'));
+  $('more').hidden = gezeigt >= gefiltert.length;
+}
+
+function chips(kategorien, gesamt) {
+  const box = $('chips');
+  const eintraege = [['alle', gesamt], ...Object.entries(kategorien).sort((a, b) => b[1] - a[1])];
+  for (const [name, n] of eintraege) {
+    const b = el('button', 'chip', name === 'alle' ? '🌍 Alle' : (LABELS[name] || name));
+    b.type = 'button';
+    b.setAttribute('aria-pressed', String(name === kat));
+    b.append(el('em', '', n.toLocaleString('de-DE')));
+    b.addEventListener('click', () => {
+      kat = name;
+      box.querySelectorAll('.chip').forEach((x) => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+      filtern();
+    });
+    box.append(b);
+  }
+}
+
+let timer;
+$('q').addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(filtern, 150); });
+$('free').addEventListener('change', filtern);
+$('more').addEventListener('click', mehr);
+
+fetch('./catalog.json', { cache: 'no-cache' })
+  .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+  .then((d) => {
+    alle = d.server || [];
+    $('sAll').textContent = (d.anzahl || alle.length).toLocaleString('de-DE');
+    $('sFree').textContent = (d.ohneKey ?? alle.filter((s) => !s.k).length).toLocaleString('de-DE');
+    $('sCat').textContent = Object.keys(d.kategorien || {}).length;
+    $('sDate').textContent = d.stand ? new Date(d.stand).toLocaleDateString('de-DE') : '–';
+    chips(d.kategorien || {}, alle.length);
+    const start = new URLSearchParams(location.search).get('q');
+    if (start) $('q').value = start;
+    filtern();
+  })
+  .catch((err) => { $('info').textContent = `Katalog konnte nicht geladen werden (${err.message}).`; });
+</script>
+</body>
+</html>
