@@ -31,6 +31,7 @@ on:
       - 'mission-control/**'
       - 'social-poster/**'
       - 'community-studio/**'
+      - 'mcp-hub/**'
       - 'empire/**'
       - 'command/**'
       - 'cockpit/**'
@@ -89,6 +90,7 @@ jobs:
           cp -r mission-control _site/mission-control
           cp -r social-poster _site/social-poster
           cp -r community-studio _site/community-studio
+          cp -r mcp-hub _site/mcp-hub
           cp -r empire _site/empire
           cp -r command _site/command
           cp -r cockpit _site/cockpit

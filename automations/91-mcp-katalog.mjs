@@ -1,7 +1,7 @@
 // MCP-Katalog - sammelt woechentlich alle oeffentlich gelisteten MCP-Server
-// aus der offiziellen MCP-Registry (registry.modelcontextprotocol.io) und
-// dem Glama-Verzeichnis, sortiert sie nach Kategorien und markiert, welche
-// ohne API-Key / Konto nutzbar sind. Ergebnis landet in mcp-hub/catalog.json
+// aus der offiziellen MCP-Registry (registry.modelcontextprotocol.io),
+// sortiert sie nach Kategorien und markiert, welche laut Registry-Eintrag
+// keinen API-Key verlangen (OAuth-Logins stehen dort oft nicht drin). Ergebnis landet in mcp-hub/catalog.json
 // und wird von der MCP-Hub-Seite angezeigt.
 import { writeFileSync, mkdirSync } from 'node:fs';
 
@@ -10,7 +10,7 @@ const MAX_SEITEN = 400;
 
 const KATEGORIEN = [
   ['ki-video', /\b(video|text-to-video|t2v|i2v|runway|kling|veo|sora|luma|pika|hailuo|seedance|wan2|ltx|animat)/i],
-  ['ki-bild', /\b(image gen|image-gen|text-to-image|stable diffusion|sdxl|flux|midjourney|dall-?e|ideogram|imagen|comfyui|replicate|fal\.ai|photo edit|background remov|upscal)/i],
+  ['ki-bild', /(generat\w* (an )?images?|images? generat|image edit|\bimage gen|image-gen|text-to-image|stable diffusion|sdxl|flux|midjourney|dall-?e|ideogram|imagen|comfyui|replicate|fal\.ai|photo edit|background remov|upscal)/i],
   ['ki-audio', /\b(tts|text-to-speech|speech|voice|elevenlabs|music|audio|podcast|transcri|whisper)/i],
   ['social-media', /\b(instagram|tiktok|youtube|facebook|twitter|\bx\.com|threads|bluesky|linkedin|pinterest|reddit|mastodon|social media|metricool|buffer|hootsuite|telegram|discord|whatsapp)/i],
   ['e-commerce', /\b(shopify|woocommerce|amazon|ebay|etsy|stripe|paypal|checkout|e-?commerce|product catalog|inventory|order)/i],
@@ -66,7 +66,7 @@ async function offizielleRegistry() {
       eintraege.set(s.name, {
         n: s.title || s.name,
         id: s.name,
-        d: (s.description || '').slice(0, 220),
+        d: (s.description || '').slice(0, 180),
         q: 'offiziell',
         r: s.repository?.url || '',
         u: remote?.url || '',
@@ -80,35 +80,10 @@ async function offizielleRegistry() {
   return [...eintraege.values()];
 }
 
-async function glama() {
-  const eintraege = [];
-  let after = '';
-  for (let seite = 0; seite < MAX_SEITEN; seite++) {
-    const url = `https://glama.ai/api/mcp/v1/servers?first=100${after ? `&after=${encodeURIComponent(after)}` : ''}`;
-    const data = await holeJson(url);
-    for (const s of data.servers || []) {
-      const envPflicht = s.environmentVariablesJsonSchema?.required || [];
-      eintraege.push({
-        n: s.name,
-        id: s.namespace ? `${s.namespace}/${s.slug}` : s.id,
-        d: (s.description || '').slice(0, 220),
-        q: 'glama',
-        r: s.repository?.url || '',
-        u: s.url || '',
-        p: '',
-        k: envPflicht.some((e) => /key|token|secret|password/i.test(e)) ? 1 : 0,
-      });
-    }
-    after = data.pageInfo?.hasNextPage ? data.pageInfo.endCursor : '';
-    if (!after) break;
-  }
-  return eintraege;
-}
-
 async function main() {
   const quellen = {};
   let alle = [];
-  for (const [name, fn] of [['offiziell', offizielleRegistry], ['glama', glama]]) {
+  for (const [name, fn] of [['offiziell', offizielleRegistry]]) {
     try {
       const liste = await fn();
       quellen[name] = liste.length;
@@ -124,7 +99,7 @@ async function main() {
   for (const e of alle) {
     const schluessel = (e.r || e.id || e.n).toLowerCase().replace(/\.git$/, '').replace(/\/$/, '');
     const vorher = gesehen.get(schluessel);
-    if (!vorher || (vorher.q === 'glama' && e.q === 'offiziell')) gesehen.set(schluessel, e);
+    if (!vorher) gesehen.set(schluessel, e);
   }
   const server = [...gesehen.values()].map((e) => ({ ...e, c: kategorie(`${e.n} ${e.id} ${e.d}`) }));
   server.sort((a, b) => a.n.localeCompare(b.n));
