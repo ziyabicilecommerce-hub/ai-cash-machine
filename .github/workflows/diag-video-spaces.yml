@@ -10,5 +10,8 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - run: pip install -q gradio_client
-      - run: python3 scripts/hf-video-spaces-gentest.py
+      - run: |
+          for u in mcp-hub/ mcp-hub/catalog.json automations-dashboard/; do
+            curl -sS -o body -w "$u HTTP %{http_code} %{size_download} Bytes\n" "https://ziyabicilecommerce-hub.github.io/ai-cash-machine/$u?x=$RANDOM"
+          done
+          grep -o "<title>[^<]*" body; grep -c 'class="num">91' body
