@@ -13,6 +13,7 @@ test('100 unique sourced releases and authored copy for all 20 products',async()
 });
 test('request duration and image bounds reject unsupported or unsafe input',()=>{
  for(const c of connections){assert.equal(requestData(c,input).length,c.params.length);assert.throws(()=>requestData(c,{...input,duration:12}));assert.throws(()=>requestData(c,{...input,image:'javascript:alert(1)'}));}
+ assert.deepEqual(requestData(connections[0],input).slice(-2),[768,512]);
 });
 test('SSE parsing retains incomplete events across chunks and supports CRLF',()=>{
  const first=parseEvents('event: heartbeat\r\ndata: null\r\n\r\nevent: comp');assert.equal(first.events[0].event,'heartbeat');assert.equal(first.rest,'event: comp');

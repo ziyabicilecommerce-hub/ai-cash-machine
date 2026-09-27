@@ -12,7 +12,7 @@ export function requestData(connection,{image,prompt,duration=4}){
  const d=Number(duration);if(!Number.isFinite(d)||d<1||d>connection.maxDuration)throw new Error('Die gewählte Dauer wird von diesem Modell nicht unterstützt.');
  const file={path:u.href,meta:{_type:'gradio.FileData'}};
  switch(connection.kind){
-  case 'ltx23':return [file,prompt,d,true,42,true,832,480];
+  case 'ltx23':return [file,prompt,d,true,42,true,768,512];
   case 'fastwan':return [file,prompt,832,480,negative,d,0,4,42,true];
   case 'wan14':return [file,prompt,6,negative,d,1,1,42,true];
   case 'ltx098':return [prompt,negative,file,null,832,480,'image-to-video',d,9,42,true,1,true];
