@@ -7,7 +7,8 @@ permissions:
 jobs:
   scan:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - run: pip install -q gradio_client
-      - run: python3 scripts/hf-video-spaces-probe.py
+      - run: python3 scripts/hf-video-spaces-gentest.py
