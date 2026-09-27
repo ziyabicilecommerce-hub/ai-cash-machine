@@ -13,7 +13,7 @@ for term in ["video", "wan", "ltx", "cogvideo", "hunyuan", "animatediff", "anime
     queries.append(("search", term))
 
 for kind, val in queries:
-    params = {kind: val, "sort": "likes", "direction": "-1", "limit": "500", "full": "true"}
+    params = [(kind, val), ("sort", "likes"), ("direction", "-1"), ("limit", "500")] + [("expand[]", f) for f in ["runtime", "sdk", "likes", "tags", "subdomain"]]
     try:
         data = get("https://huggingface.co/api/spaces?" + urllib.parse.urlencode(params))
     except Exception as e:
@@ -34,7 +34,7 @@ for sid, s in seen.items():
     videoish = any(k in name or k in tags for k in ["video", "wan", "ltx", "cogvideo", "hunyuan", "animatediff", "i2v", "t2v", "svd", "framepack", "mochi", "opensora", "pyramid", "skyreels", "zeroscope"])
     if stage == "RUNNING" and videoish and s.get("sdk") == "gradio":
         hw[hardware] += 1
-        rows.append((s.get("likes", 0), sid, hardware))
+        rows.append((s.get("likes", 0), sid, hardware, s.get("subdomain")))
 
 rows.sort(reverse=True)
 print("TOTAL gefunden:", len(seen))
@@ -45,5 +45,6 @@ gpu = [r for r in rows if r[2] and r[2] != "cpu-basic" and r[2] != "cpu-upgrade"
 print("davon mit GPU:", len(gpu))
 print("=== TOP (likes, id, hardware) ===")
 for r in gpu[:300]:
-    print(r[0], r[1], r[2])
-json.dump([{"id": r[1], "likes": r[0], "hardware": r[2]} for r in gpu], open("spaces.json", "w"))
+    print(r[0], r[1], r[2], r[3])
+json.dump([{"id": r[1], "likes": r[0], "hardware": r[2], "subdomain": r[3]} for r in gpu], open("spaces.json", "w"))
+print("=== SAMPLE KEYS ===", list(next(iter(seen.values())).keys()))
