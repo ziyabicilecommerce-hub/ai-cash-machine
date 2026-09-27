@@ -4,9 +4,6 @@ on:
   schedule:
     - cron: '30 4 * * 1'
   workflow_dispatch: {}
-  push:
-    branches: [feat/mcp-hub]
-    paths: ['automations/91-mcp-katalog.mjs']
 
 permissions:
   contents: write
