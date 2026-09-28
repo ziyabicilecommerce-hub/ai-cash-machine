@@ -214,7 +214,17 @@ async function korrekturLesen(szenen, produktName) {
   }
 }
 
+// Zwei Anlaeufe: das Gratis-Modell liefert gelegentlich nur 1-2 Szenen.
 async function produktSkript(p) {
+  let skript;
+  for (let versuch = 0; versuch < 2; versuch++) {
+    skript = await produktSkriptEinmal(p);
+    if (skript.szenen.length >= 3) break;
+  }
+  return skript;
+}
+
+async function produktSkriptEinmal(p) {
   const preis = p.variants?.[0]?.price;
   const link = `${p.shopUrl}/products/${p.handle}`;
   const fotos = p.images.map((b) => b.src);
@@ -275,6 +285,8 @@ async function bauen() {
   console.log(`[94-video-fabrik] ${produkte.length ? `${produkte.length} Produkte gefunden - Produkt-Ads` : 'kein Shopify-Zugang - Themen-Videos'}, ${auftraege.length} Videos geplant`);
   if (LANG_MIN > 0) auftraege.push({ thema: liste[tag % liste.length], format: 'quer', minuten: LANG_MIN });
 
+  // Ersatzprodukte: scheitert ein Produkt, springt das naechste ein, damit das Tagesziel steht.
+  const reserve = produkte.filter((p) => !auftraege.some((a) => a.produkt === p));
   const manifest = [];
   for (const [i, a] of auftraege.entries()) {
     const start = Date.now();
@@ -299,6 +311,11 @@ async function bauen() {
       }
     } catch (err) {
       console.log(`[94-video-fabrik] ✗ "${a.thema}": ${err.message}`);
+      if (a.produkt && reserve.length && !a.ersatz) {
+        const p = reserve.shift();
+        auftraege.push({ thema: p.title, produkt: p, format: a.format, ersatz: true });
+        console.log(`[94-video-fabrik] Ersatz: "${p.title}"`);
+      }
     }
   }
   writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1));
