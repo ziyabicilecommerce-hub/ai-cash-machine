@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '30 4 * * 1'
   workflow_dispatch: {}
+  push:
+    branches: [feat/mcp-quellen]
+    paths: ['automations/91-mcp-katalog.mjs', 'automations/lib/mcpQuellen.mjs']
 
 permissions:
   contents: write
@@ -16,13 +19,15 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - run: node automations/91-mcp-katalog.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Katalog committen
         run: |
           git config user.name "github-actions[bot]"
@@ -31,7 +36,7 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "chore: MCP-Katalog aktualisiert [skip ci]"
             git push
-            gh workflow run jarvis-pages.yml --ref main
+            if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
           fi
         env:
           GH_TOKEN: ${{ github.token }}
