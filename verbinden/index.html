@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alles verbinden</title>
+<meta name="description" content="Ein Klick pro Plattform: Metricool, TikTok, Instagram, Facebook, YouTube, Pinterest, Threads, Bluesky, LinkedIn, Telegram, Mastodon und die GitHub-Secrets für den kostenlosen Direkt-Poster.">
+<meta name="referrer" content="no-referrer">
+<style>
+  :root { --bg:#070b12; --panel:#111827; --panel2:#0c1320; --gruen:#3ef2a0; --cyan:#6fe0ff; --txt:#eef3f8; --mut:#9fb0c3; --line:#1f2b3d; --auf:#04121a; }
+  @media (prefers-color-scheme: light) { :root { --bg:#f4f7fb; --panel:#ffffff; --panel2:#eef3f8; --gruen:#0c8f5f; --cyan:#0a6f99; --txt:#101826; --mut:#526174; --line:#dbe3ee; --auf:#ffffff; } }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:system-ui,-apple-system,sans-serif; line-height:1.5; }
+  main { max-width:900px; margin:0 auto; padding:24px 16px 48px; }
+  h1 { font-size:clamp(26px,6vw,40px); letter-spacing:.01em; }
+  h1 span { color:var(--gruen); }
+  .sub { color:var(--mut); margin:6px 0 16px; }
+  .fortschritt { height:10px; background:var(--panel2); border-radius:99px; overflow:hidden; border:1px solid var(--line); }
+  .fortschritt div { height:100%; width:0; background:linear-gradient(90deg,var(--gruen),var(--cyan)); transition:width .3s; }
+  .zahl { font-size:13px; color:var(--mut); margin:6px 0 20px; }
+  h2 { font-size:18px; margin:26px 0 4px; }
+  .hinweis { color:var(--mut); font-size:14px; margin-bottom:10px; }
+  .gross { display:block; text-align:center; font-size:18px; font-weight:700; padding:16px; border-radius:14px; background:var(--gruen); color:var(--auf); text-decoration:none; margin:10px 0; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px; }
+  .karte { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:8px; min-width:0; }
+  .karte.fertig { border-color:var(--gruen); }
+  .kopf { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .kopf strong { font-size:16px; }
+  .karte p { color:var(--mut); font-size:13px; overflow-wrap:anywhere; }
+  .knopf { display:block; text-align:center; font-weight:600; padding:10px; border-radius:10px; text-decoration:none; background:var(--cyan); color:var(--auf); }
+  .knopf.zweit { background:transparent; color:var(--txt); border:1px solid var(--line); font-weight:500; }
+  label.haken { display:flex; gap:6px; align-items:center; font-size:13px; color:var(--mut); cursor:pointer; white-space:nowrap; }
+  input[type=checkbox] { width:18px; height:18px; accent-color:var(--gruen); }
+  code { font-family:ui-monospace,monospace; font-size:12px; background:var(--panel2); padding:1px 5px; border-radius:5px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>ALLES <span>VERBINDEN</span></h1>
+  <p class="sub">Ein Klick pro Plattform – du landest direkt an der richtigen Stelle. Häkchen setzen, wenn erledigt (wird nur in diesem Browser gespeichert).</p>
+  <div class="fortschritt"><div id="balken"></div></div>
+  <div class="zahl" id="zahl"></div>
+
+  <h2>1 · Metricool (alle Netzwerke an einer Stelle)</h2>
+  <p class="hinweis">Dort auf jeder Zeile „… verbinden“ klicken und bei der Plattform einloggen. TikTok: nur „business“ ODER „personal“ nehmen.</p>
+  <a class="gross" href="https://app.metricool.com/brands/connections?blogId=7054490" target="_blank" rel="noopener">➜ Metricool: Konten verbinden</a>
+  <div class="grid" id="metricool"></div>
+
+  <h2>2 · Kostenloser Direkt-Poster (#99) – Zugangsdaten holen</h2>
+  <p class="hinweis">Für automatisches, kostenloses Posten ohne Metricool-Abo. Jeder Knopf öffnet die Stelle, wo du den Schlüssel bekommst.</p>
+  <div class="grid" id="direkt"></div>
+
+  <h2>3 · In GitHub eintragen</h2>
+  <p class="hinweis">Geheimes (Passwörter, Tokens) unter „Secrets“, Normales (Kanalname, Adresse) unter „Variables“.</p>
+  <div class="grid" id="github"></div>
+</main>
+<script>
+const METRICOOL = [
+  ['m-tiktok', 'TikTok', 'Business- oder persönliches Konto (nur eins).'],
+  ['m-instagram', 'Instagram', 'Muss ein professionelles Konto sein, mit Facebook-Seite verknüpft.'],
+  ['m-facebook', 'Facebook-Seite', 'Die Seite, nicht das Privatprofil.'],
+  ['m-youtube', 'YouTube', 'Deinen Kanal wieder verbinden.'],
+  ['m-pinterest', 'Pinterest', 'Viel Reichweite für Produkte.'],
+  ['m-threads', 'Threads', 'Läuft über dein Instagram-Konto.'],
+  ['m-bluesky', 'Bluesky', 'Braucht ein App-Passwort (Knopf unten bei Bluesky).'],
+  ['m-linkedin', 'LinkedIn', 'Steht auf „erneut verbinden“.'],
+  ['m-google', 'Google-Unternehmensprofil', 'Nur wenn vorhanden.'],
+];
+const DIREKT = [
+  ['d-bluesky', 'Bluesky', 'App-Passwort erstellen → als Secrets BLUESKY_HANDLE + BLUESKY_APP_PASSWORD.', [['App-Passwort erstellen', 'https://bsky.app/settings/app-passwords']]],
+  ['d-telegram', 'Telegram-Kanal', 'Kanal anlegen, Bot als Admin hinzufügen → Variable TELEGRAM_KANAL_ID (z. B. @deinkanal).', [['BotFather öffnen', 'https://t.me/BotFather']]],
+  ['d-tiktok', 'TikTok', 'App anlegen und Refresh-Token holen – mit Schritt-für-Schritt-Seite.', [['TikTok verbinden', '../tiktok-verbinden/'], ['TikTok Developer', 'https://developers.tiktok.com/apps/']]],
+  ['d-meta', 'Instagram + Facebook', 'Meta-App (Business) anlegen, dich als Instagram-Tester eintragen, Token erzeugen und verlängern.', [['Meta-App anlegen', 'https://developers.facebook.com/apps/'], ['Graph API Explorer', 'https://developers.facebook.com/tools/explorer/'], ['Token verlängern', 'https://developers.facebook.com/tools/debug/accesstoken/']]],
+  ['d-youtube', 'YouTube', 'Projekt anlegen, YouTube Data API v3 aktivieren, OAuth-Client (Webanwendung), dann Refresh-Token im Playground holen.', [['YouTube API aktivieren', 'https://console.cloud.google.com/apis/library/youtube.googleapis.com'], ['OAuth-Client anlegen', 'https://console.cloud.google.com/apis/credentials'], ['OAuth Playground', 'https://developers.google.com/oauthplayground/']]],
+  ['d-mastodon', 'Mastodon', 'Einstellungen → Entwicklung → Neue Anwendung (Recht: write) → Secret MASTODON_TOKEN, Variable MASTODON_URL.', [['mastodon.social: Anwendung', 'https://mastodon.social/settings/applications/new']]],
+  ['d-podcast', 'Podcast (Spotify/Apple)', 'Erst Variable PODCAST_EMAIL setzen, dann den RSS-Feed einreichen.', [['Spotify for Creators', 'https://creators.spotify.com/'], ['Apple Podcasts Connect', 'https://podcastsconnect.apple.com/'], ['Podcast-Seite (RSS)', '../podcast/']]],
+];
+const REPO = 'https://github.com/ziyabicilecommerce-hub/ai-cash-machine';
+const GITHUB = [
+  ['g-secrets', 'GitHub Secrets', 'Tokens & Passwörter: BLUESKY_*, TIKTOK_*, META_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ACCOUNT_ID, FACEBOOK_PAGE_*, YOUTUBE_*, MASTODON_TOKEN.', [['Neues Secret', `${REPO}/settings/secrets/actions/new`], ['Alle Secrets', `${REPO}/settings/secrets/actions`]]],
+  ['g-vars', 'GitHub Variables', 'Normale Werte: TELEGRAM_KANAL_ID, MASTODON_URL, PODCAST_EMAIL, TIKTOK_MODUS.', [['Neue Variable', `${REPO}/settings/variables/actions/new`], ['Alle Variables', `${REPO}/settings/variables/actions`]]],
+  ['g-test', 'Testlauf starten', 'Nach dem Eintragen: Video-Fabrik starten – der Direkt-Poster postet danach automatisch.', [['Video-Fabrik starten', `${REPO}/actions/workflows/automation-94-video-fabrik.yml`]]],
+];
+
+const lesen = () => { try { return JSON.parse(localStorage.getItem('verbinden') || '{}'); } catch { return {}; } };
+const schreiben = (d) => { try { localStorage.setItem('verbinden', JSON.stringify(d)); } catch { /* egal */ } };
+const stand = lesen();
+
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function karte([id, titel, text, links]) {
+  const k = el('article', `karte${stand[id] ? ' fertig' : ''}`);
+  const kopf = el('div', 'kopf');
+  kopf.append(el('strong', '', titel));
+  const lab = el('label', 'haken');
+  const cb = el('input'); cb.type = 'checkbox'; cb.checked = Boolean(stand[id]);
+  cb.addEventListener('change', () => { stand[id] = cb.checked; schreiben(stand); k.classList.toggle('fertig', cb.checked); zaehlen(); });
+  lab.append(cb, document.createTextNode('erledigt'));
+  kopf.append(lab);
+  k.append(kopf, el('p', '', text));
+  (links || [['In Metricool verbinden', 'https://app.metricool.com/brands/connections?blogId=7054490']]).forEach(([t, h], i) => {
+    const a = el('a', `knopf${i ? ' zweit' : ''}`, `${t} ➜`); a.href = h; a.target = '_blank'; a.rel = 'noopener'; k.append(a);
+  });
+  return k;
+}
+const alle = [...METRICOOL, ...DIREKT, ...GITHUB];
+function zaehlen() {
+  const n = alle.filter(([id]) => stand[id]).length;
+  document.getElementById('balken').style.width = `${Math.round((n / alle.length) * 100)}%`;
+  document.getElementById('zahl').textContent = `${n} von ${alle.length} erledigt`;
+}
+METRICOOL.forEach((x) => document.getElementById('metricool').append(karte(x)));
+DIREKT.forEach((x) => document.getElementById('direkt').append(karte(x)));
+GITHUB.forEach((x) => document.getElementById('github').append(karte(x)));
+zaehlen();
+</script>
+</body>
+</html>
