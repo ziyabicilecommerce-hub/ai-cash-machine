@@ -17,21 +17,49 @@ const MAX_WERKZEUGE = 25;
 function pruefe(eintrag) {
   let timer;
   const hart = new Promise((r) => {
-    timer = setTimeout(() => r([0, 0, []]), 40000);
+    timer = setTimeout(() => r([0, 0, [], 'timeout']), 40000);
   });
   return Promise.race([pruefeEcht(eintrag), hart]).finally(() => clearTimeout(timer));
 }
 
+const GRUENDE = new Set(['platzhalter', 'kein-https', 'intern', 'ungueltig', 'timeout', 'domain-weg', 'abgelehnt', 'abbruch', 'zertifikat', 'h404', 'h405', 'h5xx', 'hfehler', 'kein-mcp', 'mcp-fehler', 'umleitung', 'sonstiges']);
+
+function grundUngueltig(url) {
+  if (/[{}]|%7B|%7D|<|>/i.test(url)) return 'platzhalter';
+  try {
+    const u = new URL(url);
+    return u.protocol !== 'https:' ? 'kein-https' : 'intern';
+  } catch {
+    return 'ungueltig';
+  }
+}
+
+function grundFehler(err) {
+  const code = err?.cause?.code || err?.code || '';
+  const text = String(err?.message || '');
+  if (err?.name === 'TimeoutError' || err?.name === 'AbortError' || /timeout/i.test(text)) return 'timeout';
+  if (/ENOTFOUND|EAI_AGAIN/.test(code)) return 'domain-weg';
+  if (/ECONNREFUSED/.test(code)) return 'abgelehnt';
+  if (/ECONNRESET|UND_ERR_SOCKET|EPIPE/.test(code)) return 'abbruch';
+  if (/CERT|SSL|TLS/i.test(code)) return 'zertifikat';
+  if (/redirect/i.test(text)) return 'umleitung';
+  const http = text.match(/HTTP (\d{3})/);
+  if (http) return http[1] === '404' ? 'h404' : http[1] === '405' ? 'h405' : http[1].startsWith('5') ? 'h5xx' : 'hfehler';
+  if (/Keine gueltige MCP-Antwort/.test(text)) return 'kein-mcp';
+  if (/MCP-Fehler/.test(text)) return 'mcp-fehler';
+  return 'sonstiges';
+}
+
 async function pruefeEcht(eintrag) {
   const url = sichereZielUrl(eintrag.u);
-  if (!url) return [3, 0, []];
+  if (!url) return [3, 0, [], grundUngueltig(eintrag.u)];
   try {
     const mcp = new RemoteMcp(url, { timeoutMs: 12000 });
     await mcp.verbinden();
     const tools = await mcp.werkzeuge();
     return [1, tools.length, tools.slice(0, MAX_WERKZEUGE).map((t) => String(t.name || '').slice(0, 48))];
   } catch (err) {
-    return [err.auth ? 2 : 0, 0, []];
+    return err.auth ? [2, 0, []] : [0, 0, [], grundFehler(err)];
   }
 }
 
@@ -57,8 +85,8 @@ async function main() {
         return;
       }
       const s = ziele[index++];
-      const [status, anzahl, namen] = await pruefe(s);
-      ergebnis[s.u] = anzahl ? [status, anzahl, namen] : [status];
+      const [status, anzahl, namen, grund] = await pruefe(s);
+      ergebnis[s.u] = anzahl ? [status, anzahl, namen] : grund ? [status, 0, [], grund] : [status];
     }
   }
   const lebenszeichen = setInterval(() => console.log(`[92-mcp-livecheck] ${Object.keys(ergebnis).length}/${ziele.length} geprueft`), 60000);
@@ -67,9 +95,11 @@ async function main() {
 
   const werte = Object.values(ergebnis);
   const zaehle = (st) => werte.filter((v) => v[0] === st).length;
+  const todesursachen = {};
+  for (const v of werte) if (v[3]) todesursachen[v[3]] = (todesursachen[v[3]] || 0) + 1;
   const zusammenfassung = { geprueft: werte.length, antwortet: zaehle(1), login: zaehle(2), tot: zaehle(0), nichtPruefbar: zaehle(3), werkzeuge: werte.reduce((a, v) => a + (v[1] || 0), 0) };
   if (!werte.length) throw new Error('Nichts geprueft - live.json wird nicht ueberschrieben.');
-  writeFileSync(OUT, JSON.stringify({ stand: new Date().toISOString(), abgebrochen, ...zusammenfassung, server: ergebnis }));
+  writeFileSync(OUT, JSON.stringify({ stand: new Date().toISOString(), abgebrochen, ...zusammenfassung, todesursachen, server: ergebnis }));
   console.log('[92-mcp-livecheck] Ergebnis:', JSON.stringify(zusammenfassung), abgebrochen ? '(Zeitlimit erreicht)' : '');
 }
 
@@ -85,11 +115,13 @@ function validieren(quelle, ziel) {
     if (!sichereZielUrl(url) || url.length > 500 || !Array.isArray(wert)) continue;
     const status = [0, 1, 2, 3].includes(wert[0]) ? wert[0] : 0;
     const namen = Array.isArray(wert[2]) ? wert[2].filter((n) => typeof n === 'string').slice(0, MAX_WERKZEUGE).map((n) => n.slice(0, 48)) : [];
-    server[url] = namen.length ? [status, Math.min(zahl(wert[1]), 10000), namen] : [status];
+    const grund = GRUENDE.has(wert[3]) ? wert[3] : '';
+    server[url] = namen.length ? [status, Math.min(zahl(wert[1]), 10000), namen] : grund ? [status, 0, [], grund] : [status];
   }
   const felder = ['geprueft', 'antwortet', 'login', 'tot', 'nichtPruefbar', 'werkzeuge'];
   const sauber = { stand: new Date(d.stand).toISOString(), abgebrochen: d.abgebrochen === true };
   for (const f of felder) sauber[f] = zahl(d[f]);
+  sauber.todesursachen = Object.fromEntries(Object.entries(d.todesursachen || {}).filter(([g]) => GRUENDE.has(g)).map(([g, n]) => [g, zahl(n)]));
   sauber.server = server;
   writeFileSync(ziel, JSON.stringify(sauber));
   console.log(`[92-mcp-livecheck] validiert: ${Object.keys(server).length} Eintraege`);

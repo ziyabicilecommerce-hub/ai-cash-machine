@@ -27,6 +27,8 @@
   .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   input[type=search] { flex:1; min-width:200px; background:#0a0f1c; border:1px solid var(--line); color:var(--txt); border-radius:10px;
     padding:10px 14px; font:inherit; font-size:15px; }
+  select { background:#0a0f1c; border:1px solid var(--line); color:var(--txt); border-radius:10px; padding:9px 10px; font:inherit; font-size:14px; }
+  .flags { font-size:12px; color:var(--mut); }
   input[type=search]:focus { outline:2px solid var(--green); outline-offset:1px; }
   label.toggle { display:flex; align-items:center; gap:6px; color:var(--mut); font-size:14px; cursor:pointer; white-space:nowrap; }
   .chips { display:flex; gap:6px; overflow-x:auto; padding-bottom:2px; scrollbar-width:thin; }
@@ -70,6 +72,8 @@
     <div class="stat"><b id="sCat">…</b><small>Kategorien</small></div>
     <div class="stat"><b id="sSrc">…</b><small>Quellen</small></div>
     <div class="stat"><b id="sLive">…</b><small>✅ antworten live</small></div>
+    <div class="stat"><b id="sAna">…</b><small>🔬 analysiert</small></div>
+    <div class="stat"><b id="sRot">…</b><small>🔴 starke Warnsignale</small></div>
     <div class="stat"><b id="sDate">…</b><small>Stand</small></div>
   </div>
 </header>
@@ -80,6 +84,13 @@
       <input type="search" id="q" placeholder="Suchen: video, instagram, shopify, anime …" aria-label="MCP-Server durchsuchen">
       <label class="toggle"><input type="checkbox" id="free"> nur ohne Key</label>
       <label class="toggle"><input type="checkbox" id="live"> nur ✅ live</label>
+      <select id="sicher" aria-label="Sicherheit filtern">
+        <option value="">Sicherheit: alle</option>
+        <option value="1">🟢 unauffällig</option>
+        <option value="2">🟡 Vorsicht</option>
+        <option value="3">🔴 starkes Warnsignal</option>
+        <option value="x">⚪ noch nicht analysiert</option>
+      </select>
     </div>
     <div class="chips" id="chips" role="toolbar" aria-label="Kategorien"></div>
   </div>
@@ -92,6 +103,7 @@
 </main>
 
 <footer>
+  🔬 Sicherheits-Labels kommen aus einer rein statischen Analyse (Automation #93): Code wird nur gelesen, nie ausgeführt. 🟢 heißt „keine Warnsignale gefunden“, nicht „garantiert sicher“; 🔴 heißt „starkes Warnsignal“, nicht „bewiesen schädlich“.<br>
   * „ohne Key-Pflicht“ heißt: Der Eintrag verlangt laut Registry/Docker-Katalog keinen API-Key. „Key ?“ = unbekannt (GitHub, npm, PyPI …). Manche Dienste wollen trotzdem einen Login (OAuth) oder sind kostenpflichtig – vor dem Einsatz prüfen.<br>
   Quellen: <a href="https://registry.modelcontextprotocol.io" target="_blank" rel="noopener">MCP-Registry</a>, GitHub, npm, PyPI, <a href="https://github.com/docker/mcp-registry" target="_blank" rel="noopener">Docker</a>, Awesome-Listen ·
   <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-91-mcp-katalog.yml" target="_blank" rel="noopener">Automation #91</a>
@@ -107,6 +119,16 @@ const LABELS = {
 const QUELLEN = { offiziell: 'Registry', pulsemcp: 'PulseMCP', github: 'GitHub', npm: 'npm', pypi: 'PyPI', docker: 'Docker', awesome: 'Awesome' };
 const SEITE = 60;
 let alle = [], gefiltert = [], gezeigt = 0, kat = 'alle', live = {};
+const SICHER = { 0: ['unk', '⚪ nicht analysierbar'], 1: ['free', '🟢 unauffällig'], 2: ['key', '🟡 Vorsicht'], 3: ['badge-tot', '🔴 starkes Warnsignal'] };
+const FLAG = { 'install-skript': 'Install-Skript', 'install-download': 'lädt beim Installieren nach', 'eval-dekodiert': 'verschleierter Code', 'hex-kette': 'verschleierter Code', 'langer-blob': 'großer Datenblock', 'fremd-webhook': 'sendet an fremde Webhooks', 'liest-geheimnisse': 'liest Keys/Passwörter', 'geheimnis-abfluss': 'möglicher Datenabfluss', 'krypto-miner': 'Mining-Bezug', 'versteckter-miner': 'versteckter Krypto-Miner', 'install-shell': 'führt Download beim Installieren aus', 'sicherheitstool': 'Sicherheitstool mit Angriffsmustern', 'shell': 'startet Programme', 'keine-lizenz': 'keine Lizenz', 'kein-repo': 'kein Quellcode verlinkt', 'veraltet': 'über 18 Monate ohne Update', 'archiviert': 'archiviert', 'deprecated': 'eingestellt', 'malware-gemeldet': 'als Malware gemeldet', 'neu-und-unbekannt': 'neu und unbekannt', 'kaum-genutzt': 'kaum genutzt', 'zu-gross': 'zu groß zum Prüfen', 'code-nicht-lesbar': 'Code nicht lesbar', 'repo-weg': 'Repo gelöscht', 'nicht-erreichbar': 'nicht erreichbar' };
+const GRUND = { platzhalter: 'Platzhalter in URL', 'kein-https': 'kein https', intern: 'interne Adresse', ungueltig: 'ungültige URL', timeout: 'Zeitüberschreitung', 'domain-weg': 'Domain weg', abgelehnt: 'Verbindung abgelehnt', abbruch: 'Verbindung abgebrochen', zertifikat: 'Zertifikat kaputt', h404: 'nicht gefunden', h405: 'altes Protokoll', h5xx: 'Serverfehler', hfehler: 'HTTP-Fehler', 'kein-mcp': 'kein MCP', 'mcp-fehler': 'MCP-Fehler', umleitung: 'Umleitung', sonstiges: 'sonstiger Fehler' };
+let analyse = {};
+function schluessel(s) {
+  if (s.p && s.p.startsWith('npm:')) return s.p;
+  if (s.p && s.p.startsWith('pypi:')) return `pypi:${s.p.slice(5).toLowerCase()}`;
+  const m = (s.r || '').match(/github\.com\/([^/\s#?]+)\/([^/\s#?]+)/i);
+  return m ? `gh:${m[1]}/${m[2].replace(/\.git$/i, '')}`.toLowerCase() : null;
+}
 const LIVE = { 1: ['free', '✅ antwortet'], 2: ['key', '🔒 Login nötig'], 0: ['badge-tot', '❌ tot'], 3: ['unk', '⚠️ nicht prüfbar'] };
 const $ = (id) => document.getElementById(id);
 
@@ -133,10 +155,14 @@ function karte(s) {
   for (const q of String(s.q || '').split(',').filter(Boolean)) b.append(el('span', 'badge', QUELLEN[q] || q));
   if (s.u) {
     const l = live[s.u];
-    b.append(l ? el('span', `badge ${LIVE[l[0]][0]}`, l[1] ? `${LIVE[l[0]][1]} · ${l[1]} Tools` : LIVE[l[0]][1]) : el('span', 'badge', 'Remote'));
+    const text = !l ? 'Remote' : l[1] ? `${LIVE[l[0]][1]} · ${l[1]} Tools` : l[3] ? `${LIVE[l[0]][1]} · ${GRUND[l[3]] || l[3]}` : LIVE[l[0]][1];
+    b.append(el('span', l ? `badge ${LIVE[l[0]][0]}` : 'badge', text));
   }
   if (s.p) b.append(el('span', 'badge', s.p.split(':')[0] || 'Paket'));
+  const an = s._k !== undefined ? analyse[s._k] : null;
+  if (an) b.append(el('span', `badge ${SICHER[an[0]][0]}`, SICHER[an[0]][1]));
   c.append(b);
+  if (an && an[2].length) c.append(el('div', 'flags', `🔬 ${[...new Set(an[2].map((f) => FLAG[f] || f))].join(' · ')}`));
   const a = el('div', 'actions');
   const repo = sichereUrl(s.r);
   if (repo) { const l = el('a', '', 'Code'); l.href = repo; l.target = '_blank'; l.rel = 'noopener'; a.append(l); }
@@ -158,11 +184,16 @@ function filtern() {
   const q = $('q').value.trim().toLowerCase();
   const nurFrei = $('free').checked;
   const nurLive = $('live').checked;
+  const sicher = $('sicher').value;
   const woerter = q.split(/\s+/).filter(Boolean);
   gefiltert = alle.filter((s) => {
     if (kat !== 'alle' && s.c !== kat) return false;
     if (nurFrei && s.k !== 0) return false;
     if (nurLive && !(s.u && live[s.u] && live[s.u][0] === 1)) return false;
+    if (sicher) {
+      const an = analyse[s._k];
+      if (sicher === 'x' ? an : !an || String(an[0]) !== sicher) return false;
+    }
     if (!woerter.length) return true;
     const t = s._t || (s._t = `${s.n} ${s.id || ''} ${s.d || ''} ${s.p || ''}`.toLowerCase());
     return woerter.every((w) => t.includes(w));
@@ -204,16 +235,23 @@ let timer;
 $('q').addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(filtern, 150); });
 $('free').addEventListener('change', filtern);
 $('live').addEventListener('change', filtern);
+$('sicher').addEventListener('change', filtern);
 $('more').addEventListener('click', mehr);
 
 const liveLaden = fetch('./live.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+const analyseLaden = fetch('./analyse.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
 fetch('./catalog.json', { cache: 'no-cache' })
   .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
   .then(async (d) => {
     const l = await liveLaden;
     live = (l && l.server) || {};
+    const an = await analyseLaden;
+    analyse = (an && an.e) || {};
+    $('sAna').textContent = an ? `${(an.analysiert || 0).toLocaleString('de-DE')} / ${(an.gesamt || 0).toLocaleString('de-DE')}` : '–';
+    $('sRot').textContent = an ? (an.zaehler?.gefaehrlich || 0).toLocaleString('de-DE') : '–';
     $('sLive').textContent = l ? (l.antwortet || 0).toLocaleString('de-DE') : '–';
     alle = d.server || [];
+    for (const s of alle) s._k = schluessel(s);
     $('sAll').textContent = (d.anzahl || alle.length).toLocaleString('de-DE');
     $('sFree').textContent = (d.ohneKey ?? alle.filter((s) => s.k === 0).length).toLocaleString('de-DE');
     $('sSrc').textContent = Object.values(d.quellen || {}).filter((v) => typeof v === 'number').length;

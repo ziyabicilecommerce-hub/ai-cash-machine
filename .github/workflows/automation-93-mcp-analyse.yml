@@ -1,0 +1,69 @@
+name: "93 · MCP-Analyse"
+
+# "analysieren" laedt fremde Pakete nur als Daten (nie installieren/ausfuehren)
+# und hat nur Leserechte. "speichern" kontaktiert nichts Fremdes und
+# validiert das Ergebnis streng vor dem Commit.
+
+on:
+  schedule:
+    - cron: '15 3 * * *'
+  workflow_dispatch: {}
+
+permissions: {}
+
+concurrency:
+  group: mcp-katalog
+  cancel-in-progress: false
+
+jobs:
+  analysieren:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node automations/93-mcp-analyse.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: analyse-json
+          path: mcp-hub/analyse.json
+          retention-days: 3
+
+  speichern:
+    needs: analysieren
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: analyse-json
+          path: ergebnis
+      - run: node automations/93-mcp-analyse.mjs --validieren ergebnis/analyse.json mcp-hub/analyse.json
+      - name: Analyse committen
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add mcp-hub/analyse.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: MCP-Analyse aktualisiert [skip ci]"
+            git pull --rebase
+            git push
+            if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
