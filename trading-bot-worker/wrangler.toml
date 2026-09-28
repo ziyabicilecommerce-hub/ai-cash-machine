@@ -21,13 +21,21 @@ id = "055d3b2d0a514437aec11e888e81c242"
 # Nicht-geheime Konfiguration - kann hier direkt stehen (kein Secret).
 [vars]
 TRADING_EXCHANGE = "kraken"
-TRADING_SYMBOLS = "XBTUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,DOGEUSDT,DOTUSDT,LTCUSDT"
+# LINK/AVAX/ATOM ergänzt - vor dem Hinzufügen einzeln per backtest.mjs (35
+# Tage, echte Kraken-Kerzen, aktuelle Strategie/Filter) geprüft: alle drei
+# positiv (LINK +0.56%/62.5% Win-Rate, AVAX +1.28%/81%, ATOM +0.58%/70.6%).
+# BCHUSDT bewusst NICHT aufgenommen (nur 52.9% Win-Rate, zu nah am
+# Münzwurf). MATICUSDT/UNIUSDT existieren als Paar so nicht bei Kraken.
+TRADING_SYMBOLS = "XBTUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,DOGEUSDT,DOTUSDT,LTCUSDT,LINKUSDT,AVAXUSDT,ATOMUSDT"
 # War 50 (6.25/Coin bei 8 Symbolen) - bei 25% Positionsgröße macht das nur
 # 1.56 USDT pro Trade, unter Krakens Mindest-Ordergröße für praktisch jeden
-# Coin (live bestätigt: SOLUSDT braucht mind. 7.07 USDT). Auf 240 (30/Coin)
-# angehoben, damit auch der teuerste Fall (SOL) mit Puffer klar über der
-# Mindestgröße liegt. Reines Paper-Kapital, kein echtes Geld.
-TRADING_KAPITAL_USDT = "240"
+# Coin (live bestätigt: SOLUSDT braucht mind. 7.07 USDT). Erst auf 30/Coin
+# angehoben, aber LINKUSDT ist live trotzdem knapp drunter gerutscht
+# (Mindestgröße schwankt mit dem Kurs, war bei 8.28 USDT gegen nur 7.50
+# USDT Invest-Betrag) - deshalb auf 40/Coin (440 gesamt bei jetzt 11
+# Symbolen) für echten Puffer über allen bisher beobachteten Minima.
+# Reines Paper-Kapital, kein echtes Geld.
+TRADING_KAPITAL_USDT = "440"
 TRADING_TAKE_PROFIT_PROZENT = "5"
 
 # Neue Risiko-/Strategie-Features - alle standardmäßig AUS bzw. verhaltensneutral
