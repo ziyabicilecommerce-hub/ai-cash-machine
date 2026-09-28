@@ -37,7 +37,7 @@
 <body>
 <header>
   <h1>VIDEO-<span>FEED</span></h1>
-  <p class="sub">Täglich automatisch erzeugt – Produkt-Ads (#94), Anime-Serie (#95) und Welt-Bot in bis zu 50 Sprachen (#96): KI-Skript, KI-Bilder, KI-Stimme und Untertitel – ganz ohne API-Key. Herunterladen, Caption kopieren, posten.</p>
+  <p class="sub">Täglich automatisch erzeugt – Produkt-Ads (#94), Anime-Serie (#95), Welt-Bot in bis zu 50 Sprachen (#96) und Marathon-Videos bis 48 Stunden (#97): KI-Skript, KI-Bilder, KI-Stimme und Untertitel – ganz ohne API-Key. Herunterladen, Caption kopieren, posten.</p>
 </header>
 <main>
   <div class="info" id="info">Videos werden geladen …</div>
@@ -51,6 +51,7 @@
       <option value="lang">Lange Videos (16:9)</option>
       <option value="anime">Anime-Serie</option>
       <option value="teaser">Teaser</option>
+      <option value="marathon">Marathon (Stunden)</option>
     </select>
   </div>
   <div class="grid" id="grid"></div>
@@ -61,7 +62,7 @@ const $ = (id) => document.getElementById(id);
 function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 function sichereUrl(u) { try { const x = new URL(u); return x.protocol === 'https:' && x.hostname === 'github.com' ? x.href : ''; } catch { return ''; } }
 
-const SPRACHEN = { de: 'Deutsch', en: 'Englisch', es: 'Spanisch', mx: 'Spanisch (LatAm)', fr: 'Französisch', it: 'Italienisch', pt: 'Portugiesisch (BR)', pp: 'Portugiesisch (PT)', nl: 'Niederländisch', tr: 'Türkisch', pl: 'Polnisch', ru: 'Russisch', uk: 'Ukrainisch', ar: 'Arabisch', eg: 'Arabisch (EG)', hi: 'Hindi', bn: 'Bengalisch', ur: 'Urdu', ta: 'Tamil', te: 'Telugu', ja: 'Japanisch', ko: 'Koreanisch', zh: 'Chinesisch', tw: 'Chinesisch (TW)', id: 'Indonesisch', ms: 'Malaiisch', vi: 'Vietnamesisch', th: 'Thai', fil: 'Filipino', sv: 'Schwedisch', da: 'Dänisch', no: 'Norwegisch', fi: 'Finnisch', el: 'Griechisch', cs: 'Tschechisch', sk: 'Slowakisch', hu: 'Ungarisch', ro: 'Rumänisch', bg: 'Bulgarisch', hr: 'Kroatisch', sr: 'Serbisch', he: 'Hebräisch', fa: 'Persisch', sw: 'Suaheli', af: 'Afrikaans', az: 'Aserbaidschanisch', kk: 'Kasachisch', uz: 'Usbekisch', ka: 'Georgisch', lt: 'Litauisch', ca: 'Katalanisch' };
+const SPRACHEN = { int: 'International (ohne Sprache)', de: 'Deutsch', en: 'Englisch', es: 'Spanisch', mx: 'Spanisch (LatAm)', fr: 'Französisch', it: 'Italienisch', pt: 'Portugiesisch (BR)', pp: 'Portugiesisch (PT)', nl: 'Niederländisch', tr: 'Türkisch', pl: 'Polnisch', ru: 'Russisch', uk: 'Ukrainisch', ar: 'Arabisch', eg: 'Arabisch (EG)', hi: 'Hindi', bn: 'Bengalisch', ur: 'Urdu', ta: 'Tamil', te: 'Telugu', ja: 'Japanisch', ko: 'Koreanisch', zh: 'Chinesisch', tw: 'Chinesisch (TW)', id: 'Indonesisch', ms: 'Malaiisch', vi: 'Vietnamesisch', th: 'Thai', fil: 'Filipino', sv: 'Schwedisch', da: 'Dänisch', no: 'Norwegisch', fi: 'Finnisch', el: 'Griechisch', cs: 'Tschechisch', sk: 'Slowakisch', hu: 'Ungarisch', ro: 'Rumänisch', bg: 'Bulgarisch', hr: 'Kroatisch', sr: 'Serbisch', he: 'Hebräisch', fa: 'Persisch', sw: 'Suaheli', af: 'Afrikaans', az: 'Aserbaidschanisch', kk: 'Kasachisch', uz: 'Usbekisch', ka: 'Georgisch', lt: 'Litauisch', ca: 'Katalanisch' };
 const SEITE = 36;
 let alle = [];
 let gezeigt = 0;
@@ -69,6 +70,7 @@ let gezeigt = 0;
 function art(v) {
   if (v.teaser) return 'teaser';
   if (v.thema === 'anime') return 'anime';
+  if (v.thema === 'marathon') return 'marathon';
   return v.format === 'quer' ? 'lang' : 'kurz';
 }
 
@@ -81,7 +83,7 @@ function karte(v) {
   const b = el('div', 'body');
   b.append(el('h3', '', v.titel || v.thema || 'Video'));
   const sprache = v.sprache || 'de';
-  b.append(el('div', 'meta', `${sprache !== 'de' ? `🌍 ${SPRACHEN[sprache] || sprache.toUpperCase()} · ` : ''}${v.dauer ? `${Math.floor(v.dauer / 60)}:${String(v.dauer % 60).padStart(2, '0')} min · ` : ''}${v.format === 'quer' ? '16:9' : '9:16'} · ${v.erstellt ? new Date(v.erstellt).toLocaleDateString('de-DE') : ''}`));
+  b.append(el('div', 'meta', `${sprache !== 'de' ? `🌍 ${SPRACHEN[sprache] || sprache.toUpperCase()} · ` : ''}${v.dauer >= 3600 ? `${Math.floor(v.dauer / 3600)} Std. ${Math.round((v.dauer % 3600) / 60)} Min. · ` : v.dauer ? `${Math.floor(v.dauer / 60)}:${String(v.dauer % 60).padStart(2, '0')} min · ` : ''}${v.format === 'quer' ? '16:9' : '9:16'} · ${v.erstellt ? new Date(v.erstellt).toLocaleDateString('de-DE') : ''}`));
   if (v.caption) b.append(el('div', 'caption', v.caption));
   const a = el('div', 'actions');
   const dl = el('a', '', 'Download'); dl.href = sichereUrl(v.url); dl.rel = 'noopener'; a.append(dl);

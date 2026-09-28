@@ -1,0 +1,65 @@
+name: "97 · Marathon-Fabrik"
+
+# Schlaf-, Entspannungs- und Fokus-Videos bis 48 Stunden - komplett kostenlos
+# (Pollinations-Bilder, Klang aus ffmpeg, keine Sprache = weltweit nutzbar).
+# Teile von max. 8 Std. landen als GitHub-Release im Video-Feed. Damit der Speicher
+# nicht endlos waechst, bleiben nur die neuesten 6 Marathon-Releases erhalten.
+
+on:
+  schedule:
+    - cron: '23 1 * * 1,4'
+  workflow_dispatch:
+    inputs:
+      stunden:
+        description: 'Laenge in Stunden (bis 48, wird in Teile zu max. 8 Std. aufgeteilt)'
+        required: false
+        default: ''
+      welt:
+        description: 'regen, meer, wald, kamin, weltraum, rauschen, fokus (leer = taeglich wechselnd)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: marathon
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      MARATHON_STUNDEN: ${{ inputs.stunden || vars.MARATHON_STUNDEN || '8' }}
+      MARATHON_WELT: ${{ inputs.welt || vars.MARATHON_WELT }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: ffmpeg und Schrift installieren
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null
+      - name: Release anlegen
+        run: |
+          TAG="marathon-$(date -u +%Y%m%d-%H%M)"
+          gh release create "$TAG" --title "Marathon $(date -u +%d.%m.%Y)" --notes "Automatisch erzeugt von Automation #97 (Marathon-Fabrik): lange Klang-Videos ohne Sprache." --latest=false
+          echo "MARATHON_TAG=$TAG" >> "$GITHUB_ENV"
+      - name: Video bauen und Teile hochladen
+        run: node automations/97-marathon.mjs
+      - name: Leeres Release bei Fehler entfernen
+        if: failure()
+        run: gh release delete "$MARATHON_TAG" --yes --cleanup-tag || true
+      - name: Alte Marathon-Releases aufraeumen (nur die neuesten 6 bleiben)
+        run: |
+          ALT=$(gh release list --limit 200 --json tagName --jq '[.[].tagName | select(startswith("marathon-"))] | sort | reverse | .[6:] | join(",")')
+          for t in ${ALT//,/ }; do gh release delete "$t" --yes --cleanup-tag || true; done
+          echo "FEED_ENTFERNEN_TAGS=$ALT" >> "$GITHUB_ENV"
+      - name: Feed ergaenzen
+        run: |
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases/download/${MARATHON_TAG}"
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
