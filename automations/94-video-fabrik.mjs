@@ -99,6 +99,32 @@ async function kurzSkript(thema) {
   return { titel: String(d.titel || thema).slice(0, 120), caption: String(d.caption || thema).slice(0, 2000), szenen: szenenPruefen(d.szenen).slice(0, 10) };
 }
 
+// Holt einzelne Szenen-Objekte aus kaputtem KI-Text (z. B. abgeschnittenes JSON).
+function szenenRetten(text) {
+  const treffer = String(text).match(/\{[^{}]*"text"\s*:\s*"[^"]*"[^{}]*\}/g) || [];
+  const szenen = [];
+  for (const t of treffer) {
+    try {
+      szenen.push(jsonAusText(t));
+    } catch {
+      /* einzelne Szene unbrauchbar */
+    }
+  }
+  return szenen;
+}
+
+async function szenenPortion(prompt) {
+  try {
+    return szenenPruefen((await kiJson(prompt, { maxTokens: 2500 })).szenen);
+  } catch {
+    try {
+      return szenenPruefen(szenenRetten(await kiText(prompt, { maxTokens: 2500 })));
+    } catch {
+      return [];
+    }
+  }
+}
+
 async function langSkript(thema, minuten) {
   const ziel = Math.round((minuten * 60) / 15);
   const gliederung = await kiJson(
@@ -106,16 +132,24 @@ async function langSkript(thema, minuten) {
     { maxTokens: 800 }
   );
   const kapitel = (gliederung.kapitel || []).map(String).slice(0, 12);
-  const proKapitel = Math.max(3, Math.round(ziel / Math.max(kapitel.length, 1)));
+  if (!kapitel.length) throw new Error('Keine Kapitel erhalten');
+  const proKapitel = Math.max(3, Math.round(ziel / kapitel.length));
   const szenen = [];
   for (const k of kapitel) {
-    const d = await kiJson(
-      `Video "${gliederung.titel}". Schreibe das Kapitel "${k}" als ${proKapitel} Szenen (je 3-4 ruhig gesprochene Saetze Deutsch, ca. 15 Sekunden, fehlerfreie Rechtschreibung, du-Form; der Bild-Prompt beschreibt ein eindrucksvolles, jugendfreies Bild ohne Text). Antworte NUR mit JSON: {"szenen":[{"text":"...","bild":"englischer Bild-Prompt"}]}`,
-      { maxTokens: 4000 }
-    );
-    szenen.push(...szenenPruefen(d.szenen).slice(0, proKapitel + 2));
+    const imKapitel = [];
+    for (let versuch = 0; imKapitel.length < proKapitel && versuch < Math.ceil(proKapitel / 5) + 2; versuch++) {
+      const n = Math.min(5, proKapitel - imKapitel.length);
+      const bisher = imKapitel.length ? ` Bisher gesagt (nicht wiederholen, nahtlos weitererzaehlen): "${imKapitel.map((x) => x.text).join(' ').slice(-600)}"` : '';
+      imKapitel.push(...(await szenenPortion(
+        `Video "${gliederung.titel}". Kapitel "${k}". Schreibe die naechsten ${n} Szenen (je 3-4 ruhig gesprochene Saetze Deutsch, ca. 15 Sekunden, fehlerfreie Rechtschreibung, du-Form; der Bild-Prompt beschreibt ein eindrucksvolles, jugendfreies Bild ohne Text).${bisher} ` +
+          'Antworte NUR mit JSON: {"szenen":[{"text":"...","bild":"englischer Bild-Prompt"}]}'
+      )).slice(0, n));
+    }
+    console.log(`[94-video-fabrik] Kapitel "${k.slice(0, 50)}": ${imKapitel.length}/${proKapitel} Szenen`);
+    szenen.push(...imKapitel);
   }
-  return { titel: String(gliederung.titel || thema).slice(0, 120), caption: String(gliederung.caption || thema).slice(0, 4000), szenen: szenen.slice(0, Math.max(ziel + 6, 10)) };
+  if (szenen.length < Math.max(5, ziel * 0.4)) throw new Error(`Zu wenige Szenen (${szenen.length}/${ziel})`);
+  return { titel: String(gliederung.titel || thema).slice(0, 120), caption: String(gliederung.caption || thema).slice(0, 4000), szenen: szenen.slice(0, ziel + 6) };
 }
 
 const reinText = (html) => String(html || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
