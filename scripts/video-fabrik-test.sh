@@ -1,19 +1,9 @@
 #!/usr/bin/env bash
-# Machbarkeitstest mit Zeitmessung pro Schritt
+# Welche kostenlosen Text-Modelle gibt es ohne Key, und wie gut schreiben sie Deutsch?
 set -uo pipefail
-t() { date +%s; }
-S=$(t); echo "== apt"; timeout 300 sudo apt-get install -y -qq --no-install-recommends ffmpeg fonts-dejavu-core >/dev/null 2>&1 || { timeout 300 sudo apt-get update -qq && timeout 300 sudo apt-get install -y -qq --no-install-recommends ffmpeg fonts-dejavu-core >/dev/null; }
-echo "apt: $(( $(t)-S ))s"; ffmpeg -version | head -1
-S=$(t); timeout 180 pip install -q "edge-tts==7.*"; echo "pip: $(( $(t)-S ))s"
-edge-tts --list-voices | grep -E "^de-DE" | head -20
-mkdir -p vt && cd vt
-S=$(t)
-echo "Dieser Gaming-Stuhl verändert alles. Ergonomisch, bequem und in drei Minuten aufgebaut. Hol ihn dir jetzt bei DeskRebel." > text.txt
-for v in de-DE-KatjaNeural de-DE-AmalaNeural de-DE-SeraphinaMultilingualNeural; do timeout 60 edge-tts --voice $v --file text.txt --write-media "$v.mp3" --write-subtitles "$v.srt" && echo "$v ok $(ffprobe -v error -show_entries format=duration -of csv=p=0 $v.mp3)s"; done
-echo "tts: $(( $(t)-S ))s"
-S=$(t)
-for i in 1 2 3; do timeout 100 curl -sS -m 90 -o "b$i.jpg" -w "bild$i %{http_code} %{size_download}B %{time_total}s\n" "https://image.pollinations.ai/prompt/product%20photo%20of%20a%20black%20ergonomic%20gaming%20chair%20studio%20light%20$i?width=1080&height=1920&nologo=true&seed=$RANDOM"; done
-echo "bilder: $(( $(t)-S ))s"
-S=$(t)
-timeout 300 ffmpeg -loglevel error -y -i b1.jpg -i de-DE-SeraphinaMultilingualNeural.mp3 -vf "scale=1296:2304:force_original_aspect_ratio=increase,crop=1296:2304,zoompan=z='min(zoom+0.0009,1.18)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=240:s=1080x1920:fps=30,subtitles=de-DE-SeraphinaMultilingualNeural.srt:force_style='FontName=DejaVu Sans,FontSize=12,Bold=1,Outline=3,Alignment=2,MarginV=36'" -t 8 -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -c:a aac -shortest szene.mp4
-echo "ffmpeg-szene: $(( $(t)-S ))s rc=$?"; ls -la szene.mp4 2>&1
+echo "== LLM7 Modelle"; curl -sS -m 30 https://api.llm7.io/v1/models -H 'Authorization: Bearer unused' | python3 -c "import sys,json;d=json.load(sys.stdin);[print(m.get('id')) for m in d.get('data',d if isinstance(d,list) else [])]" | head -60
+echo "== Pollinations Modelle"; curl -sS -m 30 https://text.pollinations.ai/models | python3 -c "import sys,json;d=json.load(sys.stdin);[print(m.get('name'), m.get('tier',''), m.get('description','')[:60]) for m in d]" | head -40
+P='Schreibe 2 kurze, fehlerfreie deutsche Werbesaetze fuer einen Massagestab mit texturierten Koepfen. Nur die Saetze.'
+for m in default gpt-4.1-nano gpt-4o-mini mistral-small-3.1-24b-instruct-2503 deepseek-v3 qwen2.5-72b-instruct llama-3.3-70b-instruct gemini-2.0-flash; do
+  echo "== LLM7 $m"; curl -sS -m 60 https://api.llm7.io/v1/chat/completions -H 'Authorization: Bearer unused' -H 'content-type: application/json' -d "{\"model\":\"$m\",\"messages\":[{\"role\":\"user\",\"content\":\"$P\"}],\"max_tokens\":120}" | python3 -c "import sys,json;d=json.load(sys.stdin);print(d.get('model'),'|',(d.get('choices') or [{}])[0].get('message',{}).get('content','')[:220].replace(chr(10),' '), d.get('error',''))"; sleep 2
+done
