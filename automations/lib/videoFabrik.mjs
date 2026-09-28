@@ -40,25 +40,34 @@ function srtPfadFuerFilter(pfad) {
   return pfad.replace(/\\/g, '/').replace(/:/g, '\\:').replace(/'/g, "\\'");
 }
 
-// Eine Szene: Bild mit langsamem Zoom, Stimme, eingebrannte Untertitel.
+// Macht aus einem Rohbild ein sauberes Standbild im Zielformat. "produkt":
+// Produktfoto mittig, dahinter derselbe Hintergrund weichgezeichnet (Ad-Look).
+// "vollbild": einfach formatfuellend zugeschnitten (fuer KI-Szenenbilder).
+export function bildVorbereiten(roh, ziel, { breite, hoehe, modus }) {
+  const cover = `scale=${breite}:${hoehe}:force_original_aspect_ratio=increase,crop=${breite}:${hoehe}`;
+  const filter = modus === 'produkt'
+    ? `[0:v]${cover},boxblur=40:6,eq=brightness=-0.10:saturation=1.1[bg];[0:v]scale=${Math.round(breite * 0.9)}:${Math.round(hoehe * 0.72)}:force_original_aspect_ratio=decrease[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2-${Math.round(hoehe * 0.04)}`
+    : `[0:v]${cover}`;
+  execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', roh, '-filter_complex', filter, '-frames:v', '1', '-q:v', '2', ziel], { stdio: 'pipe', timeout: 120000 });
+}
+
+// Eine Szene: vorbereitetes Standbild mit langsamem Zoom, Stimme, Untertitel.
 export function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index, format }) {
   const dauer = dauerSekunden(mp3) + 0.35;
   const frames = Math.ceil(dauer * 30);
-  const zoomRein = index % 2 === 0;
-  const zoom = zoomRein ? `min(zoom+0.0009,1.18)` : `if(eq(on,0),1.18,max(zoom-0.0009,1.0))`;
+  const zoom = index % 2 === 0 ? 'min(zoom+0.0006,1.12)' : 'if(eq(on,0),1.12,max(zoom-0.0006,1.0))';
   const schrift = format === 'quer' ? 16 : 12;
   const filter = [
-    `scale=${Math.round(breite * 1.2)}:${Math.round(hoehe * 1.2)}:force_original_aspect_ratio=increase`,
-    `crop=${Math.round(breite * 1.2)}:${Math.round(hoehe * 1.2)}`,
+    `scale=${breite * 2}:${hoehe * 2}`,
     `zoompan=z='${zoom}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=${frames}:s=${breite}x${hoehe}:fps=30`,
-    `fade=in:0:8`,
-    `subtitles='${srtPfadFuerFilter(srt)}':force_style='FontName=DejaVu Sans,FontSize=${schrift},Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=3,Shadow=0,Alignment=2,MarginV=36'`,
+    'fade=in:0:6',
+    `subtitles='${srtPfadFuerFilter(srt)}':force_style='FontName=DejaVu Sans,FontSize=${schrift},Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=3,Shadow=0,Alignment=2,MarginV=40'`,
   ].join(',');
   execFileSync('ffmpeg', [
-    '-loglevel', 'error', '-y', '-loop', '1', '-i', bild, '-i', mp3,
+    '-loglevel', 'error', '-y', '-i', bild, '-i', mp3,
     '-vf', filter, '-t', dauer.toFixed(2),
-    '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23', '-pix_fmt', 'yuv420p',
-    '-c:a', 'aac', '-b:a', '128k', '-ar', '44100', '-ac', '2', '-af', 'apad', '-shortest',
+    '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-pix_fmt', 'yuv420p', '-r', '30',
+    '-c:a', 'aac', '-b:a', '160k', '-ar', '44100', '-ac', '2', '-af', 'apad',
     ziel,
   ], { stdio: 'pipe', timeout: 600000 });
 }
@@ -69,27 +78,49 @@ export function zusammenfuegen(szenen, ziel, ordner) {
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', liste, '-c', 'copy', '-movflags', '+faststart', ziel], { stdio: 'pipe', timeout: 600000 });
 }
 
-// Baut ein komplettes Video aus einem Skript {szenen:[{text, bild}]}.
-export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-ConradNeural', stil = '' } = {}) {
+async function ladeUrl(url, ziel) {
+  const res = await fetch(url, { signal: AbortSignal.timeout(60000) });
+  if (!res.ok || !(res.headers.get('content-type') || '').startsWith('image/')) return false;
+  writeFileSync(ziel, Buffer.from(await res.arrayBuffer()));
+  return true;
+}
+
+// Baut ein komplettes Video. Szene: {text, foto?: URL eines echten Produktfotos, bild?: KI-Bild-Prompt}.
+export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '' } = {}) {
   if (!existsSync(ordner)) mkdirSync(ordner, { recursive: true });
   const [breite, hoehe] = format === 'quer' ? [1920, 1080] : [1080, 1920];
   const clips = [];
+  let letztesBild = '';
   for (const [i, szene] of skript.szenen.entries()) {
+    const roh = join(ordner, `r${i}.img`);
     const bild = join(ordner, `s${i}.jpg`);
     const mp3 = join(ordner, `s${i}.mp3`);
     const srt = join(ordner, `s${i}.srt`);
     const clip = join(ordner, `s${i}.mp4`);
-    const ok = await ladeBild(`${szene.bild}${stil ? `, ${stil}` : ''}`, bild, { breite, hoehe });
-    if (!ok) {
-      if (!clips.length) continue;
-      execFileSync('cp', [join(ordner, `s${clips.at(-1).i}.jpg`), bild]);
+    let ok = false;
+    let modus = 'vollbild';
+    if (szene.foto) {
+      ok = await ladeUrl(szene.foto, roh).catch(() => false);
+      modus = 'produkt';
     }
-    sprechen(szene.text, mp3, srt, stimme);
-    szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format });
-    clips.push({ i, clip });
+    if (!ok && szene.bild) {
+      ok = await ladeBild(`${szene.bild}${stil ? `, ${stil}` : ''}`, roh, { breite, hoehe });
+      modus = 'vollbild';
+    }
+    try {
+      if (ok) bildVorbereiten(roh, bild, { breite, hoehe, modus });
+      else if (letztesBild) execFileSync('cp', [letztesBild, bild]);
+      else continue;
+      sprechen(szene.text, mp3, srt, stimme);
+      szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format });
+      letztesBild = bild;
+      clips.push(clip);
+    } catch (err) {
+      console.log(`[video-fabrik] Szene ${i + 1} uebersprungen: ${String(err.message).slice(0, 200)}`);
+    }
   }
-  if (!clips.length) throw new Error('Keine einzige Szene konnte gerendert werden (Bilder nicht ladbar).');
+  if (!clips.length) throw new Error('Keine einzige Szene konnte gerendert werden.');
   const ziel = join(ordner, 'video.mp4');
-  zusammenfuegen(clips.map((c) => c.clip), ziel, ordner);
+  zusammenfuegen(clips, ziel, ordner);
   return { pfad: ziel, dauer: dauerSekunden(ziel), szenen: clips.length };
 }

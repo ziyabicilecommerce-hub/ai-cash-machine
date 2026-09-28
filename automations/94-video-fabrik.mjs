@@ -1,6 +1,7 @@
-// Video-Fabrik - erzeugt taeglich fertige Videos mit Sprecher und Untertiteln,
+// Video-Fabrik - erzeugt taeglich fertige Werbevideos mit Sprecherin und Untertiteln,
 // komplett ohne API-Key: KI-Skript (kostenlose KI-Kette), Pollinations-Bilder,
-// edge-tts-Stimme, ffmpeg-Schnitt. Standard: 5 Kurzvideos (9:16), optional
+// edge-tts-Stimme, ffmpeg-Schnitt. Mit Shopify-Zugang: Werbevideos zu echten
+// Produkten mit echten Produktfotos. Standard: 5 Kurzvideos (9:16), optional
 // ein langes Video bis 10 Minuten (VIDEO_FABRIK_LANG_MINUTEN).
 //   node automations/94-video-fabrik.mjs            -> Videos nach out/ bauen
 //   node automations/94-video-fabrik.mjs --feed URL -> video-feed/videos.json ergaenzen
@@ -10,6 +11,7 @@ import { join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { askKI } from './lib/ki.mjs';
 import { videoBauen } from './lib/videoFabrik.mjs';
+import { getProducts } from './lib/shopify.mjs';
 
 const OUT = 'out';
 const MANIFEST = join(OUT, 'manifest.json');
@@ -19,7 +21,7 @@ const env = (k, d = '') => (process.env[k] || d).trim();
 const ANZAHL = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_ANZAHL', '5'), 10) || 5, 0), 10);
 const LANG_MIN = Math.min(Math.max(parseFloat(env('VIDEO_FABRIK_LANG_MINUTEN', '0')) || 0, 0), 10);
 const STIL = env('VIDEO_FABRIK_STIL', 'cinematic, vibrant colors, high detail, no text');
-const STIMME = env('VIDEO_FABRIK_STIMME', 'de-DE-ConradNeural');
+const STIMME = env('VIDEO_FABRIK_STIMME', 'de-DE-SeraphinaMultilingualNeural');
 
 function themen() {
   const liste = (env('VIDEO_FABRIK_THEMEN') || config.SOCIAL_AUTOPILOT_THEMEN || '').split(',').map((s) => s.trim()).filter(Boolean);
@@ -73,18 +75,58 @@ async function langSkript(thema, minuten) {
   return { titel: String(gliederung.titel || thema).slice(0, 120), caption: String(gliederung.caption || thema).slice(0, 4000), szenen: szenen.slice(0, 70) };
 }
 
+const reinText = (html) => String(html || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+
+async function aktiveProdukte() {
+  if (!config.SHOP || !config.SHOPIFY_TOKEN) return [];
+  try {
+    return (await getProducts({ status: 'active' })).filter((p) => (p.images || []).length);
+  } catch (err) {
+    console.log(`[94-video-fabrik] Shopify nicht lesbar (${err.message}) - Themen-Videos statt Produkt-Ads.`);
+    return [];
+  }
+}
+
+async function produktSkript(p) {
+  const preis = p.variants?.[0]?.price;
+  const link = config.SHOP_URL ? `${config.SHOP_URL.replace(/\/$/, '')}/products/${p.handle}` : '';
+  const fotos = p.images.map((b) => b.src);
+  const antwort = await askKI(
+    `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ein 25-40 Sekunden Werbe-Skript auf Deutsch (Du-Form) fuer das Produkt "${p.title}" aus dem Shop "${config.SHOP_NAME}". ` +
+      `Produktinfos: ${reinText(p.body_html).slice(0, 700)}${preis ? ` Preis: ${preis} EUR.` : ''} ` +
+      'Aufbau: 1) Hook, der in 2 Sekunden fesselt, 2) Problem, 3) 2-3 konkrete Vorteile des Produkts, 4) Call-to-Action ("Link in der Bio"). 5 bis 7 Szenen, pro Szene 1 kurzer gesprochener Satz. Nichts erfinden, was nicht in den Produktinfos steht. ' +
+      `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index eines Produktfotos ODER "bild": englischer Prompt fuer ein Lifestyle-Bild ohne das Produkt. Mindestens die Haelfte der Szenen mit Produktfoto. ` +
+      'Antworte NUR mit JSON: {"titel":"...","caption":"Caption mit 3-5 Hashtags","szenen":[{"text":"...","foto":0},{"text":"...","bild":"..."}]}',
+    { maxTokens: 1500 }
+  );
+  const d = jsonAusText(antwort);
+  const szenen = (Array.isArray(d.szenen) ? d.szenen : []).map((s, i) => {
+    const text = String(s.text || '').replace(/\s+/g, ' ').trim().slice(0, 400);
+    const idx = Number.isInteger(s.foto) && s.foto >= 0 && s.foto < fotos.length ? s.foto : null;
+    const bild = String(s.bild || '').trim().slice(0, 300);
+    return { text, foto: idx !== null ? fotos[idx] : bild ? '' : fotos[i % fotos.length], bild };
+  }).filter((s) => s.text.length > 3).slice(0, 8);
+  if (szenen.length && !szenen[0].foto) szenen[0].foto = fotos[0];
+  const caption = `${String(d.caption || p.title).slice(0, 1800)}${link ? `\n\n👉 ${link}` : ''}`;
+  return { titel: String(d.titel || p.title).slice(0, 120), caption, szenen };
+}
+
 async function bauen() {
   mkdirSync(join(OUT, 'videos'), { recursive: true });
   const liste = themen();
   const tag = Math.floor(Date.now() / 86400000);
-  const auftraege = Array.from({ length: ANZAHL }, (_, i) => ({ thema: liste[(tag * ANZAHL + i) % liste.length], format: 'hoch' }));
+  const produkte = await aktiveProdukte();
+  const auftraege = produkte.length
+    ? Array.from({ length: Math.min(ANZAHL, produkte.length) }, (_, i) => { const p = produkte[(tag * ANZAHL + i) % produkte.length]; return { thema: p.title, produkt: p, format: 'hoch' }; })
+    : Array.from({ length: ANZAHL }, (_, i) => ({ thema: liste[(tag * ANZAHL + i) % liste.length], format: 'hoch' }));
+  console.log(`[94-video-fabrik] ${produkte.length ? `${produkte.length} Produkte gefunden - Produkt-Ads` : 'kein Shopify-Zugang - Themen-Videos'}, ${auftraege.length} Videos geplant`);
   if (LANG_MIN > 0) auftraege.push({ thema: liste[tag % liste.length], format: 'quer', minuten: LANG_MIN });
 
   const manifest = [];
   for (const [i, a] of auftraege.entries()) {
     const start = Date.now();
     try {
-      const skript = a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
+      const skript = a.produkt ? await produktSkript(a.produkt) : a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
       if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
       const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL });
       const datei = `${new Date().toISOString().slice(0, 10)}-${i + 1}-${slug(skript.titel)}.mp4`;
