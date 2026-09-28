@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHMACHINE VIDEO-FEED</title>
+<meta name="description" content="Täglich automatisch erzeugte Videos der Video-Fabrik (#94) – ohne API-Key, mit KI-Stimme und Untertiteln.">
+<meta name="theme-color" content="#3ef2a0">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#030512; --panel:rgba(20,28,40,.6); --green:#3ef2a0; --cyan:#6fe0ff; --txt:#eef4f2; --mut:rgba(220,235,230,.62);
+    --line:rgba(62,242,160,.24); --line2:rgba(255,255,255,.08); --mono:'JetBrains Mono', ui-monospace, monospace; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:system-ui,-apple-system,sans-serif; line-height:1.5; min-height:100vh;
+    background-image:radial-gradient(ellipse 80% 50% at 50% -10%, rgba(62,242,160,.14), transparent 70%); }
+  header, main { max-width:1200px; margin:0 auto; padding:24px 16px 8px; }
+  h1 { font-family:'Orbitron',sans-serif; font-size:clamp(22px,5vw,38px); letter-spacing:.04em; }
+  h1 span { color:var(--green); }
+  .sub { color:var(--mut); margin-top:6px; font-size:14px; }
+  .info { color:var(--mut); font-size:13px; margin:12px 0; font-family:var(--mono); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; padding-bottom:40px; }
+  .card { background:var(--panel); border:1px solid var(--line2); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; min-width:0; }
+  video { width:100%; aspect-ratio:9/16; background:#000; display:block; }
+  video.quer { aspect-ratio:16/9; }
+  .body { padding:12px; display:flex; flex-direction:column; gap:8px; }
+  .body h3 { font-size:15px; overflow-wrap:anywhere; }
+  .meta { font-family:var(--mono); font-size:11px; color:var(--mut); }
+  .caption { font-size:13px; color:var(--mut); white-space:pre-wrap; overflow-wrap:anywhere; }
+  .actions { display:flex; gap:8px; flex-wrap:wrap; }
+  .actions a, .actions button { font:inherit; font-size:12px; color:var(--green); background:none; border:1px solid var(--line); border-radius:8px; padding:5px 10px; cursor:pointer; text-decoration:none; }
+  .leer { color:var(--mut); padding:40px 0; text-align:center; font-family:var(--mono); }
+</style>
+</head>
+<body>
+<header>
+  <h1>VIDEO-<span>FEED</span></h1>
+  <p class="sub">Täglich automatisch erzeugt von der Video-Fabrik (Automation #94): KI-Skript, KI-Bilder, KI-Stimme und Untertitel – ganz ohne API-Key. Herunterladen, Caption kopieren, posten.</p>
+</header>
+<main>
+  <div class="info" id="info">Videos werden geladen …</div>
+  <div class="grid" id="grid"></div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function sichereUrl(u) { try { const x = new URL(u); return x.protocol === 'https:' && x.hostname === 'github.com' ? x.href : ''; } catch { return ''; } }
+
+fetch('./videos.json', { cache: 'no-cache' })
+  .then((r) => (r.ok ? r.json() : { videos: [] }))
+  .then((d) => {
+    const videos = (d.videos || []).filter((v) => sichereUrl(v.url));
+    $('info').textContent = `${videos.length} Videos${d.stand ? ` · Stand ${new Date(d.stand).toLocaleString('de-DE')}` : ''}`;
+    if (!videos.length) { $('grid').append(el('div', 'leer', 'Noch keine Videos – die Video-Fabrik läuft täglich um 07:00 Uhr.')); return; }
+    for (const v of videos) {
+      const c = el('article', 'card');
+      const video = el('video', v.format === 'quer' ? 'quer' : '');
+      video.controls = true; video.preload = 'none'; video.playsInline = true; video.src = sichereUrl(v.url);
+      c.append(video);
+      const b = el('div', 'body');
+      b.append(el('h3', '', v.titel || v.thema || 'Video'));
+      b.append(el('div', 'meta', `${v.dauer ? `${Math.floor(v.dauer / 60)}:${String(v.dauer % 60).padStart(2, '0')} min · ` : ''}${v.format === 'quer' ? '16:9' : '9:16'} · ${v.erstellt ? new Date(v.erstellt).toLocaleDateString('de-DE') : ''}`));
+      if (v.caption) b.append(el('div', 'caption', v.caption));
+      const a = el('div', 'actions');
+      const dl = el('a', '', 'Download'); dl.href = sichereUrl(v.url); dl.rel = 'noopener'; a.append(dl);
+      const cp = el('button', '', 'Caption kopieren'); cp.type = 'button';
+      cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText(`${v.titel || ''}\n\n${v.caption || ''}`.trim()); cp.textContent = 'Kopiert ✓'; } catch { cp.textContent = 'Nicht möglich'; } });
+      a.append(cp);
+      b.append(a);
+      c.append(b);
+      $('grid').append(c);
+    }
+  })
+  .catch((err) => { $('info').textContent = `Feed konnte nicht geladen werden (${err.message}).`; });
+</script>
+</body>
+</html>
