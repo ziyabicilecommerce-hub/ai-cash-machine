@@ -11,6 +11,7 @@ import { join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { videoBauen } from './lib/videoFabrik.mjs';
 import { kapitelText, teaserBauen } from './lib/videoExtras.mjs';
+import { WELT_SPRACHEN, sprachGruppen } from './lib/weltSprachen.mjs';
 import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
 
 const OUT = 'out';
@@ -25,9 +26,11 @@ const STIL = env('VIDEO_FABRIK_STIL', 'cinematic, vibrant colors, high detail, n
 const STIMME = env('VIDEO_FABRIK_STIMME', 'de-DE-SeraphinaMultilingualNeural');
 const LIFESTYLE = env('VIDEO_FABRIK_LIFESTYLE', 'nein').toLowerCase() === 'ja';
 // Zusaetzliche Sprachversionen der Produkt-Kurzvideos, z. B. "en,es,tr" (Deutsch ist immer dabei).
-const STIMMEN = { en: 'en-US-AvaMultilingualNeural', es: 'es-ES-ElviraNeural', fr: 'fr-FR-DeniseNeural', it: 'it-IT-ElsaNeural', tr: 'tr-TR-EmelNeural', nl: 'nl-NL-FennaNeural', pl: 'pl-PL-ZofiaNeural', pt: 'pt-BR-FranciscaNeural' };
-const SPRACHNAMEN = { en: 'Englisch', es: 'Spanisch', fr: 'Franzoesisch', it: 'Italienisch', tr: 'Tuerkisch', nl: 'Niederlaendisch', pl: 'Polnisch', pt: 'Portugiesisch (Brasilien)' };
-const EXTRA_SPRACHEN = env('VIDEO_FABRIK_SPRACHEN').toLowerCase().split(',').map((x) => x.trim()).filter((x) => STIMMEN[x]);
+const STIMMEN = Object.fromEntries(Object.entries(WELT_SPRACHEN).map(([k, v]) => [k, v.stimme]));
+const SPRACHNAMEN = Object.fromEntries(Object.entries(WELT_SPRACHEN).map(([k, v]) => [k, v.name]));
+// "alle" = jede Sprache aus lib/weltSprachen.mjs.
+const sprachListe = (text) => (text.trim().toLowerCase() === 'alle' ? Object.keys(STIMMEN) : text.toLowerCase().split(',').map((x) => x.trim()).filter((x) => STIMMEN[x]));
+const EXTRA_SPRACHEN = sprachListe(env('VIDEO_FABRIK_SPRACHEN'));
 
 function themen() {
   const liste = (env('VIDEO_FABRIK_THEMEN') || config.SOCIAL_AUTOPILOT_THEMEN || '').split(',').map((s) => s.trim()).filter(Boolean);
@@ -289,7 +292,7 @@ function feedErgaenzen(basisUrl) {
   const feed = existsSync(FEED) ? JSON.parse(readFileSync(FEED, 'utf8')) : { videos: [] };
   const basis = basisUrl.replace(/\/$/, '');
   const neu = manifest.map((m) => ({ ...m, url: `${basis}/${encodeURIComponent(m.datei)}`, vorschauUrl: m.vorschau ? `${basis}/${encodeURIComponent(m.vorschau)}` : '', erstellt: new Date().toISOString() }));
-  feed.videos = [...neu, ...(feed.videos || [])].slice(0, 300);
+  feed.videos = [...neu, ...(feed.videos || [])].slice(0, 1500);
   feed.stand = new Date().toISOString();
   mkdirSync('video-feed', { recursive: true });
   writeFileSync(FEED, JSON.stringify(feed, null, 1));
@@ -330,8 +333,62 @@ async function metricoolPlanen(basisUrl) {
   }
 }
 
+// Welt-Bot (#96), Schritt 1: deutsche Produkt-Skripte des Tages fuer alle Sprach-Jobs festlegen.
+async function skripteSchreiben() {
+  mkdirSync(OUT, { recursive: true });
+  const produkte = await aktiveProdukte();
+  if (!produkte.length) throw new Error('Keine Produkte gefunden');
+  const tag = Math.floor(Date.now() / 86400000);
+  const skripte = [];
+  for (let i = 0; skripte.length < Math.max(ANZAHL, 1) && i < produkte.length; i++) {
+    const p = produkte[(tag * 7 + i) % produkte.length];
+    try {
+      const skript = await produktSkript(p);
+      if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
+      skripte.push({ nr: skripte.length + 1, thema: p.title, skript });
+      console.log(`[94-video-fabrik] Welt-Skript ${skripte.length}: "${p.title}"`);
+    } catch (err) {
+      console.log(`[94-video-fabrik] ✗ "${p.title}": ${err.message}`);
+    }
+  }
+  if (!skripte.length) throw new Error('Kein einziges Skript');
+  writeFileSync(join(OUT, 'skripte.json'), JSON.stringify(skripte, null, 1));
+  let codes = EXTRA_SPRACHEN.length ? EXTRA_SPRACHEN : Object.keys(STIMMEN);
+  // Stimmenliste von edge-tts (im Workflow erzeugt): nur Sprachen, deren Stimme es wirklich gibt.
+  if (existsSync(join(OUT, 'stimmen.txt'))) {
+    const vorhanden = readFileSync(join(OUT, 'stimmen.txt'), 'utf8');
+    const fehlt = codes.filter((c) => !vorhanden.includes(STIMMEN[c]));
+    if (fehlt.length) console.log(`[94-video-fabrik] Stimme nicht gefunden, uebersprungen: ${fehlt.join(', ')}`);
+    if (fehlt.length < codes.length) codes = codes.filter((c) => !fehlt.includes(c));
+  }
+  writeFileSync(join(OUT, 'gruppen.json'), JSON.stringify(sprachGruppen(codes)));
+  console.log(`[94-video-fabrik] ${skripte.length} Skripte, ${codes.length} Sprachen in ${sprachGruppen(codes).length} Gruppen`);
+}
+
+// Welt-Bot (#96), Schritt 2: die Skripte in die Sprachen dieses Jobs uebersetzen und vertonen.
+async function sprachenRendern(liste) {
+  mkdirSync(join(OUT, 'videos'), { recursive: true });
+  const skripte = JSON.parse(readFileSync(join(OUT, 'skripte.json'), 'utf8'));
+  const manifest = [];
+  for (const sprache of sprachListe(liste)) {
+    for (const { nr, thema, skript } of skripte) {
+      try {
+        const uebersetzt = await uebersetzen(skript, sprache);
+        const v = await videoBauen(uebersetzt, join(OUT, `welt-${nr}-${sprache}`), { format: 'hoch', stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook });
+        await ablegen(manifest, v, uebersetzt, { thema, format: 'hoch' }, nr, sprache);
+        console.log(`[94-video-fabrik] ✓ ${sprache}: ${manifest.at(-1).datei}`);
+      } catch (err) {
+        console.log(`[94-video-fabrik] ✗ ${sprache} "${thema}": ${String(err.message).slice(0, 200)}`);
+      }
+    }
+  }
+  writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1));
+  console.log(`[94-video-fabrik] ${manifest.length} Welt-Videos fertig`);
+}
+
 const [modus, arg] = process.argv.slice(2);
-(modus === '--feed' ? Promise.resolve(feedErgaenzen(arg)) : modus === '--metricool' ? metricoolPlanen(arg) : bauen()).catch((err) => {
+const MODI = { '--feed': () => feedErgaenzen(arg), '--metricool': () => metricoolPlanen(arg), '--skripte': skripteSchreiben, '--sprachen': () => sprachenRendern(arg || '') };
+Promise.resolve((MODI[modus] || bauen)()).catch((err) => {
   console.error('[94-video-fabrik] Fehler:', err.message);
   process.exit(1);
 });

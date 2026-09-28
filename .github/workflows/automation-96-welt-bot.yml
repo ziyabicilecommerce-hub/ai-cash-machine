@@ -1,0 +1,133 @@
+name: "96 · Welt-Bot"
+
+# Synchronisiert die Produkt-Ads des Tages in bis zu 50 Sprachen - komplett kostenlos:
+# Pollinations-KI uebersetzt, edge-tts spricht mit Muttersprachler-Stimmen, ffmpeg
+# schneidet. Die Sprachen laufen parallel als Matrix-Jobs (oeffentliches Repo =
+# kostenlose Actions-Minuten). Ergebnis: ein Release + Video-Feed mit Sprachfilter.
+
+on:
+  schedule:
+    - cron: '43 7 * * *'
+  workflow_dispatch:
+    inputs:
+      anzahl:
+        description: 'Anzahl Produkte (1-5)'
+        required: false
+        default: ''
+      sprachen:
+        description: 'Sprachen, z. B. en,es,ja,ar - leer oder "alle" = alle 50'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: welt-bot
+  cancel-in-progress: false
+
+env:
+  VIDEO_FABRIK_ANZAHL: ${{ inputs.anzahl || vars.WELT_BOT_ANZAHL || '2' }}
+  VIDEO_FABRIK_SPRACHEN: ${{ inputs.sprachen || vars.WELT_BOT_SPRACHEN || 'alle' }}
+  VIDEO_FABRIK_SHOPS: ${{ vars.VIDEO_FABRIK_SHOPS }}
+
+jobs:
+  skripte:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      gruppen: ${{ steps.gruppen.outputs.gruppen }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Stimmenliste von edge-tts holen
+        run: |
+          pip install -q "edge-tts==7.*"
+          mkdir -p out
+          edge-tts --list-voices > out/stimmen.txt || true
+      - name: Deutsche Skripte des Tages schreiben
+        run: node automations/94-video-fabrik.mjs --skripte
+      - id: gruppen
+        run: echo "gruppen=$(cat out/gruppen.json)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skripte
+          path: out/skripte.json
+          retention-days: 2
+
+  rendern:
+    needs: skripte
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        gruppe: ${{ fromJSON(needs.skripte.outputs.gruppen) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: ffmpeg, Schriften fuer alle Sprachen und edge-tts installieren
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core fonts-noto-core fonts-noto-cjk >/dev/null
+          pip install -q "edge-tts==7.*"
+      - uses: actions/download-artifact@v4
+        with:
+          name: skripte
+          path: out
+      - name: Sprachen ${{ matrix.gruppe }} vertonen
+        run: node automations/94-video-fabrik.mjs --sprachen "${{ matrix.gruppe }}"
+      - id: name
+        run: echo "name=welt-$(echo '${{ matrix.gruppe }}' | tr ',' '-')" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.name.outputs.name }}
+          path: |
+            out/videos
+            out/manifest.json
+          retention-days: 2
+          if-no-files-found: ignore
+
+  veroeffentlichen:
+    needs: rendern
+    if: always() && needs.rendern.result != 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: welt-*
+          path: teile
+      - name: Teile zusammenfuehren
+        run: |
+          mkdir -p out/videos
+          find teile -path '*/videos/*' -type f -exec cp {} out/videos/ \;
+          node -e "
+            const fs = require('fs'), path = require('path');
+            const alle = [];
+            for (const d of fs.readdirSync('teile')) {
+              const f = path.join('teile', d, 'manifest.json');
+              if (fs.existsSync(f)) alle.push(...JSON.parse(fs.readFileSync(f, 'utf8')));
+            }
+            fs.writeFileSync('out/manifest.json', JSON.stringify(alle, null, 1));
+            console.log(alle.length + ' Welt-Videos');
+            if (!alle.length) process.exit(1);
+          "
+      - name: Als Release veroeffentlichen und Feed ergaenzen
+        run: |
+          TAG="welt-$(date -u +%Y%m%d-%H%M)"
+          gh release create "$TAG" out/videos/* --title "Welt-Bot $(date -u +%d.%m.%Y)" --notes "Automatisch erzeugt von Automation #96 (Welt-Bot): Produkt-Ads in vielen Sprachen." --latest=false
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}"
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
+        env:
+          GH_TOKEN: ${{ github.token }}
