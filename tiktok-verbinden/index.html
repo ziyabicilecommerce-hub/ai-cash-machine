@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok verbinden</title>
+<meta name="description" content="Verbindet den kostenlosen Direkt-Poster (#99) mit deinem eigenen TikTok-Konto über die offizielle TikTok Content Posting API.">
+<meta name="referrer" content="no-referrer">
+<style>
+  :root { --bg:#0a0a0f; --panel:#15151f; --akzent:#25f4ee; --rot:#fe2c55; --txt:#f2f2f7; --mut:#a6a6b8; --line:#2a2a3a; }
+  @media (prefers-color-scheme: light) { :root { --bg:#f5f5f8; --panel:#ffffff; --akzent:#0a8f8b; --rot:#d61f45; --txt:#15151f; --mut:#5c5c6e; --line:#e2e2ea; } }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:system-ui,-apple-system,sans-serif; line-height:1.55; }
+  main { max-width:760px; margin:0 auto; padding:24px 16px 48px; }
+  h1 { font-size:clamp(24px,5vw,34px); }
+  h1 span { color:var(--rot); }
+  .sub { color:var(--mut); margin:6px 0 18px; }
+  .box { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; margin:14px 0; }
+  .box h2 { font-size:17px; margin-bottom:8px; }
+  label { display:block; font-size:14px; color:var(--mut); margin:10px 0 4px; }
+  input[type=text], input[type=password] { width:100%; font:inherit; padding:9px 10px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--txt); }
+  button { font:inherit; margin-top:12px; padding:9px 14px; border-radius:8px; border:0; background:var(--rot); color:#fff; cursor:pointer; }
+  button.zweit { background:transparent; color:var(--txt); border:1px solid var(--akzent); }
+  code, pre { font-family:ui-monospace,monospace; font-size:13px; overflow-wrap:anywhere; white-space:pre-wrap; }
+  pre { background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:10px; margin-top:8px; }
+  ol { padding-left:20px; color:var(--mut); font-size:14px; }
+  li { margin:4px 0; }
+  .ok { color:var(--akzent); }
+  .fehler { color:var(--rot); }
+  .check { display:flex; gap:8px; align-items:flex-start; margin-top:10px; font-size:14px; color:var(--mut); }
+  footer { max-width:760px; margin:0 auto; padding:0 16px 32px; font-size:14px; }
+  footer a { color:var(--akzent); margin-right:14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>TikTok <span>verbinden</span></h1>
+  <p class="sub">Einmalig einrichten, damit der kostenlose Direkt-Poster (#99) deine Videos an dein eigenes TikTok-Konto schickt. Alles läuft über die offizielle TikTok-API; Passwörter und Schlüssel bleiben in deinem Browser.</p>
+
+  <div class="box">
+    <h2>1 · App bei TikTok anlegen (einmalig)</h2>
+    <ol>
+      <li>developers.tiktok.com → Login → <strong>Manage apps</strong> → <strong>Connect an app</strong>.</li>
+      <li>Als Website, Datenschutz und Nutzungsbedingungen diese Seiten eintragen (Links unten auf dieser Seite).</li>
+      <li>Produkte hinzufügen: <strong>Login Kit</strong> und <strong>Content Posting API</strong>. Scopes: <code>user.info.basic</code>, <code>video.upload</code> (und später <code>video.publish</code>).</li>
+      <li>Bei Login Kit als <strong>Redirect URI</strong> eintragen: <code id="redirect"></code></li>
+      <li>Client Key und Client Secret aus der App kopieren.</li>
+    </ol>
+  </div>
+
+  <div class="box" id="schritt2">
+    <h2>2 · Mit deinem TikTok-Konto anmelden</h2>
+    <label for="clientKey">Client Key</label>
+    <input type="text" id="clientKey" autocomplete="off" spellcheck="false">
+    <div class="check"><input type="checkbox" id="direkt"><label for="direkt" style="margin:0">Auch Direkt-Posten erlauben (<code>video.publish</code> – öffentlich erst nach TikTok-Audit)</label></div>
+    <button type="button" id="los">Mit TikTok anmelden</button>
+  </div>
+
+  <div class="box" id="schritt3" hidden>
+    <h2>3 · Schlüssel abholen</h2>
+    <p class="ok" id="codeInfo"></p>
+    <label for="clientSecret">Client Secret (bleibt in deinem Browser)</label>
+    <input type="password" id="clientSecret" autocomplete="off">
+    <button type="button" id="token">Refresh-Token holen</button>
+    <div id="ergebnis"></div>
+  </div>
+
+  <div class="box">
+    <h2>4 · In GitHub eintragen</h2>
+    <ol>
+      <li>GitHub → Repo <code>ai-cash-machine</code> → Settings → Secrets and variables → Actions.</li>
+      <li>Secrets: <code>TIKTOK_CLIENT_KEY</code>, <code>TIKTOK_CLIENT_SECRET</code>, <code>TIKTOK_REFRESH_TOKEN</code>.</li>
+      <li>Fertig: Neue Hochformat-Videos landen als <strong>Entwurf in deinem TikTok-Postfach</strong> – in der App auf die Benachrichtigung tippen und posten.</li>
+      <li>Nach bestandenem TikTok-Audit: Variable <code>TIKTOK_MODUS</code> = <code>direkt</code> → Videos gehen automatisch online.</li>
+    </ol>
+  </div>
+</main>
+<footer>
+  <a href="./datenschutz.html">Datenschutz</a>
+  <a href="./nutzungsbedingungen.html">Nutzungsbedingungen</a>
+</footer>
+<script>
+const $ = (id) => document.getElementById(id);
+const redirect = location.origin + location.pathname;
+$('redirect').textContent = redirect;
+const speicher = { get: (k) => { try { return sessionStorage.getItem(k) || ''; } catch { return ''; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch { /* egal */ } } };
+
+function zeile(cls, text) { const p = document.createElement('p'); p.className = cls; p.textContent = text; p.style.marginTop = '10px'; return p; }
+function block(text) { const p = document.createElement('pre'); p.textContent = text; return p; }
+
+$('los').addEventListener('click', () => {
+  const key = $('clientKey').value.trim();
+  if (!/^[A-Za-z0-9_-]{6,}$/.test(key)) { $('schritt2').append(zeile('fehler', 'Bitte einen gültigen Client Key eintragen.')); return; }
+  const state = crypto.getRandomValues(new Uint32Array(4)).join('-');
+  speicher.set('tt_key', key); speicher.set('tt_state', state);
+  const scope = ['user.info.basic', 'video.upload', ...($('direkt').checked ? ['video.publish'] : [])].join(',');
+  const u = new URL('https://www.tiktok.com/v2/auth/authorize/');
+  u.search = new URLSearchParams({ client_key: key, scope, response_type: 'code', redirect_uri: redirect, state }).toString();
+  location.assign(u.href);
+});
+
+const q = new URLSearchParams(location.search);
+if (q.get('error')) {
+  $('schritt2').append(zeile('fehler', `TikTok meldet: ${q.get('error')} ${q.get('error_description') || ''}`));
+} else if (q.get('code')) {
+  $('clientKey').value = speicher.get('tt_key');
+  $('schritt3').hidden = false;
+  if (q.get('state') !== speicher.get('tt_state')) $('codeInfo').textContent = 'Achtung: Sicherheits-Prüfwert passt nicht – bitte Schritt 2 wiederholen.';
+  else $('codeInfo').textContent = 'Anmeldung bei TikTok erfolgreich. Jetzt den Refresh-Token abholen (der Code gilt nur wenige Minuten).';
+  history.replaceState(null, '', location.pathname);
+  const code = q.get('code');
+  $('token').addEventListener('click', async () => {
+    const secret = $('clientSecret').value.trim();
+    const key = $('clientKey').value.trim();
+    $('ergebnis').replaceChildren();
+    if (!secret || !key) { $('ergebnis').append(zeile('fehler', 'Client Key und Client Secret werden gebraucht.')); return; }
+    const body = new URLSearchParams({ client_key: key, client_secret: secret, code, grant_type: 'authorization_code', redirect_uri: redirect });
+    try {
+      const res = await fetch('https://open.tiktokapis.com/v2/oauth/token/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+      const d = await res.json();
+      if (!d.refresh_token) throw new Error(d.error_description || d.error || `Status ${res.status}`);
+      $('ergebnis').append(zeile('ok', `Geschafft! Rechte: ${d.scope}. Diesen Wert als Secret TIKTOK_REFRESH_TOKEN speichern (gültig ${Math.round((d.refresh_expires_in || 0) / 86400)} Tage):`), block(d.refresh_token));
+      const b = document.createElement('button'); b.className = 'zweit'; b.type = 'button'; b.textContent = 'Kopieren';
+      b.addEventListener('click', async () => { try { await navigator.clipboard.writeText(d.refresh_token); b.textContent = 'Kopiert ✓'; } catch { b.textContent = 'Bitte manuell kopieren'; } });
+      $('ergebnis').append(b);
+    } catch (err) {
+      $('ergebnis').append(
+        zeile('fehler', `Direkt im Browser ging es nicht (${err.message}). Dann im Terminal ausführen – die Antwort enthält "refresh_token":`),
+        block(`curl -s -X POST 'https://open.tiktokapis.com/v2/oauth/token/' -H 'Content-Type: application/x-www-form-urlencoded' --data '${body.toString()}'`),
+      );
+    }
+  });
+}
+</script>
+</body>
+</html>
