@@ -1,0 +1,61 @@
+// Sprachen fuer die Welt-Synchro (#94/#96): je Sprache eine kostenlose edge-tts-Stimme
+// (Microsoft Neural, ohne Key). Codes sind die Kuerzel fuer VIDEO_FABRIK_SPRACHEN.
+export const WELT_SPRACHEN = {
+  en: { name: 'Englisch', stimme: 'en-US-AvaMultilingualNeural' },
+  es: { name: 'Spanisch', stimme: 'es-ES-ElviraNeural' },
+  mx: { name: 'Spanisch (Lateinamerika)', stimme: 'es-MX-DaliaNeural' },
+  fr: { name: 'Franzoesisch', stimme: 'fr-FR-DeniseNeural' },
+  it: { name: 'Italienisch', stimme: 'it-IT-ElsaNeural' },
+  pt: { name: 'Portugiesisch (Brasilien)', stimme: 'pt-BR-FranciscaNeural' },
+  pp: { name: 'Portugiesisch (Portugal)', stimme: 'pt-PT-RaquelNeural' },
+  nl: { name: 'Niederlaendisch', stimme: 'nl-NL-FennaNeural' },
+  tr: { name: 'Tuerkisch', stimme: 'tr-TR-EmelNeural' },
+  pl: { name: 'Polnisch', stimme: 'pl-PL-ZofiaNeural' },
+  ru: { name: 'Russisch', stimme: 'ru-RU-SvetlanaNeural' },
+  uk: { name: 'Ukrainisch', stimme: 'uk-UA-PolinaNeural' },
+  ar: { name: 'Arabisch', stimme: 'ar-SA-ZariyahNeural' },
+  eg: { name: 'Arabisch (Aegypten)', stimme: 'ar-EG-SalmaNeural' },
+  hi: { name: 'Hindi', stimme: 'hi-IN-SwaraNeural' },
+  bn: { name: 'Bengalisch', stimme: 'bn-IN-TanishaaNeural' },
+  ur: { name: 'Urdu', stimme: 'ur-PK-UzmaNeural' },
+  ta: { name: 'Tamil', stimme: 'ta-IN-PallaviNeural' },
+  te: { name: 'Telugu', stimme: 'te-IN-ShrutiNeural' },
+  ja: { name: 'Japanisch', stimme: 'ja-JP-NanamiNeural' },
+  ko: { name: 'Koreanisch', stimme: 'ko-KR-SunHiNeural' },
+  zh: { name: 'Chinesisch (vereinfacht)', stimme: 'zh-CN-XiaoxiaoNeural' },
+  tw: { name: 'Chinesisch (traditionell, Taiwan)', stimme: 'zh-TW-HsiaoChenNeural' },
+  id: { name: 'Indonesisch', stimme: 'id-ID-GadisNeural' },
+  ms: { name: 'Malaiisch', stimme: 'ms-MY-YasminNeural' },
+  vi: { name: 'Vietnamesisch', stimme: 'vi-VN-HoaiMyNeural' },
+  th: { name: 'Thailaendisch', stimme: 'th-TH-PremwadeeNeural' },
+  fil: { name: 'Filipino', stimme: 'fil-PH-BlessicaNeural' },
+  sv: { name: 'Schwedisch', stimme: 'sv-SE-SofieNeural' },
+  da: { name: 'Daenisch', stimme: 'da-DK-ChristelNeural' },
+  no: { name: 'Norwegisch', stimme: 'nb-NO-PernilleNeural' },
+  fi: { name: 'Finnisch', stimme: 'fi-FI-NooraNeural' },
+  el: { name: 'Griechisch', stimme: 'el-GR-AthinaNeural' },
+  cs: { name: 'Tschechisch', stimme: 'cs-CZ-VlastaNeural' },
+  sk: { name: 'Slowakisch', stimme: 'sk-SK-ViktoriaNeural' },
+  hu: { name: 'Ungarisch', stimme: 'hu-HU-NoemiNeural' },
+  ro: { name: 'Rumaenisch', stimme: 'ro-RO-AlinaNeural' },
+  bg: { name: 'Bulgarisch', stimme: 'bg-BG-KalinaNeural' },
+  hr: { name: 'Kroatisch', stimme: 'hr-HR-GabrijelaNeural' },
+  sr: { name: 'Serbisch', stimme: 'sr-RS-SophieNeural' },
+  he: { name: 'Hebraeisch', stimme: 'he-IL-HilaNeural' },
+  fa: { name: 'Persisch', stimme: 'fa-IR-DilaraNeural' },
+  sw: { name: 'Suaheli', stimme: 'sw-KE-ZuriNeural' },
+  af: { name: 'Afrikaans', stimme: 'af-ZA-AdriNeural' },
+  az: { name: 'Aserbaidschanisch', stimme: 'az-AZ-BanuNeural' },
+  kk: { name: 'Kasachisch', stimme: 'kk-KZ-AigulNeural' },
+  uz: { name: 'Usbekisch', stimme: 'uz-UZ-MadinaNeural' },
+  ka: { name: 'Georgisch', stimme: 'ka-GE-EkaNeural' },
+  lt: { name: 'Litauisch', stimme: 'lt-LT-OnaNeural' },
+  ca: { name: 'Katalanisch', stimme: 'ca-ES-JoanaNeural' },
+};
+
+// Aufteilen in Gruppen fuer parallele GitHub-Jobs (Matrix).
+export function sprachGruppen(codes, groesse = 5) {
+  const gruppen = [];
+  for (let i = 0; i < codes.length; i += groesse) gruppen.push(codes.slice(i, i + groesse).join(','));
+  return gruppen;
+}

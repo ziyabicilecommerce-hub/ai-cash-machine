@@ -29,47 +29,100 @@
   .actions { display:flex; gap:8px; flex-wrap:wrap; }
   .actions a, .actions button { font:inherit; font-size:12px; color:var(--green); background:none; border:1px solid var(--line); border-radius:8px; padding:5px 10px; cursor:pointer; text-decoration:none; }
   .leer { color:var(--mut); padding:40px 0; text-align:center; font-family:var(--mono); }
+  .filter { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:8px 0 14px; }
+  .filter select, .mehr { font:inherit; font-size:13px; color:var(--txt); background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:6px 10px; max-width:100%; }
+  .mehr { display:block; margin:0 auto 40px; color:var(--green); cursor:pointer; }
 </style>
 </head>
 <body>
 <header>
   <h1>VIDEO-<span>FEED</span></h1>
-  <p class="sub">Täglich automatisch erzeugt von der Video-Fabrik (Automation #94): KI-Skript, KI-Bilder, KI-Stimme und Untertitel – ganz ohne API-Key. Herunterladen, Caption kopieren, posten.</p>
+  <p class="sub">Täglich automatisch erzeugt – Produkt-Ads (#94), Anime-Serie (#95) und Welt-Bot in bis zu 50 Sprachen (#96): KI-Skript, KI-Bilder, KI-Stimme und Untertitel – ganz ohne API-Key. Herunterladen, Caption kopieren, posten.</p>
 </header>
 <main>
   <div class="info" id="info">Videos werden geladen …</div>
+  <div class="filter">
+    <label for="sprache">🌍 Sprache</label>
+    <select id="sprache"><option value="">Alle Sprachen</option></select>
+    <label for="art">Art</label>
+    <select id="art">
+      <option value="">Alles</option>
+      <option value="kurz">Kurzvideos (9:16)</option>
+      <option value="lang">Lange Videos (16:9)</option>
+      <option value="anime">Anime-Serie</option>
+      <option value="teaser">Teaser</option>
+    </select>
+  </div>
   <div class="grid" id="grid"></div>
+  <button class="mehr" id="mehr" type="button" hidden>Mehr laden</button>
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
 function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 function sichereUrl(u) { try { const x = new URL(u); return x.protocol === 'https:' && x.hostname === 'github.com' ? x.href : ''; } catch { return ''; } }
 
+const SPRACHEN = { de: 'Deutsch', en: 'Englisch', es: 'Spanisch', mx: 'Spanisch (LatAm)', fr: 'Französisch', it: 'Italienisch', pt: 'Portugiesisch (BR)', pp: 'Portugiesisch (PT)', nl: 'Niederländisch', tr: 'Türkisch', pl: 'Polnisch', ru: 'Russisch', uk: 'Ukrainisch', ar: 'Arabisch', eg: 'Arabisch (EG)', hi: 'Hindi', bn: 'Bengalisch', ur: 'Urdu', ta: 'Tamil', te: 'Telugu', ja: 'Japanisch', ko: 'Koreanisch', zh: 'Chinesisch', tw: 'Chinesisch (TW)', id: 'Indonesisch', ms: 'Malaiisch', vi: 'Vietnamesisch', th: 'Thai', fil: 'Filipino', sv: 'Schwedisch', da: 'Dänisch', no: 'Norwegisch', fi: 'Finnisch', el: 'Griechisch', cs: 'Tschechisch', sk: 'Slowakisch', hu: 'Ungarisch', ro: 'Rumänisch', bg: 'Bulgarisch', hr: 'Kroatisch', sr: 'Serbisch', he: 'Hebräisch', fa: 'Persisch', sw: 'Suaheli', af: 'Afrikaans', az: 'Aserbaidschanisch', kk: 'Kasachisch', uz: 'Usbekisch', ka: 'Georgisch', lt: 'Litauisch', ca: 'Katalanisch' };
+const SEITE = 36;
+let alle = [];
+let gezeigt = 0;
+
+function art(v) {
+  if (v.teaser) return 'teaser';
+  if (v.thema === 'anime') return 'anime';
+  return v.format === 'quer' ? 'lang' : 'kurz';
+}
+
+function karte(v) {
+  const c = el('article', 'card');
+  const video = el('video', v.format === 'quer' ? 'quer' : '');
+  video.controls = true; video.preload = 'none'; video.playsInline = true; video.src = sichereUrl(v.url);
+  if (sichereUrl(v.vorschauUrl)) video.poster = sichereUrl(v.vorschauUrl);
+  c.append(video);
+  const b = el('div', 'body');
+  b.append(el('h3', '', v.titel || v.thema || 'Video'));
+  const sprache = v.sprache || 'de';
+  b.append(el('div', 'meta', `${sprache !== 'de' ? `🌍 ${SPRACHEN[sprache] || sprache.toUpperCase()} · ` : ''}${v.dauer ? `${Math.floor(v.dauer / 60)}:${String(v.dauer % 60).padStart(2, '0')} min · ` : ''}${v.format === 'quer' ? '16:9' : '9:16'} · ${v.erstellt ? new Date(v.erstellt).toLocaleDateString('de-DE') : ''}`));
+  if (v.caption) b.append(el('div', 'caption', v.caption));
+  const a = el('div', 'actions');
+  const dl = el('a', '', 'Download'); dl.href = sichereUrl(v.url); dl.rel = 'noopener'; a.append(dl);
+  const cp = el('button', '', 'Caption kopieren'); cp.type = 'button';
+  cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText(`${v.titel || ''}\n\n${v.caption || ''}`.trim()); cp.textContent = 'Kopiert ✓'; } catch { cp.textContent = 'Nicht möglich'; } });
+  a.append(cp);
+  b.append(a);
+  c.append(b);
+  return c;
+}
+
+function gefiltert() {
+  const s = $('sprache').value;
+  const a = $('art').value;
+  return alle.filter((v) => (!s || (v.sprache || 'de') === s) && (!a || art(v) === a));
+}
+
+function zeigen(neu) {
+  const liste = gefiltert();
+  if (neu) { $('grid').replaceChildren(); gezeigt = 0; }
+  if (!liste.length) $('grid').append(el('div', 'leer', 'Keine Videos für diesen Filter.'));
+  for (const v of liste.slice(gezeigt, gezeigt + SEITE)) $('grid').append(karte(v));
+  gezeigt += SEITE;
+  $('mehr').hidden = gezeigt >= liste.length;
+  $('info').textContent = `${liste.length} von ${alle.length} Videos`;
+}
+
 fetch('./videos.json', { cache: 'no-cache' })
   .then((r) => (r.ok ? r.json() : { videos: [] }))
   .then((d) => {
-    const videos = (d.videos || []).filter((v) => sichereUrl(v.url));
-    $('info').textContent = `${videos.length} Videos${d.stand ? ` · Stand ${new Date(d.stand).toLocaleString('de-DE')}` : ''}`;
-    if (!videos.length) { $('grid').append(el('div', 'leer', 'Noch keine Videos – die Video-Fabrik läuft täglich um 07:00 Uhr.')); return; }
-    for (const v of videos) {
-      const c = el('article', 'card');
-      const video = el('video', v.format === 'quer' ? 'quer' : '');
-      video.controls = true; video.preload = 'none'; video.playsInline = true; video.src = sichereUrl(v.url);
-      if (sichereUrl(v.vorschauUrl)) video.poster = sichereUrl(v.vorschauUrl);
-      c.append(video);
-      const b = el('div', 'body');
-      b.append(el('h3', '', v.titel || v.thema || 'Video'));
-      b.append(el('div', 'meta', `${v.sprache && v.sprache !== 'de' ? `🌍 ${v.sprache.toUpperCase()} · ` : ''}${v.dauer ? `${Math.floor(v.dauer / 60)}:${String(v.dauer % 60).padStart(2, '0')} min · ` : ''}${v.format === 'quer' ? '16:9' : '9:16'} · ${v.erstellt ? new Date(v.erstellt).toLocaleDateString('de-DE') : ''}`));
-      if (v.caption) b.append(el('div', 'caption', v.caption));
-      const a = el('div', 'actions');
-      const dl = el('a', '', 'Download'); dl.href = sichereUrl(v.url); dl.rel = 'noopener'; a.append(dl);
-      const cp = el('button', '', 'Caption kopieren'); cp.type = 'button';
-      cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText(`${v.titel || ''}\n\n${v.caption || ''}`.trim()); cp.textContent = 'Kopiert ✓'; } catch { cp.textContent = 'Nicht möglich'; } });
-      a.append(cp);
-      b.append(a);
-      c.append(b);
-      $('grid').append(c);
+    alle = (d.videos || []).filter((v) => sichereUrl(v.url));
+    if (!alle.length) { $('info').textContent = '0 Videos'; $('grid').append(el('div', 'leer', 'Noch keine Videos – die Video-Fabrik läuft täglich um 07:00 Uhr.')); return; }
+    const zaehler = {};
+    for (const v of alle) zaehler[v.sprache || 'de'] = (zaehler[v.sprache || 'de'] || 0) + 1;
+    for (const [code, n] of Object.entries(zaehler).sort((x, y) => y[1] - x[1])) {
+      const o = el('option', '', `${SPRACHEN[code] || code.toUpperCase()} (${n})`); o.value = code; $('sprache').append(o);
     }
+    $('sprache').addEventListener('change', () => zeigen(true));
+    $('art').addEventListener('change', () => zeigen(true));
+    $('mehr').addEventListener('click', () => zeigen(false));
+    zeigen(true);
   })
   .catch((err) => { $('info').textContent = `Feed konnte nicht geladen werden (${err.message}).`; });
 </script>

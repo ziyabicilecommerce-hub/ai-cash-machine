@@ -52,6 +52,11 @@ export async function sprechen(text, mp3, srt, stimme, { tonhoehe = '', tempo = 
 
 const SCHRIFT_FETT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
 
+// drawtext nutzt DejaVu (Latein, Kyrillisch, Griechisch). Andere Schriften (Arabisch, CJK,
+// Indisch, Thai ...) wuerden als Kaestchen erscheinen - dann kein Text-Overlay. Untertitel
+// laufen ueber libass mit Noto-Fallback und koennen alle Schriften.
+export const schriftOk = (text) => /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}\p{N}\p{P}\p{S}\p{Zs}\p{M}]*$/u.test(String(text));
+
 // Bricht Text fuer drawtext in Zeilen um (drawtext kann nicht selbst umbrechen).
 export function umbrechen(text, maxZeichen) {
   const zeilen = [];
@@ -116,8 +121,8 @@ export async function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index,
     `zoompan=z='${k.z}':x='${k.x}':y='${k.y}':d=${frames}:s=${breite}x${hoehe}:fps=30`,
     'fade=in:0:6',
     `fade=out:st=${Math.max(dauer - 0.25, 0).toFixed(2)}:d=0.25`,
-    ...(schild ? [schildFilter(schild, ziel, breite, hoehe)] : []),
-    ...(hook ? [hookFilter(hook, ziel, breite, hoehe)] : []),
+    ...(schild && schriftOk(schild) ? [schildFilter(schild, ziel, breite, hoehe)] : []),
+    ...(hook && schriftOk(hook) ? [hookFilter(hook, ziel, breite, hoehe)] : []),
     `subtitles='${srtPfadFuerFilter(srt)}':force_style='FontName=DejaVu Sans,FontSize=${schrift},Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=3,Shadow=0,Alignment=2,MarginV=40'`,
   ].join(',');
   await ausfuehren('ffmpeg', [
@@ -142,6 +147,10 @@ export function vorschaubildBauen(bild, ziel, titel, { breite, hoehe }) {
   const datei = `${ziel}.titel.txt`;
   writeFileSync(datei, umbrechen(titel.toUpperCase(), breite > hoehe ? 22 : 12));
   const groesse = Math.round((breite > hoehe ? hoehe : breite) * 0.07);
+  if (!titel || !schriftOk(titel)) {
+    execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', bild, '-vf', `scale=${breite}:${hoehe}`, '-frames:v', '1', '-q:v', '3', ziel], { stdio: 'pipe', timeout: 120000 });
+    return;
+  }
   const filter = `scale=${breite}:${hoehe},eq=brightness=-0.12,drawtext=fontfile=${SCHRIFT_FETT}:textfile='${filterPfad(datei)}':fontsize=${groesse}:fontcolor=white:borderw=${Math.round(groesse * 0.08)}:bordercolor=black:line_spacing=${Math.round(groesse * 0.15)}:x=(w-text_w)/2:y=(h-text_h)/2`;
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', bild, '-vf', filter, '-frames:v', '1', '-q:v', '3', ziel], { stdio: 'pipe', timeout: 120000 });
 }
