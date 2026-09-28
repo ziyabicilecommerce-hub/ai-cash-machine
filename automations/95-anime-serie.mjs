@@ -172,7 +172,8 @@ async function folgeSchreiben(serie) {
   const gruppe = serie.figuren.slice(0, 3).map((f) => `${f.name}: ${f.aussehen}`).join('; ');
   szenen.unshift({ text: `${serie.titel}. Folge ${nr}: ${titel}.`, bild: `${STIL_VORNE}, epic anime title key visual, group shot of the main characters standing together, ${gruppe}`.slice(0, 900), stimme: ERZAEHLER, sprecher: 'Erzaehler' });
   szenen.push({ text: `Wie geht es weiter? Fortsetzung folgt in Folge ${nr + 1}!`, bild: szenen.at(-1).bild, stimme: ERZAEHLER, sprecher: 'Erzaehler' });
-  return { nr, titel, zusammenfassung, szenen };
+  // Ohne Zusammenfassung verliert die naechste Folge den roten Faden - dann die Akte nehmen.
+  return { nr, titel, zusammenfassung: zusammenfassung || sauber(akte.join(' '), 800), szenen };
 }
 
 async function main() {

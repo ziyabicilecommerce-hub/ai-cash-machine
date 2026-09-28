@@ -5,9 +5,6 @@ name: "95 · Anime-Serie"
 # Metricool ein, sobald die Metricool-Secrets gesetzt sind.
 
 on:
-  push:
-    branches: [feat/anime-serie]
-    paths: [automations/95-anime-serie.mjs]
   schedule:
     - cron: '17 12 * * *'
   workflow_dispatch:
@@ -64,13 +61,7 @@ jobs:
           TAG="anime-$(date -u +%Y%m%d-%H%M)"
           gh release create "$TAG" out/videos/* --title "Anime-Serie $(date -u +%d.%m.%Y)" --notes "Automatisch erzeugt von Automation #95 (Anime-Serie)." --latest=false
           echo "BASIS=https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" >> "$GITHUB_ENV"
-          node automations/94-video-fabrik.mjs --feed "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add video-feed/videos.json anime-serie/serie.json
-          git commit -m "chore: neue Anime-Folge [skip ci]"
-          git pull --rebase --autostash
-          git push
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" anime-serie/serie.json
           if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
         env:
           GH_TOKEN: ${{ github.token }}
