@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Machbarkeitstest: Edge-TTS (ohne Key) + Pollinations-Bilder (ohne Key) + ffmpeg -> 60-s-Video
 set -euo pipefail
+command -v ffmpeg >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null)
+ffmpeg -version | head -1
 pip install -q "edge-tts==7.*"
 mkdir -p vt && cd vt
 T0=$(date +%s)
