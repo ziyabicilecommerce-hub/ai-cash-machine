@@ -11,7 +11,6 @@ import { join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { askKI } from './lib/ki.mjs';
 import { videoBauen } from './lib/videoFabrik.mjs';
-import { getProducts } from './lib/shopify.mjs';
 
 const OUT = 'out';
 const MANIFEST = join(OUT, 'manifest.json');
@@ -36,7 +35,31 @@ function jsonAusText(text) {
   const start = text.indexOf('{');
   const ende = text.lastIndexOf('}');
   if (start < 0 || ende <= start) throw new Error('KI lieferte kein JSON');
-  return JSON.parse(text.slice(start, ende + 1));
+  const roh = text.slice(start, ende + 1);
+  try {
+    return JSON.parse(roh);
+  } catch {
+    const repariert = roh
+      .replace(/[\u201C\u201D\u201E]/g, '"')
+      .replace(/,\s*([}\]])/g, '$1')
+      .replace(/([{,]\s*)([A-Za-z_][\w]*)\s*:/g, '$1"$2":')
+      .replace(/}\s*{/g, '},{')
+      .replace(/"\s*\n\s*"/g, '","');
+    return JSON.parse(repariert);
+  }
+}
+
+// Fragt die KI bis zu 3-mal, falls das JSON unbrauchbar ist.
+async function kiJson(prompt, opts) {
+  let letzter;
+  for (let versuch = 0; versuch < 3; versuch++) {
+    try {
+      return jsonAusText(await askKI(versuch ? `${prompt}\nWICHTIG: Gib ausschliesslich gueltiges JSON zurueck, doppelte Anfuehrungszeichen, keine Kommentare.` : prompt, opts));
+    } catch (err) {
+      letzter = err;
+    }
+  }
+  throw letzter;
 }
 
 function szenenPruefen(szenen) {
@@ -46,30 +69,29 @@ function szenenPruefen(szenen) {
 }
 
 async function kurzSkript(thema) {
-  const antwort = await askKI(
+  const d = await kiJson(
     `Schreibe ein Skript fuer ein 40-60 Sekunden Social-Media-Video (TikTok/Reels/Shorts) auf Deutsch zum Thema "${thema}" fuer den Shop "${config.SHOP_NAME}". ` +
       'Starker Hook in Szene 1, 6 bis 8 Szenen, jede Szene 1-2 kurze gesprochene Saetze, am Ende ein Call-to-Action. ' +
       'Antworte NUR mit JSON: {"titel":"...","caption":"kurze Caption mit 3-5 Hashtags","szenen":[{"text":"gesprochener Text","bild":"englischer Bild-Prompt, konkrete Szene"}]}',
     { maxTokens: 1800 }
   );
-  const d = jsonAusText(antwort);
   return { titel: String(d.titel || thema).slice(0, 120), caption: String(d.caption || thema).slice(0, 2000), szenen: szenenPruefen(d.szenen).slice(0, 10) };
 }
 
 async function langSkript(thema, minuten) {
   const ziel = Math.round((minuten * 60) / 10);
-  const gliederung = jsonAusText(await askKI(
+  const gliederung = await kiJson(
     `Plane ein ${minuten}-Minuten-YouTube-Video auf Deutsch zum Thema "${thema}" fuer den Shop "${config.SHOP_NAME}". Antworte NUR mit JSON: {"titel":"...","caption":"Beschreibung mit Hashtags","kapitel":["Kapitel 1", "..."]} mit 5 bis 8 Kapiteln.`,
     { maxTokens: 800 }
-  ));
+  );
   const kapitel = (gliederung.kapitel || []).map(String).slice(0, 8);
   const proKapitel = Math.max(3, Math.round(ziel / Math.max(kapitel.length, 1)));
   const szenen = [];
   for (const k of kapitel) {
-    const d = jsonAusText(await askKI(
+    const d = await kiJson(
       `Video "${gliederung.titel}". Schreibe das Kapitel "${k}" als ${proKapitel} Szenen (je 2-3 gesprochene Saetze Deutsch, ca. 10 Sekunden). Antworte NUR mit JSON: {"szenen":[{"text":"...","bild":"englischer Bild-Prompt"}]}`,
       { maxTokens: 2500 }
-    ));
+    );
     szenen.push(...szenenPruefen(d.szenen).slice(0, proKapitel + 2));
   }
   return { titel: String(gliederung.titel || thema).slice(0, 120), caption: String(gliederung.caption || thema).slice(0, 4000), szenen: szenen.slice(0, 70) };
@@ -77,29 +99,46 @@ async function langSkript(thema, minuten) {
 
 const reinText = (html) => String(html || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
 
+const SHOPS = env('VIDEO_FABRIK_SHOPS', 'https://www.deskrebel.store,https://purivelle.store').split(',').map((u) => u.trim().replace(/\/$/, '')).filter(Boolean);
+
+function shopName(url) {
+  const host = new URL(url).hostname.replace(/^www\./, '').split('.')[0];
+  return { deskrebel: 'DeskRebel', purivelle: 'Purivelle' }[host] || host.charAt(0).toUpperCase() + host.slice(1);
+}
+
+// Oeffentliche Shopify-Storefront (/products.json) - kein Key noetig.
 async function aktiveProdukte() {
-  if (!config.SHOP || !config.SHOPIFY_TOKEN) return [];
-  try {
-    return (await getProducts({ status: 'active' })).filter((p) => (p.images || []).length);
-  } catch (err) {
-    console.log(`[94-video-fabrik] Shopify nicht lesbar (${err.message}) - Themen-Videos statt Produkt-Ads.`);
-    return [];
+  const alle = [];
+  for (const shop of SHOPS) {
+    try {
+      const res = await fetch(`${shop}/products.json?limit=250`, { signal: AbortSignal.timeout(30000), headers: { 'user-agent': 'Mozilla/5.0 (video-fabrik)' } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const d = await res.json();
+      const liste = (d.products || []).filter((p) => (p.images || []).length).map((p) => ({ ...p, shopUrl: shop, shopName: shopName(shop) }));
+      console.log(`[94-video-fabrik] ${shopName(shop)}: ${liste.length} Produkte mit Fotos`);
+      alle.push(liste);
+    } catch (err) {
+      console.log(`[94-video-fabrik] ${shop} nicht lesbar (${err.message})`);
+    }
   }
+  // abwechselnd aus allen Shops mischen
+  const gemischt = [];
+  for (let i = 0; alle.some((l) => i < l.length); i++) for (const l of alle) if (l[i]) gemischt.push(l[i]);
+  return gemischt;
 }
 
 async function produktSkript(p) {
   const preis = p.variants?.[0]?.price;
-  const link = config.SHOP_URL ? `${config.SHOP_URL.replace(/\/$/, '')}/products/${p.handle}` : '';
+  const link = `${p.shopUrl}/products/${p.handle}`;
   const fotos = p.images.map((b) => b.src);
-  const antwort = await askKI(
-    `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ein 25-40 Sekunden Werbe-Skript auf Deutsch (Du-Form) fuer das Produkt "${p.title}" aus dem Shop "${config.SHOP_NAME}". ` +
+  const d = await kiJson(
+    `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ein 25-40 Sekunden Werbe-Skript auf Deutsch (Du-Form) fuer das Produkt "${p.title}" aus dem Shop "${p.shopName}". ` +
       `Produktinfos: ${reinText(p.body_html).slice(0, 700)}${preis ? ` Preis: ${preis} EUR.` : ''} ` +
       'Aufbau: 1) Hook, der in 2 Sekunden fesselt, 2) Problem, 3) 2-3 konkrete Vorteile des Produkts, 4) Call-to-Action ("Link in der Bio"). 5 bis 7 Szenen, pro Szene 1 kurzer gesprochener Satz. Nichts erfinden, was nicht in den Produktinfos steht. ' +
       `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index eines Produktfotos ODER "bild": englischer Prompt fuer ein Lifestyle-Bild ohne das Produkt. Mindestens die Haelfte der Szenen mit Produktfoto. ` +
       'Antworte NUR mit JSON: {"titel":"...","caption":"Caption mit 3-5 Hashtags","szenen":[{"text":"...","foto":0},{"text":"...","bild":"..."}]}',
     { maxTokens: 1500 }
   );
-  const d = jsonAusText(antwort);
   const szenen = (Array.isArray(d.szenen) ? d.szenen : []).map((s, i) => {
     const text = String(s.text || '').replace(/\s+/g, ' ').trim().slice(0, 400);
     const idx = Number.isInteger(s.foto) && s.foto >= 0 && s.foto < fotos.length ? s.foto : null;

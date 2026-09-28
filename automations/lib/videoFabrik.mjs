@@ -3,7 +3,7 @@
 // Stimme: edge-tts (kostenlose Microsoft-Stimmen). Schnitt: ffmpeg.
 import { execFileSync } from 'node:child_process';
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -74,7 +74,7 @@ export function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index, forma
 
 export function zusammenfuegen(szenen, ziel, ordner) {
   const liste = join(ordner, 'liste.txt');
-  writeFileSync(liste, szenen.map((s) => `file '${s.replace(/'/g, "'\\''")}'`).join('\n'));
+  writeFileSync(liste, szenen.map((s) => `file '${resolve(s).replace(/'/g, "'\\''")}'`).join('\n'));
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', liste, '-c', 'copy', '-movflags', '+faststart', ziel], { stdio: 'pipe', timeout: 600000 });
 }
 
