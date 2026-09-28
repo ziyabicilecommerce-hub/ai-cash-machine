@@ -1,0 +1,67 @@
+name: "92 · MCP-Live-Check"
+
+# Zwei getrennte Jobs: "pruefen" kontaktiert fremde MCP-Server, hat aber nur
+# Leserechte. "speichern" hat Schreibrechte, kontaktiert aber keine fremden
+# Server und validiert das Ergebnis vor dem Commit.
+
+on:
+  schedule:
+    - cron: '45 5 * * 1'
+  workflow_dispatch: {}
+
+permissions: {}
+
+concurrency:
+  group: mcp-katalog
+  cancel-in-progress: false
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node automations/92-mcp-livecheck.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-json
+          path: mcp-hub/live.json
+          retention-days: 3
+
+  speichern:
+    needs: pruefen
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: live-json
+          path: ergebnis
+      - run: node automations/92-mcp-livecheck.mjs --validieren ergebnis/live.json mcp-hub/live.json
+      - name: Live-Status committen
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add mcp-hub/live.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: MCP-Live-Status aktualisiert [skip ci]"
+            git pull --rebase
+            git push
+            if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}

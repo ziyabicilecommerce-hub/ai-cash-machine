@@ -1,12 +1,16 @@
 // MCP-Katalog - sammelt woechentlich alle oeffentlich gelisteten MCP-Server
 // aus der offiziellen MCP-Registry (registry.modelcontextprotocol.io),
+// GitHub-Topics, npm, PyPI, dem Docker-MCP-Katalog und den
+// Awesome-MCP-Listen, fuehrt Duplikate zusammen,
 // sortiert sie nach Kategorien und markiert, welche laut Registry-Eintrag
 // keinen API-Key verlangen (OAuth-Logins stehen dort oft nicht drin). Ergebnis landet in mcp-hub/catalog.json
 // und wird von der MCP-Hub-Seite angezeigt.
 import { writeFileSync, mkdirSync } from 'node:fs';
+import { githubTopics, npmPakete, pypiPakete, dockerKatalog, awesomeListen, repoSchluessel } from './lib/mcpQuellen.mjs';
 
 const OUT = 'mcp-hub/catalog.json';
 const MAX_SEITEN = 400;
+const ZEIT_BUDGET_MIN = Number(process.env.MCP_ZEIT_BUDGET_MIN || 40);
 
 const KATEGORIEN = [
   ['ki-video', /\b(video|text-to-video|t2v|i2v|runway|kling|veo|sora|luma|pika|hailuo|seedance|wan2|ltx|animat)/i],
@@ -66,7 +70,7 @@ async function offizielleRegistry() {
       eintraege.set(s.name, {
         n: s.title || s.name,
         id: s.name,
-        d: (s.description || '').slice(0, 180),
+        d: (s.description || '').replace(/\s+/g, ' ').trim().slice(0, 140),
         q: 'offiziell',
         r: s.repository?.url || '',
         u: remote?.url || '',
@@ -80,13 +84,46 @@ async function offizielleRegistry() {
   return [...eintraege.values()];
 }
 
+function zusammenfuehren(alle) {
+  const gesehen = new Map();
+  for (const e of alle) {
+    const schluessel = repoSchluessel(e.r) || `${e.q}:${(e.id || e.n || '').toLowerCase()}`;
+    const v = gesehen.get(schluessel);
+    if (!v) {
+      gesehen.set(schluessel, { ...e, q: [e.q] });
+      continue;
+    }
+    if (!v.q.includes(e.q)) v.q.push(e.q);
+    if (e.q === 'offiziell') Object.assign(v, { n: e.n, id: e.id, k: e.k, d: e.d || v.d });
+    for (const f of ['d', 'u', 'p', 'r', 'id']) if (!v[f] && e[f]) v[f] = e[f];
+    if ((e.s || 0) > (v.s || 0)) v.s = e.s;
+    if (v.k === 2 && e.k !== 2) v.k = e.k;
+  }
+  return [...gesehen.values()];
+}
+
+function kompakt(e) {
+  const o = { n: e.n, c: e.c, q: e.q.join(','), k: e.k };
+  if (e.id && e.id !== e.n) o.id = e.id;
+  for (const f of ['d', 'r', 'u', 'p']) if (e[f]) o[f] = e[f];
+  if (e.s) o.s = e.s;
+  return o;
+}
+
 async function main() {
   const quellen = {};
   let alle = [];
-  for (const [name, fn] of [['offiziell', offizielleRegistry]]) {
+  const token = process.env.GITHUB_TOKEN || '';
+  const deadline = Date.now() + ZEIT_BUDGET_MIN * 60 * 1000;
+  const quellenListe = [
+    ['offiziell', offizielleRegistry], ['docker', () => dockerKatalog(token)],
+    ['awesome', awesomeListen], ['npm', npmPakete], ['pypi', pypiPakete], ['github', () => githubTopics(token, deadline)],
+  ];
+  for (const [name, fn] of quellenListe) {
     try {
       const liste = await fn();
       quellen[name] = liste.length;
+      if (liste.zeitlimit) quellen[`${name}-zeitlimit`] = `nach ${ZEIT_BUDGET_MIN} Min. gestoppt`;
       alle = alle.concat(liste);
       console.log(`[91-mcp-katalog] ${name}: ${liste.length} Server`);
     } catch (err) {
@@ -95,14 +132,10 @@ async function main() {
     }
   }
 
-  const gesehen = new Map();
-  for (const e of alle) {
-    const schluessel = (e.r || e.id || e.n).toLowerCase().replace(/\.git$/, '').replace(/\/$/, '');
-    const vorher = gesehen.get(schluessel);
-    if (!vorher) gesehen.set(schluessel, e);
-  }
-  const server = [...gesehen.values()].map((e) => ({ ...e, c: kategorie(`${e.n} ${e.id} ${e.d}`) }));
-  server.sort((a, b) => a.n.localeCompare(b.n));
+  const server = zusammenfuehren(alle)
+    .filter((e) => e.n)
+    .map((e) => ({ ...e, c: kategorie(`${e.n} ${e.id || ''} ${e.d || ''}`) }));
+  server.sort((a, b) => (b.s || 0) - (a.s || 0) || (b.q.includes('offiziell') - a.q.includes('offiziell')) || a.n.localeCompare(b.n));
 
   if (server.length === 0) throw new Error('Keine MCP-Server gefunden - Katalog wird nicht ueberschrieben.');
 
@@ -110,8 +143,8 @@ async function main() {
   for (const s of server) zaehler[s.c] = (zaehler[s.c] || 0) + 1;
 
   mkdirSync('mcp-hub', { recursive: true });
-  writeFileSync(OUT, JSON.stringify({ stand: new Date().toISOString(), quellen, anzahl: server.length, ohneKey: server.filter((s) => !s.k).length, kategorien: zaehler, server }));
-  console.log(`[91-mcp-katalog] ${server.length} eindeutige Server, ${server.filter((s) => !s.k).length} ohne Key-Pflicht`);
+  writeFileSync(OUT, JSON.stringify({ stand: new Date().toISOString(), quellen, anzahl: server.length, ohneKey: server.filter((s) => s.k === 0).length, kategorien: zaehler, server: server.map(kompakt) }));
+  console.log(`[91-mcp-katalog] ${server.length} eindeutige Server, ${server.filter((s) => s.k === 0).length} ohne Key-Pflicht`);
   console.log('[91-mcp-katalog] Kategorien:', JSON.stringify(zaehler));
 }
 

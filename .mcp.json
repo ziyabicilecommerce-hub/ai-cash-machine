@@ -17,6 +17,12 @@
         "CLAUDE_FLOW_MEMORY_BACKEND": "hybrid"
       },
       "autoStart": false
+    },
+    "cashmachine-router": {
+      "command": "node",
+      "args": [
+        "mcp-router/server.mjs"
+      ]
     }
   }
 }

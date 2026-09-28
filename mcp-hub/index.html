@@ -46,6 +46,9 @@
   .badge { font-size:11px; font-family:var(--mono); border-radius:6px; padding:2px 7px; border:1px solid var(--line2); color:var(--mut); }
   .badge.free { border-color:rgba(62,242,160,.5); color:var(--green); }
   .badge.key { border-color:rgba(255,197,92,.5); color:var(--amber); }
+  .badge.badge-tot { border-color:rgba(255,107,129,.45); color:var(--red); }
+  .badge.unk { border-color:rgba(255,255,255,.2); }
+  .badge.star { border-color:rgba(255,197,92,.35); color:var(--amber); }
   .badge.cat { border-color:rgba(111,224,255,.4); color:var(--cyan); }
   .actions { display:flex; flex-wrap:wrap; gap:8px; }
   .actions a, .actions button { font:inherit; font-size:12px; color:var(--green); background:none; border:1px solid var(--line); border-radius:8px;
@@ -60,11 +63,13 @@
 <body>
 <header>
   <h1>MCP-<span>HUB</span></h1>
-  <p class="sub">Alle öffentlich gelisteten MCP-Server aus der offiziellen MCP-Registry – nach Kategorie sortiert, wöchentlich automatisch aktualisiert (Automation #91).</p>
+  <p class="sub">Alle öffentlich gelisteten MCP-Server weltweit – aus offizieller MCP-Registry, GitHub, npm, PyPI, Docker-Katalog und Awesome-Listen. Beliebteste zuerst, wöchentlich automatisch aktualisiert (Automation #91).</p>
   <div class="stats">
     <div class="stat"><b id="sAll">…</b><small>MCP-Server</small></div>
     <div class="stat"><b id="sFree">…</b><small>ohne Key-Pflicht*</small></div>
     <div class="stat"><b id="sCat">…</b><small>Kategorien</small></div>
+    <div class="stat"><b id="sSrc">…</b><small>Quellen</small></div>
+    <div class="stat"><b id="sLive">…</b><small>✅ antworten live</small></div>
     <div class="stat"><b id="sDate">…</b><small>Stand</small></div>
   </div>
 </header>
@@ -74,6 +79,7 @@
     <div class="row">
       <input type="search" id="q" placeholder="Suchen: video, instagram, shopify, anime …" aria-label="MCP-Server durchsuchen">
       <label class="toggle"><input type="checkbox" id="free"> nur ohne Key</label>
+      <label class="toggle"><input type="checkbox" id="live"> nur ✅ live</label>
     </div>
     <div class="chips" id="chips" role="toolbar" aria-label="Kategorien"></div>
   </div>
@@ -86,8 +92,8 @@
 </main>
 
 <footer>
-  * „ohne Key-Pflicht“ heißt: Der Registry-Eintrag verlangt keinen API-Key. Manche Dienste wollen trotzdem einen Login (OAuth) oder sind kostenpflichtig – vor dem Einsatz prüfen.<br>
-  Quelle: <a href="https://registry.modelcontextprotocol.io" target="_blank" rel="noopener">registry.modelcontextprotocol.io</a> ·
+  * „ohne Key-Pflicht“ heißt: Der Eintrag verlangt laut Registry/Docker-Katalog keinen API-Key. „Key ?“ = unbekannt (GitHub, npm, PyPI …). Manche Dienste wollen trotzdem einen Login (OAuth) oder sind kostenpflichtig – vor dem Einsatz prüfen.<br>
+  Quellen: <a href="https://registry.modelcontextprotocol.io" target="_blank" rel="noopener">MCP-Registry</a>, GitHub, npm, PyPI, <a href="https://github.com/docker/mcp-registry" target="_blank" rel="noopener">Docker</a>, Awesome-Listen ·
   <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-91-mcp-katalog.yml" target="_blank" rel="noopener">Automation #91</a>
 </footer>
 
@@ -98,8 +104,10 @@ const LABELS = {
   'web-suche-scraping': '🔎 Web & Scraping', 'finanzen-crypto': '💹 Finanzen & Crypto', 'daten-datenbank': '🗄️ Daten',
   'ki-llm-agenten': '🤖 KI & Agenten', 'entwicklung': '🛠️ Entwicklung', 'produktivitaet': '✅ Produktivität', 'sonstiges': '📦 Sonstiges',
 };
+const QUELLEN = { offiziell: 'Registry', pulsemcp: 'PulseMCP', github: 'GitHub', npm: 'npm', pypi: 'PyPI', docker: 'Docker', awesome: 'Awesome' };
 const SEITE = 60;
-let alle = [], gefiltert = [], gezeigt = 0, kat = 'alle';
+let alle = [], gefiltert = [], gezeigt = 0, kat = 'alle', live = {};
+const LIVE = { 1: ['free', '✅ antwortet'], 2: ['key', '🔒 Login nötig'], 0: ['badge-tot', '❌ tot'], 3: ['unk', '⚠️ nicht prüfbar'] };
 const $ = (id) => document.getElementById(id);
 
 function el(tag, cls, text) {
@@ -116,12 +124,17 @@ function sichereUrl(u) {
 function karte(s) {
   const c = el('article', 'card');
   c.append(el('h3', '', s.n));
-  if (s.id && s.id !== s.n) c.append(el('div', 'id', s.id));
+  if (s.id) c.append(el('div', 'id', s.id));
   c.append(el('p', '', s.d || 'Keine Beschreibung.'));
   const b = el('div', 'badges');
   b.append(el('span', 'badge cat', LABELS[s.c] || s.c));
-  b.append(el('span', s.k ? 'badge key' : 'badge free', s.k ? 'Key nötig' : 'ohne Key'));
-  if (s.u) b.append(el('span', 'badge', 'Remote'));
+  b.append(s.k === 0 ? el('span', 'badge free', 'ohne Key') : s.k === 1 ? el('span', 'badge key', 'Key nötig') : el('span', 'badge unk', 'Key ?'));
+  if (s.s) b.append(el('span', 'badge star', `★ ${s.s.toLocaleString('de-DE')}`));
+  for (const q of String(s.q || '').split(',').filter(Boolean)) b.append(el('span', 'badge', QUELLEN[q] || q));
+  if (s.u) {
+    const l = live[s.u];
+    b.append(l ? el('span', `badge ${LIVE[l[0]][0]}`, l[1] ? `${LIVE[l[0]][1]} · ${l[1]} Tools` : LIVE[l[0]][1]) : el('span', 'badge', 'Remote'));
+  }
   if (s.p) b.append(el('span', 'badge', s.p.split(':')[0] || 'Paket'));
   c.append(b);
   const a = el('div', 'actions');
@@ -144,12 +157,14 @@ function karte(s) {
 function filtern() {
   const q = $('q').value.trim().toLowerCase();
   const nurFrei = $('free').checked;
+  const nurLive = $('live').checked;
   const woerter = q.split(/\s+/).filter(Boolean);
   gefiltert = alle.filter((s) => {
     if (kat !== 'alle' && s.c !== kat) return false;
-    if (nurFrei && s.k) return false;
+    if (nurFrei && s.k !== 0) return false;
+    if (nurLive && !(s.u && live[s.u] && live[s.u][0] === 1)) return false;
     if (!woerter.length) return true;
-    const t = s._t || (s._t = `${s.n} ${s.id} ${s.d}`.toLowerCase());
+    const t = s._t || (s._t = `${s.n} ${s.id || ''} ${s.d || ''} ${s.p || ''}`.toLowerCase());
     return woerter.every((w) => t.includes(w));
   });
   gezeigt = 0;
@@ -188,14 +203,20 @@ function chips(kategorien, gesamt) {
 let timer;
 $('q').addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(filtern, 150); });
 $('free').addEventListener('change', filtern);
+$('live').addEventListener('change', filtern);
 $('more').addEventListener('click', mehr);
 
+const liveLaden = fetch('./live.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
 fetch('./catalog.json', { cache: 'no-cache' })
   .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-  .then((d) => {
+  .then(async (d) => {
+    const l = await liveLaden;
+    live = (l && l.server) || {};
+    $('sLive').textContent = l ? (l.antwortet || 0).toLocaleString('de-DE') : '–';
     alle = d.server || [];
     $('sAll').textContent = (d.anzahl || alle.length).toLocaleString('de-DE');
-    $('sFree').textContent = (d.ohneKey ?? alle.filter((s) => !s.k).length).toLocaleString('de-DE');
+    $('sFree').textContent = (d.ohneKey ?? alle.filter((s) => s.k === 0).length).toLocaleString('de-DE');
+    $('sSrc').textContent = Object.values(d.quellen || {}).filter((v) => typeof v === 'number').length;
     $('sCat').textContent = Object.keys(d.kategorien || {}).length;
     $('sDate').textContent = d.stand ? new Date(d.stand).toLocaleDateString('de-DE') : '–';
     chips(d.kategorien || {}, alle.length);
