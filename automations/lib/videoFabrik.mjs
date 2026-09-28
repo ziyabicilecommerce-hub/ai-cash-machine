@@ -47,7 +47,7 @@ export function bildVorbereiten(roh, ziel, { breite, hoehe, modus }) {
   const cover = `scale=${breite}:${hoehe}:force_original_aspect_ratio=increase,crop=${breite}:${hoehe}`;
   const filter = modus === 'produkt'
     ? `[0:v]${cover},boxblur=40:6,eq=brightness=-0.10:saturation=1.1[bg];[0:v]scale=${Math.round(breite * 0.9)}:${Math.round(hoehe * 0.72)}:force_original_aspect_ratio=decrease[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2-${Math.round(hoehe * 0.04)}`
-    : `[0:v]${cover}`;
+    : `[0:v]crop=iw:ih*0.93:0:0,${cover}`;
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', roh, '-filter_complex', filter, '-frames:v', '1', '-q:v', '2', ziel], { stdio: 'pipe', timeout: 120000 });
 }
 
@@ -104,7 +104,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
       modus = 'produkt';
     }
     if (!ok && szene.bild) {
-      ok = await ladeBild(`${szene.bild}${stil ? `, ${stil}` : ''}`, roh, { breite, hoehe });
+      ok = await ladeBild(`${szene.bild}, family friendly, fully clothed${stil ? `, ${stil}` : ''}`, roh, { breite, hoehe });
       modus = 'vollbild';
     }
     try {

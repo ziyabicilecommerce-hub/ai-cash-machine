@@ -21,6 +21,7 @@ const ANZAHL = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_ANZAHL', '5'), 10) |
 const LANG_MIN = Math.min(Math.max(parseFloat(env('VIDEO_FABRIK_LANG_MINUTEN', '0')) || 0, 0), 10);
 const STIL = env('VIDEO_FABRIK_STIL', 'cinematic, vibrant colors, high detail, no text');
 const STIMME = env('VIDEO_FABRIK_STIMME', 'de-DE-SeraphinaMultilingualNeural');
+const LIFESTYLE = env('VIDEO_FABRIK_LIFESTYLE', 'nein').toLowerCase() === 'ja';
 
 function themen() {
   const liste = (env('VIDEO_FABRIK_THEMEN') || config.SOCIAL_AUTOPILOT_THEMEN || '').split(',').map((s) => s.trim()).filter(Boolean);
@@ -29,7 +30,7 @@ function themen() {
   return [`Top-Tipps rund um ${nische}`, `Fehler, die jeder bei ${nische} macht`, `So sparst du Geld bei ${nische}`, `Trends 2026: ${nische}`, `Vorher-Nachher: ${nische}`];
 }
 
-const slug = (t) => t.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) || 'video';
+const slug = (t) => t.toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) || 'video';
 
 function jsonAusText(text) {
   const start = text.indexOf('{');
@@ -135,14 +136,17 @@ async function produktSkript(p) {
     `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ein 25-40 Sekunden Werbe-Skript auf Deutsch (Du-Form) fuer das Produkt "${p.title}" aus dem Shop "${p.shopName}". ` +
       `Produktinfos: ${reinText(p.body_html).slice(0, 700)}${preis ? ` Preis: ${preis} EUR.` : ''} ` +
       'Aufbau: 1) Hook, der in 2 Sekunden fesselt, 2) Problem, 3) 2-3 konkrete Vorteile des Produkts, 4) Call-to-Action ("Link in der Bio"). 5 bis 7 Szenen, pro Szene 1 kurzer gesprochener Satz. Nichts erfinden, was nicht in den Produktinfos steht. ' +
-      `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index eines Produktfotos ODER "bild": englischer Prompt fuer ein Lifestyle-Bild ohne das Produkt. Mindestens die Haelfte der Szenen mit Produktfoto. ` +
-      'Antworte NUR mit JSON: {"titel":"...","caption":"Caption mit 3-5 Hashtags","szenen":[{"text":"...","foto":0},{"text":"...","bild":"..."}]}',
+      'Nutze NUR Eigenschaften, die woertlich in den Produktinfos stehen - keine erfundenen Features, Zahlen oder Versprechen. Keine Floskeln. ' +
+      (LIFESTYLE
+        ? `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index ODER "bild": englischer Prompt fuer ein passendes, jugendfreies Lifestyle-Bild (vollstaendig bekleidete Personen). Mindestens die Haelfte der Szenen mit Produktfoto. `
+        : `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene "foto": Index des passendsten Produktfotos. `) +
+      'Antworte NUR mit JSON: {"titel":"...","caption":"Caption mit 3-5 Hashtags","szenen":[{"text":"...","foto":0}]}',
     { maxTokens: 1500 }
   );
   const szenen = (Array.isArray(d.szenen) ? d.szenen : []).map((s, i) => {
     const text = String(s.text || '').replace(/\s+/g, ' ').trim().slice(0, 400);
     const idx = Number.isInteger(s.foto) && s.foto >= 0 && s.foto < fotos.length ? s.foto : null;
-    const bild = String(s.bild || '').trim().slice(0, 300);
+    const bild = LIFESTYLE ? String(s.bild || '').trim().slice(0, 300) : '';
     return { text, foto: idx !== null ? fotos[idx] : bild ? '' : fotos[i % fotos.length], bild };
   }).filter((s) => s.text.length > 3).slice(0, 8);
   if (szenen.length && !szenen[0].foto) szenen[0].foto = fotos[0];
