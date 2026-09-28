@@ -83,41 +83,54 @@ export async function ladeBytes(url, maxBytes) {
   return Buffer.concat(teile);
 }
 
+export const ANALYSE_VERSION = 2;
+
 const MUSTER = {
-  'eval-dekodiert': /\beval\s*\(\s*(atob|Buffer\.from|unescape|decodeURIComponent|String\.fromCharCode)|exec\s*\(\s*(base64\.b64decode|codecs\.decode|bytes\.fromhex|zlib\.decompress)|new\s+Function\s*\(\s*(atob|Buffer\.from)/,
+  'eval-dekodiert': /\beval\s*\(\s*(atob|Buffer\.from|unescape|decodeURIComponent|String\.fromCharCode)\s*\(|exec\s*\(\s*(base64\.b64decode|codecs\.decode|bytes\.fromhex|zlib\.decompress)\s*\(|new\s+Function\s*\(\s*(atob|Buffer\.from)\s*\(/,
   'hex-kette': /(\\x[0-9a-fA-F]{2}){60,}/,
   'langer-blob': /["'`][A-Za-z0-9+/]{800,}={0,2}["'`]/,
-  'fremd-webhook': /discord(app)?\.com\/api\/webhooks|webhook\.site|requestbin|pipedream\.net|pastebin\.com\/raw|transfer\.sh|ngrok(-free)?\.(io|app)|interact\.sh|burpcollaborator/i,
-  'liest-geheimnisse': /\.ssh\/id_|id_rsa|\.aws\/credentials|\.npmrc|\.pypirc|wallet\.dat|Login Data|Local State|keychain|JSON\.stringify\(\s*process\.env\s*\)|dict\(\s*os\.environ\s*\)|os\.environ\.copy\(\)|Object\.(entries|keys)\(\s*process\.env\s*\)/,
-  'krypto-miner': /stratum\+tcp|xmrig|coinhive|cryptonight/i,
+  'fremd-webhook': /discord(app)?\.com\/api\/webhooks\/\d+|webhook\.site\/[\w-]+|pipedream\.net|pastebin\.com\/raw\/\w+|transfer\.sh\/|[\w-]+\.ngrok(-free)?\.(io|app)|\.oast\.|burpcollaborator\.net/i,
+  'liest-geheimnisse': /\.ssh\/id_(rsa|ed25519)|\.aws\/credentials|wallet\.dat|Login Data|Local State|JSON\.stringify\(\s*process\.env\s*\)|json\.dumps\(\s*dict\(\s*os\.environ/,
+  'krypto-miner': /stratum\+(tcp|ssl):\/\/[\w.-]+:\d{2,5}|--donate-level|randomx.*--threads/i,
   'shell': /child_process|execSync|spawnSync|subprocess\.(run|Popen|call)|os\.system\(/,
 };
 
-const INSTALL_GEFAHR = /curl|wget|https?:\/\/|node\s+-e|python\s+-c|powershell|bash\s+-c|\|\s*sh\b|eval/i;
+// Zeilen, die Suchmuster/Regeln definieren (typisch fuer Sicherheits-Scanner),
+// werden fuer Warnsignale ignoriert, sonst markiert man Scanner als Schadcode.
+const REGEL_ZEILE = /RegExp|re\.compile|pattern|regex|signature|detect|rule|ioc\b|yara|indicator|\\s\*|\\\(|\\\.|\/\^|\[\^/i;
+
+const INSTALL_DOWNLOAD = /curl|wget|https?:\/\/|download/i;
+const INSTALL_SHELL = /\|\s*(ba|z)?sh\b|node\s+-e|python3?\s+-c|powershell\b.*-e(nc|ncodedcommand)?\b|\beval\b|iex\s*\(/i;
 
 export function scanne(dateien, manifest) {
   const flags = new Set();
   const skripte = manifest?.scripts || {};
-  for (const phase of ['preinstall', 'install', 'postinstall', 'prepare']) {
+  for (const phase of ['preinstall', 'install', 'postinstall']) {
     const s = skripte[phase];
-    if (!s || phase === 'prepare') continue;
+    if (!s) continue;
     flags.add('install-skript');
-    if (INSTALL_GEFAHR.test(s)) flags.add('install-download');
+    if (INSTALL_DOWNLOAD.test(s)) flags.add('install-download');
+    if (INSTALL_SHELL.test(s)) flags.add('install-shell');
   }
   for (const d of dateien) {
+    const zeilen = d.text.split('\n').filter((z) => z.length < 20000 && !REGEL_ZEILE.test(z));
+    const text = zeilen.join('\n');
+    const lang = d.text.split('\n').filter((z) => !REGEL_ZEILE.test(z.slice(0, 200))).join('\n');
+    const inDatei = new Set();
     for (const [flag, re] of Object.entries(MUSTER)) {
-      if (!flags.has(flag) && re.test(d.text)) flags.add(flag);
+      if ((flag === 'hex-kette' || flag === 'langer-blob' ? lang : text).match(re)) inDatei.add(flag);
     }
+    if (inDatei.has('liest-geheimnisse') && inDatei.has('fremd-webhook')) flags.add('geheimnis-abfluss');
+    for (const f of inDatei) flags.add(f);
   }
   return flags;
 }
 
-const ROT = new Set(['eval-dekodiert', 'install-download', 'krypto-miner', 'hex-kette', 'geheimnis-abfluss', 'malware-gemeldet']);
-const GELB = new Set(['install-skript', 'langer-blob', 'fremd-webhook', 'liest-geheimnisse', 'keine-lizenz', 'kein-repo', 'veraltet', 'archiviert', 'deprecated', 'neu-und-unbekannt', 'zu-gross']);
+const ROT = new Set(['eval-dekodiert', 'install-shell', 'krypto-miner', 'hex-kette', 'geheimnis-abfluss', 'malware-gemeldet']);
+const GELB = new Set(['install-skript', 'install-download', 'langer-blob', 'fremd-webhook', 'liest-geheimnisse', 'keine-lizenz', 'kein-repo', 'veraltet', 'archiviert', 'deprecated', 'neu-und-unbekannt', 'zu-gross']);
 
 // 1 = unauffaellig, 2 = Vorsicht, 3 = gefaehrlich, 0 = nicht analysierbar
 export function bewerte(flags) {
-  if (flags.has('liest-geheimnisse') && (flags.has('fremd-webhook') || flags.has('install-skript'))) flags.add('geheimnis-abfluss');
   if ([...flags].some((f) => ROT.has(f))) return 3;
   if ([...flags].some((f) => GELB.has(f))) return 2;
   return 1;

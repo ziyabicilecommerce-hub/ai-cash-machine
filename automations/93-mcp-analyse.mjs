@@ -4,7 +4,7 @@
 // Nichts wird installiert oder ausgefuehrt. Arbeitet in Portionen mit
 // Zeitbudget und merkt sich den Fortschritt in mcp-hub/analyse.json.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { tarDateien, zipDateien, ladeBytes, scanne, bewerte, qualitaetsFlags } from './lib/mcpAnalyse.mjs';
+import { tarDateien, zipDateien, ladeBytes, scanne, bewerte, qualitaetsFlags, ANALYSE_VERSION } from './lib/mcpAnalyse.mjs';
 
 const KATALOG = 'mcp-hub/catalog.json';
 const OUT = 'mcp-hub/analyse.json';
@@ -122,7 +122,7 @@ async function main() {
   const deadline = start + BUDGET_MIN * 60 * 1000;
   const katalog = JSON.parse(readFileSync(KATALOG, 'utf8'));
   const alt = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : { e: {} };
-  const e = alt.e || {};
+  const e = alt.version === ANALYSE_VERSION ? alt.e || {} : {};
 
   const alleSchluessel = new Set();
   const offen = [];
@@ -165,11 +165,11 @@ async function main() {
   const namen = ['unklar', 'unauffaellig', 'vorsicht', 'gefaehrlich'];
   for (const v of Object.values(e)) zaehler[namen[v[0]]]++;
   const analysiert = Object.keys(e).length;
-  writeFileSync(OUT, JSON.stringify({ stand: new Date().toISOString(), gesamt: alleSchluessel.size, analysiert, zaehler, e }));
+  writeFileSync(OUT, JSON.stringify({ version: ANALYSE_VERSION, stand: new Date().toISOString(), gesamt: alleSchluessel.size, analysiert, zaehler, e }));
   console.log(`[93-mcp-analyse] diesmal ${fertig}, insgesamt ${analysiert}/${alleSchluessel.size} analysiert:`, JSON.stringify(zaehler));
 }
 
-const BEKANNTE_FLAGS = new Set(['install-skript', 'install-download', 'eval-dekodiert', 'hex-kette', 'langer-blob', 'fremd-webhook', 'liest-geheimnisse', 'geheimnis-abfluss', 'krypto-miner', 'shell', 'keine-lizenz', 'kein-repo', 'veraltet', 'archiviert', 'deprecated', 'malware-gemeldet', 'neu-und-unbekannt', 'kaum-genutzt', 'zu-gross', 'code-nicht-lesbar', 'repo-weg', 'nicht-erreichbar']);
+const BEKANNTE_FLAGS = new Set(['install-skript', 'install-download', 'install-shell', 'eval-dekodiert', 'hex-kette', 'langer-blob', 'fremd-webhook', 'liest-geheimnisse', 'geheimnis-abfluss', 'krypto-miner', 'shell', 'keine-lizenz', 'kein-repo', 'veraltet', 'archiviert', 'deprecated', 'malware-gemeldet', 'neu-und-unbekannt', 'kaum-genutzt', 'zu-gross', 'code-nicht-lesbar', 'repo-weg', 'nicht-erreichbar']);
 
 function validieren(quelle, ziel) {
   const roh = readFileSync(quelle, 'utf8');
@@ -193,7 +193,7 @@ function validieren(quelle, ziel) {
   const namen = ['unklar', 'unauffaellig', 'vorsicht', 'gefaehrlich'];
   for (const v of Object.values(e)) zaehler[namen[v[0]]]++;
   const gesamt = Number.isInteger(d.gesamt) ? d.gesamt : Object.keys(e).length;
-  writeFileSync(ziel, JSON.stringify({ stand: new Date(d.stand).toISOString(), gesamt, analysiert: Object.keys(e).length, zaehler, e }));
+  writeFileSync(ziel, JSON.stringify({ version: Number.isInteger(d.version) ? d.version : 0, stand: new Date(d.stand).toISOString(), gesamt, analysiert: Object.keys(e).length, zaehler, e }));
   console.log(`[93-mcp-analyse] validiert: ${Object.keys(e).length} Eintraege`, JSON.stringify(zaehler));
 }
 
