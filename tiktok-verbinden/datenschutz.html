@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datenschutz – Direkt-Poster</title>
+<style>
+  :root { --bg:#0a0a0f; --txt:#f2f2f7; --mut:#a6a6b8; --akzent:#25f4ee; }
+  @media (prefers-color-scheme: light) { :root { --bg:#f5f5f8; --txt:#15151f; --mut:#5c5c6e; --akzent:#0a8f8b; } }
+  body { background:var(--bg); color:var(--txt); font-family:system-ui,-apple-system,sans-serif; line-height:1.6; margin:0; }
+  main { max-width:760px; margin:0 auto; padding:24px 16px 48px; }
+  h1 { font-size:28px; margin-bottom:6px; } h2 { font-size:18px; margin:22px 0 6px; }
+  p, li { color:var(--mut); } ul { padding-left:20px; } a { color:var(--akzent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Datenschutzerklärung</h1>
+  <p>für die Anwendung „Direkt-Poster“ (Automation #99) der Shops DeskRebel und Purivelle · Stand: September 2026 · English summary below.</p>
+
+  <h2>1. Zweck der Anwendung</h2>
+  <p>Der Direkt-Poster veröffentlicht vom Betreiber selbst erstellte Videos auf den eigenen Social-Media-Konten des Betreibers (u. a. TikTok, YouTube, Instagram). Die Anwendung wird ausschließlich vom Betreiber für seine eigenen Konten genutzt und ist nicht für Dritte bestimmt.</p>
+
+  <h2>2. Welche Daten verarbeitet werden</h2>
+  <ul>
+    <li>Zugangs-Token der verbundenen Konten (z. B. TikTok-Refresh-Token), gespeichert verschlüsselt als GitHub-Actions-Secrets.</li>
+    <li>Die zu veröffentlichenden Videos, Titel und Beschreibungen.</li>
+    <li>Von TikTok nur die Basis-Profildaten (<code>user.info.basic</code>) zur Anmeldung sowie die Upload-Rechte (<code>video.upload</code>, optional <code>video.publish</code>).</li>
+  </ul>
+  <p>Es werden keine Daten anderer Nutzer, keine Follower-, Nachrichten- oder Standortdaten abgerufen, gespeichert oder weitergegeben. Es gibt kein Tracking und keine Werbung.</p>
+
+  <h2>3. Speicherdauer und Löschung</h2>
+  <p>Token bleiben gespeichert, bis der Betreiber sie in GitHub löscht oder den Zugriff in den TikTok-Einstellungen („Sicherheit → Apps verwalten“) widerruft. Veröffentlichte Videos können jederzeit in den jeweiligen Apps gelöscht werden.</p>
+
+  <h2>4. Weitergabe</h2>
+  <p>Daten werden nur an die Plattform übertragen, auf der veröffentlicht wird (z. B. TikTok über die offizielle Content Posting API). Eine Weitergabe an sonstige Dritte findet nicht statt.</p>
+
+  <h2>5. Kontakt</h2>
+  <p>Verantwortlich ist der Betreiber der Shops; Kontaktdaten siehe Impressum auf <a href="https://www.deskrebel.store" rel="noopener">deskrebel.store</a> bzw. <a href="https://purivelle.store" rel="noopener">purivelle.store</a>.</p>
+
+  <h2>English summary</h2>
+  <p>This app is used only by its operator to publish the operator's own videos to the operator's own accounts. It stores access tokens as encrypted GitHub secrets, requests only basic profile info and upload permissions, collects no data about other users, and shares data only with the platform the video is posted to. Access can be revoked at any time in the TikTok app settings.</p>
+  <p><a href="./">← TikTok verbinden</a> · <a href="./nutzungsbedingungen.html">Nutzungsbedingungen</a></p>
+</main>
+</body>
+</html>

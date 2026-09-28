@@ -3,8 +3,10 @@
 // sie uebersprungen. Grenzen laut Plattform-Doku (Stand 2026):
 //   Instagram Reels max. 90 s (API) · Bluesky-Video max. 3 Min./100 MB · Telegram-Bot max. 50 MB
 //   YouTube: Projekte ohne Google-Audit laden nur PRIVAT hoch (danach im Studio freischalten).
+//   TikTok: ohne Audit als Entwurf ins TikTok-Postfach (siehe tiktok.mjs).
 import { createReadStream, statSync } from 'node:fs';
 import { Readable } from 'node:stream';
+import { tiktok } from './tiktok.mjs';
 
 const env = (k) => (process.env[k] || '').trim();
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -169,4 +171,4 @@ export const mastodon = {
   },
 };
 
-export const PLATTFORMEN = [youtube, instagram, facebook, bluesky, telegram, mastodon];
+export const PLATTFORMEN = [youtube, tiktok, instagram, facebook, bluesky, telegram, mastodon];

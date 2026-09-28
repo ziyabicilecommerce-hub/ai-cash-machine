@@ -108,3 +108,8 @@ jobs:
           MASTODON_URL: ${{ vars.MASTODON_URL }}
           MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
           DIREKT_POSTER_PLATTFORMEN: ${{ vars.DIREKT_POSTER_PLATTFORMEN }}
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+          TIKTOK_MODUS: ${{ vars.TIKTOK_MODUS }}
+          TIKTOK_SICHTBARKEIT: ${{ vars.TIKTOK_SICHTBARKEIT }}
