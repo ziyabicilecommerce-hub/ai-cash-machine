@@ -33,7 +33,12 @@ async function leseAntwort(res, id, timeoutMs) {
   const ende = Date.now() + timeoutMs;
   try {
     while (Date.now() < ende) {
-      const { value, done } = await reader.read();
+      let timer;
+      const zeitUm = new Promise((r) => {
+        timer = setTimeout(() => r({ done: true }), Math.max(ende - Date.now(), 1));
+      });
+      const { value, done } = await Promise.race([reader.read(), zeitUm]);
+      clearTimeout(timer);
       if (done) break;
       puffer += decoder.decode(value, { stream: true });
       let idx;

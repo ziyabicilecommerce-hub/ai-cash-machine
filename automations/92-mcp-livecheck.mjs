@@ -12,7 +12,17 @@ const BUDGET_MIN = Number(process.env.MCP_LIVECHECK_BUDGET_MIN || 25);
 const MAX_WERKZEUGE = 25;
 
 // Status: 1 = antwortet ohne Login, 2 = Login noetig, 0 = tot/kaputt, 3 = nicht pruefbar
-async function pruefe(eintrag) {
+// Harte Obergrenze pro Server: normale Timer halten den Prozess am Leben,
+// AbortSignal.timeout allein tut das nicht (Node beendete sonst still).
+function pruefe(eintrag) {
+  let timer;
+  const hart = new Promise((r) => {
+    timer = setTimeout(() => r([0, 0, []]), 40000);
+  });
+  return Promise.race([pruefeEcht(eintrag), hart]).finally(() => clearTimeout(timer));
+}
+
+async function pruefeEcht(eintrag) {
   const url = sichereZielUrl(eintrag.u);
   if (!url) return [3, 0, []];
   try {
@@ -51,7 +61,9 @@ async function main() {
       ergebnis[s.u] = anzahl ? [status, anzahl, namen] : [status];
     }
   }
+  const lebenszeichen = setInterval(() => console.log(`[92-mcp-livecheck] ${Object.keys(ergebnis).length}/${ziele.length} geprueft`), 60000);
   await Promise.all(Array.from({ length: PARALLEL }, arbeiter));
+  clearInterval(lebenszeichen);
 
   const werte = Object.values(ergebnis);
   const zaehle = (st) => werte.filter((v) => v[0] === st).length;
