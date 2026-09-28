@@ -46,18 +46,24 @@ export async function pulseMcp() {
   return out;
 }
 
-export async function githubTopics(token) {
+export async function githubTopics(token, deadline = Infinity) {
   if (!token) throw new Error('GITHUB_TOKEN fehlt');
   const headers = { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json' };
   const sterne = ['>=500', '100..499', '50..99', '20..49', '10..19', '5..9', '3..4', '2', '1', '0'];
   const jahre = ['2024-01-01..2025-03-31', '2025-04-01..2025-06-30', '2025-07-01..2025-09-30', '2025-10-01..2025-12-31', '2026-01-01..2026-04-30', '2026-05-01..2026-12-31'];
   const gesehen = new Map();
+  let abgebrochen = false;
+  suche:
   for (const topic of ['mcp-server', 'model-context-protocol', 'mcp']) {
     for (const st of sterne) {
       const slices = ['0', '1', '2'].includes(st) ? jahre : [''];
       for (const zeit of slices) {
         const q = `topic:${topic} stars:${st}${zeit ? ` created:${zeit}` : ''} archived:false`;
         for (let page = 1; page <= 10; page++) {
+          if (Date.now() > deadline) {
+            abgebrochen = true;
+            break suche;
+          }
           const data = await hole(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&per_page=100&page=${page}`, { headers });
           await warte(2200);
           for (const r of data.items || []) {
@@ -71,7 +77,9 @@ export async function githubTopics(token) {
       }
     }
   }
-  return [...gesehen.values()];
+  const liste = [...gesehen.values()];
+  liste.zeitlimit = abgebrochen;
+  return liste;
 }
 
 export async function npmPakete() {

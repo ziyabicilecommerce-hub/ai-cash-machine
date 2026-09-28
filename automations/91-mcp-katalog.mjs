@@ -10,6 +10,7 @@ import { pulseMcp, githubTopics, npmPakete, pypiPakete, dockerKatalog, awesomeLi
 
 const OUT = 'mcp-hub/catalog.json';
 const MAX_SEITEN = 400;
+const ZEIT_BUDGET_MIN = Number(process.env.MCP_ZEIT_BUDGET_MIN || 40);
 
 const KATEGORIEN = [
   ['ki-video', /\b(video|text-to-video|t2v|i2v|runway|kling|veo|sora|luma|pika|hailuo|seedance|wan2|ltx|animat)/i],
@@ -113,14 +114,16 @@ async function main() {
   const quellen = {};
   let alle = [];
   const token = process.env.GITHUB_TOKEN || '';
+  const deadline = Date.now() + ZEIT_BUDGET_MIN * 60 * 1000;
   const quellenListe = [
     ['offiziell', offizielleRegistry], ['pulsemcp', pulseMcp], ['docker', () => dockerKatalog(token)],
-    ['awesome', awesomeListen], ['npm', npmPakete], ['pypi', pypiPakete], ['github', () => githubTopics(token)],
+    ['awesome', awesomeListen], ['npm', npmPakete], ['pypi', pypiPakete], ['github', () => githubTopics(token, deadline)],
   ];
   for (const [name, fn] of quellenListe) {
     try {
       const liste = await fn();
       quellen[name] = liste.length;
+      if (liste.zeitlimit) quellen[`${name}-zeitlimit`] = `nach ${ZEIT_BUDGET_MIN} Min. gestoppt`;
       alle = alle.concat(liste);
       console.log(`[91-mcp-katalog] ${name}: ${liste.length} Server`);
     } catch (err) {
