@@ -83,7 +83,7 @@ export async function ladeBytes(url, maxBytes) {
   return Buffer.concat(teile);
 }
 
-export const ANALYSE_VERSION = 2;
+export const ANALYSE_VERSION = 3;
 
 const MUSTER = {
   'eval-dekodiert': /\beval\s*\(\s*(atob|Buffer\.from|unescape|decodeURIComponent|String\.fromCharCode)\s*\(|exec\s*\(\s*(base64\.b64decode|codecs\.decode|bytes\.fromhex|zlib\.decompress)\s*\(|new\s+Function\s*\(\s*(atob|Buffer\.from)\s*\(/,
@@ -100,7 +100,11 @@ const MUSTER = {
 const REGEL_ZEILE = /RegExp|re\.compile|pattern|regex|signature|detect|rule|ioc\b|yara|indicator|\\s\*|\\\(|\\\.|\/\^|\[\^/i;
 
 const INSTALL_DOWNLOAD = /curl|wget|https?:\/\/|download/i;
-const INSTALL_SHELL = /\|\s*(ba|z)?sh\b|node\s+-e|python3?\s+-c|powershell\b.*-e(nc|ncodedcommand)?\b|\beval\b|iex\s*\(/i;
+const INSTALL_SHELL = /(curl|wget)[^|;&]*\|\s*(ba|z)?sh\b|powershell\b.*-e(nc|ncodedcommand)?\s|iex\s*\(\s*(iwr|irm|invoke-web|new-object)/i;
+
+// Test-, Beispiel- und Regel-Dateien enthalten bei Sicherheits-Tools oft
+// absichtlich Schadcode-Beispiele - fuer Warnsignale werden sie ignoriert.
+const PRUEF_AUSNAHME = /(^|\/)(tests?|__tests__|spec|fixtures?|examples?|samples?|rules?|signatures?|payloads?|corpus|testdata|benchmarks?|evals?)(\/|$)|\.(test|spec)\.[cm]?[jt]s$|(^|\/)test_[^/]*\.py$|_test\.py$/i;
 
 export function scanne(dateien, manifest) {
   const flags = new Set();
@@ -113,6 +117,7 @@ export function scanne(dateien, manifest) {
     if (INSTALL_SHELL.test(s)) flags.add('install-shell');
   }
   for (const d of dateien) {
+    if (PRUEF_AUSNAHME.test(d.name)) continue;
     const zeilen = d.text.split('\n').filter((z) => z.length < 20000 && !REGEL_ZEILE.test(z));
     const text = zeilen.join('\n');
     const lang = d.text.split('\n').filter((z) => !REGEL_ZEILE.test(z.slice(0, 200))).join('\n');
@@ -126,11 +131,12 @@ export function scanne(dateien, manifest) {
   return flags;
 }
 
-const ROT = new Set(['eval-dekodiert', 'install-shell', 'krypto-miner', 'hex-kette', 'geheimnis-abfluss', 'malware-gemeldet']);
-const GELB = new Set(['install-skript', 'install-download', 'langer-blob', 'fremd-webhook', 'liest-geheimnisse', 'keine-lizenz', 'kein-repo', 'veraltet', 'archiviert', 'deprecated', 'neu-und-unbekannt', 'zu-gross']);
+const ROT = new Set(['eval-dekodiert', 'install-shell', 'hex-kette', 'geheimnis-abfluss', 'malware-gemeldet', 'versteckter-miner']);
+const GELB = new Set(['install-skript', 'install-download', 'krypto-miner', 'langer-blob', 'fremd-webhook', 'liest-geheimnisse', 'keine-lizenz', 'kein-repo', 'veraltet', 'archiviert', 'deprecated', 'neu-und-unbekannt', 'zu-gross']);
 
 // 1 = unauffaellig, 2 = Vorsicht, 3 = gefaehrlich, 0 = nicht analysierbar
 export function bewerte(flags) {
+  if (flags.has('krypto-miner') && (flags.has('install-skript') || flags.has('hex-kette') || flags.has('eval-dekodiert'))) flags.add('versteckter-miner');
   if ([...flags].some((f) => ROT.has(f))) return 3;
   if ([...flags].some((f) => GELB.has(f))) return 2;
   return 1;

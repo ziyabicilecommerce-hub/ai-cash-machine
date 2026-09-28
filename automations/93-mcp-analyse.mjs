@@ -169,7 +169,7 @@ async function main() {
   console.log(`[93-mcp-analyse] diesmal ${fertig}, insgesamt ${analysiert}/${alleSchluessel.size} analysiert:`, JSON.stringify(zaehler));
 }
 
-const BEKANNTE_FLAGS = new Set(['install-skript', 'install-download', 'install-shell', 'eval-dekodiert', 'hex-kette', 'langer-blob', 'fremd-webhook', 'liest-geheimnisse', 'geheimnis-abfluss', 'krypto-miner', 'shell', 'keine-lizenz', 'kein-repo', 'veraltet', 'archiviert', 'deprecated', 'malware-gemeldet', 'neu-und-unbekannt', 'kaum-genutzt', 'zu-gross', 'code-nicht-lesbar', 'repo-weg', 'nicht-erreichbar']);
+const BEKANNTE_FLAGS = new Set(['install-skript', 'install-download', 'install-shell', 'versteckter-miner', 'eval-dekodiert', 'hex-kette', 'langer-blob', 'fremd-webhook', 'liest-geheimnisse', 'geheimnis-abfluss', 'krypto-miner', 'shell', 'keine-lizenz', 'kein-repo', 'veraltet', 'archiviert', 'deprecated', 'malware-gemeldet', 'neu-und-unbekannt', 'kaum-genutzt', 'zu-gross', 'code-nicht-lesbar', 'repo-weg', 'nicht-erreichbar']);
 
 function validieren(quelle, ziel) {
   const roh = readFileSync(quelle, 'utf8');
