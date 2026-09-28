@@ -9,10 +9,12 @@ import { tarDateien, zipDateien, ladeBytes, scanne, bewerte, qualitaetsFlags, AN
 const KATALOG = 'mcp-hub/catalog.json';
 const OUT = 'mcp-hub/analyse.json';
 const BUDGET_MIN = Number(process.env.MCP_ANALYSE_BUDGET_MIN || 40);
-const PARALLEL = Number(process.env.MCP_ANALYSE_PARALLEL || 12);
+const PARALLEL = Number(process.env.MCP_ANALYSE_PARALLEL || 16);
 const MAX_ARCHIV = 10 * 1024 * 1024;
 const TAG = 24 * 3600 * 1000;
 const UA = { 'user-agent': 'ai-cash-machine-mcp-analyse' };
+const SICHERHEITSTOOL = /secur|scan(ner)?\b|audit|guard|shield|defen[cs]e|red.?team|pentest|sentinel|malware|threat|vulnerab|firewall|injection|sanitiz|safety|protect|sicherheit/i;
+const IMMER_ROT = new Set(['hex-kette', 'install-shell', 'versteckter-miner', 'malware-gemeldet']);
 
 export function schluessel(s) {
   if (s.p?.startsWith('npm:')) return s.p;
@@ -125,11 +127,13 @@ async function main() {
   const e = alt.version === ANALYSE_VERSION ? alt.e || {} : {};
 
   const alleSchluessel = new Set();
+  const texte = new Map();
   const offen = [];
   for (const s of katalog.server || []) {
     const k = schluessel(s);
     if (!k || alleSchluessel.has(k)) continue;
     alleSchluessel.add(k);
+    texte.set(k, `${s.n} ${s.id || ''} ${s.d || ''}`);
     const v = e[k];
     const alter = v ? start - Date.parse(v[1]) : Infinity;
     if (!v || alter > 30 * TAG || (v[0] === 0 && alter > 7 * TAG)) offen.push(k);
@@ -137,7 +141,7 @@ async function main() {
   console.log(`[93-mcp-analyse] ${alleSchluessel.size} Pakete insgesamt, ${offen.length} offen, Budget ${BUDGET_MIN} Min.`);
 
   const token = process.env.GITHUB_TOKEN || '';
-  const ghOffen = offen.filter((k) => k.startsWith('gh:')).slice(0, 8000).map((k) => k.slice(3));
+  const ghOffen = offen.filter((k) => k.startsWith('gh:')).slice(0, 30000).map((k) => k.slice(3));
   if (token && ghOffen.length) await ladeGithubMeta(ghOffen, token);
 
   let index = 0;
@@ -161,6 +165,14 @@ async function main() {
   clearInterval(lebenszeichen);
 
   for (const k of Object.keys(e)) if (!alleSchluessel.has(k)) delete e[k];
+  // Selbsterklaerte Sicherheits-Tools enthalten Angriffsmuster als Pruefregeln.
+  // Verschleierung (hex-kette) und Download+Ausfuehren bleiben immer rot.
+  for (const [k, v] of Object.entries(e)) {
+    if (v[0] !== 3 || !SICHERHEITSTOOL.test(texte.get(k) || '')) continue;
+    if (v[2].some((f) => IMMER_ROT.has(f))) continue;
+    if (!v[2].includes('sicherheitstool')) v[2] = [...v[2], 'sicherheitstool'].sort();
+    v[0] = 2;
+  }
   const zaehler = { unklar: 0, unauffaellig: 0, vorsicht: 0, gefaehrlich: 0 };
   const namen = ['unklar', 'unauffaellig', 'vorsicht', 'gefaehrlich'];
   for (const v of Object.values(e)) zaehler[namen[v[0]]]++;
@@ -169,7 +181,7 @@ async function main() {
   console.log(`[93-mcp-analyse] diesmal ${fertig}, insgesamt ${analysiert}/${alleSchluessel.size} analysiert:`, JSON.stringify(zaehler));
 }
 
-const BEKANNTE_FLAGS = new Set(['install-skript', 'install-download', 'install-shell', 'versteckter-miner', 'eval-dekodiert', 'hex-kette', 'langer-blob', 'fremd-webhook', 'liest-geheimnisse', 'geheimnis-abfluss', 'krypto-miner', 'shell', 'keine-lizenz', 'kein-repo', 'veraltet', 'archiviert', 'deprecated', 'malware-gemeldet', 'neu-und-unbekannt', 'kaum-genutzt', 'zu-gross', 'code-nicht-lesbar', 'repo-weg', 'nicht-erreichbar']);
+const BEKANNTE_FLAGS = new Set(['install-skript', 'install-download', 'install-shell', 'versteckter-miner', 'sicherheitstool', 'eval-dekodiert', 'hex-kette', 'langer-blob', 'fremd-webhook', 'liest-geheimnisse', 'geheimnis-abfluss', 'krypto-miner', 'shell', 'keine-lizenz', 'kein-repo', 'veraltet', 'archiviert', 'deprecated', 'malware-gemeldet', 'neu-und-unbekannt', 'kaum-genutzt', 'zu-gross', 'code-nicht-lesbar', 'repo-weg', 'nicht-erreichbar']);
 
 function validieren(quelle, ziel) {
   const roh = readFileSync(quelle, 'utf8');
