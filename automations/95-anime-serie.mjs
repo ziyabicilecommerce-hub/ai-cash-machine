@@ -19,7 +19,9 @@ const MINUTEN = Math.min(Math.max(parseFloat(env('ANIME_MINUTEN', '4')) || 4, 1)
 const FORMAT = env('ANIME_FORMAT', 'quer') === 'hoch' ? 'hoch' : 'quer';
 const NEU = env('ANIME_NEU').toLowerCase() === 'ja';
 const THEMA = env('ANIME_THEMA') || 'Ninja-Abenteuer: junge Ninjas in einem verborgenen Bergdorf, Freundschaft, Rivalitaet, hartes Training, geheimnisvolle Kraefte und ein uralter Feind';
-const STIL = env('ANIME_STIL') || 'anime style, 2D cel shading, detailed anime key visual, dramatic lighting, vibrant colors, no text, no watermark';
+// Stil steht VORNE im Bild-Prompt (sonst malt das Modell halb-realistisch) und nochmal hinten.
+const STIL_VORNE = 'masterpiece 2D anime illustration, anime screencap, cel shading, clean bold lineart, flat vibrant colors';
+const STIL = env('ANIME_STIL') || 'japanese anime art style, detailed anime key visual, dramatic lighting, not photorealistic, not a 3d render, no text, no watermark';
 
 const ERZAEHLER = 'de-DE-FlorianMultilingualNeural';
 const STIMMEN = {
@@ -47,7 +49,7 @@ async function serieAnlegen() {
   const zaehler = { m: 0, w: 0 };
   const figuren = (Array.isArray(d.figuren) ? d.figuren : [])
     .map((f) => {
-      const g = String(f.geschlecht || '').toLowerCase().startsWith('w') ? 'w' : 'm';
+      const g = geschlecht(f);
       const n = zaehler[g]++;
       return { name: sauber(f.name, 40), geschlecht: g, rolle: sauber(f.rolle, 60), art: sauber(f.art, 200), aussehen: sauber(f.aussehen, 300), stimme: STIMMEN[g][n % STIMMEN[g].length], tonhoehe: TONHOEHEN[n % TONHOEHEN.length] };
     })
@@ -55,7 +57,26 @@ async function serieAnlegen() {
     .slice(0, 6);
   const titel = sauber(d.titel, 80);
   if (!titel || figuren.length < 2) throw new Error('Serien-Bibel unbrauchbar');
-  return { titel, logline: sauber(d.logline, 300), welt: sauber(d.welt, 600), stil: STIL, figuren, folgen: [], erstellt: new Date().toISOString() };
+  await looksAufEnglisch(figuren);
+  return { titel, logline: sauber(d.logline, 300), welt: sauber(d.welt, 600), figuren, folgen: [], erstellt: new Date().toISOString() };
+}
+
+function geschlecht(f) {
+  const roh = String(f.geschlecht || '').toLowerCase().trim();
+  if (/^(w|f)\b|weib|female|frau|m(ae|ä)dchen|girl/.test(roh)) return 'w';
+  if (/^m\b|m(ae|ä)nn|^male|junge|boy/.test(roh)) return 'm';
+  return /\b(sie|ihr|ihre|she|her)\b/i.test(`${f.aussehen} ${f.art}`) ? 'w' : 'm';
+}
+
+// Das Bildmodell versteht Englisch am besten - deutsche Beschreibungen werden uebersetzt.
+async function looksAufEnglisch(figuren) {
+  if (!figuren.some((f) => /\b(hat|und|mit|trägt|traegt|sie|seine|ihre|Haar)\b/.test(f.aussehen))) return;
+  try {
+    const d = await kiJson(`Translate these anime character descriptions to concise English image-prompt text (hair, eyes, outfit, colors). Answer ONLY with JSON: {"looks":["..."]} in the same order.\n${JSON.stringify(figuren.map((f) => f.aussehen))}`, { maxTokens: 1200 });
+    if (Array.isArray(d.looks) && d.looks.length === figuren.length) d.looks.forEach((l, i) => { if (String(l).trim().length > 10) figuren[i].aussehen = sauber(l, 300); });
+  } catch {
+    /* deutsche Beschreibung behalten */
+  }
 }
 
 function figurenText(serie) {
@@ -66,7 +87,7 @@ function figurenText(serie) {
 function bildPrompt(serie, bild, sprecher) {
   const drin = serie.figuren.filter((f) => f.name === sprecher || bild.toLowerCase().includes(f.name.toLowerCase()));
   const looks = drin.map((f) => `${f.name}: ${f.aussehen}`).join('; ');
-  return `${bild}${looks ? `. Characters: ${looks}` : ''}`.slice(0, 900);
+  return `${STIL_VORNE}, ${bild}${looks ? `. Characters: ${looks}` : ''}`.slice(0, 900);
 }
 
 function szenenPruefen(serie, roh) {
@@ -118,8 +139,12 @@ async function folgeSchreiben(serie) {
       'Antworte NUR mit JSON: {"titel":"Folgentitel","zusammenfassung":"3-4 Saetze, was passiert","akte":["Akt 1 in 1-2 Saetzen","..."]} mit 4 bis 6 Akten.',
     { maxTokens: 1200 }
   );
-  const titel = sauber(plan.titel, 80) || `Folge ${nr}`;
-  const akte = (Array.isArray(plan.akte) ? plan.akte : []).map((a) => sauber(a, 300)).filter(Boolean).slice(0, 6);
+  const zusammenfassung = sauber(plan.zusammenfassung || plan.summary || plan.inhalt, 800);
+  const akte = (Array.isArray(plan.akte) ? plan.akte : Array.isArray(plan.acts) ? plan.acts : []).map((a) => sauber(typeof a === 'string' ? a : a?.text || a?.inhalt || JSON.stringify(a), 300)).filter(Boolean).slice(0, 6);
+  let titel = sauber(plan.titel || plan.title || plan.folgentitel || plan.name, 60);
+  if (!titel || /^folge\s*\d+$/i.test(titel)) {
+    titel = sauber((await kiText(`Gib dieser Anime-Folge einen packenden deutschen Titel mit 2 bis 5 Woertern. Nur den Titel, ohne Anfuehrungszeichen.\n${zusammenfassung || akte.join(' ')}`, { maxTokens: 40 })).split('\n')[0].replace(/["„“*]/g, ''), 60) || `Kapitel ${nr}`;
+  }
   if (!akte.length) throw new Error('Keine Akte erhalten');
   const ziel = Math.round((MINUTEN * 60) / 9);
   const proAkt = Math.max(4, Math.round(ziel / akte.length));
@@ -129,9 +154,10 @@ async function folgeSchreiben(serie) {
     const imAkt = [];
     for (let versuch = 0; imAkt.length < proAkt && versuch < Math.ceil(proAkt / 6) + 2; versuch++) {
       const n = Math.min(6, proAkt - imAkt.length);
-      const bisher = [...szenen, ...imAkt].slice(-6).map((s) => `${s.sprecher}: ${s.text}`).join(' | ');
+      const bisher = [...szenen, ...imAkt].slice(-8).map((s) => `${s.sprecher}: ${s.text}`).join(' | ');
+      const ablauf = akte.map((a, j) => `${j + 1}) ${a}${j === ai ? '  <- DIESER AKT' : j < ai ? ' (schon erzaehlt)' : ' (kommt spaeter)'}`).join('\n');
       imAkt.push(...(await portion(serie,
-        `Anime-Serie "${serie.titel}", Folge ${nr} "${titel}". Akt ${ai + 1} von ${akte.length}: ${akt}\n` +
+        `Anime-Serie "${serie.titel}", Folge ${nr} "${titel}". Ablauf der Folge:\n${ablauf}\nSchreibe NUR Akt ${ai + 1}: ${akt} - bereits Erzaehltes nicht wiederholen, nichts aus spaeteren Akten vorwegnehmen.\n` +
           `${bisher ? `Zuletzt (nahtlos weiter, nichts wiederholen): ${bisher}\n` : ''}` +
           `Schreibe die naechsten ${n} Szenen wie eine deutsche Anime-Synchronisation: abwechselnd Erzaehler und Dialoge der Figuren (${namen}). Pro Szene 1-2 kurze, lebendige Saetze auf Deutsch, fehlerfrei. ${ai === akte.length - 1 ? 'Letzter Akt: ende mit einem Cliffhanger.' : 'Die Folge ist hier NICHT zu Ende.'} ` +
           '"sprecher" ist "Erzaehler" oder genau ein Figurenname. "bild" ist ein ENGLISCHER Bild-Prompt der Szene, nenne darin die Namen der sichtbaren Figuren, Ort, Pose, Kamerawinkel. ' +
@@ -144,9 +170,9 @@ async function folgeSchreiben(serie) {
   }
   if (szenen.length < Math.max(6, ziel * 0.4)) throw new Error(`Zu wenige Szenen (${szenen.length}/${ziel})`);
   const gruppe = serie.figuren.slice(0, 3).map((f) => `${f.name}: ${f.aussehen}`).join('; ');
-  szenen.unshift({ text: `${serie.titel}. Folge ${nr}: ${titel}.`, bild: `epic anime title key visual, group shot of the main characters standing together, ${gruppe}`.slice(0, 900), stimme: ERZAEHLER, sprecher: 'Erzaehler' });
+  szenen.unshift({ text: `${serie.titel}. Folge ${nr}: ${titel}.`, bild: `${STIL_VORNE}, epic anime title key visual, group shot of the main characters standing together, ${gruppe}`.slice(0, 900), stimme: ERZAEHLER, sprecher: 'Erzaehler' });
   szenen.push({ text: `Wie geht es weiter? Fortsetzung folgt in Folge ${nr + 1}!`, bild: szenen.at(-1).bild, stimme: ERZAEHLER, sprecher: 'Erzaehler' });
-  return { nr, titel, zusammenfassung: sauber(plan.zusammenfassung, 800), szenen };
+  return { nr, titel, zusammenfassung, szenen };
 }
 
 async function main() {
@@ -160,7 +186,7 @@ async function main() {
   const folge = await folgeSchreiben(serie);
   const hook = `Folge ${folge.nr}: ${folge.titel}`.slice(0, 60);
   const titel = `${serie.titel} – Folge ${folge.nr}: ${folge.titel}`;
-  const v = await videoBauen({ titel, hook, szenen: folge.szenen }, join(OUT, 'anime-arbeit'), { format: FORMAT, stimme: ERZAEHLER, stil: serie.stil || STIL, hook });
+  const v = await videoBauen({ titel, hook, szenen: folge.szenen }, join(OUT, 'anime-arbeit'), { format: FORMAT, stimme: ERZAEHLER, stil: STIL, hook });
   const basis = `${new Date().toISOString().slice(0, 10)}-anime-${slug(serie.titel)}-folge-${folge.nr}`;
   copyFileSync(v.pfad, join(OUT, 'videos', `${basis}.mp4`));
   let vorschau = '';
