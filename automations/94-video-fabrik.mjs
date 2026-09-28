@@ -50,12 +50,31 @@ function jsonAusText(text) {
   }
 }
 
+// Pollinations "openai-fast" (GPT-OSS 20B) laeuft ohne Key und schreibt deutlich
+// besseres Deutsch als das Standardmodell der KI-Kette; askKI bleibt Rueckfall.
+async function kiText(prompt, { maxTokens = 1500 } = {}) {
+  try {
+    const res = await fetch('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ model: 'openai-fast', messages: [{ role: 'user', content: prompt }], max_tokens: maxTokens }),
+      signal: AbortSignal.timeout(120000),
+    });
+    const d = await res.json();
+    const text = d?.choices?.[0]?.message?.content || '';
+    if (res.ok && text && !/reached its budget|enough credits|enter\.pollinations\.ai/i.test(text)) return text;
+  } catch {
+    /* Rueckfall auf askKI */
+  }
+  return askKI(prompt, { maxTokens });
+}
+
 // Fragt die KI bis zu 3-mal, falls das JSON unbrauchbar ist.
 async function kiJson(prompt, opts) {
   let letzter;
   for (let versuch = 0; versuch < 3; versuch++) {
     try {
-      return jsonAusText(await askKI(versuch ? `${prompt}\nWICHTIG: Gib ausschliesslich gueltiges JSON zurueck, doppelte Anfuehrungszeichen, keine Kommentare.` : prompt, opts));
+      return jsonAusText(await kiText(versuch ? `${prompt}\nWICHTIG: Gib ausschliesslich gueltiges JSON zurueck, doppelte Anfuehrungszeichen, keine Kommentare.` : prompt, opts));
     } catch (err) {
       letzter = err;
     }
@@ -128,12 +147,28 @@ async function aktiveProdukte() {
   return gemischt;
 }
 
+// Zweiter Durchgang: Rechtschreibung/Grammatik/Wortwahl pruefen, Du-Form,
+// Produktname korrekt. Bei Fehlern bleiben die Originaltexte erhalten.
+async function korrekturLesen(szenen, produktName) {
+  try {
+    const d = await kiJson(
+      `Du bist Lektorin. Korrigiere diese deutschen Werbe-Saetze fuer das Produkt "${produktName}": Rechtschreibung, Grammatik, falsche oder erfundene Woerter, Du-Form, natuerlich gesprochen. Inhalt und Laenge beibehalten. ` +
+        `Antworte NUR mit JSON: {"saetze":["...", ...]} in derselben Reihenfolge.\n${JSON.stringify(szenen.map((s) => s.text))}`,
+      { maxTokens: 1200 }
+    );
+    const saetze = Array.isArray(d.saetze) ? d.saetze : [];
+    if (saetze.length === szenen.length) saetze.forEach((t, i) => { if (typeof t === 'string' && t.trim().length > 3) szenen[i].text = t.trim().slice(0, 400); });
+  } catch {
+    /* Original behalten */
+  }
+}
+
 async function produktSkript(p) {
   const preis = p.variants?.[0]?.price;
   const link = `${p.shopUrl}/products/${p.handle}`;
   const fotos = p.images.map((b) => b.src);
   const d = await kiJson(
-    `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ein 25-40 Sekunden Werbe-Skript auf Deutsch (Du-Form) fuer das Produkt "${p.title}" aus dem Shop "${p.shopName}". ` +
+    `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ein 25-40 Sekunden Werbe-Skript auf Deutsch, sprich die Zuschauer mit "du" an (niemals "Sie"), fuer das Produkt "${p.title}" aus dem Shop "${p.shopName}". ` +
       `Produktinfos: ${reinText(p.body_html).slice(0, 700)}${preis ? ` Preis: ${preis} EUR.` : ''} ` +
       'Aufbau: 1) Hook, der in 2 Sekunden fesselt, 2) Problem, 3) 2-3 konkrete Vorteile des Produkts, 4) Call-to-Action ("Link in der Bio"). 5 bis 7 Szenen, pro Szene 1 kurzer gesprochener Satz. Nichts erfinden, was nicht in den Produktinfos steht. ' +
       'Nutze NUR Eigenschaften, die woertlich in den Produktinfos stehen - keine erfundenen Features, Zahlen oder Versprechen. Keine Floskeln. ' +
@@ -150,6 +185,7 @@ async function produktSkript(p) {
     return { text, foto: idx !== null ? fotos[idx] : bild ? '' : fotos[i % fotos.length], bild };
   }).filter((s) => s.text.length > 3).slice(0, 8);
   if (szenen.length && !szenen[0].foto) szenen[0].foto = fotos[0];
+  await korrekturLesen(szenen, p.title);
   const caption = `${String(d.caption || p.title).slice(0, 1800)}${link ? `\n\n👉 ${link}` : ''}`;
   return { titel: String(d.titel || p.title).slice(0, 120), caption, szenen };
 }
