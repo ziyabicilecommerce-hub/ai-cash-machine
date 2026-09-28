@@ -17,8 +17,9 @@ const MANIFEST = join(OUT, 'manifest.json');
 const FEED = 'video-feed/videos.json';
 const env = (k, d = '') => (process.env[k] || d).trim();
 
-const ANZAHL = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_ANZAHL', '5'), 10) || 5, 0), 10);
-const LANG_MIN = Math.min(Math.max(parseFloat(env('VIDEO_FABRIK_LANG_MINUTEN', '0')) || 0, 0), 10);
+const ANZAHL_ROH = parseInt(env('VIDEO_FABRIK_ANZAHL', '5'), 10);
+const ANZAHL = Math.min(Math.max(Number.isNaN(ANZAHL_ROH) ? 5 : ANZAHL_ROH, 0), 10);
+const LANG_MIN = Math.min(Math.max(parseFloat(env('VIDEO_FABRIK_LANG_MINUTEN', '0')) || 0, 0), 60);
 const STIL = env('VIDEO_FABRIK_STIL', 'cinematic, vibrant colors, high detail, no text');
 const STIMME = env('VIDEO_FABRIK_STIMME', 'de-DE-SeraphinaMultilingualNeural');
 const LIFESTYLE = env('VIDEO_FABRIK_LIFESTYLE', 'nein').toLowerCase() === 'ja';
@@ -99,22 +100,22 @@ async function kurzSkript(thema) {
 }
 
 async function langSkript(thema, minuten) {
-  const ziel = Math.round((minuten * 60) / 10);
+  const ziel = Math.round((minuten * 60) / 15);
   const gliederung = await kiJson(
-    `Plane ein ${minuten}-Minuten-YouTube-Video auf Deutsch zum Thema "${thema}" fuer den Shop "${config.SHOP_NAME}". Antworte NUR mit JSON: {"titel":"...","caption":"Beschreibung mit Hashtags","kapitel":["Kapitel 1", "..."]} mit 5 bis 8 Kapiteln.`,
+    `Plane ein ${minuten}-Minuten-YouTube-Video auf Deutsch zum Thema "${thema}". Antworte NUR mit JSON: {"titel":"...","caption":"Beschreibung mit Hashtags","kapitel":["Kapitel 1", "..."]} mit 5 bis 12 Kapiteln. Es ist KEIN Werbevideo: keine Produkte, keine Shop-Erwaehnung, reiner Unterhaltungs-/Wissensinhalt.`,
     { maxTokens: 800 }
   );
-  const kapitel = (gliederung.kapitel || []).map(String).slice(0, 8);
+  const kapitel = (gliederung.kapitel || []).map(String).slice(0, 12);
   const proKapitel = Math.max(3, Math.round(ziel / Math.max(kapitel.length, 1)));
   const szenen = [];
   for (const k of kapitel) {
     const d = await kiJson(
-      `Video "${gliederung.titel}". Schreibe das Kapitel "${k}" als ${proKapitel} Szenen (je 2-3 gesprochene Saetze Deutsch, ca. 10 Sekunden). Antworte NUR mit JSON: {"szenen":[{"text":"...","bild":"englischer Bild-Prompt"}]}`,
-      { maxTokens: 2500 }
+      `Video "${gliederung.titel}". Schreibe das Kapitel "${k}" als ${proKapitel} Szenen (je 3-4 ruhig gesprochene Saetze Deutsch, ca. 15 Sekunden, fehlerfreie Rechtschreibung, du-Form; der Bild-Prompt beschreibt ein eindrucksvolles, jugendfreies Bild ohne Text). Antworte NUR mit JSON: {"szenen":[{"text":"...","bild":"englischer Bild-Prompt"}]}`,
+      { maxTokens: 4000 }
     );
     szenen.push(...szenenPruefen(d.szenen).slice(0, proKapitel + 2));
   }
-  return { titel: String(gliederung.titel || thema).slice(0, 120), caption: String(gliederung.caption || thema).slice(0, 4000), szenen: szenen.slice(0, 70) };
+  return { titel: String(gliederung.titel || thema).slice(0, 120), caption: String(gliederung.caption || thema).slice(0, 4000), szenen: szenen.slice(0, Math.max(ziel + 6, 10)) };
 }
 
 const reinText = (html) => String(html || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();

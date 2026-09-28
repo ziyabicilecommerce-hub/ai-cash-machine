@@ -7,7 +7,24 @@ name: "94 · Video-Fabrik"
 on:
   schedule:
     - cron: '0 5 * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      anzahl:
+        description: 'Anzahl Produkt-Kurzvideos (0-10)'
+        required: false
+        default: ''
+      minuten:
+        description: 'Langes Video (Minuten, 0 = keins, max 60)'
+        required: false
+        default: ''
+      thema:
+        description: 'Thema fuer das lange Video'
+        required: false
+        default: ''
+      stil:
+        description: 'Bildstil (englisch), z. B. psychedelic dreamy art'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -20,7 +37,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 300
     env:
       SHOP: ${{ secrets.SHOP }}
       SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
@@ -29,10 +46,10 @@ jobs:
       SHOP_NISCHE: ${{ secrets.SHOP_NISCHE }}
       SOCIAL_AUTOPILOT_THEMEN: ${{ secrets.SOCIAL_AUTOPILOT_THEMEN }}
       SOCIAL_AUTOPILOT_AUTO_PUBLISH: ${{ secrets.SOCIAL_AUTOPILOT_AUTO_PUBLISH }}
-      VIDEO_FABRIK_THEMEN: ${{ vars.VIDEO_FABRIK_THEMEN }}
-      VIDEO_FABRIK_ANZAHL: ${{ vars.VIDEO_FABRIK_ANZAHL }}
-      VIDEO_FABRIK_LANG_MINUTEN: ${{ vars.VIDEO_FABRIK_LANG_MINUTEN }}
-      VIDEO_FABRIK_STIL: ${{ vars.VIDEO_FABRIK_STIL }}
+      VIDEO_FABRIK_THEMEN: ${{ inputs.thema || vars.VIDEO_FABRIK_THEMEN }}
+      VIDEO_FABRIK_ANZAHL: ${{ inputs.anzahl || vars.VIDEO_FABRIK_ANZAHL }}
+      VIDEO_FABRIK_LANG_MINUTEN: ${{ inputs.minuten || vars.VIDEO_FABRIK_LANG_MINUTEN }}
+      VIDEO_FABRIK_STIL: ${{ inputs.stil || vars.VIDEO_FABRIK_STIL }}
       VIDEO_FABRIK_STIMME: ${{ vars.VIDEO_FABRIK_STIMME }}
       VIDEO_FABRIK_LIFESTYLE: ${{ vars.VIDEO_FABRIK_LIFESTYLE }}
       VIDEO_FABRIK_SHOPS: ${{ vars.VIDEO_FABRIK_SHOPS }}
