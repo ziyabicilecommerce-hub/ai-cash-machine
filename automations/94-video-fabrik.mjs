@@ -292,7 +292,10 @@ function feedErgaenzen(basisUrl) {
   const feed = existsSync(FEED) ? JSON.parse(readFileSync(FEED, 'utf8')) : { videos: [] };
   const basis = basisUrl.replace(/\/$/, '');
   const neu = manifest.map((m) => ({ ...m, url: `${basis}/${encodeURIComponent(m.datei)}`, vorschauUrl: m.vorschau ? `${basis}/${encodeURIComponent(m.vorschau)}` : '', erstellt: new Date().toISOString() }));
-  feed.videos = [...neu, ...(feed.videos || [])].slice(0, 1500);
+  // Geloeschte Releases (z. B. alte Marathon-Videos) aus dem Feed entfernen.
+  const weg = env('FEED_ENTFERNEN_TAGS').split(',').map((t) => t.trim()).filter(Boolean);
+  const alt = (feed.videos || []).filter((v) => !weg.some((t) => String(v.url || '').includes(`/download/${t}/`)));
+  feed.videos = [...neu, ...alt].slice(0, 1500);
   feed.stand = new Date().toISOString();
   mkdirSync('video-feed', { recursive: true });
   writeFileSync(FEED, JSON.stringify(feed, null, 1));
