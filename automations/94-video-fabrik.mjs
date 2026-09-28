@@ -65,8 +65,13 @@ async function szenenPortion(prompt) {
   }
 }
 
+// Geschaetzte Sprechdauer: edge-tts spricht Deutsch mit rund 2,3 Woertern pro Sekunde.
+const sprechSekunden = (szenen) => szenen.reduce((n, s) => n + s.text.split(/\s+/).length / 2.3 + 0.35, 0);
+
+// Schreibt Kapitel fuer Kapitel, bis die Wunschlaenge (nach Sprechdauer) wirklich erreicht ist.
 async function langSkript(thema, minuten) {
-  const ziel = Math.round((minuten * 60) / 15);
+  const zielSek = minuten * 60;
+  const ziel = Math.round(zielSek / 15);
   const gliederung = await kiJson(
     `Plane ein ${minuten}-Minuten-YouTube-Video auf Deutsch zum Thema "${thema}". Antworte NUR mit JSON: {"titel":"...","caption":"Beschreibung mit Hashtags","kapitel":["Kapitel 1", "..."]} mit 5 bis 12 Kapiteln. Es ist KEIN Werbevideo: keine Produkte, keine Shop-Erwaehnung, reiner Unterhaltungs-/Wissensinhalt.`,
     { maxTokens: 800 }
@@ -74,24 +79,27 @@ async function langSkript(thema, minuten) {
   const kapitel = (gliederung.kapitel || []).map(String).slice(0, 12);
   if (!kapitel.length) throw new Error('Keine Kapitel erhalten');
   const proKapitel = Math.max(3, Math.round(ziel / kapitel.length));
+  const sekProKapitel = zielSek / kapitel.length;
   const szenen = [];
   for (const [ki, k] of kapitel.entries()) {
     const imKapitel = [];
     const position = ki === 0 ? 'Das ist das ERSTE Kapitel: fuehre in das Thema ein.' : ki === kapitel.length - 1 ? 'Das ist das LETZTE Kapitel: hier darf das Video zum Abschluss kommen.' : 'Das ist ein Kapitel in der MITTE: erzaehle weiter, beende das Video NICHT, kein Abschied, kein Fazit.';
-    for (let versuch = 0; imKapitel.length < proKapitel && versuch < Math.ceil(proKapitel / 5) + 2; versuch++) {
-      const n = Math.min(5, proKapitel - imKapitel.length);
+    for (let versuch = 0; sprechSekunden(imKapitel) < sekProKapitel * 0.97 && versuch < Math.ceil(proKapitel / 5) * 2 + 4; versuch++) {
+      const n = Math.max(2, Math.min(5, Math.ceil((sekProKapitel - sprechSekunden(imKapitel)) / 15)));
       const bisher = imKapitel.length ? ` Bisher gesagt (nicht wiederholen, nahtlos weitererzaehlen): "${imKapitel.map((x) => x.text).join(' ').slice(-600)}"` : '';
       imKapitel.push(...(await szenenPortion(
         `Video "${gliederung.titel}". Kapitel ${ki + 1} von ${kapitel.length}: "${k}". ${position} Schreibe die naechsten ${n} Szenen: je 3-4 ruhig gesprochene, klare und verstaendliche Saetze, AUSSCHLIESSLICH auf Deutsch (kein Englisch), echte deutsche Woerter, fehlerfreie Rechtschreibung, du-Form, ca. 15 Sekunden. Der Bild-Prompt (Englisch) beschreibt ein eindrucksvolles, jugendfreies Bild ohne Text.${bisher} ` +
           'Antworte NUR mit JSON: {"szenen":[{"text":"...","bild":"englischer Bild-Prompt"}]}'
       )).slice(0, n));
     }
-    await korrekturLesen(imKapitel, gliederung.titel);
-    console.log(`[94-video-fabrik] Kapitel "${k.slice(0, 50)}": ${imKapitel.length}/${proKapitel} Szenen`);
+    // In 8er-Portionen, sonst schneidet das Gratis-Modell bei langen Kapiteln die Antwort ab.
+    for (let j = 0; j < imKapitel.length; j += 8) await korrekturLesen(imKapitel.slice(j, j + 8), gliederung.titel);
+    console.log(`[94-video-fabrik] Kapitel "${k.slice(0, 50)}": ${imKapitel.length} Szenen, ca. ${Math.round(sprechSekunden(imKapitel) / 60)} Min.`);
     szenen.push(...imKapitel);
   }
   if (szenen.length < Math.max(5, ziel * 0.4)) throw new Error(`Zu wenige Szenen (${szenen.length}/${ziel})`);
-  return { titel: String(gliederung.titel || thema).slice(0, 120), caption: String(gliederung.caption || thema).slice(0, 4000), szenen: szenen.slice(0, ziel + 6) };
+  console.log(`[94-video-fabrik] Skript: ${szenen.length} Szenen, ca. ${Math.round(sprechSekunden(szenen) / 60)} von ${minuten} Min.`);
+  return { titel: String(gliederung.titel || thema).slice(0, 120), caption: String(gliederung.caption || thema).slice(0, 4000), szenen };
 }
 
 // Hook fuer das Bild: hoechstens 5 Woerter / 32 Zeichen, an Wortgrenze gekuerzt.
@@ -230,7 +238,7 @@ async function bauen() {
       const skript = a.produkt ? await produktSkript(a.produkt) : a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
       if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
       const hook = a.format === 'hoch' ? skript.hook || kurzHook(skript.titel) : '';
-      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook });
+      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook, bildAlle: a.minuten > 20 ? 2 : 1 });
       ablegen(manifest, v, skript, a, i + 1, 'de');
       console.log(`[94-video-fabrik] ✓ ${manifest.at(-1).datei} (${Math.round(v.dauer)} s, ${v.szenen} Szenen, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
       if (a.produkt) {

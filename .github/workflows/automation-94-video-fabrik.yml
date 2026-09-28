@@ -41,7 +41,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 350
     env:
       SHOP: ${{ secrets.SHOP }}
       SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}

@@ -1,12 +1,15 @@
 // Video-Fabrik (#94): baut aus Skript + KI-Bildern + KI-Stimme ein fertiges
 // Video mit Untertiteln - komplett ohne API-Key. Bilder: Pollinations.
 // Stimme: edge-tts (kostenlose Microsoft-Stimmen). Schnitt: ffmpeg.
-import { execFileSync } from 'node:child_process';
+import { execFileSync, execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
+// Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
+const ausfuehren = promisify(execFile);
 
 export function dauerSekunden(datei) {
   const out = execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', datei]).toString().trim();
@@ -31,11 +34,19 @@ export async function ladeBild(prompt, ziel, { breite, hoehe }) {
 }
 
 // tonhoehe/tempo z. B. "+6Hz" / "-5%" - macht Figuren mit gleicher Grundstimme unterscheidbar.
-export function sprechen(text, mp3, srt, stimme, { tonhoehe = '', tempo = '' } = {}) {
+export async function sprechen(text, mp3, srt, stimme, { tonhoehe = '', tempo = '' } = {}) {
   const txt = `${mp3}.txt`;
   writeFileSync(txt, text);
   const extra = [...(tonhoehe ? [`--pitch=${tonhoehe}`] : []), ...(tempo ? [`--rate=${tempo}`] : [])];
-  execFileSync('edge-tts', ['--voice', stimme, ...extra, '--file', txt, '--write-media', mp3, '--write-subtitles', srt], { stdio: 'pipe', timeout: 120000 });
+  for (let versuch = 0; ; versuch++) {
+    try {
+      await ausfuehren('edge-tts', ['--voice', stimme, ...extra, '--file', txt, '--write-media', mp3, '--write-subtitles', srt], { timeout: 120000 });
+      return;
+    } catch (err) {
+      if (versuch >= 2) throw err;
+      await warte(3000 * (versuch + 1));
+    }
+  }
 }
 
 const SCHRIFT_FETT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
@@ -94,7 +105,7 @@ function schildFilter(name, ziel, breite, hoehe) {
 }
 
 // Eine Szene: vorbereitetes Standbild mit Kamerabewegung, Stimme, Untertitel.
-export function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index, format, hook = '', schild = '' }) {
+export async function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index, format, hook = '', schild = '' }) {
   const dauer = dauerSekunden(mp3) + 0.35;
   const frames = Math.ceil(dauer * 30);
   const k = kamera(index, frames);
@@ -108,13 +119,13 @@ export function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index, forma
     ...(hook ? [hookFilter(hook, ziel, breite, hoehe)] : []),
     `subtitles='${srtPfadFuerFilter(srt)}':force_style='FontName=DejaVu Sans,FontSize=${schrift},Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=3,Shadow=0,Alignment=2,MarginV=40'`,
   ].join(',');
-  execFileSync('ffmpeg', [
+  await ausfuehren('ffmpeg', [
     '-loglevel', 'error', '-y', '-i', bild, '-i', mp3,
     '-vf', filter, '-t', dauer.toFixed(2),
     '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-pix_fmt', 'yuv420p', '-r', '30',
     '-c:a', 'aac', '-b:a', '160k', '-ar', '44100', '-ac', '2', '-af', 'apad',
     ziel,
-  ], { stdio: 'pipe', timeout: 600000 });
+  ], { timeout: 600000, maxBuffer: 16 * 1024 * 1024 });
 }
 
 // Grosse Schlagzeile oben in den ersten Sekunden (Hook fuer Kurzvideos).
@@ -147,39 +158,50 @@ async function ladeUrl(url, ziel) {
   return true;
 }
 
+// Holt das Rohbild einer Szene: echtes Produktfoto, sonst KI-Bild.
+async function bildHolen(szene, roh, { breite, hoehe, stil }) {
+  if (szene.foto && (await ladeUrl(szene.foto, roh).catch(() => false))) return 'produkt';
+  if (szene.bild && (await ladeBild(`${szene.bild}, family friendly, fully clothed${stil ? `, ${stil}` : ''}`, roh, { breite, hoehe }))) return 'vollbild';
+  return '';
+}
+
 // Baut ein komplettes Video. Szene: {text, foto?: URL eines echten Produktfotos, bild?: KI-Bild-Prompt, stimme?, tonhoehe?, tempo?: eigene Sprecherstimme, schild?: Name oben links}.
-export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '' } = {}) {
+// bildAlle: nur jede n-te Szene bekommt ein neues Bild (die anderen nutzen es mit anderer
+// Kamerabewegung weiter) - so passen auch 1-Stunden-Videos in das 6-Stunden-Limit.
+export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '', bildAlle = 1 } = {}) {
   if (!existsSync(ordner)) mkdirSync(ordner, { recursive: true });
   const [breite, hoehe] = format === 'quer' ? [1920, 1080] : [1080, 1920];
+  const szenen = skript.szenen;
+  const neu = (i) => i % Math.max(1, bildAlle) === 0;
+  const vorab = new Map();
+  const holen = (i) => {
+    if (!vorab.has(i)) vorab.set(i, bildHolen(szenen[i], join(ordner, `r${i}.img`), { breite, hoehe, stil }).catch(() => ''));
+    return vorab.get(i);
+  };
   const clips = [];
   let letztesBild = '';
-  for (const [i, szene] of skript.szenen.entries()) {
-    const roh = join(ordner, `r${i}.img`);
+  const start = Date.now();
+  for (const [i, szene] of szenen.entries()) {
     const bild = join(ordner, `s${i}.jpg`);
     const mp3 = join(ordner, `s${i}.mp3`);
     const srt = join(ordner, `s${i}.srt`);
     const clip = join(ordner, `s${i}.mp4`);
-    let ok = false;
-    let modus = 'vollbild';
-    if (szene.foto) {
-      ok = await ladeUrl(szene.foto, roh).catch(() => false);
-      modus = 'produkt';
-    }
-    if (!ok && szene.bild) {
-      ok = await ladeBild(`${szene.bild}, family friendly, fully clothed${stil ? `, ${stil}` : ''}`, roh, { breite, hoehe });
-      modus = 'vollbild';
-    }
+    const modus = neu(i) || !letztesBild ? await holen(i) : '';
+    // Naechstes neues Bild schon laden, waehrend diese Szene gesprochen und geschnitten wird.
+    const naechstes = szenen.findIndex((_, j) => j > i && neu(j));
+    if (naechstes > 0) holen(naechstes);
     try {
-      if (ok) bildVorbereiten(roh, bild, { breite, hoehe, modus });
+      if (modus) bildVorbereiten(join(ordner, `r${i}.img`), bild, { breite, hoehe, modus });
       else if (letztesBild) execFileSync('cp', [letztesBild, bild]);
       else continue;
-      sprechen(szene.text, mp3, srt, szene.stimme || stimme, { tonhoehe: szene.tonhoehe, tempo: szene.tempo });
-      szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
+      await sprechen(szene.text, mp3, srt, szene.stimme || stimme, { tonhoehe: szene.tonhoehe, tempo: szene.tempo });
+      await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
       letztesBild = bild;
       clips.push(clip);
     } catch (err) {
       console.log(`[video-fabrik] Szene ${i + 1} uebersprungen: ${String(err.message).slice(0, 200)}`);
     }
+    if (szenen.length > 40 && (i + 1) % 25 === 0) console.log(`[video-fabrik] ${i + 1}/${szenen.length} Szenen (${Math.round((Date.now() - start) / 60000)} Min.)`);
   }
   if (!clips.length) throw new Error('Keine einzige Szene konnte gerendert werden.');
   const ziel = join(ordner, 'video.mp4');

@@ -15,7 +15,9 @@ const OUT = 'out';
 const SERIE = 'anime-serie/serie.json';
 const env = (k, d = '') => (process.env[k] || d).trim();
 
-const MINUTEN = Math.min(Math.max(parseFloat(env('ANIME_MINUTEN', '4')) || 4, 1), 30);
+const MINUTEN = Math.min(Math.max(parseFloat(env('ANIME_MINUTEN', '4')) || 4, 1), 60);
+// Lange Folgen: ein Bild fuer mehrere Dialogzeilen, damit 60 Minuten ins 6-Stunden-Limit passen.
+const BILD_ALLE = MINUTEN > 20 ? 3 : MINUTEN > 8 ? 2 : 1;
 const FORMAT = env('ANIME_FORMAT', 'quer') === 'hoch' ? 'hoch' : 'quer';
 const NEU = env('ANIME_NEU').toLowerCase() === 'ja';
 const THEMA = env('ANIME_THEMA') || 'Ninja-Abenteuer: junge Ninjas in einem verborgenen Bergdorf, Freundschaft, Rivalitaet, hartes Training, geheimnisvolle Kraefte und ein uralter Feind';
@@ -130,17 +132,20 @@ async function korrektur(szenen) {
   }
 }
 
+// Geschaetzte Sprechdauer (edge-tts: rund 2,3 Woerter pro Sekunde).
+const sprechSekunden = (szenen) => szenen.reduce((n, s) => n + s.text.split(/\s+/).length / 2.3 + 0.35, 0);
+
 async function folgeSchreiben(serie) {
   const nr = serie.folgen.length + 1;
   const vorher = serie.folgen.slice(-4).map((f) => `Folge ${f.nr} "${f.titel}": ${f.zusammenfassung}`).join('\n') || 'Noch keine - das ist die allererste Folge: stelle Welt und Held vor.';
   const plan = await kiJson(
     `Anime-Serie "${serie.titel}". ${serie.logline} Welt: ${serie.welt} Figuren: ${figurenText(serie)}.\nBisherige Folgen:\n${vorher}\n` +
       `Plane Folge ${nr} (ca. ${MINUTEN} Minuten). Erzaehle die Geschichte logisch weiter, mit Action, Gefuehl und Humor, und ende mit einem Cliffhanger. ${REGELN} ` +
-      'Antworte NUR mit JSON: {"titel":"Folgentitel","zusammenfassung":"3-4 Saetze, was passiert","akte":["Akt 1 in 1-2 Saetzen","..."]} mit 4 bis 6 Akten.',
+      `Antworte NUR mit JSON: {"titel":"Folgentitel","zusammenfassung":"3-4 Saetze, was passiert","akte":["Akt 1 in 1-2 Saetzen","..."]} mit ${MINUTEN > 15 ? '8 bis 12' : '4 bis 6'} Akten.`,
     { maxTokens: 1200 }
   );
   const zusammenfassung = sauber(plan.zusammenfassung || plan.summary || plan.inhalt, 800);
-  const akte = (Array.isArray(plan.akte) ? plan.akte : Array.isArray(plan.acts) ? plan.acts : []).map((a) => sauber(typeof a === 'string' ? a : a?.text || a?.inhalt || JSON.stringify(a), 300)).filter(Boolean).slice(0, 6);
+  const akte = (Array.isArray(plan.akte) ? plan.akte : Array.isArray(plan.acts) ? plan.acts : []).map((a) => sauber(typeof a === 'string' ? a : a?.text || a?.inhalt || JSON.stringify(a), 300)).filter(Boolean).slice(0, 12);
   let titel = sauber(plan.titel || plan.title || plan.folgentitel || plan.name, 60);
   if (!titel || /^folge\s*\d+$/i.test(titel)) {
     titel = sauber((await kiText(`Gib dieser Anime-Folge einen packenden deutschen Titel mit 2 bis 5 Woertern. Nur den Titel, ohne Anfuehrungszeichen.\n${zusammenfassung || akte.join(' ')}`, { maxTokens: 40 })).split('\n')[0].replace(/["„“*]/g, ''), 60) || `Kapitel ${nr}`;
@@ -148,12 +153,13 @@ async function folgeSchreiben(serie) {
   if (!akte.length) throw new Error('Keine Akte erhalten');
   const ziel = Math.round((MINUTEN * 60) / 9);
   const proAkt = Math.max(4, Math.round(ziel / akte.length));
+  const sekProAkt = (MINUTEN * 60) / akte.length;
   const namen = serie.figuren.map((f) => f.name).join(', ');
   const szenen = [];
   for (const [ai, akt] of akte.entries()) {
     const imAkt = [];
-    for (let versuch = 0; imAkt.length < proAkt && versuch < Math.ceil(proAkt / 6) + 2; versuch++) {
-      const n = Math.min(6, proAkt - imAkt.length);
+    for (let versuch = 0; sprechSekunden(imAkt) < sekProAkt * 0.97 && versuch < Math.ceil(proAkt / 6) * 2 + 4; versuch++) {
+      const n = Math.max(2, Math.min(6, Math.ceil((sekProAkt - sprechSekunden(imAkt)) / 9)));
       const bisher = [...szenen, ...imAkt].slice(-8).map((s) => `${s.sprecher}: ${s.text}`).join(' | ');
       const ablauf = akte.map((a, j) => `${j + 1}) ${a}${j === ai ? '  <- DIESER AKT' : j < ai ? ' (schon erzaehlt)' : ' (kommt spaeter)'}`).join('\n');
       imAkt.push(...(await portion(serie,
@@ -164,8 +170,9 @@ async function folgeSchreiben(serie) {
           'Antworte NUR mit JSON: {"szenen":[{"sprecher":"...","text":"...","bild":"..."}]}'
       )).slice(0, n));
     }
-    await korrektur(imAkt);
-    console.log(`[95-anime-serie] Akt ${ai + 1}: ${imAkt.length}/${proAkt} Szenen`);
+    // In 10er-Portionen, sonst schneidet das Gratis-Modell bei langen Akten die Antwort ab.
+    for (let j = 0; j < imAkt.length; j += 10) await korrektur(imAkt.slice(j, j + 10));
+    console.log(`[95-anime-serie] Akt ${ai + 1}/${akte.length}: ${imAkt.length} Szenen, ca. ${Math.round(sprechSekunden(imAkt))} s`);
     szenen.push(...imAkt);
   }
   if (szenen.length < Math.max(6, ziel * 0.4)) throw new Error(`Zu wenige Szenen (${szenen.length}/${ziel})`);
@@ -187,7 +194,7 @@ async function main() {
   const folge = await folgeSchreiben(serie);
   const hook = `Folge ${folge.nr}: ${folge.titel}`.slice(0, 60);
   const titel = `${serie.titel} – Folge ${folge.nr}: ${folge.titel}`;
-  const v = await videoBauen({ titel, hook, szenen: folge.szenen }, join(OUT, 'anime-arbeit'), { format: FORMAT, stimme: ERZAEHLER, stil: STIL, hook });
+  const v = await videoBauen({ titel, hook, szenen: folge.szenen }, join(OUT, 'anime-arbeit'), { format: FORMAT, stimme: ERZAEHLER, stil: STIL, hook, bildAlle: BILD_ALLE });
   const basis = `${new Date().toISOString().slice(0, 10)}-anime-${slug(serie.titel)}-folge-${folge.nr}`;
   copyFileSync(v.pfad, join(OUT, 'videos', `${basis}.mp4`));
   let vorschau = '';
