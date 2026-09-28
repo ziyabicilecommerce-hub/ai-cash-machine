@@ -135,16 +135,18 @@ async function langSkript(thema, minuten) {
   if (!kapitel.length) throw new Error('Keine Kapitel erhalten');
   const proKapitel = Math.max(3, Math.round(ziel / kapitel.length));
   const szenen = [];
-  for (const k of kapitel) {
+  for (const [ki, k] of kapitel.entries()) {
     const imKapitel = [];
+    const position = ki === 0 ? 'Das ist das ERSTE Kapitel: fuehre in das Thema ein.' : ki === kapitel.length - 1 ? 'Das ist das LETZTE Kapitel: hier darf das Video zum Abschluss kommen.' : 'Das ist ein Kapitel in der MITTE: erzaehle weiter, beende das Video NICHT, kein Abschied, kein Fazit.';
     for (let versuch = 0; imKapitel.length < proKapitel && versuch < Math.ceil(proKapitel / 5) + 2; versuch++) {
       const n = Math.min(5, proKapitel - imKapitel.length);
       const bisher = imKapitel.length ? ` Bisher gesagt (nicht wiederholen, nahtlos weitererzaehlen): "${imKapitel.map((x) => x.text).join(' ').slice(-600)}"` : '';
       imKapitel.push(...(await szenenPortion(
-        `Video "${gliederung.titel}". Kapitel "${k}". Schreibe die naechsten ${n} Szenen (je 3-4 ruhig gesprochene Saetze Deutsch, ca. 15 Sekunden, fehlerfreie Rechtschreibung, du-Form; der Bild-Prompt beschreibt ein eindrucksvolles, jugendfreies Bild ohne Text).${bisher} ` +
+        `Video "${gliederung.titel}". Kapitel ${ki + 1} von ${kapitel.length}: "${k}". ${position} Schreibe die naechsten ${n} Szenen: je 3-4 ruhig gesprochene, klare und verstaendliche Saetze, AUSSCHLIESSLICH auf Deutsch (kein Englisch), echte deutsche Woerter, fehlerfreie Rechtschreibung, du-Form, ca. 15 Sekunden. Der Bild-Prompt (Englisch) beschreibt ein eindrucksvolles, jugendfreies Bild ohne Text.${bisher} ` +
           'Antworte NUR mit JSON: {"szenen":[{"text":"...","bild":"englischer Bild-Prompt"}]}'
       )).slice(0, n));
     }
+    await korrekturLesen(imKapitel, gliederung.titel);
     console.log(`[94-video-fabrik] Kapitel "${k.slice(0, 50)}": ${imKapitel.length}/${proKapitel} Szenen`);
     szenen.push(...imKapitel);
   }
@@ -187,7 +189,7 @@ async function aktiveProdukte() {
 async function korrekturLesen(szenen, produktName) {
   try {
     const d = await kiJson(
-      `Du bist Lektorin. Korrigiere diese deutschen Werbe-Saetze fuer das Produkt "${produktName}": Rechtschreibung, Grammatik, falsche oder erfundene Woerter, Du-Form, natuerlich gesprochen. Inhalt und Laenge beibehalten. ` +
+      `Du bist Lektorin. Korrigiere diese deutschen Sprechtexte zu "${produktName}": Rechtschreibung, Grammatik, erfundene oder sinnlose Woerter durch passende echte Woerter ersetzen, englische Saetze ins Deutsche uebersetzen, Du-Form, natuerlich gesprochen. Inhalt und Laenge beibehalten. ` +
         `Antworte NUR mit JSON: {"saetze":["...", ...]} in derselben Reihenfolge.\n${JSON.stringify(szenen.map((s) => s.text))}`,
       { maxTokens: 1200 }
     );
