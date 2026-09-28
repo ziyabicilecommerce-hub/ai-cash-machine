@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          for u in mcp-hub/ mcp-hub/catalog.json mcp-hub/live.json automations-dashboard/; do
+          for u in mcp-hub/ mcp-hub/analyse.json mcp-hub/live.json automations-dashboard/; do
             curl -sS -o body -w "$u HTTP %{http_code} %{size_download} Bytes\n" "https://ziyabicilecommerce-hub.github.io/ai-cash-machine/$u?x=$RANDOM"
           done
-          grep -o "<title>[^<]*" body; grep -c 'class="num">92' body
+          grep -o "<title>[^<]*" body; grep -c 'class="num">93' body
