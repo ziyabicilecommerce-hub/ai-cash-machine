@@ -164,7 +164,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   let vorschau = '';
   try {
     vorschau = join(ordner, 'vorschau.jpg');
-    vorschaubildBauen(clips[0].replace(/\.mp4$/, '.jpg'), vorschau, skript.titel || '', { breite, hoehe });
+    vorschaubildBauen(clips[0].replace(/\.mp4$/, '.jpg'), vorschau, skript.hook || skript.titel || '', { breite, hoehe });
   } catch (err) {
     console.log(`[video-fabrik] Vorschaubild fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
     vorschau = '';

@@ -158,6 +158,16 @@ async function langSkript(thema, minuten) {
   return { titel: String(gliederung.titel || thema).slice(0, 120), caption: String(gliederung.caption || thema).slice(0, 4000), szenen: szenen.slice(0, ziel + 6) };
 }
 
+// Hook fuer das Bild: hoechstens 5 Woerter / 32 Zeichen, an Wortgrenze gekuerzt.
+function kurzHook(text) {
+  let h = '';
+  for (const wort of String(text).replace(/[#"]/g, '').split(/\s+/).filter(Boolean).slice(0, 5)) {
+    if ((h + ' ' + wort).trim().length > 32) break;
+    h = (h + ' ' + wort).trim();
+  }
+  return h.replace(/[\s–:,-]+$/, '');
+}
+
 const reinText = (html) => String(html || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
 
 const SHOPS = env('VIDEO_FABRIK_SHOPS', 'https://www.deskrebel.store,https://purivelle.store').split(',').map((u) => u.trim().replace(/\/$/, '')).filter(Boolean);
@@ -216,7 +226,7 @@ async function produktSkript(p) {
       (LIFESTYLE
         ? `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index ODER "bild": englischer Prompt fuer ein passendes, jugendfreies Lifestyle-Bild (vollstaendig bekleidete Personen). Mindestens die Haelfte der Szenen mit Produktfoto. `
         : `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene "foto": Index des passendsten Produktfotos. `) +
-      'Antworte NUR mit JSON: {"titel":"...","caption":"Caption mit 3-5 Hashtags","szenen":[{"text":"...","foto":0}]}',
+      'Antworte NUR mit JSON: {"titel":"...","hook":"knallige Schlagzeile, maximal 5 Woerter","caption":"Caption mit 3-5 Hashtags","szenen":[{"text":"...","foto":0}]}',
     { maxTokens: 1500 }
   );
   const szenen = (Array.isArray(d.szenen) ? d.szenen : []).map((s, i) => {
@@ -228,19 +238,19 @@ async function produktSkript(p) {
   if (szenen.length && !szenen[0].foto) szenen[0].foto = fotos[0];
   await korrekturLesen(szenen, p.title);
   const caption = `${String(d.caption || p.title).slice(0, 1800)}${link ? `\n\n👉 ${link}` : ''}`;
-  return { titel: String(d.titel || p.title).slice(0, 120), caption, szenen };
+  return { titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, szenen };
 }
 
 // Uebersetzt Titel, Caption und Sprechtexte; Produktfotos bleiben gleich.
 async function uebersetzen(skript, sprache) {
   const d = await kiJson(
     `Uebersetze diese Werbevideo-Texte ins ${SPRACHNAMEN[sprache]}, natuerlich und muttersprachlich, Du-Ansprache, Laenge beibehalten, Markennamen und Preise unveraendert, Link unveraendert. ` +
-      `Antworte NUR mit JSON: {"titel":"...","caption":"...","saetze":["..."]}\n${JSON.stringify({ titel: skript.titel, caption: skript.caption, saetze: skript.szenen.map((x) => x.text) })}`,
+      `Antworte NUR mit JSON: {"titel":"...","hook":"...","caption":"...","saetze":["..."]}\n${JSON.stringify({ titel: skript.titel, hook: skript.hook || '', caption: skript.caption, saetze: skript.szenen.map((x) => x.text) })}`,
     { maxTokens: 2500 }
   );
   const saetze = Array.isArray(d.saetze) ? d.saetze : [];
   if (saetze.length !== skript.szenen.length) throw new Error('Uebersetzung unvollstaendig');
-  return { titel: String(d.titel || skript.titel).slice(0, 120), caption: String(d.caption || skript.caption).slice(0, 2000), szenen: skript.szenen.map((x, i) => ({ ...x, text: String(saetze[i]).slice(0, 400) })) };
+  return { titel: String(d.titel || skript.titel).slice(0, 120), hook: kurzHook(d.hook || d.titel || skript.titel), caption: String(d.caption || skript.caption).slice(0, 2000), szenen: skript.szenen.map((x, i) => ({ ...x, text: String(saetze[i]).slice(0, 400) })) };
 }
 
 function ablegen(manifest, v, skript, a, nummer, sprache) {
@@ -271,7 +281,7 @@ async function bauen() {
     try {
       const skript = a.produkt ? await produktSkript(a.produkt) : a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
       if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
-      const hook = a.format === 'hoch' ? skript.titel : '';
+      const hook = a.format === 'hoch' ? skript.hook || kurzHook(skript.titel) : '';
       const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook });
       ablegen(manifest, v, skript, a, i + 1, 'de');
       console.log(`[94-video-fabrik] ✓ ${manifest.at(-1).datei} (${Math.round(v.dauer)} s, ${v.szenen} Szenen, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
@@ -279,7 +289,7 @@ async function bauen() {
         for (const sprache of EXTRA_SPRACHEN) {
           try {
             const uebersetzt = await uebersetzen(skript, sprache);
-            const vs = await videoBauen(uebersetzt, join(OUT, `arbeit-${i}-${sprache}`), { format: a.format, stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.titel });
+            const vs = await videoBauen(uebersetzt, join(OUT, `arbeit-${i}-${sprache}`), { format: a.format, stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook });
             ablegen(manifest, vs, uebersetzt, a, i + 1, sprache);
             console.log(`[94-video-fabrik] ✓ ${manifest.at(-1).datei} (${sprache})`);
           } catch (err) {
