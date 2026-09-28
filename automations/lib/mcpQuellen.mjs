@@ -27,25 +27,6 @@ export function repoSchluessel(url) {
 
 const kurz = (t) => String(t || '').replace(/\s+/g, ' ').trim().slice(0, 140);
 
-export async function pulseMcp() {
-  const out = [];
-  let url = 'https://api.pulsemcp.com/v0beta/servers?count_per_page=5000&offset=0';
-  for (let seite = 0; url && seite < 50; seite++) {
-    const data = await hole(url);
-    for (const s of data.servers || []) {
-      out.push({
-        n: s.name, d: kurz(s.short_description), q: 'pulsemcp',
-        r: s.source_code_url || s.external_url || s.url || '',
-        u: (s.remotes || [])[0]?.url_direct || '',
-        p: s.package_name ? `${s.package_registry || ''}:${s.package_name}` : '',
-        s: s.github_stars || 0, k: 2,
-      });
-    }
-    url = data.next || '';
-  }
-  return out;
-}
-
 export async function githubTopics(token, deadline = Infinity) {
   if (!token) throw new Error('GITHUB_TOKEN fehlt');
   const headers = { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json' };
