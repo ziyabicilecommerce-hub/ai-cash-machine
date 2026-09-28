@@ -97,16 +97,16 @@ export function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index, forma
 // Grosse Schlagzeile oben in den ersten Sekunden (Hook fuer Kurzvideos).
 function hookFilter(text, ziel, breite, hoehe) {
   const datei = `${ziel}.hook.txt`;
-  writeFileSync(datei, umbrechen(text.toUpperCase(), breite > hoehe ? 34 : 18));
-  const groesse = Math.round((breite > hoehe ? hoehe : breite) * 0.075);
+  writeFileSync(datei, umbrechen(text.toUpperCase(), breite > hoehe ? 30 : 15));
+  const groesse = Math.round((breite > hoehe ? hoehe : breite) * 0.058);
   return `drawtext=fontfile=${SCHRIFT_FETT}:textfile='${filterPfad(datei)}':fontsize=${groesse}:fontcolor=white:line_spacing=${Math.round(groesse * 0.2)}:box=1:boxcolor=black@0.55:boxborderw=${Math.round(groesse * 0.4)}:x=(w-text_w)/2:y=h*0.12:enable='lt(t,3.5)':alpha='if(lt(t,0.25),t/0.25,if(gt(t,3.0),(3.5-t)/0.5,1))'`;
 }
 
 // Vorschaubild: erstes Szenenbild abgedunkelt plus Titel.
 export function vorschaubildBauen(bild, ziel, titel, { breite, hoehe }) {
   const datei = `${ziel}.titel.txt`;
-  writeFileSync(datei, umbrechen(titel.toUpperCase(), breite > hoehe ? 26 : 16));
-  const groesse = Math.round((breite > hoehe ? hoehe : breite) * 0.09);
+  writeFileSync(datei, umbrechen(titel.toUpperCase(), breite > hoehe ? 22 : 12));
+  const groesse = Math.round((breite > hoehe ? hoehe : breite) * 0.07);
   const filter = `scale=${breite}:${hoehe},eq=brightness=-0.12,drawtext=fontfile=${SCHRIFT_FETT}:textfile='${filterPfad(datei)}':fontsize=${groesse}:fontcolor=white:borderw=${Math.round(groesse * 0.08)}:bordercolor=black:line_spacing=${Math.round(groesse * 0.15)}:x=(w-text_w)/2:y=(h-text_h)/2`;
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', bild, '-vf', filter, '-frames:v', '1', '-q:v', '3', ziel], { stdio: 'pipe', timeout: 120000 });
 }
