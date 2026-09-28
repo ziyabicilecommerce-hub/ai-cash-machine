@@ -8,9 +8,6 @@ on:
   schedule:
     - cron: '0 5 * * *'
   workflow_dispatch: {}
-  push:
-    branches: [feat/video-autopilot]
-    paths: ['automations/94-video-fabrik.mjs', 'automations/lib/videoFabrik.mjs']
 
 permissions:
   contents: write
