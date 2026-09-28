@@ -9,8 +9,8 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { config } from './lib/config.mjs';
-import { askKI } from './lib/ki.mjs';
 import { videoBauen } from './lib/videoFabrik.mjs';
+import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
 
 const OUT = 'out';
 const MANIFEST = join(OUT, 'manifest.json');
@@ -37,56 +37,6 @@ function themen() {
 
 const slug = (t) => t.toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) || 'video';
 
-function jsonAusText(text) {
-  const start = text.indexOf('{');
-  const ende = text.lastIndexOf('}');
-  if (start < 0 || ende <= start) throw new Error('KI lieferte kein JSON');
-  const roh = text.slice(start, ende + 1);
-  try {
-    return JSON.parse(roh);
-  } catch {
-    const repariert = roh
-      .replace(/[\u201C\u201D\u201E]/g, '"')
-      .replace(/,\s*([}\]])/g, '$1')
-      .replace(/([{,]\s*)([A-Za-z_][\w]*)\s*:/g, '$1"$2":')
-      .replace(/}\s*{/g, '},{')
-      .replace(/"\s*\n\s*"/g, '","');
-    return JSON.parse(repariert);
-  }
-}
-
-// Pollinations "openai-fast" (GPT-OSS 20B) laeuft ohne Key und schreibt deutlich
-// besseres Deutsch als das Standardmodell der KI-Kette; askKI bleibt Rueckfall.
-async function kiText(prompt, { maxTokens = 1500 } = {}) {
-  try {
-    const res = await fetch('https://text.pollinations.ai/openai', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ model: 'openai-fast', messages: [{ role: 'user', content: prompt }], max_tokens: maxTokens }),
-      signal: AbortSignal.timeout(120000),
-    });
-    const d = await res.json();
-    const text = d?.choices?.[0]?.message?.content || '';
-    if (res.ok && text && !/reached its budget|enough credits|enter\.pollinations\.ai/i.test(text)) return text;
-  } catch {
-    /* Rueckfall auf askKI */
-  }
-  return askKI(prompt, { maxTokens });
-}
-
-// Fragt die KI bis zu 3-mal, falls das JSON unbrauchbar ist.
-async function kiJson(prompt, opts) {
-  let letzter;
-  for (let versuch = 0; versuch < 3; versuch++) {
-    try {
-      return jsonAusText(await kiText(versuch ? `${prompt}\nWICHTIG: Gib ausschliesslich gueltiges JSON zurueck, doppelte Anfuehrungszeichen, keine Kommentare.` : prompt, opts));
-    } catch (err) {
-      letzter = err;
-    }
-  }
-  throw letzter;
-}
-
 function szenenPruefen(szenen) {
   return (Array.isArray(szenen) ? szenen : [])
     .map((s) => ({ text: String(s.text || '').replace(/\s+/g, ' ').trim().slice(0, 600), bild: String(s.bild || s.bild_prompt || '').trim().slice(0, 400) }))
@@ -101,20 +51,6 @@ async function kurzSkript(thema) {
     { maxTokens: 1800 }
   );
   return { titel: String(d.titel || thema).slice(0, 120), caption: String(d.caption || thema).slice(0, 2000), szenen: szenenPruefen(d.szenen).slice(0, 10) };
-}
-
-// Holt einzelne Szenen-Objekte aus kaputtem KI-Text (z. B. abgeschnittenes JSON).
-function szenenRetten(text) {
-  const treffer = String(text).match(/\{[^{}]*"text"\s*:\s*"[^"]*"[^{}]*\}/g) || [];
-  const szenen = [];
-  for (const t of treffer) {
-    try {
-      szenen.push(jsonAusText(t));
-    } catch {
-      /* einzelne Szene unbrauchbar */
-    }
-  }
-  return szenen;
 }
 
 async function szenenPortion(prompt) {

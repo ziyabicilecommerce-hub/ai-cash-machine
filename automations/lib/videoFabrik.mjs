@@ -30,10 +30,12 @@ export async function ladeBild(prompt, ziel, { breite, hoehe }) {
   return false;
 }
 
-export function sprechen(text, mp3, srt, stimme) {
+// tonhoehe/tempo z. B. "+6Hz" / "-5%" - macht Figuren mit gleicher Grundstimme unterscheidbar.
+export function sprechen(text, mp3, srt, stimme, { tonhoehe = '', tempo = '' } = {}) {
   const txt = `${mp3}.txt`;
   writeFileSync(txt, text);
-  execFileSync('edge-tts', ['--voice', stimme, '--file', txt, '--write-media', mp3, '--write-subtitles', srt], { stdio: 'pipe', timeout: 120000 });
+  const extra = [...(tonhoehe ? [`--pitch=${tonhoehe}`] : []), ...(tempo ? [`--rate=${tempo}`] : [])];
+  execFileSync('edge-tts', ['--voice', stimme, ...extra, '--file', txt, '--write-media', mp3, '--write-subtitles', srt], { stdio: 'pipe', timeout: 120000 });
 }
 
 const SCHRIFT_FETT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
@@ -71,17 +73,38 @@ export function bildVorbereiten(roh, ziel, { breite, hoehe, modus }) {
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', roh, '-filter_complex', filter, '-frames:v', '1', '-q:v', '2', ziel], { stdio: 'pipe', timeout: 120000 });
 }
 
-// Eine Szene: vorbereitetes Standbild mit langsamem Zoom, Stimme, Untertitel.
-export function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index, format, hook = '' }) {
+// Kamerabewegung im Wechsel: Zoom rein, Zoom raus, Schwenk nach rechts, Schwenk nach links.
+function kamera(index, frames) {
+  const mitte = { x: 'iw/2-(iw/zoom/2)', y: 'ih/2-(ih/zoom/2)' };
+  switch (index % 4) {
+    case 0: return { z: 'min(zoom+0.0006,1.12)', ...mitte };
+    case 1: return { z: 'if(eq(on,0),1.12,max(zoom-0.0006,1.0))', ...mitte };
+    case 2: return { z: '1.12', x: `(iw-iw/zoom)*on/${frames}`, y: mitte.y };
+    default: return { z: '1.12', x: `(iw-iw/zoom)*(1-on/${frames})`, y: mitte.y };
+  }
+}
+
+// Namensschild oben links (wer gerade spricht), wie in einer Anime-Synchronisation.
+function schildFilter(name, ziel, breite, hoehe) {
+  const datei = `${ziel}.name.txt`;
+  writeFileSync(datei, name.toUpperCase());
+  const groesse = Math.round((breite > hoehe ? hoehe : breite) * 0.04);
+  const rand = Math.round(groesse * 0.9);
+  return `drawtext=fontfile=${SCHRIFT_FETT}:textfile='${filterPfad(datei)}':fontsize=${groesse}:fontcolor=white:box=1:boxcolor=0xff8a3d@0.85:boxborderw=${Math.round(groesse * 0.35)}:x=${rand}:y=${rand}`;
+}
+
+// Eine Szene: vorbereitetes Standbild mit Kamerabewegung, Stimme, Untertitel.
+export function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index, format, hook = '', schild = '' }) {
   const dauer = dauerSekunden(mp3) + 0.35;
   const frames = Math.ceil(dauer * 30);
-  const zoom = index % 2 === 0 ? 'min(zoom+0.0006,1.12)' : 'if(eq(on,0),1.12,max(zoom-0.0006,1.0))';
+  const k = kamera(index, frames);
   const schrift = format === 'quer' ? 16 : 12;
   const filter = [
     `scale=${breite * 2}:${hoehe * 2}`,
-    `zoompan=z='${zoom}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=${frames}:s=${breite}x${hoehe}:fps=30`,
+    `zoompan=z='${k.z}':x='${k.x}':y='${k.y}':d=${frames}:s=${breite}x${hoehe}:fps=30`,
     'fade=in:0:6',
     `fade=out:st=${Math.max(dauer - 0.25, 0).toFixed(2)}:d=0.25`,
+    ...(schild ? [schildFilter(schild, ziel, breite, hoehe)] : []),
     ...(hook ? [hookFilter(hook, ziel, breite, hoehe)] : []),
     `subtitles='${srtPfadFuerFilter(srt)}':force_style='FontName=DejaVu Sans,FontSize=${schrift},Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=3,Shadow=0,Alignment=2,MarginV=40'`,
   ].join(',');
@@ -124,7 +147,7 @@ async function ladeUrl(url, ziel) {
   return true;
 }
 
-// Baut ein komplettes Video. Szene: {text, foto?: URL eines echten Produktfotos, bild?: KI-Bild-Prompt}.
+// Baut ein komplettes Video. Szene: {text, foto?: URL eines echten Produktfotos, bild?: KI-Bild-Prompt, stimme?, tonhoehe?, tempo?: eigene Sprecherstimme, schild?: Name oben links}.
 export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '' } = {}) {
   if (!existsSync(ordner)) mkdirSync(ordner, { recursive: true });
   const [breite, hoehe] = format === 'quer' ? [1920, 1080] : [1080, 1920];
@@ -150,8 +173,8 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
       if (ok) bildVorbereiten(roh, bild, { breite, hoehe, modus });
       else if (letztesBild) execFileSync('cp', [letztesBild, bild]);
       else continue;
-      sprechen(szene.text, mp3, srt, stimme);
-      szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '' });
+      sprechen(szene.text, mp3, srt, szene.stimme || stimme, { tonhoehe: szene.tonhoehe, tempo: szene.tempo });
+      szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
       letztesBild = bild;
       clips.push(clip);
     } catch (err) {

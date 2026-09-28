@@ -75,13 +75,7 @@ jobs:
           TAG="videos-$(date -u +%Y%m%d-%H%M)"
           gh release create "$TAG" out/videos/* --title "Videos $(date -u +%d.%m.%Y)" --notes "Automatisch erzeugt von Automation #94 (Video-Fabrik)." --latest=false
           echo "BASIS=https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" >> "$GITHUB_ENV"
-          node automations/94-video-fabrik.mjs --feed "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add video-feed/videos.json
-          git commit -m "chore: Video-Feed aktualisiert [skip ci]"
-          git pull --rebase --autostash
-          git push
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}"
           if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
         env:
           GH_TOKEN: ${{ github.token }}

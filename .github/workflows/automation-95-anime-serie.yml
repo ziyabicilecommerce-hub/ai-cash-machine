@@ -1,0 +1,77 @@
+name: "95 · Anime-Serie"
+
+# Baut jeden Tag die naechste Folge einer eigenen Anime-Serie (ohne API-Key),
+# legt sie als GitHub-Release ab, ergaenzt den Video-Feed und plant sie in
+# Metricool ein, sobald die Metricool-Secrets gesetzt sind.
+
+on:
+  schedule:
+    - cron: '17 12 * * *'
+  workflow_dispatch:
+    inputs:
+      minuten:
+        description: 'Laenge der Folge in Minuten (1-30)'
+        required: false
+        default: ''
+      format:
+        description: 'quer (YouTube 16:9) oder hoch (TikTok/Reels 9:16)'
+        required: false
+        default: ''
+      neu:
+        description: 'ja = neue Serie starten (sonst naechste Folge)'
+        required: false
+        default: ''
+      thema:
+        description: 'Thema fuer eine neue Serie'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: anime-serie
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      ANIME_MINUTEN: ${{ inputs.minuten || vars.ANIME_MINUTEN }}
+      ANIME_FORMAT: ${{ inputs.format || vars.ANIME_FORMAT }}
+      ANIME_NEU: ${{ inputs.neu }}
+      ANIME_THEMA: ${{ inputs.thema || vars.ANIME_THEMA }}
+      ANIME_STIL: ${{ vars.ANIME_STIL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: ffmpeg, Schrift und edge-tts installieren
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null
+          pip install -q "edge-tts==7.*"
+      - name: Folge bauen
+        run: node automations/95-anime-serie.mjs
+      - name: Als Release veroeffentlichen und Feed ergaenzen
+        run: |
+          TAG="anime-$(date -u +%Y%m%d-%H%M)"
+          gh release create "$TAG" out/videos/* --title "Anime-Serie $(date -u +%d.%m.%Y)" --notes "Automatisch erzeugt von Automation #95 (Anime-Serie)." --latest=false
+          echo "BASIS=https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" >> "$GITHUB_ENV"
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" anime-serie/serie.json
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: In Metricool einplanen
+        continue-on-error: true
+        run: node automations/94-video-fabrik.mjs --metricool "$BASIS"
+        env:
+          METRICOOL_API_TOKEN: ${{ secrets.METRICOOL_API_TOKEN }}
+          METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID }}
+          METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
+          METRICOOL_TIMEZONE: ${{ secrets.METRICOOL_TIMEZONE }}
+          METRICOOL_PROVIDERS: ${{ secrets.METRICOOL_PROVIDERS }}
+          SOCIAL_AUTOPILOT_AUTO_PUBLISH: ${{ secrets.SOCIAL_AUTOPILOT_AUTO_PUBLISH }}
