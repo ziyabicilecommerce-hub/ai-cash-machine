@@ -124,7 +124,7 @@ async function ladeUrl(url, ziel) {
   return true;
 }
 
-// Baut ein komplettes Video. Szene: {text, foto?: URL eines echten Produktfotos, bild?: KI-Bild-Prompt}.
+// Baut ein komplettes Video. Szene: {text, foto?: URL eines echten Produktfotos, bild?: KI-Bild-Prompt, stimme?: eigene Sprecherstimme}.
 export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '' } = {}) {
   if (!existsSync(ordner)) mkdirSync(ordner, { recursive: true });
   const [breite, hoehe] = format === 'quer' ? [1920, 1080] : [1080, 1920];
@@ -150,7 +150,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
       if (ok) bildVorbereiten(roh, bild, { breite, hoehe, modus });
       else if (letztesBild) execFileSync('cp', [letztesBild, bild]);
       else continue;
-      sprechen(szene.text, mp3, srt, stimme);
+      sprechen(szene.text, mp3, srt, szene.stimme || stimme);
       szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '' });
       letztesBild = bild;
       clips.push(clip);
