@@ -288,6 +288,8 @@ async function bauen() {
 }
 
 function feedErgaenzen(basisUrl) {
+  // Ohne Manifest (z. B. Podcast-Lauf) gibt es keine neuen Videos - nur alte Eintraege pflegen.
+  if (!existsSync(MANIFEST)) writeFileSync(MANIFEST, '[]');
   const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
   const feed = existsSync(FEED) ? JSON.parse(readFileSync(FEED, 'utf8')) : { videos: [] };
   const basis = basisUrl.replace(/\/$/, '');

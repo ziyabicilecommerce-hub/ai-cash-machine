@@ -33,6 +33,7 @@ on:
       - 'community-studio/**'
       - 'mcp-hub/**'
       - 'video-feed/**'
+      - 'podcast/**'
       - 'empire/**'
       - 'command/**'
       - 'cockpit/**'
@@ -93,6 +94,7 @@ jobs:
           cp -r community-studio _site/community-studio
           cp -r mcp-hub _site/mcp-hub
           cp -r video-feed _site/video-feed
+          cp -r podcast _site/podcast
           cp -r empire _site/empire
           cp -r command _site/command
           cp -r cockpit _site/cockpit

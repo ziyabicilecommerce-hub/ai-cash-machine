@@ -1,0 +1,65 @@
+name: "98 · Podcast-Fabrik"
+
+# Taeglich eine Podcast-Folge mit zwei KI-Stimmen - komplett kostenlos. MP3 im
+# GitHub-Release, RSS-Feed unter /podcast/feed.xml (GitHub Pages) fuer Spotify,
+# Apple Podcasts, Amazon Music & Co.
+
+on:
+  schedule:
+    - cron: '37 4 * * *'
+  workflow_dispatch:
+    inputs:
+      minuten:
+        description: 'Laenge in Minuten (3-60)'
+        required: false
+        default: ''
+      thema:
+        description: 'Thema dieser Folge (leer = naechstes aus der Liste)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: podcast
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      PODCAST_MINUTEN: ${{ inputs.minuten || vars.PODCAST_MINUTEN }}
+      PODCAST_THEMEN: ${{ inputs.thema || vars.PODCAST_THEMEN }}
+      PODCAST_NAME: ${{ vars.PODCAST_NAME }}
+      PODCAST_SPRACHE: ${{ vars.PODCAST_SPRACHE }}
+      PODCAST_EMAIL: ${{ vars.PODCAST_EMAIL }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: ffmpeg, Schrift und edge-tts installieren
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null
+          pip install -q "edge-tts==7.*"
+      - name: Release anlegen
+        run: |
+          TAG="podcast-$(date -u +%Y%m%d-%H%M)"
+          gh release create "$TAG" --title "Podcast $(date -u +%d.%m.%Y)" --notes "Automatisch erzeugt von Automation #98 (Podcast-Fabrik)." --latest=false
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          echo "PODCAST_BASIS=https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" >> "$GITHUB_ENV"
+      - name: Folge bauen
+        run: node automations/98-podcast.mjs
+      - name: Leeres Release bei Fehler entfernen
+        if: failure()
+        run: gh release delete "$TAG" --yes --cleanup-tag || true
+      - name: MP3 hochladen, Feed und Seite aktualisieren
+        run: |
+          gh release upload "$TAG" out/podcast/*.mp3
+          scripts/video-feed-veroeffentlichen.sh "$PODCAST_BASIS" podcast/episoden.json podcast/feed.xml $(ls podcast/cover.jpg 2>/dev/null)
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
