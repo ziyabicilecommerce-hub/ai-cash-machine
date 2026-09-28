@@ -6,6 +6,7 @@ import { promisify } from 'node:util';
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
+import { musikUnterlegen, untertitelZusammenfuegen } from './videoExtras.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -168,7 +169,9 @@ async function bildHolen(szene, roh, { breite, hoehe, stil }) {
 // Baut ein komplettes Video. Szene: {text, foto?: URL eines echten Produktfotos, bild?: KI-Bild-Prompt, stimme?, tonhoehe?, tempo?: eigene Sprecherstimme, schild?: Name oben links}.
 // bildAlle: nur jede n-te Szene bekommt ein neues Bild (die anderen nutzen es mit anderer
 // Kamerabewegung weiter) - so passen auch 1-Stunden-Videos in das 6-Stunden-Limit.
-export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '', bildAlle = 1 } = {}) {
+// musik: 'ruhig' | 'anime' legt eine eigene, leise Klangflaeche darunter. Szene.kapitel setzt
+// eine YouTube-Kapitelmarke. Zurueck kommen auch Kapitelmarken und eine Gesamt-.srt.
+export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '', bildAlle = 1, musik = '' } = {}) {
   if (!existsSync(ordner)) mkdirSync(ordner, { recursive: true });
   const [breite, hoehe] = format === 'quer' ? [1920, 1080] : [1080, 1920];
   const szenen = skript.szenen;
@@ -179,6 +182,9 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
     return vorab.get(i);
   };
   const clips = [];
+  const srtTeile = [];
+  const kapitel = [];
+  let zeit = 0;
   let letztesBild = '';
   const start = Date.now();
   for (const [i, szene] of szenen.entries()) {
@@ -198,6 +204,9 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
       await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
       letztesBild = bild;
       clips.push(clip);
+      if (szene.kapitel) kapitel.push({ zeit, titel: szene.kapitel });
+      srtTeile.push({ srt, start: zeit });
+      zeit += dauerSekunden(clip);
     } catch (err) {
       console.log(`[video-fabrik] Szene ${i + 1} uebersprungen: ${String(err.message).slice(0, 200)}`);
     }
@@ -206,6 +215,15 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   if (!clips.length) throw new Error('Keine einzige Szene konnte gerendert werden.');
   const ziel = join(ordner, 'video.mp4');
   zusammenfuegen(clips, ziel, ordner);
+  if (musik) {
+    try {
+      await musikUnterlegen(ziel, zeit, { stimmung: musik });
+    } catch (err) {
+      console.log(`[video-fabrik] Musik fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
+    }
+  }
+  const untertitel = join(ordner, 'untertitel.srt');
+  untertitelZusammenfuegen(srtTeile, untertitel);
   let vorschau = '';
   try {
     vorschau = join(ordner, 'vorschau.jpg');
@@ -214,5 +232,5 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
     console.log(`[video-fabrik] Vorschaubild fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
     vorschau = '';
   }
-  return { pfad: ziel, vorschau, dauer: dauerSekunden(ziel), szenen: clips.length };
+  return { pfad: ziel, vorschau, untertitel, kapitel, dauer: dauerSekunden(ziel), szenen: clips.length };
 }

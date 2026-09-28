@@ -10,6 +10,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from
 import { join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { videoBauen } from './lib/videoFabrik.mjs';
+import { kapitelText, teaserBauen } from './lib/videoExtras.mjs';
 import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
 
 const OUT = 'out';
@@ -95,6 +96,7 @@ async function langSkript(thema, minuten) {
     // In 8er-Portionen, sonst schneidet das Gratis-Modell bei langen Kapiteln die Antwort ab.
     for (let j = 0; j < imKapitel.length; j += 8) await korrekturLesen(imKapitel.slice(j, j + 8), gliederung.titel);
     console.log(`[94-video-fabrik] Kapitel "${k.slice(0, 50)}": ${imKapitel.length} Szenen, ca. ${Math.round(sprechSekunden(imKapitel) / 60)} Min.`);
+    if (imKapitel.length) imKapitel[0].kapitel = k.slice(0, 80);
     szenen.push(...imKapitel);
   }
   if (szenen.length < Math.max(5, ziel * 0.4)) throw new Error(`Zu wenige Szenen (${szenen.length}/${ziel})`);
@@ -207,7 +209,7 @@ async function uebersetzen(skript, sprache) {
   return { titel: String(d.titel || skript.titel).slice(0, 120), hook: kurzHook(d.hook || d.titel || skript.titel), caption: String(d.caption || skript.caption).slice(0, 2000), szenen: skript.szenen.map((x, i) => ({ ...x, text: String(saetze[i]).slice(0, 400) })) };
 }
 
-function ablegen(manifest, v, skript, a, nummer, sprache) {
+async function ablegen(manifest, v, skript, a, nummer, sprache) {
   const basis = `${new Date().toISOString().slice(0, 10)}-${nummer}-${sprache === 'de' ? '' : `${sprache}-`}${slug(skript.titel)}`;
   copyFileSync(v.pfad, join(OUT, 'videos', `${basis}.mp4`));
   let vorschau = '';
@@ -215,7 +217,22 @@ function ablegen(manifest, v, skript, a, nummer, sprache) {
     vorschau = `${basis}.jpg`;
     copyFileSync(v.vorschau, join(OUT, 'videos', vorschau));
   }
-  manifest.push({ datei: `${basis}.mp4`, vorschau, sprache, titel: skript.titel, caption: skript.caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen });
+  const kapitel = kapitelText(v.kapitel || []);
+  const caption = kapitel ? `${skript.caption}\n\nKapitel:\n${kapitel}` : skript.caption;
+  const eintrag = { datei: `${basis}.mp4`, vorschau, sprache, titel: skript.titel, caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen };
+  if (!a.minuten) return void manifest.push(eintrag);
+  // Lange Videos: Untertitel-Datei fuer YouTube und ein 9:16-Teaser fuer Shorts/Reels/TikTok.
+  if (v.untertitel && existsSync(v.untertitel)) {
+    eintrag.untertitel = `${basis}.srt`;
+    copyFileSync(v.untertitel, join(OUT, 'videos', eintrag.untertitel));
+  }
+  manifest.push(eintrag);
+  try {
+    await teaserBauen(v.pfad, join(OUT, 'videos', `${basis}-teaser.mp4`));
+    manifest.push({ datei: `${basis}-teaser.mp4`, vorschau: '', sprache, titel: `${skript.titel} (Teaser)`, caption: `Das ganze Video (${Math.round(v.dauer / 60)} Min.) jetzt auf YouTube!\n\n${skript.caption}`.slice(0, 2000), thema: a.thema, format: 'hoch', dauer: 55, szenen: 0, teaser: true });
+  } catch (err) {
+    console.log(`[94-video-fabrik] Teaser fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
+  }
 }
 
 async function bauen() {
@@ -238,15 +255,15 @@ async function bauen() {
       const skript = a.produkt ? await produktSkript(a.produkt) : a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
       if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
       const hook = a.format === 'hoch' ? skript.hook || kurzHook(skript.titel) : '';
-      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook, bildAlle: a.minuten > 20 ? 2 : 1 });
-      ablegen(manifest, v, skript, a, i + 1, 'de');
-      console.log(`[94-video-fabrik] ✓ ${manifest.at(-1).datei} (${Math.round(v.dauer)} s, ${v.szenen} Szenen, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
+      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook, bildAlle: a.minuten > 20 ? 2 : 1, musik: a.minuten ? 'ruhig' : '' });
+      await ablegen(manifest, v, skript, a, i + 1, 'de');
+      console.log(`[94-video-fabrik] ✓ ${manifest.filter((m) => !m.teaser).at(-1).datei} (${Math.round(v.dauer)} s, ${v.szenen} Szenen, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
       if (a.produkt) {
         for (const sprache of EXTRA_SPRACHEN) {
           try {
             const uebersetzt = await uebersetzen(skript, sprache);
             const vs = await videoBauen(uebersetzt, join(OUT, `arbeit-${i}-${sprache}`), { format: a.format, stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook });
-            ablegen(manifest, vs, uebersetzt, a, i + 1, sprache);
+            await ablegen(manifest, vs, uebersetzt, a, i + 1, sprache);
             console.log(`[94-video-fabrik] ✓ ${manifest.at(-1).datei} (${sprache})`);
           } catch (err) {
             console.log(`[94-video-fabrik] ✗ ${sprache}-Version von "${a.thema}": ${err.message}`);
@@ -263,7 +280,7 @@ async function bauen() {
     }
   }
   writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1));
-  console.log(`[94-video-fabrik] ${manifest.length}/${auftraege.length} Videos fertig`);
+  console.log(`[94-video-fabrik] ${manifest.filter((m) => !m.teaser).length}/${auftraege.length} Videos fertig (+ ${manifest.filter((m) => m.teaser).length} Teaser)`);
   if (!manifest.length) process.exit(1);
 }
 

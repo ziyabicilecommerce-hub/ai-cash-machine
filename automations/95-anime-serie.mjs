@@ -10,6 +10,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from
 import { join } from 'node:path';
 import { videoBauen } from './lib/videoFabrik.mjs';
 import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
+import { kapitelText, teaserBauen } from './lib/videoExtras.mjs';
 
 const OUT = 'out';
 const SERIE = 'anime-serie/serie.json';
@@ -173,11 +174,12 @@ async function folgeSchreiben(serie) {
     // In 10er-Portionen, sonst schneidet das Gratis-Modell bei langen Akten die Antwort ab.
     for (let j = 0; j < imAkt.length; j += 10) await korrektur(imAkt.slice(j, j + 10));
     console.log(`[95-anime-serie] Akt ${ai + 1}/${akte.length}: ${imAkt.length} Szenen, ca. ${Math.round(sprechSekunden(imAkt))} s`);
+    if (imAkt.length) imAkt[0].kapitel = `Akt ${ai + 1}`;
     szenen.push(...imAkt);
   }
   if (szenen.length < Math.max(6, ziel * 0.4)) throw new Error(`Zu wenige Szenen (${szenen.length}/${ziel})`);
   const gruppe = serie.figuren.slice(0, 3).map((f) => `${f.name}: ${f.aussehen}`).join('; ');
-  szenen.unshift({ text: `${serie.titel}. Folge ${nr}: ${titel}.`, bild: `${STIL_VORNE}, epic anime title key visual, group shot of the main characters standing together, ${gruppe}`.slice(0, 900), stimme: ERZAEHLER, sprecher: 'Erzaehler' });
+  szenen.unshift({ text: `${serie.titel}. Folge ${nr}: ${titel}.`, bild: `${STIL_VORNE}, epic anime title key visual, group shot of the main characters standing together, ${gruppe}`.slice(0, 900), stimme: ERZAEHLER, sprecher: 'Erzaehler', kapitel: 'Intro' });
   szenen.push({ text: `Wie geht es weiter? Fortsetzung folgt in Folge ${nr + 1}!`, bild: szenen.at(-1).bild, stimme: ERZAEHLER, sprecher: 'Erzaehler' });
   // Ohne Zusammenfassung verliert die naechste Folge den roten Faden - dann die Akte nehmen.
   return { nr, titel, zusammenfassung: zusammenfassung || sauber(akte.join(' '), 800), szenen };
@@ -194,7 +196,7 @@ async function main() {
   const folge = await folgeSchreiben(serie);
   const hook = `Folge ${folge.nr}: ${folge.titel}`.slice(0, 60);
   const titel = `${serie.titel} – Folge ${folge.nr}: ${folge.titel}`;
-  const v = await videoBauen({ titel, hook, szenen: folge.szenen }, join(OUT, 'anime-arbeit'), { format: FORMAT, stimme: ERZAEHLER, stil: STIL, hook, bildAlle: BILD_ALLE });
+  const v = await videoBauen({ titel, hook, szenen: folge.szenen }, join(OUT, 'anime-arbeit'), { format: FORMAT, stimme: ERZAEHLER, stil: STIL, hook, bildAlle: BILD_ALLE, musik: 'anime' });
   const basis = `${new Date().toISOString().slice(0, 10)}-anime-${slug(serie.titel)}-folge-${folge.nr}`;
   copyFileSync(v.pfad, join(OUT, 'videos', `${basis}.mp4`));
   let vorschau = '';
@@ -202,8 +204,25 @@ async function main() {
     vorschau = `${basis}.jpg`;
     copyFileSync(v.vorschau, join(OUT, 'videos', vorschau));
   }
-  const caption = `${folge.zusammenfassung}\n\n#anime #animeserie #ninja #${slug(serie.titel).replace(/-/g, '')} #folge${folge.nr}`;
-  writeFileSync(join(OUT, 'manifest.json'), JSON.stringify([{ datei: `${basis}.mp4`, vorschau, sprache: 'de', titel, caption, thema: 'anime', format: FORMAT, dauer: Math.round(v.dauer), szenen: v.szenen }], null, 1));
+  const tags = `#anime #animeserie #ninja #${slug(serie.titel).replace(/-/g, '')} #folge${folge.nr}`;
+  const kapitel = kapitelText(v.kapitel || []);
+  const caption = `${folge.zusammenfassung}${kapitel ? `\n\nKapitel:\n${kapitel}` : ''}\n\n${tags}`;
+  const eintrag = { datei: `${basis}.mp4`, vorschau, sprache: 'de', titel, caption, thema: 'anime', format: FORMAT, dauer: Math.round(v.dauer), szenen: v.szenen };
+  if (v.untertitel && existsSync(v.untertitel)) {
+    eintrag.untertitel = `${basis}.srt`;
+    copyFileSync(v.untertitel, join(OUT, 'videos', eintrag.untertitel));
+  }
+  const manifest = [eintrag];
+  // Querformat-Folgen bekommen einen 9:16-Teaser fuer Shorts/Reels/TikTok.
+  if (FORMAT === 'quer') {
+    try {
+      await teaserBauen(v.pfad, join(OUT, 'videos', `${basis}-teaser.mp4`));
+      manifest.push({ datei: `${basis}-teaser.mp4`, vorschau: '', sprache: 'de', titel: `${titel} (Teaser)`, caption: `Die ganze Folge jetzt auf YouTube!\n\n${folge.zusammenfassung}\n\n${tags}`.slice(0, 2000), thema: 'anime', format: 'hoch', dauer: 55, szenen: 0, teaser: true });
+    } catch (err) {
+      console.log(`[95-anime-serie] Teaser fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
+    }
+  }
+  writeFileSync(join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 1));
   serie.folgen.push({ nr: folge.nr, titel: folge.titel, zusammenfassung: folge.zusammenfassung, datum: new Date().toISOString().slice(0, 10) });
   mkdirSync('anime-serie', { recursive: true });
   writeFileSync(SERIE, JSON.stringify(serie, null, 1) + '\n');
