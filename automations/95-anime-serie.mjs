@@ -27,6 +27,9 @@ const STIMMEN = {
   w: ['de-DE-AmalaNeural', 'de-DE-KatjaNeural', 'de-AT-IngridNeural', 'de-CH-LeniNeural', 'de-DE-SeraphinaMultilingualNeural'],
 };
 
+// Leichte Tonhoehen-Unterschiede, damit jede Figur unverwechselbar klingt.
+const TONHOEHEN = ['+0Hz', '+6Hz', '-5Hz', '+10Hz', '-8Hz'];
+
 // Namen/Begriffe bestehender Serien fliegen raus - die Serie muss original sein.
 const GESCHUETZT = /\b(naruto|sasuke|sakura haruno|kakashi|hokage|konoha(gakure)?|akatsuki|sharingan|rinnegan|byakugan|rasengan|chidori|uchiha|uzumaki|hyuga|hinata|itachi|boruto|jiraiya|orochimaru|kurama|goku|vegeta|luffy|zoro|pikachu|pok[eé]mon|one piece|dragon ball|bleach|ichigo|demon slayer|tanjiro|jujutsu|gojo|attack on titan|eren jaeger)\b/gi;
 const sauber = (t, max = 600) => String(t || '').replace(GESCHUETZT, '').replace(/\s+/g, ' ').trim().slice(0, max);
@@ -45,7 +48,8 @@ async function serieAnlegen() {
   const figuren = (Array.isArray(d.figuren) ? d.figuren : [])
     .map((f) => {
       const g = String(f.geschlecht || '').toLowerCase().startsWith('w') ? 'w' : 'm';
-      return { name: sauber(f.name, 40), geschlecht: g, rolle: sauber(f.rolle, 60), art: sauber(f.art, 200), aussehen: sauber(f.aussehen, 300), stimme: STIMMEN[g][zaehler[g]++ % STIMMEN[g].length] };
+      const n = zaehler[g]++;
+      return { name: sauber(f.name, 40), geschlecht: g, rolle: sauber(f.rolle, 60), art: sauber(f.art, 200), aussehen: sauber(f.aussehen, 300), stimme: STIMMEN[g][n % STIMMEN[g].length], tonhoehe: TONHOEHEN[n % TONHOEHEN.length] };
     })
     .filter((f) => f.name.length > 1 && f.aussehen.length > 10)
     .slice(0, 6);
@@ -72,7 +76,9 @@ function szenenPruefen(serie, roh) {
       const figur = namen.get(String(s.sprecher || '').trim().toLowerCase());
       const text = sauber(s.text, 400);
       const bild = sauber(s.bild, 400);
-      return { text, bild: bildPrompt(serie, bild, figur?.name), stimme: figur ? figur.stimme : ERZAEHLER, sprecher: figur ? figur.name : 'Erzaehler' };
+      return figur
+        ? { text, bild: bildPrompt(serie, bild, figur.name), stimme: figur.stimme, tonhoehe: figur.tonhoehe || '', schild: figur.name, sprecher: figur.name }
+        : { text, bild: bildPrompt(serie, bild), stimme: ERZAEHLER, tempo: '-5%', sprecher: 'Erzaehler' };
     })
     .filter((s) => s.text.length > 3 && s.bild.length > 5);
 }
