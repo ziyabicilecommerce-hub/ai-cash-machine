@@ -1,0 +1,152 @@
+// Video-Fabrik - erzeugt taeglich fertige Videos mit Sprecher und Untertiteln,
+// komplett ohne API-Key: KI-Skript (kostenlose KI-Kette), Pollinations-Bilder,
+// edge-tts-Stimme, ffmpeg-Schnitt. Standard: 5 Kurzvideos (9:16), optional
+// ein langes Video bis 10 Minuten (VIDEO_FABRIK_LANG_MINUTEN).
+//   node automations/94-video-fabrik.mjs            -> Videos nach out/ bauen
+//   node automations/94-video-fabrik.mjs --feed URL -> video-feed/videos.json ergaenzen
+//   node automations/94-video-fabrik.mjs --metricool URL -> in Metricool einplanen
+import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { config } from './lib/config.mjs';
+import { askKI } from './lib/ki.mjs';
+import { videoBauen } from './lib/videoFabrik.mjs';
+
+const OUT = 'out';
+const MANIFEST = join(OUT, 'manifest.json');
+const FEED = 'video-feed/videos.json';
+const env = (k, d = '') => (process.env[k] || d).trim();
+
+const ANZAHL = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_ANZAHL', '5'), 10) || 5, 0), 10);
+const LANG_MIN = Math.min(Math.max(parseFloat(env('VIDEO_FABRIK_LANG_MINUTEN', '0')) || 0, 0), 10);
+const STIL = env('VIDEO_FABRIK_STIL', 'cinematic, vibrant colors, high detail, no text');
+const STIMME = env('VIDEO_FABRIK_STIMME', 'de-DE-ConradNeural');
+
+function themen() {
+  const liste = (env('VIDEO_FABRIK_THEMEN') || config.SOCIAL_AUTOPILOT_THEMEN || '').split(',').map((s) => s.trim()).filter(Boolean);
+  if (liste.length) return liste;
+  const nische = config.SHOP_NISCHE || 'Gaming-Setup und Schreibtisch-Zubehoer';
+  return [`Top-Tipps rund um ${nische}`, `Fehler, die jeder bei ${nische} macht`, `So sparst du Geld bei ${nische}`, `Trends 2026: ${nische}`, `Vorher-Nachher: ${nische}`];
+}
+
+const slug = (t) => t.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) || 'video';
+
+function jsonAusText(text) {
+  const start = text.indexOf('{');
+  const ende = text.lastIndexOf('}');
+  if (start < 0 || ende <= start) throw new Error('KI lieferte kein JSON');
+  return JSON.parse(text.slice(start, ende + 1));
+}
+
+function szenenPruefen(szenen) {
+  return (Array.isArray(szenen) ? szenen : [])
+    .map((s) => ({ text: String(s.text || '').replace(/\s+/g, ' ').trim().slice(0, 600), bild: String(s.bild || s.bild_prompt || '').trim().slice(0, 400) }))
+    .filter((s) => s.text.length > 5 && s.bild.length > 5);
+}
+
+async function kurzSkript(thema) {
+  const antwort = await askKI(
+    `Schreibe ein Skript fuer ein 40-60 Sekunden Social-Media-Video (TikTok/Reels/Shorts) auf Deutsch zum Thema "${thema}" fuer den Shop "${config.SHOP_NAME}". ` +
+      'Starker Hook in Szene 1, 6 bis 8 Szenen, jede Szene 1-2 kurze gesprochene Saetze, am Ende ein Call-to-Action. ' +
+      'Antworte NUR mit JSON: {"titel":"...","caption":"kurze Caption mit 3-5 Hashtags","szenen":[{"text":"gesprochener Text","bild":"englischer Bild-Prompt, konkrete Szene"}]}',
+    { maxTokens: 1800 }
+  );
+  const d = jsonAusText(antwort);
+  return { titel: String(d.titel || thema).slice(0, 120), caption: String(d.caption || thema).slice(0, 2000), szenen: szenenPruefen(d.szenen).slice(0, 10) };
+}
+
+async function langSkript(thema, minuten) {
+  const ziel = Math.round((minuten * 60) / 10);
+  const gliederung = jsonAusText(await askKI(
+    `Plane ein ${minuten}-Minuten-YouTube-Video auf Deutsch zum Thema "${thema}" fuer den Shop "${config.SHOP_NAME}". Antworte NUR mit JSON: {"titel":"...","caption":"Beschreibung mit Hashtags","kapitel":["Kapitel 1", "..."]} mit 5 bis 8 Kapiteln.`,
+    { maxTokens: 800 }
+  ));
+  const kapitel = (gliederung.kapitel || []).map(String).slice(0, 8);
+  const proKapitel = Math.max(3, Math.round(ziel / Math.max(kapitel.length, 1)));
+  const szenen = [];
+  for (const k of kapitel) {
+    const d = jsonAusText(await askKI(
+      `Video "${gliederung.titel}". Schreibe das Kapitel "${k}" als ${proKapitel} Szenen (je 2-3 gesprochene Saetze Deutsch, ca. 10 Sekunden). Antworte NUR mit JSON: {"szenen":[{"text":"...","bild":"englischer Bild-Prompt"}]}`,
+      { maxTokens: 2500 }
+    ));
+    szenen.push(...szenenPruefen(d.szenen).slice(0, proKapitel + 2));
+  }
+  return { titel: String(gliederung.titel || thema).slice(0, 120), caption: String(gliederung.caption || thema).slice(0, 4000), szenen: szenen.slice(0, 70) };
+}
+
+async function bauen() {
+  mkdirSync(join(OUT, 'videos'), { recursive: true });
+  const liste = themen();
+  const tag = Math.floor(Date.now() / 86400000);
+  const auftraege = Array.from({ length: ANZAHL }, (_, i) => ({ thema: liste[(tag * ANZAHL + i) % liste.length], format: 'hoch' }));
+  if (LANG_MIN > 0) auftraege.push({ thema: liste[tag % liste.length], format: 'quer', minuten: LANG_MIN });
+
+  const manifest = [];
+  for (const [i, a] of auftraege.entries()) {
+    const start = Date.now();
+    try {
+      const skript = a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
+      if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
+      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL });
+      const datei = `${new Date().toISOString().slice(0, 10)}-${i + 1}-${slug(skript.titel)}.mp4`;
+      copyFileSync(v.pfad, join(OUT, 'videos', datei));
+      manifest.push({ datei, titel: skript.titel, caption: skript.caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen });
+      console.log(`[94-video-fabrik] ✓ ${datei} (${Math.round(v.dauer)} s, ${v.szenen} Szenen, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
+    } catch (err) {
+      console.log(`[94-video-fabrik] ✗ "${a.thema}": ${err.message}`);
+    }
+  }
+  writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1));
+  console.log(`[94-video-fabrik] ${manifest.length}/${auftraege.length} Videos fertig`);
+  if (!manifest.length) process.exit(1);
+}
+
+function feedErgaenzen(basisUrl) {
+  const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
+  const feed = existsSync(FEED) ? JSON.parse(readFileSync(FEED, 'utf8')) : { videos: [] };
+  const neu = manifest.map((m) => ({ ...m, url: `${basisUrl.replace(/\/$/, '')}/${encodeURIComponent(m.datei)}`, erstellt: new Date().toISOString() }));
+  feed.videos = [...neu, ...(feed.videos || [])].slice(0, 300);
+  feed.stand = new Date().toISOString();
+  mkdirSync('video-feed', { recursive: true });
+  writeFileSync(FEED, JSON.stringify(feed, null, 1));
+  console.log(`[94-video-fabrik] Feed: ${neu.length} neue, ${feed.videos.length} insgesamt`);
+}
+
+// Naechster Zeitpunkt HH:MM Berliner Ortszeit (Metricool bekommt die Zone separat).
+function slotBerlin(stunde, minute) {
+  const teile = (d) => Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(d).map((p) => [p.type, p.value]));
+  const jetzt = teile(new Date());
+  const minutenJetzt = Number(jetzt.hour) * 60 + Number(jetzt.minute);
+  const tag = stunde * 60 + minute > minutenJetzt + 15 ? teile(new Date()) : teile(new Date(Date.now() + 86400000));
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${tag.year}-${tag.month}-${tag.day}T${pad(stunde)}:${pad(minute)}:00`;
+}
+
+async function metricoolPlanen(basisUrl) {
+  if (!config.METRICOOL_API_TOKEN || !config.METRICOOL_USER_ID || !config.METRICOOL_BLOG_ID) {
+    console.log('[94-video-fabrik] Metricool-Secrets fehlen - Videos liegen im Video-Feed, Posten uebersprungen.');
+    return;
+  }
+  const { medienURLNormalisieren, beitragPlanen } = await import('./lib/metricool.mjs');
+  const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
+  const providers = (config.METRICOOL_PROVIDERS || 'instagram,tiktok,youtube').split(',').map((s) => s.trim()).filter(Boolean);
+  const autoPublish = String(config.SOCIAL_AUTOPILOT_AUTO_PUBLISH || '').trim().toLowerCase() === 'ja';
+  const stunden = [9, 12, 15, 18, 21, 20];
+  for (const [i, m] of manifest.entries()) {
+    try {
+      const datumISO = slotBerlin(stunden[i % stunden.length], (i * 7) % 60);
+      const mediaId = await medienURLNormalisieren(`${basisUrl.replace(/\/$/, '')}/${encodeURIComponent(m.datei)}`);
+      const nur = m.format === 'quer' ? providers.filter((p) => p === 'youtube') : providers;
+      if (!nur.length) continue;
+      await beitragPlanen({ providers: nur, text: `${m.titel}\n\n${m.caption}`, mediaId, datumISO, draft: !autoPublish, instagramTyp: 'REEL' });
+      console.log(`[94-video-fabrik] Metricool: "${m.titel}" fuer ${datumISO} ${autoPublish ? 'geplant' : 'als Entwurf'}`);
+    } catch (err) {
+      console.log(`[94-video-fabrik] Metricool-Fehler bei "${m.titel}": ${err.message}`);
+    }
+  }
+}
+
+const [modus, arg] = process.argv.slice(2);
+(modus === '--feed' ? Promise.resolve(feedErgaenzen(arg)) : modus === '--metricool' ? metricoolPlanen(arg) : bauen()).catch((err) => {
+  console.error('[94-video-fabrik] Fehler:', err.message);
+  process.exit(1);
+});
