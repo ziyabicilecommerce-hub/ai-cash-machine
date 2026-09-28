@@ -23,6 +23,10 @@ const LANG_MIN = Math.min(Math.max(parseFloat(env('VIDEO_FABRIK_LANG_MINUTEN', '
 const STIL = env('VIDEO_FABRIK_STIL', 'cinematic, vibrant colors, high detail, no text');
 const STIMME = env('VIDEO_FABRIK_STIMME', 'de-DE-SeraphinaMultilingualNeural');
 const LIFESTYLE = env('VIDEO_FABRIK_LIFESTYLE', 'nein').toLowerCase() === 'ja';
+// Zusaetzliche Sprachversionen der Produkt-Kurzvideos, z. B. "en,es,tr" (Deutsch ist immer dabei).
+const STIMMEN = { en: 'en-US-AvaMultilingualNeural', es: 'es-ES-ElviraNeural', fr: 'fr-FR-DeniseNeural', it: 'it-IT-ElsaNeural', tr: 'tr-TR-EmelNeural', nl: 'nl-NL-FennaNeural', pl: 'pl-PL-ZofiaNeural', pt: 'pt-BR-FranciscaNeural' };
+const SPRACHNAMEN = { en: 'Englisch', es: 'Spanisch', fr: 'Franzoesisch', it: 'Italienisch', tr: 'Tuerkisch', nl: 'Niederlaendisch', pl: 'Polnisch', pt: 'Portugiesisch (Brasilien)' };
+const EXTRA_SPRACHEN = env('VIDEO_FABRIK_SPRACHEN').toLowerCase().split(',').map((x) => x.trim()).filter((x) => STIMMEN[x]);
 
 function themen() {
   const liste = (env('VIDEO_FABRIK_THEMEN') || config.SOCIAL_AUTOPILOT_THEMEN || '').split(',').map((s) => s.trim()).filter(Boolean);
@@ -227,6 +231,29 @@ async function produktSkript(p) {
   return { titel: String(d.titel || p.title).slice(0, 120), caption, szenen };
 }
 
+// Uebersetzt Titel, Caption und Sprechtexte; Produktfotos bleiben gleich.
+async function uebersetzen(skript, sprache) {
+  const d = await kiJson(
+    `Uebersetze diese Werbevideo-Texte ins ${SPRACHNAMEN[sprache]}, natuerlich und muttersprachlich, Du-Ansprache, Laenge beibehalten, Markennamen und Preise unveraendert, Link unveraendert. ` +
+      `Antworte NUR mit JSON: {"titel":"...","caption":"...","saetze":["..."]}\n${JSON.stringify({ titel: skript.titel, caption: skript.caption, saetze: skript.szenen.map((x) => x.text) })}`,
+    { maxTokens: 2500 }
+  );
+  const saetze = Array.isArray(d.saetze) ? d.saetze : [];
+  if (saetze.length !== skript.szenen.length) throw new Error('Uebersetzung unvollstaendig');
+  return { titel: String(d.titel || skript.titel).slice(0, 120), caption: String(d.caption || skript.caption).slice(0, 2000), szenen: skript.szenen.map((x, i) => ({ ...x, text: String(saetze[i]).slice(0, 400) })) };
+}
+
+function ablegen(manifest, v, skript, a, nummer, sprache) {
+  const basis = `${new Date().toISOString().slice(0, 10)}-${nummer}-${sprache === 'de' ? '' : `${sprache}-`}${slug(skript.titel)}`;
+  copyFileSync(v.pfad, join(OUT, 'videos', `${basis}.mp4`));
+  let vorschau = '';
+  if (v.vorschau) {
+    vorschau = `${basis}.jpg`;
+    copyFileSync(v.vorschau, join(OUT, 'videos', vorschau));
+  }
+  manifest.push({ datei: `${basis}.mp4`, vorschau, sprache, titel: skript.titel, caption: skript.caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen });
+}
+
 async function bauen() {
   mkdirSync(join(OUT, 'videos'), { recursive: true });
   const liste = themen();
@@ -244,11 +271,22 @@ async function bauen() {
     try {
       const skript = a.produkt ? await produktSkript(a.produkt) : a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
       if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
-      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL });
-      const datei = `${new Date().toISOString().slice(0, 10)}-${i + 1}-${slug(skript.titel)}.mp4`;
-      copyFileSync(v.pfad, join(OUT, 'videos', datei));
-      manifest.push({ datei, titel: skript.titel, caption: skript.caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen });
-      console.log(`[94-video-fabrik] ✓ ${datei} (${Math.round(v.dauer)} s, ${v.szenen} Szenen, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
+      const hook = a.format === 'hoch' ? skript.titel : '';
+      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook });
+      ablegen(manifest, v, skript, a, i + 1, 'de');
+      console.log(`[94-video-fabrik] ✓ ${manifest.at(-1).datei} (${Math.round(v.dauer)} s, ${v.szenen} Szenen, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
+      if (a.produkt) {
+        for (const sprache of EXTRA_SPRACHEN) {
+          try {
+            const uebersetzt = await uebersetzen(skript, sprache);
+            const vs = await videoBauen(uebersetzt, join(OUT, `arbeit-${i}-${sprache}`), { format: a.format, stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.titel });
+            ablegen(manifest, vs, uebersetzt, a, i + 1, sprache);
+            console.log(`[94-video-fabrik] ✓ ${manifest.at(-1).datei} (${sprache})`);
+          } catch (err) {
+            console.log(`[94-video-fabrik] ✗ ${sprache}-Version von "${a.thema}": ${err.message}`);
+          }
+        }
+      }
     } catch (err) {
       console.log(`[94-video-fabrik] ✗ "${a.thema}": ${err.message}`);
     }
@@ -261,7 +299,8 @@ async function bauen() {
 function feedErgaenzen(basisUrl) {
   const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
   const feed = existsSync(FEED) ? JSON.parse(readFileSync(FEED, 'utf8')) : { videos: [] };
-  const neu = manifest.map((m) => ({ ...m, url: `${basisUrl.replace(/\/$/, '')}/${encodeURIComponent(m.datei)}`, erstellt: new Date().toISOString() }));
+  const basis = basisUrl.replace(/\/$/, '');
+  const neu = manifest.map((m) => ({ ...m, url: `${basis}/${encodeURIComponent(m.datei)}`, vorschauUrl: m.vorschau ? `${basis}/${encodeURIComponent(m.vorschau)}` : '', erstellt: new Date().toISOString() }));
   feed.videos = [...neu, ...(feed.videos || [])].slice(0, 300);
   feed.stand = new Date().toISOString();
   mkdirSync('video-feed', { recursive: true });
@@ -289,7 +328,7 @@ async function metricoolPlanen(basisUrl) {
   const providers = (config.METRICOOL_PROVIDERS || 'instagram,tiktok,youtube').split(',').map((s) => s.trim()).filter(Boolean);
   const autoPublish = String(config.SOCIAL_AUTOPILOT_AUTO_PUBLISH || '').trim().toLowerCase() === 'ja';
   const stunden = [9, 12, 15, 18, 21, 20];
-  for (const [i, m] of manifest.entries()) {
+  for (const [i, m] of manifest.filter((x) => (x.sprache || 'de') === 'de').entries()) {
     try {
       const datumISO = slotBerlin(stunden[i % stunden.length], (i * 7) % 60);
       const mediaId = await medienURLNormalisieren(`${basisUrl.replace(/\/$/, '')}/${encodeURIComponent(m.datei)}`);
