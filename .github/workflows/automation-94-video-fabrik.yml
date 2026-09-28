@@ -88,3 +88,23 @@ jobs:
           METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
           METRICOOL_TIMEZONE: ${{ secrets.METRICOOL_TIMEZONE }}
           METRICOOL_PROVIDERS: ${{ secrets.METRICOOL_PROVIDERS }}
+      - name: Direkt posten (kostenlos, ohne Metricool)
+        continue-on-error: true
+        run: node automations/99-direkt-poster.mjs "${BASIS_URL}"
+        env:
+          BASIS_URL: ${{ env.BASIS }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          YOUTUBE_SICHTBARKEIT: ${{ vars.YOUTUBE_SICHTBARKEIT }}
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_KANAL_ID: ${{ vars.TELEGRAM_KANAL_ID }}
+          MASTODON_URL: ${{ vars.MASTODON_URL }}
+          MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
+          DIREKT_POSTER_PLATTFORMEN: ${{ vars.DIREKT_POSTER_PLATTFORMEN }}
