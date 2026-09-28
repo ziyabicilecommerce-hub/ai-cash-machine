@@ -8,9 +8,6 @@ on:
   schedule:
     - cron: '15 3 * * *'
   workflow_dispatch: {}
-  push:
-    branches: [feat/mcp-analyse]
-    paths: ['automations/93-mcp-analyse.mjs', 'automations/lib/mcpAnalyse.mjs']
 
 permissions: {}
 

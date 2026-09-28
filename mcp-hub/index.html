@@ -73,7 +73,7 @@
     <div class="stat"><b id="sSrc">…</b><small>Quellen</small></div>
     <div class="stat"><b id="sLive">…</b><small>✅ antworten live</small></div>
     <div class="stat"><b id="sAna">…</b><small>🔬 analysiert</small></div>
-    <div class="stat"><b id="sRot">…</b><small>🔴 gefährlich</small></div>
+    <div class="stat"><b id="sRot">…</b><small>🔴 starke Warnsignale</small></div>
     <div class="stat"><b id="sDate">…</b><small>Stand</small></div>
   </div>
 </header>
@@ -88,7 +88,7 @@
         <option value="">Sicherheit: alle</option>
         <option value="1">🟢 unauffällig</option>
         <option value="2">🟡 Vorsicht</option>
-        <option value="3">🔴 gefährlich</option>
+        <option value="3">🔴 starkes Warnsignal</option>
         <option value="x">⚪ noch nicht analysiert</option>
       </select>
     </div>
@@ -103,7 +103,7 @@
 </main>
 
 <footer>
-  🔬 Sicherheits-Labels kommen aus einer rein statischen Analyse (Automation #93): Code wird nur gelesen, nie ausgeführt. 🟢 heißt „keine Warnsignale gefunden“, nicht „garantiert sicher“.<br>
+  🔬 Sicherheits-Labels kommen aus einer rein statischen Analyse (Automation #93): Code wird nur gelesen, nie ausgeführt. 🟢 heißt „keine Warnsignale gefunden“, nicht „garantiert sicher“; 🔴 heißt „starkes Warnsignal“, nicht „bewiesen schädlich“.<br>
   * „ohne Key-Pflicht“ heißt: Der Eintrag verlangt laut Registry/Docker-Katalog keinen API-Key. „Key ?“ = unbekannt (GitHub, npm, PyPI …). Manche Dienste wollen trotzdem einen Login (OAuth) oder sind kostenpflichtig – vor dem Einsatz prüfen.<br>
   Quellen: <a href="https://registry.modelcontextprotocol.io" target="_blank" rel="noopener">MCP-Registry</a>, GitHub, npm, PyPI, <a href="https://github.com/docker/mcp-registry" target="_blank" rel="noopener">Docker</a>, Awesome-Listen ·
   <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-91-mcp-katalog.yml" target="_blank" rel="noopener">Automation #91</a>
@@ -119,7 +119,7 @@ const LABELS = {
 const QUELLEN = { offiziell: 'Registry', pulsemcp: 'PulseMCP', github: 'GitHub', npm: 'npm', pypi: 'PyPI', docker: 'Docker', awesome: 'Awesome' };
 const SEITE = 60;
 let alle = [], gefiltert = [], gezeigt = 0, kat = 'alle', live = {};
-const SICHER = { 0: ['unk', '⚪ nicht analysierbar'], 1: ['free', '🟢 unauffällig'], 2: ['key', '🟡 Vorsicht'], 3: ['badge-tot', '🔴 gefährlich'] };
+const SICHER = { 0: ['unk', '⚪ nicht analysierbar'], 1: ['free', '🟢 unauffällig'], 2: ['key', '🟡 Vorsicht'], 3: ['badge-tot', '🔴 starkes Warnsignal'] };
 const FLAG = { 'install-skript': 'Install-Skript', 'install-download': 'lädt beim Installieren nach', 'eval-dekodiert': 'verschleierter Code', 'hex-kette': 'verschleierter Code', 'langer-blob': 'großer Datenblock', 'fremd-webhook': 'sendet an fremde Webhooks', 'liest-geheimnisse': 'liest Keys/Passwörter', 'geheimnis-abfluss': 'möglicher Datenabfluss', 'krypto-miner': 'Mining-Bezug', 'versteckter-miner': 'versteckter Krypto-Miner', 'install-shell': 'führt Download beim Installieren aus', 'sicherheitstool': 'Sicherheitstool mit Angriffsmustern', 'shell': 'startet Programme', 'keine-lizenz': 'keine Lizenz', 'kein-repo': 'kein Quellcode verlinkt', 'veraltet': 'über 18 Monate ohne Update', 'archiviert': 'archiviert', 'deprecated': 'eingestellt', 'malware-gemeldet': 'als Malware gemeldet', 'neu-und-unbekannt': 'neu und unbekannt', 'kaum-genutzt': 'kaum genutzt', 'zu-gross': 'zu groß zum Prüfen', 'code-nicht-lesbar': 'Code nicht lesbar', 'repo-weg': 'Repo gelöscht', 'nicht-erreichbar': 'nicht erreichbar' };
 const GRUND = { platzhalter: 'Platzhalter in URL', 'kein-https': 'kein https', intern: 'interne Adresse', ungueltig: 'ungültige URL', timeout: 'Zeitüberschreitung', 'domain-weg': 'Domain weg', abgelehnt: 'Verbindung abgelehnt', abbruch: 'Verbindung abgebrochen', zertifikat: 'Zertifikat kaputt', h404: 'nicht gefunden', h405: 'altes Protokoll', h5xx: 'Serverfehler', hfehler: 'HTTP-Fehler', 'kein-mcp': 'kein MCP', 'mcp-fehler': 'MCP-Fehler', umleitung: 'Umleitung', sonstiges: 'sonstiger Fehler' };
 let analyse = {};
