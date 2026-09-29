@@ -6,7 +6,7 @@
 //   node automations/94-video-fabrik.mjs            -> Videos nach out/ bauen
 //   node automations/94-video-fabrik.mjs --feed URL -> video-feed/videos.json ergaenzen
 //   node automations/94-video-fabrik.mjs --metricool URL -> in Metricool einplanen
-import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { config } from './lib/config.mjs';
 import { videoBauen } from './lib/videoFabrik.mjs';
@@ -21,6 +21,8 @@ const env = (k, d = '') => (process.env[k] || d).trim();
 
 const ANZAHL_ROH = parseInt(env('VIDEO_FABRIK_ANZAHL', '5'), 10);
 const ANZAHL = Math.min(Math.max(Number.isNaN(ANZAHL_ROH) ? 5 : ANZAHL_ROH, 0), 10);
+// Welt-Bot (#96): bis zu 30 Produkte x 50 Sprachen (21 Produkte = ca. 1.050 Videos/Tag).
+const WELT_ANZAHL = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_ANZAHL', '21'), 10) || 21, 1), 30);
 const LANG_MIN = Math.min(Math.max(parseFloat(env('VIDEO_FABRIK_LANG_MINUTEN', '0')) || 0, 0), 60);
 const STIL = env('VIDEO_FABRIK_STIL', 'cinematic, vibrant colors, high detail, no text');
 const STIMME = env('VIDEO_FABRIK_STIMME', 'de-DE-SeraphinaMultilingualNeural');
@@ -212,6 +214,30 @@ async function uebersetzen(skript, sprache) {
   return { titel: String(d.titel || skript.titel).slice(0, 120), hook: kurzHook(d.hook || d.titel || skript.titel), caption: String(d.caption || skript.caption).slice(0, 2000), szenen: skript.szenen.map((x, i) => ({ ...x, text: String(saetze[i]).slice(0, 400) })) };
 }
 
+// Uebersetzt bis zu 5 Skripte in EINER KI-Anfrage (spart das Anfrage-Limit der Gratis-KI);
+// was dabei fehlt, wird einzeln nachuebersetzt.
+async function uebersetzenBuendel(skripte, sprache) {
+  let d = {};
+  try {
+    d = await kiJson(
+      `Uebersetze diese ${skripte.length} Werbevideo-Texte ins ${SPRACHNAMEN[sprache]}, natuerlich und muttersprachlich, Du-Ansprache, Laenge beibehalten, Markennamen und Preise unveraendert, Links unveraendert. ` +
+        `Antworte NUR mit JSON: {"videos":[{"i":0,"titel":"...","hook":"...","caption":"...","saetze":["..."]}]} - fuer jedes Video, gleiche i, gleiche Anzahl saetze.\n` +
+        JSON.stringify(skripte.map((sk, i) => ({ i, titel: sk.titel, hook: sk.hook || '', caption: sk.caption, saetze: sk.szenen.map((x) => x.text) }))),
+      { maxTokens: 6000 }
+    );
+  } catch {
+    /* einzeln nachuebersetzen */
+  }
+  const videos = Array.isArray(d.videos) ? d.videos : [];
+  return Promise.all(skripte.map(async (sk, i) => {
+    const t = videos.find((x) => Number(x?.i) === i);
+    if (t && Array.isArray(t.saetze) && t.saetze.length === sk.szenen.length) {
+      return { titel: String(t.titel || sk.titel).slice(0, 120), hook: kurzHook(t.hook || t.titel || sk.titel), caption: String(t.caption || sk.caption).slice(0, 2000), szenen: sk.szenen.map((x, j) => ({ ...x, text: String(t.saetze[j]).slice(0, 400) })) };
+    }
+    return uebersetzen(sk, sprache).catch(() => null);
+  }));
+}
+
 async function ablegen(manifest, v, skript, a, nummer, sprache) {
   const basis = `${new Date().toISOString().slice(0, 10)}-${nummer}-${sprache === 'de' ? '' : `${sprache}-`}${slug(skript.titel)}`;
   copyFileSync(v.pfad, join(OUT, 'videos', `${basis}.mp4`));
@@ -293,11 +319,12 @@ function feedErgaenzen(basisUrl) {
   const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
   const feed = existsSync(FEED) ? JSON.parse(readFileSync(FEED, 'utf8')) : { videos: [] };
   const basis = basisUrl.replace(/\/$/, '');
-  const neu = manifest.map((m) => ({ ...m, url: `${basis}/${encodeURIComponent(m.datei)}`, vorschauUrl: m.vorschau ? `${basis}/${encodeURIComponent(m.vorschau)}` : '', erstellt: new Date().toISOString() }));
+  // m.basis: eigenes Release je Welt-Bot-Gruppe (ein Release fasst hoechstens 1.000 Dateien).
+  const neu = manifest.map((m) => { const b = String(m.basis || basis).replace(/\/$/, ''); return { ...m, url: `${b}/${encodeURIComponent(m.datei)}`, vorschauUrl: m.vorschau ? `${b}/${encodeURIComponent(m.vorschau)}` : '', erstellt: new Date().toISOString() }; });
   // Geloeschte Releases (z. B. alte Marathon-Videos) aus dem Feed entfernen.
   const weg = env('FEED_ENTFERNEN_TAGS').split(',').map((t) => t.trim()).filter(Boolean);
   const alt = (feed.videos || []).filter((v) => !weg.some((t) => String(v.url || '').includes(`/download/${t}/`)));
-  feed.videos = [...neu, ...alt].slice(0, 1500);
+  feed.videos = [...neu, ...alt].slice(0, 3000);
   feed.stand = new Date().toISOString();
   mkdirSync('video-feed', { recursive: true });
   writeFileSync(FEED, JSON.stringify(feed, null, 1));
@@ -345,7 +372,7 @@ async function skripteSchreiben() {
   if (!produkte.length) throw new Error('Keine Produkte gefunden');
   const tag = Math.floor(Date.now() / 86400000);
   const skripte = [];
-  for (let i = 0; skripte.length < Math.max(ANZAHL, 1) && i < produkte.length; i++) {
+  for (let i = 0; skripte.length < WELT_ANZAHL && i < produkte.length; i++) {
     const p = produkte[(tag * 7 + i) % produkte.length];
     try {
       const skript = await produktSkript(p);
@@ -376,14 +403,22 @@ async function sprachenRendern(liste) {
   const skripte = JSON.parse(readFileSync(join(OUT, 'skripte.json'), 'utf8'));
   const manifest = [];
   for (const sprache of sprachListe(liste)) {
-    for (const { nr, thema, skript } of skripte) {
-      try {
-        const uebersetzt = await uebersetzen(skript, sprache);
-        const v = await videoBauen(uebersetzt, join(OUT, `welt-${nr}-${sprache}`), { format: 'hoch', stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook });
-        await ablegen(manifest, v, uebersetzt, { thema, format: 'hoch' }, nr, sprache);
-        console.log(`[94-video-fabrik] ✓ ${sprache}: ${manifest.at(-1).datei}`);
-      } catch (err) {
-        console.log(`[94-video-fabrik] ✗ ${sprache} "${thema}": ${String(err.message).slice(0, 200)}`);
+    for (let b = 0; b < skripte.length; b += 5) {
+      const teil = skripte.slice(b, b + 5);
+      const uebersetzungen = await uebersetzenBuendel(teil.map((x) => x.skript), sprache);
+      for (const [j, { nr, thema }] of teil.entries()) {
+        const arbeit = join(OUT, `welt-${nr}-${sprache}`);
+        try {
+          const uebersetzt = uebersetzungen[j];
+          if (!uebersetzt) throw new Error('Uebersetzung fehlgeschlagen');
+          const v = await videoBauen(uebersetzt, arbeit, { format: 'hoch', stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook });
+          await ablegen(manifest, v, uebersetzt, { thema, format: 'hoch' }, nr, sprache);
+          console.log(`[94-video-fabrik] ✓ ${sprache}: ${manifest.at(-1).datei}`);
+        } catch (err) {
+          console.log(`[94-video-fabrik] ✗ ${sprache} "${thema}": ${String(err.message).slice(0, 200)}`);
+        }
+        // Arbeitsordner sofort loeschen - bei ~105 Videos pro Runner wird sonst die Platte voll.
+        rmSync(arbeit, { recursive: true, force: true });
       }
     }
   }

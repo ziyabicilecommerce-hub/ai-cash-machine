@@ -3,8 +3,9 @@
 // Instagram, Facebook, Threads, LinkedIn, Pinterest, Dailymotion, Bluesky, Telegram,
 // Mastodon, Discord und Reddit. Jede Plattform laeuft nur, wenn
 // ihre Secrets gesetzt sind. Jeder Post bekommt einen KI-Hinweis (EU AI Act Art. 50).
-//   node automations/99-direkt-poster.mjs <Release-Basis-URL>
-import { readFileSync, existsSync, mkdirSync, rmSync, createWriteStream } from 'node:fs';
+//   node automations/99-direkt-poster.mjs --aus-feed 1   -> 1 noch nicht gepostetes Video aus dem Feed
+//   node automations/99-direkt-poster.mjs <Release-Basis-URL>  -> alle frischen Videos eines Laufs
+import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync, createWriteStream } from 'node:fs';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
@@ -29,17 +30,38 @@ async function laden(url, ziel) {
   await pipeline(Readable.fromWeb(res.body), createWriteStream(ziel));
 }
 
+const GEPOSTET = 'video-feed/gepostet.json';
+const nurErlaubt = (u) => { try { const x = new URL(u); return x.protocol === 'https:' && x.hostname === 'github.com' ? x.href : ''; } catch { return ''; } };
+
+// Welche Videos? Modus 1: frische aus out/manifest.json (Basis-URL). Modus 2 (--aus-feed N):
+// die N neuesten, noch nie geposteten deutschen/sprachfreien Videos aus dem Video-Feed -
+// so bleibt es bei wenigen, sicheren Posts pro Tag, egal wie viele Videos gebaut werden.
+function auswahl() {
+  const [a1, a2] = process.argv.slice(2);
+  if (a1 === '--aus-feed') {
+    const n = Math.min(Math.max(parseInt(a2, 10) || 1, 1), 10);
+    const feed = existsSync('video-feed/videos.json') ? JSON.parse(readFileSync('video-feed/videos.json', 'utf8')).videos || [] : [];
+    const schon = new Set(existsSync(GEPOSTET) ? JSON.parse(readFileSync(GEPOSTET, 'utf8')) : []);
+    const offen = feed.filter((v) => nurErlaubt(v.url) && !schon.has(v.datei) && SPRACHEN.includes(v.sprache || 'de'));
+    // Bevorzugt Hochformat-Kurzvideos (passen auf die meisten Plattformen), dann der Rest.
+    offen.sort((x, y) => (y.format === 'hoch' && y.dauer <= 90) - (x.format === 'hoch' && x.dauer <= 90));
+    return { videos: offen.slice(0, n).map((v) => ({ m: v, url: v.url, vorschauUrl: nurErlaubt(v.vorschauUrl) })), merken: true };
+  }
+  const basis = (a1 || '').replace(/\/$/, '');
+  if (!basis || !existsSync(MANIFEST)) return { videos: [] };
+  return { videos: JSON.parse(readFileSync(MANIFEST, 'utf8')).filter((m) => SPRACHEN.includes(m.sprache || 'de')).map((m) => ({ m, url: `${basis}/${encodeURIComponent(m.datei)}`, vorschauUrl: m.vorschau ? `${basis}/${encodeURIComponent(m.vorschau)}` : '' })) };
+}
+
 async function main() {
-  const basis = (process.argv[2] || '').replace(/\/$/, '');
-  if (!basis || !existsSync(MANIFEST)) return console.log('[99-direkt-poster] Keine Basis-URL oder kein Manifest - nichts zu posten.');
+  const { videos, merken } = auswahl();
+  if (!videos.length) return console.log('[99-direkt-poster] Nichts zu posten.');
   const aktiv = ALLE.filter((p) => p.bereit() && (!NUR.length || NUR.includes(p.name.toLowerCase())));
-  console.log(`[99-direkt-poster] Aktiv: ${aktiv.map((p) => p.name).join(', ') || 'keine (Secrets fehlen)'}`);
+  console.log(`[99-direkt-poster] Aktiv: ${aktiv.map((p) => p.name).join(', ') || 'keine (Secrets fehlen)'} · ${videos.length} Video(s)`);
   if (!aktiv.length) return;
-  const videos = JSON.parse(readFileSync(MANIFEST, 'utf8')).filter((m) => SPRACHEN.includes(m.sprache || 'de'));
   mkdirSync(TMP, { recursive: true });
   const bilanz = {};
-  for (const m of videos) {
-    const url = `${basis}/${encodeURIComponent(m.datei)}`;
+  const erledigt = [];
+  for (const { m, url, vorschauUrl } of videos) {
     const datei = join(TMP, m.datei);
     try {
       await laden(url, datei);
@@ -47,18 +69,25 @@ async function main() {
       console.log(`[99-direkt-poster] ✗ ${m.datei}: ${err.message}`);
       continue;
     }
-    const v = { ...m, url, vorschauUrl: m.vorschau ? `${basis}/${encodeURIComponent(m.vorschau)}` : '', link: FEED_SEITE, datei, dateiname: m.datei, sprache: m.sprache || 'de', text: `${m.titel}\n\n${m.caption || ''}\n\n${KI_HINWEIS}`.trim() };
+    const v = { ...m, url, vorschauUrl, link: FEED_SEITE, datei, dateiname: m.datei, sprache: m.sprache || 'de', text: `${m.titel}\n\n${m.caption || ''}\n\n${KI_HINWEIS}`.trim() };
+    let irgendwo = false;
     for (const p of aktiv) {
       if (!p.passt(v)) continue;
       try {
         const ergebnis = await p.posten(v);
         bilanz[p.name] = (bilanz[p.name] || 0) + 1;
+        irgendwo = true;
         console.log(`[99-direkt-poster] ✓ ${p.name}: "${m.titel}" → ${ergebnis}`);
       } catch (err) {
         console.log(`[99-direkt-poster] ✗ ${p.name}: "${m.titel}" → ${String(err.message).slice(0, 250)}`);
       }
     }
+    if (irgendwo) erledigt.push(m.datei);
     rmSync(datei, { force: true });
+  }
+  if (merken && erledigt.length) {
+    const alt = existsSync(GEPOSTET) ? JSON.parse(readFileSync(GEPOSTET, 'utf8')) : [];
+    writeFileSync(GEPOSTET, JSON.stringify([...erledigt, ...alt].slice(0, 5000), null, 1) + '\n');
   }
   console.log(`[99-direkt-poster] Fertig: ${Object.entries(bilanz).map(([k, n]) => `${k} ${n}`).join(', ') || 'nichts gepostet'}`);
 }
