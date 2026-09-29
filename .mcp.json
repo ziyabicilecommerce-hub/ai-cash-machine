@@ -23,6 +23,12 @@
       "args": [
         "mcp-router/server.mjs"
       ]
+    },
+    "cashmachine-ultimativ": {
+      "command": "node",
+      "args": [
+        "mcp-ultimativ/server.mjs"
+      ]
     }
   }
 }
