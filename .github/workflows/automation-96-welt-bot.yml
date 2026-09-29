@@ -3,9 +3,10 @@ name: "96 · Welt-Bot"
 # Synchronisiert die Produkt-Ads des Tages in bis zu 50 Sprachen - komplett kostenlos:
 # Pollinations-KI uebersetzt, edge-tts spricht mit Muttersprachler-Stimmen, ffmpeg
 # schneidet. Die Sprachen laufen parallel als Matrix-Jobs (oeffentliches Repo =
-# kostenlose Actions-Minuten). Standard: 21 Produkte x 50 Sprachen = ca. 1.050 Videos/Tag.
-# Je Sprachgruppe ein eigenes Release (max. 1.000 Dateien pro Release); Welt-Releases
-# aelter als 3 Tage werden automatisch geloescht, damit der Speicher nicht explodiert.
+# kostenlose Actions-Minuten). Standard: 21 Produkte x 10 Varianten x 50 Sprachen = ca. 10.500
+# Videos/Tag (jede Variante mit eigener Erzaehlweise, Kulisse und Farbstil). Bei vielen Varianten
+# baut jeder Job genau 1 Sprache (~210 Videos, ca. 3 h). Je Job ein eigenes Release (max. 1.000
+# Dateien); Welt-Releases aelter als 2 Tage werden automatisch geloescht.
 
 on:
   schedule:
@@ -13,7 +14,11 @@ on:
   workflow_dispatch:
     inputs:
       anzahl:
-        description: 'Anzahl Produkte (1-30, Standard 21 = ca. 1.050 Videos)'
+        description: 'Anzahl Produkte (1-60, Standard 21)'
+        required: false
+        default: ''
+      varianten:
+        description: 'Varianten je Produkt (1-12, Standard 10 = ca. 10.500 Videos)'
         required: false
         default: ''
       sprachen:
@@ -31,6 +36,7 @@ concurrency:
 
 env:
   VIDEO_FABRIK_ANZAHL: ${{ inputs.anzahl || vars.WELT_BOT_ANZAHL || '21' }}
+  VIDEO_FABRIK_VARIANTEN: ${{ inputs.varianten || vars.WELT_BOT_VARIANTEN || '10' }}
   VIDEO_FABRIK_SPRACHEN: ${{ inputs.sprachen || vars.WELT_BOT_SPRACHEN || 'alle' }}
   VIDEO_FABRIK_SHOPS: ${{ vars.VIDEO_FABRIK_SHOPS }}
 
@@ -66,7 +72,7 @@ jobs:
     timeout-minutes: 340
     strategy:
       fail-fast: false
-      max-parallel: 10
+      max-parallel: 18
       matrix:
         gruppe: ${{ fromJSON(needs.skripte.outputs.gruppen) }}
     steps:
@@ -135,11 +141,11 @@ jobs:
             console.log(alle.length + ' Welt-Videos');
             if (!alle.length) process.exit(1);
           "
-      - name: Welt-Releases aelter als 3 Tage loeschen
+      - name: Welt-Releases aelter als 2 Tage loeschen
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          GRENZE=$(date -u -d '3 days ago' +%Y%m%d)
+          GRENZE=$(date -u -d '2 days ago' +%Y%m%d)
           ALT=$(gh release list --limit 1000 --json tagName --jq '.[].tagName' | awk -v g="$GRENZE" 'substr($0, 1, 5) == "welt-" && substr($0, 6, 8) ~ /^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/ { if (substr($0, 6, 8) < g) print }' | paste -sd, -)
           for t in ${ALT//,/ }; do gh release delete "$t" --yes --cleanup-tag || true; done
           echo "FEED_ENTFERNEN_TAGS=$ALT" >> "$GITHUB_ENV"

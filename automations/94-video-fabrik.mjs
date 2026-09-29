@@ -23,8 +23,13 @@ const env = (k, d = '') => (process.env[k] || d).trim();
 
 const ANZAHL_ROH = parseInt(env('VIDEO_FABRIK_ANZAHL', '5'), 10);
 const ANZAHL = Math.min(Math.max(Number.isNaN(ANZAHL_ROH) ? 5 : ANZAHL_ROH, 0), 10);
-// Welt-Bot (#96): bis zu 30 Produkte x 50 Sprachen (21 Produkte = ca. 1.050 Videos/Tag).
-const WELT_ANZAHL = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_ANZAHL', '21'), 10) || 21, 1), 30);
+// Welt-Bot (#96): bis zu 60 Produkte x 12 Varianten x 50 Sprachen (Standard 21 x 10 x 50 = ca. 10.500 Videos/Tag).
+const WELT_ANZAHL = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_ANZAHL', '21'), 10) || 21, 1), 60);
+// Welt-Bot: mehrere Varianten je Produkt (eigene Erzaehlweise, Kulisse, Farbstil) - 21 x 10 x 50 = ~10.500 Videos/Tag.
+const WELT_VARIANTEN = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_VARIANTEN', '1'), 10) || 1, 1), 12);
+const WINKEL = ['', 'Mini-Story in Ich-Form aus Sicht einer Kundin oder eines Kunden.', 'Top-3-Liste: drei konkrete Gruende fuer das Produkt.', 'Vorher/Nachher: erst der nervige Alltag ohne das Produkt, dann die Loesung.', 'POV-Stil ("POV: du ..."), locker und witzig.', 'Vergleich: ein gewoehnliches Produkt gegen dieses Produkt.', 'Schnelle Tipps-Form: "So nutzt du ..." mit kurzen Schritten.', 'Frage-Antwort: Beginne mit einer Frage, die viele sich stellen.', 'Ruhig und hochwertig, wie ein Premium-Markenspot.', 'Geschenkidee: fuer wen das Produkt das perfekte Geschenk ist.', 'Alltagsmoment: eine typische Situation zuhause oder im Buero.', 'Mythos vs. Wahrheit rund um das Problem, das das Produkt loest.'];
+// Zeitbudget je Render-Job: danach aufhoeren, damit alles Fertige noch hochgeladen wird (Job-Limit 6 h).
+const WELT_ZEIT_MIN = Math.min(Math.max(parseInt(env('WELT_ZEIT_MINUTEN', '290'), 10) || 290, 10), 330);
 const LANG_MIN = Math.min(Math.max(parseFloat(env('VIDEO_FABRIK_LANG_MINUTEN', '0')) || 0, 0), 60);
 const STIL = env('VIDEO_FABRIK_STIL', 'cinematic, vibrant colors, high detail, no text');
 const STIMME = env('VIDEO_FABRIK_STIMME', 'de-DE-SeraphinaMultilingualNeural');
@@ -172,16 +177,16 @@ async function korrekturLesen(szenen, produktName) {
 }
 
 // Zwei Anlaeufe: das Gratis-Modell liefert gelegentlich nur 1-2 Szenen.
-async function produktSkript(p) {
+async function produktSkript(p, winkel = '') {
   let skript;
   for (let versuch = 0; versuch < 2; versuch++) {
-    skript = await produktSkriptEinmal(p);
+    skript = await produktSkriptEinmal(p, winkel);
     if (skript.szenen.length >= 3) break;
   }
   return skript;
 }
 
-async function produktSkriptEinmal(p) {
+async function produktSkriptEinmal(p, winkel = '') {
   const preis = p.variants?.[0]?.price;
   const link = `${p.shopUrl}/products/${p.handle}`;
   const fotos = p.images.map((b) => b.src);
@@ -190,6 +195,7 @@ async function produktSkriptEinmal(p) {
       `Produktinfos: ${reinText(p.body_html).slice(0, 700)}${preis ? ` Preis: ${preis} EUR.` : ''} ` +
       'Aufbau: 1) Hook, der in 2 Sekunden fesselt, 2) Problem, 3) 2-3 konkrete Vorteile des Produkts, 4) Call-to-Action ("Link in der Bio"). 5 bis 7 Szenen, pro Szene 1 kurzer gesprochener Satz. Nichts erfinden, was nicht in den Produktinfos steht. ' +
       'Nutze NUR Eigenschaften, die woertlich in den Produktinfos stehen - keine erfundenen Features, Zahlen oder Versprechen. Keine Floskeln. ' +
+      (winkel ? `Erzaehlweise dieser Variante: ${winkel} ` : '') +
       (LIFESTYLE
         ? `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index ODER "bild": englischer Prompt fuer ein passendes, jugendfreies Lifestyle-Bild (vollstaendig bekleidete Personen). Mindestens die Haelfte der Szenen mit Produktfoto. `
         : `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene "foto": Index des passendsten Produktfotos. `) +
@@ -261,7 +267,8 @@ async function ablegen(manifest, v, skript, a, nummer, sprache) {
   const caption = kapitel ? `${skript.caption}\n\nKapitel:\n${kapitel}` : skript.caption;
   const eintrag = { datei: `${basis}.mp4`, vorschau, sprache, titel: skript.titel, caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen };
   // Karussell: 4 Bild-Slides (4:5) aus denselben Ebenen - Hook, 2 Vorteile, Preis + CTA.
-  if (KARUSSELL && v.ebenen && skript.szenen.length >= 3) {
+  // Nur fuer die erste Variante, damit ein Release unter 1.000 Dateien bleibt.
+  if (KARUSSELL && v.ebenen && skript.szenen.length >= 3 && !skript.variante) {
     try {
       const sz = skript.szenen.map((x) => x.text);
       const slides = karussellBauen({
@@ -395,18 +402,28 @@ async function skripteSchreiben() {
   const produkte = await aktiveProdukte();
   if (!produkte.length) throw new Error('Keine Produkte gefunden');
   const tag = Math.floor(Date.now() / 86400000);
-  const skripte = [];
-  for (let i = 0; skripte.length < WELT_ANZAHL && i < produkte.length; i++) {
-    const p = produkte[(tag * 7 + i) % produkte.length];
-    try {
-      const skript = await produktSkript(p);
-      if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
-      skripte.push({ nr: skripte.length + 1, thema: p.title, skript });
-      console.log(`[94-video-fabrik] Welt-Skript ${skripte.length}: "${p.title}"`);
-    } catch (err) {
-      console.log(`[94-video-fabrik] ✗ "${p.title}": ${err.message}`);
+  const auswahl = Array.from({ length: Math.min(WELT_ANZAHL, produkte.length) }, (_, i) => produkte[(tag * 7 + i) % produkte.length]);
+  const auftraege = auswahl.flatMap((p) => Array.from({ length: WELT_VARIANTEN }, (_, v) => ({ p, v })));
+  const fertig = [];
+  // 4 Skripte gleichzeitig schreiben - bei 200+ Varianten sonst zu langsam.
+  let naechster = 0;
+  await Promise.all(Array.from({ length: 4 }, async () => {
+    while (naechster < auftraege.length) {
+      const k = naechster++;
+      const { p, v } = auftraege[k];
+      try {
+        const skript = await produktSkript(p, WINKEL[v % WINKEL.length]);
+        if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
+        if (v) skript.hintergrund = { ...skript.hintergrund, seed: skript.hintergrund.seed + v * 7919 };
+        skript.variante = v;
+        fertig.push({ k, thema: p.title, skript });
+        console.log(`[94-video-fabrik] Welt-Skript ${fertig.length}/${auftraege.length}: "${p.title}" (Variante ${v + 1})`);
+      } catch (err) {
+        console.log(`[94-video-fabrik] ✗ "${p.title}" Variante ${v + 1}: ${err.message}`);
+      }
     }
-  }
+  }));
+  const skripte = fertig.sort((x, y) => x.k - y.k).map(({ thema, skript }, i) => ({ nr: i + 1, thema, skript }));
   if (!skripte.length) throw new Error('Kein einziges Skript');
   writeFileSync(join(OUT, 'skripte.json'), JSON.stringify(skripte, null, 1));
   let codes = EXTRA_SPRACHEN.length ? EXTRA_SPRACHEN : Object.keys(STIMMEN);
@@ -417,8 +434,10 @@ async function skripteSchreiben() {
     if (fehlt.length) console.log(`[94-video-fabrik] Stimme nicht gefunden, uebersprungen: ${fehlt.join(', ')}`);
     if (fehlt.length < codes.length) codes = codes.filter((c) => !fehlt.includes(c));
   }
-  writeFileSync(join(OUT, 'gruppen.json'), JSON.stringify(sprachGruppen(codes)));
-  console.log(`[94-video-fabrik] ${skripte.length} Skripte, ${codes.length} Sprachen in ${sprachGruppen(codes).length} Gruppen`);
+  // So viele Sprachen je Job, dass ein Job ca. 250 Videos baut (bei vielen Varianten: 1 Sprache je Job).
+  const gruppen = sprachGruppen(codes, Math.max(1, Math.min(5, Math.floor(250 / skripte.length))));
+  writeFileSync(join(OUT, 'gruppen.json'), JSON.stringify(gruppen));
+  console.log(`[94-video-fabrik] ${skripte.length} Skripte, ${codes.length} Sprachen in ${gruppen.length} Gruppen = ${skripte.length * codes.length} Videos`);
 }
 
 // Welt-Bot (#96), Schritt 2: die Skripte in die Sprachen dieses Jobs uebersetzen und vertonen.
@@ -426,8 +445,9 @@ async function sprachenRendern(liste) {
   mkdirSync(join(OUT, 'videos'), { recursive: true });
   const skripte = JSON.parse(readFileSync(join(OUT, 'skripte.json'), 'utf8'));
   const manifest = [];
+  const ende = Date.now() + WELT_ZEIT_MIN * 60000;
   for (const sprache of sprachListe(liste)) {
-    for (let b = 0; b < skripte.length; b += 5) {
+    for (let b = 0; b < skripte.length && Date.now() < ende; b += 5) {
       const teil = skripte.slice(b, b + 5);
       const uebersetzungen = await uebersetzenBuendel(teil.map((x) => x.skript), sprache);
       for (const [j, { nr, thema }] of teil.entries()) {
@@ -447,7 +467,7 @@ async function sprachenRendern(liste) {
     }
   }
   writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1));
-  console.log(`[94-video-fabrik] ${manifest.length} Welt-Videos fertig`);
+  console.log(`[94-video-fabrik] ${manifest.length} Welt-Videos fertig${Date.now() >= ende ? ' (Zeitbudget erreicht, Rest uebersprungen)' : ''}`);
 }
 
 const [modus, arg] = process.argv.slice(2);
