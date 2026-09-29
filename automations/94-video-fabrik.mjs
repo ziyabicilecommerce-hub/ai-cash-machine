@@ -203,6 +203,32 @@ async function produktSkriptEinmal(p, winkel = '') {
       'Antworte NUR mit JSON: {"titel":"...","hook":"knallige Schlagzeile, maximal 5 Woerter","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","szenen":[{"text":"...","foto":0}]}',
     { maxTokens: 1500 }
   );
+  const skript = ausDaten(d, p);
+  await korrekturLesen(skript.szenen, p.title);
+  return skript;
+}
+
+// Weitere Varianten eines Produkts in EINER KI-Anfrage (spart bei 10 Varianten 90 % der Anfragen -
+// die kostenlosen KI-Dienste drosseln sonst). Variante 1 kommt einzeln und korrekturgelesen.
+async function variantenSkripte(p, winkelListe) {
+  const preis = p.variants?.[0]?.price;
+  const fotos = p.images.map((b) => b.src);
+  const d = await kiJson(
+    `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ${winkelListe.length} VERSCHIEDENE 25-40 Sekunden Werbe-Skripte auf Deutsch (Du-Ansprache) fuer "${p.title}" aus dem Shop "${p.shopName}". ` +
+      `Produktinfos: ${reinText(p.body_html).slice(0, 700)}${preis ? ` Preis: ${preis} EUR.` : ''} Nutze NUR Eigenschaften aus den Produktinfos, nichts erfinden. ` +
+      `Je Skript 5-7 Szenen mit je 1 kurzen Satz, Hook am Anfang, "Link in der Bio" am Ende. Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}), pro Szene "foto": Index. ` +
+      `Erzaehlweisen in dieser Reihenfolge: ${winkelListe.map((w, i) => `${i + 1}) ${w}`).join(' ')} ` +
+      'Je Skript "hintergrund": englischer Bild-Prompt (max. 12 Woerter) fuer eine leere, edle Umgebung ohne Produkt, Personen oder Text - jedes Skript eine andere Umgebung. ' +
+      'Antworte NUR mit JSON: {"varianten":[{"titel":"...","hook":"max. 5 Woerter","caption":"mit 3-5 Hashtags","hintergrund":"...","szenen":[{"text":"...","foto":0}]}]}',
+    { maxTokens: Math.min(1200 * winkelListe.length, 8000) }
+  );
+  return (Array.isArray(d.varianten) ? d.varianten : []).map((v) => ausDaten(v, p)).filter((x) => x.szenen.length >= 3);
+}
+
+function ausDaten(d, p) {
+  const preis = p.variants?.[0]?.price;
+  const link = `${p.shopUrl}/products/${p.handle}`;
+  const fotos = p.images.map((b) => b.src);
   const szenen = (Array.isArray(d.szenen) ? d.szenen : []).map((s, i) => {
     const text = String(s.text || '').replace(/\s+/g, ' ').trim().slice(0, 400);
     const idx = Number.isInteger(s.foto) && s.foto >= 0 && s.foto < fotos.length ? s.foto : null;
@@ -210,7 +236,6 @@ async function produktSkriptEinmal(p, winkel = '') {
     return { text, foto: idx !== null ? fotos[idx] : bild ? '' : fotos[i % fotos.length], bild };
   }).filter((s) => s.text.length > 3).slice(0, 8);
   if (szenen.length && !szenen[0].foto) szenen[0].foto = fotos[0];
-  await korrekturLesen(szenen, p.title);
   const caption = `${String(d.caption || p.title).slice(0, 1800)}${link ? `\n\n👉 ${link}` : ''}`;
   // Fester Seed je Produkt: derselbe KI-Hintergrund in allen Sprachen und an allen Tagen.
   const seed = [...String(p.handle || p.title)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 7);
@@ -362,39 +387,6 @@ function feedErgaenzen(basisUrl) {
   console.log(`[94-video-fabrik] Feed: ${neu.length} neue, ${feed.videos.length} insgesamt`);
 }
 
-// Naechster Zeitpunkt HH:MM Berliner Ortszeit (Metricool bekommt die Zone separat).
-function slotBerlin(stunde, minute) {
-  const teile = (d) => Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(d).map((p) => [p.type, p.value]));
-  const jetzt = teile(new Date());
-  const minutenJetzt = Number(jetzt.hour) * 60 + Number(jetzt.minute);
-  const tag = stunde * 60 + minute > minutenJetzt + 15 ? teile(new Date()) : teile(new Date(Date.now() + 86400000));
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${tag.year}-${tag.month}-${tag.day}T${pad(stunde)}:${pad(minute)}:00`;
-}
-
-async function metricoolPlanen(basisUrl) {
-  if (!config.METRICOOL_API_TOKEN || !config.METRICOOL_USER_ID || !config.METRICOOL_BLOG_ID) {
-    console.log('[94-video-fabrik] Metricool-Secrets fehlen - Videos liegen im Video-Feed, Posten uebersprungen.');
-    return;
-  }
-  const { medienURLNormalisieren, beitragPlanen } = await import('./lib/metricool.mjs');
-  const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
-  const providers = (config.METRICOOL_PROVIDERS || 'instagram,tiktok,youtube').split(',').map((s) => s.trim()).filter(Boolean);
-  const autoPublish = String(config.SOCIAL_AUTOPILOT_AUTO_PUBLISH || '').trim().toLowerCase() === 'ja';
-  const stunden = [9, 12, 15, 18, 21, 20];
-  for (const [i, m] of manifest.filter((x) => (x.sprache || 'de') === 'de').entries()) {
-    try {
-      const datumISO = slotBerlin(stunden[i % stunden.length], (i * 7) % 60);
-      const mediaId = await medienURLNormalisieren(`${basisUrl.replace(/\/$/, '')}/${encodeURIComponent(m.datei)}`);
-      const nur = m.format === 'quer' ? providers.filter((p) => p === 'youtube') : providers;
-      if (!nur.length) continue;
-      await beitragPlanen({ providers: nur, text: `${m.titel}\n\n${m.caption}`, mediaId, datumISO, draft: !autoPublish, instagramTyp: 'REEL' });
-      console.log(`[94-video-fabrik] Metricool: "${m.titel}" fuer ${datumISO} ${autoPublish ? 'geplant' : 'als Entwurf'}`);
-    } catch (err) {
-      console.log(`[94-video-fabrik] Metricool-Fehler bei "${m.titel}": ${err.message}`);
-    }
-  }
-}
 
 // Welt-Bot (#96), Schritt 1: deutsche Produkt-Skripte des Tages fuer alle Sprach-Jobs festlegen.
 async function skripteSchreiben() {
@@ -403,26 +395,30 @@ async function skripteSchreiben() {
   if (!produkte.length) throw new Error('Keine Produkte gefunden');
   const tag = Math.floor(Date.now() / 86400000);
   const auswahl = Array.from({ length: Math.min(WELT_ANZAHL, produkte.length) }, (_, i) => produkte[(tag * 7 + i) % produkte.length]);
-  const auftraege = auswahl.flatMap((p) => Array.from({ length: WELT_VARIANTEN }, (_, v) => ({ p, v })));
   const fertig = [];
-  // 4 Skripte gleichzeitig schreiben - bei 200+ Varianten sonst zu langsam.
-  let naechster = 0;
-  await Promise.all(Array.from({ length: 4 }, async () => {
-    while (naechster < auftraege.length) {
-      const k = naechster++;
-      const { p, v } = auftraege[k];
+  // Nacheinander: die Gratis-KI drosselt parallele Anfragen (429). Je Produkt 2 Anfragen.
+  for (const [i, p] of auswahl.entries()) {
+    const liste = [];
+    try {
+      const erste = await produktSkript(p);
+      if (erste.szenen.length >= 3) liste.push(erste);
+    } catch (err) {
+      console.log(`[94-video-fabrik] ✗ "${p.title}" Variante 1: ${String(err.message).slice(0, 160)}`);
+    }
+    if (WELT_VARIANTEN > 1) {
       try {
-        const skript = await produktSkript(p, WINKEL[v % WINKEL.length]);
-        if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
-        if (v) skript.hintergrund = { ...skript.hintergrund, seed: skript.hintergrund.seed + v * 7919 };
-        skript.variante = v;
-        fertig.push({ k, thema: p.title, skript });
-        console.log(`[94-video-fabrik] Welt-Skript ${fertig.length}/${auftraege.length}: "${p.title}" (Variante ${v + 1})`);
+        liste.push(...(await variantenSkripte(p, WINKEL.slice(1, WELT_VARIANTEN))));
       } catch (err) {
-        console.log(`[94-video-fabrik] ✗ "${p.title}" Variante ${v + 1}: ${err.message}`);
+        console.log(`[94-video-fabrik] ✗ "${p.title}" weitere Varianten: ${String(err.message).slice(0, 160)}`);
       }
     }
-  }));
+    liste.slice(0, WELT_VARIANTEN).forEach((skript, v) => {
+      if (v) skript.hintergrund = { ...skript.hintergrund, seed: skript.hintergrund.seed + v * 7919 };
+      skript.variante = v;
+      fertig.push({ k: i * 100 + v, thema: p.title, skript });
+    });
+    console.log(`[94-video-fabrik] Welt-Skripte "${p.title}": ${Math.min(liste.length, WELT_VARIANTEN)}/${WELT_VARIANTEN} Varianten`);
+  }
   const skripte = fertig.sort((x, y) => x.k - y.k).map(({ thema, skript }, i) => ({ nr: i + 1, thema, skript }));
   if (!skripte.length) throw new Error('Kein einziges Skript');
   writeFileSync(join(OUT, 'skripte.json'), JSON.stringify(skripte, null, 1));
@@ -471,7 +467,7 @@ async function sprachenRendern(liste) {
 }
 
 const [modus, arg] = process.argv.slice(2);
-const MODI = { '--feed': () => feedErgaenzen(arg), '--metricool': () => metricoolPlanen(arg), '--skripte': skripteSchreiben, '--sprachen': () => sprachenRendern(arg || '') };
+const MODI = { '--feed': () => feedErgaenzen(arg), '--metricool': async () => (await import('./lib/metricoolPlanen.mjs')).metricoolPlanen(arg), '--skripte': skripteSchreiben, '--sprachen': () => sprachenRendern(arg || '') };
 Promise.resolve((MODI[modus] || bauen)()).catch((err) => {
   console.error('[94-video-fabrik] Fehler:', err.message);
   process.exit(1);

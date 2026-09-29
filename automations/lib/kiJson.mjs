@@ -20,9 +20,32 @@ export function jsonAusText(text) {
   }
 }
 
+// Die Gratis-Dienste drosseln gleichzeitige Anfragen (429) - daher eine Warteschlange:
+// immer nur eine Anfrage auf einmal, bei "Retry after N" warten und neu versuchen.
+const warte = (ms) => new Promise((r) => setTimeout(r, ms));
+let kette = Promise.resolve();
+export function kiText(prompt, opts) {
+  const lauf = kette.then(() => kiTextMitWarten(prompt, opts));
+  kette = lauf.catch(() => {});
+  return lauf;
+}
+
+async function kiTextMitWarten(prompt, opts) {
+  for (let versuch = 0; ; versuch++) {
+    try {
+      return await kiTextEinmal(prompt, opts);
+    } catch (err) {
+      const m = String(err.message).match(/429|retry after (\d+)/i);
+      if (!m || versuch >= 5) throw err;
+      const sek = Number(String(err.message).match(/retry after (\d+)/i)?.[1]) || 15 * (versuch + 1);
+      await warte((sek + 2) * 1000);
+    }
+  }
+}
+
 // Pollinations "openai-fast" (GPT-OSS 20B) laeuft ohne Key und schreibt deutlich
 // besseres Deutsch als das Standardmodell der KI-Kette; askKI bleibt Rueckfall.
-export async function kiText(prompt, { maxTokens = 1500 } = {}) {
+async function kiTextEinmal(prompt, { maxTokens = 1500 } = {}) {
   try {
     const res = await fetch('https://text.pollinations.ai/openai', {
       method: 'POST',
