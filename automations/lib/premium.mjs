@@ -122,16 +122,42 @@ function gruppieren(liste, trenner) {
   return gruppen;
 }
 
-// Baut aus der .srt von edge-tts eine .ass, in der das gerade gesprochene Wort gelb
-// aufleuchtet. Zeiten je Wort werden nach Zeichenlaenge verteilt.
-export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de' }) {
+// Farbstile im Wechsel je Produkt (ASS-Farben sind &HBBGGRR): Akzent fuer das aktive Wort,
+// Hook-Box und Preisschild. Abwechslung wirkt weniger nach Massenware.
+const THEMEN = [
+  { wort: '&H00E5FF&', box: '&H0000D5FF', text: '&H00101010' },
+  { wort: '&H00FFE14D&', box: '&H00E0B000', text: '&H00FFFFFF' },
+  { wort: '&H00B469FF&', box: '&H009A3DFF', text: '&H00FFFFFF' },
+  { wort: '&H0066FF8A&', box: '&H0040D060', text: '&H00101010' },
+  { wort: '&H003D8AFF&', box: '&H002060F0', text: '&H00FFFFFF' },
+];
+export const themaFuer = (seed) => THEMEN[Math.abs(Number(seed) || 0) % THEMEN.length];
+
+// Preis in Landesschreibweise, z. B. "29,95 €" / "€29.95".
+export function preisText(preis, sprache, waehrung = 'EUR') {
+  const n = Number(preis);
+  if (!Number.isFinite(n) || n <= 0) return '';
+  for (const loc of [sprache, 'en']) {
+    try { return new Intl.NumberFormat(loc, { style: 'currency', currency: waehrung }).format(n); } catch { /* naechste */ }
+  }
+  return '';
+}
+
+// Baut aus der .srt von edge-tts eine .ass, in der das gerade gesprochene Wort aufleuchtet.
+// Zeiten je Wort werden nach Zeichenlaenge verteilt. Optional: hook (grosse Schlagzeile oben,
+// klappt anders als drawtext in allen Schriften), preis + shop (Endkarte der letzten Szene).
+export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', preis = '', shop = '' }) {
   const groesse = Math.round(Math.min(breite, hoehe) * 0.078);
   const unten = Math.round(hoehe * (hoehe > breite ? 0.25 : 0.09));
+  const rand = Math.round(breite * 0.06);
   const kopf = [
     '[Script Info]', 'ScriptType: v4.00+', `PlayResX: ${breite}`, `PlayResY: ${hoehe}`, 'WrapStyle: 0', 'ScaledBorderAndShadow: yes', '',
     '[V4+ Styles]',
     'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
-    `Style: Wort,DejaVu Sans,${groesse},&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,-1,0,0,0,100,100,1,0,1,${Math.round(groesse * 0.1)},${Math.round(groesse * 0.05)},2,${Math.round(breite * 0.06)},${Math.round(breite * 0.06)},${unten},1`,
+    `Style: Wort,DejaVu Sans,${groesse},&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,-1,0,0,0,100,100,1,0,1,${Math.round(groesse * 0.1)},${Math.round(groesse * 0.05)},2,${rand},${rand},${unten},1`,
+    `Style: Hook,DejaVu Sans,${Math.round(groesse * 0.95)},${thema.text},${thema.text},${thema.box},&H64000000,-1,0,0,0,100,100,0,0,3,${Math.round(groesse * 0.28)},0,8,${rand},${rand},${Math.round(hoehe * 0.1)},1`,
+    `Style: Preis,DejaVu Sans,${Math.round(groesse * 1.25)},${thema.text},${thema.text},${thema.box},&H64000000,-1,0,0,0,100,100,0,-7,3,${Math.round(groesse * 0.3)},0,5,0,0,0,1`,
+    `Style: Shop,DejaVu Sans,${Math.round(groesse * 0.55)},&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,-1,0,0,0,100,100,2,0,1,${Math.round(groesse * 0.08)},0,2,${rand},${rand},${Math.round(hoehe * 0.05)},1`,
     '', '[Events]', 'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text',
   ];
   const zeilen = [];
@@ -153,12 +179,19 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de' }) {
     for (const gruppe of gruppieren(liste, trenner)) {
       gruppe.forEach((_, k) => {
         const [von, bis] = zeiten[n + k];
-        const inhalt = gruppe.map((w, j) => (j === k ? `{\\c&H00E5FF&\\fscx112\\fscy112}${assText(w)}{\\r}` : assText(w))).join(trenner);
+        const inhalt = gruppe.map((w, j) => (j === k ? `{\\c${thema.wort}\\fscx112\\fscy112}${assText(w)}{\\r}` : assText(w))).join(trenner);
         zeilen.push(`Dialogue: 0,${assZeit(von)},${assZeit(bis)},Wort,,0,0,0,,${k === 0 ? '{\\fad(70,0)}' : ''}${inhalt}`);
       });
       n += gruppe.length;
     }
   }
+  const pop = '{\\fscx40\\fscy40\\t(0,180,\\fscx108\\fscy108)\\t(180,260,\\fscx100\\fscy100)}';
+  if (hook) {
+    const h = GROSS_OK.test(hook) ? hook.toLocaleUpperCase(sprache) : hook;
+    zeilen.push(`Dialogue: 1,${assZeit(0)},${assZeit(3300)},Hook,,0,0,0,,{\\fad(0,300)}${pop}${assText(h)}`);
+  }
+  if (preis) zeilen.push(`Dialogue: 2,${assZeit(350)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * 0.72)},${Math.round(hoehe * 0.2)})}${pop}${assText(preis)}`);
+  if (shop) zeilen.push(`Dialogue: 1,${assZeit(200)},${assZeit(600000)},Shop,,0,0,0,,{\\fad(300,0)}${assText(shop)}`);
   writeFileSync(ass, [...kopf, ...zeilen].join('\n') + '\n');
   return zeilen.length;
 }

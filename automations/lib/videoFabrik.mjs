@@ -7,7 +7,7 @@ import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
 import { musikUnterlegen, untertitelZusammenfuegen } from './videoExtras.mjs';
-import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild } from './premium.mjs';
+import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText } from './premium.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -233,9 +233,15 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
       await sprechen(szene.text, mp3, srt, szene.stimme || stimme, { tonhoehe: szene.tonhoehe, tempo: szene.tempo });
       if (premium) {
         const ass = join(ordner, `s${i}.ass`);
-        assAusSrt(srt, ass, { breite, hoehe, sprache });
-        const h = clips.length === 0 && hook && schriftOk(hook) ? [hookFilter(hook, clip, breite, hoehe)] : [];
-        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, extra: h });
+        // Hook und Endkarte (Preis + Shop) laufen ueber .ass - so klappen sie in allen 50 Sprachen.
+        const letzte = i === szenen.length - 1;
+        assAusSrt(srt, ass, {
+          breite, hoehe, sprache, thema: themaFuer(skript.hintergrund?.seed),
+          hook: clips.length === 0 ? hook : '',
+          preis: letzte ? preisText(skript.preis, sprache, skript.waehrung) : '',
+          shop: letzte ? skript.shop || '' : '',
+        });
+        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i });
       } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
       letztesBild = bild;
       clips.push(clip);
