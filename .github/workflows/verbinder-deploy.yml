@@ -1,0 +1,85 @@
+name: "Verbinder deployen"
+
+# Einmalig (und nach neuen App-Schluesseln) starten: bringt den kostenlosen Cloudflare-Worker
+# fuer das Ein-Klick-Verbinden online, uebertraegt die App-Schluessel als Worker-Secrets und
+# traegt die Worker-Adresse in verbinden/verbinder.json ein, damit die Seite sie kennt.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: verbinder-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Voraussetzungen pruefen
+        run: |
+          [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || { echo "::error::Secrets CLOUDFLARE_API_TOKEN und CLOUDFLARE_ACCOUNT_ID fehlen (siehe Verbinden-Seite, Schritt 1)"; exit 1; }
+          [ ${#VP} -ge 16 ] || { echo "::error::Secret VERBINDER_PASSWORT fehlt oder ist kuerzer als 16 Zeichen"; exit 1; }
+        env:
+          VP: ${{ secrets.VERBINDER_PASSWORT }}
+      - name: Speicher (KV) anlegen oder finden
+        working-directory: verbinder-worker
+        run: |
+          ID=$(npx -y wrangler@4 kv namespace list 2>/dev/null | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{const l=JSON.parse(s.slice(s.indexOf('[')));const n=l.find(x=>/verbinder.*VERBINDUNGEN|VERBINDUNGEN/.test(x.title));process.stdout.write(n?n.id:'')}catch{}})")
+          if [ -z "$ID" ]; then
+            ID=$(npx -y wrangler@4 kv namespace create VERBINDUNGEN 2>&1 | grep -oE '[0-9a-f]{32}' | head -1)
+          fi
+          [ -n "$ID" ] || { echo "::error::KV-Namespace konnte nicht angelegt werden"; exit 1; }
+          sed -i "s/^id = .*/id = \"$ID\"/" wrangler.toml
+      - name: Worker deployen
+        working-directory: verbinder-worker
+        run: |
+          npx -y wrangler@4 deploy 2>&1 | tee deploy.log
+          URL=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' deploy.log | head -1)
+          [ -n "$URL" ] || { echo "::error::Worker-Adresse nicht gefunden"; exit 1; }
+          echo "URL=$URL" >> "$GITHUB_ENV"
+      - name: App-Schluessel als Worker-Secrets setzen
+        working-directory: verbinder-worker
+        env:
+          VERBINDER_PASSWORT: ${{ secrets.VERBINDER_PASSWORT }}
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          META_APP_ID: ${{ secrets.META_APP_ID }}
+          META_APP_SECRET: ${{ secrets.META_APP_SECRET }}
+          THREADS_APP_ID: ${{ secrets.THREADS_APP_ID }}
+          THREADS_APP_SECRET: ${{ secrets.THREADS_APP_SECRET }}
+          LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+          PINTEREST_APP_ID: ${{ secrets.PINTEREST_APP_ID }}
+          PINTEREST_APP_SECRET: ${{ secrets.PINTEREST_APP_SECRET }}
+        run: |
+          node -e "
+            const n = ['VERBINDER_PASSWORT','TIKTOK_CLIENT_KEY','TIKTOK_CLIENT_SECRET','GOOGLE_CLIENT_ID','GOOGLE_CLIENT_SECRET','META_APP_ID','META_APP_SECRET','THREADS_APP_ID','THREADS_APP_SECRET','LINKEDIN_CLIENT_ID','LINKEDIN_CLIENT_SECRET','PINTEREST_APP_ID','PINTEREST_APP_SECRET'];
+            const o = Object.fromEntries(n.filter((k) => process.env[k]).map((k) => [k, process.env[k]]));
+            require('fs').writeFileSync('secrets.json', JSON.stringify(o));
+            console.log('Secrets: ' + Object.keys(o).join(', '));"
+          npx -y wrangler@4 secret bulk secrets.json
+          rm -f secrets.json
+      - name: Adresse fuer die Verbinden-Seite eintragen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "{\"url\":\"$URL\"}" > verbinden/verbinder.json
+          git add verbinden/verbinder.json
+          git diff --cached --quiet && exit 0
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "chore: Verbinder-Adresse [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 5; done
+          gh workflow run jarvis-pages.yml --ref main || true

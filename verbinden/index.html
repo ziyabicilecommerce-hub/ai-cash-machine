@@ -31,6 +31,20 @@
   .knopf.zweit { background:transparent; color:var(--txt); border:1px solid var(--line); font-weight:500; }
   label.haken { display:flex; gap:6px; align-items:center; font-size:13px; color:var(--mut); cursor:pointer; white-space:nowrap; }
   input[type=checkbox] { width:18px; height:18px; accent-color:var(--gruen); }
+  .klick { background:var(--panel); border:1px solid var(--gruen); border-radius:16px; padding:16px; margin-bottom:8px; }
+  .klick input[type=password] { width:100%; font:inherit; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--panel2); color:var(--txt); margin:6px 0 10px; }
+  .klick .zeile { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-top:1px solid var(--line); flex-wrap:wrap; }
+  .klick .zeile:first-of-type { border-top:0; }
+  .klick button { font:inherit; font-weight:600; padding:9px 16px; border-radius:10px; border:0; background:var(--cyan); color:var(--auf); cursor:pointer; }
+  .klick button.zweit { background:transparent; color:var(--mut); border:1px solid var(--line); font-weight:500; }
+  .klick .ok { color:var(--gruen); font-weight:600; }
+  .meldung { padding:10px 12px; border-radius:10px; margin:8px 0; font-size:14px; overflow-wrap:anywhere; }
+  .meldung.gut { background:rgba(62,242,160,.12); color:var(--gruen); }
+  .meldung.schlecht { background:rgba(255,90,90,.12); color:#ff6b6b; }
+  details { color:var(--mut); font-size:14px; margin-top:10px; }
+  details summary { cursor:pointer; color:var(--txt); }
+  details ol { padding-left:20px; margin-top:6px; }
+  details code { font-size:12px; overflow-wrap:anywhere; }
 </style>
 </head>
 <body>
@@ -39,6 +53,29 @@
   <p class="sub">100 % kostenlos, ohne Abo: 13 Kanäle über die offiziellen Gratis-APIs. Ein Klick pro Plattform bringt dich direkt an die richtige Stelle. Häkchen setzen, wenn erledigt (wird nur in diesem Browser gespeichert).</p>
   <div class="fortschritt"><div id="balken"></div></div>
   <div class="zahl" id="zahl"></div>
+
+  <h2>⚡ Ein-Klick-Verbinden (wie bei Metricool)</h2>
+  <p class="hinweis">Klick auf „Verbinden“ → Plattform fragt nach Erlaubnis → „Weiter“ → fertig. Der Direkt-Poster holt sich alles automatisch.</p>
+  <div class="klick" id="klick">
+    <div id="klickMeldung"></div>
+    <div id="klickLogin">
+      <label for="vpw" class="hinweis">Verbinder-Passwort (einmal eingeben, bleibt in diesem Browser)</label>
+      <input type="password" id="vpw" autocomplete="current-password">
+      <button type="button" id="vpwLos">Anmelden</button>
+    </div>
+    <div id="klickListe"></div>
+    <details id="einrichtung">
+      <summary>Einmalige Einrichtung (ca. 10 Minuten, danach nie wieder)</summary>
+      <ol>
+        <li>Kostenloses Cloudflare-Konto → „Workers &amp; Pages“ einmal öffnen (legt deine workers.dev-Adresse an).</li>
+        <li>Cloudflare → My Profile → API Tokens → Vorlage „Edit Cloudflare Workers“ → Token kopieren.</li>
+        <li>GitHub → Settings → Secrets → Actions: <code>CLOUDFLARE_API_TOKEN</code>, <code>CLOUDFLARE_ACCOUNT_ID</code> und <code>VERBINDER_PASSWORT</code> (selbst ausgedacht, mind. 16 Zeichen).</li>
+        <li>App-Schlüssel der Plattformen als Secrets: <code>TIKTOK_CLIENT_KEY/SECRET</code>, <code>YOUTUBE_CLIENT_ID/SECRET</code>, <code>META_APP_ID/SECRET</code>, <code>THREADS_APP_ID/SECRET</code>, <code>LINKEDIN_CLIENT_ID/SECRET</code>, <code>PINTEREST_APP_ID/SECRET</code> – nur die, die du willst.</li>
+        <li>GitHub → Actions → „Verbinder deployen“ → Run workflow. Danach hier anmelden.</li>
+        <li>In jeder Plattform-App die Rückleitungs-Adresse eintragen, die unten bei der Plattform steht.</li>
+      </ol>
+    </details>
+  </div>
 
   <h2>1 · Sofort startklar (2–5 Minuten)</h2>
   <p class="hinweis">Nur ein Passwort oder einen Link holen und bei GitHub eintragen – fertig.</p>
@@ -113,6 +150,72 @@ APP.forEach((x) => document.getElementById('app').append(karte(x)));
 PODCAST.forEach((x) => document.getElementById('podcast').append(karte(x)));
 GITHUB.forEach((x) => document.getElementById('github').append(karte(x)));
 zaehlen();
+</script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const speicher = { get: () => { try { return localStorage.getItem('verbinder_pw') || ''; } catch { return ''; } }, set: (v) => { try { v ? localStorage.setItem('verbinder_pw', v) : localStorage.removeItem('verbinder_pw'); } catch { /* egal */ } } };
+  const meldung = (text, gut) => { const d = document.createElement('div'); d.className = `meldung ${gut ? 'gut' : 'schlecht'}`; d.textContent = text; $('klickMeldung').replaceChildren(d); };
+  let basis = '';
+  const q = new URLSearchParams(location.search);
+  if (q.get('verbunden')) meldung(`✓ ${q.get('verbunden')} ist verbunden – der Direkt-Poster nutzt es ab dem nächsten Lauf.`, true);
+  if (q.get('fehler')) meldung(`Verbinden hat nicht geklappt: ${q.get('fehler')}`, false);
+  if (q.get('verbunden') || q.get('fehler')) history.replaceState(null, '', location.pathname);
+
+  async function aufruf(pfad, methode = 'GET') {
+    const res = await fetch(basis + pfad, { method: methode, headers: { authorization: `Bearer ${speicher.get()}` } });
+    const d = await res.json().catch(() => ({}));
+    if (res.status === 401) { speicher.set(''); zeigen(); throw new Error('Passwort falsch'); }
+    if (!res.ok) throw new Error(d.fehler || `Status ${res.status}`);
+    return d;
+  }
+
+  async function zeigen() {
+    const angemeldet = Boolean(speicher.get());
+    $('klickLogin').hidden = angemeldet || !basis;
+    $('klickListe').replaceChildren();
+    if (!basis) { $('einrichtung').open = true; return; }
+    if (!angemeldet) return;
+    try {
+      const { plattformen } = await aufruf('/status');
+      for (const p of plattformen) {
+        const z = document.createElement('div'); z.className = 'zeile';
+        const links = document.createElement('div');
+        const name = document.createElement('strong'); name.textContent = p.name; links.append(name);
+        const info = document.createElement('div'); info.className = 'hinweis';
+        info.textContent = p.verbunden
+          ? `✓ verbunden${p.konto ? ` (${p.konto})` : ''}${p.gueltig_bis ? ` · gültig bis ${new Date(p.gueltig_bis).toLocaleDateString('de-DE')}` : ''}`
+          : p.eingerichtet ? 'bereit zum Verbinden' : `App-Schlüssel fehlen noch · Rückleitung: ${p.rueckleitung}`;
+        if (p.verbunden) info.classList.add('ok');
+        links.append(info);
+        const knopf = document.createElement('button'); knopf.type = 'button';
+        knopf.textContent = p.verbunden ? 'Neu verbinden' : 'Verbinden';
+        knopf.disabled = !p.eingerichtet;
+        knopf.addEventListener('click', async () => {
+          try { const { url } = await aufruf(`/start/${p.plattform}`, 'POST'); location.assign(url); } catch (err) { meldung(err.message, false); }
+        });
+        const rechts = document.createElement('div'); rechts.append(knopf);
+        if (p.verbunden) {
+          const weg = document.createElement('button'); weg.type = 'button'; weg.className = 'zweit'; weg.textContent = 'Trennen'; weg.style.marginLeft = '6px';
+          weg.addEventListener('click', async () => { try { await aufruf(`/trennen/${p.plattform}`, 'POST'); zeigen(); } catch (err) { meldung(err.message, false); } });
+          rechts.append(weg);
+        }
+        z.append(links, rechts);
+        $('klickListe').append(z);
+      }
+      const ab = document.createElement('button'); ab.type = 'button'; ab.className = 'zweit'; ab.textContent = 'Abmelden'; ab.style.marginTop = '10px';
+      ab.addEventListener('click', () => { speicher.set(''); zeigen(); });
+      $('klickListe').append(ab);
+    } catch (err) { meldung(`Verbinder nicht erreichbar: ${err.message}`, false); }
+  }
+
+  $('vpwLos').addEventListener('click', () => { speicher.set($('vpw').value.trim()); $('vpw').value = ''; zeigen(); });
+  fetch('./verbinder.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : {})).catch(() => ({})).then((d) => {
+    basis = /^https:\/\/[a-z0-9.-]+\.workers\.dev$/.test(d.url || '') ? d.url : '';
+    if (!basis) meldung('Noch nicht eingerichtet – einmalig die Schritte unten machen.', false);
+    zeigen();
+  });
+})();
 </script>
 </body>
 </html>
