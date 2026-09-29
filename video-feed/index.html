@@ -87,6 +87,7 @@ function karte(v) {
   if (v.caption) b.append(el('div', 'caption', v.caption));
   const a = el('div', 'actions');
   const dl = el('a', '', 'Download'); dl.href = sichereUrl(v.url); dl.rel = 'noopener'; a.append(dl);
+  const seite = el('a', '', 'Seite'); seite.href = `v/${String(v.datei || '').replace(/\.mp4$/i, '').toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-|-$/g, '').slice(0, 120) || 'video'}.html`; a.append(seite);
   const cp = el('button', '', 'Caption kopieren'); cp.type = 'button';
   cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText(`${v.titel || ''}\n\n${v.caption || ''}`.trim()); cp.textContent = 'Kopiert ✓'; } catch { cp.textContent = 'Nicht möglich'; } });
   a.append(cp);
