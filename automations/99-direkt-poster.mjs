@@ -32,6 +32,21 @@ async function laden(url, ziel) {
 }
 
 const GEPOSTET = 'video-feed/gepostet.json';
+const ZAEHLER = 'video-feed/post-zaehler.json';
+
+// Sichere Tageslimits je Plattform (Posts pro Tag). TikTok/Instagram strafen Massen-Posts ab,
+// YouTube erlaubt per API-Kontingent max. ~6 Uploads/Tag; Kanaele wie Telegram vertragen mehr.
+// Ueberschreibbar per Variable, z. B. LIMIT_TIKTOK=3.
+const LIMITS = { youtube: 6, tiktok: 4, instagram: 3, facebook: 4, threads: 6, linkedin: 2, pinterest: 10, dailymotion: 6, bluesky: 10, telegram: 12, mastodon: 8, discord: 12, reddit: 1 };
+const limit = (p) => { const n = parseInt(env(`LIMIT_${p.name.toUpperCase()}`), 10); return Number.isNaN(n) ? LIMITS[p.name.toLowerCase()] ?? 4 : n; };
+const heuteBerlin = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date());
+function zaehlerLaden() {
+  try {
+    const z = JSON.parse(readFileSync(ZAEHLER, 'utf8'));
+    if (z.datum === heuteBerlin()) return z;
+  } catch { /* neu anfangen */ }
+  return { datum: heuteBerlin(), zaehler: {} };
+}
 const nurErlaubt = (u) => { try { const x = new URL(u); return x.protocol === 'https:' && x.hostname === 'github.com' ? x.href : ''; } catch { return ''; } };
 
 // Welche Videos? Modus 1: frische aus out/manifest.json (Basis-URL). Modus 2 (--aus-feed N):
@@ -57,8 +72,11 @@ async function main() {
   await verbinderLaden();
   const { videos, merken } = auswahl();
   if (!videos.length) return console.log('[99-direkt-poster] Nichts zu posten.');
-  const aktiv = ALLE.filter((p) => p.bereit() && (!NUR.length || NUR.includes(p.name.toLowerCase())));
-  console.log(`[99-direkt-poster] Aktiv: ${aktiv.map((p) => p.name).join(', ') || 'keine (Secrets fehlen)'} · ${videos.length} Video(s)`);
+  const z = zaehlerLaden();
+  const bereit = ALLE.filter((p) => p.bereit() && (!NUR.length || NUR.includes(p.name.toLowerCase())));
+  const aktiv = bereit.filter((p) => (z.zaehler[p.name] || 0) < limit(p));
+  const voll = bereit.filter((p) => !aktiv.includes(p));
+  console.log(`[99-direkt-poster] Aktiv: ${aktiv.map((p) => `${p.name} ${z.zaehler[p.name] || 0}/${limit(p)}`).join(', ') || 'keine (Secrets fehlen oder Tageslimit erreicht)'}${voll.length ? ` · Tageslimit erreicht: ${voll.map((p) => p.name).join(', ')}` : ''} · ${videos.length} Video(s)`);
   if (!aktiv.length) return;
   mkdirSync(TMP, { recursive: true });
   const bilanz = {};
@@ -74,10 +92,11 @@ async function main() {
     const v = { ...m, url, vorschauUrl, link: FEED_SEITE, datei, dateiname: m.datei, sprache: m.sprache || 'de', text: `${m.titel}\n\n${m.caption || ''}\n\n${KI_HINWEIS}`.trim() };
     let irgendwo = false;
     for (const p of aktiv) {
-      if (!p.passt(v)) continue;
+      if (!p.passt(v) || (z.zaehler[p.name] || 0) >= limit(p)) continue;
       try {
         const ergebnis = await p.posten(v);
         bilanz[p.name] = (bilanz[p.name] || 0) + 1;
+        z.zaehler[p.name] = (z.zaehler[p.name] || 0) + 1;
         irgendwo = true;
         console.log(`[99-direkt-poster] ✓ ${p.name}: "${m.titel}" → ${ergebnis}`);
       } catch (err) {
@@ -87,6 +106,7 @@ async function main() {
     if (irgendwo) erledigt.push(m.datei);
     rmSync(datei, { force: true });
   }
+  if (Object.keys(bilanz).length) writeFileSync(ZAEHLER, JSON.stringify(z, null, 1) + '\n');
   if (merken && erledigt.length) {
     const alt = existsSync(GEPOSTET) ? JSON.parse(readFileSync(GEPOSTET, 'utf8')) : [];
     writeFileSync(GEPOSTET, JSON.stringify([...erledigt, ...alt].slice(0, 5000), null, 1) + '\n');
