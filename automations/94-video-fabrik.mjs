@@ -14,6 +14,7 @@ import { kapitelText, teaserBauen, zusammenschnittBauen } from './lib/videoExtra
 import { WELT_SPRACHEN, sprachGruppen } from './lib/weltSprachen.mjs';
 import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
 import { premiumAn, themaFuer, preisText } from './lib/premium.mjs';
+import { kurzHook, reinText, aktiveProdukte, topListeSkript } from './lib/shopProdukte.mjs';
 import { karussellBauen } from './lib/karussell.mjs';
 
 const OUT = 'out';
@@ -121,48 +122,6 @@ async function langSkript(thema, minuten) {
   return { titel: String(gliederung.titel || thema).slice(0, 120), caption: String(gliederung.caption || thema).slice(0, 4000), szenen };
 }
 
-// Hook fuer das Bild: hoechstens 5 Woerter / 32 Zeichen, an Wortgrenze gekuerzt.
-function kurzHook(text) {
-  let h = '';
-  for (const wort of String(text).replace(/[#"]/g, '').split(/\s+/).filter(Boolean).slice(0, 7)) {
-    if ((h + ' ' + wort).trim().length > 42) break;
-    h = (h + ' ' + wort).trim();
-  }
-  return h.replace(/[\s–:,-]+$/, '');
-}
-
-const reinText = (html) => String(html || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
-
-const SHOPS = env('VIDEO_FABRIK_SHOPS', 'https://www.deskrebel.store,https://purivelle.store').split(',').map((u) => u.trim().replace(/\/$/, '')).filter(Boolean);
-
-function shopName(url) {
-  const host = new URL(url).hostname.replace(/^www\./, '').split('.')[0];
-  return { deskrebel: 'DeskRebel', purivelle: 'Purivelle' }[host] || host.charAt(0).toUpperCase() + host.slice(1);
-}
-
-// Oeffentliche Shopify-Storefront (/products.json) - kein Key noetig.
-async function aktiveProdukte() {
-  const alle = [];
-  for (const shop of SHOPS) {
-    try {
-      const res = await fetch(`${shop}/products.json?limit=250`, { signal: AbortSignal.timeout(30000), headers: { 'user-agent': 'Mozilla/5.0 (video-fabrik)' } });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const d = await res.json();
-      const liste = (d.products || []).filter((p) => (p.images || []).length).map((p) => ({ ...p, shopUrl: shop, shopName: shopName(shop) }));
-      console.log(`[94-video-fabrik] ${shopName(shop)}: ${liste.length} Produkte mit Fotos`);
-      alle.push(liste);
-    } catch (err) {
-      console.log(`[94-video-fabrik] ${shop} nicht lesbar (${err.message})`);
-    }
-  }
-  // abwechselnd aus allen Shops mischen
-  const gemischt = [];
-  for (let i = 0; alle.some((l) => i < l.length); i++) for (const l of alle) if (l[i]) gemischt.push(l[i]);
-  return gemischt;
-}
-
-// Zweiter Durchgang: Rechtschreibung/Grammatik/Wortwahl pruefen, Du-Form,
-// Produktname korrekt. Bei Fehlern bleiben die Originaltexte erhalten.
 async function korrekturLesen(szenen, produktName) {
   try {
     const d = await kiJson(
@@ -366,6 +325,20 @@ async function bauen() {
     }
   }
   writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1));
+  // Top-5-Countdown je Shop (neues Format): taeglich andere 5 Produkte je Shop.
+  for (const shop of PREMIUM ? [...new Set(produkte.map((p) => p.shopName))] : []) {
+    const eigene = produkte.filter((p) => p.shopName === shop);
+    if (eigene.length < 3) continue;
+    const auswahl = Array.from({ length: Math.min(5, eigene.length) }, (_, k) => eigene[(tag * 5 + k) % eigene.length]);
+    try {
+      const skript = await topListeSkript(shop, auswahl);
+      const v = await videoBauen(skript, join(OUT, `arbeit-top-${shop}`), { format: 'hoch', stimme: STIMME, hook: skript.hook, premium: true, sprache: 'de' });
+      await ablegen(manifest, v, skript, { thema: `Top 5 ${shop}`, format: 'hoch' }, `top5-${shop.toLowerCase()}`, 'de');
+      console.log(`[94-video-fabrik] ✓ Top-5 ${shop} (${Math.round(v.dauer)} s)`);
+    } catch (err) {
+      console.log(`[94-video-fabrik] ✗ Top-5 ${shop}: ${String(err.message).slice(0, 150)}`);
+    }
+  }
   // Tages-Highlights aus den deutschen Produkt-Ads (Hook-Sekunden hintereinander).
   const ads = manifest.filter((m) => m.sprache === 'de' && m.format === 'hoch' && !m.teaser);
   if (ads.length >= 3) {
