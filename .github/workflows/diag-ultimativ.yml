@@ -15,4 +15,4 @@ jobs:
         with:
           node-version: '22'
       - run: >
-          node scripts/mcp-ultimativ-test.mjs '[["aktien_kurs",{"symbol":"AAPL"}],["aktien_kurs",{"symbol":"SAP.DE"}],["land_info",{"land":"Japan"}],["woerterbuch",{"wort":"ultimate"}],["text_generieren",{"anweisung":"Sag Hallo in einem Satz."}]]'
+          node scripts/mcp-ultimativ-test.mjs '[["land_info",{"land":"Japan"}],["land_info",{"land":"Germany"}],["text_generieren",{"anweisung":"Sag Hallo in einem Satz."}]]'

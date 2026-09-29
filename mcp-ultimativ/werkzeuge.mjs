@@ -3,6 +3,7 @@
 // neu gebaut auf kostenlosen, oeffentlichen Schnittstellen ohne API-Key.
 import { readFileSync, existsSync } from 'node:fs';
 import { sichereZielUrl } from '../mcp-router/client.mjs';
+import { askKI } from '../automations/lib/ki.mjs';
 
 const UA = 'cashmachine-ultimativ-mcp/1.0 (+https://github.com/ziyabicilecommerce-hub/ai-cash-machine)';
 const MAX_TEXT = 20000;
@@ -120,10 +121,22 @@ async function feiertage({ land, jahr }) {
   return d.map((f) => ({ datum: f.date, name: f.localName, englisch: f.name, bundesweit: f.global }));
 }
 
+// restcountries, Rueckfall Weltbank (beide ohne Key).
 async function landInfo({ land }) {
-  const d = await hole(`https://restcountries.com/v3.1/name/${q(land)}?fields=name,capital,population,region,languages,currencies,timezones,flag,cca2`);
-  if (!Array.isArray(d)) throw new Error(d?.message || `Land "${land}" nicht gefunden`);
-  return d.slice(0, 3).map((l) => ({ name: l.name?.common, offiziell: l.name?.official, code: l.cca2, hauptstadt: l.capital, einwohner: l.population, region: l.region, sprachen: Object.values(l.languages || {}), waehrungen: Object.keys(l.currencies || {}), zeitzonen: l.timezones, flagge: l.flag }));
+  try {
+    const d = await hole(`https://restcountries.com/v3.1/name/${q(land)}?fields=name,capital,population,region,languages,currencies,timezones,flag,cca2`);
+    if (!Array.isArray(d) || !d.length) throw new Error('leer');
+    return d.slice(0, 3).map((l) => ({ name: l.name?.common, offiziell: l.name?.official, code: l.cca2, hauptstadt: l.capital, einwohner: l.population, region: l.region, sprachen: Object.values(l.languages || {}), waehrungen: Object.keys(l.currencies || {}), zeitzonen: l.timezones, flagge: l.flag }));
+  } catch {
+    const [, laender] = await hole('https://api.worldbank.org/v2/country?format=json&per_page=400');
+    const such = String(land).toLowerCase();
+    const treffer = (laender || []).filter((l) => l.region?.value !== 'Aggregates' && (l.name.toLowerCase().includes(such) || l.iso2Code.toLowerCase() === such || l.id.toLowerCase() === such)).slice(0, 3);
+    if (!treffer.length) throw new Error(`Land "${land}" nicht gefunden (englischer Name, z. B. Japan, Germany, Turkiye)`);
+    return Promise.all(treffer.map(async (l) => {
+      const [, pop] = await hole(`https://api.worldbank.org/v2/country/${l.id}/indicator/SP.POP.TOTL?format=json&mrnev=1`).catch(() => [null, []]);
+      return { name: l.name, code: l.iso2Code, hauptstadt: l.capitalCity, region: l.region?.value, einkommen: l.incomeLevel?.value, einwohner: pop?.[0]?.value ?? null, einwohner_jahr: pop?.[0]?.date ?? null, quelle: 'Weltbank' };
+    }));
+  }
 }
 
 // dictionaryapi.dev, Rueckfall Wiktionary.
@@ -177,8 +190,13 @@ async function textGenerieren({ anweisung }) {
       /* zweiter Weg unten */
     }
   }
-  const text = await hole(`https://text.pollinations.ai/${q(prompt.slice(0, 1500))}`, { text: true });
-  return { text: text.slice(0, MAX_TEXT), modell: 'Pollinations (kostenlos)' };
+  try {
+    const text = await hole(`https://text.pollinations.ai/${q(prompt.slice(0, 1500))}`, { text: true });
+    if (text && !/reached its budget|enough credits|pollinations\.ai\/(pricing|pay)/i.test(text)) return { text: text.slice(0, MAX_TEXT), modell: 'Pollinations (kostenlos)' };
+  } catch {
+    /* Rueckfall auf die kostenlose KI-Kette */
+  }
+  return { text: String(await askKI(prompt, { maxTokens: 1500 })).slice(0, MAX_TEXT), modell: 'kostenlose KI-Kette (LLM7)' };
 }
 
 async function uhrzeit({ zeitzone }) {
