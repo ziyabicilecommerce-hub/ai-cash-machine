@@ -191,10 +191,13 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
     const zeiten = gewicht.map((g) => { const von = t; t += ((ende - start) * g) / summe; return [von, t]; });
     let n = 0;
     for (const gruppe of gruppieren(liste, trenner)) {
+      // Sehr lange Woerter (z. B. "LATEX-WIDERSTANDSRING") passen sonst nicht in die Bildbreite: verkleinern.
+      const f = Math.min(1, (breite > hoehe ? 26 : 13) / Math.max(...gruppe.map((w) => [...w].length)));
+      const sk = (x) => Math.round(x * f);
       gruppe.forEach((_, k) => {
         const [von, bis] = zeiten[n + k];
-        const inhalt = gruppe.map((w, j) => (j === k ? `{\\c${thema.wort}\\fscx128\\fscy128\\t(0,110,\\fscx112\\fscy112)}${assText(w)}{\\r}` : assText(w))).join(trenner);
-        zeilen.push(`Dialogue: 0,${assZeit(von)},${assZeit(bis)},Wort,,0,0,0,,${k === 0 ? '{\\fad(70,0)}' : ''}${inhalt}`);
+        const inhalt = gruppe.map((w, j) => (j === k ? `{\\c${thema.wort}\\fscx${sk(128)}\\fscy${sk(128)}\\t(0,110,\\fscx${sk(112)}\\fscy${sk(112)})}${assText(w)}{\\r${f < 1 ? `\\fscx${sk(100)}\\fscy${sk(100)}` : ''}}` : assText(w))).join(trenner);
+        zeilen.push(`Dialogue: 0,${assZeit(von)},${assZeit(bis)},Wort,,0,0,0,,${k === 0 ? '{\\fad(70,0)}' : ''}${f < 1 ? `{\\fscx${sk(100)}\\fscy${sk(100)}}` : ''}${inhalt}`);
       });
       n += gruppe.length;
     }
