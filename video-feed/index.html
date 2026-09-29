@@ -19,6 +19,10 @@
   h1 span { color:var(--green); }
   .sub { color:var(--mut); margin-top:6px; font-size:14px; }
   .info { color:var(--mut); font-size:13px; margin:12px 0; font-family:var(--mono); }
+  .statistik { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px; margin:14px 0 4px; }
+  .kachel { border:1px solid var(--line, #2a2a3a); border-radius:12px; padding:10px 12px; }
+  .kachel b { display:block; font-size:22px; }
+  .kachel span { color:var(--mut); font-size:12px; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; padding-bottom:40px; }
   .card { background:var(--panel); border:1px solid var(--line2); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; min-width:0; }
   video { width:100%; aspect-ratio:9/16; background:#000; display:block; }
@@ -41,6 +45,7 @@
   <p class="sub">Täglich automatisch erzeugt – Produkt-Ads (#94), Anime-Serie (#95), Welt-Bot in bis zu 50 Sprachen (#96) und Marathon-Videos bis 48 Stunden (#97): KI-Skript, KI-Bilder, KI-Stimme und Untertitel – ganz ohne API-Key. Herunterladen, Caption kopieren, posten.</p>
 </header>
 <main>
+  <div class="statistik" id="statistik"></div>
   <div class="info" id="info">Videos werden geladen …</div>
   <div class="filter">
     <label for="sprache">🌍 Sprache</label>
@@ -119,6 +124,23 @@ function zeigen(neu) {
   $('info').textContent = `${liste.length} von ${alle.length} Videos`;
 }
 
+// Statistik-Kacheln: Videos gesamt, heute gebaut, Sprachen, Karussell-Slides, heute gepostet.
+function statistik(liste) {
+  const heute = new Date().toISOString().slice(0, 10);
+  const kachel = (zahl, text) => { const k = el('div', 'kachel'); k.append(el('b', '', String(zahl)), el('span', '', text)); return k; };
+  const slides = liste.reduce((n, v) => n + (Array.isArray(v.karussell) ? v.karussell.length : 0), 0);
+  $('statistik').replaceChildren(
+    kachel(liste.length.toLocaleString('de-DE'), 'Videos im Feed'),
+    kachel(liste.filter((v) => String(v.erstellt || '').startsWith(heute)).length.toLocaleString('de-DE'), 'heute gebaut'),
+    kachel(new Set(liste.map((v) => v.sprache || 'de')).size, 'Sprachen'),
+    kachel(slides.toLocaleString('de-DE'), 'Karussell-Slides'),
+  );
+  fetch('./post-zaehler.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : {})).then((z) => {
+    const n = z && z.zaehler ? Object.values(z.zaehler).reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+    $('statistik').append(kachel(n, z && z.datum === heute ? 'heute gepostet' : 'gepostet (letzter Tag)'));
+  }).catch(() => {});
+}
+
 fetch('./videos.json', { cache: 'no-cache' })
   .then((r) => (r.ok ? r.json() : { videos: [] }))
   .then((d) => {
@@ -129,6 +151,7 @@ fetch('./videos.json', { cache: 'no-cache' })
     for (const [code, n] of Object.entries(zaehler).sort((x, y) => y[1] - x[1])) {
       const o = el('option', '', `${SPRACHEN[code] || code.toUpperCase()} (${n})`); o.value = code; $('sprache').append(o);
     }
+    statistik(alle);
     $('sprache').addEventListener('change', () => zeigen(true));
     $('art').addEventListener('change', () => zeigen(true));
     $('mehr').addEventListener('click', () => zeigen(false));

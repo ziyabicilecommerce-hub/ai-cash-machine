@@ -160,7 +160,7 @@ export function preisText(preis, sprache, waehrung = 'EUR') {
 // Baut aus der .srt von edge-tts eine .ass, in der das gerade gesprochene Wort aufleuchtet.
 // Zeiten je Wort werden nach Zeichenlaenge verteilt. Optional: hook (grosse Schlagzeile oben,
 // klappt anders als drawtext in allen Schriften), preis + shop (Endkarte der letzten Szene).
-export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', preis = '', shop = '', fortschritt = null }) {
+export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', preis = '', shop = '', fortschritt = null, marke = '' }) {
   const groesse = Math.round(Math.min(breite, hoehe) * 0.078);
   const unten = Math.round(hoehe * (hoehe > breite ? 0.25 : 0.09));
   const rand = Math.round(breite * 0.06);
@@ -214,6 +214,8 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
     zeilen.push(`Dialogue: 3,${assZeit(0)},${bis},Wort,,0,0,0,,{\\an7\\pos(0,0)\\bord0\\shad0\\1c&HFFFFFF&\\1a&HB0&\\p1}${form}`);
     zeilen.push(`Dialogue: 4,${assZeit(0)},${bis},Wort,,0,0,0,,{\\an7\\pos(0,0)\\bord0\\shad0\\1c${thema.wort}\\clip(0,0,${x1},${hBalken})\\t(0,${Math.round(fortschritt.dauerMs)},\\clip(0,0,${x2},${hBalken}))\\p1}${form}`);
   }
+  // Marken-Wasserzeichen oben links (dezent, ganze Szene) - staerkt die Wiedererkennung.
+  if (marke) zeilen.push(`Dialogue: 2,${assZeit(0)},${assZeit(600000)},Shop,,0,0,0,,{\\an7\\pos(${Math.round(breite * 0.045)},${Math.round(hoehe * 0.03)})\\1a&H50&\\3a&H80&\\fsp4}${assText(marke)}`);
   if (shop) zeilen.push(`Dialogue: 1,${assZeit(200)},${assZeit(600000)},Shop,,0,0,0,,{\\fad(300,0)}${assText(shop)}`);
   writeFileSync(ass, [...kopf, ...zeilen].join('\n') + '\n');
   return zeilen.length;

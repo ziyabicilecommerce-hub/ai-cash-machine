@@ -10,7 +10,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync, rmSyn
 import { join, dirname } from 'node:path';
 import { config } from './lib/config.mjs';
 import { videoBauen } from './lib/videoFabrik.mjs';
-import { kapitelText, teaserBauen } from './lib/videoExtras.mjs';
+import { kapitelText, teaserBauen, zusammenschnittBauen } from './lib/videoExtras.mjs';
 import { WELT_SPRACHEN, sprachGruppen } from './lib/weltSprachen.mjs';
 import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
 import { premiumAn, themaFuer, preisText } from './lib/premium.mjs';
@@ -365,6 +365,18 @@ async function bauen() {
     }
   }
   writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1));
+  // Tages-Highlights aus den deutschen Produkt-Ads (Hook-Sekunden hintereinander).
+  const ads = manifest.filter((m) => m.sprache === 'de' && m.format === 'hoch' && !m.teaser);
+  if (ads.length >= 3) {
+    try {
+      const datei = `${new Date().toISOString().slice(0, 10)}-highlights.mp4`;
+      const dauer = await zusammenschnittBauen(ads.map((m) => join(OUT, 'videos', m.datei)), join(OUT, 'videos', datei));
+      manifest.push({ datei, vorschau: ads[0].vorschau, sprache: 'de', titel: `Die ${ads.length} Highlights des Tages`, caption: `Heute neu: ${ads.map((m) => m.thema).join(' · ').slice(0, 1500)}\n\n#Produkte #Highlights #Shopping`, thema: 'highlights', format: 'hoch', dauer, szenen: ads.length });
+      console.log(`[94-video-fabrik] ✓ ${datei} (${dauer} s)`);
+    } catch (err) {
+      console.log(`[94-video-fabrik] Highlights fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
+    }
+  }
   console.log(`[94-video-fabrik] ${manifest.filter((m) => !m.teaser).length}/${auftraege.length} Videos fertig (+ ${manifest.filter((m) => m.teaser).length} Teaser)`);
   if (!manifest.length) process.exit(1);
 }
