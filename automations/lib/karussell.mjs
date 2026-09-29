@@ -37,7 +37,7 @@ export function karussellBauen({ ebenen, texte, thema, sprache, ordner }) {
     [...(preis ? [zeile('Preis', preis, `{\\pos(${Math.round(B * 0.7)},${Math.round(H * 0.13)})}`)] : []), zeile('Text', cta), ...(shop ? [zeile('Klein', shop)] : [])],
   ].filter((s) => s.length);
   const graph = (ass) => `[0:v]crop=${B}:${H}[bg];` +
-    (ebenen.fgP ? `[1:v]scale=${Math.round(B * 0.82)}:${Math.round(H * 0.56)}:force_original_aspect_ratio=decrease[fg];[bg][fg]overlay=x=(W-w)/2:y=(H-h)/2-H*0.02,` : '[bg]') +
+    (ebenen.fgP ? `[1:v]scale=${Math.round(B * 0.86)}:${Math.round(H * 0.74)}:force_original_aspect_ratio=decrease:flags=lanczos[fg];[bg][fg]overlay=x=(W-w)/2:y=(H-((h-140)/1.45+140))/2-H*0.02,` : '[bg]') +
     `ass='${pfadFuerFilter(ass)}'`;
   return slides.map((events, i) => {
     const ass = join(ordner, `k${i + 1}.ass`);
