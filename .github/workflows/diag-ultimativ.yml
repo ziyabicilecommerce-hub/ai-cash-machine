@@ -1,0 +1,18 @@
+name: diag-ultimativ
+on:
+  push:
+    branches: [feat/mcp-ultimativ]
+    paths: [.github/workflows/diag-ultimativ.yml, mcp-ultimativ/**]
+permissions:
+  contents: read
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: >
+          node scripts/mcp-ultimativ-test.mjs '[["web_suche",{"suche":"Model Context Protocol","sprache":"en"}],["webseite_lesen",{"url":"https://example.com"}],["wikipedia",{"titel":"Berlin"}],["nachrichten",{"suche":"KI","sprache":"de","land":"DE"}],["wetter",{"ort":"Istanbul","tage":2}],["ort_suchen",{"ort":"Brandenburger Tor","limit":1}],["krypto_preise",{"coins":"bitcoin,ethereum","waehrung":"eur"}],["waehrung_umrechnen",{"betrag":100,"von":"EUR","nach":"USD,TRY"}],["aktien_kurs",{"symbol":"aapl.us"}],["feiertage",{"land":"TR","jahr":2026}],["land_info",{"land":"Japan"}],["woerterbuch",{"wort":"ultimate"}],["hacker_news",{"suche":"mcp","limit":2}],["arxiv_suche",{"suche":"model context protocol","limit":2}],["text_generieren",{"anweisung":"Sag Hallo in einem Satz."}]]'
