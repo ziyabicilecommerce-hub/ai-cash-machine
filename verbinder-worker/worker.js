@@ -103,11 +103,25 @@ async function passwortOk(env, eingabe) {
   return diff === 0;
 }
 
+// App-Schluessel koennen auch direkt auf der Verbinden-Seite eingegeben werden (KV "app:<plattform>").
+// Worker-Secrets haben Vorrang; sonst werden die gespeicherten Schluessel ergaenzt.
+async function mitApps(env) {
+  const e = { ...env };
+  await Promise.all(Object.entries(PLATTFORMEN).map(async ([k, c]) => {
+    if (e[c.id] && e[c.geheim]) return;
+    const a = await env.VERBINDUNGEN.get(`app:${k}`, 'json');
+    if (a?.id && a?.geheim) { e[c.id] = a.id; e[c.geheim] = a.geheim; }
+  }));
+  return e;
+}
+const schluesselOk = (x) => typeof x === 'string' && /^[\x21-\x7e]{4,300}$/.test(x);
+
 const antwort = (daten, status, kopf) => new Response(JSON.stringify(daten), { status, headers: { ...JSON_KOPF, ...kopf } });
 
 export default {
-  async fetch(req, env) {
+  async fetch(req, rohEnv) {
     const url = new URL(req.url);
+    const env = await mitApps(rohEnv);
     const erlaubt = env.SEITE_URSPRUNG || 'https://ziyabicilecommerce-hub.github.io';
     const cors = { 'access-control-allow-origin': erlaubt, 'access-control-allow-headers': 'authorization, content-type', 'access-control-allow-methods': 'GET, POST, OPTIONS', vary: 'origin' };
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
@@ -169,6 +183,18 @@ export default {
         for (const [name, wert] of Object.entries(w)) if (/^[A-Z][A-Z0-9_]+$/.test(name) && wert) werte[name] = String(wert);
       }
       return antwort(werte, 200, {});
+    }
+
+    // App-Schluessel einer Plattform speichern (von der Verbinden-Seite).
+    if (teil === 'app' && req.method === 'POST') {
+      if (!(await passwortOk(env, passwort))) return antwort({ fehler: 'Passwort falsch' }, 401, cors);
+      if (!PLATTFORMEN[p]) return antwort({ fehler: 'Unbekannte Plattform' }, 404, cors);
+      const d = await req.json().catch(() => ({}));
+      const id = String(d.id || '').trim();
+      const geheim = String(d.geheim || '').trim();
+      if (!schluesselOk(id) || !schluesselOk(geheim)) return antwort({ fehler: 'Bitte beide Schluessel vollstaendig einfuegen (ohne Leerzeichen)' }, 400, cors);
+      await env.VERBINDUNGEN.put(`app:${p}`, JSON.stringify({ id, geheim }));
+      return antwort({ ok: true }, 200, cors);
     }
 
     // Trennen: Verbindung einer Plattform loeschen.
