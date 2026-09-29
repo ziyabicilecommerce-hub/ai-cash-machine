@@ -107,6 +107,22 @@ export function untertitelZusammenfuegen(teile, ziel) {
   return bloecke.length;
 }
 
+// Tages-Highlights: die ersten Sekunden (Hook) mehrerer Videos hintereinander - ein eigenes
+// Kurzvideo "Die Top-Produkte des Tages", Lautheit auf -14 LUFS.
+export async function zusammenschnittBauen(videos, ziel, { sekunden = 6 } = {}) {
+  const n = videos.length;
+  const teile = videos.map((_, i) => `[${i}:v]setpts=PTS-STARTPTS,fps=30,scale=1080:1920,setsar=1,format=yuv420p[v${i}];[${i}:a]asetpts=PTS-STARTPTS,aformat=sample_rates=44100:channel_layouts=stereo[a${i}]`).join(';');
+  const kette = videos.map((_, i) => `[v${i}][a${i}]`).join('');
+  const gesamt = n * sekunden;
+  await ausfuehren('ffmpeg', [
+    '-loglevel', 'error', '-y', ...videos.flatMap((v) => ['-t', String(sekunden), '-i', v]),
+    '-filter_complex', `${teile};${kette}concat=n=${n}:v=1:a=1[vc][ac];[vc]fade=t=out:st=${gesamt - 0.6}:d=0.6[v];[ac]loudnorm=I=-14:TP=-1.5:LRA=11,aresample=44100,afade=t=out:st=${gesamt - 0.6}:d=0.6[a]`,
+    '-map', '[v]', '-map', '[a]', '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', '-pix_fmt', 'yuv420p',
+    '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', ziel,
+  ], { timeout: 1200000, maxBuffer: 16 * 1024 * 1024 });
+  return gesamt;
+}
+
 // YouTube-Kapitel: erste Marke bei 0:00, mindestens 3 Kapitel, jedes mindestens 10 Sekunden.
 export function kapitelText(marken) {
   // Liegen zwei Marken zu dicht beieinander, gewinnt die spaetere (z. B. "Akt 1" statt "Intro").
