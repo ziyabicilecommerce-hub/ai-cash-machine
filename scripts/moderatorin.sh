@@ -35,7 +35,7 @@ if [ "${1:-}" = "einrichten" ]; then
 fi
 
 if [ "${1:-}" = "sprechen" ]; then
-  audio="$2"; ziel="$3"; bild="${4:-$BILD_STANDARD}"
+  audio="$(realpath "$2")"; ziel="$(realpath -m "$3")"; bild="$(realpath "${4:-$BILD_STANDARD}")"
   wav="$(mktemp --suffix=.wav)"
   ffmpeg -loglevel error -y -i "$audio" -ar 16000 -ac 1 "$wav"
   (cd "$W2L" && python3 inference.py --checkpoint_path checkpoints/wav2lip_gan.pth --face "$bild" --audio "$wav" --outfile "$ziel" --static True --pads 0 15 0 0 --resize_factor 1 --nosmooth >/dev/null)
