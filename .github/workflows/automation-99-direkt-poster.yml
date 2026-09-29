@@ -1,0 +1,80 @@
+name: "99 · Direkt-Poster"
+
+# Postet nur wenige, ausgewaehlte Videos pro Tag - sicher fuer die Algorithmen und gegen
+# die Regeln zu massenhaften KI-Inhalten: 4-mal taeglich je 1 Video, das neueste noch nie
+# gepostete deutsche/sprachfreie Video aus dem Video-Feed. Gebaut werden kann trotzdem viel
+# mehr (Welt-Bot ~1.000/Tag) - gepostet wird nur die Auswahl. Kostenlos ueber offizielle APIs.
+
+on:
+  schedule:
+    - cron: '47 7 * * *'
+    - cron: '47 11 * * *'
+    - cron: '47 15 * * *'
+    - cron: '47 18 * * *'
+  workflow_dispatch:
+    inputs:
+      anzahl:
+        description: 'Wie viele Videos jetzt posten (1-10)'
+        required: false
+        default: '1'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: direkt-poster
+  cancel-in-progress: false
+
+jobs:
+  posten:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Video aus dem Feed posten
+        run: node automations/99-direkt-poster.mjs --aus-feed "${{ inputs.anzahl || '1' }}"
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          YOUTUBE_SICHTBARKEIT: ${{ vars.YOUTUBE_SICHTBARKEIT }}
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_KANAL_ID: ${{ vars.TELEGRAM_KANAL_ID }}
+          MASTODON_URL: ${{ vars.MASTODON_URL }}
+          MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
+          DIREKT_POSTER_PLATTFORMEN: ${{ vars.DIREKT_POSTER_PLATTFORMEN }}
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+          TIKTOK_MODUS: ${{ vars.TIKTOK_MODUS }}
+          TIKTOK_SICHTBARKEIT: ${{ vars.TIKTOK_SICHTBARKEIT }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_PERSON_ID: ${{ vars.LINKEDIN_PERSON_ID }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+          REDDIT_SUBREDDIT: ${{ vars.REDDIT_SUBREDDIT }}
+          PINTEREST_ACCESS_TOKEN: ${{ secrets.PINTEREST_ACCESS_TOKEN }}
+          PINTEREST_BOARD_ID: ${{ vars.PINTEREST_BOARD_ID }}
+          PINTEREST_API_BASIS: ${{ vars.PINTEREST_API_BASIS }}
+          DAILYMOTION_API_KEY: ${{ secrets.DAILYMOTION_API_KEY }}
+          DAILYMOTION_API_SECRET: ${{ secrets.DAILYMOTION_API_SECRET }}
+          DAILYMOTION_USERNAME: ${{ secrets.DAILYMOTION_USERNAME }}
+          DAILYMOTION_PASSWORD: ${{ secrets.DAILYMOTION_PASSWORD }}
+      - name: Merken, was gepostet wurde
+        run: |
+          [ -f video-feed/gepostet.json ] || exit 0
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases" video-feed/gepostet.json

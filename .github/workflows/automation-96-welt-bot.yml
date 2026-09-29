@@ -3,7 +3,9 @@ name: "96 · Welt-Bot"
 # Synchronisiert die Produkt-Ads des Tages in bis zu 50 Sprachen - komplett kostenlos:
 # Pollinations-KI uebersetzt, edge-tts spricht mit Muttersprachler-Stimmen, ffmpeg
 # schneidet. Die Sprachen laufen parallel als Matrix-Jobs (oeffentliches Repo =
-# kostenlose Actions-Minuten). Ergebnis: ein Release + Video-Feed mit Sprachfilter.
+# kostenlose Actions-Minuten). Standard: 21 Produkte x 50 Sprachen = ca. 1.050 Videos/Tag.
+# Je Sprachgruppe ein eigenes Release (max. 1.000 Dateien pro Release); Welt-Releases
+# aelter als 3 Tage werden automatisch geloescht, damit der Speicher nicht explodiert.
 
 on:
   schedule:
@@ -11,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       anzahl:
-        description: 'Anzahl Produkte (1-5)'
+        description: 'Anzahl Produkte (1-30, Standard 21 = ca. 1.050 Videos)'
         required: false
         default: ''
       sprachen:
@@ -28,14 +30,14 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  VIDEO_FABRIK_ANZAHL: ${{ inputs.anzahl || vars.WELT_BOT_ANZAHL || '2' }}
+  VIDEO_FABRIK_ANZAHL: ${{ inputs.anzahl || vars.WELT_BOT_ANZAHL || '21' }}
   VIDEO_FABRIK_SPRACHEN: ${{ inputs.sprachen || vars.WELT_BOT_SPRACHEN || 'alle' }}
   VIDEO_FABRIK_SHOPS: ${{ vars.VIDEO_FABRIK_SHOPS }}
 
 jobs:
   skripte:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 150
     outputs:
       gruppen: ${{ steps.gruppen.outputs.gruppen }}
     steps:
@@ -61,7 +63,7 @@ jobs:
   rendern:
     needs: skripte
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 340
     strategy:
       fail-fast: false
       max-parallel: 10
@@ -83,14 +85,23 @@ jobs:
           path: out
       - name: Sprachen ${{ matrix.gruppe }} vertonen
         run: node automations/94-video-fabrik.mjs --sprachen "${{ matrix.gruppe }}"
-      - id: name
-        run: echo "name=welt-$(echo '${{ matrix.gruppe }}' | tr ',' '-')" >> "$GITHUB_OUTPUT"
+      - name: Eigenes Release fuer diese Gruppe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [ -f out/manifest.json ] && [ -n "$(ls -A out/videos 2>/dev/null)" ] || { echo "Keine Videos in dieser Gruppe"; exit 0; }
+          TAG="welt-$(date -u +%Y%m%d)-${{ github.run_id }}-g${{ strategy.job-index }}"
+          gh release create "$TAG" --title "Welt-Bot $(date -u +%d.%m.%Y) · ${{ matrix.gruppe }}" --notes "Automatisch erzeugt von Automation #96 (Welt-Bot): ${{ matrix.gruppe }}." --latest=false
+          gh release upload "$TAG" out/videos/*
+          BASIS="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" node -e "
+            const fs = require('fs');
+            const m = JSON.parse(fs.readFileSync('out/manifest.json', 'utf8')).map((x) => ({ ...x, basis: process.env.BASIS }));
+            fs.writeFileSync('out/manifest.json', JSON.stringify(m));
+            console.log(m.length + ' Videos in ' + process.env.BASIS);"
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.name.outputs.name }}
-          path: |
-            out/videos
-            out/manifest.json
+          name: welt-g${{ strategy.job-index }}
+          path: out/manifest.json
           retention-days: 2
           if-no-files-found: ignore
 
@@ -110,12 +121,11 @@ jobs:
           path: teile
       - name: Teile zusammenfuehren
         run: |
-          mkdir -p out/videos
-          find teile -path '*/videos/*' -type f -exec cp {} out/videos/ \;
+          mkdir -p out
           node -e "
             const fs = require('fs'), path = require('path');
             const alle = [];
-            for (const d of fs.readdirSync('teile')) {
+            for (const d of fs.existsSync('teile') ? fs.readdirSync('teile') : []) {
               const f = path.join('teile', d, 'manifest.json');
               if (fs.existsSync(f)) alle.push(...JSON.parse(fs.readFileSync(f, 'utf8')));
             }
@@ -123,11 +133,18 @@ jobs:
             console.log(alle.length + ' Welt-Videos');
             if (!alle.length) process.exit(1);
           "
-      - name: Als Release veroeffentlichen und Feed ergaenzen
+      - name: Welt-Releases aelter als 3 Tage loeschen
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="welt-$(date -u +%Y%m%d-%H%M)"
-          gh release create "$TAG" out/videos/* --title "Welt-Bot $(date -u +%d.%m.%Y)" --notes "Automatisch erzeugt von Automation #96 (Welt-Bot): Produkt-Ads in vielen Sprachen." --latest=false
-          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}"
+          GRENZE=$(date -u -d '3 days ago' +%Y%m%d)
+          ALT=$(gh release list --limit 1000 --json tagName --jq '.[].tagName' | awk -v g="$GRENZE" 'substr($0, 1, 5) == "welt-" && substr($0, 6, 8) ~ /^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/ { if (substr($0, 6, 8) < g) print }' | paste -sd, -)
+          for t in ${ALT//,/ }; do gh release delete "$t" --yes --cleanup-tag || true; done
+          echo "FEED_ENTFERNEN_TAGS=$ALT" >> "$GITHUB_ENV"
+          echo "Geloescht: ${ALT:-keine}"
+      - name: Feed ergaenzen
+        run: |
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases"
           if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
         env:
           GH_TOKEN: ${{ github.token }}
