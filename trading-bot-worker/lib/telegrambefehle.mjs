@@ -14,6 +14,7 @@
 //   /resume SYMBOL     - hebt die Pause wieder auf
 //   /top               - die 3 Coins mit dem besten P&L gesamt
 //   /flop              - die 3 Coins mit dem schlechtesten P&L gesamt
+//   /heute             - heute abgeschlossene Trades + P&L über alle Coins
 //   /help              - Befehlsübersicht
 
 import { loadState, saveState } from './state.mjs';
@@ -42,7 +43,11 @@ function formatiereStatusZeile(symbol, state) {
   return `${symbol}${pausiertText}: ${state.kapital.toFixed(2)} USDT (${plGesamt >= 0 ? '+' : ''}${plGesamt.toFixed(2)} P&L) - ${position} - ${trades.length} Trades gesamt`;
 }
 
-const HILFE_TEXT = 'Befehle:\n/status [SYMBOL] - Kapital, Position, Trades\n/pause SYMBOL - keine neuen Käufe mehr für dieses Symbol\n/resume SYMBOL - Pause aufheben\n/top - 3 beste Coins nach P&L\n/flop - 3 schlechteste Coins nach P&L\n/help - diese Übersicht';
+const HILFE_TEXT = 'Befehle:\n/status [SYMBOL] - Kapital, Position, Trades\n/pause SYMBOL - keine neuen Käufe mehr für dieses Symbol\n/resume SYMBOL - Pause aufheben\n/top - 3 beste Coins nach P&L\n/flop - 3 schlechteste Coins nach P&L\n/heute - heutige Trades + P&L\n/help - diese Übersicht';
+
+function heuteStr() {
+  return new Date().toISOString().slice(0, 10);
+}
 
 function plUsdt(state) {
   return (state.trades || []).reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
@@ -93,6 +98,28 @@ export async function verarbeiteTelegramUpdate(env, update) {
     const top3 = eintraege.slice(0, 3);
     const zeilen = top3.map((e) => `${e.symbol}: ${e.pl >= 0 ? '+' : ''}${e.pl.toFixed(2)} USDT (${e.trades} Trades)`);
     await sendeTelegramAntwort(env, `${befehl === '/top' ? '🏆' : '📉'} ${befehl === '/top' ? 'Top' : 'Flop'} 3:\n${zeilen.join('\n')}`);
+    return;
+  }
+
+  if (befehl === '/heute') {
+    const heute = heuteStr();
+    let plGesamt = 0;
+    let anzahlTrades = 0;
+    const zeilen = [];
+    for (const symbol of cfg.symbols) {
+      const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
+      const heutigeTrades = (state.trades || []).filter((t) => (t.ausstiegAm || '').slice(0, 10) === heute);
+      if (!heutigeTrades.length) continue;
+      const pl = heutigeTrades.reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
+      plGesamt += pl;
+      anzahlTrades += heutigeTrades.length;
+      zeilen.push(`${symbol}: ${pl >= 0 ? '+' : ''}${pl.toFixed(2)} USDT (${heutigeTrades.length} Trade${heutigeTrades.length === 1 ? '' : 's'})`);
+    }
+    if (!anzahlTrades) {
+      await sendeTelegramAntwort(env, '📅 Heute noch keine abgeschlossenen Trades.');
+      return;
+    }
+    await sendeTelegramAntwort(env, `📅 Heute: ${anzahlTrades} Trade${anzahlTrades === 1 ? '' : 's'}, ${plGesamt >= 0 ? '+' : ''}${plGesamt.toFixed(2)} USDT gesamt\n${zeilen.join('\n')}`);
     return;
   }
 
