@@ -7,13 +7,14 @@
 //   node automations/94-video-fabrik.mjs --feed URL -> video-feed/videos.json ergaenzen
 //   node automations/94-video-fabrik.mjs --metricool URL -> in Metricool einplanen
 import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { config } from './lib/config.mjs';
 import { videoBauen } from './lib/videoFabrik.mjs';
 import { kapitelText, teaserBauen } from './lib/videoExtras.mjs';
 import { WELT_SPRACHEN, sprachGruppen } from './lib/weltSprachen.mjs';
 import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
-import { premiumAn } from './lib/premium.mjs';
+import { premiumAn, themaFuer, preisText } from './lib/premium.mjs';
+import { karussellBauen } from './lib/karussell.mjs';
 
 const OUT = 'out';
 const MANIFEST = join(OUT, 'manifest.json');
@@ -30,6 +31,8 @@ const STIMME = env('VIDEO_FABRIK_STIMME', 'de-DE-SeraphinaMultilingualNeural');
 const LIFESTYLE = env('VIDEO_FABRIK_LIFESTYLE', 'nein').toLowerCase() === 'ja';
 // Premium-Look fuer Produkt-Ads (Freisteller, KI-Hintergrund, Parallaxe, Wort-Untertitel, Beat); VIDEO_PREMIUM=0 schaltet ab.
 const PREMIUM = premiumAn();
+// Karussell-Slides zu jedem Premium-Produktvideo; VIDEO_KARUSSELL=0 schaltet ab.
+const KARUSSELL = !/^(0|nein|aus|false)$/i.test(env('VIDEO_KARUSSELL'));
 // Zusaetzliche Sprachversionen der Produkt-Kurzvideos, z. B. "en,es,tr" (Deutsch ist immer dabei).
 const STIMMEN = Object.fromEntries(Object.entries(WELT_SPRACHEN).map(([k, v]) => [k, v.stimme]));
 const SPRACHNAMEN = Object.fromEntries(Object.entries(WELT_SPRACHEN).map(([k, v]) => [k, v.name]));
@@ -190,7 +193,7 @@ async function produktSkriptEinmal(p) {
       (LIFESTYLE
         ? `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index ODER "bild": englischer Prompt fuer ein passendes, jugendfreies Lifestyle-Bild (vollstaendig bekleidete Personen). Mindestens die Haelfte der Szenen mit Produktfoto. `
         : `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene "foto": Index des passendsten Produktfotos. `) +
-      'Dazu "hintergrund": englischer Bild-Prompt fuer eine leere, edle Umgebung, in der das Produkt stehen koennte (z. B. "minimalist oak desk by a sunny window") - ohne Produkt, ohne Personen, ohne Text. ' +
+      'Dazu "hintergrund": englischer Bild-Prompt (max. 12 Woerter) fuer eine leere, edle Umgebung, die zum Einsatzort des Produkts passt - ohne Produkt, ohne Personen, ohne Text. ' +
       'Antworte NUR mit JSON: {"titel":"...","hook":"knallige Schlagzeile, maximal 5 Woerter","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","szenen":[{"text":"...","foto":0}]}',
     { maxTokens: 1500 }
   );
@@ -257,6 +260,19 @@ async function ablegen(manifest, v, skript, a, nummer, sprache) {
   const kapitel = kapitelText(v.kapitel || []);
   const caption = kapitel ? `${skript.caption}\n\nKapitel:\n${kapitel}` : skript.caption;
   const eintrag = { datei: `${basis}.mp4`, vorschau, sprache, titel: skript.titel, caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen };
+  // Karussell: 4 Bild-Slides (4:5) aus denselben Ebenen - Hook, 2 Vorteile, Preis + CTA.
+  if (KARUSSELL && v.ebenen && skript.szenen.length >= 3) {
+    try {
+      const sz = skript.szenen.map((x) => x.text);
+      const slides = karussellBauen({
+        ebenen: v.ebenen, thema: themaFuer(skript.hintergrund?.seed), sprache, ordner: dirname(v.pfad),
+        texte: { hook: skript.hook || skript.titel, vorteile: sz.slice(1, -1).slice(0, 2), cta: sz.at(-1), preis: preisText(skript.preis, sprache, skript.waehrung), shop: skript.shop },
+      });
+      eintrag.karussell = slides.map((pfad, k) => { const name = `${basis}-k${k + 1}.jpg`; copyFileSync(pfad, join(OUT, 'videos', name)); return name; });
+    } catch (err) {
+      console.log(`[94-video-fabrik] Karussell fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
+    }
+  }
   if (!a.minuten) return void manifest.push(eintrag);
   // Lange Videos: Untertitel-Datei fuer YouTube und ein 9:16-Teaser fuer Shorts/Reels/TikTok.
   if (v.untertitel && existsSync(v.untertitel)) {

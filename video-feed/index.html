@@ -91,6 +91,13 @@ function karte(v) {
   const cp = el('button', '', 'Caption kopieren'); cp.type = 'button';
   cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText(`${v.titel || ''}\n\n${v.caption || ''}`.trim()); cp.textContent = 'Kopiert ✓'; } catch { cp.textContent = 'Nicht möglich'; } });
   a.append(cp);
+  // Karussell-Slides (4:5) liegen im selben Release wie das Video.
+  const ordner = String(v.url || '').replace(/[^/]*$/, '');
+  (Array.isArray(v.karussell) ? v.karussell : []).forEach((name, i) => {
+    const u = sichereUrl(ordner + encodeURIComponent(String(name)));
+    if (!u) return;
+    const k = el('a', '', `Slide ${i + 1}`); k.href = u; k.rel = 'noopener'; a.append(k);
+  });
   b.append(a);
   c.append(b);
   return c;

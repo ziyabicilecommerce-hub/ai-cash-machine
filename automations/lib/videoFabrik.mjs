@@ -204,6 +204,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   let zeit = 0;
   let letztesBild = '';
   let ebenen = null;
+  let produktEbenen = null;
   const hgKi = join(ordner, 'hintergrund.jpg');
   const mitKiHg = premium && (await hintergrundHolen(skript.hintergrund, hgKi, { breite, hoehe, laden: ladeBild }).catch(() => false));
   const start = Date.now();
@@ -224,6 +225,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
           const hg = mitKiHg ? hgKi : join(ordner, `s${i}.hg.jpg`);
           if (!mitKiHg) unscharfHintergrund(roh, hg, { breite, hoehe });
           ebenen = ebenenVorbereiten({ hg, vg: (await freistellen(roh, vg).catch(() => false)) ? vg : roh, breite, hoehe, basis: join(ordner, `e${i}`) });
+          produktEbenen ||= ebenen;
         } else if (modus) ebenen = ebenenVorbereiten({ hg: roh, vg: '', breite, hoehe, basis: join(ordner, `e${i}`) });
         else if (!ebenen) continue;
         premiumStandbild({ ...ebenen, ziel: bild, breite, hoehe });
@@ -273,5 +275,5 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
     console.log(`[video-fabrik] Vorschaubild fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
     vorschau = '';
   }
-  return { pfad: ziel, vorschau, untertitel, kapitel, dauer: dauerSekunden(ziel), szenen: clips.length };
+  return { pfad: ziel, vorschau, untertitel, kapitel, dauer: dauerSekunden(ziel), szenen: clips.length, ebenen: produktEbenen };
 }
