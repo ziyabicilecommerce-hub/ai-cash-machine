@@ -5,7 +5,7 @@
 // genau das, was Metricool als Media-Quelle braucht (siehe metricool.mjs).
 const IMAGE_BASE = 'https://image.pollinations.ai/prompt';
 
-export function bildURL(prompt, { width = 1024, height = 1024, model = 'flux', seed } = {}) {
+export function bildURL(prompt, { width = 1024, height = 1024, model = 'flux', seed, enhance = false } = {}) {
   const encodedPrompt = encodeURIComponent(prompt);
   const params = new URLSearchParams({
     width: String(width),
@@ -16,6 +16,8 @@ export function bildURL(prompt, { width = 1024, height = 1024, model = 'flux', s
     // identische Prompts zurueck - ein Zufalls-Seed pro Aufruf sorgt fuer
     // ein wirklich neues Bild bei jedem Lauf.
     seed: String(seed ?? Math.floor(Math.random() * 1_000_000_000)),
+    // enhance: Pollinations schreibt den Prompt vorher detaillierter aus (bessere Bilder).
+    ...(enhance ? { enhance: 'true' } : {}),
   });
   return `${IMAGE_BASE}/${encodedPrompt}?${params.toString()}`;
 }

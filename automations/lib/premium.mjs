@@ -89,7 +89,7 @@ export async function hintergrundHolen(h, ziel, { breite, hoehe, laden }) {
   const datei = cache(`hg-${hash(`${h.prompt}|${h.seed}|${breite}x${hoehe}`)}.jpg`);
   if (!existsSync(datei)) {
     const prompt = `${h.prompt}, ${SETS[Math.abs(Number(h.seed) || 0) % SETS.length]}, empty product photography set, soft studio light, shallow depth of field, premium commercial look, no people, no text, no logo`;
-    if (!(await laden(prompt, datei, { breite, hoehe, seed: h.seed }))) return false;
+    if (!(await laden(prompt, datei, { breite, hoehe, seed: h.seed, enhance: true }))) return false;
   }
   copyFileSync(datei, ziel);
   return true;
@@ -237,12 +237,20 @@ export function ebenenVorbereiten({ hg, vg, breite, hoehe, basis }) {
   ffmpegBild(['-i', hg, '-vf', `scale=${bw}:${bh}:force_original_aspect_ratio=increase:flags=lanczos,crop=${bw}:${bh}${vg ? ',gblur=sigma=4,eq=brightness=-0.05' : ''},${LOOK},vignette=PI/4.2,noise=alls=4:allf=u`, '-frames:v', '1', '-q:v', '2', bgP]);
   if (!vg) return { bgP, fgP: '' };
   const fgP = `${basis}.fg.png`;
+  // Farbanpassung: das Produkt nimmt leicht die Lichtfarbe des Hintergrunds an (wirkt echt fotografiert).
+  let tint = '';
+  try {
+    const [r, g, b] = execFileSync('ffmpeg', ['-v', 'error', '-i', bgP, '-vf', 'scale=1:1', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], { timeout: 30000 });
+    const m = (r + g + b) / 3 || 1;
+    const f = (c) => Math.min(1.1, Math.max(0.85, 0.9 + 0.1 * (c / m))).toFixed(3);
+    tint = `colorchannelmixer=rr=${f(r)}:gg=${f(g)}:bb=${f(b)},`;
+  } catch { /* ohne Farbanpassung */ }
   // Studio-Look: weicher Schlagschatten, Kontaktschatten direkt unter dem Produkt und eine
   // leichte Spiegelung auf der Flaeche (wie bei Apple-Produktfotos). Die Leinwand ist 45 % hoeher
   // als das Produkt, damit die Spiegelung Platz hat (siehe PRODUKT_Y).
   const blur = (r) => `boxblur=luma_radius=${r}:luma_power=2:alpha_radius=${r}:alpha_power=2`;
   ffmpegBild(['-i', vg, '-filter_complex',
-    `[0:v]format=rgba,scale=${Math.round(breite * 0.8)}:${Math.round(hoehe * 0.5)}:force_original_aspect_ratio=decrease:flags=lanczos,${LOOK},format=rgba,split=5[p][pc][d0][s0][r0];` +
+    `[0:v]format=rgba,scale=${Math.round(breite * 0.8)}:${Math.round(hoehe * 0.5)}:force_original_aspect_ratio=decrease:flags=lanczos,${tint}${LOOK},format=rgba,split=5[p][pc][d0][s0][r0];` +
     `[pc]colorchannelmixer=aa=0,pad=iw+140:ih*1.45+140:70:70:color=black@0[c];` +
     `[d0]pad=iw+140:ih+140:70:70:color=black@0,colorchannelmixer=rr=0:gg=0:bb=0:aa=0.45,${blur(26)}[d];` +
     `[s0]colorchannelmixer=rr=0:gg=0:bb=0:aa=0.85,scale=iw*1.1:ih*0.06,pad=iw+80:ih+80:40:40:color=black@0,${blur(16)}[k];` +
@@ -261,6 +269,17 @@ export function glanzBauen(ziel, hoehe) {
   return ziel;
 }
 
+// Bokeh: weiche, warme Lichtpunkte, die langsam hinter dem Produkt nach oben schweben (Kino-Look).
+export function bokehBauen(ziel, breite, hoehe) {
+  if (!existsSync(ziel)) {
+    const h = Math.round(hoehe * 1.5);
+    const punkte = Array.from({ length: 14 }, () => [Math.random() * breite, Math.random() * h, 18 + Math.random() * 46, 40 + Math.random() * 55]);
+    const a = punkte.map(([x, y, r, s]) => `${s.toFixed(0)}*exp(-(pow(X-${x.toFixed(0)},2)+pow(Y-${y.toFixed(0)},2))/${(r * r).toFixed(0)})`).join('+');
+    ffmpegBild(['-f', 'lavfi', '-i', `color=white:s=${breite}x${h},format=rgba`, '-vf', `geq=r=255:g=236:b=205:a='min(255,${a})'`, '-frames:v', '1', ziel]);
+  }
+  return ziel;
+}
+
 // Standbild (Vorschaubild): Mitte des Hintergrunds plus Produkt.
 export function premiumStandbild({ bgP, fgP, ziel, breite, hoehe }) {
   const graph = `[0:v]crop=${breite}:${hoehe}${fgP ? `[bg];[bg][1:v]overlay=x=(W-w)/2:y=${PRODUKT_Y}` : ''}`;
@@ -269,25 +288,31 @@ export function premiumStandbild({ bgP, fgP, ziel, breite, hoehe }) {
 
 // Eine Szene: Hintergrund schwenkt in die eine Richtung, Produkt schwebt leicht gegenlaeufig
 // (Parallaxe), Blitz-Uebergang, Wort-Untertitel. extra = zusaetzliche Filter (Hook).
-export async function premiumSzene({ bgP, fgP, glanz = '', mp3, ass, ziel, breite, hoehe, dauer, index, extra = [] }) {
+export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = false, mp3, ass, ziel, breite, hoehe, dauer, index, extra = [] }) {
   const D = dauer.toFixed(2);
   const r = index % 2 ? `(t/${D})` : `(1-t/${D})`;
-  const bg = `[0:v]crop=${breite}:${hoehe}:x='(iw-ow)*${r}':y='(ih-oh)*(0.5+0.35*sin(t*0.45+${index}))'`;
-  const graph = fgP
-    ? `${bg}[bg];[bg][1:v]overlay=x=(W-w)/2-W*0.018*(${r}-0.5):y=${PRODUKT_Y}+H*0.012*sin(t*1.7+${index})`
-    : bg;
-  const mitGlanz = glanz ? `[g0];[g0][${fgP ? 2 : 1}:v]overlay=x='-w+(W+w)*(t-0.05)/0.7':y=0:enable='between(t,0.05,0.75)'` : '';
+  // Eingaenge: 0 Hintergrund, dann (falls vorhanden) Produkt, Bokeh, Glanz, zuletzt die Stimme.
+  const bilder = [bgP, fgP, bokeh, glanz].filter(Boolean);
+  const nr = (x) => bilder.indexOf(x);
+  let graph = `[0:v]crop=${breite}:${hoehe}:x='(iw-ow)*${r}':y='(ih-oh)*(0.5+0.35*sin(t*0.45+${index}))'`;
+  if (bokeh) graph += `[b0];[b0][${nr(bokeh)}:v]overlay=x=0:y='-(h-H)*(0.2+0.6*t/${D})'`;
+  if (fgP) {
+    // Nahaufnahme: Produkt 40 % groesser (Detail-Shot), sonst normale Position mit Schweben.
+    const quelle = nah ? `[${nr(fgP)}:v]scale=iw*1.4:-1:flags=lanczos[fn];[v0][fn]` : `[v0][${nr(fgP)}:v]`;
+    const y = nah ? `(H-h*0.69)/2-H*0.02` : PRODUKT_Y;
+    graph += `[v0];${quelle}overlay=x=(W-w)/2-W*0.018*(${r}-0.5):y=${y}+H*0.012*sin(t*1.7+${index})`;
+  }
+  if (glanz) graph += `[g0];[g0][${nr(glanz)}:v]overlay=x='-w+(W+w)*(t-0.05)/0.7':y=0:enable='between(t,0.05,0.75)'`;
   const ende = [
     index === 0 ? 'fade=in:st=0:d=0.25' : 'fade=in:st=0:d=0.14:color=white',
     `fade=out:st=${Math.max(dauer - 0.18, 0).toFixed(2)}:d=0.18`,
     ...extra,
     `ass='${pfadFuerFilter(ass)}'`,
   ].join(',');
-  const eingaben = ['-loop', '1', '-framerate', '30', '-i', bgP, ...(fgP ? ['-loop', '1', '-framerate', '30', '-i', fgP] : []), ...(glanz ? ['-loop', '1', '-framerate', '30', '-i', glanz] : [])];
   await ausfuehren('ffmpeg', [
-    '-loglevel', 'error', '-y', ...eingaben, '-i', mp3,
-    '-filter_complex', `${graph}${mitGlanz},${ende}[v]`,
-    '-map', '[v]', '-map', `${(fgP ? 2 : 1) + (glanz ? 1 : 0)}:a`, '-t', D,
+    '-loglevel', 'error', '-y', ...bilder.flatMap((b) => ['-loop', '1', '-framerate', '30', '-i', b]), '-i', mp3,
+    '-filter_complex', `${graph},${ende}[v]`,
+    '-map', '[v]', '-map', `${bilder.length}:a`, '-t', D,
     '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', '30',
     '-c:a', 'aac', '-b:a', '160k', '-ar', '44100', '-ac', '2', '-af', 'apad',
     ziel,

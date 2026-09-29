@@ -7,7 +7,7 @@ import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
 import { musikUnterlegen, untertitelZusammenfuegen } from './videoExtras.mjs';
-import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen } from './premium.mjs';
+import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen, bokehBauen } from './premium.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -18,10 +18,10 @@ export function dauerSekunden(datei) {
   return Number(out) || 0;
 }
 
-export async function ladeBild(prompt, ziel, { breite, hoehe, seed }) {
+export async function ladeBild(prompt, ziel, { breite, hoehe, seed, enhance }) {
   for (let versuch = 0; versuch < 4; versuch++) {
     try {
-      const res = await fetch(bildURL(prompt, { width: breite, height: hoehe, seed }), { signal: AbortSignal.timeout(120000) });
+      const res = await fetch(bildURL(prompt, { width: breite, height: hoehe, seed, enhance }), { signal: AbortSignal.timeout(120000) });
       const typ = res.headers.get('content-type') || '';
       if (res.ok && typ.startsWith('image/')) {
         writeFileSync(ziel, Buffer.from(await res.arrayBuffer()));
@@ -220,6 +220,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   }
   const gesamt = dauern.reduce((a, b) => a + (b || 0), 0) || 1;
   const glanz = premium ? glanzBauen(join(ordner, 'glanz.png'), hoehe) : '';
+  const bokeh = premium ? bokehBauen(join(ordner, 'bokeh.png'), breite, hoehe) : '';
   let dingZeit = 0;
   const start = Date.now();
   for (const [i, szene] of szenen.entries()) {
@@ -260,7 +261,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
           fortschritt: { von: dauern.slice(0, i).reduce((a, b) => a + (b || 0), 0) / gesamt, bis: dauern.slice(0, i + 1).reduce((a, b) => a + (b || 0), 0) / gesamt, dauerMs: dauern[i] * 1000 },
         });
         if (letzte) dingZeit = zeit + 0.4;
-        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz });
+        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1 });
       } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
       letztesBild = bild;
       clips.push(clip);
