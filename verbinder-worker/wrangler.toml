@@ -1,0 +1,17 @@
+name = "cashmachine-verbinder"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# Speichert die verbundenen Konten (Tokens) und kurzlebige Anmelde-Sitzungen.
+# Die id setzt der Workflow "Verbinder deployen" automatisch ein.
+[[kv_namespaces]]
+binding = "VERBINDUNGEN"
+id = "WIRD_AUTOMATISCH_GESETZT"
+
+[vars]
+SEITE_URL = "https://ziyabicilecommerce-hub.github.io/ai-cash-machine/verbinden/"
+SEITE_URSPRUNG = "https://ziyabicilecommerce-hub.github.io"
+
+# Secrets setzt der Workflow aus den GitHub-Secrets (nie hier eintragen):
+#   VERBINDER_PASSWORT (mind. 16 Zeichen), TIKTOK_CLIENT_KEY/SECRET, GOOGLE_CLIENT_ID/SECRET,
+#   META_APP_ID/SECRET, THREADS_APP_ID/SECRET, LINKEDIN_CLIENT_ID/SECRET, PINTEREST_APP_ID/SECRET

@@ -11,6 +11,7 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { PLATTFORMEN } from './lib/plattformen.mjs';
 import { threads, linkedin, discord, reddit, pinterest, dailymotion } from './lib/plattformen2.mjs';
+import { verbinderLaden } from './lib/verbinder.mjs';
 
 const ALLE = [...PLATTFORMEN, threads, linkedin, pinterest, dailymotion, discord, reddit];
 
@@ -53,6 +54,7 @@ function auswahl() {
 }
 
 async function main() {
+  await verbinderLaden();
   const { videos, merken } = auswahl();
   if (!videos.length) return console.log('[99-direkt-poster] Nichts zu posten.');
   const aktiv = ALLE.filter((p) => p.bereit() && (!NUR.length || NUR.includes(p.name.toLowerCase())));
