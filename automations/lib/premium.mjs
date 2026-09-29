@@ -222,6 +222,8 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
 // ---------- 2.5D-Szene ----------
 
 const gerade = (x) => Math.round(x / 2) * 2;
+// Oberkante der Produkt-Ebene: Produkt (ohne Spiegelung) sitzt leicht ueber der Bildmitte.
+export const PRODUKT_Y = '(H-((h-140)/1.45+140))/2-H*0.05';
 const LOOK = 'eq=contrast=1.07:saturation=1.14:gamma=0.98,unsharp=5:5:0.55:5:5:0';
 const ffmpegBild = (args) => execFileSync('ffmpeg', ['-loglevel', 'error', '-y', ...args], { stdio: 'pipe', timeout: 120000 });
 
@@ -232,12 +234,21 @@ const ffmpegBild = (args) => execFileSync('ffmpeg', ['-loglevel', 'error', '-y',
 export function ebenenVorbereiten({ hg, vg, breite, hoehe, basis }) {
   const [bw, bh] = [gerade(breite * 1.16), gerade(hoehe * 1.16)];
   const bgP = `${basis}.bg.jpg`;
-  ffmpegBild(['-i', hg, '-vf', `scale=${bw}:${bh}:force_original_aspect_ratio=increase,crop=${bw}:${bh}${vg ? ',gblur=sigma=4,eq=brightness=-0.05' : ''},${LOOK},vignette=PI/4.2,noise=alls=4:allf=u`, '-frames:v', '1', '-q:v', '2', bgP]);
+  ffmpegBild(['-i', hg, '-vf', `scale=${bw}:${bh}:force_original_aspect_ratio=increase:flags=lanczos,crop=${bw}:${bh}${vg ? ',gblur=sigma=4,eq=brightness=-0.05' : ''},${LOOK},vignette=PI/4.2,noise=alls=4:allf=u`, '-frames:v', '1', '-q:v', '2', bgP]);
   if (!vg) return { bgP, fgP: '' };
   const fgP = `${basis}.fg.png`;
+  // Studio-Look: weicher Schlagschatten, Kontaktschatten direkt unter dem Produkt und eine
+  // leichte Spiegelung auf der Flaeche (wie bei Apple-Produktfotos). Die Leinwand ist 45 % hoeher
+  // als das Produkt, damit die Spiegelung Platz hat (siehe PRODUKT_Y).
+  const blur = (r) => `boxblur=luma_radius=${r}:luma_power=2:alpha_radius=${r}:alpha_power=2`;
   ffmpegBild(['-i', vg, '-filter_complex',
-    `[0:v]format=rgba,scale=${Math.round(breite * 0.8)}:${Math.round(hoehe * 0.5)}:force_original_aspect_ratio=decrease,${LOOK},format=rgba,pad=iw+140:ih+140:70:70:color=black@0,split[f1][f2];` +
-    '[f2]colorchannelmixer=rr=0:gg=0:bb=0:aa=0.6,boxblur=luma_radius=26:luma_power=2:alpha_radius=26:alpha_power=2[sh];[sh][f1]overlay=x=-16:y=-34:format=rgb,format=rgba',
+    `[0:v]format=rgba,scale=${Math.round(breite * 0.8)}:${Math.round(hoehe * 0.5)}:force_original_aspect_ratio=decrease:flags=lanczos,${LOOK},format=rgba,split=5[p][pc][d0][s0][r0];` +
+    `[pc]colorchannelmixer=aa=0,pad=iw+140:ih*1.45+140:70:70:color=black@0[c];` +
+    `[d0]pad=iw+140:ih+140:70:70:color=black@0,colorchannelmixer=rr=0:gg=0:bb=0:aa=0.45,${blur(26)}[d];` +
+    `[s0]colorchannelmixer=rr=0:gg=0:bb=0:aa=0.85,scale=iw*1.1:ih*0.06,pad=iw+80:ih+80:40:40:color=black@0,${blur(16)}[k];` +
+    `[r0]vflip,crop=iw:ih*0.4:0:0,geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='alpha(X,Y)*0.3*pow(max(0,1-Y/H),1.6)',gblur=sigma=1.5[r];` +
+    '[c][d]overlay=x=16:y=34:format=rgb[c1];[c1][k]overlay=x=(W-w)/2:y=70+(H-140)/1.45-h/2-4:format=rgb[c2];' +
+    '[c2][r]overlay=x=70:y=70+(H-140)/1.45+2:format=rgb[c3];[c3][p]overlay=x=70:y=70:format=rgb,format=rgba',
     '-frames:v', '1', fgP]);
   return { bgP, fgP };
 }
@@ -252,7 +263,7 @@ export function glanzBauen(ziel, hoehe) {
 
 // Standbild (Vorschaubild): Mitte des Hintergrunds plus Produkt.
 export function premiumStandbild({ bgP, fgP, ziel, breite, hoehe }) {
-  const graph = `[0:v]crop=${breite}:${hoehe}${fgP ? `[bg];[bg][1:v]overlay=x=(W-w)/2:y=(H-h)/2-H*0.05` : ''}`;
+  const graph = `[0:v]crop=${breite}:${hoehe}${fgP ? `[bg];[bg][1:v]overlay=x=(W-w)/2:y=${PRODUKT_Y}` : ''}`;
   ffmpegBild(['-i', bgP, ...(fgP ? ['-i', fgP] : []), '-filter_complex', graph, '-frames:v', '1', '-q:v', '2', ziel]);
 }
 
@@ -263,7 +274,7 @@ export async function premiumSzene({ bgP, fgP, glanz = '', mp3, ass, ziel, breit
   const r = index % 2 ? `(t/${D})` : `(1-t/${D})`;
   const bg = `[0:v]crop=${breite}:${hoehe}:x='(iw-ow)*${r}':y='(ih-oh)*(0.5+0.35*sin(t*0.45+${index}))'`;
   const graph = fgP
-    ? `${bg}[bg];[bg][1:v]overlay=x=(W-w)/2-W*0.018*(${r}-0.5):y=(H-h)/2-H*0.05+H*0.012*sin(t*1.7+${index})`
+    ? `${bg}[bg];[bg][1:v]overlay=x=(W-w)/2-W*0.018*(${r}-0.5):y=${PRODUKT_Y}+H*0.012*sin(t*1.7+${index})`
     : bg;
   const mitGlanz = glanz ? `[g0];[g0][${fgP ? 2 : 1}:v]overlay=x='-w+(W+w)*(t-0.05)/0.7':y=0:enable='between(t,0.05,0.75)'` : '';
   const ende = [
@@ -277,7 +288,7 @@ export async function premiumSzene({ bgP, fgP, glanz = '', mp3, ass, ziel, breit
     '-loglevel', 'error', '-y', ...eingaben, '-i', mp3,
     '-filter_complex', `${graph}${mitGlanz},${ende}[v]`,
     '-map', '[v]', '-map', `${(fgP ? 2 : 1) + (glanz ? 1 : 0)}:a`, '-t', D,
-    '-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-pix_fmt', 'yuv420p', '-r', '30',
+    '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', '30',
     '-c:a', 'aac', '-b:a', '160k', '-ar', '44100', '-ac', '2', '-af', 'apad',
     ziel,
   ], { timeout: 600000, maxBuffer: 16 * 1024 * 1024 });
