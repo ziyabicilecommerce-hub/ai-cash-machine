@@ -9,7 +9,9 @@ const UA = 'cashmachine-ultimativ-mcp/1.0 (+https://github.com/ziyabicilecommerc
 const MAX_TEXT = 20000;
 
 async function hole(url, { text = false, headers = {}, method = 'GET', body } = {}) {
-  const res = await fetch(url, { method, body, headers: { 'user-agent': UA, accept: text ? '*/*' : 'application/json', ...headers }, signal: AbortSignal.timeout(20000) });
+  const abruf = () => fetch(url, { method, body, headers: { 'user-agent': UA, accept: text ? '*/*' : 'application/json', ...headers }, signal: AbortSignal.timeout(20000) });
+  // Einmal neu versuchen, wenn die Verbindung abbricht (kurze Netzstoerungen).
+  const res = await abruf().catch(() => new Promise((r) => setTimeout(r, 1500)).then(abruf));
   if (!res.ok) throw new Error(`${new URL(url).hostname} antwortet mit HTTP ${res.status}`);
   return text ? res.text() : res.json();
 }
@@ -56,6 +58,24 @@ async function webseiteLesen({ url }) {
   throw new Error('Nur oeffentliche https-Adressen sind erlaubt.');
 }
 
+// Echte Web-Treffer: DuckDuckGo (HTML-Version), sonst Mojeek - beide ohne Key.
+async function suchTreffer(suche) {
+  const liste = [];
+  try {
+    const html = await hole(`https://html.duckduckgo.com/html/?q=${q(suche)}`, { text: true });
+    for (const m of html.matchAll(/class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g)) {
+      const roh = m[1].startsWith('//') ? `https:${m[1]}` : m[1];
+      const link = new URL(roh, 'https://duckduckgo.com').searchParams.get('uddg') || roh;
+      liste.push({ titel: kurz(htmlZuText(m[2]), 200), link, text: kurz(htmlZuText(m[3]), 300) });
+    }
+  } catch { /* weiter mit Mojeek */ }
+  if (!liste.length) {
+    const html = await hole(`https://www.mojeek.com/search?q=${q(suche)}`, { text: true });
+    for (const m of html.matchAll(/<a class="title" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?<p class="s">([\s\S]*?)<\/p>/g)) liste.push({ titel: kurz(htmlZuText(m[2]), 200), link: m[1], text: kurz(htmlZuText(m[3]), 300) });
+  }
+  return liste.filter((t) => /^https?:\/\//.test(t.link)).slice(0, 10);
+}
+
 async function webSuche({ suche, sprache: s }) {
   const l = sprache(s);
   const [ddg, wiki] = await Promise.allSettled([
@@ -63,9 +83,10 @@ async function webSuche({ suche, sprache: s }) {
     hole(`https://${l}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${q(suche)}&format=json&srlimit=8`),
   ]);
   const d = ddg.status === 'fulfilled' ? ddg.value : {};
+  const treffer = await suchTreffer(suche).catch(() => []);
   const themen = (d.RelatedTopics || []).flatMap((t) => t.Topics || [t]).filter((t) => t.FirstURL).slice(0, 8).map((t) => ({ titel: kurz(t.Text, 200), link: t.FirstURL }));
   const artikel = wiki.status === 'fulfilled' ? (wiki.value.query?.search || []).map((a) => ({ titel: a.title, link: `https://${l}.wikipedia.org/wiki/${q(a.title.replace(/ /g, '_'))}`, text: kurz(htmlZuText(a.snippet), 250) })) : [];
-  return { suche, sofortAntwort: kurz(d.AbstractText || d.Answer || '', 800), quelle: d.AbstractURL || '', themen, wikipedia: artikel };
+  return { suche, treffer, sofortAntwort: kurz(d.AbstractText || d.Answer || '', 800), quelle: d.AbstractURL || '', themen, wikipedia: artikel };
 }
 
 async function wikipedia({ titel, sprache: s }) {
@@ -90,7 +111,21 @@ async function wetter({ ort, tage }) {
 async function kryptoPreise({ coins, waehrung }) {
   const ids = String(coins || 'bitcoin,ethereum').toLowerCase().replace(/\s+/g, '');
   const w = String(waehrung || 'eur').toLowerCase();
-  return hole(`https://api.coingecko.com/api/v3/simple/price?ids=${q(ids)}&vs_currencies=${q(w)}&include_24hr_change=true&include_market_cap=true`);
+  try {
+    return await hole(`https://api.coingecko.com/api/v3/simple/price?ids=${q(ids)}&vs_currencies=${q(w)}&include_24hr_change=true&include_market_cap=true`);
+  } catch {
+    // CoinGecko blockt manche Server - Ersatz: Coinbase-Spotpreise (ohne 24h-Aenderung).
+    const SYMBOL = { bitcoin: 'BTC', ethereum: 'ETH', solana: 'SOL', ripple: 'XRP', cardano: 'ADA', dogecoin: 'DOGE', litecoin: 'LTC', polkadot: 'DOT', chainlink: 'LINK', 'avalanche-2': 'AVAX', tron: 'TRX', 'shiba-inu': 'SHIB', stellar: 'XLM', uniswap: 'UNI' };
+    const aus = {};
+    for (const id of ids.split(',').filter(Boolean).slice(0, 15)) {
+      const sym = SYMBOL[id] || (id.length <= 5 ? id.toUpperCase() : '');
+      if (!sym) continue;
+      const d = await hole(`https://api.coinbase.com/v2/prices/${q(sym)}-${q(w.toUpperCase())}/spot`).catch(() => null);
+      if (d?.data?.amount) aus[id] = { [w]: Number(d.data.amount) };
+    }
+    if (!Object.keys(aus).length) throw new Error('Keine Kursquelle erreichbar');
+    return { ...aus, quelle: 'Coinbase (Ersatz)' };
+  }
 }
 
 async function waehrungUmrechnen({ betrag, von, nach }) {

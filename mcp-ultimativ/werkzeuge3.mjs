@@ -64,8 +64,15 @@ async function stackoverflow({ suche, limit }) {
 }
 
 async function redditSuche({ suche, limit }) {
-  const d = await hole(`https://www.reddit.com/search.json?q=${q(suche)}&limit=${zahl(limit, 10, 1, 25)}&sort=relevance`);
-  return (d.data?.children || []).map(({ data: p }) => ({ titel: p.title, subreddit: p.subreddit_name_prefixed, punkte: p.score, kommentare: p.num_comments, link: `https://www.reddit.com${p.permalink}` }));
+  const n = zahl(limit, 10, 1, 25);
+  try {
+    const d = await hole(`https://www.reddit.com/search.json?q=${q(suche)}&limit=${n}&sort=relevance`);
+    return (d.data?.children || []).map(({ data: p }) => ({ titel: p.title, subreddit: p.subreddit_name_prefixed, punkte: p.score, kommentare: p.num_comments, link: `https://www.reddit.com${p.permalink}` }));
+  } catch {
+    // Reddit blockt manche Server - Ersatz: oeffentliches Reddit-Archiv (PullPush).
+    const d = await hole(`https://api.pullpush.io/reddit/search/submission/?q=${q(suche)}&size=${n}`);
+    return (d.data || []).map((p) => ({ titel: p.title, subreddit: `r/${p.subreddit}`, punkte: p.score, kommentare: p.num_comments, link: `https://www.reddit.com${p.permalink}`, quelle: 'PullPush-Archiv' }));
+  }
 }
 
 // KI-Helfer fuer Marketing - nutzen die kostenlose KI-Kette des Ultimativ-MCP.

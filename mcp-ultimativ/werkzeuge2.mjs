@@ -79,7 +79,10 @@ async function sonnenzeiten({ ort, datum }) {
 }
 
 async function issPosition() {
-  const d = await hole('https://api.wheretheiss.at/v1/satellites/25544');
+  const d = await hole('https://api.wheretheiss.at/v1/satellites/25544').catch(async () => {
+    const o = await hole('http://api.open-notify.org/iss-now.json');
+    return { latitude: Number(o.iss_position.latitude), longitude: Number(o.iss_position.longitude), altitude: 420, velocity: 27600 };
+  });
   return { breite: d.latitude, laenge: d.longitude, hoehe_km: Math.round(d.altitude), geschwindigkeit_kmh: Math.round(d.velocity), karte: `https://www.openstreetmap.org/?mlat=${d.latitude}&mlon=${d.longitude}#map=4/${d.latitude}/${d.longitude}` };
 }
 
@@ -97,7 +100,7 @@ async function bundesliga({ liga }) {
 }
 
 async function bahnAbfahrten({ bahnhof, minuten }) {
-  const orte = await hole(`https://v6.db.transport.rest/locations?query=${q(bahnhof)}&results=1&addresses=false&poi=false`);
+  const orte = await hole(`https://v6.db.transport.rest/locations?query=${q(bahnhof)}&results=1&addresses=false&poi=false`).catch((err) => { throw new Error(`Der freie DB-Dienst (db.transport.rest) ist gerade nicht erreichbar (${err.message}) - bitte spaeter erneut versuchen.`); });
   const halt = orte[0];
   if (!halt) throw new Error(`Bahnhof "${bahnhof}" nicht gefunden`);
   const d = await hole(`https://v6.db.transport.rest/stops/${q(halt.id)}/departures?duration=${zahl(minuten, 60, 10, 240)}&results=25`);
