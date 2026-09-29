@@ -69,12 +69,26 @@ export async function freistellen(roh, ziel) {
   return true;
 }
 
+// Kulissen im Wechsel je Produkt (per Seed), damit nicht jeder Hintergrund gleich aussieht.
+const SETS = [
+  'white marble countertop, bright airy minimal',
+  'raw concrete pedestal, moody dark studio, rim light',
+  'soft linen fabric in warm sunlight',
+  'pastel color backdrop with soft geometric shadows',
+  'modern desk setup with green plants, blurred',
+  'spa bathroom shelf, calm neutral tones',
+  'outdoor wooden deck at golden hour, bokeh',
+  'terrazzo surface, editorial magazine style',
+  'gradient backdrop in deep blue and purple, neon glow',
+  'cozy living room with warm lamp light, blurred',
+];
+
 // KI-Hintergrund pro Produkt mit festem Seed: jede Sprache bekommt denselben Look.
 export async function hintergrundHolen(h, ziel, { breite, hoehe, laden }) {
   if (!h?.prompt) return false;
   const datei = cache(`hg-${hash(`${h.prompt}|${h.seed}|${breite}x${hoehe}`)}.jpg`);
   if (!existsSync(datei)) {
-    const prompt = `${h.prompt}, empty product photography set, soft studio light, shallow depth of field, premium commercial look, no people, no text, no logo`;
+    const prompt = `${h.prompt}, ${SETS[Math.abs(Number(h.seed) || 0) % SETS.length]}, empty product photography set, soft studio light, shallow depth of field, premium commercial look, no people, no text, no logo`;
     if (!(await laden(prompt, datei, { breite, hoehe, seed: h.seed }))) return false;
   }
   copyFileSync(datei, ziel);
@@ -84,13 +98,13 @@ export async function hintergrundHolen(h, ziel, { breite, hoehe, laden }) {
 // ---------- Wort-fuer-Wort-Untertitel ----------
 
 const OHNE_LEERZEICHEN = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}\p{Script=Lao}\p{Script=Khmer}\p{Script=Myanmar}]/u;
-const GROSS_OK = /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}\p{N}\p{P}\p{S}\p{Zs}\p{M}]*$/u;
+export const GROSS_OK = /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}\p{N}\p{P}\p{S}\p{Zs}\p{M}]*$/u;
 const zuMs = (z) => { const [h, m, rest] = z.split(':'); const [s, ms] = rest.split(/[,.]/); return ((+h * 60 + +m) * 60 + +s) * 1000 + +ms; };
 const assZeit = (ms) => {
   const cs = Math.max(0, Math.round(ms / 10));
   return `${Math.floor(cs / 360000)}:${String(Math.floor(cs / 6000) % 60).padStart(2, '0')}:${String(Math.floor(cs / 100) % 60).padStart(2, '0')}.${String(cs % 100).padStart(2, '0')}`;
 };
-const assText = (t) => t.replace(/\\/g, '/').replace(/[{}]/g, '');
+export const assText = (t) => t.replace(/\\/g, '/').replace(/[{}]/g, '');
 
 // Zerlegt einen Satz in Woerter; Sprachen ohne Leerzeichen (Chinesisch, Japanisch, Thai ...)
 // ueber Intl.Segmenter.
@@ -190,7 +204,7 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
     const h = GROSS_OK.test(hook) ? hook.toLocaleUpperCase(sprache) : hook;
     zeilen.push(`Dialogue: 1,${assZeit(0)},${assZeit(3300)},Hook,,0,0,0,,{\\fad(0,300)}${pop}${assText(h)}`);
   }
-  if (preis) zeilen.push(`Dialogue: 2,${assZeit(350)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * 0.72)},${Math.round(hoehe * 0.2)})}${pop}${assText(preis)}`);
+  if (preis) zeilen.push(`Dialogue: 2,${assZeit(350)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * 0.7)},${Math.round(hoehe * 0.1)})}${pop}${assText(preis)}`);
   if (shop) zeilen.push(`Dialogue: 1,${assZeit(200)},${assZeit(600000)},Shop,,0,0,0,,{\\fad(300,0)}${assText(shop)}`);
   writeFileSync(ass, [...kopf, ...zeilen].join('\n') + '\n');
   return zeilen.length;
