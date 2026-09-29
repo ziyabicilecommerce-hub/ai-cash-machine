@@ -12,6 +12,8 @@
 //                        Stop-Loss/Trailing-Stop laufen unverändert weiter -
 //                        siehe worker.js runSymbol)
 //   /resume SYMBOL     - hebt die Pause wieder auf
+//   /top               - die 3 Coins mit dem besten P&L gesamt
+//   /flop              - die 3 Coins mit dem schlechtesten P&L gesamt
 //   /help              - Befehlsübersicht
 
 import { loadState, saveState } from './state.mjs';
@@ -40,7 +42,11 @@ function formatiereStatusZeile(symbol, state) {
   return `${symbol}${pausiertText}: ${state.kapital.toFixed(2)} USDT (${plGesamt >= 0 ? '+' : ''}${plGesamt.toFixed(2)} P&L) - ${position} - ${trades.length} Trades gesamt`;
 }
 
-const HILFE_TEXT = 'Befehle:\n/status [SYMBOL] - Kapital, Position, Trades\n/pause SYMBOL - keine neuen Käufe mehr für dieses Symbol\n/resume SYMBOL - Pause aufheben\n/help - diese Übersicht';
+const HILFE_TEXT = 'Befehle:\n/status [SYMBOL] - Kapital, Position, Trades\n/pause SYMBOL - keine neuen Käufe mehr für dieses Symbol\n/resume SYMBOL - Pause aufheben\n/top - 3 beste Coins nach P&L\n/flop - 3 schlechteste Coins nach P&L\n/help - diese Übersicht';
+
+function plUsdt(state) {
+  return (state.trades || []).reduce((s, t) => s + t.gewinnVerlustUsdt, 0);
+}
 
 export async function verarbeiteTelegramUpdate(env, update) {
   const message = update && update.message;
@@ -74,6 +80,19 @@ export async function verarbeiteTelegramUpdate(env, update) {
       zeilen.push(formatiereStatusZeile(symbol, state));
     }
     await sendeTelegramAntwort(env, `📊 Status (${cfg.paperModus ? 'PAPER' : 'LIVE'}):\n${zeilen.join('\n')}`);
+    return;
+  }
+
+  if (befehl === '/top' || befehl === '/flop') {
+    const eintraege = [];
+    for (const symbol of cfg.symbols) {
+      const state = await loadState(env, symbol, cfg.startKapitalProSymbol);
+      eintraege.push({ symbol, pl: plUsdt(state), trades: (state.trades || []).length });
+    }
+    eintraege.sort((a, b) => befehl === '/top' ? b.pl - a.pl : a.pl - b.pl);
+    const top3 = eintraege.slice(0, 3);
+    const zeilen = top3.map((e) => `${e.symbol}: ${e.pl >= 0 ? '+' : ''}${e.pl.toFixed(2)} USDT (${e.trades} Trades)`);
+    await sendeTelegramAntwort(env, `${befehl === '/top' ? '🏆' : '📉'} ${befehl === '/top' ? 'Top' : 'Flop'} 3:\n${zeilen.join('\n')}`);
     return;
   }
 
