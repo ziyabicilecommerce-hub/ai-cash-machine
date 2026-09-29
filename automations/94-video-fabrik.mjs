@@ -19,6 +19,7 @@ import { karussellBauen } from './lib/karussell.mjs';
 const OUT = 'out';
 const MANIFEST = join(OUT, 'manifest.json');
 const FEED = 'video-feed/videos.json';
+const FEED_WELT = Math.min(Math.max(parseInt(process.env.FEED_WELT_MAX || '6000', 10) || 6000, 0), 30000);
 const env = (k, d = '') => (process.env[k] || d).trim();
 
 const ANZAHL_ROH = parseInt(env('VIDEO_FABRIK_ANZAHL', '5'), 10);
@@ -392,10 +393,17 @@ function feedErgaenzen(basisUrl) {
   // Geloeschte Releases (z. B. alte Marathon-Videos) aus dem Feed entfernen.
   const weg = env('FEED_ENTFERNEN_TAGS').split(',').map((t) => t.trim()).filter(Boolean);
   const alt = (feed.videos || []).filter((v) => !weg.some((t) => String(v.url || '').includes(`/download/${t}/`)));
-  feed.videos = [...neu, ...alt].slice(0, 3000);
+  // Getrennte Kontingente: Deutsch/sprachfreie Videos (die der Direkt-Poster postet) duerfen nie von
+  // den ~10.000 Welt-Videos pro Tag verdraengt werden. Welt-Eintraege mit gekuerzter Caption (Dateigroesse).
+  // Nichts Neues und nichts entfernt: Datei nicht neu schreiben (sonst waechst das Repo bei jedem Lauf).
+  if (!neu.length && alt.length === (feed.videos || []).length) return console.log('[94-video-fabrik] Feed unveraendert');
+  const haupt = (v) => ['de', 'int'].includes(v.sprache || 'de');
+  const alle = [...neu, ...alt];
+  const welt = alle.filter((v) => !haupt(v)).slice(0, FEED_WELT).map((v) => ({ ...v, caption: String(v.caption || '').slice(0, 400) }));
+  feed.videos = [...alle.filter(haupt).slice(0, 2000), ...welt].sort((x, y) => String(y.erstellt || '').localeCompare(String(x.erstellt || '')));
   feed.stand = new Date().toISOString();
   mkdirSync('video-feed', { recursive: true });
-  writeFileSync(FEED, JSON.stringify(feed, null, 1));
+  writeFileSync(FEED, JSON.stringify(feed));
   console.log(`[94-video-fabrik] Feed: ${neu.length} neue, ${feed.videos.length} insgesamt`);
 }
 
