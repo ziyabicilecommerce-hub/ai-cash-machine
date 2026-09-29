@@ -70,9 +70,8 @@
         <li>Kostenloses Cloudflare-Konto → „Workers &amp; Pages“ einmal öffnen (legt deine workers.dev-Adresse an).</li>
         <li>Cloudflare → My Profile → API Tokens → Vorlage „Edit Cloudflare Workers“ → Token kopieren.</li>
         <li>GitHub → Settings → Secrets → Actions: <code>CLOUDFLARE_API_TOKEN</code>, <code>CLOUDFLARE_ACCOUNT_ID</code> und <code>VERBINDER_PASSWORT</code> (selbst ausgedacht, mind. 16 Zeichen).</li>
-        <li>App-Schlüssel der Plattformen als Secrets: <code>TIKTOK_CLIENT_KEY/SECRET</code>, <code>YOUTUBE_CLIENT_ID/SECRET</code>, <code>META_APP_ID/SECRET</code>, <code>THREADS_APP_ID/SECRET</code>, <code>LINKEDIN_CLIENT_ID/SECRET</code>, <code>PINTEREST_APP_ID/SECRET</code> – nur die, die du willst.</li>
-        <li>GitHub → Actions → „Verbinder deployen“ → Run workflow. Danach hier anmelden.</li>
-        <li>In jeder Plattform-App die Rückleitungs-Adresse eintragen, die unten bei der Plattform steht.</li>
+        <li>GitHub → Actions → „Verbinder deployen“ → Run workflow. Danach hier mit dem Passwort anmelden.</li>
+        <li>Alles Weitere passiert hier auf der Seite: je Plattform der Assistent mit Anleitung, Schlüssel einfügen, Verbinden.</li>
       </ol>
     </details>
   </div>
@@ -157,6 +156,43 @@ zaehlen();
   const speicher = { get: () => { try { return localStorage.getItem('verbinder_pw') || ''; } catch { return ''; } }, set: (v) => { try { v ? localStorage.setItem('verbinder_pw', v) : localStorage.removeItem('verbinder_pw'); } catch { /* egal */ } } };
   const meldung = (text, gut) => { const d = document.createElement('div'); d.className = `meldung ${gut ? 'gut' : 'schlecht'}`; d.textContent = text; $('klickMeldung').replaceChildren(d); };
   let basis = '';
+  const SEITE = 'https://ziyabicilecommerce-hub.github.io/ai-cash-machine/tiktok-verbinden/';
+  // Schritt-fuer-Schritt je Plattform: [Portal-Link, Schritte, Name Feld 1, Name Feld 2]
+  const ANLEITUNG = {
+    tiktok: ['https://developers.tiktok.com/apps/', [
+      'Oben auf „Entwicklerportal öffnen“ → mit deinem TikTok-Konto anmelden → „Connect an app“.',
+      'App-Name: CASHMACHINE · Kategorie: Entertainment · Plattform: Web.',
+      `Website, Datenschutz und Nutzungsbedingungen: ${SEITE} (…datenschutz.html / …nutzungsbedingungen.html).`,
+      'Produkte hinzufügen: „Login Kit“ und „Content Posting API“ · Scopes: user.info.basic und video.upload.',
+      'Bei Login Kit → Redirect URI: die Rückleitung unten einfügen.',
+      'Oben auf „Sandbox“ → „Target users“ → dein TikTok-Konto hinzufügen.',
+      'Client key und Client secret kopieren und unten einfügen → Speichern → Verbinden.'], 'Client key', 'Client secret'],
+    youtube: ['https://console.cloud.google.com/projectcreate', [
+      'Oben auf „Entwicklerportal öffnen“ → neues Projekt „CASHMACHINE“ anlegen.',
+      'APIs & Dienste → Bibliothek → „YouTube Data API v3“ → Aktivieren.',
+      'OAuth-Zustimmungsbildschirm → Extern → App-Name + deine E-Mail → deine E-Mail als Testnutzer → danach „App veröffentlichen“.',
+      'Anmeldedaten → „OAuth-Client-ID erstellen“ → Webanwendung → Autorisierte Weiterleitungs-URI: die Rückleitung unten.',
+      'Client-ID und Clientschlüssel kopieren und unten einfügen → Speichern → Verbinden.'], 'Client-ID', 'Clientschlüssel'],
+    meta: ['https://developers.facebook.com/apps/creation/', [
+      'Oben auf „Entwicklerportal öffnen“ → App erstellen → Anwendungsfall „Andere“ → Typ „Business“.',
+      'Produkt „Facebook Login for Business“ hinzufügen → Einstellungen → Gültige OAuth-Redirect-URIs: die Rückleitung unten.',
+      'Dein Instagram muss ein Business/Creator-Konto sein und mit deiner Facebook-Seite verknüpft sein.',
+      'App-Einstellungen → Allgemeines: App-ID und App-Geheimcode kopieren und unten einfügen → Speichern → Verbinden.'], 'App-ID', 'App-Geheimcode'],
+    threads: ['https://developers.facebook.com/apps/creation/', [
+      'Oben auf „Entwicklerportal öffnen“ → App erstellen → Anwendungsfall „Access the Threads API“.',
+      'Threads API → Einstellungen → Redirect Callback URLs: die Rückleitung unten.',
+      'Rollen → Threads-Tester → dein Threads-Konto einladen und in der Threads-App annehmen.',
+      'Threads-App-ID und Threads-App-Geheimcode kopieren und unten einfügen → Speichern → Verbinden.'], 'Threads-App-ID', 'Threads-App-Geheimcode'],
+    linkedin: ['https://www.linkedin.com/developers/apps/new', [
+      'Oben auf „Entwicklerportal öffnen“ → App erstellen (braucht eine LinkedIn-Unternehmensseite, kostenlos).',
+      'Products: „Share on LinkedIn“ und „Sign In with LinkedIn using OpenID Connect“ anfordern.',
+      'Auth → Authorized redirect URLs: die Rückleitung unten.',
+      'Client ID und Primary Client Secret kopieren und unten einfügen → Speichern → Verbinden.'], 'Client ID', 'Client Secret'],
+    pinterest: ['https://developers.pinterest.com/apps/', [
+      'Oben auf „Entwicklerportal öffnen“ → „Connect app“ → Formular ausfüllen.',
+      'Redirect URIs: die Rückleitung unten.',
+      'App ID und App secret key kopieren und unten einfügen → Speichern → Verbinden.'], 'App ID', 'App secret key'],
+  };
   const q = new URLSearchParams(location.search);
   if (q.get('verbunden')) meldung(`✓ ${q.get('verbunden')} ist verbunden – der Direkt-Poster nutzt es ab dem nächsten Lauf.`, true);
   if (q.get('fehler')) meldung(`Verbinden hat nicht geklappt: ${q.get('fehler')}`, false);
@@ -185,7 +221,7 @@ zaehlen();
         const info = document.createElement('div'); info.className = 'hinweis';
         info.textContent = p.verbunden
           ? `✓ verbunden${p.konto ? ` (${p.konto})` : ''}${p.gueltig_bis ? ` · gültig bis ${new Date(p.gueltig_bis).toLocaleDateString('de-DE')}` : ''}`
-          : p.eingerichtet ? 'bereit zum Verbinden' : `App-Schlüssel fehlen noch · Rückleitung: ${p.rueckleitung}`;
+          : p.eingerichtet ? 'bereit zum Verbinden' : 'noch nicht eingerichtet – Anleitung darunter';
         if (p.verbunden) info.classList.add('ok');
         links.append(info);
         const knopf = document.createElement('button'); knopf.type = 'button';
@@ -202,6 +238,32 @@ zaehlen();
         }
         z.append(links, rechts);
         $('klickListe').append(z);
+        const a = ANLEITUNG[p.plattform];
+        if (a) {
+          const d = document.createElement('details'); d.open = !p.eingerichtet;
+          const sm = document.createElement('summary'); sm.textContent = p.eingerichtet ? 'App-Schlüssel ändern' : `${p.name} einrichten (einmalig, ca. 10 Min.)`; d.append(sm);
+          const portal = document.createElement('a'); portal.href = a[0]; portal.target = '_blank'; portal.rel = 'noopener'; portal.className = 'knopf'; portal.textContent = 'Entwicklerportal öffnen'; portal.style.margin = '8px 0';
+          const ol = document.createElement('ol'); a[1].forEach((t) => { const li = document.createElement('li'); li.textContent = t; ol.append(li); });
+          const rl = document.createElement('div'); rl.className = 'hinweis'; rl.style.marginTop = '8px'; rl.textContent = 'Rückleitung: ';
+          const code = document.createElement('code'); code.textContent = p.rueckleitung; rl.append(code);
+          const kop = document.createElement('button'); kop.type = 'button'; kop.className = 'zweit'; kop.textContent = 'Kopieren'; kop.style.marginLeft = '6px';
+          kop.addEventListener('click', async () => { try { await navigator.clipboard.writeText(p.rueckleitung); kop.textContent = 'Kopiert ✓'; } catch { kop.textContent = 'Bitte markieren'; } });
+          rl.append(kop);
+          const f1 = document.createElement('input'); f1.type = 'text'; f1.placeholder = a[2]; f1.autocomplete = 'off'; f1.spellcheck = false;
+          const f2 = document.createElement('input'); f2.type = 'password'; f2.placeholder = a[3]; f2.autocomplete = 'off';
+          [f1, f2].forEach((f) => { f.style.cssText = 'width:100%;font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);margin-top:8px'; });
+          const sp = document.createElement('button'); sp.type = 'button'; sp.textContent = 'Speichern'; sp.style.marginTop = '8px';
+          sp.addEventListener('click', async () => {
+            try {
+              const res = await fetch(`${basis}/app/${p.plattform}`, { method: 'POST', headers: { authorization: `Bearer ${speicher.get()}`, 'content-type': 'application/json' }, body: JSON.stringify({ id: f1.value.trim(), geheim: f2.value.trim() }) });
+              const d2 = await res.json().catch(() => ({}));
+              if (!res.ok) throw new Error(d2.fehler || `Status ${res.status}`);
+              meldung(`✓ ${p.name}-App gespeichert – jetzt auf „Verbinden“ klicken.`, true); zeigen();
+            } catch (err) { meldung(err.message, false); }
+          });
+          d.append(portal, ol, rl, f1, f2, sp);
+          $('klickListe').append(d);
+        }
       }
       const ab = document.createElement('button'); ab.type = 'button'; ab.className = 'zweit'; ab.textContent = 'Abmelden'; ab.style.marginTop = '10px';
       ab.addEventListener('click', () => { speicher.set(''); zeigen(); });
