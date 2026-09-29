@@ -7,7 +7,7 @@ import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
 import { musikUnterlegen, untertitelZusammenfuegen } from './videoExtras.mjs';
-import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText } from './premium.mjs';
+import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen } from './premium.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -207,6 +207,20 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   let produktEbenen = null;
   const hgKi = join(ordner, 'hintergrund.jpg');
   const mitKiHg = premium && (await hintergrundHolen(skript.hintergrund, hgKi, { breite, hoehe, laden: ladeBild }).catch(() => false));
+  // Premium: erst alle Szenen sprechen - so ist die Gesamtlaenge fuer den Fortschrittsbalken bekannt.
+  // Etwas schnellere Stimme (+6 %) wirkt in Ads energischer.
+  const dauern = [];
+  if (premium) {
+    for (const [i, szene] of szenen.entries()) {
+      try {
+        await sprechen(szene.text, join(ordner, `s${i}.mp3`), join(ordner, `s${i}.srt`), szene.stimme || stimme, { tonhoehe: szene.tonhoehe, tempo: szene.tempo || '+6%' });
+        dauern[i] = dauerSekunden(join(ordner, `s${i}.mp3`)) + 0.3;
+      } catch { dauern[i] = 0; }
+    }
+  }
+  const gesamt = dauern.reduce((a, b) => a + (b || 0), 0) || 1;
+  const glanz = premium ? glanzBauen(join(ordner, 'glanz.png'), hoehe) : '';
+  let dingZeit = 0;
   const start = Date.now();
   for (const [i, szene] of szenen.entries()) {
     const bild = join(ordner, `s${i}.jpg`);
@@ -232,7 +246,8 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
       } else if (modus) bildVorbereiten(join(ordner, `r${i}.img`), bild, { breite, hoehe, modus });
       else if (letztesBild) execFileSync('cp', [letztesBild, bild]);
       else continue;
-      await sprechen(szene.text, mp3, srt, szene.stimme || stimme, { tonhoehe: szene.tonhoehe, tempo: szene.tempo });
+      if (!premium) await sprechen(szene.text, mp3, srt, szene.stimme || stimme, { tonhoehe: szene.tonhoehe, tempo: szene.tempo });
+      else if (!dauern[i]) continue;
       if (premium) {
         const ass = join(ordner, `s${i}.ass`);
         // Hook und Endkarte (Preis + Shop) laufen ueber .ass - so klappen sie in allen 50 Sprachen.
@@ -242,8 +257,10 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
           hook: clips.length === 0 ? hook : '',
           preis: letzte ? preisText(skript.preis, sprache, skript.waehrung) : '',
           shop: letzte ? skript.shop || '' : '',
+          fortschritt: { von: dauern.slice(0, i).reduce((a, b) => a + (b || 0), 0) / gesamt, bis: dauern.slice(0, i + 1).reduce((a, b) => a + (b || 0), 0) / gesamt, dauerMs: dauern[i] * 1000 },
         });
-        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i });
+        if (letzte) dingZeit = zeit + 0.4;
+        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz });
       } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
       letztesBild = bild;
       clips.push(clip);
@@ -260,7 +277,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   zusammenfuegen(clips, ziel, ordner);
   if (musik || premium) {
     try {
-      await musikUnterlegen(ziel, zeit, premium && !musik ? { stimmung: 'beat', whoosh: srtTeile.slice(1).map((t) => t.start) } : { stimmung: musik });
+      await musikUnterlegen(ziel, zeit, premium && !musik ? { stimmung: 'beat', whoosh: srtTeile.slice(1).map((t) => t.start), ding: dingZeit ? [dingZeit] : [] } : { stimmung: musik });
     } catch (err) {
       console.log(`[video-fabrik] Musik fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
     }

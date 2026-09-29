@@ -26,7 +26,7 @@ const whooshFormel = (zeiten) => zeiten.slice(0, 60).map((z) => `exp(-pow((t-${z
 
 // Langsame, schwebende Klangflaeche (oder Beat) in Videolaenge, leise unter die Stimme gemischt.
 // whoosh: Zeitpunkte (s), an denen ein Uebergangs-Rauschen liegt.
-export async function musikUnterlegen(video, dauer, { stimmung = 'ruhig', lautstaerke, whoosh = [] } = {}) {
+export async function musikUnterlegen(video, dauer, { stimmung = 'ruhig', lautstaerke, whoosh = [], ding = [] } = {}) {
   const d = Math.ceil(dauer) + 1;
   let quelle;
   let kette;
@@ -41,17 +41,22 @@ export async function musikUnterlegen(video, dauer, { stimmung = 'ruhig', lautst
     kette = `lowpass=f=1400,aecho=0.8:0.6:600|1100:0.25|0.15,afade=t=in:d=3,afade=t=out:st=${Math.max(d - 4, 0)}:d=4,volume=${lautstaerke ?? 1.2}`;
   }
   const mitWhoosh = whoosh.length > 0;
+  // "Ding" (zwei helle, abklingende Toene) z. B. wenn das Preisschild erscheint.
+  const dingFormel = ding.slice(0, 5).map((z) => `if(gte(t,${z.toFixed(2)}),(0.22*sin(2*PI*1760*(t-${z.toFixed(2)}))+0.12*sin(2*PI*2637*(t-${z.toFixed(2)})))*exp(-6*(t-${z.toFixed(2)})),0)`).join('+');
   const tmp = `${video}.musik.mp4`;
   await ausfuehren('ffmpeg', [
     '-loglevel', 'error', '-y', '-i', video,
     '-f', 'lavfi', '-i', `aevalsrc='${quelle}':s=44100:d=${d}`,
     ...(mitWhoosh ? ['-f', 'lavfi', '-i', `aevalsrc='0.5*(random(1)*2-1)*(${whooshFormel(whoosh)})':s=44100:d=${d}`] : []),
+    ...(dingFormel ? ['-f', 'lavfi', '-i', `aevalsrc='${dingFormel}':s=44100:d=${d}`] : []),
     '-filter_complex',
     // Beat: Musik duckt sich per Sidechain unter die Stimme, am Ende Lautheit wie auf TikTok/Reels (-14 LUFS).
     (stimmung === 'beat'
       ? `[0:a]asplit[s1][s2];[1:a]${kette},aformat=channel_layouts=stereo[m0];[m0][s2]sidechaincompress=threshold=0.02:ratio=5:attack=15:release=350[m];`
       : `[0:a]anull[s1];[1:a]${kette},aformat=channel_layouts=stereo[m];`) +
-      (mitWhoosh ? '[2:a]bandpass=f=1500:width_type=o:w=2.5,volume=0.8,aformat=channel_layouts=stereo[w];[s1][m][w]amix=inputs=3' : '[s1][m]amix=inputs=2') +
+      (mitWhoosh ? '[2:a]bandpass=f=1500:width_type=o:w=2.5,volume=0.8,aformat=channel_layouts=stereo[w];' : '') +
+      (dingFormel ? `[${mitWhoosh ? 3 : 2}:a]aformat=channel_layouts=stereo[dg];` : '') +
+      `[s1][m]${mitWhoosh ? '[w]' : ''}${dingFormel ? '[dg]' : ''}amix=inputs=${2 + (mitWhoosh ? 1 : 0) + (dingFormel ? 1 : 0)}` +
       `:duration=first:normalize=0${stimmung === 'beat' ? ',loudnorm=I=-14:TP=-1.5:LRA=11,aresample=44100' : ''}[a]`,
     '-map', '0:v', '-map', '[a]', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', tmp,
   ], { timeout: 3600000, maxBuffer: 16 * 1024 * 1024 });

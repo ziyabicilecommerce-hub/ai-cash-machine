@@ -123,8 +123,8 @@ async function langSkript(thema, minuten) {
 // Hook fuer das Bild: hoechstens 5 Woerter / 32 Zeichen, an Wortgrenze gekuerzt.
 function kurzHook(text) {
   let h = '';
-  for (const wort of String(text).replace(/[#"]/g, '').split(/\s+/).filter(Boolean).slice(0, 5)) {
-    if ((h + ' ' + wort).trim().length > 32) break;
+  for (const wort of String(text).replace(/[#"]/g, '').split(/\s+/).filter(Boolean).slice(0, 7)) {
+    if ((h + ' ' + wort).trim().length > 42) break;
     h = (h + ' ' + wort).trim();
   }
   return h.replace(/[\s–:,-]+$/, '');
