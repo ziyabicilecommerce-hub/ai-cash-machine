@@ -206,7 +206,8 @@ async function produktSkriptEinmal(p) {
   // Fester Seed je Produkt: derselbe KI-Hintergrund in allen Sprachen und an allen Tagen.
   const seed = [...String(p.handle || p.title)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 7);
   const hintergrund = { prompt: String(d.hintergrund || `elegant minimal setting for ${p.title}`).replace(/\s+/g, ' ').trim().slice(0, 300), seed };
-  return { titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, szenen };
+  const shop = (() => { try { return new URL(p.shopUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })();
+  return { titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, preis: Number(preis) || 0, waehrung: 'EUR', shop, szenen };
 }
 
 // Uebersetzt Titel, Caption und Sprechtexte; Produktfotos bleiben gleich.
@@ -218,7 +219,7 @@ async function uebersetzen(skript, sprache) {
   );
   const saetze = Array.isArray(d.saetze) ? d.saetze : [];
   if (saetze.length !== skript.szenen.length) throw new Error('Uebersetzung unvollstaendig');
-  return { titel: String(d.titel || skript.titel).slice(0, 120), hook: kurzHook(d.hook || d.titel || skript.titel), caption: String(d.caption || skript.caption).slice(0, 2000), hintergrund: skript.hintergrund, szenen: skript.szenen.map((x, i) => ({ ...x, text: String(saetze[i]).slice(0, 400) })) };
+  return { ...skript, titel: String(d.titel || skript.titel).slice(0, 120), hook: kurzHook(d.hook || d.titel || skript.titel), caption: String(d.caption || skript.caption).slice(0, 2000), szenen: skript.szenen.map((x, i) => ({ ...x, text: String(saetze[i]).slice(0, 400) })) };
 }
 
 // Uebersetzt bis zu 5 Skripte in EINER KI-Anfrage (spart das Anfrage-Limit der Gratis-KI);
@@ -239,7 +240,7 @@ async function uebersetzenBuendel(skripte, sprache) {
   return Promise.all(skripte.map(async (sk, i) => {
     const t = videos.find((x) => Number(x?.i) === i);
     if (t && Array.isArray(t.saetze) && t.saetze.length === sk.szenen.length) {
-      return { titel: String(t.titel || sk.titel).slice(0, 120), hook: kurzHook(t.hook || t.titel || sk.titel), caption: String(t.caption || sk.caption).slice(0, 2000), hintergrund: sk.hintergrund, szenen: sk.szenen.map((x, j) => ({ ...x, text: String(t.saetze[j]).slice(0, 400) })) };
+      return { ...sk, titel: String(t.titel || sk.titel).slice(0, 120), hook: kurzHook(t.hook || t.titel || sk.titel), caption: String(t.caption || sk.caption).slice(0, 2000), szenen: sk.szenen.map((x, j) => ({ ...x, text: String(t.saetze[j]).slice(0, 400) })) };
     }
     return uebersetzen(sk, sprache).catch(() => null);
   }));
