@@ -240,6 +240,8 @@ const T = (name, description, properties, required, fn) => ({ name, description,
 const S = (description) => ({ type: 'string', description });
 const N = (description) => ({ type: 'number', description });
 
+export { hole, q, kurz, zahl, sprache, htmlZuText, textGenerieren, T, S, N, UA };
+
 export const WERKZEUGE = [
   T('web_suche', 'Websuche ohne Key: DuckDuckGo-Sofortantwort plus Wikipedia-Treffer in jeder Sprache.', { suche: S('Suchbegriff'), sprache: S('Sprachcode, z. B. de, en, fr, ja (Standard de)') }, ['suche'], webSuche),
   T('webseite_lesen', 'Liest eine oeffentliche https-Webseite und gibt den Text zurueck (max. 20.000 Zeichen).', { url: S('https-Adresse') }, ['url'], webseiteLesen),
