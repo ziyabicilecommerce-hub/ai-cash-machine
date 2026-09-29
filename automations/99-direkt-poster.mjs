@@ -1,6 +1,7 @@
 // Direkt-Poster (#99) - kostenlose Alternative zu Metricool: postet die frisch gebauten
-// Videos (out/manifest.json) direkt ueber die offiziellen Gratis-APIs von YouTube,
-// Instagram, Facebook, Bluesky, Telegram und Mastodon. Jede Plattform laeuft nur, wenn
+// Videos (out/manifest.json) direkt ueber die offiziellen Gratis-APIs von YouTube, TikTok,
+// Instagram, Facebook, Threads, LinkedIn, Pinterest, Dailymotion, Bluesky, Telegram,
+// Mastodon, Discord und Reddit. Jede Plattform laeuft nur, wenn
 // ihre Secrets gesetzt sind. Jeder Post bekommt einen KI-Hinweis (EU AI Act Art. 50).
 //   node automations/99-direkt-poster.mjs <Release-Basis-URL>
 import { readFileSync, existsSync, mkdirSync, rmSync, createWriteStream } from 'node:fs';
@@ -8,6 +9,9 @@ import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { PLATTFORMEN } from './lib/plattformen.mjs';
+import { threads, linkedin, discord, reddit, pinterest, dailymotion } from './lib/plattformen2.mjs';
+
+const ALLE = [...PLATTFORMEN, threads, linkedin, pinterest, dailymotion, discord, reddit];
 
 const env = (k, d = '') => (process.env[k] || d).trim();
 const MANIFEST = join('out', 'manifest.json');
@@ -28,7 +32,7 @@ async function laden(url, ziel) {
 async function main() {
   const basis = (process.argv[2] || '').replace(/\/$/, '');
   if (!basis || !existsSync(MANIFEST)) return console.log('[99-direkt-poster] Keine Basis-URL oder kein Manifest - nichts zu posten.');
-  const aktiv = PLATTFORMEN.filter((p) => p.bereit() && (!NUR.length || NUR.includes(p.name.toLowerCase())));
+  const aktiv = ALLE.filter((p) => p.bereit() && (!NUR.length || NUR.includes(p.name.toLowerCase())));
   console.log(`[99-direkt-poster] Aktiv: ${aktiv.map((p) => p.name).join(', ') || 'keine (Secrets fehlen)'}`);
   if (!aktiv.length) return;
   const videos = JSON.parse(readFileSync(MANIFEST, 'utf8')).filter((m) => SPRACHEN.includes(m.sprache || 'de'));
@@ -43,7 +47,7 @@ async function main() {
       console.log(`[99-direkt-poster] ✗ ${m.datei}: ${err.message}`);
       continue;
     }
-    const v = { ...m, url, link: FEED_SEITE, datei, dateiname: m.datei, sprache: m.sprache || 'de', text: `${m.titel}\n\n${m.caption || ''}\n\n${KI_HINWEIS}`.trim() };
+    const v = { ...m, url, vorschauUrl: m.vorschau ? `${basis}/${encodeURIComponent(m.vorschau)}` : '', link: FEED_SEITE, datei, dateiname: m.datei, sprache: m.sprache || 'de', text: `${m.titel}\n\n${m.caption || ''}\n\n${KI_HINWEIS}`.trim() };
     for (const p of aktiv) {
       if (!p.passt(v)) continue;
       try {

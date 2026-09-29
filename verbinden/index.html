@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alles verbinden</title>
-<meta name="description" content="Ein Klick pro Plattform: Metricool, TikTok, Instagram, Facebook, YouTube, Pinterest, Threads, Bluesky, LinkedIn, Telegram, Mastodon und die GitHub-Secrets für den kostenlosen Direkt-Poster.">
+<meta name="description" content="Ein Klick pro Plattform: TikTok, Instagram, Facebook, Threads, YouTube, LinkedIn, Pinterest, Dailymotion, Bluesky, Telegram, Discord, Mastodon, Reddit – alles kostenlos über den Direkt-Poster.">
 <meta name="referrer" content="no-referrer">
 <style>
   :root { --bg:#070b12; --panel:#111827; --panel2:#0c1320; --gruen:#3ef2a0; --cyan:#6fe0ff; --txt:#eef3f8; --mut:#9fb0c3; --line:#1f2b3d; --auf:#04121a; }
@@ -20,7 +20,6 @@
   .zahl { font-size:13px; color:var(--mut); margin:6px 0 20px; }
   h2 { font-size:18px; margin:26px 0 4px; }
   .hinweis { color:var(--mut); font-size:14px; margin-bottom:10px; }
-  .gross { display:block; text-align:center; font-size:18px; font-weight:700; padding:16px; border-radius:14px; background:var(--gruen); color:var(--auf); text-decoration:none; margin:10px 0; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px; }
   .karte { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:8px; min-width:0; }
   .karte.fertig { border-color:var(--gruen); }
@@ -31,55 +30,55 @@
   .knopf.zweit { background:transparent; color:var(--txt); border:1px solid var(--line); font-weight:500; }
   label.haken { display:flex; gap:6px; align-items:center; font-size:13px; color:var(--mut); cursor:pointer; white-space:nowrap; }
   input[type=checkbox] { width:18px; height:18px; accent-color:var(--gruen); }
-  code { font-family:ui-monospace,monospace; font-size:12px; background:var(--panel2); padding:1px 5px; border-radius:5px; }
 </style>
 </head>
 <body>
 <main>
   <h1>ALLES <span>VERBINDEN</span></h1>
-  <p class="sub">Ein Klick pro Plattform – du landest direkt an der richtigen Stelle. Häkchen setzen, wenn erledigt (wird nur in diesem Browser gespeichert).</p>
+  <p class="sub">100 % kostenlos, ohne Abo: 13 Kanäle über die offiziellen Gratis-APIs. Ein Klick pro Plattform bringt dich direkt an die richtige Stelle. Häkchen setzen, wenn erledigt (wird nur in diesem Browser gespeichert).</p>
   <div class="fortschritt"><div id="balken"></div></div>
   <div class="zahl" id="zahl"></div>
 
-  <h2>1 · Metricool (alle Netzwerke an einer Stelle)</h2>
-  <p class="hinweis">Dort auf jeder Zeile „… verbinden“ klicken und bei der Plattform einloggen. TikTok: nur „business“ ODER „personal“ nehmen.</p>
-  <a class="gross" href="https://app.metricool.com/brands/connections?blogId=7054490" target="_blank" rel="noopener">➜ Metricool: Konten verbinden</a>
-  <div class="grid" id="metricool"></div>
+  <h2>1 · Sofort startklar (2–5 Minuten)</h2>
+  <p class="hinweis">Nur ein Passwort oder einen Link holen und bei GitHub eintragen – fertig.</p>
+  <div class="grid" id="sofort"></div>
 
-  <h2>2 · Kostenloser Direkt-Poster (#99) – Zugangsdaten holen</h2>
-  <p class="hinweis">Für automatisches, kostenloses Posten ohne Metricool-Abo. Jeder Knopf öffnet die Stelle, wo du den Schlüssel bekommst.</p>
-  <div class="grid" id="direkt"></div>
+  <h2>2 · Mit kostenloser Entwickler-App (15–20 Minuten, einmalig)</h2>
+  <p class="hinweis">Eigene App bei der Plattform anlegen (kostet nichts), Schlüssel holen, bei GitHub eintragen.</p>
+  <div class="grid" id="app"></div>
 
-  <h2>3 · In GitHub eintragen</h2>
-  <p class="hinweis">Geheimes (Passwörter, Tokens) unter „Secrets“, Normales (Kanalname, Adresse) unter „Variables“.</p>
+  <h2>3 · Podcast auf Spotify &amp; Apple</h2>
+  <div class="grid" id="podcast"></div>
+
+  <h2>4 · In GitHub eintragen</h2>
+  <p class="hinweis">Geheimes (Passwörter, Tokens, Webhook-Links) unter „Secrets“, Normales (Kanalname, Adresse, Board-ID) unter „Variables“.</p>
   <div class="grid" id="github"></div>
 </main>
 <script>
-const METRICOOL = [
-  ['m-tiktok', 'TikTok', 'Business- oder persönliches Konto (nur eins).'],
-  ['m-instagram', 'Instagram', 'Muss ein professionelles Konto sein, mit Facebook-Seite verknüpft.'],
-  ['m-facebook', 'Facebook-Seite', 'Die Seite, nicht das Privatprofil.'],
-  ['m-youtube', 'YouTube', 'Deinen Kanal wieder verbinden.'],
-  ['m-pinterest', 'Pinterest', 'Viel Reichweite für Produkte.'],
-  ['m-threads', 'Threads', 'Läuft über dein Instagram-Konto.'],
-  ['m-bluesky', 'Bluesky', 'Braucht ein App-Passwort (Knopf unten bei Bluesky).'],
-  ['m-linkedin', 'LinkedIn', 'Steht auf „erneut verbinden“.'],
-  ['m-google', 'Google-Unternehmensprofil', 'Nur wenn vorhanden.'],
+const SOFORT = [
+  ['s-bluesky', 'Bluesky', 'App-Passwort erstellen. Secrets: BLUESKY_HANDLE, BLUESKY_APP_PASSWORD.', [['App-Passwort erstellen', 'https://bsky.app/settings/app-passwords']]],
+  ['s-telegram', 'Telegram-Kanal', 'Kanal anlegen, deinen Bot als Admin hinzufügen. Variable: TELEGRAM_KANAL_ID (z. B. @deinkanal).', [['BotFather öffnen', 'https://t.me/BotFather']]],
+  ['s-discord', 'Discord', 'Kanal bearbeiten → Integrationen → Webhooks → Neuer Webhook → URL kopieren. Secret: DISCORD_WEBHOOK_URL.', [['Discord öffnen', 'https://discord.com/app'], ['Anleitung Webhooks', 'https://support.discord.com/hc/de/articles/228383668']]],
+  ['s-mastodon', 'Mastodon', 'Neue Anwendung mit Recht „write“. Secret: MASTODON_TOKEN, Variable: MASTODON_URL.', [['Anwendung anlegen', 'https://mastodon.social/settings/applications/new']]],
+  ['s-reddit', 'Reddit', 'App vom Typ „script“ anlegen. Secrets: REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USERNAME, REDDIT_PASSWORD. Postet 1× pro Lauf ins eigene Profil.', [['Reddit-App anlegen', 'https://www.reddit.com/prefs/apps']]],
 ];
-const DIREKT = [
-  ['d-bluesky', 'Bluesky', 'App-Passwort erstellen → als Secrets BLUESKY_HANDLE + BLUESKY_APP_PASSWORD.', [['App-Passwort erstellen', 'https://bsky.app/settings/app-passwords']]],
-  ['d-telegram', 'Telegram-Kanal', 'Kanal anlegen, Bot als Admin hinzufügen → Variable TELEGRAM_KANAL_ID (z. B. @deinkanal).', [['BotFather öffnen', 'https://t.me/BotFather']]],
-  ['d-tiktok', 'TikTok', 'App anlegen und Refresh-Token holen – mit Schritt-für-Schritt-Seite.', [['TikTok verbinden', '../tiktok-verbinden/'], ['TikTok Developer', 'https://developers.tiktok.com/apps/']]],
-  ['d-meta', 'Instagram + Facebook', 'Meta-App (Business) anlegen, dich als Instagram-Tester eintragen, Token erzeugen und verlängern.', [['Meta-App anlegen', 'https://developers.facebook.com/apps/'], ['Graph API Explorer', 'https://developers.facebook.com/tools/explorer/'], ['Token verlängern', 'https://developers.facebook.com/tools/debug/accesstoken/']]],
-  ['d-youtube', 'YouTube', 'Projekt anlegen, YouTube Data API v3 aktivieren, OAuth-Client (Webanwendung), dann Refresh-Token im Playground holen.', [['YouTube API aktivieren', 'https://console.cloud.google.com/apis/library/youtube.googleapis.com'], ['OAuth-Client anlegen', 'https://console.cloud.google.com/apis/credentials'], ['OAuth Playground', 'https://developers.google.com/oauthplayground/']]],
-  ['d-mastodon', 'Mastodon', 'Einstellungen → Entwicklung → Neue Anwendung (Recht: write) → Secret MASTODON_TOKEN, Variable MASTODON_URL.', [['mastodon.social: Anwendung', 'https://mastodon.social/settings/applications/new']]],
-  ['d-podcast', 'Podcast (Spotify/Apple)', 'Erst Variable PODCAST_EMAIL setzen, dann den RSS-Feed einreichen.', [['Spotify for Creators', 'https://creators.spotify.com/'], ['Apple Podcasts Connect', 'https://podcastsconnect.apple.com/'], ['Podcast-Seite (RSS)', '../podcast/']]],
+const APP = [
+  ['a-tiktok', 'TikTok', 'App anlegen und Refresh-Token holen – mit Schritt-für-Schritt-Seite. Secrets: TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET, TIKTOK_REFRESH_TOKEN.', [['TikTok verbinden', '../tiktok-verbinden/'], ['TikTok Developer', 'https://developers.tiktok.com/apps/']]],
+  ['a-meta', 'Instagram + Facebook', 'Eine Meta-App (Business), dich als Instagram-Tester eintragen, Token erzeugen und auf 60 Tage verlängern. Secrets: META_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ACCOUNT_ID, FACEBOOK_PAGE_ID, FACEBOOK_PAGE_TOKEN.', [['Meta-App anlegen', 'https://developers.facebook.com/apps/'], ['Graph API Explorer', 'https://developers.facebook.com/tools/explorer/'], ['Token verlängern', 'https://developers.facebook.com/tools/debug/accesstoken/']]],
+  ['a-threads', 'Threads', 'In derselben Meta-App den Anwendungsfall „Threads API“ hinzufügen, dich als Threads-Tester eintragen, Token erzeugen. Secrets: THREADS_ACCESS_TOKEN, THREADS_USER_ID.', [['Meta-App öffnen', 'https://developers.facebook.com/apps/']]],
+  ['a-youtube', 'YouTube', 'Projekt anlegen, YouTube Data API v3 aktivieren, OAuth-Client (Webanwendung), Refresh-Token im Playground holen. Secrets: YOUTUBE_CLIENT_ID, YOUTUBE_CLIENT_SECRET, YOUTUBE_REFRESH_TOKEN. Uploads erst privat.', [['YouTube-API aktivieren', 'https://console.cloud.google.com/apis/library/youtube.googleapis.com'], ['OAuth-Client anlegen', 'https://console.cloud.google.com/apis/credentials'], ['OAuth Playground', 'https://developers.google.com/oauthplayground/']]],
+  ['a-linkedin', 'LinkedIn', 'App anlegen, Produkte „Share on LinkedIn“ und „Sign In with LinkedIn (OpenID)“ hinzufügen, Token mit w_member_social, openid, profile erzeugen. Secret: LINKEDIN_ACCESS_TOKEN (60 Tage gültig).', [['LinkedIn-App anlegen', 'https://www.linkedin.com/developers/apps/new'], ['Token-Generator', 'https://www.linkedin.com/developers/tools/oauth/token-generator']]],
+  ['a-dailymotion', 'Dailymotion', 'API-Schlüssel im Partner-Bereich anlegen. Secrets: DAILYMOTION_API_KEY, DAILYMOTION_API_SECRET, DAILYMOTION_USERNAME, DAILYMOTION_PASSWORD.', [['Dailymotion Partner', 'https://www.dailymotion.com/partner/'], ['API-Doku', 'https://developers.dailymotion.com/']]],
+  ['a-pinterest', 'Pinterest', 'App anlegen, Token erzeugen, Board-ID heraussuchen. Secret: PINTEREST_ACCESS_TOKEN, Variable: PINTEREST_BOARD_ID. Achtung: Mit „Trial“-Zugang sieht nur DU die Pins (dann Variable PINTEREST_API_BASIS = https://api-sandbox.pinterest.com/v5). Öffentlich erst nach Freigabe „Standard“.', [['Pinterest-App anlegen', 'https://developers.pinterest.com/apps/']]],
+];
+const PODCAST = [
+  ['p-podcast', 'Spotify + Apple Podcasts', 'Erst Variable PODCAST_EMAIL setzen, nach der ersten Folge den RSS-Link einreichen.', [['Spotify for Creators', 'https://creators.spotify.com/'], ['Apple Podcasts Connect', 'https://podcastsconnect.apple.com/'], ['Podcast-Seite (RSS)', '../podcast/']]],
 ];
 const REPO = 'https://github.com/ziyabicilecommerce-hub/ai-cash-machine';
 const GITHUB = [
-  ['g-secrets', 'GitHub Secrets', 'Tokens & Passwörter: BLUESKY_*, TIKTOK_*, META_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ACCOUNT_ID, FACEBOOK_PAGE_*, YOUTUBE_*, MASTODON_TOKEN.', [['Neues Secret', `${REPO}/settings/secrets/actions/new`], ['Alle Secrets', `${REPO}/settings/secrets/actions`]]],
-  ['g-vars', 'GitHub Variables', 'Normale Werte: TELEGRAM_KANAL_ID, MASTODON_URL, PODCAST_EMAIL, TIKTOK_MODUS.', [['Neue Variable', `${REPO}/settings/variables/actions/new`], ['Alle Variables', `${REPO}/settings/variables/actions`]]],
-  ['g-test', 'Testlauf starten', 'Nach dem Eintragen: Video-Fabrik starten – der Direkt-Poster postet danach automatisch.', [['Video-Fabrik starten', `${REPO}/actions/workflows/automation-94-video-fabrik.yml`]]],
+  ['g-secrets', 'GitHub Secrets', 'Alles Geheime aus den Karten oben (Tokens, Passwörter, Webhook-Link).', [['Neues Secret', `${REPO}/settings/secrets/actions/new`], ['Alle Secrets', `${REPO}/settings/secrets/actions`]]],
+  ['g-vars', 'GitHub Variables', 'Normale Werte: TELEGRAM_KANAL_ID, MASTODON_URL, PINTEREST_BOARD_ID, PODCAST_EMAIL, TIKTOK_MODUS.', [['Neue Variable', `${REPO}/settings/variables/actions/new`], ['Alle Variables', `${REPO}/settings/variables/actions`]]],
+  ['g-test', 'Testlauf starten', 'Nach dem Eintragen: Video-Fabrik starten – der Direkt-Poster postet danach automatisch auf alle verbundenen Kanäle.', [['Video-Fabrik starten', `${REPO}/actions/workflows/automation-94-video-fabrik.yml`]]],
 ];
 
 const lesen = () => { try { return JSON.parse(localStorage.getItem('verbinden') || '{}'); } catch { return {}; } };
@@ -97,19 +96,20 @@ function karte([id, titel, text, links]) {
   lab.append(cb, document.createTextNode('erledigt'));
   kopf.append(lab);
   k.append(kopf, el('p', '', text));
-  (links || [['In Metricool verbinden', 'https://app.metricool.com/brands/connections?blogId=7054490']]).forEach(([t, h], i) => {
+  links.forEach(([t, h], i) => {
     const a = el('a', `knopf${i ? ' zweit' : ''}`, `${t} ➜`); a.href = h; a.target = '_blank'; a.rel = 'noopener'; k.append(a);
   });
   return k;
 }
-const alle = [...METRICOOL, ...DIREKT, ...GITHUB];
+const alle = [...SOFORT, ...APP, ...PODCAST, ...GITHUB];
 function zaehlen() {
   const n = alle.filter(([id]) => stand[id]).length;
   document.getElementById('balken').style.width = `${Math.round((n / alle.length) * 100)}%`;
   document.getElementById('zahl').textContent = `${n} von ${alle.length} erledigt`;
 }
-METRICOOL.forEach((x) => document.getElementById('metricool').append(karte(x)));
-DIREKT.forEach((x) => document.getElementById('direkt').append(karte(x)));
+SOFORT.forEach((x) => document.getElementById('sofort').append(karte(x)));
+APP.forEach((x) => document.getElementById('app').append(karte(x)));
+PODCAST.forEach((x) => document.getElementById('podcast').append(karte(x)));
 GITHUB.forEach((x) => document.getElementById('github').append(karte(x)));
 zaehlen();
 </script>
