@@ -97,12 +97,22 @@ async function waehrungUmrechnen({ betrag, von, nach }) {
   return { betrag: d.amount, von: d.base, datum: d.date, ergebnis: d.rates, quelle: 'Europaeische Zentralbank (Frankfurter)' };
 }
 
+// Yahoo-Finance-Chart (ohne Key), Rueckfall Stooq. Symbole z. B. AAPL, SAP.DE, ^GDAXI, BTC-EUR.
 async function aktienKurs({ symbol }) {
-  const csv = await hole(`https://stooq.com/q/l/?s=${q(String(symbol).toLowerCase())}&f=sd2t2ohlcv&h&e=csv`, { text: true });
-  const [kopf, werte] = csv.trim().split('\n');
-  if (!werte || /N\/D/.test(werte)) throw new Error(`Kein Kurs fuer "${symbol}" (US-Aktien z. B. aapl.us, DE z. B. sap.de)`);
-  const k = kopf.split(','); const w = werte.split(',');
-  return Object.fromEntries(k.map((x, i) => [x.toLowerCase(), w[i]]));
+  const sym = String(symbol || '').trim();
+  try {
+    const d = await hole(`https://query1.finance.yahoo.com/v8/finance/chart/${q(sym.toUpperCase())}?range=5d&interval=1d`);
+    const r = d.chart?.result?.[0];
+    if (!r) throw new Error(d.chart?.error?.description || 'kein Ergebnis');
+    const m = r.meta;
+    return { symbol: m.symbol, name: m.longName || m.shortName || '', kurs: m.regularMarketPrice, vortag: m.chartPreviousClose, waehrung: m.currency, boerse: m.exchangeName, zeit: new Date(m.regularMarketTime * 1000).toISOString(), quelle: 'Yahoo Finance' };
+  } catch (err) {
+    const csv = await hole(`https://stooq.com/q/l/?s=${q(sym.toLowerCase())}&f=sd2t2ohlcv&h&e=csv`, { text: true }).catch(() => '');
+    const [kopf, werte] = csv.trim().split('\n');
+    if (!werte || /N\/D/.test(werte)) throw new Error(`Kein Kurs fuer "${sym}" (${err.message}). Beispiele: AAPL, SAP.DE, ^GDAXI`);
+    const k = kopf.split(','); const w = werte.split(',');
+    return { ...Object.fromEntries(k.map((x, i) => [x.toLowerCase(), w[i]])), quelle: 'Stooq' };
+  }
 }
 
 async function feiertage({ land, jahr }) {
@@ -111,12 +121,20 @@ async function feiertage({ land, jahr }) {
 }
 
 async function landInfo({ land }) {
-  const d = await hole(`https://restcountries.com/v3.1/name/${q(land)}?fields=name,capital,population,region,subregion,languages,currencies,timezones,flag,cca2`);
-  return d.slice(0, 3).map((l) => ({ name: l.name?.common, offiziell: l.name?.official, code: l.cca2, hauptstadt: l.capital, einwohner: l.population, region: `${l.region} / ${l.subregion || ''}`, sprachen: Object.values(l.languages || {}), waehrungen: Object.keys(l.currencies || {}), zeitzonen: l.timezones, flagge: l.flag }));
+  const d = await hole(`https://restcountries.com/v3.1/name/${q(land)}?fields=name,capital,population,region,languages,currencies,timezones,flag,cca2`);
+  if (!Array.isArray(d)) throw new Error(d?.message || `Land "${land}" nicht gefunden`);
+  return d.slice(0, 3).map((l) => ({ name: l.name?.common, offiziell: l.name?.official, code: l.cca2, hauptstadt: l.capital, einwohner: l.population, region: l.region, sprachen: Object.values(l.languages || {}), waehrungen: Object.keys(l.currencies || {}), zeitzonen: l.timezones, flagge: l.flag }));
 }
 
+// dictionaryapi.dev, Rueckfall Wiktionary.
 async function woerterbuch({ wort }) {
-  const d = await hole(`https://api.dictionaryapi.dev/api/v2/entries/en/${q(wort)}`);
+  let d;
+  try {
+    d = await hole(`https://api.dictionaryapi.dev/api/v2/entries/en/${q(wort)}`);
+  } catch {
+    const w = await hole(`https://en.wiktionary.org/api/rest_v1/page/definition/${q(wort)}`);
+    return (w.en || []).slice(0, 4).map((m) => ({ wort, wortart: m.partOfSpeech, erklaerungen: (m.definitions || []).slice(0, 3).map((x) => htmlZuText(x.definition)), quelle: 'Wiktionary' }));
+  }
   return d.slice(0, 2).map((e) => ({ wort: e.word, lautschrift: e.phonetic || '', bedeutungen: (e.meanings || []).slice(0, 4).map((m) => ({ wortart: m.partOfSpeech, erklaerungen: m.definitions.slice(0, 3).map((x) => x.definition) })) }));
 }
 
@@ -149,8 +167,18 @@ async function bildGenerieren({ beschreibung, breite, hoehe }) {
 }
 
 async function textGenerieren({ anweisung }) {
-  const d = await hole('https://text.pollinations.ai/openai', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ model: 'openai-fast', messages: [{ role: 'user', content: String(anweisung).slice(0, 8000) }] }) });
-  return { text: d?.choices?.[0]?.message?.content || '', modell: 'Pollinations openai-fast (kostenlos)' };
+  const prompt = String(anweisung).slice(0, 8000);
+  for (let versuch = 0; versuch < 2; versuch++) {
+    try {
+      const d = await hole('https://text.pollinations.ai/openai', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ model: 'openai-fast', messages: [{ role: 'user', content: prompt }] }) });
+      const text = d?.choices?.[0]?.message?.content || '';
+      if (text) return { text, modell: 'Pollinations openai-fast (kostenlos)' };
+    } catch {
+      /* zweiter Weg unten */
+    }
+  }
+  const text = await hole(`https://text.pollinations.ai/${q(prompt.slice(0, 1500))}`, { text: true });
+  return { text: text.slice(0, MAX_TEXT), modell: 'Pollinations (kostenlos)' };
 }
 
 async function uhrzeit({ zeitzone }) {
@@ -200,7 +228,7 @@ export const WERKZEUGE = [
   T('ort_suchen', 'Findet Orte/Adressen weltweit mit Koordinaten (OpenStreetMap).', { ort: S('Adresse oder Ort'), limit: N('max. Treffer') }, ['ort'], ortSuchen),
   T('krypto_preise', 'Krypto-Preise, 24h-Aenderung und Marktkapitalisierung (CoinGecko).', { coins: S('CoinGecko-IDs, z. B. bitcoin,ethereum,solana'), waehrung: S('z. B. eur, usd') }, [], kryptoPreise),
   T('waehrung_umrechnen', 'Waehrungen umrechnen mit EZB-Kursen.', { betrag: N('Betrag'), von: S('z. B. EUR'), nach: S('z. B. USD,TRY,JPY') }, ['betrag'], waehrungUmrechnen),
-  T('aktien_kurs', 'Letzter Aktien-/Index-Kurs (Stooq), z. B. aapl.us, sap.de, ^dax.', { symbol: S('Stooq-Symbol') }, ['symbol'], aktienKurs),
+  T('aktien_kurs', 'Aktueller Aktien-/Index-/Krypto-Kurs (Yahoo Finance), z. B. AAPL, SAP.DE, ^GDAXI, BTC-EUR.', { symbol: S('Boersensymbol') }, ['symbol'], aktienKurs),
   T('feiertage', 'Gesetzliche Feiertage eines Landes und Jahres.', { land: S('Laendercode, z. B. DE, TR, US'), jahr: N('Jahr') }, [], feiertage),
   T('land_info', 'Infos zu einem Land: Hauptstadt, Einwohner, Sprachen, Waehrung, Zeitzonen.', { land: S('Landname (englisch), z. B. Germany') }, ['land'], landInfo),
   T('woerterbuch', 'Englisches Woerterbuch: Bedeutungen und Lautschrift.', { wort: S('englisches Wort') }, ['wort'], woerterbuch),
