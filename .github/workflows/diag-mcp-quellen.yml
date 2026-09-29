@@ -2,16 +2,24 @@ name: diag-mcp-quellen
 on:
   push:
     branches: [feat/mcp-mehr-quellen]
-    paths: [.github/workflows/diag-mcp-quellen.yml]
+    paths: [.github/workflows/diag-mcp-quellen.yml, automations/lib/mcpQuellen2.mjs]
 permissions:
   contents: read
 jobs:
   pruefen:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - run: |
-          for u in "https://glama.ai/api/mcp/v1/servers?first=3" "https://api.pulsemcp.com/v0beta/servers?count_per_page=3" "https://huggingface.co/api/spaces?filter=mcp-server&limit=3" "https://azuresearch-usnc.nuget.org/query?q=mcp&take=3" "https://gitee.com/api/v5/search/repositories?q=mcp&per_page=3" "https://registry.smithery.ai/servers?pageSize=3" "https://codeberg.org/api/v1/repos/search?q=mcp&limit=3" "https://search.maven.org/solrsearch/select?q=mcp&rows=3&wt=json" "https://hub.docker.com/v2/search/repositories/?query=mcp&page_size=3"; do
-            echo "=== $u"
-            curl -sS -m 30 -A "ai-cash-machine-mcp-katalog" -D - "$u" | head -c 1500 | tr -d '\r' | grep -iv "^set-cookie" | head -40
-            echo
-          done
+          node --input-type=module -e "
+          import * as q from './automations/lib/mcpQuellen2.mjs';
+          for (const n of ['smithery', 'huggingface', 'dockerhub', 'nuget', 'maven', 'codeberg']) {
+            const fn = n === 'dockerhub' ? q.dockerHub : q[n];
+            const t = Date.now();
+            try { const l = await fn(); console.log(n, l.length, Math.round((Date.now() - t) / 1000) + 's', JSON.stringify(l[0] || {}).slice(0, 200)); }
+            catch (e) { console.log(n, 'FEHLER', e.message); }
+          }"
