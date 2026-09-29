@@ -256,7 +256,8 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         assAusSrt(srt, ass, {
           breite, hoehe, sprache, thema: themaFuer(skript.hintergrund?.seed),
           hook: clips.length === 0 ? hook : '',
-          preis: letzte ? preisText(skript.preis, sprache, skript.waehrung) : '',
+          preis: szene.preis ? preisText(szene.preis, sprache, skript.waehrung) : letzte ? preisText(skript.preis, sprache, skript.waehrung) : '',
+          rang: szene.rang || 0,
           shop: letzte ? skript.shop || '' : '',
           marke: String(skript.shop || '').split('.')[0].toUpperCase(),
           fortschritt: { von: dauern.slice(0, i).reduce((a, b) => a + (b || 0), 0) / gesamt, bis: dauern.slice(0, i + 1).reduce((a, b) => a + (b || 0), 0) / gesamt, dauerMs: dauern[i] * 1000 },

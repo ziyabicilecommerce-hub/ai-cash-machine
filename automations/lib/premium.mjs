@@ -160,7 +160,7 @@ export function preisText(preis, sprache, waehrung = 'EUR') {
 // Baut aus der .srt von edge-tts eine .ass, in der das gerade gesprochene Wort aufleuchtet.
 // Zeiten je Wort werden nach Zeichenlaenge verteilt. Optional: hook (grosse Schlagzeile oben,
 // klappt anders als drawtext in allen Schriften), preis + shop (Endkarte der letzten Szene).
-export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', preis = '', shop = '', fortschritt = null, marke = '' }) {
+export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', preis = '', shop = '', fortschritt = null, marke = '', rang = 0 }) {
   const groesse = Math.round(Math.min(breite, hoehe) * 0.078);
   const unten = Math.round(hoehe * (hoehe > breite ? 0.25 : 0.09));
   const rand = Math.round(breite * 0.06);
@@ -204,6 +204,8 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
     const h = GROSS_OK.test(hook) ? hook.toLocaleUpperCase(sprache) : hook;
     zeilen.push(`Dialogue: 1,${assZeit(0)},${assZeit(3300)},Hook,,0,0,0,,{\\fad(0,300)}${pop}${assText(h)}`);
   }
+  // Rang-Badge fuer Countdown-Videos (Top 5): gross, schraeg, links oben.
+  if (rang) zeilen.push(`Dialogue: 2,${assZeit(150)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * 0.22)},${Math.round(hoehe * 0.19)})\\fs${Math.round(Math.min(breite, hoehe) * 0.16)}\\frz8}${pop}#${rang}`);
   if (preis) zeilen.push(`Dialogue: 2,${assZeit(350)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * 0.7)},${Math.round(hoehe * 0.1)})}${pop}${assText(preis)}`);
   // Fortschrittsbalken oben (wie bei TikTok): waechst ueber das ganze Video, je Szene ein Stueck.
   if (fortschritt) {
