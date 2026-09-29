@@ -1,0 +1,42 @@
+name: "MCP Ultimativ · Selbsttest"
+
+# Ruft jedes Internet-Werkzeug des Ultimativ-MCP einmal echt auf und zeigt, was funktioniert.
+# Manuell starten (Actions -> Run workflow); laeuft zusaetzlich jeden Montag.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 5 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Alle Werkzeuge aufrufen
+        run: |
+          node scripts/mcp-ultimativ-test.mjs '[
+            ["web_suche",{"suche":"Klimmzugband"}],["wikipedia",{"titel":"Berlin"}],["nachrichten",{"suche":"Onlinehandel"}],
+            ["wetter",{"ort":"Frankfurt"}],["krypto_preise",{"coins":"bitcoin"}],["waehrung_umrechnen",{"betrag":100,"nach":"USD"}],
+            ["aktien_kurs",{"symbol":"SAP.DE"}],["feiertage",{"land":"DE"}],["land_info",{"land":"Germany"}],["woerterbuch",{"wort":"hello"}],
+            ["github_suche",{"suche":"mcp","limit":2}],["hacker_news",{"suche":"ai","limit":2}],["arxiv_suche",{"suche":"video","limit":2}],
+            ["uebersetzen",{"text":"Guten Morgen","nach":"en"}],["buch_suche",{"suche":"Harry Potter","limit":2}],["serien_suche",{"suche":"Dark"}],
+            ["rezept_suche",{"suche":"pasta"}],["cocktail_suche",{"suche":"mojito"}],["witz",{}],["zitat",{}],["plz_info",{"plz":"65795"}],
+            ["erdbeben",{}],["luftqualitaet",{"ort":"Berlin"}],["sonnenzeiten",{"ort":"Frankfurt"}],["iss_position",{}],["nasa_bild_des_tages",{}],
+            ["bundesliga_tabelle",{}],["bahn_abfahrten",{"bahnhof":"Frankfurt Hbf","minuten":30}],["musik_suche",{"suche":"Apache 207"}],
+            ["podcast_suche",{"suche":"Hotel Matze"}],["lebensmittel_info",{"barcode":"3017620422003"}],["heute_in_geschichte",{}],
+            ["ip_info",{}],["dns_abfrage",{"domain":"github.com"}],["domain_info",{"domain":"example.com"}],["webseite_status",{"url":"https://github.com"}],
+            ["url_kuerzen",{"url":"https://github.com"}],["npm_paket",{"name":"react"}],["pypi_paket",{"name":"requests"}],
+            ["stackoverflow_suche",{"suche":"ffmpeg overlay","limit":2}],["reddit_suche",{"suche":"dropshipping","limit":2}],
+            ["farbpalette",{"farbe":"#ff5500"}],["hashtags",{"thema":"Klimmzugband"}],["rechnen",{"ausdruck":"2^10"}]
+          ]' | tee ergebnis.txt
+          echo "## Ultimativ-MCP Selbsttest" >> "$GITHUB_STEP_SUMMARY"
+          echo "OK: $(grep -c '^— ' ergebnis.txt) aufgerufen, Fehler: $(grep -c 'FEHLER' ergebnis.txt)" >> "$GITHUB_STEP_SUMMARY"
+          grep 'FEHLER' ergebnis.txt >> "$GITHUB_STEP_SUMMARY" || true
