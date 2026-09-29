@@ -6,7 +6,7 @@
 // sortiert sie nach Kategorien und markiert, welche laut Registry-Eintrag
 // keinen API-Key verlangen (OAuth-Logins stehen dort oft nicht drin). Ergebnis landet in mcp-hub/catalog.json
 // und wird von der MCP-Hub-Seite angezeigt.
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';
 import { githubTopics, npmPakete, pypiPakete, dockerKatalog, awesomeListen, repoSchluessel } from './lib/mcpQuellen.mjs';
 import { smithery, huggingface, dockerHub, nuget, crates, packagist, rubygems, maven, gitlab, codeberg } from './lib/mcpQuellen2.mjs';
 
@@ -104,6 +104,22 @@ function zusammenfuehren(alle) {
   return [...gesehen.values()];
 }
 
+// Gleicher Schluessel wie in 93-mcp-analyse.mjs (npm-/PyPI-Paket, sonst GitHub-Repo).
+function analyseSchluessel(s) {
+  if (s.p?.startsWith('npm:')) return s.p;
+  if (s.p?.startsWith('pypi:')) return `pypi:${s.p.slice(5).toLowerCase()}`;
+  const m = (s.r || '').match(/github\.com\/([^/\s#?]+)\/([^/\s#?]+)/i);
+  return m ? `gh:${m[1]}/${m[2].replace(/\.git$/i, '')}`.toLowerCase() : null;
+}
+
+// Laut Paket-Analyse (#93) "unklar" (0) oder "starkes Warnsignal" (3) -> fliegt raus.
+function aussortieren(server) {
+  if (!existsSync('mcp-hub/analyse.json')) return { server, weg: 0 };
+  const e = JSON.parse(readFileSync('mcp-hub/analyse.json', 'utf8')).e || {};
+  const behalten = server.filter((s) => { const k = analyseSchluessel(s); const st = k ? e[k]?.[0] : undefined; return st !== 0 && st !== 3; });
+  return { server: behalten, weg: server.length - behalten.length };
+}
+
 function kompakt(e) {
   const o = { n: e.n, c: e.c, q: e.q.join(','), k: e.k };
   if (e.id && e.id !== e.n) o.id = e.id;
@@ -137,8 +153,10 @@ async function main() {
     }
   }
 
-  const server = zusammenfuehren(alle)
-    .filter((e) => e.n)
+  const sortiert = aussortieren(zusammenfuehren(alle).filter((e) => e.n));
+  quellen.aussortiert = sortiert.weg;
+  console.log(`[91-mcp-katalog] ${sortiert.weg} unklare/gefaehrliche Server aussortiert`);
+  const server = sortiert.server
     .map((e) => ({ ...e, c: kategorie(`${e.n} ${e.id || ''} ${e.d || ''}`) }));
   server.sort((a, b) => (b.s || 0) - (a.s || 0) || (b.q.includes('offiziell') - a.q.includes('offiziell')) || a.n.localeCompare(b.n));
 
