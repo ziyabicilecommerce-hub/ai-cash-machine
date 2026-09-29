@@ -7,6 +7,7 @@ import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
 import { musikUnterlegen, untertitelZusammenfuegen } from './videoExtras.mjs';
+import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild } from './premium.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -17,10 +18,10 @@ export function dauerSekunden(datei) {
   return Number(out) || 0;
 }
 
-export async function ladeBild(prompt, ziel, { breite, hoehe }) {
+export async function ladeBild(prompt, ziel, { breite, hoehe, seed }) {
   for (let versuch = 0; versuch < 4; versuch++) {
     try {
-      const res = await fetch(bildURL(prompt, { width: breite, height: hoehe }), { signal: AbortSignal.timeout(120000) });
+      const res = await fetch(bildURL(prompt, { width: breite, height: hoehe, seed }), { signal: AbortSignal.timeout(120000) });
       const typ = res.headers.get('content-type') || '';
       if (res.ok && typ.startsWith('image/')) {
         writeFileSync(ziel, Buffer.from(await res.arrayBuffer()));
@@ -88,6 +89,11 @@ export function bildVorbereiten(roh, ziel, { breite, hoehe, modus }) {
     ? `[0:v]${cover},boxblur=40:6,eq=brightness=-0.10:saturation=1.1[bg];[0:v]scale=${Math.round(breite * 0.9)}:${Math.round(hoehe * 0.72)}:force_original_aspect_ratio=decrease[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2-${Math.round(hoehe * 0.04)}`
     : `[0:v]crop=iw:ih*0.93:0:0,${cover}`;
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', roh, '-filter_complex', filter, '-frames:v', '1', '-q:v', '2', ziel], { stdio: 'pipe', timeout: 120000 });
+}
+
+// Weichgezeichneter Hintergrund aus dem Produktfoto (Premium-Ersatz, wenn kein KI-Hintergrund da ist).
+function unscharfHintergrund(roh, ziel, { breite, hoehe }) {
+  execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', roh, '-vf', `scale=${breite}:${hoehe}:force_original_aspect_ratio=increase,crop=${breite}:${hoehe},boxblur=40:6,eq=brightness=-0.12:saturation=1.15`, '-frames:v', '1', '-q:v', '2', ziel], { stdio: 'pipe', timeout: 120000 });
 }
 
 // Kamerabewegung im Wechsel: Zoom rein, Zoom raus, Schwenk nach rechts, Schwenk nach links.
@@ -180,7 +186,9 @@ async function bildHolen(szene, roh, { breite, hoehe, stil }) {
 // Kamerabewegung weiter) - so passen auch 1-Stunden-Videos in das 6-Stunden-Limit.
 // musik: 'ruhig' | 'anime' legt eine eigene, leise Klangflaeche darunter. Szene.kapitel setzt
 // eine YouTube-Kapitelmarke. Zurueck kommen auch Kapitelmarken und eine Gesamt-.srt.
-export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '', bildAlle = 1, musik = '' } = {}) {
+// premium: Produkt freigestellt vor KI-Hintergrund (skript.hintergrund = {prompt, seed}),
+// 2.5D-Parallaxe, Farblook, Wort-fuer-Wort-Untertitel, Beat und Whoosh (siehe premium.mjs).
+export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '', bildAlle = 1, musik = '', premium = false, sprache = 'de' } = {}) {
   if (!existsSync(ordner)) mkdirSync(ordner, { recursive: true });
   const [breite, hoehe] = format === 'quer' ? [1920, 1080] : [1080, 1920];
   const szenen = skript.szenen;
@@ -195,6 +203,9 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   const kapitel = [];
   let zeit = 0;
   let letztesBild = '';
+  let ebenen = null;
+  const hgKi = join(ordner, 'hintergrund.jpg');
+  const mitKiHg = premium && (await hintergrundHolen(skript.hintergrund, hgKi, { breite, hoehe, laden: ladeBild }).catch(() => false));
   const start = Date.now();
   for (const [i, szene] of szenen.entries()) {
     const bild = join(ordner, `s${i}.jpg`);
@@ -206,11 +217,26 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
     const naechstes = szenen.findIndex((_, j) => j > i && neu(j));
     if (naechstes > 0) holen(naechstes);
     try {
-      if (modus) bildVorbereiten(join(ordner, `r${i}.img`), bild, { breite, hoehe, modus });
+      if (premium) {
+        const roh = join(ordner, `r${i}.img`);
+        if (modus === 'produkt') {
+          const vg = join(ordner, `s${i}.png`);
+          const hg = mitKiHg ? hgKi : join(ordner, `s${i}.hg.jpg`);
+          if (!mitKiHg) unscharfHintergrund(roh, hg, { breite, hoehe });
+          ebenen = ebenenVorbereiten({ hg, vg: (await freistellen(roh, vg).catch(() => false)) ? vg : roh, breite, hoehe, basis: join(ordner, `e${i}`) });
+        } else if (modus) ebenen = ebenenVorbereiten({ hg: roh, vg: '', breite, hoehe, basis: join(ordner, `e${i}`) });
+        else if (!ebenen) continue;
+        premiumStandbild({ ...ebenen, ziel: bild, breite, hoehe });
+      } else if (modus) bildVorbereiten(join(ordner, `r${i}.img`), bild, { breite, hoehe, modus });
       else if (letztesBild) execFileSync('cp', [letztesBild, bild]);
       else continue;
       await sprechen(szene.text, mp3, srt, szene.stimme || stimme, { tonhoehe: szene.tonhoehe, tempo: szene.tempo });
-      await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
+      if (premium) {
+        const ass = join(ordner, `s${i}.ass`);
+        assAusSrt(srt, ass, { breite, hoehe, sprache });
+        const h = clips.length === 0 && hook && schriftOk(hook) ? [hookFilter(hook, clip, breite, hoehe)] : [];
+        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, extra: h });
+      } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
       letztesBild = bild;
       clips.push(clip);
       if (szene.kapitel) kapitel.push({ zeit, titel: szene.kapitel });
@@ -224,9 +250,9 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   if (!clips.length) throw new Error('Keine einzige Szene konnte gerendert werden.');
   const ziel = join(ordner, 'video.mp4');
   zusammenfuegen(clips, ziel, ordner);
-  if (musik) {
+  if (musik || premium) {
     try {
-      await musikUnterlegen(ziel, zeit, { stimmung: musik });
+      await musikUnterlegen(ziel, zeit, premium && !musik ? { stimmung: 'beat', whoosh: srtTeile.slice(1).map((t) => t.start) } : { stimmung: musik });
     } catch (err) {
       console.log(`[video-fabrik] Musik fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
     }

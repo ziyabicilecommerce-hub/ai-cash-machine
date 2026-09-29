@@ -13,18 +13,43 @@ const STIMMUNGEN = {
   anime: [110.0, 130.81, 164.81, 220.0],
 };
 
-// Langsame, schwebende Klangflaeche in Videolaenge, leise unter die Stimme gemischt.
-export async function musikUnterlegen(video, dauer, { stimmung = 'ruhig', lautstaerke = 1.2 } = {}) {
-  const toene = STIMMUNGEN[stimmung] || STIMMUNGEN.ruhig;
-  const formel = toene
-    .map((hz, i) => `${(0.05 - i * 0.008).toFixed(3)}*sin(2*PI*${hz}*t)*(0.55+0.45*sin(2*PI*${(0.03 + i * 0.013).toFixed(3)}*t+${i}))`)
-    .join('+');
-  const tmp = `${video}.musik.mp4`;
+// Beat fuer Produkt-Ads (120 BPM): Kick mit Tonhoehen-Abfall, Hi-Hat auf dem Offbeat,
+// leiser Akkord darunter. Rein synthetisch, daher ohne Lizenzfragen.
+const BEAT = [
+  '0.5*sin(2*PI*(48+70*exp(-28*mod(t,0.5)))*mod(t,0.5))*exp(-8*mod(t,0.5))',
+  '0.06*(random(0)*2-1)*exp(-70*mod(t+0.25,0.5))',
+  '0.035*(sin(2*PI*220*t)+sin(2*PI*277.18*t)+sin(2*PI*329.63*t))*(0.6+0.4*sin(2*PI*0.125*t))',
+].join('+');
+
+// Whoosh an jedem Szenenwechsel: Rauschen mit kurzer Glockenkurve, per Bandpass geformt.
+const whooshFormel = (zeiten) => zeiten.slice(0, 60).map((z) => `exp(-pow((t-${z.toFixed(2)})/0.09,2))`).join('+');
+
+// Langsame, schwebende Klangflaeche (oder Beat) in Videolaenge, leise unter die Stimme gemischt.
+// whoosh: Zeitpunkte (s), an denen ein Uebergangs-Rauschen liegt.
+export async function musikUnterlegen(video, dauer, { stimmung = 'ruhig', lautstaerke, whoosh = [] } = {}) {
   const d = Math.ceil(dauer) + 1;
+  let quelle;
+  let kette;
+  if (stimmung === 'beat') {
+    quelle = BEAT;
+    kette = `highpass=f=35,afade=t=in:d=1,afade=t=out:st=${Math.max(d - 2, 0)}:d=2,volume=${lautstaerke ?? 0.32}`;
+  } else {
+    const toene = STIMMUNGEN[stimmung] || STIMMUNGEN.ruhig;
+    quelle = toene
+      .map((hz, i) => `${(0.05 - i * 0.008).toFixed(3)}*sin(2*PI*${hz}*t)*(0.55+0.45*sin(2*PI*${(0.03 + i * 0.013).toFixed(3)}*t+${i}))`)
+      .join('+');
+    kette = `lowpass=f=1400,aecho=0.8:0.6:600|1100:0.25|0.15,afade=t=in:d=3,afade=t=out:st=${Math.max(d - 4, 0)}:d=4,volume=${lautstaerke ?? 1.2}`;
+  }
+  const mitWhoosh = whoosh.length > 0;
+  const tmp = `${video}.musik.mp4`;
   await ausfuehren('ffmpeg', [
     '-loglevel', 'error', '-y', '-i', video,
-    '-f', 'lavfi', '-i', `aevalsrc='${formel}':s=44100:d=${d}`,
-    '-filter_complex', `[1:a]lowpass=f=1400,aecho=0.8:0.6:600|1100:0.25|0.15,afade=t=in:d=3,afade=t=out:st=${Math.max(d - 4, 0)}:d=4,volume=${lautstaerke},aformat=channel_layouts=stereo[m];[0:a][m]amix=inputs=2:duration=first:normalize=0[a]`,
+    '-f', 'lavfi', '-i', `aevalsrc='${quelle}':s=44100:d=${d}`,
+    ...(mitWhoosh ? ['-f', 'lavfi', '-i', `aevalsrc='0.5*(random(1)*2-1)*(${whooshFormel(whoosh)})':s=44100:d=${d}`] : []),
+    '-filter_complex',
+    `[1:a]${kette},aformat=channel_layouts=stereo[m];` +
+      (mitWhoosh ? '[2:a]bandpass=f=1500:width_type=o:w=2.5,volume=0.8,aformat=channel_layouts=stereo[w];[0:a][m][w]amix=inputs=3' : '[0:a][m]amix=inputs=2') +
+      ':duration=first:normalize=0[a]',
     '-map', '0:v', '-map', '[a]', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', tmp,
   ], { timeout: 3600000, maxBuffer: 16 * 1024 * 1024 });
   renameSync(tmp, video);
