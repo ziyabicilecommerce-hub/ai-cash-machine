@@ -160,7 +160,7 @@ export function preisText(preis, sprache, waehrung = 'EUR') {
 // Baut aus der .srt von edge-tts eine .ass, in der das gerade gesprochene Wort aufleuchtet.
 // Zeiten je Wort werden nach Zeichenlaenge verteilt. Optional: hook (grosse Schlagzeile oben,
 // klappt anders als drawtext in allen Schriften), preis + shop (Endkarte der letzten Szene).
-export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', preis = '', shop = '' }) {
+export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', preis = '', shop = '', fortschritt = null }) {
   const groesse = Math.round(Math.min(breite, hoehe) * 0.078);
   const unten = Math.round(hoehe * (hoehe > breite ? 0.25 : 0.09));
   const rand = Math.round(breite * 0.06);
@@ -193,7 +193,7 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
     for (const gruppe of gruppieren(liste, trenner)) {
       gruppe.forEach((_, k) => {
         const [von, bis] = zeiten[n + k];
-        const inhalt = gruppe.map((w, j) => (j === k ? `{\\c${thema.wort}\\fscx112\\fscy112}${assText(w)}{\\r}` : assText(w))).join(trenner);
+        const inhalt = gruppe.map((w, j) => (j === k ? `{\\c${thema.wort}\\fscx128\\fscy128\\t(0,110,\\fscx112\\fscy112)}${assText(w)}{\\r}` : assText(w))).join(trenner);
         zeilen.push(`Dialogue: 0,${assZeit(von)},${assZeit(bis)},Wort,,0,0,0,,${k === 0 ? '{\\fad(70,0)}' : ''}${inhalt}`);
       });
       n += gruppe.length;
@@ -205,6 +205,15 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
     zeilen.push(`Dialogue: 1,${assZeit(0)},${assZeit(3300)},Hook,,0,0,0,,{\\fad(0,300)}${pop}${assText(h)}`);
   }
   if (preis) zeilen.push(`Dialogue: 2,${assZeit(350)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * 0.7)},${Math.round(hoehe * 0.1)})}${pop}${assText(preis)}`);
+  // Fortschrittsbalken oben (wie bei TikTok): waechst ueber das ganze Video, je Szene ein Stueck.
+  if (fortschritt) {
+    const hBalken = Math.max(8, Math.round(hoehe * 0.006));
+    const [x1, x2] = [fortschritt.von, fortschritt.bis].map((a) => Math.round(breite * Math.min(1, Math.max(0, a))));
+    const form = `m 0 0 l ${breite} 0 ${breite} ${hBalken} 0 ${hBalken}`;
+    const bis = assZeit(fortschritt.dauerMs);
+    zeilen.push(`Dialogue: 3,${assZeit(0)},${bis},Wort,,0,0,0,,{\\an7\\pos(0,0)\\bord0\\shad0\\1c&HFFFFFF&\\1a&HB0&\\p1}${form}`);
+    zeilen.push(`Dialogue: 4,${assZeit(0)},${bis},Wort,,0,0,0,,{\\an7\\pos(0,0)\\bord0\\shad0\\1c${thema.wort}\\clip(0,0,${x1},${hBalken})\\t(0,${Math.round(fortschritt.dauerMs)},\\clip(0,0,${x2},${hBalken}))\\p1}${form}`);
+  }
   if (shop) zeilen.push(`Dialogue: 1,${assZeit(200)},${assZeit(600000)},Shop,,0,0,0,,{\\fad(300,0)}${assText(shop)}`);
   writeFileSync(ass, [...kopf, ...zeilen].join('\n') + '\n');
   return zeilen.length;
@@ -233,6 +242,14 @@ export function ebenenVorbereiten({ hg, vg, breite, hoehe, basis }) {
   return { bgP, fgP };
 }
 
+// Glanz-Streifen (weiches, schraeges Licht), der bei jedem Szenenwechsel einmal durchs Bild zieht.
+export function glanzBauen(ziel, hoehe) {
+  if (!existsSync(ziel)) {
+    ffmpegBild(['-f', 'lavfi', '-i', `color=white:s=720x${hoehe},format=rgba`, '-vf', `geq=r=255:g=255:b=255:a='120*exp(-pow((X-360+0.35*(Y-${hoehe / 2}))/80,2))'`, '-frames:v', '1', ziel]);
+  }
+  return ziel;
+}
+
 // Standbild (Vorschaubild): Mitte des Hintergrunds plus Produkt.
 export function premiumStandbild({ bgP, fgP, ziel, breite, hoehe }) {
   const graph = `[0:v]crop=${breite}:${hoehe}${fgP ? `[bg];[bg][1:v]overlay=x=(W-w)/2:y=(H-h)/2-H*0.05` : ''}`;
@@ -241,24 +258,25 @@ export function premiumStandbild({ bgP, fgP, ziel, breite, hoehe }) {
 
 // Eine Szene: Hintergrund schwenkt in die eine Richtung, Produkt schwebt leicht gegenlaeufig
 // (Parallaxe), Blitz-Uebergang, Wort-Untertitel. extra = zusaetzliche Filter (Hook).
-export async function premiumSzene({ bgP, fgP, mp3, ass, ziel, breite, hoehe, dauer, index, extra = [] }) {
+export async function premiumSzene({ bgP, fgP, glanz = '', mp3, ass, ziel, breite, hoehe, dauer, index, extra = [] }) {
   const D = dauer.toFixed(2);
   const r = index % 2 ? `(t/${D})` : `(1-t/${D})`;
   const bg = `[0:v]crop=${breite}:${hoehe}:x='(iw-ow)*${r}':y='(ih-oh)*(0.5+0.35*sin(t*0.45+${index}))'`;
   const graph = fgP
     ? `${bg}[bg];[bg][1:v]overlay=x=(W-w)/2-W*0.018*(${r}-0.5):y=(H-h)/2-H*0.05+H*0.012*sin(t*1.7+${index})`
     : bg;
+  const mitGlanz = glanz ? `[g0];[g0][${fgP ? 2 : 1}:v]overlay=x='-w+(W+w)*(t-0.05)/0.7':y=0:enable='between(t,0.05,0.75)'` : '';
   const ende = [
     index === 0 ? 'fade=in:st=0:d=0.25' : 'fade=in:st=0:d=0.14:color=white',
     `fade=out:st=${Math.max(dauer - 0.18, 0).toFixed(2)}:d=0.18`,
     ...extra,
     `ass='${pfadFuerFilter(ass)}'`,
   ].join(',');
-  const eingaben = ['-loop', '1', '-framerate', '30', '-i', bgP, ...(fgP ? ['-loop', '1', '-framerate', '30', '-i', fgP] : [])];
+  const eingaben = ['-loop', '1', '-framerate', '30', '-i', bgP, ...(fgP ? ['-loop', '1', '-framerate', '30', '-i', fgP] : []), ...(glanz ? ['-loop', '1', '-framerate', '30', '-i', glanz] : [])];
   await ausfuehren('ffmpeg', [
     '-loglevel', 'error', '-y', ...eingaben, '-i', mp3,
-    '-filter_complex', `${graph},${ende}[v]`,
-    '-map', '[v]', '-map', `${fgP ? 2 : 1}:a`, '-t', D,
+    '-filter_complex', `${graph}${mitGlanz},${ende}[v]`,
+    '-map', '[v]', '-map', `${(fgP ? 2 : 1) + (glanz ? 1 : 0)}:a`, '-t', D,
     '-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-pix_fmt', 'yuv420p', '-r', '30',
     '-c:a', 'aac', '-b:a', '160k', '-ar', '44100', '-ac', '2', '-af', 'apad',
     ziel,
