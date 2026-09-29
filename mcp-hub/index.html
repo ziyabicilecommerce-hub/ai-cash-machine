@@ -249,13 +249,17 @@ fetch('./catalog.json', { cache: 'no-cache' })
     const an = await analyseLaden;
     analyse = (an && an.e) || {};
     $('sAna').textContent = an ? `${(an.analysiert || 0).toLocaleString('de-DE')} / ${(an.gesamt || 0).toLocaleString('de-DE')}` : '–';
-    $('sRot').textContent = an ? (an.zaehler?.gefaehrlich || 0).toLocaleString('de-DE') : '–';
     $('sLive').textContent = l ? (l.antwortet || 0).toLocaleString('de-DE') : '–';
     alle = d.server || [];
     for (const s of alle) s._k = schluessel(s);
-    $('sAll').textContent = (d.anzahl || alle.length).toLocaleString('de-DE');
-    $('sFree').textContent = (d.ohneKey ?? alle.filter((s) => s.k === 0).length).toLocaleString('de-DE');
-    $('sSrc').textContent = Object.values(d.quellen || {}).filter((v) => typeof v === 'number').length;
+    // Unklare und stark auffaellige Server werden gar nicht erst angezeigt.
+    const vorher = alle.length;
+    alle = alle.filter((s) => { const st = analyse[s._k]?.[0]; return st !== 0 && st !== 3; });
+    const weg = vorher - alle.length + (Number(d.quellen?.aussortiert) || 0);
+    $('sAll').textContent = alle.length.toLocaleString('de-DE');
+    $('sRot').textContent = `0 (${weg.toLocaleString('de-DE')} aussortiert)`;
+    $('sFree').textContent = alle.filter((s) => s.k === 0).length.toLocaleString('de-DE');
+    $('sSrc').textContent = Object.entries(d.quellen || {}).filter(([k, v]) => typeof v === 'number' && k !== 'aussortiert').length;
     $('sCat').textContent = Object.keys(d.kategorien || {}).length;
     $('sDate').textContent = d.stand ? new Date(d.stand).toLocaleDateString('de-DE') : '–';
     chips(d.kategorien || {}, alle.length);

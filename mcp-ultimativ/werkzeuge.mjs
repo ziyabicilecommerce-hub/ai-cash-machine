@@ -217,7 +217,10 @@ function ladeKatalog() {
   const basis = new URL('../mcp-hub/', import.meta.url);
   const c = JSON.parse(readFileSync(new URL('catalog.json', basis), 'utf8'));
   const live = existsSync(new URL('live.json', basis)) ? JSON.parse(readFileSync(new URL('live.json', basis), 'utf8')).server || {} : {};
-  katalog = { server: c.server || [], live };
+  const analyse = existsSync(new URL('analyse.json', basis)) ? JSON.parse(readFileSync(new URL('analyse.json', basis), 'utf8')).e || {} : {};
+  // Unklare (0) und stark auffaellige (3) Server laut Paket-Analyse nie vorschlagen.
+  const schluessel = (s) => (s.p?.startsWith('npm:') ? s.p : s.p?.startsWith('pypi:') ? `pypi:${s.p.slice(5).toLowerCase()}` : ((m) => (m ? `gh:${m[1]}/${m[2].replace(/\.git$/i, '')}`.toLowerCase() : null))((s.r || '').match(/github\.com\/([^/\s#?]+)\/([^/\s#?]+)/i)));
+  katalog = { server: (c.server || []).filter((s) => ![0, 3].includes(analyse[schluessel(s)]?.[0])), live };
   return katalog;
 }
 async function mcpErsatz({ suche, nur_ohne_key, limit }) {
