@@ -412,6 +412,17 @@ async function skripteSchreiben() {
     });
     console.log(`[94-video-fabrik] Welt-Skripte "${p.title}": ${Math.min(liste.length, WELT_VARIANTEN)}/${WELT_VARIANTEN} Varianten`);
   }
+  // Top-5-Countdowns je Shop laufen auch durch alle 50 Sprachen.
+  for (const [j, shop] of [...new Set(auswahl.map((p) => p.shopName))].entries()) {
+    const eigene = produkte.filter((p) => p.shopName === shop);
+    if (eigene.length < 3) continue;
+    try {
+      fertig.push({ k: 900000 + j, thema: `Top 5 ${shop}`, skript: await topListeSkript(shop, Array.from({ length: Math.min(5, eigene.length) }, (_, x) => eigene[(tag * 5 + x) % eigene.length])) });
+      console.log(`[94-video-fabrik] Welt-Skript Top-5 ${shop}`);
+    } catch (err) {
+      console.log(`[94-video-fabrik] ✗ Top-5 ${shop}: ${String(err.message).slice(0, 160)}`);
+    }
+  }
   const skripte = fertig.sort((x, y) => x.k - y.k).map(({ thema, skript }, i) => ({ nr: i + 1, thema, skript }));
   if (!skripte.length) throw new Error('Kein einziges Skript');
   writeFileSync(join(OUT, 'skripte.json'), JSON.stringify(skripte, null, 1));
