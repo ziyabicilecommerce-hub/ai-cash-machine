@@ -6,7 +6,7 @@ import { promisify } from 'node:util';
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
-import { musikUnterlegen, untertitelZusammenfuegen } from './videoExtras.mjs';
+import { musikUnterlegen, untertitelZusammenfuegen, BEAT_STILE } from './videoExtras.mjs';
 import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen, bokehBauen } from './premium.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -278,7 +278,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   zusammenfuegen(clips, ziel, ordner);
   if (musik || premium) {
     try {
-      await musikUnterlegen(ziel, zeit, premium && !musik ? { stimmung: 'beat', whoosh: srtTeile.slice(1).map((t) => t.start), ding: dingZeit ? [dingZeit] : [] } : { stimmung: musik });
+      await musikUnterlegen(ziel, zeit, premium && !musik ? { stimmung: 'beat', stil: BEAT_STILE[Math.abs(Number(skript.hintergrund?.seed) || 0) % BEAT_STILE.length], whoosh: srtTeile.slice(1).map((t) => t.start), ding: dingZeit ? [dingZeit] : [] } : { stimmung: musik });
     } catch (err) {
       console.log(`[video-fabrik] Musik fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
     }
