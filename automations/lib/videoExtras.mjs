@@ -15,23 +15,46 @@ const STIMMUNGEN = {
 
 // Beat fuer Produkt-Ads (120 BPM): Kick mit Tonhoehen-Abfall, Hi-Hat auf dem Offbeat,
 // leiser Akkord darunter. Rein synthetisch, daher ohne Lizenzfragen.
-const BEAT = [
-  '0.5*sin(2*PI*(48+70*exp(-28*mod(t,0.5)))*mod(t,0.5))*exp(-8*mod(t,0.5))',
-  '0.06*(random(0)*2-1)*exp(-70*mod(t+0.25,0.5))',
-  '0.035*(sin(2*PI*220*t)+sin(2*PI*277.18*t)+sin(2*PI*329.63*t))*(0.6+0.4*sin(2*PI*0.125*t))',
-].join('+');
+const BEATS = {
+  house: [
+    '0.5*sin(2*PI*(48+70*exp(-28*mod(t,0.5)))*mod(t,0.5))*exp(-8*mod(t,0.5))',
+    '0.06*(random(0)*2-1)*exp(-70*mod(t+0.25,0.5))',
+    '0.035*(sin(2*PI*220*t)+sin(2*PI*277.18*t)+sin(2*PI*329.63*t))*(0.6+0.4*sin(2*PI*0.125*t))',
+  ],
+  // Trap (140 BPM, Half-Time): langer 808-Kick, schnelle Hi-Hats, Snare auf 3.
+  trap: [
+    '0.55*sin(2*PI*(45+60*exp(-20*mod(t,0.857)))*mod(t,0.857))*exp(-3*mod(t,0.857))',
+    '0.045*(random(0)*2-1)*exp(-120*mod(t,0.1071))',
+    '0.12*(random(1)*2-1)*exp(-25*mod(t+0.4285,0.857))',
+    '0.03*(sin(2*PI*196*t)+sin(2*PI*233.08*t))',
+  ],
+  // Lo-Fi (85 BPM): weicher Kick, leise Hats, Jazz-Akkord (Cmaj7).
+  lofi: [
+    '0.4*sin(2*PI*(50+40*exp(-25*mod(t,0.706)))*mod(t,0.706))*exp(-9*mod(t,0.706))',
+    '0.03*(random(0)*2-1)*exp(-80*mod(t+0.353,0.706))',
+    '0.03*(sin(2*PI*261.63*t)+sin(2*PI*329.63*t)+sin(2*PI*392*t)+sin(2*PI*493.88*t))*(0.7+0.3*sin(2*PI*0.2*t))',
+  ],
+  // Pop (110 BPM): Four-on-the-floor, Clap auf 2 und 4, G-Dur-Akkord.
+  pop: [
+    '0.5*sin(2*PI*(50+70*exp(-28*mod(t,0.545)))*mod(t,0.545))*exp(-8*mod(t,0.545))',
+    '0.1*(random(1)*2-1)*exp(-30*mod(t+0.545,1.09))',
+    '0.05*(random(0)*2-1)*exp(-70*mod(t+0.2725,0.545))',
+    '0.03*(sin(2*PI*196*t)+sin(2*PI*246.94*t)+sin(2*PI*293.66*t))',
+  ],
+};
+export const BEAT_STILE = Object.keys(BEATS);
 
 // Whoosh an jedem Szenenwechsel: Rauschen mit kurzer Glockenkurve, per Bandpass geformt.
 const whooshFormel = (zeiten) => zeiten.slice(0, 60).map((z) => `exp(-pow((t-${z.toFixed(2)})/0.09,2))`).join('+');
 
 // Langsame, schwebende Klangflaeche (oder Beat) in Videolaenge, leise unter die Stimme gemischt.
 // whoosh: Zeitpunkte (s), an denen ein Uebergangs-Rauschen liegt.
-export async function musikUnterlegen(video, dauer, { stimmung = 'ruhig', lautstaerke, whoosh = [], ding = [] } = {}) {
+export async function musikUnterlegen(video, dauer, { stimmung = 'ruhig', lautstaerke, whoosh = [], ding = [], stil = 'house' } = {}) {
   const d = Math.ceil(dauer) + 1;
   let quelle;
   let kette;
   if (stimmung === 'beat') {
-    quelle = BEAT;
+    quelle = (BEATS[stil] || BEATS.house).join('+');
     kette = `highpass=f=35,afade=t=in:d=1,afade=t=out:st=${Math.max(d - 2, 0)}:d=2,volume=${lautstaerke ?? 0.4}`;
   } else {
     const toene = STIMMUNGEN[stimmung] || STIMMUNGEN.ruhig;
