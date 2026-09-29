@@ -1,16 +1,13 @@
 name: "99 · Direkt-Poster"
 
-# Postet nur wenige, ausgewaehlte Videos pro Tag - sicher fuer die Algorithmen und gegen
-# die Regeln zu massenhaften KI-Inhalten: 4-mal taeglich je 1 Video, das neueste noch nie
-# gepostete deutsche/sprachfreie Video aus dem Video-Feed. Gebaut werden kann trotzdem viel
-# mehr (Welt-Bot ~1.000/Tag) - gepostet wird nur die Auswahl. Kostenlos ueber offizielle APIs.
+# Postet stuendlich (08-22 Uhr) je 1 noch nie gepostetes deutsches/sprachfreies Video aus dem
+# Video-Feed - jede Plattform nur bis zu ihrem sicheren Tageslimit (z. B. TikTok 4, Instagram 3,
+# YouTube 6, Telegram 12; siehe LIMITS in 99-direkt-poster.mjs, per Variable LIMIT_<NAME> aenderbar).
+# So kommen je nach Plattform 3-12 Posts pro Tag zusammen, ohne Spam-Strafen. Kostenlos, offizielle APIs.
 
 on:
   schedule:
-    - cron: '47 7 * * *'
-    - cron: '47 11 * * *'
-    - cron: '47 15 * * *'
-    - cron: '47 18 * * *'
+    - cron: '47 6-20 * * *'
   workflow_dispatch:
     inputs:
       anzahl:
@@ -52,6 +49,19 @@ jobs:
           MASTODON_URL: ${{ vars.MASTODON_URL }}
           MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
           DIREKT_POSTER_PLATTFORMEN: ${{ vars.DIREKT_POSTER_PLATTFORMEN }}
+          LIMIT_YOUTUBE: ${{ vars.LIMIT_YOUTUBE }}
+          LIMIT_TIKTOK: ${{ vars.LIMIT_TIKTOK }}
+          LIMIT_INSTAGRAM: ${{ vars.LIMIT_INSTAGRAM }}
+          LIMIT_FACEBOOK: ${{ vars.LIMIT_FACEBOOK }}
+          LIMIT_THREADS: ${{ vars.LIMIT_THREADS }}
+          LIMIT_LINKEDIN: ${{ vars.LIMIT_LINKEDIN }}
+          LIMIT_PINTEREST: ${{ vars.LIMIT_PINTEREST }}
+          LIMIT_DAILYMOTION: ${{ vars.LIMIT_DAILYMOTION }}
+          LIMIT_BLUESKY: ${{ vars.LIMIT_BLUESKY }}
+          LIMIT_TELEGRAM: ${{ vars.LIMIT_TELEGRAM }}
+          LIMIT_MASTODON: ${{ vars.LIMIT_MASTODON }}
+          LIMIT_DISCORD: ${{ vars.LIMIT_DISCORD }}
+          LIMIT_REDDIT: ${{ vars.LIMIT_REDDIT }}
           VERBINDER_PASSWORT: ${{ secrets.VERBINDER_PASSWORT }}
           VERBINDER_URL: ${{ vars.VERBINDER_URL }}
           TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
@@ -79,4 +89,5 @@ jobs:
       - name: Merken, was gepostet wurde
         run: |
           [ -f video-feed/gepostet.json ] || exit 0
-          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases" video-feed/gepostet.json
+          [ -f video-feed/post-zaehler.json ] || echo '{}' > video-feed/post-zaehler.json
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases" video-feed/gepostet.json video-feed/post-zaehler.json
