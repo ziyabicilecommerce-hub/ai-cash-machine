@@ -13,6 +13,7 @@ import { videoBauen } from './lib/videoFabrik.mjs';
 import { kapitelText, teaserBauen } from './lib/videoExtras.mjs';
 import { WELT_SPRACHEN, sprachGruppen } from './lib/weltSprachen.mjs';
 import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
+import { premiumAn } from './lib/premium.mjs';
 
 const OUT = 'out';
 const MANIFEST = join(OUT, 'manifest.json');
@@ -27,6 +28,8 @@ const LANG_MIN = Math.min(Math.max(parseFloat(env('VIDEO_FABRIK_LANG_MINUTEN', '
 const STIL = env('VIDEO_FABRIK_STIL', 'cinematic, vibrant colors, high detail, no text');
 const STIMME = env('VIDEO_FABRIK_STIMME', 'de-DE-SeraphinaMultilingualNeural');
 const LIFESTYLE = env('VIDEO_FABRIK_LIFESTYLE', 'nein').toLowerCase() === 'ja';
+// Premium-Look fuer Produkt-Ads (Freisteller, KI-Hintergrund, Parallaxe, Wort-Untertitel, Beat); VIDEO_PREMIUM=0 schaltet ab.
+const PREMIUM = premiumAn();
 // Zusaetzliche Sprachversionen der Produkt-Kurzvideos, z. B. "en,es,tr" (Deutsch ist immer dabei).
 const STIMMEN = Object.fromEntries(Object.entries(WELT_SPRACHEN).map(([k, v]) => [k, v.stimme]));
 const SPRACHNAMEN = Object.fromEntries(Object.entries(WELT_SPRACHEN).map(([k, v]) => [k, v.name]));
@@ -187,7 +190,8 @@ async function produktSkriptEinmal(p) {
       (LIFESTYLE
         ? `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index ODER "bild": englischer Prompt fuer ein passendes, jugendfreies Lifestyle-Bild (vollstaendig bekleidete Personen). Mindestens die Haelfte der Szenen mit Produktfoto. `
         : `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene "foto": Index des passendsten Produktfotos. `) +
-      'Antworte NUR mit JSON: {"titel":"...","hook":"knallige Schlagzeile, maximal 5 Woerter","caption":"Caption mit 3-5 Hashtags","szenen":[{"text":"...","foto":0}]}',
+      'Dazu "hintergrund": englischer Bild-Prompt fuer eine leere, edle Umgebung, in der das Produkt stehen koennte (z. B. "minimalist oak desk by a sunny window") - ohne Produkt, ohne Personen, ohne Text. ' +
+      'Antworte NUR mit JSON: {"titel":"...","hook":"knallige Schlagzeile, maximal 5 Woerter","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","szenen":[{"text":"...","foto":0}]}',
     { maxTokens: 1500 }
   );
   const szenen = (Array.isArray(d.szenen) ? d.szenen : []).map((s, i) => {
@@ -199,7 +203,10 @@ async function produktSkriptEinmal(p) {
   if (szenen.length && !szenen[0].foto) szenen[0].foto = fotos[0];
   await korrekturLesen(szenen, p.title);
   const caption = `${String(d.caption || p.title).slice(0, 1800)}${link ? `\n\n👉 ${link}` : ''}`;
-  return { titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, szenen };
+  // Fester Seed je Produkt: derselbe KI-Hintergrund in allen Sprachen und an allen Tagen.
+  const seed = [...String(p.handle || p.title)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 7);
+  const hintergrund = { prompt: String(d.hintergrund || `elegant minimal setting for ${p.title}`).replace(/\s+/g, ' ').trim().slice(0, 300), seed };
+  return { titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, szenen };
 }
 
 // Uebersetzt Titel, Caption und Sprechtexte; Produktfotos bleiben gleich.
@@ -211,7 +218,7 @@ async function uebersetzen(skript, sprache) {
   );
   const saetze = Array.isArray(d.saetze) ? d.saetze : [];
   if (saetze.length !== skript.szenen.length) throw new Error('Uebersetzung unvollstaendig');
-  return { titel: String(d.titel || skript.titel).slice(0, 120), hook: kurzHook(d.hook || d.titel || skript.titel), caption: String(d.caption || skript.caption).slice(0, 2000), szenen: skript.szenen.map((x, i) => ({ ...x, text: String(saetze[i]).slice(0, 400) })) };
+  return { titel: String(d.titel || skript.titel).slice(0, 120), hook: kurzHook(d.hook || d.titel || skript.titel), caption: String(d.caption || skript.caption).slice(0, 2000), hintergrund: skript.hintergrund, szenen: skript.szenen.map((x, i) => ({ ...x, text: String(saetze[i]).slice(0, 400) })) };
 }
 
 // Uebersetzt bis zu 5 Skripte in EINER KI-Anfrage (spart das Anfrage-Limit der Gratis-KI);
@@ -232,7 +239,7 @@ async function uebersetzenBuendel(skripte, sprache) {
   return Promise.all(skripte.map(async (sk, i) => {
     const t = videos.find((x) => Number(x?.i) === i);
     if (t && Array.isArray(t.saetze) && t.saetze.length === sk.szenen.length) {
-      return { titel: String(t.titel || sk.titel).slice(0, 120), hook: kurzHook(t.hook || t.titel || sk.titel), caption: String(t.caption || sk.caption).slice(0, 2000), szenen: sk.szenen.map((x, j) => ({ ...x, text: String(t.saetze[j]).slice(0, 400) })) };
+      return { titel: String(t.titel || sk.titel).slice(0, 120), hook: kurzHook(t.hook || t.titel || sk.titel), caption: String(t.caption || sk.caption).slice(0, 2000), hintergrund: sk.hintergrund, szenen: sk.szenen.map((x, j) => ({ ...x, text: String(t.saetze[j]).slice(0, 400) })) };
     }
     return uebersetzen(sk, sprache).catch(() => null);
   }));
@@ -284,14 +291,14 @@ async function bauen() {
       const skript = a.produkt ? await produktSkript(a.produkt) : a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
       if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
       const hook = a.format === 'hoch' ? skript.hook || kurzHook(skript.titel) : '';
-      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook, bildAlle: a.minuten > 20 ? 2 : 1, musik: a.minuten ? 'ruhig' : '' });
+      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook, bildAlle: a.minuten > 20 ? 2 : 1, musik: a.minuten ? 'ruhig' : '', premium: PREMIUM && !!a.produkt });
       await ablegen(manifest, v, skript, a, i + 1, 'de');
       console.log(`[94-video-fabrik] ✓ ${manifest.filter((m) => !m.teaser).at(-1).datei} (${Math.round(v.dauer)} s, ${v.szenen} Szenen, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
       if (a.produkt) {
         for (const sprache of EXTRA_SPRACHEN) {
           try {
             const uebersetzt = await uebersetzen(skript, sprache);
-            const vs = await videoBauen(uebersetzt, join(OUT, `arbeit-${i}-${sprache}`), { format: a.format, stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook });
+            const vs = await videoBauen(uebersetzt, join(OUT, `arbeit-${i}-${sprache}`), { format: a.format, stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook, premium: PREMIUM, sprache });
             await ablegen(manifest, vs, uebersetzt, a, i + 1, sprache);
             console.log(`[94-video-fabrik] ✓ ${manifest.at(-1).datei} (${sprache})`);
           } catch (err) {
@@ -411,7 +418,7 @@ async function sprachenRendern(liste) {
         try {
           const uebersetzt = uebersetzungen[j];
           if (!uebersetzt) throw new Error('Uebersetzung fehlgeschlagen');
-          const v = await videoBauen(uebersetzt, arbeit, { format: 'hoch', stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook });
+          const v = await videoBauen(uebersetzt, arbeit, { format: 'hoch', stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook, premium: PREMIUM, sprache });
           await ablegen(manifest, v, uebersetzt, { thema, format: 'hoch' }, nr, sprache);
           console.log(`[94-video-fabrik] ✓ ${sprache}: ${manifest.at(-1).datei}`);
         } catch (err) {
