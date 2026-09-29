@@ -1,12 +1,14 @@
 // MCP-Katalog - sammelt woechentlich alle oeffentlich gelisteten MCP-Server
 // aus der offiziellen MCP-Registry (registry.modelcontextprotocol.io),
-// GitHub-Topics, npm, PyPI, dem Docker-MCP-Katalog und den
-// Awesome-MCP-Listen, fuehrt Duplikate zusammen,
+// GitHub-Topics, npm, PyPI, dem Docker-MCP-Katalog, den Awesome-MCP-Listen sowie
+// international Smithery, Hugging Face, Docker Hub, NuGet, crates.io, Packagist,
+// RubyGems, Maven Central, GitLab und Codeberg, fuehrt Duplikate zusammen,
 // sortiert sie nach Kategorien und markiert, welche laut Registry-Eintrag
 // keinen API-Key verlangen (OAuth-Logins stehen dort oft nicht drin). Ergebnis landet in mcp-hub/catalog.json
 // und wird von der MCP-Hub-Seite angezeigt.
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { githubTopics, npmPakete, pypiPakete, dockerKatalog, awesomeListen, repoSchluessel } from './lib/mcpQuellen.mjs';
+import { smithery, huggingface, dockerHub, nuget, crates, packagist, rubygems, maven, gitlab, codeberg } from './lib/mcpQuellen2.mjs';
 
 const OUT = 'mcp-hub/catalog.json';
 const MAX_SEITEN = 400;
@@ -117,7 +119,10 @@ async function main() {
   const deadline = Date.now() + ZEIT_BUDGET_MIN * 60 * 1000;
   const quellenListe = [
     ['offiziell', offizielleRegistry], ['docker', () => dockerKatalog(token)],
-    ['awesome', awesomeListen], ['npm', npmPakete], ['pypi', pypiPakete], ['github', () => githubTopics(token, deadline)],
+    ['awesome', awesomeListen], ['npm', npmPakete], ['pypi', pypiPakete],
+    ['smithery', smithery], ['huggingface', huggingface], ['dockerhub', dockerHub], ['nuget', nuget], ['crates', crates],
+    ['packagist', packagist], ['rubygems', rubygems], ['maven', maven], ['gitlab', gitlab], ['codeberg', codeberg],
+    ['github', () => githubTopics(token, deadline)],
   ];
   for (const [name, fn] of quellenListe) {
     try {

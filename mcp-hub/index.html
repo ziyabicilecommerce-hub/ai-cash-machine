@@ -105,7 +105,7 @@
 <footer>
   🔬 Sicherheits-Labels kommen aus einer rein statischen Analyse (Automation #93): Code wird nur gelesen, nie ausgeführt. 🟢 heißt „keine Warnsignale gefunden“, nicht „garantiert sicher“; 🔴 heißt „starkes Warnsignal“, nicht „bewiesen schädlich“.<br>
   * „ohne Key-Pflicht“ heißt: Der Eintrag verlangt laut Registry/Docker-Katalog keinen API-Key. „Key ?“ = unbekannt (GitHub, npm, PyPI …). Manche Dienste wollen trotzdem einen Login (OAuth) oder sind kostenpflichtig – vor dem Einsatz prüfen.<br>
-  Quellen: <a href="https://registry.modelcontextprotocol.io" target="_blank" rel="noopener">MCP-Registry</a>, GitHub, npm, PyPI, <a href="https://github.com/docker/mcp-registry" target="_blank" rel="noopener">Docker</a>, Awesome-Listen ·
+  Quellen: <a href="https://registry.modelcontextprotocol.io" target="_blank" rel="noopener">MCP-Registry</a>, GitHub, npm, PyPI, <a href="https://github.com/docker/mcp-registry" target="_blank" rel="noopener">Docker</a>, Awesome-Listen, Smithery, Hugging Face, Docker Hub, NuGet, crates.io, Packagist, RubyGems, Maven, GitLab, Codeberg ·
   <a href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-91-mcp-katalog.yml" target="_blank" rel="noopener">Automation #91</a>
 </footer>
 
@@ -116,7 +116,7 @@ const LABELS = {
   'web-suche-scraping': '🔎 Web & Scraping', 'finanzen-crypto': '💹 Finanzen & Crypto', 'daten-datenbank': '🗄️ Daten',
   'ki-llm-agenten': '🤖 KI & Agenten', 'entwicklung': '🛠️ Entwicklung', 'produktivitaet': '✅ Produktivität', 'sonstiges': '📦 Sonstiges',
 };
-const QUELLEN = { offiziell: 'Registry', pulsemcp: 'PulseMCP', github: 'GitHub', npm: 'npm', pypi: 'PyPI', docker: 'Docker', awesome: 'Awesome' };
+const QUELLEN = { offiziell: 'Registry', pulsemcp: 'PulseMCP', github: 'GitHub', npm: 'npm', pypi: 'PyPI', docker: 'Docker', awesome: 'Awesome', smithery: 'Smithery', huggingface: 'Hugging Face', dockerhub: 'Docker Hub', nuget: 'NuGet', crates: 'crates.io', packagist: 'Packagist', rubygems: 'RubyGems', maven: 'Maven', gitlab: 'GitLab', codeberg: 'Codeberg' };
 const SEITE = 60;
 let alle = [], gefiltert = [], gezeigt = 0, kat = 'alle', live = {};
 const SICHER = { 0: ['unk', '⚪ nicht analysierbar'], 1: ['free', '🟢 unauffällig'], 2: ['key', '🟡 Vorsicht'], 3: ['badge-tot', '🔴 starkes Warnsignal'] };
