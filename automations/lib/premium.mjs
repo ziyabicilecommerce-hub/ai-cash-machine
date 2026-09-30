@@ -320,7 +320,8 @@ export function premiumStandbild({ bgP, fgP, ziel, breite, hoehe }) {
 // (Parallaxe), Blitz-Uebergang, Wort-Untertitel. extra = zusaetzliche Filter (Hook).
 // effekt (effekte.mjs): {art: 'start'|'blitz'|'glitch'|'leck', leck: PNG, qr: PNG, wackeln} - Zoom-Punch,
 // Uebergang und QR-Endkarte; ohne effekt bleibt es beim klassischen Blitz-Uebergang.
-export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = false, mp3, ass, ziel, breite, hoehe, dauer, index, extra = [], effekt = null }) {
+// bgVideo: fertige 3D-Kamerafahrt (scripts/tiefe3d.py) statt des Standbild-Schwenks.
+export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = false, mp3, ass, ziel, breite, hoehe, dauer, index, extra = [], effekt = null, bgVideo = '' }) {
   const D = dauer.toFixed(2);
   const r = index % 2 ? `(t/${D})` : `(1-t/${D})`;
   // Eingaenge: 0 Hintergrund, dann (falls vorhanden) Produkt, Bokeh, Glanz, zuletzt die Stimme.
@@ -330,7 +331,7 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
   const strahlen = fgP ? effekt?.strahlen || '' : '';
   const bilder = [bgP, fgP, bokeh, glanz, leck, qr, strahlen].filter(Boolean);
   const nr = (x) => bilder.indexOf(x);
-  let graph = `[0:v]crop=${breite}:${hoehe}:x='(iw-ow)*${r}':y='(ih-oh)*(0.5+0.35*sin(t*0.45+${index}))'`;
+  let graph = bgVideo ? `[0:v]scale=${breite}:${hoehe},setsar=1,fps=30,tpad=stop_mode=clone:stop_duration=2` : `[0:v]crop=${breite}:${hoehe}:x='(iw-ow)*${r}':y='(ih-oh)*(0.5+0.35*sin(t*0.45+${index}))'`;
   if (bokeh) graph += `[b0];[b0][${nr(bokeh)}:v]overlay=x=0:y='-(h-H)*(0.2+0.6*t/${D})'`;
   // Lichtstrahlen hinter dem Produkt (Hook): drehen sich langsam und blenden am Szenenende aus.
   if (strahlen) graph += `[s0];[${nr(strahlen)}:v]format=rgba,rotate=a=t*0.45:c=none:ow=iw:oh=ih,fade=t=out:st=${Math.max(dauer - 0.6, 0.2).toFixed(2)}:d=0.5:alpha=1[st];[s0][st]overlay=x=(W-w)/2:y=H*0.4-h/2`;
@@ -355,7 +356,7 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
     `ass='${pfadFuerFilter(ass)}'`,
   ].join(',');
   await ausfuehren('ffmpeg', [
-    '-loglevel', 'error', '-y', ...bilder.flatMap((b) => ['-loop', '1', '-framerate', '30', '-i', b]), '-i', mp3,
+    '-loglevel', 'error', '-y', ...bilder.flatMap((b, k) => (k === 0 && bgVideo ? ['-i', bgVideo] : ['-loop', '1', '-framerate', '30', '-i', b])), '-i', mp3,
     '-filter_complex', `${graph},${ende}[v]`,
     '-map', '[v]', '-map', `${bilder.length}:a`, '-t', D,
     // aq-mode 3 verteilt Bits in dunkle Verlaeufe - weniger Farbstreifen (Banding) in Nacht-Hintergruenden.

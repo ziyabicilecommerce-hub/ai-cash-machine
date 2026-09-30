@@ -182,6 +182,19 @@ async function bildHolen(szene, roh, { breite, hoehe, stil }) {
   return '';
 }
 
+// 3D-Kamerafahrt aus einem Standbild (scripts/tiefe3d.py). VIDEO_3D=0 schaltet ab; TIEFE_PY waehlt das Python
+// (z. B. eine venv mit torch + transformers fuer Depth Anything V2). Scheitert es, bleibt es beim Schwenk.
+function tiefe3d(bild, ziel, dauer, { breite, hoehe, art }) {
+  if (/^(0|nein|aus|false)$/i.test(String(process.env.VIDEO_3D || '').trim())) return '';
+  try {
+    execFileSync(process.env.TIEFE_PY || 'python3', ['scripts/tiefe3d.py', bild, ziel, dauer.toFixed(2), String(breite), String(hoehe), art], { stdio: 'pipe', timeout: 300000 });
+    return existsSync(ziel) ? ziel : '';
+  } catch (err) {
+    console.log(`[video-fabrik] 3D-Kamerafahrt uebersprungen: ${String(err.stderr || err.message).slice(-160)}`);
+    return '';
+  }
+}
+
 // Baut ein komplettes Video. Szene: {text, foto?: URL eines echten Produktfotos, bild?: KI-Bild-Prompt, stimme?, tonhoehe?, tempo?: eigene Sprecherstimme, schild?: Name oben links}.
 // bildAlle: nur jede n-te Szene bekommt ein neues Bild (die anderen nutzen es mit anderer
 // Kamerabewegung weiter) - so passen auch 1-Stunden-Videos in das 6-Stunden-Limit.
@@ -279,7 +292,9 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         if (fx && ebenen?.fgP) funkelnAss(ass, { breite, hoehe, dauerMs: dauern[i] * 1000, seed: seedZahl + i, burst: mitPreis ? { x: Math.round(breite * 0.7), y: Math.round(hoehe * 0.1), ms: 380 } : null });
         const hookSzene = clips.length === 0;
         const effekt = fx ? { art: uebergangFuer(clips.length), leck, qr: letzte ? qr : '', wackeln: hookSzene, drop: hookSzene, strahlen: hookSzene ? strahlen : '', beat: { p: BEAT_PERIODE[beatStil], off: zeit }, stoss: mitPreis ? 0.38 : null } : null;
-        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1, effekt });
+        // Vollbild-Szenen (KI-Bild ohne Produkt): 3D-Kamerafahrt durch das Bild (Depth Anything V2, CPU).
+        const bgVideo = !ebenen.fgP ? tiefe3d(ebenen.bgP, join(ordner, `s${i}.3d.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe, art: ['dolly', 'orbit', 'kran'][i % 3] }) : '';
+        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1, effekt, bgVideo });
       } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
       letztesBild = bild;
       clips.push(clip);
