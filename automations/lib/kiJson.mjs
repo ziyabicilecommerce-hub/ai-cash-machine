@@ -36,6 +36,8 @@ async function kiTextMitWarten(prompt, opts) {
       return await kiTextEinmal(prompt, opts);
     } catch (err) {
       const m = String(err.message).match(/429|retry after (\d+)/i);
+      // Tageslimit/Kontingent aufgebraucht: Warten bringt nichts - sofort aufgeben.
+      if (/daily|quota|budget|credits/i.test(String(err.message))) throw err;
       if (!m || versuch >= 5) throw err;
       const sek = Number(String(err.message).match(/retry after (\d+)/i)?.[1]) || 15 * (versuch + 1);
       await warte((sek + 2) * 1000);

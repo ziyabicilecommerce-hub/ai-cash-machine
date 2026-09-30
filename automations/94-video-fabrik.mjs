@@ -398,8 +398,12 @@ async function skripteSchreiben() {
   const tag = Math.floor(Date.now() / 86400000);
   const auswahl = Array.from({ length: Math.min(WELT_ANZAHL, produkte.length) }, (_, i) => produkte[(tag * 7 + i) % produkte.length]);
   const fertig = [];
+  // Zeitbudget: danach geht es mit den fertigen Skripten weiter (statt dass der Job abbricht und alles verloren ist).
+  const bis = Date.now() + Math.max(10, parseInt(env('WELT_SKRIPT_MIN', '110'), 10) || 110) * 60000;
+  let kiAus = 0; // Varianten-Anfragen hintereinander gescheitert, weil die Gratis-KI ausgelastet ist
   // Nacheinander: die Gratis-KI drosselt parallele Anfragen (429). Je Produkt 2 Anfragen.
   for (const [i, p] of auswahl.entries()) {
+    if (Date.now() > bis) { console.log(`[94-video-fabrik] Skript-Zeitbudget erreicht - weiter mit ${fertig.length} Skripten`); break; }
     const liste = [];
     try {
       const erste = await produktSkript(p);
@@ -407,10 +411,13 @@ async function skripteSchreiben() {
     } catch (err) {
       console.log(`[94-video-fabrik] ✗ "${p.title}" Variante 1: ${String(err.message).slice(0, 160)}`);
     }
-    if (WELT_VARIANTEN > 1) {
+    // Ist die Gratis-KI 2x hintereinander ausgelastet, nur noch Variante 1 je Produkt (spart die langen Wartezeiten).
+    if (WELT_VARIANTEN > 1 && kiAus < 2) {
       try {
         liste.push(...(await variantenSkripte(p, WINKEL.slice(1, WELT_VARIANTEN))));
+        kiAus = 0;
       } catch (err) {
+        if (/nicht verf|429|daily|leere Antwort/i.test(String(err.message))) kiAus++;
         console.log(`[94-video-fabrik] ✗ "${p.title}" weitere Varianten: ${String(err.message).slice(0, 160)}`);
       }
     }
