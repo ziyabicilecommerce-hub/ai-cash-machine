@@ -49,7 +49,9 @@ const whooshFormel = (zeiten) => zeiten.slice(0, 60).map((z) => `exp(-pow((t-${z
 
 // Langsame, schwebende Klangflaeche (oder Beat) in Videolaenge, leise unter die Stimme gemischt.
 // whoosh: Zeitpunkte (s), an denen ein Uebergangs-Rauschen liegt.
-export async function musikUnterlegen(video, dauer, { stimmung = 'ruhig', lautstaerke, whoosh = [], ding = [], stil = 'house' } = {}) {
+// boom: Bass-Drop (tiefer, abfallender Sinus) z. B. zum Hook; riser: 1,2 s anschwellendes
+// Rauschen + Sweep, das genau zum Zeitpunkt endet (z. B. vor der Preis-Enthuellung).
+export async function musikUnterlegen(video, dauer, { stimmung = 'ruhig', lautstaerke, whoosh = [], ding = [], boom = [], riser = [], stil = 'house' } = {}) {
   const d = Math.ceil(dauer) + 1;
   let quelle;
   let kette;
@@ -65,7 +67,11 @@ export async function musikUnterlegen(video, dauer, { stimmung = 'ruhig', lautst
   }
   const mitWhoosh = whoosh.length > 0;
   // "Ding" (zwei helle, abklingende Toene) z. B. wenn das Preisschild erscheint.
-  const dingFormel = ding.slice(0, 5).map((z) => `if(gte(t,${z.toFixed(2)}),(0.22*sin(2*PI*1760*(t-${z.toFixed(2)}))+0.12*sin(2*PI*2637*(t-${z.toFixed(2)})))*exp(-6*(t-${z.toFixed(2)})),0)`).join('+');
+  const dingFormel = [
+    ...ding.slice(0, 5).map((z) => `if(gte(t,${z.toFixed(2)}),(0.22*sin(2*PI*1760*(t-${z.toFixed(2)}))+0.12*sin(2*PI*2637*(t-${z.toFixed(2)})))*exp(-6*(t-${z.toFixed(2)})),0)`),
+    ...boom.slice(0, 3).map((z) => `if(gte(t,${z.toFixed(2)}),0.8*sin(2*PI*(36+55*exp(-7*(t-${z.toFixed(2)})))*(t-${z.toFixed(2)}))*exp(-2.2*(t-${z.toFixed(2)})),0)`),
+    ...riser.filter((z) => z > 1.2).slice(0, 3).map((z) => { const a = (z - 1.2).toFixed(2); return `if(between(t,${a},${z.toFixed(2)}),(0.14*(random(2)*2-1)+0.09*sin(2*PI*(300+500*(t-${a}))*(t-${a})))*pow((t-${a})/1.2,2),0)`; }),
+  ].join('+');
   const tmp = `${video}.musik.mp4`;
   await ausfuehren('ffmpeg', [
     '-loglevel', 'error', '-y', '-i', video,

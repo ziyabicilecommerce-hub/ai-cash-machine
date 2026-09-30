@@ -208,7 +208,7 @@ function ausDaten(d, p) {
   const seed = [...String(p.handle || p.title)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 7);
   const hintergrund = { prompt: String(d.hintergrund || `elegant minimal setting for ${p.title}`).replace(/\s+/g, ' ').trim().slice(0, 300), seed };
   const shop = (() => { try { return new URL(p.shopUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })();
-  return { titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, preis: Number(preis) || 0, waehrung: 'EUR', shop, szenen };
+  return { titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, preis: Number(preis) || 0, waehrung: 'EUR', shop, link, szenen };
 }
 
 // Uebersetzt Titel, Caption und Sprechtexte; Produktfotos bleiben gleich.

@@ -8,6 +8,7 @@ import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
 import { musikUnterlegen, untertitelZusammenfuegen, BEAT_STILE } from './videoExtras.mjs';
 import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen, bokehBauen } from './premium.mjs';
+import { effekteAn, lichtLeckBauen, qrBauen, uebergangFuer, endkarteAss } from './effekte.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -221,6 +222,10 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   const gesamt = dauern.reduce((a, b) => a + (b || 0), 0) || 1;
   const glanz = premium ? glanzBauen(join(ordner, 'glanz.png'), hoehe) : '';
   const bokeh = premium ? bokehBauen(join(ordner, 'bokeh.png'), breite, hoehe) : '';
+  // Effekt-Paket: Zoom-Punch, wechselnde Uebergaenge, Light-Leak, QR-Endkarte (VIDEO_EFFEKTE=0 schaltet ab).
+  const fx = premium && effekteAn();
+  const leck = fx ? lichtLeckBauen(join(ordner, 'leck.png'), breite, hoehe) : '';
+  const qr = fx ? qrBauen(skript.link, join(ordner, 'qr.png')) : '';
   let dingZeit = 0;
   const start = Date.now();
   for (const [i, szene] of szenen.entries()) {
@@ -263,7 +268,9 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
           fortschritt: { von: dauern.slice(0, i).reduce((a, b) => a + (b || 0), 0) / gesamt, bis: dauern.slice(0, i + 1).reduce((a, b) => a + (b || 0), 0) / gesamt, dauerMs: dauern[i] * 1000 },
         });
         if (letzte) dingZeit = zeit + 0.4;
-        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1 });
+        if (fx && letzte) endkarteAss(ass, { breite, hoehe, qr: !!qr });
+        const effekt = fx ? { art: uebergangFuer(clips.length), leck, qr: letzte ? qr : '', wackeln: clips.length === 0 } : null;
+        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1, effekt });
       } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
       letztesBild = bild;
       clips.push(clip);
@@ -283,7 +290,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   try { execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', ziel, '-vn', '-ac', '1', '-ar', '16000', stimmspur], { stdio: 'pipe', timeout: 300000 }); } catch { /* ohne Stimmspur */ }
   if (musik || premium) {
     try {
-      await musikUnterlegen(ziel, zeit, premium && !musik ? { stimmung: 'beat', stil: BEAT_STILE[Math.abs(Number(skript.hintergrund?.seed) || 0) % BEAT_STILE.length], whoosh: srtTeile.slice(1).map((t) => t.start), ding: dingZeit ? [dingZeit] : [] } : { stimmung: musik });
+      await musikUnterlegen(ziel, zeit, premium && !musik ? { stimmung: 'beat', stil: BEAT_STILE[Math.abs(Number(skript.hintergrund?.seed) || 0) % BEAT_STILE.length], whoosh: srtTeile.slice(1).map((t) => t.start), ding: dingZeit ? [dingZeit] : [], boom: fx ? [0.05] : [], riser: fx && dingZeit ? [dingZeit - 0.4] : [] } : { stimmung: musik });
     } catch (err) {
       console.log(`[video-fabrik] Musik fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
     }

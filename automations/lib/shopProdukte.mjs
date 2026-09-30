@@ -70,6 +70,6 @@ export async function topListeSkript(shop, produkte) {
   return {
     titel: String(d.titel || `Top ${liste.length} von ${shop}`).slice(0, 120), hook: kurzHook(d.hook || `Top ${liste.length} von ${shop}`),
     caption: `${String(d.caption || '').slice(0, 1500)}\n\n👉 ${url}`, hintergrund: { prompt: 'modern minimalist product display studio, soft gradient backdrop, premium lighting', seed },
-    waehrung: 'EUR', shop: new URL(url).hostname.replace(/^www\./, ''), szenen,
+    waehrung: 'EUR', shop: new URL(url).hostname.replace(/^www\./, ''), link: `${url.replace(/\/$/, '')}/`, szenen,
   };
 }

@@ -8,6 +8,7 @@ import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync, renameSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { kameraFilter, glitchFilter } from './effekte.mjs';
 
 const ausfuehren = promisify(execFile);
 const CACHE = resolve(process.env.PREMIUM_CACHE || 'out/premium-cache');
@@ -295,11 +296,16 @@ export function premiumStandbild({ bgP, fgP, ziel, breite, hoehe }) {
 
 // Eine Szene: Hintergrund schwenkt in die eine Richtung, Produkt schwebt leicht gegenlaeufig
 // (Parallaxe), Blitz-Uebergang, Wort-Untertitel. extra = zusaetzliche Filter (Hook).
-export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = false, mp3, ass, ziel, breite, hoehe, dauer, index, extra = [] }) {
+// effekt (effekte.mjs): {art: 'start'|'blitz'|'glitch'|'leck', leck: PNG, qr: PNG, wackeln} - Zoom-Punch,
+// Uebergang und QR-Endkarte; ohne effekt bleibt es beim klassischen Blitz-Uebergang.
+export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = false, mp3, ass, ziel, breite, hoehe, dauer, index, extra = [], effekt = null }) {
   const D = dauer.toFixed(2);
   const r = index % 2 ? `(t/${D})` : `(1-t/${D})`;
   // Eingaenge: 0 Hintergrund, dann (falls vorhanden) Produkt, Bokeh, Glanz, zuletzt die Stimme.
-  const bilder = [bgP, fgP, bokeh, glanz].filter(Boolean);
+  const art = effekt?.art || (index === 0 ? 'start' : 'blitz');
+  const leck = art === 'leck' ? effekt?.leck || '' : '';
+  const qr = effekt?.qr || '';
+  const bilder = [bgP, fgP, bokeh, glanz, leck, qr].filter(Boolean);
   const nr = (x) => bilder.indexOf(x);
   let graph = `[0:v]crop=${breite}:${hoehe}:x='(iw-ow)*${r}':y='(ih-oh)*(0.5+0.35*sin(t*0.45+${index}))'`;
   if (bokeh) graph += `[b0];[b0][${nr(bokeh)}:v]overlay=x=0:y='-(h-H)*(0.2+0.6*t/${D})'`;
@@ -310,8 +316,13 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
     graph += `[v0];${quelle}overlay=x=(W-w)/2-W*0.018*(${r}-0.5):y=${y}+H*0.012*sin(t*1.7+${index})`;
   }
   if (glanz) graph += `[g0];[g0][${nr(glanz)}:v]overlay=x='-w+(W+w)*(t-0.05)/0.7':y=0:enable='between(t,0.05,0.75)'`;
+  // Light-Leak: warmes Licht blendet in 0,9 s aus.
+  if (leck) graph += `[l0];[${nr(leck)}:v]format=rgba,fade=t=out:st=0.1:d=0.8:alpha=1[lk];[l0][lk]overlay=enable='lt(t,0.9)'`;
+  if (effekt) graph += `,${kameraFilter({ breite, hoehe, wackeln: !!effekt.wackeln })}`;
+  // QR-Endkarte oben links (nach dem Zoom, damit er ruhig steht und scannbar bleibt).
+  if (qr) graph += `[q0];[${nr(qr)}:v]scale=${gerade(breite * 0.26)}:-2,format=rgba,fade=t=in:st=0.4:d=0.3:alpha=1[qr];[q0][qr]overlay=x=${Math.round(breite * 0.17)}-w/2:y=${Math.round(hoehe * 0.075)}`;
   const ende = [
-    index === 0 ? 'fade=in:st=0:d=0.25' : 'fade=in:st=0:d=0.14:color=white',
+    ...(art === 'start' ? ['fade=in:st=0:d=0.25'] : art === 'blitz' ? ['fade=in:st=0:d=0.14:color=white'] : art === 'glitch' ? glitchFilter() : []),
     `fade=out:st=${Math.max(dauer - 0.18, 0).toFixed(2)}:d=0.18`,
     ...extra,
     `ass='${pfadFuerFilter(ass)}'`,

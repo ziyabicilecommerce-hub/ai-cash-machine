@@ -70,7 +70,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null
-          pip install -q "edge-tts==7.*"
+          pip install -q "edge-tts==7.*" segno
           # Premium-Look: rembg stellt Produktfotos frei (faellt es aus, gibt es den einfachen Look).
           pip install -q "rembg[cpu,cli]" || echo "rembg nicht installiert - Videos ohne Freisteller"
       # KI-Moderatorin (Wav2Lip auf CPU): Modelle + Portraets werden zwischengespeichert.
