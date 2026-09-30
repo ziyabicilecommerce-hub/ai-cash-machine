@@ -42,19 +42,25 @@ if [ "${1:-}" = "einrichten" ]; then
     [ -s "$bild" ] && continue
     beschreibung="${MODERATORINNEN[$i]%%|*}"; seed="${MODERATORINNEN[$i]##*|}"
     roh="$(mktemp --suffix=.jpg)"
-    for versuch in 1 2 3; do
-      curl -sfL -m 120 -o "$roh" "https://image.pollinations.ai/prompt/$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$beschreibung, $BASIS")?width=768&height=1024&nologo=true&seed=$seed&model=flux" && break || sleep $((versuch * 10))
+    # Die Gratis-Bild-KI bremst schnelle Anfragen - daher Pausen und bis zu 5 Versuche.
+    for versuch in 1 2 3 4 5; do
+      if curl -sfL -m 150 -o "$roh" "https://image.pollinations.ai/prompt/$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$beschreibung, $BASIS")?width=768&height=1024&nologo=true&seed=$seed&model=flux" && [ "$(stat -c%s "$roh")" -gt 20000 ]; then break; fi
+      echo "  Moderatorin $((i + 1)): Versuch $versuch fehlgeschlagen, warte"; sleep $((versuch * 20))
     done
     # Unten den Rand abschneiden (dort sitzt sonst das kleine Pollinations-Logo).
-    ffmpeg -loglevel error -y -i "$roh" -vf "crop=iw:ih*0.92:0:0" -q:v 2 "$bild" && rm -f "$roh"
+    ffmpeg -loglevel error -y -i "$roh" -vf "crop=iw:ih*0.92:0:0" -q:v 2 "$bild" || echo "  Moderatorin $((i + 1)) nicht verfuegbar"
+    rm -f "$roh"; sleep 8
   done
-  ls -la "$W2L/checkpoints" "$W2L/face_detection/detection/sfd" "$W2L"/moderatorin-*.jpg
+  ls -la "$W2L/checkpoints" "$W2L/face_detection/detection/sfd" "$W2L"/moderatorin-*.jpg || true
   exit 0
 fi
 
 if [ "${1:-}" = "sprechen" ]; then
   audio="$(realpath "$2")"; ziel="$(realpath -m "$3")"; wahl="${4:-1}"
   if [[ "$wahl" =~ ^[1-6]$ ]]; then bild="$W2L/moderatorin-$wahl.jpg"; else bild="$(realpath "$wahl")"; fi
+  # Fehlt ein Portraet (Download gescheitert), spricht die erste verfuegbare Moderatorin.
+  [ -s "$bild" ] || bild="$(ls "$W2L"/moderatorin-*.jpg 2>/dev/null | head -1)"
+  [ -s "$bild" ] || { echo "Keine Moderatorin verfuegbar"; exit 1; }
   wav="$(mktemp --suffix=.wav)"
   ffmpeg -loglevel error -y -i "$audio" -ar 16000 -ac 1 "$wav"
   (cd "$W2L" && python3 inference.py --checkpoint_path checkpoints/wav2lip_gan.pth --face "$bild" --audio "$wav" --outfile "$ziel" --static True --pads 0 15 0 0 --resize_factor 1 --nosmooth >/dev/null)
