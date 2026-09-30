@@ -33,16 +33,21 @@ export function qrBauen(url, ziel) {
 // Uebergang je Szene - wechselt, damit der Schnitt nie gleich wirkt.
 export function uebergangFuer(index) {
   if (index === 0) return 'start';
-  return ['blitz', 'glitch', 'leck'][index % 3];
+  return ['blitz', 'glitch', 'leck', 'wisch'][index % 4];
 }
 
 // Kamera nach dem Zusammensetzen: Zoom-Punch (startet 12 % naeher und schnappt in 0,35 s zurueck),
 // beim Hook zusaetzlich ein kurzer Wackler wie bei einem Bass-Drop.
-export function kameraFilter({ breite, hoehe, wackeln = false, fps = 30 }) {
+// wisch: Whip-Pan - das Bild rauscht in 0,18 s von rechts in die Mitte (dazu Bewegungsunschaerfe, siehe wischFilter).
+export function kameraFilter({ breite, hoehe, wackeln = false, wisch = false, fps = 30 }) {
   const zoom = `1+0.12*max(0,1-it/0.35)${wackeln ? '+0.035' : ''}`;
   const w = (a, f) => (wackeln ? `+${a}*sin(it*${f})*max(0,1-it/0.8)` : '');
-  return `zoompan=z='${zoom}':x='iw/2-iw/zoom/2${w(14, 53)}':y='ih/2-ih/zoom/2${w(11, 41)}':d=1:s=${breite}x${hoehe}:fps=${fps}`;
+  const rein = wisch ? '+(iw-iw/zoom)/2*max(0,1-it/0.18)' : '';
+  return `zoompan=z='${zoom}':x='iw/2-iw/zoom/2${w(14, 53)}${rein}':y='ih/2-ih/zoom/2${w(11, 41)}':d=1:s=${breite}x${hoehe}:fps=${fps}`;
 }
+
+// Bewegungsunschaerfe fuer den Whip-Pan (nur horizontal, erste 0,16 s).
+export const wischFilter = () => ["avgblur=sizeX=46:sizeY=1:enable='lt(t,0.16)'"];
 
 // Glitch: RGB-Versatz und Rauschen fuer die ersten 0,14 s.
 export const glitchFilter = () => [
@@ -66,5 +71,33 @@ export function endkarteAss(ass, { breite, hoehe, qr = false, cta = 'LINK IN BIO
   zeilen.push(`Dialogue: 5,${zeit(500)},${zeit(600000)},Hook,,0,0,0,,{\\an2\\pos(${Math.round(breite * (breite > hoehe ? 0.5 : 0.36))},${Math.round(hoehe * 0.9)})\\fs${Math.round(Math.min(breite, hoehe) * 0.05)}\\fad(200,0)${puls}}▼ ${cta} ▼`);
   // Shopname unter dem Hinweis (gleiche Achse, nicht unter der Moderatorin).
   if (shop) zeilen.push(`Dialogue: 5,${zeit(200)},${zeit(600000)},Shop,,0,0,0,,{\\an2\\pos(${Math.round(breite * (breite > hoehe ? 0.5 : 0.36))},${Math.round(hoehe * 0.955)})\\fad(300,0)}${String(shop).replace(/[{}\\]/g, '')}`);
+  appendFileSync(ass, zeilen.join('\n') + '\n');
+}
+
+// Funkeln: kleine 4-Zack-Sterne blitzen nacheinander rund ums Produkt auf (Premium-Glanz).
+// burst: Sterne fliegen beim Erscheinen des Preisschilds strahlenfoermig aus dem Schild heraus.
+export function funkelnAss(ass, { breite, hoehe, dauerMs, seed = 1, burst = null }) {
+  let z = Math.abs(Number(seed) || 1) % 2147483647 || 1;
+  const zufall = () => { z = (z * 48271) % 2147483647; return z / 2147483647; };
+  const stern = (r) => { const a = Math.round(r * 0.22); return `m 0 ${-r} l ${a} ${-a} ${r} 0 ${a} ${a} 0 ${r} ${-a} ${a} ${-r} 0 ${-a} ${-a}`; };
+  const glanz = '\\an5\\bord3\\3c&HFFFFFF&\\3a&H90&\\shad0\\1c&HFFFFFF&\\blur2\\p1';
+  const zeilen = [];
+  const n = Math.max(3, Math.min(7, Math.round(dauerMs / 700)));
+  for (let i = 0; i < n; i++) {
+    const t0 = Math.round(250 + (i / n) * Math.max(dauerMs - 900, 400) + zufall() * 200);
+    const x = Math.round(breite * (0.2 + zufall() * 0.6));
+    const y = Math.round(hoehe * (0.22 + zufall() * 0.36));
+    const r = Math.round(Math.min(breite, hoehe) * (0.03 + zufall() * 0.028));
+    zeilen.push(`Dialogue: 4,${zeit(t0)},${zeit(t0 + 520)},Wort,,0,0,0,,{\\pos(${x},${y})${glanz}\\fscx0\\fscy0\\t(0,200,\\fscx100\\fscy100\\frz45)\\t(200,520,\\fscx0\\fscy0\\frz90)}${stern(r)}`);
+  }
+  if (burst) {
+    const r = Math.round(Math.min(breite, hoehe) * 0.03);
+    for (let i = 0; i < 8; i++) {
+      const w = (i / 8) * 2 * Math.PI + zufall() * 0.3;
+      const d = Math.min(breite, hoehe) * (0.14 + zufall() * 0.06);
+      const [x2, y2] = [Math.round(burst.x + Math.cos(w) * d), Math.round(burst.y + Math.sin(w) * d)];
+      zeilen.push(`Dialogue: 4,${zeit(burst.ms)},${zeit(burst.ms + 600)},Wort,,0,0,0,,{\\move(${burst.x},${burst.y},${x2},${y2},0,450)${glanz}\\t(0,600,\\fscx30\\fscy30\\frz180\\alpha&HFF&)}${stern(r)}`);
+    }
+  }
   appendFileSync(ass, zeilen.join('\n') + '\n');
 }
