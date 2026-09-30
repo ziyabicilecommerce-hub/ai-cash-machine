@@ -242,7 +242,11 @@ const ffmpegBild = (args) => execFileSync('ffmpeg', ['-loglevel', 'error', '-y',
 export function ebenenVorbereiten({ hg, vg, breite, hoehe, basis }) {
   const [bw, bh] = [gerade(breite * 1.16), gerade(hoehe * 1.16)];
   const bgP = `${basis}.bg.jpg`;
-  ffmpegBild(['-i', hg, '-vf', `scale=${bw}:${bh}:force_original_aspect_ratio=increase:flags=lanczos,crop=${bw}:${bh}${vg ? ',gblur=sigma=4,eq=brightness=-0.05' : ''},${LOOK},vignette=PI/4.2,noise=alls=4:allf=u`, '-frames:v', '1', '-q:v', '2', bgP]);
+  // Mit Produkt: Spotlight hinter dem Produkt (weicher, heller Lichtkegel) - trennt es vom Hintergrund.
+  const spot = `[s]geq=r=255:g=246:b=230:a='105*exp(-(pow(X-W/2,2)/pow(W*0.34,2)+pow(Y-H*0.4,2)/pow(H*0.24,2)))',scale=${bw}:${bh}:flags=bicubic[sp];[b][sp]overlay=format=rgb`;
+  ffmpegBild(['-i', hg, ...(vg ? ['-f', 'lavfi', '-i', `color=black:s=${gerade(bw / 4)}x${gerade(bh / 4)},format=rgba`] : []), '-filter_complex',
+    `[0:v]scale=${bw}:${bh}:force_original_aspect_ratio=increase:flags=lanczos,crop=${bw}:${bh}${vg ? ',gblur=sigma=4,eq=brightness=-0.05[b];[1:v]format=rgba[s];' + spot : ''},${LOOK},vignette=PI/4.2,noise=alls=4:allf=u`,
+    '-frames:v', '1', '-q:v', '2', bgP]);
   if (!vg) return { bgP, fgP: '' };
   const fgP = `${basis}.fg.png`;
   // Farbanpassung: das Produkt nimmt leicht die Lichtfarbe des Hintergrunds an (wirkt echt fotografiert).
@@ -258,12 +262,14 @@ export function ebenenVorbereiten({ hg, vg, breite, hoehe, basis }) {
   // als das Produkt, damit die Spiegelung Platz hat (siehe PRODUKT_Y).
   const blur = (r) => `boxblur=luma_radius=${r}:luma_power=2:alpha_radius=${r}:alpha_power=2`;
   ffmpegBild(['-i', vg, '-filter_complex',
-    `[0:v]format=rgba,scale=${Math.round(breite * 0.8)}:${Math.round(hoehe * 0.5)}:force_original_aspect_ratio=decrease:flags=lanczos,${tint}${LOOK},format=rgba,split=5[p][pc][d0][s0][r0];` +
+    `[0:v]format=rgba,scale=${Math.round(breite * 0.8)}:${Math.round(hoehe * 0.5)}:force_original_aspect_ratio=decrease:flags=lanczos,${tint}${LOOK},cas=0.5,format=rgba,split=6[p][pc][d0][s0][r0][h0];` +
+    // Lichthalo: weiches, warmes Leuchten rund um die Produktkante (Rim-Light wie im Studio).
+    `[h0]pad=iw+140:ih+140:70:70:color=black@0,lutrgb=r=255:g=244:b=225,colorchannelmixer=aa=0.38,${blur(30)}[h];` +
     `[pc]colorchannelmixer=aa=0,pad=iw+140:ih*1.45+140:70:70:color=black@0[c];` +
     `[d0]pad=iw+140:ih+140:70:70:color=black@0,colorchannelmixer=rr=0:gg=0:bb=0:aa=0.45,${blur(26)}[d];` +
     `[s0]colorchannelmixer=rr=0:gg=0:bb=0:aa=0.85,scale=iw*1.1:ih*0.06,pad=iw+80:ih+80:40:40:color=black@0,${blur(16)}[k];` +
     `[r0]vflip,crop=iw:ih*0.4:0:0,geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='alpha(X,Y)*0.3*pow(max(0,1-Y/H),1.6)',gblur=sigma=1.5[r];` +
-    '[c][d]overlay=x=16:y=34:format=rgb[c1];[c1][k]overlay=x=(W-w)/2:y=70+(H-140)/1.45-h/2-4:format=rgb[c2];' +
+    '[c][h]overlay=x=0:y=0:format=rgb[c0];[c0][d]overlay=x=16:y=34:format=rgb[c1];[c1][k]overlay=x=(W-w)/2:y=70+(H-140)/1.45-h/2-4:format=rgb[c2];' +
     '[c2][r]overlay=x=70:y=70+(H-140)/1.45+2:format=rgb[c3];[c3][p]overlay=x=70:y=70:format=rgb,format=rgba',
     '-frames:v', '1', fgP]);
   return { bgP, fgP };
@@ -331,8 +337,10 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
     '-loglevel', 'error', '-y', ...bilder.flatMap((b) => ['-loop', '1', '-framerate', '30', '-i', b]), '-i', mp3,
     '-filter_complex', `${graph},${ende}[v]`,
     '-map', '[v]', '-map', `${bilder.length}:a`, '-t', D,
-    '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', '30',
-    '-c:a', 'aac', '-b:a', '160k', '-ar', '44100', '-ac', '2', '-af', 'apad',
+    // aq-mode 3 verteilt Bits in dunkle Verlaeufe - weniger Farbstreifen (Banding) in Nacht-Hintergruenden.
+    '-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-profile:v', 'high', '-x264-params', 'aq-mode=3:aq-strength=0.9:deblock=-1,-1', '-pix_fmt', 'yuv420p', '-r', '30',
+    // Stimme wie im Studio: Rumpeln weg, Praesenz rauf, Kompressor fuer gleichmaessige Lautstaerke.
+    '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-ac', '2', '-af', 'highpass=f=70,equalizer=f=220:t=q:w=1:g=-2,equalizer=f=3400:t=q:w=1.2:g=3,equalizer=f=9000:t=q:w=1:g=1.5,acompressor=threshold=0.08:ratio=3:attack=5:release=90:makeup=1.6,apad',
     ziel,
   ], { timeout: 600000, maxBuffer: 16 * 1024 * 1024 });
 }
