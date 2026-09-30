@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   test:
@@ -25,18 +25,20 @@ jobs:
           pip install -q "numpy==1.23.5" "librosa==0.10.1" "opencv-python-headless<4.10" scipy tqdm numba "edge-tts==7.*"
       - name: Wav2Lip und Modelle einrichten
         run: scripts/moderatorin.sh einrichten
-      - name: Testsatz sprechen lassen
+      - name: Alle 6 Moderatorinnen sprechen lassen
         run: |
           edge-tts --voice de-DE-SeraphinaMultilingualNeural --rate=+6% --text "Hey du! Kennst du das? Dein Schreibtisch ist immer zu dunkel. Mit dieser Lampe hast du endlich warmes, klares Licht. Link in der Bio!" --write-media test.mp3
-          start=$(date +%s)
-          scripts/moderatorin.sh sprechen test.mp3 moderatorin.mp4
-          echo "Dauer: $(( $(date +%s) - start )) s fuer $(ffprobe -v error -show_entries format=duration -of csv=p=0 test.mp3) s Audio" | tee -a "$GITHUB_STEP_SUMMARY"
-          ffmpeg -loglevel error -y -i moderatorin.mp4 -i test.mp3 -map 0:v -map 1:a -c:v libx264 -crf 20 -pix_fmt yuv420p -c:a aac -shortest moderatorin-mit-ton.mp4
-          cp ~/wav2lip/moderatorin.jpg .
-      - uses: actions/upload-artifact@v4
-        with:
-          name: moderatorin-test
-          path: |
-            moderatorin-mit-ton.mp4
-            moderatorin.jpg
-          retention-days: 7
+          for nr in 1 2 3 4 5 6; do
+            start=$(date +%s)
+            scripts/moderatorin.sh sprechen test.mp3 roh-$nr.mp4 $nr
+            ffmpeg -loglevel error -y -i roh-$nr.mp4 -i test.mp3 -map 0:v -map 1:a -c:v libx264 -crf 20 -pix_fmt yuv420p -c:a aac -shortest moderatorin-$nr.mp4
+            ffmpeg -loglevel error -y -ss 3.5 -i moderatorin-$nr.mp4 -frames:v 1 -vf scale=300:-2 bild-$nr.jpg
+            echo "Moderatorin $nr: $(( $(date +%s) - start )) s" | tee -a "$GITHUB_STEP_SUMMARY"
+          done
+          ffmpeg -loglevel error -y -i bild-1.jpg -i bild-2.jpg -i bild-3.jpg -i bild-4.jpg -i bild-5.jpg -i bild-6.jpg -filter_complex "[0][1][2]hstack=3[a];[3][4][5]hstack=3[b];[a][b]vstack" alle-moderatorinnen.jpg
+      - name: Als Release zum Anschauen ablegen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete moderatorin-test --yes --cleanup-tag 2>/dev/null || true
+          gh release create moderatorin-test moderatorin-*.mp4 alle-moderatorinnen.jpg --title "KI-Moderatorinnen Test" --notes "Automatischer Test der 6 kostenlosen KI-Moderatorinnen (Wav2Lip)." --latest=false
