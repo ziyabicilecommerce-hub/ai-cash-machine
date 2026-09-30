@@ -352,16 +352,19 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
     ...(art === 'start' ? ['fade=in:st=0:d=0.25'] : art === 'blitz' ? ['fade=in:st=0:d=0.14:color=white'] : art === 'glitch' ? glitchFilter() : art === 'wisch' ? wischFilter() : []),
     `fade=out:st=${Math.max(dauer - 0.18, 0).toFixed(2)}:d=0.18`,
     ...extra,
-    `ass='${pfadFuerFilter(ass)}'`,
+    // Ohne ass/mp3 entsteht eine "saubere" Bildspur (Welt-Turbo: Untertitel und Ton kommen je Sprache danach).
+    ...(ass ? [`ass='${pfadFuerFilter(ass)}'`] : []),
   ].join(',');
   await ausfuehren('ffmpeg', [
-    '-loglevel', 'error', '-y', ...bilder.flatMap((b) => ['-loop', '1', '-framerate', '30', '-i', b]), '-i', mp3,
+    '-loglevel', 'error', '-y', ...bilder.flatMap((b) => ['-loop', '1', '-framerate', '30', '-i', b]), ...(mp3 ? ['-i', mp3] : []),
     '-filter_complex', `${graph},${ende}[v]`,
-    '-map', '[v]', '-map', `${bilder.length}:a`, '-t', D,
+    '-map', '[v]', ...(mp3 ? ['-map', `${bilder.length}:a`] : ['-an']), '-t', D,
     // aq-mode 3 verteilt Bits in dunkle Verlaeufe - weniger Farbstreifen (Banding) in Nacht-Hintergruenden.
     '-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-profile:v', 'high', '-x264-params', 'aq-mode=3:aq-strength=0.9:deblock=-1,-1', '-pix_fmt', 'yuv420p', '-r', '30',
-    // Stimme wie im Studio: Rumpeln weg, Praesenz rauf, Kompressor fuer gleichmaessige Lautstaerke.
-    '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-ac', '2', '-af', 'highpass=f=70,equalizer=f=220:t=q:w=1:g=-2,equalizer=f=3400:t=q:w=1.2:g=3,equalizer=f=9000:t=q:w=1:g=1.5,acompressor=threshold=0.08:ratio=3:attack=5:release=90:makeup=1.6,apad',
+    ...(mp3 ? ['-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-ac', '2', '-af', STUDIO_STIMME] : []),
     ziel,
   ], { timeout: 600000, maxBuffer: 16 * 1024 * 1024 });
 }
+
+// Stimme wie im Studio: Rumpeln weg, Praesenz rauf, Kompressor fuer gleichmaessige Lautstaerke.
+export const STUDIO_STIMME = 'highpass=f=70,equalizer=f=220:t=q:w=1:g=-2,equalizer=f=3400:t=q:w=1.2:g=3,equalizer=f=9000:t=q:w=1:g=1.5,acompressor=threshold=0.08:ratio=3:attack=5:release=90:makeup=1.6,apad';

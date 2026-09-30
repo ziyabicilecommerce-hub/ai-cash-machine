@@ -14,16 +14,11 @@ import { kapitelText, teaserBauen, zusammenschnittBauen } from './lib/videoExtra
 import { WELT_SPRACHEN, sprachGruppen } from './lib/weltSprachen.mjs';
 import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
 import { uebersetzen, uebersetzenBuendel } from './lib/uebersetzen.mjs';
+import { turboJob, turboGruppen, istTurboGruppe } from './lib/weltTurboJob.mjs';
 import { skripteLaden, skripteSpeichern, uebersetzungenLaden, uebersetzungenSpeichern, schluessel, anwenden, auszug } from './lib/weltCache.mjs';
 import { premiumAn, themaFuer, preisText } from './lib/premium.mjs';
 import { kurzHook, reinText, aktiveProdukte, topListeSkript } from './lib/shopProdukte.mjs';
-import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
-
-// KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
-async function mitModeratorin(v, nr) {
-  if (!moderatorinAn()) return;
-  try { await moderatorinEinfuegen(v.pfad, v.stimme, nr); console.log(`[94-video-fabrik] Moderatorin ${((nr - 1) % 6) + 1} eingefuegt`); } catch (err) { console.log(`[94-video-fabrik] Moderatorin fehlgeschlagen: ${String(err.message).slice(0, 120)} ... ${String(err.stderr || '').slice(-900)}`); }
-}
+import { mitModeratorin } from './lib/moderatorin.mjs';
 import { karussellBauen } from './lib/karussell.mjs';
 
 const OUT = 'out';
@@ -40,6 +35,8 @@ const WELT_ANZAHL = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_ANZAHL', '21'),
 const WELT_VARIANTEN = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_VARIANTEN', '1'), 10) || 1, 1), 12);
 const WINKEL = ['', 'Mini-Story in Ich-Form aus Sicht einer Kundin oder eines Kunden.', 'Top-3-Liste: drei konkrete Gruende fuer das Produkt.', 'Vorher/Nachher: erst der nervige Alltag ohne das Produkt, dann die Loesung.', 'POV-Stil ("POV: du ..."), locker und witzig.', 'Vergleich: ein gewoehnliches Produkt gegen dieses Produkt.', 'Schnelle Tipps-Form: "So nutzt du ..." mit kurzen Schritten.', 'Frage-Antwort: Beginne mit einer Frage, die viele sich stellen.', 'Ruhig und hochwertig, wie ein Premium-Markenspot.', 'Geschenkidee: fuer wen das Produkt das perfekte Geschenk ist.', 'Alltagsmoment: eine typische Situation zuhause oder im Buero.', 'Mythos vs. Wahrheit rund um das Problem, das das Produkt loest.'];
 // Zeitbudget je Render-Job: danach aufhoeren, damit alles Fertige noch hochgeladen wird (Job-Limit 6 h).
+const TURBO = !/^(0|nein|aus|false)$/i.test(env('WELT_TURBO'));
+const WELT_JOBS = Math.min(Math.max(parseInt(env('WELT_JOBS', '18'), 10) || 18, 1), 40);
 const WELT_ZEIT_MIN = Math.min(Math.max(parseInt(env('WELT_ZEIT_MINUTEN', '290'), 10) || 290, 10), 330);
 const LANG_MIN = Math.min(Math.max(parseFloat(env('VIDEO_FABRIK_LANG_MINUTEN', '0')) || 0, 0), 60);
 const STIL = env('VIDEO_FABRIK_STIL', 'cinematic, vibrant colors, high detail, no text');
@@ -442,13 +439,18 @@ async function skripteSchreiben() {
     if (fehlt.length < codes.length) codes = codes.filter((c) => !fehlt.includes(c));
   }
   // So viele Sprachen je Job, dass ein Job ca. 250 Videos baut (bei vielen Varianten: 1 Sprache je Job).
-  const gruppen = sprachGruppen(codes, Math.max(1, Math.min(5, Math.floor(250 / skripte.length))));
+  // Turbo (Standard): jeder Runner baut ein paar Skripte in allen Sprachen, das Bild nur einmal je Skript.
+  writeFileSync(join(OUT, 'sprachen.json'), JSON.stringify(codes));
+  const gruppen = TURBO ? turboGruppen(skripte, WELT_JOBS) : sprachGruppen(codes, Math.max(1, Math.min(5, Math.floor(250 / skripte.length))));
   writeFileSync(join(OUT, 'gruppen.json'), JSON.stringify(gruppen));
   console.log(`[94-video-fabrik] ${skripte.length} Skripte, ${codes.length} Sprachen in ${gruppen.length} Gruppen = ${skripte.length * codes.length} Videos`);
 }
 
 // Welt-Bot (#96), Schritt 2: die Skripte in die Sprachen dieses Jobs uebersetzen und vertonen.
 async function sprachenRendern(liste) {
+  if (istTurboGruppe(liste)) {
+    return turboJob({ liste, out: OUT, sprachen: JSON.parse(readFileSync(join(OUT, 'sprachen.json'), 'utf8')), stimmen: STIMMEN, stil: STIL, zeitMin: WELT_ZEIT_MIN, ablegen });
+  }
   mkdirSync(join(OUT, 'videos'), { recursive: true });
   const skripte = JSON.parse(readFileSync(join(OUT, 'skripte.json'), 'utf8'));
   const manifest = [];
