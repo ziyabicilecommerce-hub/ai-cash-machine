@@ -82,7 +82,8 @@ jobs:
         continue-on-error: true
         run: |
           python -m venv ~/w2l-venv
-          ~/w2l-venv/bin/pip install -q --index-url https://download.pytorch.org/whl/cpu torch==2.2.2 torchvision==0.17.2
+          ~/w2l-venv/bin/pip install -q --upgrade pip setuptools wheel
+          ~/w2l-venv/bin/pip install -q --extra-index-url https://download.pytorch.org/whl/cpu torch==2.2.2+cpu torchvision==0.17.2+cpu
           ~/w2l-venv/bin/pip install -q "numpy==1.23.5" "librosa==0.10.1" "opencv-python-headless<4.10" scipy tqdm numba
           echo "W2L_PY=$HOME/w2l-venv/bin/python" >> "$GITHUB_ENV"
           scripts/moderatorin.sh einrichten
