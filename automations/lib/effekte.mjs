@@ -39,9 +39,13 @@ export function uebergangFuer(index) {
 // Kamera nach dem Zusammensetzen: Zoom-Punch (startet 12 % naeher und schnappt in 0,35 s zurueck),
 // beim Hook zusaetzlich ein kurzer Wackler wie bei einem Bass-Drop.
 // wisch: Whip-Pan - das Bild rauscht in 0,18 s von rechts in die Mitte (dazu Bewegungsunschaerfe, siehe wischFilter).
-export function kameraFilter({ breite, hoehe, wackeln = false, wisch = false, fps = 30 }) {
-  const zoom = `1+0.12*max(0,1-it/0.35)${wackeln ? '+0.035' : ''}`;
-  const w = (a, f) => (wackeln ? `+${a}*sin(it*${f})*max(0,1-it/0.8)` : '');
+// beat: {p: Taktlaenge in s, off: Startzeit der Szene im Video} - das Bild pumpt auf jedem Schlag mit.
+// stoss: Sekunde, ab der die Kamera kurz einschlaegt (z. B. wenn das Preisschild erscheint).
+export function kameraFilter({ breite, hoehe, wackeln = false, wisch = false, beat = null, stoss = null, fps = 30 }) {
+  const pump = beat?.p ? `+0.022*exp(-12*mod(it+${Number(beat.off || 0).toFixed(3)},${Number(beat.p).toFixed(3)}))` : '';
+  const zoom = `1+0.12*max(0,1-it/0.35)${wackeln || stoss != null ? '+0.035' : ''}${pump}`;
+  const w = (a, f) => (wackeln ? `+${a}*sin(it*${f})*max(0,1-it/0.8)` : '') +
+    (stoss != null ? `+${a * 1.3}*sin((it-${stoss})*${f})*exp(-7*max(0,it-${stoss}))*gte(it,${stoss})` : '');
   const rein = wisch ? '+(iw-iw/zoom)/2*max(0,1-it/0.18)' : '';
   return `zoompan=z='${zoom}':x='iw/2-iw/zoom/2${w(14, 53)}${rein}':y='ih/2-ih/zoom/2${w(11, 41)}':d=1:s=${breite}x${hoehe}:fps=${fps}`;
 }
@@ -100,4 +104,15 @@ export function funkelnAss(ass, { breite, hoehe, dauerMs, seed = 1, burst = null
     }
   }
   appendFileSync(ass, zeilen.join('\n') + '\n');
+}
+
+// Lichtstrahlen (Buehnen-Enthuellung): 14 weiche Strahlen aus der Mitte, warmweiss, quadratisch.
+export function strahlenBauen(ziel, groesse) {
+  if (!existsSync(ziel)) {
+    const g = Math.round(groesse / 4) * 2;
+    bild(['-f', 'lavfi', '-i', `color=black:s=${g}x${g},format=rgba`,
+      '-vf', `geq=r=255:g=240:b=205:a='min(170,150*pow(max(0,cos(7*atan2(Y-H/2,X-W/2))),10)*exp(-hypot(X-W/2,Y-H/2)/(W*0.32))+70*exp(-hypot(X-W/2,Y-H/2)/(W*0.1)))',scale=${g * 2}:${g * 2}:flags=bicubic`,
+      '-frames:v', '1', ziel]);
+  }
+  return ziel;
 }

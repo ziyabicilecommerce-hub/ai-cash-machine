@@ -43,6 +43,8 @@ const BEATS = {
   ],
 };
 export const BEAT_STILE = Object.keys(BEATS);
+// Taktlaenge (s) je Stil - fuer den Beat-Pump im Bild (effekte.mjs).
+export const BEAT_PERIODE = { house: 0.5, trap: 0.857, lofi: 0.706, pop: 0.545 };
 
 // Whoosh an jedem Szenenwechsel: Rauschen mit kurzer Glockenkurve, per Bandpass geformt.
 const whooshFormel = (zeiten) => zeiten.slice(0, 60).map((z) => `exp(-pow((t-${z.toFixed(2)})/0.09,2))`).join('+');
