@@ -278,6 +278,9 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   if (!clips.length) throw new Error('Keine einzige Szene konnte gerendert werden.');
   const ziel = join(ordner, 'video.mp4');
   zusammenfuegen(clips, ziel, ordner);
+  // Reine Stimmspur (vor der Musik) - z. B. fuer die lippensynchrone KI-Moderatorin.
+  const stimmspur = join(ordner, 'stimme.wav');
+  try { execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', ziel, '-vn', '-ac', '1', '-ar', '16000', stimmspur], { stdio: 'pipe', timeout: 300000 }); } catch { /* ohne Stimmspur */ }
   if (musik || premium) {
     try {
       await musikUnterlegen(ziel, zeit, premium && !musik ? { stimmung: 'beat', stil: BEAT_STILE[Math.abs(Number(skript.hintergrund?.seed) || 0) % BEAT_STILE.length], whoosh: srtTeile.slice(1).map((t) => t.start), ding: dingZeit ? [dingZeit] : [] } : { stimmung: musik });
@@ -295,5 +298,5 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
     console.log(`[video-fabrik] Vorschaubild fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
     vorschau = '';
   }
-  return { pfad: ziel, vorschau, untertitel, kapitel, dauer: dauerSekunden(ziel), szenen: clips.length, ebenen: produktEbenen };
+  return { pfad: ziel, vorschau, untertitel, kapitel, dauer: dauerSekunden(ziel), szenen: clips.length, ebenen: produktEbenen, stimme: existsSync(stimmspur) ? stimmspur : '' };
 }

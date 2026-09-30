@@ -15,6 +15,13 @@ import { WELT_SPRACHEN, sprachGruppen } from './lib/weltSprachen.mjs';
 import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
 import { premiumAn, themaFuer, preisText } from './lib/premium.mjs';
 import { kurzHook, reinText, aktiveProdukte, topListeSkript } from './lib/shopProdukte.mjs';
+import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
+
+// KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
+async function mitModeratorin(v, nr) {
+  if (!moderatorinAn()) return;
+  try { await moderatorinEinfuegen(v.pfad, v.stimme, nr); console.log(`[94-video-fabrik] Moderatorin ${((nr - 1) % 6) + 1} eingefuegt`); } catch (err) { console.log(`[94-video-fabrik] Moderatorin fehlgeschlagen: ${String(err.message).slice(0, 150)}`); }
+}
 import { karussellBauen } from './lib/karussell.mjs';
 
 const OUT = 'out';
@@ -301,6 +308,7 @@ async function bauen() {
       if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
       const hook = a.format === 'hoch' ? skript.hook || kurzHook(skript.titel) : '';
       const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook, bildAlle: a.minuten > 20 ? 2 : 1, musik: a.minuten ? 'ruhig' : '', premium: PREMIUM && !!a.produkt });
+      if (PREMIUM && a.produkt) await mitModeratorin(v, i + 1 + tag);
       await ablegen(manifest, v, skript, a, i + 1, 'de');
       console.log(`[94-video-fabrik] ✓ ${manifest.filter((m) => !m.teaser).at(-1).datei} (${Math.round(v.dauer)} s, ${v.szenen} Szenen, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
       if (a.produkt) {
@@ -333,6 +341,7 @@ async function bauen() {
     try {
       const skript = await topListeSkript(shop, auswahl);
       const v = await videoBauen(skript, join(OUT, `arbeit-top-${shop}`), { format: 'hoch', stimme: STIMME, hook: skript.hook, premium: true, sprache: 'de' });
+      await mitModeratorin(v, shop.length + tag);
       await ablegen(manifest, v, skript, { thema: `Top 5 ${shop}`, format: 'hoch' }, `top5-${shop.toLowerCase()}`, 'de');
       console.log(`[94-video-fabrik] ✓ Top-5 ${shop} (${Math.round(v.dauer)} s)`);
     } catch (err) {

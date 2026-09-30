@@ -5,6 +5,8 @@
 #   scripts/moderatorin.sh sprechen AUDIO.mp3 ZIEL.mp4 [NR 1-6 | BILD]
 set -euo pipefail
 W2L="${W2L_DIR:-$HOME/wav2lip}"
+# Eigene Python-Umgebung fuer Wav2Lip (alte numpy-Version), damit rembg & Co. nicht stoeren.
+PY="${W2L_PY:-python3}"
 BILD_STANDARD="$W2L/moderatorin-1.jpg"
 
 # Sechs feste KI-Moderatorinnen (je eigener Seed = immer dieselbe Person), abwechselnd eingesetzt.
@@ -63,7 +65,7 @@ if [ "${1:-}" = "sprechen" ]; then
   [ -s "$bild" ] || { echo "Keine Moderatorin verfuegbar"; exit 1; }
   wav="$(mktemp --suffix=.wav)"
   ffmpeg -loglevel error -y -i "$audio" -ar 16000 -ac 1 "$wav"
-  (cd "$W2L" && python3 inference.py --checkpoint_path checkpoints/wav2lip_gan.pth --face "$bild" --audio "$wav" --outfile "$ziel" --static True --pads 0 15 0 0 --resize_factor 1 --nosmooth >/dev/null)
+  (cd "$W2L" && "$PY" inference.py --checkpoint_path checkpoints/wav2lip_gan.pth --face "$bild" --audio "$wav" --outfile "$ziel" --static True --pads 0 15 0 0 --resize_factor 1 --nosmooth >/dev/null)
   rm -f "$wav"
   exit 0
 fi

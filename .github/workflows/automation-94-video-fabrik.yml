@@ -63,6 +63,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
       - name: ffmpeg, Schrift und edge-tts installieren
         run: |
           sudo apt-get update -qq
@@ -70,6 +73,20 @@ jobs:
           pip install -q "edge-tts==7.*"
           # Premium-Look: rembg stellt Produktfotos frei (faellt es aus, gibt es den einfachen Look).
           pip install -q "rembg[cpu,cli]" || echo "rembg nicht installiert - Videos ohne Freisteller"
+      # KI-Moderatorin (Wav2Lip auf CPU): Modelle + Portraets werden zwischengespeichert.
+      - uses: actions/cache@v4
+        with:
+          path: ~/wav2lip
+          key: wav2lip-moderatorin-v1
+      - name: KI-Moderatorin einrichten
+        continue-on-error: true
+        run: |
+          python -m venv ~/w2l-venv
+          ~/w2l-venv/bin/pip install -q --index-url https://download.pytorch.org/whl/cpu torch==2.2.2 torchvision==0.17.2
+          ~/w2l-venv/bin/pip install -q "numpy==1.23.5" "librosa==0.10.1" "opencv-python-headless<4.10" scipy tqdm numba
+          echo "W2L_PY=$HOME/w2l-venv/bin/python" >> "$GITHUB_ENV"
+          scripts/moderatorin.sh einrichten
+          ls ~/wav2lip/moderatorin-*.jpg >/dev/null && echo "MODERATORIN=${{ vars.MODERATORIN || '1' }}" >> "$GITHUB_ENV"
       - name: Videos bauen
         run: node automations/94-video-fabrik.mjs
       - name: Als Release veroeffentlichen und Feed ergaenzen
