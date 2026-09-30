@@ -29,3 +29,9 @@ export async function moderatorinEinfuegen(video, stimme, nr, { breite = 1080, h
   ], { timeout: 1800000, maxBuffer: 16 * 1024 * 1024 });
   renameSync(tmp, video);
 }
+
+// KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
+export async function mitModeratorin(v, nr) {
+  if (!moderatorinAn()) return;
+  try { await moderatorinEinfuegen(v.pfad, v.stimme, nr); console.log(`[94-video-fabrik] Moderatorin ${((nr - 1) % 6) + 1} eingefuegt`); } catch (err) { console.log(`[94-video-fabrik] Moderatorin fehlgeschlagen: ${String(err.message).slice(0, 120)} ... ${String(err.stderr || '').slice(-900)}`); }
+}

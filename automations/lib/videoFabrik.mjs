@@ -93,7 +93,7 @@ export function bildVorbereiten(roh, ziel, { breite, hoehe, modus }) {
 }
 
 // Weichgezeichneter Hintergrund aus dem Produktfoto (Premium-Ersatz, wenn kein KI-Hintergrund da ist).
-function unscharfHintergrund(roh, ziel, { breite, hoehe }) {
+export function unscharfHintergrund(roh, ziel, { breite, hoehe }) {
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', roh, '-vf', `scale=${breite}:${hoehe}:force_original_aspect_ratio=increase,crop=${breite}:${hoehe},boxblur=40:6,eq=brightness=-0.12:saturation=1.15`, '-frames:v', '1', '-q:v', '2', ziel], { stdio: 'pipe', timeout: 120000 });
 }
 
@@ -176,7 +176,7 @@ async function ladeUrl(url, ziel) {
 }
 
 // Holt das Rohbild einer Szene: echtes Produktfoto, sonst KI-Bild.
-async function bildHolen(szene, roh, { breite, hoehe, stil }) {
+export async function bildHolen(szene, roh, { breite, hoehe, stil }) {
   if (szene.foto && (await ladeUrl(szene.foto, roh).catch(() => false))) return 'produkt';
   if (szene.bild && (await ladeBild(`${szene.bild}, family friendly, fully clothed${stil ? `, ${stil}` : ''}`, roh, { breite, hoehe }))) return 'vollbild';
   return '';
