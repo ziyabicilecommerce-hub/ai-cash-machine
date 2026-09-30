@@ -9,6 +9,7 @@ import { bildURL } from './pollinationsMedia.mjs';
 import { musikUnterlegen, untertitelZusammenfuegen, BEAT_STILE, BEAT_PERIODE } from './videoExtras.mjs';
 import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen, bokehBauen } from './premium.mjs';
 import { effekteAn, lichtLeckBauen, qrBauen, uebergangFuer, endkarteAss, funkelnAss, strahlenBauen } from './effekte.mjs';
+import { mitmachAss } from './mitmachen.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -288,6 +289,8 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         });
         if (letzte) dingZeit = zeit + 0.4;
         if (fx && letzte) endkarteAss(ass, { breite, hoehe, qr: !!qr, shop: skript.shop || '', cta: skript.cta || 'LINK IN BIO' });
+        // Mitmach-Overlay (Quiz-Antworten, Countdown, Aufloesung, Stempel) aus dem Skript.
+        if (szene.overlay) mitmachAss(ass, szene.overlay, { breite, hoehe, dauerMs: dauern[i] * 1000 });
         const mitPreis = !!(szene.preis || (letzte && skript.preis));
         if (fx && ebenen?.fgP) funkelnAss(ass, { breite, hoehe, dauerMs: dauern[i] * 1000, seed: seedZahl + i, burst: mitPreis ? { x: Math.round(breite * 0.7), y: Math.round(hoehe * 0.1), ms: 380 } : null });
         const hookSzene = clips.length === 0;

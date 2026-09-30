@@ -22,6 +22,12 @@ const MODERATORIN_NR = Math.min(Math.max(parseInt(env('FAKTEN_MODERATORIN', '2')
 const KATEGORIEN = env('FAKTEN_KATEGORIEN', 'Psychologie,Menschlicher Koerper,Weltall,Tiere,Geschichte,Geld und Wirtschaft,Technik,Natur und Erde,Essen,Rekorde')
   .split(',').map((s) => s.trim()).filter(Boolean);
 
+// Formate im Wechsel: fakt (Wusstest du?), quiz (Rate mal A/B/C mit Countdown), mythos (Mythos oder Wahrheit?).
+// Quiz und Mythos holen Kommentare - jeder will seine Antwort posten.
+const FORMATE = env('FAKTEN_FORMATE', 'quiz,fakt,mythos').split(',').map((s) => s.trim()).filter((f) => ['fakt', 'quiz', 'mythos'].includes(f));
+const REGELN = 'Regeln: nur gut belegtes Lexikon-Wissen, keine erfundenen Zahlen oder Studien, keine Gesundheits- oder Finanzratschlaege, nichts Politisches, keine realen Privatpersonen, keine Marken. ';
+const BILD = '"bilder": 5 englische Bild-Prompts (je max. 15 Woerter, cinematic, photorealistic, dramatic light, no text, no logos, no real people)';
+
 const slug = (t) => t.toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) || 'fakt';
 const kurz = (t, n) => String(t || '').replace(/\s+/g, ' ').trim().slice(0, n);
 
@@ -59,6 +65,59 @@ async function skriptSchreiben(kategorie, nr, bekannt) {
   };
 }
 
+function fertig(d, nr, szenen, fakt) {
+  szenen[0].rang = nr;
+  const seed = [...String(fakt || nr)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 13);
+  return { titel: `#${nr}: ${kurz(d.titel || fakt, 60)}`, fakt: kurz(fakt, 200), hook: kurz(d.hook || d.titel, 40), caption: kurz(d.caption, 1500), hintergrund: { prompt: '', seed }, shop: KANAL, cta: 'FOLGEN FÜR MEHR', szenen };
+}
+const bilderAus = (d) => (Array.isArray(d.bilder) ? d.bilder : []).map((b) => kurz(b, 200)).filter(Boolean);
+
+async function quizSchreiben(kategorie, nr, bekannt) {
+  const d = await kiJson(
+    `Erstelle ein virales Quiz-Kurzvideo auf Deutsch (Kategorie "${kategorie}"): eine ueberraschende Wissensfrage mit 3 Antworten, genau eine ist richtig. ${REGELN}` +
+      `Schon benutzt (nicht wiederholen): ${bekannt.slice(-40).join(' | ') || 'keine'}. Antworten max. 4 Woerter. ` +
+      `Antworte NUR mit JSON: {"titel":"max. 60 Zeichen","hook":"max. 5 Woerter, z. B. Nur 5% wissen das","frage":"...","optionen":["...","...","..."],"richtig":0,"erklaerung":["1-2 kurze Saetze warum"],"caption":"Frage + Aufforderung zu kommentieren + 4-6 Hashtags",${BILD}}`,
+    { maxTokens: 1200 }
+  );
+  const optionen = (d.optionen || []).map((o) => kurz(o, 40)).slice(0, 3);
+  const richtig = Number(d.richtig);
+  const bilder = bilderAus(d);
+  if (optionen.length !== 3 || !(richtig >= 0 && richtig <= 2) || !d.frage || bilder.length < 3) throw new Error('Quiz unvollstaendig');
+  const b = (i) => bilder[i % bilder.length];
+  const erkl = (Array.isArray(d.erklaerung) ? d.erklaerung : [d.erklaerung]).map((t) => kurz(t, 220)).filter(Boolean).slice(0, 2);
+  const szenen = [
+    { text: `${kurz(d.hook, 60)}! Teste dich selbst.`, bild: b(0) },
+    { text: `${kurz(d.frage, 200)} A: ${optionen[0]}. B: ${optionen[1]}. Oder C: ${optionen[2]}?`, bild: b(1), overlay: { typ: 'optionen', optionen } },
+    { text: 'Schreib deine Antwort in die Kommentare! Drei, zwei, eins...', bild: b(1), overlay: { typ: 'countdown', optionen } },
+    { text: `Richtig ist ${'ABC'[richtig]}: ${optionen[richtig]}!`, bild: b(2), overlay: { typ: 'aufloesung', optionen, richtig } },
+    ...erkl.map((t, i) => ({ text: t, bild: b(3 + i) })),
+    { text: 'Hattest du es richtig? Folge fuer das naechste Quiz!', bild: b(4) },
+  ];
+  return fertig(d, nr, szenen, `${d.frage} -> ${optionen[richtig]}`);
+}
+
+async function mythosSchreiben(kategorie, nr, bekannt) {
+  const d = await kiJson(
+    `Erstelle ein virales "Mythos oder Wahrheit?"-Kurzvideo auf Deutsch (Kategorie "${kategorie}"): eine Behauptung, die viele fuer wahr halten (oder die unglaublich klingt, aber stimmt). ${REGELN}` +
+      `Schon benutzt (nicht wiederholen): ${bekannt.slice(-40).join(' | ') || 'keine'}. ` +
+      `Antworte NUR mit JSON: {"titel":"max. 60 Zeichen","hook":"max. 5 Woerter","aussage":"die Behauptung in einem Satz","wahr":true,"erklaerung":["2-3 kurze Saetze"],"caption":"Frage + Aufforderung zu kommentieren + 4-6 Hashtags",${BILD}}`,
+    { maxTokens: 1200 }
+  );
+  const bilder = bilderAus(d);
+  if (!d.aussage || typeof d.wahr !== 'boolean' || bilder.length < 3) throw new Error('Mythos unvollstaendig');
+  const b = (i) => bilder[i % bilder.length];
+  const erkl = (Array.isArray(d.erklaerung) ? d.erklaerung : [d.erklaerung]).map((t) => kurz(t, 220)).filter(Boolean).slice(0, 3);
+  const szenen = [
+    { text: 'Mythos oder Wahrheit?', bild: b(0) },
+    { text: kurz(d.aussage, 220), bild: b(1) },
+    { text: 'Was glaubst du? Schreib es in die Kommentare! Drei, zwei, eins...', bild: b(1), overlay: { typ: 'countdown', optionen: [] } },
+    { text: d.wahr ? 'Es ist tatsaechlich wahr!' : 'Das ist ein Mythos!', bild: b(2), overlay: { typ: 'stempel', wahr: d.wahr } },
+    ...erkl.map((t, i) => ({ text: t, bild: b(3 + i) })),
+    { text: 'Hast du es gewusst? Folge fuer mehr!', bild: b(4) },
+  ];
+  return fertig(d, nr, szenen, `${d.aussage} (${d.wahr ? 'wahr' : 'Mythos'})`);
+}
+
 async function main() {
   mkdirSync(join(OUT, 'videos'), { recursive: true });
   const verlauf = verlaufLaden();
@@ -69,19 +128,21 @@ async function main() {
     const nr = verlauf.nr + 1;
     const start = Date.now();
     try {
-      const skript = await skriptSchreiben(kategorie, nr, verlauf.fakten);
+      const format = FORMATE.length ? FORMATE[(tag * ANZAHL + i) % FORMATE.length] : 'fakt';
+      const schreiben = { fakt: skriptSchreiben, quiz: quizSchreiben, mythos: mythosSchreiben }[format];
+      const skript = await schreiben(kategorie, nr, verlauf.fakten);
       const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting' });
       if (moderatorinAn() && v.stimme) {
         try { await moderatorinEinfuegen(v.pfad, v.stimme, MODERATORIN_NR); } catch (err) { console.log(`[100-fakten-kanal] Moderatorin fehlgeschlagen: ${String(err.message).slice(0, 150)}`); }
       }
-      const basis = `${new Date().toISOString().slice(0, 10)}-fakt-${nr}-${slug(skript.titel.replace(/^Fakt #\d+:\s*/, ''))}`;
+      const basis = `${new Date().toISOString().slice(0, 10)}-fakt-${nr}-${slug(skript.titel.replace(/^(Fakt )?#\d+:\s*/, ''))}`;
       copyFileSync(v.pfad, join(OUT, 'videos', `${basis}.mp4`));
       const vorschau = v.vorschau ? `${basis}.jpg` : '';
       if (vorschau) copyFileSync(v.vorschau, join(OUT, 'videos', vorschau));
       manifest.push({ datei: `${basis}.mp4`, vorschau, sprache: 'de', kanal: 'fakten', titel: skript.titel, caption: `${skript.caption}\n\nFolge ${KANAL} für täglich neue Fakten!`, thema: kategorie, format: 'hoch', dauer: Math.round(v.dauer), szenen: v.szenen });
       verlauf.nr = nr;
       verlauf.fakten = [...verlauf.fakten, skript.fakt].slice(-500);
-      console.log(`[100-fakten-kanal] ✓ ${basis}.mp4 (${kategorie}, ${Math.round(v.dauer)} s, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
+      console.log(`[100-fakten-kanal] ✓ ${basis}.mp4 (${format}, ${kategorie}, ${Math.round(v.dauer)} s, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
     } catch (err) {
       console.log(`[100-fakten-kanal] ✗ ${kategorie}: ${String(err.message).slice(0, 200)}`);
     }
