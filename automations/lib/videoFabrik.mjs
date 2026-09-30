@@ -271,7 +271,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
           fortschritt: { von: dauern.slice(0, i).reduce((a, b) => a + (b || 0), 0) / gesamt, bis: dauern.slice(0, i + 1).reduce((a, b) => a + (b || 0), 0) / gesamt, dauerMs: dauern[i] * 1000 },
         });
         if (letzte) dingZeit = zeit + 0.4;
-        if (fx && letzte) endkarteAss(ass, { breite, hoehe, qr: !!qr, shop: skript.shop || '' });
+        if (fx && letzte) endkarteAss(ass, { breite, hoehe, qr: !!qr, shop: skript.shop || '', cta: skript.cta || 'LINK IN BIO' });
         const mitPreis = !!(szene.preis || (letzte && skript.preis));
         if (fx && ebenen?.fgP) funkelnAss(ass, { breite, hoehe, dauerMs: dauern[i] * 1000, seed: seedZahl + i, burst: mitPreis ? { x: Math.round(breite * 0.7), y: Math.round(hoehe * 0.1), ms: 380 } : null });
         const effekt = fx ? { art: uebergangFuer(clips.length), leck, qr: letzte ? qr : '', wackeln: clips.length === 0 } : null;

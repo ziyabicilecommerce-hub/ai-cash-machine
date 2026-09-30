@@ -1,0 +1,72 @@
+name: "100 · Fakten-Kanal"
+
+# Community-Aufbau: baut jeden Tag virale "Wusstest du...?"-Videos (ohne Shop-Bezug) mit
+# fester KI-Moderatorin, legt sie als GitHub-Release ab und ergaenzt den Video-Feed
+# (kanal: fakten - der Direkt-Poster schickt sie nie an die Shop-Konten).
+
+on:
+  schedule:
+    - cron: '23 9 * * *'
+  workflow_dispatch:
+    inputs:
+      anzahl:
+        description: 'Anzahl Fakten-Videos (1-12)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: fakten-kanal
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 200
+    env:
+      FAKTEN_ANZAHL: ${{ inputs.anzahl || vars.FAKTEN_ANZAHL }}
+      FAKTEN_KANAL: ${{ vars.FAKTEN_KANAL }}
+      FAKTEN_MODERATORIN: ${{ vars.FAKTEN_MODERATORIN }}
+      FAKTEN_KATEGORIEN: ${{ vars.FAKTEN_KATEGORIEN }}
+      VIDEO_UNTERTITEL: ${{ vars.VIDEO_UNTERTITEL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: ffmpeg, Schrift und edge-tts installieren
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null
+          pip install -q "edge-tts==7.*" segno
+      # KI-Moderatorin (Wav2Lip auf CPU): Modelle + Portraets werden zwischengespeichert.
+      - uses: actions/cache@v4
+        with:
+          path: ~/wav2lip
+          key: wav2lip-moderatorin-v1
+      - name: KI-Moderatorin einrichten
+        continue-on-error: true
+        run: |
+          python -m venv ~/w2l-venv
+          ~/w2l-venv/bin/pip install -q --upgrade pip wheel "setuptools<70"
+          ~/w2l-venv/bin/pip install -q --extra-index-url https://download.pytorch.org/whl/cpu torch==2.2.2+cpu torchvision==0.17.2+cpu
+          ~/w2l-venv/bin/pip install -q "numpy==1.23.5" "librosa==0.10.1" "opencv-python-headless<4.10" scipy tqdm numba
+          echo "W2L_PY=$HOME/w2l-venv/bin/python" >> "$GITHUB_ENV"
+          scripts/moderatorin.sh einrichten
+          ls ~/wav2lip/moderatorin-*.jpg >/dev/null && echo "MODERATORIN=${{ vars.MODERATORIN || '1' }}" >> "$GITHUB_ENV"
+      - name: Fakten-Videos bauen
+        run: node automations/100-fakten-kanal.mjs
+      - name: Als Release veroeffentlichen und Feed ergaenzen
+        run: |
+          TAG="fakten-$(date -u +%Y%m%d-%H%M)"
+          gh release create "$TAG" out/videos/* --title "Fakten-Kanal $(date -u +%d.%m.%Y)" --notes "Automatisch erzeugt von Automation #100 (Fakten-Kanal)." --latest=false
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" fakten-kanal/verlauf.json
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
+        env:
+          GH_TOKEN: ${{ github.token }}

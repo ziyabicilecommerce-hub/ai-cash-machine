@@ -31,6 +31,8 @@ async function laden(url, ziel) {
   await pipeline(Readable.fromWeb(res.body), createWriteStream(ziel));
 }
 
+// Kanal: leer = Shop-Konten; 'fakten' = Community-Konten (#100). So landen Fakten-Videos nie auf den Shop-Konten.
+const KANAL = env('DIREKT_POSTER_KANAL').toLowerCase();
 const GEPOSTET = 'video-feed/gepostet.json';
 const ZAEHLER = 'video-feed/post-zaehler.json';
 
@@ -58,14 +60,14 @@ function auswahl() {
     const n = Math.min(Math.max(parseInt(a2, 10) || 1, 1), 10);
     const feed = existsSync('video-feed/videos.json') ? JSON.parse(readFileSync('video-feed/videos.json', 'utf8')).videos || [] : [];
     const schon = new Set(existsSync(GEPOSTET) ? JSON.parse(readFileSync(GEPOSTET, 'utf8')) : []);
-    const offen = feed.filter((v) => nurErlaubt(v.url) && !schon.has(v.datei) && SPRACHEN.includes(v.sprache || 'de'));
+    const offen = feed.filter((v) => nurErlaubt(v.url) && !schon.has(v.datei) && SPRACHEN.includes(v.sprache || 'de') && (v.kanal || '') === KANAL);
     // Bevorzugt Hochformat-Kurzvideos (passen auf die meisten Plattformen), dann der Rest.
     offen.sort((x, y) => (y.format === 'hoch' && y.dauer <= 90) - (x.format === 'hoch' && x.dauer <= 90));
     return { videos: offen.slice(0, n).map((v) => ({ m: v, url: v.url, vorschauUrl: nurErlaubt(v.vorschauUrl) })), merken: true };
   }
   const basis = (a1 || '').replace(/\/$/, '');
   if (!basis || !existsSync(MANIFEST)) return { videos: [] };
-  return { videos: JSON.parse(readFileSync(MANIFEST, 'utf8')).filter((m) => SPRACHEN.includes(m.sprache || 'de')).map((m) => ({ m, url: `${basis}/${encodeURIComponent(m.datei)}`, vorschauUrl: m.vorschau ? `${basis}/${encodeURIComponent(m.vorschau)}` : '' })) };
+  return { videos: JSON.parse(readFileSync(MANIFEST, 'utf8')).filter((m) => SPRACHEN.includes(m.sprache || 'de') && (m.kanal || '') === KANAL).map((m) => ({ m, url: `${basis}/${encodeURIComponent(m.datei)}`, vorschauUrl: m.vorschau ? `${basis}/${encodeURIComponent(m.vorschau)}` : '' })) };
 }
 
 async function main() {
