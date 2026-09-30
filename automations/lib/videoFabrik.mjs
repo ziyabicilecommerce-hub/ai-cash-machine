@@ -8,7 +8,7 @@ import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
 import { musikUnterlegen, untertitelZusammenfuegen, BEAT_STILE } from './videoExtras.mjs';
 import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen, bokehBauen } from './premium.mjs';
-import { effekteAn, lichtLeckBauen, qrBauen, uebergangFuer, endkarteAss } from './effekte.mjs';
+import { effekteAn, lichtLeckBauen, qrBauen, uebergangFuer, endkarteAss, funkelnAss } from './effekte.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -226,6 +226,9 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   const fx = premium && effekteAn();
   const leck = fx ? lichtLeckBauen(join(ordner, 'leck.png'), breite, hoehe) : '';
   const qr = fx ? qrBauen(skript.link, join(ordner, 'qr.png')) : '';
+  // Untertitel-Stil wechselt je Produkt (VIDEO_UNTERTITEL=karaoke|box legt ihn fest).
+  const seedZahl = Math.abs(Number(skript.hintergrund?.seed) || 0);
+  const untertitelStil = /^(karaoke|box)$/.test(process.env.VIDEO_UNTERTITEL || '') ? process.env.VIDEO_UNTERTITEL : seedZahl % 2 ? 'box' : 'karaoke';
   let dingZeit = 0;
   const start = Date.now();
   for (const [i, szene] of szenen.entries()) {
@@ -264,11 +267,13 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
           preis: szene.preis ? preisText(szene.preis, sprache, skript.waehrung) : letzte ? preisText(skript.preis, sprache, skript.waehrung) : '',
           rang: szene.rang || 0,
           shop: letzte && !fx ? skript.shop || '' : '',
-          marke: String(skript.shop || '').split('.')[0].toUpperCase(),
+          marke: String(skript.shop || '').split('.')[0].toUpperCase(), untertitelStil,
           fortschritt: { von: dauern.slice(0, i).reduce((a, b) => a + (b || 0), 0) / gesamt, bis: dauern.slice(0, i + 1).reduce((a, b) => a + (b || 0), 0) / gesamt, dauerMs: dauern[i] * 1000 },
         });
         if (letzte) dingZeit = zeit + 0.4;
         if (fx && letzte) endkarteAss(ass, { breite, hoehe, qr: !!qr, shop: skript.shop || '' });
+        const mitPreis = !!(szene.preis || (letzte && skript.preis));
+        if (fx && ebenen?.fgP) funkelnAss(ass, { breite, hoehe, dauerMs: dauern[i] * 1000, seed: seedZahl + i, burst: mitPreis ? { x: Math.round(breite * 0.7), y: Math.round(hoehe * 0.1), ms: 380 } : null });
         const effekt = fx ? { art: uebergangFuer(clips.length), leck, qr: letzte ? qr : '', wackeln: clips.length === 0 } : null;
         await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1, effekt });
       } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });

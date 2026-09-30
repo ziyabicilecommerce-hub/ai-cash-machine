@@ -8,7 +8,7 @@ import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync, renameSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { kameraFilter, glitchFilter } from './effekte.mjs';
+import { kameraFilter, glitchFilter, wischFilter } from './effekte.mjs';
 
 const ausfuehren = promisify(execFile);
 const CACHE = resolve(process.env.PREMIUM_CACHE || 'out/premium-cache');
@@ -161,7 +161,9 @@ export function preisText(preis, sprache, waehrung = 'EUR') {
 // Baut aus der .srt von edge-tts eine .ass, in der das gerade gesprochene Wort aufleuchtet.
 // Zeiten je Wort werden nach Zeichenlaenge verteilt. Optional: hook (grosse Schlagzeile oben,
 // klappt anders als drawtext in allen Schriften), preis + shop (Endkarte der letzten Szene).
-export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', preis = '', shop = '', fortschritt = null, marke = '', rang = 0 }) {
+// untertitelStil: 'karaoke' (aktives Wort leuchtet in der Akzentfarbe) oder 'box' (TikTok-Stil:
+// aktives Wort in einer farbigen Box).
+export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', preis = '', shop = '', fortschritt = null, marke = '', rang = 0, untertitelStil = 'karaoke' }) {
   const groesse = Math.round(Math.min(breite, hoehe) * 0.078);
   const unten = Math.round(hoehe * (hoehe > breite ? 0.25 : 0.09));
   const rand = Math.round(breite * 0.06);
@@ -170,6 +172,7 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
     '[V4+ Styles]',
     'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
     `Style: Wort,DejaVu Sans,${groesse},&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,-1,0,0,0,100,100,1,0,1,${Math.round(groesse * 0.1)},${Math.round(groesse * 0.05)},2,${rand},${rand},${unten},1`,
+    `Style: WortBox,DejaVu Sans,${groesse},${thema.text},${thema.text},${thema.box},${thema.box},-1,0,0,0,100,100,1,0,3,${Math.round(groesse * 0.16)},0,2,${rand},${rand},${unten},1`,
     `Style: Hook,DejaVu Sans,${Math.round(groesse * 0.95)},${thema.text},${thema.text},${thema.box},&H64000000,-1,0,0,0,100,100,0,0,3,${Math.round(groesse * 0.28)},0,8,${rand},${rand},${Math.round(hoehe * 0.1)},1`,
     `Style: Preis,DejaVu Sans,${Math.round(groesse * 1.25)},${thema.text},${thema.text},${thema.box},&H64000000,-1,0,0,0,100,100,0,-7,3,${Math.round(groesse * 0.3)},0,5,0,0,0,1`,
     `Style: Shop,DejaVu Sans,${Math.round(groesse * 0.55)},&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,-1,0,0,0,100,100,2,0,1,${Math.round(groesse * 0.08)},0,2,${rand},${rand},${Math.round(hoehe * 0.05)},1`,
@@ -197,8 +200,19 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
       const sk = (x) => Math.round(x * f);
       gruppe.forEach((_, k) => {
         const [von, bis] = zeiten[n + k];
-        const inhalt = gruppe.map((w, j) => (j === k ? `{\\c${thema.wort}\\fscx${sk(128)}\\fscy${sk(128)}\\t(0,110,\\fscx${sk(112)}\\fscy${sk(112)})}${assText(w)}{\\r${f < 1 ? `\\fscx${sk(100)}\\fscy${sk(100)}` : ''}}` : assText(w))).join(trenner);
-        zeilen.push(`Dialogue: 0,${assZeit(von)},${assZeit(bis)},Wort,,0,0,0,,${k === 0 ? '{\\fad(70,0)}' : ''}${f < 1 ? `{\\fscx${sk(100)}\\fscy${sk(100)}}` : ''}${inhalt}`);
+        const pop = `\\fscx${sk(128)}\\fscy${sk(128)}\\t(0,110,\\fscx${sk(112)}\\fscy${sk(112)})`;
+        const normal = `\\fscx${sk(100)}\\fscy${sk(100)}`;
+        const vorne = `${k === 0 ? '{\\fad(70,0)}' : ''}${f < 1 ? `{${normal}}` : ''}`;
+        if (untertitelStil === 'box') {
+          // Zwei deckungsgleiche Ebenen: unten nur die Box des aktiven Worts, oben der Text ohne das aktive Wort.
+          const boxZeile = gruppe.map((w, j) => (j === k ? `{\\alpha&H00&${pop}}${assText(w)}{\\alpha&HFF&${normal}}` : assText(w))).join(trenner);
+          const textZeile = gruppe.map((w, j) => (j === k ? `{\\alpha&HFF&${pop}}${assText(w)}{\\alpha&H00&${normal}}` : assText(w))).join(trenner);
+          zeilen.push(`Dialogue: 0,${assZeit(von)},${assZeit(bis)},WortBox,,0,0,0,,${vorne}{\\alpha&HFF&}${boxZeile}`);
+          zeilen.push(`Dialogue: 1,${assZeit(von)},${assZeit(bis)},Wort,,0,0,0,,${vorne}${textZeile}`);
+        } else {
+          const inhalt = gruppe.map((w, j) => (j === k ? `{\\c${thema.wort}${pop}}${assText(w)}{\\r${f < 1 ? normal : ''}}` : assText(w))).join(trenner);
+          zeilen.push(`Dialogue: 0,${assZeit(von)},${assZeit(bis)},Wort,,0,0,0,,${vorne}${inhalt}`);
+        }
       });
       n += gruppe.length;
     }
@@ -206,7 +220,9 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
   const pop = '{\\fscx40\\fscy40\\t(0,180,\\fscx108\\fscy108)\\t(180,260,\\fscx100\\fscy100)}';
   if (hook) {
     const h = GROSS_OK.test(hook) ? hook.toLocaleUpperCase(sprache) : hook;
-    zeilen.push(`Dialogue: 1,${assZeit(0)},${assZeit(3300)},Hook,,0,0,0,,{\\fad(0,300)}${pop}${assText(h)}`);
+    // Hook knallt ins Bild: riesig und durchsichtig -> in 140 ms auf 92 % (Aufprall) -> 100 %, leicht gekippt.
+    const slam = '{\\fscx260\\fscy260\\frz-5\\alpha&HFF&\\t(0,140,\\fscx92\\fscy92\\frz0\\alpha&H00&)\\t(140,230,\\fscx100\\fscy100)}';
+    zeilen.push(`Dialogue: 1,${assZeit(0)},${assZeit(3300)},Hook,,0,0,0,,{\\fad(0,300)}${slam}${assText(h)}`);
   }
   // Rang-Badge fuer Countdown-Videos (Top 5): gross, schraeg, links oben.
   if (rang) zeilen.push(`Dialogue: 2,${assZeit(150)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * 0.22)},${Math.round(hoehe * 0.19)})\\fs${Math.round(Math.min(breite, hoehe) * 0.16)}\\frz8}${pop}#${rang}`);
@@ -324,11 +340,11 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
   if (glanz) graph += `[g0];[g0][${nr(glanz)}:v]overlay=x='-w+(W+w)*(t-0.05)/0.7':y=0:enable='between(t,0.05,0.75)'`;
   // Light-Leak: warmes Licht blendet in 0,9 s aus.
   if (leck) graph += `[l0];[${nr(leck)}:v]format=rgba,fade=t=out:st=0.1:d=0.8:alpha=1[lk];[l0][lk]overlay=enable='lt(t,0.9)'`;
-  if (effekt) graph += `,${kameraFilter({ breite, hoehe, wackeln: !!effekt.wackeln })}`;
+  if (effekt) graph += `,${kameraFilter({ breite, hoehe, wackeln: !!effekt.wackeln, wisch: art === 'wisch' })}`;
   // QR-Endkarte oben links (nach dem Zoom, damit er ruhig steht und scannbar bleibt).
   if (qr) graph += `[q0];[${nr(qr)}:v]scale=${gerade(breite * 0.26)}:-2,format=rgba,fade=t=in:st=0.4:d=0.3:alpha=1[qr];[q0][qr]overlay=x=${Math.round(breite * 0.17)}-w/2:y=${Math.round(hoehe * 0.075)}`;
   const ende = [
-    ...(art === 'start' ? ['fade=in:st=0:d=0.25'] : art === 'blitz' ? ['fade=in:st=0:d=0.14:color=white'] : art === 'glitch' ? glitchFilter() : []),
+    ...(art === 'start' ? ['fade=in:st=0:d=0.25'] : art === 'blitz' ? ['fade=in:st=0:d=0.14:color=white'] : art === 'glitch' ? glitchFilter() : art === 'wisch' ? wischFilter() : []),
     `fade=out:st=${Math.max(dauer - 0.18, 0).toFixed(2)}:d=0.18`,
     ...extra,
     `ass='${pfadFuerFilter(ass)}'`,
