@@ -6,9 +6,9 @@ import { promisify } from 'node:util';
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
-import { musikUnterlegen, untertitelZusammenfuegen, BEAT_STILE } from './videoExtras.mjs';
+import { musikUnterlegen, untertitelZusammenfuegen, BEAT_STILE, BEAT_PERIODE } from './videoExtras.mjs';
 import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen, bokehBauen } from './premium.mjs';
-import { effekteAn, lichtLeckBauen, qrBauen, uebergangFuer, endkarteAss, funkelnAss } from './effekte.mjs';
+import { effekteAn, lichtLeckBauen, qrBauen, uebergangFuer, endkarteAss, funkelnAss, strahlenBauen } from './effekte.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -226,6 +226,9 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   const fx = premium && effekteAn();
   const leck = fx ? lichtLeckBauen(join(ordner, 'leck.png'), breite, hoehe) : '';
   const qr = fx ? qrBauen(skript.link, join(ordner, 'qr.png')) : '';
+  const strahlen = fx ? strahlenBauen(join(ordner, 'strahlen.png'), Math.round(breite * 1.3)) : '';
+  // Beat-Stil schon hier festlegen: Musik und Beat-Pump im Bild laufen im selben Takt.
+  const beatStil = BEAT_STILE[Math.abs(Number(skript.hintergrund?.seed) || 0) % BEAT_STILE.length];
   // Untertitel-Stil wechselt je Produkt (VIDEO_UNTERTITEL=karaoke|box legt ihn fest).
   const seedZahl = Math.abs(Number(skript.hintergrund?.seed) || 0);
   const untertitelStil = /^(karaoke|box)$/.test(process.env.VIDEO_UNTERTITEL || '') ? process.env.VIDEO_UNTERTITEL : seedZahl % 2 ? 'box' : 'karaoke';
@@ -274,7 +277,8 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         if (fx && letzte) endkarteAss(ass, { breite, hoehe, qr: !!qr, shop: skript.shop || '', cta: skript.cta || 'LINK IN BIO' });
         const mitPreis = !!(szene.preis || (letzte && skript.preis));
         if (fx && ebenen?.fgP) funkelnAss(ass, { breite, hoehe, dauerMs: dauern[i] * 1000, seed: seedZahl + i, burst: mitPreis ? { x: Math.round(breite * 0.7), y: Math.round(hoehe * 0.1), ms: 380 } : null });
-        const effekt = fx ? { art: uebergangFuer(clips.length), leck, qr: letzte ? qr : '', wackeln: clips.length === 0 } : null;
+        const hookSzene = clips.length === 0;
+        const effekt = fx ? { art: uebergangFuer(clips.length), leck, qr: letzte ? qr : '', wackeln: hookSzene, drop: hookSzene, strahlen: hookSzene ? strahlen : '', beat: { p: BEAT_PERIODE[beatStil], off: zeit }, stoss: mitPreis ? 0.38 : null } : null;
         await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1, effekt });
       } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
       letztesBild = bild;
@@ -295,7 +299,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
   try { execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', ziel, '-vn', '-ac', '1', '-ar', '16000', stimmspur], { stdio: 'pipe', timeout: 300000 }); } catch { /* ohne Stimmspur */ }
   if (musik || premium) {
     try {
-      await musikUnterlegen(ziel, zeit, premium && !musik ? { stimmung: 'beat', stil: BEAT_STILE[Math.abs(Number(skript.hintergrund?.seed) || 0) % BEAT_STILE.length], whoosh: srtTeile.slice(1).map((t) => t.start), ding: dingZeit ? [dingZeit] : [], boom: fx ? [0.05] : [], riser: fx && dingZeit ? [dingZeit - 0.4] : [] } : { stimmung: musik });
+      await musikUnterlegen(ziel, zeit, premium && !musik ? { stimmung: 'beat', stil: beatStil, whoosh: srtTeile.slice(1).map((t) => t.start), ding: dingZeit ? [dingZeit] : [], boom: fx ? [0.05] : [], riser: fx && dingZeit ? [dingZeit - 0.4] : [] } : { stimmung: musik });
     } catch (err) {
       console.log(`[video-fabrik] Musik fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
     }

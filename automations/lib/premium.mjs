@@ -327,20 +327,25 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
   const art = effekt?.art || (index === 0 ? 'start' : 'blitz');
   const leck = art === 'leck' ? effekt?.leck || '' : '';
   const qr = effekt?.qr || '';
-  const bilder = [bgP, fgP, bokeh, glanz, leck, qr].filter(Boolean);
+  const strahlen = fgP ? effekt?.strahlen || '' : '';
+  const bilder = [bgP, fgP, bokeh, glanz, leck, qr, strahlen].filter(Boolean);
   const nr = (x) => bilder.indexOf(x);
   let graph = `[0:v]crop=${breite}:${hoehe}:x='(iw-ow)*${r}':y='(ih-oh)*(0.5+0.35*sin(t*0.45+${index}))'`;
   if (bokeh) graph += `[b0];[b0][${nr(bokeh)}:v]overlay=x=0:y='-(h-H)*(0.2+0.6*t/${D})'`;
+  // Lichtstrahlen hinter dem Produkt (Hook): drehen sich langsam und blenden am Szenenende aus.
+  if (strahlen) graph += `[s0];[${nr(strahlen)}:v]format=rgba,rotate=a=t*0.45:c=none:ow=iw:oh=ih,fade=t=out:st=${Math.max(dauer - 0.6, 0.2).toFixed(2)}:d=0.5:alpha=1[st];[s0][st]overlay=x=(W-w)/2:y=H*0.4-h/2`;
   if (fgP) {
     // Nahaufnahme: Produkt 40 % groesser (Detail-Shot), sonst normale Position mit Schweben.
     const quelle = nah ? `[${nr(fgP)}:v]scale=iw*1.4:-1:flags=lanczos[fn];[v0][fn]` : `[v0][${nr(fgP)}:v]`;
     const y = nah ? `(H-h*0.69)/2-H*0.02` : PRODUKT_Y;
-    graph += `[v0];${quelle}overlay=x=(W-w)/2-W*0.018*(${r}-0.5):y=${y}+H*0.012*sin(t*1.7+${index})`;
+    // Drop: Produkt faellt von oben ins Bild und federt beim Aufprall kurz nach (Hook).
+    const drop = effekt?.drop ? '-H*0.7*pow(max(0,1-t/0.42),3)+H*0.03*sin(PI*min(1,max(0,(t-0.42)/0.22)))' : '';
+    graph += `[v0];${quelle}overlay=x=(W-w)/2-W*0.018*(${r}-0.5):y='${y}+H*0.012*sin(t*1.7+${index})${drop}'`;
   }
   if (glanz) graph += `[g0];[g0][${nr(glanz)}:v]overlay=x='-w+(W+w)*(t-0.05)/0.7':y=0:enable='between(t,0.05,0.75)'`;
   // Light-Leak: warmes Licht blendet in 0,9 s aus.
   if (leck) graph += `[l0];[${nr(leck)}:v]format=rgba,fade=t=out:st=0.1:d=0.8:alpha=1[lk];[l0][lk]overlay=enable='lt(t,0.9)'`;
-  if (effekt) graph += `,${kameraFilter({ breite, hoehe, wackeln: !!effekt.wackeln, wisch: art === 'wisch' })}`;
+  if (effekt) graph += `,${kameraFilter({ breite, hoehe, wackeln: !!effekt.wackeln, wisch: art === 'wisch', beat: effekt.beat, stoss: effekt.stoss })}`;
   // QR-Endkarte oben links (nach dem Zoom, damit er ruhig steht und scannbar bleibt).
   if (qr) graph += `[q0];[${nr(qr)}:v]scale=${gerade(breite * 0.26)}:-2,format=rgba,fade=t=in:st=0.4:d=0.3:alpha=1[qr];[q0][qr]overlay=x=${Math.round(breite * 0.17)}-w/2:y=${Math.round(hoehe * 0.075)}`;
   const ende = [
