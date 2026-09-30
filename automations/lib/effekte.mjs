@@ -56,7 +56,7 @@ const zeit = (ms) => {
 };
 
 // Endkarte: Beschriftung unter dem QR-Code und pulsierender "Link in Bio"-Hinweis (in die .ass der Szene).
-export function endkarteAss(ass, { breite, hoehe, qr = false, cta = 'LINK IN BIO' }) {
+export function endkarteAss(ass, { breite, hoehe, qr = false, cta = 'LINK IN BIO', shop = '' }) {
   const zeilen = [];
   if (qr) {
     zeilen.push(`Dialogue: 5,${zeit(600)},${zeit(600000)},Shop,,0,0,0,,{\\an8\\pos(${Math.round(breite * 0.17)},${Math.round(hoehe * 0.075 + breite * 0.26 + 14)})\\fs${Math.round(breite * 0.034)}\\fad(250,0)}SCAN & SHOP`);
@@ -64,5 +64,7 @@ export function endkarteAss(ass, { breite, hoehe, qr = false, cta = 'LINK IN BIO
   const puls = Array.from({ length: 10 }, (_, i) => `\\t(${i * 900},${i * 900 + 450},\\fscx112\\fscy112)\\t(${i * 900 + 450},${i * 900 + 900},\\fscx100\\fscy100)`).join('');
   // Hochformat: links der Mitte, damit die Moderatorin unten rechts nichts verdeckt.
   zeilen.push(`Dialogue: 5,${zeit(500)},${zeit(600000)},Hook,,0,0,0,,{\\an2\\pos(${Math.round(breite * (breite > hoehe ? 0.5 : 0.36))},${Math.round(hoehe * 0.9)})\\fs${Math.round(Math.min(breite, hoehe) * 0.05)}\\fad(200,0)${puls}}▼ ${cta} ▼`);
+  // Shopname unter dem Hinweis (gleiche Achse, nicht unter der Moderatorin).
+  if (shop) zeilen.push(`Dialogue: 5,${zeit(200)},${zeit(600000)},Shop,,0,0,0,,{\\an2\\pos(${Math.round(breite * (breite > hoehe ? 0.5 : 0.36))},${Math.round(hoehe * 0.955)})\\fad(300,0)}${String(shop).replace(/[{}\\]/g, '')}`);
   appendFileSync(ass, zeilen.join('\n') + '\n');
 }

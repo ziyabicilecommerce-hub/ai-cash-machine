@@ -263,12 +263,12 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
           hook: clips.length === 0 ? hook : '',
           preis: szene.preis ? preisText(szene.preis, sprache, skript.waehrung) : letzte ? preisText(skript.preis, sprache, skript.waehrung) : '',
           rang: szene.rang || 0,
-          shop: letzte ? skript.shop || '' : '',
+          shop: letzte && !fx ? skript.shop || '' : '',
           marke: String(skript.shop || '').split('.')[0].toUpperCase(),
           fortschritt: { von: dauern.slice(0, i).reduce((a, b) => a + (b || 0), 0) / gesamt, bis: dauern.slice(0, i + 1).reduce((a, b) => a + (b || 0), 0) / gesamt, dauerMs: dauern[i] * 1000 },
         });
         if (letzte) dingZeit = zeit + 0.4;
-        if (fx && letzte) endkarteAss(ass, { breite, hoehe, qr: !!qr });
+        if (fx && letzte) endkarteAss(ass, { breite, hoehe, qr: !!qr, shop: skript.shop || '' });
         const effekt = fx ? { art: uebergangFuer(clips.length), leck, qr: letzte ? qr : '', wackeln: clips.length === 0 } : null;
         await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1, effekt });
       } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
