@@ -13,6 +13,8 @@ import { videoBauen } from './lib/videoFabrik.mjs';
 import { kapitelText, teaserBauen, zusammenschnittBauen } from './lib/videoExtras.mjs';
 import { WELT_SPRACHEN, sprachGruppen } from './lib/weltSprachen.mjs';
 import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
+import { uebersetzen, uebersetzenBuendel } from './lib/uebersetzen.mjs';
+import { skripteLaden, skripteSpeichern, uebersetzungenLaden, uebersetzungenSpeichern, schluessel, anwenden, auszug } from './lib/weltCache.mjs';
 import { premiumAn, themaFuer, preisText } from './lib/premium.mjs';
 import { kurzHook, reinText, aktiveProdukte, topListeSkript } from './lib/shopProdukte.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
@@ -49,7 +51,6 @@ const PREMIUM = premiumAn();
 const KARUSSELL = !/^(0|nein|aus|false)$/i.test(env('VIDEO_KARUSSELL'));
 // Zusaetzliche Sprachversionen der Produkt-Kurzvideos, z. B. "en,es,tr" (Deutsch ist immer dabei).
 const STIMMEN = Object.fromEntries(Object.entries(WELT_SPRACHEN).map(([k, v]) => [k, v.stimme]));
-const SPRACHNAMEN = Object.fromEntries(Object.entries(WELT_SPRACHEN).map(([k, v]) => [k, v.name]));
 // "alle" = jede Sprache aus lib/weltSprachen.mjs.
 const sprachListe = (text) => (text.trim().toLowerCase() === 'alle' ? Object.keys(STIMMEN) : text.toLowerCase().split(',').map((x) => x.trim()).filter((x) => STIMMEN[x]));
 const EXTRA_SPRACHEN = sprachListe(env('VIDEO_FABRIK_SPRACHEN'));
@@ -211,42 +212,6 @@ function ausDaten(d, p) {
   return { titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, preis: Number(preis) || 0, waehrung: 'EUR', shop, link, szenen };
 }
 
-// Uebersetzt Titel, Caption und Sprechtexte; Produktfotos bleiben gleich.
-async function uebersetzen(skript, sprache) {
-  const d = await kiJson(
-    `Uebersetze diese Werbevideo-Texte ins ${SPRACHNAMEN[sprache]}, natuerlich und muttersprachlich, Du-Ansprache, Laenge beibehalten, Markennamen und Preise unveraendert, Link unveraendert. ` +
-      `Antworte NUR mit JSON: {"titel":"...","hook":"...","caption":"...","saetze":["..."]}\n${JSON.stringify({ titel: skript.titel, hook: skript.hook || '', caption: skript.caption, saetze: skript.szenen.map((x) => x.text) })}`,
-    { maxTokens: 2500 }
-  );
-  const saetze = Array.isArray(d.saetze) ? d.saetze : [];
-  if (saetze.length !== skript.szenen.length) throw new Error('Uebersetzung unvollstaendig');
-  return { ...skript, titel: String(d.titel || skript.titel).slice(0, 120), hook: kurzHook(d.hook || d.titel || skript.titel), caption: String(d.caption || skript.caption).slice(0, 2000), szenen: skript.szenen.map((x, i) => ({ ...x, text: String(saetze[i]).slice(0, 400) })) };
-}
-
-// Uebersetzt bis zu 5 Skripte in EINER KI-Anfrage (spart das Anfrage-Limit der Gratis-KI);
-// was dabei fehlt, wird einzeln nachuebersetzt.
-async function uebersetzenBuendel(skripte, sprache) {
-  let d = {};
-  try {
-    d = await kiJson(
-      `Uebersetze diese ${skripte.length} Werbevideo-Texte ins ${SPRACHNAMEN[sprache]}, natuerlich und muttersprachlich, Du-Ansprache, Laenge beibehalten, Markennamen und Preise unveraendert, Links unveraendert. ` +
-        `Antworte NUR mit JSON: {"videos":[{"i":0,"titel":"...","hook":"...","caption":"...","saetze":["..."]}]} - fuer jedes Video, gleiche i, gleiche Anzahl saetze.\n` +
-        JSON.stringify(skripte.map((sk, i) => ({ i, titel: sk.titel, hook: sk.hook || '', caption: sk.caption, saetze: sk.szenen.map((x) => x.text) }))),
-      { maxTokens: 6000 }
-    );
-  } catch {
-    /* einzeln nachuebersetzen */
-  }
-  const videos = Array.isArray(d.videos) ? d.videos : [];
-  return Promise.all(skripte.map(async (sk, i) => {
-    const t = videos.find((x) => Number(x?.i) === i);
-    if (t && Array.isArray(t.saetze) && t.saetze.length === sk.szenen.length) {
-      return { ...sk, titel: String(t.titel || sk.titel).slice(0, 120), hook: kurzHook(t.hook || t.titel || sk.titel), caption: String(t.caption || sk.caption).slice(0, 2000), szenen: sk.szenen.map((x, j) => ({ ...x, text: String(t.saetze[j]).slice(0, 400) })) };
-    }
-    return uebersetzen(sk, sprache).catch(() => null);
-  }));
-}
-
 async function ablegen(manifest, v, skript, a, nummer, sprache) {
   const basis = `${new Date().toISOString().slice(0, 10)}-${nummer}-${sprache === 'de' ? '' : `${sprache}-`}${slug(skript.titel)}`;
   copyFileSync(v.pfad, join(OUT, 'videos', `${basis}.mp4`));
@@ -398,47 +363,73 @@ async function skripteSchreiben() {
   const tag = Math.floor(Date.now() / 86400000);
   const auswahl = Array.from({ length: Math.min(WELT_ANZAHL, produkte.length) }, (_, i) => produkte[(tag * 7 + i) % produkte.length]);
   const fertig = [];
+  // Gedaechtnis: fertige Skripte je Produkt werden WELT_SKRIPT_TAGE lang wiederverwendet (keine KI noetig).
+  const cache = skripteLaden();
+  const maxAlter = Math.max(1, parseInt(env('WELT_SKRIPT_TAGE', '14'), 10) || 14) * 86400000;
+  const frisch = (e, n) => e && Date.now() - e.erstellt < maxAlter && (e.skripte || []).length >= n;
   // Zeitbudget: danach geht es mit den fertigen Skripten weiter (statt dass der Job abbricht und alles verloren ist).
   const bis = Date.now() + Math.max(10, parseInt(env('WELT_SKRIPT_MIN', '110'), 10) || 110) * 60000;
-  let kiAus = 0; // Varianten-Anfragen hintereinander gescheitert, weil die Gratis-KI ausgelastet ist
+  let kiAus = 0; // Anfragen hintereinander gescheitert, weil die Gratis-KI ausgelastet ist
+  let ausGedaechtnis = 0;
   // Nacheinander: die Gratis-KI drosselt parallele Anfragen (429). Je Produkt 2 Anfragen.
   for (const [i, p] of auswahl.entries()) {
-    if (Date.now() > bis) { console.log(`[94-video-fabrik] Skript-Zeitbudget erreicht - weiter mit ${fertig.length} Skripten`); break; }
-    const liste = [];
-    try {
-      const erste = await produktSkript(p);
-      if (erste.szenen.length >= 3) liste.push(erste);
-    } catch (err) {
-      console.log(`[94-video-fabrik] ✗ "${p.title}" Variante 1: ${String(err.message).slice(0, 160)}`);
-    }
-    // Ist die Gratis-KI 2x hintereinander ausgelastet, nur noch Variante 1 je Produkt (spart die langen Wartezeiten).
-    if (WELT_VARIANTEN > 1 && kiAus < 2) {
+    const id = `p:${p.handle || p.title}`;
+    let liste = [];
+    if (frisch(cache[id], WELT_VARIANTEN)) {
+      liste = cache[id].skripte;
+      ausGedaechtnis++;
+    } else if (Date.now() < bis && kiAus < 3) {
       try {
-        liste.push(...(await variantenSkripte(p, WINKEL.slice(1, WELT_VARIANTEN))));
-        kiAus = 0;
+        const erste = await produktSkript(p);
+        if (erste.szenen.length >= 3) liste.push(erste);
       } catch (err) {
         if (/nicht verf|429|daily|leere Antwort/i.test(String(err.message))) kiAus++;
-        console.log(`[94-video-fabrik] ✗ "${p.title}" weitere Varianten: ${String(err.message).slice(0, 160)}`);
+        console.log(`[94-video-fabrik] ✗ "${p.title}" Variante 1: ${String(err.message).slice(0, 160)}`);
       }
+      // Ist die Gratis-KI 2x hintereinander ausgelastet, nur noch Variante 1 je Produkt (spart die langen Wartezeiten).
+      if (WELT_VARIANTEN > 1 && kiAus < 2 && liste.length) {
+        try {
+          liste.push(...(await variantenSkripte(p, WINKEL.slice(1, WELT_VARIANTEN))));
+          kiAus = 0;
+        } catch (err) {
+          if (/nicht verf|429|daily|leere Antwort/i.test(String(err.message))) kiAus++;
+          console.log(`[94-video-fabrik] ✗ "${p.title}" weitere Varianten: ${String(err.message).slice(0, 160)}`);
+        }
+      }
+      // Nur speichern, wenn es mehr ist als das, was schon im Gedaechtnis liegt.
+      if (liste.length && liste.length >= (cache[id]?.skripte || []).length) cache[id] = { erstellt: Date.now(), skripte: liste };
+      else if (cache[id]?.skripte?.length) liste = cache[id].skripte; // KI aus: aeltere Skripte weiterbenutzen
+    } else if (cache[id]?.skripte?.length) {
+      liste = cache[id].skripte;
+      ausGedaechtnis++;
     }
-    liste.slice(0, WELT_VARIANTEN).forEach((skript, v) => {
-      if (v) skript.hintergrund = { ...skript.hintergrund, seed: skript.hintergrund.seed + v * 7919 };
+    // Neuer Hintergrund jeden Tag (Tages-Seed) - auch wenn der Text aus dem Gedaechtnis kommt.
+    liste.slice(0, WELT_VARIANTEN).forEach((original, v) => {
+      const skript = structuredClone(original);
+      skript.hintergrund = { ...skript.hintergrund, seed: (skript.hintergrund?.seed || 0) + v * 7919 + tag * 104729 };
       skript.variante = v;
       fertig.push({ k: i * 100 + v, thema: p.title, skript });
     });
     console.log(`[94-video-fabrik] Welt-Skripte "${p.title}": ${Math.min(liste.length, WELT_VARIANTEN)}/${WELT_VARIANTEN} Varianten`);
   }
-  // Top-5-Countdowns je Shop laufen auch durch alle 50 Sprachen.
+  // Top-5-Countdowns je Shop laufen auch durch alle 50 Sprachen (Gedaechtnis: 7 Tage je Shop).
   for (const [j, shop] of [...new Set(auswahl.map((p) => p.shopName))].entries()) {
     const eigene = produkte.filter((p) => p.shopName === shop);
     if (eigene.length < 3) continue;
+    const id = `top5:${shop}`;
     try {
-      fertig.push({ k: 900000 + j, thema: `Top 5 ${shop}`, skript: await topListeSkript(shop, Array.from({ length: Math.min(5, eigene.length) }, (_, x) => eigene[(tag * 5 + x) % eigene.length])) });
+      if (!(cache[id] && Date.now() - cache[id].erstellt < 7 * 86400000)) {
+        cache[id] = { erstellt: Date.now(), skripte: [await topListeSkript(shop, Array.from({ length: Math.min(5, eigene.length) }, (_, x) => eigene[(tag * 5 + x) % eigene.length]))] };
+      }
+      fertig.push({ k: 900000 + j, thema: `Top 5 ${shop}`, skript: structuredClone(cache[id].skripte[0]) });
       console.log(`[94-video-fabrik] Welt-Skript Top-5 ${shop}`);
     } catch (err) {
+      if (cache[id]?.skripte?.length) fertig.push({ k: 900000 + j, thema: `Top 5 ${shop}`, skript: structuredClone(cache[id].skripte[0]) });
       console.log(`[94-video-fabrik] ✗ Top-5 ${shop}: ${String(err.message).slice(0, 160)}`);
     }
   }
+  skripteSpeichern(cache, OUT);
+  console.log(`[94-video-fabrik] Gedaechtnis: ${ausGedaechtnis} Produkte ohne KI, ${Object.keys(cache).length} Eintraege gespeichert`);
   const skripte = fertig.sort((x, y) => x.k - y.k).map(({ thema, skript }, i) => ({ nr: i + 1, thema, skript }));
   if (!skripte.length) throw new Error('Kein einziges Skript');
   writeFileSync(join(OUT, 'skripte.json'), JSON.stringify(skripte, null, 1));
@@ -462,10 +453,20 @@ async function sprachenRendern(liste) {
   const skripte = JSON.parse(readFileSync(join(OUT, 'skripte.json'), 'utf8'));
   const manifest = [];
   const ende = Date.now() + WELT_ZEIT_MIN * 60000;
+  const gueltig = new Set(skripte.map((x) => schluessel(x.skript)));
   for (const sprache of sprachListe(liste)) {
+    const gedaechtnis = uebersetzungenLaden(sprache);
+    let kiAus = 0;
     for (let b = 0; b < skripte.length && Date.now() < ende; b += 5) {
       const teil = skripte.slice(b, b + 5);
-      const uebersetzungen = await uebersetzenBuendel(teil.map((x) => x.skript), sprache);
+      // Erst ins Gedaechtnis schauen - nur was fehlt, geht an die Gratis-KI.
+      const aus = teil.map((x) => anwenden(x.skript, gedaechtnis[schluessel(x.skript)], kurzHook));
+      const fehlt = teil.filter((_, j) => !aus[j]);
+      const neu = fehlt.length && kiAus < 2 ? await uebersetzenBuendel(fehlt.map((x) => x.skript), sprache) : [];
+      if (fehlt.length && !neu.some(Boolean)) kiAus++; else if (neu.some(Boolean)) kiAus = 0;
+      fehlt.forEach((x, j) => { if (neu[j]) gedaechtnis[schluessel(x.skript)] = auszug(neu[j]); });
+      let n = 0;
+      const uebersetzungen = aus.map((u) => u || neu[n++] || null);
       for (const [j, { nr, thema }] of teil.entries()) {
         const arbeit = join(OUT, `welt-${nr}-${sprache}`);
         try {
@@ -481,6 +482,7 @@ async function sprachenRendern(liste) {
         rmSync(arbeit, { recursive: true, force: true });
       }
     }
+    uebersetzungenSpeichern(sprache, gedaechtnis, gueltig, OUT);
   }
   writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1));
   console.log(`[94-video-fabrik] ${manifest.length} Welt-Videos fertig${Date.now() >= ende ? ' (Zeitbudget erreicht, Rest uebersprungen)' : ''}`);

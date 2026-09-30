@@ -63,7 +63,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: skripte
-          path: out/skripte.json
+          path: |
+            out/skripte.json
+            out/welt-cache/skripte.json
           retention-days: 2
 
   rendern:
@@ -109,7 +111,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: welt-g${{ strategy.job-index }}
-          path: out/manifest.json
+          path: |
+            out/manifest.json
+            out/welt-cache/*.json
           retention-days: 2
           if-no-files-found: ignore
 
@@ -127,6 +131,27 @@ jobs:
         with:
           pattern: welt-*
           path: teile
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: skripte
+          path: skripte-teil
+      # Gedaechtnis (Skripte + Uebersetzungen) auch dann sichern, wenn heute wenig fertig wurde -
+      # morgen braucht der Welt-Bot dann weniger KI-Anfragen.
+      - name: Gedaechtnis sichern
+        if: always()
+        run: |
+          mkdir -p welt-cache
+          for f in teile/*/welt-cache/*.json skripte-teil/welt-cache/*.json; do [ -f "$f" ] && cp "$f" welt-cache/; done
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add welt-cache
+          git commit -qm "chore: Welt-Gedaechtnis aktualisiert [skip ci]" || exit 0
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 5))
+          done
+          exit 1
       - name: Teile zusammenfuehren
         run: |
           mkdir -p out
