@@ -29,6 +29,7 @@ const REGELN = 'Regeln: nur gut belegtes Lexikon-Wissen, keine erfundenen Zahlen
 const BILD = '"bilder": 5 englische Bild-Prompts (je max. 15 Woerter, cinematic, photorealistic, dramatic light, no text, no logos, no real people)';
 
 const slug = (t) => t.toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) || 'fakt';
+const ersatzBild = (kategorie) => `${kategorie} theme, mysterious cinematic scene, photorealistic, dramatic light, no text`;
 const kurz = (t, n) => String(t || '').replace(/\s+/g, ' ').trim().slice(0, n);
 
 function verlaufLaden() {
@@ -47,8 +48,8 @@ async function skriptSchreiben(kategorie, nr, bekannt) {
     { maxTokens: 1400 }
   );
   const szenen = (Array.isArray(d.szenen) ? d.szenen : [])
-    .map((s) => ({ text: kurz(s.text, 220), bild: kurz(s.bild, 200) }))
-    .filter((s) => s.text.length > 3 && s.bild)
+    .map((s) => ({ text: kurz(typeof s === 'string' ? s : s?.text, 220), bild: kurz(s?.bild, 200) || ersatzBild(kategorie) }))
+    .filter((s) => s.text.length > 3)
     .slice(0, 7);
   if (szenen.length < 4) throw new Error('Skript zu kurz');
   szenen[0].rang = nr; // Serien-Nummer "#N" oben links
@@ -70,7 +71,10 @@ function fertig(d, nr, szenen, fakt) {
   const seed = [...String(fakt || nr)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 13);
   return { titel: `#${nr}: ${kurz(d.titel || fakt, 60)}`, fakt: kurz(fakt, 200), hook: kurz(d.hook || d.titel, 40), caption: kurz(d.caption, 1500), hintergrund: { prompt: '', seed }, shop: KANAL, cta: 'FOLGEN FÜR MEHR', szenen };
 }
-const bilderAus = (d) => (Array.isArray(d.bilder) ? d.bilder : []).map((b) => kurz(b, 200)).filter(Boolean);
+const bilderAus = (d, kategorie) => {
+  const b = (Array.isArray(d.bilder) ? d.bilder : []).map((x) => kurz(x, 200)).filter(Boolean);
+  return b.length >= 3 ? b : [...b, ersatzBild(kategorie), `${ersatzBild(kategorie)}, close-up detail`, `${ersatzBild(kategorie)}, wide epic shot`];
+};
 
 async function quizSchreiben(kategorie, nr, bekannt) {
   const d = await kiJson(
@@ -81,8 +85,8 @@ async function quizSchreiben(kategorie, nr, bekannt) {
   );
   const optionen = (d.optionen || []).map((o) => kurz(o, 40)).slice(0, 3);
   const richtig = Number(d.richtig);
-  const bilder = bilderAus(d);
-  if (optionen.length !== 3 || !(richtig >= 0 && richtig <= 2) || !d.frage || bilder.length < 3) throw new Error('Quiz unvollstaendig');
+  const bilder = bilderAus(d, kategorie);
+  if (optionen.length !== 3 || !(richtig >= 0 && richtig <= 2) || !d.frage) throw new Error('Quiz unvollstaendig');
   const b = (i) => bilder[i % bilder.length];
   const erkl = (Array.isArray(d.erklaerung) ? d.erklaerung : [d.erklaerung]).map((t) => kurz(t, 220)).filter(Boolean).slice(0, 2);
   const szenen = [
@@ -103,8 +107,8 @@ async function mythosSchreiben(kategorie, nr, bekannt) {
       `Antworte NUR mit JSON: {"titel":"max. 60 Zeichen","hook":"max. 5 Woerter","aussage":"die Behauptung in einem Satz","wahr":true,"erklaerung":["2-3 kurze Saetze"],"caption":"Frage + Aufforderung zu kommentieren + 4-6 Hashtags",${BILD}}`,
     { maxTokens: 1200 }
   );
-  const bilder = bilderAus(d);
-  if (!d.aussage || typeof d.wahr !== 'boolean' || bilder.length < 3) throw new Error('Mythos unvollstaendig');
+  const bilder = bilderAus(d, kategorie);
+  if (!d.aussage || typeof d.wahr !== 'boolean') throw new Error('Mythos unvollstaendig');
   const b = (i) => bilder[i % bilder.length];
   const erkl = (Array.isArray(d.erklaerung) ? d.erklaerung : [d.erklaerung]).map((t) => kurz(t, 220)).filter(Boolean).slice(0, 3);
   const szenen = [
@@ -128,9 +132,16 @@ async function main() {
     const nr = verlauf.nr + 1;
     const start = Date.now();
     try {
-      const format = FORMATE.length ? FORMATE[(tag * ANZAHL + i) % FORMATE.length] : 'fakt';
-      const schreiben = { fakt: skriptSchreiben, quiz: quizSchreiben, mythos: mythosSchreiben }[format];
-      const skript = await schreiben(kategorie, nr, verlauf.fakten);
+      // Bis zu 3 Versuche - bei einem unbrauchbaren Skript notfalls im naechsten Format.
+      const liste = FORMATE.length ? FORMATE : ['fakt'];
+      let skript;
+      let format;
+      for (let v = 0; v < 3 && !skript; v++) {
+        format = liste[(tag * ANZAHL + i + v) % liste.length];
+        const schreiben = { fakt: skriptSchreiben, quiz: quizSchreiben, mythos: mythosSchreiben }[format];
+        try { skript = await schreiben(kategorie, nr, verlauf.fakten); } catch (err) { console.log(`[100-fakten-kanal] ${format}-Skript verworfen (${String(err.message).slice(0, 80)}) - neuer Versuch`); }
+      }
+      if (!skript) throw new Error('3 Skripte unbrauchbar');
       const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting' });
       if (moderatorinAn() && v.stimme) {
         try { await moderatorinEinfuegen(v.pfad, v.stimme, MODERATORIN_NR); } catch (err) { console.log(`[100-fakten-kanal] Moderatorin fehlgeschlagen: ${String(err.message).slice(0, 150)}`); }
