@@ -302,7 +302,6 @@ async function bauen() {
       }
     }
   }
-  writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1));
   // Top-5-Countdown je Shop (neues Format): taeglich andere 5 Produkte je Shop.
   for (const shop of PREMIUM ? [...new Set(produkte.map((p) => p.shopName))] : []) {
     const eigene = produkte.filter((p) => p.shopName === shop);
@@ -330,6 +329,7 @@ async function bauen() {
       console.log(`[94-video-fabrik] Highlights fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
     }
   }
+  writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1)); // erst nach Top-5/Highlights - sonst fehlen sie in Pruefer und Feed
   console.log(`[94-video-fabrik] ${manifest.filter((m) => !m.teaser).length}/${auftraege.length} Videos fertig (+ ${manifest.filter((m) => m.teaser).length} Teaser)`);
   if (!manifest.length) process.exit(1);
 }
