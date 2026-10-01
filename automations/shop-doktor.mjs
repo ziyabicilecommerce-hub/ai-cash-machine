@@ -5,12 +5,13 @@
 //    (ueber GitHub Pages abrufbar; einmal im Merchant Center / Commerce Manager eintragen, fertig).
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { SHOPS, shopName } from './lib/shopProdukte.mjs';
-import { produktPruefen, seitePruefen, shopPruefen, punktzahl, doppelteTitel, PFLICHT } from './lib/shopDoktor.mjs';
+import { produktPruefen, seitePruefen, shopPruefen, punktzahl, doppelteTitel, PFLICHT, schnappschuss, aenderungen } from './lib/shopDoktor.mjs';
 import { feedEintraege, googleXml, katalogCsv } from './lib/produktFeeds.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 
 const ZIEL = 'zentrale/daten/shop-doktor.json';
 const FEEDS = 'zentrale/feeds';
+const STAND = 'automations/state/shop-schnappschuss.json';
 const PAUSE = Number(process.env.SHOP_DOKTOR_PAUSE_MS ?? 800);
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 const UA = { 'user-agent': 'Mozilla/5.0 (compatible; shop-doktor/1.0)' };
@@ -84,9 +85,20 @@ async function main() {
     feeds[s.name] = { eintraege: e.length, google: `feeds/${key}-google.xml`, meta: `feeds/${key}-meta.csv`, pinterest: `feeds/${key}-meta.csv` };
     console.log(`[shop-doktor] Feeds ${s.name}: ${e.length} Einträge (Google XML, Meta/Pinterest CSV)`);
   }
+  // Aenderungs-Waechter: Vergleich mit dem letzten Lauf (Preis, ausverkauft, neu, entfernt).
+  const letzterStand = existsSync(STAND) ? JSON.parse(readFileSync(STAND, 'utf8')) : {};
+  const jetzt = Object.fromEntries(shops.filter((s) => s.rohProdukte.length).map((s) => [s.name, schnappschuss(s.rohProdukte)]));
+  const neueAenderungen = shops.flatMap((s) => (jetzt[s.name] ? aenderungen(letzterStand[s.name], jetzt[s.name], s.name) : []));
+  mkdirSync('automations/state', { recursive: true });
+  writeFileSync(STAND, JSON.stringify({ ...letzterStand, ...jetzt }, null, 1) + '\n');
+  if (neueAenderungen.length) {
+    console.log(`[shop-doktor] ${neueAenderungen.length} Änderungen seit dem letzten Lauf`);
+    await notifyTelegram(`🔔 Shop-Änderungen\n\n${neueAenderungen.slice(0, 20).map((x) => `• ${x.shop} · ${x.titel}: ${x.text}`).join('\n')}`);
+  }
   const heute = new Date().toISOString().slice(0, 10);
   const verlauf = [...(alt.verlauf || []).filter((v) => v.datum !== heute), { datum: heute, ...Object.fromEntries(shops.map((s) => [s.name, s.punkte])) }].slice(-60);
-  const daten = { stand: new Date().toISOString(), shops: shops.map(({ rohProdukte, ...s }) => s), feeds, verlauf };
+  const protokoll = [...neueAenderungen.map((x) => ({ ...x, datum: heute })), ...(alt.aenderungen || [])].slice(0, 200);
+  const daten = { stand: new Date().toISOString(), shops: shops.map(({ rohProdukte, ...s }) => s), feeds, verlauf, aenderungen: protokoll };
   mkdirSync('zentrale/daten', { recursive: true });
   writeFileSync(ZIEL, JSON.stringify(daten, null, 1) + '\n');
   // Nur NEUE kritische Befunde melden (kein taeglicher Spam).

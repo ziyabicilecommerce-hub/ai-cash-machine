@@ -87,3 +87,27 @@ export function doppelteTitel(produkte) {
   for (const p of produkte) zahl.set(n(p.title), (zahl.get(n(p.title)) || 0) + 1);
   return new Set(produkte.filter((p) => zahl.get(n(p.title)) > 1).map((p) => p.id));
 }
+
+// Aenderungs-Waechter: Stand je Produkt (guenstigster Preis, verfuegbar ja/nein) und Vergleich mit gestern.
+export function schnappschuss(produkte) {
+  return Object.fromEntries(produkte.map((p) => {
+    const v = p.variants || [];
+    const preise = v.map((x) => Number(x.price)).filter((x) => x > 0);
+    return [String(p.id), { titel: p.title, preis: preise.length ? Math.min(...preise) : 0, verfuegbar: v.some((x) => x.available !== false) }];
+  }));
+}
+
+export function aenderungen(alt, neu, shop) {
+  if (!alt) return [];
+  const out = [];
+  const eur = (x) => `${x.toFixed(2).replace('.', ',')} €`;
+  for (const [id, n] of Object.entries(neu)) {
+    const a = alt[id];
+    if (!a) { out.push({ shop, art: 'neu', titel: n.titel, text: `Neues Produkt (${eur(n.preis)})` }); continue; }
+    if (Math.abs(a.preis - n.preis) >= 0.01) out.push({ shop, art: 'preis', titel: n.titel, text: `Preis ${eur(a.preis)} → ${eur(n.preis)}` });
+    if (a.verfuegbar && !n.verfuegbar) out.push({ shop, art: 'ausverkauft', titel: n.titel, text: 'Jetzt ausverkauft' });
+    if (!a.verfuegbar && n.verfuegbar) out.push({ shop, art: 'zurueck', titel: n.titel, text: 'Wieder verfügbar' });
+  }
+  for (const [id, a] of Object.entries(alt)) if (!neu[id]) out.push({ shop, art: 'entfernt', titel: a.titel, text: 'Nicht mehr im Shop' });
+  return out;
+}

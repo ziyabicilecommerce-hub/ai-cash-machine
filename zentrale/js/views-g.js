@@ -46,6 +46,9 @@
         return;
       }
       el.innerHTML = `<p class="klein-text">Stand: ${h(ZUI.datum(String(daten.stand).slice(0, 10)))} · Punkte: 100 minus 15 je kritischem, 5 je wichtigem und 1 je Tipp-Punkt.</p>
+        <section class="box" style="margin-bottom:16px"><h2>Änderungen (Preis, Bestand, neu, entfernt)</h2>
+          ${(daten.aenderungen || []).length ? `<ul class="aufgaben">${daten.aenderungen.slice(0, 25).map((x) => `<li class="aufgabe" data-prio="${x.art === 'ausverkauft' || x.art === 'entfernt' ? 'hoch' : 'info'}"><span class="t">${h(x.titel)}<span class="klein-text"> · ${h(x.shop)} · ${h(x.text)} · ${h(ZUI.datum(x.datum))}</span></span></li>`).join('')}</ul>`
+            : '<p class="klein-text">Noch keine Änderungen erkannt. Ab dem zweiten Lauf vergleicht der Wächter jeden Morgen mit dem Vortag.</p>'}</section>
         <div class="raster r2">${daten.shops.map((s) => shopKarte(s, daten.feeds)).join('')}</div>
         <section class="box" style="margin-top:16px"><h2>So kommst du kostenlos in Google Shopping</h2>
           <ol><li>merchants.google.com öffnen und mit deinem Google-Konto anmelden.</li><li>Shop-Domain bestätigen (Shopify: Google &amp; YouTube-App oder Meta-Tag).</li><li>Produkte &gt; Feeds &gt; Plus &gt; „Geplanter Abruf“ und den kopierten Google-Feed-Link einfügen, täglich.</li><li>Unter „Wachstum“ die kostenlosen Produkteinträge aktivieren.</li></ol>
