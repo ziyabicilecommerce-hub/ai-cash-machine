@@ -20,7 +20,7 @@ import { kurzHook, reinText, aktiveProdukte, topListeSkript, HOOK_REGELN } from 
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 import { laborWinkel } from './lib/laborWinkel.mjs';
 import { nachbauenEinplanen, stateLaden as pruefungLaden } from './lib/videoPruefung.mjs';
-import { ANWENDUNG_REGEL, anwendungEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen } from './lib/skriptExtras.mjs';
+import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen } from './lib/skriptExtras.mjs';
 // KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
 async function mitModeratorin(v, nr) {
   if (!moderatorinAn()) return;
@@ -163,14 +163,14 @@ async function produktSkriptEinmal(p, winkel = '') {
   const d = await kiJson(
     `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ein 25-40 Sekunden Werbe-Skript auf Deutsch, sprich die Zuschauer mit "du" an (niemals "Sie"), fuer das Produkt "${p.title}" aus dem Shop "${p.shopName}". ` +
       `Produktinfos: ${reinText(p.body_html).slice(0, 700)}${preis ? ` Preis: ${preis} EUR.` : ''} ` +
-      HOOK_REGELN + ANWENDUNG_REGEL + ANFAENGE_REGEL + 'Aufbau: 1) dieser Hook-Satz, 2) Problem, 3) 2-3 konkrete Vorteile des Produkts, 4) Call-to-Action ("Link in der Bio"). 5 bis 7 Szenen, pro Szene 1 kurzer gesprochener Satz. Nichts erfinden, was nicht in den Produktinfos steht. ' +
+      HOOK_REGELN + ANWENDUNG_REGEL + VERGLEICH_REGEL + ANFAENGE_REGEL + 'Aufbau: 1) dieser Hook-Satz, 2) Problem, 3) 2-3 konkrete Vorteile des Produkts, 4) Call-to-Action ("Link in der Bio"). 5 bis 7 Szenen, pro Szene 1 kurzer gesprochener Satz. Nichts erfinden, was nicht in den Produktinfos steht. ' +
       'Nutze NUR Eigenschaften, die woertlich in den Produktinfos stehen - keine erfundenen Features, Zahlen oder Versprechen. Keine Floskeln. ' +
       (winkel ? `Erzaehlweise dieser Variante: ${winkel} ` : '') +
       (LIFESTYLE
         ? `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index ODER "bild": englischer Prompt fuer ein passendes, jugendfreies Lifestyle-Bild (vollstaendig bekleidete Personen). Mindestens die Haelfte der Szenen mit Produktfoto. `
         : `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene "foto": Index des passendsten Produktfotos. `) +
       'Dazu "hintergrund": englischer Bild-Prompt (max. 12 Woerter) fuer eine leere, edle Umgebung, die zum Einsatzort des Produkts passt - ohne Produkt, ohne Personen, ohne Text. ' +
-      'Antworte NUR mit JSON: {"titel":"...","hook":"Text-Overlay fuer Sekunde 0-3, 2-5 Woerter, weckt Neugier (Frage/Warnung/Widerspruch), NICHT der Produktname","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","anwendung":{"szene":2,"foto":0,"prompt":"..."},"anfaenge":[{"typ":"frage","satz":"...","hook":"..."}],"szenen":[{"text":"...","foto":0}]}',
+      'Antworte NUR mit JSON: {"titel":"...","hook":"Text-Overlay fuer Sekunde 0-3, 2-5 Woerter, weckt Neugier (Frage/Warnung/Widerspruch), NICHT der Produktname","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","anwendung":{"szene":2,"foto":0,"prompt":"..."},"vergleich":{"szene":1,"ohne":"...","mit":"..."},"anfaenge":[{"typ":"frage","satz":"...","hook":"..."}],"szenen":[{"text":"...","foto":0}]}',
     { maxTokens: 1800 }
   );
   const skript = ausDaten(d, p);
@@ -211,7 +211,7 @@ function ausDaten(d, p) {
   const seed = [...String(p.handle || p.title)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 7);
   const hintergrund = { prompt: String(d.hintergrund || `elegant minimal setting for ${p.title}`).replace(/\s+/g, ' ').trim().slice(0, 300), seed };
   const shop = (() => { try { return new URL(p.shopUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })();
-  return anfaengeEinbauen(anwendungEinbauen({ titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, preis: Number(preis) || 0, waehrung: 'EUR', shop, link, szenen }, d.anwendung, fotos), d.anfaenge);
+  return anfaengeEinbauen(vergleichEinbauen(anwendungEinbauen({ titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, preis: Number(preis) || 0, waehrung: 'EUR', shop, link, szenen }, d.anwendung, fotos), d.vergleich, fotos), d.anfaenge);
 }
 
 async function ablegen(manifest, v, skript, a, nummer, sprache) {

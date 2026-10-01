@@ -179,6 +179,18 @@ async function ladeUrl(url, ziel) {
 
 // Holt das Rohbild einer Szene: echtes Produktfoto, sonst KI-Bild.
 async function bildHolen(szene, roh, { breite, hoehe, stil }) {
+  // Ohne/Mit-Vergleich: zwei Haelften (ohne Produkt | mit echtem Produkt), dazwischen eine helle Linie.
+  if (szene.vergleich) {
+    const h = Math.round(breite / 2);
+    const [a, b] = [`${roh}.ohne`, `${roh}.mit`];
+    const ok = (await ladeBild(`${szene.vergleich.ohne}, family friendly, fully clothed`, a, { breite: h, hoehe })) && (await anwendungBild({ prompt: szene.vergleich.mit, ref: szene.vergleich.ref }, b, { breite: h, hoehe }).catch(() => false));
+    if (ok) {
+      const teil = `scale=${h}:${hoehe}:force_original_aspect_ratio=increase,crop=${h}:${hoehe},setsar=1`;
+      execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', a, '-i', b, '-filter_complex', `[0:v]${teil}[l];[1:v]${teil}[r];[l][r]hstack,drawbox=x=${h - 3}:y=0:w=6:h=ih:color=white@0.9:t=fill`, '-frames:v', '1', '-f', 'image2', '-c:v', 'mjpeg', '-q:v', '2', roh], { stdio: 'pipe', timeout: 120000 });
+      return 'vergleich';
+    }
+    console.log('[video-fabrik] Ohne/Mit-Vergleich uebersprungen - nutze das Produktfoto.');
+  }
   // Anwendungs-Szene: Person mit dem echten Produkt (Produktfoto als Vorlage), sonst normales Produktfoto.
   if (szene.anwendung && (await anwendungBild(szene.anwendung, roh, { breite, hoehe }).catch(() => false))) return 'anwendung';
   if (szene.foto && (await ladeUrl(szene.foto, roh).catch(() => false))) return 'produkt';
@@ -272,7 +284,8 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         const assOpts = {
           breite, hoehe, sprache, thema: themaFuer(skript.hintergrund?.seed),
           hook: clips.length === 0 ? hook : '',
-          hinweis: modus === 'anwendung' ? 'KI-Beispiel' : '',
+          hinweis: modus === 'anwendung' || modus === 'vergleich' ? 'KI-Beispiel' : '',
+          etiketten: modus === 'vergleich' ? ['OHNE', 'MIT'] : [],
           preis: szene.preis ? preisText(szene.preis, sprache, skript.waehrung) : letzte ? preisText(skript.preis, sprache, skript.waehrung) : '',
           rang: szene.rang || 0,
           shop: letzte && !fx ? skript.shop || '' : '',

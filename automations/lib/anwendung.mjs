@@ -50,3 +50,24 @@ export async function anwendungBild({ prompt, ref }, ziel, { breite, hoehe, seed
   }
   return false;
 }
+
+// Ohne/Mit im geteilten Bild: links dieselbe Situation ohne Produkt, rechts mit dem echten Produkt.
+// Bewusst "OHNE" / "MIT" statt "Vorher/Nachher" - es wird kein Ergebnis versprochen, nur gezeigt,
+// wie das Produkt benutzt wird. Ebenfalls als KI-Beispiel gekennzeichnet.
+export const VERGLEICH_REGEL =
+  'Die Problem-Szene (Index 1) wird ein Ohne/Mit-Vergleich im geteilten Bild: "vergleich": {"szene": 1, ' +
+  '"ohne": englischer Prompt: realistic smartphone photo, one adult person in the typical problem situation WITHOUT the product, fully clothed, ' +
+  '"mit": englischer Prompt: the same kind of person in the same setting now using this exact product, fully clothed, product clearly visible}. ' +
+  'Keine uebertriebenen Ergebnisse, keine Heilversprechen. ';
+
+export function vergleichEinbauen(skript, d, fotos) {
+  const n = skript.szenen.length;
+  const [ohne, mit] = [d?.ohne, d?.mit].map((x) => String(x || '').replace(/\s+/g, ' ').trim().slice(0, 400));
+  if (!anwendungAn() || n < 4 || ohne.length < 15 || mit.length < 15 || !fotos.length) return skript;
+  const k = Math.min(Math.max(Number.isInteger(d.szene) ? d.szene : 1, 1), n - 2);
+  const { anwendung, ...rest } = skript.szenen[k];
+  skript.szenen[k] = { ...rest, vergleich: { ohne, mit, ref: anwendung?.ref || fotos[0] } };
+  // Liegt die Anwendungs-Szene auf derselben Szene, rueckt sie eine weiter (nie auf die letzte).
+  if (anwendung && k + 1 < n - 1 && !skript.szenen[k + 1].anwendung) skript.szenen[k + 1] = { ...skript.szenen[k + 1], anwendung };
+  return skript;
+}

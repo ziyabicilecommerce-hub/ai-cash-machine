@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { anwendungEinbauen, anwendungBild, anwendungURL } from '../../automations/lib/anwendung.mjs';
+import { anwendungEinbauen, anwendungBild, anwendungURL, vergleichEinbauen } from '../../automations/lib/anwendung.mjs';
 
 const skript = () => ({ szenen: ['Hook', 'Problem', 'Vorteil', 'Vorteil 2', 'Link in der Bio'].map((text) => ({ text, foto: 'f.png' })) });
 const fotos = ['https://cdn.shopify.com/a.png', 'https://cdn.shopify.com/b.png'];
@@ -41,4 +41,14 @@ test('anwendungBild probiert das naechste Modell, wenn eins kein Bild liefert', 
   const leer = join(mkdtempSync(join(tmpdir(), 'anw-')), 'r.img');
   assert.equal(await anwendungBild({ prompt: 'p', ref: fotos[0] }, leer, { breite: 1080, hoehe: 1920, laden: async () => new Response('x', { status: 500 }) }), false);
   assert.ok(!existsSync(leer));
+});
+
+test('vergleichEinbauen setzt Ohne/Mit auf die Problem-Szene und schiebt die Anwendung eine weiter', () => {
+  const mitAnwendung = anwendungEinbauen(skript(), { szene: 1, foto: 1, prompt: 'person using this resistance band for a pull-up' }, fotos);
+  const s = vergleichEinbauen(mitAnwendung, { szene: 1, ohne: 'person struggling with a pull-up at home', mit: 'same person doing the pull-up with the band' }, fotos);
+  assert.equal(s.szenen[1].vergleich.ref, fotos[1], 'echtes Produktfoto der Anwendung wird Vorlage');
+  assert.ok(!s.szenen[1].anwendung);
+  assert.ok(s.szenen[2].anwendung, 'Anwendung rueckt auf Szene 3');
+  assert.ok(!vergleichEinbauen(skript(), { ohne: 'kurz', mit: 'kurz' }, fotos).szenen.some((x) => x.vergleich), 'zu kurze Prompts: kein Vergleich');
+  assert.ok(vergleichEinbauen(skript(), { szene: 9, ohne: 'person struggling with a pull-up', mit: 'person doing it with the band' }, fotos).szenen[3].vergleich, 'nie die letzte Szene');
 });
