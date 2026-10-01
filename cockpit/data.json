@@ -1,13 +1,9 @@
 {
-  "updatedAt": "2026-09-30T22:22:20.289Z",
+  "updatedAt": "2026-10-01T13:30:11.976Z",
   "kosten": {
     "tokenHeute": 0,
     "limit": null,
     "verlauf": [
-      {
-        "datum": "2026-09-01",
-        "tokenHeute": 0
-      },
       {
         "datum": "2026-09-02",
         "tokenHeute": 0
@@ -123,12 +119,16 @@
       {
         "datum": "2026-09-30",
         "tokenHeute": 0
+      },
+      {
+        "datum": "2026-10-01",
+        "tokenHeute": 0
       }
     ]
   },
   "sofortNoetig": [
     {
-      "titel": "5 Automation(en) brauchen Aufmerksamkeit",
+      "titel": "4 Automation(en) brauchen Aufmerksamkeit",
       "detail": "Nie gelaufen oder letzter Lauf fehlgeschlagen - siehe Tabelle.",
       "quelle": "Cockpit"
     }
@@ -172,8 +172,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T18:54:19Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36761898648"
+        "startedAt": "2026-10-01T08:31:59Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36836895230"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-02-ki-kundenservice.yml",
@@ -447,8 +447,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T11:27:33Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36708663681"
+        "startedAt": "2026-10-01T11:55:37Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36858434307"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-14-preis-spion.yml",
@@ -472,8 +472,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T18:41:14Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36760354858"
+        "startedAt": "2026-10-01T07:58:59Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36833529029"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-15-warenkorb-sequenz.yml",
@@ -1116,8 +1116,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T21:16:16Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36778336658"
+        "startedAt": "2026-10-01T08:27:02Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36836368921"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-41-post-purchase-sofort-upsell.yml",
@@ -1164,8 +1164,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T17:52:15Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36754488505"
+        "startedAt": "2026-10-01T05:17:24Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36819055916"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-43-meta-ads-notbremse.yml",
@@ -1238,8 +1238,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T19:49:07Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36768295542"
+        "startedAt": "2026-10-01T11:21:28Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36854856091"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-46-grossbestellung-radar.yml",
@@ -1576,8 +1576,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-29T23:15:30Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36644216815"
+        "startedAt": "2026-09-30T23:18:24Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36790387795"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-60-chef-agent.yml",
@@ -1627,8 +1627,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T20:20:55Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36771980490"
+        "startedAt": "2026-10-01T07:51:54Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36832820697"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-62-risk-guard-agent.yml",
@@ -1701,8 +1701,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T21:35:50Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36780447724"
+        "startedAt": "2026-10-01T09:31:42Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36843314720"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-65-inventory-guardian-agent.yml",
@@ -1776,8 +1776,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T16:24:18Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36743942710"
+        "startedAt": "2026-10-01T05:52:50Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36821900693"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-68-sonderwunsch-flagger.yml",
@@ -1800,8 +1800,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T19:36:57Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36766902680"
+        "startedAt": "2026-10-01T06:31:53Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36825267850"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-69-dsgvo-anfragen-waechter.yml",
@@ -1826,8 +1826,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T20:13:48Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36771136358"
+        "startedAt": "2026-10-01T10:23:36Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36848843209"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-70-produkt-launch-hype-agent.yml",
@@ -1876,8 +1876,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T10:46:43Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36704481296"
+        "startedAt": "2026-10-01T11:13:14Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36853991338"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-72-broken-link-guardian.yml",
@@ -1925,8 +1925,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T19:08:55Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36763623436"
+        "startedAt": "2026-10-01T05:40:56Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36820944504"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-74-refund-concierge-agent.yml",
@@ -2069,8 +2069,8 @@
       "letzterLauf": {
         "status": "in_progress",
         "conclusion": null,
-        "startedAt": "2026-09-30T21:59:07Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36782849004"
+        "startedAt": "2026-10-01T12:40:57Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36863390928"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-80-agenten-status-sammler.yml",
@@ -2090,8 +2090,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T12:45:38Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36716864243"
+        "startedAt": "2026-10-01T06:07:33Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36823135017"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-81-kosten-cockpit.yml",
@@ -2185,8 +2185,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T11:56:09Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36711590005"
+        "startedAt": "2026-10-01T12:27:27Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36861869483"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-85-autopilot-status.yml",
@@ -2208,8 +2208,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T00:48:40Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36652107276"
+        "startedAt": "2026-10-01T00:52:30Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36798338374"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-86-insider-buy-radar.yml",
@@ -2365,8 +2365,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T09:37:30Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36697292440"
+        "startedAt": "2026-10-01T10:03:06Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36846663367"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-93-mcp-analyse.yml",
@@ -2386,8 +2386,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T19:32:14Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36766356872"
+        "startedAt": "2026-10-01T11:21:21Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36854844302"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-94-video-fabrik.yml",
@@ -2405,15 +2405,15 @@
       "verbindungen": [],
       "status": "ok",
       "letzterLauf": {
-        "status": "in_progress",
-        "conclusion": null,
+        "status": "completed",
+        "conclusion": "cancelled",
         "startedAt": "2026-09-30T17:59:56Z",
         "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36755395077"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-95-anime-serie.yml",
       "verlauf": [
-        null,
+        "cancelled",
         "success",
         "success",
         "success"
@@ -2442,11 +2442,18 @@
       "nummer": 97,
       "name": "Marathon-Fabrik",
       "verbindungen": [],
-      "status": "nie-gelaufen",
-      "letzterLauf": null,
-      "sofortNoetig": "Noch nie gelaufen.",
+      "status": "ok",
+      "letzterLauf": {
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-01T07:15:27Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36829282589"
+      },
+      "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-97-marathon.yml",
-      "verlauf": []
+      "verlauf": [
+        "success"
+      ]
     },
     {
       "nummer": 98,
@@ -2456,12 +2463,13 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T10:41:54Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36703986057"
+        "startedAt": "2026-10-01T11:08:34Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36853501316"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-98-podcast.yml",
       "verlauf": [
+        "success",
         "success",
         "success"
       ]
@@ -2474,8 +2482,8 @@
       "letzterLauf": {
         "status": "completed",
         "conclusion": "success",
-        "startedAt": "2026-09-30T18:35:14Z",
-        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36759633611"
+        "startedAt": "2026-09-30T22:38:43Z",
+        "htmlUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36786750597"
       },
       "sofortNoetig": null,
       "workflowUrl": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/blob/main/.github/workflows/automation-99-direkt-poster.yml",
