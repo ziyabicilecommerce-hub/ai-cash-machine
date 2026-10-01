@@ -9,6 +9,7 @@ import { config, ueberspringenWerfen } from './config.mjs';
 import { loadState, saveState } from './state.mjs';
 import { notifyTelegram } from './telegram.mjs';
 import { notifyWhatsapp } from './whatsapp.mjs';
+import { kiLokal, lokalBereit } from './kiLokal.mjs';
 
 const POLLINATIONS_URL = 'https://text.pollinations.ai/openai';
 // Zweiter kostenloser, offener KI-Dienst (kein Key, kein Account) - Backup
@@ -132,6 +133,10 @@ export async function askKI(prompt, { maxTokens = 1500, system } = {}) {
     try {
       ergebnis = await rufeLlm7Auf(body);
     } catch (llm7Fehler) {
+      // Letztes Sicherheitsnetz: eigene KI im GitHub-Lauf (kostenlos, ohne Limit).
+      if (lokalBereit()) {
+        try { const r = await kiLokal(prompt, { maxTokens, system }); aktualisiereTagesBudget(budgetState, r.usage.prompt_tokens, r.usage.completion_tokens); return r.antwort; } catch (lokalFehler) { console.log(`[ki] ${lokalFehler.message}`); }
+      }
       ueberspringenWerfen(
         `Beide kostenlosen KI-Dienste nicht verfügbar - Pollinations: ${pollinationsFehler.message}; LLM7: ${llm7Fehler.message}`
       );

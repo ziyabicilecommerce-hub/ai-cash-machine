@@ -1,8 +1,8 @@
 name: "94 · Video-Fabrik"
 
 # Erzeugt taeglich Videos ohne API-Key (Pollinations-Bilder, edge-tts-Stimme,
-# ffmpeg), legt sie als GitHub-Release ab, ergaenzt den Video-Feed und plant
-# sie in Metricool ein, sobald die Metricool-Secrets gesetzt sind.
+# ffmpeg), legt sie als GitHub-Release ab und ergaenzt den Video-Feed. Gepostet wird
+# vom eigenen Direkt-Poster (99) - ohne Metricool oder andere Bezahl-Apps.
 
 on:
   schedule:
@@ -66,6 +66,10 @@ jobs:
       VIDEO_FABRIK_SPRACHEN: ${{ inputs.sprachen || vars.VIDEO_FABRIK_SPRACHEN }}
     steps:
       - uses: actions/checkout@v4
+      - name: Eigene KI starten (kostenlos, ohne Schlüssel, ohne Limit)
+        uses: ./.github/actions/ki-lokal
+        with:
+          modell: ${{ vars.KI_LOKAL_MODELL || 'qwen2.5:3b' }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -122,12 +126,3 @@ jobs:
           if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: In Metricool einplanen
-        continue-on-error: true
-        run: node automations/94-video-fabrik.mjs --metricool "$BASIS"
-        env:
-          METRICOOL_API_TOKEN: ${{ secrets.METRICOOL_API_TOKEN }}
-          METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID }}
-          METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
-          METRICOOL_TIMEZONE: ${{ secrets.METRICOOL_TIMEZONE }}
-          METRICOOL_PROVIDERS: ${{ secrets.METRICOOL_PROVIDERS }}
