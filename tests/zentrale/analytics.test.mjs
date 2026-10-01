@@ -116,3 +116,43 @@ test('Beispieldaten sind deterministisch und alle Agenten liefern Ergebnisse', (
   assert.ok(r.ctx.bundles.length > 0);
   assert.ok(ZA.elastizitaetSchaetzen(z1.bestellungen, 'led'), 'LED-Preistest sollte eine Elastizität ergeben');
 });
+
+test('Shopify-Export: Folgezeilen, Stornos, Varianten-Namen, keine E-Mails', () => {
+  const z = ZS.shopModus([{ id: 'p1', name: 'DeskRebel PowerBand', preis: 12.99 }, { id: 'p2', name: 'Purivelle BackEase', preis: 56.99 }], null);
+  const csv = [
+    'Name,Email,Financial Status,Created at,Lineitem quantity,Lineitem name,Lineitem price,Cancelled at,Source',
+    '#1001,anna@mail.de,paid,2026-09-28 14:03:11 +0200,2,DeskRebel PowerBand - Rot / Stark,12.99,,web',
+    '#1001,,,,1,Purivelle BackEase,56.99,,',
+    '#1002,ben@mail.de,paid,2026-09-29 09:00:00 +0200,1,Purivelle BackEase,56.99,2026-09-29 10:00:00 +0200,web',
+    '#1003,ANNA@mail.de ,paid,2026-09-30 11:00:00 +0200,1,Ganz neues Ding,9.5,,instagram',
+  ].join('\n');
+  const r = ZS.bestellungenImportieren(z, csv);
+  assert.equal(r.format, 'Shopify-Export');
+  assert.equal(r.importiert, 2);
+  const b1 = z.bestellungen.find((b) => b.id === 'I#1001');
+  assert.equal(b1.datum, '2026-09-28');
+  assert.equal(JSON.stringify(b1.artikel.map((a) => a.p)), JSON.stringify(['p1', 'p2']));
+  assert.equal(ZA.bestellWert(b1), 2 * 12.99 + 56.99);
+  const b3 = z.bestellungen.find((b) => b.id === 'I#1003');
+  assert.equal(b3.kunde, b1.kunde, 'gleiche E-Mail (Groß/Klein, Leerzeichen) = gleicher Kunde');
+  assert.equal(b3.kanal, 'instagram');
+  assert.ok(!JSON.stringify(z).includes('@'), 'keine E-Mail-Adressen gespeichert');
+  assert.equal(z.produkte.length, 3);
+  assert.equal(ZS.bestellungenImportieren(z, csv).importiert, 0, 'zweiter Import erzeugt keine Dubletten');
+});
+
+test('shopModus: echte Produkte, keine Beispiel-Bestellungen, eigene Einkaufspreise bleiben', () => {
+  const demo = ZS.beispielDaten('2026-09-30');
+  const z1 = ZS.shopModus([{ id: 'p1', name: 'PowerBand', preis: 12.99 }], demo);
+  assert.equal(z1.beispiel, false);
+  assert.equal(z1.bestellungen.length, 0);
+  assert.equal(z1.produkte.length, 1);
+  z1.produkte[0].kosten = 3.2;
+  z1.produkte.push({ id: 'import-x', name: 'Import', preis: 5 });
+  const z2 = ZS.shopModus([{ id: 'p1', name: 'PowerBand', preis: 14.99 }, { id: 'p2', name: 'PalmGrips', preis: 19.99 }], z1);
+  assert.equal(z2.produkte.find((p) => p.id === 'p1').kosten, 3.2);
+  assert.equal(z2.produkte.find((p) => p.id === 'p1').preis, 14.99);
+  assert.ok(z2.produkte.some((p) => p.id === 'import-x'));
+  const r = ZAgenten.alleLaufen(z2);
+  assert.ok(r.berichte.every((b) => !b.funde.some((f) => f.titel === 'Konnte nicht rechnen')), 'Agenten laufen auch ohne Bestellungen');
+});
