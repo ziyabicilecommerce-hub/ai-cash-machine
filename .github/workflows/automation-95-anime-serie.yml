@@ -52,6 +52,10 @@ jobs:
       ANIME_STIL: ${{ vars.ANIME_STIL }}
     steps:
       - uses: actions/checkout@v4
+      - name: Eigene KI starten (kostenlos, ohne Schlüssel, ohne Limit)
+        uses: ./.github/actions/ki-lokal
+        with:
+          modell: ${{ vars.KI_LOKAL_MODELL || 'qwen2.5:3b' }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
