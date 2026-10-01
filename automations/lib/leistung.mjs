@@ -92,10 +92,10 @@ export function lernstandRechnen(posts) {
 
 // Auswahl mit Lernen (UCB): unbekannte Optionen werden erst ausprobiert, danach gewinnt, was echte
 // Zahlen bringt - mit etwas Neugier, damit ein frueher Zufallstreffer nicht fuer immer gewinnt.
-export function waehlen(optionen, statistik = {}, { neugier = 0.6 } = {}) {
+export function waehlen(optionen, statistik = {}, { neugier = 0.6, seed = 0 } = {}) {
   if (!optionen.length) return '';
   const neu = optionen.filter((o) => !(statistik[o]?.n > 0));
-  if (neu.length) return neu[0];
+  if (neu.length) return neu[Math.abs(seed) % neu.length];
   const gesamt = optionen.reduce((s, o) => s + statistik[o].n, 0);
   return optionen.map((o) => ({ o, w: statistik[o].punkte + neugier * Math.sqrt(Math.log(gesamt + 1) / statistik[o].n) })).sort((a, b) => b.w - a.w)[0].o;
 }

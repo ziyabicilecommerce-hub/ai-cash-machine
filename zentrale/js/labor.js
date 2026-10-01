@@ -83,7 +83,15 @@
   }
 
   // Wertet die Jury-Matrix aus: gewichtete Kaufabsicht je Hook, Gewinner, häufigster Einwand.
-  function auswerten(hooks, jury, k) {
+  // echt: Lernstand je Winkel aus echten Posts ({name: {n, punkte}}, siehe automations/lib/leistung.mjs).
+  // Echte Zahlen zählen mit wachsender Menge mehr: ab 10 Messungen bis zu ±2 Punkte auf die Jury-Note.
+  function echtBonus(echt, winkel) {
+    const e = echt && echt[winkel];
+    if (!e || !(e.n > 0) || !Number.isFinite(e.punkte)) return 0;
+    return Math.round(Math.max(-1, Math.min(1, e.punkte)) * 2 * Math.min(1, e.n / 10) * 10) / 10;
+  }
+
+  function auswerten(hooks, jury, k, echt) {
     const werte = jury && Array.isArray(jury.werte) && jury.werte.length === JURY.length ? jury.werte : null;
     const summeGewicht = JURY.reduce((s, j) => s + j.gewicht, 0);
     const ergebnisse = hooks.map((hook, i) => {
@@ -95,7 +103,9 @@
       if (proTyp.every((v) => v !== null)) punkte = proTyp.reduce((s, v, t) => s + v * JURY[t].gewicht, 0) / summeGewicht;
       else { punkte = heuristik(hook, k); quelle = 'Regeln'; }
       const kaeufer = proTyp.every((v) => v !== null) ? proTyp.reduce((s, v, t) => s + (v >= 7 ? JURY[t].gewicht : 0), 0) : null;
-      return { hook, winkel: WINKEL[i] ? WINKEL[i].name : 'Frei', punkte: Math.round(punkte * 10) / 10, kaeufer, proTyp, quelle };
+      const winkel = WINKEL[i] ? WINKEL[i].name : 'Frei';
+      const bonus = echtBonus(echt, winkel);
+      return { hook, winkel, punkte: Math.round(Math.max(0, Math.min(10, punkte + bonus)) * 10) / 10, kaeufer, proTyp, quelle, echt: bonus || null };
     }).sort((a, b) => b.punkte - a.punkte);
     const gewinner = ergebnisse[0] || null;
     let einwand = null;
@@ -108,7 +118,7 @@
   }
 
   // Ganzer Durchlauf mit austauschbarer KI-Funktion: ki(prompt, maxTokens) -> Objekt (JSON).
-  async function labor(p, ki) {
+  async function labor(p, ki, { echt = null } = {}) {
     const k = produktKurz(p);
     let hooks = [];
     try { hooks = hooksLesen(await ki(hookPrompt(p), 900)); } catch (e) { /* weiter mit Ersatz */ }
@@ -116,7 +126,7 @@
     if (ersatz) hooks = ersatzHooks(k);
     let jury = null;
     try { jury = await ki(juryPrompt(p, hooks), 1400); } catch (e) { /* Regeln statt Jury */ }
-    const a = auswerten(hooks, jury, k);
+    const a = auswerten(hooks, jury, k, echt);
     let final = { hook: a.gewinner.hook, antwort: null, schlagzeile: null };
     if (a.einwand) {
       try {
@@ -149,5 +159,5 @@
       (e.final.schlagzeile ? `Als "hook" (Bild-Schlagzeile) nimm: "${e.final.schlagzeile}". ` : '');
   }
 
-  root.ZLabor = { WINKEL, JURY, produktKurz, hookPrompt, juryPrompt, schaerfPrompt, hooksLesen, heuristik, auswerten, labor, fabrikWinkel, kurzName };
+  root.ZLabor = { WINKEL, JURY, produktKurz, hookPrompt, juryPrompt, schaerfPrompt, hooksLesen, heuristik, auswerten, echtBonus, labor, fabrikWinkel, kurzName };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -6,6 +6,7 @@ import { dirname } from 'node:path';
 import '../zentrale/js/labor.js';
 import { kiJson } from './lib/kiJson.mjs';
 import { aktiveProdukte } from './lib/shopProdukte.mjs';
+import { lernstandLaden } from './lib/leistung.mjs';
 
 const { ZLabor } = globalThis;
 const PRO_LAUF = Math.min(Math.max(parseInt(process.env.WERBE_LABOR_ANZAHL || '6', 10) || 6, 1), 20);
@@ -61,9 +62,12 @@ async function main() {
     if (warten > 0) await new Promise((r) => setTimeout(r, warten));
     try { return await kiJson(prompt, { maxTokens }); } finally { letzte = Date.now(); }
   };
+  // Echte Zahlen aus den Posts (Leistungs-Sammler) fliessen in die Jury-Note mit ein.
+  const echt = lernstandLaden();
+  if (echt.posts) console.log(`[werbe-labor] Echte Zahlen aus ${echt.posts} Posts fliessen mit ein.`);
   for (const p of liste) {
     try {
-      const e = await ZLabor.labor(p, ki);
+      const e = await ZLabor.labor(p, ki, { echt: echt.winkel });
       stand.produkte[schluessel(p)] = { ...e, handle: p.handle, shop: p.shopName, bild: (p.images && p.images[0] && p.images[0].src) || null };
       console.log(`[werbe-labor] ${p.title}: ${e.ersatz ? 'KI nicht erreichbar - Fabrik schreibt ihr eigenes Skript' : `Gewinner "${e.final.hook}" (${e.gewinner.punkte}/10, ${e.gewinner.quelle})`}`);
     } catch (err) {

@@ -1,4 +1,4 @@
-name: "Leistungs-Sammler"
+name: "Leistungs-Sammler + Trend-Radar"
 
 # Täglich vor dem Werbe-Labor (03:50 UTC): holt die echten Zahlen aller Posts der letzten 14 Tage
 # und rechnet den Lernstand neu. Labor und Video-Fabrik bauen danach mehr von dem, was wirkt.
@@ -34,11 +34,15 @@ jobs:
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
           MASTODON_URL: ${{ vars.MASTODON_URL }}
           MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
+      - name: Trend-Radar (Google Trends DE, passend zur Nische)
+        run: node automations/trend-radar.mjs
+        env:
+          TREND_NISCHE: ${{ vars.TREND_NISCHE }}
       - name: Speichern
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add video-feed/posts.json automations/state/lernen.json 2>/dev/null || true
+          for f in video-feed/posts.json automations/state/lernen.json automations/state/trends.json; do [ -f "$f" ] && git add "$f"; done
           if git diff --cached --quiet; then exit 0; fi
           git commit -qm "chore: Leistungs-Zahlen und Lernstand [skip ci]"
           for versuch in 1 2 3; do git pull -q --rebase --autostash origin "$GITHUB_REF_NAME" && git push -q && exit 0; sleep $((versuch * 5)); done
