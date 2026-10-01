@@ -38,6 +38,7 @@ on:
       - 'verbinden/**'
       - 'empire/**'
       - 'command/**'
+      - 'bio/**'
       - 'cockpit/**'
       - 'brand-scout/**'
       - 'zentrale/**'
@@ -105,6 +106,7 @@ jobs:
           cp -r cockpit _site/cockpit
           cp -r brand-scout _site/brand-scout
           cp -r zentrale _site/zentrale
+          cp -r bio _site/bio
           mkdir -p _site/trading-bot-worker
           cp -r trading-bot-worker/lib _site/trading-bot-worker/lib
 
