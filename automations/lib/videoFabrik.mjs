@@ -6,7 +6,7 @@ import { promisify } from 'node:util';
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { bildURL } from './pollinationsMedia.mjs';
-import { anwendungBild } from './anwendung.mjs';
+import { anwendungBild, demoBilder, demoVideoBauen } from './anwendung.mjs';
 import { musikUnterlegen, untertitelZusammenfuegen, BEAT_STILE, BEAT_PERIODE } from './videoExtras.mjs';
 import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen, bokehBauen } from './premium.mjs';
 import { effekteAn, lichtLeckBauen, qrBauen, uebergangFuer, endkarteAss, funkelnAss, strahlenBauen } from './effekte.mjs';
@@ -193,6 +193,10 @@ async function bildHolen(szene, roh, { breite, hoehe, stil }) {
     console.log('[video-fabrik] Ohne/Mit-Vergleich uebersprungen - nutze das Produktfoto.');
   }
   // Anwendungs-Szene: Person mit dem echten Produkt (Produktfoto als Vorlage), sonst normales Produktfoto.
+  if (szene.anwendung?.schritte) {
+    szene.demo = await demoBilder(szene.anwendung, roh, { breite, hoehe }).catch(() => []);
+    if (szene.demo.length) return 'demo';
+  }
   if (szene.anwendung && (await anwendungBild(szene.anwendung, roh, { breite, hoehe }).catch(() => false))) return 'anwendung';
   if (szene.foto && (await ladeUrl(szene.foto, roh).catch(() => false))) return 'produkt';
   if (szene.bild && (await ladeBild(`${szene.bild}, family friendly, fully clothed${stil ? `, ${stil}` : ''}`, roh, { breite, hoehe }))) return 'vollbild';
@@ -298,7 +302,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         const assOpts = {
           breite, hoehe, sprache, thema: themaFuer(skript.hintergrund?.seed),
           hook: clips.length === 0 ? hook : '',
-          hinweis: modus === 'anwendung' || modus === 'vergleich' ? 'KI-Beispiel' : '',
+          hinweis: ['anwendung', 'vergleich', 'demo'].includes(modus) ? 'KI-Beispiel' : '',
           etiketten: modus === 'vergleich' ? ['OHNE', 'MIT'] : [],
           preis: szene.preis ? preisText(szene.preis, sprache, skript.waehrung) : letzte ? preisText(skript.preis, sprache, skript.waehrung) : '',
           rang: szene.rang || 0,
@@ -317,7 +321,8 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         const effekt = fx ? { art: uebergangFuer(clips.length), leck, qr: letzte ? qr : '', wackeln: hookSzene, drop: hookSzene, strahlen: hookSzene ? strahlen : '', beat: { p: BEAT_PERIODE[beatStil], off: zeit }, stoss: mitPreis ? 0.38 : null } : null;
         // Vollbild-Szenen (KI-Bild ohne Produkt): 3D-Kamerafahrt durch das Bild (Depth Anything V2, CPU).
         // Nicht beim Ohne/Mit-Vergleich - eine Kamerafahrt durch zwei Bildhaelften wirkt kaputt.
-        const bgVideo = !ebenen.fgP && modus !== 'vergleich' ? tiefe3d(ebenen.bgP, join(ordner, `s${i}.3d.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe, art: ['dolly', 'orbit', 'kran'][i % 3] }) : '';
+        const bgVideo = modus === 'demo' ? demoVideoBauen(szene.demo, join(ordner, `s${i}.demo.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe, schrift: SCHRIFT_FETT })
+          : !ebenen.fgP && modus !== 'vergleich' ? tiefe3d(ebenen.bgP, join(ordner, `s${i}.3d.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe, art: ['dolly', 'orbit', 'kran'][i % 3] }) : '';
         await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1, effekt, bgVideo });
         if (hookSzene) hookVorlage = { ebenen, assOpts, effekt, bgVideo, index: i, stimme: szene.stimme || stimme };
       } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });

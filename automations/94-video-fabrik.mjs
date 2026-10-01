@@ -170,7 +170,7 @@ async function produktSkriptEinmal(p, winkel = '') {
         ? `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index ODER "bild": englischer Prompt fuer ein passendes, jugendfreies Lifestyle-Bild (vollstaendig bekleidete Personen). Mindestens die Haelfte der Szenen mit Produktfoto. `
         : `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene "foto": Index des passendsten Produktfotos. `) +
       'Dazu "hintergrund": englischer Bild-Prompt (max. 12 Woerter) fuer eine leere, edle Umgebung, die zum Einsatzort des Produkts passt - ohne Produkt, ohne Personen, ohne Text. ' +
-      'Antworte NUR mit JSON: {"titel":"...","hook":"Text-Overlay fuer Sekunde 0-3, 2-5 Woerter, weckt Neugier (Frage/Warnung/Widerspruch), NICHT der Produktname","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","anwendung":{"szene":2,"foto":0,"prompt":"..."},"vergleich":{"szene":1,"ohne":"...","mit":"..."},"anfaenge":[{"typ":"frage","satz":"...","hook":"..."}],"szenen":[{"text":"...","foto":0}]}',
+      'Antworte NUR mit JSON: {"titel":"...","hook":"Text-Overlay fuer Sekunde 0-3, 2-5 Woerter, weckt Neugier (Frage/Warnung/Widerspruch), NICHT der Produktname","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","anwendung":{"szene":2,"foto":0,"prompt":"...","schritte":["...","...","..."]},"vergleich":{"szene":1,"ohne":"...","mit":"..."},"anfaenge":[{"typ":"frage","satz":"...","hook":"..."}],"szenen":[{"text":"...","foto":0}]}',
     { maxTokens: 1800 }
   );
   const skript = ausDaten(d, p);

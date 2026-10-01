@@ -52,3 +52,27 @@ test('vergleichEinbauen setzt Ohne/Mit auf die Problem-Szene und schiebt die Anw
   assert.ok(!vergleichEinbauen(skript(), { ohne: 'kurz', mit: 'kurz' }, fotos).szenen.some((x) => x.vergleich), 'zu kurze Prompts: kein Vergleich');
   assert.ok(vergleichEinbauen(skript(), { szene: 9, ohne: 'person struggling with a pull-up', mit: 'person doing it with the band' }, fotos).szenen[3].vergleich, 'nie die letzte Szene');
 });
+
+test('Demo-Sequenz: Schritte werden uebernommen, Video mit harten Schnitten entsteht', async () => {
+  const s = anwendungEinbauen(skript(), { szene: 2, prompt: 'person using this resistance band', schritte: ['hook band on bar', 'pull up with band', 'hold at the top'] }, fotos);
+  assert.equal(s.szenen[2].anwendung.schritte.length, 3);
+  assert.ok(!anwendungEinbauen(skript(), { szene: 2, prompt: 'person using this resistance band', schritte: ['nur einer zu kurz'] }, fotos).szenen[2].anwendung.schritte);
+  const { demoBilder, demoVideoBauen } = await import('../../automations/lib/anwendung.mjs');
+  const dir = mkdtempSync(join(tmpdir(), 'demo-'));
+  const { execFileSync } = await import('node:child_process');
+  let nr = 0;
+  const laden = async () => {
+    nr += 1;
+    const ziel = join(dir, `q${nr}.jpg`);
+    execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'lavfi', '-i', `color=c=0x${nr}${nr}4080:size=270x480`, '-frames:v', '1', ziel]);
+    return new Response(new Uint8Array([...readFileSync(ziel), ...new Uint8Array(25000)]), { headers: { 'content-type': 'image/jpeg' } });
+  };
+  const roh = join(dir, 'r.img');
+  const bilder = await demoBilder({ schritte: ['a', 'b', 'c'], ref: fotos[0] }, roh, { breite: 270, hoehe: 480, laden });
+  assert.equal(bilder.length, 3);
+  assert.ok(existsSync(roh), 'erstes Schrittbild wird Szenenbild');
+  const video = demoVideoBauen(bilder, join(dir, 'demo.mp4'), 2.4, { breite: 270, hoehe: 480, schrift: '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf' });
+  const dauer = Number(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', video], { encoding: 'utf8' }));
+  assert.ok(dauer > 2.2 && dauer < 2.8, `Dauer ${dauer}`);
+  assert.equal(JSON.stringify(await demoBilder({ schritte: ['a', 'b'], ref: fotos[0] }, join(dir, 'x.img'), { breite: 270, hoehe: 480, laden: async () => new Response('x', { status: 500 }) })), '[]');
+});
