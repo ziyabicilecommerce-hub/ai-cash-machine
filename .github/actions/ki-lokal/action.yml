@@ -1,0 +1,31 @@
+name: 'Eigene KI (Ollama) einrichten'
+description: 'Startet ein offenes KI-Modell direkt im GitHub-Lauf - kostenlos, ohne Schluessel, ohne Limit.'
+inputs:
+  modell:
+    description: 'Ollama-Modell'
+    default: 'qwen2.5:3b'
+runs:
+  using: composite
+  steps:
+    - uses: actions/cache@v4
+      with:
+        path: ~/.ollama/models
+        key: ollama-${{ inputs.modell }}-v1
+    - name: Ollama starten und Modell laden
+      shell: bash
+      run: |
+        set +e
+        if ! command -v ollama >/dev/null; then curl -fsSL https://ollama.com/install.sh | sh >/dev/null 2>&1; fi
+        # Eigener Server mit Modell-Ordner im Cache (der System-Dienst des Installers nutzt einen anderen Ordner).
+        sudo systemctl stop ollama >/dev/null 2>&1
+        mkdir -p "$HOME/.ollama/models"
+        (OLLAMA_MODELS="$HOME/.ollama/models" nohup ollama serve >/tmp/ollama.log 2>&1 &)
+        for i in $(seq 1 30); do curl -sf http://127.0.0.1:11434/api/tags >/dev/null && break; sleep 1; done
+        if ollama pull "${{ inputs.modell }}" >/dev/null 2>&1 && ollama run "${{ inputs.modell }}" "Sag nur: ok" >/dev/null 2>&1; then
+          echo "OLLAMA_URL=http://127.0.0.1:11434" >> "$GITHUB_ENV"
+          echo "OLLAMA_MODELL=${{ inputs.modell }}" >> "$GITHUB_ENV"
+          echo "Eigene KI bereit: ${{ inputs.modell }}"
+        else
+          echo "::warning::Eigene KI konnte nicht starten - es geht ohne weiter (Notfall-Skript)."
+        fi
+        exit 0
