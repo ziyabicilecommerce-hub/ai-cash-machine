@@ -6,12 +6,17 @@ const env = (k, d = '') => (process.env[k] || d).trim();
 
 // Hook fuer das Bild: hoechstens 7 Woerter / 42 Zeichen, an Wortgrenze gekuerzt.
 export function kurzHook(text) {
+  const rein = String(text).replace(/[#"]/g, '').replace(/\s+/g, ' ').trim();
+  // Lieber ein ganzer erster Satz ("Ohne Band: Klimmzug ist schwer.") als ein mitten im Satz abgeschnittener Hook.
+  const satz = rein.match(/^.{6,42}?[.!?](?=\s|$)/)?.[0];
+  if (satz) return satz.replace(/\.$/, '');
   let h = '';
-  for (const wort of String(text).replace(/[#"]/g, '').split(/\s+/).filter(Boolean).slice(0, 7)) {
+  for (const wort of rein.split(' ').filter(Boolean).slice(0, 7)) {
     if ((h + ' ' + wort).trim().length > 42) break;
     h = (h + ' ' + wort).trim();
   }
-  return h.replace(/[\s–:,-]+$/, '');
+  // Kein Hook endet auf "für dein" oder "mit dem": haengende Fuellwoerter weg.
+  return h.replace(/(\s+(f(ü|ue)r|mit|und|oder|zu|von|im|in|am|auf|an|bei|der|die|das|dem|den|des|ein|eine|einen|einem|dein|deine|deinen|deinem|dich|dir))+$/i, '').replace(/[\s–:,-]+$/, '');
 }
 
 // Regeln fuer die ersten 2 Sekunden (entscheiden, ob jemand weiterwischt). Gilt fuer alle Werbe-Skripte.
