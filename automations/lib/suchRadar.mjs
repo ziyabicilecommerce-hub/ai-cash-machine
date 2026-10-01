@@ -7,14 +7,26 @@ import { readFileSync, existsSync } from 'node:fs';
 export const ZIEL = 'zentrale/daten/suchbegriffe.json';
 export const QUELLEN = { google: '', youtube: 'yt' };
 const ZUSAETZE = ['', ' für', ' wie', ' oder', 'beste '];
-const FRAGE = /^(wie|was|welche[rsn]?|warum|wann|wo|wieso|hilft|helfen|lohnt|bringt|bringen|kann|darf|soll|ist|sind)\b|\b(sinnvoll|erfahrung(en)?|test|wirkung|anleitung|übungen|uebungen)\b/;
+// Echte Fragen (keine "test"/"erfahrungen"-Suchen - die verlangen Bewertungen, die wir nicht erfinden).
+const FRAGE = /^(wie|was|welche[rsn]?|warum|wann|wo|wieso|hilft|helfen|lohnt|bringt|bringen|kann|darf|soll|ist|sind)\b|\b(wie|was|welche[rsn]?|sinnvoll|anleitung|übungen|uebungen)\b/;
 const STOPP = new Set(['für', 'fuer', 'wie', 'oder', 'und', 'mit', 'der', 'die', 'das', 'den', 'dem', 'ein', 'eine', 'beste', 'besten', 'test', 'kaufen', 'günstig', 'amazon', 'lidl', 'aldi', 'decathlon', 'ebay', 'kaufland', 'temu', 'shein', 'testsieger', 'stiftung', 'warentest', 'gegen', 'bei', 'zum', 'zur', 'von', 'auf', 'ohne', 'lange', 'oft', 'man', 'benutzen', 'anwenden']);
-const NISCHE = ['fitness', 'training', 'workout', 'sport', 'gym', 'klimmzug', 'muskel', 'ruecken', 'rücken', 'nacken', 'schulter', 'haltung', 'massage', 'entspann', 'verspann', 'yoga', 'pilates', 'dehnen', 'stretching', 'homeoffice', 'büro', 'wellness', 'faszien', 'griff', 'kraft', 'arme', 'beine', 'hand', 'fuß', 'akupressur', 'widerstand'];
+// Allgemeine Nischen-Hashtags (ganze Woerter - "massage" ja, "massageliege" nein).
+const NISCHE = new Set(['fitness', 'training', 'workout', 'sport', 'gym', 'homegym', 'muskeln', 'rücken', 'nacken', 'schulter', 'schultern', 'haltung', 'massage', 'selbstmassage', 'entspannung', 'verspannung', 'verspannungen', 'yoga', 'pilates', 'dehnen', 'stretching', 'homeoffice', 'büro', 'wellness', 'faszien', 'krafttraining', 'griffkraft', 'arme', 'beine', 'übungen', 'akupressur', 'klimmzüge', 'regeneration']);
+
+// Material-/Eigenschaftswoerter taugen weder als Hashtag noch als Beleg, dass eine Suche zu uns passt.
+const MATERIAL = new Set(['silikon', 'latex', 'holz', 'breites', 'breite', 'wärmende', 'kompressions', 'speed']);
+const ALLGEMEIN = new Set([...MATERIAL, 'power', 'form', 'hartschaum', 'atmungsaktivem', 'gezielte', 'magneten', 'bordstein']);
+// Fragen mit Heil-/Koerperversprechen greift die Fabrik nie auf (Werberecht, ehrliche Videos).
+const HEIL = /cellulite|schmerz|arzt|krank|bandscheib|arthrose|ischias|rheuma|abnehm|fett|heilt|heilung|schwanger|verletz|entzünd|thrombose|krampfader/;
+
+// Woerter des eigenen Produkts (aus dem Namen ohne Marke): nur Vorschlaege damit sind wirklich "unsere".
+export const eigeneWorte = (name) => new Set([...String(name || '').split(/\s[–—-]\s/).slice(1).join(' ').toLowerCase().split(/[^\p{L}]+/u), ...stichwort(name).split(' ')].filter((w) => w.length > 3 && !STOPP.has(w) && !ALLGEMEIN.has(w)));
+const passtZu = (s, worte) => [...worte].some((w) => s.includes(w));
 
 // Grund-Suchbegriff aus dem Produktnamen: "Marke Modell – Klimmzugband & Widerstandsband" -> "klimmzugband".
 export function stichwort(name) {
   const teil = String(name || '').split(/\s[–—-]\s/).slice(1).join(' ') || String(name || '');
-  return teil.split(/\s(?:für|zur|zum|mit|aus|in|gegen)\s|[&,/]/)[0].replace(/-/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+  return teil.split(/\s(?:für|zur|zum|mit|aus|in|gegen)\s|[&,/]/)[0].replace(/-/g, ' ').toLowerCase().split(/\s+/).filter((w) => w && !MATERIAL.has(w)).join(' ');
 }
 
 export const handleAus = (url) => String(url || '').replace(/[?#].*$/, '').split('/').filter(Boolean).pop() || '';
@@ -41,15 +53,15 @@ export function rangliste(listen, grund) {
   return [...z.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([s]) => s);
 }
 
-export const fragen = (liste) => liste.filter((s) => FRAGE.test(s));
+export const fragen = (liste, name = '') => { const w = eigeneWorte(name); return liste.filter((s) => FRAGE.test(s) && !HEIL.test(s) && !/bordstein/.test(s) && (!w.size || passtZu(s, w))); };
 
 // Hashtags nur aus Woertern, die zum eigenen Produkt oder zur Nische gehoeren (keine fremden Marken).
 export function hashtags(liste, name, max = 8) {
-  const eigen = new Set(String(name).toLowerCase().split(/[^\p{L}]+/u).filter((w) => w.length > 3));
+  const eigen = eigeneWorte(name);
   const z = new Map();
   for (const s of liste) for (const w of new Set(s.split(/[^\p{L}]+/u))) {
     if (w.length < 4 || w.length > 22 || STOPP.has(w)) continue;
-    if (eigen.has(w) || NISCHE.some((n) => w.includes(n))) z.set(w, (z.get(w) || 0) + 1);
+    if (eigen.has(w) || NISCHE.has(w)) z.set(w, (z.get(w) || 0) + 1);
   }
   return [...z.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, max).map(([w]) => `#${w.replace(/ß/g, 'ss')}`);
 }
@@ -67,7 +79,7 @@ export async function produktRadar(p, { laden = fetch, pause = 250 } = {}) {
   }
   const google = rangliste(roh.google, grund).slice(0, 15);
   const youtube = rangliste(roh.youtube, grund).slice(0, 15);
-  return { name: p.name, shop: p.shop, stichwort: grund, google, youtube, fragen: [...new Set(fragen([...youtube, ...google]))].slice(0, 8), hashtags: hashtags([...google, ...youtube], p.name) };
+  return { name: p.name, shop: p.shop, stichwort: grund, google, youtube, fragen: [...new Set(fragen([...youtube, ...google], p.name))].slice(0, 8), hashtags: hashtags([...google, ...youtube], p.name) };
 }
 
 // Hinweis fuer das Video-Skript: echte Fragen/Suchen - nur aufgreifen, wenn es ehrlich passt.

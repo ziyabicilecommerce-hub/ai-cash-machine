@@ -20,7 +20,7 @@ import { kurzHook, reinText, aktiveProdukte, topListeSkript, HOOK_REGELN } from 
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 import { laborWinkel } from './lib/laborWinkel.mjs';
 import { nachbauenEinplanen, stateLaden as pruefungLaden } from './lib/videoPruefung.mjs';
-import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen, skriptMitFormat, planWert } from './lib/skriptExtras.mjs';
+import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen, skriptMitFormat, planWert, notfallSkript } from './lib/skriptExtras.mjs';
 // KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
 async function mitModeratorin(v, nr) {
   if (!moderatorinAn()) return;
@@ -150,7 +150,7 @@ async function korrekturLesen(szenen, produktName) {
 async function produktSkript(p, winkel = '') {
   let skript;
   for (let versuch = 0; versuch < 2; versuch++) {
-    skript = await produktSkriptEinmal(p, winkel);
+    try { skript = await produktSkriptEinmal(p, winkel); } catch (err) { console.log(`[94-video-fabrik] KI weg (${String(err.message).slice(0, 80)}) - Notfall-Skript aus dem Shop-Text`); return { ...ausDaten(notfallSkript(p), p), ohneKi: true }; }
     if (skript.szenen.length >= 3) break;
   }
   return skript;

@@ -10,7 +10,9 @@ import { WERKZEUGE4 } from '../../mcp-ultimativ/werkzeuge4.mjs';
 test('stichwort nimmt den Produkt-Begriff hinter dem Markennamen', () => {
   assert.equal(stichwort('DeskRebel PowerBand – Klimmzugband & Widerstandsband'), 'klimmzugband');
   assert.equal(stichwort('Purivelle LotusTap – Massagehammer zur Muskelentspannung'), 'massagehammer');
-  assert.equal(stichwort('DeskRebel O-Loop – Latex-Widerstandsring für Arme & Rücken'), 'latex widerstandsring');
+  assert.equal(stichwort('DeskRebel O-Loop – Latex-Widerstandsring für Arme & Rücken'), 'widerstandsring');
+  assert.equal(stichwort('Purivelle TapRelax – Silikon-Klopfpaddel zur Selbstmassage'), 'klopfpaddel');
+  assert.equal(stichwort('DeskRebel ArmForce – Power-Twister für Arme'), 'power twister');
   assert.equal(stichwort('DeskRebel DoorKit – Türanker, Griffe & Karabiner'), 'türanker');
   assert.equal(handleAus('https://x.store/products/powerband-x?variant=1'), 'powerband-x');
 });
@@ -21,7 +23,9 @@ test('Vorschlaege lesen, ranken und Fragen erkennen', () => {
   const r = rangliste([['klimmzugband', 'klimmzugband übungen', 'klimmzugband stärke'], ['klimmzugband übungen']], 'klimmzugband');
   assert.equal(r[0], 'klimmzugband übungen');
   assert.ok(!r.includes('klimmzugband'), 'Grundbegriff selbst ist keine Erkenntnis');
-  assert.deepEqual(fragen(['wie lange klimmzugband', 'klimmzugband rot', 'lohnt sich ein klimmzugband', 'klimmzugband erfahrungen']), ['wie lange klimmzugband', 'lohnt sich ein klimmzugband', 'klimmzugband erfahrungen']);
+  const n = 'DeskRebel PowerBand – Klimmzugband & Widerstandsband';
+  assert.deepEqual(fragen(['wie lange klimmzugband', 'klimmzugband rot', 'lohnt sich ein klimmzugband', 'klimmzugband erfahrungen', 'klimmzugband test', 'beste kraftübungen wie oft'], n), ['wie lange klimmzugband', 'lohnt sich ein klimmzugband'], 'keine Test-/Bewertungs-Suchen, nur zum Produkt');
+  assert.deepEqual(fragen(['massageroller cellulite wie lange', 'massageroller wie anwenden', 'silikon wie reinigen'], 'Purivelle SculptRoll – Massageroller für Faszien'), ['massageroller wie anwenden'], 'keine Heilversprechen-Fragen');
 });
 
 test('Hashtags nur aus eigenen Produkt- und Nischenwoertern - keine fremden Marken', () => {
@@ -29,6 +33,9 @@ test('Hashtags nur aus eigenen Produkt- und Nischenwoertern - keine fremden Mark
   assert.ok(t.includes('#klimmzugband'));
   assert.ok(t.includes('#rücken'));
   assert.ok(!t.some((x) => /decathlon|amazon|theragun/.test(x)), t.join(' '));
+  const m = hashtags(['massageliege test', 'massage hammer holz', 'massagehammer massage'], 'Purivelle LotusTap – Holz-Massagehammer');
+  assert.ok(m.includes('#massagehammer') && m.includes('#massage'));
+  assert.ok(!m.some((x) => /massageliege|holz/.test(x)), 'keine fremden Produkte, keine Materialwoerter');
 });
 
 test('produktRadar fragt Google und YouTube mit Zusaetzen ab und uebersteht Ausfaelle', async () => {
