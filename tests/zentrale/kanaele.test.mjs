@@ -55,3 +55,21 @@ test('Zentrale-Anleitung deckt genau 15 Plattformen ab und jede hat Zugangswerte
   assert.equal(new Set(K.map((k) => k.name)).size, 15);
   assert.ok(K.every((k) => k.werte.length && k.schritte.length && k.link));
 });
+
+test('KI-Kette: Pollinations 402 -> Gemini springt ein; ohne Schluessel weiter zur alten Kette', async () => {
+  const { kiTextEinmal } = await import('../../automations/lib/kiJson.mjs');
+  const echt = globalThis.fetch;
+  const gefragt = [];
+  globalThis.fetch = async (url) => {
+    const u = String(url); gefragt.push(new URL(u).hostname);
+    if (u.includes('pollinations')) return new Response('{}', { status: 402 });
+    if (u.includes('generativelanguage')) return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: '{"ok":1}' }] } }] }));
+    return new Response('{}', { status: 500 });
+  };
+  process.env.GEMINI_API_KEY = 'gratis';
+  try {
+    assert.equal(await kiTextEinmal('Hallo', { maxTokens: 50 }), '{"ok":1}');
+    assert.equal(JSON.stringify(gefragt), '["text.pollinations.ai","generativelanguage.googleapis.com"]');
+  } finally { globalThis.fetch = echt; delete process.env.GEMINI_API_KEY; }
+  assert.equal(globalThis.ZViews.kanaele15.KI.length, 3);
+});

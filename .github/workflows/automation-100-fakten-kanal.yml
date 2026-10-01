@@ -22,6 +22,12 @@ concurrency:
   group: fakten-kanal
   cancel-in-progress: false
 
+# Kostenlose KI-Schlüssel (optional, machen die KI stabil - siehe Zentrale > 15 Kanäle > KI).
+env:
+  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+  POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
+
 jobs:
   run:
     runs-on: ubuntu-latest
