@@ -20,6 +20,7 @@ export const AGENTEN = {
   'kommentar-agent': { datei: 'kommentar-agent.yml', eingaben: [] },
   'zahlen-sammler': { datei: 'leistung-sammler.yml', eingaben: [] },
   'fakten-kanal': { datei: 'automation-100-fakten-kanal.yml', eingaben: ['anzahl'] },
+  'community-agent': { datei: 'community-agent.yml', eingaben: [] },
 };
 
 async function zentraleStatus() {

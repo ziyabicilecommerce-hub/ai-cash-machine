@@ -35,6 +35,7 @@ a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
     <a href="https://www.deskrebel.store" rel="noopener">DeskRebel-Shop öffnen</a>
     <a href="https://purivelle.store" rel="noopener">Purivelle-Shop öffnen</a>
   </nav>
+  <nav class="shops" id="community" aria-label="Community" hidden></nav>
   <section><h2>Neueste Videos</h2><div class="raster videos" id="videos"><p class="unter">Lädt …</p></div></section>
   <section id="produkte"></section>
   <p class="hinweis">Videos sind KI-generiert. Preise und Verfügbarkeit gelten im jeweiligen Shop.</p>
@@ -45,7 +46,13 @@ a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
   const eur = (x) => (Number(x) || 0).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
   const sicher = (u) => { try { const x = new URL(u); return x.protocol === 'https:' ? x.href : ''; } catch (e) { return ''; } };
   const holen = async (pfad) => { try { const r = await fetch(pfad, { cache: 'no-store' }); return r.ok ? r.json() : null; } catch (e) { return null; } };
-  const [p, f] = await Promise.all([holen('../zentrale/daten/produkte.json'), holen('../video-feed/videos.json')]);
+  const [p, f, c] = await Promise.all([holen('../zentrale/daten/produkte.json'), holen('../video-feed/videos.json'), holen('../zentrale/daten/community.json')]);
+  const links = [['telegram', 'Telegram'], ['discord', 'Discord']].filter(([k]) => c && c.links && sicher(c.links[k]));
+  if (links.length) {
+    const el = document.getElementById('community');
+    el.innerHTML = `<h2 style="text-align:center;margin:0">Komm in die Community „${h(c.name)}“</h2>` + links.map(([k, n]) => `<a href="${h(sicher(c.links[k]))}" rel="noopener">${n}-Community beitreten - kostenlos</a>`).join('');
+    el.hidden = false;
+  }
   const videos = ((f && f.videos) || []).filter((v) => (v.sprache || 'de') === 'de' && !v.kanal && v.format === 'hoch' && v.vorschauUrl)
     .filter((v, i, l) => l.findIndex((x) => x.titel === v.titel) === i).slice(0, 6);
   document.getElementById('videos').innerHTML = videos.length ? videos.map((v) => `<a class="karte" href="${h(sicher(v.url))}" rel="noopener"><img src="${h(sicher(v.vorschauUrl))}" alt="${h(v.titel)}" loading="lazy"><div class="info"><div class="name">${h(v.titel)}</div></div></a>`).join('') : '<p class="unter">Bald neue Videos.</p>';

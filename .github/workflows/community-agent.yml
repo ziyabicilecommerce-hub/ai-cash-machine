@@ -1,0 +1,50 @@
+name: "Community-Agent"
+
+# Taeglich 16:05 UTC (18:05 Uhr in DE - beste Zeit fuer Community): ein Beitrag nach Wochenplan in deinen
+# Telegram-Kanal und Discord - Challenge, Tipp, Umfrage, Frage, Fortschritt, Routine, Rueckblick. Kostenlos.
+
+on:
+  schedule:
+    - cron: '5 16 * * *'
+  workflow_dispatch:
+    inputs:
+      erzwingen:
+        description: 'Heute nochmal posten (zum Testen)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: community-agent
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Community-Beitrag
+        run: node automations/community-agent.mjs
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_KANAL_ID: ${{ vars.TELEGRAM_KANAL_ID }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          COMMUNITY_NAME: ${{ vars.COMMUNITY_NAME }}
+          COMMUNITY_TELEGRAM_LINK: ${{ vars.COMMUNITY_TELEGRAM_LINK }}
+          COMMUNITY_DISCORD_LINK: ${{ vars.COMMUNITY_DISCORD_LINK }}
+          COMMUNITY_ERZWINGEN: ${{ inputs.erzwingen && '1' || '' }}
+      - name: Speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add automations/state/community.json zentrale/daten/community.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -qm "chore: Community [skip ci]"
+          for versuch in 1 2 3; do git pull -q --rebase --autostash origin "$GITHUB_REF_NAME" && git push -q && exit 0; sleep $((versuch * 5)); done
+          exit 1
