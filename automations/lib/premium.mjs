@@ -163,7 +163,7 @@ export function preisText(preis, sprache, waehrung = 'EUR') {
 // klappt anders als drawtext in allen Schriften), preis + shop (Endkarte der letzten Szene).
 // untertitelStil: 'karaoke' (aktives Wort leuchtet in der Akzentfarbe) oder 'box' (TikTok-Stil:
 // aktives Wort in einer farbigen Box).
-export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', preis = '', shop = '', fortschritt = null, marke = '', rang = 0, untertitelStil = 'karaoke' }) {
+export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', hinweis = '', preis = '', shop = '', fortschritt = null, marke = '', rang = 0, untertitelStil = 'karaoke' }) {
   const groesse = Math.round(Math.min(breite, hoehe) * 0.078);
   const unten = Math.round(hoehe * (hoehe > breite ? 0.25 : 0.09));
   const rand = Math.round(breite * 0.06);
@@ -225,6 +225,8 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
     const slam = '{\\fscx150\\fscy150\\frz-4\\t(0,120,\\fscx92\\fscy92\\frz0)\\t(120,200,\\fscx100\\fscy100)\\t(1200,1300,\\fscx108\\fscy108)\\t(1300,1420,\\fscx100\\fscy100)}';
     zeilen.push(`Dialogue: 1,${assZeit(0)},${assZeit(3300)},Hook,,0,0,0,,{\\fad(0,300)}${slam}${assText(h)}`);
   }
+  // Ehrliche Kennzeichnung (z. B. "KI-Beispiel" bei der Anwendungs-Szene): klein, oben rechts, die ganze Szene.
+  if (hinweis) zeilen.push(`Dialogue: 2,${assZeit(0)},${assZeit(600000)},Shop,,0,0,0,,{\\an9\\pos(${Math.round(breite * 0.955)},${Math.round(hoehe * 0.03)})\\1a&H30&}${assText(hinweis)}`);
   // Rang-Badge fuer Countdown-Videos (Top 5): gross, schraeg, links oben.
   if (rang) zeilen.push(`Dialogue: 2,${assZeit(150)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * 0.22)},${Math.round(hoehe * 0.19)})\\fs${Math.round(Math.min(breite, hoehe) * 0.16)}\\frz8}${pop}#${rang}`);
   if (preis) zeilen.push(`Dialogue: 2,${assZeit(350)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * 0.7)},${Math.round(hoehe * 0.1)})}${pop}${assText(preis)}`);

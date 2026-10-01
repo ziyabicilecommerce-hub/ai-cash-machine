@@ -9,6 +9,7 @@ import { bildURL } from './pollinationsMedia.mjs';
 import { musikUnterlegen, untertitelZusammenfuegen, BEAT_STILE, BEAT_PERIODE } from './videoExtras.mjs';
 import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen, bokehBauen } from './premium.mjs';
 import { effekteAn, lichtLeckBauen, qrBauen, uebergangFuer, endkarteAss, funkelnAss, strahlenBauen } from './effekte.mjs';
+import { anwendungBild } from './anwendung.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -178,6 +179,8 @@ async function ladeUrl(url, ziel) {
 
 // Holt das Rohbild einer Szene: echtes Produktfoto, sonst KI-Bild.
 async function bildHolen(szene, roh, { breite, hoehe, stil }) {
+  // Anwendungs-Szene: Person mit dem echten Produkt (Produktfoto als Vorlage), sonst normales Produktfoto.
+  if (szene.anwendung && (await anwendungBild(szene.anwendung, roh, { breite, hoehe }).catch(() => false))) return 'anwendung';
   if (szene.foto && (await ladeUrl(szene.foto, roh).catch(() => false))) return 'produkt';
   if (szene.bild && (await ladeBild(`${szene.bild}, family friendly, fully clothed${stil ? `, ${stil}` : ''}`, roh, { breite, hoehe }))) return 'vollbild';
   return '';
@@ -268,6 +271,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         assAusSrt(srt, ass, {
           breite, hoehe, sprache, thema: themaFuer(skript.hintergrund?.seed),
           hook: clips.length === 0 ? hook : '',
+          hinweis: modus === 'anwendung' ? 'KI-Beispiel' : '',
           preis: szene.preis ? preisText(szene.preis, sprache, skript.waehrung) : letzte ? preisText(skript.preis, sprache, skript.waehrung) : '',
           rang: szene.rang || 0,
           shop: letzte && !fx ? skript.shop || '' : '',
