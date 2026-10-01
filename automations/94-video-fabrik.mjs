@@ -19,6 +19,7 @@ import { premiumAn, themaFuer, preisText } from './lib/premium.mjs';
 import { kurzHook, reinText, aktiveProdukte, topListeSkript } from './lib/shopProdukte.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 import { laborWinkel } from './lib/laborWinkel.mjs';
+import { nachbauenEinplanen, stateLaden as pruefungLaden } from './lib/videoPruefung.mjs';
 
 // KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
 async function mitModeratorin(v, nr) {
@@ -258,9 +259,11 @@ async function bauen() {
   const liste = themen();
   const tag = Math.floor(Date.now() / 86400000);
   const produkte = await aktiveProdukte();
-  const auftraege = produkte.length
+  let auftraege = produkte.length
     ? Array.from({ length: Math.min(ANZAHL, produkte.length) }, (_, i) => { const p = produkte[(tag * ANZAHL + i) % produkte.length]; return { thema: p.title, produkt: p, format: 'hoch' }; })
     : Array.from({ length: ANZAHL }, (_, i) => ({ thema: liste[(tag * ANZAHL + i) % liste.length], format: 'hoch' }));
+  // Vom Video-Prüfer aussortierte Produkte werden zuerst neu gebaut.
+  if (produkte.length) auftraege = nachbauenEinplanen(auftraege, produkte, pruefungLaden().nachbauen);
   console.log(`[94-video-fabrik] ${produkte.length ? `${produkte.length} Produkte gefunden - Produkt-Ads` : 'kein Shopify-Zugang - Themen-Videos'}, ${auftraege.length} Videos geplant`);
   if (LANG_MIN > 0) auftraege.push({ thema: liste[tag % liste.length], format: 'quer', minuten: LANG_MIN });
 

@@ -36,10 +36,10 @@ const KANAL = env('DIREKT_POSTER_KANAL').toLowerCase();
 const GEPOSTET = 'video-feed/gepostet.json';
 const ZAEHLER = 'video-feed/post-zaehler.json';
 
-// Sichere Tageslimits je Plattform (Posts pro Tag). TikTok/Instagram strafen Massen-Posts ab,
-// YouTube erlaubt per API-Kontingent max. ~6 Uploads/Tag; Kanaele wie Telegram vertragen mehr.
+// 5 Posts pro Tag und Kanal (= Tagesproduktion der Video-Fabrik). YouTube erlaubt per API-Kontingent
+// max. ~6 Uploads/Tag; Reddit bleibt bei 1, weil Subreddits Mehrfach-Posts als Spam sperren.
 // Ueberschreibbar per Variable, z. B. LIMIT_TIKTOK=3.
-const LIMITS = { youtube: 6, tiktok: 4, instagram: 3, facebook: 4, threads: 6, linkedin: 2, pinterest: 10, dailymotion: 6, bluesky: 10, telegram: 12, mastodon: 8, discord: 12, reddit: 1 };
+const LIMITS = { youtube: 5, tiktok: 5, instagram: 5, facebook: 5, threads: 5, linkedin: 5, pinterest: 5, dailymotion: 5, bluesky: 5, telegram: 5, mastodon: 5, discord: 5, reddit: 1 };
 const limit = (p) => { const n = parseInt(env(`LIMIT_${p.name.toUpperCase()}`), 10); return Number.isNaN(n) ? LIMITS[p.name.toLowerCase()] ?? 4 : n; };
 const heuteBerlin = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date());
 function zaehlerLaden() {
