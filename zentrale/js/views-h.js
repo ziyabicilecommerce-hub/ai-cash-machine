@@ -63,7 +63,11 @@
     zeichnen(el, app) {
       if (!geladen) laden(app);
       if (!ablauf) ablauf = ladenLokal() || structuredClone(BEISPIEL);
-      el.innerHTML = fliessband() + werkstatt();
+      const mcp = `<section class="box" style="margin-top:16px"><h2>Per KI steuern (eigener MCP)</h2>
+        <p class="klein-text">Dein MCP-Server <code>cashmachine-ultimativ</code> kennt jetzt die Zentrale: Engpass, 15 Kanäle, Shop-Doktor, neueste Videos, Feeds, Werbe-Labor, Lernstand, Kommentare, Engpass-Rechnung - und kann Agenten auf GitHub starten (Video-Fabrik, Shop-Doktor, Poster …). Frag z. B. „Wo ist heute der Engpass?“ oder „Starte die Video-Fabrik mit 3 Videos“.</p>
+        <pre style="white-space:pre-wrap">claude mcp add cashmachine -e GITHUB_TOKEN=DEIN_TOKEN -- node mcp-ultimativ/server.mjs</pre>
+        <p class="klein-text">Lesen geht ohne Token. Zum Starten: GitHub > Settings > Developer settings > Fine-grained token, nur dieses Repo, Berechtigung „Actions: Read and write“.</p></section>`;
+      el.innerHTML = fliessband() + mcp + werkstatt();
       const neu = () => { speichernLokal(ablauf); this.zeichnen(el, app); };
       const num = (x) => (String(x).trim() === '' ? NaN : Number(x));
       el.querySelector('#ew-auftraege').addEventListener('change', (e) => { ablauf.auftraege = num(e.target.value); neu(); });
