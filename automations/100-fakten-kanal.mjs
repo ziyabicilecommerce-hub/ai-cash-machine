@@ -41,7 +41,7 @@ async function skriptSchreiben(kategorie, nr, bekannt) {
     `Schreibe ein virales Kurzvideo (25-35 Sekunden, TikTok/Reels/Shorts) auf Deutsch ueber einen krassen, WAHREN Fakt aus der Kategorie "${kategorie}". ` +
       'Regeln: nur gut belegtes Lexikon-Wissen, keine erfundenen Zahlen oder Studien, keine Gesundheits- oder Finanzratschlaege, nichts Politisches, keine realen Privatpersonen, keine Marken. ' +
       `Diese Fakten gab es schon (nicht wiederholen): ${bekannt.slice(-40).join(' | ') || 'keine'}. ` +
-      'Aufbau in 5-6 Szenen mit je 1 kurzem, gesprochenem Satz (Du-Form, locker): 1) Hook, der sofort neugierig macht (max. 12 Woerter), ' +
+      'Aufbau in 5-6 Szenen mit je 1 kurzem, gesprochenem Satz (Du-Form, locker): 1) Hook als Pattern-Interrupt (max. 8 Woerter): ein Widerspruch zu dem, was fast alle glauben, oder eine Frage, die sofort eine Wissensluecke oeffnet - keine Begruessung, keine Einleitung, keine erfundenen Zahlen, ' +
       '2-4) Erklaerung, die sich steigert, 5) Frage an die Zuschauer fuer die Kommentare, 6) "Folge fuer mehr krasse Fakten!". ' +
       'Je Szene "bild": englischer Bild-Prompt (max. 15 Woerter, cinematic, photorealistic, dramatic light, no text, no logos, no real people). ' +
       'Antworte NUR mit JSON: {"titel":"max. 60 Zeichen","fakt":"der Fakt in einem Satz","hook":"max. 5 Woerter","caption":"2 Saetze + Frage + 4-6 Hashtags","szenen":[{"text":"...","bild":"..."}]}',
@@ -80,7 +80,7 @@ async function quizSchreiben(kategorie, nr, bekannt) {
   const d = await kiJson(
     `Erstelle ein virales Quiz-Kurzvideo auf Deutsch (Kategorie "${kategorie}"): eine ueberraschende Wissensfrage mit 3 Antworten, genau eine ist richtig. ${REGELN}` +
       `Schon benutzt (nicht wiederholen): ${bekannt.slice(-40).join(' | ') || 'keine'}. Antworten max. 4 Woerter. ` +
-      `Antworte NUR mit JSON: {"titel":"max. 60 Zeichen","hook":"max. 5 Woerter, z. B. Nur 5% wissen das","frage":"...","optionen":["...","...","..."],"richtig":0,"erklaerung":["1-2 kurze Saetze warum"],"caption":"Frage + Aufforderung zu kommentieren + 4-6 Hashtags",${BILD}}`,
+      `Antworte NUR mit JSON: {"titel":"max. 60 Zeichen","hook":"max. 5 Woerter, Herausforderung an den Zuschauer OHNE Zahlen/Prozente, z. B. Schaffst du diese Frage?","frage":"...","optionen":["...","...","..."],"richtig":0,"erklaerung":["1-2 kurze Saetze warum"],"caption":"Frage + Aufforderung zu kommentieren + 4-6 Hashtags",${BILD}}`,
     { maxTokens: 1200 }
   );
   const optionen = (d.optionen || []).map((o) => kurz(o, 40)).slice(0, 3);
@@ -90,7 +90,7 @@ async function quizSchreiben(kategorie, nr, bekannt) {
   const b = (i) => bilder[i % bilder.length];
   const erkl = (Array.isArray(d.erklaerung) ? d.erklaerung : [d.erklaerung]).map((t) => kurz(t, 220)).filter(Boolean).slice(0, 2);
   const szenen = [
-    { text: `${kurz(d.hook, 60)}! Teste dich selbst.`, bild: b(0) },
+    { text: `${kurz(d.hook, 60).replace(/[^.!?]$/, '$&!')} Du hast drei Sekunden.`, bild: b(0) },
     { text: `${kurz(d.frage, 200)} A: ${optionen[0]}. B: ${optionen[1]}. Oder C: ${optionen[2]}?`, bild: b(1), overlay: { typ: 'optionen', optionen } },
     { text: 'Schreib deine Antwort in die Kommentare! Drei, zwei, eins...', bild: b(1), overlay: { typ: 'countdown', optionen } },
     { text: `Richtig ist ${'ABC'[richtig]}: ${optionen[richtig]}!`, bild: b(2), overlay: { typ: 'aufloesung', optionen, richtig } },
