@@ -1,0 +1,55 @@
+name: "Werbe-Labor"
+
+# Täglich vor der Video-Fabrik (05:00 UTC): testet Hooks an der simulierten Test-Jury und legt die
+# Gewinner ab. Die Fabrik beginnt ihre Produkt-Videos danach mit dem getesteten Hook.
+
+on:
+  schedule:
+    - cron: '50 3 * * *'
+  workflow_dispatch:
+    inputs:
+      anzahl:
+        description: 'Wie viele Produkte testen (1-20)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: werbe-labor
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Labor ausführen
+        run: node automations/werbe-labor.mjs
+        env:
+          WERBE_LABOR_ANZAHL: ${{ inputs.anzahl || vars.WERBE_LABOR_ANZAHL }}
+          VIDEO_FABRIK_SHOPS: ${{ vars.VIDEO_FABRIK_SHOPS }}
+          POLLINATIONS_MAX_TOKENS_PRO_TAG: ${{ secrets.POLLINATIONS_MAX_TOKENS_PRO_TAG }}
+
+      - name: Ergebnisse speichern und Seite aktualisieren
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          for pfad in automations/state/ zentrale/daten/werbe-labor.json; do
+            git add "$pfad" 2>/dev/null || true
+          done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "chore: Werbe-Labor Ergebnisse [skip ci]"
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+          git push
+          gh workflow run jarvis-pages.yml --ref "${GITHUB_REF_NAME}"

@@ -18,6 +18,7 @@ import { skripteLaden, skripteSpeichern, uebersetzungenLaden, uebersetzungenSpei
 import { premiumAn, themaFuer, preisText } from './lib/premium.mjs';
 import { kurzHook, reinText, aktiveProdukte, topListeSkript } from './lib/shopProdukte.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
+import { laborWinkel } from './lib/laborWinkel.mjs';
 
 // KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
 async function mitModeratorin(v, nr) {
@@ -269,7 +270,8 @@ async function bauen() {
   for (const [i, a] of auftraege.entries()) {
     const start = Date.now();
     try {
-      const skript = a.produkt ? await produktSkript(a.produkt) : a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
+      // Getesteten Gewinner-Hook aus dem Werbe-Labor nutzen, falls frisch vorhanden.
+      const skript = a.produkt ? await produktSkript(a.produkt, laborWinkel(a.produkt)) : a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
       if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
       const hook = a.format === 'hoch' ? skript.hook || kurzHook(skript.titel) : '';
       const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook, bildAlle: a.minuten > 20 ? 2 : 1, musik: a.minuten ? 'ruhig' : '', premium: PREMIUM && !!a.produkt });

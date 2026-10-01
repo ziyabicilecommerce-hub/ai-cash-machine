@@ -2,7 +2,7 @@
 (function (root) {
   const { ZS, ZAgenten, ZUI } = root;
   const BEREICHE = [
-    ['heute', 'Heute'], ['uebersicht', 'Übersicht'], ['agenten', 'Agenten-Team'], ['empfehlungen', 'Empfehlungen'], ['kunden', 'Kunden'],
+    ['heute', 'Heute'], ['labor', 'Werbe-Labor'], ['uebersicht', 'Übersicht'], ['agenten', 'Agenten-Team'], ['empfehlungen', 'Empfehlungen'], ['kunden', 'Kunden'],
     ['kanaele', 'Kanäle'], ['preise', 'Preise'], ['konkurrenz', 'Konkurrenz'], ['content', 'Content'],
     ['support', 'Support-Bot'], ['daten', 'Daten'],
   ];
