@@ -1,0 +1,49 @@
+name: "Engpass-Chef (Agenten-Fließband)"
+
+# Täglich 03:35 UTC - nach dem Leistungs-Sammler, vor Werbe-Labor und Video-Fabrik:
+# misst die echte Leistung jedes Agenten, findet den Engpass und legt den Plan für den Tag fest.
+
+on:
+  schedule:
+    - cron: '35 3 * * *'
+  workflow_dispatch:
+    inputs:
+      ziel:
+        description: 'Ziel: Videos pro Tag (1-10)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: engpass-chef
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Engpass finden und Plan setzen
+        run: node automations/engpass-chef.mjs
+        env:
+          AGENTEN_ZIEL: ${{ inputs.ziel || vars.AGENTEN_ZIEL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      - name: Speichern
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add automations/state/agenten-plan.json zentrale/daten/engpass.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -qm "chore: Engpass-Chef Plan [skip ci]"
+          for versuch in 1 2 3; do git pull -q --rebase --autostash origin "$GITHUB_REF_NAME" && git push -q && break; sleep $((versuch * 5)); done
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi

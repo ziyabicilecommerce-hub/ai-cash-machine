@@ -20,7 +20,7 @@ import { kurzHook, reinText, aktiveProdukte, topListeSkript, HOOK_REGELN } from 
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 import { laborWinkel } from './lib/laborWinkel.mjs';
 import { nachbauenEinplanen, stateLaden as pruefungLaden } from './lib/videoPruefung.mjs';
-import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen, skriptMitFormat } from './lib/skriptExtras.mjs';
+import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen, skriptMitFormat, planWert } from './lib/skriptExtras.mjs';
 // KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
 async function mitModeratorin(v, nr) {
   if (!moderatorinAn()) return;
@@ -34,7 +34,7 @@ const FEED = 'video-feed/videos.json';
 const FEED_WELT = Math.min(Math.max(parseInt(process.env.FEED_WELT_MAX || '6000', 10) || 6000, 0), 30000);
 const env = (k, d = '') => (process.env[k] || d).trim();
 
-const ANZAHL_ROH = parseInt(env('VIDEO_FABRIK_ANZAHL', '5'), 10);
+const ANZAHL_ROH = parseInt(env('VIDEO_FABRIK_ANZAHL', String(planWert('fabrikAnzahl', 5))), 10); // Engpass-Chef-Plan, Variable hat Vorrang
 const ANZAHL = Math.min(Math.max(Number.isNaN(ANZAHL_ROH) ? 5 : ANZAHL_ROH, 0), 10);
 // Welt-Bot (#96): bis zu 60 Produkte x 12 Varianten x 50 Sprachen (Standard 21 x 10 x 50 = ca. 10.500 Videos/Tag).
 const WELT_ANZAHL = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_ANZAHL', '21'), 10) || 21, 1), 60);

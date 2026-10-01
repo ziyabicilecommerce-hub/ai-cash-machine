@@ -2,3 +2,4 @@
 export * from './anwendung.mjs';
 export * from './anfaenge.mjs';
 export * from './formate.mjs';
+export { planWert } from './agentenPlan.mjs';

@@ -7,9 +7,11 @@ import '../zentrale/js/labor.js';
 import { kiJson } from './lib/kiJson.mjs';
 import { aktiveProdukte } from './lib/shopProdukte.mjs';
 import { lernstandLaden } from './lib/leistung.mjs';
+import { planWert } from './lib/agentenPlan.mjs';
 
 const { ZLabor } = globalThis;
-const PRO_LAUF = Math.min(Math.max(parseInt(process.env.WERBE_LABOR_ANZAHL || '6', 10) || 6, 1), 20);
+// Menge: Eingabe/Variable > Plan des Engpass-Chefs > 6.
+const PRO_LAUF = Math.min(Math.max(parseInt(process.env.WERBE_LABOR_ANZAHL || String(planWert('laborAnzahl', 6)), 10) || 6, 1), 20);
 const FRISCH_TAGE = 14;
 export const STATE = 'automations/state/werbe-labor.json';
 const SEITE = 'zentrale/daten/werbe-labor.json';
