@@ -64,7 +64,7 @@
   }
 
   function hooksLesen(d) {
-    const liste = (d && Array.isArray(d.hooks) ? d.hooks : []).map((h) => String(h || '').replace(/^\s*(\d{1,2}[.)]\s+|[-•*]\s+)/, '').replace(/^["„“'\s]+|["“”'\s]+$/g, '').trim()).filter((h) => h.length >= 6 && h.length <= 120);
+    const liste = (d && Array.isArray(d.hooks) ? d.hooks : []).map((h) => String(h || '').replace(/^\s*(\d{1,2}[.)]\s+|[-•*]\s+)/, '').replace(/^["„“'\s]+|["“”'\s]+$/g, '').trim()).filter((h) => h.length >= 6 && h.length <= 120 && !/^[,.;:)\]%€]/.test(h));
     return [...new Set(liste)].slice(0, WINKEL.length);
   }
 

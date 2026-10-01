@@ -103,3 +103,7 @@ test('produktListe: günstigste Variante, echter Streichpreis, IDs passend zum S
   assert.equal(p.bild, 'https://cdn/x.jpg');
   assert.equal(p.info, 'Reißfest');
 });
+
+test('hooksLesen wirft abgeschnittene KI-Fragmente raus (z. B. ",99 € ..."), behaelt echte Zahlen-Hooks', () => {
+  assert.deepEqual(ZLabor.hooksLesen({ hooks: [',99 € für ein Band', '3 Gründe für das Band', '12,99 € statt Fitnessstudio'] }), ['3 Gründe für das Band', '12,99 € statt Fitnessstudio']);
+});
