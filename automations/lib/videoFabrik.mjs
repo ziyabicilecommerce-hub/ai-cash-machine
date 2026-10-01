@@ -126,7 +126,8 @@ export async function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index,
   const filter = [
     `scale=${breite * 2}:${hoehe * 2}`,
     `zoompan=z='${k.z}':x='${k.x}':y='${k.y}':d=${frames}:s=${breite}x${hoehe}:fps=30`,
-    'fade=in:0:6',
+    // Erste Szene ohne Schwarzblende - Bild 1 ist das, was im Feed stehen bleibt.
+    ...(index === 0 ? [] : ['fade=in:0:6']),
     `fade=out:st=${Math.max(dauer - 0.25, 0).toFixed(2)}:d=0.25`,
     ...(schild && schriftOk(schild) ? [schildFilter(schild, ziel, breite, hoehe)] : []),
     ...(hook && schriftOk(hook) ? [hookFilter(hook, ziel, breite, hoehe)] : []),
@@ -146,7 +147,7 @@ function hookFilter(text, ziel, breite, hoehe) {
   const datei = `${ziel}.hook.txt`;
   writeFileSync(datei, umbrechen(text.toUpperCase(), breite > hoehe ? 30 : 15));
   const groesse = Math.round((breite > hoehe ? hoehe : breite) * 0.058);
-  return `drawtext=fontfile=${SCHRIFT_FETT}:textfile='${filterPfad(datei)}':fontsize=${groesse}:fontcolor=white:line_spacing=${Math.round(groesse * 0.2)}:box=1:boxcolor=black@0.55:boxborderw=${Math.round(groesse * 0.4)}:x=(w-text_w)/2:y=h*0.12:enable='lt(t,3.5)':alpha='if(lt(t,0.25),t/0.25,if(gt(t,3.0),(3.5-t)/0.5,1))'`;
+  return `drawtext=fontfile=${SCHRIFT_FETT}:textfile='${filterPfad(datei)}':fontsize=${groesse}:fontcolor=white:line_spacing=${Math.round(groesse * 0.2)}:box=1:boxcolor=black@0.55:boxborderw=${Math.round(groesse * 0.4)}:x=(w-text_w)/2:y=h*0.12:enable='lt(t,3.5)':alpha='if(gt(t,3.0),(3.5-t)/0.5,1)'`;
 }
 
 // Vorschaubild: erstes Szenenbild abgedunkelt plus Titel.

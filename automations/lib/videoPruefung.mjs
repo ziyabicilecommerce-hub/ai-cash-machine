@@ -19,6 +19,8 @@ export function messungLesen(text) {
     schwarz: [...t.matchAll(/black_start:([\d.]+)\s+black_end:([\d.]+)/g)].map((m) => [Number(m[1]), Number(m[2])]),
     standbild: spannen('lavfi.freezedetect.freeze_start', 'lavfi.freezedetect.freeze_end'),
     stille: spannen('silence_start', 'silence_end'),
+    // Helligkeit von Bild 1 (signalstats YAVG, 16 = schwarz): das Bild, das im Feed zuerst stehen bleibt.
+    start: Number(t.match(/lavfi\.signalstats\.YAVG=([\d.]+)/)?.[1] ?? NaN),
   };
 }
 
@@ -35,6 +37,7 @@ export function bewerten(info, m) {
   const schwarz = m.schwarz.reduce((s, [a, b]) => s + (b - a), 0);
   const hart = gruende.length > 0;
   if (schwarz > 1.2) gruende.push(`${schwarz.toFixed(1)} s Schwarzbild`);
+  if (m.start < 30) gruende.push('Anfang schwarz – Bild 1 zeigt weder Produkt noch Hook');
   const stand = m.standbild.filter(([a, b]) => innen(a, b) && b - a > 3.5);
   if (stand.length) gruende.push(`Bild friert ein (${stand.map(([a, b]) => `${a.toFixed(0)}–${b.toFixed(0)} s`).join(', ')})`);
   const stumm = m.stille.filter(([a, b]) => innen(a, b) && b - a > 2.5);
@@ -43,7 +46,7 @@ export function bewerten(info, m) {
   return { status: gruende.length ? 'abgelehnt' : reparatur.length ? 'repariert' : 'ok', gruende, reparatur, hart };
 }
 
-// Notbremse: Würden weiche Gründe (Standbild, Stille, Schwarz) ALLE Videos eines Laufs aussortieren,
+// Notbremse: Würden weiche Gründe (Standbild, Stille, Schwarz, schwarzer Anfang) ALLE Videos eines Laufs aussortieren,
 // liegt eher eine falsch eingestellte Messung vor als lauter kaputte Videos. Dann mit Warnung freigeben.
 export function notbremse(ergebnisse) {
   if (!ergebnisse.length || !ergebnisse.every((e) => e.status === 'abgelehnt' && !e.hart)) return false;

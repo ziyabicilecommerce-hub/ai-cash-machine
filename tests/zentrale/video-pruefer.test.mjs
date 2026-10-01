@@ -24,6 +24,8 @@ test('messungLesen liest Lautheit, Schwarz, Standbild und Stille', () => {
   assert.equal(JSON.stringify(m.schwarz), '[[0,0.8]]');
   assert.equal(JSON.stringify(m.standbild), '[[3.04,8.04]]');
   assert.equal(JSON.stringify(m.stille), '[[4.5,7.9]]');
+  assert.equal(messungLesen('[Parsed_metadata_1 @ 0x4] lavfi.signalstats.YAVG=16.2').start, 16.2);
+  assert.ok(Number.isNaN(m.start), 'ohne Messung kein Start-Fehler');
 });
 
 test('bewerten: ok, Lautstärke reparieren, harte Fehler aussortieren', () => {
@@ -35,6 +37,9 @@ test('bewerten: ok, Lautstärke reparieren, harte Fehler aussortieren', () => {
   assert.match(bewerten({ ...gut, breite: 1920, hoehe: 1080 }, leer).gruende.join(), /falsches Format/);
   assert.match(bewerten(gut, { ...leer, standbild: [[5, 12]] }).gruende.join(), /friert ein/);
   assert.match(bewerten(gut, { ...leer, stille: [[8, 12]] }).gruende.join(), /Stimme fehlt/);
+  assert.match(bewerten(gut, { ...leer, start: 16 }).gruende.join(), /Anfang schwarz/);
+  assert.equal(bewerten(gut, { ...leer, start: 110 }).status, 'ok');
+  assert.equal(bewerten(gut, { ...leer, start: 16 }).hart, false, 'schwarzer Anfang ist ein weicher Fehler (Notbremse greift)');
   assert.equal(bewerten(gut, { ...leer, stille: [[22.8, 25]] }).status, 'ok', 'Stille am Ende (Musik-Ausklang) ist erlaubt');
   assert.equal(bewerten({ ...gut, breite: 1920, hoehe: 1080, dauer: 600, format: 'quer' }, leer).status, 'ok', 'lange Querformat-Videos sind erlaubt');
 });
@@ -77,8 +82,9 @@ test('echter Lauf: repariert leise Videos, sortiert kaputte aus, plant Nachbau',
   ff([...bild, '-c:v', 'libx264', '-preset', 'ultrafast', '-pix_fmt', 'yuv420p', join(v, 'stumm.mp4')]);
   ff(['-f', 'lavfi', '-i', 'testsrc2=size=1920x1080:rate=30:duration=8', ...stimme(2.5), ...enc, join(v, 'quer.mp4')]);
   ff(['-f', 'lavfi', '-i', 'testsrc2=size=1080x1920:rate=30:duration=10', ...stimme(0.5).slice(0, 3), 'sine=frequency=220:duration=10,volume=2.5', '-filter_complex', "[0:v]trim=0:2,setpts=PTS-STARTPTS[a];[0:v]trim=2:2.04,setpts=PTS-STARTPTS,loop=180:1:0[b];[0:v]trim=8:10,setpts=PTS-STARTPTS[c];[a][b][c]concat=n=3:v=1[v]", '-map', '[v]', '-map', '1:a', ...enc, join(v, 'standbild.mp4')]);
+  ff([...bild, ...stimme(2.5), '-vf', "drawbox=c=black:t=fill:enable='lt(t,0.5)'", ...enc, join(v, 'schwarzstart.mp4')]);
   writeFileSync(join(v, 'standbild.jpg'), 'x');
-  const manifest = ['gut', 'leise', 'stumm', 'quer', 'standbild'].map((n) => ({ datei: `${n}.mp4`, vorschau: n === 'standbild' ? 'standbild.jpg' : '', thema: `Produkt ${n}`, titel: n, sprache: 'de', format: 'hoch' }));
+  const manifest = ['gut', 'leise', 'stumm', 'quer', 'standbild', 'schwarzstart'].map((n) => ({ datei: `${n}.mp4`, vorschau: n === 'standbild' ? 'standbild.jpg' : '', thema: `Produkt ${n}`, titel: n, sprache: 'de', format: 'hoch' }));
   writeFileSync(join(dir, 'out', 'manifest.json'), JSON.stringify(manifest));
   const log = execFileSync(process.execPath, [SKRIPT], { cwd: dir, encoding: 'utf8' });
   const rest = JSON.parse(readFileSync(join(dir, 'out', 'manifest.json'), 'utf8')).map((e) => e.datei);
@@ -89,7 +95,8 @@ test('echter Lauf: repariert leise Videos, sortiert kaputte aus, plant Nachbau',
   const lufs = messungLesen(nachher).lufs;
   assert.ok(lufs > -18 && lufs < -11, `leise.mp4 nach Reparatur bei ${lufs} LUFS`);
   const state = JSON.parse(readFileSync(join(dir, 'automations', 'state', 'video-pruefung.json'), 'utf8'));
-  assert.equal(JSON.stringify(state.nachbauen.map((n) => n.thema).sort()), JSON.stringify(['Produkt quer', 'Produkt standbild', 'Produkt stumm']));
+  assert.equal(JSON.stringify(state.nachbauen.map((n) => n.thema).sort()), JSON.stringify(['Produkt quer', 'Produkt schwarzstart', 'Produkt standbild', 'Produkt stumm']));
   assert.equal(state.laeufe.at(-1).repariert, 1);
   assert.match(log, /friert ein/);
+  assert.match(log, /schwarzstart\.mp4 – Anfang schwarz/);
 });

@@ -173,7 +173,7 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
     'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
     `Style: Wort,DejaVu Sans,${groesse},&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,-1,0,0,0,100,100,1,0,1,${Math.round(groesse * 0.1)},${Math.round(groesse * 0.05)},2,${rand},${rand},${unten},1`,
     `Style: WortBox,DejaVu Sans,${groesse},${thema.text},${thema.text},${thema.box},${thema.box},-1,0,0,0,100,100,1,0,3,${Math.round(groesse * 0.16)},0,2,${rand},${rand},${unten},1`,
-    `Style: Hook,DejaVu Sans,${Math.round(groesse * 0.95)},${thema.text},${thema.text},${thema.box},&H64000000,-1,0,0,0,100,100,0,0,3,${Math.round(groesse * 0.28)},0,8,${rand},${rand},${Math.round(hoehe * 0.1)},1`,
+    `Style: Hook,DejaVu Sans,${Math.round(groesse * 1.12)},${thema.text},${thema.text},${thema.box},&H64000000,-1,0,0,0,100,100,0,0,3,${Math.round(groesse * 0.28)},0,8,${rand},${rand},${Math.round(hoehe * 0.1)},1`,
     `Style: Preis,DejaVu Sans,${Math.round(groesse * 1.25)},${thema.text},${thema.text},${thema.box},&H64000000,-1,0,0,0,100,100,0,-7,3,${Math.round(groesse * 0.3)},0,5,0,0,0,1`,
     `Style: Shop,DejaVu Sans,${Math.round(groesse * 0.55)},&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,-1,0,0,0,100,100,2,0,1,${Math.round(groesse * 0.08)},0,2,${rand},${rand},${Math.round(hoehe * 0.05)},1`,
     '', '[Events]', 'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text',
@@ -220,8 +220,9 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
   const pop = '{\\fscx40\\fscy40\\t(0,180,\\fscx108\\fscy108)\\t(180,260,\\fscx100\\fscy100)}';
   if (hook) {
     const h = GROSS_OK.test(hook) ? hook.toLocaleUpperCase(sprache) : hook;
-    // Hook knallt ins Bild: riesig und durchsichtig -> in 140 ms auf 92 % (Aufprall) -> 100 %, leicht gekippt.
-    const slam = '{\\fscx260\\fscy260\\frz-5\\alpha&HFF&\\t(0,140,\\fscx92\\fscy92\\frz0\\alpha&H00&)\\t(140,230,\\fscx100\\fscy100)}';
+    // Hook steht ab Bild 1 (kein Einblenden), knallt von 150 % auf 92 % (Aufprall) -> 100 % und pumpt
+    // bei 1,2 s noch einmal, damit das Auge oben bleibt.
+    const slam = '{\\fscx150\\fscy150\\frz-4\\t(0,120,\\fscx92\\fscy92\\frz0)\\t(120,200,\\fscx100\\fscy100)\\t(1200,1300,\\fscx108\\fscy108)\\t(1300,1420,\\fscx100\\fscy100)}';
     zeilen.push(`Dialogue: 1,${assZeit(0)},${assZeit(3300)},Hook,,0,0,0,,{\\fad(0,300)}${slam}${assText(h)}`);
   }
   // Rang-Badge fuer Countdown-Videos (Top 5): gross, schraeg, links oben.
@@ -339,7 +340,8 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
     const quelle = nah ? `[${nr(fgP)}:v]scale=iw*1.4:-1:flags=lanczos[fn];[v0][fn]` : `[v0][${nr(fgP)}:v]`;
     const y = nah ? `(H-h*0.69)/2-H*0.02` : PRODUKT_Y;
     // Drop: Produkt faellt von oben ins Bild und federt beim Aufprall kurz nach (Hook).
-    const drop = effekt?.drop ? '-H*0.7*pow(max(0,1-t/0.42),3)+H*0.03*sin(PI*min(1,max(0,(t-0.42)/0.22)))' : '';
+    // Startet schon halb im Bild, damit Bild 1 nicht leer ist.
+    const drop = effekt?.drop ? '-H*0.32*pow(max(0,1-t/0.3),3)+H*0.03*sin(PI*min(1,max(0,(t-0.3)/0.22)))' : '';
     graph += `[v0];${quelle}overlay=x=(W-w)/2-W*0.018*(${r}-0.5):y='${y}+H*0.012*sin(t*1.7+${index})${drop}'`;
   }
   if (glanz) graph += `[g0];[g0][${nr(glanz)}:v]overlay=x='-w+(W+w)*(t-0.05)/0.7':y=0:enable='between(t,0.05,0.75)'`;
@@ -349,7 +351,8 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
   // QR-Endkarte oben links (nach dem Zoom, damit er ruhig steht und scannbar bleibt).
   if (qr) graph += `[q0];[${nr(qr)}:v]scale=${gerade(breite * 0.26)}:-2,format=rgba,fade=t=in:st=0.4:d=0.3:alpha=1[qr];[q0][qr]overlay=x=${Math.round(breite * 0.17)}-w/2:y=${Math.round(hoehe * 0.075)}`;
   const ende = [
-    ...(art === 'start' ? ['fade=in:st=0:d=0.25'] : art === 'blitz' ? ['fade=in:st=0:d=0.14:color=white'] : art === 'glitch' ? glitchFilter() : art === 'wisch' ? wischFilter() : []),
+    // Start ohne Schwarzblende: schon Bild 1 zeigt Produkt + Hook (Feed-Vorschau!), dazu ein kurzer Lichtblitz.
+    ...(art === 'start' ? ["eq=brightness='0.3*max(0,1-t/0.22)':eval=frame"] : art === 'blitz' ? ['fade=in:st=0:d=0.14:color=white'] : art === 'glitch' ? glitchFilter() : art === 'wisch' ? wischFilter() : []),
     `fade=out:st=${Math.max(dauer - 0.18, 0).toFixed(2)}:d=0.18`,
     ...extra,
     `ass='${pfadFuerFilter(ass)}'`,

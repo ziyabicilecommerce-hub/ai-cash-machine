@@ -23,7 +23,8 @@ function messen(datei, ton) {
   const args = ton
     ? ['-hide_banner', '-nostats', '-i', datei, '-filter_complex', `[0:v]${video}[v];[0:a]ebur128=framelog=quiet,silencedetect=n=-45dB:d=2.5[a]`, '-map', '[v]', '-map', '[a]', '-f', 'null', '-']
     : ['-hide_banner', '-nostats', '-i', datei, '-vf', video, '-f', 'null', '-'];
-  return messungLesen(spawnSync('ffmpeg', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).stderr);
+  const start = spawnSync('ffmpeg', ['-hide_banner', '-nostats', '-i', datei, '-frames:v', '1', '-vf', 'signalstats,metadata=print:key=lavfi.signalstats.YAVG', '-f', 'null', '-'], { encoding: 'utf8' }).stderr;
+  return messungLesen(spawnSync('ffmpeg', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).stderr + start);
 }
 
 function lautstaerkeReparieren(datei) {

@@ -16,7 +16,7 @@ import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
 import { uebersetzen, uebersetzenBuendel } from './lib/uebersetzen.mjs';
 import { skripteLaden, skripteSpeichern, uebersetzungenLaden, uebersetzungenSpeichern, schluessel, anwenden, auszug } from './lib/weltCache.mjs';
 import { premiumAn, themaFuer, preisText } from './lib/premium.mjs';
-import { kurzHook, reinText, aktiveProdukte, topListeSkript } from './lib/shopProdukte.mjs';
+import { kurzHook, reinText, aktiveProdukte, topListeSkript, HOOK_REGELN } from './lib/shopProdukte.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 import { laborWinkel } from './lib/laborWinkel.mjs';
 import { nachbauenEinplanen, stateLaden as pruefungLaden } from './lib/videoPruefung.mjs';
@@ -163,14 +163,14 @@ async function produktSkriptEinmal(p, winkel = '') {
   const d = await kiJson(
     `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ein 25-40 Sekunden Werbe-Skript auf Deutsch, sprich die Zuschauer mit "du" an (niemals "Sie"), fuer das Produkt "${p.title}" aus dem Shop "${p.shopName}". ` +
       `Produktinfos: ${reinText(p.body_html).slice(0, 700)}${preis ? ` Preis: ${preis} EUR.` : ''} ` +
-      'Aufbau: 1) Hook, der in 2 Sekunden fesselt, 2) Problem, 3) 2-3 konkrete Vorteile des Produkts, 4) Call-to-Action ("Link in der Bio"). 5 bis 7 Szenen, pro Szene 1 kurzer gesprochener Satz. Nichts erfinden, was nicht in den Produktinfos steht. ' +
+      HOOK_REGELN + 'Aufbau: 1) dieser Hook-Satz, 2) Problem, 3) 2-3 konkrete Vorteile des Produkts, 4) Call-to-Action ("Link in der Bio"). 5 bis 7 Szenen, pro Szene 1 kurzer gesprochener Satz. Nichts erfinden, was nicht in den Produktinfos steht. ' +
       'Nutze NUR Eigenschaften, die woertlich in den Produktinfos stehen - keine erfundenen Features, Zahlen oder Versprechen. Keine Floskeln. ' +
       (winkel ? `Erzaehlweise dieser Variante: ${winkel} ` : '') +
       (LIFESTYLE
         ? `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index ODER "bild": englischer Prompt fuer ein passendes, jugendfreies Lifestyle-Bild (vollstaendig bekleidete Personen). Mindestens die Haelfte der Szenen mit Produktfoto. `
         : `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene "foto": Index des passendsten Produktfotos. `) +
       'Dazu "hintergrund": englischer Bild-Prompt (max. 12 Woerter) fuer eine leere, edle Umgebung, die zum Einsatzort des Produkts passt - ohne Produkt, ohne Personen, ohne Text. ' +
-      'Antworte NUR mit JSON: {"titel":"...","hook":"knallige Schlagzeile, maximal 5 Woerter","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","szenen":[{"text":"...","foto":0}]}',
+      'Antworte NUR mit JSON: {"titel":"...","hook":"Text-Overlay fuer Sekunde 0-3, 2-5 Woerter, weckt Neugier (Frage/Warnung/Widerspruch), NICHT der Produktname","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","szenen":[{"text":"...","foto":0}]}',
     { maxTokens: 1500 }
   );
   const skript = ausDaten(d, p);
@@ -186,10 +186,10 @@ async function variantenSkripte(p, winkelListe) {
   const d = await kiJson(
     `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ${winkelListe.length} VERSCHIEDENE 25-40 Sekunden Werbe-Skripte auf Deutsch (Du-Ansprache) fuer "${p.title}" aus dem Shop "${p.shopName}". ` +
       `Produktinfos: ${reinText(p.body_html).slice(0, 700)}${preis ? ` Preis: ${preis} EUR.` : ''} Nutze NUR Eigenschaften aus den Produktinfos, nichts erfinden. ` +
-      `Je Skript 5-7 Szenen mit je 1 kurzen Satz, Hook am Anfang, "Link in der Bio" am Ende. Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}), pro Szene "foto": Index. ` +
+      HOOK_REGELN + `Je Skript 5-7 Szenen mit je 1 kurzen Satz, jede Variante mit eigenem Hook-Satz am Anfang, "Link in der Bio" am Ende. Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}), pro Szene "foto": Index. ` +
       `Erzaehlweisen in dieser Reihenfolge: ${winkelListe.map((w, i) => `${i + 1}) ${w}`).join(' ')} ` +
       'Je Skript "hintergrund": englischer Bild-Prompt (max. 12 Woerter) fuer eine leere, edle Umgebung ohne Produkt, Personen oder Text - jedes Skript eine andere Umgebung. ' +
-      'Antworte NUR mit JSON: {"varianten":[{"titel":"...","hook":"max. 5 Woerter","caption":"mit 3-5 Hashtags","hintergrund":"...","szenen":[{"text":"...","foto":0}]}]}',
+      'Antworte NUR mit JSON: {"varianten":[{"titel":"...","hook":"2-5 Woerter Neugier-Overlay, nicht der Produktname","caption":"mit 3-5 Hashtags","hintergrund":"...","szenen":[{"text":"...","foto":0}]}]}',
     { maxTokens: Math.min(1200 * winkelListe.length, 8000) }
   );
   return (Array.isArray(d.varianten) ? d.varianten : []).map((v) => ausDaten(v, p)).filter((x) => x.szenen.length >= 3);
