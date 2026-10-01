@@ -137,6 +137,8 @@ async function main() {
       let skript;
       let format;
       for (let v = 0; v < 3 && !skript; v++) {
+        // Die kostenlose KI drosselt schnelle Folgeanfragen: vor jedem neuen Versuch kurz warten.
+        if (v > 0) await new Promise((r) => setTimeout(r, Number(process.env.FAKTEN_PAUSE_MS ?? 20000) * v));
         format = liste[(tag * ANZAHL + i + v) % liste.length];
         const schreiben = { fakt: skriptSchreiben, quiz: quizSchreiben, mythos: mythosSchreiben }[format];
         try { skript = await schreiben(kategorie, nr, verlauf.fakten); } catch (err) { console.log(`[100-fakten-kanal] ${format}-Skript verworfen (${String(err.message).slice(0, 80)}) - neuer Versuch`); }
