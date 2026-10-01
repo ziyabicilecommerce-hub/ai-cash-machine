@@ -15,6 +15,11 @@ test('hooksLesen säubert, entfernt Dubletten und zu kurze Hooks', () => {
   assert.equal(JSON.stringify(h), JSON.stringify(['Dein Zimmer um 22 Uhr', 'Warum zeigt dir das keiner?']));
 });
 
+test('hooksLesen behält Preise am Anfang, entfernt nur Aufzählungen', () => {
+  const h = ZLabor.hooksLesen({ hooks: ['26,99 € für sanfte Entspannung', '1. Dein Rücken sagt danke', '- Nie wieder Nackenschmerzen', '10 Minuten statt Fitnessstudio'] });
+  assert.equal(JSON.stringify(h), JSON.stringify(['26,99 € für sanfte Entspannung', 'Dein Rücken sagt danke', 'Nie wieder Nackenschmerzen', '10 Minuten statt Fitnessstudio']));
+});
+
 test('auswerten: gewichtete Kaufabsicht, Käufer von 100 und Einwand des größten Nicht-Käufers', () => {
   const hooks = ['A', 'B'];
   const werte = ZLabor.JURY.map((j, t) => (t === 0 ? [3, 9] : [8, 5]));
@@ -57,6 +62,8 @@ test('labor: ohne erreichbare KI trotzdem ein Ergebnis', async () => {
   assert.ok(e.ergebnisse.length >= 3);
   assert.equal(e.gewinner.quelle, 'Regeln');
   assert.ok(e.final.hook.length > 5);
+  assert.equal(e.ersatz, true);
+  assert.equal(ZLabor.fabrikWinkel(e), '', 'Ersatz-Hooks gehen nie an die Fabrik');
 });
 
 test('kurzName macht gesprochene Hooks kurz', () => {
@@ -68,12 +75,15 @@ test('kurzName macht gesprochene Hooks kurz', () => {
 test('laborWinkel nutzt nur frische Ergebnisse für die Fabrik', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'labor-'));
   const pfad = join(dir, 'werbe-labor.json');
-  const e = await ZLabor.labor(produkt, async () => { throw new Error('offline'); });
+  const offline = await ZLabor.labor(produkt, async () => { throw new Error('offline'); });
+  const e = { ...offline, ersatz: false, gewinner: { ...offline.gewinner, quelle: 'Jury' } };
   writeFileSync(pfad, JSON.stringify({ produkte: { [schluessel(produkt)]: e } }));
   assert.ok(laborWinkel(produkt, { pfad }).includes(e.final.hook));
   assert.equal(laborWinkel(produkt, { pfad, jetzt: Date.now() + 15 * 864e5 }), '');
   assert.equal(laborWinkel({ ...produkt, handle: 'anders' }, { pfad }), '');
   assert.equal(laborWinkel(produkt, { pfad: join(dir, 'fehlt.json') }), '');
+  writeFileSync(pfad, JSON.stringify({ produkte: { [schluessel(produkt)]: { ...e, gewinner: { ...e.gewinner, quelle: 'Regeln' } } } }));
+  assert.equal(laborWinkel(produkt, { pfad }), '', 'nur Jury-Gewinner gehen an die Fabrik');
 });
 
 test('auswahl: erst ungetestete, dann älteste, frische bleiben liegen', () => {

@@ -64,7 +64,7 @@
   }
 
   function hooksLesen(d) {
-    const liste = (d && Array.isArray(d.hooks) ? d.hooks : []).map((h) => String(h || '').replace(/^["„“\s\d.)-]+|["“”\s]+$/g, '').trim()).filter((h) => h.length >= 6 && h.length <= 120);
+    const liste = (d && Array.isArray(d.hooks) ? d.hooks : []).map((h) => String(h || '').replace(/^\s*(\d{1,2}[.)]\s+|[-•*]\s+)/, '').replace(/^["„“'\s]+|["“”'\s]+$/g, '').trim()).filter((h) => h.length >= 6 && h.length <= 120);
     return [...new Set(liste)].slice(0, WINKEL.length);
   }
 
@@ -112,7 +112,8 @@
     const k = produktKurz(p);
     let hooks = [];
     try { hooks = hooksLesen(await ki(hookPrompt(p), 900)); } catch (e) { /* weiter mit Ersatz */ }
-    if (hooks.length < 3) hooks = ersatzHooks(k);
+    const ersatz = hooks.length < 3;
+    if (ersatz) hooks = ersatzHooks(k);
     let jury = null;
     try { jury = await ki(juryPrompt(p, hooks), 1400); } catch (e) { /* Regeln statt Jury */ }
     const a = auswerten(hooks, jury, k);
@@ -123,7 +124,7 @@
         if (s && typeof s.hook === 'string' && s.hook.trim().length >= 6) final = { hook: s.hook.trim().slice(0, 120), antwort: String(s.antwort || '').trim().slice(0, 200) || null, schlagzeile: String(s.schlagzeile || '').trim().slice(0, 40) || null };
       } catch (e) { /* Gewinner unverändert */ }
     }
-    return { produkt: k.titel, preis: k.preis, ...a, final, erstellt: new Date().toISOString() };
+    return { produkt: k.titel, preis: k.preis, ...a, final, ersatz, erstellt: new Date().toISOString() };
   }
 
   // Kurzname für gesprochene Hooks: Teil vor „–“/„|“/„:“, höchstens 3 Wörter.
@@ -138,8 +139,10 @@
   }
 
   // Erzählweise für die Video-Fabrik aus einem Labor-Ergebnis.
+  // Nur von der Test-Jury gewonnene Hooks gehen an die Fabrik. Ohne Jury (KI gedrosselt) schreibt die
+  // Fabrik ihr eigenes KI-Skript – das ist besser als eine Regel- oder Vorlagen-Entscheidung.
   function fabrikWinkel(e) {
-    if (!e || !e.final || !e.final.hook) return '';
+    if (!e || e.ersatz || !e.gewinner || e.gewinner.quelle !== 'Jury' || !e.final || !e.final.hook) return '';
     return `Beginne GENAU mit diesem getesteten Hook als erstem Satz: "${e.final.hook}". ` +
       (e.final.antwort ? `Szene 2 räumt diesen Einwand ehrlich aus: "${e.final.antwort}". ` : '') +
       `Kauf-Psychologie: ${e.gewinner ? e.gewinner.winkel : ''}. ` +
