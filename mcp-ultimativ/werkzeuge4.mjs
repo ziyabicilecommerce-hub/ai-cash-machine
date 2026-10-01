@@ -92,7 +92,7 @@ export async function agentStarten({ agent, anzahl, ziel }, laden = fetch) {
   const inputs = {};
   if (a.eingaben.includes('anzahl') && anzahl) inputs.anzahl = String(zahl(anzahl, 1, 1, 10));
   if (a.eingaben.includes('ziel') && ziel) inputs.ziel = String(zahl(ziel, 5, 1, 10));
-  const res = await laden(`https://api.github.com/repos/${REPO}/actions/workflows/${a.datei}/dispatches`, { method: 'POST', headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json', 'content-type': 'application/json' }, body: JSON.stringify({ ref: 'main', inputs }) });
+  const res = await laden(`https://api.github.com/repos/${REPO}/actions/workflows/${a.datei}/dispatches`, { method: 'POST', headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json', 'content-type': 'application/json', 'user-agent': 'cashmachine-ultimativ-mcp' }, body: JSON.stringify({ ref: 'main', inputs }) });
   if (res.status !== 204) throw new Error(`GitHub ${res.status}: ${kurz(await res.text(), 200)}`);
   return { gestartet: agent, eingaben: inputs, verlauf: `https://github.com/${REPO}/actions/workflows/${a.datei}` };
 }

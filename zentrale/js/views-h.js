@@ -15,9 +15,11 @@
   const speichernLokal = (a) => { try { localStorage.setItem(SPEICHER, JSON.stringify(a)); } catch (e) { /* nur dieses Fenster */ } };
   let ablauf = null;
 
+  let system = null;
   async function laden(app) {
     geladen = true;
     try { const r = await fetch('daten/engpass.json', { cache: 'no-store' }); daten = r.ok ? await r.json() : null; } catch (e) { daten = null; }
+    try { const r = await fetch('daten/system.json', { cache: 'no-store' }); system = r.ok ? await r.json() : null; } catch (e) { system = null; }
     if (app.aktiv === 'fliessband') app.zeichnen();
   }
 
@@ -67,7 +69,11 @@
         <p class="klein-text">Dein MCP-Server <code>cashmachine-ultimativ</code> kennt jetzt die Zentrale: Engpass, 15 Kanäle, Shop-Doktor, neueste Videos, Feeds, Werbe-Labor, Lernstand, Kommentare, Engpass-Rechnung - und kann Agenten auf GitHub starten (Video-Fabrik, Shop-Doktor, Poster …). Frag z. B. „Wo ist heute der Engpass?“ oder „Starte die Video-Fabrik mit 3 Videos“.</p>
         <pre style="white-space:pre-wrap">claude mcp add cashmachine -e GITHUB_TOKEN=DEIN_TOKEN -- node mcp-ultimativ/server.mjs</pre>
         <p class="klein-text">Lesen geht ohne Token. Zum Starten: GitHub > Settings > Developer settings > Fine-grained token, nur dieses Repo, Berechtigung „Actions: Read and write“.</p></section>`;
-      el.innerHTML = fliessband() + mcp + werkstatt();
+      const gesund = system ? `<section class="box" style="margin-top:16px"><h2>System-Gesundheit · ${system.ok}/${system.gesamt} Workflows ok</h2>
+        ${system.probleme.length ? `<ul class="aufgaben">${system.probleme.map((p) => `<li class="aufgabe" data-prio="${p.art === 'absturz' ? 'hoch' : 'mittel'}"><span class="t">${h(p.name)}<span class="klein-text"> · ${h(p.text)}</span></span>${p.url ? `<a class="knopf klein" href="${h(p.url)}" target="_blank" rel="noopener">Ansehen</a>` : ''}</li>`).join('')}</ul>` : '<p class="plus">Alles läuft sauber.</p>'}
+        ${system.neugestartet?.length ? `<p class="klein-text">Automatisch neu gestartet: ${system.neugestartet.map(h).join(', ')}</p>` : ''}
+        <p class="klein-text">Der System-Wächter prüft alle 3 Stunden alle Workflows und startet abgestürzte Agenten einmal neu. Stand ${h(ZUI.datum(String(system.stand).slice(0, 10)))}.</p></section>` : '';
+      el.innerHTML = fliessband() + gesund + mcp + werkstatt();
       const neu = () => { speichernLokal(ablauf); this.zeichnen(el, app); };
       const num = (x) => (String(x).trim() === '' ? NaN : Number(x));
       el.querySelector('#ew-auftraege').addEventListener('change', (e) => { ablauf.auftraege = num(e.target.value); neu(); });

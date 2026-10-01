@@ -1,0 +1,42 @@
+name: "System-Wächter"
+
+# Alle 3 Stunden: prüft alle Workflows (48 h), startet abgestürzte Läufe wichtiger Agenten einmal neu
+# und meldet neue Probleme. Ergebnis in der Zentrale (Engpass & Agenten) und im Tagesbericht.
+
+on:
+  schedule:
+    - cron: '41 */3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: system-waechter
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Workflows prüfen und heilen
+        run: node automations/system-waechter.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      - name: Speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add zentrale/daten/system.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -qm "chore: System-Wächter [skip ci]"
+          for versuch in 1 2 3; do git pull -q --rebase --autostash origin "$GITHUB_REF_NAME" && git push -q && exit 0; sleep $((versuch * 5)); done
+          exit 1

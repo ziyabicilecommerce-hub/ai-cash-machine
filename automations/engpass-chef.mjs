@@ -42,6 +42,7 @@ async function main() {
   const bericht = [
     `📡 Kanäle verbunden: ${verbunden.length}/15${verbunden.length ? ` (${verbunden.join(', ')})` : ''}${fehlerhaft.length ? ` · ⚠️ Fehler bei ${fehlerhaft.join(', ')}` : ''}`,
     `💬 Kommentare gestern: ${kom.antworten} beantwortet, ${kom.melden} an dich gemeldet`,
+    (() => { const sy = lesen('zentrale/daten/system.json', null); return sy ? `🛡️ System: ${sy.ok}/${sy.gesamt} Workflows ok${sy.probleme.length ? ` · Probleme: ${sy.probleme.slice(0, 4).map((p) => p.name).join(', ')}` : ''}` : '🛡️ System: noch nicht geprüft'; })(),
     `🩺 Shops: ${(doktor.shops || []).map((s) => `${s.name} ${s.punkte}/100`).join(', ') || 'noch nicht geprüft'}${kritisch ? ` · ${kritisch} kritische Punkte` : ''}`,
   ].join('\n');
   const text = `🏭 Agenten-Fließband · Ziel ${ziel} Videos/Tag\n\n${zeilen.join('\n')}\n\nEngpass: ${e.engpass.name}\n${e.grund}\nPlan heute: Fabrik ${e.plan.fabrikAnzahl}, Labor ${e.plan.laborAnzahl}\n\n${bericht}${e.aufgabe ? `\n\n👉 Deine Aufgabe: ${e.aufgabe.titel} - ${e.aufgabe.text}` : ''}`;
