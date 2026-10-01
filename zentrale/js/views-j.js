@@ -9,6 +9,11 @@
   const lokal = () => { try { return JSON.parse(localStorage.getItem(MERKEN)) || []; } catch (e) { return []; } };
   const merken = (liste) => { try { localStorage.setItem(MERKEN, JSON.stringify(liste.slice(-500))); } catch (e) { /* nur dieses Fenster */ } };
   const BIO = new URL('../bio/', location.href).href;
+  // International: Sprache der Videos waehlen (merkt sich die Zentrale), Bio-Link oeffnet in derselben Sprache.
+  const SPRACHE = 'zentrale-post-sprache';
+  const REGION = { mx: 'es-MX', pp: 'pt-PT', eg: 'ar-EG', tw: 'zh-TW' };
+  let sprache = (() => { try { return localStorage.getItem(SPRACHE) || 'de'; } catch (e) { return 'de'; } })();
+  const sprachName = (c) => { try { return new Intl.DisplayNames(['de'], { type: 'language' }).of(REGION[c] || c) || c; } catch (e) { return c; } };
 
   async function laden(app) {
     geladen = true;
@@ -37,12 +42,17 @@
     zeichnen(el, app) {
       if (!geladen) laden(app);
       if (!feed) { el.innerHTML = '<p class="klein-text">Lädt …</p>'; return; }
-      const liste = ZCaptions.heute(feed, { gepostet: [...auto, ...lokal()] });
-      el.innerHTML = `<section class="box betont" style="margin-bottom:14px"><h2>Dein Link in der Bio</h2>
+      const liste = ZCaptions.heute(feed, { gepostet: [...auto, ...lokal()], sprache });
+      const sprachen = [...new Set(feed.filter((v) => !v.kanal && v.format === 'hoch').map((v) => v.sprache || 'de'))].filter((c) => c !== 'int').sort((a, b) => (a === 'de' ? -1 : b === 'de' ? 1 : sprachName(a).localeCompare(sprachName(b))));
+      const bio = sprache === 'de' ? BIO : `${BIO}?lang=${encodeURIComponent(sprache)}`;
+      el.innerHTML = `<div class="reihe" style="margin-bottom:12px"><label class="klein-text">🌐 Sprache der Videos <select id="post-sprache">${sprachen.map((c) => `<option value="${h(c)}"${c === sprache ? ' selected' : ''}>${h(sprachName(c))} (${feed.filter((v) => (v.sprache || 'de') === c && v.format === 'hoch' && !v.kanal).length})</option>`).join('')}</select></label>
+          <span class="klein-text">Für internationale Accounts: Videos, Texte und KI-Hinweis passen dann zur Sprache.</span></div>
+        <section class="box betont" style="margin-bottom:14px"><h2>Dein Link in der Bio</h2>
           <p class="klein-text">Jedes Video sagt „Link in der Bio“ - trag diese Seite in TikTok, Instagram, YouTube und Co. als Profil-Link ein. Sie zeigt alle Produkte und die neuesten Videos und aktualisiert sich jeden Tag selbst.</p>
-          <div class="reihe"><code>${h(BIO)}</code><button class="knopf klein" data-kopie="${h(BIO)}">Link kopieren</button><a class="knopf klein" href="${h(BIO)}" target="_blank" rel="noopener">Ansehen</a></div></section>
+          <div class="reihe"><code>${h(bio)}</code><button class="knopf klein" data-kopie="${h(bio)}">Link kopieren</button><a class="knopf klein" href="${h(bio)}" target="_blank" rel="noopener">Ansehen</a></div></section>
         ${liste.length ? liste.map(karte).join('') : '<p class="plus">Alles gepostet - morgen kommen neue Videos.</p>'}`;
       el.querySelectorAll('[data-kopie]').forEach((b) => b.addEventListener('click', () => kopieren(b.dataset.kopie)));
+      el.querySelector('#post-sprache')?.addEventListener('change', (e) => { sprache = e.target.value; try { localStorage.setItem(SPRACHE, sprache); } catch (x) { /* nur dieses Fenster */ } this.zeichnen(el, app); });
       el.querySelectorAll('[data-erledigt]').forEach((b) => b.addEventListener('click', () => { merken([...lokal(), b.dataset.erledigt]); meldung('Als gepostet markiert'); this.zeichnen(el, app); }));
     },
   };

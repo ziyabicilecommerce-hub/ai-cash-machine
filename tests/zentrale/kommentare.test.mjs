@@ -1,7 +1,7 @@
 // Kommentar-Agent: ehrlich antworten, Heikles melden, Spam ignorieren, nie doppelt, keine Namen/Texte im Repo.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { vorfilter, entscheiden, ADAPTER } from '../../automations/lib/kommentare.mjs';
+import { vorfilter, entscheiden, ADAPTER, antwortPrompt } from '../../automations/lib/kommentare.mjs';
 import { lauf } from '../../automations/kommentar-agent.mjs';
 
 const post = { titel: 'DeskRebel PowerBand', caption: 'Klimmzugband 4 Stärken 👉 https://www.deskrebel.store/products/powerband', shopLink: 'https://www.deskrebel.store/products/powerband' };
@@ -54,4 +54,10 @@ test('Bluesky-Adapter liest Antworten mit Referenzen fuer die Antwort', async ()
   const l = await ADAPTER.Bluesky.lesen({ id: 'at://root' }, laden);
   assert.equal(l[0].text, 'Preis?');
   assert.equal(JSON.stringify(l[0].ref), '{"root":{"uri":"at://root","cid":"rc"},"parent":{"uri":"at://r1","cid":"c1"}}');
+});
+
+test('international: Gesundheitsfragen in anderen Sprachen werden gemeldet, Antworten in der Sprache des Kommentars', async () => {
+  for (const t of ['Does this help with back pain?', '¿Sirve para el dolor de espalda?', 'Ça aide pour la douleur au dos ?', 'Sırt ağrısı için iyi mi?', 'Czy pomaga na ból pleców?']) assert.equal(vorfilter(t), 'gesundheit', t);
+  assert.equal(vorfilter('How much is shipping to Austria?'), '');
+  assert.match(antwortPrompt({ autor: 'a', text: 'price?' }, { titel: 'X', caption: '', shopLink: '' }), /SPRACHE DES KOMMENTARS/);
 });

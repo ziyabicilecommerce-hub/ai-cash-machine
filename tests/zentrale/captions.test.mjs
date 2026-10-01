@@ -26,3 +26,15 @@ test('heute: nur deutsche Kurzvideos, ohne bereits gepostete und ohne Doppelte',
   const liste = heute([v('1.mp4'), v('2.mp4'), v('3.mp4', { titel: 'B' }), v('4.mp4', { sprache: 'fr', titel: 'C' }), v('5.mp4', { dauer: 300, titel: 'D' }), v('6.mp4', { titel: 'E', kanal: 'fakten' })], { gepostet: ['3.mp4'] });
   assert.equal(JSON.stringify(liste.map((x) => x.datei)), '["1.mp4"]');
 });
+
+test('international: Videos je Sprache, KI-Hinweis als "AI-generated"/#AI ausser auf Deutsch', () => {
+  const es = { titel: 'Tu mejora para dominadas', caption: 'Texto #fitness #KI\n👉 https://www.deskrebel.store/products/powerband', sprache: 'es', format: 'hoch', dauer: 30, datei: 'es.mp4' };
+  const de = { ...es, titel: 'Dein Klimmzug-Upgrade', sprache: 'de', datei: 'de.mp4' };
+  assert.deepEqual(ZCaptions.heute([es, de], { sprache: 'es' }).map((v) => v.datei), ['es.mp4']);
+  assert.deepEqual(ZCaptions.heute([es, de]).map((v) => v.datei), ['de.mp4'], 'Standard bleibt Deutsch');
+  const ig = ZCaptions.fuerPlattform(es, 'instagram').text;
+  assert.match(ig, /AI-generated/);
+  assert.match(ig, /#AI/);
+  assert.doesNotMatch(ig, /#KI|KI-generiert/);
+  assert.match(ZCaptions.fuerPlattform(de, 'instagram').text, /KI-generiert[\s\S]*#KI/);
+});

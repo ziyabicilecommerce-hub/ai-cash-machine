@@ -42,3 +42,12 @@ test('Privatnachrichten: /start begruesst, jede Nachricht wird bewertet; Produkt
   assert.equal(produktFuer('Welches Widerstandsband nehme ich für Klimmzüge?', PRODUKTE).url, 'https://www.deskrebel.store/products/powerband');
   assert.equal(produktFuer('Hallo', PRODUKTE), null);
 });
+
+test('international: Begruessung in der Sprache des Mitglieds, unbekannte Sprachen auf Englisch', async () => {
+  const neu = [{ first_name: 'Lena', language_code: 'de' }, { first_name: 'Ana', language_code: 'es-ES' }, { first_name: 'Ivan', language_code: 'ru' }];
+  const a = await verarbeiten([{ update_id: 9, message: { message_id: 9, chat: gruppe, new_chat_members: neu } }], { jetzt, ki: async () => ({}) });
+  assert.equal(a.length, 3);
+  assert.match(a[0].text, /Willkommen in der Community, Lena!/);
+  assert.match(a[1].text, /Bienvenido\/a a la comunidad, Ana!/);
+  assert.match(a[2].text, /Welcome to the community, Ivan!/);
+});
