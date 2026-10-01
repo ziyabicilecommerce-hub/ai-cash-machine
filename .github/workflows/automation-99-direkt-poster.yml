@@ -90,4 +90,5 @@ jobs:
         run: |
           [ -f video-feed/gepostet.json ] || exit 0
           [ -f video-feed/post-zaehler.json ] || echo '{}' > video-feed/post-zaehler.json
-          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases" video-feed/gepostet.json video-feed/post-zaehler.json
+          [ -f video-feed/posts.json ] || echo '[]' > video-feed/posts.json
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases" video-feed/gepostet.json video-feed/post-zaehler.json video-feed/posts.json

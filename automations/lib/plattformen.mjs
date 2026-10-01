@@ -167,7 +167,7 @@ export const mastodon = {
       status.media_ids = [m.id];
     }
     const s = await json(await fetch(`${basis}/api/v1/statuses`, { method: 'POST', headers: { ...auth, 'Content-Type': 'application/json' }, body: JSON.stringify(status) }), 'Status');
-    return s.url || 'Post';
+    return `Status ${s.id} ${s.url || ''}`.trim();
   },
 };
 

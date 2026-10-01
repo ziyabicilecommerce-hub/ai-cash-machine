@@ -12,6 +12,7 @@ import { pipeline } from 'node:stream/promises';
 import { PLATTFORMEN } from './lib/plattformen.mjs';
 import { threads, linkedin, discord, reddit, pinterest, dailymotion } from './lib/plattformen2.mjs';
 import { verbinderLaden } from './lib/verbinder.mjs';
+import { postMerken } from './lib/leistung.mjs';
 
 const ALLE = [...PLATTFORMEN, threads, linkedin, pinterest, dailymotion, discord, reddit];
 
@@ -101,6 +102,7 @@ async function main() {
         z.zaehler[p.name] = (z.zaehler[p.name] || 0) + 1;
         irgendwo = true;
         console.log(`[99-direkt-poster] ✓ ${p.name}: "${m.titel}" → ${ergebnis}`);
+        postMerken(m, p.name, ergebnis); // fuer echte Zahlen spaeter (leistung-sammler.mjs)
       } catch (err) {
         console.log(`[99-direkt-poster] ✗ ${p.name}: "${m.titel}" → ${String(err.message).slice(0, 250)}`);
       }
