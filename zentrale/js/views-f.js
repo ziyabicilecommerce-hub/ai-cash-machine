@@ -58,6 +58,7 @@
         const p = app.z.produkte.find((x) => x.id === sel.value);
         el.querySelector('#lab-name').value = p ? p.name : '';
         el.querySelector('#lab-preis').value = p ? p.preis : '';
+        el.querySelector('#lab-info').value = p && p.info ? p.info : '';
       });
       el.querySelector('#lab-form').addEventListener('submit', async (e) => {
         e.preventDefault();

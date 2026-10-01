@@ -12,6 +12,7 @@ const PRO_LAUF = Math.min(Math.max(parseInt(process.env.WERBE_LABOR_ANZAHL || '6
 const FRISCH_TAGE = 14;
 export const STATE = 'automations/state/werbe-labor.json';
 const SEITE = 'zentrale/daten/werbe-labor.json';
+const PRODUKTE = 'zentrale/daten/produkte.json';
 
 export const schluessel = (p) => `${p.shopUrl || ''}/products/${p.handle || p.id}`;
 
@@ -25,6 +26,21 @@ export function auswahl(produkte, stand, n, jetzt = Date.now()) {
   return produkte.filter((p) => alter(p) > FRISCH_TAGE * 864e5 / 2).sort((a, b) => alter(b) - alter(a)).slice(0, n);
 }
 
+// Öffentliche Produktdaten der Shops für die Zentrale (IDs passen zum Shopify-Anschluss: "p" + Produkt-ID).
+export function produktListe(produkte) {
+  return produkte.map((p) => {
+    const preise = (p.variants || []).map((v) => Number(v.price)).filter((x) => x > 0);
+    const v = (p.variants || [])[0] || {};
+    const vergleich = Number(v.compare_at_price) || null, preis = preise.length ? Math.min(...preise) : 0;
+    return {
+      id: 'p' + p.id, name: p.title, preis, vergleich: vergleich && vergleich > preis ? vergleich : null, kosten: 0,
+      kategorie: p.product_type || p.shopName, shop: p.shopName, url: `${p.shopUrl}/products/${p.handle}`,
+      bild: (p.images && p.images[0] && p.images[0].src) || null,
+      info: ZLabor.produktKurz(p).info.slice(0, 300),
+    };
+  });
+}
+
 function speichern(pfad, daten) {
   mkdirSync(dirname(pfad), { recursive: true });
   writeFileSync(pfad, JSON.stringify(daten, null, 1));
@@ -33,6 +49,7 @@ function speichern(pfad, daten) {
 async function main() {
   const produkte = await aktiveProdukte();
   if (!produkte.length) { console.log('[werbe-labor] Keine Produkte lesbar - nichts zu tun.'); return; }
+  speichern(PRODUKTE, { stand: new Date().toISOString(), produkte: produktListe(produkte) });
   const stand = laden();
   const liste = auswahl(produkte, stand, PRO_LAUF);
   console.log(`[werbe-labor] ${liste.length} von ${produkte.length} Produkten werden getestet.`);

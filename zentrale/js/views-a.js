@@ -28,7 +28,7 @@
           <div class="kpi"><div class="l">Umsatz</div><div class="w">${eur0(k.umsatz)}</div>${delta(k.umsatz, v.umsatz)}</div>
           <div class="kpi"><div class="l">Bestellungen</div><div class="w">${zahl(k.bestellungen)}</div>${delta(k.bestellungen, v.bestellungen)}</div>
           <div class="kpi"><div class="l">Warenkorb</div><div class="w">${eur(k.warenkorb)}</div>${delta(k.warenkorb, v.warenkorb)}</div>
-          <div class="kpi"><div class="l">Rohertrag</div><div class="w">${eur0(k.rohertrag)}</div><div class="d leise">Marge ${zahl(k.margeProzent, 1)} %</div></div>
+          ${z.produkte.some((p) => p.kosten > 0) ? `<div class="kpi"><div class="l">Rohertrag</div><div class="w">${eur0(k.rohertrag)}</div><div class="d leise">Marge ${zahl(k.margeProzent, 1)} %</div></div>` : `<div class="kpi"><div class="l">Rohertrag</div><div class="w">–</div><div class="d"><button class="knopf klein" data-gehe="preise">Einkaufspreise eintragen</button></div></div>`}
           <div class="kpi"><div class="l">Prognose 4 Wochen</div><div class="w">${eur0(vier)}</div><div class="d ${p.trendProWoche >= 0 ? 'plus' : 'minus'}">${p.trendProWoche >= 0 ? '+' : ''}${eur0(p.trendProWoche)} je Woche</div></div>
         </div>
         <div class="raster r2">

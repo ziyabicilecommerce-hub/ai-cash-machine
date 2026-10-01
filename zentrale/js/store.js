@@ -134,30 +134,79 @@
 
   function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'produkt'; }
 
+  // Kurzer, nicht umkehrbarer Kunden-Schlüssel statt E-Mail (FNV-1a).
+  function pseudonym(text) {
+    let h = 0x811c9dc5;
+    for (const c of String(text).toLowerCase().trim()) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
+    return 'K-' + h.toString(36).toUpperCase();
+  }
+
+  // Shopify-Bestellexport (Admin → Bestellungen → Exportieren): weitere Artikel einer Bestellung
+  // stehen in Folgezeilen, in denen nur Name und Lineitem-Felder gefüllt sind.
+  function ausShopifyExport(zeilen) {
+    const merk = {};
+    return zeilen.map((z) => {
+      const nr = z.name || '';
+      const m = merk[nr] || (merk[nr] = {});
+      for (const k of ['created at', 'email', 'cancelled at', 'source']) if (z[k]) m[k] = z[k];
+      if (m['cancelled at']) return null;
+      return { bestellung: nr, datum: m['created at'] || '', kunde: m.email ? pseudonym(m.email) : 'Gast-' + nr.replace(/\W/g, ''), produkt: z['lineitem name'] || '', menge: z['lineitem quantity'] || '1', preis: z['lineitem price'] || '', kanal: (m.source && m.source !== 'web' ? m.source : 'shop') };
+    }).filter(Boolean);
+  }
+
+  function produktFinden(produkte, name) {
+    const n = name.toLowerCase();
+    let best = null;
+    for (const p of produkte) {
+      const pn = p.name.toLowerCase();
+      if (pn === n) return p;
+      if (n.startsWith(pn) && (!best || pn.length > best.name.length)) best = p;
+    }
+    return best;
+  }
+
   // Spalten: datum; kunde; produkt; menge; preis; kanal; pfad (optional, mit > getrennt); bestellung (optional)
+  // oder direkt der Shopify-Bestellexport.
   function bestellungenImportieren(zustand, text) {
-    const zeilen = csvZeilen(text), fehler = [];
-    const pnachName = {};
-    for (const p of zustand.produkte) pnachName[p.name.toLowerCase()] = p;
-    const gruppen = {};
+    let zeilen = csvZeilen(text);
+    const shopify = zeilen.length && 'lineitem name' in zeilen[0];
+    if (shopify) zeilen = ausShopifyExport(zeilen);
+    const fehler = [], gruppen = {};
     zeilen.forEach((z, i) => {
       const datum = datumNorm(z.datum), name = (z.produkt || '').trim(), preis = zahl(z.preis);
       if (!datum || !name || !preis) { fehler.push(`Zeile ${i + 2}: Datum, Produkt oder Preis fehlt`); return; }
-      let p = pnachName[name.toLowerCase()];
+      let p = produktFinden(zustand.produkte, name);
       if (!p) {
         let id = slug(name); while (zustand.produkte.some((x) => x.id === id)) id += '-2';
         p = { id, name, preis, kosten: zahl(z.kosten) || 0, kategorie: z.kategorie || 'Import' };
-        zustand.produkte.push(p); pnachName[name.toLowerCase()] = p;
+        zustand.produkte.push(p);
       }
-      const kunde = (z.kunde || z.email || 'Gast-' + (i + 2)).trim();
+      const kunde = (z.kunde || (z.email ? pseudonym(z.email) : '') || 'Gast-' + (i + 2)).trim();
       const key = z.bestellung || `${datum}|${kunde}`;
       const pfad = (z.pfad || z.kanal || 'direkt').split(/>|\|/).map((x) => x.trim().toLowerCase()).filter(Boolean);
       const g = gruppen[key] || (gruppen[key] = { id: 'I' + key, datum, kunde, pfad, kanal: pfad[pfad.length - 1], artikel: [] });
       g.artikel.push({ p: p.id, menge: Math.max(1, Math.round(zahl(z.menge) || 1)), preis });
     });
     const neu = Object.values(gruppen);
-    zustand.bestellungen.push(...neu);
-    return { importiert: neu.length, zeilen: zeilen.length, fehler };
+    const vorhanden = new Set(zustand.bestellungen.map((b) => b.id));
+    const wirklichNeu = neu.filter((b) => !vorhanden.has(b.id));
+    zustand.bestellungen.push(...wirklichNeu);
+    return { importiert: wirklichNeu.length, doppelt: neu.length - wirklichNeu.length, zeilen: zeilen.length, fehler, format: shopify ? 'Shopify-Export' : 'CSV' };
+  }
+
+  // Shop-Modus: echte Produkte aus den Shops, keine erfundenen Bestellungen.
+  function shopModus(liste, alt) {
+    const kosten = {};
+    for (const p of (alt && !alt.beispiel ? alt.produkte : [])) kosten[p.id] = p.kosten;
+    const basis = alt && !alt.beispiel ? JSON.parse(JSON.stringify(alt)) : { ...leer(), einstellungen: { ...leer().einstellungen, shopName: 'DeskRebel & Purivelle' }, faq: [
+      { frage: 'Ab wann ist der Versand kostenlos?', antwort: 'Innerhalb Deutschlands ist der Versand ab 55 € Bestellwert kostenlos, bei DeskRebel und bei Purivelle.' },
+      { frage: 'Gibt es Rabatt, wenn ich mehrere Sachen kaufe?', antwort: 'Bei DeskRebel ja: ab 2 Teilen gibt es 10 % und ab 3 Teilen 15 % Rabatt.' },
+    ] };
+    basis.beispiel = false;
+    basis.shopModus = true;
+    const bekannt = new Set(liste.map((p) => p.id));
+    basis.produkte = [...liste.map((p) => ({ ...p, ausShop: true, kosten: kosten[p.id] || p.kosten || 0 })), ...basis.produkte.filter((p) => !bekannt.has(p.id) && !p.ausShop)];
+    return basis;
   }
 
   function backupText(zustand) { return JSON.stringify(zustand); }
@@ -168,5 +217,5 @@
     return { ...leer(), ...d };
   }
 
-  root.ZS = { leer, laden, speichern, beispielDaten, csvZeilen, bestellungenImportieren, backupText, backupLaden, datumNorm, zahl };
+  root.ZS = { leer, laden, speichern, beispielDaten, csvZeilen, bestellungenImportieren, shopModus, pseudonym, backupText, backupLaden, datumNorm, zahl };
 })(typeof window !== 'undefined' ? window : globalThis);

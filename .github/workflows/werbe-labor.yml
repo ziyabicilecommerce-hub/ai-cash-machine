@@ -4,6 +4,11 @@ name: "Werbe-Labor"
 # Gewinner ab. Die Fabrik beginnt ihre Produkt-Videos danach mit dem getesteten Hook.
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'automations/werbe-labor.mjs'
+      - 'zentrale/js/labor.js'
   schedule:
     - cron: '50 3 * * *'
   workflow_dispatch:
@@ -45,7 +50,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          for pfad in automations/state/ zentrale/daten/werbe-labor.json; do
+          for pfad in automations/state/ zentrale/daten/werbe-labor.json zentrale/daten/produkte.json; do
             git add "$pfad" 2>/dev/null || true
           done
           if git diff --cached --quiet; then exit 0; fi

@@ -47,6 +47,7 @@
             ${!live && app.livePaket ? '<p><span class="chip mittel">Bereit</span> Deine Live-Daten liegen verschlüsselt bereit. Gib unter „Daten“ einmal dein Passwort ein.</p>' : ''}
             ${live ? `<p><span class="chip ok">Live</span> Shopify-Daten vom ${h(ZUI.datum(live.stand))}, automatisch geholt.</p>`
               : z.beispiel ? '<p><span class="chip mittel">Beispiel</span> Noch keine echten Daten. Der Autopilot rechnet mit einem erfundenen Shop.</p>'
+              : z.shopModus ? `<p><span class="chip ok">Shops</span> ${z.produkte.filter((p) => p.ausShop).length} echte Produkte aus DeskRebel und Purivelle, jeden Morgen automatisch aktualisiert. ${z.bestellungen.length ? `${z.bestellungen.length} Bestellungen hochgeladen.` : 'Noch keine Bestellungen.'}</p>`
               : '<p><span class="chip info">Import</span> Deine hochgeladenen Daten.</p>'}
             <p class="klein-text">Damit der Autopilot deine Bestellungen jeden Morgen selbst holt, muss dein Shop einmalig mit GitHub verbunden sein. Wie das geht, steht unter „Daten“.</p>
             <div class="reihe"><button class="knopf" data-gehe="daten">Zu den Daten</button></div></section>

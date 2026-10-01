@@ -6,11 +6,12 @@
 
   function umsatzAgent(z, ctx) {
     const f = [];
+    if (!z.bestellungen.length) return [{ prio: 'hoch', titel: 'Bestellungen hochladen: dann rechnen alle Agenten mit echten Zahlen', text: 'Shopify-Admin → Bestellungen → Exportieren → „Alle Bestellungen“ als CSV → hier unter „Daten“ hochladen. Dauert eine Minute, E-Mails werden dabei nicht gespeichert.', ziel: 'daten' }];
     const jetzt = ZA.kennzahlen(ZA.imZeitraum(z.bestellungen, ctx.heute, 28), z.produkte);
     const vorher = ZA.kennzahlen(ZA.imZeitraum(z.bestellungen, ZA.datumAus(ZA.tagZahl(ctx.heute) - 28), 28), z.produkte);
     if (vorher.umsatz) {
       const d = ((jetzt.umsatz - vorher.umsatz) / vorher.umsatz) * 100;
-      f.push({ prio: d < -10 ? 'hoch' : 'info', titel: `Umsatz 28 Tage: ${eur(jetzt.umsatz)} (${pct(d)})`, text: `Vorher ${eur(vorher.umsatz)}. Warenkorb ${eur(jetzt.warenkorb)}, Marge ${jetzt.margeProzent} %.`, ziel: 'uebersicht' });
+      f.push({ prio: d < -10 ? 'hoch' : 'info', titel: `Umsatz 28 Tage: ${eur(jetzt.umsatz)} (${pct(d)})`, text: `Vorher ${eur(vorher.umsatz)}. Warenkorb ${eur(jetzt.warenkorb)}${z.produkte.some((p) => p.kosten > 0) ? `, Marge ${jetzt.margeProzent} %` : ''}.`, ziel: 'uebersicht' });
     }
     if (ctx.prognose.punkte.length) {
       const vier = ZA.summe(ctx.prognose.punkte.slice(0, 4).map((p) => p.wert));

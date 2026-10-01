@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import '../../zentrale/js/labor.js';
 import { laborWinkel } from '../../automations/lib/laborWinkel.mjs';
-import { auswahl, schluessel } from '../../automations/werbe-labor.mjs';
+import { auswahl, schluessel, produktListe } from '../../automations/werbe-labor.mjs';
 
 const { ZLabor } = globalThis;
 const produkt = { title: 'LED-Lichtleiste', body_html: '<p>App-Steuerung, 16 Mio. Farben, kürzbar</p>', variants: [{ price: '29.99', compare_at_price: '39.99' }], handle: 'led', shopUrl: 'https://shop.test' };
@@ -82,4 +82,14 @@ test('auswahl: erst ungetestete, dann älteste, frische bleiben liegen', () => {
   const stand = { produkte: { [schluessel(p('alt'))]: { erstellt: '2026-09-01T00:00:00Z' }, [schluessel(p('frisch'))]: { erstellt: '2026-10-09T00:00:00Z' } } };
   const r = auswahl([p('frisch'), p('alt'), p('neu')], stand, 5, jetzt).map((x) => x.handle);
   assert.equal(JSON.stringify(r), JSON.stringify(['neu', 'alt']));
+});
+
+test('produktListe: günstigste Variante, echter Streichpreis, IDs passend zum Shopify-Anschluss', () => {
+  const [p] = produktListe([{ id: 42, title: 'PowerBand', handle: 'powerband', shopUrl: 'https://www.deskrebel.store', shopName: 'DeskRebel', body_html: '<p>Reißfest</p>', images: [{ src: 'https://cdn/x.jpg' }], variants: [{ price: '19.99', compare_at_price: '24.99' }, { price: '12.99' }] }]);
+  assert.equal(p.id, 'p42');
+  assert.equal(p.preis, 12.99);
+  assert.equal(p.vergleich, 24.99);
+  assert.equal(p.url, 'https://www.deskrebel.store/products/powerband');
+  assert.equal(p.bild, 'https://cdn/x.jpg');
+  assert.equal(p.info, 'Reißfest');
 });

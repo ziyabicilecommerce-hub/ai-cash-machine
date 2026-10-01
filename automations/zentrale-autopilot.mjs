@@ -42,7 +42,7 @@ function bericht(z, lauf, seite) {
   const top = lauf.aufgaben.filter((a) => a.prio !== 'info').slice(0, 5);
   return [
     'ZENTRALE · Tagesbericht',
-    `Umsatz 28 Tage: ${eur(k.umsatz)} · ${k.bestellungen} Bestellungen · Marge ${k.margeProzent} %`,
+    `Umsatz 28 Tage: ${eur(k.umsatz)} · ${k.bestellungen} Bestellungen${z.produkte.some((p) => p.kosten > 0) ? ` · Marge ${k.margeProzent} %` : ''}`,
     '',
     'Heute wichtig:',
     ...top.map((a, i) => `${i + 1}. ${a.titel}`),

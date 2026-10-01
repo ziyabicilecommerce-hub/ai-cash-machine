@@ -41,5 +41,21 @@
     uebernehmen(app, d);
   }
 
-  root.ZLive = { pruefen, entsperren, vergessen: merke.weg };
+  // Echte Produkte aus den Shops (vom täglichen Lauf abgelegt) ersetzen den Beispiel-Shop.
+  async function produkteLaden(app) {
+    let d;
+    try {
+      const res = await fetch('daten/produkte.json', { cache: 'no-store' });
+      if (!res.ok) return;
+      d = await res.json();
+    } catch (e) { return; }
+    const liste = Array.isArray(d && d.produkte) ? d.produkte.filter((p) => p && p.id && p.name) : [];
+    if (!liste.length || !(app.z.beispiel || app.z.shopModus)) return;
+    const fingerabdruck = (ps) => ps.filter((p) => p.ausShop || !app.z.shopModus).map((p) => `${p.id}:${p.preis}:${p.bild}`).sort().join('|');
+    if (app.z.shopModus && fingerabdruck(app.z.produkte) === fingerabdruck(liste.map((p) => ({ ...p, ausShop: true })))) return;
+    const warBeispiel = app.z.beispiel;
+    app.ersetzen(ZS.shopModus(liste, app.z), warBeispiel ? `Deine ${liste.length} Shop-Produkte sind geladen` : 'Produkte aktualisiert');
+  }
+
+  root.ZLive = { pruefen, entsperren, vergessen: merke.weg, produkteLaden };
 })(window);

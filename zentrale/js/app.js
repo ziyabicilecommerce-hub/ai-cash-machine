@@ -45,7 +45,11 @@
       for (const a of this.lauf.aufgaben) if (a.prio === 'hoch' && a.ziel) dringend[a.ziel] = (dringend[a.ziel] || 0) + 1;
       nav.innerHTML = BEREICHE.map(([id, name]) => `<button type="button" data-gehe="${id}" aria-current="${id === this.aktiv}">${name}${dringend[id] ? `<span class="zahl" title="dringende Punkte">${dringend[id]}</span>` : ''}</button>`).join('');
       const v = root.ZViews[this.aktiv], main = document.getElementById('inhalt');
-      const hinweis = this.z.beispiel ? `<div class="hinweis"><span>Du siehst Beispieldaten eines erfundenen Shops. Lade unter „Daten“ deine echten Bestellungen hoch.</span><button class="knopf klein" data-gehe="daten">Eigene Daten laden</button></div>` : '';
+      const hinweis = this.z.beispiel
+        ? `<div class="hinweis"><span>Du siehst Beispieldaten eines erfundenen Shops. Deine echten Produkte erscheinen hier automatisch, sobald der tägliche Lauf sie geholt hat.</span><button class="knopf klein" data-gehe="daten">Eigene Daten laden</button></div>`
+        : !this.z.bestellungen.length && this.aktiv !== 'daten' && this.aktiv !== 'labor'
+          ? `<div class="hinweis"><span>Deine ${this.z.produkte.length} Produkte sind da. Für Umsatz, Kunden und Prognose fehlen noch Bestellungen: Shopify → Bestellungen → Exportieren → hier hochladen. Dauert 1 Minute.</span><button class="knopf klein" data-gehe="daten">Bestellungen hochladen</button></div>`
+          : '';
       main.innerHTML = `<header class="kopf"><div><h1>${v.titel}</h1><p class="unterzeile">${v.unter}</p></div></header>${hinweis}<div id="ansicht"></div>`;
       v.zeichnen(document.getElementById('ansicht'), this);
     },
@@ -62,7 +66,7 @@
       if (ziel) { e.preventDefault(); app.gehe(ziel.dataset.gehe); }
     });
     app.autopilotStarten();
-    root.ZLive.pruefen(app);
+    root.ZLive.produkteLaden(app).then(() => root.ZLive.pruefen(app));
   }
 
   root.ZApp = app;
