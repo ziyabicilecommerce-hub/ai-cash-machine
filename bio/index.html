@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DeskRebel &amp; Purivelle</title>
+<meta name="description" content="Alle Produkte von DeskRebel und Purivelle und die neuesten Videos - der Link aus der Bio.">
+<style>
+:root { --bg: #f6f5f1; --karte: #ffffff; --text: #1d211c; --leise: #636b5f; --linie: #e2e4dc; --akzent: #1f6f4a; --knopf-text: #ffffff; }
+@media (prefers-color-scheme: dark) { :root { --bg: #111413; --karte: #1b201d; --text: #eef1ec; --leise: #a3ad9f; --linie: #2a312c; --akzent: #4cc38a; --knopf-text: #0d130f; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; }
+main { max-width: 560px; margin: 0 auto; padding: 28px 16px 40px; }
+h1 { font-size: 1.6rem; margin: 0 0 4px; text-align: center; letter-spacing: -0.5px; }
+.unter { text-align: center; color: var(--leise); margin: 0 0 22px; font-size: .95rem; }
+.shops { display: grid; gap: 10px; margin-bottom: 26px; }
+.shops a { display: block; text-align: center; padding: 14px; border-radius: 12px; background: var(--akzent); color: var(--knopf-text); font-weight: 650; text-decoration: none; }
+h2 { font-size: 1.05rem; margin: 26px 0 10px; }
+.raster { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.karte { background: var(--karte); border: 1px solid var(--linie); border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
+.karte img { width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--linie); display: block; }
+.karte .info { padding: 8px 10px 10px; }
+.karte .name { font-size: .85rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.karte .preis { font-weight: 700; margin-top: 4px; }
+.videos .karte img { aspect-ratio: 9 / 16; }
+.hinweis { color: var(--leise); font-size: .8rem; text-align: center; margin-top: 28px; }
+a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>DeskRebel &amp; Purivelle</h1>
+  <p class="unter">Fitness &amp; Massage für zuhause und das Büro</p>
+  <nav class="shops" aria-label="Shops">
+    <a href="https://www.deskrebel.store" rel="noopener">DeskRebel-Shop öffnen</a>
+    <a href="https://purivelle.store" rel="noopener">Purivelle-Shop öffnen</a>
+  </nav>
+  <section><h2>Neueste Videos</h2><div class="raster videos" id="videos"><p class="unter">Lädt …</p></div></section>
+  <section id="produkte"></section>
+  <p class="hinweis">Videos sind KI-generiert. Preise und Verfügbarkeit gelten im jeweiligen Shop.</p>
+</main>
+<script>
+(async function () {
+  const h = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const eur = (x) => (Number(x) || 0).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+  const sicher = (u) => { try { const x = new URL(u); return x.protocol === 'https:' ? x.href : ''; } catch (e) { return ''; } };
+  const holen = async (pfad) => { try { const r = await fetch(pfad, { cache: 'no-store' }); return r.ok ? r.json() : null; } catch (e) { return null; } };
+  const [p, f] = await Promise.all([holen('../zentrale/daten/produkte.json'), holen('../video-feed/videos.json')]);
+  const videos = ((f && f.videos) || []).filter((v) => (v.sprache || 'de') === 'de' && !v.kanal && v.format === 'hoch' && v.vorschauUrl)
+    .filter((v, i, l) => l.findIndex((x) => x.titel === v.titel) === i).slice(0, 6);
+  document.getElementById('videos').innerHTML = videos.length ? videos.map((v) => `<a class="karte" href="${h(sicher(v.url))}" rel="noopener"><img src="${h(sicher(v.vorschauUrl))}" alt="${h(v.titel)}" loading="lazy"><div class="info"><div class="name">${h(v.titel)}</div></div></a>`).join('') : '<p class="unter">Bald neue Videos.</p>';
+  const produkte = ((p && p.produkte) || []).filter((x) => sicher(x.url) && sicher(x.bild));
+  const shops = [...new Set(produkte.map((x) => x.shop))];
+  document.getElementById('produkte').innerHTML = shops.map((s) => `<h2>${h(s)}</h2><div class="raster">${produkte.filter((x) => x.shop === s).map((x) => `<a class="karte" href="${h(sicher(x.url))}" rel="noopener"><img src="${h(sicher(x.bild))}" alt="${h(x.name)}" loading="lazy"><div class="info"><div class="name">${h(x.name)}</div><div class="preis">${eur(x.preis)}</div></div></a>`).join('')}</div>`).join('');
+})();
+</script>
+</body>
+</html>
