@@ -1,0 +1,101 @@
+{
+ "stand": "2026-10-01T19:53:25.697Z",
+ "ziel": 5,
+ "agenten": [
+  {
+   "id": "labor",
+   "name": "Werbe-Labor",
+   "job": "testet Hooks an der Test-Jury",
+   "einheit": "Jury-Gewinner",
+   "leistung": 3,
+   "status": "laeuft"
+  },
+  {
+   "id": "fabrik",
+   "name": "Video-Fabrik",
+   "job": "baut Produkt-Videos",
+   "einheit": "Videos",
+   "leistung": 20.3,
+   "status": "laeuft"
+  },
+  {
+   "id": "pruefer",
+   "name": "Video-Prüfer",
+   "job": "gibt fehlerfreie Videos frei",
+   "einheit": "freigegeben",
+   "leistung": 5,
+   "status": "laeuft"
+  },
+  {
+   "id": "poster",
+   "name": "Poster",
+   "job": "postet auf allen verbundenen Kanälen",
+   "einheit": "gepostet",
+   "leistung": 0,
+   "status": "engpass"
+  },
+  {
+   "id": "sammler",
+   "name": "Zahlen-Sammler",
+   "job": "holt echte Aufrufe und Likes",
+   "einheit": "gemessen",
+   "leistung": 0,
+   "status": "wartet"
+  }
+ ],
+ "kanaele": [],
+ "laborQuote": 25,
+ "engpass": {
+  "id": "poster",
+  "name": "Poster"
+ },
+ "durchsatz": 0,
+ "plan": {
+  "fabrikAnzahl": 2,
+  "laborAnzahl": 9
+ },
+ "grund": "Kein Kanal postet - Videos stauen sich. Fabrik baut nur 2 pro Tag, das freie KI-Kontingent geht ins Labor (9 statt 6 Produkte vorgetestet).",
+ "aufgabe": {
+  "titel": "Einen Kanal verbinden",
+  "text": "Telegram oder Bluesky (5 Minuten): GitHub > Settings > Secrets > Actions. Danach postet der Poster automatisch.",
+  "ziel": "daten"
+ },
+ "kiAnfragen": {
+  "vorher": 33,
+  "nachher": 33
+ },
+ "kette": [
+  {
+   "id": "fabrik",
+   "name": "Video-Fabrik",
+   "kapazitaet": 20
+  },
+  {
+   "id": "pruefer",
+   "name": "Video-Prüfer",
+   "kapazitaet": 5
+  },
+  {
+   "id": "poster",
+   "name": "Poster",
+   "kapazitaet": 0
+  },
+  {
+   "id": "sammler",
+   "name": "Zahlen-Sammler",
+   "kapazitaet": 0
+  }
+ ],
+ "verlauf": [
+  {
+   "datum": "2026-10-01",
+   "durchsatz": 0,
+   "engpass": "poster",
+   "labor": 3,
+   "fabrik": 20.3,
+   "pruefer": 5,
+   "poster": 0,
+   "sammler": 0
+  }
+ ]
+}
