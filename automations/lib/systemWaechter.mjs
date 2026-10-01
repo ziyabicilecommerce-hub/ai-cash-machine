@@ -7,7 +7,7 @@ const STUNDE = 36e5;
 // Agenten, deren Fehlschlag automatisch einmal neu versucht wird (alle sind wiederholbar/idempotent).
 export const SELBSTHEILEN = new Set([
   '94 · Video-Fabrik', 'Werbe-Labor', 'Shop-Doktor + Produkt-Feeds', '99 · Direkt-Poster', 'Kommentar-Agent',
-  'Leistungs-Sammler + Trend-Radar', 'Engpass-Chef (Agenten-Fließband)', '100 · Fakten-Kanal', 'Deploy Site to GitHub Pages',
+  'Leistungs-Sammler + Trend-Radar', 'Engpass-Chef (Agenten-Fließband)', 'Community-Agent', '100 · Fakten-Kanal', 'Deploy Site to GitHub Pages',
 ]);
 
 // Erwarteter Rhythmus wichtiger Zeitplaene (Stunden) und ihre Datei: laenger ohne Lauf = "haengt".
@@ -15,7 +15,7 @@ export const RHYTHMUS = {
   '94 · Video-Fabrik': [30, 'automation-94-video-fabrik.yml'], 'Werbe-Labor': [30, 'werbe-labor.yml'],
   'Shop-Doktor + Produkt-Feeds': [30, 'shop-doktor.yml'], '99 · Direkt-Poster': [14, 'automation-99-direkt-poster.yml'],
   'Kommentar-Agent': [14, 'kommentar-agent.yml'], 'Leistungs-Sammler + Trend-Radar': [30, 'leistung-sammler.yml'],
-  'Engpass-Chef (Agenten-Fließband)': [30, 'engpass-chef.yml'],
+  'Engpass-Chef (Agenten-Fließband)': [30, 'engpass-chef.yml'], 'Community-Agent': [30, 'community-agent.yml'],
 };
 
 // laeufe: GitHub-API workflow_runs (neueste zuerst). Ergebnis je Workflow + Problemliste.
