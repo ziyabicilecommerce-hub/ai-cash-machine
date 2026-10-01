@@ -72,6 +72,13 @@ async function lernstand() {
   return { stand: l.stand, posts_mit_zahlen: l.posts, hook_typen: top(l.hookTyp), formate: top(l.format), kauf_psychologie: top(l.winkel) };
 }
 
+async function suchbegriffe({ produkt }) {
+  const d = await datei('zentrale/daten/suchbegriffe.json').catch(() => null);
+  if (!d) return { hinweis: 'Noch keine Daten - der Such-Radar läuft täglich mit dem Zahlen-Sammler.' };
+  const q = String(produkt || '').toLowerCase();
+  return { stand: d.stand, produkte: Object.values(d.produkte || {}).filter((e) => !q || e.name.toLowerCase().includes(q)).map((e) => ({ name: e.name, fragen: e.fragen, google: e.google.slice(0, 8), youtube: e.youtube.slice(0, 8), hashtags: e.hashtags })) };
+}
+
 async function kommentareStatistik({ tage }) {
   const k = await datei('zentrale/daten/kommentare.json').catch(() => ({ tage: {} }));
   return Object.entries(k.tage || {}).slice(-zahl(tage, 7, 1, 30)).map(([datum, t]) => ({ datum, beantwortet: t.antworten, an_dich_gemeldet: t.melden, spam_ignoriert: t.ignorieren }));
@@ -105,6 +112,7 @@ export const WERKZEUGE4 = [
   T('produkt_feeds', 'Links der Produkt-Feeds für Google Shopping, Facebook/Instagram und Pinterest.', {}, [], produktFeeds),
   T('werbe_labor', 'Getestete Gewinner-Hooks je Produkt aus dem Werbe-Labor.', { produkt: S('optional, Teil des Produktnamens') }, [], werbeLabor),
   T('lernstand', 'Was laut echten Zahlen wirkt: beste Hook-Typen, Formate und Kauf-Psychologie.', {}, [], lernstand),
+  T('suchbegriffe', 'Such-Radar: echte Google-/YouTube-Suchen und Fragen je Produkt (Video-Ideen, Hashtags).', { produkt: S('optional, Teil des Produktnamens') }, [], suchbegriffe),
   T('kommentare_statistik', 'Kommentar-Agent: beantwortete, gemeldete und ignorierte Kommentare je Tag.', { tage: N('Tage, Standard 7') }, [], kommentareStatistik),
   T('engpass_rechnen', 'Engpass-Rechnung (NEULAND): wo stockt ein Ablauf und was bringt eine Verschiebung von Stunden?', { auftraege: N('erwartete Aufträge'), schritte: { type: 'array', description: '[{id, name, verfuegbar, jeAuftrag}]', items: { type: 'object' } }, von: S('id Geber-Schritt'), nach: S('id Empfänger-Schritt'), menge: N('verschobene Stunden') }, ['auftraege', 'schritte'], engpassRechnen),
   T('agent_starten', `Startet einen Agenten sofort auf GitHub: ${Object.keys(AGENTEN).join(', ')}.`, { agent: S('Name des Agenten'), anzahl: N('optional, z. B. Videos'), ziel: N('optional, Engpass-Chef: Videos pro Tag') }, ['agent'], (a) => agentStarten(a)),

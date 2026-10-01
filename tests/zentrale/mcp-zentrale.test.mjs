@@ -6,7 +6,7 @@ import { WERKZEUGE4, AGENTEN, agentStarten } from '../../mcp-ultimativ/werkzeuge
 const w = (name) => WERKZEUGE4.find((x) => x.name === name);
 
 test('alle Zentrale-Werkzeuge haben Beschreibung und Schema', () => {
-  assert.equal(WERKZEUGE4.length, 10);
+  assert.equal(WERKZEUGE4.length, 11);
   for (const x of WERKZEUGE4) { assert.ok(x.description.length > 20, x.name); assert.equal(x.inputSchema.type, 'object'); }
 });
 

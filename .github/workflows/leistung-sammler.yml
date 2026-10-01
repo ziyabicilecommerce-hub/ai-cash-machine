@@ -38,11 +38,13 @@ jobs:
         run: node automations/trend-radar.mjs
         env:
           TREND_NISCHE: ${{ vars.TREND_NISCHE }}
+      - name: Such-Radar (echte Google-/YouTube-Suchen je Produkt)
+        run: node automations/such-radar.mjs
       - name: Speichern
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          for f in video-feed/posts.json automations/state/lernen.json automations/state/trends.json; do [ -f "$f" ] && git add "$f"; done
+          for f in video-feed/posts.json automations/state/lernen.json automations/state/trends.json zentrale/daten/suchbegriffe.json; do [ -f "$f" ] && git add "$f"; done
           if git diff --cached --quiet; then exit 0; fi
           git commit -qm "chore: Leistungs-Zahlen und Lernstand [skip ci]"
           for versuch in 1 2 3; do git pull -q --rebase --autostash origin "$GITHUB_REF_NAME" && git push -q && exit 0; sleep $((versuch * 5)); done
