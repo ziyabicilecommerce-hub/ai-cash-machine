@@ -13,6 +13,7 @@ import { PLATTFORMEN } from './lib/plattformen.mjs';
 import { threads, linkedin, discord, reddit, pinterest, dailymotion } from './lib/plattformen2.mjs';
 import { verbinderLaden } from './lib/verbinder.mjs';
 import { postMerken } from './lib/leistung.mjs';
+import { varianteFuer } from './lib/anfaenge.mjs';
 
 const ALLE = [...PLATTFORMEN, threads, linkedin, pinterest, dailymotion, discord, reddit];
 
@@ -85,30 +86,35 @@ async function main() {
   const bilanz = {};
   const erledigt = [];
   for (const { m, url, vorschauUrl } of videos) {
-    const datei = join(TMP, m.datei);
-    try {
-      await laden(url, datei);
-    } catch (err) {
-      console.log(`[99-direkt-poster] ✗ ${m.datei}: ${err.message}`);
-      continue;
-    }
-    const v = { ...m, url, vorschauUrl, link: FEED_SEITE, datei, dateiname: m.datei, sprache: m.sprache || 'de', text: `${m.titel}\n\n${m.caption || ''}\n\n${KI_HINWEIS}`.trim() };
+    // 3 Anfaenge: jeder Kanal bekommt (taeglich rotierend) eine andere Variante desselben Videos.
+    const zuteilung = aktiv.map((p, k) => ({ p, w: varianteFuer(m, k) }));
     let irgendwo = false;
-    for (const p of aktiv) {
-      if (!p.passt(v) || (z.zaehler[p.name] || 0) >= limit(p)) continue;
+    for (const dateiname of [...new Set(zuteilung.map((x) => x.w.datei))]) {
+      const datei = join(TMP, dateiname);
       try {
-        const ergebnis = await p.posten(v);
-        bilanz[p.name] = (bilanz[p.name] || 0) + 1;
-        z.zaehler[p.name] = (z.zaehler[p.name] || 0) + 1;
-        irgendwo = true;
-        console.log(`[99-direkt-poster] ✓ ${p.name}: "${m.titel}" → ${ergebnis}`);
-        postMerken(m, p.name, ergebnis); // fuer echte Zahlen spaeter (leistung-sammler.mjs)
+        await laden(url.replace(/[^/]+$/, encodeURIComponent(dateiname)), datei);
       } catch (err) {
-        console.log(`[99-direkt-poster] ✗ ${p.name}: "${m.titel}" → ${String(err.message).slice(0, 250)}`);
+        console.log(`[99-direkt-poster] ✗ ${dateiname}: ${err.message}`);
+        continue;
       }
+      for (const { p, w } of zuteilung.filter((x) => x.w.datei === dateiname)) {
+        const mv = { ...m, datei: dateiname, hookTyp: w.hookTyp };
+        const v = { ...mv, url, vorschauUrl, link: FEED_SEITE, datei, dateiname, sprache: m.sprache || 'de', text: `${m.titel}\n\n${m.caption || ''}\n\n${KI_HINWEIS}`.trim() };
+        if (!p.passt(v) || (z.zaehler[p.name] || 0) >= limit(p)) continue;
+        try {
+          const ergebnis = await p.posten(v);
+          bilanz[p.name] = (bilanz[p.name] || 0) + 1;
+          z.zaehler[p.name] = (z.zaehler[p.name] || 0) + 1;
+          irgendwo = true;
+          console.log(`[99-direkt-poster] ✓ ${p.name}: "${m.titel}"${dateiname !== m.datei ? ` (Anfang: ${w.hookTyp})` : ''} → ${ergebnis}`);
+          postMerken(mv, p.name, ergebnis); // fuer echte Zahlen spaeter (leistung-sammler.mjs)
+        } catch (err) {
+          console.log(`[99-direkt-poster] ✗ ${p.name}: "${m.titel}" → ${String(err.message).slice(0, 250)}`);
+        }
+      }
+      rmSync(datei, { force: true });
     }
     if (irgendwo) erledigt.push(m.datei);
-    rmSync(datei, { force: true });
   }
   if (Object.keys(bilanz).length) writeFileSync(ZAEHLER, JSON.stringify(z, null, 1) + '\n');
   if (merken && erledigt.length) {

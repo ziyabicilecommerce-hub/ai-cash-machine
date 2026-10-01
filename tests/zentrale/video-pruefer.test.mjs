@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync, execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync, copyFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -85,6 +85,10 @@ test('echter Lauf: repariert leise Videos, sortiert kaputte aus, plant Nachbau',
   ff([...bild, ...stimme(2.5), '-vf', "drawbox=c=black:t=fill:enable='lt(t,0.5)'", ...enc, join(v, 'schwarzstart.mp4')]);
   writeFileSync(join(v, 'standbild.jpg'), 'x');
   const manifest = ['gut', 'leise', 'stumm', 'quer', 'standbild', 'schwarzstart'].map((n) => ({ datei: `${n}.mp4`, vorschau: n === 'standbild' ? 'standbild.jpg' : '', thema: `Produkt ${n}`, titel: n, sprache: 'de', format: 'hoch' }));
+  // 3 Anfaenge: eine gute und eine stumme Variante am guten Video.
+  copyFileSync(join(v, 'gut.mp4'), join(v, 'gut-frage.mp4'));
+  copyFileSync(join(v, 'stumm.mp4'), join(v, 'gut-warnung.mp4'));
+  manifest[0].varianten = [{ datei: 'gut-frage.mp4', hookTyp: 'frage' }, { datei: 'gut-warnung.mp4', hookTyp: 'warnung' }];
   writeFileSync(join(dir, 'out', 'manifest.json'), JSON.stringify(manifest));
   const log = execFileSync(process.execPath, [SKRIPT], { cwd: dir, encoding: 'utf8' });
   const rest = JSON.parse(readFileSync(join(dir, 'out', 'manifest.json'), 'utf8')).map((e) => e.datei);
@@ -99,4 +103,7 @@ test('echter Lauf: repariert leise Videos, sortiert kaputte aus, plant Nachbau',
   assert.equal(state.laeufe.at(-1).repariert, 1);
   assert.match(log, /friert ein/);
   assert.match(log, /schwarzstart\.mp4 – Anfang schwarz/);
+  const gut = JSON.parse(readFileSync(join(dir, 'out', 'manifest.json'), 'utf8'))[0];
+  assert.equal(JSON.stringify(gut.varianten.map((x) => x.datei)), '["gut-frage.mp4"]', 'stumme Variante fliegt raus, Hauptvideo bleibt');
+  assert.ok(existsSync(join(dir, 'out', 'abgelehnt', 'gut-warnung.mp4')));
 });

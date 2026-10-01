@@ -37,7 +37,7 @@ function lautstaerkeReparieren(datei) {
 
 function wegraeumen(eintrag) {
   mkdirSync(ABGELEHNT, { recursive: true });
-  for (const name of [eintrag.datei, eintrag.vorschau, eintrag.untertitel, ...(eintrag.karussell || [])].filter(Boolean)) {
+  for (const name of [eintrag.datei, eintrag.vorschau, eintrag.untertitel, ...(eintrag.karussell || []), ...(eintrag.varianten || []).map((x) => x.datei)].filter(Boolean)) {
     const quelle = join(VIDEOS, name);
     if (existsSync(quelle)) renameSync(quelle, join(ABGELEHNT, name));
   }
@@ -52,6 +52,19 @@ function main() {
     if (!/\.mp4$/.test(e.datei || '') || !existsSync(datei)) { behalten.push(e); continue; }
     const info = { ...proben(datei), format: e.format };
     const b = bewerten(info, messen(datei, info.ton));
+    // 3 Anfaenge: jede Variante einzeln pruefen; kaputte Varianten fliegen raus, das Hauptvideo bleibt.
+    if (e.varianten?.length) e.varianten = e.varianten.filter((x) => {
+      const pfad = join(VIDEOS, x.datei);
+      if (!existsSync(pfad)) return false;
+      const vi = { ...proben(pfad), format: e.format };
+      const vb = bewerten(vi, messen(pfad, vi.ton));
+      if (vb.status === 'repariert') lautstaerkeReparieren(pfad);
+      if (vb.status !== 'abgelehnt') return true;
+      console.log(`[video-pruefer] ✗ Variante ${x.datei} – ${vb.gruende.join('; ')}`);
+      mkdirSync(ABGELEHNT, { recursive: true });
+      renameSync(pfad, join(ABGELEHNT, x.datei));
+      return false;
+    });
     ergebnis.push({ datei: e.datei, thema: e.thema, titel: e.titel, sprache: e.sprache, ...b });
     geprueft.push({ e, datei });
   }
