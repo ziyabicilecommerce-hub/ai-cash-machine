@@ -60,3 +60,23 @@ test('Feeds: je Variante ein Eintrag mit echtem Preis, gueltiges Google-XML und 
   assert.equal(c.length, 3);
   assert.match(c[0], /^id,item_group_id,title/);
 });
+
+test('Text-Vorschlaege: nur bei Anlass, gecacht je Text, ehrlich gepromptet, hoechstens max je Lauf', async () => {
+  const { braucht, vorschlagPrompt, bereinigen, vorschlaegeHolen, fingerabdruck } = await import('../../automations/lib/textVorschlaege.mjs');
+  assert.equal(braucht([{ was: 'Keine Meta-Beschreibung' }]), true);
+  assert.equal(braucht([{ was: 'Nur 2 Bild(er)' }]), false);
+  assert.match(vorschlagPrompt(produkt()), /nichts erfinden.*Heilversprechen/s);
+  assert.equal(bereinigen({ meta: 'zu kurz', beschreibung: 'x' }), null);
+  const gut = { meta: 'M'.repeat(150), beschreibung: 'Wort '.repeat(160) };
+  let aufrufe = 0;
+  const ki = async () => { aufrufe++; return gut; };
+  const faelle = [1, 2, 3].map((id) => ({ p: produkt({ id }) }));
+  const r = await vorschlaegeHolen(faelle, ki, { cache: {}, max: 2, pauseMs: 0 });
+  assert.equal(r.neu, 2);
+  assert.equal(aufrufe, 2);
+  const r2 = await vorschlaegeHolen(faelle, ki, { cache: r.cache, max: 5, pauseMs: 0 });
+  assert.equal(r2.neu, 1, 'schon vorhandene werden nicht neu angefragt');
+  assert.ok(r2.cache[`1:${fingerabdruck(produkt({ id: 1 }))}`]);
+  const kaputt = await vorschlaegeHolen(faelle, async () => { throw new Error('gedrosselt'); }, { cache: {}, pauseMs: 0 });
+  assert.equal(kaputt.neu, 0);
+});

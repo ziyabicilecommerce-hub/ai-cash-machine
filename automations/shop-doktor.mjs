@@ -8,6 +8,8 @@ import { SHOPS, shopName } from './lib/shopProdukte.mjs';
 import { produktPruefen, seitePruefen, shopPruefen, punktzahl, doppelteTitel, PFLICHT, schnappschuss, aenderungen } from './lib/shopDoktor.mjs';
 import { feedEintraege, googleXml, katalogCsv } from './lib/produktFeeds.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
+import { kiJson } from './lib/kiJson.mjs';
+import { braucht, vorschlaegeHolen, cacheLaden, cacheSpeichern, fingerabdruck } from './lib/textVorschlaege.mjs';
 
 const ZIEL = 'zentrale/daten/shop-doktor.json';
 const FEEDS = 'zentrale/feeds';
@@ -55,7 +57,7 @@ async function shopUntersuchen(shop) {
     const url = `${shop}/products/${p.handle}`;
     await warte(PAUSE);
     const befunde = [...produktPruefen(p, { titelDoppelt: doppelt.has(p.id) }), ...seitePruefen(await holen(url))];
-    ergebnisse.push({ titel: p.title, url, bild: p.images?.[0]?.src || '', punkte: punktzahl(befunde), befunde });
+    ergebnisse.push({ id: p.id, titel: p.title, url, bild: p.images?.[0]?.src || '', punkte: punktzahl(befunde), befunde });
   }
   const shopBefunde = shopPruefen({ start, robots: robots.status === 200, sitemap: sitemap.status === 200, pflicht });
   const schnitt = ergebnisse.length ? ergebnisse.reduce((s, x) => s + x.punkte, 0) / ergebnisse.length : 0;
@@ -74,6 +76,12 @@ async function main() {
     console.log(`[shop-doktor] ${s.name}: ${s.punkte}/100 · ${s.produkte.length} Produkte · Startseite ${s.ladezeitMs} ms · ${s.befunde.length + s.produkte.reduce((n, p) => n + p.befunde.length, 0)} Befunde`);
     shops.push(s);
   }
+  // Text-Vorschlaege (KI) fuer Produkte mit fehlender Meta-Beschreibung, kurzem Text oder Heilversprechen.
+  const faelle = shops.flatMap((s) => s.rohProdukte.map((p) => ({ p, e: s.produkte.find((x) => x.id === p.id) }))).filter((f) => f.e && braucht(f.e.befunde));
+  const { cache, neu: neueTexte } = await vorschlaegeHolen(faelle, (prompt) => kiJson(prompt, { maxTokens: 1200 }), { cache: cacheLaden(), pauseMs: Number(process.env.SHOP_DOKTOR_KI_PAUSE_MS ?? 15000) });
+  for (const { p, e } of faelle) { const v = cache[`${p.id}:${fingerabdruck(p)}`]; if (v) e.vorschlag = { meta: v.meta, beschreibung: v.beschreibung }; }
+  cacheSpeichern(cache);
+  if (faelle.length) console.log(`[shop-doktor] Text-Vorschläge: ${faelle.filter((f) => f.e.vorschlag).length}/${faelle.length} Produkte (${neueTexte} neu)`);
   // Feeds aus allen Shops (je Shop eigene Dateien + eine gemeinsame).
   mkdirSync(FEEDS, { recursive: true });
   const feeds = {};
