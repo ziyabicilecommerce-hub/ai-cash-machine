@@ -44,5 +44,5 @@ export const winkelAus = (text) => String(text || '').match(/Kauf-Psychologie: (
 export async function skriptMitFormat(p, winkel, bauer) {
   const f = formateAn() ? formatWaehlen(p, { mitHook: !!winkel }) : { name: '', anweisung: '' };
   const s = await bauer(p, [winkel, f.anweisung, trendHinweis(), suchHinweis(p)].filter(Boolean).join(' '));
-  return { ...s, formatName: f.name, winkelName: winkelAus(winkel) };
+  return s.ohneKi ? { ...s, formatName: '', winkelName: '' } : { ...s, formatName: f.name, winkelName: winkelAus(winkel) };
 }
