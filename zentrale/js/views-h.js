@@ -70,7 +70,10 @@
         <pre style="white-space:pre-wrap">claude mcp add cashmachine -e GITHUB_TOKEN=DEIN_TOKEN -- node mcp-ultimativ/server.mjs</pre>
         <p class="klein-text">Lesen geht ohne Token. Zum Starten: GitHub > Settings > Developer settings > Fine-grained token, nur dieses Repo, Berechtigung „Actions: Read and write“.</p></section>`;
       const gesund = system ? `<section class="box" style="margin-top:16px"><h2>System-Gesundheit · ${system.ok}/${system.gesamt} Workflows ok</h2>
-        ${system.probleme.length ? `<ul class="aufgaben">${system.probleme.map((p) => `<li class="aufgabe" data-prio="${p.art === 'absturz' ? 'hoch' : 'mittel'}"><span class="t">${h(p.name)}<span class="klein-text"> · ${h(p.text)}</span></span>${p.url ? `<a class="knopf klein" href="${h(p.url)}" target="_blank" rel="noopener">Ansehen</a>` : ''}</li>`).join('')}</ul>` : '<p class="plus">Alles läuft sauber.</p>'}
+        ${system.probleme.length ? [['Braucht dich', (p) => !p.diagnose?.selbst, 'hoch'], ['Erledigt das System selbst', (p) => p.diagnose?.selbst, 'info']].map(([titel, f, prio]) => {
+          const l = system.probleme.filter(f);
+          return l.length ? `<p class="klein-text"><strong>${titel} (${l.length})</strong></p><ul class="aufgaben">${l.map((p) => `<li class="aufgabe" data-prio="${p.diagnose?.selbst ? prio : p.art === 'absturz' ? 'hoch' : 'mittel'}"><span class="t">${h(p.name)}<span class="klein-text"> · ${h(p.diagnose ? p.diagnose.text : p.text)}${p.diagnose ? `<br>→ ${h(p.diagnose.loesung)}${p.diagnose.beleg ? `<br><code>${h(p.diagnose.beleg)}</code>` : ''}` : ''}</span></span>${p.url ? `<a class="knopf klein" href="${h(p.url)}" target="_blank" rel="noopener">Log</a>` : ''}</li>`).join('')}</ul>` : '';
+        }).join('') : '<p class="plus">Alles läuft sauber.</p>'}
         ${system.neugestartet?.length ? `<p class="klein-text">Automatisch neu gestartet: ${system.neugestartet.map(h).join(', ')}</p>` : ''}
         <p class="klein-text">Der System-Wächter prüft alle 3 Stunden alle Workflows und startet abgestürzte Agenten einmal neu. Stand ${h(ZUI.datum(String(system.stand).slice(0, 10)))}.</p></section>` : '';
       el.innerHTML = fliessband() + gesund + mcp + werkstatt();
