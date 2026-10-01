@@ -30,32 +30,67 @@ a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
 <body>
 <main>
   <h1>DeskRebel &amp; Purivelle</h1>
-  <p class="unter">Fitness &amp; Massage für zuhause und das Büro</p>
+  <p class="unter" data-t="unter">Fitness &amp; Massage für zuhause und das Büro</p>
+  <p style="text-align:center;margin:-12px 0 18px"><label class="unter" style="margin:0">🌐 <select id="sprache" aria-label="Sprache / Language"></select></label></p>
   <nav class="shops" aria-label="Shops">
-    <a href="https://www.deskrebel.store" rel="noopener">DeskRebel-Shop öffnen</a>
-    <a href="https://purivelle.store" rel="noopener">Purivelle-Shop öffnen</a>
+    <a href="https://www.deskrebel.store" rel="noopener" data-t="shop" data-shop="DeskRebel">DeskRebel-Shop öffnen</a>
+    <a href="https://purivelle.store" rel="noopener" data-t="shop" data-shop="Purivelle">Purivelle-Shop öffnen</a>
   </nav>
   <nav class="shops" id="community" aria-label="Community" hidden></nav>
-  <section><h2>Neueste Videos</h2><div class="raster videos" id="videos"><p class="unter">Lädt …</p></div></section>
+  <section><h2 data-t="videos">Neueste Videos</h2><div class="raster videos" id="videos"><p class="unter">…</p></div></section>
   <section id="produkte"></section>
-  <p class="hinweis">Videos sind KI-generiert. Preise und Verfügbarkeit gelten im jeweiligen Shop.</p>
+  <p class="hinweis" data-t="hinweis">Videos sind KI-generiert. Preise und Verfügbarkeit gelten im jeweiligen Shop.</p>
 </main>
 <script>
 (async function () {
+  // Mehrsprachig: Sprache aus ?lang=, sonst aus dem Browser - Texte, Preise und Videos in dieser Sprache.
+  const T = {
+    de: { unter: 'Fitness & Massage für zuhause und das Büro', shop: '{s}-Shop öffnen', videos: 'Neueste Videos', leer: 'Bald neue Videos.', hinweis: 'Videos sind KI-generiert. Preise und Verfügbarkeit gelten im jeweiligen Shop.', community: 'Komm in die Community „{n}“', beitreten: '{k}-Community beitreten - kostenlos' },
+    en: { unter: 'Fitness & massage for home and office', shop: 'Open the {s} shop', videos: 'Latest videos', leer: 'New videos coming soon.', hinweis: 'Videos are AI-generated. Prices and availability as shown in each shop.', community: 'Join the community "{n}"', beitreten: 'Join on {k} - free' },
+    es: { unter: 'Fitness y masaje para casa y oficina', shop: 'Abrir la tienda {s}', videos: 'Vídeos recientes', leer: 'Pronto nuevos vídeos.', hinweis: 'Los vídeos están generados con IA. Precios y disponibilidad según cada tienda.', community: 'Únete a la comunidad "{n}"', beitreten: 'Unirse en {k} - gratis' },
+    fr: { unter: 'Fitness & massage pour la maison et le bureau', shop: 'Ouvrir la boutique {s}', videos: 'Dernières vidéos', leer: 'Nouvelles vidéos bientôt.', hinweis: 'Vidéos générées par IA. Prix et disponibilité selon chaque boutique.', community: 'Rejoins la communauté « {n} »', beitreten: 'Rejoindre sur {k} - gratuit' },
+    it: { unter: 'Fitness e massaggio per casa e ufficio', shop: 'Apri il negozio {s}', videos: 'Ultimi video', leer: 'Presto nuovi video.', hinweis: 'Video generati con IA. Prezzi e disponibilità come indicato in ogni negozio.', community: 'Entra nella community "{n}"', beitreten: 'Unisciti su {k} - gratis' },
+    pt: { unter: 'Fitness e massagem para casa e escritório', shop: 'Abrir a loja {s}', videos: 'Vídeos recentes', leer: 'Novos vídeos em breve.', hinweis: 'Vídeos gerados por IA. Preços e disponibilidade conforme cada loja.', community: 'Entra na comunidade "{n}"', beitreten: 'Entrar no {k} - grátis' },
+    nl: { unter: 'Fitness & massage voor thuis en op kantoor', shop: 'Open de {s}-shop', videos: 'Nieuwste video\'s', leer: 'Binnenkort nieuwe video\'s.', hinweis: 'Video\'s zijn met AI gemaakt. Prijzen en beschikbaarheid volgens de shop.', community: 'Word lid van de community "{n}"', beitreten: 'Lid worden op {k} - gratis' },
+    pl: { unter: 'Fitness i masaż w domu i w biurze', shop: 'Otwórz sklep {s}', videos: 'Najnowsze filmy', leer: 'Wkrótce nowe filmy.', hinweis: 'Filmy wygenerowane przez AI. Ceny i dostępność według sklepu.', community: 'Dołącz do społeczności „{n}”', beitreten: 'Dołącz na {k} - za darmo' },
+    tr: { unter: 'Ev ve ofis için fitness ve masaj', shop: '{s} mağazasını aç', videos: 'En yeni videolar', leer: 'Yakında yeni videolar.', hinweis: 'Videolar yapay zekâ ile üretilmiştir. Fiyat ve stok mağazaya göre geçerlidir.', community: '"{n}" topluluğuna katıl', beitreten: '{k} üzerinden katıl - ücretsiz' },
+    ru: { unter: 'Фитнес и массаж для дома и офиса', shop: 'Открыть магазин {s}', videos: 'Новые видео', leer: 'Скоро новые видео.', hinweis: 'Видео созданы ИИ. Цены и наличие — как в магазине.', community: 'Вступай в сообщество «{n}»', beitreten: 'Вступить в {k} — бесплатно' },
+    uk: { unter: 'Фітнес і масаж для дому та офісу', shop: 'Відкрити магазин {s}', videos: 'Нові відео', leer: 'Незабаром нові відео.', hinweis: 'Відео створені ШІ. Ціни та наявність — як у магазині.', community: 'Приєднуйся до спільноти «{n}»', beitreten: 'Приєднатися в {k} — безкоштовно' },
+    ar: { unter: 'لياقة وتدليك للمنزل والمكتب', shop: 'افتح متجر {s}', videos: 'أحدث الفيديوهات', leer: 'فيديوهات جديدة قريباً.', hinweis: 'الفيديوهات مُنشأة بالذكاء الاصطناعي. الأسعار والتوفر حسب كل متجر.', community: 'انضم إلى مجتمع "{n}"', beitreten: 'انضم عبر {k} - مجاناً' },
+  };
+  // Feed-Codes mit Region (wie in automations/lib/weltSprachen.mjs) <-> Browser-Sprachen.
+  const REGION = { mx: 'es-MX', pp: 'pt-PT', eg: 'ar-EG', tw: 'zh-TW', fil: 'fil' };
+  const ausBrowser = (l) => { const x = String(l || '').toLowerCase(); return x.startsWith('es-') && x !== 'es-es' ? 'mx' : x === 'pt-pt' ? 'pp' : x === 'ar-eg' ? 'eg' : /^zh-(tw|hk)/.test(x) ? 'tw' : x.startsWith('fil') || x.startsWith('tl') ? 'fil' : x.split('-')[0]; };
+  const bcp = (c) => REGION[c] || c;
+  const RTL = ['ar', 'eg', 'he', 'fa', 'ur'];
   const h = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const eur = (x) => (Number(x) || 0).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
   const sicher = (u) => { try { const x = new URL(u); return x.protocol === 'https:' ? x.href : ''; } catch (e) { return ''; } };
   const holen = async (pfad) => { try { const r = await fetch(pfad, { cache: 'no-store' }); return r.ok ? r.json() : null; } catch (e) { return null; } };
   const [p, f, c] = await Promise.all([holen('../zentrale/daten/produkte.json'), holen('../video-feed/videos.json'), holen('../zentrale/daten/community.json')]);
+  const alle = ((f && f.videos) || []).filter((v) => !v.kanal && v.format === 'hoch' && v.vorschauUrl && (v.sprache || 'de') !== 'int');
+  const vorhanden = [...new Set(['de', ...alle.map((v) => v.sprache || 'de')])];
+  const wunsch = new URLSearchParams(location.search).get('lang') || (navigator.languages || [navigator.language]).map(ausBrowser).find((x) => vorhanden.includes(x) || T[x]) || 'de';
+  const sel = document.getElementById('sprache');
+  sel.innerHTML = vorhanden.map((x) => { let n = x; try { n = new Intl.DisplayNames([bcp(x)], { type: 'language' }).of(bcp(x)) || x; } catch (e) { /* Code zeigen */ } return `<option value="${h(x)}"${x === wunsch ? ' selected' : ''}>${h(n)}</option>`; }).join('');
+  sel.addEventListener('change', () => { const u = new URL(location.href); u.searchParams.set('lang', sel.value); location.href = u.href; });
+
+  const basis = T[wunsch] ? wunsch : T[bcp(wunsch).split('-')[0]] ? bcp(wunsch).split('-')[0] : 'en';
+  const t = (k, w = {}) => T[basis][k].replace(/\{(\w)\}/g, (_, x) => w[x] ?? '');
+  document.documentElement.lang = bcp(wunsch);
+  document.documentElement.dir = RTL.includes(wunsch) ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t(el.dataset.t, { s: el.dataset.shop || '' }); });
+  const eur = (x) => (Number(x) || 0).toLocaleString(bcp(wunsch), { style: 'currency', currency: 'EUR' });
+
   const links = [['telegram', 'Telegram'], ['discord', 'Discord']].filter(([k]) => c && c.links && sicher(c.links[k]));
   if (links.length) {
     const el = document.getElementById('community');
-    el.innerHTML = `<h2 style="text-align:center;margin:0">Komm in die Community „${h(c.name)}“</h2>` + links.map(([k, n]) => `<a href="${h(sicher(c.links[k]))}" rel="noopener">${n}-Community beitreten - kostenlos</a>`).join('');
+    el.innerHTML = `<h2 style="text-align:center;margin:0">${h(t('community', { n: c.name }))}</h2>` + links.map(([k, n]) => `<a href="${h(sicher(c.links[k]))}" rel="noopener">${h(t('beitreten', { k: n }))}</a>`).join('');
     el.hidden = false;
   }
-  const videos = ((f && f.videos) || []).filter((v) => (v.sprache || 'de') === 'de' && !v.kanal && v.format === 'hoch' && v.vorschauUrl)
-    .filter((v, i, l) => l.findIndex((x) => x.titel === v.titel) === i).slice(0, 6);
-  document.getElementById('videos').innerHTML = videos.length ? videos.map((v) => `<a class="karte" href="${h(sicher(v.url))}" rel="noopener"><img src="${h(sicher(v.vorschauUrl))}" alt="${h(v.titel)}" loading="lazy"><div class="info"><div class="name">${h(v.titel)}</div></div></a>`).join('') : '<p class="unter">Bald neue Videos.</p>';
+  // Videos in der gewaehlten Sprache, sonst Englisch, sonst Deutsch.
+  const inSprache = (code) => alle.filter((v) => (v.sprache || 'de') === code).filter((v, i, l) => l.findIndex((x) => x.titel === v.titel) === i);
+  const videos = [wunsch, 'en', 'de'].map(inSprache).find((l) => l.length) || [];
+  document.getElementById('videos').innerHTML = videos.length ? videos.slice(0, 6).map((v) => `<a class="karte" href="${h(sicher(v.url))}" rel="noopener"><img src="${h(sicher(v.vorschauUrl))}" alt="${h(v.titel)}" loading="lazy"><div class="info"><div class="name">${h(v.titel)}</div></div></a>`).join('') : `<p class="unter">${h(t('leer'))}</p>`;
   const produkte = ((p && p.produkte) || []).filter((x) => sicher(x.url) && sicher(x.bild));
   const shops = [...new Set(produkte.map((x) => x.shop))];
   document.getElementById('produkte').innerHTML = shops.map((s) => `<h2>${h(s)}</h2><div class="raster">${produkte.filter((x) => x.shop === s).map((x) => `<a class="karte" href="${h(sicher(x.url))}" rel="noopener"><img src="${h(sicher(x.bild))}" alt="${h(x.name)}" loading="lazy"><div class="info"><div class="name">${h(x.name)}</div><div class="preis">${eur(x.preis)}</div></div></a>`).join('')}</div>`).join('');

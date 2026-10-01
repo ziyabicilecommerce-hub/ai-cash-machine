@@ -100,6 +100,8 @@ export function vorfilter(t) {
   const s = String(t || '').toLowerCase();
   if (!s.trim() || /https?:\/\/|www\.|t\.me\/|whatsapp|dm me|follow me|check my|crypto|bitcoin|onlyfans|\bverdien(e|st) \d+/.test(s)) return 'spam';
   if (/schmerz|arzt|krank|bandscheib|arthrose|schwanger|verletz|operation|\bop\b|ischias|rheuma|medizin/.test(s)) return 'gesundheit';
+  // International: Gesundheitsthemen auch auf Englisch, Spanisch, Franzoesisch, Italienisch, Portugiesisch, Tuerkisch, Polnisch, Niederlaendisch.
+  if (/\bpain|doctor|injur|surgery|pregnan|sciatica|arthritis|hernia|disc (problem|issue)|medical|dolor|médic|medic[oa]\b|lesi[oó]n|embaraz|douleur|médecin|bless[ée]|enceinte|dolore|infortun|incinta|gravidez|grávida|ağrı|doktor|hamile|ból|lekarz|kontuzj|ciąż|pijn|dokter|blessure|zwanger/.test(s)) return 'gesundheit';
   return '';
 }
 
@@ -107,7 +109,7 @@ export function antwortPrompt(k, post) {
   return `Du betreust die Kommentare eines Online-Shops. Produkt im Video: "${post.titel}". Infos: "${String(post.caption || '').slice(0, 500)}". Link: ${post.shopLink || '(keiner)'}.\n` +
     `Kommentar von ${k.autor}: "${String(k.text).slice(0, 500)}"\n` +
     'Ordne den Kommentar ein: "kauf" (Frage zu Preis/Kauf/Versand/Größe), "frage" (Frage zum Produkt), "lob", "kritik" (Beschwerde, Ärger, Problem mit Bestellung), "sonstiges". ' +
-    'Bei kauf/frage/lob schreibe eine kurze, freundliche Antwort auf Deutsch (Du, max. 2 Sätze, 1 Emoji erlaubt). Nur Fakten aus den Infos, nichts erfinden (keine Lieferzeiten, Rabatte oder Eigenschaften, die nicht dastehen). ' +
+    'Bei kauf/frage/lob schreibe eine kurze, freundliche Antwort IN DER SPRACHE DES KOMMENTARS (auf Deutsch mit Du; max. 2 Sätze, 1 Emoji erlaubt). Nur Fakten aus den Infos, nichts erfinden (keine Lieferzeiten, Rabatte oder Eigenschaften, die nicht dastehen). ' +
     'Keine Heilversprechen. Bei kauf den Link anhängen. Wenn du die Antwort nicht sicher weißt: Kategorie "sonstiges". ' +
     'Antworte NUR mit JSON: {"kategorie":"...","antwort":"..."}';
 }

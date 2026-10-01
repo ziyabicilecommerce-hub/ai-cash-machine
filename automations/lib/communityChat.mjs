@@ -27,6 +27,21 @@ export function produktFuer(text, produkte) {
   return best;
 }
 
+// Begruessung in der Sprache des Nutzers (Telegram liefert language_code). Beitraege sind auf Deutsch,
+// Fragen beantwortet der Bot in jeder Sprache.
+const HALLO = {
+  en: (n) => `Welcome to the community, ${n}! 👋 Our daily posts are in German - but ask anything in your language, we answer in yours.`,
+  es: (n) => `¡Bienvenido/a a la comunidad, ${n}! 👋 Publicamos en alemán, pero pregunta en tu idioma y te respondemos en el tuyo.`,
+  fr: (n) => `Bienvenue dans la communauté, ${n} ! 👋 Nos posts sont en allemand - pose tes questions dans ta langue, on répond dans la tienne.`,
+  it: (n) => `Benvenuto/a nella community, ${n}! 👋 Pubblichiamo in tedesco, ma chiedi pure nella tua lingua: rispondiamo nella tua.`,
+  pt: (n) => `Bem-vindo/a à comunidade, ${n}! 👋 Publicamos em alemão, mas pergunte no seu idioma e respondemos no seu.`,
+  tr: (n) => `Topluluğa hoş geldin, ${n}! 👋 Paylaşımlarımız Almanca - ama sorularını kendi dilinde sor, senin dilinde cevaplarız.`,
+  pl: (n) => `Witaj w społeczności, ${n}! 👋 Publikujemy po niemiecku, ale pytaj w swoim języku - odpowiemy w Twoim.`,
+  nl: (n) => `Welkom in de community, ${n}! 👋 Onze posts zijn in het Duits - stel je vragen gerust in je eigen taal, we antwoorden in de jouwe.`,
+  ar: (n) => `أهلاً بك في المجتمع يا ${n}! 👋 منشوراتنا بالألمانية، لكن اسأل بلغتك وسنرد بلغتك.`,
+};
+export const sprache = (from) => String(from?.language_code || 'de').slice(0, 2).toLowerCase();
+
 const istFrage = (m, bot) => /\?/.test(m.text) || (bot && m.text.toLowerCase().includes(`@${bot.toLowerCase()}`)) || m.reply_to_message?.from?.username === bot;
 
 // Aus Telegram-Updates werden Aktionen: willkommen | antworten | melden. ki = kiJson.
@@ -40,12 +55,17 @@ export async function verarbeiten(updates, { produkte = [], ki, bot = env('TELEG
     if (String(chat) === eigenerChat) continue; // dein privater Melde-Chat
     const neu = (m.new_chat_members || []).filter((x) => !x.is_bot);
     if (neu.length) {
-      aktionen.push({ typ: 'willkommen', chat, text: `Willkommen in der Community, ${neu.map((x) => x.first_name || 'du').join(', ')}! 👋\nDiese Woche läuft die ${ch.titel}: ${ch.text}\nErzähl gern kurz: Was willst du erreichen?` });
+      const de = neu.filter((x) => sprache(x) === 'de');
+      if (de.length) aktionen.push({ typ: 'willkommen', chat, text: `Willkommen in der Community, ${de.map((x) => x.first_name || 'du').join(', ')}! 👋\nDiese Woche läuft die ${ch.titel}: ${ch.text}\nErzähl gern kurz: Was willst du erreichen?` });
+      for (const x of neu.filter((y) => !de.includes(y))) aktionen.push({ typ: 'willkommen', chat, text: (HALLO[sprache(x)] || HALLO.en)(x.first_name || '') });
       continue;
     }
     if (!m.text || m.from?.is_bot || (m.text.startsWith('/') && m.text !== '/start')) continue;
     const privat = m.chat.type === 'private';
-    if (m.text === '/start') { if (privat) aktionen.push({ typ: 'antworten', chat, text: `Hey ${m.from?.first_name || ''}! 👋 Hier bekommst du Antworten zu Training, Haltung und Entspannung - und zu unseren Produkten. Frag einfach.`.replace('Hey !', 'Hey!') }); continue; }
+    if (m.text === '/start') {
+      if (privat) aktionen.push({ typ: 'antworten', chat, text: sprache(m.from) === 'de' ? `Hey ${m.from?.first_name || ''}! 👋 Hier bekommst du Antworten zu Training, Haltung und Entspannung - und zu unseren Produkten. Frag einfach.`.replace('Hey !', 'Hey!') : (HALLO[sprache(m.from)] || HALLO.en)(m.from?.first_name || '') });
+      continue;
+    }
     if (!privat && !istFrage(m, bot)) continue;
     if (aktionen.filter((a) => a.typ === 'antworten').length >= MAX_ANTWORTEN) break;
     const p = produktFuer(m.text, produkte);
