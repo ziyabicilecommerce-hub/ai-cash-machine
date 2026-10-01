@@ -53,11 +53,18 @@ jobs:
           VERBINDER_PASSWORT: ${{ secrets.VERBINDER_PASSWORT }}
           VERBINDER_URL: ${{ vars.VERBINDER_URL }}
           POLLINATIONS_MAX_TOKENS_PRO_TAG: ${{ secrets.POLLINATIONS_MAX_TOKENS_PRO_TAG }}
+      - name: Community-Chat (Telegram-Gruppe begrüßen und Fragen beantworten)
+        continue-on-error: true
+        run: node automations/community-chat.mjs
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          POLLINATIONS_MAX_TOKENS_PRO_TAG: ${{ secrets.POLLINATIONS_MAX_TOKENS_PRO_TAG }}
       - name: Speichern
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          for f in automations/state/kommentare.json zentrale/daten/kommentare.json; do [ -f "$f" ] && git add "$f"; done
+          for f in automations/state/kommentare.json zentrale/daten/kommentare.json automations/state/community-chat.json zentrale/daten/community-chat.json; do [ -f "$f" ] && git add "$f"; done
           if git diff --cached --quiet; then exit 0; fi
           git commit -qm "chore: Kommentar-Agent [skip ci]"
           for versuch in 1 2 3; do git pull -q --rebase --autostash origin "$GITHUB_REF_NAME" && git push -q && exit 0; sleep $((versuch * 5)); done

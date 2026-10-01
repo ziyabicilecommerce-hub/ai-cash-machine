@@ -55,7 +55,7 @@ export const ROUTINEN = [
 
 // Wochenplan nach UTC-Wochentag (0 = Sonntag).
 export const WOCHENPLAN = ['rueckblick', 'challenge', 'tipp', 'umfrage', 'frage', 'fortschritt', 'routine'];
-const woche = (d) => Math.floor((d.getTime() / 864e5 + 3) / 7); // Wochen seit 1970, Wechsel am Montag
+export const woche = (d) => Math.floor((d.getTime() / 864e5 + 3) / 7); // Wochen seit 1970, Wechsel am Montag
 
 // Beitrag fuer einen Tag. produkte: [{name, shop, url}] fuer den einen Produkt-Beitrag (Samstag).
 export function beitrag(datum = new Date(), { produkte = [], ergebnis = null, communityName = 'Fit & entspannt im Alltag' } = {}) {

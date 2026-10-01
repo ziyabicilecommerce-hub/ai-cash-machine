@@ -5,11 +5,12 @@
   const V = (root.ZViews = root.ZViews || {});
   const ART = { challenge: '🏁 Challenge', tipp: '💡 Tipp', umfrage: '📊 Umfrage', frage: '💬 Frage', fortschritt: '🔥 Fortschritt', routine: '⏱️ Routine', rueckblick: '📅 Rückblick' };
   const BIO = new URL('../bio/', location.href).href;
-  let daten, geladen = false;
+  let daten, chat = null, geladen = false;
 
   async function laden(app) {
     geladen = true;
     try { const r = await fetch('daten/community.json', { cache: 'no-store' }); daten = r.ok ? await r.json() : null; } catch (e) { daten = null; }
+    try { const r = await fetch('daten/community-chat.json', { cache: 'no-store' }); chat = r.ok ? await r.json() : null; } catch (e) { chat = null; }
     if (app.aktiv === 'community') app.zeichnen();
   }
 
@@ -29,6 +30,9 @@
           <li>Einladungs-Links als Variablen <code>COMMUNITY_TELEGRAM_LINK</code> / <code>COMMUNITY_DISCORD_LINK</code> eintragen - dann erscheint auf deiner Bio-Seite ein „Community beitreten“-Knopf.</li></ol>
           <p class="klein-text">Dieselben Schlüssel nutzt auch der Video-Poster - einmal eintragen, beides läuft.</p></section>`}
         ${links.length ? `<section class="box"><h2>Einladen</h2><div class="reihe">${links.map(([k, l]) => `<button class="knopf klein" data-kopie="${h(l)}">${h(k)}-Link kopieren</button>`).join('')}<a class="knopf klein" href="${h(BIO)}" target="_blank" rel="noopener">Bio-Seite</a></div></section>` : ''}
+        <section class="box"><h2>Chat-Bot in deiner Gruppe</h2>
+          <p class="klein-text">Stündlich begrüßt der Bot neue Mitglieder mit der aktuellen Challenge und beantwortet Fragen (Produktfragen mit Shop-Link). Gesundheitsfragen, Beschwerden und Unklares schickt er dir per Telegram. Einrichtung: Telegram-Kanal > Diskussion > Gruppe verknüpfen und den Bot dort als Admin hinzufügen.</p>
+          ${chat ? (() => { const t = Object.values(chat.tage || {}).reduce((s, x) => ({ w: s.w + x.willkommen, a: s.a + x.antworten, m: s.m + x.melden }), { w: 0, a: 0, m: 0 }); return `<div class="kpis"><div class="kpi"><div class="l">Begrüßt</div><div class="w">${t.w}</div></div><div class="kpi"><div class="l">Beantwortet</div><div class="w">${t.a}</div></div><div class="kpi"><div class="l">An dich gemeldet</div><div class="w">${t.m}</div></div></div>${chat.bot ? `<p class="klein-text">Bot: @${h(chat.bot)} · letzte 30 Tage</p>` : ''}`; })() : '<p class="klein-text">Startet, sobald TELEGRAM_BOT_TOKEN eingetragen ist.</p>'}</section>
         <section class="box"><h2>Wochenplan</h2>${(daten.plan || []).map((p) => `<details><summary><strong>${h(ZUI.datum(p.datum))}</strong> · ${h(ART[p.art] || p.art)}</summary><pre style="white-space:pre-wrap">${h(p.text)}</pre><button class="knopf klein" data-kopie="${h(p.text)}">Text kopieren</button></details>`).join('')}</section>
         ${(daten.verlauf || []).length ? `<section class="box"><h2>Zuletzt</h2><ul>${daten.verlauf.map((v) => `<li>${h(v.datum)} · ${h(ART[v.art] || v.art)} · ${v.kanaele.length ? h(v.kanaele.join(', ')) : 'nicht gepostet'}${v.fehler?.length ? ` <span class="klein-text">(${h(v.fehler.join('; '))})</span>` : ''}</li>`).join('')}</ul></section>` : ''}`;
       el.querySelectorAll('[data-kopie]').forEach((b) => b.addEventListener('click', () => kopieren(b.dataset.kopie)));
