@@ -11,6 +11,7 @@ test('KI-Limit: heilt sich selbst (eigene KI), Tipp Gemini', () => {
   assert.equal(d.selbst, true);
   assert.match(d.loesung, /GEMINI_API_KEY/);
   assert.match(d.beleg, /LotusTap/);
+  assert.equal(diagnose(log('[95-anime-serie] Fehler: Zu wenige Szenen (6/27)')).art, 'ki-limit');
 });
 
 test('Abgelaufener Zugang: braucht dich und nennt den Schluessel', () => {

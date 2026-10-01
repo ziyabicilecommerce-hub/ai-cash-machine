@@ -3,7 +3,7 @@
 
 // Reihenfolge = Prioritaet. selbst: true -> das System heilt es automatisch (Neustart lohnt sich).
 export const REGELN = [
-  { art: 'ki-limit', test: /quota|insufficient_quota|Pollinations-Fehler 402|enough credits|KI-Dienste nicht verfügbar|rate limit|Tages-Sicherheitslimit/i, selbst: true,
+  { art: 'ki-limit', test: /quota|insufficient_quota|Pollinations-Fehler 402|enough credits|KI-Dienste nicht verfügbar|rate limit|Tages-Sicherheitslimit|Zu wenige Szenen|Skript zu kurz|KI lieferte kein JSON/i, selbst: true,
     text: 'Gratis-KI am Limit', loesung: 'Die eigene KI auf GitHub übernimmt automatisch. Schneller und besser: kostenlosen GEMINI_API_KEY eintragen.' },
   { art: 'zugang', test: /\b(401|403)\b.*(token|auth|credential|unauthori|forbidden)|invalid[_ ](token|grant|client)|token (expired|abgelaufen)|Bad credentials|OAuthException|Session has expired/i, selbst: false,
     text: 'Zugang abgelaufen oder ungültig', loesung: 'Den genannten Schlüssel neu erstellen und unter GitHub > Secrets ersetzen.' },
