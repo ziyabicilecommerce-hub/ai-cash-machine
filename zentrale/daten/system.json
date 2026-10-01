@@ -1,36 +1,49 @@
 {
- "stand": "2026-10-01T20:52:06.517Z",
- "gesamt": 81,
- "ok": 76,
+ "stand": "2026-10-01T21:48:30.805Z",
+ "gesamt": 80,
+ "ok": 77,
  "probleme": [
   {
    "art": "absturz",
    "name": "08 · Trend-Scout",
    "text": "letzter Lauf fehlgeschlagen",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36873828742"
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36873828742",
+   "diagnose": {
+    "art": "code",
+    "selbst": false,
+    "text": "Programmfehler",
+    "loesung": "Muss im Code behoben werden - in Claude Code mit „Fehler-Doktor: <Workflow> reparieren“ beauftragen.",
+    "beleg": "[08-trend-scout] Fehler: SyntaxError: Unexpected token '<', \"<body clas\"... is not valid JSON"
+   }
   },
   {
    "art": "absturz",
    "name": "100 · Fakten-Kanal",
    "text": "letzter Lauf fehlgeschlagen",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36892632840"
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36892632840",
+   "diagnose": {
+    "art": "ki-limit",
+    "selbst": true,
+    "text": "Gratis-KI am Limit",
+    "loesung": "Die eigene KI auf GitHub übernimmt automatisch. Schneller und besser: kostenlosen GEMINI_API_KEY eintragen.",
+    "beleg": "[100-fakten-kanal] ✗ Menschlicher Koerper: Beide kostenlosen KI-Dienste nicht verfügbar - Pollinations: Pollinations-Fehler 402: {}; LLM7: LLM7-Fehler 429: {\"error\":{\"message\":\"Daily token quota exceeded. Retry after 57 "
+   }
   },
   {
    "art": "absturz",
    "name": "95 · Anime-Serie",
    "text": "letzter Lauf fehlgeschlagen",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36906666635"
-  },
-  {
-   "art": "absturz",
-   "name": "KI-Moderatorin · Test",
-   "text": "letzter Lauf fehlgeschlagen",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36635063455"
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36906666635",
+   "diagnose": {
+    "art": "unbekannt",
+    "selbst": false,
+    "text": "Unbekannter Fehler",
+    "loesung": "Log ansehen - die letzte Fehlerzeile steht hier.",
+    "beleg": "[95-anime-serie] Fehler: Zu wenige Szenen (6/27)"
+   }
   }
  ],
- "neugestartet": [
-  "100 · Fakten-Kanal"
- ],
+ "neugestartet": [],
  "workflows": [
   {
    "name": "01 · Gewinn-Radar",
@@ -117,7 +130,7 @@
    "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36892632840",
    "letzterLauf": "2026-10-01T16:31:25Z",
    "ergebnis": "failure",
-   "versuch": 1,
+   "versuch": 2,
    "runId": 36892632840,
    "laeufe24h": 1,
    "fehler24h": 1
@@ -314,21 +327,21 @@
   },
   {
    "name": "40 · Kunden-Feedback-Sammler",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36775732264",
-   "letzterLauf": "2026-09-30T20:53:08Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36926570281",
+   "letzterLauf": "2026-10-01T21:07:59Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 36775732264,
+   "runId": 36926570281,
    "laeufe24h": 1,
    "fehler24h": 0
   },
   {
    "name": "41 · Post-Purchase-Sofort-Upsell",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36889176648",
-   "letzterLauf": "2026-10-01T16:04:13Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36929769570",
+   "letzterLauf": "2026-10-01T21:36:13Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 36889176648,
+   "runId": 36929769570,
    "laeufe24h": 4,
    "fehler24h": 0
   },
@@ -479,7 +492,7 @@
    "ergebnis": "success",
    "versuch": 1,
    "runId": 36900689344,
-   "laeufe24h": 4,
+   "laeufe24h": 3,
    "fehler24h": 0
   },
   {
@@ -754,12 +767,12 @@
   },
   {
    "name": "Deploy Site to GitHub Pages",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36924052815",
-   "letzterLauf": "2026-10-01T20:46:40Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36930921697",
+   "letzterLauf": "2026-10-01T21:46:54Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 36924052815,
-   "laeufe24h": 18,
+   "runId": 36930921697,
+   "laeufe24h": 23,
    "fehler24h": 0
   },
   {
@@ -773,33 +786,23 @@
    "fehler24h": 0
   },
   {
-   "name": "KI-Moderatorin · Test",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36635063455",
-   "letzterLauf": "2026-09-29T21:42:38Z",
-   "ergebnis": "failure",
-   "versuch": 1,
-   "runId": 36635063455,
-   "laeufe24h": 0,
-   "fehler24h": 0
-  },
-  {
    "name": "Leistungs-Sammler + Trend-Radar",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36917571146",
-   "letzterLauf": "2026-10-01T19:53:11Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36929550582",
+   "letzterLauf": "2026-10-01T21:34:12Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 36917571146,
-   "laeufe24h": 1,
+   "runId": 36929550582,
+   "laeufe24h": 3,
    "fehler24h": 0
   },
   {
    "name": "pages build and deployment",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36924079676",
-   "letzterLauf": "2026-10-01T20:46:53Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36930921465",
+   "letzterLauf": "2026-10-01T21:46:53Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 36924079676,
-   "laeufe24h": 30,
+   "runId": 36930921465,
+   "laeufe24h": 38,
    "fehler24h": 0
   },
   {
@@ -816,20 +819,20 @@
    "name": "System-Wächter",
    "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36924668699",
    "letzterLauf": "2026-10-01T20:51:46Z",
-   "ergebnis": "in_progress",
+   "ergebnis": "success",
    "versuch": 1,
    "runId": 36924668699,
-   "laeufe24h": 0,
+   "laeufe24h": 1,
    "fehler24h": 0
   },
   {
    "name": "Werbe-Labor",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36917543808",
-   "letzterLauf": "2026-10-01T19:52:57Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/36930381705",
+   "letzterLauf": "2026-10-01T21:41:54Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 36917543808,
-   "laeufe24h": 3,
+   "runId": 36930381705,
+   "laeufe24h": 4,
    "fehler24h": 0
   },
   {
