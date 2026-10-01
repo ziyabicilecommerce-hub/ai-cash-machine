@@ -11,11 +11,14 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { PLATTFORMEN } from './lib/plattformen.mjs';
 import { threads, linkedin, discord, reddit, pinterest, dailymotion } from './lib/plattformen2.mjs';
+import { x, tumblr } from './lib/plattformen3.mjs';
+import { statusSchreiben } from './lib/kanalStatus.mjs';
 import { verbinderLaden } from './lib/verbinder.mjs';
 import { postMerken } from './lib/leistung.mjs';
 import { varianteFuer } from './lib/anfaenge.mjs';
 
-const ALLE = [...PLATTFORMEN, threads, linkedin, pinterest, dailymotion, discord, reddit];
+// 15 Plattformen, alle direkt ueber die offiziellen APIs (kein Fremddienst).
+const ALLE = [...PLATTFORMEN, threads, linkedin, pinterest, dailymotion, discord, reddit, x, tumblr];
 
 const env = (k, d = '') => (process.env[k] || d).trim();
 const MANIFEST = join('out', 'manifest.json');
@@ -41,7 +44,7 @@ const ZAEHLER = 'video-feed/post-zaehler.json';
 // 5 Posts pro Tag und Kanal (= Tagesproduktion der Video-Fabrik). YouTube erlaubt per API-Kontingent
 // max. ~6 Uploads/Tag; Reddit bleibt bei 1, weil Subreddits Mehrfach-Posts als Spam sperren.
 // Ueberschreibbar per Variable, z. B. LIMIT_TIKTOK=3.
-const LIMITS = { youtube: 5, tiktok: 5, instagram: 5, facebook: 5, threads: 5, linkedin: 5, pinterest: 5, dailymotion: 5, bluesky: 5, telegram: 5, mastodon: 5, discord: 5, reddit: 1 };
+const LIMITS = { youtube: 5, tiktok: 5, instagram: 5, facebook: 5, threads: 5, linkedin: 5, pinterest: 5, dailymotion: 5, bluesky: 5, telegram: 5, mastodon: 5, discord: 5, reddit: 1, x: 5, tumblr: 5 };
 const limit = (p) => { const n = parseInt(env(`LIMIT_${p.name.toUpperCase()}`), 10); return Number.isNaN(n) ? LIMITS[p.name.toLowerCase()] ?? 4 : n; };
 const heuteBerlin = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date());
 function zaehlerLaden() {
@@ -75,13 +78,16 @@ function auswahl() {
 async function main() {
   await verbinderLaden();
   const { videos, merken } = auswahl();
-  if (!videos.length) return console.log('[99-direkt-poster] Nichts zu posten.');
   const z = zaehlerLaden();
+  const ergebnisse = {};
+  // Kanal-Status fuer die Zentrale (nur verbunden ja/nein, Zaehler, letzter Erfolg/Fehler - keine Geheimnisse).
+  const status = () => statusSchreiben(ALLE.map((p) => ({ name: p.name, verbunden: p.bereit(), heute: z.zaehler[p.name] || 0, limit: limit(p), ...(ergebnisse[p.name] || {}) })));
+  if (!videos.length) { status(); return console.log('[99-direkt-poster] Nichts zu posten.'); }
   const bereit = ALLE.filter((p) => p.bereit() && (!NUR.length || NUR.includes(p.name.toLowerCase())));
   const aktiv = bereit.filter((p) => (z.zaehler[p.name] || 0) < limit(p));
   const voll = bereit.filter((p) => !aktiv.includes(p));
   console.log(`[99-direkt-poster] Aktiv: ${aktiv.map((p) => `${p.name} ${z.zaehler[p.name] || 0}/${limit(p)}`).join(', ') || 'keine (Secrets fehlen oder Tageslimit erreicht)'}${voll.length ? ` · Tageslimit erreicht: ${voll.map((p) => p.name).join(', ')}` : ''} · ${videos.length} Video(s)`);
-  if (!aktiv.length) return;
+  if (!aktiv.length) { status(); return; }
   mkdirSync(TMP, { recursive: true });
   const bilanz = {};
   const erledigt = [];
@@ -99,7 +105,7 @@ async function main() {
       }
       for (const { p, w } of zuteilung.filter((x) => x.w.datei === dateiname)) {
         const mv = { ...m, datei: dateiname, hookTyp: w.hookTyp };
-        const v = { ...mv, url, vorschauUrl, link: FEED_SEITE, datei, dateiname, sprache: m.sprache || 'de', text: `${m.titel}\n\n${m.caption || ''}\n\n${KI_HINWEIS}`.trim() };
+        const v = { ...mv, url, vorschauUrl, link: FEED_SEITE, shopLink: String(m.caption || '').match(/https:\/\/\S+\/products\/\S+/)?.[0] || '', datei, dateiname, sprache: m.sprache || 'de', text: `${m.titel}\n\n${m.caption || ''}\n\n${KI_HINWEIS}`.trim() };
         if (!p.passt(v) || (z.zaehler[p.name] || 0) >= limit(p)) continue;
         try {
           const ergebnis = await p.posten(v);
@@ -108,8 +114,10 @@ async function main() {
           irgendwo = true;
           console.log(`[99-direkt-poster] ✓ ${p.name}: "${m.titel}"${dateiname !== m.datei ? ` (Anfang: ${w.hookTyp})` : ''} → ${ergebnis}`);
           postMerken(mv, p.name, ergebnis); // fuer echte Zahlen spaeter (leistung-sammler.mjs)
+          ergebnisse[p.name] = { ok: new Date().toISOString() };
         } catch (err) {
           console.log(`[99-direkt-poster] ✗ ${p.name}: "${m.titel}" → ${String(err.message).slice(0, 250)}`);
+          ergebnisse[p.name] = { fehler: String(err.message).slice(0, 200), zeit: new Date().toISOString() };
         }
       }
       rmSync(datei, { force: true });
@@ -121,6 +129,7 @@ async function main() {
     const alt = existsSync(GEPOSTET) ? JSON.parse(readFileSync(GEPOSTET, 'utf8')) : [];
     writeFileSync(GEPOSTET, JSON.stringify([...erledigt, ...alt].slice(0, 5000), null, 1) + '\n');
   }
+  status();
   console.log(`[99-direkt-poster] Fertig: ${Object.entries(bilanz).map(([k, n]) => `${k} ${n}`).join(', ') || 'nichts gepostet'}`);
 }
 

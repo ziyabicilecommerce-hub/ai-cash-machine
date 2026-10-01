@@ -86,9 +86,22 @@ jobs:
           DAILYMOTION_API_SECRET: ${{ secrets.DAILYMOTION_API_SECRET }}
           DAILYMOTION_USERNAME: ${{ secrets.DAILYMOTION_USERNAME }}
           DAILYMOTION_PASSWORD: ${{ secrets.DAILYMOTION_PASSWORD }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+          LIMIT_X: ${{ vars.LIMIT_X }}
+          TUMBLR_CONSUMER_KEY: ${{ secrets.TUMBLR_CONSUMER_KEY }}
+          TUMBLR_CONSUMER_SECRET: ${{ secrets.TUMBLR_CONSUMER_SECRET }}
+          TUMBLR_TOKEN: ${{ secrets.TUMBLR_TOKEN }}
+          TUMBLR_TOKEN_SECRET: ${{ secrets.TUMBLR_TOKEN_SECRET }}
+          TUMBLR_BLOG: ${{ vars.TUMBLR_BLOG }}
+          LIMIT_TUMBLR: ${{ vars.LIMIT_TUMBLR }}
       - name: Merken, was gepostet wurde
         run: |
-          [ -f video-feed/gepostet.json ] || exit 0
+          # Kanal-Status (Zentrale > 15 Kanäle) immer speichern, auch wenn nichts gepostet wurde.
+          [ -f video-feed/gepostet.json ] || echo '[]' > video-feed/gepostet.json
           [ -f video-feed/post-zaehler.json ] || echo '{}' > video-feed/post-zaehler.json
           [ -f video-feed/posts.json ] || echo '[]' > video-feed/posts.json
-          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases" video-feed/gepostet.json video-feed/post-zaehler.json video-feed/posts.json
+          [ -f video-feed/kanaele.json ] || exit 0
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases" video-feed/gepostet.json video-feed/post-zaehler.json video-feed/posts.json video-feed/kanaele.json
