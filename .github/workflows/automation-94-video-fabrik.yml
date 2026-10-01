@@ -90,12 +90,29 @@ jobs:
           ls ~/wav2lip/moderatorin-*.jpg >/dev/null && echo "MODERATORIN=${{ vars.MODERATORIN || '1' }}" >> "$GITHUB_ENV"
       - name: Videos bauen
         run: node automations/94-video-fabrik.mjs
+      - name: Videos pruefen (reparieren oder aussortieren)
+        run: node automations/video-pruefer.mjs
       - name: Als Release veroeffentlichen und Feed ergaenzen
         run: |
+          if ! ls out/videos/*.mp4 >/dev/null 2>&1; then
+            echo "Keine freigegebenen Videos in diesem Lauf - nur den Pruefbericht speichern."
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            cp automations/state/video-pruefung.json /tmp/pruefung.json 2>/dev/null || exit 0
+            for versuch in 1 2 3; do
+              git fetch -q origin "$GITHUB_REF_NAME" && git reset -q --hard "origin/$GITHUB_REF_NAME"
+              mkdir -p automations/state && cp /tmp/pruefung.json automations/state/video-pruefung.json
+              git add automations/state/video-pruefung.json
+              git commit -qm "chore: Video-Pruefung [skip ci]" || exit 0
+              git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+              sleep $((versuch * 5))
+            done
+            exit 0
+          fi
           TAG="videos-$(date -u +%Y%m%d-%H%M)"
           gh release create "$TAG" out/videos/* --title "Videos $(date -u +%d.%m.%Y)" --notes "Automatisch erzeugt von Automation #94 (Video-Fabrik)." --latest=false
           echo "BASIS=https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" >> "$GITHUB_ENV"
-          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}"
+          scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" automations/state/video-pruefung.json
           if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
         env:
           GH_TOKEN: ${{ github.token }}
