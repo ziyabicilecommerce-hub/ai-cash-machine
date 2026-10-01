@@ -3,6 +3,7 @@
 // oefter dran. Alle Formate sind ehrlich - kein "Ich hab es 30 Tage getestet", keine erfundenen Kunden.
 import { readFileSync, existsSync } from 'node:fs';
 import { lernstandLaden, waehlen } from './leistung.mjs';
+import { suchHinweis } from './suchRadar.mjs';
 
 export const FORMATE = {
   pov: 'Format POV: Szene 1 beginnt mit "POV:" und beschreibt eine typische Alltagssituation der Zielgruppe aus Ich-Sicht.',
@@ -38,10 +39,10 @@ export function trendHinweis(pfad = 'automations/state/trends.json', jetzt = Dat
 
 export const winkelAus = (text) => String(text || '').match(/Kauf-Psychologie: ([^.]+)\./)?.[1]?.trim() || '';
 
-// Baut das Produkt-Skript mit Labor-Winkel + Format + Trend und merkt sich, was benutzt wurde -
+// Baut das Produkt-Skript mit Labor-Winkel + Format + Trend + echten Suchfragen und merkt sich, was benutzt wurde -
 // der Poster schreibt es an jeden Post, damit der Leistungs-Sammler es spaeter auswerten kann.
 export async function skriptMitFormat(p, winkel, bauer) {
   const f = formateAn() ? formatWaehlen(p, { mitHook: !!winkel }) : { name: '', anweisung: '' };
-  const s = await bauer(p, [winkel, f.anweisung, trendHinweis()].filter(Boolean).join(' '));
+  const s = await bauer(p, [winkel, f.anweisung, trendHinweis(), suchHinweis(p)].filter(Boolean).join(' '));
   return { ...s, formatName: f.name, winkelName: winkelAus(winkel) };
 }
