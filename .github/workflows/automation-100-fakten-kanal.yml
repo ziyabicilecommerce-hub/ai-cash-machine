@@ -44,7 +44,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null
-          pip install -q "edge-tts==7.*" segno
+          pip install -q "edge-tts==7.*" segno opencv-python-headless
       # KI-Moderatorin (Wav2Lip auf CPU): Modelle + Portraets werden zwischengespeichert.
       - uses: actions/cache@v4
         with:
@@ -60,6 +60,14 @@ jobs:
           echo "W2L_PY=$HOME/w2l-venv/bin/python" >> "$GITHUB_ENV"
           scripts/moderatorin.sh einrichten
           ls ~/wav2lip/moderatorin-*.jpg >/dev/null && echo "MODERATORIN=${{ vars.MODERATORIN || '1' }}" >> "$GITHUB_ENV"
+      # 3D-Kamerafahrt: Depth Anything V2 Small (CPU) schaetzt die Tiefe - die Bilder bewegen sich wie im 3D-Raum.
+      # Klappt das nicht, nimmt scripts/tiefe3d.py eine einfache Tiefenschaetzung.
+      - name: 3D-Tiefe (Depth Anything V2) einrichten
+        continue-on-error: true
+        run: |
+          ~/w2l-venv/bin/pip install -q "transformers==4.46.3" pillow
+          ~/w2l-venv/bin/python -c "from transformers import pipeline; pipeline('depth-estimation', model='depth-anything/Depth-Anything-V2-Small-hf', device=-1)"
+          echo "TIEFE_PY=$HOME/w2l-venv/bin/python" >> "$GITHUB_ENV"
       - name: Fakten-Videos bauen
         run: node automations/100-fakten-kanal.mjs
       - name: Als Release veroeffentlichen und Feed ergaenzen

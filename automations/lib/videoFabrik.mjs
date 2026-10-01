@@ -10,6 +10,7 @@ import { anwendungBild } from './anwendung.mjs';
 import { musikUnterlegen, untertitelZusammenfuegen, BEAT_STILE, BEAT_PERIODE } from './videoExtras.mjs';
 import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen, bokehBauen } from './premium.mjs';
 import { effekteAn, lichtLeckBauen, qrBauen, uebergangFuer, endkarteAss, funkelnAss, strahlenBauen } from './effekte.mjs';
+import { mitmachAss } from './mitmachen.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -198,6 +199,19 @@ async function bildHolen(szene, roh, { breite, hoehe, stil }) {
   return '';
 }
 
+// 3D-Kamerafahrt aus einem Standbild (scripts/tiefe3d.py). VIDEO_3D=0 schaltet ab; TIEFE_PY waehlt das Python
+// (z. B. eine venv mit torch + transformers fuer Depth Anything V2). Scheitert es, bleibt es beim Schwenk.
+function tiefe3d(bild, ziel, dauer, { breite, hoehe, art }) {
+  if (/^(0|nein|aus|false)$/i.test(String(process.env.VIDEO_3D || '').trim())) return '';
+  try {
+    execFileSync(process.env.TIEFE_PY || 'python3', ['scripts/tiefe3d.py', bild, ziel, dauer.toFixed(2), String(breite), String(hoehe), art], { stdio: 'pipe', timeout: 300000 });
+    return existsSync(ziel) ? ziel : '';
+  } catch (err) {
+    console.log(`[video-fabrik] 3D-Kamerafahrt uebersprungen: ${String(err.stderr || err.message).slice(-160)}`);
+    return '';
+  }
+}
+
 // Baut ein komplettes Video. Szene: {text, foto?: URL eines echten Produktfotos, bild?: KI-Bild-Prompt, stimme?, tonhoehe?, tempo?: eigene Sprecherstimme, schild?: Name oben links}.
 // bildAlle: nur jede n-te Szene bekommt ein neues Bild (die anderen nutzen es mit anderer
 // Kamerabewegung weiter) - so passen auch 1-Stunden-Videos in das 6-Stunden-Limit.
@@ -295,12 +309,17 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         assAusSrt(srt, ass, assOpts);
         if (letzte) dingZeit = zeit + 0.4;
         if (fx && letzte) endkarteAss(ass, { breite, hoehe, qr: !!qr, shop: skript.shop || '', cta: skript.cta || 'LINK IN BIO' });
+        // Mitmach-Overlay (Quiz-Antworten, Countdown, Aufloesung, Stempel) aus dem Skript.
+        if (szene.overlay) mitmachAss(ass, szene.overlay, { breite, hoehe, dauerMs: dauern[i] * 1000 });
         const mitPreis = !!(szene.preis || (letzte && skript.preis));
         if (fx && ebenen?.fgP) funkelnAss(ass, { breite, hoehe, dauerMs: dauern[i] * 1000, seed: seedZahl + i, burst: mitPreis ? { x: Math.round(breite * 0.7), y: Math.round(hoehe * 0.1), ms: 380 } : null });
         const hookSzene = clips.length === 0;
         const effekt = fx ? { art: uebergangFuer(clips.length), leck, qr: letzte ? qr : '', wackeln: hookSzene, drop: hookSzene, strahlen: hookSzene ? strahlen : '', beat: { p: BEAT_PERIODE[beatStil], off: zeit }, stoss: mitPreis ? 0.38 : null } : null;
-        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1, effekt });
-        if (hookSzene) hookVorlage = { ebenen, assOpts, effekt, index: i, stimme: szene.stimme || stimme };
+        // Vollbild-Szenen (KI-Bild ohne Produkt): 3D-Kamerafahrt durch das Bild (Depth Anything V2, CPU).
+        // Nicht beim Ohne/Mit-Vergleich - eine Kamerafahrt durch zwei Bildhaelften wirkt kaputt.
+        const bgVideo = !ebenen.fgP && modus !== 'vergleich' ? tiefe3d(ebenen.bgP, join(ordner, `s${i}.3d.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe, art: ['dolly', 'orbit', 'kran'][i % 3] }) : '';
+        await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1, effekt, bgVideo });
+        if (hookSzene) hookVorlage = { ebenen, assOpts, effekt, bgVideo, index: i, stimme: szene.stimme || stimme };
       } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
       letztesBild = bild;
       clips.push(clip);
@@ -350,7 +369,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
       const delta = d - dauerSekunden(clips[0]);
       assAusSrt(srt, ass, { ...hookVorlage.assOpts, hook: a.hook, fortschritt: { von: 0, bis: d / (gesamt + delta), dauerMs: d * 1000 } });
       if (fx && hookVorlage.ebenen?.fgP) funkelnAss(ass, { breite, hoehe, dauerMs: d * 1000, seed: seedZahl, burst: null });
-      await premiumSzene({ ...hookVorlage.ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: d, index: hookVorlage.index, glanz, bokeh, nah: false, effekt: hookVorlage.effekt });
+      await premiumSzene({ ...hookVorlage.ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: d, index: hookVorlage.index, glanz, bokeh, nah: false, effekt: hookVorlage.effekt, bgVideo: hookVorlage.bgVideo });
       const teile = [{ srt, start: 0 }, ...srtTeile.slice(1).map((t) => ({ ...t, start: t.start + delta }))];
       varianten.push({ ...(await fertigstellen([clip, ...clips.slice(1)], teile, zeit + delta, dingZeit ? dingZeit + delta : 0, `anfang-${a.typ}`, a.hook)), typ: a.typ, hook: a.hook });
     } catch (err) {
