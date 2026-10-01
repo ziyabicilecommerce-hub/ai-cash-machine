@@ -31,7 +31,20 @@ async function main() {
     plan: e.plan, grund: e.grund, aufgabe: e.aufgabe, kiAnfragen: e.kiAnfragen,
     kette: e.analyse.vorher.schritte.map((s) => ({ id: s.id, name: s.name, kapazitaet: s.kapazitaet })), verlauf,
   }, null, 1) + '\n');
-  const text = `🏭 Agenten-Fließband · Ziel ${ziel} Videos/Tag\n\n${zeilen.join('\n')}\n\nEngpass: ${e.engpass.name}\n${e.grund}\nPlan morgen: Fabrik ${e.plan.fabrikAnzahl}, Labor ${e.plan.laborAnzahl}${e.aufgabe ? `\n\n👉 Deine Aufgabe: ${e.aufgabe.titel} - ${e.aufgabe.text}` : ''}`;
+  // Tagesbericht: was gestern passiert ist (Kanäle, Kommentare, Shop-Gesundheit) - eine Nachricht für alles.
+  const gestern = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  const kanaele = lesen('video-feed/kanaele.json', { kanaele: {} }).kanaele || {};
+  const verbunden = Object.entries(kanaele).filter(([, k]) => k.verbunden).map(([n]) => n);
+  const fehlerhaft = Object.entries(kanaele).filter(([, k]) => k.letzterFehler).map(([n]) => n);
+  const kom = (lesen('zentrale/daten/kommentare.json', { tage: {} }).tage || {})[gestern] || { antworten: 0, melden: 0 };
+  const doktor = lesen('zentrale/daten/shop-doktor.json', { shops: [] });
+  const kritisch = (doktor.shops || []).reduce((n, s) => n + [...s.befunde, ...s.produkte.flatMap((p) => p.befunde)].filter((b) => b.stufe === 'kritisch').length, 0);
+  const bericht = [
+    `📡 Kanäle verbunden: ${verbunden.length}/15${verbunden.length ? ` (${verbunden.join(', ')})` : ''}${fehlerhaft.length ? ` · ⚠️ Fehler bei ${fehlerhaft.join(', ')}` : ''}`,
+    `💬 Kommentare gestern: ${kom.antworten} beantwortet, ${kom.melden} an dich gemeldet`,
+    `🩺 Shops: ${(doktor.shops || []).map((s) => `${s.name} ${s.punkte}/100`).join(', ') || 'noch nicht geprüft'}${kritisch ? ` · ${kritisch} kritische Punkte` : ''}`,
+  ].join('\n');
+  const text = `🏭 Agenten-Fließband · Ziel ${ziel} Videos/Tag\n\n${zeilen.join('\n')}\n\nEngpass: ${e.engpass.name}\n${e.grund}\nPlan heute: Fabrik ${e.plan.fabrikAnzahl}, Labor ${e.plan.laborAnzahl}\n\n${bericht}${e.aufgabe ? `\n\n👉 Deine Aufgabe: ${e.aufgabe.titel} - ${e.aufgabe.text}` : ''}`;
   console.log(text);
   await notifyTelegram(text);
 }

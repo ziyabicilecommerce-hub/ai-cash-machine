@@ -45,13 +45,38 @@ async function kiTextMitWarten(prompt, opts) {
   }
 }
 
-// Pollinations "openai-fast" (GPT-OSS 20B) laeuft ohne Key und schreibt deutlich
-// besseres Deutsch als das Standardmodell der KI-Kette; askKI bleibt Rueckfall.
-async function kiTextEinmal(prompt, { maxTokens = 1500 } = {}) {
+// Kostenlose KI-Kette: Pollinations (mit Gratis-Schluessel POLLINATIONS_TOKEN stabiler, ohne Schluessel
+// gedrosselt) -> Google Gemini (Gratis-Kontingent, GEMINI_API_KEY) -> Groq (Gratis-Kontingent, GROQ_API_KEY)
+// -> askKI (bisherige Gratis-Kette). Faellt einer aus oder ist sein Tageskontingent leer, springt der naechste ein.
+const envK = (k) => (process.env[k] || '').trim();
+
+async function gemini(prompt, maxTokens) {
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${envK('GEMINI_MODELL') || 'gemini-2.5-flash'}:generateContent?key=${encodeURIComponent(envK('GEMINI_API_KEY'))}`, {
+    method: 'POST', headers: { 'content-type': 'application/json' }, signal: AbortSignal.timeout(120000),
+    body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: maxTokens, thinkingConfig: { thinkingBudget: 0 } } }),
+  });
+  const d = await res.json();
+  const text = d?.candidates?.[0]?.content?.parts?.map((x) => x.text || '').join('') || '';
+  if (!res.ok || !text) throw new Error(`Gemini ${res.status}: ${String(d?.error?.message || '').slice(0, 120)}`);
+  return text;
+}
+
+async function groq(prompt, maxTokens) {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${envK('GROQ_API_KEY')}` }, signal: AbortSignal.timeout(120000),
+    body: JSON.stringify({ model: envK('GROQ_MODELL') || 'llama-3.3-70b-versatile', messages: [{ role: 'user', content: prompt }], max_tokens: maxTokens }),
+  });
+  const d = await res.json();
+  const text = d?.choices?.[0]?.message?.content || '';
+  if (!res.ok || !text) throw new Error(`Groq ${res.status}: ${String(d?.error?.message || '').slice(0, 120)}`);
+  return text;
+}
+
+export async function kiTextEinmal(prompt, { maxTokens = 1500 } = {}) {
   try {
     const res = await fetch('https://text.pollinations.ai/openai', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...(envK('POLLINATIONS_TOKEN') ? { authorization: `Bearer ${envK('POLLINATIONS_TOKEN')}` } : {}) },
       body: JSON.stringify({ model: 'openai-fast', messages: [{ role: 'user', content: prompt }], max_tokens: maxTokens }),
       signal: AbortSignal.timeout(120000),
     });
@@ -59,7 +84,11 @@ async function kiTextEinmal(prompt, { maxTokens = 1500 } = {}) {
     const text = d?.choices?.[0]?.message?.content || '';
     if (res.ok && text && !/reached its budget|enough credits|enter\.pollinations\.ai/i.test(text)) return text;
   } catch {
-    /* Rueckfall auf askKI */
+    /* naechster Anbieter */
+  }
+  for (const [name, fn] of [['GEMINI_API_KEY', gemini], ['GROQ_API_KEY', groq]]) {
+    if (!envK(name)) continue;
+    try { return await fn(prompt, maxTokens); } catch (err) { console.log(`[ki] ${String(err.message).slice(0, 140)} - nächster Anbieter`); }
   }
   return askKI(prompt, { maxTokens });
 }

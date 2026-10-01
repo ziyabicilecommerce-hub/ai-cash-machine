@@ -39,6 +39,9 @@ env:
   VIDEO_FABRIK_VARIANTEN: ${{ inputs.varianten || vars.WELT_BOT_VARIANTEN || '10' }}
   VIDEO_FABRIK_SPRACHEN: ${{ inputs.sprachen || vars.WELT_BOT_SPRACHEN || 'alle' }}
   VIDEO_FABRIK_SHOPS: ${{ vars.VIDEO_FABRIK_SHOPS }}
+  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+  POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
 
 jobs:
   skripte:
