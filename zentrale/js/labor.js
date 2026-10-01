@@ -64,7 +64,7 @@
   }
 
   function hooksLesen(d) {
-    const liste = (d && Array.isArray(d.hooks) ? d.hooks : []).map((h) => String(h || '').replace(/^["„“\s\d.)-]+|["“”\s]+$/g, '').trim()).filter((h) => h.length >= 6 && h.length <= 120);
+    const liste = (d && Array.isArray(d.hooks) ? d.hooks : []).map((h) => String(h || '').replace(/^\s*(\d{1,2}[.)]\s+|[-•*]\s+)/, '').replace(/^["„“'\s]+|["“”'\s]+$/g, '').trim()).filter((h) => h.length >= 6 && h.length <= 120);
     return [...new Set(liste)].slice(0, WINKEL.length);
   }
 
@@ -83,7 +83,15 @@
   }
 
   // Wertet die Jury-Matrix aus: gewichtete Kaufabsicht je Hook, Gewinner, häufigster Einwand.
-  function auswerten(hooks, jury, k) {
+  // echt: Lernstand je Winkel aus echten Posts ({name: {n, punkte}}, siehe automations/lib/leistung.mjs).
+  // Echte Zahlen zählen mit wachsender Menge mehr: ab 10 Messungen bis zu ±2 Punkte auf die Jury-Note.
+  function echtBonus(echt, winkel) {
+    const e = echt && echt[winkel];
+    if (!e || !(e.n > 0) || !Number.isFinite(e.punkte)) return 0;
+    return Math.round(Math.max(-1, Math.min(1, e.punkte)) * 2 * Math.min(1, e.n / 10) * 10) / 10;
+  }
+
+  function auswerten(hooks, jury, k, echt) {
     const werte = jury && Array.isArray(jury.werte) && jury.werte.length === JURY.length ? jury.werte : null;
     const summeGewicht = JURY.reduce((s, j) => s + j.gewicht, 0);
     const ergebnisse = hooks.map((hook, i) => {
@@ -95,7 +103,9 @@
       if (proTyp.every((v) => v !== null)) punkte = proTyp.reduce((s, v, t) => s + v * JURY[t].gewicht, 0) / summeGewicht;
       else { punkte = heuristik(hook, k); quelle = 'Regeln'; }
       const kaeufer = proTyp.every((v) => v !== null) ? proTyp.reduce((s, v, t) => s + (v >= 7 ? JURY[t].gewicht : 0), 0) : null;
-      return { hook, winkel: WINKEL[i] ? WINKEL[i].name : 'Frei', punkte: Math.round(punkte * 10) / 10, kaeufer, proTyp, quelle };
+      const winkel = WINKEL[i] ? WINKEL[i].name : 'Frei';
+      const bonus = echtBonus(echt, winkel);
+      return { hook, winkel, punkte: Math.round(Math.max(0, Math.min(10, punkte + bonus)) * 10) / 10, kaeufer, proTyp, quelle, echt: bonus || null };
     }).sort((a, b) => b.punkte - a.punkte);
     const gewinner = ergebnisse[0] || null;
     let einwand = null;
@@ -108,14 +118,15 @@
   }
 
   // Ganzer Durchlauf mit austauschbarer KI-Funktion: ki(prompt, maxTokens) -> Objekt (JSON).
-  async function labor(p, ki) {
+  async function labor(p, ki, { echt = null } = {}) {
     const k = produktKurz(p);
     let hooks = [];
     try { hooks = hooksLesen(await ki(hookPrompt(p), 900)); } catch (e) { /* weiter mit Ersatz */ }
-    if (hooks.length < 3) hooks = ersatzHooks(k);
+    const ersatz = hooks.length < 3;
+    if (ersatz) hooks = ersatzHooks(k);
     let jury = null;
     try { jury = await ki(juryPrompt(p, hooks), 1400); } catch (e) { /* Regeln statt Jury */ }
-    const a = auswerten(hooks, jury, k);
+    const a = auswerten(hooks, jury, k, echt);
     let final = { hook: a.gewinner.hook, antwort: null, schlagzeile: null };
     if (a.einwand) {
       try {
@@ -123,7 +134,7 @@
         if (s && typeof s.hook === 'string' && s.hook.trim().length >= 6) final = { hook: s.hook.trim().slice(0, 120), antwort: String(s.antwort || '').trim().slice(0, 200) || null, schlagzeile: String(s.schlagzeile || '').trim().slice(0, 40) || null };
       } catch (e) { /* Gewinner unverändert */ }
     }
-    return { produkt: k.titel, preis: k.preis, ...a, final, erstellt: new Date().toISOString() };
+    return { produkt: k.titel, preis: k.preis, ...a, final, ersatz, erstellt: new Date().toISOString() };
   }
 
   // Kurzname für gesprochene Hooks: Teil vor „–“/„|“/„:“, höchstens 3 Wörter.
@@ -138,13 +149,15 @@
   }
 
   // Erzählweise für die Video-Fabrik aus einem Labor-Ergebnis.
+  // Nur von der Test-Jury gewonnene Hooks gehen an die Fabrik. Ohne Jury (KI gedrosselt) schreibt die
+  // Fabrik ihr eigenes KI-Skript – das ist besser als eine Regel- oder Vorlagen-Entscheidung.
   function fabrikWinkel(e) {
-    if (!e || !e.final || !e.final.hook) return '';
+    if (!e || e.ersatz || !e.gewinner || e.gewinner.quelle !== 'Jury' || !e.final || !e.final.hook) return '';
     return `Beginne GENAU mit diesem getesteten Hook als erstem Satz: "${e.final.hook}". ` +
       (e.final.antwort ? `Szene 2 räumt diesen Einwand ehrlich aus: "${e.final.antwort}". ` : '') +
       `Kauf-Psychologie: ${e.gewinner ? e.gewinner.winkel : ''}. ` +
       (e.final.schlagzeile ? `Als "hook" (Bild-Schlagzeile) nimm: "${e.final.schlagzeile}". ` : '');
   }
 
-  root.ZLabor = { WINKEL, JURY, produktKurz, hookPrompt, juryPrompt, schaerfPrompt, hooksLesen, heuristik, auswerten, labor, fabrikWinkel, kurzName };
+  root.ZLabor = { WINKEL, JURY, produktKurz, hookPrompt, juryPrompt, schaerfPrompt, hooksLesen, heuristik, auswerten, echtBonus, labor, fabrikWinkel, kurzName };
 })(typeof window !== 'undefined' ? window : globalThis);

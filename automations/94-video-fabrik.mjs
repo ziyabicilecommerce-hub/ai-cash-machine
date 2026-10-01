@@ -16,11 +16,11 @@ import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
 import { uebersetzen, uebersetzenBuendel } from './lib/uebersetzen.mjs';
 import { skripteLaden, skripteSpeichern, uebersetzungenLaden, uebersetzungenSpeichern, schluessel, anwenden, auszug } from './lib/weltCache.mjs';
 import { premiumAn, themaFuer, preisText } from './lib/premium.mjs';
-import { kurzHook, reinText, aktiveProdukte, topListeSkript } from './lib/shopProdukte.mjs';
+import { kurzHook, reinText, aktiveProdukte, topListeSkript, HOOK_REGELN } from './lib/shopProdukte.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 import { laborWinkel } from './lib/laborWinkel.mjs';
 import { nachbauenEinplanen, stateLaden as pruefungLaden } from './lib/videoPruefung.mjs';
-
+import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen, skriptMitFormat, planWert } from './lib/skriptExtras.mjs';
 // KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
 async function mitModeratorin(v, nr) {
   if (!moderatorinAn()) return;
@@ -34,7 +34,7 @@ const FEED = 'video-feed/videos.json';
 const FEED_WELT = Math.min(Math.max(parseInt(process.env.FEED_WELT_MAX || '6000', 10) || 6000, 0), 30000);
 const env = (k, d = '') => (process.env[k] || d).trim();
 
-const ANZAHL_ROH = parseInt(env('VIDEO_FABRIK_ANZAHL', '5'), 10);
+const ANZAHL_ROH = parseInt(env('VIDEO_FABRIK_ANZAHL', String(planWert('fabrikAnzahl', 5))), 10); // Engpass-Chef-Plan, Variable hat Vorrang
 const ANZAHL = Math.min(Math.max(Number.isNaN(ANZAHL_ROH) ? 5 : ANZAHL_ROH, 0), 10);
 // Welt-Bot (#96): bis zu 60 Produkte x 12 Varianten x 50 Sprachen (Standard 21 x 10 x 50 = ca. 10.500 Videos/Tag).
 const WELT_ANZAHL = Math.min(Math.max(parseInt(env('VIDEO_FABRIK_ANZAHL', '21'), 10) || 21, 1), 60);
@@ -163,15 +163,15 @@ async function produktSkriptEinmal(p, winkel = '') {
   const d = await kiJson(
     `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ein 25-40 Sekunden Werbe-Skript auf Deutsch, sprich die Zuschauer mit "du" an (niemals "Sie"), fuer das Produkt "${p.title}" aus dem Shop "${p.shopName}". ` +
       `Produktinfos: ${reinText(p.body_html).slice(0, 700)}${preis ? ` Preis: ${preis} EUR.` : ''} ` +
-      'Aufbau: 1) Hook, der in 2 Sekunden fesselt, 2) Problem, 3) 2-3 konkrete Vorteile des Produkts, 4) Call-to-Action ("Link in der Bio"). 5 bis 7 Szenen, pro Szene 1 kurzer gesprochener Satz. Nichts erfinden, was nicht in den Produktinfos steht. ' +
+      HOOK_REGELN + ANWENDUNG_REGEL + VERGLEICH_REGEL + ANFAENGE_REGEL + 'Aufbau: 1) dieser Hook-Satz, 2) Problem, 3) 2-3 konkrete Vorteile des Produkts, 4) Call-to-Action ("Link in der Bio"). 5 bis 7 Szenen, pro Szene 1 kurzer gesprochener Satz. Nichts erfinden, was nicht in den Produktinfos steht. ' +
       'Nutze NUR Eigenschaften, die woertlich in den Produktinfos stehen - keine erfundenen Features, Zahlen oder Versprechen. Keine Floskeln. ' +
       (winkel ? `Erzaehlweise dieser Variante: ${winkel} ` : '') +
       (LIFESTYLE
         ? `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index ODER "bild": englischer Prompt fuer ein passendes, jugendfreies Lifestyle-Bild (vollstaendig bekleidete Personen). Mindestens die Haelfte der Szenen mit Produktfoto. `
         : `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene "foto": Index des passendsten Produktfotos. `) +
       'Dazu "hintergrund": englischer Bild-Prompt (max. 12 Woerter) fuer eine leere, edle Umgebung, die zum Einsatzort des Produkts passt - ohne Produkt, ohne Personen, ohne Text. ' +
-      'Antworte NUR mit JSON: {"titel":"...","hook":"knallige Schlagzeile, maximal 5 Woerter","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","szenen":[{"text":"...","foto":0}]}',
-    { maxTokens: 1500 }
+      'Antworte NUR mit JSON: {"titel":"...","hook":"Text-Overlay fuer Sekunde 0-3, 2-5 Woerter, weckt Neugier (Frage/Warnung/Widerspruch), NICHT der Produktname","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","anwendung":{"szene":2,"foto":0,"prompt":"...","schritte":["...","...","..."]},"vergleich":{"szene":1,"ohne":"...","mit":"..."},"anfaenge":[{"typ":"frage","satz":"...","hook":"..."}],"szenen":[{"text":"...","foto":0}]}',
+    { maxTokens: 1800 }
   );
   const skript = ausDaten(d, p);
   await korrekturLesen(skript.szenen, p.title);
@@ -186,10 +186,10 @@ async function variantenSkripte(p, winkelListe) {
   const d = await kiJson(
     `Du bist Top-Werbetexterin fuer TikTok/Reels-Ads. Schreibe ${winkelListe.length} VERSCHIEDENE 25-40 Sekunden Werbe-Skripte auf Deutsch (Du-Ansprache) fuer "${p.title}" aus dem Shop "${p.shopName}". ` +
       `Produktinfos: ${reinText(p.body_html).slice(0, 700)}${preis ? ` Preis: ${preis} EUR.` : ''} Nutze NUR Eigenschaften aus den Produktinfos, nichts erfinden. ` +
-      `Je Skript 5-7 Szenen mit je 1 kurzen Satz, Hook am Anfang, "Link in der Bio" am Ende. Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}), pro Szene "foto": Index. ` +
+      HOOK_REGELN + ANWENDUNG_REGEL + `Je Skript 5-7 Szenen mit je 1 kurzen Satz, jede Variante mit eigenem Hook-Satz am Anfang, "Link in der Bio" am Ende. Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}), pro Szene "foto": Index. ` +
       `Erzaehlweisen in dieser Reihenfolge: ${winkelListe.map((w, i) => `${i + 1}) ${w}`).join(' ')} ` +
       'Je Skript "hintergrund": englischer Bild-Prompt (max. 12 Woerter) fuer eine leere, edle Umgebung ohne Produkt, Personen oder Text - jedes Skript eine andere Umgebung. ' +
-      'Antworte NUR mit JSON: {"varianten":[{"titel":"...","hook":"max. 5 Woerter","caption":"mit 3-5 Hashtags","hintergrund":"...","szenen":[{"text":"...","foto":0}]}]}',
+      'Antworte NUR mit JSON: {"varianten":[{"titel":"...","hook":"2-5 Woerter Neugier-Overlay, nicht der Produktname","caption":"mit 3-5 Hashtags","hintergrund":"...","anwendung":{"szene":2,"foto":0,"prompt":"..."},"szenen":[{"text":"...","foto":0}]}]}',
     { maxTokens: Math.min(1200 * winkelListe.length, 8000) }
   );
   return (Array.isArray(d.varianten) ? d.varianten : []).map((v) => ausDaten(v, p)).filter((x) => x.szenen.length >= 3);
@@ -211,7 +211,7 @@ function ausDaten(d, p) {
   const seed = [...String(p.handle || p.title)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 7);
   const hintergrund = { prompt: String(d.hintergrund || `elegant minimal setting for ${p.title}`).replace(/\s+/g, ' ').trim().slice(0, 300), seed };
   const shop = (() => { try { return new URL(p.shopUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })();
-  return { titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, preis: Number(preis) || 0, waehrung: 'EUR', shop, link, szenen };
+  return anfaengeEinbauen(vergleichEinbauen(anwendungEinbauen({ titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, preis: Number(preis) || 0, waehrung: 'EUR', shop, link, szenen }, d.anwendung, fotos), d.vergleich, fotos), d.anfaenge);
 }
 
 async function ablegen(manifest, v, skript, a, nummer, sprache) {
@@ -224,7 +224,7 @@ async function ablegen(manifest, v, skript, a, nummer, sprache) {
   }
   const kapitel = kapitelText(v.kapitel || []);
   const caption = kapitel ? `${skript.caption}\n\nKapitel:\n${kapitel}` : skript.caption;
-  const eintrag = { datei: `${basis}.mp4`, vorschau, sprache, titel: skript.titel, caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen };
+  const eintrag = { datei: `${basis}.mp4`, vorschau, sprache, titel: skript.titel, caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen, gruppe: basis, hookTyp: skript.hookTyp || '', winkel: skript.winkelName || '', formatName: skript.formatName || '', ...anfaengeAblegen(v, basis, join(OUT, 'videos')) };
   // Karussell: 4 Bild-Slides (4:5) aus denselben Ebenen - Hook, 2 Vorteile, Preis + CTA.
   // Nur fuer die erste Variante, damit ein Release unter 1.000 Dateien bleibt.
   if (KARUSSELL && v.ebenen && skript.szenen.length >= 3 && !skript.variante) {
@@ -274,11 +274,11 @@ async function bauen() {
     const start = Date.now();
     try {
       // Getesteten Gewinner-Hook aus dem Werbe-Labor nutzen, falls frisch vorhanden.
-      const skript = a.produkt ? await produktSkript(a.produkt, laborWinkel(a.produkt)) : a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
+      const skript = a.produkt ? await skriptMitFormat(a.produkt, laborWinkel(a.produkt), produktSkript) : a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
       if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
       const hook = a.format === 'hoch' ? skript.hook || kurzHook(skript.titel) : '';
-      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook, bildAlle: a.minuten > 20 ? 2 : 1, musik: a.minuten ? 'ruhig' : '', premium: PREMIUM && !!a.produkt });
-      if (PREMIUM && a.produkt) await mitModeratorin(v, i + 1 + tag);
+      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook, bildAlle: a.minuten > 20 ? 2 : 1, musik: a.minuten ? 'ruhig' : '', premium: PREMIUM && !!a.produkt, anfaenge: a.format === 'hoch' ? skript.anfaenge || [] : [] });
+      if (PREMIUM && a.produkt) for (const x of [v, ...(v.varianten || [])]) await mitModeratorin(x, i + 1 + tag);
       await ablegen(manifest, v, skript, a, i + 1, 'de');
       console.log(`[94-video-fabrik] ✓ ${manifest.filter((m) => !m.teaser).at(-1).datei} (${Math.round(v.dauer)} s, ${v.szenen} Szenen, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
       if (a.produkt) {
@@ -302,7 +302,6 @@ async function bauen() {
       }
     }
   }
-  writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1));
   // Top-5-Countdown je Shop (neues Format): taeglich andere 5 Produkte je Shop.
   for (const shop of PREMIUM ? [...new Set(produkte.map((p) => p.shopName))] : []) {
     const eigene = produkte.filter((p) => p.shopName === shop);
@@ -330,6 +329,7 @@ async function bauen() {
       console.log(`[94-video-fabrik] Highlights fehlgeschlagen: ${String(err.message).slice(0, 150)}`);
     }
   }
+  writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1)); // erst nach Top-5/Highlights - sonst fehlen sie in Pruefer und Feed
   console.log(`[94-video-fabrik] ${manifest.filter((m) => !m.teaser).length}/${auftraege.length} Videos fertig (+ ${manifest.filter((m) => m.teaser).length} Teaser)`);
   if (!manifest.length) process.exit(1);
 }

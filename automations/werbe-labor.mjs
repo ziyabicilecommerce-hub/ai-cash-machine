@@ -6,9 +6,12 @@ import { dirname } from 'node:path';
 import '../zentrale/js/labor.js';
 import { kiJson } from './lib/kiJson.mjs';
 import { aktiveProdukte } from './lib/shopProdukte.mjs';
+import { lernstandLaden } from './lib/leistung.mjs';
+import { planWert } from './lib/agentenPlan.mjs';
 
 const { ZLabor } = globalThis;
-const PRO_LAUF = Math.min(Math.max(parseInt(process.env.WERBE_LABOR_ANZAHL || '6', 10) || 6, 1), 20);
+// Menge: Eingabe/Variable > Plan des Engpass-Chefs > 6.
+const PRO_LAUF = Math.min(Math.max(parseInt(process.env.WERBE_LABOR_ANZAHL || String(planWert('laborAnzahl', 6)), 10) || 6, 1), 20);
 const FRISCH_TAGE = 14;
 export const STATE = 'automations/state/werbe-labor.json';
 const SEITE = 'zentrale/daten/werbe-labor.json';
@@ -53,12 +56,22 @@ async function main() {
   const stand = laden();
   const liste = auswahl(produkte, stand, PRO_LAUF);
   console.log(`[werbe-labor] ${liste.length} von ${produkte.length} Produkten werden getestet.`);
-  const ki = (prompt, maxTokens) => kiJson(prompt, { maxTokens });
+  // Die kostenlose KI drosselt bei schnellen Folgeanfragen: zwischen zwei Anfragen kurz warten.
+  const PAUSE = Number(process.env.WERBE_LABOR_PAUSE_MS ?? 15000);
+  let letzte = 0;
+  const ki = async (prompt, maxTokens) => {
+    const warten = letzte + PAUSE - Date.now();
+    if (warten > 0) await new Promise((r) => setTimeout(r, warten));
+    try { return await kiJson(prompt, { maxTokens }); } finally { letzte = Date.now(); }
+  };
+  // Echte Zahlen aus den Posts (Leistungs-Sammler) fliessen in die Jury-Note mit ein.
+  const echt = lernstandLaden();
+  if (echt.posts) console.log(`[werbe-labor] Echte Zahlen aus ${echt.posts} Posts fliessen mit ein.`);
   for (const p of liste) {
     try {
-      const e = await ZLabor.labor(p, ki);
+      const e = await ZLabor.labor(p, ki, { echt: echt.winkel });
       stand.produkte[schluessel(p)] = { ...e, handle: p.handle, shop: p.shopName, bild: (p.images && p.images[0] && p.images[0].src) || null };
-      console.log(`[werbe-labor] ${p.title}: Gewinner "${e.final.hook}" (${e.gewinner.punkte}/10, ${e.gewinner.quelle})`);
+      console.log(`[werbe-labor] ${p.title}: ${e.ersatz ? 'KI nicht erreichbar - Fabrik schreibt ihr eigenes Skript' : `Gewinner "${e.final.hook}" (${e.gewinner.punkte}/10, ${e.gewinner.quelle})`}`);
     } catch (err) {
       console.log(`[werbe-labor] ${p.title}: übersprungen (${err.message})`);
     }

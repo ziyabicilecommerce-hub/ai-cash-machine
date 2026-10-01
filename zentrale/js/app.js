@@ -2,7 +2,7 @@
 (function (root) {
   const { ZS, ZAgenten, ZUI } = root;
   const BEREICHE = [
-    ['heute', 'Heute'], ['labor', 'Werbe-Labor'], ['uebersicht', 'Übersicht'], ['agenten', 'Agenten-Team'], ['empfehlungen', 'Empfehlungen'], ['kunden', 'Kunden'],
+    ['heute', 'Heute'], ['fliessband', 'Engpass & Agenten'], ['shopdoktor', 'Shop-Doktor'], ['labor', 'Werbe-Labor'], ['uebersicht', 'Übersicht'], ['agenten', 'Agenten-Team'], ['empfehlungen', 'Empfehlungen'], ['kunden', 'Kunden'],
     ['kanaele', 'Kanäle'], ['preise', 'Preise'], ['konkurrenz', 'Konkurrenz'], ['content', 'Content'],
     ['support', 'Support-Bot'], ['daten', 'Daten'],
   ];
@@ -47,7 +47,7 @@
       const v = root.ZViews[this.aktiv], main = document.getElementById('inhalt');
       const hinweis = this.z.beispiel
         ? `<div class="hinweis"><span>Du siehst Beispieldaten eines erfundenen Shops. Deine echten Produkte erscheinen hier automatisch, sobald der tägliche Lauf sie geholt hat.</span><button class="knopf klein" data-gehe="daten">Eigene Daten laden</button></div>`
-        : !this.z.bestellungen.length && this.aktiv !== 'daten' && this.aktiv !== 'labor'
+        : !this.z.bestellungen.length && !['daten', 'labor', 'shopdoktor', 'fliessband'].includes(this.aktiv)
           ? `<div class="hinweis"><span>Deine ${this.z.produkte.length} Produkte sind da. Für Umsatz, Kunden und Prognose fehlen noch Bestellungen: Shopify → Bestellungen → Exportieren → hier hochladen. Dauert 1 Minute.</span><button class="knopf klein" data-gehe="daten">Bestellungen hochladen</button></div>`
           : '';
       main.innerHTML = `<header class="kopf"><div><h1>${v.titel}</h1><p class="unterzeile">${v.unter}</p></div></header>${hinweis}<div id="ansicht"></div>`;

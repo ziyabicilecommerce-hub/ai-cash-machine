@@ -163,7 +163,7 @@ export function preisText(preis, sprache, waehrung = 'EUR') {
 // klappt anders als drawtext in allen Schriften), preis + shop (Endkarte der letzten Szene).
 // untertitelStil: 'karaoke' (aktives Wort leuchtet in der Akzentfarbe) oder 'box' (TikTok-Stil:
 // aktives Wort in einer farbigen Box).
-export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', preis = '', shop = '', fortschritt = null, marke = '', rang = 0, untertitelStil = 'karaoke' }) {
+export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THEMEN[0], hook = '', hinweis = '', etiketten = [], preis = '', shop = '', fortschritt = null, marke = '', rang = 0, untertitelStil = 'karaoke' }) {
   const groesse = Math.round(Math.min(breite, hoehe) * 0.078);
   const unten = Math.round(hoehe * (hoehe > breite ? 0.25 : 0.09));
   const rand = Math.round(breite * 0.06);
@@ -173,7 +173,7 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
     'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
     `Style: Wort,DejaVu Sans,${groesse},&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,-1,0,0,0,100,100,1,0,1,${Math.round(groesse * 0.1)},${Math.round(groesse * 0.05)},2,${rand},${rand},${unten},1`,
     `Style: WortBox,DejaVu Sans,${groesse},${thema.text},${thema.text},${thema.box},${thema.box},-1,0,0,0,100,100,1,0,3,${Math.round(groesse * 0.16)},0,2,${rand},${rand},${unten},1`,
-    `Style: Hook,DejaVu Sans,${Math.round(groesse * 0.95)},${thema.text},${thema.text},${thema.box},&H64000000,-1,0,0,0,100,100,0,0,3,${Math.round(groesse * 0.28)},0,8,${rand},${rand},${Math.round(hoehe * 0.1)},1`,
+    `Style: Hook,DejaVu Sans,${Math.round(groesse * 1.12)},${thema.text},${thema.text},${thema.box},&H64000000,-1,0,0,0,100,100,0,0,3,${Math.round(groesse * 0.28)},0,8,${rand},${rand},${Math.round(hoehe * 0.1)},1`,
     `Style: Preis,DejaVu Sans,${Math.round(groesse * 1.25)},${thema.text},${thema.text},${thema.box},&H64000000,-1,0,0,0,100,100,0,-7,3,${Math.round(groesse * 0.3)},0,5,0,0,0,1`,
     `Style: Shop,DejaVu Sans,${Math.round(groesse * 0.55)},&H00FFFFFF,&H00FFFFFF,&H00101010,&H90000000,-1,0,0,0,100,100,2,0,1,${Math.round(groesse * 0.08)},0,2,${rand},${rand},${Math.round(hoehe * 0.05)},1`,
     '', '[Events]', 'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text',
@@ -220,10 +220,15 @@ export function assAusSrt(srt, ass, { breite, hoehe, sprache = 'de', thema = THE
   const pop = '{\\fscx40\\fscy40\\t(0,180,\\fscx108\\fscy108)\\t(180,260,\\fscx100\\fscy100)}';
   if (hook) {
     const h = GROSS_OK.test(hook) ? hook.toLocaleUpperCase(sprache) : hook;
-    // Hook knallt ins Bild: riesig und durchsichtig -> in 140 ms auf 92 % (Aufprall) -> 100 %, leicht gekippt.
-    const slam = '{\\fscx260\\fscy260\\frz-5\\alpha&HFF&\\t(0,140,\\fscx92\\fscy92\\frz0\\alpha&H00&)\\t(140,230,\\fscx100\\fscy100)}';
+    // Hook steht ab Bild 1 (kein Einblenden), knallt von 150 % auf 92 % (Aufprall) -> 100 % und pumpt
+    // bei 1,2 s noch einmal, damit das Auge oben bleibt.
+    const slam = '{\\fscx150\\fscy150\\frz-4\\t(0,120,\\fscx92\\fscy92\\frz0)\\t(120,200,\\fscx100\\fscy100)\\t(1200,1300,\\fscx108\\fscy108)\\t(1300,1420,\\fscx100\\fscy100)}';
     zeilen.push(`Dialogue: 1,${assZeit(0)},${assZeit(3300)},Hook,,0,0,0,,{\\fad(0,300)}${slam}${assText(h)}`);
   }
+  // Ehrliche Kennzeichnung (z. B. "KI-Beispiel" bei der Anwendungs-Szene): klein, oben rechts, die ganze Szene.
+  if (hinweis) zeilen.push(`Dialogue: 2,${assZeit(0)},${assZeit(600000)},Shop,,0,0,0,,{\\an9\\pos(${Math.round(breite * 0.955)},${Math.round(hoehe * 0.03)})\\1a&H30&}${assText(hinweis)}`);
+  // Ohne/Mit-Etiketten ueber den beiden Bildhaelften.
+  etiketten.slice(0, 2).forEach((t, k) => zeilen.push(`Dialogue: 2,${assZeit(100 + k * 250)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * (k ? 0.75 : 0.25))},${Math.round(hoehe * 0.2)})\\fs${Math.round(Math.min(breite, hoehe) * 0.075)}}${pop}${assText(t)}`));
   // Rang-Badge fuer Countdown-Videos (Top 5): gross, schraeg, links oben.
   if (rang) zeilen.push(`Dialogue: 2,${assZeit(150)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * 0.22)},${Math.round(hoehe * 0.19)})\\fs${Math.round(Math.min(breite, hoehe) * 0.16)}\\frz8}${pop}#${rang}`);
   if (preis) zeilen.push(`Dialogue: 2,${assZeit(350)},${assZeit(600000)},Preis,,0,0,0,,{\\pos(${Math.round(breite * 0.7)},${Math.round(hoehe * 0.1)})}${pop}${assText(preis)}`);
@@ -320,7 +325,8 @@ export function premiumStandbild({ bgP, fgP, ziel, breite, hoehe }) {
 // (Parallaxe), Blitz-Uebergang, Wort-Untertitel. extra = zusaetzliche Filter (Hook).
 // effekt (effekte.mjs): {art: 'start'|'blitz'|'glitch'|'leck', leck: PNG, qr: PNG, wackeln} - Zoom-Punch,
 // Uebergang und QR-Endkarte; ohne effekt bleibt es beim klassischen Blitz-Uebergang.
-export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = false, mp3, ass, ziel, breite, hoehe, dauer, index, extra = [], effekt = null }) {
+// bgVideo: fertige 3D-Kamerafahrt (scripts/tiefe3d.py) statt des Standbild-Schwenks.
+export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = false, mp3, ass, ziel, breite, hoehe, dauer, index, extra = [], effekt = null, bgVideo = '' }) {
   const D = dauer.toFixed(2);
   const r = index % 2 ? `(t/${D})` : `(1-t/${D})`;
   // Eingaenge: 0 Hintergrund, dann (falls vorhanden) Produkt, Bokeh, Glanz, zuletzt die Stimme.
@@ -330,7 +336,7 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
   const strahlen = fgP ? effekt?.strahlen || '' : '';
   const bilder = [bgP, fgP, bokeh, glanz, leck, qr, strahlen].filter(Boolean);
   const nr = (x) => bilder.indexOf(x);
-  let graph = `[0:v]crop=${breite}:${hoehe}:x='(iw-ow)*${r}':y='(ih-oh)*(0.5+0.35*sin(t*0.45+${index}))'`;
+  let graph = bgVideo ? `[0:v]scale=${breite}:${hoehe},setsar=1,fps=30,tpad=stop_mode=clone:stop_duration=2` : `[0:v]crop=${breite}:${hoehe}:x='(iw-ow)*${r}':y='(ih-oh)*(0.5+0.35*sin(t*0.45+${index}))'`;
   if (bokeh) graph += `[b0];[b0][${nr(bokeh)}:v]overlay=x=0:y='-(h-H)*(0.2+0.6*t/${D})'`;
   // Lichtstrahlen hinter dem Produkt (Hook): drehen sich langsam und blenden am Szenenende aus.
   if (strahlen) graph += `[s0];[${nr(strahlen)}:v]format=rgba,rotate=a=t*0.45:c=none:ow=iw:oh=ih,fade=t=out:st=${Math.max(dauer - 0.6, 0.2).toFixed(2)}:d=0.5:alpha=1[st];[s0][st]overlay=x=(W-w)/2:y=H*0.4-h/2`;
@@ -339,7 +345,8 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
     const quelle = nah ? `[${nr(fgP)}:v]scale=iw*1.4:-1:flags=lanczos[fn];[v0][fn]` : `[v0][${nr(fgP)}:v]`;
     const y = nah ? `(H-h*0.69)/2-H*0.02` : PRODUKT_Y;
     // Drop: Produkt faellt von oben ins Bild und federt beim Aufprall kurz nach (Hook).
-    const drop = effekt?.drop ? '-H*0.7*pow(max(0,1-t/0.42),3)+H*0.03*sin(PI*min(1,max(0,(t-0.42)/0.22)))' : '';
+    // Startet schon halb im Bild, damit Bild 1 nicht leer ist.
+    const drop = effekt?.drop ? '-H*0.32*pow(max(0,1-t/0.3),3)+H*0.03*sin(PI*min(1,max(0,(t-0.3)/0.22)))' : '';
     graph += `[v0];${quelle}overlay=x=(W-w)/2-W*0.018*(${r}-0.5):y='${y}+H*0.012*sin(t*1.7+${index})${drop}'`;
   }
   if (glanz) graph += `[g0];[g0][${nr(glanz)}:v]overlay=x='-w+(W+w)*(t-0.05)/0.7':y=0:enable='between(t,0.05,0.75)'`;
@@ -349,13 +356,14 @@ export async function premiumSzene({ bgP, fgP, glanz = '', bokeh = '', nah = fal
   // QR-Endkarte oben links (nach dem Zoom, damit er ruhig steht und scannbar bleibt).
   if (qr) graph += `[q0];[${nr(qr)}:v]scale=${gerade(breite * 0.26)}:-2,format=rgba,fade=t=in:st=0.4:d=0.3:alpha=1[qr];[q0][qr]overlay=x=${Math.round(breite * 0.17)}-w/2:y=${Math.round(hoehe * 0.075)}`;
   const ende = [
-    ...(art === 'start' ? ['fade=in:st=0:d=0.25'] : art === 'blitz' ? ['fade=in:st=0:d=0.14:color=white'] : art === 'glitch' ? glitchFilter() : art === 'wisch' ? wischFilter() : []),
+    // Start ohne Schwarzblende: schon Bild 1 zeigt Produkt + Hook (Feed-Vorschau!), dazu ein kurzer Lichtblitz.
+    ...(art === 'start' ? ["eq=brightness='0.3*max(0,1-t/0.22)':eval=frame"] : art === 'blitz' ? ['fade=in:st=0:d=0.14:color=white'] : art === 'glitch' ? glitchFilter() : art === 'wisch' ? wischFilter() : []),
     `fade=out:st=${Math.max(dauer - 0.18, 0).toFixed(2)}:d=0.18`,
     ...extra,
     `ass='${pfadFuerFilter(ass)}'`,
   ].join(',');
   await ausfuehren('ffmpeg', [
-    '-loglevel', 'error', '-y', ...bilder.flatMap((b) => ['-loop', '1', '-framerate', '30', '-i', b]), '-i', mp3,
+    '-loglevel', 'error', '-y', ...bilder.flatMap((b, k) => (k === 0 && bgVideo ? ['-i', bgVideo] : ['-loop', '1', '-framerate', '30', '-i', b])), '-i', mp3,
     '-filter_complex', `${graph},${ende}[v]`,
     '-map', '[v]', '-map', `${bilder.length}:a`, '-t', D,
     // aq-mode 3 verteilt Bits in dunkle Verlaeufe - weniger Farbstreifen (Banding) in Nacht-Hintergruenden.

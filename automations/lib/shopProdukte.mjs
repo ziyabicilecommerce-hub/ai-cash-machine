@@ -6,19 +6,31 @@ const env = (k, d = '') => (process.env[k] || d).trim();
 
 // Hook fuer das Bild: hoechstens 7 Woerter / 42 Zeichen, an Wortgrenze gekuerzt.
 export function kurzHook(text) {
+  const rein = String(text).replace(/[#"]/g, '').replace(/\s+/g, ' ').trim();
+  // Lieber ein ganzer erster Satz ("Ohne Band: Klimmzug ist schwer.") als ein mitten im Satz abgeschnittener Hook.
+  const satz = rein.match(/^.{6,42}?[.!?](?=\s|$)/)?.[0];
+  if (satz) return satz.replace(/\.$/, '');
   let h = '';
-  for (const wort of String(text).replace(/[#"]/g, '').split(/\s+/).filter(Boolean).slice(0, 7)) {
+  for (const wort of rein.split(' ').filter(Boolean).slice(0, 7)) {
     if ((h + ' ' + wort).trim().length > 42) break;
     h = (h + ' ' + wort).trim();
   }
-  return h.replace(/[\s–:,-]+$/, '');
+  // Kein Hook endet auf "für dein" oder "mit dem": haengende Fuellwoerter weg.
+  return h.replace(/(\s+(f(ü|ue)r|mit|und|oder|zu|von|im|in|am|auf|an|bei|der|die|das|dem|den|des|ein|eine|einen|einem|dein|deine|deinen|deinem|dich|dir))+$/i, '').replace(/[\s–:,-]+$/, '');
 }
+
+// Regeln fuer die ersten 2 Sekunden (entscheiden, ob jemand weiterwischt). Gilt fuer alle Werbe-Skripte.
+export const HOOK_REGELN =
+  'DER ANFANG ENTSCHEIDET: Der erste gesprochene Satz ist ein Pattern-Interrupt mit hoechstens 8 Woertern - direkte Du-Ansprache als ' +
+  'Warnung, Widerspruch oder Frage, die eine Wissensluecke oeffnet (Muster: "Hoer auf, so zu trainieren.", "Dein Ruecken hasst diesen Fehler.", ' +
+  '"Warum fuehlt sich das so gut an?"). Verboten am Anfang: Begruessung, "Heute zeige ich", der Produktname, langsame Einleitung. ' +
+  'Der Satz muss ehrlich zum Produkt passen: keine erfundenen Zahlen, Prozente, Studien oder Heilversprechen. ';
 
 export const reinText = (html) => String(html || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
 
-const SHOPS = env('VIDEO_FABRIK_SHOPS', 'https://www.deskrebel.store,https://purivelle.store').split(',').map((u) => u.trim().replace(/\/$/, '')).filter(Boolean);
+export const SHOPS = env('VIDEO_FABRIK_SHOPS', 'https://www.deskrebel.store,https://purivelle.store').split(',').map((u) => u.trim().replace(/\/$/, '')).filter(Boolean);
 
-function shopName(url) {
+export function shopName(url) {
   const host = new URL(url).hostname.replace(/^www\./, '').split('.')[0];
   return { deskrebel: 'DeskRebel', purivelle: 'Purivelle' }[host] || host.charAt(0).toUpperCase() + host.slice(1);
 }
@@ -54,6 +66,7 @@ export async function topListeSkript(shop, produkte) {
     `Du bist Top-Werbetexterin fuer TikTok. Schreibe ein Countdown-Video "Top ${liste.length} von ${shop}" auf Deutsch (Du-Ansprache). ` +
       `Produkte (Platz ${liste.length} bis 1): ${liste.map((p, i) => `[${i}] ${p.title}: ${reinText(p.body_html).slice(0, 200)}`).join(' | ')}. ` +
       'Je Produkt genau 1 kurzer, knackiger Satz mit dem wichtigsten Vorteil (nur Fakten aus den Infos). Dazu ein Intro-Satz (Hook) und ein Outro mit "Link in der Bio". ' +
+      HOOK_REGELN.replace('Der erste gesprochene Satz', 'Der Intro-Satz') +
       'Antworte NUR mit JSON: {"titel":"...","hook":"max. 6 Woerter","caption":"mit 3-5 Hashtags","intro":"...","saetze":["Satz zu [0]","..."],"outro":"..."}',
     { maxTokens: 1500 }
   );
