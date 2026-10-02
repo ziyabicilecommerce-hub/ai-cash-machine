@@ -43,10 +43,9 @@ jobs:
         with:
           node-version: '22'
       - name: ffmpeg, Schrift und edge-tts installieren
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null
-          pip install -q "edge-tts==7.*"
+        uses: ./.github/actions/video-werkzeug
+        with:
+          pip: 'edge-tts==7.*'
       - name: Release anlegen
         run: |
           TAG="podcast-$(date -u +%Y%m%d-%H%M)"
