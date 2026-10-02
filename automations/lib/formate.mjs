@@ -40,13 +40,18 @@ export function trendHinweis(pfad = 'automations/state/trends.json', jetzt = Dat
 
 export const winkelAus = (text) => String(text || '').match(/Kauf-Psychologie: ([^.]+)\./)?.[1]?.trim() || '';
 
+// Viral-Regel fuer jedes KI-Skript: Tempo (Retention), Kommentar-Frage (Algorithmus) und Loop-Ende (Rewatch).
+export const VIRAL_REGEL = 'VIRAL: Jede Szene bringt einen neuen Gedanken (keine Fuellsaetze, max. 12 Woerter pro Satz). ' +
+  'Die vorletzte Szene ist eine ehrliche Frage an die Zuschauer, die zum Kommentieren einlaedt (z. B. "Wuerdest du das ausprobieren? Schreib ja oder nein."). ' +
+  'Der letzte Satz greift den ersten Satz wieder auf, damit sich das Video wie eine Schleife anfuehlt, und endet mit "Link in der Bio".';
+
 const werbeFehler = (s) => pruefen([s.titel, s.hook, s.caption, ...(s.szenen || []).map((x) => x.text), ...(s.anfaenge || []).flatMap((a) => [a.satz, a.hook])].filter(Boolean).join('\n')).filter((t) => t.stufe === 'block');
 
 // Baut das Produkt-Skript mit Labor-Winkel + Format + Trend + echten Suchfragen und merkt sich, was benutzt wurde -
 // der Poster schreibt es an jeden Post, damit der Leistungs-Sammler es spaeter auswerten kann.
 export async function skriptMitFormat(p, winkel, bauer) {
   const f = formateAn() ? formatWaehlen(p, { mitHook: !!winkel }) : { name: '', anweisung: '' };
-  const zusatz = [winkel, f.anweisung, trendHinweis(), suchHinweis(p)].filter(Boolean).join(' ');
+  const zusatz = [winkel, f.anweisung, VIRAL_REGEL, trendHinweis(), suchHinweis(p)].filter(Boolean).join(' ');
   let s = await bauer(p, zusatz);
   // Werbe-Check schon beim Schreiben: verbotene Aussage im Skript -> einmal neu schreiben lassen, sonst verwerfen.
   let fehler = werbeFehler(s);
