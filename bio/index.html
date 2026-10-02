@@ -66,8 +66,9 @@ a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
   const h = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const sicher = (u) => { try { const x = new URL(u); return x.protocol === 'https:' ? x.href : ''; } catch (e) { return ''; } };
   const holen = async (pfad) => { try { const r = await fetch(pfad, { cache: 'no-store' }); return r.ok ? r.json() : null; } catch (e) { return null; } };
-  const [p, f, c] = await Promise.all([holen('../zentrale/daten/produkte.json'), holen('../video-feed/videos.json'), holen('../zentrale/daten/community.json')]);
-  const alle = ((f && f.videos) || []).filter((v) => !v.kanal && v.format === 'hoch' && v.vorschauUrl && (v.sprache || 'de') !== 'int');
+  const [p, f, c, w] = await Promise.all([holen('../zentrale/daten/produkte.json'), holen('../video-feed/videos.json'), holen('../zentrale/daten/community.json'), holen('../zentrale/daten/werbe-check.json')]);
+  const gesperrt = new Set(((w && w.liste) || []).map((x) => x.datei));
+  const alle = ((f && f.videos) || []).filter((v) => !gesperrt.has(v.datei) && !v.kanal && v.format === 'hoch' && v.vorschauUrl && (v.sprache || 'de') !== 'int');
   const vorhanden = [...new Set(['de', ...alle.map((v) => v.sprache || 'de')])];
   const wunsch = new URLSearchParams(location.search).get('lang') || (navigator.languages || [navigator.language]).map(ausBrowser).find((x) => vorhanden.includes(x) || T[x]) || 'de';
   const sel = document.getElementById('sprache');

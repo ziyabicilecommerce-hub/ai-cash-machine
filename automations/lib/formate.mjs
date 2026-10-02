@@ -4,6 +4,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { lernstandLaden, waehlen } from './leistung.mjs';
 import { suchHinweis } from './suchRadar.mjs';
+import { pruefen } from './werbeCheck.mjs';
 
 export const FORMATE = {
   pov: 'Format POV: Szene 1 beginnt mit "POV:" und beschreibt eine typische Alltagssituation der Zielgruppe aus Ich-Sicht.',
@@ -39,10 +40,21 @@ export function trendHinweis(pfad = 'automations/state/trends.json', jetzt = Dat
 
 export const winkelAus = (text) => String(text || '').match(/Kauf-Psychologie: ([^.]+)\./)?.[1]?.trim() || '';
 
+const werbeFehler = (s) => pruefen([s.titel, s.hook, s.caption, ...(s.szenen || []).map((x) => x.text), ...(s.anfaenge || []).flatMap((a) => [a.satz, a.hook])].filter(Boolean).join('\n')).filter((t) => t.stufe === 'block');
+
 // Baut das Produkt-Skript mit Labor-Winkel + Format + Trend + echten Suchfragen und merkt sich, was benutzt wurde -
 // der Poster schreibt es an jeden Post, damit der Leistungs-Sammler es spaeter auswerten kann.
 export async function skriptMitFormat(p, winkel, bauer) {
   const f = formateAn() ? formatWaehlen(p, { mitHook: !!winkel }) : { name: '', anweisung: '' };
-  const s = await bauer(p, [winkel, f.anweisung, trendHinweis(), suchHinweis(p)].filter(Boolean).join(' '));
+  const zusatz = [winkel, f.anweisung, trendHinweis(), suchHinweis(p)].filter(Boolean).join(' ');
+  let s = await bauer(p, zusatz);
+  // Werbe-Check schon beim Schreiben: verbotene Aussage im Skript -> einmal neu schreiben lassen, sonst verwerfen.
+  let fehler = werbeFehler(s);
+  if (fehler.length) {
+    console.log(`[werbe-check] Skript "${s.titel}" enthält ${fehler.map((t) => `„${t.stelle}“`).join(', ')} - wird neu geschrieben`);
+    s = await bauer(p, `${zusatz} VERBOTEN (Werberecht): ${fehler.map((t) => `${t.grund}, z. B. „${t.stelle}“`).join('; ')}. Formuliere ohne solche Aussagen.`);
+    fehler = werbeFehler(s);
+    if (fehler.length) { console.log('[werbe-check] auch zweiter Versuch unzulässig - Produkt übersprungen'); s = { ...s, szenen: [] }; }
+  }
   return s.ohneKi ? { ...s, formatName: '', winkelName: '' } : { ...s, formatName: f.name, winkelName: winkelAus(winkel) };
 }

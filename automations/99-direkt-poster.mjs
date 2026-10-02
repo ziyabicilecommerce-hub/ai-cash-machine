@@ -5,6 +5,7 @@
 // ihre Secrets gesetzt sind. Jeder Post bekommt einen KI-Hinweis (EU AI Act Art. 50).
 //   node automations/99-direkt-poster.mjs --aus-feed 1   -> 1 noch nicht gepostetes Video aus dem Feed
 //   node automations/99-direkt-poster.mjs <Release-Basis-URL>  -> alle frischen Videos eines Laufs
+import { videoPruefen } from './lib/werbeCheck.mjs';
 import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync, createWriteStream } from 'node:fs';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
@@ -59,20 +60,27 @@ const nurErlaubt = (u) => { try { const x = new URL(u); return x.protocol === 'h
 // Welche Videos? Modus 1: frische aus out/manifest.json (Basis-URL). Modus 2 (--aus-feed N):
 // die N neuesten, noch nie geposteten deutschen/sprachfreien Videos aus dem Video-Feed -
 // so bleibt es bei wenigen, sicheren Posts pro Tag, egal wie viele Videos gebaut werden.
+// Werbe-Check: Videos mit Heilversprechen, erfundener Knappheit o. ae. werden nie gepostet.
+function werbeOk(v) {
+  const e = videoPruefen(v);
+  if (!e.ok) console.log(`[99-direkt-poster] Werbe-Check blockiert ${v.datei}: ${e.treffer.filter((t) => t.stufe === 'block').map((t) => `${t.grund} („${t.stelle}“)`).join('; ')}`);
+  return e.ok;
+}
+
 function auswahl() {
   const [a1, a2] = process.argv.slice(2);
   if (a1 === '--aus-feed') {
     const n = Math.min(Math.max(parseInt(a2, 10) || 1, 1), 10);
     const feed = existsSync('video-feed/videos.json') ? JSON.parse(readFileSync('video-feed/videos.json', 'utf8')).videos || [] : [];
     const schon = new Set(existsSync(GEPOSTET) ? JSON.parse(readFileSync(GEPOSTET, 'utf8')) : []);
-    const offen = feed.filter((v) => nurErlaubt(v.url) && !schon.has(v.datei) && SPRACHEN.includes(v.sprache || 'de') && (v.kanal || '') === KANAL);
+    const offen = feed.filter((v) => nurErlaubt(v.url) && !schon.has(v.datei) && SPRACHEN.includes(v.sprache || 'de') && (v.kanal || '') === KANAL && werbeOk(v));
     // Bevorzugt Hochformat-Kurzvideos (passen auf die meisten Plattformen), dann der Rest.
     offen.sort((x, y) => (y.format === 'hoch' && y.dauer <= 90) - (x.format === 'hoch' && x.dauer <= 90));
     return { videos: offen.slice(0, n).map((v) => ({ m: v, url: v.url, vorschauUrl: nurErlaubt(v.vorschauUrl) })), merken: true };
   }
   const basis = (a1 || '').replace(/\/$/, '');
   if (!basis || !existsSync(MANIFEST)) return { videos: [] };
-  return { videos: JSON.parse(readFileSync(MANIFEST, 'utf8')).filter((m) => SPRACHEN.includes(m.sprache || 'de') && (m.kanal || '') === KANAL).map((m) => ({ m, url: `${basis}/${encodeURIComponent(m.datei)}`, vorschauUrl: m.vorschau ? `${basis}/${encodeURIComponent(m.vorschau)}` : '' })) };
+  return { videos: JSON.parse(readFileSync(MANIFEST, 'utf8')).filter((m) => SPRACHEN.includes(m.sprache || 'de') && (m.kanal || '') === KANAL && werbeOk(m)).map((m) => ({ m, url: `${basis}/${encodeURIComponent(m.datei)}`, vorschauUrl: m.vorschau ? `${basis}/${encodeURIComponent(m.vorschau)}` : '' })) };
 }
 
 async function main() {

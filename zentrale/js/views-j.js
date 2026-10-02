@@ -5,7 +5,7 @@
   const { h, kopieren, meldung } = ZUI;
   const V = (root.ZViews = root.ZViews || {});
   const MERKEN = 'zentrale-manuell-gepostet';
-  let feed = null, auto = [], geladen = false;
+  let feed = null, auto = [], check = null, geladen = false;
   const lokal = () => { try { return JSON.parse(localStorage.getItem(MERKEN)) || []; } catch (e) { return []; } };
   const merken = (liste) => { try { localStorage.setItem(MERKEN, JSON.stringify(liste.slice(-500))); } catch (e) { /* nur dieses Fenster */ } };
   const BIO = new URL('../bio/', location.href).href;
@@ -19,6 +19,7 @@
     geladen = true;
     try { const r = await fetch('../video-feed/videos.json', { cache: 'no-store' }); feed = r.ok ? (await r.json()).videos || [] : []; } catch (e) { feed = []; }
     try { const r = await fetch('../video-feed/gepostet.json', { cache: 'no-store' }); auto = r.ok ? await r.json() : []; } catch (e) { auto = []; }
+    try { const r = await fetch('daten/werbe-check.json', { cache: 'no-store' }); check = r.ok ? await r.json() : null; } catch (e) { check = null; }
     if (app.aktiv === 'heutePosten') app.zeichnen();
   }
 
@@ -42,12 +43,17 @@
     zeichnen(el, app) {
       if (!geladen) laden(app);
       if (!feed) { el.innerHTML = '<p class="klein-text">Lädt …</p>'; return; }
-      const liste = ZCaptions.heute(feed, { gepostet: [...auto, ...lokal()], sprache });
+      // Werbe-Check: Videos mit Heilversprechen & Co. tauchen hier gar nicht erst auf.
+      const gesperrt = (check?.liste || []).map((x) => x.datei);
+      const liste = ZCaptions.heute(feed, { gepostet: [...auto, ...lokal(), ...gesperrt], sprache });
+      const werbe = check ? `<details class="box" style="margin-bottom:14px"><summary><strong>🛡️ Werbe-Check:</strong> ${check.geprueft} Videos geprüft · ${check.blockiert ? `<span style="color:var(--rot,#c0392b)">${check.blockiert} gesperrt</span>` : '0 gesperrt'}${check.hinweise ? ` · ${check.hinweise} Hinweise` : ''}</summary>
+          <p class="klein-text">Gesperrt werden Heilversprechen („schmerzfrei“, „heilt“), „klinisch getestet“, „Testsieger“, erfundene Knappheit („nur noch 3“) und erfundene Kundenzahlen - in 12 Sprachen. Gesperrte Videos postet weder der Poster noch erscheinen sie hier oder auf der Bio-Seite. Keine Rechtsberatung, aber ein Schutz vor den häufigsten Abmahnungen.</p>
+          ${[...(check.liste || []), ...(check.pruefliste || [])].slice(0, 40).map((x) => `<p class="klein-text">${x.treffer.some((t) => t.stufe === 'block') ? '⛔' : '⚠️'} <strong>${h(x.sprache)}</strong> · ${h(x.titel)} - ${x.treffer.map((t) => `${h(t.grund)} („${h(t.stelle)}“)`).join(', ')}</p>`).join('')}</details>` : '';
       const sprachen = [...new Set(feed.filter((v) => !v.kanal && v.format === 'hoch').map((v) => v.sprache || 'de'))].filter((c) => c !== 'int').sort((a, b) => (a === 'de' ? -1 : b === 'de' ? 1 : sprachName(a).localeCompare(sprachName(b))));
       const bio = sprache === 'de' ? BIO : `${BIO}?lang=${encodeURIComponent(sprache)}`;
       el.innerHTML = `<div class="reihe" style="margin-bottom:12px"><label class="klein-text">🌐 Sprache der Videos <select id="post-sprache">${sprachen.map((c) => `<option value="${h(c)}"${c === sprache ? ' selected' : ''}>${h(sprachName(c))} (${feed.filter((v) => (v.sprache || 'de') === c && v.format === 'hoch' && !v.kanal).length})</option>`).join('')}</select></label>
           <span class="klein-text">Für internationale Accounts: Videos, Texte und KI-Hinweis passen dann zur Sprache.</span></div>
-        <section class="box betont" style="margin-bottom:14px"><h2>Dein Link in der Bio</h2>
+        ${werbe}<section class="box betont" style="margin-bottom:14px"><h2>Dein Link in der Bio</h2>
           <p class="klein-text">Jedes Video sagt „Link in der Bio“ - trag diese Seite in TikTok, Instagram, YouTube und Co. als Profil-Link ein. Sie zeigt alle Produkte und die neuesten Videos und aktualisiert sich jeden Tag selbst.</p>
           <div class="reihe"><code>${h(bio)}</code><button class="knopf klein" data-kopie="${h(bio)}">Link kopieren</button><a class="knopf klein" href="${h(bio)}" target="_blank" rel="noopener">Ansehen</a></div></section>
         ${liste.length ? liste.map(karte).join('') : '<p class="plus">Alles gepostet - morgen kommen neue Videos.</p>'}`;

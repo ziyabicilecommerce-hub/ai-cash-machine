@@ -36,7 +36,7 @@ jobs:
             ["url_kuerzen",{"url":"https://github.com"}],["npm_paket",{"name":"react"}],["pypi_paket",{"name":"requests"}],
             ["stackoverflow_suche",{"suche":"ffmpeg overlay","limit":2}],["reddit_suche",{"suche":"dropshipping","limit":2}],
             ["farbpalette",{"farbe":"#ff5500"}],["hashtags",{"thema":"Klimmzugband"}],["rechnen",{"ausdruck":"2^10"}],
-            ["zentrale_status",{}],["kanaele_status",{}],["shop_doktor",{"nur_kritisch":true}],["neueste_videos",{"limit":2}],["produkt_feeds",{}],["suchbegriffe",{}],
+            ["zentrale_status",{}],["kanaele_status",{}],["shop_doktor",{"nur_kritisch":true}],["neueste_videos",{"limit":2}],["produkt_feeds",{}],["suchbegriffe",{}],["werbe_check",{"text":"Schmerzfrei mit dem Testsieger"}],
             ["werbe_labor",{}],["lernstand",{}],["kommentare_statistik",{}],["engpass_rechnen",{"auftraege":45,"schritte":[{"id":"a","name":"Packen","verfuegbar":60,"jeAuftrag":1},{"id":"b","name":"Prüfen","verfuegbar":40,"jeAuftrag":2}],"von":"a","nach":"b","menge":12}]
           ]' | tee ergebnis.txt
           echo "## Ultimativ-MCP Selbsttest" >> "$GITHUB_STEP_SUMMARY"
