@@ -24,6 +24,11 @@ h2 { font-size: 1.05rem; margin: 26px 0 10px; }
 .karte .preis { font-weight: 700; margin-top: 4px; }
 .videos .karte img { aspect-ratio: 9 / 16; }
 .hinweis { color: var(--leise); font-size: .8rem; text-align: center; margin-top: 28px; }
+.quiz { background: var(--karte); border: 1px solid var(--linie); border-radius: 12px; padding: 16px; margin: 0 0 26px; }
+.quiz h2 { margin-top: 0; }
+.quiz .wahl { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
+.quiz button { font: inherit; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--linie); background: var(--bg); color: var(--text); cursor: pointer; }
+.quiz button[aria-pressed="true"] { background: var(--akzent); color: var(--knopf-text); border-color: var(--akzent); }
 a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
 </style>
 </head>
@@ -38,6 +43,7 @@ a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
   </nav>
   <nav class="shops" id="community" aria-label="Community" hidden></nav>
   <section><h2 data-t="videos">Neueste Videos</h2><div class="raster videos" id="videos"><p class="unter">…</p></div></section>
+  <section id="quiz" class="quiz" hidden></section>
   <section id="produkte"></section>
   <p class="hinweis" data-t="hinweis">Videos sind KI-generiert. Preise und Verfügbarkeit gelten im jeweiligen Shop.</p>
 </main>
@@ -45,8 +51,8 @@ a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
 (async function () {
   // Mehrsprachig: Sprache aus ?lang=, sonst aus dem Browser - Texte, Preise und Videos in dieser Sprache.
   const T = {
-    de: { unter: 'Fitness & Massage für zuhause und das Büro', shop: '{s}-Shop öffnen', videos: 'Neueste Videos', leer: 'Bald neue Videos.', hinweis: 'Videos sind KI-generiert. Preise und Verfügbarkeit gelten im jeweiligen Shop.', community: 'Komm in die Community „{n}“', beitreten: '{k}-Community beitreten - kostenlos' },
-    en: { unter: 'Fitness & massage for home and office', shop: 'Open the {s} shop', videos: 'Latest videos', leer: 'New videos coming soon.', hinweis: 'Videos are AI-generated. Prices and availability as shown in each shop.', community: 'Join the community "{n}"', beitreten: 'Join on {k} - free' },
+    de: { quiz: 'Welches Produkt passt zu dir?', q1: 'Was willst du?', a_kraft: 'Stärker werden', a_entspannen: 'Entspannen', a_beides: 'Beides', q2: 'Wo zwickt es oder was willst du trainieren?', a_ruecken: 'Rücken & Nacken', a_arme: 'Arme & Griff', a_beine: 'Beine & ganzer Körper', a_haende: 'Hände & Füße', ergebnis: 'Passt zu dir:', unter: 'Fitness & Massage für zuhause und das Büro', shop: '{s}-Shop öffnen', videos: 'Neueste Videos', leer: 'Bald neue Videos.', hinweis: 'Videos sind KI-generiert. Preise und Verfügbarkeit gelten im jeweiligen Shop.', community: 'Komm in die Community „{n}“', beitreten: '{k}-Community beitreten - kostenlos' },
+    en: { quiz: 'Which product fits you?', q1: 'What do you want?', a_kraft: 'Get stronger', a_entspannen: 'Relax', a_beides: 'Both', q2: 'Where does it feel tight, or what do you want to train?', a_ruecken: 'Back & neck', a_arme: 'Arms & grip', a_beine: 'Legs & full body', a_haende: 'Hands & feet', ergebnis: 'Fits you:', unter: 'Fitness & massage for home and office', shop: 'Open the {s} shop', videos: 'Latest videos', leer: 'New videos coming soon.', hinweis: 'Videos are AI-generated. Prices and availability as shown in each shop.', community: 'Join the community "{n}"', beitreten: 'Join on {k} - free' },
     es: { unter: 'Fitness y masaje para casa y oficina', shop: 'Abrir la tienda {s}', videos: 'Vídeos recientes', leer: 'Pronto nuevos vídeos.', hinweis: 'Los vídeos están generados con IA. Precios y disponibilidad según cada tienda.', community: 'Únete a la comunidad "{n}"', beitreten: 'Unirse en {k} - gratis' },
     fr: { unter: 'Fitness & massage pour la maison et le bureau', shop: 'Ouvrir la boutique {s}', videos: 'Dernières vidéos', leer: 'Nouvelles vidéos bientôt.', hinweis: 'Vidéos générées par IA. Prix et disponibilité selon chaque boutique.', community: 'Rejoins la communauté « {n} »', beitreten: 'Rejoindre sur {k} - gratuit' },
     it: { unter: 'Fitness e massaggio per casa e ufficio', shop: 'Apri il negozio {s}', videos: 'Ultimi video', leer: 'Presto nuovi video.', hinweis: 'Video generati con IA. Prezzi e disponibilità come indicato in ogni negozio.', community: 'Entra nella community "{n}"', beitreten: 'Unisciti su {k} - gratis' },
@@ -76,7 +82,7 @@ a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
   sel.addEventListener('change', () => { const u = new URL(location.href); u.searchParams.set('lang', sel.value); location.href = u.href; });
 
   const basis = T[wunsch] ? wunsch : T[bcp(wunsch).split('-')[0]] ? bcp(wunsch).split('-')[0] : 'en';
-  const t = (k, w = {}) => T[basis][k].replace(/\{(\w)\}/g, (_, x) => w[x] ?? '');
+  const t = (k, w = {}) => (T[basis][k] ?? T.en[k]).replace(/\{(\w)\}/g, (_, x) => w[x] ?? '');
   document.documentElement.lang = bcp(wunsch);
   document.documentElement.dir = RTL.includes(wunsch) ? 'rtl' : 'ltr';
   document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t(el.dataset.t, { s: el.dataset.shop || '' }); });
@@ -94,6 +100,20 @@ a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
   document.getElementById('videos').innerHTML = videos.length ? videos.slice(0, 6).map((v) => `<a class="karte" href="${h(sicher(v.url))}" rel="noopener"><img src="${h(sicher(v.vorschauUrl))}" alt="${h(v.titel)}" loading="lazy"><div class="info"><div class="name">${h(v.titel)}</div></div></a>`).join('') : `<p class="unter">${h(t('leer'))}</p>`;
   const produkte = ((p && p.produkte) || []).filter((x) => sicher(x.url) && sicher(x.bild));
   const shops = [...new Set(produkte.map((x) => x.shop))];
+  // Produkt-Finder: 2 Fragen -> die 3 passendsten Produkte (feste Regeln aus Name/Kategorie, keine KI, nichts erfunden).
+  const BEREICH = { ruecken: /rücken|nacken|schulter|lumbar|back|wirbel/i, arme: /griff|grip|arm|ellbogen|liegestütz|klimmzug|twister|hand/i, beine: /bein|po\b|faszien|roller|springseil|ganzkörper|körper|widerstand/i, haende: /finger|hand|daumen|fuß|fuss|ball/i };
+  const wahl = { ziel: '', bereich: '' };
+  const quiz = document.getElementById('quiz');
+  const knopf = (feld, wert, text) => `<button type="button" data-feld="${feld}" data-wert="${wert}" aria-pressed="${wahl[feld] === wert}">${h(text)}</button>`;
+  const punkte = (x) => (wahl.ziel === 'kraft' && x.shop === 'DeskRebel' || wahl.ziel === 'entspannen' && x.shop === 'Purivelle' || wahl.ziel === 'beides' ? 2 : 0) + (wahl.bereich && BEREICH[wahl.bereich].test(`${x.name} ${x.kategorie || ''}`) ? 3 : 0);
+  const quizZeichnen = () => {
+    const top = wahl.ziel && wahl.bereich ? produkte.map((x) => ({ x, p: punkte(x) })).filter((y) => y.p > 0).sort((a, b) => b.p - a.p).slice(0, 3).map((y) => y.x) : [];
+    quiz.innerHTML = `<h2>${h(t('quiz'))}</h2><p>${h(t('q1'))}</p><div class="wahl">${knopf('ziel', 'kraft', t('a_kraft'))}${knopf('ziel', 'entspannen', t('a_entspannen'))}${knopf('ziel', 'beides', t('a_beides'))}</div>
+      <p>${h(t('q2'))}</p><div class="wahl">${['ruecken', 'arme', 'beine', 'haende'].map((b) => knopf('bereich', b, t(`a_${b}`))).join('')}</div>
+      ${top.length ? `<p><strong>${h(t('ergebnis'))}</strong></p><div class="raster">${top.map((x) => `<a class="karte" href="${h(sicher(x.url))}" rel="noopener"><img src="${h(sicher(x.bild))}" alt="${h(x.name)}" loading="lazy"><div class="info"><div class="name">${h(x.name)}</div><div class="preis">${eur(x.preis)}</div></div></a>`).join('')}</div>` : ''}`;
+    quiz.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { wahl[b.dataset.feld] = b.dataset.wert; quizZeichnen(); }));
+  };
+  if (produkte.length) { quizZeichnen(); quiz.hidden = false; }
   document.getElementById('produkte').innerHTML = shops.map((s) => `<h2>${h(s)}</h2><div class="raster">${produkte.filter((x) => x.shop === s).map((x) => `<a class="karte" href="${h(sicher(x.url))}" rel="noopener"><img src="${h(sicher(x.bild))}" alt="${h(x.name)}" loading="lazy"><div class="info"><div class="name">${h(x.name)}</div><div class="preis">${eur(x.preis)}</div></div></a>`).join('')}</div>`).join('');
 })();
 </script>

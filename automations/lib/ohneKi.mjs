@@ -3,6 +3,7 @@
 // Nichts wird erfunden; so fallen keine Tagesvideos mehr aus, nur weil eine KI streikt.
 import { readFileSync, existsSync } from 'node:fs';
 import { reinText } from './shopProdukte.mjs';
+import { saisonJetzt } from './saison.mjs';
 
 const UEBERSCHRIFT = /^(warum du (es|ihn|sie) willst|warum du (es|ihn|sie) liebst|highlights|vorteile|details|eigenschaften|so funktioniert'?s|so geht'?s|anwendung|perfekt für)\s*:?\s*/i;
 const RAUS = /versand|lieferung|lieferumfang|garantie|rückgabe|rueckgabe|widerruf|hinweis|ersetzt keine|arzt|medizin|\d+\s?(cm|mm|kg|g)\b|https?:/i;
@@ -66,7 +67,7 @@ export function notfallSkript(p, { such = suchEintrag(p.handle), tags = such?.ha
   return {
     titel: p.title,
     hook,
-    caption: `${hook}\n\n${saetze[0] || p.title}\n\n${kommentarFrage(tag)}\n\n${[...tags.slice(0, 4), shopTag].filter((t) => t.length > 1).join(' ')}`,
+    caption: `${hook}\n\n${saetze[0] || p.title}\n\n${kommentarFrage(tag)}\n\n${[...tags.slice(0, 4), ...(saisonJetzt()?.tags || []).slice(0, 1), shopTag].filter((t) => t.length > 1).join(' ')}`,
     hintergrund: 'clean minimal room with soft natural daylight, empty, no people, no text',
     anwendung: ANWENDUNG,
     szenen: saetze.length >= 2 ? texte.map((text, i) => ({ text, foto: i % fotos })) : [],

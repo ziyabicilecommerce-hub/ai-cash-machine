@@ -6,6 +6,8 @@
 //   node automations/99-direkt-poster.mjs --aus-feed 1   -> 1 noch nicht gepostetes Video aus dem Feed
 //   node automations/99-direkt-poster.mjs <Release-Basis-URL>  -> alle frischen Videos eines Laufs
 import { videoPruefen } from './lib/werbeCheck.mjs';
+import { berlinStunde, jetztPosten, kuerzlichGepostet } from './lib/postZeiten.mjs';
+import { postsLaden } from './lib/leistung.mjs';
 import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync, createWriteStream } from 'node:fs';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
@@ -92,7 +94,13 @@ async function main() {
   const status = () => statusSchreiben(ALLE.map((p) => ({ name: p.name, verbunden: p.bereit(), heute: z.zaehler[p.name] || 0, limit: limit(p), ...(ergebnisse[p.name] || {}) })));
   if (!videos.length) { status(); return console.log('[99-direkt-poster] Nichts zu posten.'); }
   const bereit = ALLE.filter((p) => p.bereit() && (!NUR.length || NUR.includes(p.name.toLowerCase())));
-  const aktiv = bereit.filter((p) => (z.zaehler[p.name] || 0) < limit(p));
+  // Beste Posting-Zeiten: nur in den starken Stunden der Plattform (oder zum Aufholen am Abend).
+  const stunde = berlinStunde();
+  const spaeter = bereit.filter((p) => (z.zaehler[p.name] || 0) < limit(p) && !jetztPosten(p.name, stunde, { heute: z.zaehler[p.name] || 0, limit: limit(p) }));
+  const aktiv = bereit.filter((p) => (z.zaehler[p.name] || 0) < limit(p) && !spaeter.includes(p));
+  if (spaeter.length) console.log(`[99-direkt-poster] ${stunde} Uhr: ${spaeter.map((p) => p.name).join(', ')} warten auf ihre beste Zeit`);
+  const posts = postsLaden();
+  const dieseRunde = {};
   const voll = bereit.filter((p) => !aktiv.includes(p));
   console.log(`[99-direkt-poster] Aktiv: ${aktiv.map((p) => `${p.name} ${z.zaehler[p.name] || 0}/${limit(p)}`).join(', ') || 'keine (Secrets fehlen oder Tageslimit erreicht)'}${voll.length ? ` · Tageslimit erreicht: ${voll.map((p) => p.name).join(', ')}` : ''} · ${videos.length} Video(s)`);
   if (!aktiv.length) { status(); return; }
@@ -114,7 +122,8 @@ async function main() {
       for (const { p, w } of zuteilung.filter((x) => x.w.datei === dateiname)) {
         const mv = { ...m, datei: dateiname, hookTyp: w.hookTyp };
         const v = { ...mv, url, vorschauUrl, link: FEED_SEITE, shopLink: String(m.caption || '').match(/https:\/\/\S+\/products\/\S+/)?.[0] || '', datei, dateiname, sprache: m.sprache || 'de', text: `${m.titel}\n\n${m.caption || ''}\n\n${KI_HINWEIS}`.trim() };
-        if (!p.passt(v) || (z.zaehler[p.name] || 0) >= limit(p)) continue;
+        if (!p.passt(v) || (z.zaehler[p.name] || 0) >= limit(p) || dieseRunde[p.name]) continue;
+        if (kuerzlichGepostet(posts, p.name, m.titel)) { console.log(`[99-direkt-poster] ${p.name}: "${m.titel}" lief dort schon in den letzten 24 h - übersprungen`); continue; }
         try {
           const ergebnis = await p.posten(v);
           bilanz[p.name] = (bilanz[p.name] || 0) + 1;
@@ -122,6 +131,7 @@ async function main() {
           irgendwo = true;
           console.log(`[99-direkt-poster] ✓ ${p.name}: "${m.titel}"${dateiname !== m.datei ? ` (Anfang: ${w.hookTyp})` : ''} → ${ergebnis}`);
           postMerken(mv, p.name, ergebnis); // fuer echte Zahlen spaeter (leistung-sammler.mjs)
+          dieseRunde[p.name] = 1; // max. 1 Post je Kanal und Lauf - verteilt ueber die starken Stunden
           ergebnisse[p.name] = { ok: new Date().toISOString() };
         } catch (err) {
           console.log(`[99-direkt-poster] ✗ ${p.name}: "${m.titel}" → ${String(err.message).slice(0, 250)}`);

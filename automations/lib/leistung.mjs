@@ -23,11 +23,13 @@ export function postId(plattform, ergebnis) {
   return t.match(/^(?:Reel|Video) ([\w-]+)/)?.[1] || '';
 }
 
+import { produktSchluessel } from './postZeiten.mjs';
+
 export function postMerken(m, plattform, ergebnis, { pfad = POSTS, jetzt = new Date() } = {}) {
   const id = postId(plattform, ergebnis);
   if (!id) return;
   const posts = postsLaden(pfad);
-  posts.unshift({ plattform, id, datei: m.datei, gruppe: m.gruppe || m.datei, hookTyp: m.hookTyp || '', winkel: m.winkel || '', format: m.formatName || '', gepostet: jetzt.toISOString(), zahlen: null });
+  posts.unshift({ plattform, id, datei: m.datei, gruppe: m.gruppe || m.datei, produkt: produktSchluessel(m.titel), hookTyp: m.hookTyp || '', winkel: m.winkel || '', format: m.formatName || '', gepostet: jetzt.toISOString(), zahlen: null });
   schreiben(pfad, posts.slice(0, 3000));
 }
 
