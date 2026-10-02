@@ -16,6 +16,10 @@ export const REGELN = [
     // ru / uk
     /лечит|исцеля|без\s+боли|от\s+боли|снимает\s+боль|свободн\S*\s+от\s+боли|терапевт|лікує|без\s+болю|від\s+болю|знімає\s+біль/i,
   ] },
+  { art: 'schmerz', stufe: 'block', grund: 'Schmerz-Bezug in der Werbung (wirkt wie Heilversprechen, HWG)', muster: [
+    // Jede Erwaehnung von Schmerz/Beschwerden in Werbung fuer Nicht-Medizinprodukte - auch indirekt ("Hoer auf, solche Schmerzen ...").
+    /schmerz|beschwerden|\bpain\b|\baches?\b|\bdolor(es)?\b|douleur|dolore|\bdores?\b|\bból|ağrı|\bболь|боли\b|болі|\bбіль/i,
+  ] },
   { art: 'klinisch', stufe: 'block', grund: 'Unbelegte Studien-/Klinik-Aussage', muster: [
     /klinisch\s+(getestet|bewiesen|belegt)|clinically\s+(tested|proven)|cliniquement|clínicamente|clinicamente|klinicznie|klinik\s+olarak|клинически|клінічно|wissenschaftlich\s+bewiesen|scientifically\s+proven/i,
   ] },

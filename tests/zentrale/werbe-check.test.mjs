@@ -7,7 +7,7 @@ import { skriptMitFormat } from '../../automations/lib/formate.mjs';
 const block = (t) => pruefen(t).filter((x) => x.stufe === 'block').map((x) => x.art);
 
 test('Heilversprechen in vielen Sprachen werden gesperrt (echte Fälle aus dem Feed)', () => {
-  for (const t of ['Rückenfrei mit Purivelle', 'Tiefer, stärker, schmerzfrei', 'Heilt Verspannungen', 'Lindert Rückenschmerzen sofort', 'Hilft bei Nackenschmerzen', 'Gegen Kopfschmerzen', 'Pain-free back in 5 minutes', 'Cures your neck', 'Libre de dolor de espalda', 'Bez bólu pleców', 'Свободный от боли спины', 'Без болю спини', 'Alivia a dor', 'Sans douleur au dos', 'Ağrısız bir sırt']) assert.deepEqual(block(t), ['heilversprechen'], t);
+  for (const t of ['Rückenfrei mit Purivelle', 'Tiefer, stärker, schmerzfrei', 'Heilt Verspannungen', 'Lindert Rückenschmerzen sofort', 'Hilft bei Nackenschmerzen', 'Gegen Kopfschmerzen', 'Pain-free back in 5 minutes', 'Cures your neck', 'Libre de dolor de espalda', 'Bez bólu pleców', 'Свободный от боли спины', 'Без болю спини', 'Alivia a dor', 'Sans douleur au dos', 'Ağrısız bir sırt']) assert.ok(block(t).includes('heilversprechen'), t);
 });
 
 test('Klinik, Testsieger, Knappheit, erfundene Kunden', () => {
@@ -37,4 +37,9 @@ test('Video-Fabrik: verbotene Aussage im Skript -> neu schreiben lassen, sonst v
   assert.match(anweisungen[1], /VERBOTEN \(Werberecht\).*Rückenfrei/);
   const immer = await skriptMitFormat({ handle: 'x' }, '', async () => ({ titel: 'Schmerzfrei!', szenen: [{ text: 'a' }] }));
   assert.equal(immer.szenen.length, 0, 'zweimal unzulaessig -> Fabrik nimmt Ersatzprodukt');
+});
+
+test('Schmerz-Bezug wird gesperrt - auch indirekt (echter Hook aus dem Fabrik-Lauf)', () => {
+  for (const t of ['Hör auf, solche Schmerzen zu tragen!', 'Weniger Beschwerden im Alltag', 'Say goodbye to back aches', 'Adiós al dolor', 'Koniec z bólem']) assert.ok(block(t).length, t);
+  for (const t of ['Angenehmer Halt für den Alltag', 'Klettverschluss für die perfekte Passform', 'Dorf-Leben, entspannt']) assert.deepEqual(block(t), [], t);
 });
