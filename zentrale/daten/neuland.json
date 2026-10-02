@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-02T03:40:44.244Z",
+ "stand": "2026-10-02T05:57:29.858Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,7 +9,7 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 41,
+     "value": 45,
      "unit": ""
     },
     {
@@ -19,7 +19,7 @@
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 39,
+     "value": 43,
      "unit": ""
     }
    ],
@@ -27,6 +27,48 @@
     {
      "Aussage": "DeskRebel LumbarEase – Massagegurt für den unteren Rücken",
      "Beleglink": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Purivelle BackEase – Dein Helfer für den Alltag",
+     "Beleglink": "https://purivelle.store/products/backease-rueckenguertel",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage in Ihrem Herbstabend!",
+     "Beleglink": "https://purivelle.store/products/lotustap-massagehammer",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel – Dein Büro-Workout",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Hoer auf, so zu massieren!",
+     "Beleglink": "https://purivelle.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -111,20 +153,6 @@
     {
      "Aussage": "Purivelle LotusTap – Massagehammer zur Muskelentspannung",
      "Beleglink": "https://purivelle.store/products/new-lotus-massage-hammer-for-home-use-muscle-relaxation-meridian-massage-hammer-health-and-fitness-portable-equipment-manufacturer-wholesale",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Beleglink": "https://www.deskrebel.store",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Beleglink": "https://purivelle.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -323,7 +351,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 41,
+     "value": 45,
      "unit": ""
     },
     {
@@ -341,6 +369,42 @@
     {
      "Aussage": "DeskRebel LumbarEase – Massagegurt für den unteren Rücken",
      "Quellenverweis": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Purivelle BackEase – Dein Helfer für den Alltag",
+     "Quellenverweis": "https://purivelle.store/products/backease-rueckenguertel",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Quellenverweis": "https://www.deskrebel.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage in Ihrem Herbstabend!",
+     "Quellenverweis": "https://purivelle.store/products/lotustap-massagehammer",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel – Dein Büro-Workout",
+     "Quellenverweis": "https://www.deskrebel.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Hoer auf, so zu massieren!",
+     "Quellenverweis": "https://purivelle.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -413,18 +477,6 @@
     {
      "Aussage": "Purivelle LotusTap – Massagehammer zur Muskelentspannung",
      "Quellenverweis": "https://purivelle.store/products/new-lotus-massage-hammer-for-home-use-muscle-relaxation-meridian-massage-hammer-health-and-fitness-portable-equipment-manufacturer-wholesale",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Quellenverweis": "https://www.deskrebel.store",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Quellenverweis": "https://purivelle.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -596,12 +648,12 @@
    "metrics": [
     {
      "label": "Inhalte",
-     "value": 7,
+     "value": 6,
      "unit": ""
     },
     {
      "label": "Prüfung offen",
-     "value": 3,
+     "value": 2,
      "unit": ""
     },
     {
@@ -659,15 +711,6 @@
     {
      "Inhalt": "KI-Stimmen (edge-tts / Microsoft)",
      "Lizenz": "Inoffizieller Zugang zu Microsoft-Stimmen - kommerzielle Nutzung klären",
-     "Freigabe": "Fehlt",
-     "Ablauf": "Keine Frist erfasst",
-     "Resttage": null,
-     "Status": "Prüfung offen",
-     "Hinweise": "Freigabe nicht dokumentiert."
-    },
-    {
-     "Inhalt": "Moderatorin-Lippensync (Wav2Lip-Modell)",
-     "Lizenz": "Wav2Lip: nur nicht-kommerzielle Forschung erlaubt",
      "Freigabe": "Fehlt",
      "Ablauf": "Keine Frist erfasst",
      "Resttage": null,
