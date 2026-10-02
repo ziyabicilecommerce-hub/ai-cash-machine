@@ -10,6 +10,7 @@ export function jsonAusText(text) {
   try {
     return JSON.parse(roh);
   } catch {
+    try { return JSON.parse(abgeschnittenSchliessen(text.slice(start))); } catch { /* weiter mit Reparatur */ }
     const repariert = roh
       .replace(/[\u201C\u201D\u201E]/g, '"')
       .replace(/,\s*([}\]])/g, '$1')
@@ -18,6 +19,30 @@ export function jsonAusText(text) {
       .replace(/"\s*\n\s*"/g, '","');
     return JSON.parse(repariert);
   }
+}
+
+// Abgeschnittenes JSON (kleine KI, Token-Limit): bis zum letzten vollstaendigen Element behalten und
+// offene Klammern schliessen - so bleiben die fertigen Szenen erhalten statt "0 Szenen".
+export function abgeschnittenSchliessen(text) {
+  const stapel = [];
+  let inText = false, esc = false, schnitt = -1, offen = [];
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inText) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') inText = false; continue; }
+    if (c === '"') inText = true;
+    else if (c === '{' || c === '[') stapel.push(c === '{' ? '}' : ']');
+    else if (c === '}' || c === ']') { stapel.pop(); if (!stapel.length) return text.slice(0, i + 1); schnitt = i + 1; offen = [...stapel]; }
+    else if (c === ',') { schnitt = i; offen = [...stapel]; }
+  }
+  if (schnitt < 0) throw new Error('KI lieferte kein JSON');
+  return text.slice(0, schnitt).replace(/,\s*$/, '') + offen.reverse().join('');
+}
+
+// Szenen aus der KI-Antwort - auch wenn die KI andere Namen nimmt ("scenes", "skript.szenen")
+// oder die Szenen nur als Texte liefert.
+export function szenenAus(d) {
+  const liste = [d?.szenen, d?.scenes, d?.Szenen, d?.skript?.szenen, d?.script?.scenes, d?.video?.szenen].find(Array.isArray) || (Array.isArray(d) ? d : []);
+  return liste.map((x) => (typeof x === 'string' ? { text: x } : { ...x, text: x?.text ?? x?.satz ?? x?.sprechtext ?? x?.voiceover ?? x?.sprecher ?? '' }));
 }
 
 // Die Gratis-Dienste drosseln gleichzeitige Anfragen (429) - daher eine Warteschlange:
