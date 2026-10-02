@@ -39,7 +39,8 @@ export const BAUSTEINE = [
   { name: 'KI-Stimmen (edge-tts / Microsoft)', license: 'Inoffizieller Zugang zu Microsoft-Stimmen - kommerzielle Nutzung klären', permission: false, expires: '' },
   { name: 'Moderatorin-Lippensync (Wav2Lip-Modell)', license: 'Wav2Lip: nur nicht-kommerzielle Forschung erlaubt', permission: false, expires: '' },
 ];
-export const rechteEingabe = (datum = new Date().toISOString().slice(0, 10)) => ({ analysis_date: datum, assets: BAUSTEINE });
+// Moderatorin (Wav2Lip) ist standardmaessig aus (Lizenz nur nicht-kommerziell) - dann ist sie kein Baustein mehr.
+export const rechteEingabe = (datum = new Date().toISOString().slice(0, 10), { moderatorin = process.env.MODERATORIN === '1' } = {}) => ({ analysis_date: datum, assets: BAUSTEINE.filter((b) => moderatorin || !/Wav2Lip/.test(b.name)) });
 
 // Vorhabenwaage: deine offenen Aufgaben nach Wirkung x Vertrauen / Aufwand (Erfahrungswerte, Stunden-Aufwand 1-5).
 const KANAL_WERT = {
