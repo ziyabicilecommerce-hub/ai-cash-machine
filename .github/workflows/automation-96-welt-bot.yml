@@ -8,9 +8,11 @@ name: "96 · Welt-Bot"
 # baut jeder Job genau 1 Sprache (~210 Videos, ca. 3 h). Je Job ein eigenes Release (max. 1.000
 # Dateien); Welt-Releases aelter als 2 Tage werden automatisch geloescht.
 
+# PAUSIERT (Fokus Deutsch): kein Zeitplan mehr - manuell weiter startbar. Wieder an: die zwei Zeilen
+# unter "on:" einkommentieren.
 on:
-  schedule:
-    - cron: '43 7 * * *'
+  # schedule:
+  #   - cron: '43 7 * * *'
   workflow_dispatch:
     inputs:
       anzahl:

@@ -224,7 +224,7 @@ async function ablegen(manifest, v, skript, a, nummer, sprache) {
   }
   const kapitel = kapitelText(v.kapitel || []);
   const caption = kapitel ? `${skript.caption}\n\nKapitel:\n${kapitel}` : skript.caption;
-  const eintrag = { datei: `${basis}.mp4`, vorschau, sprache, titel: skript.titel, caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen, gruppe: basis, hookTyp: skript.hookTyp || '', winkel: skript.winkelName || '', formatName: skript.formatName || '', ...anfaengeAblegen(v, basis, join(OUT, 'videos')) };
+  const eintrag = { datei: `${basis}.mp4`, vorschau, sprache, titel: skript.titel, caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen, gruppe: basis, hookTyp: skript.hookTyp || '', winkel: skript.winkelName || '', formatName: skript.formatName || '', stil: skript.stilName || '', ...anfaengeAblegen(v, basis, join(OUT, 'videos')) };
   // Karussell: 4 Bild-Slides (4:5) aus denselben Ebenen - Hook, 2 Vorteile, Preis + CTA.
   // Nur fuer die erste Variante, damit ein Release unter 1.000 Dateien bleibt.
   if (KARUSSELL && v.ebenen && skript.szenen.length >= 3 && !skript.variante) {

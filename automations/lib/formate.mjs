@@ -6,6 +6,7 @@ import { lernstandLaden, waehlen } from './leistung.mjs';
 import { suchHinweis } from './suchRadar.mjs';
 import { pruefen } from './werbeCheck.mjs';
 import { saisonHinweis } from './saison.mjs';
+import { animeHeute, animeStil } from './animeStil.mjs';
 
 export const FORMATE = {
   pov: 'Format POV: Szene 1 beginnt mit "POV:" und beschreibt eine typische Alltagssituation der Zielgruppe aus Ich-Sicht.',
@@ -67,5 +68,7 @@ export async function skriptMitFormat(p, winkel, bauer) {
     fehler = werbeFehler(s);
     if (fehler.length) { console.log('[werbe-check] auch zweiter Versuch unzulässig - Produkt übersprungen'); s = { ...s, szenen: [] }; }
   }
+  // Anime-Produktvideo: etwa jedes 4. Video im Anime-Stil (gleiches ehrliches Skript, andere Optik).
+  if (s.szenen?.length && animeHeute(p)) s = animeStil(s);
   return s.ohneKi ? { ...s, formatName: '', winkelName: '' } : { ...s, formatName: f.name, winkelName: winkelAus(winkel) };
 }
