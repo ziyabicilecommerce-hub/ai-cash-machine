@@ -42,6 +42,7 @@ on:
       - 'cockpit/**'
       - 'brand-scout/**'
       - 'zentrale/**'
+      - 'neuland/**'
       - 'automations/lib/werbeCheck.mjs'
       - 'trading-bot-worker/lib/**'
       - '.github/workflows/jarvis-pages.yml'
@@ -111,6 +112,7 @@ jobs:
           cp -r brand-scout _site/brand-scout
           cp -r zentrale _site/zentrale
           cp -r bio _site/bio
+          cp -r neuland _site/neuland
           mkdir -p _site/trading-bot-worker
           cp -r trading-bot-worker/lib _site/trading-bot-worker/lib
 
