@@ -41,6 +41,7 @@ export function anwendungURL(prompt, ref, { breite, hoehe, model, seed }) {
 
 // Modelle, die in diesem Lauf schon versagt haben, werden nicht erneut versucht (spart bis zu Minuten je Szene).
 export const KAPUTT = new Set();
+export const WARTEN = Number(process.env.BILD_WARTEN_MS || 6000);
 
 // Probiert die Modelle der Reihe nach; true, sobald ein echtes Bild (> 20 KB) da ist.
 export async function anwendungBild({ prompt, ref }, ziel, { breite, hoehe, seed = Math.floor(Math.random() * 1e9), laden = fetch } = {}) {
@@ -63,7 +64,7 @@ export async function anwendungBild({ prompt, ref }, ziel, { breite, hoehe, seed
   }
   // Ersatzweg ohne Bearbeitungs-Modell: KI malt die Szene (freies Modell flux), das ECHTE Produkt wird
   // freigestellt und mit Schatten hineingesetzt - garantiert das richtige Produkt, kostenlos.
-  return komponieren({ prompt, ref }, ziel, { breite, hoehe, seed, laden }).catch(() => false);
+  return komponieren({ prompt, ref }, ziel, { breite, hoehe, seed, laden }).catch((err) => { console.log(`[video-fabrik] Komponieren fehlgeschlagen: ${String(err.message).slice(0, 160)}`); return false; });
 }
 
 // Szene ohne Produkt-Details: "the exact product from the reference image" -> neutrale Formulierung, unten Platz.
@@ -72,15 +73,25 @@ export const szenenPrompt = (prompt) => `${String(prompt).replace(/the exact pro
 export async function komponieren({ prompt, ref }, ziel, { breite, hoehe, seed = Math.floor(Math.random() * 1e9), laden = fetch, frei = freistellen } = {}) {
   if (!ref) return false;
   const roh = `${ziel}.produkt`, png = `${ziel}.produkt.png`, szene = `${ziel}.szene`;
-  const holen = async (url, datei, ms) => {
-    const res = await laden(url, { headers: auth(), signal: AbortSignal.timeout(ms) });
-    const typ = res.headers.get('content-type') || '';
-    if (!res.ok || !typ.startsWith('image/')) return false;
-    writeFileSync(datei, Buffer.from(await res.arrayBuffer()));
-    return true;
+  // Mit Wiederholung: der freie Dienst drosselt gleichzeitige Anfragen (429) - wie ladeBild der Fabrik.
+  const holen = async (url, datei, ms, versuche = 1) => {
+    let grund = '';
+    for (let v = 0; v < versuche; v++) {
+      try {
+        const res = await laden(url, { headers: auth(), signal: AbortSignal.timeout(ms) });
+        const typ = res.headers.get('content-type') || '';
+        if (res.ok && typ.startsWith('image/')) { writeFileSync(datei, Buffer.from(await res.arrayBuffer())); return ''; }
+        grund = `${res.status} ${typ}`;
+      } catch (err) { grund = String(err.message).slice(0, 80); }
+      if (v + 1 < versuche) await new Promise((r) => setTimeout(r, WARTEN * (v + 1)));
+    }
+    return grund || 'kein Bild';
   };
-  if (!(await holen(ref, roh, 60000)) || !(await frei(roh, png)) || !existsSync(png)) return false;
-  if (!(await holen(bildURL(szenenPrompt(prompt), { width: breite, height: hoehe, seed, model: 'flux' }), szene, 120000))) return false;
+  let f = await holen(ref, roh, 60000, 2);
+  if (f) { console.log(`[video-fabrik] Komponieren: Produktfoto nicht ladbar (${f})`); return false; }
+  if (!(await frei(roh, png)) || !existsSync(png)) { console.log('[video-fabrik] Komponieren: Freistellen nicht möglich'); return false; }
+  f = await holen(bildURL(szenenPrompt(prompt), { width: breite, height: hoehe, seed, model: 'flux' }), szene, 120000, 4);
+  if (f) { console.log(`[video-fabrik] Komponieren: Szene von flux nicht ladbar (${f})`); return false; }
   const pw = Math.round(breite * 0.62), ph = Math.round(hoehe * 0.36), unten = Math.round(hoehe * 0.1);
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', szene, '-i', png, '-filter_complex',
     `[0:v]scale=${breite}:${hoehe}:force_original_aspect_ratio=increase,crop=${breite}:${hoehe}[bg];` +
