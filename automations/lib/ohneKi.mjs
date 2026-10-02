@@ -44,7 +44,7 @@ export function einstieg(saetze, wort, fragen = [], tag = Math.floor(Date.now() 
 export const kommentarFrage = (tag = Math.floor(Date.now() / 864e5)) => ['Würdest du das ausprobieren? Schreib ja oder nein in die Kommentare.', 'Welche Frage hast du dazu? Ab in die Kommentare, wir antworten.', 'Wofür würdest du es benutzen? Schreib es in die Kommentare.'][tag % 3];
 
 // KI-Beispiel-Szene (Bildmodell mit dem echten Produktfoto als Vorlage) - funktioniert auch ohne Text-KI.
-const ANWENDUNG = {
+export const ANWENDUNG = {
   szene: 2, foto: 0,
   prompt: 'realistic smartphone photo, one adult person using the exact product from the reference image the way it is meant to be used, in a typical everyday situation at home or in the office, fully clothed, natural light, product clearly visible',
   schritte: [

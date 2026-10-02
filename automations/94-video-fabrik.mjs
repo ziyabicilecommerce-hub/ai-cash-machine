@@ -20,7 +20,7 @@ import { kurzHook, reinText, aktiveProdukte, topListeSkript, HOOK_REGELN } from 
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 import { laborWinkel } from './lib/laborWinkel.mjs';
 import { nachbauenEinplanen, stateLaden as pruefungLaden } from './lib/videoPruefung.mjs';
-import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen, skriptMitFormat, planWert, notfallSkript, werbeText } from './lib/skriptExtras.mjs';
+import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen, skriptMitFormat, planWert, notfallSkript, werbeText, ANWENDUNG_STANDARD } from './lib/skriptExtras.mjs';
 // KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
 async function mitModeratorin(v, nr) {
   if (!moderatorinAn()) return;
@@ -213,7 +213,7 @@ function ausDaten(d, p) {
   const seed = [...String(p.handle || p.title)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 7);
   const hintergrund = { prompt: String(d.hintergrund || `elegant minimal setting for ${p.title}`).replace(/\s+/g, ' ').trim().slice(0, 300), seed };
   const shop = (() => { try { return new URL(p.shopUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })();
-  return anfaengeEinbauen(vergleichEinbauen(anwendungEinbauen({ titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, preis: Number(preis) || 0, waehrung: 'EUR', shop, link, szenen }, d.anwendung, fotos), d.vergleich, fotos), d.anfaenge);
+  return anfaengeEinbauen(vergleichEinbauen(anwendungEinbauen({ titel: String(d.titel || p.title).slice(0, 120), hook: kurzHook(d.hook || d.titel || p.title), caption, hintergrund, preis: Number(preis) || 0, waehrung: 'EUR', shop, link, szenen }, d.anwendung?.prompt ? d.anwendung : ANWENDUNG_STANDARD, fotos), d.vergleich, fotos), d.anfaenge);
 }
 
 async function ablegen(manifest, v, skript, a, nummer, sprache) {
