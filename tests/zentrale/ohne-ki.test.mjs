@@ -63,3 +63,13 @@ test('KI-Skripte bekommen die Viral-Regel (Kommentar-Frage + Loop)', async () =>
   await skriptMitFormat({ handle: 'x' }, '', async (p, zusatz) => { z = zusatz; return { titel: 'X', szenen: [] }; });
   assert.match(z, /VIRAL:.*Kommentieren.*Schleife/);
 });
+
+test('Notfall-Skript nimmt keine Sätze/Google-Fragen, die der Werbe-Check sperren würde (z. B. Schmerzen)', async () => {
+  const { pruefen } = await import('../../automations/lib/werbeCheck.mjs');
+  const html = '<p>Atmungsaktiver Rückengurt gegen Rückenschmerzen im Alltag.</p><p>Stabilisiert den unteren Rücken beim Sitzen.</p><p>Der Klettverschluss lässt sich stufenlos verstellen.</p>';
+  const s = notfallSkript({ ...P, title: 'BackEase Rückengurt', body_html: html }, { such: { stichwort: 'rückengurt', fragen: ['rückengurt gegen schmerzen', 'rückengurt beim sitzen'] }, tags: [], tag: 0 });
+  assert.ok(s.szenen.length >= 5);
+  const alles = [s.titel, s.hook, s.caption, ...s.szenen.map((x) => x.text)].join('\n');
+  assert.deepEqual(pruefen(alles).filter((x) => x.stufe === 'block'), []);
+  assert.match(s.hook, /sitzen/i, 'die erlaubte Google-Frage wird genommen');
+});

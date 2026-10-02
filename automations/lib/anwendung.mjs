@@ -1,5 +1,5 @@
-// Anwendungs-Szene: eine Person benutzt das Produkt - erzeugt aus dem ECHTEN Produktfoto als Vorlage
-// (Bild-Bearbeitungsmodell), damit im Video wirklich das Produkt aus dem Shop zu sehen ist.
+// Anwendungs-Szene: eine Person benutzt das Produkt - KI-Szene mit dem ECHTEN, freigestellten Produktfoto
+// (optional Bild-Bearbeitungsmodell), damit im Video wirklich das Produkt aus dem Shop zu sehen ist.
 // Klappt keins der Modelle, bleibt die Szene beim normalen Produktfoto. Im Video steht klein
 // "KI-Beispiel", damit niemand die Szene fuer ein echtes Kundenfoto haelt.
 import { writeFileSync, copyFileSync, existsSync } from 'node:fs';
@@ -11,8 +11,10 @@ import { bildURL } from './pollinationsMedia.mjs';
 const auth = () => (process.env.POLLINATIONS_TOKEN ? { Authorization: `Bearer ${process.env.POLLINATIONS_TOKEN.trim()}` } : {});
 
 const BASIS = 'https://image.pollinations.ai/prompt';
-// Reihenfolge = Vorliebe. Ueber VIDEO_ANWENDUNG_MODELLE aenderbar; VIDEO_ANWENDUNG=0 schaltet ab.
-const MODELLE = (process.env.VIDEO_ANWENDUNG_MODELLE || 'kontext,gptimage,nanobanana,seedream').split(',').map((m) => m.trim()).filter(Boolean);
+// Bearbeitungs-Modelle (z. B. kontext,gptimage,nanobanana,seedream) nur, wenn per VIDEO_ANWENDUNG_MODELLE eingeschaltet:
+// im Test 10/2026 lieferten sie 402/500 oder - gptimage - ein Bild OHNE das Produkt. Standard ist daher das Komponieren
+// (KI-Szene + echtes, freigestelltes Produktfoto) - garantiert das richtige Produkt. VIDEO_ANWENDUNG=0 schaltet ab.
+const modelle = () => String(process.env.VIDEO_ANWENDUNG_MODELLE || '').split(',').map((m) => m.trim()).filter(Boolean);
 export const anwendungAn = () => !/^(0|nein|aus|false)$/i.test(String(process.env.VIDEO_ANWENDUNG || '').trim());
 
 export const ANWENDUNG_REGEL =
@@ -52,7 +54,7 @@ export function nacheinander(fn) {
 
 // Probiert die Modelle der Reihe nach; true, sobald ein echtes Bild (> 20 KB) da ist.
 export async function anwendungBild({ prompt, ref }, ziel, { breite, hoehe, seed = Math.floor(Math.random() * 1e9), laden = fetch } = {}) {
-  for (const model of MODELLE.filter((m) => !KAPUTT.has(m))) {
+  for (const model of modelle().filter((m) => !KAPUTT.has(m))) {
     try {
       const res = await laden(anwendungURL(prompt, ref, { breite, hoehe, model, seed }), { headers: auth(), signal: AbortSignal.timeout(90000) });
       const typ = res.headers.get('content-type') || '';

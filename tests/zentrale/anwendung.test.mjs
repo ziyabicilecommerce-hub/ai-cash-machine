@@ -6,6 +6,9 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { anwendungEinbauen, anwendungBild, anwendungURL, vergleichEinbauen } from '../../automations/lib/anwendung.mjs';
 
+// Bearbeitungs-Modelle sind standardmaessig aus - hier eingeschaltet, um den Modell-Weg zu pruefen.
+process.env.VIDEO_ANWENDUNG_MODELLE = 'kontext,gptimage,nanobanana,seedream';
+
 const skript = () => ({ szenen: ['Hook', 'Problem', 'Vorteil', 'Vorteil 2', 'Link in der Bio'].map((text) => ({ text, foto: 'f.png' })) });
 const fotos = ['https://cdn.shopify.com/a.png', 'https://cdn.shopify.com/b.png'];
 
@@ -135,4 +138,16 @@ test('flux-Anfragen fuer Szenen laufen strikt nacheinander (keine Ablehnung wege
   const erg = await Promise.all([arbeit(), arbeit(), arbeit()]);
   assert.deepEqual(erg, [1, 1, 1]);
   assert.equal(max, 1);
+});
+
+test('Standard ohne VIDEO_ANWENDUNG_MODELLE: kein Bearbeitungs-Modell, direkt komponieren (echtes Produkt garantiert)', async () => {
+  const alt = process.env.VIDEO_ANWENDUNG_MODELLE;
+  delete process.env.VIDEO_ANWENDUNG_MODELLE;
+  const urls = [];
+  const laden = async (url) => { urls.push(url); return new Response('x', { status: 404 }); };
+  const ziel = join(mkdtempSync(join(tmpdir(), 'std-')), 'r.img');
+  assert.equal(await anwendungBild({ prompt: 'p', ref: 'https://cdn.shopify.com/p.jpg' }, ziel, { breite: 270, hoehe: 480, laden }), false);
+  assert.ok(!urls.some((u) => /model=(kontext|gptimage|nanobanana|seedream)/.test(u)), 'kein Bearbeitungs-Modell gefragt');
+  assert.ok(urls.some((u) => u.startsWith('https://cdn.shopify.com/')), 'Komponieren laedt das echte Produktfoto');
+  process.env.VIDEO_ANWENDUNG_MODELLE = alt;
 });

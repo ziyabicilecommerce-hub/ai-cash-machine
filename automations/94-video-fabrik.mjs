@@ -20,7 +20,7 @@ import { kurzHook, reinText, aktiveProdukte, topListeSkript, HOOK_REGELN } from 
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 import { laborWinkel } from './lib/laborWinkel.mjs';
 import { nachbauenEinplanen, stateLaden as pruefungLaden } from './lib/videoPruefung.mjs';
-import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen, skriptMitFormat, planWert, notfallSkript } from './lib/skriptExtras.mjs';
+import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen, skriptMitFormat, planWert, notfallSkript, werbeText } from './lib/skriptExtras.mjs';
 // KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
 async function mitModeratorin(v, nr) {
   if (!moderatorinAn()) return;
@@ -225,7 +225,7 @@ async function ablegen(manifest, v, skript, a, nummer, sprache) {
   }
   const kapitel = kapitelText(v.kapitel || []);
   const caption = kapitel ? `${skript.caption}\n\nKapitel:\n${kapitel}` : skript.caption;
-  const eintrag = { datei: `${basis}.mp4`, vorschau, sprache, titel: skript.titel, caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen, gruppe: basis, hookTyp: skript.hookTyp || '', winkel: skript.winkelName || '', formatName: skript.formatName || '', stil: skript.stilName || '', ...anfaengeAblegen(v, basis, join(OUT, 'videos')) };
+  const eintrag = { datei: `${basis}.mp4`, vorschau, sprache, titel: skript.titel, caption, thema: a.thema, format: a.format, dauer: Math.round(v.dauer), szenen: v.szenen, gruppe: basis, hookTyp: skript.hookTyp || '', winkel: skript.winkelName || '', formatName: skript.formatName || '', stil: skript.stilName || '', werbetext: werbeText(skript).slice(0, 1500), ...anfaengeAblegen(v, basis, join(OUT, 'videos')) };
   // Karussell: 4 Bild-Slides (4:5) aus denselben Ebenen - Hook, 2 Vorteile, Preis + CTA.
   // Nur fuer die erste Variante, damit ein Release unter 1.000 Dateien bleibt.
   if (KARUSSELL && v.ebenen && skript.szenen.length >= 3 && !skript.variante) {
