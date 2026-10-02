@@ -1,7 +1,7 @@
 // System-Waechter (alle 3 Stunden): prueft alle Workflows der letzten 48 h, startet abgestuerzte Laeufe
 // wichtiger Agenten einmal neu und meldet neue Probleme per Telegram. Ergebnis: zentrale/daten/system.json.
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { auswerten, neuStarten, schluessel, RHYTHMUS } from './lib/systemWaechter.mjs';
+import { auswerten, neuStarten, schluessel, nachholen, RHYTHMUS } from './lib/systemWaechter.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { diagnose } from './lib/fehlerDoktor.mjs';
 
@@ -55,6 +55,12 @@ async function main() {
     const res = await api(`/actions/runs/${w.runId}/rerun-failed-jobs`, { method: 'POST' });
     if (res.status === 201) neugestartet.push(w.name);
     console.log(`[system] ${w.name}: Neustart ${res.status === 201 ? 'ausgelöst' : `nicht möglich (${res.status})`}`);
+  }
+  // Verpasste Zeitplaene nachholen (GitHub droppt geplante Laeufe unter Last).
+  for (const { name, datei } of nachholen(probleme)) {
+    const res = await api(`/actions/workflows/${datei}/dispatches`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ref: 'main' }) });
+    if (res.status === 204) neugestartet.push(`${name} (nachgeholt)`);
+    console.log(`[system] ${name}: verpasster Lauf ${res.status === 204 ? 'nachgeholt' : `nicht startbar (${res.status})`}`);
   }
   const ok = workflows.filter((w) => w.ergebnis === 'success').length;
   console.log(`[system] ${workflows.length} Workflows · ${ok} ok · ${probleme.length} Probleme · ${neugestartet.length} neu gestartet`);
