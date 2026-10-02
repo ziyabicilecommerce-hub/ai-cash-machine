@@ -4,6 +4,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { ADAPTER, entscheiden } from './lib/kommentare.mjs';
 import { kiJson } from './lib/kiJson.mjs';
+import { mitUtm } from './lib/utm.mjs';
 import { notifyTelegram } from './lib/telegram.mjs';
 import { verbinderLaden } from './lib/verbinder.mjs';
 
@@ -22,7 +23,7 @@ export async function lauf({ posts, feed, state, ki, laden = fetch, jetzt = Date
   for (const post of posts.filter((p) => adapter[p.plattform]?.bereit() && jetzt - Date.parse(p.gepostet) < 14 * TAG)) {
     const a = adapter[post.plattform];
     const v = nachDatei.get(post.datei) || nachDatei.get(String(post.datei).replace(/-(frage|warnung|widerspruch)\.mp4$/, '.mp4')) || {};
-    const kontext = { titel: v.titel || post.datei, caption: v.caption || '', shopLink: String(v.caption || '').match(/https:\/\/\S+\/products\/\S+/)?.[0] || '' };
+    const kontext = { titel: v.titel || post.datei, caption: v.caption || '', shopLink: mitUtm(String(v.caption || '').match(/https:\/\/\S+\/products\/\S+/)?.[0] || '', post.plattform, 'kommentar') };
     let liste = [];
     try { liste = await a.lesen(post, laden); } catch (err) { zaehler.fehler++; console.log(`[kommentare] ${post.plattform}: ${String(err.message).slice(0, 120)}`); continue; }
     for (const k of liste) {

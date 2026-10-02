@@ -26,10 +26,24 @@
     facebook: { name: 'Facebook Reels', bauen: (z) => ({ text: passend(`${z.titel}\n\n`, z.text, `\n\n👉 ${z.link}\n${kiText(z.sp)}\n${tagsText(z, 5)}`, 5000) }) },
   };
 
+  // Verkaufs-Messung: Shop-Link mit UTM je Plattform (Shopify > Analysen > Umsatz nach Quelle).
+  const utm = (url, quelle, kampagne) => {
+    try {
+      const u = new URL(url);
+      if (!/(^|\.)(deskrebel|purivelle)\.store$/.test(u.hostname) || u.searchParams.has('utm_source')) return url;
+      u.searchParams.set('utm_source', quelle);
+      u.searchParams.set('utm_medium', 'social');
+      if (kampagne) u.searchParams.set('utm_campaign', String(kampagne).toLowerCase().replace(/\.mp4$/, '').replace(/[^a-z0-9-]+/g, '-').slice(0, 60));
+      return u.href;
+    } catch (e) { return url; }
+  };
+
   function fuerPlattform(video, plattform) {
     const p = PLATTFORMEN[plattform];
     if (!p) throw new Error(`Unbekannte Plattform: ${plattform}`);
-    return { plattform: p.name, ...p.bauen(zerlegen(video)) };
+    const z = zerlegen(video);
+    z.link = z.link ? utm(z.link, plattform, video.gruppe || video.datei) : z.link;
+    return { plattform: p.name, ...p.bauen(z) };
   }
 
   // Die besten Kandidaten fuer heute: neueste deutsche Hochformat-Ads (max. 90 s), noch nicht gepostet.
@@ -39,5 +53,5 @@
       .filter((v, i, l) => l.findIndex((x) => x.titel === v.titel) === i).slice(0, anzahl);
   }
 
-  root.ZCaptions = { PLATTFORMEN, fuerPlattform, heute, zerlegen };
+  root.ZCaptions = { PLATTFORMEN, fuerPlattform, heute, zerlegen, utm };
 })(typeof window !== 'undefined' ? window : globalThis);

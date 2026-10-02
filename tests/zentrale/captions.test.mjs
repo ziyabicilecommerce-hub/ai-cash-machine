@@ -17,7 +17,7 @@ test('jede Plattform: Laengengrenze, KI-Hinweis, kein Link wo er nicht klickbar 
   assert.match(fuerPlattform(video, 'tiktok').text, /Link in Bio/);
   assert.match(fuerPlattform(video, 'x').text, /deskrebel\.store\/products\/powerband/);
   assert.ok([...fuerPlattform(video, 'youtube').titel].length <= 100);
-  assert.equal(fuerPlattform(video, 'pinterest').link, 'https://www.deskrebel.store/products/powerband');
+  assert.match(fuerPlattform(video, 'pinterest').link, /^https:\/\/www\.deskrebel\.store\/products\/powerband\?utm_source=pinterest&utm_medium=social/);
   assert.throws(() => fuerPlattform(video, 'myspace'), /Unbekannte Plattform/);
 });
 

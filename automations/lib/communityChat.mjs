@@ -3,6 +3,7 @@
 // Gesundheit/Beschwerden/Unklares meldet er dir. Gespeichert wird nur der Lese-Stand (Offset) und Zaehler.
 import { entscheiden } from './kommentare.mjs';
 import { CHALLENGES, woche } from './community.mjs';
+import { mitUtm } from './utm.mjs';
 
 const env = (k) => (process.env[k] || '').trim();
 const API = () => `https://api.telegram.org/bot${env('TELEGRAM_BOT_TOKEN')}`;
@@ -69,7 +70,7 @@ export async function verarbeiten(updates, { produkte = [], ki, bot = env('TELEG
     if (!privat && !istFrage(m, bot)) continue;
     if (aktionen.filter((a) => a.typ === 'antworten').length >= MAX_ANTWORTEN) break;
     const p = produktFuer(m.text, produkte);
-    const kontext = p ? { titel: p.name, caption: p.info || '', shopLink: p.url } : { titel: 'Community "Fit & entspannt im Alltag" (Shops: DeskRebel = Fitness, Purivelle = Massage)', caption: '', shopLink: '' };
+    const kontext = p ? { titel: p.name, caption: p.info || '', shopLink: mitUtm(p.url, 'telegram', 'community-chat') } : { titel: 'Community "Fit & entspannt im Alltag" (Shops: DeskRebel = Fitness, Purivelle = Massage)', caption: '', shopLink: '' };
     let e;
     try { e = await entscheiden({ autor: m.from?.first_name || '', text: m.text }, kontext, ki); } catch (err) { aktionen.push({ typ: 'fehler', text: String(err.message).slice(0, 120) }); break; }
     if (e.aktion === 'antworten') aktionen.push({ typ: 'antworten', chat, antwortAuf: m.message_id, text: e.antwort, kategorie: e.kategorie });
