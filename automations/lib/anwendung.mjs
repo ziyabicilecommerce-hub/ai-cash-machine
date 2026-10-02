@@ -2,8 +2,13 @@
 // (Bild-Bearbeitungsmodell), damit im Video wirklich das Produkt aus dem Shop zu sehen ist.
 // Klappt keins der Modelle, bleibt die Szene beim normalen Produktfoto. Im Video steht klein
 // "KI-Beispiel", damit niemand die Szene fuer ein echtes Kundenfoto haelt.
-import { writeFileSync, copyFileSync } from 'node:fs';
+import { writeFileSync, copyFileSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { freistellen } from './premium.mjs';
+import { bildURL } from './pollinationsMedia.mjs';
+
+// Kostenloser Pollinations-Schluessel (enter.pollinations.ai) - wird mitgeschickt, wenn eingetragen.
+const auth = () => (process.env.POLLINATIONS_TOKEN ? { Authorization: `Bearer ${process.env.POLLINATIONS_TOKEN.trim()}` } : {});
 
 const BASIS = 'https://image.pollinations.ai/prompt';
 // Reihenfolge = Vorliebe. Ueber VIDEO_ANWENDUNG_MODELLE aenderbar; VIDEO_ANWENDUNG=0 schaltet ab.
@@ -41,7 +46,7 @@ export const KAPUTT = new Set();
 export async function anwendungBild({ prompt, ref }, ziel, { breite, hoehe, seed = Math.floor(Math.random() * 1e9), laden = fetch } = {}) {
   for (const model of MODELLE.filter((m) => !KAPUTT.has(m))) {
     try {
-      const res = await laden(anwendungURL(prompt, ref, { breite, hoehe, model, seed }), { signal: AbortSignal.timeout(90000) });
+      const res = await laden(anwendungURL(prompt, ref, { breite, hoehe, model, seed }), { headers: auth(), signal: AbortSignal.timeout(90000) });
       const typ = res.headers.get('content-type') || '';
       const daten = res.ok && typ.startsWith('image/') ? Buffer.from(await res.arrayBuffer()) : null;
       if (daten && daten.length > 20000) {
@@ -56,7 +61,35 @@ export async function anwendungBild({ prompt, ref }, ziel, { breite, hoehe, seed
       KAPUTT.add(model);
     }
   }
-  return false;
+  // Ersatzweg ohne Bearbeitungs-Modell: KI malt die Szene (freies Modell flux), das ECHTE Produkt wird
+  // freigestellt und mit Schatten hineingesetzt - garantiert das richtige Produkt, kostenlos.
+  return komponieren({ prompt, ref }, ziel, { breite, hoehe, seed, laden }).catch(() => false);
+}
+
+// Szene ohne Produkt-Details: "the exact product from the reference image" -> neutrale Formulierung, unten Platz.
+export const szenenPrompt = (prompt) => `${String(prompt).replace(/the exact product from the reference image/gi, 'a small product').replace(/,?\s*product clearly visible/gi, '')}, the product itself is not in focus, plain uncluttered lower third of the image`;
+
+export async function komponieren({ prompt, ref }, ziel, { breite, hoehe, seed = Math.floor(Math.random() * 1e9), laden = fetch, frei = freistellen } = {}) {
+  if (!ref) return false;
+  const roh = `${ziel}.produkt`, png = `${ziel}.produkt.png`, szene = `${ziel}.szene`;
+  const holen = async (url, datei, ms) => {
+    const res = await laden(url, { headers: auth(), signal: AbortSignal.timeout(ms) });
+    const typ = res.headers.get('content-type') || '';
+    if (!res.ok || !typ.startsWith('image/')) return false;
+    writeFileSync(datei, Buffer.from(await res.arrayBuffer()));
+    return true;
+  };
+  if (!(await holen(ref, roh, 60000)) || !(await frei(roh, png)) || !existsSync(png)) return false;
+  if (!(await holen(bildURL(szenenPrompt(prompt), { width: breite, height: hoehe, seed, model: 'flux' }), szene, 120000))) return false;
+  const pw = Math.round(breite * 0.62), ph = Math.round(hoehe * 0.36), unten = Math.round(hoehe * 0.1);
+  execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', szene, '-i', png, '-filter_complex',
+    `[0:v]scale=${breite}:${hoehe}:force_original_aspect_ratio=increase,crop=${breite}:${hoehe}[bg];` +
+    `[1:v]format=rgba,scale=${pw}:${ph}:force_original_aspect_ratio=decrease,split[p][s];` +
+    `[s]colorchannelmixer=rr=0:gg=0:bb=0:aa=0.5,boxblur=16:2[sh];` +
+    `[bg][sh]overlay=(W-w)/2+16:H-h-${unten}+24[t];[t][p]overlay=(W-w)/2:H-h-${unten}`,
+    '-frames:v', '1', '-f', 'image2', '-c:v', 'mjpeg', '-q:v', '2', ziel], { stdio: 'pipe', timeout: 120000 });
+  console.log('[video-fabrik] Anwendungs-Szene komponiert: KI-Szene + echtes Produkt (freigestellt).');
+  return true;
 }
 
 // Ohne/Mit im geteilten Bild: links dieselbe Situation ohne Produkt, rechts mit dem echten Produkt.
