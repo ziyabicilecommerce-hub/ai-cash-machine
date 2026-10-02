@@ -12,7 +12,7 @@ import { config } from './lib/config.mjs';
 import { videoBauen } from './lib/videoFabrik.mjs';
 import { kapitelText, teaserBauen, zusammenschnittBauen } from './lib/videoExtras.mjs';
 import { WELT_SPRACHEN, sprachGruppen } from './lib/weltSprachen.mjs';
-import { kiText, kiJson, szenenRetten } from './lib/kiJson.mjs';
+import { kiText, kiJson, szenenRetten, szenenAus } from './lib/kiJson.mjs';
 import { uebersetzen, uebersetzenBuendel } from './lib/uebersetzen.mjs';
 import { skripteLaden, skripteSpeichern, uebersetzungenLaden, uebersetzungenSpeichern, schluessel, anwenden, auszug } from './lib/weltCache.mjs';
 import { premiumAn, themaFuer, preisText } from './lib/premium.mjs';
@@ -79,7 +79,7 @@ async function kurzSkript(thema) {
       'Antworte NUR mit JSON: {"titel":"...","caption":"kurze Caption mit 3-5 Hashtags","szenen":[{"text":"gesprochener Text","bild":"englischer Bild-Prompt, konkrete Szene"}]}',
     { maxTokens: 1800 }
   );
-  return { titel: String(d.titel || thema).slice(0, 120), caption: String(d.caption || thema).slice(0, 2000), szenen: szenenPruefen(d.szenen).slice(0, 10) };
+  return { titel: String(d.titel || thema).slice(0, 120), caption: String(d.caption || thema).slice(0, 2000), szenen: szenenPruefen(szenenAus(d)).slice(0, 10) };
 }
 
 async function szenenPortion(prompt) {
@@ -171,10 +171,11 @@ async function produktSkriptEinmal(p, winkel = '') {
         ? `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene entweder "foto": Index ODER "bild": englischer Prompt fuer ein passendes, jugendfreies Lifestyle-Bild (vollstaendig bekleidete Personen). Mindestens die Haelfte der Szenen mit Produktfoto. `
         : `Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}). Pro Szene "foto": Index des passendsten Produktfotos. `) +
       'Dazu "hintergrund": englischer Bild-Prompt (max. 12 Woerter) fuer eine leere, edle Umgebung, die zum Einsatzort des Produkts passt - ohne Produkt, ohne Personen, ohne Text. ' +
-      'Antworte NUR mit JSON: {"titel":"...","hook":"Text-Overlay fuer Sekunde 0-3, 2-5 Woerter, weckt Neugier (Frage/Warnung/Widerspruch), NICHT der Produktname","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","anwendung":{"szene":2,"foto":0,"prompt":"...","schritte":["...","...","..."]},"vergleich":{"szene":1,"ohne":"...","mit":"..."},"anfaenge":[{"typ":"frage","satz":"...","hook":"..."}],"szenen":[{"text":"...","foto":0}]}',
+      'Antworte NUR mit JSON, "szenen" ZUERST (5-7 Eintraege): {"szenen":[{"text":"...","foto":0}],"titel":"...","hook":"Text-Overlay fuer Sekunde 0-3, 2-5 Woerter, weckt Neugier (Frage/Warnung/Widerspruch), NICHT der Produktname","caption":"Caption mit 3-5 Hashtags","hintergrund":"...","anwendung":{"szene":2,"foto":0,"prompt":"...","schritte":["...","...","..."]},"vergleich":{"szene":1,"ohne":"...","mit":"..."},"anfaenge":[{"typ":"frage","satz":"...","hook":"..."}]}',
     { maxTokens: 1800 }
   );
   const skript = ausDaten(d, p);
+  if (skript.szenen.length < 5) console.log(`[94-video-fabrik] KI-Antwort mit ${skript.szenen.length} Szenen - Schlüssel: ${Object.keys(d || {}).join(',') || '-'} · ${JSON.stringify(d).slice(0, 300)}`);
   await korrekturLesen(skript.szenen, p.title);
   return skript;
 }
@@ -190,7 +191,7 @@ async function variantenSkripte(p, winkelListe) {
       HOOK_REGELN + ANWENDUNG_REGEL + `Je Skript 5-7 Szenen mit je 1 kurzen Satz, jede Variante mit eigenem Hook-Satz am Anfang, "Link in der Bio" am Ende. Es gibt ${fotos.length} Produktfotos (Index 0-${fotos.length - 1}), pro Szene "foto": Index. ` +
       `Erzaehlweisen in dieser Reihenfolge: ${winkelListe.map((w, i) => `${i + 1}) ${w}`).join(' ')} ` +
       'Je Skript "hintergrund": englischer Bild-Prompt (max. 12 Woerter) fuer eine leere, edle Umgebung ohne Produkt, Personen oder Text - jedes Skript eine andere Umgebung. ' +
-      'Antworte NUR mit JSON: {"varianten":[{"titel":"...","hook":"2-5 Woerter Neugier-Overlay, nicht der Produktname","caption":"mit 3-5 Hashtags","hintergrund":"...","anwendung":{"szene":2,"foto":0,"prompt":"..."},"szenen":[{"text":"...","foto":0}]}]}',
+      'Antworte NUR mit JSON: {"varianten":[{"titel":"...","hook":"2-5 Woerter Neugier-Overlay, nicht der Produktname","caption":"mit 3-5 Hashtags","hintergrund":"...","szenen":[{"text":"...","foto":0}],"anwendung":{"szene":2,"foto":0,"prompt":"..."}}]}',
     { maxTokens: Math.min(1200 * winkelListe.length, 8000) }
   );
   return (Array.isArray(d.varianten) ? d.varianten : []).map((v) => ausDaten(v, p)).filter((x) => x.szenen.length >= 3);
@@ -200,7 +201,7 @@ function ausDaten(d, p) {
   const preis = p.variants?.[0]?.price;
   const link = `${p.shopUrl}/products/${p.handle}`;
   const fotos = p.images.map((b) => b.src);
-  const szenen = (Array.isArray(d.szenen) ? d.szenen : []).map((s, i) => {
+  const szenen = szenenAus(d).map((s, i) => {
     const text = String(s.text || '').replace(/\s+/g, ' ').trim().slice(0, 400);
     const idx = Number.isInteger(s.foto) && s.foto >= 0 && s.foto < fotos.length ? s.foto : null;
     const bild = LIFESTYLE ? String(s.bild || '').trim().slice(0, 300) : '';
