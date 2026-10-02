@@ -42,6 +42,7 @@ on:
       - 'cockpit/**'
       - 'brand-scout/**'
       - 'zentrale/**'
+      - 'automations/lib/werbeCheck.mjs'
       - 'trading-bot-worker/lib/**'
       - '.github/workflows/jarvis-pages.yml'
   workflow_dispatch:
@@ -64,6 +65,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Werbe-Check (blockierte Videos für Zentrale und Bio-Seite markieren)
+        run: node automations/werbe-check.mjs || echo "Werbe-Check übersprungen"
 
       - name: Assemble public site
         run: |

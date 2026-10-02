@@ -6,7 +6,7 @@ import { WERKZEUGE4, AGENTEN, agentStarten } from '../../mcp-ultimativ/werkzeuge
 const w = (name) => WERKZEUGE4.find((x) => x.name === name);
 
 test('alle Zentrale-Werkzeuge haben Beschreibung und Schema', () => {
-  assert.equal(WERKZEUGE4.length, 11);
+  assert.equal(WERKZEUGE4.length, 12);
   for (const x of WERKZEUGE4) { assert.ok(x.description.length > 20, x.name); assert.equal(x.inputSchema.type, 'object'); }
 });
 
@@ -28,4 +28,9 @@ test('agent_starten: nur erlaubte Agenten, ohne Token klare Meldung, mit Token k
   assert.equal(anfrage.o.body, JSON.stringify({ ref: 'main', inputs: { anzahl: '10' } }), 'Anzahl begrenzt, fremde Eingaben verworfen');
   assert.equal(r.gestartet, 'video-fabrik');
   assert.ok(Object.keys(AGENTEN).includes('kommentar-agent'));
+});
+
+test('werbe_check prueft Texte lokal', async () => {
+  assert.equal((await w('werbe_check').fn({ text: 'Rückenfrei in 5 Minuten - Testsieger!' })).erlaubt, false);
+  assert.equal((await w('werbe_check').fn({ text: 'Dein Klimmzug-Upgrade' })).erlaubt, true);
 });

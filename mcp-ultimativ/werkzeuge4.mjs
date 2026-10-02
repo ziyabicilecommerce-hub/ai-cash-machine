@@ -4,6 +4,7 @@
 // GITHUB_TOKEN (fine-grained, nur "Actions: write" fuer dieses Repo) und ist auf feste Agenten beschraenkt.
 import { hole, kurz, zahl, T, S, N } from './werkzeuge.mjs';
 import '../zentrale/js/engpass.js';
+import { pruefen as werbePruefen } from '../automations/lib/werbeCheck.mjs';
 
 const REPO = (process.env.ZENTRALE_REPO || 'ziyabicilecommerce-hub/ai-cash-machine').trim();
 const ROH = (pfad) => `https://raw.githubusercontent.com/${REPO}/main/${pfad}`;
@@ -114,6 +115,7 @@ export const WERKZEUGE4 = [
   T('werbe_labor', 'Getestete Gewinner-Hooks je Produkt aus dem Werbe-Labor.', { produkt: S('optional, Teil des Produktnamens') }, [], werbeLabor),
   T('lernstand', 'Was laut echten Zahlen wirkt: beste Hook-Typen, Formate und Kauf-Psychologie.', {}, [], lernstand),
   T('suchbegriffe', 'Such-Radar: echte Google-/YouTube-Suchen und Fragen je Produkt (Video-Ideen, Hashtags).', { produkt: S('optional, Teil des Produktnamens') }, [], suchbegriffe),
+  T('werbe_check', 'Werbe-Check (HWG/UWG-Sicherheitsnetz, 12 Sprachen): findet Heilversprechen, „klinisch getestet“, Testsieger, erfundene Knappheit und Kundenzahlen in einem Werbetext.', { text: S('Werbetext, Titel oder Caption') }, ['text'], ({ text }) => { const t = werbePruefen(text); return { erlaubt: !t.some((x) => x.stufe === 'block'), treffer: t, hinweis: 'Keine Rechtsberatung - Schutz vor den häufigsten Abmahnfehlern.' }; }),
   T('kommentare_statistik', 'Kommentar-Agent: beantwortete, gemeldete und ignorierte Kommentare je Tag.', { tage: N('Tage, Standard 7') }, [], kommentareStatistik),
   T('engpass_rechnen', 'Engpass-Rechnung (NEULAND): wo stockt ein Ablauf und was bringt eine Verschiebung von Stunden?', { auftraege: N('erwartete Aufträge'), schritte: { type: 'array', description: '[{id, name, verfuegbar, jeAuftrag}]', items: { type: 'object' } }, von: S('id Geber-Schritt'), nach: S('id Empfänger-Schritt'), menge: N('verschobene Stunden') }, ['auftraege', 'schritte'], engpassRechnen),
   T('agent_starten', `Startet einen Agenten sofort auf GitHub: ${Object.keys(AGENTEN).join(', ')}.`, { agent: S('Name des Agenten'), anzahl: N('optional, z. B. Videos'), ziel: N('optional, Engpass-Chef: Videos pro Tag') }, ['agent'], (a) => agentStarten(a)),
