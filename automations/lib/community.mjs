@@ -2,6 +2,7 @@
 // Tag ein Beitrag nach Wochenplan: Challenge, Tipp, Umfrage, Frage, Fortschritt, Mini-Routine, Rueckblick.
 // 80/20-Regel: nur 1 von 7 Beitraegen nennt ein Produkt. Feste, ehrliche Inhalte (keine KI noetig, keine
 // Heilversprechen); Sonntags kommen die echten Umfrage-Ergebnisse der Woche zurueck in die Community.
+import { mitUtm } from './utm.mjs';
 
 export const CHALLENGES = [
   { titel: 'Haltungs-Woche', text: 'Jede volle Stunde 30 Sekunden: aufrecht hinsetzen, Schultern nach hinten-unten, 3 tiefe Atemzüge.' },
@@ -70,7 +71,7 @@ export function beitrag(datum = new Date(), { produkte = [], ergebnis = null, co
   if (art === 'routine') {
     const r = ROUTINEN[w % ROUTINEN.length];
     const p = produkte.filter((x) => x.shop === r.shop)[w % Math.max(1, produkte.filter((x) => x.shop === r.shop).length)];
-    const zusatz = p ? `\n\nWer noch ein Hilfsmittel dafür sucht: ${p.name} - ${p.url}` : '';
+    const zusatz = p ? `\n\nWer noch ein Hilfsmittel dafür sucht: ${p.name} - ${mitUtm(p.url, 'community', r.titel)}` : '';
     return { art, text: `⏱️ ${r.titel} - zum Mitmachen\n\n${r.schritte.map((s, i) => `${i + 1}. ${s}`).join('\n')}${zusatz}`, produkt: Boolean(p) };
   }
   // Sonntag: Rueckblick mit echtem Umfrage-Ergebnis (falls vorhanden) + Ausblick.

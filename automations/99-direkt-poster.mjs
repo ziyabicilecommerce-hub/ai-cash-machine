@@ -8,6 +8,7 @@
 import { videoPruefen } from './lib/werbeCheck.mjs';
 import { berlinStunde, jetztPosten, kuerzlichGepostet } from './lib/postZeiten.mjs';
 import { postsLaden } from './lib/leistung.mjs';
+import { mitUtm, textMitUtm } from './lib/utm.mjs';
 import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync, createWriteStream } from 'node:fs';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
@@ -121,7 +122,10 @@ async function main() {
       }
       for (const { p, w } of zuteilung.filter((x) => x.w.datei === dateiname)) {
         const mv = { ...m, datei: dateiname, hookTyp: w.hookTyp };
-        const v = { ...mv, url, vorschauUrl, link: FEED_SEITE, shopLink: String(m.caption || '').match(/https:\/\/\S+\/products\/\S+/)?.[0] || '', datei, dateiname, sprache: m.sprache || 'de', text: `${m.titel}\n\n${m.caption || ''}\n\n${KI_HINWEIS}`.trim() };
+        // Verkaufs-Messung: Shop-Links mit UTM je Plattform (Shopify > Analysen > nach Quelle).
+        const kampagne = m.gruppe || m.datei, quelle = p.name;
+        const caption = textMitUtm(m.caption || '', quelle, kampagne);
+        const v = { ...mv, caption, url, vorschauUrl, link: FEED_SEITE, shopLink: mitUtm(String(m.caption || '').match(/https:\/\/\S+\/products\/\S+/)?.[0] || '', quelle, kampagne), datei, dateiname, sprache: m.sprache || 'de', text: `${m.titel}\n\n${caption}\n\n${KI_HINWEIS}`.trim() };
         if (!p.passt(v) || (z.zaehler[p.name] || 0) >= limit(p) || dieseRunde[p.name]) continue;
         if (kuerzlichGepostet(posts, p.name, m.titel)) { console.log(`[99-direkt-poster] ${p.name}: "${m.titel}" lief dort schon in den letzten 24 h - übersprungen`); continue; }
         try {

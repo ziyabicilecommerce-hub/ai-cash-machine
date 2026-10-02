@@ -71,6 +71,9 @@ a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
   const RTL = ['ar', 'eg', 'he', 'fa', 'ur'];
   const h = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const sicher = (u) => { try { const x = new URL(u); return x.protocol === 'https:' ? x.href : ''; } catch (e) { return ''; } };
+  // Verkaufs-Messung: Klicks aus der Bio-Seite erscheinen in Shopify als Quelle "bio".
+  const shop = (u) => { const x = sicher(u); if (!x) return ''; const y = new URL(x); if (/(deskrebel|purivelle)\.store$/.test(y.hostname) && !y.searchParams.has('utm_source')) { y.searchParams.set('utm_source', 'bio'); y.searchParams.set('utm_medium', 'linkinbio'); } return y.href; };
+  document.querySelectorAll('a[data-shop]').forEach((a) => { a.href = shop(a.href); });
   const holen = async (pfad) => { try { const r = await fetch(pfad, { cache: 'no-store' }); return r.ok ? r.json() : null; } catch (e) { return null; } };
   const [p, f, c, w] = await Promise.all([holen('../zentrale/daten/produkte.json'), holen('../video-feed/videos.json'), holen('../zentrale/daten/community.json'), holen('../zentrale/daten/werbe-check.json')]);
   const gesperrt = new Set(((w && w.liste) || []).map((x) => x.datei));
@@ -110,11 +113,11 @@ a:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
     const top = wahl.ziel && wahl.bereich ? produkte.map((x) => ({ x, p: punkte(x) })).filter((y) => y.p > 0).sort((a, b) => b.p - a.p).slice(0, 3).map((y) => y.x) : [];
     quiz.innerHTML = `<h2>${h(t('quiz'))}</h2><p>${h(t('q1'))}</p><div class="wahl">${knopf('ziel', 'kraft', t('a_kraft'))}${knopf('ziel', 'entspannen', t('a_entspannen'))}${knopf('ziel', 'beides', t('a_beides'))}</div>
       <p>${h(t('q2'))}</p><div class="wahl">${['ruecken', 'arme', 'beine', 'haende'].map((b) => knopf('bereich', b, t(`a_${b}`))).join('')}</div>
-      ${top.length ? `<p><strong>${h(t('ergebnis'))}</strong></p><div class="raster">${top.map((x) => `<a class="karte" href="${h(sicher(x.url))}" rel="noopener"><img src="${h(sicher(x.bild))}" alt="${h(x.name)}" loading="lazy"><div class="info"><div class="name">${h(x.name)}</div><div class="preis">${eur(x.preis)}</div></div></a>`).join('')}</div>` : ''}`;
+      ${top.length ? `<p><strong>${h(t('ergebnis'))}</strong></p><div class="raster">${top.map((x) => `<a class="karte" href="${h(shop(x.url))}" rel="noopener"><img src="${h(sicher(x.bild))}" alt="${h(x.name)}" loading="lazy"><div class="info"><div class="name">${h(x.name)}</div><div class="preis">${eur(x.preis)}</div></div></a>`).join('')}</div>` : ''}`;
     quiz.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { wahl[b.dataset.feld] = b.dataset.wert; quizZeichnen(); }));
   };
   if (produkte.length) { quizZeichnen(); quiz.hidden = false; }
-  document.getElementById('produkte').innerHTML = shops.map((s) => `<h2>${h(s)}</h2><div class="raster">${produkte.filter((x) => x.shop === s).map((x) => `<a class="karte" href="${h(sicher(x.url))}" rel="noopener"><img src="${h(sicher(x.bild))}" alt="${h(x.name)}" loading="lazy"><div class="info"><div class="name">${h(x.name)}</div><div class="preis">${eur(x.preis)}</div></div></a>`).join('')}</div>`).join('');
+  document.getElementById('produkte').innerHTML = shops.map((s) => `<h2>${h(s)}</h2><div class="raster">${produkte.filter((x) => x.shop === s).map((x) => `<a class="karte" href="${h(shop(x.url))}" rel="noopener"><img src="${h(sicher(x.bild))}" alt="${h(x.name)}" loading="lazy"><div class="info"><div class="name">${h(x.name)}</div><div class="preis">${eur(x.preis)}</div></div></a>`).join('')}</div>`).join('');
 })();
 </script>
 </body>
