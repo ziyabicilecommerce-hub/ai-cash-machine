@@ -20,23 +20,46 @@ test('saetzeAus nimmt nur sprechbare, echte Saetze - ohne Ueberschriften, Masse,
   assert.deepEqual(saetzeAus('Warum du es willst Unterstützt dich jeden Tag beim Training. Hinweis: kein Medizinprodukt.'), ['Unterstützt dich jeden Tag beim Training.']);
 });
 
-test('notfallSkript: Shop-Saetze + Preis + Link in der Bio, Fotos reihum', () => {
-  const d = notfallSkript(P, { tags: ['#klimmzugband', '#training'] });
+test('notfallSkript: Hook + Shop-Saetze + Preis + Kommentar-Frage + Link in der Bio, Fotos reihum', () => {
+  const d = notfallSkript(P, { such: null, tags: ['#klimmzugband', '#training'], tag: 1 });
   const texte = d.szenen.map((x) => x.text);
-  assert.equal(texte[0], 'Dein Klimmzug-Upgrade – überall, jederzeit.');
+  assert.equal(texte[0], 'Klimmzugband in 30 Sekunden erklärt.');
+  assert.equal(texte[1], 'Dein Klimmzug-Upgrade – überall, jederzeit.');
   assert.ok(texte.includes('Gerade für 12,99 Euro im DeskRebel.'));
+  assert.match(texte.at(-2), /Kommentare/);
   assert.match(texte.at(-1), /Link in der Bio/);
-  assert.deepEqual(d.szenen.map((x) => x.foto), [0, 1, 0, 1, 0, 1]);
+  assert.deepEqual(d.szenen.map((x) => x.foto), texte.map((_, i) => i % 2));
   assert.match(d.caption, /#klimmzugband #training #DeskRebel/);
   assert.equal(d.hook, texte[0]);
 });
 
 test('notfallSkript ohne brauchbaren Text liefert keine Szenen (dann springt ein Ersatzprodukt ein)', () => {
-  assert.deepEqual(notfallSkript({ ...P, body_html: '<p>Kurz.</p>' }, { tags: [] }).szenen, []);
+  assert.deepEqual(notfallSkript({ ...P, body_html: '<p>Kurz.</p>' }, { such: null, tags: [] }).szenen, []);
 });
 
 test('Notfall-Videos verfaelschen das Lernen nicht (kein Format/Winkel zugeordnet)', async () => {
   const s = await skriptMitFormat({ handle: 'x' }, 'Kauf-Psychologie: Neugier. ', async () => ({ szenen: [], ohneKi: true }));
   assert.equal(s.formatName, '');
   assert.equal(s.winkelName, '');
+});
+
+test('viral ohne KI: echte Google-Frage als Hook nur mit passender Antwort aus dem Shop-Text', async () => {
+  const { einstieg, notfallSkript, kommentarFrage } = await import('../../automations/lib/ohneKi.mjs');
+  const saetze = ['Dein Klimmzug-Upgrade – überall, jederzeit.', 'Acht Stärken von Warm-up bis Profi.'];
+  assert.deepEqual(einstieg(saetze, 'klimmzugband', ['klimmzugband welche stärke']), { hook: 'Klimmzugband: welche stärke?', antwort: 'Acht Stärken von Warm-up bis Profi.' });
+  assert.equal(einstieg(saetze, 'klimmzugband', ['klimmzugband wie lange halten']).antwort, '', 'keine Antwort im Text -> keine Frage');
+  assert.match(einstieg(saetze, 'klimmzugband', [], 0).hook, /3 Dinge, die du über Klimmzugband wissen solltest/);
+  const d = notfallSkript(P, { such: { stichwort: 'klimmzugband', fragen: ['klimmzugband welche stärke'], hashtags: ['#klimmzugband'] }, tag: 1 });
+  const texte = d.szenen.map((x) => x.text);
+  assert.equal(texte[0], 'Klimmzugband: welche stärke?');
+  assert.equal(texte[1], 'Acht Stärken von Warm-up bis Profi.');
+  assert.equal(texte.at(-2), kommentarFrage(1));
+  assert.match(texte.at(-1), /Link in der Bio/);
+  assert.ok(d.anwendung.prompt.includes('reference image') && d.anwendung.schritte.length === 3, 'KI-Beispiel-Szene auch ohne Text-KI');
+});
+
+test('KI-Skripte bekommen die Viral-Regel (Kommentar-Frage + Loop)', async () => {
+  let z = '';
+  await skriptMitFormat({ handle: 'x' }, '', async (p, zusatz) => { z = zusatz; return { titel: 'X', szenen: [] }; });
+  assert.match(z, /VIRAL:.*Kommentieren.*Schleife/);
 });
