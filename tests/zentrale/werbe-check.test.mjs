@@ -43,3 +43,11 @@ test('Schmerz-Bezug wird gesperrt - auch indirekt (echter Hook aus dem Fabrik-La
   for (const t of ['Hör auf, solche Schmerzen zu tragen!', 'Weniger Beschwerden im Alltag', 'Say goodbye to back aches', 'Adiós al dolor', 'Koniec z bólem']) assert.ok(block(t).length, t);
   for (const t of ['Angenehmer Halt für den Alltag', 'Klettverschluss für die perfekte Passform', 'Dorf-Leben, entspannt']) assert.deepEqual(block(t), [], t);
 });
+
+test('Feed: auch der Text IM Video (werbetext) wird geprüft - nicht nur Titel und Caption', async () => {
+  const { werbeText } = await import('../../automations/lib/werbeCheck.mjs');
+  const s = { titel: 'BackEase – dein Helfer', hook: 'Hör auf, solche Schmerzen zu tragen!', szenen: [{ text: 'Angenehmer Halt.' }], anfaenge: [{ hook: 'Stoppt jetzt!' }] };
+  assert.match(werbeText(s), /Schmerzen.*\n.*Halt.*\n.*Stoppt/s);
+  assert.equal(videoPruefen({ titel: s.titel, caption: '#Purivelle' }).ok, true);
+  assert.equal(videoPruefen({ titel: s.titel, caption: '#Purivelle', werbetext: werbeText(s) }).ok, false);
+});

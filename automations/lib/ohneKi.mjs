@@ -4,6 +4,10 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { reinText } from './shopProdukte.mjs';
 import { saisonJetzt } from './saison.mjs';
+import { pruefen } from './werbeCheck.mjs';
+
+// Nur Saetze/Fragen, die der Werbe-Check durchlaesst (Shop-Texte und Google-Fragen enthalten oft "Schmerzen").
+const werbeSauber = (t) => !pruefen(t).some((x) => x.stufe === 'block');
 
 const UEBERSCHRIFT = /^(warum du (es|ihn|sie) willst|warum du (es|ihn|sie) liebst|highlights|vorteile|details|eigenschaften|so funktioniert'?s|so geht'?s|anwendung|perfekt für)\s*:?\s*/i;
 const RAUS = /versand|lieferung|lieferumfang|garantie|rückgabe|rueckgabe|widerruf|hinweis|ersetzt keine|arzt|medizin|\d+\s?(cm|mm|kg|g)\b|https?:/i;
@@ -13,7 +17,7 @@ export function saetzeAus(html) {
   const text = reinText(String(html || '').replace(/<\/(li|p|h\d|div)>/gi, '. ')).replace(/([.!?])(\s*\.)+/g, '$1').split(/\bHinweis:/)[0];
   return text.split(/(?<=[.!?])\s+/).map((s) => s.replace(/^[.\s•\-–]+/, '').replace(UEBERSCHRIFT, '').trim())
     .map((s) => (/[.!?]$/.test(s) ? s : `${s}.`))
-    .filter((s, i, l) => s.length >= 18 && s.length <= 170 && !RAUS.test(s) && l.indexOf(s) === i);
+    .filter((s, i, l) => s.length >= 18 && s.length <= 170 && !RAUS.test(s) && werbeSauber(s) && l.indexOf(s) === i);
 }
 
 const euro = (preis) => (Number(preis) > 0 ? `${Number(preis).toFixed(2).replace('.', ',').replace(',00', '')} Euro` : '');
@@ -27,7 +31,7 @@ const stamm = (w) => w.toLowerCase().replace(/(en|er|e|n|s)$/, '').slice(0, 6);
 
 // Viraler Einstieg ohne KI: echte Google-Frage (nur wenn der Shop-Text sie beantwortet), sonst Neugier-Hook im Tageswechsel.
 export function einstieg(saetze, wort, fragen = [], tag = Math.floor(Date.now() / 864e5)) {
-  for (const f of fragen) {
+  for (const f of fragen.filter(werbeSauber)) {
     const kern = f.split(/\s+/).filter((w) => w.length >= 4 && !wort.toLowerCase().includes(w.toLowerCase()));
     const antwort = saetze.find((s) => kern.some((w) => s.toLowerCase().includes(stamm(w))));
     if (kern.length && antwort) return { hook: `${gross(wort)}: ${f.replace(new RegExp(wort, 'i'), '').trim()}?`.replace(/\s+\?/, '?'), antwort };

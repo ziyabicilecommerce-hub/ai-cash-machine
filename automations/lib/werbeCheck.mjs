@@ -50,9 +50,12 @@ export function pruefen(text) {
   return treffer;
 }
 
-// Ein Video aus dem Feed/Manifest: Titel + Caption (ohne Links und Hashtags-Zeichen).
+// Alles, was im Video gesagt/eingeblendet wird: Hook, Szenen-Saetze, Anfang-Varianten (fuer Skript und Feed).
+export const werbeText = (s) => [s.hook, ...(s.szenen || []).map((x) => x?.text), ...(s.anfaenge || []).flatMap((a) => [a?.satz, a?.hook])].filter(Boolean).join('\n');
+
+// Ein Video aus dem Feed/Manifest: Titel + Caption (ohne Links) + der Text IM Video (werbetext).
 export function videoPruefen(v) {
-  const text = `${v.titel || ''}\n${String(v.caption || '').replace(/https?:\/\/\S+/g, ' ')}`;
+  const text = `${v.titel || ''}\n${String(v.caption || '').replace(/https?:\/\/\S+/g, ' ')}\n${v.werbetext || ''}`;
   const treffer = pruefen(text);
   return { ok: !treffer.some((x) => x.stufe === 'block'), treffer };
 }
