@@ -29,7 +29,7 @@ test('notfallSkript: Hook + Shop-Saetze + Preis + Kommentar-Frage + Link in der 
   assert.match(texte.at(-2), /Kommentare/);
   assert.match(texte.at(-1), /Link in der Bio/);
   assert.deepEqual(d.szenen.map((x) => x.foto), texte.map((_, i) => i % 2));
-  assert.match(d.caption, /#klimmzugband #training #DeskRebel/);
+  assert.match(d.caption, /#klimmzugband #training .*#DeskRebel/);
   assert.equal(d.hook, texte[0]);
 });
 

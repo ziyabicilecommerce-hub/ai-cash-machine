@@ -5,6 +5,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { lernstandLaden, waehlen } from './leistung.mjs';
 import { suchHinweis } from './suchRadar.mjs';
 import { pruefen } from './werbeCheck.mjs';
+import { saisonHinweis } from './saison.mjs';
 
 export const FORMATE = {
   pov: 'Format POV: Szene 1 beginnt mit "POV:" und beschreibt eine typische Alltagssituation der Zielgruppe aus Ich-Sicht.',
@@ -15,6 +16,11 @@ export const FORMATE = {
   check: 'Format Schnell-Check: "Mach mal diesen 5-Sekunden-Check" - eine einfache Selbstpruefung, danach das Produkt.',
   sekunden: 'Format "In 20 Sekunden erklaert": schnelles Tempo, jede Szene ein klarer Nutzen, Zaehler 1-2-3 im gesprochenen Text.',
   detail: 'Format Detail-Nahaufnahme: ruhige Sprache, Material, Haptik und Handgriffe im Mittelpunkt (wie ASMR, aber gesprochen).',
+  // Arsenal Tier 13 "Content Weapons":
+  story: 'Format Mini-Story: eine kurze Alltagsgeschichte in 3 Akten (Situation - kleiner Wendepunkt mit dem Produkt - Ausblick), erzählt in der Du-Form, ohne erfundene Erfahrungsberichte.',
+  challenge: 'Format Mitmach-Challenge: "Mach diese 30-Sekunden-Challenge mit" - eine einfache Übung oder Routine mit dem Produkt, Zuschauer sollen im Kommentar schreiben, ob sie es geschafft haben.',
+  meme: 'Format Alltags-Humor: Szene 1 im Meme-Stil ("Ich nach 8 Stunden am Schreibtisch:") mit einer wiedererkennbaren, harmlosen Situation, dann das Produkt als Lösung - freundlich, niemanden lächerlich machen.',
+  fragen: 'Format Schnelle Antworten: drei kurze Fragen, die Leute zu so einem Produkt wirklich haben (Anwendung, Größe/Stärke, für wen), jede in einem Satz ehrlich aus den Produktinfos beantwortet.',
 };
 
 export const formateAn = () => !/^(0|nein|aus|false)$/i.test(String(process.env.VIDEO_FORMATE || '').trim());
@@ -22,7 +28,7 @@ export const formateAn = () => !/^(0|nein|aus|false)$/i.test(String(process.env.
 // Unbekannte Formate reihum (je Produkt und Tag versetzt), danach nach echten Zahlen.
 // mitHook: Das Labor gibt den ersten Satz schon vor - dann keine Formate, die Szene 1 selbst festlegen.
 export function formatWaehlen(p, { lernstand = lernstandLaden(), tag = Math.floor(Date.now() / 864e5), mitHook = false } = {}) {
-  const namen = Object.keys(FORMATE).filter((n) => !(mitHook && ['pov', 'check'].includes(n)));
+  const namen = Object.keys(FORMATE).filter((n) => !(mitHook && ['pov', 'check', 'meme'].includes(n)));
   const seed = [...String(p?.handle || p?.title || '')].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 9973, tag);
   const name = waehlen(namen, lernstand.format, { seed });
   return { name, anweisung: FORMATE[name] };
@@ -51,7 +57,7 @@ const werbeFehler = (s) => pruefen([s.titel, s.hook, s.caption, ...(s.szenen || 
 // der Poster schreibt es an jeden Post, damit der Leistungs-Sammler es spaeter auswerten kann.
 export async function skriptMitFormat(p, winkel, bauer) {
   const f = formateAn() ? formatWaehlen(p, { mitHook: !!winkel }) : { name: '', anweisung: '' };
-  const zusatz = [winkel, f.anweisung, VIRAL_REGEL, trendHinweis(), suchHinweis(p)].filter(Boolean).join(' ');
+  const zusatz = [winkel, f.anweisung, VIRAL_REGEL, trendHinweis(), suchHinweis(p), saisonHinweis()].filter(Boolean).join(' ');
   let s = await bauer(p, zusatz);
   // Werbe-Check schon beim Schreiben: verbotene Aussage im Skript -> einmal neu schreiben lassen, sonst verwerfen.
   let fehler = werbeFehler(s);
