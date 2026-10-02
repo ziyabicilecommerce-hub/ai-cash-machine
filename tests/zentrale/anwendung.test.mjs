@@ -127,3 +127,12 @@ test('Ersatzweg: alle Bearbeitungs-Modelle kaputt -> KI-Szene (flux) + echtes Pr
   assert.match(szenenPrompt('person using the exact product from the reference image, product clearly visible'), /a small product.*lower third/);
   KAPUTT.clear();
 });
+
+test('flux-Anfragen fuer Szenen laufen strikt nacheinander (keine Ablehnung wegen Gleichzeitigkeit)', async () => {
+  const { nacheinander } = await import('../../automations/lib/anwendung.mjs');
+  let aktiv = 0, max = 0;
+  const arbeit = () => nacheinander(async () => { aktiv++; max = Math.max(max, aktiv); await new Promise((r) => setTimeout(r, 15)); aktiv--; return 1; });
+  const erg = await Promise.all([arbeit(), arbeit(), arbeit()]);
+  assert.deepEqual(erg, [1, 1, 1]);
+  assert.equal(max, 1);
+});

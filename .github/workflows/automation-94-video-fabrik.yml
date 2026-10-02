@@ -102,7 +102,7 @@ jobs:
           fi
           echo "W2L_PY=$HOME/w2l-venv/bin/python" >> "$GITHUB_ENV"
           scripts/moderatorin.sh einrichten
-          ls ~/wav2lip/moderatorin-*.jpg >/dev/null && echo "MODERATORIN=${{ vars.MODERATORIN || '1' }}" >> "$GITHUB_ENV"
+          ls ~/wav2lip/moderatorin-*.jpg >/dev/null && echo "MODERATORIN=${{ vars.MODERATORIN || '0' }}" >> "$GITHUB_ENV"
       - name: Videos bauen
         run: node automations/94-video-fabrik.mjs
       - name: Videos pruefen (reparieren oder aussortieren)

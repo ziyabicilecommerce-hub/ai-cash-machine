@@ -24,10 +24,12 @@ test('Belegprobe: nur Werbung mit Shop-Link, Werbe-Check-Sperre = Pruefung offen
 });
 
 test('Rechtebuch: ehrliche Lizenzlage der Video-Bausteine (Wav2Lip, edge-tts, Pollinations offen)', () => {
-  const r = allesRechnen(T, { RightsLedger: { eingabe: rechteEingabe('2026-10-02'), quelle: 'test' } }).RightsLedger;
+  const r = allesRechnen(T, { RightsLedger: { eingabe: rechteEingabe('2026-10-02', { moderatorin: true }), quelle: 'test' } }).RightsLedger;
   assert.equal(r.metrics[0].value, BAUSTEINE.length);
   assert.equal(r.metrics[1].value, 3);
   assert.ok(r.rows.some((x) => /Wav2Lip/.test(x.Inhalt) && x.Freigabe === 'Fehlt'));
+  const aus = allesRechnen(T, { RightsLedger: { eingabe: rechteEingabe('2026-10-02', { moderatorin: false }), quelle: 'test' } }).RightsLedger;
+  assert.equal(aus.metrics[1].value, 2, 'Moderatorin aus -> Wav2Lip kein offenes Risiko mehr');
 });
 
 test('Vorhabenwaage: unverbundene Kanaele und fehlende Schluessel, Gemini zuerst', () => {

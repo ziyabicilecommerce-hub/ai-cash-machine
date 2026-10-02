@@ -42,6 +42,13 @@ export function anwendungURL(prompt, ref, { breite, hoehe, model, seed }) {
 // Modelle, die in diesem Lauf schon versagt haben, werden nicht erneut versucht (spart bis zu Minuten je Szene).
 export const KAPUTT = new Set();
 export const WARTEN = Number(process.env.BILD_WARTEN_MS || 6000);
+// Der freie Bilddienst lehnt gleichzeitige Anfragen ab (402/429) - Szenen-Bilder daher strikt nacheinander.
+let warteschlange = Promise.resolve();
+export function nacheinander(fn) {
+  const lauf = warteschlange.then(fn, fn);
+  warteschlange = lauf.catch(() => {}).then(() => new Promise((r) => setTimeout(r, Math.min(WARTEN, 3000))));
+  return lauf;
+}
 
 // Probiert die Modelle der Reihe nach; true, sobald ein echtes Bild (> 20 KB) da ist.
 export async function anwendungBild({ prompt, ref }, ziel, { breite, hoehe, seed = Math.floor(Math.random() * 1e9), laden = fetch } = {}) {
@@ -90,7 +97,7 @@ export async function komponieren({ prompt, ref }, ziel, { breite, hoehe, seed =
   let f = await holen(ref, roh, 60000, 2);
   if (f) { console.log(`[video-fabrik] Komponieren: Produktfoto nicht ladbar (${f})`); return false; }
   if (!(await frei(roh, png)) || !existsSync(png)) { console.log('[video-fabrik] Komponieren: Freistellen nicht möglich'); return false; }
-  f = await holen(bildURL(szenenPrompt(prompt), { width: breite, height: hoehe, seed, model: 'flux' }), szene, 120000, 4);
+  f = await nacheinander(() => holen(bildURL(szenenPrompt(prompt), { width: breite, height: hoehe, seed, model: 'flux' }), szene, 120000, 4));
   if (f) { console.log(`[video-fabrik] Komponieren: Szene von flux nicht ladbar (${f})`); return false; }
   const pw = Math.round(breite * 0.62), ph = Math.round(hoehe * 0.36), unten = Math.round(hoehe * 0.1);
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', szene, '-i', png, '-filter_complex',
