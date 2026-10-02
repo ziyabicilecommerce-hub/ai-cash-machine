@@ -99,3 +99,31 @@ test('schneller: Schritt-Bilder parallel, kaputte Modelle werden im Lauf uebersp
   assert.ok(!urls.some((u) => u.includes('model=kontext')), 'kaputtes Modell wird nicht nochmal versucht');
   KAPUTT.clear();
 });
+
+test('Ersatzweg: alle Bearbeitungs-Modelle kaputt -> KI-Szene (flux) + echtes Produkt freigestellt hineinkomponiert', async () => {
+  const { anwendungBild, komponieren, szenenPrompt, KAPUTT } = await import('../../automations/lib/anwendung.mjs');
+  const { execFileSync } = await import('node:child_process');
+  const dir = mkdtempSync(join(tmpdir(), 'komp-'));
+  const szeneJpg = join(dir, 'szene.jpg'), produktPng = join(dir, 'p.png');
+  execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'lavfi', '-i', 'color=c=0x3366aa:size=270x480', '-frames:v', '1', szeneJpg]);
+  execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'lavfi', '-i', 'color=c=red@1.0:size=200x100,format=rgba', '-frames:v', '1', produktPng]);
+  const urls = [];
+  const laden = async (url) => {
+    urls.push(url);
+    if (url.includes('image.pollinations.ai') && /model=(kontext|gptimage|nanobanana|seedream)/.test(url)) return new Response('x', { status: 500 });
+    return new Response(readFileSync(szeneJpg), { headers: { 'content-type': 'image/jpeg' } });
+  };
+  const frei = async (roh, ziel) => { (await import('node:fs')).copyFileSync(produktPng, ziel); return true; };
+  KAPUTT.clear();
+  const ziel = join(dir, 'r.img');
+  assert.equal(await komponieren({ prompt: 'realistic smartphone photo, one adult person using the exact product from the reference image, product clearly visible', ref: 'https://cdn.shopify.com/p.jpg' }, ziel, { breite: 270, hoehe: 480, laden, frei }), true);
+  assert.ok(urls.some((u) => u.includes('model=flux')), 'Szene kommt vom freien Modell flux');
+  assert.doesNotMatch(decodeURIComponent(urls.find((u) => u.includes('model=flux'))), /reference image|clearly visible/);
+  // Produkt sitzt unten mittig (rot), oben bleibt die Szene (blau)
+  const px = (x, y) => execFileSync('ffmpeg', ['-loglevel', 'error', '-i', ziel, '-vf', `crop=2:2:${x}:${y},format=rgb24`, '-f', 'rawvideo', '-'], { encoding: 'buffer' });
+  const unten = px(134, 380), oben = px(134, 40);
+  assert.ok(unten[0] > 150 && unten[2] < 100, `unten rot: ${[...unten]}`);
+  assert.ok(oben[2] > 120 && oben[0] < 100, `oben blau: ${[...oben]}`);
+  assert.match(szenenPrompt('person using the exact product from the reference image, product clearly visible'), /a small product.*lower third/);
+  KAPUTT.clear();
+});

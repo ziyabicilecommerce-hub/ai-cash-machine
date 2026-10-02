@@ -24,7 +24,7 @@ export function dauerSekunden(datei) {
 export async function ladeBild(prompt, ziel, { breite, hoehe, seed, enhance }) {
   for (let versuch = 0; versuch < 4; versuch++) {
     try {
-      const res = await fetch(bildURL(prompt, { width: breite, height: hoehe, seed, enhance }), { signal: AbortSignal.timeout(120000) });
+      const res = await fetch(bildURL(prompt, { width: breite, height: hoehe, seed, enhance }), { headers: process.env.POLLINATIONS_TOKEN ? { Authorization: `Bearer ${process.env.POLLINATIONS_TOKEN.trim()}` } : {}, signal: AbortSignal.timeout(120000) });
       const typ = res.headers.get('content-type') || '';
       if (res.ok && typ.startsWith('image/')) {
         writeFileSync(ziel, Buffer.from(await res.arrayBuffer()));
