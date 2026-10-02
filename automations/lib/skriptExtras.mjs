@@ -4,4 +4,4 @@ export * from './anfaenge.mjs';
 export * from './formate.mjs';
 export { planWert } from './agentenPlan.mjs';
 export { notfallSkript, ANWENDUNG as ANWENDUNG_STANDARD } from './ohneKi.mjs';
-export { werbeText } from './werbeCheck.mjs';
+export { werbeText, skriptBlock } from './werbeCheck.mjs';

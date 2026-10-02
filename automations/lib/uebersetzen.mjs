@@ -5,10 +5,12 @@ import { WELT_SPRACHEN } from './weltSprachen.mjs';
 
 const SPRACHNAMEN = Object.fromEntries(Object.entries(WELT_SPRACHEN).map(([k, v]) => [k, v.name]));
 
+export const TITEL_REGEL = 'der GANZE Titel wird uebersetzt (auch der Teil nach dem Gedankenstrich), nur Markennamen (DeskRebel, Purivelle) und Produktnamen bleiben; ';
+
 // Uebersetzt Titel, Caption und Sprechtexte; Produktfotos bleiben gleich.
 export async function uebersetzen(skript, sprache) {
   const d = await kiJson(
-    `Uebersetze diese Werbevideo-Texte ins ${SPRACHNAMEN[sprache]}, natuerlich und muttersprachlich, Du-Ansprache, Laenge beibehalten, Markennamen und Preise unveraendert, Link unveraendert. ` +
+    `Uebersetze diese Werbevideo-Texte ins ${SPRACHNAMEN[sprache]}, natuerlich und muttersprachlich, Du-Ansprache, Laenge beibehalten, ${TITEL_REGEL}Preise unveraendert, Link unveraendert. ` +
       `Antworte NUR mit JSON: {"titel":"...","hook":"...","caption":"...","saetze":["..."]}\n${JSON.stringify({ titel: skript.titel, hook: skript.hook || '', caption: skript.caption, saetze: skript.szenen.map((x) => x.text) })}`,
     { maxTokens: 2500 }
   );
@@ -23,7 +25,7 @@ export async function uebersetzenBuendel(skripte, sprache) {
   let d = {};
   try {
     d = await kiJson(
-      `Uebersetze diese ${skripte.length} Werbevideo-Texte ins ${SPRACHNAMEN[sprache]}, natuerlich und muttersprachlich, Du-Ansprache, Laenge beibehalten, Markennamen und Preise unveraendert, Links unveraendert. ` +
+      `Uebersetze diese ${skripte.length} Werbevideo-Texte ins ${SPRACHNAMEN[sprache]}, natuerlich und muttersprachlich, Du-Ansprache, Laenge beibehalten, ${TITEL_REGEL}Preise unveraendert, Links unveraendert. ` +
         `Antworte NUR mit JSON: {"videos":[{"i":0,"titel":"...","hook":"...","caption":"...","saetze":["..."]}]} - fuer jedes Video, gleiche i, gleiche Anzahl saetze.\n` +
         JSON.stringify(skripte.map((sk, i) => ({ i, titel: sk.titel, hook: sk.hook || '', caption: sk.caption, saetze: sk.szenen.map((x) => x.text) }))),
       { maxTokens: 6000 }
