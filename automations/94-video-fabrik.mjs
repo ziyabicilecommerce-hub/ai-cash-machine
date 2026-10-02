@@ -151,9 +151,10 @@ async function produktSkript(p, winkel = '') {
   let skript;
   for (let versuch = 0; versuch < 2; versuch++) {
     try { skript = await produktSkriptEinmal(p, winkel); } catch (err) { console.log(`[94-video-fabrik] KI weg (${String(err.message).slice(0, 80)}) - Notfall-Skript aus dem Shop-Text`); return { ...ausDaten(notfallSkript(p), p), ohneKi: true }; }
-    if (skript.szenen.length >= 3) break;
+    if (skript.szenen.length >= 5) break;
   }
-  return skript;
+  return skript.szenen.length >= 5 ? skript : (console.log( // zu kurz (kleine lokale KI): lieber ehrliches Notfall-Skript als 10-s-Video
+`[94-video-fabrik] KI-Skript zu kurz (${skript.szenen.length} Szenen) - Notfall-Skript`), { ...ausDaten(notfallSkript(p), p), ohneKi: true });
 }
 
 async function produktSkriptEinmal(p, winkel = '') {
