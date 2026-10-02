@@ -48,5 +48,5 @@ jobs:
           git add zentrale/daten/shop-doktor.json zentrale/feeds automations/state/shop-schnappschuss.json automations/state/text-vorschlaege.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -qm "chore: Shop-Doktor und Produkt-Feeds [skip ci]"
-          for versuch in 1 2 3; do git pull -q --rebase --autostash origin "$GITHUB_REF_NAME" && git push -q && break; sleep $((versuch * 5)); done
+          for versuch in 1 2 3; do git pull -q --rebase -X theirs --autostash origin "$GITHUB_REF_NAME" && git push -q && break; sleep $((versuch * 5)); done
           if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi

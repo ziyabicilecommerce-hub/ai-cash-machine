@@ -12,10 +12,10 @@ export const SELBSTHEILEN = new Set([
 
 // Erwarteter Rhythmus wichtiger Zeitplaene (Stunden) und ihre Datei: laenger ohne Lauf = "haengt".
 export const RHYTHMUS = {
-  '94 · Video-Fabrik': [30, 'automation-94-video-fabrik.yml'], 'Werbe-Labor': [30, 'werbe-labor.yml'],
-  'Shop-Doktor + Produkt-Feeds': [30, 'shop-doktor.yml'], '99 · Direkt-Poster': [14, 'automation-99-direkt-poster.yml'],
-  'Kommentar-Agent': [14, 'kommentar-agent.yml'], 'Leistungs-Sammler + Trend-Radar': [30, 'leistung-sammler.yml'],
-  'Engpass-Chef (Agenten-Fließband)': [30, 'engpass-chef.yml'], 'Community-Agent': [30, 'community-agent.yml'],
+  '94 · Video-Fabrik': [26, 'automation-94-video-fabrik.yml'], 'Werbe-Labor': [26, 'werbe-labor.yml'],
+  'Shop-Doktor + Produkt-Feeds': [26, 'shop-doktor.yml'], '99 · Direkt-Poster': [14, 'automation-99-direkt-poster.yml'],
+  'Kommentar-Agent': [14, 'kommentar-agent.yml'], 'Leistungs-Sammler + Trend-Radar': [26, 'leistung-sammler.yml'],
+  'Engpass-Chef (Agenten-Fließband)': [26, 'engpass-chef.yml'], 'Community-Agent': [26, 'community-agent.yml'],
 };
 
 // laeufe: GitHub-API workflow_runs (neueste zuerst). Ergebnis je Workflow + Problemliste.
@@ -56,3 +56,7 @@ export function neuStarten(workflows, { jetzt = Date.now() } = {}) {
 }
 
 export const schluessel = (p) => `${p.art}|${p.name}`;
+
+// Verpasste Zeitplaene: GitHub laesst geplante Laeufe unter Last manchmal ausfallen - haengende wichtige
+// Agenten werden per workflow_dispatch nachgeholt (Datei aus RHYTHMUS).
+export const nachholen = (probleme) => [...new Set(probleme.filter((p) => p.art === 'haengt' && RHYTHMUS[p.name]).map((p) => p.name))].map((name) => ({ name, datei: RHYTHMUS[name][1] }));

@@ -52,5 +52,5 @@ jobs:
           git add automations/state/agenten-plan.json zentrale/daten/engpass.json zentrale/daten/neuland.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -qm "chore: Engpass-Chef Plan [skip ci]"
-          for versuch in 1 2 3; do git pull -q --rebase --autostash origin "$GITHUB_REF_NAME" && git push -q && break; sleep $((versuch * 5)); done
+          for versuch in 1 2 3; do git pull -q --rebase -X theirs --autostash origin "$GITHUB_REF_NAME" && git push -q && break; sleep $((versuch * 5)); done
           if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi

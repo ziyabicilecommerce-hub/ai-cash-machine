@@ -28,3 +28,9 @@ test('Selbstheilung nur fuer wichtige Agenten, nur erster Versuch, nur frisch', 
   assert.equal(JSON.stringify(neuStarten(r.workflows, { jetzt }).map((w) => w.name)), '["Werbe-Labor"]');
   assert.equal(schluessel({ art: 'absturz', name: 'A' }), 'absturz|A');
 });
+
+test('verpasste Zeitplaene wichtiger Agenten werden nachgeholt, andere nicht', async () => {
+  const { nachholen } = await import('../../automations/lib/systemWaechter.mjs');
+  const r = nachholen([{ art: 'haengt', name: 'Werbe-Labor' }, { art: 'haengt', name: 'Werbe-Labor' }, { art: 'absturz', name: 'Shop-Doktor + Produkt-Feeds' }, { art: 'haengt', name: 'Irgendwas' }]);
+  assert.deepEqual(r, [{ name: 'Werbe-Labor', datei: 'werbe-labor.yml' }]);
+});
