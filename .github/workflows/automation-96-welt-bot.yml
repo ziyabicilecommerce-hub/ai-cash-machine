@@ -8,11 +8,11 @@ name: "96 · Welt-Bot"
 # baut jeder Job genau 1 Sprache (~210 Videos, ca. 3 h). Je Job ein eigenes Release (max. 1.000
 # Dateien); Welt-Releases aelter als 2 Tage werden automatisch geloescht.
 
-# PAUSIERT (Fokus Deutsch): kein Zeitplan mehr - manuell weiter startbar. Wieder an: die zwei Zeilen
-# unter "on:" einkommentieren.
+# Fokus: Top-5-Sprachen (Englisch, Spanisch, Franzoesisch, Italienisch, Tuerkisch) - aenderbar per Variable
+# WELT_BOT_SPRACHEN. Welche Sprachen sich lohnen, zeigt der NEULAND-Versuchsfeld-Rechner in der Zentrale.
 on:
-  # schedule:
-  #   - cron: '43 7 * * *'
+  schedule:
+    - cron: '43 7 * * *'
   workflow_dispatch:
     inputs:
       anzahl:
@@ -39,7 +39,7 @@ concurrency:
 env:
   VIDEO_FABRIK_ANZAHL: ${{ inputs.anzahl || vars.WELT_BOT_ANZAHL || '21' }}
   VIDEO_FABRIK_VARIANTEN: ${{ inputs.varianten || vars.WELT_BOT_VARIANTEN || '10' }}
-  VIDEO_FABRIK_SPRACHEN: ${{ inputs.sprachen || vars.WELT_BOT_SPRACHEN || 'alle' }}
+  VIDEO_FABRIK_SPRACHEN: ${{ inputs.sprachen || vars.WELT_BOT_SPRACHEN || 'en,es,fr,it,tr' }}
   VIDEO_FABRIK_SHOPS: ${{ vars.VIDEO_FABRIK_SHOPS }}
   GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
   GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}

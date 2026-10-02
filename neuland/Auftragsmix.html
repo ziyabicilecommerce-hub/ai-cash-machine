@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Finde einen passenden Auftragsmix für deine verfügbare Zeit, dein Kostenbudget und deine Nachfragegrenzen. Lokal im Browser berechnen.">
+  <meta name="theme-color" content="#f7f5ef">
+  <title>Auftragsmix · NEULAND</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23234dff%22/%3E%3Cpath%20fill%3D%22%23fffefa%22%20d%3D%22M13%2013h16v16H13zM35%2013h16v16H35zM13%2035h16v16H13zM35%2035h16v16H35z%22/%3E%3Cpath%20fill%3D%22%23234dff%22%20d%3D%22M40%2040h6v6h-6z%22/%3E%3C/svg%3E%0A" type="image/svg+xml">
+  <style>@charset "UTF-8";
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#27282d;background:#f7f5ef;font-synthesis:none;--blue:#234dff;--ink:#27282d;--muted:#6c6d72;--border:#e0dfd9;--paper:#fffefa;--soft:#edeee9}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #8ba6ff;outline-offset:3px}[hidden]{display:none!important}.topbar{max-width:1520px;margin:auto;min-height:80px;padding:20px 40px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.brand{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:750;letter-spacing:.08em}.brand svg{width:31px;height:31px;fill:var(--ink)}.brand .mark-cut{fill:var(--blue)}.brand b{display:block;font-size:9px;letter-spacing:.17em;margin-top:3px;color:var(--muted)}.edition{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}.edition i{width:7px;height:7px;background:var(--blue);border-radius:50%}main{max-width:1520px;padding:32px 40px 18px;margin:auto}.intro{display:flex;align-items:center;justify-content:space-between;gap:24px}.eyebrow{font-size:10px;letter-spacing:.13em;font-weight:800;color:var(--blue);margin:0 0 10px}h1{font-size:clamp(32px,3.1vw,48px);font-weight:650;letter-spacing:-.065em;margin:0;line-height:1.05}.lead{max-width:700px;color:var(--muted);font-size:14px;line-height:1.55;margin:12px 0 0}.intro-actions{display:flex;gap:9px;flex-shrink:0}.quiet{background:transparent;border:1px solid #d3d3ce;border-radius:7px;color:var(--ink);padding:10px 12px;font-size:12px;font-weight:600}.quiet:hover{background:#eeede7}.scenario-note{font-size:11px;color:var(--muted);margin:17px 0 23px;padding-left:12px;border-left:2px solid #bfcaff;line-height:1.5}.workspace{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(370px,1fr);gap:22px;align-items:start}.editor,.plan{border:1px solid var(--border);border-radius:12px;padding:23px;background:var(--paper)}.plan{background:#eeeee9;border-color:#deded6}.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:17px}.section-title h2{font-size:14px;letter-spacing:-.02em;margin:0;font-weight:700;display:flex;align-items:center;gap:10px}.section-title h2>span{font-size:10px;color:#989992;font-weight:500}.period,#product-count{font-size:10px;color:var(--muted)}.resources{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.resources label{font-size:11px;font-weight:650}.unit{display:block;color:var(--muted);font-size:10px;font-weight:400;margin:4px 0 7px}input{min-width:0;width:100%;background:#f7f7f2;border:1px solid #dcdcd5;border-radius:5px;padding:9px 10px;color:var(--ink);font-size:14px;line-height:1.3}input:hover{border-color:#a9b5e9}input:focus{border-color:var(--blue);background:white}.resources input{font-size:21px;letter-spacing:-.04em;font-weight:650;padding:9px 10px}.product-heading{margin:23px 0 13px}.product{padding:13px 0;border-top:1px solid var(--border)}.product-top{display:grid;grid-template-columns:minmax(0,1fr) 89px 27px;gap:9px;align-items:end}.name-label,.product-top label{font-size:10px;color:var(--muted);display:block}.name-label input{background:transparent;font-size:13px;font-weight:650;margin-top:5px}.current-input{margin-top:5px;font-size:13px}.remove-product{background:transparent;border:0;color:#858581;border-radius:4px;width:27px;height:34px;padding:0;font-size:19px}.remove-product:hover{background:#f4e7e2;color:#984d3a}.product-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:9px}.product-fields label{font-size:9px;color:var(--muted);line-height:1.5}.product-fields input{margin-top:3px;padding:7px 9px;font-size:12px}.add-button{width:100%;padding:9px;font-size:11px;border:1px dashed #c9cac3;background:transparent;color:var(--muted);border-radius:5px;margin-top:9px}.add-button:hover{color:var(--blue);border-color:var(--blue)}.editor-bottom{display:flex;align-items:center;gap:18px;margin-top:16px}.editor-bottom p{font-size:10px;color:var(--muted);line-height:1.5;margin:0;flex:1}.primary{flex-shrink:0;border:0;border-radius:7px;background:var(--blue);color:white;padding:12px 15px;display:flex;gap:20px;align-items:center;font-size:12px;font-weight:650}.primary:hover{background:#1239dc}.primary span{font-size:17px;line-height:1}.status-badge{font-size:9px;line-height:1.5;color:#4a577e;border:1px solid #cbd1e0;background:#f5f6fb;border-radius:20px;padding:4px 8px;white-space:nowrap}.status-badge.bounded{color:#8a6530;background:#fdf5e8;border-color:#decaa8}.hero-result{margin-top:4px;padding:16px 0 19px;border-bottom:1px solid #d7d8d0}.hero-result>p{font-size:11px;color:var(--muted);margin:0 0 4px}.hero-result>strong{font-size:clamp(34px,3.8vw,56px);font-weight:650;color:var(--blue);letter-spacing:-.065em;line-height:1.2;overflow-wrap:anywhere}.delta{font-size:12px;line-height:1.5;margin-top:7px;font-weight:600}.delta.positive{color:var(--blue)}.delta.negative{color:#ad593b}.hero-result small{display:block;font-size:10px;color:var(--muted);margin-top:9px;line-height:1.5}.hero-result small b{font-weight:500;color:#43443f}.solver-note{font-size:10px;line-height:1.5;color:var(--muted);margin:14px 0 17px}.mix-table-head,.recommendation{display:grid;grid-template-columns:minmax(0,1fr) 52px 58px;gap:10px;align-items:center}.mix-table-head{font-size:10px;color:var(--muted);padding-bottom:7px}.mix-table-head span:first-child{font-weight:650;color:var(--ink)}.mix-table-head span:not(:first-child){text-align:right}.recommendation{padding:9px 0;border-top:1px solid #dbdcd4}.recommendation strong{font-size:12px;font-weight:600;overflow-wrap:anywhere}.recommendation .demand{display:block;font-size:9px;color:var(--muted);margin-top:3px}.recommendation .previous{font-size:16px;color:#8b8c85;text-align:right;letter-spacing:-.04em}.recommendation .quantity{font-size:22px;font-weight:650;color:var(--blue);text-align:right;letter-spacing:-.04em}.usage{margin:17px 0 0}.usage-row{display:flex;justify-content:space-between;gap:10px;font-size:10px}.usage-row strong{font-weight:500}.track{height:5px;background:#d7d9d0;border-radius:3px;margin:7px 0;overflow:hidden}.track span{display:block;height:100%;background:var(--blue);width:0%;border-radius:3px;transition:width .2s}.usage>p{font-size:9px;color:var(--muted);margin:0 0 13px}.totals{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #d7d8d0;padding-top:12px;gap:12px}.totals span{display:block;font-size:9px;color:var(--muted);margin-bottom:4px}.totals b{font-size:14px;font-weight:600;overflow-wrap:anywhere}.scenario-actions{display:flex;justify-content:space-between;gap:12px;margin-top:19px}.scenario-actions .quiet{font-size:10px;padding:9px}.export-button{background:transparent;border:0;color:var(--blue);font-size:11px;font-weight:650;padding:9px 0}.notice,.current-warning{background:#fff1e9;border:1px solid #e9caba;color:#93462e;font-size:12px;line-height:1.5;padding:12px;border-radius:7px;overflow-wrap:anywhere}.notice.success{background:#eef2ff;border-color:#bac9ff;color:#2c4694}.current-warning{font-size:10px;margin:13px 0 0}.empty-result{padding:80px 24px;min-height:390px;text-align:center;color:var(--muted)}.empty-mark{display:block;color:#b9c1df;font-size:56px;margin-bottom:18px}.empty-result h3{font-size:17px;color:var(--ink);margin:0 0 9px}.empty-result p{font-size:12px;line-height:1.6;max-width:280px;margin:auto}.method{margin-top:22px;border-top:1px solid var(--border);padding-top:17px}.method summary{font-size:12px;color:#585b59;cursor:pointer;width:fit-content}.method-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}.method p{font-size:11px;line-height:1.65;color:var(--muted)}footer{display:flex;justify-content:space-between;gap:30px;margin:23px 0 0;padding:17px 0 0;border-top:1px solid var(--border);font-size:9px;color:#90928b;line-height:1.6}footer span:last-child{white-space:nowrap;letter-spacing:.09em}@media(min-width:1500px){.editor,.plan{padding:27px}.product{padding:15px 0}.product-fields input{padding:8px 10px}}@media(max-width:1050px){.topbar{padding:18px 24px}main{padding:27px 24px 18px}.workspace{grid-template-columns:minmax(0,1fr) minmax(330px,.95fr);gap:16px}.editor,.plan{padding:18px}.product-top{grid-template-columns:minmax(0,1fr) 65px 23px}.product-fields{gap:6px}.product-fields input{padding:7px 6px}.resources{gap:9px}.resources input{font-size:18px}.period{display:none}.editor-bottom{align-items:stretch;flex-direction:column;gap:12px}.primary{justify-content:space-between}.intro-actions{flex-direction:column}.hero-result>strong{font-size:41px}}@media(max-width:760px){.topbar{min-height:65px;padding:16px 18px}.brand{font-size:13px;gap:9px}.brand svg{width:27px;height:27px}.edition{font-size:9px;gap:5px}main{padding:24px 16px 18px}.intro{align-items:flex-start;gap:12px}.intro-actions{gap:6px}.intro-actions .quiet{padding:8px;font-size:9px}.eyebrow{font-size:8px;margin-bottom:8px;letter-spacing:.1em}h1{font-size:31px;line-height:1.1;max-width:290px}.lead{font-size:12px;line-height:1.6;margin-top:10px}.scenario-note{font-size:10px;margin:15px 0 18px}.workspace{grid-template-columns:1fr;gap:17px}.editor,.plan{padding:18px}.product-top{grid-template-columns:minmax(0,1fr) 73px 24px}.product-fields{gap:8px}.product-fields label{font-size:9px}.product-fields input{padding:8px 7px}.product{padding:13px 0}.editor-bottom{flex-direction:row;align-items:center;gap:14px}.primary{padding:12px;font-size:11px;gap:15px}.hero-result>strong{font-size:48px}.plan{scroll-margin-top:14px}.scenario-actions .quiet{font-size:10px}.method-grid{grid-template-columns:1fr;gap:0}.method p{font-size:11px;margin-bottom:0}footer{flex-direction:column;gap:8px;margin-top:20px}.empty-result{padding:45px 15px;min-height:230px}.section-title{margin-bottom:15px}.resources{gap:10px}.resources label{font-size:10px}.resources input{font-size:20px}.unit{font-size:9px}}@media(max-width:370px){.edition{display:none}.intro{flex-wrap:wrap}.intro-actions{flex-direction:row}.editor,.plan{padding:15px}.resources{gap:7px}.resources input{font-size:17px;padding:8px}.product-fields{gap:5px}.product-fields label{font-size:8px}.editor-bottom{align-items:stretch;flex-direction:column}.hero-result>strong{font-size:39px}}
+</style>
+  
+  
+</head>
+<body>
+  <header class="topbar"><div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 3h11v11H3zM18 3h11v11H18zM3 18h11v11H3zM18 18h11v11H18z"/><path class="mark-cut" d="M21 21h5v5h-5z"/></svg><span>NEULAND <b>AUFTRAGSMIX</b></span></div><span class="edition"><i></i> Rechnet auf deinem Gerät</span></header>
+  <main>
+    <div class="intro"><div><p class="eyebrow">DEINE RESSOURCEN. DEIN BESTER MIX.</p><h1>Mehr aus deiner Woche.</h1><p class="lead">Welche Produkte oder Aufträge passen in deine Zeit und dein Budget? Rechne es durch, bevor du zusagst.</p></div><div class="intro-actions"><button id="demo" class="quiet" type="button">Beispiel laden</button><button id="import" class="quiet" type="button">JSON öffnen</button><input id="import-file" type="file" accept=".json,application/json" hidden></div></div>
+    <p class="scenario-note" id="scenario-note">Beispieldaten: Beratung, Vorlagen und Workshops. Ersetze sie durch deine eigenen Angebote.</p>
+    <div class="workspace">
+      <section class="editor" aria-labelledby="editor-title">
+        <div class="section-title"><h2 id="editor-title"><span>01</span> Deine Spielräume</h2><span class="period">Ein gemeinsamer Zeitraum</span></div>
+        <div class="resources">
+          <label>Zeitbudget <span class="unit">Stunden</span><input id="hours" type="number" min="0" max="10000" step="0.001" value="40" required></label>
+          <label>Variable Kosten <span class="unit">Budget in €</span><input id="budget" type="number" min="0" max="1000000" step="0.01" value="800" required></label>
+          <label>Fixkosten <span class="unit">€ pro Zeitraum</span><input id="fixed-costs" type="number" min="0" max="1000000" step="0.01" value="500" required></label>
+        </div>
+        <div class="section-title product-heading"><h2><span>02</span> Deine Angebote</h2><span id="product-count">3 / 6</span></div>
+        <div id="products"></div>
+        <button id="add-product" class="add-button" type="button">+ Angebot ergänzen</button>
+        <div class="editor-bottom"><p>Nachfrage ist die maximale Stückzahl, die du im Zeitraum verkaufen könntest. „Bisher“ ist dein aktueller Plan.</p><button id="calculate" class="primary" type="button">Mix berechnen <span aria-hidden="true">↗</span></button></div>
+      </section>
+      <section class="plan" aria-labelledby="plan-title">
+        <div class="section-title"><h2 id="plan-title"><span>03</span> Dein Rechenplan</h2><span id="solver-status" class="status-badge">Bereit</span></div>
+        <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+        <div id="empty-result" class="empty-result"><span class="empty-mark" aria-hidden="true">↗</span><h3>Dein Mix wartet auf Werte.</h3><p>Fülle deine Spielräume und Angebote aus. Hier siehst du den passenden Plan.</p></div>
+        <div id="result" hidden>
+          <div class="hero-result"><p>Modellüberschuss nach Fixkosten</p><strong id="surplus">—</strong><div id="delta" class="delta"></div><small>Deckungsbeitrag <b id="contribution">—</b> abzüglich <b id="fixed-summary">—</b> Fixkosten.</small></div>
+          <p id="solver-note" class="solver-note"></p>
+          <div class="mix-table"><div class="mix-table-head"><span>Empfohlener Mix</span><span>Bisher</span><span>Jetzt</span></div><div id="recommendations"></div></div>
+          <div class="usage"><div class="usage-row"><span>Zeit</span><strong id="time-usage">—</strong></div><div class="track"><span id="time-bar"></span></div><p id="time-headroom"></p><div class="usage-row"><span>Variable Kosten</span><strong id="cost-usage">—</strong></div><div class="track"><span id="cost-bar"></span></div><p id="cost-headroom"></p></div>
+          <div class="totals"><div><span>Umsatz im Modell</span><b id="revenue">—</b></div><div><span>Bisheriger Überschuss</span><b id="current-surplus">—</b></div></div>
+          <p id="current-warning" class="current-warning" hidden></p>
+          <div class="scenario-actions"><button id="less-demand" class="quiet" type="button">20 % weniger Nachfrage testen</button><button id="export" class="export-button" type="button" disabled>Rechenbeleg ↓</button></div>
+        </div>
+      </section>
+    </div>
+    <details class="method"><summary>Was der Plan berücksichtigt</summary><div class="method-grid"><p>Die Rechnung wählt ganze Stückzahlen und maximiert den Deckungsbeitrag: Umsatz minus variable Kosten. Zeitbudget, Kostenbudget und Nachfragegrenzen begrenzen den Mix. Fixkosten werden danach abgezogen; sie ändern die Auswahl nicht.</p><p>Alle ausgewählten Stücke werden zum eingetragenen Preis verkauft. Zeit und variable Kosten steigen linear mit der Stückzahl. Rüstzeiten, Steuern, Versand, Zahlungstermine und unterschiedliche Mitarbeiterqualifikationen sind nicht enthalten. Das Kostenbudget ist eine Szenariogrenze, keine Liquiditätsprognose.</p><p>„Optimal im Modell“ heißt, dass die Suche den besten Mix für diese Annahmen nachgewiesen hat. Bei „Suchgrenze erreicht“ siehst du den besten bisher gefundenen Mix und den verbleibenden Abstand zur oberen Grenze. Es entsteht dadurch kein garantierter Gewinn oder zusätzlicher Verkauf.</p></div></details>
+    <footer><span>Deine Eingaben bleiben im Arbeitsspeicher dieses Browsers. Mit dem Rechenbeleg sicherst du sie als Datei.</span><span>NEULAND / AUFTRAGSMIX</span></footer>
+  </main>
+<script>/* Auftragsmix — deterministic integer planning, no network or dependencies. */
+(function (root, factory) {
+  "use strict";
+  const api = factory();
+  if (typeof module === "object" && module.exports) module.exports = api;
+  if (root) root.MixEngine = api;
+})(typeof window !== "undefined" ? window : null, function () {
+  "use strict";
+
+  const example = {
+    hours: 40, budget: 800, fixed_costs: 500,
+    products: [
+      { id: "consultation", name: "Beratung", price: 180, cost: 20, hours: 2, demand: 20, current: 10 },
+      { id: "template", name: "Vorlage", price: 60, cost: 15, hours: 0.5, demand: 80, current: 20 },
+      { id: "workshop", name: "Workshop", price: 450, cost: 100, hours: 4, demand: 10, current: 2 }
+    ]
+  };
+
+  function record(value, path) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${path}: Ein Objekt ist erforderlich.`);
+  }
+  function scaled(value, path, scale, minimum, maximum) {
+    if (typeof value !== "number" || !Number.isFinite(value) || value < minimum || value > maximum) {
+      throw new Error(`${path}: Eine endliche Zahl zwischen ${minimum} und ${maximum} eingeben.`);
+    }
+    const units = value * scale, integer = Math.round(units);
+    // Accept floating-point representation noise, never an extra decimal digit.
+    const tolerance = Number.EPSILON * Math.max(1, Math.abs(units)) * 4;
+    if (Math.abs(units - integer) > tolerance) {
+      throw new Error(`${path}: Höchstens ${scale === 100 ? 2 : 3} Nachkommastellen eingeben.`);
+    }
+    return integer;
+  }
+  function count(value, path) {
+    if (typeof value !== "number" || !Number.isInteger(value) || value < 0 || value > 200) {
+      throw new Error(`${path}: Eine ganze Zahl zwischen 0 und 200 eingeben.`);
+    }
+    return value;
+  }
+  function label(value, path, maximum) {
+    if (typeof value !== "string" || !value.trim() || value.length > maximum) {
+      throw new Error(`${path}: Ein nicht leerer Text mit höchstens ${maximum} Zeichen ist erforderlich.`);
+    }
+    return value.trim();
+  }
+  function validate(input) {
+    record(input, "Plan");
+    const hours = scaled(input.hours, "Verfügbare Stunden", 1000, 0, 10000) / 1000;
+    const budget = scaled(input.budget, "Vorleistungsbudget", 100, 0, 1000000) / 100;
+    const fixed_costs = scaled(input.fixed_costs, "Fixkosten", 100, 0, 1000000) / 100;
+    if (!Array.isArray(input.products) || input.products.length < 2 || input.products.length > 6) {
+      throw new Error("Produkte: Zwei bis sechs Angebote sind erforderlich.");
+    }
+    const ids = new Set();
+    const products = input.products.map((item, index) => {
+      const path = `Angebot ${index + 1}`;
+      record(item, path);
+      const id = label(item.id, `${path}: Kennung`, 100);
+      if (ids.has(id)) throw new Error(`${path}: Jede Kennung muss eindeutig sein.`);
+      ids.add(id);
+      const name = label(item.name, `${path}: Name`, 200);
+      const price = scaled(item.price, `${name}: Verkaufspreis`, 100, 0, 1000000) / 100;
+      const cost = scaled(item.cost, `${name}: variable Kosten`, 100, 0, 1000000) / 100;
+      const productHours = scaled(item.hours, `${name}: Stunden je Einheit`, 1000, 0.001, 10000) / 1000;
+      const demand = count(item.demand, `${name}: Nachfragegrenze`);
+      const current = count(item.current, `${name}: aktueller Plan`);
+      if (current > demand) throw new Error(`${name}: Der aktuelle Plan darf die Nachfragegrenze nicht überschreiten.`);
+      return { id, name, price, cost, hours: productHours, demand, current };
+    });
+    return { hours, budget, fixed_costs, products };
+  }
+
+  function optimize(input, options = {}) {
+    const plan = validate(input);
+    record(options, "Solver-Optionen");
+    const maxNodes = options.maxNodes === undefined ? 150000 : options.maxNodes;
+    if (typeof maxNodes !== "number" || !Number.isInteger(maxNodes) || maxNodes < 0 || maxNodes > 1000000) {
+      throw new Error("maxNodes: Eine ganze Zahl zwischen 0 und 1000000 eingeben.");
+    }
+    const availableHours = Math.round(plan.hours * 1000), budget = Math.round(plan.budget * 100);
+    const fixed = Math.round(plan.fixed_costs * 100);
+    const products = plan.products.map((p, index) => ({
+      ...p, index, priceUnits: Math.round(p.price * 100), costUnits: Math.round(p.cost * 100),
+      hourUnits: Math.round(p.hours * 1000), margin: Math.round(p.price * 100) - Math.round(p.cost * 100)
+    }));
+    function totals(quantities) {
+      let revenue = 0, cost = 0, hours = 0;
+      products.forEach((p, index) => {
+        revenue += p.priceUnits * quantities[index];
+        cost += p.costUnits * quantities[index];
+        hours += p.hourUnits * quantities[index];
+      });
+      return { revenueUnits: revenue, costUnits: cost, hourUnits: hours, marginUnits: revenue - cost };
+    }
+    function publicTotals(quantities) {
+      const t = totals(quantities);
+      return {
+        quantities: quantities.slice(), contribution: t.marginUnits / 100,
+        revenue: t.revenueUnits / 100, cost: t.costUnits / 100,
+        hours: t.hourUnits / 1000, after_fixed_costs: (t.marginUnits - fixed) / 100
+      };
+    }
+    const currentQuantities = products.map(p => p.current), currentUnits = totals(currentQuantities);
+    const violations = [];
+    if (currentUnits.hourUnits > availableHours) violations.push("Der aktuelle Plan überschreitet die verfügbaren Stunden.");
+    if (currentUnits.costUnits > budget) violations.push("Der aktuelle Plan überschreitet das Vorleistungsbudget.");
+    const current = { ...publicTotals(currentQuantities), feasible: violations.length === 0, violations };
+
+    // Non-positive margins cannot improve this objective and need no branching.
+    const active = products.filter(p => p.margin > 0 && p.demand > 0);
+    function ratioOrder(resource) {
+      return (a, b) => {
+        const ar = a[resource], br = b[resource];
+        if (!ar || !br) return ar === br ? a.index - b.index : ar === 0 ? -1 : 1;
+        const left = BigInt(a.margin) * BigInt(br), right = BigInt(b.margin) * BigInt(ar);
+        return left === right ? a.index - b.index : left > right ? -1 : 1;
+      };
+    }
+    const hourRank = active.slice().sort(ratioOrder("hourUnits"));
+    const costRank = active.slice().sort(ratioOrder("costUnits"));
+    const valueRank = active.slice().sort((a, b) => b.margin - a.margin || a.index - b.index);
+    const decisions = hourRank;
+    decisions.forEach((p, index) => { p.depth = index; });
+    let bestQuantities = products.map(() => 0), bestValue = 0;
+    function accept(quantities) {
+      const value = totals(quantities).marginUnits;
+      if (value > bestValue) { bestValue = value; bestQuantities = quantities.slice(); }
+    }
+    function maximum(p, remainingHours, remainingBudget) {
+      return Math.min(p.demand, Math.floor(remainingHours / p.hourUnits), p.costUnits === 0 ? p.demand : Math.floor(remainingBudget / p.costUnits));
+    }
+    // Feasible incumbent seeds keep capped searches useful from their first node.
+    for (const rank of [hourRank, costRank, valueRank]) {
+      let remainingHours = availableHours, remainingBudget = budget;
+      const quantities = products.map(() => 0);
+      for (const p of rank) {
+        const quantity = maximum(p, remainingHours, remainingBudget);
+        quantities[p.index] = quantity;
+        remainingHours -= p.hourUnits * quantity;
+        remainingBudget -= p.costUnits * quantity;
+      }
+      accept(quantities);
+    }
+    if (current.feasible) accept(products.map(p => p.margin > 0 ? p.current : 0));
+
+    // A fractional knapsack relaxes the *other* resource. Each relaxation is an
+    // upper bound; the smaller one remains safe. BigInt preserves ratio ordering
+    // and rounds fractional cents upward rather than understating the bound.
+    function fractionalBound(rank, resource, capacity, depth) {
+      let value = 0, remaining = capacity;
+      for (const p of rank) {
+        if (p.depth < depth) continue;
+        const amount = p[resource];
+        if (amount === 0) { value += p.margin * p.demand; continue; }
+        const full = amount * p.demand;
+        if (full <= remaining) { value += p.margin * p.demand; remaining -= full; }
+        else {
+          const numerator = BigInt(remaining) * BigInt(p.margin), denominator = BigInt(amount);
+          value += Number((numerator + denominator - 1n) / denominator);
+          break;
+        }
+      }
+      return value;
+    }
+    function bound(depth, remainingHours, remainingBudget) {
+      return Math.min(
+        fractionalBound(hourRank, "hourUnits", remainingHours, depth),
+        fractionalBound(costRank, "costUnits", remainingBudget, depth)
+      );
+    }
+    const rootBound = bound(0, availableHours, budget);
+    let nodes = 0, capped = false;
+    const quantities = products.map(() => 0);
+    function search(depth, remainingHours, remainingBudget, value) {
+      if (nodes >= maxNodes) { capped = true; return; }
+      nodes += 1;
+      const upper = value + bound(depth, remainingHours, remainingBudget);
+      if (upper <= bestValue) return;
+      if (depth === decisions.length) {
+        if (value > bestValue) { bestValue = value; bestQuantities = quantities.slice(); }
+        return;
+      }
+      const p = decisions[depth], maxQuantity = maximum(p, remainingHours, remainingBudget);
+      for (let quantity = maxQuantity; quantity >= 0; quantity -= 1) {
+        quantities[p.index] = quantity;
+        search(depth + 1, remainingHours - quantity * p.hourUnits,
+          remainingBudget - quantity * p.costUnits, value + quantity * p.margin);
+        if (capped) break;
+      }
+      quantities[p.index] = 0;
+    }
+    if (rootBound > bestValue) search(0, availableHours, budget, 0);
+    const status = capped && bestValue < rootBound ? "bounded" : "optimal";
+    const upperBound = status === "optimal" ? bestValue : rootBound;
+    return {
+      status, nodes, ...publicTotals(bestQuantities), upper_bound: upperBound / 100,
+      gap: (upperBound - bestValue) / 100, current,
+      delta: current.feasible ? (bestValue - currentUnits.marginUnits) / 100 : null
+    };
+  }
+
+  return { validate, optimize, example, formulaVersion: "1.0" };
+});
+</script><script>/* Auftragsmix UI: no network calls, no storage, no external dependencies. */
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const money = new Intl.NumberFormat('de-DE', {style:'currency', currency:'EUR', maximumFractionDigits:2});
+  const decimal = new Intl.NumberFormat('de-DE', {maximumFractionDigits:3});
+  const demoInput = {hours:40,budget:800,fixed_costs:500,products:[
+    {id:'beratung',name:'Beratung',price:180,cost:20,hours:2,demand:20,current:10},
+    {id:'vorlagen',name:'Vorlagenpaket',price:60,cost:15,hours:0.5,demand:80,current:20},
+    {id:'workshop',name:'Workshop',price:450,cost:100,hours:4,demand:10,current:2}
+  ]};
+  let lastInput = null, lastResult = null, timer = null, nextId = 1;
+  let scenarioLabel = '';
+
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+  function notice(message, success = false) {
+    $('notice').textContent = message;
+    $('notice').className = success ? 'notice success' : 'notice';
+    $('notice').hidden = !message;
+  }
+  function invalidate() {
+    lastInput = null;
+    lastResult = null;
+    $('export').disabled = true;
+    $('result').hidden = true;
+    $('empty-result').hidden = false;
+    $('solver-status').textContent = 'Neue Werte';
+    $('solver-status').className = 'status-badge';
+  }
+  function readNumber(input, label) {
+    if (input.value.trim() === '' || !Number.isFinite(input.valueAsNumber)) throw new Error(label + ': Bitte eine gültige Zahl eingeben.');
+    if (!input.checkValidity()) throw new Error(label + ': Bitte den erlaubten Bereich und die Nachkommastellen beachten.');
+    return input.valueAsNumber;
+  }
+  function readInput() {
+    const products = [...$('products').children].map((row, index) => {
+      const data = {id:row.dataset.id, name:row.querySelector('[data-field="name"]').value.trim()};
+      if (!data.name) throw new Error('Angebot ' + (index + 1) + ': Bitte einen Namen eingeben.');
+      for (const field of ['price','cost','hours','demand','current']) {
+        const node = row.querySelector('[data-field="' + field + '"]');
+        data[field] = readNumber(node, data.name + ' / ' + node.dataset.label);
+      }
+      return data;
+    });
+    return {hours:readNumber($('hours'),'Zeitbudget'),budget:readNumber($('budget'),'Kostenbudget'),fixed_costs:readNumber($('fixed-costs'),'Fixkosten'),products};
+  }
+  function numberLabel(row, parent, field, title, value, config) {
+    const label = el('label', '', title);
+    const node = el('input');
+    node.type = 'number';
+    node.min = String(config.min ?? 0);
+    node.max = String(config.max);
+    node.step = String(config.step);
+    node.required = true;
+    node.value = String(value);
+    node.dataset.field = field;
+    node.dataset.label = title;
+    label.append(node);
+    parent.append(label);
+    return node;
+  }
+  function makeProduct(product) {
+    const row = el('div', 'product');
+    row.dataset.id = product.id;
+    const top = el('div','product-top');
+    const nameLabel = el('label','name-label','Angebot');
+    const name = el('input');
+    name.type = 'text';
+    name.maxLength = 200;
+    name.required = true;
+    name.value = product.name;
+    name.dataset.field = 'name';
+    nameLabel.append(name);
+    top.append(nameLabel);
+    numberLabel(row,top,'current','Bisher · Stück',product.current,{max:200,step:1}).className = 'current-input';
+    const remove = el('button','remove-product','×');
+    remove.type = 'button';
+    remove.title = 'Angebot entfernen';
+    remove.setAttribute('aria-label','Angebot entfernen');
+    remove.addEventListener('click', () => {
+      if ($('products').children.length <= 2) return;
+      row.remove();
+      updateRows();
+      edited();
+    });
+    top.append(remove);
+    row.append(top);
+    const fields = el('div','product-fields');
+    numberLabel(row,fields,'price','Preis · €',product.price,{max:1000000,step:0.01});
+    numberLabel(row,fields,'cost','Kosten · €',product.cost,{max:1000000,step:0.01});
+    numberLabel(row,fields,'hours','Zeit · h / Stück',product.hours,{min:0.001,max:10000,step:0.001});
+    numberLabel(row,fields,'demand','Nachfrage · Stück',product.demand,{max:200,step:1});
+    row.append(fields);
+    $('products').append(row);
+  }
+  function updateRows() {
+    const count = $('products').children.length;
+    $('product-count').textContent = count + ' / 6';
+    $('add-product').disabled = count >= 6;
+    for (const row of $('products').children) row.querySelector('.remove-product').disabled = count <= 2;
+  }
+  function load(input, label) {
+    const clean = window.MixEngine.validate(input);
+    clearTimeout(timer);
+    $('hours').value = clean.hours;
+    $('budget').value = clean.budget;
+    $('fixed-costs').value = clean.fixed_costs;
+    $('products').replaceChildren();
+    clean.products.forEach(makeProduct);
+    updateRows();
+    scenarioLabel = label;
+    $('scenario-note').textContent = label;
+    calculate();
+  }
+  function edited() {
+    invalidate();
+    notice('');
+    scenarioLabel = 'Eigene Eingaben. Das Ergebnis gilt für diesen gemeinsamen Zeitraum und die eingegebenen Nachfragegrenzen.';
+    $('scenario-note').textContent = scenarioLabel;
+    clearTimeout(timer);
+    timer = setTimeout(calculate, 250);
+  }
+  function showResult(input,result) {
+    $('empty-result').hidden = true;
+    $('result').hidden = false;
+    $('export').disabled = false;
+    const optimal = result.status === 'optimal';
+    $('solver-status').textContent = optimal ? 'Optimal im Modell' : 'Suchgrenze erreicht';
+    $('solver-status').className = optimal ? 'status-badge' : 'status-badge bounded';
+    $('surplus').textContent = money.format(result.after_fixed_costs);
+    $('contribution').textContent = money.format(result.contribution);
+    $('fixed-summary').textContent = money.format(input.fixed_costs);
+    $('delta').className = 'delta';
+    if (result.delta === null) {
+      $('delta').textContent = 'Dein bisheriger Mix überschreitet die Grenzen.';
+    } else {
+      $('delta').textContent = (result.delta > 0 ? '+' : '') + money.format(result.delta) + ' gegenüber deinem bisherigen Mix';
+      $('delta').classList.add(result.delta >= 0 ? 'positive' : 'negative');
+    }
+    $('solver-note').textContent = optimal
+      ? 'Der beste Deckungsbeitrag ist für dieses Modell nachgewiesen. Alle Stückzahlen bleiben innerhalb deiner Grenzen.'
+      : 'Bester gefundener Mix nach ' + decimal.format(result.nodes) + ' Suchschritten. Obere Grenze: ' + money.format(result.upper_bound) + ' Deckungsbeitrag; möglicher Abstand: ' + money.format(result.gap) + '.';
+    $('recommendations').replaceChildren();
+    input.products.forEach((product,index) => {
+      const row = el('div','recommendation');
+      const label = el('div');
+      label.append(el('strong','',product.name),el('span','demand','Nachfragegrenze ' + decimal.format(product.demand) + ' · DB / Stück ' + money.format(product.price - product.cost)));
+      row.append(label,el('span','previous',decimal.format(result.current.quantities[index])),el('span','quantity',decimal.format(result.quantities[index])));
+      $('recommendations').append(row);
+    });
+    $('time-usage').textContent = decimal.format(result.hours) + ' / ' + decimal.format(input.hours) + ' h';
+    $('time-bar').style.width = (input.hours > 0 ? Math.min(100,result.hours / input.hours * 100) : 0) + '%';
+    $('time-headroom').textContent = decimal.format(Math.max(0,input.hours - result.hours)) + ' h bleiben verfügbar';
+    $('cost-usage').textContent = money.format(result.cost) + ' / ' + money.format(input.budget);
+    $('cost-bar').style.width = (input.budget > 0 ? Math.min(100,result.cost / input.budget * 100) : 0) + '%';
+    $('cost-headroom').textContent = money.format(Math.max(0,input.budget - result.cost)) + ' Kostenbudget bleiben frei';
+    $('revenue').textContent = money.format(result.revenue);
+    $('current-surplus').textContent = money.format(result.current.after_fixed_costs);
+    $('current-warning').hidden = result.current.feasible;
+    $('current-warning').textContent = result.current.feasible ? '' : 'Bisheriger Plan nicht umsetzbar: ' + result.current.violations.join(' ') + ' Der Überschuss dieses Plans dient daher nicht als gültiger Vergleich.';
+  }
+  function calculate() {
+    clearTimeout(timer);
+    invalidate();
+    try {
+      if (!window.MixEngine) throw new Error('Rechenkern konnte nicht geladen werden. Bitte das vollständige Paket öffnen.');
+      const input = window.MixEngine.validate(readInput());
+      const result = window.MixEngine.optimize(input,{maxNodes:150000});
+      lastInput = input;
+      lastResult = result;
+      notice('');
+      showResult(input,result);
+    } catch (error) {
+      $('solver-status').textContent = 'Eingabe prüfen';
+      notice(error.message || 'Diese Eingabe lässt sich nicht berechnen.');
+    }
+  }
+  $('products').addEventListener('input',edited);
+  for (const id of ['hours','budget','fixed-costs']) $(id).addEventListener('input',edited);
+  $('calculate').addEventListener('click', () => {calculate(); if (window.innerWidth <= 760 && lastResult) $('plan-title').scrollIntoView({behavior:'smooth',block:'start'});});
+  $('add-product').addEventListener('click', () => {
+    if ($('products').children.length >= 6) return;
+    let id;
+    do {id = 'angebot-' + nextId++;} while ([...$('products').children].some(row => row.dataset.id === id));
+    makeProduct({id,name:'Neues Angebot',price:100,cost:20,hours:1,demand:20,current:0});
+    updateRows();
+    edited();
+  });
+  $('demo').addEventListener('click', () => {
+    try {load(demoInput,'Beispieldaten: Beratung, Vorlagen und Workshops. Ersetze sie durch deine eigenen Angebote.');}
+    catch(error) {invalidate();notice(error.message);}
+  });
+  $('less-demand').addEventListener('click', () => {
+    if (!lastInput) return;
+    const input = JSON.parse(JSON.stringify(lastInput));
+    for (const product of input.products) {
+      product.demand = Math.floor(product.demand * 0.8);
+      product.current = Math.min(product.current,product.demand);
+    }
+    load(input,'Nachfrage-Szenario: Alle Nachfragegrenzen um 20 % reduziert und abgerundet. „Bisher“ wurde auf diese neuen Grenzen gekürzt; der Vergleich bezieht sich auf das geänderte Szenario.');
+  });
+  $('export').addEventListener('click', () => {
+    if (!lastInput || !lastResult) return;
+    const receipt = {schema:'neuland.auftragsmix.receipt',schema_version:1,formula_version:window.MixEngine.formulaVersion,created_at:new Date().toISOString(),scenario:scenarioLabel,input:lastInput,result:lastResult};
+    const blob = new Blob([JSON.stringify(receipt,null,2)],{type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const anchor = el('a');
+    anchor.href = url;
+    anchor.download = 'NEULAND_AUFTRAGSMIX_' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.append(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url),1000);
+  });
+  $('import').addEventListener('click', () => $('import-file').click());
+  $('import-file').addEventListener('change', async () => {
+    const file = $('import-file').files[0];
+    if (!file) return;
+    clearTimeout(timer);
+    invalidate();
+    try {
+      if (file.size > 100 * 1024) throw new Error('Die Datei ist größer als 100 KB. Bitte einen einzelnen Szenariobeleg wählen.');
+      const data = JSON.parse(await file.text());
+      const input = data && typeof data === 'object' && 'input' in data ? data.input : data;
+      load(input,'Importiertes Szenario. Das Ergebnis wurde mit dem aktuellen Rechenkern neu berechnet.');
+      notice('Szenario geladen und neu berechnet.',true);
+    } catch(error) {
+      invalidate();
+      $('solver-status').textContent = 'Import prüfen';
+      notice(error instanceof SyntaxError ? 'Die Datei enthält kein gültiges JSON.' : (error.message || 'Diese Datei lässt sich nicht öffnen.'));
+    } finally {$('import-file').value = '';}
+  });
+  try {load(demoInput,'Beispieldaten: Beratung, Vorlagen und Workshops. Ersetze sie durch deine eigenen Angebote.');}
+  catch(error) {invalidate();notice(error.message);}
+})();
+</script><script src="../zentrale/rueckweg.js"></script>
+</body>
+</html>

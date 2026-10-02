@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="de" data-api="none">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Arbeitsstunden zwischen Prozessschritten verteilen und den neuen Engpass sofort erkennen.">
+  <meta name="theme-color" content="#20271f">
+  <title>Engpasswechsel · NEULAND OS</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%2320271f%22/%3E%3Cpath%20d%3D%22M14%2018h36v8H14zm10%2014h16v8H24zm-10%2014h36v8H14z%22%20fill%3D%22%23d6fa75%22/%3E%3C/svg%3E%0A" type="image/svg+xml">
+  <style>:root{color-scheme:light;--ink:#20271f;--paper:#f7f6f0;--line:#d9ddce;--lime:#d6fa75;--orange:#e16b3d}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 system-ui,sans-serif}header{display:flex;align-items:center;justify-content:space-between;padding:22px max(24px,calc((100vw - 1320px)/2));border-bottom:1px solid var(--line)}.brand{font-size:22px;font-weight:800;color:var(--ink);text-decoration:none;letter-spacing:1px}.brand span{display:block;font:11px/1.6 ui-monospace,monospace;letter-spacing:2px}.edition{font:12px ui-monospace,monospace;color:#64715d}main{max-width:1320px;margin:auto;padding:30px 24px 20px}.heading{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:24px}h1{font-size:clamp(28px,3.5vw,43px);line-height:1.15;letter-spacing:-1.5px;margin:8px 0 12px}.heading p:last-child{margin:0;max-width:75ch;color:#617057}.eyebrow{font:11px/1.5 ui-monospace,monospace;font-weight:700;letter-spacing:2px;margin:0;color:#677659}h2{font-size:22px;line-height:1.25;margin:0 0 16px;letter-spacing:-.6px}.demo-note{padding:11px 16px;border:1px solid #ecd4b7;background:#fff2df;border-radius:8px;color:#816040;font-size:14px;margin-bottom:22px}.workspace{display:grid;grid-template-columns:1fr 1fr;gap:24px}.input-panel,.result-panel{border:1px solid var(--line);border-radius:18px;padding:25px;background:#fffef9}.panel-heading{display:flex;align-items:center;justify-content:space-between;gap:20px}.demand{display:flex;align-items:center;gap:10px;font-size:14px}.demand input{width:85px}.muted{font-size:14px;color:#66735b}.step-head,.step-row{display:grid;grid-template-columns:1.5fr 1fr 1fr 26px;gap:10px;align-items:center}.step-head{font-size:12px;color:#687661;margin-top:24px;margin-bottom:10px}.step-row{margin:10px 0}.step-row input{width:100%;min-width:0}.step-row input:first-child{font-weight:600}input,select,button{font:inherit}input,select{padding:10px 11px;border:1px solid var(--line);border-radius:7px;background:white;color:var(--ink)}input:focus,select:focus,button:focus-visible{outline:2px solid #649530;outline-offset:3px}button{border:1px solid var(--ink);background:var(--ink);color:white;border-radius:7px;padding:10px 15px;font-size:14px;font-weight:650;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}.secondary{background:transparent;color:var(--ink);border-color:#cdd4c1}.text-button{background:transparent;border:0;color:#55733b;padding:9px 0;text-align:left}.remove-step{padding:2px;border:0;background:transparent;color:#687661;font-size:22px}.transfer{margin-top:22px;padding-top:23px;border-top:1px solid var(--line)}.transfer-pair{display:grid;grid-template-columns:1fr 25px 1fr;align-items:end;gap:10px}.transfer-pair label{font-size:14px}.transfer-pair select{display:block;width:100%;margin-top:6px}.transfer-pair>span{padding-bottom:10px;text-align:center;color:#78836c}.hours-label{display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px;font-size:14px;font-weight:600}.hours-label input{width:105px}input[type=range]{width:100%;padding:0;accent-color:#678835;border:0}.slider-labels{display:flex;justify-content:space-between;font-size:12px;color:#708061;margin:5px 0 17px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.result-panel{background:#eff2e4}.results{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:24px 0}.results>div{padding:15px;border:1px solid #dce3cf;border-radius:12px;background:#fbfcf7}.results .after-metric{background:var(--lime);border-color:var(--lime)}.results span{font-size:13px;display:block;color:#657256}.results strong{display:block;font-size:42px;line-height:1.2;letter-spacing:-1.5px;margin:8px 0}.results small{color:#62704f;font-size:12px}.verdict{font-weight:650;background:#e5ead7;border-radius:8px;padding:12px 14px;margin-bottom:22px}.verdict.negative{background:#f8e2d4;color:#9b462a}.legend{display:flex;gap:20px;font-size:12px;color:#697b53;margin-bottom:17px}.legend span{display:flex;align-items:center;gap:7px}.legend i{display:inline-block;width:9px;height:9px;border-radius:2px}.before-dot{background:#b0ba9c}.after-dot{background:#2f4c2e}.chart-row{margin-bottom:18px}.chart-top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px;font-weight:600;margin-bottom:7px}.chart-top span:last-child{font-size:11px;letter-spacing:1px;color:#a24c2b}.bar-track{height:9px;border-radius:3px;background:#e3e9d7;margin:5px 0;position:relative}.bar{height:100%;border-radius:3px;min-width:0;transition:width .15s}.bar.before{background:#b0ba9c}.bar.after{background:#2f4c2e}.bar-label{font-size:12px;position:absolute;right:6px;top:-3px;transform:translateY(-100%);color:#52633f}.summary{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #d4ddc4;margin-top:28px;padding-top:15px;gap:17px}.summary span{display:block;font-size:12px;color:#718060}.summary strong{display:block;font-size:16px;margin-top:4px}details{margin-top:26px;border-top:1px solid #d4ddc4;padding-top:15px;font-size:14px;color:#5a6d45}summary{cursor:pointer;font-weight:650}footer{font-size:12px;color:#7a856e;margin-top:25px}.notice{padding:12px 16px;background:#fff0e7;border:1px solid #eab496;color:#843a23;border-radius:8px;margin-bottom:18px}.result-panel.invalid .results{opacity:.5}[hidden]{display:none!important}@media(max-width:1000px){.workspace{grid-template-columns:1fr}.heading{align-items:flex-start}.result-panel{order:0}.input-panel{order:1}.results strong{font-size:38px}}@media(max-width:600px){header{padding:17px}.edition{display:none}main{padding:22px 14px}.heading{display:block}.heading button{margin-top:15px}.heading p:last-child{font-size:15px}.input-panel,.result-panel{padding:18px}.panel-heading{display:block}.demand{margin-top:10px;justify-content:space-between}.step-head,.step-row{grid-template-columns:1.3fr 1fr 1fr 20px;gap:5px}.step-head{font-size:11px}.step-row input{padding:9px 6px;font-size:13px}.results{gap:6px}.results>div{padding:11px}.results strong{font-size:32px}.results span{font-size:12px}.transfer-pair{gap:6px}.summary{gap:12px}.brand{font-size:20px}}@media(prefers-reduced-motion:reduce){.bar{transition:none}}
+</style>
+  
+</head>
+<body>
+<header><a class="brand" id="back-link" href="/">NEULAND <span>OS / ENG PASS WECHSEL</span></a><div class="edition">INTERAKTIVE WERKSTATT</div></header>
+<main>
+  <div class="heading"><div><p class="eyebrow">GLEICHE ZEIT. ANDERE VERTEILUNG.</p><h1>Wo stockt dein Prozess?</h1><p>Verschiebe Stunden. Sieh, ob mehr Aufträge möglich werden und wo der nächste Engpass entsteht.</p></div><button id="demo" class="secondary" type="button">Beispiel laden</button></div>
+  <div class="demo-note" id="demo-note">Synthetisches Beispiel: Vorbereitung → Bearbeitung → Abschluss. Ersetze die Werte durch deinen eigenen Ablauf.</div>
+  <div id="notice" class="notice" role="status" hidden></div>
+  <div class="workspace">
+    <section class="input-panel" aria-labelledby="input-title">
+      <div class="panel-heading"><h2 id="input-title">Dein Ablauf</h2><label class="demand">Erwartete Aufträge<input id="orders" type="number" min="0" max="1000000000" step="1" value="45"></label></div>
+      <p class="muted">Alle Stunden beziehen sich auf denselben Zeitraum. Jeder Auftrag durchläuft jeden Schritt.</p>
+      <div class="step-head" aria-hidden="true"><span>Prozessschritt</span><span>Verfügbare Stunden</span><span>Stunden je Auftrag</span><span></span></div>
+      <div id="steps"></div>
+      <button id="add-step" class="text-button" type="button">+ Prozessschritt ergänzen</button>
+      <div class="transfer">
+        <h2>Stunden verschieben</h2>
+        <div class="transfer-pair"><label>Von<select id="from"></select></label><span aria-hidden="true">zu</span><label>Nach<select id="to"></select></label></div>
+        <label class="hours-label" for="transfer-hours">Verschobene Stunden <input id="transfer-hours" type="number" min="0" max="1000000000" step="0.1" value="12"></label>
+        <input id="transfer-slider" type="range" min="0" max="60" step="0.1" value="12" aria-label="Stunden zwischen den Schritten verschieben">
+        <div class="slider-labels"><span>0 Stunden</span><span id="slider-max">60 Stunden</span></div>
+        <button id="balance" class="secondary" type="button">Die beiden Schritte ausbalancieren</button>
+        <p class="muted">Verschiebe nur Stunden, wenn die Mitarbeitenden tatsächlich in beiden Schritten arbeiten können.</p>
+      </div>
+      <div class="actions"><button id="save" type="button" hidden>Szenario in NEULAND speichern</button><button id="export" class="secondary" type="button">Rechenbeleg herunterladen</button></div>
+    </section>
+    <section class="result-panel" aria-labelledby="result-title">
+      <div class="result-header"><p class="eyebrow">DEIN MODELLERGEBNIS</p><h2 id="result-title">Was verändert sich?</h2></div>
+      <div class="results"><div><span>Vorher möglich</span><strong id="before">—</strong><small>Aufträge</small></div><div class="after-metric"><span>Nachher möglich</span><strong id="after">—</strong><small>Aufträge</small></div><div><span>Veränderung</span><strong id="delta">—</strong><small>Aufträge</small></div></div>
+      <p id="verdict" class="verdict" aria-live="polite"></p>
+      <div class="legend"><span><i class="before-dot"></i>Vorher</span><span><i class="after-dot"></i>Nachher</span></div>
+      <div id="chart" aria-label="Kapazität pro Prozessschritt"></div>
+      <div class="summary"><div><span>Engpass vorher</span><strong id="bottleneck-before">—</strong></div><div><span>Engpass nachher</span><strong id="bottleneck-after">—</strong></div><div><span>Noch offene Aufträge</span><strong id="unmet">—</strong></div><div><span>Stunden gesamt</span><strong id="total">—</strong></div></div>
+      <details><summary>So wird gerechnet</summary><p>Kapazität je Schritt = verfügbare Stunden ÷ Stunden je Auftrag, abgerundet. Die kleinste Kapazität begrenzt den ganzen Ablauf. Verschieben ändert die Verteilung, nicht die Gesamtstunden.</p><p>Das Modell setzt gleichartige Aufträge, einen seriellen Ablauf und übertragbare Arbeitszeit voraus. Material, Rüstzeiten, Qualifikationen und parallele Maschinen müssen separat berücksichtigt werden.</p></details>
+    </section>
+  </div>
+  <footer>Die Rechnung läuft in deinem Browser. <span id="storage-note">Speichern legt das Szenario in deiner lokalen NEULAND-Datenbank ab.</span> Kein externer KI-Dienst.</footer>
+</main>
+<script>"use strict";
+
+const EXAMPLE = {
+  orders_expected: 45,
+  steps: [
+    { id: "prep", name: "Vorbereitung", hours_available: 60, hours_per_order: 1 },
+    { id: "work", name: "Bearbeitung", hours_available: 40, hours_per_order: 2 },
+    { id: "finish", name: "Abschluss", hours_available: 30, hours_per_order: 0.75 }
+  ],
+  transfer: { from_id: "prep", to_id: "work", hours: 12 }
+};
+const localAPI = document.documentElement.dataset.api === "local" && /^https?:$/.test(location.protocol);
+const $ = selector => document.querySelector(selector);
+const fmt = new Intl.NumberFormat("de-DE", { maximumFractionDigits: 4 });
+let currentResult = null, stepCounter = 10, saving = false;
+
+function element(tag, text, attrs = {}) {
+  const item = document.createElement(tag);
+  if (text !== undefined) item.textContent = String(text);
+  for (const [key, value] of Object.entries(attrs)) item.setAttribute(key, String(value));
+  return item;
+}
+
+function finite(value, name, min = 0, max = 1e9, integer = false) {
+  if (typeof value !== "number" || !Number.isFinite(value) || value < min || value > max || (integer && !Number.isInteger(value))) {
+    throw new Error(`${name}: ${integer ? "ganze Zahl" : "Zahl"} zwischen ${min} und ${max} eingeben.`);
+  }
+  return value;
+}
+
+// Exact decimal ratios, so 0.3 / 0.1 yields three full orders.
+function fraction(value) {
+  const parts = String(value).toLowerCase().split("e");
+  const exponent = Number(parts[1] || 0);
+  const decimal = parts[0].split(".");
+  const digits = decimal.join("");
+  const scale = (decimal[1]?.length || 0) - exponent;
+  return scale >= 0 ? { n: BigInt(digits), d: 10n ** BigInt(scale) } : { n: BigInt(digits) * 10n ** BigInt(-scale), d: 1n };
+}
+const add = (a, b) => ({ n: a.n * b.d + b.n * a.d, d: a.d * b.d });
+const subtract = (a, b) => ({ n: a.n * b.d - b.n * a.d, d: a.d * b.d });
+const toNumber = a => {
+  if (a.n === 0n) return 0;
+  const n = String(a.n), d = String(a.d), nHead = n.slice(0, 17), dHead = d.slice(0, 17);
+  return Number(nHead) / Number(dHead) * 10 ** ((n.length - nHead.length) - (d.length - dHead.length));
+};
+const floorRatio = (a, b) => Number((a.n * b.d) / (a.d * b.n));
+
+function analyze(config) {
+  if (!config || typeof config !== "object") throw new Error("Ein Ablauf ist erforderlich.");
+  finite(config.orders_expected, "Erwartete Aufträge", 0, 1e9, true);
+  if (!Array.isArray(config.steps) || config.steps.length < 2 || config.steps.length > 8) throw new Error("Der Ablauf braucht zwei bis acht Schritte.");
+  const ids = new Set();
+  for (const item of config.steps) {
+    if (!item || typeof item.id !== "string" || !item.id.trim() || ids.has(item.id)) throw new Error("Jeder Schritt benötigt eine eindeutige Kennung.");
+    ids.add(item.id);
+    if (typeof item.name !== "string" || !item.name.trim() || item.name.length > 200) throw new Error("Bitte jeden Schritt benennen (maximal 200 Zeichen).");
+    finite(item.hours_available, `${item.name}: verfügbare Stunden`);
+    finite(item.hours_per_order, `${item.name}: Stunden je Auftrag`, 1e-6);
+  }
+  const transfer = config.transfer;
+  if (!transfer || !ids.has(transfer.from_id) || !ids.has(transfer.to_id) || transfer.from_id === transfer.to_id) throw new Error("Wähle zwei verschiedene vorhandene Schritte für die Verschiebung.");
+  finite(transfer.hours, "Verschobene Stunden");
+  const donor = config.steps.find(item => item.id === transfer.from_id);
+  if (transfer.hours > donor.hours_available) throw new Error(`Du kannst höchstens ${fmt.format(donor.hours_available)} Stunden aus ${donor.name} verschieben.`);
+  const moved = fraction(transfer.hours);
+  function scenario(changed) {
+    const steps = config.steps.map(item => {
+      let hours = fraction(item.hours_available);
+      if (changed && item.id === transfer.from_id) hours = subtract(hours, moved);
+      if (changed && item.id === transfer.to_id) hours = add(hours, moved);
+      return { ...item, hours_available: toNumber(hours), capacity_orders: floorRatio(hours, fraction(item.hours_per_order)) };
+    });
+    const throughput = Math.min(...steps.map(item => item.capacity_orders));
+    return { throughput, bottlenecks: steps.filter(item => item.capacity_orders === throughput).map(item => ({ id: item.id, name: item.name })), steps };
+  }
+  const baseline = scenario(false), after = scenario(true);
+  const total = config.steps.reduce((sum, item) => add(sum, fraction(item.hours_available)), fraction(0));
+  return {
+    orders_expected: config.orders_expected, transfer: { ...transfer }, baseline, after,
+    delta_orders: after.throughput - baseline.throughput,
+    unmet_before: Math.max(0, config.orders_expected - baseline.throughput),
+    unmet_after: Math.max(0, config.orders_expected - after.throughput),
+    total_hours: toNumber(total),
+    assumptions: ["Jeder Auftrag durchläuft alle Schritte; die kleinste Kapazität begrenzt den Ablauf.", "Arbeitsstunden können tatsächlich zwischen den gewählten Schritten übertragen werden.", "Gleichartige Aufträge, einheitlicher Zeitraum; Material und Rüstzeiten sind nicht modelliert."]
+  };
+}
+
+function makeStep(item) {
+  const row = element("div", undefined, { class: "step-row", "data-id": item.id });
+  row.append(element("input", undefined, { type: "text", value: item.name, maxlength: 200, "data-field": "name", "aria-label": "Name des Prozessschritts" }));
+  row.append(element("input", undefined, { type: "number", value: item.hours_available, min: 0, max: 1e9, step: "any", "data-field": "hours_available", "aria-label": `Verfügbare Stunden: ${item.name}` }));
+  row.append(element("input", undefined, { type: "number", value: item.hours_per_order, min: 0.000001, max: 1e9, step: "any", "data-field": "hours_per_order", "aria-label": `Stunden je Auftrag: ${item.name}` }));
+  const remove = element("button", "×", { type: "button", class: "remove-step", "aria-label": `${item.name} entfernen` });
+  remove.addEventListener("click", () => {
+    if ($("#steps").children.length <= 2) { showNotice("Mindestens zwei Prozessschritte bleiben im Ablauf."); return; }
+    row.remove(); rebuildSelects(); markOwn(); update();
+  });
+  row.append(remove);
+  row.addEventListener("input", event => { if (event.target.dataset.field === "name") rebuildSelects(); markOwn(); update(); });
+  return row;
+}
+
+function readNumber(input) { return input.value.trim() === "" ? NaN : Number(input.value); }
+function readConfig() {
+  return {
+    orders_expected: readNumber($("#orders")),
+    steps: [...$("#steps").children].map(row => ({
+      id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim(),
+      hours_available: readNumber(row.querySelector('[data-field="hours_available"]')),
+      hours_per_order: readNumber(row.querySelector('[data-field="hours_per_order"]'))
+    })),
+    transfer: { from_id: $("#from").value, to_id: $("#to").value, hours: readNumber($("#transfer-hours")) }
+  };
+}
+
+function rebuildSelects(fromValue = $("#from").value, toValue = $("#to").value) {
+  const rows = [...$("#steps").children];
+  for (const selector of ["#from", "#to"]) {
+    const select = $(selector); select.replaceChildren();
+    for (const row of rows) select.append(element("option", row.querySelector('[data-field="name"]').value || "Unbenannt", { value: row.dataset.id }));
+  }
+  $("#from").value = rows.some(row => row.dataset.id === fromValue) ? fromValue : rows[0].dataset.id;
+  $("#to").value = rows.some(row => row.dataset.id === toValue) ? toValue : rows[1].dataset.id;
+  $("#add-step").disabled = rows.length >= 8;
+}
+
+function showNotice(text = "") { $("#notice").textContent = text; $("#notice").hidden = !text; }
+function markOwn() { $("#demo-note").hidden = true; }
+
+function loadConfig(config, demo = false) {
+  analyze(config);
+  $("#steps").replaceChildren(...config.steps.map(makeStep));
+  $("#orders").value = config.orders_expected;
+  rebuildSelects(config.transfer.from_id, config.transfer.to_id);
+  $("#transfer-hours").value = config.transfer.hours;
+  $("#demo-note").hidden = !demo;
+  update();
+}
+
+function update() {
+  showNotice();
+  try {
+    const config = readConfig();
+    const donor = config.steps.find(item => item.id === config.transfer.from_id);
+    const maximum = Number.isFinite(donor?.hours_available) ? Math.max(0, donor.hours_available) : 0;
+    $("#transfer-slider").max = maximum;
+    $("#slider-max").textContent = `${fmt.format(maximum)} Stunden`;
+    $("#transfer-slider").value = Number.isFinite(config.transfer.hours) ? config.transfer.hours : 0;
+    currentResult = analyze(config);
+    $(".result-panel").classList.remove("invalid");
+    $("#export").disabled = false;
+    $("#save").disabled = saving;
+    render(currentResult);
+  } catch (error) {
+    currentResult = null; showNotice(error.message); $(".result-panel").classList.add("invalid");
+    $("#export").disabled = true; $("#save").disabled = true;
+    $("#verdict").textContent = "Eingaben korrigieren. Die vorherige Rechnung ist nicht mehr aktuell.";
+  }
+}
+
+function render(result) {
+  $("#before").textContent = fmt.format(result.baseline.throughput);
+  $("#after").textContent = fmt.format(result.after.throughput);
+  $("#delta").textContent = `${result.delta_orders > 0 ? "+" : ""}${fmt.format(result.delta_orders)}`;
+  const verdict = $("#verdict"); verdict.classList.toggle("negative", result.delta_orders < 0);
+  verdict.textContent = result.delta_orders > 0 ? `Die neue Verteilung schafft rechnerisch ${fmt.format(result.delta_orders)} zusätzliche Aufträge.` : result.delta_orders < 0 ? "Diese Verschiebung verringert die Gesamtkapazität. Der Engpass ist gewandert." : "Diese Verschiebung ändert die Gesamtkapazität nicht.";
+  $("#bottleneck-before").textContent = result.baseline.bottlenecks.map(item => item.name).join(", ");
+  $("#bottleneck-after").textContent = result.after.bottlenecks.map(item => item.name).join(", ");
+  $("#unmet").textContent = `${fmt.format(result.unmet_before)} vorher / ${fmt.format(result.unmet_after)} nachher`;
+  $("#total").textContent = `${fmt.format(result.total_hours)} Stunden, unverändert`;
+  const max = Math.max(1, ...result.baseline.steps.map(item => item.capacity_orders), ...result.after.steps.map(item => item.capacity_orders));
+  $("#chart").replaceChildren();
+  result.after.steps.forEach((item, index) => {
+    const row = element("div", undefined, { class: "chart-row" });
+    const head = element("div", undefined, { class: "chart-top" });
+    head.append(element("span", item.name));
+    if (result.after.bottlenecks.some(b => b.id === item.id)) head.append(element("span", "ENGPASS NACHHER"));
+    row.append(head);
+    for (const [value, kind] of [[result.baseline.steps[index].capacity_orders, "before"], [item.capacity_orders, "after"]]) {
+      const track = element("div", undefined, { class: "bar-track" });
+      const bar = element("div", undefined, { class: `bar ${kind}` }); bar.style.width = `${value / max * 100}%`;
+      track.append(bar, element("span", fmt.format(value), { class: "bar-label" })); row.append(track);
+    }
+    $("#chart").append(row);
+  });
+}
+
+for (const selector of ["#orders", "#from", "#to", "#transfer-hours"]) $(selector).addEventListener("input", () => { markOwn(); update(); });
+$("#transfer-slider").addEventListener("input", event => { $("#transfer-hours").value = event.target.value; markOwn(); update(); });
+$("#demo").addEventListener("click", () => loadConfig(structuredClone(EXAMPLE), true));
+$("#add-step").addEventListener("click", () => {
+  if ($("#steps").children.length >= 8) return;
+  const existing = new Set([...$("#steps").children].map(row => row.dataset.id));
+  let id;
+  do { id = `step-${stepCounter++}`; } while (existing.has(id));
+  $("#steps").append(makeStep({ id, name: "Neuer Schritt", hours_available: 30, hours_per_order: 1 }));
+  rebuildSelects(); markOwn(); update();
+});
+$("#balance").addEventListener("click", () => {
+  try {
+    const config = readConfig(); analyze(config);
+    const from = config.steps.find(item => item.id === config.transfer.from_id), to = config.steps.find(item => item.id === config.transfer.to_id);
+    const hours = (to.hours_per_order * from.hours_available - from.hours_per_order * to.hours_available) / (from.hours_per_order + to.hours_per_order);
+    $("#transfer-hours").value = Math.max(0, Math.min(from.hours_available, Math.round(hours * 10) / 10));
+    markOwn(); update();
+  } catch (error) { showNotice(error.message); }
+});
+$("#export").addEventListener("click", () => {
+  if (!currentResult) return;
+  const receipt = { schema_version: 1, module: "BottleneckSwap", formula_version: "1.0", generated_at: new Date().toISOString(), process: readConfig(), result: currentResult };
+  const url = URL.createObjectURL(new Blob([JSON.stringify(receipt, null, 2)], { type: "application/json" }));
+  const link = element("a", undefined, { href: url, download: "NEULAND-Engpasswechsel.json" }); document.body.append(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+$("#save").hidden = !localAPI;
+$("#save").addEventListener("click", async () => {
+  if (!currentResult || saving) return;
+  saving = true; $("#save").disabled = true;
+  try {
+    const response = await fetch("/api/process", { method: "POST", headers: { "Content-Type": "application/json", "X-Neuland-Local": "1" }, body: JSON.stringify({ process: readConfig() }) });
+    const payload = await response.json(); if (!response.ok) throw new Error(payload.error || "Speichern fehlgeschlagen.");
+    showNotice("Dein Szenario ist in der lokalen NEULAND-Datenbank gespeichert.");
+  } catch (error) { showNotice(error.message); } finally { saving = false; $("#save").disabled = !currentResult; }
+});
+window.NeulandProcess = { analyze, example: EXAMPLE };
+loadConfig(structuredClone(EXAMPLE), true);
+if (localAPI) {
+  fetch("/api/process").then(response => { if (!response.ok) throw new Error("Lokales Szenario konnte nicht geladen werden."); return response.json(); })
+    .then(payload => { if (payload.process) loadConfig(payload.process, payload.mode === "demo"); })
+    .catch(error => showNotice(`${error.message} Das Beispiel bleibt nutzbar.`));
+} else {
+  $("#back-link").removeAttribute("href");
+  $("#storage-note").textContent = "Deine Eingaben bleiben im aktuellen Browserfenster; der Rechenbeleg sichert sie als Datei.";
+}
+</script><script src="../zentrale/rueckweg.js"></script>
+</body>
+</html>
