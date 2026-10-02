@@ -20,7 +20,7 @@ import { kurzHook, reinText, aktiveProdukte, topListeSkript, HOOK_REGELN } from 
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 import { laborWinkel } from './lib/laborWinkel.mjs';
 import { nachbauenEinplanen, stateLaden as pruefungLaden } from './lib/videoPruefung.mjs';
-import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen, skriptMitFormat, planWert, notfallSkript, werbeText, ANWENDUNG_STANDARD } from './lib/skriptExtras.mjs';
+import { ANWENDUNG_REGEL, anwendungEinbauen, VERGLEICH_REGEL, vergleichEinbauen, ANFAENGE_REGEL, anfaengeEinbauen, anfaengeAblegen, skriptMitFormat, planWert, notfallSkript, werbeText, skriptBlock, ANWENDUNG_STANDARD } from './lib/skriptExtras.mjs';
 // KI-Moderatorin als Bild-im-Bild in die deutschen Premium-Videos (wenn der Workflow sie eingerichtet hat).
 async function mitModeratorin(v, nr) {
   if (!moderatorinAn()) return;
@@ -479,6 +479,10 @@ async function sprachenRendern(liste) {
         try {
           const uebersetzt = uebersetzungen[j];
           if (!uebersetzt) throw new Error('Uebersetzung fehlgeschlagen');
+          // Werbe-Check VOR dem Rendern: eine Uebersetzung kann Heilversprechen o. ae. einschleppen - dann gar nicht erst bauen
+          // (spart Renderzeit) und nicht im Gedaechtnis lassen, sonst scheitert sie jeden Tag erneut.
+          const gesperrt = skriptBlock(uebersetzt);
+          if (gesperrt.length) { delete gedaechtnis[schluessel(teil[j].skript)]; throw new Error(`Werbe-Check: ${gesperrt.map((t) => `„${t.stelle}“`).join(', ')}`); }
           const v = await videoBauen(uebersetzt, arbeit, { format: 'hoch', stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook, premium: PREMIUM, sprache });
           await ablegen(manifest, v, uebersetzt, { thema, format: 'hoch' }, nr, sprache);
           console.log(`[94-video-fabrik] ✓ ${sprache}: ${manifest.at(-1).datei}`);

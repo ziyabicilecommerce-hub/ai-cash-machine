@@ -51,3 +51,14 @@ test('Feed: auch der Text IM Video (werbetext) wird geprüft - nicht nur Titel u
   assert.equal(videoPruefen({ titel: s.titel, caption: '#Purivelle' }).ok, true);
   assert.equal(videoPruefen({ titel: s.titel, caption: '#Purivelle', werbetext: werbeText(s) }).ok, false);
 });
+
+test('Welt-Bot: skriptBlock prüft eine Übersetzung vor dem Rendern (Heilversprechen, die erst durch die KI-Übersetzung entstehen)', async () => {
+  const { skriptBlock } = await import('../../automations/lib/werbeCheck.mjs');
+  const sauber = { titel: 'DeskRebel PowerBand – pull-up band', hook: 'Stop doing this', caption: 'Train anywhere.\n\n👉 https://deskrebel.store/products/powerband', szenen: [{ text: 'Eight strengths from warm-up to pro.' }] };
+  assert.deepEqual(skriptBlock(sauber), []);
+  const unsauber = { ...sauber, szenen: [...sauber.szenen, { text: 'Say goodbye to wrist pain – pain-free pull-ups!' }] };
+  assert.ok(skriptBlock(unsauber).some((t) => t.art === 'schmerz'));
+  assert.ok(skriptBlock({ ...sauber, titel: 'Rückenfrei mit Purivelle' }).some((t) => t.art === 'heilversprechen'));
+  // Links allein lösen keinen Treffer aus
+  assert.deepEqual(skriptBlock({ ...sauber, caption: 'https://purivelle.store/products/schmerz-weg' }), []);
+});

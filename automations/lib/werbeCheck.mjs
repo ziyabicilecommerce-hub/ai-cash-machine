@@ -53,6 +53,9 @@ export function pruefen(text) {
 // Alles, was im Video gesagt/eingeblendet wird: Hook, Szenen-Saetze, Anfang-Varianten (fuer Skript und Feed).
 export const werbeText = (s) => [s.hook, ...(s.szenen || []).map((x) => x?.text), ...(s.anfaenge || []).flatMap((a) => [a?.satz, a?.hook])].filter(Boolean).join('\n');
 
+// Gesperrte Treffer fuer ein Skript (Titel, Caption, gesprochene Saetze, Anfaenge) - vor dem Rendern, spart Renderzeit.
+export const skriptBlock = (s) => pruefen([s.titel, String(s.caption || '').replace(/https?:\/\/\S+/g, ' '), werbeText(s)].filter(Boolean).join('\n')).filter((t) => t.stufe === 'block');
+
 // Ein Video aus dem Feed/Manifest: Titel + Caption (ohne Links) + der Text IM Video (werbetext).
 export function videoPruefen(v) {
   const text = `${v.titel || ''}\n${String(v.caption || '').replace(/https?:\/\/\S+/g, ' ')}\n${v.werbetext || ''}`;
