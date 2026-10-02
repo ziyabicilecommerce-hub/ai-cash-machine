@@ -1,0 +1,37 @@
+name: 'Video-Werkzeug (schnell, mit Cache)'
+description: 'ffmpeg, Schriften und Python-Pakete - Downloads und Modelle werden zwischengespeichert, langsame apt-Schritte abgeschaltet.'
+inputs:
+  apt:
+    description: 'apt-Pakete (ffmpeg und DejaVu sind immer dabei)'
+    default: ''
+  pip:
+    description: 'pip-Pakete (leer = keine)'
+    default: ''
+  rembg:
+    description: 'rembg (Freisteller) installieren'
+    default: 'false'
+runs:
+  using: composite
+  steps:
+    - uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/pip
+          ~/.u2net
+        key: video-werkzeug-v1-${{ runner.os }}-${{ hashFiles('.github/actions/video-werkzeug/action.yml') }}-${{ inputs.pip }}-${{ inputs.rembg }}
+        restore-keys: video-werkzeug-v1-${{ runner.os }}-
+    - name: Werkzeug installieren
+      shell: bash
+      run: |
+        PAKETE="ffmpeg fonts-dejavu-core ${{ inputs.apt }}"
+        if ! dpkg -s $PAKETE >/dev/null 2>&1; then
+          # man-db baut sonst bei jedem apt-install minutenlang den Handbuch-Index neu.
+          sudo rm -f /var/lib/man-db/auto-update
+          sudo apt-get update -qq -o Acquire::Languages=none
+          sudo apt-get install -y -qq --no-install-recommends $PAKETE >/dev/null
+        fi
+        if [ -n "${{ inputs.pip }}" ]; then pip install -q --prefer-binary ${{ inputs.pip }}; fi
+        if [ "${{ inputs.rembg }}" = "true" ]; then
+          pip install -q --prefer-binary "rembg[cpu,cli]" || echo "rembg nicht installiert - Videos ohne Freisteller"
+        fi
+        ffmpeg -hide_banner -version | head -1

@@ -34,11 +34,14 @@ export function anwendungURL(prompt, ref, { breite, hoehe, model, seed }) {
   return `${BASIS}/${encodeURIComponent(`${prompt}. Keep the product exactly as in the reference image (shape, color, details). Vertical 9:16 photo.`)}?${params}`;
 }
 
+// Modelle, die in diesem Lauf schon versagt haben, werden nicht erneut versucht (spart bis zu Minuten je Szene).
+export const KAPUTT = new Set();
+
 // Probiert die Modelle der Reihe nach; true, sobald ein echtes Bild (> 20 KB) da ist.
 export async function anwendungBild({ prompt, ref }, ziel, { breite, hoehe, seed = Math.floor(Math.random() * 1e9), laden = fetch } = {}) {
-  for (const model of MODELLE) {
+  for (const model of MODELLE.filter((m) => !KAPUTT.has(m))) {
     try {
-      const res = await laden(anwendungURL(prompt, ref, { breite, hoehe, model, seed }), { signal: AbortSignal.timeout(150000) });
+      const res = await laden(anwendungURL(prompt, ref, { breite, hoehe, model, seed }), { signal: AbortSignal.timeout(90000) });
       const typ = res.headers.get('content-type') || '';
       const daten = res.ok && typ.startsWith('image/') ? Buffer.from(await res.arrayBuffer()) : null;
       if (daten && daten.length > 20000) {
@@ -47,8 +50,10 @@ export async function anwendungBild({ prompt, ref }, ziel, { breite, hoehe, seed
         return true;
       }
       console.log(`[video-fabrik] Anwendungs-Szene: ${model} lieferte kein Bild (${res.status} ${typ}).`);
+      if (res.status >= 400) KAPUTT.add(model);
     } catch (err) {
       console.log(`[video-fabrik] Anwendungs-Szene: ${model} fehlgeschlagen (${String(err.message).slice(0, 80)}).`);
+      KAPUTT.add(model);
     }
   }
   return false;
@@ -79,11 +84,9 @@ export function vergleichEinbauen(skript, d, fotos) {
 // fuer dieselbe Person). Mindestens 2 muessen klappen, sonst nimmt die Szene das einzelne Anwendungsbild.
 export async function demoBilder({ schritte, ref }, roh, { breite, hoehe, laden = fetch } = {}) {
   const seed = Math.floor(Math.random() * 1e9);
-  const bilder = [];
-  for (const [k, prompt] of schritte.entries()) {
-    const ziel = `${roh}.d${k}`;
-    if (await anwendungBild({ prompt, ref }, ziel, { breite, hoehe, seed, laden }).catch(() => false)) bilder.push(ziel);
-  }
+  // Alle Schritte gleichzeitig laden (statt nacheinander) - Reihenfolge bleibt erhalten.
+  const ok = await Promise.all(schritte.map((prompt, k) => anwendungBild({ prompt, ref }, `${roh}.d${k}`, { breite, hoehe, seed, laden }).catch(() => false)));
+  const bilder = schritte.map((_, k) => `${roh}.d${k}`).filter((_, k) => ok[k]);
   if (bilder.length < 2) return [];
   copyFileSync(bilder[0], roh);
   return bilder;

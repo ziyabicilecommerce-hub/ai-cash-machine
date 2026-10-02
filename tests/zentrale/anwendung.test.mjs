@@ -57,7 +57,8 @@ test('Demo-Sequenz: Schritte werden uebernommen, Video mit harten Schnitten ents
   const s = anwendungEinbauen(skript(), { szene: 2, prompt: 'person using this resistance band', schritte: ['hook band on bar', 'pull up with band', 'hold at the top'] }, fotos);
   assert.equal(s.szenen[2].anwendung.schritte.length, 3);
   assert.ok(!anwendungEinbauen(skript(), { szene: 2, prompt: 'person using this resistance band', schritte: ['nur einer zu kurz'] }, fotos).szenen[2].anwendung.schritte);
-  const { demoBilder, demoVideoBauen } = await import('../../automations/lib/anwendung.mjs');
+  const { demoBilder, demoVideoBauen, KAPUTT } = await import('../../automations/lib/anwendung.mjs');
+  KAPUTT.clear();
   const dir = mkdtempSync(join(tmpdir(), 'demo-'));
   const { execFileSync } = await import('node:child_process');
   let nr = 0;
@@ -75,4 +76,26 @@ test('Demo-Sequenz: Schritte werden uebernommen, Video mit harten Schnitten ents
   const dauer = Number(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', video], { encoding: 'utf8' }));
   assert.ok(dauer > 2.2 && dauer < 2.8, `Dauer ${dauer}`);
   assert.equal(JSON.stringify(await demoBilder({ schritte: ['a', 'b'], ref: fotos[0] }, join(dir, 'x.img'), { breite: 270, hoehe: 480, laden: async () => new Response('x', { status: 500 }) })), '[]');
+});
+
+test('schneller: Schritt-Bilder parallel, kaputte Modelle werden im Lauf uebersprungen', async () => {
+  const { demoBilder, anwendungBild, KAPUTT } = await import('../../automations/lib/anwendung.mjs');
+  KAPUTT.clear();
+  const dir = mkdtempSync(join(tmpdir(), 'schnell-'));
+  let gleichzeitig = 0, max = 0;
+  const bild = new Uint8Array(30000);
+  const laden = async (url) => {
+    gleichzeitig++; max = Math.max(max, gleichzeitig);
+    await new Promise((r) => setTimeout(r, 30));
+    gleichzeitig--;
+    return url.includes('model=kontext') ? new Response('x', { status: 402 }) : new Response(bild, { headers: { 'content-type': 'image/jpeg' } });
+  };
+  const bilder = await demoBilder({ schritte: ['a', 'b', 'c'], ref: 'https://x/y.jpg' }, join(dir, 'r.img'), { breite: 270, hoehe: 480, laden });
+  assert.equal(bilder.length, 3);
+  assert.ok(max >= 3, `parallel geladen (max ${max})`);
+  assert.ok(KAPUTT.has('kontext'), 'kontext lieferte 402 -> gemerkt');
+  const urls = [];
+  await anwendungBild({ prompt: 'p', ref: 'https://x/y.jpg' }, join(dir, 'z.img'), { breite: 270, hoehe: 480, laden: async (u) => { urls.push(u); return new Response(bild, { headers: { 'content-type': 'image/jpeg' } }); } });
+  assert.ok(!urls.some((u) => u.includes('model=kontext')), 'kaputtes Modell wird nicht nochmal versucht');
+  KAPUTT.clear();
 });

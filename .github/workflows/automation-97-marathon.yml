@@ -41,9 +41,9 @@ jobs:
         with:
           node-version: '22'
       - name: ffmpeg und Schrift installieren
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null
+        uses: ./.github/actions/video-werkzeug
+        with:
+          pip: ''
       - name: Release anlegen
         run: |
           TAG="marathon-$(date -u +%Y%m%d-%H%M)"
