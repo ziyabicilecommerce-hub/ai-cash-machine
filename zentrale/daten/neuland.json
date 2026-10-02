@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-02T05:57:29.858Z",
+ "stand": "2026-10-02T10:00:08.932Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,7 +9,7 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 45,
+     "value": 47,
      "unit": ""
     },
     {
@@ -19,11 +19,32 @@
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 43,
+     "value": 45,
      "unit": ""
     }
    ],
    "rows": [
+    {
+     "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
+     "Beleglink": "https://purivelle.store/products/lotustap-massagehammer",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle - Deine Selbstmассage im Griff",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
     {
      "Aussage": "DeskRebel LumbarEase – Massagegurt für den unteren Rücken",
      "Beleglink": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
@@ -34,13 +55,6 @@
     {
      "Aussage": "Purivelle BackEase – Dein Helfer für den Alltag",
      "Beleglink": "https://purivelle.store/products/backease-rueckenguertel",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Beleglink": "https://www.deskrebel.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -351,7 +365,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 45,
+     "value": 47,
      "unit": ""
     },
     {
@@ -367,6 +381,24 @@
    ],
    "rows": [
     {
+     "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
+     "Quellenverweis": "https://purivelle.store/products/lotustap-massagehammer",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Quellenverweis": "https://www.deskrebel.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle - Deine Selbstmассage im Griff",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
      "Aussage": "DeskRebel LumbarEase – Massagegurt für den unteren Rücken",
      "Quellenverweis": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
      "Prüfmarkierung ohne Quelle": "Nein",
@@ -375,12 +407,6 @@
     {
      "Aussage": "Purivelle BackEase – Dein Helfer für den Alltag",
      "Quellenverweis": "https://purivelle.store/products/backease-rueckenguertel",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Quellenverweis": "https://www.deskrebel.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
