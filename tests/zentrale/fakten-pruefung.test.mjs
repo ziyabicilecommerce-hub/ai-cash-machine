@@ -18,3 +18,20 @@ test('umstritten: unstrittige Fakten bleiben erlaubt', () => {
   assert.ok(!umstritten(s('Blitze', 'Ein Blitz ist heißer als die Sonnenoberfläche.')));
   assert.ok(!umstritten({}));
 });
+
+test('echo: abgeschriebene Anweisungen als Titel werden erkannt', async () => {
+  const { echo } = await import('../../automations/lib/faktenPruefung.mjs');
+  assert.ok(echo({ titel: 'Fakt #11: 5-6 Szenen mit je 1 kurzer gesprochener Satz' }));
+  assert.ok(echo({ titel: '#10: Genau ein Thema?' }));
+  assert.ok(echo({ titel: 'Blitze', caption: '2 Saetze + Frage + 4-6 Hashtags' }));
+  assert.ok(!echo({ titel: 'Ein Oktopus hat drei Herzen', hook: 'Stimmt das wirklich?', caption: 'Wusstest du das? #Natur #Tiere' }));
+});
+
+test('doppelt: dasselbe Thema wie ein bekannter Fakt wird erkannt', async () => {
+  const { doppelt } = await import('../../automations/lib/faktenPruefung.mjs');
+  const bekannt = ['Ein Oktopus hat drei Herzen', 'Olympus Mons ist ca. 22 km hoch'];
+  assert.ok(doppelt({ titel: 'Oktopus: Drei Herzen', fakt: 'Der Oktopus besitzt drei Herzen' }, bekannt));
+  assert.ok(doppelt({ titel: 'Olympus Mons', fakt: 'Der Olympus Mons ist riesig' }, bekannt));
+  assert.ok(!doppelt({ titel: 'Honig wird nie schlecht', fakt: 'Honig verdirbt nicht, weil er kaum Wasser enthält' }, bekannt));
+  assert.ok(!doppelt({ titel: 'Honig', fakt: 'Honig' }, []));
+});

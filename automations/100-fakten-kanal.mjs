@@ -9,7 +9,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from
 import { join } from 'node:path';
 import { videoBauen } from './lib/videoFabrik.mjs';
 import { kiJson } from './lib/kiJson.mjs';
-import { umstritten } from './lib/faktenPruefung.mjs';
+import { umstritten, echo, doppelt } from './lib/faktenPruefung.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 
 const OUT = 'out';
@@ -148,6 +148,8 @@ async function main() {
         try {
           skript = await schreiben(kategorie, nr, verlauf.fakten);
           if (umstritten(skript)) { console.log(`[100-fakten-kanal] ${format}-Skript verworfen (strittiger Rekord-Fakt) - neuer Versuch`); skript = undefined; }
+          else if (echo(skript)) { console.log(`[100-fakten-kanal] ${format}-Skript verworfen (Anweisung als Titel abgeschrieben: "${String(skript.titel).slice(0, 50)}") - neuer Versuch`); skript = undefined; }
+          else if (doppelt(skript, verlauf.fakten)) { console.log(`[100-fakten-kanal] ${format}-Skript verworfen (Thema schon gehabt: "${String(skript.titel).slice(0, 50)}") - neuer Versuch`); skript = undefined; }
         } catch (err) { console.log(`[100-fakten-kanal] ${format}-Skript verworfen (${String(err.message).slice(0, 80)}) - neuer Versuch`); }
       }
       if (!skript) throw new Error('3 Skripte unbrauchbar');
