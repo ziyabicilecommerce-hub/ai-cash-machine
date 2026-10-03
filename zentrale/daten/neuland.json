@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-02T10:00:08.932Z",
+ "stand": "2026-10-03T09:23:00.903Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,7 +9,7 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 47,
+     "value": 50,
      "unit": ""
     },
     {
@@ -19,7 +19,7 @@
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 45,
+     "value": 48,
      "unit": ""
     }
    ],
@@ -39,7 +39,7 @@
      "Hinweise": "Keine offenen Prüfpunkte."
     },
     {
-     "Aussage": "Top 5 von Purivelle - Deine Selbstmассage im Griff",
+     "Aussage": "Top 5 von Purivelle – Dein Wohlfühl-Toolkit",
      "Beleglink": "https://purivelle.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
@@ -48,6 +48,27 @@
     {
      "Aussage": "DeskRebel LumbarEase – Massagegurt für den unteren Rücken",
      "Beleglink": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Klimmzug leicht gemacht mit DeskRebel PowerBand",
+     "Beleglink": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle – Entspanne dich jetzt!",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle - Deine Selbstmассage im Griff",
+     "Beleglink": "https://purivelle.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -365,7 +386,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 47,
+     "value": 50,
      "unit": ""
     },
     {
@@ -393,7 +414,7 @@
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
     {
-     "Aussage": "Top 5 von Purivelle - Deine Selbstmассage im Griff",
+     "Aussage": "Top 5 von Purivelle – Dein Wohlfühl-Toolkit",
      "Quellenverweis": "https://purivelle.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
@@ -401,6 +422,24 @@
     {
      "Aussage": "DeskRebel LumbarEase – Massagegurt für den unteren Rücken",
      "Quellenverweis": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Klimmzug leicht gemacht mit DeskRebel PowerBand",
+     "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle – Entspanne dich jetzt!",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle - Deine Selbstmассage im Griff",
+     "Quellenverweis": "https://purivelle.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -765,7 +804,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-02",
+     "value": "2026-10-03",
      "unit": ""
     }
    ],
@@ -781,7 +820,7 @@
    "metrics": [
     {
      "label": "Vorhaben",
-     "value": 17
+     "value": 16
     },
     {
      "label": "Höchste Bewertung",
@@ -871,14 +910,6 @@
     },
     {
      "Rang": 11,
-     "Vorhaben": "TikTok verbinden",
-     "Wirkung": 10,
-     "Vertrauen": 0.6,
-     "Aufwand": 5,
-     "Bewertung": 1.2
-    },
-    {
-     "Rang": 12,
      "Vorhaben": "LinkedIn verbinden",
      "Wirkung": 5,
      "Vertrauen": 0.6,
@@ -886,7 +917,7 @@
      "Bewertung": 1
     },
     {
-     "Rang": 13,
+     "Rang": 12,
      "Vorhaben": "Threads verbinden",
      "Wirkung": 5,
      "Vertrauen": 0.6,
@@ -894,7 +925,7 @@
      "Bewertung": 1
     },
     {
-     "Rang": 14,
+     "Rang": 13,
      "Vorhaben": "Reddit verbinden",
      "Wirkung": 4,
      "Vertrauen": 0.4,
@@ -902,7 +933,7 @@
      "Bewertung": 0.8
     },
     {
-     "Rang": 15,
+     "Rang": 14,
      "Vorhaben": "X verbinden",
      "Wirkung": 5,
      "Vertrauen": 0.5,
@@ -910,7 +941,7 @@
      "Bewertung": 0.625
     },
     {
-     "Rang": 16,
+     "Rang": 15,
      "Vorhaben": "Dailymotion verbinden",
      "Wirkung": 2,
      "Vertrauen": 0.6,
@@ -918,7 +949,7 @@
      "Bewertung": 0.6
     },
     {
-     "Rang": 17,
+     "Rang": 16,
      "Vorhaben": "Tumblr verbinden",
      "Wirkung": 2,
      "Vertrauen": 0.6,

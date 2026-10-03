@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-02T10:00:08.833Z",
+ "stand": "2026-10-03T09:23:00.809Z",
  "ziel": 5,
  "agenten": [
   {
@@ -7,7 +7,7 @@
    "name": "Werbe-Labor",
    "job": "testet Hooks an der Test-Jury",
    "einheit": "Jury-Gewinner",
-   "leistung": 4.5,
+   "leistung": 3.3,
    "status": "laeuft"
   },
   {
@@ -15,7 +15,7 @@
    "name": "Video-Fabrik",
    "job": "baut Produkt-Videos",
    "einheit": "Videos",
-   "leistung": 27,
+   "leistung": 23.2,
    "status": "laeuft"
   },
   {
@@ -23,7 +23,7 @@
    "name": "Video-Prüfer",
    "job": "gibt fehlerfreie Videos frei",
    "einheit": "freigegeben",
-   "leistung": 39,
+   "leistung": 24,
    "status": "laeuft"
   },
   {
@@ -44,7 +44,7 @@
   }
  ],
  "kanaele": [],
- "laborQuote": 31,
+ "laborQuote": 32,
  "engpass": {
   "id": "poster",
   "name": "Poster"
@@ -68,12 +68,12 @@
   {
    "id": "fabrik",
    "name": "Video-Fabrik",
-   "kapazitaet": 27
+   "kapazitaet": 23
   },
   {
    "id": "pruefer",
    "name": "Video-Prüfer",
-   "kapazitaet": 39
+   "kapazitaet": 24
   },
   {
    "id": "poster",
@@ -104,6 +104,16 @@
    "labor": 4.5,
    "fabrik": 27,
    "pruefer": 39,
+   "poster": 0,
+   "sammler": 0
+  },
+  {
+   "datum": "2026-10-03",
+   "durchsatz": 0,
+   "engpass": "poster",
+   "labor": 3.3,
+   "fabrik": 23.2,
+   "pruefer": 24,
    "poster": 0,
    "sammler": 0
   }
