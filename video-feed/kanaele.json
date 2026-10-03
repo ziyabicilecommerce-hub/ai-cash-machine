@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-02T22:35:27.814Z",
+ "stand": "2026-10-03T16:45:15.302Z",
  "kanaele": {
   "YouTube": {
    "verbunden": false,
@@ -13,7 +13,10 @@
    "heute": 0,
    "limit": 5,
    "letzterErfolg": "2026-10-02T18:43:16.652Z",
-   "letzterFehler": null
+   "letzterFehler": {
+    "text": "Init (Entwurf): 401 access_token_invalid The access token is invalid or not found in the request.",
+    "zeit": "2026-10-03T16:45:15.299Z"
+   }
   },
   "Instagram": {
    "verbunden": false,
