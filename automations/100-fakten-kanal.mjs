@@ -9,6 +9,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from
 import { join } from 'node:path';
 import { videoBauen } from './lib/videoFabrik.mjs';
 import { kiJson } from './lib/kiJson.mjs';
+import { umstritten } from './lib/faktenPruefung.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 
 const OUT = 'out';
@@ -16,7 +17,7 @@ const VERLAUF = 'fakten-kanal/verlauf.json';
 const env = (k, d = '') => (process.env[k] || d).trim();
 const ANZAHL = Math.min(Math.max(parseInt(env('FAKTEN_ANZAHL', '4'), 10) || 4, 1), 12);
 // Kanalname erscheint oben als Wasserzeichen und auf der Endkarte (z. B. @faktenblitz).
-const KANAL = env('FAKTEN_KANAL', '@faktenblitz').slice(0, 30);
+const KANAL = env('FAKTEN_KANAL', '@futureflowxx').slice(0, 30);
 // Immer dieselbe Moderatorin (1-6) - ein festes Gesicht macht den Kanal wiedererkennbar.
 const MODERATORIN_NR = Math.min(Math.max(parseInt(env('FAKTEN_MODERATORIN', '2'), 10) || 2, 1), 6);
 const KATEGORIEN = env('FAKTEN_KATEGORIEN', 'Psychologie,Menschlicher Koerper,Weltall,Tiere,Geschichte,Geld und Wirtschaft,Technik,Natur und Erde,Essen,Rekorde')
@@ -25,8 +26,10 @@ const KATEGORIEN = env('FAKTEN_KATEGORIEN', 'Psychologie,Menschlicher Koerper,We
 // Formate im Wechsel: fakt (Wusstest du?), quiz (Rate mal A/B/C mit Countdown), mythos (Mythos oder Wahrheit?).
 // Quiz und Mythos holen Kommentare - jeder will seine Antwort posten.
 const FORMATE = env('FAKTEN_FORMATE', 'quiz,fakt,mythos').split(',').map((s) => s.trim()).filter((f) => ['fakt', 'quiz', 'mythos'].includes(f));
-const REGELN = 'Regeln: nur gut belegtes Lexikon-Wissen, keine erfundenen Zahlen oder Studien, keine Gesundheits- oder Finanzratschlaege, nichts Politisches, keine realen Privatpersonen, keine Marken. ';
-const BILD = '"bilder": 5 englische Bild-Prompts (je max. 15 Woerter, cinematic, photorealistic, dramatic light, no text, no logos, no real people)';
+const REGELN = 'Regeln: nur gut belegtes Lexikon-Wissen, keine erfundenen Zahlen oder Studien, keine Gesundheits- oder Finanzratschlaege, nichts Politisches, keine realen Privatpersonen, keine Marken. ' +
+  'Nur UNSTRITTIGE Fakten: keine Rekord- oder Ranglisten-Fragen, bei denen Quellen sich uneinig sind (z. B. laengster Fluss, hoechster Berg, groesstes Tier). ' +
+  'Alle Saetze und Bilder drehen sich um GENAU EIN Thema - nichts aus anderen Fakten einmischen. Hashtags nur zum Thema des Videos. ';
+const BILD = '"bilder": 5 englische Bild-Prompts (je max. 15 Woerter, cinematic, photorealistic, dramatic light, no text, no logos, no real people) die NUR das Thema zeigen (Tier, Landschaft, Objekt, Weltall) - keine Personen, keine Gesichter, keine Silhouetten';
 
 const slug = (t) => t.toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) || 'fakt';
 const ersatzBild = (kategorie) => `${kategorie} theme, mysterious cinematic scene, photorealistic, dramatic light, no text`;
@@ -40,10 +43,11 @@ async function skriptSchreiben(kategorie, nr, bekannt) {
   const d = await kiJson(
     `Schreibe ein virales Kurzvideo (25-35 Sekunden, TikTok/Reels/Shorts) auf Deutsch ueber einen krassen, WAHREN Fakt aus der Kategorie "${kategorie}". ` +
       'Regeln: nur gut belegtes Lexikon-Wissen, keine erfundenen Zahlen oder Studien, keine Gesundheits- oder Finanzratschlaege, nichts Politisches, keine realen Privatpersonen, keine Marken. ' +
+      'Nur UNSTRITTIGE Fakten (keine Rekord-Fragen mit uneinigen Quellen), alle Saetze und Bilder zu GENAU EINEM Thema, Hashtags nur zum Thema. ' +
       `Diese Fakten gab es schon (nicht wiederholen): ${bekannt.slice(-40).join(' | ') || 'keine'}. ` +
       'Aufbau in 5-6 Szenen mit je 1 kurzem, gesprochenem Satz (Du-Form, locker): 1) Hook als Pattern-Interrupt (max. 8 Woerter): ein Widerspruch zu dem, was fast alle glauben, oder eine Frage, die sofort eine Wissensluecke oeffnet - keine Begruessung, keine Einleitung, keine erfundenen Zahlen, ' +
       '2-4) Erklaerung, die sich steigert, 5) Frage an die Zuschauer fuer die Kommentare, 6) "Folge fuer mehr krasse Fakten!". ' +
-      'Je Szene "bild": englischer Bild-Prompt (max. 15 Woerter, cinematic, photorealistic, dramatic light, no text, no logos, no real people). ' +
+      'Je Szene "bild": englischer Bild-Prompt (max. 15 Woerter, cinematic, photorealistic, dramatic light, no text, no logos, nur das Thema zeigen - keine Personen, keine Gesichter, keine Silhouetten). ' +
       'Antworte NUR mit JSON: {"titel":"max. 60 Zeichen","fakt":"der Fakt in einem Satz","hook":"max. 5 Woerter","caption":"2 Saetze + Frage + 4-6 Hashtags","szenen":[{"text":"...","bild":"..."}]}',
     { maxTokens: 1400 }
   );
@@ -141,7 +145,10 @@ async function main() {
         if (v > 0) await new Promise((r) => setTimeout(r, Number(process.env.FAKTEN_PAUSE_MS ?? 20000) * v));
         format = liste[(tag * ANZAHL + i + v) % liste.length];
         const schreiben = { fakt: skriptSchreiben, quiz: quizSchreiben, mythos: mythosSchreiben }[format];
-        try { skript = await schreiben(kategorie, nr, verlauf.fakten); } catch (err) { console.log(`[100-fakten-kanal] ${format}-Skript verworfen (${String(err.message).slice(0, 80)}) - neuer Versuch`); }
+        try {
+          skript = await schreiben(kategorie, nr, verlauf.fakten);
+          if (umstritten(skript)) { console.log(`[100-fakten-kanal] ${format}-Skript verworfen (strittiger Rekord-Fakt) - neuer Versuch`); skript = undefined; }
+        } catch (err) { console.log(`[100-fakten-kanal] ${format}-Skript verworfen (${String(err.message).slice(0, 80)}) - neuer Versuch`); }
       }
       if (!skript) throw new Error('3 Skripte unbrauchbar');
       const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting' });
