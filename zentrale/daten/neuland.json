@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-03T09:23:00.903Z",
+ "stand": "2026-10-04T10:02:26.169Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,21 +9,49 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 50,
+     "value": 53,
      "unit": ""
     },
     {
      "label": "Prüfung offen",
-     "value": 2,
+     "value": 3,
      "unit": ""
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 48,
+     "value": 50,
      "unit": ""
     }
    ],
    "rows": [
+    {
+     "Aussage": "DeskRebel ElbowGuard – Kompressions-Ellbogenbandage",
+     "Beleglink": "https://www.deskrebel.store/products/elbowguard-kompressions-ellbogenbandage",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "DeskRebel PowerBand – dein Klimmzug-Upgrade",
+     "Beleglink": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel – Futtere dein Home-Gym!",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Nein",
+     "Status": "Prüfung offen",
+     "Hinweise": "Menschliche Prüfung ausstehend."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
     {
      "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
      "Beleglink": "https://purivelle.store/products/lotustap-massagehammer",
@@ -76,13 +104,6 @@
     {
      "Aussage": "Purivelle BackEase – Dein Helfer für den Alltag",
      "Beleglink": "https://purivelle.store/products/backease-rueckenguertel",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Beleglink": "https://purivelle.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -386,7 +407,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 50,
+     "value": 53,
      "unit": ""
     },
     {
@@ -401,6 +422,30 @@
     }
    ],
    "rows": [
+    {
+     "Aussage": "DeskRebel ElbowGuard – Kompressions-Ellbogenbandage",
+     "Quellenverweis": "https://www.deskrebel.store/products/elbowguard-kompressions-ellbogenbandage",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "DeskRebel PowerBand – dein Klimmzug-Upgrade",
+     "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel – Futtere dein Home-Gym!",
+     "Quellenverweis": "https://www.deskrebel.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
     {
      "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
      "Quellenverweis": "https://purivelle.store/products/lotustap-massagehammer",
@@ -446,12 +491,6 @@
     {
      "Aussage": "Purivelle BackEase – Dein Helfer für den Alltag",
      "Quellenverweis": "https://purivelle.store/products/backease-rueckenguertel",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Quellenverweis": "https://purivelle.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -804,7 +843,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-03",
+     "value": "2026-10-04",
      "unit": ""
     }
    ],
