@@ -35,3 +35,10 @@ test('doppelt: dasselbe Thema wie ein bekannter Fakt wird erkannt', async () => 
   assert.ok(!doppelt({ titel: 'Honig wird nie schlecht', fakt: 'Honig verdirbt nicht, weil er kaum Wasser enthält' }, bekannt));
   assert.ok(!doppelt({ titel: 'Honig', fakt: 'Honig' }, []));
 });
+
+test('echo: abgeschriebene Platzhalter ("max. 60 Zeichen", "...") werden erkannt', async () => {
+  const { echo } = await import('../../automations/lib/faktenPruefung.mjs');
+  assert.ok(echo({ titel: 'Fakt #13: max. 60 Zeichen' }));
+  assert.ok(echo({ titel: '...', caption: 'Wusstest du das?' }));
+  assert.ok(!echo({ titel: 'Honig verdirbt nie', hook: 'Wirklich nie?', caption: 'Honig ist uralt. Wusstest du das? #Honig #Natur' }));
+});

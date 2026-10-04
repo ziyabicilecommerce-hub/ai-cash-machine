@@ -43,7 +43,7 @@ jobs:
       - name: Eigene KI starten (kostenlos, ohne Schlüssel, ohne Limit)
         uses: ./.github/actions/ki-lokal
         with:
-          modell: ${{ vars.KI_LOKAL_MODELL || 'qwen2.5:3b' }}
+          modell: ${{ vars.KI_LOKAL_MODELL_FABRIK || vars.KI_LOKAL_MODELL || 'qwen2.5:7b' }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
