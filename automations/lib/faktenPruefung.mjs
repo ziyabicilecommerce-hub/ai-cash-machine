@@ -9,7 +9,7 @@ export const umstritten = (skript) => {
 
 // Die kleine KI schreibt gelegentlich Teile der Anweisung ("5-6 Szenen mit je 1 kurzem Satz", "genau ein Thema") als
 // Titel/Hook/Caption ab - solche Skripte sind unbrauchbar.
-const ECHO = /\bszenen?\b|genau\s+ein(em)?\s+thema|max\.\s*\d|gesprochen(en|er|e)?\s+satz|hashtags?\b|pattern[- ]interrupt|du-form|wissensl(ü|ue)cke|\bhook\b|\bcaption\b|nur\s+das\s+thema|ein\s+thema\??$/i;
+const ECHO = /\bszenen?\b|genau\s+ein(em)?\s+thema|max\.\s*\d|gesprochen(en|er|e)?\s+satz|hashtags?\b|pattern[- ]interrupt|du-form|wissensl(ü|ue)cke|\bhook\b|\bcaption\b|nur\s+das\s+thema|ein\s+thema\??$|\bzeichen\b|platzhalter|^\W*(\.{2,}|…)\W*$/im;
 export const echo = (skript) => ECHO.test([skript?.titel, skript?.hook, skript?.caption].filter(Boolean).join('\n'));
 
 // Dasselbe Thema nicht mehrfach: gleiche Inhaltswoerter (>= 5 Buchstaben) wie ein bekannter Fakt -> doppelt.

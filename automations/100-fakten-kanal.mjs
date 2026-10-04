@@ -48,7 +48,8 @@ async function skriptSchreiben(kategorie, nr, bekannt) {
       'Aufbau in 5-6 Szenen mit je 1 kurzem, gesprochenem Satz (Du-Form, locker): 1) Hook als Pattern-Interrupt (max. 8 Woerter): ein Widerspruch zu dem, was fast alle glauben, oder eine Frage, die sofort eine Wissensluecke oeffnet - keine Begruessung, keine Einleitung, keine erfundenen Zahlen, ' +
       '2-4) Erklaerung, die sich steigert, 5) Frage an die Zuschauer fuer die Kommentare, 6) "Folge fuer mehr krasse Fakten!". ' +
       'Je Szene "bild": englischer Bild-Prompt (max. 15 Woerter, cinematic, photorealistic, dramatic light, no text, no logos, nur das Thema zeigen - keine Personen, keine Gesichter, keine Silhouetten). ' +
-      'Antworte NUR mit JSON: {"titel":"max. 60 Zeichen","fakt":"der Fakt in einem Satz","hook":"max. 5 Woerter","caption":"2 Saetze + Frage + 4-6 Hashtags","szenen":[{"text":"...","bild":"..."}]}',
+      'Felder: titel = kurzer Titel zum Fakt (unter 60 Zeichen), fakt = der Fakt in einem Satz, hook = 2-5 Woerter, caption = zwei Saetze zum Fakt, eine Frage an die Zuschauer und 4-6 passende Hashtags. Schreibe echte Inhalte, keine Platzhalter. ' +
+      'Antworte NUR mit JSON: {"titel":"...","fakt":"...","hook":"...","caption":"...","szenen":[{"text":"...","bild":"..."}]}',
     { maxTokens: 1400 }
   );
   const szenen = (Array.isArray(d.szenen) ? d.szenen : [])
@@ -84,7 +85,8 @@ async function quizSchreiben(kategorie, nr, bekannt) {
   const d = await kiJson(
     `Erstelle ein virales Quiz-Kurzvideo auf Deutsch (Kategorie "${kategorie}"): eine ueberraschende Wissensfrage mit 3 Antworten, genau eine ist richtig. ${REGELN}` +
       `Schon benutzt (nicht wiederholen): ${bekannt.slice(-40).join(' | ') || 'keine'}. Antworten max. 4 Woerter. ` +
-      `Antworte NUR mit JSON: {"titel":"max. 60 Zeichen","hook":"max. 5 Woerter, Herausforderung an den Zuschauer OHNE Zahlen/Prozente, z. B. Schaffst du diese Frage?","frage":"...","optionen":["...","...","..."],"richtig":0,"erklaerung":["1-2 kurze Saetze warum"],"caption":"Frage + Aufforderung zu kommentieren + 4-6 Hashtags",${BILD}}`,
+      `Felder: titel = kurzer Titel zur Frage (unter 60 Zeichen), hook = 2-5 Woerter Herausforderung an den Zuschauer ohne Zahlen, z. B. Schaffst du diese Frage?, frage = die Wissensfrage, optionen = genau 3 Antworten, richtig = Index 0, 1 oder 2 der richtigen Antwort, erklaerung = 1-2 kurze Saetze warum, caption = Frage plus Aufforderung zu kommentieren plus 4-6 passende Hashtags. Schreibe echte Inhalte, keine Platzhalter. ` +
+      `Antworte NUR mit JSON: {"titel":"...","hook":"...","frage":"...","optionen":["...","...","..."],"richtig":0,"erklaerung":["..."],"caption":"...",${BILD}}`,
     { maxTokens: 1200 }
   );
   const optionen = (d.optionen || []).map((o) => kurz(o, 40)).slice(0, 3);
@@ -108,7 +110,8 @@ async function mythosSchreiben(kategorie, nr, bekannt) {
   const d = await kiJson(
     `Erstelle ein virales "Mythos oder Wahrheit?"-Kurzvideo auf Deutsch (Kategorie "${kategorie}"): eine Behauptung, die viele fuer wahr halten (oder die unglaublich klingt, aber stimmt). ${REGELN}` +
       `Schon benutzt (nicht wiederholen): ${bekannt.slice(-40).join(' | ') || 'keine'}. ` +
-      `Antworte NUR mit JSON: {"titel":"max. 60 Zeichen","hook":"max. 5 Woerter","aussage":"die Behauptung in einem Satz","wahr":true,"erklaerung":["2-3 kurze Saetze"],"caption":"Frage + Aufforderung zu kommentieren + 4-6 Hashtags",${BILD}}`,
+      `Felder: titel = kurzer Titel zur Behauptung (unter 60 Zeichen), hook = 2-5 Woerter, aussage = die Behauptung in einem Satz, wahr = true oder false, erklaerung = 2-3 kurze Saetze, caption = Frage plus Aufforderung zu kommentieren plus 4-6 passende Hashtags. Schreibe echte Inhalte, keine Platzhalter. ` +
+      `Antworte NUR mit JSON: {"titel":"...","hook":"...","aussage":"...","wahr":true,"erklaerung":["..."],"caption":"...",${BILD}}`,
     { maxTokens: 1200 }
   );
   const bilder = bilderAus(d, kategorie);
