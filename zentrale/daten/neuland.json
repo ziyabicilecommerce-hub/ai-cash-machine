@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-04T10:02:26.169Z",
+ "stand": "2026-10-05T10:47:21.240Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,21 +9,49 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 53,
+     "value": 55,
      "unit": ""
     },
     {
      "label": "Prüfung offen",
-     "value": 3,
+     "value": 4,
      "unit": ""
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 50,
+     "value": 51,
      "unit": ""
     }
    ],
    "rows": [
+    {
+     "Aussage": "DoorKit – deines Home-Gyms Tür",
+     "Beleglink": "https://www.deskrebel.store/products/doorkit-tueranker-griffe-karabiner",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "DeskRebel PowerBand – Dein Klimmzug-Upgrade",
+     "Beleglink": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle - Deine Selbstversorgung",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Nein",
+     "Status": "Prüfung offen",
+     "Hinweise": "Menschliche Prüfung ausstehend."
+    },
     {
      "Aussage": "DeskRebel ElbowGuard – Kompressions-Ellbogenbandage",
      "Beleglink": "https://www.deskrebel.store/products/elbowguard-kompressions-ellbogenbandage",
@@ -55,13 +83,6 @@
     {
      "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
      "Beleglink": "https://purivelle.store/products/lotustap-massagehammer",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Beleglink": "https://www.deskrebel.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -249,13 +270,6 @@
      "Hinweise": "Keine offenen Prüfpunkte."
     },
     {
-     "Aussage": "DeskRebel PowerBand – Dein Klimmzug-Upgrade",
-     "Beleglink": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
      "Aussage": "Fit-zuhause, kein Chaos",
      "Beleglink": "https://www.deskrebel.store/products/armforce-power-twister",
      "Von dir geprüft": "Ja",
@@ -407,7 +421,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 53,
+     "value": 55,
      "unit": ""
     },
     {
@@ -422,6 +436,30 @@
     }
    ],
    "rows": [
+    {
+     "Aussage": "DoorKit – deines Home-Gyms Tür",
+     "Quellenverweis": "https://www.deskrebel.store/products/doorkit-tueranker-griffe-karabiner",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "DeskRebel PowerBand – Dein Klimmzug-Upgrade",
+     "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Quellenverweis": "https://www.deskrebel.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle - Deine Selbstversorgung",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
     {
      "Aussage": "DeskRebel ElbowGuard – Kompressions-Ellbogenbandage",
      "Quellenverweis": "https://www.deskrebel.store/products/elbowguard-kompressions-ellbogenbandage",
@@ -449,12 +487,6 @@
     {
      "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
      "Quellenverweis": "https://purivelle.store/products/lotustap-massagehammer",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Quellenverweis": "https://www.deskrebel.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -610,12 +642,6 @@
     },
     {
      "Aussage": "DeskRebel PowerBand",
-     "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "DeskRebel PowerBand – Dein Klimmzug-Upgrade",
      "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
@@ -843,7 +869,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-04",
+     "value": "2026-10-05",
      "unit": ""
     }
    ],
