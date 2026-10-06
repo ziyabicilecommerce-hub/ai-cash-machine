@@ -1,7 +1,7 @@
 {
- "stand": "2026-10-05T22:10:14.323Z",
- "gesamt": 88,
- "ok": 83,
+ "stand": "2026-10-06T06:49:25.254Z",
+ "gesamt": 89,
+ "ok": 85,
  "probleme": [
   {
    "art": "absturz",
@@ -44,19 +44,6 @@
   },
   {
    "art": "absturz",
-   "name": "65 · Inventory-Guardian-Agent",
-   "text": "letzter Lauf fehlgeschlagen",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37366015006",
-   "diagnose": {
-    "art": "unbekannt",
-    "selbst": false,
-    "text": "Unbekannter Fehler",
-    "loesung": "Log ansehen - die letzte Fehlerzeile steht hier.",
-    "beleg": ""
-   }
-  },
-  {
-   "art": "absturz",
    "name": "95 · Anime-Serie",
    "text": "letzter Lauf fehlgeschlagen",
    "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37370448331",
@@ -67,17 +54,9 @@
     "loesung": "Log ansehen - die letzte Fehlerzeile steht hier.",
     "beleg": ""
    }
-  },
-  {
-   "art": "haengt",
-   "name": "Community-Agent",
-   "text": "seit 27 h kein Lauf",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37228466223"
   }
  ],
- "neugestartet": [
-  "Community-Agent (nachgeholt)"
- ],
+ "neugestartet": [],
  "workflows": [
   {
    "name": "01 · Gewinn-Radar",
@@ -91,11 +70,11 @@
   },
   {
    "name": "02 · KI-Kundenservice",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37354623854",
-   "letzterLauf": "2026-10-05T18:15:48Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37423230792",
+   "letzterLauf": "2026-10-06T06:20:58Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37354623854,
+   "runId": 37423230792,
    "laeufe24h": 4,
    "fehler24h": 0
   },
@@ -211,12 +190,12 @@
   },
   {
    "name": "15 · Warenkorb-Sequenz 3.0",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37341873961",
-   "letzterLauf": "2026-10-05T16:34:26Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37405512854",
+   "letzterLauf": "2026-10-06T02:43:23Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37341873961,
-   "laeufe24h": 3,
+   "runId": 37405512854,
+   "laeufe24h": 4,
    "fehler24h": 0
   },
   {
@@ -231,12 +210,12 @@
   },
   {
    "name": "18 · Multi-Plattform-Poster",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37227261519",
-   "letzterLauf": "2026-10-04T19:10:37Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37381663252",
+   "letzterLauf": "2026-10-05T22:18:56Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37227261519,
-   "laeufe24h": 0,
+   "runId": 37381663252,
+   "laeufe24h": 1,
    "fehler24h": 0
   },
   {
@@ -296,7 +275,7 @@
    "ergebnis": "success",
    "versuch": 1,
    "runId": 37239397700,
-   "laeufe24h": 1,
+   "laeufe24h": 0,
    "fehler24h": 0
   },
   {
@@ -326,7 +305,7 @@
    "ergebnis": "success",
    "versuch": 1,
    "runId": 37240859456,
-   "laeufe24h": 1,
+   "laeufe24h": 0,
    "fehler24h": 0
   },
   {
@@ -381,22 +360,22 @@
   },
   {
    "name": "40 · Kunden-Feedback-Sammler",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37229342408",
-   "letzterLauf": "2026-10-04T19:43:07Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37384653170",
+   "letzterLauf": "2026-10-05T22:47:09Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37229342408,
-   "laeufe24h": 0,
+   "runId": 37384653170,
+   "laeufe24h": 1,
    "fehler24h": 0
   },
   {
    "name": "41 · Post-Purchase-Sofort-Upsell",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37352888507",
-   "letzterLauf": "2026-10-05T18:01:58Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37394983086",
+   "letzterLauf": "2026-10-06T00:37:32Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37352888507,
-   "laeufe24h": 4,
+   "runId": 37394983086,
+   "laeufe24h": 3,
    "fehler24h": 0
   },
   {
@@ -411,12 +390,12 @@
   },
   {
    "name": "43 · Meta-Ads-Notbremse",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37379053754",
-   "letzterLauf": "2026-10-05T21:55:10Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37420626871",
+   "letzterLauf": "2026-10-06T05:51:25Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37379053754,
-   "laeufe24h": 4,
+   "runId": 37420626871,
+   "laeufe24h": 3,
    "fehler24h": 0
   },
   {
@@ -441,11 +420,11 @@
   },
   {
    "name": "46 · Großbestellung-Radar",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37351681181",
-   "letzterLauf": "2026-10-05T17:52:25Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37415794491",
+   "letzterLauf": "2026-10-06T04:52:52Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37351681181,
+   "runId": 37415794491,
    "laeufe24h": 4,
    "fehler24h": 0
   },
@@ -491,11 +470,11 @@
   },
   {
    "name": "60 · Chef-Agent",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37240599669",
-   "letzterLauf": "2026-10-04T22:35:33Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37397020650",
+   "letzterLauf": "2026-10-06T01:01:10Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37240599669,
+   "runId": 37397020650,
    "laeufe24h": 1,
    "fehler24h": 0
   },
@@ -511,12 +490,12 @@
   },
   {
    "name": "62 · Risk-Guard-Agent",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37340909775",
-   "letzterLauf": "2026-10-05T16:26:56Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37408790463",
+   "letzterLauf": "2026-10-06T03:24:00Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37340909775,
-   "laeufe24h": 3,
+   "runId": 37408790463,
+   "laeufe24h": 4,
    "fehler24h": 0
   },
   {
@@ -541,12 +520,12 @@
   },
   {
    "name": "65 · Inventory-Guardian-Agent",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37366015006",
-   "letzterLauf": "2026-10-05T19:50:48Z",
-   "ergebnis": "failure",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37399867316",
+   "letzterLauf": "2026-10-06T01:34:38Z",
+   "ergebnis": "success",
    "versuch": 1,
-   "runId": 37366015006,
-   "laeufe24h": 4,
+   "runId": 37399867316,
+   "laeufe24h": 3,
    "fehler24h": 1
   },
   {
@@ -571,32 +550,32 @@
   },
   {
    "name": "68 · Sonderwunsch-Flagger",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37326181582",
-   "letzterLauf": "2026-10-05T14:37:21Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37423127827",
+   "letzterLauf": "2026-10-06T06:19:52Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37326181582,
+   "runId": 37423127827,
    "laeufe24h": 3,
    "fehler24h": 0
   },
   {
    "name": "69 · DSGVO-Anfragen-Wächter",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37362979139",
-   "letzterLauf": "2026-10-05T19:22:49Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37399215493",
+   "letzterLauf": "2026-10-06T01:27:02Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37362979139,
+   "runId": 37399215493,
    "laeufe24h": 3,
    "fehler24h": 0
   },
   {
    "name": "70 · Produkt-Launch-Hype-Agent",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37380507953",
-   "letzterLauf": "2026-10-05T22:08:19Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37425448088",
+   "letzterLauf": "2026-10-06T06:44:26Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37380507953,
-   "laeufe24h": 4,
+   "runId": 37425448088,
+   "laeufe24h": 3,
    "fehler24h": 0
   },
   {
@@ -631,11 +610,11 @@
   },
   {
    "name": "74 · Refund-Concierge-Agent",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37361909453",
-   "letzterLauf": "2026-10-05T19:13:57Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37398291590",
+   "letzterLauf": "2026-10-06T01:16:05Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37361909453,
+   "runId": 37398291590,
    "laeufe24h": 3,
    "fehler24h": 0
   },
@@ -671,22 +650,22 @@
   },
   {
    "name": "80 · Agenten-Status-Sammler",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37320816505",
-   "letzterLauf": "2026-10-05T13:57:19Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37418685378",
+   "letzterLauf": "2026-10-06T05:28:13Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37320816505,
-   "laeufe24h": 2,
+   "runId": 37418685378,
+   "laeufe24h": 3,
    "fehler24h": 0
   },
   {
    "name": "81 · Kosten-Cockpit",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37328688233",
-   "letzterLauf": "2026-10-05T14:55:43Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37424162766",
+   "letzterLauf": "2026-10-06T06:30:56Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37328688233,
-   "laeufe24h": 2,
+   "runId": 37424162766,
+   "laeufe24h": 3,
    "fehler24h": 0
   },
   {
@@ -716,6 +695,16 @@
    "ergebnis": "success",
    "versuch": 1,
    "runId": 37318309711,
+   "laeufe24h": 1,
+   "fehler24h": 0
+  },
+  {
+   "name": "86 · Insider-Buy-Radar",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37401756466",
+   "letzterLauf": "2026-10-06T01:57:20Z",
+   "ergebnis": "success",
+   "versuch": 1,
+   "runId": 37401756466,
    "laeufe24h": 1,
    "fehler24h": 0
   },
@@ -841,22 +830,22 @@
   },
   {
    "name": "99 · Direkt-Poster",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37331708033",
-   "letzterLauf": "2026-10-05T15:18:09Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37380888091",
+   "letzterLauf": "2026-10-05T22:11:52Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37331708033,
-   "laeufe24h": 2,
+   "runId": 37380888091,
+   "laeufe24h": 3,
    "fehler24h": 0
   },
   {
    "name": "Community-Agent",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37228466223",
-   "letzterLauf": "2026-10-04T19:29:31Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37382931209",
+   "letzterLauf": "2026-10-05T22:30:39Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37228466223,
-   "laeufe24h": 0,
+   "runId": 37382931209,
+   "laeufe24h": 2,
    "fehler24h": 0
   },
   {
@@ -911,12 +900,12 @@
   },
   {
    "name": "pages build and deployment",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37362730530",
-   "letzterLauf": "2026-10-05T19:20:42Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37424185623",
+   "letzterLauf": "2026-10-06T06:31:10Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37362730530,
-   "laeufe24h": 26,
+   "runId": 37424185623,
+   "laeufe24h": 29,
    "fehler24h": 1
   },
   {
@@ -931,12 +920,12 @@
   },
   {
    "name": "System-Wächter",
-   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37331044178",
-   "letzterLauf": "2026-10-05T15:13:19Z",
+   "url": "https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/runs/37380669846",
+   "letzterLauf": "2026-10-05T22:09:50Z",
    "ergebnis": "success",
    "versuch": 1,
-   "runId": 37331044178,
-   "laeufe24h": 3,
+   "runId": 37380669846,
+   "laeufe24h": 2,
    "fehler24h": 0
   },
   {
