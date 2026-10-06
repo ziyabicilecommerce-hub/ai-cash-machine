@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-05T10:47:21.240Z",
+ "stand": "2026-10-06T10:42:03.270Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,7 +9,7 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 55,
+     "value": 56,
      "unit": ""
     },
     {
@@ -19,11 +19,39 @@
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 51,
+     "value": 52,
      "unit": ""
     }
    ],
    "rows": [
+    {
+     "Aussage": "DeskRebel PushPro – Liegestützgriffe in S-Form",
+     "Beleglink": "https://www.deskrebel.store/products/pushpro-liegestuetzgriffe",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "DeskRebel PowerBand - Dein Klimmzug-Upgrade",
+     "Beleglink": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
     {
      "Aussage": "DoorKit – deines Home-Gyms Tür",
      "Beleglink": "https://www.deskrebel.store/products/doorkit-tueranker-griffe-karabiner",
@@ -34,13 +62,6 @@
     {
      "Aussage": "DeskRebel PowerBand – Dein Klimmzug-Upgrade",
      "Beleglink": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Beleglink": "https://www.deskrebel.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -72,13 +93,6 @@
      "Von dir geprüft": "Nein",
      "Status": "Prüfung offen",
      "Hinweise": "Menschliche Prüfung ausstehend."
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Beleglink": "https://purivelle.store",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
     },
     {
      "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
@@ -195,13 +209,6 @@
     {
      "Aussage": "Purivelle BackEase – Rückenstütze mit atmungsaktivem Gurt",
      "Beleglink": "https://purivelle.store/products/cross-border-hot-selling-back-support-belt-to-relieve-back-pain-breathable-waistband-detachable-waist-pad-for-men-and-women",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "DeskRebel PowerBand - Dein Klimmzug-Upgrade",
-     "Beleglink": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -421,7 +428,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 55,
+     "value": 56,
      "unit": ""
     },
     {
@@ -437,6 +444,30 @@
    ],
    "rows": [
     {
+     "Aussage": "DeskRebel PushPro – Liegestützgriffe in S-Form",
+     "Quellenverweis": "https://www.deskrebel.store/products/pushpro-liegestuetzgriffe",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "DeskRebel PowerBand - Dein Klimmzug-Upgrade",
+     "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Quellenverweis": "https://www.deskrebel.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
      "Aussage": "DoorKit – deines Home-Gyms Tür",
      "Quellenverweis": "https://www.deskrebel.store/products/doorkit-tueranker-griffe-karabiner",
      "Prüfmarkierung ohne Quelle": "Nein",
@@ -445,12 +476,6 @@
     {
      "Aussage": "DeskRebel PowerBand – Dein Klimmzug-Upgrade",
      "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Quellenverweis": "https://www.deskrebel.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -475,12 +500,6 @@
     {
      "Aussage": "Top 5 von DeskRebel – Futtere dein Home-Gym!",
      "Quellenverweis": "https://www.deskrebel.store",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Quellenverweis": "https://purivelle.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -583,12 +602,6 @@
     {
      "Aussage": "Purivelle BackEase – Rückenstütze mit atmungsaktivem Gurt",
      "Quellenverweis": "https://purivelle.store/products/cross-border-hot-selling-back-support-belt-to-relieve-back-pain-breathable-waistband-detachable-waist-pad-for-men-and-women",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "DeskRebel PowerBand - Dein Klimmzug-Upgrade",
-     "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -869,7 +882,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-05",
+     "value": "2026-10-06",
      "unit": ""
     }
    ],
