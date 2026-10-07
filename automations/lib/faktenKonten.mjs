@@ -41,3 +41,15 @@ export function serienHook(kat, typ, teil) {
   const name = SERIE[String(kat || '').toLowerCase()] || 'FAKTEN';
   return typ === 'mythos' ? `${name} #${teil}: Mythos oder Wahrheit?` : `${name}-QUIZ #${teil}: Schaffst du's?`;
 }
+
+// TikTok-Taktik "Tages-Streak": "Tag 12 von 100" - Zuschauer verfolgen, ob die Serie hält.
+export const streakTag = (jetzt = Date.now(), start = '2026-10-07') => Math.max(1, Math.floor((jetzt - Date.parse(start)) / 86400000) + 1);
+
+// TikTok-Taktik "Konten verweisen aufeinander": jedes Video nennt ein anderes eigenes Konto mit dessen Thema.
+export function querverweis(konto, tiktok, nischen, tag) {
+  const andere = tiktok.filter((k) => norm(k) !== norm(konto));
+  if (!andere.length) return '';
+  const ziel = andere[tag % andere.length];
+  const thema = (nischen[norm(ziel)] || [])[0];
+  return thema ? `Mehr ${thema}-Fakten: ${ziel}` : `Mehr Fakten: ${ziel}`;
+}

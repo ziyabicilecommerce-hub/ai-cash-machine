@@ -5,7 +5,7 @@
 // Zuschauer am Ende holen Kommentare und Follower. Alles kostenlos, ohne API-Key.
 //   node automations/100-fakten-kanal.mjs   -> Videos nach out/videos, Manifest nach out/manifest.json
 // Verlauf (Nummer + schon benutzte Fakten) liegt in fakten-kanal/verlauf.json.
-import { kontoFuer, nischenAus, nischeFuer, STANDARD_NISCHEN, serienHook } from './lib/faktenKonten.mjs';
+import { kontoFuer, nischenAus, nischeFuer, STANDARD_NISCHEN, serienHook, streakTag, querverweis } from './lib/faktenKonten.mjs';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { videoBauen } from './lib/videoFabrik.mjs';
@@ -204,7 +204,7 @@ async function main() {
       copyFileSync(v.pfad, join(OUT, 'videos', `${basis}.mp4`));
       const vorschau = v.vorschau ? `${basis}.jpg` : '';
       if (vorschau) copyFileSync(v.vorschau, join(OUT, 'videos', vorschau));
-      manifest.push({ datei: `${basis}.mp4`, vorschau, sprache: 'de', kanal: 'fakten', titel: skript.titel, konto: KONTO, caption: `${skript.caption}\n\nFolge ${KONTO} für täglich neue Fakten!`, thema: kategorie, format: 'hoch', dauer: Math.round(v.dauer), szenen: v.szenen });
+      manifest.push({ datei: `${basis}.mp4`, vorschau, sprache: 'de', kanal: 'fakten', titel: skript.titel, konto: KONTO, caption: `${skript.caption}\n\n${i < TIKTOK_KONTEN.length ? `Tag ${streakTag(Date.now(), env('FAKTEN_START', '2026-10-07'))} von 100 🔥 Folge ${KONTO}! ${querverweis(KONTO, TIKTOK_KONTEN, NISCHEN, tag)}`.trim() : `Folge ${KONTO} für täglich neue Fakten!`}`, thema: kategorie, format: 'hoch', dauer: Math.round(v.dauer), szenen: v.szenen });
       verlauf.nr = nr;
       if (teil) verlauf.serien = { ...(verlauf.serien || {}), [KONTO]: teil };
       verlauf.fakten = [...verlauf.fakten, skript.fakt].slice(-500);
