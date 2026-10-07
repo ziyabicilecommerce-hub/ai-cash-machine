@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import { videoBauen } from './lib/videoFabrik.mjs';
 import { kiJson } from './lib/kiJson.mjs';
 import { umstritten, echo, doppelt } from './lib/faktenPruefung.mjs';
+import { bankNaechster } from './lib/faktenBank.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 
 const OUT = 'out';
@@ -89,6 +90,11 @@ async function quizSchreiben(kategorie, nr, bekannt) {
       `Antworte NUR mit JSON: {"titel":"...","hook":"...","frage":"...","optionen":["...","...","..."],"richtig":0,"erklaerung":["..."],"caption":"...",${BILD}}`,
     { maxTokens: 1200 }
   );
+  return quizAus(d, kategorie, nr);
+}
+
+// Szenen aus fertigen Quiz-Daten (von der KI oder aus der geprüften Faktenliste).
+function quizAus(d, kategorie, nr) {
   const optionen = (d.optionen || []).map((o) => kurz(o, 40)).slice(0, 3);
   const richtig = Number(d.richtig);
   const bilder = bilderAus(d, kategorie);
@@ -114,6 +120,10 @@ async function mythosSchreiben(kategorie, nr, bekannt) {
       `Antworte NUR mit JSON: {"titel":"...","hook":"...","aussage":"...","wahr":true,"erklaerung":["..."],"caption":"...",${BILD}}`,
     { maxTokens: 1200 }
   );
+  return mythosAus(d, kategorie, nr);
+}
+
+function mythosAus(d, kategorie, nr) {
   const bilder = bilderAus(d, kategorie);
   if (!d.aussage || typeof d.wahr !== 'boolean') throw new Error('Mythos unvollstaendig');
   const b = (i) => bilder[i % bilder.length];
@@ -143,6 +153,13 @@ async function main() {
       const liste = FORMATE.length ? FORMATE : ['fakt'];
       let skript;
       let format;
+      // Zuerst die geprüfte Faktenliste (keine erfundenen Fakten); die KI schreibt nur, wenn die Liste leer ist.
+      const eintrag = bankNaechster(verlauf.bank);
+      if (eintrag) {
+        skript = (eintrag.typ === 'quiz' ? quizAus : mythosAus)(eintrag, eintrag.kat, nr);
+        format = `${eintrag.typ}/Faktenliste ${eintrag.id}`;
+        verlauf.bank = [...(verlauf.bank || []), eintrag.id];
+      }
       for (let v = 0; v < 3 && !skript; v++) {
         // Die kostenlose KI drosselt schnelle Folgeanfragen: vor jedem neuen Versuch kurz warten.
         if (v > 0) await new Promise((r) => setTimeout(r, Number(process.env.FAKTEN_PAUSE_MS ?? 20000) * v));
