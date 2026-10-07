@@ -33,3 +33,11 @@ export function nischenAus(text = STANDARD_NISCHEN) {
   return m;
 }
 export const nischeFuer = (konto, nischen) => nischen[norm(konto)] || [];
+
+// TikTok-Taktik "Serie": jedes Konto zählt seine eigene Reihe hoch ("WELTALL-QUIZ #7") - Serien holen Follower,
+// weil Zuschauer den nächsten Teil nicht verpassen wollen.
+const SERIE = { weltall: 'WELTALL', geld: 'GELD', 'körper': 'KÖRPER', essen: 'ESSEN', natur: 'NATUR', tiere: 'TIER' };
+export function serienHook(kat, typ, teil) {
+  const name = SERIE[String(kat || '').toLowerCase()] || 'FAKTEN';
+  return typ === 'mythos' ? `${name} #${teil}: Mythos oder Wahrheit?` : `${name}-QUIZ #${teil}: Schaffst du's?`;
+}

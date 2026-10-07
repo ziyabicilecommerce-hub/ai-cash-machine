@@ -94,3 +94,12 @@ test('bankNaechster: gelerntes Format zuerst innerhalb der Nische', () => {
   assert.equal(e.typ, 'mythos');
   assert.equal(bankNaechster([], ['Weltall'], null).kat, 'Weltall');
 });
+
+import { serienHook } from '../../automations/lib/faktenKonten.mjs';
+
+test('serienHook: Serie pro Thema und Format, kurz genug für das Video', () => {
+  assert.equal(serienHook('Weltall', 'quiz', 7), "WELTALL-QUIZ #7: Schaffst du's?");
+  assert.equal(serienHook('Körper', 'mythos', 3), 'KÖRPER #3: Mythos oder Wahrheit?');
+  assert.equal(serienHook('Unbekannt', 'quiz', 1), "FAKTEN-QUIZ #1: Schaffst du's?");
+  assert.ok(serienHook('Weltall', 'mythos', 999).length <= 40);
+});
