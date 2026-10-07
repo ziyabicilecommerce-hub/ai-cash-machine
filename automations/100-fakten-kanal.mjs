@@ -105,14 +105,14 @@ function quizAus(d, kategorie, nr) {
   const bilder = bilderAus(d, kategorie);
   if (optionen.length !== 3 || !(richtig >= 0 && richtig <= 2) || !d.frage) throw new Error('Quiz unvollstaendig');
   const b = (i) => bilder[i % bilder.length];
-  const erkl = (Array.isArray(d.erklaerung) ? d.erklaerung : [d.erklaerung]).map((t) => kurz(t, 220)).filter(Boolean).slice(0, 2);
+  const erkl = (Array.isArray(d.erklaerung) ? d.erklaerung : [d.erklaerung]).map((t) => kurz(t, 220)).filter(Boolean).slice(0, 1);
   const szenen = [
-    { text: `${kurz(d.hook, 60).replace(/[^.!?]$/, '$&!')} Du hast drei Sekunden.`, bild: b(0) },
+    { text: kurz(d.hook, 60).replace(/[^.!?]$/, '$&!'), bild: b(0) },
     { text: `${kurz(d.frage, 200)} A: ${optionen[0]}. B: ${optionen[1]}. Oder C: ${optionen[2]}?`, bild: b(1), overlay: { typ: 'optionen', optionen } },
-    { text: 'Schreib deine Antwort in die Kommentare! Drei, zwei, eins...', bild: b(1), overlay: { typ: 'countdown', optionen } },
+    { text: 'Schreib A, B oder C in die Kommentare! Drei, zwei, eins...', bild: b(1), overlay: { typ: 'countdown', optionen } },
     { text: `Richtig ist ${'ABC'[richtig]}: ${optionen[richtig]}!`, bild: b(2), overlay: { typ: 'aufloesung', optionen, richtig } },
     ...erkl.map((t, i) => ({ text: t, bild: b(3 + i) })),
-    { text: 'Hattest du es richtig? Folge fuer das naechste Quiz!', bild: b(4) },
+    { text: 'Folge fuer das naechste Quiz!', bild: b(4) },
   ];
   return fertig(d, nr, szenen, `${d.frage} -> ${optionen[richtig]}`);
 }
@@ -136,10 +136,10 @@ function mythosAus(d, kategorie, nr) {
   const szenen = [
     { text: 'Mythos oder Wahrheit?', bild: b(0) },
     { text: kurz(d.aussage, 220), bild: b(1) },
-    { text: 'Was glaubst du? Schreib es in die Kommentare! Drei, zwei, eins...', bild: b(1), overlay: { typ: 'countdown', optionen: [] } },
+    { text: 'Mythos oder wahr? Schreib es in die Kommentare! Drei, zwei, eins...', bild: b(1), overlay: { typ: 'countdown', optionen: [] } },
     { text: d.wahr ? 'Es ist tatsaechlich wahr!' : 'Das ist ein Mythos!', bild: b(2), overlay: { typ: 'stempel', wahr: d.wahr } },
     ...erkl.map((t, i) => ({ text: t, bild: b(3 + i) })),
-    { text: 'Hast du es gewusst? Folge fuer mehr!', bild: b(4) },
+    { text: 'Folge fuer mehr!', bild: b(4) },
   ];
   return fertig(d, nr, szenen, `${d.aussage} (${d.wahr ? 'wahr' : 'Mythos'})`);
 }
