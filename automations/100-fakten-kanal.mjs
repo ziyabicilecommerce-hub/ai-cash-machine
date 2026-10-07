@@ -5,7 +5,7 @@
 // Zuschauer am Ende holen Kommentare und Follower. Alles kostenlos, ohne API-Key.
 //   node automations/100-fakten-kanal.mjs   -> Videos nach out/videos, Manifest nach out/manifest.json
 // Verlauf (Nummer + schon benutzte Fakten) liegt in fakten-kanal/verlauf.json.
-import { kontoFuer } from './lib/faktenKonten.mjs';
+import { kontoFuer, nischenAus, nischeFuer, STANDARD_NISCHEN } from './lib/faktenKonten.mjs';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { videoBauen } from './lib/videoFabrik.mjs';
@@ -24,6 +24,7 @@ const liste = (k, d) => env(k, d).split(',').map((x) => x.trim()).filter(Boolean
 const TIKTOK_KONTEN = liste('FAKTEN_KONTEN_TIKTOK', '@zyx_7851,@futureflowxx,@futureflowx3');
 const WEITERE_KONTEN = liste('FAKTEN_KONTEN_WEITERE', '@futureflowxx,@desk.rebel,@purivelle.785');
 let KONTO = KANAL;
+const NISCHEN = nischenAus(env('FAKTEN_NISCHEN', STANDARD_NISCHEN));
 // Immer dieselbe Moderatorin (1-6) - ein festes Gesicht macht den Kanal wiedererkennbar.
 const MODERATORIN_NR = Math.min(Math.max(parseInt(env('FAKTEN_MODERATORIN', '2'), 10) || 2, 1), 6);
 const KATEGORIEN = env('FAKTEN_KATEGORIEN', 'Psychologie,Menschlicher Koerper,Weltall,Tiere,Geschichte,Geld und Wirtschaft,Technik,Natur und Erde,Essen,Rekorde')
@@ -150,9 +151,9 @@ async function main() {
   const manifest = [];
   const tag = Math.floor(Date.now() / 86400000);
   for (let i = 0; i < ANZAHL; i++) {
-    const kategorie = KATEGORIEN[(tag * ANZAHL + i) % KATEGORIEN.length];
     const nr = verlauf.nr + 1;
     KONTO = kontoFuer(i, tag, TIKTOK_KONTEN, WEITERE_KONTEN, KANAL);
+    const kategorie = (i < TIKTOK_KONTEN.length && nischeFuer(KONTO, NISCHEN)[tag % Math.max(nischeFuer(KONTO, NISCHEN).length, 1)]) || KATEGORIEN[(tag * ANZAHL + i) % KATEGORIEN.length];
     const start = Date.now();
     try {
       // Bis zu 3 Versuche - bei einem unbrauchbaren Skript notfalls im naechsten Format.
@@ -160,7 +161,9 @@ async function main() {
       let skript;
       let format;
       // Zuerst die geprüfte Faktenliste (keine erfundenen Fakten); die KI schreibt nur, wenn die Liste leer ist.
-      const eintrag = bankNaechster(verlauf.bank);
+      // Jedes TikTok-Konto hat seine Nische (z. B. nur Weltall) - so lernt der Algorithmus, wem er es zeigen soll.
+      const nische = nischeFuer(KONTO, NISCHEN);
+      const eintrag = bankNaechster(verlauf.bank, i < TIKTOK_KONTEN.length ? nische : []);
       if (eintrag) {
         skript = (eintrag.typ === 'quiz' ? quizAus : mythosAus)(eintrag, eintrag.kat, nr);
         format = `${eintrag.typ}/Faktenliste ${eintrag.id}`;

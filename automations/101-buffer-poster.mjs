@@ -6,7 +6,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { videoPruefen } from './lib/werbeCheck.mjs';
 import { zuordnen } from './lib/faktenKonten.mjs';
-import { API, postText, postInput, POST_MUTATION } from './lib/bufferPoster.mjs';
+import { API, postText, postInput, POST_MUTATION, zeitplan, tiktokTitel } from './lib/bufferPoster.mjs';
 
 const env = (k, d = '') => (process.env[k] || d).trim();
 const TOKEN = env('BUFFER_ACCESS_TOKEN');
@@ -43,14 +43,16 @@ async function main() {
 
   // Jedes Video gehört zu einem Konto (Name steht im Video): es kommt auf genau diesen TikTok-Kanal.
   const plan = zuordnen(videos, kanaele);
+  // Erstes Video sofort, die weiteren im Abstand (BUFFER_ABSTAND_MIN, Standard 40 Minuten).
+  const zeiten = zeitplan(plan.length, new Date(), Number(env('BUFFER_ABSTAND_MIN', '40')) || 40);
   let ok = 0;
-  for (const { video, kanal } of plan) {
+  for (const [n, { video, kanal }] of plan.entries()) {
     try {
-      const d = await gql(POST_MUTATION, { input: postInput(kanal.id, postText(video), `${BASIS}/${video.datei}`) });
+      const d = await gql(POST_MUTATION, { input: postInput(kanal.id, postText(video), `${BASIS}/${video.datei}`, { dueAt: zeiten[n], titel: tiktokTitel(video) }) });
       const r = d.createPost;
       if (r.__typename !== 'PostActionSuccess') throw new Error(r.message || r.__typename);
       ok++;
-      console.log(`[101-buffer-poster] ✓ ${video.datei} -> ${kanal.name} (${r.post.status})`);
+      console.log(`[101-buffer-poster] ✓ ${video.datei} -> ${kanal.name} (${r.post.status}${zeiten[n] ? `, geplant ${zeiten[n]}` : ', sofort'})`);
     } catch (err) {
       console.log(`[101-buffer-poster] ✗ ${video.datei}: ${String(err.message).slice(0, 200)}`);
     }

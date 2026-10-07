@@ -20,3 +20,16 @@ export function zuordnen(videos, kanaele) {
   for (const v of rest) if (frei.length) plan.push({ video: v, kanal: frei.shift() });
   return plan;
 }
+
+// TikTok-Taktik "eine Nische pro Konto": der Algorithmus zeigt ein Konto eher weiter, wenn es immer dasselbe Thema hat.
+// Format: '@konto=Kat1|Kat2;@konto2=Kat3'. Konten ohne Eintrag bekommen alle Themen.
+export const STANDARD_NISCHEN = '@zyx_7851=Weltall|Geld;@futureflowxx=Körper|Essen;@futureflowx3=Natur|Tiere';
+export function nischenAus(text = STANDARD_NISCHEN) {
+  const m = {};
+  for (const teil of String(text).split(';')) {
+    const [konto, kats] = teil.split('=');
+    if (konto && kats) m[norm(konto)] = kats.split('|').map((k) => k.trim()).filter(Boolean);
+  }
+  return m;
+}
+export const nischeFuer = (konto, nischen) => nischen[norm(konto)] || [];
