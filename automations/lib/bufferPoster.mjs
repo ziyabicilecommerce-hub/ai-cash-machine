@@ -44,6 +44,41 @@ export const POST_MUTATION = `mutation($input: CreatePostInput!) {
   }
 }`;
 
+// TikTok-Taktik "feste Prime-Time": GitHub startet geplante Läufe oft Stunden zu spät - deshalb bestimmt nicht
+// die Laufzeit den Post, sondern feste Uhrzeiten (deutsche Zeit), zu denen viele auf TikTok sind.
+export const STANDARD_ZEITEN = '11:30,12:30,13:30,18:00,19:00,20:00';
+const berlinOffsetMin = (d) => {
+  const t = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Berlin', timeZoneName: 'shortOffset' }).formatToParts(d).find((p) => p.type === 'timeZoneName')?.value || 'GMT';
+  const m = t.match(/GMT([+-])(\d+)(?::(\d+))?/);
+  return m ? (m[1] === '-' ? -1 : 1) * (Number(m[2]) * 60 + Number(m[3] || 0)) : 0;
+};
+// "2026-10-08" + "19:00" deutsche Zeit -> Zeitpunkt (ms)
+export function berlinZeitpunkt(datum, hhmm) {
+  const [y, mo, d] = datum.split('-').map(Number);
+  const [h, mi] = hhmm.split(':').map(Number);
+  const geraten = Date.UTC(y, mo - 1, d, h, mi);
+  return geraten - berlinOffsetMin(new Date(geraten)) * 60000;
+}
+// Die nächsten freien Uhrzeiten: mindestens pufferMin in der Zukunft und abstandMin weg von schon geplanten Posts.
+export function naechsteZeiten(anzahl, { jetzt = Date.now(), zeiten = STANDARD_ZEITEN, belegt = [], pufferMin = 10, abstandMin = 30 } = {}) {
+  const liste = String(zeiten).split(',').map((z) => z.trim()).filter((z) => /^\d{1,2}:\d{2}$/.test(z)).sort((a, b) => a.padStart(5, '0').localeCompare(b.padStart(5, '0')));
+  const heute = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date(jetzt));
+  const besetzt = belegt.map((b) => Date.parse(b)).filter((b) => !Number.isNaN(b));
+  const raus = [];
+  for (let tag = 0; tag < 4 && raus.length < anzahl; tag++) {
+    const [y, mo, d] = heute.split('-').map(Number);
+    const datum = new Date(Date.UTC(y, mo - 1, d + tag)).toISOString().slice(0, 10);
+    for (const z of liste) {
+      const t = berlinZeitpunkt(datum, z);
+      if (t < jetzt + pufferMin * 60000) continue;
+      if ([...besetzt, ...raus.map((r) => Date.parse(r))].some((b) => Math.abs(b - t) < abstandMin * 60000)) continue;
+      raus.push(new Date(t).toISOString());
+      if (raus.length === anzahl) break;
+    }
+  }
+  return raus;
+}
+
 export function postInput(kanalId, text, videoUrl, { dueAt = null, titel = '' } = {}) {
   return {
     channelId: kanalId,

@@ -118,3 +118,15 @@ test('Streak und Querverweis: Tag zählt ab Start, Verweis nie aufs eigene Konto
   }
   assert.equal(querverweis('@zyx_7851', t, n, 0), 'Mehr Körper-Fakten: @futureflowxx');
 });
+
+import { naechsteZeiten, berlinZeitpunkt } from '../../automations/lib/bufferPoster.mjs';
+
+test('naechsteZeiten: feste deutsche Uhrzeiten, Sommer-/Winterzeit, belegte Zeiten werden ausgelassen', () => {
+  assert.equal(new Date(berlinZeitpunkt('2026-10-08', '19:00')).toISOString(), '2026-10-08T17:00:00.000Z');
+  assert.equal(new Date(berlinZeitpunkt('2026-12-08', '19:00')).toISOString(), '2026-12-08T18:00:00.000Z');
+  const jetzt = Date.parse('2026-10-08T09:50:00Z');
+  assert.deepEqual(naechsteZeiten(3, { jetzt }), ['2026-10-08T10:30:00.000Z', '2026-10-08T11:30:00.000Z', '2026-10-08T16:00:00.000Z']);
+  assert.deepEqual(naechsteZeiten(2, { jetzt, belegt: ['2026-10-08T10:35:00Z'] }), ['2026-10-08T11:30:00.000Z', '2026-10-08T16:00:00.000Z']);
+  // Spät in der Nacht: es geht am nächsten Tag weiter
+  assert.equal(naechsteZeiten(1, { jetzt: Date.parse('2026-10-08T22:00:00Z') })[0], '2026-10-09T09:30:00.000Z');
+});

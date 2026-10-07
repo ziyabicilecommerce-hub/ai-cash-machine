@@ -6,9 +6,10 @@ name: "100 · Fakten-Kanal"
 
 on:
   schedule:
-    - cron: '23 9 * * *'
-    # Abendlauf (19:23 deutsche Zeit, beste TikTok-Zeit): 3 weitere Videos, je eins pro TikTok-Konto
-    - cron: '23 17 * * *'
+    # Früh starten: GitHub verschiebt geplante Läufe oft um Stunden; gepostet wird zu festen Prime-Time-Zeiten (BUFFER_ZEITEN).
+    - cron: '17 4 * * *'
+    # Zweiter Lauf: 3 weitere Videos, je eins pro TikTok-Konto (Posts abends zur Prime-Time)
+    - cron: '17 12 * * *'
   workflow_dispatch:
     inputs:
       anzahl:
@@ -36,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 200
     env:
-      FAKTEN_ANZAHL: ${{ inputs.anzahl || (github.event.schedule == '23 17 * * *' && '3') || vars.FAKTEN_ANZAHL }}
+      FAKTEN_ANZAHL: ${{ inputs.anzahl || (github.event.schedule == '17 12 * * *' && '3') || vars.FAKTEN_ANZAHL }}
       FAKTEN_KANAL: ${{ vars.FAKTEN_KANAL }}
       FAKTEN_MODERATORIN: ${{ vars.FAKTEN_MODERATORIN }}
       FAKTEN_KATEGORIEN: ${{ vars.FAKTEN_KATEGORIEN }}
