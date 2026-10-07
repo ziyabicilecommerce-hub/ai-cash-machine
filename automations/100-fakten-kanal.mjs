@@ -25,6 +25,8 @@ const TIKTOK_KONTEN = liste('FAKTEN_KONTEN_TIKTOK', '@zyx_7851,@futureflowxx,@fu
 const WEITERE_KONTEN = liste('FAKTEN_KONTEN_WEITERE', '@futureflowxx,@desk.rebel,@purivelle.785');
 let KONTO = KANAL;
 const NISCHEN = nischenAus(env('FAKTEN_NISCHEN', STANDARD_NISCHEN));
+// Gelerntes Lieblingsformat der TikTok-Zuschauer (#102), z. B. 'quiz' - bevorzugt, aber nicht ausschließlich.
+const LIEBLING = (() => { try { return JSON.parse(readFileSync('fakten-kanal/lernen.json', 'utf8')).bevorzugt || null; } catch { return null; } })();
 // Immer dieselbe Moderatorin (1-6) - ein festes Gesicht macht den Kanal wiedererkennbar.
 const MODERATORIN_NR = Math.min(Math.max(parseInt(env('FAKTEN_MODERATORIN', '2'), 10) || 2, 1), 6);
 const KATEGORIEN = env('FAKTEN_KATEGORIEN', 'Psychologie,Menschlicher Koerper,Weltall,Tiere,Geschichte,Geld und Wirtschaft,Technik,Natur und Erde,Essen,Rekorde')
@@ -163,7 +165,8 @@ async function main() {
       // Zuerst die geprüfte Faktenliste (keine erfundenen Fakten); die KI schreibt nur, wenn die Liste leer ist.
       // Jedes TikTok-Konto hat seine Nische (z. B. nur Weltall) - so lernt der Algorithmus, wem er es zeigen soll.
       const nische = nischeFuer(KONTO, NISCHEN);
-      const eintrag = bankNaechster(verlauf.bank, i < TIKTOK_KONTEN.length ? nische : []);
+      // Jedes zweite TikTok-Video im gelernten Lieblingsformat - so wird weiter getestet, aber das Bessere öfter gezeigt.
+      const eintrag = bankNaechster(verlauf.bank, i < TIKTOK_KONTEN.length ? nische : [], LIEBLING && (tag + i) % 2 === 0 ? LIEBLING : null);
       if (eintrag) {
         skript = (eintrag.typ === 'quiz' ? quizAus : mythosAus)(eintrag, eintrag.kat, nr);
         format = `${eintrag.typ}/Faktenliste ${eintrag.id}`;
