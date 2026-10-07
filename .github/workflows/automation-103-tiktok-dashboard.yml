@@ -1,0 +1,58 @@
+name: "103 · TikTok-Viral-Zentrale"
+
+# Holt alle 3 Stunden die TikTok-Zahlen aus Buffer, lernt daraus (#102) und aktualisiert die
+# TikTok-Seite im Automations-Dashboard (automations-dashboard/tiktok/).
+
+on:
+  schedule:
+    - cron: '41 */3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: tiktok-dashboard
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
+      FAKTEN_NISCHEN: ${{ vars.FAKTEN_NISCHEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Aus TikTok-Zahlen lernen
+        continue-on-error: true
+        run: node automations/102-tiktok-lernen.mjs
+      - name: Dashboard-Daten holen
+        run: node automations/103-tiktok-dashboard.mjs
+      - name: Speichern und Seite neu bauen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          sicher=$(mktemp -d)
+          cp automations-dashboard/tiktok/daten.json "$sicher/daten.json"
+          [ -f fakten-kanal/lernen.json ] && cp fakten-kanal/lernen.json "$sicher/lernen.json"
+          for versuch in 1 2 3 4 5; do
+            git fetch -q origin "$GITHUB_REF_NAME"
+            git reset -q --hard "origin/$GITHUB_REF_NAME"
+            cp "$sicher/daten.json" automations-dashboard/tiktok/daten.json
+            [ -f "$sicher/lernen.json" ] && cp "$sicher/lernen.json" fakten-kanal/lernen.json
+            git add automations-dashboard/tiktok/daten.json fakten-kanal/lernen.json 2>/dev/null || git add automations-dashboard/tiktok/daten.json
+            git commit -qm "chore: TikTok-Zahlen aktualisiert [skip ci]" || exit 0
+            if git push -q origin "HEAD:$GITHUB_REF_NAME"; then
+              gh workflow run jarvis-pages.yml --ref "$GITHUB_REF_NAME" || true
+              exit 0
+            fi
+            sleep $((versuch * 5))
+          done
+          exit 1
