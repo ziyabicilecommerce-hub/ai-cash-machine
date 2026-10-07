@@ -27,6 +27,7 @@ env:
   GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
   GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
   POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
+  BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
 
 jobs:
   run:
@@ -92,5 +93,12 @@ jobs:
           gh release create "$TAG" out/videos/* --title "Fakten-Kanal $(date -u +%d.%m.%Y)" --notes "Automatisch erzeugt von Automation #100 (Fakten-Kanal)." --latest=false
           scripts/video-feed-veroeffentlichen.sh "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" fakten-kanal/verlauf.json
           if [ "${GITHUB_REF_NAME}" = "main" ]; then gh workflow run jarvis-pages.yml --ref main; fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+      # Automatisch auf alle TikTok-Kanaele in Buffer posten (je Kanal ein anderes Video). Braucht BUFFER_ACCESS_TOKEN.
+      - name: Auf TikTok posten (Buffer)
+        if: env.BUFFER_ACCESS_TOKEN != ''
+        continue-on-error: true
+        run: node automations/101-buffer-poster.mjs "https://github.com/${GITHUB_REPOSITORY}/releases/download/$(gh release list --limit 1 --json tagName --jq '.[0].tagName')"
         env:
           GH_TOKEN: ${{ github.token }}
