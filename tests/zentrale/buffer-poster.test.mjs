@@ -103,3 +103,18 @@ test('serienHook: Serie pro Thema und Format, kurz genug für das Video', () => 
   assert.equal(serienHook('Unbekannt', 'quiz', 1), "FAKTEN-QUIZ #1: Schaffst du's?");
   assert.ok(serienHook('Weltall', 'mythos', 999).length <= 40);
 });
+
+import { streakTag, querverweis } from '../../automations/lib/faktenKonten.mjs';
+
+test('Streak und Querverweis: Tag zählt ab Start, Verweis nie aufs eigene Konto', () => {
+  assert.equal(streakTag(Date.parse('2026-10-07T12:00:00Z')), 1);
+  assert.equal(streakTag(Date.parse('2026-10-18T09:00:00Z')), 12);
+  const t = ['@zyx_7851', '@futureflowxx', '@futureflowx3'];
+  const n = nischenAus();
+  for (const tag of [0, 1, 2, 3]) for (const k of t) {
+    const q = querverweis(k, t, n, tag);
+    assert.ok(!q.includes(k), q);
+    assert.match(q, /^Mehr \S+-Fakten: @/);
+  }
+  assert.equal(querverweis('@zyx_7851', t, n, 0), 'Mehr Körper-Fakten: @futureflowxx');
+});
