@@ -16,7 +16,7 @@ import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 const OUT = 'out';
 const VERLAUF = 'fakten-kanal/verlauf.json';
 const env = (k, d = '') => (process.env[k] || d).trim();
-const ANZAHL = Math.min(Math.max(parseInt(env('FAKTEN_ANZAHL', '4'), 10) || 4, 1), 12);
+const ANZAHL = Math.min(Math.max(parseInt(env('FAKTEN_ANZAHL', '6'), 10) || 6, 1), 12);
 // Kanalname erscheint oben als Wasserzeichen und auf der Endkarte (z. B. @faktenblitz).
 const KANAL = env('FAKTEN_KANAL', '@futureflowxx').slice(0, 30);
 // Immer dieselbe Moderatorin (1-6) - ein festes Gesicht macht den Kanal wiedererkennbar.
