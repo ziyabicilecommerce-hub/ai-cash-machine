@@ -87,6 +87,11 @@ jobs:
           ~/w2l-venv/bin/pip install -q "transformers==4.46.3" pillow
           ~/w2l-venv/bin/python -c "from transformers import pipeline; pipeline('depth-estimation', model='depth-anything/Depth-Anything-V2-Small-hf', device=-1)"
           echo "TIEFE_PY=$HOME/w2l-venv/bin/python" >> "$GITHUB_ENV"
+      # Lernen (#102): welches Format zieht auf TikTok besser (Sehdauer, Kommentare)? -> fakten-kanal/lernen.json
+      - name: Aus TikTok-Zahlen lernen
+        if: env.BUFFER_ACCESS_TOKEN != ''
+        continue-on-error: true
+        run: node automations/102-tiktok-lernen.mjs
       - name: Fakten-Videos bauen
         run: node automations/100-fakten-kanal.mjs
       - name: Als Release veroeffentlichen und Feed ergaenzen

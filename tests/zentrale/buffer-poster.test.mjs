@@ -73,3 +73,24 @@ test('Nischen: jedes TikTok-Konto bekommt Fakten aus seinem Thema, sonst irgende
   const alle = BANK.map((e) => e.id);
   assert.equal(bankNaechster(alle.slice(0, -1), ['GibtEsNicht']).id, alle.at(-1), 'Rückfall auf irgendeinen');
 });
+
+import { typAus, auswerten } from '../../automations/lib/tiktokLernen.mjs';
+
+test('TikTok-Lernen: erkennt Format, bevorzugt erst bei genug Daten und klarem Vorsprung', () => {
+  assert.equal(typAus('Honig verdirbt nie. Wahr oder Mythos? Schreib es...'), 'mythos');
+  assert.equal(typAus('Welcher Planet ist der heißeste?'), 'quiz');
+  const post = (text, sek, views = 100, kom = 0) => ({ text, metrics: [{ type: 'views', value: views }, { type: 'averageTimeWatched', value: sek }, { type: 'comments', value: kom }] });
+  const quiz = Array.from({ length: 4 }, () => post('Frage?', 9));
+  const mythos = Array.from({ length: 4 }, () => post('X. Wahr oder Mythos?', 5));
+  assert.equal(auswerten([...quiz, ...mythos]).bevorzugt, 'quiz');
+  assert.equal(auswerten([...quiz.slice(0, 2), ...mythos]).bevorzugt, null, 'zu wenig Daten');
+  assert.equal(auswerten([...quiz, ...Array.from({ length: 4 }, () => post('Wahr oder Mythos?', 8.8))]).bevorzugt, null, 'kein klarer Vorsprung');
+  assert.equal(auswerten([{ text: 'x', metrics: [] }]).quiz.n, 0, 'Posts ohne Zahlen zählen nicht');
+});
+
+test('bankNaechster: gelerntes Format zuerst innerhalb der Nische', () => {
+  const e = bankNaechster([], ['Weltall'], 'mythos');
+  assert.equal(e.kat, 'Weltall');
+  assert.equal(e.typ, 'mythos');
+  assert.equal(bankNaechster([], ['Weltall'], null).kat, 'Weltall');
+});

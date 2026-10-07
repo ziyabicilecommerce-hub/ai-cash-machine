@@ -42,6 +42,15 @@ const QUIZ = [
   q('Tiere', 'Das Känguru-Baby', 'Wie heißt ein junges Känguru?', ['Joey', 'Welpe', 'Fohlen'], 0, ['Ein junges Känguru heißt Joey.', 'Es wächst im Beutel der Mutter auf.'], '#Känguru #Tiere #Australien #Quiz #Wissen', ph('kangaroo in the australian outback at sunset')),
   q('Weltall', 'Die Planeten', 'Wie viele Planeten hat unser Sonnensystem?', ['Sieben', 'Acht', 'Neun'], 1, ['Unser Sonnensystem hat acht Planeten.', 'Pluto gilt seit 2006 als Zwergplanet.'], '#Planeten #Weltall #Sonnensystem #Quiz #Wissen', ph('solar system planets lined up in space')),
   q('Natur', 'Was wir ausatmen', 'Welches Gas atmen wir hauptsächlich zusätzlich aus, das wir nicht eingeatmet haben?', ['Helium', 'Kohlendioxid', 'Wasserstoff'], 1, ['Beim Ausatmen geben wir Kohlendioxid ab.', 'Pflanzen nehmen es auf und machen daraus Sauerstoff.'], '#Atmung #Körper #Natur #Quiz #Wissen', ph('mist breath cloud in cold air at dawn, no people')),
+  q('Weltall', 'Der Mond mit Atmosphäre', 'Wie heißt der größte Mond des Saturn?', ['Titan', 'Europa', 'Phobos'], 0, ['Titan ist der größte Saturnmond.', 'Er hat als einziger Mond im Sonnensystem eine dichte Atmosphäre.'], '#Saturn #Titan #Weltall #Quiz #Wissen', ph('saturn moon Titan with orange hazy atmosphere in space')),
+  q('Weltall', 'Nah an der Sonne', 'Welcher Planet ist der Sonne am nächsten?', ['Venus', 'Merkur', 'Mars'], 1, ['Der Merkur ist der Sonne am nächsten.', 'Trotzdem ist die Venus heißer, wegen ihrer dichten Atmosphäre.'], '#Merkur #Sonne #Weltall #Quiz #Wissen', ph('small grey planet Mercury close to the blazing sun')),
+  q('Weltall', 'Sternexplosion', 'Wie nennt man die gewaltige Explosion eines Sterns am Ende seines Lebens?', ['Supernova', 'Quasar', 'Komet'], 0, ['Diese Explosion heißt Supernova.', 'Sie kann kurzzeitig heller leuchten als eine ganze Galaxie.'], '#Supernova #Sterne #Weltall #Quiz #Wissen', ph('supernova explosion with colorful shockwave in deep space')),
+  q('Weltall', 'Der Ringplanet', 'Welcher Planet ist für seine riesigen, gut sichtbaren Ringe bekannt?', ['Jupiter', 'Saturn', 'Neptun'], 1, ['Saturn hat die auffälligsten Ringe im Sonnensystem.', 'Sie bestehen aus unzähligen Eis- und Gesteinsbrocken.'], '#Saturn #Ringe #Weltall #Quiz #Wissen', ph('planet Saturn with bright rings, cinematic space view')),
+  q('Weltall', 'Eine Runde um die Sonne', 'Wie lange braucht die Erde für eine Runde um die Sonne?', ['Etwa 30 Tage', 'Etwa 365 Tage', 'Etwa 1000 Tage'], 1, ['Die Erde braucht etwa 365 Tage für eine Runde.', 'Weil es genauer 365 und ein Viertel Tage sind, gibt es Schaltjahre.'], '#Erde #Sonne #Weltall #Quiz #Wissen', ph('earth orbiting the sun, wide cinematic space shot')),
+  q('Geld', 'Die Währung Japans', 'Wie heißt die Währung von Japan?', ['Yuan', 'Yen', 'Won'], 1, ['In Japan bezahlt man mit dem Yen.', 'Der Yuan ist die Währung Chinas, der Won die Südkoreas.'], '#Geld #Japan #Währung #Quiz #Wissen', ph('japanese yen coins and banknotes on dark table')),
+  q('Geld', 'Zinsen auf Zinsen', 'Wie nennt man Zinsen, die auf bereits gutgeschriebene Zinsen gezahlt werden?', ['Dispo', 'Zinseszins', 'Tilgung'], 1, ['Das nennt man Zinseszins.', 'Dadurch wächst ein Betrag mit der Zeit immer schneller.'], '#Geld #Zinsen #Wirtschaft #Quiz #Wissen', ph('growing stacks of coins with soft light, no people')),
+  q('Essen', 'Woraus Schokolade ist', 'Aus welcher Pflanze wird Schokolade hergestellt?', ['Kaffee', 'Kakao', 'Vanille'], 1, ['Schokolade wird aus den Bohnen des Kakaobaums gemacht.'], '#Schokolade #Kakao #Essen #Quiz #Wissen', ph('cocoa pods and cocoa beans on a wooden table')),
+  q('Essen', 'Popcorn', 'Aus welchem Getreide wird Popcorn gemacht?', ['Weizen', 'Reis', 'Mais'], 2, ['Popcorn ist eine besondere Mais-Sorte.', 'Beim Erhitzen platzt das Wasser im Korn die Schale auf.'], '#Popcorn #Mais #Essen #Quiz #Wissen', ph('popcorn kernels popping in slow motion, warm light')),
 ];
 
 const MYTHOS = [
@@ -80,12 +89,25 @@ const MYTHOS = [
   m('Körper', 'Blaues Blut', 'Unser Blut in den Venen ist blau.', false, ['Das ist ein Mythos.', 'Blut ist immer rot, mit Sauerstoff etwas heller, ohne etwas dunkler.', 'Venen wirken durch die Haut nur bläulich.'], '#Blut #Körper #Mythos #Wissen #Anatomie', ph('abstract blue and red flowing lines like veins, dark')),
   m('Weltall', 'Jupiter hat keine Oberfläche', 'Auf dem Jupiter kann man nicht stehen, weil er keine feste Oberfläche hat.', true, ['Jupiter ist ein Gasriese und besteht vor allem aus Wasserstoff und Helium.', 'Nach innen wird das Gas immer dichter.'], '#Jupiter #Weltall #Wahrheit #Planeten #Wissen', ph('planet Jupiter swirling clouds close up')),
   m('Natur', 'Bambus ist ein Gras', 'Bambus ist botanisch ein Gras.', true, ['Bambus gehört zur Familie der Süßgräser.', 'Manche Arten wachsen an einem Tag fast einen Meter.'], '#Bambus #Pflanzen #Wahrheit #Natur #Wissen', ph('tall bamboo forest with sunlight beams')),
+  m('Weltall', 'Warum Sterne funkeln', 'Das Funkeln der Sterne entsteht in unserer eigenen Atmosphäre.', true, ['Die Luft über uns ist ständig in Bewegung und lenkt das Sternenlicht ab.', 'Im Weltall würden die Sterne ruhig leuchten.'], '#Sterne #Weltall #Wahrheit #Himmel #Wissen', ph('starry night sky with twinkling stars over mountains')),
+  m('Weltall', 'Die dunkle Seite des Mondes', 'Die Rückseite des Mondes ist immer dunkel.', false, ['Das ist ein Mythos.', 'Die Rückseite bekommt genauso Sonnenlicht, wir sehen sie von der Erde nur nie.'], '#Mond #Weltall #Mythos #Wissen #Himmel', ph('far side of the moon lit by sunlight in space')),
+  m('Weltall', 'Kein Wind auf dem Mond', 'Auf dem Mond weht kein Wind.', true, ['Der Mond hat fast keine Atmosphäre.', 'Ohne Luft gibt es auch keinen Wind.'], '#Mond #Weltall #Wahrheit #Wissen #Raumfahrt', ph('still grey lunar surface with craters and black sky')),
+  m('Weltall', 'Die Monde des Mars', 'Der Mars hat zwei kleine Monde.', true, ['Die beiden Marsmonde heißen Phobos und Deimos.', 'Sie sind viel kleiner als unser Mond.'], '#Mars #Weltall #Wahrheit #Monde #Wissen', ph('mars with two tiny moons in space, cinematic')),
+  m('Weltall', 'Sternschnuppen', 'Sternschnuppen sind herabfallende Sterne.', false, ['Das ist ein Mythos.', 'Sternschnuppen sind winzige Staub- und Gesteinsteilchen, die in der Atmosphäre verglühen.'], '#Sternschnuppe #Weltall #Mythos #Himmel #Wissen', ph('shooting stars streaking across night sky over a lake')),
+  m('Geld', 'Euro als Bargeld', 'Der Euro ist erst seit 2002 als Bargeld im Umlauf.', true, ['Als Buchgeld gab es den Euro schon ab 1999.', 'Münzen und Scheine kamen am 1. Januar 2002.'], '#Geld #Euro #Wahrheit #Geschichte #Wissen', ph('new euro coins shining on dark surface, macro')),
+  m('Geld', 'Uralte Münzen', 'Münzgeld gibt es schon seit über 2500 Jahren.', true, ['Die ersten Münzen wurden vor mehr als 2500 Jahren in Kleinasien geprägt.'], '#Geld #Münzen #Wahrheit #Geschichte #Wissen', ph('ancient gold coins in an old museum display, no people')),
+  m('Essen', 'Erdnüsse sind keine Nüsse', 'Erdnüsse sind botanisch gar keine Nüsse.', true, ['Erdnüsse gehören zu den Hülsenfrüchten, wie Erbsen und Bohnen.', 'Sie reifen unter der Erde.'], '#Erdnuss #Essen #Wahrheit #Botanik #Wissen', ph('peanuts in their shells on a rustic table')),
+  m('Essen', 'Weiße Schokolade', 'Weiße Schokolade enthält Kakaobutter, aber keine Kakaomasse.', true, ['Weiße Schokolade besteht vor allem aus Kakaobutter, Zucker und Milch.', 'Die dunkle Kakaomasse fehlt, deshalb ist sie hell.'], '#Schokolade #Essen #Wahrheit #Süßes #Wissen', ph('white chocolate pieces on dark background, studio light')),
 ];
 
 // Abwechselnd Quiz und Mythos - so wiederholt sich das Format nicht.
-export const BANK = QUIZ.flatMap((e, i) => (MYTHOS[i] ? [e, MYTHOS[i]] : [e])).map((e, i) => ({ ...e, id: `b${i + 1}` }));
+export const BANK = Array.from({ length: Math.max(QUIZ.length, MYTHOS.length) }, (_, i) => [QUIZ[i], MYTHOS[i]]).flat().filter(Boolean).map((e, i) => ({ ...e, id: `b${i + 1}` }));
 
 // Naechster noch nicht benutzter Eintrag (verwendet = Liste benutzter ids), sonst null.
-// Mit kats (Nische eines Kontos) zuerst ein Eintrag aus diesen Kategorien, sonst irgendeiner.
-export const bankNaechster = (verwendet = [], kats = []) =>
-  (kats.length && BANK.find((e) => !verwendet.includes(e.id) && kats.includes(e.kat))) || BANK.find((e) => !verwendet.includes(e.id)) || null;
+// Mit kats (Nische eines Kontos) zuerst ein Eintrag aus diesen Kategorien, mit typ (gelerntes Lieblingsformat)
+// darin zuerst dieses Format; sonst irgendeiner.
+export function bankNaechster(verwendet = [], kats = [], typ = null) {
+  const frei = BANK.filter((e) => !verwendet.includes(e.id));
+  const inNische = kats.length ? frei.filter((e) => kats.includes(e.kat)) : frei;
+  return (typ && inNische.find((e) => e.typ === typ)) || inNische[0] || frei[0] || null;
+}
