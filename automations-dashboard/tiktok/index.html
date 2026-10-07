@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok Viral-Zentrale</title>
+<meta name="color-scheme" content="dark">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#020617; --panel:rgba(15,23,42,.72); --rand:rgba(111,224,255,.18); --text:#c9edff; --leise:#7f9bb3;
+          --cyan:#6fe0ff; --green:#3ef2a0; --amber:#ffc55c; --red:#ff6b81; --pink:#ff4d94; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; }
+  body::before { content:''; position:fixed; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255,77,148,.14), transparent 70%),
+               radial-gradient(ellipse 60% 40% at 90% 100%, rgba(111,224,255,.10), transparent 70%); }
+  main { position:relative; max-width:1100px; margin:0 auto; padding:28px 16px 64px; }
+  a { color:var(--cyan); }
+  .zurueck { font-size:13px; text-decoration:none; color:var(--leise); }
+  h1 { font-family:'Orbitron',sans-serif; font-weight:900; font-size:clamp(26px,6vw,44px); margin:14px 0 6px;
+       background:linear-gradient(90deg,var(--pink),var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .unter { color:var(--leise); font-size:13px; }
+  h2 { font-family:'Orbitron',sans-serif; font-size:16px; letter-spacing:.06em; margin:34px 0 12px; color:#fff; }
+  .raster { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }
+  .karte { background:var(--panel); border:1px solid var(--rand); border-radius:12px; padding:16px; }
+  .kpi .wert { font-family:'Orbitron',sans-serif; font-size:28px; color:#fff; }
+  .kpi .name { font-size:12px; color:var(--leise); margin-top:4px; }
+  .kpi .trend { font-size:12px; margin-top:6px; }
+  .hoch { color:var(--green); } .runter { color:var(--red); }
+  .konten { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
+  .konto h3 { font-size:17px; color:#fff; } .konto .nische { font-size:12px; color:var(--pink); margin:4px 0 12px; }
+  .zeilen { display:grid; grid-template-columns:1fr auto; gap:6px 10px; font-size:13px; }
+  .zeilen span:nth-child(even) { text-align:right; color:#fff; }
+  .bester { margin-top:12px; font-size:12px; color:var(--leise); border-top:1px solid var(--rand); padding-top:10px; }
+  .tipp { padding:12px 14px; border-radius:10px; margin-bottom:8px; font-size:14px; border-left:4px solid var(--cyan); background:var(--panel); }
+  .tipp.warn { border-color:var(--amber); } .tipp.gut { border-color:var(--green); }
+  .liste { width:100%; border-collapse:collapse; font-size:13px; }
+  .liste th, .liste td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--rand); vertical-align:top; }
+  .liste th { color:var(--leise); font-weight:400; font-size:12px; }
+  .liste td.zahl, .liste th.zahl { text-align:right; white-space:nowrap; }
+  .tabelle { overflow-x:auto; background:var(--panel); border:1px solid var(--rand); border-radius:12px; padding:6px 10px; }
+  .lernen { display:flex; gap:12px; flex-wrap:wrap; }
+  .lernen .karte { flex:1 1 220px; }
+  .knoepfe { display:flex; gap:10px; flex-wrap:wrap; }
+  .knopf { display:inline-block; padding:10px 14px; border-radius:10px; border:1px solid var(--cyan); text-decoration:none; font-size:13px; }
+  .knopf.haupt { background:var(--pink); border-color:var(--pink); color:#fff; font-weight:700; }
+  .leer { color:var(--leise); font-size:13px; padding:10px 0; }
+  @media (max-width:600px) { .liste .weg { display:none; } }
+</style>
+</head>
+<body>
+<main>
+  <a class="zurueck" href="../">← Automations Control Center</a>
+  <h1>TikTok Viral-Zentrale</h1>
+  <p class="unter" id="stand">Lade Zahlen …</p>
+
+  <h2>Überblick</h2>
+  <div class="raster" id="kpis"></div>
+
+  <h2>Was jetzt zu tun ist</h2>
+  <div id="tipps"></div>
+
+  <h2>Konten</h2>
+  <div class="konten" id="konten"></div>
+
+  <h2>Was das System gelernt hat</h2>
+  <div class="lernen" id="lernen"></div>
+
+  <h2>Nächste Posts</h2>
+  <div class="tabelle"><table class="liste" id="geplant"></table></div>
+
+  <h2>Letzte Posts</h2>
+  <div class="tabelle"><table class="liste" id="letzte"></table></div>
+
+  <h2>Aktionen</h2>
+  <div class="knoepfe">
+    <a class="knopf haupt" href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-100-fakten-kanal.yml" target="_blank" rel="noopener">Neue Videos bauen und posten</a>
+    <a class="knopf" href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/actions/workflows/automation-103-tiktok-dashboard.yml" target="_blank" rel="noopener">Zahlen jetzt aktualisieren</a>
+    <a class="knopf" href="https://publish.buffer.com" target="_blank" rel="noopener">Buffer öffnen</a>
+  </div>
+  <p class="unter" style="margin-top:10px">Auf GitHub jeweils „Run workflow“ drücken. Zahlen aktualisieren sich sonst alle 3 Stunden von allein.</p>
+</main>
+<script src="tiktok.js"></script>
+</body>
+</html>
