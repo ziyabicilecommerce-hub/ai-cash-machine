@@ -86,4 +86,6 @@ const MYTHOS = [
 export const BANK = QUIZ.flatMap((e, i) => (MYTHOS[i] ? [e, MYTHOS[i]] : [e])).map((e, i) => ({ ...e, id: `b${i + 1}` }));
 
 // Naechster noch nicht benutzter Eintrag (verwendet = Liste benutzter ids), sonst null.
-export const bankNaechster = (verwendet = []) => BANK.find((e) => !verwendet.includes(e.id)) || null;
+// Mit kats (Nische eines Kontos) zuerst ein Eintrag aus diesen Kategorien, sonst irgendeiner.
+export const bankNaechster = (verwendet = [], kats = []) =>
+  (kats.length && BANK.find((e) => !verwendet.includes(e.id) && kats.includes(e.kat))) || BANK.find((e) => !verwendet.includes(e.id)) || null;
