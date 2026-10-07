@@ -5,7 +5,8 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { videoPruefen } from './lib/werbeCheck.mjs';
-import { API, verteilen, postText, postInput, POST_MUTATION } from './lib/bufferPoster.mjs';
+import { zuordnen } from './lib/faktenKonten.mjs';
+import { API, postText, postInput, POST_MUTATION } from './lib/bufferPoster.mjs';
 
 const env = (k, d = '') => (process.env[k] || d).trim();
 const TOKEN = env('BUFFER_ACCESS_TOKEN');
@@ -37,25 +38,25 @@ async function main() {
   const orgId = env('BUFFER_ORGANISATION') || konto.account.organizations[0]?.id;
   if (!orgId) throw new Error('Keine Buffer-Organisation gefunden');
   const { channels } = await gql('query($i: ChannelsInput!) { channels(input: $i) { id name service isDisconnected isLocked } }', { i: { organizationId: orgId } });
-  const kanaele = channels.filter((c) => c.service === 'tiktok' && !c.isDisconnected && !c.isLocked).map((c) => c.id);
+  const kanaele = channels.filter((c) => c.service === 'tiktok' && !c.isDisconnected && !c.isLocked);
   if (!kanaele.length) throw new Error('Kein verbundener TikTok-Kanal in Buffer');
 
-  // Jeden Tag mit anderem Versatz, damit nicht immer dasselbe Konto das erste Video bekommt.
-  const versatz = Math.floor(Date.now() / 86400000) % kanaele.length;
+  // Jedes Video gehört zu einem Konto (Name steht im Video): es kommt auf genau diesen TikTok-Kanal.
+  const plan = zuordnen(videos, kanaele);
   let ok = 0;
-  for (const { video, kanal } of verteilen(videos, kanaele, versatz)) {
+  for (const { video, kanal } of plan) {
     try {
-      const d = await gql(POST_MUTATION, { input: postInput(kanal, postText(video), `${BASIS}/${video.datei}`) });
+      const d = await gql(POST_MUTATION, { input: postInput(kanal.id, postText(video), `${BASIS}/${video.datei}`) });
       const r = d.createPost;
       if (r.__typename !== 'PostActionSuccess') throw new Error(r.message || r.__typename);
       ok++;
-      console.log(`[101-buffer-poster] ✓ ${video.datei} -> Kanal ${kanal} (${r.post.status})`);
+      console.log(`[101-buffer-poster] ✓ ${video.datei} -> ${kanal.name} (${r.post.status})`);
     } catch (err) {
       console.log(`[101-buffer-poster] ✗ ${video.datei}: ${String(err.message).slice(0, 200)}`);
     }
     await new Promise((r) => setTimeout(r, 3000));
   }
-  console.log(`[101-buffer-poster] ${ok}/${Math.min(videos.length, kanaele.length)} TikTok-Posts abgeschickt`);
+  console.log(`[101-buffer-poster] ${ok}/${plan.length} TikTok-Posts abgeschickt`);
   if (!ok) process.exit(1);
 }
 
