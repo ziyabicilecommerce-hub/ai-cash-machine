@@ -5,6 +5,7 @@
 // Zuschauer am Ende holen Kommentare und Follower. Alles kostenlos, ohne API-Key.
 //   node automations/100-fakten-kanal.mjs   -> Videos nach out/videos, Manifest nach out/manifest.json
 // Verlauf (Nummer + schon benutzte Fakten) liegt in fakten-kanal/verlauf.json.
+import { kontoFuer } from './lib/faktenKonten.mjs';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { videoBauen } from './lib/videoFabrik.mjs';
@@ -19,6 +20,10 @@ const env = (k, d = '') => (process.env[k] || d).trim();
 const ANZAHL = Math.min(Math.max(parseInt(env('FAKTEN_ANZAHL', '6'), 10) || 6, 1), 12);
 // Kanalname erscheint oben als Wasserzeichen und auf der Endkarte (z. B. @faktenblitz).
 const KANAL = env('FAKTEN_KANAL', '@futureflowxx').slice(0, 30);
+const liste = (k, d) => env(k, d).split(',').map((x) => x.trim()).filter(Boolean);
+const TIKTOK_KONTEN = liste('FAKTEN_KONTEN_TIKTOK', '@zyx_7851,@futureflowxx,@futureflowx3');
+const WEITERE_KONTEN = liste('FAKTEN_KONTEN_WEITERE', '@futureflowxx,@desk.rebel,@purivelle.785');
+let KONTO = KANAL;
 // Immer dieselbe Moderatorin (1-6) - ein festes Gesicht macht den Kanal wiedererkennbar.
 const MODERATORIN_NR = Math.min(Math.max(parseInt(env('FAKTEN_MODERATORIN', '2'), 10) || 2, 1), 6);
 const KATEGORIEN = env('FAKTEN_KATEGORIEN', 'Psychologie,Menschlicher Koerper,Weltall,Tiere,Geschichte,Geld und Wirtschaft,Technik,Natur und Erde,Essen,Rekorde')
@@ -66,7 +71,7 @@ async function skriptSchreiben(kategorie, nr, bekannt) {
     hook: kurz(d.hook || d.titel, 40),
     caption: kurz(d.caption, 1500),
     hintergrund: { prompt: '', seed },
-    shop: KANAL,
+    shop: KONTO,
     cta: 'FOLGEN FÜR MEHR',
     szenen,
   };
@@ -75,7 +80,7 @@ async function skriptSchreiben(kategorie, nr, bekannt) {
 function fertig(d, nr, szenen, fakt) {
   szenen[0].rang = nr;
   const seed = [...String(fakt || nr)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 13);
-  return { titel: `#${nr}: ${kurz(d.titel || fakt, 60)}`, fakt: kurz(fakt, 200), hook: kurz(d.hook || d.titel, 40), caption: kurz(d.caption, 1500), hintergrund: { prompt: '', seed }, shop: KANAL, cta: 'FOLGEN FÜR MEHR', szenen };
+  return { titel: `#${nr}: ${kurz(d.titel || fakt, 60)}`, fakt: kurz(fakt, 200), hook: kurz(d.hook || d.titel, 40), caption: kurz(d.caption, 1500), hintergrund: { prompt: '', seed }, shop: KONTO, cta: 'FOLGEN FÜR MEHR', szenen };
 }
 const bilderAus = (d, kategorie) => {
   const b = (Array.isArray(d.bilder) ? d.bilder : []).map((x) => kurz(x, 200)).filter(Boolean);
@@ -147,6 +152,7 @@ async function main() {
   for (let i = 0; i < ANZAHL; i++) {
     const kategorie = KATEGORIEN[(tag * ANZAHL + i) % KATEGORIEN.length];
     const nr = verlauf.nr + 1;
+    KONTO = kontoFuer(i, tag, TIKTOK_KONTEN, WEITERE_KONTEN, KANAL);
     const start = Date.now();
     try {
       // Bis zu 3 Versuche - bei einem unbrauchbaren Skript notfalls im naechsten Format.
@@ -181,7 +187,7 @@ async function main() {
       copyFileSync(v.pfad, join(OUT, 'videos', `${basis}.mp4`));
       const vorschau = v.vorschau ? `${basis}.jpg` : '';
       if (vorschau) copyFileSync(v.vorschau, join(OUT, 'videos', vorschau));
-      manifest.push({ datei: `${basis}.mp4`, vorschau, sprache: 'de', kanal: 'fakten', titel: skript.titel, caption: `${skript.caption}\n\nFolge ${KANAL} für täglich neue Fakten!`, thema: kategorie, format: 'hoch', dauer: Math.round(v.dauer), szenen: v.szenen });
+      manifest.push({ datei: `${basis}.mp4`, vorschau, sprache: 'de', kanal: 'fakten', titel: skript.titel, konto: KONTO, caption: `${skript.caption}\n\nFolge ${KONTO} für täglich neue Fakten!`, thema: kategorie, format: 'hoch', dauer: Math.round(v.dauer), szenen: v.szenen });
       verlauf.nr = nr;
       verlauf.fakten = [...verlauf.fakten, skript.fakt].slice(-500);
       console.log(`[100-fakten-kanal] ✓ ${basis}.mp4 (${format}, ${kategorie}, ${Math.round(v.dauer)} s, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
