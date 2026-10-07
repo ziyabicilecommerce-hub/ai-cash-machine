@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-06T10:42:03.270Z",
+ "stand": "2026-10-07T10:31:11.040Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,7 +9,7 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 56,
+     "value": 60,
      "unit": ""
     },
     {
@@ -19,11 +19,39 @@
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 52,
+     "value": 56,
      "unit": ""
     }
    ],
    "rows": [
+    {
+     "Aussage": "DeskRebel O-Loop – Latex-Widerstandsring für Arme & Rücken",
+     "Beleglink": "https://www.deskrebel.store/products/o-loop-latex-widerstandsring",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Purivelle TapRelax – Silikon-Klopfpaddel zur Selbstmassage",
+     "Beleglink": "https://purivelle.store/products/taprelax-klopfpaddel",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel - Dein Home-Workout-Solution!",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle - Fühle dich jetzt besser!",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
     {
      "Aussage": "DeskRebel PushPro – Liegestützgriffe in S-Form",
      "Beleglink": "https://www.deskrebel.store/products/pushpro-liegestuetzgriffe",
@@ -428,7 +456,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 56,
+     "value": 60,
      "unit": ""
     },
     {
@@ -443,6 +471,30 @@
     }
    ],
    "rows": [
+    {
+     "Aussage": "DeskRebel O-Loop – Latex-Widerstandsring für Arme & Rücken",
+     "Quellenverweis": "https://www.deskrebel.store/products/o-loop-latex-widerstandsring",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Purivelle TapRelax – Silikon-Klopfpaddel zur Selbstmassage",
+     "Quellenverweis": "https://purivelle.store/products/taprelax-klopfpaddel",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel - Dein Home-Workout-Solution!",
+     "Quellenverweis": "https://www.deskrebel.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle - Fühle dich jetzt besser!",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
     {
      "Aussage": "DeskRebel PushPro – Liegestützgriffe in S-Form",
      "Quellenverweis": "https://www.deskrebel.store/products/pushpro-liegestuetzgriffe",
@@ -882,7 +934,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-06",
+     "value": "2026-10-07",
      "unit": ""
     }
    ],
