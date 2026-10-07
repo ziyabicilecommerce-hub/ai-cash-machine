@@ -5,7 +5,7 @@
 // Zuschauer am Ende holen Kommentare und Follower. Alles kostenlos, ohne API-Key.
 //   node automations/100-fakten-kanal.mjs   -> Videos nach out/videos, Manifest nach out/manifest.json
 // Verlauf (Nummer + schon benutzte Fakten) liegt in fakten-kanal/verlauf.json.
-import { kontoFuer, nischenAus, nischeFuer, STANDARD_NISCHEN } from './lib/faktenKonten.mjs';
+import { kontoFuer, nischenAus, nischeFuer, STANDARD_NISCHEN, serienHook } from './lib/faktenKonten.mjs';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { videoBauen } from './lib/videoFabrik.mjs';
@@ -185,6 +185,17 @@ async function main() {
         } catch (err) { console.log(`[100-fakten-kanal] ${format}-Skript verworfen (${String(err.message).slice(0, 80)}) - neuer Versuch`); }
       }
       if (!skript) throw new Error('3 Skripte unbrauchbar');
+      // Endlos-Schleife: das letzte Bild ist das erste - das Video geht nahtlos von vorn los (mehr Sehdauer).
+      const letzte = skript.szenen.at(-1);
+      if (letzte && skript.szenen[0]?.bild) letzte.bild = skript.szenen[0].bild;
+      // Serie pro TikTok-Konto: "WELTALL-QUIZ #7" oben, am Ende "Folge für Teil 8!".
+      let teil = 0;
+      if (i < TIKTOK_KONTEN.length) {
+        teil = ((verlauf.serien || {})[KONTO] || 0) + 1;
+        skript.hook = serienHook(eintrag?.kat || nische[0] || kategorie, /^mythos/.test(format) ? 'mythos' : 'quiz', teil);
+        skript.szenen[0].rang = teil;
+        if (letzte && /^Folge/.test(letzte.text)) letzte.text = `Folge fuer Teil ${teil + 1}!`;
+      }
       const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting' });
       if (moderatorinAn() && v.stimme) {
         try { await moderatorinEinfuegen(v.pfad, v.stimme, MODERATORIN_NR); } catch (err) { console.log(`[100-fakten-kanal] Moderatorin fehlgeschlagen: ${String(err.message).slice(0, 150)}`); }
@@ -195,6 +206,7 @@ async function main() {
       if (vorschau) copyFileSync(v.vorschau, join(OUT, 'videos', vorschau));
       manifest.push({ datei: `${basis}.mp4`, vorschau, sprache: 'de', kanal: 'fakten', titel: skript.titel, konto: KONTO, caption: `${skript.caption}\n\nFolge ${KONTO} für täglich neue Fakten!`, thema: kategorie, format: 'hoch', dauer: Math.round(v.dauer), szenen: v.szenen });
       verlauf.nr = nr;
+      if (teil) verlauf.serien = { ...(verlauf.serien || {}), [KONTO]: teil };
       verlauf.fakten = [...verlauf.fakten, skript.fakt].slice(-500);
       console.log(`[100-fakten-kanal] ✓ ${basis}.mp4 (${format}, ${kategorie}, ${Math.round(v.dauer)} s, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
     } catch (err) {
