@@ -6,7 +6,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { videoPruefen } from './lib/werbeCheck.mjs';
 import { zuordnen } from './lib/faktenKonten.mjs';
-import { API, postText, postInput, POST_MUTATION, zeitplan, tiktokTitel } from './lib/bufferPoster.mjs';
+import { API, postText, postInput, POST_MUTATION, zeitplan, tiktokTitel, naechsteZeiten, STANDARD_ZEITEN } from './lib/bufferPoster.mjs';
 
 const env = (k, d = '') => (process.env[k] || d).trim();
 const TOKEN = env('BUFFER_ACCESS_TOKEN');
@@ -43,8 +43,15 @@ async function main() {
 
   // Jedes Video gehört zu einem Konto (Name steht im Video): es kommt auf genau diesen TikTok-Kanal.
   const plan = zuordnen(videos, kanaele);
-  // Erstes Video sofort, die weiteren im Abstand (BUFFER_ABSTAND_MIN, Standard 40 Minuten).
-  const zeiten = zeitplan(plan.length, new Date(), Number(env('BUFFER_ABSTAND_MIN', '40')) || 40);
+  // Feste Prime-Time-Uhrzeiten (BUFFER_ZEITEN, deutsche Zeit) statt "sofort" - GitHub startet Läufe oft Stunden zu spät.
+  // Schon geplante Posts werden ausgelassen, damit sich nichts überschneidet.
+  let belegt = [];
+  try {
+    const d = await gql('query($i: PostsInput!) { posts(input: $i, first: 50) { edges { node { dueAt } } } }', { i: { organizationId: orgId, filter: { channelIds: kanaele.map((k) => k.id), status: ['scheduled'] } } });
+    belegt = (d.posts.edges || []).map((e) => e.node.dueAt).filter(Boolean);
+  } catch (err) { console.log(`[101-buffer-poster] geplante Posts nicht lesbar (${String(err.message).slice(0, 100)})`); }
+  let zeiten = naechsteZeiten(plan.length, { zeiten: env('BUFFER_ZEITEN', STANDARD_ZEITEN), belegt });
+  if (zeiten.length < plan.length) zeiten = zeitplan(plan.length, new Date(), Number(env('BUFFER_ABSTAND_MIN', '40')) || 40);
   let ok = 0;
   for (const [n, { video, kanal }] of plan.entries()) {
     try {

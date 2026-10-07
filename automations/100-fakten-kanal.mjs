@@ -66,7 +66,6 @@ async function skriptSchreiben(kategorie, nr, bekannt) {
     .filter((s) => s.text.length > 3)
     .slice(0, 7);
   if (szenen.length < 4) throw new Error('Skript zu kurz');
-  szenen[0].rang = nr; // Serien-Nummer "#N" oben links
   const seed = [...String(d.fakt || d.titel || nr)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 13);
   return {
     titel: `Fakt #${nr}: ${kurz(d.titel || d.fakt, 60)}`,
@@ -81,7 +80,6 @@ async function skriptSchreiben(kategorie, nr, bekannt) {
 }
 
 function fertig(d, nr, szenen, fakt) {
-  szenen[0].rang = nr;
   const seed = [...String(fakt || nr)].reduce((h, c) => (h * 31 + c.codePointAt(0)) % 1_000_000_007, 13);
   return { titel: `#${nr}: ${kurz(d.titel || fakt, 60)}`, fakt: kurz(fakt, 200), hook: kurz(d.hook || d.titel, 40), caption: kurz(d.caption, 1500), hintergrund: { prompt: '', seed }, shop: KONTO, cta: 'FOLGEN FÜR MEHR', szenen };
 }
@@ -115,7 +113,7 @@ function quizAus(d, kategorie, nr) {
     { text: 'Schreib A, B oder C in die Kommentare! Drei, zwei, eins...', bild: b(1), overlay: { typ: 'countdown', optionen } },
     { text: `Richtig ist ${'ABC'[richtig]}: ${optionen[richtig]}!`, bild: b(2), overlay: { typ: 'aufloesung', optionen, richtig } },
     ...erkl.map((t, i) => ({ text: t, bild: b(3 + i) })),
-    { text: 'Folge fuer das naechste Quiz!', bild: b(4) },
+    { text: 'Folge für das nächste Quiz!', bild: b(4) },
   ];
   return fertig(d, nr, szenen, `${d.frage} -> ${optionen[richtig]}`);
 }
@@ -140,9 +138,9 @@ function mythosAus(d, kategorie, nr) {
     // Sofort-Start: die Behauptung kommt in der ersten Sekunde ("Mythos oder Wahrheit?" steht oben als Text).
     { text: kurz(d.aussage, 220), bild: b(0) },
     { text: 'Mythos oder wahr? Schreib es in die Kommentare! Drei, zwei, eins...', bild: b(1), overlay: { typ: 'countdown', optionen: [] } },
-    { text: d.wahr ? 'Es ist tatsaechlich wahr!' : 'Das ist ein Mythos!', bild: b(2), overlay: { typ: 'stempel', wahr: d.wahr } },
+    { text: d.wahr ? 'Es ist tatsächlich wahr!' : 'Das ist ein Mythos!', bild: b(2), overlay: { typ: 'stempel', wahr: d.wahr } },
     ...erkl.map((t, i) => ({ text: t, bild: b(3 + i) })),
-    { text: 'Folge fuer mehr!', bild: b(4) },
+    { text: 'Folge für mehr!', bild: b(4) },
   ];
   return fertig(d, nr, szenen, `${d.aussage} (${d.wahr ? 'wahr' : 'Mythos'})`);
 }
@@ -188,13 +186,12 @@ async function main() {
       // Endlos-Schleife: das letzte Bild ist das erste - das Video geht nahtlos von vorn los (mehr Sehdauer).
       const letzte = skript.szenen.at(-1);
       if (letzte && skript.szenen[0]?.bild) letzte.bild = skript.szenen[0].bild;
-      // Serie pro TikTok-Konto: "WELTALL-QUIZ #7" oben, am Ende "Folge für Teil 8!".
+      // Serie pro TikTok-Konto: "WELTALL-QUIZ #7" oben (ohne extra #-Abzeichen, das den Text verdeckte), am Ende "Folge für Teil 8!".
       let teil = 0;
       if (i < TIKTOK_KONTEN.length) {
         teil = ((verlauf.serien || {})[KONTO] || 0) + 1;
         skript.hook = serienHook(eintrag?.kat || nische[0] || kategorie, /^mythos/.test(format) ? 'mythos' : 'quiz', teil);
-        skript.szenen[0].rang = teil;
-        if (letzte && /^Folge/.test(letzte.text)) letzte.text = `Folge fuer Teil ${teil + 1}!`;
+        if (letzte && /^Folge/.test(letzte.text)) letzte.text = `Folge für Teil ${teil + 1}!`;
       }
       const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting' });
       if (moderatorinAn() && v.stimme) {
