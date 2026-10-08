@@ -124,12 +124,15 @@ async function pexelsSuchen(q, schluessel, benutzt, ohneMenschen) {
 }
 
 // Sucht der Reihe nach: Pexels (nur mit Schlüssel), NASA (nur Weltall), Wikimedia Commons (3, dann 2 Kernwörter).
-export async function stockHolen(prompt, ziel, { schluessel = process.env.PEXELS_API_KEY, benutzt = new Set(), weltall = false, ohneMenschen = false, quellen = ['pexels', 'nasa', 'commons'] } = {}) {
+export async function stockHolen(prompt, ziel, { schluessel = process.env.PEXELS_API_KEY, benutzt = new Set(), weltall = false, ohneMenschen = false, quellen = ['pexels', 'nasa', 'commons'], info = {} } = {}) {
   const lang = suchbegriff(prompt);
   if (!lang) return '';
   const versuche = [];
   if (quellen.includes('pexels') && schluessel) versuche.push(['Pexels', () => pexelsSuchen(lang, schluessel, benutzt, ohneMenschen)]);
-  if (quellen.includes('nasa') && weltall) versuche.push(['NASA', () => nasaSuchen(kernwoerter(prompt, 2), benutzt, prompt, ohneMenschen)]);
+  // Weltall: echte NASA-Aufnahmen zuerst - erst 2 Kernwörter, dann nur das Hauptwort, dann 3 Wörter.
+  if (quellen.includes('nasa') && weltall) {
+    for (const q of [...new Set([kernwoerter(prompt, 2), hauptwoerter(prompt)[0] || '', kernwoerter(prompt, 3)])].filter(Boolean)) versuche.push(['NASA', () => nasaSuchen(q, benutzt, prompt, ohneMenschen)]);
+  }
   if (quellen.includes('commons')) {
     // Erst genau (3 Wörter), dann breiter (2 Wörter), zuletzt nur das Hauptwort - der Titel-Filter hält es passend.
     const anfragen = [...new Set([kernwoerter(prompt, 3), kernwoerter(prompt, 2), hauptwoerter(prompt)[0] || ''])].filter(Boolean);
@@ -149,6 +152,7 @@ export async function stockHolen(prompt, ziel, { schluessel = process.env.PEXELS
       const clip = await suchen();
       if (clip && (await laden(clip.link, ziel))) {
         benutzt.add(clip.id);
+        info.quelle = quelle.split(' ')[0];
         console.log(`[stock-video] ${quelle}: "${lang}" -> ${String(clip.id).slice(0, 80)}`);
         return ziel;
       }
@@ -170,8 +174,13 @@ export async function clipsHolen(szenen, ordner, { weltall = false, ohneMenschen
     if (szene.video && existsSync(szene.video)) { treffer++; moeglich++; continue; }
     if (!szene.bild || szene.foto || szene.anwendung || szene.vergleich || szene.demo) continue;
     moeglich++;
-    if (!gleich.has(szene.bild)) gleich.set(szene.bild, await stockHolen(szene.bild, `${ordner}/clip${n}.mp4`, { benutzt, weltall, ohneMenschen }));
-    szene.video = gleich.get(szene.bild);
+    if (!gleich.has(szene.bild)) {
+      const info = {};
+      const pfad = await stockHolen(szene.bild, `${ordner}/clip${n}.mp4`, { benutzt, weltall, ohneMenschen, info });
+      gleich.set(szene.bild, { pfad, quelle: info.quelle || '' });
+    }
+    szene.video = gleich.get(szene.bild).pfad;
+    szene.videoQuelle = gleich.get(szene.bild).quelle;
     if (szene.video) treffer++;
   }
   console.log(`[stock-video] Clips: ${treffer}/${moeglich} Szenen`);
