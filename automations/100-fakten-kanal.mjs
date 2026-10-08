@@ -13,6 +13,7 @@ import { kiJson } from './lib/kiJson.mjs';
 import { umstritten, echo, doppelt } from './lib/faktenPruefung.mjs';
 import { bankNaechster } from './lib/faktenBank.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
+import { stockHolen } from './lib/stockVideo.mjs';
 
 const OUT = 'out';
 const VERLAUF = 'fakten-kanal/verlauf.json';
@@ -192,6 +193,20 @@ async function main() {
         teil = ((verlauf.serien || {})[KONTO] || 0) + 1;
         skript.hook = serienHook(eintrag?.kat || nische[0] || kategorie, /^mythos/.test(format) ? 'mythos' : 'quiz', teil);
         if (letzte && /^Folge/.test(letzte.text)) letzte.text = `Folge für Teil ${teil + 1}!`;
+      }
+      // Echte Video-Clips (Pexels, kostenlos) statt Standbild, wenn PEXELS_API_KEY gesetzt ist - je Szene ein anderer Clip.
+      if (process.env.PEXELS_API_KEY) {
+        mkdirSync(join(OUT, `fakt-${i}`), { recursive: true });
+        const benutzt = new Set();
+        let treffer = 0;
+        const gleichesBild = new Map(); // gleiches Bild -> gleicher Clip (z. B. letzte = erste Szene für die Endlos-Schleife)
+        for (const [n, szene] of skript.szenen.entries()) {
+          if (!szene.bild) continue;
+          if (!gleichesBild.has(szene.bild)) gleichesBild.set(szene.bild, await stockHolen(szene.bild, join(OUT, `fakt-${i}`, `clip${n}.mp4`), { benutzt }));
+          szene.video = gleichesBild.get(szene.bild);
+          if (szene.video) treffer++;
+        }
+        console.log(`[100-fakten-kanal] Stock-Clips: ${treffer}/${skript.szenen.length} Szenen`);
       }
       const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting' });
       if (moderatorinAn() && v.stimme) {
