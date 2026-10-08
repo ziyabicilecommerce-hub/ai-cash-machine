@@ -119,3 +119,13 @@ test('international: Übersetzungen aus Wikipedia-Sprachlinks, Titel passt auch 
   assert.equal(titelPasst('File:Récolte du miel en Provence.webm', honig, w), true);
   assert.deepEqual(langlinksAus({}), []);
 });
+
+import { unpassend } from '../../automations/lib/stockVideo.mjs';
+
+test('unpassend: Politik, Nachrichten, Sendungen fliegen raus (Live-Fehlgriff Spinat -> West Wing Week)', () => {
+  assert.equal(unpassend('File:West Wing Week- 01-22-2016 or, “Say Spinach, Say Kale".webm'), true);
+  assert.equal(unpassend('File:President speech on honey bees.webm'), true);
+  assert.equal(unpassend('File:Flash-Lightning over Germany.ogv'), false);
+  assert.equal(unpassend("NASA's Return to Venus"), false);
+  assert.equal(unpassend('File:Spider Moving on Silk Strands- night camera.mpg'), false);
+});
