@@ -28,6 +28,9 @@ async function mitModeratorin(v, nr) {
 }
 import { karussellBauen } from './lib/karussell.mjs';
 
+// Echte Video-Clips (Commons/NASA, ohne Schlüssel) für Szenen ohne Produkt - nie mit Menschen (sonst wirkt ein
+// fremder Mensch wie ein Kunde). VIDEO_CLIPS=aus schaltet ab.
+const SHOP_CLIPS = { ohneMenschen: true };
 const OUT = 'out';
 const MANIFEST = join(OUT, 'manifest.json');
 const FEED = 'video-feed/videos.json';
@@ -279,7 +282,7 @@ async function bauen() {
       const skript = a.produkt ? await skriptMitFormat(a.produkt, laborWinkel(a.produkt), produktSkript) : a.minuten ? await langSkript(a.thema, a.minuten) : await kurzSkript(a.thema);
       if (skript.szenen.length < 3) throw new Error('Skript zu kurz');
       const hook = a.format === 'hoch' ? skript.hook || kurzHook(skript.titel) : '';
-      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook, bildAlle: a.minuten > 20 ? 2 : 1, musik: a.minuten ? 'ruhig' : '', premium: PREMIUM && !!a.produkt, anfaenge: a.format === 'hoch' ? skript.anfaenge || [] : [] });
+      const v = await videoBauen(skript, join(OUT, `arbeit-${i}`), { format: a.format, stimme: STIMME, stil: STIL, hook, bildAlle: a.minuten > 20 ? 2 : 1, musik: a.minuten ? 'ruhig' : '', premium: PREMIUM && !!a.produkt, stockClips: SHOP_CLIPS, anfaenge: a.format === 'hoch' ? skript.anfaenge || [] : [] });
       if (PREMIUM && a.produkt) for (const x of [v, ...(v.varianten || [])]) await mitModeratorin(x, i + 1 + tag);
       await ablegen(manifest, v, skript, a, i + 1, 'de');
       console.log(`[94-video-fabrik] ✓ ${manifest.filter((m) => !m.teaser).at(-1).datei} (${Math.round(v.dauer)} s, ${v.szenen} Szenen, ${Math.round((Date.now() - start) / 1000)} s Bauzeit)`);
@@ -287,7 +290,7 @@ async function bauen() {
         for (const sprache of EXTRA_SPRACHEN) {
           try {
             const uebersetzt = await uebersetzen(skript, sprache);
-            const vs = await videoBauen(uebersetzt, join(OUT, `arbeit-${i}-${sprache}`), { format: a.format, stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook, premium: PREMIUM, sprache });
+            const vs = await videoBauen(uebersetzt, join(OUT, `arbeit-${i}-${sprache}`), { format: a.format, stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook, premium: PREMIUM, sprache, stockClips: SHOP_CLIPS });
             await ablegen(manifest, vs, uebersetzt, a, i + 1, sprache);
             console.log(`[94-video-fabrik] ✓ ${manifest.at(-1).datei} (${sprache})`);
           } catch (err) {
@@ -311,7 +314,7 @@ async function bauen() {
     const auswahl = Array.from({ length: Math.min(5, eigene.length) }, (_, k) => eigene[(tag * 5 + k) % eigene.length]);
     try {
       const skript = await topListeSkript(shop, auswahl);
-      const v = await videoBauen(skript, join(OUT, `arbeit-top-${shop}`), { format: 'hoch', stimme: STIMME, hook: skript.hook, premium: true, sprache: 'de' });
+      const v = await videoBauen(skript, join(OUT, `arbeit-top-${shop}`), { format: 'hoch', stimme: STIMME, hook: skript.hook, premium: true, sprache: 'de', stockClips: SHOP_CLIPS });
       await mitModeratorin(v, shop.length + tag);
       await ablegen(manifest, v, skript, { thema: `Top 5 ${shop}`, format: 'hoch' }, `top5-${shop.toLowerCase()}`, 'de');
       console.log(`[94-video-fabrik] ✓ Top-5 ${shop} (${Math.round(v.dauer)} s)`);
@@ -483,7 +486,7 @@ async function sprachenRendern(liste) {
           // (spart Renderzeit) und nicht im Gedaechtnis lassen, sonst scheitert sie jeden Tag erneut.
           const gesperrt = skriptBlock(uebersetzt);
           if (gesperrt.length) { delete gedaechtnis[schluessel(teil[j].skript)]; throw new Error(`Werbe-Check: ${gesperrt.map((t) => `„${t.stelle}“`).join(', ')}`); }
-          const v = await videoBauen(uebersetzt, arbeit, { format: 'hoch', stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook, premium: PREMIUM, sprache });
+          const v = await videoBauen(uebersetzt, arbeit, { format: 'hoch', stimme: STIMMEN[sprache], stil: STIL, hook: uebersetzt.hook, premium: PREMIUM, sprache, stockClips: SHOP_CLIPS });
           await ablegen(manifest, v, uebersetzt, { thema, format: 'hoch' }, nr, sprache);
           console.log(`[94-video-fabrik] ✓ ${sprache}: ${manifest.at(-1).datei}`);
         } catch (err) {
