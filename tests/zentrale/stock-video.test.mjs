@@ -104,3 +104,18 @@ test('clipsHolen: Produkt-, KI-Beispiel- und Vergleichs-Szenen bleiben unangetas
   assert.equal(szenen[1].video, undefined);
   assert.equal(szenen[3].video, da);
 });
+
+import { langlinksAus } from '../../automations/lib/stockVideo.mjs';
+
+test('international: Übersetzungen aus Wikipedia-Sprachlinks, Titel passt auch auf Deutsch/Französisch', () => {
+  const antwort = { query: { pages: { 1: { title: 'Honey', langlinks: [
+    { lang: 'de', '*': 'Honig' }, { lang: 'fr', '*': 'Miel' }, { lang: 'es', '*': 'Miel' }, { lang: 'it', '*': 'Miele' },
+    { lang: 'ja', '*': '蜂蜜' }, { lang: 'pl', '*': 'Miód' }, { lang: 'nl', '*': 'Honing (voedsel)' }] } } } };
+  const w = langlinksAus(antwort);
+  assert.deepEqual(w, ['Honig', 'Miel', 'Miele', 'Miód', 'Honing']);
+  const honig = 'golden honey dripping from a wooden dipper, cinematic';
+  assert.equal(titelPasst('File:Honig fließt vom Löffel.webm', honig), false);
+  assert.equal(titelPasst('File:Honig fließt vom Löffel.webm', honig, w), true);
+  assert.equal(titelPasst('File:Récolte du miel en Provence.webm', honig, w), true);
+  assert.deepEqual(langlinksAus({}), []);
+});
