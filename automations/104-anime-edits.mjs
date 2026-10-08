@@ -42,7 +42,7 @@ async function main() {
       copyFileSync(bilder[0], join(OUT, 'videos', `${basis}.jpg`));
       manifest.push({
         datei: `${basis}.mp4`, vorschau: `${basis}.jpg`, sprache: 'de', kanal: 'anime', konto: KONTO, format: 'hoch', dauer: Math.round(dauer),
-        titel: `${name} - Anime Edit #${teil}`,
+        titel: `${name} - Anime Edit Teil ${teil}`, // kein "#1" - der Werbe-Check liest das als "Nummer 1"
         caption: `${hookText(figur.name, teil)} 🔥 Welche Figur ist dein Main? Schreib's in die Kommentare!\n\nEigene Figur aus „Kage no Shiro“ - Teil ${teil}. Folge ${KONTO} für Teil ${teil + 1}!\n\n#animeedit #anime #ninja #edit #animefan`,
         festeTags: ['#animeedit', '#anime'],
       });

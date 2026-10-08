@@ -51,3 +51,19 @@ test('postText: Anime-Videos bekommen Anime-Hashtags statt Wissens-Hashtags', ()
   assert.ok(t.includes('#animeedit') && t.includes('#anime'));
   assert.ok(!t.includes('#wusstestdu'));
 });
+
+import { umbrechen } from '../../automations/lib/animeEdit.mjs';
+import { videoPruefen } from '../../automations/lib/werbeCheck.mjs';
+
+test('Hook-Umbruch und Werbe-Check: lange Hooks brechen um, Titel ohne "#1" geht durch', () => {
+  const z = umbrechen('WENN SORA KEINE GNADE MEHR KENNT', 16).split('\n');
+  assert.ok(z.length >= 2 && z.every((l) => l.length <= 16), z.join('|'));
+  const v = { datei: 'x.mp4', titel: 'Sora - Anime Edit Teil 1', caption: 'Wenn Sora keine Gnade mehr kennt 🔥 Welche Figur ist dein Main? #animeedit #anime' };
+  assert.equal(videoPruefen(v).ok, true);
+  assert.equal(videoPruefen({ ...v, titel: 'Sora - Anime Edit #1' }).ok, false, 'so wurde der erste Edit blockiert');
+});
+
+test('editPrompts: immer dezent bekleidet, keine tiefen Kamerawinkel', () => {
+  const p = editPrompts({ name: 'Sora', geschlecht: 'w', aussehen: 'long blonde hair' }, 10);
+  assert.ok(p.every((x) => /fully clothed/.test(x) && /modest/.test(x) && !/low angle/.test(x)));
+});
