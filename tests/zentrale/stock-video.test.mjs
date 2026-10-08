@@ -76,3 +76,31 @@ test('titelPasst: Hauptwort muss als ganzes Wort im Titel stehen (Live-Fehlgriff
   assert.equal(titelPasst('File:Lightning over Oradea.webm', blitz), true);
   assert.equal(titelPasst("NASA's Return to Venus", 'planet Venus with thick glowing clouds in space'), true);
 });
+
+import { mitMenschen, clipsHolen } from '../../automations/lib/stockVideo.mjs';
+import { writeFileSync } from 'node:fs';
+
+test('mitMenschen: Titel mit Personen werden für Shop-Videos aussortiert', () => {
+  assert.equal(mitMenschen('File:Woman doing yoga at sunset.webm'), true);
+  assert.equal(mitMenschen('File:Kodune mee võtmine. Harvesting honey with family'), true);
+  assert.equal(mitMenschen('File:Flash-Lightning over Germany.ogv'), false);
+  assert.equal(mitMenschen('https://www.pexels.com/video/man-typing-on-laptop-123/'), true);
+  assert.equal(mitMenschen('https://www.pexels.com/video/ocean-waves-crashing-456/'), false);
+});
+
+test('clipsHolen: Produkt-, KI-Beispiel- und Vergleichs-Szenen bleiben unangetastet, vorhandene Clips zählen', async () => {
+  const d = mkdtempSync(join(tmpdir(), 'clips-'));
+  const da = join(d, 'da.mp4');
+  writeFileSync(da, 'x');
+  const szenen = [
+    { text: 'a', foto: 'https://shop/x.jpg', bild: 'desk' },
+    { text: 'b', anwendung: { prompt: 'p' }, bild: 'desk' },
+    { text: 'c', vergleich: { ohne: 'x', mit: 'y' } },
+    { text: 'd', video: da, bild: 'ocean' },
+    { text: 'e' },
+  ];
+  assert.equal(await clipsHolen(szenen, d), 1);
+  assert.equal(szenen[0].video, undefined);
+  assert.equal(szenen[1].video, undefined);
+  assert.equal(szenen[3].video, da);
+});

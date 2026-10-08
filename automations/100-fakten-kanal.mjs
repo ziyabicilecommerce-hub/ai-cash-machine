@@ -13,7 +13,6 @@ import { kiJson } from './lib/kiJson.mjs';
 import { umstritten, echo, doppelt } from './lib/faktenPruefung.mjs';
 import { bankNaechster } from './lib/faktenBank.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
-import { stockHolen } from './lib/stockVideo.mjs';
 
 const OUT = 'out';
 const VERLAUF = 'fakten-kanal/verlauf.json';
@@ -195,21 +194,9 @@ async function main() {
         if (letzte && /^Folge/.test(letzte.text)) letzte.text = `Folge für Teil ${teil + 1}!`;
       }
       // Echte Video-Clips statt Standbild - ohne Schlüssel (Wikimedia Commons gemeinfrei, NASA bei Weltall; Pexels falls
-      // PEXELS_API_KEY gesetzt). Je Szene ein anderer Clip. FAKTEN_CLIPS=aus schaltet ab.
-      if (!/^(0|nein|aus|false)$/i.test(env('FAKTEN_CLIPS', 'an'))) {
-        mkdirSync(join(OUT, `fakt-${i}`), { recursive: true });
-        const benutzt = new Set();
-        let treffer = 0;
-        const gleichesBild = new Map(); // gleiches Bild -> gleicher Clip (z. B. letzte = erste Szene für die Endlos-Schleife)
-        for (const [n, szene] of skript.szenen.entries()) {
-          if (!szene.bild) continue;
-          if (!gleichesBild.has(szene.bild)) gleichesBild.set(szene.bild, await stockHolen(szene.bild, join(OUT, `fakt-${i}`, `clip${n}.mp4`), { benutzt, weltall: /weltall/i.test(eintrag?.kat || kategorie) }));
-          szene.video = gleichesBild.get(szene.bild);
-          if (szene.video) treffer++;
-        }
-        console.log(`[100-fakten-kanal] Stock-Clips: ${treffer}/${skript.szenen.length} Szenen`);
-      }
-      const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting' });
+      // PEXELS_API_KEY gesetzt). FAKTEN_CLIPS=aus schaltet ab.
+      const clips = /^(0|nein|aus|false)$/i.test(env('FAKTEN_CLIPS', 'an')) ? null : { weltall: /weltall/i.test(eintrag?.kat || kategorie) };
+      const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting', stockClips: clips });
       if (moderatorinAn() && v.stimme) {
         try { await moderatorinEinfuegen(v.pfad, v.stimme, MODERATORIN_NR); } catch (err) { console.log(`[100-fakten-kanal] Moderatorin fehlgeschlagen: ${String(err.message).slice(0, 150)}`); }
       }

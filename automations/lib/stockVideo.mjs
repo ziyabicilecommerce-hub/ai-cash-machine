@@ -20,12 +20,16 @@ export function titelPasst(titel, prompt) {
   return hauptwoerter(prompt).some((w) => new RegExp(`\\b${w.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '')}(s|es)?\\b`, 'u').test(t));
 }
 
+// Shop-Videos: keine Clips mit Menschen - ein fremder Mensch neben dem Produkt wirkte wie ein (falscher) Kunde.
+const MENSCHEN = /\b(man|men|woman|women|person|persons|people|girl|girls|boy|boys|child|children|kid|kids|family|families|patient|doctor|nurse|portrait|selfie|interview|crowd|actor|actress|dancer|wedding|couple|baby|babies|mother|father|student|students|worker|workers|athlete|player|lady|guy|teen|teenager|face|faces|hands?|frau|mann|menschen|kind|kinder)\b/i;
+export const mitMenschen = (text) => MENSCHEN.test(String(text || '').replace(/[_\-.]/g, ' '));
+
 // Wikimedia Commons: nur gemeinfreie/CC0-Videos, bevorzugt eine 480-1080p-Fassung, Titel muss zum Motiv passen.
-export function commonsAuswaehlen(antwort, benutzt = new Set(), prompt = '') {
+export function commonsAuswaehlen(antwort, benutzt = new Set(), prompt = '', ohneMenschen = false) {
   const seiten = Object.values(antwort?.query?.pages || {});
   for (const s of seiten) {
     const v = s.videoinfo?.[0];
-    if (!v || benutzt.has(s.title) || (prompt && !titelPasst(s.title, prompt))) continue;
+    if (!v || benutzt.has(s.title) || (prompt && !titelPasst(s.title, prompt)) || (ohneMenschen && mitMenschen(s.title))) continue;
     const lizenz = String(v.extmetadata?.LicenseShortName?.value || '');
     if (!/^(cc0|public domain|pd\b|pd-)/i.test(lizenz)) continue;
     if ((v.duration || 0) < 3 || (v.width || 0) < 480) continue;
@@ -50,19 +54,19 @@ async function laden(url, ziel) {
   return existsSync(ziel) && statSync(ziel).size > 50000;
 }
 
-async function commonsSuchen(q, benutzt, prompt) {
+async function commonsSuchen(q, benutzt, prompt, ohneMenschen) {
   const url = `https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=15&gsrsearch=${encodeURIComponent(`filetype:video ${q}`)}&prop=videoinfo&viprop=url|size|mime|derivatives|extmetadata&viextmetadatafilter=LicenseShortName`;
   const res = await fetch(url, { headers: UA });
   if (!res.ok) throw new Error(`Commons ${res.status}`);
-  return commonsAuswaehlen(await res.json(), benutzt, prompt);
+  return commonsAuswaehlen(await res.json(), benutzt, prompt, ohneMenschen);
 }
 
-async function nasaSuchen(q, benutzt, prompt) {
+async function nasaSuchen(q, benutzt, prompt, ohneMenschen) {
   const res = await fetch(`https://images-api.nasa.gov/search?media_type=video&q=${encodeURIComponent(q)}`, { headers: UA });
   if (!res.ok) throw new Error(`NASA ${res.status}`);
   for (const item of ((await res.json())?.collection?.items || []).slice(0, 6)) {
     const id = item.data?.[0]?.nasa_id;
-    if (!id || benutzt.has(id) || !/^https:\/\//.test(item.href || '') || !titelPasst(item.data?.[0]?.title, prompt)) continue;
+    if (!id || benutzt.has(id) || !/^https:\/\//.test(item.href || '') || !titelPasst(item.data?.[0]?.title, prompt) || (ohneMenschen && mitMenschen(`${item.data?.[0]?.title} ${item.data?.[0]?.description || ''}`))) continue;
     const r = await fetch(item.href, { headers: UA });
     if (!r.ok) continue;
     const link = nasaDateiAuswaehlen(await r.json());
@@ -78,9 +82,9 @@ export function suchbegriff(prompt) {
 }
 
 // Bester Clip aus einer Pexels-Antwort: Hochformat, mind. 1280 hoch, mind. 4 s lang, nicht schon benutzt.
-export function clipAuswaehlen(antwort, benutzt = new Set()) {
+export function clipAuswaehlen(antwort, benutzt = new Set(), ohneMenschen = false) {
   for (const v of antwort?.videos || []) {
-    if (benutzt.has(v.id) || (v.duration || 0) < 4) continue;
+    if (benutzt.has(v.id) || (v.duration || 0) < 4 || (ohneMenschen && mitMenschen(v.url))) continue;
     const dateien = (v.video_files || [])
       .filter((f) => /^https:\/\//.test(f.link || '') && f.file_type === 'video/mp4' && f.height > f.width && f.height >= 1280)
       .sort((a, b) => Math.abs(a.height - 1920) - Math.abs(b.height - 1920));
@@ -89,23 +93,23 @@ export function clipAuswaehlen(antwort, benutzt = new Set()) {
   return null;
 }
 
-async function pexelsSuchen(q, schluessel, benutzt) {
+async function pexelsSuchen(q, schluessel, benutzt, ohneMenschen) {
   const res = await fetch(`https://api.pexels.com/videos/search?query=${encodeURIComponent(q)}&orientation=portrait&size=medium&per_page=8`, { headers: { authorization: schluessel } });
   if (!res.ok) throw new Error(`Pexels ${res.status}`);
-  return clipAuswaehlen(await res.json(), benutzt);
+  return clipAuswaehlen(await res.json(), benutzt, ohneMenschen);
 }
 
 // Sucht der Reihe nach: Pexels (nur mit Schlüssel), NASA (nur Weltall), Wikimedia Commons (3, dann 2 Kernwörter).
-export async function stockHolen(prompt, ziel, { schluessel = process.env.PEXELS_API_KEY, benutzt = new Set(), weltall = false, quellen = ['pexels', 'nasa', 'commons'] } = {}) {
+export async function stockHolen(prompt, ziel, { schluessel = process.env.PEXELS_API_KEY, benutzt = new Set(), weltall = false, ohneMenschen = false, quellen = ['pexels', 'nasa', 'commons'] } = {}) {
   const lang = suchbegriff(prompt);
   if (!lang) return '';
   const versuche = [];
-  if (quellen.includes('pexels') && schluessel) versuche.push(['Pexels', () => pexelsSuchen(lang, schluessel, benutzt)]);
-  if (quellen.includes('nasa') && weltall) versuche.push(['NASA', () => nasaSuchen(kernwoerter(prompt, 2), benutzt, prompt)]);
+  if (quellen.includes('pexels') && schluessel) versuche.push(['Pexels', () => pexelsSuchen(lang, schluessel, benutzt, ohneMenschen)]);
+  if (quellen.includes('nasa') && weltall) versuche.push(['NASA', () => nasaSuchen(kernwoerter(prompt, 2), benutzt, prompt, ohneMenschen)]);
   if (quellen.includes('commons')) {
     // Erst genau (3 Wörter), dann breiter (2 Wörter), zuletzt nur das Hauptwort - der Titel-Filter hält es passend.
     const anfragen = [...new Set([kernwoerter(prompt, 3), kernwoerter(prompt, 2), hauptwoerter(prompt)[0] || ''])].filter(Boolean);
-    for (const q of anfragen) versuche.push(['Commons', () => commonsSuchen(q, benutzt, prompt)]);
+    for (const q of anfragen) versuche.push(['Commons', () => commonsSuchen(q, benutzt, prompt, ohneMenschen)]);
   }
   for (const [quelle, suchen] of versuche) {
     try {
@@ -120,6 +124,25 @@ export async function stockHolen(prompt, ziel, { schluessel = process.env.PEXELS
     }
   }
   return '';
+}
+
+// Für alle Szenen eines Videos Clips holen (videoBauen-Option clips). Szenen mit echtem Produktfoto, KI-Beispiel
+// oder Ohne/Mit-Vergleich bleiben unangetastet. Gleiches Bild -> gleicher Clip (Endlos-Schleife bleibt).
+export async function clipsHolen(szenen, ordner, { weltall = false, ohneMenschen = false } = {}) {
+  const benutzt = new Set();
+  const gleich = new Map();
+  let treffer = 0;
+  let moeglich = 0;
+  for (const [n, szene] of szenen.entries()) {
+    if (szene.video && existsSync(szene.video)) { treffer++; moeglich++; continue; }
+    if (!szene.bild || szene.foto || szene.anwendung || szene.vergleich || szene.demo) continue;
+    moeglich++;
+    if (!gleich.has(szene.bild)) gleich.set(szene.bild, await stockHolen(szene.bild, `${ordner}/clip${n}.mp4`, { benutzt, weltall, ohneMenschen }));
+    szene.video = gleich.get(szene.bild);
+    if (szene.video) treffer++;
+  }
+  console.log(`[stock-video] Clips: ${treffer}/${moeglich} Szenen`);
+  return treffer;
 }
 
 // Clip auf Hochformat zuschneiden, auf die Szenenlänge bringen (zu kurz -> Schleife), ohne Ton.

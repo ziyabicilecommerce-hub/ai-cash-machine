@@ -11,7 +11,7 @@ import { musikUnterlegen, untertitelZusammenfuegen, BEAT_STILE, BEAT_PERIODE } f
 import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSzene, premiumStandbild, themaFuer, preisText, glanzBauen, bokehBauen } from './premium.mjs';
 import { effekteAn, lichtLeckBauen, qrBauen, uebergangFuer, endkarteAss, funkelnAss, strahlenBauen } from './effekte.mjs';
 import { mitmachAss } from './mitmachen.mjs';
-import { clipAnpassen } from './stockVideo.mjs';
+import { clipAnpassen, clipsHolen } from './stockVideo.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -224,10 +224,12 @@ function tiefe3d(bild, ziel, dauer, { breite, hoehe, art }) {
 // eine YouTube-Kapitelmarke. Zurueck kommen auch Kapitelmarken und eine Gesamt-.srt.
 // premium: Produkt freigestellt vor KI-Hintergrund (skript.hintergrund = {prompt, seed}),
 // 2.5D-Parallaxe, Farblook, Wort-fuer-Wort-Untertitel, Beat und Whoosh (siehe premium.mjs).
-export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '', bildAlle = 1, musik = '', premium = false, sprache = 'de', anfaenge = [] } = {}) {
+export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '', bildAlle = 1, musik = '', premium = false, sprache = 'de', anfaenge = [], stockClips = null } = {}) {
   if (!existsSync(ordner)) mkdirSync(ordner, { recursive: true });
   const [breite, hoehe] = format === 'quer' ? [1920, 1080] : [1080, 1920];
   const szenen = skript.szenen;
+  // Echte Video-Clips (Commons/NASA/Pexels) statt KI-Standbild für Szenen ohne Produkt; VIDEO_CLIPS=aus schaltet ab.
+  if (stockClips && premium && !/^(0|nein|aus|false)$/i.test(String(process.env.VIDEO_CLIPS || '').trim())) await clipsHolen(szenen, ordner, stockClips).catch(() => 0);
   const neu = (i) => i % Math.max(1, bildAlle) === 0;
   const vorab = new Map();
   const holen = (i) => {
