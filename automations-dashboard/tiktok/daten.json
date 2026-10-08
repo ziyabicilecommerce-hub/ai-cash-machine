@@ -1,7 +1,7 @@
 {
- "stand": "2026-10-07T23:34:18.686Z",
+ "stand": "2026-10-08T06:36:21.767Z",
  "gesamt": {
-  "posts": 15,
+  "posts": 16,
   "aufrufe": 5477,
   "likes": 33,
   "kommentare": 1,
@@ -68,7 +68,7 @@
     "Tiere"
    ],
    "serie": 1,
-   "posts": 5,
+   "posts": 6,
    "aufrufe": 2190,
    "likes": 16,
    "kommentare": 0,
@@ -87,20 +87,19 @@
    }
   }
  ],
- "geplant": [
+ "geplant": [],
+ "letzte": [
   {
-   "zeit": "2026-10-07T23:38:08.340Z",
+   "zeit": "2026-10-07T23:39:58.882Z",
    "konto": "@futureflowx3",
    "text": "Welches Metall ist bei Zimmertemperatur flüssig? Schreib deine Antwort in die Kommentare!",
-   "link": "",
+   "link": "https://tiktok.com/@futureflowx3/video/7694074404913040673",
    "format": "quiz",
    "aufrufe": 0,
    "sehdauer": 0,
    "likes": 0,
    "kommentare": 0
-  }
- ],
- "letzte": [
+  },
   {
    "zeit": "2026-10-07T22:59:58.749Z",
    "konto": "@futureflowxx",
@@ -269,8 +268,8 @@
  ],
  "fehler": 0,
  "lernen": {
-  "stand": "2026-10-07T23:34:17.915Z",
-  "posts": 15,
+  "stand": "2026-10-08T06:36:21.344Z",
+  "posts": 16,
   "quiz": {
    "n": 6,
    "sehdauer": 19.04,
@@ -295,6 +294,10 @@
   {
    "stufe": "warn",
    "text": "Unter 1 Kommentar pro 100 Aufrufe: mehr Fragen, bei denen jeder mitreden will (Schätzen, Streit-Fragen)."
+  },
+  {
+   "stufe": "warn",
+   "text": "Keine TikTok-Posts geplant - der nächste Fakten-Lauf füllt die Warteschlange."
   }
  ]
 }
