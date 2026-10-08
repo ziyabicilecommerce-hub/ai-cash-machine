@@ -28,7 +28,7 @@ async function main() {
   let after = null;
   for (let seite = 0; seite < 6; seite++) {
     const d = await gql(`query($i: PostsInput!, $a: String) { posts(input: $i, first: 50, after: $a) {
-      edges { node { id status text dueAt sentAt channelId externalLink metrics { type value } } } pageInfo { hasNextPage endCursor } } }`,
+      edges { node { id status text dueAt sentAt channelId externalLink metricsUpdatedAt metrics { type value } } } pageInfo { hasNextPage endCursor } } }`,
     { i: { organizationId: orgId, filter: { channelIds: kanaele.map((k) => k.id), dueAt: { start: seit } } }, a: after });
     posts.push(...(d.posts.edges || []).map((e) => e.node));
     if (!d.posts.pageInfo.hasNextPage) break;
