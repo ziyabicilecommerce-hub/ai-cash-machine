@@ -15,9 +15,9 @@ export const kernwoerter = (prompt, n = 3) => suchbegriff(prompt).split(' ').fil
 // Deshalb muss ein Hauptwort des Motivs als ganzes Wort im Titel stehen.
 const EIGENSCHAFT = new Set(['golden', 'bright', 'dark', 'colorful', 'fresh', 'ancient', 'old', 'modern', 'tall', 'deep', 'vast', 'giant', 'tiny', 'huge', 'red', 'blue', 'green', 'orange', 'white', 'black', 'purple', 'shiny', 'clear', 'still', 'rough', 'striking', 'swimming', 'walking', 'flying', 'dripping', 'rising', 'floating', 'growing', 'sparkling', 'snowy', 'cloudy', 'stormy', 'rocky', 'sunny']);
 export const hauptwoerter = (prompt) => kernwoerter(prompt, 5).split(' ').filter((w) => w.length >= 4 && !EIGENSCHAFT.has(w.toLowerCase()));
-export function titelPasst(titel, prompt) {
+export function titelPasst(titel, prompt, extra = []) {
   const t = String(titel || '').toLowerCase().replace(/[_\-.]/g, ' ');
-  return hauptwoerter(prompt).some((w) => new RegExp(`\\b${w.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '')}(s|es)?\\b`, 'u').test(t));
+  return [...hauptwoerter(prompt), ...extra].filter(Boolean).some((w) => new RegExp(`\\b${w.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '')}(s|es)?\\b`, 'u').test(t));
 }
 
 // Shop-Videos: keine Clips mit Menschen - ein fremder Mensch neben dem Produkt wirkte wie ein (falscher) Kunde.
@@ -25,11 +25,11 @@ const MENSCHEN = /\b(man|men|woman|women|person|persons|people|girl|girls|boy|bo
 export const mitMenschen = (text) => MENSCHEN.test(String(text || '').replace(/[_\-.]/g, ' '));
 
 // Wikimedia Commons: nur gemeinfreie/CC0-Videos, bevorzugt eine 480-1080p-Fassung, Titel muss zum Motiv passen.
-export function commonsAuswaehlen(antwort, benutzt = new Set(), prompt = '', ohneMenschen = false) {
+export function commonsAuswaehlen(antwort, benutzt = new Set(), prompt = '', ohneMenschen = false, extra = []) {
   const seiten = Object.values(antwort?.query?.pages || {});
   for (const s of seiten) {
     const v = s.videoinfo?.[0];
-    if (!v || benutzt.has(s.title) || (prompt && !titelPasst(s.title, prompt)) || (ohneMenschen && mitMenschen(s.title))) continue;
+    if (!v || benutzt.has(s.title) || (prompt && !titelPasst(s.title, prompt, extra)) || (ohneMenschen && mitMenschen(s.title))) continue;
     const lizenz = String(v.extmetadata?.LicenseShortName?.value || '');
     if (!/^(cc0|public domain|pd\b|pd-)/i.test(lizenz)) continue;
     if ((v.duration || 0) < 3 || (v.width || 0) < 480) continue;
@@ -47,6 +47,27 @@ export function nasaDateiAuswaehlen(dateien = []) {
   return (mp4.find((u) => /~medium\.mp4$/i.test(u)) || mp4.find((u) => /~mobile\.mp4$/i.test(u)) || mp4.find((u) => /~small\.mp4$/i.test(u)) || '').replace(/^http:/, 'https:');
 }
 
+// International suchen: viele Commons-Clips haben Titel auf Deutsch, Französisch, Spanisch ... Die Übersetzungen
+// des Hauptworts kommen kostenlos aus den Sprach-Links der englischen Wikipedia (z. B. Honey -> Honig, Miel, Miele).
+export const SPRACHEN = ['de', 'fr', 'es', 'it', 'pt', 'nl', 'pl', 'sv', 'tr', 'ru'];
+export function langlinksAus(antwort, sprachen = SPRACHEN) {
+  const seite = Object.values(antwort?.query?.pages || {})[0];
+  const woerter = (seite?.langlinks || []).filter((l) => sprachen.includes(l.lang)).map((l) => String(l['*'] || l.title || '').replace(/\s*\(.*\)\s*$/, '').trim());
+  return [...new Set(woerter.filter((w) => w && w.split(' ').length <= 2))];
+}
+const uebersetzt = new Map();
+export async function uebersetzungen(wort) {
+  if (!wort) return [];
+  if (!uebersetzt.has(wort)) {
+    uebersetzt.set(wort, (async () => {
+      const titel = wort.charAt(0).toUpperCase() + wort.slice(1).toLowerCase();
+      const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=langlinks&lllimit=500&titles=${encodeURIComponent(titel)}`, { headers: UA });
+      return res.ok ? langlinksAus(await res.json()) : [];
+    })().catch(() => []));
+  }
+  return uebersetzt.get(wort);
+}
+
 async function laden(url, ziel) {
   const dl = await fetch(url, { headers: UA });
   if (!dl.ok || !dl.body) throw new Error(`Download ${dl.status}`);
@@ -54,11 +75,11 @@ async function laden(url, ziel) {
   return existsSync(ziel) && statSync(ziel).size > 50000;
 }
 
-async function commonsSuchen(q, benutzt, prompt, ohneMenschen) {
+async function commonsSuchen(q, benutzt, prompt, ohneMenschen, extra = []) {
   const url = `https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=15&gsrsearch=${encodeURIComponent(`filetype:video ${q}`)}&prop=videoinfo&viprop=url|size|mime|derivatives|extmetadata&viextmetadatafilter=LicenseShortName`;
   const res = await fetch(url, { headers: UA });
   if (!res.ok) throw new Error(`Commons ${res.status}`);
-  return commonsAuswaehlen(await res.json(), benutzt, prompt, ohneMenschen);
+  return commonsAuswaehlen(await res.json(), benutzt, prompt, ohneMenschen, extra);
 }
 
 async function nasaSuchen(q, benutzt, prompt, ohneMenschen) {
@@ -110,6 +131,15 @@ export async function stockHolen(prompt, ziel, { schluessel = process.env.PEXELS
     // Erst genau (3 Wörter), dann breiter (2 Wörter), zuletzt nur das Hauptwort - der Titel-Filter hält es passend.
     const anfragen = [...new Set([kernwoerter(prompt, 3), kernwoerter(prompt, 2), hauptwoerter(prompt)[0] || ''])].filter(Boolean);
     for (const q of anfragen) versuche.push(['Commons', () => commonsSuchen(q, benutzt, prompt, ohneMenschen)]);
+    // Nichts auf Englisch? Dann international: das Hauptwort in 10 Sprachen (Titel darf in jeder davon passen).
+    versuche.push(['Commons international', async () => {
+      const woerter = await uebersetzungen(hauptwoerter(prompt)[0]);
+      for (const w of woerter.slice(0, 8)) {
+        const clip = await commonsSuchen(w, benutzt, prompt, ohneMenschen, woerter).catch(() => null);
+        if (clip) return clip;
+      }
+      return null;
+    }]);
   }
   for (const [quelle, suchen] of versuche) {
     try {

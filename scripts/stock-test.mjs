@@ -9,6 +9,8 @@ const proben = [
   ['golden honey dripping from a wooden dipper, close-up detail, cinematic, no text, no people', false],
   ['lightning bolt striking over a city skyline at night, cinematic, no people', false],
   ['orange goldfish swimming in clear water, cinematic, no people', false],
+  ['spider on a dew covered web at sunrise, cinematic, no people', false],
+  ['fresh spinach leaves with water drops', false],
 ];
 let ok = 0;
 for (const [i, [prompt, weltall]] of proben.entries()) {
