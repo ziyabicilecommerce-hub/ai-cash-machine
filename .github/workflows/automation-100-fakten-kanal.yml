@@ -31,6 +31,8 @@ env:
   GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
   POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
   BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
+  # Echte Video-Clips statt Standbilder (kostenloser Schlüssel: pexels.com/api)
+  PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
 
 jobs:
   run:
