@@ -63,3 +63,16 @@ test('clipAnpassen: kurzer Querformat-Clip wird Hochformat in Szenenlänge', () 
   assert.equal(j.streams[0].height, 960);
   assert.ok(Math.abs(Number(j.format.duration) - 2.5) < 0.15);
 });
+
+import { titelPasst, hauptwoerter } from '../../automations/lib/stockVideo.mjs';
+
+test('titelPasst: Hauptwort muss als ganzes Wort im Titel stehen (Live-Fehlgriffe aus dem Test)', () => {
+  const honig = 'golden honey dripping from a wooden dipper, close-up detail, cinematic';
+  const blitz = 'lightning bolt striking over a city skyline at night, cinematic';
+  assert.deepEqual(hauptwoerter(honig), ['honey']);
+  assert.equal(titelPasst('File:20160923-AMS-LSC-9001 (Food Demo-Sweet Potato).webm', honig), false);
+  assert.equal(titelPasst('File:Republic Aviation - P-47D Thunderbolt start-up', blitz), false);
+  assert.equal(titelPasst('File:Honey dripping.webm', honig), true);
+  assert.equal(titelPasst('File:Lightning over Oradea.webm', blitz), true);
+  assert.equal(titelPasst("NASA's Return to Venus", 'planet Venus with thick glowing clouds in space'), true);
+});
