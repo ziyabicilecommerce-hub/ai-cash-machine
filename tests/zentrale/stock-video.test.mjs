@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { suchbegriff, clipAuswaehlen, clipAnpassen, stockHolen } from '../../automations/lib/stockVideo.mjs';
+import { suchbegriff, clipAuswaehlen, clipAnpassen, stockHolen, kernwoerter, commonsAuswaehlen, nasaDateiAuswaehlen } from '../../automations/lib/stockVideo.mjs';
 
 test('suchbegriff: nur das Motiv, ohne Stil-Wörter, max. 5 Wörter', () => {
   assert.equal(suchbegriff('planet Venus with thick glowing clouds in space, cinematic, photorealistic, dramatic light, no text, no people'), 'planet Venus with thick clouds');
@@ -27,8 +27,28 @@ test('clipAuswaehlen: Hochformat, mind. 1280 hoch, mind. 4 s, nahe 1920, nichts 
   assert.equal(clipAuswaehlen({}), null);
 });
 
-test('stockHolen: ohne Schlüssel kein Netz, leeres Ergebnis', async () => {
-  assert.equal(await stockHolen('planet venus', '/tmp/x.mp4', { schluessel: '' }), '');
+test('stockHolen: nur Pexels ohne Schlüssel -> kein Netz, leeres Ergebnis', async () => {
+  assert.equal(await stockHolen('planet venus', '/tmp/x.mp4', { schluessel: '', quellen: ['pexels'] }), '');
+});
+
+test('kernwoerter: Motiv ohne Füllwörter', () => {
+  assert.equal(kernwoerter('planet Venus with thick glowing clouds in space, cinematic, no people'), 'planet Venus thick');
+  assert.equal(kernwoerter('golden honey dripping from a wooden dipper, cinematic', 2), 'golden honey');
+});
+
+test('commonsAuswaehlen: nur gemeinfrei/CC0, lang genug, 480-1080p-Fassung', () => {
+  const v = (title, lizenz, extra = {}) => ({ title, videoinfo: [{ duration: 12, width: 1920, height: 1080, size: 9e6, url: `https://upload.wikimedia.org/${title}.webm`, extmetadata: { LicenseShortName: { value: lizenz } },
+    derivatives: [{ src: `https://upload.wikimedia.org/${title}.1080p.webm`, type: 'video/webm; codecs="vp9"', height: 1080 }, { src: `https://upload.wikimedia.org/${title}.2160p.webm`, type: 'video/webm', height: 2160 }], ...extra }] });
+  const antwort = { query: { pages: { 1: v('File:A', 'CC BY-SA 4.0'), 2: v('File:B', 'Public domain', { duration: 1 }), 3: v('File:C', 'CC0') } } };
+  assert.deepEqual(commonsAuswaehlen(antwort), { id: 'File:C', link: 'https://upload.wikimedia.org/File:C.1080p.webm', dauer: 12 });
+  assert.equal(commonsAuswaehlen(antwort, new Set(['File:C'])), null);
+  assert.equal(commonsAuswaehlen({}), null);
+});
+
+test('nasaDateiAuswaehlen: mittlere MP4, sonst mobile/small, https', () => {
+  assert.equal(nasaDateiAuswaehlen(['http://images-assets.nasa.gov/video/x/x~orig.mp4', 'http://images-assets.nasa.gov/video/x/x~medium.mp4', 'http://images-assets.nasa.gov/video/x/x~small.mp4']), 'https://images-assets.nasa.gov/video/x/x~medium.mp4');
+  assert.equal(nasaDateiAuswaehlen(['https://a/x~mobile.mp4', 'https://a/x~preview.mp4']), 'https://a/x~mobile.mp4');
+  assert.equal(nasaDateiAuswaehlen(['https://a/x.srt']), '');
 });
 
 test('clipAnpassen: kurzer Querformat-Clip wird Hochformat in Szenenlänge', () => {
