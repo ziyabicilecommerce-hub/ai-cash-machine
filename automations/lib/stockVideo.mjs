@@ -23,13 +23,16 @@ export function titelPasst(titel, prompt, extra = []) {
 // Shop-Videos: keine Clips mit Menschen - ein fremder Mensch neben dem Produkt wirkte wie ein (falscher) Kunde.
 const MENSCHEN = /\b(man|men|woman|women|person|persons|people|girl|girls|boy|boys|child|children|kid|kids|family|families|patient|doctor|nurse|portrait|selfie|interview|crowd|actor|actress|dancer|wedding|couple|baby|babies|mother|father|student|students|worker|workers|athlete|player|lady|guy|teen|teenager|face|faces|hands?|frau|mann|menschen|kind|kinder)\b/i;
 export const mitMenschen = (text) => MENSCHEN.test(String(text || '').replace(/[_\-.]/g, ' '));
+// Nie: Politik, Nachrichten, Reden, Interviews, Werbung, Sendungs-Folgen (Spinat fand "West Wing Week" aus dem Weißen Haus).
+const UNPASSEND = /\b(west wing|white house|president|presidential|obama|trump|biden|congress|senate|parliament|minister|government|politic\w*|election|campaign|news|newscast|press|speech|interview|lecture|conference|briefing|podcast|episode|trailer|commercial|advert\w*|propaganda|war|military|army|protest|rally|weekly|week|show|tv|television)\b/i;
+export const unpassend = (text) => UNPASSEND.test(String(text || '').replace(/[_\-.]/g, ' '));
 
 // Wikimedia Commons: nur gemeinfreie/CC0-Videos, bevorzugt eine 480-1080p-Fassung, Titel muss zum Motiv passen.
 export function commonsAuswaehlen(antwort, benutzt = new Set(), prompt = '', ohneMenschen = false, extra = []) {
   const seiten = Object.values(antwort?.query?.pages || {});
   for (const s of seiten) {
     const v = s.videoinfo?.[0];
-    if (!v || benutzt.has(s.title) || (prompt && !titelPasst(s.title, prompt, extra)) || (ohneMenschen && mitMenschen(s.title))) continue;
+    if (!v || benutzt.has(s.title) || (prompt && !titelPasst(s.title, prompt, extra)) || unpassend(s.title) || (ohneMenschen && mitMenschen(s.title))) continue;
     const lizenz = String(v.extmetadata?.LicenseShortName?.value || '');
     if (!/^(cc0|public domain|pd\b|pd-)/i.test(lizenz)) continue;
     if ((v.duration || 0) < 3 || (v.width || 0) < 480) continue;
@@ -87,7 +90,7 @@ async function nasaSuchen(q, benutzt, prompt, ohneMenschen) {
   if (!res.ok) throw new Error(`NASA ${res.status}`);
   for (const item of ((await res.json())?.collection?.items || []).slice(0, 6)) {
     const id = item.data?.[0]?.nasa_id;
-    if (!id || benutzt.has(id) || !/^https:\/\//.test(item.href || '') || !titelPasst(item.data?.[0]?.title, prompt) || (ohneMenschen && mitMenschen(`${item.data?.[0]?.title} ${item.data?.[0]?.description || ''}`))) continue;
+    if (!id || benutzt.has(id) || !/^https:\/\//.test(item.href || '') || !titelPasst(item.data?.[0]?.title, prompt) || unpassend(item.data?.[0]?.title) || (ohneMenschen && mitMenschen(`${item.data?.[0]?.title} ${item.data?.[0]?.description || ''}`))) continue;
     const r = await fetch(item.href, { headers: UA });
     if (!r.ok) continue;
     const link = nasaDateiAuswaehlen(await r.json());
