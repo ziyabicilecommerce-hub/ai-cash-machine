@@ -11,12 +11,21 @@ const FUELL = new Set(['a', 'an', 'the', 'of', 'in', 'on', 'with', 'from', 'and'
 // Kurzer Suchbegriff (Kernwörter) für Archive, die alle Wörter verlangen.
 export const kernwoerter = (prompt, n = 3) => suchbegriff(prompt).split(' ').filter((w) => w && !FUELL.has(w.toLowerCase())).slice(0, n).join(' ');
 
-// Wikimedia Commons: nur gemeinfreie/CC0-Videos, bevorzugt eine 480-1080p-Fassung.
-export function commonsAuswaehlen(antwort, benutzt = new Set()) {
+// Archive suchen auch in Beschreibungen - "honey" fand ein Kochvideo, "lightning bolt" ein Flugzeug "Thunderbolt".
+// Deshalb muss ein Hauptwort des Motivs als ganzes Wort im Titel stehen.
+const EIGENSCHAFT = new Set(['golden', 'bright', 'dark', 'colorful', 'fresh', 'ancient', 'old', 'modern', 'tall', 'deep', 'vast', 'giant', 'tiny', 'huge', 'red', 'blue', 'green', 'orange', 'white', 'black', 'purple', 'shiny', 'clear', 'still', 'rough', 'striking', 'swimming', 'walking', 'flying', 'dripping', 'rising', 'floating', 'growing', 'sparkling', 'snowy', 'cloudy', 'stormy', 'rocky', 'sunny']);
+export const hauptwoerter = (prompt) => kernwoerter(prompt, 5).split(' ').filter((w) => w.length >= 4 && !EIGENSCHAFT.has(w.toLowerCase()));
+export function titelPasst(titel, prompt) {
+  const t = String(titel || '').toLowerCase().replace(/[_\-.]/g, ' ');
+  return hauptwoerter(prompt).some((w) => new RegExp(`\\b${w.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '')}(s|es)?\\b`, 'u').test(t));
+}
+
+// Wikimedia Commons: nur gemeinfreie/CC0-Videos, bevorzugt eine 480-1080p-Fassung, Titel muss zum Motiv passen.
+export function commonsAuswaehlen(antwort, benutzt = new Set(), prompt = '') {
   const seiten = Object.values(antwort?.query?.pages || {});
   for (const s of seiten) {
     const v = s.videoinfo?.[0];
-    if (!v || benutzt.has(s.title)) continue;
+    if (!v || benutzt.has(s.title) || (prompt && !titelPasst(s.title, prompt))) continue;
     const lizenz = String(v.extmetadata?.LicenseShortName?.value || '');
     if (!/^(cc0|public domain|pd\b|pd-)/i.test(lizenz)) continue;
     if ((v.duration || 0) < 3 || (v.width || 0) < 480) continue;
@@ -41,19 +50,19 @@ async function laden(url, ziel) {
   return existsSync(ziel) && statSync(ziel).size > 50000;
 }
 
-async function commonsSuchen(q, benutzt) {
+async function commonsSuchen(q, benutzt, prompt) {
   const url = `https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=15&gsrsearch=${encodeURIComponent(`filetype:video ${q}`)}&prop=videoinfo&viprop=url|size|mime|derivatives|extmetadata&viextmetadatafilter=LicenseShortName`;
   const res = await fetch(url, { headers: UA });
   if (!res.ok) throw new Error(`Commons ${res.status}`);
-  return commonsAuswaehlen(await res.json(), benutzt);
+  return commonsAuswaehlen(await res.json(), benutzt, prompt);
 }
 
-async function nasaSuchen(q, benutzt) {
+async function nasaSuchen(q, benutzt, prompt) {
   const res = await fetch(`https://images-api.nasa.gov/search?media_type=video&q=${encodeURIComponent(q)}`, { headers: UA });
   if (!res.ok) throw new Error(`NASA ${res.status}`);
   for (const item of ((await res.json())?.collection?.items || []).slice(0, 6)) {
     const id = item.data?.[0]?.nasa_id;
-    if (!id || benutzt.has(id) || !/^https:\/\//.test(item.href || '')) continue;
+    if (!id || benutzt.has(id) || !/^https:\/\//.test(item.href || '') || !titelPasst(item.data?.[0]?.title, prompt)) continue;
     const r = await fetch(item.href, { headers: UA });
     if (!r.ok) continue;
     const link = nasaDateiAuswaehlen(await r.json());
@@ -92,10 +101,11 @@ export async function stockHolen(prompt, ziel, { schluessel = process.env.PEXELS
   if (!lang) return '';
   const versuche = [];
   if (quellen.includes('pexels') && schluessel) versuche.push(['Pexels', () => pexelsSuchen(lang, schluessel, benutzt)]);
-  if (quellen.includes('nasa') && weltall) versuche.push(['NASA', () => nasaSuchen(kernwoerter(prompt, 2), benutzt)]);
+  if (quellen.includes('nasa') && weltall) versuche.push(['NASA', () => nasaSuchen(kernwoerter(prompt, 2), benutzt, prompt)]);
   if (quellen.includes('commons')) {
-    versuche.push(['Commons', () => commonsSuchen(kernwoerter(prompt, 3), benutzt)]);
-    if (kernwoerter(prompt, 2) !== kernwoerter(prompt, 3)) versuche.push(['Commons', () => commonsSuchen(kernwoerter(prompt, 2), benutzt)]);
+    // Erst genau (3 Wörter), dann breiter (2 Wörter), zuletzt nur das Hauptwort - der Titel-Filter hält es passend.
+    const anfragen = [...new Set([kernwoerter(prompt, 3), kernwoerter(prompt, 2), hauptwoerter(prompt)[0] || ''])].filter(Boolean);
+    for (const q of anfragen) versuche.push(['Commons', () => commonsSuchen(q, benutzt, prompt)]);
   }
   for (const [quelle, suchen] of versuche) {
     try {
