@@ -3,7 +3,7 @@
 // Bass-Drop, dann schnelle Schnitte mit Zoom-Punch, Shake und Flash; Text "POV: ..." und "Folge für Teil N".
 import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 export const TAKT = 0.857; // Trap-Beat (BEAT_PERIODE.trap)
 const SCHRIFT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
@@ -61,7 +61,8 @@ export function editRendern(bilder, plan, ziel, { ordner, hook = '', ende = '', 
     clips.push(clip);
   }
   const liste = join(ordner, 'liste.txt');
-  writeFileSync(liste, clips.map((c) => `file '${c.replace(/'/g, "'\\''")}'`).join('\n'));
+  // Absolute Pfade: der concat-Demuxer sucht relative Pfade relativ zur Listen-Datei (lief so im Runner schief).
+  writeFileSync(liste, clips.map((c) => `file '${resolve(c).replace(/'/g, "'\\''")}'`).join('\n'));
   const dauer = plan.reduce((a, s) => a + s.dauer, 0);
   const groesse = Math.round(breite * 0.075);
   const texte = [

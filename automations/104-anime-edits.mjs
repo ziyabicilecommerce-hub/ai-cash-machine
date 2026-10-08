@@ -49,7 +49,7 @@ async function main() {
       verlauf.teil = teil;
       console.log(`[104-anime-edits] ✓ ${basis}.mp4 (${figur.name}, ${dauer.toFixed(1)} s, ${bilder.length} Bilder)`);
     } catch (err) {
-      console.log(`[104-anime-edits] ✗ ${figur.name}: ${String(err.message).slice(0, 200)}`);
+      console.log(`[104-anime-edits] ✗ ${figur.name}: ${String(err.stderr || '').slice(-400) || String(err.message).slice(0, 200)}`);
     }
   }
   writeFileSync(join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2));
