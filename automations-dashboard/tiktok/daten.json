@@ -1,7 +1,7 @@
 {
- "stand": "2026-10-08T16:58:02.081Z",
+ "stand": "2026-10-08T20:48:05.908Z",
  "gesamt": {
-  "posts": 17,
+  "posts": 19,
   "aufrufe": 11174,
   "likes": 62,
   "kommentare": 6,
@@ -17,8 +17,8 @@
     "Natur",
     "Tiere"
    ],
-   "serie": 2,
-   "posts": 6,
+   "serie": 3,
+   "posts": 7,
    "aufrufe": 5664,
    "likes": 30,
    "kommentare": 4,
@@ -41,8 +41,8 @@
    "nische": [
     "Weltall"
    ],
-   "serie": 2,
-   "posts": 5,
+   "serie": 3,
+   "posts": 6,
    "aufrufe": 3478,
    "likes": 17,
    "kommentare": 1,
@@ -66,7 +66,7 @@
     "Körper",
     "Essen"
    ],
-   "serie": 2,
+   "serie": 3,
    "posts": 6,
    "aufrufe": 2032,
    "likes": 15,
@@ -86,8 +86,64 @@
    }
   }
  ],
- "geplant": [],
+ "geplant": [
+  {
+   "zeit": "2026-10-09T09:30:00.000Z",
+   "konto": "@futureflowxx",
+   "text": "Zucker macht Kinder hyperaktiv. Wahr oder Mythos? Schreib es in die Kommentare!",
+   "link": "",
+   "format": "mythos",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  },
+  {
+   "zeit": "2026-10-09T10:30:00.000Z",
+   "konto": "@futureflowx3",
+   "text": "Welcher ist der größte Ozean der Erde? Schreib deine Antwort in die Kommentare!",
+   "link": "",
+   "format": "quiz",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  },
+  {
+   "zeit": "2026-10-09T11:30:00.000Z",
+   "konto": "@zyx_7851",
+   "text": "🚀 Echte NASA-Aufnahmen! Der Mond entfernt sich jedes Jahr ein paar Zentimeter von der Erd",
+   "link": "",
+   "format": "mythos",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  }
+ ],
  "letzte": [
+  {
+   "zeit": "2026-10-08T18:01:56.714Z",
+   "konto": "@zyx_7851",
+   "text": "Ein Tag auf der Venus dauert länger als ein Jahr auf der Venus. Wahr oder Mythos? Schreib ",
+   "link": "https://tiktok.com/@zyx_7851/video/7694358442512796961",
+   "format": "mythos",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  },
+  {
+   "zeit": "2026-10-08T17:16:47.516Z",
+   "konto": "@futureflowx3",
+   "text": "Bananen wachsen an Bäumen. Wahr oder Mythos? Schreib es in die Kommentare!",
+   "link": "https://tiktok.com/@futureflowx3/video/7694346815121968417",
+   "format": "mythos",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  },
   {
    "zeit": "2026-10-08T16:01:09.000Z",
    "konto": "@futureflowxx",
@@ -279,8 +335,8 @@
  "fehler": 0,
  "ohneZahlen": 0,
  "lernen": {
-  "stand": "2026-10-08T16:58:01.333Z",
-  "posts": 17,
+  "stand": "2026-10-08T20:48:05.512Z",
+  "posts": 19,
   "quiz": {
    "n": 7,
    "sehdauer": 26.56,
@@ -305,10 +361,6 @@
   {
    "stufe": "warn",
    "text": "Unter 1 Kommentar pro 100 Aufrufe: mehr Fragen, bei denen jeder mitreden will (Schätzen, Streit-Fragen)."
-  },
-  {
-   "stufe": "warn",
-   "text": "Keine TikTok-Posts geplant - der nächste Fakten-Lauf füllt die Warteschlange."
   }
  ]
 }
