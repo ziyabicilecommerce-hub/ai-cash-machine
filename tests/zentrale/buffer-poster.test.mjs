@@ -64,7 +64,7 @@ test('zuordnen: Video kommt auf den Kanal, dessen Name im Video steht', () => {
 
 test('Nischen: jedes TikTok-Konto bekommt Fakten aus seinem Thema, sonst irgendeinen', () => {
   const n = nischenAus();
-  assert.deepEqual(nischeFuer('@zyx_7851', n), ['Weltall', 'Geld']);
+  assert.deepEqual(nischeFuer('@zyx_7851', n), ['Weltall']);
   assert.deepEqual(nischeFuer('@unbekannt', n), []);
   for (const kats of Object.values(n)) {
     assert.ok(BANK.filter((e) => kats.includes(e.kat)).length >= 15, `genug Fakten für ${kats}`);
