@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { schnittPlan, dropZeit, editPrompts, hookText, editRendern, TAKT } from '../../automations/lib/animeEdit.mjs';
@@ -28,7 +28,9 @@ test('editPrompts und Hook: eigene Figur, Anime-Stil, keine fremden Serien', () 
 });
 
 test('editRendern: baut ein Hochformat-Video mit Ton in Plan-Länge', () => {
-  const d = mkdtempSync(join(tmpdir(), 'edit-'));
+  // Relativer Arbeitsordner wie im Runner (out/edit-0) - dort scheiterte der erste echte Lauf.
+  const d = join('out', `test-edit-${process.pid}`);
+  mkdirSync(d, { recursive: true });
   const bilder = ['red', 'blue', 'green'].map((farbe, i) => {
     const b = join(d, `b${i}.jpg`);
     execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'lavfi', '-i', `color=c=${farbe}:s=270x480`, '-frames:v', '1', b]);
@@ -41,6 +43,7 @@ test('editRendern: baut ein Hochformat-Video mit Ton in Plan-Länge', () => {
   assert.ok(info.streams.some((s) => s.codec_type === 'audio'));
   assert.equal(info.streams.find((s) => s.codec_type === 'video').height, 480);
   assert.ok(Math.abs(Number(info.format.duration) - dauer) < 0.2);
+  rmSync(d, { recursive: true, force: true });
 });
 
 test('postText: Anime-Videos bekommen Anime-Hashtags statt Wissens-Hashtags', () => {
