@@ -25,22 +25,33 @@ const POSEN = [
   'running across temple rooftops at dusk, motion blur, speed lines',
   'back view looking at a burning red sky, embers floating',
   'confident smirk, close-up portrait, cherry blossoms falling',
-  'mid-air jump with a glowing energy aura, dynamic low angle',
+  'mid-air jump with a glowing energy aura, side view',
   'kneeling in heavy rain, head down, then looking up with fire in the eyes',
   'battle stance in a bamboo forest, mist, sharp shadows',
   'silhouette against a giant glowing moon, fireflies',
 ];
 const STIL_VORNE = 'masterpiece 2D anime illustration, anime screencap, cel shading, clean bold lineart, flat vibrant colors';
-const STIL_HINTEN = 'japanese anime art style, epic anime key visual, dramatic lighting, not photorealistic, not a 3d render, no text, no watermark';
+// Immer dezent: vollständig bekleidet, keine tiefen Kamerawinkel (ein erster Edit zeigte zu viel Bein).
+const STIL_HINTEN = 'japanese anime art style, epic anime key visual, dramatic lighting, fully clothed, modest full outfit, wholesome, eye-level camera, not photorealistic, not a 3d render, no text, no watermark';
 
 export function editPrompts(figur, n = 8, versatz = 0) {
-  const wer = `${figur.geschlecht === 'w' ? 'anime girl' : 'anime boy'} ninja, ${figur.aussehen}`;
+  const wer = `anime ninja hero character, ${figur.aussehen}`;
   return Array.from({ length: n }, (_, i) => `${STIL_VORNE}, ${wer}, ${POSEN[(i + versatz) % POSEN.length]}, ${STIL_HINTEN}`);
 }
 
 const HOOKS = ['POV: {name} wird ernst', 'Wenn {name} keine Gnade mehr kennt', '{name} hat genug', 'Niemand hat {name} kommen sehen', 'Das Erwachen von {name}'];
 export const hookText = (name, teil) => HOOKS[teil % HOOKS.length].replace('{name}', name.split(' ')[0]);
 
+// Zeilenumbruch für große Texte: höchstens n Zeichen pro Zeile (der erste Edit schnitt den Hook links/rechts ab).
+export function umbrechen(text, n = 16) {
+  const zeilen = [];
+  for (const wort of String(text).split(/\s+/).filter(Boolean)) {
+    const letzte = zeilen.at(-1);
+    if (letzte !== undefined && `${letzte} ${wort}`.length <= n) zeilen[zeilen.length - 1] = `${letzte} ${wort}`;
+    else zeilen.push(wort);
+  }
+  return zeilen.join('\n');
+}
 const textDatei = (pfad, text) => { writeFileSync(pfad, text); return pfad.replace(/\\/g, '/').replace(/:/g, '\\:').replace(/'/g, "\\'"); };
 
 // Rendert den Edit aus fertigen Bildern (ohne Netz testbar). Gibt die Dauer zurück.
@@ -66,8 +77,8 @@ export function editRendern(bilder, plan, ziel, { ordner, hook = '', ende = '', 
   const dauer = plan.reduce((a, s) => a + s.dauer, 0);
   const groesse = Math.round(breite * 0.075);
   const texte = [
-    hook && `drawtext=fontfile=${SCHRIFT}:textfile='${textDatei(join(ordner, 'hook.txt'), hook.toUpperCase())}':fontsize=${groesse}:fontcolor=white:borderw=6:bordercolor=black:x=(w-text_w)/2:y=h*0.16:enable='lt(t,${dropZeit(plan).toFixed(2)})'`,
-    ende && `drawtext=fontfile=${SCHRIFT}:textfile='${textDatei(join(ordner, 'ende.txt'), ende.toUpperCase())}':fontsize=${groesse}:fontcolor=white:borderw=6:bordercolor=black:x=(w-text_w)/2:y=(h-text_h)/2:enable='gte(t,${(dauer - 1.2).toFixed(2)})'`,
+    hook && `drawtext=fontfile=${SCHRIFT}:textfile='${textDatei(join(ordner, 'hook.txt'), umbrechen(hook.toUpperCase(), 16))}':fontsize=${groesse}:fontcolor=white:borderw=6:bordercolor=black:line_spacing=12:x=(w-text_w)/2:y=h*0.14:enable='lt(t,${dropZeit(plan).toFixed(2)})'`,
+    ende && `drawtext=fontfile=${SCHRIFT}:textfile='${textDatei(join(ordner, 'ende.txt'), umbrechen(ende.toUpperCase(), 16))}':fontsize=${groesse}:fontcolor=white:borderw=6:bordercolor=black:line_spacing=12:x=(w-text_w)/2:y=(h-text_h)/2:enable='gte(t,${(dauer - 1.2).toFixed(2)})'`,
     konto && `drawtext=fontfile=${SCHRIFT}:textfile='${textDatei(join(ordner, 'konto.txt'), konto.toUpperCase())}':fontsize=${Math.round(breite * 0.034)}:fontcolor=white@0.85:borderw=3:bordercolor=black@0.6:x=w*0.05:y=h*0.045`,
   ].filter(Boolean).join(',');
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', liste, '-f', 'lavfi', '-i', 'anullsrc=r=44100:cl=stereo',
