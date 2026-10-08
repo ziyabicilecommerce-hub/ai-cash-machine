@@ -21,7 +21,8 @@ const ANZAHL = Math.min(Math.max(parseInt(env('FAKTEN_ANZAHL', '6'), 10) || 6, 1
 // Kanalname erscheint oben als Wasserzeichen und auf der Endkarte (z. B. @faktenblitz).
 const KANAL = env('FAKTEN_KANAL', '@futureflowxx').slice(0, 30);
 const liste = (k, d) => env(k, d).split(',').map((x) => x.trim()).filter(Boolean);
-const TIKTOK_KONTEN = liste('FAKTEN_KONTEN_TIKTOK', '@zyx_7851,@futureflowxx,@futureflowx3');
+// @futureflowxx ist seit Oktober das Anime-Edit-Konto (#104) - die Fakten laufen auf den beiden anderen.
+const TIKTOK_KONTEN = liste('FAKTEN_KONTEN_TIKTOK', '@zyx_7851,@futureflowx3');
 const WEITERE_KONTEN = liste('FAKTEN_KONTEN_WEITERE', '@futureflowxx,@desk.rebel,@purivelle.785');
 let KONTO = KANAL;
 const NISCHEN = nischenAus(env('FAKTEN_NISCHEN', STANDARD_NISCHEN));
@@ -207,7 +208,7 @@ async function main() {
       // Echte NASA-Aufnahmen im Video? Dann ehrlich nennen - und es ist ein starker Hook (gemeinfrei, keine Werbung für NASA).
       const nasa = skript.szenen.some((sz) => sz.videoQuelle === 'NASA');
       if (nasa) skript.caption = `🚀 Echte NASA-Aufnahmen! ${skript.caption}`.replace(/(\n|$)/, ' (Videomaterial: NASA)$1');
-      manifest.push({ datei: `${basis}.mp4`, vorschau, sprache: 'de', kanal: 'fakten', titel: skript.titel, konto: KONTO, caption: `${skript.caption}\n\n${i < TIKTOK_KONTEN.length ? `Tag ${streakTag(Date.now(), env('FAKTEN_START', '2026-10-07'))} von 100 🔥 Folge ${KONTO}! ${querverweis(KONTO, TIKTOK_KONTEN, NISCHEN, tag)}`.trim() : `Folge ${KONTO} für täglich neue Fakten!`}`, thema: kategorie, format: 'hoch', dauer: Math.round(v.dauer), szenen: v.szenen });
+      manifest.push({ datei: `${basis}.mp4`, vorschau, sprache: 'de', kanal: 'fakten', titel: skript.titel, konto: KONTO, tiktok: i < TIKTOK_KONTEN.length, caption: `${skript.caption}\n\n${i < TIKTOK_KONTEN.length ? `Tag ${streakTag(Date.now(), env('FAKTEN_START', '2026-10-07'))} von 100 🔥 Folge ${KONTO}! ${querverweis(KONTO, TIKTOK_KONTEN, NISCHEN, tag)}`.trim() : `Folge ${KONTO} für täglich neue Fakten!`}`, thema: kategorie, format: 'hoch', dauer: Math.round(v.dauer), szenen: v.szenen });
       verlauf.nr = nr;
       if (teil) verlauf.serien = { ...(verlauf.serien || {}), [KONTO]: teil };
       verlauf.fakten = [...verlauf.fakten, skript.fakt].slice(-500);

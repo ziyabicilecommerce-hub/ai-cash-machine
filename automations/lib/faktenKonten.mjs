@@ -6,9 +6,9 @@ export const kontoFuer = (i, tag, tiktok, weitere, standard = '@futureflowxx') =
 
 const norm = (s) => String(s || '').trim().replace(/^@/, '').toLowerCase();
 
-// Buffer-Kanäle ({id, name}) den Videos zuordnen: Video mit konto "@name" -> Kanal "name". Pro Kanal ein Video;
-// Videos ohne passendes Konto bekommen einen noch freien Kanal.
-export function zuordnen(videos, kanaele) {
+// Buffer-Kanäle ({id, name}) den Videos zuordnen: Video mit konto "@name" -> Kanal "name". Pro Kanal ein Video.
+// Videos ohne passendes Konto bleiben liegen (streng) - sonst landeten Fakten-Videos auf dem Anime-Konto.
+export function zuordnen(videos, kanaele, { streng = true } = {}) {
   const frei = [...kanaele];
   const plan = [];
   const rest = [];
@@ -17,7 +17,7 @@ export function zuordnen(videos, kanaele) {
     if (i >= 0) plan.push({ video: v, kanal: frei.splice(i, 1)[0] });
     else rest.push(v);
   }
-  for (const v of rest) if (frei.length) plan.push({ video: v, kanal: frei.shift() });
+  if (!streng) for (const v of rest) if (frei.length) plan.push({ video: v, kanal: frei.shift() });
   return plan;
 }
 
