@@ -27,7 +27,8 @@ async function main() {
   if (!/^https:\/\/github\.com\//.test(BASIS)) throw new Error('Release-Basis-URL fehlt');
   const manifestPfad = join('out', 'manifest.json');
   if (!existsSync(manifestPfad)) throw new Error('out/manifest.json fehlt');
-  const videos = JSON.parse(readFileSync(manifestPfad, 'utf8')).filter((v) => {
+  // Nur Videos, die für TikTok gebaut wurden (tiktok: false = für Instagram/YouTube gedacht).
+  const videos = JSON.parse(readFileSync(manifestPfad, 'utf8')).filter((v) => v.tiktok !== false).filter((v) => {
     const e = videoPruefen(v);
     if (!e.ok) console.log(`[101-buffer-poster] Werbe-Check blockiert ${v.datei}`);
     return e.ok;

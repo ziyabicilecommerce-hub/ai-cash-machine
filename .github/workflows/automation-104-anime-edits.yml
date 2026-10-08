@@ -1,0 +1,70 @@
+name: "104 · Anime-Edits"
+
+# Täglich 2 kurze Anime-Edits mit den eigenen Figuren der Anime-Serie (#95), auf den eigenen Beat geschnitten,
+# automatisch auf TikTok (@futureflowxx) gepostet - zu den festen Prime-Time-Zeiten (Buffer-Poster #101).
+
+on:
+  schedule:
+    - cron: '47 3 * * *'
+    - cron: '47 11 * * *'
+  workflow_dispatch:
+    inputs:
+      anzahl:
+        description: 'Anzahl Edits (1-4)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: anime-edits
+  cancel-in-progress: false
+
+env:
+  POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
+  BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      ANIME_EDITS_ANZAHL: ${{ inputs.anzahl || vars.ANIME_EDITS_ANZAHL || '1' }}
+      ANIME_EDIT_KONTO: ${{ vars.ANIME_EDIT_KONTO }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: ffmpeg und Schrift installieren
+        uses: ./.github/actions/video-werkzeug
+      - name: Anime-Edits bauen
+        run: node automations/104-anime-edits.mjs
+      - name: Als Release veröffentlichen
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="anime-edit-$(date -u +%Y%m%d-%H%M)"
+          gh release create "$TAG" out/videos/* --title "Anime-Edits $(date -u +%d.%m.%Y)" --notes "Automatisch erzeugt von Automation #104 (Anime-Edits, eigene Figuren, eigener Beat)." --latest=false
+          echo "basis=https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}" >> "$GITHUB_OUTPUT"
+      - name: Auf TikTok posten (Buffer)
+        if: env.BUFFER_ACCESS_TOKEN != ''
+        continue-on-error: true
+        run: node automations/101-buffer-poster.mjs "${{ steps.release.outputs.basis }}"
+      - name: Verlauf speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp anime-edits/verlauf.json /tmp/verlauf.json
+          for versuch in 1 2 3 4 5; do
+            git fetch -q origin "$GITHUB_REF_NAME"
+            git reset -q --hard "origin/$GITHUB_REF_NAME"
+            mkdir -p anime-edits && cp /tmp/verlauf.json anime-edits/verlauf.json
+            git add anime-edits/verlauf.json
+            git commit -qm "chore: Anime-Edits Verlauf [skip ci]" || exit 0
+            if git push -q origin "HEAD:$GITHUB_REF_NAME"; then exit 0; fi
+            sleep $((versuch * 5))
+          done
+          exit 1

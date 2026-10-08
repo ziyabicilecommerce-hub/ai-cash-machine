@@ -57,6 +57,7 @@ test('zuordnen: Video kommt auf den Kanal, dessen Name im Video steht', () => {
   const v = [{ datei: 'a', konto: '@futureflowx3' }, { datei: 'b', konto: '@zyx_7851' }, { datei: 'c', konto: '@futureflowxx' }, { datei: 'd', konto: '@desk.rebel' }];
   const plan = zuordnen(v, kanaele);
   assert.equal(plan.length, 3);
+  assert.equal(zuordnen([{ datei: 'x', konto: '@desk.rebel' }], kanaele).length, 0, 'streng: fremdes Konto bleibt liegen');
   assert.equal(plan.find((p) => p.video.datei === 'a').kanal.id, '3');
   assert.equal(plan.find((p) => p.video.datei === 'b').kanal.id, '1');
   assert.equal(plan.find((p) => p.video.datei === 'c').kanal.id, '2');
