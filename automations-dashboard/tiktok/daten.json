@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-08T06:36:21.767Z",
+ "stand": "2026-10-08T13:58:13.126Z",
  "gesamt": {
   "posts": 16,
   "aufrufe": 5477,
@@ -17,7 +17,7 @@
     "Körper",
     "Essen"
    ],
-   "serie": 1,
+   "serie": 2,
    "posts": 5,
    "aufrufe": 1512,
    "likes": 10,
@@ -42,7 +42,7 @@
     "Weltall",
     "Geld"
    ],
-   "serie": 1,
+   "serie": 2,
    "posts": 5,
    "aufrufe": 1775,
    "likes": 7,
@@ -67,7 +67,7 @@
     "Natur",
     "Tiere"
    ],
-   "serie": 1,
+   "serie": 2,
    "posts": 6,
    "aufrufe": 2190,
    "likes": 16,
@@ -87,7 +87,41 @@
    }
   }
  ],
- "geplant": [],
+ "geplant": [
+  {
+   "zeit": "2026-10-08T16:00:00.000Z",
+   "konto": "@futureflowxx",
+   "text": "Haare und Fingernägel wachsen nach dem Tod weiter. Wahr oder Mythos? Schreib es in die Kom",
+   "link": "",
+   "format": "mythos",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  },
+  {
+   "zeit": "2026-10-08T17:00:00.000Z",
+   "konto": "@futureflowx3",
+   "text": "Bananen wachsen an Bäumen. Wahr oder Mythos? Schreib es in die Kommentare!",
+   "link": "",
+   "format": "mythos",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  },
+  {
+   "zeit": "2026-10-08T18:00:00.000Z",
+   "konto": "@zyx_7851",
+   "text": "Ein Tag auf der Venus dauert länger als ein Jahr auf der Venus. Wahr oder Mythos? Schreib ",
+   "link": "",
+   "format": "mythos",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  }
+ ],
  "letzte": [
   {
    "zeit": "2026-10-07T23:39:58.882Z",
@@ -268,7 +302,7 @@
  ],
  "fehler": 0,
  "lernen": {
-  "stand": "2026-10-08T06:36:21.344Z",
+  "stand": "2026-10-08T13:58:12.635Z",
   "posts": 16,
   "quiz": {
    "n": 6,
@@ -294,10 +328,6 @@
   {
    "stufe": "warn",
    "text": "Unter 1 Kommentar pro 100 Aufrufe: mehr Fragen, bei denen jeder mitreden will (Schätzen, Streit-Fragen)."
-  },
-  {
-   "stufe": "warn",
-   "text": "Keine TikTok-Posts geplant - der nächste Fakten-Lauf füllt die Warteschlange."
   }
  ]
 }
