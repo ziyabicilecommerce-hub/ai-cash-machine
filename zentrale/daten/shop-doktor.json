@@ -1,17 +1,17 @@
 {
- "stand": "2026-10-07T11:20:17.444Z",
+ "stand": "2026-10-08T11:36:30.608Z",
  "shops": [
   {
    "name": "DeskRebel",
    "url": "https://www.deskrebel.store",
-   "ladezeitMs": 900,
+   "ladezeitMs": 722,
    "produkte": [
     {
      "id": 15898374308214,
      "titel": "DeskRebel LumbarEase – Massagegurt für den unteren Rücken",
      "url": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_231847_c7622f9e-7178-432b-b965-5666c4a6fa77.png?v=1790292343",
-     "punkte": 89,
+     "punkte": 94,
      "befunde": [
       {
        "stufe": "tipp",
@@ -22,11 +22,20 @@
        "stufe": "wichtig",
        "was": "Beschreibung sehr kurz (53 Wörter)",
        "tipp": "150-300 Wörter mit Nutzen, Maßen, Material, Lieferumfang."
-      },
+      }
+     ]
+    },
+    {
+     "id": 15920624632182,
+     "titel": "DeskRebel CurlForce – Bizeps-Widerstandsband mit Doppelgriff",
+     "url": "https://www.deskrebel.store/products/curlforce-bizeps-widerstandsband",
+     "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20261007_232326_70261764-d88a-45f3-903c-03e9ee2ec730.png?v=1791415535",
+     "punkte": 99,
+     "befunde": [
       {
-       "stufe": "wichtig",
-       "was": "Streichpreis ist nicht höher als der Preis",
-       "tipp": "Streichpreis entfernen oder korrigieren."
+       "stufe": "tipp",
+       "was": "13 Bild(er) ohne Alt-Text",
+       "tipp": "Alt-Texte helfen bei Google Bilder und Barrierefreiheit."
       }
      ]
     },
@@ -179,12 +188,12 @@
     "AGB": true,
     "Versand & Zahlung": true
    },
-   "punkte": 98
+   "punkte": 99
   },
   {
    "name": "Purivelle",
    "url": "https://purivelle.store",
-   "ladezeitMs": 494,
+   "ladezeitMs": 547,
    "produkte": [
     {
      "id": 11638691529045,
@@ -419,30 +428,6 @@
      ]
     },
     {
-     "id": 11627838177621,
-     "titel": "Purivelle WarmEase – Wärmende Nackenbandage mit Magneten",
-     "url": "https://purivelle.store/products/warmease-nackenbandage",
-     "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_012710_ad8687e9-ee3f-4a02-b58f-31c9aeac93ed.png?v=1790040654",
-     "punkte": 93,
-     "befunde": [
-      {
-       "stufe": "tipp",
-       "was": "3 Bild(er) ohne Alt-Text",
-       "tipp": "Alt-Texte helfen bei Google Bilder und Barrierefreiheit."
-      },
-      {
-       "stufe": "wichtig",
-       "was": "Beschreibung sehr kurz (58 Wörter)",
-       "tipp": "150-300 Wörter mit Nutzen, Maßen, Material, Lieferumfang."
-      },
-      {
-       "stufe": "tipp",
-       "was": "Keine Tags",
-       "tipp": "Tags für Filter, Sammlungen und Suche setzen."
-      }
-     ]
-    },
-    {
      "id": 11627822186837,
      "titel": "Purivelle PointFlow – Silikon-Faszienball für Fuß, Nacken & Ganzkörper",
      "url": "https://purivelle.store/products/pointflow-faszienball",
@@ -465,6 +450,25 @@
        "tipp": "Tags für Filter, Sammlungen und Suche setzen."
       }
      ]
+    },
+    {
+     "id": 11627838177621,
+     "titel": "Purivelle WarmEase – Wärmende Nackenbandage mit Magneten",
+     "url": "https://purivelle.store/products/warmease-nackenbandage",
+     "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_012710_ad8687e9-ee3f-4a02-b58f-31c9aeac93ed.png?v=1790040654",
+     "punkte": 98,
+     "befunde": [
+      {
+       "stufe": "tipp",
+       "was": "3 Bild(er) ohne Alt-Text",
+       "tipp": "Alt-Texte helfen bei Google Bilder und Barrierefreiheit."
+      },
+      {
+       "stufe": "tipp",
+       "was": "Keine Tags",
+       "tipp": "Tags für Filter, Sammlungen und Suche setzen."
+      }
+     ]
     }
    ],
    "befunde": [],
@@ -480,7 +484,7 @@
  ],
  "feeds": {
   "DeskRebel": {
-   "eintraege": 73,
+   "eintraege": 75,
    "google": "feeds/deskrebel-google.xml",
    "meta": "feeds/deskrebel-meta.csv",
    "pinterest": "feeds/deskrebel-meta.csv"
@@ -527,7 +531,97 @@
    "datum": "2026-10-07",
    "DeskRebel": 98,
    "Purivelle": 91
+  },
+  {
+   "datum": "2026-10-08",
+   "DeskRebel": 99,
+   "Purivelle": 91
   }
  ],
- "aenderungen": []
+ "aenderungen": [
+  {
+   "shop": "DeskRebel",
+   "art": "neu",
+   "titel": "DeskRebel CurlForce – Bizeps-Widerstandsband mit Doppelgriff",
+   "text": "Neues Produkt (28,99 €)",
+   "datum": "2026-10-08"
+  },
+  {
+   "shop": "DeskRebel",
+   "art": "preis",
+   "titel": "DeskRebel PowerBand – Klimmzugband & Widerstandsband",
+   "text": "Preis 12,99 € → 26,99 €",
+   "datum": "2026-10-08"
+  },
+  {
+   "shop": "DeskRebel",
+   "art": "preis",
+   "titel": "DeskRebel LumbarEase – Massagegurt für den unteren Rücken",
+   "text": "Preis 34,99 € → 26,99 €",
+   "datum": "2026-10-08"
+  },
+  {
+   "shop": "DeskRebel",
+   "art": "preis",
+   "titel": "DeskRebel ElbowGuard – Kompressions-Ellbogenbandage",
+   "text": "Preis 17,99 € → 27,99 €",
+   "datum": "2026-10-08"
+  },
+  {
+   "shop": "DeskRebel",
+   "art": "preis",
+   "titel": "DeskRebel DoorKit – Türanker, Griffe & Karabiner für Widerstandsbänder",
+   "text": "Preis 12,99 € → 26,99 €",
+   "datum": "2026-10-08"
+  },
+  {
+   "shop": "DeskRebel",
+   "art": "preis",
+   "titel": "DeskRebel PushPro – Liegestützgriffe in S-Form",
+   "text": "Preis 16,99 € → 26,99 €",
+   "datum": "2026-10-08"
+  },
+  {
+   "shop": "DeskRebel",
+   "art": "preis",
+   "titel": "DeskRebel O-Loop – Latex-Widerstandsring für Arme & Rücken",
+   "text": "Preis 16,99 € → 27,99 €",
+   "datum": "2026-10-08"
+  },
+  {
+   "shop": "DeskRebel",
+   "art": "preis",
+   "titel": "DeskRebel PalmGrips – Silikon-Griffpads für Klimmzug & Gym",
+   "text": "Preis 19,99 € → 26,99 €",
+   "datum": "2026-10-08"
+  },
+  {
+   "shop": "DeskRebel",
+   "art": "preis",
+   "titel": "DeskRebel GripRing – Silikon-Handtrainer für Griffkraft",
+   "text": "Preis 19,99 € → 26,99 €",
+   "datum": "2026-10-08"
+  },
+  {
+   "shop": "DeskRebel",
+   "art": "preis",
+   "titel": "DeskRebel FlexLoop – Breites Widerstandsband für Beine & Po",
+   "text": "Preis 22,99 € → 26,99 €",
+   "datum": "2026-10-08"
+  },
+  {
+   "shop": "DeskRebel",
+   "art": "preis",
+   "titel": "DeskRebel JumpRebel – Speed-Springseil mit Kugellager",
+   "text": "Preis 17,99 € → 26,99 €",
+   "datum": "2026-10-08"
+  },
+  {
+   "shop": "DeskRebel",
+   "art": "preis",
+   "titel": "DeskRebel ArmForce – Power-Twister für Arme, Brust & Schultern",
+   "text": "Preis 19,99 € → 26,99 €",
+   "datum": "2026-10-08"
+  }
+ ]
 }
