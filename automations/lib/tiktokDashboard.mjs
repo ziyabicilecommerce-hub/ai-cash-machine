@@ -22,8 +22,9 @@ function summe(posts) {
   };
 }
 
-export function tippsAus(gesamt, konten, geplant, fehler) {
+export function tippsAus(gesamt, konten, geplant, fehler, ohneZahlen = 0) {
   const tipps = [];
+  if (ohneZahlen) tipps.push({ stufe: 'warn', text: `Buffer holt für ${ohneZahlen} Post(s) keine Zahlen mehr von TikTok ab - die Zahlen hier sind zu niedrig. In TikTok selbst nachsehen oder den Kanal in Buffer neu verbinden.` });
   if (!gesamt.aufrufe) tipps.push({ stufe: 'info', text: 'Noch keine Zahlen von TikTok - die kommen meist 1-2 Tage nach dem Post.' });
   if (gesamt.aufrufe && gesamt.sehdauer < 8) tipps.push({ stufe: 'warn', text: `Sehdauer nur ${gesamt.sehdauer} s: die Leute wischen früh weg. Frage noch schneller, Videos kürzer.` });
   if (gesamt.aufrufe >= 300 && (gesamt.kommentare / gesamt.aufrufe) * 100 < 1) tipps.push({ stufe: 'warn', text: 'Unter 1 Kommentar pro 100 Aufrufe: mehr Fragen, bei denen jeder mitreden will (Schätzen, Streit-Fragen).' });
@@ -60,6 +61,8 @@ export function dashboardDaten({ posts = [], kanaele = [], nischen = {}, serien 
   });
   const geplant = posts.filter((p) => p.status === 'scheduled').sort((a, b) => zeit(a) - zeit(b)).map(zeile);
   const fehler = posts.filter((p) => p.status === 'error').length;
+  // Buffer aktualisiert die Zahlen eines Posts nach dem Senden; ist das nach 6 Stunden nie passiert, fehlen sie.
+  const ohneZahlen = gesendet.filter((p) => zeit(p) < jetzt - 6 * 3600000 && p.metricsUpdatedAt && Date.parse(p.metricsUpdatedAt) < zeit(p)).length;
   const letzte = [...gesendet].sort((a, b) => zeit(b) - zeit(a)).slice(0, 30).map(zeile);
-  return { stand: new Date(jetzt).toISOString(), gesamt, konten, geplant, letzte, fehler, lernen, tipps: tippsAus(gesamt, konten, geplant, fehler) };
+  return { stand: new Date(jetzt).toISOString(), gesamt, konten, geplant, letzte, fehler, ohneZahlen, lernen, tipps: tippsAus(gesamt, konten, geplant, fehler, ohneZahlen) };
 }
