@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-08T10:52:15.032Z",
+ "stand": "2026-10-09T10:51:09.180Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,7 +9,7 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 61,
+     "value": 64,
      "unit": ""
     },
     {
@@ -19,11 +19,39 @@
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 56,
+     "value": 59,
      "unit": ""
     }
    ],
    "rows": [
+    {
+     "Aussage": "JumpRebel – Trainiere intensiv zu Hause",
+     "Beleglink": "https://www.deskrebel.store/products/jumprebel-speed-springseil",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "DeskRebel ArmForce - Power-Twister für Arme, Brust & Schultern",
+     "Beleglink": "https://www.deskrebel.store/products/armforce-power-twister",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle - Deine Rückenschutz-Allianz",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Nein",
+     "Status": "Prüfung offen",
+     "Hinweise": "Menschliche Prüfung ausstehend."
+    },
     {
      "Aussage": "DeskRebel PalmGrips",
      "Beleglink": "https://www.deskrebel.store/products/palmgrips-silikon-griffpads",
@@ -37,13 +65,6 @@
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Beleglink": "https://www.deskrebel.store",
-     "Von dir geprüft": "Nein",
-     "Status": "Prüfung offen",
-     "Hinweise": "Menschliche Prüfung ausstehend."
     },
     {
      "Aussage": "Top 5 von Purivelle",
@@ -463,7 +484,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 61,
+     "value": 64,
      "unit": ""
     },
     {
@@ -479,6 +500,30 @@
    ],
    "rows": [
     {
+     "Aussage": "JumpRebel – Trainiere intensiv zu Hause",
+     "Quellenverweis": "https://www.deskrebel.store/products/jumprebel-speed-springseil",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "DeskRebel ArmForce - Power-Twister für Arme, Brust & Schultern",
+     "Quellenverweis": "https://www.deskrebel.store/products/armforce-power-twister",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Quellenverweis": "https://www.deskrebel.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle - Deine Rückenschutz-Allianz",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
      "Aussage": "DeskRebel PalmGrips",
      "Quellenverweis": "https://www.deskrebel.store/products/palmgrips-silikon-griffpads",
      "Prüfmarkierung ohne Quelle": "Nein",
@@ -487,12 +532,6 @@
     {
      "Aussage": "Purivelle RelaxRoll – Faszienrolle aus EPP-Hartschaum",
      "Quellenverweis": "https://purivelle.store/products/relaxroll-faszienrolle",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Quellenverweis": "https://www.deskrebel.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -947,7 +986,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-08",
+     "value": "2026-10-09",
      "unit": ""
     }
    ],
