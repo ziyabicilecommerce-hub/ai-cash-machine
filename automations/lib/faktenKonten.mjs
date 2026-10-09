@@ -24,7 +24,8 @@ export function zuordnen(videos, kanaele, { streng = true } = {}) {
 // @zyx_7851 ist der Weltall-Kanal mit echten NASA-Aufnahmen.
 // TikTok-Taktik "eine Nische pro Konto": der Algorithmus zeigt ein Konto eher weiter, wenn es immer dasselbe Thema hat.
 // Format: '@konto=Kat1|Kat2;@konto2=Kat3'. Konten ohne Eintrag bekommen alle Themen.
-export const STANDARD_NISCHEN = '@zyx_7851=Weltall;@futureflowxx=Körper|Essen;@futureflowx3=Natur|Tiere';
+// @futureflowxx: Mythen aus allen Themen außer Weltall (das Weltall gehört @zyx_7851).
+export const STANDARD_NISCHEN = '@zyx_7851=Weltall;@futureflowxx=Körper|Essen|Geld|Tiere|Natur;@futureflowx3=Natur|Tiere';
 export function nischenAus(text = STANDARD_NISCHEN) {
   const m = {};
   for (const teil of String(text).split(';')) {
