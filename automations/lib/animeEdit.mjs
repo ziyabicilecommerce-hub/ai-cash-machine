@@ -35,7 +35,8 @@ const STIL_VORNE = 'masterpiece 2D anime illustration, anime screencap, cel shad
 const STIL_HINTEN = 'japanese anime art style, epic anime key visual, dramatic lighting, fully clothed, modest full outfit, wholesome, eye-level camera, not photorealistic, not a 3d render, no text, no watermark';
 
 export function editPrompts(figur, n = 8, versatz = 0) {
-  const wer = `anime ninja hero character, ${figur.aussehen}`;
+  // Solo: die KI malte sonst Nebenfiguren dazu (einmal ein blonder Junge in Orange, der an eine bekannte Serie erinnerte).
+  const wer = `solo, single original anime ninja hero character, only one person in the image, ${figur.aussehen}`;
   return Array.from({ length: n }, (_, i) => `${STIL_VORNE}, ${wer}, ${POSEN[(i + versatz) % POSEN.length]}, ${STIL_HINTEN}`);
 }
 
