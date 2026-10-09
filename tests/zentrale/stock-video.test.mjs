@@ -45,9 +45,9 @@ test('commonsAuswaehlen: nur gemeinfrei/CC0, lang genug, 480-1080p-Fassung', () 
   assert.equal(commonsAuswaehlen({}), null);
 });
 
-test('nasaDateiAuswaehlen: mittlere MP4, sonst mobile/small, https', () => {
+test('nasaDateiAuswaehlen: nur die mittlere MP4 (kleinere Fassungen wurden unscharf), https', () => {
   assert.equal(nasaDateiAuswaehlen(['http://images-assets.nasa.gov/video/x/x~orig.mp4', 'http://images-assets.nasa.gov/video/x/x~medium.mp4', 'http://images-assets.nasa.gov/video/x/x~small.mp4']), 'https://images-assets.nasa.gov/video/x/x~medium.mp4');
-  assert.equal(nasaDateiAuswaehlen(['https://a/x~mobile.mp4', 'https://a/x~preview.mp4']), 'https://a/x~mobile.mp4');
+  assert.equal(nasaDateiAuswaehlen(['https://a/x~mobile.mp4', 'https://a/x~preview.mp4']), '');
   assert.equal(nasaDateiAuswaehlen(['https://a/x.srt']), '');
 });
 
@@ -128,4 +128,16 @@ test('unpassend: Politik, Nachrichten, Sendungen fliegen raus (Live-Fehlgriff Sp
   assert.equal(unpassend('File:Flash-Lightning over Germany.ogv'), false);
   assert.equal(unpassend("NASA's Return to Venus"), false);
   assert.equal(unpassend('File:Spider Moving on Silk Strands- night camera.mpg'), false);
+});
+
+import { filterFuer } from '../../automations/lib/stockVideo.mjs';
+
+test('filterFuer: Querformat scharf in die Mitte mit Unschärfe-Hintergrund, Hochformat füllt das Bild', () => {
+  const quer = filterFuer(1280, 720, 1080, 1920);
+  assert.match(quer, /boxblur/);
+  assert.match(quer, /scale=1080:-2/);
+  assert.match(quer, /overlay/);
+  const hoch = filterFuer(1080, 1920, 1080, 1920);
+  assert.doesNotMatch(hoch, /boxblur/);
+  assert.doesNotMatch(filterFuer(0, 0, 1080, 1920), /boxblur/, 'unbekannte Größe -> füllen');
 });

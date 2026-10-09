@@ -35,8 +35,8 @@ export function commonsAuswaehlen(antwort, benutzt = new Set(), prompt = '', ohn
     if (!v || benutzt.has(s.title) || (prompt && !titelPasst(s.title, prompt, extra)) || unpassend(s.title) || (ohneMenschen && mitMenschen(s.title))) continue;
     const lizenz = String(v.extmetadata?.LicenseShortName?.value || '');
     if (!/^(cc0|public domain|pd\b|pd-)/i.test(lizenz)) continue;
-    if ((v.duration || 0) < 3 || (v.width || 0) < 480) continue;
-    const fassungen = (v.derivatives || []).filter((d) => /^https:\/\//.test(d.src || '') && /video\/(webm|mp4)/.test(d.type || '') && d.height >= 480 && d.height <= 1080)
+    if ((v.duration || 0) < 3 || Math.min(v.width || 0, v.height || 0) < 720) continue;
+    const fassungen = (v.derivatives || []).filter((d) => /^https:\/\//.test(d.src || '') && /video\/(webm|mp4)/.test(d.type || '') && d.height >= 720 && d.height <= 1080)
       .sort((a, b) => b.height - a.height);
     const link = fassungen[0]?.src || ((v.size || 0) < 80e6 && /^https:\/\//.test(v.url || '') ? v.url : '');
     if (link) return { id: s.title, link, dauer: v.duration };
@@ -47,7 +47,8 @@ export function commonsAuswaehlen(antwort, benutzt = new Set(), prompt = '', ohn
 // NASA-Videoarchiv: Liste der Dateien eines Eintrags -> mittlere MP4-Fassung.
 export function nasaDateiAuswaehlen(dateien = []) {
   const mp4 = dateien.filter((u) => /^https?:\/\/.+\.mp4$/i.test(u) && !/~preview/i.test(u));
-  return (mp4.find((u) => /~medium\.mp4$/i.test(u)) || mp4.find((u) => /~mobile\.mp4$/i.test(u)) || mp4.find((u) => /~small\.mp4$/i.test(u)) || '').replace(/^http:/, 'https:');
+  // Nur ~medium (meist 1280x720) - ~mobile/~small sind zu klein und wurden unscharf; ~orig ist oft riesig.
+  return (mp4.find((u) => /~medium\.mp4$/i.test(u)) || '').replace(/^http:/, 'https:');
 }
 
 // International suchen: viele Commons-Clips haben Titel auf Deutsch, Französisch, Spanisch ... Die Übersetzungen
@@ -188,11 +189,25 @@ export async function clipsHolen(szenen, ordner, { weltall = false, ohneMenschen
 }
 
 // Clip auf Hochformat zuschneiden, auf die Szenenlänge bringen (zu kurz -> Schleife), ohne Ton.
+// Querformat-Clip im Hochformat: NICHT die Mitte ausschneiden und ~3x aufblasen (wurde matschig), sondern
+// scharf in voller Breite in die Mitte, dahinter derselbe Clip groß und verschwommen. Hochformat-Clips füllen das Bild.
+export function filterFuer(quellBreite, quellHoehe, breite, hoehe) {
+  const fuellen = `scale=${breite}:${hoehe}:force_original_aspect_ratio=increase,crop=${breite}:${hoehe}`;
+  if (!quellBreite || !quellHoehe || quellBreite / quellHoehe <= (breite / hoehe) * 1.25) return `[0:v]${fuellen},fps=30,setsar=1[v]`;
+  return `[0:v]split[a][b];[a]${fuellen},boxblur=24:2,eq=brightness=-0.12:saturation=1.1[hg];` +
+    `[b]scale=${breite}:-2:flags=lanczos,unsharp=5:5:0.6:5:5:0[vg];[hg][vg]overlay=(W-w)/2:(H-h)/2,fps=30,setsar=1[v]`;
+}
+
 export function clipAnpassen(quelle, ziel, dauer, { breite, hoehe }) {
   try {
+    let qb = 0;
+    let qh = 0;
+    try {
+      [qb, qh] = execFileSync('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height', '-of', 'csv=p=0', quelle]).toString().trim().split(',').map(Number);
+    } catch { /* unbekannt -> füllen */ }
     execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-stream_loop', '-1', '-i', quelle, '-t', dauer.toFixed(2), '-an',
-      '-vf', `scale=${breite}:${hoehe}:force_original_aspect_ratio=increase,crop=${breite}:${hoehe},fps=30,setsar=1`,
-      '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '20', '-pix_fmt', 'yuv420p', ziel], { stdio: 'pipe', timeout: 300000 });
+      '-filter_complex', filterFuer(qb, qh, breite, hoehe), '-map', '[v]',
+      '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', '-pix_fmt', 'yuv420p', ziel], { stdio: 'pipe', timeout: 300000 });
     return existsSync(ziel) ? ziel : '';
   } catch (err) {
     console.log(`[stock-video] Zuschnitt fehlgeschlagen: ${String(err.stderr || err.message).slice(-160)}`);
