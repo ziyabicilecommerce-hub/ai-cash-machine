@@ -21,8 +21,10 @@ const ANZAHL = Math.min(Math.max(parseInt(env('FAKTEN_ANZAHL', '6'), 10) || 6, 1
 // Kanalname erscheint oben als Wasserzeichen und auf der Endkarte (z. B. @faktenblitz).
 const KANAL = env('FAKTEN_KANAL', '@futureflowxx').slice(0, 30);
 const liste = (k, d) => env(k, d).split(',').map((x) => x.trim()).filter(Boolean);
-// @futureflowxx ist seit Oktober das Anime-Edit-Konto (#104) - die Fakten laufen auf den beiden anderen.
-const TIKTOK_KONTEN = liste('FAKTEN_KONTEN_TIKTOK', '@zyx_7851,@futureflowx3');
+const TIKTOK_KONTEN = liste('FAKTEN_KONTEN_TIKTOK', '@zyx_7851,@futureflowxx,@futureflowx3');
+// Festes Format je Konto: @futureflowxx ist der "Mythos oder Wahrheit"-Kanal - das Format mit der längsten Sehdauer
+// (bestes Video: "Wir nutzen nur 10 % vom Gehirn", 1.253 Aufrufe, 8,3 s). Format: '@konto=mythos;@konto2=quiz'.
+const KONTO_FORMAT = Object.fromEntries(env('FAKTEN_KONTO_FORMAT', '@futureflowxx=mythos').split(';').map((t) => t.split('=').map((x) => x.trim().toLowerCase())).filter(([k, f]) => k && ['quiz', 'mythos'].includes(f)));
 const WEITERE_KONTEN = liste('FAKTEN_KONTEN_WEITERE', '@futureflowxx,@desk.rebel,@purivelle.785');
 let KONTO = KANAL;
 const NISCHEN = nischenAus(env('FAKTEN_NISCHEN', STANDARD_NISCHEN));
@@ -165,7 +167,8 @@ async function main() {
       // Jedes TikTok-Konto hat seine Nische (z. B. nur Weltall) - so lernt der Algorithmus, wem er es zeigen soll.
       const nische = nischeFuer(KONTO, NISCHEN);
       // Jedes zweite TikTok-Video im gelernten Lieblingsformat - so wird weiter getestet, aber das Bessere öfter gezeigt.
-      const eintrag = bankNaechster(verlauf.bank, i < TIKTOK_KONTEN.length ? nische : [], LIEBLING && (tag + i) % 2 === 0 ? LIEBLING : null);
+      const festesFormat = i < TIKTOK_KONTEN.length ? KONTO_FORMAT[KONTO.toLowerCase()] : null;
+      const eintrag = bankNaechster(verlauf.bank, i < TIKTOK_KONTEN.length ? nische : [], festesFormat || (LIEBLING && (tag + i) % 2 === 0 ? LIEBLING : null));
       if (eintrag) {
         skript = (eintrag.typ === 'quiz' ? quizAus : mythosAus)(eintrag, eintrag.kat, nr);
         format = `${eintrag.typ}/Faktenliste ${eintrag.id}`;
