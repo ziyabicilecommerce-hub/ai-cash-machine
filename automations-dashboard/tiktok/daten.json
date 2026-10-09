@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-09T18:29:51.786Z",
+ "stand": "2026-10-09T22:52:03.660Z",
  "gesamt": {
   "posts": 25,
   "aufrufe": 15355,
@@ -17,7 +17,7 @@
     "Natur",
     "Tiere"
    ],
-   "serie": 4,
+   "serie": 5,
    "posts": 9,
    "aufrufe": 8562,
    "likes": 37,
@@ -41,7 +41,7 @@
    "nische": [
     "Weltall"
    ],
-   "serie": 4,
+   "serie": 5,
    "posts": 8,
    "aufrufe": 4332,
    "likes": 27,
@@ -64,7 +64,10 @@
    "name": "@futureflowxx",
    "nische": [
     "Körper",
-    "Essen"
+    "Essen",
+    "Geld",
+    "Tiere",
+    "Natur"
    ],
    "serie": 3,
    "posts": 8,
@@ -86,7 +89,30 @@
    }
   }
  ],
- "geplant": [],
+ "geplant": [
+  {
+   "zeit": "2026-10-10T09:30:00.000Z",
+   "konto": "@futureflowx3",
+   "text": "Bei wie viel Grad Celsius kocht Wasser auf Meereshöhe? Schreib deine Antwort in die Kommen",
+   "link": "",
+   "format": "quiz",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  },
+  {
+   "zeit": "2026-10-10T10:30:00.000Z",
+   "konto": "@zyx_7851",
+   "text": "🚀 Echte NASA-Aufnahmen! Schwarze Löcher saugen alles in ihrer Nähe auf wie ein Staubsauge",
+   "link": "",
+   "format": "mythos",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  }
+ ],
  "letzte": [
   {
    "zeit": "2026-10-09T18:02:55.972Z",
@@ -365,9 +391,9 @@
   }
  ],
  "fehler": 0,
- "ohneZahlen": 0,
+ "ohneZahlen": 1,
  "lernen": {
-  "stand": "2026-10-09T18:29:51.378Z",
+  "stand": "2026-10-09T22:52:03.153Z",
   "posts": 25,
   "quiz": {
    "n": 9,
@@ -388,6 +414,10 @@
  "tipps": [
   {
    "stufe": "warn",
+   "text": "Buffer holt für 1 Post(s) keine Zahlen mehr von TikTok ab - die Zahlen hier sind zu niedrig. In TikTok selbst nachsehen oder den Kanal in Buffer neu verbinden."
+  },
+  {
+   "stufe": "warn",
    "text": "Sehdauer nur 4.6 s: die Leute wischen früh weg. Frage noch schneller, Videos kürzer."
   },
   {
@@ -397,10 +427,6 @@
   {
    "stufe": "gut",
    "text": "@futureflowx3 läuft stark (951 Aufrufe/Post) - mehr in diese Richtung."
-  },
-  {
-   "stufe": "warn",
-   "text": "Keine TikTok-Posts geplant - der nächste Fakten-Lauf füllt die Warteschlange."
   }
  ]
 }
