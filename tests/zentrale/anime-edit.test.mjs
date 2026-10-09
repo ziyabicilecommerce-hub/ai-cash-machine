@@ -65,5 +65,5 @@ test('Hook-Umbruch und Werbe-Check: lange Hooks brechen um, Titel ohne "#1" geht
 
 test('editPrompts: immer dezent bekleidet, keine tiefen Kamerawinkel', () => {
   const p = editPrompts({ name: 'Sora', geschlecht: 'w', aussehen: 'long blonde hair' }, 10);
-  assert.ok(p.every((x) => /fully clothed/.test(x) && /modest/.test(x) && !/low angle/.test(x)));
+  assert.ok(p.every((x) => /fully clothed/.test(x) && /modest/.test(x) && !/low angle/.test(x) && /solo, single/.test(x)));
 });
