@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-09T10:51:09.180Z",
+ "stand": "2026-10-10T10:05:18.736Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,7 +9,7 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 64,
+     "value": 66,
      "unit": ""
     },
     {
@@ -19,11 +19,39 @@
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 59,
+     "value": 61,
      "unit": ""
     }
    ],
    "rows": [
+    {
+     "Aussage": "DeskRebel CurlForce – Bizeps-Widerstandsband mit Doppelgriff",
+     "Beleglink": "https://www.deskrebel.store/products/curlforce-bizeps-widerstandsband",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
+     "Beleglink": "https://purivelle.store/products/lotustap-massagehammer",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel – Dein Trainings-Toolkit für zu Hause",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
     {
      "Aussage": "JumpRebel – Trainiere intensiv zu Hause",
      "Beleglink": "https://www.deskrebel.store/products/jumprebel-speed-springseil",
@@ -62,13 +90,6 @@
     {
      "Aussage": "Purivelle RelaxRoll – Faszienrolle aus EPP-Hartschaum",
      "Beleglink": "https://purivelle.store/products/relaxroll-faszienrolle",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Beleglink": "https://purivelle.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -156,13 +177,6 @@
      "Von dir geprüft": "Nein",
      "Status": "Prüfung offen",
      "Hinweise": "Menschliche Prüfung ausstehend."
-    },
-    {
-     "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
-     "Beleglink": "https://purivelle.store/products/lotustap-massagehammer",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
     },
     {
      "Aussage": "Top 5 von Purivelle – Dein Wohlfühl-Toolkit",
@@ -484,7 +498,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 64,
+     "value": 66,
      "unit": ""
     },
     {
@@ -499,6 +513,30 @@
     }
    ],
    "rows": [
+    {
+     "Aussage": "DeskRebel CurlForce – Bizeps-Widerstandsband mit Doppelgriff",
+     "Quellenverweis": "https://www.deskrebel.store/products/curlforce-bizeps-widerstandsband",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
+     "Quellenverweis": "https://purivelle.store/products/lotustap-massagehammer",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel – Dein Trainings-Toolkit für zu Hause",
+     "Quellenverweis": "https://www.deskrebel.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
     {
      "Aussage": "JumpRebel – Trainiere intensiv zu Hause",
      "Quellenverweis": "https://www.deskrebel.store/products/jumprebel-speed-springseil",
@@ -532,12 +570,6 @@
     {
      "Aussage": "Purivelle RelaxRoll – Faszienrolle aus EPP-Hartschaum",
      "Quellenverweis": "https://purivelle.store/products/relaxroll-faszienrolle",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Quellenverweis": "https://purivelle.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -610,12 +642,6 @@
     {
      "Aussage": "Top 5 von DeskRebel – Futtere dein Home-Gym!",
      "Quellenverweis": "https://www.deskrebel.store",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
-     "Quellenverweis": "https://purivelle.store/products/lotustap-massagehammer",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -986,7 +1012,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-09",
+     "value": "2026-10-10",
      "unit": ""
     }
    ],
