@@ -4573,69 +4573,386 @@
    "preis": 29.99,
    "ergebnisse": [
     {
-     "hook": "Warum hat dir niemand Purivelle TapRelax gezeigt?",
-     "winkel": "Neugier-Lücke",
-     "punkte": 8.6,
-     "kaeufer": null,
-     "proTyp": [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-     ],
-     "quelle": "Regeln",
-     "echt": null
-    },
-    {
-     "hook": "Dein Alltag ohne Purivelle TapRelax: anstrengend.",
-     "winkel": "Problem trifft",
-     "punkte": 7.3,
-     "kaeufer": null,
-     "proTyp": [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-     ],
-     "quelle": "Regeln",
-     "echt": null
-    },
-    {
-     "hook": "So sparst du dir jeden Tag Zeit",
+     "hook": "TapRelax=5 min Entspannung=intensives 1-std-Massage Mendes dazu ein bild mit text 'so viel G Güewinn in nur 30 Sekunden!",
      "winkel": "Zeitgewinn",
-     "punkte": 7,
-     "kaeufer": null,
+     "punkte": 6.5,
+     "kaeufer": 49,
      "proTyp": [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
+      7,
+      6,
+      6,
+      7,
+      6,
+      6,
+      7,
+      6,
+      7,
+      7
      ],
-     "quelle": "Regeln",
+     "quelle": "Jury",
      "echt": null
     },
     {
-     "hook": "Vorher vs. nachher mit Purivelle TapRelax",
+     "hook": "Klopf jetzt & sieh's! Sanft oder kräftig.",
+     "winkel": "Live-Beweis",
+     "punkte": 6.4,
+     "kaeufer": 55,
+     "proTyp": [
+      6,
+      5,
+      7,
+      7,
+      6,
+      6,
+      7,
+      7,
+      7,
+      7
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "Adios, angekniffene Muskeln. Hallo, TapRelax!",
+     "winkel": "Preis-Wert",
+     "punkte": 6.2,
+     "kaeufer": 41,
+     "proTyp": [
+      7,
+      5,
+      6,
+      7,
+      6,
+      5,
+      7,
+      6,
+      6,
+      7
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "Du, der Entspannungsgenießer?",
+     "winkel": "Identität",
+     "punkte": 5.8,
+     "kaeufer": 29,
+     "proTyp": [
+      7,
+      4,
+      6,
+      5,
+      5,
+      5,
+      6,
+      7,
+      6,
+      7
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "Rückenschmerzen vom vielen Sitzen?",
+     "winkel": "Problem trifft",
+     "punkte": 5.4,
+     "kaeufer": 20,
+     "proTyp": [
+      6,
+      5,
+      4,
+      7,
+      6,
+      3,
+      7,
+      5,
+      5,
+      6
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "Ohne & Mit TapRelax: Mord &guid from https://smarter蓴demy.com/Guid=111528139781,35201030760müde? Nie wieder!",
      "winkel": "Vorher/Nachher",
+     "punkte": 5.4,
+     "kaeufer": 0,
+     "proTyp": [
+      5,
+      4,
+      6,
+      6,
+      5,
+      5,
+      6,
+      6,
+      6,
+      6
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "Was, wenn's doch so einfach wäre?",
+     "winkel": "Neugier-Lücke",
+     "punkte": 5.2,
+     "kaeufer": 21,
+     "proTyp": [
+      7,
+      3,
+      4,
+      6,
+      5,
+      4,
+      5,
+      6,
+      6,
+      7
+     ],
+     "quelle": "Jury",
+     "echt": null
+    }
+   ],
+   "gewinner": {
+    "hook": "TapRelax=5 min Entspannung=intensives 1-std-Massage Mendes dazu ein bild mit text 'so viel G Güewinn in nur 30 Sekunden!",
+    "winkel": "Zeitgewinn",
+    "punkte": 6.5,
+    "kaeufer": 49,
+    "proTyp": [
+     7,
+     6,
+     6,
+     7,
+     6,
+     6,
+     7,
+     6,
+     7,
+     7
+    ],
+    "quelle": "Jury",
+    "echt": null
+   },
+   "einwand": {
+    "text": "Mangel an Beweisen",
+    "von": "Skeptiker, 41"
+   },
+   "final": {
+    "hook": "TapRelax: 30 Sekunden Entspannung = 1 Stunde Massage – weil es ein Wellness‑Produkt ist, brauchst du keine klinischen Be",
+    "antwort": "Es ist ein Wellness‑Produkt, nicht medizinisch, deshalb gibt es keine klinischen Studien – die Wirkung basiert auf bewährter Selbstmassage.",
+    "schlagzeile": "30 Sekunden, 1 Stunde Entspannung"
+   },
+   "ersatz": false,
+   "erstellt": "2026-10-10T10:11:06.493Z",
+   "handle": "taprelax-klopfpaddel",
+   "shop": "Purivelle",
+   "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_020332_b63ea50d-fcf6-4583-bdef-e108cbd3a149.png?v=1790043016"
+  },
+  "https://purivelle.store/products/relaxroll-faszienrolle": {
+   "produkt": "Purivelle RelaxRoll – Faszienrolle aus EPP-Hartschaum",
+   "preis": 64.99,
+   "ergebnisse": [
+    {
+     "hook": "Ohne Roll steif, mit Roll locker.",
+     "winkel": "Vorher/Nachher",
+     "punkte": 6.7,
+     "kaeufer": 55,
+     "proTyp": [
+      5,
+      7,
+      6,
+      8,
+      6,
+      4,
+      9,
+      8,
+      7,
+      8
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "Für alle, die schnelle Entspannung schätzen.",
+     "winkel": "Identität",
      "punkte": 6.3,
+     "kaeufer": 47,
+     "proTyp": [
+      6,
+      5,
+      8,
+      7,
+      5,
+      3,
+      8,
+      7,
+      6,
+      9
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "100 EUR? Unser Produkt kostet 64,99 EUR.",
+     "winkel": "Preis-Wert",
+     "punkte": 6.1,
+     "kaeufer": 49,
+     "proTyp": [
+      8,
+      6,
+      4,
+      8,
+      5,
+      2,
+      8,
+      7,
+      6,
+      7
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "Beim langen Sitzen: Rücken schmerzt? Roll raus!",
+     "winkel": "Problem trifft",
+     "punkte": 5.7,
+     "kaeufer": 35,
+     "proTyp": [
+      4,
+      6,
+      5,
+      7,
+      5,
+      3,
+      8,
+      7,
+      6,
+      7
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "Live: Spür sofort Muskelkater verschwinden.",
+     "winkel": "Live-Beweis",
+     "punkte": 5.7,
+     "kaeufer": 35,
+     "proTyp": [
+      4,
+      6,
+      5,
+      7,
+      5,
+      2,
+      8,
+      7,
+      6,
+      8
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "Zeit sparen: 5 Minuten, volle Entspannung.",
+     "winkel": "Zeitgewinn",
+     "punkte": 5.6,
+     "kaeufer": 30,
+     "proTyp": [
+      7,
+      4,
+      6,
+      5,
+      6,
+      3,
+      7,
+      6,
+      5,
+      7
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "Der schräge Sitzschmerz? Unser Roll besiegt ihn.",
+     "winkel": "Gemeinsamer Gegner",
+     "punkte": 5.3,
+     "kaeufer": 29,
+     "proTyp": [
+      2,
+      7,
+      6,
+      6,
+      4,
+      3,
+      7,
+      8,
+      5,
+      6
+     ],
+     "quelle": "Jury",
+     "echt": null
+    },
+    {
+     "hook": "Wie fühlt sich dein Rücken wirklich nach der Rolle?",
+     "winkel": "Neugier-Lücke",
+     "punkte": 5.2,
+     "kaeufer": 28,
+     "proTyp": [
+      3,
+      5,
+      7,
+      6,
+      4,
+      2,
+      7,
+      6,
+      5,
+      8
+     ],
+     "quelle": "Jury",
+     "echt": null
+    }
+   ],
+   "gewinner": {
+    "hook": "Ohne Roll steif, mit Roll locker.",
+    "winkel": "Vorher/Nachher",
+    "punkte": 6.7,
+    "kaeufer": 55,
+    "proTyp": [
+     5,
+     7,
+     6,
+     8,
+     6,
+     4,
+     9,
+     8,
+     7,
+     8
+    ],
+    "quelle": "Jury",
+    "echt": null
+   },
+   "einwand": null,
+   "final": {
+    "hook": "Ohne Roll steif, mit Roll locker.",
+    "antwort": null,
+    "schlagzeile": null
+   },
+   "ersatz": false,
+   "erstellt": "2026-10-10T10:12:41.627Z",
+   "handle": "relaxroll-faszienrolle",
+   "shop": "Purivelle",
+   "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_020224_dd7177ba-04d5-4907-bcae-acfbbd20f1ae.png?v=1790043013"
+  },
+  "https://purivelle.store/products/warmease-nackenbandage": {
+   "produkt": "Purivelle WarmEase – Wärmende Nackenbandage mit Magneten",
+   "preis": 58.99,
+   "ergebnisse": [
+    {
+     "hook": "58,99 € – das ist dein Nacken wert!",
+     "winkel": "Preis-Wert",
+     "punkte": 6.7,
      "kaeufer": null,
      "proTyp": [
       null,
@@ -4653,7 +4970,67 @@
      "echt": null
     },
     {
-     "hook": "Für alle, die es satt haben",
+     "hook": "Kalt am Nacken? Hier die Lösung!",
+     "winkel": "Neugier-Lücke",
+     "punkte": 6,
+     "kaeufer": null,
+     "proTyp": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "quelle": "Regeln",
+     "echt": null
+    },
+    {
+     "hook": "Schreibtischkälte – schnell warm!",
+     "winkel": "Problem trifft",
+     "punkte": 6,
+     "kaeufer": null,
+     "proTyp": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "quelle": "Regeln",
+     "echt": null
+    },
+    {
+     "hook": "Ohne Kabel, aber mit Hitze!",
+     "winkel": "Vorher/Nachher",
+     "punkte": 6,
+     "kaeufer": null,
+     "proTyp": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "quelle": "Regeln",
+     "echt": null
+    },
+    {
+     "hook": "Für alle, die kaltes Wetter hasst!",
      "winkel": "Identität",
      "punkte": 6,
      "kaeufer": null,
@@ -4673,8 +5050,48 @@
      "echt": null
     },
     {
-     "hook": "Schau, was Purivelle TapRelax in 5 Sekunden macht",
+     "hook": "Schau, wie die Magnete warm machen!",
      "winkel": "Live-Beweis",
+     "punkte": 6,
+     "kaeufer": null,
+     "proTyp": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "quelle": "Regeln",
+     "echt": null
+    },
+    {
+     "hook": "Kein Aufwärmen mehr – einfach anlegen!",
+     "winkel": "Zeitgewinn",
+     "punkte": 6,
+     "kaeufer": null,
+     "proTyp": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "quelle": "Regeln",
+     "echt": null
+    },
+    {
+     "hook": "Kabel nerven? Wir haben die Lösung!",
+     "winkel": "Gemeinsamer Gegner",
      "punkte": 6,
      "kaeufer": null,
      "proTyp": [
@@ -4694,9 +5111,9 @@
     }
    ],
    "gewinner": {
-    "hook": "Warum hat dir niemand Purivelle TapRelax gezeigt?",
-    "winkel": "Neugier-Lücke",
-    "punkte": 8.6,
+    "hook": "58,99 € – das ist dein Nacken wert!",
+    "winkel": "Preis-Wert",
+    "punkte": 6.7,
     "kaeufer": null,
     "proTyp": [
      null,
@@ -4715,412 +5132,12 @@
    },
    "einwand": null,
    "final": {
-    "hook": "Warum hat dir niemand Purivelle TapRelax gezeigt?",
+    "hook": "58,99 € – das ist dein Nacken wert!",
     "antwort": null,
     "schlagzeile": null
    },
-   "ersatz": true,
-   "erstellt": "2026-10-02T06:13:17.214Z",
-   "handle": "taprelax-klopfpaddel",
-   "shop": "Purivelle",
-   "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_020332_b63ea50d-fcf6-4583-bdef-e108cbd3a149.png?v=1790043016"
-  },
-  "https://purivelle.store/products/relaxroll-faszienrolle": {
-   "produkt": "Purivelle RelaxRoll – Faszienrolle aus EPP-Hartschaum",
-   "preis": 64.99,
-   "ergebnisse": [
-    {
-     "hook": "Für alle, die sich gut fühlen wollen!",
-     "winkel": "Identität",
-     "punkte": 6,
-     "kaeufer": 47,
-     "proTyp": [
-      6,
-      3,
-      7,
-      6,
-      7,
-      5,
-      7,
-      7,
-      7,
-      6
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Trainingslast, Rückenschmerzen? Purivelle hilft!",
-     "winkel": "Problem trifft",
-     "punkte": 5.7,
-     "kaeufer": 20,
-     "proTyp": [
-      6,
-      5,
-      4,
-      7,
-      6,
-      4,
-      9,
-      6,
-      5,
-      5
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Sparen Sie Stunden auf, purivelle macht es einfach!",
-     "winkel": "Zeitgewinn",
-     "punkte": 5.6,
-     "kaeufer": 44,
-     "proTyp": [
-      7,
-      3,
-      4,
-      7,
-      8,
-      4,
-      7,
-      5,
-      5,
-      6
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "64.99 EUR für eine Rolle, die sich lohnt!",
-     "winkel": "Preis-Wert",
-     "punkte": 5.5,
-     "kaeufer": 18,
-     "proTyp": [
-      6,
-      4,
-      5,
-      5,
-      7,
-      3,
-      6,
-      8,
-      6,
-      5
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Noch nie so leicht: von müder Rücken zum glücklichen!",
-     "winkel": "Vorher/Nachher",
-     "punkte": 5.4,
-     "kaeufer": 30,
-     "proTyp": [
-      7,
-      2,
-      5,
-      5,
-      6,
-      4,
-      8,
-      5,
-      6,
-      7
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Purivelle, gegen den Stress der modernen Welt!",
-     "winkel": "Gemeinsamer Gegner",
-     "punkte": 5.3,
-     "kaeufer": 17,
-     "proTyp": [
-      5,
-      2,
-      6,
-      6,
-      6,
-      4,
-      7,
-      6,
-      7,
-      5
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Was sagt sich dein Rücken zu, nach einem lauten Tag?",
-     "winkel": "Neugier-Lücke",
-     "punkte": 5.1,
-     "kaeufer": 19,
-     "proTyp": [
-      5,
-      3,
-      4,
-      6,
-      7,
-      3,
-      8,
-      5,
-      5,
-      6
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Kümmere dich nicht mehr, purivelle wird es für dich!",
-     "winkel": "Live-Beweis",
-     "punkte": 4.8,
-     "kaeufer": 0,
-     "proTyp": [
-      5,
-      4,
-      5,
-      4,
-      5,
-      3,
-      6,
-      6,
-      6,
-      5
-     ],
-     "quelle": "Jury",
-     "echt": null
-    }
-   ],
-   "gewinner": {
-    "hook": "Für alle, die sich gut fühlen wollen!",
-    "winkel": "Identität",
-    "punkte": 6,
-    "kaeufer": 47,
-    "proTyp": [
-     6,
-     3,
-     7,
-     6,
-     7,
-     5,
-     7,
-     7,
-     7,
-     6
-    ],
-    "quelle": "Jury",
-    "echt": null
-   },
-   "einwand": {
-    "text": "Preis zu hoch",
-    "von": "Schnäppchenjägerin, 24"
-   },
-   "final": {
-    "hook": "Preis zahlt sich aus, dein Wohlbefinden zählt!",
-    "antwort": "Mit langlebigem, formstabilem EPP-Hartschaum bleibt die Rolle ein einziges Mal zu kaufen – ersetzt wiederholte Massageaufwände.",
-    "schlagzeile": "Formstabil, leicht abzuwischen"
-   },
    "ersatz": false,
-   "erstellt": "2026-10-02T06:15:06.111Z",
-   "handle": "relaxroll-faszienrolle",
-   "shop": "Purivelle",
-   "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_020224_dd7177ba-04d5-4907-bcae-acfbbd20f1ae.png?v=1790043013"
-  },
-  "https://purivelle.store/products/warmease-nackenbandage": {
-   "produkt": "Purivelle WarmEase – Wärmende Nackenbandage mit Magneten",
-   "preis": 58.99,
-   "ergebnisse": [
-    {
-     "hook": "Live-Beweis: In 5 Minuten, keine Batterien!",
-     "winkel": "Live-Beweis",
-     "punkte": 6.6,
-     "kaeufer": 49,
-     "proTyp": [
-      5,
-      8,
-      6,
-      7,
-      9,
-      6,
-      8,
-      5,
-      5,
-      7
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Zeitgewinn: 30 Sekunden statt 10 Minuten Massage!",
-     "winkel": "Zeitgewinn",
-     "punkte": 6.6,
-     "kaeufer": 47,
-     "proTyp": [
-      6,
-      5,
-      6,
-      8,
-      7,
-      7,
-      8,
-      6,
-      7,
-      6
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Problem trifft: Kopfschmerzen am Schreibtisch löst sich!",
-     "winkel": "Problem trifft",
-     "punkte": 6.1,
-     "kaeufer": 30,
-     "proTyp": [
-      4,
-      6,
-      4,
-      9,
-      8,
-      4,
-      9,
-      6,
-      6,
-      6
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Vorher/Nachher: Ruhe und Wärme, keine Kopfschmerzen!",
-     "winkel": "Vorher/Nachher",
-     "punkte": 5.8,
-     "kaeufer": 35,
-     "proTyp": [
-      4,
-      5,
-      5,
-      7,
-      6,
-      5,
-      8,
-      7,
-      6,
-      7
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Gemeinsamer Gegner: Kopfschmerzen, die uns alle quälen!",
-     "winkel": "Gemeinsamer Gegner",
-     "punkte": 5.8,
-     "kaeufer": 30,
-     "proTyp": [
-      4,
-      5,
-      6,
-      7,
-      7,
-      6,
-      7,
-      5,
-      6,
-      6
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Identität: Für alle, die sich in der Wärme wohlfühlen!",
-     "winkel": "Identität",
-     "punkte": 5.6,
-     "kaeufer": 29,
-     "proTyp": [
-      3,
-      4,
-      7,
-      5,
-      6,
-      8,
-      6,
-      6,
-      7,
-      6
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Preis-Wert: 58,99 EUR für eine Wohltuung!",
-     "winkel": "Preis-Wert",
-     "punkte": 5.4,
-     "kaeufer": 22,
-     "proTyp": [
-      7,
-      3,
-      4,
-      5,
-      6,
-      5,
-      6,
-      7,
-      6,
-      6
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Neugier-Lücke: Wärme ohne Kabel? Nein, wirklich!",
-     "winkel": "Neugier-Lücke",
-     "punkte": 5,
-     "kaeufer": 16,
-     "proTyp": [
-      3,
-      4,
-      5,
-      6,
-      5,
-      5,
-      7,
-      5,
-      5,
-      7
-     ],
-     "quelle": "Jury",
-     "echt": null
-    }
-   ],
-   "gewinner": {
-    "hook": "Live-Beweis: In 5 Minuten, keine Batterien!",
-    "winkel": "Live-Beweis",
-    "punkte": 6.6,
-    "kaeufer": 49,
-    "proTyp": [
-     5,
-     8,
-     6,
-     7,
-     9,
-     6,
-     8,
-     5,
-     5,
-     7
-    ],
-    "quelle": "Jury",
-    "echt": null
-   },
-   "einwand": {
-    "text": "Preis zu hoch",
-    "von": "Schnäppchenjägerin, 24"
-   },
-   "final": {
-    "hook": "Live‑Beweis: 5 Minuten, keine Batterien – Magnet‑Wärme, die ‘Preis zu hoch’ verwirrt.",
-    "antwort": "Der Preis liegt an den hochwertigen Magneten (5, 13 oder 19) und dem atmungsaktiven Stoff, die kabellos Wärme liefern.",
-    "schlagzeile": "Magnetische Wärme ohne Kabel"
-   },
-   "ersatz": false,
-   "erstellt": "2026-10-02T06:17:04.494Z",
+   "erstellt": "2026-10-10T10:16:52.643Z",
    "handle": "warmease-nackenbandage",
    "shop": "Purivelle",
    "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_012710_ad8687e9-ee3f-4a02-b58f-31c9aeac93ed.png?v=1790040654"
@@ -5130,39 +5147,19 @@
    "preis": 44.99,
    "ergebnisse": [
     {
-     "hook": "Zeitgewinn: 5 Minuten, statt 30 Minuten Massage!",
-     "winkel": "Zeitgewinn",
-     "punkte": 7.5,
-     "kaeufer": null,
-     "proTyp": [
-      3,
-      null,
-      4,
-      null,
-      6,
-      5,
-      7,
-      6,
-      4,
-      2
-     ],
-     "quelle": "Regeln",
-     "echt": null
-    },
-    {
-     "hook": "Preis-Wert: 10% billiger als rivalische Massageroller!",
+     "hook": "44,99 € – das ist dein Wohlfühl-Ritual!",
      "winkel": "Preis-Wert",
-     "punkte": 6.7,
+     "punkte": 7.7,
      "kaeufer": null,
      "proTyp": [
-      9,
-      null,
-      8,
-      null,
-      6,
       7,
-      6,
-      7,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
       null,
       null
      ],
@@ -5170,114 +5167,134 @@
      "echt": null
     },
     {
-     "hook": "Neugier-Lücke: Wie massiert man sich selbst optimal?",
+     "hook": "5 Minuten statt 30 Minuten Massage!",
+     "winkel": "Zeitgewinn",
+     "punkte": 7.5,
+     "kaeufer": null,
+     "proTyp": [
+      4,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "quelle": "Regeln",
+     "echt": null
+    },
+    {
+     "hook": "Fazien massieren? So tief wie noch nie!",
      "winkel": "Neugier-Lücke",
-     "punkte": 6.5,
-     "kaeufer": null,
-     "proTyp": [
-      8,
-      null,
-      7,
-      null,
-      5,
-      3,
-      7,
-      6,
-      4,
-      2
-     ],
-     "quelle": "Regeln",
-     "echt": null
-    },
-    {
-     "hook": "Problem trifft: Müde Beine nach Sportflaschen?",
-     "winkel": "Problem trifft",
-     "punkte": 6.5,
-     "kaeufer": null,
-     "proTyp": [
-      4,
-      null,
-      5,
-      null,
-      7,
-      4,
-      8,
-      7,
-      5,
-      3
-     ],
-     "quelle": "Regeln",
-     "echt": null
-    },
-    {
-     "hook": "Vorher/Nachher: Sei fit, wie ein König!",
-     "winkel": "Vorher/Nachher",
      "punkte": 6,
      "kaeufer": null,
      "proTyp": [
       6,
       null,
-      8,
       null,
-      8,
-      7,
-      8,
-      7,
-      6,
-      4
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
      ],
      "quelle": "Regeln",
      "echt": null
     },
     {
-     "hook": "Identität: Für gesunde, selbstmassierende Männer!",
+     "hook": "Schmerzige Muskeln? Der Roller hilft!",
+     "winkel": "Problem trifft",
+     "punkte": 6,
+     "kaeufer": null,
+     "proTyp": [
+      3,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "quelle": "Regeln",
+     "echt": null
+    },
+    {
+     "hook": "Vorher: Steif. Nachher: Entspannt!",
+     "winkel": "Vorher/Nachher",
+     "punkte": 6,
+     "kaeufer": null,
+     "proTyp": [
+      5,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "quelle": "Regeln",
+     "echt": null
+    },
+    {
+     "hook": "Für alle, die sich selbst entspannen wollen!",
      "winkel": "Identität",
      "punkte": 6,
      "kaeufer": null,
      "proTyp": [
       7,
       null,
-      7,
       null,
-      7,
-      6,
-      8,
-      8,
-      6,
-      4
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
      ],
      "quelle": "Regeln",
      "echt": null
     },
     {
-     "hook": "Live-Beweis: Am Wochenende, ohne Recherche!",
-     "winkel": "Live-Beweis",
+     "hook": "Kein Trainer? Kein Problem – der Roller!",
+     "winkel": "Gemeinsamer Gegner",
      "punkte": 6,
      "kaeufer": null,
      "proTyp": [
-      5,
-      null,
-      6,
-      null,
-      6,
-      5,
       7,
-      7,
-      5,
-      3
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
      ],
      "quelle": "Regeln",
      "echt": null
     },
     {
-     "hook": "Gemeinsamer Gegner: Müdigkeit und Zeitstress, was uns die Ruhe nimmt!",
-     "winkel": "Gemeinsamer Gegner",
+     "hook": "Schau, wie der Roller über meine Beine rollt!",
+     "winkel": "Live-Beweis",
      "punkte": 5,
      "kaeufer": null,
      "proTyp": [
-      7,
+      8,
       null,
-      6,
+      null,
       null,
       null,
       null,
@@ -5291,36 +5308,33 @@
     }
    ],
    "gewinner": {
-    "hook": "Zeitgewinn: 5 Minuten, statt 30 Minuten Massage!",
-    "winkel": "Zeitgewinn",
-    "punkte": 7.5,
+    "hook": "44,99 € – das ist dein Wohlfühl-Ritual!",
+    "winkel": "Preis-Wert",
+    "punkte": 7.7,
     "kaeufer": null,
     "proTyp": [
-     3,
-     null,
-     4,
-     null,
-     6,
-     5,
      7,
-     6,
-     4,
-     2
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
     ],
     "quelle": "Regeln",
     "echt": null
    },
-   "einwand": {
-    "text": "Preis,Wert für Geld,Design,Wirkung,Gemeinsamer Gegner,Leistung,Versandkosten,Versandkosten,Design,Gemeinsamer Gegner",
-    "von": "Schnäppchenjägerin, 24"
-   },
+   "einwand": null,
    "final": {
-    "hook": "5 Minuten Selbstmassage: Tiefe Entspannung, die 30 Minuten Massage entspricht.",
-    "antwort": "Der strukturiert‑geprägte Massageroller rollt über Beine, Arme, Rücken und Po mit individuell einstellbarem Druck – sodass du dieselbe Muskel‑Freisetzung wie bei einer 30‑Minuten‑Massage in nur fünf M",
-    "schlagzeile": "Selbstmassage in fünf Minuten"
+    "hook": "44,99 € – das ist dein Wohlfühl-Ritual!",
+    "antwort": null,
+    "schlagzeile": null
    },
    "ersatz": false,
-   "erstellt": "2026-10-02T06:20:59.056Z",
+   "erstellt": "2026-10-10T10:18:47.766Z",
    "handle": "sculptroll-massageroller",
    "shop": "Purivelle",
    "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_015423_4fb54e8c-1160-4a56-a27d-88f063a48ca2.png?v=1790042400"
@@ -5517,204 +5531,204 @@
     "schlagzeile": null
    },
    "ersatz": false,
-   "erstellt": "2026-10-02T10:07:45.800Z",
+   "erstellt": "2026-10-10T10:20:24.835Z",
    "handle": "pointflow-faszienball",
    "shop": "Purivelle",
    "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_015255_ba17636d-002c-4cf3-9ceb-d214a1b9aef6.png?v=1790042292"
   },
   "https://www.deskrebel.store/products/armforce-power-twister": {
    "produkt": "DeskRebel ArmForce – Power-Twister für Arme, Brust & Schultern",
-   "preis": 24.99,
+   "preis": 27.99,
    "ergebnisse": [
     {
-     "hook": "Ruckelnde Gewichte? Wir besiegen sie mit ArmForce.",
-     "winkel": "Gemeinsamer Gegner",
-     "punkte": 8,
-     "kaeufer": 100,
-     "proTyp": [
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Kämpfst du mit schwachen Oberkörper, ohne Bank?",
-     "winkel": "Problem trifft",
-     "punkte": 7,
-     "kaeufer": 100,
-     "proTyp": [
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Sei in 30 Sekunden noch stärker!",
+     "hook": "Live-Beweis: 5. Minute: Schwingen, zappen, knacken!",
      "winkel": "Live-Beweis",
-     "punkte": 7,
-     "kaeufer": 100,
+     "punkte": 6.7,
+     "kaeufer": null,
      "proTyp": [
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
      ],
-     "quelle": "Jury",
+     "quelle": "Regeln",
      "echt": null
     },
     {
-     "hook": "Nur 24,99 € für 4‑100 kg‑Widerstand.",
+     "hook": "Preis-Wert: 10% weniger, 50% mehr Wirkung.",
      "winkel": "Preis-Wert",
-     "punkte": 7,
-     "kaeufer": 100,
+     "punkte": 6.7,
+     "kaeufer": null,
      "proTyp": [
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
      ],
-     "quelle": "Jury",
+     "quelle": "Regeln",
      "echt": null
     },
     {
-     "hook": "Ohne: Schwache Arme. Mit: Durchtrainiert, Haus-Workout.",
-     "winkel": "Vorher/Nachher",
-     "punkte": 6.8,
-     "kaeufer": 39,
-     "proTyp": [
-      6,
-      6,
-      9,
-      6,
-      7,
-      6,
-      8,
-      8,
-      6,
-      6
-     ],
-     "quelle": "Jury",
-     "echt": null
-    },
-    {
-     "hook": "Hast du neugierig, wie starke Arme entstehen?",
+     "hook": "Neugier-Lücke: Wie viel Biegen?",
      "winkel": "Neugier-Lücke",
-     "punkte": 6.1,
-     "kaeufer": 53,
+     "punkte": 6.5,
+     "kaeufer": null,
      "proTyp": [
-      8,
-      4,
-      8,
-      4,
-      8,
-      4,
-      8,
-      8,
-      4,
-      4
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
      ],
-     "quelle": "Jury",
+     "quelle": "Regeln",
      "echt": null
     },
     {
-     "hook": "Für alle, die Zuhause stärker werden wollen.",
+     "hook": "Problem trifft: Stärke ohne Hantelbank.",
+     "winkel": "Problem trifft",
+     "punkte": 6,
+     "kaeufer": null,
+     "proTyp": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "quelle": "Regeln",
+     "echt": null
+    },
+    {
+     "hook": "Vorher/Nachher: Glatte Arme, Stärke pro Woche.",
+     "winkel": "Vorher/Nachher",
+     "punkte": 6,
+     "kaeufer": null,
+     "proTyp": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "quelle": "Regeln",
+     "echt": null
+    },
+    {
+     "hook": "Identität: Für Sportfreunde, die Zeit sparen.",
      "winkel": "Identität",
-     "punkte": 5.1,
-     "kaeufer": 0,
+     "punkte": 6,
+     "kaeufer": null,
      "proTyp": [
-      5,
-      6,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
      ],
-     "quelle": "Jury",
+     "quelle": "Regeln",
      "echt": null
     },
     {
-     "hook": "Rieße 20 Minuten deins, Trainiert alle Oberkörperteile.",
-     "winkel": "Zeitgewinn",
-     "punkte": 3.6,
-     "kaeufer": 0,
+     "hook": "Gemeinsamer Gegner: Klappern, Stress, Zeit.",
+     "winkel": "Gemeinsamer Gegner",
+     "punkte": 6,
+     "kaeufer": null,
      "proTyp": [
-      4,
-      3,
-      5,
-      3,
-      3,
-      3,
-      4,
-      4,
-      3,
-      3
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
      ],
-     "quelle": "Jury",
+     "quelle": "Regeln",
+     "echt": null
+    },
+    {
+     "hook": "Zeitgewinn: 15 min Workouts, 30 min weniger Sport.",
+     "winkel": "Zeitgewinn",
+     "punkte": 5.7,
+     "kaeufer": null,
+     "proTyp": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "quelle": "Regeln",
      "echt": null
     }
    ],
    "gewinner": {
-    "hook": "Ruckelnde Gewichte? Wir besiegen sie mit ArmForce.",
-    "winkel": "Gemeinsamer Gegner",
-    "punkte": 8,
-    "kaeufer": 100,
+    "hook": "Live-Beweis: 5. Minute: Schwingen, zappen, knacken!",
+    "winkel": "Live-Beweis",
+    "punkte": 6.7,
+    "kaeufer": null,
     "proTyp": [
-     8,
-     8,
-     8,
-     8,
-     8,
-     8,
-     8,
-     8,
-     8,
-     8
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
     ],
-    "quelle": "Jury",
+    "quelle": "Regeln",
     "echt": null
    },
    "einwand": null,
    "final": {
-    "hook": "Ruckelnde Gewichte? Wir besiegen sie mit ArmForce.",
+    "hook": "Live-Beweis: 5. Minute: Schwingen, zappen, knacken!",
     "antwort": null,
     "schlagzeile": null
    },
    "ersatz": false,
-   "erstellt": "2026-10-02T10:09:17.525Z",
+   "erstellt": "2026-10-10T10:22:57.179Z",
    "handle": "armforce-power-twister",
    "shop": "DeskRebel",
    "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_045412_fc0b9e6e-b910-4991-8b7d-f636bbe00c15.png?v=1790227140"
@@ -5920,5 +5934,5 @@
    "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20261007_232326_70261764-d88a-45f3-903c-03e9ee2ec730.png?v=1791415535"
   }
  },
- "stand": "2026-10-09T11:12:51.379Z"
+ "stand": "2026-10-10T10:22:57.179Z"
 }
