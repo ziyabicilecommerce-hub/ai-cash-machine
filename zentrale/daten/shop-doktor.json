@@ -1,10 +1,10 @@
 {
- "stand": "2026-10-10T10:49:17.626Z",
+ "stand": "2026-10-11T11:02:42.012Z",
  "shops": [
   {
    "name": "DeskRebel",
    "url": "https://www.deskrebel.store",
-   "ladezeitMs": 486,
+   "ladezeitMs": 646,
    "produkte": [
     {
      "id": 15898374308214,
@@ -20,7 +20,7 @@
       },
       {
        "stufe": "wichtig",
-       "was": "Beschreibung sehr kurz (53 Wörter)",
+       "was": "Beschreibung sehr kurz (77 Wörter)",
        "tipp": "150-300 Wörter mit Nutzen, Maßen, Material, Lieferumfang."
       }
      ]
@@ -146,7 +146,7 @@
      "befunde": [
       {
        "stufe": "tipp",
-       "was": "21 Bild(er) ohne Alt-Text",
+       "was": "20 Bild(er) ohne Alt-Text",
        "tipp": "Alt-Texte helfen bei Google Bilder und Barrierefreiheit."
       }
      ]
@@ -193,7 +193,7 @@
   {
    "name": "Purivelle",
    "url": "https://purivelle.store",
-   "ladezeitMs": 479,
+   "ladezeitMs": 371,
    "produkte": [
     {
      "id": 11638691529045,
@@ -544,6 +544,11 @@
   },
   {
    "datum": "2026-10-10",
+   "DeskRebel": 99,
+   "Purivelle": 91
+  },
+  {
+   "datum": "2026-10-11",
    "DeskRebel": 99,
    "Purivelle": 91
   }
