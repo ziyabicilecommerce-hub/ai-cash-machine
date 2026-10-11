@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-10T10:05:18.736Z",
+ "stand": "2026-10-11T10:15:46.857Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,7 +9,7 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 66,
+     "value": 70,
      "unit": ""
     },
     {
@@ -19,11 +19,39 @@
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 61,
+     "value": 65,
      "unit": ""
     }
    ],
    "rows": [
+    {
+     "Aussage": "Bizeps-Training ohne Hanteln",
+     "Beleglink": "https://www.deskrebel.store/products/curlforce-bizeps-widerstandsband",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel – Dein Home-Gym",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle – Deine Selbstmassagesolution",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Dein Klimmzug-Upgrade – überall",
+     "Beleglink": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
     {
      "Aussage": "DeskRebel CurlForce – Bizeps-Widerstandsband mit Doppelgriff",
      "Beleglink": "https://www.deskrebel.store/products/curlforce-bizeps-widerstandsband",
@@ -498,7 +526,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 66,
+     "value": 70,
      "unit": ""
     },
     {
@@ -513,6 +541,30 @@
     }
    ],
    "rows": [
+    {
+     "Aussage": "Bizeps-Training ohne Hanteln",
+     "Quellenverweis": "https://www.deskrebel.store/products/curlforce-bizeps-widerstandsband",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel – Dein Home-Gym",
+     "Quellenverweis": "https://www.deskrebel.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle – Deine Selbstmassagesolution",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Dein Klimmzug-Upgrade – überall",
+     "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
     {
      "Aussage": "DeskRebel CurlForce – Bizeps-Widerstandsband mit Doppelgriff",
      "Quellenverweis": "https://www.deskrebel.store/products/curlforce-bizeps-widerstandsband",
@@ -1012,7 +1064,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-10",
+     "value": "2026-10-11",
      "unit": ""
     }
    ],
