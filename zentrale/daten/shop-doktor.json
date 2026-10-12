@@ -1,14 +1,14 @@
 {
- "stand": "2026-10-11T11:02:42.012Z",
+ "stand": "2026-10-12T12:30:52.146Z",
  "shops": [
   {
    "name": "DeskRebel",
    "url": "https://www.deskrebel.store",
-   "ladezeitMs": 646,
+   "ladezeitMs": 500,
    "produkte": [
     {
      "id": 15898374308214,
-     "titel": "DeskRebel LumbarEase – Massagegurt für den unteren Rücken",
+     "titel": "DeskRebel Feierabend – Massagegurt für den unteren Rücken",
      "url": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_231847_c7622f9e-7178-432b-b965-5666c4a6fa77.png?v=1790292343",
      "punkte": 94,
@@ -26,8 +26,27 @@
      ]
     },
     {
+     "id": 15896078319990,
+     "titel": "DeskRebel Türsteher – Türanker, Griffe & Karabiner für Widerstandsbänder",
+     "url": "https://www.deskrebel.store/products/doorkit-tueranker-griffe-karabiner",
+     "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_053523_c923707a-1ca4-4c6e-8b9b-8ce9d7ec3e46.png?v=1790228326",
+     "punkte": 98,
+     "befunde": [
+      {
+       "stufe": "tipp",
+       "was": "16 Bild(er) ohne Alt-Text",
+       "tipp": "Alt-Texte helfen bei Google Bilder und Barrierefreiheit."
+      },
+      {
+       "stufe": "tipp",
+       "was": "Titel lang (72 Zeichen)",
+       "tipp": "Google zeigt ca. 60-70 Zeichen - das Wichtigste nach vorne."
+      }
+     ]
+    },
+    {
      "id": 15920624632182,
-     "titel": "DeskRebel CurlForce – Bizeps-Widerstandsband mit Doppelgriff",
+     "titel": "DeskRebel Doppelzug – Bizeps-Widerstandsband mit Doppelgriff",
      "url": "https://www.deskrebel.store/products/curlforce-bizeps-widerstandsband",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20261007_232326_70261764-d88a-45f3-903c-03e9ee2ec730.png?v=1791415535",
      "punkte": 99,
@@ -41,7 +60,7 @@
     },
     {
      "id": 15896035787126,
-     "titel": "DeskRebel PowerBand – Klimmzugband & Widerstandsband",
+     "titel": "DeskRebel Zugkraft – Klimmzugband & Widerstandsband",
      "url": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_045320_b77d39f5-6c91-4a15-9ede-d799050bc1c2.png?v=1790227105",
      "punkte": 99,
@@ -55,7 +74,7 @@
     },
     {
      "id": 15896503353718,
-     "titel": "DeskRebel ElbowGuard – Kompressions-Ellbogenbandage",
+     "titel": "DeskRebel Kompressor – Kompressions-Sleeve für den Ellbogen",
      "url": "https://www.deskrebel.store/products/elbowguard-kompressions-ellbogenbandage",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_053808_8bb2d6ac-812f-44a0-8a66-80d2f1eec57b.png?v=1790228428",
      "punkte": 99,
@@ -68,22 +87,8 @@
      ]
     },
     {
-     "id": 15896078319990,
-     "titel": "DeskRebel DoorKit – Türanker, Griffe & Karabiner für Widerstandsbänder",
-     "url": "https://www.deskrebel.store/products/doorkit-tueranker-griffe-karabiner",
-     "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_053523_c923707a-1ca4-4c6e-8b9b-8ce9d7ec3e46.png?v=1790228326",
-     "punkte": 99,
-     "befunde": [
-      {
-       "stufe": "tipp",
-       "was": "16 Bild(er) ohne Alt-Text",
-       "tipp": "Alt-Texte helfen bei Google Bilder und Barrierefreiheit."
-      }
-     ]
-    },
-    {
      "id": 15896077271414,
-     "titel": "DeskRebel PushPro – Liegestützgriffe in S-Form",
+     "titel": "DeskRebel Stützpunkt – Liegestützgriffe in S-Form",
      "url": "https://www.deskrebel.store/products/pushpro-liegestuetzgriffe",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_053312_f80069ec-301a-480f-8f34-4410b83edaf6.png?v=1790228326",
      "punkte": 99,
@@ -97,7 +102,7 @@
     },
     {
      "id": 15896069079414,
-     "titel": "DeskRebel O-Loop – Latex-Widerstandsring für Arme & Rücken",
+     "titel": "DeskRebel Ringkampf – Latex-Widerstandsring für Arme & Rücken",
      "url": "https://www.deskrebel.store/products/o-loop-latex-widerstandsring",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_052754_a24cbf09-a9ab-4f10-a397-fbe89b9d7764.png?v=1790227979",
      "punkte": 99,
@@ -111,7 +116,7 @@
     },
     {
      "id": 15896059674998,
-     "titel": "DeskRebel PalmGrips – Silikon-Griffpads für Klimmzug & Gym",
+     "titel": "DeskRebel Haftgriff – Silikon-Griffpads für Klimmzug & Gym",
      "url": "https://www.deskrebel.store/products/palmgrips-silikon-griffpads",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_052615_71453f8d-5f6a-438d-bc74-b0105b4addc8.png?v=1790227938",
      "punkte": 99,
@@ -125,7 +130,7 @@
     },
     {
      "id": 15896058921334,
-     "titel": "DeskRebel GripRing – Silikon-Handtrainer für Griffkraft",
+     "titel": "DeskRebel Schraubstock – Silikon-Handtrainer für Griffkraft",
      "url": "https://www.deskrebel.store/products/gripring-silikon-handtrainer",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_045412_69016d12-0709-4c1d-aa8b-c8cae7ba4745.png?v=1790227719",
      "punkte": 99,
@@ -139,7 +144,7 @@
     },
     {
      "id": 15896052269430,
-     "titel": "DeskRebel FlexLoop – Breites Widerstandsband für Beine & Po",
+     "titel": "DeskRebel Beinarbeit – Breites Widerstandsband für Beine & Po",
      "url": "https://www.deskrebel.store/products/flexloop-breites-widerstandsband",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_051729_f40c0174-8ae4-4911-a642-2b36fe014dfa.png?v=1790227461",
      "punkte": 99,
@@ -153,7 +158,7 @@
     },
     {
      "id": 15896049713526,
-     "titel": "DeskRebel JumpRebel – Speed-Springseil mit Kugellager",
+     "titel": "DeskRebel Drehzahl – Speed-Springseil mit Kugellager",
      "url": "https://www.deskrebel.store/products/jumprebel-speed-springseil",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_050346_bffe3164-1205-4fef-a497-0838b679c55d.png?v=1790227372",
      "punkte": 99,
@@ -167,7 +172,7 @@
     },
     {
      "id": 15896044503414,
-     "titel": "DeskRebel ArmForce – Power-Twister für Arme, Brust & Schultern",
+     "titel": "DeskRebel Federkraft – Power-Twister für Arme, Brust & Schultern",
      "url": "https://www.deskrebel.store/products/armforce-power-twister",
      "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_045412_fc0b9e6e-b910-4991-8b7d-f636bbe00c15.png?v=1790227140",
      "punkte": 99,
@@ -193,11 +198,11 @@
   {
    "name": "Purivelle",
    "url": "https://purivelle.store",
-   "ladezeitMs": 371,
+   "ladezeitMs": 436,
    "produkte": [
     {
      "id": 11638691529045,
-     "titel": "Purivelle LotusTap – Massagehammer zur Klopfmassage",
+     "titel": "Purivelle Loto – Massagehammer zur Klopfmassage",
      "url": "https://purivelle.store/products/lotustap-massagehammer",
      "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260924_210230_67f37d1b-4b0a-432d-aaab-5359d31c894b.png?v=1790283858",
      "punkte": 87,
@@ -231,7 +236,7 @@
     },
     {
      "id": 11638660104533,
-     "titel": "Purivelle FingerFlow – Holz-Massageroller für Finger & Hand",
+     "titel": "Purivelle Mano – Holz-Massageroller für Finger & Hand",
      "url": "https://purivelle.store/products/fingerflow-handroller",
      "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260924_201721_9cd9fbd8-fc7c-4993-ad71-7e0173b30b00.png?v=1790281292",
      "punkte": 87,
@@ -265,7 +270,7 @@
     },
     {
      "id": 11638225305941,
-     "titel": "Purivelle ThumbPoint – Daumen-Massagehelfer für die Selbstmassage",
+     "titel": "Purivelle Dito – Massagehelfer für die Selbstmassage",
      "url": "https://purivelle.store/products/thumbpoint-massagehelfer",
      "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260924_201752_97def9e1-06d5-4c76-aa26-cde5392b6fd3.png?v=1790281292",
      "punkte": 87,
@@ -299,7 +304,7 @@
     },
     {
      "id": 11638660890965,
-     "titel": "Purivelle BackEase – Rückengurt mit atmungsaktivem Mesh",
+     "titel": "Purivelle Cinta – Rückengurt mit atmungsaktivem Mesh",
      "url": "https://purivelle.store/products/backease-rueckenguertel",
      "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260924_212002_72d0719c-4e69-4e79-a201-ea6533146a26.png?v=1790285253",
      "punkte": 88,
@@ -328,7 +333,7 @@
     },
     {
      "id": 11627824906581,
-     "titel": "Purivelle SculptRoll – Massageroller für Faszien & Körper",
+     "titel": "Purivelle Onda – Massageroller für den Körper",
      "url": "https://purivelle.store/products/sculptroll-massageroller",
      "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_015423_4fb54e8c-1160-4a56-a27d-88f063a48ca2.png?v=1790042400",
      "punkte": 92,
@@ -357,7 +362,7 @@
     },
     {
      "id": 11627845255509,
-     "titel": "Purivelle DeepStick – Massagestab für gezielte Tiefenmassage",
+     "titel": "Purivelle Stelo – Massagestab für die Selbstmassage",
      "url": "https://purivelle.store/products/deepstick-massagestab",
      "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_020332_462c2303-56ae-4e37-9500-b0b535da5f74.png?v=1790043066",
      "punkte": 93,
@@ -381,7 +386,7 @@
     },
     {
      "id": 11627844272469,
-     "titel": "Purivelle TapRelax – Silikon-Klopfpaddel zur Selbstmassage",
+     "titel": "Purivelle Pala – Silikon-Klopfpaddel zur Selbstmassage",
      "url": "https://purivelle.store/products/taprelax-klopfpaddel",
      "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_020332_b63ea50d-fcf6-4583-bdef-e108cbd3a149.png?v=1790043016",
      "punkte": 93,
@@ -405,7 +410,7 @@
     },
     {
      "id": 11627843551573,
-     "titel": "Purivelle RelaxRoll – Faszienrolle aus EPP-Hartschaum",
+     "titel": "Purivelle Colonna – Faszienrolle aus EPP-Hartschaum",
      "url": "https://purivelle.store/products/relaxroll-faszienrolle",
      "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_020224_dd7177ba-04d5-4907-bcae-acfbbd20f1ae.png?v=1790043013",
      "punkte": 93,
@@ -429,7 +434,7 @@
     },
     {
      "id": 11627822186837,
-     "titel": "Purivelle PointFlow – Silikon-Faszienball für Fuß, Nacken & Ganzkörper",
+     "titel": "Purivelle Perla – Silikon-Faszienball für Fuß, Nacken & Körper",
      "url": "https://purivelle.store/products/pointflow-faszienball",
      "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_015255_ba17636d-002c-4cf3-9ceb-d214a1b9aef6.png?v=1790042292",
      "punkte": 93,
@@ -453,7 +458,7 @@
     },
     {
      "id": 11627838177621,
-     "titel": "Purivelle WarmEase – Wärmende Nackenbandage mit Magneten",
+     "titel": "Purivelle Calda – Wärmende Nackenbandage",
      "url": "https://purivelle.store/products/warmease-nackenbandage",
      "bild": "https://cdn.shopify.com/s/files/1/1082/2968/9685/files/hf_20260922_012710_ad8687e9-ee3f-4a02-b58f-31c9aeac93ed.png?v=1790040654",
      "punkte": 98,
@@ -549,6 +554,11 @@
   },
   {
    "datum": "2026-10-11",
+   "DeskRebel": 99,
+   "Purivelle": 91
+  },
+  {
+   "datum": "2026-10-12",
    "DeskRebel": 99,
    "Purivelle": 91
   }
