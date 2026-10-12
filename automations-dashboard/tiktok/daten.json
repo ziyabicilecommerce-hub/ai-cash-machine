@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-11T19:41:24.875Z",
+ "stand": "2026-10-12T00:43:05.841Z",
  "gesamt": {
   "posts": 36,
   "aufrufe": 23018,
@@ -457,9 +457,9 @@
   }
  ],
  "fehler": 0,
- "ohneZahlen": 0,
+ "ohneZahlen": 2,
  "lernen": {
-  "stand": "2026-10-11T19:41:24.268Z",
+  "stand": "2026-10-12T00:43:05.431Z",
   "posts": 36,
   "quiz": {
    "n": 12,
@@ -478,6 +478,10 @@
   "bevorzugt": "mythos"
  },
  "tipps": [
+  {
+   "stufe": "warn",
+   "text": "Buffer holt für 2 Post(s) keine Zahlen mehr von TikTok ab - die Zahlen hier sind zu niedrig. In TikTok selbst nachsehen oder den Kanal in Buffer neu verbinden."
+  },
   {
    "stufe": "warn",
    "text": "Sehdauer nur 4.5 s: die Leute wischen früh weg. Frage noch schneller, Videos kürzer."
