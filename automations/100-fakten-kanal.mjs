@@ -127,7 +127,7 @@ async function waswaereSchreiben(kategorie, nr, bekannt) {
   const d = await kiJson(
     `Erstelle ein virales "Was wäre wenn?"-Kurzvideo auf Deutsch (Kategorie "${kategorie}"): ein krasses Gedankenexperiment, das die Wissenschaft gut erklären kann. ${REGELN}` +
       `Schon benutzt (nicht wiederholen): ${bekannt.slice(-40).join(' | ') || 'keine'}. ` +
-      `Felder: titel = kurzer Titel (unter 60 Zeichen), frage = die Frage "Was passiert, wenn ...?", schritte = genau 3 kurze Sätze (je max. 16 Wörter), die Schritt für Schritt erklären, was passiert - der krasseste zuletzt, caption = die Frage plus Aufforderung zu kommentieren plus 4-6 passende Hashtags. Schreibe echte Inhalte, keine Platzhalter. ` +
+      `Felder: titel = kurzer Titel (unter 60 Zeichen), frage = die Frage "Was passiert, wenn ...?", schritte = genau 3 kurze Sätze (je max. 10 Wörter), die Schritt für Schritt erklären, was passiert - der krasseste zuletzt, caption = die Frage plus Aufforderung zu kommentieren plus 4-6 passende Hashtags. Schreibe echte Inhalte, keine Platzhalter. ` +
       `Antworte NUR mit JSON: {"titel":"...","frage":"...","schritte":["...","...","..."],"caption":"...",${BILD}}`,
     { maxTokens: 1200 }
   );
@@ -140,10 +140,12 @@ function waswaereAus(d, kategorie, nr) {
   const schritte = (Array.isArray(d.schritte) ? d.schritte : []).map((t) => kurz(t, 160)).filter(Boolean).slice(0, 3);
   if (!d.frage || schritte.length < 3) throw new Error('Szenario unvollstaendig');
   const b = (i) => bilder[i % bilder.length];
+  // Schneller Sprecher (+12 %) und kurze Sätze: Ziel sind ~12-15 s statt 25 s (Sehdauer lag bei 4,4 s).
+  // Erste Szene ohne Stock-Clip: das scharfe KI-Bild ist der stärkere Hook als ein zufälliger Archiv-Clip.
   const szenen = [
-    { text: kurz(d.frage, 160), bild: b(0) },
-    ...schritte.map((t, i) => ({ text: t, bild: b(1 + i) })),
-    { text: 'Folge für mehr! Welches Szenario willst du als Nächstes? Schreib es in die Kommentare!', bild: b(4) },
+    { text: kurz(d.frage, 160), bild: b(0), tempo: '+12%', ohneClip: true },
+    ...schritte.map((t, i) => ({ text: t, bild: b(1 + i), tempo: '+12%' })),
+    { text: 'Folge für mehr! Was als Nächstes? Schreib es unten!', bild: b(4), tempo: '+12%' },
   ];
   return fertig(d, nr, szenen, d.frage);
 }
@@ -228,7 +230,8 @@ async function main() {
       }
       // Echte Video-Clips statt Standbild - ohne Schlüssel (Wikimedia Commons gemeinfrei, NASA bei Weltall; Pexels falls
       // PEXELS_API_KEY gesetzt). FAKTEN_CLIPS=aus schaltet ab.
-      const clips = /^(0|nein|aus|false)$/i.test(env('FAKTEN_CLIPS', 'an')) ? null : { weltall: /weltall/i.test(eintrag?.kat || kategorie) };
+      const clips = /^(0|nein|aus|false)$/i.test(env('FAKTEN_CLIPS', 'an')) ? null : { weltall: /weltall/i.test(eintrag?.kat || kategorie), ohneMenschen: true };
+      if (/weltall/i.test(eintrag?.kat || kategorie)) for (const sz of skript.szenen) delete sz.ohneClip;
       const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting', stockClips: clips });
       if (moderatorinAn() && v.stimme) {
         try { await moderatorinEinfuegen(v.pfad, v.stimme, MODERATORIN_NR); } catch (err) { console.log(`[100-fakten-kanal] Moderatorin fehlgeschlagen: ${String(err.message).slice(0, 150)}`); }
