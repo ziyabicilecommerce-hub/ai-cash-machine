@@ -1,3 +1,4 @@
+import { WASWAERE } from './waswaereBank.mjs';
 // Geprüfte Fakten für den Fakten-Kanal (#100): jeder Eintrag ist von Hand kontrolliert und unstrittig.
 // Die kleine lokale KI erfand oder verdrehte Fakten (falsche Quiz-Antworten) - deshalb kommen Frage, Antwort und
 // Erklärung hier aus der Liste; die KI wird nur noch als Notnagel gebraucht, wenn die Liste leer ist.
@@ -141,13 +142,15 @@ const MYTHOS = [
 ];
 
 // Abwechselnd Quiz und Mythos - so wiederholt sich das Format nicht.
-export const BANK = Array.from({ length: Math.max(QUIZ.length, MYTHOS.length) }, (_, i) => [QUIZ[i], MYTHOS[i]]).flat().filter(Boolean).map((e, i) => ({ ...e, id: `b${i + 1}` }));
+// "Was wäre wenn?"-Szenarien hängen hinten an - so bleiben die ids der älteren Einträge gleich.
+export const BANK = [...Array.from({ length: Math.max(QUIZ.length, MYTHOS.length) }, (_, i) => [QUIZ[i], MYTHOS[i]]).flat().filter(Boolean), ...WASWAERE].map((e, i) => ({ ...e, id: `b${i + 1}` }));
 
 // Naechster noch nicht benutzter Eintrag (verwendet = Liste benutzter ids), sonst null.
 // Mit kats (Nische eines Kontos) zuerst ein Eintrag aus diesen Kategorien, mit typ (gelerntes Lieblingsformat)
 // darin zuerst dieses Format; sonst irgendeiner.
-export function bankNaechster(verwendet = [], kats = [], typ = null) {
-  const frei = BANK.filter((e) => !verwendet.includes(e.id));
+// ohne: Formate, die gar nicht mehr kommen sollen (z. B. ['mythos']).
+export function bankNaechster(verwendet = [], kats = [], typ = null, { ohne = [] } = {}) {
+  const frei = BANK.filter((e) => !verwendet.includes(e.id) && !ohne.includes(e.typ));
   const inNische = kats.length ? frei.filter((e) => kats.includes(e.kat)) : frei;
   return (typ && inNische.find((e) => e.typ === typ)) || inNische[0] || frei[0] || null;
 }

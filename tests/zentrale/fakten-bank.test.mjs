@@ -10,7 +10,8 @@ test('Faktenliste: jeder Eintrag ist vollständig und sauber', () => {
   const ids = new Set(BANK.map((e) => e.id));
   assert.equal(ids.size, BANK.length, 'ids eindeutig');
   for (const e of BANK) {
-    assert.ok(['quiz', 'mythos'].includes(e.typ), e.id);
+    assert.ok(['quiz', 'mythos', 'waswaere'].includes(e.typ), e.id);
+    if (e.typ === 'waswaere') e.erklaerung = e.schritte;
     assert.ok(e.titel.length > 5 && e.titel.length <= 60, `${e.id} Titel`);
     assert.ok(e.erklaerung.length >= 1 && e.erklaerung.every((t) => t.length > 10), `${e.id} Erklärung`);
     assert.ok(e.bilder.length >= 3 && e.bilder.every((b) => /no people/.test(b)), `${e.id} Bilder ohne Personen`);
@@ -20,6 +21,10 @@ test('Faktenliste: jeder Eintrag ist vollständig und sauber', () => {
       assert.equal(new Set(e.optionen).size, 3, `${e.id} Optionen verschieden`);
       assert.ok(e.richtig >= 0 && e.richtig <= 2, e.id);
       assert.ok(e.frage.endsWith('?'), e.id);
+    } else if (e.typ === 'waswaere') {
+      assert.match(e.frage, /^Was (passiert|passierte|wäre)\b.*\?$/, e.id);
+      assert.equal(e.schritte.length, 3, `${e.id} genau 3 Schritte`);
+      assert.ok(e.schritte.every((t) => t.length <= 160), `${e.id} Schritte kurz`);
     } else {
       assert.equal(typeof e.wahr, 'boolean', e.id);
       assert.ok(e.aussage.length > 15, e.id);
@@ -36,4 +41,16 @@ test('Faktenliste: Quiz und Mythos wechseln sich ab, bankNaechster nimmt Unbenut
   assert.equal(bankNaechster([]).id, 'b1');
   assert.equal(bankNaechster(['b1', 'b2']).id, 'b3');
   assert.equal(bankNaechster(BANK.map((e) => e.id)), null, 'leer -> KI-Notnagel');
+});
+
+test('Was wäre wenn: alte ids bleiben stabil, ohne Mythen kommt nie ein Mythos', () => {
+  assert.equal(BANK.find((e) => e.id === 'b127').typ, 'mythos', 'letzter alter Eintrag unverändert');
+  assert.equal(BANK.find((e) => e.id === 'b128').typ, 'waswaere');
+  const alle = BANK.filter((e) => e.typ !== 'waswaere').map((e) => e.id);
+  assert.equal(bankNaechster(alle, ['Weltall'], 'waswaere').typ, 'waswaere');
+  for (const kats of [['Weltall'], ['Natur', 'Tiere'], ['Körper', 'Essen', 'Geld', 'Tiere', 'Natur']]) {
+    assert.equal(bankNaechster([], kats, 'waswaere', { ohne: ['mythos'] }).typ, 'waswaere', kats.join());
+    const benutzt = [];
+    for (let n = 0; n < 200; n++) { const e = bankNaechster(benutzt, kats, 'waswaere', { ohne: ['mythos'] }); if (!e) break; assert.notEqual(e.typ, 'mythos'); benutzt.push(e.id); }
+  }
 });

@@ -22,9 +22,11 @@ const ANZAHL = Math.min(Math.max(parseInt(env('FAKTEN_ANZAHL', '6'), 10) || 6, 1
 const KANAL = env('FAKTEN_KANAL', '@futureflowxx').slice(0, 30);
 const liste = (k, d) => env(k, d).split(',').map((x) => x.trim()).filter(Boolean);
 const TIKTOK_KONTEN = liste('FAKTEN_KONTEN_TIKTOK', '@zyx_7851,@futureflowxx,@futureflowx3');
-// Festes Format je Konto: @futureflowxx ist der "Mythos oder Wahrheit"-Kanal - das Format mit der längsten Sehdauer
-// (bestes Video: "Wir nutzen nur 10 % vom Gehirn", 1.253 Aufrufe, 8,3 s). Format: '@konto=mythos;@konto2=quiz'.
-const KONTO_FORMAT = Object.fromEntries(env('FAKTEN_KONTO_FORMAT', '@futureflowxx=mythos').split(';').map((t) => t.split('=').map((x) => x.trim().toLowerCase())).filter(([k, f]) => k && ['quiz', 'mythos'].includes(f)));
+// Festes Format je Konto: alle TikTok-Konten zeigen "Was wäre wenn?" - krasse Szenarien mit Spannungsbogen statt
+// Mythen (Wunsch des Users). Format: '@konto=waswaere;@konto2=quiz'.
+const KONTO_FORMAT = Object.fromEntries(env('FAKTEN_KONTO_FORMAT', '@zyx_7851=waswaere;@futureflowxx=waswaere;@futureflowx3=waswaere').split(';').map((t) => t.split('=').map((x) => x.trim().toLowerCase())).filter(([k, f]) => k && ['quiz', 'mythos', 'waswaere'].includes(f)));
+// Formate, die gar nicht mehr kommen (Standard: keine Mythen mehr).
+const OHNE = liste('FAKTEN_OHNE', 'mythos');
 const WEITERE_KONTEN = liste('FAKTEN_KONTEN_WEITERE', '@futureflowxx,@desk.rebel,@purivelle.785');
 let KONTO = KANAL;
 const NISCHEN = nischenAus(env('FAKTEN_NISCHEN', STANDARD_NISCHEN));
@@ -37,7 +39,7 @@ const KATEGORIEN = env('FAKTEN_KATEGORIEN', 'Psychologie,Menschlicher Koerper,We
 
 // Formate im Wechsel: fakt (Wusstest du?), quiz (Rate mal A/B/C mit Countdown), mythos (Mythos oder Wahrheit?).
 // Quiz und Mythos holen Kommentare - jeder will seine Antwort posten.
-const FORMATE = env('FAKTEN_FORMATE', 'quiz,fakt,mythos').split(',').map((s) => s.trim()).filter((f) => ['fakt', 'quiz', 'mythos'].includes(f));
+const FORMATE = env('FAKTEN_FORMATE', 'waswaere,quiz,fakt').split(',').map((s) => s.trim()).filter((f) => ['fakt', 'quiz', 'mythos', 'waswaere'].includes(f) && !OHNE.includes(f));
 const REGELN = 'Regeln: nur gut belegtes Lexikon-Wissen, keine erfundenen Zahlen oder Studien, keine Gesundheits- oder Finanzratschlaege, nichts Politisches, keine realen Privatpersonen, keine Marken. ' +
   'Nur UNSTRITTIGE Fakten: keine Rekord- oder Ranglisten-Fragen, bei denen Quellen sich uneinig sind (z. B. laengster Fluss, hoechster Berg, groesstes Tier). ' +
   'Alle Saetze und Bilder drehen sich um GENAU EIN Thema - nichts aus anderen Fakten einmischen. Hashtags nur zum Thema des Videos. ';
@@ -121,6 +123,31 @@ function quizAus(d, kategorie, nr) {
   return fertig(d, nr, szenen, `${d.frage} -> ${optionen[richtig]}`);
 }
 
+async function waswaereSchreiben(kategorie, nr, bekannt) {
+  const d = await kiJson(
+    `Erstelle ein virales "Was wäre wenn?"-Kurzvideo auf Deutsch (Kategorie "${kategorie}"): ein krasses Gedankenexperiment, das die Wissenschaft gut erklären kann. ${REGELN}` +
+      `Schon benutzt (nicht wiederholen): ${bekannt.slice(-40).join(' | ') || 'keine'}. ` +
+      `Felder: titel = kurzer Titel (unter 60 Zeichen), frage = die Frage "Was passiert, wenn ...?", schritte = genau 3 kurze Sätze (je max. 16 Wörter), die Schritt für Schritt erklären, was passiert - der krasseste zuletzt, caption = die Frage plus Aufforderung zu kommentieren plus 4-6 passende Hashtags. Schreibe echte Inhalte, keine Platzhalter. ` +
+      `Antworte NUR mit JSON: {"titel":"...","frage":"...","schritte":["...","...","..."],"caption":"...",${BILD}}`,
+    { maxTokens: 1200 }
+  );
+  return waswaereAus(d, kategorie, nr);
+}
+
+// "Was wäre wenn?": Frage in Sekunde 1, drei Schritte (der krasseste zuletzt), Endkarte mit Kommentar-Frage. ~12 s.
+function waswaereAus(d, kategorie, nr) {
+  const bilder = bilderAus(d, kategorie);
+  const schritte = (Array.isArray(d.schritte) ? d.schritte : []).map((t) => kurz(t, 160)).filter(Boolean).slice(0, 3);
+  if (!d.frage || schritte.length < 3) throw new Error('Szenario unvollstaendig');
+  const b = (i) => bilder[i % bilder.length];
+  const szenen = [
+    { text: kurz(d.frage, 160), bild: b(0) },
+    ...schritte.map((t, i) => ({ text: t, bild: b(1 + i) })),
+    { text: 'Folge für mehr! Welches Szenario willst du als Nächstes? Schreib es in die Kommentare!', bild: b(4) },
+  ];
+  return fertig(d, nr, szenen, d.frage);
+}
+
 async function mythosSchreiben(kategorie, nr, bekannt) {
   const d = await kiJson(
     `Erstelle ein virales "Mythos oder Wahrheit?"-Kurzvideo auf Deutsch (Kategorie "${kategorie}"): eine Behauptung, die viele fuer wahr halten (oder die unglaublich klingt, aber stimmt). ${REGELN}` +
@@ -168,17 +195,19 @@ async function main() {
       const nische = nischeFuer(KONTO, NISCHEN);
       // Jedes zweite TikTok-Video im gelernten Lieblingsformat - so wird weiter getestet, aber das Bessere öfter gezeigt.
       const festesFormat = i < TIKTOK_KONTEN.length ? KONTO_FORMAT[KONTO.toLowerCase()] : null;
-      const eintrag = bankNaechster(verlauf.bank, i < TIKTOK_KONTEN.length ? nische : [], festesFormat || (LIEBLING && (tag + i) % 2 === 0 ? LIEBLING : null));
+      const lieblingOk = LIEBLING && !OHNE.includes(LIEBLING) ? LIEBLING : null;
+      const eintrag = bankNaechster(verlauf.bank, i < TIKTOK_KONTEN.length ? nische : [], festesFormat || (lieblingOk && (tag + i) % 2 === 0 ? lieblingOk : null), { ohne: OHNE });
       if (eintrag) {
-        skript = (eintrag.typ === 'quiz' ? quizAus : mythosAus)(eintrag, eintrag.kat, nr);
+        skript = ({ quiz: quizAus, mythos: mythosAus, waswaere: waswaereAus }[eintrag.typ])(eintrag, eintrag.kat, nr);
         format = `${eintrag.typ}/Faktenliste ${eintrag.id}`;
         verlauf.bank = [...(verlauf.bank || []), eintrag.id];
       }
       for (let v = 0; v < 3 && !skript; v++) {
         // Die kostenlose KI drosselt schnelle Folgeanfragen: vor jedem neuen Versuch kurz warten.
         if (v > 0) await new Promise((r) => setTimeout(r, Number(process.env.FAKTEN_PAUSE_MS ?? 20000) * v));
-        format = liste[(tag * ANZAHL + i + v) % liste.length];
-        const schreiben = { fakt: skriptSchreiben, quiz: quizSchreiben, mythos: mythosSchreiben }[format];
+        // Erst das feste Format des Kontos (z. B. "Was wäre wenn?"), danach im Wechsel.
+        format = v === 0 && festesFormat && liste.includes(festesFormat) ? festesFormat : liste[(tag * ANZAHL + i + v) % liste.length];
+        const schreiben = { fakt: skriptSchreiben, quiz: quizSchreiben, mythos: mythosSchreiben, waswaere: waswaereSchreiben }[format];
         try {
           skript = await schreiben(kategorie, nr, verlauf.fakten);
           if (umstritten(skript)) { console.log(`[100-fakten-kanal] ${format}-Skript verworfen (strittiger Rekord-Fakt) - neuer Versuch`); skript = undefined; }
@@ -194,8 +223,8 @@ async function main() {
       let teil = 0;
       if (i < TIKTOK_KONTEN.length) {
         teil = ((verlauf.serien || {})[KONTO] || 0) + 1;
-        skript.hook = serienHook(eintrag?.kat || nische[0] || kategorie, /^mythos/.test(format) ? 'mythos' : 'quiz', teil);
-        if (letzte && /^Folge/.test(letzte.text)) letzte.text = `Folge für Teil ${teil + 1}!`;
+        skript.hook = serienHook(eintrag?.kat || nische[0] || kategorie, /^(mythos|waswaere)/.exec(format)?.[1] || 'quiz', teil);
+        if (letzte && /^Folge für [^!]*!/.test(letzte.text)) letzte.text = letzte.text.replace(/^Folge für [^!]*!/, `Folge für Teil ${teil + 1}!`);
       }
       // Echte Video-Clips statt Standbild - ohne Schlüssel (Wikimedia Commons gemeinfrei, NASA bei Weltall; Pexels falls
       // PEXELS_API_KEY gesetzt). FAKTEN_CLIPS=aus schaltet ab.
