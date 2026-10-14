@@ -231,6 +231,19 @@ jobs:
           SOCIAL_AUTOPILOT_ANZAHL_PRO_LAUF: ${{ secrets.SOCIAL_AUTOPILOT_ANZAHL_PRO_LAUF }}
           SOCIAL_AUTOPILOT_AUTO_PUBLISH: ${{ secrets.SOCIAL_AUTOPILOT_AUTO_PUBLISH }}
           SOCIAL_AUTOPILOT_MEDIENTYP: ${{ secrets.SOCIAL_AUTOPILOT_MEDIENTYP }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          BEWERBUNG_CV_URL: ${{ secrets.BEWERBUNG_CV_URL }}
+          BEWERBUNG_LIVE: ${{ secrets.BEWERBUNG_LIVE }}
+          BEWERBUNG_MAX_PRO_TAG: ${{ secrets.BEWERBUNG_MAX_PRO_TAG }}
+          BEWERBUNG_ORT: ${{ secrets.BEWERBUNG_ORT }}
+          BEWERBUNG_UMKREIS_KM: ${{ secrets.BEWERBUNG_UMKREIS_KM }}
+          BEWERBUNG_SUCHBEGRIFFE: ${{ secrets.BEWERBUNG_SUCHBEGRIFFE }}
+          BEWERBER_NAME: ${{ secrets.BEWERBER_NAME }}
+          BEWERBER_ADRESSE: ${{ secrets.BEWERBER_ADRESSE }}
+          BEWERBER_TELEFON: ${{ secrets.BEWERBER_TELEFON }}
+          BEWERBUNG_PROFIL: ${{ secrets.BEWERBUNG_PROFIL }}
+          BEWERBUNG_STATE_KEY: ${{ secrets.BEWERBUNG_STATE_KEY }}
 
       - name: State-Änderungen committen
         # if: always() ist wichtig - läuft ein Skript mitten in einer Kunden-
