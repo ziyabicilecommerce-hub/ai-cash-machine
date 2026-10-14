@@ -1,14 +1,14 @@
 {
- "stand": "2026-10-14T12:19:23.800Z",
+ "stand": "2026-10-14T17:34:45.931Z",
  "gesamt": {
-  "posts": 42,
+  "posts": 44,
   "aufrufe": 29537,
   "likes": 150,
   "kommentare": 17,
   "shares": 5,
   "sehdauer": 4.4,
-  "aufrufe7": 23800,
-  "aufrufeVor7": 3969
+  "aufrufe7": 20255,
+  "aufrufeVor7": 7514
  },
  "konten": [
   {
@@ -42,7 +42,7 @@
     "Weltall"
    ],
    "serie": 11,
-   "posts": 14,
+   "posts": 15,
    "aufrufe": 7863,
    "likes": 64,
    "kommentare": 6,
@@ -70,7 +70,7 @@
     "Natur"
    ],
    "serie": 9,
-   "posts": 13,
+   "posts": 14,
    "aufrufe": 3933,
    "likes": 24,
    "kommentare": 1,
@@ -90,28 +90,6 @@
   }
  ],
  "geplant": [
-  {
-   "zeit": "2026-10-14T16:00:00.000Z",
-   "konto": "@zyx_7851",
-   "text": "🚀 Echte NASA-Aufnahmen! Welcher Planet ist am weitesten von der Sonne entfernt? Schreib d",
-   "link": "",
-   "format": "quiz",
-   "aufrufe": 0,
-   "sehdauer": 0,
-   "likes": 0,
-   "kommentare": 0
-  },
-  {
-   "zeit": "2026-10-14T17:00:00.000Z",
-   "konto": "@futureflowxx",
-   "text": "Botanisch gesehen ist die Tomate eine Beere. Wahr oder Mythos? Schreib es in die Kommentar",
-   "link": "",
-   "format": "mythos",
-   "aufrufe": 0,
-   "sehdauer": 0,
-   "likes": 0,
-   "kommentare": 0
-  },
   {
    "zeit": "2026-10-14T18:00:00.000Z",
    "konto": "@futureflowx3",
@@ -158,6 +136,28 @@
   }
  ],
  "letzte": [
+  {
+   "zeit": "2026-10-14T17:04:05.966Z",
+   "konto": "@futureflowxx",
+   "text": "Botanisch gesehen ist die Tomate eine Beere. Wahr oder Mythos? Schreib es in die Kommentar",
+   "link": "https://tiktok.com/@futureflowxx/video/7696570086542347552",
+   "format": "mythos",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  },
+  {
+   "zeit": "2026-10-14T16:06:07.576Z",
+   "konto": "@zyx_7851",
+   "text": "🚀 Echte NASA-Aufnahmen! Welcher Planet ist am weitesten von der Sonne entfernt? Schreib d",
+   "link": "https://tiktok.com/@zyx_7851/video/7696554941069921568",
+   "format": "quiz",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  },
   {
    "zeit": "2026-10-14T11:32:12.186Z",
    "konto": "@futureflowx3",
@@ -465,35 +465,13 @@
    "sehdauer": 5.3,
    "likes": 2,
    "kommentare": 0
-  },
-  {
-   "zeit": "2026-10-07T22:18:10.000Z",
-   "konto": "@zyx_7851",
-   "text": "Die Sonne ist in Wahrheit weiß. Wahr oder Mythos? Schreib es in die Kommentare! Folge @zyx",
-   "link": "https://www.tiktok.com/@zyx_7851/video/7694053816487972129?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
-   "format": "mythos",
-   "aufrufe": 766,
-   "sehdauer": 6,
-   "likes": 8,
-   "kommentare": 1
-  },
-  {
-   "zeit": "2026-10-07T17:12:00.000Z",
-   "konto": "@futureflowx3",
-   "text": "Welches ist das häufigste Element im Universum? Schreib deine Antwort in die Kommentare!  ",
-   "link": "https://www.tiktok.com/@futureflowx3/video/7693974947558968608?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
-   "format": "quiz",
-   "aufrufe": 735,
-   "sehdauer": 4.6,
-   "likes": 0,
-   "kommentare": 1
   }
  ],
  "fehler": 0,
- "ohneZahlen": 0,
+ "ohneZahlen": 1,
  "lernen": {
-  "stand": "2026-10-14T12:19:23.129Z",
-  "posts": 41,
+  "stand": "2026-10-14T17:34:45.102Z",
+  "posts": 43,
   "quiz": {
    "n": 14,
    "sehdauer": 53.75,
@@ -513,6 +491,10 @@
  "tipps": [
   {
    "stufe": "warn",
+   "text": "Buffer holt für 1 Post(s) keine Zahlen mehr von TikTok ab - die Zahlen hier sind zu niedrig. In TikTok selbst nachsehen oder den Kanal in Buffer neu verbinden."
+  },
+  {
+   "stufe": "warn",
    "text": "Sehdauer nur 4.4 s: die Leute wischen früh weg. Frage noch schneller, Videos kürzer."
   },
   {
@@ -525,7 +507,7 @@
   },
   {
    "stufe": "warn",
-   "text": "@futureflowxx läuft deutlich schwächer (303 Aufrufe/Post): Thema Körper/Essen/Geld/Tiere/Natur prüfen."
+   "text": "@futureflowxx läuft deutlich schwächer (281 Aufrufe/Post): Thema Körper/Essen/Geld/Tiere/Natur prüfen."
   }
  ]
 }
