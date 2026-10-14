@@ -9,7 +9,7 @@ import { ueberspringenWerfen } from './config.mjs';
 
 export const env = (k, d = '') => (process.env[k] || d).trim();
 export const LIVE = env('BEWERBUNG_LIVE').toLowerCase() === 'ja';
-export const BEWERBER = () => env('BEWERBER_NAME', 'Ziya Bicil');
+export const BEWERBER = () => env('BEWERBER_NAME') || ueberspringenWerfen('BEWERBER_NAME fehlt.');
 export const emailOk = (e) => /^[a-z0-9._%+-]+@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/i.test(e || '') && e.length < 120;
 export const heute = () => new Date().toISOString().slice(0, 10);
 export const tageSeit = (datum) => (Date.now() - new Date(datum).getTime()) / 864e5;
