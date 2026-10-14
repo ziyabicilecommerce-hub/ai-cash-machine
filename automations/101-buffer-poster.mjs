@@ -6,7 +6,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { videoPruefen } from './lib/werbeCheck.mjs';
 import { zuordnen } from './lib/faktenKonten.mjs';
-import { API, postText, postInput, POST_MUTATION, zeitplan, tiktokTitel, naechsteZeiten, STANDARD_ZEITEN } from './lib/bufferPoster.mjs';
+import { API, postText, schonGepostet, postInput, POST_MUTATION, zeitplan, tiktokTitel, naechsteZeiten, STANDARD_ZEITEN } from './lib/bufferPoster.mjs';
 
 const env = (k, d = '') => (process.env[k] || d).trim();
 const TOKEN = env('BUFFER_ACCESS_TOKEN');
@@ -42,8 +42,20 @@ async function main() {
   const kanaele = channels.filter((c) => c.service === 'tiktok' && !c.isDisconnected && !c.isLocked);
   if (!kanaele.length) throw new Error('Kein verbundener TikTok-Kanal in Buffer');
 
+  // Doppel-Sperre: was schon geplant oder in den letzten Tagen gepostet wurde, geht nicht nochmal raus.
+  let texte = [];
+  try {
+    const d = await gql('query($i: PostsInput!) { posts(input: $i, first: 100) { edges { node { text } } } }', { i: { organizationId: orgId, filter: { channelIds: kanaele.map((k) => k.id), status: ['scheduled', 'sending', 'sent'] } } });
+    texte = (d.posts.edges || []).map((e) => e.node.text);
+  } catch (err) { console.log(`[101-buffer-poster] bisherige Posts nicht lesbar (${String(err.message).slice(0, 100)})`); }
+  const neu = videos.filter((v) => {
+    if (!schonGepostet(v, texte)) return true;
+    console.log(`[101-buffer-poster] schon gepostet/geplant, übersprungen: ${v.datei}`);
+    return false;
+  });
+  if (!neu.length) { console.log('[101-buffer-poster] alles schon gepostet - nichts zu tun.'); return; }
   // Jedes Video gehört zu einem Konto (Name steht im Video): es kommt auf genau diesen TikTok-Kanal.
-  const plan = zuordnen(videos, kanaele);
+  const plan = zuordnen(neu, kanaele);
   // Feste Prime-Time-Uhrzeiten (BUFFER_ZEITEN, deutsche Zeit) statt "sofort" - GitHub startet Läufe oft Stunden zu spät.
   // Schon geplante Posts werden ausgelassen, damit sich nichts überschneidet.
   let belegt = [];

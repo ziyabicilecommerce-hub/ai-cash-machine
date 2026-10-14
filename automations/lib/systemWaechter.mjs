@@ -33,6 +33,8 @@ export function auswerten(laeufe, { jetzt = Date.now(), letzte = {} } = {}) {
     const tag = fertig.filter((r) => jetzt - Date.parse(r.created_at) < 24 * STUNDE);
     return {
       name, url: letzter.html_url, letzterLauf: letzter.created_at, ergebnis: letzter.conclusion || letzter.status, versuch: letzter.run_attempt || 1, runId: letzter.id,
+      // Läuft schon ein neuerer Lauf? Dann den alten nicht neu starten (er hätte einen veralteten Stand -> doppelte Videos).
+      neuerer: rs.some((r) => Date.parse(r.created_at) > Date.parse(letzter.created_at)),
       laeufe24h: tag.length, fehler24h: tag.filter((r) => r.conclusion === 'failure').length,
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
@@ -52,7 +54,7 @@ export function auswerten(laeufe, { jetzt = Date.now(), letzte = {} } = {}) {
 
 // Welche Laeufe neu starten? Nur Abstuerze wichtiger Agenten, nur der erste Versuch, nur juenger als 12 h.
 export function neuStarten(workflows, { jetzt = Date.now() } = {}) {
-  return workflows.filter((w) => w.ergebnis === 'failure' && SELBSTHEILEN.has(w.name) && w.versuch === 1 && jetzt - Date.parse(w.letzterLauf) < 12 * STUNDE);
+  return workflows.filter((w) => w.ergebnis === 'failure' && !w.neuerer && SELBSTHEILEN.has(w.name) && w.versuch === 1 && jetzt - Date.parse(w.letzterLauf) < 12 * STUNDE);
 }
 
 export const schluessel = (p) => `${p.art}|${p.name}`;

@@ -49,7 +49,7 @@ async function main() {
     const w = workflows.find((x) => x.name === p.name);
     try { p.diagnose = diagnose(await logHolen(w.runId)); } catch (err) { console.log(`[system] Log ${p.name}: ${err.message}`); }
   }
-  const heilbar = workflows.filter((w) => probleme.some((p) => p.name === w.name && p.diagnose?.selbst) && w.versuch === 1 && Date.now() - Date.parse(w.letzterLauf) < 12 * 36e5);
+  const heilbar = workflows.filter((w) => probleme.some((p) => p.name === w.name && p.diagnose?.selbst) && !w.neuerer && w.versuch === 1 && Date.now() - Date.parse(w.letzterLauf) < 12 * 36e5);
   const neugestartet = [];
   for (const w of [...new Set([...neuStarten(workflows), ...heilbar])]) {
     const res = await api(`/actions/runs/${w.runId}/rerun-failed-jobs`, { method: 'POST' });

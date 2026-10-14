@@ -34,3 +34,10 @@ test('verpasste Zeitplaene wichtiger Agenten werden nachgeholt, andere nicht', a
   const r = nachholen([{ art: 'haengt', name: 'Werbe-Labor' }, { art: 'haengt', name: 'Werbe-Labor' }, { art: 'absturz', name: 'Shop-Doktor + Produkt-Feeds' }, { art: 'haengt', name: 'Irgendwas' }]);
   assert.deepEqual(r, [{ name: 'Werbe-Labor', datei: 'werbe-labor.yml' }]);
 });
+
+test('kein Neustart eines alten Laufs, wenn schon ein neuerer läuft (sonst doppelte Videos)', () => {
+  const r = auswerten([
+    lauf('100 · Fakten-Kanal', 0.2, null, { status: 'in_progress' }), lauf('100 · Fakten-Kanal', 8, 'failure'),
+  ], { jetzt });
+  assert.equal(neuStarten(r.workflows, { jetzt }).length, 0);
+});
