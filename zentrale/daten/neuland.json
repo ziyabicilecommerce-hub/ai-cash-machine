@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-13T10:57:32.809Z",
+ "stand": "2026-10-14T08:58:31.822Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,24 +9,31 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 64,
+     "value": 59,
      "unit": ""
     },
     {
      "label": "Prüfung offen",
-     "value": 4,
+     "value": 5,
      "unit": ""
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 60,
+     "value": 54,
      "unit": ""
     }
    ],
    "rows": [
     {
-     "Aussage": "Top 5 von DeskRebel",
-     "Beleglink": "https://www.deskrebel.store",
+     "Aussage": "Dein Home-Gym für jeden Tag",
+     "Beleglink": "https://www.deskrebel.store/products/doorkit-tueranker-griffe-karabiner",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Purivelle Stelo – Massagestab für die Selbstmassage",
+     "Beleglink": "https://purivelle.store/products/deepstick-massagestab",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -34,6 +41,13 @@
     {
      "Aussage": "Top 5 von Purivelle",
      "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Nein",
+     "Status": "Prüfung offen",
+     "Hinweise": "Menschliche Prüfung ausstehend."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Beleglink": "https://www.deskrebel.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -422,55 +436,6 @@
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Purivelle TapRelax – Sofortige Klopfmassage",
-     "Beleglink": "https://purivelle.store/products/factory-wholesale-health-meridian-clap-fitness-clap-massage-clap-meridian-clap-clap-silicone-clap-board-small-gifts",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "DeskRebel GripRing – Silikon-Handtrainer",
-     "Beleglink": "https://www.deskrebel.store/products/gripring-silikon-handtrainer",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Purivelle WarmEase – Wärme für den Nacken",
-     "Beleglink": "https://purivelle.store/products/manufacturer-wholesale-self-heating-neck-brace-with-magnetic-therapy-warm-compress-for-cervical-spine-breathable-suitable-for-middle-aged-and-elderly-health-care-sports-heating-neck-wrap",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Griff, der keine Verletzungen lässt",
-     "Beleglink": "https://www.deskrebel.store/products/palmgrips-silikon-griffpads",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "DeskRebel GripRing",
-     "Beleglink": "https://www.deskrebel.store/products/gripring-silikon-handtrainer",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Purivelle WarmEase – Dein Nacken, dein Lächeln",
-     "Beleglink": "https://purivelle.store/products/manufacturer-wholesale-self-heating-neck-brace-with-magnetic-therapy-warm-compress-for-cervical-spine-breathable-suitable-for-middle-aged-and-elderly-health-care-sports-heating-neck-wrap",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Purivelle TapRelax – Klopfpaddel für kleine Pausen",
-     "Beleglink": "https://purivelle.store/products/factory-wholesale-health-meridian-clap-fitness-clap-massage-clap-meridian-clap-clap-silicone-clap-board-small-gifts",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
     }
    ],
    "notes": [
@@ -484,7 +449,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 64,
+     "value": 59,
      "unit": ""
     },
     {
@@ -500,14 +465,26 @@
    ],
    "rows": [
     {
-     "Aussage": "Top 5 von DeskRebel",
-     "Quellenverweis": "https://www.deskrebel.store",
+     "Aussage": "Dein Home-Gym für jeden Tag",
+     "Quellenverweis": "https://www.deskrebel.store/products/doorkit-tueranker-griffe-karabiner",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Purivelle Stelo – Massagestab für die Selbstmassage",
+     "Quellenverweis": "https://purivelle.store/products/deepstick-massagestab",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
     {
      "Aussage": "Top 5 von Purivelle",
      "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Quellenverweis": "https://www.deskrebel.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -840,48 +817,6 @@
      "Quellenverweis": "https://www.deskrebel.store/products/elbowguard-kompressions-ellbogenbandage",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Purivelle TapRelax – Sofortige Klopfmassage",
-     "Quellenverweis": "https://purivelle.store/products/factory-wholesale-health-meridian-clap-fitness-clap-massage-clap-meridian-clap-clap-silicone-clap-board-small-gifts",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "DeskRebel GripRing – Silikon-Handtrainer",
-     "Quellenverweis": "https://www.deskrebel.store/products/gripring-silikon-handtrainer",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Purivelle WarmEase – Wärme für den Nacken",
-     "Quellenverweis": "https://purivelle.store/products/manufacturer-wholesale-self-heating-neck-brace-with-magnetic-therapy-warm-compress-for-cervical-spine-breathable-suitable-for-middle-aged-and-elderly-health-care-sports-heating-neck-wrap",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Griff, der keine Verletzungen lässt",
-     "Quellenverweis": "https://www.deskrebel.store/products/palmgrips-silikon-griffpads",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "DeskRebel GripRing",
-     "Quellenverweis": "https://www.deskrebel.store/products/gripring-silikon-handtrainer",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Purivelle WarmEase – Dein Nacken, dein Lächeln",
-     "Quellenverweis": "https://purivelle.store/products/manufacturer-wholesale-self-heating-neck-brace-with-magnetic-therapy-warm-compress-for-cervical-spine-breathable-suitable-for-middle-aged-and-elderly-health-care-sports-heating-neck-wrap",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Purivelle TapRelax – Klopfpaddel für kleine Pausen",
-     "Quellenverweis": "https://purivelle.store/products/factory-wholesale-health-meridian-clap-fitness-clap-massage-clap-meridian-clap-clap-silicone-clap-board-small-gifts",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     }
    ],
    "notes": [
@@ -986,7 +921,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-13",
+     "value": "2026-10-14",
      "unit": ""
     }
    ],
