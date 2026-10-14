@@ -21,7 +21,7 @@ export function titelPasst(titel, prompt, extra = []) {
 }
 
 // Shop-Videos: keine Clips mit Menschen - ein fremder Mensch neben dem Produkt wirkte wie ein (falscher) Kunde.
-const MENSCHEN = /\b(man|men|woman|women|person|persons|people|girl|girls|boy|boys|child|children|kid|kids|family|families|patient|doctor|nurse|portrait|selfie|interview|crowd|actor|actress|dancer|wedding|couple|baby|babies|mother|father|student|students|worker|workers|athlete|player|lady|guy|teen|teenager|face|faces|hands?|frau|mann|menschen|kind|kinder)\b/i;
+const MENSCHEN = /\b(man|men|woman|women|person|persons|people|girl|girls|boy|boys|child|children|kid|kids|family|families|patient|doctor|nurse|portrait|selfie|interview|crowd|actor|actress|dancer|wedding|couple|baby|babies|mother|father|student|students|worker|workers|athlete|player|lady|guy|teen|teenager|face|faces|hands?|frau|mann|menschen|kind|kinder|beekeep\w*|imker\w*|harvest\w*|farmers?|fisherm[ae]n|tourists?|visitors?|divers?|surfers?|hikers?|climbers?)\b/i;
 export const mitMenschen = (text) => MENSCHEN.test(String(text || '').replace(/[_\-.]/g, ' '));
 // Nie: Politik, Nachrichten, Reden, Interviews, Werbung, Sendungs-Folgen (Spinat fand "West Wing Week" aus dem Weißen Haus).
 const UNPASSEND = /\b(west wing|white house|president|presidential|obama|trump|biden|congress|senate|parliament|minister|government|politic\w*|election|campaign|news|newscast|press|speech|interview|lecture|conference|briefing|podcast|episode|trailer|commercial|advert\w*|propaganda|war|military|army|protest|rally|weekly|week|show|tv|television)\b/i;
@@ -173,7 +173,7 @@ export async function clipsHolen(szenen, ordner, { weltall = false, ohneMenschen
   let moeglich = 0;
   for (const [n, szene] of szenen.entries()) {
     if (szene.video && existsSync(szene.video)) { treffer++; moeglich++; continue; }
-    if (!szene.bild || szene.foto || szene.anwendung || szene.vergleich || szene.demo) continue;
+    if (!szene.bild || szene.foto || szene.anwendung || szene.vergleich || szene.demo || szene.ohneClip) continue;
     moeglich++;
     if (!gleich.has(szene.bild)) {
       const info = {};
