@@ -1,0 +1,21 @@
+name: "105 · Buchhaltungs-Bot"
+
+# Autopilot-Buchhaltung: stündlich je neue Bestellung eine Mail an dich (Brutto/Netto/MwSt./geschätzter Gewinn),
+# am Monatsersten die Monatsabrechnung mit CSV für den Steuerberater.
+# Braucht die Secrets SHOP, SHOPIFY_TOKEN, RESEND_API_KEY und OWNER_EMAIL - ohne sie endet der Lauf still und grün.
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/105-buchhaltung.mjs
+    secrets: inherit

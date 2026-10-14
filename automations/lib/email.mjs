@@ -1,7 +1,8 @@
 import { config, isTestMode, sindEmailsPausiert } from './config.mjs';
 
 // Nutzt Resend (https://resend.com) statt SMTP - kostenloser Tier reicht für die meisten Shops.
-export async function sendEmail({ to, subject, html }) {
+// attachments (optional): [{ filename, content: Base64 }] - z. B. die CSV der Monatsabrechnung.
+export async function sendEmail({ to, subject, html, attachments }) {
   if (sindEmailsPausiert()) {
     console.log('[email] E-Mail-Versand pausiert (EMAILS_PAUSIERT=ja) - E-Mail wird nur geloggt, nicht versendet.');
     console.log('[email] An:', to, '| Betreff:', subject);
@@ -22,10 +23,12 @@ export async function sendEmail({ to, subject, html }) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: config.ABSENDER_EMAIL,
+      // Ohne eigene Domain geht nur die Resend-Testadresse (Mails an die eigene Resend-Konto-Adresse).
+      from: config.ABSENDER_EMAIL || 'Cash Machine <onboarding@resend.dev>',
       to: empfaenger,
       subject: finalSubject,
       html,
+      ...(attachments?.length ? { attachments } : {}),
     }),
   });
   if (!res.ok) {

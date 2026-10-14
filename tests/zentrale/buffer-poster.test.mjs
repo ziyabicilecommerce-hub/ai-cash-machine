@@ -131,3 +131,13 @@ test('naechsteZeiten: feste deutsche Uhrzeiten, Sommer-/Winterzeit, belegte Zeit
   // Spät in der Nacht: es geht am nächsten Tag weiter
   assert.equal(naechsteZeiten(1, { jetzt: Date.parse('2026-10-08T22:00:00Z') })[0], '2026-10-09T09:30:00.000Z');
 });
+
+import { schonGepostet, postKennung } from '../../automations/lib/bufferPoster.mjs';
+test('Doppel-Sperre: gleiches Video (auch mit anderer Caption-Endung) geht nicht zweimal raus', () => {
+  const v = { caption: '🚀 Echte NASA-Aufnahmen! Welcher Planet ist am weitesten weg? Schreib es! #neptun', titel: 'x' };
+  const alt = '🚀 Echte NASA-Aufnahmen! Welcher Planet ist am weitesten weg? Schreib es!\n\nTag 7 von 100\n\n#neptun #KIgeneriert';
+  assert.equal(schonGepostet(v, [alt]), true);
+  assert.equal(schonGepostet(v, ['Bambus ist ein Gras. Wahr oder Mythos?']), false);
+  assert.equal(schonGepostet(v, []), false);
+  assert.equal(postKennung(''), '');
+});

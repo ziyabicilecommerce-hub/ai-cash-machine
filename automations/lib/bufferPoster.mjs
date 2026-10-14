@@ -79,6 +79,15 @@ export function naechsteZeiten(anzahl, { jetzt = Date.now(), zeiten = STANDARD_Z
   return raus;
 }
 
+// Doppel-Sperre: Kennung eines Posts = erste Zeile ohne Emojis/Satzzeichen. Ein Video, dessen Kennung schon
+// geplant oder gepostet ist, geht nicht ein zweites Mal raus (z. B. wenn ein alter Lauf neu gestartet wurde).
+export const postKennung = (text) => String(text || '').split('\n')[0].replace(/🚀 Echte NASA-Aufnahmen!/g, '').toLowerCase()
+  .replace(/[^\p{L}\p{N}]+/gu, ' ').trim().slice(0, 80);
+export const schonGepostet = (video, texte = []) => {
+  const k = postKennung(postText(video));
+  return !!k && texte.some((t) => postKennung(t) === k);
+};
+
 export function postInput(kanalId, text, videoUrl, { dueAt = null, titel = '' } = {}) {
   return {
     channelId: kanalId,
