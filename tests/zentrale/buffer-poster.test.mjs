@@ -79,6 +79,7 @@ import { typAus, auswerten } from '../../automations/lib/tiktokLernen.mjs';
 
 test('TikTok-Lernen: erkennt Format, bevorzugt erst bei genug Daten und klarem Vorsprung', () => {
   assert.equal(typAus('Honig verdirbt nie. Wahr oder Mythos? Schreib es...'), 'mythos');
+  assert.equal(typAus('🚀 Echte NASA-Aufnahmen! Was passiert, wenn der Mond verschwindet?'), 'waswaere');
   assert.equal(typAus('Welcher Planet ist der heißeste?'), 'quiz');
   const post = (text, sek, views = 100, kom = 0) => ({ text, metrics: [{ type: 'views', value: views }, { type: 'averageTimeWatched', value: sek }, { type: 'comments', value: kom }] });
   const quiz = Array.from({ length: 4 }, () => post('Frage?', 9));
@@ -101,6 +102,7 @@ import { serienHook } from '../../automations/lib/faktenKonten.mjs';
 test('serienHook: Serie pro Thema und Format, kurz genug für das Video', () => {
   assert.equal(serienHook('Weltall', 'quiz', 7), "WELTALL-QUIZ #7: Schaffst du's?");
   assert.equal(serienHook('Körper', 'mythos', 3), 'KÖRPER #3: Mythos oder Wahrheit?');
+  assert.equal(serienHook('Weltall', 'waswaere', 5), 'WAS WÄRE WENN #5');
   assert.equal(serienHook('Unbekannt', 'quiz', 1), "FAKTEN-QUIZ #1: Schaffst du's?");
   assert.ok(serienHook('Weltall', 'mythos', 999).length <= 40);
 });

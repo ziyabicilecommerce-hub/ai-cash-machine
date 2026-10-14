@@ -3,7 +3,7 @@
 // Reine Funktionen - ohne Netz testbar.
 
 // Format eines Posts aus seinem Text erkennen (Captions aus der Faktenliste).
-export const typAus = (text) => (/wahr oder mythos|mythos oder wahr/i.test(String(text)) ? 'mythos' : 'quiz');
+export const typAus = (text) => (/wahr oder mythos|mythos oder wahr/i.test(String(text)) ? 'mythos' : /^\W*(🚀 Echte NASA-Aufnahmen! )?Was (passiert|passierte|wäre)\b/i.test(String(text)) ? 'waswaere' : 'quiz');
 
 const wert = (metrics, typ) => Number((metrics || []).find((m) => m.type === typ)?.value) || 0;
 
@@ -13,6 +13,7 @@ export function auswerten(posts, { mindestens = 4, vorsprung = 0.1 } = {}) {
   for (const p of posts) {
     if (!wert(p.metrics, 'views')) continue; // noch keine Zahlen
     const s = stat[typAus(p.text)];
+    if (!s) continue; // "Was wäre wenn?" wird (noch) nicht gegen Quiz/Mythos verglichen
     s.n++;
     s.sehdauer += wert(p.metrics, 'averageTimeWatched');
     s.kommentare += wert(p.metrics, 'comments');

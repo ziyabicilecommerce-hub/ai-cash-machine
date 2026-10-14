@@ -41,6 +41,7 @@ export const nischeFuer = (konto, nischen) => nischen[norm(konto)] || [];
 const SERIE = { weltall: 'WELTALL', geld: 'GELD', 'körper': 'KÖRPER', essen: 'ESSEN', natur: 'NATUR', tiere: 'TIER' };
 export function serienHook(kat, typ, teil) {
   const name = SERIE[String(kat || '').toLowerCase()] || 'FAKTEN';
+  if (typ === 'waswaere') return `WAS WÄRE WENN #${teil}`;
   return typ === 'mythos' ? `${name} #${teil}: Mythos oder Wahrheit?` : `${name}-QUIZ #${teil}: Schaffst du's?`;
 }
 
