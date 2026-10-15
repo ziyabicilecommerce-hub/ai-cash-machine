@@ -62,7 +62,7 @@ const STANDARD_SUCHE = [
 ].join(';');
 
 const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key ?account|kundenberater|neukunden|d2d|door to door|fundraising/i;
-const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung/i;
+const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt/i;
 // Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
 const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freelance|freiberuf|selbstständig|selbständig|nebenjob|honorar|auf provisionsbasis|\b(520|538|556) ?(€|euro)/i;
 const FLUGHAFEN = /flughafen|airport|fraport|lufthansa|condor|cargo ?city|luftverkehr|luftfracht|aviation|\b60549\b/i;
@@ -75,7 +75,7 @@ const QUEREINSTEIGER = /quereinst|ohne (berufs)?erfahrung|keine (berufs)?erfahru
 // Je höher, desto früher wird beworben: Flughafen > Quereinsteiger > Buchhaltung > Rest.
 function attraktivitaet(st) {
   const kopf = `${st.titel} ${st.beruf || ''} ${st.arbeitgeber || ''} ${st.arbeitsort?.plz || ''} ${st.arbeitsort?.ort || ''}`;
-  return (FLUGHAFEN.test(kopf) ? 3 : 0) + (QUEREINSTEIGER.test(kopf) ? 2 : 0) + (/buchhalt|finanz|rechnungswesen|kreditor|debitor/i.test(kopf) ? 2 : 0) + (/büro|verwaltung|sachbearbeit|backoffice/i.test(kopf) ? 1 : 0);
+  return (FLUGHAFEN.test(kopf) ? 3 : 0) + (st.quereinstieg || QUEREINSTEIGER.test(kopf) ? 2 : 0) + (/buchhalt|finanz|rechnungswesen|kreditor|debitor/i.test(kopf) ? 2 : 0) + (/büro|verwaltung|sachbearbeit|backoffice/i.test(kopf) ? 1 : 0);
 }
 
 function extras(text) {
@@ -100,15 +100,28 @@ async function holeJson(url) {
   return res.json();
 }
 
+// Die BA hat /pc/v4/jobs abgeschaltet (403) - Suche läuft über v6, das Format wird hier
+// auf die bisherigen Feldnamen gemappt. Die Details kommen weiter aus /pc/v4/jobdetails.
+function ausV6(x, angebotsart, was) {
+  const adr = x.stellenlokationen?.[0]?.adresse || {};
+  return {
+    refnr: x.referenznummer, titel: x.stellenangebotsTitel || '', arbeitgeber: x.firma || '', beruf: x.hauptberuf || '',
+    arbeitsort: { ort: adr.ort || '', plz: adr.plz || '', region: adr.region || '' }, externeUrl: x.externeURL || '',
+    vollzeit: x.arbeitszeitVollzeit !== false, minijob: !!x.istGeringfuegigeBeschaeftigung,
+    zeitarbeit: !!x.istArbeitnehmerUeberlassung || !!x.istPrivateArbeitsvermittlung,
+    quereinstieg: !!x.quereinstiegGeeignet, angebotsart, suchbegriff: was,
+  };
+}
+
 async function sucheStellen({ was, angebotsart }) {
   const q = new URLSearchParams({ was, wo: ORT, umkreis: String(UMKREIS), angebotsart: String(angebotsart), veroeffentlichtseit: '60', size: '100' });
   if (angebotsart === 1) q.set('arbeitszeit', 'vz');
   const alle = [];
   for (let seite = 1; seite <= 3; seite++) {
     q.set('page', String(seite));
-    const data = await holeJson(`${API}/pc/v4/jobs?${q}`);
-    const treffer = data.stellenangebote || [];
-    alle.push(...treffer.map((s) => ({ ...s, angebotsart, suchbegriff: was })));
+    const data = await holeJson(`${API}/pc/v6/jobs?${q}`);
+    const treffer = data.ergebnisliste || [];
+    alle.push(...treffer.filter((x) => x.referenznummer).map((x) => ausV6(x, angebotsart, was)));
     if (treffer.length < 100) break;
   }
   return alle;
@@ -117,22 +130,22 @@ async function sucheStellen({ was, angebotsart }) {
 // Detailtext holen: erst API, sonst die öffentliche Detailseite (HTML).
 async function holeDetails(refnr) {
   const b64 = Buffer.from(refnr).toString('base64');
-  for (const url of [`${API}/pc/v4/jobdetails/${b64}`, `${API}/pc/v2/jobdetails/${b64}`]) {
-    try {
-      const d = await holeJson(url);
-      const text = [d.stellenangebotsBeschreibung, d.stellenbeschreibung, JSON.stringify(d.arbeitgeberAdresse || ''), JSON.stringify(d.ansprechpartner || ''), d.kontaktdaten && JSON.stringify(d.kontaktdaten)].filter(Boolean).join('\n');
-      if (text.length > 80) return { text, externeUrl: d.allianzpartnerUrl || d.externeUrl || '' };
-    } catch { /* nächste Quelle */ }
-  }
+  try {
+    const d = await holeJson(`${API}/pc/v4/jobdetails/${b64}`);
+    // Ganze Antwort als Text, damit auch Kontakt-Mails in Nebenfeldern gefunden werden; "\n" aus JSON entschärfen.
+    const text = `${d.stellenangebotsBeschreibung || ''}\n${JSON.stringify({ ...d, stellenangebotsBeschreibung: undefined })}`.replace(/\\n/g, ' ');
+    const gehalt = d.gehaltsspanneVon ? `${d.gehaltsspanneVon}${d.gehaltsspanneBis ? `–${d.gehaltsspanneBis}` : ''} €` : '';
+    if (text.length > 80) return { text, externeUrl: d.externeURL || d.allianzpartnerUrl || '', gehalt, flags: d };
+  } catch { /* nächste Quelle */ }
   try {
     const res = await fetch(`https://www.arbeitsagentur.de/jobsuche/jobdetail/${encodeURIComponent(refnr)}`, { headers: { 'User-Agent': 'Mozilla/5.0' } });
     if (res.ok) {
       const html = await res.text();
       const text = html.replace(/\\u003C|\\u003E/g, ' ').replace(/<[^>]+>/g, ' ').replace(/&#64;|&#x40;|\\u0040/g, '@').replace(/\s+/g, ' ');
-      return { text: text.slice(0, 20000), externeUrl: '' };
+      return { text: text.slice(0, 20000), externeUrl: '', gehalt: '', flags: {} };
     }
   } catch { /* egal */ }
-  return { text: '', externeUrl: '' };
+  return { text: '', externeUrl: '', gehalt: '', flags: {} };
 }
 
 export function findeEmail(text) {
@@ -225,13 +238,16 @@ async function main() {
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf) || ZEITARBEIT.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb/zeitarbeit'; continue; }
-    if (KEIN_FIXGEHALT.test(kopf)) { state.uebersprungen[refnr] = 'kein Vollzeit-Fixgehalt'; continue; }
+    if (stelle.minijob || !stelle.vollzeit || KEIN_FIXGEHALT.test(kopf)) { state.uebersprungen[refnr] = 'kein Vollzeit-Fixgehalt'; continue; }
+    if (stelle.zeitarbeit) { state.uebersprungen[refnr] = 'Zeitarbeit/Personalvermittlung'; continue; }
     if (!ortPasst(stelle)) { state.uebersprungen[refnr] = `Ort ${stelle.arbeitsort?.ort || '?'}`; continue; }
 
-    const { text, externeUrl } = await holeDetails(refnr);
+    const { text, externeUrl, gehalt, flags } = await holeDetails(refnr);
+    if (flags.istGeringfuegigeBeschaeftigung || flags.istArbeitnehmerUeberlassung) { state.uebersprungen[refnr] = 'Minijob/Zeitarbeit (Details)'; continue; }
     if (VERTRIEB.test(text.slice(0, 3000)) && /vertrieb|au(ß|ss)endienst|akquise|provision/i.test(text)) { state.uebersprungen[refnr] = 'vertrieb (Text)'; continue; }
     const email = findeEmail(text);
-    const link = externeUrl || stelle.externeUrl || `https://www.arbeitsagentur.de/jobsuche/jobdetail/${refnr}`;
+    // Nur echte Anzeigen-Links nehmen, keine reinen Startseiten ("http://www.arbeitsagentur.de").
+    const link = [externeUrl, stelle.externeUrl].find((u) => /^https?:\/\/[^/]+\/.+/.test(u || '')) || `https://www.arbeitsagentur.de/jobsuche/jobdetail/${encodeURIComponent(refnr)}`;
     if (!emailOk(email)) {
       state.uebersprungen[refnr] = 'keine E-Mail';
       if (manuell.length < 10) manuell.push(`• ${stelle.titel} – ${stelle.arbeitgeber}\n  ${link}`);
@@ -265,7 +281,7 @@ async function main() {
       state.emails[email] = heute();
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
-    const plus = extras(`${kopf} ${text}`);
+    const plus = [...extras(`${kopf} ${text}`), ...(stelle.quereinstieg && !QUEREINSTEIGER.test(text) ? ['🎓 Quereinstieg geeignet'] : []), ...(gehalt ? [`💶 ${gehalt}`] : [])];
     gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.passung}/10${plus.length ? `  ${plus.join(' ')}` : ''}`);
     console.log(`[bewerbungs-bot] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${refnr}`);
     await pause(8000); // Gmail nicht fluten
