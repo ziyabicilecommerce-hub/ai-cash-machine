@@ -1,14 +1,14 @@
 {
- "stand": "2026-10-15T17:19:18.312Z",
+ "stand": "2026-10-15T21:43:31.420Z",
  "gesamt": {
-  "posts": 50,
+  "posts": 51,
   "aufrufe": 34232,
   "likes": 173,
   "kommentare": 18,
   "shares": 5,
   "sehdauer": 4.5,
-  "aufrufe7": 20463,
-  "aufrufeVor7": 12001
+  "aufrufe7": 20186,
+  "aufrufeVor7": 12278
  },
  "konten": [
   {
@@ -17,7 +17,7 @@
     "Natur",
     "Tiere"
    ],
-   "serie": 13,
+   "serie": 14,
    "posts": 18,
    "aufrufe": 21040,
    "likes": 74,
@@ -41,8 +41,8 @@
    "nische": [
     "Weltall"
    ],
-   "serie": 13,
-   "posts": 16,
+   "serie": 14,
+   "posts": 17,
    "aufrufe": 8308,
    "likes": 67,
    "kommentare": 6,
@@ -91,17 +91,6 @@
  ],
  "geplant": [
   {
-   "zeit": "2026-10-15T18:00:00.000Z",
-   "konto": "@zyx_7851",
-   "text": "🚀 Echte NASA-Aufnahmen! Der Mars hat zwei kleine Monde. Wahr oder Mythos? Schreib es in d",
-   "link": "",
-   "format": "mythos",
-   "aufrufe": 0,
-   "sehdauer": 0,
-   "likes": 0,
-   "kommentare": 0
-  },
-  {
    "zeit": "2026-10-16T09:30:00.000Z",
    "konto": "@futureflowxx",
    "text": "Was passiert, wenn alle Bienen verschwinden? 🤯 Welches Szenario soll als Nächstes kommen?",
@@ -144,9 +133,42 @@
    "sehdauer": 0,
    "likes": 0,
    "kommentare": 0
+  },
+  {
+   "zeit": "2026-10-16T17:00:00.000Z",
+   "konto": "@futureflowx3",
+   "text": "Was passiert, wenn du ein Loch bis zum Erdmittelpunkt gräbst? 🤯 Welches Szenario soll als",
+   "link": "",
+   "format": "waswaere",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  },
+  {
+   "zeit": "2026-10-16T18:00:00.000Z",
+   "konto": "@zyx_7851",
+   "text": "🚀 Echte NASA-Aufnahmen! Was passiert, wenn du in ein Schwarzes Loch fällst? 🤯 Welches Sz",
+   "link": "",
+   "format": "waswaere",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
   }
  ],
  "letzte": [
+  {
+   "zeit": "2026-10-15T18:03:46.526Z",
+   "konto": "@zyx_7851",
+   "text": "🚀 Echte NASA-Aufnahmen! Der Mars hat zwei kleine Monde. Wahr oder Mythos? Schreib es in d",
+   "link": "https://tiktok.com/@zyx_7851/video/7696956573230337313",
+   "format": "mythos",
+   "aufrufe": 0,
+   "sehdauer": 0,
+   "likes": 0,
+   "kommentare": 0
+  },
   {
    "zeit": "2026-10-15T17:05:05.621Z",
    "konto": "@futureflowx3",
@@ -465,24 +487,13 @@
    "sehdauer": 5.2,
    "likes": 11,
    "kommentare": 1
-  },
-  {
-   "zeit": "2026-10-09T10:31:57.043Z",
-   "konto": "@futureflowx3",
-   "text": "Welcher ist der größte Ozean der Erde? Schreib deine Antwort in die Kommentare! Tag 2 von ",
-   "link": "https://www.tiktok.com/@futureflowx3/video/7694613553982016800?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
-   "format": "quiz",
-   "aufrufe": 1888,
-   "sehdauer": 4.8,
-   "likes": 5,
-   "kommentare": 0
   }
  ],
  "fehler": 0,
- "ohneZahlen": 1,
+ "ohneZahlen": 2,
  "lernen": {
-  "stand": "2026-10-15T17:19:17.576Z",
-  "posts": 49,
+  "stand": "2026-10-15T21:43:30.727Z",
+  "posts": 50,
   "quiz": {
    "n": 17,
    "sehdauer": 67.32000000000001,
@@ -502,7 +513,7 @@
  "tipps": [
   {
    "stufe": "warn",
-   "text": "Buffer holt für 1 Post(s) keine Zahlen mehr von TikTok ab - die Zahlen hier sind zu niedrig. In TikTok selbst nachsehen oder den Kanal in Buffer neu verbinden."
+   "text": "Buffer holt für 2 Post(s) keine Zahlen mehr von TikTok ab - die Zahlen hier sind zu niedrig. In TikTok selbst nachsehen oder den Kanal in Buffer neu verbinden."
   },
   {
    "stufe": "warn",
