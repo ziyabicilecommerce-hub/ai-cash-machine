@@ -152,9 +152,10 @@ export const BANK = [...Array.from({ length: Math.max(QUIZ.length, MYTHOS.length
 // saison: z. B. 'halloween' - Saison-Einträge kommen dann zuerst, außerhalb ihrer Saison nie.
 // heute: 'MM-TT' (deutsche Zeit) - Einträge mit aktuell: [von, bis] laufen nur in diesem Fenster und kommen dann ganz zuerst.
 export const heuteMT = (jetzt = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(jetzt).slice(5, 10);
+// Darf ein Eintrag gerade laufen? (Saison passt, Zeitfenster offen)
+export const laeuftGerade = (e, saison = null, heute = heuteMT()) => (!e.saison || e.saison === saison) && (!e.aktuell || (heute >= e.aktuell[0] && heute <= e.aktuell[1]));
 export function bankNaechster(verwendet = [], kats = [], typ = null, { ohne = [], saison = null, heute = heuteMT() } = {}) {
-  const imFenster = (e) => !e.aktuell || (heute >= e.aktuell[0] && heute <= e.aktuell[1]);
-  const frei = BANK.filter((e) => !verwendet.includes(e.id) && !ohne.includes(e.typ) && (!e.saison || e.saison === saison) && imFenster(e));
+  const frei = BANK.filter((e) => !verwendet.includes(e.id) && !ohne.includes(e.typ) && laeuftGerade(e, saison, heute));
   const inNische = kats.length ? frei.filter((e) => kats.includes(e.kat)) : frei;
   const saisonal = [...inNische.filter((e) => e.aktuell), ...(saison ? inNische.filter((e) => e.saison === saison) : [])];
   return (typ && saisonal.find((e) => e.typ === typ)) || (typ && inNische.find((e) => e.typ === typ)) || inNische[0] || frei[0] || null;
