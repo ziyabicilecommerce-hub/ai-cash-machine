@@ -13,15 +13,19 @@
 import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import {
   env, LIVE, BEWERBER, emailOk, heute, tageSeit, gmailZugang, profil, ladeGeheim, speichereGeheim,
-  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang,
+  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang, wohnort,
 } from './lib/bewerbung.mjs';
+import { config } from './lib/config.mjs';
+
+// 100 Bewerbungen/Tag brauchen mehr als das geteilte KI-Tageslimit - nur für diesen Lauf aufheben.
+config.POLLINATIONS_MAX_TOKENS_PRO_TAG = '0';
 
 export const STATE_BOT = 'bewerbungs-bot';
 export const STATE_POSTFACH = 'bewerbungs-postfach';
 const API = 'https://rest.arbeitsagentur.de/jobboerse/jobsuche-service';
 const API_HEADERS = { 'X-API-Key': 'jobboerse-jobsuche', 'User-Agent': 'Jobsuche/2.9.2 (de.arbeitsagentur.jobboerse)' };
 const MAX_PRO_TAG = Math.max(1, Math.min(150, parseInt(env('BEWERBUNG_MAX_PRO_TAG', '100'), 10) || 100));
-const ORT = env('BEWERBUNG_ORT', 'Frankfurt am Main');
+const ORT = wohnort();
 const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '20'), 10) || 20;
 const MIN_PASSUNG = 6;
 const NACHFASS_NACH_TAGEN = 12;
