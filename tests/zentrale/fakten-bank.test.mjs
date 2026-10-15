@@ -66,3 +66,11 @@ test('Grusel-Oktober: nur im Oktober, dann zuerst; danach nie', async () => {
   for (let n = 0; n < 300; n++) { const e = bankNaechster(benutzt, ['Weltall'], 'waswaere', { ohne: ['mythos'] }); if (!e) break; assert.ok(!e.saison, 'außerhalb der Saison kein Grusel'); benutzt.push(e.id); }
   assert.ok(BANK.filter((e) => e.saison === 'halloween').every((e) => /Antworte in einem Wort/.test(e.caption)));
 });
+
+test('Aktuelles Ereignis (Orioniden) nur im Zeitfenster und dann zuerst', () => {
+  const e = bankNaechster([], ['Weltall'], 'waswaere', { ohne: ['mythos'], saison: 'halloween', heute: '10-16' });
+  assert.match(e.titel, /Orioniden/);
+  const spaeter = bankNaechster([], ['Weltall'], 'waswaere', { ohne: ['mythos'], saison: 'halloween', heute: '10-25' });
+  assert.doesNotMatch(spaeter.titel, /Orioniden/);
+  assert.equal(BANK.filter((x) => x.aktuell).every((x) => /^\d\d-\d\d$/.test(x.aktuell[0])), true);
+});
