@@ -22,30 +22,55 @@ const API = 'https://rest.arbeitsagentur.de/jobboerse/jobsuche-service';
 const API_HEADERS = { 'X-API-Key': 'jobboerse-jobsuche', 'User-Agent': 'Jobsuche/2.9.2 (de.arbeitsagentur.jobboerse)' };
 const MAX_PRO_TAG = Math.max(1, Math.min(150, parseInt(env('BEWERBUNG_MAX_PRO_TAG', '100'), 10) || 100));
 const ORT = env('BEWERBUNG_ORT', 'Frankfurt am Main');
-const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '50'), 10) || 50;
+const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '20'), 10) || 20;
 const MIN_PASSUNG = 6;
 const NACHFASS_NACH_TAGEN = 12;
 
-// Angebotsart der BA: 1 = Arbeit, 4 = Ausbildung. Tarif-Azubi-Berufe
-// (öffentlicher Dienst, Krankenkassen, Versicherungen, Steuerbüros) zuerst.
+// Angebotsart der BA: 1 = Arbeit, 4 = Ausbildung. Wunsch: Büro/Buchhaltung,
+// Vollzeit mit festem Gehalt, am liebsten am Flughafen Frankfurt (liegt im 20-km-Radius).
 const STANDARD_SUCHE = [
-  'Verwaltungsfachangestellte:ausbildung',
-  'Sozialversicherungsfachangestellte:ausbildung',
-  'Kaufmann Versicherungen und Finanzen:ausbildung',
+  'Flughafen Büro:job',
+  'Flughafen Verwaltung:job',
+  'Flughafen Sachbearbeiter:job',
+  'Luftverkehrskaufmann:ausbildung',
+  'Servicekaufmann Luftverkehr:ausbildung',
+  'Flughafen Kaufmann:ausbildung',
+  'Buchhaltung:job',
+  'Finanzbuchhaltung:job',
+  'Mitarbeiter Buchhaltung:job',
+  'Bürokaufmann:job',
+  'Bürokraft:job',
+  'Bürohilfe:job',
+  'Sachbearbeiter Büro:job',
+  'Mitarbeiter Backoffice:job',
   'Steuerfachangestellte:ausbildung',
   'Kaufmann Büromanagement:ausbildung',
   'Industriekaufmann:ausbildung',
+  'Verwaltungsfachangestellte:ausbildung',
+  'Sozialversicherungsfachangestellte:ausbildung',
   'Kaufmann Spedition und Logistikdienstleistung:ausbildung',
-  'Kaufmann E-Commerce:ausbildung',
-  'Bürohilfe:job',
-  'Bürokraft:job',
-  'Mitarbeiter Backoffice:job',
-  'Datenerfassung:job',
-  'Empfangsmitarbeiter:job',
 ].join(';');
 
 const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key ?account|kundenberater|neukunden|d2d|door to door|fundraising/i;
 const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung/i;
+// Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
+const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freelance|freiberuf|selbstständig|selbständig|nebenjob|honorar|auf provisionsbasis|\b(520|538|556) ?(€|euro)/i;
+const FLUGHAFEN = /flughafen|airport|fraport|lufthansa|condor|cargo ?city|luftverkehr|luftfracht|aviation|\b60549\b/i;
+
+// Je höher, desto früher wird beworben: Flughafen > Buchhaltung > Rest.
+function attraktivitaet(st) {
+  const kopf = `${st.titel} ${st.beruf || ''} ${st.arbeitgeber || ''} ${st.arbeitsort?.plz || ''} ${st.arbeitsort?.ort || ''}`;
+  return (FLUGHAFEN.test(kopf) ? 3 : 0) + (/buchhalt|finanz|rechnungswesen|kreditor|debitor/i.test(kopf) ? 2 : 0) + (/büro|verwaltung|sachbearbeit|backoffice/i.test(kopf) ? 1 : 0);
+}
+
+function extras(text) {
+  return [
+    FLUGHAFEN.test(text) && '🛫 Flughafen',
+    /firmenwagen|dienstwagen|firmenfahrzeug|dienstfahrzeug/i.test(text) && '🚗 Firmenwagen',
+    /tarif|tvöd|tv-l|13\. ?(monats)?gehalt|weihnachtsgeld|urlaubsgeld/i.test(text) && '💰 Tarif/Extras',
+    /jobticket|deutschlandticket/i.test(text) && '🎫 Jobticket',
+  ].filter(Boolean);
+}
 
 function suchListe() {
   return env('BEWERBUNG_SUCHBEGRIFFE', STANDARD_SUCHE)
@@ -112,6 +137,8 @@ Firma: ${stelle.arbeitgeber}
 Ort: ${stelle.arbeitsort?.ort || ''}
 Text: ${beschreibung.slice(0, 3500)}
 
+WUNSCH DES BEWERBERS: Büro oder Buchhaltung, Vollzeit, festes Gehalt (keine Provision), am liebsten am Flughafen Frankfurt. Passt die Stelle dazu, darf das Anschreiben diese Begeisterung (z. B. für den Flughafen oder für Zahlen/Buchhaltung) konkret zeigen.
+
 AUFGABE:
 1. Bewerte ehrlich, ob der Bewerber realistische Chancen hat (0-10). Unter 6, wenn: abgeschlossene Ausbildung/Studium/Berufserfahrung zwingend verlangt, Realschulabschluss/Abitur zwingend verlangt, Führerschein zwingend, oder es eigentlich Vertrieb/Verkauf ist.
 2. Wenn >= 6: Schreibe ein Anschreiben (E-Mail-Text, deutsch, 170-260 Wörter, Sie-Form). Erster Satz: ein starker, konkreter Aufhänger zur Firma/Stelle (KEIN "mit großem Interesse habe ich..."). Dann: was aus dem Profil genau zu den Aufgaben der Anzeige passt (Praktika, Excel/Word, Sprachen), Eintritt ab sofort möglich. Ansprechpartner aus der Anzeige verwenden falls genannt, sonst "Sehr geehrte Damen und Herren,". Letzter Satz: Bitte um ein persönliches Kennenlernen, Lebenslauf im Anhang. KEINE Platzhalter in eckigen Klammern, KEINE Grußformel und KEINEN Namen am Ende (wird automatisch angehängt). Keine erfundenen Noten, Zertifikate oder Erfahrungen.
@@ -171,12 +198,14 @@ async function main() {
   const manuell = [];
   let geprueft = 0;
 
-  for (const stelle of alle.values()) {
+  const reihenfolge = [...alle.values()].sort((a, b) => attraktivitaet(b) - attraktivitaet(a));
+  for (const stelle of reihenfolge) {
     if (gesendet.length >= MAX_PRO_TAG || geprueft >= MAX_PRO_TAG * 3) break;
     const { refnr } = stelle;
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf) || ZEITARBEIT.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb/zeitarbeit'; continue; }
+    if (KEIN_FIXGEHALT.test(kopf)) { state.uebersprungen[refnr] = 'kein Vollzeit-Fixgehalt'; continue; }
 
     const { text, externeUrl } = await holeDetails(refnr);
     if (VERTRIEB.test(text.slice(0, 3000)) && /vertrieb|au(ß|ss)endienst|akquise|provision/i.test(text)) { state.uebersprungen[refnr] = 'vertrieb (Text)'; continue; }
@@ -215,7 +244,8 @@ async function main() {
       state.emails[email] = heute();
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
-    gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.passung}/10`);
+    const plus = extras(`${kopf} ${text}`);
+    gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.passung}/10${plus.length ? `  ${plus.join(' ')}` : ''}`);
     console.log(`[bewerbungs-bot] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${refnr}`);
     await pause(8000); // Gmail nicht fluten
   }
