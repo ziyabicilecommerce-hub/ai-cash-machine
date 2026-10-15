@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-14T08:58:31.724Z",
+ "stand": "2026-10-15T08:32:37.361Z",
  "ziel": 5,
  "agenten": [
   {
@@ -7,7 +7,7 @@
    "name": "Werbe-Labor",
    "job": "testet Hooks an der Test-Jury",
    "einheit": "Jury-Gewinner",
-   "leistung": 1.3,
+   "leistung": 1.1,
    "status": "laeuft"
   },
   {
@@ -222,6 +222,16 @@
    "durchsatz": 0,
    "engpass": "poster",
    "labor": 1.3,
+   "fabrik": 4.1,
+   "pruefer": 4.1,
+   "poster": 0,
+   "sammler": 0
+  },
+  {
+   "datum": "2026-10-15",
+   "durchsatz": 0,
+   "engpass": "poster",
+   "labor": 1.1,
    "fabrik": 4.1,
    "pruefer": 4.1,
    "poster": 0,

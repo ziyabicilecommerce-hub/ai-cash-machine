@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-14T08:58:31.822Z",
+ "stand": "2026-10-15T08:32:37.436Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,21 +9,49 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 59,
+     "value": 55,
      "unit": ""
     },
     {
      "label": "Prüfung offen",
-     "value": 5,
+     "value": 3,
      "unit": ""
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 54,
+     "value": 52,
      "unit": ""
     }
    ],
    "rows": [
+    {
+     "Aussage": "DeskRebel Stützpunkt – Liegestützgriffe in S-Form",
+     "Beleglink": "https://www.deskrebel.store/products/pushpro-liegestuetzgriffe",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Purivelle Pala – Silikon-Klopfpaddel zur Selbstmassage",
+     "Beleglink": "https://purivelle.store/products/taprelax-klopfpaddel",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
     {
      "Aussage": "Dein Home-Gym für jeden Tag",
      "Beleglink": "https://www.deskrebel.store/products/doorkit-tueranker-griffe-karabiner",
@@ -34,20 +62,6 @@
     {
      "Aussage": "Purivelle Stelo – Massagestab für die Selbstmassage",
      "Beleglink": "https://purivelle.store/products/deepstick-massagestab",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Beleglink": "https://purivelle.store",
-     "Von dir geprüft": "Nein",
-     "Status": "Prüfung offen",
-     "Hinweise": "Menschliche Prüfung ausstehend."
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Beleglink": "https://www.deskrebel.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -394,48 +408,6 @@
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Fit-zuhause, kein Chaos",
-     "Beleglink": "https://www.deskrebel.store/products/armforce-power-twister",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Purivelle LotusTap – Meister des Muskel‑Entspannens",
-     "Beleglink": "https://purivelle.store/products/new-lotus-massage-hammer-for-home-use-muscle-relaxation-meridian-massage-hammer-health-and-fitness-portable-equipment-manufacturer-wholesale",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "DeskRebel LumbarEase – Rückenmassage leicht gemacht",
-     "Beleglink": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Rückenfrei mit Purivelle",
-     "Beleglink": "https://purivelle.store/products/cross-border-hot-selling-back-support-belt-to-relieve-back-pain-breathable-waistband-detachable-waist-pad-for-men-and-women",
-     "Von dir geprüft": "Nein",
-     "Status": "Prüfung offen",
-     "Hinweise": "Menschliche Prüfung ausstehend."
-    },
-    {
-     "Aussage": "DeskRebel FlexLoop – Po Power",
-     "Beleglink": "https://www.deskrebel.store/products/flexloop-breites-widerstandsband",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "DeskRebel ElbowGuard – Dein neues Trainings-Partner",
-     "Beleglink": "https://www.deskrebel.store/products/elbowguard-kompressions-ellbogenbandage",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
     }
    ],
    "notes": [
@@ -449,7 +421,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 59,
+     "value": 55,
      "unit": ""
     },
     {
@@ -465,14 +437,20 @@
    ],
    "rows": [
     {
-     "Aussage": "Dein Home-Gym für jeden Tag",
-     "Quellenverweis": "https://www.deskrebel.store/products/doorkit-tueranker-griffe-karabiner",
+     "Aussage": "DeskRebel Stützpunkt – Liegestützgriffe in S-Form",
+     "Quellenverweis": "https://www.deskrebel.store/products/pushpro-liegestuetzgriffe",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
     {
-     "Aussage": "Purivelle Stelo – Massagestab für die Selbstmassage",
-     "Quellenverweis": "https://purivelle.store/products/deepstick-massagestab",
+     "Aussage": "Purivelle Pala – Silikon-Klopfpaddel zur Selbstmassage",
+     "Quellenverweis": "https://purivelle.store/products/taprelax-klopfpaddel",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von DeskRebel",
+     "Quellenverweis": "https://www.deskrebel.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -483,8 +461,14 @@
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
     {
-     "Aussage": "Top 5 von DeskRebel",
-     "Quellenverweis": "https://www.deskrebel.store",
+     "Aussage": "Dein Home-Gym für jeden Tag",
+     "Quellenverweis": "https://www.deskrebel.store/products/doorkit-tueranker-griffe-karabiner",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Purivelle Stelo – Massagestab für die Selbstmassage",
+     "Quellenverweis": "https://purivelle.store/products/deepstick-massagestab",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -781,42 +765,6 @@
      "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Fit-zuhause, kein Chaos",
-     "Quellenverweis": "https://www.deskrebel.store/products/armforce-power-twister",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Purivelle LotusTap – Meister des Muskel‑Entspannens",
-     "Quellenverweis": "https://purivelle.store/products/new-lotus-massage-hammer-for-home-use-muscle-relaxation-meridian-massage-hammer-health-and-fitness-portable-equipment-manufacturer-wholesale",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "DeskRebel LumbarEase – Rückenmassage leicht gemacht",
-     "Quellenverweis": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Rückenfrei mit Purivelle",
-     "Quellenverweis": "https://purivelle.store/products/cross-border-hot-selling-back-support-belt-to-relieve-back-pain-breathable-waistband-detachable-waist-pad-for-men-and-women",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "DeskRebel FlexLoop – Po Power",
-     "Quellenverweis": "https://www.deskrebel.store/products/flexloop-breites-widerstandsband",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "DeskRebel ElbowGuard – Dein neues Trainings-Partner",
-     "Quellenverweis": "https://www.deskrebel.store/products/elbowguard-kompressions-ellbogenbandage",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     }
    ],
    "notes": [
@@ -921,7 +869,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-14",
+     "value": "2026-10-15",
      "unit": ""
     }
    ],
