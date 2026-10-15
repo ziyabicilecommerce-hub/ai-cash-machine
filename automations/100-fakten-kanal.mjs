@@ -11,7 +11,7 @@ import { join } from 'node:path';
 import { videoBauen } from './lib/videoFabrik.mjs';
 import { kiJson } from './lib/kiJson.mjs';
 import { umstritten, echo, doppelt } from './lib/faktenPruefung.mjs';
-import { bankNaechster } from './lib/faktenBank.mjs';
+import { bankNaechster, saisonHeute } from './lib/faktenBank.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 
 const OUT = 'out';
@@ -145,7 +145,7 @@ function waswaereAus(d, kategorie, nr) {
   const szenen = [
     { text: kurz(d.frage, 160), bild: b(0), tempo: '+12%', ohneClip: true },
     ...schritte.map((t, i) => ({ text: t, bild: b(1 + i), tempo: '+12%' })),
-    { text: 'Folge für mehr! Was als Nächstes? Schreib es unten!', bild: b(4), tempo: '+12%' },
+    { text: 'Folge für mehr! Was als Nächstes? Antworte in einem Wort!', bild: b(4), tempo: '+12%' },
   ];
   return fertig(d, nr, szenen, d.frage);
 }
@@ -198,7 +198,7 @@ async function main() {
       // Jedes zweite TikTok-Video im gelernten Lieblingsformat - so wird weiter getestet, aber das Bessere öfter gezeigt.
       const festesFormat = i < TIKTOK_KONTEN.length ? KONTO_FORMAT[KONTO.toLowerCase()] : null;
       const lieblingOk = LIEBLING && !OHNE.includes(LIEBLING) ? LIEBLING : null;
-      const eintrag = bankNaechster(verlauf.bank, i < TIKTOK_KONTEN.length ? nische : [], festesFormat || (lieblingOk && (tag + i) % 2 === 0 ? lieblingOk : null), { ohne: OHNE });
+      const eintrag = bankNaechster(verlauf.bank, i < TIKTOK_KONTEN.length ? nische : [], festesFormat || (lieblingOk && (tag + i) % 2 === 0 ? lieblingOk : null), { ohne: OHNE, saison: saisonHeute() });
       if (eintrag) {
         skript = ({ quiz: quizAus, mythos: mythosAus, waswaere: waswaereAus }[eintrag.typ])(eintrag, eintrag.kat, nr);
         format = `${eintrag.typ}/Faktenliste ${eintrag.id}`;
@@ -227,6 +227,12 @@ async function main() {
         teil = ((verlauf.serien || {})[KONTO] || 0) + 1;
         skript.hook = serienHook(eintrag?.kat || nische[0] || kategorie, /^(mythos|waswaere)/.exec(format)?.[1] || 'quiz', teil);
         if (letzte && /^Folge für [^!]*!/.test(letzte.text)) letzte.text = letzte.text.replace(/^Folge für [^!]*!/, `Folge für Teil ${teil + 1}!`);
+        // TikTok-Trend "31 Days of Halloween": im Oktober nummeriert nach Kalendertag ("GRUSEL-OKTOBER 16/31").
+        if (eintrag?.saison === 'halloween') {
+          const tagImMonat = Number(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date()).slice(8, 10));
+          skript.hook = `GRUSEL-OKTOBER ${tagImMonat}/31`;
+          if (letzte) letzte.text = 'Folge für mehr Grusel! Gruselig oder krass? Antworte in einem Wort!';
+        }
       }
       // Echte Video-Clips statt Standbild - ohne Schlüssel (Wikimedia Commons gemeinfrei, NASA bei Weltall; Pexels falls
       // PEXELS_API_KEY gesetzt). FAKTEN_CLIPS=aus schaltet ab.
