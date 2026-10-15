@@ -46,7 +46,8 @@ export const POST_MUTATION = `mutation($input: CreatePostInput!) {
 
 // TikTok-Taktik "feste Prime-Time": GitHub startet geplante Läufe oft Stunden zu spät - deshalb bestimmt nicht
 // die Laufzeit den Post, sondern feste Uhrzeiten (deutsche Zeit), zu denen viele auf TikTok sind.
-export const STANDARD_ZEITEN = '11:30,12:30,13:30,18:00,19:00,20:00';
+// 10 Plätze am Tag: morgens auf dem Schulweg/Arbeitsweg, Mittagspause, Feierabend bis spät.
+export const STANDARD_ZEITEN = '07:30,11:30,12:30,13:30,16:00,17:00,18:00,19:00,20:00,21:00';
 const berlinOffsetMin = (d) => {
   const t = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Berlin', timeZoneName: 'shortOffset' }).formatToParts(d).find((p) => p.type === 'timeZoneName')?.value || 'GMT';
   const m = t.match(/GMT([+-])(\d+)(?::(\d+))?/);

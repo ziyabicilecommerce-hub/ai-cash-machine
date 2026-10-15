@@ -55,7 +55,8 @@ async function main() {
   });
   if (!neu.length) { console.log('[101-buffer-poster] alles schon gepostet - nichts zu tun.'); return; }
   // Jedes Video gehört zu einem Konto (Name steht im Video): es kommt auf genau diesen TikTok-Kanal.
-  const plan = zuordnen(neu, kanaele);
+  // Bis zu BUFFER_JE_KANAL Videos pro Konto und Lauf (mehr Posts = mehr Chancen auf einen Viral-Treffer).
+  const plan = zuordnen(neu, kanaele, { jeKanal: Number(env('BUFFER_JE_KANAL', '2')) || 2 });
   // Feste Prime-Time-Uhrzeiten (BUFFER_ZEITEN, deutsche Zeit) statt "sofort" - GitHub startet Läufe oft Stunden zu spät.
   // Schon geplante Posts werden ausgelassen, damit sich nichts überschneidet.
   let belegt = [];

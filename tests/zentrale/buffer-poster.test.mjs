@@ -58,6 +58,9 @@ test('zuordnen: Video kommt auf den Kanal, dessen Name im Video steht', () => {
   const plan = zuordnen(v, kanaele);
   assert.equal(plan.length, 3);
   assert.equal(zuordnen([{ datei: 'x', konto: '@desk.rebel' }], kanaele).length, 0, 'streng: fremdes Konto bleibt liegen');
+  const zwei = [...v, ...v, ...v];
+  assert.equal(zuordnen(zwei, kanaele).length, zuordnen(v, kanaele).length, 'Standard: ein Video pro Kanal');
+  assert.equal(zuordnen(zwei, kanaele, { jeKanal: 2 }).length, zuordnen(v, kanaele).length * 2, 'jeKanal 2: zwei pro Kanal');
   assert.equal(plan.find((p) => p.video.datei === 'a').kanal.id, '3');
   assert.equal(plan.find((p) => p.video.datei === 'b').kanal.id, '1');
   assert.equal(plan.find((p) => p.video.datei === 'c').kanal.id, '2');
@@ -128,10 +131,10 @@ test('naechsteZeiten: feste deutsche Uhrzeiten, Sommer-/Winterzeit, belegte Zeit
   assert.equal(new Date(berlinZeitpunkt('2026-10-08', '19:00')).toISOString(), '2026-10-08T17:00:00.000Z');
   assert.equal(new Date(berlinZeitpunkt('2026-12-08', '19:00')).toISOString(), '2026-12-08T18:00:00.000Z');
   const jetzt = Date.parse('2026-10-08T09:50:00Z');
-  assert.deepEqual(naechsteZeiten(3, { jetzt }), ['2026-10-08T10:30:00.000Z', '2026-10-08T11:30:00.000Z', '2026-10-08T16:00:00.000Z']);
-  assert.deepEqual(naechsteZeiten(2, { jetzt, belegt: ['2026-10-08T10:35:00Z'] }), ['2026-10-08T11:30:00.000Z', '2026-10-08T16:00:00.000Z']);
+  assert.deepEqual(naechsteZeiten(3, { jetzt }), ['2026-10-08T10:30:00.000Z', '2026-10-08T11:30:00.000Z', '2026-10-08T14:00:00.000Z']);
+  assert.deepEqual(naechsteZeiten(2, { jetzt, belegt: ['2026-10-08T10:35:00Z'] }), ['2026-10-08T11:30:00.000Z', '2026-10-08T14:00:00.000Z']);
   // Spät in der Nacht: es geht am nächsten Tag weiter
-  assert.equal(naechsteZeiten(1, { jetzt: Date.parse('2026-10-08T22:00:00Z') })[0], '2026-10-09T09:30:00.000Z');
+  assert.equal(naechsteZeiten(1, { jetzt: Date.parse('2026-10-08T22:00:00Z') })[0], '2026-10-09T05:30:00.000Z');
 });
 
 import { schonGepostet, postKennung } from '../../automations/lib/bufferPoster.mjs';
