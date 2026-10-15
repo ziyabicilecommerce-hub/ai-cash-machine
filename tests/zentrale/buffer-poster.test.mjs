@@ -71,7 +71,7 @@ test('Nischen: jedes TikTok-Konto bekommt Fakten aus seinem Thema, sonst irgende
     assert.ok(BANK.filter((e) => kats.includes(e.kat)).length >= 15, `genug Fakten für ${kats}`);
     assert.ok(kats.includes(bankNaechster([], kats).kat));
   }
-  const alle = BANK.map((e) => e.id);
+  const alle = BANK.filter((e) => !e.saison).map((e) => e.id);
   assert.equal(bankNaechster(alle.slice(0, -1), ['GibtEsNicht']).id, alle.at(-1), 'Rückfall auf irgendeinen');
 });
 

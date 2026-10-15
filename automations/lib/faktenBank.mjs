@@ -149,8 +149,13 @@ export const BANK = [...Array.from({ length: Math.max(QUIZ.length, MYTHOS.length
 // Mit kats (Nische eines Kontos) zuerst ein Eintrag aus diesen Kategorien, mit typ (gelerntes Lieblingsformat)
 // darin zuerst dieses Format; sonst irgendeiner.
 // ohne: Formate, die gar nicht mehr kommen sollen (z. B. ['mythos']).
-export function bankNaechster(verwendet = [], kats = [], typ = null, { ohne = [] } = {}) {
-  const frei = BANK.filter((e) => !verwendet.includes(e.id) && !ohne.includes(e.typ));
+// saison: z. B. 'halloween' - Saison-Einträge kommen dann zuerst, außerhalb ihrer Saison nie.
+export function bankNaechster(verwendet = [], kats = [], typ = null, { ohne = [], saison = null } = {}) {
+  const frei = BANK.filter((e) => !verwendet.includes(e.id) && !ohne.includes(e.typ) && (!e.saison || e.saison === saison));
   const inNische = kats.length ? frei.filter((e) => kats.includes(e.kat)) : frei;
-  return (typ && inNische.find((e) => e.typ === typ)) || inNische[0] || frei[0] || null;
+  const saisonal = saison ? inNische.filter((e) => e.saison === saison) : [];
+  return (typ && saisonal.find((e) => e.typ === typ)) || (typ && inNische.find((e) => e.typ === typ)) || inNische[0] || frei[0] || null;
 }
+
+// Aktuelle Saison (deutsche Zeit): im Oktober läuft die Grusel-Serie ("31 Days of Halloween").
+export const saisonHeute = (jetzt = new Date()) => (new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(jetzt).slice(5, 7) === '10' ? 'halloween' : null);

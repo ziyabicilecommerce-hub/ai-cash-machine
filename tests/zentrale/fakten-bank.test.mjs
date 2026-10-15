@@ -54,3 +54,15 @@ test('Was wäre wenn: alte ids bleiben stabil, ohne Mythen kommt nie ein Mythos'
     for (let n = 0; n < 200; n++) { const e = bankNaechster(benutzt, kats, 'waswaere', { ohne: ['mythos'] }); if (!e) break; assert.notEqual(e.typ, 'mythos'); benutzt.push(e.id); }
   }
 });
+
+test('Grusel-Oktober: nur im Oktober, dann zuerst; danach nie', async () => {
+  const { saisonHeute } = await import('../../automations/lib/faktenBank.mjs');
+  assert.equal(saisonHeute(new Date('2026-10-15T12:00:00Z')), 'halloween');
+  assert.equal(saisonHeute(new Date('2026-11-01T12:00:00Z')), null);
+  assert.equal(saisonHeute(new Date('2026-10-31T23:30:00Z')), null, '00:30 am 1.11. in Deutschland');
+  const okt = bankNaechster([], ['Natur', 'Tiere'], 'waswaere', { ohne: ['mythos'], saison: 'halloween' });
+  assert.equal(okt.saison, 'halloween');
+  const benutzt = [];
+  for (let n = 0; n < 300; n++) { const e = bankNaechster(benutzt, ['Weltall'], 'waswaere', { ohne: ['mythos'] }); if (!e) break; assert.ok(!e.saison, 'außerhalb der Saison kein Grusel'); benutzt.push(e.id); }
+  assert.ok(BANK.filter((e) => e.saison === 'halloween').every((e) => /Antworte in einem Wort/.test(e.caption)));
+});
