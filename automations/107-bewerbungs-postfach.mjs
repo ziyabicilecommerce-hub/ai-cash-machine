@@ -1,8 +1,8 @@
 // Bewerbungs-Postfach - liest alle 30 Min das Gmail-Postfach, erkennt Antworten
 // auf Bewerbungen von #106 und reagiert sofort:
-//  🔥 Einladung   → Telegram-Alarm + KI-Spickzettel fürs Gespräch + fertiger
+//  🔥 Einladung   → Alarm-Mail an dich + KI-Spickzettel fürs Gespräch + fertiger
 //                   Zusage-Entwurf in Gmail-Entwürfen (nur noch "Senden" drücken)
-//  ❓ Rückfrage   → Antwort-Entwurf in Gmail-Entwürfen + Telegram
+//  ❓ Rückfrage   → Antwort-Entwurf in Gmail-Entwürfen + Mail an dich
 //  ↪️ Weiterleitung ("bitte an karriere@... senden") → Bewerbung geht automatisch
 //                   an die neue Adresse (nur bei BEWERBUNG_LIVE=ja)
 //  ❌ Absage      → wird gezählt, damit #106 nicht nachfasst
@@ -11,10 +11,9 @@ import { ImapFlow } from 'imapflow';
 import { simpleParser } from 'mailparser';
 import MailComposer from 'nodemailer/lib/mail-composer/index.js';
 import { askKI, parseJsonFromText } from './lib/ki.mjs';
-import { notifyTelegram } from './lib/telegram.mjs';
 import {
   LIVE, BEWERBER, emailOk, heute, gmailZugang, profil, ladeGeheim, speichereGeheim,
-  gmailTransport, holeLebenslauf, cvAnhang, signatur, firmenDomain,
+  gmailTransport, holeLebenslauf, cvAnhang, signatur, firmenDomain, meldeMir, anschreibenAnhang,
 } from './lib/bewerbung.mjs';
 import { STATE_BOT, STATE_POSTFACH } from './106-bewerbungs-bot.mjs';
 
@@ -126,7 +125,7 @@ async function main() {
         const neu = String(k.neueEmail || '').toLowerCase().trim();
         if (LIVE && emailOk(neu) && neu !== b.email && !st.zusatzEmails[neu]) {
           transport ||= gmailTransport(); cv ||= await holeLebenslauf();
-          await transport.sendMail({ from: `${BEWERBER()} <${user}>`, to: neu, subject: b.betreff, text: `${b.anschreiben}\n${signatur()}`, attachments: [cvAnhang(cv)] });
+          await transport.sendMail({ from: `${BEWERBER()} <${user}>`, to: neu, subject: b.betreff, text: `${b.anschreiben}\n${signatur()}`, attachments: [await anschreibenAnhang({ firma: b.firma, ort: '', betreff: b.betreff, anschreiben: b.anschreiben }), cvAnhang(cv)] });
           st.zusatzEmails[neu] = heute();
           index.perEmail.set(neu, refnr);
           meldungen.push(`↪️ ${kopf}: wollte die Bewerbung an ${neu} – automatisch nachgeschickt ✅`);
@@ -150,8 +149,9 @@ async function main() {
     const z = (t) => typen.filter((x) => x === t).length;
     const offen = Object.keys(bot.beworben).length - z('einladung') - z('absage');
     const bilanz = `\n📊 Bilanz: ${z('einladung')} Einladungen · ${z('absage')} Absagen · ${offen} noch offen`;
-    for (const m of meldungen) await notifyTelegram(m);
-    await notifyTelegram(bilanz.trim());
+    transport ||= gmailTransport();
+    const einladung = meldungen.some((m) => m.includes('EINLADUNG'));
+    await meldeMir(einladung ? '🔥🔥 EINLADUNG ZUM GESPRÄCH – sofort lesen!' : `📬 ${meldungen.length} neue Antwort(en) auf deine Bewerbungen`, `${meldungen.join('\n\n────────\n\n')}\n${bilanz}`, transport);
   }
   console.log(`[bewerbungs-postfach] ${meldungen.length} relevante Antwort(en).`);
 }

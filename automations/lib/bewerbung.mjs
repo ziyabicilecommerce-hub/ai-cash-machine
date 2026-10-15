@@ -81,3 +81,18 @@ export function signatur() {
 const FREEMAIL = /^(gmail|googlemail|web|gmx|t-online|outlook|hotmail|yahoo|icloud|aol|freenet|posteo)\./i;
 export const domainVon = (email) => (email || '').toLowerCase().split('@')[1] || '';
 export const firmenDomain = (email) => { const d = domainVon(email); return d && !FREEMAIL.test(d) ? d : ''; };
+
+// Berichte und Alarme gehen per Mail an dich selbst (kein Telegram).
+export async function meldeMir(betreff, text, transport = gmailTransport()) {
+  const { user } = gmailZugang();
+  await transport.sendMail({ from: `Bewerbungs-Bot <${user}>`, to: user, subject: betreff, text });
+}
+
+// Anschreiben als PDF-Anhang, eigener Brief pro Firma.
+export async function anschreibenAnhang({ firma, ort, betreff, anschreiben }) {
+  const { anschreibenPdf } = await import('./anschreibenPdf.mjs');
+  const absender = [BEWERBER(), env('BEWERBER_ADRESSE'), env('BEWERBER_TELEFON') && `Tel.: ${env('BEWERBER_TELEFON')}`, env('GMAIL_USER')].filter(Boolean);
+  const wohnort = (env('BEWERBER_ADRESSE').match(/\d{5}\s+(.+)$/) || [])[1] || env('BEWERBUNG_ORT', '');
+  const content = await anschreibenPdf({ absender, empfaenger: [firma, ort], ort: wohnort, betreff, text: anschreiben });
+  return { filename: `Anschreiben_${BEWERBER().replace(/\s+/g, '_')}.pdf`, content, contentType: 'application/pdf' };
+}

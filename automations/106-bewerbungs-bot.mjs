@@ -3,6 +3,7 @@
 // prüfen ob die Stelle zum Lebenslauf passt, schreibt ein individuelles
 // Anschreiben und schickt es mit Lebenslauf-PDF über Gmail an die Firma.
 // Nach 12 Tagen ohne Antwort geht automatisch EINE höfliche Nachfass-Mail raus.
+// Jede Bewerbung bekommt ein eigenes Anschreiben-PDF. Bericht per Mail an dich.
 // Antworten wertet #107 (Bewerbungs-Postfach) aus. Zeitplan: Mo-Fr 08:00.
 //
 // Secrets: GMAIL_USER, GMAIL_APP_PASSWORD, BEWERBUNG_CV_URL, BEWERBUNG_PROFIL,
@@ -10,19 +11,18 @@
 // (sonst Testmodus: alles geht an GMAIL_USER selbst), BEWERBUNG_MAX_PRO_TAG,
 // BEWERBUNG_ORT, BEWERBUNG_UMKREIS_KM, BEWERBUNG_SUCHBEGRIFFE, BEWERBUNG_STATE_KEY.
 import { askKI, parseJsonFromText } from './lib/ki.mjs';
-import { notifyTelegram } from './lib/telegram.mjs';
 import {
   env, LIVE, BEWERBER, emailOk, heute, tageSeit, gmailZugang, profil, ladeGeheim, speichereGeheim,
-  gmailTransport, holeLebenslauf, cvAnhang, signatur,
+  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang,
 } from './lib/bewerbung.mjs';
 
 export const STATE_BOT = 'bewerbungs-bot';
 export const STATE_POSTFACH = 'bewerbungs-postfach';
 const API = 'https://rest.arbeitsagentur.de/jobboerse/jobsuche-service';
 const API_HEADERS = { 'X-API-Key': 'jobboerse-jobsuche', 'User-Agent': 'Jobsuche/2.9.2 (de.arbeitsagentur.jobboerse)' };
-const MAX_PRO_TAG = Math.max(1, Math.min(25, parseInt(env('BEWERBUNG_MAX_PRO_TAG', '12'), 10) || 12));
+const MAX_PRO_TAG = Math.max(1, Math.min(150, parseInt(env('BEWERBUNG_MAX_PRO_TAG', '100'), 10) || 100));
 const ORT = env('BEWERBUNG_ORT', 'Frankfurt am Main');
-const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '35'), 10) || 35;
+const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '50'), 10) || 50;
 const MIN_PASSUNG = 6;
 const NACHFASS_NACH_TAGEN = 12;
 
@@ -60,10 +60,17 @@ async function holeJson(url) {
 }
 
 async function sucheStellen({ was, angebotsart }) {
-  const q = new URLSearchParams({ was, wo: ORT, umkreis: String(UMKREIS), angebotsart: String(angebotsart), veroeffentlichtseit: '28', page: '1', size: '75' });
+  const q = new URLSearchParams({ was, wo: ORT, umkreis: String(UMKREIS), angebotsart: String(angebotsart), veroeffentlichtseit: '60', size: '100' });
   if (angebotsart === 1) q.set('arbeitszeit', 'vz');
-  const data = await holeJson(`${API}/pc/v4/jobs?${q}`);
-  return (data.stellenangebote || []).map((s) => ({ ...s, angebotsart, suchbegriff: was }));
+  const alle = [];
+  for (let seite = 1; seite <= 3; seite++) {
+    q.set('page', String(seite));
+    const data = await holeJson(`${API}/pc/v4/jobs?${q}`);
+    const treffer = data.stellenangebote || [];
+    alle.push(...treffer.map((s) => ({ ...s, angebotsart, suchbegriff: was })));
+    if (treffer.length < 100) break;
+  }
+  return alle;
 }
 
 // Detailtext holen: erst API, sonst die öffentliche Detailseite (HTML).
@@ -103,7 +110,7 @@ STELLENANZEIGE (${art}):
 Titel: ${stelle.titel}
 Firma: ${stelle.arbeitgeber}
 Ort: ${stelle.arbeitsort?.ort || ''}
-Text: ${beschreibung.slice(0, 5000)}
+Text: ${beschreibung.slice(0, 3500)}
 
 AUFGABE:
 1. Bewerte ehrlich, ob der Bewerber realistische Chancen hat (0-10). Unter 6, wenn: abgeschlossene Ausbildung/Studium/Berufserfahrung zwingend verlangt, Realschulabschluss/Abitur zwingend verlangt, Führerschein zwingend, oder es eigentlich Vertrieb/Verkauf ist.
@@ -165,7 +172,7 @@ async function main() {
   let geprueft = 0;
 
   for (const stelle of alle.values()) {
-    if (gesendet.length >= MAX_PRO_TAG || geprueft >= MAX_PRO_TAG * 4) break;
+    if (gesendet.length >= MAX_PRO_TAG || geprueft >= MAX_PRO_TAG * 3) break;
     const { refnr } = stelle;
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
@@ -191,12 +198,13 @@ async function main() {
 
     const betreff = String(b.betreff || `Bewerbung als ${stelle.titel} – ${BEWERBER()}`).slice(0, 150);
     const anschreiben = b.anschreiben.trim();
+    const brief = await anschreibenAnhang({ firma: stelle.arbeitgeber, ort: stelle.arbeitsort?.ort || '', betreff, anschreiben });
     const info = await transport.sendMail({
       from: `${BEWERBER()} <${user}>`,
       to: LIVE ? email : user,
       subject: LIVE ? betreff : `[TEST → ${email}] ${betreff}`,
       text: `${anschreiben}\n${signatur()}`,
-      attachments: [cvAnhang(cv)],
+      attachments: [brief, cvAnhang(cv)],
     });
     if (LIVE) {
       const anrede = anschreiben.split('\n')[0].replace(/,\s*$/, '');
@@ -209,7 +217,7 @@ async function main() {
     }
     gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.passung}/10`);
     console.log(`[bewerbungs-bot] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${refnr}`);
-    await pause(20000); // Gmail nicht fluten
+    await pause(8000); // Gmail nicht fluten
   }
 
   speichereGeheim(STATE_BOT, state);
@@ -224,7 +232,7 @@ async function main() {
     LIVE ? '' : '\nZum Scharfschalten: Secret BEWERBUNG_LIVE=ja setzen.',
   ].filter(Boolean).join('\n');
   console.log(bericht);
-  await notifyTelegram(bericht);
+  await meldeMir(`📨 Bewerbungs-Bot: ${gesendet.length} neue Bewerbung(en) heute`, bericht, transport);
 }
 
 if (process.argv[1]?.endsWith('106-bewerbungs-bot.mjs')) {
