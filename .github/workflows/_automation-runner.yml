@@ -243,6 +243,7 @@ jobs:
           BEWERBER_ADRESSE: ${{ secrets.BEWERBER_ADRESSE }}
           BEWERBER_TELEFON: ${{ secrets.BEWERBER_TELEFON }}
           BEWERBUNG_PROFIL: ${{ secrets.BEWERBUNG_PROFIL }}
+          BEWERBUNG_DATEN: ${{ secrets.BEWERBUNG_DATEN }}
           BEWERBUNG_STATE_KEY: ${{ secrets.BEWERBUNG_STATE_KEY }}
 
       - name: State-Änderungen committen

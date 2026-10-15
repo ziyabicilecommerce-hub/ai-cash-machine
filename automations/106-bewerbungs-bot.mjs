@@ -3,6 +3,7 @@
 // prüfen ob die Stelle zum Lebenslauf passt, schreibt ein individuelles
 // Anschreiben und schickt es mit Lebenslauf-PDF über Gmail an die Firma.
 // Nach 12 Tagen ohne Antwort geht automatisch EINE höfliche Nachfass-Mail raus.
+// Jede Bewerbung bekommt ein eigenes Anschreiben-PDF. Bericht per Mail an dich.
 // Antworten wertet #107 (Bewerbungs-Postfach) aus. Zeitplan: Mo-Fr 08:00.
 //
 // Secrets: GMAIL_USER, GMAIL_APP_PASSWORD, BEWERBUNG_CV_URL, BEWERBUNG_PROFIL,
@@ -10,42 +11,82 @@
 // (sonst Testmodus: alles geht an GMAIL_USER selbst), BEWERBUNG_MAX_PRO_TAG,
 // BEWERBUNG_ORT, BEWERBUNG_UMKREIS_KM, BEWERBUNG_SUCHBEGRIFFE, BEWERBUNG_STATE_KEY.
 import { askKI, parseJsonFromText } from './lib/ki.mjs';
-import { notifyTelegram } from './lib/telegram.mjs';
 import {
   env, LIVE, BEWERBER, emailOk, heute, tageSeit, gmailZugang, profil, ladeGeheim, speichereGeheim,
-  gmailTransport, holeLebenslauf, cvAnhang, signatur,
+  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang, wohnort,
 } from './lib/bewerbung.mjs';
+import { config } from './lib/config.mjs';
+
+// 100 Bewerbungen/Tag brauchen mehr als das geteilte KI-Tageslimit - nur für diesen Lauf aufheben.
+config.POLLINATIONS_MAX_TOKENS_PRO_TAG = '0';
 
 export const STATE_BOT = 'bewerbungs-bot';
 export const STATE_POSTFACH = 'bewerbungs-postfach';
 const API = 'https://rest.arbeitsagentur.de/jobboerse/jobsuche-service';
 const API_HEADERS = { 'X-API-Key': 'jobboerse-jobsuche', 'User-Agent': 'Jobsuche/2.9.2 (de.arbeitsagentur.jobboerse)' };
-const MAX_PRO_TAG = Math.max(1, Math.min(25, parseInt(env('BEWERBUNG_MAX_PRO_TAG', '12'), 10) || 12));
-const ORT = env('BEWERBUNG_ORT', 'Frankfurt am Main');
-const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '35'), 10) || 35;
+const MAX_PRO_TAG = Math.max(1, Math.min(150, parseInt(env('BEWERBUNG_MAX_PRO_TAG', '100'), 10) || 100));
+const ORT = wohnort();
+const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '25'), 10) || 25;
 const MIN_PASSUNG = 6;
 const NACHFASS_NACH_TAGEN = 12;
 
-// Angebotsart der BA: 1 = Arbeit, 4 = Ausbildung. Tarif-Azubi-Berufe
-// (öffentlicher Dienst, Krankenkassen, Versicherungen, Steuerbüros) zuerst.
+// Angebotsart der BA: 1 = Arbeit, 4 = Ausbildung. Wunsch: Büro/Buchhaltung,
+// Vollzeit mit festem Gehalt, am liebsten am Flughafen Frankfurt (liegt im 20-km-Radius).
 const STANDARD_SUCHE = [
-  'Verwaltungsfachangestellte:ausbildung',
-  'Sozialversicherungsfachangestellte:ausbildung',
-  'Kaufmann Versicherungen und Finanzen:ausbildung',
+  'Quereinsteiger Büro:job',
+  'Quereinsteiger Verwaltung:job',
+  'Quereinsteiger Buchhaltung:job',
+  'Quereinsteiger Flughafen:job',
+  'ohne Berufserfahrung Büro:job',
+  'Bürokraft Einarbeitung:job',
+  'Flughafen Büro:job',
+  'Flughafen Verwaltung:job',
+  'Flughafen Sachbearbeiter:job',
+  'Luftverkehrskaufmann:ausbildung',
+  'Servicekaufmann Luftverkehr:ausbildung',
+  'Flughafen Kaufmann:ausbildung',
+  'Buchhaltung:job',
+  'Finanzbuchhaltung:job',
+  'Mitarbeiter Buchhaltung:job',
+  'Bürokaufmann:job',
+  'Bürokraft:job',
+  'Bürohilfe:job',
+  'Sachbearbeiter Büro:job',
+  'Mitarbeiter Backoffice:job',
   'Steuerfachangestellte:ausbildung',
   'Kaufmann Büromanagement:ausbildung',
   'Industriekaufmann:ausbildung',
+  'Verwaltungsfachangestellte:ausbildung',
+  'Sozialversicherungsfachangestellte:ausbildung',
   'Kaufmann Spedition und Logistikdienstleistung:ausbildung',
-  'Kaufmann E-Commerce:ausbildung',
-  'Bürohilfe:job',
-  'Bürokraft:job',
-  'Mitarbeiter Backoffice:job',
-  'Datenerfassung:job',
-  'Empfangsmitarbeiter:job',
 ].join(';');
 
 const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key ?account|kundenberater|neukunden|d2d|door to door|fundraising/i;
 const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung/i;
+// Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
+const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freelance|freiberuf|selbstständig|selbständig|nebenjob|honorar|auf provisionsbasis|\b(520|538|556) ?(€|euro)/i;
+const FLUGHAFEN = /flughafen|airport|fraport|lufthansa|condor|cargo ?city|luftverkehr|luftfracht|aviation|\b60549\b/i;
+
+// Nur diese Orte (Arbeitsort der Stelle). Griesheim bei Darmstadt (PLZ 64347) ist nicht gemeint.
+const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|mainz|kastel'), 'i');
+const ortPasst = (st) => ORTE.test(`${st.arbeitsort?.ort || ''} ${st.arbeitsort?.region || ''}`) && st.arbeitsort?.plz !== '64347';
+const QUEREINSTEIGER = /quereinst|ohne (berufs)?erfahrung|keine (berufs)?erfahrung (nötig|erforderlich|notwendig)|einarbeitung|wir arbeiten (sie|dich) ein|berufseinsteiger|berufsanfänger/i;
+
+// Je höher, desto früher wird beworben: Flughafen > Quereinsteiger > Buchhaltung > Rest.
+function attraktivitaet(st) {
+  const kopf = `${st.titel} ${st.beruf || ''} ${st.arbeitgeber || ''} ${st.arbeitsort?.plz || ''} ${st.arbeitsort?.ort || ''}`;
+  return (FLUGHAFEN.test(kopf) ? 3 : 0) + (QUEREINSTEIGER.test(kopf) ? 2 : 0) + (/buchhalt|finanz|rechnungswesen|kreditor|debitor/i.test(kopf) ? 2 : 0) + (/büro|verwaltung|sachbearbeit|backoffice/i.test(kopf) ? 1 : 0);
+}
+
+function extras(text) {
+  return [
+    FLUGHAFEN.test(text) && '🛫 Flughafen',
+    /firmenwagen|dienstwagen|firmenfahrzeug|dienstfahrzeug/i.test(text) && '🚗 Firmenwagen',
+    /tarif|tvöd|tv-l|13\. ?(monats)?gehalt|weihnachtsgeld|urlaubsgeld/i.test(text) && '💰 Tarif/Extras',
+    /jobticket|deutschlandticket/i.test(text) && '🎫 Jobticket',
+    QUEREINSTEIGER.test(text) && '🎓 Einarbeitung/Quereinstieg',
+  ].filter(Boolean);
+}
 
 function suchListe() {
   return env('BEWERBUNG_SUCHBEGRIFFE', STANDARD_SUCHE)
@@ -60,10 +101,17 @@ async function holeJson(url) {
 }
 
 async function sucheStellen({ was, angebotsart }) {
-  const q = new URLSearchParams({ was, wo: ORT, umkreis: String(UMKREIS), angebotsart: String(angebotsart), veroeffentlichtseit: '28', page: '1', size: '75' });
+  const q = new URLSearchParams({ was, wo: ORT, umkreis: String(UMKREIS), angebotsart: String(angebotsart), veroeffentlichtseit: '60', size: '100' });
   if (angebotsart === 1) q.set('arbeitszeit', 'vz');
-  const data = await holeJson(`${API}/pc/v4/jobs?${q}`);
-  return (data.stellenangebote || []).map((s) => ({ ...s, angebotsart, suchbegriff: was }));
+  const alle = [];
+  for (let seite = 1; seite <= 3; seite++) {
+    q.set('page', String(seite));
+    const data = await holeJson(`${API}/pc/v4/jobs?${q}`);
+    const treffer = data.stellenangebote || [];
+    alle.push(...treffer.map((s) => ({ ...s, angebotsart, suchbegriff: was })));
+    if (treffer.length < 100) break;
+  }
+  return alle;
 }
 
 // Detailtext holen: erst API, sonst die öffentliche Detailseite (HTML).
@@ -103,7 +151,9 @@ STELLENANZEIGE (${art}):
 Titel: ${stelle.titel}
 Firma: ${stelle.arbeitgeber}
 Ort: ${stelle.arbeitsort?.ort || ''}
-Text: ${beschreibung.slice(0, 5000)}
+Text: ${beschreibung.slice(0, 3500)}
+
+WUNSCH DES BEWERBERS: Büro oder Buchhaltung, Vollzeit, festes Gehalt (keine Provision), am liebsten am Flughafen Frankfurt. Er hat KEINE Berufserfahrung und ist Quereinsteiger - Stellen, die Quereinsteiger/Berufsanfänger ausdrücklich willkommen heißen oder eine Einarbeitung bieten, passen besonders gut (eher 7-9). Verlangt die Stelle mehrjährige Berufserfahrung, ist sie unter 6. Im Anschreiben die Lernbereitschaft und Motivation für die Einarbeitung betonen, nichts beschönigen. Passt die Stelle dazu, darf das Anschreiben diese Begeisterung (z. B. für den Flughafen oder für Zahlen/Buchhaltung) konkret zeigen.
 
 AUFGABE:
 1. Bewerte ehrlich, ob der Bewerber realistische Chancen hat (0-10). Unter 6, wenn: abgeschlossene Ausbildung/Studium/Berufserfahrung zwingend verlangt, Realschulabschluss/Abitur zwingend verlangt, Führerschein zwingend, oder es eigentlich Vertrieb/Verkauf ist.
@@ -164,12 +214,15 @@ async function main() {
   const manuell = [];
   let geprueft = 0;
 
-  for (const stelle of alle.values()) {
-    if (gesendet.length >= MAX_PRO_TAG || geprueft >= MAX_PRO_TAG * 4) break;
+  const reihenfolge = [...alle.values()].sort((a, b) => attraktivitaet(b) - attraktivitaet(a));
+  for (const stelle of reihenfolge) {
+    if (gesendet.length >= MAX_PRO_TAG || geprueft >= MAX_PRO_TAG * 3) break;
     const { refnr } = stelle;
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf) || ZEITARBEIT.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb/zeitarbeit'; continue; }
+    if (KEIN_FIXGEHALT.test(kopf)) { state.uebersprungen[refnr] = 'kein Vollzeit-Fixgehalt'; continue; }
+    if (!ortPasst(stelle)) { state.uebersprungen[refnr] = `Ort ${stelle.arbeitsort?.ort || '?'}`; continue; }
 
     const { text, externeUrl } = await holeDetails(refnr);
     if (VERTRIEB.test(text.slice(0, 3000)) && /vertrieb|au(ß|ss)endienst|akquise|provision/i.test(text)) { state.uebersprungen[refnr] = 'vertrieb (Text)'; continue; }
@@ -191,12 +244,13 @@ async function main() {
 
     const betreff = String(b.betreff || `Bewerbung als ${stelle.titel} – ${BEWERBER()}`).slice(0, 150);
     const anschreiben = b.anschreiben.trim();
+    const brief = await anschreibenAnhang({ firma: stelle.arbeitgeber, ort: stelle.arbeitsort?.ort || '', betreff, anschreiben });
     const info = await transport.sendMail({
       from: `${BEWERBER()} <${user}>`,
       to: LIVE ? email : user,
       subject: LIVE ? betreff : `[TEST → ${email}] ${betreff}`,
       text: `${anschreiben}\n${signatur()}`,
-      attachments: [cvAnhang(cv)],
+      attachments: [brief, cvAnhang(cv)],
     });
     if (LIVE) {
       const anrede = anschreiben.split('\n')[0].replace(/,\s*$/, '');
@@ -207,9 +261,10 @@ async function main() {
       state.emails[email] = heute();
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
-    gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.passung}/10`);
+    const plus = extras(`${kopf} ${text}`);
+    gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.passung}/10${plus.length ? `  ${plus.join(' ')}` : ''}`);
     console.log(`[bewerbungs-bot] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${refnr}`);
-    await pause(20000); // Gmail nicht fluten
+    await pause(8000); // Gmail nicht fluten
   }
 
   speichereGeheim(STATE_BOT, state);
@@ -224,7 +279,7 @@ async function main() {
     LIVE ? '' : '\nZum Scharfschalten: Secret BEWERBUNG_LIVE=ja setzen.',
   ].filter(Boolean).join('\n');
   console.log(bericht);
-  await notifyTelegram(bericht);
+  await meldeMir(`📨 Bewerbungs-Bot: ${gesendet.length} neue Bewerbung(en) heute`, bericht, transport);
 }
 
 if (process.argv[1]?.endsWith('106-bewerbungs-bot.mjs')) {
