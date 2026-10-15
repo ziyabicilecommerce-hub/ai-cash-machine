@@ -198,7 +198,11 @@ async function main() {
 
   const cv = await holeLebenslauf();
   const transport = gmailTransport();
-  await transport.verify();
+  try { await transport.verify(); }
+  catch (e) {
+    if (e.code !== 'EAUTH') throw e;
+    throw new Error(`Gmail lehnt den Login für ${user} ab. Das App-Passwort muss in GENAU diesem Konto erstellt sein (myaccount.google.com/apppasswords, oben rechts Konto prüfen) und als GMAIL_APP_PASSWORD eingetragen werden.`);
+  }
 
   const nachfassBericht = LIVE ? await nachfassen(state, postfach, transport, user, cv) : [];
   speichereGeheim(STATE_BOT, state);
