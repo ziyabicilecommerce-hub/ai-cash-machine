@@ -22,6 +22,9 @@ const ANZAHL = Math.min(Math.max(parseInt(env('FAKTEN_ANZAHL', '6'), 10) || 6, 1
 const KANAL = env('FAKTEN_KANAL', '@futureflowxx').slice(0, 30);
 const liste = (k, d) => env(k, d).split(',').map((x) => x.trim()).filter(Boolean);
 const TIKTOK_KONTEN = liste('FAKTEN_KONTEN_TIKTOK', '@zyx_7851,@futureflowxx,@futureflowx3');
+// Videos pro TikTok-Konto und Lauf (Standard 2: der 6er-Morgenlauf geht komplett auf TikTok statt halb ungenutzt).
+const TT_PRO_KONTO = Math.min(Math.max(parseInt(env('FAKTEN_TIKTOK_PRO_KONTO', '2'), 10) || 2, 1), 4);
+const TT_LISTE = Array.from({ length: TIKTOK_KONTEN.length * TT_PRO_KONTO }, (_, k) => TIKTOK_KONTEN[k % TIKTOK_KONTEN.length]);
 // Festes Format je Konto: alle TikTok-Konten zeigen "Was wäre wenn?" - krasse Szenarien mit Spannungsbogen statt
 // Mythen (Wunsch des Users). Format: '@konto=waswaere;@konto2=quiz'.
 const KONTO_FORMAT = Object.fromEntries(env('FAKTEN_KONTO_FORMAT', '@zyx_7851=waswaere;@futureflowxx=waswaere;@futureflowx3=waswaere').split(';').map((t) => t.split('=').map((x) => x.trim().toLowerCase())).filter(([k, f]) => k && ['quiz', 'mythos', 'waswaere'].includes(f)));
@@ -184,8 +187,8 @@ async function main() {
   const tag = Math.floor(Date.now() / 86400000);
   for (let i = 0; i < ANZAHL; i++) {
     const nr = verlauf.nr + 1;
-    KONTO = kontoFuer(i, tag, TIKTOK_KONTEN, WEITERE_KONTEN, KANAL);
-    const kategorie = (i < TIKTOK_KONTEN.length && nischeFuer(KONTO, NISCHEN)[tag % Math.max(nischeFuer(KONTO, NISCHEN).length, 1)]) || KATEGORIEN[(tag * ANZAHL + i) % KATEGORIEN.length];
+    KONTO = kontoFuer(i, tag, TT_LISTE, WEITERE_KONTEN, KANAL);
+    const kategorie = (i < TT_LISTE.length && nischeFuer(KONTO, NISCHEN)[tag % Math.max(nischeFuer(KONTO, NISCHEN).length, 1)]) || KATEGORIEN[(tag * ANZAHL + i) % KATEGORIEN.length];
     const start = Date.now();
     try {
       // Bis zu 3 Versuche - bei einem unbrauchbaren Skript notfalls im naechsten Format.
@@ -196,9 +199,9 @@ async function main() {
       // Jedes TikTok-Konto hat seine Nische (z. B. nur Weltall) - so lernt der Algorithmus, wem er es zeigen soll.
       const nische = nischeFuer(KONTO, NISCHEN);
       // Jedes zweite TikTok-Video im gelernten Lieblingsformat - so wird weiter getestet, aber das Bessere öfter gezeigt.
-      const festesFormat = i < TIKTOK_KONTEN.length ? KONTO_FORMAT[KONTO.toLowerCase()] : null;
+      const festesFormat = i < TT_LISTE.length ? KONTO_FORMAT[KONTO.toLowerCase()] : null;
       const lieblingOk = LIEBLING && !OHNE.includes(LIEBLING) ? LIEBLING : null;
-      const eintrag = bankNaechster(verlauf.bank, i < TIKTOK_KONTEN.length ? nische : [], festesFormat || (lieblingOk && (tag + i) % 2 === 0 ? lieblingOk : null), { ohne: OHNE, saison: saisonHeute() });
+      const eintrag = bankNaechster(verlauf.bank, i < TT_LISTE.length ? nische : [], festesFormat || (lieblingOk && (tag + i) % 2 === 0 ? lieblingOk : null), { ohne: OHNE, saison: saisonHeute() });
       if (eintrag) {
         skript = ({ quiz: quizAus, mythos: mythosAus, waswaere: waswaereAus }[eintrag.typ])(eintrag, eintrag.kat, nr);
         format = `${eintrag.typ}/Faktenliste ${eintrag.id}`;
@@ -223,14 +226,17 @@ async function main() {
       if (letzte && skript.szenen[0]?.bild) letzte.bild = skript.szenen[0].bild;
       // Serie pro TikTok-Konto: "WELTALL-QUIZ #7" oben (ohne extra #-Abzeichen, das den Text verdeckte), am Ende "Folge für Teil 8!".
       let teil = 0;
-      if (i < TIKTOK_KONTEN.length) {
+      if (i < TT_LISTE.length) {
         teil = ((verlauf.serien || {})[KONTO] || 0) + 1;
         skript.hook = serienHook(eintrag?.kat || nische[0] || kategorie, /^(mythos|waswaere)/.exec(format)?.[1] || 'quiz', teil);
+        // Hook = das konkrete Thema groß in Sekunde 1 ("TEIL 12: STURZ INS SCHWARZE LOCH") statt nur der Serien-Name.
+        const thema = String(eintrag?.titel || skript.titel || '').replace(/^#\d+:\s*/, '');
+        if (/^waswaere/.test(format) && thema) skript.hook = `Teil ${teil}: ${thema}`;
         if (letzte && /^Folge für [^!]*!/.test(letzte.text)) letzte.text = letzte.text.replace(/^Folge für [^!]*!/, `Folge für Teil ${teil + 1}!`);
         // TikTok-Trend "31 Days of Halloween": im Oktober nummeriert nach Kalendertag ("GRUSEL-OKTOBER 16/31").
         if (eintrag?.saison === 'halloween') {
           const tagImMonat = Number(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date()).slice(8, 10));
-          skript.hook = `GRUSEL-OKTOBER ${tagImMonat}/31`;
+          skript.hook = `Grusel ${tagImMonat}/31: ${String(eintrag.titel || '')}`;
           if (letzte) letzte.text = 'Folge für mehr Grusel! Gruselig oder krass? Antworte in einem Wort!';
         }
       }
@@ -249,7 +255,7 @@ async function main() {
       // Echte NASA-Aufnahmen im Video? Dann ehrlich nennen - und es ist ein starker Hook (gemeinfrei, keine Werbung für NASA).
       const nasa = skript.szenen.some((sz) => sz.videoQuelle === 'NASA');
       if (nasa) skript.caption = `🚀 Echte NASA-Aufnahmen! ${skript.caption}`.replace(/(\n|$)/, ' (Videomaterial: NASA)$1');
-      manifest.push({ datei: `${basis}.mp4`, vorschau, sprache: 'de', kanal: 'fakten', titel: skript.titel, konto: KONTO, tiktok: i < TIKTOK_KONTEN.length, caption: `${skript.caption}\n\n${i < TIKTOK_KONTEN.length ? `Tag ${streakTag(Date.now(), env('FAKTEN_START', '2026-10-07'))} von 100 🔥 Folge ${KONTO}! ${querverweis(KONTO, TIKTOK_KONTEN, NISCHEN, tag)}`.trim() : `Folge ${KONTO} für täglich neue Fakten!`}`, thema: kategorie, format: 'hoch', dauer: Math.round(v.dauer), szenen: v.szenen });
+      manifest.push({ datei: `${basis}.mp4`, vorschau, sprache: 'de', kanal: 'fakten', titel: skript.titel, konto: KONTO, tiktok: i < TT_LISTE.length, caption: `${skript.caption}\n\n${i < TT_LISTE.length ? `Tag ${streakTag(Date.now(), env('FAKTEN_START', '2026-10-07'))} von 100 🔥 Folge ${KONTO}! ${querverweis(KONTO, TIKTOK_KONTEN, NISCHEN, tag)}`.trim() : `Folge ${KONTO} für täglich neue Fakten!`}`, thema: kategorie, format: 'hoch', dauer: Math.round(v.dauer), szenen: v.szenen });
       verlauf.nr = nr;
       if (teil) verlauf.serien = { ...(verlauf.serien || {}), [KONTO]: teil };
       verlauf.fakten = [...verlauf.fakten, skript.fakt].slice(-500);
