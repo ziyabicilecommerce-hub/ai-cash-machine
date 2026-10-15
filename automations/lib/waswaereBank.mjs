@@ -7,7 +7,7 @@ const w = (kat, titel, frage, schritte, tags, bilder) => ({
   caption: `${frage} 🤯 Welches Szenario als Nächstes? Antworte in einem Wort! 👇 ${tags}`, bilder,
 });
 
-const g = (kat, titel, frage, schritte, tags, bilder) => ({ ...w(kat, titel, frage, schritte, tags, bilder), saison: 'halloween', hook: 'Grusel-Oktober', caption: `${frage} 🎃 Gruselig oder krass? Antworte in einem Wort! 👇 ${tags}` });
+const g = (kat, titel, frage, schritte, tags, bilder) => ({ ...w(kat, titel, frage, schritte, tags, bilder), saison: 'halloween', hook: 'Grusel-Oktober', caption: `${frage} 🎃 Gruselig oder krass? Antworte in einem Wort! 👇 ${tags} #spookyseason` });
 
 export const WASWAERE = [
   w('Weltall', 'Wenn der Mond verschwindet', 'Was passiert, wenn der Mond plötzlich verschwindet?', ['Die Nächte werden stockdunkel.', 'Ebbe und Flut werden viel schwächer.', 'Langfristig würde die Erdachse taumeln und das Klima kippen.'], '#mond #weltall #waswärewenn #nasa', ph('full moon rising over dark ocean at night')),
@@ -45,4 +45,6 @@ export const WASWAERE = [
   g('Körper', 'Wenn du dich gruselst', 'Was passiert in deinem Körper, wenn du dich gruselst?', ['Dein Körper schüttet sofort Adrenalin aus.', 'Das Herz rast, die Pupillen werden groß.', 'Alles macht dich bereit, zu kämpfen oder zu fliehen.'], '#gruselig #körper #adrenalin #halloween', ph('dark foggy forest path at night with moonlight')),
   g('Körper', 'Gesichter im Dunkeln', 'Was passiert, wenn du im Dunkeln Gesichter siehst?', ['Dein Gehirn sucht ständig nach Gesichtern, sogar in Wolken und Steckdosen.', 'Das nennt man Pareidolie.', 'Früher war es sicherer, einmal zu oft Gefahr zu sehen.'], '#gehirn #körper #gruselig #halloween', ph('old wooden door with knots that look like a face, eerie light')),
   g('Körper', 'Gänsehaut', 'Was passiert, wenn du Gänsehaut bekommst?', ['Winzige Muskeln stellen deine Haare auf.', 'Bei Tieren mit Fell wirkt das größer und wärmer.', 'Bei uns ist davon nur noch die Gänsehaut übrig.'], '#gänsehaut #körper #gruselig #halloween', ph('frosty spider web in a dark window at night')),
+  // Aktuelles Ereignis: nur im Zeitfenster (MM-TT) und dann vor allem anderen (Orioniden-Maximum am 22.10.).
+  { ...w('Weltall', 'Sternschnuppen der Orioniden', 'Was passiert, wenn ein Staubkorn vom Halleyschen Kometen auf die Erde trifft?', ['Es rast mit rund 66 Kilometern pro Sekunde in unsere Luft.', 'In etwa 100 Kilometern Höhe verglüht es als Sternschnuppe.', 'Am 22. Oktober ist das Maximum der Orioniden, schau nach oben!'], '#sternschnuppen #orioniden #weltall #nasa', ph('bright meteor streaking across a starry night sky')), aktuell: ['10-14', '10-22'] },
 ];
