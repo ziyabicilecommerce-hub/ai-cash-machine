@@ -11,7 +11,8 @@ import { join } from 'node:path';
 import { videoBauen } from './lib/videoFabrik.mjs';
 import { kiJson } from './lib/kiJson.mjs';
 import { umstritten, echo, doppelt } from './lib/faktenPruefung.mjs';
-import { bankNaechster, saisonHeute } from './lib/faktenBank.mjs';
+import { BANK, bankNaechster, saisonHeute, laeuftGerade } from './lib/faktenBank.mjs';
+import { fortsetzungFuer } from './lib/gewinner.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 
 const OUT = 'out';
@@ -34,6 +35,8 @@ const WEITERE_KONTEN = liste('FAKTEN_KONTEN_WEITERE', '@futureflowxx,@desk.rebel
 let KONTO = KANAL;
 const NISCHEN = nischenAus(env('FAKTEN_NISCHEN', STANDARD_NISCHEN));
 // Gelerntes Lieblingsformat der TikTok-Zuschauer (#102), z. B. 'quiz' - bevorzugt, aber nicht ausschließlich.
+// TikTok-Zahlen der letzten Posts (von #103) - daraus erkennt die Gewinner-Fortsetzung, welches Video abgeht.
+const POSTS = (() => { try { return JSON.parse(readFileSync('automations-dashboard/tiktok/daten.json', 'utf8')).letzte || []; } catch { return []; } })();
 const LIEBLING = (() => { try { return JSON.parse(readFileSync('fakten-kanal/lernen.json', 'utf8')).bevorzugt || null; } catch { return null; } })();
 // Immer dieselbe Moderatorin (1-6) - ein festes Gesicht macht den Kanal wiedererkennbar.
 const MODERATORIN_NR = Math.min(Math.max(parseInt(env('FAKTEN_MODERATORIN', '2'), 10) || 2, 1), 6);
@@ -201,7 +204,13 @@ async function main() {
       // Jedes zweite TikTok-Video im gelernten Lieblingsformat - so wird weiter getestet, aber das Bessere öfter gezeigt.
       const festesFormat = i < TT_LISTE.length ? KONTO_FORMAT[KONTO.toLowerCase()] : null;
       const lieblingOk = LIEBLING && !OHNE.includes(LIEBLING) ? LIEBLING : null;
-      const eintrag = bankNaechster(verlauf.bank, i < TT_LISTE.length ? nische : [], festesFormat || (lieblingOk && (tag + i) % 2 === 0 ? lieblingOk : null), { ohne: OHNE, saison: saisonHeute() });
+      // Gewinner-Fortsetzung zuerst: ging ein Video dieses Kontos ab, kommt jetzt "TEIL 2" mit dem passenden Folge-Szenario.
+      const fortsetzung = i < TT_LISTE.length ? fortsetzungFuer(KONTO, POSTS, BANK, { verwendet: verlauf.bank || [], fortgesetzt: verlauf.fortgesetzt || [], erlaubt: (e) => laeuftGerade(e, saisonHeute()) }) : null;
+      if (fortsetzung) {
+        verlauf.fortgesetzt = [...(verlauf.fortgesetzt || []), fortsetzung.vorbild.id].slice(-200);
+        console.log(`[100-fakten-kanal] 🔥 Gewinner (${fortsetzung.aufrufe} Aufrufe): "${fortsetzung.vorbild.titel}" -> Teil 2 "${fortsetzung.eintrag.titel}" auf ${KONTO}`);
+      }
+      const eintrag = fortsetzung?.eintrag || bankNaechster(verlauf.bank, i < TT_LISTE.length ? nische : [], festesFormat || (lieblingOk && (tag + i) % 2 === 0 ? lieblingOk : null), { ohne: OHNE, saison: saisonHeute() });
       if (eintrag) {
         skript = ({ quiz: quizAus, mythos: mythosAus, waswaere: waswaereAus }[eintrag.typ])(eintrag, eintrag.kat, nr);
         format = `${eintrag.typ}/Faktenliste ${eintrag.id}`;
@@ -232,9 +241,14 @@ async function main() {
         // Hook = das konkrete Thema groß in Sekunde 1 ("TEIL 12: STURZ INS SCHWARZE LOCH") statt nur der Serien-Name.
         const thema = String(eintrag?.titel || skript.titel || '').replace(/^#\d+:\s*/, '');
         if (/^waswaere/.test(format) && thema) skript.hook = `Teil ${teil}: ${thema}`;
+        if (fortsetzung) {
+          skript.hook = `Teil 2: ${fortsetzung.vorbild.titel}`;
+          skript.caption = `Teil 2, weil ihr Teil 1 so gefeiert habt 🔥 ${skript.caption}`;
+          if (letzte) letzte.text = 'Folge, damit du Teil 3 nicht verpasst! Antworte in einem Wort: krass oder krasser?';
+        }
         if (letzte && /^Folge für [^!]*!/.test(letzte.text)) letzte.text = letzte.text.replace(/^Folge für [^!]*!/, `Folge für Teil ${teil + 1}!`);
         // TikTok-Trend "31 Days of Halloween": im Oktober nummeriert nach Kalendertag ("GRUSEL-OKTOBER 16/31").
-        if (eintrag?.saison === 'halloween') {
+        if (eintrag?.saison === 'halloween' && !fortsetzung) {
           const tagImMonat = Number(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date()).slice(8, 10));
           skript.hook = `Grusel ${tagImMonat}/31: ${String(eintrag.titel || '')}`;
           if (letzte) letzte.text = 'Folge für mehr Grusel! Gruselig oder krass? Antworte in einem Wort!';
