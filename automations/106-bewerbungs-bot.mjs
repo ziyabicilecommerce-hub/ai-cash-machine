@@ -185,6 +185,30 @@ function anschreibenOk(t) {
 
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// Die kostenlose KI (Pollinations) erlaubt nur ~1 Antwort pro 30 s und IP, der Ersatz (LLM7)
+// ist oft überlastet. Statt beim ersten "nicht verfügbar" den ganzen Lauf abzubrechen:
+// warten und nochmal versuchen. Erst nach mehreren Fehlschlägen am Stück wird für heute aufgehört.
+const KI_AUS = Symbol('ki-aus');
+let kiFehlerInFolge = 0;
+let letzterKiAufruf = 0;
+async function mitKiGeduld(aufruf, refnr) {
+  for (let versuch = 1; versuch <= 4; versuch++) {
+    const warten = letzterKiAufruf + 31000 - Date.now();
+    if (warten > 0) await pause(warten);
+    letzterKiAufruf = Date.now();
+    try {
+      const ergebnis = await aufruf();
+      kiFehlerInFolge = 0;
+      return ergebnis;
+    } catch (e) {
+      console.log(`[bewerbungs-bot] KI-Versuch ${versuch} für ${refnr} fehlgeschlagen: ${String(e.message).slice(0, 160)}`);
+      if (!e.uebersprungen) return null; // kaputte Antwort → diese Stelle überspringen
+      await pause(35000 * versuch);
+    }
+  }
+  return ++kiFehlerInFolge >= 3 ? KI_AUS : null;
+}
+
 // Nachfassen: eine Mail im selben Thread, wenn nach X Tagen nichts kam.
 async function nachfassen(state, postfach, transport, user, cv) {
   const raus = [];
@@ -230,10 +254,11 @@ async function main() {
   const gesendet = [];
   const manuell = [];
   let geprueft = 0;
+  let kiAus = false;
 
   const reihenfolge = [...alle.values()].sort((a, b) => attraktivitaet(b) - attraktivitaet(a));
   for (const stelle of reihenfolge) {
-    if (gesendet.length >= MAX_PRO_TAG || geprueft >= MAX_PRO_TAG * 3) break;
+    if (gesendet.length >= MAX_PRO_TAG || geprueft >= MAX_PRO_TAG * 2) break;
     const { refnr } = stelle;
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
@@ -256,9 +281,9 @@ async function main() {
     if (state.emails[email] || postfach.zusatzEmails[email]) { state.uebersprungen[refnr] = 'Firma schon angeschrieben'; continue; }
 
     geprueft++;
-    let b;
-    try { b = await schreibeBewerbung(stelle, text || kopf); }
-    catch (e) { if (e.uebersprungen) throw e; console.log(`[bewerbungs-bot] KI-Fehler ${refnr}: ${e.message}`); continue; }
+    const b = await mitKiGeduld(() => schreibeBewerbung(stelle, text || kopf), refnr);
+    if (b === KI_AUS) { kiAus = true; break; }
+    if (!b) continue;
     if (!(Number(b.passung) >= MIN_PASSUNG)) { state.uebersprungen[refnr] = `passt nicht (${b.passung})`; continue; }
     if (!anschreibenOk(b.anschreiben)) { console.log(`[bewerbungs-bot] Anschreiben für ${refnr} unbrauchbar - übersprungen.`); continue; }
 
@@ -296,6 +321,7 @@ async function main() {
     ...gesendet,
     ...nachfassBericht,
     manuell.length ? `\n👉 Ohne E-Mail (bitte selbst über den Link bewerben):\n${manuell.join('\n')}` : '',
+    kiAus ? '\n⚠️ Die kostenlose KI war heute zu lange überlastet – der Rest kommt beim nächsten Lauf dran.' : '',
     LIVE ? '' : '\nZum Scharfschalten: Secret BEWERBUNG_LIVE=ja setzen.',
   ].filter(Boolean).join('\n');
   console.log(bericht);
