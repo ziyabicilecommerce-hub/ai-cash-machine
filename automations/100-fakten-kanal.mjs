@@ -13,6 +13,7 @@ import { kiJson } from './lib/kiJson.mjs';
 import { umstritten, echo, doppelt } from './lib/faktenPruefung.mjs';
 import { BANK, bankNaechster, saisonHeute, laeuftGerade } from './lib/faktenBank.mjs';
 import { fortsetzungFuer } from './lib/gewinner.mjs';
+import { eigenenClipWaehlen, eigeneClipDateien, clipPfad } from './lib/eigeneClips.mjs';
 import { moderatorinAn, moderatorinEinfuegen } from './lib/moderatorin.mjs';
 
 const OUT = 'out';
@@ -260,6 +261,14 @@ async function main() {
       const weltall = /weltall/i.test(eintrag?.kat || kategorie);
       const clips = /^(0|nein|aus|false)$/i.test(env('FAKTEN_CLIPS', 'an')) || !weltall ? null : { weltall, ohneMenschen: true, quellen: ['pexels', 'nasa'] }; // Weltall: nur NASA, kein Archiv-Zufall (ein Hockey-Clip für "empty astronaut helmet")
       if (/weltall/i.test(eintrag?.kat || kategorie)) for (const sz of skript.szenen) delete sz.ohneClip;
+      // Eigener Gratis-Clip (per Hand in Kling/Bing/Flow gemacht, in eigene-clips/ hochgeladen) als Hook - jeder nur einmal.
+      const eigener = i < TT_LISTE.length ? eigenenClipWaehlen(eigeneClipDateien(), `${eintrag?.titel || skript.titel} ${eintrag?.frage || ''} ${skript.szenen[0]?.bild || ''}`, verlauf.eigeneClips || []) : null;
+      if (eigener && skript.szenen[0]) {
+        skript.szenen[0].video = clipPfad(eigener);
+        skript.szenen[0].videoQuelle = 'eigen';
+        verlauf.eigeneClips = [...(verlauf.eigeneClips || []), eigener];
+        console.log(`[100-fakten-kanal] 🎬 eigener Clip als Hook: ${eigener}`);
+      }
       const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting', stockClips: clips, kiClips: true });
       if (moderatorinAn() && v.stimme) {
         try { await moderatorinEinfuegen(v.pfad, v.stimme, MODERATORIN_NR); } catch (err) { console.log(`[100-fakten-kanal] Moderatorin fehlgeschlagen: ${String(err.message).slice(0, 150)}`); }
