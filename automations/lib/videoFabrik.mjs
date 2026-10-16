@@ -328,7 +328,8 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         // Echter Video-Clip der Szene (szene.video, z. B. Pexels) hat Vorrang vor der 3D-Kamerafahrt.
         const stock = szene.video && existsSync(szene.video) && !ebenen.fgP ? clipAnpassen(szene.video, join(ordner, `s${i}.stock.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe }) : '';
         // Echter KI-Clip (Bild-zu-Video, kostenlos über Hugging Face) statt Kamerafahrt durchs Standbild.
-        const kiRoh = !stock && kiClips && !ebenen.fgP && !modus?.match?.(/vergleich|demo/) ? await kiClip(ebenen.bgP, szene.bild, join(ordner, `s${i}.ki.mp4`), { index: i }) : '';
+        // Das Gratis-Kontingent reicht nur für wenige Clips am Tag -> standardmäßig nur der Hook (Szene 1), VIDEO_KI_ALLE=ja für alle Szenen.
+        const kiRoh = !stock && kiClips && (i === 0 || /^(ja|1|an|true)$/i.test(String(process.env.VIDEO_KI_ALLE || '').trim())) && !ebenen.fgP && !modus?.match?.(/vergleich|demo/) ? await kiClip(ebenen.bgP, szene.bild, join(ordner, `s${i}.ki.mp4`), { index: i }) : '';
         const ki = kiRoh ? clipAnpassen(bumerang(kiRoh, join(ordner, `s${i}.kib.mp4`), dauerSekunden(mp3) + 0.3) || kiRoh, join(ordner, `s${i}.kif.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe }) : '';
         const bgVideo = stock || ki || (modus === 'demo' ? demoVideoBauen(szene.demo, join(ordner, `s${i}.demo.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe, schrift: SCHRIFT_FETT })
           : !ebenen.fgP && modus !== 'vergleich' ? tiefe3d(ebenen.bgP, join(ordner, `s${i}.3d.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe, art: ['dolly', 'orbit', 'kran'][i % 3] }) : '');

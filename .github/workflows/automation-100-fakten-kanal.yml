@@ -35,6 +35,8 @@ env:
   PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
   # Optional: kostenloser Hugging-Face-Schlüssel für mehr KI-Video-Kontingent (ohne geht es auch).
   HF_TOKEN: ${{ secrets.HF_TOKEN }}
+  # ja = jede Szene als KI-Clip (braucht viel Kontingent, z. B. Hugging Face PRO); sonst nur der Hook.
+  VIDEO_KI_ALLE: ${{ vars.VIDEO_KI_ALLE }}
 
 jobs:
   run:
