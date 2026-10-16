@@ -8,14 +8,24 @@ from gradio_client import Client, handle_file
 
 bild, prompt, ziel, modell = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 token = os.environ.get("HF_TOKEN") or None
+
+
+def client(space):
+    # Ohne Schlüssel kein Token-Argument; je nach gradio_client-Version heißt es token oder hf_token.
+    if not token:
+        return Client(space, verbose=False)
+    try:
+        return Client(space, token=token, verbose=False)
+    except TypeError:
+        return Client(space, hf_token=token, verbose=False)
 NEG = "static, still image, blurry, distorted, deformed, text, watermark, subtitles, people, faces"
 try:
     if modell == "wan":
-        c = Client(os.environ.get("KI_CLIP_WAN", "zerogpu-aoti/wan2-2-fp8da-aoti-faster"), hf_token=token, verbose=False)
+        c = client(os.environ.get("KI_CLIP_WAN", "zerogpu-aoti/wan2-2-fp8da-aoti-faster"))
         r = c.predict(input_image=handle_file(bild), prompt=prompt, steps=6, negative_prompt=NEG, duration_seconds=3.5,
                       guidance_scale=1, guidance_scale_2=1, seed=42, randomize_seed=True, api_name="/generate_video")
     else:
-        c = Client(os.environ.get("KI_CLIP_LTX", "Lightricks/ltx-video-distilled"), hf_token=token, verbose=False)
+        c = client(os.environ.get("KI_CLIP_LTX", "Lightricks/ltx-video-distilled"))
         r = c.predict(prompt=prompt, negative_prompt=NEG, input_image_filepath=handle_file(bild), input_video_filepath=None,
                       height_ui=704, width_ui=512, mode="image-to-video", duration_ui=3, ui_frames_to_use=9, seed_ui=42,
                       randomize_seed=True, ui_guidance_scale=1, improve_texture_flag=True, api_name="/image_to_video")
