@@ -57,6 +57,8 @@ const STANDARD_SUCHE = [
   'Sicherheitsleitstelle:job',
   'Leitstand:job',
   'Einsatzzentrale:job',
+  'Notrufzentrale:job',
+  'Notruf- und Serviceleitstelle:job',
   // Weiteres Büro mit Tempo
   'Flughafen Operations:job',
   'Disponent Quereinsteiger:job',
@@ -68,6 +70,13 @@ const STANDARD_SUCHE = [
   'Kundenservice Bank:job',
   'Sachbearbeiter Bank:job',
   'Leitstelle Schichtdienst:job',
+  'Zahlungsverkehr:job',
+  // Flughafen ohne Erfahrung, gut bezahlt dank Schicht-/Flughafenzulagen
+  'Bodenverkehrsdienste:job',
+  'Luftsicherheitsassistent:job',
+  'Check-in Flughafen:job',
+  'Passagierabfertigung:job',
+  'Flughafen Kundenservice:job',
   'Luftfracht Schicht:job',
   'Quereinsteiger Büro:job',
   'Quereinsteiger Verwaltung:job',
@@ -103,7 +112,7 @@ const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|pers
 const FUEHRUNG = /geschäftsführ|leiter(in)?\b|leitung\b|head of|senior|teamlead|team lead|director|direktor/i;
 // Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
 const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freelance|freiberuf|selbstständig|selbständig|nebenjob|honorar|auf provisionsbasis|\b(520|538|556) ?(€|euro)/i;
-const FLUGHAFEN = /flughafen|airport|fraport|lufthansa|condor|cargo ?city|luftverkehr|luftfracht|aviation|\b60549\b/i;
+const FLUGHAFEN = /flughafen|airport|fraport|luftsicherheit|bodenverkehr|passagier|check-in|lufthansa|condor|cargo ?city|luftverkehr|luftfracht|aviation|\b60549\b/i;
 
 // Nur diese Orte (Arbeitsort der Stelle). Griesheim bei Darmstadt (PLZ 64347) ist nicht gemeint.
 const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|mainz|kastel'), 'i');
