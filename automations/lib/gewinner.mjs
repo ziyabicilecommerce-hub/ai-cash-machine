@@ -39,6 +39,21 @@ export const FOLGEN = {
   'Gänsehaut': 'Wenn du dich gruselst',
   'Jede Sekunde ein Euro': 'Ein Cent, jeden Tag verdoppelt',
   'Ein Cent, jeden Tag verdoppelt': 'Jede Sekunde ein Euro',
+  'Ein Stern explodiert': 'Der Gammablitz',
+  'Der Gammablitz': 'Ein Stern explodiert',
+  'Die Sonne stirbt': 'Wenn die Sonne verschwindet',
+  'Verloren im All': 'Ohne Raumanzug im All',
+  'Der Killer-See': 'Der Feuer-Tornado',
+  'Der Feuer-Tornado': 'Der Killer-See',
+  'Der Schnecken-Parasit': 'Die Zombie-Grille',
+  'Die Zombie-Grille': 'Der Zombie-Pilz',
+  'Der Riesenkalmar': 'Der Anglerfisch',
+  'Der Anglerfisch': 'Der Riesenkalmar',
+  'Die Schlafparalyse': 'Das Déjà-vu',
+  'Die Gummihand': 'Die fremde Hand',
+  'Die fremde Hand': 'Die Gummihand',
+  'Das Déjà-vu': 'Die Schlafparalyse',
+  'Milben im Gesicht': 'Der Schnecken-Parasit',
 };
 
 const norm = (t) => String(t || '').replace(/🚀 Echte NASA-Aufnahmen!/g, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
