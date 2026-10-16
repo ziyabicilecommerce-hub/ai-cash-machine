@@ -6,10 +6,24 @@ import { daten } from './bewerbung.mjs';
 const HARTE_HUERDE = /(abgeschlossene|erfolgreich abgeschlossene)\s+([a-zä-]+\s+){0,2}(berufs)?ausbildung|abgeschlossenes\s+([a-zä-]+\s+)?studium|mehrjährige|mindestens\s+(\d|zwei|drei|vier|fünf)\s+jahre|(\d|zwei|drei|vier|fünf)\+?\s+jahre\s+(berufs)?erfahrung|realschulabschluss|mittlere reife|abitur|fachhochschulreife|führerschein (der )?klasse b (ist )?(zwingend|erforderlich|voraussetzung)/i;
 const OFFEN_FUER_EINSTEIGER = /quereinst|ohne (berufs)?erfahrung|keine (berufs)?erfahrung (nötig|erforderlich|notwendig)|wir arbeiten (sie|dich) ein|berufseinsteiger|berufsanfänger/i;
 
-export const vorlagePasst = (text) => OFFEN_FUER_EINSTEIGER.test(text) || !HARTE_HUERDE.test(text);
+// Berufe, die schon im Titel eine abgeschlossene Ausbildung/ein Studium bedeuten (als Ausbildungsplatz aber ok).
+const NUR_MIT_QUALIFIKATION = /steuerfach|steuerberat|bilanzbuchhalt|hauptbuchhalt|finanzbuchhalter|lohnbuchhalter|accountant|controller|psycholog|therapeut|medizinische[rn]? fachangestellte|\bmfa\b|zahnmedizin|rechtsanwaltsfach|notarfach|rechtsanwalt|jurist|verwaltungsfachangestellte|sozialversicherungsfach|monteur|mechaniker|mechatroniker|elektriker|elektroniker|handwerker|installateur|immobilienverwalter|hausverwalter|gründer|franchise|geprüfte|sicherheitskraft|ingenieur|entwickler|developer|architekt|arzt|ärzt|pflegefach|erzieher|lehrer|consultant|berater/i;
+const AUSBILDUNG = /ausbildung|auszubild|azubi|duales studium|trainee/i;
+const FREMDSPRACHE = /spanisch|französisch|italienisch|niederländisch|polnisch|russisch|arabisch|chinesisch|japanisch|portugiesisch|tschechisch|rumänisch/i;
+
+export function vorlagePasst(text, titel = '') {
+  if (!titel.trim()) return false;
+  if (!AUSBILDUNG.test(titel) && NUR_MIT_QUALIFIKATION.test(titel)) return false;
+  const sprache = titel.match(FREMDSPRACHE)?.[0];
+  if (sprache && !new RegExp(sprache, 'i').test(daten().roh)) return false;
+  return OFFEN_FUER_EINSTEIGER.test(text) || !HARTE_HUERDE.test(text);
+}
 
 function aufhaenger(titel, firma, text) {
   const k = `${titel} ${text.slice(0, 1500)}`;
+  if (AUSBILDUNG.test(titel)) {
+    return `Ich möchte meinen Weg im Beruf mit einer richtig guten Ausbildung starten – und ${firma} ist genau der Ort, an dem ich das will. Deshalb bewerbe ich mich bei Ihnen auf „${titel}“.`;
+  }
   if (/luftfracht|air ?cargo|airfreight|export|import|zoll/i.test(k)) {
     return `Internationale Sendungen, Zollpapiere und enge Zeitfenster, bei denen jeder Handgriff sitzen muss – genau dieses Tempo reizt mich an der Stelle als ${titel} bei ${firma}.`;
   }
@@ -51,6 +65,8 @@ export function vorlageAnschreiben({ titel, firma, text = '' }) {
     [edvText && `Mit ${edvText} arbeite ich sicher`, sprachText && `durch ${sprachText} kann ich auch bei internationalen Kontakten unterstützen`]
       .filter(Boolean).join(', und ').replace(/^./, (z) => z.toUpperCase()) + '.',
     '',
-    'Ich suche eine Vollzeitstelle, in der ich dauerhaft bleiben, Verantwortung übernehmen und jeden Tag dazulernen kann. Ich kann ab sofort bei Ihnen anfangen. Über die Einladung zu einem persönlichen Kennenlernen freue ich mich sehr – meinen Lebenslauf finden Sie im Anhang.',
+    AUSBILDUNG.test(titel)
+      ? 'Ich bin bereit, mich voll reinzuhängen, im Betrieb wie in der Berufsschule, und möchte nach der Ausbildung gern bei Ihnen bleiben. Über die Einladung zu einem persönlichen Kennenlernen freue ich mich sehr – meinen Lebenslauf finden Sie im Anhang.'
+      : 'Ich suche eine Vollzeitstelle, in der ich dauerhaft bleiben, Verantwortung übernehmen und jeden Tag dazulernen kann. Ich kann ab sofort bei Ihnen anfangen. Über die Einladung zu einem persönlichen Kennenlernen freue ich mich sehr – meinen Lebenslauf finden Sie im Anhang.',
   ].join('\n').replace(/\n\.\n/, '\n');
 }
