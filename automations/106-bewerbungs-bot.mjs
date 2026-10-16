@@ -24,15 +24,50 @@ export const STATE_BOT = 'bewerbungs-bot';
 export const STATE_POSTFACH = 'bewerbungs-postfach';
 const API = 'https://rest.arbeitsagentur.de/jobboerse/jobsuche-service';
 const API_HEADERS = { 'X-API-Key': 'jobboerse-jobsuche', 'User-Agent': 'Jobsuche/2.9.2 (de.arbeitsagentur.jobboerse)' };
-const MAX_PRO_TAG = Math.max(1, Math.min(150, parseInt(env('BEWERBUNG_MAX_PRO_TAG', '100'), 10) || 100));
+const MAX_LIVE = Math.max(1, Math.min(150, parseInt(env('BEWERBUNG_MAX_PRO_TAG', '100'), 10) || 100));
+// Testmodus: nur ein paar Probe-Bewerbungen an dich selbst, damit du sie in Ruhe anschauen kannst.
+const MAX_PRO_TAG = LIVE ? MAX_LIVE : Math.min(MAX_LIVE, parseInt(env('BEWERBUNG_TEST_MAX', '5'), 10) || 5);
 const ORT = wohnort();
 const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '25'), 10) || 25;
 const MIN_PASSUNG = 6;
+// Unter diesem Monatsbrutto wird nicht beworben (nur wenn die Anzeige ein Gehalt nennt). ~3.000 € ≈ 2.050 € netto (Stkl. 1).
+const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '3000'), 10) || 3000;
+// Personalvermittler/Zeitarbeit nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt (dann lohnt es sich).
+const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3500'), 10) || 3500;
+// Wird nur genannt, wenn die Anzeige ausdrücklich nach einer Gehaltsvorstellung fragt.
+const GEHALTSWUNSCH = env('BEWERBUNG_GEHALTSWUNSCH', '36.000');
 const NACHFASS_NACH_TAGEN = 12;
 
 // Angebotsart der BA: 1 = Arbeit, 4 = Ausbildung. Wunsch: Büro/Buchhaltung,
 // Vollzeit mit festem Gehalt, am liebsten am Flughafen Frankfurt (liegt im 20-km-Radius).
 const STANDARD_SUCHE = [
+  // Lieblingsbereiche: Zoll, Export, Luftfracht, Leitstelle - werden zuerst beworben.
+  'Sachbearbeiter Luftfracht:job',
+  'Luftfracht Import:job',
+  'Luftfracht Export:job',
+  'Air Cargo:job',
+  'Tracing Luftfracht:job',
+  'Zollabwicklung:job',
+  'Zollsachbearbeiter:job',
+  'Zolldeklarant:job',
+  'Export Sachbearbeiter:job',
+  'Exportabwicklung:job',
+  'Mitarbeiter Leitstelle:job',
+  'Sicherheitsleitstelle:job',
+  'Leitstand:job',
+  'Einsatzzentrale:job',
+  // Weiteres Büro mit Tempo
+  'Flughafen Operations:job',
+  'Disponent Quereinsteiger:job',
+  'Sachbearbeiter Disposition:job',
+  'Logistik Koordinator:job',
+  'Einsatzplaner:job',
+  'Customer Service Operations:job',
+  // Mehr Geld: Bank-Service, Schichtbetrieb mit Zuschlägen
+  'Kundenservice Bank:job',
+  'Sachbearbeiter Bank:job',
+  'Leitstelle Schichtdienst:job',
+  'Luftfracht Schicht:job',
   'Quereinsteiger Büro:job',
   'Quereinsteiger Verwaltung:job',
   'Quereinsteiger Buchhaltung:job',
@@ -62,7 +97,9 @@ const STANDARD_SUCHE = [
 ].join(';');
 
 const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key ?account|kundenberater|neukunden|d2d|door to door|fundraising/i;
-const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt/i;
+const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt|\b(dis ag|tempworkers|randstad|adecco|manpower|hays|orizon|amadeus fire|ferchau|gulp|brunel|persona service|jobactive|piening|timepartner|startpeople|tempton|akkodis|allianz personal)\b|\bpersonal (gmbh|service|partner)/i;
+// Führungsjobs sind ohne Erfahrung sinnlos.
+const FUEHRUNG = /geschäftsführ|leiter(in)?\b|leitung\b|head of|senior|teamlead|team lead|director|direktor/i;
 // Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
 const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freelance|freiberuf|selbstständig|selbständig|nebenjob|honorar|auf provisionsbasis|\b(520|538|556) ?(€|euro)/i;
 const FLUGHAFEN = /flughafen|airport|fraport|lufthansa|condor|cargo ?city|luftverkehr|luftfracht|aviation|\b60549\b/i;
@@ -72,15 +109,43 @@ const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hatters
 const ortPasst = (st) => ORTE.test(`${st.arbeitsort?.ort || ''} ${st.arbeitsort?.region || ''}`) && st.arbeitsort?.plz !== '64347';
 const QUEREINSTEIGER = /quereinst|ohne (berufs)?erfahrung|keine (berufs)?erfahrung (nötig|erforderlich|notwendig)|einarbeitung|wir arbeiten (sie|dich) ein|berufseinsteiger|berufsanfänger/i;
 
-// Je höher, desto früher wird beworben: Flughafen > Quereinsteiger > Buchhaltung > Rest.
+// Lieblingsbereiche (höchste Priorität) und weiteres Büro mit Tempo.
+const FAVORIT = /zoll|export|luftfracht|air ?cargo|airfreight|leitstelle|leitstand|einsatzzentrale|notrufzentrale/i;
+const ACTION = /luftfracht|air ?cargo|cargo|operations|disposition|disponent|logistik|zoll|export|import|leitstelle|leitstand|einsatzplan|tracing|ground handling|station/i;
+
+// Je höher, desto früher wird beworben: Flughafen > Action-Büro > Quereinsteiger > Buchhaltung > Rest.
 function attraktivitaet(st) {
   const kopf = `${st.titel} ${st.beruf || ''} ${st.arbeitgeber || ''} ${st.arbeitsort?.plz || ''} ${st.arbeitsort?.ort || ''}`;
-  return (FLUGHAFEN.test(kopf) ? 3 : 0) + (st.quereinstieg || QUEREINSTEIGER.test(kopf) ? 2 : 0) + (/buchhalt|finanz|rechnungswesen|kreditor|debitor/i.test(kopf) ? 2 : 0) + (/büro|verwaltung|sachbearbeit|backoffice/i.test(kopf) ? 1 : 0);
+  return (FAVORIT.test(kopf) ? 5 : 0) + (FLUGHAFEN.test(kopf) ? 3 : 0) + (ACTION.test(kopf) ? 2 : 0) + (st.quereinstieg || QUEREINSTEIGER.test(kopf) ? 2 : 0) + (/buchhalt|finanz|rechnungswesen|kreditor|debitor/i.test(kopf) ? 2 : 0) + (/büro|verwaltung|sachbearbeit|backoffice/i.test(kopf) ? 1 : 0);
+}
+
+const NUR_PORTAL = /ausschließlich (über|online|per (unser|das))|nur (über|online|per) (unser|das|den)?\s*(online|karriere|bewerber|stellen)|bewerbungs?formular|(online|karriere|bewerber)[- ]?(portal|plattform)|bewerben sie sich (bitte )?(direkt |gerne )?(online|über (unser|den|die))|keine bewerbungen? per (e-?mail|post)|apply (online|via|through)/i;
+const BEWERBUNGS_POSTFACH = /bewerb|karriere|career|jobs?@|personal|^hr@|ausbildung|recruit|talent/i;
+
+// Gehaltsspanne aus den Details auf Monatsbrutto umrechnen (Stundenlohn × 173 h, Jahresgehalt ÷ 12).
+function monatsBrutto(d = {}) {
+  let von = parseFloat(String(d.gehaltsspanneVon ?? '').replace(',', '.'));
+  let bis = parseFloat(String(d.gehaltsspanneBis ?? '').replace(',', '.'));
+  if (!(von > 0)) return null;
+  if (!(bis >= von)) bis = von;
+  const faktor = von < 100 ? 173 : von > 15000 ? 1 / 12 : 1;
+  return { von: von * faktor, bis: bis * faktor };
+}
+const gehaltsBonus = (b) => (!b ? 0 : b.bis >= 4500 ? 6 : b.bis >= 3800 ? 4 : b.bis >= 3300 ? 3 : b.bis >= 2900 ? 2 : 1);
+// Nacht-/Sonn-/Feiertagszuschläge sind steuerfrei (§ 3b EStG) - landen fast komplett netto auf dem Konto.
+const SCHICHT = /schichtdienst|schichtarbeit|\bschicht|nachtdienst|nachtschicht|24\/7|rund um die uhr|sonn- und feiertag|(nacht|schicht|sonntags)zuschl|wechseldienst/i;
+// Nur Anzeigentext + offizielles Feld prüfen - der restliche JSON-Text enthält Feldnamen wie "arbeitszeitSchichtNachtWochenende".
+const hatSchicht = (d) => d?.flags?.arbeitszeitSchichtNachtWochenende === true || SCHICHT.test(d?.flags?.stellenangebotsBeschreibung || '');
+
+async function parallel(liste, anzahl, arbeit) {
+  let i = 0;
+  await Promise.all(Array.from({ length: anzahl }, async () => { while (i < liste.length) await arbeit(liste[i++]); }));
 }
 
 function extras(text) {
   return [
     FLUGHAFEN.test(text) && '🛫 Flughafen',
+    FAVORIT.test(text.slice(0, 600)) ? '⭐ Lieblingsbereich' : ACTION.test(text.slice(0, 600)) && '⚡ Büro mit Action',
     /firmenwagen|dienstwagen|firmenfahrzeug|dienstfahrzeug/i.test(text) && '🚗 Firmenwagen',
     /tarif|tvöd|tv-l|13\. ?(monats)?gehalt|weihnachtsgeld|urlaubsgeld/i.test(text) && '💰 Tarif/Extras',
     /jobticket|deutschlandticket/i.test(text) && '🎫 Jobticket',
@@ -165,14 +230,15 @@ Titel: ${stelle.titel}
 Firma: ${stelle.arbeitgeber}
 Ort: ${stelle.arbeitsort?.ort || ''}
 Text: ${beschreibung.slice(0, 3500)}
-
-WUNSCH DES BEWERBERS: Büro oder Buchhaltung, Vollzeit, festes Gehalt (keine Provision), am liebsten am Flughafen Frankfurt. Er hat KEINE Berufserfahrung und ist Quereinsteiger - Stellen, die Quereinsteiger/Berufsanfänger ausdrücklich willkommen heißen oder eine Einarbeitung bieten, passen besonders gut (eher 7-9). Verlangt die Stelle mehrjährige Berufserfahrung, ist sie unter 6. Im Anschreiben die Lernbereitschaft und Motivation für die Einarbeitung betonen, nichts beschönigen. Passt die Stelle dazu, darf das Anschreiben diese Begeisterung (z. B. für den Flughafen oder für Zahlen/Buchhaltung) konkret zeigen.
+${stelle.brutto ? `Gehalt laut Anzeige: ca. ${Math.round(stelle.brutto.von)}–${Math.round(stelle.brutto.bis)} € brutto im Monat\n` : ''}
+WUNSCH DES BEWERBERS: am liebsten Zoll, Export, Luftfracht oder Leitstelle - Büro mit Tempo, wo jeder Fall anders ist und der Tag schnell vergeht; sonst Disposition, Flughafen-Büro oder Buchhaltung. Bei solchen Stellen soll das Anschreiben echte Begeisterung für genau diesen Bereich zeigen (z. B. internationale Sendungen, Zeitdruck, schnelle Entscheidungen), Vollzeit, festes Gehalt (keine Provision), am liebsten am Flughafen Frankfurt. Er hat KEINE Berufserfahrung und ist Quereinsteiger - Stellen, die Quereinsteiger/Berufsanfänger ausdrücklich willkommen heißen oder eine Einarbeitung bieten, passen besonders gut (eher 7-9). Verlangt die Stelle mehrjährige Berufserfahrung, ist sie unter 6. Im Anschreiben die Lernbereitschaft und Motivation für die Einarbeitung betonen, nichts beschönigen. Passt die Stelle dazu, darf das Anschreiben diese Begeisterung (z. B. für den Flughafen oder für Zahlen/Buchhaltung) konkret zeigen.
 
 AUFGABE:
 1. Bewerte ehrlich, ob der Bewerber realistische Chancen hat (0-10). Unter 6, wenn: abgeschlossene Ausbildung/Studium/Berufserfahrung zwingend verlangt, Realschulabschluss/Abitur zwingend verlangt, Führerschein zwingend, oder es eigentlich Vertrieb/Verkauf ist.
-2. Wenn >= 6: Schreibe ein Anschreiben (E-Mail-Text, deutsch, 170-260 Wörter, Sie-Form). Erster Satz: ein starker, konkreter Aufhänger zur Firma/Stelle (KEIN "mit großem Interesse habe ich..."). Dann: was aus dem Profil genau zu den Aufgaben der Anzeige passt (Praktika, Excel/Word, Sprachen), Eintritt ab sofort möglich. Ansprechpartner aus der Anzeige verwenden falls genannt, sonst "Sehr geehrte Damen und Herren,". Letzter Satz: Bitte um ein persönliches Kennenlernen, Lebenslauf im Anhang. KEINE Platzhalter in eckigen Klammern, KEINE Grußformel und KEINEN Namen am Ende (wird automatisch angehängt). Keine erfundenen Noten, Zertifikate oder Erfahrungen.
+2. Wenn >= 6: Schreibe ein Anschreiben (E-Mail-Text, deutsch, 170-260 Wörter, Sie-Form). Erster Satz: ein starker, konkreter Aufhänger zur Firma/Stelle (KEIN "mit großem Interesse habe ich..."). Dann: was aus dem Profil genau zu den Aufgaben der Anzeige passt (Praktika, Excel/Word, Sprachen), Eintritt ab sofort möglich. Ansprechpartner aus der Anzeige verwenden falls genannt, sonst "Sehr geehrte Damen und Herren,". Letzter Satz: Bitte um ein persönliches Kennenlernen, Lebenslauf im Anhang. KEINE Platzhalter in eckigen Klammern, KEINE Grußformel und KEINEN Namen am Ende (wird automatisch angehängt). Keine erfundenen Noten, Zertifikate oder Erfahrungen. Fragt die Anzeige ausdrücklich nach einer Gehaltsvorstellung, schreibe vor dem letzten Satz: "Meine Gehaltsvorstellung liegt bei ${GEHALTSWUNSCH} € brutto im Jahr." - sonst kein Gehalt erwähnen.
+3. perMail: Darf man sich laut Anzeige per E-Mail bewerben? false NUR, wenn die Anzeige ausdrücklich NUR ein Online-Portal/Formular erlaubt; sonst true.
 
-Antworte NUR mit JSON: {"passung": Zahl, "grund": "1 Satz", "betreff": "Bewerbung als ... – ${BEWERBER()}", "anschreiben": "..."}`;
+Antworte NUR mit JSON: {"passung": Zahl, "perMail": true/false, "grund": "1 Satz", "betreff": "Bewerbung als ... – ${BEWERBER()}", "anschreiben": "..."}`;
   const antwort = await askKI(prompt, { maxTokens: 1400, system: 'Du bist ein erfahrener Bewerbungscoach in Deutschland. Du antwortest ausschließlich mit gültigem JSON.' });
   return parseJsonFromText(antwort, {});
 }
@@ -184,6 +250,30 @@ function anschreibenOk(t) {
 }
 
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Die kostenlose KI (Pollinations) erlaubt nur ~1 Antwort pro 30 s und IP, der Ersatz (LLM7)
+// ist oft überlastet. Statt beim ersten "nicht verfügbar" den ganzen Lauf abzubrechen:
+// warten und nochmal versuchen. Erst nach mehreren Fehlschlägen am Stück wird für heute aufgehört.
+const KI_AUS = Symbol('ki-aus');
+let kiFehlerInFolge = 0;
+let letzterKiAufruf = 0;
+async function mitKiGeduld(aufruf, refnr) {
+  for (let versuch = 1; versuch <= 4; versuch++) {
+    const warten = letzterKiAufruf + 31000 - Date.now();
+    if (warten > 0) await pause(warten);
+    letzterKiAufruf = Date.now();
+    try {
+      const ergebnis = await aufruf();
+      kiFehlerInFolge = 0;
+      return ergebnis;
+    } catch (e) {
+      console.log(`[bewerbungs-bot] KI-Versuch ${versuch} für ${refnr} fehlgeschlagen: ${String(e.message).slice(0, 160)}`);
+      if (!e.uebersprungen) return null; // kaputte Antwort → diese Stelle überspringen
+      await pause(35000 * versuch);
+    }
+  }
+  return ++kiFehlerInFolge >= 3 ? KI_AUS : null;
+}
 
 // Nachfassen: eine Mail im selben Thread, wenn nach X Tagen nichts kam.
 async function nachfassen(state, postfach, transport, user, cv) {
@@ -230,35 +320,56 @@ async function main() {
   const gesendet = [];
   const manuell = [];
   let geprueft = 0;
+  let kiAus = false;
 
-  const reihenfolge = [...alle.values()].sort((a, b) => attraktivitaet(b) - attraktivitaet(a));
-  for (const stelle of reihenfolge) {
-    if (gesendet.length >= MAX_PRO_TAG || geprueft >= MAX_PRO_TAG * 3) break;
+  // Schritt 1: billige Filter ohne Netzwerk.
+  const kandidaten = [];
+  for (const stelle of alle.values()) {
     const { refnr } = stelle;
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
-    if (VERTRIEB.test(kopf) || ZEITARBEIT.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb/zeitarbeit'; continue; }
+    if (VERTRIEB.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb'; continue; }
+    if (FUEHRUNG.test(stelle.titel)) { state.uebersprungen[refnr] = 'Führungsposition'; continue; }
     if (stelle.minijob || !stelle.vollzeit || KEIN_FIXGEHALT.test(kopf)) { state.uebersprungen[refnr] = 'kein Vollzeit-Fixgehalt'; continue; }
-    if (stelle.zeitarbeit) { state.uebersprungen[refnr] = 'Zeitarbeit/Personalvermittlung'; continue; }
+    // Vermittler/Zeitarbeit erst nach den Details entscheiden: nur wenn das Gehalt richtig gut ist.
+    stelle.vermittler = stelle.zeitarbeit || ZEITARBEIT.test(kopf);
     if (!ortPasst(stelle)) { state.uebersprungen[refnr] = `Ort ${stelle.arbeitsort?.ort || '?'}`; continue; }
+    kandidaten.push(stelle);
+  }
 
-    const { text, externeUrl, gehalt, flags } = await holeDetails(refnr);
-    if (flags.istGeringfuegigeBeschaeftigung || flags.istArbeitnehmerUeberlassung) { state.uebersprungen[refnr] = 'Minijob/Zeitarbeit (Details)'; continue; }
+  // Schritt 2: Details der besten Kandidaten parallel holen, damit das Gehalt in die Reihenfolge einfließt
+  // (gut bezahlte Lieblingsjobs zuerst, schlecht bezahlte fliegen raus).
+  kandidaten.sort((a, b) => attraktivitaet(b) - attraktivitaet(a));
+  const auswahl = kandidaten.slice(0, Math.max(150, MAX_PRO_TAG * 6));
+  await parallel(auswahl, 6, async (st) => { st.details = await holeDetails(st.refnr); st.brutto = monatsBrutto(st.details.flags); });
+  const geldScore = (x) => attraktivitaet(x) + gehaltsBonus(x.brutto) + (hatSchicht(x.details) ? 2 : 0);
+  auswahl.sort((a, b) => geldScore(b) - geldScore(a));
+  console.log(`[bewerbungs-bot] ${kandidaten.length} Kandidaten nach Filtern, ${auswahl.filter((x) => x.brutto).length} davon mit Gehaltsangabe.`);
+
+  for (const stelle of auswahl) {
+    if (gesendet.length >= MAX_PRO_TAG || geprueft >= MAX_PRO_TAG * 2) break;
+    const { refnr } = stelle;
+    const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
+    const { text, externeUrl, flags } = stelle.details;
+    const gehalt = stelle.brutto ? `~${Math.round(stelle.brutto.von)}–${Math.round(stelle.brutto.bis)} € brutto/Monat` : '';
+    if (flags.istGeringfuegigeBeschaeftigung) { state.uebersprungen[refnr] = 'Minijob (Details)'; continue; }
+    if ((stelle.vermittler || flags.istArbeitnehmerUeberlassung) && !(stelle.brutto?.bis >= ZEITARBEIT_AB)) { state.uebersprungen[refnr] = 'Zeitarbeit/Vermittler ohne Top-Gehalt'; continue; }
     if (VERTRIEB.test(text.slice(0, 3000)) && /vertrieb|au(ß|ss)endienst|akquise|provision/i.test(text)) { state.uebersprungen[refnr] = 'vertrieb (Text)'; continue; }
+    if (stelle.brutto && stelle.brutto.bis < MIN_BRUTTO) { state.uebersprungen[refnr] = `zu wenig Gehalt (${gehalt})`; continue; }
     const email = findeEmail(text);
     // Nur echte Anzeigen-Links nehmen, keine reinen Startseiten ("http://www.arbeitsagentur.de").
     const link = [externeUrl, stelle.externeUrl].find((u) => /^https?:\/\/[^/]+\/.+/.test(u || '')) || `https://www.arbeitsagentur.de/jobsuche/jobdetail/${encodeURIComponent(refnr)}`;
-    if (!emailOk(email)) {
-      state.uebersprungen[refnr] = 'keine E-Mail';
-      if (manuell.length < 10) manuell.push(`• ${stelle.titel} – ${stelle.arbeitgeber}\n  ${link}`);
-      continue;
-    }
+    const selbst = (grund) => { if (manuell.length < 15) manuell.push(`• ${stelle.titel} – ${stelle.arbeitgeber}${gehalt ? ` (${gehalt})` : ''} [${grund}]\n  ${link}`); };
+    if (!emailOk(email)) { state.uebersprungen[refnr] = 'keine E-Mail'; selbst('keine E-Mail in der Anzeige'); continue; }
+    // Steht "nur über unser Portal" in der Anzeige und ist die Adresse kein Bewerbungspostfach, wäre die Mail verschenkt.
+    if (NUR_PORTAL.test(text) && !BEWERBUNGS_POSTFACH.test(email)) { state.uebersprungen[refnr] = 'nur Online-Portal'; selbst('nur Online-Bewerbung'); continue; }
     if (state.emails[email] || postfach.zusatzEmails[email]) { state.uebersprungen[refnr] = 'Firma schon angeschrieben'; continue; }
 
     geprueft++;
-    let b;
-    try { b = await schreibeBewerbung(stelle, text || kopf); }
-    catch (e) { if (e.uebersprungen) throw e; console.log(`[bewerbungs-bot] KI-Fehler ${refnr}: ${e.message}`); continue; }
+    const b = await mitKiGeduld(() => schreibeBewerbung(stelle, text || kopf), refnr);
+    if (b === KI_AUS) { kiAus = true; break; }
+    if (!b) continue;
+    if (b.perMail === false) { state.uebersprungen[refnr] = 'laut Anzeige nur Portal'; selbst('laut Anzeige nur online'); continue; }
     if (!(Number(b.passung) >= MIN_PASSUNG)) { state.uebersprungen[refnr] = `passt nicht (${b.passung})`; continue; }
     if (!anschreibenOk(b.anschreiben)) { console.log(`[bewerbungs-bot] Anschreiben für ${refnr} unbrauchbar - übersprungen.`); continue; }
 
@@ -281,7 +392,7 @@ async function main() {
       state.emails[email] = heute();
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
-    const plus = [...extras(`${kopf} ${text}`), ...(stelle.quereinstieg && !QUEREINSTEIGER.test(text) ? ['🎓 Quereinstieg geeignet'] : []), ...(gehalt ? [`💶 ${gehalt}`] : [])];
+    const plus = [...(hatSchicht(stelle.details) ? ['🌙 Schichtzulagen (steuerfrei)'] : []), ...extras(`${kopf} ${text}`), ...(stelle.quereinstieg && !QUEREINSTEIGER.test(text) ? ['🎓 Quereinstieg geeignet'] : []), ...(gehalt ? [`💶 ${gehalt}`] : [])];
     gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.passung}/10${plus.length ? `  ${plus.join(' ')}` : ''}`);
     console.log(`[bewerbungs-bot] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${refnr}`);
     await pause(8000); // Gmail nicht fluten
@@ -295,7 +406,8 @@ async function main() {
     `Heute ${gesendet.length} neue Bewerbung(en) · insgesamt ${gesamt} raus`,
     ...gesendet,
     ...nachfassBericht,
-    manuell.length ? `\n👉 Ohne E-Mail (bitte selbst über den Link bewerben):\n${manuell.join('\n')}` : '',
+    manuell.length ? `\n👉 Hier geht keine Mail – bitte selbst über den Link bewerben:\n${manuell.join('\n')}` : '',
+    kiAus ? '\n⚠️ Die kostenlose KI war heute zu lange überlastet – der Rest kommt beim nächsten Lauf dran.' : '',
     LIVE ? '' : '\nZum Scharfschalten: Secret BEWERBUNG_LIVE=ja setzen.',
   ].filter(Boolean).join('\n');
   console.log(bericht);
