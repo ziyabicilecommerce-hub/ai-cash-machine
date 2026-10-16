@@ -57,6 +57,19 @@ PROFIL: ${profil()}`;
   return parseJsonFromText(await askKI(prompt, { maxTokens: 900, system: 'Du sortierst Bewerbungs-Antworten. Nur gültiges JSON.' }), {});
 }
 
+// Ersatz, wenn die Gratis-KI leer ist: grob über Stichwörter einordnen - lieber einmal zu oft Alarm als eine Einladung verpassen.
+function klassifiziereOhneKI(mail, text) {
+  const t = `${mail.subject || ''}\n${text}`.slice(0, 6000);
+  const betreff = `„${mail.subject || '(ohne Betreff)'}“ – bitte selbst lesen (KI war überlastet)`;
+  const neueEmail = (t.match(/(?:an|unter|über)\s+([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,})/i) || [])[1] || '';
+  const typ = /leider|absage|nicht (weiter )?berücksichtig|anderen? (bewerber|kandidat)|nicht in die engere|anderweitig besetzt|nicht für sie entschieden/i.test(t) ? 'absage'
+    : /einladung|einladen|vorstellungsgespräch|bewerbungsgespräch|kennenlern|telefoninterview|video(call|gespräch|interview)|probearbeit|probetag|einstellungstest|termin/i.test(t) ? 'einladung'
+      : /unterlagen|zeugnis|nachreichen|rückfrage|bitte (senden|schicken|teilen) sie|können sie uns|wann (können|könnten) sie/i.test(t) ? 'rueckfrage'
+        : neueEmail && /bitte|senden|richten|schicken/i.test(t) ? 'weiterleitung'
+          : /eingang|eingegangen|erhalten|vielen dank für ihre bewerbung/i.test(t) ? 'eingangsbestaetigung' : 'sonstiges';
+  return { typ, zusammenfassung: betreff, termin: '', neueEmail, portalLink: '', antwortEntwurf: '', ohneKI: true };
+}
+
 async function spickzettel(b, k, text) {
   return askKI(`Erstelle einen knackigen Spickzettel (max. 1800 Zeichen, deutsch, Du-Form, mit Emojis als Gliederung) für ein Vorstellungsgespräch.
 Firma: ${b.firma} · Stelle: ${b.titel} · Termin: ${k.termin || 'siehe Mail'}
@@ -121,7 +134,8 @@ async function main() {
       const b = bot.beworben[refnr];
 
       let k;
-      try { k = await klassifiziere(b, mail, text); } catch (e) { if (e.uebersprungen) throw e; verarbeitet.delete(id); continue; }
+      try { k = await klassifiziere(b, mail, text); } catch { k = klassifiziereOhneKI(mail, text); }
+      if (!k?.typ) k = klassifiziereOhneKI(mail, text);
       const typ = String(k.typ || 'sonstiges');
       // Schwächere Signale (Eingangsbestätigung, Weiterleitung) überschreiben nie eine Einladung/Absage.
       if ((RANG[typ] ?? 0) >= (RANG[st.antworten[refnr]?.typ] ?? -1)) {
@@ -139,7 +153,7 @@ async function main() {
         meldungen.push(`❓ Rückfrage von ${kopf}\n${k.zusammenfassung || ''}\n✉️ Antwort-Entwurf liegt in Gmail – kurz checken & senden.`);
       } else if (typ === 'weiterleitung') {
         const neu = String(k.neueEmail || '').toLowerCase().trim();
-        if (LIVE && emailOk(neu) && neu !== b.email && !st.zusatzEmails[neu]) {
+        if (LIVE && !k.ohneKI && emailOk(neu) && neu !== b.email && !st.zusatzEmails[neu]) {
           transport ||= gmailTransport(); cv ||= await holeLebenslauf();
           await transport.sendMail({ from: `${BEWERBER()} <${user}>`, to: neu, subject: b.betreff, text: `${b.anschreiben}\n${signatur()}`, attachments: [await anschreibenAnhang({ firma: b.firma, ort: '', betreff: b.betreff, anschreiben: b.anschreiben }), cvAnhang(cv)] });
           st.zusatzEmails[neu] = heute();
@@ -150,6 +164,8 @@ async function main() {
         }
       } else if (typ === 'absage') {
         meldungen.push(`❌ Absage: ${kopf} – abgehakt, weiter geht's.`);
+      } else if (k.ohneKI && typ === 'sonstiges') {
+        meldungen.push(`📩 Neue Mail von ${kopf}\n${k.zusammenfassung}`);
       }
     }
   } finally {
