@@ -141,3 +141,13 @@ test('filterFuer: Querformat scharf in die Mitte mit Unschärfe-Hintergrund, Hoc
   assert.doesNotMatch(hoch, /boxblur/);
   assert.doesNotMatch(filterFuer(0, 0, 1080, 1920), /boxblur/, 'unbekannte Größe -> füllen');
 });
+
+import { modelleFuer, bewegungsPrompt } from '../../automations/lib/kiVideo.mjs';
+test('KI-Video: Hook-Szene zuerst Wan, sonst LTX; erschöpfte Modelle fallen raus', () => {
+  assert.deepEqual(modelleFuer(0), ['wan', 'ltx']);
+  assert.deepEqual(modelleFuer(2), ['ltx', 'wan']);
+  assert.deepEqual(modelleFuer(2, new Set(['ltx'])), ['wan']);
+  assert.deepEqual(modelleFuer(0, new Set(['ltx', 'wan'])), []);
+  assert.match(bewegungsPrompt('honey bee on a flower, cinematic, no text, no people'), /camera motion/);
+  assert.doesNotMatch(bewegungsPrompt('bee, no text, no people'), /no people/);
+});

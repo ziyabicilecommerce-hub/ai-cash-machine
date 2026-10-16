@@ -12,6 +12,7 @@ import { freistellen, hintergrundHolen, assAusSrt, ebenenVorbereiten, premiumSze
 import { effekteAn, lichtLeckBauen, qrBauen, uebergangFuer, endkarteAss, funkelnAss, strahlenBauen } from './effekte.mjs';
 import { mitmachAss } from './mitmachen.mjs';
 import { clipAnpassen, clipsHolen } from './stockVideo.mjs';
+import { kiClip, bumerang } from './kiVideo.mjs';
 
 const warte = (ms) => new Promise((r) => setTimeout(r, ms));
 // Asynchron, damit waehrend Stimme/Schnitt schon das naechste Bild geladen wird.
@@ -224,7 +225,7 @@ function tiefe3d(bild, ziel, dauer, { breite, hoehe, art }) {
 // eine YouTube-Kapitelmarke. Zurueck kommen auch Kapitelmarken und eine Gesamt-.srt.
 // premium: Produkt freigestellt vor KI-Hintergrund (skript.hintergrund = {prompt, seed}),
 // 2.5D-Parallaxe, Farblook, Wort-fuer-Wort-Untertitel, Beat und Whoosh (siehe premium.mjs).
-export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '', bildAlle = 1, musik = '', premium = false, sprache = 'de', anfaenge = [], stockClips = null } = {}) {
+export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de-DE-SeraphinaMultilingualNeural', stil = '', hook = '', bildAlle = 1, musik = '', premium = false, sprache = 'de', anfaenge = [], stockClips = null, kiClips = false } = {}) {
   if (!existsSync(ordner)) mkdirSync(ordner, { recursive: true });
   const [breite, hoehe] = format === 'quer' ? [1920, 1080] : [1080, 1920];
   const szenen = skript.szenen;
@@ -326,7 +327,10 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         // Nicht beim Ohne/Mit-Vergleich - eine Kamerafahrt durch zwei Bildhaelften wirkt kaputt.
         // Echter Video-Clip der Szene (szene.video, z. B. Pexels) hat Vorrang vor der 3D-Kamerafahrt.
         const stock = szene.video && existsSync(szene.video) && !ebenen.fgP ? clipAnpassen(szene.video, join(ordner, `s${i}.stock.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe }) : '';
-        const bgVideo = stock || (modus === 'demo' ? demoVideoBauen(szene.demo, join(ordner, `s${i}.demo.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe, schrift: SCHRIFT_FETT })
+        // Echter KI-Clip (Bild-zu-Video, kostenlos über Hugging Face) statt Kamerafahrt durchs Standbild.
+        const kiRoh = !stock && kiClips && !ebenen.fgP && !modus?.match?.(/vergleich|demo/) ? await kiClip(ebenen.bgP, szene.bild, join(ordner, `s${i}.ki.mp4`), { index: i }) : '';
+        const ki = kiRoh ? clipAnpassen(bumerang(kiRoh, join(ordner, `s${i}.kib.mp4`), dauerSekunden(mp3) + 0.3) || kiRoh, join(ordner, `s${i}.kif.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe }) : '';
+        const bgVideo = stock || ki || (modus === 'demo' ? demoVideoBauen(szene.demo, join(ordner, `s${i}.demo.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe, schrift: SCHRIFT_FETT })
           : !ebenen.fgP && modus !== 'vergleich' ? tiefe3d(ebenen.bgP, join(ordner, `s${i}.3d.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe, art: ['dolly', 'orbit', 'kran'][i % 3] }) : '');
         await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1, effekt, bgVideo });
         if (hookSzene) hookVorlage = { ebenen, assOpts, effekt, bgVideo, index: i, stimme: szene.stimme || stimme };

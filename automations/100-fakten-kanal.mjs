@@ -256,9 +256,11 @@ async function main() {
       }
       // Echte Video-Clips statt Standbild - ohne Schlüssel (Wikimedia Commons gemeinfrei, NASA bei Weltall; Pexels falls
       // PEXELS_API_KEY gesetzt). FAKTEN_CLIPS=aus schaltet ab.
-      const clips = /^(0|nein|aus|false)$/i.test(env('FAKTEN_CLIPS', 'an')) ? null : { weltall: /weltall/i.test(eintrag?.kat || kategorie), ohneMenschen: true };
+      // Weltall: echte NASA-Aufnahmen. Alles andere: echte KI-Clips (Bild-zu-Video) statt Archiv-Clips.
+      const weltall = /weltall/i.test(eintrag?.kat || kategorie);
+      const clips = /^(0|nein|aus|false)$/i.test(env('FAKTEN_CLIPS', 'an')) || !weltall ? null : { weltall, ohneMenschen: true };
       if (/weltall/i.test(eintrag?.kat || kategorie)) for (const sz of skript.szenen) delete sz.ohneClip;
-      const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting', stockClips: clips });
+      const v = await videoBauen(skript, join(OUT, `fakt-${i}`), { format: 'hoch', hook: skript.hook, premium: true, sprache: 'de', stil: 'cinematic, photorealistic, dramatic lighting', stockClips: clips, kiClips: true });
       if (moderatorinAn() && v.stimme) {
         try { await moderatorinEinfuegen(v.pfad, v.stimme, MODERATORIN_NR); } catch (err) { console.log(`[100-fakten-kanal] Moderatorin fehlgeschlagen: ${String(err.message).slice(0, 150)}`); }
       }
