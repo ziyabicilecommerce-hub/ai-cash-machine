@@ -142,12 +142,16 @@ test('filterFuer: Querformat scharf in die Mitte mit Unschärfe-Hintergrund, Hoc
   assert.doesNotMatch(filterFuer(0, 0, 1080, 1920), /boxblur/, 'unbekannte Größe -> füllen');
 });
 
-import { modelleFuer, bewegungsPrompt } from '../../automations/lib/kiVideo.mjs';
+import { modelleFuer, bewegungsPrompt, zhipuAuftrag } from '../../automations/lib/kiVideo.mjs';
 test('KI-Video: Hook-Szene zuerst Wan, sonst LTX; erschöpfte Modelle fallen raus', () => {
-  assert.deepEqual(modelleFuer(0), ['wan', 'ltx']);
-  assert.deepEqual(modelleFuer(2), ['ltx', 'wan']);
-  assert.deepEqual(modelleFuer(2, new Set(['ltx'])), ['wan']);
-  assert.deepEqual(modelleFuer(0, new Set(['ltx', 'wan'])), []);
+  assert.deepEqual(modelleFuer(0, new Set(), { zhipu: false }), ['wan', 'ltx']);
+  assert.deepEqual(modelleFuer(0, new Set(['wan', 'ltx']), { zhipu: true }), ['zhipu'], 'Zhipu springt ein, wenn Hugging Face leer ist');
+  const a = zhipuAuftrag('QUJD', 'bee on a flower');
+  assert.equal(a.model, 'cogvideox-flash');
+  assert.match(a.image_url, /^data:image\/jpeg;base64,QUJD$/);
+  assert.deepEqual(modelleFuer(2, new Set(), { zhipu: false }), ['ltx', 'wan']);
+  assert.deepEqual(modelleFuer(2, new Set(['ltx']), { zhipu: false }), ['wan']);
+  assert.deepEqual(modelleFuer(0, new Set(['ltx', 'wan']), { zhipu: false }), []);
   assert.match(bewegungsPrompt('honey bee on a flower, cinematic, no text, no people'), /camera motion/);
   assert.doesNotMatch(bewegungsPrompt('bee, no text, no people'), /no people/);
 });
