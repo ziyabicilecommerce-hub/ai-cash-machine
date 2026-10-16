@@ -373,7 +373,7 @@ async function main() {
     if (b === KI_AUS) { kiAus = true; b = null; }
     // KI überlastet → Profi-Vorlage aus deinen echten Daten statt gar keiner Bewerbung.
     if (!b) {
-      if (!vorlagePasst(text)) { state.uebersprungen[refnr] = 'verlangt Ausbildung/Erfahrung (Vorlage)'; continue; }
+      if (!vorlagePasst(text, stelle.titel || '')) { state.uebersprungen[refnr] = 'verlangt Ausbildung/Erfahrung (Vorlage)'; continue; }
       b = { passung: MIN_PASSUNG, perMail: true, vorlage: true, anschreiben: vorlageAnschreiben({ titel: stelle.titel, firma: stelle.arbeitgeber, text }) };
     }
     if (b.perMail === false) { state.uebersprungen[refnr] = 'laut Anzeige nur Portal'; selbst('laut Anzeige nur online'); continue; }
