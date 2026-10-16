@@ -276,5 +276,11 @@ jobs:
           done
           if ! git diff --cached --quiet; then
             git commit -m "chore: update automation state [skip ci]"
-            git push
+            # Andere Automationen pushen parallel State - dann erst holen, eigenen Commit obendrauf, nochmal.
+            for versuch in 1 2 3 4 5; do
+              git push && exit 0
+              git pull --rebase -X theirs origin "$GITHUB_REF_NAME" || git rebase --abort || true
+              sleep $((versuch * 3))
+            done
+            exit 1
           fi

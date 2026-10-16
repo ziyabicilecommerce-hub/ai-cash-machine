@@ -11,6 +11,7 @@
 // (sonst Testmodus: alles geht an GMAIL_USER selbst), BEWERBUNG_MAX_PRO_TAG,
 // BEWERBUNG_ORT, BEWERBUNG_UMKREIS_KM, BEWERBUNG_SUCHBEGRIFFE, BEWERBUNG_STATE_KEY.
 import { askKI, parseJsonFromText } from './lib/ki.mjs';
+import { vorlageAnschreiben, vorlagePasst } from './lib/anschreibenVorlage.mjs';
 import {
   env, LIVE, BEWERBER, emailOk, heute, tageSeit, gmailZugang, profil, ladeGeheim, speichereGeheim,
   gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang, wohnort,
@@ -272,7 +273,7 @@ async function mitKiGeduld(aufruf, refnr) {
       await pause(35000 * versuch);
     }
   }
-  return ++kiFehlerInFolge >= 3 ? KI_AUS : null;
+  return ++kiFehlerInFolge >= 2 ? KI_AUS : null;
 }
 
 // Nachfassen: eine Mail im selben Thread, wenn nach X Tagen nichts kam.
@@ -321,6 +322,7 @@ async function main() {
   const manuell = [];
   let geprueft = 0;
   let kiAus = false;
+  const heuteAngeschrieben = new Set(); // auch im Testmodus jede Firma nur einmal
 
   // Schritt 1: billige Filter ohne Netzwerk.
   const kandidaten = [];
@@ -340,7 +342,8 @@ async function main() {
   // Schritt 2: Details der besten Kandidaten parallel holen, damit das Gehalt in die Reihenfolge einfließt
   // (gut bezahlte Lieblingsjobs zuerst, schlecht bezahlte fliegen raus).
   kandidaten.sort((a, b) => attraktivitaet(b) - attraktivitaet(a));
-  const auswahl = kandidaten.slice(0, Math.max(150, MAX_PRO_TAG * 6));
+  // Alle Kandidaten genau anschauen: nur ein kleiner Teil nennt überhaupt eine Bewerbungs-Mail.
+  const auswahl = kandidaten.slice(0, 900);
   await parallel(auswahl, 6, async (st) => { st.details = await holeDetails(st.refnr); st.brutto = monatsBrutto(st.details.flags); });
   const geldScore = (x) => attraktivitaet(x) + gehaltsBonus(x.brutto) + (hatSchicht(x.details) ? 2 : 0);
   auswahl.sort((a, b) => geldScore(b) - geldScore(a));
@@ -363,12 +366,16 @@ async function main() {
     if (!emailOk(email)) { state.uebersprungen[refnr] = 'keine E-Mail'; selbst('keine E-Mail in der Anzeige'); continue; }
     // Steht "nur über unser Portal" in der Anzeige und ist die Adresse kein Bewerbungspostfach, wäre die Mail verschenkt.
     if (NUR_PORTAL.test(text) && !BEWERBUNGS_POSTFACH.test(email)) { state.uebersprungen[refnr] = 'nur Online-Portal'; selbst('nur Online-Bewerbung'); continue; }
-    if (state.emails[email] || postfach.zusatzEmails[email]) { state.uebersprungen[refnr] = 'Firma schon angeschrieben'; continue; }
+    if (state.emails[email] || postfach.zusatzEmails[email] || heuteAngeschrieben.has(email)) { state.uebersprungen[refnr] = 'Firma schon angeschrieben'; continue; }
 
     geprueft++;
-    const b = await mitKiGeduld(() => schreibeBewerbung(stelle, text || kopf), refnr);
-    if (b === KI_AUS) { kiAus = true; break; }
-    if (!b) continue;
+    let b = kiAus ? null : await mitKiGeduld(() => schreibeBewerbung(stelle, text || kopf), refnr);
+    if (b === KI_AUS) { kiAus = true; b = null; }
+    // KI überlastet → Profi-Vorlage aus deinen echten Daten statt gar keiner Bewerbung.
+    if (!b) {
+      if (!vorlagePasst(text)) { state.uebersprungen[refnr] = 'verlangt Ausbildung/Erfahrung (Vorlage)'; continue; }
+      b = { passung: MIN_PASSUNG, perMail: true, vorlage: true, anschreiben: vorlageAnschreiben({ titel: stelle.titel, firma: stelle.arbeitgeber, text }) };
+    }
     if (b.perMail === false) { state.uebersprungen[refnr] = 'laut Anzeige nur Portal'; selbst('laut Anzeige nur online'); continue; }
     if (!(Number(b.passung) >= MIN_PASSUNG)) { state.uebersprungen[refnr] = `passt nicht (${b.passung})`; continue; }
     if (!anschreibenOk(b.anschreiben)) { console.log(`[bewerbungs-bot] Anschreiben für ${refnr} unbrauchbar - übersprungen.`); continue; }
@@ -393,7 +400,8 @@ async function main() {
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
     const plus = [...(hatSchicht(stelle.details) ? ['🌙 Schichtzulagen (steuerfrei)'] : []), ...extras(`${kopf} ${text}`), ...(stelle.quereinstieg && !QUEREINSTEIGER.test(text) ? ['🎓 Quereinstieg geeignet'] : []), ...(gehalt ? [`💶 ${gehalt}`] : [])];
-    gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.passung}/10${plus.length ? `  ${plus.join(' ')}` : ''}`);
+    gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.vorlage ? '✍️ Vorlage' : `${b.passung}/10`}${plus.length ? `  ${plus.join(' ')}` : ''}`);
+    heuteAngeschrieben.add(email);
     console.log(`[bewerbungs-bot] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${refnr}`);
     await pause(8000); // Gmail nicht fluten
   }
@@ -407,7 +415,7 @@ async function main() {
     ...gesendet,
     ...nachfassBericht,
     manuell.length ? `\n👉 Hier geht keine Mail – bitte selbst über den Link bewerben:\n${manuell.join('\n')}` : '',
-    kiAus ? '\n⚠️ Die kostenlose KI war heute zu lange überlastet – der Rest kommt beim nächsten Lauf dran.' : '',
+    kiAus ? '\n⚠️ Die kostenlose KI war heute überlastet – die mit ✍️ markierten Anschreiben kommen aus deiner Profi-Vorlage.' : '',
     LIVE ? '' : '\nZum Scharfschalten: Secret BEWERBUNG_LIVE=ja setzen.',
   ].filter(Boolean).join('\n');
   console.log(bericht);
