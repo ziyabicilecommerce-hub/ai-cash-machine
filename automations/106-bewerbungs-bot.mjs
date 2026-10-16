@@ -273,7 +273,7 @@ async function mitKiGeduld(aufruf, refnr) {
       await pause(35000 * versuch);
     }
   }
-  return ++kiFehlerInFolge >= 2 ? KI_AUS : null;
+  return ++kiFehlerInFolge >= 1 ? KI_AUS : null; // nach 4 Fehlversuchen ist die Gratis-KI für heute durch
 }
 
 // Nachfassen: eine Mail im selben Thread, wenn nach X Tagen nichts kam.
