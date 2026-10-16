@@ -2,8 +2,8 @@ name: "107 · Bewerbungs-Postfach"
 
 on:
   schedule:
-    # alle 30 Min zwischen ca. 07 und 22 Uhr deutscher Zeit
-    - cron: '*/30 5-20 * * *'
+    # alle 5 Min zwischen ca. 07 und 22 Uhr deutscher Zeit (GitHub kann bei Last ein paar Minuten später starten)
+    - cron: '*/5 5-20 * * *'
   workflow_dispatch: {}
 
 permissions:

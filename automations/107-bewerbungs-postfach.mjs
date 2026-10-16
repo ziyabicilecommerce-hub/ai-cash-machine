@@ -18,7 +18,10 @@ import {
 import { STATE_BOT, STATE_POSTFACH } from './106-bewerbungs-bot.mjs';
 
 const MAX_MAILS_PRO_LAUF = 60;
-const RANG = { sonstiges: 0, eingangsbestaetigung: 0, weiterleitung: 1, rueckfrage: 2, einladung: 3, absage: 3 };
+const RANG = { sonstiges: 0, eingangsbestaetigung: 0, weiterleitung: 1, rueckfrage: 2, unzustellbar: 3, einladung: 3, absage: 3 };
+// Rückläufer vom Mailserver: Adresse aus der Anzeige gibt es nicht (mehr).
+const RUECKLAEUFER_VON = /mailer-daemon|postmaster|mail delivery/i;
+const RUECKLAEUFER_BETREFF = /delivery status notification|undeliver|unzustellbar|nicht zugestellt|address not found|adresse nicht gefunden|zustellung fehlgeschlagen|delivery has failed|returned mail|failure notice/i;
 
 function baueIndex(beworben) {
   const perMsgId = new Map(); const perEmail = new Map(); const perDomain = new Map();
@@ -95,14 +98,27 @@ async function main() {
 
     for (const mail of mails) {
       const id = mail.messageId || `${mail.date?.toISOString()}|${mail.subject}`;
+      const text = mail.text || String(mail.html || '').replace(/<[^>]+>/g, ' ');
+      // Rückläufer auch prüfen, wenn die Mail schon gesehen wurde (idempotent über den Typ).
+      const absender = mail.from?.value?.[0]?.address?.toLowerCase() || '';
+      if (RUECKLAEUFER_VON.test(`${absender} ${mail.from?.text || ''}`) || RUECKLAEUFER_BETREFF.test(mail.subject || '')) {
+        const klein = text.toLowerCase();
+        const treffer = Object.entries(bot.beworben).find(([, x]) => x.email && klein.includes(x.email));
+        if (treffer && st.antworten[treffer[0]]?.typ !== 'unzustellbar') {
+          const [nr, x] = treffer;
+          st.antworten[nr] = { typ: 'unzustellbar', datum: heute(), zusammenfassung: `${x.email} existiert nicht` };
+          meldungen.push(`📭 Kam nicht an: ${x.titel} – ${x.firma}\n${x.email} gibt es nicht (mehr).\n👉 Selbst bewerben: https://www.arbeitsagentur.de/jobsuche/jobdetail/${encodeURIComponent(nr)}`);
+        }
+        continue;
+      }
       if (verarbeitet.has(id)) continue;
       verarbeitet.add(id);
       const von = mail.from?.value?.[0]?.address?.toLowerCase() || '';
       if (von === user.toLowerCase()) continue;
+
       const refnr = ordneZu(mail, index);
       if (!refnr) continue;
       const b = bot.beworben[refnr];
-      const text = mail.text || String(mail.html || '').replace(/<[^>]+>/g, ' ');
 
       let k;
       try { k = await klassifiziere(b, mail, text); } catch (e) { if (e.uebersprungen) throw e; verarbeitet.delete(id); continue; }
@@ -147,8 +163,8 @@ async function main() {
   if (meldungen.length) {
     const typen = Object.values(st.antworten).map((a) => a.typ);
     const z = (t) => typen.filter((x) => x === t).length;
-    const offen = Object.keys(bot.beworben).length - z('einladung') - z('absage');
-    const bilanz = `\n📊 Bilanz: ${z('einladung')} Einladungen · ${z('absage')} Absagen · ${offen} noch offen`;
+    const offen = Object.keys(bot.beworben).length - z('einladung') - z('absage') - z('unzustellbar');
+    const bilanz = `\n📊 Bilanz: ${z('einladung')} Einladungen · ${z('absage')} Absagen · ${z('unzustellbar')} nicht zugestellt · ${offen} noch offen`;
     transport ||= gmailTransport();
     const einladung = meldungen.some((m) => m.includes('EINLADUNG'));
     await meldeMir(einladung ? '🔥🔥 EINLADUNG ZUM GESPRÄCH – sofort lesen!' : `📬 ${meldungen.length} neue Antwort(en) auf deine Bewerbungen`, `${meldungen.join('\n\n────────\n\n')}\n${bilanz}`, transport);
