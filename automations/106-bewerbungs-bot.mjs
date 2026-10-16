@@ -33,6 +33,19 @@ const NACHFASS_NACH_TAGEN = 12;
 // Angebotsart der BA: 1 = Arbeit, 4 = Ausbildung. Wunsch: Büro/Buchhaltung,
 // Vollzeit mit festem Gehalt, am liebsten am Flughafen Frankfurt (liegt im 20-km-Radius).
 const STANDARD_SUCHE = [
+  // Büro mit Action: Flughafen/Luftfracht, Disposition, Zoll, Leitstelle - da vergeht der Tag schnell.
+  'Sachbearbeiter Luftfracht:job',
+  'Air Cargo:job',
+  'Flughafen Operations:job',
+  'Tracing Luftfracht:job',
+  'Disponent Quereinsteiger:job',
+  'Sachbearbeiter Disposition:job',
+  'Logistik Koordinator:job',
+  'Einsatzplaner:job',
+  'Zollabwicklung:job',
+  'Export Sachbearbeiter:job',
+  'Mitarbeiter Leitstelle:job',
+  'Customer Service Operations:job',
   'Quereinsteiger Büro:job',
   'Quereinsteiger Verwaltung:job',
   'Quereinsteiger Buchhaltung:job',
@@ -62,7 +75,9 @@ const STANDARD_SUCHE = [
 ].join(';');
 
 const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key ?account|kundenberater|neukunden|d2d|door to door|fundraising/i;
-const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt/i;
+const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt|\b(dis ag|tempworkers|randstad|adecco|manpower|hays|orizon|amadeus fire|ferchau|gulp|brunel|persona service|jobactive|piening|timepartner|startpeople|tempton|akkodis|allianz personal)\b|\bpersonal (gmbh|service|partner)/i;
+// Führungsjobs sind ohne Erfahrung sinnlos.
+const FUEHRUNG = /geschäftsführ|\bleiter|\bleitung|head of|senior|teamlead|team lead|director|direktor/i;
 // Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
 const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freelance|freiberuf|selbstständig|selbständig|nebenjob|honorar|auf provisionsbasis|\b(520|538|556) ?(€|euro)/i;
 const FLUGHAFEN = /flughafen|airport|fraport|lufthansa|condor|cargo ?city|luftverkehr|luftfracht|aviation|\b60549\b/i;
@@ -72,15 +87,19 @@ const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hatters
 const ortPasst = (st) => ORTE.test(`${st.arbeitsort?.ort || ''} ${st.arbeitsort?.region || ''}`) && st.arbeitsort?.plz !== '64347';
 const QUEREINSTEIGER = /quereinst|ohne (berufs)?erfahrung|keine (berufs)?erfahrung (nötig|erforderlich|notwendig)|einarbeitung|wir arbeiten (sie|dich) ein|berufseinsteiger|berufsanfänger/i;
 
-// Je höher, desto früher wird beworben: Flughafen > Quereinsteiger > Buchhaltung > Rest.
+// Büro mit Tempo: ständig was los, Zeit vergeht schnell.
+const ACTION = /luftfracht|air ?cargo|cargo|operations|disposition|disponent|logistik|zoll|export|import|leitstelle|leitstand|einsatzplan|tracing|ground handling|station/i;
+
+// Je höher, desto früher wird beworben: Flughafen > Action-Büro > Quereinsteiger > Buchhaltung > Rest.
 function attraktivitaet(st) {
   const kopf = `${st.titel} ${st.beruf || ''} ${st.arbeitgeber || ''} ${st.arbeitsort?.plz || ''} ${st.arbeitsort?.ort || ''}`;
-  return (FLUGHAFEN.test(kopf) ? 3 : 0) + (st.quereinstieg || QUEREINSTEIGER.test(kopf) ? 2 : 0) + (/buchhalt|finanz|rechnungswesen|kreditor|debitor/i.test(kopf) ? 2 : 0) + (/büro|verwaltung|sachbearbeit|backoffice/i.test(kopf) ? 1 : 0);
+  return (FLUGHAFEN.test(kopf) ? 3 : 0) + (ACTION.test(kopf) ? 2 : 0) + (st.quereinstieg || QUEREINSTEIGER.test(kopf) ? 2 : 0) + (/buchhalt|finanz|rechnungswesen|kreditor|debitor/i.test(kopf) ? 2 : 0) + (/büro|verwaltung|sachbearbeit|backoffice/i.test(kopf) ? 1 : 0);
 }
 
 function extras(text) {
   return [
     FLUGHAFEN.test(text) && '🛫 Flughafen',
+    ACTION.test(text.slice(0, 600)) && '⚡ Büro mit Action',
     /firmenwagen|dienstwagen|firmenfahrzeug|dienstfahrzeug/i.test(text) && '🚗 Firmenwagen',
     /tarif|tvöd|tv-l|13\. ?(monats)?gehalt|weihnachtsgeld|urlaubsgeld/i.test(text) && '💰 Tarif/Extras',
     /jobticket|deutschlandticket/i.test(text) && '🎫 Jobticket',
@@ -166,7 +185,7 @@ Firma: ${stelle.arbeitgeber}
 Ort: ${stelle.arbeitsort?.ort || ''}
 Text: ${beschreibung.slice(0, 3500)}
 
-WUNSCH DES BEWERBERS: Büro oder Buchhaltung, Vollzeit, festes Gehalt (keine Provision), am liebsten am Flughafen Frankfurt. Er hat KEINE Berufserfahrung und ist Quereinsteiger - Stellen, die Quereinsteiger/Berufsanfänger ausdrücklich willkommen heißen oder eine Einarbeitung bieten, passen besonders gut (eher 7-9). Verlangt die Stelle mehrjährige Berufserfahrung, ist sie unter 6. Im Anschreiben die Lernbereitschaft und Motivation für die Einarbeitung betonen, nichts beschönigen. Passt die Stelle dazu, darf das Anschreiben diese Begeisterung (z. B. für den Flughafen oder für Zahlen/Buchhaltung) konkret zeigen.
+WUNSCH DES BEWERBERS: Büro mit Tempo und Abwechslung (Luftfracht, Disposition, Zoll, Leitstelle, Flughafen) oder Buchhaltung, Vollzeit, festes Gehalt (keine Provision), am liebsten am Flughafen Frankfurt. Er hat KEINE Berufserfahrung und ist Quereinsteiger - Stellen, die Quereinsteiger/Berufsanfänger ausdrücklich willkommen heißen oder eine Einarbeitung bieten, passen besonders gut (eher 7-9). Verlangt die Stelle mehrjährige Berufserfahrung, ist sie unter 6. Im Anschreiben die Lernbereitschaft und Motivation für die Einarbeitung betonen, nichts beschönigen. Passt die Stelle dazu, darf das Anschreiben diese Begeisterung (z. B. für den Flughafen oder für Zahlen/Buchhaltung) konkret zeigen.
 
 AUFGABE:
 1. Bewerte ehrlich, ob der Bewerber realistische Chancen hat (0-10). Unter 6, wenn: abgeschlossene Ausbildung/Studium/Berufserfahrung zwingend verlangt, Realschulabschluss/Abitur zwingend verlangt, Führerschein zwingend, oder es eigentlich Vertrieb/Verkauf ist.
@@ -263,6 +282,7 @@ async function main() {
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf) || ZEITARBEIT.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb/zeitarbeit'; continue; }
+    if (FUEHRUNG.test(stelle.titel)) { state.uebersprungen[refnr] = 'Führungsposition'; continue; }
     if (stelle.minijob || !stelle.vollzeit || KEIN_FIXGEHALT.test(kopf)) { state.uebersprungen[refnr] = 'kein Vollzeit-Fixgehalt'; continue; }
     if (stelle.zeitarbeit) { state.uebersprungen[refnr] = 'Zeitarbeit/Personalvermittlung'; continue; }
     if (!ortPasst(stelle)) { state.uebersprungen[refnr] = `Ort ${stelle.arbeitsort?.ort || '?'}`; continue; }
