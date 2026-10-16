@@ -98,6 +98,7 @@ async function main() {
   const seit = st.letzterCheck ? new Date(new Date(st.letzterCheck).getTime() - 864e5) : new Date(Date.now() - 21 * 864e5);
   const meldungen = [];
   let transport = null; let cv = null;
+  let kiWeg = false;
 
   const client = new ImapFlow({ host: 'imap.gmail.com', port: 993, secure: true, auth: { user, pass }, logger: false });
   await client.connect();
@@ -134,7 +135,9 @@ async function main() {
       const b = bot.beworben[refnr];
 
       let k;
-      try { k = await klassifiziere(b, mail, text); } catch { k = klassifiziereOhneKI(mail, text); }
+      // Nach dem ersten KI-Ausfall den Rest des Laufs direkt über Stichwörter - sonst staut sich der 5-Min-Takt.
+      try { k = kiWeg ? null : await klassifiziere(b, mail, text); } catch { kiWeg = true; }
+      if (!k) k = klassifiziereOhneKI(mail, text);
       if (!k?.typ) k = klassifiziereOhneKI(mail, text);
       const typ = String(k.typ || 'sonstiges');
       // Schwächere Signale (Eingangsbestätigung, Weiterleitung) überschreiben nie eine Einladung/Absage.
@@ -146,7 +149,7 @@ async function main() {
       if (typ === 'einladung') {
         if (k.antwortEntwurf) await legeEntwurfAn(client, user, mail, b, k.antwortEntwurf);
         let zettel = '';
-        try { zettel = await spickzettel(b, k, text); } catch { /* Alarm ist wichtiger als der Zettel */ }
+        try { if (!kiWeg) zettel = await spickzettel(b, k, text); } catch { /* Alarm ist wichtiger als der Zettel */ }
         meldungen.push(`🔥🔥 EINLADUNG! ${kopf}\n📅 ${k.termin || 'Termin siehe Mail'}\n${k.zusammenfassung || ''}\n✉️ Zusage liegt fertig in deinen Gmail-Entwürfen – nur noch Senden drücken!\n\n${zettel}`.slice(0, 4000));
       } else if (typ === 'rueckfrage') {
         if (k.antwortEntwurf) await legeEntwurfAn(client, user, mail, b, k.antwortEntwurf);
