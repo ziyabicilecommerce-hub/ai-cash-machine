@@ -1,21 +1,28 @@
-// Prüft im GitHub-Runner, ob die schlüssellosen Clip-Quellen (Wikimedia Commons, NASA) antworten.
-//   node scripts/stock-test.mjs
-import { mkdirSync } from 'node:fs';
-import { stockHolen } from '../automations/lib/stockVideo.mjs';
-
-mkdirSync('out/stock-test', { recursive: true });
-const proben = [
-  ['planet Venus with thick glowing clouds in space, cinematic, no people', true],
-  ['golden honey dripping from a wooden dipper, close-up detail, cinematic, no text, no people', false],
-  ['lightning bolt striking over a city skyline at night, cinematic, no people', false],
-  ['orange goldfish swimming in clear water, cinematic, no people', false],
-  ['spider on a dew covered web at sunrise, cinematic, no people', false],
-  ['fresh spinach leaves with water drops', false],
+// Einmal-Probe (Branch): was bietet Pollinations für Video ohne/mit Schlüssel?
+const urls = [
+  'https://gen.pollinations.ai/docs',
+  'https://gen.pollinations.ai/openapi.json',
+  'https://gen.pollinations.ai/docs/openapi.json',
+  'https://gen.pollinations.ai/image/models',
+  'https://gen.pollinations.ai/models',
+  'https://gen.pollinations.ai/v1/models',
+  'https://image.pollinations.ai/models',
+  'https://enter.pollinations.ai/api/docs/open-api/generate-schema',
 ];
-let ok = 0;
-for (const [i, [prompt, weltall]] of proben.entries()) {
-  const z = await stockHolen(prompt, `out/stock-test/p${i}.mp4`, { weltall, schluessel: '' });
-  console.log(`${z ? '✓' : '✗'} ${prompt.slice(0, 50)}`);
-  if (z) ok++;
+for (const u of urls) {
+  try {
+    const r = await fetch(u, { headers: { 'user-agent': 'Mozilla/5.0' } });
+    const t = await r.text();
+    console.log(`\n=== ${u} -> ${r.status} (${t.length} Zeichen)`);
+    const treffer = t.match(/.{0,160}(video|seedance|wan|veo|pollen|duration).{0,200}/gi) || [];
+    console.log((treffer.length ? treffer.slice(0, 25).join('\n---\n') : t.slice(0, 1500)));
+  } catch (e) { console.log(`\n=== ${u} -> FEHLER ${e.message}`); }
 }
-console.log(`${ok}/${proben.length} Clips gefunden`);
+// Ohne Schlüssel ein Video versuchen
+for (const u of ['https://gen.pollinations.ai/image/a%20cat%20running?model=seedance&duration=3', 'https://gen.pollinations.ai/video/a%20cat%20running?model=seedance&duration=3']) {
+  try {
+    const r = await fetch(u);
+    const b = Buffer.from(await r.arrayBuffer());
+    console.log(`\n=== VIDEO ${u} -> ${r.status} ${r.headers.get('content-type')} ${b.length} B ${b.subarray(0, 300).toString().replace(/[^\x20-\x7e]/g, '.')}`);
+  } catch (e) { console.log(`VIDEO FEHLER ${e.message}`); }
+}
