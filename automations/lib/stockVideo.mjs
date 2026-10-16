@@ -166,7 +166,7 @@ export async function stockHolen(prompt, ziel, { schluessel = process.env.PEXELS
 
 // Für alle Szenen eines Videos Clips holen (videoBauen-Option clips). Szenen mit echtem Produktfoto, KI-Beispiel
 // oder Ohne/Mit-Vergleich bleiben unangetastet. Gleiches Bild -> gleicher Clip (Endlos-Schleife bleibt).
-export async function clipsHolen(szenen, ordner, { weltall = false, ohneMenschen = false } = {}) {
+export async function clipsHolen(szenen, ordner, { weltall = false, ohneMenschen = false, quellen } = {}) {
   const benutzt = new Set();
   const gleich = new Map();
   let treffer = 0;
@@ -177,7 +177,7 @@ export async function clipsHolen(szenen, ordner, { weltall = false, ohneMenschen
     moeglich++;
     if (!gleich.has(szene.bild)) {
       const info = {};
-      const pfad = await stockHolen(szene.bild, `${ordner}/clip${n}.mp4`, { benutzt, weltall, ohneMenschen, info });
+      const pfad = await stockHolen(szene.bild, `${ordner}/clip${n}.mp4`, { benutzt, weltall, ohneMenschen, info, ...(quellen ? { quellen } : {}) });
       gleich.set(szene.bild, { pfad, quelle: info.quelle || '' });
     }
     szene.video = gleich.get(szene.bild).pfad;
