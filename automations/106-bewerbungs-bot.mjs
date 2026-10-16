@@ -281,7 +281,7 @@ async function nachfassen(state, postfach, transport, user, cv) {
   const raus = [];
   for (const [refnr, b] of Object.entries(state.beworben)) {
     if (raus.length >= 5) break;
-    if (b.nachfass || ['einladung', 'absage', 'rueckfrage', 'weiterleitung'].includes(postfach.antworten[refnr]?.typ) || tageSeit(b.datum) < NACHFASS_NACH_TAGEN || !b.messageId) continue;
+    if (b.nachfass || ['einladung', 'absage', 'rueckfrage', 'weiterleitung', 'unzustellbar'].includes(postfach.antworten[refnr]?.typ) || tageSeit(b.datum) < NACHFASS_NACH_TAGEN || !b.messageId) continue;
     const text = `${b.ansprechpartner || 'Sehr geehrte Damen und Herren'},\n\nvor knapp zwei Wochen habe ich mich bei Ihnen als ${b.titel} beworben. Ich möchte mich kurz erkundigen, ob meine Unterlagen gut angekommen sind und wie der aktuelle Stand ist.\n\nIch bin nach wie vor sehr motiviert, bei ${b.firma} anzufangen, und kann kurzfristig starten. Für Rückfragen bin ich jederzeit erreichbar. Meinen Lebenslauf hänge ich der Einfachheit halber noch einmal an.\n${signatur()}`;
     await transport.sendMail({
       from: `${BEWERBER()} <${user}>`, to: b.email, subject: `Re: ${b.betreff}`, text,
