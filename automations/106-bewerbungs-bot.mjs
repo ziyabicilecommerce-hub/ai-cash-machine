@@ -77,7 +77,7 @@ const STANDARD_SUCHE = [
 const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key ?account|kundenberater|neukunden|d2d|door to door|fundraising/i;
 const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt|\b(dis ag|tempworkers|randstad|adecco|manpower|hays|orizon|amadeus fire|ferchau|gulp|brunel|persona service|jobactive|piening|timepartner|startpeople|tempton|akkodis|allianz personal)\b|\bpersonal (gmbh|service|partner)/i;
 // Führungsjobs sind ohne Erfahrung sinnlos.
-const FUEHRUNG = /geschäftsführ|\bleiter|\bleitung|head of|senior|teamlead|team lead|director|direktor/i;
+const FUEHRUNG = /geschäftsführ|leiter(in)?\b|leitung\b|head of|senior|teamlead|team lead|director|direktor/i;
 // Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
 const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freelance|freiberuf|selbstständig|selbständig|nebenjob|honorar|auf provisionsbasis|\b(520|538|556) ?(€|euro)/i;
 const FLUGHAFEN = /flughafen|airport|fraport|lufthansa|condor|cargo ?city|luftverkehr|luftfracht|aviation|\b60549\b/i;
