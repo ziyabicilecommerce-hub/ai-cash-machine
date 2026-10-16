@@ -28,8 +28,10 @@ const MAX_PRO_TAG = Math.max(1, Math.min(150, parseInt(env('BEWERBUNG_MAX_PRO_TA
 const ORT = wohnort();
 const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '25'), 10) || 25;
 const MIN_PASSUNG = 6;
-// Unter diesem Monatsbrutto wird nicht beworben (nur wenn die Anzeige ein Gehalt nennt). ~2.600 € ≈ 1.850 € netto (Stkl. 1).
-const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '2600'), 10) || 2600;
+// Unter diesem Monatsbrutto wird nicht beworben (nur wenn die Anzeige ein Gehalt nennt). ~3.000 € ≈ 2.050 € netto (Stkl. 1).
+const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '3000'), 10) || 3000;
+// Personalvermittler/Zeitarbeit nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt (dann lohnt es sich).
+const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3500'), 10) || 3500;
 // Wird nur genannt, wenn die Anzeige ausdrücklich nach einer Gehaltsvorstellung fragt.
 const GEHALTSWUNSCH = env('BEWERBUNG_GEHALTSWUNSCH', '36.000');
 const NACHFASS_NACH_TAGEN = 12;
@@ -59,6 +61,11 @@ const STANDARD_SUCHE = [
   'Logistik Koordinator:job',
   'Einsatzplaner:job',
   'Customer Service Operations:job',
+  // Mehr Geld: Bank-Service, Schichtbetrieb mit Zuschlägen
+  'Kundenservice Bank:job',
+  'Sachbearbeiter Bank:job',
+  'Leitstelle Schichtdienst:job',
+  'Luftfracht Schicht:job',
   'Quereinsteiger Büro:job',
   'Quereinsteiger Verwaltung:job',
   'Quereinsteiger Buchhaltung:job',
@@ -122,7 +129,9 @@ function monatsBrutto(d = {}) {
   const faktor = von < 100 ? 173 : von > 15000 ? 1 / 12 : 1;
   return { von: von * faktor, bis: bis * faktor };
 }
-const gehaltsBonus = (b) => (!b ? 0 : b.bis >= 3800 ? 4 : b.bis >= 3300 ? 3 : b.bis >= 2900 ? 2 : 1);
+const gehaltsBonus = (b) => (!b ? 0 : b.bis >= 4500 ? 6 : b.bis >= 3800 ? 4 : b.bis >= 3300 ? 3 : b.bis >= 2900 ? 2 : 1);
+// Nacht-/Sonn-/Feiertagszuschläge sind steuerfrei (§ 3b EStG) - landen fast komplett netto auf dem Konto.
+const SCHICHT = /schicht|nacht|24\/7|rund um die uhr|wochenend|sonn- und feiertag|zuschläge|zuschlaegen|wechseldienst/i;
 
 async function parallel(liste, anzahl, arbeit) {
   let i = 0;
@@ -132,6 +141,7 @@ async function parallel(liste, anzahl, arbeit) {
 function extras(text) {
   return [
     FLUGHAFEN.test(text) && '🛫 Flughafen',
+    SCHICHT.test(text) && '🌙 Schichtzulagen (steuerfrei)',
     FAVORIT.test(text.slice(0, 600)) ? '⭐ Lieblingsbereich' : ACTION.test(text.slice(0, 600)) && '⚡ Büro mit Action',
     /firmenwagen|dienstwagen|firmenfahrzeug|dienstfahrzeug/i.test(text) && '🚗 Firmenwagen',
     /tarif|tvöd|tv-l|13\. ?(monats)?gehalt|weihnachtsgeld|urlaubsgeld/i.test(text) && '💰 Tarif/Extras',
@@ -315,10 +325,11 @@ async function main() {
     const { refnr } = stelle;
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
-    if (VERTRIEB.test(kopf) || ZEITARBEIT.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb/zeitarbeit'; continue; }
+    if (VERTRIEB.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb'; continue; }
     if (FUEHRUNG.test(stelle.titel)) { state.uebersprungen[refnr] = 'Führungsposition'; continue; }
     if (stelle.minijob || !stelle.vollzeit || KEIN_FIXGEHALT.test(kopf)) { state.uebersprungen[refnr] = 'kein Vollzeit-Fixgehalt'; continue; }
-    if (stelle.zeitarbeit) { state.uebersprungen[refnr] = 'Zeitarbeit/Personalvermittlung'; continue; }
+    // Vermittler/Zeitarbeit erst nach den Details entscheiden: nur wenn das Gehalt richtig gut ist.
+    stelle.vermittler = stelle.zeitarbeit || ZEITARBEIT.test(kopf);
     if (!ortPasst(stelle)) { state.uebersprungen[refnr] = `Ort ${stelle.arbeitsort?.ort || '?'}`; continue; }
     kandidaten.push(stelle);
   }
@@ -328,7 +339,8 @@ async function main() {
   kandidaten.sort((a, b) => attraktivitaet(b) - attraktivitaet(a));
   const auswahl = kandidaten.slice(0, Math.max(150, MAX_PRO_TAG * 6));
   await parallel(auswahl, 6, async (st) => { st.details = await holeDetails(st.refnr); st.brutto = monatsBrutto(st.details.flags); });
-  auswahl.sort((a, b) => (attraktivitaet(b) + gehaltsBonus(b.brutto)) - (attraktivitaet(a) + gehaltsBonus(a.brutto)));
+  const geldScore = (x) => attraktivitaet(x) + gehaltsBonus(x.brutto) + (SCHICHT.test(x.details?.text || '') ? 2 : 0);
+  auswahl.sort((a, b) => geldScore(b) - geldScore(a));
   console.log(`[bewerbungs-bot] ${kandidaten.length} Kandidaten nach Filtern, ${auswahl.filter((x) => x.brutto).length} davon mit Gehaltsangabe.`);
 
   for (const stelle of auswahl) {
@@ -337,7 +349,8 @@ async function main() {
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     const { text, externeUrl, flags } = stelle.details;
     const gehalt = stelle.brutto ? `~${Math.round(stelle.brutto.von)}–${Math.round(stelle.brutto.bis)} € brutto/Monat` : '';
-    if (flags.istGeringfuegigeBeschaeftigung || flags.istArbeitnehmerUeberlassung) { state.uebersprungen[refnr] = 'Minijob/Zeitarbeit (Details)'; continue; }
+    if (flags.istGeringfuegigeBeschaeftigung) { state.uebersprungen[refnr] = 'Minijob (Details)'; continue; }
+    if ((stelle.vermittler || flags.istArbeitnehmerUeberlassung) && !(stelle.brutto?.bis >= ZEITARBEIT_AB)) { state.uebersprungen[refnr] = 'Zeitarbeit/Vermittler ohne Top-Gehalt'; continue; }
     if (VERTRIEB.test(text.slice(0, 3000)) && /vertrieb|au(ß|ss)endienst|akquise|provision/i.test(text)) { state.uebersprungen[refnr] = 'vertrieb (Text)'; continue; }
     if (stelle.brutto && stelle.brutto.bis < MIN_BRUTTO) { state.uebersprungen[refnr] = `zu wenig Gehalt (${gehalt})`; continue; }
     const email = findeEmail(text);
