@@ -131,7 +131,9 @@ function monatsBrutto(d = {}) {
 }
 const gehaltsBonus = (b) => (!b ? 0 : b.bis >= 4500 ? 6 : b.bis >= 3800 ? 4 : b.bis >= 3300 ? 3 : b.bis >= 2900 ? 2 : 1);
 // Nacht-/Sonn-/Feiertagszuschläge sind steuerfrei (§ 3b EStG) - landen fast komplett netto auf dem Konto.
-const SCHICHT = /schicht|nacht|24\/7|rund um die uhr|wochenend|sonn- und feiertag|zuschläge|zuschlaegen|wechseldienst/i;
+const SCHICHT = /schichtdienst|schichtarbeit|\bschicht|nachtdienst|nachtschicht|24\/7|rund um die uhr|sonn- und feiertag|(nacht|schicht|sonntags)zuschl|wechseldienst/i;
+// Nur Anzeigentext + offizielles Feld prüfen - der restliche JSON-Text enthält Feldnamen wie "arbeitszeitSchichtNachtWochenende".
+const hatSchicht = (d) => d?.flags?.arbeitszeitSchichtNachtWochenende === true || SCHICHT.test(d?.flags?.stellenangebotsBeschreibung || '');
 
 async function parallel(liste, anzahl, arbeit) {
   let i = 0;
@@ -141,7 +143,6 @@ async function parallel(liste, anzahl, arbeit) {
 function extras(text) {
   return [
     FLUGHAFEN.test(text) && '🛫 Flughafen',
-    SCHICHT.test(text) && '🌙 Schichtzulagen (steuerfrei)',
     FAVORIT.test(text.slice(0, 600)) ? '⭐ Lieblingsbereich' : ACTION.test(text.slice(0, 600)) && '⚡ Büro mit Action',
     /firmenwagen|dienstwagen|firmenfahrzeug|dienstfahrzeug/i.test(text) && '🚗 Firmenwagen',
     /tarif|tvöd|tv-l|13\. ?(monats)?gehalt|weihnachtsgeld|urlaubsgeld/i.test(text) && '💰 Tarif/Extras',
@@ -339,7 +340,7 @@ async function main() {
   kandidaten.sort((a, b) => attraktivitaet(b) - attraktivitaet(a));
   const auswahl = kandidaten.slice(0, Math.max(150, MAX_PRO_TAG * 6));
   await parallel(auswahl, 6, async (st) => { st.details = await holeDetails(st.refnr); st.brutto = monatsBrutto(st.details.flags); });
-  const geldScore = (x) => attraktivitaet(x) + gehaltsBonus(x.brutto) + (SCHICHT.test(x.details?.text || '') ? 2 : 0);
+  const geldScore = (x) => attraktivitaet(x) + gehaltsBonus(x.brutto) + (hatSchicht(x.details) ? 2 : 0);
   auswahl.sort((a, b) => geldScore(b) - geldScore(a));
   console.log(`[bewerbungs-bot] ${kandidaten.length} Kandidaten nach Filtern, ${auswahl.filter((x) => x.brutto).length} davon mit Gehaltsangabe.`);
 
@@ -389,7 +390,7 @@ async function main() {
       state.emails[email] = heute();
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
-    const plus = [...extras(`${kopf} ${text}`), ...(stelle.quereinstieg && !QUEREINSTEIGER.test(text) ? ['🎓 Quereinstieg geeignet'] : []), ...(gehalt ? [`💶 ${gehalt}`] : [])];
+    const plus = [...(hatSchicht(stelle.details) ? ['🌙 Schichtzulagen (steuerfrei)'] : []), ...extras(`${kopf} ${text}`), ...(stelle.quereinstieg && !QUEREINSTEIGER.test(text) ? ['🎓 Quereinstieg geeignet'] : []), ...(gehalt ? [`💶 ${gehalt}`] : [])];
     gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.passung}/10${plus.length ? `  ${plus.join(' ')}` : ''}`);
     console.log(`[bewerbungs-bot] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${refnr}`);
     await pause(8000); // Gmail nicht fluten
