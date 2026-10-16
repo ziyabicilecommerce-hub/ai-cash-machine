@@ -245,6 +245,11 @@ jobs:
           BEWERBUNG_PROFIL: ${{ secrets.BEWERBUNG_PROFIL }}
           BEWERBUNG_DATEN: ${{ secrets.BEWERBUNG_DATEN }}
           BEWERBUNG_STATE_KEY: ${{ secrets.BEWERBUNG_STATE_KEY }}
+          BEWERBUNG_MIN_BRUTTO: ${{ secrets.BEWERBUNG_MIN_BRUTTO }}
+          BEWERBUNG_GEHALTSWUNSCH: ${{ secrets.BEWERBUNG_GEHALTSWUNSCH }}
+          BEWERBUNG_ZEITARBEIT_AB: ${{ secrets.BEWERBUNG_ZEITARBEIT_AB }}
+          BEWERBUNG_ORTE: ${{ secrets.BEWERBUNG_ORTE }}
+          BEWERBUNG_TEST_MAX: ${{ secrets.BEWERBUNG_TEST_MAX }}
 
       - name: State-Änderungen committen
         # if: always() ist wichtig - läuft ein Skript mitten in einer Kunden-
