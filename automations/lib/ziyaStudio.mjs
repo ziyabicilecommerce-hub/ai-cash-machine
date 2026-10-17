@@ -3,30 +3,38 @@
 // Mehr-Shot-Planung, Modell-Auswahl und Nachbearbeitung. Genau diese Schicht steckt hier drin, aber mit
 // kostenlosen Modellen (Wan 2.2 / LTX auf Hugging Face, optional CogVideoX-Flash). Reine Funktionen (ohne Netz testbar).
 
-// Kamera-Presets: kamera = Prompt für das Videomodell, zoom = Rückfall-Kamerafahrt, falls kein KI-Clip kommt,
-// look = Farblook in der Nachbearbeitung.
+// Kamera-Presets: kamera = genau EIN Kamerabefehl (widersprüchliche Befehle zerreißen den Clip), umgebung = was sich
+// in der Szene bewegt, licht = Lichtstimmung, tempo = Geschwindigkeit; zoom = Rückfall-Kamerafahrt ohne KI-Clip,
+// look = Farblook in der Nachbearbeitung, ton = Klangfarbe der Tonspur.
 export const PRESETS = {
-  'crash-zoom': { name: 'Crash Zoom', kamera: 'fast aggressive crash zoom in towards the subject, sudden dramatic push', zoom: 'rein-schnell', look: 'kontrast' },
-  'dolly-in': { name: 'Dolly In', kamera: 'slow smooth dolly push in, steady cinematic camera', zoom: 'rein', look: 'film' },
-  'dolly-out': { name: 'Dolly Out', kamera: 'slow smooth dolly pull back revealing the wide scene', zoom: 'raus', look: 'film' },
-  orbit: { name: '360 Orbit', kamera: 'camera orbits around the subject in a smooth arc, parallax', zoom: 'schwenk', look: 'film' },
-  fpv: { name: 'FPV Drohne', kamera: 'fpv drone shot flying fast forward through the scene, dynamic banking', zoom: 'rein-schnell', look: 'kontrast' },
-  'crane-up': { name: 'Kran hoch', kamera: 'crane shot rising up and tilting down, epic reveal', zoom: 'hoch', look: 'episch' },
-  'bullet-time': { name: 'Bullet Time', kamera: 'frozen moment, camera slowly circles, extreme slow motion particles', zoom: 'schwenk', look: 'kontrast' },
-  handheld: { name: 'Handkamera', kamera: 'handheld camera, subtle natural shake, documentary feel', zoom: 'rein', look: 'natur' },
-  zeitlupe: { name: 'Zeitlupe', kamera: 'super slow motion, gentle drifting camera, floating particles', zoom: 'rein', look: 'episch' },
-  grusel: { name: 'Grusel', kamera: 'slow creeping push in, flickering light, ominous atmosphere, fog', zoom: 'rein', look: 'grusel' },
+  'crash-zoom': { name: 'Crash Zoom', kamera: 'fast aggressive crash zoom in towards the subject', umgebung: 'debris and dust fly past the lens', licht: 'hard rim light, high contrast', tempo: 'sudden, explosive speed', zoom: 'rein-schnell', look: 'kontrast', ton: 'action' },
+  'dolly-in': { name: 'Dolly In', kamera: 'slow smooth dolly push in on the subject', umgebung: 'gentle atmospheric haze drifts', licht: 'soft golden key light, volumetric rays', tempo: 'slow and steady', zoom: 'rein', look: 'film', ton: 'episch' },
+  'dolly-out': { name: 'Dolly Out', kamera: 'slow smooth dolly pull back revealing the wide scene', umgebung: 'the environment opens up around the subject', licht: 'soft natural light, wide dynamic range', tempo: 'slow and steady', zoom: 'raus', look: 'film', ton: 'episch' },
+  orbit: { name: '360 Orbit', kamera: 'camera orbits around the subject in a smooth arc', umgebung: 'background shifts with strong parallax', licht: 'dramatic side light, glowing highlights', tempo: 'smooth constant speed', zoom: 'schwenk', look: 'film', ton: 'episch' },
+  fpv: { name: 'FPV Drohne', kamera: 'fpv drone flies fast forward through the scene, banking into a turn', umgebung: 'landscape rushes past below', licht: 'bright daylight, crisp shadows', tempo: 'fast and dynamic', zoom: 'rein-schnell', look: 'kontrast', ton: 'action' },
+  'crane-up': { name: 'Kran hoch', kamera: 'crane shot rising up high and tilting down', umgebung: 'the full scale of the scene is revealed', licht: 'epic backlight, light rays through the air', tempo: 'slow majestic rise', zoom: 'hoch', look: 'episch', ton: 'episch' },
+  'bullet-time': { name: 'Bullet Time', kamera: 'frozen moment, camera slowly circles the subject', umgebung: 'particles and droplets hang still in the air', licht: 'crisp high contrast light', tempo: 'extreme slow motion', zoom: 'schwenk', look: 'kontrast', ton: 'action' },
+  handheld: { name: 'Handkamera', kamera: 'handheld camera with subtle natural shake', umgebung: 'real-world movement, wind and small details', licht: 'natural available light', tempo: 'real-time, documentary feel', zoom: 'rein', look: 'natur', ton: 'natur' },
+  zeitlupe: { name: 'Zeitlupe', kamera: 'gentle slow drifting camera', umgebung: 'floating particles, flowing elements', licht: 'dreamy soft glow, lens bloom', tempo: 'super slow motion', zoom: 'rein', look: 'episch', ton: 'episch' },
+  grusel: { name: 'Grusel', kamera: 'slow creeping push in', umgebung: 'fog rolls in, light flickers, shadows move', licht: 'cold moonlight, deep shadows', tempo: 'slow and ominous', zoom: 'rein', look: 'grusel', ton: 'grusel' },
 };
 export const PRESET_STANDARD = 'dolly-in';
 
-// Mehr-Shot-Planung: aus einer Idee wird eine kleine Szene mit Totale, Nah und Effekt-Shot (wie Higgsfields Storyboards).
-const EINSTELLUNGEN = ['wide establishing shot', 'medium close-up, shallow depth of field', 'dramatic hero shot, low angle', 'extreme close-up detail', 'wide aerial view'];
+// Mehr-Shot-Planung als Bogen vom Einstieg bis zur Enthüllung (wie Higgsfields Storyboards):
+// Totale -> Nah -> Helden-Shot -> Detail -> Luftbild. Je Einstellung passende Brennweite.
+const EINSTELLUNGEN = [
+  'wide establishing shot, 24mm lens', 'medium close-up, 50mm lens, shallow depth of field', 'dramatic hero shot from a low angle, 35mm lens',
+  'extreme close-up detail, 85mm macro lens', 'wide aerial view, 16mm lens',
+];
 const FOLGE = { 'crash-zoom': ['dolly-in', 'crash-zoom', 'orbit'], grusel: ['grusel', 'handheld', 'crash-zoom'], fpv: ['fpv', 'orbit', 'crane-up'] };
-const QUALITAET = 'cinematic lighting, volumetric light, 35mm film look, ultra detailed, sharp focus';
+// Bild-Formel: Motiv + Umgebung + Einstellung/Objektiv + Licht + Stil + Qualität.
+const STIL = 'cinematic film still, photorealistic, rich color grading, 8k, ultra detailed, sharp focus';
 
 export const presetVon = (id) => PRESETS[String(id || '').trim().toLowerCase()] ? String(id).trim().toLowerCase() : PRESET_STANDARD;
 const sauber = (t, n) => String(t || '').replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
 
+// Bild-zu-Video-Prompt beschreibt die BEWEGUNG, nicht das Bild (das Startbild legt schon fest, was zu sehen ist):
+// Kamera + Motivbewegung + Umgebung + Tempo + Licht. Stimmt der Text mit dem Bild überein, bleibt das Motiv stabil.
 export function shotsPlanen(idee, preset = PRESET_STANDARD, anzahl = 3) {
   const text = sauber(idee, 300);
   if (!text) throw new Error('Keine Idee angegeben');
@@ -35,11 +43,12 @@ export function shotsPlanen(idee, preset = PRESET_STANDARD, anzahl = 3) {
   const reihe = n === 1 ? [p] : (FOLGE[p] || [p, 'orbit', 'crane-up']);
   return Array.from({ length: n }, (_, i) => {
     const id = reihe[i % reihe.length];
+    const x = PRESETS[id];
     const einstellung = EINSTELLUNGEN[i % EINSTELLUNGEN.length];
     return {
       nr: i + 1, preset: id,
-      bild: `${text}, ${einstellung}, ${QUALITAET}, vertical composition`,
-      bewegung: `${text}, ${einstellung}, ${PRESETS[id].kamera}, ${QUALITAET}, natural fluid motion`,
+      bild: `${text}, ${einstellung}, ${x.licht}, ${STIL}, vertical 9:16 composition`,
+      bewegung: `${x.kamera}. ${text}, the subject moves naturally and stays consistent. ${x.umgebung}. ${x.tempo}. ${x.licht}. Cinematic, smooth, coherent motion.`,
     };
   });
 }
@@ -93,4 +102,18 @@ export function ueberblendung(dauern, { blende = 0.4 } = {}) {
     vorher = raus;
   }
   return { filter: teile.join(';'), laenge: Number(summe.toFixed(3)) };
+}
+
+// Tonspur ohne Musikrechte: selbst erzeugter Kino-Klang (tiefer Drone je Stimmung) + Whoosh an jedem Schnitt + Boom am Anfang.
+// Ergebnis ist ein aevalsrc-Ausdruck (Mono) - stumme Videos laufen auf TikTok deutlich schlechter.
+const DRONES = { episch: [55, 82.5, 110], action: [41.2, 61.7, 82.4], grusel: [46.2, 49, 69.3], natur: [65.4, 98, 130.8] };
+export function tonFormel(dauern, preset, { blende = 0.4 } = {}) {
+  const hz = DRONES[PRESETS[presetVon(preset)].ton] || DRONES.episch;
+  const drone = hz.map((f, i) => `${(0.09 - i * 0.02).toFixed(2)}*sin(2*PI*${f}*t)*(0.6+0.4*sin(2*PI*${(0.07 + i * 0.05).toFixed(2)}*t))`).join('+');
+  const schnitte = [];
+  let t = 0;
+  for (let i = 0; i < dauern.length - 1; i++) { t += dauern[i] - (i === 0 ? 0 : blende); schnitte.push(Number((t - blende).toFixed(2))); }
+  const whoosh = schnitte.map((z) => `if(between(t,${Math.max(z - 0.5, 0).toFixed(2)},${(z + 0.4).toFixed(2)}),0.25*(random(0)*2-1)*sin(PI*(t-${Math.max(z - 0.5, 0).toFixed(2)})/0.9),0)`);
+  const boom = '0.7*sin(2*PI*(38+60*exp(-8*t))*t)*exp(-2.5*t)';
+  return [drone, boom, ...whoosh].join('+');
 }

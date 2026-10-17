@@ -2,14 +2,16 @@
 // 1) Idee -> 1-5 Shots planen (Totale, Nah, Effekt) mit Kamera-Preset   2) je Shot ein Startbild (Pollinations Flux)
 // 3) Bild -> echter KI-Clip (Wan 2.2 -> LTX -> CogVideoX-Flash), leer = Preset-Kamerafahrt als Rückfall
 // 4) Nachbearbeitung (Upscale 1080x1920, 30 fps Zwischenbilder, Schärfe, Farblook, Korn)   5) Shots weich überblenden.
-// Eingaben: ZIYA_IDEE, ZIYA_PRESET, ZIYA_SHOTS (1-5), ZIYA_MENSCHEN=ja (Personen erlauben), ZIYA_SEKUNDEN (2-5).
+// 6) Tonspur: eigener Kino-Klang (Drone, Whoosh an Schnitten, Boom) + optional Sprecher (edge-tts), Lautheit wie TikTok.
+// Eingaben: ZIYA_IDEE, ZIYA_PRESET, ZIYA_SHOTS (1-5), ZIYA_MENSCHEN=ja (Personen erlauben), ZIYA_SEKUNDEN (2-5),
+// ZIYA_DURCHGEHEND=ja (jeder Shot startet mit dem letzten Bild des vorigen = eine durchgehende Szene), ZIYA_TEXT (Sprechertext).
 import { execFile, execFileSync } from 'node:child_process';
 import { promisify } from 'node:util';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { ladeBild, dauerSekunden } from './lib/videoFabrik.mjs';
+import { ladeBild, dauerSekunden, sprechen } from './lib/videoFabrik.mjs';
 import { zhipuClip } from './lib/kiVideo.mjs';
-import { PRESETS, presetVon, shotsPlanen, modellReihe, nachbearbeitung, kamerafahrt, ueberblendung } from './lib/ziyaStudio.mjs';
+import { PRESETS, presetVon, shotsPlanen, modellReihe, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
 const ausfuehren = promisify(execFile);
@@ -20,6 +22,8 @@ const H = 1920;
 const idee = String(process.env.ZIYA_IDEE || '').trim();
 const preset = presetVon(process.env.ZIYA_PRESET);
 const sekunden = Math.min(Math.max(Number(process.env.ZIYA_SEKUNDEN) || 3.5, 2), 5);
+const durchgehend = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_DURCHGEHEND || '').trim());
+const sprechertext = String(process.env.ZIYA_TEXT || '').replace(/\s+/g, ' ').trim().slice(0, 600);
 const menschen = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_MENSCHEN || '').trim());
 const NEG = `static, still image, blurry, distorted, deformed, morphing, extra limbs, text, watermark, subtitles${menschen ? '' : ', people, faces'}`;
 
@@ -43,6 +47,29 @@ async function kiClipHolen(bild, prompt, ziel, erschoepft) {
   return '';
 }
 
+// Klang + optional Sprecher unterlegen; der Klang duckt sich unter die Stimme. Klappt etwas nicht: Video ohne Ton.
+async function tonDrauf(stumm, video, dauern) {
+  const laenge = dauerSekunden(stumm);
+  const klang = `aevalsrc='${tonFormel(dauern, preset)}':s=44100:d=${laenge.toFixed(2)}`;
+  let stimme = '';
+  if (sprechertext) {
+    try {
+      stimme = join(ORDNER, 'stimme.mp3');
+      await sprechen(sprechertext, stimme, join(ORDNER, 'stimme.srt'), process.env.ZIYA_STIMME || 'de-DE-ConradNeural');
+    } catch (err) { stimme = ''; console.log(`${LOG} Sprecher übersprungen: ${err.message}`); }
+  }
+  const mix = stimme
+    ? '[1:a]aformat=channel_layouts=stereo,volume=0.8[k];[2:a]adelay=400|400,aformat=channel_layouts=stereo,apad,asplit[s1][s2];[k][s1]sidechaincompress=threshold=0.03:ratio=6:release=400[kd];[kd][s2]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-14:TP=-1.5[a]'
+    : '[1:a]aformat=channel_layouts=stereo,afade=t=out:st=' + Math.max(laenge - 1.5, 0).toFixed(2) + ':d=1.5,loudnorm=I=-14:TP=-1.5[a]';
+  try {
+    ffmpeg(['-i', stumm, '-f', 'lavfi', '-i', klang, ...(stimme ? ['-i', stimme] : []), '-filter_complex', mix, '-map', '0:v', '-map', '[a]',
+      '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-t', laenge.toFixed(2), '-movflags', '+faststart', video]);
+  } catch (err) {
+    console.log(`${LOG} Tonspur fehlgeschlagen, Video ohne Ton: ${String(err.stderr || err.message).slice(0, 200)}`);
+    ffmpeg(['-i', stumm, '-c', 'copy', '-movflags', '+faststart', video]);
+  }
+}
+
 async function main() {
   if (!idee) throw new Error('ZIYA_IDEE fehlt - beschreibe dein Video in einem Satz.');
   mkdirSync(ORDNER, { recursive: true });
@@ -52,16 +79,22 @@ async function main() {
   const fertig = [];
   console.log(`${LOG} "${idee}" · Preset ${PRESETS[preset].name} · ${shots.length} Shot(s)`);
 
+  let letzterRoh = '';
   for (const s of shots) {
     const bild = join(ORDNER, `shot${s.nr}.jpg`);
     const roh = join(ORDNER, `shot${s.nr}-roh.mp4`);
     const ziel = join(ORDNER, `shot${s.nr}.mp4`);
-    // Gleicher Grund-Seed für alle Shots, damit Stil und Farben zusammenpassen.
-    if (!(await ladeBild(s.bild, bild, { breite: 768, hoehe: 1344, seed: seed + s.nr, enhance: true }))) {
+    // Durchgehend: letztes Bild des vorigen KI-Clips als Startbild - Motiv, Licht und Ort bleiben gleich (eine Szene).
+    if (durchgehend && letzterRoh) {
+      try { ffmpeg(['-sseof', '-0.1', '-i', letzterRoh, '-frames:v', '1', '-q:v', '2', bild]); } catch { /* dann neues Bild */ }
+    }
+    // Sonst gleicher Grund-Seed für alle Shots, damit Stil und Farben zusammenpassen.
+    if (!existsSync(bild) && !(await ladeBild(s.bild, bild, { breite: 768, hoehe: 1344, seed: seed + s.nr, enhance: true }))) {
       console.log(`${LOG} Shot ${s.nr}: kein Startbild, übersprungen`);
       continue;
     }
     const modell = await kiClipHolen(bild, s.bewegung, roh, erschoepft);
+    letzterRoh = modell ? roh : '';
     if (modell) {
       ffmpeg(['-i', roh, '-an', '-vf', nachbearbeitung(s.preset, { breite: B, hoehe: H }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
     } else {
@@ -75,7 +108,9 @@ async function main() {
   const stempel = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12);
   const video = join(ORDNER, `ziya-${stempel}.mp4`);
   const { filter } = ueberblendung(fertig.map((f) => f.dauer));
-  ffmpeg([...fertig.flatMap((f) => ['-i', f.datei]), '-filter_complex', filter, '-map', '[v]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', video]);
+  const stumm = join(ORDNER, 'stumm.mp4');
+  ffmpeg([...fertig.flatMap((f) => ['-i', f.datei]), '-filter_complex', filter, '-map', '[v]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', stumm]);
+  await tonDrauf(stumm, video, fertig.map((f) => f.dauer));
 
   const bericht = { idee, preset, video: video.replace(`${resolve('.')}/`, ''), shots: fertig.map(({ nr, preset: p, modell, dauer }) => ({ nr, preset: p, modell, dauer })) };
   writeFileSync(join(ORDNER, 'bericht.json'), JSON.stringify(bericht, null, 2));
