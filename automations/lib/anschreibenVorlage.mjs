@@ -11,7 +11,11 @@ const NUR_MIT_QUALIFIKATION = /steuerfach|steuerberat|bilanzbuchhalt|hauptbuchha
 const AUSBILDUNG = /ausbildung|auszubild|azubi|duales studium|trainee/i;
 const FREMDSPRACHE = /spanisch|französisch|italienisch|niederländisch|polnisch|russisch|arabisch|chinesisch|japanisch|portugiesisch|tschechisch|rumänisch/i;
 
+// Die BA hängt die Anzeige als JSON an ("quereinstiegGeeignet":false) - das darf nicht als "Quereinstieg" zählen.
+export const nurAnzeige = (text = '') => text.replace(/\n?\{"[a-z][\s\S]*$/i, '');
+
 export function vorlagePasst(text, titel = '') {
+  text = nurAnzeige(text);
   if (!titel.trim()) return false;
   if (!AUSBILDUNG.test(titel) && NUR_MIT_QUALIFIKATION.test(titel)) return false;
   const sprache = titel.match(FREMDSPRACHE)?.[0];

@@ -11,7 +11,7 @@
 // (sonst Testmodus: alles geht an GMAIL_USER selbst), BEWERBUNG_MAX_PRO_TAG,
 // BEWERBUNG_ORT, BEWERBUNG_UMKREIS_KM, BEWERBUNG_SUCHBEGRIFFE, BEWERBUNG_STATE_KEY.
 import { askKI, parseJsonFromText } from './lib/ki.mjs';
-import { vorlageAnschreiben, vorlagePasst } from './lib/anschreibenVorlage.mjs';
+import { vorlageAnschreiben, vorlagePasst, nurAnzeige } from './lib/anschreibenVorlage.mjs';
 import {
   env, LIVE, BEWERBER, emailOk, heute, tageSeit, gmailZugang, profil, ladeGeheim, speichereGeheim,
   gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang, wohnort,
@@ -412,7 +412,7 @@ async function main() {
       state.emails[email] = heute();
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
-    const plus = [...(hatSchicht(stelle.details) ? ['🌙 Schichtzulagen (steuerfrei)'] : []), ...extras(`${kopf} ${text}`), ...(stelle.quereinstieg && !QUEREINSTEIGER.test(text) ? ['🎓 Quereinstieg geeignet'] : []), ...(gehalt ? [`💶 ${gehalt}`] : [])];
+    const plus = [...(hatSchicht(stelle.details) ? ['🌙 Schichtzulagen (steuerfrei)'] : []), ...extras(`${kopf} ${nurAnzeige(text)}`), ...(stelle.quereinstieg && !QUEREINSTEIGER.test(text) ? ['🎓 Quereinstieg geeignet'] : []), ...(gehalt ? [`💶 ${gehalt}`] : [])];
     gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.vorlage ? '✍️ Vorlage' : `${b.passung}/10`}${plus.length ? `  ${plus.join(' ')}` : ''}`);
     heuteAngeschrieben.add(email);
     console.log(`[bewerbungs-bot] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${refnr}`);
