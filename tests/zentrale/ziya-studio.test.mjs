@@ -28,9 +28,9 @@ test('Ziya Studio: Shot-Planung', () => {
 });
 
 test('Ziya Studio: Modell-Router überspringt erschöpfte Modelle', () => {
-  assert.deepEqual(modellReihe(), ['wan', 'ltx']);
-  assert.deepEqual(modellReihe(new Set(['wan']), { zhipu: true }), ['ltx', 'zhipu']);
-  assert.deepEqual(modellReihe(new Set(['wan', 'ltx'])), []);
+  assert.deepEqual(modellReihe(), ['wan14', 'ltx23', 'wan', 'real', 'ltx']);
+  assert.deepEqual(modellReihe(new Set(['wan14', 'ltx23', 'wan']), { zhipu: true }), ['real', 'ltx', 'zhipu']);
+  assert.deepEqual(modellReihe(new Set(['wan14', 'ltx23', 'wan', 'real', 'ltx'])), []);
 });
 
 test('Ziya Studio: Filterketten', () => {

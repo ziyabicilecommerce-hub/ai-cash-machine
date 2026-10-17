@@ -1,6 +1,6 @@
 # Echter KI-Clip aus einem Standbild (Bild-zu-Video) über kostenlose Hugging-Face-Spaces (ZeroGPU), ohne Schlüssel.
 # Optional HF_TOKEN (kostenloses Konto) für mehr Tageskontingent.
-#   python3 scripts/ki_clip.py <bild> <prompt> <ziel.mp4> <wan|ltx>
+#   python3 scripts/ki_clip.py <bild> <prompt> <ziel.mp4> <wan|ltx|wan14|ltx23|real>
 # Exit 0 = Clip liegt in <ziel>; Exit 3 = Kontingent erschöpft; sonst Fehler.
 import os, shutil, sys
 
@@ -22,8 +22,27 @@ def client(space):
 NEG = os.environ.get("KI_CLIP_NEG") or "static, still image, blurry, distorted, deformed, text, watermark, subtitles, people, faces"
 DAUER = float(os.environ.get("KI_CLIP_DAUER") or 3.5)
 SCHRITTE = int(os.environ.get("KI_CLIP_SCHRITTE") or 6)
+# Optionales Endbild (Wan 2.2 14B): = Startbild ergibt einen nahtlosen Loop.
+ENDE = os.environ.get("KI_CLIP_ENDE") or None
 try:
-    if modell == "wan":
+    if modell in ("wan14", "real"):
+        # Kleine Gratis-Spaces, im Oktober 2026 per Weltsuche gefunden und getestet: Wan 2.2 14B mit bis zu 5 s
+        # und Endbild bzw. ein realistisches Wan-2.2-Finetune.
+        if modell == "wan14":
+            c = client(os.environ.get("KI_CLIP_WAN14", "Upsampler/wan-2-2-14b-image-to-video"))
+            extra = {"end_image": handle_file(ENDE) if ENDE else None}
+        else:
+            c = client(os.environ.get("KI_CLIP_REAL", "hugging-apps/ksyjawan-realistic-i2v"))
+            extra = {}
+        r = c.predict(input_image=handle_file(bild), prompt=prompt, steps=SCHRITTE, negative_prompt=NEG, duration_seconds=min(DAUER, 5),
+                      guidance_scale=1, guidance_scale_2=1, seed=42, randomize_seed=True, api_name="/generate_video", **extra)
+    elif modell == "ltx23":
+        # LTX 2.3 in nativer Hochkant-Auflösung 704x1280 (24 fps) - deutlich schärfer, weniger Hochrechnen nötig.
+        c = client(os.environ.get("KI_CLIP_LTX23", "Ash1004/ltx23-i2v-fullres"))
+        r = c.predict(start_image=handle_file(bild), prompt=prompt, negative_prompt=NEG, width=704, height=1280, seconds=min(DAUER, 5),
+                      fps=24, steps=8, cfg=1.0, shift=13.0, sampler_name="euler_ancestral_cfg_pp", scheduler="linear_quadratic",
+                      seed=42, gpu_seconds=0, api_name="/generate")
+    elif modell == "wan":
         c = client(os.environ.get("KI_CLIP_WAN", "zerogpu-aoti/wan2-2-fp8da-aoti-faster"))
         r = c.predict(input_image=handle_file(bild), prompt=prompt, steps=SCHRITTE, negative_prompt=NEG, duration_seconds=DAUER,
                       guidance_scale=1, guidance_scale_2=1, seed=42, randomize_seed=True, api_name="/generate_video")

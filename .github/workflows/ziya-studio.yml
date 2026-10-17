@@ -29,6 +29,10 @@ on:
         description: 'Durchgehende Szene (jeder Shot startet mit dem letzten Bild des vorigen)?'
         type: boolean
         default: true
+      loop:
+        description: 'Nahtloser Loop (Video endet, wo es anfängt - mehr Wiederholungen auf TikTok)?'
+        type: boolean
+        default: false
       text:
         description: 'Sprechertext auf Deutsch (optional, leer = nur Kino-Sound)'
         required: false
@@ -49,6 +53,7 @@ jobs:
       ZIYA_MENSCHEN: ${{ inputs.menschen && 'ja' || 'nein' }}
       ZIYA_DURCHGEHEND: ${{ inputs.durchgehend && 'ja' || 'nein' }}
       ZIYA_TEXT: ${{ inputs.text }}
+      ZIYA_LOOP: ${{ inputs.loop && 'ja' || 'nein' }}
       POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
       # Optional, kostenlos: mehr KI-Video-Kontingent (huggingface.co) bzw. CogVideoX-Flash (Zhipu AI).
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
