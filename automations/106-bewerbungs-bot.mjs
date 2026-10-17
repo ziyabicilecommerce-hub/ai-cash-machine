@@ -104,6 +104,14 @@ const STANDARD_SUCHE = [
   'Verwaltungsfachangestellte:ausbildung',
   'Sozialversicherungsfachangestellte:ausbildung',
   'Kaufmann Spedition und Logistikdienstleistung:ausbildung',
+  // IT & Cybersecurity: am PC, wenig Telefon - Einstieg über Quereinstieg oder Ausbildung
+  'IT Quereinsteiger:job',
+  'IT-Support Berufseinsteiger:job',
+  'Datenerfassung:job',
+  'Fachinformatiker Systemintegration:ausbildung',
+  'Fachinformatiker Daten- und Prozessanalyse:ausbildung',
+  'Kaufmann IT-System-Management:ausbildung',
+  'IT-Sicherheit:ausbildung',
 ].join(';');
 
 const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key\)? ?account|account manager|kundenberater|neukunden|d2d|door to door|fundraising/i;
