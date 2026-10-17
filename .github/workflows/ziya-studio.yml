@@ -1,0 +1,68 @@
+name: "🎬 Ziya Studio (KI-Video aus einer Idee)"
+
+# Kostenloses KI-Video-Studio nach dem Higgsfield-Prinzip: Idee + Kamera-Preset -> mehrere Shots ->
+# echte KI-Clips (Wan 2.2 / LTX, optional CogVideoX-Flash) -> Nachbearbeitung -> fertiges 9:16-Video als Artifact.
+# Starten: Actions > Ziya Studio > Run workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      idee:
+        description: 'Deine Video-Idee in einem Satz (am besten Englisch, z. B. "a black hole swallowing a star")'
+        required: true
+      preset:
+        description: 'Kamera-Preset'
+        type: choice
+        default: dolly-in
+        options: [dolly-in, dolly-out, crash-zoom, orbit, fpv, crane-up, bullet-time, handheld, zeitlupe, grusel]
+      shots:
+        description: 'Anzahl Shots (1-5)'
+        default: '3'
+      sekunden:
+        description: 'Sekunden pro Shot (2-5)'
+        default: '3.5'
+      menschen:
+        description: 'Menschen im Bild erlauben?'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  studio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      ZIYA_IDEE: ${{ inputs.idee }}
+      ZIYA_PRESET: ${{ inputs.preset }}
+      ZIYA_SHOTS: ${{ inputs.shots }}
+      ZIYA_SEKUNDEN: ${{ inputs.sekunden }}
+      ZIYA_MENSCHEN: ${{ inputs.menschen && 'ja' || 'nein' }}
+      POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
+      # Optional, kostenlos: mehr KI-Video-Kontingent (huggingface.co) bzw. CogVideoX-Flash (Zhipu AI).
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      ZHIPU_API_KEY: ${{ secrets.ZHIPU_API_KEY }}
+      ZHIPU_API_BASE: ${{ vars.ZHIPU_API_BASE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: ffmpeg und gradio_client installieren
+        uses: ./.github/actions/video-werkzeug
+        with:
+          pip: 'gradio_client'
+      - name: Video bauen
+        run: node automations/ziya-studio.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ziya-video
+          path: |
+            out/ziya-studio/ziya-*.mp4
+            out/ziya-studio/shot*.jpg
+            out/ziya-studio/bericht.json
+          retention-days: 14

@@ -18,16 +18,19 @@ def client(space):
         return Client(space, token=token, verbose=False)
     except TypeError:
         return Client(space, hf_token=token, verbose=False)
-NEG = "static, still image, blurry, distorted, deformed, text, watermark, subtitles, people, faces"
+# Ziya Studio setzt eigene Werte (z. B. Menschen erlaubt, längere Clips, mehr Schritte).
+NEG = os.environ.get("KI_CLIP_NEG") or "static, still image, blurry, distorted, deformed, text, watermark, subtitles, people, faces"
+DAUER = float(os.environ.get("KI_CLIP_DAUER") or 3.5)
+SCHRITTE = int(os.environ.get("KI_CLIP_SCHRITTE") or 6)
 try:
     if modell == "wan":
         c = client(os.environ.get("KI_CLIP_WAN", "zerogpu-aoti/wan2-2-fp8da-aoti-faster"))
-        r = c.predict(input_image=handle_file(bild), prompt=prompt, steps=6, negative_prompt=NEG, duration_seconds=3.5,
+        r = c.predict(input_image=handle_file(bild), prompt=prompt, steps=SCHRITTE, negative_prompt=NEG, duration_seconds=DAUER,
                       guidance_scale=1, guidance_scale_2=1, seed=42, randomize_seed=True, api_name="/generate_video")
     else:
         c = client(os.environ.get("KI_CLIP_LTX", "Lightricks/ltx-video-distilled"))
         r = c.predict(prompt=prompt, negative_prompt=NEG, input_image_filepath=handle_file(bild), input_video_filepath=None,
-                      height_ui=704, width_ui=512, mode="image-to-video", duration_ui=3, ui_frames_to_use=9, seed_ui=42,
+                      height_ui=704, width_ui=512, mode="image-to-video", duration_ui=min(DAUER, 5), ui_frames_to_use=9, seed_ui=42,
                       randomize_seed=True, ui_guidance_scale=1, improve_texture_flag=True, api_name="/image_to_video")
     pfad = r[0] if isinstance(r, (list, tuple)) else r
     if isinstance(pfad, dict):

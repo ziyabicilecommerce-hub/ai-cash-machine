@@ -23,7 +23,7 @@ export function modelleFuer(index, erschoepft = new Set(), { zhipu = !!process.e
 // Auftrag anlegen, dann das Ergebnis abfragen (dauert ~3 Minuten).
 const ZHIPU_BASIS = () => (process.env.ZHIPU_API_BASE || 'https://open.bigmodel.cn/api/paas/v4').replace(/\/$/, '');
 export const zhipuAuftrag = (bildBase64, prompt) => ({ model: process.env.ZHIPU_VIDEO_MODELL || 'cogvideox-flash', prompt: String(prompt).slice(0, 500), image_url: `data:image/jpeg;base64,${bildBase64}` });
-async function zhipuClip(bild, prompt, ziel, { warten = 15000, versuche = 40 } = {}) {
+export async function zhipuClip(bild, prompt, ziel, { warten = 15000, versuche = 40 } = {}) {
   const kopf = { authorization: `Bearer ${process.env.ZHIPU_API_KEY}`, 'content-type': 'application/json' };
   const start = await fetch(`${ZHIPU_BASIS()}/videos/generations`, { method: 'POST', headers: kopf, body: JSON.stringify(zhipuAuftrag(readFileSync(bild).toString('base64'), prompt)) });
   const auftrag = await start.json().catch(() => ({}));
