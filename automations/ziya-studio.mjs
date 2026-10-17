@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { ladeBild, dauerSekunden, sprechen } from './lib/videoFabrik.mjs';
 import { zhipuClip } from './lib/kiVideo.mjs';
+import { seedanceClip } from './lib/seedance.mjs';
 import { PRESETS, presetVon, shotsPlanen, modellReihe, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
@@ -33,9 +34,10 @@ const ffmpeg = (args) => execFileSync('ffmpeg', ['-loglevel', 'error', '-y', ...
 
 async function kiClipHolen(bild, prompt, ziel, erschoepft) {
   // Loop braucht ein Endbild - das kann nur wan14, die anderen bleiben als Rückfall.
-  for (const m of modellReihe(erschoepft, { zhipu: !!process.env.ZHIPU_API_KEY })) {
+  for (const m of modellReihe(erschoepft, { zhipu: !!process.env.ZHIPU_API_KEY, seedance: !!process.env.BYTEPLUS_API_KEY })) {
     try {
-      if (m === 'zhipu') await zhipuClip(bild, prompt, ziel);
+      if (m === 'seedance') await seedanceClip(bild, prompt, ziel, { sekunden: Math.max(sekunden, 5) });
+      else if (m === 'zhipu') await zhipuClip(bild, prompt, ziel);
       else {
         await ausfuehren('python3', [resolve('scripts/ki_clip.py'), bild, prompt, ziel, m], {
           timeout: 300000, env: { ...process.env, KI_CLIP_NEG: NEG, KI_CLIP_DAUER: String(sekunden), KI_CLIP_SCHRITTE: process.env.ZIYA_SCHRITTE || '8', KI_CLIP_ENDE: loop && m === 'wan14' ? bild : '' },
