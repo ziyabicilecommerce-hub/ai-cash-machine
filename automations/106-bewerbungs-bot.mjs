@@ -387,7 +387,11 @@ async function main() {
     }
     if (b.perMail === false) { state.uebersprungen[refnr] = 'laut Anzeige nur Portal'; selbst('laut Anzeige nur online'); continue; }
     if (!(Number(b.passung) >= MIN_PASSUNG)) { state.uebersprungen[refnr] = `passt nicht (${b.passung})`; continue; }
-    if (!anschreibenOk(b.anschreiben)) { console.log(`[bewerbungs-bot] Anschreiben für ${refnr} unbrauchbar - übersprungen.`); continue; }
+    // KI-Text kaputt → Vorlage statt die Stelle zu verschenken.
+    if (!anschreibenOk(b.anschreiben)) {
+      if (!vorlagePasst(text, stelle.titel || '')) { console.log(`[bewerbungs-bot] Anschreiben für ${refnr} unbrauchbar - übersprungen.`); continue; }
+      b = { ...b, vorlage: true, anschreiben: vorlageAnschreiben({ titel: stelle.titel, firma: stelle.arbeitgeber, text }) };
+    }
 
     const betreff = String(b.betreff || `Bewerbung als ${stelle.titel} – ${BEWERBER()}`).slice(0, 150);
     const anschreiben = b.anschreiben.trim();
