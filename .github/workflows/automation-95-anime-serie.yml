@@ -53,6 +53,8 @@ jobs:
       # Echte Anime-KI-Clips statt Standbild, so viele das Gratis-Kontingent hergibt (danach Kamerafahrt).
       VIDEO_KI_ALLE: ${{ vars.ANIME_KI_ALLE || 'ja' }}
       KI_CLIP_ANIME: 'ja'
+      # 3D-Kamerafahrt (Depth Anything V2, CPU) für alle Szenen ohne KI-Clip statt flachem Zoom.
+      VIDEO_3D_EINFACH: ${{ vars.ANIME_3D || 'ja' }}
       KI_CLIP_NEG: 'static, still image, blurry, distorted, deformed, extra limbs, 3d render, photo, text, watermark, subtitles'
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
       ZHIPU_API_KEY: ${{ secrets.ZHIPU_API_KEY }}
@@ -69,7 +71,12 @@ jobs:
       - name: ffmpeg, Schrift und edge-tts installieren
         uses: ./.github/actions/video-werkzeug
         with:
-          pip: 'edge-tts==7.* gradio_client'
+          pip: 'edge-tts==7.* gradio_client opencv-python-headless numpy pillow transformers==4.46.3 --extra-index-url https://download.pytorch.org/whl/cpu torch'
+      # Depth-Anything-Modell (~100 MB) zwischenspeichern.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: depth-anything-v2-small-v1
       - name: Folge bauen
         run: node automations/95-anime-serie.mjs
       - name: Als Release veroeffentlichen und Feed ergaenzen

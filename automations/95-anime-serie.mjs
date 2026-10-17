@@ -18,7 +18,7 @@ const env = (k, d = '') => (process.env[k] || d).trim();
 
 const MINUTEN = Math.min(Math.max(parseFloat(env('ANIME_MINUTEN', '4')) || 4, 1), 60);
 // Lange Folgen: ein Bild fuer mehrere Dialogzeilen, damit 60 Minuten ins 6-Stunden-Limit passen.
-const BILD_ALLE = MINUTEN > 20 ? 3 : MINUTEN > 8 ? 2 : 1;
+const BILD_ALLE = MINUTEN > 30 ? 3 : MINUTEN > 15 ? 2 : 1;
 const FORMAT = env('ANIME_FORMAT', 'quer') === 'hoch' ? 'hoch' : 'quer';
 const NEU = env('ANIME_NEU').toLowerCase() === 'ja';
 const THEMA = env('ANIME_THEMA') || 'Ninja-Abenteuer: junge Ninjas in einem verborgenen Bergdorf, Freundschaft, Rivalitaet, hartes Training, geheimnisvolle Kraefte und ein uralter Feind';
@@ -86,13 +86,25 @@ function figurenText(serie) {
   return serie.figuren.map((f) => `${f.name} (${f.rolle}; ${f.art})`).join('; ');
 }
 
-// Bild-Prompt mit dem festen Aussehen aller Figuren, die in der Szene vorkommen.
-function bildPrompt(serie, bild, sprecher) {
-  const drin = serie.figuren.filter((f) => f.name === sprecher || bild.toLowerCase().includes(f.name.toLowerCase()));
+// Bild-Prompt mit dem festen Aussehen der Figuren. Spricht eine Figur, gibt es eine Nahaufnahme NUR von ihr
+// (weniger Figuren im Bild = sie sieht jedes Mal gleich aus). Sonst wechselnde Kamerawinkel, damit kein Bild
+// wie das vorige wirkt; Kampf-Szenen bekommen dynamische Action-Posen und Effekte.
+const WINKEL = ['wide cinematic establishing shot', 'dynamic low angle shot', 'over-the-shoulder shot', 'medium shot with dramatic perspective', 'dutch angle action shot', 'high angle wide shot'];
+const NAH = ['intense close-up portrait', 'medium close-up, expressive face', 'dramatic close-up with wind-blown hair', 'close-up with glowing eyes and rim light'];
+const KAMPF = /\b(kampf|k(ae|ä)mpf|angriff|greift|schlag|schl(ae|ä)gt|schwert|klinge|explosion|explodiert|technik|attacke|fight|attack|clash|strike|slash|sword|blade|punch|battle|duel|energy|blast)/i;
+function bildPrompt(serie, bild, sprecher, index = 0, text = '') {
+  const action = KAMPF.test(`${bild} ${text}`) ? ', dynamic action pose, speed lines, glowing energy effects, impact sparks, motion blur' : '';
+  const figur = sprecher && serie.figuren.find((f) => f.name === sprecher);
+  if (figur) {
+    return `${STIL_VORNE}, ${NAH[index % NAH.length]} of ${figur.name}, ${figur.aussehen}, ${bild}${action}, detailed anime eyes, cinematic lighting`.slice(0, 900);
+  }
+  const drin = serie.figuren.filter((f) => bild.toLowerCase().includes(f.name.toLowerCase())).slice(0, 2);
   const looks = drin.map((f) => `${f.name}: ${f.aussehen}`).join('; ');
-  return `${STIL_VORNE}, ${bild}${looks ? `. Characters: ${looks}` : ''}`.slice(0, 900);
+  return `${STIL_VORNE}, ${WINKEL[index % WINKEL.length]}, ${bild}${action}${looks ? `. Characters: ${looks}` : ''}, detailed background, cinematic lighting`.slice(0, 900);
 }
 
+// Laufende Nummer über alle Szenen der Folge, damit Kamerawinkel über Portionen hinweg weiterwechseln.
+let szenenZaehler = 0;
 function szenenPruefen(serie, roh) {
   const namen = new Map(serie.figuren.map((f) => [f.name.toLowerCase(), f]));
   return (Array.isArray(roh) ? roh : [])
@@ -100,9 +112,10 @@ function szenenPruefen(serie, roh) {
       const figur = namen.get(String(s.sprecher || '').trim().toLowerCase());
       const text = sauber(s.text, 400);
       const bild = sauber(s.bild, 400);
+      const nr = (szenenZaehler += 1);
       return figur
-        ? { text, bild: bildPrompt(serie, bild, figur.name), stimme: figur.stimme, tonhoehe: figur.tonhoehe || '', schild: figur.name, sprecher: figur.name }
-        : { text, bild: bildPrompt(serie, bild), stimme: ERZAEHLER, tempo: '-5%', sprecher: 'Erzaehler' };
+        ? { text, bild: bildPrompt(serie, bild, figur.name, nr, text), stimme: figur.stimme, tonhoehe: figur.tonhoehe || '', schild: figur.name, sprecher: figur.name }
+        : { text, bild: bildPrompt(serie, bild, '', nr, text), stimme: ERZAEHLER, tempo: '-5%', sprecher: 'Erzaehler' };
     })
     .filter((s) => s.text.length > 3 && s.bild.length > 5);
 }

@@ -149,7 +149,8 @@ export function kapitelText(marken) {
 export async function teaserBauen(video, ziel, { sekunden = 55 } = {}) {
   await ausfuehren('ffmpeg', [
     '-loglevel', 'error', '-y', '-t', String(sekunden), '-i', video,
-    '-filter_complex', '[0:v]split[a][b];[a]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=30:5,eq=brightness=-0.08[bg];[b]scale=1080:-2[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2,fade=t=out:st=' + Math.max(sekunden - 1, 0) + ':d=1[v]',
+    // Bild füllt das Hochformat (Mitte groß ausgeschnitten) - ein kleines Querbild mit Unschärfe-Rand wirkt auf TikTok billig.
+    '-filter_complex', '[0:v]scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos,crop=1080:1920,fade=t=out:st=' + Math.max(sekunden - 1, 0) + ':d=1[v]',
     '-map', '[v]', '-map', '0:a', '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-pix_fmt', 'yuv420p',
     '-c:a', 'aac', '-b:a', '160k', '-af', `afade=t=out:st=${Math.max(sekunden - 1, 0)}:d=1`, '-movflags', '+faststart', ziel,
   ], { timeout: 1200000, maxBuffer: 16 * 1024 * 1024 });
