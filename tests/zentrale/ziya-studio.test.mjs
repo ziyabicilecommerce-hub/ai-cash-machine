@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { PRESETS, PRESET_STANDARD, presetVon, shotsPlanen, modellReihe, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel } from '../../automations/lib/ziyaStudio.mjs';
+import { PRESETS, PRESET_STANDARD, presetVon, shotsPlanen, modellReihe, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt } from '../../automations/lib/ziyaStudio.mjs';
 
 test('Ziya Studio: Presets und Rückfall auf Standard', () => {
   assert.ok(Object.keys(PRESETS).length >= 10);
@@ -73,4 +73,22 @@ test('Seedance: Auftrag für BytePlus ModelArk', () => {
   assert.deepEqual(a.content[1], { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,QUJD' } });
   assert.match(seedanceAuftrag('x', 'p', { sekunden: 99 }).content[0].text, /--duration 10 /);
   assert.equal(seedanceAuftrag('x', 'p', { modell: 'seedance-2-0' }).model, 'seedance-2-0');
+});
+
+test('Ziya Studio: Anime-Kampf-Modus', () => {
+  const s = shotsPlanen('a swordsman with a water blade fights a demon with fire fists', 'anime-kampf', 4);
+  assert.ok(s.every((x) => x.preset === 'anime-kampf' && /anime key visual/.test(x.bild) && !/photorealistic/.test(x.bild)));
+  assert.equal(new Set(s.map((x) => x.bild)).size, 4, 'vier verschiedene Anime-Einstellungen');
+  assert.deepEqual(modellReihe(new Set(), { anime: true }).slice(0, 3), ['animegen', 'anisora', 'k6']);
+  assert.ok(!modellReihe().includes('anisora'), 'Anime-Modelle nur im Anime-Modus');
+  const n = nachbearbeitung('anime-kampf');
+  assert.match(n, /saturation=1\.35/);
+  assert.match(n, /blend=all_mode=screen/);
+  assert.match(n, /if\(lt\(t,0\.4\)/, 'Impact-Wackler');
+  assert.ok(!nachbearbeitung('dolly-in').includes('lt(t,0.4)'), 'kein Wackler außerhalb von Anime');
+  assert.deepEqual(schnittArt('anime-kampf'), { uebergang: 'fadewhite', blende: 0.2 });
+  assert.match(ueberblendung([3, 3], schnittArt('anime-kampf')).filter, /fadewhite:duration=0\.2:offset=2\.800/);
+  const t = tonFormel([3, 3, 3], 'anime-kampf', schnittArt('anime-kampf'));
+  assert.equal((t.match(/3150/g) || []).length, 2, 'Schwertklang an beiden Schnitten');
+  assert.ok(!tonFormel([3, 3], 'dolly-in').includes('3150'));
 });
