@@ -25,6 +25,14 @@ on:
         description: 'Menschen im Bild erlauben?'
         type: boolean
         default: false
+      durchgehend:
+        description: 'Durchgehende Szene (jeder Shot startet mit dem letzten Bild des vorigen)?'
+        type: boolean
+        default: true
+      text:
+        description: 'Sprechertext auf Deutsch (optional, leer = nur Kino-Sound)'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -39,6 +47,8 @@ jobs:
       ZIYA_SHOTS: ${{ inputs.shots }}
       ZIYA_SEKUNDEN: ${{ inputs.sekunden }}
       ZIYA_MENSCHEN: ${{ inputs.menschen && 'ja' || 'nein' }}
+      ZIYA_DURCHGEHEND: ${{ inputs.durchgehend && 'ja' || 'nein' }}
+      ZIYA_TEXT: ${{ inputs.text }}
       POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
       # Optional, kostenlos: mehr KI-Video-Kontingent (huggingface.co) bzw. CogVideoX-Flash (Zhipu AI).
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -52,10 +62,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - name: ffmpeg und gradio_client installieren
+      - name: ffmpeg, gradio_client und edge-tts installieren
         uses: ./.github/actions/video-werkzeug
         with:
-          pip: 'gradio_client'
+          pip: 'gradio_client edge-tts==7.*'
       - name: Video bauen
         run: node automations/ziya-studio.mjs
       - uses: actions/upload-artifact@v4
