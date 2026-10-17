@@ -152,6 +152,9 @@ test('KI-Video: Hook-Szene zuerst Wan, sonst LTX; erschöpfte Modelle fallen rau
   assert.deepEqual(modelleFuer(2, new Set(), { zhipu: false }), ['ltx', 'wan']);
   assert.deepEqual(modelleFuer(2, new Set(['ltx']), { zhipu: false }), ['wan']);
   assert.deepEqual(modelleFuer(0, new Set(['ltx', 'wan']), { zhipu: false }), []);
+  // Anime-Serie: AnimeGen zuerst, die allgemeinen Modelle als Rückfall.
+  assert.deepEqual(modelleFuer(2, new Set(), { zhipu: false, anime: true }), ['animegen', 'ltx', 'wan']);
+  assert.deepEqual(modelleFuer(0, new Set(['animegen']), { zhipu: false, anime: true }), ['wan', 'ltx']);
   assert.match(bewegungsPrompt('honey bee on a flower, cinematic, no text, no people'), /camera motion/);
   assert.doesNotMatch(bewegungsPrompt('bee, no text, no people'), /no people/);
 });

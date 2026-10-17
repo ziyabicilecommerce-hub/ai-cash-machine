@@ -122,14 +122,16 @@ function schildFilter(name, ziel, breite, hoehe) {
 }
 
 // Eine Szene: vorbereitetes Standbild mit Kamerabewegung, Stimme, Untertitel.
-export async function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index, format, hook = '', schild = '' }) {
+// video: echter KI-Clip (schon auf Szenenlänge gebracht) statt Kamerafahrt durchs Standbild.
+export async function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index, format, hook = '', schild = '', video = '' }) {
   const dauer = dauerSekunden(mp3) + 0.35;
   const frames = Math.ceil(dauer * 30);
   const k = kamera(index, frames);
   const schrift = format === 'quer' ? 16 : 12;
   const filter = [
-    `scale=${breite * 2}:${hoehe * 2}`,
-    `zoompan=z='${k.z}':x='${k.x}':y='${k.y}':d=${frames}:s=${breite}x${hoehe}:fps=30`,
+    ...(video ? [`scale=${breite}:${hoehe}:force_original_aspect_ratio=increase`, `crop=${breite}:${hoehe}`, 'fps=30'] : [
+      `scale=${breite * 2}:${hoehe * 2}`,
+      `zoompan=z='${k.z}':x='${k.x}':y='${k.y}':d=${frames}:s=${breite}x${hoehe}:fps=30`]),
     // Erste Szene ohne Schwarzblende - Bild 1 ist das, was im Feed stehen bleibt.
     ...(index === 0 ? [] : ['fade=in:0:6']),
     `fade=out:st=${Math.max(dauer - 0.25, 0).toFixed(2)}:d=0.25`,
@@ -138,8 +140,8 @@ export async function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index,
     `subtitles='${srtPfadFuerFilter(srt)}':force_style='FontName=DejaVu Sans,FontSize=${schrift},Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=3,Shadow=0,Alignment=2,MarginV=40'`,
   ].join(',');
   await ausfuehren('ffmpeg', [
-    '-loglevel', 'error', '-y', '-i', bild, '-i', mp3,
-    '-vf', filter, '-t', dauer.toFixed(2),
+    '-loglevel', 'error', '-y', ...(video ? ['-stream_loop', '-1', '-i', video] : ['-i', bild]), '-i', mp3,
+    '-map', '0:v', '-map', '1:a', '-vf', filter, '-t', dauer.toFixed(2),
     '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-pix_fmt', 'yuv420p', '-r', '30',
     '-c:a', 'aac', '-b:a', '160k', '-ar', '44100', '-ac', '2', '-af', 'apad',
     ziel,
@@ -335,7 +337,12 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
           : !ebenen.fgP && modus !== 'vergleich' ? tiefe3d(ebenen.bgP, join(ordner, `s${i}.3d.mp4`), dauerSekunden(mp3) + 0.3, { breite, hoehe, art: ['dolly', 'orbit', 'kran'][i % 3] }) : '');
         await premiumSzene({ ...ebenen, mp3, ass, ziel: clip, breite, hoehe, dauer: dauerSekunden(mp3) + 0.3, index: i, glanz, bokeh, nah: i % 3 === 2 && i < szenen.length - 1, effekt, bgVideo });
         if (hookSzene) hookVorlage = { ebenen, assOpts, effekt, bgVideo, index: i, stimme: szene.stimme || stimme };
-      } else await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '' });
+      } else {
+        // Auch im einfachen Modus (z. B. Anime-Serie): echter KI-Clip, solange das Gratis-Kontingent reicht.
+        const kiRoh = kiClips && (i === 0 || /^(ja|1|an|true)$/i.test(String(process.env.VIDEO_KI_ALLE || '').trim())) ? await kiClip(bild, szene.bild, join(ordner, `s${i}.ki.mp4`), { index: i }) : '';
+        const video = kiRoh ? bumerang(kiRoh, join(ordner, `s${i}.kib.mp4`), dauerSekunden(mp3) + 0.35) || kiRoh : '';
+        await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '', video });
+      }
       letztesBild = bild;
       clips.push(clip);
       if (szene.kapitel) kapitel.push({ zeit, titel: szene.kapitel });

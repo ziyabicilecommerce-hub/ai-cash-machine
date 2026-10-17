@@ -196,7 +196,7 @@ async function main() {
   const folge = await folgeSchreiben(serie);
   const hook = `Folge ${folge.nr}: ${folge.titel}`.slice(0, 60);
   const titel = `${serie.titel} – Folge ${folge.nr}: ${folge.titel}`;
-  const v = await videoBauen({ titel, hook, szenen: folge.szenen }, join(OUT, 'anime-arbeit'), { format: FORMAT, stimme: ERZAEHLER, stil: STIL, hook, bildAlle: BILD_ALLE, musik: 'anime' });
+  const v = await videoBauen({ titel, hook, szenen: folge.szenen }, join(OUT, 'anime-arbeit'), { format: FORMAT, stimme: ERZAEHLER, stil: STIL, hook, bildAlle: BILD_ALLE, musik: 'anime', kiClips: true });
   const basis = `${new Date().toISOString().slice(0, 10)}-anime-${slug(serie.titel)}-folge-${folge.nr}`;
   copyFileSync(v.pfad, join(OUT, 'videos', `${basis}.mp4`));
   let vorschau = '';
