@@ -25,7 +25,7 @@ export const STATE_BOT = 'bewerbungs-bot';
 export const STATE_POSTFACH = 'bewerbungs-postfach';
 const API = 'https://rest.arbeitsagentur.de/jobboerse/jobsuche-service';
 const API_HEADERS = { 'X-API-Key': 'jobboerse-jobsuche', 'User-Agent': 'Jobsuche/2.9.2 (de.arbeitsagentur.jobboerse)' };
-const MAX_LIVE = Math.max(1, Math.min(150, parseInt(env('BEWERBUNG_MAX_PRO_TAG', '100'), 10) || 100));
+const MAX_LIVE = Math.max(1, Math.min(200, parseInt(env('BEWERBUNG_MAX_PRO_TAG', '150'), 10) || 150));
 // Testmodus: nur ein paar Probe-Bewerbungen an dich selbst, damit du sie in Ruhe anschauen kannst.
 const MAX_PRO_TAG = LIVE ? MAX_LIVE : Math.min(MAX_LIVE, parseInt(env('BEWERBUNG_TEST_MAX', '5'), 10) || 5);
 const ORT = wohnort();
@@ -79,6 +79,20 @@ const STANDARD_SUCHE = [
   'Flughafen Kundenservice:job',
   'Luftfracht Schicht:job',
   'Quereinsteiger Büro:job',
+  // Social Media / Online: Insta- & TikTok-Erfahrung vorhanden
+  'Social Media:job',
+  'Social Media Quereinsteiger:job',
+  'Content Creator:job',
+  'Online Marketing Quereinsteiger:job',
+  'E-Commerce Mitarbeiter:job',
+  'Onlineshop Mitarbeiter:job',
+  // Mehr Masse: breite Einstiegs-Bürojobs
+  'Sachbearbeiter Quereinsteiger:job',
+  'Kundenservice Quereinsteiger:job',
+  'Mitarbeiter Innendienst:job',
+  'Assistenz Quereinsteiger:job',
+  'Empfang Rezeption:job',
+  'Logistik Sachbearbeiter:job',
   'Quereinsteiger Verwaltung:job',
   'Quereinsteiger Buchhaltung:job',
   'Quereinsteiger Flughafen:job',
