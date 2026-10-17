@@ -107,6 +107,10 @@ const STANDARD_SUCHE = [
   // IT & Cybersecurity: am PC, wenig Telefon - Einstieg über Quereinstieg oder Ausbildung
   'IT Quereinsteiger:job',
   'IT-Support Berufseinsteiger:job',
+  'Junior IT-Administrator:job',
+  '1st Level Support:job',
+  'IT Service Desk:job',
+  'IT-Supporter:job',
   'Datenerfassung:job',
   'Fachinformatiker Systemintegration:ausbildung',
   'Fachinformatiker Daten- und Prozessanalyse:ausbildung',

@@ -18,7 +18,7 @@ export function vorlagePasst(text, titel = '') {
   text = nurAnzeige(text);
   if (!titel.trim()) return false;
   // "IT-Mitarbeiter / Quereinsteiger" ist ausdrücklich offen - nur sonst blockt der Titel.
-  if (!AUSBILDUNG.test(titel) && !/quereinst|einsteiger/i.test(titel) && NUR_MIT_QUALIFIKATION.test(titel)) return false;
+  if (!AUSBILDUNG.test(titel) && !/quereinst|einsteiger|junior|1st[ -]level|service ?desk|it-support|it support/i.test(titel) && NUR_MIT_QUALIFIKATION.test(titel)) return false;
   const sprache = titel.match(FREMDSPRACHE)?.[0];
   if (sprache && !new RegExp(sprache, 'i').test(daten().roh)) return false;
   return OFFEN_FUER_EINSTEIGER.test(text) || !HARTE_HUERDE.test(text);
