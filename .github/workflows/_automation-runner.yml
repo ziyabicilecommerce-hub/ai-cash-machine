@@ -7,6 +7,11 @@ on:
         description: 'Pfad zum Automation-Script, z.B. automations/01-gewinn-radar.mjs'
         required: true
         type: string
+      auftrag:
+        description: 'Optionaler Auftrag (JSON) für manuell gestartete Automationen'
+        required: false
+        type: string
+        default: ''
 
 jobs:
   run:
@@ -250,6 +255,7 @@ jobs:
           BEWERBUNG_ZEITARBEIT_AB: ${{ secrets.BEWERBUNG_ZEITARBEIT_AB }}
           BEWERBUNG_ORTE: ${{ secrets.BEWERBUNG_ORTE }}
           BEWERBUNG_TEST_MAX: ${{ secrets.BEWERBUNG_TEST_MAX }}
+          AUTOMATION_AUFTRAG: ${{ inputs.auftrag }}
 
       - name: State-Änderungen committen
         # if: always() ist wichtig - läuft ein Skript mitten in einer Kunden-
