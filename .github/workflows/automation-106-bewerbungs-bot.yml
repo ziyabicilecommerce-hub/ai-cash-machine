@@ -2,8 +2,8 @@ name: "106 · Bewerbungs-Bot"
 
 on:
   schedule:
-    # Mo-Fr 06:00 UTC = 08:00 deutsche Sommerzeit / 07:00 Winterzeit
-    - cron: '0 6 * * 1-5'
+    # Jeden Tag 06:00 UTC = 08:00 deutsche Sommerzeit / 07:00 Winterzeit
+    - cron: '0 6 * * *'
   workflow_dispatch: {}
 
 permissions:
