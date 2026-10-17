@@ -340,7 +340,9 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
       } else {
         // Auch im einfachen Modus (z. B. Anime-Serie): echter KI-Clip, solange das Gratis-Kontingent reicht.
         const kiRoh = kiClips && (i === 0 || /^(ja|1|an|true)$/i.test(String(process.env.VIDEO_KI_ALLE || '').trim())) ? await kiClip(bild, szene.bild, join(ordner, `s${i}.ki.mp4`), { index: i }) : '';
-        const video = kiRoh ? bumerang(kiRoh, join(ordner, `s${i}.kib.mp4`), dauerSekunden(mp3) + 0.35) || kiRoh : '';
+        // Ohne KI-Clip: 3D-Kamerafahrt (Tiefe per Depth Anything, Parallaxe) statt flachem Zoom, wenn VIDEO_3D_EINFACH=ja.
+        const video = kiRoh ? bumerang(kiRoh, join(ordner, `s${i}.kib.mp4`), dauerSekunden(mp3) + 0.35) || kiRoh
+          : /^(ja|1|an|true)$/i.test(String(process.env.VIDEO_3D_EINFACH || '').trim()) ? tiefe3d(bild, join(ordner, `s${i}.3d.mp4`), dauerSekunden(mp3) + 0.35, { breite, hoehe, art: ['dolly', 'orbit', 'kran'][i % 3] }) : '';
         await szeneRendern({ bild, mp3, srt, ziel: clip, breite, hoehe, index: i, format, hook: clips.length === 0 ? hook : '', schild: szene.schild || '', video });
       }
       letztesBild = bild;
