@@ -56,8 +56,9 @@ export function shotsPlanen(idee, preset = PRESET_STANDARD, anzahl = 3) {
 // Modell-Reihenfolge: das stärkste freie Modell zuerst, ist ein Kontingent leer, das nächste.
 // wan14 (5 s, Endbild), ltx23 (natives 704x1280) und real (realistisches Finetune) sind kleine Gratis-Spaces aus der
 // Weltsuche (Okt. 2026), alle mit Testclip geprüft.
-export function modellReihe(erschoepft = new Set(), { zhipu = false } = {}) {
-  return ['wan14', 'ltx23', 'wan', 'real', 'ltx', ...(zhipu ? ['zhipu'] : [])].filter((m) => !erschoepft.has(m));
+// seedance (BytePlus, Startkontingent gratis) kommt nur mit Schlüssel dazu und steht dann ganz vorn.
+export function modellReihe(erschoepft = new Set(), { zhipu = false, seedance = false } = {}) {
+  return [...(seedance ? ['seedance'] : []), 'wan14', 'ltx23', 'wan', 'real', 'ltx', ...(zhipu ? ['zhipu'] : [])].filter((m) => !erschoepft.has(m));
 }
 
 const LOOKS = {

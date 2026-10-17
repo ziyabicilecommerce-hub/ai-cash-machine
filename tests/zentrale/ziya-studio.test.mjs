@@ -31,6 +31,8 @@ test('Ziya Studio: Modell-Router überspringt erschöpfte Modelle', () => {
   assert.deepEqual(modellReihe(), ['wan14', 'ltx23', 'wan', 'real', 'ltx']);
   assert.deepEqual(modellReihe(new Set(['wan14', 'ltx23', 'wan']), { zhipu: true }), ['real', 'ltx', 'zhipu']);
   assert.deepEqual(modellReihe(new Set(['wan14', 'ltx23', 'wan', 'real', 'ltx'])), []);
+  assert.deepEqual(modellReihe(new Set(), { seedance: true })[0], 'seedance', 'Seedance zuerst, wenn Schlüssel da');
+  assert.deepEqual(modellReihe(new Set(['seedance']), { seedance: true })[0], 'wan14', 'Kontingent leer -> Gratis-Modelle');
 });
 
 test('Ziya Studio: Filterketten', () => {
@@ -60,4 +62,15 @@ test('Ziya Studio: Tonspur mit Boom und Whoosh an den Schnitten', () => {
   assert.ok(!/random\([1-9]/.test(t), 'random nur mit gültigem Index');
   assert.ok(!tonFormel([4], 'fpv').includes('between'), 'ein Shot = kein Whoosh');
   assert.ok(Object.values(PRESETS).every((p) => p.tempo && p.licht && p.umgebung && p.ton));
+});
+
+import { seedanceAuftrag, SEEDANCE_STANDARD } from '../../automations/lib/seedance.mjs';
+test('Seedance: Auftrag für BytePlus ModelArk', () => {
+  const a = seedanceAuftrag('QUJD', 'slow dolly push in.\n a star', { sekunden: 4 });
+  assert.equal(a.model, SEEDANCE_STANDARD);
+  assert.equal(a.content[0].type, 'text');
+  assert.match(a.content[0].text, /^slow dolly push in\. a star --ratio adaptive --duration 4 --resolution 720p --watermark false$/);
+  assert.deepEqual(a.content[1], { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,QUJD' } });
+  assert.match(seedanceAuftrag('x', 'p', { sekunden: 99 }).content[0].text, /--duration 10 /);
+  assert.equal(seedanceAuftrag('x', 'p', { modell: 'seedance-2-0' }).model, 'seedance-2-0');
 });

@@ -57,6 +57,10 @@ jobs:
       POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
       # Optional, kostenlos: mehr KI-Video-Kontingent (huggingface.co) bzw. CogVideoX-Flash (Zhipu AI).
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      # Optional: echtes Seedance (ByteDance) über BytePlus ModelArk - neue Konten bekommen ein Gratis-Startkontingent.
+      BYTEPLUS_API_KEY: ${{ secrets.BYTEPLUS_API_KEY }}
+      SEEDANCE_MODELL: ${{ vars.SEEDANCE_MODELL }}
+      BYTEPLUS_API_BASE: ${{ vars.BYTEPLUS_API_BASE }}
       ZHIPU_API_KEY: ${{ secrets.ZHIPU_API_KEY }}
       ZHIPU_API_BASE: ${{ vars.ZHIPU_API_BASE }}
     steps:
