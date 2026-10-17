@@ -50,6 +50,13 @@ jobs:
       ANIME_NEU: ${{ inputs.neu }}
       ANIME_THEMA: ${{ inputs.thema || vars.ANIME_THEMA }}
       ANIME_STIL: ${{ vars.ANIME_STIL }}
+      # Echte Anime-KI-Clips statt Standbild, so viele das Gratis-Kontingent hergibt (danach Kamerafahrt).
+      VIDEO_KI_ALLE: ${{ vars.ANIME_KI_ALLE || 'ja' }}
+      KI_CLIP_ANIME: 'ja'
+      KI_CLIP_NEG: 'static, still image, blurry, distorted, deformed, extra limbs, 3d render, photo, text, watermark, subtitles'
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      ZHIPU_API_KEY: ${{ secrets.ZHIPU_API_KEY }}
+      ZHIPU_API_BASE: ${{ vars.ZHIPU_API_BASE }}
     steps:
       - uses: actions/checkout@v4
       - name: Eigene KI starten (kostenlos, ohne Schlüssel, ohne Limit)
@@ -62,7 +69,7 @@ jobs:
       - name: ffmpeg, Schrift und edge-tts installieren
         uses: ./.github/actions/video-werkzeug
         with:
-          pip: 'edge-tts==7.*'
+          pip: 'edge-tts==7.* gradio_client'
       - name: Folge bauen
         run: node automations/95-anime-serie.mjs
       - name: Als Release veroeffentlichen und Feed ergaenzen

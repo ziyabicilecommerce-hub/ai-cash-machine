@@ -15,8 +15,9 @@ export const bewegungsPrompt = (bild) => `${String(bild || '').replace(/,?\s*no 
 
 // Hook-Szene bekommt das bessere Modell (Wan), der Rest das schnellere (LTX); ist eins erschöpft, das andere.
 // Mit ZHIPU_API_KEY (kostenloses Konto bei Zhipu AI) kommt CogVideoX-Flash als dritte, kostenlose Quelle dazu.
-export function modelleFuer(index, erschoepft = new Set(), { zhipu = !!process.env.ZHIPU_API_KEY } = {}) {
-  return [...(index === 0 ? ['wan', 'ltx'] : ['ltx', 'wan']), ...(zhipu ? ['zhipu'] : [])].filter((m) => !erschoepft.has(m));
+// KI_CLIP_ANIME=ja (Anime-Serie): erst AnimeGen-I2V (auf Anime trainiert), dann die allgemeinen Modelle.
+export function modelleFuer(index, erschoepft = new Set(), { zhipu = !!process.env.ZHIPU_API_KEY, anime = /^(ja|1|an|true)$/i.test(String(process.env.KI_CLIP_ANIME || '').trim()) } = {}) {
+  return [...(anime ? ['animegen'] : []), ...(index === 0 ? ['wan', 'ltx'] : ['ltx', 'wan']), ...(zhipu ? ['zhipu'] : [])].filter((m) => !erschoepft.has(m));
 }
 
 // Zhipu AI (bigmodel.cn bzw. z.ai international): CogVideoX-Flash ist dort ein kostenloses Modell.
