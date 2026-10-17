@@ -1,0 +1,21 @@
+name: "108 · Einzelbewerbung"
+
+on:
+  workflow_dispatch:
+    inputs:
+      auftrag:
+        description: 'JSON: {"email","firma","titel","anschreiben","betreff"?}'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/108-einzelbewerbung.mjs
+      auftrag: ${{ inputs.auftrag }}
+    secrets: inherit
