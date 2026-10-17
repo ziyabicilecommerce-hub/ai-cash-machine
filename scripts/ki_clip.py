@@ -1,6 +1,6 @@
 # Echter KI-Clip aus einem Standbild (Bild-zu-Video) über kostenlose Hugging-Face-Spaces (ZeroGPU), ohne Schlüssel.
 # Optional HF_TOKEN (kostenloses Konto) für mehr Tageskontingent.
-#   python3 scripts/ki_clip.py <bild> <prompt> <ziel.mp4> <wan|ltx|wan14|ltx23|real>
+#   python3 scripts/ki_clip.py <bild> <prompt> <ziel.mp4> <wan|ltx|wan14|ltx23|real|anisora|k6|animegen>
 # Exit 0 = Clip liegt in <ziel>; Exit 3 = Kontingent erschöpft; sonst Fehler.
 import os, shutil, sys
 
@@ -36,6 +36,17 @@ try:
             extra = {}
         r = c.predict(input_image=handle_file(bild), prompt=prompt, steps=SCHRITTE, negative_prompt=NEG, duration_seconds=min(DAUER, 5),
                       guidance_scale=1, guidance_scale_2=1, seed=42, randomize_seed=True, api_name="/generate_video", **extra)
+    elif modell == "anisora":
+        # AniSora V3.2 (Bilibili, Open Source, auf Anime trainiert) - 5 s, Gratis-GPU.
+        c = client(os.environ.get("KI_CLIP_ANISORA", "thanh14536/anisora-v3-2-zero"))
+        r = c.predict(image=handle_file(bild), prompt=prompt, seed=42, randomize_seed=True, api_name="/generate")
+    elif modell == "k6":
+        # Kandinsky 6.0 Pro (Okt. 2026, offizieller Space) - 5 s Video MIT passendem Ton.
+        c = client(os.environ.get("KI_CLIP_K6", "kandinskylab/Kandinsky-6.0-Pro-distill-5s"))
+        r = c.predict(prompt=prompt, use_beautifier=True, seed=42, image=handle_file(bild), api_name="/generate")
+    elif modell == "animegen":
+        c = client(os.environ.get("KI_CLIP_ANIMEGEN", "aidealab/AnimeGen-I2V"))
+        r = c.predict(image=handle_file(bild), prompt=prompt, negative_prompt="3d, cg, photo, stop, wait", api_name="/generate_video")
     elif modell == "ltx23":
         # LTX 2.3 in nativer Hochkant-Auflösung 704x1280 (24 fps) - deutlich schärfer, weniger Hochrechnen nötig.
         c = client(os.environ.get("KI_CLIP_LTX23", "Ash1004/ltx23-i2v-fullres"))

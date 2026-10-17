@@ -12,7 +12,7 @@ import { join, resolve } from 'node:path';
 import { ladeBild, dauerSekunden, sprechen } from './lib/videoFabrik.mjs';
 import { zhipuClip } from './lib/kiVideo.mjs';
 import { seedanceClip } from './lib/seedance.mjs';
-import { PRESETS, presetVon, shotsPlanen, modellReihe, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel } from './lib/ziyaStudio.mjs';
+import { PRESETS, presetVon, shotsPlanen, modellReihe, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
 const ausfuehren = promisify(execFile);
@@ -27,14 +27,15 @@ const sekunden = Math.min(Math.max(Number(process.env.ZIYA_SEKUNDEN) || 3.5, 2),
 const loop = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_LOOP || '').trim());
 const durchgehend = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_DURCHGEHEND || '').trim());
 const sprechertext = String(process.env.ZIYA_TEXT || '').replace(/\s+/g, ' ').trim().slice(0, 600);
-const menschen = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_MENSCHEN || '').trim());
+// Anime-Kampf braucht Figuren - dort sind Menschen immer erlaubt.
+const menschen = preset === 'anime-kampf' || /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_MENSCHEN || '').trim());
 const NEG = `static, still image, blurry, distorted, deformed, morphing, extra limbs, text, watermark, subtitles${menschen ? '' : ', people, faces'}`;
 
 const ffmpeg = (args) => execFileSync('ffmpeg', ['-loglevel', 'error', '-y', ...args], { stdio: 'pipe', timeout: 600000 });
 
 async function kiClipHolen(bild, prompt, ziel, erschoepft) {
   // Loop braucht ein Endbild - das kann nur wan14, die anderen bleiben als Rückfall.
-  for (const m of modellReihe(erschoepft, { zhipu: !!process.env.ZHIPU_API_KEY, seedance: !!process.env.BYTEPLUS_API_KEY })) {
+  for (const m of modellReihe(erschoepft, { zhipu: !!process.env.ZHIPU_API_KEY, seedance: !!process.env.BYTEPLUS_API_KEY, anime: preset === 'anime-kampf' })) {
     try {
       if (m === 'seedance') await seedanceClip(bild, prompt, ziel, { sekunden: Math.max(sekunden, 5) });
       else if (m === 'zhipu') await zhipuClip(bild, prompt, ziel);
@@ -55,7 +56,7 @@ async function kiClipHolen(bild, prompt, ziel, erschoepft) {
 // Klang + optional Sprecher unterlegen; der Klang duckt sich unter die Stimme. Klappt etwas nicht: Video ohne Ton.
 async function tonDrauf(stumm, video, dauern) {
   const laenge = dauerSekunden(stumm);
-  const klang = `aevalsrc='${tonFormel(dauern, preset)}':s=44100:d=${laenge.toFixed(2)}`;
+  const klang = `aevalsrc='${tonFormel(dauern, preset, schnittArt(preset))}':s=44100:d=${laenge.toFixed(2)}`;
   let stimme = '';
   if (sprechertext) {
     try {
@@ -112,7 +113,7 @@ async function main() {
 
   const stempel = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12);
   const video = join(ORDNER, `ziya-${stempel}.mp4`);
-  const { filter } = ueberblendung(fertig.map((f) => f.dauer));
+  const { filter } = ueberblendung(fertig.map((f) => f.dauer), schnittArt(preset));
   const stumm = join(ORDNER, 'stumm.mp4');
   ffmpeg([...fertig.flatMap((f) => ['-i', f.datei]), '-filter_complex', filter, '-map', '[v]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', stumm]);
   await tonDrauf(stumm, video, fertig.map((f) => f.dauer));

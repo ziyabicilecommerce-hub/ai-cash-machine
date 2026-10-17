@@ -16,6 +16,14 @@ export const PRESETS = {
   'bullet-time': { name: 'Bullet Time', kamera: 'frozen moment, camera slowly circles the subject', umgebung: 'particles and droplets hang still in the air', licht: 'crisp high contrast light', tempo: 'extreme slow motion', zoom: 'schwenk', look: 'kontrast', ton: 'action' },
   handheld: { name: 'Handkamera', kamera: 'handheld camera with subtle natural shake', umgebung: 'real-world movement, wind and small details', licht: 'natural available light', tempo: 'real-time, documentary feel', zoom: 'rein', look: 'natur', ton: 'natur' },
   zeitlupe: { name: 'Zeitlupe', kamera: 'gentle slow drifting camera', umgebung: 'floating particles, flowing elements', licht: 'dreamy soft glow, lens bloom', tempo: 'super slow motion', zoom: 'rein', look: 'episch', ton: 'episch' },
+  // Anime-Kampf: Kinofilm-Anime-Look mit Sakuga-Kamera, Element-Effekten, Impact-Frames und Wackler an jedem Schnitt.
+  // Eigene Figuren - geschützte Anime-Figuren werden nicht nachgebaut.
+  'anime-kampf': {
+    name: 'Anime-Kampf', kamera: 'dynamic sakuga camera, fast whip pan following the attack', umgebung: 'glowing elemental slashes, shockwaves, sparks and debris burst outward',
+    licht: 'intense glowing effects, dramatic anime lighting, strong rim light', tempo: 'explosive fast action with a split-second impact pause', zoom: 'rein-schnell', look: 'anime', ton: 'action', impact: true,
+    stil: 'anime key visual, high-budget anime film, cel shading, vibrant saturated colors, detailed painted background, dynamic composition, glowing particle effects',
+    einstellungen: ['dynamic low angle action shot', 'extreme close-up of determined glowing eyes', 'wide shot of two fighters clashing mid-air', 'close-up of blades clashing with sparks', 'aerial shot of a shockwave crater'],
+  },
   grusel: { name: 'Grusel', kamera: 'slow creeping push in', umgebung: 'fog rolls in, light flickers, shadows move', licht: 'cold moonlight, deep shadows', tempo: 'slow and ominous', zoom: 'rein', look: 'grusel', ton: 'grusel' },
 };
 export const PRESET_STANDARD = 'dolly-in';
@@ -26,9 +34,12 @@ const EINSTELLUNGEN = [
   'wide establishing shot, 24mm lens', 'medium close-up, 50mm lens, shallow depth of field', 'dramatic hero shot from a low angle, 35mm lens',
   'extreme close-up detail, 85mm macro lens', 'wide aerial view, 16mm lens',
 ];
-const FOLGE = { 'crash-zoom': ['dolly-in', 'crash-zoom', 'orbit'], grusel: ['grusel', 'handheld', 'crash-zoom'], fpv: ['fpv', 'orbit', 'crane-up'] };
+const FOLGE = { 'anime-kampf': ['anime-kampf'], 'crash-zoom': ['dolly-in', 'crash-zoom', 'orbit'], grusel: ['grusel', 'handheld', 'crash-zoom'], fpv: ['fpv', 'orbit', 'crane-up'] };
 // Bild-Formel: Motiv + Umgebung + Einstellung/Objektiv + Licht + Stil + Qualität.
 const STIL = 'cinematic film still, photorealistic, rich color grading, 8k, ultra detailed, sharp focus';
+
+// Übergang und Blendenlänge je Preset (Anime: harter weißer Impact-Frame).
+export const schnittArt = (preset) => (PRESETS[presetVon(preset)].impact ? { uebergang: 'fadewhite', blende: 0.2 } : { uebergang: 'fade', blende: 0.4 });
 
 export const presetVon = (id) => PRESETS[String(id || '').trim().toLowerCase()] ? String(id).trim().toLowerCase() : PRESET_STANDARD;
 const sauber = (t, n) => String(t || '').replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
@@ -44,10 +55,11 @@ export function shotsPlanen(idee, preset = PRESET_STANDARD, anzahl = 3) {
   return Array.from({ length: n }, (_, i) => {
     const id = reihe[i % reihe.length];
     const x = PRESETS[id];
-    const einstellung = EINSTELLUNGEN[i % EINSTELLUNGEN.length];
+    const liste = x.einstellungen || EINSTELLUNGEN;
+    const einstellung = liste[i % liste.length];
     return {
       nr: i + 1, preset: id,
-      bild: `${text}, ${einstellung}, ${x.licht}, ${STIL}, vertical 9:16 composition`,
+      bild: `${text}, ${einstellung}, ${x.licht}, ${x.stil || STIL}, vertical 9:16 composition`,
       bewegung: `${x.kamera}. ${text}, the subject moves naturally and stays consistent. ${x.umgebung}. ${x.tempo}. ${x.licht}. Cinematic, smooth, coherent motion.`,
     };
   });
@@ -57,8 +69,10 @@ export function shotsPlanen(idee, preset = PRESET_STANDARD, anzahl = 3) {
 // wan14 (5 s, Endbild), ltx23 (natives 704x1280) und real (realistisches Finetune) sind kleine Gratis-Spaces aus der
 // Weltsuche (Okt. 2026), alle mit Testclip geprüft.
 // seedance (BytePlus, Startkontingent gratis) kommt nur mit Schlüssel dazu und steht dann ganz vorn.
-export function modellReihe(erschoepft = new Set(), { zhipu = false, seedance = false } = {}) {
-  return [...(seedance ? ['seedance'] : []), 'wan14', 'ltx23', 'wan', 'real', 'ltx', ...(zhipu ? ['zhipu'] : [])].filter((m) => !erschoepft.has(m));
+// anime: AnimeGen (gratis getestet) vor AniSora V3.2 und Kandinsky 6.0 Pro - die beiden brauchen mehr GPU-Zeit,
+// als ZeroGPU ohne PRO-Konto erlaubt, und springen dann in 2 s zum nächsten Modell weiter.
+export function modellReihe(erschoepft = new Set(), { zhipu = false, seedance = false, anime = false } = {}) {
+  return [...(seedance ? ['seedance'] : []), ...(anime ? ['animegen', 'anisora', 'k6'] : []), 'wan14', 'ltx23', 'wan', 'real', 'ltx', ...(zhipu ? ['zhipu'] : [])].filter((m) => !erschoepft.has(m));
 }
 
 const LOOKS = {
@@ -67,7 +81,13 @@ const LOOKS = {
   episch: "eq=contrast=1.08:saturation=1.12,colorbalance=rs=-0.04:bs=0.06:rh=0.05:bh=-0.04",
   natur: 'eq=contrast=1.04:saturation=1.12',
   grusel: 'eq=contrast=1.12:saturation=0.7:brightness=-0.03,colorbalance=bs=0.08:gs=0.03',
+  // Anime: kräftige Farben, Leuchten (weichgezeichnete Kopie im Screen-Modus) und leichte Farbsäume wie im Kino-Anime.
+  anime: 'eq=contrast=1.12:saturation=1.35,split[ak][ag];[ag]gblur=sigma=14[agb];[ak][agb]blend=all_mode=screen:all_opacity=0.32,rgbashift=rh=-2:bh=2',
 };
+
+// Impact-Wackler: die ersten 0,4 s nach jedem Schnitt bebt das Bild (Treffer-Gefühl), danach ruhig.
+export const wackler = (breite = 1080, hoehe = 1920) =>
+  `crop=w=iw-48:h=ih-48:x='24+if(lt(t,0.4),22*sin(t*95)*(1-t/0.4),0)':y='24+if(lt(t,0.4),22*cos(t*81)*(1-t/0.4),0)',scale=${breite}:${hoehe}`;
 
 // Nachbearbeitung pro Shot: flüssige Zwischenbilder (30 fps, noch in kleiner Auflösung = schnell), hochskalieren
 // (Lanczos), nachschärfen, Farblook, feines Filmkorn. roh=false: für die Kamerafahrt, die schon Größe und fps hat.
@@ -76,7 +96,7 @@ export function nachbearbeitung(preset, { breite = 1080, hoehe = 1920, fps = 30,
   return [
     ...(roh ? [`minterpolate=fps=${fps}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1`,
       `scale=${breite}:${hoehe}:force_original_aspect_ratio=increase:flags=lanczos`, `crop=${breite}:${hoehe}`] : []),
-    'unsharp=5:5:0.6:5:5:0', look, 'noise=alls=4:allf=t', 'format=yuv420p',
+    'unsharp=5:5:0.6:5:5:0', look, ...(PRESETS[presetVon(preset)].impact ? [wackler(breite, hoehe)] : []), 'noise=alls=4:allf=t', 'format=yuv420p',
   ].join(',');
 }
 
@@ -93,14 +113,15 @@ export function kamerafahrt(preset, { breite = 1080, hoehe = 1920, sekunden = 4,
 }
 
 // Weiche Überblendungen zwischen den Shots (xfade), Offsets aus den Shot-Längen.
-export function ueberblendung(dauern, { blende = 0.4 } = {}) {
+// Anime: uebergang 'fadewhite' mit kurzer Blende = weißer Impact-Frame an jedem Schnitt.
+export function ueberblendung(dauern, { blende = 0.4, uebergang = 'fade' } = {}) {
   if (dauern.length < 2) return { filter: '[0:v]null[v]', laenge: dauern[0] || 0 };
   const teile = [];
   let summe = dauern[0];
   let vorher = '[0:v]';
   for (let i = 1; i < dauern.length; i++) {
     const raus = i === dauern.length - 1 ? '[v]' : `[x${i}]`;
-    teile.push(`${vorher}[${i}:v]xfade=transition=fade:duration=${blende}:offset=${(summe - blende).toFixed(3)}${raus}`);
+    teile.push(`${vorher}[${i}:v]xfade=transition=${uebergang}:duration=${blende}:offset=${(summe - blende).toFixed(3)}${raus}`);
     summe += dauern[i] - blende;
     vorher = raus;
   }
@@ -118,5 +139,10 @@ export function tonFormel(dauern, preset, { blende = 0.4 } = {}) {
   for (let i = 0; i < dauern.length - 1; i++) { t += dauern[i] - (i === 0 ? 0 : blende); schnitte.push(Number((t - blende).toFixed(2))); }
   const whoosh = schnitte.map((z) => `if(between(t,${Math.max(z - 0.5, 0).toFixed(2)},${(z + 0.4).toFixed(2)}),0.25*(random(0)*2-1)*sin(PI*(t-${Math.max(z - 0.5, 0).toFixed(2)})/0.9),0)`);
   const boom = '0.7*sin(2*PI*(38+60*exp(-8*t))*t)*exp(-2.5*t)';
-  return [drone, boom, ...whoosh].join('+');
+  // Impact-Presets: an jedem Schnitt ein Bass-Treffer + metallisches Klingen (Schwertschlag).
+  const treffer = PRESETS[presetVon(preset)].impact ? schnitte.map((z) => {
+    const a = (z + blende / 2).toFixed(2);
+    return `if(gte(t,${a}),(0.6*sin(2*PI*(40+70*exp(-9*(t-${a})))*(t-${a}))+0.12*sin(2*PI*3150*(t-${a}))+0.08*sin(2*PI*4720*(t-${a})))*exp(-4*(t-${a})),0)`;
+  }) : [];
+  return [drone, boom, ...whoosh, ...treffer].join('+');
 }
