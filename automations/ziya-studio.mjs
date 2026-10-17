@@ -7,7 +7,7 @@
 // ZIYA_LOOP=ja (nahtloser Loop, Endbild = Startbild), ZIYA_DURCHGEHEND=ja (jeder Shot startet mit dem letzten Bild des vorigen = eine durchgehende Szene), ZIYA_TEXT (Sprechertext).
 import { execFile, execFileSync } from 'node:child_process';
 import { promisify } from 'node:util';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { ladeBild, dauerSekunden, sprechen } from './lib/videoFabrik.mjs';
 import { zhipuClip } from './lib/kiVideo.mjs';
@@ -32,6 +32,18 @@ const menschen = preset === 'anime-kampf' || /^(1|ja|true|an)$/i.test(String(pro
 const NEG = `static, still image, blurry, distorted, deformed, morphing, extra limbs, text, watermark, subtitles${menschen ? '' : ', people, faces'}`;
 
 const ffmpeg = (args) => execFileSync('ffmpeg', ['-loglevel', 'error', '-y', ...args], { stdio: 'pipe', timeout: 600000 });
+
+// KI-Hochskalierer (Real-ESRGAN x4, CPU): kleine KI-Clips werden echt hochgerechnet statt gestreckt.
+// ZIYA_HD=aus schaltet ab; klappt es nicht, geht es mit dem Originalclip weiter.
+function hochskalieren(quelle, ziel) {
+  if (/^(0|nein|aus|false)$/i.test(String(process.env.ZIYA_HD || '').trim())) return quelle;
+  try {
+    const t = Date.now();
+    execFileSync('python3', [resolve('scripts/hochskalieren.py'), quelle, ziel, preset === 'anime-kampf' ? 'anime' : 'allgemein'], { stdio: 'pipe', timeout: 1800000 });
+    if (existsSync(ziel)) { console.log(`${LOG} KI-Hochskalierung (Real-ESRGAN) in ${Math.round((Date.now() - t) / 1000)} s`); return ziel; }
+  } catch (err) { console.log(`${LOG} Hochskalierung übersprungen: ${String(err.stderr || err.message).slice(-200)}`); }
+  return quelle;
+}
 
 async function kiClipHolen(bild, prompt, ziel, erschoepft) {
   // Loop braucht ein Endbild - das kann nur wan14, die anderen bleiben als Rückfall.
@@ -95,14 +107,19 @@ async function main() {
       try { ffmpeg(['-sseof', '-0.1', '-i', letzterRoh, '-frames:v', '1', '-q:v', '2', bild]); } catch { /* dann neues Bild */ }
     }
     // Sonst gleicher Grund-Seed für alle Shots, damit Stil und Farben zusammenpassen.
-    if (!existsSync(bild) && !(await ladeBild(s.bild, bild, { breite: 768, hoehe: 1344, seed: seed + s.nr, enhance: true }))) {
-      console.log(`${LOG} Shot ${s.nr}: kein Startbild, übersprungen`);
-      continue;
+    // Bildquelle hakt manchmal: zweiter Versuch ohne Prompt-Erweiterung, sonst das Bild des vorigen Shots.
+    if (!existsSync(bild) && !(await ladeBild(s.bild, bild, { breite: 768, hoehe: 1344, seed: seed + s.nr, enhance: true }))
+      && !(await ladeBild(s.bild, bild, { breite: 768, hoehe: 1344, seed: seed + s.nr + 100, enhance: false }))) {
+      const vorher = fertig.length ? join(ORDNER, `shot${fertig[fertig.length - 1].nr}.jpg`) : '';
+      if (!vorher || !existsSync(vorher)) { console.log(`${LOG} Shot ${s.nr}: kein Startbild, übersprungen`); continue; }
+      copyFileSync(vorher, bild);
+      console.log(`${LOG} Shot ${s.nr}: Bildquelle hakt, nehme das Bild des vorigen Shots`);
     }
     const modell = await kiClipHolen(bild, s.bewegung, roh, erschoepft);
     letzterRoh = modell ? roh : '';
     if (modell) {
-      ffmpeg(['-i', roh, '-an', '-vf', nachbearbeitung(s.preset, { breite: B, hoehe: H }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
+      const hd = hochskalieren(roh, join(ORDNER, `shot${s.nr}-hd.mp4`));
+      ffmpeg(['-i', hd, '-an', '-vf', nachbearbeitung(s.preset, { breite: B, hoehe: H }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
     } else {
       ffmpeg(['-i', bild, '-vf', `${kamerafahrt(s.preset, { breite: B, hoehe: H, sekunden })},${nachbearbeitung(s.preset, { roh: false })}`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
     }
