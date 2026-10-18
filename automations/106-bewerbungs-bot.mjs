@@ -96,8 +96,6 @@ const STANDARD_SUCHE = [
   'IT-Sicherheit Quereinsteiger:job',
   'Junior SOC Analyst:job',
   'Cyber Security Junior:job',
-  'Kaufmann Marketingkommunikation:ausbildung',
-  'Mediengestalter Digital und Print:ausbildung',
   // Mehr Masse: breite Einstiegs-Bürojobs
   'Sachbearbeiter Quereinsteiger:job',
   'Kundenservice Quereinsteiger:job',
@@ -113,9 +111,6 @@ const STANDARD_SUCHE = [
   'Flughafen Büro:job',
   'Flughafen Verwaltung:job',
   'Flughafen Sachbearbeiter:job',
-  'Luftverkehrskaufmann:ausbildung',
-  'Servicekaufmann Luftverkehr:ausbildung',
-  'Flughafen Kaufmann:ausbildung',
   'Buchhaltung:job',
   'Finanzbuchhaltung:job',
   'Mitarbeiter Buchhaltung:job',
@@ -124,12 +119,6 @@ const STANDARD_SUCHE = [
   'Bürohilfe:job',
   'Sachbearbeiter Büro:job',
   'Mitarbeiter Backoffice:job',
-  'Steuerfachangestellte:ausbildung',
-  'Kaufmann Büromanagement:ausbildung',
-  'Industriekaufmann:ausbildung',
-  'Verwaltungsfachangestellte:ausbildung',
-  'Sozialversicherungsfachangestellte:ausbildung',
-  'Kaufmann Spedition und Logistikdienstleistung:ausbildung',
   // IT & Cybersecurity: am PC, wenig Telefon - Einstieg über Quereinstieg oder Ausbildung
   'IT Quereinsteiger:job',
   'IT-Support Berufseinsteiger:job',
@@ -138,10 +127,6 @@ const STANDARD_SUCHE = [
   'IT Service Desk:job',
   'IT-Supporter:job',
   'Datenerfassung:job',
-  'Fachinformatiker Systemintegration:ausbildung',
-  'Fachinformatiker Daten- und Prozessanalyse:ausbildung',
-  'Kaufmann IT-System-Management:ausbildung',
-  'IT-Sicherheit:ausbildung',
 ].join(';');
 
 export const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key\)? ?account|account manager|kundenberater|neukunden|d2d|door to door|fundraising/i;
