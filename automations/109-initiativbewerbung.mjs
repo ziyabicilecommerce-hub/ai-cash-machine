@@ -15,11 +15,15 @@ import {
 const MAX = LIVE ? Math.max(1, Math.min(60, parseInt(env('BEWERBUNG_INITIATIV_MAX', '25'), 10) || 25)) : 3;
 const SUCHE = ['Luftfracht', 'Air Cargo', 'Zoll', 'Zollabwicklung', 'Export', 'Import Export', 'Außenhandel',
   'Spedition', 'Speditionskaufmann', 'Leitstelle', 'Disposition', 'Flughafen', 'Cargo', 'Logistik Sachbearbeiter',
-  'SOC Analyst', 'Cyber Security', 'IT-Security', 'IT-Sicherheit', 'Informationssicherheit', 'Penetration Tester', 'Security Analyst'];
+  'SOC Analyst', 'Cyber Security', 'IT-Security', 'IT-Sicherheit', 'Informationssicherheit', 'Penetration Tester', 'Security Analyst',
+  'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', 'IT-Administrator', 'Systemadministrator', 'IT-Techniker', 'Rechenzentrum', 'Netzwerk'];
 // Echte IT-Sicherheit - nicht Luftsicherheit oder Objektschutz.
 const CYBER = /cyber|it-?secur|it-?sicherheit|informationssicherheit|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi/i;
+// IT-Einstieg (Support, Helpdesk, Admin, Rechenzentrum) - die Tür Richtung IT-Sicherheit.
+const IT = /it-?support|it support|helpdesk|help desk|service ?desk|1st[ -]?level|first level|2nd[ -]?level|second level|systemadmin|system ?administrator|it-?admin|netzwerk|network|rechenzentrum|data ?center|it-?techniker|it techniker|client ?management|it-?mitarbeiter|it-?service/i;
 const BEREICHE = [
   [CYBER, 'IT-Sicherheit'],
+  [IT, 'IT'],
   [/luftfracht|air ?cargo|airfreight|cargo/i, 'Luftfracht'],
   [/zoll/i, 'Zoll'],
   [/export|import|außenhandel/i, 'Export und Import'],
@@ -28,11 +32,11 @@ const BEREICHE = [
   [/disposition|disponent/i, 'Disposition'],
 ];
 // Nur Anzeigen, die wirklich im Wunschbereich sind (die Suche liefert auch Deloitte-Berater & Co.).
-const RELEVANT = /cyber|it-?secur|it-?sicherheit|informationssicherheit|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi|luftfracht|air ?cargo|airfreight|cargo|fracht|freight|zoll|export|import|außenhandel|leitstelle|leitstand|einsatzzentrale|flughafen|airport|disposition|disponent|spedition|logistik/i;
+const RELEVANT = /it-?support|it support|helpdesk|help desk|service ?desk|1st[ -]?level|first level|2nd[ -]?level|systemadmin|system ?administrator|it-?admin|netzwerk|network|rechenzentrum|data ?center|it-?techniker|it techniker|client ?management|it-?mitarbeiter|it-?service|cyber|it-?secur|it-?sicherheit|informationssicherheit|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi|luftfracht|air ?cargo|airfreight|cargo|fracht|freight|zoll|export|import|außenhandel|leitstelle|leitstand|einsatzzentrale|flughafen|airport|disposition|disponent|spedition|logistik/i;
 // Personalvermittler tarnen sich oft ohne Zeitarbeits-Flag - eine Initiativbewerbung dort bringt nichts.
 const VERMITTLER = /personal|zeitarbeit|staffing|impact gmbh|aide gmbh|bankpower|spp direkt|attentus/i;
 // Fahrer-, Handwerks-, Verkaufs- und Chefposten zeigen nicht auf ein Büro im Wunschbereich.
-const FREMD = /verkauf|geschäftsführ|ausbilder|mechatron|elektron|mechaniker|lokführer|fahrer|berater|leiter/i;
+const FREMD = /verkauf|geschäftsführ|ausbilder|mechatron|elektron|mechaniker|lokführer|fahrer|berater|leiter|elektriker|objekttechniker|haustechn|senior|architekt|leitung|ingenieur|klima|lüftung/i;
 const bereichVon = (st) => BEREICHE.find(([re]) => re.test(st.titel))?.[1] || 'Spedition und Logistik';
 const firmaKey = (name = '') => name.toLowerCase().replace(/\b(gmbh|ag|kg|se|co|mbh|& ?co\.?)\b|[^a-zäöü0-9]/g, '');
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));

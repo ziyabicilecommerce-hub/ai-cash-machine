@@ -86,7 +86,9 @@ export function initiativAnschreiben({ bereich, firma }) {
     '',
     `ich habe gesehen, dass ${firma} im Bereich ${bereich} gerade Verstärkung sucht – genau dort möchte ich beruflich hin. Für die ausgeschriebene Stelle fehlt mir vielleicht noch die Erfahrung, deshalb bewerbe ich mich initiativ für einen Einstieg: als Quereinsteiger mit Einarbeitung, in der Assistenz oder in der Sachbearbeitung.`,
     '',
-    (bereich === 'IT-Sicherheit'
+    (bereich === 'IT'
+      ? 'Mich reizt an der IT, dass man jeden Tag Probleme löst und dafür sorgt, dass alles läuft und sicher bleibt. Eine IT-Ausbildung bringe ich noch nicht mit, aber ich arbeite gern und viel am PC, lerne schnell und fange gern im Support oder Helpdesk an – langfristig möchte ich mich Richtung IT-Sicherheit entwickeln.'
+      : bereich === 'IT-Sicherheit'
       ? 'Mich reizt an IT-Sicherheit, dass man jeden Tag gegen echte Angreifer arbeitet: Auffälligkeiten erkennen, schnell reagieren und Systeme sauber halten. Eine IT-Ausbildung bringe ich noch nicht mit, aber ich will genau dorthin und fange dafür gern ganz unten an – im IT-Support oder als Trainee im Security-Team.'
       : 'Mich reizt an diesem Bereich das Tempo: Abläufe, bei denen jeder Handgriff sitzen muss, Fristen, die eingehalten werden müssen, und kein Tag wie der andere.')
       + (namen ? ` In meinen Praktika bei ${namen} habe ich gelernt, mich schnell in neue Abläufe einzuarbeiten, sorgfältig zu arbeiten und auch unter Zeitdruck den Überblick zu behalten.` : '')
