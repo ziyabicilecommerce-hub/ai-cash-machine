@@ -50,8 +50,9 @@ jobs:
       ANIME_NEU: ${{ inputs.neu }}
       ANIME_THEMA: ${{ inputs.thema || vars.ANIME_THEMA }}
       ANIME_STIL: ${{ vars.ANIME_STIL }}
-      # Echte Anime-KI-Clips statt Standbild, so viele das Gratis-Kontingent hergibt (danach Kamerafahrt).
-      VIDEO_KI_ALLE: ${{ vars.ANIME_KI_ALLE || 'ja' }}
+      # Die wenigen echten Anime-KI-Clips gehen an Hook und Kampfszenen (ANIME_KI_ALLE=ja: an alle Szenen der Reihe nach).
+      VIDEO_KI_ALLE: ${{ vars.ANIME_KI_ALLE }}
+      VIDEO_KI_SZENEN: 'action'
       KI_CLIP_ANIME: 'ja'
       # 3D-Kamerafahrt (Depth Anything V2, CPU) für alle Szenen ohne KI-Clip statt flachem Zoom.
       VIDEO_3D_EINFACH: ${{ vars.ANIME_3D || 'ja' }}

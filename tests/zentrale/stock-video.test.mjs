@@ -158,3 +158,14 @@ test('KI-Video: Hook-Szene zuerst Wan, sonst LTX; erschöpfte Modelle fallen rau
   assert.match(bewegungsPrompt('honey bee on a flower, cinematic, no text, no people'), /camera motion/);
   assert.doesNotMatch(bewegungsPrompt('bee, no text, no people'), /no people/);
 });
+
+import { kiSzene } from '../../automations/lib/videoFabrik.mjs';
+test('Video-Fabrik: knappe KI-Clips gehen an Hook und Action-Szenen', () => {
+  const action = { bild: 'anime, dynamic action pose, speed lines' };
+  const reden = { bild: 'anime, intense close-up portrait of Ren' };
+  assert.equal(kiSzene(0, reden, {}), true, 'Hook immer');
+  assert.equal(kiSzene(5, action, {}), false, 'ohne Schalter nur der Hook');
+  assert.equal(kiSzene(5, action, { VIDEO_KI_SZENEN: 'action' }), true);
+  assert.equal(kiSzene(5, reden, { VIDEO_KI_SZENEN: 'action' }), false, 'keine KI für Gesprächs-Nahaufnahmen');
+  assert.equal(kiSzene(5, reden, { VIDEO_KI_ALLE: 'ja' }), true);
+});
