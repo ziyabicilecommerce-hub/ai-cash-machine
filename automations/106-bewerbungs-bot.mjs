@@ -211,8 +211,8 @@ function ausV6(x, angebotsart, was) {
   };
 }
 
-export async function sucheStellen({ was, angebotsart }) {
-  const q = new URLSearchParams({ was, wo: ORT, umkreis: String(UMKREIS), angebotsart: String(angebotsart), veroeffentlichtseit: '60', size: '100' });
+export async function sucheStellen({ was, angebotsart, wo = ORT, umkreis = UMKREIS }) {
+  const q = new URLSearchParams({ was, wo, umkreis: String(umkreis), angebotsart: String(angebotsart), veroeffentlichtseit: '60', size: '100' });
   if (angebotsart === 1) q.set('arbeitszeit', 'vz');
   const alle = [];
   for (let seite = 1; seite <= 3; seite++) {
