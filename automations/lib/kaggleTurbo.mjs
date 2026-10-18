@@ -32,7 +32,12 @@ export function auftragBauen(shots, { negativ = '', sekunden = 3.5, qualitaet = 
   };
 }
 
-const kaggle = (args, opts = {}) => execFileSync('kaggle', args, { stdio: 'pipe', timeout: 300000, ...opts }).toString();
+// Neue Kaggle-API-Tokens (KGAT_...) liest die CLI aus KAGGLE_API_TOKEN, alte Keys aus KAGGLE_KEY - beides geht.
+export const kaggleEnv = (env = process.env) => {
+  const key = String(env.KAGGLE_KEY || '').trim();
+  return /^KGAT_/.test(key) && !env.KAGGLE_API_TOKEN ? { ...env, KAGGLE_API_TOKEN: key } : env;
+};
+const kaggle = (args, opts = {}) => execFileSync('kaggle', args, { stdio: 'pipe', timeout: 300000, env: kaggleEnv(), ...opts }).toString();
 
 // Schiebt den Auftrag zu Kaggle, wartet bis fertig (max. `maxMinuten`) und lädt die Clips nach `ordner`.
 // Zurück: Map Shot-Nr -> Pfad zum Rohclip (nur erfolgreiche Shots).
