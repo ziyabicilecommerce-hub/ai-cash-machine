@@ -41,12 +41,44 @@ def ltx25(space, ep):
                      auto_length=False, seed=42, randomize_seed=True, decoder="conv", api_name=ep)
 
 
+# Universal-Adapter für Pool-Spaces: liest die Schnittstelle aus und füllt genau die Felder, die der Space erwartet
+# (Startbild, Prompt, Dauer ...); unbekannte Felder bekommen ihren Standardwert, fehlende ein None.
+BILD_FELDER = {"input_image", "image", "image_path", "first_frame", "start_image", "input_image_filepath", "img"}
+LEER_FELDER = {"last_image", "end_image", "end_frame", "input_video", "input_video_filepath", "audio_path"}
+
+
+def wert_fuer(name, standard, hat_standard):
+    n = name.lower()
+    if n in BILD_FELDER:
+        return handle_file(bild)
+    if n in LEER_FELDER:
+        return None
+    if n == "prompt":
+        return prompt
+    if n in ("negative_prompt", "n_prompt"):
+        return NEG
+    if n in ("duration_seconds", "duration_s", "duration", "seconds", "duration_ui"):
+        return min(DAUER, 5)
+    if n in ("steps", "num_inference_steps"):
+        return SCHRITTE
+    if n in ("randomize_seed",):
+        return True
+    return standard if hat_standard else None
+
+
+def generisch(space, ep):
+    c = client(space)
+    info = c.view_api(return_format="dict", print_info=False)
+    params = (info.get("named_endpoints") or {}).get(ep, {}).get("parameters", [])
+    if not params:
+        raise RuntimeError(f"Endpunkt {ep} fehlt")
+    argumente = {p["parameter_name"]: wert_fuer(p["parameter_name"], p.get("parameter_default"), p.get("parameter_has_default", False)) for p in params}
+    return c.predict(api_name=ep, **argumente)
+
+
 try:
-    if pool_space and modell == "wan":
-        r = client(pool_space).predict(input_image=handle_file(bild), prompt=prompt, steps=SCHRITTE, negative_prompt=NEG, duration_seconds=min(DAUER, 5),
-                                       guidance_scale=1, guidance_scale_2=1, seed=42, randomize_seed=True, api_name=pool_ep)
-    elif pool_space and modell == "animegen":
-        r = client(pool_space).predict(image=handle_file(bild), prompt=prompt, negative_prompt=NEG, api_name=pool_ep)
+    if pool_space:
+        r = generisch(pool_space, pool_ep)
     elif modell == "turbo":
         # LTX-2 Turbo (alexnasa): getestet 22 s, 1024x1536 hochkant, mit Ton; Endbild für Loops möglich.
         r = client(os.environ.get("KI_CLIP_TURBO", "alexnasa/ltx-2-TURBO")).predict(
