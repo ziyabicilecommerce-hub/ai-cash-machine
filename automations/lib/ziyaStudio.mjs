@@ -68,11 +68,25 @@ export function shotsPlanen(idee, preset = PRESET_STANDARD, anzahl = 3) {
 // Modell-Reihenfolge: das stärkste freie Modell zuerst, ist ein Kontingent leer, das nächste.
 // wan14 (5 s, Endbild), ltx23 (natives 704x1280) und real (realistisches Finetune) sind kleine Gratis-Spaces aus der
 // Weltsuche (Okt. 2026), alle mit Testclip geprüft.
+// turbo (LTX-2 Turbo, Okt. 2026 getestet: 22 s, 1024x1536, mit Ton) steht vorn; ltx25 = offizielles LTX-2.5 (ohne
+// HF_TOKEN nur 2-s-Clips, sonst zu viel GPU-Zeit).
 // seedance (BytePlus, Startkontingent gratis) kommt nur mit Schlüssel dazu und steht dann ganz vorn.
 // anime: AnimeGen (gratis getestet) vor AniSora V3.2 und Kandinsky 6.0 Pro - die beiden brauchen mehr GPU-Zeit,
 // als ZeroGPU ohne PRO-Konto erlaubt, und springen dann in 2 s zum nächsten Modell weiter.
 export function modellReihe(erschoepft = new Set(), { zhipu = false, seedance = false, anime = false } = {}) {
-  return [...(seedance ? ['seedance'] : []), ...(anime ? ['animegen', 'anisora', 'k6'] : []), 'wan14', 'ltx23', 'wan', 'real', 'ltx', ...(zhipu ? ['zhipu'] : [])].filter((m) => !erschoepft.has(m));
+  return [...(seedance ? ['seedance'] : []), ...(anime ? ['animegen', 'anisora', 'k6'] : []), 'turbo', 'wan14', 'ltx23', 'ltx25', 'wan', 'real', 'ltx', ...(zhipu ? ['zhipu'] : [])].filter((m) => !erschoepft.has(m));
+}
+
+// Space-Pool (ki-video/spaces.json, wöchentlich von scripts/space_pool.py gefüllt): weitere Gratis-Video-Spaces als
+// Rückfall hinter den Stamm-Modellen - höchstens `max` Versuche pro Shot, Stamm-Spaces nicht doppelt.
+const STAMM = /^(zerogpu-aoti\/wan2-2-fp8da-aoti-faster|Lightricks\/ltx-video-distilled|Upsampler\/wan-2-2-14b-image-to-video|Ash1004\/ltx23-i2v-fullres|hugging-apps\/ksyjawan-realistic-i2v|aidealab\/AnimeGen-I2V|Lightricks\/LTX-2\.5|alexnasa\/ltx-2-TURBO)$/;
+export function poolModelle(pool, erschoepft = new Set(), { anime = false, max = 6 } = {}) {
+  const liste = (Array.isArray(pool?.spaces) ? pool.spaces : [])
+    .filter((x) => x?.space && /^(wan|ltx25|animegen)$/.test(x.typ) && /^\/[\w-]+$/.test(x.endpoint || '') && !STAMM.test(x.space))
+    .map((x) => ({ ...x, id: `pool:${x.space}:${x.typ}:${x.endpoint}` }))
+    .filter((x) => !erschoepft.has(x.id));
+  if (anime) liste.sort((a, b) => (b.typ === 'animegen') - (a.typ === 'animegen'));
+  return liste.slice(0, max).map((x) => x.id);
 }
 
 const LOOKS = {
