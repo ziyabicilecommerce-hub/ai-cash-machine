@@ -75,3 +75,21 @@ export function vorlageAnschreiben({ titel, firma, text = '' }) {
       : 'Ich suche eine Vollzeitstelle, in der ich dauerhaft bleiben, Verantwortung übernehmen und jeden Tag dazulernen kann. Ich kann ab sofort bei Ihnen anfangen. Über die Einladung zu einem persönlichen Kennenlernen freue ich mich sehr – meinen Lebenslauf finden Sie im Anhang.',
   ].join('\n').replace(/\n\.\n/, '\n');
 }
+
+// Initiativbewerbung: die Firma sucht im Lieblingsbereich (oft mit Erfahrung) - Bewerbung um den Einstieg.
+export function initiativAnschreiben({ bereich, firma }) {
+  const praktika = abschnitt(/prakti|erfahr/i);
+  const namen = undListe([...new Set(praktika.map(([, t = '']) => firmaAusPraktikum(t)).filter(Boolean))].slice(0, 4));
+  const edv = undListe((abschnitt(/kenntnis/i).find(([l = '']) => /edv|computer|it/i.test(l))?.[1] || '').replace(/\s*\([^)]*\)/g, '').split(/,\s*/).filter(Boolean));
+  return [
+    'Sehr geehrte Damen und Herren,',
+    '',
+    `ich habe gesehen, dass ${firma} im Bereich ${bereich} gerade Verstärkung sucht – genau dort möchte ich beruflich hin. Für die ausgeschriebene Stelle fehlt mir vielleicht noch die Erfahrung, deshalb bewerbe ich mich initiativ für einen Einstieg: als Quereinsteiger mit Einarbeitung, in der Assistenz oder Sachbearbeitung, oder als Auszubildender.`,
+    '',
+    'Mich reizt an diesem Bereich das Tempo: Abläufe, bei denen jeder Handgriff sitzen muss, Fristen, die eingehalten werden müssen, und kein Tag wie der andere.'
+      + (namen ? ` In meinen Praktika bei ${namen} habe ich gelernt, mich schnell in neue Abläufe einzuarbeiten, sorgfältig zu arbeiten und auch unter Zeitdruck den Überblick zu behalten.` : '')
+      + (edv ? ` Mit ${edv} arbeite ich sicher.` : ''),
+    '',
+    'Ich suche eine Vollzeitstelle, in der ich dauerhaft bleiben und jeden Tag dazulernen kann, und könnte ab sofort anfangen. Über die Gelegenheit zu einem persönlichen Kennenlernen freue ich mich sehr – meinen Lebenslauf finden Sie im Anhang.',
+  ].join('\n');
+}
