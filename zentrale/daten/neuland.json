@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-17T07:59:39.124Z",
+ "stand": "2026-10-18T08:17:12.807Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,17 +9,17 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 32,
+     "value": 29,
      "unit": ""
     },
     {
      "label": "Prüfung offen",
-     "value": 3,
+     "value": 2,
      "unit": ""
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 29,
+     "value": 27,
      "unit": ""
     }
    ],
@@ -226,27 +226,6 @@
      "Von dir geprüft": "Nein",
      "Status": "Prüfung offen",
      "Hinweise": "Menschliche Prüfung ausstehend."
-    },
-    {
-     "Aussage": "DeskRebel ElbowGuard – Kompressions-Ellbogenbandage",
-     "Beleglink": "https://www.deskrebel.store/products/elbowguard-kompressions-ellbogenbandage",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "DeskRebel PowerBand – dein Klimmzug-Upgrade",
-     "Beleglink": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel – Futtere dein Home-Gym!",
-     "Beleglink": "https://www.deskrebel.store",
-     "Von dir geprüft": "Nein",
-     "Status": "Prüfung offen",
-     "Hinweise": "Menschliche Prüfung ausstehend."
     }
    ],
    "notes": [
@@ -260,7 +239,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 32,
+     "value": 29,
      "unit": ""
     },
     {
@@ -448,24 +427,6 @@
      "Quellenverweis": "https://purivelle.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "DeskRebel ElbowGuard – Kompressions-Ellbogenbandage",
-     "Quellenverweis": "https://www.deskrebel.store/products/elbowguard-kompressions-ellbogenbandage",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "DeskRebel PowerBand – dein Klimmzug-Upgrade",
-     "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel – Futtere dein Home-Gym!",
-     "Quellenverweis": "https://www.deskrebel.store",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     }
    ],
    "notes": [
@@ -570,7 +531,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-17",
+     "value": "2026-10-18",
      "unit": ""
     }
    ],
