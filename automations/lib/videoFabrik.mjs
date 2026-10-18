@@ -207,6 +207,15 @@ async function bildHolen(szene, roh, { breite, hoehe, stil }) {
   return '';
 }
 
+// Welche Szene bekommt einen der knappen echten KI-Clips? Immer der Hook (Szene 1); VIDEO_KI_ALLE=ja alle;
+// VIDEO_KI_SZENEN=action nur Szenen mit Action (Kampf, Effekte) - dort bringt Bewegung am meisten,
+// statt das Gratis-Kontingent an Gesprächs-Nahaufnahmen zu verbrauchen.
+export const ACTION_BILD = /dynamic action pose|speed lines|impact sparks|explosion|clash|slash|battle|fight/i;
+export function kiSzene(i, szene, env = process.env) {
+  if (i === 0 || /^(ja|1|an|true)$/i.test(String(env.VIDEO_KI_ALLE || '').trim())) return true;
+  return /^action$/i.test(String(env.VIDEO_KI_SZENEN || '').trim()) && ACTION_BILD.test(String(szene?.bild || ''));
+}
+
 // 3D-Kamerafahrt aus einem Standbild (scripts/tiefe3d.py). VIDEO_3D=0 schaltet ab; TIEFE_PY waehlt das Python
 // (z. B. eine venv mit torch + transformers fuer Depth Anything V2). Scheitert es, bleibt es beim Schwenk.
 function tiefe3d(bild, ziel, dauer, { breite, hoehe, art }) {
@@ -339,7 +348,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
         if (hookSzene) hookVorlage = { ebenen, assOpts, effekt, bgVideo, index: i, stimme: szene.stimme || stimme };
       } else {
         // Auch im einfachen Modus (z. B. Anime-Serie): echter KI-Clip, solange das Gratis-Kontingent reicht.
-        const kiRoh = kiClips && (i === 0 || /^(ja|1|an|true)$/i.test(String(process.env.VIDEO_KI_ALLE || '').trim())) ? await kiClip(bild, szene.bild, join(ordner, `s${i}.ki.mp4`), { index: i }) : '';
+        const kiRoh = kiClips && kiSzene(i, szene) ? await kiClip(bild, szene.bild, join(ordner, `s${i}.ki.mp4`), { index: i }) : '';
         // Ohne KI-Clip: 3D-Kamerafahrt (Tiefe per Depth Anything, Parallaxe) statt flachem Zoom, wenn VIDEO_3D_EINFACH=ja.
         const video = kiRoh ? bumerang(kiRoh, join(ordner, `s${i}.kib.mp4`), dauerSekunden(mp3) + 0.35) || kiRoh
           : /^(ja|1|an|true)$/i.test(String(process.env.VIDEO_3D_EINFACH || '').trim()) ? tiefe3d(bild, join(ordner, `s${i}.3d.mp4`), dauerSekunden(mp3) + 0.35, { breite, hoehe, art: ['dolly', 'orbit', 'kran'][i % 3] }) : '';
