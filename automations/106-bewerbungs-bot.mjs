@@ -86,6 +86,18 @@ const STANDARD_SUCHE = [
   'Online Marketing Quereinsteiger:job',
   'E-Commerce Mitarbeiter:job',
   'Onlineshop Mitarbeiter:job',
+  // Werbung, KI, Cyber - Einstieg (Junior/Quereinstieg) und Ausbildung
+  'Online Marketing Junior:job',
+  'Performance Marketing Junior:job',
+  'Marketing Assistenz:job',
+  'Werbeagentur Quereinsteiger:job',
+  'KI Quereinsteiger:job',
+  'Künstliche Intelligenz Junior:job',
+  'IT-Sicherheit Quereinsteiger:job',
+  'Junior SOC Analyst:job',
+  'Cyber Security Junior:job',
+  'Kaufmann Marketingkommunikation:ausbildung',
+  'Mediengestalter Digital und Print:ausbildung',
   // Mehr Masse: breite Einstiegs-Bürojobs
   'Sachbearbeiter Quereinsteiger:job',
   'Kundenservice Quereinsteiger:job',
