@@ -12,6 +12,8 @@ import { join, resolve } from 'node:path';
 import { ladeBild, dauerSekunden, sprechen } from './lib/videoFabrik.mjs';
 import { zhipuClip } from './lib/kiVideo.mjs';
 import { seedanceClip } from './lib/seedance.mjs';
+import { kaggleBereit, kaggleClips } from './lib/kaggleTurbo.mjs';
+import { bildURL } from './lib/pollinationsMedia.mjs';
 import { PRESETS, presetVon, shotsPlanen, modellReihe, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
@@ -97,6 +99,12 @@ async function main() {
   const fertig = [];
   console.log(`${LOG} "${idee}" · Preset ${PRESETS[preset].name} · ${shots.length} Shot(s)`);
 
+  // Kaggle-Turbo: alle Shots auf einmal auf der kostenlosen Kaggle-GPU (Wan 2.2, 720p, volle Schrittzahl).
+  // Fehlt ein Clip, macht der normale Router unten für diesen Shot weiter.
+  const vonKaggle = kaggleBereit()
+    ? await kaggleClips(shots.map((s) => ({ ...s, bildUrl: bildURL(s.bild, { width: 768, height: 1344, seed: seed + s.nr }) })), ORDNER,
+      { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino' })
+    : new Map();
   let letzterRoh = '';
   for (const s of shots) {
     const bild = join(ORDNER, `shot${s.nr}.jpg`);
@@ -115,7 +123,12 @@ async function main() {
       copyFileSync(vorher, bild);
       console.log(`${LOG} Shot ${s.nr}: Bildquelle hakt, nehme das Bild des vorigen Shots`);
     }
-    const modell = await kiClipHolen(bild, s.bewegung, roh, erschoepft);
+    if (vonKaggle.has(s.nr)) {
+      copyFileSync(vonKaggle.get(s.nr), roh);
+      const kbild = join(ORDNER, 'kaggle-out', `shot${s.nr}.jpg`);
+      if (existsSync(kbild)) copyFileSync(kbild, bild);
+    }
+    const modell = vonKaggle.has(s.nr) ? 'kaggle' : await kiClipHolen(bild, s.bewegung, roh, erschoepft);
     letzterRoh = modell ? roh : '';
     if (modell) {
       const hd = hochskalieren(roh, join(ORDNER, `shot${s.nr}-hd.mp4`));

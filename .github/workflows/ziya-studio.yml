@@ -44,7 +44,8 @@ permissions:
 jobs:
   studio:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # Mit Kaggle-Turbo wartet der Lauf auf die Kaggle-GPU (mehrere Stunden möglich).
+    timeout-minutes: 340
     env:
       ZIYA_IDEE: ${{ inputs.idee }}
       ZIYA_PRESET: ${{ inputs.preset }}
@@ -62,6 +63,10 @@ jobs:
       SEEDANCE_MODELL: ${{ vars.SEEDANCE_MODELL }}
       BYTEPLUS_API_BASE: ${{ vars.BYTEPLUS_API_BASE }}
       ZHIPU_API_KEY: ${{ secrets.ZHIPU_API_KEY }}
+      # Optional, kostenlos: Kaggle-Konto (30 GPU-Stunden/Woche) -> jede Szene ein echter KI-Clip ohne Tageslimit.
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+      ZIYA_QUALITAET: ${{ vars.ZIYA_QUALITAET || 'kino' }}
       ZHIPU_API_BASE: ${{ vars.ZHIPU_API_BASE }}
     steps:
       - uses: actions/checkout@v4
@@ -74,7 +79,7 @@ jobs:
       - name: ffmpeg, gradio_client, edge-tts und KI-Hochskalierer installieren
         uses: ./.github/actions/video-werkzeug
         with:
-          pip: 'gradio_client edge-tts==7.* --extra-index-url https://download.pytorch.org/whl/cpu torch spandrel numpy'
+          pip: 'gradio_client edge-tts==7.* kaggle --extra-index-url https://download.pytorch.org/whl/cpu torch spandrel numpy'
       # Real-ESRGAN-Gewichte (~3 MB) zwischenspeichern.
       - uses: actions/cache@v4
         with:
