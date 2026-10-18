@@ -38,9 +38,8 @@ const VERMITTLER = /personal|zeitarbeit|staffing|impact gmbh|aide gmbh|bankpower
 // Fahrer-, Handwerks-, Verkaufs- und Chefposten zeigen nicht auf ein Büro im Wunschbereich.
 const FREMD = /verkauf|geschäftsführ|ausbilder|mechatron|elektron|mechaniker|lokführer|fahrer|berater|leiter|elektriker|objekttechniker|haustechn|senior|architekt|leitung|ingenieur|klima|lüftung/i;
 // Zusätzlich das Umland mit vielen IT-, Cyber- und Cargo-Firmen (alles mit S-Bahn/Zug erreichbar).
-const UMLAND = ['Darmstadt', 'Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Bad Homburg', 'Offenbach am Main', 'Langen (Hessen)'];
-const UMLAND_ORTE = /darmstadt|eschborn|kelsterbach|raunheim|rüsselsheim|bad homburg|offenbach|langen|neu-isenburg|dreieich|mörfelden|walldorf|flörsheim|sulzbach|schwalbach|bad soden|oberursel/i;
-const ortOk = (st) => ortPasst(st) || UMLAND_ORTE.test(`${st.arbeitsort?.ort || ''}`);
+// Zusätzlich Suchzentren im Umland, die außerhalb des Standard-Umkreises liegen (alles mit S-Bahn/Zug erreichbar).
+const UMLAND = ['Darmstadt', 'Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Bad Homburg', 'Offenbach am Main', 'Langen (Hessen)', 'Hanau', 'Bad Vilbel', 'Groß-Gerau', 'Neu-Isenburg'];
 const bereichVon = (st) => BEREICHE.find(([re]) => re.test(st.titel))?.[1] || 'Spedition und Logistik';
 const firmaKey = (name = '') => name.toLowerCase().replace(/\b(gmbh|ag|kg|se|co|mbh|& ?co\.?)\b|[^a-zäöü0-9]/g, '');
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -63,7 +62,7 @@ async function main() {
     try {
       for (const st of await sucheStellen({ was, angebotsart: 1, wo, umkreis: wo ? 5 : undefined })) {
         const key = firmaKey(st.arbeitgeber);
-        if (!key || firmen.has(key) || proFirma.has(key) || !ortOk(st)) continue;
+        if (!key || firmen.has(key) || proFirma.has(key) || !ortPasst(st)) continue;
         if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !RELEVANT.test(st.titel)) continue;
         proFirma.set(key, st);
       }
