@@ -8,9 +8,12 @@ import json, re, sys, time, urllib.parse, urllib.request
 from gradio_client import Client
 
 ZIEL = sys.argv[1] if len(sys.argv) > 1 else "ki-video/spaces.json"
-SUCHE = ["image-to-video", "i2v", "wan2.2", "wan 2.2", "wan2", "ltx-2", "ltx 2.5", "ltx2", "animegen", "anime video", "framepack",
+# Katalog: ALLE gerade laufenden Gratis-Video-KIs (bis 1000), auch ohne bekannte Schnittstelle - zum Stöbern.
+KATALOG = sys.argv[2] if len(sys.argv) > 2 else "ki-video/katalog.json"
+SUCHE = ["video", "animate", "motion", "text-to-video", "t2v", "talking", "lipsync", "dance", "avatar", "upscale video", "video edit",
+         "image-to-video", "i2v", "wan2.2", "wan 2.2", "wan2", "ltx-2", "ltx 2.5", "ltx2", "animegen", "anime video", "framepack",
          "video generation", "img2vid", "image to video", "kandinsky", "hunyuan video", "skyreels", "cogvideo"]
-NAME = re.compile(r"video|i2v|wan|ltx|anime|framepack|kandinsky|hunyuan|skyreel|cogvideo", re.I)
+NAME = re.compile(r"video|i2v|t2v|wan|ltx|anime|animat|framepack|kandinsky|hunyuan|skyreel|cogvideo|motion|talking|lipsync|dance|avatar", re.I)
 TABU = re.compile(r"nsfw|uncensor|eros|lewd|porn|hentai|nude|18\+|xxx|adult", re.I)
 
 
@@ -42,30 +45,46 @@ def main():
                         gesehen[s["id"]] = s
             except Exception as e:
                 print("Suche", q, e)
-    kandidaten = sorted(gesehen.values(), key=lambda s: -(s.get("likes") or 0))[:220]
+    kandidaten = sorted(gesehen.values(), key=lambda s: -(s.get("likes") or 0))[:2500]
     print(f"{len(gesehen)} Video-Spaces gefunden, prüfe {len(kandidaten)}", flush=True)
-    pool = []
+    pool, katalog = [], []
     for s in kandidaten:
-        if len(pool) >= 100:
+        if len(katalog) >= 1000:
             break
         try:
             d = holen(f"https://huggingface.co/api/spaces/{s['id']}")
-            if d.get("runtime", {}).get("stage") != "RUNNING" or "zero" not in str(d.get("runtime", {}).get("hardware", {}).get("current")):
-                continue
-            titel = f"{(d.get('cardData') or {}).get('title', '')} {(d.get('cardData') or {}).get('short_description', '')}"
-            if TABU.search(titel):
-                continue
-            typ, ep = typ_von(Client(s["id"], verbose=False).view_api(return_format="dict", print_info=False))
-            if typ:
-                pool.append({"space": s["id"], "typ": typ, "endpoint": ep, "likes": d.get("likes", 0)})
-                print("✓", s["id"], typ, flush=True)
         except Exception as e:
             if "429" in str(e):
-                time.sleep(60)
+                time.sleep(90)
+            continue
+        hw = str((d.get("runtime") or {}).get("hardware", {}).get("current"))
+        if (d.get("runtime") or {}).get("stage") != "RUNNING" or not re.search(r"zero|a10|a100|l4|l40|h100|h200|t4", hw):
+            continue
+        karte = d.get("cardData") or {}
+        titel = f"{karte.get('title', '')} {karte.get('short_description', '')}".strip()
+        if TABU.search(titel):
+            continue
+        katalog.append({"space": s["id"], "titel": titel[:120], "gpu": hw, "likes": d.get("likes", 0), "geaendert": str(d.get("lastModified", ""))[:10]})
+        # Schnittstelle nur für die beliebtesten prüfen (Router-Pool), sonst sprengt es das Abfragelimit.
+        if len(pool) < 100 and len(katalog) <= 250:
+            try:
+                typ, ep = typ_von(Client(s["id"], verbose=False).view_api(return_format="dict", print_info=False))
+                if typ:
+                    pool.append({"space": s["id"], "typ": typ, "endpoint": ep, "likes": d.get("likes", 0)})
+                    print("✓", s["id"], typ, flush=True)
+            except Exception as e:
+                if "429" in str(e):
+                    time.sleep(90)
+        if len(katalog) % 50 == 0:
+            print(f"Katalog: {len(katalog)}", flush=True)
     pool.sort(key=lambda x: -x["likes"])
     with open(ZIEL, "w") as f:
         json.dump({"stand": time.strftime("%Y-%m-%d"), "anzahl": len(pool), "spaces": pool}, f, indent=1)
     print(f"Pool: {len(pool)} nutzbare Video-Spaces -> {ZIEL}")
+    katalog.sort(key=lambda x: -x["likes"])
+    with open(KATALOG, "w") as f:
+        json.dump({"stand": time.strftime("%Y-%m-%d"), "anzahl": len(katalog), "spaces": katalog}, f, indent=1, ensure_ascii=False)
+    print(f"Katalog: {len(katalog)} laufende Gratis-Video-KIs -> {KATALOG}")
 
 
 if __name__ == "__main__":
