@@ -45,3 +45,9 @@ test('Kaggle-Turbo: ohne Secrets aus', () => {
   if (alt.u) process.env.KAGGLE_USERNAME = alt.u;
   if (alt.k) process.env.KAGGLE_KEY = alt.k;
 });
+
+import { kaggleEnv } from '../../automations/lib/kaggleTurbo.mjs';
+test('Kaggle: neuer API-Token wird als KAGGLE_API_TOKEN durchgereicht', () => {
+  assert.equal(kaggleEnv({ KAGGLE_KEY: 'KGAT_abc' }).KAGGLE_API_TOKEN, 'KGAT_abc');
+  assert.equal(kaggleEnv({ KAGGLE_KEY: '0123abcd' }).KAGGLE_API_TOKEN, undefined);
+});
