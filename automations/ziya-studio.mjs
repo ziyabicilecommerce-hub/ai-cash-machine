@@ -7,14 +7,14 @@
 // ZIYA_LOOP=ja (nahtloser Loop, Endbild = Startbild), ZIYA_DURCHGEHEND=ja (jeder Shot startet mit dem letzten Bild des vorigen = eine durchgehende Szene), ZIYA_TEXT (Sprechertext).
 import { execFile, execFileSync } from 'node:child_process';
 import { promisify } from 'node:util';
-import { copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { ladeBild, dauerSekunden, sprechen } from './lib/videoFabrik.mjs';
 import { zhipuClip } from './lib/kiVideo.mjs';
 import { seedanceClip } from './lib/seedance.mjs';
 import { kaggleBereit, kaggleClips } from './lib/kaggleTurbo.mjs';
 import { bildURL } from './lib/pollinationsMedia.mjs';
-import { PRESETS, presetVon, shotsPlanen, modellReihe, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt } from './lib/ziyaStudio.mjs';
+import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
 const ausfuehren = promisify(execFile);
@@ -33,6 +33,9 @@ const sprechertext = String(process.env.ZIYA_TEXT || '').replace(/\s+/g, ' ').tr
 const menschen = preset === 'anime-kampf' || /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_MENSCHEN || '').trim());
 const NEG = `static, still image, blurry, distorted, deformed, morphing, extra limbs, text, watermark, subtitles${menschen ? '' : ', people, faces'}`;
 
+// Gratis-Video-Spaces aus dem wöchentlichen Pool (leer, wenn die Datei fehlt).
+const POOL = (() => { try { return JSON.parse(readFileSync(resolve('ki-video/spaces.json'), 'utf8')); } catch { return {}; } })();
+
 const ffmpeg = (args) => execFileSync('ffmpeg', ['-loglevel', 'error', '-y', ...args], { stdio: 'pipe', timeout: 600000 });
 
 // KI-Hochskalierer (Real-ESRGAN x4, CPU): kleine KI-Clips werden echt hochgerechnet statt gestreckt.
@@ -49,7 +52,9 @@ function hochskalieren(quelle, ziel) {
 
 async function kiClipHolen(bild, prompt, ziel, erschoepft) {
   // Loop braucht ein Endbild - das kann nur wan14, die anderen bleiben als Rückfall.
-  for (const m of modellReihe(erschoepft, { zhipu: !!process.env.ZHIPU_API_KEY, seedance: !!process.env.BYTEPLUS_API_KEY, anime: preset === 'anime-kampf' })) {
+  const reihe = [...modellReihe(erschoepft, { zhipu: !!process.env.ZHIPU_API_KEY, seedance: !!process.env.BYTEPLUS_API_KEY, anime: preset === 'anime-kampf' }),
+    ...poolModelle(POOL, erschoepft, { anime: preset === 'anime-kampf' })];
+  for (const m of reihe) {
     try {
       if (m === 'seedance') await seedanceClip(bild, prompt, ziel, { sekunden: Math.max(sekunden, 5) });
       else if (m === 'zhipu') await zhipuClip(bild, prompt, ziel);

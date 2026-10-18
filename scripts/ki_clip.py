@@ -1,6 +1,6 @@
 # Echter KI-Clip aus einem Standbild (Bild-zu-Video) über kostenlose Hugging-Face-Spaces (ZeroGPU), ohne Schlüssel.
 # Optional HF_TOKEN (kostenloses Konto) für mehr Tageskontingent.
-#   python3 scripts/ki_clip.py <bild> <prompt> <ziel.mp4> <wan|ltx|wan14|ltx23|real|anisora|k6|animegen>
+#   python3 scripts/ki_clip.py <bild> <prompt> <ziel.mp4> <wan|ltx|turbo|wan14|ltx23|ltx25|real|anisora|k6|animegen|pool:space:typ:endpoint>
 # Exit 0 = Clip liegt in <ziel>; Exit 3 = Kontingent erschöpft; sonst Fehler.
 import os, shutil, sys
 
@@ -24,8 +24,38 @@ DAUER = float(os.environ.get("KI_CLIP_DAUER") or 3.5)
 SCHRITTE = int(os.environ.get("KI_CLIP_SCHRITTE") or 6)
 # Optionales Endbild (Wan 2.2 14B): = Startbild ergibt einen nahtlosen Loop.
 ENDE = os.environ.get("KI_CLIP_ENDE") or None
+# Pool-Modell aus ki-video/spaces.json: "pool:<space>:<typ>:<endpoint>" (siehe scripts/space_pool.py).
+if modell.startswith("pool:"):
+    _, pool_space, modell, pool_ep = modell.split(":", 3)
+else:
+    pool_space, pool_ep = None, None
+
+
+def ltx25(space, ep):
+    # LTX-2.5 (Lightricks): nativ 832x1472 hochkant, mit Prompt-Veredelung.
+    c = client(space)
+    if ep == "/run":
+        return c.predict(prompt=prompt, image_path=handle_file(bild), height=1472, width=832, duration_s=min(DAUER, 5) if token else 2.0,
+                         seed=42, decoder="conv", auto_len=False, randomize_seed=True, do_enhance=True, api_name=ep)
+    return c.predict(prompt=prompt, image_path=handle_file(bild), width=832, height=1472, duration_seconds=min(DAUER, 5) if token else 2.0,
+                     auto_length=False, seed=42, randomize_seed=True, decoder="conv", api_name=ep)
+
+
 try:
-    if modell in ("wan14", "real"):
+    if pool_space and modell == "wan":
+        r = client(pool_space).predict(input_image=handle_file(bild), prompt=prompt, steps=SCHRITTE, negative_prompt=NEG, duration_seconds=min(DAUER, 5),
+                                       guidance_scale=1, guidance_scale_2=1, seed=42, randomize_seed=True, api_name=pool_ep)
+    elif pool_space and modell == "animegen":
+        r = client(pool_space).predict(image=handle_file(bild), prompt=prompt, negative_prompt=NEG, api_name=pool_ep)
+    elif modell == "turbo":
+        # LTX-2 Turbo (alexnasa): getestet 22 s, 1024x1536 hochkant, mit Ton; Endbild für Loops möglich.
+        r = client(os.environ.get("KI_CLIP_TURBO", "alexnasa/ltx-2-TURBO")).predict(
+            first_frame=handle_file(bild), end_frame=handle_file(ENDE) if ENDE else None, prompt=prompt, input_video=None,
+            generation_mode="Image-to-Video", enhance_prompt=False, seed=42, randomize_seed=True, height=768, width=512,
+            camera_lora="No LoRA", audio_path=None, api_name="/generate_video")
+    elif modell == "ltx25":
+        r = ltx25(pool_space or os.environ.get("KI_CLIP_LTX25", "Lightricks/LTX-2.5"), pool_ep or "/run")
+    elif modell in ("wan14", "real"):
         # Kleine Gratis-Spaces, im Oktober 2026 per Weltsuche gefunden und getestet: Wan 2.2 14B mit bis zu 5 s
         # und Endbild bzw. ein realistisches Wan-2.2-Finetune.
         if modell == "wan14":

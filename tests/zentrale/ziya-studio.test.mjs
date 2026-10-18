@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { PRESETS, PRESET_STANDARD, presetVon, shotsPlanen, modellReihe, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt } from '../../automations/lib/ziyaStudio.mjs';
+import { PRESETS, PRESET_STANDARD, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt } from '../../automations/lib/ziyaStudio.mjs';
 
 test('Ziya Studio: Presets und Rückfall auf Standard', () => {
   assert.ok(Object.keys(PRESETS).length >= 10);
@@ -28,11 +28,11 @@ test('Ziya Studio: Shot-Planung', () => {
 });
 
 test('Ziya Studio: Modell-Router überspringt erschöpfte Modelle', () => {
-  assert.deepEqual(modellReihe(), ['wan14', 'ltx23', 'wan', 'real', 'ltx']);
-  assert.deepEqual(modellReihe(new Set(['wan14', 'ltx23', 'wan']), { zhipu: true }), ['real', 'ltx', 'zhipu']);
-  assert.deepEqual(modellReihe(new Set(['wan14', 'ltx23', 'wan', 'real', 'ltx'])), []);
+  assert.deepEqual(modellReihe(), ['turbo', 'wan14', 'ltx23', 'ltx25', 'wan', 'real', 'ltx']);
+  assert.deepEqual(modellReihe(new Set(['turbo', 'wan14', 'ltx23', 'ltx25', 'wan']), { zhipu: true }), ['real', 'ltx', 'zhipu']);
+  assert.deepEqual(modellReihe(new Set(['turbo', 'wan14', 'ltx23', 'ltx25', 'wan', 'real', 'ltx'])), []);
   assert.deepEqual(modellReihe(new Set(), { seedance: true })[0], 'seedance', 'Seedance zuerst, wenn Schlüssel da');
-  assert.deepEqual(modellReihe(new Set(['seedance']), { seedance: true })[0], 'wan14', 'Kontingent leer -> Gratis-Modelle');
+  assert.deepEqual(modellReihe(new Set(['seedance']), { seedance: true })[0], 'turbo', 'Kontingent leer -> Gratis-Modelle');
 });
 
 test('Ziya Studio: Filterketten', () => {
@@ -91,4 +91,20 @@ test('Ziya Studio: Anime-Kampf-Modus', () => {
   const t = tonFormel([3, 3, 3], 'anime-kampf', schnittArt('anime-kampf'));
   assert.equal((t.match(/3150/g) || []).length, 2, 'Schwertklang an beiden Schnitten');
   assert.ok(!tonFormel([3, 3], 'dolly-in').includes('3150'));
+});
+
+test('Ziya Studio: Space-Pool als Rückfall', () => {
+  const pool = { spaces: [
+    { space: 'a/wan-x', typ: 'wan', endpoint: '/generate_video' },
+    { space: 'Upsampler/wan-2-2-14b-image-to-video', typ: 'wan', endpoint: '/generate_video' },
+    { space: 'b/anime', typ: 'animegen', endpoint: '/generate_video' },
+    { space: 'c/ltx', typ: 'ltx25', endpoint: '/run' },
+    { space: 'd/boese', typ: 'wan', endpoint: '/x;rm -rf' },
+    { space: 'e/unbekannt', typ: 'sonstwas', endpoint: '/run' },
+  ] };
+  assert.deepEqual(poolModelle(pool), ['pool:a/wan-x:wan:/generate_video', 'pool:b/anime:animegen:/generate_video', 'pool:c/ltx:ltx25:/run']);
+  assert.equal(poolModelle(pool, new Set(), { anime: true })[0], 'pool:b/anime:animegen:/generate_video');
+  assert.deepEqual(poolModelle(pool, new Set(['pool:a/wan-x:wan:/generate_video']), { max: 1 }), ['pool:b/anime:animegen:/generate_video']);
+  assert.deepEqual(poolModelle({}), []);
+  assert.deepEqual(poolModelle(null), []);
 });
