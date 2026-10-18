@@ -144,8 +144,8 @@ const STANDARD_SUCHE = [
   'IT-Sicherheit:ausbildung',
 ].join(';');
 
-const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key\)? ?account|account manager|kundenberater|neukunden|d2d|door to door|fundraising/i;
-const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt|\b(dis ag|tempworkers|randstad|adecco|manpower|hays|orizon|amadeus fire|ferchau|gulp|brunel|persona service|jobactive|piening|timepartner|startpeople|tempton|akkodis|allianz personal)\b|\bpersonal (gmbh|service|partner)/i;
+export const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key\)? ?account|account manager|kundenberater|neukunden|d2d|door to door|fundraising/i;
+export const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt|\b(dis ag|tempworkers|randstad|adecco|manpower|hays|orizon|amadeus fire|ferchau|gulp|brunel|persona service|jobactive|piening|timepartner|startpeople|tempton|akkodis|allianz personal)\b|\bpersonal (gmbh|service|partner)/i;
 // Führungsjobs sind ohne Erfahrung sinnlos.
 const FUEHRUNG = /geschäftsführ|leiter(in)?\b|leitung\b|head of|senior|teamlead|team lead|director|direktor/i;
 // Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
@@ -154,7 +154,7 @@ const FLUGHAFEN = /flughafen|airport|fraport|luftsicherheit|bodenverkehr|passagi
 
 // Nur diese Orte (Arbeitsort der Stelle). Griesheim bei Darmstadt (PLZ 64347) ist nicht gemeint.
 const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|mainz|kastel'), 'i');
-const ortPasst = (st) => ORTE.test(`${st.arbeitsort?.ort || ''} ${st.arbeitsort?.region || ''}`) && st.arbeitsort?.plz !== '64347';
+export const ortPasst = (st) => ORTE.test(`${st.arbeitsort?.ort || ''} ${st.arbeitsort?.region || ''}`) && st.arbeitsort?.plz !== '64347';
 const QUEREINSTEIGER = /quereinst|ohne (berufs)?erfahrung|keine (berufs)?erfahrung (nötig|erforderlich|notwendig)|einarbeitung|wir arbeiten (sie|dich) ein|berufseinsteiger|berufsanfänger/i;
 
 // Lieblingsbereiche (höchste Priorität) und weiteres Büro mit Tempo.
@@ -185,7 +185,7 @@ const SCHICHT = /schichtdienst|schichtarbeit|\bschicht|nachtdienst|nachtschicht|
 // Nur Anzeigentext + offizielles Feld prüfen - der restliche JSON-Text enthält Feldnamen wie "arbeitszeitSchichtNachtWochenende".
 const hatSchicht = (d) => d?.flags?.arbeitszeitSchichtNachtWochenende === true || SCHICHT.test(d?.flags?.stellenangebotsBeschreibung || '');
 
-async function parallel(liste, anzahl, arbeit) {
+export async function parallel(liste, anzahl, arbeit) {
   let i = 0;
   await Promise.all(Array.from({ length: anzahl }, async () => { while (i < liste.length) await arbeit(liste[i++]); }));
 }
@@ -226,7 +226,7 @@ function ausV6(x, angebotsart, was) {
   };
 }
 
-async function sucheStellen({ was, angebotsart }) {
+export async function sucheStellen({ was, angebotsart }) {
   const q = new URLSearchParams({ was, wo: ORT, umkreis: String(UMKREIS), angebotsart: String(angebotsart), veroeffentlichtseit: '60', size: '100' });
   if (angebotsart === 1) q.set('arbeitszeit', 'vz');
   const alle = [];
@@ -241,7 +241,7 @@ async function sucheStellen({ was, angebotsart }) {
 }
 
 // Detailtext holen: erst API, sonst die öffentliche Detailseite (HTML).
-async function holeDetails(refnr) {
+export async function holeDetails(refnr) {
   const b64 = Buffer.from(refnr).toString('base64');
   try {
     const d = await holeJson(`${API}/pc/v4/jobdetails/${b64}`);
