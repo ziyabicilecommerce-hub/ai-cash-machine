@@ -14,8 +14,12 @@ import {
 
 const MAX = LIVE ? Math.max(1, Math.min(60, parseInt(env('BEWERBUNG_INITIATIV_MAX', '25'), 10) || 25)) : 3;
 const SUCHE = ['Luftfracht', 'Air Cargo', 'Zoll', 'Zollabwicklung', 'Export', 'Import Export', 'Außenhandel',
-  'Spedition', 'Speditionskaufmann', 'Leitstelle', 'Disposition', 'Flughafen', 'Cargo', 'Logistik Sachbearbeiter'];
+  'Spedition', 'Speditionskaufmann', 'Leitstelle', 'Disposition', 'Flughafen', 'Cargo', 'Logistik Sachbearbeiter',
+  'SOC Analyst', 'Cyber Security', 'IT-Security', 'IT-Sicherheit', 'Informationssicherheit', 'Penetration Tester', 'Security Analyst'];
+// Echte IT-Sicherheit - nicht Luftsicherheit oder Objektschutz.
+const CYBER = /cyber|it-?secur|it-?sicherheit|informationssicherheit|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi/i;
 const BEREICHE = [
+  [CYBER, 'IT-Sicherheit'],
   [/luftfracht|air ?cargo|airfreight|cargo/i, 'Luftfracht'],
   [/zoll/i, 'Zoll'],
   [/export|import|außenhandel/i, 'Export und Import'],
@@ -24,7 +28,7 @@ const BEREICHE = [
   [/disposition|disponent/i, 'Disposition'],
 ];
 // Nur Anzeigen, die wirklich im Wunschbereich sind (die Suche liefert auch Deloitte-Berater & Co.).
-const RELEVANT = /luftfracht|air ?cargo|airfreight|cargo|fracht|freight|zoll|export|import|außenhandel|leitstelle|leitstand|einsatzzentrale|flughafen|airport|disposition|disponent|spedition|logistik/i;
+const RELEVANT = /cyber|it-?secur|it-?sicherheit|informationssicherheit|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi|luftfracht|air ?cargo|airfreight|cargo|fracht|freight|zoll|export|import|außenhandel|leitstelle|leitstand|einsatzzentrale|flughafen|airport|disposition|disponent|spedition|logistik/i;
 // Personalvermittler tarnen sich oft ohne Zeitarbeits-Flag - eine Initiativbewerbung dort bringt nichts.
 const VERMITTLER = /personal|zeitarbeit|staffing|impact gmbh|aide gmbh|bankpower|spp direkt|attentus/i;
 // Fahrer-, Handwerks-, Verkaufs- und Chefposten zeigen nicht auf ein Büro im Wunschbereich.
