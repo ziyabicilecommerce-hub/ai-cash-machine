@@ -132,6 +132,9 @@ const STANDARD_SUCHE = [
 export const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key\)? ?account|account manager|kundenberater|neukunden|d2d|door to door|fundraising/i;
 export const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt|\b(dis ag|tempworkers|randstad|adecco|manpower|hays|orizon|amadeus fire|ferchau|gulp|brunel|persona service|jobactive|piening|timepartner|startpeople|tempton|akkodis|allianz personal)\b|\bpersonal (gmbh|service|partner)/i;
 // Führungsjobs sind ohne Erfahrung sinnlos.
+// Kein Handwerk, keine Hilfs-/Haushaltsjobs - außer der Titel ist klar ein Büro-Job (z.B. "Bürokaufmann für Glaserei").
+const HANDWERK = /montage|monteur|helfer\b|handwerk|elektriker|mechaniker|mechatroniker|schlosser|schweiß|tischler|schreiner|maler\b|lackierer|maurer|dachdecker|installateur|sanitär|heizung|klempner|fliesen|zimmerer|gärtner|garten|landschaftsbau|bauhelfer|bauarbeiter|reinigung|hauswirtschaft|haushaltshilfe|\bkoch\b|küchen|hausmeister|glaser\b|metallbau|produktionshelfer/i;
+const BUERO = /büro|kaufm|sachbearbeit|assistenz|verwaltung|empfang|disposition|disponent|sekretär/i;
 const FUEHRUNG = /geschäftsführ|leiter(in)?\b|leitung\b|head of|senior|teamlead|team lead|director|direktor/i;
 // Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
 const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freelance|freiberuf|selbstständig|selbständig|nebenjob|honorar|auf provisionsbasis|\b(520|538|556) ?(€|euro)/i;
@@ -365,6 +368,7 @@ async function main() {
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb'; continue; }
+    if (HANDWERK.test(stelle.titel) && !BUERO.test(stelle.titel)) { state.uebersprungen[refnr] = 'Handwerk'; continue; }
     if (FUEHRUNG.test(stelle.titel)) { state.uebersprungen[refnr] = 'Führungsposition'; continue; }
     if (stelle.minijob || !stelle.vollzeit || KEIN_FIXGEHALT.test(kopf)) { state.uebersprungen[refnr] = 'kein Vollzeit-Fixgehalt'; continue; }
     // Vermittler/Zeitarbeit erst nach den Details entscheiden: nur wenn das Gehalt richtig gut ist.
