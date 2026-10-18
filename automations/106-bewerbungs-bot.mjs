@@ -137,8 +137,8 @@ const FUEHRUNG = /geschäftsführ|leiter(in)?\b|leitung\b|head of|senior|teamlea
 const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freelance|freiberuf|selbstständig|selbständig|nebenjob|honorar|auf provisionsbasis|\b(520|538|556) ?(€|euro)/i;
 const FLUGHAFEN = /flughafen|airport|fraport|luftsicherheit|bodenverkehr|passagier|check-in|lufthansa|condor|cargo ?city|luftverkehr|luftfracht|aviation|\b60549\b/i;
 
-// Nur diese Orte (Arbeitsort der Stelle). Griesheim bei Darmstadt (PLZ 64347) ist nicht gemeint.
-const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|mainz|kastel'), 'i');
+// Nur diese Orte (Arbeitsort der Stelle): Wohnort-Nähe plus Umland mit S-Bahn/Zug. Griesheim bei Darmstadt (PLZ 64347) ist nicht gemeint.
+const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|mainz|kastel|eschborn|kelsterbach|raunheim|rüsselsheim|bad homburg|offenbach|langen \\(hessen|neu-isenburg|dreieich|mörfelden|flörsheim|sulzbach|schwalbach|bad soden|oberursel|darmstadt|hanau|bad vilbel|groß-gerau|maintal'), 'i');
 export const ortPasst = (st) => ORTE.test(`${st.arbeitsort?.ort || ''} ${st.arbeitsort?.region || ''}`) && st.arbeitsort?.plz !== '64347';
 const QUEREINSTEIGER = /quereinst|ohne (berufs)?erfahrung|keine (berufs)?erfahrung (nötig|erforderlich|notwendig)|einarbeitung|wir arbeiten (sie|dich) ein|berufseinsteiger|berufsanfänger/i;
 
