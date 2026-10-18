@@ -13,7 +13,10 @@ export const kernwoerter = (prompt, n = 3) => suchbegriff(prompt).split(' ').fil
 
 // Archive suchen auch in Beschreibungen - "honey" fand ein Kochvideo, "lightning bolt" ein Flugzeug "Thunderbolt".
 // Deshalb muss ein Hauptwort des Motivs als ganzes Wort im Titel stehen.
-const EIGENSCHAFT = new Set(['golden', 'bright', 'dark', 'colorful', 'fresh', 'ancient', 'old', 'modern', 'tall', 'deep', 'vast', 'giant', 'tiny', 'huge', 'red', 'blue', 'green', 'orange', 'white', 'black', 'purple', 'shiny', 'clear', 'still', 'rough', 'striking', 'swimming', 'walking', 'flying', 'dripping', 'rising', 'floating', 'growing', 'sparkling', 'snowy', 'cloudy', 'stormy', 'rocky', 'sunny']);
+const EIGENSCHAFT = new Set(['golden', 'bright', 'dark', 'colorful', 'fresh', 'ancient', 'old', 'modern', 'tall', 'deep', 'vast', 'giant', 'tiny', 'huge', 'red', 'blue', 'green', 'orange', 'white', 'black', 'purple', 'shiny', 'clear', 'still', 'rough', 'striking', 'swimming', 'walking', 'flying', 'dripping', 'rising', 'floating', 'growing', 'sparkling', 'snowy', 'cloudy', 'stormy', 'rocky', 'sunny',
+  // "intense gamma ray burst" fand per "intense" eine Gewitter-Pressetafel und einen Waldbrand.
+  'intense', 'massive', 'powerful', 'strong', 'enormous', 'mighty', 'violent', 'fiery', 'burning', 'frozen', 'distant', 'hidden', 'deadly',
+  'creepy', 'scary', 'strange', 'mysterious', 'glowing', 'pulsing', 'shooting', 'exploding', 'spinning', 'gigantic', 'beautiful']);
 export const hauptwoerter = (prompt) => kernwoerter(prompt, 5).split(' ').filter((w) => w.length >= 4 && !EIGENSCHAFT.has(w.toLowerCase()));
 export function titelPasst(titel, prompt, extra = []) {
   const t = String(titel || '').toLowerCase().replace(/[_\-.]/g, ' ');

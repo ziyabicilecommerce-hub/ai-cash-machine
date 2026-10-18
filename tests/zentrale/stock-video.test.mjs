@@ -70,6 +70,10 @@ test('titelPasst: Hauptwort muss als ganzes Wort im Titel stehen (Live-Fehlgriff
   const honig = 'golden honey dripping from a wooden dipper, close-up detail, cinematic';
   const blitz = 'lightning bolt striking over a city skyline at night, cinematic';
   assert.deepEqual(hauptwoerter(honig), ['honey']);
+  const gamma = 'intense gamma ray burst beam shooting across space, cinematic, no text, no people';
+  assert.ok(!hauptwoerter(gamma).includes('intense'), 'Adjektiv ist kein Motiv');
+  assert.equal(titelPasst('Intense Thunderstorms Over the Plains', gamma), false);
+  assert.equal(titelPasst('Fermi Sees Gamma-ray Burst', gamma), true);
   assert.equal(titelPasst('File:20160923-AMS-LSC-9001 (Food Demo-Sweet Potato).webm', honig), false);
   assert.equal(titelPasst('File:Republic Aviation - P-47D Thunderbolt start-up', blitz), false);
   assert.equal(titelPasst('File:Honey dripping.webm', honig), true);
