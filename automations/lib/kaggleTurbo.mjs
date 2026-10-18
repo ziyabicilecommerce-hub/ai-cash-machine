@@ -21,15 +21,30 @@ export function skriptBauen(vorlage, job) {
   return vorlage.replace('__JOB__', `json.loads(__import__("base64").b64decode("${b64}").decode("utf-8"))`);
 }
 
+// T4 (Kaggle) hat 15 GB: 480x832 passt in den Speicher (704x1280 lief out of memory) - auf 1080p bringt es danach
+// der Hochskalierer. 24 fps, Wan braucht 4n+1 Bilder; mehr als 81 Bilder sprengen den Speicher.
 export function auftragBauen(shots, { negativ = '', sekunden = 3.5, qualitaet = 'kino' } = {}) {
   const kino = qualitaet === 'kino';
   return {
-    breite: 704, hoehe: 1280, fps: 24, negativ,
-    // 24 fps: 81 Bilder ~ 3,4 s, 121 ~ 5 s (Wan braucht 4n+1 Bilder).
-    frames: Math.min(121, Math.max(49, Math.round((sekunden * 24) / 4) * 4 + 1)),
-    schritte: kino ? 40 : 25, guidance: 5,
-    shots: shots.map((s) => ({ nr: s.nr, bild_url: s.bildUrl, prompt: s.bewegung })),
+    breite: 480, hoehe: 832, fps: 24, negativ,
+    frames: Math.min(81, Math.max(49, Math.round((sekunden * 24) / 4) * 4 + 1)),
+    schritte: kino ? 30 : 20, guidance: 5,
+    shots: shots.map((s) => ({ nr: s.nr, bild_url: s.bildUrl, ...(s.bildB64 ? { bild_b64: s.bildB64 } : {}), prompt: s.bewegung })),
   };
+}
+
+// Startbilder schon hier laden und mitschicken - von Kaggle aus lieferte der Bilddienst "402 Payment Required".
+export async function bilderMitschicken(shots, versuche = 3) {
+  return Promise.all(shots.map(async (s) => {
+    for (let i = 0; i < versuche && s.bildUrl; i++) {
+      try {
+        const r = await fetch(s.bildUrl);
+        if (r.ok) return { ...s, bildB64: Buffer.from(await r.arrayBuffer()).toString('base64') };
+      } catch { /* nächster Versuch */ }
+      await new Promise((ok) => setTimeout(ok, 4000 * (i + 1)));
+    }
+    return s;
+  }));
 }
 
 // Neue Kaggle-API-Tokens (KGAT_...) liest die CLI aus KAGGLE_API_TOKEN, alte Keys aus KAGGLE_KEY - beides geht.
@@ -48,7 +63,9 @@ export async function kaggleClips(shots, ordner, opts = {}) {
   const kdir = join(ordner, 'kaggle-kernel');
   mkdirSync(kdir, { recursive: true });
   writeFileSync(join(kdir, 'kernel-metadata.json'), JSON.stringify(kernelMeta(nutzer), null, 2));
-  writeFileSync(join(kdir, 'turbo.py'), skriptBauen(readFileSync(resolve('scripts/kaggle/turbo.py'), 'utf8'), auftragBauen(shots, opts)));
+  const mitBild = await bilderMitschicken(shots);
+  console.log(`[kaggle-turbo] ${mitBild.filter((s) => s.bildB64).length}/${shots.length} Startbilder mitgeschickt`);
+  writeFileSync(join(kdir, 'turbo.py'), skriptBauen(readFileSync(resolve('scripts/kaggle/turbo.py'), 'utf8'), auftragBauen(mitBild, opts)));
   console.log(`[kaggle-turbo] ${shots.length} Shots an die Kaggle-GPU geschickt`);
   try {
     console.log(kaggle(['kernels', 'push', '-p', kdir]).trim());
@@ -56,7 +73,8 @@ export async function kaggleClips(shots, ordner, opts = {}) {
     console.log(`[kaggle-turbo] Hochladen fehlgeschlagen: ${String(err.stderr || err.message).slice(0, 300)}`);
     return ergebnis;
   }
-  const bis = Date.now() + (opts.maxMinuten || 300) * 60000;
+  // Höchstens 150 min warten - danach braucht der Lauf noch Zeit fürs Hochskalieren (Job-Limit 340 min).
+  const bis = Date.now() + (opts.maxMinuten || 150) * 60000;
   let status = '';
   while (Date.now() < bis) {
     await new Promise((r) => setTimeout(r, 60000));
