@@ -360,6 +360,8 @@ async function main() {
   const kandidaten = [];
   for (const stelle of alle.values()) {
     const { refnr } = stelle;
+    // Früher nur wegen des Orts verworfen, jetzt aber im Suchgebiet → neu prüfen.
+    if (state.uebersprungen[refnr]?.startsWith('Ort ') && ortPasst(stelle)) delete state.uebersprungen[refnr];
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb'; continue; }
