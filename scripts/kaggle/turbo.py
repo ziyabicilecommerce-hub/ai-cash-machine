@@ -18,6 +18,8 @@ def log(*a):
     print("[kaggle-turbo]", *a, flush=True)
 
 
+# Kaggles vorinstalliertes torchao ist zu alt für neue diffusers (ImportError FqnToConfig) - wird nicht gebraucht.
+subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y", "-q", "torchao"], check=False)
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "-U", "diffusers>=0.35", "transformers", "accelerate", "ftfy", "imageio", "imageio-ffmpeg"], check=False)
 
 import torch  # noqa: E402
