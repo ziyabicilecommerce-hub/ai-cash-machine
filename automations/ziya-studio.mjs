@@ -104,7 +104,7 @@ async function main() {
   const fertig = [];
   console.log(`${LOG} "${idee}" · Preset ${PRESETS[preset].name} · ${shots.length} Shot(s)`);
 
-  // Kaggle-Turbo: alle Shots auf einmal auf der kostenlosen Kaggle-GPU (Wan 2.2, 720p, volle Schrittzahl).
+  // Kaggle-Turbo: alle Shots auf einmal auf der kostenlosen Kaggle-GPU (Wan 2.2, 480x832, danach hochskaliert).
   // Fehlt ein Clip, macht der normale Router unten für diesen Shot weiter.
   const vonKaggle = kaggleBereit()
     ? await kaggleClips(shots.map((s) => ({ ...s, bildUrl: bildURL(s.bild, { width: 768, height: 1344, seed: seed + s.nr }) })), ORDNER,

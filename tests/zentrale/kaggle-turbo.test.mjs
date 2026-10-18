@@ -16,10 +16,13 @@ test('Kaggle-Turbo: Kernel privat, mit GPU und Internet', () => {
 test('Kaggle-Turbo: Auftrag (Wan braucht 4n+1 Bilder, Kino = mehr Schritte)', () => {
   const a = auftragBauen([{ nr: 1, bildUrl: 'https://x/1.jpg', bewegung: 'slow push in' }], { sekunden: 3.5, negativ: 'blurry' });
   assert.equal((a.frames - 1) % 4, 0);
-  assert.equal(a.frames, 85);
-  assert.equal(a.schritte, 40);
-  assert.equal(auftragBauen([], { qualitaet: 'schnell' }).schritte, 25);
-  assert.equal(auftragBauen([], { sekunden: 99 }).frames, 121);
+  assert.equal(a.frames, 81);
+  assert.equal(a.schritte, 30);
+  assert.deepEqual([a.breite, a.hoehe], [480, 832], 'passt in die 15 GB der T4');
+  assert.equal(auftragBauen([], { qualitaet: 'schnell' }).schritte, 20);
+  assert.equal(auftragBauen([], { sekunden: 99 }).frames, 81);
+  assert.equal(auftragBauen([], { sekunden: 2 }).frames, 49);
+  assert.equal(auftragBauen([{ nr: 1, bildUrl: 'u', bildB64: 'QUJD', bewegung: 'p' }]).shots[0].bild_b64, 'QUJD');
   assert.deepEqual(a.shots, [{ nr: 1, bild_url: 'https://x/1.jpg', prompt: 'slow push in' }]);
 });
 
