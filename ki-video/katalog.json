@@ -1,0 +1,1924 @@
+{
+ "stand": "2026-10-18",
+ "anzahl": 274,
+ "spaces": [
+  {
+   "space": "zerogpu-aoti/wan2-2-fp8da-aoti-faster",
+   "titel": "Wan2.2 14B Fast generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 3753,
+   "geaendert": "2026-08-25"
+  },
+  {
+   "space": "r3gm/wan2-2-fp8da-aoti-preview",
+   "titel": "Wan2.2 14B Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 3234,
+   "geaendert": "2026-08-21"
+  },
+  {
+   "space": "r3gm/wan2-2-fp8da-aoti-preview2",
+   "titel": "Wan2.2 14B Slow Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 2178,
+   "geaendert": "2026-09-04"
+  },
+  {
+   "space": "mediasynthesismuseum/stable-video-diffusion",
+   "titel": "Stable Video Diffusion 1.1",
+   "gpu": "zero-a10g",
+   "likes": 2040,
+   "geaendert": "2026-07-15"
+  },
+  {
+   "space": "multimodalart/wan2-1-fast",
+   "titel": "Wan2.1 Fast",
+   "gpu": "zero-a10g",
+   "likes": 1621,
+   "geaendert": "2025-07-07"
+  },
+  {
+   "space": "Lightricks/ltx-video-distilled",
+   "titel": "LTX Video Fast ultra-fast video model, LTX 0.9.8 13B distilled",
+   "gpu": "zero-a10g",
+   "likes": 1607,
+   "geaendert": "2026-06-15"
+  },
+  {
+   "space": "FrameAI4687/Omni-Video-Factory",
+   "titel": "Omni Video Factory text to video, image to video, video extend",
+   "gpu": "zero-a10g",
+   "likes": 1570,
+   "geaendert": "2026-03-06"
+  },
+  {
+   "space": "zai-org/CogVideoX-5B-Space",
+   "titel": "CogVideoX-5B Text-to-Video",
+   "gpu": "zero-a10g",
+   "likes": 1051,
+   "geaendert": "2026-05-22"
+  },
+  {
+   "space": "multimodalart/wan-2-2-first-last-frame",
+   "titel": "Wan 2 2 First Last Frame",
+   "gpu": "zero-a10g",
+   "likes": 673,
+   "geaendert": "2026-02-15"
+  },
+  {
+   "space": "innova-ai/video-background-removal",
+   "titel": "Video Background Removal Remove/Change background of video.",
+   "gpu": "zero-a10g",
+   "likes": 656,
+   "geaendert": "2025-04-25"
+  },
+  {
+   "space": "alexnasa/ltx-2-TURBO",
+   "titel": "LTX-2 Video [Turbo] Fast high quality video with audio generation",
+   "gpu": "zero-a10g",
+   "likes": 548,
+   "geaendert": "2026-08-31"
+  },
+  {
+   "space": "Lightricks/LTX-2-3",
+   "titel": "LTX 2.3 Distilled",
+   "gpu": "zero-a10g",
+   "likes": 483,
+   "geaendert": "2026-05-15"
+  },
+  {
+   "space": "zai-org/CogVideoX-2B-Space",
+   "titel": "CogVideoX-2B Text-to-Video",
+   "gpu": "zero-a10g",
+   "likes": 460,
+   "geaendert": "2025-06-27"
+  },
+  {
+   "space": "ByteDance/AnimateDiff-Lightning",
+   "titel": "AnimateDiff-Lightning",
+   "gpu": "zero-a10g",
+   "likes": 407,
+   "geaendert": "2024-06-07"
+  },
+  {
+   "space": "Saravutw/WAN2.2_I2V_LIGHTNING_4-8step_custom",
+   "titel": "WAN2.2 I2V LIGHTNING-Video-4-8step",
+   "gpu": "zero-a10g",
+   "likes": 388,
+   "geaendert": "2026-08-13"
+  },
+  {
+   "space": "artificialguybr/Video-Transcription-Smart-Summary",
+   "titel": "Video Transcription Smart Summary",
+   "gpu": "zero-a10g",
+   "likes": 374,
+   "geaendert": "2026-04-07"
+  },
+  {
+   "space": "amirgame197/Remove-Video-Background",
+   "titel": "Remove Video Background Easily remove your videos background!",
+   "gpu": "zero-a10g",
+   "likes": 367,
+   "geaendert": "2025-08-29"
+  },
+  {
+   "space": "alexnasa/Wan2.2-Animate-ZEROGPU",
+   "titel": "Wan2.2 Animate [Local] Edit Videos with Wan 2.2",
+   "gpu": "zero-a10g",
+   "likes": 361,
+   "geaendert": "2026-08-24"
+  },
+  {
+   "space": "techfreakworm/LTX2.3-Studio",
+   "titel": "LTX 2.3 Studio",
+   "gpu": "zero-a10g",
+   "likes": 361,
+   "geaendert": "2026-08-18"
+  },
+  {
+   "space": "wangfuyun/AnimateLCM-SVD",
+   "titel": "AnimateLCM SVD",
+   "gpu": "zero-a10g",
+   "likes": 357,
+   "geaendert": "2026-05-26"
+  },
+  {
+   "space": "artificialguybr/video-dubbing",
+   "titel": "Video Dubbing",
+   "gpu": "zero-a10g",
+   "likes": 332,
+   "geaendert": "2026-07-14"
+  },
+  {
+   "space": "linoyts/FramePack-F1",
+   "titel": "FramePack F1 fast video generation from images & text",
+   "gpu": "zero-a10g",
+   "likes": 330,
+   "geaendert": "2025-09-17"
+  },
+  {
+   "space": "victor/LongCat-Video-Avatar-1.5",
+   "titel": "LongCat-Video-Avatar 1.5 Audio-driven talking-head video generation (Meituan LongCat)",
+   "gpu": "zero-a10g",
+   "likes": 329,
+   "geaendert": "2026-05-26"
+  },
+  {
+   "space": "tencent/HY-Motion-1.0",
+   "titel": "HY-Motion-1.0 Text-to-3D and Image-to-3D Generation",
+   "gpu": "zero-a10g",
+   "likes": 307,
+   "geaendert": "2026-05-22"
+  },
+  {
+   "space": "vamo455/Omni-videos-custom-auto_prompt_high-quality",
+   "titel": "Omni Video Factory text to video, image to video, video extend",
+   "gpu": "zero-a10g",
+   "likes": 271,
+   "geaendert": "2026-08-30"
+  },
+  {
+   "space": "kulkas2pintu/wan222",
+   "titel": "Wan2.2 14B Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 262,
+   "geaendert": "2026-07-19"
+  },
+  {
+   "space": "cbensimon/wan2-2-fp8da-aoti-preview2",
+   "titel": "Wan2.2 14B Fast Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 254,
+   "geaendert": "2026-05-14"
+  },
+  {
+   "space": "depth-anything/Video-Depth-Anything",
+   "titel": "Video Depth Anything",
+   "gpu": "zero-a10g",
+   "likes": 242,
+   "geaendert": "2025-03-05"
+  },
+  {
+   "space": "obsxrver/wan22-i2v-omni-lora",
+   "titel": "Wan2.2 I2V OmniBlink Wan2.2 I2V Blink Effect",
+   "gpu": "zero-a10g",
+   "likes": 231,
+   "geaendert": "2026-07-27"
+  },
+  {
+   "space": "rahul7star/wan22-AOT",
+   "titel": "Wan2.2 14B Fast app_lora is base",
+   "gpu": "zero-a10g",
+   "likes": 222,
+   "geaendert": "2026-09-07"
+  },
+  {
+   "space": "fantaxy/Remove-Video-Background",
+   "titel": "Remove Video Background Easily remove your videos background!",
+   "gpu": "zero-a10g",
+   "likes": 219,
+   "geaendert": "2025-06-10"
+  },
+  {
+   "space": "dream2589632147/Dream-wan2-2-fp8da-aoti-preview-2",
+   "titel": "Dream Motion Pro - Wan 2.2 Fast Wan 2.2 image-to-video with first/last frames",
+   "gpu": "zero-a10g",
+   "likes": 207,
+   "geaendert": "2026-07-19"
+  },
+  {
+   "space": "TIGER-Lab/T2V-Turbo-V2",
+   "titel": "T2V Turbo V2 Efficient T2V generation",
+   "gpu": "zero-a10g",
+   "likes": 189,
+   "geaendert": "2026-05-26"
+  },
+  {
+   "space": "linoyts/LTX-2-3-sync",
+   "titel": "LTX 2.3 Sync Portrait animation & lipsync with LTX 2.3",
+   "gpu": "zero-a10g",
+   "likes": 177,
+   "geaendert": "2026-05-13"
+  },
+  {
+   "space": "tencent/HunyuanVideo-Foley",
+   "titel": "HunyuanVideo Foley",
+   "gpu": "zero-a10g",
+   "likes": 172,
+   "geaendert": "2025-09-04"
+  },
+  {
+   "space": "lixin4ever/VideoLLaMA2",
+   "titel": "VideoLLaMA2 Media understanding",
+   "gpu": "zero-a10g",
+   "likes": 160,
+   "geaendert": "2026-05-26"
+  },
+  {
+   "space": "linoyts/LTX-2-3-First-Last-Frame",
+   "titel": "LTX 2.3 First-Last Frame",
+   "gpu": "zero-a10g",
+   "likes": 158,
+   "geaendert": "2026-05-14"
+  },
+  {
+   "space": "kulkas2pintu/kv-i2v",
+   "titel": "KV Image to Clip Wan 2.2 image-to-clip with KV adapters",
+   "gpu": "zero-a10g",
+   "likes": 157,
+   "geaendert": "2026-10-05"
+  },
+  {
+   "space": "multimodalart/MoDA-fast-talking-head",
+   "titel": "MoDA Fast Talking Head Generate talking heads from audio",
+   "gpu": "zero-a10g",
+   "likes": 139,
+   "geaendert": "2026-07-14"
+  },
+  {
+   "space": "merve/SAM3-video-segmentation",
+   "titel": "SAM3 Video Segmentation",
+   "gpu": "zero-a10g",
+   "likes": 117,
+   "geaendert": "2025-11-28"
+  },
+  {
+   "space": "multimodalart/Hunyuan-Video-1-5",
+   "titel": "HunyuanVideo 1.5 I2V 480p",
+   "gpu": "zero-a10g",
+   "likes": 111,
+   "geaendert": "2026-07-14"
+  },
+  {
+   "space": "artificialguybr/VIDEO-TRANSLATION-TRANSCRIPTION",
+   "titel": "VIDEO TRANSLATION TRANSCRIPTION",
+   "gpu": "zero-a10g",
+   "likes": 95,
+   "geaendert": "2026-04-07"
+  },
+  {
+   "space": "linoyts/wan2-1-VACE-fast",
+   "titel": "Wan2.1 VACE Fast",
+   "gpu": "zero-a10g",
+   "likes": 95,
+   "geaendert": "2025-09-17"
+  },
+  {
+   "space": "linoyts/wan2-2-i2v-rCM",
+   "titel": "Wan2.2 14B rCM Fast fast video generation with Wan 2.2 using rCM",
+   "gpu": "zero-a10g",
+   "likes": 92,
+   "geaendert": "2025-12-11"
+  },
+  {
+   "space": "lixin4ever/VideoLLaMA3",
+   "titel": "VideoLLaMA3 Frontier Foundation Models for Video Understanding",
+   "gpu": "zero-a10g",
+   "likes": 84,
+   "geaendert": "2026-07-14"
+  },
+  {
+   "space": "Viggle/viggle-animate",
+   "titel": "Viggle-Animate Put the person from a still into a driving video, in 4 steps",
+   "gpu": "zero-a10g",
+   "likes": 84,
+   "geaendert": "2026-09-09"
+  },
+  {
+   "space": "multimodalart/ltx2-audio-to-video",
+   "titel": "Ltx2 Audio To Video",
+   "gpu": "zero-a10g",
+   "likes": 78,
+   "geaendert": "2026-01-30"
+  },
+  {
+   "space": "Lightricks/LTX-2.5",
+   "titel": "LTX-2.5 LTX-2.5 distilled two-stage",
+   "gpu": "zero-a10g",
+   "likes": 75,
+   "geaendert": "2026-10-11"
+  },
+  {
+   "space": "prashant-AI-ML/Wan-2.2-pro-Superb",
+   "titel": "Wan2.2 14B Pro Superb generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 73,
+   "geaendert": "2026-09-25"
+  },
+  {
+   "space": "amisima/LTX-2.3-Studio",
+   "titel": "LTX 2.3 Studio · AI Scene Planner Economy, AI planner, LoRA refresh & native audio",
+   "gpu": "zero-a10g",
+   "likes": 72,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "amisima/Wan_2.2_I2V_Studio",
+   "titel": "Wan 2.2 Studio · AI Scene Planner NEW: LoRA size guard, CPU downloads & AI scene planning",
+   "gpu": "zero-a10g",
+   "likes": 71,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "preSalesAIAutomation/imagetovideo",
+   "titel": "Imagetovideo",
+   "gpu": "zero-a10g",
+   "likes": 68,
+   "geaendert": "2025-11-28"
+  },
+  {
+   "space": "wxDai/joyai-video-edit",
+   "titel": "JoyAI Video Edit (Live) Real-time webcam video editing (ZeroGPU)",
+   "gpu": "zero-a10g",
+   "likes": 61,
+   "geaendert": "2026-09-23"
+  },
+  {
+   "space": "prithivMLmods/LTX-2-LoRAs-Camera-Control-Dolly",
+   "titel": "LTX-2-LoRAs-Camera-Control-Dolly Camera Control Dolly [Distilled]",
+   "gpu": "zero-a10g",
+   "likes": 60,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "hugging-apps/wan2-2-animate-2-14b",
+   "titel": "Wan2.2 Animate 2 14B Animate a character image with a driving video",
+   "gpu": "zero-a10g",
+   "likes": 58,
+   "geaendert": "2026-08-08"
+  },
+  {
+   "space": "amisima/LTX_2.5_Turbo_Studio",
+   "titel": "LTX 2.5 Studio · AI Scene Planner LTX-2.5 with Studio UI, scenes, LoRA tools and audio",
+   "gpu": "zero-a10g",
+   "likes": 57,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "ysharma/wan2-1-fast",
+   "titel": "Wan2.1 Fast",
+   "gpu": "zero-a10g",
+   "likes": 54,
+   "geaendert": "2025-08-04"
+  },
+  {
+   "space": "HappyPablo/marlin-2b-video-understanding",
+   "titel": "Marlin 2B Video Understanding Dense video captions and timestamp search",
+   "gpu": "zero-a10g",
+   "likes": 53,
+   "geaendert": "2026-05-26"
+  },
+  {
+   "space": "KingNish/wan2-2-fast",
+   "titel": "Wan2.2 Fast",
+   "gpu": "zero-a10g",
+   "likes": 51,
+   "geaendert": "2025-09-21"
+  },
+  {
+   "space": "hitman911/wan2-2-fp8da-aoti-preview-2c-finishing",
+   "titel": "Wan2.2 14B Cum explosion lora generate a video from an image with a text prompt with text",
+   "gpu": "zero-a10g",
+   "likes": 51,
+   "geaendert": "2026-07-28"
+  },
+  {
+   "space": "multimodalart/minimax-h3-audio-to-video",
+   "titel": "MiniMax-H3 Audio to Video A first frame plus your own soundtrack, driving MiniMax-H3",
+   "gpu": "zero-a10g",
+   "likes": 50,
+   "geaendert": "2026-08-16"
+  },
+  {
+   "space": "Poij134/wan2-2-fp8da-aoti-preview-2",
+   "titel": "Wan2.2 14B Fast Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 44,
+   "geaendert": "2026-05-15"
+  },
+  {
+   "space": "atharvak30/Video-Enhancer-2.0",
+   "titel": "AI Video Enhancer 4K",
+   "gpu": "zero-a10g",
+   "likes": 42,
+   "geaendert": "2026-08-30"
+  },
+  {
+   "space": "makiblek/Wan_2.2_I2V_14B_Custom_Lora_Wow",
+   "titel": "Wan2.2 14B Custom Lora",
+   "gpu": "zero-a10g",
+   "likes": 41,
+   "geaendert": "2026-08-02"
+  },
+  {
+   "space": "sky24h/Free-View_Expressive_Talking_Head_Video_Editing",
+   "titel": "Free-View Expressive Talking Head Video Editing",
+   "gpu": "zero-a10g",
+   "likes": 40,
+   "geaendert": "2026-05-15"
+  },
+  {
+   "space": "prithivMLmods/Wan2.2-Fast",
+   "titel": "Wan2.2 Fast wan2.2 fast video generation with high-res stop frames",
+   "gpu": "zero-a10g",
+   "likes": 39,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "linoyts/ltx-2-first-last-frame",
+   "titel": "LTX-2 First Last Frame first last frame controlled video & audio generation",
+   "gpu": "zero-a10g",
+   "likes": 37,
+   "geaendert": "2026-01-08"
+  },
+  {
+   "space": "Upsampler/wan-2-2-14b-image-to-video",
+   "titel": "Wan 2.2 14B - Image to Video Animate an image into a video with Wan 2.2 14B.",
+   "gpu": "zero-a10g",
+   "likes": 36,
+   "geaendert": "2026-08-15"
+  },
+  {
+   "space": "linoyts/LTX-2-3-outpaint",
+   "titel": "LTX 2.3 Outpaint expand videos to any aspect ratio with LTX 2.3",
+   "gpu": "zero-a10g",
+   "likes": 35,
+   "geaendert": "2026-04-17"
+  },
+  {
+   "space": "dayona/I2V-EXTENDED",
+   "titel": "I2V STUDIO 🎬 Wan 2.2 14B • Sulphur AI Vision • 1080p HD VIP RIFE",
+   "gpu": "zero-a10g",
+   "likes": 33,
+   "geaendert": "2026-08-24"
+  },
+  {
+   "space": "ltx-community/ltx-2.3-ingredients-distilled",
+   "titel": "LTX-2.3 Ingredients LoRA (Fast) Fast reference-sheet to video with LTX-2.3 IC-LoRA",
+   "gpu": "zero-a10g",
+   "likes": 32,
+   "geaendert": "2026-06-26"
+  },
+  {
+   "space": "yonigozlan/Segment-Anything-2-video-tracking",
+   "titel": "Segment Anything 2 Video Tracking Segment any objects and track them through a video with SAM2",
+   "gpu": "zero-a10g",
+   "likes": 29,
+   "geaendert": "2025-09-26"
+  },
+  {
+   "space": "RioShiina/LTX-2.5",
+   "titel": "LTX-2.5 Multi-task image generator with dynamic, chainable workflows",
+   "gpu": "zero-a10g",
+   "likes": 28,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "CumaSystem/Omni-videos-custom",
+   "titel": "Omni Video Custom-fast-motion text to video, image to video, video extend",
+   "gpu": "zero-a10g",
+   "likes": 27,
+   "geaendert": "2026-08-14"
+  },
+  {
+   "space": "zsaxcdssdf/wan2.2_wip",
+   "titel": "Wan2.2 14B Fast Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 27,
+   "geaendert": "2026-05-15"
+  },
+  {
+   "space": "hugging-apps/ltx-2-5-alpha-matte",
+   "titel": "LTX-2.5 22B Alpha Gen · Video to Alpha Matte Turn an RGB video into a frame-aligned alpha matte",
+   "gpu": "zero-a10g",
+   "likes": 27,
+   "geaendert": "2026-10-04"
+  },
+  {
+   "space": "meituan-longcat/LongCat-Video-Avatar-1.5-Demo",
+   "titel": "LongCat-Video-Avatar 1.5 Audio-driven talking-head video generation (Meituan LongCat)",
+   "gpu": "zero-a10g",
+   "likes": 26,
+   "geaendert": "2026-06-23"
+  },
+  {
+   "space": "EvanTHU/MotionCLR",
+   "titel": "MotionCLR",
+   "gpu": "zero-a10g",
+   "likes": 25,
+   "geaendert": "2024-11-04"
+  },
+  {
+   "space": "ChopperBlu/ltx-2-5-demo",
+   "titel": "LTX-2.5 Video + Audio Cinema-resolution LTX-2.5 video with synchronized audio",
+   "gpu": "zero-a10g",
+   "likes": 25,
+   "geaendert": "2026-09-12"
+  },
+  {
+   "space": "TencentARC/scope-camera-video-generation",
+   "titel": "SCoPE Camera Controlled Video Steer a 3D camera path through any still image",
+   "gpu": "zero-a10g",
+   "likes": 21,
+   "geaendert": "2026-08-15"
+  },
+  {
+   "space": "JCisHERE/wan2-2-i2v-v3",
+   "titel": "Wan2.2 14B Fast Preview [NEW]",
+   "gpu": "zero-a10g",
+   "likes": 19,
+   "geaendert": "2026-08-28"
+  },
+  {
+   "space": "cherry-moxxa04/wan2-2-fp8da-aoti-preview-2",
+   "titel": "Wan2.2 14B Fast Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 19,
+   "geaendert": "2026-05-15"
+  },
+  {
+   "space": "SammyLim/VideoMaMa",
+   "titel": "VideoMaMa",
+   "gpu": "zero-a10g",
+   "likes": 18,
+   "geaendert": "2026-10-06"
+  },
+  {
+   "space": "prithivMLmods/Qwen3-VL-Video-Grounding",
+   "titel": "Qwen3 VL Video Grounding Text-guided object tracking, point tracking, reasoning.",
+   "gpu": "zero-a10g",
+   "likes": 18,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "kulkas2pintu/Video_to_video_WAN",
+   "titel": "Change Clothes in a Video (by prompt) Change a person's clothing in a video from a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 18,
+   "geaendert": "2026-09-22"
+  },
+  {
+   "space": "OraRL/video-ora-9b-demo",
+   "titel": "Video-ORA-9B Explore all seven Video-ORA task families",
+   "gpu": "zero-a10g",
+   "likes": 18,
+   "geaendert": "2026-08-26"
+  },
+  {
+   "space": "jrhode666/minimax-h3-motion-enhancer-demo",
+   "titel": "MiniMax-H3 Motion Enhancer Animate a still image with MiniMax-H3 motion",
+   "gpu": "zero-a10g",
+   "likes": 18,
+   "geaendert": "2026-09-07"
+  },
+  {
+   "space": "KumaPower/AvatarArtist",
+   "titel": "AvatarArtist Open-Domain 4D Avatarization",
+   "gpu": "zero-a10g",
+   "likes": 17,
+   "geaendert": "2026-05-21"
+  },
+  {
+   "space": "aidealab/AIdeaLab-VideoJP",
+   "titel": "AIdeaLab-VideoJP Creator Friendly Text-to-Video",
+   "gpu": "zero-a10g",
+   "likes": 16,
+   "geaendert": "2026-02-04"
+  },
+  {
+   "space": "hugging-apps/qwen-video-edit",
+   "titel": "Qwen-Video-Edit Instruction-based video editing with Qwen-Image-Edit",
+   "gpu": "zero-a10g",
+   "likes": 16,
+   "geaendert": "2026-08-19"
+  },
+  {
+   "space": "vml12/wan-video-studio",
+   "titel": "Wan2.2 I2V 14B Lightning - Fast Preview Quick Image to Video Generation + Sound (optional)",
+   "gpu": "zero-a10g",
+   "likes": 15,
+   "geaendert": "2026-10-11"
+  },
+  {
+   "space": "ltx-community/ltx-2-3-preproduction-playground",
+   "titel": "LTX 2.3 Storyboard Studio Pre-production on a free GPU. LTX-2.3 + ZeroGPU.",
+   "gpu": "zero-a10g",
+   "likes": 14,
+   "geaendert": "2026-07-11"
+  },
+  {
+   "space": "Lightricks/ltx-2-3-spatial-upscaler",
+   "titel": "LTX 2.3 Pixel Spatial Upscaler Generative 4x video upscaling with LTX-2.3 IC-LoRA",
+   "gpu": "zero-a10g",
+   "likes": 14,
+   "geaendert": "2026-07-21"
+  },
+  {
+   "space": "Lightricks/ltx-2-3-22b-ic-lora-clean-plate",
+   "titel": "LTX-2.3 Clean Plate (Remove People from Video) Remove people & vehicles from video, keep the background",
+   "gpu": "zero-a10g",
+   "likes": 13,
+   "geaendert": "2026-07-20"
+  },
+  {
+   "space": "mediasynthesismuseum/modelscope-text-to-video",
+   "titel": "ModelScope Text To Video Synthesis og Will Smith eating spaghetti generator",
+   "gpu": "zero-a10g",
+   "likes": 12,
+   "geaendert": "2026-07-15"
+  },
+  {
+   "space": "prithivMLmods/NAVA-Text-to-Video",
+   "titel": "NAVA Text To Video Native Audio-Visual Alignment for Generation",
+   "gpu": "zero-a10g",
+   "likes": 11,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "aidealab/AnimeGen-I2V",
+   "titel": "AnimeGen I2V Demo for AnimeGen I2V",
+   "gpu": "zero-a10g",
+   "likes": 11,
+   "geaendert": "2026-07-13"
+  },
+  {
+   "space": "ltx-community/ltx-2.3-water-simulation",
+   "titel": "LTX-2.3 Water Simulation Add water VFX to video with an LTX-2.3 IC-LoRA",
+   "gpu": "zero-a10g",
+   "likes": 11,
+   "geaendert": "2026-06-19"
+  },
+  {
+   "space": "kandinskylab/Kandinsky-6.0-Pro-distill-5s",
+   "titel": "Kandinsky 6.0 Pro Distill 5s 10-step Kandinsky 6.0 Pro text/image to video with audio",
+   "gpu": "zero-a10g",
+   "likes": 11,
+   "geaendert": "2026-10-06"
+  },
+  {
+   "space": "prithivMLmods/Image-to-3D-Video-Asset-Generator",
+   "titel": "Image To 3D Video Asset Generator Generate Text-to-Image-to-3D Preview Video Assets",
+   "gpu": "zero-a10g",
+   "likes": 10,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "Upsampler/wan-2-2-5b-video",
+   "titel": "Wan 2.2 5B - Text or Image to Video Fast text-to-video and image-to-video with Wan 2.2 5B.",
+   "gpu": "zero-a10g",
+   "likes": 9,
+   "geaendert": "2026-08-15"
+  },
+  {
+   "space": "hugging-apps/leaptalk-talking-head",
+   "titel": "LeapTalk One-step audio-driven talking head video generation",
+   "gpu": "zero-a10g",
+   "likes": 8,
+   "geaendert": "2026-08-19"
+  },
+  {
+   "space": "hugging-apps/jdopensource-joyai-video-edit",
+   "titel": "JoyAI Video Edit Streaming instruction-guided video editing",
+   "gpu": "zero-a10g",
+   "likes": 8,
+   "geaendert": "2026-08-19"
+  },
+  {
+   "space": "aaaa33311/wan2-2-fp8da-aoti-preview-2c-finishing",
+   "titel": "Wan2.2 14B Cum explosion lora generate a video from an image with a text prompt with text",
+   "gpu": "zero-a10g",
+   "likes": 8,
+   "geaendert": "2026-07-28"
+  },
+  {
+   "space": "ltx-community/ltx-2.3-decompress",
+   "titel": "LTX-2.3 Video Decompress Remove compression artifacts with an LTX-2.3 IC-LoRA",
+   "gpu": "zero-a10g",
+   "likes": 8,
+   "geaendert": "2026-06-19"
+  },
+  {
+   "space": "ltx-community/ltx-2.3-upscaler",
+   "titel": "LTX-2.3 Spatial Upscaler 2x/4x video upscaling with LTX-2.3 IC-LoRAs",
+   "gpu": "zero-a10g",
+   "likes": 8,
+   "geaendert": "2026-07-08"
+  },
+  {
+   "space": "ltx-community/ltx-2.3-outpaint",
+   "titel": "LTX-2.3 Video Outpaint Outpaint videos with LTX 2.3 IC LoRA",
+   "gpu": "zero-a10g",
+   "likes": 8,
+   "geaendert": "2026-06-17"
+  },
+  {
+   "space": "yuvraj108c/ltx25-bbox-control-demo",
+   "titel": "LTX-2.5 BBox Control Animate bounding boxes into video, one prompt per box",
+   "gpu": "zero-a10g",
+   "likes": 8,
+   "geaendert": "2026-08-26"
+  },
+  {
+   "space": "Iceyy4400/wan22-animate-character-replace",
+   "titel": "Wan 2.2 Animate Character Replace Replace a video's character with Wan 2.2 Animate",
+   "gpu": "zero-a10g",
+   "likes": 7,
+   "geaendert": "2026-09-02"
+  },
+  {
+   "space": "traderharikrishna/Wan_2.2_I2V_14B_Custom_Lora",
+   "titel": "Wan2.2 14B Custom Lora,Fast Options, ZeroGPU cost, settings profiles",
+   "gpu": "zero-a10g",
+   "likes": 7,
+   "geaendert": "2026-08-17"
+  },
+  {
+   "space": "STCM/wan2-2-fp8da-aoti-preview-2c",
+   "titel": "Wan2.2 14B Handjob lora generate a video from an image with a text prompt with text",
+   "gpu": "zero-a10g",
+   "likes": 7,
+   "geaendert": "2026-07-28"
+  },
+  {
+   "space": "kulkas2pintu/Video_to_video_WAN2",
+   "titel": "Change Clothes in a Video (by prompt) Change a person's clothing in a video from a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 7,
+   "geaendert": "2026-09-22"
+  },
+  {
+   "space": "ltx-community/ltx-2.3-colorize",
+   "titel": "LTX-2.3 Video Colorize Colorize B&W video with an LTX-2.3 IC-LoRA",
+   "gpu": "zero-a10g",
+   "likes": 7,
+   "geaendert": "2026-06-19"
+  },
+  {
+   "space": "hugging-apps/ltx25-multi-subject-reference",
+   "titel": "LTX-2.5 Multiple Subject Reference Multi-subject reference images to video with LTX-2.5",
+   "gpu": "zero-a10g",
+   "likes": 7,
+   "geaendert": "2026-09-07"
+  },
+  {
+   "space": "cs686/ardy-motion-api",
+   "titel": "ARDY Motion Playground Text-to-motion with an interactive 3D skeleton playground",
+   "gpu": "zero-a10g",
+   "likes": 6,
+   "geaendert": "2026-07-23"
+  },
+  {
+   "space": "hugging-apps/prism-text-to-motion",
+   "titel": "PRISM Text-to-Motion Generate human motion sequences from text prompts",
+   "gpu": "zero-a10g",
+   "likes": 6,
+   "geaendert": "2026-08-21"
+  },
+  {
+   "space": "JMCC63/wan2-2-i2v-v3jm",
+   "titel": "Wan2.2 14B Fast Preview [NEW]",
+   "gpu": "zero-a10g",
+   "likes": 6,
+   "geaendert": "2026-07-19"
+  },
+  {
+   "space": "ltx-community/ltx-2.3-day-to-night",
+   "titel": "LTX-2.3 Day to Night Relight daytime video to night with an LTX-2.3 IC-LoRA",
+   "gpu": "zero-a10g",
+   "likes": 6,
+   "geaendert": "2026-06-19"
+  },
+  {
+   "space": "ibyteohdear/LTX-2.5-Multi-Pipe",
+   "titel": "LTX-2.5-Multi-Pipe LoRA, Logs, Prompt Enhance, Low vram offload capable",
+   "gpu": "zero-a10g",
+   "likes": 6,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "Upsampler/ltx-2-5",
+   "titel": "LTX 2.5 LTX-2.5 distilled two-stage video generation with audio",
+   "gpu": "zero-a10g",
+   "likes": 6,
+   "geaendert": "2026-10-13"
+  },
+  {
+   "space": "kandinskylab/Kandinsky-6.0-VSR-Demo",
+   "titel": "Kandinsky 6.0 Video Super-Resolution Tiled ×2 / ×4 video super-resolution for 5-second clips",
+   "gpu": "zero-a10g",
+   "likes": 6,
+   "geaendert": "2026-10-05"
+  },
+  {
+   "space": "prithivMLmods/SAGE-MM-Video-Reasoning",
+   "titel": "SAGE Video Reasoning Smart Any-Horizon Agents for Long Video Reasoning. [SAGE]",
+   "gpu": "zero-a10g",
+   "likes": 5,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "Upsampler/wan-2-2-14b-text-to-video",
+   "titel": "Wan 2.2 14B - Text to Video Generate a video from a text prompt with Wan 2.2 14B.",
+   "gpu": "zero-a10g",
+   "likes": 5,
+   "geaendert": "2026-07-21"
+  },
+  {
+   "space": "hugging-apps/ex-omni-talking-avatar",
+   "titel": "Ex-Omni Talking Avatar Text/speech to spoken response + 3D talking-avatar video",
+   "gpu": "zero-a10g",
+   "likes": 5,
+   "geaendert": "2026-08-19"
+  },
+  {
+   "space": "ghjjhv/wan-i2v-kira",
+   "titel": "Wan2.2 14B Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 5,
+   "geaendert": "2026-08-18"
+  },
+  {
+   "space": "hugging-apps/ksyjawan-realistic-i2v",
+   "titel": "KSYJAwan-realistic I2V Animate an image into a video with a Wan 2.2 I2V finetune",
+   "gpu": "zero-a10g",
+   "likes": 5,
+   "geaendert": "2026-09-14"
+  },
+  {
+   "space": "Fradeck619/wan2-2-fp8da-aoti-faster",
+   "titel": "Wan2.2 14B Fast generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 5,
+   "geaendert": "2025-11-26"
+  },
+  {
+   "space": "CAMOMAIL/Dream-wan2-2-fp8da-aoti-preview-2_first-last_video",
+   "titel": "Dream Motion Pro - Wan 2.2 Fast Wan 2.2 image-to-video with first/last frames",
+   "gpu": "zero-a10g",
+   "likes": 5,
+   "geaendert": "2026-07-19"
+  },
+  {
+   "space": "Poopin/wan2-2-fp8da-aoti-preview-2c-missionary",
+   "titel": "Wan2.2 14B POV Missionary lora generate a video from an image with a text prompt with text",
+   "gpu": "zero-a10g",
+   "likes": 5,
+   "geaendert": "2026-09-29"
+  },
+  {
+   "space": "rbeard0330/ltx-2-TURBO",
+   "titel": "LTX-2 Video [Turbo] Fast high quality video with audio generation with FA3",
+   "gpu": "zero-a10g",
+   "likes": 5,
+   "geaendert": "2026-01-09"
+  },
+  {
+   "space": "hugging-apps/kandinsky-6-lite-distill-5s",
+   "titel": "Kandinsky 6.0 Lite (distill 5s) Text/image-to-video with synchronized audio (10 steps)",
+   "gpu": "zero-a10g",
+   "likes": 5,
+   "geaendert": "2026-10-06"
+  },
+  {
+   "space": "neksjgg/wan22-animate-character-replace",
+   "titel": "Wan 2.2 Animate Character Replace Replace a video's character with Wan 2.2 Animate",
+   "gpu": "zero-a10g",
+   "likes": 4,
+   "geaendert": "2026-09-02"
+  },
+  {
+   "space": "cosmichackerx/ai-talking-avatar-generator",
+   "titel": "AI Talking Avatar Generator From Photo Generate AI talking avatar videos from photos",
+   "gpu": "zero-a10g",
+   "likes": 4,
+   "geaendert": "2026-08-07"
+  },
+  {
+   "space": "vvmarchuk/LongCat-Video-Avatar",
+   "titel": "LongCat Video Avatar LongCat-Video-Avatar",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2025-12-17"
+  },
+  {
+   "space": "Mnichal/wan2-2-i2v-v3",
+   "titel": "Wan2.2 14B Fast Preview [NEW]",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2026-08-07"
+  },
+  {
+   "space": "anshgoyalevil/wan2-2-i2v-v3-WOW",
+   "titel": "Wan2.2 14B Fast Preview [NEW]",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2026-08-02"
+  },
+  {
+   "space": "ivannm/WAN2.2_I2V_LIGHTNING_4-8step_custom_copy",
+   "titel": "WAN2.2 I2V LIGHTNING-Video-4-8step",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2026-09-15"
+  },
+  {
+   "space": "mcp-tools/wan-2-2-first-last-frame",
+   "titel": "Wan 2 2 First Last Frame",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2026-09-07"
+  },
+  {
+   "space": "Darkwolfprime/Dream-wan2-2-faster-Pro",
+   "titel": "Dream-wan2-2-faster-Pro",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2025-11-22"
+  },
+  {
+   "space": "Imosu/Dream-wan2-2-faster-Pro",
+   "titel": "Dream-wan2-2-faster-Pro",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2026-03-21"
+  },
+  {
+   "space": "Menyudadas/wan2-2-fp8da-aoti-preview2",
+   "titel": "Wan2.2 14B Fast Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2026-05-15"
+  },
+  {
+   "space": "alexnixxflex/wan2-2-fp8da-aoti",
+   "titel": "Wan2.2 14B Fast Nixx generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2026-06-26"
+  },
+  {
+   "space": "Limmmavinnny/wan2-2-fp8da-aoti-old-backup",
+   "titel": "Wan2.2 14B Fast Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2026-05-16"
+  },
+  {
+   "space": "Demiurge12/wan2-2-fp8da-aoti-preview-2c",
+   "titel": "Wan2.2 14B Fast Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2026-05-15"
+  },
+  {
+   "space": "hugging-apps/kandinsky-5-time-adapter",
+   "titel": "Kandinsky 5.0 Time Adapter FPS-controlled image-to-video with Kandinsky 5.0",
+   "gpu": "zero-a10g",
+   "likes": 3,
+   "geaendert": "2026-08-07"
+  },
+  {
+   "space": "hugging-apps/videojev",
+   "titel": "VideoJev-4B Temporal grounding + video QA in one forward pass",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "xlmt/wan2-2-animate-2-14b",
+   "titel": "Wan2.2 Animate 2 14B Animate a character image with a driving video",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-08-08"
+  },
+  {
+   "space": "akhaliq/viggle-animate",
+   "titel": "Viggle-Animate Put the person from a still into a driving video, in 4 steps",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-09-13"
+  },
+  {
+   "space": "fffiloni/Pulse-of-Motion",
+   "titel": "Pulse Of Motion Measure physical FPS from visual motion",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-07-01"
+  },
+  {
+   "space": "cs686/gem-x-motion-capture",
+   "titel": "GEM-X Motion Capture Video to SOMA motion and Blender BVH with NVIDIA GEM-X",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-07-23"
+  },
+  {
+   "space": "hugging-apps/cmd-i2v-demo",
+   "titel": "NVIDIA CMD Image to Video Animate an image with NVIDIA CMD autoregressive I2V",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-08-18"
+  },
+  {
+   "space": "Cludo2/Wan_2.2_I2V_14B_Custom_Lora_Wow_HITMAN911",
+   "titel": "Wan2.2 14B Custom Lora",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-08-02"
+  },
+  {
+   "space": "akhaliq/wan2-2-fp8da-aoti-preview",
+   "titel": "Wan2.2 14B Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-05-06"
+  },
+  {
+   "space": "Tinchote/Dream-wan2-2-fp8da-aoti-preview-2",
+   "titel": "Dream Motion Pro - Wan 2.2 Fast Wan 2.2 image-to-video with first/last frames",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-07-10"
+  },
+  {
+   "space": "vore2002/Dream-wan2-2-fp8da-aoti-preview-2",
+   "titel": "Dream Motion Pro - Wan 2.2 Fast Wan 2.2 image-to-video with first/last frames",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-07-19"
+  },
+  {
+   "space": "filestreamer/Dream-wan2-2-fp8da-aoti-preview-2",
+   "titel": "Dream Motion Pro - Wan 2.2 Fast Wan 2.2 image-to-video with first/last frames",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-07-19"
+  },
+  {
+   "space": "JYTeam2025/ltx2.3",
+   "titel": "XENOSLIT LTX2.3 Video Lab",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-05-07"
+  },
+  {
+   "space": "AlexCdDg/ltx-2-5-opti",
+   "titel": "LTX 2.5 LTX-2.5 distilled two-stage video generation with audio",
+   "gpu": "zero-a10g",
+   "likes": 2,
+   "geaendert": "2026-09-16"
+  },
+  {
+   "space": "wahab732/video-too",
+   "titel": "Video Too",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "GehDoc/svg-to-video-mcp",
+   "titel": "SVG to Video — Live MCP Playground & Integration Hub Convert animated SVGs to Video via MCP.",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-13"
+  },
+  {
+   "space": "openmodelai/SpaceV0.3-SuperP-VideoP-3M",
+   "titel": "SpaceV0.3 SuperP VideoP 3M 4K.",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-13"
+  },
+  {
+   "space": "openmodelai/SpaceV0.1-SuperP-VideoP-15S",
+   "titel": "SpaceV0.1 SuperP VideoP 15S Video in 740P.",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-13"
+  },
+  {
+   "space": "abdeljalilELmajjodi/video_transcriber_editor",
+   "titel": "Video Transcriber Editor",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-12"
+  },
+  {
+   "space": "zakirovrinatik/minimax-h3-audio-to-video",
+   "titel": "MiniMax-H3 Audio to Video A first frame plus your own soundtrack, driving MiniMax-H3",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-09"
+  },
+  {
+   "space": "phrographica/Video-Depth-Anything",
+   "titel": "Video Depth Anything",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-08"
+  },
+  {
+   "space": "linoyts/motionjam",
+   "titel": "MotionJam generate music using hand motions with magenta rt 2",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-06-20"
+  },
+  {
+   "space": "KanameYOkoYAMA/2d-motion-interface",
+   "titel": "2D Motion Interface",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-08-18"
+  },
+  {
+   "space": "Frankie32/socialinfinix-motion",
+   "titel": "SocialInfinix Motion",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-09-06"
+  },
+  {
+   "space": "hugging-apps/better-human-motion-h3-lora-demo",
+   "titel": "Better Human Motion · MiniMax-H3 LoRA Human-motion LoRA on MiniMax-H3 — video + stereo audio",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-09-10"
+  },
+  {
+   "space": "JoaoK90/Controllable_Human_Motion_Generation",
+   "titel": "Controllable Human Motion Generation Style-SALAD human motion generation on ZeroGPU",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "hugging-apps/msflow-text-to-motion",
+   "titel": "MSFlow Text-to-Motion Text-to-3D human motion with MotionSpaceFlow",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "aliyaasif/Audio-Video-To-Text",
+   "titel": "Audio Video To Text",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-07-22"
+  },
+  {
+   "space": "fffiloni/krea-realtime-video-t2v-zerogpu-optimized",
+   "titel": "Krea Realtime Video • T2V ZeroGPU",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-06-25"
+  },
+  {
+   "space": "multimodalart/skyreels-a1-talking-head",
+   "titel": "Skyreels A1 Talking Head Audio to Talking Face",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-05-25"
+  },
+  {
+   "space": "Minihits2142/Wan-Dancer-14B",
+   "titel": "Wan-Dancer-14B",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-07-24"
+  },
+  {
+   "space": "anandintouch/anand-ai-avatar",
+   "titel": "My AI Avatar to interact Ask about Anand's IT, AI/GenAI & Leadership Experience",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-09-30"
+  },
+  {
+   "space": "Oliver577/qwen-video-edit",
+   "titel": "Qwen-Video-Edit Instruction-based video editing with Qwen-Image-Edit",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-08-19"
+  },
+  {
+   "space": "Tinchote/wan-2-2-14b-image-to-video",
+   "titel": "Wan 2.2 14B - Image to Video Animate an image into a video with Wan 2.2 14B.",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-07-21"
+  },
+  {
+   "space": "cydyffufufurty/wan-i2v-kira",
+   "titel": "Wan2.2 14B Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-08-18"
+  },
+  {
+   "space": "Tim22222/WAN2.2_I2V_LIGHTNING_4-8step_custom",
+   "titel": "WAN2.2 I2V LIGHTNING-Video-4-8step",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-07-19"
+  },
+  {
+   "space": "Panooleg/wan2-2-i2v-v3",
+   "titel": "Wan2.2 14B Fast Preview [NEW]",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-08-03"
+  },
+  {
+   "space": "gum798/WAN2.2_I2V_LIGHTNING_4-8step_custom",
+   "titel": "WAN2.2 I2V LIGHTNING-Video-4-8step",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-08-13"
+  },
+  {
+   "space": "ChopperBlu/wan22-i2v",
+   "titel": "Wan 2.2 I2V Studio Animate an image with Wan 2.2 on ZeroGPU",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-09-13"
+  },
+  {
+   "space": "Fasces/Voltumnae-Wan2.2-I2V",
+   "titel": "VOLTUMNAE Wan2.2 I2V",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-07"
+  },
+  {
+   "space": "hitman911/Dream-wan2-2-fp8da-aoti-preview-2HITMAN",
+   "titel": "Dream Motion Pro - Wan 2.2 Fast Wan 2.2 image-to-video with first/last frames",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-10"
+  },
+  {
+   "space": "diyos1/diyos-wan21",
+   "titel": "Diyos Wan21 DIYOS AI STUDIO Wan 2.1 text to video generator",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-09-25"
+  },
+  {
+   "space": "STCM/wan2-2-fp8da-aoti-preview2",
+   "titel": "Wan2.2 14B Slow Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-09-04"
+  },
+  {
+   "space": "Limmmavinnny/wan2-2-fp8da-aoti-preview2",
+   "titel": "Wan2.2 14B Slow Preview generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-08-22"
+  },
+  {
+   "space": "linoyts/LTX-2-3",
+   "titel": "LTX 2.3 Distilled",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-04-21"
+  },
+  {
+   "space": "multimodalart/ltx23-restyle-ic-lora",
+   "titel": "Ltx23 Restyle Ic Lora",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-05-06"
+  },
+  {
+   "space": "zeekhan51/LTX2.3-Studio",
+   "titel": "LTX 2.3 Studio",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-05-19"
+  },
+  {
+   "space": "linoyts/ltx2.3-audio-reactive-lora",
+   "titel": "LTX-2.3 Audio-Reactive LoRA Audio-reactive video — visuals move to your music",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-06-23"
+  },
+  {
+   "space": "diffusers/LTX-2.4-Prompt-Enhancer",
+   "titel": "LTX-2.4 Prompt Enhancer Gemma-4 prompt enhancer for LTX-2.4 (called by the demos)",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-08-10"
+  },
+  {
+   "space": "akhaliq/kandinsky-6-zerogpu-workflow",
+   "titel": "Kandinsky 6 ZeroGPU Workflow",
+   "gpu": "zero-a10g",
+   "likes": 1,
+   "geaendert": "2026-10-07"
+  },
+  {
+   "space": "UpAbhi/udai_video",
+   "titel": "Udai Video Using for personal use",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "Oussil/No-Bueno-Ai-Images-Videos",
+   "titel": "No Bueno AI — Image API",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "hammad986/video-transcriber",
+   "titel": "Video Transcriber AI speech-to-text transcriber using Faster-Whisper",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "hammad986/video-qa-rag",
+   "titel": "Video QA RAG Evidence-grounded Video-QA with RAG and DeepSeek",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "X-HighVoltage-X/MiniMax-H3-Video-generation",
+   "titel": "MiniMax H3 Turbo LoRA Video generation with a synchronized soundtrack, LoRAs",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "JoseVillanueva/LongCat-Video-Avatar-1.5",
+   "titel": "LongCat-Video-Avatar 1.5 Audio-driven talking-head video, Meituan LongCat Avatar",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-16"
+  },
+  {
+   "space": "sunukunsinje/MiniMax-Video-Generator",
+   "titel": "MiniMax H3 Turbo LoRA Video generation with a synchronized soundtrack",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-16"
+  },
+  {
+   "space": "FireDuckOnFire/wan2-2-image-to-video",
+   "titel": "Wan2.2 14B Fast generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-16"
+  },
+  {
+   "space": "hugging-apps/malow-streaming-video-memory",
+   "titel": "MaLoW Streaming Video Memory Consolidate a whole video into LoRA memory weights, then ask",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-16"
+  },
+  {
+   "space": "TrangHoang200/storyframe-character-video",
+   "titel": "Storyframe Character to Video",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-16"
+  },
+  {
+   "space": "chichinmc/videoeditor_complete",
+   "titel": "Video AI Studio Gemini ElevenLabs Templates",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-15"
+  },
+  {
+   "space": "shahilraj51/my-video-dubbing",
+   "titel": "My Video Dubbing",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "Eva740/my-video-generator",
+   "titel": "My Video Generator",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "hugging-apps/videojev-35b-a3b",
+   "titel": "VideoJev-35B-A3B One-pass temporal grounding + video QA",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "hugging-apps/multics-multiplayer-video",
+   "titel": "Multics Multiplayer Video 4-player interactive video world model",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-14"
+  },
+  {
+   "space": "KKNTR/videolora",
+   "titel": "LORA VIDEO generate a video from an image with a text prompt",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-13"
+  },
+  {
+   "space": "NazimSabr/VideoAgentStudio",
+   "titel": "Universal AI Agent",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-13"
+  },
+  {
+   "space": "michael10098/foodvision_big_video",
+   "titel": "Foodvision Big Video Food Vision Big",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-13"
+  },
+  {
+   "space": "jawad-hua/AI-Video-Studio-API",
+   "titel": "AI Video Studio API",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-13"
+  },
+  {
+   "space": "Giansuitio/Studio-Video-AI",
+   "titel": "Studio Video AI Video con audio da testo, foto, riferimenti o tuo audio",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-12"
+  },
+  {
+   "space": "kramp/video-upscaler-v2",
+   "titel": "Video Upscaler",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-12"
+  },
+  {
+   "space": "Wolle2026/Bild-zu-Video-mit-Lippensync",
+   "titel": "MiniMax H3 Turbo LoRA Videogenerierung mit synchronisierter Tonspur",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-11"
+  },
+  {
+   "space": "regan-rey12/space-tech-video-agent",
+   "titel": "Space Tech Video Agent Video creation",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-11"
+  },
+  {
+   "space": "gbox/free-ai-video-studio",
+   "titel": "CogVideoX Real AI Motion Studio",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-10"
+  },
+  {
+   "space": "AronChan/minimax-h3-video",
+   "titel": "MiniMax-H3 Video Text-to-video with a synchronized soundtrack",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-10"
+  },
+  {
+   "space": "SunnySo246/Lxt2-dynamic-audio-video",
+   "titel": "Lxt2 Dynamic Audio Video",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-10"
+  },
+  {
+   "space": "filhodanuvem/LongCat-Video-Avatar-1.5-Demo",
+   "titel": "LongCat-Video-Avatar 1.5 Demo Audio-driven talking avatar videos from one image",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-09"
+  },
+  {
+   "space": "amirxht/Video-editor-mcp",
+   "titel": "Video Editor Mcp for Gemini Spark Connect to Video-editor-mcp",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-09"
+  },
+  {
+   "space": "Dora14-x/Video-RAG-Assistant",
+   "titel": "Video RAG Assistant",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-09"
+  },
+  {
+   "space": "gulle1155/hunyuan-video-1-5-zerogpu",
+   "titel": "Studio HunyuanVideo 1.5 ZeroGPU HunyuanVideo 1.5 text-to-video previews on ZeroGPU",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-09"
+  },
+  {
+   "space": "bibilokiko/AI-Video-Mini-Wan21",
+   "titel": "AI Video Mini Wan21 Open-source AI video generation with Wan2.1",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-08"
+  },
+  {
+   "space": "Lucifer22142/videodownloader-server",
+   "titel": "Videodownloader Server",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-08"
+  },
+  {
+   "space": "poxvnn/video5",
+   "titel": "Wan2.2 14B rCM Fast fast video generation with Wan 2.2 using rCM",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-08"
+  },
+  {
+   "space": "poxvnn/video4",
+   "titel": "Wan2.2 14B rCM Fast fast video generation with Wan 2.2 using rCM",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-08"
+  },
+  {
+   "space": "poxvnn/video3",
+   "titel": "Wan2.2 14B rCM Fast fast video generation with Wan 2.2 using rCM",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-08"
+  },
+  {
+   "space": "poxvnn/video2",
+   "titel": "Wan2.2 14B rCM Fast fast video generation with Wan 2.2 using rCM",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-08"
+  },
+  {
+   "space": "poxvnn/video1",
+   "titel": "Wan2.2 14B rCM Fast fast video generation with Wan 2.2 using rCM",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-08"
+  },
+  {
+   "space": "Aravindhan11/calluni-wan-animate-web",
+   "titel": "Calluni ConsistentID Studio",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-16"
+  },
+  {
+   "space": "thanh14536/wan22-pixel-animate-zero",
+   "titel": "Pixel Animate ZeroGPU Animate pixel art with Wan2.2 on ZeroGPU",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-15"
+  },
+  {
+   "space": "nilustack/wan22-animate-demo",
+   "titel": "Wan Animate Demo Animate or replace characters using a reference video",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-13"
+  },
+  {
+   "space": "vtmns/animatelcm-video",
+   "titel": "Animatelcm Video animatelcm-video",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-07"
+  },
+  {
+   "space": "Leo71288/Wan2.2-Animate-ZEROGPU_TEST",
+   "titel": "Wan2.2 Animate [Local] Edit Videos with Wan 2.2",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-01"
+  },
+  {
+   "space": "Cesimbingol54/wan-animate-demo",
+   "titel": "Wan2.2 Character Animate Animate a character with motion from a driving video.",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-09-26"
+  },
+  {
+   "space": "iAkashPaul/wan22-animate-gradio-zerogpu",
+   "titel": "Wan2.2 Animate Replacement",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-09-14"
+  },
+  {
+   "space": "cagaggrosso/wan22-animate-character-replace",
+   "titel": "Wan 2.2 Animate Character Replace Replace a video's character with Wan 2.2 Animate",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-09-02"
+  },
+  {
+   "space": "ysharma/gr-workflow-zerogpu-animate",
+   "titel": "ZeroGPU Animator · gr.Workflow",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-08-24"
+  },
+  {
+   "space": "idkbunglle/Wan2.2-Animate-ZEROGPU",
+   "titel": "Wan2.2 Animate [Local] Edit Videos with Wan 2.2",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-08-24"
+  },
+  {
+   "space": "knowquestionsjnkjhiu9877/wan2-2-animate-2-14b",
+   "titel": "Wan2.2 Animate 2 14B Animate a character image with a driving video",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-08-18"
+  },
+  {
+   "space": "multimodalart/AnimateLCM-SVD-zerogpu",
+   "titel": "AnimateLCM SVD",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-05-26"
+  },
+  {
+   "space": "naykaitoon88/Wan2.2-Animate-ZEROGPU",
+   "titel": "Wan2.2 Animate [Local] Edit Videos with Wan 2.2",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-02-04"
+  },
+  {
+   "space": "dima0987654321/2NET-MotionEnhancerLoRA",
+   "titel": "MiniMax-H3 Motion Enhancer Animate a still image with MiniMax-H3 motion",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-17"
+  },
+  {
+   "space": "VT2026/khmer-photo-motion",
+   "titel": "Khmer Photo Motion",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-16"
+  },
+  {
+   "space": "hugging-apps/cepheid-motion-completion",
+   "titel": "Cepheid Motion Completion Complete dense 3D mesh motion from a few vertices",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-16"
+  },
+  {
+   "space": "randong/kinematic-frequency-motion",
+   "titel": "Kinematic Frequency Motion SIGGRAPH Asia 2026 motion style transfer",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-15"
+  },
+  {
+   "space": "Yosun/hy-motion-mixamo",
+   "titel": "HY-Motion Mixamo Generate Mixamo-compatible motion from text",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-13"
+  },
+  {
+   "space": "Yosun/unimate-motion-lab-v2",
+   "titel": "UniMate Motion Lab Animate diverse rigged 3D assets with UniMate",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-13"
+  },
+  {
+   "space": "hugging-apps/ardy-human-motion",
+   "titel": "ARDY Human Motion Text-to-3D human motion with NVIDIA ARDY + root waypoints",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-10"
+  },
+  {
+   "space": "marriam-003/Human_Motion_Generation",
+   "titel": "Motion Generation Studio Text-to-3D Motion Generation",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-05"
+  },
+  {
+   "space": "pabloalvarezret/aether-motion-2",
+   "titel": "aether-motion aether-motion",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-05"
+  },
+  {
+   "space": "vclmax2/aether-motion-2",
+   "titel": "aether-motion aether-motion",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-05"
+  },
+  {
+   "space": "vclmax2/aether-motion",
+   "titel": "aether-motion aether-motion",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-05"
+  },
+  {
+   "space": "vclmax/aether-motion-2",
+   "titel": "aether-motion aether-motion",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-05"
+  },
+  {
+   "space": "vclmax/aether-motion",
+   "titel": "aether-motion aether-motion",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-05"
+  },
+  {
+   "space": "ddz16/camdistill-camera-motion-demo",
+   "titel": "CamDistill Camera Motion Demo Temporally grounded camera-motion analysis for video clips",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-09-21"
+  },
+  {
+   "space": "froilanpalacios778/motion-control-x",
+   "titel": "Motion Control X",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-09-21"
+  },
+  {
+   "space": "mantrakp/component-studio-motion",
+   "titel": "Component Studio Motion",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-09-18"
+  },
+  {
+   "space": "thornmaze/motion-ltx",
+   "titel": "Motion LTX Internal tooling",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-09-13"
+  },
+  {
+   "space": "iskandars/freeform-motion",
+   "titel": "Freeform Motion",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-09-05"
+  },
+  {
+   "space": "DYNAMAXD/3D-reconstruction-by-motionBERT-AlphaPose",
+   "titel": "AlphaPose + MotionBERT 3D Pose & Mesh",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-08-29"
+  },
+  {
+   "space": "soulmarkinternationalai/text-to-video-ms-demo",
+   "titel": "Text To Video MS Demo Generate short videos from text prompts",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-08-19"
+  },
+  {
+   "space": "eshitanarang07/text-to-video-studio",
+   "titel": "Text-to-Video Studio",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-08-19"
+  },
+  {
+   "space": "Harsha909/Video-Audio-to-Text",
+   "titel": "Video Audio To Text Video or Audio to Text Converter",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-07-19"
+  },
+  {
+   "space": "hugging-apps/sparkwan2-2-t2v-14b",
+   "titel": "SparkWan2.2 T2V A14B 4-step sparse-attention Wan2.2 text-to-video",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-10-08"
+  },
+  {
+   "space": "more-nicotine/wan22-remix-sfw-t2v",
+   "titel": "Wan2.2-Remix SFW — Text to Video Text-to-video demo of the Wan2.2-Remix SFW branch",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-09-30"
+  },
+  {
+   "space": "RicasMaravilla/wan-video-studio-t2v",
+   "titel": "Wan Video Studio T2V",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-08-28"
+  },
+  {
+   "space": "mastaP/wan22-remix-sfw-t2v",
+   "titel": "Wan2.2 Remix SFW - Text to Video Text-to-video demo of the Wan2.2-Remix SFW branch",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-08-13"
+  },
+  {
+   "space": "Sufd/WanVideo-T2V-Demo",
+   "titel": "WanVideo T2V Demo Wan2.1 1.3B text-to-video generation demo",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-07-29"
+  },
+  {
+   "space": "hy3dlab/video-t2v",
+   "titel": "LTX Video Fast ultra-fast video model, LTX 0.9.8 13B distilled",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-07-26"
+  },
+  {
+   "space": "multimodalart/T2V-Turbo-V2-zerogpu",
+   "titel": "T2V Turbo V2 Efficient T2V generation",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-05-26"
+  },
+  {
+   "space": "AikoNee/WAN2-1-fast-T2V-FusioniX",
+   "titel": "WAN 2.1 fast T2V FusioniX",
+   "gpu": "zero-a10g",
+   "likes": 0,
+   "geaendert": "2026-03-07"
+  }
+ ]
+}

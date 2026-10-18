@@ -1,6 +1,6 @@
 {
  "stand": "2026-10-18",
- "anzahl": 33,
+ "anzahl": 60,
  "spaces": [
   {
    "space": "zerogpu-aoti/wan2-2-fp8da-aoti-faster",
@@ -141,6 +141,12 @@
    "likes": 19
   },
   {
+   "space": "vml12/wan-video-studio",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 15
+  },
+  {
    "space": "aidealab/AnimeGen-I2V",
    "typ": "animegen",
    "endpoint": "/generate_video",
@@ -199,6 +205,162 @@
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 5
+  },
+  {
+   "space": "Mnichal/wan2-2-i2v-v3",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 3
+  },
+  {
+   "space": "anshgoyalevil/wan2-2-i2v-v3-WOW",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 3
+  },
+  {
+   "space": "ivannm/WAN2.2_I2V_LIGHTNING_4-8step_custom_copy",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 3
+  },
+  {
+   "space": "Darkwolfprime/Dream-wan2-2-faster-Pro",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 3
+  },
+  {
+   "space": "Imosu/Dream-wan2-2-faster-Pro",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 3
+  },
+  {
+   "space": "Menyudadas/wan2-2-fp8da-aoti-preview2",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 3
+  },
+  {
+   "space": "alexnixxflex/wan2-2-fp8da-aoti",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 3
+  },
+  {
+   "space": "Limmmavinnny/wan2-2-fp8da-aoti-old-backup",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 3
+  },
+  {
+   "space": "Demiurge12/wan2-2-fp8da-aoti-preview-2c",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 3
+  },
+  {
+   "space": "Cludo2/Wan_2.2_I2V_14B_Custom_Lora_Wow_HITMAN911",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 2
+  },
+  {
+   "space": "AlexCdDg/ltx-2-5-opti",
+   "typ": "ltx25",
+   "endpoint": "/generate_video",
+   "likes": 2
+  },
+  {
+   "space": "Tinchote/wan-2-2-14b-image-to-video",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 1
+  },
+  {
+   "space": "cydyffufufurty/wan-i2v-kira",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 1
+  },
+  {
+   "space": "Tim22222/WAN2.2_I2V_LIGHTNING_4-8step_custom",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 1
+  },
+  {
+   "space": "Panooleg/wan2-2-i2v-v3",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 1
+  },
+  {
+   "space": "gum798/WAN2.2_I2V_LIGHTNING_4-8step_custom",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 1
+  },
+  {
+   "space": "ChopperBlu/wan22-i2v",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 1
+  },
+  {
+   "space": "STCM/wan2-2-fp8da-aoti-preview2",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 1
+  },
+  {
+   "space": "Limmmavinnny/wan2-2-fp8da-aoti-preview2",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 1
+  },
+  {
+   "space": "FireDuckOnFire/wan2-2-image-to-video",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 0
+  },
+  {
+   "space": "KKNTR/videolora",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 0
+  },
+  {
+   "space": "poxvnn/video5",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 0
+  },
+  {
+   "space": "poxvnn/video4",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 0
+  },
+  {
+   "space": "poxvnn/video3",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 0
+  },
+  {
+   "space": "poxvnn/video2",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 0
+  },
+  {
+   "space": "poxvnn/video1",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 0
   }
  ]
 }
