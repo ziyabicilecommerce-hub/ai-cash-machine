@@ -1,8 +1,8 @@
 // Initiativbewerbung - Firmen in den Lieblingsbereichen (Luftfracht, Zoll, Export, Leitstelle,
-// Flughafen, Spedition), die gerade irgendwen suchen und eine Bewerbungs-Mail in der Anzeige nennen,
+// Flughafen, Spedition, IT/Cyber, Büro), die gerade irgendwen suchen und eine Bewerbungs-Mail in der Anzeige nennen,
 // bekommen eine Initiativbewerbung für den Einstieg - auch wenn die Anzeige selbst Erfahrung verlangt.
 // Gleicher State wie #106: keine Firma doppelt, #107 erkennt die Antworten, Nachfassen läuft mit.
-// Optional: BEWERBUNG_INITIATIV_MAX (Standard 25 pro Lauf).
+// Optional: BEWERBUNG_INITIATIV_MAX (Standard 50 pro Lauf).
 import {
   env, LIVE, BEWERBER, emailOk, heute, gmailZugang, profil, ladeGeheim, speichereGeheim, firmenDomain,
   gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang,
@@ -12,15 +12,18 @@ import {
   STATE_BOT, STATE_POSTFACH, VERTRIEB, ZEITARBEIT, ortPasst, sucheStellen, holeDetails, findeEmail, parallel,
 } from './106-bewerbungs-bot.mjs';
 
-const MAX = LIVE ? Math.max(1, Math.min(60, parseInt(env('BEWERBUNG_INITIATIV_MAX', '25'), 10) || 25)) : 3;
+const MAX = LIVE ? Math.max(1, Math.min(60, parseInt(env('BEWERBUNG_INITIATIV_MAX', '50'), 10) || 50)) : 3;
 const SUCHE = ['Luftfracht', 'Air Cargo', 'Zoll', 'Zollabwicklung', 'Export', 'Import Export', 'Außenhandel',
   'Spedition', 'Speditionskaufmann', 'Leitstelle', 'Disposition', 'Flughafen', 'Cargo', 'Logistik Sachbearbeiter',
   'SOC Analyst', 'Cyber Security', 'IT-Security', 'IT-Sicherheit', 'Informationssicherheit', 'Penetration Tester', 'Security Analyst',
-  'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', 'IT-Administrator', 'Systemadministrator', 'IT-Techniker', 'Rechenzentrum', 'Netzwerk'];
+  'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', 'IT-Administrator', 'Systemadministrator', 'IT-Techniker', 'Rechenzentrum', 'Netzwerk',
+  'Sachbearbeiter', 'Kaufmännischer Mitarbeiter', 'Bürokaufmann', 'Büroassistenz', 'Teamassistenz', 'Empfang', 'Kundenservice', 'Verwaltung', 'Backoffice', 'Datenerfassung'];
 // Echte IT-Sicherheit - nicht Luftsicherheit oder Objektschutz.
 const CYBER = /cyber|it-?secur|it-?sicherheit|informationssicherheit|\bisms\b|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi/i;
 // IT-Einstieg (Support, Helpdesk, Admin, Rechenzentrum) - die Tür Richtung IT-Sicherheit.
 const IT = /it-?support|it support|helpdesk|help desk|service ?desk|1st[ -]?level|first level|2nd[ -]?level|second level|systemadmin|system ?administrator|it-?admin|netzwerk|network|rechenzentrum|data ?center|it-?techniker|it techniker|client ?management|it-?mitarbeiter|it-?service/i;
+// Büro-Einstieg: Sachbearbeitung, Assistenz, Empfang, Kundenservice, Verwaltung.
+const BUERO = /sachbearbeit|kaufm(ä|a)nn|büro|assistenz|empfang|rezeption|kundenservice|kundenbetreuung|customer service|verwaltung|backoffice|back office|datenerfassung|sekretär/i;
 const BEREICHE = [
   [CYBER, 'IT-Sicherheit'],
   [IT, 'IT'],
@@ -30,13 +33,14 @@ const BEREICHE = [
   [/leitstelle|leitstand|einsatzzentrale|notruf/i, 'Leitstelle'],
   [/flughafen|airport|fraport|aviation/i, 'Flughafen'],
   [/disposition|disponent/i, 'Disposition'],
+  [BUERO, 'Büro und Sachbearbeitung'],
 ];
 // Nur Anzeigen, die wirklich im Wunschbereich sind (die Suche liefert auch Deloitte-Berater & Co.).
 const RELEVANT = /it-?support|it support|helpdesk|help desk|service ?desk|1st[ -]?level|first level|2nd[ -]?level|systemadmin|system ?administrator|it-?admin|netzwerk|network|rechenzentrum|data ?center|it-?techniker|it techniker|client ?management|it-?mitarbeiter|it-?service|cyber|it-?secur|it-?sicherheit|informationssicherheit|\bisms\b|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi|luftfracht|air ?cargo|airfreight|cargo|fracht|freight|zoll|export|import|außenhandel|leitstelle|leitstand|einsatzzentrale|flughafen|airport|disposition|disponent|spedition|logistik/i;
 // Personalvermittler tarnen sich oft ohne Zeitarbeits-Flag - eine Initiativbewerbung dort bringt nichts.
 const VERMITTLER = /personal|zeitarbeit|staffing|recruit|hr consulting|impact gmbh|aide gmbh|bankpower|spp direkt|attentus/i;
 // Fahrer-, Handwerks-, Verkaufs- und Chefposten zeigen nicht auf ein Büro im Wunschbereich.
-const FREMD = /verkauf|geschäftsführ|ausbilder|mechatron|elektron|mechaniker|lokführer|fahrer|berater|leiter|elektriker|objekttechniker|haustechn|senior|architekt|leitung|ingenieur|klima|lüftung/i;
+const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bilanzbuchhalt|lohnbuchhalt|montage|monteur|handwerk|geschäftsführ|ausbilder|mechatron|elektron|mechaniker|lokführer|fahrer|berater|leiter|elektriker|objekttechniker|haustechn|senior|architekt|leitung|ingenieur|klima|lüftung/i;
 // Zusätzlich das Umland mit vielen IT-, Cyber- und Cargo-Firmen (alles mit S-Bahn/Zug erreichbar).
 // Zusätzlich Suchzentren im Umland, die außerhalb des Standard-Umkreises liegen (alles mit S-Bahn/Zug erreichbar).
 const UMLAND = ['Darmstadt', 'Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Bad Homburg', 'Offenbach am Main', 'Langen (Hessen)', 'Hanau', 'Bad Vilbel', 'Groß-Gerau', 'Neu-Isenburg'];
@@ -66,7 +70,7 @@ async function main() {
       for (const st of await sucheStellen({ was, angebotsart: 1, wo, umkreis: wo ? 5 : undefined })) {
         const key = firmaKey(st.arbeitgeber);
         if (!key || firmen.has(key) || proFirma.has(key) || !ortPasst(st)) continue;
-        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !RELEVANT.test(st.titel)) continue;
+        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(RELEVANT.test(st.titel) || BUERO.test(st.titel))) continue;
         proFirma.set(key, st);
       }
     } catch (e) { console.log(`[initiativ] Suche "${was}" ${wo || ''} fehlgeschlagen: ${e.message}`); }
