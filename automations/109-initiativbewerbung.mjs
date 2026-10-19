@@ -40,6 +40,9 @@ const FREMD = /verkauf|geschäftsführ|ausbilder|mechatron|elektron|mechaniker|l
 // Zusätzlich das Umland mit vielen IT-, Cyber- und Cargo-Firmen (alles mit S-Bahn/Zug erreichbar).
 // Zusätzlich Suchzentren im Umland, die außerhalb des Standard-Umkreises liegen (alles mit S-Bahn/Zug erreichbar).
 const UMLAND = ['Darmstadt', 'Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Bad Homburg', 'Offenbach am Main', 'Langen (Hessen)', 'Hanau', 'Bad Vilbel', 'Groß-Gerau', 'Neu-Isenburg'];
+// Bundesweit: IT-/Cyber-Stellen, die laut Anzeige komplett im Homeoffice laufen.
+const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Analyst', 'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', '2nd Level Support', 'Systemadministrator'];
+const REMOTE = /100 ?% ?(remote|homeoffice|home-office|mobil)|vollständig (remote|im homeoffice|mobil)|komplett (remote|im homeoffice|aus dem homeoffice)|full[ -]remote|fully remote|ortsunabhängig|remote aus ganz deutschland|deutschlandweit remote/i;
 const bereichVon = (st) => BEREICHE.find(([re]) => re.test(st.titel))?.[1] || 'Spedition und Logistik';
 const firmaKey = (name = '') => name.toLowerCase().replace(/\b(gmbh|ag|kg|se|co|mbh|& ?co\.?)\b|[^a-zäöü0-9]/g, '');
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -68,12 +71,23 @@ async function main() {
       }
     } catch (e) { console.log(`[initiativ] Suche "${was}" ${wo || ''} fehlgeschlagen: ${e.message}`); }
   }
-  const auswahl = [...proFirma.entries()].slice(0, 400);
+  for (const zusatz of ['remote', 'homeoffice']) for (const was of REMOTE_SUCHE) {
+    try {
+      for (const st of await sucheStellen({ was: `${was} ${zusatz}`, angebotsart: 1, wo: null })) {
+        const key = firmaKey(st.arbeitgeber);
+        if (!key || firmen.has(key) || proFirma.has(key) || ortPasst(st)) continue;
+        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(CYBER.test(st.titel) || IT.test(st.titel))) continue;
+        st.nurRemote = true; // liegt außerhalb der Region - nur nehmen, wenn die Anzeige komplett Homeoffice bietet
+        proFirma.set(key, st);
+      }
+    } catch (e) { console.log(`[initiativ] Remote-Suche "${was}" fehlgeschlagen: ${e.message}`); }
+  }
+  const auswahl = [...proFirma.entries()].slice(0, 700);
   console.log(`[initiativ] ${auswahl.length} neue Firmen im Wunschbereich.`);
   await parallel(auswahl, 6, async ([, st]) => {
     const { text, flags } = await holeDetails(st.refnr);
     st.vermittler = !!(flags.istArbeitnehmerUeberlassung || flags.istPrivateArbeitsvermittlung);
-    st.email = findeEmail(text);
+    st.email = st.nurRemote && !REMOTE.test(text) ? '' : findeEmail(text);
   });
 
   const cv = await holeLebenslauf();
@@ -104,7 +118,7 @@ async function main() {
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
     domains.add(firmenDomain(email));
-    gesendet.push(`✅ ${st.arbeitgeber} (${st.arbeitsort?.ort || '?'}) · ${bereich} · an ${email}`);
+    gesendet.push(`✅ ${st.arbeitgeber} (${st.nurRemote ? '100 % Homeoffice' : st.arbeitsort?.ort || '?'}) · ${bereich} · an ${email}`);
     console.log(`[initiativ] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${st.arbeitgeber}`);
     await pause(8000); // Gmail nicht fluten
   }
