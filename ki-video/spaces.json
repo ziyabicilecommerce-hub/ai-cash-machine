@@ -1,6 +1,6 @@
 {
  "stand": "2026-10-19",
- "anzahl": 53,
+ "anzahl": 55,
  "spaces": [
   {
    "space": "zerogpu-aoti/wan2-2-fp8da-aoti-faster",
@@ -41,7 +41,7 @@
    "space": "kulkas2pintu/wan222",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 262,
+   "likes": 260,
    "gpu": "zero-a10g"
   },
   {
@@ -76,7 +76,7 @@
    "space": "Lightricks/LTX-2.5",
    "typ": "ltx25",
    "endpoint": "/run",
-   "likes": 75,
+   "likes": 76,
    "gpu": "zero-a10g"
   },
   {
@@ -87,14 +87,14 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "amisima/Wan_2.2_I2V_Studio",
+   "space": "hitman911/wan2-2-fp8da-aoti-preview-2c-finishing",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 71,
+   "likes": 73,
    "gpu": "zero-a10g"
   },
   {
-   "space": "hitman911/wan2-2-fp8da-aoti-preview-2c-finishing",
+   "space": "amisima/Wan_2.2_I2V_Studio",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 71,
@@ -146,7 +146,7 @@
    "space": "JCisHERE/wan2-2-i2v-v3",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 24,
+   "likes": 25,
    "gpu": "zero-a10g"
   },
   {
@@ -167,7 +167,7 @@
    "space": "vml12/wan-video-studio",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 15,
+   "likes": 16,
    "gpu": "zero-a10g"
   },
   {
@@ -206,15 +206,15 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "JMCC63/wan2-2-i2v-v3jm",
-   "typ": "wan",
+   "space": "Upsampler/ltx-2-5",
+   "typ": "ltx25",
    "endpoint": "/generate_video",
-   "likes": 6,
+   "likes": 7,
    "gpu": "zero-a10g"
   },
   {
-   "space": "Upsampler/ltx-2-5",
-   "typ": "ltx25",
+   "space": "JMCC63/wan2-2-i2v-v3jm",
+   "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 6,
    "gpu": "zero-a10g"
@@ -304,7 +304,7 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "Cludo2/Wan_2.2_I2V_14B_Custom_Lora_Wow_HITMAN911",
+   "space": "Tinchote/wan-2-2-14b-image-to-video",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 2,
@@ -347,6 +347,20 @@
   },
   {
    "space": "ChopperBlu/wan22-i2v",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 1,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "STCM/wan2-2-fp8da-aoti-preview2",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 1,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "hitman911/wan2-2-fp8da-aoti-previewHITMAN911",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 1,
