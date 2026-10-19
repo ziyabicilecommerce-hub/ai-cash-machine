@@ -34,7 +34,7 @@ const BEREICHE = [
 // Nur Anzeigen, die wirklich im Wunschbereich sind (die Suche liefert auch Deloitte-Berater & Co.).
 const RELEVANT = /it-?support|it support|helpdesk|help desk|service ?desk|1st[ -]?level|first level|2nd[ -]?level|systemadmin|system ?administrator|it-?admin|netzwerk|network|rechenzentrum|data ?center|it-?techniker|it techniker|client ?management|it-?mitarbeiter|it-?service|cyber|it-?secur|it-?sicherheit|informationssicherheit|\bisms\b|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi|luftfracht|air ?cargo|airfreight|cargo|fracht|freight|zoll|export|import|außenhandel|leitstelle|leitstand|einsatzzentrale|flughafen|airport|disposition|disponent|spedition|logistik/i;
 // Personalvermittler tarnen sich oft ohne Zeitarbeits-Flag - eine Initiativbewerbung dort bringt nichts.
-const VERMITTLER = /personal|zeitarbeit|staffing|impact gmbh|aide gmbh|bankpower|spp direkt|attentus/i;
+const VERMITTLER = /personal|zeitarbeit|staffing|recruit|hr consulting|impact gmbh|aide gmbh|bankpower|spp direkt|attentus/i;
 // Fahrer-, Handwerks-, Verkaufs- und Chefposten zeigen nicht auf ein Büro im Wunschbereich.
 const FREMD = /verkauf|geschäftsführ|ausbilder|mechatron|elektron|mechaniker|lokführer|fahrer|berater|leiter|elektriker|objekttechniker|haustechn|senior|architekt|leitung|ingenieur|klima|lüftung/i;
 // Zusätzlich das Umland mit vielen IT-, Cyber- und Cargo-Firmen (alles mit S-Bahn/Zug erreichbar).
