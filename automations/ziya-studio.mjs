@@ -4,6 +4,7 @@
 // 4) Nachbearbeitung (Upscale 1080x1920, 30 fps Zwischenbilder, Schärfe, Farblook, Korn)   5) Shots weich überblenden.
 // 6) Tonspur: eigener Kino-Klang (Drone, Whoosh an Schnitten, Boom) + optional Sprecher (edge-tts), Lautheit wie TikTok.
 // Eingaben: ZIYA_IDEE, ZIYA_PRESET, ZIYA_SHOTS (1-18, ~60 s), ZIYA_MENSCHEN=ja (Personen erlauben), ZIYA_SEKUNDEN (2-5),
+// ZIYA_GESCHICHTE=ja (Kurzfilm mit eigenen Figuren, jede Szene ein anderer Moment), ZIYA_STIL (kino|cartoon|anime),
 // ZIYA_LOOP=ja (nahtloser Loop, Endbild = Startbild), ZIYA_DURCHGEHEND=ja (jeder Shot startet mit dem letzten Bild des vorigen = eine durchgehende Szene), ZIYA_TEXT (Sprechertext).
 import { execFile, execFileSync } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -14,6 +15,8 @@ import { zhipuClip } from './lib/kiVideo.mjs';
 import { seedanceClip } from './lib/seedance.mjs';
 import { kaggleBereit, kaggleClips } from './lib/kaggleTurbo.mjs';
 import { bildURL } from './lib/pollinationsMedia.mjs';
+import { geschichtePlanen, STILE, stilVon } from './lib/ziyaGeschichte.mjs';
+import { kiJson } from './lib/kiJson.mjs';
 import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
@@ -30,10 +33,13 @@ const preset = presetVon(process.env.ZIYA_PRESET);
 const sekunden = Math.min(Math.max(Number(process.env.ZIYA_SEKUNDEN) || 3.5, 2), 5);
 // Loop: Endbild = Startbild, der Clip endet, wo er anfing - TikTok spielt ihn nahtlos weiter (mehr Wiederholungen).
 const loop = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_LOOP || '').trim());
-const durchgehend = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_DURCHGEHEND || '').trim());
-const sprechertext = String(process.env.ZIYA_TEXT || '').replace(/\s+/g, ' ').trim().slice(0, 600);
+const geschichte = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_GESCHICHTE || '').trim());
+const stil = stilVon(process.env.ZIYA_STIL);
+// Geschichte = viele verschiedene Orte/Momente, also kein Weiterdrehen aus dem letzten Bild.
+const durchgehend = !geschichte && /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_DURCHGEHEND || '').trim());
+let sprechertext = String(process.env.ZIYA_TEXT || '').replace(/\s+/g, ' ').trim().slice(0, 600);
 // Anime-Kampf braucht Figuren - dort sind Menschen immer erlaubt.
-const menschen = preset === 'anime-kampf' || /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_MENSCHEN || '').trim());
+const menschen = preset === 'anime-kampf' || geschichte || /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_MENSCHEN || '').trim());
 const NEG = `static, still image, blurry, distorted, deformed, morphing, extra limbs, text, watermark, subtitles${menschen ? '' : ', people, faces'}`;
 
 // Gratis-Video-Spaces aus dem wöchentlichen Pool (leer, wenn die Datei fehlt).
@@ -102,7 +108,12 @@ async function tonDrauf(stumm, video, dauern) {
 async function main() {
   if (!idee) throw new Error('ZIYA_IDEE fehlt - beschreibe dein Video in einem Satz.');
   mkdirSync(ORDNER, { recursive: true });
-  const shots = shotsPlanen(idee, preset, process.env.ZIYA_SHOTS);
+  const shots = geschichte
+    ? await geschichtePlanen(idee, { preset, n: Number(process.env.ZIYA_SHOTS) || 6, stil, kiJson, ersatz: () => shotsPlanen(idee, preset, process.env.ZIYA_SHOTS) })
+    : shotsPlanen(idee, preset, process.env.ZIYA_SHOTS);
+  if (stil !== 'kino') for (const s of shots) s.bild = s.bild.replace(STILE.kino, STILE[stil]);
+  // Geschichte ohne eigenen Sprechertext: der Erzähler liest die Sätze der Szenen.
+  if (geschichte && !sprechertext) sprechertext = shots.map((s) => s.satz).filter(Boolean).join(' ').slice(0, 1500);
   const seed = Math.floor(Math.random() * 1e9);
   const erschoepft = new Set();
   const fertig = [];

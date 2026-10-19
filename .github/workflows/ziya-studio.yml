@@ -33,6 +33,15 @@ on:
         description: 'Nahtloser Loop (Video endet, wo es anfängt - mehr Wiederholungen auf TikTok)?'
         type: boolean
         default: false
+      geschichte:
+        description: 'Geschichte/Kurzfilm (eigene Figuren, jede Szene ein anderer Moment, mit Erzähler)?'
+        type: boolean
+        default: false
+      stil:
+        description: 'Bild-Stil'
+        type: choice
+        default: kino
+        options: [kino, cartoon, anime]
       text:
         description: 'Sprechertext auf Deutsch (optional, leer = nur Kino-Sound)'
         required: false
@@ -54,6 +63,10 @@ jobs:
       ZIYA_MENSCHEN: ${{ inputs.menschen && 'ja' || 'nein' }}
       ZIYA_DURCHGEHEND: ${{ inputs.durchgehend && 'ja' || 'nein' }}
       ZIYA_TEXT: ${{ inputs.text }}
+      ZIYA_GESCHICHTE: ${{ inputs.geschichte && 'ja' || 'nein' }}
+      ZIYA_STIL: ${{ inputs.stil }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       ZIYA_LOOP: ${{ inputs.loop && 'ja' || 'nein' }}
       POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
       # Optional, kostenlos: mehr KI-Video-Kontingent (huggingface.co) bzw. CogVideoX-Flash (Zhipu AI).

@@ -111,3 +111,24 @@ test('Ziya Studio: Space-Pool als Rückfall', () => {
   const gemischt = { spaces: [{ space: 'z/a', typ: 'wan', endpoint: '/g', gpu: 'zero-a10g' }, { space: 'e/b', typ: 'wan', endpoint: '/g', gpu: 'a10g-small' }] };
   assert.equal(poolModelle(gemischt)[0], 'pool:e/b:wan:/g', 'eigene GPU vor ZeroGPU');
 });
+
+import { geschichteZuShots, geschichtePlanen, geschichtePrompt, stilVon, STILE } from '../../automations/lib/ziyaGeschichte.mjs';
+test('Ziya Studio: Geschichten-Modus (Kurzfilm mit eigenen Figuren)', async () => {
+  assert.match(geschichtePrompt('a fox finds a lost star', 6), /6 scenes[\s\S]*ORIGINAL characters/);
+  const d = { figuren: 'a small orange fox with a blue scarf', szenen: [
+    { bild: 'fox in a snowy forest at night', bewegung: 'camera follows the fox running', satz: 'Ein kleiner Fuchs sieht einen Stern fallen.' },
+    { bild: '', bewegung: 'x', satz: 'leer' },
+    { bild: 'fox climbs a glowing mountain', bewegung: 'crane up', satz: 'Er klettert los.' },
+  ] };
+  const s = geschichteZuShots(d, { idee: 'a fox finds a lost star', preset: 'dolly-in', n: 6, stil: 'cartoon' });
+  assert.equal(s.length, 2, 'leere Szenen fliegen raus');
+  assert.deepEqual(s.map((x) => x.nr), [1, 2]);
+  assert.ok(s.every((x) => x.bild.includes('blue scarf') && x.bild.includes(STILE.cartoon)), 'gleiche Figur, Cartoon-Stil');
+  assert.ok(s.every((x) => x.bewegung.includes('background is alive')));
+  assert.equal(s[0].satz, 'Ein kleiner Fuchs sieht einen Stern fallen.');
+  assert.equal(stilVon('CARTOON'), 'cartoon');
+  assert.equal(stilVon('quatsch'), 'kino');
+  const ersatz = () => ['ersatz'];
+  assert.deepEqual(await geschichtePlanen('x', { preset: 'orbit', n: 6, stil: 'kino', kiJson: async () => { throw new Error('429'); }, ersatz }), ['ersatz']);
+  assert.equal((await geschichtePlanen('x', { preset: 'orbit', n: 3, kiJson: async () => ({ szenen: [{ bild: 'a' }, { bild: 'b' }, { bild: 'c' }] }), ersatz })).length, 3);
+});
