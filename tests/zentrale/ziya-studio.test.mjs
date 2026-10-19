@@ -21,7 +21,8 @@ test('Ziya Studio: Shot-Planung', () => {
   assert.match(s[0].bild, /24mm lens/);
   assert.equal(new Set(s.map((x) => x.bild)).size, 3, 'verschiedene Einstellungen');
   assert.equal(shotsPlanen('x y z', 'orbit', 1)[0].preset, 'orbit');
-  assert.equal(shotsPlanen('idee', 'fpv', 99).length, 5);
+  assert.equal(shotsPlanen('idee', 'fpv', 99).length, 18, 'bis 60 s');
+  assert.ok(s.every((x) => x.bewegung.includes('background is alive')), 'Hintergrund bewegt sich');
   assert.equal(shotsPlanen('idee\nmit Umbruch', 'fpv', 0).length, 3);
   assert.ok(!shotsPlanen('idee\nmit Umbruch')[0].bild.includes('\n'));
   assert.throws(() => shotsPlanen('  '), /Keine Idee/);
@@ -107,4 +108,6 @@ test('Ziya Studio: Space-Pool als Rückfall', () => {
   assert.deepEqual(poolModelle(pool, new Set(['pool:a/wan-x:wan:/generate_video']), { max: 1 }), ['pool:b/anime:animegen:/generate_video']);
   assert.deepEqual(poolModelle({}), []);
   assert.deepEqual(poolModelle(null), []);
+  const gemischt = { spaces: [{ space: 'z/a', typ: 'wan', endpoint: '/g', gpu: 'zero-a10g' }, { space: 'e/b', typ: 'wan', endpoint: '/g', gpu: 'a10g-small' }] };
+  assert.equal(poolModelle(gemischt)[0], 'pool:e/b:wan:/g', 'eigene GPU vor ZeroGPU');
 });

@@ -70,7 +70,7 @@ def main():
             try:
                 typ, ep = typ_von(Client(s["id"], verbose=False).view_api(return_format="dict", print_info=False))
                 if typ:
-                    pool.append({"space": s["id"], "typ": typ, "endpoint": ep, "likes": d.get("likes", 0)})
+                    pool.append({"space": s["id"], "typ": typ, "endpoint": ep, "likes": d.get("likes", 0), "gpu": hw})
                     print("✓", s["id"], typ, flush=True)
             except Exception as e:
                 if "429" in str(e):

@@ -22,6 +22,7 @@ test('Kaggle-Turbo: Auftrag (Wan braucht 4n+1 Bilder, Kino = mehr Schritte)', ()
   assert.equal(auftragBauen([], { qualitaet: 'schnell' }).schritte, 20);
   assert.equal(auftragBauen([], { sekunden: 99 }).frames, 81);
   assert.equal(auftragBauen([], { sekunden: 2 }).frames, 49);
+  assert.equal(auftragBauen([], { maxMinuten: 200 }).zeit_min, 180);
   assert.equal(auftragBauen([{ nr: 1, bildUrl: 'u', bildB64: 'QUJD', bewegung: 'p' }]).shots[0].bild_b64, 'QUJD');
   assert.deepEqual(a.shots, [{ nr: 1, bild_url: 'https://x/1.jpg', prompt: 'slow push in' }]);
 });

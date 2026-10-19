@@ -23,12 +23,13 @@ export function skriptBauen(vorlage, job) {
 
 // T4 (Kaggle) hat 15 GB: 480x832 passt in den Speicher (704x1280 lief out of memory) - auf 1080p bringt es danach
 // der Hochskalierer. 24 fps, Wan braucht 4n+1 Bilder; mehr als 81 Bilder sprengen den Speicher.
-export function auftragBauen(shots, { negativ = '', sekunden = 3.5, qualitaet = 'kino' } = {}) {
+// zeit_min: das Notebook hört rechtzeitig auf (Ausgabe gibt es erst, wenn es fertig ist) - lieber 12 von 18 Clips als 0.
+export function auftragBauen(shots, { negativ = '', sekunden = 3.5, qualitaet = 'kino', maxMinuten = 150 } = {}) {
   const kino = qualitaet === 'kino';
   return {
     breite: 480, hoehe: 832, fps: 24, negativ,
     frames: Math.min(81, Math.max(49, Math.round((sekunden * 24) / 4) * 4 + 1)),
-    schritte: kino ? 30 : 20, guidance: 5,
+    schritte: kino ? 30 : 20, guidance: 5, zeit_min: Math.max(20, maxMinuten - 20),
     shots: shots.map((s) => ({ nr: s.nr, bild_url: s.bildUrl, ...(s.bildB64 ? { bild_b64: s.bildB64 } : {}), prompt: s.bewegung })),
   };
 }
