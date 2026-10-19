@@ -16,7 +16,7 @@ on:
         default: dolly-in
         options: [anime-kampf, dolly-in, dolly-out, crash-zoom, orbit, fpv, crane-up, bullet-time, handheld, zeitlupe, grusel]
       shots:
-        description: 'Anzahl Shots (1-5)'
+        description: 'Anzahl Shots (1-18, je ~3,4 s - 18 = ~60 s)'
         default: '3'
       sekunden:
         description: 'Sekunden pro Shot (2-5)'

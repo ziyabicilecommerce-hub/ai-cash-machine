@@ -37,6 +37,10 @@ const EINSTELLUNGEN = [
 const FOLGE = { 'anime-kampf': ['anime-kampf'], 'crash-zoom': ['dolly-in', 'crash-zoom', 'orbit'], grusel: ['grusel', 'handheld', 'crash-zoom'], fpv: ['fpv', 'orbit', 'crane-up'] };
 // Bild-Formel: Motiv + Umgebung + Einstellung/Objektiv + Licht + Stil + Qualität.
 const STIL = 'cinematic film still, photorealistic, rich color grading, 8k, ultra detailed, sharp focus';
+// Bis 60 s: so viele Shots passen bei ~3,4 s pro KI-Clip.
+export const MAX_SHOTS = 18;
+// "KI-Modus": auch der Hintergrund bewegt sich die ganze Zeit - kein stehendes Bild hinter dem Motiv.
+export const HINTERGRUND = 'The background is alive with constant motion: drifting clouds, swirling particles, shifting light and moving reflections';
 
 // Übergang und Blendenlänge je Preset (Anime: harter weißer Impact-Frame).
 export const schnittArt = (preset) => (PRESETS[presetVon(preset)].impact ? { uebergang: 'fadewhite', blende: 0.2 } : { uebergang: 'fade', blende: 0.4 });
@@ -50,7 +54,7 @@ export function shotsPlanen(idee, preset = PRESET_STANDARD, anzahl = 3) {
   const text = sauber(idee, 300);
   if (!text) throw new Error('Keine Idee angegeben');
   const p = presetVon(preset);
-  const n = Math.min(Math.max(Number(anzahl) || 3, 1), 5);
+  const n = Math.min(Math.max(Number(anzahl) || 3, 1), MAX_SHOTS);
   const reihe = n === 1 ? [p] : (FOLGE[p] || [p, 'orbit', 'crane-up']);
   return Array.from({ length: n }, (_, i) => {
     const id = reihe[i % reihe.length];
@@ -59,8 +63,8 @@ export function shotsPlanen(idee, preset = PRESET_STANDARD, anzahl = 3) {
     const einstellung = liste[i % liste.length];
     return {
       nr: i + 1, preset: id,
-      bild: `${text}, ${einstellung}, ${x.licht}, ${x.stil || STIL}, vertical 9:16 composition`,
-      bewegung: `${x.kamera}. ${text}, the subject moves naturally and stays consistent. ${x.umgebung}. ${x.tempo}. ${x.licht}. Cinematic, smooth, coherent motion.`,
+      bild: `${text}, ${einstellung}, ${x.licht}, dynamic detailed background with depth, ${x.stil || STIL}, vertical 9:16 composition`,
+      bewegung: `${x.kamera}. ${text}, the subject moves naturally and stays consistent. ${x.umgebung}. ${HINTERGRUND}. ${x.tempo}. ${x.licht}. Cinematic, smooth, coherent motion.`,
     };
   });
 }
@@ -80,11 +84,14 @@ export function modellReihe(erschoepft = new Set(), { zhipu = false, seedance = 
 // Space-Pool (ki-video/spaces.json, wöchentlich von scripts/space_pool.py gefüllt): weitere Gratis-Video-Spaces als
 // Rückfall hinter den Stamm-Modellen - höchstens `max` Versuche pro Shot, Stamm-Spaces nicht doppelt.
 const STAMM = /^(zerogpu-aoti\/wan2-2-fp8da-aoti-faster|Lightricks\/ltx-video-distilled|Upsampler\/wan-2-2-14b-image-to-video|Ash1004\/ltx23-i2v-fullres|hugging-apps\/ksyjawan-realistic-i2v|aidealab\/AnimeGen-I2V|Lightricks\/LTX-2\.5|alexnasa\/ltx-2-TURBO)$/;
-export function poolModelle(pool, erschoepft = new Set(), { anime = false, max = 6 } = {}) {
+// Spaces mit eigener GPU (nicht "zero") zählen nicht aufs geteilte ZeroGPU-Tageslimit - die kommen zuerst.
+export function poolModelle(pool, erschoepft = new Set(), { anime = false, max = 12 } = {}) {
   const liste = (Array.isArray(pool?.spaces) ? pool.spaces : [])
     .filter((x) => x?.space && /^(wan|ltx25|animegen)$/.test(x.typ) && /^\/[\w-]+$/.test(x.endpoint || '') && !STAMM.test(x.space))
     .map((x) => ({ ...x, id: `pool:${x.space}:${x.typ}:${x.endpoint}` }))
     .filter((x) => !erschoepft.has(x.id));
+  const eigeneGpu = (x) => !!x.gpu && !/zero/i.test(x.gpu);
+  liste.sort((a, b) => eigeneGpu(b) - eigeneGpu(a));
   if (anime) liste.sort((a, b) => (b.typ === 'animegen') - (a.typ === 'animegen'));
   return liste.slice(0, max).map((x) => x.id);
 }

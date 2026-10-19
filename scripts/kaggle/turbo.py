@@ -54,6 +54,9 @@ log("Modell geladen:", type(pipe).__name__)
 
 breite, hoehe = JOB.get("breite", 704), JOB.get("hoehe", 1280)
 for s in JOB["shots"]:
+    if time.time() - bericht["start"] > JOB.get("zeit_min", 600) * 60:
+        bericht["fehler"].append(f"Zeitlimit erreicht vor Shot {s['nr']}")
+        break
     t = time.time()
     eintrag = {"nr": s["nr"]}
     try:

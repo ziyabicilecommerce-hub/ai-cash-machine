@@ -3,7 +3,7 @@
 // 3) Bild -> echter KI-Clip (Wan 2.2 -> LTX -> CogVideoX-Flash), leer = Preset-Kamerafahrt als Rückfall
 // 4) Nachbearbeitung (Upscale 1080x1920, 30 fps Zwischenbilder, Schärfe, Farblook, Korn)   5) Shots weich überblenden.
 // 6) Tonspur: eigener Kino-Klang (Drone, Whoosh an Schnitten, Boom) + optional Sprecher (edge-tts), Lautheit wie TikTok.
-// Eingaben: ZIYA_IDEE, ZIYA_PRESET, ZIYA_SHOTS (1-5), ZIYA_MENSCHEN=ja (Personen erlauben), ZIYA_SEKUNDEN (2-5),
+// Eingaben: ZIYA_IDEE, ZIYA_PRESET, ZIYA_SHOTS (1-18, ~60 s), ZIYA_MENSCHEN=ja (Personen erlauben), ZIYA_SEKUNDEN (2-5),
 // ZIYA_LOOP=ja (nahtloser Loop, Endbild = Startbild), ZIYA_DURCHGEHEND=ja (jeder Shot startet mit dem letzten Bild des vorigen = eine durchgehende Szene), ZIYA_TEXT (Sprechertext).
 import { execFile, execFileSync } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -18,6 +18,9 @@ import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeit
 
 const LOG = '[ziya-studio]';
 const ausfuehren = promisify(execFile);
+const START = Date.now();
+// Zeitbudget (Job-Limit 340 min): nach 230 min kein Real-ESRGAN mehr (dauert ~8 min pro Clip), nur noch Lanczos.
+const HD_BIS_MIN = 230;
 const ORDNER = resolve('out/ziya-studio');
 const B = 1080;
 const H = 1920;
@@ -42,6 +45,7 @@ const ffmpeg = (args) => execFileSync('ffmpeg', ['-loglevel', 'error', '-y', ...
 // ZIYA_HD=aus schaltet ab; klappt es nicht, geht es mit dem Originalclip weiter.
 function hochskalieren(quelle, ziel) {
   if (/^(0|nein|aus|false)$/i.test(String(process.env.ZIYA_HD || '').trim())) return quelle;
+  if ((Date.now() - START) / 60000 > HD_BIS_MIN) { console.log(`${LOG} Zeitbudget knapp - Hochskalierung per Lanczos`); return quelle; }
   try {
     const t = Date.now();
     execFileSync('python3', [resolve('scripts/hochskalieren.py'), quelle, ziel, preset === 'anime-kampf' ? 'anime' : 'allgemein'], { stdio: 'pipe', timeout: 1800000 });
@@ -108,7 +112,8 @@ async function main() {
   // Fehlt ein Clip, macht der normale Router unten für diesen Shot weiter.
   const vonKaggle = kaggleBereit()
     ? await kaggleClips(shots.map((s) => ({ ...s, bildUrl: bildURL(s.bild, { width: 768, height: 1344, seed: seed + s.nr }) })), ORDNER,
-      { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino' })
+      // Viele Shots = mehr Kaggle-Zeit, aber höchstens 200 min (danach Nachbearbeitung).
+      { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino', maxMinuten: Math.min(200, 50 + shots.length * 10) })
     : new Map();
   let letzterRoh = '';
   for (const s of shots) {
