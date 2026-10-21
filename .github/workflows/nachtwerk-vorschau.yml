@@ -1,0 +1,55 @@
+name: "🖼️ NACHTWERK-Vorschau (Szenenbilder ins Issue)"
+
+# Holt das ziya-video-Artifact eines Laufs, baut daraus ein Vorschaubild (8 Szenenbilder) und postet es im Bot-Issue.
+# Das Bild liegt auf dem Branch bot-vorschau (Commit mit [skip ci], damit keine anderen Workflows anlaufen).
+# Wird von nachtwerk-bots.yml aufgerufen; von Hand: Actions > NACHTWERK-Vorschau > Run workflow (Lauf-ID + Issue).
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id: { description: 'Lauf-ID mit dem ziya-video-Artifact', required: true }
+      issue: { description: 'Issue-Nummer für die Vorschau', required: true }
+  workflow_call:
+    inputs:
+      run_id: { type: string, required: true }
+      issue: { type: string, required: true }
+
+permissions:
+  contents: write
+  issues: write
+  actions: read
+
+jobs:
+  vorschau:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ziya-video
+          path: video
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+      - name: Vorschaubild bauen und posten
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ inputs.issue }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg >/dev/null
+          VIDEO=$(ls video/ziya-*.mp4 | head -1)
+          DAUER=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$VIDEO")
+          # 8 Bilder gleichmäßig über das ganze Video, 4x2-Raster.
+          FPS=$(python3 -c "print(8/max(float('$DAUER'),1))")
+          ffmpeg -loglevel error -y -i "$VIDEO" -vf "fps=$FPS,scale=270:480,tile=4x2:padding=6:color=black" -frames:v 1 -q:v 4 vorschau.jpg
+          ZIEL="vorschau/issue-$ISSUE-$(date +%Y%m%d%H%M).jpg"
+          # Eigener Branch nur mit Vorschaubildern; [skip ci] im Commit, damit keine Push-Workflows anlaufen.
+          URL="https://x-access-token:$GH_TOKEN@github.com/$REPO"
+          git init -q pv && cd pv
+          git config user.name "nachtwerk-bot" && git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git fetch -q --depth 1 "$URL" bot-vorschau 2>/dev/null; then git checkout -q -b bot-vorschau FETCH_HEAD; else git checkout -q --orphan bot-vorschau; fi
+          mkdir -p vorschau && cp ../vorschau.jpg "$ZIEL"
+          git add "$ZIEL" && git commit -qm "Vorschau Issue #$ISSUE [skip ci]" && git push -q "$URL" bot-vorschau
+          cd ..
+          printf '%s\n\n%s\n' "🖼️ **Vorschau** – 8 Bilder quer durchs Video ($(printf '%.0f' "$DAUER") s):" "![Vorschau](https://github.com/$REPO/blob/bot-vorschau/$ZIEL?raw=true)" > text.md
+          gh issue comment "$ISSUE" -R "$REPO" --body-file text.md

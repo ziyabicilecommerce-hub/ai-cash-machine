@@ -86,3 +86,15 @@ jobs:
           else
             gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} --body "❌ Das Video ist diesmal nicht fertig geworden ($ERGEBNIS). Protokoll: $LAUF"
           fi
+
+  vorschau:
+    needs: [auftrag, video]
+    if: needs.video.result == 'success'
+    uses: ./.github/workflows/nachtwerk-vorschau.yml
+    permissions:
+      contents: write
+      issues: write
+      actions: read
+    with:
+      run_id: ${{ github.run_id }}
+      issue: ${{ github.event.issue.number }}
