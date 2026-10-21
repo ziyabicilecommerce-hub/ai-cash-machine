@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Wan 2.2",
+    "category": "Video-KI",
+    "description": "Text/Bild → echtes Video",
+    "url": "https://github.com/Wan-Video/Wan2.2",
+    "key": "wan22",
+    "status": "Externe Installation/Verbindung erforderlich"
+  },
+  {
+    "name": "LTX-2.3",
+    "category": "Video + Ton",
+    "description": "Synchronisierte Filmclips",
+    "url": "https://huggingface.co/Lightricks",
+    "key": "ltx23",
+    "status": "Externe Installation/Verbindung erforderlich"
+  },
+  {
+    "name": "HunyuanVideo 1.5",
+    "category": "Video-KI",
+    "description": "Fotorealistische Video-Workflows",
+    "url": "https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5",
+    "key": "hunyuan15",
+    "status": "Externe Installation/Verbindung erforderlich"
+  },
+  {
+    "name": "CogVideoX",
+    "category": "Video-KI",
+    "description": "Alternative für Videoerzeugung",
+    "url": "https://github.com/THUDM/CogVideo",
+    "key": "cogvideox",
+    "status": "Externe Installation/Verbindung erforderlich"
+  },
+  {
+    "name": "Mochi 1",
+    "category": "Video-KI",
+    "description": "Offene Videoerzeugung",
+    "url": "https://github.com/genmoai/models",
+    "key": "mochi1",
+    "status": "Externe Installation/Verbindung erforderlich"
+  },
+  {
+    "name": "ComfyUI",
+    "category": "Orchestrierung",
+    "description": "Lokale GPU-Workflows für Video",
+    "url": "https://github.com/comfyanonymous/ComfyUI",
+    "key": "comfy",
+    "status": "Externe Installation/Verbindung erforderlich"
+  },
+  {
+    "name": "Blender",
+    "category": "3D & VFX",
+    "description": "3D-Szenen, Kamera, Compositing",
+    "url": "https://www.blender.org/",
+    "key": "blender",
+    "status": "Externe Installation/Verbindung erforderlich"
+  },
+  {
+    "name": "FFmpeg",
+    "category": "Schnitt & Export",
+    "description": "Video konvertieren, Ton mischen, exportieren",
+    "url": "https://ffmpeg.org/",
+    "key": "ffmpeg",
+    "status": "Externe Installation/Verbindung erforderlich"
+  },
+  {
+    "name": "RIFE",
+    "category": "Zwischenbilder",
+    "description": "Frame-Interpolation vorhandener Videos",
+    "url": "https://github.com/hzwer/Practical-RIFE",
+    "key": "rife",
+    "status": "Externe Installation/Verbindung erforderlich"
+  },
+  {
+    "name": "Real-ESRGAN",
+    "category": "Qualität",
+    "description": "KI-Upscaling und Bildverbesserung",
+    "url": "https://github.com/xinntao/Real-ESRGAN",
+    "key": "realesrgan",
+    "status": "Externe Installation/Verbindung erforderlich"
+  }
+]

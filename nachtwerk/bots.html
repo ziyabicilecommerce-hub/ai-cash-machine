@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NACHTWERK Bots</title>
+  <style>
+    :root { --bg: #0b0b10; --karte: #15151d; --rand: #2a2a36; --text: #ecebf2; --leise: #9a99a8; --akzent: #7cff9b; --warn: #ffb86b; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+    a { color: var(--akzent); }
+    h1 { font-size: 1.9rem; margin: 8px 0 4px; letter-spacing: -0.02em; }
+    .leise { color: var(--leise); }
+    .kopf { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .bots { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 20px 0; }
+    .bot { background: var(--karte); border: 1px solid var(--rand); border-radius: 14px; padding: 14px; text-align: left; color: inherit; font: inherit; cursor: pointer; }
+    .bot[aria-pressed="true"] { border-color: var(--akzent); box-shadow: 0 0 0 1px var(--akzent) inset; }
+    .bot b { display: block; margin-top: 4px; }
+    .bot small { color: var(--leise); display: block; margin-top: 4px; line-height: 1.35; }
+    .emoji { font-size: 1.6rem; }
+    form { background: var(--karte); border: 1px solid var(--rand); border-radius: 16px; padding: 18px; display: grid; gap: 14px; }
+    label { display: grid; gap: 6px; font-weight: 600; font-size: 0.95rem; }
+    textarea, input, select { width: 100%; background: #0f0f15; color: var(--text); border: 1px solid var(--rand); border-radius: 10px; padding: 10px 12px; font: inherit; font-weight: 400; }
+    textarea { min-height: 84px; resize: vertical; }
+    .reihe { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+    .haken { display: flex; gap: 8px; align-items: center; font-weight: 500; }
+    .haken input { width: auto; }
+    button.los { background: var(--akzent); color: #06210d; border: 0; border-radius: 12px; padding: 14px; font-family: inherit; font-weight: 700; font-size: 1.05rem; cursor: pointer; }
+    .hinweis { font-size: 0.9rem; color: var(--leise); }
+    h2 { margin-top: 36px; font-size: 1.2rem; }
+    ul.auftraege { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+    ul.auftraege li { background: var(--karte); border: 1px solid var(--rand); border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; gap: 12px; }
+    .status { white-space: nowrap; font-size: 0.9rem; }
+    .status.offen { color: var(--warn); }
+  </style>
+</head>
+<body>
+<main>
+  <div class="kopf">
+    <div>
+      <div class="leise">NACHTWERK · BOT-NETZWERK</div>
+      <h1>Videos auf Bestellung</h1>
+    </div>
+    <a href="./index.html">← Zum Schnitt-Studio</a>
+  </div>
+  <p class="leise">Bot wählen, Idee eintippen, bestellen. Der Bot baut das Video mit dem Ziya Studio (Geschichte, Bilder, echte KI-Clips, Sound, Erzähler) und schickt dir den Link. Dabei ist immer eine <b>NACHTWERK-Projektdatei</b>, die du hier im Studio öffnen und von Hand weiterschneiden kannst.</p>
+
+  <div class="bots" id="bots" role="group" aria-label="Bot wählen"></div>
+
+  <form id="form">
+    <label>Deine Idee (am besten Englisch)
+      <textarea id="idee" required minlength="5" maxlength="400"></textarea>
+    </label>
+    <div class="reihe">
+      <label>Szenen (1–18)
+        <input id="shots" type="number" min="1" max="18">
+      </label>
+      <label>Sekunden pro Szene
+        <input id="sekunden" type="number" min="2" max="5" step="0.5" value="3.5">
+      </label>
+      <label>Stil
+        <select id="stil"><option value="kino">Kino</option><option value="cartoon">Cartoon</option><option value="anime">Anime</option></select>
+      </label>
+    </div>
+    <label class="haken"><input id="geschichte" type="checkbox"> Als Geschichte mit Erzähler (jede Szene ein anderer Moment)</label>
+    <label>Eigener Sprechertext (optional, Deutsch)
+      <textarea id="text" maxlength="600" placeholder="Leer lassen = der Bot schreibt die Erzählung selbst"></textarea>
+    </label>
+    <button class="los" type="submit">🎬 Video bestellen</button>
+    <div class="hinweis">Öffnet GitHub mit dem fertigen Auftrag – dort nur noch auf <b>„Create“</b> tippen. Nur Aufträge vom Repo-Besitzer werden gebaut. Dauer: ~1 Stunde (6 Szenen) bis ~5 Stunden (18 Szenen).</div>
+  </form>
+
+  <h2>Letzte Aufträge</h2>
+  <ul class="auftraege" id="auftraege"><li class="leise">Lädt …</li></ul>
+</main>
+<script type="module" src="./bots.js"></script>
+</body>
+</html>

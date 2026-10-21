@@ -46,6 +46,22 @@ on:
         description: 'Sprechertext auf Deutsch (optional, leer = nur Kino-Sound)'
         required: false
         default: ''
+  # NACHTWERK-Bots (nachtwerk-bots.yml) rufen das Studio mit denselben Eingaben auf.
+  workflow_call:
+    inputs:
+      idee: { type: string, required: true }
+      preset: { type: string, default: dolly-in }
+      shots: { type: string, default: '6' }
+      sekunden: { type: string, default: '3.5' }
+      menschen: { type: boolean, default: false }
+      durchgehend: { type: boolean, default: true }
+      loop: { type: boolean, default: false }
+      geschichte: { type: boolean, default: false }
+      stil: { type: string, default: kino }
+      text: { type: string, default: '' }
+    outputs:
+      run_url:
+        value: ${{ jobs.studio.outputs.run_url }}
 
 permissions:
   contents: read
@@ -55,6 +71,12 @@ jobs:
     runs-on: ubuntu-latest
     # Mit Kaggle-Turbo wartet der Lauf auf die Kaggle-GPU (mehrere Stunden möglich).
     timeout-minutes: 340
+    # Eine Kaggle-GPU für alle: Bestellungen warten aufeinander statt sich gegenseitig zu stören.
+    concurrency:
+      group: ziya-studio
+      cancel-in-progress: false
+    outputs:
+      run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     env:
       ZIYA_IDEE: ${{ inputs.idee }}
       ZIYA_PRESET: ${{ inputs.preset }}
@@ -107,4 +129,5 @@ jobs:
             out/ziya-studio/ziya-*.mp4
             out/ziya-studio/shot*.jpg
             out/ziya-studio/bericht.json
+            out/ziya-studio/film.nachtwerk.json
           retention-days: 14
