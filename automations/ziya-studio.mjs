@@ -106,6 +106,19 @@ async function tonDrauf(stumm, video, dauern) {
   }
 }
 
+// Startbild laden (zweiter Versuch ohne Prompt-Erweiterung). Ohne Gratis-Schlüssel stempelt der Bilddienst
+// "pollinations.ai" unten rechts ins Bild: die Ecke wegschneiden und wieder auf 768x1344 bringen.
+async function startbild(s, seed) {
+  const bild = join(ORDNER, `shot${s.nr}.jpg`);
+  const ok = await ladeBild(s.bild, bild, { breite: 768, hoehe: 1344, seed: seed + s.nr, enhance: true })
+    || await ladeBild(s.bild, bild, { breite: 768, hoehe: 1344, seed: seed + s.nr + 100, enhance: false });
+  if (ok && !process.env.POLLINATIONS_TOKEN) {
+    const roh = join(ORDNER, `shot${s.nr}-wz.jpg`);
+    try { copyFileSync(bild, roh); ffmpeg(['-i', roh, '-vf', 'crop=iw*0.92:ih*0.92:0:0,scale=768:1344', '-q:v', '2', bild]); } catch { copyFileSync(roh, bild); }
+  }
+  return ok;
+}
+
 // Projektdatei für NACHTWERK (Handschnitt im Browser): Clips verkleinert (720x1280), damit die Datei handlich bleibt.
 function nachtwerkSchreiben(fertig) {
   try {
@@ -138,8 +151,13 @@ async function main() {
 
   // Kaggle-Turbo: alle Shots auf einmal auf der kostenlosen Kaggle-GPU (Wan 2.2, 480x832, danach hochskaliert).
   // Fehlt ein Clip, macht der normale Router unten für diesen Shot weiter.
+  // Startbilder vorab hier laden (gleiche Bilder für Kaggle und Rückfall, im gewählten Stil, ohne Wasserzeichen).
+  if (kaggleBereit()) for (const s of shots) await startbild(s, seed);
   const vonKaggle = kaggleBereit()
-    ? await kaggleClips(shots.map((s) => ({ ...s, bildUrl: bildURL(s.bild, { width: 768, height: 1344, seed: seed + s.nr }) })), ORDNER,
+    ? await kaggleClips(shots.map((s) => {
+      const datei = join(ORDNER, `shot${s.nr}.jpg`);
+      return { ...s, bildUrl: bildURL(s.bild, { width: 768, height: 1344, seed: seed + s.nr }), ...(existsSync(datei) ? { bildB64: readFileSync(datei).toString('base64') } : {}) };
+    }), ORDNER,
       // Viele Shots = mehr Kaggle-Zeit, aber höchstens 200 min (danach Nachbearbeitung).
       { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino', maxMinuten: Math.min(200, 50 + shots.length * 10) })
     : new Map();
@@ -154,8 +172,7 @@ async function main() {
     }
     // Sonst gleicher Grund-Seed für alle Shots, damit Stil und Farben zusammenpassen.
     // Bildquelle hakt manchmal: zweiter Versuch ohne Prompt-Erweiterung, sonst das Bild des vorigen Shots.
-    if (!existsSync(bild) && !(await ladeBild(s.bild, bild, { breite: 768, hoehe: 1344, seed: seed + s.nr, enhance: true }))
-      && !(await ladeBild(s.bild, bild, { breite: 768, hoehe: 1344, seed: seed + s.nr + 100, enhance: false }))) {
+    if (!existsSync(bild) && !(await startbild(s, seed))) {
       const vorher = fertig.length ? join(ORDNER, `shot${fertig[fertig.length - 1].nr}.jpg`) : '';
       if (!vorher || !existsSync(vorher)) { console.log(`${LOG} Shot ${s.nr}: kein Startbild, übersprungen`); continue; }
       copyFileSync(vorher, bild);

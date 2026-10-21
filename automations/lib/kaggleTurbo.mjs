@@ -35,8 +35,16 @@ export function auftragBauen(shots, { negativ = '', sekunden = 3.5, qualitaet = 
 }
 
 // Startbilder schon hier laden und mitschicken - von Kaggle aus lieferte der Bilddienst "402 Payment Required".
+// Schon fertige Bilder (bildB64) bleiben; der Rest nacheinander - parallel drosselt der Bilddienst (fast alle 429).
 export async function bilderMitschicken(shots, versuche = 3) {
-  return Promise.all(shots.map(async (s) => {
+  const fertig = [];
+  for (const s of shots) fertig.push(await bildHolen(s, versuche));
+  return fertig;
+}
+
+async function bildHolen(s, versuche) {
+  if (s.bildB64) return s;
+  {
     for (let i = 0; i < versuche && s.bildUrl; i++) {
       try {
         const r = await fetch(s.bildUrl);
@@ -45,7 +53,7 @@ export async function bilderMitschicken(shots, versuche = 3) {
       await new Promise((ok) => setTimeout(ok, 4000 * (i + 1)));
     }
     return s;
-  }));
+  }
 }
 
 // Neue Kaggle-API-Tokens (KGAT_...) liest die CLI aus KAGGLE_API_TOKEN, alte Keys aus KAGGLE_KEY - beides geht.
