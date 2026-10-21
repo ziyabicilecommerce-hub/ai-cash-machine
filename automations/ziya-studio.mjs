@@ -14,6 +14,7 @@ import { ladeBild, dauerSekunden, sprechen } from './lib/videoFabrik.mjs';
 import { zhipuClip } from './lib/kiVideo.mjs';
 import { seedanceClip } from './lib/seedance.mjs';
 import { kaggleBereit, kaggleClips } from './lib/kaggleTurbo.mjs';
+import { modalBereit, modalClips } from './lib/modalTurbo.mjs';
 import { bildURL } from './lib/pollinationsMedia.mjs';
 import { geschichtePlanen, STILE, stilVon } from './lib/ziyaGeschichte.mjs';
 import { kiJson } from './lib/kiJson.mjs';
@@ -149,12 +150,13 @@ async function main() {
   const fertig = [];
   console.log(`${LOG} "${idee}" · Preset ${PRESETS[preset].name} · ${shots.length} Shot(s)`);
 
-  // Kaggle-Turbo: alle Shots auf einmal auf der kostenlosen Kaggle-GPU (Wan 2.2, 480x832, danach hochskaliert).
-  // Fehlt ein Clip, macht der normale Router unten für diesen Shot weiter.
-  // Startbilder vorab hier laden (gleiche Bilder für Kaggle und Rückfall, im gewählten Stil, ohne Wasserzeichen).
-  if (kaggleBereit()) for (const s of shots) await startbild(s, seed);
-  const vonKaggle = kaggleBereit()
-    ? await kaggleClips(shots.map((s) => {
+  // GPU-Turbo: alle Shots auf einmal - Modal (30 $ Gratis-Guthaben/Monat, 720p, keine Warteschlange) wenn eingerichtet,
+  // sonst die kostenlose Kaggle-GPU (480x832, danach hochskaliert). Fehlt ein Clip, macht der Router unten weiter.
+  // Startbilder vorab hier laden (gleiche Bilder für GPU und Rückfall, im gewählten Stil, ohne Wasserzeichen).
+  const gpu = modalBereit() ? 'modal' : kaggleBereit() ? 'kaggle' : '';
+  if (gpu) for (const s of shots) await startbild(s, seed);
+  const vonKaggle = gpu
+    ? await (gpu === 'modal' ? modalClips : kaggleClips)(shots.map((s) => {
       const datei = join(ORDNER, `shot${s.nr}.jpg`);
       return { ...s, bildUrl: bildURL(s.bild, { width: 768, height: 1344, seed: seed + s.nr }), ...(existsSync(datei) ? { bildB64: readFileSync(datei).toString('base64') } : {}) };
     }), ORDNER,
@@ -183,7 +185,7 @@ async function main() {
       const kbild = join(ORDNER, 'kaggle-out', `shot${s.nr}.jpg`);
       if (existsSync(kbild)) copyFileSync(kbild, bild);
     }
-    const modell = vonKaggle.has(s.nr) ? 'kaggle' : await kiClipHolen(bild, s.bewegung, roh, erschoepft);
+    const modell = vonKaggle.has(s.nr) ? gpu : await kiClipHolen(bild, s.bewegung, roh, erschoepft);
     letzterRoh = modell ? roh : '';
     if (modell) {
       const hd = hochskalieren(roh, join(ORDNER, `shot${s.nr}-hd.mp4`));
