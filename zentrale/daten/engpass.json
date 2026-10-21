@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-20T08:49:35.969Z",
+ "stand": "2026-10-21T08:49:47.603Z",
  "ziel": 5,
  "agenten": [
   {
@@ -15,7 +15,7 @@
    "name": "Video-Fabrik",
    "job": "baut Produkt-Videos",
    "einheit": "Videos",
-   "leistung": 3.4,
+   "leistung": 3.1,
    "status": "laeuft"
   },
   {
@@ -23,7 +23,7 @@
    "name": "Video-Prüfer",
    "job": "gibt fehlerfreie Videos frei",
    "einheit": "freigegeben",
-   "leistung": 2.4,
+   "leistung": 2,
    "status": "laeuft"
   },
   {
@@ -284,6 +284,16 @@
    "labor": 0,
    "fabrik": 3.4,
    "pruefer": 2.4,
+   "poster": 0,
+   "sammler": 0
+  },
+  {
+   "datum": "2026-10-21",
+   "durchsatz": 0,
+   "engpass": "poster",
+   "labor": 0,
+   "fabrik": 3.1,
+   "pruefer": 2,
    "poster": 0,
    "sammler": 0
   }
