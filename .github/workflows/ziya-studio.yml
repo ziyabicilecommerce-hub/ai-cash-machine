@@ -101,6 +101,9 @@ jobs:
       # Optional, kostenlos: Kaggle-Konto (30 GPU-Stunden/Woche) -> jede Szene ein echter KI-Clip ohne Tageslimit.
       KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
       KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+      # Optional: Modal (modal.com, 30 $ Gratis-Guthaben/Monat) - schnellere GPU, 720p direkt. Hat Vorrang vor Kaggle.
+      MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+      MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
       ZIYA_QUALITAET: ${{ vars.ZIYA_QUALITAET || 'kino' }}
       ZHIPU_API_BASE: ${{ vars.ZHIPU_API_BASE }}
     steps:
@@ -114,7 +117,7 @@ jobs:
       - name: ffmpeg, gradio_client, edge-tts und KI-Hochskalierer installieren
         uses: ./.github/actions/video-werkzeug
         with:
-          pip: 'gradio_client edge-tts==7.* kaggle --extra-index-url https://download.pytorch.org/whl/cpu torch spandrel numpy'
+          pip: 'gradio_client edge-tts==7.* kaggle modal --extra-index-url https://download.pytorch.org/whl/cpu torch spandrel numpy'
       # Real-ESRGAN-Gewichte (~3 MB) zwischenspeichern.
       - uses: actions/cache@v4
         with:

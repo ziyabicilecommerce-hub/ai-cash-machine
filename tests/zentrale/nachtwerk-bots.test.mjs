@@ -39,3 +39,16 @@ test('Ziya -> NACHTWERK: Projektdatei ist in NACHTWERK ladbar', () => {
   assert.equal(v.format, 'portrait');
   assert.equal(v.audio.type, 'audio');
 });
+
+import { modalBereit, modalAuftrag } from '../../automations/lib/modalTurbo.mjs';
+test('Modal-Turbo: nur mit beiden Schlüsseln, 720p-Auftrag', () => {
+  assert.equal(modalBereit({}), false);
+  assert.equal(modalBereit({ MODAL_TOKEN_ID: 'ak-1' }), false);
+  assert.equal(modalBereit({ MODAL_TOKEN_ID: 'ak-1', MODAL_TOKEN_SECRET: 'as-2' }), true);
+  const a = modalAuftrag([{ nr: 1, bildUrl: 'u', bildB64: 'eA==', bewegung: 'mummy walks' }], { sekunden: 3.5, maxMinuten: 60 });
+  assert.equal(a.breite, 704);
+  assert.equal(a.hoehe, 1280);
+  assert.equal(a.zeit_min, 50);
+  assert.equal(a.shots[0].bild_b64, 'eA==');
+  assert.equal(a.shots[0].prompt, 'mummy walks');
+});
