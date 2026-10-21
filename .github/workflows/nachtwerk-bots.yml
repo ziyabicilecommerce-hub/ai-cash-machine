@@ -1,0 +1,87 @@
+name: "🤖 NACHTWERK-Bots (Video auf Bestellung)"
+
+# Bot-Netzwerk: Auf https://<user>.github.io/ai-cash-machine/nachtwerk/bots.html einen Bot wählen und die Idee eintippen.
+# Die Seite öffnet ein vorausgefülltes Issue (Label video-bot). Dieser Workflow liest den Auftrag, lässt das Ziya Studio
+# das Video bauen (inkl. NACHTWERK-Projektdatei zum Weiterschneiden) und antwortet im Issue mit dem Download-Link.
+# Nur Issues vom Repo-Besitzer starten einen Lauf (Kaggle- und Gratis-Kontingente schützen).
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  auftrag:
+    if: contains(github.event.issue.labels.*.name, 'video-bot') && github.event.issue.user.login == github.repository_owner && (github.event.action == 'opened' || github.event.label.name == 'video-bot')
+    runs-on: ubuntu-latest
+    outputs:
+      ok: ${{ steps.lesen.outputs.ok }}
+      bot: ${{ steps.lesen.outputs.bot }}
+      idee: ${{ steps.lesen.outputs.idee }}
+      preset: ${{ steps.lesen.outputs.preset }}
+      stil: ${{ steps.lesen.outputs.stil }}
+      shots: ${{ steps.lesen.outputs.shots }}
+      sekunden: ${{ steps.lesen.outputs.sekunden }}
+      geschichte: ${{ steps.lesen.outputs.geschichte }}
+      menschen: ${{ steps.lesen.outputs.menschen }}
+      durchgehend: ${{ steps.lesen.outputs.durchgehend }}
+      loop: ${{ steps.lesen.outputs.loop }}
+      text: ${{ steps.lesen.outputs.text }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - id: lesen
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: node automations/nachtwerk-bot-auftrag.mjs
+      - name: Rückmeldung
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OK: ${{ steps.lesen.outputs.ok }}
+          FEHLER: ${{ steps.lesen.outputs.fehler }}
+          LAUF: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$OK" = "true" ]; then
+            gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} --body "🤖 Auftrag angenommen – das Video wird gebaut (je nach Länge 1–5 Stunden). Fortschritt: $LAUF"
+          else
+            gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} --body "⚠️ Auftrag nicht lesbar: $FEHLER"
+          fi
+
+  video:
+    needs: auftrag
+    if: needs.auftrag.outputs.ok == 'true'
+    uses: ./.github/workflows/ziya-studio.yml
+    secrets: inherit
+    with:
+      idee: ${{ needs.auftrag.outputs.idee }}
+      preset: ${{ needs.auftrag.outputs.preset }}
+      stil: ${{ needs.auftrag.outputs.stil }}
+      shots: ${{ needs.auftrag.outputs.shots }}
+      sekunden: ${{ needs.auftrag.outputs.sekunden }}
+      geschichte: ${{ needs.auftrag.outputs.geschichte == 'true' }}
+      menschen: ${{ needs.auftrag.outputs.menschen == 'true' }}
+      durchgehend: ${{ needs.auftrag.outputs.durchgehend == 'true' }}
+      loop: ${{ needs.auftrag.outputs.loop == 'true' }}
+      text: ${{ needs.auftrag.outputs.text }}
+
+  fertig:
+    needs: [auftrag, video]
+    if: always() && needs.auftrag.outputs.ok == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          ERGEBNIS: ${{ needs.video.result }}
+          LAUF: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$ERGEBNIS" = "success" ]; then
+            gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} --body "✅ Fertig! Download: $LAUF → unten bei **Artifacts** auf **ziya-video**. Drin: das Video (ziya-….mp4) und **film.nachtwerk.json** – die in NACHTWERK über „Projekt öffnen“ laden und von Hand weiterschneiden."
+            gh issue close ${{ github.event.issue.number }} -R ${{ github.repository }}
+          else
+            gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} --body "❌ Das Video ist diesmal nicht fertig geworden ($ERGEBNIS). Protokoll: $LAUF"
+          fi

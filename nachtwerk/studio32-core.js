@@ -1,0 +1,7 @@
+export const clamp=(v,a,b)=>Math.min(b,Math.max(a,Number(v)||0));
+export function normalizeClip(c){const duration=clamp(c.duration,0.1,3600),start=clamp(c.start,0,3600);return {id:String(c.id||''),name:String(c.name||'Clip'),start,duration,trimIn:clamp(c.trimIn,0,3600),volume:clamp(c.volume??1,0,2),kind:c.kind==='audio'?'audio':'video'};}
+export function arrange(clips){return clips.map(normalizeClip).sort((a,b)=>a.start-b.start);}
+export function activeAt(clips,time,kind='video'){return arrange(clips).filter(c=>c.kind===kind&&time>=c.start&&time<c.start+c.duration);}
+export function identityPrompt(character,action,place){return `Photorealistic continuous live-action video. Same character throughout: ${String(character).slice(0,500)}. Action: ${String(action).slice(0,500)}. Location: ${String(place).slice(0,500)}. Anatomically coherent motion, continuous gait, consistent clothes and face, realistic contact with floor and door. No freeze-frame, no slideshow.`;}
+export function cinemaParams({brightness=0,contrast=1,saturation=1}={}){return {brightness:clamp(brightness,-1,1),contrast:clamp(contrast,0,3),saturation:clamp(saturation,0,3)};}
+export function safeProject(data){if(!data||!Array.isArray(data.clips)||data.clips.length>200)throw Error('Ungültige Projektdatei');return {clips:data.clips.map(normalizeClip),character:String(data.character||'').slice(0,500),effects:cinemaParams(data.effects)};}

@@ -17,6 +17,7 @@ import { kaggleBereit, kaggleClips } from './lib/kaggleTurbo.mjs';
 import { bildURL } from './lib/pollinationsMedia.mjs';
 import { geschichtePlanen, STILE, stilVon } from './lib/ziyaGeschichte.mjs';
 import { kiJson } from './lib/kiJson.mjs';
+import { nachtwerkProjekt, datenUrl } from './lib/nachtwerkProjekt.mjs';
 import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
@@ -105,6 +106,22 @@ async function tonDrauf(stumm, video, dauern) {
   }
 }
 
+// Projektdatei für NACHTWERK (Handschnitt im Browser): Clips verkleinert (720x1280), damit die Datei handlich bleibt.
+function nachtwerkSchreiben(fertig) {
+  try {
+    const shots = fertig.map((f) => {
+      const klein = join(ORDNER, `nw-shot${f.nr}.mp4`);
+      ffmpeg(['-i', f.datei, '-an', '-vf', 'scale=720:1280', '-c:v', 'libx264', '-preset', 'fast', '-crf', '26', '-pix_fmt', 'yuv420p', klein]);
+      return { ...f, zoom: PRESETS[f.preset].zoom, daten: datenUrl(readFileSync(klein), 'video/mp4') };
+    });
+    const stimme = join(ORDNER, 'stimme.mp3');
+    const projekt = nachtwerkProjekt({ idee, shots, genre: preset === 'grusel' ? 'horror' : 'fantasy',
+      audio: existsSync(stimme) ? datenUrl(readFileSync(stimme), 'audio/mpeg') : null });
+    writeFileSync(join(ORDNER, 'film.nachtwerk.json'), JSON.stringify(projekt));
+    console.log(`${LOG} NACHTWERK-Projekt: film.nachtwerk.json (${shots.length} Szenen)`);
+  } catch (err) { console.log(`${LOG} NACHTWERK-Projekt übersprungen: ${String(err.stderr || err.message).slice(0, 200)}`); }
+}
+
 async function main() {
   if (!idee) throw new Error('ZIYA_IDEE fehlt - beschreibe dein Video in einem Satz.');
   mkdirSync(ORDNER, { recursive: true });
@@ -171,6 +188,7 @@ async function main() {
 
   const bericht = { idee, preset, video: video.replace(`${resolve('.')}/`, ''), shots: fertig.map(({ nr, preset: p, modell, dauer }) => ({ nr, preset: p, modell, dauer })) };
   writeFileSync(join(ORDNER, 'bericht.json'), JSON.stringify(bericht, null, 2));
+  nachtwerkSchreiben(fertig);
   const ki = fertig.filter((f) => f.modell !== 'kamerafahrt').length;
   console.log(`${LOG} Fertig: ${bericht.video} · ${ki}/${fertig.length} Shots echte KI-Clips`);
   if (process.env.GITHUB_STEP_SUMMARY) {

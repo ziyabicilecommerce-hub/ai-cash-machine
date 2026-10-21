@@ -1,0 +1,9 @@
+{
+  "bots": [
+    { "id": "grusel", "emoji": "🧟", "name": "Grusel-Bot", "text": "Horror-Kurzfilm mit Erzähler: Mumien, Geister, verlassene Orte.", "beispiel": "a creepy bandaged mummy wakes up in an ancient tomb and chases an explorer", "preset": "grusel", "stil": "cartoon", "geschichte": true, "shots": 12 },
+    { "id": "cartoon", "emoji": "🎨", "name": "Cartoon-Bot", "text": "3D-Zeichentrick-Geschichte wie ein Familienfilm, eigene Figuren.", "beispiel": "a tiny fox finds a fallen star and brings it back to the sky", "preset": "dolly-in", "stil": "cartoon", "geschichte": true, "shots": 12 },
+    { "id": "anime", "emoji": "⚔️", "name": "Anime-Kampf-Bot", "text": "Anime-Kampfszene mit Effekten, Impact-Frames und schnellen Schnitten.", "beispiel": "two rival sword masters clash on a burning bridge", "preset": "anime-kampf", "stil": "anime", "geschichte": false, "shots": 8 },
+    { "id": "kino", "emoji": "🎬", "name": "Kino-Bot", "text": "Realistischer Kurzfilm im Blockbuster-Look mit Erzähler.", "beispiel": "a lone astronaut discovers a glowing forest on a frozen moon", "preset": "crane-up", "stil": "kino", "geschichte": true, "shots": 12 },
+    { "id": "welt", "emoji": "🌋", "name": "Welten-Bot", "text": "Epische Naturgewalten und Weltall, durchgehende Kamerafahrt ohne Menschen.", "beispiel": "a colossal ringed planet rising over a glowing alien ocean", "preset": "fpv", "stil": "kino", "geschichte": false, "shots": 6 }
+  ]
+}
