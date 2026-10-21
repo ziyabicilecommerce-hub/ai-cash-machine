@@ -7,7 +7,8 @@ name: "🤖 NACHTWERK-Bots (Video auf Bestellung)"
 
 on:
   issues:
-    types: [opened, labeled]
+    # Nur "labeled": ein neues Issue mit Label meldet sonst opened UND labeled -> zwei Läufe.
+    types: [labeled]
 
 permissions:
   contents: read
@@ -15,7 +16,7 @@ permissions:
 
 jobs:
   auftrag:
-    if: contains(github.event.issue.labels.*.name, 'video-bot') && github.event.issue.user.login == github.repository_owner && (github.event.action == 'opened' || github.event.label.name == 'video-bot')
+    if: github.event.label.name == 'video-bot' && github.event.issue.user.login == github.repository_owner
     runs-on: ubuntu-latest
     outputs:
       ok: ${{ steps.lesen.outputs.ok }}
@@ -71,7 +72,7 @@ jobs:
 
   fertig:
     needs: [auftrag, video]
-    if: always() && needs.auftrag.outputs.ok == 'true'
+    if: ${{ !cancelled() && needs.auftrag.outputs.ok == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - env:
