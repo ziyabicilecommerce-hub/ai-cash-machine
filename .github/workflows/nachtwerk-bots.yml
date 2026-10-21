@@ -72,7 +72,7 @@ jobs:
 
   fertig:
     needs: [auftrag, video]
-    if: always() && needs.auftrag.outputs.ok == 'true'
+    if: ${{ !cancelled() && needs.auftrag.outputs.ok == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - env:
