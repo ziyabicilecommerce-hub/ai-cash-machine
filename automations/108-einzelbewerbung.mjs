@@ -2,7 +2,7 @@
 // Auftrag kommt als JSON über AUTOMATION_AUFTRAG: {"email","firma","titel","anschreiben","betreff"?}.
 // Gleiche Absender-Daten, PDFs und State wie #106, damit #107 Antworten darauf erkennt.
 import {
-  env, LIVE, BEWERBER, emailOk, heute, gmailZugang, ladeGeheim, speichereGeheim,
+  env, LIVE, BEWERBER, emailOk, heute, gmailZugang, ladeGeheim, speichereGeheim, firmenDomain,
   gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang,
 } from './lib/bewerbung.mjs';
 import { STATE_BOT } from './106-bewerbungs-bot.mjs';
@@ -28,6 +28,13 @@ async function main() {
   const state = ladeGeheim(STATE_BOT, { beworben: {}, emails: {}, uebersprungen: {} });
   if (LIVE && state.emails[auftrag.email]) {
     console.log(`[einzelbewerbung] ${auftrag.email} wurde am ${state.emails[auftrag.email]} schon angeschrieben - nicht doppelt.`);
+    return;
+  }
+  // Gleiche Firma über eine andere Adresse (z.B. info@ statt bewerbung@) ebenfalls nicht doppelt anschreiben.
+  const domain = firmenDomain(auftrag.email);
+  const frueher = domain && Object.keys(state.emails).find((e) => firmenDomain(e) === domain);
+  if (LIVE && frueher) {
+    console.log(`[einzelbewerbung] ${domain} wurde am ${state.emails[frueher]} schon angeschrieben - nicht doppelt.`);
     return;
   }
 
