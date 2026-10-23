@@ -128,7 +128,7 @@ function untertitelEinbrennen(video) {
   const srt = join(ORDNER, 'stimme.srt');
   if (!existsSync(srt)) return;
   const mit = join(ORDNER, 'mit-untertitel.mp4');
-  const stil = 'FontName=DejaVu Sans,Bold=1,FontSize=17,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=3,Shadow=0,Alignment=2,MarginV=70';
+  const stil = 'FontName=DejaVu Sans,Bold=1,FontSize=12,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=2.5,Shadow=0,Alignment=2,MarginV=38';
   try {
     ffmpeg(['-i', video, '-vf', `subtitles=${srt.replace(/([\\:'])/g, '\\$1')}:force_style='${stil}'`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-c:a', 'copy', '-movflags', '+faststart', mit]);
     copyFileSync(mit, video);
@@ -194,7 +194,12 @@ async function main() {
     // Bildquelle hakt manchmal: zweiter Versuch ohne Prompt-Erweiterung, sonst das Bild des vorigen Shots.
     if (!existsSync(bild) && !(await startbild(s, seed))) {
       const vorher = fertig.length ? join(ORDNER, `shot${fertig[fertig.length - 1].nr}.jpg`) : '';
-      if (!vorher || !existsSync(vorher)) { console.log(`${LOG} Shot ${s.nr}: kein Startbild, übersprungen`); continue; }
+      if (!vorher || !existsSync(vorher)) {
+        // Bilddienst down (#201: 503): Kaggle hat sich die Bilder evtl. selbst geholt - Platz für den Kaggle-Clip freihalten.
+        if (kaggleNebenher) { fertig.push({ ...s, datei: join(ORDNER, `shot${s.nr}.mp4`), modell: 'fehlt', dauer: 0 }); console.log(`${LOG} Shot ${s.nr}: kein Startbild, wartet auf Kaggle`); }
+        else console.log(`${LOG} Shot ${s.nr}: kein Startbild, übersprungen`);
+        continue;
+      }
       copyFileSync(vorher, bild);
       console.log(`${LOG} Shot ${s.nr}: Bildquelle hakt, nehme das Bild des vorigen Shots`);
     }
@@ -214,19 +219,20 @@ async function main() {
     fertig.push({ ...s, datei: ziel, modell: modell || 'kamerafahrt', dauer: dauerSekunden(ziel) });
     console.log(`${LOG} ✓ Shot ${s.nr} (${PRESETS[s.preset].name}) mit ${modell || 'Kamerafahrt (kein KI-Kontingent)'}`);
   }
-  if (!fertig.length) throw new Error('Kein einziger Shot entstanden (Bildquelle nicht erreichbar).');
   if (kaggleNebenher) {
-    const offen = fertig.filter((f) => f.modell === 'kamerafahrt');
+    const offen = fertig.filter((f) => f.modell === 'kamerafahrt' || f.modell === 'fehlt');
     console.log(`${LOG} Kaggle: ${offen.length} Standbild-Szene(n) warten auf Kaggle-Clips`);
     const kaggle = offen.length ? await kaggleNebenher : new Map();
     for (const f of offen) {
       if (!kaggle.has(f.nr)) continue;
       const hd = hochskalieren(kaggle.get(f.nr), join(ORDNER, `shot${f.nr}-kaggle-hd.mp4`));
       ffmpeg(['-i', hd, '-an', '-vf', nachbearbeitung(f.preset, { breite: B, hoehe: H, krass }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', f.datei]);
+      console.log(`${LOG} ✓ Shot ${f.nr}: Kaggle-Clip ${f.modell === 'fehlt' ? 'statt fehlendem Startbild' : 'ersetzt die Kamerafahrt'}`);
       Object.assign(f, { modell: 'kaggle', dauer: dauerSekunden(f.datei) });
-      console.log(`${LOG} ✓ Shot ${f.nr}: Kaggle-Clip ersetzt die Kamerafahrt`);
     }
   }
+  for (let i = fertig.length - 1; i >= 0; i--) if (fertig[i].modell === 'fehlt') fertig.splice(i, 1);
+  if (!fertig.length) throw new Error('Kein einziger Shot entstanden (Bildquelle nicht erreichbar).');
 
   const stempel = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12);
   const video = join(ORDNER, `ziya-${stempel}.mp4`);
