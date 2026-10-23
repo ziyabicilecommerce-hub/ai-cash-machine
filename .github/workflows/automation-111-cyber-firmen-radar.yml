@@ -1,0 +1,18 @@
+name: "111 · Cyber-Firmen-Radar"
+
+on:
+  schedule:
+    # Montags 10:30 UTC - nach #106 und #109, damit nie zwei Bewerbungs-Bots gleichzeitig den State schreiben
+    - cron: '30 10 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    uses: ./.github/workflows/_automation-runner.yml
+    with:
+      script: automations/111-cyber-firmen-radar.mjs
+    secrets: inherit
