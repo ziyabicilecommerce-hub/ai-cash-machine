@@ -1,5 +1,5 @@
 // Findet die Bewerbungs-Adresse auf der Firmen-Website, wenn die Anzeige selbst keine E-Mail nennt.
-const JOBBOERSE = /arbeitsagentur|jobexport|empfehlungsbund|persy\.jobs|jcd\.de|onapply|beruf-und-familie|kmk\.org|stepstone|indeed|softgarden|personio|join\.com|smartrecruiters|myworkday|successfactors|greenhouse|lever\.co|recruitee|onlyfy|dvinci|umantis|jobware|monster|xing|linkedin|google|facebook|instagram|youtube|kununu|stellenanzeigen|jobs\.de|w3\.org|schema\.org|bund\.de|interamt|gstatic|cloudflare/i;
+const JOBBOERSE = /arbeitsagentur|yourfirm|meinestadt|finest-jobs|karriere-|jobboerse|jobbörse|jobexport|empfehlungsbund|persy\.jobs|jcd\.de|onapply|beruf-und-familie|kmk\.org|stepstone|indeed|softgarden|personio|join\.com|smartrecruiters|myworkday|successfactors|greenhouse|lever\.co|recruitee|onlyfy|dvinci|umantis|jobware|monster|xing|linkedin|google|facebook|instagram|youtube|kununu|stellenanzeigen|jobs\.de|w3\.org|schema\.org|bund\.de|interamt|gstatic|cloudflare/i;
 const PFADE = ['', 'karriere', 'jobs', 'kontakt', 'impressum'];
 // Bewerbungs-Postfächer zuerst, allgemeine Firmen-Postfächer als Ersatz - nie Personen, Presse oder Datenschutz.
 const BEWERBUNG = /^(bewerbung|bewerbungen|karriere|career|careers|jobs?|personal|hr|recruiting|talent)[a-z.-]*@/;
@@ -9,12 +9,24 @@ export function basisDomain(host) {
   return host.toLowerCase().replace(/^www\./, '').split('.').slice(-2).join('.');
 }
 
-export function websiteDomain(text, externeUrl) {
+// Allgemeine Wörter aus Firmennamen zählen nicht als Treffer in der Domain.
+const FUELLWORT = /^(gmbh|mbh|und|der|die|das|des|für|fuer|eine|marke|co|kg|ag|se|ev|e\.?v|gruppe|group|service|services|dienstleistungen|deutschland|germany|holding|international|niederlassung|nl|anstalt|rechts|öffentl)$/;
+
+function nameTeile(firma) {
+  return (firma || '').toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+    .split(/[^a-z0-9]+/).filter((t) => t.length >= 2 && !FUELLWORT.test(t));
+}
+
+// Nur eine Domain, die erkennbar zur Firma gehört - sonst landet die Bewerbung bei Jobportalen oder Fremdfirmen.
+export function websiteDomain(text, externeUrl, firma) {
+  const teile = nameTeile(firma);
   for (const k of [externeUrl, ...(text.match(/(?:https?:\/\/|www\.)[a-z0-9.-]+\.[a-z]{2,}/gi) || [])]) {
     if (!k) continue;
     try {
       const host = new URL(k.startsWith('http') ? k : `https://${k}`).hostname;
-      if (!JOBBOERSE.test(host)) return basisDomain(host);
+      const domain = basisDomain(host);
+      const name = domain.split('.')[0].replace(/-/g, '');
+      if (!JOBBOERSE.test(host) && teile.some((t) => (t.length >= 3 ? name.includes(t) : name === t))) return domain;
     } catch { /* kaputte URL */ }
   }
   return '';

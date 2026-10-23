@@ -94,7 +94,7 @@ async function main() {
     const { text, flags, externeUrl } = await holeDetails(st.refnr);
     st.vermittler = !!(flags.istArbeitnehmerUeberlassung || flags.istPrivateArbeitsvermittlung);
     st.email = st.nurRemote && !REMOTE.test(text) ? '' : findeEmail(text);
-    if (!st.email && !st.nurRemote) st.website = websiteDomain(text, externeUrl);
+    if (!st.email && !st.nurRemote) st.website = websiteDomain(text, externeUrl, st.arbeitgeber);
   });
 
   const cv = await holeLebenslauf();
