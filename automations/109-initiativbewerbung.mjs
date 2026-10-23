@@ -59,6 +59,10 @@ async function main() {
   const state = ladeGeheim(STATE_BOT, { beworben: {}, emails: {}, uebersprungen: {} });
   const postfach = ladeGeheim(STATE_POSTFACH, { antworten: {}, zusatzEmails: {} });
   state.initiativ ||= {};
+  // Firmen ohne erreichbare Bewerbungs-Mail 14 Tage aussetzen, damit sie nicht jeden Lauf die Auswahl verstopfen.
+  state.ohneMail ||= {};
+  const frist = new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10);
+  for (const [k, d] of Object.entries(state.ohneMail)) if (d < frist) delete state.ohneMail[k];
 
   // Firmen, die schon Post von dir bekommen haben (per Adresse, Domain oder Name), fallen raus.
   const bekannt = [...Object.keys(state.emails), ...Object.keys(postfach.zusatzEmails)];
@@ -71,7 +75,7 @@ async function main() {
     try {
       for (const st of await sucheStellen({ was, angebotsart: 1, wo, umkreis: wo ? 5 : undefined })) {
         const key = firmaKey(st.arbeitgeber);
-        if (!key || firmen.has(key) || proFirma.has(key) || !ortPasst(st)) continue;
+        if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !ortPasst(st)) continue;
         if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(RELEVANT.test(st.titel) || BUERO.test(st.titel))) continue;
         proFirma.set(key, st);
       }
@@ -81,14 +85,14 @@ async function main() {
     try {
       for (const st of await sucheStellen({ was: `${was} ${zusatz}`, angebotsart: 1, wo: null })) {
         const key = firmaKey(st.arbeitgeber);
-        if (!key || firmen.has(key) || proFirma.has(key) || ortPasst(st)) continue;
+        if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || ortPasst(st)) continue;
         if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(CYBER.test(st.titel) || IT.test(st.titel))) continue;
         st.nurRemote = true; // liegt außerhalb der Region - nur nehmen, wenn die Anzeige komplett Homeoffice bietet
         proFirma.set(key, st);
       }
     } catch (e) { console.log(`[initiativ] Remote-Suche "${was}" fehlgeschlagen: ${e.message}`); }
   }
-  const auswahl = [...proFirma.entries()].slice(0, 700);
+  const auswahl = [...proFirma.entries()].slice(0, 1500);
   console.log(`[initiativ] ${auswahl.length} neue Firmen im Wunschbereich.`);
   await parallel(auswahl, 6, async ([, st]) => {
     const { text, flags, externeUrl } = await holeDetails(st.refnr);
@@ -105,6 +109,7 @@ async function main() {
     // Keine Mail in der Anzeige: Bewerbungs-Adresse auf der Firmen-Website suchen (erst hier, damit nur so viele Seiten wie nötig geladen werden).
     if (!st.email && st.website && !st.vermittler && !domains.has(st.website)) st.email = await emailVonWebsite(st.website);
     const { email } = st;
+    if (!emailOk(email)) state.ohneMail[key] = heute();
     if (st.vermittler || VERMITTLER.test(email) || !emailOk(email) || state.emails[email] || postfach.zusatzEmails[email] || domains.has(firmenDomain(email))) continue;
     const bereich = bereichVon(st);
     const betreff = `Initiativbewerbung – Einstieg im Bereich ${bereich} – ${BEWERBER()}`;
@@ -137,6 +142,7 @@ async function main() {
     `Heute ${gesendet.length} Firma/Firmen in deinen Lieblingsbereichen angeschrieben · insgesamt ${Object.keys(state.beworben).length} Bewerbungen raus`,
     ...gesendet,
   ].join('\n');
+  if (LIVE) speichereGeheim(STATE_BOT, state);
   console.log(bericht);
   if (gesendet.length) await meldeMir(`🚀 Initiativbewerbungen: ${gesendet.length} raus`, bericht, transport);
 }
