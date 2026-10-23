@@ -36,6 +36,14 @@ const FIRMEN = [
   { firma: 'Infraserv Höchst', domain: 'infraserv.com', ort: 'Frankfurt-Höchst' },
   { firma: 'VGF Verkehrsgesellschaft Frankfurt', domain: 'vgf-ffm.de', ort: 'Frankfurt am Main' },
   { firma: 'Mainzer Stadtwerke AG', domain: 'mainzer-stadtwerke.de', ort: 'Mainz' },
+  { firma: 'Lufthansa Systems GmbH & Co. KG', domain: 'lhsystems.com', ort: 'Raunheim' },
+  { firma: 'WIVERTIS GmbH', domain: 'wivertis.de', ort: 'Wiesbaden' },
+  { firma: 'Seibert Group GmbH', domain: 'seibert.group', ort: 'Wiesbaden' },
+  { firma: 'adesso SE Frankfurt', domain: 'adesso.de', ort: 'Frankfurt am Main' },
+  { firma: 'Frankfurter Volksbank Rhein/Main eG', domain: 'frankfurter-volksbank.de', ort: 'Frankfurt am Main' },
+  { firma: 'Nassauische Sparkasse (Naspa)', domain: 'naspa.de', ort: 'Wiesbaden' },
+  { firma: 'Wiesbadener Volksbank eG', domain: 'wvb.de', ort: 'Wiesbaden' },
+  { firma: 'Alte Leipziger – Hallesche', domain: 'alte-leipziger.de', ort: 'Oberursel' },
 ];
 
 async function main() {
