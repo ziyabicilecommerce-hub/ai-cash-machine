@@ -143,10 +143,10 @@ const STANDARD_SUCHE = [
 ].join(';');
 
 export const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key\)? ?account|account manager|kundenberater|neukunden|d2d|door to door|fundraising/i;
-export const ZEITARBEIT = /personaldienstleist|zeitarbeit|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt|\b(dis ag|tempworkers|randstad|adecco|manpower|hays|orizon|amadeus fire|ferchau|gulp|brunel|persona service|jobactive|piening|timepartner|startpeople|tempton|akkodis|allianz personal)\b|\bpersonal (gmbh|service|partner)/i;
+export const ZEITARBEIT = /personaldienstleist|zeitarbeit|zeitservice|zeit-service|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt|\b(dis ag|tempworkers|randstad|adecco|manpower|hays|orizon|amadeus fire|ferchau|gulp|brunel|persona service|jobactive|piening|timepartner|startpeople|tempton|akkodis|allianz personal)\b|\bpersonal (gmbh|service|partner)/i;
 // Führungsjobs sind ohne Erfahrung sinnlos.
 // Kein Handwerk, keine Hilfs-/Haushaltsjobs - außer der Titel ist klar ein Büro-Job (z.B. "Bürokaufmann für Glaserei").
-const HANDWERK = /montage|monteur|helfer\b|handwerk|elektriker|mechaniker|mechatroniker|schlosser|schweiß|tischler|schreiner|maler\b|lackierer|maurer|dachdecker|installateur|sanitär|heizung|klempner|fliesen|zimmerer|gärtner|garten|landschaftsbau|bauhelfer|bauarbeiter|reinigung|hauswirtschaft|haushaltshilfe|\bkoch\b|küchen|hausmeister|glaser\b|metallbau|produktionshelfer/i;
+const HANDWERK = /montage|monteur|helfer\b|handwerk|elektriker|mechaniker|mechatroniker|schlosser|schweiß|tischler|schreiner|maler\b|lackierer|maurer|dachdecker|installateur|sanitär|heizung|klempner|fliesen|zimmerer|gärtner|garten|landschaftsbau|bauhelfer|bauarbeiter|reinigung|hauswirtschaft|haushaltshilfe|\bkoch\b|küchen|hausmeister|glaser\b|metallbau|produktionshelfer|fertigung|produktion\b|produktionsmitarbeit|maschinenbediener|lagerlogistik|lagermitarbeit|kommissionier|staplerfahrer/i;
 const BUERO = /büro|kaufm|sachbearbeit|assistenz|verwaltung|empfang|disposition|disponent|sekretär/i;
 const FUEHRUNG = /geschäftsführ|leiter(in)?\b|leitung\b|head of|senior|teamlead|team lead|director|direktor/i;
 // Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
