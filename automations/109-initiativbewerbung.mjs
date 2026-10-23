@@ -8,6 +8,7 @@ import {
   gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang,
 } from './lib/bewerbung.mjs';
 import { initiativAnschreiben } from './lib/anschreibenVorlage.mjs';
+import { websiteDomain, emailVonWebsite } from './lib/firmenWebsite.mjs';
 import {
   STATE_BOT, STATE_POSTFACH, VERTRIEB, ZEITARBEIT, ortPasst, sucheStellen, holeDetails, findeEmail, parallel,
 } from './106-bewerbungs-bot.mjs';
@@ -90,9 +91,10 @@ async function main() {
   const auswahl = [...proFirma.entries()].slice(0, 700);
   console.log(`[initiativ] ${auswahl.length} neue Firmen im Wunschbereich.`);
   await parallel(auswahl, 6, async ([, st]) => {
-    const { text, flags } = await holeDetails(st.refnr);
+    const { text, flags, externeUrl } = await holeDetails(st.refnr);
     st.vermittler = !!(flags.istArbeitnehmerUeberlassung || flags.istPrivateArbeitsvermittlung);
     st.email = st.nurRemote && !REMOTE.test(text) ? '' : findeEmail(text);
+    if (!st.email && !st.nurRemote) st.website = websiteDomain(text, externeUrl);
   });
 
   const cv = await holeLebenslauf();
@@ -100,6 +102,8 @@ async function main() {
   const gesendet = [];
   for (const [key, st] of auswahl) {
     if (gesendet.length >= MAX) break;
+    // Keine Mail in der Anzeige: Bewerbungs-Adresse auf der Firmen-Website suchen (erst hier, damit nur so viele Seiten wie nötig geladen werden).
+    if (!st.email && st.website && !st.vermittler && !domains.has(st.website)) st.email = await emailVonWebsite(st.website);
     const { email } = st;
     if (st.vermittler || VERMITTLER.test(email) || !emailOk(email) || state.emails[email] || postfach.zusatzEmails[email] || domains.has(firmenDomain(email))) continue;
     const bereich = bereichVon(st);
@@ -123,7 +127,7 @@ async function main() {
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
     domains.add(firmenDomain(email));
-    gesendet.push(`✅ ${st.arbeitgeber} (${st.nurRemote ? '100 % Homeoffice' : st.arbeitsort?.ort || '?'}) · ${bereich} · an ${email}`);
+    gesendet.push(`✅ ${st.arbeitgeber} (${st.nurRemote ? '100 % Homeoffice' : st.arbeitsort?.ort || '?'}) · ${bereich} · an ${email}${st.website ? ' (von der Firmen-Website)' : ''}`);
     console.log(`[initiativ] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${st.arbeitgeber}`);
     await pause(8000); // Gmail nicht fluten
   }
