@@ -29,3 +29,24 @@ export function auftragAusIssue(body, bots) {
     text: text(roh.text, 600),
   };
 }
+
+// Tages-Bot: jeden Tag ist ein anderer Bot dran (reihum nach Tag im Jahr) und denkt sich selbst eine Idee aus.
+export function tagesBot(bots, datum = new Date()) {
+  const tag = Math.floor((datum - new Date(Date.UTC(datum.getUTCFullYear(), 0, 0))) / 86400000);
+  return { bot: bots[tag % bots.length], tag };
+}
+
+export const ideePrompt = (bot) => `Invent ONE fresh, original idea for a short vertical AI video for the "${bot.name}" channel (${bot.text}).
+Style example: "${bot.beispiel}". Rules: original characters only (no existing movie, series, game or anime characters, no
+celebrities, no brands), visually spectacular, lots of movement, one sentence in English, max 30 words.
+Answer ONLY with JSON: {"idee":"..."}`;
+
+// Idee von der Gratis-KI; klappt das nicht, eine der festen Ideen des Bots (reihum).
+export async function tagesIdee(bot, tag, kiJson) {
+  try {
+    const idee = text((await kiJson(ideePrompt(bot), { maxTokens: 300 }))?.idee, 400);
+    if (idee.length >= 15) return { idee, quelle: 'ki' };
+  } catch { /* Rückfall */ }
+  const liste = bot.ideen?.length ? bot.ideen : [bot.beispiel];
+  return { idee: liste[tag % liste.length], quelle: 'liste' };
+}

@@ -53,3 +53,17 @@ test('Modal-Turbo: nur mit beiden Schlüsseln, 720p-Auftrag', () => {
   assert.equal(a.shots[0].bild_b64, 'eA==');
   assert.equal(a.shots[0].prompt, 'mummy walks');
 });
+
+import { tagesBot, tagesIdee } from '../../automations/lib/nachtwerkBots.mjs';
+test('Tages-Bot: reihum ein Bot pro Tag, Idee von der KI oder aus der Liste', async () => {
+  const a = tagesBot(bots, new Date(Date.UTC(2026, 9, 23)));
+  const b = tagesBot(bots, new Date(Date.UTC(2026, 9, 24)));
+  assert.notEqual(a.bot.id, b.bot.id, 'jeden Tag ein anderer Bot');
+  assert.equal(tagesBot(bots, new Date(Date.UTC(2026, 9, 23 + bots.length))).bot.id, a.bot.id);
+  assert.ok(bots.every((x) => x.ideen?.length >= 3));
+  const ki = await tagesIdee(bots[0], 1, async () => ({ idee: 'a glowing jellyfish swarm rises through a flooded subway tunnel' }));
+  assert.equal(ki.quelle, 'ki');
+  const rueck = await tagesIdee(bots[0], 1, async () => { throw new Error('429'); });
+  assert.equal(rueck.quelle, 'liste');
+  assert.equal(rueck.idee, bots[0].ideen[1]);
+});
