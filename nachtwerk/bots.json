@@ -1,9 +1,84 @@
 {
   "bots": [
-    { "id": "grusel", "emoji": "🧟", "name": "Grusel-Bot", "text": "Horror-Kurzfilm mit Erzähler: Mumien, Geister, verlassene Orte.", "beispiel": "a creepy bandaged mummy wakes up in an ancient tomb and chases an explorer", "preset": "grusel", "stil": "cartoon", "geschichte": true, "shots": 12 },
-    { "id": "cartoon", "emoji": "🎨", "name": "Cartoon-Bot", "text": "3D-Zeichentrick-Geschichte wie ein Familienfilm, eigene Figuren.", "beispiel": "a tiny fox finds a fallen star and brings it back to the sky", "preset": "dolly-in", "stil": "cartoon", "geschichte": true, "shots": 12 },
-    { "id": "anime", "emoji": "⚔️", "name": "Anime-Kampf-Bot", "text": "Anime-Kampfszene mit Effekten, Impact-Frames und schnellen Schnitten.", "beispiel": "two rival sword masters clash on a burning bridge", "preset": "anime-kampf", "stil": "anime", "geschichte": false, "shots": 8 },
-    { "id": "kino", "emoji": "🎬", "name": "Kino-Bot", "text": "Realistischer Kurzfilm im Blockbuster-Look mit Erzähler.", "beispiel": "a lone astronaut discovers a glowing forest on a frozen moon", "preset": "crane-up", "stil": "kino", "geschichte": true, "shots": 12 },
-    { "id": "welt", "emoji": "🌋", "name": "Welten-Bot", "text": "Epische Naturgewalten und Weltall, durchgehende Kamerafahrt ohne Menschen.", "beispiel": "a colossal ringed planet rising over a glowing alien ocean", "preset": "fpv", "stil": "kino", "geschichte": false, "shots": 6 }
+    {
+      "id": "grusel",
+      "emoji": "🧟",
+      "name": "Grusel-Bot",
+      "text": "Horror-Kurzfilm mit Erzähler: Mumien, Geister, verlassene Orte.",
+      "beispiel": "a creepy bandaged mummy wakes up in an ancient tomb and chases an explorer",
+      "preset": "grusel",
+      "stil": "cartoon",
+      "geschichte": true,
+      "shots": 12,
+      "ideen": [
+        "a haunted lighthouse keeper's lantern turns on by itself every midnight and lures sailors to a ghost ship",
+        "a scarecrow walks through a foggy cornfield at night hunting crows that stole its button eyes",
+        "an abandoned carnival ride starts spinning by itself in the rain and a shadow waves from the top"
+      ]
+    },
+    {
+      "id": "cartoon",
+      "emoji": "🎨",
+      "name": "Cartoon-Bot",
+      "text": "3D-Zeichentrick-Geschichte wie ein Familienfilm, eigene Figuren.",
+      "beispiel": "a tiny fox finds a fallen star and brings it back to the sky",
+      "preset": "dolly-in",
+      "stil": "cartoon",
+      "geschichte": true,
+      "shots": 12,
+      "ideen": [
+        "a tiny robot gardener tries to grow the biggest pumpkin in town and it floats away like a balloon",
+        "a shy cloud learns to make rainbows to cheer up a gloomy village",
+        "a penguin chef opens an ice-cream truck in the desert"
+      ]
+    },
+    {
+      "id": "anime",
+      "emoji": "⚔️",
+      "name": "Anime-Kampf-Bot",
+      "text": "Anime-Kampfszene mit Effekten, Impact-Frames und schnellen Schnitten.",
+      "beispiel": "two rival sword masters clash on a burning bridge",
+      "preset": "anime-kampf",
+      "stil": "anime",
+      "geschichte": false,
+      "shots": 8,
+      "ideen": [
+        "a lightning-fast fox spirit duels a giant stone golem in a bamboo forest",
+        "two rival sky pirates clash on top of a flying airship during a thunderstorm",
+        "a young mage with a fire whip battles a frost dragon on a frozen lake"
+      ]
+    },
+    {
+      "id": "kino",
+      "emoji": "🎬",
+      "name": "Kino-Bot",
+      "text": "Realistischer Kurzfilm im Blockbuster-Look mit Erzähler.",
+      "beispiel": "a lone astronaut discovers a glowing forest on a frozen moon",
+      "preset": "crane-up",
+      "stil": "kino",
+      "geschichte": true,
+      "shots": 12,
+      "ideen": [
+        "a deep-sea diver discovers a glowing city at the bottom of the ocean",
+        "a lone rider races a sandstorm across a red desert toward a hidden oasis",
+        "an astronaut repairs a satellite while a meteor shower lights up the earth below"
+      ]
+    },
+    {
+      "id": "welt",
+      "emoji": "🌋",
+      "name": "Welten-Bot",
+      "text": "Epische Naturgewalten und Weltall, durchgehende Kamerafahrt ohne Menschen.",
+      "beispiel": "a colossal ringed planet rising over a glowing alien ocean",
+      "preset": "fpv",
+      "stil": "kino",
+      "geschichte": false,
+      "shots": 6,
+      "ideen": [
+        "a volcano erupts under the northern lights while lava meets the sea",
+        "a gigantic waterfall pours off the edge of a floating island into the clouds",
+        "a supercell storm forms over endless golden wheat fields at sunset"
+      ]
+    }
   ]
 }

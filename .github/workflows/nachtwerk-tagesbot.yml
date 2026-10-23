@@ -1,0 +1,101 @@
+name: "🤖 NACHTWERK-Tagesbot (jeden Tag ein Video)"
+
+# Jede Nacht ist ein anderer Bot dran (Grusel, Cartoon, Anime, Kino, Welten), erfindet sich eine Idee und baut mit dem
+# Ziya Studio ein Video (Krass-Modus, KI-Kennzeichnung im Bericht). Ergebnis + Vorschaubild landen in einem Issue
+# (Label tages-video). Gepostet wird nichts automatisch. Von Hand: Actions > NACHTWERK-Tagesbot > Run workflow.
+
+on:
+  schedule:
+    - cron: '17 1 * * *'
+  workflow_dispatch:
+    inputs:
+      bot:
+        description: 'Bestimmten Bot nehmen (leer = Bot des Tages)'
+        type: choice
+        default: ''
+        options: ['', grusel, cartoon, anime, kino, welt]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  idee:
+    runs-on: ubuntu-latest
+    outputs:
+      issue: ${{ steps.issue.outputs.nummer }}
+      idee: ${{ steps.plan.outputs.idee }}
+      preset: ${{ steps.plan.outputs.preset }}
+      stil: ${{ steps.plan.outputs.stil }}
+      shots: ${{ steps.plan.outputs.shots }}
+      sekunden: ${{ steps.plan.outputs.sekunden }}
+      geschichte: ${{ steps.plan.outputs.geschichte }}
+      menschen: ${{ steps.plan.outputs.menschen }}
+      durchgehend: ${{ steps.plan.outputs.durchgehend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - id: plan
+        env:
+          TAGES_BOT: ${{ inputs.bot }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
+        run: node automations/nachtwerk-tagesbot.mjs
+      - id: issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITEL: ${{ steps.plan.outputs.titel }}
+          IDEE: ${{ steps.plan.outputs.idee }}
+          LAUF: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create tages-video -R "$GITHUB_REPOSITORY" --color 9b7cff --description "Tagesvideo eines NACHTWERK-Bots" 2>/dev/null || true
+          printf '%s\n\n**Idee:** %s\n\nWird gerade gebaut: %s\n\n_KI-generiert – beim Posten als KI-Inhalt kennzeichnen._\n' "🤖 Tagesvideo vom Bot." "$IDEE" "$LAUF" > text.md
+          URL=$(gh issue create -R "$GITHUB_REPOSITORY" --title "$TITEL" --label tages-video --body-file text.md)
+          echo "nummer=${URL##*/}" >> "$GITHUB_OUTPUT"
+
+  video:
+    needs: idee
+    uses: ./.github/workflows/ziya-studio.yml
+    secrets: inherit
+    with:
+      idee: ${{ needs.idee.outputs.idee }}
+      preset: ${{ needs.idee.outputs.preset }}
+      stil: ${{ needs.idee.outputs.stil }}
+      shots: ${{ needs.idee.outputs.shots }}
+      sekunden: ${{ needs.idee.outputs.sekunden }}
+      geschichte: ${{ needs.idee.outputs.geschichte == 'true' }}
+      menschen: ${{ needs.idee.outputs.menschen == 'true' }}
+      durchgehend: ${{ needs.idee.outputs.durchgehend == 'true' }}
+      krass: true
+
+  fertig:
+    needs: [idee, video]
+    if: ${{ !cancelled() && needs.idee.outputs.issue != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          ERGEBNIS: ${{ needs.video.result }}
+          ISSUE: ${{ needs.idee.outputs.issue }}
+          LAUF: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$ERGEBNIS" = "success" ]; then
+            gh issue comment "$ISSUE" -R "$GITHUB_REPOSITORY" --body "✅ Fertig! Download: $LAUF → unten bei **Artifacts** auf **ziya-video** (Video + film.nachtwerk.json zum Weiterschneiden in NACHTWERK)."
+          else
+            gh issue comment "$ISSUE" -R "$GITHUB_REPOSITORY" --body "❌ Heute kein Video ($ERGEBNIS). Protokoll: $LAUF"
+          fi
+
+  vorschau:
+    needs: [idee, video]
+    if: needs.video.result == 'success'
+    uses: ./.github/workflows/nachtwerk-vorschau.yml
+    permissions:
+      contents: write
+      issues: write
+      actions: read
+    with:
+      run_id: ${{ github.run_id }}
+      issue: ${{ needs.idee.outputs.issue }}
