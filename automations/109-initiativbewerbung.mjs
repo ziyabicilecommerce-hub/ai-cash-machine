@@ -10,7 +10,7 @@ import {
 import { initiativAnschreiben } from './lib/anschreibenVorlage.mjs';
 import { websiteDomain, emailVonWebsite } from './lib/firmenWebsite.mjs';
 import {
-  STATE_BOT, STATE_POSTFACH, VERTRIEB, ZEITARBEIT, ortPasst, sucheStellen, holeDetails, findeEmail, parallel,
+  STATE_BOT, STATE_POSTFACH, VERTRIEB, ZEITARBEIT, ortPasst, sucheStellen, holeDetails, findeEmail, parallel, monatsBrutto,
 } from './106-bewerbungs-bot.mjs';
 
 const MAX = LIVE ? Math.max(1, Math.min(60, parseInt(env('BEWERBUNG_INITIATIV_MAX', '50'), 10) || 50)) : 3;
@@ -19,6 +19,7 @@ const SUCHE = ['Luftfracht', 'Air Cargo', 'Zoll', 'Zollabwicklung', 'Export', 'I
   'SOC Analyst', 'Cyber Security', 'IT-Security', 'IT-Sicherheit', 'Informationssicherheit', 'Penetration Tester', 'Security Analyst',
   'Security Engineer', 'Cloud Security', 'Netzwerksicherheit', 'IT-Forensik', 'Security Operations', 'Cyber Defense', 'Vulnerability', 'Identity Access Management', 'Firewall', 'IT-Security Consultant', 'Datenschutz',
   'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', 'IT-Administrator', 'Systemadministrator', 'IT-Techniker', 'Rechenzentrum', 'Netzwerk',
+  '2nd Level Support', 'Netzwerkadministrator', 'IT-Mitarbeiter', 'Data Center', 'IT-Operator', 'Network Operations', 'Cloud Support', 'Systembetreuer', 'Anwendungsbetreuer', 'IT-Koordinator',
   'Sachbearbeiter', 'Kaufmännischer Mitarbeiter', 'Bürokaufmann', 'Büroassistenz', 'Teamassistenz', 'Empfang', 'Kundenservice', 'Verwaltung', 'Backoffice', 'Datenerfassung'];
 // Echte IT-Sicherheit - nicht Luftsicherheit oder Objektschutz.
 const CYBER = /cyber|it-?secur|it-?sicherheit|informationssicherheit|\bisms\b|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi|cloud ?security|netzwerksicherheit|firewall|vulnerability|schwachstellen|identity|\biam\b|access management|datenschutz|security consultant|cyber ?defen/i;
@@ -92,14 +93,20 @@ async function main() {
       }
     } catch (e) { console.log(`[initiativ] Remote-Suche "${was}" fehlgeschlagen: ${e.message}`); }
   }
-  const auswahl = [...proFirma.entries()].slice(0, 1500);
+  // IT und Cyber zuerst, damit sie sicher in die Auswahl kommen.
+  const rang = (st) => (CYBER.test(st.titel) ? 0 : IT.test(st.titel) ? 1 : 2);
+  const auswahl = [...proFirma.entries()].sort(([, a], [, b]) => rang(a) - rang(b)).slice(0, 1500);
   console.log(`[initiativ] ${auswahl.length} neue Firmen im Wunschbereich.`);
   await parallel(auswahl, 6, async ([, st]) => {
     const { text, flags, externeUrl } = await holeDetails(st.refnr);
     st.vermittler = !!(flags.istArbeitnehmerUeberlassung || flags.istPrivateArbeitsvermittlung);
     st.email = st.nurRemote && !REMOTE.test(text) ? '' : findeEmail(text);
     if (!st.email && !st.nurRemote) st.website = websiteDomain(text, externeUrl, st.arbeitgeber);
+    st.brutto = monatsBrutto(flags);
   });
+
+  // Nichts, was laut Anzeige weniger als das CONDOR-Angebot zahlt (~3.100 € brutto).
+  const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '3100'), 10) || 3100;
 
   const cv = await holeLebenslauf();
   const transport = gmailTransport();
@@ -107,6 +114,7 @@ async function main() {
   for (const [key, st] of auswahl) {
     if (gesendet.length >= MAX) break;
     // Keine Mail in der Anzeige: Bewerbungs-Adresse auf der Firmen-Website suchen (erst hier, damit nur so viele Seiten wie nötig geladen werden).
+    if (st.brutto && st.brutto.bis < MIN_BRUTTO) continue;
     if (!st.email && st.website && !st.vermittler && !domains.has(st.website)) st.email = await emailVonWebsite(st.website);
     const { email } = st;
     if (!emailOk(email)) state.ohneMail[key] = heute();
