@@ -132,3 +132,17 @@ test('Ziya Studio: Geschichten-Modus (Kurzfilm mit eigenen Figuren)', async () =
   assert.deepEqual(await geschichtePlanen('x', { preset: 'orbit', n: 6, stil: 'kino', kiJson: async () => { throw new Error('429'); }, ersatz }), ['ersatz']);
   assert.equal((await geschichtePlanen('x', { preset: 'orbit', n: 3, kiJson: async () => ({ szenen: [{ bild: 'a' }, { bild: 'b' }, { bild: 'c' }] }), ersatz })).length, 3);
 });
+
+import { auffuellen } from '../../automations/lib/ziyaGeschichte.mjs';
+test('Geschichte: zu wenige Szenen werden aufgefüllt, zweiter KI-Versuch', async () => {
+  const a = auffuellen([{ nr: 1, bild: 'a', satz: 'x' }, { nr: 2, bild: 'b', satz: 'y' }, { nr: 3, bild: 'c', satz: 'z' }], 6);
+  assert.deepEqual(a.map((s) => s.nr), [1, 2, 3, 4, 5, 6]);
+  assert.match(a[3].bild, /^a, extreme close-up/);
+  assert.equal(a[3].satz, '', 'Erzähler wiederholt sich nicht');
+  let aufrufe = 0;
+  const kiJson = async () => (++aufrufe === 1 ? { szenen: [{ bild: 'a' }, { bild: 'b' }, { bild: 'c' }] } : { szenen: [1, 2, 3, 4, 5, 6].map((i) => ({ bild: `s${i}` })) });
+  const s = await geschichtePlanen('x', { preset: 'grusel', n: 6, kiJson, ersatz: () => [] });
+  assert.equal(aufrufe, 2);
+  assert.equal(s.length, 6);
+  assert.match(s[5].bild, /^s6/);
+});
