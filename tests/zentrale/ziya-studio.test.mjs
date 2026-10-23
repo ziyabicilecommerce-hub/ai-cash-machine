@@ -142,7 +142,7 @@ test('Geschichte: zu wenige Szenen werden aufgefüllt, zweiter KI-Versuch', asyn
   let aufrufe = 0;
   const kiJson = async () => (++aufrufe === 1 ? { szenen: [{ bild: 'a' }, { bild: 'b' }, { bild: 'c' }] } : { szenen: [1, 2, 3, 4, 5, 6].map((i) => ({ bild: `s${i}` })) });
   const s = await geschichtePlanen('x', { preset: 'grusel', n: 6, kiJson, ersatz: () => [] });
-  assert.equal(aufrufe, 2);
+  assert.equal(aufrufe, 3, 'zwei Planungsversuche + Regie-Bot');
   assert.equal(s.length, 6);
   assert.match(s[5].bild, /^s6/);
 });
@@ -157,4 +157,18 @@ test('Krass-Modus: Impact-Schnitte, Wackler, Bass und Herzschlag bei Grusel', ()
   assert.match(t, /mod\(t,0\.83\)/, 'Herzschlag');
   assert.ok(!tonFormel([3, 3], 'orbit', { krass: true }).includes('mod(t,0.83)'), 'Herzschlag nur bei Grusel');
   assert.match(KRASS, /high-energy/);
+});
+
+import { regiePrompt } from '../../automations/lib/ziyaGeschichte.mjs';
+test('Regie-Bot: überarbeitet den Plan, verliert aber keine Szenen', async () => {
+  assert.match(regiePrompt({ szenen: [{ bild: 'a' }] }), /hook[\s\S]*German narration[\s\S]*"bild":"a"/);
+  const plan = { szenen: [1, 2, 3].map((i) => ({ bild: `b${i}`, satz: `s${i}` })) };
+  let n = 0;
+  const besser = { szenen: [1, 2, 3].map((i) => ({ bild: `besser${i}`, satz: `Satz ${i}` })) };
+  const s = await geschichtePlanen('x', { preset: 'grusel', n: 3, kiJson: async () => (++n === 1 ? plan : besser), ersatz: () => [] });
+  assert.match(s[0].bild, /^besser1/);
+  n = 0;
+  const kaputt = { szenen: [{ bild: 'nur eins', satz: 'x' }] };
+  const t = await geschichtePlanen('x', { preset: 'grusel', n: 3, kiJson: async () => (++n === 1 ? plan : kaputt), ersatz: () => [] });
+  assert.match(t[0].bild, /^b1/, 'schlechtere Überarbeitung wird verworfen');
 });
