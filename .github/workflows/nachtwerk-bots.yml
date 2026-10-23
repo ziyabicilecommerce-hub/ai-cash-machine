@@ -31,6 +31,7 @@ jobs:
       durchgehend: ${{ steps.lesen.outputs.durchgehend }}
       loop: ${{ steps.lesen.outputs.loop }}
       text: ${{ steps.lesen.outputs.text }}
+      krass: ${{ steps.lesen.outputs.krass }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -69,6 +70,7 @@ jobs:
       durchgehend: ${{ needs.auftrag.outputs.durchgehend == 'true' }}
       loop: ${{ needs.auftrag.outputs.loop == 'true' }}
       text: ${{ needs.auftrag.outputs.text }}
+      krass: ${{ needs.auftrag.outputs.krass != 'false' }}
 
   fertig:
     needs: [auftrag, video]

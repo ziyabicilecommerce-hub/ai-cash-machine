@@ -25,6 +25,7 @@ export function auftragAusIssue(body, bots) {
     menschen: jaNein(roh.menschen, geschichte || bot.preset === 'anime-kampf'),
     durchgehend: jaNein(roh.durchgehend, !geschichte),
     loop: jaNein(roh.loop, false),
+    krass: jaNein(roh.krass, true),
     text: text(roh.text, 600),
   };
 }
