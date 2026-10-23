@@ -116,6 +116,13 @@ async function startbild(s, seed) {
   const bild = join(ORDNER, `shot${s.nr}.jpg`);
   const ok = await ladeBild(s.bild, bild, { breite: 768, hoehe: 1344, seed: seed + s.nr, enhance: true })
     || await ladeBild(s.bild, bild, { breite: 768, hoehe: 1344, seed: seed + s.nr + 100, enhance: false });
+  // Bild-Retter-Bot: Bilddienst down (#201: 503) -> freie FLUX-Spaces auf Hugging Face, ohne Schlüssel.
+  if (!ok) {
+    try {
+      await ausfuehren('python3', [resolve('scripts/ki_bild.py'), s.bild.slice(0, 900), bild, '768', '1344', String(seed + s.nr)], { timeout: 240000 });
+      if (existsSync(bild)) { console.log(`${LOG} Shot ${s.nr}: Startbild vom Bild-Retter (FLUX-Space)`); return true; }
+    } catch (err) { console.log(`${LOG} Bild-Retter ohne Erfolg: ${String(err.stdout || err.message).slice(-200)}`); }
+  }
   if (ok && !process.env.POLLINATIONS_TOKEN) {
     const roh = join(ORDNER, `shot${s.nr}-wz.jpg`);
     try { copyFileSync(bild, roh); ffmpeg(['-i', roh, '-vf', 'crop=iw*0.92:ih*0.92:0:0,scale=768:1344', '-q:v', '2', bild]); } catch { copyFileSync(roh, bild); }

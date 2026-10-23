@@ -41,18 +41,35 @@ export function geschichteZuShots(d, { idee, preset, n, stil = 'kino' }) {
 // noch Szenen, werden die vorhandenen als Nah-/Weit-Einstellung wiederholt; ganz ohne Plan bleibt der normale Shot-Plan.
 export async function geschichtePlanen(idee, { preset, n, stil, kiJson, ersatz }) {
   let beste = [];
+  let roh = null;
   for (let versuch = 0; versuch < 2 && beste.length < n; versuch++) {
     try {
       const prompt = geschichtePrompt(idee, n) + (versuch ? `\nIMPORTANT: the "szenen" array must contain EXACTLY ${n} items.` : '');
-      const shots = geschichteZuShots(await kiJson(prompt, { maxTokens: 3500 }), { idee, preset, n, stil });
-      if (shots.length > beste.length) beste = shots;
+      const d = await kiJson(prompt, { maxTokens: 3500 });
+      const shots = geschichteZuShots(d, { idee, preset, n, stil });
+      if (shots.length > beste.length) { beste = shots; roh = d; }
     } catch (err) {
       console.log(`[ziya-studio] Geschichte nicht geplant (${String(err.message).slice(0, 120)})`);
     }
   }
   if (beste.length < Math.min(3, n)) return ersatz();
+  // Regie-Bot: zweiter KI-Durchgang prüft den Plan und macht ihn krasser - nur übernehmen, wenn nichts verloren geht.
+  try {
+    const besser = geschichteZuShots(await kiJson(regiePrompt(roh), { maxTokens: 3500 }), { idee, preset, n, stil });
+    if (besser.length >= beste.length && besser.every((s) => s.satz)) { beste = besser; console.log('[ziya-studio] Regie-Bot hat die Geschichte verbessert'); }
+  } catch { /* Plan bleibt */ }
   return auffuellen(beste, n);
 }
+
+// Regie-Bot: wie ein Regisseur, der das Drehbuch überarbeitet - stärkerer Hook, logischer Ablauf, natürliches Deutsch.
+export const regiePrompt = (plan) => `You are a demanding film director. Improve this storyboard for a viral vertical short video:
+- scene 1 must be a shocking, eye-catching hook; raise tension every scene; end with a strong payoff
+- keep the same number of scenes, the same original characters ("figuren") and the same JSON format
+- "bild": vivid, concrete, cinematic image prompts in English (lighting, camera angle, action, no text in images)
+- "bewegung": strong, dynamic camera and subject motion in English
+- "satz": short, natural, gripping German narration (max 14 words), no strange or made-up words
+Answer ONLY with the improved JSON.
+${JSON.stringify(plan).slice(0, 6000)}`;
 
 const NACHSCHUB = ['extreme close-up, same moment', 'wide shot from behind, same moment', 'low angle shot, same moment'];
 export function auffuellen(shots, n) {
