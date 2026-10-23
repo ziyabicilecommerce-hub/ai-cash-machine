@@ -37,13 +37,30 @@ export function geschichteZuShots(d, { idee, preset, n, stil = 'kino' }) {
   }));
 }
 
-// Plant die Geschichte mit der Gratis-KI; scheitert sie oder liefert zu wenig, bleibt der normale Shot-Plan.
+// Plant die Geschichte mit der Gratis-KI (zwei Versuche - kleine Modelle liefern oft zu wenige Szenen). Fehlen danach
+// noch Szenen, werden die vorhandenen als Nah-/Weit-Einstellung wiederholt; ganz ohne Plan bleibt der normale Shot-Plan.
 export async function geschichtePlanen(idee, { preset, n, stil, kiJson, ersatz }) {
-  try {
-    const shots = geschichteZuShots(await kiJson(geschichtePrompt(idee, n), { maxTokens: 3500 }), { idee, preset, n, stil });
-    if (shots.length >= Math.min(3, n)) return shots;
-  } catch (err) {
-    console.log(`[ziya-studio] Geschichte nicht geplant (${String(err.message).slice(0, 120)}) - normaler Shot-Plan`);
+  let beste = [];
+  for (let versuch = 0; versuch < 2 && beste.length < n; versuch++) {
+    try {
+      const prompt = geschichtePrompt(idee, n) + (versuch ? `\nIMPORTANT: the "szenen" array must contain EXACTLY ${n} items.` : '');
+      const shots = geschichteZuShots(await kiJson(prompt, { maxTokens: 3500 }), { idee, preset, n, stil });
+      if (shots.length > beste.length) beste = shots;
+    } catch (err) {
+      console.log(`[ziya-studio] Geschichte nicht geplant (${String(err.message).slice(0, 120)})`);
+    }
   }
-  return ersatz();
+  if (beste.length < Math.min(3, n)) return ersatz();
+  return auffuellen(beste, n);
+}
+
+const NACHSCHUB = ['extreme close-up, same moment', 'wide shot from behind, same moment', 'low angle shot, same moment'];
+export function auffuellen(shots, n) {
+  const basis = shots.length;
+  const alle = [...shots];
+  for (let i = 0; alle.length < n; i++) {
+    const quelle = shots[i % basis];
+    alle.push({ ...quelle, bild: `${quelle.bild}, ${NACHSCHUB[Math.floor(i / basis) % NACHSCHUB.length]}`, satz: '' });
+  }
+  return alle.map((s, i) => ({ ...s, nr: i + 1 }));
 }

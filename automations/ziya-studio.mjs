@@ -160,8 +160,8 @@ async function main() {
       const datei = join(ORDNER, `shot${s.nr}.jpg`);
       return { ...s, bildUrl: bildURL(s.bild, { width: 768, height: 1344, seed: seed + s.nr }), ...(existsSync(datei) ? { bildB64: readFileSync(datei).toString('base64') } : {}) };
     }), ORDNER,
-      // Viele Shots = mehr Kaggle-Zeit, aber höchstens 200 min (danach Nachbearbeitung).
-      { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino', maxMinuten: Math.min(200, 50 + shots.length * 10) })
+      // T4: Start + Modell ~15 min, dann ~15-20 min pro Clip (3 Shots brauchten >80 min). Höchstens 200 min.
+      { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino', maxMinuten: Math.min(200, 60 + shots.length * 20) })
     : new Map();
   let letzterRoh = '';
   for (const s of shots) {
