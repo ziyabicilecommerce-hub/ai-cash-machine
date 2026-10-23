@@ -26,7 +26,7 @@ function bestellen(event) {
   if (idee.length < 5) return $('idee').focus();
   const auftrag = {
     bot: gewaehlt.id, idee, shots: Number($('shots').value) || gewaehlt.shots, sekunden: Number($('sekunden').value) || 3.5,
-    stil: $('stil').value, geschichte: $('geschichte').checked, text: $('text').value.trim(),
+    stil: $('stil').value, geschichte: $('geschichte').checked, krass: $('krass').checked, text: $('text').value.trim(),
   };
   const body = `${gewaehlt.emoji} **${gewaehlt.name}** – Auftrag aus NACHTWERK. Nicht verändern, nur auf „Create“ tippen.\n\n\`\`\`json\n${JSON.stringify(auftrag, null, 2)}\n\`\`\`\n`;
   const url = new URL(`https://github.com/${REPO}/issues/new`);

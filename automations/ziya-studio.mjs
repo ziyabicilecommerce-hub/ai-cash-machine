@@ -19,7 +19,7 @@ import { bildURL } from './lib/pollinationsMedia.mjs';
 import { geschichtePlanen, STILE, stilVon } from './lib/ziyaGeschichte.mjs';
 import { kiJson } from './lib/kiJson.mjs';
 import { nachtwerkProjekt, datenUrl } from './lib/nachtwerkProjekt.mjs';
-import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt } from './lib/ziyaStudio.mjs';
+import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt, KRASS } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
 const ausfuehren = promisify(execFile);
@@ -36,6 +36,9 @@ const sekunden = Math.min(Math.max(Number(process.env.ZIYA_SEKUNDEN) || 3.5, 2),
 // Loop: Endbild = Startbild, der Clip endet, wo er anfing - TikTok spielt ihn nahtlos weiter (mehr Wiederholungen).
 const loop = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_LOOP || '').trim());
 const geschichte = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_GESCHICHTE || '').trim());
+// Krass-Modus: Vorschau-Hook am Anfang, Impact-Schnitte (Blitz, Wackler, Bass), intensivere Bewegung, große Untertitel.
+const krass = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_KRASS || '').trim());
+const SCHNITT = schnittArt(presetVon(process.env.ZIYA_PRESET), { krass });
 const stil = stilVon(process.env.ZIYA_STIL);
 // Geschichte = viele verschiedene Orte/Momente, also kein Weiterdrehen aus dem letzten Bild.
 const durchgehend = !geschichte && /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_DURCHGEHEND || '').trim());
@@ -87,7 +90,7 @@ async function kiClipHolen(bild, prompt, ziel, erschoepft) {
 // Klang + optional Sprecher unterlegen; der Klang duckt sich unter die Stimme. Klappt etwas nicht: Video ohne Ton.
 async function tonDrauf(stumm, video, dauern) {
   const laenge = dauerSekunden(stumm);
-  const klang = `aevalsrc='${tonFormel(dauern, preset, schnittArt(preset))}':s=44100:d=${laenge.toFixed(2)}`;
+  const klang = `aevalsrc='${tonFormel(dauern, preset, { ...SCHNITT, krass })}':s=44100:d=${laenge.toFixed(2)}`;
   let stimme = '';
   if (sprechertext) {
     try {
@@ -120,6 +123,18 @@ async function startbild(s, seed) {
   return ok;
 }
 
+// Krass: große TikTok-Untertitel (weiß, dicker schwarzer Rand, Bildmitte unten) aus der Sprecher-Spur einbrennen.
+function untertitelEinbrennen(video) {
+  const srt = join(ORDNER, 'stimme.srt');
+  if (!existsSync(srt)) return;
+  const mit = join(ORDNER, 'mit-untertitel.mp4');
+  const stil = 'FontName=DejaVu Sans,Bold=1,FontSize=17,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=3,Shadow=0,Alignment=2,MarginV=70';
+  try {
+    ffmpeg(['-i', video, '-vf', `subtitles=${srt.replace(/([\\:'])/g, '\\$1')}:force_style='${stil}'`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-c:a', 'copy', '-movflags', '+faststart', mit]);
+    copyFileSync(mit, video);
+  } catch (err) { console.log(`${LOG} Untertitel übersprungen: ${String(err.stderr || err.message).slice(0, 200)}`); }
+}
+
 // Projektdatei für NACHTWERK (Handschnitt im Browser): Clips verkleinert (720x1280), damit die Datei handlich bleibt.
 function nachtwerkSchreiben(fertig) {
   try {
@@ -143,6 +158,7 @@ async function main() {
     ? await geschichtePlanen(idee, { preset, n: Number(process.env.ZIYA_SHOTS) || 6, stil, kiJson, ersatz: () => shotsPlanen(idee, preset, process.env.ZIYA_SHOTS) })
     : shotsPlanen(idee, preset, process.env.ZIYA_SHOTS);
   if (stil !== 'kino') for (const s of shots) s.bild = s.bild.replace(STILE.kino, STILE[stil]);
+  if (krass) for (const s of shots) s.bewegung = `${s.bewegung} ${KRASS}.`;
   // Geschichte ohne eigenen Sprechertext: der Erzähler liest die Sätze der Szenen.
   if (geschichte && !sprechertext) sprechertext = shots.map((s) => s.satz).filter(Boolean).join(' ').slice(0, 1500);
   const seed = Math.floor(Math.random() * 1e9);
@@ -189,9 +205,9 @@ async function main() {
     letzterRoh = modell ? roh : '';
     if (modell) {
       const hd = hochskalieren(roh, join(ORDNER, `shot${s.nr}-hd.mp4`));
-      ffmpeg(['-i', hd, '-an', '-vf', nachbearbeitung(s.preset, { breite: B, hoehe: H }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
+      ffmpeg(['-i', hd, '-an', '-vf', nachbearbeitung(s.preset, { breite: B, hoehe: H, krass }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
     } else {
-      ffmpeg(['-i', bild, '-vf', `${kamerafahrt(s.preset, { breite: B, hoehe: H, sekunden })},${nachbearbeitung(s.preset, { roh: false })}`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
+      ffmpeg(['-i', bild, '-vf', `${kamerafahrt(s.preset, { breite: B, hoehe: H, sekunden })},${nachbearbeitung(s.preset, { roh: false, krass })}`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
     }
     fertig.push({ ...s, datei: ziel, modell: modell || 'kamerafahrt', dauer: dauerSekunden(ziel) });
     console.log(`${LOG} ✓ Shot ${s.nr} (${PRESETS[s.preset].name}) mit ${modell || 'Kamerafahrt (kein KI-Kontingent)'}`);
@@ -200,10 +216,20 @@ async function main() {
 
   const stempel = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12);
   const video = join(ORDNER, `ziya-${stempel}.mp4`);
-  const { filter } = ueberblendung(fertig.map((f) => f.dauer), schnittArt(preset));
+  // Krass: Hook - 1,2 s aus dem Höhepunkt (letzter KI-Clip) ganz vorne, dann Blitz und die Geschichte von vorn.
+  if (krass && fertig.length > 2) {
+    const hoehepunkt = [...fertig].reverse().find((f) => f.modell !== 'kamerafahrt') || fertig[fertig.length - 1];
+    const hook = join(ORDNER, 'hook.mp4');
+    try {
+      ffmpeg(['-ss', Math.max(hoehepunkt.dauer / 2 - 0.6, 0).toFixed(2), '-i', hoehepunkt.datei, '-t', '1.2', '-an', '-c:v', 'libx264', '-preset', 'fast', '-crf', '16', '-pix_fmt', 'yuv420p', hook]);
+      fertig.unshift({ ...hoehepunkt, nr: 0, datei: hook, dauer: dauerSekunden(hook) });
+    } catch (err) { console.log(`${LOG} Hook übersprungen: ${String(err.stderr || err.message).slice(0, 160)}`); }
+  }
+  const { filter } = ueberblendung(fertig.map((f) => f.dauer), SCHNITT);
   const stumm = join(ORDNER, 'stumm.mp4');
   ffmpeg([...fertig.flatMap((f) => ['-i', f.datei]), '-filter_complex', filter, '-map', '[v]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', stumm]);
   await tonDrauf(stumm, video, fertig.map((f) => f.dauer));
+  if (krass) untertitelEinbrennen(video);
 
   const bericht = { idee, preset, video: video.replace(`${resolve('.')}/`, ''), shots: fertig.map(({ nr, preset: p, modell, dauer }) => ({ nr, preset: p, modell, dauer })) };
   writeFileSync(join(ORDNER, 'bericht.json'), JSON.stringify(bericht, null, 2));

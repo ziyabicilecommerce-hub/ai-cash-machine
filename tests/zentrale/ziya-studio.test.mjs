@@ -146,3 +146,15 @@ test('Geschichte: zu wenige Szenen werden aufgefüllt, zweiter KI-Versuch', asyn
   assert.equal(s.length, 6);
   assert.match(s[5].bild, /^s6/);
 });
+
+import { KRASS } from '../../automations/lib/ziyaStudio.mjs';
+test('Krass-Modus: Impact-Schnitte, Wackler, Bass und Herzschlag bei Grusel', () => {
+  assert.deepEqual(schnittArt('dolly-in', { krass: true }), { uebergang: 'fadewhite', blende: 0.2 });
+  assert.deepEqual(schnittArt('dolly-in'), { uebergang: 'fade', blende: 0.4 });
+  assert.match(nachbearbeitung('dolly-in', { krass: true }), /if\(lt\(t,0\.4\)/);
+  const t = tonFormel([3, 3, 3], 'grusel', { blende: 0.2, krass: true });
+  assert.equal((t.match(/3150/g) || []).length, 2, 'Treffer an beiden Schnitten');
+  assert.match(t, /mod\(t,0\.83\)/, 'Herzschlag');
+  assert.ok(!tonFormel([3, 3], 'orbit', { krass: true }).includes('mod(t,0.83)'), 'Herzschlag nur bei Grusel');
+  assert.match(KRASS, /high-energy/);
+});

@@ -18,6 +18,7 @@ test('NACHTWERK-Bots: Auftrag aus dem Issue lesen und begrenzen', () => {
   assert.equal(a.stil, 'anime');
   assert.equal(a.geschichte, true);
   assert.equal(a.durchgehend, false);
+  assert.equal(a.krass, true, 'Krass standardmäßig an');
   assert.equal(auftragAusIssue('```json\n{"bot":"gibtsnicht","idee":"epic volcano"}\n```', bots).bot, bots[0].id);
   assert.throws(() => auftragAusIssue('kein json', bots), /Auftrag/);
   assert.throws(() => auftragAusIssue('```json\n{"idee":"x"}\n```', bots), /Idee/);

@@ -43,7 +43,10 @@ export const MAX_SHOTS = 18;
 export const HINTERGRUND = 'The background is alive with constant motion: drifting clouds, swirling particles, shifting light and moving reflections';
 
 // Übergang und Blendenlänge je Preset (Anime: harter weißer Impact-Frame).
-export const schnittArt = (preset) => (PRESETS[presetVon(preset)].impact ? { uebergang: 'fadewhite', blende: 0.2 } : { uebergang: 'fade', blende: 0.4 });
+export const schnittArt = (preset, { krass = false } = {}) => (krass || PRESETS[presetVon(preset)].impact ? { uebergang: 'fadewhite', blende: 0.2 } : { uebergang: 'fade', blende: 0.4 });
+
+// Krass-Modus: jede Szene volle Wucht - mehr Bewegung, schneller, dramatischer (hängt an den Bewegungs-Prompt an).
+export const KRASS = 'Intense high-energy action, fast dynamic movement, dramatic speed ramps, epic scale, powerful visual impact, debris and particles fly through the frame';
 
 export const presetVon = (id) => PRESETS[String(id || '').trim().toLowerCase()] ? String(id).trim().toLowerCase() : PRESET_STANDARD;
 const sauber = (t, n) => String(t || '').replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
@@ -112,12 +115,12 @@ export const wackler = (breite = 1080, hoehe = 1920) =>
 
 // Nachbearbeitung pro Shot: flüssige Zwischenbilder (30 fps, noch in kleiner Auflösung = schnell), hochskalieren
 // (Lanczos), nachschärfen, Farblook, feines Filmkorn. roh=false: für die Kamerafahrt, die schon Größe und fps hat.
-export function nachbearbeitung(preset, { breite = 1080, hoehe = 1920, fps = 30, roh = true } = {}) {
+export function nachbearbeitung(preset, { breite = 1080, hoehe = 1920, fps = 30, roh = true, krass = false } = {}) {
   const look = LOOKS[PRESETS[presetVon(preset)].look] || LOOKS.film;
   return [
     ...(roh ? [`minterpolate=fps=${fps}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1`,
       `scale=${breite}:${hoehe}:force_original_aspect_ratio=increase:flags=lanczos`, `crop=${breite}:${hoehe}`] : []),
-    'unsharp=5:5:0.6:5:5:0', look, ...(PRESETS[presetVon(preset)].impact ? [wackler(breite, hoehe)] : []), 'noise=alls=4:allf=t', 'format=yuv420p',
+    'unsharp=5:5:0.6:5:5:0', look, ...(krass || PRESETS[presetVon(preset)].impact ? [wackler(breite, hoehe)] : []), 'noise=alls=4:allf=t', 'format=yuv420p',
   ].join(',');
 }
 
@@ -152,7 +155,7 @@ export function ueberblendung(dauern, { blende = 0.4, uebergang = 'fade' } = {})
 // Tonspur ohne Musikrechte: selbst erzeugter Kino-Klang (tiefer Drone je Stimmung) + Whoosh an jedem Schnitt + Boom am Anfang.
 // Ergebnis ist ein aevalsrc-Ausdruck (Mono) - stumme Videos laufen auf TikTok deutlich schlechter.
 const DRONES = { episch: [55, 82.5, 110], action: [41.2, 61.7, 82.4], grusel: [46.2, 49, 69.3], natur: [65.4, 98, 130.8] };
-export function tonFormel(dauern, preset, { blende = 0.4 } = {}) {
+export function tonFormel(dauern, preset, { blende = 0.4, krass = false } = {}) {
   const hz = DRONES[PRESETS[presetVon(preset)].ton] || DRONES.episch;
   const drone = hz.map((f, i) => `${(0.09 - i * 0.02).toFixed(2)}*sin(2*PI*${f}*t)*(0.6+0.4*sin(2*PI*${(0.07 + i * 0.05).toFixed(2)}*t))`).join('+');
   const schnitte = [];
@@ -161,9 +164,13 @@ export function tonFormel(dauern, preset, { blende = 0.4 } = {}) {
   const whoosh = schnitte.map((z) => `if(between(t,${Math.max(z - 0.5, 0).toFixed(2)},${(z + 0.4).toFixed(2)}),0.25*(random(0)*2-1)*sin(PI*(t-${Math.max(z - 0.5, 0).toFixed(2)})/0.9),0)`);
   const boom = '0.7*sin(2*PI*(38+60*exp(-8*t))*t)*exp(-2.5*t)';
   // Impact-Presets: an jedem Schnitt ein Bass-Treffer + metallisches Klingen (Schwertschlag).
-  const treffer = PRESETS[presetVon(preset)].impact ? schnitte.map((z) => {
+  const treffer = krass || PRESETS[presetVon(preset)].impact ? schnitte.map((z) => {
     const a = (z + blende / 2).toFixed(2);
     return `if(gte(t,${a}),(0.6*sin(2*PI*(40+70*exp(-9*(t-${a})))*(t-${a}))+0.12*sin(2*PI*3150*(t-${a}))+0.08*sin(2*PI*4720*(t-${a})))*exp(-4*(t-${a})),0)`;
   }) : [];
-  return [drone, boom, ...whoosh, ...treffer].join('+');
+  // Krass + Grusel: Herzschlag (Doppelschlag, 72 bpm), der zum Ende hin lauter wird.
+  const lang = dauern.reduce((a, b) => a + b, 0) || 1;
+  const herz = krass && PRESETS[presetVon(preset)].ton === 'grusel'
+    ? [`(0.18+0.25*t/${lang.toFixed(2)})*(exp(-28*mod(t,0.83))+0.7*exp(-28*mod(t-0.22,0.83)))*sin(2*PI*52*t)`] : [];
+  return [drone, boom, ...whoosh, ...treffer, ...herz].join('+');
 }
