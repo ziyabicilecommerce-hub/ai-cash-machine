@@ -32,7 +32,8 @@ const ORT = wohnort();
 const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '25'), 10) || 25;
 const MIN_PASSUNG = 6;
 // Unter diesem Monatsbrutto wird nicht beworben (nur wenn die Anzeige ein Gehalt nennt). ~3.000 € ≈ 2.050 € netto (Stkl. 1).
-const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '3000'), 10) || 3000;
+// Mindestens so viel wie das CONDOR-Angebot (Leitstelle, ~3.100 € brutto).
+const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '3100'), 10) || 3100;
 // Personalvermittler/Zeitarbeit nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt (dann lohnt es sich).
 const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3500'), 10) || 3500;
 // Wird nur genannt, wenn die Anzeige ausdrücklich nach einer Gehaltsvorstellung fragt.
@@ -126,6 +127,18 @@ const STANDARD_SUCHE = [
   '1st Level Support:job',
   'IT Service Desk:job',
   'IT-Supporter:job',
+  'IT-Systemadministrator:job',
+  'Netzwerkadministrator:job',
+  'IT-Support 2nd Level:job',
+  'IT-Mitarbeiter:job',
+  'Rechenzentrum Techniker:job',
+  'Data Center Technician:job',
+  'IT-Operator:job',
+  'Leitstelle IT:job',
+  'Network Operations Center:job',
+  'Security Operations Center:job',
+  'Cloud Support:job',
+  'Systembetreuer:job',
   'Datenerfassung:job',
 ].join(';');
 
@@ -159,7 +172,7 @@ const NUR_PORTAL = /ausschließlich (über|online|per (unser|das))|nur (über|on
 const BEWERBUNGS_POSTFACH = /bewerb|karriere|career|jobs?@|personal|^hr@|ausbildung|recruit|talent/i;
 
 // Gehaltsspanne aus den Details auf Monatsbrutto umrechnen (Stundenlohn × 173 h, Jahresgehalt ÷ 12).
-function monatsBrutto(d = {}) {
+export function monatsBrutto(d = {}) {
   let von = parseFloat(String(d.gehaltsspanneVon ?? '').replace(',', '.'));
   let bis = parseFloat(String(d.gehaltsspanneBis ?? '').replace(',', '.'));
   if (!(von > 0)) return null;
