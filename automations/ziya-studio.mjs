@@ -166,19 +166,21 @@ async function main() {
   const fertig = [];
   console.log(`${LOG} "${idee}" · Preset ${PRESETS[preset].name} · ${shots.length} Shot(s)`);
 
-  // GPU-Turbo: alle Shots auf einmal - Modal (30 $ Gratis-Guthaben/Monat, 720p, keine Warteschlange) wenn eingerichtet,
-  // sonst die kostenlose Kaggle-GPU (480x832, danach hochskaliert). Fehlt ein Clip, macht der Router unten weiter.
-  // Startbilder vorab hier laden (gleiche Bilder für GPU und Rückfall, im gewählten Stil, ohne Wasserzeichen).
-  const gpu = modalBereit() ? 'modal' : kaggleBereit() ? 'kaggle' : '';
+  // GPU-Turbo: Modal (30 $ Gratis-Guthaben/Monat, 720p, schnell) liefert alle Shots vorab, wenn eingerichtet.
+  // Kaggle (T4, langsam, nicht immer verlässlich) bremst nie: es rechnet nebenher, während die Gratis-Spaces arbeiten,
+  // und ersetzt am Ende nur Szenen, die sonst Standbild-Kamerafahrten geblieben wären. ZIYA_KAGGLE=aus schaltet es ab.
+  // Startbilder vorab laden (gleiche Bilder für GPU und Rückfall, im gewählten Stil, ohne Wasserzeichen).
+  const mitKaggle = kaggleBereit() && !/^(0|nein|aus|false)$/i.test(String(process.env.ZIYA_KAGGLE || '').trim());
+  const gpu = modalBereit() ? 'modal' : mitKaggle ? 'kaggle' : '';
   if (gpu) for (const s of shots) await startbild(s, seed);
-  const vonKaggle = gpu
-    ? await (gpu === 'modal' ? modalClips : kaggleClips)(shots.map((s) => {
-      const datei = join(ORDNER, `shot${s.nr}.jpg`);
-      return { ...s, bildUrl: bildURL(s.bild, { width: 768, height: 1344, seed: seed + s.nr }), ...(existsSync(datei) ? { bildB64: readFileSync(datei).toString('base64') } : {}) };
-    }), ORDNER,
-      // T4: Start + Modell ~15 min, dann ~15-20 min pro Clip (3 Shots brauchten >80 min). Höchstens 200 min.
-      { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino', maxMinuten: Math.min(200, 60 + shots.length * 20) })
-    : new Map();
+  const gpuShots = () => shots.map((s) => {
+    const datei = join(ORDNER, `shot${s.nr}.jpg`);
+    return { ...s, bildUrl: bildURL(s.bild, { width: 768, height: 1344, seed: seed + s.nr }), ...(existsSync(datei) ? { bildB64: readFileSync(datei).toString('base64') } : {}) };
+  });
+  // T4: Start + Modell ~15 min, dann ~15-20 min pro Clip. Höchstens 200 min.
+  const gpuOpts = { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino', maxMinuten: Math.min(200, 60 + shots.length * 20) };
+  const vonKaggle = gpu === 'modal' ? await modalClips(gpuShots(), ORDNER, gpuOpts) : new Map();
+  const kaggleNebenher = gpu === 'kaggle' ? kaggleClips(gpuShots(), ORDNER, gpuOpts).catch(() => new Map()) : null;
   let letzterRoh = '';
   for (const s of shots) {
     const bild = join(ORDNER, `shot${s.nr}.jpg`);
@@ -213,6 +215,18 @@ async function main() {
     console.log(`${LOG} ✓ Shot ${s.nr} (${PRESETS[s.preset].name}) mit ${modell || 'Kamerafahrt (kein KI-Kontingent)'}`);
   }
   if (!fertig.length) throw new Error('Kein einziger Shot entstanden (Bildquelle nicht erreichbar).');
+  if (kaggleNebenher) {
+    const offen = fertig.filter((f) => f.modell === 'kamerafahrt');
+    console.log(`${LOG} Kaggle: ${offen.length} Standbild-Szene(n) warten auf Kaggle-Clips`);
+    const kaggle = offen.length ? await kaggleNebenher : new Map();
+    for (const f of offen) {
+      if (!kaggle.has(f.nr)) continue;
+      const hd = hochskalieren(kaggle.get(f.nr), join(ORDNER, `shot${f.nr}-kaggle-hd.mp4`));
+      ffmpeg(['-i', hd, '-an', '-vf', nachbearbeitung(f.preset, { breite: B, hoehe: H, krass }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', f.datei]);
+      Object.assign(f, { modell: 'kaggle', dauer: dauerSekunden(f.datei) });
+      console.log(`${LOG} ✓ Shot ${f.nr}: Kaggle-Clip ersetzt die Kamerafahrt`);
+    }
+  }
 
   const stempel = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12);
   const video = join(ORDNER, `ziya-${stempel}.mp4`);
@@ -241,7 +255,8 @@ async function main() {
   }
 }
 
-main().catch((err) => {
+// exit: ein nicht mehr gebrauchter Kaggle-Lauf (Warte-Timer) soll den Job nicht offen halten.
+main().then(() => process.exit(0)).catch((err) => {
   console.error(`${LOG} Fehler:`, err.message);
   process.exit(1);
 });

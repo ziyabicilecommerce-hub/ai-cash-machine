@@ -107,6 +107,8 @@ jobs:
       # Optional, kostenlos: Kaggle-Konto (30 GPU-Stunden/Woche) -> jede Szene ein echter KI-Clip ohne Tageslimit.
       KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
       KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+      # Kaggle ganz aus: Repo-Variable ZIYA_KAGGLE=aus.
+      ZIYA_KAGGLE: ${{ vars.ZIYA_KAGGLE }}
       # Optional: Modal (modal.com, 30 $ Gratis-Guthaben/Monat) - schnellere GPU, 720p direkt. Hat Vorrang vor Kaggle.
       MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
       MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
