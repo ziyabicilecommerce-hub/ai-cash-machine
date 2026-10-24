@@ -88,7 +88,7 @@ export function modellReihe(erschoepft = new Set(), { zhipu = false, seedance = 
 // Rückfall hinter den Stamm-Modellen - höchstens `max` Versuche pro Shot, Stamm-Spaces nicht doppelt.
 const STAMM = /^(zerogpu-aoti\/wan2-2-fp8da-aoti-faster|Lightricks\/ltx-video-distilled|Upsampler\/wan-2-2-14b-image-to-video|Ash1004\/ltx23-i2v-fullres|hugging-apps\/ksyjawan-realistic-i2v|aidealab\/AnimeGen-I2V|Lightricks\/LTX-2\.5|alexnasa\/ltx-2-TURBO)$/;
 // Spaces mit eigener GPU (nicht "zero") zählen nicht aufs geteilte ZeroGPU-Tageslimit - die kommen zuerst.
-export function poolModelle(pool, erschoepft = new Set(), { anime = false, max = 12 } = {}) {
+export function poolModelle(pool, erschoepft = new Set(), { anime = false, max = 60 } = {}) {
   const liste = (Array.isArray(pool?.spaces) ? pool.spaces : [])
     .filter((x) => x?.space && /^(wan|ltx25|animegen)$/.test(x.typ) && /^\/[\w-]+$/.test(x.endpoint || '') && !STAMM.test(x.space))
     .map((x) => ({ ...x, id: `pool:${x.space}:${x.typ}:${x.endpoint}` }))
@@ -133,8 +133,12 @@ export function kamerafahrt(preset, { breite = 1080, hoehe = 1920, sekunden = 4,
   }[PRESETS[presetVon(preset)].zoom] || `zoom='1+0.15*on/${f}'`;
   const x = PRESETS[presetVon(preset)].zoom === 'schwenk' ? `x='(iw-iw/zoom)*on/${f}'` : "x='iw/2-(iw/zoom/2)'";
   const y = PRESETS[presetVon(preset)].zoom === 'hoch' ? `y='(ih-ih/zoom)*(1-on/${f})'` : "y='ih/2-(ih/zoom/2)'";
-  return `scale=${breite * 2}:${hoehe * 2}:force_original_aspect_ratio=increase,crop=${breite * 2}:${hoehe * 2},zoompan=${z}:${x}:${y}:d=${f}:s=${breite}x${hoehe}:fps=${fps},format=yuv420p`;
+  return `scale=${breite * 2}:${hoehe * 2}:force_original_aspect_ratio=increase,crop=${breite * 2}:${hoehe * 2},zoompan=${z}:${x}:${y}:d=${f}:s=${breite}x${hoehe}:fps=${fps},${LEBENDIG},format=yuv420p`;
 }
+
+// Ohne KI-Clip soll das Standbild trotzdem leben: pulsierendes Licht, wandernder Lichtschimmer und bewegte Filmkörnung.
+export const LEBENDIG = "eq=brightness='0.035*sin(2*PI*t*1.3)':saturation='1.05+0.06*sin(2*PI*t*0.7)':eval=frame,"
+  + "vignette=angle='PI/5+0.06*sin(2*PI*t*0.9)':eval=frame,noise=alls=6:allf=t";
 
 // Weiche Überblendungen zwischen den Shots (xfade), Offsets aus den Shot-Längen.
 // Anime: uebergang 'fadewhite' mit kurzer Blende = weißer Impact-Frame an jedem Schnitt.

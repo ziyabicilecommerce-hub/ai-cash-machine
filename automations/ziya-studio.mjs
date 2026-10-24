@@ -81,7 +81,12 @@ async function kiClipHolen(bild, prompt, ziel, erschoepft) {
       if (existsSync(ziel)) return m;
     } catch (err) {
       if (err.code === 3) { erschoepft.add(m); console.log(`${LOG} Kontingent ${m} für heute aufgebraucht`); }
-      else console.log(`${LOG} ${m} fehlgeschlagen: ${String(err.stderr || err.message).slice(0, 160)}`);
+      else {
+        const text = String(err.stderr || err.message);
+        console.log(`${LOG} ${m} fehlgeschlagen: ${text.slice(0, 160)}`);
+        // Kaputte oder pausierte Spaces kommen heute nicht wieder - nicht bei jedem Shot erneut fragen.
+        if (/PAUSED|RepositoryNotFound|RUNTIME_ERROR|BUILD_ERROR|does not exist|404/i.test(text)) erschoepft.add(m);
+      }
     }
   }
   return '';

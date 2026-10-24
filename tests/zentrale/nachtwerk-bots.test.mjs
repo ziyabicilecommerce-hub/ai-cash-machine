@@ -67,3 +67,12 @@ test('Tages-Bot: reihum ein Bot pro Tag, Idee von der KI oder aus der Liste', as
   assert.equal(rueck.quelle, 'liste');
   assert.equal(rueck.idee, bots[0].ideen[1]);
 });
+
+test('NACHTWERK-Bots: sieben Bots, jeder mit eigenen Ideen und gültigen Einstellungen', () => {
+  assert.equal(bots.length, 7);
+  assert.equal(new Set(bots.map((b) => b.id)).size, 7);
+  for (const b of bots) {
+    assert.ok(b.ideen.length >= 6, b.id);
+    assert.deepEqual(auftragAusIssue(JSON.stringify({ bot: b.id, idee: b.ideen[0] }), bots).bot, b.id);
+  }
+});
