@@ -59,6 +59,9 @@ const REMOTE = /100 ?% ?(remote|homeoffice|home-office|mobil)|vollständig (remo
 // BA-Branchen mit eigener IT: 11 IT/Telekommunikation, 6 Banken/Versicherungen (ohne Immobilien),
 // 18 öffentliche Verwaltung, 22 Energie/Wasser/Entsorgung (kritische Infrastruktur), 25 Forschung, 3 Elektronik/Automatisierung.
 const FINANZ = /bank|sparkasse|volksbank|raiffeisen|versicher|invest|capital|finanz|asset|fonds|payment|börse|leasing|kredit|clearing/i;
+const VERKEHR = /fraport|lufthansa|samsung|landesbahn|autobahn|flugsicherung|transdev|emirates|air canada|air china|swissport|dachser|rhenus|kühne|deutsche post|arvato|hellmann|dp world|ceva|dsv|expeditors|db intermodal|\bdb\b/i;
+const TECH_NICHT = /bau|gebäude|montage|gerüst|scaffold|sanitär|elektro|facility|kälte|klima/i;
+const TECH = /netapp|computacenter|cyberport|axians|network|telekom|software|digital|data|daten|cloud|cyber|informatik|\bit\b|\bi t s\b|ict|arcadyan|convergint|samsung/i;
 const IT_BRANCHEN = [
   { branche: 11, ohneAnzeige: false },
   { branche: 6, name: FINANZ, ohneAnzeige: true },
@@ -66,6 +69,11 @@ const IT_BRANCHEN = [
   { branche: 22, ohneAnzeige: true },
   { branche: 25, ohneAnzeige: true },
   { branche: 3, ohneAnzeige: true },
+  // 21 Verkehr/Luftfahrt: nur große Arbeitgeber mit eigener IT (Fraport, Lufthansa, Bahn, Autobahn …)
+  { branche: 21, name: VERKEHR, ohneAnzeige: true },
+  // 9 Handel und 1 Ingenieurbüros: nur Tech-/ICT-Firmen, keine Läden oder Baufirmen
+  { branche: 9, name: TECH, nicht: TECH_NICHT, ohneAnzeige: true },
+  { branche: 1, name: TECH, nicht: TECH_NICHT, ohneAnzeige: true },
 ];
 const bereichVon = (st) => (st.itBranche && !CYBER.test(st.titel) ? 'IT' : BEREICHE.find(([re]) => re.test(st.titel))?.[1] || 'Spedition und Logistik');
 const firmaKey = (name = '') => name.toLowerCase().replace(/\b(gmbh|ag|kg|se|co|mbh|& ?co\.?)\b|[^a-zäöü0-9]/g, '');
@@ -114,13 +122,13 @@ async function main() {
   }
   // Arbeitgeber im Umkreis, die gerade irgendeine Stelle ausschreiben und eine eigene IT haben (BA-Branchen):
   // Initiativbewerbung für den IT-Einstieg, auch wenn die Anzeige selbst etwas ganz anderes ist.
-  for (const { branche, name, ohneAnzeige } of IT_BRANCHEN) {
+  for (const { branche, name, nicht, ohneAnzeige } of IT_BRANCHEN) {
     try {
       for (const st of await sucheStellen({ was: '', angebotsart: 1, branche, seiten: 7 })) {
         const key = firmaKey(st.arbeitgeber);
         if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !ortPasst(st)) continue;
         if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || PRAXIS.test(st.arbeitgeber)) continue;
-        if (name && !name.test(st.arbeitgeber)) continue;
+        if ((name && !name.test(st.arbeitgeber)) || (nicht && nicht.test(st.arbeitgeber))) continue;
         st.itBranche = true;
         st.ohneAnzeige = ohneAnzeige;
         proFirma.set(key, st);
