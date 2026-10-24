@@ -19,7 +19,7 @@ import { bildURL } from './lib/pollinationsMedia.mjs';
 import { geschichtePlanen, STILE, stilVon } from './lib/ziyaGeschichte.mjs';
 import { kiJson } from './lib/kiJson.mjs';
 import { nachtwerkProjekt, datenUrl } from './lib/nachtwerkProjekt.mjs';
-import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt, KRASS, hookFilter, hookUmbrechen } from './lib/ziyaStudio.mjs';
+import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt, KRASS, hookFilter, hookUmbrechen, uebersetzenPrompt } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
 const ausfuehren = promisify(execFile);
@@ -96,14 +96,14 @@ async function kiClipHolen(bild, prompt, ziel, erschoepft) {
 }
 
 // Klang + optional Sprecher unterlegen; der Klang duckt sich unter die Stimme. Klappt etwas nicht: Video ohne Ton.
-async function tonDrauf(stumm, video, dauern) {
+async function tonDrauf(stumm, video, dauern, { text = sprechertext, sprecher = process.env.ZIYA_STIMME || 'de-DE-ConradNeural', name = 'stimme' } = {}) {
   const laenge = dauerSekunden(stumm);
   const klang = `aevalsrc='${tonFormel(dauern, preset, { ...SCHNITT, krass })}':s=44100:d=${laenge.toFixed(2)}`;
   let stimme = '';
-  if (sprechertext) {
+  if (text) {
     try {
-      stimme = join(ORDNER, 'stimme.mp3');
-      await sprechen(sprechertext, stimme, join(ORDNER, 'stimme.srt'), process.env.ZIYA_STIMME || 'de-DE-ConradNeural');
+      stimme = join(ORDNER, `${name}.mp3`);
+      await sprechen(text, stimme, join(ORDNER, `${name}.srt`), sprecher);
     } catch (err) { stimme = ''; console.log(`${LOG} Sprecher übersprungen: ${err.message}`); }
   }
   const mix = stimme
@@ -139,8 +139,7 @@ async function startbild(s, seed) {
 }
 
 // Krass: große TikTok-Untertitel (weiß, dicker schwarzer Rand, Bildmitte unten) aus der Sprecher-Spur einbrennen.
-function untertitelEinbrennen(video) {
-  const srt = join(ORDNER, 'stimme.srt');
+function untertitelEinbrennen(video, srt = join(ORDNER, 'stimme.srt')) {
   if (!existsSync(srt)) return;
   const mit = join(ORDNER, 'mit-untertitel.mp4');
   const stil = 'FontName=DejaVu Sans,Bold=1,FontSize=12,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=2.5,Shadow=0,Alignment=2,MarginV=38';
@@ -153,15 +152,13 @@ function untertitelEinbrennen(video) {
 // Hook: großer Text in den ersten 2,6 s (blendet aus) - hält die Zuschauer auf TikTok. Text über Datei, damit kein
 // Zeichen den Filter bricht; ohne Schrift oder bei Fehlern bleibt das Video wie es ist.
 // TikTok-Titelbild: Bild aus der ersten Sekunde (Höhepunkt-Hook + großer Hook-Text) als cover.jpg im Download.
-function coverBauen(video) {
-  try { ffmpeg(['-ss', process.env.ZIYA_HOOK ? '1.0' : '0.6', '-i', video, '-frames:v', '1', '-q:v', '2', join(ORDNER, 'cover.jpg')]); console.log(`${LOG} TikTok-Titelbild: cover.jpg`); } catch { /* ohne Titelbild */ }
+function coverBauen(video, datei = 'cover.jpg', mitHook = !!process.env.ZIYA_HOOK) {
+  try { ffmpeg(['-ss', mitHook ? '1.0' : '0.6', '-i', video, '-frames:v', '1', '-q:v', '2', join(ORDNER, datei)]); console.log(`${LOG} TikTok-Titelbild: ${datei}`); } catch { /* ohne Titelbild */ }
 }
 
 // ZIYA_ENDE: Abspann-Text in den letzten 2,5 s (Serien: "Fortsetzung folgt...").
-function hookEinblenden(video) {
-  const sauber = (x) => String(x || '').replace(/\s+/g, ' ').trim().slice(0, 60);
-  const hook = sauber(process.env.ZIYA_HOOK);
-  const ende = sauber(process.env.ZIYA_ENDE);
+const sauber = (x, n = 60) => String(x || '').replace(/\s+/g, ' ').trim().slice(0, n);
+function hookEinblenden(video, { hook = sauber(process.env.ZIYA_HOOK), ende = sauber(process.env.ZIYA_ENDE) } = {}) {
   const schrift = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
   if ((!hook && !ende) || !existsSync(schrift)) return;
   const filter = [];
@@ -175,6 +172,24 @@ function hookEinblenden(video) {
     copyFileSync(mit, video);
     console.log(`${LOG} Text eingeblendet: ${[hook, ende].filter(Boolean).join(' / ')}`);
   } catch (err) { console.log(`${LOG} Text übersprungen: ${String(err.stderr || err.message).slice(0, 200)}`); }
+}
+
+// Englische Fassung (ZIYA_ENGLISCH=ja): dieselben Bilder, englische Stimme/Untertitel/Hook - kostet keine GPU-Zeit.
+// Übersetzt die Gratis-KI (zur Not die eigene im Lauf); klappt das nicht, gibt es eben nur die deutsche Fassung.
+async function englischeFassung(stumm, deVideo, dauern) {
+  const de = { text: sprechertext, hook: sauber(process.env.ZIYA_HOOK), ende: sauber(process.env.ZIYA_ENDE) };
+  let en;
+  try { en = await kiJson(uebersetzenPrompt(de), { maxTokens: 900 }); } catch (err) { console.log(`${LOG} Englische Fassung übersprungen: ${err.message}`); return ''; }
+  const text = sauber(en?.text, 1500);
+  if (de.text && text.length < 10) { console.log(`${LOG} Englische Fassung übersprungen: keine Übersetzung`); return ''; }
+  const ziel = deVideo.replace(/\.mp4$/, '-en.mp4');
+  await tonDrauf(stumm, ziel, dauern, { text, sprecher: process.env.ZIYA_STIMME_EN || 'en-US-GuyNeural', name: 'stimme-en' });
+  if (krass) untertitelEinbrennen(ziel, join(ORDNER, 'stimme-en.srt'));
+  const hook = sauber(en?.hook);
+  hookEinblenden(ziel, { hook, ende: sauber(en?.ende) || (de.ende ? 'To be continued...' : '') });
+  coverBauen(ziel, 'cover-en.jpg', !!hook);
+  console.log(`${LOG} Englische Fassung: ${ziel.replace(`${resolve('.')}/`, '')}`);
+  return ziel;
 }
 
 // Projektdatei für NACHTWERK (Handschnitt im Browser): Clips verkleinert (720x1280), damit die Datei handlich bleibt.
@@ -220,7 +235,7 @@ async function main() {
     return { ...s, bildUrl: bildURL(s.bild, { width: 768, height: 1344, seed: seed + s.nr }), ...(existsSync(datei) ? { bildB64: readFileSync(datei).toString('base64') } : {}) };
   });
   // T4: Start + Modell ~15 min, dann ~19 min pro Clip. Höchstens 220 min (Job-Limit 340, danach Hochskalieren + Schnitt).
-  const gpuOpts = { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino', maxMinuten: Math.min(220, 60 + shots.length * 20) };
+  const gpuOpts = { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino', maxMinuten: Math.min(Number(process.env.ZIYA_KAGGLE_MIN) || 220, 220, 60 + shots.length * 20) };
   const vonKaggle = gpu === 'modal' ? await modalClips(gpuShots(), ORDNER, gpuOpts) : new Map();
   // Kaggle rechnet von hinten: die ersten Shots schaffen meist noch die Gratis-Spaces, bevor ihr Tageslimit greift
   // (Test 24.10.: Kaggle baute Shot 1+2 umsonst). So landet jede Kaggle-Minute in einer Szene, die sonst Standbild bliebe.
@@ -296,8 +311,9 @@ async function main() {
   if (krass) untertitelEinbrennen(video);
   hookEinblenden(video);
   coverBauen(video);
+  const videoEn = /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_ENGLISCH || '').trim()) ? await englischeFassung(stumm, video, fertig.map((f) => f.dauer)) : '';
 
-  const bericht = { idee, preset, video: video.replace(`${resolve('.')}/`, ''), shots: fertig.map(({ nr, preset: p, modell, dauer }) => ({ nr, preset: p, modell, dauer })) };
+  const bericht = { idee, preset, video: video.replace(`${resolve('.')}/`, ''), ...(videoEn ? { video_en: videoEn.replace(`${resolve('.')}/`, '') } : {}), shots: fertig.map(({ nr, preset: p, modell, dauer }) => ({ nr, preset: p, modell, dauer })) };
   writeFileSync(join(ORDNER, 'bericht.json'), JSON.stringify(bericht, null, 2));
   nachtwerkSchreiben(fertig);
   const ki = fertig.filter((f) => f.modell !== 'kamerafahrt').length;

@@ -37,7 +37,7 @@ jobs:
         run: |
           set -e
           sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg >/dev/null
-          VIDEO=$(ls video/ziya-*.mp4 | head -1)
+          VIDEO=$(ls video/ziya-*.mp4 | grep -v -- '-en\.mp4$' | head -1)
           DAUER=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$VIDEO")
           # 8 Bilder gleichmäßig über das ganze Video, 4x2-Raster.
           FPS=$(python3 -c "print(8/max(float('$DAUER'),1))")

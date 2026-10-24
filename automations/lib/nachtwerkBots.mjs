@@ -31,11 +31,15 @@ export function auftragAusIssue(body, bots) {
   };
 }
 
-// Tages-Bot: jeden Tag ist ein anderer Bot dran (reihum nach Tag im Jahr) und denkt sich selbst eine Idee aus.
+// Tages-Bot: zwei Videos am Tag (nachts und nachmittags), jedes Mal ist der nächste Bot dran (reihum nach
+// Halbtag im Jahr) und denkt sich selbst eine Idee aus. tag = Nummer des Halbtags (auch für die Ideenliste).
 export function tagesBot(bots, datum = new Date()) {
-  const tag = Math.floor((datum - new Date(Date.UTC(datum.getUTCFullYear(), 0, 0))) / 86400000);
+  const tag = Math.floor((datum - new Date(Date.UTC(datum.getUTCFullYear(), 0, 0))) / 86400000) * 2 + (datum.getUTCHours() >= 12 ? 1 : 0);
   return { bot: bots[tag % bots.length], tag };
 }
+
+// Tagesvideos sind länger als bestellte: mindestens 14 Szenen à 4 s (~50 s mit Hook und Abspann).
+export const TAGES_LAENGE = { shots: 14, sekunden: 4 };
 
 // Serie: die letzte Folge des Bots aus den Tagesvideo-Issues (neueste zuerst, wie gh issue list sie liefert).
 export function letzteFolge(issues, bot) {
@@ -58,8 +62,9 @@ celebrities, no brands), visually spectacular, lots of movement, one sentence in
 Also write a short German hook line for the first 2 seconds (max 6 words, a question or a shock, no hashtags, no emojis),
 e.g. "Wer gewinnt diesen Kampf?" or "Das hätte niemand erwartet...".
 Also write a German narrator text for the video ("sprecher": 2-3 short, dramatic sentences, max 30 words, no emojis)
-and a German TikTok caption ("beschreibung": one catchy sentence plus 4-6 fitting hashtags, max 150 characters).
-Answer ONLY with JSON: {"idee":"...","hook":"...","sprecher":"...","beschreibung":"..."}`;
+and a German TikTok caption ("beschreibung": one catchy sentence plus 4-6 fitting hashtags, max 150 characters)
+plus the same caption in English ("beschreibung_en").
+Answer ONLY with JSON: {"idee":"...","hook":"...","sprecher":"...","beschreibung":"...","beschreibung_en":"..."}`;
 
 // Fester Hook je Bot, falls die KI keinen liefert - kurze Frage/Schock-Zeile für die ersten 2 Sekunden.
 export const HOOKS = { grusel: 'Schau nicht allein...', cartoon: 'Das endet anders als gedacht', anime: 'Wer gewinnt diesen Kampf?',
@@ -67,11 +72,12 @@ export const HOOKS = { grusel: 'Schau nicht allein...', cartoon: 'Das endet ande
 
 const ohneDeko = (x, n) => text(x, n + 40).replace(/#\S+/g, '').replace(/\p{Extended_Pictographic}/gu, '').replace(/\s+/g, ' ').trim().slice(0, n);
 
-// TikTok-Beschreibung: immer mit #KI (KI-Inhalt offen kennzeichnen), keine fremden Marken nötig.
-export function beschreibungBauen(roh, hook, bot) {
+// TikTok-Beschreibung: immer mit #KI bzw. #AI (KI-Inhalt offen kennzeichnen), keine fremden Marken nötig.
+export function beschreibungBauen(roh, hook, bot, { englisch = false } = {}) {
+  const marke = englisch ? '#AI' : '#KI';
   let b = text(roh, 200);
-  if (b.length < 10) b = `${hook} #${bot.id} #animation #fyp`;
-  if (!/#ki\b/i.test(b)) b += ' #KI';
+  if (b.length < 10) b = englisch ? `Wait for the end... #${bot.id} #animation #fyp` : `${hook} #${bot.id} #animation #fyp`;
+  if (!new RegExp(`${marke}\\b`, 'i').test(b)) b += ` ${marke}`;
   return b.slice(0, 220);
 }
 
@@ -89,10 +95,11 @@ export async function tagesIdee(bot, tag, kiJson, vorher = null) {
     const fertigerHook = `${teil}${hook.length >= 4 ? hook : ersatz}`.slice(0, 60);
     const sprecher = bot.geschichte ? '' : ohneDeko(antwort?.sprecher, 300);
     const beschreibung = beschreibungBauen(folge > 1 ? `(Teil ${folge}) ${text(antwort?.beschreibung, 200)}` : antwort?.beschreibung, fertigerHook, bot);
-    if (idee.length >= 15) return { idee, hook: fertigerHook, sprecher, beschreibung, folge, quelle: 'ki' };
+    const beschreibungEn = beschreibungBauen(folge > 1 ? `(Part ${folge}) ${text(antwort?.beschreibung_en, 200)}` : antwort?.beschreibung_en, fertigerHook, bot, { englisch: true });
+    if (idee.length >= 15) return { idee, hook: fertigerHook, sprecher, beschreibung, beschreibungEn, folge, quelle: 'ki' };
     console.log(`[tages-bot] KI-Idee unbrauchbar: ${JSON.stringify(antwort).slice(0, 200)}`);
   } catch (err) { console.log(`[tages-bot] KI-Idee fehlgeschlagen: ${String(err?.message || err).slice(0, 200)}`); }
   // Ohne KI keine echte Fortsetzung möglich - dann startet eine neue Geschichte (Folge 1).
   const liste = bot.ideen?.length ? bot.ideen : [bot.beispiel];
-  return { idee: liste[tag % liste.length], hook: ersatz, sprecher: '', beschreibung: beschreibungBauen('', ersatz, bot), folge: 1, quelle: 'liste' };
+  return { idee: liste[tag % liste.length], hook: ersatz, sprecher: '', beschreibung: beschreibungBauen('', ersatz, bot), beschreibungEn: beschreibungBauen('', ersatz, bot, { englisch: true }), folge: 1, quelle: 'liste' };
 }

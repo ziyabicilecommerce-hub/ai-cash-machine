@@ -195,3 +195,9 @@ export function hookUmbrechen(hook, breite = 14) {
   }
   return zeilen.slice(0, 3).join('\n');
 }
+
+// Übersetzung für die englische Fassung: gleiche Länge (die Bilder sind schon geschnitten), TikTok-Ton, keine Emojis.
+export const uebersetzenPrompt = ({ text = '', hook = '', ende = '' }) => `Translate this German TikTok video text into natural, punchy English.
+Keep roughly the same length (the video is already cut), no emojis, no hashtags. Empty fields stay empty.
+Answer ONLY with JSON: {"text":"...","hook":"...","ende":"..."}
+${JSON.stringify({ text, hook, ende })}`;
