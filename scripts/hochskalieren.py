@@ -26,6 +26,11 @@ modell = ModelLoader().load_from_file(pfad).model.eval()
 info = json.loads(subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height,r_frame_rate",
                                   "-of", "json", quelle], capture_output=True, text=True, check=True).stdout)["streams"][0]
 b, h, fps = info["width"], info["height"], info["r_frame_rate"]
+# Schon große Clips (z. B. 704x1280 vom Turbo-Space) bringt x4 kaum etwas, kostet auf der CPU aber 13 min pro Clip -
+# dann lieber Lanczos (Exit 3 = "nicht nötig", der Aufrufer nimmt den Originalclip).
+if min(b, h) >= 600:
+    print(f"schon {b}x{h} - KI-Hochskalierung nicht nötig")
+    sys.exit(3)
 # Ziel: kurze Seite höchstens 1080 (x4 wird danach sauber auf Full HD verkleinert).
 faktor = min(4, 1080 / min(b, h)) if min(b, h) < 1080 else 1
 nb, nh = int(b * faktor) // 2 * 2, int(h * faktor) // 2 * 2
