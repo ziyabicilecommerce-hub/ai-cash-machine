@@ -24,8 +24,8 @@ import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeit
 const LOG = '[ziya-studio]';
 const ausfuehren = promisify(execFile);
 const START = Date.now();
-// Zeitbudget (Job-Limit 340 min): nach 230 min kein Real-ESRGAN mehr (dauert ~8 min pro Clip), nur noch Lanczos.
-const HD_BIS_MIN = 230;
+// Zeitbudget (Job-Limit 340 min): nach 270 min kein Real-ESRGAN mehr (dauert ~4 min pro Kaggle-Clip), nur noch Lanczos.
+const HD_BIS_MIN = 270;
 const ORDNER = resolve('out/ziya-studio');
 const B = 1080;
 const H = 1920;
@@ -152,6 +152,11 @@ function untertitelEinbrennen(video) {
 
 // Hook: großer Text in den ersten 2,6 s (blendet aus) - hält die Zuschauer auf TikTok. Text über Datei, damit kein
 // Zeichen den Filter bricht; ohne Schrift oder bei Fehlern bleibt das Video wie es ist.
+// TikTok-Titelbild: Bild aus der ersten Sekunde (Höhepunkt-Hook + großer Hook-Text) als cover.jpg im Download.
+function coverBauen(video) {
+  try { ffmpeg(['-ss', process.env.ZIYA_HOOK ? '1.0' : '0.6', '-i', video, '-frames:v', '1', '-q:v', '2', join(ORDNER, 'cover.jpg')]); console.log(`${LOG} TikTok-Titelbild: cover.jpg`); } catch { /* ohne Titelbild */ }
+}
+
 function hookEinblenden(video) {
   const hook = String(process.env.ZIYA_HOOK || '').replace(/\s+/g, ' ').trim().slice(0, 60);
   const schrift = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
@@ -208,10 +213,12 @@ async function main() {
     const datei = join(ORDNER, `shot${s.nr}.jpg`);
     return { ...s, bildUrl: bildURL(s.bild, { width: 768, height: 1344, seed: seed + s.nr }), ...(existsSync(datei) ? { bildB64: readFileSync(datei).toString('base64') } : {}) };
   });
-  // T4: Start + Modell ~15 min, dann ~15-20 min pro Clip. Höchstens 200 min.
-  const gpuOpts = { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino', maxMinuten: Math.min(200, 60 + shots.length * 20) };
+  // T4: Start + Modell ~15 min, dann ~19 min pro Clip. Höchstens 220 min (Job-Limit 340, danach Hochskalieren + Schnitt).
+  const gpuOpts = { negativ: NEG, sekunden, qualitaet: process.env.ZIYA_QUALITAET || 'kino', maxMinuten: Math.min(220, 60 + shots.length * 20) };
   const vonKaggle = gpu === 'modal' ? await modalClips(gpuShots(), ORDNER, gpuOpts) : new Map();
-  const kaggleNebenher = gpu === 'kaggle' ? kaggleClips(gpuShots(), ORDNER, gpuOpts).catch(() => new Map()) : null;
+  // Kaggle rechnet von hinten: die ersten Shots schaffen meist noch die Gratis-Spaces, bevor ihr Tageslimit greift
+  // (Test 24.10.: Kaggle baute Shot 1+2 umsonst). So landet jede Kaggle-Minute in einer Szene, die sonst Standbild bliebe.
+  const kaggleNebenher = gpu === 'kaggle' ? kaggleClips(gpuShots().reverse(), ORDNER, gpuOpts).catch(() => new Map()) : null;
   let letzterRoh = '';
   for (const s of shots) {
     const bild = join(ORDNER, `shot${s.nr}.jpg`);
@@ -282,6 +289,7 @@ async function main() {
   await tonDrauf(stumm, video, fertig.map((f) => f.dauer));
   if (krass) untertitelEinbrennen(video);
   hookEinblenden(video);
+  coverBauen(video);
 
   const bericht = { idee, preset, video: video.replace(`${resolve('.')}/`, ''), shots: fertig.map(({ nr, preset: p, modell, dauer }) => ({ nr, preset: p, modell, dauer })) };
   writeFileSync(join(ORDNER, 'bericht.json'), JSON.stringify(bericht, null, 2));
