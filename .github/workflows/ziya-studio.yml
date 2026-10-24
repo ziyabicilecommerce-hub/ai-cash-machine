@@ -50,6 +50,10 @@ on:
         description: 'Sprechertext auf Deutsch (optional, leer = nur Kino-Sound)'
         required: false
         default: ''
+      hook:
+        description: 'Großer Text in den ersten 2 Sekunden (optional, z. B. "Wer gewinnt?")'
+        required: false
+        default: ''
   # NACHTWERK-Bots (nachtwerk-bots.yml) rufen das Studio mit denselben Eingaben auf.
   workflow_call:
     inputs:
@@ -64,6 +68,7 @@ on:
       stil: { type: string, default: kino }
       krass: { type: boolean, default: true }
       text: { type: string, default: '' }
+      hook: { type: string, default: '' }
     outputs:
       run_url:
         value: ${{ jobs.studio.outputs.run_url }}
@@ -90,6 +95,7 @@ jobs:
       ZIYA_MENSCHEN: ${{ inputs.menschen && 'ja' || 'nein' }}
       ZIYA_DURCHGEHEND: ${{ inputs.durchgehend && 'ja' || 'nein' }}
       ZIYA_TEXT: ${{ inputs.text }}
+      ZIYA_HOOK: ${{ inputs.hook }}
       ZIYA_GESCHICHTE: ${{ inputs.geschichte && 'ja' || 'nein' }}
       ZIYA_STIL: ${{ inputs.stil }}
       ZIYA_KRASS: ${{ inputs.krass && 'ja' || 'nein' }}

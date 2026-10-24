@@ -27,6 +27,7 @@ export function auftragAusIssue(body, bots) {
     loop: jaNein(roh.loop, false),
     krass: jaNein(roh.krass, true),
     text: text(roh.text, 600),
+    hook: text(roh.hook, 60) || HOOKS[bot.id] || '',
   };
 }
 
@@ -39,14 +40,23 @@ export function tagesBot(bots, datum = new Date()) {
 export const ideePrompt = (bot) => `Invent ONE fresh, original idea for a short vertical AI video for the "${bot.name}" channel (${bot.text}).
 Style example: "${bot.beispiel}". Rules: original characters only (no existing movie, series, game or anime characters, no
 celebrities, no brands), visually spectacular, lots of movement, one sentence in English, max 30 words.
-Answer ONLY with JSON: {"idee":"..."}`;
+Also write a short German hook line for the first 2 seconds (max 6 words, a question or a shock, no hashtags, no emojis),
+e.g. "Wer gewinnt diesen Kampf?" or "Das hätte niemand erwartet...".
+Answer ONLY with JSON: {"idee":"...","hook":"..."}`;
+
+// Fester Hook je Bot, falls die KI keinen liefert - kurze Frage/Schock-Zeile für die ersten 2 Sekunden.
+export const HOOKS = { grusel: 'Schau nicht allein...', cartoon: 'Das endet anders als gedacht', anime: 'Wer gewinnt diesen Kampf?',
+  kino: 'Das hätte niemand überlebt', welt: 'Das ist wirklich passiert?', drache: 'Der Drache ist erwacht', tier: 'Niemand hat damit gerechnet' };
 
 // Idee von der Gratis-KI; klappt das nicht, eine der festen Ideen des Bots (reihum).
 export async function tagesIdee(bot, tag, kiJson) {
+  const ersatz = HOOKS[bot.id] || 'Warte bis zum Ende...';
   try {
-    const idee = text((await kiJson(ideePrompt(bot), { maxTokens: 300 }))?.idee, 400);
-    if (idee.length >= 15) return { idee, quelle: 'ki' };
+    const antwort = await kiJson(ideePrompt(bot), { maxTokens: 300 });
+    const idee = text(antwort?.idee, 400);
+    const hook = text(antwort?.hook, 80).replace(/#\S+/g, '').replace(/\p{Extended_Pictographic}/gu, '').replace(/\s+/g, ' ').trim().slice(0, 60);
+    if (idee.length >= 15) return { idee, hook: hook.length >= 4 ? hook : ersatz, quelle: 'ki' };
   } catch { /* Rückfall */ }
   const liste = bot.ideen?.length ? bot.ideen : [bot.beispiel];
-  return { idee: liste[tag % liste.length], quelle: 'liste' };
+  return { idee: liste[tag % liste.length], hook: ersatz, quelle: 'liste' };
 }

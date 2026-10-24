@@ -179,3 +179,19 @@ test('Kamerafahrt lebt: pulsierendes Licht und bewegte Körnung', () => {
   assert.match(LEBENDIG, /eval=frame/);
   assert.match(LEBENDIG, /noise=alls=\d+:allf=t/);
 });
+
+import { hookFilter, hookUmbrechen } from '../../automations/lib/ziyaStudio.mjs';
+import { existsSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { execFileSync } from 'node:child_process';
+test('Hook: großer Text am Anfang, umgebrochen und echt eingeblendet', (t) => {
+  assert.equal(hookUmbrechen('WER GEWINNT DIESEN KAMPF?'), 'WER GEWINNT\nDIESEN KAMPF?');
+  assert.equal(hookUmbrechen('a b c d e f g h i j k l m n o p q r s t u v w x y z aa bb cc dd ee ff gg', 4).split('\n').length, 3);
+  const schrift = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
+  if (!existsSync(schrift)) return t.skip('keine Schrift');
+  const ordner = mkdtempSync(join(tmpdir(), 'hook-'));
+  writeFileSync(join(ordner, 'hook.txt'), 'WER GEWINNT?');
+  const bild = execFileSync('ffmpeg', ['-loglevel', 'error', '-f', 'lavfi', '-i', 'color=c=blue:s=540x960:d=0.2', '-vf', hookFilter(join(ordner, 'hook.txt'), schrift), '-frames:v', '1', '-f', 'rawvideo', '-pix_fmt', 'gray', 'pipe:1']);
+  assert.ok(bild.some((x) => x > 200), 'weißer Text sichtbar');
+});
