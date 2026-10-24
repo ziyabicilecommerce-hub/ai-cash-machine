@@ -201,3 +201,11 @@ export const uebersetzenPrompt = ({ text = '', hook = '', ende = '' }) => `Trans
 Keep roughly the same length (the video is already cut), no emojis, no hashtags. Empty fields stay empty.
 Answer ONLY with JSON: {"text":"...","hook":"...","ende":"..."}
 ${JSON.stringify({ text, hook, ende })}`;
+
+// Titelbild-Zeitpunkt: mittlere Helligkeit am nächsten an 110 (0-255) - kein Weißblitz, kein schwarzes Bild.
+// werte: [[sekunde, helligkeit]], -1 = nicht messbar.
+export function besterCoverZeitpunkt(werte) {
+  const gut = werte.filter(([, h]) => h >= 0);
+  if (!gut.length) return werte[0]?.[0] ?? 0.5;
+  return gut.reduce((a, b) => (Math.abs(b[1] - 110) < Math.abs(a[1] - 110) ? b : a))[0];
+}

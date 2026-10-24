@@ -215,3 +215,11 @@ test('Englische Fassung: Übersetzungs-Auftrag enthält alle Texte als JSON', ()
   assert.match(p, /Answer ONLY with JSON/);
   assert.match(uebersetzenPrompt({}), /"text":""/);
 });
+
+import { besterCoverZeitpunkt } from '../../automations/lib/ziyaStudio.mjs';
+test('Titelbild: nicht im weißen Blitz und nicht im Schwarz', () => {
+  assert.equal(besterCoverZeitpunkt([[0.4, 120], [1.0, 250], [2.0, 30]]), 0.4);
+  assert.equal(besterCoverZeitpunkt([[0.4, 249], [0.7, 180], [1.7, 251]]), 0.7);
+  assert.equal(besterCoverZeitpunkt([[0.4, -1], [0.7, -1]]), 0.4);
+  assert.equal(besterCoverZeitpunkt([]), 0.5);
+});
