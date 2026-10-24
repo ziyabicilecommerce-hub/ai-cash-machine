@@ -77,14 +77,17 @@ export function vorlageAnschreiben({ titel, firma, text = '' }) {
 }
 
 // Initiativbewerbung: die Firma sucht im Lieblingsbereich (oft mit Erfahrung) - Bewerbung um den Einstieg.
-export function initiativAnschreiben({ bereich, firma }) {
+// ohneAnzeige: die Firma sucht gerade niemanden in diesem Bereich - dann kein "habe gesehen, dass Sie suchen".
+export function initiativAnschreiben({ bereich, firma, ohneAnzeige = false }) {
   const praktika = abschnitt(/prakti|erfahr/i);
   const namen = undListe([...new Set(praktika.map(([, t = '']) => firmaAusPraktikum(t)).filter(Boolean))].slice(0, 4));
   const edv = undListe((abschnitt(/kenntnis/i).find(([l = '']) => /edv|computer|it/i.test(l))?.[1] || '').replace(/\s*\([^)]*\)/g, '').split(/,\s*/).filter(Boolean));
   return [
     'Sehr geehrte Damen und Herren,',
     '',
-    `ich habe gesehen, dass ${firma} im Bereich ${bereich} gerade Verstärkung sucht – genau dort möchte ich beruflich hin. Für die ausgeschriebene Stelle fehlt mir vielleicht noch die Erfahrung, deshalb bewerbe ich mich initiativ für einen Einstieg: als Quereinsteiger mit Einarbeitung, in der Assistenz oder in der Sachbearbeitung.`,
+    ohneAnzeige
+      ? `hiermit bewerbe ich mich initiativ bei ${firma} für einen Einstieg im Bereich ${bereich} – genau dort möchte ich beruflich hin. Ich bin Quereinsteiger und suche eine Vollzeitstelle mit Einarbeitung, gern auch zunächst im IT-Support oder Helpdesk.`
+      : `ich habe gesehen, dass ${firma} im Bereich ${bereich} gerade Verstärkung sucht – genau dort möchte ich beruflich hin. Für die ausgeschriebene Stelle fehlt mir vielleicht noch die Erfahrung, deshalb bewerbe ich mich initiativ für einen Einstieg: als Quereinsteiger mit Einarbeitung, in der Assistenz oder in der Sachbearbeitung.`,
     '',
     (bereich === 'IT'
       ? 'Mich reizt an der IT, dass man jeden Tag Probleme löst und dafür sorgt, dass alles läuft und sicher bleibt. Eine IT-Ausbildung bringe ich noch nicht mit, aber ich arbeite gern und viel am PC, lerne schnell und fange gern im Support oder Helpdesk an – langfristig möchte ich mich Richtung IT-Sicherheit entwickeln.'
