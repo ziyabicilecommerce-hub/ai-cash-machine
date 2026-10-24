@@ -42,6 +42,29 @@ export async function bilderMitschicken(shots, versuche = 3) {
   return fertig;
 }
 
+// Kaggle nimmt nur kleine Aufträge an: 8 volle Startbilder (doppelt base64) liefen am 24.10. ins Leere. Kaggle rechnet
+// ohnehin in 480x832 - also die Bilder vorher genau darauf verkleinern (~40 KB statt ~400 KB je Bild).
+export function bildVerkleinern(b64, breite = 480, hoehe = 832) {
+  try {
+    const klein = execFileSync('ffmpeg', ['-loglevel', 'error', '-i', 'pipe:0', '-vf', `scale=${breite}:${hoehe}:force_original_aspect_ratio=increase,crop=${breite}:${hoehe}`, '-q:v', '6', '-f', 'mjpeg', 'pipe:1'],
+      { input: Buffer.from(b64, 'base64'), stdio: ['pipe', 'pipe', 'pipe'], timeout: 60000 });
+    return klein.length ? klein.toString('base64') : b64;
+  } catch { return b64; }
+}
+
+// Kaggle lehnt Skripte ab ~3 MB ab (400 Bad Request, getestet: 1 MB geht). Bilder werden im Skript noch einmal base64-
+// verpackt (x1,33) - also höchstens ~650 KB Bilder; was darüber liegt, holt sich Kaggle selbst über bild_url.
+export function bildBudget(shots, maxKb = 650) {
+  let summe = 0;
+  return shots.map((s) => {
+    if (!s.bildB64) return s;
+    summe += s.bildB64.length / 1024;
+    if (summe <= maxKb) return s;
+    const { bildB64, ...rest } = s;
+    return rest;
+  });
+}
+
 async function bildHolen(s, versuche) {
   if (s.bildB64) return s;
   {
@@ -61,6 +84,8 @@ export const kaggleEnv = (env = process.env) => {
   const key = String(env.KAGGLE_KEY || '').trim();
   return /^KGAT_/.test(key) && !env.KAGGLE_API_TOKEN ? { ...env, KAGGLE_API_TOKEN: key } : env;
 };
+// Kaggle meldet Fehler oft auf stdout statt stderr - beides zeigen, sonst steht im Protokoll nur eine leere Zeile.
+const fehlerText = (err) => [err.stdout, err.stderr, err.message].map((x) => String(x || '').trim()).filter(Boolean).join(' | ').slice(0, 600);
 const kaggle = (args, opts = {}) => execFileSync('kaggle', args, { stdio: 'pipe', timeout: 300000, env: kaggleEnv(), ...opts }).toString();
 
 // Schiebt den Auftrag zu Kaggle, wartet bis fertig (max. `maxMinuten`) und lädt die Clips nach `ordner`.
@@ -72,14 +97,15 @@ export async function kaggleClips(shots, ordner, opts = {}) {
   const kdir = join(ordner, 'kaggle-kernel');
   mkdirSync(kdir, { recursive: true });
   writeFileSync(join(kdir, 'kernel-metadata.json'), JSON.stringify(kernelMeta(nutzer), null, 2));
-  const mitBild = await bilderMitschicken(shots);
-  console.log(`[kaggle-turbo] ${mitBild.filter((s) => s.bildB64).length}/${shots.length} Startbilder mitgeschickt`);
+  const mitBild = bildBudget((await bilderMitschicken(shots)).map((s) => (s.bildB64 ? { ...s, bildB64: bildVerkleinern(s.bildB64) } : s)));
+  const kb = Math.round(mitBild.reduce((n, s) => n + (s.bildB64?.length || 0), 0) / 1024);
+  console.log(`[kaggle-turbo] ${mitBild.filter((s) => s.bildB64).length}/${shots.length} Startbilder mitgeschickt (${kb} KB)`);
   writeFileSync(join(kdir, 'turbo.py'), skriptBauen(readFileSync(resolve('scripts/kaggle/turbo.py'), 'utf8'), auftragBauen(mitBild, opts)));
   console.log(`[kaggle-turbo] ${shots.length} Shots an die Kaggle-GPU geschickt`);
   try {
     console.log(kaggle(['kernels', 'push', '-p', kdir]).trim());
   } catch (err) {
-    console.log(`[kaggle-turbo] Hochladen fehlgeschlagen: ${String(err.stderr || err.message).slice(0, 300)}`);
+    console.log(`[kaggle-turbo] Hochladen fehlgeschlagen: ${fehlerText(err)}`);
     return ergebnis;
   }
   // Höchstens 150 min warten - danach braucht der Lauf noch Zeit fürs Hochskalieren (Job-Limit 340 min).
@@ -94,7 +120,7 @@ export async function kaggleClips(shots, ordner, opts = {}) {
   const ziel = join(ordner, 'kaggle-out');
   mkdirSync(ziel, { recursive: true });
   try { kaggle(['kernels', 'output', `${nutzer}/${KERNEL_NAME}`, '-p', ziel], { timeout: 900000 }); } catch (err) {
-    console.log(`[kaggle-turbo] Abholen fehlgeschlagen: ${String(err.stderr || err.message).slice(0, 300)}`);
+    console.log(`[kaggle-turbo] Abholen fehlgeschlagen: ${fehlerText(err)}`);
   }
   if (existsSync(join(ziel, 'bericht.json'))) console.log(`[kaggle-turbo] Bericht: ${readFileSync(join(ziel, 'bericht.json'), 'utf8').slice(0, 3000)}`);
   for (const s of shots) {
