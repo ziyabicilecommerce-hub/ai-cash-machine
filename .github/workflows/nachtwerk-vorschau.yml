@@ -49,7 +49,11 @@ jobs:
           git config user.name "nachtwerk-bot" && git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git fetch -q --depth 1 "$URL" bot-vorschau 2>/dev/null; then git checkout -q -b bot-vorschau FETCH_HEAD; else git checkout -q --orphan bot-vorschau; fi
           mkdir -p vorschau && cp ../vorschau.jpg "$ZIEL"
+          # TikTok-Titelbild (cover.jpg aus dem Studio) gleich mit ablegen.
+          COVER=""
+          if [ -f ../video/cover.jpg ]; then COVER="${ZIEL%.jpg}-cover.jpg"; cp ../video/cover.jpg "$COVER"; git add "$COVER"; fi
           git add "$ZIEL" && git commit -qm "Vorschau Issue #$ISSUE [skip ci]" && git push -q "$URL" bot-vorschau
           cd ..
           printf '%s\n\n%s\n' "🖼️ **Vorschau** – 8 Bilder quer durchs Video ($(printf '%.0f' "$DAUER") s):" "![Vorschau](https://github.com/$REPO/blob/bot-vorschau/$ZIEL?raw=true)" > text.md
+          if [ -n "$COVER" ]; then printf '\n%s\n\n<img src="%s" width="270">\n' "📱 **TikTok-Titelbild** (zum Speichern antippen):" "https://github.com/$REPO/blob/bot-vorschau/$COVER?raw=true" >> text.md; fi
           gh issue comment "$ISSUE" -R "$REPO" --body-file text.md
