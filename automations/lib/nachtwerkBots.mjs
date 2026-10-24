@@ -90,7 +90,8 @@ export async function tagesIdee(bot, tag, kiJson, vorher = null) {
     const sprecher = bot.geschichte ? '' : ohneDeko(antwort?.sprecher, 300);
     const beschreibung = beschreibungBauen(folge > 1 ? `(Teil ${folge}) ${text(antwort?.beschreibung, 200)}` : antwort?.beschreibung, fertigerHook, bot);
     if (idee.length >= 15) return { idee, hook: fertigerHook, sprecher, beschreibung, folge, quelle: 'ki' };
-  } catch { /* Rückfall */ }
+    console.log(`[tages-bot] KI-Idee unbrauchbar: ${JSON.stringify(antwort).slice(0, 200)}`);
+  } catch (err) { console.log(`[tages-bot] KI-Idee fehlgeschlagen: ${String(err?.message || err).slice(0, 200)}`); }
   // Ohne KI keine echte Fortsetzung möglich - dann startet eine neue Geschichte (Folge 1).
   const liste = bot.ideen?.length ? bot.ideen : [bot.beispiel];
   return { idee: liste[tag % liste.length], hook: ersatz, sprecher: '', beschreibung: beschreibungBauen('', ersatz, bot), folge: 1, quelle: 'liste' };

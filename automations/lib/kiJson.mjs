@@ -108,8 +108,9 @@ export async function kiTextEinmal(prompt, { maxTokens = 1500 } = {}) {
     const d = await res.json();
     const text = d?.choices?.[0]?.message?.content || '';
     if (res.ok && text && !/reached its budget|enough credits|enter\.pollinations\.ai/i.test(text)) return text;
-  } catch {
-    /* naechster Anbieter */
+    console.log(`[ki] Pollinations ${res.status}: ${String(text || d?.error?.message || d?.error || '').slice(0, 120)} - nächster Anbieter`);
+  } catch (err) {
+    console.log(`[ki] Pollinations: ${String(err.message).slice(0, 120)} - nächster Anbieter`);
   }
   for (const [name, fn] of [['GEMINI_API_KEY', gemini], ['GROQ_API_KEY', groq]]) {
     if (!envK(name)) continue;
