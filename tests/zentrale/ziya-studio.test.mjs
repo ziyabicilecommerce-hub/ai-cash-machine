@@ -172,3 +172,10 @@ test('Regie-Bot: überarbeitet den Plan, verliert aber keine Szenen', async () =
   const t = await geschichtePlanen('x', { preset: 'grusel', n: 3, kiJson: async () => (++n === 1 ? plan : kaputt), ersatz: () => [] });
   assert.match(t[0].bild, /^b1/, 'schlechtere Überarbeitung wird verworfen');
 });
+
+import { LEBENDIG } from '../../automations/lib/ziyaStudio.mjs';
+test('Kamerafahrt lebt: pulsierendes Licht und bewegte Körnung', () => {
+  assert.ok(kamerafahrt('grusel').includes(LEBENDIG));
+  assert.match(LEBENDIG, /eval=frame/);
+  assert.match(LEBENDIG, /noise=alls=\d+:allf=t/);
+});

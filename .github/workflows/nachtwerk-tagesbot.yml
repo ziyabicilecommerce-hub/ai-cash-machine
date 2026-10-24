@@ -1,6 +1,6 @@
 name: "🤖 NACHTWERK-Tagesbot (jeden Tag ein Video)"
 
-# Jede Nacht ist ein anderer Bot dran (Grusel, Cartoon, Anime, Kino, Welten), erfindet sich eine Idee und baut mit dem
+# Jede Nacht ist ein anderer Bot dran (Grusel, Cartoon, Anime, Kino, Welten, Drachen, Tier-Action), erfindet sich eine Idee und baut mit dem
 # Ziya Studio ein Video (Krass-Modus, KI-Kennzeichnung im Bericht). Ergebnis + Vorschaubild landen in einem Issue
 # (Label tages-video). Gepostet wird nichts automatisch. Von Hand: Actions > NACHTWERK-Tagesbot > Run workflow.
 
@@ -13,7 +13,7 @@ on:
         description: 'Bestimmten Bot nehmen (leer = Bot des Tages)'
         type: choice
         default: ''
-        options: ['', grusel, cartoon, anime, kino, welt]
+        options: ['', grusel, cartoon, anime, kino, welt, drache, tier]
 
 permissions:
   contents: read

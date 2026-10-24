@@ -13,7 +13,10 @@
       "ideen": [
         "a haunted lighthouse keeper's lantern turns on by itself every midnight and lures sailors to a ghost ship",
         "a scarecrow walks through a foggy cornfield at night hunting crows that stole its button eyes",
-        "an abandoned carnival ride starts spinning by itself in the rain and a shadow waves from the top"
+        "an abandoned carnival ride starts spinning by itself in the rain and a shadow waves from the top",
+        "a forgotten porcelain doll walks down a moonlit hallway and the paintings' eyes follow it",
+        "a ghost train arrives at an empty station at 3 am and its doors open by themselves",
+        "a swamp witch's lantern floats over black water and fireflies form a skull"
       ]
     },
     {
@@ -29,7 +32,10 @@
       "ideen": [
         "a tiny robot gardener tries to grow the biggest pumpkin in town and it floats away like a balloon",
         "a shy cloud learns to make rainbows to cheer up a gloomy village",
-        "a penguin chef opens an ice-cream truck in the desert"
+        "a penguin chef opens an ice-cream truck in the desert",
+        "a tiny dragon tries to light birthday candles but sneezes fireworks across the kitchen",
+        "a snail racer upgrades its shell with a rocket and wins the garden grand prix",
+        "a lonely snowman builds himself a friend just before the sun comes out"
       ]
     },
     {
@@ -45,7 +51,10 @@
       "ideen": [
         "a lightning-fast fox spirit duels a giant stone golem in a bamboo forest",
         "two rival sky pirates clash on top of a flying airship during a thunderstorm",
-        "a young mage with a fire whip battles a frost dragon on a frozen lake"
+        "a young mage with a fire whip battles a frost dragon on a frozen lake",
+        "a samurai with a blade of pure water fights a lava demon inside an erupting volcano",
+        "a cyber ninja races across neon rooftops and clashes with a mechanical tiger",
+        "a moon priestess deflects a meteor storm with a giant glowing shield"
       ]
     },
     {
@@ -61,7 +70,10 @@
       "ideen": [
         "a deep-sea diver discovers a glowing city at the bottom of the ocean",
         "a lone rider races a sandstorm across a red desert toward a hidden oasis",
-        "an astronaut repairs a satellite while a meteor shower lights up the earth below"
+        "an astronaut repairs a satellite while a meteor shower lights up the earth below",
+        "a firefighter carries a child out of a burning skyscraper as the floor collapses",
+        "a pilot lands a damaged plane on a frozen lake at night",
+        "a mountain climber reaches the summit as an avalanche thunders below"
       ]
     },
     {
@@ -77,7 +89,48 @@
       "ideen": [
         "a volcano erupts under the northern lights while lava meets the sea",
         "a gigantic waterfall pours off the edge of a floating island into the clouds",
-        "a supercell storm forms over endless golden wheat fields at sunset"
+        "a supercell storm forms over endless golden wheat fields at sunset",
+        "a glowing jellyfish swarm rises through a deep ocean trench toward the moonlight",
+        "a black hole bends the light of a nearby galaxy into a burning ring",
+        "a desert canyon floods with a sudden flash flood under a lightning sky"
+      ]
+    },
+    {
+      "id": "drache",
+      "emoji": "🐉",
+      "name": "Drachen-Bot",
+      "text": "Fantasy-Epos: Drachen, Burgen, Magie - eigene Welten, eigene Figuren.",
+      "beispiel": "a giant crystal dragon wakes up under a frozen castle and breathes blue fire into the sky",
+      "preset": "crane-up",
+      "stil": "kino",
+      "geschichte": true,
+      "shots": 10,
+      "ideen": [
+        "a young knight rides a storm dragon through a thunder cloud to save a floating city",
+        "a golden dragon guards a waterfall temple and battles a shadow serpent",
+        "a baby dragon hatches in a volcano and its first flame lights up a whole valley",
+        "a sky castle is attacked by a swarm of fire wyverns at sunset",
+        "an old wizard summons a dragon made of stars above a sleeping village",
+        "a sea dragon rises from a whirlpool and splits a pirate ship in two"
+      ]
+    },
+    {
+      "id": "tier",
+      "emoji": "🐾",
+      "name": "Tier-Action-Bot",
+      "text": "Süße und wilde Tiere in Action-Szenen - Cartoon-Look, viel Bewegung.",
+      "beispiel": "a fluffy hamster drifts a tiny race car through a kitchen obstacle course",
+      "preset": "fpv",
+      "stil": "cartoon",
+      "geschichte": false,
+      "shots": 8,
+      "ideen": [
+        "a cat in a superhero cape leaps across city rooftops chasing a robot mouse",
+        "a squad of penguins snowboards down a giant glacier and launches off an ice ramp",
+        "a turbo turtle with jet boots races a cheetah across the savanna",
+        "a raccoon heist crew sneaks through a museum of shiny treasures",
+        "a corgi pilot flies a paper airplane through a thunderstorm",
+        "a gecko climbs a skyscraper during a neon festival and catches a falling balloon"
       ]
     }
   ]
