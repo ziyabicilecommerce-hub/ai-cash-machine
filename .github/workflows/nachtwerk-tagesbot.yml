@@ -5,8 +5,10 @@ name: "🤖 NACHTWERK-Tagesbot (jeden Tag ein Video)"
 # (Label tages-video). Gepostet wird nichts automatisch. Von Hand: Actions > NACHTWERK-Tagesbot > Run workflow.
 
 on:
+  # Zwei Tagesvideos: nachts und nachmittags (jeweils anderer Bot). GitHub startet geplante Läufe oft Stunden später.
   schedule:
     - cron: '17 1 * * *'
+    - cron: '17 13 * * *'
   workflow_dispatch:
     inputs:
       bot:
@@ -62,11 +64,12 @@ jobs:
           TITEL: ${{ steps.plan.outputs.titel }}
           IDEE: ${{ steps.plan.outputs.idee }}
           BESCHREIBUNG: ${{ steps.plan.outputs.beschreibung }}
+          BESCHREIBUNG_EN: ${{ steps.plan.outputs.beschreibung_en }}
           FOLGE: ${{ steps.plan.outputs.folge }}
           LAUF: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           gh label create tages-video -R "$GITHUB_REPOSITORY" --color 9b7cff --description "Tagesvideo eines NACHTWERK-Bots" 2>/dev/null || true
-          printf '%s\n\n**Folge:** %s\n\n**Idee:** %s\n\n**TikTok-Text zum Kopieren:**\n```\n%s\n```\n\nWird gerade gebaut: %s\n\n_KI-generiert – beim Posten als KI-Inhalt kennzeichnen._\n' "🤖 Tagesvideo vom Bot." "$FOLGE" "$IDEE" "$BESCHREIBUNG" "$LAUF" > text.md
+          printf '%s\n\n**Folge:** %s\n\n**Idee:** %s\n\n**TikTok-Text zum Kopieren:**\n```\n%s\n```\n\n**🇬🇧 English (für die englische Fassung *-en.mp4):**\n```\n%s\n```\n\nWird gerade gebaut: %s\n\n_KI-generiert – beim Posten als KI-Inhalt kennzeichnen._\n' "🤖 Tagesvideo vom Bot." "$FOLGE" "$IDEE" "$BESCHREIBUNG" "$BESCHREIBUNG_EN" "$LAUF" > text.md
           URL=$(gh issue create -R "$GITHUB_REPOSITORY" --title "$TITEL" --label tages-video --body-file text.md)
           echo "nummer=${URL##*/}" >> "$GITHUB_OUTPUT"
 
@@ -86,6 +89,9 @@ jobs:
       krass: true
       hook: ${{ needs.idee.outputs.hook }}
       ende: Fortsetzung folgt...
+      englisch: true
+      # Zwei Videos am Tag teilen sich die 30 Kaggle-Stunden pro Woche: höchstens 110 min GPU je Video.
+      kaggle_min: '110'
       text: ${{ needs.idee.outputs.text }}
 
   fertig:

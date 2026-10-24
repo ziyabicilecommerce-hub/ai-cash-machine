@@ -58,6 +58,10 @@ on:
         description: 'Text am Ende (optional, z. B. "Fortsetzung folgt...")'
         required: false
         default: ''
+      englisch:
+        description: 'Zusätzlich englische Fassung (Stimme, Untertitel, Hook)'
+        type: boolean
+        default: false
   # NACHTWERK-Bots (nachtwerk-bots.yml) rufen das Studio mit denselben Eingaben auf.
   workflow_call:
     inputs:
@@ -74,6 +78,8 @@ on:
       text: { type: string, default: '' }
       hook: { type: string, default: '' }
       ende: { type: string, default: '' }
+      englisch: { type: boolean, default: false }
+      kaggle_min: { type: string, default: '' }
     outputs:
       run_url:
         value: ${{ jobs.studio.outputs.run_url }}
@@ -102,6 +108,8 @@ jobs:
       ZIYA_TEXT: ${{ inputs.text }}
       ZIYA_HOOK: ${{ inputs.hook }}
       ZIYA_ENDE: ${{ inputs.ende }}
+      ZIYA_ENGLISCH: ${{ inputs.englisch && 'ja' || 'nein' }}
+      ZIYA_KAGGLE_MIN: ${{ inputs.kaggle_min }}
       ZIYA_GESCHICHTE: ${{ inputs.geschichte && 'ja' || 'nein' }}
       ZIYA_STIL: ${{ inputs.stil }}
       ZIYA_KRASS: ${{ inputs.krass && 'ja' || 'nein' }}
@@ -159,4 +167,5 @@ jobs:
             out/ziya-studio/bericht.json
             out/ziya-studio/film.nachtwerk.json
             out/ziya-studio/cover.jpg
+            out/ziya-studio/cover-en.jpg
           retention-days: 14

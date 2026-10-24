@@ -125,3 +125,18 @@ test('Serie: nächste Folge mit denselben Figuren, Teil N in Hook und Titel', as
   const ohneKi = await tagesIdee(anime, 0, async () => null, vorher);
   assert.equal(ohneKi.folge, 1);
 });
+
+import { TAGES_LAENGE } from '../../automations/lib/nachtwerkBots.mjs';
+test('Zwei Tagesvideos: nachts und nachmittags ein anderer Bot, länger, mit englischem TikTok-Text', async () => {
+  const nacht = tagesBot(bots, new Date(Date.UTC(2026, 9, 25, 5, 50)));
+  const mittag = tagesBot(bots, new Date(Date.UTC(2026, 9, 25, 17, 30)));
+  assert.notEqual(nacht.bot.id, mittag.bot.id);
+  assert.equal(mittag.tag, nacht.tag + 1);
+  const a = auftragAusIssue(JSON.stringify({ bot: 'welt', idee: 'a volcano erupts at night', shots: Math.max(6, TAGES_LAENGE.shots), sekunden: TAGES_LAENGE.sekunden }), bots);
+  assert.equal(a.shots, '14');
+  assert.equal(a.sekunden, '4');
+  const tier = bots.find((b) => b.id === 'tier');
+  const ki = await tagesIdee(tier, 0, async () => ({ idee: 'a turbo turtle with jet boots races a cheetah', hook: 'Unmöglich!', beschreibung: 'Wer ist schneller? #tiere', beschreibung_en: 'Who is faster? #animals' }));
+  assert.equal(ki.beschreibungEn, 'Who is faster? #animals #AI');
+  assert.match((await tagesIdee(tier, 0, async () => null)).beschreibungEn, /#AI$/);
+});

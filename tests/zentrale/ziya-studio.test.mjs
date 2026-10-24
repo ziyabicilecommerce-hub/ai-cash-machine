@@ -206,3 +206,12 @@ test('Abspann: "Fortsetzung folgt" erst in den letzten Sekunden', (t) => {
   assert.ok(!bild(3).some((x) => x > 200), 'vorher kein Text');
   assert.ok(bild(7.5).some((x) => x > 200), 'am Ende Text');
 });
+
+import { uebersetzenPrompt } from '../../automations/lib/ziyaStudio.mjs';
+test('Englische Fassung: Übersetzungs-Auftrag enthält alle Texte als JSON', () => {
+  const p = uebersetzenPrompt({ text: 'Der Drache erwacht.', hook: 'Teil 2: Er ist zurück', ende: 'Fortsetzung folgt...' });
+  assert.match(p, /"text":"Der Drache erwacht\."/);
+  assert.match(p, /"hook":"Teil 2: Er ist zurück"/);
+  assert.match(p, /Answer ONLY with JSON/);
+  assert.match(uebersetzenPrompt({}), /"text":""/);
+});
