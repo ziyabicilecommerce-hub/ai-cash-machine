@@ -32,6 +32,7 @@ jobs:
       geschichte: ${{ steps.plan.outputs.geschichte }}
       menschen: ${{ steps.plan.outputs.menschen }}
       durchgehend: ${{ steps.plan.outputs.durchgehend }}
+      hook: ${{ steps.plan.outputs.hook }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -70,6 +71,7 @@ jobs:
       menschen: ${{ needs.idee.outputs.menschen == 'true' }}
       durchgehend: ${{ needs.idee.outputs.durchgehend == 'true' }}
       krass: true
+      hook: ${{ needs.idee.outputs.hook }}
 
   fertig:
     needs: [idee, video]

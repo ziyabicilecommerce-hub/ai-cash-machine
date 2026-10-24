@@ -19,7 +19,7 @@ import { bildURL } from './lib/pollinationsMedia.mjs';
 import { geschichtePlanen, STILE, stilVon } from './lib/ziyaGeschichte.mjs';
 import { kiJson } from './lib/kiJson.mjs';
 import { nachtwerkProjekt, datenUrl } from './lib/nachtwerkProjekt.mjs';
-import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt, KRASS } from './lib/ziyaStudio.mjs';
+import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt, KRASS, hookFilter, hookUmbrechen } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
 const ausfuehren = promisify(execFile);
@@ -147,6 +147,22 @@ function untertitelEinbrennen(video) {
   } catch (err) { console.log(`${LOG} Untertitel übersprungen: ${String(err.stderr || err.message).slice(0, 200)}`); }
 }
 
+// Hook: großer Text in den ersten 2,6 s (blendet aus) - hält die Zuschauer auf TikTok. Text über Datei, damit kein
+// Zeichen den Filter bricht; ohne Schrift oder bei Fehlern bleibt das Video wie es ist.
+function hookEinblenden(video) {
+  const hook = String(process.env.ZIYA_HOOK || '').replace(/\s+/g, ' ').trim().slice(0, 60);
+  const schrift = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
+  if (!hook || !existsSync(schrift)) return;
+  const datei = join(ORDNER, 'hook.txt');
+  writeFileSync(datei, hookUmbrechen(hook.toUpperCase()));
+  const mit = join(ORDNER, 'mit-hook.mp4');
+  try {
+    ffmpeg(['-i', video, '-vf', hookFilter(datei, schrift), '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-c:a', 'copy', '-movflags', '+faststart', mit]);
+    copyFileSync(mit, video);
+    console.log(`${LOG} Hook eingeblendet: ${hook}`);
+  } catch (err) { console.log(`${LOG} Hook übersprungen: ${String(err.stderr || err.message).slice(0, 200)}`); }
+}
+
 // Projektdatei für NACHTWERK (Handschnitt im Browser): Clips verkleinert (720x1280), damit die Datei handlich bleibt.
 function nachtwerkSchreiben(fertig) {
   try {
@@ -262,6 +278,7 @@ async function main() {
   ffmpeg([...fertig.flatMap((f) => ['-i', f.datei]), '-filter_complex', filter, '-map', '[v]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', stumm]);
   await tonDrauf(stumm, video, fertig.map((f) => f.dauer));
   if (krass) untertitelEinbrennen(video);
+  hookEinblenden(video);
 
   const bericht = { idee, preset, video: video.replace(`${resolve('.')}/`, ''), shots: fertig.map(({ nr, preset: p, modell, dauer }) => ({ nr, preset: p, modell, dauer })) };
   writeFileSync(join(ORDNER, 'bericht.json'), JSON.stringify(bericht, null, 2));

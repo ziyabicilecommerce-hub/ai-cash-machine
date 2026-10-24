@@ -76,3 +76,14 @@ test('NACHTWERK-Bots: sieben Bots, jeder mit eigenen Ideen und gültigen Einstel
     assert.deepEqual(auftragAusIssue(JSON.stringify({ bot: b.id, idee: b.ideen[0] }), bots).bot, b.id);
   }
 });
+
+import { HOOKS } from '../../automations/lib/nachtwerkBots.mjs';
+test('Tagesbot: Hook von der KI (ohne Emojis), sonst fester Hook je Bot', async () => {
+  const anime = bots.find((b) => b.id === 'anime');
+  const ki = await tagesIdee(anime, 0, async () => ({ idee: 'two rival sky pirates clash on a flying airship', hook: 'Wer gewinnt? 🔥 #anime' }));
+  assert.equal(ki.hook, 'Wer gewinnt?');
+  const rueck = await tagesIdee(anime, 0, async () => { throw new Error('weg'); });
+  assert.equal(rueck.hook, HOOKS.anime);
+  for (const b of bots) assert.ok(HOOKS[b.id], b.id);
+  assert.equal(auftragAusIssue(JSON.stringify({ bot: 'anime', idee: 'test idee hier', hook: 'Wer\ngewinnt?' }), bots).hook, 'Wer gewinnt?');
+});

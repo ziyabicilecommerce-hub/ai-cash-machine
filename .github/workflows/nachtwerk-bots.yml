@@ -31,6 +31,7 @@ jobs:
       durchgehend: ${{ steps.lesen.outputs.durchgehend }}
       loop: ${{ steps.lesen.outputs.loop }}
       text: ${{ steps.lesen.outputs.text }}
+      hook: ${{ steps.lesen.outputs.hook }}
       krass: ${{ steps.lesen.outputs.krass }}
     steps:
       - uses: actions/checkout@v4
@@ -70,6 +71,7 @@ jobs:
       durchgehend: ${{ needs.auftrag.outputs.durchgehend == 'true' }}
       loop: ${{ needs.auftrag.outputs.loop == 'true' }}
       text: ${{ needs.auftrag.outputs.text }}
+      hook: ${{ needs.auftrag.outputs.hook }}
       krass: ${{ needs.auftrag.outputs.krass != 'false' }}
 
   fertig:

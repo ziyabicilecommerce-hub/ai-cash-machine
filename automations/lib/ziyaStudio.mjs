@@ -178,3 +178,16 @@ export function tonFormel(dauern, preset, { blende = 0.4, krass = false } = {}) 
     ? [`(0.18+0.25*t/${lang.toFixed(2)})*(exp(-28*mod(t,0.83))+0.7*exp(-28*mod(t-0.22,0.83)))*sin(2*PI*52*t)`] : [];
   return [drone, boom, ...whoosh, ...treffer, ...herz].join('+');
 }
+
+// Hook-Text (großer Titel in den ersten 2,6 s) - siehe hookEinblenden in automations/ziya-studio.mjs.
+export const hookFilter = (datei, schrift) => `drawtext=fontfile=${schrift}:textfile=${datei}:reload=0:fontcolor=white:fontsize=w/14:`
+  + `borderw=7:bordercolor=black@0.9:line_spacing=12:x=(w-text_w)/2:y=h*0.2:alpha='if(lt(t,2.2),1,max(0,1-(t-2.2)/0.4))':enable='lt(t,2.6)'`;
+export function hookUmbrechen(hook, breite = 14) {
+  const zeilen = [];
+  for (const wort of String(hook).trim().split(/\s+/).filter(Boolean)) {
+    const letzte = zeilen[zeilen.length - 1];
+    if (letzte && (letzte + ' ' + wort).length <= breite) zeilen[zeilen.length - 1] = `${letzte} ${wort}`;
+    else zeilen.push(wort);
+  }
+  return zeilen.slice(0, 3).join('\n');
+}
