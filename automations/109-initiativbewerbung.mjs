@@ -62,6 +62,10 @@ const FINANZ = /bank|sparkasse|volksbank|raiffeisen|versicher|invest|capital|fin
 const VERKEHR = /fraport|lufthansa|samsung|landesbahn|autobahn|flugsicherung|transdev|emirates|air canada|air china|swissport|dachser|rhenus|kühne|deutsche post|arvato|hellmann|dp world|ceva|dsv|expeditors|db intermodal|\bdb\b/i;
 const TECH_NICHT = /bau|gebäude|montage|gerüst|scaffold|sanitär|elektro|facility|kälte|klima/i;
 const TECH = /netapp|computacenter|cyberport|axians|network|telekom|software|digital|data|daten|cloud|cyber|informatik|\bit\b|\bi t s\b|ict|arcadyan|convergint|samsung/i;
+const FIRMA = /gmbh|\bag\b|\bse\b|\bkg\b|llp|partg|mbb|holding/i; // keine Einzelpersonen
+const DIENST_NICHT = /kaufland|rossmann|hit frische|vergoelst|hotel|go asia|lpp|brunel|wackler|korian|curatis|schindler|b&o|actemium|vinci construction|hays|headmatch|it professionals|\bhr\b|-hr-|hrlaw|vermitt|tedi|mömax|aldi|lidl|toom|calzedonia|matratzen|xxxl|seh land|agaplesion|alloheim|senior|evangel|kirch|ib südwest|gemeinnütz|ggmbh|piepenbrock|wisag|sodexo|dussmann|stölting|express|hermes|vertrieb|euromaster|goldbeck|albag|karriere|career|job|talent|headhunt|steuer|rechtsanw|kanzlei|anwält|notar|bildung|schule|akademie|coaching|reinigung|catering|sicherheit|security|bewachung|makler|immobilienmakler/i;
+const PRUEF = /tüv|dekra|vde|fresenius|sto se|corden|cabb|landesbetrieb|amg lithium|ginger/i;
+const AUTO = /mercedes|bosch|man truck|continental|opel|stellantis|hyundai|kia|toyota|porsche|bmw|volkswagen|audi|ford|carglass/i;
 const IT_BRANCHEN = [
   { branche: 11, ohneAnzeige: false },
   { branche: 6, name: FINANZ, ohneAnzeige: true },
@@ -74,6 +78,13 @@ const IT_BRANCHEN = [
   // 9 Handel und 1 Ingenieurbüros: nur Tech-/ICT-Firmen, keine Läden oder Baufirmen
   { branche: 9, name: TECH, nicht: TECH_NICHT, ohneAnzeige: true },
   { branche: 1, name: TECH, nicht: TECH_NICHT, ohneAnzeige: true },
+  // 13 Unternehmensdienstleister/Beratung: Büro-Arbeitgeber mit eigener IT, ohne Vermittler, Kanzleien, Bildung
+  { branche: 13, name: FIRMA, nicht: DIENST_NICHT, ohneAnzeige: true },
+  // 2 Chemie/Prüfdienste, 5 Fahrzeugbau, 14 Medien, 26 Luftfahrttechnik: nur große Arbeitgeber
+  { branche: 2, name: PRUEF, ohneAnzeige: true },
+  { branche: 5, name: AUTO, ohneAnzeige: true },
+  { branche: 14, name: /maxon|fachverlag|videoforschung/i, ohneAnzeige: true },
+  { branche: 26, name: /rolls-royce/i, ohneAnzeige: true },
 ];
 const bereichVon = (st) => (st.itBranche && !CYBER.test(st.titel) ? 'IT' : BEREICHE.find(([re]) => re.test(st.titel))?.[1] || 'Spedition und Logistik');
 const firmaKey = (name = '') => name.toLowerCase().replace(/\b(gmbh|ag|kg|se|co|mbh|& ?co\.?)\b|[^a-zäöü0-9]/g, '');
