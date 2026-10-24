@@ -41,7 +41,7 @@ const BEREICHE = [
 // Nur Anzeigen, die wirklich im Wunschbereich sind (die Suche liefert auch Deloitte-Berater & Co.).
 const RELEVANT = /it-?support|it support|helpdesk|help desk|service ?desk|1st[ -]?level|first level|2nd[ -]?level|systemadmin|system ?administrator|it-?admin|netzwerk|network|rechenzentrum|data ?center|it-?techniker|it techniker|client ?management|it-?mitarbeiter|it-?service|cyber|it-?secur|it-?sicherheit|informationssicherheit|\bisms\b|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi|cloud ?security|netzwerksicherheit|firewall|vulnerability|schwachstellen|identity|\biam\b|access management|datenschutz|security consultant|cyber ?defen|luftfracht|air ?cargo|airfreight|cargo|fracht|freight|zoll|export|import|außenhandel|leitstelle|leitstand|einsatzzentrale|notruf|sicherheitszentrale|überwachungszentrale|alarmempfang|flughafen|airport|disposition|disponent|spedition|logistik/i;
 // Arzt-, Zahnarzt- und Therapiepraxen als Arbeitgeber (Empfang dort = medizinisches Personal) passen nicht.
-const PRAXIS = /praxis|kieferorthop|zahnarzt|zahnärzt|ärzt|arzt|klinik|pflege|therap|apothek|dental|zahntechn|orthopädie|sanitätshaus|hörgerät|optik|rohr|kanal|reinigung|entrümpel|orthopäd|schuhmacher|haustechnik|elektrotechnik|elektro &|installation|repair|reparatur|sanitär|heizung|finanzberat|vermögensberat|finanzcheck|finanzpartner|attikon|makler|generalvertret|agentur/i;
+const PRAXIS = /reifen|kfz|autoservice|ernsting|praxis|kieferorthop|zahnarzt|zahnärzt|ärzt|arzt|klinik|pflege|therap|apothek|dental|zahntechn|orthopädie|sanitätshaus|hörgerät|optik|rohr|kanal|reinigung|entrümpel|orthopäd|schuhmacher|haustechnik|elektrotechnik|elektro &|installation|repair|reparatur|sanitär|heizung|finanzberat|vermögensberat|finanzcheck|finanzpartner|attikon|makler|generalvertret|agentur/i;
 // Personalvermittler tarnen sich oft ohne Zeitarbeits-Flag - eine Initiativbewerbung dort bringt nichts.
 const VERMITTLER = /personal|zeitarbeit|staffing|recruit|hr consulting|impact gmbh|aide gmbh|bankpower|spp direkt|attentus/i;
 // Fahrer-, Handwerks-, Verkaufs- und Chefposten zeigen nicht auf ein Büro im Wunschbereich.
@@ -174,7 +174,7 @@ async function main() {
     if (!emailOk(email)) state.ohneMail[key] = heute();
     const zeitarbeit = st.vermittler || st.vermittlerFirma || VERMITTLER.test(email);
     if (zeitarbeit && !(st.brutto?.bis >= ZEITARBEIT_AB)) state.ohneMail[key] = heute(); // nicht jeden Lauf neu prüfen
-    if (/aussendienst|außendienst|vertrieb|sales/i.test(email) || (zeitarbeit && !(st.brutto?.bis >= ZEITARBEIT_AB)) || !emailOk(email) || state.emails[email] || postfach.zusatzEmails[email] || domains.has(firmenDomain(email))) continue;
+    if (/aussendienst|außendienst|vertrieb|sales|^sbv|schwerbehind|betriebsrat|datenschutz|presse|kanzlei@|steuerberat/i.test(email) || (zeitarbeit && !(st.brutto?.bis >= ZEITARBEIT_AB)) || !emailOk(email) || state.emails[email] || postfach.zusatzEmails[email] || domains.has(firmenDomain(email))) continue;
     const bereich = bereichVon(st);
     const betreff = `Initiativbewerbung – Einstieg im Bereich ${bereich} – ${BEWERBER()}`;
     const anschreiben = initiativAnschreiben({ bereich, firma: st.arbeitgeber, ohneAnzeige: !!st.ohneAnzeige });
