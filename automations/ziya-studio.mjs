@@ -61,7 +61,10 @@ function hochskalieren(quelle, ziel) {
     const t = Date.now();
     execFileSync('python3', [resolve('scripts/hochskalieren.py'), quelle, ziel, preset === 'anime-kampf' ? 'anime' : 'allgemein'], { stdio: 'pipe', timeout: 1800000 });
     if (existsSync(ziel)) { console.log(`${LOG} KI-Hochskalierung (Real-ESRGAN) in ${Math.round((Date.now() - t) / 1000)} s`); return ziel; }
-  } catch (err) { console.log(`${LOG} Hochskalierung übersprungen: ${String(err.stderr || err.message).slice(-200)}`); }
+  } catch (err) {
+    if (err.status === 3) console.log(`${LOG} Clip schon groß genug - Lanczos statt KI-Hochskalierung`);
+    else console.log(`${LOG} Hochskalierung übersprungen: ${String(err.stderr || err.message).slice(-200)}`);
+  }
   return quelle;
 }
 

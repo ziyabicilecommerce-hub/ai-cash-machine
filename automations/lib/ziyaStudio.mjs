@@ -106,7 +106,7 @@ const LOOKS = {
   natur: 'eq=contrast=1.04:saturation=1.12',
   grusel: 'eq=contrast=1.12:saturation=0.7:brightness=-0.03,colorbalance=bs=0.08:gs=0.03',
   // Anime: kräftige Farben, Leuchten (weichgezeichnete Kopie im Screen-Modus) und leichte Farbsäume wie im Kino-Anime.
-  anime: 'eq=contrast=1.12:saturation=1.35,split[ak][ag];[ag]gblur=sigma=14[agb];[ak][agb]blend=all_mode=screen:all_opacity=0.32,rgbashift=rh=-2:bh=2',
+  anime: "eq=contrast=1.12:saturation=1.35,split[ak][ag];[ag]gblur=sigma=14[agb];[ak][agb]blend=all_mode=screen:all_opacity=0.2,curves=all='0/0 0.7/0.68 1/0.93',rgbashift=rh=-2:bh=2",
 };
 
 // Impact-Wackler: die ersten 0,4 s nach jedem Schnitt bebt das Bild (Treffer-Gefühl), danach ruhig.
