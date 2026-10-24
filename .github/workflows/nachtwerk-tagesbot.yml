@@ -39,8 +39,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Frühere Folgen holen (für die Serie)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue list -R "$GITHUB_REPOSITORY" --label tages-video --state all --limit 60 --json title,body > "$RUNNER_TEMP/frueher.json" || echo '[]' > "$RUNNER_TEMP/frueher.json"
       - id: plan
         env:
+          TAGES_FRUEHER: ${{ runner.temp }}/frueher.json
           TAGES_BOT: ${{ inputs.bot }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -52,10 +57,11 @@ jobs:
           TITEL: ${{ steps.plan.outputs.titel }}
           IDEE: ${{ steps.plan.outputs.idee }}
           BESCHREIBUNG: ${{ steps.plan.outputs.beschreibung }}
+          FOLGE: ${{ steps.plan.outputs.folge }}
           LAUF: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           gh label create tages-video -R "$GITHUB_REPOSITORY" --color 9b7cff --description "Tagesvideo eines NACHTWERK-Bots" 2>/dev/null || true
-          printf '%s\n\n**Idee:** %s\n\n**TikTok-Text zum Kopieren:**\n```\n%s\n```\n\nWird gerade gebaut: %s\n\n_KI-generiert – beim Posten als KI-Inhalt kennzeichnen._\n' "🤖 Tagesvideo vom Bot." "$IDEE" "$BESCHREIBUNG" "$LAUF" > text.md
+          printf '%s\n\n**Folge:** %s\n\n**Idee:** %s\n\n**TikTok-Text zum Kopieren:**\n```\n%s\n```\n\nWird gerade gebaut: %s\n\n_KI-generiert – beim Posten als KI-Inhalt kennzeichnen._\n' "🤖 Tagesvideo vom Bot." "$FOLGE" "$IDEE" "$BESCHREIBUNG" "$LAUF" > text.md
           URL=$(gh issue create -R "$GITHUB_REPOSITORY" --title "$TITEL" --label tages-video --body-file text.md)
           echo "nummer=${URL##*/}" >> "$GITHUB_OUTPUT"
 
