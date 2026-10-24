@@ -248,8 +248,31 @@
    "ok": 0,
    "repariert": 2,
    "abgelehnt": []
+  },
+  {
+   "datum": "2026-10-24T09:28:03.643Z",
+   "geprueft": 2,
+   "ok": 0,
+   "repariert": 1,
+   "abgelehnt": [
+    {
+     "datei": "2026-10-24-2-fehler-die-jeder-bei-gaming-setup-und-schreibtisch.mp4",
+     "thema": "Fehler, die jeder bei Gaming-Setup und Schreibtisch-Zubehoer macht",
+     "gruende": [
+      "Anfang schwarz – Bild 1 zeigt weder Produkt noch Hook"
+     ]
+    }
+   ]
   }
  ],
- "nachbauen": [],
- "stand": "2026-10-23T10:01:32.482Z"
+ "nachbauen": [
+  {
+   "thema": "Fehler, die jeder bei Gaming-Setup und Schreibtisch-Zubehoer macht",
+   "datum": "2026-10-24",
+   "gruende": [
+    "Anfang schwarz – Bild 1 zeigt weder Produkt noch Hook"
+   ]
+  }
+ ],
+ "stand": "2026-10-24T09:28:03.643Z"
 }
