@@ -19,7 +19,7 @@ import { bildURL } from './lib/pollinationsMedia.mjs';
 import { geschichtePlanen, STILE, stilVon } from './lib/ziyaGeschichte.mjs';
 import { kiJson } from './lib/kiJson.mjs';
 import { nachtwerkProjekt, datenUrl } from './lib/nachtwerkProjekt.mjs';
-import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt, KRASS, hookFilter, hookUmbrechen, uebersetzenPrompt } from './lib/ziyaStudio.mjs';
+import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt, KRASS, hookFilter, hookUmbrechen, uebersetzenPrompt, besterCoverZeitpunkt } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
 const ausfuehren = promisify(execFile);
@@ -152,8 +152,13 @@ function untertitelEinbrennen(video, srt = join(ORDNER, 'stimme.srt')) {
 // Hook: großer Text in den ersten 2,6 s (blendet aus) - hält die Zuschauer auf TikTok. Text über Datei, damit kein
 // Zeichen den Filter bricht; ohne Schrift oder bei Fehlern bleibt das Video wie es ist.
 // TikTok-Titelbild: Bild aus der ersten Sekunde (Höhepunkt-Hook + großer Hook-Text) als cover.jpg im Download.
+// Nicht blind bei 1,0 s: dort lag am 24.10. genau der weiße Impact-Blitz (Titelbild fast komplett weiß). Mehrere
+// Zeitpunkte mit sichtbarem Hook-Text prüfen und den nehmen, der am wenigsten über- oder unterbelichtet ist.
 function coverBauen(video, datei = 'cover.jpg', mitHook = !!process.env.ZIYA_HOOK) {
-  try { ffmpeg(['-ss', mitHook ? '1.0' : '0.6', '-i', video, '-frames:v', '1', '-q:v', '2', join(ORDNER, datei)]); console.log(`${LOG} TikTok-Titelbild: ${datei}`); } catch { /* ohne Titelbild */ }
+  const zeiten = mitHook ? [0.4, 0.7, 1.7, 2.0, 2.3] : [0.4, 1.5, 2.5, 4];
+  const hell = (t) => { try { const px = execFileSync('ffmpeg', ['-loglevel', 'error', '-ss', String(t), '-i', video, '-frames:v', '1', '-vf', 'scale=36:64,format=gray', '-f', 'rawvideo', 'pipe:1'], { stdio: 'pipe', timeout: 60000 }); return px.length ? px.reduce((a, b) => a + b, 0) / px.length : -1; } catch { return -1; } };
+  const t = besterCoverZeitpunkt(zeiten.map((z) => [z, hell(z)]));
+  try { ffmpeg(['-ss', String(t), '-i', video, '-frames:v', '1', '-q:v', '2', join(ORDNER, datei)]); console.log(`${LOG} TikTok-Titelbild: ${datei} (bei ${t} s)`); } catch { /* ohne Titelbild */ }
 }
 
 // ZIYA_ENDE: Abspann-Text in den letzten 2,5 s (Serien: "Fortsetzung folgt...").
