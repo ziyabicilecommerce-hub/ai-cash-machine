@@ -2,8 +2,8 @@ name: "111 · Cyber-Firmen-Radar"
 
 on:
   schedule:
-    # Montags 10:30 UTC - nach #106 und #109, damit nie zwei Bewerbungs-Bots gleichzeitig den State schreiben
-    - cron: '30 10 * * 1'
+    # Täglich 10:30 UTC - nach #106 und #109, damit nie zwei Bewerbungs-Bots gleichzeitig den State schreiben
+    - cron: '30 10 * * *'
   workflow_dispatch: {}
 
 permissions:
