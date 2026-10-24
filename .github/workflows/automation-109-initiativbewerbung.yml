@@ -2,8 +2,8 @@ name: "109 · Initiativbewerbung"
 
 on:
   schedule:
-    # Werktags 08:15 UTC - nach #106 (06:00), damit beide nicht gleichzeitig den State schreiben
-    - cron: '15 8 * * 1-5'
+    # Täglich 08:15 UTC - nach #106 (06:00), damit beide nicht gleichzeitig den State schreiben
+    - cron: '15 8 * * *'
   workflow_dispatch: {}
 
 permissions:
