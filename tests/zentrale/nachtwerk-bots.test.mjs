@@ -101,3 +101,27 @@ test('Tagesbot: Sprecher nur ohne Geschichte, TikTok-Text immer mit #KI', async 
   assert.match(rueck.beschreibung, /#KI$/);
   assert.equal(beschreibungBauen('Krass #ki #wow', 'x', tier), 'Krass #ki #wow');
 });
+
+import { letzteFolge, ideePrompt } from '../../automations/lib/nachtwerkBots.mjs';
+test('Serie: nächste Folge mit denselben Figuren, Teil N in Hook und Titel', async () => {
+  const anime = bots.find((b) => b.id === 'anime');
+  const issues = [
+    { title: '🐾 Tagesvideo Tier-Action-Bot · Folge 1: x', body: '**Folge:** 1\n\n**Idee:** a cat hero' },
+    { title: '⚔️ Tagesvideo Anime-Kampf-Bot: Twin ninjas', body: '🤖 Tagesvideo vom Bot.\n\n**Idee:** Twin chrono-blade ninjas slash a nebula bridge\n\nWird gebaut' },
+    { title: '⚔️ Tagesvideo Anime-Kampf-Bot · Folge 1: alt', body: '**Folge:** 1\n\n**Idee:** ganz alt' },
+  ];
+  const vorher = letzteFolge(issues, anime);
+  assert.deepEqual(vorher, { idee: 'Twin chrono-blade ninjas slash a nebula bridge', folge: 1 });
+  assert.equal(letzteFolge([], anime), null);
+  assert.equal(letzteFolge(null, anime), null);
+  assert.match(ideePrompt(anime, vorher), /part 2.*Twin chrono-blade ninjas/s);
+  assert.doesNotMatch(ideePrompt(anime), /Previous episode/);
+  let gefragt = '';
+  const neu = await tagesIdee(anime, 0, async (p) => { gefragt = p; return { idee: 'the twin ninjas chase the time thief into a collapsing star', hook: 'Er ist zurück!', beschreibung: 'Weiter gehts #anime' }; }, vorher);
+  assert.match(gefragt, /Previous episode/);
+  assert.equal(neu.folge, 2);
+  assert.equal(neu.hook, 'Teil 2: Er ist zurück!');
+  assert.match(neu.beschreibung, /^\(Teil 2\) Weiter gehts #anime #KI$/);
+  const ohneKi = await tagesIdee(anime, 0, async () => null, vorher);
+  assert.equal(ohneKi.folge, 1);
+});

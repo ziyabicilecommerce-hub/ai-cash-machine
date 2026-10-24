@@ -37,7 +37,22 @@ export function tagesBot(bots, datum = new Date()) {
   return { bot: bots[tag % bots.length], tag };
 }
 
-export const ideePrompt = (bot) => `Invent ONE fresh, original idea for a short vertical AI video for the "${bot.name}" channel (${bot.text}).
+// Serie: die letzte Folge des Bots aus den Tagesvideo-Issues (neueste zuerst, wie gh issue list sie liefert).
+export function letzteFolge(issues, bot) {
+  for (const i of Array.isArray(issues) ? issues : []) {
+    if (!String(i?.title || '').includes(bot.name)) continue;
+    const idee = String(i.body || '').match(/\*\*Idee:\*\*\s*(.+)/)?.[1];
+    if (!idee) continue;
+    const folge = Number(String(i.body).match(/\*\*Folge:\*\*\s*(\d+)/)?.[1]) || 1;
+    return { idee: text(idee, 400), folge };
+  }
+  return null;
+}
+
+export const ideePrompt = (bot, vorher = null) => `${vorher
+    ? `Write the NEXT episode (part ${vorher.folge + 1}) of an ongoing short video series for the "${bot.name}" channel (${bot.text}).
+Previous episode: "${vorher.idee}". Keep the same main characters and world, continue the story with a new, bigger escalation or twist.`
+    : `Invent ONE fresh, original idea for a short vertical AI video for the "${bot.name}" channel (${bot.text}).`}
 Style example: "${bot.beispiel}". Rules: original characters only (no existing movie, series, game or anime characters, no
 celebrities, no brands), visually spectacular, lots of movement, one sentence in English, max 30 words.
 Also write a short German hook line for the first 2 seconds (max 6 words, a question or a shock, no hashtags, no emojis),
@@ -62,16 +77,21 @@ export function beschreibungBauen(roh, hook, bot) {
 
 // Idee von der Gratis-KI; klappt das nicht, eine der festen Ideen des Bots (reihum).
 // Sprechertext nur für Bots ohne Geschichte - Geschichten bringen ihren Erzähler selbst mit.
-export async function tagesIdee(bot, tag, kiJson) {
+// vorher (letzteFolge): die KI schreibt die nächste Folge mit denselben Figuren - "Teil N" im Hook und im TikTok-Text.
+export async function tagesIdee(bot, tag, kiJson, vorher = null) {
   const ersatz = HOOKS[bot.id] || 'Warte bis zum Ende...';
   try {
-    const antwort = await kiJson(ideePrompt(bot), { maxTokens: 500 });
+    const antwort = await kiJson(ideePrompt(bot, vorher), { maxTokens: 500 });
     const idee = text(antwort?.idee, 400);
     const hook = ohneDeko(antwort?.hook, 60);
-    const fertigerHook = hook.length >= 4 ? hook : ersatz;
+    const folge = vorher ? vorher.folge + 1 : 1;
+    const teil = folge > 1 ? `Teil ${folge}: ` : '';
+    const fertigerHook = `${teil}${hook.length >= 4 ? hook : ersatz}`.slice(0, 60);
     const sprecher = bot.geschichte ? '' : ohneDeko(antwort?.sprecher, 300);
-    if (idee.length >= 15) return { idee, hook: fertigerHook, sprecher, beschreibung: beschreibungBauen(antwort?.beschreibung, fertigerHook, bot), quelle: 'ki' };
+    const beschreibung = beschreibungBauen(folge > 1 ? `(Teil ${folge}) ${text(antwort?.beschreibung, 200)}` : antwort?.beschreibung, fertigerHook, bot);
+    if (idee.length >= 15) return { idee, hook: fertigerHook, sprecher, beschreibung, folge, quelle: 'ki' };
   } catch { /* Rückfall */ }
+  // Ohne KI keine echte Fortsetzung möglich - dann startet eine neue Geschichte (Folge 1).
   const liste = bot.ideen?.length ? bot.ideen : [bot.beispiel];
-  return { idee: liste[tag % liste.length], hook: ersatz, sprecher: '', beschreibung: beschreibungBauen('', ersatz, bot), quelle: 'liste' };
+  return { idee: liste[tag % liste.length], hook: ersatz, sprecher: '', beschreibung: beschreibungBauen('', ersatz, bot), folge: 1, quelle: 'liste' };
 }
