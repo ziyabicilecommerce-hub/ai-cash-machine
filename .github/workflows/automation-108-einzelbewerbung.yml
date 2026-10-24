@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       auftrag:
-        description: 'JSON: {"email","firma","titel","anschreiben","betreff"?}'
+        description: 'JSON: {"email","firma","titel","anschreiben","betreff"?} oder Liste davon (max. 25)'
         required: true
         type: string
 
