@@ -51,7 +51,9 @@ const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bila
 // Nur Zentren innerhalb von 20 km um Hattersheim (ortPasst prüft die echte Entfernung).
 const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesbaden', 'Mainz', 'Hofheim am Taunus', 'Langen (Hessen)', 'Neu-Isenburg', 'Offenbach am Main'];
 // Bundesweit: IT-/Cyber-Stellen, die laut Anzeige komplett im Homeoffice laufen.
-const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Analyst', 'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', '2nd Level Support', 'Systemadministrator'];
+const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Analyst', 'Security Analyst', 'Informationssicherheit', 'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', '2nd Level Support', 'Systemadministrator', 'IT-Administrator', 'Netzwerkadministrator', 'Cloud Support', 'IT Quereinsteiger', 'Junior IT'];
+// Zeitarbeit/Personalvermittler nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt.
+const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3100'), 10) || 3100;
 const REMOTE = /100 ?% ?(remote|homeoffice|home-office|mobil)|vollständig (remote|im homeoffice|mobil)|komplett (remote|im homeoffice|aus dem homeoffice)|full[ -]remote|fully remote|ortsunabhängig|remote aus ganz deutschland|deutschlandweit remote/i;
 const bereichVon = (st) => BEREICHE.find(([re]) => re.test(st.titel))?.[1] || 'Spedition und Logistik';
 const firmaKey = (name = '') => name.toLowerCase().replace(/\b(gmbh|ag|kg|se|co|mbh|& ?co\.?)\b|[^a-zäöü0-9]/g, '');
@@ -80,7 +82,8 @@ async function main() {
       for (const st of await sucheStellen({ was, angebotsart: 1, wo, umkreis: wo ? 5 : undefined })) {
         const key = firmaKey(st.arbeitgeber);
         if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !ortPasst(st)) continue;
-        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || PRAXIS.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(RELEVANT.test(st.titel) || BUERO.test(st.titel))) continue;
+        st.vermittlerFirma = st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber);
+        if (PRAXIS.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(RELEVANT.test(st.titel) || BUERO.test(st.titel))) continue;
         proFirma.set(key, st);
       }
     } catch (e) { console.log(`[initiativ] Suche "${was}" ${wo || ''} fehlgeschlagen: ${e.message}`); }
@@ -90,7 +93,8 @@ async function main() {
       for (const st of await sucheStellen({ was: `${was} ${zusatz}`, angebotsart: 1, wo: null })) {
         const key = firmaKey(st.arbeitgeber);
         if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || ortPasst(st)) continue;
-        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || PRAXIS.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(CYBER.test(st.titel) || IT.test(st.titel))) continue;
+        st.vermittlerFirma = st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber);
+        if (PRAXIS.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(CYBER.test(st.titel) || IT.test(st.titel))) continue;
         st.nurRemote = true; // liegt außerhalb der Region - nur nehmen, wenn die Anzeige komplett Homeoffice bietet
         proFirma.set(key, st);
       }
@@ -118,10 +122,12 @@ async function main() {
     if (gesendet.length >= MAX) break;
     // Keine Mail in der Anzeige: Bewerbungs-Adresse auf der Firmen-Website suchen (erst hier, damit nur so viele Seiten wie nötig geladen werden).
     if (st.brutto && st.brutto.bis < MIN_BRUTTO) continue;
-    if (!st.email && st.website && !st.vermittler && !domains.has(st.website)) st.email = await emailVonWebsite(st.website);
+    if (!st.email && st.website && !st.vermittler && !st.vermittlerFirma && !domains.has(st.website)) st.email = await emailVonWebsite(st.website);
     const { email } = st;
     if (!emailOk(email)) state.ohneMail[key] = heute();
-    if (st.vermittler || VERMITTLER.test(email) || !emailOk(email) || state.emails[email] || postfach.zusatzEmails[email] || domains.has(firmenDomain(email))) continue;
+    const zeitarbeit = st.vermittler || st.vermittlerFirma || VERMITTLER.test(email);
+    if (zeitarbeit && !(st.brutto?.bis >= ZEITARBEIT_AB)) state.ohneMail[key] = heute(); // nicht jeden Lauf neu prüfen
+    if ((zeitarbeit && !(st.brutto?.bis >= ZEITARBEIT_AB)) || !emailOk(email) || state.emails[email] || postfach.zusatzEmails[email] || domains.has(firmenDomain(email))) continue;
     const bereich = bereichVon(st);
     const betreff = `Initiativbewerbung – Einstieg im Bereich ${bereich} – ${BEWERBER()}`;
     const anschreiben = initiativAnschreiben({ bereich, firma: st.arbeitgeber });

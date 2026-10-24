@@ -40,7 +40,7 @@ const MIN_PASSUNG = 6;
 // Mindestens so viel wie das CONDOR-Angebot (Leitstelle, ~3.100 € brutto).
 const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '3100'), 10) || 3100;
 // Personalvermittler/Zeitarbeit nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt (dann lohnt es sich).
-const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3500'), 10) || 3500;
+const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3100'), 10) || 3100;
 // Wird nur genannt, wenn die Anzeige ausdrücklich nach einer Gehaltsvorstellung fragt.
 const GEHALTSWUNSCH = env('BEWERBUNG_GEHALTSWUNSCH', '36.000');
 const NACHFASS_NACH_TAGEN = 12;
