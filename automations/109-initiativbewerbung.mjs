@@ -40,6 +40,8 @@ const BEREICHE = [
 ];
 // Nur Anzeigen, die wirklich im Wunschbereich sind (die Suche liefert auch Deloitte-Berater & Co.).
 const RELEVANT = /it-?support|it support|helpdesk|help desk|service ?desk|1st[ -]?level|first level|2nd[ -]?level|systemadmin|system ?administrator|it-?admin|netzwerk|network|rechenzentrum|data ?center|it-?techniker|it techniker|client ?management|it-?mitarbeiter|it-?service|cyber|it-?secur|it-?sicherheit|informationssicherheit|\bisms\b|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi|cloud ?security|netzwerksicherheit|firewall|vulnerability|schwachstellen|identity|\biam\b|access management|datenschutz|security consultant|cyber ?defen|luftfracht|air ?cargo|airfreight|cargo|fracht|freight|zoll|export|import|außenhandel|leitstelle|leitstand|einsatzzentrale|notruf|sicherheitszentrale|überwachungszentrale|alarmempfang|flughafen|airport|disposition|disponent|spedition|logistik/i;
+// Arzt-, Zahnarzt- und Therapiepraxen als Arbeitgeber (Empfang dort = medizinisches Personal) passen nicht.
+const PRAXIS = /praxis|kieferorthop|zahnarzt|zahnärzt|ärzt|arzt|klinik|pflege|therap|apothek/i;
 // Personalvermittler tarnen sich oft ohne Zeitarbeits-Flag - eine Initiativbewerbung dort bringt nichts.
 const VERMITTLER = /personal|zeitarbeit|staffing|recruit|hr consulting|impact gmbh|aide gmbh|bankpower|spp direkt|attentus/i;
 // Fahrer-, Handwerks-, Verkaufs- und Chefposten zeigen nicht auf ein Büro im Wunschbereich.
@@ -78,7 +80,7 @@ async function main() {
       for (const st of await sucheStellen({ was, angebotsart: 1, wo, umkreis: wo ? 5 : undefined })) {
         const key = firmaKey(st.arbeitgeber);
         if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !ortPasst(st)) continue;
-        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(RELEVANT.test(st.titel) || BUERO.test(st.titel))) continue;
+        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || PRAXIS.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(RELEVANT.test(st.titel) || BUERO.test(st.titel))) continue;
         proFirma.set(key, st);
       }
     } catch (e) { console.log(`[initiativ] Suche "${was}" ${wo || ''} fehlgeschlagen: ${e.message}`); }
@@ -88,7 +90,7 @@ async function main() {
       for (const st of await sucheStellen({ was: `${was} ${zusatz}`, angebotsart: 1, wo: null })) {
         const key = firmaKey(st.arbeitgeber);
         if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || ortPasst(st)) continue;
-        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(CYBER.test(st.titel) || IT.test(st.titel))) continue;
+        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || PRAXIS.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(CYBER.test(st.titel) || IT.test(st.titel))) continue;
         st.nurRemote = true; // liegt außerhalb der Region - nur nehmen, wenn die Anzeige komplett Homeoffice bietet
         proFirma.set(key, st);
       }
