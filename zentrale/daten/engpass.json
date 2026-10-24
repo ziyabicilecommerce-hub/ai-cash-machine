@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-23T08:47:26.509Z",
+ "stand": "2026-10-24T08:21:29.321Z",
  "ziel": 5,
  "agenten": [
   {
@@ -23,7 +23,7 @@
    "name": "Video-Prüfer",
    "job": "gibt fehlerfreie Videos frei",
    "einheit": "freigegeben",
-   "leistung": 1.6,
+   "leistung": 1.7,
    "status": "laeuft"
   },
   {
@@ -314,6 +314,16 @@
    "labor": 0,
    "fabrik": 2.9,
    "pruefer": 1.6,
+   "poster": 0,
+   "sammler": 0
+  },
+  {
+   "datum": "2026-10-24",
+   "durchsatz": 0,
+   "engpass": "poster",
+   "labor": 0,
+   "fabrik": 2.9,
+   "pruefer": 1.7,
    "poster": 0,
    "sammler": 0
   }
