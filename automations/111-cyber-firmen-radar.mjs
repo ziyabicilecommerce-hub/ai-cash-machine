@@ -44,6 +44,16 @@ const FIRMEN = [
   { firma: 'Nassauische Sparkasse (Naspa)', domain: 'naspa.de', ort: 'Wiesbaden' },
   { firma: 'Wiesbadener Volksbank eG', domain: 'wvb.de', ort: 'Wiesbaden' },
   { firma: 'Alte Leipziger – Hallesche', domain: 'alte-leipziger.de', ort: 'Oberursel' },
+  { firma: 'PROFI Engineering Systems AG', domain: 'profi-ag.de', ort: 'Darmstadt' },
+  { firma: 'INFOMOTION GmbH', domain: 'infomotion.de', ort: 'Frankfurt am Main' },
+  { firma: 'Hauck Aufhäuser Lampe Privatbank AG', domain: 'hal-privatbank.com', ort: 'Frankfurt am Main' },
+  { firma: 'Kreissparkasse Groß-Gerau', domain: 'kskgg.de', ort: 'Groß-Gerau' },
+  { firma: 'Sparkasse Hanau', domain: 'sparkasse-hanau.de', ort: 'Hanau' },
+  { firma: 'Sparkasse Oberhessen', domain: 'sparkasse-oberhessen.de', ort: 'Friedberg' },
+  { firma: 'Volksbank Darmstadt-Südhessen eG', domain: 'volksbanking.de', ort: 'Darmstadt' },
+  { firma: 'Wissenschaftsstadt Darmstadt', domain: 'darmstadt.de', ort: 'Darmstadt' },
+  { firma: 'Stadt Eschborn', domain: 'eschborn.de', ort: 'Eschborn' },
+  { firma: 'Stadt Kelsterbach', domain: 'kelsterbach.de', ort: 'Kelsterbach' },
 ];
 
 async function main() {
