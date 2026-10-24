@@ -51,7 +51,8 @@ const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bila
 // Nur Zentren innerhalb von 20 km um Hattersheim (ortPasst prüft die echte Entfernung).
 const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesbaden', 'Mainz', 'Hofheim am Taunus', 'Langen (Hessen)', 'Neu-Isenburg', 'Offenbach am Main'];
 // Bundesweit: IT-/Cyber-Stellen, die laut Anzeige komplett im Homeoffice laufen.
-const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Analyst', 'Security Analyst', 'Informationssicherheit', 'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', '2nd Level Support', 'Systemadministrator', 'IT-Administrator', 'Netzwerkadministrator', 'Cloud Support', 'IT Quereinsteiger', 'Junior IT'];
+const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Analyst', 'Security Analyst', 'Informationssicherheit', 'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', '2nd Level Support', 'Systemadministrator', 'IT-Administrator', 'Netzwerkadministrator', 'Cloud Support', 'IT Quereinsteiger', 'Junior IT',
+  'Sachbearbeiter', 'Kundenservice', 'Kundenbetreuung', 'Backoffice', 'Datenerfassung', 'Assistenz', 'Verwaltung', 'Disposition'];
 // Zeitarbeit/Personalvermittler nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt.
 const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3100'), 10) || 3100;
 const REMOTE = /100 ?% ?(remote|homeoffice|home-office|mobil)|vollständig (remote|im homeoffice|mobil)|komplett (remote|im homeoffice|aus dem homeoffice)|full[ -]remote|fully remote|ortsunabhängig|remote aus ganz deutschland|deutschlandweit remote/i;
@@ -94,7 +95,7 @@ async function main() {
         const key = firmaKey(st.arbeitgeber);
         if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || ortPasst(st)) continue;
         st.vermittlerFirma = st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber);
-        if (PRAXIS.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(CYBER.test(st.titel) || IT.test(st.titel))) continue;
+        if (PRAXIS.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(CYBER.test(st.titel) || IT.test(st.titel) || BUERO.test(st.titel) || /disposition|disponent/i.test(st.titel))) continue;
         st.nurRemote = true; // liegt außerhalb der Region - nur nehmen, wenn die Anzeige komplett Homeoffice bietet
         proFirma.set(key, st);
       }
