@@ -33,6 +33,8 @@ const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '20'), 10) || 20;
 // Höchstens so weit darf der Arbeitsort (Luftlinie) von zuhause weg sein.
 const MAX_KM = parseInt(env('BEWERBUNG_MAX_KM', '20'), 10) || 20;
 const ZUHAUSE = { breite: 50.0697, laenge: 8.4867 }; // Hattersheim am Main
+// Ausnahmen, die trotz etwas mehr Entfernung passen (ganze Stadt bis 25 km).
+const AUSNAHME = new RegExp(env('BEWERBUNG_ORTE_EXTRA', 'offenbach'), 'i');
 const MIN_PASSUNG = 6;
 // Unter diesem Monatsbrutto wird nicht beworben (nur wenn die Anzeige ein Gehalt nennt). ~3.000 € ≈ 2.050 € netto (Stkl. 1).
 // Mindestens so viel wie das CONDOR-Angebot (Leitstelle, ~3.100 € brutto).
@@ -158,7 +160,7 @@ const FLUGHAFEN = /flughafen|airport|fraport|luftsicherheit|bodenverkehr|passagi
 
 // Nur diese Orte (Arbeitsort der Stelle): Wohnort-Nähe plus Umland mit S-Bahn/Zug. Griesheim bei Darmstadt (PLZ 64347) ist nicht gemeint.
 // Nur Orte bis ~20 km - greift, wenn eine Anzeige keine Koordinaten hat.
-const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|mainz|kastel|eschborn|kelsterbach|raunheim|rüsselsheim|mörfelden|flörsheim|sulzbach|schwalbach|bad soden|groß-gerau|liederbach|kelkheim'), 'i');
+const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|mainz|kastel|eschborn|kelsterbach|raunheim|rüsselsheim|mörfelden|flörsheim|sulzbach|schwalbach|bad soden|groß-gerau|liederbach|kelkheim|offenbach'), 'i');
 export function entfernungKm(a, b = ZUHAUSE) {
   const rad = (g) => (g * Math.PI) / 180;
   const h = Math.sin(rad(b.breite - a.breite) / 2) ** 2 + Math.cos(rad(a.breite)) * Math.cos(rad(b.breite)) * Math.sin(rad(b.laenge - a.laenge) / 2) ** 2;
@@ -166,7 +168,7 @@ export function entfernungKm(a, b = ZUHAUSE) {
 }
 export const ortPasst = (st) => {
   const o = st.arbeitsort || {};
-  if (o.breite && o.laenge) return entfernungKm(o) <= MAX_KM;
+  if (o.breite && o.laenge) return entfernungKm(o) <= (AUSNAHME.test(o.ort || '') ? 25 : MAX_KM);
   return ORTE.test(`${o.ort || ''} ${o.region || ''}`) && o.plz !== '64347';
 };
 const QUEREINSTEIGER = /quereinst|ohne (berufs)?erfahrung|keine (berufs)?erfahrung (nötig|erforderlich|notwendig)|einarbeitung|wir arbeiten (sie|dich) ein|berufseinsteiger|berufsanfänger/i;

@@ -47,7 +47,7 @@ const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bila
 // Zusätzlich das Umland mit vielen IT-, Cyber- und Cargo-Firmen (alles mit S-Bahn/Zug erreichbar).
 // Zusätzlich Suchzentren im Umland, die außerhalb des Standard-Umkreises liegen (alles mit S-Bahn/Zug erreichbar).
 // Nur Zentren innerhalb von 20 km um Hattersheim (ortPasst prüft die echte Entfernung).
-const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesbaden', 'Mainz', 'Hofheim am Taunus', 'Langen (Hessen)', 'Neu-Isenburg'];
+const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesbaden', 'Mainz', 'Hofheim am Taunus', 'Langen (Hessen)', 'Neu-Isenburg', 'Offenbach am Main'];
 // Bundesweit: IT-/Cyber-Stellen, die laut Anzeige komplett im Homeoffice laufen.
 const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Analyst', 'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', '2nd Level Support', 'Systemadministrator'];
 const REMOTE = /100 ?% ?(remote|homeoffice|home-office|mobil)|vollständig (remote|im homeoffice|mobil)|komplett (remote|im homeoffice|aus dem homeoffice)|full[ -]remote|fully remote|ortsunabhängig|remote aus ganz deutschland|deutschlandweit remote/i;
