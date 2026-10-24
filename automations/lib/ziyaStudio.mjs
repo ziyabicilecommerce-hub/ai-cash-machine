@@ -180,8 +180,12 @@ export function tonFormel(dauern, preset, { blende = 0.4, krass = false } = {}) 
 }
 
 // Hook-Text (großer Titel in den ersten 2,6 s) - siehe hookEinblenden in automations/ziya-studio.mjs.
-export const hookFilter = (datei, schrift) => `drawtext=fontfile=${schrift}:textfile=${datei}:reload=0:fontcolor=white:fontsize=w/14:`
-  + `borderw=7:bordercolor=black@0.9:line_spacing=12:x=(w-text_w)/2:y=h*0.2:alpha='if(lt(t,2.2),1,max(0,1-(t-2.2)/0.4))':enable='lt(t,2.6)'`;
+// ab (Sekunden): Text erst am Ende zeigen (Abspann "Fortsetzung folgt"), blendet dort ein statt aus.
+export const hookFilter = (datei, schrift, { ab = null } = {}) => `drawtext=fontfile=${schrift}:textfile=${datei}:reload=0:fontcolor=white:fontsize=w/14:`
+  + `borderw=7:bordercolor=black@0.9:line_spacing=12:x=(w-text_w)/2:`
+  + (ab === null
+    ? `y=h*0.2:alpha='if(lt(t,2.2),1,max(0,1-(t-2.2)/0.4))':enable='lt(t,2.6)'`
+    : `y=h*0.42:alpha='min(1,(t-${ab})/0.4)':enable='gte(t,${ab})'`);
 export function hookUmbrechen(hook, breite = 14) {
   const zeilen = [];
   for (const wort of String(hook).trim().split(/\s+/).filter(Boolean)) {

@@ -50,6 +50,34 @@ async function auftraegeLaden() {
   }
 }
 
+// Galerie: Tagesvideos (Label tages-video) mit ihrem TikTok-Titelbild bzw. Vorschaubild vom Branch bot-vorschau.
+export function bildFuerIssue(namen, nummer) {
+  const eigene = namen.filter((n) => n.startsWith(`issue-${nummer}-`)).sort();
+  return eigene.filter((n) => n.endsWith('-cover.jpg')).pop() || eigene.pop() || '';
+}
+
+async function galerieLaden() {
+  const feld = $('galerie');
+  try {
+    const [iRes, bRes] = await Promise.all([
+      fetch(`https://api.github.com/repos/${REPO}/issues?labels=tages-video&state=all&per_page=12`, { headers: { Accept: 'application/vnd.github+json' } }),
+      fetch(`https://api.github.com/repos/${REPO}/contents/vorschau?ref=bot-vorschau`, { headers: { Accept: 'application/vnd.github+json' } }),
+    ]);
+    if (!iRes.ok) throw new Error(iRes.status);
+    const issues = await iRes.json();
+    const namen = bRes.ok ? (await bRes.json()).map((d) => d.name) : [];
+    feld.innerHTML = issues.length
+      ? issues.map((i) => {
+        const bild = bildFuerIssue(namen, i.number);
+        const src = bild ? `https://raw.githubusercontent.com/${REPO}/bot-vorschau/vorschau/${encodeURIComponent(bild)}` : '';
+        return `<a href="${esc(i.html_url)}" target="_blank" rel="noopener">${src ? `<img src="${esc(src)}" alt="" loading="lazy">` : ''}<span>${esc(i.title)}</span></a>`;
+      }).join('')
+      : '<span class="leise">Noch keine Tagesvideos – der erste kommt nachts.</span>';
+  } catch {
+    feld.innerHTML = '<span class="leise">Tagesvideos gerade nicht abrufbar.</span>';
+  }
+}
+
 async function start() {
   ({ bots } = await (await fetch('./bots.json')).json());
   $('bots').innerHTML = bots.map((b) => `<button type="button" class="bot" data-id="${esc(b.id)}" aria-pressed="false"><span class="emoji">${esc(b.emoji)}</span><b>${esc(b.name)}</b><small>${esc(b.text)}</small></button>`).join('');
@@ -57,6 +85,7 @@ async function start() {
   waehlen(bots[0]);
   $('form').addEventListener('submit', bestellen);
   auftraegeLaden();
+  galerieLaden();
 }
 
 start();

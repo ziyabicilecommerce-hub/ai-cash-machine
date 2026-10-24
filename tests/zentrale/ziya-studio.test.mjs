@@ -195,3 +195,14 @@ test('Hook: großer Text am Anfang, umgebrochen und echt eingeblendet', (t) => {
   const bild = execFileSync('ffmpeg', ['-loglevel', 'error', '-f', 'lavfi', '-i', 'color=c=blue:s=540x960:d=0.2', '-vf', hookFilter(join(ordner, 'hook.txt'), schrift), '-frames:v', '1', '-f', 'rawvideo', '-pix_fmt', 'gray', 'pipe:1']);
   assert.ok(bild.some((x) => x > 200), 'weißer Text sichtbar');
 });
+
+test('Abspann: "Fortsetzung folgt" erst in den letzten Sekunden', (t) => {
+  const schrift = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
+  if (!existsSync(schrift)) return t.skip('keine Schrift');
+  const ordner = mkdtempSync(join(tmpdir(), 'ende-'));
+  writeFileSync(join(ordner, 'ende.txt'), hookUmbrechen('FORTSETZUNG FOLGT...'));
+  const filter = hookFilter(join(ordner, 'ende.txt'), schrift, { ab: '5.50' });
+  const bild = (s) => execFileSync('ffmpeg', ['-loglevel', 'error', '-f', 'lavfi', '-i', 'color=c=blue:s=540x960:d=8', '-vf', filter, '-ss', String(s), '-frames:v', '1', '-f', 'rawvideo', '-pix_fmt', 'gray', 'pipe:1']);
+  assert.ok(!bild(3).some((x) => x > 200), 'vorher kein Text');
+  assert.ok(bild(7.5).some((x) => x > 200), 'am Ende Text');
+});

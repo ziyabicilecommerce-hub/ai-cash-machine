@@ -80,6 +80,7 @@ jobs:
       durchgehend: ${{ needs.idee.outputs.durchgehend == 'true' }}
       krass: true
       hook: ${{ needs.idee.outputs.hook }}
+      ende: Fortsetzung folgt...
       text: ${{ needs.idee.outputs.text }}
 
   fertig:
