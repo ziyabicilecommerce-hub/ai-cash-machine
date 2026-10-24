@@ -55,3 +55,21 @@ test('Kaggle: neuer API-Token wird als KAGGLE_API_TOKEN durchgereicht', () => {
   assert.equal(kaggleEnv({ KAGGLE_KEY: 'KGAT_abc' }).KAGGLE_API_TOKEN, 'KGAT_abc');
   assert.equal(kaggleEnv({ KAGGLE_KEY: '0123abcd' }).KAGGLE_API_TOKEN, undefined);
 });
+
+import { bildVerkleinern, bildBudget } from '../../automations/lib/kaggleTurbo.mjs';
+test('Kaggle-Turbo: Startbilder werden auf 480x832 verkleinert', (t) => {
+  let gross;
+  try { gross = execFileSync('ffmpeg', ['-loglevel', 'error', '-f', 'lavfi', '-i', 'testsrc=size=768x1344', '-frames:v', '1', '-q:v', '1', '-f', 'mjpeg', 'pipe:1']); } catch { return t.skip('kein ffmpeg'); }
+  const klein = Buffer.from(bildVerkleinern(gross.toString('base64')), 'base64');
+  assert.ok(klein.length < gross.length);
+  const groesse = execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'stream=width,height', '-of', 'csv=p=0', '-i', 'pipe:0'], { input: klein }).toString().trim();
+  assert.equal(groesse, '480,832');
+  assert.equal(bildVerkleinern('kaputt'), 'kaputt');
+});
+
+test('Kaggle-Turbo: Bild-Budget hält den Auftrag unter dem Kaggle-Limit', () => {
+  const bild = 'a'.repeat(300 * 1024);
+  const raus = bildBudget([{ nr: 1, bildB64: bild }, { nr: 2, bildB64: bild }, { nr: 3, bildB64: bild }, { nr: 4 }]);
+  assert.deepEqual(raus.map((s) => !!s.bildB64), [true, true, false, false]);
+  assert.equal(raus[2].nr, 3);
+});
