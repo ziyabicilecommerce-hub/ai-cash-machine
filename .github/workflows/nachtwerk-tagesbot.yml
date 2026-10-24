@@ -33,6 +33,7 @@ jobs:
       menschen: ${{ steps.plan.outputs.menschen }}
       durchgehend: ${{ steps.plan.outputs.durchgehend }}
       hook: ${{ steps.plan.outputs.hook }}
+      text: ${{ steps.plan.outputs.text }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -50,10 +51,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TITEL: ${{ steps.plan.outputs.titel }}
           IDEE: ${{ steps.plan.outputs.idee }}
+          BESCHREIBUNG: ${{ steps.plan.outputs.beschreibung }}
           LAUF: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           gh label create tages-video -R "$GITHUB_REPOSITORY" --color 9b7cff --description "Tagesvideo eines NACHTWERK-Bots" 2>/dev/null || true
-          printf '%s\n\n**Idee:** %s\n\nWird gerade gebaut: %s\n\n_KI-generiert – beim Posten als KI-Inhalt kennzeichnen._\n' "🤖 Tagesvideo vom Bot." "$IDEE" "$LAUF" > text.md
+          printf '%s\n\n**Idee:** %s\n\n**TikTok-Text zum Kopieren:**\n```\n%s\n```\n\nWird gerade gebaut: %s\n\n_KI-generiert – beim Posten als KI-Inhalt kennzeichnen._\n' "🤖 Tagesvideo vom Bot." "$IDEE" "$BESCHREIBUNG" "$LAUF" > text.md
           URL=$(gh issue create -R "$GITHUB_REPOSITORY" --title "$TITEL" --label tages-video --body-file text.md)
           echo "nummer=${URL##*/}" >> "$GITHUB_OUTPUT"
 
@@ -72,6 +74,7 @@ jobs:
       durchgehend: ${{ needs.idee.outputs.durchgehend == 'true' }}
       krass: true
       hook: ${{ needs.idee.outputs.hook }}
+      text: ${{ needs.idee.outputs.text }}
 
   fertig:
     needs: [idee, video]

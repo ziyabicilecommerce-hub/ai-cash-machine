@@ -87,3 +87,17 @@ test('Tagesbot: Hook von der KI (ohne Emojis), sonst fester Hook je Bot', async 
   for (const b of bots) assert.ok(HOOKS[b.id], b.id);
   assert.equal(auftragAusIssue(JSON.stringify({ bot: 'anime', idee: 'test idee hier', hook: 'Wer\ngewinnt?' }), bots).hook, 'Wer gewinnt?');
 });
+
+import { beschreibungBauen } from '../../automations/lib/nachtwerkBots.mjs';
+test('Tagesbot: Sprecher nur ohne Geschichte, TikTok-Text immer mit #KI', async () => {
+  const antwort = { idee: 'a turbo turtle with jet boots races a cheetah', hook: 'Unmöglich!', sprecher: 'Die Schildkröte zündet die Düsen. 🔥 #speed', beschreibung: 'Wer ist schneller? #tiere #fyp' };
+  const tier = bots.find((b) => b.id === 'tier');
+  const grusel = bots.find((b) => b.id === 'grusel');
+  const a = await tagesIdee(tier, 0, async () => antwort);
+  assert.equal(a.sprecher, 'Die Schildkröte zündet die Düsen.');
+  assert.equal(a.beschreibung, 'Wer ist schneller? #tiere #fyp #KI');
+  assert.equal((await tagesIdee(grusel, 0, async () => antwort)).sprecher, '');
+  const rueck = await tagesIdee(tier, 0, async () => null);
+  assert.match(rueck.beschreibung, /#KI$/);
+  assert.equal(beschreibungBauen('Krass #ki #wow', 'x', tier), 'Krass #ki #wow');
+});
