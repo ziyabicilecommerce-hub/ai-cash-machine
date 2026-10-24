@@ -39,6 +39,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      # Eigene KI im Lauf (Ollama, Modell im Cache): letztes Netz, wenn die Gratis-Dienste hängen (24.10.: 5 min, dann nichts).
+      - name: Eigene KI starten (kostenlos, ohne Schlüssel, ohne Limit)
+        uses: ./.github/actions/ki-lokal
+        with:
+          modell: ${{ vars.KI_LOKAL_MODELL_FABRIK || 'qwen2.5:7b' }}
       - name: Frühere Folgen holen (für die Serie)
         env:
           GH_TOKEN: ${{ github.token }}
