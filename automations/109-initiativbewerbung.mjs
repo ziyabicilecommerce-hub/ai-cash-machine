@@ -46,7 +46,8 @@ const VERMITTLER = /personal|zeitarbeit|staffing|recruit|hr consulting|impact gm
 const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bilanzbuchhalt|lohnbuchhalt|montage|monteur|handwerk|geschäftsführ|ausbilder|mechatron|elektron|mechaniker|lokführer|fahrer|berater|leiter|elektriker|objekttechniker|haustechn|senior|architekt|leitung|ingenieur|klima|lüftung/i;
 // Zusätzlich das Umland mit vielen IT-, Cyber- und Cargo-Firmen (alles mit S-Bahn/Zug erreichbar).
 // Zusätzlich Suchzentren im Umland, die außerhalb des Standard-Umkreises liegen (alles mit S-Bahn/Zug erreichbar).
-const UMLAND = ['Darmstadt', 'Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Bad Homburg', 'Offenbach am Main', 'Langen (Hessen)', 'Hanau', 'Bad Vilbel', 'Groß-Gerau', 'Neu-Isenburg'];
+// Nur Zentren innerhalb von 20 km um Hattersheim (ortPasst prüft die echte Entfernung).
+const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesbaden', 'Mainz', 'Hofheim am Taunus', 'Langen (Hessen)', 'Neu-Isenburg'];
 // Bundesweit: IT-/Cyber-Stellen, die laut Anzeige komplett im Homeoffice laufen.
 const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Analyst', 'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', '2nd Level Support', 'Systemadministrator'];
 const REMOTE = /100 ?% ?(remote|homeoffice|home-office|mobil)|vollständig (remote|im homeoffice|mobil)|komplett (remote|im homeoffice|aus dem homeoffice)|full[ -]remote|fully remote|ortsunabhängig|remote aus ganz deutschland|deutschlandweit remote/i;

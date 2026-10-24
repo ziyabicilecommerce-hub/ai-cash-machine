@@ -29,7 +29,10 @@ const MAX_LIVE = Math.max(1, Math.min(200, parseInt(env('BEWERBUNG_MAX_PRO_TAG',
 // Testmodus: nur ein paar Probe-Bewerbungen an dich selbst, damit du sie in Ruhe anschauen kannst.
 const MAX_PRO_TAG = LIVE ? MAX_LIVE : Math.min(MAX_LIVE, parseInt(env('BEWERBUNG_TEST_MAX', '5'), 10) || 5);
 const ORT = wohnort();
-const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '25'), 10) || 25;
+const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '20'), 10) || 20;
+// Höchstens so weit darf der Arbeitsort (Luftlinie) von zuhause weg sein.
+const MAX_KM = parseInt(env('BEWERBUNG_MAX_KM', '20'), 10) || 20;
+const ZUHAUSE = { breite: 50.0697, laenge: 8.4867 }; // Hattersheim am Main
 const MIN_PASSUNG = 6;
 // Unter diesem Monatsbrutto wird nicht beworben (nur wenn die Anzeige ein Gehalt nennt). ~3.000 € ≈ 2.050 € netto (Stkl. 1).
 // Mindestens so viel wie das CONDOR-Angebot (Leitstelle, ~3.100 € brutto).
@@ -154,8 +157,18 @@ const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freela
 const FLUGHAFEN = /flughafen|airport|fraport|luftsicherheit|bodenverkehr|passagier|check-in|lufthansa|condor|cargo ?city|luftverkehr|luftfracht|aviation|\b60549\b/i;
 
 // Nur diese Orte (Arbeitsort der Stelle): Wohnort-Nähe plus Umland mit S-Bahn/Zug. Griesheim bei Darmstadt (PLZ 64347) ist nicht gemeint.
-const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|mainz|kastel|eschborn|kelsterbach|raunheim|rüsselsheim|bad homburg|offenbach|langen \\(hessen|neu-isenburg|dreieich|mörfelden|flörsheim|sulzbach|schwalbach|bad soden|oberursel|darmstadt|hanau|bad vilbel|groß-gerau|maintal'), 'i');
-export const ortPasst = (st) => ORTE.test(`${st.arbeitsort?.ort || ''} ${st.arbeitsort?.region || ''}`) && st.arbeitsort?.plz !== '64347';
+// Nur Orte bis ~20 km - greift, wenn eine Anzeige keine Koordinaten hat.
+const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|mainz|kastel|eschborn|kelsterbach|raunheim|rüsselsheim|mörfelden|flörsheim|sulzbach|schwalbach|bad soden|groß-gerau|liederbach|kelkheim'), 'i');
+export function entfernungKm(a, b = ZUHAUSE) {
+  const rad = (g) => (g * Math.PI) / 180;
+  const h = Math.sin(rad(b.breite - a.breite) / 2) ** 2 + Math.cos(rad(a.breite)) * Math.cos(rad(b.breite)) * Math.sin(rad(b.laenge - a.laenge) / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(h));
+}
+export const ortPasst = (st) => {
+  const o = st.arbeitsort || {};
+  if (o.breite && o.laenge) return entfernungKm(o) <= MAX_KM;
+  return ORTE.test(`${o.ort || ''} ${o.region || ''}`) && o.plz !== '64347';
+};
 const QUEREINSTEIGER = /quereinst|ohne (berufs)?erfahrung|keine (berufs)?erfahrung (nötig|erforderlich|notwendig)|einarbeitung|wir arbeiten (sie|dich) ein|berufseinsteiger|berufsanfänger/i;
 
 // Lieblingsbereiche (höchste Priorität) und weiteres Büro mit Tempo.
@@ -220,7 +233,7 @@ function ausV6(x, angebotsart, was) {
   const adr = x.stellenlokationen?.[0]?.adresse || {};
   return {
     refnr: x.referenznummer, titel: x.stellenangebotsTitel || '', arbeitgeber: x.firma || '', beruf: x.hauptberuf || '',
-    arbeitsort: { ort: adr.ort || '', plz: adr.plz || '', region: adr.region || '' }, externeUrl: x.externeURL || '',
+    arbeitsort: { ort: adr.ort || '', plz: adr.plz || '', region: adr.region || '', breite: x.stellenlokationen?.[0]?.breite, laenge: x.stellenlokationen?.[0]?.laenge }, externeUrl: x.externeURL || '',
     vollzeit: x.arbeitszeitVollzeit !== false, minijob: !!x.istGeringfuegigeBeschaeftigung,
     zeitarbeit: !!x.istArbeitnehmerUeberlassung || !!x.istPrivateArbeitsvermittlung,
     quereinstieg: !!x.quereinstiegGeeignet, angebotsart, suchbegriff: was,
