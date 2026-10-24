@@ -56,7 +56,7 @@ const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Ana
 // Zeitarbeit/Personalvermittler nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt.
 const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3100'), 10) || 3100;
 const REMOTE = /100 ?% ?(remote|homeoffice|home-office|mobil)|vollständig (remote|im homeoffice|mobil)|komplett (remote|im homeoffice|aus dem homeoffice)|full[ -]remote|fully remote|ortsunabhängig|remote aus ganz deutschland|deutschlandweit remote/i;
-const bereichVon = (st) => BEREICHE.find(([re]) => re.test(st.titel))?.[1] || 'Spedition und Logistik';
+const bereichVon = (st) => (st.itBranche && !CYBER.test(st.titel) ? 'IT' : BEREICHE.find(([re]) => re.test(st.titel))?.[1] || 'Spedition und Logistik');
 const firmaKey = (name = '') => name.toLowerCase().replace(/\b(gmbh|ag|kg|se|co|mbh|& ?co\.?)\b|[^a-zäöü0-9]/g, '');
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -101,8 +101,20 @@ async function main() {
       }
     } catch (e) { console.log(`[initiativ] Remote-Suche "${was}" fehlgeschlagen: ${e.message}`); }
   }
+  // IT-Firmen im Umkreis, die gerade irgendeine Stelle ausschreiben (BA-Branche 11 = IT/Telekommunikation):
+  // Initiativbewerbung für den IT-Einstieg, auch wenn die Anzeige selbst z.B. ein Entwickler- oder Beraterjob ist.
+  try {
+    for (const st of await sucheStellen({ was: '', angebotsart: 1, branche: 11, seiten: 7 })) {
+      const key = firmaKey(st.arbeitgeber);
+      if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !ortPasst(st)) continue;
+      if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || PRAXIS.test(st.arbeitgeber)) continue;
+      st.itBranche = true;
+      proFirma.set(key, st);
+    }
+  } catch (e) { console.log(`[initiativ] IT-Branchen-Suche fehlgeschlagen: ${e.message}`); }
+
   // IT und Cyber zuerst, damit sie sicher in die Auswahl kommen.
-  const rang = (st) => (CYBER.test(st.titel) ? 0 : IT.test(st.titel) ? 1 : 2);
+  const rang = (st) => (CYBER.test(st.titel) ? 0 : IT.test(st.titel) || st.itBranche ? 1 : 2);
   const auswahl = [...proFirma.entries()].sort(([, a], [, b]) => rang(a) - rang(b)).slice(0, 1500);
   console.log(`[initiativ] ${auswahl.length} neue Firmen im Wunschbereich.`);
   await parallel(auswahl, 6, async ([, st]) => {

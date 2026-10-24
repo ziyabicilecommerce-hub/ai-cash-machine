@@ -242,12 +242,14 @@ function ausV6(x, angebotsart, was) {
   };
 }
 
-export async function sucheStellen({ was, angebotsart, wo = ORT, umkreis = UMKREIS }) {
+export async function sucheStellen({ was, angebotsart, wo = ORT, umkreis = UMKREIS, branche, seiten = 3 }) {
   const q = new URLSearchParams({ was, wo, umkreis: String(umkreis), angebotsart: String(angebotsart), veroeffentlichtseit: '60', size: '100' });
+  if (!was) q.delete('was'); // reine Branchen-Suche
+  if (branche) q.set('branche', String(branche));
   if (angebotsart === 1) q.set('arbeitszeit', 'vz');
   if (wo === null) { q.delete('wo'); q.delete('umkreis'); } // bundesweit (z.B. für Remote-Stellen)
   const alle = [];
-  for (let seite = 1; seite <= 3; seite++) {
+  for (let seite = 1; seite <= seiten; seite++) {
     q.set('page', String(seite));
     const data = await holeJson(`${API}/pc/v6/jobs?${q}`);
     const treffer = data.ergebnisliste || [];
