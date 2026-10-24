@@ -33,6 +33,10 @@
     ul.auftraege li { background: var(--karte); border: 1px solid var(--rand); border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; gap: 12px; }
     .status { white-space: nowrap; font-size: 0.9rem; }
     .status.offen { color: var(--warn); }
+    .galerie { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+    .galerie a { display: block; background: var(--karte); border: 1px solid var(--rand); border-radius: 12px; overflow: hidden; color: inherit; text-decoration: none; }
+    .galerie img { display: block; width: 100%; aspect-ratio: 9 / 16; object-fit: cover; background: #000; }
+    .galerie span { display: block; padding: 8px 10px; font-size: 0.85rem; line-height: 1.3; }
   </style>
 </head>
 <body>
@@ -71,6 +75,9 @@
     <button class="los" type="submit">🎬 Video bestellen</button>
     <div class="hinweis">Öffnet GitHub mit dem fertigen Auftrag – dort nur noch auf <b>„Create“</b> tippen. Nur Aufträge vom Repo-Besitzer werden gebaut. Dauer: ~1 Stunde (6 Szenen) bis ~5 Stunden (18 Szenen).</div>
   </form>
+
+  <h2>📺 Tagesvideos der Bots</h2>
+  <div class="galerie" id="galerie"><span class="leise">Lädt …</span></div>
 
   <h2>Letzte Aufträge</h2>
   <ul class="auftraege" id="auftraege"><li class="leise">Lädt …</li></ul>

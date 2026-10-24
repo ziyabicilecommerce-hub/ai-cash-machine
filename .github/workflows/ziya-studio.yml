@@ -54,6 +54,10 @@ on:
         description: 'Großer Text in den ersten 2 Sekunden (optional, z. B. "Wer gewinnt?")'
         required: false
         default: ''
+      ende:
+        description: 'Text am Ende (optional, z. B. "Fortsetzung folgt...")'
+        required: false
+        default: ''
   # NACHTWERK-Bots (nachtwerk-bots.yml) rufen das Studio mit denselben Eingaben auf.
   workflow_call:
     inputs:
@@ -69,6 +73,7 @@ on:
       krass: { type: boolean, default: true }
       text: { type: string, default: '' }
       hook: { type: string, default: '' }
+      ende: { type: string, default: '' }
     outputs:
       run_url:
         value: ${{ jobs.studio.outputs.run_url }}
@@ -96,6 +101,7 @@ jobs:
       ZIYA_DURCHGEHEND: ${{ inputs.durchgehend && 'ja' || 'nein' }}
       ZIYA_TEXT: ${{ inputs.text }}
       ZIYA_HOOK: ${{ inputs.hook }}
+      ZIYA_ENDE: ${{ inputs.ende }}
       ZIYA_GESCHICHTE: ${{ inputs.geschichte && 'ja' || 'nein' }}
       ZIYA_STIL: ${{ inputs.stil }}
       ZIYA_KRASS: ${{ inputs.krass && 'ja' || 'nein' }}

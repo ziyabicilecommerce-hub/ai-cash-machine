@@ -157,18 +157,24 @@ function coverBauen(video) {
   try { ffmpeg(['-ss', process.env.ZIYA_HOOK ? '1.0' : '0.6', '-i', video, '-frames:v', '1', '-q:v', '2', join(ORDNER, 'cover.jpg')]); console.log(`${LOG} TikTok-Titelbild: cover.jpg`); } catch { /* ohne Titelbild */ }
 }
 
+// ZIYA_ENDE: Abspann-Text in den letzten 2,5 s (Serien: "Fortsetzung folgt...").
 function hookEinblenden(video) {
-  const hook = String(process.env.ZIYA_HOOK || '').replace(/\s+/g, ' ').trim().slice(0, 60);
+  const sauber = (x) => String(x || '').replace(/\s+/g, ' ').trim().slice(0, 60);
+  const hook = sauber(process.env.ZIYA_HOOK);
+  const ende = sauber(process.env.ZIYA_ENDE);
   const schrift = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
-  if (!hook || !existsSync(schrift)) return;
-  const datei = join(ORDNER, 'hook.txt');
-  writeFileSync(datei, hookUmbrechen(hook.toUpperCase()));
+  if ((!hook && !ende) || !existsSync(schrift)) return;
+  const filter = [];
+  if (hook) { writeFileSync(join(ORDNER, 'hook.txt'), hookUmbrechen(hook.toUpperCase())); filter.push(hookFilter(join(ORDNER, 'hook.txt'), schrift)); }
+  const laenge = dauerSekunden(video);
+  if (ende && laenge > 6) { writeFileSync(join(ORDNER, 'ende.txt'), hookUmbrechen(ende.toUpperCase())); filter.push(hookFilter(join(ORDNER, 'ende.txt'), schrift, { ab: (laenge - 2.5).toFixed(2) })); }
+  if (!filter.length) return;
   const mit = join(ORDNER, 'mit-hook.mp4');
   try {
-    ffmpeg(['-i', video, '-vf', hookFilter(datei, schrift), '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-c:a', 'copy', '-movflags', '+faststart', mit]);
+    ffmpeg(['-i', video, '-vf', filter.join(','), '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-c:a', 'copy', '-movflags', '+faststart', mit]);
     copyFileSync(mit, video);
-    console.log(`${LOG} Hook eingeblendet: ${hook}`);
-  } catch (err) { console.log(`${LOG} Hook übersprungen: ${String(err.stderr || err.message).slice(0, 200)}`); }
+    console.log(`${LOG} Text eingeblendet: ${[hook, ende].filter(Boolean).join(' / ')}`);
+  } catch (err) { console.log(`${LOG} Text übersprungen: ${String(err.stderr || err.message).slice(0, 200)}`); }
 }
 
 // Projektdatei für NACHTWERK (Handschnitt im Browser): Clips verkleinert (720x1280), damit die Datei handlich bleibt.
