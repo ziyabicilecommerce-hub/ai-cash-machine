@@ -41,7 +41,7 @@ const BEREICHE = [
 // Nur Anzeigen, die wirklich im Wunschbereich sind (die Suche liefert auch Deloitte-Berater & Co.).
 const RELEVANT = /it-?support|it support|helpdesk|help desk|service ?desk|1st[ -]?level|first level|2nd[ -]?level|systemadmin|system ?administrator|it-?admin|netzwerk|network|rechenzentrum|data ?center|it-?techniker|it techniker|client ?management|it-?mitarbeiter|it-?service|cyber|it-?secur|it-?sicherheit|informationssicherheit|\bisms\b|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi|cloud ?security|netzwerksicherheit|firewall|vulnerability|schwachstellen|identity|\biam\b|access management|datenschutz|security consultant|cyber ?defen|luftfracht|air ?cargo|airfreight|cargo|fracht|freight|zoll|export|import|außenhandel|leitstelle|leitstand|einsatzzentrale|notruf|sicherheitszentrale|überwachungszentrale|alarmempfang|flughafen|airport|disposition|disponent|spedition|logistik/i;
 // Arzt-, Zahnarzt- und Therapiepraxen als Arbeitgeber (Empfang dort = medizinisches Personal) passen nicht.
-const PRAXIS = /praxis|kieferorthop|zahnarzt|zahnärzt|ärzt|arzt|klinik|pflege|therap|apothek/i;
+const PRAXIS = /praxis|kieferorthop|zahnarzt|zahnärzt|ärzt|arzt|klinik|pflege|therap|apothek|dental|zahntechn|orthopädie|sanitätshaus|hörgerät|optik|rohr|kanal|reinigung|entrümpel/i;
 // Personalvermittler tarnen sich oft ohne Zeitarbeits-Flag - eine Initiativbewerbung dort bringt nichts.
 const VERMITTLER = /personal|zeitarbeit|staffing|recruit|hr consulting|impact gmbh|aide gmbh|bankpower|spp direkt|attentus/i;
 // Fahrer-, Handwerks-, Verkaufs- und Chefposten zeigen nicht auf ein Büro im Wunschbereich.
@@ -56,6 +56,17 @@ const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Ana
 // Zeitarbeit/Personalvermittler nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt.
 const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3100'), 10) || 3100;
 const REMOTE = /100 ?% ?(remote|homeoffice|home-office|mobil)|vollständig (remote|im homeoffice|mobil)|komplett (remote|im homeoffice|aus dem homeoffice)|full[ -]remote|fully remote|ortsunabhängig|remote aus ganz deutschland|deutschlandweit remote/i;
+// BA-Branchen mit eigener IT: 11 IT/Telekommunikation, 6 Banken/Versicherungen (ohne Immobilien),
+// 18 öffentliche Verwaltung, 22 Energie/Wasser/Entsorgung (kritische Infrastruktur), 25 Forschung, 3 Elektronik/Automatisierung.
+const FINANZ = /bank|sparkasse|volksbank|raiffeisen|versicher|invest|capital|finanz|asset|fonds|payment|börse|leasing|kredit|clearing/i;
+const IT_BRANCHEN = [
+  { branche: 11, ohneAnzeige: false },
+  { branche: 6, name: FINANZ, ohneAnzeige: true },
+  { branche: 18, ohneAnzeige: true },
+  { branche: 22, ohneAnzeige: true },
+  { branche: 25, ohneAnzeige: true },
+  { branche: 3, ohneAnzeige: true },
+];
 const bereichVon = (st) => (st.itBranche && !CYBER.test(st.titel) ? 'IT' : BEREICHE.find(([re]) => re.test(st.titel))?.[1] || 'Spedition und Logistik');
 const firmaKey = (name = '') => name.toLowerCase().replace(/\b(gmbh|ag|kg|se|co|mbh|& ?co\.?)\b|[^a-zäöü0-9]/g, '');
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -101,17 +112,21 @@ async function main() {
       }
     } catch (e) { console.log(`[initiativ] Remote-Suche "${was}" fehlgeschlagen: ${e.message}`); }
   }
-  // IT-Firmen im Umkreis, die gerade irgendeine Stelle ausschreiben (BA-Branche 11 = IT/Telekommunikation):
-  // Initiativbewerbung für den IT-Einstieg, auch wenn die Anzeige selbst z.B. ein Entwickler- oder Beraterjob ist.
-  try {
-    for (const st of await sucheStellen({ was: '', angebotsart: 1, branche: 11, seiten: 7 })) {
-      const key = firmaKey(st.arbeitgeber);
-      if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !ortPasst(st)) continue;
-      if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || PRAXIS.test(st.arbeitgeber)) continue;
-      st.itBranche = true;
-      proFirma.set(key, st);
-    }
-  } catch (e) { console.log(`[initiativ] IT-Branchen-Suche fehlgeschlagen: ${e.message}`); }
+  // Arbeitgeber im Umkreis, die gerade irgendeine Stelle ausschreiben und eine eigene IT haben (BA-Branchen):
+  // Initiativbewerbung für den IT-Einstieg, auch wenn die Anzeige selbst etwas ganz anderes ist.
+  for (const { branche, name, ohneAnzeige } of IT_BRANCHEN) {
+    try {
+      for (const st of await sucheStellen({ was: '', angebotsart: 1, branche, seiten: 7 })) {
+        const key = firmaKey(st.arbeitgeber);
+        if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !ortPasst(st)) continue;
+        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || PRAXIS.test(st.arbeitgeber)) continue;
+        if (name && !name.test(st.arbeitgeber)) continue;
+        st.itBranche = true;
+        st.ohneAnzeige = ohneAnzeige;
+        proFirma.set(key, st);
+      }
+    } catch (e) { console.log(`[initiativ] Branchen-Suche ${branche} fehlgeschlagen: ${e.message}`); }
+  }
 
   // IT und Cyber zuerst, damit sie sicher in die Auswahl kommen.
   const rang = (st) => (CYBER.test(st.titel) ? 0 : IT.test(st.titel) || st.itBranche ? 1 : 2);
@@ -143,7 +158,7 @@ async function main() {
     if ((zeitarbeit && !(st.brutto?.bis >= ZEITARBEIT_AB)) || !emailOk(email) || state.emails[email] || postfach.zusatzEmails[email] || domains.has(firmenDomain(email))) continue;
     const bereich = bereichVon(st);
     const betreff = `Initiativbewerbung – Einstieg im Bereich ${bereich} – ${BEWERBER()}`;
-    const anschreiben = initiativAnschreiben({ bereich, firma: st.arbeitgeber });
+    const anschreiben = initiativAnschreiben({ bereich, firma: st.arbeitgeber, ohneAnzeige: !!st.ohneAnzeige });
     const brief = await anschreibenAnhang({ firma: st.arbeitgeber, ort: st.arbeitsort?.ort || '', betreff, anschreiben });
     const info = await transport.sendMail({
       from: `${BEWERBER()} <${user}>`,

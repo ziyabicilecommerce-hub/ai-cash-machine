@@ -78,7 +78,7 @@ async function main() {
     const email = await emailVonWebsite(f.domain);
     if (!emailOk(email) || state.emails[email] || postfach.zusatzEmails[email] || domains.has(firmenDomain(email))) { ohne.push(f.firma); continue; }
     const betreff = `Initiativbewerbung – Einstieg im Bereich ${BEREICH} – ${BEWERBER()}`;
-    const anschreiben = initiativAnschreiben({ bereich: BEREICH, firma: f.firma });
+    const anschreiben = initiativAnschreiben({ bereich: BEREICH, firma: f.firma, ohneAnzeige: true });
     const brief = await anschreibenAnhang({ firma: f.firma, ort: f.ort, betreff, anschreiben });
     const info = await transport.sendMail({
       from: `${BEWERBER()} <${user}>`,
