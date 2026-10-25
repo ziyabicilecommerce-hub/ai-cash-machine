@@ -77,6 +77,23 @@ Answer ONLY with JSON: {"idee":"...","hook":"...","sprecher":"...","beschreibung
 export const HOOKS = { grusel: 'Schau nicht allein...', cartoon: 'Das endet anders als gedacht', anime: 'Wer gewinnt diesen Kampf?',
   kino: 'Das hätte niemand überlebt', welt: 'Das ist wirklich passiert?', drache: 'Der Drache ist erwacht', tier: 'Niemand hat damit gerechnet' };
 
+// KIs benennen Felder gern um ("idea", "hook_line", "narrator_text" - Testlauf 25.10. mit der eigenen KI).
+// feld() nimmt den ersten passenden Schlüssel, ohne Groß-/Kleinschreibung, Unterstriche und Bindestriche.
+const NAMEN = {
+  idee: ['idee', 'idea', 'videoidee', 'videoidea', 'concept', 'konzept', 'story'],
+  hook: ['hook', 'hookline', 'hooktext', 'haken', 'opener'],
+  sprecher: ['sprecher', 'sprechertext', 'narrator', 'narratortext', 'narration', 'voiceover', 'erzaehler', 'erzähler'],
+  beschreibung: ['beschreibung', 'caption', 'captionde', 'tiktokcaption', 'tiktoktext', 'beschreibungde', 'description'],
+  beschreibung_en: ['beschreibungen', 'captionen', 'englishcaption', 'tiktokcaptionen', 'descriptionen', 'beschreibungenglisch'],
+};
+export function feld(obj, art) {
+  if (!obj || typeof obj !== 'object') return undefined;
+  const norm = (k) => String(k).toLowerCase().replace(/[^a-zäöü]/g, '');
+  const gesucht = NAMEN[art] || [art];
+  for (const name of gesucht) for (const [k, v] of Object.entries(obj)) if (norm(k) === name && v != null) return v;
+  return undefined;
+}
+
 const ohneDeko = (x, n) => text(x, n + 40).replace(/#\S+/g, '').replace(/\p{Extended_Pictographic}/gu, '').replace(/\s+/g, ' ').trim().slice(0, n);
 
 // TikTok-Beschreibung: immer mit #KI bzw. #AI (KI-Inhalt offen kennzeichnen), keine fremden Marken nötig.
@@ -95,14 +112,14 @@ export async function tagesIdee(bot, tag, kiJson, vorher = null, themen = []) {
   const ersatz = HOOKS[bot.id] || 'Warte bis zum Ende...';
   try {
     const antwort = await kiJson(ideePrompt(bot, vorher, themen), { maxTokens: 500 });
-    const idee = text(antwort?.idee, 400);
-    const hook = ohneDeko(antwort?.hook, 60);
+    const idee = text(feld(antwort, 'idee'), 400);
+    const hook = ohneDeko(feld(antwort, 'hook'), 60);
     const folge = vorher ? vorher.folge + 1 : 1;
     const teil = folge > 1 ? `Teil ${folge}: ` : '';
     const fertigerHook = `${teil}${hook.length >= 4 ? hook : ersatz}`.slice(0, 60);
-    const sprecher = bot.geschichte ? '' : ohneDeko(antwort?.sprecher, 300);
-    const beschreibung = beschreibungBauen(folge > 1 ? `(Teil ${folge}) ${text(antwort?.beschreibung, 200)}` : antwort?.beschreibung, fertigerHook, bot);
-    const beschreibungEn = beschreibungBauen(folge > 1 ? `(Part ${folge}) ${text(antwort?.beschreibung_en, 200)}` : antwort?.beschreibung_en, fertigerHook, bot, { englisch: true });
+    const sprecher = bot.geschichte ? '' : ohneDeko(feld(antwort, 'sprecher'), 300);
+    const beschreibung = beschreibungBauen(folge > 1 ? `(Teil ${folge}) ${text(feld(antwort, 'beschreibung'), 200)}` : feld(antwort, 'beschreibung'), fertigerHook, bot);
+    const beschreibungEn = beschreibungBauen(folge > 1 ? `(Part ${folge}) ${text(feld(antwort, 'beschreibung_en'), 200)}` : feld(antwort, 'beschreibung_en'), fertigerHook, bot, { englisch: true });
     if (idee.length >= 15) return { idee, hook: fertigerHook, sprecher, beschreibung, beschreibungEn, folge, quelle: 'ki' };
     console.log(`[tages-bot] KI-Idee unbrauchbar: ${JSON.stringify(antwort).slice(0, 200)}`);
   } catch (err) { console.log(`[tages-bot] KI-Idee fehlgeschlagen: ${String(err?.message || err).slice(0, 200)}`); }
@@ -122,11 +139,11 @@ export async function auftragVerfeinern(bot, idee, kiJson) {
   const ersatz = HOOKS[bot.id] || 'Warte bis zum Ende...';
   let antwort = null;
   try { antwort = await kiJson(verfeinernPrompt(bot, idee), { maxTokens: 400 }); } catch { /* Rückfall */ }
-  const hook = ohneDeko(antwort?.hook, 60);
+  const hook = ohneDeko(feld(antwort, 'hook'), 60);
   const fertigerHook = hook.length >= 4 ? hook : ersatz;
   return {
     hook: fertigerHook,
-    beschreibung: beschreibungBauen(antwort?.beschreibung, fertigerHook, bot),
-    beschreibungEn: beschreibungBauen(antwort?.beschreibung_en, fertigerHook, bot, { englisch: true }),
+    beschreibung: beschreibungBauen(feld(antwort, 'beschreibung'), fertigerHook, bot),
+    beschreibungEn: beschreibungBauen(feld(antwort, 'beschreibung_en'), fertigerHook, bot, { englisch: true }),
   };
 }
