@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ZIYA ULTIMATIV</title>
+  <meta name="description" content="Eine Idee rein, ein fertiger KI-Kurzfilm raus – kostenlos, automatisch, auf GitHub.">
+  <style>
+    :root { --bg: #07070b; --karte: #12121a; --rand: #262634; --text: #f1f0f7; --leise: #9796a8; --a: #ff3d7f; --b: #7c5cff; --c: #2de2e6; --gruen: #6dff9a; --gelb: #ffd166; --rot: #ff5c5c; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: radial-gradient(1200px 600px at 80% -10%, #2a0f3d 0%, transparent 60%), radial-gradient(900px 500px at -10% 10%, #0f2a3d 0%, transparent 55%), var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 100vh; }
+    main { max-width: 760px; margin: 0 auto; padding: 20px 16px 80px; }
+    a { color: var(--c); }
+    .oben { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 0.9rem; }
+    h1 { font-size: clamp(2.2rem, 9vw, 3.6rem); line-height: 1; margin: 26px 0 8px; letter-spacing: -0.03em; font-weight: 900;
+      background: linear-gradient(90deg, var(--a), var(--b), var(--c)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .unter { color: var(--leise); margin: 0 0 22px; }
+    .karte { background: var(--karte); border: 1px solid var(--rand); border-radius: 18px; padding: 16px; }
+    textarea { width: 100%; min-height: 110px; resize: vertical; background: #0b0b12; color: var(--text); border: 1px solid var(--rand); border-radius: 14px; padding: 14px; font: inherit; font-size: 1.05rem; }
+    textarea:focus { outline: 2px solid var(--b); border-color: transparent; }
+    .titel { font-weight: 700; margin: 18px 0 8px; font-size: 0.95rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { background: #0b0b12; border: 1px solid var(--rand); color: var(--text); border-radius: 999px; padding: 8px 12px; font: inherit; font-size: 0.92rem; cursor: pointer; }
+    .chip[aria-pressed="true"] { border-color: var(--a); background: linear-gradient(90deg, #3a0f24, #22153f); }
+    .haken { display: flex; gap: 10px; align-items: center; margin-top: 10px; font-size: 0.95rem; }
+    .haken input { width: 20px; height: 20px; accent-color: var(--a); }
+    .los { margin-top: 20px; width: 100%; border: 0; border-radius: 16px; padding: 18px; font: inherit; font-size: 1.2rem; font-weight: 900; letter-spacing: 0.02em; color: #fff; cursor: pointer;
+      background: linear-gradient(90deg, var(--a), var(--b)); box-shadow: 0 10px 40px -10px var(--a); }
+    .los:active { transform: scale(0.99); }
+    .drin { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 14px; font-size: 0.85rem; color: var(--leise); }
+    .drin span { background: #0b0b12; border: 1px solid var(--rand); border-radius: 10px; padding: 8px 10px; }
+    h2 { margin: 36px 0 12px; font-size: 1.25rem; }
+    .liste { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+    .video { background: var(--karte); border: 1px solid var(--rand); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+    .video img { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; background: #000; display: block; }
+    .video .platz { aspect-ratio: 9 / 16; display: grid; place-items: center; font-size: 2rem; background: #0b0b12; }
+    .video .text { padding: 8px 10px; font-size: 0.82rem; line-height: 1.3; flex: 1; }
+    .video .text a { color: inherit; text-decoration: none; }
+    .status { font-size: 0.78rem; margin-top: 6px; display: block; }
+    .gruen { color: var(--gruen); } .gelb { color: var(--gelb); } .rot { color: var(--rot); } .laeuft { color: var(--c); }
+    .weiter { border: 0; border-top: 1px solid var(--rand); background: transparent; color: var(--a); font: inherit; font-weight: 700; font-size: 0.85rem; padding: 9px; cursor: pointer; }
+    .hinweis { font-size: 0.85rem; color: var(--leise); margin-top: 12px; }
+  </style>
+</head>
+<body>
+<main>
+  <div class="oben">
+    <span class="leise">NACHTWERK × ZIYA STUDIO</span>
+    <span><a href="./bots.html">Bots</a> · <a href="./index.html">Schnitt</a></span>
+  </div>
+  <h1>ZIYA<br>ULTIMATIV</h1>
+  <p class="unter">Eine Idee rein – ein fertiger KI-Kurzfilm raus. Kostenlos, automatisch, auf deinem GitHub.</p>
+
+  <form class="karte" id="form">
+    <textarea id="idee" required minlength="5" maxlength="400" placeholder="Was soll passieren? z. B. Eine Mumie wacht im Museum auf und jagt den Nachtwächter durch die Ausstellung"></textarea>
+
+    <div class="titel">Welcher Bot dreht?</div>
+    <div class="chips" id="bots" role="group" aria-label="Bot"></div>
+
+    <div class="titel">Länge</div>
+    <div class="chips" id="laenge" role="group" aria-label="Länge">
+      <button type="button" class="chip" data-shots="8" data-sek="3.5">⚡ Kurz ~30 s</button>
+      <button type="button" class="chip" data-shots="14" data-sek="4" aria-pressed="true">🎬 Mittel ~55 s</button>
+      <button type="button" class="chip" data-shots="18" data-sek="4">🍿 Lang ~70 s</button>
+    </div>
+
+    <label class="haken"><input id="englisch" type="checkbox" checked> 🇬🇧 Zusätzlich englische Fassung</label>
+    <label class="haken"><input id="serie" type="checkbox" checked> 📺 „Fortsetzung folgt…“ am Ende</label>
+
+    <button class="los" type="submit">🔥 ULTIMATIV-VIDEO BAUEN</button>
+    <div class="drin">
+      <span>🧠 KI schreibt Geschichte + Erzähler</span><span>🎞️ Echte KI-Animation + 3D-Parallax</span>
+      <span>💥 Krass-Schnitte, Sound, Untertitel</span><span>🪝 Hook + Titelbild + TikTok-Text</span>
+      <span>🇩🇪🇬🇧 Deutsch & Englisch</span><span>🩺 Fehler-Radar prüft alles</span>
+    </div>
+    <div class="hinweis">Öffnet GitHub mit dem fertigen Auftrag – dort nur auf <b>„Create“</b> tippen. Nur Aufträge vom Repo-Besitzer werden gebaut. Dauer 2–5 Stunden. Gepostet wird nichts automatisch; beim Posten als KI-Inhalt kennzeichnen.</div>
+  </form>
+
+  <h2>🎥 Deine Videos</h2>
+  <div class="liste" id="videos"><span class="leise">Lädt …</span></div>
+</main>
+<script type="module" src="./ultimativ.js"></script>
+</body>
+</html>

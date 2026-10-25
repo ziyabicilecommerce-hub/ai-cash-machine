@@ -19,7 +19,7 @@ import { bildURL } from './lib/pollinationsMedia.mjs';
 import { geschichtePlanen, STILE, stilVon } from './lib/ziyaGeschichte.mjs';
 import { kiJson } from './lib/kiJson.mjs';
 import { nachtwerkProjekt, datenUrl } from './lib/nachtwerkProjekt.mjs';
-import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt, KRASS, hookFilter, hookUmbrechen, uebersetzenPrompt, besterCoverZeitpunkt } from './lib/ziyaStudio.mjs';
+import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt, KRASS, LEBENDIG, hookFilter, hookUmbrechen, uebersetzenPrompt, besterCoverZeitpunkt } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
 const ausfuehren = promisify(execFile);
@@ -179,6 +179,22 @@ function hookEinblenden(video, { hook = sauber(process.env.ZIYA_HOOK), ende = sa
   } catch (err) { console.log(`${LOG} Text übersprungen: ${String(err.stderr || err.message).slice(0, 200)}`); }
 }
 
+// Szenen ohne KI-Clip: zuerst 3D-Parallax (Tiefen-KI auf der CPU, Vorder-/Hintergrund bewegen sich verschieden),
+// klappt das nicht, die flache Zoom-Fahrt. Beides mit lebendigem Licht und Körnung; Kaggle kann sie später ersetzen.
+const OHNE_KI = new Set(['kamerafahrt', 'parallax']);
+async function standbildFahrt(s, bild, ziel) {
+  const roh = join(ORDNER, `shot${s.nr}-parallax.mp4`);
+  if (!/^(0|nein|aus|false)$/i.test(String(process.env.ZIYA_PARALLAX || '').trim())) {
+    try {
+      await ausfuehren('python3', [resolve('scripts/parallax.py'), bild, roh, String(sekunden), PRESETS[s.preset].zoom || 'rein', String(B), String(H), '30'], { timeout: 600000 });
+      ffmpeg(['-i', roh, '-vf', `${LEBENDIG},${nachbearbeitung(s.preset, { roh: false, krass })}`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
+      return 'parallax';
+    } catch (err) { console.log(`${LOG} 3D-Parallax übersprungen: ${String(err.stderr || err.message).slice(-200)}`); }
+  }
+  ffmpeg(['-i', bild, '-vf', `${kamerafahrt(s.preset, { breite: B, hoehe: H, sekunden })},${nachbearbeitung(s.preset, { roh: false, krass })}`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
+  return 'kamerafahrt';
+}
+
 // Englische Fassung (ZIYA_ENGLISCH=ja): dieselben Bilder, englische Stimme/Untertitel/Hook - kostet keine GPU-Zeit.
 // Übersetzt die Gratis-KI (zur Not die eigene im Lauf); klappt das nicht, gibt es eben nur die deutsche Fassung.
 async function englischeFassung(stumm, deVideo, dauern) {
@@ -277,14 +293,13 @@ async function main() {
     if (modell) {
       const hd = hochskalieren(roh, join(ORDNER, `shot${s.nr}-hd.mp4`));
       ffmpeg(['-i', hd, '-an', '-vf', nachbearbeitung(s.preset, { breite: B, hoehe: H, krass }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
-    } else {
-      ffmpeg(['-i', bild, '-vf', `${kamerafahrt(s.preset, { breite: B, hoehe: H, sekunden })},${nachbearbeitung(s.preset, { roh: false, krass })}`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
     }
-    fertig.push({ ...s, datei: ziel, modell: modell || 'kamerafahrt', dauer: dauerSekunden(ziel) });
-    console.log(`${LOG} ✓ Shot ${s.nr} (${PRESETS[s.preset].name}) mit ${modell || 'Kamerafahrt (kein KI-Kontingent)'}`);
+    const rueckfall = modell ? '' : await standbildFahrt(s, bild, ziel);
+    fertig.push({ ...s, datei: ziel, modell: modell || rueckfall, dauer: dauerSekunden(ziel) });
+    console.log(`${LOG} ✓ Shot ${s.nr} (${PRESETS[s.preset].name}) mit ${modell || (rueckfall === 'parallax' ? '3D-Parallax (kein KI-Kontingent)' : 'Kamerafahrt (kein KI-Kontingent)')}`);
   }
   if (kaggleNebenher) {
-    const offen = fertig.filter((f) => f.modell === 'kamerafahrt' || f.modell === 'fehlt');
+    const offen = fertig.filter((f) => OHNE_KI.has(f.modell) || f.modell === 'fehlt');
     console.log(`${LOG} Kaggle: ${offen.length} Standbild-Szene(n) warten auf Kaggle-Clips`);
     const kaggle = offen.length ? await kaggleNebenher : new Map();
     for (const f of offen) {
@@ -302,7 +317,7 @@ async function main() {
   const video = join(ORDNER, `ziya-${stempel}.mp4`);
   // Krass: Hook - 1,2 s aus dem Höhepunkt (letzter KI-Clip) ganz vorne, dann Blitz und die Geschichte von vorn.
   if (krass && fertig.length > 2) {
-    const hoehepunkt = [...fertig].reverse().find((f) => f.modell !== 'kamerafahrt') || fertig[fertig.length - 1];
+    const hoehepunkt = [...fertig].reverse().find((f) => !OHNE_KI.has(f.modell)) || fertig[fertig.length - 1];
     const hook = join(ORDNER, 'hook.mp4');
     try {
       ffmpeg(['-ss', Math.max(hoehepunkt.dauer / 2 - 0.6, 0).toFixed(2), '-i', hoehepunkt.datei, '-t', '1.2', '-an', '-c:v', 'libx264', '-preset', 'fast', '-crf', '16', '-pix_fmt', 'yuv420p', hook]);
@@ -321,7 +336,7 @@ async function main() {
   const bericht = { idee, preset, video: video.replace(`${resolve('.')}/`, ''), ...(videoEn ? { video_en: videoEn.replace(`${resolve('.')}/`, '') } : {}), shots: fertig.map(({ nr, preset: p, modell, dauer }) => ({ nr, preset: p, modell, dauer })) };
   writeFileSync(join(ORDNER, 'bericht.json'), JSON.stringify(bericht, null, 2));
   nachtwerkSchreiben(fertig);
-  const ki = fertig.filter((f) => f.modell !== 'kamerafahrt').length;
+  const ki = fertig.filter((f) => !OHNE_KI.has(f.modell)).length;
   console.log(`${LOG} Fertig: ${bericht.video} · ${ki}/${fertig.length} Shots echte KI-Clips`);
   if (process.env.GITHUB_STEP_SUMMARY) {
     writeFileSync(process.env.GITHUB_STEP_SUMMARY, `## 🎬 Ziya Studio\n**Idee:** ${idee}\n\n**Preset:** ${PRESETS[preset].name} · **Shots:** ${fertig.length} · **echte KI-Clips:** ${ki}\n\n${fertig.map((f) => `- Shot ${f.nr}: ${PRESETS[f.preset].name} → ${f.modell}`).join('\n')}\n\nDas Video liegt unten bei **Artifacts** (ziya-video).\n`, { flag: 'a' });

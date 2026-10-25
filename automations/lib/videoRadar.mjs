@@ -12,6 +12,7 @@ const REGELN = [
   { test: /Untertitel übersprungen/, stufe: 'gelb', text: 'Untertitel fehlen', tipp: 'Video ist trotzdem fertig, nur ohne eingebrannten Text.' },
   { test: /Text übersprungen/, stufe: 'gelb', text: 'Hook/„Fortsetzung folgt“ fehlt', tipp: 'Video ist trotzdem fertig.' },
   { test: /Englische Fassung übersprungen/, stufe: 'gelb', text: 'Englische Fassung fehlt', tipp: 'Übersetzung hat nicht geklappt – nur die deutsche Fassung.' },
+  { test: /3D-Parallax übersprungen/, stufe: 'gelb', text: '3D-Parallax ging nicht – flache Zoom-Fahrt genommen', tipp: 'Tiefen-KI nicht geladen; Video ist trotzdem fertig.' },
   { test: /Zeitbudget knapp/, stufe: 'gelb', text: 'Zeit wurde knapp – einige Clips ohne KI-Schärfung', tipp: 'Etwas weicher, sonst ok.' },
   { test: /\[tages-bot\] KI-Idee (fehlgeschlagen|unbrauchbar)/, stufe: 'gelb', text: 'Ideen-KI ausgefallen – Idee aus der festen Liste', tipp: 'Dadurch keine Serien-Fortsetzung und kein eigener Sprechertext.' },
 ];
@@ -27,7 +28,7 @@ export function radarPruefen({ log = '', bericht = null, messungen = {}, issueTe
   }
   const shots = (bericht?.shots || []).filter((s) => s.nr !== 0);
   if (shots.length) {
-    const ki = shots.filter((s) => s.modell && s.modell !== 'kamerafahrt').length;
+    const ki = shots.filter((s) => s.modell && s.modell !== 'kamerafahrt' && s.modell !== 'parallax').length;
     const q = anteil(ki, shots.length);
     if (q < 0.25) funde.push({ stufe: 'rot', text: `Nur ${ki}/${shots.length} Szenen echt animiert`, tipp: 'Gratis-KIs und Kaggle waren fast leer – der Rest sind bewegte Standbilder.' });
     else if (q < 0.5) funde.push({ stufe: 'gelb', text: `${ki}/${shots.length} Szenen echt animiert`, tipp: 'Mehr als die Hälfte sind bewegte Standbilder.' });

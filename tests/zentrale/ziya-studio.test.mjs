@@ -223,3 +223,16 @@ test('Titelbild: nicht im weißen Blitz und nicht im Schwarz', () => {
   assert.equal(besterCoverZeitpunkt([[0.4, -1], [0.7, -1]]), 0.4);
   assert.equal(besterCoverZeitpunkt([]), 0.5);
 });
+
+test('3D-Parallax: aus einem Standbild wird ein bewegtes Video (Test ohne Tiefen-KI)', (t) => {
+  const ordner = mkdtempSync(join(tmpdir(), 'parallax-'));
+  try { execFileSync('python3', ['-c', 'import cv2']); execFileSync('ffmpeg', ['-loglevel', 'error', '-f', 'lavfi', '-i', 'testsrc=size=384x672', '-frames:v', '1', join(ordner, 'b.jpg')]); } catch { return t.skip('kein cv2/ffmpeg'); }
+  execFileSync('python3', ['scripts/parallax.py', join(ordner, 'b.jpg'), join(ordner, 'p.mp4'), '1', 'schwenk', '270', '480', '30'], { env: { ...process.env, PARALLAX_TIEFE: 'verlauf' } });
+  const info = execFileSync('ffprobe', ['-v', 'error', '-count_frames', '-show_entries', 'stream=nb_read_frames,width,height', '-of', 'csv=p=0', join(ordner, 'p.mp4')]).toString().trim();
+  assert.equal(info, '270,480,30');
+  const bild = (n) => execFileSync('ffmpeg', ['-loglevel', 'error', '-i', join(ordner, 'p.mp4'), '-vf', `select=eq(n\\,${n})`, '-frames:v', '1', '-f', 'rawvideo', '-pix_fmt', 'gray', 'pipe:1']);
+  const a = bild(0), b = bild(29);
+  let unterschied = 0;
+  for (let i = 0; i < a.length; i++) unterschied += Math.abs(a[i] - b[i]);
+  assert.ok(unterschied / a.length > 5, 'Kamera bewegt sich');
+});

@@ -16,18 +16,22 @@ export function auftragAusIssue(body, bots) {
   const bot = bots.find((b) => b.id === roh.bot) || bots[0];
   const idee = text(roh.idee, 400);
   if (idee.length < 5) throw new Error('Die Idee fehlt oder ist zu kurz.');
-  const geschichte = jaNein(roh.geschichte, bot.geschichte);
+  // Ultimativ-Modus: alles an - Geschichte mit Erzähler, Krass, Englisch, Abspann, lange Fassung.
+  const ultimativ = jaNein(roh.ultimativ, false);
+  const geschichte = ultimativ || jaNein(roh.geschichte, bot.geschichte);
   return {
-    bot: bot.id, idee,
+    bot: bot.id, idee, ultimativ,
     preset: PRESETS.includes(roh.preset) ? roh.preset : bot.preset,
     stil: STILE.includes(roh.stil) ? roh.stil : bot.stil,
-    shots: String(Math.round(zahl(roh.shots, 1, 18, bot.shots))),
-    sekunden: String(zahl(roh.sekunden, 2, 5, 3.5)),
+    shots: String(Math.round(zahl(roh.shots, 1, 18, ultimativ ? 14 : bot.shots))),
+    sekunden: String(zahl(roh.sekunden, 2, 5, ultimativ ? 4 : 3.5)),
+    englisch: ultimativ || jaNein(roh.englisch, false),
+    ende: text(roh.ende, 60) || (ultimativ ? 'Fortsetzung folgt...' : ''),
     geschichte,
     menschen: jaNein(roh.menschen, geschichte || bot.preset === 'anime-kampf'),
     durchgehend: jaNein(roh.durchgehend, !geschichte),
     loop: jaNein(roh.loop, false),
-    krass: jaNein(roh.krass, true),
+    krass: ultimativ || jaNein(roh.krass, true),
     text: text(roh.text, 600),
     hook: text(roh.hook, 60) || HOOKS[bot.id] || '',
   };
@@ -105,4 +109,24 @@ export async function tagesIdee(bot, tag, kiJson, vorher = null, themen = []) {
   // Ohne KI keine echte Fortsetzung möglich - dann startet eine neue Geschichte (Folge 1).
   const liste = bot.ideen?.length ? bot.ideen : [bot.beispiel];
   return { idee: liste[tag % liste.length], hook: ersatz, sprecher: '', beschreibung: beschreibungBauen('', ersatz, bot), beschreibungEn: beschreibungBauen('', ersatz, bot, { englisch: true }), folge: 1, quelle: 'liste' };
+}
+
+// Ultimativ-Bestellung: die Gratis-KI schreibt zur eigenen Idee Hook und TikTok-Texte (DE/EN).
+// Klappt das nicht, bleibt es beim Bot-Hook und einem einfachen Text - die Bestellung läuft trotzdem.
+export const verfeinernPrompt = (bot, idee) => `For a short vertical AI video on the "${bot.name}" channel about: "${idee}"
+write a German hook line for the first 2 seconds ("hook": max 6 words, question or shock, no hashtags, no emojis),
+a German TikTok caption ("beschreibung": one catchy sentence plus 4-6 hashtags) and the same caption in English ("beschreibung_en").
+Answer ONLY with JSON: {"hook":"...","beschreibung":"...","beschreibung_en":"..."}`;
+
+export async function auftragVerfeinern(bot, idee, kiJson) {
+  const ersatz = HOOKS[bot.id] || 'Warte bis zum Ende...';
+  let antwort = null;
+  try { antwort = await kiJson(verfeinernPrompt(bot, idee), { maxTokens: 400 }); } catch { /* Rückfall */ }
+  const hook = ohneDeko(antwort?.hook, 60);
+  const fertigerHook = hook.length >= 4 ? hook : ersatz;
+  return {
+    hook: fertigerHook,
+    beschreibung: beschreibungBauen(antwort?.beschreibung, fertigerHook, bot),
+    beschreibungEn: beschreibungBauen(antwort?.beschreibung_en, fertigerHook, bot, { englisch: true }),
+  };
 }

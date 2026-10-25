@@ -33,6 +33,9 @@ jobs:
       text: ${{ steps.lesen.outputs.text }}
       hook: ${{ steps.lesen.outputs.hook }}
       krass: ${{ steps.lesen.outputs.krass }}
+      englisch: ${{ steps.lesen.outputs.englisch }}
+      ende: ${{ steps.lesen.outputs.ende }}
+      ultimativ: ${{ steps.lesen.outputs.ultimativ }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -47,9 +50,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           OK: ${{ steps.lesen.outputs.ok }}
           FEHLER: ${{ steps.lesen.outputs.fehler }}
+          ULTIMATIV: ${{ steps.lesen.outputs.ultimativ }}
+          BESCHREIBUNG: ${{ steps.lesen.outputs.beschreibung }}
+          BESCHREIBUNG_EN: ${{ steps.lesen.outputs.beschreibung_en }}
           LAUF: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          if [ "$OK" = "true" ]; then
+          if [ "$OK" = "true" ] && [ "$ULTIMATIV" = "true" ]; then
+            printf '%s\n\n%s\n\n**TikTok-Text zum Kopieren:**\n```\n%s\n```\n\n**🇬🇧 English (für *-en.mp4):**\n```\n%s\n```\n\n_KI-generiert – beim Posten als KI-Inhalt kennzeichnen._\n' "🔥 **ULTIMATIV-Auftrag angenommen** – Geschichte mit Erzähler, echte KI-Animation, 3D-Parallax, Hook, Abspann, Deutsch + Englisch. Dauert 2–5 Stunden." "Fortschritt: $LAUF" "$BESCHREIBUNG" "$BESCHREIBUNG_EN" > antwort.md
+            gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} --body-file antwort.md
+          elif [ "$OK" = "true" ]; then
             gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} --body "🤖 Auftrag angenommen – das Video wird gebaut (je nach Länge 1–5 Stunden). Fortschritt: $LAUF"
           else
             gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} --body "⚠️ Auftrag nicht lesbar: $FEHLER"
@@ -73,6 +82,8 @@ jobs:
       text: ${{ needs.auftrag.outputs.text }}
       hook: ${{ needs.auftrag.outputs.hook }}
       krass: ${{ needs.auftrag.outputs.krass != 'false' }}
+      englisch: ${{ needs.auftrag.outputs.englisch == 'true' }}
+      ende: ${{ needs.auftrag.outputs.ende }}
 
   fertig:
     needs: [auftrag, video]
