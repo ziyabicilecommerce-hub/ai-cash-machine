@@ -1,7 +1,7 @@
 // Ziya Studio: eine Idee rein, ein fertiges KI-Video (9:16) raus - kostenlos, nach dem Higgsfield-Prinzip.
 // 1) Idee -> 1-5 Shots planen (Totale, Nah, Effekt) mit Kamera-Preset   2) je Shot ein Startbild (Pollinations Flux)
 // 3) Bild -> echter KI-Clip (Wan 2.2 -> LTX -> CogVideoX-Flash), leer = Preset-Kamerafahrt als Rückfall
-// 4) Nachbearbeitung (Upscale 1080x1920, 30 fps Zwischenbilder, Schärfe, Farblook, Korn)   5) Shots weich überblenden.
+// 4) Nachbearbeitung (Upscale 1080x1920, 60 fps Zwischenbilder, Schärfe, Farblook, Korn)   5) Shots weich überblenden.
 // 6) Tonspur: eigener Kino-Klang (Drone, Whoosh an Schnitten, Boom) + optional Sprecher (edge-tts), Lautheit wie TikTok.
 // Eingaben: ZIYA_IDEE, ZIYA_PRESET, ZIYA_SHOTS (1-18, ~60 s), ZIYA_MENSCHEN=ja (Personen erlauben), ZIYA_SEKUNDEN (2-5),
 // ZIYA_GESCHICHTE=ja (Kurzfilm mit eigenen Figuren, jede Szene ein anderer Moment), ZIYA_STIL (kino|cartoon|anime),
@@ -29,6 +29,8 @@ const HD_BIS_MIN = 270;
 const ORDNER = resolve('out/ziya-studio');
 const B = 1080;
 const H = 1920;
+// 60 fps: TikTok-Maximum, butterweich (Zwischenbilder per minterpolate). ZIYA_FPS=30 für schnellere Läufe.
+const FPS = Number(process.env.ZIYA_FPS) === 30 ? 30 : 60;
 
 const idee = String(process.env.ZIYA_IDEE || '').trim();
 const preset = presetVon(process.env.ZIYA_PRESET);
@@ -186,12 +188,12 @@ async function standbildFahrt(s, bild, ziel) {
   const roh = join(ORDNER, `shot${s.nr}-parallax.mp4`);
   if (!/^(0|nein|aus|false)$/i.test(String(process.env.ZIYA_PARALLAX || '').trim())) {
     try {
-      await ausfuehren('python3', [resolve('scripts/parallax.py'), bild, roh, String(sekunden), PRESETS[s.preset].zoom || 'rein', String(B), String(H), '30'], { timeout: 600000 });
-      ffmpeg(['-i', roh, '-vf', `${LEBENDIG},${nachbearbeitung(s.preset, { roh: false, krass })}`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
+      await ausfuehren('python3', [resolve('scripts/parallax.py'), bild, roh, String(sekunden), PRESETS[s.preset].zoom || 'rein', String(B), String(H), String(FPS)], { timeout: 600000 });
+      ffmpeg(['-i', roh, '-vf', `${LEBENDIG},${nachbearbeitung(s.preset, { roh: false, fps: FPS, krass })}`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
       return 'parallax';
     } catch (err) { console.log(`${LOG} 3D-Parallax übersprungen: ${String(err.stderr || err.message).slice(-200)}`); }
   }
-  ffmpeg(['-i', bild, '-vf', `${kamerafahrt(s.preset, { breite: B, hoehe: H, sekunden })},${nachbearbeitung(s.preset, { roh: false, krass })}`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
+  ffmpeg(['-i', bild, '-vf', `${kamerafahrt(s.preset, { breite: B, hoehe: H, sekunden, fps: FPS })},${nachbearbeitung(s.preset, { roh: false, fps: FPS, krass })}`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
   return 'kamerafahrt';
 }
 
@@ -292,7 +294,7 @@ async function main() {
     letzterRoh = modell ? roh : '';
     if (modell) {
       const hd = hochskalieren(roh, join(ORDNER, `shot${s.nr}-hd.mp4`));
-      ffmpeg(['-i', hd, '-an', '-vf', nachbearbeitung(s.preset, { breite: B, hoehe: H, krass }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
+      ffmpeg(['-i', hd, '-an', '-vf', nachbearbeitung(s.preset, { breite: B, hoehe: H, fps: FPS, krass }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', ziel]);
     }
     const rueckfall = modell ? '' : await standbildFahrt(s, bild, ziel);
     fertig.push({ ...s, datei: ziel, modell: modell || rueckfall, dauer: dauerSekunden(ziel) });
@@ -305,7 +307,7 @@ async function main() {
     for (const f of offen) {
       if (!kaggle.has(f.nr)) continue;
       const hd = hochskalieren(kaggle.get(f.nr), join(ORDNER, `shot${f.nr}-kaggle-hd.mp4`));
-      ffmpeg(['-i', hd, '-an', '-vf', nachbearbeitung(f.preset, { breite: B, hoehe: H, krass }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', f.datei]);
+      ffmpeg(['-i', hd, '-an', '-vf', nachbearbeitung(f.preset, { breite: B, hoehe: H, fps: FPS, krass }), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', f.datei]);
       console.log(`${LOG} ✓ Shot ${f.nr}: Kaggle-Clip ${f.modell === 'fehlt' ? 'statt fehlendem Startbild' : 'ersetzt die Kamerafahrt'}`);
       Object.assign(f, { modell: 'kaggle', dauer: dauerSekunden(f.datei) });
     }
