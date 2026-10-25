@@ -70,8 +70,9 @@ async function kiTextMitWarten(prompt, opts) {
   }
 }
 
-// Kostenlose KI-Kette: GitHub Models (im Actions-Lauf) -> Pollinations (mit Gratis-Schluessel POLLINATIONS_TOKEN stabiler, ohne Schluessel
+// Kostenlose KI-Kette: GitHub Models (im Actions-Lauf, falls an) -> Pollinations (mit Gratis-Schluessel POLLINATIONS_TOKEN stabiler, ohne Schluessel
 // gedrosselt) -> Google Gemini (Gratis-Kontingent, GEMINI_API_KEY) -> Groq (Gratis-Kontingent, GROQ_API_KEY)
+// -> Cloudflare Workers AI (Gratis-Kontingent, CF_ACCOUNT_ID + CF_API_TOKEN)
 // -> askKI (bisherige Gratis-Kette). Faellt einer aus oder ist sein Tageskontingent leer, springt der naechste ein.
 const envK = (k) => (process.env[k] || '').trim();
 
@@ -113,6 +114,19 @@ async function githubModels(prompt, maxTokens) {
 }
 export const githubModelsBereit = () => !!(envK('GITHUB_TOKEN') && envK('GITHUB_ACTIONS'));
 
+// Cloudflare Workers AI: Gratis-Kontingent pro Tag (Konto + CF_ACCOUNT_ID/CF_API_TOKEN als Secret).
+async function cloudflareText(prompt, maxTokens) {
+  const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(envK('CF_ACCOUNT_ID'))}/ai/run/${envK('CF_TEXT_MODELL') || '@cf/meta/llama-3.3-70b-instruct-fp8-fast'}`, {
+    method: 'POST', signal: AbortSignal.timeout(120000),
+    headers: { 'content-type': 'application/json', authorization: `Bearer ${envK('CF_API_TOKEN')}` },
+    body: JSON.stringify({ messages: [{ role: 'user', content: prompt }], max_tokens: maxTokens }),
+  });
+  const d = await res.json().catch(() => ({}));
+  const text = typeof d?.result?.response === 'string' ? d.result.response : (d?.result?.response ? JSON.stringify(d.result.response) : '');
+  if (!res.ok || !text) throw new Error(`Cloudflare ${res.status}: ${String(d?.errors?.[0]?.message || '').slice(0, 120)}`);
+  return text;
+}
+
 export async function kiTextEinmal(prompt, { maxTokens = 1500 } = {}) {
   // Test 25.10.: models.github.ai antwortete mit "200 OK" ohne Inhalt - deshalb nur mit Repo-Variable KI_GITHUB_MODELS=an.
   if (githubModelsBereit() && /^(1|ja|true|an)$/i.test(envK('KI_GITHUB_MODELS'))) {
@@ -132,8 +146,8 @@ export async function kiTextEinmal(prompt, { maxTokens = 1500 } = {}) {
   } catch (err) {
     console.log(`[ki] Pollinations: ${String(err.message).slice(0, 120)} - nächster Anbieter`);
   }
-  for (const [name, fn] of [['GEMINI_API_KEY', gemini], ['GROQ_API_KEY', groq]]) {
-    if (!envK(name)) continue;
+  for (const [name, fn] of [['GEMINI_API_KEY', gemini], ['GROQ_API_KEY', groq], ['CF_API_TOKEN', cloudflareText]]) {
+    if (!envK(name) || (name === 'CF_API_TOKEN' && !envK('CF_ACCOUNT_ID'))) continue;
     try { return await fn(prompt, maxTokens); } catch (err) { console.log(`[ki] ${String(err.message).slice(0, 140)} - nächster Anbieter`); }
   }
   return askKI(prompt, { maxTokens });

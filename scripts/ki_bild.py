@@ -57,6 +57,35 @@ def bild_aus(ergebnis):
     return ergebnis if isinstance(ergebnis, str) else ""
 
 
+def cloudflare():
+    """Cloudflare Workers AI (FLUX.1 schnell): Gratis-Kontingent pro Tag, braucht CF_ACCOUNT_ID + CF_API_TOKEN als Secret.
+    Liefert ein quadratisches Bild - ffmpeg schneidet es auf das Hochformat zu."""
+    konto, schluessel = os.environ.get("CF_ACCOUNT_ID", "").strip(), os.environ.get("CF_API_TOKEN", "").strip()
+    if not (konto and schluessel):
+        return False
+    import base64, subprocess, tempfile, urllib.request
+    try:
+        anfrage = urllib.request.Request(f"https://api.cloudflare.com/client/v4/accounts/{konto}/ai/run/@cf/black-forest-labs/flux-1-schnell",
+                                         data=json.dumps({"prompt": prompt[:2000], "steps": 6, "seed": seed}).encode(), method="POST",
+                                         headers={"Authorization": f"Bearer {schluessel}", "Content-Type": "application/json"})
+        with urllib.request.urlopen(anfrage, timeout=120) as r:
+            bild = (json.loads(r.read().decode()).get("result") or {}).get("image")
+        if not bild:
+            return False
+        roh = tempfile.mktemp(suffix=".jpg")
+        with open(roh, "wb") as f:
+            f.write(base64.b64decode(bild))
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", roh, "-vf", f"scale={breite}:{hoehe}:force_original_aspect_ratio=increase,crop={breite}:{hoehe}", "-q:v", "2", ziel], check=True)
+        print("[bild-retter] Cloudflare Workers AI (FLUX schnell) ok", flush=True)
+        return True
+    except Exception as e:
+        print(f"[bild-retter] Cloudflare fehlgeschlagen: {str(e)[:160]}", flush=True)
+        return False
+
+
+if cloudflare():
+    sys.exit(0)
+
 for space in SPACES:
     space = space.strip()
     try:
