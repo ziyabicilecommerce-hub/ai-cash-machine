@@ -185,6 +185,8 @@ export const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|a
 export const ZEITARBEIT = /personaldienstleist|zeitarbeit|zeitservice|zeit-service|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt|\b(dis ag|tempworkers|randstad|adecco|manpower|hays|orizon|amadeus fire|ferchau|gulp|brunel|persona service|jobactive|piening|timepartner|startpeople|tempton|akkodis|allianz personal)\b|\bpersonal (gmbh|service|partner)/i;
 // Führungsjobs sind ohne Erfahrung sinnlos.
 // Kein Handwerk, keine Hilfs-/Haushaltsjobs - außer der Titel ist klar ein Büro-Job (z.B. "Bürokaufmann für Glaserei").
+// Arzt-, Zahnarzt-, Tierarzt- und Therapiepraxen sowie Pflege: nicht gewünscht.
+const MEDIZIN = /praxis|\btfa\b|\bmfa\b|\bzfa\b|tiermedizin|zahnmedizin|arzthelfer|zahnarzt|kieferorthop|pflegefach|pflegekraft|altenpfleg|krankenpfleg|therapeut|apothek/i;
 const HANDWERK = /montage|monteur|helfer\b|handwerk|elektriker|mechaniker|mechatroniker|schlosser|schweiß|tischler|schreiner|maler\b|lackierer|maurer|dachdecker|installateur|sanitär|heizung|klempner|fliesen|zimmerer|gärtner|garten|landschaftsbau|bauhelfer|bauarbeiter|reinigung|hauswirtschaft|haushaltshilfe|\bkoch\b|küchen|hausmeister|glaser\b|metallbau|produktionshelfer|fertigung|produktion\b|produktionsmitarbeit|maschinenbediener|lagerlogistik|lagermitarbeit|kommissionier|staplerfahrer/i;
 const BUERO = /büro|kaufm|sachbearbeit|assistenz|verwaltung|empfang|disposition|disponent|sekretär/i;
 const FUEHRUNG = /geschäftsführ|leiter(in)?\b|leitung\b|head of|senior|teamlead|team lead|director|direktor/i;
@@ -435,6 +437,7 @@ async function main() {
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb'; continue; }
+    if (MEDIZIN.test(kopf)) { state.uebersprungen[refnr] = 'Praxis/Medizin'; continue; }
     if (HANDWERK.test(stelle.titel) && !BUERO.test(stelle.titel)) { state.uebersprungen[refnr] = 'Handwerk'; continue; }
     if (FUEHRUNG.test(stelle.titel)) { state.uebersprungen[refnr] = 'Führungsposition'; continue; }
     if (stelle.minijob || !stelle.vollzeit || KEIN_FIXGEHALT.test(kopf)) { state.uebersprungen[refnr] = 'kein Vollzeit-Fixgehalt'; continue; }
