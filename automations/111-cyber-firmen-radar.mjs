@@ -54,6 +54,18 @@ const FIRMEN = [
   { firma: 'Wissenschaftsstadt Darmstadt', domain: 'darmstadt.de', ort: 'Darmstadt' },
   { firma: 'Stadt Eschborn', domain: 'eschborn.de', ort: 'Eschborn' },
   { firma: 'Stadt Kelsterbach', domain: 'kelsterbach.de', ort: 'Kelsterbach' },
+  // Ab hier nur noch max. 20 km um Hattersheim (Offenbach bis 25 km). email = auf der Firmen-Website geprüft.
+  { firma: 'HZD Hessische Zentrale für Datenverarbeitung', domain: 'hzd.hessen.de', ort: 'Wiesbaden', email: 'info@hzd.hessen.de' },
+  { firma: 'Link11 GmbH', domain: 'link11.com', ort: 'Frankfurt am Main', email: 'info@link11.com' },
+  { firma: 'Finanz Informatik GmbH & Co. KG', domain: 'f-i.de', ort: 'Frankfurt am Main' },
+  { firma: 'Frankfurter Sparkasse', domain: 'frankfurter-sparkasse.de', ort: 'Frankfurt am Main' },
+  { firma: 'dwpbank Deutsche WertpapierService Bank AG', domain: 'dwpbank.de', ort: 'Frankfurt am Main' },
+  { firma: 'Landwirtschaftliche Rentenbank', domain: 'rentenbank.de', ort: 'Frankfurt am Main' },
+  { firma: 'Cassini Consulting AG', domain: 'cassini.de', ort: 'Frankfurt am Main' },
+  { firma: 'codecentric AG', domain: 'codecentric.de', ort: 'Frankfurt am Main' },
+  { firma: 'Deutscher Wetterdienst', domain: 'dwd.de', ort: 'Offenbach am Main' },
+  { firma: 'ZDF Zweites Deutsches Fernsehen', domain: 'zdf.de', ort: 'Mainz' },
+  { firma: 'Kreis Groß-Gerau', domain: 'kreisgg.de', ort: 'Groß-Gerau' },
 ];
 
 async function main() {
@@ -75,7 +87,7 @@ async function main() {
     if (gesendet.length >= MAX) break;
     const key = firmaKey(f.firma);
     if (firmen.has(key) || domains.has(f.domain)) continue;
-    const email = await emailVonWebsite(f.domain);
+    const email = f.email || await emailVonWebsite(f.domain);
     if (!emailOk(email) || state.emails[email] || postfach.zusatzEmails[email] || domains.has(firmenDomain(email))) { ohne.push(f.firma); continue; }
     const betreff = `Initiativbewerbung – Einstieg im Bereich ${BEREICH} – ${BEWERBER()}`;
     const anschreiben = initiativAnschreiben({ bereich: BEREICH, firma: f.firma, ohneAnzeige: true });
