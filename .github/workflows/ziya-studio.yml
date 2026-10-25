@@ -150,8 +150,13 @@ jobs:
       - name: ffmpeg, gradio_client, edge-tts und KI-Hochskalierer installieren
         uses: ./.github/actions/video-werkzeug
         with:
-          pip: 'gradio_client edge-tts==7.* kaggle modal --extra-index-url https://download.pytorch.org/whl/cpu torch spandrel numpy'
+          pip: 'gradio_client edge-tts==7.* kaggle modal opencv-python-headless transformers pillow --extra-index-url https://download.pytorch.org/whl/cpu torch spandrel numpy'
       # Real-ESRGAN-Gewichte (~3 MB) zwischenspeichern.
+      # Tiefen-KI für die 3D-Parallax-Fahrt (Depth Anything V2 Small, ~100 MB) nicht jedes Mal neu laden.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-tiefe-v1
       - uses: actions/cache@v4
         with:
           path: ~/.cache/real-esrgan
