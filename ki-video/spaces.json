@@ -1,40 +1,40 @@
 {
- "stand": "2026-10-19",
- "anzahl": 55,
+ "stand": "2026-10-25",
+ "anzahl": 56,
  "spaces": [
   {
    "space": "zerogpu-aoti/wan2-2-fp8da-aoti-faster",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 3756,
+   "likes": 3770,
    "gpu": "zero-a10g"
   },
   {
    "space": "r3gm/wan2-2-fp8da-aoti-preview",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 3235,
+   "likes": 3251,
    "gpu": "zero-a10g"
   },
   {
    "space": "r3gm/wan2-2-fp8da-aoti-preview2",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 2181,
+   "likes": 2184,
    "gpu": "zero-a10g"
   },
   {
    "space": "multimodalart/wan2-1-fast",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 1622,
+   "likes": 1623,
    "gpu": "zero-a10g"
   },
   {
    "space": "Saravutw/WAN2.2_I2V_LIGHTNING_4-8step_custom",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 390,
+   "likes": 399,
    "gpu": "zero-a10g"
   },
   {
@@ -48,21 +48,28 @@
    "space": "cbensimon/wan2-2-fp8da-aoti-preview2",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 255,
+   "likes": 256,
    "gpu": "zero-a10g"
   },
   {
    "space": "obsxrver/wan22-i2v-omni-lora",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 231,
+   "likes": 230,
    "gpu": "zero-a10g"
   },
   {
    "space": "kulkas2pintu/kv-i2v",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 160,
+   "likes": 162,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "hitman911/wan2-2-fp8da-aoti-preview-2c-finishing",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 143,
    "gpu": "zero-a10g"
   },
   {
@@ -76,7 +83,7 @@
    "space": "Lightricks/LTX-2.5",
    "typ": "ltx25",
    "endpoint": "/run",
-   "likes": 76,
+   "likes": 79,
    "gpu": "zero-a10g"
   },
   {
@@ -87,17 +94,24 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "hitman911/wan2-2-fp8da-aoti-preview-2c-finishing",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 73,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "amisima/Wan_2.2_I2V_Studio",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 71,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "makiblek/Wan_2.2_I2V_14B_Custom_Lora_Wow",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 66,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "JCisHERE/wan2-2-i2v-v3",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 59,
    "gpu": "zero-a10g"
   },
   {
@@ -112,13 +126,6 @@
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 44,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "makiblek/Wan_2.2_I2V_14B_Custom_Lora_Wow",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 43,
    "gpu": "zero-a10g"
   },
   {
@@ -143,13 +150,6 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "JCisHERE/wan2-2-i2v-v3",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 25,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "ChopperBlu/ltx-2-5-demo",
    "typ": "ltx25",
    "endpoint": "/generate_video",
@@ -171,6 +171,20 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "traderharikrishna/Wan_2.2_I2V_14B_Custom_Lora",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 14,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "aaaa33311/wan2-2-fp8da-aoti-preview-2c-finishing",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 13,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "aidealab/AnimeGen-I2V",
    "typ": "animegen",
    "endpoint": "/generate_video",
@@ -185,38 +199,17 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "aaaa33311/wan2-2-fp8da-aoti-preview-2c-finishing",
+   "space": "STCM/wan2-2-fp8da-aoti-preview-2c",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 9,
    "gpu": "zero-a10g"
   },
   {
-   "space": "STCM/wan2-2-fp8da-aoti-preview-2c",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 8,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "traderharikrishna/Wan_2.2_I2V_14B_Custom_Lora",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 7,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "Upsampler/ltx-2-5",
    "typ": "ltx25",
    "endpoint": "/generate_video",
-   "likes": 7,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "JMCC63/wan2-2-i2v-v3jm",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 6,
+   "likes": 9,
    "gpu": "zero-a10g"
   },
   {
@@ -304,6 +297,13 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "AlexCdDg/ltx-2-5-opti",
+   "typ": "ltx25",
+   "endpoint": "/generate_video",
+   "likes": 3,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "Tinchote/wan-2-2-14b-image-to-video",
    "typ": "wan",
    "endpoint": "/generate_video",
@@ -311,8 +311,8 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "AlexCdDg/ltx-2-5-opti",
-   "typ": "ltx25",
+   "space": "Cludo2/Wan_2.2_I2V_14B_Custom_Lora_Wow_HITMAN911",
+   "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 2,
    "gpu": "zero-a10g"
@@ -333,6 +333,13 @@
   },
   {
    "space": "Panooleg/wan2-2-i2v-v3",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 1,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "asnlfiwahfi/Wan_2.2_I2V_14B_Custom_Lora_Wow",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 1,
@@ -360,28 +367,28 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "hitman911/wan2-2-fp8da-aoti-previewHITMAN911",
+   "space": "adhamsabry1111/wan22-ours",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 1,
    "gpu": "zero-a10g"
   },
   {
-   "space": "Limmmavinnny/wan2-2-fp8da-aoti-preview2",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 1,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "FireDuckOnFire/wan2-2-image-to-video",
+   "space": "KKNTR/videolora",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 0,
    "gpu": "zero-a10g"
   },
   {
-   "space": "KKNTR/videolora",
+   "space": "iskandars/freeform-motion",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 0,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "AikoNee/WAN2-1-fast-T2V-FusioniX",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 0,
