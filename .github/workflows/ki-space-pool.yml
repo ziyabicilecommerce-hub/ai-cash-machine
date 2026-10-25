@@ -1,7 +1,7 @@
 name: "🎬 KI-Video Space-Pool (wöchentlich)"
 
-# Sucht jede Woche alle laufenden Gratis-Video-KIs auf Hugging Face, prüft ihre Schnittstelle und speichert bis zu
-# 100 nutzbare in ki-video/spaces.json, dazu ein Katalog mit bis zu 1000 laufenden Gratis-Video-KIs (ki-video/katalog.json). Das Ziya Studio nimmt sie als Rückfall, wenn die Stamm-Modelle hängen.
+# Sucht jede Woche alle laufenden Gratis-Video-KIs auf Hugging Face, prüft ihre Schnittstelle und speichert
+# alle nutzbaren (bis 1000) in ki-video/spaces.json, dazu ein Katalog mit bis zu 1000 laufenden Gratis-Video-KIs (ki-video/katalog.json). Das Ziya Studio nimmt sie als Rückfall, wenn die Stamm-Modelle hängen.
 
 on:
   schedule:
@@ -18,7 +18,7 @@ concurrency:
 jobs:
   pool:
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 340
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -27,10 +27,13 @@ jobs:
       - run: pip install -q gradio_client
       - name: Video-Spaces suchen und prüfen
         run: python3 scripts/space_pool.py ki-video/spaces.json ki-video/katalog.json
+      - name: Bild-Spaces suchen und prüfen (für den Bild-Retter)
+        continue-on-error: true
+        run: python3 scripts/bild_pool.py ki-video/bild-spaces.json 400
       - name: Liste speichern
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ki-video/spaces.json ki-video/katalog.json
+          git add ki-video/spaces.json ki-video/katalog.json ki-video/bild-spaces.json 2>/dev/null || git add ki-video/spaces.json ki-video/katalog.json
           git diff --cached --quiet || git commit -m "chore: KI-Video Space-Pool aktualisiert [skip ci]"
           git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q

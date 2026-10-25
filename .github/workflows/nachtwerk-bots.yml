@@ -13,6 +13,7 @@ on:
 permissions:
   contents: read
   issues: write
+  models: read  # GitHub Models: Gratis-Text-KI mit dem eingebauten Token
 
 jobs:
   auftrag:
@@ -44,6 +45,8 @@ jobs:
       - id: lesen
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
+          GITHUB_TOKEN: ${{ github.token }}
+          KI_GITHUB_MODELS: ${{ vars.KI_GITHUB_MODELS }}
         run: node automations/nachtwerk-bot-auftrag.mjs
       - name: Rückmeldung
         env:

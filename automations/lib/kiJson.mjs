@@ -70,7 +70,7 @@ async function kiTextMitWarten(prompt, opts) {
   }
 }
 
-// Kostenlose KI-Kette: Pollinations (mit Gratis-Schluessel POLLINATIONS_TOKEN stabiler, ohne Schluessel
+// Kostenlose KI-Kette: GitHub Models (im Actions-Lauf) -> Pollinations (mit Gratis-Schluessel POLLINATIONS_TOKEN stabiler, ohne Schluessel
 // gedrosselt) -> Google Gemini (Gratis-Kontingent, GEMINI_API_KEY) -> Groq (Gratis-Kontingent, GROQ_API_KEY)
 // -> askKI (bisherige Gratis-Kette). Faellt einer aus oder ist sein Tageskontingent leer, springt der naechste ein.
 const envK = (k) => (process.env[k] || '').trim();
@@ -97,7 +97,27 @@ async function groq(prompt, maxTokens) {
   return text;
 }
 
+// GitHub Models: Gratis-KI direkt von GitHub - in jedem Actions-Lauf mit dem eingebauten GITHUB_TOKEN
+// (Workflow-Recht "models: read"), ohne Anmeldung und ohne eigenen Schlüssel. Tageslimit pro Konto - danach weiter.
+// Einschalten: Repo-Variable KI_GITHUB_MODELS=an (wird in den Workflows durchgereicht).
+async function githubModels(prompt, maxTokens) {
+  const res = await fetch('https://models.github.ai/inference/chat/completions', {
+    method: 'POST', signal: AbortSignal.timeout(90000),
+    headers: { 'content-type': 'application/json', accept: 'application/vnd.github+json', authorization: `Bearer ${envK('GITHUB_TOKEN')}` },
+    body: JSON.stringify({ model: envK('GITHUB_MODELS_MODELL') || 'openai/gpt-4.1-mini', messages: [{ role: 'user', content: prompt }], max_tokens: maxTokens }),
+  });
+  const d = await res.json().catch(() => ({}));
+  const text = d?.choices?.[0]?.message?.content || '';
+  if (!res.ok || !text) throw new Error(`GitHub Models ${res.status}: ${String(d?.error?.message || d?.message || '').slice(0, 120)}`);
+  return text;
+}
+export const githubModelsBereit = () => !!(envK('GITHUB_TOKEN') && envK('GITHUB_ACTIONS'));
+
 export async function kiTextEinmal(prompt, { maxTokens = 1500 } = {}) {
+  // Test 25.10.: models.github.ai antwortete mit "200 OK" ohne Inhalt - deshalb nur mit Repo-Variable KI_GITHUB_MODELS=an.
+  if (githubModelsBereit() && /^(1|ja|true|an)$/i.test(envK('KI_GITHUB_MODELS'))) {
+    try { return await githubModels(prompt, Math.min(maxTokens, 4000)); } catch (err) { console.log(`[ki] ${String(err.message).slice(0, 140)} - nächster Anbieter`); }
+  }
   try {
     const res = await fetch('https://text.pollinations.ai/openai', {
       method: 'POST',

@@ -20,6 +20,7 @@ on:
 permissions:
   contents: read
   issues: write
+  models: read  # GitHub Models: Gratis-Text-KI mit dem eingebauten Token
 
 jobs:
   idee:
@@ -54,6 +55,8 @@ jobs:
         env:
           TAGES_FRUEHER: ${{ runner.temp }}/frueher.json
           TAGES_BOT: ${{ inputs.bot }}
+          GITHUB_TOKEN: ${{ github.token }}
+          KI_GITHUB_MODELS: ${{ vars.KI_GITHUB_MODELS }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
