@@ -1,5 +1,5 @@
 # Space-Pool: sucht wöchentlich alle laufenden Video-KIs auf Hugging Face (Gratis-GPU "ZeroGPU"), prüft ihre
-# Schnittstelle und schreibt bis zu 100 nutzbare in ki-video/spaces.json. scripts/ki_clip.py kann jeden davon
+# Schnittstelle und schreibt alle nutzbaren (bis 1000) in ki-video/spaces.json. scripts/ki_clip.py kann jeden davon
 # ansprechen - fällt ein Space aus oder ist er besetzt, nimmt der Router den nächsten.
 # Hinweis: Das Gratis-Kontingent gilt pro Nutzer/IP für alle Spaces zusammen - der Pool macht robuster, nicht mehr.
 #   python3 scripts/space_pool.py [ziel.json]
@@ -10,6 +10,7 @@ from gradio_client import Client
 ZIEL = sys.argv[1] if len(sys.argv) > 1 else "ki-video/spaces.json"
 # Katalog: ALLE gerade laufenden Gratis-Video-KIs (bis 1000), auch ohne bekannte Schnittstelle - zum Stöbern.
 KATALOG = sys.argv[2] if len(sys.argv) > 2 else "ki-video/katalog.json"
+POOL_MAX = int(sys.argv[3]) if len(sys.argv) > 3 else 1000
 SUCHE = ["video", "animate", "motion", "text-to-video", "t2v", "talking", "lipsync", "dance", "avatar", "upscale video", "video edit",
          "image-to-video", "i2v", "wan2.2", "wan 2.2", "wan2", "ltx-2", "ltx 2.5", "ltx2", "animegen", "anime video", "framepack",
          "video generation", "img2vid", "image to video", "kandinsky", "hunyuan video", "skyreels", "cogvideo"]
@@ -65,8 +66,8 @@ def main():
         if TABU.search(titel):
             continue
         katalog.append({"space": s["id"], "titel": titel[:120], "gpu": hw, "likes": d.get("likes", 0), "geaendert": str(d.get("lastModified", ""))[:10]})
-        # Schnittstelle nur für die beliebtesten prüfen (Router-Pool), sonst sprengt es das Abfragelimit.
-        if len(pool) < 100 and len(katalog) <= 250:
+        # Schnittstelle für jede laufende Video-KI prüfen (bis POOL_MAX); bei 429 wartet die Suche kurz.
+        if len(pool) < POOL_MAX:
             try:
                 typ, ep = typ_von(Client(s["id"], verbose=False).view_api(return_format="dict", print_info=False))
                 if typ:

@@ -2,7 +2,7 @@
 # von freien FLUX-Spaces auf Hugging Face (ZeroGPU). Liest die Schnittstelle selbst aus und füllt die Felder.
 #   python3 scripts/ki_bild.py "<prompt>" ziel.jpg [breite] [hoehe] [seed]
 # Exit 0 = Bild da, 1 = kein Space hat geliefert. Optional HF_TOKEN für mehr Kontingent.
-import os, shutil, sys
+import json, os, shutil, sys
 
 from gradio_client import Client
 
@@ -12,6 +12,16 @@ hoehe = int(sys.argv[4]) if len(sys.argv) > 4 else 1344
 seed = int(sys.argv[5]) if len(sys.argv) > 5 else 42
 token = os.environ.get("HF_TOKEN") or None
 SPACES = [s for s in os.environ.get("KI_BILD_SPACES", "black-forest-labs/FLUX.1-schnell,black-forest-labs/FLUX.1-dev,stabilityai/stable-diffusion-3.5-large-turbo").split(",") if s.strip()]
+# Dazu der wöchentliche Bild-Pool (scripts/bild_pool.py): alle laufenden Gratis-Bild-KIs mit geprüfter Schnittstelle.
+ENDPUNKT = {}
+try:
+    with open(os.environ.get("KI_BILD_POOL", "ki-video/bild-spaces.json")) as f:
+        for x in json.load(f).get("spaces", [])[: int(os.environ.get("KI_BILD_POOL_MAX", "40"))]:
+            if x.get("space") and x["space"] not in SPACES:
+                SPACES.append(x["space"])
+                ENDPUNKT[x["space"]] = x.get("endpoint")
+except Exception:
+    pass
 
 
 def client(space):
@@ -52,7 +62,7 @@ for space in SPACES:
     try:
         c = client(space)
         endpunkte = (c.view_api(return_format="dict", print_info=False).get("named_endpoints") or {})
-        ep = next((e for e in ("/infer", "/generate", "/predict", "/run") if e in endpunkte), next(iter(endpunkte), None))
+        ep = ENDPUNKT.get(space) if ENDPUNKT.get(space) in endpunkte else next((e for e in ("/infer", "/generate", "/predict", "/run") if e in endpunkte), next(iter(endpunkte), None))
         if not ep:
             continue
         argumente = {p["parameter_name"]: wert(p["parameter_name"], p.get("parameter_default"), p.get("parameter_has_default", False))
