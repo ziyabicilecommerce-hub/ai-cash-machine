@@ -38,7 +38,7 @@ export function wetterAufhaenger(code, wind) {
 }
 
 const holen = async (url, laden) => {
-  const res = await laden(url, { signal: AbortSignal.timeout(10000), headers: { 'User-Agent': 'nachtwerk-themen-radar' } });
+  const res = await laden(url, { signal: AbortSignal.timeout(25000), headers: { 'User-Agent': 'nachtwerk-themen-radar' } });
   if (!res.ok) throw new Error(`${res.status}`);
   return res.json();
 };
