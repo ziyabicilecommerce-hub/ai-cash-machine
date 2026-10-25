@@ -47,6 +47,8 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           GITHUB_TOKEN: ${{ github.token }}
           KI_GITHUB_MODELS: ${{ vars.KI_GITHUB_MODELS }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: node automations/nachtwerk-bot-auftrag.mjs
       - name: Rückmeldung
         env:

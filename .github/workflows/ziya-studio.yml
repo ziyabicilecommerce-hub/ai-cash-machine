@@ -102,6 +102,9 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ github.token }}
       KI_GITHUB_MODELS: ${{ vars.KI_GITHUB_MODELS }}
+      # Optional (kostenloses Cloudflare-Konto): FLUX-Bilder + Text-KI mit Gratis-Tageskontingent.
+      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
       ZIYA_IDEE: ${{ inputs.idee }}
       ZIYA_PRESET: ${{ inputs.preset }}
       ZIYA_SHOTS: ${{ inputs.shots }}
