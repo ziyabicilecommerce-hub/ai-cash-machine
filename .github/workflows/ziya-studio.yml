@@ -157,7 +157,11 @@ jobs:
           path: ~/.cache/real-esrgan
           key: real-esrgan-v1
       - name: Video bauen
-        run: node automations/ziya-studio.mjs
+        # Protokoll mitschreiben: der Fehler-Radar (nachtwerk-vorschau.yml) wertet es nach dem Lauf aus.
+        run: |
+          set -o pipefail
+          mkdir -p out/ziya-studio
+          node automations/ziya-studio.mjs 2>&1 | tee out/ziya-studio/protokoll.txt
       - uses: actions/upload-artifact@v4
         with:
           name: ziya-video
@@ -168,4 +172,5 @@ jobs:
             out/ziya-studio/film.nachtwerk.json
             out/ziya-studio/cover.jpg
             out/ziya-studio/cover-en.jpg
+            out/ziya-studio/protokoll.txt
           retention-days: 14

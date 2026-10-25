@@ -66,10 +66,11 @@ jobs:
           BESCHREIBUNG: ${{ steps.plan.outputs.beschreibung }}
           BESCHREIBUNG_EN: ${{ steps.plan.outputs.beschreibung_en }}
           FOLGE: ${{ steps.plan.outputs.folge }}
+          QUELLE: ${{ steps.plan.outputs.quelle }}
           LAUF: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           gh label create tages-video -R "$GITHUB_REPOSITORY" --color 9b7cff --description "Tagesvideo eines NACHTWERK-Bots" 2>/dev/null || true
-          printf '%s\n\n**Folge:** %s\n\n**Idee:** %s\n\n**TikTok-Text zum Kopieren:**\n```\n%s\n```\n\n**🇬🇧 English (für die englische Fassung *-en.mp4):**\n```\n%s\n```\n\nWird gerade gebaut: %s\n\n_KI-generiert – beim Posten als KI-Inhalt kennzeichnen._\n' "🤖 Tagesvideo vom Bot." "$FOLGE" "$IDEE" "$BESCHREIBUNG" "$BESCHREIBUNG_EN" "$LAUF" > text.md
+          printf '%s\n\n**Folge:** %s · **Idee-Quelle:** %s\n\n**Idee:** %s\n\n**TikTok-Text zum Kopieren:**\n```\n%s\n```\n\n**🇬🇧 English (für die englische Fassung *-en.mp4):**\n```\n%s\n```\n\nWird gerade gebaut: %s\n\n_KI-generiert – beim Posten als KI-Inhalt kennzeichnen._\n' "🤖 Tagesvideo vom Bot." "$FOLGE" "$QUELLE" "$IDEE" "$BESCHREIBUNG" "$BESCHREIBUNG_EN" "$LAUF" > text.md
           URL=$(gh issue create -R "$GITHUB_REPOSITORY" --title "$TITEL" --label tages-video --body-file text.md)
           echo "nummer=${URL##*/}" >> "$GITHUB_OUTPUT"
 
