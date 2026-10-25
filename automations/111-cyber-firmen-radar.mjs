@@ -66,6 +66,10 @@ const FIRMEN = [
   { firma: 'Deutscher Wetterdienst', domain: 'dwd.de', ort: 'Offenbach am Main' },
   { firma: 'ZDF Zweites Deutsches Fernsehen', domain: 'zdf.de', ort: 'Mainz' },
   { firma: 'Kreis Groß-Gerau', domain: 'kreisgg.de', ort: 'Groß-Gerau' },
+  { firma: 'juunit GmbH', domain: 'juunit.com', ort: 'Eschborn', email: 'contact@juunit.com' },
+  { firma: 'MightyCare Solutions GmbH', domain: 'mightycare.de', ort: 'Frankfurt am Main', email: 'bewerbung@mightycare.de' },
+  { firma: 'IT-Zinn', domain: 'it-zinn.de', ort: 'Frankfurt am Main', email: 'info@it-zinn.de' },
+  { firma: 'SYSPRO GmbH', domain: 'syspro-gmbh.de', ort: 'Frankfurt am Main', email: 'info@syspro-gmbh.de' },
 ];
 
 async function main() {
