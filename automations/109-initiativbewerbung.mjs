@@ -20,13 +20,19 @@ const SUCHE = ['Luftfracht', 'Air Cargo', 'Zoll', 'Zollabwicklung', 'Export', 'I
   'Security Engineer', 'Cloud Security', 'Netzwerksicherheit', 'IT-Forensik', 'Security Operations', 'Cyber Defense', 'Vulnerability', 'Identity Access Management', 'Firewall', 'IT-Security Consultant', 'Datenschutz',
   'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', 'IT-Administrator', 'Systemadministrator', 'IT-Techniker', 'Rechenzentrum', 'Netzwerk',
   '2nd Level Support', 'Netzwerkadministrator', 'IT-Mitarbeiter', 'Data Center', 'IT-Operator', 'Network Operations', 'Cloud Support', 'Systembetreuer', 'Anwendungsbetreuer', 'IT-Koordinator',
-  'Sachbearbeiter', 'Kaufmännischer Mitarbeiter', 'Bürokaufmann', 'Büroassistenz', 'Teamassistenz', 'Empfang', 'Kundenservice', 'Verwaltung', 'Backoffice', 'Datenerfassung'];
+  'Sachbearbeiter', 'Kaufmännischer Mitarbeiter', 'Bürokaufmann', 'Büroassistenz', 'Teamassistenz', 'Empfang', 'Kundenservice', 'Verwaltung', 'Backoffice', 'Datenerfassung',
+  'Kaufmann Büromanagement', 'Office Manager', 'Office Assistant', 'Assistenz der Geschäftsführung', 'Sekretariat', 'Bürokraft', 'Bürosachbearbeiter',
+  'Sachbearbeiter Einkauf', 'Einkauf', 'Auftragsabwicklung', 'Bestellwesen', 'Materialdisposition', 'Sachbearbeiter Personal', 'Personalsachbearbeiter',
+  'Lohnbuchhaltung', 'Buchhaltung', 'Finanzbuchhaltung', 'Debitorenbuchhaltung', 'Kreditorenbuchhaltung', 'Rechnungsprüfung', 'Fakturierung', 'Mahnwesen', 'Forderungsmanagement',
+  'Schadensachbearbeiter', 'Sachbearbeiter Versicherung', 'Hausverwaltung', 'Immobilienverwaltung', 'Mietbuchhaltung', 'Verwaltungsangestellter', 'Verwaltungsfachangestellter',
+  'Bürgerservice', 'Sachbearbeiter öffentlicher Dienst', 'Poststelle', 'Dokumentenmanagement', 'Stammdatenpflege', 'Datenpflege', 'Reklamationsmanagement', 'Kundenbetreuung',
+  'Telefonzentrale', 'Rezeption', 'Sachbearbeiter Logistik', 'Sachbearbeiter Vertragsmanagement', 'Sachbearbeiter Rechnungswesen', 'Controlling Assistenz'];
 // Echte IT-Sicherheit - nicht Luftsicherheit oder Objektschutz.
 const CYBER = /cyber|it-?secur|it-?sicherheit|informationssicherheit|\bisms\b|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi|cloud ?security|netzwerksicherheit|firewall|vulnerability|schwachstellen|identity|\biam\b|access management|datenschutz|security consultant|cyber ?defen/i;
 // IT-Einstieg (Support, Helpdesk, Admin, Rechenzentrum) - die Tür Richtung IT-Sicherheit.
 const IT = /it-?support|it support|helpdesk|help desk|service ?desk|1st[ -]?level|first level|2nd[ -]?level|second level|systemadmin|system ?administrator|it-?admin|netzwerk|network|rechenzentrum|data ?center|it-?techniker|it techniker|client ?management|it-?mitarbeiter|it-?service/i;
 // Büro-Einstieg: Sachbearbeitung, Assistenz, Empfang, Kundenservice, Verwaltung.
-const BUERO = /sachbearbeit|kaufm(ä|a)nn|büro|assistenz|empfang|rezeption|kundenservice|kundenbetreuung|customer service|verwaltung|backoffice|back office|datenerfassung|sekretär/i;
+const BUERO = /sachbearbeit|kaufm(ä|a)nn|büro|assistenz|empfang|rezeption|kundenservice|kundenbetreuung|customer service|verwaltung|backoffice|back office|datenerfassung|sekretär|sekretariat|office|buchhalt|bilanz|einkauf|einkäufer|auftragsabwicklung|bestellwesen|materialdispo|personalsachbearb|lohn|gehaltsabrechnung|faktur|rechnungsprüf|rechnungswesen|mahnwesen|forderungsmanag|schaden|hausverwalt|immobilienverwalt|mietbuchhalt|bürgerservice|poststelle|dokumentenmanag|stammdaten|datenpflege|reklamation|telefonzentrale|controlling|vertragsmanag/i;
 const BEREICHE = [
   [CYBER, 'IT-Sicherheit'],
   [IT, 'IT'],
