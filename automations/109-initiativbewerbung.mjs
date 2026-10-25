@@ -58,7 +58,9 @@ const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bila
 const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesbaden', 'Mainz', 'Hofheim am Taunus', 'Langen (Hessen)', 'Neu-Isenburg', 'Offenbach am Main'];
 // Bundesweit: IT-/Cyber-Stellen, die laut Anzeige komplett im Homeoffice laufen.
 const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Analyst', 'Security Analyst', 'Informationssicherheit', 'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', '2nd Level Support', 'Systemadministrator', 'IT-Administrator', 'Netzwerkadministrator', 'Cloud Support', 'IT Quereinsteiger', 'Junior IT',
-  'Sachbearbeiter', 'Kundenservice', 'Kundenbetreuung', 'Backoffice', 'Datenerfassung', 'Assistenz', 'Verwaltung', 'Disposition'];
+  'Sachbearbeiter', 'Kundenservice', 'Kundenbetreuung', 'Backoffice', 'Datenerfassung', 'Assistenz', 'Verwaltung', 'Disposition',
+  'Office Manager', 'Teamassistenz', 'Buchhaltung', 'Lohnbuchhaltung', 'Debitorenbuchhaltung', 'Kreditorenbuchhaltung', 'Fakturierung', 'Rechnungsprüfung', 'Einkauf', 'Auftragsabwicklung',
+  'Personalsachbearbeiter', 'Schadensachbearbeiter', 'Sachbearbeiter Versicherung', 'Immobilienverwaltung', 'Stammdatenpflege', 'Forderungsmanagement', 'Vertragsmanagement'];
 // Zeitarbeit/Personalvermittler nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt.
 const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3100'), 10) || 3100;
 const REMOTE = /100 ?% ?(remote|homeoffice|home-office|mobil)|vollständig (remote|im homeoffice|mobil)|komplett (remote|im homeoffice|aus dem homeoffice)|full[ -]remote|fully remote|ortsunabhängig|remote aus ganz deutschland|deutschlandweit remote/i;
