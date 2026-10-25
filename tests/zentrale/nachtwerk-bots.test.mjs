@@ -140,3 +140,17 @@ test('Zwei Tagesvideos: nachts und nachmittags ein anderer Bot, länger, mit eng
   assert.equal(ki.beschreibungEn, 'Who is faster? #animals #AI');
   assert.match((await tagesIdee(tier, 0, async () => null)).beschreibungEn, /#AI$/);
 });
+
+import { feld } from '../../automations/lib/nachtwerkBots.mjs';
+test('Tagesbot: KI-Antwort mit umbenannten Feldern wird trotzdem genommen (Lauf 25.10.)', async () => {
+  const cartoon = bots.find((b) => b.id === 'cartoon');
+  const antwort = { idea: 'a tiny fox finds a fallen star and brings it back to the sky', hook_line: 'Was ist das für ein Licht?', narrator_text: 'Ein kleiner Fuchs findet ein Sternenlicht.', caption: 'Magisch! #fuchs', caption_en: 'Magic! #fox' };
+  const a = await tagesIdee(cartoon, 0, async () => antwort);
+  assert.equal(a.quelle, 'ki');
+  assert.equal(a.idee, antwort.idea);
+  assert.equal(a.hook, 'Was ist das für ein Licht?');
+  assert.equal(a.beschreibung, 'Magisch! #fuchs #KI');
+  assert.equal(a.beschreibungEn, 'Magic! #fox #AI');
+  assert.equal(feld({ 'Narrator-Text': 'x' }, 'sprecher'), 'x');
+  assert.equal(feld(null, 'idee'), undefined);
+});
