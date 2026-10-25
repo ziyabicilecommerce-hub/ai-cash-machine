@@ -1,6 +1,8 @@
 // NACHTWERK-Bot-Netzwerk: Die Seite /nachtwerk/bots.html öffnet ein vorausgefülltes GitHub-Issue (Label "video-bot")
 // mit einem JSON-Auftrag. Der Workflow nachtwerk-bots.yml liest ihn hier aus und startet damit das Ziya Studio.
 // Alles wird geprüft und begrenzt - der Issue-Text ist Eingabe von außen.
+import { themenHinweis } from './themenRadar.mjs';
+
 const PRESETS = ['anime-kampf', 'dolly-in', 'dolly-out', 'crash-zoom', 'orbit', 'fpv', 'crane-up', 'bullet-time', 'handheld', 'zeitlupe', 'grusel'];
 const STILE = ['kino', 'cartoon', 'anime'];
 const zahl = (x, min, max, std) => { const n = Number(x); return Number.isFinite(n) ? Math.min(Math.max(n, min), max) : std; };
@@ -53,11 +55,12 @@ export function letzteFolge(issues, bot) {
   return null;
 }
 
-export const ideePrompt = (bot, vorher = null) => `${vorher
+export const ideePrompt = (bot, vorher = null, themen = []) => `${vorher
     ? `Write the NEXT episode (part ${vorher.folge + 1}) of an ongoing short video series for the "${bot.name}" channel (${bot.text}).
 Previous episode: "${vorher.idee}". Keep the same main characters and world, continue the story with a new, bigger escalation or twist.`
     : `Invent ONE fresh, original idea for a short vertical AI video for the "${bot.name}" channel (${bot.text}).`}
-Style example: "${bot.beispiel}". Rules: original characters only (no existing movie, series, game or anime characters, no
+Style example: "${bot.beispiel}".${themenHinweis(themen)}
+Rules: original characters only (no existing movie, series, game or anime characters, no
 celebrities, no brands), visually spectacular, lots of movement, one sentence in English, max 30 words.
 Also write a short German hook line for the first 2 seconds (max 6 words, a question or a shock, no hashtags, no emojis),
 e.g. "Wer gewinnt diesen Kampf?" or "Das hätte niemand erwartet...".
@@ -84,10 +87,10 @@ export function beschreibungBauen(roh, hook, bot, { englisch = false } = {}) {
 // Idee von der Gratis-KI; klappt das nicht, eine der festen Ideen des Bots (reihum).
 // Sprechertext nur für Bots ohne Geschichte - Geschichten bringen ihren Erzähler selbst mit.
 // vorher (letzteFolge): die KI schreibt die nächste Folge mit denselben Figuren - "Teil N" im Hook und im TikTok-Text.
-export async function tagesIdee(bot, tag, kiJson, vorher = null) {
+export async function tagesIdee(bot, tag, kiJson, vorher = null, themen = []) {
   const ersatz = HOOKS[bot.id] || 'Warte bis zum Ende...';
   try {
-    const antwort = await kiJson(ideePrompt(bot, vorher), { maxTokens: 500 });
+    const antwort = await kiJson(ideePrompt(bot, vorher, themen), { maxTokens: 500 });
     const idee = text(antwort?.idee, 400);
     const hook = ohneDeko(antwort?.hook, 60);
     const folge = vorher ? vorher.folge + 1 : 1;
