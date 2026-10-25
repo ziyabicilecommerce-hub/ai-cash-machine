@@ -23,6 +23,9 @@ jobs:
   vorschau:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: automations
       - uses: actions/download-artifact@v4
         with:
           name: ziya-video
@@ -56,4 +59,7 @@ jobs:
           cd ..
           printf '%s\n\n%s\n' "🖼️ **Vorschau** – 8 Bilder quer durchs Video ($(printf '%.0f' "$DAUER") s):" "![Vorschau](https://github.com/$REPO/blob/bot-vorschau/$ZIEL?raw=true)" > text.md
           if [ -n "$COVER" ]; then printf '\n%s\n\n<img src="%s" width="270">\n' "📱 **TikTok-Titelbild** (zum Speichern antippen):" "https://github.com/$REPO/blob/bot-vorschau/$COVER?raw=true" >> text.md; fi
+          # Fehler-Radar: prüft Protokoll, Bericht und das fertige Video - Diagnose kommt in denselben Kommentar.
+          gh issue view "$ISSUE" -R "$REPO" --json body -q .body > issue.txt 2>/dev/null || : > issue.txt
+          { printf '\n'; node automations/video-radar.mjs video issue.txt || echo '🩺 Fehler-Radar konnte nicht prüfen.'; } >> text.md
           gh issue comment "$ISSUE" -R "$REPO" --body-file text.md
