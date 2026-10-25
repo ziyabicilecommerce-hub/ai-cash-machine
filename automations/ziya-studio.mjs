@@ -157,7 +157,7 @@ function untertitelEinbrennen(video, srt = join(ORDNER, 'stimme.srt')) {
 // Nicht blind bei 1,0 s: dort lag am 24.10. genau der weiße Impact-Blitz (Titelbild fast komplett weiß). Mehrere
 // Zeitpunkte mit sichtbarem Hook-Text prüfen und den nehmen, der am wenigsten über- oder unterbelichtet ist.
 function coverBauen(video, datei = 'cover.jpg', mitHook = !!process.env.ZIYA_HOOK) {
-  const zeiten = mitHook ? [0.4, 0.7, 1.7, 2.0, 2.3] : [0.4, 1.5, 2.5, 4];
+  const zeiten = mitHook ? [0.4, 0.7, 1.2, 1.7, 2.0] : [0.4, 1.5, 2.5, 4]; // Hook-Text blendet ab 2,2 s aus
   const hell = (t) => { try { const px = execFileSync('ffmpeg', ['-loglevel', 'error', '-ss', String(t), '-i', video, '-frames:v', '1', '-vf', 'scale=36:64,format=gray', '-f', 'rawvideo', 'pipe:1'], { stdio: 'pipe', timeout: 60000 }); return px.length ? px.reduce((a, b) => a + b, 0) / px.length : -1; } catch { return -1; } };
   const t = besterCoverZeitpunkt(zeiten.map((z) => [z, hell(z)]));
   try { ffmpeg(['-ss', String(t), '-i', video, '-frames:v', '1', '-q:v', '2', join(ORDNER, datei)]); console.log(`${LOG} TikTok-Titelbild: ${datei} (bei ${t} s)`); } catch { /* ohne Titelbild */ }
