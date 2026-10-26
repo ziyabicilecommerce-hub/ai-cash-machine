@@ -236,3 +236,14 @@ test('3D-Parallax: aus einem Standbild wird ein bewegtes Video (Test ohne Tiefen
   for (let i = 0; i < a.length; i++) unterschied += Math.abs(a[i] - b[i]);
   assert.ok(unterschied / a.length > 5, 'Kamera bewegt sich');
 });
+
+test('Virale Effekt-Presets: vollständig und in Bot-Aufträgen erlaubt', async () => {
+  const neu = ['erde-zoom', 'zerfall', 'schweben', 'farbexplosion', 'portal', 'verwandlung', 'energie', 'riese'];
+  const { auftragAusIssue } = await import('../../automations/lib/nachtwerkBots.mjs');
+  for (const id of neu) {
+    const p = PRESETS[id];
+    for (const f of ['name', 'kamera', 'umgebung', 'licht', 'tempo', 'zoom', 'look', 'ton']) assert.ok(p?.[f], `${id}.${f}`);
+    assert.match(kamerafahrt(id), /zoompan=/);
+    assert.equal(auftragAusIssue(JSON.stringify({ bot: 'welt', idee: 'a dragon flies', preset: id }), [{ id: 'welt', preset: 'fpv', stil: 'kino', shots: 6 }]).preset, id);
+  }
+});

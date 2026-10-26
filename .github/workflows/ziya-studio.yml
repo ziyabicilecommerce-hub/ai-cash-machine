@@ -14,7 +14,7 @@ on:
         description: 'Kamera-Preset'
         type: choice
         default: dolly-in
-        options: [anime-kampf, dolly-in, dolly-out, crash-zoom, orbit, fpv, crane-up, bullet-time, handheld, zeitlupe, grusel]
+        options: [anime-kampf, dolly-in, dolly-out, crash-zoom, orbit, fpv, crane-up, bullet-time, handheld, zeitlupe, grusel, erde-zoom, zerfall, schweben, farbexplosion, portal, verwandlung, energie, riese]
       shots:
         description: 'Anzahl Shots (1-18, je ~3,4 s - 18 = ~60 s)'
         default: '3'

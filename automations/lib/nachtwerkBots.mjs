@@ -3,7 +3,8 @@
 // Alles wird geprüft und begrenzt - der Issue-Text ist Eingabe von außen.
 import { themenHinweis } from './themenRadar.mjs';
 
-const PRESETS = ['anime-kampf', 'dolly-in', 'dolly-out', 'crash-zoom', 'orbit', 'fpv', 'crane-up', 'bullet-time', 'handheld', 'zeitlupe', 'grusel'];
+const PRESETS = ['anime-kampf', 'dolly-in', 'dolly-out', 'crash-zoom', 'orbit', 'fpv', 'crane-up', 'bullet-time', 'handheld', 'zeitlupe', 'grusel',
+  'erde-zoom', 'zerfall', 'schweben', 'farbexplosion', 'portal', 'verwandlung', 'energie', 'riese'];
 const STILE = ['kino', 'cartoon', 'anime'];
 const zahl = (x, min, max, std) => { const n = Number(x); return Number.isFinite(n) ? Math.min(Math.max(n, min), max) : std; };
 const text = (x, n) => String(x ?? '').replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);

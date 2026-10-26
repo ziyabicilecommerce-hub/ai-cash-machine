@@ -12,13 +12,14 @@ const kopf = { headers: { Accept: 'application/vnd.github+json' } };
 let bots = [];
 let bot = null;
 let laenge = { shots: 14, sekunden: 4 };
+let effekt = '';
 
 function waehle(gruppe, knopf) {
   for (const k of $(gruppe).querySelectorAll('.chip')) k.setAttribute('aria-pressed', String(k === knopf));
 }
 
-export function auftragUrl({ bot: b, idee, shots, sekunden, englisch, serie }, repo = REPO) {
-  const auftrag = { bot: b.id, idee, ultimativ: true, shots, sekunden, englisch, ende: serie ? 'Fortsetzung folgt...' : '' };
+export function auftragUrl({ bot: b, idee, shots, sekunden, englisch, serie, preset = '' }, repo = REPO) {
+  const auftrag = { bot: b.id, idee, ultimativ: true, shots, sekunden, englisch, ende: serie ? 'Fortsetzung folgt...' : '', ...(preset ? { preset } : {}) };
   const body = `🔥 **ZIYA ULTIMATIV** · ${b.emoji} ${b.name} – Auftrag. Nicht verändern, nur auf „Create“ tippen.\n\n\`\`\`json\n${JSON.stringify(auftrag, null, 2)}\n\`\`\`\n`;
   const url = new URL(`https://github.com/${repo}/issues/new`);
   url.searchParams.set('labels', 'video-bot');
@@ -85,11 +86,12 @@ async function start() {
   for (const k of $('bots').querySelectorAll('.chip')) k.addEventListener('click', () => { bot = bots.find((b) => b.id === k.dataset.id); waehle('bots', k); $('idee').placeholder = `z. B. ${bot.beispiel}`; });
   $('bots').querySelector('.chip').click();
   for (const k of $('laenge').querySelectorAll('.chip')) k.addEventListener('click', () => { laenge = { shots: Number(k.dataset.shots), sekunden: Number(k.dataset.sek) }; waehle('laenge', k); });
+  for (const k of $('effekt').querySelectorAll('.chip')) k.addEventListener('click', () => { effekt = k.dataset.preset; waehle('effekt', k); });
   $('form').addEventListener('submit', (e) => {
     e.preventDefault();
     const idee = $('idee').value.trim();
     if (idee.length < 5) return $('idee').focus();
-    window.open(auftragUrl({ bot, idee, ...laenge, englisch: $('englisch').checked, serie: $('serie').checked }), '_blank', 'noopener');
+    window.open(auftragUrl({ bot, idee, ...laenge, englisch: $('englisch').checked, serie: $('serie').checked, preset: effekt }), '_blank', 'noopener');
   });
   videosLaden();
 }
