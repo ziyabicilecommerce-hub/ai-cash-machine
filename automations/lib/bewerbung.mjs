@@ -35,7 +35,7 @@ export const adresse = () => feld('ADRESSE', 'BEWERBER_ADRESSE');
 export const telefon = () => feld('TELEFON', 'BEWERBER_TELEFON');
 export const wohnort = () => env('BEWERBUNG_ORT') || (adresse().match(/\d{5}\s+(.+)$/) || [])[1] || 'Frankfurt am Main';
 // Nur echte Endungen: Anzeigentext wie "E-Mail@Ugur.Guezel" (Name statt Adresse) darf nicht als Adresse durchgehen.
-const ENDUNG = /\.(de|com|net|org|eu|info|biz|io|at|ch|li|lu|nl|be|fr|it|es|pl|cz|dk|se|uk|us|int|ag|gmbh|group|jobs|career|careers|hessen|frankfurt|berlin|hamburg|koeln|bayern|nrw|ruhr|online|digital|tech|solutions|services|global|cloud|app|ai|co)$/i;
+const ENDUNG = /\.(de|com|net|org|eu|info|biz|io|at|ch|li|lu|nl|be|fr|it|es|pl|cz|dk|se|uk|us|int|ag|gmbh|group|jobs|career|careers|hessen|frankfurt|berlin|hamburg|koeln|bayern|nrw|ruhr|online|digital|tech|solutions|services|global|cloud|app|ai|co|cc|me|tv|aero|bio|consulting|systems|security|network|software|energy|law|legal|team|work|company|international)$/i;
 export const emailOk = (e) => /^[a-z0-9._%+-]+@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/i.test(e || '') && e.length < 120 && ENDUNG.test(e) && !/^e-?mail@/i.test(e) && !/^(vorname|nachname|firstname|lastname|name|max\.?mustermann|mustermann|beispiel|example|your|ihr)[._@-]/i.test(e);
 export const heute = () => new Date().toISOString().slice(0, 10);
 export const tageSeit = (datum) => (Date.now() - new Date(datum).getTime()) / 864e5;
