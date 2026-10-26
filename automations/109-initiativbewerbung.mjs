@@ -51,7 +51,7 @@ const PRAXIS = /reifen|kfz|autoservice|ernsting|praxis|kieferorthop|zahnarzt|zah
 // Personalvermittler tarnen sich oft ohne Zeitarbeits-Flag - eine Initiativbewerbung dort bringt nichts.
 const VERMITTLER = /personal|zeitarbeit|staffing|recruit|hr consulting|impact gmbh|aide gmbh|bankpower|spp direkt|attentus/i;
 // Fahrer-, Handwerks-, Verkaufs- und Chefposten zeigen nicht auf ein Büro im Wunschbereich.
-const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bilanzbuchhalt|lohnbuchhalt|montage|monteur|handwerk|geschäftsführ|ausbilder|mechatron|elektron|mechaniker|lokführer|fahrer|berater|leiter|elektriker|objekttechniker|haustechn|senior|architekt|leitung|ingenieur|klima|lüftung/i;
+const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bilanzbuchhalt|lohnbuchhalt|montage|monteur|handwerk|geschäftsführ|ausbilder|mechatron|elektron|mechaniker|lokführer|fahrer|berater|leiter|elektriker|objekttechniker|haustechn|senior|architekt|leitung|ingenieur|klima|lüftung|lager|kommissionier|stapler|wareneingang|warenausgang|versandmitarbeit|logistikmitarbeit|picker|packer|produktion|fertigung|helfer\b|onboarding logistik/i;
 // Zusätzlich das Umland mit vielen IT-, Cyber- und Cargo-Firmen (alles mit S-Bahn/Zug erreichbar).
 // Zusätzlich Suchzentren im Umland, die außerhalb des Standard-Umkreises liegen (alles mit S-Bahn/Zug erreichbar).
 // Nur Zentren innerhalb von 20 km um Hattersheim (ortPasst prüft die echte Entfernung).
