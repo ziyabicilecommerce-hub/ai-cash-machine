@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-25T08:40:04.381Z",
+ "stand": "2026-10-26T09:17:36.832Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,7 +9,7 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 8,
+     "value": 6,
      "unit": ""
     },
     {
@@ -19,7 +19,7 @@
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 8,
+     "value": 6,
      "unit": ""
     }
    ],
@@ -65,20 +65,6 @@
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "DeskRebel LumbarEase – Massagegurt für den unteren Rücken",
-     "Beleglink": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Purivelle FingerFlow – Holz-Massageroller für Finger & Hand",
-     "Beleglink": "https://purivelle.store/products/fingerflow-handroller",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
     }
    ],
    "notes": [
@@ -92,7 +78,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 8,
+     "value": 6,
      "unit": ""
     },
     {
@@ -140,18 +126,6 @@
     {
      "Aussage": "Purivelle Stelo – Massagestab für die Selbstmassage",
      "Quellenverweis": "https://purivelle.store/products/deepstick-massagestab",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "DeskRebel LumbarEase – Massagegurt für den unteren Rücken",
-     "Quellenverweis": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Purivelle FingerFlow – Holz-Massageroller für Finger & Hand",
-     "Quellenverweis": "https://purivelle.store/products/fingerflow-handroller",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     }
@@ -258,7 +232,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-25",
+     "value": "2026-10-26",
      "unit": ""
     }
    ],
