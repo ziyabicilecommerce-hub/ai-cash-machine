@@ -39,3 +39,11 @@ test('ULTIMATIV: KI schreibt Hook + TikTok-Texte, sonst Rückfall', async () => 
   const weg = await auftragVerfeinern(bot, 'a dragon', async () => { throw new Error('x'); });
   assert.equal(weg.hook, HOOKS.drache);
 });
+
+test('ULTIMATIV: gewählter viraler Effekt landet im Auftrag', () => {
+  const bot = bots.find((b) => b.id === 'welt');
+  const url = new URL(auftragUrl({ bot, idee: 'a giant whale flies over the city', shots: 8, sekunden: 3.5, englisch: false, serie: false, preset: 'erde-zoom' }, 'x/y'));
+  assert.equal(auftragAusIssue(url.searchParams.get('body'), bots).preset, 'erde-zoom');
+  const ohne = new URL(auftragUrl({ bot, idee: 'a giant whale flies over the city', shots: 8, sekunden: 3.5, englisch: false, serie: false }, 'x/y'));
+  assert.equal(auftragAusIssue(ohne.searchParams.get('body'), bots).preset, bot.preset);
+});
