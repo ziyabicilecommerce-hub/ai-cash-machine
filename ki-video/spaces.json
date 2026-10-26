@@ -1,26 +1,26 @@
 {
- "stand": "2026-10-25",
+ "stand": "2026-10-26",
  "anzahl": 56,
  "spaces": [
   {
    "space": "zerogpu-aoti/wan2-2-fp8da-aoti-faster",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 3770,
+   "likes": 3771,
    "gpu": "zero-a10g"
   },
   {
    "space": "r3gm/wan2-2-fp8da-aoti-preview",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 3251,
+   "likes": 3254,
    "gpu": "zero-a10g"
   },
   {
    "space": "r3gm/wan2-2-fp8da-aoti-preview2",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 2184,
+   "likes": 2186,
    "gpu": "zero-a10g"
   },
   {
@@ -69,7 +69,7 @@
    "space": "hitman911/wan2-2-fp8da-aoti-preview-2c-finishing",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 143,
+   "likes": 157,
    "gpu": "zero-a10g"
   },
   {
@@ -83,7 +83,7 @@
    "space": "Lightricks/LTX-2.5",
    "typ": "ltx25",
    "endpoint": "/run",
-   "likes": 79,
+   "likes": 81,
    "gpu": "zero-a10g"
   },
   {
@@ -101,17 +101,17 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "JCisHERE/wan2-2-i2v-v3",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 67,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "makiblek/Wan_2.2_I2V_14B_Custom_Lora_Wow",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 66,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "JCisHERE/wan2-2-i2v-v3",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 59,
    "gpu": "zero-a10g"
   },
   {
@@ -192,6 +192,13 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "Upsampler/ltx-2-5",
+   "typ": "ltx25",
+   "endpoint": "/generate_video",
+   "likes": 10,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "Upsampler/wan-2-2-5b-video",
    "typ": "wan",
    "endpoint": "/generate_video",
@@ -201,13 +208,6 @@
   {
    "space": "STCM/wan2-2-fp8da-aoti-preview-2c",
    "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 9,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "Upsampler/ltx-2-5",
-   "typ": "ltx25",
    "endpoint": "/generate_video",
    "likes": 9,
    "gpu": "zero-a10g"

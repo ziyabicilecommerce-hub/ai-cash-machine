@@ -1,23 +1,23 @@
 {
- "stand": "2026-10-25",
+ "stand": "2026-10-26",
  "anzahl": 217,
  "spaces": [
   {
    "space": "black-forest-labs/FLUX.1-dev",
    "endpoint": "/infer",
-   "likes": 9573,
+   "likes": 9575,
    "gpu": "zero-a10g"
   },
   {
    "space": "black-forest-labs/FLUX.1-schnell",
    "endpoint": "/infer",
-   "likes": 5159,
+   "likes": 5158,
    "gpu": "zero-a10g"
   },
   {
    "space": "mrfakename/Z-Image-Turbo",
    "endpoint": "/generate_image",
-   "likes": 3915,
+   "likes": 3916,
    "gpu": "zero-a10g"
   },
   {
@@ -45,15 +45,15 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "black-forest-labs/FLUX.2-dev",
-   "endpoint": "/infer",
-   "likes": 1183,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "black-forest-labs/FLUX.2-klein-9B",
    "endpoint": "/generate",
    "likes": 942,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "Qwen/Qwen-Image",
+   "endpoint": "/infer",
+   "likes": 931,
    "gpu": "zero-a10g"
   },
   {
@@ -77,7 +77,7 @@
   {
    "space": "Qwen/Qwen-Image-Edit-2511",
    "endpoint": "/infer",
-   "likes": 501,
+   "likes": 502,
    "gpu": "zero-a10g"
   },
   {
@@ -105,15 +105,15 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "hysts/SDXL",
-   "endpoint": "/predict",
-   "likes": 390,
+   "space": "Viggle/Qwen-Image-2.1-viggle-turbo",
+   "endpoint": "/generate",
+   "likes": 395,
    "gpu": "zero-a10g"
   },
   {
-   "space": "Viggle/Qwen-Image-2.1-viggle-turbo",
-   "endpoint": "/generate",
-   "likes": 385,
+   "space": "hysts/SDXL",
+   "endpoint": "/predict",
+   "likes": 390,
    "gpu": "zero-a10g"
   },
   {
@@ -197,7 +197,7 @@
   {
    "space": "black-forest-labs/flux-3-image-klein",
    "endpoint": "/generate",
-   "likes": 210,
+   "likes": 220,
    "gpu": "zero-a10g"
   },
   {
@@ -245,7 +245,7 @@
   {
    "space": "hugging-apps/qwen-qwen-image-2-1-turbo",
    "endpoint": "/generate",
-   "likes": 145,
+   "likes": 146,
    "gpu": "zero-a10g"
   },
   {
@@ -263,7 +263,7 @@
   {
    "space": "M3st3rJ4k3l/FLUX.2-Klein-Multi-LoRA-v2",
    "endpoint": "/bulk_infer",
-   "likes": 133,
+   "likes": 132,
    "gpu": "zero-a10g"
   },
   {
@@ -317,7 +317,7 @@
   {
    "space": "mcp-tools/Z-Image-Turbo",
    "endpoint": "/generate",
-   "likes": 70,
+   "likes": 71,
    "gpu": "zero-a10g"
   },
   {
@@ -365,7 +365,7 @@
   {
    "space": "linoyts/Qwen-Image-2.1-Move",
    "endpoint": "/infer_canvas",
-   "likes": 51,
+   "likes": 52,
    "gpu": "zero-a10g"
   },
   {
@@ -417,6 +417,12 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "mcp-tools/FLUX.1-Krea-dev",
+   "endpoint": "/infer",
+   "likes": 32,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "mcp-tools/Qwen-Image-Fast",
    "endpoint": "/generate_image",
    "likes": 32,
@@ -426,12 +432,6 @@
    "space": "hugging-apps/krea2-turbo-sda-demo",
    "endpoint": "/generate",
    "likes": 32,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "mcp-tools/FLUX.1-Krea-dev",
-   "endpoint": "/infer",
-   "likes": 30,
    "gpu": "zero-a10g"
   },
   {
@@ -489,8 +489,20 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "CirujanoRetro/FLUX.2-Klein-Multi-LoRA",
+   "endpoint": "/bulk_infer",
+   "likes": 17,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "victor/Z-Image-Turbo-MCP",
    "endpoint": "/generate_image",
+   "likes": 17,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "akhaliq/moss-image-4-step-turbo",
+   "endpoint": "/generate",
    "likes": 17,
    "gpu": "zero-a10g"
   },
@@ -513,9 +525,9 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "akhaliq/moss-image-4-step-turbo",
+   "space": "Diskfo/flux-3-image-klein",
    "endpoint": "/generate",
-   "likes": 15,
+   "likes": 14,
    "gpu": "zero-a10g"
   },
   {
@@ -531,6 +543,12 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "linoyts/qwen-image-2-1-realtime",
+   "endpoint": "/generate",
+   "likes": 13,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "artificialguybr/JUGGERNAUT-Z-IMAGE",
    "endpoint": "/generate",
    "likes": 13,
@@ -540,12 +558,6 @@
    "space": "speridlabs/iris-3b-turbo",
    "endpoint": "/run",
    "likes": 13,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "Diskfo/flux-3-image-klein",
-   "endpoint": "/generate",
-   "likes": 12,
    "gpu": "zero-a10g"
   },
   {
@@ -561,12 +573,6 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "bghira/FluxBooru-CFG3.5",
-   "endpoint": "/predict",
-   "likes": 11,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "mcp-tools/Qwen-Image",
    "endpoint": "/generate_image",
    "likes": 11,
@@ -579,8 +585,8 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "techfreakworm/z-image-studio",
-   "endpoint": "/on_t2i_generate",
+   "space": "akhaliq/Z-Image-Turbo",
+   "endpoint": "/generate_image",
    "likes": 11,
    "gpu": "zero-a10g"
   },
@@ -600,12 +606,6 @@
    "space": "daniel-dona/Qwen-Image",
    "endpoint": "/infer",
    "likes": 10,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "linoyts/qwen-image-2-1-realtime",
-   "endpoint": "/generate",
-   "likes": 9,
    "gpu": "zero-a10g"
   },
   {
@@ -648,12 +648,6 @@
    "space": "pentacoxian-dev/iris-3b-turbo",
    "endpoint": "/infer",
    "likes": 7,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "hugging-apps/qwen-image-2-1-lightning",
-   "endpoint": "/generate",
-   "likes": 6,
    "gpu": "zero-a10g"
   },
   {
@@ -706,6 +700,12 @@
   },
   {
    "space": "r3gm/AniReal-qwen-image",
+   "endpoint": "/infer",
+   "likes": 4,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "Shourabhji500/Qwen-Image-Edit-2511-LoRAs-Fast",
    "endpoint": "/infer",
    "likes": 4,
    "gpu": "zero-a10g"
@@ -765,14 +765,14 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "Shourabhji500/Qwen-Image-Edit-2511-LoRAs-Fast",
-   "endpoint": "/infer",
+   "space": "AbstractPhil/lyra-xl-playground",
+   "endpoint": "/generate_image",
    "likes": 3,
    "gpu": "zero-a10g"
   },
   {
-   "space": "AbstractPhil/lyra-xl-playground",
-   "endpoint": "/generate_image",
+   "space": "NikAgs/Chroma1-HD",
+   "endpoint": "/generate",
    "likes": 3,
    "gpu": "zero-a10g"
   },
@@ -801,8 +801,8 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "glarr/qwen-image-bench-classification",
-   "endpoint": "/on_preset_change",
+   "space": "dosesnrolls1/Qwen-Image-Edit-Batch2",
+   "endpoint": "/infer_batch",
    "likes": 2,
    "gpu": "zero-a10g"
   },
@@ -821,12 +821,6 @@
   {
    "space": "inoculatemedia/Z-Image-Turbo",
    "endpoint": "/generate_image",
-   "likes": 2,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "chipfoxx/zeta-chroma-test-bench",
-   "endpoint": "/run_custom",
    "likes": 2,
    "gpu": "zero-a10g"
   },
@@ -999,6 +993,12 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "1inkusFace/RealVis_v5.0_BF16_IP",
+   "endpoint": "/generate_30",
+   "likes": 1,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "bep40/Qwen-Image-2.1-viggle-turbo-fast",
    "endpoint": "/generate",
    "likes": 1,
@@ -1071,12 +1071,6 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "rothel888/flux-tarot-generator",
-   "endpoint": "/generate_tarot",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "Lilxjjssj/natasha-flux-engine",
    "endpoint": "/generate",
    "likes": 0,
@@ -1084,6 +1078,12 @@
   },
   {
    "space": "GTO83/FLUX.2-Klein-Multi-LoRA-v2",
+   "endpoint": "/bulk_infer",
+   "likes": 0,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "GeoGeo1/FLUX.2-Klein-Multi-LoRA-v2",
    "endpoint": "/bulk_infer",
    "likes": 0,
    "gpu": "zero-a10g"
@@ -1191,8 +1191,8 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "adebnath/Text-to-Image_Generation_using_Stable_Diffusion",
-   "endpoint": "/predict",
+   "space": "berten22/my-text-to-image-app",
+   "endpoint": "/generate",
    "likes": 0,
    "gpu": "zero-a10g"
   },
@@ -1275,6 +1275,12 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "muquanta-axel-v17/SDXL-Ghost-Demo",
+   "endpoint": "/generate",
+   "likes": 0,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "YGu1998/SiD-DiT-SD3-medium",
    "endpoint": "/infer",
    "likes": 0,
@@ -1295,12 +1301,6 @@
   {
    "space": "YUG0634/my-ai-image-video-generation",
    "endpoint": "/run_scratch_mode",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "eshitanarang07/image-generation-studio",
-   "endpoint": "/generate_image",
    "likes": 0,
    "gpu": "zero-a10g"
   }
