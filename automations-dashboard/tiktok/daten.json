@@ -1,14 +1,14 @@
 {
- "stand": "2026-10-26T13:29:50.281Z",
+ "stand": "2026-10-26T20:43:57.249Z",
  "gesamt": {
-  "posts": 146,
+  "posts": 147,
   "aufrufe": 110972,
   "likes": 430,
   "kommentare": 36,
   "shares": 11,
   "sehdauer": 4.3,
-  "aufrufe7": 39372,
-  "aufrufeVor7": 43958
+  "aufrufe7": 33118,
+  "aufrufeVor7": 50212
  },
  "konten": [
   {
@@ -18,7 +18,7 @@
     "Tiere"
    ],
    "serie": 46,
-   "posts": 50,
+   "posts": 51,
    "aufrufe": 63564,
    "likes": 217,
    "kommentare": 20,
@@ -89,20 +89,19 @@
    }
   }
  ],
- "geplant": [
+ "geplant": [],
+ "letzte": [
   {
-   "zeit": "2026-10-26T15:00:00.000Z",
+   "zeit": "2026-10-26T15:04:35.345Z",
    "konto": "@futureflowx3",
    "text": "Der kälteste Punkt auf der Erde ist unter dem Eis der Antarktis, wo die Temperatur bis zu ",
-   "link": "",
+   "link": "https://tiktok.com/@futureflowx3/video/7700992227182464288",
    "format": "quiz",
    "aufrufe": 0,
    "sehdauer": 0,
    "likes": 0,
    "kommentare": 0
-  }
- ],
- "letzte": [
+  },
   {
    "zeit": "2026-10-26T12:32:24.764Z",
    "konto": "@futureflowxx",
@@ -421,24 +420,13 @@
    "sehdauer": 3.9,
    "likes": 1,
    "kommentare": 0
-  },
-  {
-   "zeit": "2026-10-22T16:09:37.152Z",
-   "konto": "@zyx_7851",
-   "text": "🚀 Echte NASA-Aufnahmen! Wie heißt der größte Mond des Saturn? Schreib deine Antwort in di",
-   "link": "https://www.tiktok.com/@zyx_7851/video/7699524348129955105?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
-   "format": "quiz",
-   "aufrufe": 274,
-   "sehdauer": 4.4,
-   "likes": 1,
-   "kommentare": 0
   }
  ],
  "fehler": 0,
- "ohneZahlen": 1,
+ "ohneZahlen": 3,
  "lernen": {
-  "stand": "2026-10-26T13:29:48.877Z",
-  "posts": 145,
+  "stand": "2026-10-26T20:43:55.828Z",
+  "posts": 146,
   "quiz": {
    "n": 56,
    "sehdauer": 214.00999999999993,
@@ -458,7 +446,7 @@
  "tipps": [
   {
    "stufe": "warn",
-   "text": "Buffer holt für 1 Post(s) keine Zahlen mehr von TikTok ab - die Zahlen hier sind zu niedrig. In TikTok selbst nachsehen oder den Kanal in Buffer neu verbinden."
+   "text": "Buffer holt für 3 Post(s) keine Zahlen mehr von TikTok ab - die Zahlen hier sind zu niedrig. In TikTok selbst nachsehen oder den Kanal in Buffer neu verbinden."
   },
   {
    "stufe": "warn",
@@ -470,7 +458,11 @@
   },
   {
    "stufe": "gut",
-   "text": "@futureflowx3 läuft stark (1271 Aufrufe/Post) - mehr in diese Richtung."
+   "text": "@futureflowx3 läuft stark (1246 Aufrufe/Post) - mehr in diese Richtung."
+  },
+  {
+   "stufe": "warn",
+   "text": "Keine TikTok-Posts geplant - der nächste Fakten-Lauf füllt die Warteschlange."
   }
  ]
 }
