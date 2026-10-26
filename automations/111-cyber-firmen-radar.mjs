@@ -70,6 +70,10 @@ const FIRMEN = [
   { firma: 'MightyCare Solutions GmbH', domain: 'mightycare.de', ort: 'Frankfurt am Main', email: 'bewerbung@mightycare.de' },
   { firma: 'IT-Zinn', domain: 'it-zinn.de', ort: 'Frankfurt am Main', email: 'info@it-zinn.de' },
   { firma: 'SYSPRO GmbH', domain: 'syspro-gmbh.de', ort: 'Frankfurt am Main', email: 'info@syspro-gmbh.de' },
+  { firma: 'Blue Frost Security GmbH', domain: 'bluefrostsecurity.de', ort: 'Frankfurt am Main', email: 'info@bluefrostsecurity.de' },
+  { firma: 'mainis IT-Service GmbH', domain: 'mainis.de', ort: 'Offenbach am Main', email: 'jobs@mainis.de' },
+  { firma: 'NETPERFORMERS GmbH', domain: 'netperformers.de', ort: 'Kriftel', email: 'info@netperformers.de' },
+  { firma: 'WIIT AG', domain: 'wiit.cloud', ort: 'Eschborn', email: 'info.de@wiit.cloud' },
 ];
 
 async function main() {
