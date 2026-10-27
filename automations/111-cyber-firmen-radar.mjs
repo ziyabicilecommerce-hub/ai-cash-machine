@@ -74,6 +74,7 @@ const FIRMEN = [
   { firma: 'mainis IT-Service GmbH', domain: 'mainis.de', ort: 'Offenbach am Main', email: 'jobs@mainis.de' },
   { firma: 'NETPERFORMERS GmbH', domain: 'netperformers.de', ort: 'Kriftel', email: 'info@netperformers.de' },
   { firma: 'WIIT AG', domain: 'wiit.cloud', ort: 'Eschborn', email: 'info.de@wiit.cloud' },
+  { firma: 'CloudKleyer Frankfurt GmbH', domain: 'cloudkleyer.de', ort: 'Frankfurt am Main', email: 'info@cloudkleyer.de' },
 ];
 
 async function main() {
