@@ -1,14 +1,14 @@
 {
- "stand": "2026-10-27T09:18:49.837Z",
+ "stand": "2026-10-27T15:31:47.162Z",
  "gesamt": {
-  "posts": 148,
+  "posts": 149,
   "aufrufe": 112990,
   "likes": 436,
   "kommentare": 36,
   "shares": 11,
   "sehdauer": 4.3,
-  "aufrufe7": 34350,
-  "aufrufeVor7": 50998
+  "aufrufe7": 31321,
+  "aufrufeVor7": 54027
  },
  "konten": [
   {
@@ -18,7 +18,7 @@
     "Tiere"
    ],
    "serie": 47,
-   "posts": 51,
+   "posts": 52,
    "aufrufe": 65063,
    "likes": 220,
    "kommentare": 20,
@@ -89,20 +89,19 @@
    }
   }
  ],
- "geplant": [
+ "geplant": [],
+ "letzte": [
   {
-   "zeit": "2026-10-27T10:30:00.000Z",
+   "zeit": "2026-10-27T10:32:06.076Z",
    "konto": "@futureflowx3",
    "text": "Hast du schon mal daran gedacht, dass der Ozean kälter ist als du denkst? Tatsächlich schw",
-   "link": "",
+   "link": "https://tiktok.com/@futureflowx3/video/7701293120125701409",
    "format": "quiz",
    "aufrufe": 0,
    "sehdauer": 0,
    "likes": 0,
    "kommentare": 0
-  }
- ],
- "letzte": [
+  },
   {
    "zeit": "2026-10-27T06:31:50.791Z",
    "konto": "@futureflowxx",
@@ -421,24 +420,13 @@
    "sehdauer": 3.3,
    "likes": 0,
    "kommentare": 0
-  },
-  {
-   "zeit": "2026-10-22T18:03:21.864Z",
-   "konto": "@zyx_7851",
-   "text": "Welcher Planet ist der Sonne am nächsten? Schreib deine Antwort in die Kommentare! Tag 16 ",
-   "link": "https://www.tiktok.com/@zyx_7851/video/7699554059648257312?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
-   "format": "quiz",
-   "aufrufe": 264,
-   "sehdauer": 2.1,
-   "likes": 0,
-   "kommentare": 0
   }
  ],
  "fehler": 0,
- "ohneZahlen": 0,
+ "ohneZahlen": 1,
  "lernen": {
-  "stand": "2026-10-27T09:18:48.526Z",
-  "posts": 147,
+  "stand": "2026-10-27T15:31:45.668Z",
+  "posts": 148,
   "quiz": {
    "n": 60,
    "sehdauer": 228.18999999999994,
@@ -458,6 +446,10 @@
  "tipps": [
   {
    "stufe": "warn",
+   "text": "Buffer holt für 1 Post(s) keine Zahlen mehr von TikTok ab - die Zahlen hier sind zu niedrig. In TikTok selbst nachsehen oder den Kanal in Buffer neu verbinden."
+  },
+  {
+   "stufe": "warn",
    "text": "Sehdauer nur 4.3 s: die Leute wischen früh weg. Frage noch schneller, Videos kürzer."
   },
   {
@@ -466,7 +458,11 @@
   },
   {
    "stufe": "gut",
-   "text": "@futureflowx3 läuft stark (1276 Aufrufe/Post) - mehr in diese Richtung."
+   "text": "@futureflowx3 läuft stark (1251 Aufrufe/Post) - mehr in diese Richtung."
+  },
+  {
+   "stufe": "warn",
+   "text": "Keine TikTok-Posts geplant - der nächste Fakten-Lauf füllt die Warteschlange."
   }
  ]
 }
