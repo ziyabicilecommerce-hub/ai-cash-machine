@@ -83,6 +83,8 @@ const FIRMEN = [
   { firma: 'zentrust partners GmbH', domain: 'zentrust.partners', ort: 'Wiesbaden', email: 'contact@zentrust.partners' },
   { firma: 'Exploit Labs GmbH', domain: 'xplt.com', ort: 'Eschborn', email: 'frontoffice@xplt.com' },
   { firma: 'cybsys gmbh', domain: 'cybsys.de', ort: 'Sulzbach (Taunus)', email: 'cybsys@cybsys.de' },
+  { firma: 'Zühlke Engineering GmbH', domain: 'zuehlke.com', ort: 'Eschborn', email: 'info@zuehlke.com' },
+  { firma: 'Senacor Technologies AG', domain: 'senacor.com', ort: 'Eschborn', email: 'info@senacor.com' },
 ];
 
 async function main() {
