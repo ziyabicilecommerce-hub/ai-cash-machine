@@ -197,6 +197,33 @@ def fratze(im, lt):
         ad.ellipse((ax - 9 * g, ay - 9 * g, ax + 9 * g, ay + 9 * g), fill=(0, 0, 0))
 
 
+def hand(im, x, y, staerke):
+    lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(lage)
+    f = (205, 210, 222, int(230 * staerke))
+    d.ellipse((x - 75, y - 60, x + 75, y + 95), fill=f)
+    for i, (dx, lang) in enumerate(((-62, 120), (-30, 165), (5, 180), (40, 160), (78, 95))):
+        glied(d, (x + dx * 0.9, y - 30 + (40 if i == 4 else 0)), (x + dx * 1.35, y - lang + (60 if i == 4 else 0)), 30, f)
+    lage = lage.filter(ImageFilter.GaussianBlur(2))
+    im.paste(lage, (0, 0), lage)
+
+
+def uhr(im, t, bis, gesamt):
+    # tickende Uhr oben: läuft bis 00:00:00, bleibt dann stehen und blinkt rot
+    d = ImageDraw.Draw(im)
+    if t < bis:
+        sek = 23 * 3600 + 58 * 60 + 40 + int(80 * t / bis)
+        text, farbe = f'{sek // 3600:02d}:{sek // 60 % 60:02d}:{sek % 60:02d}', WEISS
+    else:
+        text, farbe = '00:00:00', (230, 30, 30) if int(t * 2.5) % 2 else (90, 0, 0)
+    d.text((W / 2, 140), text, font=KLEIN, fill=farbe, stroke_width=4, stroke_fill=(0, 0, 0), anchor='mm')
+
+
+def warnung(im, text, lt):
+    if int(lt * 3) % 2:
+        ImageDraw.Draw(im).text((W / 2, 200), text, font=FONT, fill=(225, 20, 20), stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
+
+
 def bild(s, t, lt):
     art = s['art']
     im = Image.new('RGB', (W, H), NACHT)
@@ -244,6 +271,11 @@ def bild(s, t, lt):
             schatten(lage, 450, 830 + 140 * (nah - 0.95), s=nah, wink=0.55 * math.sin(lt * 7))
         im.paste(lage, (0, 0), lage); lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
         fensterrahmen(im)
+    elif art == 'klopfen':
+        bahnsteig(im, t, lt, '? ? ?')
+        fensterrahmen(im)
+        if lt >= s.get('schreck_bei', 0.55):
+            hand(im, 360, 560, min((lt - s.get('schreck_bei', 0.55)) / 0.08, 1))
     elif art in ('zettel', 'zettel2'):
         zettel(im, t, lt, art == 'zettel2', s.get('zettel', ['STEIG', 'NICHT AUS']))
     elif art == 'tueren':
@@ -321,8 +353,18 @@ def tonspur(plan, gesamt, ordner):
     teile = [f"0.18*sin(2*PI*55*t)*(0.7+0.3*sin(2*PI*0.2*t))+0.1*sin(2*PI*82.4*t+sin(2*PI*0.5*t))",
              f"0.45*gte(t,{herz:.2f})*exp(-16*mod({ph},1))*sin(2*PI*48*t)",
              f"0.35*gte(t,{herz:.2f})*gte(mod({ph},1),0.25)*exp(-16*(mod({ph},1)-0.25))*sin(2*PI*44*t)"]
+    bis = next((s['start'] for s in plan if s['art'] == 'station'), 0)
+    if bis:
+        teile.append(f"0.22*lt(t,{bis:.2f})*exp(-90*mod(t,0.5))*sin(2*PI*2600*t)")
+    still = next((s['start'] for s in plan if s['art'] == 'dunkel'), 0)
+    if still > 12:
+        a0 = still - 14
+        teile.append(f"0.3*between(t,{a0:.2f},{still:.2f})*pow((t-{a0:.2f})/14,2)*(sin(2*PI*(90+260*pow((t-{a0:.2f})/14,2))*t)+0.6*sin(2*PI*(181+520*pow((t-{a0:.2f})/14,2))*t))")
     for s in plan:
         a = f"{s['start']:.2f}"
+        if s['art'] == 'klopfen':
+            k = f"{s['start'] + s.get('schreck_bei', 0.55):.2f}"
+            teile.append(f"1.0*gte(t,{k})*exp(-9*(t-{k}))*sin(2*PI*70*t)+0.5*gte(t,{k})*exp(-25*(t-{k}))*sin(2*PI*900*t*(1-0.3*(t-{k})))")
         if s.get('schreck'):
             teile.append(f"0.9*gte(t,{a})*exp(-3.5*(t-{a}))*sin(2*PI*38*t)")
         if s['art'] == 'fratze':
@@ -360,13 +402,13 @@ def main():
         datei, sprech = os.path.join(ordner, f'sprich-{i:02d}.mp3'), 0.0
         if s.get('sprich') and not stumm:
             try:
-                asyncio.run(stimme(s['sprich'], datei, story.get('stimme', 'de-DE-ConradNeural'), s.get('tempo', '-8%')))
+                asyncio.run(stimme(s['sprich'], datei, story.get('stimme', 'de-DE-ConradNeural'), s.get('tempo', story.get('tempo', '+0%'))))
                 sprech = dauer_von(datei)
             except Exception as e:
                 print('Stimme fehlt:', e); stumm = True
         if not sprech and s.get('sprich'):
             sprech = len(s['sprich']) / 14
-        dauer = s.get('dauer') or max(sprech + s.get('pause', 0.35), 1.8)
+        dauer = s.get('dauer') or max(sprech + s.get('pause', 0.25), 1.8)
         plan.append({**s, 'start': start, 'dauer': dauer, 'sprech': sprech, 'datei': datei if (s.get('sprich') and not stumm) else None})
         start += dauer
     gesamt = start
@@ -376,6 +418,7 @@ def main():
                           '-vf', 'scale=1080:1920:flags=lanczos,vignette=PI/4.5,noise=alls=6:allf=t+u,format=yuv420p',
                           '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-maxrate', '6M', '-bufsize', '12M', bildspur], stdin=subprocess.PIPE)
     cover = None
+    uhr_bis = next((s['start'] for s in plan if s['art'] == 'station'), gesamt)
     for s in plan:
         n = int(round(s['dauer'] * FPS))
         worte = len(s.get('text', '').split())
@@ -385,7 +428,7 @@ def main():
             zoom = 1 + (0.18 * min(lt / 0.2, 1) if s['art'] == 'fratze' else 0.07 * (f / n))
             cw, ch = int(W / zoom), int(H / zoom)
             im = im.crop(((W - cw) // 2, (H - ch) // 2, (W - cw) // 2 + cw, (H - ch) // 2 + ch)).resize((W, H), Image.BILINEAR)
-            if s.get('schreck') and lt < 0.6:
+            if (s.get('schreck') and lt < 0.6) or ('schreck_bei' in s and 0 <= lt - s['schreck_bei'] < 0.5):
                 st = 26 if s['art'] == 'fratze' else 12
                 im = im.rotate(random.uniform(-1.5, 1.5) if s['art'] == 'fratze' else 0, translate=(random.randint(-st, st), random.randint(-st, st)), fillcolor=NACHT)
                 im = rotverschiebung(im, 10 if s['art'] == 'fratze' else 5)
@@ -398,6 +441,13 @@ def main():
             if s.get('text'):
                 k = worte if not s['sprech'] else min(worte, 1 + int(lt / max(s['sprech'], 0.3) * worte * 1.1))
                 untertitel(im, s['text'], s.get('gelb', ''), k)
+            fortschritt = t / gesamt
+            if fortschritt > 0.45 and s['art'] != 'teil2':
+                im = Image.blend(im, Image.new('RGB', (W, H), (45, 0, 4)), min(0.32, (fortschritt - 0.45) * 0.7))
+            if s.get('warnung'):
+                warnung(im, s['warnung'], lt)
+            if story.get('uhr', True) and s['art'] not in ('fratze', 'teil2', 'nachricht'):
+                uhr(im, t, uhr_bis, gesamt)
             if f < 3 and s['start'] > 0 and s['art'] not in ('fratze', 'blitz'):
                 im = Image.blend(im, Image.new('RGB', (W, H), NACHT), 0.6 - f * 0.2)
             p.stdin.write(im.tobytes())
