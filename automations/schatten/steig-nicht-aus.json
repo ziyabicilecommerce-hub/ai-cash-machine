@@ -16,13 +16,15 @@
       "art": "innen",
       "sprich": "Es ist zwei Minuten vor Mitternacht. Ich bin allein im letzten Zug.",
       "text": "23:58. ICH BIN ALLEIN IM LETZTEN ZUG.",
-      "gelb": "ALLEIN"
+      "gelb": "ALLEIN",
+      "naeher": 0.15
     },
     {
       "art": "handy",
       "sprich": "Mein Handy vibriert. Eine Nachricht von meiner Mutter.",
       "text": "MEIN HANDY VIBRIERT. MAMA SCHREIBT.",
-      "gelb": "HANDY"
+      "gelb": "HANDY",
+      "naeher": 0.4
     },
     {
       "art": "nachricht",
@@ -84,7 +86,9 @@
       "text": "UNBEKANNT: ICH WARTE AUF DICH.",
       "gelb": "WARTE",
       "schreck": true,
-      "pause": 0.8
+      "pause": 0.8,
+      "monster": "Ich ... warte ... auf dich.",
+      "monster_text": "ICH WARTE AUF DICH ..."
     },
     {
       "art": "tueren",
@@ -130,7 +134,9 @@
       "tempo": "-20%",
       "pause": 0.8,
       "atem": true,
-      "warnung": "DREH DICH NICHT UM"
+      "warnung": "DREH DICH NICHT UM",
+      "monster": "Dreh ... dich ... um.",
+      "monster_text": "DREH DICH UM."
     },
     {
       "art": "fratze",
@@ -142,7 +148,9 @@
       "sprich": "Er saß die ganze Zeit hinter mir.",
       "text": "ER SASS DIE GANZE ZEIT HINTER MIR.",
       "gelb": "HINTER",
-      "schreck": true
+      "schreck": true,
+      "monster": "Du bist der Nächste.",
+      "monster_text": "DU BIST DER NÄCHSTE."
     },
     {
       "art": "teil2",
