@@ -261,3 +261,15 @@ test('Musik-Teppich: Beat + Arpeggio je Stimmung, kein "between" (bleibt dem Who
   assert.ok(musikBett('action').length > 50 && tonFormel([4], 'fpv').includes('mod(t,'));
   assert.ok(!tonFormel([4], 'fpv').includes('between'));
 });
+
+import { satzSaeubern } from '../../automations/lib/ziyaGeschichte.mjs';
+test('Satz-Säuberung: mechanische KI-Fehler weg, Satzende und Großschreibung sicher', () => {
+  assert.equal(satzSaeubern('der drache  erwacht'), 'Der drache erwacht.');
+  assert.equal(satzSaeubern('„Lauf!“  rief sie'), '"Lauf!" rief sie.');
+  assert.equal(satzSaeubern('ein Clip #horror 🔥 #KI'), 'Ein Clip.');
+  assert.equal(satzSaeubern('Warte...'), 'Warte...');
+  assert.equal(satzSaeubern('Er rennt!!!'), 'Er rennt!');
+  assert.equal(satzSaeubern('die Nacht ‑ kalt und still'), 'Die Nacht - kalt und still.');
+  assert.equal(satzSaeubern('*Spannung* steigt'), 'Spannung steigt.');
+  assert.equal(satzSaeubern('  '), '');
+});
