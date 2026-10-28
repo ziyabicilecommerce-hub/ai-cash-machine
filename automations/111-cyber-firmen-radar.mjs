@@ -82,6 +82,7 @@ const FIRMEN = [
   { firma: 'CERTAINITY GmbH', domain: 'certainity.com', ort: 'Neu-Isenburg', email: 'office@certainity.com' },
   { firma: 'zentrust partners GmbH', domain: 'zentrust.partners', ort: 'Wiesbaden', email: 'contact@zentrust.partners' },
   { firma: 'Exploit Labs GmbH', domain: 'xplt.com', ort: 'Eschborn', email: 'frontoffice@xplt.com' },
+  { firma: 'cybsys gmbh', domain: 'cybsys.de', ort: 'Sulzbach (Taunus)', email: 'cybsys@cybsys.de' },
 ];
 
 async function main() {
