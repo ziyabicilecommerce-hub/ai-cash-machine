@@ -180,9 +180,13 @@ function hookEinblenden(video, { hook = sauber(process.env.ZIYA_HOOK), ende = sa
   const schrift = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
   if ((!hook && !ende) || !existsSync(schrift)) return;
   const filter = [];
-  if (hook) { writeFileSync(join(ORDNER, 'hook.txt'), hookUmbrechen(hook.toUpperCase())); filter.push(hookFilter(join(ORDNER, 'hook.txt'), schrift)); }
+  const zeilenFilter = (name, text, opt = {}) => hookUmbrechen(text.toUpperCase()).split('\n').forEach((z, i) => {
+    writeFileSync(join(ORDNER, `${name}-${i}.txt`), z);
+    filter.push(hookFilter(join(ORDNER, `${name}-${i}.txt`), schrift, { ...opt, zeile: i }));
+  });
+  if (hook) zeilenFilter('hook', hook);
   const laenge = dauerSekunden(video);
-  if (ende && laenge > 6) { writeFileSync(join(ORDNER, 'ende.txt'), hookUmbrechen(ende.toUpperCase())); filter.push(hookFilter(join(ORDNER, 'ende.txt'), schrift, { ab: (laenge - 2.5).toFixed(2) })); }
+  if (ende && laenge > 6) zeilenFilter('ende', ende, { ab: (laenge - 2.5).toFixed(2) });
   if (!filter.length) return;
   const mit = join(ORDNER, 'mit-hook.mp4');
   try {
