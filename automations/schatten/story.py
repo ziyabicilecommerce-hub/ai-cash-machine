@@ -364,12 +364,12 @@ def tonspur(plan, gesamt, ordner):
         a = f"{s['start']:.2f}"
         if s['art'] == 'klopfen':
             k = f"{s['start'] + s.get('schreck_bei', 0.55):.2f}"
-            teile.append(f"1.0*gte(t,{k})*exp(-9*(t-{k}))*sin(2*PI*70*t)+0.5*gte(t,{k})*exp(-25*(t-{k}))*sin(2*PI*900*t*(1-0.3*(t-{k})))")
+            teile.append(f"1.0*gte(t,{k})*exp(-9*max(t-{k},0))*sin(2*PI*70*t)+0.5*gte(t,{k})*exp(-25*max(t-{k},0))*sin(2*PI*900*t*(1-0.3*(t-{k})))")
         if s.get('schreck'):
-            teile.append(f"0.9*gte(t,{a})*exp(-3.5*(t-{a}))*sin(2*PI*38*t)")
+            teile.append(f"0.9*gte(t,{a})*exp(-3.5*max(t-{a},0))*sin(2*PI*38*t)")
         if s['art'] == 'fratze':
-            teile.append(f"0.6*gte(t,{a})*exp(-2.2*(t-{a}))*sin(2*PI*(1300+700*sin(2*PI*11*t))*t)")
-            teile.append(f"0.5*gte(t,{a})*exp(-2.2*(t-{a}))*sin(2*PI*(1750+500*sin(2*PI*17*t))*t)")
+            teile.append(f"0.6*gte(t,{a})*exp(-2.2*max(t-{a},0))*sin(2*PI*(1300+700*sin(2*PI*11*t))*t)")
+            teile.append(f"0.5*gte(t,{a})*exp(-2.2*max(t-{a},0))*sin(2*PI*(1750+500*sin(2*PI*17*t))*t)")
     stille = [s for s in plan if s.get('stille')]
     leise = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in stille) or '0'
     atem = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in plan if s.get('atem')) or '0'

@@ -36,7 +36,7 @@
     },
     {
       "art": "spiegel",
-      "sprich": "Im dunklen Fenster sehe ich mein Spiegelbild. Und dahinter noch eins.",
+      "sprich": "Im Fenster sehe ich mein Spiegelbild. Und hinter mir noch eins.",
       "text": "IM FENSTER: MEIN SPIEGELBILD. UND NOCH EINS.",
       "gelb": "EINS",
       "blitzbild": [
@@ -45,32 +45,14 @@
       "pause": 0.6
     },
     {
-      "art": "licht",
-      "sprich": "Dann flackert das Licht.",
-      "text": "DANN FLACKERT DAS LICHT.",
-      "gelb": "FLACKERT",
-      "dauer": 2.4
-    },
-    {
       "art": "station",
       "sprich": "Der Zug hält. An einer Station ohne Namen.",
       "text": "DER ZUG HÄLT. AN EINER STATION OHNE NAMEN.",
       "gelb": "NAMEN"
     },
     {
-      "art": "zettel",
-      "sprich": "Am Fenster klebt ein Zettel.",
-      "text": "AM FENSTER KLEBT EIN ZETTEL.",
-      "gelb": "ZETTEL",
-      "zettel": [
-        "STEIG NICHT AUS",
-        "DREH DICH",
-        "NICHT UM"
-      ]
-    },
-    {
       "art": "zettel2",
-      "sprich": "Steig nicht aus. Und dreh dich nicht um.",
+      "sprich": "Am Fenster klebt ein Zettel. Steig nicht aus. Und dreh dich nicht um.",
       "text": "STEIG NICHT AUS. UND DREH DICH NICHT UM.",
       "gelb": "UM",
       "zettel": [
@@ -98,7 +80,7 @@
       "art": "nachricht",
       "absender": "Unbekannt",
       "nachricht": "Warum steigst du nicht aus? Ich warte auf dich.",
-      "sprich": "Dann eine zweite Nachricht. Unbekannte Nummer. Warum steigst du nicht aus? Ich warte auf dich.",
+      "sprich": "Unbekannte Nummer. Warum steigst du nicht aus? Ich warte auf dich.",
       "text": "UNBEKANNT: ICH WARTE AUF DICH.",
       "gelb": "WARTE",
       "schreck": true,
@@ -169,5 +151,6 @@
       "gelb": "MAMA",
       "pause": 1.2
     }
-  ]
+  ],
+  "tempo": "+5%"
 }
