@@ -3,6 +3,7 @@
 # Ohne Netz (oder STUMM=1) wird ohne Stimme gerendert - zum lokalen Testen.
 import asyncio, json, math, os, random, subprocess, sys
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from ton import tonspur
 
 W, H, FPS = 720, 1280, 30
 FONTDATEI = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
@@ -66,20 +67,51 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT):
             glied(d, k(dx, -122), k(dx * 1.3, -10), int(28 * s), farbe)
 
 
+ZEIT = [0.0]  # aktuelle Videozeit, damit der Schatten blinzeln kann
+ROTGLUT = leuchten(40, (255, 40, 20), 150)
+
+
 def schatten(ziel, x, y, s=1.0, wink=0.0, alpha=255, augen=True):
+    # langer Schatten mit Gesicht: rot glühende Augen mit Schlitzpupillen, breites Grinsen, Krallenfinger
     lage = Image.new('RGBA', ziel.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(lage)
     f = (0, 0, 0, alpha)
     k = lambda px, py: (x + px * s, y + py * s)
-    d.ellipse((*k(-26, -470), *k(26, -400)), fill=f)
-    d.polygon([k(-34, -400), k(34, -400), k(24, -150), k(16, 0), k(-16, 0), k(-24, -150)], fill=f)
-    glied(d, k(-30, -390), k(-60, -60), int(14 * s), f)
+    d.ellipse((*k(-32, -495), *k(32, -398)), fill=f)
+    d.polygon([k(-36, -405), k(36, -405), k(24, -150), k(16, 0), k(-16, 0), k(-24, -150)], fill=f)
+    hl = k(-60, -60)
+    glied(d, k(-30, -390), hl, int(14 * s), f)
     a = -1.25 + wink
-    glied(d, k(30, -390), (x + 30 * s + math.cos(a) * 230 * s, y - 390 * s + math.sin(a) * 230 * s), int(14 * s), f)
-    ziel.alpha_composite(lage.filter(ImageFilter.GaussianBlur(3)))
-    if augen:
-        for ex in (-10, 10):
-            ziel.alpha_composite(AUGE, (int(x + ex * s - 18), int(y - 440 * s - 18)))
+    hr = (x + 30 * s + math.cos(a) * 230 * s, y - 390 * s + math.sin(a) * 230 * s)
+    glied(d, k(30, -390), hr, int(14 * s), f)
+    for (hx, hy), richtung in ((hl, math.pi / 2), (hr, a)):
+        for w in (-0.5, -0.17, 0.17, 0.5):
+            glied(d, (hx, hy), (hx + math.cos(richtung + w) * 46 * s, hy + math.sin(richtung + w) * 46 * s), max(2, int(4 * s)), f)
+    ziel.alpha_composite(lage.filter(ImageFilter.GaussianBlur(2)))
+    if not augen:
+        return
+    gesicht = Image.new('RGBA', ziel.size, (0, 0, 0, 0))
+    g = ImageDraw.Draw(gesicht)
+    ga = min(255, alpha + 60)
+    zu = (ZEIT[0] % 3.7) < 0.13  # blinzeln
+    for ex in (-14, 14):
+        cx, cy = x + ex * s, y - 455 * s
+        r = ROTGLUT.resize((max(8, int(70 * s)), max(8, int(70 * s))))
+        gesicht.alpha_composite(r, (int(cx - r.width / 2), int(cy - r.height / 2)))
+        if zu:
+            g.line((cx - 10 * s, cy, cx + 10 * s, cy), fill=(255, 240, 220, ga), width=max(1, int(2 * s)))
+        else:
+            o = 1 if ex > 0 else -1  # schräg nach innen unten: böser Blick
+            g.polygon([(cx + o * 14 * s, cy - 5 * s), (cx, cy - 8 * s), (cx - o * 12 * s, cy + 3 * s), (cx, cy + 6 * s)], fill=(255, 245, 225, ga))
+            g.ellipse((cx - 1.6 * s, cy - 5 * s, cx + 1.6 * s, cy + 4 * s), fill=(0, 0, 0, ga))
+    # Grinsen: dünne helle Sichel mit Zähnen
+    pts = [(x + i * s, y - 422 * s - 0.016 * (i * i) * s) for i in range(-26, 27, 2)]
+    pts_u = [(px, py + 9 * s * (1 - abs(i) / 28)) for (px, py), i in zip(pts, range(-26, 27, 2))]
+    g.polygon(pts + pts_u[::-1], fill=(235, 230, 215, ga))
+    for (px, py), i in zip(pts, range(-26, 27, 2)):
+        if i % 4 == 0:
+            g.line((px, py, px, py + 9 * s), fill=(0, 0, 0, ga), width=max(1, int(1.5 * s)))
+    ziel.alpha_composite(gesicht)
 
 
 def zug_innen(im, t, lt, licht=1.0, fahrt=True, augen_im_fenster=False):
@@ -354,61 +386,6 @@ def dauer_von(datei):
     return float(subprocess.check_output(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', datei]))
 
 
-def tonspur(plan, gesamt, ordner):
-    # Brummen + Rumpeln, Herzschlag wird schneller, Schläge bei Schrecks, Kreischen beim Jumpscare,
-    # Flüstern, und Stille direkt vor dem Schreck (alles kostenlos aus ffmpeg erzeugt)
-    herz = next((s['start'] for s in plan if s['art'] == 'schatten'), gesamt)
-    ph = f"(t*(1+max(t-{herz:.2f},0)/18))"
-    teile = [f"0.18*sin(2*PI*55*t)*(0.7+0.3*sin(2*PI*0.2*t))+0.1*sin(2*PI*82.4*t+sin(2*PI*0.5*t))",
-             f"0.45*gte(t,{herz:.2f})*exp(-16*mod({ph},1))*sin(2*PI*48*t)",
-             f"0.35*gte(t,{herz:.2f})*gte(mod({ph},1),0.25)*exp(-16*(mod({ph},1)-0.25))*sin(2*PI*44*t)"]
-    bis = next((s['start'] for s in plan if s['art'] == 'station'), 0)
-    if bis:
-        teile.append(f"0.22*lt(t,{bis:.2f})*exp(-90*mod(t,0.5))*sin(2*PI*2600*t)")
-    still = next((s['start'] for s in plan if s['art'] == 'dunkel'), 0)
-    if still > 12:
-        a0 = still - 14
-        teile.append(f"0.3*between(t,{a0:.2f},{still:.2f})*pow((t-{a0:.2f})/14,2)*(sin(2*PI*(90+260*pow((t-{a0:.2f})/14,2))*t)+0.6*sin(2*PI*(181+520*pow((t-{a0:.2f})/14,2))*t))")
-    for s in plan:
-        a = f"{s['start']:.2f}"
-        if s['art'] == 'klopfen':
-            k = f"{s['start'] + s.get('schreck_bei', 0.55):.2f}"
-            teile.append(f"1.0*gte(t,{k})*exp(-9*max(t-{k},0))*sin(2*PI*70*t)+0.5*gte(t,{k})*exp(-25*max(t-{k},0))*sin(2*PI*900*t*(1-0.3*(t-{k})))")
-        if s.get('schreck'):
-            teile.append(f"0.9*gte(t,{a})*exp(-3.5*max(t-{a},0))*sin(2*PI*38*t)")
-        if s['art'] == 'fratze':
-            teile.append(f"0.6*gte(t,{a})*exp(-2.2*max(t-{a},0))*sin(2*PI*(1300+700*sin(2*PI*11*t))*t)")
-            teile.append(f"0.5*gte(t,{a})*exp(-2.2*max(t-{a},0))*sin(2*PI*(1750+500*sin(2*PI*17*t))*t)")
-    stille = [s for s in plan if s.get('stille')]
-    leise = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in stille) or '0'
-    atem = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in plan if s.get('atem')) or '0'
-    fluester = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in plan if s.get('fluestern')) or '0'
-    eingaben = ['-f', 'lavfi', '-i', f"aevalsrc='{'+'.join(teile)}':s=44100:d={gesamt:.2f}",
-                '-f', 'lavfi', '-i', f'anoisesrc=color=brown:amplitude=0.2:d={gesamt:.2f}',
-                '-f', 'lavfi', '-i', f'anoisesrc=color=white:amplitude=0.5:d={gesamt:.2f}',
-                '-f', 'lavfi', '-i', f'anoisesrc=color=pink:amplitude=0.6:d={gesamt:.2f}']
-    filter_ = (f"[0]volume='if(gt({leise},0),0.03,1)':eval=frame[b];[1]lowpass=f=160,volume='if(gt({leise},0),0.05,1)':eval=frame[n];"
-               f"[2]bandpass=f=2800:w=1800,volume='0.5*gt({fluester},0)*(0.4+0.6*abs(sin(2*PI*2.3*t)))':eval=frame,aecho=0.8:0.7:90:0.4[w];"
-               f"[3]bandpass=f=700:w=900,volume='0.9*gt({atem},0)*pow(max(sin(2*PI*0.35*t),0),3)':eval=frame[at];")
-    mix = ['[b]', '[n]', '[w]', '[at]']
-    for i, s in enumerate(x for x in plan if x['datei']):
-        eingaben += ['-i', s['datei']]
-        ms = int(s['start'] * 1000) + 120
-        filter_ += f'[{i + 4}]aresample=44100,aecho=0.8:0.6:70|140:0.25|0.12,volume=2.4,adelay={ms}|{ms}[v{i}];'
-        mix.append(f'[v{i}]')
-    nr = len(mix)
-    for j, s in enumerate(x for x in plan if x.get('mdatei')):
-        eingaben += ['-i', s['mdatei']]
-        ms = int((s['start'] + s['mbei']) * 1000)
-        filter_ += (f'[{nr + j}]aresample=44100,asetrate=44100*0.82,aresample=44100,aecho=0.8:0.85:40|90|170:0.5|0.35|0.22,'
-                    f'highpass=f=60,volume=3.2,adelay={ms}|{ms}[m{j}];')
-        mix.append(f'[m{j}]')
-    filter_ += f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,afade=t=out:st={gesamt - 1.5:.2f}:d=1.5,alimiter=limit=0.92[a]"
-    ton = os.path.join(ordner, 'ton.m4a')
-    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', *eingaben, '-filter_complex', filter_, '-map', '[a]', '-ac', '2', '-c:a', 'aac', '-b:a', '192k', ton], check=True)
-    return ton
-
-
 def main():
     story, ordner = json.load(open(sys.argv[1], encoding='utf-8')), sys.argv[2]
     os.makedirs(ordner, exist_ok=True)
@@ -451,6 +428,7 @@ def main():
         worte = len(s.get('text', '').split())
         for f in range(n):
             lt, t = f / FPS, s['start'] + f / FPS
+            ZEIT[0] = t
             im = bild(s, t, lt)
             zoom = 1 + (0.18 * min(lt / 0.2, 1) if s['art'] == 'fratze' else 0.07 * (f / n))
             cw, ch = int(W / zoom), int(H / zoom)
