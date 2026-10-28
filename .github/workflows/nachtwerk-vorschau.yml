@@ -59,6 +59,13 @@ jobs:
           cd ..
           printf '%s\n\n%s\n' "🖼️ **Vorschau** – 8 Bilder quer durchs Video ($(printf '%.0f' "$DAUER") s):" "![Vorschau](https://github.com/$REPO/blob/bot-vorschau/$ZIEL?raw=true)" > text.md
           if [ -n "$COVER" ]; then printf '\n%s\n\n<img src="%s" width="270">\n' "📱 **TikTok-Titelbild** (zum Speichern antippen):" "https://github.com/$REPO/blob/bot-vorschau/$COVER?raw=true" >> text.md; fi
+          # Fertige MP4s als öffentlicher Release-Download (direkter Link, z. B. für Buffer/TikTok-Posten).
+          TAG="video-$ISSUE"
+          gh release view "$TAG" -R "$REPO" >/dev/null 2>&1 || gh release create "$TAG" -R "$REPO" --prerelease --title "Video Issue #$ISSUE" --notes "KI-generiertes Video zu Issue #$ISSUE – beim Posten als KI-Inhalt kennzeichnen."
+          if gh release upload "$TAG" video/ziya-*.mp4 -R "$REPO" --clobber; then
+            printf '\n%s\n' "🎬 **Video-Download:**" >> text.md
+            for f in video/ziya-*.mp4; do printf -- '- https://github.com/%s/releases/download/%s/%s\n' "$REPO" "$TAG" "$(basename "$f")" >> text.md; done
+          fi
           # Fehler-Radar: prüft Protokoll, Bericht und das fertige Video - Diagnose kommt in denselben Kommentar.
           gh issue view "$ISSUE" -R "$REPO" --json body -q .body > issue.txt 2>/dev/null || : > issue.txt
           { printf '\n'; node automations/video-radar.mjs video issue.txt || echo '🩺 Fehler-Radar konnte nicht prüfen.'; } >> text.md
