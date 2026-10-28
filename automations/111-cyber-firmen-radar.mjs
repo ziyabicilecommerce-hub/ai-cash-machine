@@ -76,6 +76,11 @@ const FIRMEN = [
   { firma: 'WIIT AG', domain: 'wiit.cloud', ort: 'Eschborn', email: 'info.de@wiit.cloud' },
   { firma: 'CloudKleyer Frankfurt GmbH', domain: 'cloudkleyer.de', ort: 'Frankfurt am Main', email: 'info@cloudkleyer.de' },
   { firma: 'AXXCON GmbH & Co. KG', domain: 'axxcon.com', ort: 'Schwalbach am Taunus', email: 'info@axxcon.com' },
+  // Pentest-Firmen aus der Syslifters-Liste (Hauptsitz Rhein-Main), Adressen aus Impressum/Karriereseite.
+  { firma: 'binsec GmbH', domain: 'binsec.com', ort: 'Frankfurt am Main', email: 'info@binsec.com' },
+  { firma: 'Dietzel & Company GmbH (DIESEC)', domain: 'diesec.com', ort: 'Eschborn', email: 'info@diesec.com' },
+  { firma: 'CERTAINITY GmbH', domain: 'certainity.com', ort: 'Neu-Isenburg', email: 'office@certainity.com' },
+  { firma: 'zentrust partners GmbH', domain: 'zentrust.partners', ort: 'Wiesbaden', email: 'contact@zentrust.partners' },
 ];
 
 async function main() {
