@@ -16,7 +16,7 @@ import { seedanceClip } from './lib/seedance.mjs';
 import { kaggleBereit, kaggleClips } from './lib/kaggleTurbo.mjs';
 import { modalBereit, modalClips } from './lib/modalTurbo.mjs';
 import { bildURL } from './lib/pollinationsMedia.mjs';
-import { geschichtePlanen, STILE, stilVon } from './lib/ziyaGeschichte.mjs';
+import { geschichtePlanen, STILE, stilVon, satzSaeubern } from './lib/ziyaGeschichte.mjs';
 import { kiJson } from './lib/kiJson.mjs';
 import { nachtwerkProjekt, datenUrl } from './lib/nachtwerkProjekt.mjs';
 import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt, KRASS, LEBENDIG, hookFilter, hookUmbrechen, uebersetzenPrompt, besterCoverZeitpunkt } from './lib/ziyaStudio.mjs';
@@ -44,7 +44,7 @@ const SCHNITT = schnittArt(presetVon(process.env.ZIYA_PRESET), { krass });
 const stil = stilVon(process.env.ZIYA_STIL);
 // Geschichte = viele verschiedene Orte/Momente, also kein Weiterdrehen aus dem letzten Bild.
 const durchgehend = !geschichte && /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_DURCHGEHEND || '').trim());
-let sprechertext = String(process.env.ZIYA_TEXT || '').replace(/\s+/g, ' ').trim().slice(0, 600);
+let sprechertext = satzSaeubern(String(process.env.ZIYA_TEXT || '').slice(0, 600));
 // Anime-Kampf braucht Figuren - dort sind Menschen immer erlaubt.
 const menschen = preset === 'anime-kampf' || geschichte || /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_MENSCHEN || '').trim());
 const NEG = `static, still image, blurry, distorted, deformed, morphing, extra limbs, text, watermark, subtitles${menschen ? '' : ', people, faces'}`;

@@ -12,6 +12,25 @@ export const stilVon = (s) => (STILE[String(s || '').trim().toLowerCase()] ? Str
 
 const sauber = (t, n) => String(t || '').replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
 
+// Erzähler-/Untertitel-Text aufräumen: mechanische KI-Fehler sicher wegräumen (keine Rechtschreibprüfung).
+// Smart-Quotes/Sonderstriche vereinheitlichen, Markdown/Emojis/Hashtags raus, Satzzeichen glätten, Satzende sichern.
+export function satzSaeubern(roh) {
+  let t = String(roh || '')
+    .replace(/[\u2018\u2019\u201A\u2032]/g, "'").replace(/[\u201C\u201D\u201E\u2033]/g, '"')
+    .replace(/[\u2010\u2011\u2012\u2013\u2014\u2212]/g, '-')
+    .replace(/#\S+/g, ' ')
+    .replace(/\p{Extended_Pictographic}/gu, ' ')
+    .replace(/[*_`#>]+/g, ' ')
+    .replace(/\s+-\s+-\s+/g, ' - ')
+    .replace(/\s*\.\s*\.\s*\.\s*/g, '... ')
+    .replace(/([.!?]){2,}/g, (m, z) => (z === '.' ? '...' : z))
+    .replace(/\s*([,.;:!?])/g, '$1').replace(/([,.;:!?])(?=[A-Za-z0-9\u00C0-\u024F])/g, '$1 ')
+    .replace(/\s+/g, ' ').trim();
+  if (t && !/[.!?\u2026]$/.test(t)) t += '.';
+  if (t) t = t.charAt(0).toUpperCase() + t.slice(1);
+  return t;
+}
+
 export function geschichtePrompt(idee, n) {
   return `Write a short visual story as ${n} scenes for a vertical AI video, based on this idea: "${sauber(idee, 300)}".
 Rules: invent ORIGINAL characters only (no existing movie, series, game or anime characters, no celebrities). One clear arc:
@@ -19,7 +38,8 @@ setup -> problem -> action/turning point -> ending. Every scene is a different m
 background is always alive (weather, crowds of creatures, particles, light). No text or logos in the images.
 Answer ONLY with JSON:
 {"figuren":"one English sentence describing the main characters' fixed look (species, clothes, colors) so they stay identical",
- "szenen":[{"bild":"English image prompt: what we see, composition, location","bewegung":"English: what moves and how the camera moves","satz":"one short German narrator sentence"}]}`;
+ "szenen":[{"bild":"English image prompt: what we see, composition, location","bewegung":"English: what moves and how the camera moves","satz":"one short German narrator sentence"}]}
+Write every "satz" in simple, correct, everyday German - short sentences, only real German words, no invented, misspelled or English words.`;
 }
 
 // KI-Antwort -> Shots im Format von shotsPlanen (nr, preset, bild, bewegung) plus Erzählsatz.
@@ -33,7 +53,7 @@ export function geschichteZuShots(d, { idee, preset, n, stil = 'kino' }) {
     nr: i + 1, preset: p,
     bild: `${sauber(s.bild, 400)}${figuren ? `, ${figuren}` : ''}, dynamic detailed background with depth, ${look}, vertical 9:16 composition`,
     bewegung: `${sauber(s.bewegung, 300) || x.kamera}. ${sauber(idee, 120)}. The characters stay consistent. ${HINTERGRUND}. ${x.tempo}. Smooth, coherent motion.`,
-    satz: sauber(s.satz, 200),
+    satz: satzSaeubern(sauber(s.satz, 200)),
   }));
 }
 
@@ -67,7 +87,7 @@ export const regiePrompt = (plan) => `You are a demanding film director. Improve
 - keep the same number of scenes, the same original characters ("figuren") and the same JSON format
 - "bild": vivid, concrete, cinematic image prompts in English (lighting, camera angle, action, no text in images)
 - "bewegung": strong, dynamic camera and subject motion in English
-- "satz": short, natural, gripping German narration (max 14 words), no strange or made-up words
+- "satz": short, natural, gripping German narration (max 14 words); simple correct everyday German only - real German words, no invented, misspelled or English words
 Answer ONLY with the improved JSON.
 ${JSON.stringify(plan).slice(0, 6000)}`;
 
