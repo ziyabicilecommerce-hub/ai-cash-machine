@@ -186,7 +186,7 @@ export const ZEITARBEIT = /personaldienstleist|zeitarbeit|zeitservice|zeit-servi
 // Führungsjobs sind ohne Erfahrung sinnlos.
 // Kein Handwerk, keine Hilfs-/Haushaltsjobs - außer der Titel ist klar ein Büro-Job (z.B. "Bürokaufmann für Glaserei").
 // Arzt-, Zahnarzt-, Tierarzt- und Therapiepraxen sowie Pflege: nicht gewünscht.
-const MEDIZIN = /praxis|\btfa\b|\bmfa\b|\bzfa\b|tiermedizin|zahnmedizin|arzthelfer|zahnarzt|kieferorthop|pflegefach|pflegekraft|altenpfleg|krankenpfleg|therapeut|apothek/i;
+const MEDIZIN = /physio|ergothera|logopäd|heilprakt|osteopath|massage|podolog|praxis|\btfa\b|\bmfa\b|\bzfa\b|tiermedizin|zahnmedizin|arzthelfer|zahnarzt|kieferorthop|pflegefach|pflegekraft|altenpfleg|krankenpfleg|therapeut|apothek/i;
 const HANDWERK = /montage|monteur|helfer\b|handwerk|elektriker|mechaniker|mechatroniker|schlosser|schweiß|tischler|schreiner|maler\b|lackierer|maurer|dachdecker|installateur|sanitär|heizung|klempner|fliesen|zimmerer|gärtner|garten|landschaftsbau|bauhelfer|bauarbeiter|reinigung|hauswirtschaft|haushaltshilfe|\bkoch\b|küchen|hausmeister|glaser\b|metallbau|produktionshelfer|fertigung|produktion\b|produktionsmitarbeit|maschinenbediener|lagerlogistik|lagermitarbeit|kommissionier|staplerfahrer/i;
 const BUERO = /büro|kaufm|sachbearbeit|assistenz|verwaltung|empfang|disposition|disponent|sekretär/i;
 const FUEHRUNG = /geschäftsführ|leiter(in)?\b|leitung\b|head of|senior|teamlead|team lead|director|direktor/i;
