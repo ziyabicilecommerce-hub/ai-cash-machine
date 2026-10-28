@@ -85,6 +85,10 @@ const FIRMEN = [
   { firma: 'cybsys gmbh', domain: 'cybsys.de', ort: 'Sulzbach (Taunus)', email: 'cybsys@cybsys.de' },
   { firma: 'Zühlke Engineering GmbH', domain: 'zuehlke.com', ort: 'Eschborn', email: 'info@zuehlke.com' },
   { firma: 'Senacor Technologies AG', domain: 'senacor.com', ort: 'Eschborn', email: 'info@senacor.com' },
+  { firma: 'Umesoft GmbH', domain: 'umesoft.de', ort: 'Eschborn', email: 'info@umesoft.de' },
+  { firma: 'vertical GmbH', domain: 'vertical.de', ort: 'Frankfurt am Main', email: 'info@vertical.de' },
+  { firma: 'Ammann IT Services GmbH', domain: 'ammann-it-services.de', ort: 'Wiesbaden', email: 'info@ammann-it-services.de' },
+  { firma: 'Clatum Consulting Group', domain: 'clatum.com', ort: 'Eschborn', email: 'info@clatum.com' },
 ];
 
 async function main() {
