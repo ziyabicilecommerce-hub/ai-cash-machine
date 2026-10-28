@@ -19,6 +19,7 @@ import { bildURL } from './lib/pollinationsMedia.mjs';
 import { geschichtePlanen, STILE, stilVon, satzSaeubern } from './lib/ziyaGeschichte.mjs';
 import { kiJson } from './lib/kiJson.mjs';
 import { nachtwerkProjekt, datenUrl } from './lib/nachtwerkProjekt.mjs';
+import { assGross } from './lib/untertitel.mjs';
 import { PRESETS, presetVon, shotsPlanen, modellReihe, poolModelle, nachbearbeitung, kamerafahrt, ueberblendung, tonFormel, schnittArt, KRASS, LEBENDIG, hookFilter, hookUmbrechen, uebersetzenPrompt, besterCoverZeitpunkt } from './lib/ziyaStudio.mjs';
 
 const LOG = '[ziya-studio]';
@@ -140,13 +141,23 @@ async function startbild(s, seed) {
   return ok;
 }
 
-// Krass: große TikTok-Untertitel (weiß, dicker schwarzer Rand, Bildmitte unten) aus der Sprecher-Spur einbrennen.
+// Untertitel einbrennen. Großer Story-Stil (mittig, Großbuchstaben, ein Wort gelb - viraler TikTok-Horror-Look)
+// für Grusel oder ZIYA_UT_GROSS=ja; sonst der kleine Stil unten. Aus der Sprecher-Spur (edge-tts-SRT).
+const grosseUt = () => preset === 'grusel' || /^(1|ja|true|an)$/i.test(String(process.env.ZIYA_UT_GROSS || '').trim());
 function untertitelEinbrennen(video, srt = join(ORDNER, 'stimme.srt')) {
   if (!existsSync(srt)) return;
   const mit = join(ORDNER, 'mit-untertitel.mp4');
-  const stil = 'FontName=DejaVu Sans,Bold=1,FontSize=12,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=2.5,Shadow=0,Alignment=2,MarginV=38';
+  let filter;
+  if (grosseUt()) {
+    const ass = srt.replace(/\.srt$/, '.ass');
+    writeFileSync(ass, assGross(readFileSync(srt, 'utf8'), { breite: B, hoehe: H }));
+    filter = `ass=${ass.replace(/([\\:'])/g, '\\$1')}`;
+  } else {
+    const stil = 'FontName=DejaVu Sans,Bold=1,FontSize=12,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=2.5,Shadow=0,Alignment=2,MarginV=38';
+    filter = `subtitles=${srt.replace(/([\\:'])/g, '\\$1')}:force_style='${stil}'`;
+  }
   try {
-    ffmpeg(['-i', video, '-vf', `subtitles=${srt.replace(/([\\:'])/g, '\\$1')}:force_style='${stil}'`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-c:a', 'copy', '-movflags', '+faststart', mit]);
+    ffmpeg(['-i', video, '-vf', filter, '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-c:a', 'copy', '-movflags', '+faststart', mit]);
     copyFileSync(mit, video);
   } catch (err) { console.log(`${LOG} Untertitel übersprungen: ${String(err.stderr || err.message).slice(0, 200)}`); }
 }
