@@ -7,6 +7,7 @@ export const STILE = {
   kino: 'cinematic film still, photorealistic, rich color grading, 8k, ultra detailed, sharp focus',
   cartoon: '3D animated family movie style, expressive cartoon characters with big eyes, vibrant colors, soft global illumination, highly detailed render',
   anime: 'anime key visual, high-budget anime film, cel shading, vibrant saturated colors, detailed painted background',
+  schatten: 'minimalist flat 2D illustration, a single simple white silhouette stick figure, plain dark navy night background, tiny distant stars, lots of empty negative space, eerie, very high contrast, no realistic humans, no faces, no text',
 };
 export const stilVon = (s) => (STILE[String(s || '').trim().toLowerCase()] ? String(s).trim().toLowerCase() : 'kino');
 

@@ -128,6 +128,8 @@ test('Ziya Studio: Geschichten-Modus (Kurzfilm mit eigenen Figuren)', async () =
   assert.equal(s[0].satz, 'Ein kleiner Fuchs sieht einen Stern fallen.');
   assert.equal(stilVon('CARTOON'), 'cartoon');
   assert.equal(stilVon('quatsch'), 'kino');
+  assert.equal(stilVon('schatten'), 'schatten');
+  assert.match(STILE.schatten, /silhouette[\s\S]*no realistic humans/);
   const ersatz = () => ['ersatz'];
   assert.deepEqual(await geschichtePlanen('x', { preset: 'orbit', n: 6, stil: 'kino', kiJson: async () => { throw new Error('429'); }, ersatz }), ['ersatz']);
   assert.equal((await geschichtePlanen('x', { preset: 'orbit', n: 3, kiJson: async () => ({ szenen: [{ bild: 'a' }, { bild: 'b' }, { bild: 'c' }] }), ersatz })).length, 3);
