@@ -45,7 +45,7 @@ on:
         description: 'Bild-Stil'
         type: choice
         default: kino
-        options: [kino, cartoon, anime]
+        options: [kino, cartoon, anime, schatten]
       text:
         description: 'Sprechertext auf Deutsch (optional, leer = nur Kino-Sound)'
         required: false
