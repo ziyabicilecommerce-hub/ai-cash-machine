@@ -243,8 +243,14 @@ def bild(s, t, lt):
         art = 'ende'
         lt = 2.0
     if art == 'dunkel':
+        # die Figur im Dunkeln, seine Augen kommen langsam immer näher an ihren Kopf
+        mensch(lage, 250, 812, farbe=(52, 56, 68))
+        im.paste(lage, (0, 0), lage)
+        p = min(lt / max(s.get('dauer', 4), 1), 1) ** 1.5
+        a = AUGE.resize((int(36 + 50 * p), int(36 + 50 * p)))
         for ex in (-10, 10):
-            im.paste(AUGE, (int(520 + ex - 18), int(330 - 18)), AUGE)
+            ax, ay = 520 - 190 * p + ex * (1 + 2.5 * p), 330 + 190 * p
+            im.paste(a, (int(ax - a.width / 2), int(ay - a.height / 2)), a)
         return Image.blend(im, Image.new('RGB', (W, H), NACHT), 0.3 + 0.3 * math.sin(lt * 3) ** 2)
     if art in ('innen', 'ende', 'handy', 'spiegel'):
         zug_innen(im, t, lt, augen_im_fenster=(art == 'innen'), fahrt=(art != 'spiegel'))
@@ -255,6 +261,9 @@ def bild(s, t, lt):
             maske = Image.new('L', (W, H), 0)
             ImageDraw.Draw(maske).rounded_rectangle((386, 186, 674, 464), 24, fill=110)
             im.paste(geist, (0, 0), Image.composite(geist.split()[3], Image.new('L', (W, H), 0), maske).point(lambda v: min(v, 110)))
+        if s.get('naeher') is not None:  # er sitzt schon die ganze Zeit hinter ihr und kommt näher
+            v = s['naeher']
+            schatten(lage, 560 - 150 * v, 905, s=1.0 + 0.4 * v, alpha=int(35 + 120 * v), augen=v > 0.35)
         mensch(lage, 250, 812)
         if art == 'handy':
             zit = random.randint(-3, 3) if (lt % 0.8) < 0.3 else 0
@@ -312,7 +321,7 @@ def rotverschiebung(im, px):
     return Image.merge('RGB', (r.transform(im.size, Image.AFFINE, (1, 0, -px, 0, 1, 0)), g, b.transform(im.size, Image.AFFINE, (1, 0, px, 0, 1, 0))))
 
 
-def untertitel(im, satz, key, k=None):
+def untertitel(im, satz, key, k=None, basis=WEISS):
     # Wort für Wort: die Positionen stehen fest, sichtbar sind nur die ersten k Wörter (das neueste etwas größer)
     d = ImageDraw.Draw(im)
     zeilen, z = [], ''
@@ -329,16 +338,16 @@ def untertitel(im, satz, key, k=None):
         for w in zl.split():
             nr += 1
             if k is None or nr <= k:
-                f = GELB if w.strip('".,:!?') == key else WEISS
+                f = GELB if w.strip('".,:!?') == key else basis
                 gross = FONT_POP if (k is not None and nr == k) else FONT
                 d.text((x + d.textlength(w, font=FONT) / 2, y), w, font=gross, fill=f, stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
             x += d.textlength(w + ' ', font=FONT)
         y += 72
 
 
-async def stimme(text, datei, sprecher, tempo):
+async def stimme(text, datei, sprecher, tempo, tonhoehe='-12Hz'):
     import edge_tts
-    await edge_tts.Communicate(text, sprecher, rate=tempo, pitch='-12Hz').save(datei)
+    await edge_tts.Communicate(text, sprecher, rate=tempo, pitch=tonhoehe).save(datei)
 
 
 def dauer_von(datei):
@@ -387,6 +396,13 @@ def tonspur(plan, gesamt, ordner):
         ms = int(s['start'] * 1000) + 120
         filter_ += f'[{i + 4}]aresample=44100,aecho=0.8:0.6:70|140:0.25|0.12,volume=2.4,adelay={ms}|{ms}[v{i}];'
         mix.append(f'[v{i}]')
+    nr = len(mix)
+    for j, s in enumerate(x for x in plan if x.get('mdatei')):
+        eingaben += ['-i', s['mdatei']]
+        ms = int((s['start'] + s['mbei']) * 1000)
+        filter_ += (f'[{nr + j}]aresample=44100,asetrate=44100*0.82,aresample=44100,aecho=0.8:0.85:40|90|170:0.5|0.35|0.22,'
+                    f'highpass=f=60,volume=3.2,adelay={ms}|{ms}[m{j}];')
+        mix.append(f'[m{j}]')
     filter_ += f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,afade=t=out:st={gesamt - 1.5:.2f}:d=1.5,alimiter=limit=0.92[a]"
     ton = os.path.join(ordner, 'ton.m4a')
     subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', *eingaben, '-filter_complex', filter_, '-map', '[a]', '-ac', '2', '-c:a', 'aac', '-b:a', '192k', ton], check=True)
@@ -408,8 +424,19 @@ def main():
                 print('Stimme fehlt:', e); stumm = True
         if not sprech and s.get('sprich'):
             sprech = len(s['sprich']) / 14
-        dauer = s.get('dauer') or max(sprech + s.get('pause', 0.25), 1.8)
-        plan.append({**s, 'start': start, 'dauer': dauer, 'sprech': sprech, 'datei': datei if (s.get('sprich') and not stumm) else None})
+        mdatei, mdauer = os.path.join(ordner, f'monster-{i:02d}.mp3'), 0.0
+        if s.get('monster') and not stumm:
+            try:
+                asyncio.run(stimme(s['monster'], mdatei, story.get('monsterstimme', 'de-DE-KillianNeural'), '-30%', '-35Hz'))
+                mdauer = dauer_von(mdatei) / 0.82
+            except Exception as e:
+                print('Monsterstimme fehlt:', e)
+        if s.get('monster') and not mdauer:
+            mdauer = len(s['monster']) / 8
+        mbei = s.get('monster_bei', sprech + 0.3)
+        dauer = s.get('dauer') or max(sprech + s.get('pause', 0.25), 1.8, (mbei + mdauer + 0.6) if s.get('monster') else 0)
+        plan.append({**s, 'start': start, 'dauer': dauer, 'sprech': sprech, 'datei': datei if (s.get('sprich') and not stumm) else None,
+                     'mdatei': mdatei if (s.get('monster') and not stumm and os.path.exists(mdatei)) else None, 'mbei': mbei, 'mdauer': mdauer})
         start += dauer
     gesamt = start
 
@@ -438,12 +465,16 @@ def main():
                 im = Image.blend(im, Image.new('RGB', (W, H), (255, 255, 255)), 0.7 - f * 0.25)
             if s['art'] == 'ende' and f == int(1.2 * FPS):
                 cover = im.copy()
-            if s.get('text'):
-                k = worte if not s['sprech'] else min(worte, 1 + int(lt / max(s['sprech'], 0.3) * worte * 1.1))
-                untertitel(im, s['text'], s.get('gelb', ''), k)
             fortschritt = t / gesamt
             if fortschritt > 0.45 and s['art'] != 'teil2':
                 im = Image.blend(im, Image.new('RGB', (W, H), (45, 0, 4)), min(0.32, (fortschritt - 0.45) * 0.7))
+            if s.get('monster') and lt >= s['mbei']:
+                mt = s.get('monster_text', s['monster'].upper())
+                mw = len(mt.split())
+                untertitel(im, mt, '', min(mw, 1 + int((lt - s['mbei']) / max(s['mdauer'], 0.3) * mw * 1.1)), basis=(230, 25, 25))
+            elif s.get('text'):
+                k = worte if not s['sprech'] else min(worte, 1 + int(lt / max(s['sprech'], 0.3) * worte * 1.1))
+                untertitel(im, s['text'], s.get('gelb', ''), k)
             if s.get('warnung'):
                 warnung(im, s['warnung'], lt)
             if story.get('uhr', True) and s['art'] not in ('fratze', 'teil2', 'nachricht'):
