@@ -1,6 +1,9 @@
 {
   "titel": "Steig nicht aus – Teil 1",
-  "stimme": "de-DE-ConradNeural",
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+12%",
+  "ton": "schlicht",
   "titelbild": "ER SITZT HINTER DIR",
   "titelbild_gelb": "HINTER",
   "szenen": [
@@ -10,47 +13,46 @@
       "text": "ER SITZT SEIT 3 STATIONEN HINTER MIR.",
       "gelb": "HINTER",
       "schreck": true,
-      "pause": 0.2,
+      "pause": 0.1,
       "angst": 0.8,
       "blick": 1.0
     },
     {
       "art": "innen",
-      "sprich": "Es ist zwei Minuten vor Mitternacht. Ich bin allein im letzten Zug.",
-      "text": "23:58. ICH BIN ALLEIN IM LETZTEN ZUG.",
+      "sprich": "Kurz vor Mitternacht. Ich bin allein im letzten Zug.",
+      "text": "KURZ VOR MITTERNACHT. ICH BIN ALLEIN.",
       "gelb": "ALLEIN",
       "naeher": 0.15,
       "angst": 0.1,
-      "blick": 0.0
+      "pause": 0.1
     },
     {
       "art": "handy",
-      "sprich": "Mein Handy vibriert. Eine Nachricht von meiner Mutter.",
-      "text": "MEIN HANDY VIBRIERT. MAMA SCHREIBT.",
-      "gelb": "HANDY",
+      "sprich": "Dann schreibt meine Mutter.",
+      "text": "DANN SCHREIBT MEINE MUTTER.",
+      "gelb": "MUTTER",
       "naeher": 0.4,
       "angst": 0.35,
-      "blick": 0.0
+      "pause": 0.1
     },
     {
       "art": "nachricht",
-      "sprich": "Wo bist du? Du liegst doch gerade neben mir im Bett.",
+      "sprich": "Wo bist du? Du liegst doch neben mir im Bett.",
       "text": "WO BIST DU? DU LIEGST DOCH NEBEN MIR IM BETT.",
       "gelb": "BETT",
       "absender": "Mama",
       "nachricht": "Wo bist du?? Du liegst doch gerade neben mir im Bett...",
       "schreck": true,
-      "pause": 0.9
+      "pause": 0.5
     },
     {
       "art": "gesicht",
-      "sprich": "Mir wird eiskalt. Wenn ich hier bin ... wer liegt dann neben ihr?",
-      "text": "WENN ICH HIER BIN ... WER LIEGT DANN NEBEN IHR?",
+      "sprich": "Wenn ich hier bin ... wer liegt dann neben ihr?",
+      "text": "WENN ICH HIER BIN ... WER LIEGT NEBEN IHR?",
       "gelb": "WER",
       "angst": 0.72,
-      "augen_bei": 2.0,
-      "atem": true,
-      "pause": 0.5
+      "augen_bei": 1.2,
+      "pause": 0.3
     },
     {
       "art": "spiegel",
@@ -58,109 +60,66 @@
       "text": "IM FENSTER: MEIN SPIEGELBILD. UND NOCH EINS.",
       "gelb": "EINS",
       "blitzbild": [
-        2.2
+        1.8
       ],
-      "pause": 0.6,
       "angst": 0.65,
-      "blick": 0.9
-    },
-    {
-      "art": "station",
-      "sprich": "Der Zug hält. An einer Station ohne Namen.",
-      "text": "DER ZUG HÄLT. AN EINER STATION OHNE NAMEN.",
-      "gelb": "NAMEN"
+      "blick": 0.9,
+      "pause": 0.3
     },
     {
       "art": "zettel2",
-      "sprich": "Am Fenster klebt ein Zettel. Steig nicht aus. Und dreh dich nicht um.",
-      "text": "STEIG NICHT AUS. UND DREH DICH NICHT UM.",
+      "sprich": "Der Zug hält. Am Fenster ein Zettel: Steig nicht aus. Dreh dich nicht um.",
+      "text": "STEIG NICHT AUS. DREH DICH NICHT UM.",
       "gelb": "UM",
       "zettel": [
         "STEIG NICHT AUS",
         "DREH DICH",
         "NICHT UM"
       ],
-      "fluestern": true,
-      "warnung": "NICHT UMDREHEN"
-    },
-    {
-      "art": "schatten",
-      "sprich": "Draußen, unter der Lampe, steht jemand.",
-      "text": "DRAUSSEN UNTER DER LAMPE STEHT JEMAND.",
-      "gelb": "JEMAND"
+      "warnung": "NICHT UMDREHEN",
+      "pause": 0.1
     },
     {
       "art": "winken",
-      "sprich": "Er winkt mir zu. Und mit jedem Winken kommt er näher.",
-      "text": "ER WINKT. UND KOMMT IMMER NÄHER.",
+      "sprich": "Draußen steht jemand. Er winkt. Und kommt näher.",
+      "text": "DRAUSSEN STEHT JEMAND. ER KOMMT NÄHER.",
       "gelb": "NÄHER",
-      "tempo": "-18%"
+      "pause": 0.1
     },
     {
       "art": "nachricht",
       "absender": "Unbekannt",
       "nachricht": "Warum steigst du nicht aus? Ich warte auf dich.",
-      "sprich": "Unbekannte Nummer. Warum steigst du nicht aus? Ich warte auf dich.",
-      "text": "UNBEKANNT: ICH WARTE AUF DICH.",
-      "gelb": "WARTE",
+      "sprich": "Unbekannte Nummer: Warum steigst du nicht aus?",
+      "text": "UNBEKANNT: WARUM STEIGST DU NICHT AUS?",
+      "gelb": "UNBEKANNT",
       "schreck": true,
-      "pause": 0.8,
-      "monster": "Ich ... warte ... auf dich.",
-      "monster_text": "ICH WARTE AUF DICH ..."
-    },
-    {
-      "art": "tueren",
-      "sprich": "Die Türen öffnen sich. Ein kalter Atem streift meinen Nacken.",
-      "text": "DIE TÜREN ÖFFNEN SICH. KALTER ATEM IM NACKEN.",
-      "gelb": "NACKEN",
-      "schreck": true,
-      "fluestern": true
-    },
-    {
-      "art": "leer",
-      "sprich": "Ich schaue wieder raus. Der Bahnsteig ist leer. Er ist weg.",
-      "text": "DER BAHNSTEIG IST LEER. ER IST WEG.",
-      "gelb": "LEER",
-      "stille": true,
-      "pause": 1.3,
-      "blitzbild": [
-        3.4
-      ]
+      "pause": 0.2,
+      "monster": "Ich warte auf dich.",
+      "monster_text": "ICH WARTE AUF DICH."
     },
     {
       "art": "klopfen",
-      "sprich": "Dann knallt eine Hand gegen die Scheibe. Direkt neben meinem Gesicht.",
+      "sprich": "Bumm. Eine Hand knallt gegen die Scheibe.",
       "text": "BUMM. EINE HAND AN DER SCHEIBE.",
       "gelb": "HAND",
-      "schreck_bei": 0.55,
-      "pause": 0.4
-    },
-    {
-      "art": "licht",
-      "sprich": "Das Licht geht aus.",
-      "text": "DAS LICHT GEHT AUS.",
-      "gelb": "LICHT",
-      "dauer": 2.6,
-      "angst": 0.7,
-      "blick": 0.0
+      "schreck_bei": 0.25,
+      "pause": 0.2
     },
     {
       "art": "dunkel",
-      "sprich": "Hinter mir flüstert jemand meinen Namen. Ich drehe mich langsam um.",
-      "text": "HINTER MIR FLÜSTERT JEMAND MEINEN NAMEN ...",
-      "gelb": "NAMEN",
-      "fluestern": true,
+      "sprich": "Das Licht geht aus. Hinter mir flüstert jemand meinen Namen.",
+      "text": "LICHT AUS. HINTER MIR FLÜSTERT JEMAND ...",
+      "gelb": "HINTER",
       "stille": true,
-      "tempo": "-20%",
-      "pause": 0.8,
-      "atem": true,
       "warnung": "DREH DICH NICHT UM",
-      "monster": "Dreh ... dich ... um.",
-      "monster_text": "DREH DICH UM."
+      "monster": "Dreh dich um.",
+      "monster_text": "DREH DICH UM.",
+      "pause": 0.2
     },
     {
       "art": "fratze",
-      "dauer": 1.5,
+      "dauer": 1.2,
       "schreck": true
     },
     {
@@ -172,15 +131,15 @@
       "monster": "Du bist der Nächste.",
       "monster_text": "DU BIST DER NÄCHSTE.",
       "angst": 1.0,
-      "blick": 1.0
+      "blick": 1.0,
+      "pause": 0.2
     },
     {
       "art": "teil2",
       "sprich": "Teil zwei: Wer hat meiner Mutter geschrieben?",
       "text": "TEIL 2: WER HAT MAMA GESCHRIEBEN?",
       "gelb": "MAMA",
-      "pause": 1.2
+      "pause": 0.8
     }
-  ],
-  "tempo": "+5%"
+  ]
 }

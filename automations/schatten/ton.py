@@ -2,7 +2,7 @@
 import os, subprocess
 
 
-def tonspur(plan, gesamt, ordner):
+def tonspur(plan, gesamt, ordner, schlicht=False):
     # Brummen + Rumpeln, Herzschlag wird schneller, Schläge bei Schrecks, Kreischen beim Jumpscare,
     # Flüstern, und Stille direkt vor dem Schreck (alles kostenlos aus ffmpeg erzeugt)
     herz = next((s['start'] for s in plan if s['art'] == 'schatten'), gesamt)
@@ -27,6 +27,8 @@ def tonspur(plan, gesamt, ordner):
         if s['art'] == 'fratze':
             teile.append(f"0.6*gte(t,{a})*exp(-2.2*max(t-{a},0))*sin(2*PI*(1300+700*sin(2*PI*11*t))*t)")
             teile.append(f"0.5*gte(t,{a})*exp(-2.2*max(t-{a},0))*sin(2*PI*(1750+500*sin(2*PI*17*t))*t)")
+    if schlicht:
+        teile = ['0'] + [f"0.9*gte(t,{s['start']:.2f})*exp(-5*max(t-{s['start']:.2f},0))*sin(2*PI*42*t)" for s in plan if s['art'] == 'fratze']
     stille = [s for s in plan if s.get('stille')]
     leise = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in stille) or '0'
     atem = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in plan if s.get('atem')) or '0'
@@ -38,18 +40,21 @@ def tonspur(plan, gesamt, ordner):
     filter_ = (f"[0]volume='if(gt({leise},0),0.03,1)':eval=frame[b];[1]lowpass=f=160,volume='if(gt({leise},0),0.05,1)':eval=frame[n];"
                f"[2]bandpass=f=2800:w=1800,volume='0.5*gt({fluester},0)*(0.4+0.6*abs(sin(2*PI*2.3*t)))':eval=frame,aecho=0.8:0.7:90:0.4[w];"
                f"[3]bandpass=f=700:w=900,volume='0.9*gt({atem},0)*pow(max(sin(2*PI*0.35*t),0),3)':eval=frame[at];")
-    mix = ['[b]', '[n]', '[w]', '[at]']
+    mix = ['[b]', '[n]'] if schlicht else ['[b]', '[n]', '[w]', '[at]']
+    if schlicht:
+        filter_ = filter_.split('[n];')[0] + '[n];'
     for i, s in enumerate(x for x in plan if x['datei']):
         eingaben += ['-i', s['datei']]
         ms = int(s['start'] * 1000) + 120
-        filter_ += f'[{i + 4}]aresample=44100,aecho=0.8:0.6:70|140:0.25|0.12,volume=2.4,adelay={ms}|{ms}[v{i}];'
+        hall = 'aecho=0.8:0.4:35:0.12' if schlicht else 'aecho=0.8:0.6:70|140:0.25|0.12'
+        filter_ += f'[{i + 4}]aresample=44100,{hall},volume=2.4,adelay={ms}|{ms}[v{i}];'
         mix.append(f'[v{i}]')
     nr = len(mix)
     for j, s in enumerate(x for x in plan if x.get('mdatei')):
         eingaben += ['-i', s['mdatei']]
         ms = int((s['start'] + s['mbei']) * 1000)
-        filter_ += (f'[{nr + j}]aresample=44100,asetrate=44100*0.82,aresample=44100,aecho=0.8:0.85:40|90|170:0.5|0.35|0.22,'
-                    f'highpass=f=60,volume=3.2,adelay={ms}|{ms}[m{j}];')
+        effekt = 'aecho=0.8:0.5:60:0.25' if schlicht else 'asetrate=44100*0.82,aresample=44100,aecho=0.8:0.85:40|90|170:0.5|0.35|0.22'
+        filter_ += f'[{nr + j}]aresample=44100,{effekt},highpass=f=60,volume=2.6,adelay={ms}|{ms}[m{j}];'
         mix.append(f'[m{j}]')
     filter_ += f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,afade=t=out:st={gesamt - 1.5:.2f}:d=1.5,alimiter=limit=0.92[a]"
     ton = os.path.join(ordner, 'ton.m4a')

@@ -164,7 +164,7 @@ def uhr(im, t, bis, gesamt):
 
 def warnung(im, text, lt):
     if int(lt * 3) % 2:
-        ImageDraw.Draw(im).text((W / 2, 200), text, font=FONT, fill=(225, 20, 20), stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
+        ImageDraw.Draw(im).text((W / 2, 200), text, font=ImageFont.truetype(FONTDATEI, 46), fill=(225, 20, 20), stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
 
 
 def bild(s, t, lt):
@@ -319,7 +319,13 @@ def main():
         datei, sprech = os.path.join(ordner, f'sprich-{i:02d}.mp3'), 0.0
         if s.get('sprich') and not stumm:
             try:
-                asyncio.run(stimme(s['sprich'], datei, story.get('stimme', 'de-DE-ConradNeural'), s.get('tempo', story.get('tempo', '+0%'))))
+                tempo, hoehe = s.get('tempo', story.get('tempo', '+0%')), story.get('tonhoehe', '-12Hz')
+                try:
+                    asyncio.run(stimme(s['sprich'], datei, story.get('stimme', 'de-DE-ConradNeural'), tempo, hoehe))
+                except Exception as e:  # Ersatzstimme, falls die gewünschte nicht verfügbar ist
+                    print('Stimme nicht verfügbar, nehme Conrad:', e)
+                    story['stimme'] = 'de-DE-ConradNeural'
+                    asyncio.run(stimme(s['sprich'], datei, 'de-DE-ConradNeural', tempo, hoehe))
                 sprech = dauer_von(datei)
             except Exception as e:
                 print('Stimme fehlt:', e); stumm = True
@@ -328,8 +334,9 @@ def main():
         mdatei, mdauer = os.path.join(ordner, f'monster-{i:02d}.mp3'), 0.0
         if s.get('monster') and not stumm:
             try:
-                asyncio.run(stimme(s['monster'], mdatei, story.get('monsterstimme', 'de-DE-KillianNeural'), '-30%', '-35Hz'))
-                mdauer = dauer_von(mdatei) / 0.82
+                schlicht = story.get('ton') == 'schlicht'
+                asyncio.run(stimme(s['monster'], mdatei, story.get('monsterstimme', 'de-DE-KillianNeural'), '-15%' if schlicht else '-30%', '-18Hz' if schlicht else '-35Hz'))
+                mdauer = dauer_von(mdatei) / (1 if schlicht else 0.82)
             except Exception as e:
                 print('Monsterstimme fehlt:', e)
         if s.get('monster') and not mdauer:
@@ -346,7 +353,7 @@ def main():
                           '-vf', 'scale=1080:1920:flags=lanczos,vignette=PI/4.5,noise=alls=6:allf=t+u,format=yuv420p',
                           '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-maxrate', '6M', '-bufsize', '12M', bildspur], stdin=subprocess.PIPE)
     cover = None
-    uhr_bis = next((s['start'] for s in plan if s['art'] == 'station'), gesamt)
+    uhr_bis = next((s['start'] for s in plan if s['art'] in ('station', 'zettel2')), gesamt)
     for s in plan:
         n = int(round(s['dauer'] * FPS))
         worte = len(s.get('text', '').split())
@@ -388,7 +395,7 @@ def main():
     if cover:
         untertitel(cover, story.get('titelbild', 'ER SITZT HINTER DIR'), story.get('titelbild_gelb', 'HINTER'))
         cover.resize((1080, 1920), Image.LANCZOS).save(os.path.join(ordner, 'cover.jpg'), quality=90)
-    ton = tonspur(plan, gesamt, ordner)
+    ton = tonspur(plan, gesamt, ordner, schlicht=story.get('ton') == 'schlicht')
     subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', bildspur, '-i', ton, '-c', 'copy', '-shortest', '-movflags', '+faststart',
                     os.path.join(ordner, 'video.mp4')], check=True)
     print(f'fertig: {gesamt:.1f} s, Stimme: {"nein" if stumm else "ja"}')
