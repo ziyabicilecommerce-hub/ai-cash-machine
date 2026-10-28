@@ -78,7 +78,8 @@
         "DREH DICH",
         "NICHT UM"
       ],
-      "fluestern": true
+      "fluestern": true,
+      "warnung": "NICHT UMDREHEN"
     },
     {
       "art": "schatten",
@@ -123,6 +124,14 @@
       ]
     },
     {
+      "art": "klopfen",
+      "sprich": "Dann knallt eine Hand gegen die Scheibe. Direkt neben meinem Gesicht.",
+      "text": "BUMM. EINE HAND AN DER SCHEIBE.",
+      "gelb": "HAND",
+      "schreck_bei": 0.55,
+      "pause": 0.4
+    },
+    {
       "art": "licht",
       "sprich": "Das Licht geht aus.",
       "text": "DAS LICHT GEHT AUS.",
@@ -138,7 +147,8 @@
       "stille": true,
       "tempo": "-20%",
       "pause": 0.8,
-      "atem": true
+      "atem": true,
+      "warnung": "DREH DICH NICHT UM"
     },
     {
       "art": "fratze",
