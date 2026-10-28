@@ -1,0 +1,56 @@
+name: "👤 Schatten-Story (Horror mit Erzähler)"
+
+# Rendert eine minimalistische Schatten-Horror-Story aus automations/schatten/<story>.json:
+# Silhouetten im Nachtzug, Erzählerstimme (edge-tts), große Untertitel mit einem gelben Wort.
+# Das fertige Video liegt danach als öffentlicher Download im Release "schatten-<story>".
+
+on:
+  workflow_dispatch:
+    inputs:
+      story: { description: 'Story-Datei in automations/schatten (ohne .json)', required: true, default: 'steig-nicht-aus' }
+
+permissions:
+  contents: write
+
+concurrency:
+  group: schatten-${{ inputs.story }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: automations/schatten
+      - name: Werkzeuge
+        run: |
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
+          pip install -q pillow edge-tts
+      - name: Rendern
+        env:
+          STORY: ${{ inputs.story }}
+        run: |
+          case "$STORY" in *[!a-z0-9-]*|'') echo "Ungültiger Story-Name"; exit 1;; esac
+          python3 automations/schatten/story.py "automations/schatten/$STORY.json" out
+          ls -la out/video.mp4
+      - name: Als öffentlichen Download ablegen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STORY: ${{ inputs.story }}
+          REPO: ${{ github.repository }}
+        run: |
+          TAG="schatten-$STORY"
+          gh release view "$TAG" -R "$REPO" >/dev/null 2>&1 || gh release create "$TAG" -R "$REPO" --prerelease --title "Schatten-Story: $STORY" --notes "KI-generiertes Horror-Video – beim Posten als KI-Inhalt kennzeichnen."
+          cp out/video.mp4 "out/$STORY.mp4"
+          FILES="out/$STORY.mp4"
+          [ -f out/cover.jpg ] && cp out/cover.jpg "out/$STORY-cover.jpg" && FILES="$FILES out/$STORY-cover.jpg"
+          gh release upload "$TAG" $FILES -R "$REPO" --clobber
+          echo "🎬 https://github.com/$REPO/releases/download/$TAG/$STORY.mp4" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: schatten-video
+          path: out/*.mp4
+          if-no-files-found: ignore
