@@ -232,8 +232,8 @@ def main():
 
     bildspur = os.path.join(ordner, 'bild.mp4')
     p = subprocess.Popen(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
-                          '-vf', 'scale=1080:1920:flags=lanczos,vignette=PI/4.5,noise=alls=9:allf=t+u,format=yuv420p',
-                          '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', bildspur], stdin=subprocess.PIPE)
+                          '-vf', 'scale=1080:1920:flags=lanczos,vignette=PI/4.5,noise=alls=6:allf=t+u,format=yuv420p',
+                          '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-maxrate', '6M', '-bufsize', '12M', bildspur], stdin=subprocess.PIPE)
     cover = None
     for s in plan:
         n = int(round(s['dauer'] * FPS))
