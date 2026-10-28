@@ -10,21 +10,27 @@
       "text": "ER SITZT SEIT 3 STATIONEN HINTER MIR.",
       "gelb": "HINTER",
       "schreck": true,
-      "pause": 0.2
+      "pause": 0.2,
+      "angst": 0.8,
+      "blick": 1.0
     },
     {
       "art": "innen",
       "sprich": "Es ist zwei Minuten vor Mitternacht. Ich bin allein im letzten Zug.",
       "text": "23:58. ICH BIN ALLEIN IM LETZTEN ZUG.",
       "gelb": "ALLEIN",
-      "naeher": 0.15
+      "naeher": 0.15,
+      "angst": 0.1,
+      "blick": 0.0
     },
     {
       "art": "handy",
       "sprich": "Mein Handy vibriert. Eine Nachricht von meiner Mutter.",
       "text": "MEIN HANDY VIBRIERT. MAMA SCHREIBT.",
       "gelb": "HANDY",
-      "naeher": 0.4
+      "naeher": 0.4,
+      "angst": 0.35,
+      "blick": 0.0
     },
     {
       "art": "nachricht",
@@ -37,6 +43,16 @@
       "pause": 0.9
     },
     {
+      "art": "gesicht",
+      "sprich": "Mir wird eiskalt. Wenn ich hier bin ... wer liegt dann neben ihr?",
+      "text": "WENN ICH HIER BIN ... WER LIEGT DANN NEBEN IHR?",
+      "gelb": "WER",
+      "angst": 0.72,
+      "augen_bei": 2.0,
+      "atem": true,
+      "pause": 0.5
+    },
+    {
       "art": "spiegel",
       "sprich": "Im Fenster sehe ich mein Spiegelbild. Und hinter mir noch eins.",
       "text": "IM FENSTER: MEIN SPIEGELBILD. UND NOCH EINS.",
@@ -44,7 +60,9 @@
       "blitzbild": [
         2.2
       ],
-      "pause": 0.6
+      "pause": 0.6,
+      "angst": 0.65,
+      "blick": 0.9
     },
     {
       "art": "station",
@@ -122,7 +140,9 @@
       "sprich": "Das Licht geht aus.",
       "text": "DAS LICHT GEHT AUS.",
       "gelb": "LICHT",
-      "dauer": 2.6
+      "dauer": 2.6,
+      "angst": 0.7,
+      "blick": 0.0
     },
     {
       "art": "dunkel",
@@ -150,7 +170,9 @@
       "gelb": "HINTER",
       "schreck": true,
       "monster": "Du bist der Nächste.",
-      "monster_text": "DU BIST DER NÄCHSTE."
+      "monster_text": "DU BIST DER NÄCHSTE.",
+      "angst": 1.0,
+      "blick": 1.0
     },
     {
       "art": "teil2",

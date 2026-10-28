@@ -4,6 +4,7 @@
 import asyncio, json, math, os, random, subprocess, sys
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from ton import tonspur
+from figuren import leuchten, glied, mensch, schatten, hand, ZEIT
 
 W, H, FPS = 720, 1280, 30
 FONTDATEI = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
@@ -21,12 +22,6 @@ def verlauf(oben, unten):
     return im.resize((W, H))
 
 
-def leuchten(radius, farbe, staerke=255):
-    g = Image.new('RGBA', (radius * 2, radius * 2), (0, 0, 0, 0))
-    ImageDraw.Draw(g).ellipse((radius * 0.4, radius * 0.4, radius * 1.6, radius * 1.6), fill=farbe + (staerke,))
-    return g.filter(ImageFilter.GaussianBlur(radius * 0.35))
-
-
 HIMMEL, WAND = verlauf((10, 16, 40), (1, 2, 6)), verlauf((22, 26, 40), (8, 9, 14))
 LAMPE, AUGE, NEBEL, STREIF = leuchten(220, (255, 214, 150), 150), leuchten(18, (255, 255, 255)), leuchten(260, (170, 180, 205), 45), leuchten(60, (255, 190, 90), 200)
 AUGE_LEISE, HANDYLICHT, AUGE_GROSS = leuchten(14, (255, 255, 255), 70), leuchten(90, (170, 200, 255), 170), leuchten(120, (255, 255, 255))
@@ -39,79 +34,6 @@ def sterne(d, t, dx=0.0, box=None):
             continue
         a = int(90 + 140 * (0.5 + 0.5 * math.sin(t * 2 + p)))
         d.ellipse((xx - r, y - r, xx + r, y + r), fill=(a, a, min(255, a + 25)))
-
-
-def glied(d, a, b, w, f):
-    d.line((a, b), fill=f, width=w)
-    for p in (a, b):
-        d.ellipse((p[0] - w / 2, p[1] - w / 2, p[0] + w / 2, p[1] + w / 2), fill=f)
-
-
-def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT):
-    # gefüllte, realistische Silhouette (Kopf, Hals, Schultern, Arme, Beine) mit weichem Leuchten
-    d = ImageDraw.Draw(lage)
-    k = lambda px, py: (x + px * s, y + py * s)
-    d.ellipse((*k(-24, -300), *k(24, -244)), fill=farbe)
-    d.rectangle((*k(-9, -250), *k(9, -232)), fill=farbe)
-    d.polygon([k(-46, -232), k(46, -232), k(36, -120), k(-36, -120)], fill=farbe)
-    glied(d, k(-42, -226), k(-56, -150), int(22 * s), farbe)
-    glied(d, k(-56, -150), k(-20, -110), int(19 * s), farbe)
-    glied(d, k(42, -226), k(56, -150), int(22 * s), farbe)
-    glied(d, k(56, -150), k(22, -112), int(19 * s), farbe)
-    if sitzen:
-        for dx in (-16, 16):
-            glied(d, k(dx, -122), k(dx + 78, -116), int(30 * s), farbe)
-            glied(d, k(dx + 78, -116), k(dx + 84, -20), int(25 * s), farbe)
-    else:
-        for dx in (-18, 18):
-            glied(d, k(dx, -122), k(dx * 1.3, -10), int(28 * s), farbe)
-
-
-ZEIT = [0.0]  # aktuelle Videozeit, damit der Schatten blinzeln kann
-ROTGLUT = leuchten(40, (255, 40, 20), 150)
-
-
-def schatten(ziel, x, y, s=1.0, wink=0.0, alpha=255, augen=True):
-    # langer Schatten mit Gesicht: rot glühende Augen mit Schlitzpupillen, breites Grinsen, Krallenfinger
-    lage = Image.new('RGBA', ziel.size, (0, 0, 0, 0))
-    d = ImageDraw.Draw(lage)
-    f = (0, 0, 0, alpha)
-    k = lambda px, py: (x + px * s, y + py * s)
-    d.ellipse((*k(-32, -495), *k(32, -398)), fill=f)
-    d.polygon([k(-36, -405), k(36, -405), k(24, -150), k(16, 0), k(-16, 0), k(-24, -150)], fill=f)
-    hl = k(-60, -60)
-    glied(d, k(-30, -390), hl, int(14 * s), f)
-    a = -1.25 + wink
-    hr = (x + 30 * s + math.cos(a) * 230 * s, y - 390 * s + math.sin(a) * 230 * s)
-    glied(d, k(30, -390), hr, int(14 * s), f)
-    for (hx, hy), richtung in ((hl, math.pi / 2), (hr, a)):
-        for w in (-0.5, -0.17, 0.17, 0.5):
-            glied(d, (hx, hy), (hx + math.cos(richtung + w) * 46 * s, hy + math.sin(richtung + w) * 46 * s), max(2, int(4 * s)), f)
-    ziel.alpha_composite(lage.filter(ImageFilter.GaussianBlur(2)))
-    if not augen:
-        return
-    gesicht = Image.new('RGBA', ziel.size, (0, 0, 0, 0))
-    g = ImageDraw.Draw(gesicht)
-    ga = min(255, alpha + 60)
-    zu = (ZEIT[0] % 3.7) < 0.13  # blinzeln
-    for ex in (-14, 14):
-        cx, cy = x + ex * s, y - 455 * s
-        r = ROTGLUT.resize((max(8, int(70 * s)), max(8, int(70 * s))))
-        gesicht.alpha_composite(r, (int(cx - r.width / 2), int(cy - r.height / 2)))
-        if zu:
-            g.line((cx - 10 * s, cy, cx + 10 * s, cy), fill=(255, 240, 220, ga), width=max(1, int(2 * s)))
-        else:
-            o = 1 if ex > 0 else -1  # schräg nach innen unten: böser Blick
-            g.polygon([(cx + o * 14 * s, cy - 5 * s), (cx, cy - 8 * s), (cx - o * 12 * s, cy + 3 * s), (cx, cy + 6 * s)], fill=(255, 245, 225, ga))
-            g.ellipse((cx - 1.6 * s, cy - 5 * s, cx + 1.6 * s, cy + 4 * s), fill=(0, 0, 0, ga))
-    # Grinsen: dünne helle Sichel mit Zähnen
-    pts = [(x + i * s, y - 422 * s - 0.016 * (i * i) * s) for i in range(-26, 27, 2)]
-    pts_u = [(px, py + 9 * s * (1 - abs(i) / 28)) for (px, py), i in zip(pts, range(-26, 27, 2))]
-    g.polygon(pts + pts_u[::-1], fill=(235, 230, 215, ga))
-    for (px, py), i in zip(pts, range(-26, 27, 2)):
-        if i % 4 == 0:
-            g.line((px, py, px, py + 9 * s), fill=(0, 0, 0, ga), width=max(1, int(1.5 * s)))
-    ziel.alpha_composite(gesicht)
 
 
 def zug_innen(im, t, lt, licht=1.0, fahrt=True, augen_im_fenster=False):
@@ -229,17 +151,6 @@ def fratze(im, lt):
         ad.ellipse((ax - 9 * g, ay - 9 * g, ax + 9 * g, ay + 9 * g), fill=(0, 0, 0))
 
 
-def hand(im, x, y, staerke):
-    lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
-    d = ImageDraw.Draw(lage)
-    f = (205, 210, 222, int(230 * staerke))
-    d.ellipse((x - 75, y - 60, x + 75, y + 95), fill=f)
-    for i, (dx, lang) in enumerate(((-62, 120), (-30, 165), (5, 180), (40, 160), (78, 95))):
-        glied(d, (x + dx * 0.9, y - 30 + (40 if i == 4 else 0)), (x + dx * 1.35, y - lang + (60 if i == 4 else 0)), 30, f)
-    lage = lage.filter(ImageFilter.GaussianBlur(2))
-    im.paste(lage, (0, 0), lage)
-
-
 def uhr(im, t, bis, gesamt):
     # tickende Uhr oben: läuft bis 00:00:00, bleibt dann stehen und blinkt rot
     d = ImageDraw.Draw(im)
@@ -274,9 +185,22 @@ def bild(s, t, lt):
             return im
         art = 'ende'
         lt = 2.0
+    if art == 'gesicht':
+        # Nahaufnahme der Person: zitternd, große Augen, schaut sich panisch um - hinter ihr leuchten seine Augen auf
+        zug_innen(im, t, lt, licht=0.6, fahrt=False)
+        im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.5)
+        if lt > s.get('augen_bei', 1.4):
+            for ex in (-12, 12):
+                im.paste(AUGE, (int(585 + ex - 18), int(250 - 18)), AUGE)
+        mensch(lage, 360, 1600, s=4.2, sitzen=False, angst=s.get('angst', 0.72), blick=math.sin(lt * 2.4) * 0.9)
+        verlauf_maske = Image.linear_gradient('L').resize((W, H)).point(lambda v: 255 if v < 115 else max(0, 255 - (v - 115) * 6))
+        lage.putalpha(Image.composite(lage.split()[3], Image.new('L', (W, H), 0), verlauf_maske))
+        glow = lage.filter(ImageFilter.GaussianBlur(14))
+        im.paste(glow, (0, 0), glow); im.paste(lage, (0, 0), lage)
+        return im
     if art == 'dunkel':
         # die Figur im Dunkeln, seine Augen kommen langsam immer näher an ihren Kopf
-        mensch(lage, 250, 812, farbe=(52, 56, 68))
+        mensch(lage, 250, 812, farbe=(52, 56, 68), angst=0.9, blick=min(lt / max(s.get('dauer', 4), 1) * 1.4, 1))
         im.paste(lage, (0, 0), lage)
         p = min(lt / max(s.get('dauer', 4), 1), 1) ** 1.5
         a = AUGE.resize((int(36 + 50 * p), int(36 + 50 * p)))
@@ -288,7 +212,7 @@ def bild(s, t, lt):
         zug_innen(im, t, lt, augen_im_fenster=(art == 'innen'), fahrt=(art != 'spiegel'))
         if art == 'spiegel':
             geist = Image.new('RGBA', (W, H), (0, 0, 0, 0))
-            mensch(geist, 520, 470, s=0.55, farbe=(150, 160, 185))
+            mensch(geist, 520, 470, s=0.55, farbe=(150, 160, 185), gesicht=False)
             schatten(geist, 565, 470, s=0.5, alpha=int(230 * min(lt / 2.0, 1)))
             maske = Image.new('L', (W, H), 0)
             ImageDraw.Draw(maske).rounded_rectangle((386, 186, 674, 464), 24, fill=110)
@@ -296,7 +220,7 @@ def bild(s, t, lt):
         if s.get('naeher') is not None:  # er sitzt schon die ganze Zeit hinter ihr und kommt näher
             v = s['naeher']
             schatten(lage, 560 - 150 * v, 905, s=1.0 + 0.4 * v, alpha=int(35 + 120 * v), augen=v > 0.35)
-        mensch(lage, 250, 812)
+        mensch(lage, 250, 812, angst=s.get('angst', 0.0), blick=s.get('blick', 0.0))
         if art == 'handy':
             zit = random.randint(-3, 3) if (lt % 0.8) < 0.3 else 0
             im.paste(HANDYLICHT, (int(300 - 90 + zit), int(650 - 90)), HANDYLICHT)
@@ -334,7 +258,7 @@ def bild(s, t, lt):
     elif art == 'licht':
         flacker = 1.0 if lt < 0.6 else (0.0 if lt > 1.3 else float(int(lt * 20) % 3 != 0))
         zug_innen(im, t, lt, licht=flacker, fahrt=False)
-        mensch(lage, 250, 812)
+        mensch(lage, 250, 812, angst=s.get('angst', 0.6))
         im.paste(lage, (0, 0), lage); lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
         im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.15 + 0.85 * flacker)
         if lt > 1.3:
