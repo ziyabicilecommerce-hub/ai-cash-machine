@@ -219,8 +219,15 @@ def bild(s, t, lt):
         for ex in (-10, 10):
             im.paste(AUGE, (int(520 + ex - 18), int(330 - 18)), AUGE)
         return Image.blend(im, Image.new('RGB', (W, H), NACHT), 0.3 + 0.3 * math.sin(lt * 3) ** 2)
-    if art in ('innen', 'ende', 'handy'):
-        zug_innen(im, t, lt, augen_im_fenster=(art == 'innen'))
+    if art in ('innen', 'ende', 'handy', 'spiegel'):
+        zug_innen(im, t, lt, augen_im_fenster=(art == 'innen'), fahrt=(art != 'spiegel'))
+        if art == 'spiegel':
+            geist = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+            mensch(geist, 520, 470, s=0.55, farbe=(150, 160, 185))
+            schatten(geist, 565, 470, s=0.5, alpha=int(230 * min(lt / 2.0, 1)))
+            maske = Image.new('L', (W, H), 0)
+            ImageDraw.Draw(maske).rounded_rectangle((386, 186, 674, 464), 24, fill=110)
+            im.paste(geist, (0, 0), Image.composite(geist.split()[3], Image.new('L', (W, H), 0), maske).point(lambda v: min(v, 110)))
         mensch(lage, 250, 812)
         if art == 'handy':
             zit = random.randint(-3, 3) if (lt % 0.8) < 0.3 else 0
@@ -228,10 +235,13 @@ def bild(s, t, lt):
             ImageDraw.Draw(lage).rounded_rectangle((285 + zit, 640, 325 + zit, 700), 6, fill=(190, 215, 255, 255))
         if art == 'ende' and lt > 0.5:
             schatten(lage, 520, 905, s=1.45, wink=3.7, alpha=int(255 * min((lt - 0.5) / 0.3, 1)))
-    elif art in ('station', 'schatten', 'winken'):
+    elif art in ('station', 'schatten', 'winken', 'leer'):
         bahnsteig(im, t, lt, '00:00' if art == 'station' else '? ? ?')
-        if art != 'station':
-            schatten(lage, 480, 830, s=0.95, wink=0.55 * math.sin(lt * 7) if art == 'winken' else 0.0)
+        if art == 'schatten':
+            schatten(lage, 480, 830, s=0.95)
+        if art == 'winken':
+            nah = 0.95 + 0.45 * min(lt / 3.0, 1)
+            schatten(lage, 450, 830 + 140 * (nah - 0.95), s=nah, wink=0.55 * math.sin(lt * 7))
         im.paste(lage, (0, 0), lage); lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
         fensterrahmen(im)
     elif art in ('zettel', 'zettel2'):
@@ -320,17 +330,20 @@ def tonspur(plan, gesamt, ordner):
             teile.append(f"0.5*gte(t,{a})*exp(-2.2*(t-{a}))*sin(2*PI*(1750+500*sin(2*PI*17*t))*t)")
     stille = [s for s in plan if s.get('stille')]
     leise = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in stille) or '0'
+    atem = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in plan if s.get('atem')) or '0'
     fluester = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in plan if s.get('fluestern')) or '0'
     eingaben = ['-f', 'lavfi', '-i', f"aevalsrc='{'+'.join(teile)}':s=44100:d={gesamt:.2f}",
                 '-f', 'lavfi', '-i', f'anoisesrc=color=brown:amplitude=0.2:d={gesamt:.2f}',
-                '-f', 'lavfi', '-i', f'anoisesrc=color=white:amplitude=0.5:d={gesamt:.2f}']
+                '-f', 'lavfi', '-i', f'anoisesrc=color=white:amplitude=0.5:d={gesamt:.2f}',
+                '-f', 'lavfi', '-i', f'anoisesrc=color=pink:amplitude=0.6:d={gesamt:.2f}']
     filter_ = (f"[0]volume='if(gt({leise},0),0.03,1)':eval=frame[b];[1]lowpass=f=160,volume='if(gt({leise},0),0.05,1)':eval=frame[n];"
-               f"[2]bandpass=f=2800:w=1800,volume='0.5*gt({fluester},0)*(0.4+0.6*abs(sin(2*PI*2.3*t)))':eval=frame,aecho=0.8:0.7:90:0.4[w];")
-    mix = ['[b]', '[n]', '[w]']
+               f"[2]bandpass=f=2800:w=1800,volume='0.5*gt({fluester},0)*(0.4+0.6*abs(sin(2*PI*2.3*t)))':eval=frame,aecho=0.8:0.7:90:0.4[w];"
+               f"[3]bandpass=f=700:w=900,volume='0.9*gt({atem},0)*pow(max(sin(2*PI*0.35*t),0),3)':eval=frame[at];")
+    mix = ['[b]', '[n]', '[w]', '[at]']
     for i, s in enumerate(x for x in plan if x['datei']):
         eingaben += ['-i', s['datei']]
         ms = int(s['start'] * 1000) + 120
-        filter_ += f'[{i + 3}]aresample=44100,aecho=0.8:0.6:70|140:0.25|0.12,volume=2.4,adelay={ms}|{ms}[v{i}];'
+        filter_ += f'[{i + 4}]aresample=44100,aecho=0.8:0.6:70|140:0.25|0.12,volume=2.4,adelay={ms}|{ms}[v{i}];'
         mix.append(f'[v{i}]')
     filter_ += f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,afade=t=out:st={gesamt - 1.5:.2f}:d=1.5,alimiter=limit=0.92[a]"
     ton = os.path.join(ordner, 'ton.m4a')
@@ -376,6 +389,8 @@ def main():
                 st = 26 if s['art'] == 'fratze' else 12
                 im = im.rotate(random.uniform(-1.5, 1.5) if s['art'] == 'fratze' else 0, translate=(random.randint(-st, st), random.randint(-st, st)), fillcolor=NACHT)
                 im = rotverschiebung(im, 10 if s['art'] == 'fratze' else 5)
+            if any(0 <= lt - x < 2 / FPS for x in s.get('blitzbild', [])):
+                fr = Image.new('RGB', (W, H)); fratze(fr, 0.3); im = Image.blend(im, fr, 0.75)
             if s['art'] == 'fratze' and f < 3:
                 im = Image.blend(im, Image.new('RGB', (W, H), (255, 255, 255)), 0.7 - f * 0.25)
             if s['art'] == 'ende' and f == int(1.2 * FPS):

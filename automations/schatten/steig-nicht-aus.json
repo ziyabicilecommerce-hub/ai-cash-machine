@@ -4,21 +4,160 @@
   "titelbild": "ER SITZT HINTER DIR",
   "titelbild_gelb": "HINTER",
   "szenen": [
-    { "art": "blitz", "sprich": "Er sitzt seit drei Stationen hinter mir.", "text": "ER SITZT SEIT 3 STATIONEN HINTER MIR.", "gelb": "HINTER", "schreck": true, "pause": 0.2 },
-    { "art": "innen", "sprich": "Es ist zwei Minuten vor Mitternacht. Ich bin allein im letzten Zug.", "text": "23:58. ICH BIN ALLEIN IM LETZTEN ZUG.", "gelb": "ALLEIN" },
-    { "art": "handy", "sprich": "Mein Handy vibriert. Eine Nachricht von meiner Mutter.", "text": "MEIN HANDY VIBRIERT. MAMA SCHREIBT.", "gelb": "HANDY" },
-    { "art": "nachricht", "sprich": "Wo bist du? Du liegst doch gerade neben mir im Bett.", "text": "WO BIST DU? DU LIEGST DOCH NEBEN MIR IM BETT.", "gelb": "BETT", "absender": "Mama", "nachricht": "Wo bist du?? Du liegst doch gerade neben mir im Bett...", "schreck": true, "pause": 0.9 },
-    { "art": "licht", "sprich": "Dann flackert das Licht.", "text": "DANN FLACKERT DAS LICHT.", "gelb": "FLACKERT", "dauer": 2.4 },
-    { "art": "station", "sprich": "Der Zug hält. An einer Station ohne Namen.", "text": "DER ZUG HÄLT. AN EINER STATION OHNE NAMEN.", "gelb": "NAMEN" },
-    { "art": "zettel", "sprich": "Am Fenster klebt ein Zettel.", "text": "AM FENSTER KLEBT EIN ZETTEL.", "gelb": "ZETTEL", "zettel": ["STEIG NICHT AUS", "DREH DICH", "NICHT UM"] },
-    { "art": "zettel2", "sprich": "Steig nicht aus. Und dreh dich nicht um.", "text": "STEIG NICHT AUS. UND DREH DICH NICHT UM.", "gelb": "UM", "zettel": ["STEIG NICHT AUS", "DREH DICH", "NICHT UM"], "fluestern": true },
-    { "art": "schatten", "sprich": "Draußen, unter der Lampe, steht jemand.", "text": "DRAUSSEN UNTER DER LAMPE STEHT JEMAND.", "gelb": "JEMAND" },
-    { "art": "winken", "sprich": "Er winkt mir zu. Ganz langsam.", "text": "ER WINKT MIR ZU. GANZ LANGSAM.", "gelb": "WINKT", "tempo": "-18%" },
-    { "art": "tueren", "sprich": "Die Türen öffnen sich. Ein kalter Atem streift meinen Nacken.", "text": "DIE TÜREN ÖFFNEN SICH. KALTER ATEM IM NACKEN.", "gelb": "NACKEN", "schreck": true, "fluestern": true },
-    { "art": "licht", "sprich": "Das Licht geht aus.", "text": "DAS LICHT GEHT AUS.", "gelb": "LICHT", "dauer": 2.6 },
-    { "art": "dunkel", "sprich": "Hinter mir flüstert jemand meinen Namen. Ich drehe mich langsam um.", "text": "HINTER MIR FLÜSTERT JEMAND MEINEN NAMEN ...", "gelb": "NAMEN", "fluestern": true, "stille": true, "tempo": "-20%", "pause": 0.8 },
-    { "art": "fratze", "dauer": 1.5, "schreck": true },
-    { "art": "ende", "sprich": "Er saß die ganze Zeit hinter mir.", "text": "ER SASS DIE GANZE ZEIT HINTER MIR.", "gelb": "HINTER", "schreck": true },
-    { "art": "teil2", "sprich": "Teil zwei: Wer hat meiner Mutter geschrieben?", "text": "TEIL 2: WER HAT MAMA GESCHRIEBEN?", "gelb": "MAMA", "pause": 1.2 }
+    {
+      "art": "blitz",
+      "sprich": "Er sitzt seit drei Stationen hinter mir.",
+      "text": "ER SITZT SEIT 3 STATIONEN HINTER MIR.",
+      "gelb": "HINTER",
+      "schreck": true,
+      "pause": 0.2
+    },
+    {
+      "art": "innen",
+      "sprich": "Es ist zwei Minuten vor Mitternacht. Ich bin allein im letzten Zug.",
+      "text": "23:58. ICH BIN ALLEIN IM LETZTEN ZUG.",
+      "gelb": "ALLEIN"
+    },
+    {
+      "art": "handy",
+      "sprich": "Mein Handy vibriert. Eine Nachricht von meiner Mutter.",
+      "text": "MEIN HANDY VIBRIERT. MAMA SCHREIBT.",
+      "gelb": "HANDY"
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Wo bist du? Du liegst doch gerade neben mir im Bett.",
+      "text": "WO BIST DU? DU LIEGST DOCH NEBEN MIR IM BETT.",
+      "gelb": "BETT",
+      "absender": "Mama",
+      "nachricht": "Wo bist du?? Du liegst doch gerade neben mir im Bett...",
+      "schreck": true,
+      "pause": 0.9
+    },
+    {
+      "art": "spiegel",
+      "sprich": "Im dunklen Fenster sehe ich mein Spiegelbild. Und dahinter noch eins.",
+      "text": "IM FENSTER: MEIN SPIEGELBILD. UND NOCH EINS.",
+      "gelb": "EINS",
+      "blitzbild": [
+        2.2
+      ],
+      "pause": 0.6
+    },
+    {
+      "art": "licht",
+      "sprich": "Dann flackert das Licht.",
+      "text": "DANN FLACKERT DAS LICHT.",
+      "gelb": "FLACKERT",
+      "dauer": 2.4
+    },
+    {
+      "art": "station",
+      "sprich": "Der Zug hält. An einer Station ohne Namen.",
+      "text": "DER ZUG HÄLT. AN EINER STATION OHNE NAMEN.",
+      "gelb": "NAMEN"
+    },
+    {
+      "art": "zettel",
+      "sprich": "Am Fenster klebt ein Zettel.",
+      "text": "AM FENSTER KLEBT EIN ZETTEL.",
+      "gelb": "ZETTEL",
+      "zettel": [
+        "STEIG NICHT AUS",
+        "DREH DICH",
+        "NICHT UM"
+      ]
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Steig nicht aus. Und dreh dich nicht um.",
+      "text": "STEIG NICHT AUS. UND DREH DICH NICHT UM.",
+      "gelb": "UM",
+      "zettel": [
+        "STEIG NICHT AUS",
+        "DREH DICH",
+        "NICHT UM"
+      ],
+      "fluestern": true
+    },
+    {
+      "art": "schatten",
+      "sprich": "Draußen, unter der Lampe, steht jemand.",
+      "text": "DRAUSSEN UNTER DER LAMPE STEHT JEMAND.",
+      "gelb": "JEMAND"
+    },
+    {
+      "art": "winken",
+      "sprich": "Er winkt mir zu. Und mit jedem Winken kommt er näher.",
+      "text": "ER WINKT. UND KOMMT IMMER NÄHER.",
+      "gelb": "NÄHER",
+      "tempo": "-18%"
+    },
+    {
+      "art": "nachricht",
+      "absender": "Unbekannt",
+      "nachricht": "Warum steigst du nicht aus? Ich warte auf dich.",
+      "sprich": "Dann eine zweite Nachricht. Unbekannte Nummer. Warum steigst du nicht aus? Ich warte auf dich.",
+      "text": "UNBEKANNT: ICH WARTE AUF DICH.",
+      "gelb": "WARTE",
+      "schreck": true,
+      "pause": 0.8
+    },
+    {
+      "art": "tueren",
+      "sprich": "Die Türen öffnen sich. Ein kalter Atem streift meinen Nacken.",
+      "text": "DIE TÜREN ÖFFNEN SICH. KALTER ATEM IM NACKEN.",
+      "gelb": "NACKEN",
+      "schreck": true,
+      "fluestern": true
+    },
+    {
+      "art": "leer",
+      "sprich": "Ich schaue wieder raus. Der Bahnsteig ist leer. Er ist weg.",
+      "text": "DER BAHNSTEIG IST LEER. ER IST WEG.",
+      "gelb": "LEER",
+      "stille": true,
+      "pause": 1.3,
+      "blitzbild": [
+        3.4
+      ]
+    },
+    {
+      "art": "licht",
+      "sprich": "Das Licht geht aus.",
+      "text": "DAS LICHT GEHT AUS.",
+      "gelb": "LICHT",
+      "dauer": 2.6
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Hinter mir flüstert jemand meinen Namen. Ich drehe mich langsam um.",
+      "text": "HINTER MIR FLÜSTERT JEMAND MEINEN NAMEN ...",
+      "gelb": "NAMEN",
+      "fluestern": true,
+      "stille": true,
+      "tempo": "-20%",
+      "pause": 0.8,
+      "atem": true
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.5,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Er saß die ganze Zeit hinter mir.",
+      "text": "ER SASS DIE GANZE ZEIT HINTER MIR.",
+      "gelb": "HINTER",
+      "schreck": true
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil zwei: Wer hat meiner Mutter geschrieben?",
+      "text": "TEIL 2: WER HAT MAMA GESCHRIEBEN?",
+      "gelb": "MAMA",
+      "pause": 1.2
+    }
   ]
 }
