@@ -168,6 +168,26 @@ export function ueberblendung(dauern, { blende = 0.4, uebergang = 'fade' } = {})
 // Tonspur ohne Musikrechte: selbst erzeugter Kino-Klang (tiefer Drone je Stimmung) + Whoosh an jedem Schnitt + Boom am Anfang.
 // Ergebnis ist ein aevalsrc-Ausdruck (Mono) - stumme Videos laufen auf TikTok deutlich schlechter.
 const DRONES = { episch: [55, 82.5, 110], action: [41.2, 61.7, 82.4], grusel: [46.2, 49, 69.3], natur: [65.4, 98, 130.8] };
+// Musik-Teppich (kein fremder Song, reine ffmpeg-Mathematik): Kick auf dem Beat + 4-Ton-Arpeggio je Stimmung.
+// bpm = Tempo, kick = Lautstärke der Bassdrum, noten = 4 Töne (Hz) der sich wiederholenden Melodie.
+const MUSIK = {
+  episch: { bpm: 90, kick: 0.26, noten: [110, 164.81, 220, 164.81] },
+  action: { bpm: 122, kick: 0.32, noten: [82.41, 123.47, 164.81, 246.94] },
+  grusel: { bpm: 66, kick: 0.14, noten: [73.42, 77.78, 69.30, 77.78] },
+  natur: { bpm: 84, kick: 0.2, noten: [130.81, 196.0, 261.63, 196.0] },
+};
+// Gated note: (gte(p,a)-gte(p,b)) ist 1 für a<=p<b, sonst 0 - vermeidet "between" (das bleibt dem Whoosh vorbehalten).
+export function musikBett(ton) {
+  const m = MUSIK[ton] || MUSIK.episch;
+  const beat = 60 / m.bpm;
+  const cy = (4 * beat).toFixed(3);
+  const kick = `${m.kick}*sin(2*PI*(50+40*exp(-24*mod(t,${beat.toFixed(3)})))*t)*exp(-22*mod(t,${beat.toFixed(3)}))`;
+  const arp = m.noten.map((f, i) => {
+    const a = (i * beat).toFixed(3); const b = ((i + 1) * beat).toFixed(3);
+    return `(gte(mod(t,${cy}),${a})-gte(mod(t,${cy}),${b}))*0.075*sin(2*PI*${f}*t)*exp(-5*(mod(t,${cy})-${a}))`;
+  });
+  return [kick, ...arp].join('+');
+}
 export function tonFormel(dauern, preset, { blende = 0.4, krass = false } = {}) {
   const hz = DRONES[PRESETS[presetVon(preset)].ton] || DRONES.episch;
   const drone = hz.map((f, i) => `${(0.09 - i * 0.02).toFixed(2)}*sin(2*PI*${f}*t)*(0.6+0.4*sin(2*PI*${(0.07 + i * 0.05).toFixed(2)}*t))`).join('+');
@@ -185,7 +205,8 @@ export function tonFormel(dauern, preset, { blende = 0.4, krass = false } = {}) 
   const lang = dauern.reduce((a, b) => a + b, 0) || 1;
   const herz = krass && PRESETS[presetVon(preset)].ton === 'grusel'
     ? [`(0.18+0.25*t/${lang.toFixed(2)})*(exp(-28*mod(t,0.83))+0.7*exp(-28*mod(t-0.22,0.83)))*sin(2*PI*52*t)`] : [];
-  return [drone, boom, ...whoosh, ...treffer, ...herz].join('+');
+  const musik = musikBett(PRESETS[presetVon(preset)].ton);
+  return [drone, musik, boom, ...whoosh, ...treffer, ...herz].join('+');
 }
 
 // Hook-Text (großer Titel in den ersten 2,6 s) - siehe hookEinblenden in automations/ziya-studio.mjs.

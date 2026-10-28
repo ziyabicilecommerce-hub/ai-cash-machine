@@ -247,3 +247,17 @@ test('Virale Effekt-Presets: vollständig und in Bot-Aufträgen erlaubt', async 
     assert.equal(auftragAusIssue(JSON.stringify({ bot: 'welt', idee: 'a dragon flies', preset: id }), [{ id: 'welt', preset: 'fpv', stil: 'kino', shots: 6 }]).preset, id);
   }
 });
+
+import { musikBett } from '../../automations/lib/ziyaStudio.mjs';
+test('Musik-Teppich: Beat + Arpeggio je Stimmung, kein "between" (bleibt dem Whoosh)', () => {
+  for (const ton of ['episch', 'action', 'grusel', 'natur']) {
+    const m = musikBett(ton);
+    assert.ok(/mod\(t,/.test(m), `${ton}: Kick/Beat per mod`);
+    assert.equal((m.match(/gte\(mod\(t,/g) || []).length, 8, `${ton}: 4 Arpeggio-Töne (2 gte je Ton)`);
+    assert.ok(!m.includes('between'), `${ton}: kein between im Musik-Bett`);
+  }
+  assert.equal(musikBett('gibtsnicht'), musikBett('episch'), 'unbekannt -> episch');
+  // tonFormel enthält jetzt den Beat, aber Einzel-Shot weiterhin keinen Whoosh
+  assert.ok(musikBett('action').length > 50 && tonFormel([4], 'fpv').includes('mod(t,'));
+  assert.ok(!tonFormel([4], 'fpv').includes('between'));
+});
