@@ -81,6 +81,7 @@ const FIRMEN = [
   { firma: 'Dietzel & Company GmbH (DIESEC)', domain: 'diesec.com', ort: 'Eschborn', email: 'info@diesec.com' },
   { firma: 'CERTAINITY GmbH', domain: 'certainity.com', ort: 'Neu-Isenburg', email: 'office@certainity.com' },
   { firma: 'zentrust partners GmbH', domain: 'zentrust.partners', ort: 'Wiesbaden', email: 'contact@zentrust.partners' },
+  { firma: 'Exploit Labs GmbH', domain: 'xplt.com', ort: 'Eschborn', email: 'frontoffice@xplt.com' },
 ];
 
 async function main() {
