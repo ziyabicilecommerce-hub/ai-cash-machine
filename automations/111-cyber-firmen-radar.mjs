@@ -75,6 +75,7 @@ const FIRMEN = [
   { firma: 'NETPERFORMERS GmbH', domain: 'netperformers.de', ort: 'Kriftel', email: 'info@netperformers.de' },
   { firma: 'WIIT AG', domain: 'wiit.cloud', ort: 'Eschborn', email: 'info.de@wiit.cloud' },
   { firma: 'CloudKleyer Frankfurt GmbH', domain: 'cloudkleyer.de', ort: 'Frankfurt am Main', email: 'info@cloudkleyer.de' },
+  { firma: 'AXXCON GmbH & Co. KG', domain: 'axxcon.com', ort: 'Schwalbach am Taunus', email: 'info@axxcon.com' },
 ];
 
 async function main() {
