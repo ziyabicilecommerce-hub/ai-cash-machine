@@ -4,7 +4,7 @@
   "tempo": "+12%",
   "ton": "schlicht",
   "ki_bilder": false,
-  "titel": "Reihe 13 – Teil 1",
+  "titel": "Passagier 41 – Teil 1",
   "ort": "flugzeug",
   "fahrgaeste": [
     {
@@ -16,8 +16,8 @@
       ]
     }
   ],
-  "titelbild": "ER SITZT AUF DEM FLÜGEL",
-  "titelbild_gelb": "FLÜGEL",
+  "titelbild": "WIR SIND EINER ZU VIEL",
+  "titelbild_gelb": "ZU VIEL",
   "boesewicht": "gremlin",
   "held": {
     "farbe": [
@@ -41,9 +41,9 @@
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Er sitzt auf dem Flügel. Und er schaut mich an.",
-      "text": "ER SITZT AUF DEM FLÜGEL.",
-      "gelb": "FLÜGEL",
+      "sprich": "Die Stewardess hat zweimal gezählt. Vierzig Passagiere. Aber wir sind einundvierzig.",
+      "text": "VIERZIG PASSAGIERE. WIR SIND 41.",
+      "gelb": "41",
       "schreck": true,
       "pause": 0.1,
       "angst": 0.8,
@@ -51,119 +51,67 @@
     },
     {
       "art": "innen",
-      "sprich": "Nachtflug, Reihe dreizehn. Alle schlafen. Nur ich nicht.",
-      "text": "NACHTFLUG. REIHE 13. ALLE SCHLAFEN.",
-      "gelb": "13",
-      "naeher": 0.15,
+      "sprich": "Nachtflug. Reihe dreizehn. Der Platz neben mir ist leer.",
+      "text": "REIHE 13. DER PLATZ NEBEN MIR IST LEER.",
+      "gelb": "LEER",
       "angst": 0.1,
       "pause": 0.1
     },
     {
-      "art": "handy",
-      "sprich": "Mein Handy ist im Flugmodus. Trotzdem kommt eine Nachricht.",
-      "text": "FLUGMODUS. TROTZDEM EINE NACHRICHT.",
-      "gelb": "NACHRICHT",
-      "naeher": 0.4,
-      "angst": 0.35,
-      "pause": 0.1
-    },
-    {
-      "art": "nachricht",
-      "sprich": "Unbekannt: Schau nicht aus dem Fenster.",
-      "text": "UNBEKANNT: SCHAU NICHT AUS DEM FENSTER.",
-      "gelb": "FENSTER",
-      "absender": "Unbekannt",
-      "nachricht": "Schau nicht aus dem Fenster.",
-      "schreck": true,
-      "pause": 0.4
+      "art": "licht",
+      "sprich": "Durchsage vom Kapitän: Bleiben Sie sitzen. Egal, was Sie gleich sehen.",
+      "text": "BLEIBEN SIE SITZEN. EGAL, WAS SIE SEHEN.",
+      "gelb": "EGAL",
+      "angst": 0.5,
+      "pause": 0.3
     },
     {
       "art": "gesicht",
-      "sprich": "Wer schreibt mir hier oben? Auf zehntausend Metern?",
-      "text": "WER SCHREIBT MIR AUF 10.000 METERN?",
-      "gelb": "METERN",
-      "angst": 0.72,
-      "augen_bei": 1.2,
+      "sprich": "Was sollen wir denn sehen?",
+      "text": "WAS SOLLEN WIR DENN SEHEN?",
+      "gelb": "SEHEN",
+      "angst": 0.8,
+      "augen_bei": 1.0,
       "pause": 0.3
     },
     {
-      "art": "spiegel",
-      "sprich": "Im Fenster spiegelt sich die Kabine. Und hinter mir steht jemand.",
-      "text": "IM FENSTER: HINTER MIR STEHT JEMAND.",
-      "gelb": "JEMAND",
-      "blitzbild": [
-        1.8
-      ],
-      "angst": 0.65,
-      "blick": 0.9,
-      "pause": 0.3
+      "art": "dunkel",
+      "sprich": "Im Dunkeln setzt sich jemand neben mich. Auf den leeren Platz.",
+      "text": "JEMAND SETZT SICH NEBEN MICH.",
+      "gelb": "NEBEN",
+      "stille": true,
+      "dauer": 4.6,
+      "pause": 0.2
     },
     {
       "art": "zettel2",
-      "sprich": "In der Sitztasche ein Zettel: Schau nicht raus. Er sieht dich.",
-      "text": "SCHAU NICHT RAUS. ER SIEHT DICH.",
-      "gelb": "SIEHT",
+      "sprich": "Auf meiner Bordkarte steht plötzlich etwas anderes. Platz dreizehn B: besetzt seit neunzehnhundertneunundneunzig.",
+      "text": "PLATZ 13B: BESETZT SEIT 1999.",
+      "gelb": "1999",
       "zettel": [
-        "SCHAU NICHT",
-        "RAUS. ER",
-        "SIEHT DICH"
+        "PLATZ 13B",
+        "BESETZT",
+        "SEIT 1999"
       ],
-      "warnung": "NICHT RAUSSCHAUEN",
+      "warnung": "NICHT HINSEHEN",
       "pause": 0.1
-    },
-    {
-      "art": "winken",
-      "sprich": "Draußen auf dem Flügel steht jemand. Bei neunhundert Sachen. Und winkt.",
-      "text": "AUF DEM FLÜGEL STEHT JEMAND.",
-      "gelb": "FLÜGEL",
-      "pause": 0.1
-    },
-    {
-      "art": "nachricht",
-      "sprich": "Unbekannt: Lass mich rein.",
-      "text": "UNBEKANNT: LASS MICH REIN.",
-      "gelb": "REIN",
-      "absender": "Unbekannt",
-      "nachricht": "Lass mich rein.",
-      "schreck": true,
-      "pause": 0.2,
-      "monster": "Mach das Fenster auf.",
-      "monster_text": "MACH DAS FENSTER AUF."
-    },
-    {
-      "art": "scheibe",
-      "sprich": "Dann schlägt er gegen das Fenster. Und noch mal. Das Glas reißt!",
-      "text": "DAS FENSTER REISST!",
-      "gelb": "REISST",
-      "schlag": 0.3,
-      "schreck_bei": 2.4,
-      "pause": 0.4
-    },
-    {
-      "art": "rennen",
-      "sprich": "Ich renne den Gang entlang. Er ist direkt hinter mir.",
-      "text": "ICH RENNE DEN GANG ENTLANG.",
-      "gelb": "GANG",
-      "pause": 0.1
-    },
-    {
-      "art": "decke",
-      "sprich": "Plötzlich Stille. Der Mann liest einfach weiter. Über mir öffnet sich die Gepäckklappe.",
-      "text": "ÜBER MIR ÖFFNET SICH DIE GEPÄCKKLAPPE ...",
-      "gelb": "GEPÄCKKLAPPE",
-      "stille": true,
-      "warnung": "NICHT HOCHSCHAUEN",
-      "monster": "Schau nach oben.",
-      "monster_text": "SCHAU NACH OBEN.",
-      "pause": 0.3
     },
     {
       "art": "masken",
-      "sprich": "Dann fällt der Strom aus. Die Sauerstoffmasken fallen herunter.",
-      "text": "STROM AUS. DIE MASKEN FALLEN!",
-      "gelb": "MASKEN",
+      "sprich": "Die Masken fallen. Eine Klaue greift nach meiner.",
+      "text": "EINE KLAUE GREIFT NACH MEINER MASKE.",
+      "gelb": "KLAUE",
       "schreck": true,
-      "pause": 0.2
+      "pause": 0.2,
+      "monster": "Die gehört mir.",
+      "monster_text": "DIE GEHÖRT MIR."
+    },
+    {
+      "art": "winken",
+      "sprich": "Draußen auf dem Flügel steht noch einer. Und noch einer. Sie winken.",
+      "text": "AUF DEM FLÜGEL: NOCH EINER. UND NOCH EINER.",
+      "gelb": "NOCH",
+      "pause": 0.1
     },
     {
       "art": "fratze",
@@ -172,38 +120,38 @@
     },
     {
       "art": "ende",
-      "sprich": "Er war die ganze Zeit an Bord.",
-      "text": "ER WAR DIE GANZE ZEIT AN BORD.",
-      "gelb": "BORD",
+      "sprich": "Er war Passagier einundvierzig.",
+      "text": "ER WAR PASSAGIER 41.",
+      "gelb": "41",
       "schreck": true,
-      "monster": "Willkommen an Bord.",
-      "monster_text": "WILLKOMMEN AN BORD.",
+      "monster": "Du sitzt auf meinem Platz.",
+      "monster_text": "DU SITZT AUF MEINEM PLATZ.",
       "angst": 1.0,
       "blick": 1.0,
       "pause": 0.2
     },
     {
       "art": "zeitung_nah",
-      "sprich": "Der Mann legt die Zeitung weg. Flug sieben dreizehn. Seit neunzehnhundertneunundneunzig verschollen. Mein Flug.",
-      "text": "FLUG 713: SEIT 1999 VERSCHOLLEN.",
-      "gelb": "VERSCHOLLEN",
+      "sprich": "Der Mann neben mir zeigt mir die Zeitung. Die Passagierliste von Flug sieben dreizehn. Ganz unten: mein Foto.",
+      "text": "DIE PASSAGIERLISTE. GANZ UNTEN: ICH.",
+      "gelb": "ICH",
       "schreck": true,
       "pause": 0.5,
       "zeitung": {
         "zeilen": [
           "FLUG 713",
-          "SEIT 1999",
-          "VERSCHOLLEN"
+          "DIE LISTE DER",
+          "40 PASSAGIERE"
         ],
         "datum": "SAMSTAG, 30. OKTOBER 1999",
-        "unter": "Letzter Funkspruch: 23:58 Uhr"
+        "unter": "Platz 13B: Name unbekannt"
       }
     },
     {
       "art": "teil2",
-      "sprich": "Teil zwei: Wo landet Flug sieben dreizehn?",
-      "text": "TEIL 2: WO LANDET FLUG 713?",
-      "gelb": "LANDET",
+      "sprich": "Teil zwei: Wer von uns lebt noch?",
+      "text": "TEIL 2: WER VON UNS LEBT NOCH?",
+      "gelb": "LEBT",
       "pause": 0.8
     }
   ]

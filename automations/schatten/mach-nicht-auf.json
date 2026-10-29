@@ -4,11 +4,11 @@
   "tempo": "+12%",
   "ton": "schlicht",
   "ki_bilder": false,
-  "titel": "Mach nicht auf – Teil 1",
+  "titel": "Es klopft – Teil 1",
   "ort": "haus",
   "fahrgaeste": [],
-  "titelbild": "MACH NIEMANDEM AUF",
-  "titelbild_gelb": "NIEMANDEM",
+  "titelbild": "DAS KLOPFEN KAM VON INNEN",
+  "titelbild_gelb": "INNEN",
   "boesewicht": "frau",
   "held": {
     "farbe": [
@@ -33,9 +33,9 @@
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Sie steht seit einer Stunde in unserem Garten.",
-      "text": "SIE STEHT IN UNSEREM GARTEN.",
-      "gelb": "GARTEN",
+      "sprich": "Der Fernseher zeigt unser Wohnzimmer. Live. Und hinter mir steht jemand.",
+      "text": "DER FERNSEHER ZEIGT MICH. LIVE.",
+      "gelb": "LIVE",
       "schreck": true,
       "pause": 0.1,
       "angst": 0.8,
@@ -43,48 +43,35 @@
     },
     {
       "art": "innen",
-      "sprich": "Ich bin allein zu Hause. Mama kommt um Mitternacht.",
-      "text": "ALLEIN ZU HAUSE. MAMA KOMMT UM 12.",
+      "sprich": "Ich bin allein zu Hause. Mama ist auf Geschäftsreise.",
+      "text": "ALLEIN ZU HAUSE. MAMA IST VERREIST.",
       "gelb": "ALLEIN",
-      "naeher": 0.15,
       "angst": 0.1,
       "pause": 0.1
     },
     {
-      "art": "handy",
-      "sprich": "Dann schreibt Mama.",
-      "text": "DANN SCHREIBT MAMA.",
-      "gelb": "MAMA",
-      "naeher": 0.4,
-      "angst": 0.35,
-      "pause": 0.1
-    },
-    {
-      "art": "nachricht",
-      "sprich": "Ich stecke im Stau. Mach niemandem auf.",
-      "text": "MACH NIEMANDEM AUF!",
-      "gelb": "NIEMANDEM",
-      "absender": "Mama",
-      "nachricht": "Stecke im Stau. Mach NIEMANDEM auf!",
-      "schreck": true,
-      "pause": 0.4
+      "art": "fernseher",
+      "sprich": "Um Mitternacht geht der Fernseher von selbst an. Rauschen. Dann ein Bild.",
+      "text": "DER FERNSEHER GEHT VON SELBST AN.",
+      "gelb": "SELBST",
+      "stille": true,
+      "dauer": 5.2,
+      "pause": 0.2
     },
     {
       "art": "gesicht",
-      "sprich": "Dann klopft es an der Tür.",
-      "text": "DANN KLOPFT ES AN DER TÜR.",
-      "gelb": "TÜR",
-      "angst": 0.72,
-      "augen_bei": 1.2,
-      "pause": 0.2,
-      "monster": "Mach auf. Ich bin's, Mama.",
-      "monster_text": "MACH AUF. ICH BIN'S, MAMA."
+      "sprich": "Das ist unser Wohnzimmer. Gefilmt von hinter dem Sofa.",
+      "text": "GEFILMT VON HINTER DEM SOFA.",
+      "gelb": "SOFA",
+      "angst": 0.75,
+      "augen_bei": 1.3,
+      "pause": 0.3
     },
     {
       "art": "spiegel",
-      "sprich": "Im Fenster sehe ich mein Spiegelbild. Und hinter mir noch eins.",
-      "text": "IM FENSTER: MEIN SPIEGELBILD. UND NOCH EINS.",
-      "gelb": "EINS",
+      "sprich": "Im Fenster sehe ich mich. Und hinter dem Sofa lange schwarze Haare.",
+      "text": "HINTER DEM SOFA: LANGE SCHWARZE HAARE.",
+      "gelb": "HAARE",
       "blitzbild": [
         1.8
       ],
@@ -93,70 +80,41 @@
       "pause": 0.3
     },
     {
-      "art": "zettel2",
-      "sprich": "Am Fenster klebt ein Zettel. Von außen: Ich sehe dich.",
-      "text": "AM FENSTER, VON AUSSEN: ICH SEHE DICH.",
-      "gelb": "SEHE",
-      "zettel": [
-        "ICH SEHE",
-        "DICH"
-      ],
-      "warnung": "NICHT HINSCHAUEN",
-      "pause": 0.1
+      "art": "klopfen",
+      "sprich": "Dann klopft es. Dreimal.",
+      "text": "DANN KLOPFT ES. DREIMAL.",
+      "gelb": "DREIMAL",
+      "schreck_bei": 1.3,
+      "pause": 0.3,
+      "monster": "Schatz, ich bin's. Mach auf.",
+      "monster_text": "SCHATZ, ICH BIN'S. MACH AUF."
     },
     {
-      "art": "winken",
-      "sprich": "Im Garten steht eine Frau. Sie winkt. Und kommt näher.",
-      "text": "IM GARTEN STEHT EINE FRAU. SIE KOMMT NÄHER.",
-      "gelb": "NÄHER",
-      "pause": 0.1
+      "art": "handy",
+      "sprich": "Ich rufe Mama an. Sie geht ran. Sie ist im Hotel. Dreihundert Kilometer weit weg.",
+      "text": "MAMA IST 300 KILOMETER WEG.",
+      "gelb": "300",
+      "angst": 0.7,
+      "pause": 0.2
     },
     {
-      "art": "nachricht",
-      "sprich": "Mama: Bin gleich da. Hast du jemanden reingelassen?",
-      "text": "HAST DU JEMANDEN REINGELASSEN?",
-      "gelb": "REINGELASSEN",
-      "absender": "Mama",
-      "nachricht": "Bin gleich da. Hast du jemanden reingelassen??",
-      "schreck": true,
-      "pause": 0.2,
-      "monster": "Zu spät.",
-      "monster_text": "ZU SPÄT."
-    },
-    {
-      "art": "scheibe",
-      "sprich": "Dann zerspringt das Wohnzimmerfenster!",
-      "text": "DAS FENSTER ZERSPRINGT!",
-      "gelb": "ZERSPRINGT",
-      "schlag": 0.3,
-      "schreck_bei": 2.0,
+      "art": "licht",
+      "sprich": "Das Licht geht aus. Das Klopfen hört auf.",
+      "text": "DAS LICHT GEHT AUS. DAS KLOPFEN HÖRT AUF.",
+      "gelb": "AUF",
+      "stille": true,
+      "angst": 0.85,
       "pause": 0.4
     },
     {
-      "art": "rennen",
-      "sprich": "Ich renne zur Treppe. Er ist direkt hinter mir.",
-      "text": "ICH RENNE ZUR TREPPE.",
-      "gelb": "TREPPE",
-      "pause": 0.1
-    },
-    {
-      "art": "decke",
-      "sprich": "Oben ist es still. Etwas tropft von der Decke. Auf mich.",
-      "text": "ETWAS TROPFT VON DER DECKE.",
-      "gelb": "DECKE",
-      "stille": true,
-      "warnung": "NICHT HOCHSCHAUEN",
-      "monster": "Schau nach oben.",
-      "monster_text": "SCHAU NACH OBEN.",
-      "pause": 0.3
-    },
-    {
-      "art": "fernseher",
-      "sprich": "Unten geht der Fernseher von selbst an. Nur Rauschen. Dann bewegt sich etwas darin.",
-      "text": "DER FERNSEHER GEHT VON SELBST AN ...",
-      "gelb": "FERNSEHER",
-      "dauer": 5.2,
-      "pause": 0.2
+      "art": "dunkel",
+      "sprich": "Und dann flüstert jemand. Ganz nah an meinem Ohr.",
+      "text": "JEMAND FLÜSTERT AN MEINEM OHR.",
+      "gelb": "OHR",
+      "dauer": 4.4,
+      "pause": 0.2,
+      "monster": "Ich hab nie draußen gestanden.",
+      "monster_text": "ICH HAB NIE DRAUSSEN GESTANDEN."
     },
     {
       "art": "fratze",
@@ -165,38 +123,21 @@
     },
     {
       "art": "ende",
-      "sprich": "Sie war schon die ganze Zeit im Haus.",
-      "text": "SIE WAR DIE GANZE ZEIT IM HAUS.",
-      "gelb": "HAUS",
+      "sprich": "Das Klopfen kam nie von draußen. Es kam von innen.",
+      "text": "DAS KLOPFEN KAM VON INNEN.",
+      "gelb": "INNEN",
       "schreck": true,
-      "monster": "Ich wohne hier.",
-      "monster_text": "ICH WOHNE HIER.",
+      "monster": "Jetzt mach du mir auf.",
+      "monster_text": "JETZT MACH DU MIR AUF.",
       "angst": 1.0,
       "blick": 1.0,
       "pause": 0.2
     },
     {
-      "art": "zeitung_nah",
-      "sprich": "Auf dem Tisch liegt die Zeitung von morgen. Unser Haus. Seit zwanzig Jahren leer.",
-      "text": "UNSER HAUS: SEIT 20 JAHREN LEER.",
-      "gelb": "LEER",
-      "schreck": true,
-      "pause": 0.5,
-      "zeitung": {
-        "zeilen": [
-          "HAUS SEIT",
-          "20 JAHREN",
-          "LEER"
-        ],
-        "datum": "DONNERSTAG, 30. OKTOBER",
-        "unter": "Letzte Bewohnerin vermisst seit 23:58 Uhr"
-      }
-    },
-    {
       "art": "teil2",
-      "sprich": "Teil zwei: Wer hat mir als Mama geschrieben?",
-      "text": "TEIL 2: WER IST MAMA WIRKLICH?",
-      "gelb": "MAMA",
+      "sprich": "Teil zwei: Wer hat das gefilmt?",
+      "text": "TEIL 2: WER HAT DAS GEFILMT?",
+      "gelb": "GEFILMT",
       "pause": 0.8
     }
   ],

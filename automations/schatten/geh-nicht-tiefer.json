@@ -4,7 +4,7 @@
   "tempo": "+12%",
   "ton": "schlicht",
   "ki_bilder": false,
-  "titel": "Geh nicht tiefer – Teil 1",
+  "titel": "Antworte ihm nicht – Teil 1",
   "ort": "wald",
   "fahrgaeste": [
     {
@@ -16,8 +16,8 @@
       ]
     }
   ],
-  "titelbild": "GEH NICHT TIEFER",
-  "titelbild_gelb": "TIEFER",
+  "titelbild": "ES HAT SEINE STIMME",
+  "titelbild_gelb": "STIMME",
   "boesewicht": "hirsch",
   "held": {
     "farbe": [
@@ -41,9 +41,9 @@
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Es steht seit Stunden zwischen den Bäumen.",
-      "text": "ES STEHT ZWISCHEN DEN BÄUMEN.",
-      "gelb": "BÄUMEN",
+      "sprich": "Mein Freund ruft aus dem Wald nach mir. Aber er schläft direkt neben mir.",
+      "text": "ER RUFT AUS DEM WALD. ABER ER SCHLÄFT NEBEN MIR.",
+      "gelb": "NEBEN",
       "schreck": true,
       "pause": 0.1,
       "angst": 0.8,
@@ -51,98 +51,77 @@
     },
     {
       "art": "innen",
-      "sprich": "Camping im Wald. Mein Freund ist am Feuer eingeschlafen.",
-      "text": "CAMPING IM WALD. MEIN FREUND SCHLÄFT.",
-      "gelb": "WALD",
-      "naeher": 0.15,
+      "sprich": "Camping. Lagerfeuer. Mein Freund ist eingeschlafen.",
+      "text": "LAGERFEUER. MEIN FREUND SCHLÄFT.",
+      "gelb": "SCHLÄFT",
       "angst": 0.1,
       "pause": 0.1
     },
     {
-      "art": "handy",
-      "sprich": "Hier gibt es kein Netz. Trotzdem kommt eine Nachricht.",
-      "text": "KEIN NETZ. TROTZDEM EINE NACHRICHT.",
-      "gelb": "NACHRICHT",
-      "naeher": 0.4,
-      "angst": 0.35,
-      "pause": 0.1
-    },
-    {
-      "art": "nachricht",
-      "sprich": "Unbekannt: Ich sehe dein Feuer.",
-      "text": "UNBEKANNT: ICH SEHE DEIN FEUER.",
-      "gelb": "FEUER",
-      "absender": "Unbekannt",
-      "nachricht": "Ich sehe dein Feuer.",
-      "schreck": true,
-      "pause": 0.4
+      "art": "innen",
+      "sprich": "Dann ruft jemand aus dem Wald. Mit seiner Stimme.",
+      "text": "JEMAND RUFT. MIT SEINER STIMME.",
+      "gelb": "STIMME",
+      "pause": 0.2,
+      "monster": "Komm her! Ich hab was gefunden!",
+      "monster_text": "KOMM HER! ICH HAB WAS GEFUNDEN!",
+      "angst": 0.6,
+      "blick": 1.0
     },
     {
       "art": "gesicht",
-      "sprich": "Hier draußen ist niemand. Kilometerweit.",
-      "text": "HIER IST NIEMAND. KILOMETERWEIT.",
-      "gelb": "NIEMAND",
-      "angst": 0.72,
+      "sprich": "Ich schaue zu ihm. Er schläft. Er hat sich nicht bewegt.",
+      "text": "ER SCHLÄFT. ER HAT SICH NICHT BEWEGT.",
+      "gelb": "NICHT",
+      "angst": 0.8,
       "augen_bei": 1.2,
       "pause": 0.3
     },
     {
-      "art": "zettel2",
-      "sprich": "An einem Baum hängt ein Zettel: Geh nicht tiefer in den Wald.",
-      "text": "GEH NICHT TIEFER IN DEN WALD.",
-      "gelb": "TIEFER",
-      "zettel": [
-        "GEH NICHT",
-        "TIEFER IN",
-        "DEN WALD"
-      ],
-      "warnung": "NICHT WEITERGEHEN",
-      "pause": 0.1
-    },
-    {
-      "art": "winken",
-      "sprich": "Zwischen den Bäumen steht etwas. Mit Geweih. Es winkt. Und kommt näher.",
-      "text": "ZWISCHEN DEN BÄUMEN: ES KOMMT NÄHER.",
-      "gelb": "NÄHER",
-      "pause": 0.1
-    },
-    {
-      "art": "nachricht",
-      "sprich": "Unbekannt: Dein Freund schläft nicht.",
-      "text": "DEIN FREUND SCHLÄFT NICHT.",
-      "gelb": "SCHLÄFT",
-      "absender": "Unbekannt",
-      "nachricht": "Dein Freund schläft nicht.",
-      "schreck": true,
-      "pause": 0.2,
-      "monster": "Er gehört jetzt mir.",
-      "monster_text": "ER GEHÖRT JETZT MIR."
-    },
-    {
-      "art": "rennen",
-      "sprich": "Ich renne. Äste peitschen mir ins Gesicht. Es ist direkt hinter mir.",
-      "text": "ICH RENNE. ES IST DIREKT HINTER MIR.",
-      "gelb": "RENNE",
-      "pause": 0.1
-    },
-    {
-      "art": "decke",
-      "sprich": "Plötzlich Stille. Etwas tropft auf mich. Aus dem Baum über mir.",
-      "text": "ETWAS TROPFT AUS DEM BAUM ÜBER MIR.",
+      "art": "taschenlampe",
+      "sprich": "Ich leuchte in den Wald. Langsam. Baum für Baum.",
+      "text": "ICH LEUCHTE IN DEN WALD. BAUM FÜR BAUM.",
       "gelb": "BAUM",
       "stille": true,
-      "warnung": "NICHT HOCHSCHAUEN",
-      "monster": "Schau nach oben.",
-      "monster_text": "SCHAU NACH OBEN.",
-      "pause": 0.3
+      "dauer": 5.0,
+      "pause": 0.2
     },
     {
-      "art": "taschenlampe",
-      "sprich": "Ich mache die Taschenlampe an. Langsam leuchte ich zwischen die Bäume.",
-      "text": "ICH LEUCHTE ZWISCHEN DIE BÄUME ...",
-      "gelb": "LEUCHTE",
+      "art": "schatten",
+      "sprich": "Es steht einfach da. Und lächelt.",
+      "text": "ES STEHT DA. UND LÄCHELT.",
+      "gelb": "LÄCHELT",
+      "pause": 0.2,
+      "monster": "Warum antwortest du nicht?",
+      "monster_text": "WARUM ANTWORTEST DU NICHT?"
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Am Baum hängt ein Zettel. In der Schrift meines Freundes: Antworte ihm nicht.",
+      "text": "IN SEINER SCHRIFT: ANTWORTE IHM NICHT.",
+      "gelb": "NICHT",
+      "zettel": [
+        "ANTWORTE",
+        "IHM NICHT"
+      ],
+      "warnung": "NICHT ANTWORTEN",
+      "pause": 0.1
+    },
+    {
+      "art": "licht",
+      "sprich": "Das Feuer geht aus. Mit einem Schlag.",
+      "text": "DAS FEUER GEHT AUS.",
+      "gelb": "FEUER",
       "stille": true,
-      "dauer": 5.0,
+      "angst": 0.85,
+      "pause": 0.4
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Im Dunkeln setzt sich jemand zu mir ans Feuer. Er riecht nach Erde.",
+      "text": "JEMAND SETZT SICH ZU MIR. ER RIECHT NACH ERDE.",
+      "gelb": "ERDE",
+      "dauer": 4.4,
       "pause": 0.2
     },
     {
@@ -152,38 +131,21 @@
     },
     {
       "art": "ende",
-      "sprich": "Es saß die ganze Zeit mit uns am Feuer.",
-      "text": "ES SASS DIE GANZE ZEIT MIT UNS AM FEUER.",
-      "gelb": "FEUER",
+      "sprich": "Mein Freund hat nie geschlafen. Es hat ihn nur nachgemacht.",
+      "text": "ES HAT IHN NUR NACHGEMACHT.",
+      "gelb": "NACHGEMACHT",
       "schreck": true,
-      "monster": "Du bist der Nächste.",
-      "monster_text": "DU BIST DER NÄCHSTE.",
+      "monster": "Jetzt mache ich dich nach.",
+      "monster_text": "JETZT MACHE ICH DICH NACH.",
       "angst": 1.0,
       "blick": 1.0,
       "pause": 0.2
     },
     {
-      "art": "zeitung_nah",
-      "sprich": "Am Baum hängt ein Plakat. Vermisst: zwei Camper. Datum: morgen.",
-      "text": "VERMISST: ZWEI CAMPER. DATUM: MORGEN.",
-      "gelb": "MORGEN",
-      "schreck": true,
-      "pause": 0.5,
-      "zeitung": {
-        "zeilen": [
-          "ZWEI CAMPER",
-          "IM WALD",
-          "VERMISST"
-        ],
-        "datum": "DONNERSTAG, 30. OKTOBER",
-        "unter": "Zuletzt gesehen am Lagerfeuer, 23:58 Uhr"
-      }
-    },
-    {
       "art": "teil2",
-      "sprich": "Teil zwei: Was lebt in diesem Wald?",
-      "text": "TEIL 2: WAS LEBT IN DIESEM WALD?",
-      "gelb": "WALD",
+      "sprich": "Teil zwei: Wo ist mein echter Freund?",
+      "text": "TEIL 2: WO IST MEIN ECHTER FREUND?",
+      "gelb": "ECHTER",
       "pause": 0.8
     }
   ]
