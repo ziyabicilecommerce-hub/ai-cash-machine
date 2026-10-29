@@ -7,6 +7,7 @@ from ton import tonspur
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT
 from ki import ki_bilder_laden, ki_szene
 from aktion import scheibe, decke_schatten
+from fahrgaeste import zeitungsleser, schlaeferin, zeitung_nah
 
 W, H, FPS = 720, 1280, 30
 FONTDATEI = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
@@ -204,6 +205,8 @@ def bild(s, t, lt):
     if art == 'fratze':
         fratze(im, lt)
         return im
+    if art == 'zeitung_nah':
+        return zeitung_nah(im, lt)
     if art == 'nachricht':
         handy_nah(im, lt, s.get('absender', 'Mama'), s.get('nachricht', ''))
         return im
@@ -247,6 +250,9 @@ def bild(s, t, lt):
         if s.get('naeher') is not None:  # er sitzt schon die ganze Zeit hinter ihr und kommt näher
             v = s['naeher']
             schatten(lage, 560 - 150 * v, 905, s=1.0 + 0.4 * v, alpha=int(35 + 120 * v), augen=v > 0.35)
+        if s.get('fahrgaeste', True):  # die anderen merken nichts
+            zeitungsleser(lage, 470, 812, t)
+            schlaeferin(lage, 640, 905)
         mensch(lage, 250, 812, angst=s.get('angst', 0.0), blick=s.get('blick', 0.0))
         if art == 'handy':
             zit = random.randint(-3, 3) if (lt % 0.8) < 0.3 else 0
@@ -282,6 +288,8 @@ def bild(s, t, lt):
         im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.35 + 0.65 * flacker)
     elif art == 'decke':
         zug_innen(im, t, lt, licht=0.55, fahrt=False)
+        zeitungsleser(lage, 470, 812, t)
+        schlaeferin(lage, 640, 905)
         mensch(lage, 250, 812, angst=min(1.0, 0.5 + lt / 3), blick=0.4)
         decke_schatten(lage, 430, min(max((lt - 0.6) / 1.4, 0), 1) ** 0.7)
     elif art in ('zettel', 'zettel2'):

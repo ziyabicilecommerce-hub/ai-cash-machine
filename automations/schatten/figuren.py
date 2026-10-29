@@ -59,7 +59,7 @@ def _aermel(d, a, b, w, hell, dunkel):
     glied(d, a, b, int(w), hell)
 
 
-def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, gesicht=True, lauf=None):
+def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, gesicht=True, lauf=None, schlaf=False):
     # Person im Hoodie: Kapuze, Gesicht, Bauchtasche, Kordeln, Jeans, Schuhe - zittert und atmet bei Angst
     z = ZEIT[0]
     x += (math.sin(z * 47) * 3.2 + math.sin(z * 31) * 1.5) * angst * s
@@ -112,7 +112,7 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
         d.ellipse((fx - 20 * S, fy - 23 * S, fx + 20 * S, fy + 23 * S), fill=haut)
         d.chord((fx - 21 * S, fy - 32 * S, fx + 21 * S, fy - 10 * S), 180, 360, fill=_ton(haut, 0.82))
         if gesicht:
-            gesicht_malen(d, (fx, fy), S, angst, blick, verdeckt=haende_vorm_mund)
+            gesicht_malen(d, (fx, fy), S, angst, blick, verdeckt=haende_vorm_mund, schlaf=schlaf)
         if haende_vorm_mund:
             for sx in (-1, 1):
                 _aermel(d, k(sx * 42, top + 8), k(sx * 44, -168), 21 * S, hoodie, kante)
@@ -123,9 +123,14 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
     _ss(lage, (x - 110 * s, y - 330 * s, x + 150 * s, y + 10 * s), zeichne)
 
 
-def gesicht_malen(d, kopf, s, angst, blick, verdeckt=False):
+def gesicht_malen(d, kopf, s, angst, blick, verdeckt=False, schlaf=False):
     dunkel = (22, 26, 38)
     kx, ky = kopf
+    if schlaf:  # geschlossene Augen, entspannter Mund - merkt nichts
+        for ex in (-9, 9):
+            d.arc((kx + ex * s - 5 * s, ky - 9 * s, kx + ex * s + 5 * s, ky - 1 * s), 20, 160, fill=dunkel, width=max(1, int(2 * s)))
+        d.line((kx - 3 * s, ky + 13 * s, kx + 3 * s, ky + 13 * s), fill=dunkel, width=max(1, int(2 * s)))
+        return
     zitter = math.sin(ZEIT[0] * 60) * 1.2 * angst * s
     for ex in (-9, 9):
         ax, ay = kx + ex * s + blick * 4 * s, ky - 5 * s
