@@ -22,9 +22,9 @@
     },
     {
       "art": "innen",
-      "sprich": "Kurz vor Mitternacht. Ich bin allein im letzten Zug.",
-      "text": "KURZ VOR MITTERNACHT. ICH BIN ALLEIN.",
-      "gelb": "ALLEIN",
+      "sprich": "Kurz vor Mitternacht. Im letzten Zug sind nur ich und zwei Fremde.",
+      "text": "NUR ICH UND ZWEI FREMDE IM LETZTEN ZUG.",
+      "gelb": "FREMDE",
       "naeher": 0.15,
       "angst": 0.1,
       "pause": 0.1,
@@ -124,7 +124,7 @@
     },
     {
       "art": "decke",
-      "sprich": "Plötzlich ist es still. Etwas tropft auf mein Gesicht. Von oben.",
+      "sprich": "Plötzlich ist es still. Der Mann liest einfach weiter. Etwas tropft auf mich. Von oben.",
       "text": "ETWAS TROPFT AUF MICH. VON OBEN.",
       "gelb": "OBEN",
       "stille": true,
@@ -151,6 +151,14 @@
       "blick": 1.0,
       "pause": 0.2,
       "ki": "a young person in a grey hoodie frozen in terror in a subway seat, a tall thin pitch-black shadow creature with glowing red eyes and a wide white grin sitting directly behind them with a long clawed hand on their shoulder, red light"
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Der Mann blättert um. Auf der Titelseite: mein Foto. Mit dem Datum von morgen.",
+      "text": "AUF DER TITELSEITE: MEIN FOTO. DATUM: MORGEN.",
+      "gelb": "MORGEN",
+      "schreck": true,
+      "pause": 0.5
     },
     {
       "art": "teil2",
