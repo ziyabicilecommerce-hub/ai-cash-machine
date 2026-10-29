@@ -1,0 +1,174 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+12%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Mach nicht auf – Teil 1",
+  "ort": "haus",
+  "fahrgaeste": [],
+  "titelbild": "MACH NIEMANDEM AUF",
+  "titelbild_gelb": "NIEMANDEM",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Er steht seit einer Stunde in unserem Garten.",
+      "text": "ER STEHT IN UNSEREM GARTEN.",
+      "gelb": "GARTEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.8,
+      "blick": 1.0
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich bin allein zu Hause. Mama kommt um Mitternacht.",
+      "text": "ALLEIN ZU HAUSE. MAMA KOMMT UM 12.",
+      "gelb": "ALLEIN",
+      "naeher": 0.15,
+      "angst": 0.1,
+      "pause": 0.1
+    },
+    {
+      "art": "handy",
+      "sprich": "Dann schreibt Mama.",
+      "text": "DANN SCHREIBT MAMA.",
+      "gelb": "MAMA",
+      "naeher": 0.4,
+      "angst": 0.35,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Ich stecke im Stau. Mach niemandem auf.",
+      "text": "MACH NIEMANDEM AUF!",
+      "gelb": "NIEMANDEM",
+      "absender": "Mama",
+      "nachricht": "Stecke im Stau. Mach NIEMANDEM auf!",
+      "schreck": true,
+      "pause": 0.4
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Dann klopft es an der Tür.",
+      "text": "DANN KLOPFT ES AN DER TÜR.",
+      "gelb": "TÜR",
+      "angst": 0.72,
+      "augen_bei": 1.2,
+      "pause": 0.2,
+      "monster": "Mach auf. Ich bin's, Mama.",
+      "monster_text": "MACH AUF. ICH BIN'S, MAMA."
+    },
+    {
+      "art": "spiegel",
+      "sprich": "Im Fenster sehe ich mein Spiegelbild. Und hinter mir noch eins.",
+      "text": "IM FENSTER: MEIN SPIEGELBILD. UND NOCH EINS.",
+      "gelb": "EINS",
+      "blitzbild": [
+        1.8
+      ],
+      "angst": 0.65,
+      "blick": 0.9,
+      "pause": 0.3
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Am Fenster klebt ein Zettel. Von außen: Ich sehe dich.",
+      "text": "AM FENSTER, VON AUSSEN: ICH SEHE DICH.",
+      "gelb": "SEHE",
+      "zettel": [
+        "ICH SEHE",
+        "DICH"
+      ],
+      "warnung": "NICHT HINSCHAUEN",
+      "pause": 0.1
+    },
+    {
+      "art": "winken",
+      "sprich": "Im Garten steht jemand. Er winkt. Und kommt näher.",
+      "text": "IM GARTEN STEHT JEMAND. ER KOMMT NÄHER.",
+      "gelb": "NÄHER",
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama: Bin gleich da. Hast du jemanden reingelassen?",
+      "text": "HAST DU JEMANDEN REINGELASSEN?",
+      "gelb": "REINGELASSEN",
+      "absender": "Mama",
+      "nachricht": "Bin gleich da. Hast du jemanden reingelassen??",
+      "schreck": true,
+      "pause": 0.2,
+      "monster": "Zu spät.",
+      "monster_text": "ZU SPÄT."
+    },
+    {
+      "art": "scheibe",
+      "sprich": "Dann zerspringt das Wohnzimmerfenster!",
+      "text": "DAS FENSTER ZERSPRINGT!",
+      "gelb": "ZERSPRINGT",
+      "schlag": 0.3,
+      "schreck_bei": 2.0,
+      "pause": 0.4
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne zur Treppe. Er ist direkt hinter mir.",
+      "text": "ICH RENNE ZUR TREPPE.",
+      "gelb": "TREPPE",
+      "pause": 0.1
+    },
+    {
+      "art": "decke",
+      "sprich": "Oben ist es still. Etwas tropft von der Decke. Auf mich.",
+      "text": "ETWAS TROPFT VON DER DECKE.",
+      "gelb": "DECKE",
+      "stille": true,
+      "warnung": "NICHT HOCHSCHAUEN",
+      "monster": "Schau nach oben.",
+      "monster_text": "SCHAU NACH OBEN.",
+      "pause": 0.3
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Er war schon die ganze Zeit im Haus.",
+      "text": "ER WAR DIE GANZE ZEIT IM HAUS.",
+      "gelb": "HAUS",
+      "schreck": true,
+      "monster": "Ich wohne hier.",
+      "monster_text": "ICH WOHNE HIER.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Auf dem Tisch liegt die Zeitung von morgen. Unser Haus. Seit zwanzig Jahren leer.",
+      "text": "UNSER HAUS: SEIT 20 JAHREN LEER.",
+      "gelb": "LEER",
+      "schreck": true,
+      "pause": 0.5,
+      "zeitung": {
+        "zeilen": [
+          "HAUS SEIT",
+          "20 JAHREN",
+          "LEER"
+        ],
+        "datum": "DONNERSTAG, 30. OKTOBER",
+        "unter": "Letzte Bewohnerin vermisst seit 23:58 Uhr"
+      }
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil zwei: Wer hat mir als Mama geschrieben?",
+      "text": "TEIL 2: WER IST MAMA WIRKLICH?",
+      "gelb": "MAMA",
+      "pause": 0.8
+    }
+  ]
+}

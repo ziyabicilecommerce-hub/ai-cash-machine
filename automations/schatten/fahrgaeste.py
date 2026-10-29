@@ -59,7 +59,18 @@ def schlaeferin(lage, x, y):
     _ss(lage, (x - 70, y - 340, x + 70, y - 200), zeichne)
 
 
-def zeitung_nah(im, lt):
+def fahrgaeste_malen(lage, t, liste):
+    # 'zeitung' = Mann mit Zeitung auf dem Sitz, 'schlaf' = Frau mit Kopfhörern im Stehen, 'schlaf_sitz' = schläft im Sitzen
+    for wer in liste:
+        if wer == 'zeitung':
+            zeitungsleser(lage, 470, 812, t)
+        elif wer == 'schlaf':
+            schlaeferin(lage, 640, 905)
+        elif wer == 'schlaf_sitz':
+            mensch(lage, 470, 812, farbe=JACKE, blick=0.7, schlaf=True)
+
+
+def zeitung_nah(im, lt, z=None):
     # Nahaufnahme der Titelseite: "Fahrgast verschwunden" - mit dem Foto der Person und dem Datum von morgen
     zoom = 1 + 0.25 * min(lt / 3, 1)
     papier = Image.new('RGB', (W, H), PAPIER)
@@ -67,9 +78,10 @@ def zeitung_nah(im, lt):
     gross, mittel, klein = (ImageFont.truetype(SCHRIFT, n) for n in (76, 40, 26))
     d.rectangle((30, 40, W - 30, 160), fill=TINTE)
     d.text((W / 2, 100), 'STADTBLATT', font=gross, fill=PAPIER, anchor='mm')
-    d.text((W / 2, 200), 'DONNERSTAG, 30. OKTOBER', font=klein, fill=(120, 30, 30), anchor='mm')
+    d.text((W / 2, 200), z.get('datum', 'DONNERSTAG, 30. OKTOBER'), font=klein, fill=(120, 30, 30), anchor='mm')
     d.line((30, 228, W - 30, 228), fill=TINTE, width=4)
-    for i, zeile in enumerate(('FAHRGAST IM', 'LETZTEN ZUG', 'VERSCHWUNDEN')):
+    z = z or {}
+    for i, zeile in enumerate(z.get('zeilen', ['FAHRGAST IM', 'LETZTEN ZUG', 'VERSCHWUNDEN'])):
         d.text((W / 2, 290 + i * 54), zeile, font=mittel, fill=TINTE, anchor='mm')
     d.rectangle((150, 460, W - 150, 860), fill=(70, 72, 80), outline=TINTE, width=6)
     foto = Image.new('RGBA', (W, H), (0, 0, 0, 0))
@@ -78,7 +90,7 @@ def zeitung_nah(im, lt):
     maske = Image.new('L', (W, H), 0)
     ImageDraw.Draw(maske).rectangle((156, 466, W - 156, 854), fill=255)
     papier.paste(grau, (0, 0), Image.composite(grau.split()[3], Image.new('L', (W, H), 0), maske))
-    d.text((W / 2, 900), 'Zuletzt gesehen: Linie 7, 23:58 Uhr', font=klein, fill=TINTE, anchor='mm')
+    d.text((W / 2, 900), z.get('unter', 'Zuletzt gesehen: Linie 7, 23:58 Uhr'), font=klein, fill=TINTE, anchor='mm')
     for i in range(6):
         d.line((60, 950 + i * 30, W - 60, 950 + i * 30), fill=(160, 156, 146), width=4)
     cw, ch = int(W / zoom), int(H / zoom)

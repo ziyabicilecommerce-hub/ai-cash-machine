@@ -1,0 +1,154 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+12%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Geh nicht tiefer – Teil 1",
+  "ort": "wald",
+  "fahrgaeste": [
+    "schlaf_sitz"
+  ],
+  "titelbild": "GEH NICHT TIEFER",
+  "titelbild_gelb": "TIEFER",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Er steht seit Stunden zwischen den Bäumen.",
+      "text": "ER STEHT ZWISCHEN DEN BÄUMEN.",
+      "gelb": "BÄUMEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.8,
+      "blick": 1.0
+    },
+    {
+      "art": "innen",
+      "sprich": "Camping im Wald. Mein Freund ist am Feuer eingeschlafen.",
+      "text": "CAMPING IM WALD. MEIN FREUND SCHLÄFT.",
+      "gelb": "WALD",
+      "naeher": 0.15,
+      "angst": 0.1,
+      "pause": 0.1
+    },
+    {
+      "art": "handy",
+      "sprich": "Hier gibt es kein Netz. Trotzdem kommt eine Nachricht.",
+      "text": "KEIN NETZ. TROTZDEM EINE NACHRICHT.",
+      "gelb": "NACHRICHT",
+      "naeher": 0.4,
+      "angst": 0.35,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Unbekannt: Ich sehe dein Feuer.",
+      "text": "UNBEKANNT: ICH SEHE DEIN FEUER.",
+      "gelb": "FEUER",
+      "absender": "Unbekannt",
+      "nachricht": "Ich sehe dein Feuer.",
+      "schreck": true,
+      "pause": 0.4
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Hier draußen ist niemand. Kilometerweit.",
+      "text": "HIER IST NIEMAND. KILOMETERWEIT.",
+      "gelb": "NIEMAND",
+      "angst": 0.72,
+      "augen_bei": 1.2,
+      "pause": 0.3
+    },
+    {
+      "art": "zettel2",
+      "sprich": "An einem Baum hängt ein Zettel: Geh nicht tiefer in den Wald.",
+      "text": "GEH NICHT TIEFER IN DEN WALD.",
+      "gelb": "TIEFER",
+      "zettel": [
+        "GEH NICHT",
+        "TIEFER IN",
+        "DEN WALD"
+      ],
+      "warnung": "NICHT WEITERGEHEN",
+      "pause": 0.1
+    },
+    {
+      "art": "winken",
+      "sprich": "Zwischen den Bäumen steht jemand. Er winkt. Und kommt näher.",
+      "text": "ZWISCHEN DEN BÄUMEN: ER KOMMT NÄHER.",
+      "gelb": "NÄHER",
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Unbekannt: Dein Freund schläft nicht.",
+      "text": "DEIN FREUND SCHLÄFT NICHT.",
+      "gelb": "SCHLÄFT",
+      "absender": "Unbekannt",
+      "nachricht": "Dein Freund schläft nicht.",
+      "schreck": true,
+      "pause": 0.2,
+      "monster": "Er gehört jetzt mir.",
+      "monster_text": "ER GEHÖRT JETZT MIR."
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne. Äste peitschen mir ins Gesicht. Er ist direkt hinter mir.",
+      "text": "ICH RENNE. ER IST DIREKT HINTER MIR.",
+      "gelb": "RENNE",
+      "pause": 0.1
+    },
+    {
+      "art": "decke",
+      "sprich": "Plötzlich Stille. Etwas tropft auf mich. Aus dem Baum über mir.",
+      "text": "ETWAS TROPFT AUS DEM BAUM ÜBER MIR.",
+      "gelb": "BAUM",
+      "stille": true,
+      "warnung": "NICHT HOCHSCHAUEN",
+      "monster": "Schau nach oben.",
+      "monster_text": "SCHAU NACH OBEN.",
+      "pause": 0.3
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Er saß die ganze Zeit mit uns am Feuer.",
+      "text": "ER SASS DIE GANZE ZEIT MIT UNS AM FEUER.",
+      "gelb": "FEUER",
+      "schreck": true,
+      "monster": "Du bist der Nächste.",
+      "monster_text": "DU BIST DER NÄCHSTE.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Am Baum hängt ein Plakat. Vermisst: zwei Camper. Datum: morgen.",
+      "text": "VERMISST: ZWEI CAMPER. DATUM: MORGEN.",
+      "gelb": "MORGEN",
+      "schreck": true,
+      "pause": 0.5,
+      "zeitung": {
+        "zeilen": [
+          "ZWEI CAMPER",
+          "IM WALD",
+          "VERMISST"
+        ],
+        "datum": "DONNERSTAG, 30. OKTOBER",
+        "unter": "Zuletzt gesehen am Lagerfeuer, 23:58 Uhr"
+      }
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil zwei: Was lebt in diesem Wald?",
+      "text": "TEIL 2: WAS LEBT IN DIESEM WALD?",
+      "gelb": "WALD",
+      "pause": 0.8
+    }
+  ]
+}
