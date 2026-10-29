@@ -5,6 +5,8 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter
 W, H = 720, 1280
 HAUT = (214, 219, 230)
 ZEIT = [0.0]  # aktuelle Videozeit: Blinzeln, Zittern, Atmen
+BOESE = ['schatten']  # Bösewicht der Story: schatten, gremlin, frau, hirsch
+HELD = [{}]  # Aussehen der Hauptfigur (farbe, oberteil, kopf, haar, zopf, muetze_farbe, hose)
 
 
 def leuchten(radius, farbe, staerke=255):
@@ -59,8 +61,14 @@ def _aermel(d, a, b, w, hell, dunkel):
     glied(d, a, b, int(w), hell)
 
 
-def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, gesicht=True, lauf=None, schlaf=False):
-    # Person im Hoodie: Kapuze, Gesicht, Bauchtasche, Kordeln, Jeans, Schuhe - zittert und atmet bei Angst
+def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, gesicht=True, lauf=None, schlaf=False, stil=None):
+    # Person mit Kleidung je nach Stil (Hoodie, Anzug, Schlafanzug, Jacke; Kapuze, Haare, Zopf, Mütze) -
+    # zittert und atmet bei Angst. Ohne eigene Farbe und ohne Stil sieht sie aus wie die Hauptfigur der Story.
+    if stil is None:
+        stil = HELD[0] if farbe == HAUT else {}
+    farbe = tuple(stil.get('farbe', farbe))
+    oberteil, kopfart = stil.get('oberteil', 'hoodie'), stil.get('kopf', 'kapuze')
+    haar, muetze = tuple(stil.get('haar', (70, 50, 36))), tuple(stil.get('muetze_farbe', (40, 60, 110)))
     z = ZEIT[0]
     x += (math.sin(z * 47) * 3.2 + math.sin(z * 31) * 1.5) * angst * s
     atem = math.sin(z * (2.2 + 7 * angst)) * (1 + 3 * angst)
@@ -71,7 +79,7 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
         d = ImageDraw.Draw(cv)
         S = s * A
         k = lambda px, py: T(x + px * s, y + py * s)
-        hoodie, kante, jeans, schuh = farbe, _ton(farbe, 0.78), _ton(farbe, 0.58), _ton(farbe, 0.22)
+        hoodie, kante, jeans, schuh = farbe, _ton(farbe, 0.78), tuple(stil.get('hose', _ton(farbe, 0.58))), _ton(farbe, 0.22)
         haut = _mix(farbe, (252, 238, 228), 0.6)
         if sitzen:
             for dx, f in ((16, _ton(jeans, 0.85)), (-14, jeans)):
@@ -90,11 +98,26 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
         d.rounded_rectangle((*k(-46, top), *k(46, -114)), radius=int(24 * S), fill=kante)
         d.rounded_rectangle((*k(-43, top + 2), *k(43, -116)), radius=int(22 * S), fill=hoodie)
         d.rounded_rectangle((*k(-43, -132), *k(43, -114)), radius=int(8 * S), fill=kante)
-        d.rounded_rectangle((*k(-25, -172), *k(25, -138)), radius=int(10 * S), outline=kante, width=max(1, int(2.5 * S)))
-        for sx in (-7, 7):
-            d.line((*k(sx, top + 6), *k(sx * 1.25, top + 36)), fill=kante, width=max(1, int(2.2 * S)))
-            ex, ey = k(sx * 1.25, top + 38)
-            d.ellipse((ex - 2.4 * S, ey - 2.4 * S, ex + 2.4 * S, ey + 2.4 * S), fill=kante)
+        if oberteil == 'hoodie':
+            d.rounded_rectangle((*k(-25, -172), *k(25, -138)), radius=int(10 * S), outline=kante, width=max(1, int(2.5 * S)))
+            for sx in (-7, 7):
+                d.line((*k(sx, top + 6), *k(sx * 1.25, top + 36)), fill=kante, width=max(1, int(2.2 * S)))
+                ex, ey = k(sx * 1.25, top + 38)
+                d.ellipse((ex - 2.4 * S, ey - 2.4 * S, ex + 2.4 * S, ey + 2.4 * S), fill=kante)
+        elif oberteil == 'anzug':  # Hemd, Revers, Krawatte
+            d.polygon([k(-16, top + 2), k(16, top + 2), k(0, -170)], fill=(232, 234, 238))
+            d.polygon([k(-3, top + 6), k(3, top + 6), k(5, -176), k(0, -166), k(-5, -176)], fill=(150, 28, 34))
+            for sx in (-1, 1):
+                d.line((*k(sx * 18, top + 2), *k(sx * 4, -168)), fill=kante, width=max(1, int(3 * S)))
+        elif oberteil == 'pyjama':  # Kragen + Knöpfe
+            for sx in (-1, 1):
+                d.polygon([k(0, top + 4), k(sx * 22, top + 2), k(sx * 10, top + 22)], fill=_ton(hoodie, 1.12))
+            for i in range(4):
+                bx, by = k(0, top + 30 + i * 22)
+                d.ellipse((bx - 3 * S, by - 3 * S, bx + 3 * S, by + 3 * S), fill=kante)
+        else:  # Jacke: Reißverschluss + Brusttasche
+            d.line((*k(0, top + 4), *k(0, -118)), fill=kante, width=max(1, int(3 * S)))
+            d.rounded_rectangle((*k(12, -200), *k(34, -182)), radius=int(3 * S), outline=kante, width=max(1, int(2 * S)))
         kx, ky = k(blick * 7, -270 + atem * 0.4)
         fx, fy = kx + blick * 5 * S, ky + 5 * S
         haende_vorm_mund = angst > 0.75
@@ -106,11 +129,25 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
                 _aermel(d, k(*ell), k(*hand_), 18 * S, hoodie, kante)
                 hx, hy = k(hand_[0] - sx * 2, hand_[1] + 2)
                 d.ellipse((hx - 9 * S, hy - 8 * S, hx + 9 * S, hy + 8 * S), fill=haut)
-        d.ellipse((kx - 36 * S, ky - 39 * S, kx + 36 * S, ky + 35 * S), fill=kante)
-        d.ellipse((kx - 33 * S, ky - 36 * S, kx + 33 * S, ky + 32 * S), fill=hoodie)
-        d.ellipse((fx - 22 * S, fy - 26 * S, fx + 22 * S, fy + 24 * S), fill=_ton(hoodie, 0.55))
-        d.ellipse((fx - 20 * S, fy - 23 * S, fx + 20 * S, fy + 23 * S), fill=haut)
-        d.chord((fx - 21 * S, fy - 32 * S, fx + 21 * S, fy - 10 * S), 180, 360, fill=_ton(haut, 0.82))
+        if kopfart == 'kapuze':
+            d.ellipse((kx - 36 * S, ky - 39 * S, kx + 36 * S, ky + 35 * S), fill=kante)
+            d.ellipse((kx - 33 * S, ky - 36 * S, kx + 33 * S, ky + 32 * S), fill=hoodie)
+            d.ellipse((fx - 22 * S, fy - 26 * S, fx + 22 * S, fy + 24 * S), fill=_ton(hoodie, 0.55))
+            d.ellipse((fx - 20 * S, fy - 23 * S, fx + 20 * S, fy + 23 * S), fill=haut)
+            d.chord((fx - 21 * S, fy - 32 * S, fx + 21 * S, fy - 10 * S), 180, 360, fill=_ton(haut, 0.82))
+        else:
+            if kopfart == 'haare':
+                if stil.get('zopf'):  # Pferdeschwanz schwingt mit
+                    zx = fx + (26 - blick * 30) * S
+                    glied(d, (zx, fy - 18 * S), (zx + 8 * S + math.sin(z * 3) * 3 * S, fy + 34 * S), int(15 * S), _ton(haar, 0.9))
+                d.ellipse((fx - 26 * S, fy - 33 * S, fx + 26 * S, fy + 14 * S), fill=haar)
+            d.ellipse((fx - 21 * S, fy - 24 * S, fx + 21 * S, fy + 24 * S), fill=haut)
+            if kopfart == 'haare':
+                d.chord((fx - 23 * S, fy - 34 * S, fx + 23 * S, fy - 2 * S), 180, 360, fill=haar)
+            else:  # Wollmütze mit Umschlag und Bommel
+                d.chord((fx - 25 * S, fy - 44 * S, fx + 25 * S, fy + 2 * S), 180, 360, fill=muetze)
+                d.rounded_rectangle((fx - 25 * S, fy - 18 * S, fx + 25 * S, fy - 8 * S), radius=int(4 * S), fill=_ton(muetze, 0.75))
+                d.ellipse((fx - 9 * S, fy - 56 * S, fx + 9 * S, fy - 38 * S), fill=_ton(muetze, 1.3))
         if gesicht:
             gesicht_malen(d, (fx, fy), S, angst, blick, verdeckt=haende_vorm_mund, schlaf=schlaf)
         if haende_vorm_mund:
@@ -162,6 +199,9 @@ ROTGLUT = leuchten(40, (255, 40, 20), 150)
 
 def schatten(ziel, x, y, s=1.0, wink=0.0, alpha=255, augen=True):
     # langer Schatten: leicht gebückt, rauchige Ränder, lange Arme mit Krallen, rot glühende Augen, breites Grinsen
+    if BOESE[0] != 'schatten':  # andere Bösewichte (Gremlin, Frau in Weiß, Hirsch-Kreatur) in boese.py
+        from boese import ZEICHNER
+        return ZEICHNER[BOESE[0]](ziel, x, y, s, wink, alpha, augen)
     a = -1.25 + wink
     hl = (x - 62 * s, y - 70 * s)
     hr = (x + 30 * s + math.cos(a) * 235 * s, y - 392 * s + math.sin(a) * 235 * s)

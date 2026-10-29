@@ -1,5 +1,5 @@
 {
-  "stimme": "de-DE-FlorianMultilingualNeural",
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
   "tonhoehe": "+0Hz",
   "tempo": "+12%",
   "ton": "schlicht",
@@ -9,11 +9,32 @@
   "fahrgaeste": [],
   "titelbild": "MACH NIEMANDEM AUF",
   "titelbild_gelb": "NIEMANDEM",
+  "boesewicht": "frau",
+  "held": {
+    "farbe": [
+      232,
+      168,
+      194
+    ],
+    "oberteil": "pyjama",
+    "kopf": "haare",
+    "haar": [
+      128,
+      74,
+      34
+    ],
+    "zopf": true,
+    "hose": [
+      200,
+      140,
+      170
+    ]
+  },
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Er steht seit einer Stunde in unserem Garten.",
-      "text": "ER STEHT IN UNSEREM GARTEN.",
+      "sprich": "Sie steht seit einer Stunde in unserem Garten.",
+      "text": "SIE STEHT IN UNSEREM GARTEN.",
       "gelb": "GARTEN",
       "schreck": true,
       "pause": 0.1,
@@ -85,8 +106,8 @@
     },
     {
       "art": "winken",
-      "sprich": "Im Garten steht jemand. Er winkt. Und kommt näher.",
-      "text": "IM GARTEN STEHT JEMAND. ER KOMMT NÄHER.",
+      "sprich": "Im Garten steht eine Frau. Sie winkt. Und kommt näher.",
+      "text": "IM GARTEN STEHT EINE FRAU. SIE KOMMT NÄHER.",
       "gelb": "NÄHER",
       "pause": 0.1
     },
@@ -136,8 +157,8 @@
     },
     {
       "art": "ende",
-      "sprich": "Er war schon die ganze Zeit im Haus.",
-      "text": "ER WAR DIE GANZE ZEIT IM HAUS.",
+      "sprich": "Sie war schon die ganze Zeit im Haus.",
+      "text": "SIE WAR DIE GANZE ZEIT IM HAUS.",
       "gelb": "HAUS",
       "schreck": true,
       "monster": "Ich wohne hier.",
@@ -170,5 +191,6 @@
       "gelb": "MAMA",
       "pause": 0.8
     }
-  ]
+  ],
+  "monsterstimme": "de-DE-KatjaNeural"
 }

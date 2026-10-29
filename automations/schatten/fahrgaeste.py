@@ -26,9 +26,9 @@ def _zeitung_malen(d, box, s, schlagzeile, foto=False):
                 d.line((sx0, yy, sx0 + (x1 - x0) / 2 - 18 * s, yy), fill=(150, 148, 140), width=max(1, int(2 * s)))
 
 
-def zeitungsleser(lage, x, y, t):
+def zeitungsleser(lage, x, y, t, farbe=MANTEL):
     # sitzt, Beine übereinander, Zeitung vor dem Gesicht - blättert ab und zu, sonst völlig ruhig
-    mensch(lage, x, y, farbe=MANTEL, gesicht=False)
+    mensch(lage, x, y, farbe=farbe, gesicht=False)
     wackel = math.sin(t * 0.9) * 2
 
     def zeichne(cv, T):
@@ -44,9 +44,9 @@ def zeitungsleser(lage, x, y, t):
     _ss(lage, (x - 100, y - 360, x + 100, y - 150), zeichne)
 
 
-def schlaeferin(lage, x, y):
+def schlaeferin(lage, x, y, farbe=JACKE):
     # steht an der Haltestange, Kopf zur Seite, Kopfhörer auf - schläft
-    mensch(lage, x, y, s=0.95, sitzen=False, farbe=JACKE, blick=0.6, schlaf=True)
+    mensch(lage, x, y, s=0.95, sitzen=False, farbe=farbe, blick=0.6, schlaf=True)
 
     def zeichne(cv, T):
         d = ImageDraw.Draw(cv)
@@ -61,16 +61,20 @@ def schlaeferin(lage, x, y):
 
 def fahrgaeste_malen(lage, t, liste):
     # 'zeitung' = Mann mit Zeitung auf dem Sitz, 'schlaf' = Frau mit Kopfhörern im Stehen, 'schlaf_sitz' = schläft im Sitzen
-    for wer in liste:
+    # ein Eintrag ist ein Name oder {"wer": ..., "farbe": [r, g, b]}
+    for eintrag in liste:
+        wer = eintrag['wer'] if isinstance(eintrag, dict) else eintrag
+        farbe = tuple(eintrag['farbe']) if isinstance(eintrag, dict) and 'farbe' in eintrag else None
         if wer == 'zeitung':
-            zeitungsleser(lage, 470, 812, t)
+            zeitungsleser(lage, 470, 812, t, farbe or MANTEL)
         elif wer == 'schlaf':
-            schlaeferin(lage, 640, 905)
+            schlaeferin(lage, 640, 905, farbe or JACKE)
         elif wer == 'schlaf_sitz':
-            mensch(lage, 470, 812, farbe=JACKE, blick=0.7, schlaf=True)
+            mensch(lage, 470, 812, farbe=farbe or JACKE, blick=0.7, schlaf=True)
 
 
 def zeitung_nah(im, lt, z=None):
+    z = z or {}
     # Nahaufnahme der Titelseite: "Fahrgast verschwunden" - mit dem Foto der Person und dem Datum von morgen
     zoom = 1 + 0.25 * min(lt / 3, 1)
     papier = Image.new('RGB', (W, H), PAPIER)
@@ -80,12 +84,11 @@ def zeitung_nah(im, lt, z=None):
     d.text((W / 2, 100), 'NACHTBLATT', font=gross, fill=PAPIER, anchor='mm')
     d.text((W / 2, 200), z.get('datum', 'DONNERSTAG, 30. OKTOBER'), font=klein, fill=(120, 30, 30), anchor='mm')
     d.line((30, 228, W - 30, 228), fill=TINTE, width=4)
-    z = z or {}
     for i, zeile in enumerate(z.get('zeilen', ['FAHRGAST IM', 'LETZTEN ZUG', 'VERSCHWUNDEN'])):
         d.text((W / 2, 290 + i * 54), zeile, font=mittel, fill=TINTE, anchor='mm')
     d.rectangle((150, 460, W - 150, 860), fill=(70, 72, 80), outline=TINTE, width=6)
     foto = Image.new('RGBA', (W, H), (0, 0, 0, 0))
-    mensch(foto, W / 2, 1120, s=1.5, sitzen=False, farbe=(205, 208, 214), angst=0.2)
+    mensch(foto, W / 2, 1120, s=1.5, sitzen=False, angst=0.2)  # Foto der Hauptfigur
     grau = foto.convert('LA').convert('RGBA')
     maske = Image.new('L', (W, H), 0)
     ImageDraw.Draw(maske).rectangle((156, 466, W - 156, 854), fill=255)
