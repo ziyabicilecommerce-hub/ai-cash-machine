@@ -176,7 +176,7 @@ def ki_bilder_laden(story, ordner):
             continue
         url = 'https://image.pollinations.ai/prompt/' + urllib.parse.quote(f"{s['ki']}, {stil}") + '?' + urllib.parse.urlencode(
             {'width': W, 'height': H, 'model': 'flux', 'nologo': 'true', 'seed': story.get('ki_seed', 7) + i})
-        for versuch in range(3):
+        for versuch in range(6):  # kostenlos = Tempolimit: bei 402/429 länger warten und nochmal
             try:
                 with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'}), timeout=180) as r:
                     if not r.headers.get_content_type().startswith('image/'):
@@ -185,10 +185,11 @@ def ki_bilder_laden(story, ordner):
                     open(ziel, 'wb').write(r.read())
                     s['_kibild'] = ImageOps.fit(Image.open(ziel).convert('RGB'), (W, H))
                     print(f'KI-Bild {i} ({s["art"]}) ok')
+                    time.sleep(20)
                     break
             except Exception as e:
                 print(f'KI-Bild {i} Versuch {versuch + 1}: {e}')
-                time.sleep(6)
+                time.sleep(30)
 
 
 def ki_szene(s, lt):
