@@ -120,11 +120,10 @@ def bild(s, t, lt):
     if art == 'nachricht':
         handy_nah(im, lt, s.get('absender', 'Mama'), s.get('nachricht', ''))
         return im
-    if art == 'blitz':
+    if art == 'blitz':  # Einstieg: nur das panische Gesicht im roten Flackern - der Bösewicht wird noch nicht verraten
         if int(lt * 10) % 4 == 0:
             return im
-        art = 'ende'
-        lt = 2.0
+        return Image.blend(bild({**s, 'art': 'gesicht', 'augen_bei': 99}, t, lt), Image.new('RGB', (W, H), (120, 0, 0)), 0.3)
     if art == 'gesicht':
         # Nahaufnahme der Person: zitternd, große Augen, schaut sich panisch um - hinter ihr leuchten seine Augen auf
         innenraum(im, t, lt, licht=0.6, fahrt=False)
@@ -252,8 +251,6 @@ def bild(s, t, lt):
     glow = lage.filter(ImageFilter.GaussianBlur(10))
     im.paste(glow, (0, 0), glow)
     im.paste(lage, (0, 0), lage)
-    if s['art'] == 'blitz':
-        im = Image.blend(im, Image.new('RGB', (W, H), (120, 0, 0)), 0.3)
     return im
 
 
@@ -367,7 +364,7 @@ def main():
                 im = Image.blend(im, fr, 0.75)
             if s['art'] == 'fratze' and f < 3:
                 im = Image.blend(im, Image.new('RGB', (W, H), (255, 255, 255)), 0.7 - f * 0.25)
-            if s['art'] == 'ende' and f == int(1.2 * FPS):
+            if s['art'] == 'blitz' and f == int(0.35 * FPS):  # Titelbild ohne Spoiler
                 cover = im.copy()
             fortschritt = t / gesamt
             if fortschritt > 0.45 and s['art'] != 'teil2':
