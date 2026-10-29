@@ -1,8 +1,8 @@
 # Schatten-Horror-Story: Silhouetten im Nachtzug, Erzählerstimme (edge-tts), große Untertitel mit einem gelben Wort.
 # Aufruf: python3 story.py <story.json> <ausgabe-ordner>   ->  <ordner>/video.mp4 und cover.jpg
 # Ohne Netz (oder STUMM=1) wird ohne Stimme gerendert - zum lokalen Testen.
-import asyncio, json, math, os, random, subprocess, sys
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+import asyncio, json, math, os, random, subprocess, sys, time, urllib.parse, urllib.request
+from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
 from ton import tonspur
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT
 
@@ -167,8 +167,50 @@ def warnung(im, text, lt):
         ImageDraw.Draw(im).text((W / 2, 200), text, font=ImageFont.truetype(FONTDATEI, 46), fill=(225, 20, 20), stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
 
 
+def ki_bilder_laden(story, ordner):
+    # Kostenlose KI-Bilder (Pollinations/FLUX, ohne Key) für Szenen mit "ki"-Prompt. Klappt eins nicht,
+    # bleibt die gezeichnete Szene - das Video wird in jedem Fall fertig.
+    stil = story.get('ki_stil', '')
+    for i, s in enumerate(story['szenen']):
+        if not s.get('ki') or os.environ.get('STUMM') == '1':
+            continue
+        url = 'https://image.pollinations.ai/prompt/' + urllib.parse.quote(f"{s['ki']}, {stil}") + '?' + urllib.parse.urlencode(
+            {'width': W, 'height': H, 'model': 'flux', 'nologo': 'true', 'seed': story.get('ki_seed', 7) + i})
+        for versuch in range(3):
+            try:
+                with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'}), timeout=180) as r:
+                    if not r.headers.get_content_type().startswith('image/'):
+                        raise ValueError(r.headers.get_content_type())
+                    ziel = os.path.join(ordner, f'ki-{i:02d}.jpg')
+                    open(ziel, 'wb').write(r.read())
+                    s['_kibild'] = ImageOps.fit(Image.open(ziel).convert('RGB'), (W, H))
+                    print(f'KI-Bild {i} ({s["art"]}) ok')
+                    break
+            except Exception as e:
+                print(f'KI-Bild {i} Versuch {versuch + 1}: {e}')
+                time.sleep(6)
+
+
+def ki_szene(s, lt):
+    # echtes Bild mit langsamer Kamerafahrt; je nach Szene dunkler oder rot flackernd
+    bild_ = s['_kibild']
+    p = min(lt / max(s.get('dauer', 3), 0.5), 1)
+    zoom = 1.02 + 0.12 * p
+    cw, ch = int(W / zoom), int(H / zoom)
+    richtung = (hash(s.get('ki', '')) % 3) - 1
+    x0 = int((W - cw) / 2 + richtung * (W - cw) / 2 * (p - 0.5))
+    im = bild_.crop((x0, (H - ch) // 2, x0 + cw, (H - ch) // 2 + ch)).resize((W, H), Image.BILINEAR)
+    if s['art'] == 'blitz' and int(lt * 10) % 4 == 0:
+        return Image.new('RGB', (W, H), NACHT)
+    if s['art'] in ('dunkel', 'blitz'):
+        im = Image.blend(im, Image.new('RGB', (W, H), (40, 0, 0) if s['art'] == 'blitz' else NACHT), 0.35)
+    return im
+
+
 def bild(s, t, lt):
     art = s['art']
+    if s.get('_kibild') is not None:
+        return ki_szene(s, lt)
     im = Image.new('RGB', (W, H), NACHT)
     lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
     if art == 'teil2':
@@ -313,6 +355,8 @@ def dauer_von(datei):
 def main():
     story, ordner = json.load(open(sys.argv[1], encoding='utf-8')), sys.argv[2]
     os.makedirs(ordner, exist_ok=True)
+    ki_bilder_laden(story, ordner)
+    fratze_ki = next((x['_kibild'] for x in story['szenen'] if x['art'] == 'fratze' and x.get('_kibild') is not None), None)
     stumm = os.environ.get('STUMM') == '1'
     plan, start = [], 0.0
     for i, s in enumerate(story['szenen']):
@@ -369,7 +413,9 @@ def main():
                 im = im.rotate(random.uniform(-1.5, 1.5) if s['art'] == 'fratze' else 0, translate=(random.randint(-st, st), random.randint(-st, st)), fillcolor=NACHT)
                 im = rotverschiebung(im, 10 if s['art'] == 'fratze' else 5)
             if any(0 <= lt - x < 2 / FPS for x in s.get('blitzbild', [])):
-                fr = Image.new('RGB', (W, H)); fratze(fr, 0.3); im = Image.blend(im, fr, 0.75)
+                fr = fratze_ki if fratze_ki is not None else Image.new('RGB', (W, H))
+                if fratze_ki is None: fratze(fr, 0.3)
+                im = Image.blend(im, fr, 0.75)
             if s['art'] == 'fratze' and f < 3:
                 im = Image.blend(im, Image.new('RGB', (W, H), (255, 255, 255)), 0.7 - f * 0.25)
             if s['art'] == 'ende' and f == int(1.2 * FPS):

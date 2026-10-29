@@ -15,7 +15,8 @@
       "schreck": true,
       "pause": 0.1,
       "angst": 0.8,
-      "blick": 1.0
+      "blick": 1.0,
+      "ki": "a tall thin pitch-black shadow creature with glowing red eyes and a wide white grin standing directly behind a young person in a grey hoodie who sits frozen in fear in an empty subway train at night, red emergency light"
     },
     {
       "art": "innen",
@@ -24,7 +25,8 @@
       "gelb": "ALLEIN",
       "naeher": 0.15,
       "angst": 0.1,
-      "pause": 0.1
+      "pause": 0.1,
+      "ki": "a young person in a grey hoodie sitting alone in an empty night subway train, dim flickering fluorescent light, dark windows, eerie silence"
     },
     {
       "art": "handy",
@@ -33,7 +35,8 @@
       "gelb": "MUTTER",
       "naeher": 0.4,
       "angst": 0.35,
-      "pause": 0.1
+      "pause": 0.1,
+      "ki": "close-up of a young person in a grey hoodie looking at a glowing phone screen in an empty dark subway train, worried face lit by the phone"
     },
     {
       "art": "nachricht",
@@ -52,7 +55,8 @@
       "gelb": "WER",
       "angst": 0.72,
       "augen_bei": 1.2,
-      "pause": 0.3
+      "pause": 0.3,
+      "ki": "extreme close-up of the terrified face of a young person in a grey hoodie, wide eyes, sweat, tears, dark subway train behind, cold blue light"
     },
     {
       "art": "spiegel",
@@ -64,7 +68,8 @@
       ],
       "angst": 0.65,
       "blick": 0.9,
-      "pause": 0.3
+      "pause": 0.3,
+      "ki": "reflection in a dark subway train window showing a young person in a grey hoodie and, right behind them, a tall thin pitch-black shadow creature with glowing red eyes and a wide white grin"
     },
     {
       "art": "zettel2",
@@ -84,7 +89,8 @@
       "sprich": "Draußen steht jemand. Er winkt. Und kommt näher.",
       "text": "DRAUSSEN STEHT JEMAND. ER KOMMT NÄHER.",
       "gelb": "NÄHER",
-      "pause": 0.1
+      "pause": 0.1,
+      "ki": "view through a subway train window onto an empty dark platform at midnight, under a single flickering lamp a tall thin pitch-black shadow creature with glowing red eyes and a wide white grin slowly waving, fog"
     },
     {
       "art": "nachricht",
@@ -104,7 +110,8 @@
       "text": "BUMM. EINE HAND AN DER SCHEIBE.",
       "gelb": "HAND",
       "schreck_bei": 0.25,
-      "pause": 0.2
+      "pause": 0.2,
+      "ki": "a pale dead hand slammed flat against a subway train window from outside at night, dark empty platform behind, fog"
     },
     {
       "art": "dunkel",
@@ -115,12 +122,14 @@
       "warnung": "DREH DICH NICHT UM",
       "monster": "Dreh dich um.",
       "monster_text": "DREH DICH UM.",
-      "pause": 0.2
+      "pause": 0.2,
+      "ki": "pitch black subway train, only the faint outline of a young person in a grey hoodie and two glowing red eyes right behind their head"
     },
     {
       "art": "fratze",
       "dauer": 1.2,
-      "schreck": true
+      "schreck": true,
+      "ki": "horrifying close-up face of a pitch-black shadow creature with huge glowing red eyes and a wide grin full of sharp teeth, darkness, jumpscare"
     },
     {
       "art": "ende",
@@ -132,7 +141,8 @@
       "monster_text": "DU BIST DER NÄCHSTE.",
       "angst": 1.0,
       "blick": 1.0,
-      "pause": 0.2
+      "pause": 0.2,
+      "ki": "a young person in a grey hoodie frozen in terror in a subway seat, a tall thin pitch-black shadow creature with glowing red eyes and a wide white grin sitting directly behind them with a long clawed hand on their shoulder, red light"
     },
     {
       "art": "teil2",
@@ -141,5 +151,6 @@
       "gelb": "MAMA",
       "pause": 0.8
     }
-  ]
+  ],
+  "ki_stil": "cinematic horror movie still, ultra realistic, dark, moody, cold blue light with red accents, film grain, shallow depth of field, vertical 9:16, no text, no watermark"
 }
