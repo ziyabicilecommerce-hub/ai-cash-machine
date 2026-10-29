@@ -4,7 +4,7 @@
 import asyncio, json, math, os, random, subprocess, sys
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from ton import tonspur
-from figuren import leuchten, glied, mensch, schatten, hand, ZEIT
+from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
 from ki import ki_bilder_laden, ki_szene
 from aktion import scheibe, decke_schatten
 from fahrgaeste import fahrgaeste_malen, zeitung_nah
@@ -59,7 +59,10 @@ def handy_nah(im, lt, absender, nachricht):
 
 
 def fratze(im, lt):
-    # Jumpscare: riesiger Schattenkopf, Augen, aufgerissenes Maul
+    # Jumpscare: riesiger Schattenkopf, Augen, aufgerissenes Maul (andere Bösewichte: eigene Fratze in boese.py)
+    if BOESE[0] != 'schatten':
+        from boese import FRATZEN
+        return FRATZEN[BOESE[0]](im, lt)
     im.paste(Image.new('RGB', (W, H), (40, 0, 0) if int(lt * 12) % 2 else (0, 0, 0)))
     lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(lage)
@@ -269,6 +272,8 @@ def main():
     story, ordner = json.load(open(sys.argv[1], encoding='utf-8')), sys.argv[2]
     os.makedirs(ordner, exist_ok=True)
     ORT[0] = story.get('ort', 'zug')
+    BOESE[0] = story.get('boesewicht', 'schatten')
+    HELD[0] = story.get('held', {})
     FAHRGAESTE[0] = story.get('fahrgaeste', ['zeitung', 'schlaf'])
     ki_bilder_laden(story, ordner)
     fratze_ki = next((x['_kibild'] for x in story['szenen'] if x['art'] == 'fratze' and x.get('_kibild') is not None), None)

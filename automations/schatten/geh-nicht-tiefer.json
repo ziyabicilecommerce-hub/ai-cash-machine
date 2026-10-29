@@ -7,15 +7,42 @@
   "titel": "Geh nicht tiefer – Teil 1",
   "ort": "wald",
   "fahrgaeste": [
-    "schlaf_sitz"
+    {
+      "wer": "schlaf_sitz",
+      "farbe": [
+        70,
+        112,
+        156
+      ]
+    }
   ],
   "titelbild": "GEH NICHT TIEFER",
   "titelbild_gelb": "TIEFER",
+  "boesewicht": "hirsch",
+  "held": {
+    "farbe": [
+      220,
+      112,
+      40
+    ],
+    "oberteil": "jacke",
+    "kopf": "muetze",
+    "muetze_farbe": [
+      38,
+      58,
+      112
+    ],
+    "hose": [
+      60,
+      72,
+      58
+    ]
+  },
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Er steht seit Stunden zwischen den Bäumen.",
-      "text": "ER STEHT ZWISCHEN DEN BÄUMEN.",
+      "sprich": "Es steht seit Stunden zwischen den Bäumen.",
+      "text": "ES STEHT ZWISCHEN DEN BÄUMEN.",
       "gelb": "BÄUMEN",
       "schreck": true,
       "pause": 0.1,
@@ -74,8 +101,8 @@
     },
     {
       "art": "winken",
-      "sprich": "Zwischen den Bäumen steht jemand. Er winkt. Und kommt näher.",
-      "text": "ZWISCHEN DEN BÄUMEN: ER KOMMT NÄHER.",
+      "sprich": "Zwischen den Bäumen steht etwas. Mit Geweih. Es winkt. Und kommt näher.",
+      "text": "ZWISCHEN DEN BÄUMEN: ES KOMMT NÄHER.",
       "gelb": "NÄHER",
       "pause": 0.1
     },
@@ -93,8 +120,8 @@
     },
     {
       "art": "rennen",
-      "sprich": "Ich renne. Äste peitschen mir ins Gesicht. Er ist direkt hinter mir.",
-      "text": "ICH RENNE. ER IST DIREKT HINTER MIR.",
+      "sprich": "Ich renne. Äste peitschen mir ins Gesicht. Es ist direkt hinter mir.",
+      "text": "ICH RENNE. ES IST DIREKT HINTER MIR.",
       "gelb": "RENNE",
       "pause": 0.1
     },
@@ -116,8 +143,8 @@
     },
     {
       "art": "ende",
-      "sprich": "Er saß die ganze Zeit mit uns am Feuer.",
-      "text": "ER SASS DIE GANZE ZEIT MIT UNS AM FEUER.",
+      "sprich": "Es saß die ganze Zeit mit uns am Feuer.",
+      "text": "ES SASS DIE GANZE ZEIT MIT UNS AM FEUER.",
       "gelb": "FEUER",
       "schreck": true,
       "monster": "Du bist der Nächste.",

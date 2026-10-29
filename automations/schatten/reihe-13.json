@@ -7,10 +7,37 @@
   "titel": "Reihe 13 – Teil 1",
   "ort": "flugzeug",
   "fahrgaeste": [
-    "zeitung"
+    {
+      "wer": "zeitung",
+      "farbe": [
+        96,
+        96,
+        104
+      ]
+    }
   ],
   "titelbild": "ER SITZT AUF DEM FLÜGEL",
   "titelbild_gelb": "FLÜGEL",
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      44,
+      56,
+      92
+    ],
+    "oberteil": "anzug",
+    "kopf": "haare",
+    "haar": [
+      46,
+      34,
+      26
+    ],
+    "hose": [
+      38,
+      44,
+      70
+    ]
+  },
   "szenen": [
     {
       "art": "blitz",
