@@ -2,8 +2,12 @@
 # und der Schatten, der kopfüber von der Decke kommt.
 import math
 import random
-from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter
-from figuren import schatten, hand, W, H
+from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageFont
+from figuren import schatten, hand, mensch, leuchten, W, H
+from fahrgaeste import fahrgaeste_malen
+from orte import innenraum, draussen, rahmen, AUGE, AUGE_LEISE
+
+SCHRIFT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
 
 _r = random.Random(5)
 RISSE = []
@@ -100,14 +104,30 @@ def masken(lage, lt):
         d.ellipse((ende[0] - 26, ende[1], ende[0] + 26, ende[1] + 40), fill=(240, 200, 40, 255), outline=(150, 120, 20, 255), width=3)
 
 
-def fernseher(im, t, lt, dauer):
-    # Haus: der alte Fernseher geht von selbst an - Rauschen, darin taucht sie auf und kommt immer näher
+TV_BOX = (160, 345, 560, 715)
+
+
+def _tv_gehaeuse(im):
     im.paste(Image.new('RGB', im.size, (6, 7, 9)))
     d = ImageDraw.Draw(im)
     d.rectangle((0, 900, W, H), fill=(18, 12, 10))
     d.rounded_rectangle((110, 300, 610, 790), 40, fill=(40, 36, 34), outline=(70, 64, 60), width=8)
     d.rectangle((250, 790, 470, 880), fill=(30, 26, 24))
-    box = (160, 345, 560, 715)
+    return d
+
+
+def _tv_schein(im, t, box):
+    schein = Image.new('RGB', im.size, (120, 130, 150))
+    maske = Image.new('L', im.size, 0)
+    ImageDraw.Draw(maske).ellipse((-80, 150, W + 80, 1200), fill=40 + int(20 * math.sin(t * 40)))
+    im.paste(schein, (0, 0), maske.filter(ImageFilter.GaussianBlur(80)))
+    ImageDraw.Draw(im).rounded_rectangle(box, 18, outline=(20, 18, 16), width=10)
+
+
+def fernseher(im, t, lt, dauer):
+    # Haus: der alte Fernseher geht von selbst an - Rauschen, darin taucht sie auf und kommt immer näher
+    _tv_gehaeuse(im)
+    box = TV_BOX
     rauschen = Image.effect_noise((box[2] - box[0], box[3] - box[1]), 90).convert('RGB')
     if lt > 1.0:  # im Rauschen erscheint sie und kommt näher
         p = min((lt - 1.0) / max(dauer - 1.4, 0.6), 1)
@@ -116,11 +136,7 @@ def fernseher(im, t, lt, dauer):
         figur = lage.crop(box)
         rauschen.paste(figur, (0, 0), figur)
     im.paste(rauschen, box[:2])
-    schein = Image.new('RGB', im.size, (120, 130, 150))
-    maske = Image.new('L', im.size, 0)
-    ImageDraw.Draw(maske).ellipse((-80, 150, W + 80, 1200), fill=40 + int(20 * math.sin(t * 40)))
-    im.paste(schein, (0, 0), maske.filter(ImageFilter.GaussianBlur(80)))
-    d.rounded_rectangle(box, 18, outline=(20, 18, 16), width=10)
+    _tv_schein(im, t, box)
     return im
 
 
@@ -142,3 +158,158 @@ def taschenlampe(im, lt, dauer, hintergrund):
     licht = Image.new('RGB', im.size, (255, 236, 190))  # warmer Schein im Kegel
     dunkel.paste(licht, (0, 0), maske.filter(ImageFilter.GaussianBlur(60)).point(lambda v: v // 7))
     return dunkel
+
+
+# --- eigene Animationen pro Story ---
+
+STEWARDESS = {'farbe': (150, 28, 40), 'oberteil': 'anzug', 'kopf': 'haare', 'haar': (30, 22, 18), 'zopf': True, 'hose': (40, 30, 36)}
+
+
+def zaehlen(im, t, lt, dauer, gaeste):
+    # Flugzeug: die Stewardess geht durch den Gang und zählt - 38, 39, 40 ... 41
+    innenraum(im, t, lt, licht=0.8, fahrt=False)
+    lage = Image.new('RGBA', im.size, (0, 0, 0, 0))
+    fahrgaeste_malen(lage, t, gaeste)
+    p = min(lt / max(dauer * 0.8, 0.5), 1)
+    mensch(lage, 250, 812, angst=0.2 + 0.7 * p, blick=0.8)
+    mensch(lage, 760 - 300 * p, 1010, s=1.15, sitzen=False, lauf=lt * 7 if p < 1 else None, blick=-0.6, stil=STEWARDESS)
+    im.paste(lage, (0, 0), lage)
+    n = 38 + min(int(p * 4), 3)
+    rot = n == 41
+    f = ImageFont.truetype(SCHRIFT, 150 if rot else 120)
+    zit = random.randint(-6, 6) if rot else 0
+    ImageDraw.Draw(im).text((360 + zit, 300 + zit), str(n), font=f, fill=(230, 20, 20) if rot else (240, 240, 240),
+                            stroke_width=8, stroke_fill=(0, 0, 0), anchor='mm')
+    return im
+
+
+def turbulenz(im, t, lt, gaeste):
+    # Flugzeug: alles wackelt, das Licht flackert, eine Gepäckklappe springt auf und ein Koffer fällt
+    flacker = 0.25 if int(lt * 11) % 3 == 0 else 1.0
+    innenraum(im, t, lt, licht=flacker, fahrt=False)
+    d = ImageDraw.Draw(im)
+    auf = min(max(lt - 0.6, 0) / 0.25, 1)
+    d.polygon([(370, 172), (540, 172), (540, 172 + 90 * auf), (370, 172 + 70 * auf)], fill=(60, 62, 76))  # Klappe
+    if auf > 0:
+        d.rectangle((372, 60, 538, 170), fill=(8, 8, 12))
+    if lt > 0.85:
+        fy = 120 + 1400 * (lt - 0.85) ** 2
+        if fy < 1100:
+            d.rounded_rectangle((400, fy, 510, fy + 80), 10, fill=(120, 70, 40), outline=(60, 34, 20), width=4)
+            d.line((440, fy - 12, 470, fy - 12), fill=(60, 34, 20), width=6)
+    lage = Image.new('RGBA', im.size, (0, 0, 0, 0))
+    fahrgaeste_malen(lage, t, gaeste)
+    mensch(lage, 250, 812, angst=1.0, blick=math.sin(lt * 5) * 0.8)
+    im.paste(lage, (0, 0), lage)
+    im = Image.blend(Image.new('RGB', im.size, (4, 4, 8)), im, 0.35 + 0.65 * flacker)
+    return ImageChops.offset(im, int(12 * math.sin(lt * 37)), int(9 * math.sin(lt * 53)))
+
+
+def fluegel(im, t, lt):
+    # Flugzeug: auf dem Flügel taucht einer auf - dann noch einer - dann noch einer, immer näher
+    draussen(im, t, lt, '')
+    lage = Image.new('RGBA', im.size, (0, 0, 0, 0))
+    for i, (x, gr) in enumerate(((560, 0.55), (380, 0.8), (190, 1.05))):
+        a = min(max(lt - i * 1.1, 0) / 0.3, 1)
+        if a > 0:
+            schatten(lage, x, 808 + 60 * x / W, s=gr, wink=0.5 * math.sin(lt * 6 + i), alpha=int(255 * a))
+    im.paste(lage, (0, 0), lage)
+    rahmen(im)
+    return im
+
+
+def live(im, t, lt):
+    # Haus: der Fernseher zeigt das eigene Wohnzimmer live - und hinter dem Sofa taucht sie auf
+    _tv_gehaeuse(im)
+    klein = Image.new('RGB', im.size)
+    innenraum(klein, t, lt, licht=0.7, fahrt=False)
+    lage = Image.new('RGBA', im.size, (0, 0, 0, 0))
+    schatten(lage, 520, 1010, s=1.45, alpha=int(255 * min(max(lt - 0.8, 0) / 1.5, 1)))
+    lage.paste((0, 0, 0, 0), (0, 640, W, H))  # nur Kopf und Schultern schauen über die Lehne
+    mensch(lage, 250, 812, angst=0.6, blick=-0.4)
+    klein.paste(lage, (0, 0), lage)
+    box = TV_BOX
+    bild = klein.crop((20, 280, 700, 910)).resize((box[2] - box[0], box[3] - box[1])).convert('L').convert('RGB')
+    bd = ImageDraw.Draw(bild)
+    for y in range(0, bild.height, 4):  # Bildzeilen wie bei einer alten Kamera
+        bd.line((0, y, bild.width, y), fill=(0, 0, 0), width=1)
+    if int(lt * 2) % 2 == 0:
+        bd.ellipse((18, 18, 40, 40), fill=(230, 20, 20))
+    bd.text((50, 29), 'LIVE', font=ImageFont.truetype(SCHRIFT, 26), fill=(240, 240, 240), anchor='lm')
+    im.paste(bild, box[:2])
+    _tv_schein(im, t, box)
+    return im
+
+
+def klinke(im, t, lt, dauer, klopf_bei):
+    # Haus: es klopft an der Zimmertür, die Klinke geht langsam runter, unter der Tür bewegen sich Schatten
+    im.paste(Image.new('RGB', im.size, (22, 24, 24)))
+    stoss = sum(math.exp(-30 * (lt - (klopf_bei + i * 0.32))) for i in range(3) if lt >= klopf_bei + i * 0.32)
+    dx = int(8 * stoss * math.sin(lt * 90))
+    d = ImageDraw.Draw(im)
+    d.rectangle((150 + dx, 100, 570 + dx, 1160), fill=(86, 58, 40), outline=(50, 34, 24), width=10)
+    for y0, y1 in ((160, 560), (640, 1100)):
+        d.rectangle((210 + dx, y0, 510 + dx, y1), outline=(64, 42, 28), width=8)
+    d.rectangle((150, 1160, 570, 1185), fill=(255, 214, 150))  # Licht unter der Tür
+    fx = 360 + 90 * math.sin(lt * 1.6)
+    for ex in (-35, 35):
+        d.rectangle((fx + ex - 22, 1160, fx + ex + 22, 1185), fill=(10, 8, 6))
+    runter = min(max(lt - klopf_bei - 1.2, 0) / 1.6, 1) * 0.7 + (0.08 * math.sin(lt * 30) if lt > klopf_bei + 1.2 else 0)
+    hx, hy = 490 + dx, 600
+    d.rounded_rectangle((hx - 22, hy - 50, hx + 22, hy + 110), 10, fill=(180, 170, 140))
+    w = 0.1 + runter
+    d.line((hx, hy, hx - 110 * math.cos(w), hy + 110 * math.sin(w)), fill=(205, 195, 160), width=22)
+    d.ellipse((hx - 9, hy + 58, hx + 9, hy + 80), fill=(6, 6, 6))  # Schlüsselloch
+    d.rectangle((hx - 4, hy + 74, hx + 4, hy + 96), fill=(6, 6, 6))
+    if lt > dauer - 1.6:
+        im.paste(AUGE_LEISE, (hx - 14, hy + 69 - 14), AUGE_LEISE)
+    return im
+
+
+def rufen(im, t, lt, gaeste):
+    # Wald: aus der Dunkelheit zwischen den Bäumen kommen Rufe - Schallwellen von dort, wo zwei Augen leuchten
+    innenraum(im, t, lt, licht=1.0, fahrt=False)
+    welle = Image.new('RGBA', im.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(welle)
+    for i in range(4):
+        r = (lt * 140 + i * 70) % 280
+        d.ellipse((600 - r, 420 - r * 0.7, 600 + r, 420 + r * 0.7), outline=(220, 230, 255, int(170 * (1 - r / 280))), width=4)
+    im.paste(welle, (0, 0), welle)
+    if int(lt * 1.5) % 3 != 2:
+        for ex in (-9, 9):
+            im.paste(AUGE_LEISE, (600 + ex - 14, 420 - 14), AUGE_LEISE)
+    lage = Image.new('RGBA', im.size, (0, 0, 0, 0))
+    fahrgaeste_malen(lage, t, gaeste)
+    mensch(lage, 250, 812, angst=0.6, blick=1.0)
+    im.paste(lage, (0, 0), lage)
+    return im
+
+
+def zelt(im, t, lt, dauer):
+    # Wald: im Zelt, die Taschenlampe an - draußen geht etwas mit Geweih ums Zelt, sein Schatten wandert über die Plane
+    im.paste(Image.new('RGB', im.size, (10, 6, 4)))
+    d = ImageDraw.Draw(im)
+    plane = [(-40, 1240), (360, 120), (760, 1240)]
+    d.polygon(plane, fill=(150, 78, 30))
+    d.line((360, 120, 360, 1240), fill=(110, 56, 22), width=6)  # Reißverschluss
+    for y in range(200, 1240, 40):
+        d.line((352, y, 368, y + 10), fill=(90, 46, 18), width=3)
+    licht = leuchten(360, (255, 210, 140), 120)
+    im.paste(licht, (360 - 360, 1000 - 360), licht)
+    halt = dauer - 1.3
+    x = -160 + 520 * min(lt / max(halt, 0.5), 1)
+    tmp = Image.new('RGBA', im.size, (0, 0, 0, 0))
+    schatten(tmp, x, 1150, s=1.5 + (0.35 * min((lt - halt) / 0.8, 1) if lt > halt else 0), augen=False)
+    silhouette = Image.new('RGBA', im.size, (20, 8, 2, 255))
+    maske = ImageChops.multiply(tmp.split()[3].point(lambda v: int(v * 0.85)).filter(ImageFilter.GaussianBlur(8)), _zeltmaske(plane))
+    im.paste(silhouette, (0, 0), maske)
+    lage = Image.new('RGBA', im.size, (0, 0, 0, 0))
+    mensch(lage, 330, 1300, s=1.3, angst=0.9, blick=max(-1, min(1, (x - 330) / 300)))
+    im.paste(lage, (0, 0), lage)
+    return im
+
+
+def _zeltmaske(plane):
+    m = Image.new('L', (W, H), 0)
+    ImageDraw.Draw(m).polygon(plane, fill=255)
+    return m

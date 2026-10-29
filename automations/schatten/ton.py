@@ -37,7 +37,13 @@ def tonspur(plan, gesamt, ordner, schlicht=False):
                 glas.append(s['start'] + s.get('schreck_bei', 1.0))
             if s['art'] in ('masken', 'taschenlampe'):  # dumpfer Schlag beim Strom-Aus / Klick der Lampe
                 teile.append(f"0.6*gte(t,{s['start']:.2f})*exp(-12*max(t-{s['start']:.2f},0))*sin(2*PI*70*t)")
-            if s['art'] == 'klopfen':  # drei dumpfe Klopfer an Tür/Fenster
+            if s['art'] == 'turbulenz':  # Dröhnen und Rütteln
+                a, e = s['start'], s['start'] + s['dauer']
+                teile.append(f"0.5*between(t,{a:.2f},{e:.2f})*(0.6+0.4*sin(2*PI*7*t))*sin(2*PI*36*t)")
+            if s['art'] == 'zelt':  # langsame Schritte ums Zelt
+                a, e = s['start'], s['start'] + s['dauer'] - 1.3
+                teile.append(f"0.45*between(t,{a:.2f},{e:.2f})*exp(-22*mod(t-{a:.2f},0.75))*sin(2*PI*58*t)")
+            if s['art'] in ('klopfen', 'klinke'):  # drei dumpfe Klopfer an Tür/Fenster
                 for i in range(3):
                     k = s['start'] + s.get('schreck_bei', 0.55) + i * 0.32
                     teile.append(f"0.8*gte(t,{k:.2f})*exp(-28*max(t-{k:.2f},0))*sin(2*PI*85*t)")

@@ -58,7 +58,7 @@
       "pause": 0.1
     },
     {
-      "art": "innen",
+      "art": "rufen",
       "sprich": "Dann ruft jemand aus dem Wald. Mit seiner Stimme.",
       "text": "JEMAND RUFT. MIT SEINER STIMME.",
       "gelb": "STIMME",
@@ -117,11 +117,12 @@
       "pause": 0.4
     },
     {
-      "art": "dunkel",
-      "sprich": "Im Dunkeln setzt sich jemand zu mir ans Feuer. Er riecht nach Erde.",
-      "text": "JEMAND SETZT SICH ZU MIR. ER RIECHT NACH ERDE.",
-      "gelb": "ERDE",
-      "dauer": 4.4,
+      "art": "zelt",
+      "sprich": "Ich krieche ins Zelt. Draußen geht etwas ums Zelt herum. Langsam. Dann bleibt es stehen.",
+      "text": "ETWAS GEHT UMS ZELT. DANN BLEIBT ES STEHEN.",
+      "gelb": "ZELT",
+      "stille": true,
+      "dauer": 6.0,
       "pause": 0.2
     },
     {
