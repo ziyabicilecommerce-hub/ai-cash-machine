@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-28T09:57:56.291Z",
+ "stand": "2026-10-29T10:20:26.911Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,7 +9,7 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 4,
+     "value": 0,
      "unit": ""
     },
     {
@@ -19,40 +19,11 @@
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 4,
+     "value": 0,
      "unit": ""
     }
    ],
-   "rows": [
-    {
-     "Aussage": "DeskRebel Stützpunkt – Liegestützgriffe in S-Form",
-     "Beleglink": "https://www.deskrebel.store/products/pushpro-liegestuetzgriffe",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Purivelle Pala – Silikon-Klopfpaddel zur Selbstmassage",
-     "Beleglink": "https://purivelle.store/products/taprelax-klopfpaddel",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Beleglink": "https://www.deskrebel.store",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Beleglink": "https://purivelle.store",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    }
-   ],
+   "rows": [],
    "notes": [
     "Beleglinks werden nicht abgerufen. Die Markierung dokumentiert deine eigene Prüfung; Inhalt und Rechtswirksamkeit werden nicht bestätigt."
    ]
@@ -64,12 +35,12 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 4,
+     "value": 0,
      "unit": ""
     },
     {
      "label": "Quellenabdeckung",
-     "value": 100,
+     "value": null,
      "unit": "%"
     },
     {
@@ -78,32 +49,7 @@
      "unit": ""
     }
    ],
-   "rows": [
-    {
-     "Aussage": "DeskRebel Stützpunkt – Liegestützgriffe in S-Form",
-     "Quellenverweis": "https://www.deskrebel.store/products/pushpro-liegestuetzgriffe",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Purivelle Pala – Silikon-Klopfpaddel zur Selbstmassage",
-     "Quellenverweis": "https://purivelle.store/products/taprelax-klopfpaddel",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von DeskRebel",
-     "Quellenverweis": "https://www.deskrebel.store",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Quellenverweis": "https://purivelle.store",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    }
-   ],
+   "rows": [],
    "notes": [
     "Abdeckung zählt jeden nichtleeren Verweis. Format, Inhalt und Richtigkeit werden getrennt geprüft; kein Quellenabruf."
    ]
@@ -206,7 +152,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-10-28",
+     "value": "2026-10-29",
      "unit": ""
     }
    ],
