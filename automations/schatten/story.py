@@ -7,110 +7,17 @@ from ton import tonspur
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT
 from ki import ki_bilder_laden, ki_szene
 from aktion import scheibe, decke_schatten
-from fahrgaeste import zeitungsleser, schlaeferin, zeitung_nah
+from fahrgaeste import fahrgaeste_malen, zeitung_nah
+from orte import ORT, HIMMEL, NEBEL, AUGE, AUGE_LEISE, HANDYLICHT, AUGE_GROSS, sterne, innenraum, draussen, rahmen, SPIEGELBOX
 
 W, H, FPS = 720, 1280, 30
+FAHRGAESTE = [['zeitung', 'schlaf']]  # pro Story: wer sonst noch da ist
 FONTDATEI = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
 FONT, KLEIN, FONT_POP = ImageFont.truetype(FONTDATEI, 60), ImageFont.truetype(FONTDATEI, 34), ImageFont.truetype(FONTDATEI, 64)
 WEISS, GELB, HAUT, NACHT = (245, 245, 245), (255, 212, 0), (214, 219, 230), (2, 3, 8)
-random.seed(11)
-STERNE = [(random.randrange(W * 2), random.randrange(H), random.random() * 6.3, random.choice([1, 1, 2])) for _ in range(140)]
-
-
-def verlauf(oben, unten):
-    im = Image.new('RGB', (1, H))
-    for y in range(H):
-        k = y / H
-        im.putpixel((0, y), tuple(int(oben[i] + (unten[i] - oben[i]) * k) for i in range(3)))
-    return im.resize((W, H))
-
-
-HIMMEL, WAND = verlauf((10, 16, 40), (1, 2, 6)), verlauf((22, 26, 40), (8, 9, 14))
-LAMPE, AUGE, NEBEL, STREIF = leuchten(220, (255, 214, 150), 150), leuchten(18, (255, 255, 255)), leuchten(260, (170, 180, 205), 45), leuchten(60, (255, 190, 90), 200)
-AUGE_LEISE, HANDYLICHT, AUGE_GROSS = leuchten(14, (255, 255, 255), 70), leuchten(90, (170, 200, 255), 170), leuchten(120, (255, 255, 255))
-
-
-def sterne(d, t, dx=0.0, box=None):
-    for x, y, p, r in STERNE:
-        xx = (x - dx) % (W * 2) - W / 2
-        if box and not (box[0] < xx < box[2] and box[1] < y < box[3]):
-            continue
-        a = int(90 + 140 * (0.5 + 0.5 * math.sin(t * 2 + p)))
-        d.ellipse((xx - r, y - r, xx + r, y + r), fill=(a, a, min(255, a + 25)))
-
-
-def zug_innen(im, t, lt, licht=1.0, fahrt=True, augen_im_fenster=False):
-    im.paste(WAND)
-    d = ImageDraw.Draw(im)
-    for fx in (40, 380):
-        box = (fx, 180, fx + 300, 470)
-        d.rounded_rectangle(box, 28, fill=(4, 6, 16))
-        sterne(d, t, dx=t * 420 if fahrt else 0, box=box)
-        if fahrt:
-            for i in range(3):
-                sx = (fx + 330 - ((t * 900 + i * 260 + fx) % 420))
-                if box[0] < sx < box[2] - 40:
-                    im.paste(STREIF, (int(sx) - 60, 260 + i * 50 - 60), STREIF)
-        d.rounded_rectangle(box, 28, outline=(120, 128, 150), width=6)
-    if augen_im_fenster:  # verstecktes Detail zum Nochmal-Anschauen: er schaut schon die ganze Zeit rein
-        for ex in (-9, 9):
-            im.paste(AUGE_LEISE, (560 + ex - 14, 330 - 14), AUGE_LEISE)
-    for fx in (40, 380):  # Spiegelung schräg über die Scheibe
-        d.line((fx + 40, 470, fx + 150, 190), fill=(60, 66, 86), width=5)
-        d.line((fx + 70, 470, fx + 170, 210), fill=(38, 42, 58), width=3)
-    hell = int(200 * licht)
-    d.rectangle((0, 0, W, 96), fill=(12, 13, 20))
-    d.rectangle((150, 66, 570, 88), fill=(hell, hell, min(255, hell + 20)))
-    if licht > 0.3:
-        glanz = LAMPE.resize((520, 260))
-        im.paste(glanz, (100, -60), glanz)
-    d.line((30, 132, 690, 132), fill=(150, 155, 170), width=6)  # Haltestange mit Griffen
-    for i, gx in enumerate(range(80, 680, 110)):
-        sw = math.sin(t * 1.7 + i) * 6
-        d.line((gx, 132, gx + sw, 168), fill=(120, 125, 140), width=4)
-        d.ellipse((gx + sw - 14, 166, gx + sw + 14, 194), outline=(190, 195, 210), width=5)
-    d.polygon([(0, 900), (W, 900), (W + 260, H), (-260, H)], fill=(16, 17, 25))  # Boden in Perspektive
-    for i in range(1, 7):
-        yy = 900 + (H - 900) * (i / 7) ** 1.6
-        d.line((0, yy, W, yy), fill=(22, 24, 34), width=2)
-    for xx in range(-260, W + 300, 120):
-        d.line((W / 2 + (xx - W / 2) * 0.55, 900, xx, H), fill=(22, 24, 34), width=2)
-    d.rounded_rectangle((60, 520, 660, 712), 26, fill=(28, 33, 50))  # Rückenlehne mit Polstern
-    for nx in (260, 460):
-        d.line((nx, 530, nx, 700), fill=(20, 24, 38), width=4)
-    d.line((76, 532, 644, 532), fill=(44, 50, 72), width=3)
-    d.rounded_rectangle((52, 698, 668, 782), 20, fill=(36, 42, 64))  # Sitzfläche
-    d.line((70, 704, 650, 704), fill=(58, 66, 92), width=4)
-    d.rectangle((70, 782, 650, 820), fill=(18, 20, 30))
-    d.line((690, 90, 690, 900), fill=(140, 145, 160), width=10)
-    d.line((686, 90, 686, 900), fill=(200, 205, 220), width=2)
-
-
-def bahnsteig(im, t, lt, kz):
-    im.paste(HIMMEL)
-    d = ImageDraw.Draw(im)
-    sterne(d, t)
-    d.rectangle((0, 830, W, H), fill=(18, 19, 26))
-    d.line((0, 830, W, 830), fill=(200, 200, 210), width=4)
-    d.line((470, 830, 470, 360), fill=(60, 62, 72), width=12)
-    im.paste(LAMPE, (470 - 220, 360 - 120), LAMPE)
-    d.rectangle((130, 420, 330, 480), fill=(30, 32, 44), outline=(190, 190, 200), width=4)
-    d.text((230, 450), kz, font=KLEIN, fill=WEISS, anchor='mm')
-    for i in range(3):
-        nx = int((t * 30 + i * 300) % (W + 500)) - 400
-        im.paste(NEBEL, (nx, 650 + i * 40), NEBEL)
-
-
-def fensterrahmen(im):
-    d = ImageDraw.Draw(im)
-    d.rectangle((0, 0, W, 120), fill=(16, 18, 28)); d.rectangle((0, 1060, W, H), fill=(16, 18, 28))
-    d.rectangle((0, 0, 50, H), fill=(16, 18, 28)); d.rectangle((W - 50, 0, W, H), fill=(16, 18, 28))
-    d.rounded_rectangle((50, 120, W - 50, 1060), 40, outline=(130, 136, 156), width=10)
-
-
 def zettel(im, t, lt, nah, zeilen):
-    bahnsteig(im, t, lt, '? ? ?')
-    fensterrahmen(im)
+    draussen(im, t, lt, '? ? ?')
+    rahmen(im, fuer_zettel=True)
     z = 1.0 + (0.4 * min(lt / 2.5, 1) if nah else 0)
     blatt = Image.new('RGBA', (int(430 * z), int(80 * z + 62 * z * len(zeilen))), (228, 222, 204, 255))
     f = ImageFont.truetype(FONTDATEI, int(40 * z))
@@ -206,7 +113,7 @@ def bild(s, t, lt):
         fratze(im, lt)
         return im
     if art == 'zeitung_nah':
-        return zeitung_nah(im, lt)
+        return zeitung_nah(im, lt, s.get('zeitung'))
     if art == 'nachricht':
         handy_nah(im, lt, s.get('absender', 'Mama'), s.get('nachricht', ''))
         return im
@@ -217,7 +124,7 @@ def bild(s, t, lt):
         lt = 2.0
     if art == 'gesicht':
         # Nahaufnahme der Person: zitternd, große Augen, schaut sich panisch um - hinter ihr leuchten seine Augen auf
-        zug_innen(im, t, lt, licht=0.6, fahrt=False)
+        innenraum(im, t, lt, licht=0.6, fahrt=False)
         im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.5)
         if lt > s.get('augen_bei', 1.4):
             for ex in (-12, 12):
@@ -239,20 +146,18 @@ def bild(s, t, lt):
             im.paste(a, (int(ax - a.width / 2), int(ay - a.height / 2)), a)
         return Image.blend(im, Image.new('RGB', (W, H), NACHT), 0.3 + 0.3 * math.sin(lt * 3) ** 2)
     if art in ('innen', 'ende', 'handy', 'spiegel'):
-        zug_innen(im, t, lt, augen_im_fenster=(art == 'innen'), fahrt=(art != 'spiegel'))
+        innenraum(im, t, lt, augen_im_fenster=(art == 'innen'), fahrt=(art != 'spiegel'))
         if art == 'spiegel':
             geist = Image.new('RGBA', (W, H), (0, 0, 0, 0))
             mensch(geist, 520, 470, s=0.55, farbe=(150, 160, 185), gesicht=False)
             schatten(geist, 565, 470, s=0.5, alpha=int(230 * min(lt / 2.0, 1)))
             maske = Image.new('L', (W, H), 0)
-            ImageDraw.Draw(maske).rounded_rectangle((386, 186, 674, 464), 24, fill=110)
+            ImageDraw.Draw(maske).rounded_rectangle(SPIEGELBOX.get(ORT[0], SPIEGELBOX['zug']), 24, fill=110)
             im.paste(geist, (0, 0), Image.composite(geist.split()[3], Image.new('L', (W, H), 0), maske).point(lambda v: min(v, 110)))
         if s.get('naeher') is not None:  # er sitzt schon die ganze Zeit hinter ihr und kommt näher
             v = s['naeher']
             schatten(lage, 560 - 150 * v, 905, s=1.0 + 0.4 * v, alpha=int(35 + 120 * v), augen=v > 0.35)
-        if s.get('fahrgaeste', True):  # die anderen merken nichts
-            zeitungsleser(lage, 470, 812, t)
-            schlaeferin(lage, 640, 905)
+        fahrgaeste_malen(lage, t, s.get('fahrgaeste', FAHRGAESTE[0]))  # die anderen merken nichts
         mensch(lage, 250, 812, angst=s.get('angst', 0.0), blick=s.get('blick', 0.0))
         if art == 'handy':
             zit = random.randint(-3, 3) if (lt % 0.8) < 0.3 else 0
@@ -261,35 +166,34 @@ def bild(s, t, lt):
         if art == 'ende' and lt > 0.5:
             schatten(lage, 520, 905, s=1.45, wink=3.7, alpha=int(255 * min((lt - 0.5) / 0.3, 1)))
     elif art in ('station', 'schatten', 'winken', 'leer'):
-        bahnsteig(im, t, lt, '00:00' if art == 'station' else '? ? ?')
+        draussen(im, t, lt, '00:00' if art == 'station' else '? ? ?')
         if art == 'schatten':
             schatten(lage, 480, 830, s=0.95)
         if art == 'winken':
             nah = 0.95 + 0.45 * min(lt / 3.0, 1)
             schatten(lage, 450, 830 + 140 * (nah - 0.95), s=nah, wink=0.55 * math.sin(lt * 7))
         im.paste(lage, (0, 0), lage); lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
-        fensterrahmen(im)
+        rahmen(im)
     elif art == 'klopfen':
-        bahnsteig(im, t, lt, '? ? ?')
-        fensterrahmen(im)
+        draussen(im, t, lt, '? ? ?')
+        rahmen(im)
         if lt >= s.get('schreck_bei', 0.55):
             hand(im, 360, 560, min((lt - s.get('schreck_bei', 0.55)) / 0.08, 1))
     elif art == 'scheibe':
-        bahnsteig(im, t, lt, '? ? ?')
-        fensterrahmen(im)
+        draussen(im, t, lt, '? ? ?')
+        rahmen(im)
         scheibe(im, lt, schlag=s.get('schlag', 0.25), bruch=s.get('schreck_bei', 1.0))
     elif art == 'rennen':
         flacker = 0.25 if int(lt * 9) % 4 == 0 else 1.0
-        zug_innen(im, t * 2.2, lt, licht=flacker)
+        innenraum(im, t * 2.2, lt, licht=flacker)
         p = min(lt / max(s.get('dauer', 3), 1), 1)
         px = 170 + 330 * p
         schatten(lage, px - 250 + 40 * math.sin(lt * 6), 905, s=1.2, wink=1.25 + 0.15 * math.sin(lt * 8))
         mensch(lage, px, 905, s=1.12, sitzen=False, angst=0.7, blick=-0.8, lauf=lt * 14)
         im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.35 + 0.65 * flacker)
     elif art == 'decke':
-        zug_innen(im, t, lt, licht=0.55, fahrt=False)
-        zeitungsleser(lage, 470, 812, t)
-        schlaeferin(lage, 640, 905)
+        innenraum(im, t, lt, licht=0.55, fahrt=False)
+        fahrgaeste_malen(lage, t, s.get('fahrgaeste', FAHRGAESTE[0]))
         mensch(lage, 250, 812, angst=min(1.0, 0.5 + lt / 3), blick=0.4)
         decke_schatten(lage, 430, min(max((lt - 0.6) / 1.4, 0), 1) ** 0.7)
     elif art in ('zettel', 'zettel2'):
@@ -308,7 +212,7 @@ def bild(s, t, lt):
             d.rounded_rectangle((x0 + 60, 250, x1 - 60, 560), 20, fill=(10, 12, 20))
     elif art == 'licht':
         flacker = 1.0 if lt < 0.6 else (0.0 if lt > 1.3 else float(int(lt * 20) % 3 != 0))
-        zug_innen(im, t, lt, licht=flacker, fahrt=False)
+        innenraum(im, t, lt, licht=flacker, fahrt=False)
         mensch(lage, 250, 812, angst=s.get('angst', 0.6))
         im.paste(lage, (0, 0), lage); lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
         im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.15 + 0.85 * flacker)
@@ -364,6 +268,8 @@ def dauer_von(datei):
 def main():
     story, ordner = json.load(open(sys.argv[1], encoding='utf-8')), sys.argv[2]
     os.makedirs(ordner, exist_ok=True)
+    ORT[0] = story.get('ort', 'zug')
+    FAHRGAESTE[0] = story.get('fahrgaeste', ['zeitung', 'schlaf'])
     ki_bilder_laden(story, ordner)
     fratze_ki = next((x['_kibild'] for x in story['szenen'] if x['art'] == 'fratze' and x.get('_kibild') is not None), None)
     stumm = os.environ.get('STUMM') == '1'
