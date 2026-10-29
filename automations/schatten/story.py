@@ -1,10 +1,12 @@
 # Schatten-Horror-Story: Silhouetten im Nachtzug, Erzählerstimme (edge-tts), große Untertitel mit einem gelben Wort.
 # Aufruf: python3 story.py <story.json> <ausgabe-ordner>   ->  <ordner>/video.mp4 und cover.jpg
 # Ohne Netz (oder STUMM=1) wird ohne Stimme gerendert - zum lokalen Testen.
-import asyncio, json, math, os, random, subprocess, sys, time, urllib.parse, urllib.request
-from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
+import asyncio, json, math, os, random, subprocess, sys
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from ton import tonspur
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT
+from ki import ki_bilder_laden, ki_szene
+from aktion import scheibe, decke_schatten
 
 W, H, FPS = 720, 1280, 30
 FONTDATEI = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
@@ -190,49 +192,6 @@ def warnung(im, text, lt):
         ImageDraw.Draw(im).text((W / 2, 200), text, font=ImageFont.truetype(FONTDATEI, 46), fill=(225, 20, 20), stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
 
 
-def ki_bilder_laden(story, ordner):
-    # Kostenlose KI-Bilder (Pollinations/FLUX, ohne Key) für Szenen mit "ki"-Prompt. Klappt eins nicht,
-    # bleibt die gezeichnete Szene - das Video wird in jedem Fall fertig.
-    if not story.get('ki_bilder', True):  # aus = gezeichnete Figuren
-        return
-    stil = story.get('ki_stil', '')
-    for i, s in enumerate(story['szenen']):
-        if not s.get('ki') or os.environ.get('STUMM') == '1':
-            continue
-        url = 'https://image.pollinations.ai/prompt/' + urllib.parse.quote(f"{s['ki']}, {stil}") + '?' + urllib.parse.urlencode(
-            {'width': W, 'height': H, 'model': 'flux', 'nologo': 'true', 'seed': story.get('ki_seed', 7) + i})
-        for versuch in range(6):  # kostenlos = Tempolimit: bei 402/429 länger warten und nochmal
-            try:
-                with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'}), timeout=180) as r:
-                    if not r.headers.get_content_type().startswith('image/'):
-                        raise ValueError(r.headers.get_content_type())
-                    ziel = os.path.join(ordner, f'ki-{i:02d}.jpg')
-                    open(ziel, 'wb').write(r.read())
-                    s['_kibild'] = ImageOps.fit(Image.open(ziel).convert('RGB'), (W, H))
-                    print(f'KI-Bild {i} ({s["art"]}) ok')
-                    time.sleep(20)
-                    break
-            except Exception as e:
-                print(f'KI-Bild {i} Versuch {versuch + 1}: {e}')
-                time.sleep(30)
-
-
-def ki_szene(s, lt):
-    # echtes Bild mit langsamer Kamerafahrt; je nach Szene dunkler oder rot flackernd
-    bild_ = s['_kibild']
-    p = min(lt / max(s.get('dauer', 3), 0.5), 1)
-    zoom = 1.02 + 0.12 * p
-    cw, ch = int(W / zoom), int(H / zoom)
-    richtung = (hash(s.get('ki', '')) % 3) - 1
-    x0 = int((W - cw) / 2 + richtung * (W - cw) / 2 * (p - 0.5))
-    im = bild_.crop((x0, (H - ch) // 2, x0 + cw, (H - ch) // 2 + ch)).resize((W, H), Image.BILINEAR)
-    if s['art'] == 'blitz' and int(lt * 10) % 4 == 0:
-        return Image.new('RGB', (W, H), NACHT)
-    if s['art'] in ('dunkel', 'blitz'):
-        im = Image.blend(im, Image.new('RGB', (W, H), (40, 0, 0) if s['art'] == 'blitz' else NACHT), 0.35)
-    return im
-
-
 def bild(s, t, lt):
     art = s['art']
     if s.get('_kibild') is not None:
@@ -309,6 +268,22 @@ def bild(s, t, lt):
         fensterrahmen(im)
         if lt >= s.get('schreck_bei', 0.55):
             hand(im, 360, 560, min((lt - s.get('schreck_bei', 0.55)) / 0.08, 1))
+    elif art == 'scheibe':
+        bahnsteig(im, t, lt, '? ? ?')
+        fensterrahmen(im)
+        scheibe(im, lt, schlag=s.get('schlag', 0.25), bruch=s.get('schreck_bei', 1.0))
+    elif art == 'rennen':
+        flacker = 0.25 if int(lt * 9) % 4 == 0 else 1.0
+        zug_innen(im, t * 2.2, lt, licht=flacker)
+        p = min(lt / max(s.get('dauer', 3), 1), 1)
+        px = 170 + 330 * p
+        schatten(lage, px - 250 + 40 * math.sin(lt * 6), 905, s=1.2, wink=1.25 + 0.15 * math.sin(lt * 8))
+        mensch(lage, px, 905, s=1.12, sitzen=False, angst=0.7, blick=-0.8, lauf=lt * 14)
+        im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.35 + 0.65 * flacker)
+    elif art == 'decke':
+        zug_innen(im, t, lt, licht=0.55, fahrt=False)
+        mensch(lage, 250, 812, angst=min(1.0, 0.5 + lt / 3), blick=0.4)
+        decke_schatten(lage, 430, min(max((lt - 0.6) / 1.4, 0), 1) ** 0.7)
     elif art in ('zettel', 'zettel2'):
         zettel(im, t, lt, art == 'zettel2', s.get('zettel', ['STEIG', 'NICHT AUS']))
     elif art == 'tueren':

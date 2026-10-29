@@ -107,25 +107,31 @@
       "monster_text": "ICH WARTE AUF DICH."
     },
     {
-      "art": "klopfen",
-      "sprich": "Bumm. Eine Hand knallt gegen die Scheibe.",
-      "text": "BUMM. EINE HAND AN DER SCHEIBE.",
-      "gelb": "HAND",
-      "schreck_bei": 0.25,
-      "pause": 0.2,
-      "ki": "a pale dead hand slammed flat against a subway train window from outside at night, dark empty platform behind, fog"
+      "art": "scheibe",
+      "sprich": "Dann knallt eine Klaue gegen die Scheibe. Und noch mal. Das Glas zerspringt!",
+      "text": "DIE SCHEIBE ZERSPRINGT!",
+      "gelb": "ZERSPRINGT",
+      "schlag": 0.3,
+      "schreck_bei": 2.4,
+      "pause": 0.4
     },
     {
-      "art": "dunkel",
-      "sprich": "Das Licht geht aus. Hinter mir flüstert jemand meinen Namen.",
-      "text": "LICHT AUS. HINTER MIR FLÜSTERT JEMAND ...",
-      "gelb": "HINTER",
+      "art": "rennen",
+      "sprich": "Ich renne. Wagen für Wagen. Er ist direkt hinter mir.",
+      "text": "ICH RENNE. ER IST DIREKT HINTER MIR.",
+      "gelb": "RENNE",
+      "pause": 0.1
+    },
+    {
+      "art": "decke",
+      "sprich": "Plötzlich ist es still. Etwas tropft auf mein Gesicht. Von oben.",
+      "text": "ETWAS TROPFT AUF MICH. VON OBEN.",
+      "gelb": "OBEN",
       "stille": true,
-      "warnung": "DREH DICH NICHT UM",
-      "monster": "Dreh dich um.",
-      "monster_text": "DREH DICH UM.",
-      "pause": 0.2,
-      "ki": "pitch black subway train, only the faint outline of a young person in a grey hoodie and two glowing red eyes right behind their head"
+      "warnung": "NICHT HOCHSCHAUEN",
+      "monster": "Schau nach oben.",
+      "monster_text": "SCHAU NACH OBEN.",
+      "pause": 0.3
     },
     {
       "art": "fratze",

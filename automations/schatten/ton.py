@@ -27,8 +27,17 @@ def tonspur(plan, gesamt, ordner, schlicht=False):
         if s['art'] == 'fratze':
             teile.append(f"0.6*gte(t,{a})*exp(-2.2*max(t-{a},0))*sin(2*PI*(1300+700*sin(2*PI*11*t))*t)")
             teile.append(f"0.5*gte(t,{a})*exp(-2.2*max(t-{a},0))*sin(2*PI*(1750+500*sin(2*PI*17*t))*t)")
+    glas = []
     if schlicht:
         teile = ['0'] + [f"0.9*gte(t,{s['start']:.2f})*exp(-5*max(t-{s['start']:.2f},0))*sin(2*PI*42*t)" for s in plan if s['art'] == 'fratze']
+        for s in plan:
+            if s['art'] == 'scheibe':  # Handschlag, dann Bruch: dumpfer Schlag + Glasklirren
+                for k, st in ((s['start'] + s.get('schlag', 0.25), 0.6), (s['start'] + s.get('schreck_bei', 1.0), 1.0)):
+                    teile.append(f"{st}*gte(t,{k:.2f})*exp(-7*max(t-{k:.2f},0))*sin(2*PI*55*t)")
+                glas.append(s['start'] + s.get('schreck_bei', 1.0))
+            if s['art'] == 'rennen':  # Schritte
+                a, e = s['start'], s['start'] + s['dauer']
+                teile.append(f"0.55*between(t,{a:.2f},{e:.2f})*exp(-30*mod(t-{a:.2f},0.3))*sin(2*PI*62*t)")
     stille = [s for s in plan if s.get('stille')]
     leise = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in stille) or '0'
     atem = '+'.join(f"between(t,{s['start']:.2f},{s['start'] + s['dauer']:.2f})" for s in plan if s.get('atem')) or '0'
@@ -43,6 +52,10 @@ def tonspur(plan, gesamt, ordner, schlicht=False):
     mix = ['[b]', '[n]'] if schlicht else ['[b]', '[n]', '[w]', '[at]']
     if schlicht:
         filter_ = filter_.split('[n];')[0] + '[n];'
+        if glas:
+            huelle = '+'.join(f"gte(t,{g:.2f})*exp(-3.5*max(t-{g:.2f},0))" for g in glas)
+            filter_ += f"[2]highpass=f=2200,volume='1.6*({huelle})':eval=frame[gl];"
+            mix.append('[gl]')
     for i, s in enumerate(x for x in plan if x['datei']):
         eingaben += ['-i', s['datei']]
         ms = int(s['start'] * 1000) + 120
