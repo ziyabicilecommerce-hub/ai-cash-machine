@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from ton import tonspur
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
 from ki import ki_bilder_laden, ki_szene
-from aktion import scheibe, decke_schatten
+from aktion import scheibe, decke_schatten, masken, fernseher, taschenlampe
 from fahrgaeste import fahrgaeste_malen, zeitung_nah
 from orte import ORT, HIMMEL, NEBEL, AUGE, AUGE_LEISE, HANDYLICHT, AUGE_GROSS, sterne, innenraum, draussen, rahmen, SPIEGELBOX
 
@@ -194,6 +194,19 @@ def bild(s, t, lt):
         schatten(lage, px - 250 + 40 * math.sin(lt * 6), 905, s=1.2, wink=1.25 + 0.15 * math.sin(lt * 8))
         mensch(lage, px, 905, s=1.12, sitzen=False, angst=0.7, blick=-0.8, lauf=lt * 14)
         im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.35 + 0.65 * flacker)
+    elif art == 'masken':  # Flugzeug: Strom weg, rotes Notlicht, Sauerstoffmasken fallen
+        innenraum(im, t, lt, licht=0.0, fahrt=False)
+        fahrgaeste_malen(lage, t, s.get('fahrgaeste', FAHRGAESTE[0]))
+        mensch(lage, 250, 812, angst=1.0, blick=0.3)
+        masken(lage, lt)
+        im.paste(lage, (0, 0), lage); lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+        rot = 0.35 + 0.25 * (int(lt * 6) % 2)
+        im = Image.blend(im, Image.new('RGB', (W, H), (110, 0, 0)), rot)
+    elif art == 'fernseher':
+        return fernseher(im, t, lt, s.get('dauer', 4))
+    elif art == 'taschenlampe':
+        draussen(im, t, lt, '')
+        return taschenlampe(im, lt, s.get('dauer', 4), im)
     elif art == 'decke':
         innenraum(im, t, lt, licht=0.55, fahrt=False)
         fahrgaeste_malen(lage, t, s.get('fahrgaeste', FAHRGAESTE[0]))

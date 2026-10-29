@@ -27,7 +27,7 @@ def tonspur(plan, gesamt, ordner, schlicht=False):
         if s['art'] == 'fratze':
             teile.append(f"0.6*gte(t,{a})*exp(-2.2*max(t-{a},0))*sin(2*PI*(1300+700*sin(2*PI*11*t))*t)")
             teile.append(f"0.5*gte(t,{a})*exp(-2.2*max(t-{a},0))*sin(2*PI*(1750+500*sin(2*PI*17*t))*t)")
-    glas = []
+    glas, rauschen = [], []
     if schlicht:
         teile = ['0'] + [f"0.9*gte(t,{s['start']:.2f})*exp(-5*max(t-{s['start']:.2f},0))*sin(2*PI*42*t)" for s in plan if s['art'] == 'fratze']
         for s in plan:
@@ -35,6 +35,10 @@ def tonspur(plan, gesamt, ordner, schlicht=False):
                 for k, st in ((s['start'] + s.get('schlag', 0.25), 0.6), (s['start'] + s.get('schreck_bei', 1.0), 1.0)):
                     teile.append(f"{st}*gte(t,{k:.2f})*exp(-7*max(t-{k:.2f},0))*sin(2*PI*55*t)")
                 glas.append(s['start'] + s.get('schreck_bei', 1.0))
+            if s['art'] in ('masken', 'taschenlampe'):  # dumpfer Schlag beim Strom-Aus / Klick der Lampe
+                teile.append(f"0.6*gte(t,{s['start']:.2f})*exp(-12*max(t-{s['start']:.2f},0))*sin(2*PI*70*t)")
+            if s['art'] == 'fernseher':  # Fernseh-Rauschen
+                rauschen.append((s['start'], s['start'] + s['dauer']))
             if s['art'] == 'rennen':  # Schritte
                 a, e = s['start'], s['start'] + s['dauer']
                 teile.append(f"0.55*between(t,{a:.2f},{e:.2f})*exp(-30*mod(t-{a:.2f},0.3))*sin(2*PI*62*t)")
@@ -52,6 +56,10 @@ def tonspur(plan, gesamt, ordner, schlicht=False):
     mix = ['[b]', '[n]'] if schlicht else ['[b]', '[n]', '[w]', '[at]']
     if schlicht:
         filter_ = filter_.split('[n];')[0] + '[n];'
+        if rauschen:
+            zeit = '+'.join(f"between(t,{a:.2f},{e:.2f})" for a, e in rauschen)
+            filter_ += f"[3]lowpass=f=6000,volume='0.45*gt({zeit},0)':eval=frame[rs];"
+            mix.append('[rs]')
         if glas:
             huelle = '+'.join(f"gte(t,{g:.2f})*exp(-3.5*max(t-{g:.2f},0))" for g in glas)
             filter_ += f"[2]highpass=f=2200,volume='1.6*({huelle})':eval=frame[gl];"

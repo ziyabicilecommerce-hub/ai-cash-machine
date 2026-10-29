@@ -2,7 +2,7 @@
 # und der Schatten, der kopfüber von der Decke kommt.
 import math
 import random
-from PIL import Image, ImageChops, ImageDraw
+from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter
 from figuren import schatten, hand, W, H
 
 _r = random.Random(5)
@@ -87,3 +87,58 @@ def decke_schatten(lage, x, p):
     kopfueber = tmp.transpose(Image.FLIP_TOP_BOTTOM)
     versatz = int((1 - p) * 420)
     lage.alpha_composite(kopfueber.crop((0, versatz, W, H)), (0, 0))
+
+
+def masken(lage, lt):
+    # Flugzeug: die Sauerstoffmasken fallen aus den Fächern und pendeln an ihren Schläuchen
+    d = ImageDraw.Draw(lage)
+    p = min(lt / 0.5, 1)
+    for i, mx in enumerate((110, 330, 550, 680)):
+        schw = math.sin(lt * 5 + i) * 22 * p
+        ende = (mx + schw, 175 + 290 * p - 20 * math.sin(lt * 9 + i) * (1 - p))
+        d.line((mx, 175, *ende), fill=(220, 225, 230, 255), width=3)
+        d.ellipse((ende[0] - 26, ende[1], ende[0] + 26, ende[1] + 40), fill=(240, 200, 40, 255), outline=(150, 120, 20, 255), width=3)
+
+
+def fernseher(im, t, lt, dauer):
+    # Haus: der alte Fernseher geht von selbst an - Rauschen, darin taucht sie auf und kommt immer näher
+    im.paste(Image.new('RGB', im.size, (6, 7, 9)))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 900, W, H), fill=(18, 12, 10))
+    d.rounded_rectangle((110, 300, 610, 790), 40, fill=(40, 36, 34), outline=(70, 64, 60), width=8)
+    d.rectangle((250, 790, 470, 880), fill=(30, 26, 24))
+    box = (160, 345, 560, 715)
+    rauschen = Image.effect_noise((box[2] - box[0], box[3] - box[1]), 90).convert('RGB')
+    if lt > 1.0:  # im Rauschen erscheint sie und kommt näher
+        p = min((lt - 1.0) / max(dauer - 1.4, 0.6), 1)
+        lage = Image.new('RGBA', im.size, (0, 0, 0, 0))
+        schatten(lage, 360, 715 + 520 * p, s=0.6 + 1.2 * p)
+        figur = lage.crop(box)
+        rauschen.paste(figur, (0, 0), figur)
+    im.paste(rauschen, box[:2])
+    schein = Image.new('RGB', im.size, (120, 130, 150))
+    maske = Image.new('L', im.size, 0)
+    ImageDraw.Draw(maske).ellipse((-80, 150, W + 80, 1200), fill=40 + int(20 * math.sin(t * 40)))
+    im.paste(schein, (0, 0), maske.filter(ImageFilter.GaussianBlur(80)))
+    d.rounded_rectangle(box, 18, outline=(20, 18, 16), width=10)
+    return im
+
+
+def taschenlampe(im, lt, dauer, hintergrund):
+    # Wald: stockdunkel, der Lichtkegel wandert zwischen die Bäume - und bleibt an ihm hängen
+    hell = ImageEnhance.Brightness(hintergrund).enhance(2.6)
+    halt = max(dauer - 1.0, 0.8)
+    if lt >= halt:
+        lage = Image.new('RGBA', im.size, (0, 0, 0, 0))
+        schatten(lage, 360, 1480, s=1.9)
+        hell.paste(lage, (0, 0), lage)
+        lx = 360
+    else:
+        lx = 360 + math.sin(lt * 2.2) * 230
+    maske = Image.new('L', im.size, 0)
+    ImageDraw.Draw(maske).ellipse((lx - 230, 330, lx + 230, 790), fill=255)
+    dunkel = Image.new('RGB', im.size, (2, 3, 5))
+    dunkel.paste(hell, (0, 0), maske.filter(ImageFilter.GaussianBlur(40)))
+    licht = Image.new('RGB', im.size, (255, 236, 190))  # warmer Schein im Kegel
+    dunkel.paste(licht, (0, 0), maske.filter(ImageFilter.GaussianBlur(60)).point(lambda v: v // 7))
+    return dunkel
