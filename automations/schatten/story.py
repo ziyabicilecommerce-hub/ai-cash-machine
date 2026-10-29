@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from ton import tonspur
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
 from ki import ki_bilder_laden, ki_szene
-from aktion import scheibe, decke_schatten, masken, fernseher, taschenlampe
+from aktion import scheibe, decke_schatten, masken, fernseher, taschenlampe, zaehlen, turbulenz, fluegel, live, klinke, rufen, zelt
 from fahrgaeste import fahrgaeste_malen, zeitung_nah
 from orte import ORT, HIMMEL, NEBEL, AUGE, AUGE_LEISE, HANDYLICHT, AUGE_GROSS, sterne, innenraum, draussen, rahmen, SPIEGELBOX
 
@@ -204,6 +204,20 @@ def bild(s, t, lt):
         im = Image.blend(im, Image.new('RGB', (W, H), (110, 0, 0)), rot)
     elif art == 'fernseher':
         return fernseher(im, t, lt, s.get('dauer', 4))
+    elif art == 'zaehlen':
+        return zaehlen(im, t, lt, s.get('dauer', 4), s.get('fahrgaeste', FAHRGAESTE[0]))
+    elif art == 'turbulenz':
+        return turbulenz(im, t, lt, s.get('fahrgaeste', FAHRGAESTE[0]))
+    elif art == 'fluegel':
+        return fluegel(im, t, lt)
+    elif art == 'live':
+        return live(im, t, lt)
+    elif art == 'klinke':
+        return klinke(im, t, lt, s.get('dauer', 4), s.get('schreck_bei', 0.6))
+    elif art == 'rufen':
+        return rufen(im, t, lt, s.get('fahrgaeste', FAHRGAESTE[0]))
+    elif art == 'zelt':
+        return zelt(im, t, lt, s.get('dauer', 4))
     elif art == 'taschenlampe':
         draussen(im, t, lt, '')
         return taschenlampe(im, lt, s.get('dauer', 4), im)
@@ -319,7 +333,9 @@ def main():
         if s.get('monster') and not mdauer:
             mdauer = len(s['monster']) / 8
         mbei = s.get('monster_bei', sprech + 0.3)
-        dauer = s.get('dauer') or max(sprech + s.get('pause', 0.25), 1.8, (mbei + mdauer + 0.6) if s.get('monster') else 0)
+        dauer = max(sprech + s.get('pause', 0.25), 1.8, (mbei + mdauer + 0.6) if s.get('monster') else 0)
+        if s.get('dauer'):  # feste Länge für Animationen - aber nie kürzer als der gesprochene Satz
+            dauer = max(s['dauer'], sprech + s.get('pause', 0.25) if sprech else 0)
         plan.append({**s, 'start': start, 'dauer': dauer, 'sprech': sprech, 'datei': datei if (s.get('sprich') and not stumm) else None,
                      'mdatei': mdatei if (s.get('monster') and not stumm and os.path.exists(mdatei)) else None, 'mbei': mbei, 'mdauer': mdauer})
         start += dauer

@@ -59,12 +59,11 @@
       "pause": 0.2
     },
     {
-      "art": "gesicht",
-      "sprich": "Das ist unser Wohnzimmer. Gefilmt von hinter dem Sofa.",
-      "text": "GEFILMT VON HINTER DEM SOFA.",
-      "gelb": "SOFA",
-      "angst": 0.75,
-      "augen_bei": 1.3,
+      "art": "live",
+      "sprich": "Das ist unser Wohnzimmer. Live. Gefilmt von hinter dem Sofa.",
+      "text": "UNSER WOHNZIMMER. LIVE. VON HINTER DEM SOFA.",
+      "gelb": "LIVE",
+      "dauer": 4.6,
       "pause": 0.3
     },
     {
@@ -80,14 +79,15 @@
       "pause": 0.3
     },
     {
-      "art": "klopfen",
-      "sprich": "Dann klopft es. Dreimal.",
-      "text": "DANN KLOPFT ES. DREIMAL.",
-      "gelb": "DREIMAL",
-      "schreck_bei": 1.3,
+      "art": "klinke",
+      "sprich": "Dann klopft es an meiner Zimmertür. Dreimal. Und die Klinke geht runter.",
+      "text": "ES KLOPFT. DIE KLINKE GEHT RUNTER.",
+      "gelb": "KLINKE",
+      "schreck_bei": 0.6,
       "pause": 0.3,
       "monster": "Schatz, ich bin's. Mach auf.",
-      "monster_text": "SCHATZ, ICH BIN'S. MACH AUF."
+      "monster_text": "SCHATZ, ICH BIN'S. MACH AUF.",
+      "dauer": 6.0
     },
     {
       "art": "handy",

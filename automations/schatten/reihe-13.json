@@ -58,11 +58,19 @@
       "pause": 0.1
     },
     {
-      "art": "licht",
-      "sprich": "Durchsage vom Kapitän: Bleiben Sie sitzen. Egal, was Sie gleich sehen.",
+      "art": "zaehlen",
+      "sprich": "Die Stewardess zählt noch mal. Achtunddreißig. Neununddreißig. Vierzig. Einundvierzig.",
+      "text": "SIE ZÄHLT NOCH MAL ...",
+      "gelb": "ZÄHLT",
+      "dauer": 5.6,
+      "pause": 0.2
+    },
+    {
+      "art": "turbulenz",
+      "sprich": "Dann Turbulenzen. Der Kapitän: Bleiben Sie sitzen. Egal, was Sie gleich sehen.",
       "text": "BLEIBEN SIE SITZEN. EGAL, WAS SIE SEHEN.",
       "gelb": "EGAL",
-      "angst": 0.5,
+      "schreck_bei": 0.85,
       "pause": 0.3
     },
     {
@@ -107,11 +115,12 @@
       "monster_text": "DIE GEHÖRT MIR."
     },
     {
-      "art": "winken",
+      "art": "fluegel",
       "sprich": "Draußen auf dem Flügel steht noch einer. Und noch einer. Sie winken.",
       "text": "AUF DEM FLÜGEL: NOCH EINER. UND NOCH EINER.",
       "gelb": "NOCH",
-      "pause": 0.1
+      "pause": 0.1,
+      "dauer": 4.2
     },
     {
       "art": "fratze",
