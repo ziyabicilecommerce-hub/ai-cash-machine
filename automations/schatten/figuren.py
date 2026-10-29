@@ -59,11 +59,13 @@ def _aermel(d, a, b, w, hell, dunkel):
     glied(d, a, b, int(w), hell)
 
 
-def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, gesicht=True):
+def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, gesicht=True, lauf=None):
     # Person im Hoodie: Kapuze, Gesicht, Bauchtasche, Kordeln, Jeans, Schuhe - zittert und atmet bei Angst
     z = ZEIT[0]
     x += (math.sin(z * 47) * 3.2 + math.sin(z * 31) * 1.5) * angst * s
     atem = math.sin(z * (2.2 + 7 * angst)) * (1 + 3 * angst)
+    if lauf is not None:  # beim Rennen federt der ganze Körper
+        y -= abs(math.sin(lauf)) * 10 * s
 
     def zeichne(cv, T):
         d = ImageDraw.Draw(cv)
@@ -77,9 +79,13 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
                 glied(d, k(dx + 80, -114), k(dx + 84, -26), int(25 * S), f)
                 d.rounded_rectangle((*k(dx + 70, -32), *k(dx + 112, -10)), radius=int(8 * S), fill=schuh)
         else:
-            for dx, f in ((16, _ton(jeans, 0.85)), (-16, jeans)):
-                glied(d, k(dx, -120), k(dx * 1.2, -22), int(29 * S), f)
-                d.rounded_rectangle((*k(dx * 1.2 - 16, -26), *k(dx * 1.2 + 22, -6)), radius=int(8 * S), fill=schuh)
+            for i, (dx, f) in enumerate(((16, _ton(jeans, 0.85)), (-16, jeans))):
+                sw = math.sin(lauf + i * math.pi) * 0.6 if lauf is not None else 0.0
+                knie = (dx + math.sin(sw) * 52, -120 + math.cos(sw) * 52)
+                fuss = (knie[0] + math.sin(sw * 0.4) * 48 - (20 if sw < 0 else 0), knie[1] + 46)
+                glied(d, k(dx, -120), k(*knie), int(29 * S), f)
+                glied(d, k(*knie), k(*fuss), int(25 * S), f)
+                d.rounded_rectangle((*k(fuss[0] - 16, fuss[1] - 4), *k(fuss[0] + 22, fuss[1] + 16)), radius=int(8 * S), fill=schuh)
         top = -230 + atem
         d.rounded_rectangle((*k(-46, top), *k(46, -114)), radius=int(24 * S), fill=kante)
         d.rounded_rectangle((*k(-43, top + 2), *k(43, -116)), radius=int(22 * S), fill=hoodie)
@@ -94,9 +100,11 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
         haende_vorm_mund = angst > 0.75
         if not haende_vorm_mund:
             for sx in (-1, 1):
-                _aermel(d, k(sx * 42, top + 8), k(sx * 56, -152), 21 * S, hoodie, kante)
-                _aermel(d, k(sx * 56, -152), k(sx * 20, -118), 18 * S, hoodie, kante)
-                hx, hy = k(sx * 18, -116)
+                schw = math.sin(lauf + (sx > 0) * math.pi) * 34 if lauf is not None else 0.0
+                ell, hand_ = ((sx * 50 + schw, -165), (sx * 34 + schw * 1.6, -190)) if lauf is not None else ((sx * 56, -152), (sx * 20, -118))
+                _aermel(d, k(sx * 42, top + 8), k(*ell), 21 * S, hoodie, kante)
+                _aermel(d, k(*ell), k(*hand_), 18 * S, hoodie, kante)
+                hx, hy = k(hand_[0] - sx * 2, hand_[1] + 2)
                 d.ellipse((hx - 9 * S, hy - 8 * S, hx + 9 * S, hy + 8 * S), fill=haut)
         d.ellipse((kx - 36 * S, ky - 39 * S, kx + 36 * S, ky + 35 * S), fill=kante)
         d.ellipse((kx - 33 * S, ky - 36 * S, kx + 33 * S, ky + 32 * S), fill=hoodie)
