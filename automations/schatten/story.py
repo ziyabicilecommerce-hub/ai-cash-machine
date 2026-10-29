@@ -333,7 +333,9 @@ def main():
         if s.get('monster') and not mdauer:
             mdauer = len(s['monster']) / 8
         mbei = s.get('monster_bei', sprech + 0.3)
-        dauer = s.get('dauer') or max(sprech + s.get('pause', 0.25), 1.8, (mbei + mdauer + 0.6) if s.get('monster') else 0)
+        dauer = max(sprech + s.get('pause', 0.25), 1.8, (mbei + mdauer + 0.6) if s.get('monster') else 0)
+        if s.get('dauer'):  # feste Länge für Animationen - aber nie kürzer als der gesprochene Satz
+            dauer = max(s['dauer'], sprech + s.get('pause', 0.25) if sprech else 0)
         plan.append({**s, 'start': start, 'dauer': dauer, 'sprech': sprech, 'datei': datei if (s.get('sprich') and not stumm) else None,
                      'mdatei': mdatei if (s.get('monster') and not stumm and os.path.exists(mdatei)) else None, 'mbei': mbei, 'mdauer': mdauer})
         start += dauer
