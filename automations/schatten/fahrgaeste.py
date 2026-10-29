@@ -36,7 +36,7 @@ def zeitungsleser(lage, x, y, t):
         a = 2
         x0, y0 = T(x - 78, y - 342 + wackel)
         x1, y1 = T(x + 78, y - 168 + wackel)
-        _zeitung_malen(d, (x0, y0, x1, y1), a, 'STADTBLATT')
+        _zeitung_malen(d, (x0, y0, x1, y1), a, 'NACHTBLATT')
         for sx in (-1, 1):
             hx, hy = T(x + sx * 80, y - 250 + wackel)
             d.ellipse((hx - 9 * a, hy - 11 * a, hx + 9 * a, hy + 11 * a), fill=(230, 214, 200))
@@ -77,7 +77,7 @@ def zeitung_nah(im, lt, z=None):
     d = ImageDraw.Draw(papier)
     gross, mittel, klein = (ImageFont.truetype(SCHRIFT, n) for n in (76, 40, 26))
     d.rectangle((30, 40, W - 30, 160), fill=TINTE)
-    d.text((W / 2, 100), 'STADTBLATT', font=gross, fill=PAPIER, anchor='mm')
+    d.text((W / 2, 100), 'NACHTBLATT', font=gross, fill=PAPIER, anchor='mm')
     d.text((W / 2, 200), z.get('datum', 'DONNERSTAG, 30. OKTOBER'), font=klein, fill=(120, 30, 30), anchor='mm')
     d.line((30, 228, W - 30, 228), fill=TINTE, width=4)
     z = z or {}
