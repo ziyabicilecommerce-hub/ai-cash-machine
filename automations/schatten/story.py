@@ -52,12 +52,35 @@ def zug_innen(im, t, lt, licht=1.0, fahrt=True, augen_im_fenster=False):
     if augen_im_fenster:  # verstecktes Detail zum Nochmal-Anschauen: er schaut schon die ganze Zeit rein
         for ex in (-9, 9):
             im.paste(AUGE_LEISE, (560 + ex - 14, 330 - 14), AUGE_LEISE)
+    for fx in (40, 380):  # Spiegelung schräg über die Scheibe
+        d.line((fx + 40, 470, fx + 150, 190), fill=(60, 66, 86), width=5)
+        d.line((fx + 70, 470, fx + 170, 210), fill=(38, 42, 58), width=3)
     hell = int(200 * licht)
-    d.rectangle((150, 70, 570, 86), fill=(hell, hell, min(255, hell + 20)))
-    d.rectangle((0, 900, W, H), fill=(14, 15, 22))
-    d.rounded_rectangle((60, 700, 660, 780), 20, fill=(34, 40, 60))
-    d.rounded_rectangle((60, 520, 660, 710), 26, fill=(28, 33, 50))
+    d.rectangle((0, 0, W, 96), fill=(12, 13, 20))
+    d.rectangle((150, 66, 570, 88), fill=(hell, hell, min(255, hell + 20)))
+    if licht > 0.3:
+        glanz = LAMPE.resize((520, 260))
+        im.paste(glanz, (100, -60), glanz)
+    d.line((30, 132, 690, 132), fill=(150, 155, 170), width=6)  # Haltestange mit Griffen
+    for i, gx in enumerate(range(80, 680, 110)):
+        sw = math.sin(t * 1.7 + i) * 6
+        d.line((gx, 132, gx + sw, 168), fill=(120, 125, 140), width=4)
+        d.ellipse((gx + sw - 14, 166, gx + sw + 14, 194), outline=(190, 195, 210), width=5)
+    d.polygon([(0, 900), (W, 900), (W + 260, H), (-260, H)], fill=(16, 17, 25))  # Boden in Perspektive
+    for i in range(1, 7):
+        yy = 900 + (H - 900) * (i / 7) ** 1.6
+        d.line((0, yy, W, yy), fill=(22, 24, 34), width=2)
+    for xx in range(-260, W + 300, 120):
+        d.line((W / 2 + (xx - W / 2) * 0.55, 900, xx, H), fill=(22, 24, 34), width=2)
+    d.rounded_rectangle((60, 520, 660, 712), 26, fill=(28, 33, 50))  # Rückenlehne mit Polstern
+    for nx in (260, 460):
+        d.line((nx, 530, nx, 700), fill=(20, 24, 38), width=4)
+    d.line((76, 532, 644, 532), fill=(44, 50, 72), width=3)
+    d.rounded_rectangle((52, 698, 668, 782), 20, fill=(36, 42, 64))  # Sitzfläche
+    d.line((70, 704, 650, 704), fill=(58, 66, 92), width=4)
+    d.rectangle((70, 782, 650, 820), fill=(18, 20, 30))
     d.line((690, 90, 690, 900), fill=(140, 145, 160), width=10)
+    d.line((686, 90, 686, 900), fill=(200, 205, 220), width=2)
 
 
 def bahnsteig(im, t, lt, kz):
@@ -170,6 +193,8 @@ def warnung(im, text, lt):
 def ki_bilder_laden(story, ordner):
     # Kostenlose KI-Bilder (Pollinations/FLUX, ohne Key) für Szenen mit "ki"-Prompt. Klappt eins nicht,
     # bleibt die gezeichnete Szene - das Video wird in jedem Fall fertig.
+    if not story.get('ki_bilder', True):  # aus = gezeichnete Figuren
+        return
     stil = story.get('ki_stil', '')
     for i, s in enumerate(story['szenen']):
         if not s.get('ki') or os.environ.get('STUMM') == '1':
