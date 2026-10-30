@@ -60,3 +60,11 @@ test('Restocks: nur der Wechsel nach "auf Lager" zählt, Muster nach Wochentag u
 test('linksAus: Produkt-Links aus dem Issue, ohne GitHub-Links und Dubletten', () => {
   assert.deepEqual(linksAus('Restock bitte\nhttps://www.smythstoys.com/de/x https://github.com/a/b https://www.smythstoys.com/de/x'), ['https://www.smythstoys.com/de/x']);
 });
+
+test('kartenPicks: steigt nichts deutlich, kommen die besten Bewegungen markiert statt einer leeren Liste', async () => {
+  const { kartenPicks: picks, kartenStatistik } = await import('../../automations/lib/resellingRadar.mjs');
+  const leicht = [karte('x', { lowPrice: 20, trendPrice: 22, avg1: 23, avg30: 21 }), karte('y', { lowPrice: 20, trendPrice: 20, avg1: 19, avg30: 21 })];
+  const p = picks(leicht);
+  assert.deepEqual(p.map((k) => [k.id, k.nurBewegung]), [['x', true]]);
+  assert.deepEqual(kartenStatistik([...leicht, karte('z', {})]), { karten: 3, mitPreis: 2, imBudget: 2, steigend: 0 });
+});
