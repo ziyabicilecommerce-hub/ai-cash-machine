@@ -5,7 +5,7 @@
 //  - Lagerstatus der Produkte aus GitHub-Issues mit dem Label "restock"; bei Restock kommt ein Kommentar ins Issue
 //    (= Push-Benachrichtigung über die GitHub-App) und die Uhrzeit wird für das Restock-Muster gespeichert.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
+import { shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
 
 const ORDNER = 'automations-dashboard/reselling';
 const DATEN = `${ORDNER}/daten.json`;
@@ -101,6 +101,36 @@ async function trends() {
   return { ware: wareTrends(alle), top: alle.slice(0, 12) };
 }
 
+// Bekannte, echte Online-Shops mit Shopify-Suche - was gerade auf Lager ist, mit Preis und Kauflink.
+// Shops ohne öffentliche Suche werden beim Probieren automatisch übersprungen.
+const LIVE_SHOPS = [
+  ['afew-store.com', ['jordan', 'dunk', 'samba', 'new balance', 'cap']],
+  ['www.allikestore.com', ['jordan', 'dunk', 'samba', 'new balance', 'carhartt']],
+  ['www.overkillshop.com', ['jordan', 'dunk', 'samba', 'new balance', 'new era']],
+  ['www.asphaltgold.com', ['jordan', 'dunk', 'samba', 'new balance', 'asics']],
+  ['www.43einhalb.com', ['jordan', 'dunk', 'samba', 'new balance']],
+  ['www.uebervart-shop.de', ['carhartt', 'cap', 'stüssy']],
+  ['www.sneakersnstuff.com', ['jordan', 'dunk', 'new balance', 'asics']],
+  ['eu.kith.com', ['new balance', 'asics', 'cap']],
+  ['funkoeurope.com', ['funko pop', 'exclusive', 'bitty pop']],
+  ['www.hhv.de', ['vinyl limited', 'new balance', 'samba']],
+];
+async function liveShops() {
+  const treffer = [], erreicht = [];
+  for (const [domain, begriffe] of LIVE_SHOPS) {
+    let ok = false;
+    for (const b of begriffe) {
+      try {
+        const j = await holen(`https://${domain}/search/suggest.json?q=${encodeURIComponent(b)}&resources[type]=product&resources[limit]=8`, { json: true });
+        treffer.push(...shopifyTreffer(j, domain, b)); ok = true;
+      } catch (e) { if (!ok) { log('Shop übersprungen:', domain, e.message); break; } }
+    }
+    if (ok) erreicht.push(domain.replace(/^(www|eu|shop)\./, ''));
+  }
+  const gesehen = new Set();
+  return { treffer: treffer.filter((t) => !gesehen.has(t.url) && gesehen.add(t.url)).sort((a, b) => (a.preis ?? 999) - (b.preis ?? 999)), erreicht };
+}
+
 async function issues() {
   if (!REPO || !TOKEN) return [];
   // Auch Freunde ohne Rechte am Repo: deren Issues haben kein Label, aber den Titel "Restock: ..."
@@ -128,6 +158,7 @@ async function main() {
   const poke = await teil('Pokémon-Preise', pokemon, alt.pokemon || { picks: [], sets: [] });
   const hype = await teil('Google Trends', trends, alt.trends || { ware: [], top: [] });
   const beobachtet = await teil('Beobachtungsliste', issues, []);
+  const live = await teil('Live-Shops', liveShops, alt.live || { treffer: [], erreicht: [] });
 
   const status = {};
   const produkte = [];
@@ -147,10 +178,10 @@ async function main() {
   verlauf.restocks = verlauf.restocks.slice(-500);
   for (const p of produkte) p.muster = restockMuster(verlauf.restocks.filter((r) => r.url === p.url));
 
-  const daten = { stand: jetzt, budget: BUDGET, pokemon: poke, trends: hype, produkte, restocks: verlauf.restocks.slice(-20).reverse(), muster: restockMuster(verlauf.restocks), fehler };
+  const daten = { stand: jetzt, budget: BUDGET, pokemon: poke, trends: hype, live, produkte, restocks: verlauf.restocks.slice(-20).reverse(), muster: restockMuster(verlauf.restocks), fehler };
   writeFileSync(DATEN, `${JSON.stringify(daten, null, 1)}\n`);
   writeFileSync(VERLAUF, `${JSON.stringify(verlauf, null, 1)}\n`);
-  log(`fertig: ${poke.picks?.length || 0} Karten-Picks, ${hype.ware?.length || 0} Ware-Trends, ${produkte.length} beobachtete Produkte, Fehler: ${fehler.length}`);
+  log(`fertig: ${poke.picks?.length || 0} Karten-Picks, ${hype.ware?.length || 0} Ware-Trends, ${live.treffer?.length || 0} Live-Treffer bei ${live.erreicht?.length || 0} Shops, ${produkte.length} beobachtete Produkte, Fehler: ${fehler.length}`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

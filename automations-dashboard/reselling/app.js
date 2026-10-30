@@ -81,7 +81,49 @@ function rechnen() {
 ['ek', 'vk', 'pf', 'vs'].forEach((id) => $(id).addEventListener('input', rechnen));
 rechnen();
 
+// Katalog: alles, was sich zum Weiterverkaufen lohnt - mit Kauf-Links und Preis-Check zum Wiederverkauf
+let KATALOG = null, LIVE = [], KAT = 'Alle';
+const suchlink = (shop, q) => shop.suche.replace('{q}', encodeURIComponent(q));
+function katalogZeigen() {
+  if (!KATALOG) return;
+  const kats = ['Alle', ...new Set(KATALOG.produkte.map((p) => p.kat))];
+  $('filter').replaceChildren(...kats.map((k) => {
+    const b = el('button', `chip knopfchip ${k === KAT ? 'an' : ''}`, k); b.type = 'button';
+    b.onclick = () => { KAT = k; katalogZeigen(); };
+    return b;
+  }));
+  const shops = { ...KATALOG.verkaufen, ...KATALOG.shops };
+  $('katalog').replaceChildren(...KATALOG.produkte.filter((p) => KAT === 'Alle' || p.kat === KAT).map((p) => {
+    const k = el('div', 'karte');
+    k.append(el('div', 'titel', p.name), el('span', 'chip', p.kat), el('span', 'chip gut', `Einkauf ${p.ek}`), el('div', 'klein', p.warum));
+    const kaufen = el('div', 'links'); kaufen.append(el('span', 'klein', 'Kaufen:'));
+    for (const s of p.kaufen) if (shops[s]) kaufen.append(link(suchlink(shops[s], p.q), shops[s].name));
+    const verk = el('div', 'links'); verk.append(el('span', 'klein', 'Preis checken:'));
+    for (const s of p.verkaufen) if (KATALOG.verkaufen[s]) { const a = link(suchlink(KATALOG.verkaufen[s], p.q), KATALOG.verkaufen[s].name); a.className = 'verk'; verk.append(a); }
+    k.append(kaufen, verk);
+    return k;
+  }));
+}
+function liveZeigen(live, budget) {
+  LIVE = live?.treffer || [];
+  const imBudget = LIVE.filter((t) => t.preis != null && t.preis <= budget);
+  const zeigen = (imBudget.length ? imBudget : LIVE).slice(0, 25);
+  $('liveinfo').textContent = LIVE.length
+    ? `${LIVE.length} Artikel auf Lager bei ${(live.erreicht || []).join(', ')}${imBudget.length ? ` - davon ${imBudget.length} bis ${euro(budget)}` : ''}. Jede Stunde neu geprüft.`
+    : 'Der Shop-Bot prüft jede Stunde echte Online-Shops (Sneaker, Funko, Vinyl …) - Ergebnisse erscheinen nach dem nächsten Lauf.';
+  $('live').replaceChildren(...zeigen.map((t) => {
+    const box = el('div', 'karte'); const z = el('div', 'zeile');
+    if (https(t.bild)) { const i = el('img'); i.src = t.bild.startsWith('//') ? `https:${t.bild}` : t.bild; i.alt = t.titel; i.loading = 'lazy'; z.append(i); }
+    const m = el('div'); m.append(el('div', 'titel', t.titel), el('div', 'klein', `${t.laden} · auf Lager`));
+    const p = el('div', 'preis'); p.append(el('b', t.preis <= budget ? 'hoch' : '', euro(t.preis)));
+    z.append(m, p); box.append(z, link(t.url, 'Jetzt kaufen →'));
+    return box;
+  }));
+}
+fetch(`katalog.json?t=${Date.now()}`).then((r) => r.json()).then((k) => { KATALOG = k; katalogZeigen(); }).catch(() => {});
+
 fetch(`daten.json?t=${Date.now()}`).then((r) => r.json()).then((d) => {
+  liveZeigen(d.live, d.budget || 40);
   $('stand').textContent = `Stand: ${uhr(d.stand)} · aktualisiert sich jede Stunde`;
   heiss(d.trends); karten(d.pokemon, d.budget || 40); restock(d);
 }).catch(() => { $('stand').textContent = 'Keine Verbindung - zeige gespeicherte Daten, sobald vorhanden.'; restock({}); });

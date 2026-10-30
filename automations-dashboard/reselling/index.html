@@ -30,6 +30,9 @@
   .titel { font-weight:650; font-size:15px; } .klein { color:var(--leise); font-size:12.5px; margin-top:3px; line-height:1.4; }
   .preis { margin-left:auto; text-align:right; white-space:nowrap; } .preis b { font-size:17px; display:block; }
   .hoch { color:var(--gruen); } .runter { color:var(--rot); } .gelb { color:var(--gelb); }
+  .chip.knopfchip { cursor:pointer; border:0; } .chip.knopfchip.an { background:var(--akzent); color:#fff; }
+  .links { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; } .links a { font-size:13px; text-decoration:none; background:#1c2440; padding:6px 10px; border-radius:9px; color:#cdd8ff; }
+  .links a.verk { background:#1d2e2a; color:#9ff0cf; }
   .chip { display:inline-block; font-size:11.5px; padding:3px 8px; border-radius:99px; background:#222b45; color:var(--leise); margin:6px 6px 0 0; }
   .chip.gut { background:rgba(62,242,160,.14); color:var(--gruen); } .chip.warn { background:rgba(255,212,92,.14); color:var(--gelb); } .chip.schlecht { background:rgba(255,92,122,.14); color:var(--rot); }
   .knopf { display:block; text-align:center; background:var(--akzent); color:#fff; text-decoration:none; font-weight:650; padding:13px; border-radius:12px; margin:10px 0; border:0; width:100%; font-size:15px; }
@@ -52,7 +55,17 @@
   <button class="knopf zweit" id="teilen" type="button">📲 Mit Freunden teilen – kostenlos</button>
 </header>
 <main>
-  <section id="heiss" class="aktiv">
+  <section id="alles" class="aktiv">
+    <h2>🛒 Alles zum Reselling (unter 1 kg, passt in den Schuhkarton)</h2>
+    <div id="filter"></div>
+    <h2>⚡ Gerade auf Lager bei Online-Shops</h2>
+    <p class="klein" id="liveinfo"></p>
+    <div id="live"></div>
+    <h2>📦 Was sich lohnt + wo kaufen</h2>
+    <div id="katalog"></div>
+  </section>
+
+  <section id="heiss">
     <h2>🔥 Geht gerade hoch in Deutschland</h2>
     <div id="ware"></div>
     <h2>Alle Top-Suchen heute</h2>
@@ -96,9 +109,7 @@
       <p class="klein" id="gewinninfo"></p>
     </div>
     <p class="klein">Die Gebühren sind ungefähre Werte. Schau vor dem Verkauf auf der jeweiligen Plattform nach.</p>
-  </section>
 
-  <section id="tipps">
     <h2>📲 App installieren</h2>
     <div class="karte tipp"><ul>
       <li><b>iPhone:</b> In Safari öffnen → Teilen-Symbol → „Zum Home-Bildschirm“.</li>
@@ -124,11 +135,11 @@
   </section>
 </main>
 <nav id="nav">
-  <button data-ziel="heiss" class="aktiv"><span class="ic">🔥</span>Heiß</button>
+  <button data-ziel="alles" class="aktiv"><span class="ic">🛒</span>Alles</button>
+  <button data-ziel="heiss"><span class="ic">🔥</span>Heiß</button>
   <button data-ziel="karten"><span class="ic">📈</span>Karten</button>
   <button data-ziel="restock"><span class="ic">🔔</span>Restock</button>
   <button data-ziel="rechner"><span class="ic">🧮</span>Rechner</button>
-  <button data-ziel="tipps"><span class="ic">✅</span>Tipps</button>
 </nav>
 <script src="app.js"></script>
 </body>
