@@ -304,6 +304,10 @@ def main():
     BOESE[0] = story.get('boesewicht', 'schatten')
     HELD[0] = story.get('held', {})
     FAHRGAESTE[0] = story.get('fahrgaeste', ['zeitung', 'schlaf'])
+    szenen = story['szenen']
+    for i, sz in enumerate(szenen):  # wer genau hinschaut, sieht ihn schon vor dem Jumpscare - von Szene zu Szene naeher
+        if i > 0 and sz['art'] in ('innen', 'handy') and 'naeher' not in sz:
+            sz['naeher'] = round(min(0.55, 0.1 + 0.6 * i / len(szenen)), 2)
     ki_bilder_laden(story, ordner)
     fratze_ki = next((x['_kibild'] for x in story['szenen'] if x['art'] == 'fratze' and x.get('_kibild') is not None), None)
     stumm = os.environ.get('STUMM') == '1'
@@ -361,9 +365,14 @@ def main():
             lt, t = f / FPS, s['start'] + f / FPS
             ZEIT[0] = t
             im = bild(s, t, lt)
-            zoom = 1 + (0.18 * min(lt / 0.2, 1) if s['art'] == 'fratze' else 0.07 * (f / n))
+            angespannt = s.get('stille') or s.get('angst', 0) >= 0.8
+            zoom = 1.02 + (0.18 * min(lt / 0.2, 1) if s['art'] == 'fratze' else (0.15 if angespannt else 0.07) * (f / n))
             cw, ch = int(W / zoom), int(H / zoom)
-            im = im.crop(((W - cw) // 2, (H - ch) // 2, (W - cw) // 2 + cw, (H - ch) // 2 + ch)).resize((W, H), Image.BILINEAR)
+            wack = 3 + (5 if angespannt else 0)  # Handkamera: nie ganz ruhig, bei Angst unruhiger
+            dx = int((math.sin(t * 1.7) + 0.6 * math.sin(t * 4.3)) * wack)
+            dy = int((math.sin(t * 1.3 + 1) + 0.5 * math.sin(t * 3.7)) * wack)
+            x0 = max(0, min(W - cw, (W - cw) // 2 + dx)); y0 = max(0, min(H - ch, (H - ch) // 2 + dy))
+            im = im.crop((x0, y0, x0 + cw, y0 + ch)).resize((W, H), Image.BILINEAR)
             if (s.get('schreck') and lt < 0.6) or ('schreck_bei' in s and 0 <= lt - s['schreck_bei'] < 0.5):
                 st = 26 if s['art'] == 'fratze' else 12
                 im = im.rotate(random.uniform(-1.5, 1.5) if s['art'] == 'fratze' else 0, translate=(random.randint(-st, st), random.randint(-st, st)), fillcolor=NACHT)
@@ -372,6 +381,12 @@ def main():
                 fr = fratze_ki if fratze_ki is not None else Image.new('RGB', (W, H))
                 if fratze_ki is None: fratze(fr, 0.3)
                 im = Image.blend(im, fr, 0.75)
+            if f < 2 and s['start'] > 0 and s['art'] not in ('fratze', 'teil2'):  # Bildstoerung beim Schnitt
+                im = rotverschiebung(im, 9 - f * 4)
+                band = random.randint(200, H - 300)
+                im.paste(im.crop((0, band, W, band + 70)), (random.randint(-40, 40), band))
+            if t / gesamt > 0.4 and s['art'] not in ('fratze', 'teil2') and (int(t * 12) * 7919) % 89 == 0:
+                im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.2)  # Licht flackert kurz weg
             if id(s) in augen_szenen and 1.2 <= lt < 1.2 + 2 / FPS:
                 im = Image.blend(im, augenbild, 0.85)
             if s['art'] == 'fratze' and f < 3:
