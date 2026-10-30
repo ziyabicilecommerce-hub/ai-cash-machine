@@ -143,9 +143,11 @@ test('Saison-Plan: jeder Monat hat Tipps, alle Shops gibt es im Katalog', async 
 });
 
 test('Bilder: Suchbegriffe, DuckDuckGo, Commons und Shop-Suchlinks', async () => {
-  const { bildBegriffe, ddgVqd, ddgBild, commonsBild, suchLink } = await import('../../automations/lib/resellingRadar.mjs');
+  const { bildBegriffe, bingBild, ddgVqd, ddgBild, commonsBild, suchLink } = await import('../../automations/lib/resellingRadar.mjs');
   const b = bildBegriffe({ monate: { 1: [{ q: 'lego' }, { q: 'x', bild: 'lego set' }] } }, { produkte: [{ q: 'lego' }] }, { produkte: [{ q: 'labubu' }] });
   assert.deepEqual(b, ['labubu', 'lego', 'lego set']);
+  assert.equal(bingBild('m="{&quot;murl&quot;:&quot;https://s/a.jpg&quot;,&quot;turl&quot;:&quot;https://tse1.mm.bing.net/th?id=1&amp;pid=Api&quot;}"').url, 'https://tse1.mm.bing.net/th?id=1&pid=Api');
+  assert.equal(bingBild('nichts'), null);
   assert.equal(ddgVqd('foo vqd="4-1234-5678" bar'), '4-1234-5678');
   assert.equal(ddgBild({ results: [{ thumbnail: 'http://x' }, { thumbnail: 'https://tse1.mm.bing.net/th?id=1', url: 'https://shop' }] }).url, 'https://tse1.mm.bing.net/th?id=1');
   assert.equal(ddgBild({ results: [] }), null);

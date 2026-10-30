@@ -40,7 +40,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           sicher=$(mktemp -d)
-          cp automations-dashboard/reselling/daten.json automations-dashboard/reselling/verlauf.json "$sicher/"; [ -f automations-dashboard/reselling/laeden.json ] && cp automations-dashboard/reselling/laeden.json "$sicher/"
+          cp automations-dashboard/reselling/daten.json automations-dashboard/reselling/verlauf.json "$sicher/"; for f in laeden bilder; do [ -f "automations-dashboard/reselling/$f.json" ] && cp "automations-dashboard/reselling/$f.json" "$sicher/"; done; true
           for versuch in 1 2 3 4 5; do
             git fetch -q origin "$GITHUB_REF_NAME"
             git reset -q --hard "origin/$GITHUB_REF_NAME"

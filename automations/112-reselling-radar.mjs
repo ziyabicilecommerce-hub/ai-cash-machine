@@ -5,7 +5,7 @@
 //  - Lagerstatus der Produkte aus GitHub-Issues mit dem Label "restock"; bei Restock kommt ein Kommentar ins Issue
 //    (= Push-Benachrichtigung über die GitHub-App) und die Uhrzeit wird für das Restock-Muster gespeichert.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { bildBegriffe, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
+import { bildBegriffe, bingBild, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
 
 const ORDNER = 'automations-dashboard/reselling';
 const DATEN = `${ORDNER}/daten.json`;
@@ -156,12 +156,13 @@ async function bilder() {
   const faellig = begriffe.filter((b) => !alt.bilder[b]?.url || Date.now() - Date.parse(alt.bilder[b].stand) > 14 * 86400000).slice(0, 25);
   for (const b of faellig) {
     let bild = null;
-    try {
+    try { bild = bingBild(await holen(`https://www.bing.com/images/search?q=${encodeURIComponent(b)}&form=HDRSC2&first=1&setlang=de&cc=DE`)); } catch (e) { log('Bing', b, e.message); }
+    if (!bild) try {
       const vqd = ddgVqd(await holen(`https://duckduckgo.com/?q=${encodeURIComponent(b)}&iax=images&ia=images`));
       if (vqd) bild = ddgBild(await holen(`https://duckduckgo.com/i.js?l=de-de&o=json&q=${encodeURIComponent(b)}&vqd=${vqd}&f=,,,,,&p=1`, { json: true, kopf: { referer: 'https://duckduckgo.com/' } }));
     } catch (e) { log('Bildsuche', b, e.message); }
     if (!bild) {
-      try { bild = commonsBild(await holen(`https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=5&gsrsearch=${encodeURIComponent(`${b} filetype:bitmap`)}&prop=imageinfo&iiprop=url&iiurlwidth=240`, { json: true })); } catch (e) { log('Commons', b, e.message); }
+      try { bild = commonsBild(await holen(`https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=5&gsrsearch=${encodeURIComponent(`${b} filetype:bitmap`)}&prop=imageinfo&iiprop=url&iiurlwidth=240`, { json: true, kopf: { 'user-agent': 'reselling-radar/1.0 (https://github.com/ziyabicilecommerce-hub/ai-cash-machine)' } })); } catch (e) { log('Commons', b, e.message); }
     }
     if (bild) alt.bilder[b] = { ...bild, stand: new Date().toISOString() };
     await new Promise((r) => setTimeout(r, 1500));
