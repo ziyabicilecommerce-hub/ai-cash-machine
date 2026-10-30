@@ -1,8 +1,66 @@
 {
- "stand": "2026-10-30T21:34:03.192Z",
+ "stand": "2026-10-30T21:35:26.561Z",
  "budget": 40,
  "pokemon": {
-  "picks": [],
+  "picks": [
+   {
+    "id": "me03-094",
+    "name": "Piepi",
+    "nummer": "094",
+    "seltenheit": "Selten, Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/094/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Piepi",
+    "preis": {
+     "tief": 8.9,
+     "trend": 17.29,
+     "schnitt7": 18.04,
+     "schnitt30": 17.84
+    },
+    "prozent": 31,
+    "signal": "steigt"
+   },
+   {
+    "id": "me03-118",
+    "name": "Mega-Starmie-ex",
+    "nummer": "118",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/118/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Starmie-ex",
+    "preis": {
+     "tief": 24,
+     "trend": 34.68,
+     "schnitt7": 33.46,
+     "schnitt30": 34.58
+    },
+    "prozent": 19,
+    "signal": "steigt"
+   },
+   {
+    "id": "me03-122",
+    "name": "Violette",
+    "nummer": "122",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/122/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Violette",
+    "preis": {
+     "tief": 11.9,
+     "trend": 18.27,
+     "schnitt7": 18.49,
+     "schnitt30": 19.92
+    },
+    "prozent": 18,
+    "signal": "steigt"
+   }
+  ],
   "sets": [
    {
     "name": "30 Jahre: Klassische Sammlung",
@@ -39,14 +97,32 @@
     "phase": "halten",
     "tage": 161,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
+   },
+   {
+    "name": "Optimale Ordnung",
+    "id": "me03",
+    "release": "2026-03-27",
+    "logo": "https://assets.tcgdex.net/de/me/me03/logo.webp",
+    "phase": "halten",
+    "tage": 217,
+    "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
+   },
+   {
+    "name": "Paldean Wonders",
+    "id": "B2a",
+    "release": "2026-02-26",
+    "logo": "",
+    "phase": "halten",
+    "tage": 246,
+    "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 120,
+  "geprueft": 366,
   "statistik": {
-   "karten": 120,
-   "mitPreis": 120,
-   "imBudget": 7,
-   "steigend": 0
+   "karten": 366,
+   "mitPreis": 366,
+   "imBudget": 20,
+   "steigend": 3
   },
   "quelle": "TCGdex"
  },
