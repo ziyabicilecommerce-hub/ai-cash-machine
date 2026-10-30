@@ -121,14 +121,17 @@ async function liveShops() {
     let ok = false;
     for (const b of begriffe) {
       try {
-        const j = await holen(`https://${domain}/search/suggest.json?q=${encodeURIComponent(b)}&resources[type]=product&resources[limit]=8`, { json: true });
+        // Als Besucher aus Deutschland in Euro fragen - sonst zeigen manche Shops dem US-Server Netto- oder Dollarpreise
+        const j = await holen(`https://${domain}/search/suggest.json?q=${encodeURIComponent(b)}&resources[type]=product&resources[limit]=8&country=DE&currency=EUR`,
+          { json: true, kopf: { cookie: 'localization=DE; cart_currency=EUR', 'accept-language': 'de-DE,de;q=0.9' } });
         treffer.push(...shopifyTreffer(j, domain, b)); ok = true;
       } catch (e) { if (!ok) { log('Shop übersprungen:', domain, e.message); break; } }
     }
     if (ok) erreicht.push(domain.replace(/^(www|eu|shop)\./, ''));
   }
   const gesehen = new Set();
-  return { treffer: treffer.filter((t) => !gesehen.has(t.url) && gesehen.add(t.url)).sort((a, b) => (a.preis ?? 999) - (b.preis ?? 999)), erreicht };
+  const sinnvoll = (t) => t.preis == null || t.preis >= 5;  // Gratis-Beigaben und Centartikel lohnen nicht
+  return { treffer: treffer.filter((t) => sinnvoll(t) && !gesehen.has(t.url) && gesehen.add(t.url)).sort((a, b) => (a.preis ?? 999) - (b.preis ?? 999)), erreicht };
 }
 
 async function issues() {
