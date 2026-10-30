@@ -1,0 +1,110 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "zug",
+  "fahrgaeste": [
+    "zeitung",
+    "schlaf"
+  ],
+  "boesewicht": "schatten",
+  "held": {},
+  "titel": "Letzte Bahn – Teil 3",
+  "titelbild": "ETWAS VON MIR IST AUSGESTIEGEN.",
+  "titelbild_gelb": "ETWAS",
+  "caption": "Teil drei. Sie ist ausgestiegen. Ich nicht. Aber etwas von mir schon. Würdest du tauschen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil drei. Sie ist ausgestiegen. Ich nicht. Aber etwas von mir schon.",
+      "text": "TEIL 3: ETWAS VON MIR IST AUSGESTIEGEN.",
+      "gelb": "ETWAS",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich bin allein in der Bahn. Mein Spiegelbild nicht.",
+      "text": "ICH BIN ALLEIN. MEIN SPIEGELBILD NICHT.",
+      "gelb": "SPIEGELBILD",
+      "angst": 0.6,
+      "pause": 0.1,
+      "fahrgaeste": []
+    },
+    {
+      "art": "spiegel",
+      "sprich": "Im Fenster sitzt mein Spiegelbild. Aber es schaut nach draußen.",
+      "text": "MEIN SPIEGELBILD SCHAUT NACH DRAUSSEN.",
+      "gelb": "DRAUSSEN",
+      "blitzbild": [
+        1.8
+      ],
+      "angst": 0.7,
+      "blick": 0.9,
+      "pause": 0.2,
+      "fahrgaeste": []
+    },
+    {
+      "art": "winken",
+      "sprich": "Draußen auf dem Bahnsteig winkt jemand. Er trägt meinen Hoodie.",
+      "text": "ER TRÄGT MEINEN HOODIE.",
+      "gelb": "HOODIE",
+      "pause": 0.1
+    },
+    {
+      "art": "handy",
+      "sprich": "Mein Handy zeigt ein Foto. Gerade aufgenommen. Von draußen.",
+      "text": "EIN FOTO VON MIR. VON DRAUSSEN.",
+      "gelb": "DRAUSSEN",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "klopfen",
+      "sprich": "Dann klopft es an die Scheibe.",
+      "text": "DANN KLOPFT ES AN DIE SCHEIBE.",
+      "gelb": "KLOPFT",
+      "schreck_bei": 1.0,
+      "pause": 0.2,
+      "monster": "Tauschen wir?",
+      "monster_text": "TAUSCHEN WIR?"
+    },
+    {
+      "art": "licht",
+      "sprich": "Das Licht geht aus.",
+      "text": "DAS LICHT GEHT AUS.",
+      "gelb": "AUS",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Er sitzt jetzt in der Bahn. Und draußen stehe ich.",
+      "text": "DRAUSSEN STEHE ICH.",
+      "gelb": "ICH",
+      "schreck": true,
+      "monster": "Jetzt bin ich du.",
+      "monster_text": "JETZT BIN ICH DU.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil vier: Wer fährt nach Hause?",
+      "text": "TEIL 4: WER FÄHRT NACH HAUSE?",
+      "gelb": "HAUSE",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

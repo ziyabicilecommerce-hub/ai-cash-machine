@@ -1,0 +1,120 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "aufzug",
+  "fahrgaeste": [],
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      70,
+      110,
+      90
+    ],
+    "oberteil": "jacke",
+    "kopf": "haare",
+    "haar": [
+      30,
+      24,
+      20
+    ],
+    "zopf": true,
+    "hose": [
+      40,
+      40,
+      52
+    ]
+  },
+  "titel": "Etage 0 – Teil 8",
+  "titelbild": "FREIWILLIG ZURÜCK AUF ETAGE NULL.",
+  "titelbild_gelb": "FREIWILLIG",
+  "caption": "Finale. Ich fahre freiwillig zurück auf Etage null. Hat dein Aufzug einen Knopf zu viel? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Finale. Ich fahre freiwillig zurück auf Etage null.",
+      "text": "FINALE: FREIWILLIG ZURÜCK AUF ETAGE NULL.",
+      "gelb": "FREIWILLIG",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich drücke den Knopf. Diesmal mit Absicht.",
+      "text": "DIESMAL MIT ABSICHT.",
+      "gelb": "ABSICHT",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "decke",
+      "sprich": "Über mir öffnet sich die Klappe.",
+      "text": "ÜBER MIR ÖFFNET SICH DIE KLAPPE.",
+      "gelb": "KLAPPE",
+      "stille": true,
+      "warnung": "NICHT HOCHSCHAUEN",
+      "monster": "Du kommst freiwillig?",
+      "monster_text": "DU KOMMST FREIWILLIG?",
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ich sage: Nimm mich. Lass sie gehen.",
+      "text": "NIMM MICH. LASS SIE GEHEN.",
+      "gelb": "MICH",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Sie schreibt: Ich bin oben! Danke! Wer bist du?",
+      "text": "SIE IST OBEN! DANKE!",
+      "gelb": "DANKE",
+      "absender": "Unbekannt",
+      "nachricht": "Ich bin oben! Danke! Wer bist du?",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Ich klebe einen Zettel an den Knopf. Für die Nächste.",
+      "text": "FÜR DIE NÄCHSTE: NIEMALS DRÜCKEN.",
+      "gelb": "NIEMALS",
+      "zettel": [
+        "NIEMALS",
+        "DRÜCKEN"
+      ],
+      "pause": 0.1,
+      "warnung": "NICHT DRÜCKEN"
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Jetzt bin ich die, die im Aufzug wartet.",
+      "text": "JETZT WARTE ICH IM AUFZUG.",
+      "gelb": "WARTE",
+      "schreck": true,
+      "monster": "Für immer. Etage null.",
+      "monster_text": "FÜR IMMER. ETAGE NULL.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Ende. Hat dein Aufzug auch einen Knopf zu viel?",
+      "text": "ENDE? HAT DEIN AUFZUG EINEN KNOPF ZU VIEL?",
+      "gelb": "KNOPF",
+      "pause": 1.0
+    }
+  ],
+  "teile": 8
+}

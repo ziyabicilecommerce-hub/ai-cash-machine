@@ -1,0 +1,104 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "haus",
+  "fahrgaeste": [],
+  "boesewicht": "schatten",
+  "held": {},
+  "titel": "Letzte Bahn – Teil 7",
+  "titelbild": "WARUM FÄHRT MAMA KEINE BAHN MEHR?",
+  "titelbild_gelb": "WARUM",
+  "caption": "Teil sieben. Mama hat nie erzählt, warum sie keine Bahn mehr fährt. Hättest du die Tür aufgemacht? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil sieben. Mama hat nie erzählt, warum sie keine Bahn mehr fährt.",
+      "text": "TEIL 7: WARUM FÄHRT MAMA KEINE BAHN MEHR?",
+      "gelb": "WARUM",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich bin wieder zu Hause. Mama sitzt im Wohnzimmer.",
+      "text": "MAMA SITZT IM WOHNZIMMER.",
+      "gelb": "WOHNZIMMER",
+      "angst": 0.4,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ich frage sie nach Station Null. Sie wird ganz weiß.",
+      "text": "SIE WIRD GANZ WEISS.",
+      "gelb": "WEISS",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Sie kann es nicht aussprechen. Sie schreibt: Dein Vater ist nicht ausgestiegen.",
+      "text": "MAMA: DEIN VATER IST NICHT AUSGESTIEGEN.",
+      "gelb": "VATER",
+      "absender": "Mama",
+      "nachricht": "Ich bin damals ausgestiegen. Dein Vater nicht.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "fernseher",
+      "sprich": "Der Fernseher geht an. Rauschen. Und das Geräusch einer Bahn.",
+      "text": "RAUSCHEN. UND DAS GERÄUSCH EINER BAHN.",
+      "gelb": "BAHN",
+      "stille": true,
+      "dauer": 5.0,
+      "pause": 0.2
+    },
+    {
+      "art": "live",
+      "sprich": "Dann zeigt er unser Wohnzimmer. Live. Hinter dem Sofa steht ein Mann im Mantel.",
+      "text": "HINTER DEM SOFA: EIN MANN IM MANTEL.",
+      "gelb": "MANTEL",
+      "dauer": 4.6,
+      "pause": 0.2
+    },
+    {
+      "art": "klinke",
+      "sprich": "Dann klopft es an der Tür. Dreimal.",
+      "text": "ES KLOPFT. DREIMAL.",
+      "gelb": "DREIMAL",
+      "schreck_bei": 0.6,
+      "dauer": 6.0,
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Papa ist zurück. Aber nur sein Mantel. Und sein Grinsen.",
+      "text": "PAPA IST ZURÜCK. NUR SEIN GRINSEN.",
+      "gelb": "GRINSEN",
+      "schreck": true,
+      "monster": "Ich hab euch so vermisst.",
+      "monster_text": "ICH HAB EUCH SO VERMISST.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Finale: Wer fährt die letzte Bahn?",
+      "text": "FINALE: WER FÄHRT DIE LETZTE BAHN?",
+      "gelb": "LETZTE",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

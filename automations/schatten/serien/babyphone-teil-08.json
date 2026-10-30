@@ -1,0 +1,123 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "haus",
+  "fahrgaeste": [],
+  "boesewicht": "schatten",
+  "held": {
+    "farbe": [
+      200,
+      120,
+      60
+    ],
+    "oberteil": "hoodie",
+    "kopf": "haare",
+    "haar": [
+      214,
+      176,
+      100
+    ],
+    "hose": [
+      50,
+      56,
+      80
+    ]
+  },
+  "titel": "Babyphone – Teil 8",
+  "titelbild": "JETZT SINGT ES AUS MEINEM HANDY.",
+  "titelbild_gelb": "HANDY",
+  "caption": "Finale. Ich habe das Babyphone zerstört. Seitdem singt es aus meinem Handy. Hörst du gerade auch jemanden singen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Finale. Ich habe das Babyphone zerstört. Seitdem singt es aus meinem Handy.",
+      "text": "FINALE: JETZT SINGT ES AUS MEINEM HANDY.",
+      "gelb": "HANDY",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich bin zu Hause. Ich habe es mit dem Hammer zerschlagen.",
+      "text": "MIT DEM HAMMER ZERSCHLAGEN.",
+      "gelb": "HAMMER",
+      "angst": 0.5,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Um Mitternacht leuchtet mein Handy auf: Babyphone verbunden.",
+      "text": "BABYPHONE VERBUNDEN.",
+      "gelb": "VERBUNDEN",
+      "absender": "Babyphone",
+      "nachricht": "Verbunden.",
+      "schreck": true,
+      "pause": 0.3,
+      "monster": "Schlaf, Kindlein, schlaf.",
+      "monster_text": "SCHLAF, KINDLEIN, SCHLAF."
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ich habe kein Baby. Wen hört er?",
+      "text": "ICH HABE KEIN BABY. WEN HÖRT ER?",
+      "gelb": "WEN",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "fernseher",
+      "sprich": "Der Fernseher geht an. Er zeigt ein Kinderzimmer. Meins. Von früher.",
+      "text": "MEIN KINDERZIMMER. VON FRÜHER.",
+      "gelb": "FRÜHER",
+      "stille": true,
+      "dauer": 5.0,
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Er hat nie Babysitterinnen gesucht. Er sucht die Kinder von damals.",
+      "text": "ER SUCHT DIE KINDER VON DAMALS.",
+      "gelb": "DAMALS",
+      "schreck": true,
+      "monster": "Ich hab dich wiedergefunden.",
+      "monster_text": "ICH HAB DICH WIEDERGEFUNDEN.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Die Zeitung: Babysitterin nach drei Jahren gefunden. Sie sagt nur ein Wort: Psst.",
+      "text": "SIE SAGT NUR EIN WORT: PSST.",
+      "gelb": "PSST",
+      "schreck": true,
+      "pause": 0.4,
+      "zeitung": {
+        "zeilen": [
+          "BABYSITTERIN",
+          "GEFUNDEN"
+        ],
+        "datum": "FREITAG, 31. OKTOBER",
+        "unter": "Sie sagt nur ein Wort: Psst"
+      }
+    },
+    {
+      "art": "teil2",
+      "sprich": "Ende. Hörst du gerade auch jemanden singen?",
+      "text": "ENDE? HÖRST DU AUCH JEMANDEN SINGEN?",
+      "gelb": "SINGEN",
+      "pause": 1.0
+    }
+  ],
+  "teile": 8
+}

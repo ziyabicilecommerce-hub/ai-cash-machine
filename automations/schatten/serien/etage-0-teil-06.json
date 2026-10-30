@@ -1,0 +1,132 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "aufzug",
+  "fahrgaeste": [],
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      70,
+      110,
+      90
+    ],
+    "oberteil": "jacke",
+    "kopf": "haare",
+    "haar": [
+      30,
+      24,
+      20
+    ],
+    "zopf": true,
+    "hose": [
+      40,
+      40,
+      52
+    ]
+  },
+  "titel": "Etage 0 – Teil 6",
+  "titelbild": "ETAGE NULL GAB ES BIS 1999.",
+  "titelbild_gelb": "1999",
+  "caption": "Teil sechs. Etage null gab es wirklich. Bis neunzehnhundertneunundneunzig. Glaubst du dem Hausmeister? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil sechs. Etage null gab es wirklich. Bis neunzehnhundertneunundneunzig.",
+      "text": "TEIL 6: ETAGE NULL GAB ES BIS 1999.",
+      "gelb": "1999",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Im Aufzug sitzt plötzlich ein alter Mann. Der Hausmeister. Die Augen geschlossen.",
+      "text": "DER HAUSMEISTER. DIE AUGEN ZU.",
+      "gelb": "HAUSMEISTER",
+      "angst": 0.5,
+      "pause": 0.1,
+      "fahrgaeste": [
+        {
+          "wer": "schlaf_sitz",
+          "farbe": [
+            96,
+            84,
+            62
+          ]
+        }
+      ]
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Er zeigt mir einen alten Artikel. Aufzug stürzt ab. Alle Insassen vermisst.",
+      "text": "AUFZUG STÜRZT AB. ALLE VERMISST.",
+      "gelb": "VERMISST",
+      "schreck": true,
+      "pause": 0.4,
+      "zeitung": {
+        "zeilen": [
+          "AUFZUG",
+          "STÜRZT AB"
+        ],
+        "datum": "SAMSTAG, 30. OKTOBER 1999",
+        "unter": "Alle Insassen werden vermisst"
+      }
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Auf dem Foto: dieser Aufzug. Und eine Frau, die aussieht wie ich.",
+      "text": "AUF DEM FOTO: EINE FRAU WIE ICH.",
+      "gelb": "ICH",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Er schreibt auf einen Zettel: Sie fahren immer noch.",
+      "text": "SIE FAHREN IMMER NOCH.",
+      "gelb": "IMMER",
+      "absender": "Hausmeister",
+      "nachricht": "Sie sind nie ausgestiegen. Sie fahren immer noch.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "licht",
+      "sprich": "Das Licht geht aus. Der Hausmeister ist weg.",
+      "text": "DER HAUSMEISTER IST WEG.",
+      "gelb": "WEG",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Ich bin nicht eingestiegen. Ich bin nie ausgestiegen.",
+      "text": "ICH BIN NIE AUSGESTIEGEN.",
+      "gelb": "NIE",
+      "schreck": true,
+      "monster": "Seit neunzehnhundertneunundneunzig.",
+      "monster_text": "SEIT 1999.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil sieben: Wie kommt man hier raus?",
+      "text": "TEIL 7: WIE KOMMT MAN HIER RAUS?",
+      "gelb": "RAUS",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

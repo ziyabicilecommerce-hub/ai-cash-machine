@@ -10,7 +10,7 @@ const TAGS = '#horror #gruselgeschichte #horrorstory #creepy #fyp #serie';
 export function serienText(folge) {
   const teil = String(folge.titel || '').match(/Teil (\d+)/)?.[1];
   const kopf = String(folge.caption || folge.titel || '').trim();
-  return `${kopf}${teil ? ` (Teil ${teil}/12)` : ''}\n\n${TAGS} #teil${teil || ''}\n(KI-generiert, frei erfundene Geschichte)`.slice(0, 2200);
+  return `${kopf}${teil ? ` (Teil ${teil}/${folge.teile || 12})` : ''}\n\n${TAGS} #teil${teil || ''}\n(KI-generiert, frei erfundene Geschichte)`.slice(0, 2200);
 }
 
 export const serienTitel = (folge) => String(folge.titel || '').slice(0, 90);

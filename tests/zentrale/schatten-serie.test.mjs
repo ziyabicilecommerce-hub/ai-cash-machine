@@ -6,11 +6,16 @@ import { serienText, serienTitel } from '../../automations/schatten/posten.mjs';
 const ORDNER = new URL('../../automations/schatten/serien/', import.meta.url);
 const folgen = readdirSync(ORDNER).filter((f) => f.endsWith('.json')).map((f) => ({ f, d: JSON.parse(readFileSync(new URL(f, ORDNER), 'utf8')) }));
 
-test('Schatten-Serien: drei Serien mit je Teil 2 bis 12', () => {
-  for (const serie of ['reihe-13', 'mach-nicht-auf', 'geh-nicht-tiefer']) {
-    const teile = folgen.filter(({ f }) => f.startsWith(`${serie}-teil-`)).map(({ f }) => Number(f.match(/teil-(\d+)/)[1])).sort((a, b) => a - b);
-    assert.deepEqual(teile, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], serie);
-  }
+const nummern = (serie) => folgen.filter(({ f }) => f.startsWith(`${serie}-teil-`)).map(({ f }) => Number(f.match(/teil-(\d+)/)[1])).sort((a, b) => a - b);
+const bis = (von, n) => Array.from({ length: n - von + 1 }, (_, i) => von + i);
+
+test('Schatten-Serien: alte Serien Teil 2 bis 12, neue Serien Teil 1 bis 8 - lueckenlos', () => {
+  for (const serie of ['reihe-13', 'mach-nicht-auf', 'geh-nicht-tiefer']) assert.deepEqual(nummern(serie), bis(2, 12), serie);
+  for (const serie of ['letzte-bahn', 'etage-0', 'babyphone']) assert.deepEqual(nummern(serie), bis(1, 8), serie);
+});
+
+test('Schatten-Serien: jede Folge kennt ihre Gesamtzahl an Teilen', () => {
+  for (const { f, d } of folgen) assert.ok([8, 12].includes(d.teile), f);
 });
 
 test('Schatten-Serien: jede Folge hat Hook, Jumpscare, Ende und ein gelbes Wort, das im Text steht', () => {
@@ -26,8 +31,9 @@ test('Schatten-Serien: jede Folge hat Hook, Jumpscare, Ende und ein gelbes Wort,
 });
 
 test('serienText: Hook, Teil-Nummer, Hashtags und KI-Hinweis', () => {
-  const t = serienText({ titel: 'Passagier 41 – Teil 5', caption: 'Teil fünf. Hook. Frage? 👇' });
+  const t = serienText({ titel: 'Passagier 41 – Teil 5', caption: 'Teil fünf. Hook. Frage? 👇', teile: 12 });
   assert.match(t, /^Teil fünf\. Hook\. Frage\? 👇 \(Teil 5\/12\)/);
+  assert.match(serienText({ titel: 'Etage 0 – Teil 3', caption: 'x', teile: 8 }), /\(Teil 3\/8\)/);
   assert.match(t, /#horror/);
   assert.match(t, /#teil5/);
   assert.match(t, /KI-generiert/);

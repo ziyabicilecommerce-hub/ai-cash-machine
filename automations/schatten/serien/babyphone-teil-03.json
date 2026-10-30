@@ -1,0 +1,124 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "haus",
+  "fahrgaeste": [],
+  "boesewicht": "schatten",
+  "held": {
+    "farbe": [
+      200,
+      120,
+      60
+    ],
+    "oberteil": "hoodie",
+    "kopf": "haare",
+    "haar": [
+      214,
+      176,
+      100
+    ],
+    "hose": [
+      50,
+      56,
+      80
+    ]
+  },
+  "titel": "Babyphone – Teil 3",
+  "titelbild": "DIE LETZTE BABYSITTERIN KAM NIE HEIM.",
+  "titelbild_gelb": "NIE",
+  "caption": "Teil drei. Die letzte Babysitterin ist nie nach Hause gekommen. Wärst du auf den Dachboden gegangen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil drei. Die letzte Babysitterin ist nie nach Hause gekommen.",
+      "text": "TEIL 3: DIE LETZTE BABYSITTERIN KAM NIE HEIM.",
+      "gelb": "NIE",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich will gehen. Aber die Haustür ist von außen abgeschlossen.",
+      "text": "VON AUSSEN ABGESCHLOSSEN.",
+      "gelb": "ABGESCHLOSSEN",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Auf dem Küchentisch ein alter Artikel. Babysitterin spurlos verschwunden.",
+      "text": "BABYSITTERIN SPURLOS VERSCHWUNDEN.",
+      "gelb": "SPURLOS",
+      "schreck": true,
+      "pause": 0.4,
+      "zeitung": {
+        "zeilen": [
+          "BABYSITTERIN",
+          "SPURLOS",
+          "VERSCHWUNDEN"
+        ],
+        "datum": "MONTAG, 30. OKTOBER 2023",
+        "unter": "Das Babyphone lief noch"
+      }
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Unter dem Artikel steht: Das Babyphone lief noch.",
+      "text": "DAS BABYPHONE LIEF NOCH.",
+      "gelb": "NOCH",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Das Babyphone knistert: Hilfe. Ich bin noch hier.",
+      "text": "BABYPHONE: ICH BIN NOCH HIER.",
+      "gelb": "HIER",
+      "absender": "Babyphone",
+      "nachricht": "Hilfe. Ich bin noch hier. Im Kinderzimmer.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "decke",
+      "sprich": "Über mir knarrt der Dachboden.",
+      "text": "ÜBER MIR KNARRT DER DACHBODEN.",
+      "gelb": "DACHBODEN",
+      "stille": true,
+      "warnung": "NICHT HOCHSCHAUEN",
+      "monster": "Sie gehört jetzt mir.",
+      "monster_text": "SIE GEHÖRT JETZT MIR.",
+      "pause": 0.3
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Sie ist noch hier. Und ich bald auch.",
+      "text": "SIE IST NOCH HIER. ICH BALD AUCH.",
+      "gelb": "BALD",
+      "schreck": true,
+      "monster": "Zwei Babysitterinnen. Endlich.",
+      "monster_text": "ZWEI BABYSITTERINNEN. ENDLICH.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil vier: Was ist auf dem Dachboden?",
+      "text": "TEIL 4: WAS IST AUF DEM DACHBODEN?",
+      "gelb": "DACHBODEN",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

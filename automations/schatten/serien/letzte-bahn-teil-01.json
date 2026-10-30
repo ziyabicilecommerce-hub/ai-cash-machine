@@ -1,0 +1,121 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "zug",
+  "fahrgaeste": [
+    "zeitung",
+    "schlaf"
+  ],
+  "boesewicht": "schatten",
+  "held": {},
+  "titel": "Letzte Bahn – Teil 1",
+  "titelbild": "DIE LETZTE BAHN HÄLT, WO ES KEINE STATION GIBT.",
+  "titelbild_gelb": "KEINE",
+  "caption": "Die letzte Bahn hält jede Nacht an einer Station, die es nicht gibt. Wärst du sitzen geblieben? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Die letzte Bahn hält jede Nacht an einer Station, die es nicht gibt.",
+      "text": "DIE LETZTE BAHN HÄLT, WO ES KEINE STATION GIBT.",
+      "gelb": "KEINE",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Null Uhr. Ich sitze in der letzten Bahn nach Hause.",
+      "text": "NULL UHR. DIE LETZTE BAHN.",
+      "gelb": "LETZTE",
+      "angst": 0.1,
+      "pause": 0.1
+    },
+    {
+      "art": "handy",
+      "sprich": "Auf der Karte in meinem Handy fehlt die nächste Station.",
+      "text": "DIE NÄCHSTE STATION FEHLT.",
+      "gelb": "FEHLT",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "station",
+      "sprich": "Die Bahn hält trotzdem. Auf dem Schild steht nur: Null.",
+      "text": "AUF DEM SCHILD: NULL.",
+      "gelb": "NULL",
+      "pause": 0.2
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Der Mann mit der Zeitung steht auf. Und steigt aus.",
+      "text": "DER MANN MIT DER ZEITUNG STEIGT AUS.",
+      "gelb": "AUS",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "schatten",
+      "sprich": "Auf dem Bahnsteig wartet jemand auf ihn.",
+      "text": "AUF DEM BAHNSTEIG WARTET JEMAND.",
+      "gelb": "WARTET",
+      "pause": 0.2
+    },
+    {
+      "art": "innen",
+      "sprich": "Die Türen gehen zu. Der Mann ist weg. Seine Zeitung liegt noch da.",
+      "text": "SEINE ZEITUNG LIEGT NOCH DA.",
+      "gelb": "ZEITUNG",
+      "angst": 0.6,
+      "pause": 0.1,
+      "fahrgaeste": [
+        "schlaf"
+      ]
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Auf der Titelseite: der Mann. Vermisst seit gestern.",
+      "text": "DER MANN: VERMISST SEIT GESTERN.",
+      "gelb": "VERMISST",
+      "schreck": true,
+      "pause": 0.4,
+      "zeitung": {
+        "zeilen": [
+          "MANN SEIT",
+          "GESTERN",
+          "VERMISST"
+        ],
+        "datum": "DONNERSTAG, 30. OKTOBER",
+        "unter": "Zuletzt gesehen in der letzten Bahn"
+      }
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Und morgen steht mein Foto in der Zeitung.",
+      "text": "MORGEN STEHT MEIN FOTO DRIN.",
+      "gelb": "MORGEN",
+      "schreck": true,
+      "monster": "Nächster Halt: du.",
+      "monster_text": "NÄCHSTER HALT: DU.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil zwei: Wer steigt bei Null aus?",
+      "text": "TEIL 2: WER STEIGT BEI NULL AUS?",
+      "gelb": "NULL",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

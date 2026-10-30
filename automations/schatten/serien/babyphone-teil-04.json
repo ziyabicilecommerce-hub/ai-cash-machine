@@ -1,0 +1,120 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "haus",
+  "fahrgaeste": [],
+  "boesewicht": "schatten",
+  "held": {
+    "farbe": [
+      200,
+      120,
+      60
+    ],
+    "oberteil": "hoodie",
+    "kopf": "haare",
+    "haar": [
+      214,
+      176,
+      100
+    ],
+    "hose": [
+      50,
+      56,
+      80
+    ]
+  },
+  "titel": "Babyphone – Teil 4",
+  "titelbild": "ZWANZIG BABYPHONES. ALLE AN.",
+  "titelbild_gelb": "ZWANZIG",
+  "caption": "Teil vier. Auf dem Dachboden stehen zwanzig Babyphones. Alle an. Hättest du dich hingesetzt? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil vier. Auf dem Dachboden stehen zwanzig Babyphones. Alle an.",
+      "text": "TEIL 4: ZWANZIG BABYPHONES. ALLE AN.",
+      "gelb": "ZWANZIG",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Ich steige auf den Dachboden. Stockdunkel. Nur grüne Lämpchen.",
+      "text": "STOCKDUNKEL. NUR GRÜNE LÄMPCHEN.",
+      "gelb": "GRÜNE",
+      "dauer": 4.6,
+      "stille": true,
+      "pause": 0.2
+    },
+    {
+      "art": "handy",
+      "sprich": "Mit der Handylampe sehe ich sie. Zwanzig Babyphones.",
+      "text": "ZWANZIG BABYPHONES.",
+      "gelb": "ZWANZIG",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Aus jedem flüstert eine andere Stimme.",
+      "text": "AUS JEDEM FLÜSTERT EINE ANDERE STIMME.",
+      "gelb": "ANDERE",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "live",
+      "sprich": "Ein Bildschirm zeigt das Wohnzimmer. Hinter dem Sofa steht jemand.",
+      "text": "HINTER DEM SOFA STEHT JEMAND.",
+      "gelb": "SOFA",
+      "dauer": 4.6,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Babyphone sieben: Er wartet da, wo du gleich sitzt.",
+      "text": "ER WARTET DA, WO DU GLEICH SITZT.",
+      "gelb": "GLEICH",
+      "absender": "Babyphone 7",
+      "nachricht": "Er wartet da, wo du gleich sitzt.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne runter. Treppe für Treppe.",
+      "text": "ICH RENNE RUNTER.",
+      "gelb": "RENNE",
+      "pause": 0.1
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Unten sitzt er auf dem Sofa. Und klopft neben sich.",
+      "text": "ER KLOPFT NEBEN SICH AUFS SOFA.",
+      "gelb": "SOFA",
+      "schreck": true,
+      "monster": "Setz dich. Wir warten zusammen.",
+      "monster_text": "SETZ DICH. WIR WARTEN ZUSAMMEN.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil fünf: Worauf wartet er?",
+      "text": "TEIL 5: WORAUF WARTET ER?",
+      "gelb": "WARTET",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

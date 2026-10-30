@@ -1,0 +1,112 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "haus",
+  "fahrgaeste": [],
+  "boesewicht": "schatten",
+  "held": {
+    "farbe": [
+      200,
+      120,
+      60
+    ],
+    "oberteil": "hoodie",
+    "kopf": "haare",
+    "haar": [
+      214,
+      176,
+      100
+    ],
+    "hose": [
+      50,
+      56,
+      80
+    ]
+  },
+  "titel": "Babyphone – Teil 7",
+  "titelbild": "ER HÖRT ALLES, WAS ICH SAGE.",
+  "titelbild_gelb": "ALLES",
+  "caption": "Teil sieben. Es gibt nur einen Ausgang. Und er hört alles, was ich sage. Hättest du es weggeworfen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil sieben. Es gibt nur einen Ausgang. Und er hört alles, was ich sage.",
+      "text": "TEIL 7: ER HÖRT ALLES, WAS ICH SAGE.",
+      "gelb": "ALLES",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Die alte Babysitterin flüstert durchs Babyphone: Sag ihm etwas Falsches.",
+      "text": "SAG IHM ETWAS FALSCHES.",
+      "gelb": "FALSCHES",
+      "absender": "Babyphone",
+      "nachricht": "Er hört alles. Also sag ihm etwas Falsches.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ich sage laut: Die Eltern kommen erst morgen.",
+      "text": "DIE ELTERN KOMMEN ERST MORGEN.",
+      "gelb": "MORGEN",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "live",
+      "sprich": "Auf dem Bildschirm verschwindet er hinter dem Sofa.",
+      "text": "ER VERSCHWINDET HINTER DEM SOFA.",
+      "gelb": "VERSCHWINDET",
+      "dauer": 4.6,
+      "pause": 0.2
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne zur Hintertür. Sie ist offen!",
+      "text": "DIE HINTERTÜR IST OFFEN!",
+      "gelb": "OFFEN",
+      "pause": 0.1
+    },
+    {
+      "art": "scheibe",
+      "sprich": "Hinter mir zersplittert das Fenster!",
+      "text": "HINTER MIR ZERSPLITTERT DAS FENSTER!",
+      "gelb": "ZERSPLITTERT",
+      "schlag": 0.3,
+      "schreck_bei": 2.0,
+      "pause": 0.4
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Ich bin draußen. Aber das Babyphone ist noch in meiner Tasche.",
+      "text": "DAS BABYPHONE IST IN MEINER TASCHE.",
+      "gelb": "TASCHE",
+      "schreck": true,
+      "monster": "Ich höre dich immer noch.",
+      "monster_text": "ICH HÖRE DICH IMMER NOCH.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Finale: Kann ich es abschalten?",
+      "text": "FINALE: KANN ICH ES ABSCHALTEN?",
+      "gelb": "ABSCHALTEN",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

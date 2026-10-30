@@ -1,0 +1,116 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "haus",
+  "fahrgaeste": [],
+  "boesewicht": "schatten",
+  "held": {
+    "farbe": [
+      200,
+      120,
+      60
+    ],
+    "oberteil": "hoodie",
+    "kopf": "haare",
+    "haar": [
+      214,
+      176,
+      100
+    ],
+    "hose": [
+      50,
+      56,
+      80
+    ]
+  },
+  "titel": "Babyphone – Teil 5",
+  "titelbild": "DIE ELTERN KOMMEN UM MITTERNACHT.",
+  "titelbild_gelb": "MITTERNACHT",
+  "caption": "Teil fünf. Er wartet auf die Eltern. Sie kommen um Mitternacht. Wem hättest du aufgemacht? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil fünf. Er wartet auf die Eltern. Sie kommen um Mitternacht.",
+      "text": "TEIL 5: DIE ELTERN KOMMEN UM MITTERNACHT.",
+      "gelb": "MITTERNACHT",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich sitze neben ihm. Er riecht nach kaltem Rauch.",
+      "text": "ER RIECHT NACH KALTEM RAUCH.",
+      "gelb": "RAUCH",
+      "angst": 0.8,
+      "pause": 0.1,
+      "naeher": 0.7
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Ich schreibe den Eltern: Kommt nicht. Die Antwort: Zu spät. Wir stehen vor der Tür.",
+      "text": "ZU SPÄT. WIR STEHEN VOR DER TÜR.",
+      "gelb": "TÜR",
+      "absender": "Die Mutter",
+      "nachricht": "Zu spät. Wir stehen vor der Tür.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "klopfen",
+      "sprich": "Es klopft. Aber nicht an der Tür. Am Fenster.",
+      "text": "ES KLOPFT. AM FENSTER.",
+      "gelb": "FENSTER",
+      "schreck_bei": 1.0,
+      "pause": 0.2,
+      "monster": "Macht auf. Wir sind's.",
+      "monster_text": "MACHT AUF. WIR SIND'S."
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Die Eltern klopfen am Fenster. Im ersten Stock.",
+      "text": "IM ERSTEN STOCK.",
+      "gelb": "ERSTEN",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "licht",
+      "sprich": "Das Licht geht aus.",
+      "text": "DAS LICHT GEHT AUS.",
+      "gelb": "AUS",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Die Eltern sind vor drei Jahren auch nicht nach Hause gekommen.",
+      "text": "DIE ELTERN KAMEN AUCH NIE NACH HAUSE.",
+      "gelb": "NIE",
+      "schreck": true,
+      "monster": "Jetzt ist die Familie komplett.",
+      "monster_text": "JETZT IST DIE FAMILIE KOMPLETT.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil sechs: Wer hat mich überhaupt gebucht?",
+      "text": "TEIL 6: WER HAT MICH GEBUCHT?",
+      "gelb": "GEBUCHT",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}
