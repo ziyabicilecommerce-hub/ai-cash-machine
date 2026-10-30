@@ -1,10 +1,20 @@
 {
- "stand": "2026-10-30T22:42:47.716Z",
+ "stand": "2026-10-30T22:54:10.379Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
- "alarme": [],
+ "alarme": [
+  {
+   "schluessel": "karte:me04-119",
+   "art": "Karte",
+   "titel": "🚨 STRONG BUY: Chillabell-ex",
+   "bild": "https://assets.tcgdex.net/de/me/me04/119/low.webp",
+   "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Chillabell-ex",
+   "text": "Kaufen ab 19,50 € · Ziel 35,51 € · +12,73 € nach Gebühren (ROI 65 %)",
+   "zeit": "2026-10-30T22:54:10.379Z"
+  }
+ ],
  "kalender": [
   {
    "titel": "Kobe Dunk Low Protro Schuh",
@@ -170,29 +180,20 @@
     },
     "prozent": 3,
     "signal": "stabil",
-    "nurBewegung": true,
-    "kurs": []
-   },
-   {
-    "id": "me04-120",
-    "name": "Azetts Gelassenheit",
-    "nummer": "120",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Wachsendes Chaos",
-    "setId": "me04",
-    "release": "2026-05-22",
-    "bild": "https://assets.tcgdex.net/de/me/me04/120/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Azetts%20Gelassenheit",
-    "preis": {
-     "tief": 12,
-     "trend": 20.26,
-     "schnitt7": 20.53,
-     "schnitt30": 20.18
+    "profi": {
+     "einstieg": 19.5,
+     "ziel": 35.51,
+     "gewinn": 12.73,
+     "roi": 65,
+     "momentum": 3,
+     "spread": 16.01,
+     "score": 75,
+     "signal": "STRONG BUY"
     },
-    "prozent": 2,
-    "signal": "stabil",
     "nurBewegung": true,
-    "kurs": []
+    "kurs": [
+     35.51
+    ]
    },
    {
     "id": "me03-094",
@@ -212,8 +213,251 @@
     },
     "prozent": 1,
     "signal": "stabil",
+    "profi": {
+     "einstieg": 8.9,
+     "ziel": 17.29,
+     "gewinn": 6.03,
+     "roi": 68,
+     "momentum": 1,
+     "spread": 8.39,
+     "score": 73,
+     "signal": "BUY"
+    },
     "nurBewegung": true,
-    "kurs": []
+    "kurs": [
+     17.29
+    ]
+   },
+   {
+    "id": "me04-120",
+    "name": "Azetts Gelassenheit",
+    "nummer": "120",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Wachsendes Chaos",
+    "setId": "me04",
+    "release": "2026-05-22",
+    "bild": "https://assets.tcgdex.net/de/me/me04/120/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Azetts%20Gelassenheit",
+    "preis": {
+     "tief": 12,
+     "trend": 20.26,
+     "schnitt7": 20.53,
+     "schnitt30": 20.18
+    },
+    "prozent": 2,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 12,
+     "ziel": 20.26,
+     "gewinn": 5.75,
+     "roi": 48,
+     "momentum": 2,
+     "spread": 8.26,
+     "score": 68,
+     "signal": "BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     20.26
+    ]
+   },
+   {
+    "id": "me05-117",
+    "name": "Morpeko-ex",
+    "nummer": "117",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Dunkelnacht",
+    "setId": "me05",
+    "release": "2026-07-17",
+    "bild": "https://assets.tcgdex.net/de/me/me05/117/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Morpeko-ex",
+    "preis": {
+     "tief": 32.9,
+     "trend": 52.12,
+     "schnitt7": 53.39,
+     "schnitt30": 55.08
+    },
+    "prozent": -3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 32.9,
+     "ziel": 52.12,
+     "gewinn": 15.11,
+     "roi": 46,
+     "momentum": -3,
+     "spread": 19.22,
+     "score": 60,
+     "signal": "BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     52.12
+    ]
+   },
+   {
+    "id": "me05-118",
+    "name": "Gladios Finalkampf",
+    "nummer": "118",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Dunkelnacht",
+    "setId": "me05",
+    "release": "2026-07-17",
+    "bild": "https://assets.tcgdex.net/de/me/me05/118/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gladios%20Finalkampf",
+    "preis": {
+     "tief": 11,
+     "trend": 19.49,
+     "schnitt7": 19.79,
+     "schnitt30": 20.99
+    },
+    "prozent": -6,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 11,
+     "ziel": 19.49,
+     "gewinn": 6.02,
+     "roi": 55,
+     "momentum": -6,
+     "spread": 8.49,
+     "score": 58,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     19.49
+    ]
+   },
+   {
+    "id": "me03-118",
+    "name": "Mega-Starmie-ex",
+    "nummer": "118",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/118/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Starmie-ex",
+    "preis": {
+     "tief": 24,
+     "trend": 34.68,
+     "schnitt7": 33.46,
+     "schnitt30": 34.58
+    },
+    "prozent": -3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 24,
+     "ziel": 33.46,
+     "gewinn": 6.29,
+     "roi": 26,
+     "momentum": -3,
+     "spread": 10.68,
+     "score": 53,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     34.68
+    ]
+   },
+   {
+    "id": "me03-107",
+    "name": "Mauzi-ex",
+    "nummer": "107",
+    "seltenheit": "Ultra Selten",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/107/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mauzi-ex",
+    "preis": {
+     "tief": 7,
+     "trend": 13.17,
+     "schnitt7": 12.67,
+     "schnitt30": 13.13
+    },
+    "prozent": -4,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 7,
+     "ziel": 12.67,
+     "gewinn": 3.54,
+     "roi": 51,
+     "momentum": -4,
+     "spread": 6.17,
+     "score": 52,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     13.17
+    ]
+   },
+   {
+    "id": "me03-119",
+    "name": "Mega-Pixi-ex",
+    "nummer": "119",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/119/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Pixi-ex",
+    "preis": {
+     "tief": 23.95,
+     "trend": 34.79,
+     "schnitt7": 37.03,
+     "schnitt30": 39.54
+    },
+    "prozent": -6,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 23.95,
+     "ziel": 34.79,
+     "gewinn": 7.6,
+     "roi": 32,
+     "momentum": -6,
+     "spread": 10.84,
+     "score": 50,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     34.79
+    ]
+   },
+   {
+    "id": "me04-121",
+    "name": "Micas Aufführung",
+    "nummer": "121",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Wachsendes Chaos",
+    "setId": "me04",
+    "release": "2026-05-22",
+    "bild": "https://assets.tcgdex.net/de/me/me04/121/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Micas%20Auff%C3%BChrung",
+    "preis": {
+     "tief": 8,
+     "trend": 13.21,
+     "schnitt7": 13.81,
+     "schnitt30": 14.18
+    },
+    "prozent": -3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 8,
+     "ziel": 13.21,
+     "gewinn": 3.05,
+     "roi": 38,
+     "momentum": -3,
+     "spread": 5.21,
+     "score": 49,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     13.21
+    ]
    }
   ],
   "sets": [
@@ -272,19 +516,32 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 366,
+  "geprueft": 923,
   "statistik": {
-   "karten": 366,
+   "karten": 923,
    "mitPreis": 366,
    "imBudget": 20,
-   "steigend": 0
+   "steigend": 0,
+   "fallend": 6
   },
-  "quelle": "TCGdex",
-  "stand": "2026-10-30T21:52:11.238Z"
+  "quelle": "TCGdex + pokemontcg.io",
+  "stand": "2026-10-30T22:53:39.049Z"
  },
  "trends": {
   "ware": [],
   "top": [
+   {
+    "titel": "tim raue",
+    "menge": "500+"
+   },
+   {
+    "titel": "nsu",
+    "menge": "200+"
+   },
+   {
+    "titel": "goldpreis aktuell",
+    "menge": "200+"
+   },
    {
     "titel": "andy kim",
     "menge": "500+"
@@ -294,12 +551,12 @@
     "menge": "200+"
    },
    {
-    "titel": "germersheim",
-    "menge": "200+"
-   },
-   {
     "titel": "micky beisenherz",
     "menge": "500+"
+   },
+   {
+    "titel": "germersheim",
+    "menge": "200+"
    },
    {
     "titel": "podcast",
@@ -310,20 +567,8 @@
     "menge": "100+"
    },
    {
-    "titel": "rankingi górnik zabrze – legia warszawa",
-    "menge": "1000+"
-   },
-   {
     "titel": "insel",
-    "menge": "200+"
-   },
-   {
-    "titel": "virus",
-    "menge": "200+"
-   },
-   {
-    "titel": "audi q9",
-    "menge": "200+"
+    "menge": "500+"
    }
   ]
  },
