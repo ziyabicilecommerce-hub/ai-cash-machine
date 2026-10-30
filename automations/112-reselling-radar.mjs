@@ -65,17 +65,28 @@ async function pokemonTcgdex() {
 }
 
 async function pokemon() {
-  try { return await nochmal(pokemonTcgApi); } catch (e) { log('pokemontcg.io aus:', e.message, '- nehme TCGdex'); return pokemonTcgdex(); }
+  let haupt = null;
+  try { haupt = await nochmal(pokemonTcgApi); } catch (e) { log('pokemontcg.io aus:', e.message); }
+  if (haupt && haupt.geprueft >= 300) return haupt;
+  log(`pokemontcg.io lieferte nur ${haupt?.geprueft || 0} Karten - frage zusaetzlich TCGdex`);
+  try {
+    const ersatz = await pokemonTcgdex();
+    return ersatz.geprueft > (haupt?.geprueft || 0) ? ersatz : haupt;
+  } catch (e) { if (haupt) return haupt; throw e; }
 }
 
 async function pokemonTcgApi() {
   const sets = (await holen('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=6', { json: true })).data || [];
   const karten = [];
   for (const s of sets) {
-    try {
-      const d = await holen(`https://api.pokemontcg.io/v2/cards?q=set.id:${s.id}&pageSize=250&select=id,name,number,rarity,images,set,cardmarket`, { json: true });
-      karten.push(...(d.data || []));
-    } catch (e) { log('Set übersprungen:', s.id, e.message); }
+    // kleine Seiten mit Wiederholung - grosse Abfragen beantwortet die API oft mit 500
+    for (let seite = 1; seite <= 4; seite++) {
+      try {
+        const d = await nochmal(() => holen(`https://api.pokemontcg.io/v2/cards?q=set.id:${s.id}&page=${seite}&pageSize=100&select=id,name,number,rarity,images,set,cardmarket`, { json: true }), 2);
+        karten.push(...(d.data || []));
+        if ((d.data || []).length < 100) break;
+      } catch (e) { log('Set-Seite übersprungen:', s.id, seite, e.message); break; }
+    }
   }
   return {
     picks: kartenPicks(karten, { maxEuro: BUDGET }),
