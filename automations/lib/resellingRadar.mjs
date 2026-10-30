@@ -121,15 +121,15 @@ export function shopifyTreffer(json, domain, begriff) {
   })).filter((p) => p.titel && p.verfuegbar);
 }
 
-// Läden vor Ort: ganz Hessen + 30 km um Hattersheim (damit auch Mainz/Wiesbaden), Daten aus OpenStreetMap.
-export const HEIMAT = { name: 'Hattersheim am Main', lat: 50.0697, lon: 8.4867, radiusKm: 30 };
+// Läden vor Ort: 50 km um Hattersheim (Frankfurt, Mainz, Wiesbaden, Darmstadt, Hanau …), Daten aus OpenStreetMap.
+export const HEIMAT = { name: 'Hattersheim am Main', lat: 50.0697, lon: 8.4867, radiusKm: 50 };
 const KETTEN = 'Smyths Toys|Müller|Drogerie Müller|MediaMarkt|Media Markt|Saturn|Snipes|SNIPES|Foot Locker|JD Sports|Thalia|GameStop|LEGO|Galeria|Nike|adidas|Kaufland|Rossmann|Douglas|Hugendubel';
 export function overpassAbfrage(h = HEIMAT) {
   const um = `around:${h.radiusKm * 1000},${h.lat},${h.lon}`;
   const art = '["shop"~"^(toys|games|video_games|collector|hobby|comic|anime|model|trade|second_hand)$"]';
   const kette = `["shop"]["brand"~"^(${KETTEN})$",i]`;
   const name = `["shop"]["name"~"^(${KETTEN})",i]`;
-  return `[out:json][timeout:180];area["ISO3166-2"="DE-HE"]->.he;(nwr${art}(area.he);nwr${art}(${um});nwr${kette}(area.he);nwr${kette}(${um});nwr${name}(area.he);nwr${name}(${um}););out center tags;`;
+  return `[out:json][timeout:180];(nwr${art}(${um});nwr${kette}(${um});nwr${name}(${um}););out center tags;`;
 }
 
 export function entfernungKm(a, b) {

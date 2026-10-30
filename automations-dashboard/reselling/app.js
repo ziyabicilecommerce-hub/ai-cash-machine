@@ -47,7 +47,36 @@ $('nav').addEventListener('click', (e) => {
 try { const t = localStorage.getItem('tab'); if (t) document.querySelector(`nav button[data-ziel="${t}"]`)?.click(); } catch {}
 
 let D = {}, LAEDEN = [], KATALOG = null;
-const zustand = { kal: 'Alle', kauf: 'Im Budget', laden: 'Alle', ladenZahl: 15, kat: 'Alle' };
+const zustand = { saison: 'Alle', kal: 'Alle', kauf: 'Im Budget', laden: 'Alle', ladenZahl: 15, kat: 'Alle' };
+
+// Saison: was in diesem Monat zu kaufen/verkaufen lohnt - mit Shop-Links; dazu passende Google-Suchen von heute
+let SAISON = null;
+const MONATE = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+function tippZeile(t) {
+  const shops = { ...(KATALOG?.verkaufen || {}), ...(KATALOG?.shops || {}) };
+  const such = (s) => shops[s]?.suche.replace('{q}', encodeURIComponent(t.q));
+  const box = el('div'); box.style.margin = '0 0 12px';
+  box.append(eintrag({ emoji: t.aktion === 'kaufen' ? '🛒' : '💶', name: t.name, info: t.warum, tag: t.aktion === 'kaufen' ? 'Jetzt kaufen' : 'Jetzt verkaufen' }));
+  const l = el('div', 'links');
+  for (const s of [...(t.kaufen || []), ...(t.verkaufen || [])]) if (shops[s]) { const a = el('a', t.aktion === 'kaufen' ? 'kauf' : 'verk2', shops[s].name); a.href = such(s); a.target = '_blank'; a.rel = 'noopener'; l.append(a); }
+  box.append(l);
+  return box;
+}
+function saison() {
+  if (!SAISON) return;
+  const m = Number(new Intl.DateTimeFormat('de-DE', { ...BERLIN, month: 'numeric' }).format(new Date()));
+  const naechster = (m % 12) + 1;
+  $('saisontitel').textContent = `🗓️ Jetzt dran im ${MONATE[m - 1]}`;
+  $('saisoninfo').textContent = SAISON.hinweis;
+  const tipps = SAISON.monate[m] || [];
+  chips('saisonfilter', ['Alle', 'Jetzt kaufen', 'Jetzt verkaufen'], zustand.saison, (w) => { zustand.saison = w; saison(); });
+  const zeig = tipps.filter((t) => zustand.saison === 'Alle' || (zustand.saison === 'Jetzt kaufen' ? t.aktion === 'kaufen' : t.aktion === 'verkaufen'));
+  const gesucht = (D.trends?.ware || []).map((t) => eintrag({ emoji: '🔎', name: `${t.titel}`, info: `Wird heute viel gegoogelt (${t.menge || 'viele'} Suchen) - Preise checken!`, marke: t.kategorie,
+    link: `https://www.ebay.de/sch/i.html?_nkw=${encodeURIComponent(t.titel)}&LH_Sold=1&LH_Complete=1` }));
+  $('saison').replaceChildren(...gesucht, ...zeig.map(tippZeile));
+  $('baldtitel').textContent = `Vorbereiten für ${MONATE[naechster - 1]}`;
+  $('bald').replaceChildren(...(SAISON.monate[naechster] || []).map(tippZeile));
+}
 
 function kalender() {
   const liste = D.kalender || [];
@@ -93,7 +122,6 @@ function mehr() {
     emoji: '🔔', name: p.titel || p.laden, info: p.muster?.anzahl ? `meist ${(p.muster.tage || []).map((t) => t[0]).join('/')} ${(p.muster.stunden || []).map((t) => t[0]).join('/')}` : p.laden,
     preis: p.status, preisKlasse: farbe[p.status] || '', link: https(p.url),
   })));
-  $('trends').replaceChildren(...((D.trends?.top || []).length ? D.trends.top.map((t) => eintrag({ emoji: '🔎', name: t.titel, info: t.menge ? `${t.menge} Suchen` : '' })) : [leer('Keine Daten.')]));
 }
 
 function katalog() {
@@ -132,13 +160,14 @@ async function json(name) {
 }
 async function laden() {
   $('stand').textContent = 'Aktualisiere …';
-  const [d, l, k] = await Promise.all([json('daten.json'), LAEDEN.length ? null : json('laeden.json'), KATALOG ? null : json('katalog.json')]);
+  const [d, l, k, sa] = await Promise.all([json('daten.json'), LAEDEN.length ? null : json('laeden.json'), KATALOG ? null : json('katalog.json'), SAISON ? null : json('saison.json')]);
   if (d) D = d;
+  if (sa) SAISON = sa;
   if (l) LAEDEN = l.laeden || [];
   if (k) KATALOG = k;
   const alter = D.stand ? Math.round((Date.now() - Date.parse(D.stand)) / 60000) : null;
   $('stand').replaceChildren(document.createTextNode(alter == null ? 'Noch keine Daten' : 'Stand: '), ...(alter == null ? [] : [el('b', '', alter < 1 ? 'gerade eben' : `vor ${alter} Min.`), document.createTextNode(' · aktualisiert sich alle 10 Min.')]));
-  kalender(); kaufen(); laeden(); mehr(); katalog();
+  saison(); kalender(); kaufen(); laeden(); mehr(); katalog();
 }
 $('neuladen').addEventListener('click', laden);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) laden(); });
@@ -146,7 +175,7 @@ setInterval(laden, 10 * 60000);
 laden();
 
 $('teilen').addEventListener('click', async () => {
-  const daten = { title: 'Reselling-Radar', text: 'Drops, was auf Lager ist + Läden in Hessen - kostenlos:', url: location.href.split('?')[0] };
+  const daten = { title: 'Reselling-Radar', text: 'Was sich gerade lohnt, Drops, Lager + Läden um Frankfurt/Mainz - kostenlos:', url: location.href.split('?')[0] };
   try {
     if (navigator.share) await navigator.share(daten);
     else { await navigator.clipboard.writeText(daten.url); $('teilen').textContent = '✅ Kopiert'; }
