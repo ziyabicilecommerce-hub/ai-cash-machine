@@ -20,7 +20,9 @@ export function doppelt(skript, bekannt = []) {
   if (!neu.length) return false;
   return bekannt.some((b) => {
     const alt = woerter(b);
-    const gemeinsam = neu.filter((w) => alt.has(w) || [...alt].some((a) => a.slice(0, 6) === w.slice(0, 6)));
+    // Wortstamm nur bei langen Woertern (beide >= 7, gleiche ersten 7 Buchstaben): "oktopus/oktopusse" ja,
+    // "meisterstueck/meiste" oder "schlafen/schlafparalyse" nein - sonst gilt nach 200 Fakten fast alles als doppelt.
+    const gemeinsam = neu.filter((w) => alt.has(w) || (w.length >= 7 && [...alt].some((a) => a.length >= 7 && a.slice(0, 7) === w.slice(0, 7))));
     // Ein langes, markantes Wort (>= 7 Buchstaben, z. B. "oktopus") oder zwei gemeinsame Woerter = dasselbe Thema.
     return gemeinsam.some((w) => w.length >= 7) || gemeinsam.length >= 2;
   });
