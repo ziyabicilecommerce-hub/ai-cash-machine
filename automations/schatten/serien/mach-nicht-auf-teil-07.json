@@ -31,11 +31,11 @@
     ]
   },
   "monsterstimme": "de-DE-KatjaNeural",
-  "caption": "Teil sieben. In der dreizehnten Nacht holt sie dich. Heute ist die zwölfte. Hättest du geschlafen? 👇",
+  "caption": "In der dreizehnten Nacht holt sie dich. Heute ist die zwölfte. Hättest du geschlafen? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil sieben. In der dreizehnten Nacht holt sie dich. Heute ist die zwölfte.",
+      "sprich": "In der dreizehnten Nacht holt sie dich. Heute ist die zwölfte.",
       "text": "TEIL 7: HEUTE IST DIE 12. NACHT.",
       "gelb": "NACHT",
       "schreck": true,
@@ -117,7 +117,8 @@
       "sprich": "Teil acht: Überlebe ich die Nacht?",
       "text": "TEIL 8: ÜBERLEBE ICH DIE NACHT?",
       "gelb": "ÜBERLEBE",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 8"
     }
   ],
   "teile": 12

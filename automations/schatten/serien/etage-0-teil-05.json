@@ -30,11 +30,11 @@
   "titel": "Etage 0 – Teil 5",
   "titelbild": "KEINE STUFEN NACH OBEN.",
   "titelbild_gelb": "OBEN",
-  "caption": "Teil fünf. Ich nehme die Treppe. Sie hat keine Stufen nach oben. Treppe oder Aufzug? 👇",
+  "caption": "Ich nehme die Treppe. Sie hat keine Stufen nach oben. Treppe oder Aufzug? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil fünf. Ich nehme die Treppe. Sie hat keine Stufen nach oben.",
+      "sprich": "Ich nehme die Treppe. Sie hat keine Stufen nach oben.",
       "text": "TEIL 5: KEINE STUFEN NACH OBEN.",
       "gelb": "OBEN",
       "schreck": true,
@@ -108,7 +108,8 @@
       "sprich": "Teil sechs: Welcher Weg?",
       "text": "TEIL 6: WELCHER WEG?",
       "gelb": "WEG",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 6"
     }
   ],
   "teile": 8

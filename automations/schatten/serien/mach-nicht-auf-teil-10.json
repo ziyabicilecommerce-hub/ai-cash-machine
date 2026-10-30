@@ -31,11 +31,11 @@
     ]
   },
   "monsterstimme": "de-DE-KatjaNeural",
-  "caption": "Teil zehn. Ich klopfe an meine eigene Tür. Und höre mich sagen: Mach nicht auf. Hättest du die Scheibe eingeschlagen? 👇",
+  "caption": "Ich klopfe an meine eigene Tür. Und höre mich sagen: Mach nicht auf. Hättest du die Scheibe eingeschlagen? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil zehn. Ich klopfe an meine eigene Tür. Und höre mich sagen: Mach nicht auf.",
+      "sprich": "Ich klopfe an meine eigene Tür. Und höre mich sagen: Mach nicht auf.",
       "text": "TEIL 10: ICH HÖRE MICH: MACH NICHT AUF.",
       "gelb": "MICH",
       "schreck": true,
@@ -115,7 +115,8 @@
       "sprich": "Teil elf: Wer von uns ist echt?",
       "text": "TEIL 11: WER VON UNS IST ECHT?",
       "gelb": "ECHT",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 11"
     }
   ],
   "teile": 12

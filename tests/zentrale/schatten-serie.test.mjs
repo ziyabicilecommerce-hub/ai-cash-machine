@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { serienText, serienTitel } from '../../automations/schatten/posten.mjs';
+import { serienText, serienTitel, serienTag } from '../../automations/schatten/posten.mjs';
 
 const ORDNER = new URL('../../automations/schatten/serien/', import.meta.url);
 const folgen = readdirSync(ORDNER).filter((f) => f.endsWith('.json')).map((f) => ({ f, d: JSON.parse(readFileSync(new URL(f, ORDNER), 'utf8')) }));
@@ -24,6 +24,8 @@ test('Schatten-Serien: jede Folge hat Hook, Jumpscare, Ende und ein gelbes Wort,
     assert.ok(d.szenen.some((s) => s.art === 'fratze'), `${f}: Jumpscare`);
     assert.equal(d.szenen.at(-1).art, 'teil2', `${f}: Abschluss-Karte`);
     assert.ok(d.caption && /👇/.test(d.caption), `${f}: Frage an die Zuschauer`);
+    assert.doesNotMatch(d.szenen[0].sprich, /^(Teil \S+|Finale)\./, `${f}: Hook beginnt sofort mit Spannung`);
+    if (Number(f.match(/teil-(\d+)/)[1]) < d.teile) assert.match(d.szenen.at(-1).cta || '', /FOLG MIR/, `${f}: Folgen-Aufruf`);
     for (const s of d.szenen.filter((s) => s.gelb)) {
       assert.ok(s.text.split(' ').map((w) => w.replace(/^["]+|[".,:!?]+$/g, '')).includes(s.gelb), `${f}: "${s.gelb}" fehlt in "${s.text}"`);
     }
@@ -38,4 +40,9 @@ test('serienText: Hook, Teil-Nummer, Hashtags und KI-Hinweis', () => {
   assert.match(t, /#teil5/);
   assert.match(t, /KI-generiert/);
   assert.equal(serienTitel({ titel: 'x'.repeat(200) }).length, 90);
+  assert.equal(serienTag({ titel: 'Passagier 41 – Teil 5' }), '#passagier41');
+  assert.match(t, /#passagier41/);
+  assert.match(t, /Teil 6 kommt bald/);
+  assert.doesNotMatch(serienText({ titel: 'Etage 0 – Teil 8', caption: 'x', teile: 8 }), /kommt bald/, 'kein Teil 9 versprechen');
+  assert.doesNotMatch(t, /#fyp/);
 });

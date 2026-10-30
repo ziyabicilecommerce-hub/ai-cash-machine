@@ -31,11 +31,11 @@
     ]
   },
   "monsterstimme": "de-DE-KatjaNeural",
-  "caption": "Teil neun. Unter dem Baum liegt ein weißes Kleid. Trocken. Nach zwanzig Jahren. Wärst du nach Hause gegangen? 👇",
+  "caption": "Unter dem Baum liegt ein weißes Kleid. Trocken. Nach zwanzig Jahren. Wärst du nach Hause gegangen? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil neun. Unter dem Baum liegt ein weißes Kleid. Trocken. Nach zwanzig Jahren.",
+      "sprich": "Unter dem Baum liegt ein weißes Kleid. Trocken. Nach zwanzig Jahren.",
       "text": "TEIL 9: DAS KLEID IST TROCKEN.",
       "gelb": "TROCKEN",
       "schreck": true,
@@ -107,7 +107,8 @@
       "sprich": "Teil zehn: Wie komme ich nach Hause?",
       "text": "TEIL 10: WIE KOMME ICH NACH HAUSE?",
       "gelb": "HAUSE",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 10"
     }
   ],
   "teile": 12

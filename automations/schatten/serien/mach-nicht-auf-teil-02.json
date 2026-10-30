@@ -31,11 +31,11 @@
     ]
   },
   "monsterstimme": "de-DE-KatjaNeural",
-  "caption": "Teil zwei. Schau nicht nach oben, während du das hier schaust. Würdest du jetzt nach oben schauen? 👇",
+  "caption": "Schau nicht nach oben, während du das hier schaust. Würdest du jetzt nach oben schauen? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil zwei. Schau nicht nach oben, während du das hier schaust.",
+      "sprich": "Schau nicht nach oben, während du das hier schaust.",
       "text": "TEIL 2: SCHAU NICHT NACH OBEN, WÄHREND DU DAS SCHAUST.",
       "gelb": "OBEN",
       "schreck": true,
@@ -149,7 +149,8 @@
       "sprich": "Teil drei: Wer kommt da gerade nach Hause?",
       "text": "TEIL 3: WER KOMMT DA NACH HAUSE?",
       "gelb": "HAUSE",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 3"
     }
   ],
   "teile": 12

@@ -4,13 +4,17 @@ import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { API, POST_MUTATION, postInput } from '../lib/bufferPoster.mjs';
 
-const TAGS = '#horror #gruselgeschichte #horrorstory #creepy #fyp #serie';
+// Wenige, gesuchte Nischen-Tags statt #fyp - dazu ein eigener Serien-Tag, über den man alle Teile findet.
+const TAGS = '#horrortok #gruselgeschichte #creepypasta #gänsehaut #horrorstory';
+export const serienTag = (folge) => `#${String(folge.titel || '').split(' – ')[0].toLowerCase().replace(/[^a-zäöüß0-9]+/g, '')}`;
 
 // Beschreibung: Hook + Frage an die Zuschauer (für Kommentare), Teil-Nummer, Hashtags und klarer KI-Hinweis.
 export function serienText(folge) {
   const teil = String(folge.titel || '').match(/Teil (\d+)/)?.[1];
   const kopf = String(folge.caption || folge.titel || '').trim();
-  return `${kopf}${teil ? ` (Teil ${teil}/${folge.teile || 12})` : ''}\n\n${TAGS} #teil${teil || ''}\n(KI-generiert, frei erfundene Geschichte)`.slice(0, 2200);
+  const gesamt = folge.teile || 12;
+  const weiter = teil && Number(teil) < gesamt ? ` Folg mir, Teil ${Number(teil) + 1} kommt bald ⏰` : '';
+  return `${kopf}${teil ? ` (Teil ${teil}/${gesamt})` : ''}${weiter}\n\n${TAGS} ${serienTag(folge)} #teil${teil || ''}\n(KI-generiert, frei erfundene Geschichte)`.slice(0, 2200);
 }
 
 export const serienTitel = (folge) => String(folge.titel || '').slice(0, 90);
@@ -33,4 +37,4 @@ async function main() {
   console.log('[schatten] gepostet:', folge.titel, ergebnis.post?.id, ergebnis.post?.status);
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) main().catch((e) => { console.error(e.message); process.exit(1); });
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch((e) => { console.error(e.message); process.exit(1); });

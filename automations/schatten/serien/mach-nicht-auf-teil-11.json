@@ -31,11 +31,11 @@
     ]
   },
   "monsterstimme": "de-DE-KatjaNeural",
-  "caption": "Teil elf. Mama steht zwischen uns. Und muss sich entscheiden. Woran hätte deine Mama dich erkannt? 👇",
+  "caption": "Mama steht zwischen uns. Und muss sich entscheiden. Woran hätte deine Mama dich erkannt? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil elf. Mama steht zwischen uns. Und muss sich entscheiden.",
+      "sprich": "Mama steht zwischen uns. Und muss sich entscheiden.",
       "text": "TEIL 11: MAMA MUSS SICH ENTSCHEIDEN.",
       "gelb": "ENTSCHEIDEN",
       "schreck": true,
@@ -122,7 +122,8 @@
       "sprich": "Teil zwölf, das Finale: Was passiert mit der Falschen?",
       "text": "FINALE: WAS PASSIERT MIT DER FALSCHEN?",
       "gelb": "FALSCHEN",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 12"
     }
   ],
   "teile": 12

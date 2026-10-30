@@ -14,11 +14,11 @@
   "titel": "Letzte Bahn – Teil 3",
   "titelbild": "ETWAS VON MIR IST AUSGESTIEGEN.",
   "titelbild_gelb": "ETWAS",
-  "caption": "Teil drei. Sie ist ausgestiegen. Ich nicht. Aber etwas von mir schon. Würdest du tauschen? 👇",
+  "caption": "Sie ist ausgestiegen. Ich nicht. Aber etwas von mir schon. Würdest du tauschen? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil drei. Sie ist ausgestiegen. Ich nicht. Aber etwas von mir schon.",
+      "sprich": "Sie ist ausgestiegen. Ich nicht. Aber etwas von mir schon.",
       "text": "TEIL 3: ETWAS VON MIR IST AUSGESTIEGEN.",
       "gelb": "ETWAS",
       "schreck": true,
@@ -103,7 +103,8 @@
       "sprich": "Teil vier: Wer fährt nach Hause?",
       "text": "TEIL 4: WER FÄHRT NACH HAUSE?",
       "gelb": "HAUSE",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 4"
     }
   ],
   "teile": 8
