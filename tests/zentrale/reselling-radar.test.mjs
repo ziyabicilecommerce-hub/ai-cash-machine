@@ -9,6 +9,10 @@ test('kartenSignal: steigt, fällt, stabil - ohne Preise keine Bewertung', () =>
   assert.equal(kartenSignal(karte('b', { trendPrice: 20, avg1: 15, avg30: 25 })).signal, 'fällt');
   assert.equal(kartenSignal(karte('c', { trendPrice: 20, avg1: 21, avg30: 20 })).signal, 'stabil');
   assert.equal(kartenSignal(karte('d', {})), null);
+  // ein einzelner teurer Tagesverkauf ist kein Trend
+  assert.equal(kartenSignal(karte('e', { trendPrice: 17, avg1: 24, avg7: 18, avg30: 17.8 })).signal, 'stabil');
+  // Woche deutlich hoch, letzter Tag bricht ein: noch nicht bestätigt
+  assert.equal(kartenSignal(karte('f', { trendPrice: 30, avg1: 20, avg7: 30, avg30: 25 })).signal, 'stabil');
 });
 
 test('kartenPicks: nur steigend, im Budget und wiederverkaufbar - stärkster Anstieg zuerst', () => {
@@ -63,7 +67,7 @@ test('linksAus: Produkt-Links aus dem Issue, ohne GitHub-Links und Dubletten', (
 
 test('kartenPicks: steigt nichts deutlich, kommen die besten Bewegungen markiert statt einer leeren Liste', async () => {
   const { kartenPicks: picks, kartenStatistik } = await import('../../automations/lib/resellingRadar.mjs');
-  const leicht = [karte('x', { lowPrice: 20, trendPrice: 22, avg1: 23, avg30: 21 }), karte('y', { lowPrice: 20, trendPrice: 20, avg1: 19, avg30: 21 })];
+  const leicht = [karte('x', { lowPrice: 20, trendPrice: 22, avg1: 22, avg30: 21 }), karte('y', { lowPrice: 20, trendPrice: 20, avg1: 19, avg30: 21 })];
   const p = picks(leicht);
   assert.deepEqual(p.map((k) => [k.id, k.nurBewegung]), [['x', true]]);
   assert.deepEqual(kartenStatistik([...leicht, karte('z', {})]), { karten: 3, mitPreis: 2, imBudget: 2, steigend: 0 });
