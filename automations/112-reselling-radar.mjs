@@ -30,20 +30,21 @@ async function nochmal(f, versuche = 3) {
 }
 
 // Ersatzquelle, falls pokemontcg.io ausfällt: TCGdex (kostenlos, deutsche Kartennamen, Cardmarket-Preise in EUR).
+// Quelle 1: TCGdex (kostenlos, deutsche Kartennamen, Cardmarket-Preise in EUR)
 async function pokemonTcgdex() {
   const API = 'https://api.tcgdex.net/v2/de';
   const liste = await holen(`${API}/sets`, { json: true });
   const neueste = [];
-  for (const s of liste.slice(-10).reverse()) {
+  for (const s of liste.slice(-14).reverse()) {
     try { neueste.push(await holen(`${API}/sets/${s.id}`, { json: true })); } catch { /* Set ohne Details */ }
-    if (neueste.length >= 4) break;
+    if (neueste.length >= 8) break;
   }
   neueste.sort((a, b) => String(b.releaseDate).localeCompare(String(a.releaseDate)));
   const karten = [];
-  for (const set of neueste.slice(0, 3)) {
+  for (const set of neueste.slice(0, 6)) {
     const ids = (set.cards || []).map((c) => c.id);
-    for (let i = 0; i < ids.length; i += 8) {
-      const stapel = await Promise.all(ids.slice(i, i + 8).map((id) => holen(`${API}/cards/${id}`, { json: true }).catch(() => null)));
+    for (let i = 0; i < ids.length; i += 10) {
+      const stapel = await Promise.all(ids.slice(i, i + 10).map((id) => holen(`${API}/cards/${id}`, { json: true }).catch(() => null)));
       for (const c of stapel.filter(Boolean)) {
         const cm = c.pricing?.cardmarket;
         if (!cm) continue;
@@ -56,30 +57,14 @@ async function pokemonTcgdex() {
       }
     }
   }
-  if (!karten.length) throw new Error('TCGdex lieferte keine Preise');
-  return {
-    picks: kartenPicks(karten, { maxEuro: BUDGET }),
-    sets: neueste.map((s) => ({ name: s.name, id: s.id, release: s.releaseDate, logo: s.logo ? `${s.logo}.webp` : '', ...kaufZeitpunkt(s.releaseDate) })),
-    geprueft: karten.length, statistik: kartenStatistik(karten, { maxEuro: BUDGET }), quelle: 'TCGdex',
-  };
+  return { karten, sets: neueste.slice(0, 6).map((s) => ({ name: s.name, id: s.id, release: s.releaseDate, logo: s.logo ? `${s.logo}.webp` : '' })) };
 }
 
-async function pokemon() {
-  let haupt = null;
-  try { haupt = await nochmal(pokemonTcgApi); } catch (e) { log('pokemontcg.io aus:', e.message); }
-  if (haupt && haupt.geprueft >= 300) return haupt;
-  log(`pokemontcg.io lieferte nur ${haupt?.geprueft || 0} Karten - frage zusaetzlich TCGdex`);
-  try {
-    const ersatz = await pokemonTcgdex();
-    return ersatz.geprueft > (haupt?.geprueft || 0) ? ersatz : haupt;
-  } catch (e) { if (haupt) return haupt; throw e; }
-}
-
+// Quelle 2: pokemontcg.io (englische Namen, ebenfalls Cardmarket-Preise) - antwortet oft mit 500, daher kleine Seiten
 async function pokemonTcgApi() {
-  const sets = (await holen('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=6', { json: true })).data || [];
+  const sets = (await holen('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=8', { json: true })).data || [];
   const karten = [];
   for (const s of sets) {
-    // kleine Seiten mit Wiederholung - grosse Abfragen beantwortet die API oft mit 500
     for (let seite = 1; seite <= 4; seite++) {
       try {
         const d = await nochmal(() => holen(`https://api.pokemontcg.io/v2/cards?q=set.id:${s.id}&page=${seite}&pageSize=100&select=id,name,number,rarity,images,set,cardmarket`, { json: true }), 2);
@@ -88,10 +73,26 @@ async function pokemonTcgApi() {
       } catch (e) { log('Set-Seite übersprungen:', s.id, seite, e.message); break; }
     }
   }
+  return { karten, sets: sets.map((s) => ({ name: s.name, id: s.id, release: s.releaseDate, logo: s.images?.logo || '' })) };
+}
+
+// Beide Quellen zusammen - je mehr Karten mit Preis, desto eher findet sich, was gerade steigt.
+async function pokemon() {
+  const quellen = [];
+  for (const [name, f] of [['TCGdex', pokemonTcgdex], ['pokemontcg.io', pokemonTcgApi]]) {
+    try { const r = await f(); if (r.karten.length) quellen.push({ name, ...r }); log(name, r.karten.length, 'Karten'); } catch (e) { log(name, 'aus:', e.message); }
+  }
+  if (!quellen.length) throw new Error('keine Preisquelle erreichbar');
+  const gesehen = new Set();
+  const karten = quellen.flatMap((q) => q.karten).filter((k) => {
+    const schluessel = `${String(k.set?.releaseDate).replace(/\//g, '-')}|${String(k.number).replace(/^0+/, '')}`;  // gleiche Karte aus beiden Quellen nur einmal
+    return gesehen.has(schluessel) ? false : (gesehen.add(schluessel), true);
+  });
+  const sets = quellen[0].sets.length ? quellen[0].sets : quellen[1]?.sets || [];
   return {
     picks: kartenPicks(karten, { maxEuro: BUDGET }),
-    sets: sets.map((s) => ({ name: s.name, id: s.id, release: s.releaseDate, logo: s.images?.logo || '', ...kaufZeitpunkt(s.releaseDate) })),
-    geprueft: karten.length, statistik: kartenStatistik(karten, { maxEuro: BUDGET }), quelle: 'pokemontcg.io',
+    sets: sets.map((s) => ({ ...s, ...kaufZeitpunkt(s.release) })),
+    geprueft: karten.length, statistik: kartenStatistik(karten, { maxEuro: BUDGET }), quelle: quellen.map((q) => q.name).join(' + '),
   };
 }
 
