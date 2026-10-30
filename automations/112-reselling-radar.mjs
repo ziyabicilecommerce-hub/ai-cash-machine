@@ -1,15 +1,16 @@
-// #112 Reselling-Radar (Deutschland): holt stündlich kostenlose, echte Daten und schreibt sie für die App
+// #112 Reselling-Radar (Hessen): holt alle 10 Minuten kostenlose, echte Daten und schreibt sie für die App
 // (automations-dashboard/reselling/) in daten.json:
 //  - Pokémon-Karten, deren Cardmarket-Preis (EUR) gerade steigt und die ins Budget passen (pokemontcg.io, ohne Schlüssel)
 //  - was in Deutschland gerade gesucht wird und Ware ist (Google-Trends-RSS)
 //  - Lagerstatus der Produkte aus GitHub-Issues mit dem Label "restock"; bei Restock kommt ein Kommentar ins Issue
 //    (= Push-Benachrichtigung über die GitHub-App) und die Uhrzeit wird für das Restock-Muster gespeichert.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
+import { nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
 
 const ORDNER = 'automations-dashboard/reselling';
 const DATEN = `${ORDNER}/daten.json`;
 const VERLAUF = `${ORDNER}/verlauf.json`;
+const LAEDEN = `${ORDNER}/laeden.json`;
 const REPO = process.env.GITHUB_REPOSITORY || '';
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
 const BUDGET = Number(process.env.RESELLING_BUDGET || 40);
@@ -134,6 +135,33 @@ async function liveShops() {
   return { treffer: treffer.filter((t) => sinnvoll(t) && !gesehen.has(t.url) && gesehen.add(t.url)).sort((a, b) => (a.preis ?? 999) - (b.preis ?? 999)), erreicht };
 }
 
+// Release-Kalender: kommende Nike-SNKRS-Drops in Deutschland (Bild, Modell, Preis, Uhrzeit).
+async function sneakerDrops() {
+  const url = 'https://api.nike.com/product_feed/threads/v3/?anchor=0&count=60&filter=marketplace(DE)&filter=language(de)'
+    + '&filter=upcoming(true)&filter=channelId(010794e5-35fe-4e32-aaff-cd2c74f89d61)&filter=exclusiveAccess(true,false)&sort=effectiveStartSellDateAsc';
+  return nikeDrops(await nochmal(() => holen(url, { json: true, kopf: { accept: 'application/json' } }), 2));
+}
+
+// Läden vor Ort (Hessen + 30 km um Hattersheim) aus OpenStreetMap - einmal pro Woche reicht.
+async function laedenVorOrt() {
+  const alt = lesen(LAEDEN, null);
+  if (alt?.stand && Date.now() - Date.parse(alt.stand) < 7 * 86400000 && alt.laeden?.length) return alt;
+  const abfrage = overpassAbfrage(HEIMAT);
+  for (const server of ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter']) {
+    try {
+      const res = await fetch(server, { method: 'POST', body: new URLSearchParams({ data: abfrage }), headers: { 'user-agent': 'reselling-radar (github actions)' }, signal: AbortSignal.timeout(200000) });
+      if (!res.ok) throw new Error(`${res.status}`);
+      const laeden = laedenAusOsm(await res.json(), HEIMAT);
+      const daten = { stand: new Date().toISOString(), heimat: HEIMAT, laeden };
+      writeFileSync(LAEDEN, `${JSON.stringify(daten, null, 1)}\n`);
+      log('Läden vor Ort:', laeden.length);
+      return daten;
+    } catch (e) { log('Overpass', server, 'aus:', e.message); }
+  }
+  if (alt) return alt;
+  throw new Error('OpenStreetMap nicht erreichbar');
+}
+
 async function issues() {
   if (!REPO || !TOKEN) return [];
   // Auch Freunde ohne Rechte am Repo: deren Issues haben kein Label, aber den Titel "Restock: ..."
@@ -158,10 +186,19 @@ async function main() {
   const fehler = [];
   const teil = async (name, f, ersatz) => { try { return await f(); } catch (e) { fehler.push(`${name}: ${e.message}`); log(name, 'fehlgeschlagen:', e.message); return ersatz; } };
 
-  const poke = await teil('Pokémon-Preise', pokemon, alt.pokemon || { picks: [], sets: [] });
+  // Pokémon-Preise sind ~1000 Abfragen - die reichen stündlich; Kalender, Lager und Restocks laufen alle 10 Minuten.
+  const pokeFrisch = alt.pokemon?.stand && Date.now() - Date.parse(alt.pokemon.stand) < 55 * 60000 && alt.pokemon.geprueft;
+  const poke = pokeFrisch ? alt.pokemon
+    : { ...(await teil('Pokémon-Preise', pokemon, alt.pokemon || { picks: [], sets: [] })), stand: new Date().toISOString() };
   const hype = await teil('Google Trends', trends, alt.trends || { ware: [], top: [] });
   const beobachtet = await teil('Beobachtungsliste', issues, []);
   const live = await teil('Live-Shops', liveShops, alt.live || { treffer: [], erreicht: [] });
+  const vorOrt = await teil('Läden vor Ort', laedenVorOrt, null);
+  const drops = await teil('Sneaker-Kalender', sneakerDrops, alt.kalender?.filter((k) => k.kat === 'Sneaker') || []);
+  const setTermine = (poke.sets || []).filter((x) => ['vorverkauf', 'hype'].includes(x.phase)).map((x) => ({
+    titel: `Pokémon: ${x.name}`, farbe: x.phase === 'vorverkauf' ? 'Neues Set - vorbestellen' : 'Gerade erschienen', preis: null,
+    bild: x.logo, zeit: new Date(Date.parse(String(x.release).replace(/\//g, '-'))).toISOString(), link: 'https://www.pokemon.com/de/pokemon-sammelkartenspiel', marke: 'Pokémon', kat: 'Sammelkarten' }));
+  const kalender = [...drops, ...setTermine].sort((a, b) => a.zeit.localeCompare(b.zeit)).slice(0, 60);
 
   const status = {};
   const produkte = [];
@@ -181,10 +218,10 @@ async function main() {
   verlauf.restocks = verlauf.restocks.slice(-500);
   for (const p of produkte) p.muster = restockMuster(verlauf.restocks.filter((r) => r.url === p.url));
 
-  const daten = { stand: jetzt, budget: BUDGET, pokemon: poke, trends: hype, live, produkte, restocks: verlauf.restocks.slice(-20).reverse(), muster: restockMuster(verlauf.restocks), fehler };
+  const daten = { stand: jetzt, budget: BUDGET, kalender, pokemon: poke, trends: hype, live, produkte, restocks: verlauf.restocks.slice(-20).reverse(), muster: restockMuster(verlauf.restocks), fehler };
   writeFileSync(DATEN, `${JSON.stringify(daten, null, 1)}\n`);
   writeFileSync(VERLAUF, `${JSON.stringify(verlauf, null, 1)}\n`);
-  log(`fertig: ${poke.picks?.length || 0} Karten-Picks, ${hype.ware?.length || 0} Ware-Trends, ${live.treffer?.length || 0} Live-Treffer bei ${live.erreicht?.length || 0} Shops, ${produkte.length} beobachtete Produkte, Fehler: ${fehler.length}`);
+  log(`fertig: ${kalender.length} Kalender-Termine, ${vorOrt?.laeden?.length || 0} Läden vor Ort, ${poke.picks?.length || 0} Karten-Picks, ${hype.ware?.length || 0} Ware-Trends, ${live.treffer?.length || 0} Live-Treffer bei ${live.erreicht?.length || 0} Shops, ${produkte.length} beobachtete Produkte, Fehler: ${fehler.length}`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

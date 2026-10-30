@@ -1,15 +1,42 @@
-// Reselling-Radar-App: liest daten.json (stündlich von Automation #112 erzeugt) und zeigt sie in fünf Tabs.
+// Reselling-Radar-App: Kalender, Jetzt kaufen, Läden, Mehr. Daten kommen alle 10 Minuten frisch (Automation #112)
+// direkt aus dem Repo - die App lädt sie beim Öffnen und alle 10 Minuten neu.
 const REPO = 'ziyabicilecommerce-hub/ai-cash-machine';
+const ROH = `https://raw.githubusercontent.com/${REPO}/main/automations-dashboard/reselling/`;
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
-const euro = (n) => (n == null ? '–' : new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(n));
-const uhr = (iso) => (iso ? new Date(iso).toLocaleString('de-DE', { timeZone: 'Europe/Berlin', weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '–');
-const https = (u) => (/^https:\/\//.test(String(u || '')) ? u : '');
-const leer = (text) => el('p', 'leer', text);
+const euro = (n) => (n == null ? '' : new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(n));
+const https = (u) => (/^https:\/\//.test(String(u || '')) ? u : String(u || '').startsWith('//') ? `https:${u}` : '');
+const leer = (text) => el('p', 'leer-text', text);
+const BERLIN = { timeZone: 'Europe/Berlin' };
+const tagText = (iso) => {
+  const d = new Date(iso), heute = new Date();
+  const tag = (x) => new Intl.DateTimeFormat('de-DE', { ...BERLIN, year: 'numeric', month: '2-digit', day: '2-digit' }).format(x);
+  const uhr = d.toLocaleTimeString('de-DE', { ...BERLIN, hour: '2-digit', minute: '2-digit' });
+  if (tag(d) === tag(heute)) return `Heute ${uhr}`;
+  if (tag(d) === tag(new Date(heute.getTime() + 86400000))) return `Morgen ${uhr}`;
+  return `${d.toLocaleDateString('de-DE', { ...BERLIN, weekday: 'short', day: '2-digit', month: '2-digit' })} ${uhr}`;
+};
 
-function link(href, text) { const a = el('a', '', text); a.href = https(href); a.target = '_blank'; a.rel = 'noopener'; return a; }
+// Ein Eintrag: kleines Bild links, Name + Info, Preis rechts - tippen öffnet den Link
+function eintrag({ bild, emoji = '🛍️', name, info, preis, preisKlasse = '', marke, tag, link }) {
+  const a = el(link ? 'a' : 'div', 'eintrag');
+  if (link) { a.href = link; a.target = '_blank'; a.rel = 'noopener'; }
+  const b = el('div', https(bild) ? 'bild' : 'bild leer', https(bild) ? '' : emoji);
+  if (https(bild)) b.style.backgroundImage = `url("${https(bild).replace(/"/g, '')}")`;
+  const m = el('div', 'mitte'); m.append(el('div', 'name', name));
+  if (info) m.append(el('div', 'info', info));
+  if (marke) m.append(el('span', 'marke', marke));
+  const r = el('div', 'rechts');
+  if (tag) r.append(el('span', 'tag', tag));
+  if (preis) r.append(el('div', `preis ${preisKlasse}`, preis));
+  a.append(b, m, r);
+  return a;
+}
+function chips(ziel, werte, aktiv, wahl) {
+  $(ziel).replaceChildren(...werte.map((w) => { const c = el('button', `chip ${w === aktiv ? 'an' : ''}`, w); c.type = 'button'; c.onclick = () => wahl(w); return c; }));
+}
 
-// Tabs unten wie in einer App
+// Tabs
 $('nav').addEventListener('click', (e) => {
   const b = e.target.closest('button'); if (!b) return;
   document.querySelectorAll('nav button').forEach((x) => x.classList.toggle('aktiv', x === b));
@@ -19,121 +46,111 @@ $('nav').addEventListener('click', (e) => {
 });
 try { const t = localStorage.getItem('tab'); if (t) document.querySelector(`nav button[data-ziel="${t}"]`)?.click(); } catch {}
 
-function heiss(trends) {
-  const ware = trends?.ware || [];
-  $('ware').replaceChildren(...(ware.length ? ware.map((t) => {
-    const k = el('div', 'karte');
-    k.append(el('div', 'titel', t.titel), el('span', 'chip gut', t.kategorie));
-    if (t.menge) k.append(el('span', 'chip', `${t.menge} Suchen`));
-    k.append(el('div', 'klein', 'Im Trend heißt: Preise auf Kleinanzeigen/eBay jetzt checken, bevor alle verkaufen.'));
-    return k;
-  }) : [leer('Gerade nichts Kaufbares in den Top-Suchen. Schau in ein paar Stunden wieder rein.')]));
-  $('top').replaceChildren(...((trends?.top || []).map((t) => { const k = el('div', 'karte'); k.append(el('div', 'titel', t.titel), el('div', 'klein', t.menge ? `${t.menge} Suchen` : '')); return k; })));
+let D = {}, LAEDEN = [], KATALOG = null;
+const zustand = { kal: 'Alle', kauf: 'Im Budget', laden: 'Alle', ladenZahl: 15, kat: 'Alle' };
+
+function kalender() {
+  const liste = D.kalender || [];
+  const arten = ['Alle', ...new Set(liste.map((k) => k.kat))];
+  chips('kalfilter', arten, zustand.kal, (w) => { zustand.kal = w; kalender(); });
+  const zeig = liste.filter((k) => zustand.kal === 'Alle' || k.kat === zustand.kal);
+  $('kal').replaceChildren(...(zeig.length ? zeig.map((k) => eintrag({
+    bild: k.bild, emoji: k.kat === 'Sneaker' ? '👟' : '🃏', name: k.titel, info: k.farbe, marke: k.marke, tag: tagText(k.zeit), preis: euro(k.preis), link: https(k.link),
+  })) : [leer('Gerade keine angekündigten Drops - die Liste prüft sich alle 10 Minuten neu.')]));
 }
 
-function karten(poke, budget) {
-  $('budgetinfo').textContent = `Bis ${euro(budget)} kaufbar, Preis steigt gerade (Schnitt der letzten 7 Tage gegen 30 Tage). Preise von Cardmarket.`;
-  const picks = poke?.picks || [];
-  if (picks.some((k) => k.nurBewegung)) $('budgetinfo').textContent += ' Gerade steigt nichts stark - das hier bewegt sich am meisten nach oben.';
-  $('picks').replaceChildren(...(picks.length ? picks.map((k) => {
-    const box = el('div', 'karte'); const z = el('div', 'zeile');
-    if (https(k.bild)) { const i = el('img'); i.src = k.bild; i.alt = k.name; i.loading = 'lazy'; z.append(i); }
-    const mitte = el('div'); mitte.append(el('div', 'titel', k.name), el('div', 'klein', `${k.set} · ${k.nummer} · ${k.seltenheit}`));
-    const p = el('div', 'preis'); p.append(el('b', k.nurBewegung ? 'gelb' : 'hoch', `▲ ${k.prozent} %`), el('div', 'klein', `ab ${euro(k.preis.tief)}`), el('div', 'klein', `Trend ${euro(k.preis.trend)}`));
-    z.append(mitte, p); box.append(z);
-    if (https(k.link)) box.append(link(k.link, 'Auf Cardmarket ansehen'));
-    return box;
-  }) : [leer('Gerade keine steigenden Karten im Budget gefunden.')]));
-  const phase = { vorverkauf: 'warn', hype: 'schlecht', kaufzeit: 'gut', halten: 'gut' };
-  $('sets').replaceChildren(...((poke?.sets || []).map((s) => {
-    const k = el('div', 'karte');
-    k.append(el('div', 'titel', s.name), el('span', `chip ${phase[s.phase] || ''}`, { vorverkauf: 'Vorverkauf', hype: 'Release-Hype', kaufzeit: 'Kaufzeit', halten: 'Halten' }[s.phase] || '?'), el('span', 'chip', `seit ${s.release}`), el('div', 'klein', s.rat));
-    return k;
+function kaufen() {
+  const budget = D.budget || 40;
+  const shop = (D.live?.treffer || []).map((t) => ({ ...t, typ: 'Sneaker & Klamotten' }));
+  const karten = (D.pokemon?.picks || []).map((k) => ({ titel: k.name, preis: k.preis.tief ?? k.preis.trend, bild: k.bild, url: k.link, laden: `Cardmarket · ${k.set}`, typ: 'Pokémon-Karten', plus: k.prozent, nurBewegung: k.nurBewegung }));
+  const alle = [...karten, ...shop];
+  chips('kauffilter', ['Im Budget', 'Pokémon-Karten', 'Sneaker & Klamotten', 'Alle'], zustand.kauf, (w) => { zustand.kauf = w; kaufen(); });
+  const zeig = alle.filter((t) => zustand.kauf === 'Alle' || (zustand.kauf === 'Im Budget' ? t.preis != null && t.preis <= budget : t.typ === zustand.kauf)).slice(0, 60);
+  $('kaufinfo').textContent = `${alle.length} Treffer · Budget bis ${euro(budget)} · alle 10 Min. neu geprüft`;
+  $('kauf').replaceChildren(...(zeig.length ? zeig.map((t) => eintrag({
+    bild: t.bild, emoji: t.typ === 'Pokémon-Karten' ? '🃏' : '👟', name: t.titel, info: t.laden,
+    tag: t.plus != null ? `▲ ${t.plus} %` : '', preis: euro(t.preis), preisKlasse: t.preis != null && t.preis <= budget ? 'gruen' : '', link: https(t.url),
+  })) : [leer('Gerade nichts im Budget auf Lager. Wähle „Alle“ oder schau gleich nochmal.')]));
+}
+
+function laeden() {
+  const arten = ['Alle', ...new Set(LAEDEN.map((l) => l.art))];
+  chips('ladenfilter', arten, zustand.laden, (w) => { zustand.laden = w; zustand.ladenZahl = 15; laeden(); });
+  const zeig = LAEDEN.filter((l) => zustand.laden === 'Alle' || l.art === zustand.laden);
+  const emoji = { 'Spielzeug & Figuren': '🧸', 'Karten & Sammeln': '🃏', 'Technik & Games': '🎮', 'Sneaker & Klamotten': '👟', 'Bücher & Manga': '📚', 'Drogerie & Beauty': '💄', 'Second-Hand': '♻️' };
+  $('ladenliste').replaceChildren(...(zeig.length ? zeig.slice(0, zustand.ladenZahl).map((l) => eintrag({
+    emoji: emoji[l.art] || '🏬', name: l.name, info: [l.adresse || l.ort, l.zeiten].filter(Boolean).join(' · '), marke: l.art,
+    preis: `${String(l.km).replace('.', ',')} km`, link: `https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lon}`,
+  })) : [leer('Die Läden werden gerade aus OpenStreetMap geladen.')]));
+  $('mehrlaeden').hidden = zeig.length <= zustand.ladenZahl;
+}
+$('mehrlaeden').addEventListener('click', () => { zustand.ladenZahl += 20; laeden(); });
+
+function mehr() {
+  $('neu').href = `https://github.com/${REPO}/issues/new?labels=restock&title=${encodeURIComponent('Restock: ')}&body=${encodeURIComponent('Link zum Produkt (eine Zeile pro Link):\n\n')}`;
+  const farbe = { 'auf Lager': 'gruen', Vorbestellung: 'gelb' };
+  $('produkte').replaceChildren(...(D.produkte || []).map((p) => eintrag({
+    emoji: '🔔', name: p.titel || p.laden, info: p.muster?.anzahl ? `meist ${(p.muster.tage || []).map((t) => t[0]).join('/')} ${(p.muster.stunden || []).map((t) => t[0]).join('/')}` : p.laden,
+    preis: p.status, preisKlasse: farbe[p.status] || '', link: https(p.url),
   })));
+  $('trends').replaceChildren(...((D.trends?.top || []).length ? D.trends.top.map((t) => eintrag({ emoji: '🔎', name: t.titel, info: t.menge ? `${t.menge} Suchen` : '' })) : [leer('Keine Daten.')]));
 }
 
-function restock(daten) {
-  const body = encodeURIComponent('Link zum Produkt (eine Zeile pro Link):\n\n');
-  // Titel "Restock: ..." reicht - Freunde ohne Rechte am Repo koennen kein Label setzen
-  $('neu').href = `https://github.com/${REPO}/issues/new?labels=restock&title=${encodeURIComponent('Restock: ')}&body=${body}`;
-  const farbe = { 'auf Lager': 'gut', Vorbestellung: 'warn', ausverkauft: 'schlecht' };
-  $('produkte').replaceChildren(...((daten.produkte || []).length ? daten.produkte.map((p) => {
-    const k = el('div', 'karte');
-    k.append(el('div', 'titel', p.titel || p.laden), el('span', `chip ${farbe[p.status] || ''}`, p.status), el('span', 'chip', p.laden));
-    const m = p.muster || {};
-    k.append(el('div', 'klein', m.anzahl ? `Kam bisher meist: ${(m.tage || []).map((t) => t[0]).join(', ')} um ${(m.stunden || []).map((t) => t[0]).join(', ')} (${m.anzahl} Restocks)` : 'Noch kein Restock gesehen. Das Muster lernt die App mit der Zeit.'));
-    k.append(link(p.url, 'Zum Shop'));
-    return k;
-  }) : [leer('Noch keine Produkte. Tippe auf „Produkt beobachten“ und füge einen Link ein.')]));
-  $('restocks').replaceChildren(...((daten.restocks || []).length ? daten.restocks.map((r) => { const k = el('div', 'karte'); k.append(el('div', 'titel', r.titel), el('div', 'klein', uhr(r.zeit)), link(r.url, 'Zum Shop')); return k; }) : [leer('Noch keine Restocks erkannt.')]));
+function katalog() {
+  if (!KATALOG) return;
+  chips('katfilter', ['Alle', ...new Set(KATALOG.produkte.map((p) => p.kat))], zustand.kat, (w) => { zustand.kat = w; katalog(); });
+  const shops = { ...KATALOG.verkaufen, ...KATALOG.shops };
+  const such = (s, q) => s.suche.replace('{q}', encodeURIComponent(q));
+  $('katalog').replaceChildren(...KATALOG.produkte.filter((p) => zustand.kat === 'Alle' || p.kat === zustand.kat).map((p) => {
+    const box = el('div'); box.style.margin = '0 0 14px';
+    box.append(eintrag({ emoji: '📦', name: p.name, info: p.warum, marke: p.kat, preis: p.ek }));
+    const l = el('div', 'links');
+    for (const s of p.kaufen) if (shops[s]) { const a = el('a', '', shops[s].name); a.href = such(shops[s], p.q); a.target = '_blank'; a.rel = 'noopener'; l.append(a); }
+    for (const s of p.verkaufen) if (KATALOG.verkaufen[s]) { const a = el('a', 'verk', `💶 ${KATALOG.verkaufen[s].name}`); a.href = such(KATALOG.verkaufen[s], p.q); a.target = '_blank'; a.rel = 'noopener'; l.append(a); }
+    box.append(l);
+    return box;
+  }));
 }
 
 function rechnen() {
   const ek = Number($('ek').value) || 0, vk = Number($('vk').value) || 0, vs = Number($('vs').value) || 0;
   const [proz, fix] = $('pf').value.split('|').map(Number);
-  const gebuehr = vk * proz / 100 + fix;
-  const gewinn = vk - ek - vs - gebuehr;
+  const gebuehr = vk * proz / 100 + fix, gewinn = vk - ek - vs - gebuehr;
   $('gewinn').textContent = `${gewinn >= 0 ? '+' : ''}${euro(gewinn)}`;
-  $('gewinn').className = `ergebnis ${gewinn >= 10 ? 'hoch' : gewinn >= 0 ? 'gelb' : 'runter'}`;
-  const marge = ek ? Math.round((gewinn / ek) * 100) : 0;
-  $('gewinninfo').textContent = `Gebühren ${euro(gebuehr)} · Rendite ${marge} % · ${gewinn >= 10 ? 'lohnt sich' : gewinn >= 0 ? 'knapp, lohnt kaum' : 'Verlust - Finger weg'}`;
+  $('gewinn').className = `ergebnis ${gewinn >= 10 ? 'gruen' : gewinn >= 0 ? 'gelb' : ''}`;
+  $('gewinninfo').textContent = `Gebühren ${euro(gebuehr)} · ${gewinn >= 10 ? 'lohnt sich' : gewinn >= 0 ? 'knapp' : 'Verlust - Finger weg'}`;
 }
 ['ek', 'vk', 'pf', 'vs'].forEach((id) => $(id).addEventListener('input', rechnen));
 rechnen();
 
-// Katalog: alles, was sich zum Weiterverkaufen lohnt - mit Kauf-Links und Preis-Check zum Wiederverkauf
-let KATALOG = null, LIVE = [], KAT = 'Alle';
-const suchlink = (shop, q) => shop.suche.replace('{q}', encodeURIComponent(q));
-function katalogZeigen() {
-  if (!KATALOG) return;
-  const kats = ['Alle', ...new Set(KATALOG.produkte.map((p) => p.kat))];
-  $('filter').replaceChildren(...kats.map((k) => {
-    const b = el('button', `chip knopfchip ${k === KAT ? 'an' : ''}`, k); b.type = 'button';
-    b.onclick = () => { KAT = k; katalogZeigen(); };
-    return b;
-  }));
-  const shops = { ...KATALOG.verkaufen, ...KATALOG.shops };
-  $('katalog').replaceChildren(...KATALOG.produkte.filter((p) => KAT === 'Alle' || p.kat === KAT).map((p) => {
-    const k = el('div', 'karte');
-    k.append(el('div', 'titel', p.name), el('span', 'chip', p.kat), el('span', 'chip gut', `Einkauf ${p.ek}`), el('div', 'klein', p.warum));
-    const kaufen = el('div', 'links'); kaufen.append(el('span', 'klein', 'Kaufen:'));
-    for (const s of p.kaufen) if (shops[s]) kaufen.append(link(suchlink(shops[s], p.q), shops[s].name));
-    const verk = el('div', 'links'); verk.append(el('span', 'klein', 'Preis checken:'));
-    for (const s of p.verkaufen) if (KATALOG.verkaufen[s]) { const a = link(suchlink(KATALOG.verkaufen[s], p.q), KATALOG.verkaufen[s].name); a.className = 'verk'; verk.append(a); }
-    k.append(kaufen, verk);
-    return k;
-  }));
+// Daten: zuerst frisch aus dem Repo (alle 10 Min. aktualisiert), sonst die mitgelieferte Kopie
+async function json(name) {
+  for (const url of [`${ROH}${name}?t=${Date.now()}`, `${name}?t=${Date.now()}`]) {
+    try { const r = await fetch(url, { cache: 'no-store' }); if (r.ok) return await r.json(); } catch { /* nächste Quelle */ }
+  }
+  return null;
 }
-function liveZeigen(live, budget) {
-  LIVE = live?.treffer || [];
-  const imBudget = LIVE.filter((t) => t.preis != null && t.preis <= budget);
-  const zeigen = (imBudget.length ? imBudget : LIVE).slice(0, 25);
-  $('liveinfo').textContent = LIVE.length
-    ? `${LIVE.length} Artikel auf Lager bei ${(live.erreicht || []).join(', ')}${imBudget.length ? ` - davon ${imBudget.length} bis ${euro(budget)}` : ''}. Jede Stunde neu geprüft.`
-    : 'Der Shop-Bot prüft jede Stunde echte Online-Shops (Sneaker, Funko, Vinyl …) - Ergebnisse erscheinen nach dem nächsten Lauf.';
-  $('live').replaceChildren(...zeigen.map((t) => {
-    const box = el('div', 'karte'); const z = el('div', 'zeile');
-    if (https(t.bild)) { const i = el('img'); i.src = t.bild.startsWith('//') ? `https:${t.bild}` : t.bild; i.alt = t.titel; i.loading = 'lazy'; z.append(i); }
-    const m = el('div'); m.append(el('div', 'titel', t.titel), el('div', 'klein', `${t.laden} · auf Lager`));
-    const p = el('div', 'preis'); p.append(el('b', t.preis <= budget ? 'hoch' : '', euro(t.preis)));
-    z.append(m, p); box.append(z, link(t.url, 'Jetzt kaufen →'));
-    return box;
-  }));
+async function laden() {
+  $('stand').textContent = 'Aktualisiere …';
+  const [d, l, k] = await Promise.all([json('daten.json'), LAEDEN.length ? null : json('laeden.json'), KATALOG ? null : json('katalog.json')]);
+  if (d) D = d;
+  if (l) LAEDEN = l.laeden || [];
+  if (k) KATALOG = k;
+  const alter = D.stand ? Math.round((Date.now() - Date.parse(D.stand)) / 60000) : null;
+  $('stand').replaceChildren(document.createTextNode(alter == null ? 'Noch keine Daten' : 'Stand: '), ...(alter == null ? [] : [el('b', '', alter < 1 ? 'gerade eben' : `vor ${alter} Min.`), document.createTextNode(' · aktualisiert sich alle 10 Min.')]));
+  kalender(); kaufen(); laeden(); mehr(); katalog();
 }
-fetch(`katalog.json?t=${Date.now()}`).then((r) => r.json()).then((k) => { KATALOG = k; katalogZeigen(); }).catch(() => {});
-
-fetch(`daten.json?t=${Date.now()}`).then((r) => r.json()).then((d) => {
-  liveZeigen(d.live, d.budget || 40);
-  $('stand').textContent = `Stand: ${uhr(d.stand)} · aktualisiert sich jede Stunde`;
-  heiss(d.trends); karten(d.pokemon, d.budget || 40); restock(d);
-}).catch(() => { $('stand').textContent = 'Keine Verbindung - zeige gespeicherte Daten, sobald vorhanden.'; restock({}); });
+$('neuladen').addEventListener('click', laden);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) laden(); });
+setInterval(laden, 10 * 60000);
+laden();
 
 $('teilen').addEventListener('click', async () => {
-  const daten = { title: 'Reselling-Radar', text: 'Was gerade hoch geht + Restock-Alarm, kostenlos:', url: location.href.split('?')[0] };
+  const daten = { title: 'Reselling-Radar', text: 'Drops, was auf Lager ist + Läden in Hessen - kostenlos:', url: location.href.split('?')[0] };
   try {
     if (navigator.share) await navigator.share(daten);
-    else { await navigator.clipboard.writeText(daten.url); $('teilen').textContent = '✅ Link kopiert – jetzt in WhatsApp einfügen'; }
-  } catch { /* Teilen abgebrochen */ }
+    else { await navigator.clipboard.writeText(daten.url); $('teilen').textContent = '✅ Kopiert'; }
+  } catch { /* abgebrochen */ }
 });
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});

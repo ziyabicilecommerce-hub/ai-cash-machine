@@ -120,3 +120,68 @@ export function shopifyTreffer(json, domain, begriff) {
     laden: domain.replace(/^(www|eu|shop)\./, ''), begriff,
   })).filter((p) => p.titel && p.verfuegbar);
 }
+
+// Läden vor Ort: ganz Hessen + 30 km um Hattersheim (damit auch Mainz/Wiesbaden), Daten aus OpenStreetMap.
+export const HEIMAT = { name: 'Hattersheim am Main', lat: 50.0697, lon: 8.4867, radiusKm: 30 };
+const KETTEN = 'Smyths Toys|Müller|Drogerie Müller|MediaMarkt|Media Markt|Saturn|Snipes|SNIPES|Foot Locker|JD Sports|Thalia|GameStop|LEGO|Galeria|Nike|adidas|Kaufland|Rossmann|Douglas|Hugendubel';
+export function overpassAbfrage(h = HEIMAT) {
+  const um = `around:${h.radiusKm * 1000},${h.lat},${h.lon}`;
+  const art = '["shop"~"^(toys|games|video_games|collector|hobby|comic|anime|model|trade|second_hand)$"]';
+  const kette = `["shop"]["brand"~"^(${KETTEN})$",i]`;
+  const name = `["shop"]["name"~"^(${KETTEN})",i]`;
+  return `[out:json][timeout:180];area["ISO3166-2"="DE-HE"]->.he;(nwr${art}(area.he);nwr${art}(${um});nwr${kette}(area.he);nwr${kette}(${um});nwr${name}(area.he);nwr${name}(${um}););out center tags;`;
+}
+
+export function entfernungKm(a, b) {
+  const r = (x) => (x * Math.PI) / 180;
+  const d = Math.sin(r(b.lat - a.lat) / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(r(b.lon - a.lon) / 2) ** 2;
+  return Math.round(6371 * 2 * Math.asin(Math.sqrt(d)) * 10) / 10;
+}
+
+// Welche Ware gibt es dort? Für den Filter in der App.
+export function ladenArt(tags = {}) {
+  const t = `${tags.brand || ''} ${tags.name || ''}`.toLowerCase();
+  if (/smyths|lego|toys|spielwaren|spielzeug/.test(t) || ['toys', 'model'].includes(tags.shop)) return 'Spielzeug & Figuren';
+  if (/tcg|card|karten|pokémon|pokemon|comic|manga|anime/.test(t) || ['games', 'collector', 'comic', 'anime', 'hobby', 'trade'].includes(tags.shop)) return 'Karten & Sammeln';
+  if (/mediamarkt|media markt|saturn|gamestop/.test(t) || tags.shop === 'video_games' || tags.shop === 'electronics') return 'Technik & Games';
+  if (/snipes|foot locker|jd sports|nike|adidas/.test(t) || ['shoes', 'clothes', 'sports'].includes(tags.shop)) return 'Sneaker & Klamotten';
+  if (/thalia|hugendubel/.test(t) || tags.shop === 'books') return 'Bücher & Manga';
+  if (/müller|rossmann|douglas/.test(t) || ['chemist', 'cosmetics', 'perfumery'].includes(tags.shop)) return 'Drogerie & Beauty';
+  if (tags.shop === 'second_hand') return 'Second-Hand';
+  return 'Kaufhaus & Markt';
+}
+
+export function laedenAusOsm(json, h = HEIMAT) {
+  const gesehen = new Set();
+  return (json?.elements || []).map((e) => {
+    const lat = e.lat ?? e.center?.lat, lon = e.lon ?? e.center?.lon, t = e.tags || {};
+    if (lat == null || !t.name) return null;
+    const adresse = [[t['addr:street'], t['addr:housenumber']].filter(Boolean).join(' '), [t['addr:postcode'], t['addr:city']].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+    return { name: t.name, art: ladenArt(t), km: entfernungKm(h, { lat, lon }), lat, lon, adresse, ort: t['addr:city'] || '',
+      zeiten: t.opening_hours || '', web: /^https?:\/\//.test(t.website || t['contact:website'] || '') ? (t.website || t['contact:website']) : '' };
+  }).filter((l) => l && !gesehen.has(`${l.name}|${l.adresse || l.lat}`) && gesehen.add(`${l.name}|${l.adresse || l.lat}`))
+    .sort((a, b) => a.km - b.km);
+}
+
+// Release-Kalender: kommende Nike-SNKRS-Drops für Deutschland (öffentlicher Produkt-Feed der Nike-Seite).
+// Liefert Modell, Farbe, Bild, Preis, Release-Zeit und Link - unbekannte Felder werden einfach übersprungen.
+export function nikeDrops(json, heute = new Date()) {
+  const raus = [];
+  for (const o of json?.objects || []) {
+    const slug = o.publishedContent?.properties?.seo?.slug;
+    for (const p of o.productInfo || []) {
+      const start = p.launchView?.startEntryDate || p.merchProduct?.commerceStartDate;
+      const t = Date.parse(start);
+      if (!start || Number.isNaN(t) || t < heute.getTime() - 86400000) continue;
+      const titel = p.productContent?.fullTitle || [p.productContent?.title, p.productContent?.subtitle].filter(Boolean).join(' ');
+      if (!titel) continue;
+      raus.push({
+        titel, farbe: p.productContent?.colorDescription || '', preis: p.merchPrice?.currentPrice ?? p.merchPrice?.fullPrice ?? null,
+        bild: p.imageUrls?.productImageUrl || '', zeit: new Date(t).toISOString(), art: p.launchView?.method || '',
+        link: slug ? `https://www.nike.com/de/launch/t/${slug}` : 'https://www.nike.com/de/launch', marke: 'Nike', kat: 'Sneaker',
+      });
+    }
+  }
+  const gesehen = new Set();
+  return raus.filter((d) => !gesehen.has(d.titel + d.zeit) && gesehen.add(d.titel + d.zeit)).sort((a, b) => a.zeit.localeCompare(b.zeit));
+}
