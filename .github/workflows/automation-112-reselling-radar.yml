@@ -1,0 +1,56 @@
+name: "112 · Reselling-Radar (App)"
+
+# Stündlich: steigende Pokémon-Karten (Cardmarket-Preise), Google-Trends Deutschland und Lagerstatus der
+# beobachteten Produkte (GitHub-Issues mit Label "restock") holen und die App automations-dashboard/reselling/ aktualisieren.
+# Bei einem Restock kommt ein Kommentar ins Issue = Benachrichtigung in der GitHub-App. Kostenlos, ohne Schlüssel.
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: reselling-radar
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
+      RESELLING_BUDGET: ${{ vars.RESELLING_BUDGET || '40' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Label "restock" sicherstellen
+        run: gh label create restock --color 7c5cff --description "Reselling-Radar beobachtet diesen Link" -R "$GITHUB_REPOSITORY" 2>/dev/null || true
+      - name: Daten holen
+        run: node automations/112-reselling-radar.mjs
+      - name: Speichern und App neu veröffentlichen
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          sicher=$(mktemp -d)
+          cp automations-dashboard/reselling/daten.json automations-dashboard/reselling/verlauf.json "$sicher/"
+          for versuch in 1 2 3 4 5; do
+            git fetch -q origin "$GITHUB_REF_NAME"
+            git reset -q --hard "origin/$GITHUB_REF_NAME"
+            cp "$sicher/daten.json" "$sicher/verlauf.json" automations-dashboard/reselling/
+            git add automations-dashboard/reselling/daten.json automations-dashboard/reselling/verlauf.json
+            git commit -qm "chore: Reselling-Radar aktualisiert [skip ci]" || exit 0
+            if git push -q origin "HEAD:$GITHUB_REF_NAME"; then
+              gh workflow run jarvis-pages.yml --ref "$GITHUB_REF_NAME" || true
+              exit 0
+            fi
+            sleep $((versuch * 5))
+          done
+          exit 1
