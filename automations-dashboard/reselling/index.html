@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Reselling-Radar</title>
+<meta name="description" content="Was in Deutschland gerade hoch geht, was sich zum Weiterverkaufen lohnt und wann Ware wieder auf Lager ist.">
+<meta name="theme-color" content="#0b0f1a">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Radar">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root { --bg:#0b0f1a; --panel:#141a2a; --rand:#232c44; --text:#e8edf8; --leise:#8a97b3; --gruen:#3ef2a0; --rot:#ff5c7a; --gelb:#ffd45c; --akzent:#7c5cff; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; min-height:100vh; padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
+  header { padding:calc(18px + env(safe-area-inset-top)) 16px 10px; }
+  h1 { font-size:24px; letter-spacing:-.02em; } h1 span { color:var(--akzent); }
+  .unter { color:var(--leise); font-size:13px; margin-top:4px; }
+  main { padding:0 16px; max-width:720px; margin:0 auto; }
+  section { display:none; } section.aktiv { display:block; }
+  h2 { font-size:17px; margin:20px 0 10px; }
+  .karte { background:var(--panel); border:1px solid var(--rand); border-radius:14px; padding:14px; margin-bottom:10px; }
+  .zeile { display:flex; gap:12px; align-items:center; }
+  .zeile img { width:64px; border-radius:6px; flex:none; }
+  .titel { font-weight:650; font-size:15px; } .klein { color:var(--leise); font-size:12.5px; margin-top:3px; line-height:1.4; }
+  .preis { margin-left:auto; text-align:right; white-space:nowrap; } .preis b { font-size:17px; display:block; }
+  .hoch { color:var(--gruen); } .runter { color:var(--rot); } .gelb { color:var(--gelb); }
+  .chip { display:inline-block; font-size:11.5px; padding:3px 8px; border-radius:99px; background:#222b45; color:var(--leise); margin:6px 6px 0 0; }
+  .chip.gut { background:rgba(62,242,160,.14); color:var(--gruen); } .chip.warn { background:rgba(255,212,92,.14); color:var(--gelb); } .chip.schlecht { background:rgba(255,92,122,.14); color:var(--rot); }
+  .knopf { display:block; text-align:center; background:var(--akzent); color:#fff; text-decoration:none; font-weight:650; padding:13px; border-radius:12px; margin:10px 0; border:0; width:100%; font-size:15px; }
+  .knopf.zweit { background:transparent; border:1px solid var(--rand); color:var(--text); }
+  a { color:#9fb4ff; }
+  .leer { color:var(--leise); font-size:14px; padding:12px 2px; }
+  nav { position:fixed; left:0; right:0; bottom:0; display:flex; background:rgba(11,15,26,.96); border-top:1px solid var(--rand); padding-bottom:env(safe-area-inset-bottom); backdrop-filter:blur(10px); }
+  nav button { flex:1; background:none; border:0; color:var(--leise); padding:9px 0 10px; font-size:11px; display:flex; flex-direction:column; align-items:center; gap:3px; }
+  nav button .ic { font-size:21px; } nav button.aktiv { color:var(--text); }
+  label { display:block; font-size:13px; color:var(--leise); margin:10px 0 4px; }
+  input, select { width:100%; background:#0e1322; border:1px solid var(--rand); color:var(--text); border-radius:10px; padding:11px; font-size:16px; }
+  .ergebnis { font-size:26px; font-weight:750; margin-top:12px; } .tipp { font-size:14px; line-height:1.5; }
+  .tipp li { margin:6px 0 6px 18px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Reselling-<span>Radar</span> 🇩🇪</h1>
+  <p class="unter" id="stand">Lade Daten …</p>
+</header>
+<main>
+  <section id="heiss" class="aktiv">
+    <h2>🔥 Geht gerade hoch in Deutschland</h2>
+    <div id="ware"></div>
+    <h2>Alle Top-Suchen heute</h2>
+    <div id="top"></div>
+  </section>
+
+  <section id="karten">
+    <h2>📈 Pokémon-Karten, die steigen</h2>
+    <p class="klein" id="budgetinfo"></p>
+    <div id="picks"></div>
+    <h2>🗓️ Wann kaufen? (neueste Sets)</h2>
+    <div id="sets"></div>
+  </section>
+
+  <section id="restock">
+    <h2>🔔 Restock-Alarm</h2>
+    <p class="klein">Füge einen Produkt-Link hinzu (Pokémon Center, Smyths, Nike, Pop Mart, MediaMarkt …). Die App prüft jede Stunde den Lagerstatus. Kommt die Ware rein, bekommst du eine Benachrichtigung in der GitHub-App. Mit der Zeit zeigt sie dir, an welchem Tag und um welche Uhrzeit der Shop meistens auffüllt.</p>
+    <a class="knopf" id="neu" target="_blank" rel="noopener">＋ Produkt beobachten</a>
+    <div id="produkte"></div>
+    <h2>Letzte Restocks</h2>
+    <div id="restocks"></div>
+  </section>
+
+  <section id="rechner">
+    <h2>🧮 Lohnt sich das?</h2>
+    <div class="karte">
+      <label for="ek">Einkaufspreis (€)</label><input id="ek" type="number" inputmode="decimal" value="35">
+      <label for="vk">Verkaufspreis (€)</label><input id="vk" type="number" inputmode="decimal" value="60">
+      <label for="pf">Verkaufen über</label>
+      <select id="pf">
+        <option value="0|0">Kleinanzeigen (keine Gebühr)</option>
+        <option value="0|0">eBay privat (keine Verkaufsgebühr)</option>
+        <option value="0|0">Vinted (Käufer zahlt Gebühr)</option>
+        <option value="5|0">Cardmarket (ca. 5 %)</option>
+        <option value="11|0.35">eBay gewerblich (ca. 11 % + 0,35 €)</option>
+        <option value="9|5">StockX (ca. 9 % + Versand)</option>
+      </select>
+      <label for="vs">Versand, den du zahlst (€)</label><input id="vs" type="number" inputmode="decimal" value="4.5">
+      <div class="ergebnis" id="gewinn">–</div>
+      <p class="klein" id="gewinninfo"></p>
+    </div>
+    <p class="klein">Die Gebühren sind ungefähre Werte. Schau vor dem Verkauf auf der jeweiligen Plattform nach.</p>
+  </section>
+
+  <section id="tipps">
+    <h2>✅ So läuft's</h2>
+    <div class="karte tipp"><ol>
+      <li><b>Heiß</b> und <b>Karten</b> anschauen: Was steigt, was wird gesucht?</li>
+      <li>Im <b>Rechner</b> prüfen, ob nach Gebühren und Versand genug übrig bleibt.</li>
+      <li>Nur in offiziellen Shops kaufen, Rechnung aufheben. Bei Restocks über den <b>Alarm</b> schnell sein.</li>
+      <li>Verkaufen über Kleinanzeigen, eBay, Vinted oder Cardmarket, mit echten Fotos von deiner Ware.</li>
+    </ol></div>
+    <h2>⚖️ Wichtig in Deutschland</h2>
+    <div class="karte tipp"><ul>
+      <li>Wer regelmäßig mit Gewinnabsicht verkauft, braucht ein <b>Gewerbe</b>. Das kostet je nach Stadt ca. 15–60 € einmalig. Bis 25.000 € Umsatz im Jahr bleibst du als Kleinunternehmer ohne Umsatzsteuer.</li>
+      <li>Ab <b>30 Verkäufen oder 2.000 €</b> im Jahr melden eBay, Vinted &amp; Co. deine Verkäufe ans Finanzamt (DAC7).</li>
+      <li><b>Direktversand</b> (du bestellst im Shop mit der Adresse deines Käufers): erlaubt, aber dann haftest du, wenn der Shop storniert oder zu spät liefert. Bei eBay ist das nur eingeschränkt erlaubt. Sicherer ist: erst selbst kaufen, dann verkaufen.</li>
+      <li>Keine Fälschungen, keine erfundenen Bewertungen. Gewerbliche Verkäufer müssen 14 Tage Widerruf geben.</li>
+      <li>Keine Garantie: Preise können jederzeit fallen. Investiere nur, was du verlieren kannst.</li>
+    </ul></div>
+    <p class="klein">Quellen: Cardmarket-Preise über pokemontcg.io, Google Trends Deutschland, Lagerstatus direkt von den Shopseiten.</p>
+  </section>
+</main>
+<nav id="nav">
+  <button data-ziel="heiss" class="aktiv"><span class="ic">🔥</span>Heiß</button>
+  <button data-ziel="karten"><span class="ic">📈</span>Karten</button>
+  <button data-ziel="restock"><span class="ic">🔔</span>Restock</button>
+  <button data-ziel="rechner"><span class="ic">🧮</span>Rechner</button>
+  <button data-ziel="tipps"><span class="ic">✅</span>Tipps</button>
+</nav>
+<script src="app.js"></script>
+</body>
+</html>
