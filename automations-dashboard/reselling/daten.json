@@ -1,66 +1,54 @@
 {
- "stand": "2026-10-30T21:32:36.457Z",
+ "stand": "2026-10-30T21:34:03.192Z",
  "budget": 40,
  "pokemon": {
   "picks": [],
   "sets": [
    {
-    "name": "30th Celebration",
-    "id": "me55",
-    "release": "2026/09/16",
-    "logo": "https://images.scrydex.com/pokemon/me55-logo/logo",
+    "name": "30 Jahre: Klassische Sammlung",
+    "id": "30th-c",
+    "release": "2026-09-16",
+    "logo": "",
     "phase": "kaufzeit",
     "tage": 44,
     "rat": "Beste Kaufzeit: der Release-Hype ist vorbei, viele verkaufen ihre Karten günstig."
    },
    {
-    "name": "30th Celebration: Classic Collection",
-    "id": "me55c",
-    "release": "2026/09/16",
-    "logo": "https://images.scrydex.com/pokemon/me55c-logo/logo",
+    "name": "30 Jahre",
+    "id": "30th",
+    "release": "2026-09-16",
+    "logo": "",
     "phase": "kaufzeit",
     "tage": 44,
     "rat": "Beste Kaufzeit: der Release-Hype ist vorbei, viele verkaufen ihre Karten günstig."
    },
    {
-    "name": "Pitch Black",
-    "id": "me5",
-    "release": "2026/07/17",
-    "logo": "https://images.scrydex.com/pokemon/me5-logo/logo",
+    "name": "Dunkelnacht",
+    "id": "me05",
+    "release": "2026-07-17",
+    "logo": "https://assets.tcgdex.net/de/me/me05/logo.webp",
     "phase": "halten",
     "tage": 105,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    },
    {
-    "name": "Chaos Rising",
-    "id": "me4",
-    "release": "2026/05/22",
-    "logo": "https://images.scrydex.com/pokemon/me4-logo/logo",
+    "name": "Wachsendes Chaos",
+    "id": "me04",
+    "release": "2026-05-22",
+    "logo": "https://assets.tcgdex.net/de/me/me04/logo.webp",
     "phase": "halten",
     "tage": 161,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
-   },
-   {
-    "name": "Perfect Order",
-    "id": "me3",
-    "release": "2026/03/27",
-    "logo": "https://images.scrydex.com/pokemon/me3-logo/logo",
-    "phase": "halten",
-    "tage": 217,
-    "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
-   },
-   {
-    "name": "Ascended Heroes",
-    "id": "me2pt5",
-    "release": "2026/01/30",
-    "logo": "https://images.scrydex.com/pokemon/me2pt5-logo/logo",
-    "phase": "halten",
-    "tage": 273,
-    "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 771,
-  "quelle": "pokemontcg.io"
+  "geprueft": 120,
+  "statistik": {
+   "karten": 120,
+   "mitPreis": 120,
+   "imBudget": 7,
+   "steigend": 0
+  },
+  "quelle": "TCGdex"
  },
  "trends": {
   "ware": [],
