@@ -1,0 +1,123 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Passagier 41 – Teil 7",
+  "ort": "haus",
+  "fahrgaeste": [],
+  "titelbild": "ZU HAUSE. ABER NIEMAND ERKENNT MICH.",
+  "titelbild_gelb": "NIEMAND",
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      44,
+      56,
+      92
+    ],
+    "oberteil": "anzug",
+    "kopf": "haare",
+    "haar": [
+      46,
+      34,
+      26
+    ],
+    "hose": [
+      38,
+      44,
+      70
+    ]
+  },
+  "caption": "Teil sieben. Ich bin wieder zu Hause. Aber niemand erkennt mich. Woran würde deine Mama dich erkennen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil sieben. Ich bin wieder zu Hause. Aber niemand erkennt mich.",
+      "text": "TEIL 7: ZU HAUSE. ABER NIEMAND ERKENNT MICH.",
+      "gelb": "NIEMAND",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich stehe in unserem Wohnzimmer. Alles sieht aus wie immer.",
+      "text": "ALLES SIEHT AUS WIE IMMER.",
+      "gelb": "IMMER",
+      "angst": 0.3,
+      "pause": 0.1
+    },
+    {
+      "art": "spiegel",
+      "sprich": "Im Fenster mein Spiegelbild. Es bewegt sich eine Sekunde zu spät.",
+      "text": "MEIN SPIEGELBILD IST EINE SEKUNDE ZU SPÄT.",
+      "gelb": "SPÄT",
+      "blitzbild": [
+        1.8
+      ],
+      "angst": 0.7,
+      "blick": 0.9,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama schreibt: Wer sind Sie? Woher haben Sie diese Nummer?",
+      "text": "MAMA: WER SIND SIE?",
+      "gelb": "SIE",
+      "absender": "Mama",
+      "nachricht": "Wer sind Sie? Woher haben Sie diese Nummer?",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "fernseher",
+      "sprich": "Der Fernseher geht an. Nachrichten. Flug sieben dreizehn: alle Passagiere wohlauf.",
+      "text": "FLUG 713: ALLE PASSAGIERE WOHLAUF.",
+      "gelb": "WOHLAUF",
+      "dauer": 5.0,
+      "pause": 0.2
+    },
+    {
+      "art": "live",
+      "sprich": "Dann zeigt er unser Haus. Live. Und einen Mann mit meinem Gesicht.",
+      "text": "LIVE: EINER MIT MEINEM GESICHT.",
+      "gelb": "GESICHT",
+      "dauer": 4.6,
+      "pause": 0.2
+    },
+    {
+      "art": "klinke",
+      "sprich": "Er steht vor der Tür. Er hat einen Schlüssel.",
+      "text": "ER HAT EINEN SCHLÜSSEL.",
+      "gelb": "SCHLÜSSEL",
+      "schreck_bei": 0.6,
+      "dauer": 6.0,
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Er wohnt hier jetzt. Und ich bin der Fremde.",
+      "text": "ER WOHNT HIER. ICH BIN DER FREMDE.",
+      "gelb": "FREMDE",
+      "schreck": true,
+      "monster": "Raus aus meinem Haus.",
+      "monster_text": "RAUS AUS MEINEM HAUS.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil acht: Wie beweise ich, wer ich bin?",
+      "text": "TEIL 8: WIE BEWEISE ICH, WER ICH BIN?",
+      "gelb": "BEWEISE",
+      "pause": 0.8
+    }
+  ]
+}

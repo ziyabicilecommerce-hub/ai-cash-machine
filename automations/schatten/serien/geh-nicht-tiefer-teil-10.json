@@ -1,0 +1,130 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Antworte ihm nicht – Teil 10",
+  "ort": "wald",
+  "fahrgaeste": [
+    {
+      "wer": "schlaf_sitz",
+      "farbe": [
+        70,
+        112,
+        156
+      ]
+    }
+  ],
+  "titelbild": "UNSERE KOPIEN FAHREN NACH HAUSE.",
+  "titelbild_gelb": "KOPIEN",
+  "boesewicht": "hirsch",
+  "held": {
+    "farbe": [
+      220,
+      112,
+      40
+    ],
+    "oberteil": "jacke",
+    "kopf": "muetze",
+    "muetze_farbe": [
+      38,
+      58,
+      112
+    ],
+    "hose": [
+      60,
+      72,
+      58
+    ]
+  },
+  "caption": "Teil zehn. Unsere Kopien fahren nach Hause. Zu unseren Familien. Würde deine Familie den Unterschied merken? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil zehn. Unsere Kopien fahren nach Hause. Zu unseren Familien.",
+      "text": "TEIL 10: UNSERE KOPIEN FAHREN NACH HAUSE.",
+      "gelb": "KOPIEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Wir sitzen am kalten Feuer. Wir zwei. Die Echten.",
+      "text": "WIR ZWEI. DIE ECHTEN.",
+      "gelb": "ECHTEN",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "handy",
+      "sprich": "Ein Foto kommt rein. Meine Mutter umarmt mich. Aber ich bin hier.",
+      "text": "MAMA UMARMT MICH. ABER ICH BIN HIER.",
+      "gelb": "HIER",
+      "angst": 0.7,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama: Schön, dass du da bist. Du riechst nach Erde.",
+      "text": "MAMA: DU RIECHST NACH ERDE.",
+      "gelb": "ERDE",
+      "absender": "Mama",
+      "nachricht": "Schön, dass du wieder da bist. Du riechst nach Erde.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Bis Sonnenaufgang müssen wir zu Hause sein. Sonst bleiben sie für immer.",
+      "text": "BIS SONNENAUFGANG. SONST FÜR IMMER.",
+      "gelb": "IMMER",
+      "angst": 0.85,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "rennen",
+      "sprich": "Wir rennen durch den Wald. Richtung Straße.",
+      "text": "WIR RENNEN RICHTUNG STRASSE.",
+      "gelb": "STRASSE",
+      "pause": 0.1
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Am letzten Baum ein Zettel. In meiner Schrift: Zu spät.",
+      "text": "IN MEINER SCHRIFT: ZU SPÄT.",
+      "gelb": "SPÄT",
+      "zettel": [
+        "ZU SPÄT"
+      ],
+      "warnung": "NICHT AUFGEBEN",
+      "pause": 0.1
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Es steht auf der Straße. Und versperrt den Weg.",
+      "text": "ES VERSPERRT DEN WEG.",
+      "gelb": "WEG",
+      "schreck": true,
+      "monster": "Niemand verlässt meinen Wald.",
+      "monster_text": "NIEMAND VERLÄSST MEINEN WALD.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil elf: Gibt es einen anderen Weg?",
+      "text": "TEIL 11: GIBT ES EINEN ANDEREN WEG?",
+      "gelb": "ANDEREN",
+      "pause": 0.8
+    }
+  ]
+}

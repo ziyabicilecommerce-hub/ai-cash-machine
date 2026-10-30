@@ -1,13 +1,13 @@
 {
   "stimme": "de-DE-SeraphinaMultilingualNeural",
   "tonhoehe": "+0Hz",
-  "tempo": "+12%",
+  "tempo": "+16%",
   "ton": "schlicht",
   "ki_bilder": false,
   "titel": "Es klopft – Teil 2",
   "ort": "haus",
   "fahrgaeste": [],
-  "titelbild": "SCHAU NICHT NACH OBEN",
+  "titelbild": "SCHAU NICHT NACH OBEN, WÄHREND DU DAS SCHAUST.",
   "titelbild_gelb": "OBEN",
   "boesewicht": "frau",
   "held": {
@@ -30,6 +30,8 @@
       170
     ]
   },
+  "monsterstimme": "de-DE-KatjaNeural",
+  "caption": "Teil zwei. Schau nicht nach oben, während du das hier schaust. Würdest du jetzt nach oben schauen? 👇",
   "szenen": [
     {
       "art": "blitz",
@@ -149,6 +151,5 @@
       "gelb": "HAUSE",
       "pause": 0.8
     }
-  ],
-  "monsterstimme": "de-DE-KatjaNeural"
+  ]
 }

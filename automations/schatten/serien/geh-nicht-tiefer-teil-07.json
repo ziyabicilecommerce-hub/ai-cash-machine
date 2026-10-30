@@ -1,0 +1,140 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Antworte ihm nicht – Teil 7",
+  "ort": "wald",
+  "fahrgaeste": [
+    {
+      "wer": "schlaf_sitz",
+      "farbe": [
+        70,
+        112,
+        156
+      ]
+    }
+  ],
+  "titelbild": "SIEH IHM IN DIE AUGEN.",
+  "titelbild_gelb": "AUGEN",
+  "boesewicht": "hirsch",
+  "held": {
+    "farbe": [
+      220,
+      112,
+      40
+    ],
+    "oberteil": "jacke",
+    "kopf": "muetze",
+    "muetze_farbe": [
+      38,
+      58,
+      112
+    ],
+    "hose": [
+      60,
+      72,
+      58
+    ]
+  },
+  "caption": "Teil sieben. Um den Schatten zurückzuholen, musst du ihm in die Augen sehen. Hättest du hingesehen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil sieben. Um den Schatten zurückzuholen, musst du ihm in die Augen sehen.",
+      "text": "TEIL 7: SIEH IHM IN DIE AUGEN.",
+      "gelb": "AUGEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ein alter Förster sitzt plötzlich mit am Feuer. Die Augen geschlossen.",
+      "text": "EIN FÖRSTER. DIE AUGEN GESCHLOSSEN.",
+      "gelb": "FÖRSTER",
+      "fahrgaeste": [
+        {
+          "wer": "schlaf_sitz",
+          "farbe": [
+            70,
+            96,
+            52
+          ]
+        }
+      ],
+      "angst": 0.5,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Er sagt: Ich habe nicht hingesehen. Vor vierzig Jahren.",
+      "text": "ER HAT VOR 40 JAHREN NICHT HINGESEHEN.",
+      "gelb": "40",
+      "angst": 0.75,
+      "augen_bei": 1.3,
+      "pause": 0.2
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Er gibt mir eine Karte. Darauf ein Kreuz: Hier wohnt es.",
+      "text": "AUF DER KARTE: HIER WOHNT ES.",
+      "gelb": "WOHNT",
+      "zettel": [
+        "HIER",
+        "WOHNT ES"
+      ],
+      "pause": 0.1
+    },
+    {
+      "art": "taschenlampe",
+      "sprich": "Ich gehe zum Kreuz. Mitten im Wald.",
+      "text": "ICH GEHE ZUM KREUZ.",
+      "gelb": "KREUZ",
+      "stille": true,
+      "dauer": 5.0,
+      "pause": 0.2
+    },
+    {
+      "art": "schatten",
+      "sprich": "Da steht es. Ich muss nur hinsehen.",
+      "text": "ICH MUSS NUR HINSEHEN.",
+      "gelb": "HINSEHEN",
+      "pause": 0.2
+    },
+    {
+      "art": "licht",
+      "sprich": "Meine Taschenlampe geht aus.",
+      "text": "MEINE TASCHENLAMPE GEHT AUS.",
+      "gelb": "AUS",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Ich habe hingesehen. Und es hat zurückgeschaut.",
+      "text": "ES HAT ZURÜCKGESCHAUT.",
+      "gelb": "ZURÜCKGESCHAUT",
+      "schreck": true,
+      "monster": "Jetzt gehören deine Augen mir.",
+      "monster_text": "JETZT GEHÖREN DEINE AUGEN MIR.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil acht: Was sehe ich jetzt?",
+      "text": "TEIL 8: WAS SEHE ICH JETZT?",
+      "gelb": "SEHE",
+      "pause": 0.8
+    }
+  ]
+}

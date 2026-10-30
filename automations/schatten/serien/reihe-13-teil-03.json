@@ -1,0 +1,142 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Passagier 41 – Teil 3",
+  "ort": "flugzeug",
+  "fahrgaeste": [
+    {
+      "wer": "zeitung",
+      "farbe": [
+        96,
+        96,
+        104
+      ]
+    }
+  ],
+  "titelbild": "MAMA SAGT: DU SITZT DOCH NEBEN MIR.",
+  "titelbild_gelb": "NEBEN",
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      44,
+      56,
+      92
+    ],
+    "oberteil": "anzug",
+    "kopf": "haare",
+    "haar": [
+      46,
+      34,
+      26
+    ],
+    "hose": [
+      38,
+      44,
+      70
+    ]
+  },
+  "caption": "Teil drei. Ich rufe meine Mutter an. Sie sagt: Du sitzt doch neben mir. Würdest du nochmal anrufen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil drei. Ich rufe meine Mutter an. Sie sagt: Du sitzt doch neben mir.",
+      "text": "TEIL 3: MAMA SAGT: DU SITZT DOCH NEBEN MIR.",
+      "gelb": "NEBEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich bin immer noch in Reihe dreizehn. Die anderen schlafen.",
+      "text": "ICH BIN IMMER NOCH IN REIHE 13.",
+      "gelb": "13",
+      "angst": 0.4,
+      "pause": 0.1
+    },
+    {
+      "art": "handy",
+      "sprich": "Ich rufe zu Hause an. Es klingelt. Einmal. Zweimal.",
+      "text": "ICH RUFE ZU HAUSE AN.",
+      "gelb": "HAUSE",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama schreibt: Wer ist da? Mein Sohn sitzt neben mir und isst.",
+      "text": "MAMA: MEIN SOHN SITZT NEBEN MIR.",
+      "gelb": "SOHN",
+      "absender": "Mama",
+      "nachricht": "Wer ist da? Mein Sohn sitzt neben mir und isst.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ich bin ihr Sohn. Und ich bin hier.",
+      "text": "ICH BIN IHR SOHN. UND ICH BIN HIER.",
+      "gelb": "HIER",
+      "angst": 0.85,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "spiegel",
+      "sprich": "Im Fenster spiegelt sich mein Platz. Er ist leer. Obwohl ich draufsitze.",
+      "text": "MEIN PLATZ IST LEER. OBWOHL ICH DRAUFSITZE.",
+      "gelb": "LEER",
+      "angst": 0.7,
+      "blick": 0.9,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama: Er sagt, du sollst nicht mehr anrufen.",
+      "text": "ER SAGT, DU SOLLST NICHT MEHR ANRUFEN.",
+      "gelb": "ANRUFEN",
+      "absender": "Mama",
+      "nachricht": "Er sagt, du sollst nicht mehr anrufen.",
+      "schreck": true,
+      "pause": 0.3,
+      "monster": "Ich hab jetzt dein Zimmer.",
+      "monster_text": "ICH HAB JETZT DEIN ZIMMER."
+    },
+    {
+      "art": "licht",
+      "sprich": "Dann geht das Licht aus.",
+      "text": "DANN GEHT DAS LICHT AUS.",
+      "gelb": "AUS",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Er lebt jetzt mein Leben. Und ich bin der Verschollene.",
+      "text": "ER LEBT JETZT MEIN LEBEN.",
+      "gelb": "LEBEN",
+      "schreck": true,
+      "monster": "Bleib, wo du bist.",
+      "monster_text": "BLEIB, WO DU BIST.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil vier: Wie komme ich zurück?",
+      "text": "TEIL 4: WIE KOMME ICH ZURÜCK?",
+      "gelb": "ZURÜCK",
+      "pause": 0.8
+    }
+  ]
+}

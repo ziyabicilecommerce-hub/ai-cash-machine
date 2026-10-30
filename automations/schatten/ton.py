@@ -30,6 +30,14 @@ def tonspur(plan, gesamt, ordner, schlicht=False):
     glas, rauschen = [], []
     if schlicht:
         teile = ['0'] + [f"0.9*gte(t,{s['start']:.2f})*exp(-5*max(t-{s['start']:.2f},0))*sin(2*PI*42*t)" for s in plan if s['art'] == 'fratze']
+        fr = next((s['start'] for s in plan if s['art'] == 'fratze'), 0)
+        if fr > 6:  # Spannung: Brummen wird bis zum Jumpscare lauter, kurz davor steigt ein Ton an
+            teile.append(f"0.14*lt(t,{fr:.2f})*(t/{fr:.2f})*(0.6+0.4*sin(2*PI*0.5*t))*sin(2*PI*55*t)")
+            r0 = fr - 2.5
+            teile.append(f"0.2*between(t,{r0:.2f},{fr:.2f})*pow((t-{r0:.2f})/2.5,2)*sin(2*PI*(160+260*(t-{r0:.2f}))*t)")
+        for s in plan[1:]:  # dumpfer Schlag bei jedem Szenenwechsel: alle paar Sekunden passiert etwas
+            if s['art'] not in ('fratze', 'teil2'):
+                teile.append(f"0.35*gte(t,{s['start']:.2f})*exp(-16*max(t-{s['start']:.2f},0))*sin(2*PI*50*t)")
         for s in plan:
             if s['art'] == 'scheibe':  # Handschlag, dann Bruch: dumpfer Schlag + Glasklirren
                 for k, st in ((s['start'] + s.get('schlag', 0.25), 0.6), (s['start'] + s.get('schreck_bei', 1.0), 1.0)):

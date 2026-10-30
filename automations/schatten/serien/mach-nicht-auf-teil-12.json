@@ -1,0 +1,132 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Es klopft – Teil 12",
+  "ort": "haus",
+  "fahrgaeste": [],
+  "titelbild": "ICH BIN JETZT DIE IM SCHRANK.",
+  "titelbild_gelb": "SCHRANK",
+  "boesewicht": "frau",
+  "held": {
+    "farbe": [
+      232,
+      168,
+      194
+    ],
+    "oberteil": "pyjama",
+    "kopf": "haare",
+    "haar": [
+      128,
+      74,
+      34
+    ],
+    "zopf": true,
+    "hose": [
+      200,
+      140,
+      170
+    ]
+  },
+  "monsterstimme": "de-DE-KatjaNeural",
+  "caption": "Finale. Ich bin jetzt die im Schrank. Hat es bei dir heute auch dreimal geklopft? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Finale. Ich bin jetzt die im Schrank.",
+      "text": "FINALE: ICH BIN JETZT DIE IM SCHRANK.",
+      "gelb": "SCHRANK",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Im Schrank ist es dunkel. Ich warte. Wie sie zwanzig Jahre gewartet hat.",
+      "text": "ICH WARTE. WIE SIE 20 JAHRE GEWARTET HAT.",
+      "gelb": "20",
+      "dauer": 4.6,
+      "stille": true,
+      "pause": 0.2
+    },
+    {
+      "art": "handy",
+      "sprich": "Mein Handy hat noch ein Prozent Akku.",
+      "text": "NOCH 1 PROZENT AKKU.",
+      "gelb": "AKKU",
+      "angst": 0.8,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama: Schatz, warum klopft es im Schrank?",
+      "text": "MAMA: WARUM KLOPFT ES IM SCHRANK?",
+      "gelb": "SCHRANK",
+      "absender": "Mama",
+      "nachricht": "Schatz, warum klopft es im Schrank?",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Mama hört mich!",
+      "text": "MAMA HÖRT MICH!",
+      "gelb": "HÖRT",
+      "angst": 0.7,
+      "augen_bei": 1.5,
+      "pause": 0.2
+    },
+    {
+      "art": "klinke",
+      "sprich": "Die Schranktür geht auf.",
+      "text": "DIE SCHRANKTÜR GEHT AUF.",
+      "gelb": "AUF",
+      "schreck_bei": 0.6,
+      "dauer": 6.0,
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Es ist nicht Mama. Ein neues Mädchen zieht hier ein.",
+      "text": "EIN NEUES MÄDCHEN ZIEHT HIER EIN.",
+      "gelb": "NEUES",
+      "schreck": true,
+      "monster": "Psst. Jetzt bist du dran.",
+      "monster_text": "PSST. JETZT BIST DU DRAN.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Die Zeitung: Neue Familie zieht in das Haus, das zwanzig Jahre leer stand.",
+      "text": "NEUE FAMILIE IM LEEREN HAUS.",
+      "gelb": "NEUE",
+      "schreck": true,
+      "pause": 0.5,
+      "zeitung": {
+        "zeilen": [
+          "NEUE FAMILIE",
+          "IM LEEREN",
+          "HAUS"
+        ],
+        "datum": "FREITAG, 31. OKTOBER",
+        "unter": "Das Haus stand 20 Jahre leer"
+      }
+    },
+    {
+      "art": "teil2",
+      "sprich": "Ende. Hat es bei dir heute auch dreimal geklopft?",
+      "text": "ENDE? HAT ES BEI DIR AUCH DREIMAL GEKLOPFT?",
+      "gelb": "DREIMAL",
+      "pause": 1.0
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Es klopft – Teil 8",
+  "ort": "wald",
+  "fahrgaeste": [],
+  "titelbild": "BARFUSS IN DEN WALD GEFLOHEN.",
+  "titelbild_gelb": "WALD",
+  "boesewicht": "frau",
+  "held": {
+    "farbe": [
+      232,
+      168,
+      194
+    ],
+    "oberteil": "pyjama",
+    "kopf": "haare",
+    "haar": [
+      128,
+      74,
+      34
+    ],
+    "zopf": true,
+    "hose": [
+      200,
+      140,
+      170
+    ]
+  },
+  "monsterstimme": "de-DE-KatjaNeural",
+  "caption": "Teil acht. Ich bin aus dem Haus geflohen. Barfuß. In den Wald. Wohin wärst du gerannt? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil acht. Ich bin aus dem Haus geflohen. Barfuß. In den Wald.",
+      "text": "TEIL 8: BARFUSS IN DEN WALD GEFLOHEN.",
+      "gelb": "WALD",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich finde ein Lagerfeuer. Es brennt noch. Mitten in der Nacht.",
+      "text": "EIN FEUER. ES BRENNT NOCH.",
+      "gelb": "BRENNT",
+      "angst": 0.4,
+      "pause": 0.1
+    },
+    {
+      "art": "taschenlampe",
+      "sprich": "Ich leuchte mit dem Handy zwischen die Bäume.",
+      "text": "ICH LEUCHTE ZWISCHEN DIE BÄUME.",
+      "gelb": "BÄUME",
+      "stille": true,
+      "dauer": 5.0,
+      "pause": 0.2
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Sie steht da. Barfuß. Wie ich.",
+      "text": "SIE STEHT DA. BARFUSS. WIE ICH.",
+      "gelb": "BARFUSS",
+      "angst": 0.9,
+      "augen_bei": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne. Ihre Haare schleifen über den Boden. Direkt hinter mir.",
+      "text": "ICH RENNE. SIE IST DIREKT HINTER MIR.",
+      "gelb": "RENNE",
+      "pause": 0.1
+    },
+    {
+      "art": "zettel2",
+      "sprich": "An einem Baum ein Kinderzettel: Hier bin ich sicher.",
+      "text": "HIER BIN ICH SICHER.",
+      "gelb": "SICHER",
+      "zettel": [
+        "HIER BIN",
+        "ICH SICHER"
+      ],
+      "pause": 0.1
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Ich bleibe am Baum stehen. Dann wird es still.",
+      "text": "DANN WIRD ES STILL.",
+      "gelb": "STILL",
+      "dauer": 4.4,
+      "stille": true,
+      "pause": 0.2,
+      "monster": "Hier habe ich sie auch gefunden.",
+      "monster_text": "HIER HAB ICH SIE AUCH GEFUNDEN."
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Der Baum war nie sicher. Hier hat alles angefangen.",
+      "text": "HIER HAT ALLES ANGEFANGEN.",
+      "gelb": "ANGEFANGEN",
+      "schreck": true,
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil neun: Was liegt unter dem Baum?",
+      "text": "TEIL 9: WAS LIEGT UNTER DEM BAUM?",
+      "gelb": "BAUM",
+      "pause": 0.8
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Es klopft – Teil 10",
+  "ort": "haus",
+  "fahrgaeste": [],
+  "titelbild": "ICH HÖRE MICH: MACH NICHT AUF.",
+  "titelbild_gelb": "MICH",
+  "boesewicht": "frau",
+  "held": {
+    "farbe": [
+      232,
+      168,
+      194
+    ],
+    "oberteil": "pyjama",
+    "kopf": "haare",
+    "haar": [
+      128,
+      74,
+      34
+    ],
+    "zopf": true,
+    "hose": [
+      200,
+      140,
+      170
+    ]
+  },
+  "monsterstimme": "de-DE-KatjaNeural",
+  "caption": "Teil zehn. Ich klopfe an meine eigene Tür. Und höre mich sagen: Mach nicht auf. Hättest du die Scheibe eingeschlagen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil zehn. Ich klopfe an meine eigene Tür. Und höre mich sagen: Mach nicht auf.",
+      "text": "TEIL 10: ICH HÖRE MICH: MACH NICHT AUF.",
+      "gelb": "MICH",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "klopfen",
+      "sprich": "Ich klopfe ans Fenster. Dreimal.",
+      "text": "ICH KLOPFE ANS FENSTER. DREIMAL.",
+      "gelb": "DREIMAL",
+      "schreck_bei": 0.6,
+      "pause": 0.2
+    },
+    {
+      "art": "live",
+      "sprich": "Drinnen läuft der Fernseher. Er zeigt mich. Draußen. Live.",
+      "text": "DER FERNSEHER ZEIGT MICH. DRAUSSEN.",
+      "gelb": "DRAUSSEN",
+      "dauer": 4.6,
+      "pause": 0.2
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Drinnen sitzt ein Mädchen in meinem Pyjama.",
+      "text": "DRINNEN: EIN MÄDCHEN IN MEINEM PYJAMA.",
+      "gelb": "PYJAMA",
+      "angst": 0.85,
+      "augen_bei": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Von meiner eigenen Nummer: Geh weg. Hier wohne ich jetzt.",
+      "text": "VON MEINER NUMMER: HIER WOHNE ICH JETZT.",
+      "gelb": "JETZT",
+      "absender": "Mein Handy",
+      "nachricht": "Geh weg. Hier wohne ich jetzt.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "scheibe",
+      "sprich": "Ich schlage gegen die Scheibe. Sie zerspringt!",
+      "text": "DIE SCHEIBE ZERSPRINGT!",
+      "gelb": "ZERSPRINGT",
+      "schlag": 0.3,
+      "schreck_bei": 2.0,
+      "pause": 0.4
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne ins Haus. Die Treppe hoch.",
+      "text": "ICH RENNE DIE TREPPE HOCH.",
+      "gelb": "TREPPE",
+      "pause": 0.1
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Sie wartet oben. Mit meinem Gesicht.",
+      "text": "SIE WARTET OBEN. MIT MEINEM GESICHT.",
+      "gelb": "GESICHT",
+      "schreck": true,
+      "monster": "Willkommen zu Hause.",
+      "monster_text": "WILLKOMMEN ZU HAUSE.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil elf: Wer von uns ist echt?",
+      "text": "TEIL 11: WER VON UNS IST ECHT?",
+      "gelb": "ECHT",
+      "pause": 0.8
+    }
+  ]
+}

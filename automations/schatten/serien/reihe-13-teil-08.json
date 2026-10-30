@@ -1,0 +1,127 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Passagier 41 – Teil 8",
+  "ort": "flugzeug",
+  "fahrgaeste": [
+    {
+      "wer": "zeitung",
+      "farbe": [
+        96,
+        96,
+        104
+      ]
+    }
+  ],
+  "titelbild": "DER BEWEIS LIEGT IM FLUGZEUG.",
+  "titelbild_gelb": "FLUGZEUG",
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      44,
+      56,
+      92
+    ],
+    "oberteil": "anzug",
+    "kopf": "haare",
+    "haar": [
+      46,
+      34,
+      26
+    ],
+    "hose": [
+      38,
+      44,
+      70
+    ]
+  },
+  "caption": "Teil acht. Es gibt nur einen Beweis, dass ich ich bin. Und er liegt im Flugzeug. Wärst du zurück ins Flugzeug? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil acht. Es gibt nur einen Beweis, dass ich ich bin. Und er liegt im Flugzeug.",
+      "text": "TEIL 8: DER BEWEIS LIEGT IM FLUGZEUG.",
+      "gelb": "FLUGZEUG",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Nachts schleiche ich zurück ins Flugzeug. Reihe dreizehn.",
+      "text": "ICH SCHLEICHE ZURÜCK INS FLUGZEUG.",
+      "gelb": "ZURÜCK",
+      "angst": 0.5,
+      "pause": 0.1
+    },
+    {
+      "art": "licht",
+      "sprich": "Ich mache Licht. Alle vierzig sitzen noch da.",
+      "text": "ALLE 40 SITZEN NOCH DA.",
+      "gelb": "40",
+      "angst": 0.75,
+      "pause": 0.3
+    },
+    {
+      "art": "zettel2",
+      "sprich": "In meiner Sitztasche: meine Bordkarte. Mit meinem Namen.",
+      "text": "MEINE BORDKARTE. MIT MEINEM NAMEN.",
+      "gelb": "NAMEN",
+      "zettel": [
+        "BORDKARTE",
+        "PLATZ 13A"
+      ],
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Das ist der Beweis. Ich muss nur noch raus.",
+      "text": "DAS IST DER BEWEIS.",
+      "gelb": "BEWEIS",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne zum Ausgang. Hinter mir stehen sie auf.",
+      "text": "ICH RENNE. HINTER MIR STEHEN SIE AUF.",
+      "gelb": "RENNE",
+      "pause": 0.1
+    },
+    {
+      "art": "tueren",
+      "sprich": "Die Tür geht auf. Und er wartet schon draußen.",
+      "text": "DIE TÜR GEHT AUF. ER WARTET SCHON.",
+      "gelb": "SCHON",
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Er hat gewusst, dass ich komme.",
+      "text": "ER HAT GEWUSST, DASS ICH KOMME.",
+      "gelb": "GEWUSST",
+      "schreck": true,
+      "monster": "Gib mir die Karte.",
+      "monster_text": "GIB MIR DIE KARTE.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil neun: Gebe ich sie ihm?",
+      "text": "TEIL 9: GEBE ICH SIE IHM?",
+      "gelb": "IHM",
+      "pause": 0.8
+    }
+  ]
+}

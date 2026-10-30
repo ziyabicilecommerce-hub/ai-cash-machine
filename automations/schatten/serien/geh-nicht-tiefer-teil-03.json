@@ -1,0 +1,132 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Antworte ihm nicht – Teil 3",
+  "ort": "wald",
+  "fahrgaeste": [
+    {
+      "wer": "schlaf_sitz",
+      "farbe": [
+        70,
+        112,
+        156
+      ]
+    }
+  ],
+  "titelbild": "WIR KAMEN ZU ZWEIT. WIR SIND DREI.",
+  "titelbild_gelb": "DREI",
+  "boesewicht": "hirsch",
+  "held": {
+    "farbe": [
+      220,
+      112,
+      40
+    ],
+    "oberteil": "jacke",
+    "kopf": "muetze",
+    "muetze_farbe": [
+      38,
+      58,
+      112
+    ],
+    "hose": [
+      60,
+      72,
+      58
+    ]
+  },
+  "caption": "Teil drei. Wir kamen zu zweit in den Wald. Wir gehen zu dritt. Welchem von beiden würdest du glauben? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil drei. Wir kamen zu zweit in den Wald. Wir gehen zu dritt.",
+      "text": "TEIL 3: WIR KAMEN ZU ZWEIT. WIR SIND DREI.",
+      "gelb": "DREI",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Wir warten am Feuer auf den Morgen. Mein Freund redet ganz normal.",
+      "text": "MEIN FREUND REDET GANZ NORMAL.",
+      "gelb": "NORMAL",
+      "angst": 0.4,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Aber er blinzelt nicht. Seit einer Stunde nicht.",
+      "text": "ER BLINZELT NICHT. SEIT EINER STUNDE.",
+      "gelb": "BLINZELT",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "taschenlampe",
+      "sprich": "Ich leuchte in den Wald. Da bewegt sich etwas.",
+      "text": "DA BEWEGT SICH ETWAS.",
+      "gelb": "BEWEGT",
+      "stille": true,
+      "dauer": 5.0,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mein Freund schreibt: Ich bin noch im Wald. Fahr nicht ohne mich.",
+      "text": "ICH BIN NOCH IM WALD. FAHR NICHT OHNE MICH.",
+      "gelb": "OHNE",
+      "absender": "Mein Freund",
+      "nachricht": "Ich bin noch im Wald. Fahr nicht ohne mich.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich schaue zu ihm. Er hat gar kein Handy in der Hand.",
+      "text": "ER HAT KEIN HANDY IN DER HAND.",
+      "gelb": "KEIN",
+      "naeher": 0.4,
+      "angst": 0.8,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "licht",
+      "sprich": "Das Feuer geht aus.",
+      "text": "DAS FEUER GEHT AUS.",
+      "gelb": "FEUER",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Der neben mir hat nicht geschrieben. Der im Wald schon.",
+      "text": "DER IM WALD HAT GESCHRIEBEN.",
+      "gelb": "WALD",
+      "schreck": true,
+      "monster": "Er lügt. Ich bin der Echte.",
+      "monster_text": "ER LÜGT. ICH BIN DER ECHTE.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil vier: Wer ist der Echte?",
+      "text": "TEIL 4: WER IST DER ECHTE?",
+      "gelb": "ECHTE",
+      "pause": 0.8
+    }
+  ]
+}

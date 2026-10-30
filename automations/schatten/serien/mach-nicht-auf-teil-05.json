@@ -1,0 +1,122 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Es klopft – Teil 5",
+  "ort": "haus",
+  "fahrgaeste": [],
+  "titelbild": "SIE IST IN MAMAS FOTOALBUM.",
+  "titelbild_gelb": "FOTOALBUM",
+  "boesewicht": "frau",
+  "held": {
+    "farbe": [
+      232,
+      168,
+      194
+    ],
+    "oberteil": "pyjama",
+    "kopf": "haare",
+    "haar": [
+      128,
+      74,
+      34
+    ],
+    "zopf": true,
+    "hose": [
+      200,
+      140,
+      170
+    ]
+  },
+  "monsterstimme": "de-DE-KatjaNeural",
+  "caption": "Teil fünf. Das Mädchen aus dem Schrank ist in Mamas altem Fotoalbum. Würdest du in dem Haus bleiben? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil fünf. Das Mädchen aus dem Schrank ist in Mamas altem Fotoalbum.",
+      "text": "TEIL 5: SIE IST IN MAMAS FOTOALBUM.",
+      "gelb": "FOTOALBUM",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Am Morgen ist alles still. Die Frau ist weg.",
+      "text": "AM MORGEN IST ALLES STILL.",
+      "gelb": "STILL",
+      "angst": 0.3,
+      "pause": 0.1
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Im Album klebt ein alter Artikel. Mädchen seit zwanzig Jahren vermisst.",
+      "text": "MÄDCHEN SEIT 20 JAHREN VERMISST.",
+      "gelb": "VERMISST",
+      "schreck": true,
+      "pause": 0.4,
+      "zeitung": {
+        "zeilen": [
+          "MÄDCHEN",
+          "SEIT JAHREN",
+          "VERMISST"
+        ],
+        "datum": "MONTAG, 30. OKTOBER 2006",
+        "unter": "Zuletzt gesehen in ihrem Kinderzimmer"
+      }
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Das Kinderzimmer auf dem Foto ist mein Zimmer.",
+      "text": "ES IST MEIN ZIMMER.",
+      "gelb": "MEIN",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama schreibt: Das Haus stand leer. Warum?",
+      "text": "MAMA: DAS HAUS STAND LEER.",
+      "gelb": "LEER",
+      "absender": "Mama",
+      "nachricht": "Niemand hat hier gewohnt. Das Haus stand leer. Warum?",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "live",
+      "sprich": "Der Fernseher geht an. Er zeigt den Schrank. Die Tür steht offen.",
+      "text": "DER SCHRANK. DIE TÜR STEHT OFFEN.",
+      "gelb": "OFFEN",
+      "dauer": 4.6,
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Das Mädchen ist nicht vermisst. Sie ist das, was die Frau übrig lässt.",
+      "text": "SIE IST, WAS DIE FRAU ÜBRIG LÄSST.",
+      "gelb": "ÜBRIG",
+      "schreck": true,
+      "monster": "Du wirst die Nächste.",
+      "monster_text": "DU WIRST DIE NÄCHSTE.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil sechs: Wie lange habe ich noch?",
+      "text": "TEIL 6: WIE LANGE HABE ICH NOCH?",
+      "gelb": "NOCH",
+      "pause": 0.8
+    }
+  ]
+}

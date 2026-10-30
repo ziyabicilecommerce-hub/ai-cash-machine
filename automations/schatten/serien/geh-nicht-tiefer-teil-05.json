@@ -1,0 +1,130 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Antworte ihm nicht – Teil 5",
+  "ort": "wald",
+  "fahrgaeste": [
+    {
+      "wer": "schlaf_sitz",
+      "farbe": [
+        70,
+        112,
+        156
+      ]
+    }
+  ],
+  "titelbild": "ALLEIN. NICHT UMDREHEN.",
+  "titelbild_gelb": "UMDREHEN",
+  "boesewicht": "hirsch",
+  "held": {
+    "farbe": [
+      220,
+      112,
+      40
+    ],
+    "oberteil": "jacke",
+    "kopf": "muetze",
+    "muetze_farbe": [
+      38,
+      58,
+      112
+    ],
+    "hose": [
+      60,
+      72,
+      58
+    ]
+  },
+  "caption": "Teil fünf. Ich gehe allein in den Wald. Und ich darf mich nicht umdrehen. Hättest du dich umgedreht? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil fünf. Ich gehe allein in den Wald. Und ich darf mich nicht umdrehen.",
+      "text": "TEIL 5: ALLEIN. NICHT UMDREHEN.",
+      "gelb": "UMDREHEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "taschenlampe",
+      "sprich": "Die Taschenlampe flackert. Ich folge seinen Rufen.",
+      "text": "ICH FOLGE SEINEN RUFEN.",
+      "gelb": "RUFEN",
+      "stille": true,
+      "dauer": 5.0,
+      "pause": 0.2
+    },
+    {
+      "art": "rufen",
+      "sprich": "Seine Stimme kommt mal von links. Mal von rechts.",
+      "text": "MAL VON LINKS. MAL VON RECHTS.",
+      "gelb": "RECHTS",
+      "pause": 0.2,
+      "monster": "Hier! Ich bin hier!",
+      "monster_text": "HIER! ICH BIN HIER!"
+    },
+    {
+      "art": "zettel2",
+      "sprich": "An jedem Baum ein Zettel. In seiner Schrift: Dreh dich nicht um.",
+      "text": "IN SEINER SCHRIFT: DREH DICH NICHT UM.",
+      "gelb": "UM",
+      "zettel": [
+        "DREH DICH",
+        "NICHT UM"
+      ],
+      "warnung": "NICHT UMDREHEN",
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Hinter mir knacken Äste.",
+      "text": "HINTER MIR KNACKEN ÄSTE.",
+      "gelb": "KNACKEN",
+      "angst": 0.9,
+      "augen_bei": 0.9,
+      "pause": 0.2
+    },
+    {
+      "art": "winken",
+      "sprich": "Vor mir steht es. Und winkt. Mit der Hand meines Freundes.",
+      "text": "ES WINKT. MIT SEINER HAND.",
+      "gelb": "HAND",
+      "pause": 0.1
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne. Es ist direkt hinter mir.",
+      "text": "ICH RENNE. ES IST DIREKT HINTER MIR.",
+      "gelb": "RENNE",
+      "pause": 0.1
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Ich habe mich umgedreht.",
+      "text": "ICH HABE MICH UMGEDREHT.",
+      "gelb": "UMGEDREHT",
+      "schreck": true,
+      "monster": "Danke.",
+      "monster_text": "DANKE.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil sechs: Was passiert, wenn man sich umdreht?",
+      "text": "TEIL 6: WAS PASSIERT, WENN MAN SICH UMDREHT?",
+      "gelb": "UMDREHT",
+      "pause": 0.8
+    }
+  ]
+}

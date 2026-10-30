@@ -1,0 +1,137 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Es klopft – Teil 3",
+  "ort": "haus",
+  "fahrgaeste": [],
+  "titelbild": "MAMA KAM ZWEIMAL NACH HAUSE.",
+  "titelbild_gelb": "ZWEIMAL",
+  "boesewicht": "frau",
+  "held": {
+    "farbe": [
+      232,
+      168,
+      194
+    ],
+    "oberteil": "pyjama",
+    "kopf": "haare",
+    "haar": [
+      128,
+      74,
+      34
+    ],
+    "zopf": true,
+    "hose": [
+      200,
+      140,
+      170
+    ]
+  },
+  "monsterstimme": "de-DE-KatjaNeural",
+  "caption": "Teil drei. Mama ist nach Hause gekommen. Zweimal. Hättest du die Tür aufgemacht? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil drei. Mama ist nach Hause gekommen. Zweimal.",
+      "text": "TEIL 3: MAMA KAM ZWEIMAL NACH HAUSE.",
+      "gelb": "ZWEIMAL",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Unten geht die Haustür auf. Mama ruft: Ich bin zu Hause.",
+      "text": "MAMA RUFT: ICH BIN ZU HAUSE.",
+      "gelb": "HAUSE",
+      "angst": 0.4,
+      "pause": 0.1
+    },
+    {
+      "art": "handy",
+      "sprich": "Gleichzeitig ruft Mama an.",
+      "text": "GLEICHZEITIG RUFT MAMA AN.",
+      "gelb": "GLEICHZEITIG",
+      "angst": 0.7,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama: Ich stehe noch im Stau. Wer ist bei dir?",
+      "text": "MAMA: ICH STEH IM STAU. WER IST BEI DIR?",
+      "gelb": "WER",
+      "absender": "Mama",
+      "nachricht": "Ich stehe noch im Stau. Wer ist bei dir??",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Unten singt jemand Mamas Lieblingslied.",
+      "text": "UNTEN SINGT JEMAND MAMAS LIED.",
+      "gelb": "SINGT",
+      "angst": 0.85,
+      "augen_bei": 1.3,
+      "pause": 0.2
+    },
+    {
+      "art": "klinke",
+      "sprich": "Schritte auf der Treppe. Dann geht die Klinke runter.",
+      "text": "DIE KLINKE GEHT RUNTER.",
+      "gelb": "KLINKE",
+      "schreck_bei": 0.6,
+      "dauer": 6.0,
+      "pause": 0.2,
+      "monster": "Schatz, mach auf.",
+      "monster_text": "SCHATZ, MACH AUF."
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Unter der Tür schiebt jemand einen Zettel durch: Ich bin es wirklich.",
+      "text": "ICH BIN ES WIRKLICH.",
+      "gelb": "WIRKLICH",
+      "zettel": [
+        "ICH BINS",
+        "WIRKLICH"
+      ],
+      "warnung": "NICHT GLAUBEN",
+      "pause": 0.1
+    },
+    {
+      "art": "licht",
+      "sprich": "Dann geht das Licht aus.",
+      "text": "DANN GEHT DAS LICHT AUS.",
+      "gelb": "AUS",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Mama steht im Stau. Die da unten ist nicht Mama.",
+      "text": "DIE DA UNTEN IST NICHT MAMA.",
+      "gelb": "NICHT",
+      "schreck": true,
+      "monster": "Ich bin jetzt deine Mama.",
+      "monster_text": "ICH BIN JETZT DEINE MAMA.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil vier: Wie lange kann ich mich verstecken?",
+      "text": "TEIL 4: WIE LANGE KANN ICH MICH VERSTECKEN?",
+      "gelb": "VERSTECKEN",
+      "pause": 0.8
+    }
+  ]
+}

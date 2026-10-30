@@ -1,0 +1,140 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Passagier 41 – Teil 4",
+  "ort": "flugzeug",
+  "fahrgaeste": [
+    {
+      "wer": "zeitung",
+      "farbe": [
+        96,
+        96,
+        104
+      ]
+    }
+  ],
+  "titelbild": "ER HAT SEIT 27 JAHREN NICHT UMGEBLÄTTERT.",
+  "titelbild_gelb": "27",
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      44,
+      56,
+      92
+    ],
+    "oberteil": "anzug",
+    "kopf": "haare",
+    "haar": [
+      46,
+      34,
+      26
+    ],
+    "hose": [
+      38,
+      44,
+      70
+    ]
+  },
+  "caption": "Teil vier. Der Mann mit der Zeitung hat seit siebenundzwanzig Jahren nicht umgeblättert. Wen würdest du zurücklassen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil vier. Der Mann mit der Zeitung hat seit siebenundzwanzig Jahren nicht umgeblättert.",
+      "text": "TEIL 4: ER HAT SEIT 27 JAHREN NICHT UMGEBLÄTTERT.",
+      "gelb": "27",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich setze mich neben den Mann mit der Zeitung.",
+      "text": "ICH SETZE MICH NEBEN IHN.",
+      "gelb": "NEBEN",
+      "angst": 0.3,
+      "pause": 0.1
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Seine Zeitung ist von neunzehnhundertneunundneunzig. Die Schlagzeile: Wir kommen nie mehr nach Hause.",
+      "text": "SCHLAGZEILE: WIR KOMMEN NIE MEHR NACH HAUSE.",
+      "gelb": "NIE",
+      "schreck": true,
+      "pause": 0.4,
+      "zeitung": {
+        "zeilen": [
+          "WIR KOMMEN",
+          "NIE MEHR",
+          "NACH HAUSE"
+        ],
+        "datum": "SAMSTAG, 30. OKTOBER 1999",
+        "unter": "Flug 713: Suche eingestellt"
+      }
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ich frage ihn: Wie kommen wir zurück?",
+      "text": "WIE KOMMEN WIR ZURÜCK?",
+      "gelb": "ZURÜCK",
+      "angst": 0.7,
+      "augen_bei": 1.4,
+      "pause": 0.2
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Er schiebt mir einen Zettel zu: Nur wenn einer hierbleibt.",
+      "text": "NUR WENN EINER HIERBLEIBT.",
+      "gelb": "HIERBLEIBT",
+      "zettel": [
+        "NUR WENN",
+        "EINER",
+        "HIERBLEIBT"
+      ],
+      "warnung": "NICHT FRAGEN WER",
+      "pause": 0.1
+    },
+    {
+      "art": "turbulenz",
+      "sprich": "Dann wackelt alles. Die Gepäckklappen springen auf.",
+      "text": "DIE GEPÄCKKLAPPEN SPRINGEN AUF.",
+      "gelb": "AUF",
+      "schreck_bei": 0.85,
+      "pause": 0.2
+    },
+    {
+      "art": "fluegel",
+      "sprich": "Draußen auf dem Flügel stehen sie wieder. Diesmal sind es mehr.",
+      "text": "AUF DEM FLÜGEL: DIESMAL SIND ES MEHR.",
+      "gelb": "MEHR",
+      "dauer": 4.2,
+      "pause": 0.1
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Der Mann mit der Zeitung zeigt auf mich.",
+      "text": "ER ZEIGT AUF MICH.",
+      "gelb": "MICH",
+      "schreck": true,
+      "monster": "Der bleibt hier.",
+      "monster_text": "DER BLEIBT HIER.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil fünf: Wer bleibt im Flugzeug?",
+      "text": "TEIL 5: WER BLEIBT IM FLUGZEUG?",
+      "gelb": "BLEIBT",
+      "pause": 0.8
+    }
+  ]
+}
