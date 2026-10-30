@@ -168,3 +168,16 @@ test('Bilder: Suchbegriffe, DuckDuckGo, Commons und Shop-Suchlinks', async () =>
   assert.equal(suchLink('https://www.kleinanzeigen.de/s-{q-}/k0', 'halloween kostüm'), 'https://www.kleinanzeigen.de/s-halloween-kost%C3%BCm/k0');
   assert.equal(suchLink('https://www.amazon.de/s?k={q}', 'a b'), 'https://www.amazon.de/s?k=a%20b');
 });
+
+test('alarme: STRONG BUY, Drop in 90 Min., neue Ware im Budget - ohne Wiederholung', async () => {
+  const { alarme, bildVarianten } = await import('../../automations/lib/resellingRadar.mjs');
+  const jetzt = new Date('2026-10-30T12:00:00Z');
+  const daten = {
+    picks: [{ id: 'a', name: 'Glurak', bild: 'b', link: 'l', profi: { signal: 'STRONG BUY', einstieg: 10, ziel: 25, gewinn: 12, roi: 120 } }, { id: 'b', profi: { signal: 'HOLD' } }],
+    kalender: [{ titel: 'Dunk', zeit: '2026-10-30T13:00:00Z', link: 'n' }, { titel: 'Später', zeit: '2026-10-31T13:00:00Z' }],
+    liveNeu: [{ titel: 'Cap', preis: 30, url: 'u1', laden: 'x' }, { titel: 'Teuer', preis: 99, url: 'u2' }, { titel: 'C2', preis: 9, url: 'u3' }, { titel: 'C3', preis: 9, url: 'u4' }],
+  };
+  assert.deepEqual(alarme(daten, {}, jetzt).map((a) => a.schluessel), ['karte:a', 'drop:Dunk:2026-10-30T13:00:00Z', 'neu:u1', 'neu:u3']);
+  assert.deepEqual(alarme(daten, { 'karte:a': '2026-10-29T12:00:00Z', 'neu:u1': '2026-10-30T11:00:00Z' }, jetzt).map((a) => a.schluessel), ['drop:Dunk:2026-10-30T13:00:00Z', 'neu:u3', 'neu:u4']);
+  assert.deepEqual(bildVarianten('https://assets.tcgdex.net/de/me/me04/1/low.webp')[1], 'https://assets.tcgdex.net/en/me/me04/1/low.webp');
+});
