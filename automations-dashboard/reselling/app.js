@@ -32,7 +32,7 @@ function heiss(trends) {
 }
 
 function karten(poke, budget) {
-  $('budgetinfo').textContent = `Bis ${euro(budget)} kaufbar, Preis steigt gerade (letzte Tage gegen 30-Tage-Schnitt). Preise von Cardmarket.`;
+  $('budgetinfo').textContent = `Bis ${euro(budget)} kaufbar, Preis steigt gerade (Schnitt der letzten 7 Tage gegen 30 Tage). Preise von Cardmarket.`;
   const picks = poke?.picks || [];
   if (picks.some((k) => k.nurBewegung)) $('budgetinfo').textContent += ' Gerade steigt nichts stark - das hier bewegt sich am meisten nach oben.';
   $('picks').replaceChildren(...(picks.length ? picks.map((k) => {

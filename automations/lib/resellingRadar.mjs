@@ -5,14 +5,16 @@
 const zahl = (v) => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null);
 const runden = (v) => Math.round(v * 100) / 100;
 
-// Eine Karte bewerten: Trend = Preis der letzten Tage gegen den 30-Tage-Schnitt.
+// Eine Karte bewerten: Trend = Preis der letzten 7 Tage gegen den 30-Tage-Schnitt.
 export function kartenSignal(karte) {
   const p = karte?.cardmarket?.prices || {};
   const tief = zahl(p.lowPrice), trend = zahl(p.trendPrice), a1 = zahl(p.avg1), a7 = zahl(p.avg7), a30 = zahl(p.avg30);
   if (!trend || !a30) return null;
-  const jetzt = a1 || a7 || trend;
+  // Wochenschnitt gegen Monatsschnitt - ein einzelner teurer Verkauf (Tagesschnitt) soll keinen Trend vortäuschen.
+  const jetzt = a7 || a1 || trend;
   const prozent = Math.round((jetzt / a30 - 1) * 100);
-  const signal = prozent >= 12 ? 'steigt' : prozent <= -12 ? 'fällt' : 'stabil';
+  const bestaetigt = !a1 || !a7 || a1 >= a7 * 0.95;  // der letzte Tag hält das Niveau der Woche
+  const signal = prozent >= 8 && bestaetigt ? 'steigt' : prozent <= -8 ? 'fällt' : 'stabil';
   return {
     id: karte.id, name: karte.name, nummer: karte.number, seltenheit: karte.rarity || '',
     set: karte.set?.name || '', setId: karte.set?.id || '', release: karte.set?.releaseDate || '',
