@@ -30,11 +30,11 @@
   "titel": "Etage 0 – Teil 3",
   "titelbild": "AUF ETAGE NULL WOHNE ICH.",
   "titelbild_gelb": "ICH",
-  "caption": "Teil drei. Auf Etage null wohnen Leute. Und eine davon bin ich. Würdest du die Tür aufmachen? 👇",
+  "caption": "Auf Etage null wohnen Leute. Und eine davon bin ich. Würdest du die Tür aufmachen? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil drei. Auf Etage null wohnen Leute. Und eine davon bin ich.",
+      "sprich": "Auf Etage null wohnen Leute. Und eine davon bin ich.",
       "text": "TEIL 3: AUF ETAGE NULL WOHNE ICH.",
       "gelb": "ICH",
       "schreck": true,
@@ -109,7 +109,8 @@
       "sprich": "Teil vier: Wer lebt oben in meiner Wohnung?",
       "text": "TEIL 4: WER LEBT OBEN IN MEINER WOHNUNG?",
       "gelb": "OBEN",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 4"
     }
   ],
   "teile": 8

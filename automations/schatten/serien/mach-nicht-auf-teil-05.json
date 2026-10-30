@@ -31,11 +31,11 @@
     ]
   },
   "monsterstimme": "de-DE-KatjaNeural",
-  "caption": "Teil fünf. Das Mädchen aus dem Schrank ist in Mamas altem Fotoalbum. Würdest du in dem Haus bleiben? 👇",
+  "caption": "Das Mädchen aus dem Schrank ist in Mamas altem Fotoalbum. Würdest du in dem Haus bleiben? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil fünf. Das Mädchen aus dem Schrank ist in Mamas altem Fotoalbum.",
+      "sprich": "Das Mädchen aus dem Schrank ist in Mamas altem Fotoalbum.",
       "text": "TEIL 5: SIE IST IN MAMAS FOTOALBUM.",
       "gelb": "FOTOALBUM",
       "schreck": true,
@@ -116,7 +116,8 @@
       "sprich": "Teil sechs: Wie lange habe ich noch?",
       "text": "TEIL 6: WIE LANGE HABE ICH NOCH?",
       "gelb": "NOCH",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 6"
     }
   ],
   "teile": 12

@@ -110,7 +110,12 @@ def bild(s, t, lt):
     im = Image.new('RGB', (W, H), NACHT)
     lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
     if art == 'teil2':
-        sterne(ImageDraw.Draw(im), t)
+        d = ImageDraw.Draw(im)
+        sterne(d, t)
+        if s.get('cta') and lt > 0.4:  # Aufforderung zum Folgen, pulsiert leicht
+            f = ImageFont.truetype(FONTDATEI, int(44 + 4 * math.sin(lt * 6)))
+            d.rounded_rectangle((90, 1150, 630, 1240), 26, fill=(230, 20, 60))
+            d.text((W / 2, 1195), s['cta'], font=f, fill=(255, 255, 255), anchor='mm')
         return im
     if art == 'fratze':
         fratze(im, lt)

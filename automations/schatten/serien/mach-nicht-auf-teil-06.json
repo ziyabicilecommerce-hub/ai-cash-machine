@@ -31,11 +31,11 @@
     ]
   },
   "monsterstimme": "de-DE-KatjaNeural",
-  "caption": "Teil sechs. Jeden Morgen sind meine Haare länger. Und nass. Hättest du sie abgeschnitten? 👇",
+  "caption": "Jeden Morgen sind meine Haare länger. Und nass. Hättest du sie abgeschnitten? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil sechs. Jeden Morgen sind meine Haare länger. Und nass.",
+      "sprich": "Jeden Morgen sind meine Haare länger. Und nass.",
       "text": "TEIL 6: MEINE HAARE WERDEN LÄNGER. UND NASS.",
       "gelb": "NASS",
       "schreck": true,
@@ -116,7 +116,8 @@
       "sprich": "Teil sieben: Was passiert in der dreizehnten Nacht?",
       "text": "TEIL 7: DIE 13. NACHT.",
       "gelb": "NACHT",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 7"
     }
   ],
   "teile": 12

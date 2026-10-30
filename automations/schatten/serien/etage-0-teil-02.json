@@ -30,11 +30,11 @@
   "titel": "Etage 0 – Teil 2",
   "titelbild": "JEDER KNOPF FÜHRT NACH UNTEN.",
   "titelbild_gelb": "UNTEN",
-  "caption": "Teil zwei. Jeder Knopf in diesem Aufzug führt jetzt nach unten. Hättest du nach oben geschaut? 👇",
+  "caption": "Jeder Knopf in diesem Aufzug führt jetzt nach unten. Hättest du nach oben geschaut? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil zwei. Jeder Knopf in diesem Aufzug führt jetzt nach unten.",
+      "sprich": "Jeder Knopf in diesem Aufzug führt jetzt nach unten.",
       "text": "TEIL 2: JEDER KNOPF FÜHRT NACH UNTEN.",
       "gelb": "UNTEN",
       "schreck": true,
@@ -118,7 +118,8 @@
       "sprich": "Teil drei: Was wartet auf Etage null?",
       "text": "TEIL 3: WAS WARTET AUF ETAGE NULL?",
       "gelb": "NULL",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 3"
     }
   ],
   "teile": 8

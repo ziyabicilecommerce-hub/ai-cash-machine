@@ -31,11 +31,11 @@
     ]
   },
   "monsterstimme": "de-DE-KatjaNeural",
-  "caption": "Teil drei. Mama ist nach Hause gekommen. Zweimal. Hättest du die Tür aufgemacht? 👇",
+  "caption": "Mama ist nach Hause gekommen. Zweimal. Hättest du die Tür aufgemacht? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil drei. Mama ist nach Hause gekommen. Zweimal.",
+      "sprich": "Mama ist nach Hause gekommen. Zweimal.",
       "text": "TEIL 3: MAMA KAM ZWEIMAL NACH HAUSE.",
       "gelb": "ZWEIMAL",
       "schreck": true,
@@ -131,7 +131,8 @@
       "sprich": "Teil vier: Wie lange kann ich mich verstecken?",
       "text": "TEIL 4: WIE LANGE KANN ICH MICH VERSTECKEN?",
       "gelb": "VERSTECKEN",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 4"
     }
   ],
   "teile": 12

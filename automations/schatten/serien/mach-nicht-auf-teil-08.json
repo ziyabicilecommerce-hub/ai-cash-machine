@@ -31,11 +31,11 @@
     ]
   },
   "monsterstimme": "de-DE-KatjaNeural",
-  "caption": "Teil acht. Ich bin aus dem Haus geflohen. Barfuß. In den Wald. Wohin wärst du gerannt? 👇",
+  "caption": "Ich bin aus dem Haus geflohen. Barfuß. In den Wald. Wohin wärst du gerannt? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil acht. Ich bin aus dem Haus geflohen. Barfuß. In den Wald.",
+      "sprich": "Ich bin aus dem Haus geflohen. Barfuß. In den Wald.",
       "text": "TEIL 8: BARFUSS IN DEN WALD GEFLOHEN.",
       "gelb": "WALD",
       "schreck": true,
@@ -117,7 +117,8 @@
       "sprich": "Teil neun: Was liegt unter dem Baum?",
       "text": "TEIL 9: WAS LIEGT UNTER DEM BAUM?",
       "gelb": "BAUM",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 9"
     }
   ],
   "teile": 12

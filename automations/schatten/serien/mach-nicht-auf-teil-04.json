@@ -31,11 +31,11 @@
     ]
   },
   "monsterstimme": "de-DE-KatjaNeural",
-  "caption": "Teil vier. Ich verstecke mich im Schrank. Und im Schrank atmet noch jemand. Wo hättest du dich versteckt? 👇",
+  "caption": "Ich verstecke mich im Schrank. Und im Schrank atmet noch jemand. Wo hättest du dich versteckt? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil vier. Ich verstecke mich im Schrank. Und im Schrank atmet noch jemand.",
+      "sprich": "Ich verstecke mich im Schrank. Und im Schrank atmet noch jemand.",
       "text": "TEIL 4: IM SCHRANK ATMET NOCH JEMAND.",
       "gelb": "ATMET",
       "schreck": true,
@@ -111,7 +111,8 @@
       "sprich": "Teil fünf: Wer ist das Mädchen im Schrank?",
       "text": "TEIL 5: WER IST DAS MÄDCHEN IM SCHRANK?",
       "gelb": "MÄDCHEN",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 5"
     }
   ],
   "teile": 12

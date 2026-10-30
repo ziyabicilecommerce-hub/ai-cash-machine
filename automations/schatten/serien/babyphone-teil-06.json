@@ -29,11 +29,11 @@
   "titel": "Babyphone – Teil 6",
   "titelbild": "ICH RUFE DIE NUMMER AN.",
   "titelbild_gelb": "NUMMER",
-  "caption": "Teil sechs. Ich rufe die Nummer an, die mich gebucht hat. Hättest du die Nummer angerufen? 👇",
+  "caption": "Ich rufe die Nummer an, die mich gebucht hat. Hättest du die Nummer angerufen? 👇",
   "szenen": [
     {
       "art": "blitz",
-      "sprich": "Teil sechs. Ich rufe die Nummer an, die mich gebucht hat.",
+      "sprich": "Ich rufe die Nummer an, die mich gebucht hat.",
       "text": "TEIL 6: ICH RUFE DIE NUMMER AN.",
       "gelb": "NUMMER",
       "schreck": true,
@@ -112,7 +112,8 @@
       "sprich": "Teil sieben: Wie komme ich hier raus?",
       "text": "TEIL 7: WIE KOMME ICH HIER RAUS?",
       "gelb": "RAUS",
-      "pause": 0.8
+      "pause": 0.8,
+      "cta": "FOLG MIR FÜR TEIL 7"
     }
   ],
   "teile": 8
