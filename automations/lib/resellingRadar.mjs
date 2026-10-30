@@ -108,3 +108,15 @@ export function neueRestocks(alt = {}, neu = {}) {
 
 // Links aus einem Issue-Text (die Beobachtungsliste kommt aus GitHub-Issues mit dem Label "restock").
 export const linksAus = (text) => [...new Set(String(text || '').match(/https?:\/\/[^\s)<>"']+/g) || [])].filter((u) => !/github\.com/.test(u));
+
+// Live-Lager bei Online-Shops mit Shopify-Suche (öffentliche Vorschlagssuche, ohne Schlüssel):
+// /search/suggest.json liefert Titel, Preis, Link und ob der Artikel verfügbar ist.
+export function shopifyTreffer(json, domain, begriff) {
+  const produkte = json?.resources?.results?.products || [];
+  return produkte.map((p) => ({
+    titel: String(p.title || '').trim(), preis: Number.parseFloat(p.price) || null, verfuegbar: p.available !== false,
+    url: /^https?:\/\//.test(p.url || '') ? p.url : `https://${domain}${String(p.url || '').split('?')[0]}`,
+    bild: typeof p.image === 'string' ? p.image : p.image?.url || p.featured_image?.url || '',
+    laden: domain.replace(/^(www|eu|shop)\./, ''), begriff,
+  })).filter((p) => p.titel && p.verfuegbar);
+}

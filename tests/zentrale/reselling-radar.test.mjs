@@ -72,3 +72,27 @@ test('kartenPicks: steigt nichts deutlich, kommen die besten Bewegungen markiert
   assert.deepEqual(p.map((k) => [k.id, k.nurBewegung]), [['x', true]]);
   assert.deepEqual(kartenStatistik([...leicht, karte('z', {})]), { karten: 3, mitPreis: 2, imBudget: 2, steigend: 0 });
 });
+
+test('shopifyTreffer: nur verfügbare Artikel, absolute Kauflinks, Preis als Zahl', async () => {
+  const { shopifyTreffer } = await import('../../automations/lib/resellingRadar.mjs');
+  const j = { resources: { results: { products: [
+    { title: 'Nike Dunk Low', price: '119.99', available: true, url: '/products/dunk-low?_pos=1', image: 'https://cdn.shop/x.jpg' },
+    { title: 'Samba OG', price: '120.00', available: false, url: '/products/samba' },
+  ] } } };
+  const t = shopifyTreffer(j, 'www.overkillshop.com', 'dunk');
+  assert.equal(t.length, 1);
+  assert.deepEqual([t[0].titel, t[0].preis, t[0].url, t[0].laden], ['Nike Dunk Low', 119.99, 'https://www.overkillshop.com/products/dunk-low', 'overkillshop.com']);
+  assert.deepEqual(shopifyTreffer({}, 'x.de', 'y'), []);
+});
+
+test('Katalog: jedes Produkt hat Kauf- und Verkaufslinks zu bekannten Shops', async () => {
+  const { readFileSync } = await import('node:fs');
+  const k = JSON.parse(readFileSync(new URL('../../automations-dashboard/reselling/katalog.json', import.meta.url), 'utf8'));
+  assert.ok(k.produkte.length >= 25);
+  for (const p of k.produkte) {
+    assert.ok(p.kaufen.length && p.verkaufen.length && p.q, p.name);
+    for (const s of p.kaufen) assert.ok(k.shops[s] || k.verkaufen[s], `${p.name}: Shop ${s}`);
+    for (const s of p.verkaufen) assert.ok(k.verkaufen[s], `${p.name}: Verkauf ${s}`);
+  }
+  for (const s of Object.values({ ...k.shops, ...k.verkaufen })) assert.match(s.suche, /^https:\/\//);
+});
