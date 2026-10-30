@@ -1,5 +1,5 @@
-// Reselling-Radar-App: Kalender, Jetzt kaufen, Läden, Mehr. Daten kommen alle 10 Minuten frisch (Automation #112)
-// direkt aus dem Repo - die App lädt sie beim Öffnen und alle 10 Minuten neu.
+// Reselling-Radar-App: Kalender, Jetzt kaufen, Läden, Mehr. Daten kommen alle 5 Minuten frisch (Automation #112)
+// direkt aus dem Repo - die App lädt sie beim Öffnen und alle 5 Minuten neu.
 const REPO = 'ziyabicilecommerce-hub/ai-cash-machine';
 const ROH = `https://raw.githubusercontent.com/${REPO}/main/automations-dashboard/reselling/`;
 const $ = (id) => document.getElementById(id);
@@ -27,14 +27,19 @@ const tagText = (iso) => {
 };
 
 // Bild mit Ersatz-Emoji, falls es nicht lädt
+// TCGdex hat neue Sets oft nicht auf Deutsch -> englisches/japanisches Bild probieren
+const varianten = (u) => (/assets\.tcgdex\.net\/de\//.test(u) ? [u, u.replace('/de/', '/en/'), u.replace('/de/', '/ja/')] : [u]);
 function bildBox(cls, url, emoji) {
   const b = el('div', `${cls} leer`, emoji);
-  const u = https(url);
-  if (u) {
-    const img = new Image(); img.loading = 'lazy'; img.alt = ''; img.referrerPolicy = 'no-referrer';
-    img.onload = () => { b.classList.remove('leer'); b.textContent = ''; b.style.backgroundImage = `url("${u.replace(/"/g, '')}")`; };
-    img.src = u;
-  }
+  const liste = https(url) ? varianten(https(url)) : [];
+  const probieren = (i) => {
+    if (i >= liste.length) return;
+    const img = new Image(); img.alt = ''; img.referrerPolicy = 'no-referrer';
+    img.onload = () => { b.classList.remove('leer'); b.textContent = ''; b.style.backgroundImage = `url("${liste[i].replace(/"/g, '')}")`; };
+    img.onerror = () => probieren(i + 1);
+    img.src = liste[i];
+  };
+  probieren(0);
   return b;
 }
 // Ein Eintrag: Bild links, Name + Info, Preis rechts - tippen öffnet den Link
@@ -120,6 +125,53 @@ function saison() {
   $('bald').replaceChildren(...(SAISON.monate[naechster] || []).map(tippZeile));
 }
 
+// Sofort kaufen: Alarme vom Bot (neueste zuerst); sonst die besten Deals, die gerade gehen
+function deal({ bild, emoji, titel, text, link, zeit }) {
+  const d = el('div', 'deal');
+  const m = el('div', 'mitte');
+  m.append(el('div', 'name', titel), el('div', 'info', text));
+  if (zeit) m.append(el('div', 'zeit', tagText(zeit)));
+  if (link) { const k = el('a', 'kaufen-knopf', 'Jetzt kaufen →'); k.href = link; k.target = '_blank'; k.rel = 'noopener'; m.append(k); }
+  const b = bildBox('bild', bild, emoji);
+  if (link) { const a = el('a'); a.href = link; a.target = '_blank'; a.rel = 'noopener'; a.append(b); d.append(a, m); } else d.append(b, m);
+  return d;
+}
+function sofort() {
+  const frisch = (D.alarme || []).filter((a) => Date.now() - Date.parse(a.zeit) < 24 * 3600000);
+  let liste = frisch.map((a) => ({ ...a, emoji: a.art === 'Drop' ? '👟' : a.art === 'Karte' ? '🃏' : '🆕', link: https(a.link) }));
+  $('alarmtitel').textContent = liste.length ? `🚨 Sofort kaufen (${liste.length})` : '💎 Beste Deals gerade';
+  $('alarminfo').textContent = liste.length ? 'Vom Bot in den letzten 24 Stunden gefunden - alle 5 Minuten neu geprüft.' : 'Gerade kein Alarm - das hier lohnt sich trotzdem jetzt:';
+  if (!liste.length) {
+    const karten = (D.pokemon?.picks || []).filter((k) => ['STRONG BUY', 'BUY'].includes(k.profi?.signal)).slice(0, 3)
+      .map((k) => ({ titel: `${k.profi.signal}: ${k.name}`, text: `ab ${euro(k.profi.einstieg)} · +${euro(k.profi.gewinn)} nach Gebühren`, bild: k.bild, emoji: '🃏', link: https(k.link) }));
+    const drops = (D.kalender || []).filter((k) => Date.parse(k.zeit) > Date.now()).slice(0, 2)
+      .map((k) => ({ titel: `Drop: ${k.titel}`, text: `${tagText(k.zeit)} · ${euro(k.preis)}`, bild: k.bild, emoji: '👟', link: https(k.link) }));
+    const ware = (D.live?.treffer || []).filter((t) => t.preis != null && t.preis <= (D.budget || 40) && https(t.bild)).slice(0, 3)
+      .map((t) => ({ titel: t.titel, text: `${euro(t.preis)} bei ${t.laden} - auf Lager`, bild: t.bild, emoji: '👟', link: https(t.url) }));
+    liste = [...karten, ...drops, ...ware];
+  }
+  $('alarmliste').replaceChildren(...(liste.length ? liste.map(deal) : [leer('Lädt …')]));
+  if (D.push?.thema) $('ntfyabo').href = `https://ntfy.sh/${encodeURIComponent(D.push.thema)}`;
+  browserMelden(frisch);
+}
+// Benachrichtigung im Browser/als installierte App, solange sie offen ist oder im Hintergrund läuft
+function browserMelden(alarme) {
+  let gesehen = ''; try { gesehen = localStorage.getItem('alarm-gesehen') || ''; } catch { /* privat */ }
+  const neu = alarme.filter((a) => a.zeit > gesehen);
+  if (alarme[0]) try { localStorage.setItem('alarm-gesehen', alarme[0].zeit); } catch { /* privat */ }
+  if (!gesehen || !('Notification' in window) || Notification.permission !== 'granted') return;
+  for (const a of neu.slice(0, 3)) {
+    const n = new Notification(a.titel, { body: a.text, icon: https(a.bild) || 'icon-192.png', tag: a.schluessel });
+    n.onclick = () => { window.open(a.link, '_blank'); n.close(); };
+  }
+}
+$('browserpush').addEventListener('click', async (e) => {
+  e.preventDefault(); e.stopPropagation();
+  if (!('Notification' in window)) { $('browserpush').textContent = '❌ Geht hier nicht - nimm ntfy'; return; }
+  const r = await Notification.requestPermission();
+  $('browserpush').textContent = r === 'granted' ? '✅ An (solange die App offen ist)' : '❌ Blockiert';
+});
+
 function hype() {
   if (HYPE) {
     $('hypeinfo').textContent = HYPE.hinweis || '';
@@ -146,7 +198,7 @@ function kalender() {
   const zeig = liste.filter((k) => zustand.kal === 'Alle' || k.kat === zustand.kal);
   $('kal').replaceChildren(...(zeig.length ? zeig.map((k) => eintrag({
     bild: k.bild, emoji: k.kat === 'Sneaker' ? '👟' : '🃏', name: k.titel, info: k.farbe, marke: k.marke, tag: tagText(k.zeit), preis: euro(k.preis), link: https(k.link),
-  })) : [leer('Gerade keine angekündigten Drops - die Liste prüft sich alle 10 Minuten neu.')]));
+  })) : [leer('Gerade keine angekündigten Drops - die Liste prüft sich alle 5 Minuten neu.')]));
 }
 
 function kaufen() {
@@ -156,7 +208,7 @@ function kaufen() {
   const alle = [...karten, ...shop];
   chips('kauffilter', ['Im Budget', 'Pokémon-Karten', 'Sneaker & Klamotten', 'Alle'], zustand.kauf, (w) => { zustand.kauf = w; kaufen(); });
   const zeig = alle.filter((t) => zustand.kauf === 'Alle' || (zustand.kauf === 'Im Budget' ? t.preis != null && t.preis <= budget : t.typ === zustand.kauf)).slice(0, 60);
-  $('kaufinfo').textContent = `${alle.length} Treffer · Budget bis ${euro(budget)} · alle 10 Min. neu geprüft`;
+  $('kaufinfo').textContent = `${alle.length} Treffer · Budget bis ${euro(budget)} · alle 5 Min. neu geprüft`;
   $('kauf').replaceChildren(...(zeig.length ? zeig.map((t) => eintrag({
     bild: t.bild, emoji: t.typ === 'Pokémon-Karten' ? '🃏' : '👟', name: t.titel, info: t.laden,
     tag: t.plus != null ? `▲ ${t.plus} %` : '', preis: euro(t.preis), preisKlasse: t.preis != null && t.preis <= budget ? 'gruen' : '', link: https(t.url),
@@ -207,7 +259,7 @@ function rechnen() {
 ['ek', 'vk', 'pf', 'vs'].forEach((id) => $(id).addEventListener('input', rechnen));
 rechnen();
 
-// Daten: zuerst frisch aus dem Repo (alle 10 Min. aktualisiert), sonst die mitgelieferte Kopie
+// Daten: zuerst frisch aus dem Repo (alle 5 Min. aktualisiert), sonst die mitgelieferte Kopie
 async function json(name) {
   for (const url of [`${ROH}${name}?t=${Date.now()}`, `${name}?t=${Date.now()}`]) {
     try { const r = await fetch(url, { cache: 'no-store' }); if (r.ok) return await r.json(); } catch { /* nächste Quelle */ }
@@ -224,12 +276,12 @@ async function laden() {
   if (h) HYPE = h;
   if (bi) BILDER = bi.bilder || {};
   const alter = D.stand ? Math.round((Date.now() - Date.parse(D.stand)) / 60000) : null;
-  $('stand').replaceChildren(document.createTextNode(alter == null ? 'Noch keine Daten' : 'Stand: '), ...(alter == null ? [] : [el('b', '', alter < 1 ? 'gerade eben' : `vor ${alter} Min.`), document.createTextNode(' · aktualisiert sich alle 10 Min.')]));
-  hype(); if (typeof pro === 'function') pro(); saison(); kalender(); kaufen(); laeden(); mehr(); katalog();
+  $('stand').replaceChildren(document.createTextNode(alter == null ? 'Noch keine Daten' : 'Stand: '), ...(alter == null ? [] : [el('b', '', alter < 1 ? 'gerade eben' : `vor ${alter} Min.`), document.createTextNode(' · Bot prüft alle 5 Min.')]));
+  sofort(); hype(); if (typeof pro === 'function') pro(); saison(); kalender(); kaufen(); laeden(); mehr(); katalog();
 }
 $('neuladen').addEventListener('click', laden);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) laden(); });
-setInterval(laden, 10 * 60000);
+setInterval(laden, 5 * 60000);
 laden();
 
 $('teilen').addEventListener('click', async () => {

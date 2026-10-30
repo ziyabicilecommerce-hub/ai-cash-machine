@@ -226,3 +226,31 @@ export function commonsBild(json) {
 }
 // Shop-Suchlink: {q} = URL-kodiert, {q-} = mit Bindestrichen (z. B. Kleinanzeigen)
 export const suchLink = (vorlage, q) => String(vorlage).replace('{q-}', encodeURIComponent(String(q).trim().replace(/\s+/g, '-'))).replace('{q}', encodeURIComponent(q));
+
+// Alarme "sofort kaufen": neue STRONG-BUY-Karten, Drops in den nächsten 90 Minuten, neu eingetroffene Ware im Budget.
+// gemeldet = { schluessel: Zeitpunkt } verhindert Wiederholungen (Karten frühestens nach 3 Tagen erneut).
+const eu = (n) => `${Number(n).toFixed(2).replace('.', ',')} €`;
+export function alarme({ picks = [], kalender = [], liveNeu = [], budget = 40 }, gemeldet = {}, jetzt = new Date()) {
+  const t = jetzt.getTime(), raus = [];
+  const frisch = (k, tage) => gemeldet[k] && t - Date.parse(gemeldet[k]) < tage * 86400000;
+  for (const k of picks) {
+    if (k.profi?.signal !== 'STRONG BUY' || frisch(`karte:${k.id}`, 3)) continue;
+    raus.push({ schluessel: `karte:${k.id}`, art: 'Karte', titel: `🚨 STRONG BUY: ${k.name}`, bild: k.bild, link: k.link,
+      text: `Kaufen ab ${eu(k.profi.einstieg)} · Ziel ${eu(k.profi.ziel)} · +${eu(k.profi.gewinn)} nach Gebühren (ROI ${k.profi.roi} %)` });
+  }
+  for (const d of kalender) {
+    const bis = Date.parse(d.zeit) - t;
+    if (bis < -15 * 60000 || bis > 90 * 60000 || frisch(`drop:${d.titel}:${d.zeit}`, 30)) continue;
+    raus.push({ schluessel: `drop:${d.titel}:${d.zeit}`, art: 'Drop', titel: `⏰ Drop gleich: ${d.titel}`, bild: d.bild, link: d.link,
+      text: `${d.farbe ? `${d.farbe} · ` : ''}${d.preis ? `${eu(d.preis)} · ` : ''}Start ${new Date(d.zeit).toLocaleTimeString('de-DE', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit' })} Uhr` });
+  }
+  for (const w of liveNeu) {
+    if (raus.filter((a) => a.art === 'Neu').length >= 2) break;  // nicht zuspammen
+    if (w.preis == null || w.preis > budget || frisch(`neu:${w.url}`, 30)) continue;
+    raus.push({ schluessel: `neu:${w.url}`, art: 'Neu', titel: `🆕 Neu auf Lager: ${w.titel}`, bild: w.bild, link: w.url, text: `${eu(w.preis)} bei ${w.laden}` });
+  }
+  return raus;
+}
+
+// Kartenbild: TCGdex hat neue Sets oft noch nicht auf Deutsch - dann die englische oder japanische Variante nehmen.
+export const bildVarianten = (url) => (/assets\.tcgdex\.net\/de\//.test(url || '') ? [url, url.replace('/de/', '/en/'), url.replace('/de/', '/ja/')] : [url].filter(Boolean));

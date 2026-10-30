@@ -1,12 +1,12 @@
 name: "112 · Reselling-Radar (App)"
 
-# Alle 10 Minuten (Pokémon-Preise stündlich, Läden wöchentlich): Release-Kalender, steigende Pokémon-Karten (Cardmarket-Preise), Google-Trends Deutschland und Lagerstatus der
+# Alle 5 Minuten (Pokémon-Preise stündlich, Läden wöchentlich): Release-Kalender, steigende Pokémon-Karten (Cardmarket-Preise), Google-Trends Deutschland und Lagerstatus der
 # beobachteten Produkte (GitHub-Issues mit Label "restock") holen und die App automations-dashboard/reselling/ aktualisieren.
 # Bei einem Restock kommt ein Kommentar ins Issue = Benachrichtigung in der GitHub-App. Kostenlos, ohne Schlüssel.
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -26,6 +26,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       GITHUB_TOKEN: ${{ github.token }}
       RESELLING_BUDGET: ${{ vars.RESELLING_BUDGET || '40' }}
+      NTFY_TOPIC: ${{ vars.NTFY_TOPIC || 'reselling-radar-hattersheim' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

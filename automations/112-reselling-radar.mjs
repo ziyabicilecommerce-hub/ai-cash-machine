@@ -5,7 +5,7 @@
 //  - Lagerstatus der Produkte aus GitHub-Issues mit dem Label "restock"; bei Restock kommt ein Kommentar ins Issue
 //    (= Push-Benachrichtigung über die GitHub-App) und die Uhrzeit wird für das Restock-Muster gespeichert.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { kurseFortschreiben, bildBegriffe, bingBild, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
+import { alarme, bildVarianten, kurseFortschreiben, bildBegriffe, bingBild, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
 
 const ORDNER = 'automations-dashboard/reselling';
 const DATEN = `${ORDNER}/daten.json`;
@@ -15,6 +15,7 @@ const BILDER = `${ORDNER}/bilder.json`;
 const REPO = process.env.GITHUB_REPOSITORY || '';
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
 const BUDGET = Number(process.env.RESELLING_BUDGET || 40);
+const PUSH_THEMA = process.env.NTFY_TOPIC || 'reselling-radar-hattersheim';  // ntfy.sh: kostenlose Push-Nachrichten ohne Konto
 const BROWSER = { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36', 'accept-language': 'de-DE,de;q=0.9' };
 const log = (...a) => console.log('[112-reselling]', ...a);
 
@@ -217,6 +218,22 @@ async function kommentieren(nr, text) {
   }).catch(() => {});
 }
 
+// Push aufs Handy über ntfy.sh (App "ntfy", Thema abonnieren) - mit Bild und Kauf-Link
+async function pushen(a) {
+  const res = await fetch('https://ntfy.sh/', { method: 'POST', headers: { 'content-type': 'application/json' }, signal: AbortSignal.timeout(15000),
+    body: JSON.stringify({ topic: PUSH_THEMA, title: a.titel, message: a.text, click: a.link, ...(a.bild ? { attach: a.bild } : {}), priority: 4, tags: ['moneybag'],
+      actions: a.link ? [{ action: 'view', label: 'Jetzt kaufen', url: a.link }] : [] }) });
+  if (!res.ok) throw new Error(`ntfy ${res.status}`);
+}
+
+// Kartenbilder prüfen: erste Variante, die wirklich lädt
+async function bildPruefen(url) {
+  for (const u of bildVarianten(url)) {
+    try { const r = await fetch(u, { method: 'HEAD', signal: AbortSignal.timeout(8000) }); if (r.ok) return u; } catch { /* nächste */ }
+  }
+  return url;
+}
+
 async function main() {
   mkdirSync(ORDNER, { recursive: true });
   const alt = lesen(DATEN, {});
@@ -231,6 +248,7 @@ async function main() {
   // Kursverlauf nur bei frischen Preisen fortschreiben (stündlich) und an die Picks hängen
   if (!pokeFrisch) verlauf.kurse = kurseFortschreiben(verlauf.kurse, poke.picks || []);
   for (const k of poke.picks || []) k.kurs = (verlauf.kurse?.[k.id] || []).map(([, v]) => v);
+  if (!pokeFrisch) for (const k of poke.picks || []) k.bild = await bildPruefen(k.bild);
   const hype = await teil('Google Trends', trends, alt.trends || { ware: [], top: [] });
   const beobachtet = await teil('Beobachtungsliste', issues, []);
   const live = await teil('Live-Shops', liveShops, alt.live || { treffer: [], erreicht: [] });
@@ -253,6 +271,7 @@ async function main() {
   for (const url of neueRestocks(verlauf.status, status)) {
     const p = produkte.find((x) => x.url === url);
     verlauf.restocks.push({ url, zeit: jetzt, titel: p?.titel || url });
+    await teil('Push', () => pushen({ titel: `✅ Wieder auf Lager: ${p?.titel || new URL(url).hostname}`, text: 'Schnell sein - Restock!', link: url }), null);
     if (p) await kommentieren(p.issue, `✅ **Wieder auf Lager!** (${new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })})\n\n${url}`);
     log('Restock:', url);
   }
@@ -260,10 +279,22 @@ async function main() {
   verlauf.restocks = verlauf.restocks.slice(-500);
   for (const p of produkte) p.muster = restockMuster(verlauf.restocks.filter((r) => r.url === p.url));
 
-  const daten = { stand: jetzt, budget: BUDGET, kalender, pokemon: poke, trends: hype, live, produkte, restocks: verlauf.restocks.slice(-20).reverse(), muster: restockMuster(verlauf.restocks), fehler };
+  // Sofort-kaufen-Alarme: neue Ware nur melden, wenn es einen Vorlauf gab (sonst wäre beim ersten Lauf alles "neu")
+  const bekannt = new Set((alt.live?.treffer || []).map((x) => x.url));
+  const liveNeu = alt.live?.treffer?.length ? (live.treffer || []).filter((x) => !bekannt.has(x.url)) : [];
+  verlauf.gemeldet = verlauf.gemeldet || {};
+  const neueAlarme = alarme({ picks: poke.picks || [], kalender, liveNeu, budget: BUDGET }, verlauf.gemeldet).slice(0, 6);
+  for (const a of neueAlarme) {
+    verlauf.gemeldet[a.schluessel] = jetzt;
+    await teil('Push', () => pushen(a), null);
+  }
+  for (const [k, z] of Object.entries(verlauf.gemeldet)) if (Date.now() - Date.parse(z) > 40 * 86400000) delete verlauf.gemeldet[k];
+  const alarmListe = [...neueAlarme.map((a) => ({ ...a, zeit: jetzt })), ...(alt.alarme || [])].slice(0, 20);
+
+  const daten = { stand: jetzt, budget: BUDGET, push: { thema: PUSH_THEMA }, alarme: alarmListe, kalender, pokemon: poke, trends: hype, live, produkte, restocks: verlauf.restocks.slice(-20).reverse(), muster: restockMuster(verlauf.restocks), fehler };
   writeFileSync(DATEN, `${JSON.stringify(daten, null, 1)}\n`);
   writeFileSync(VERLAUF, `${JSON.stringify(verlauf, null, 1)}\n`);
-  log(`fertig: ${kalender.length} Kalender-Termine, ${vorOrt?.laeden?.length || 0} Läden vor Ort, ${bildZahl} Bilder, ${poke.picks?.length || 0} Karten-Picks, ${hype.ware?.length || 0} Ware-Trends, ${live.treffer?.length || 0} Live-Treffer bei ${live.erreicht?.length || 0} Shops, ${produkte.length} beobachtete Produkte, Fehler: ${fehler.length}`);
+  log(`fertig: ${kalender.length} Kalender-Termine, ${vorOrt?.laeden?.length || 0} Läden vor Ort, ${bildZahl} Bilder, ${poke.picks?.length || 0} Karten-Picks, ${hype.ware?.length || 0} Ware-Trends, ${live.treffer?.length || 0} Live-Treffer bei ${live.erreicht?.length || 0} Shops, ${produkte.length} beobachtete Produkte, ${neueAlarme.length} Alarme, Fehler: ${fehler.length}`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

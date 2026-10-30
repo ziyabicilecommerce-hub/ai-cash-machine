@@ -102,6 +102,14 @@
   .mini { margin-top:8px; background:#ffffff0d; border:1px solid var(--rand); color:var(--text); border-radius:10px; padding:7px 10px; font-size:12.5px; font-weight:700; }
   .mini.weg { margin:0; padding:4px 8px; }
   @media (min-width:520px) { .kpis { grid-template-columns:repeat(4,1fr); } }
+  /* Sofort kaufen */
+  .deal { display:flex; gap:12px; background:linear-gradient(135deg,#1a2a22,#151a2e); border:1px solid #3ef2a055; border-radius:20px; padding:12px; margin-bottom:10px; box-shadow:0 0 24px #3ef2a014; }
+  .deal .bild { width:92px; height:92px; }
+  .deal .mitte { display:flex; flex-direction:column; gap:4px; }
+  .deal .kaufen-knopf { align-self:flex-start; margin-top:4px; background:linear-gradient(90deg,#11b981,#3ef2a0); color:#03140c; font-weight:850; font-size:14px; text-decoration:none; padding:9px 14px; border-radius:12px; }
+  .deal .zeit { font-size:11px; color:var(--leise); }
+  .pushbox { background:var(--panel2); border:1px dashed #8b5cff80; border-radius:18px; padding:12px; margin:6px 0 4px; }
+  .pushbox p { margin:4px 0 8px; } .pushbox .links { margin:0; }
 </style>
 </head>
 <body>
@@ -114,6 +122,19 @@
 <div class="ticker" id="ticker" hidden></div>
 <main>
   <section id="hype" class="aktiv">
+    <h2 id="alarmtitel">🚨 Sofort kaufen</h2>
+    <p class="klein" id="alarminfo"></p>
+    <div id="alarmliste"></div>
+    <div class="pushbox" id="pushbox">
+      <b>🔔 Push aufs Handy</b>
+      <p class="klein">Kostenlos, ohne Konto: App <b>ntfy</b> installieren, Thema abonnieren - dann kommt jede Kauf-Chance mit Bild und Link sofort aufs Handy.</p>
+      <div class="links">
+        <a id="ntfyabo" target="_blank" rel="noopener">📲 Thema abonnieren</a>
+        <a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener">🍎 iPhone-App</a>
+        <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener">🤖 Android-App</a>
+        <a href="#" id="browserpush">🖥️ Hier in der App</a>
+      </div>
+    </div>
     <h2>🔥 Gerade im Hype</h2>
     <p class="klein" id="hypeinfo"></p>
     <div class="karussell" id="hypekarussell"></div>
@@ -187,7 +208,7 @@
       <div class="ergebnis" id="gewinn">–</div><p class="klein" id="gewinninfo"></p>
     </div></details>
     <details><summary>🔔 Restock-Alarm</summary><div>
-      <p class="klein">Shop-Link eintragen - die App prüft alle 10 Minuten. Ist der Artikel wieder da, kommt eine Nachricht in der GitHub-App (kostenloses Konto).</p>
+      <p class="klein">Shop-Link eintragen - die App prüft alle 5 Minuten. Ist der Artikel wieder da, kommt eine Push-Nachricht (ntfy) und ein Hinweis in der GitHub-App.</p>
       <a class="knopf" id="neu" target="_blank" rel="noopener">＋ Produkt beobachten</a>
       <div id="produkte"></div>
     </div></details>
