@@ -1,0 +1,58 @@
+{
+ "hinweis": "Faustregel: kaufen, wenn es keiner will (oder zum Ladenpreis direkt beim Release) - verkaufen, wenn alle es brauchen.",
+ "monate": {
+  "1": [
+   { "aktion": "kaufen", "name": "Winterjacken & Sneaker im Winter-Sale", "q": "winterjacke sale", "kaufen": ["zalando", "snipes", "nike"], "warum": "Bis -50 % - im Herbst wieder zum vollen Preis verkaufbar." },
+   { "aktion": "verkaufen", "name": "Ungewollte Weihnachtsgeschenke (Technik, Parfum)", "q": "parfum geschenkset", "verkaufen": ["kleinanzeigen", "ebaynah", "vinted"], "warum": "Im Januar suchen viele günstige Markenware." }
+  ],
+  "2": [
+   { "aktion": "verkaufen", "name": "Fastnachts-Kostüme (Mainz, Frankfurt, Wiesbaden)", "q": "fastnacht kostüm", "verkaufen": ["kleinanzeigen", "ebaynah", "vinted"], "warum": "Kurz vor Rosenmontag zahlen die Leute in der Region jeden Preis." },
+   { "aktion": "verkaufen", "name": "Parfum & Geschenksets zum Valentinstag", "q": "parfum geschenkset", "verkaufen": ["kleinanzeigen", "vinted"], "warum": "Last-Minute-Käufer vor dem 14. Februar." },
+   { "aktion": "kaufen", "name": "Kostüme nach Aschermittwoch", "q": "fastnacht kostüm", "kaufen": ["amazon", "kaufland"], "warum": "Danach spottbillig - nächstes Jahr wieder gefragt." }
+  ],
+  "3": [
+   { "aktion": "kaufen", "name": "Neue LEGO-Sets zum Frühjahrs-Release", "q": "lego neuheiten", "kaufen": ["lego", "smyths", "mueller"], "warum": "Gefragte Sets laufen nach 1–2 Jahren aus und steigen." },
+   { "aktion": "verkaufen", "name": "Fahrräder, Inliner & Outdoor-Sachen", "q": "fahrrad", "verkaufen": ["kleinanzeigen", "ebaynah"], "warum": "Mit dem ersten warmen Wochenende steigt die Nachfrage." }
+  ],
+  "4": [
+   { "aktion": "verkaufen", "name": "Oster-Geschenke & Spielzeug", "q": "ostergeschenk kinder", "verkaufen": ["kleinanzeigen", "ebaynah"], "warum": "Vor Ostern kaufen Eltern und Großeltern." },
+   { "aktion": "verkaufen", "name": "Sneaker & Sommer-Klamotten", "q": "sneaker", "verkaufen": ["vinted", "kleinanzeigen", "stockx"], "warum": "Frühling = Sneaker-Saison." }
+  ],
+  "5": [
+   { "aktion": "verkaufen", "name": "Festival- & Camping-Ausrüstung", "q": "zelt festival", "verkaufen": ["kleinanzeigen", "ebaynah"], "warum": "Vor der Festival-Saison im Juni/Juli gefragt." },
+   { "aktion": "kaufen", "name": "Fußball-Trikots der alten Saison im Sale", "q": "trikot sale", "kaufen": ["adidas", "nike", "zalando"], "warum": "Zum Saisonende reduziert - Kult-Trikots steigen später." }
+  ],
+  "6": [
+   { "aktion": "verkaufen", "name": "Ventilatoren, Pools, Sommer-Spielzeug", "q": "ventilator", "verkaufen": ["kleinanzeigen", "ebaynah"], "warum": "Bei der ersten Hitzewelle sind die Läden leer." },
+   { "aktion": "kaufen", "name": "Turnier-Sticker & Trikots (bei EM/WM)", "q": "panini sticker", "kaufen": ["mueller", "kaufland", "amazon"], "warum": "Vollständige Alben und Sondertrikots sind nach dem Turnier gesucht." }
+  ],
+  "7": [
+   { "aktion": "kaufen", "name": "Sommer-Sale: Sneaker & Marken-Klamotten", "q": "sommer sale sneaker", "kaufen": ["zalando", "snipes", "footlocker", "nike", "adidas"], "warum": "Größte Rabatte des Jahres - im Herbst mit Gewinn verkaufen." },
+   { "aktion": "verkaufen", "name": "Schulranzen & Schulsachen", "q": "schulranzen", "verkaufen": ["kleinanzeigen", "ebaynah"], "warum": "Vor Schulstart im August gesucht." }
+  ],
+  "8": [
+   { "aktion": "kaufen", "name": "Topps / Panini zum Bundesliga-Start", "q": "topps match attax", "kaufen": ["mueller", "kaufland", "amazon"], "warum": "Erste Displays der Saison sind schnell weg." },
+   { "aktion": "verkaufen", "name": "Gaming & Konsolen-Zubehör", "q": "ps5 controller", "verkaufen": ["kleinanzeigen", "ebaynah", "ebay"], "warum": "Ende der Sommerferien - viele kaufen Gaming." }
+  ],
+  "9": [
+   { "aktion": "kaufen", "name": "Adventskalender früh sichern (Beauty, LEGO, Pokémon)", "q": "adventskalender", "kaufen": ["douglas", "lego", "smyths", "mueller", "amazon"], "warum": "Beliebte Kalender sind im November ausverkauft und werden teurer." },
+   { "aktion": "verkaufen", "name": "Trachten für Oktoberfest & Weinfeste", "q": "dirndl", "verkaufen": ["kleinanzeigen", "vinted", "ebaynah"], "warum": "Hochsaison für Dirndl & Lederhosen." }
+  ],
+  "10": [
+   { "aktion": "kaufen", "name": "Adventskalender (letzte Chance zum Ladenpreis)", "q": "adventskalender", "kaufen": ["douglas", "lego", "smyths", "mueller", "amazon"], "warum": "Ab November knapp - Weiterverkauf über Ladenpreis möglich." },
+   { "aktion": "kaufen", "name": "Weihnachts-Spielzeughits vor dem Ansturm", "q": "spielzeug bestseller", "kaufen": ["smyths", "mueller", "amazon", "otto"], "warum": "Die Hits des Jahres sind im Dezember ausverkauft." },
+   { "aktion": "verkaufen", "name": "Halloween-Kostüme & Deko", "q": "halloween kostüm", "verkaufen": ["kleinanzeigen", "vinted", "ebaynah"], "warum": "Nur bis 31. Oktober gefragt." }
+  ],
+  "11": [
+   { "aktion": "kaufen", "name": "Black Friday: Konsolen, Technik, LEGO", "q": "black friday angebote", "kaufen": ["mediamarkt", "saturn", "amazon", "otto", "lego"], "warum": "Tiefstpreise des Jahres - im Dezember teurer weiterverkaufbar." },
+   { "aktion": "verkaufen", "name": "Adventskalender (ausverkaufte Modelle)", "q": "adventskalender", "verkaufen": ["kleinanzeigen", "ebaynah", "vinted"], "warum": "Ab Mitte November zahlen Nachzügler mehr als den Ladenpreis." },
+   { "aktion": "kaufen", "name": "Pokémon Weihnachts-Kollektionen & Top Trainer Boxen", "q": "pokemon kollektion", "kaufen": ["smyths", "mueller", "amazon", "pokemoncenter"], "warum": "Beliebtestes Geschenk - Restbestände steigen im Dezember." },
+   { "aktion": "kaufen", "name": "Winterjacken & Daunenjacken", "q": "daunenjacke", "kaufen": ["zalando", "snipes"], "warum": "Mit dem ersten Frost steigt die Nachfrage auf Vinted." }
+  ],
+  "12": [
+   { "aktion": "verkaufen", "name": "Spielzeug-Hits & Konsolen", "q": "spielzeug", "verkaufen": ["kleinanzeigen", "ebaynah", "ebay"], "warum": "Bis 22. Dezember zahlen Eltern fast jeden Preis." },
+   { "aktion": "verkaufen", "name": "Parfum-Sets & Ugly Christmas Sweater", "q": "weihnachtspullover", "verkaufen": ["vinted", "kleinanzeigen"], "warum": "Last-Minute-Geschenke und Weihnachtsfeiern." },
+   { "aktion": "kaufen", "name": "Nach Weihnachten: Restposten & Sale", "q": "sale", "kaufen": ["zalando", "mediamarkt", "smyths"], "warum": "Ab 27. Dezember stark reduziert - später wieder voll verkaufbar." }
+  ]
+ }
+}

@@ -142,17 +142,17 @@ async function sneakerDrops() {
   return nikeDrops(await nochmal(() => holen(url, { json: true, kopf: { accept: 'application/json' } }), 2));
 }
 
-// Läden vor Ort (Hessen + 30 km um Hattersheim) aus OpenStreetMap - einmal pro Woche reicht.
+// Läden vor Ort (50 km um Hattersheim) aus OpenStreetMap - einmal pro Woche reicht (oder wenn sich die Abfrage ändert).
 async function laedenVorOrt() {
   const alt = lesen(LAEDEN, null);
-  if (alt?.stand && Date.now() - Date.parse(alt.stand) < 7 * 86400000 && alt.laeden?.length) return alt;
   const abfrage = overpassAbfrage(HEIMAT);
+  if (alt?.abfrage === abfrage && Date.now() - Date.parse(alt.stand) < 7 * 86400000 && alt.laeden?.length) return alt;
   for (const server of ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter']) {
     try {
       const res = await fetch(server, { method: 'POST', body: new URLSearchParams({ data: abfrage }), headers: { 'user-agent': 'reselling-radar (github actions)' }, signal: AbortSignal.timeout(200000) });
       if (!res.ok) throw new Error(`${res.status}`);
       const laeden = laedenAusOsm(await res.json(), HEIMAT);
-      const daten = { stand: new Date().toISOString(), heimat: HEIMAT, laeden };
+      const daten = { stand: new Date().toISOString(), heimat: HEIMAT, abfrage, laeden };
       writeFileSync(LAEDEN, `${JSON.stringify(daten, null, 1)}\n`);
       log('Läden vor Ort:', laeden.length);
       return daten;

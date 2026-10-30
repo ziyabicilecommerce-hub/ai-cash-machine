@@ -97,7 +97,7 @@ test('Katalog: jedes Produkt hat Kauf- und Verkaufslinks zu bekannten Shops', as
   for (const s of Object.values({ ...k.shops, ...k.verkaufen })) assert.match(s.suche, /^https:\/\//);
 });
 
-test('Läden vor Ort: Entfernung von Hattersheim, Art des Ladens, Dubletten raus, nächster zuerst', async () => {
+test('Läden vor Ort (50 km um Hattersheim): Entfernung, Art des Ladens, Dubletten raus, nächster zuerst', async () => {
   const { laedenAusOsm, entfernungKm, HEIMAT, overpassAbfrage } = await import('../../automations/lib/resellingRadar.mjs');
   const mainz = { lat: 49.9929, lon: 8.2473 };
   assert.ok(entfernungKm(HEIMAT, mainz) > 15 && entfernungKm(HEIMAT, mainz) < 22, 'Mainz ist ca. 19 km entfernt');
@@ -110,8 +110,8 @@ test('Läden vor Ort: Entfernung von Hattersheim, Art des Ladens, Dubletten raus
   const l = laedenAusOsm(osm);
   assert.equal(l.length, 2);
   assert.deepEqual(l.map((x) => [x.name, x.art]), [['Smyths Toys', 'Spielzeug & Figuren'], ['Kartenladen Mainz', 'Karten & Sammeln']]);
-  assert.match(overpassAbfrage(), /DE-HE/);
-  assert.match(overpassAbfrage(), /around:30000,50\.0697,8\.4867/);
+  assert.match(overpassAbfrage(), /around:50000,50\.0697,8\.4867/);
+  assert.doesNotMatch(overpassAbfrage(), /DE-HE/);
 });
 
 test('nikeDrops: kommende Drops mit Modell, Bild, Preis, Zeit und Link - Vergangenes raus', async () => {
@@ -126,4 +126,18 @@ test('nikeDrops: kommende Drops mit Modell, Bild, Preis, Zeit und Link - Vergang
   assert.equal(d.length, 1);
   assert.deepEqual([d[0].titel, d[0].preis, d[0].link, d[0].zeit], ['Air Jordan 1 High OG', 189.99, 'https://www.nike.com/de/launch/t/air-jordan-1-test', '2026-11-07T08:00:00.000Z']);
   assert.deepEqual(nikeDrops({}), []);
+});
+
+test('Saison-Plan: jeder Monat hat Tipps, alle Shops gibt es im Katalog', async () => {
+  const { readFileSync } = await import('node:fs');
+  const lies = (n) => JSON.parse(readFileSync(new URL(`../../automations-dashboard/reselling/${n}`, import.meta.url), 'utf8'));
+  const saison = lies('saison.json'), k = lies('katalog.json');
+  for (let m = 1; m <= 12; m++) {
+    const tipps = saison.monate[m];
+    assert.ok(tipps?.length >= 2, `Monat ${m}`);
+    for (const t of tipps) {
+      assert.ok(['kaufen', 'verkaufen'].includes(t.aktion) && t.name && t.warum && t.q, `Monat ${m}: ${t.name}`);
+      for (const s of [...(t.kaufen || []), ...(t.verkaufen || [])]) assert.ok(k.shops[s] || k.verkaufen[s], `Monat ${m}: Shop ${s}`);
+    }
+  }
 });

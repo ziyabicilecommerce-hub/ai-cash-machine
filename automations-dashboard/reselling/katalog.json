@@ -1,5 +1,5 @@
 {
- "hinweis": "Alles unter 1 kg, passt in einen Schuhkarton. Fokus: Hessen + 30 km um Hattersheim. Preise sind ungefähre Ladenpreise - immer selbst nachrechnen.",
+ "hinweis": "Fokus: 50 km um Hattersheim (Frankfurt, Mainz, Wiesbaden, Darmstadt). Preise sind ungefähre Ladenpreise - immer selbst nachrechnen.",
  "shops": {
   "amazon": {
    "name": "Amazon",
@@ -349,7 +349,7 @@
   {
    "name": "Sneaker-Releases (Jordan, Dunk, Samba)",
    "kat": "Sneaker",
-   "ek": "über Budget, ab 100 €",
+   "ek": "ab 100 €",
    "q": "jordan 1",
    "kaufen": [
     "nike",
@@ -424,7 +424,7 @@
   {
    "name": "Fußball-Trikots (Retro, Sondertrikots)",
    "kat": "Klamotten",
-   "ek": "über Budget, ab 60 €",
+   "ek": "ab 60 €",
    "q": "trikot sonderedition",
    "kaufen": [
     "adidas",
@@ -614,6 +614,110 @@
     "ebay"
    ],
    "warum": "Ausgelaufene Motive werden teurer gehandelt."
+  },
+  {
+   "name": "Konsolen (PS5, Nintendo Switch 2) im Angebot",
+   "kat": "Technik & Games",
+   "ek": "300–500 €",
+   "q": "nintendo switch 2",
+   "kaufen": [
+    "mediamarkt",
+    "saturn",
+    "amazon",
+    "otto"
+   ],
+   "verkaufen": [
+    "kleinanzeigen",
+    "ebaynah",
+    "ebay"
+   ],
+   "warum": "Zu Weihnachten und bei Engpässen deutlich über Ladenpreis."
+  },
+  {
+   "name": "Große LEGO-Sets (bald ausgelaufen)",
+   "kat": "Figuren",
+   "ek": "80–300 €",
+   "q": "lego star wars ucs",
+   "kaufen": [
+    "lego",
+    "smyths",
+    "amazon"
+   ],
+   "verkaufen": [
+    "ebay",
+    "ebaynah",
+    "kleinanzeigen"
+   ],
+   "warum": "Ausgelaufene Sammlersets steigen oft um 30–100 %."
+  },
+  {
+   "name": "Apple AirPods & Kopfhörer im Angebot",
+   "kat": "Technik & Games",
+   "ek": "100–250 €",
+   "q": "airpods pro",
+   "kaufen": [
+    "mediamarkt",
+    "saturn",
+    "amazon",
+    "otto"
+   ],
+   "verkaufen": [
+    "kleinanzeigen",
+    "ebaynah",
+    "ebay"
+   ],
+   "warum": "Bei Aktionen unter Marktpreis - neu verpackt gut verkäuflich."
+  },
+  {
+   "name": "Dyson & Beauty-Geräte",
+   "kat": "Beauty",
+   "ek": "200–450 €",
+   "q": "dyson airwrap",
+   "kaufen": [
+    "douglas",
+    "mediamarkt",
+    "amazon"
+   ],
+   "verkaufen": [
+    "kleinanzeigen",
+    "ebaynah",
+    "vinted"
+   ],
+   "warum": "Beliebtes Geschenk, Sondereditionen sind schnell weg."
+  },
+  {
+   "name": "Pokémon Displays & Elite-Trainer-Boxen",
+   "kat": "Sammelkarten",
+   "ek": "50–180 €",
+   "q": "pokemon display",
+   "kaufen": [
+    "smyths",
+    "mueller",
+    "amazon",
+    "pokemoncenter"
+   ],
+   "verkaufen": [
+    "cardmarket",
+    "ebay",
+    "kleinanzeigen"
+   ],
+   "warum": "Versiegelte Displays steigen nach Ausverkauf am stärksten."
+  },
+  {
+   "name": "Winter- & Daunenjacken (North Face, Carhartt)",
+   "kat": "Klamotten",
+   "ek": "80–300 €",
+   "q": "north face nuptse",
+   "kaufen": [
+    "zalando",
+    "snipes"
+   ],
+   "verkaufen": [
+    "vinted",
+    "kleinanzeigen",
+    "ebaynah"
+   ],
+   "warum": "Im Sommer günstig kaufen, im Winter teurer verkaufen."
   }
  ]
 }
