@@ -5,7 +5,7 @@
 //  - Lagerstatus der Produkte aus GitHub-Issues mit dem Label "restock"; bei Restock kommt ein Kommentar ins Issue
 //    (= Push-Benachrichtigung über die GitHub-App) und die Uhrzeit wird für das Restock-Muster gespeichert.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { kartenPicks, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
+import { kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
 
 const ORDNER = 'automations-dashboard/reselling';
 const DATEN = `${ORDNER}/daten.json`;
@@ -60,7 +60,7 @@ async function pokemonTcgdex() {
   return {
     picks: kartenPicks(karten, { maxEuro: BUDGET }),
     sets: neueste.map((s) => ({ name: s.name, id: s.id, release: s.releaseDate, logo: s.logo ? `${s.logo}.webp` : '', ...kaufZeitpunkt(s.releaseDate) })),
-    geprueft: karten.length, quelle: 'TCGdex',
+    geprueft: karten.length, statistik: kartenStatistik(karten, { maxEuro: BUDGET }), quelle: 'TCGdex',
   };
 }
 
@@ -91,7 +91,7 @@ async function pokemonTcgApi() {
   return {
     picks: kartenPicks(karten, { maxEuro: BUDGET }),
     sets: sets.map((s) => ({ name: s.name, id: s.id, release: s.releaseDate, logo: s.images?.logo || '', ...kaufZeitpunkt(s.releaseDate) })),
-    geprueft: karten.length, quelle: 'pokemontcg.io',
+    geprueft: karten.length, statistik: kartenStatistik(karten, { maxEuro: BUDGET }), quelle: 'pokemontcg.io',
   };
 }
 

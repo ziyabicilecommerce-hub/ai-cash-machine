@@ -22,12 +22,21 @@ export function kartenSignal(karte) {
   };
 }
 
-// Picks fürs Budget: kaufbar bis maxEuro, steigend, wiederverkaufbar (Trend über minEuro), stärkste zuerst.
+// Picks fürs Budget: kaufbar bis maxEuro, wiederverkaufbar (Trend über minEuro), stärkster Anstieg zuerst.
+// Steigt gerade nichts deutlich, kommen die Karten mit der besten Bewegung (markiert), statt einer leeren Liste.
 export function kartenPicks(karten, { minEuro = 8, maxEuro = 40, anzahl = 30 } = {}) {
-  return karten.map(kartenSignal).filter(Boolean)
-    .filter((k) => k.signal === 'steigt' && k.preis.trend >= minEuro && (k.preis.tief ?? k.preis.trend) <= maxEuro)
-    .sort((a, b) => b.prozent - a.prozent || b.preis.trend - a.preis.trend)
-    .slice(0, anzahl);
+  const imBudget = karten.map(kartenSignal).filter(Boolean)
+    .filter((k) => k.preis.trend >= minEuro && (k.preis.tief ?? k.preis.trend) <= maxEuro)
+    .sort((a, b) => b.prozent - a.prozent || b.preis.trend - a.preis.trend);
+  const steigend = imBudget.filter((k) => k.signal === 'steigt');
+  return (steigend.length ? steigend : imBudget.filter((k) => k.prozent > 0).map((k) => ({ ...k, nurBewegung: true }))).slice(0, anzahl);
+}
+
+// Zahlen zur Kontrolle: wie viele Karten hatten Preise, wie viele im Budget, wie viele steigen?
+export function kartenStatistik(karten, { minEuro = 8, maxEuro = 40 } = {}) {
+  const bewertet = karten.map(kartenSignal).filter(Boolean);
+  const budget = bewertet.filter((k) => k.preis.trend >= minEuro && (k.preis.tief ?? k.preis.trend) <= maxEuro);
+  return { karten: karten.length, mitPreis: bewertet.length, imBudget: budget.length, steigend: budget.filter((k) => k.signal === 'steigt').length };
 }
 
 // Wann kaufen? Faustregel aus dem Kartenmarkt: kurz nach Release sind Einzelkarten am teuersten,

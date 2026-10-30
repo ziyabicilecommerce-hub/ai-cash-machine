@@ -34,11 +34,12 @@ function heiss(trends) {
 function karten(poke, budget) {
   $('budgetinfo').textContent = `Bis ${euro(budget)} kaufbar, Preis steigt gerade (letzte Tage gegen 30-Tage-Schnitt). Preise von Cardmarket.`;
   const picks = poke?.picks || [];
+  if (picks.some((k) => k.nurBewegung)) $('budgetinfo').textContent += ' Gerade steigt nichts stark - das hier bewegt sich am meisten nach oben.';
   $('picks').replaceChildren(...(picks.length ? picks.map((k) => {
     const box = el('div', 'karte'); const z = el('div', 'zeile');
     if (https(k.bild)) { const i = el('img'); i.src = k.bild; i.alt = k.name; i.loading = 'lazy'; z.append(i); }
     const mitte = el('div'); mitte.append(el('div', 'titel', k.name), el('div', 'klein', `${k.set} · ${k.nummer} · ${k.seltenheit}`));
-    const p = el('div', 'preis'); p.append(el('b', 'hoch', `▲ ${k.prozent} %`), el('div', 'klein', `ab ${euro(k.preis.tief)}`), el('div', 'klein', `Trend ${euro(k.preis.trend)}`));
+    const p = el('div', 'preis'); p.append(el('b', k.nurBewegung ? 'gelb' : 'hoch', `▲ ${k.prozent} %`), el('div', 'klein', `ab ${euro(k.preis.tief)}`), el('div', 'klein', `Trend ${euro(k.preis.trend)}`));
     z.append(mitte, p); box.append(z);
     if (https(k.link)) box.append(link(k.link, 'Auf Cardmarket ansehen'));
     return box;
