@@ -121,7 +121,7 @@ def bild(s, t, lt):
         handy_nah(im, lt, s.get('absender', 'Mama'), s.get('nachricht', ''))
         return im
     if art == 'blitz':  # Einstieg: nur das panische Gesicht im roten Flackern - der Bösewicht wird noch nicht verraten
-        if int(lt * 10) % 4 == 0:
+        if lt > 0.6 and int(lt * 10) % 4 == 0:  # flackern, aber nie schwarz im allerersten Moment
             return im
         return Image.blend(bild({**s, 'art': 'gesicht', 'augen_bei': 99}, t, lt), Image.new('RGB', (W, H), (120, 0, 0)), 0.3)
     if art == 'gesicht':
@@ -375,6 +375,8 @@ def main():
                 untertitel(im, mt, '', min(mw, 1 + int((lt - s['mbei']) / max(s['mdauer'], 0.3) * mw * 1.1)), basis=(230, 25, 25))
             elif s.get('text'):
                 k = worte if not s['sprech'] else min(worte, 1 + int(lt / max(s['sprech'], 0.3) * worte * 1.1))
+                if s['start'] == 0:  # Hook: der ganze Satz steht sofort da - wer wischt, hat ihn schon gelesen
+                    k = worte
                 untertitel(im, s['text'], s.get('gelb', ''), k)
             if s.get('warnung'):
                 warnung(im, s['warnung'], lt)
