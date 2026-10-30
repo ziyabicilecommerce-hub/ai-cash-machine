@@ -1,12 +1,12 @@
 name: "112 · Reselling-Radar (App)"
 
-# Stündlich: steigende Pokémon-Karten (Cardmarket-Preise), Google-Trends Deutschland und Lagerstatus der
+# Alle 10 Minuten (Pokémon-Preise stündlich, Läden wöchentlich): Release-Kalender, steigende Pokémon-Karten (Cardmarket-Preise), Google-Trends Deutschland und Lagerstatus der
 # beobachteten Produkte (GitHub-Issues mit Label "restock") holen und die App automations-dashboard/reselling/ aktualisieren.
 # Bei einem Restock kommt ein Kommentar ins Issue = Benachrichtigung in der GitHub-App. Kostenlos, ohne Schlüssel.
 
 on:
   schedule:
-    - cron: '23 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -40,15 +40,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           sicher=$(mktemp -d)
-          cp automations-dashboard/reselling/daten.json automations-dashboard/reselling/verlauf.json "$sicher/"
+          cp automations-dashboard/reselling/daten.json automations-dashboard/reselling/verlauf.json "$sicher/"; [ -f automations-dashboard/reselling/laeden.json ] && cp automations-dashboard/reselling/laeden.json "$sicher/"
           for versuch in 1 2 3 4 5; do
             git fetch -q origin "$GITHUB_REF_NAME"
             git reset -q --hard "origin/$GITHUB_REF_NAME"
-            cp "$sicher/daten.json" "$sicher/verlauf.json" automations-dashboard/reselling/
-            git add automations-dashboard/reselling/daten.json automations-dashboard/reselling/verlauf.json
+            cp "$sicher"/*.json automations-dashboard/reselling/
+            git add automations-dashboard/reselling/*.json
             git commit -qm "chore: Reselling-Radar aktualisiert [skip ci]" || exit 0
             if git push -q origin "HEAD:$GITHUB_REF_NAME"; then
-              gh workflow run jarvis-pages.yml --ref "$GITHUB_REF_NAME" || true
+              # Die App liest die Daten direkt aus dem Repo - kein Pages-Neubau alle 10 Minuten nötig
               exit 0
             fi
             sleep $((versuch * 5))

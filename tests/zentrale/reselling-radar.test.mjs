@@ -96,3 +96,34 @@ test('Katalog: jedes Produkt hat Kauf- und Verkaufslinks zu bekannten Shops', as
   }
   for (const s of Object.values({ ...k.shops, ...k.verkaufen })) assert.match(s.suche, /^https:\/\//);
 });
+
+test('Läden vor Ort: Entfernung von Hattersheim, Art des Ladens, Dubletten raus, nächster zuerst', async () => {
+  const { laedenAusOsm, entfernungKm, HEIMAT, overpassAbfrage } = await import('../../automations/lib/resellingRadar.mjs');
+  const mainz = { lat: 49.9929, lon: 8.2473 };
+  assert.ok(entfernungKm(HEIMAT, mainz) > 15 && entfernungKm(HEIMAT, mainz) < 22, 'Mainz ist ca. 19 km entfernt');
+  const osm = { elements: [
+    { type: 'node', lat: 50.11, lon: 8.68, tags: { shop: 'toys', name: 'Smyths Toys', brand: 'Smyths Toys', 'addr:city': 'Frankfurt am Main', website: 'https://www.smythstoys.com' } },
+    { type: 'way', center: { lat: 49.99, lon: 8.25 }, tags: { shop: 'games', name: 'Kartenladen Mainz' } },
+    { type: 'node', lat: 50.11, lon: 8.68, tags: { shop: 'toys', name: 'Smyths Toys', brand: 'Smyths Toys', 'addr:city': 'Frankfurt am Main', website: 'https://www.smythstoys.com' } },
+    { type: 'node', lat: 50.0, lon: 8.3, tags: { shop: 'toys' } },
+  ] };
+  const l = laedenAusOsm(osm);
+  assert.equal(l.length, 2);
+  assert.deepEqual(l.map((x) => [x.name, x.art]), [['Smyths Toys', 'Spielzeug & Figuren'], ['Kartenladen Mainz', 'Karten & Sammeln']]);
+  assert.match(overpassAbfrage(), /DE-HE/);
+  assert.match(overpassAbfrage(), /around:30000,50\.0697,8\.4867/);
+});
+
+test('nikeDrops: kommende Drops mit Modell, Bild, Preis, Zeit und Link - Vergangenes raus', async () => {
+  const { nikeDrops } = await import('../../automations/lib/resellingRadar.mjs');
+  const feed = { objects: [
+    { publishedContent: { properties: { seo: { slug: 'air-jordan-1-test' } } }, productInfo: [{
+      productContent: { fullTitle: 'Air Jordan 1 High OG', colorDescription: 'Black/White' }, merchPrice: { currentPrice: 189.99 },
+      imageUrls: { productImageUrl: 'https://static.nike.com/x.jpg' }, launchView: { startEntryDate: '2026-11-07T08:00:00.000Z', method: 'DAN' } }] },
+    { productInfo: [{ productContent: { title: 'Alt' }, launchView: { startEntryDate: '2026-01-01T08:00:00.000Z' } }] },
+  ] };
+  const d = nikeDrops(feed, new Date('2026-10-31'));
+  assert.equal(d.length, 1);
+  assert.deepEqual([d[0].titel, d[0].preis, d[0].link, d[0].zeit], ['Air Jordan 1 High OG', 189.99, 'https://www.nike.com/de/launch/t/air-jordan-1-test', '2026-11-07T08:00:00.000Z']);
+  assert.deepEqual(nikeDrops({}), []);
+});
