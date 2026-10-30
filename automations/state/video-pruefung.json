@@ -314,8 +314,31 @@
    "ok": 0,
    "repariert": 2,
    "abgelehnt": []
+  },
+  {
+   "datum": "2026-10-30T11:21:21.660Z",
+   "geprueft": 2,
+   "ok": 0,
+   "repariert": 1,
+   "abgelehnt": [
+    {
+     "datei": "2026-10-30-1-so-sparst-du-geld-bei-gaming-setup-und-schreibtisc.mp4",
+     "thema": "So sparst du Geld bei Gaming-Setup und Schreibtisch-Zubehoer",
+     "gruende": [
+      "Anfang schwarz – Bild 1 zeigt weder Produkt noch Hook"
+     ]
+    }
+   ]
   }
  ],
- "nachbauen": [],
- "stand": "2026-10-29T11:31:08.722Z"
+ "nachbauen": [
+  {
+   "thema": "So sparst du Geld bei Gaming-Setup und Schreibtisch-Zubehoer",
+   "datum": "2026-10-30",
+   "gruende": [
+    "Anfang schwarz – Bild 1 zeigt weder Produkt noch Hook"
+   ]
+  }
+ ],
+ "stand": "2026-10-30T11:21:21.660Z"
 }
