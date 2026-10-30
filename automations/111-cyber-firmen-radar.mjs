@@ -90,7 +90,7 @@ const FIRMEN = [
   { firma: 'Ammann IT Services GmbH', domain: 'ammann-it-services.de', ort: 'Wiesbaden', email: 'info@ammann-it-services.de' },
   { firma: 'Clatum Consulting Group', domain: 'clatum.com', ort: 'Eschborn', email: 'info@clatum.com' },
   { firma: 'Blue Logix GmbH', domain: 'blue-logix.de', ort: 'Eschborn', email: 'kontakt@blue-logix.de' },
-  { firma: 'Seibert Group GmbH', domain: 'seibert.group', ort: 'Wiesbaden', email: 'info@seibert.group' },
+  { firma: 'InfoGuard Deutschland GmbH', domain: 'infoguard.ch', ort: 'Neu-Isenburg', email: 'job@infoguard.ch' },
 ];
 
 async function main() {
