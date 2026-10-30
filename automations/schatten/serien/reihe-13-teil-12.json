@@ -1,0 +1,148 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Passagier 41 – Teil 12",
+  "ort": "flugzeug",
+  "fahrgaeste": [
+    {
+      "wer": "zeitung",
+      "farbe": [
+        96,
+        96,
+        104
+      ]
+    }
+  ],
+  "titelbild": "ALLES ZURÜCK. BIS AUF EINE SACHE.",
+  "titelbild_gelb": "EINE",
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      44,
+      56,
+      92
+    ],
+    "oberteil": "anzug",
+    "kopf": "haare",
+    "haar": [
+      46,
+      34,
+      26
+    ],
+    "hose": [
+      38,
+      44,
+      70
+    ]
+  },
+  "caption": "Finale. Ich habe alles zurückgeholt. Bis auf eine Sache. Sitzt du gerade auch in Reihe 13? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Finale. Ich habe alles zurückgeholt. Bis auf eine Sache.",
+      "text": "FINALE: ALLES ZURÜCK. BIS AUF EINE SACHE.",
+      "gelb": "EINE",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich bringe ihn zurück. Flug sieben dreizehn. Reihe dreizehn.",
+      "text": "ICH BRINGE IHN ZURÜCK IN REIHE 13.",
+      "gelb": "ZURÜCK",
+      "naeher": 0.5,
+      "angst": 0.5,
+      "pause": 0.1
+    },
+    {
+      "art": "zaehlen",
+      "sprich": "Die Stewardess zählt. Achtunddreißig. Neununddreißig. Vierzig.",
+      "text": "SIE ZÄHLT: 40. ALLES STIMMT.",
+      "gelb": "STIMMT",
+      "bis": 40,
+      "dauer": 5.0,
+      "pause": 0.2
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ich will aufstehen. Aber mein Gurt geht nicht auf.",
+      "text": "MEIN GURT GEHT NICHT AUF.",
+      "gelb": "GURT",
+      "angst": 0.9,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "tueren",
+      "sprich": "Die Tür geht auf. Draußen steht er. Und winkt zum Abschied.",
+      "text": "DRAUSSEN WINKT ER ZUM ABSCHIED.",
+      "gelb": "ABSCHIED",
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama: Schön, dass du wieder da bist. Du bist so still heute.",
+      "text": "MAMA: DU BIST SO STILL HEUTE.",
+      "gelb": "STILL",
+      "absender": "Mama",
+      "nachricht": "Schön, dass du wieder da bist. Du bist so still heute.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Ich bin nicht zu Hause. Wer ist dann bei ihr?",
+      "text": "WER IST DANN BEI IHR?",
+      "gelb": "WER",
+      "dauer": 4.4,
+      "pause": 0.2,
+      "monster": "Ich. Für immer.",
+      "monster_text": "ICH. FÜR IMMER."
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Ich bin Passagier einundvierzig. Für immer.",
+      "text": "ICH BIN PASSAGIER 41. FÜR IMMER.",
+      "gelb": "41",
+      "schreck": true,
+      "monster": "Willkommen an Bord.",
+      "monster_text": "WILLKOMMEN AN BORD.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Die Zeitung von morgen: Flug sieben dreizehn erneut verschollen.",
+      "text": "FLUG 713: ERNEUT VERSCHOLLEN.",
+      "gelb": "ERNEUT",
+      "schreck": true,
+      "pause": 0.5,
+      "zeitung": {
+        "zeilen": [
+          "FLUG 713",
+          "ERNEUT",
+          "VERSCHOLLEN"
+        ],
+        "datum": "FREITAG, 31. OKTOBER",
+        "unter": "Ein Passagier an Bord: Platz 13B"
+      }
+    },
+    {
+      "art": "teil2",
+      "sprich": "Ende. Oder sitzt du gerade auch in Reihe dreizehn?",
+      "text": "ENDE? ODER SITZT DU AUCH IN REIHE 13?",
+      "gelb": "13",
+      "pause": 1.0
+    }
+  ]
+}

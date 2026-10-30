@@ -1,0 +1,122 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Es klopft – Teil 6",
+  "ort": "haus",
+  "fahrgaeste": [],
+  "titelbild": "MEINE HAARE WERDEN LÄNGER. UND NASS.",
+  "titelbild_gelb": "NASS",
+  "boesewicht": "frau",
+  "held": {
+    "farbe": [
+      232,
+      168,
+      194
+    ],
+    "oberteil": "pyjama",
+    "kopf": "haare",
+    "haar": [
+      128,
+      74,
+      34
+    ],
+    "zopf": true,
+    "hose": [
+      200,
+      140,
+      170
+    ]
+  },
+  "monsterstimme": "de-DE-KatjaNeural",
+  "caption": "Teil sechs. Jeden Morgen sind meine Haare länger. Und nass. Hättest du sie abgeschnitten? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil sechs. Jeden Morgen sind meine Haare länger. Und nass.",
+      "text": "TEIL 6: MEINE HAARE WERDEN LÄNGER. UND NASS.",
+      "gelb": "NASS",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich zeige es Mama. Sie sieht nichts.",
+      "text": "MAMA SIEHT NICHTS.",
+      "gelb": "NICHTS",
+      "angst": 0.5,
+      "pause": 0.1
+    },
+    {
+      "art": "spiegel",
+      "sprich": "Im Fenster sehe ich mich. Mit Haaren bis zum Boden.",
+      "text": "IM FENSTER: HAARE BIS ZUM BODEN.",
+      "gelb": "BODEN",
+      "blitzbild": [
+        1.8
+      ],
+      "angst": 0.75,
+      "blick": 0.9,
+      "pause": 0.2
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ich sehe aus wie sie.",
+      "text": "ICH SEHE AUS WIE SIE.",
+      "gelb": "SIE",
+      "angst": 0.9,
+      "augen_bei": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "zettel2",
+      "sprich": "In meiner Schublade ein Zettel. In meiner Schrift: Schneid sie nicht ab.",
+      "text": "IN MEINER SCHRIFT: SCHNEID SIE NICHT AB.",
+      "gelb": "NICHT",
+      "zettel": [
+        "SCHNEID SIE",
+        "NICHT AB"
+      ],
+      "warnung": "NICHT ABSCHNEIDEN",
+      "pause": 0.1
+    },
+    {
+      "art": "decke",
+      "sprich": "Ich schneide sie trotzdem ab. Von oben tropft es.",
+      "text": "VON OBEN TROPFT ES.",
+      "gelb": "OBEN",
+      "stille": true,
+      "warnung": "NICHT HOCHSCHAUEN",
+      "monster": "Das war meins.",
+      "monster_text": "DAS WAR MEINS.",
+      "pause": 0.3
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Die Haare waren nicht meine. Sie waren ihre.",
+      "text": "DIE HAARE WAREN IHRE.",
+      "gelb": "IHRE",
+      "schreck": true,
+      "monster": "Gib sie zurück.",
+      "monster_text": "GIB SIE ZURÜCK.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil sieben: Was passiert in der dreizehnten Nacht?",
+      "text": "TEIL 7: DIE 13. NACHT.",
+      "gelb": "NACHT",
+      "pause": 0.8
+    }
+  ]
+}

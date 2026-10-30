@@ -1,0 +1,123 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Passagier 41 – Teil 9",
+  "ort": "flugzeug",
+  "fahrgaeste": [
+    {
+      "wer": "zeitung",
+      "farbe": [
+        96,
+        96,
+        104
+      ]
+    }
+  ],
+  "titelbild": "ZWEI VON UNS. NUR EINE KARTE.",
+  "titelbild_gelb": "EINE",
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      44,
+      56,
+      92
+    ],
+    "oberteil": "anzug",
+    "kopf": "haare",
+    "haar": [
+      46,
+      34,
+      26
+    ],
+    "hose": [
+      38,
+      44,
+      70
+    ]
+  },
+  "caption": "Teil neun. Wer die Bordkarte hat, darf aussteigen. Wir sind zwei. Es gibt nur eine. Hättest du losgelassen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil neun. Wer die Bordkarte hat, darf aussteigen. Wir sind zwei. Es gibt nur eine.",
+      "text": "TEIL 9: ZWEI VON UNS. NUR EINE KARTE.",
+      "gelb": "EINE",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Er sitzt neben mir. Mit demselben Gesicht wie ich.",
+      "text": "ER HAT DASSELBE GESICHT WIE ICH.",
+      "gelb": "DASSELBE",
+      "naeher": 0.7,
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Flug sieben dreizehn: Abflug in drei Minuten. Ein Passagier zu viel.",
+      "text": "ABFLUG IN 3 MINUTEN. EINER ZU VIEL.",
+      "gelb": "VIEL",
+      "absender": "Flug 713",
+      "nachricht": "Abflug in drei Minuten. Ein Passagier zu viel.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "zaehlen",
+      "sprich": "Die Stewardess zählt. Achtunddreißig. Neununddreißig. Vierzig. Einundvierzig.",
+      "text": "SIE ZÄHLT WIEDER ...",
+      "gelb": "WIEDER",
+      "dauer": 5.4,
+      "pause": 0.2
+    },
+    {
+      "art": "turbulenz",
+      "sprich": "Die Triebwerke starten. Alles wackelt.",
+      "text": "DIE TRIEBWERKE STARTEN.",
+      "gelb": "STARTEN",
+      "schreck_bei": 0.85,
+      "pause": 0.2
+    },
+    {
+      "art": "decke",
+      "sprich": "Über mir öffnet sich die Klappe. Eine Klaue greift nach der Karte.",
+      "text": "EINE KLAUE GREIFT NACH DER KARTE.",
+      "gelb": "KARTE",
+      "stille": true,
+      "warnung": "NICHT LOSLASSEN",
+      "monster": "Loslassen.",
+      "monster_text": "LOSLASSEN.",
+      "pause": 0.3
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Ich habe losgelassen.",
+      "text": "ICH HABE LOSGELASSEN.",
+      "gelb": "LOSGELASSEN",
+      "schreck": true,
+      "monster": "Guten Flug.",
+      "monster_text": "GUTEN FLUG.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil zehn: Wohin fliegt Flug sieben dreizehn?",
+      "text": "TEIL 10: WOHIN FLIEGT FLUG 713?",
+      "gelb": "WOHIN",
+      "pause": 0.8
+    }
+  ]
+}

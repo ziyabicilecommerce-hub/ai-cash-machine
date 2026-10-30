@@ -1,0 +1,117 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Es klopft – Teil 4",
+  "ort": "haus",
+  "fahrgaeste": [],
+  "titelbild": "IM SCHRANK ATMET NOCH JEMAND.",
+  "titelbild_gelb": "ATMET",
+  "boesewicht": "frau",
+  "held": {
+    "farbe": [
+      232,
+      168,
+      194
+    ],
+    "oberteil": "pyjama",
+    "kopf": "haare",
+    "haar": [
+      128,
+      74,
+      34
+    ],
+    "zopf": true,
+    "hose": [
+      200,
+      140,
+      170
+    ]
+  },
+  "monsterstimme": "de-DE-KatjaNeural",
+  "caption": "Teil vier. Ich verstecke mich im Schrank. Und im Schrank atmet noch jemand. Wo hättest du dich versteckt? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil vier. Ich verstecke mich im Schrank. Und im Schrank atmet noch jemand.",
+      "text": "TEIL 4: IM SCHRANK ATMET NOCH JEMAND.",
+      "gelb": "ATMET",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Im Schrank ist es stockdunkel. Neben mir atmet etwas.",
+      "text": "NEBEN MIR ATMET ETWAS.",
+      "gelb": "ATMET",
+      "dauer": 4.6,
+      "stille": true,
+      "pause": 0.2
+    },
+    {
+      "art": "handy",
+      "sprich": "Ich mache das Handylicht an. Nur ganz kurz.",
+      "text": "NUR GANZ KURZ HANDYLICHT.",
+      "gelb": "HANDYLICHT",
+      "angst": 0.8,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Neben mir sitzt ein Mädchen. Sie legt den Finger auf den Mund.",
+      "text": "EIN MÄDCHEN. SIE SAGT: PSST.",
+      "gelb": "PSST",
+      "angst": 0.9,
+      "augen_bei": 1.4,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Sie schreibt mir: Ich wohne hier seit zwanzig Jahren.",
+      "text": "ICH WOHNE HIER SEIT 20 JAHREN.",
+      "gelb": "20",
+      "absender": "Unbekannt",
+      "nachricht": "Ich wohne hier seit 20 Jahren. Sie hat mich nie gefunden.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "decke",
+      "sprich": "Oben am Schrank kratzt etwas.",
+      "text": "OBEN AM SCHRANK KRATZT ETWAS.",
+      "gelb": "KRATZT",
+      "stille": true,
+      "warnung": "NICHT HOCHSCHAUEN",
+      "monster": "Ich weiß, dass ihr da seid.",
+      "monster_text": "ICH WEISS, DASS IHR DA SEID.",
+      "pause": 0.3
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Wir sind jetzt zu zweit. Und sie sucht zwei.",
+      "text": "SIE SUCHT JETZT ZWEI.",
+      "gelb": "ZWEI",
+      "schreck": true,
+      "monster": "Kommt raus, Kinder.",
+      "monster_text": "KOMMT RAUS, KINDER.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil fünf: Wer ist das Mädchen im Schrank?",
+      "text": "TEIL 5: WER IST DAS MÄDCHEN IM SCHRANK?",
+      "gelb": "MÄDCHEN",
+      "pause": 0.8
+    }
+  ]
+}

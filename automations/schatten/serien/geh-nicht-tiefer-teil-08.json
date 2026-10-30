@@ -1,0 +1,122 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Antworte ihm nicht – Teil 8",
+  "ort": "wald",
+  "fahrgaeste": [
+    {
+      "wer": "schlaf_sitz",
+      "farbe": [
+        70,
+        112,
+        156
+      ]
+    }
+  ],
+  "titelbild": "ICH SEHE, WAS ES SIEHT.",
+  "titelbild_gelb": "SIEHT",
+  "boesewicht": "hirsch",
+  "held": {
+    "farbe": [
+      220,
+      112,
+      40
+    ],
+    "oberteil": "jacke",
+    "kopf": "muetze",
+    "muetze_farbe": [
+      38,
+      58,
+      112
+    ],
+    "hose": [
+      60,
+      72,
+      58
+    ]
+  },
+  "caption": "Teil acht. Seit ich es angesehen habe, sehe ich nachts, was es sieht. Wärst du weggerannt oder geblieben? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil acht. Seit ich es angesehen habe, sehe ich nachts, was es sieht.",
+      "text": "TEIL 8: ICH SEHE, WAS ES SIEHT.",
+      "gelb": "SIEHT",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich schließe die Augen. Und sehe unser Feuer. Von oben.",
+      "text": "ICH SEHE UNSER FEUER. VON OBEN.",
+      "gelb": "OBEN",
+      "angst": 0.5,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Es ist in den Bäumen. Direkt über uns.",
+      "text": "ES IST DIREKT ÜBER UNS.",
+      "gelb": "ÜBER",
+      "angst": 0.9,
+      "augen_bei": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "decke",
+      "sprich": "Etwas tropft auf mich. Aus dem Baum über mir.",
+      "text": "ETWAS TROPFT AUS DEM BAUM.",
+      "gelb": "BAUM",
+      "stille": true,
+      "warnung": "NICHT HOCHSCHAUEN",
+      "monster": "Ich sehe dich auch.",
+      "monster_text": "ICH SEHE DICH AUCH.",
+      "pause": 0.3
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Der Förster schreibt: Es sieht dich auch. Lauf.",
+      "text": "FÖRSTER: ES SIEHT DICH AUCH. LAUF.",
+      "gelb": "LAUF",
+      "absender": "Förster",
+      "nachricht": "Wenn du es sehen kannst, kann es dich sehen. Lauf.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne. Durch seine Augen sehe ich mich rennen.",
+      "text": "ICH SEHE MICH RENNEN.",
+      "gelb": "RENNEN",
+      "pause": 0.1
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Ich sehe mich. Von hinten. Ganz nah.",
+      "text": "ICH SEHE MICH. VON HINTEN. GANZ NAH.",
+      "gelb": "NAH",
+      "schreck": true,
+      "monster": "Hab dich.",
+      "monster_text": "HAB DICH.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil neun: Wo bin ich aufgewacht?",
+      "text": "TEIL 9: WO BIN ICH AUFGEWACHT?",
+      "gelb": "AUFGEWACHT",
+      "pause": 0.8
+    }
+  ]
+}

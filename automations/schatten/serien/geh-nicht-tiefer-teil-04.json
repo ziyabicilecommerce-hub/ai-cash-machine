@@ -1,0 +1,130 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Antworte ihm nicht – Teil 4",
+  "ort": "wald",
+  "fahrgaeste": [
+    {
+      "wer": "schlaf_sitz",
+      "farbe": [
+        70,
+        112,
+        156
+      ]
+    }
+  ],
+  "titelbild": "EINE FRAGE VERRÄT IHN.",
+  "titelbild_gelb": "FRAGE",
+  "boesewicht": "hirsch",
+  "held": {
+    "farbe": [
+      220,
+      112,
+      40
+    ],
+    "oberteil": "jacke",
+    "kopf": "muetze",
+    "muetze_farbe": [
+      38,
+      58,
+      112
+    ],
+    "hose": [
+      60,
+      72,
+      58
+    ]
+  },
+  "caption": "Teil vier. Eine Frage verrät, wer mein echter Freund ist. Welche Frage hättest du gestellt? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil vier. Eine Frage verrät, wer mein echter Freund ist.",
+      "text": "TEIL 4: EINE FRAGE VERRÄT IHN.",
+      "gelb": "FRAGE",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich frage ihn: Was habe ich dir zum Geburtstag geschenkt?",
+      "text": "WAS HAB ICH DIR GESCHENKT?",
+      "gelb": "GESCHENKT",
+      "angst": 0.5,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Er antwortet sofort. Ohne zu zögern.",
+      "text": "ER ANTWORTET SOFORT.",
+      "gelb": "SOFORT",
+      "angst": 0.7,
+      "augen_bei": 1.3,
+      "pause": 0.2
+    },
+    {
+      "art": "handy",
+      "sprich": "Ich schreibe dem im Wald dieselbe Frage.",
+      "text": "ICH SCHREIBE DEM IM WALD.",
+      "gelb": "WALD",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Er schreibt: Gar nichts. Du hast es vergessen. Wie immer.",
+      "text": "GAR NICHTS. DU HAST ES VERGESSEN.",
+      "gelb": "VERGESSEN",
+      "absender": "Mein Freund",
+      "nachricht": "Gar nichts. Du hast es vergessen. Wie immer.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "rufen",
+      "sprich": "Er hat recht. Ich hatte es vergessen. Dann ruft er aus dem Wald.",
+      "text": "ER HAT RECHT. DANN RUFT ER.",
+      "gelb": "RECHT",
+      "pause": 0.2,
+      "monster": "Komm her. Schnell.",
+      "monster_text": "KOMM HER. SCHNELL."
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Der neben mir hört auf zu atmen.",
+      "text": "DER NEBEN MIR HÖRT AUF ZU ATMEN.",
+      "gelb": "ATMEN",
+      "dauer": 4.4,
+      "stille": true,
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Das Ding neben mir hat gelernt. Aber nicht alles.",
+      "text": "ES HAT GELERNT. ABER NICHT ALLES.",
+      "gelb": "ALLES",
+      "schreck": true,
+      "monster": "Ich lerne schnell.",
+      "monster_text": "ICH LERNE SCHNELL.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil fünf: Ich gehe in den Wald.",
+      "text": "TEIL 5: ICH GEHE IN DEN WALD.",
+      "gelb": "WALD",
+      "pause": 0.8
+    }
+  ]
+}

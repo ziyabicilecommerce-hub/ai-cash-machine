@@ -1,0 +1,137 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Passagier 41 – Teil 10",
+  "ort": "flugzeug",
+  "fahrgaeste": [
+    {
+      "wer": "zeitung",
+      "farbe": [
+        96,
+        96,
+        104
+      ]
+    }
+  ],
+  "titelbild": "ALLE HABEN MEIN GESICHT.",
+  "titelbild_gelb": "GESICHT",
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      44,
+      56,
+      92
+    ],
+    "oberteil": "anzug",
+    "kopf": "haare",
+    "haar": [
+      46,
+      34,
+      26
+    ],
+    "hose": [
+      38,
+      44,
+      70
+    ]
+  },
+  "caption": "Teil zehn. Auf dem Flügel stehen sie. Und alle haben mein Gesicht. Hättest du dich festgehalten? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil zehn. Auf dem Flügel stehen sie. Und alle haben mein Gesicht.",
+      "text": "TEIL 10: ALLE HABEN MEIN GESICHT.",
+      "gelb": "GESICHT",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Wir fliegen wieder. Ich sitze allein in Reihe dreizehn.",
+      "text": "ICH SITZE ALLEIN IN REIHE 13.",
+      "gelb": "ALLEIN",
+      "angst": 0.5,
+      "pause": 0.1
+    },
+    {
+      "art": "fluegel",
+      "sprich": "Draußen stehen sie und starren rein.",
+      "text": "DRAUSSEN STEHEN SIE UND STARREN REIN.",
+      "gelb": "STARREN",
+      "dauer": 4.2,
+      "pause": 0.1
+    },
+    {
+      "art": "handy",
+      "sprich": "Ein letzter Balken Empfang.",
+      "text": "EIN LETZTER BALKEN EMPFANG.",
+      "gelb": "LETZTER",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama: Schatz? Der Mann hier ist nicht du. Oder?",
+      "text": "MAMA: DER MANN HIER IST NICHT DU. ODER?",
+      "gelb": "NICHT",
+      "absender": "Mama",
+      "nachricht": "Schatz? Der Mann hier ist nicht du. Oder?",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Sie hat es gemerkt.",
+      "text": "SIE HAT ES GEMERKT.",
+      "gelb": "GEMERKT",
+      "angst": 0.8,
+      "augen_bei": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "scheibe",
+      "sprich": "Dann zerspringt das Fenster neben mir!",
+      "text": "DAS FENSTER ZERSPRINGT!",
+      "gelb": "ZERSPRINGT",
+      "schlag": 0.3,
+      "schreck_bei": 2.0,
+      "pause": 0.4
+    },
+    {
+      "art": "masken",
+      "sprich": "Die Masken fallen. Der Druck reißt alles nach draußen.",
+      "text": "DER DRUCK REISST ALLES NACH DRAUSSEN.",
+      "gelb": "DRAUSSEN",
+      "schreck": true,
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Ich halte mich fest. Er nicht.",
+      "text": "ICH HALTE MICH FEST. ER NICHT.",
+      "gelb": "FEST",
+      "schreck": true,
+      "monster": "Wir sehen uns unten.",
+      "monster_text": "WIR SEHEN UNS UNTEN.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil elf: Wo ist er gelandet?",
+      "text": "TEIL 11: WO IST ER GELANDET?",
+      "gelb": "GELANDET",
+      "pause": 0.8
+    }
+  ]
+}

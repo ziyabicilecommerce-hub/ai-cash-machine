@@ -1,0 +1,123 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Es klopft – Teil 7",
+  "ort": "haus",
+  "fahrgaeste": [],
+  "titelbild": "HEUTE IST DIE 12. NACHT.",
+  "titelbild_gelb": "NACHT",
+  "boesewicht": "frau",
+  "held": {
+    "farbe": [
+      232,
+      168,
+      194
+    ],
+    "oberteil": "pyjama",
+    "kopf": "haare",
+    "haar": [
+      128,
+      74,
+      34
+    ],
+    "zopf": true,
+    "hose": [
+      200,
+      140,
+      170
+    ]
+  },
+  "monsterstimme": "de-DE-KatjaNeural",
+  "caption": "Teil sieben. In der dreizehnten Nacht holt sie dich. Heute ist die zwölfte. Hättest du geschlafen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil sieben. In der dreizehnten Nacht holt sie dich. Heute ist die zwölfte.",
+      "text": "TEIL 7: HEUTE IST DIE 12. NACHT.",
+      "gelb": "NACHT",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich will nicht schlafen. Ich trinke Kaffee. Viel Kaffee.",
+      "text": "ICH WILL NICHT SCHLAFEN.",
+      "gelb": "SCHLAFEN",
+      "angst": 0.5,
+      "pause": 0.1
+    },
+    {
+      "art": "fernseher",
+      "sprich": "Um Mitternacht geht der Fernseher an. Ein Countdown.",
+      "text": "DER FERNSEHER: EIN COUNTDOWN.",
+      "gelb": "COUNTDOWN",
+      "stille": true,
+      "dauer": 5.2,
+      "pause": 0.2
+    },
+    {
+      "art": "handy",
+      "sprich": "Ich suche im Internet nach unserem Haus.",
+      "text": "ICH SUCHE NACH UNSEREM HAUS.",
+      "gelb": "HAUS",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Unbekannt: Hör auf zu suchen. Sie liest mit.",
+      "text": "HÖR AUF. SIE LIEST MIT.",
+      "gelb": "MIT",
+      "absender": "Unbekannt",
+      "nachricht": "Hör auf zu suchen. Sie liest mit.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Sie liest mit? Durch mein Handy?",
+      "text": "SIE LIEST DURCH MEIN HANDY MIT?",
+      "gelb": "HANDY",
+      "angst": 0.9,
+      "augen_bei": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "klinke",
+      "sprich": "Meine Zimmertür. Die Klinke. Schon wieder.",
+      "text": "DIE KLINKE. SCHON WIEDER.",
+      "gelb": "KLINKE",
+      "schreck_bei": 0.6,
+      "dauer": 6.0,
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Sie hält sich nicht an den Countdown.",
+      "text": "SIE HÄLT SICH NICHT AN DEN COUNTDOWN.",
+      "gelb": "COUNTDOWN",
+      "schreck": true,
+      "monster": "Ich habe gelogen.",
+      "monster_text": "ICH HABE GELOGEN.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil acht: Überlebe ich die Nacht?",
+      "text": "TEIL 8: ÜBERLEBE ICH DIE NACHT?",
+      "gelb": "ÜBERLEBE",
+      "pause": 0.8
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Antworte ihm nicht – Teil 11",
+  "ort": "wald",
+  "fahrgaeste": [
+    {
+      "wer": "schlaf_sitz",
+      "farbe": [
+        70,
+        112,
+        156
+      ]
+    }
+  ],
+  "titelbild": "NUR EINER KOMMT RAUS.",
+  "titelbild_gelb": "EINER",
+  "boesewicht": "hirsch",
+  "held": {
+    "farbe": [
+      220,
+      112,
+      40
+    ],
+    "oberteil": "jacke",
+    "kopf": "muetze",
+    "muetze_farbe": [
+      38,
+      58,
+      112
+    ],
+    "hose": [
+      60,
+      72,
+      58
+    ]
+  },
+  "caption": "Teil elf. Es gibt einen Weg raus. Aber nur für einen von uns. Hättest du für deinen Freund geantwortet? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil elf. Es gibt einen Weg raus. Aber nur für einen von uns.",
+      "text": "TEIL 11: NUR EINER KOMMT RAUS.",
+      "gelb": "EINER",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Mein Freund sagt: Geh du. Du hast mich gesucht.",
+      "text": "ER SAGT: GEH DU.",
+      "gelb": "GEH",
+      "angst": 0.7,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ich kann ihn nicht zurücklassen.",
+      "text": "ICH KANN IHN NICHT ZURÜCKLASSEN.",
+      "gelb": "ZURÜCKLASSEN",
+      "angst": 0.8,
+      "augen_bei": 1.5,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Der Förster: Einer muss ihm antworten. Dann ist der andere frei.",
+      "text": "EINER MUSS IHM ANTWORTEN.",
+      "gelb": "ANTWORTEN",
+      "absender": "Förster",
+      "nachricht": "Einer muss ihm antworten. Dann ist der andere frei.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "rufen",
+      "sprich": "Es ruft. Mit unseren beiden Stimmen.",
+      "text": "ES RUFT MIT UNSEREN STIMMEN.",
+      "gelb": "STIMMEN",
+      "pause": 0.2,
+      "monster": "Antworte mir.",
+      "monster_text": "ANTWORTE MIR."
+    },
+    {
+      "art": "licht",
+      "sprich": "Das Feuer erlischt.",
+      "text": "DAS FEUER ERLISCHT.",
+      "gelb": "ERLISCHT",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Mein Freund hat geantwortet.",
+      "text": "MEIN FREUND HAT GEANTWORTET.",
+      "gelb": "GEANTWORTET",
+      "schreck": true,
+      "monster": "Endlich.",
+      "monster_text": "ENDLICH.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil zwölf, das Finale: Bin ich frei?",
+      "text": "FINALE: BIN ICH FREI?",
+      "gelb": "FREI",
+      "pause": 0.8
+    }
+  ]
+}

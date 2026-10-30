@@ -1,0 +1,122 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Antworte ihm nicht – Teil 9",
+  "ort": "wald",
+  "fahrgaeste": [
+    {
+      "wer": "schlaf_sitz",
+      "farbe": [
+        70,
+        112,
+        156
+      ]
+    }
+  ],
+  "titelbild": "UNTER DER ERDE. NEBEN MEINEM FREUND.",
+  "titelbild_gelb": "ERDE",
+  "boesewicht": "hirsch",
+  "held": {
+    "farbe": [
+      220,
+      112,
+      40
+    ],
+    "oberteil": "jacke",
+    "kopf": "muetze",
+    "muetze_farbe": [
+      38,
+      58,
+      112
+    ],
+    "hose": [
+      60,
+      72,
+      58
+    ]
+  },
+  "caption": "Teil neun. Ich bin aufgewacht. Unter der Erde. Neben meinem Freund. Hättest du nach oben gegraben? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil neun. Ich bin aufgewacht. Unter der Erde. Neben meinem Freund.",
+      "text": "TEIL 9: UNTER DER ERDE. NEBEN MEINEM FREUND.",
+      "gelb": "ERDE",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Stockdunkel. Es riecht nach Erde. Neben mir atmet jemand.",
+      "text": "ES RIECHT NACH ERDE.",
+      "gelb": "ERDE",
+      "dauer": 4.6,
+      "stille": true,
+      "pause": 0.2
+    },
+    {
+      "art": "handy",
+      "sprich": "Ich habe noch mein Handy. Drei Prozent Akku.",
+      "text": "DREI PROZENT AKKU.",
+      "gelb": "AKKU",
+      "angst": 0.8,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Im Handylicht: mein echter Freund. Er lebt.",
+      "text": "MEIN ECHTER FREUND. ER LEBT.",
+      "gelb": "LEBT",
+      "angst": 0.6,
+      "augen_bei": 9,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Eine Nachricht von meiner Nummer: Bin am Feuer. Warte auf dich.",
+      "text": "VON MEINER NUMMER: BIN AM FEUER.",
+      "gelb": "FEUER",
+      "absender": "Ich",
+      "nachricht": "Bin am Feuer. Warte auf dich.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "taschenlampe",
+      "sprich": "Wir graben nach oben. Ein Lichtstrahl.",
+      "text": "WIR GRABEN NACH OBEN.",
+      "gelb": "GRABEN",
+      "stille": true,
+      "dauer": 5.0,
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Oben am Feuer sitzen wir beide schon. Lächelnd.",
+      "text": "AM FEUER SITZEN WIR SCHON.",
+      "gelb": "SCHON",
+      "schreck": true,
+      "monster": "Ihr seid zu spät.",
+      "monster_text": "IHR SEID ZU SPÄT.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil zehn: Wer geht nach Hause?",
+      "text": "TEIL 10: WER GEHT NACH HAUSE?",
+      "gelb": "HAUSE",
+      "pause": 0.8
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Antworte ihm nicht – Teil 6",
+  "ort": "wald",
+  "fahrgaeste": [
+    {
+      "wer": "schlaf_sitz",
+      "farbe": [
+        70,
+        112,
+        156
+      ]
+    }
+  ],
+  "titelbild": "MEIN SCHATTEN FOLGT MIR NICHT MEHR.",
+  "titelbild_gelb": "SCHATTEN",
+  "boesewicht": "hirsch",
+  "held": {
+    "farbe": [
+      220,
+      112,
+      40
+    ],
+    "oberteil": "jacke",
+    "kopf": "muetze",
+    "muetze_farbe": [
+      38,
+      58,
+      112
+    ],
+    "hose": [
+      60,
+      72,
+      58
+    ]
+  },
+  "caption": "Teil sechs. Seit ich mich umgedreht habe, folgt mir mein Schatten nicht mehr. Hast du heute schon nach deinem Schatten geschaut? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil sechs. Seit ich mich umgedreht habe, folgt mir mein Schatten nicht mehr.",
+      "text": "TEIL 6: MEIN SCHATTEN FOLGT MIR NICHT MEHR.",
+      "gelb": "SCHATTEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich bin zurück am Feuer. Mein Schatten bleibt am Waldrand stehen.",
+      "text": "MEIN SCHATTEN BLEIBT AM WALDRAND.",
+      "gelb": "WALDRAND",
+      "naeher": 0.3,
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Er schaut mich an. Mein eigener Schatten.",
+      "text": "MEIN EIGENER SCHATTEN SCHAUT MICH AN.",
+      "gelb": "EIGENER",
+      "angst": 0.85,
+      "augen_bei": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "zelt",
+      "sprich": "Im Zelt sehe ich ihn an der Plane. Er geht ums Zelt herum.",
+      "text": "ER GEHT UMS ZELT HERUM.",
+      "gelb": "ZELT",
+      "stille": true,
+      "dauer": 6.0,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Eine Nachricht. Von mir selbst: Lass mich wieder rein.",
+      "text": "VON MIR SELBST: LASS MICH WIEDER REIN.",
+      "gelb": "REIN",
+      "absender": "Ich",
+      "nachricht": "Lass mich wieder rein.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Ohne Schatten wird mir kalt. Sehr kalt.",
+      "text": "OHNE SCHATTEN WIRD MIR KALT.",
+      "gelb": "KALT",
+      "dauer": 4.4,
+      "pause": 0.2,
+      "monster": "Ich bin das, was übrig bleibt.",
+      "monster_text": "ICH BIN, WAS ÜBRIG BLEIBT."
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Es kopiert keine Menschen. Es nimmt ihre Schatten.",
+      "text": "ES NIMMT IHRE SCHATTEN.",
+      "gelb": "SCHATTEN",
+      "schreck": true,
+      "monster": "Zwei hab ich schon.",
+      "monster_text": "ZWEI HAB ICH SCHON.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil sieben: Wie hole ich ihn zurück?",
+      "text": "TEIL 7: WIE HOLE ICH IHN ZURÜCK?",
+      "gelb": "ZURÜCK",
+      "pause": 0.8
+    }
+  ]
+}

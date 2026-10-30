@@ -1,0 +1,113 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Es klopft – Teil 9",
+  "ort": "wald",
+  "fahrgaeste": [],
+  "titelbild": "DAS KLEID IST TROCKEN.",
+  "titelbild_gelb": "TROCKEN",
+  "boesewicht": "frau",
+  "held": {
+    "farbe": [
+      232,
+      168,
+      194
+    ],
+    "oberteil": "pyjama",
+    "kopf": "haare",
+    "haar": [
+      128,
+      74,
+      34
+    ],
+    "zopf": true,
+    "hose": [
+      200,
+      140,
+      170
+    ]
+  },
+  "monsterstimme": "de-DE-KatjaNeural",
+  "caption": "Teil neun. Unter dem Baum liegt ein weißes Kleid. Trocken. Nach zwanzig Jahren. Wärst du nach Hause gegangen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil neun. Unter dem Baum liegt ein weißes Kleid. Trocken. Nach zwanzig Jahren.",
+      "text": "TEIL 9: DAS KLEID IST TROCKEN.",
+      "gelb": "TROCKEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich warte am Feuer auf den Morgen.",
+      "text": "ICH WARTE AUF DEN MORGEN.",
+      "gelb": "MORGEN",
+      "angst": 0.5,
+      "pause": 0.1
+    },
+    {
+      "art": "rufen",
+      "sprich": "Aus dem Wald ruft Mama nach mir.",
+      "text": "AUS DEM WALD RUFT MAMA.",
+      "gelb": "MAMA",
+      "pause": 0.2,
+      "monster": "Schatz! Wo bist du?",
+      "monster_text": "SCHATZ! WO BIST DU?"
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Mama weiß gar nicht, dass ich hier bin.",
+      "text": "MAMA WEISS NICHT, DASS ICH HIER BIN.",
+      "gelb": "NICHT",
+      "angst": 0.85,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama schreibt: Du liegst in deinem Bett und schläfst.",
+      "text": "MAMA: DU LIEGST IN DEINEM BETT.",
+      "gelb": "BETT",
+      "absender": "Mama",
+      "nachricht": "Ich bin zu Hause. Du liegst in deinem Bett und schläfst.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "schatten",
+      "sprich": "Zwischen den Bäumen steht sie. Sie hat mein Gesicht.",
+      "text": "SIE HAT MEIN GESICHT.",
+      "gelb": "GESICHT",
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Sie ist zu Hause. In meinem Bett. Als ich.",
+      "text": "SIE IST ZU HAUSE. ALS ICH.",
+      "gelb": "ICH",
+      "schreck": true,
+      "monster": "Bleib im Wald.",
+      "monster_text": "BLEIB IM WALD.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil zehn: Wie komme ich nach Hause?",
+      "text": "TEIL 10: WIE KOMME ICH NACH HAUSE?",
+      "gelb": "HAUSE",
+      "pause": 0.8
+    }
+  ]
+}
