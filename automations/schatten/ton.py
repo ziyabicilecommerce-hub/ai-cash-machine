@@ -33,8 +33,11 @@ def tonspur(plan, gesamt, ordner, schlicht=False):
         fr = next((s['start'] for s in plan if s['art'] == 'fratze'), 0)
         if fr > 6:  # Spannung: Brummen wird bis zum Jumpscare lauter, kurz davor steigt ein Ton an
             teile.append(f"0.14*lt(t,{fr:.2f})*(t/{fr:.2f})*(0.6+0.4*sin(2*PI*0.5*t))*sin(2*PI*55*t)")
-            r0 = fr - 2.5
-            teile.append(f"0.2*between(t,{r0:.2f},{fr:.2f})*pow((t-{r0:.2f})/2.5,2)*sin(2*PI*(160+260*(t-{r0:.2f}))*t)")
+            r0 = fr - 2.85  # Ton steigt an - dann 0,35 s Totenstille - dann der Jumpscare
+            teile.append(f"0.22*between(t,{r0:.2f},{fr - 0.35:.2f})*pow((t-{r0:.2f})/2.5,2)*sin(2*PI*(160+260*(t-{r0:.2f}))*t)")
+        for s in plan:  # schrille Schreck-Stiche bei jedem Schreck (nicht beim Jumpscare selbst)
+            for k in ([s['start']] if s.get('schreck') and s['art'] != 'fratze' else []) + ([s['start'] + s['schreck_bei']] if 'schreck_bei' in s else []):
+                teile.append(f"0.3*between(t,{k:.2f},{k + 0.7:.2f})*exp(-4*max(t-{k:.2f},0))*sin(2*PI*(1500+500*sin(2*PI*14*t))*t)")
         for s in plan[1:]:  # dumpfer Schlag bei jedem Szenenwechsel: alle paar Sekunden passiert etwas
             if s['art'] not in ('fratze', 'teil2'):
                 teile.append(f"0.35*gte(t,{s['start']:.2f})*exp(-16*max(t-{s['start']:.2f},0))*sin(2*PI*50*t)")
