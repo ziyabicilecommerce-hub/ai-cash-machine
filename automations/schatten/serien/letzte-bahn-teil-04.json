@@ -1,0 +1,103 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "zug",
+  "fahrgaeste": [
+    "zeitung",
+    "schlaf"
+  ],
+  "boesewicht": "schatten",
+  "held": {},
+  "titel": "Letzte Bahn – Teil 4",
+  "titelbild": "DIE BAHN FÄHRT OHNE MICH.",
+  "titelbild_gelb": "OHNE",
+  "caption": "Teil vier. Ich stehe auf Bahnsteig Null. Und die Bahn fährt ohne mich. Wärst du eingestiegen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil vier. Ich stehe auf Bahnsteig Null. Und die Bahn fährt ohne mich.",
+      "text": "TEIL 4: DIE BAHN FÄHRT OHNE MICH.",
+      "gelb": "OHNE",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "station",
+      "sprich": "Bahnsteig Null. Keine Treppe. Kein Ausgang.",
+      "text": "KEINE TREPPE. KEIN AUSGANG.",
+      "gelb": "AUSGANG",
+      "pause": 0.2
+    },
+    {
+      "art": "leer",
+      "sprich": "Nur Nebel. Und Fahrpläne ohne Uhrzeiten.",
+      "text": "FAHRPLÄNE OHNE UHRZEITEN.",
+      "gelb": "OHNE",
+      "pause": 0.2
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Am Fahrplan klebt ein Zettel: Die Bahn kommt nie.",
+      "text": "DIE BAHN KOMMT NIE.",
+      "gelb": "NIE",
+      "zettel": [
+        "DIE BAHN",
+        "KOMMT NIE"
+      ],
+      "pause": 0.1,
+      "warnung": "NICHT WARTEN"
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Hinter mir räuspert sich jemand.",
+      "text": "HINTER MIR RÄUSPERT SICH JEMAND.",
+      "gelb": "HINTER",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "schatten",
+      "sprich": "Am Ende des Bahnsteigs steht er.",
+      "text": "AM ENDE DES BAHNSTEIGS STEHT ER.",
+      "gelb": "ENDE",
+      "pause": 0.2
+    },
+    {
+      "art": "tueren",
+      "sprich": "Dann kommt doch eine Bahn. Die Türen gehen auf.",
+      "text": "DIE TÜREN GEHEN AUF.",
+      "gelb": "AUF",
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Ich steige ein. Aber er sitzt schon drin.",
+      "text": "ER SITZT SCHON DRIN.",
+      "gelb": "DRIN",
+      "schreck": true,
+      "monster": "Endstation.",
+      "monster_text": "ENDSTATION.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil fünf: Wohin fährt diese Bahn?",
+      "text": "TEIL 5: WOHIN FÄHRT DIESE BAHN?",
+      "gelb": "WOHIN",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

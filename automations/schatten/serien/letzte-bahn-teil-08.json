@@ -1,0 +1,115 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "zug",
+  "fahrgaeste": [
+    "zeitung",
+    "schlaf"
+  ],
+  "boesewicht": "schatten",
+  "held": {},
+  "titel": "Letzte Bahn – Teil 8",
+  "titelbild": "EIN LETZTES MAL. MIT ABSICHT.",
+  "titelbild_gelb": "ABSICHT",
+  "caption": "Finale. Ich fahre ein letztes Mal die letzte Bahn. Diesmal mit Absicht. Wann fährt deine letzte Bahn? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Finale. Ich fahre ein letztes Mal die letzte Bahn. Diesmal mit Absicht.",
+      "text": "FINALE: EIN LETZTES MAL. MIT ABSICHT.",
+      "gelb": "ABSICHT",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Null Uhr. Ich habe Papas alten Fahrschein dabei.",
+      "text": "ICH HABE PAPAS FAHRSCHEIN DABEI.",
+      "gelb": "PAPAS",
+      "angst": 0.5,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama schreibt: Tu es nicht. Er will nur dich.",
+      "text": "MAMA: ER WILL NUR DICH.",
+      "gelb": "DICH",
+      "absender": "Mama",
+      "nachricht": "Tu es nicht. Er will nur dich.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "station",
+      "sprich": "Halt Null. Ich steige aus.",
+      "text": "HALT NULL. ICH STEIGE AUS.",
+      "gelb": "AUS",
+      "pause": 0.2
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Ich klebe Papas Fahrschein an den Fahrplan. Gültig für immer.",
+      "text": "GÜLTIG FÜR IMMER.",
+      "gelb": "IMMER",
+      "zettel": [
+        "GÜLTIG",
+        "FÜR IMMER"
+      ],
+      "pause": 0.1,
+      "warnung": "NICHT UMDREHEN"
+    },
+    {
+      "art": "tueren",
+      "sprich": "Die Bahn kommt. Die Türen gehen auf. Er steigt ein.",
+      "text": "DIE TÜREN GEHEN AUF. ER STEIGT EIN.",
+      "gelb": "EIN",
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Ich sitze wieder in der Bahn. Er hat getauscht.",
+      "text": "ER HAT GETAUSCHT.",
+      "gelb": "GETAUSCHT",
+      "schreck": true,
+      "monster": "Willkommen in der letzten Bahn.",
+      "monster_text": "WILLKOMMEN IN DER LETZTEN BAHN.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Die Zeitung von morgen: Mann nach siebenundzwanzig Jahren aufgetaucht. Sein Sohn vermisst.",
+      "text": "MANN AUFGETAUCHT. SOHN VERMISST.",
+      "gelb": "VERMISST",
+      "schreck": true,
+      "pause": 0.4,
+      "zeitung": {
+        "zeilen": [
+          "MANN NACH",
+          "27 JAHREN",
+          "AUFGETAUCHT"
+        ],
+        "datum": "FREITAG, 31. OKTOBER",
+        "unter": "Sein Sohn wird seitdem vermisst"
+      }
+    },
+    {
+      "art": "teil2",
+      "sprich": "Ende. Wann fährt deine letzte Bahn?",
+      "text": "ENDE? WANN FÄHRT DEINE LETZTE BAHN?",
+      "gelb": "LETZTE",
+      "pause": 1.0
+    }
+  ],
+  "teile": 8
+}

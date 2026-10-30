@@ -297,10 +297,75 @@ def wald_rahmen(im, fuer_zettel=False):
         d.arc((210, y, 510, y + 80), 190, 350, fill=(26, 18, 12), width=5)
 
 
-INNEN = {'zug': zug_innen, 'flugzeug': flugzeug_innen, 'haus': haus_innen, 'wald': wald_innen}
-DRAUSSEN = {'zug': zug_draussen, 'flugzeug': flugzeug_draussen, 'haus': haus_draussen, 'wald': wald_draussen}
-RAHMEN = {'zug': zug_rahmen, 'flugzeug': flugzeug_rahmen, 'haus': haus_rahmen, 'wald': wald_rahmen}
-SPIEGELBOX = {'zug': (386, 186, 674, 464), 'flugzeug': (506, 236, 644, 444), 'haus': (196, 176, 524, 464), 'wald': (386, 186, 674, 464)}
+STAHL = verlauf((92, 96, 104), (40, 42, 48))
+LED = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 64)
+
+
+def aufzug_innen(im, t, lt, licht=1.0, fahrt=True, augen_im_fenster=False):
+    # Aufzugkabine: gebuerstete Stahlwaende, Stockwerk-Anzeige zaehlt runter, Handlauf, Klappsitz, flackerndes Deckenlicht
+    im.paste(STAHL)
+    d = ImageDraw.Draw(im)
+    for x in range(0, W, 12):  # Buerstspuren
+        d.line((x, 120, x + 6, 900), fill=(84, 88, 96) if x % 24 else (98, 102, 110), width=1)
+    d.rectangle((0, 0, W, 110), fill=(26, 28, 32))
+    hell = int(230 * licht * (0.6 if int(t * 7) % 9 == 0 else 1.0))
+    d.rectangle((120, 70, 600, 96), fill=(hell, hell, min(255, hell + 15)))
+    if licht > 0.3:
+        glanz = LAMPE.resize((560, 240))
+        im.paste(glanz, (80, -60), glanz)
+    d.rounded_rectangle((280, 150, 440, 240), 10, fill=(10, 4, 4), outline=(70, 72, 80), width=4)  # Anzeige
+    etage = max(0, 9 - int(t / 5)) if fahrt else 0
+    d.text((360, 196), str(etage), font=LED, fill=(255, 40, 30), anchor='mm')
+    d.polygon([(330, 252), (390, 252), (360, 276)], fill=(255, 40, 30) if fahrt and int(t * 2) % 2 else (70, 20, 20))
+    box = (186, 300, 534, 470)  # Spiegelstreifen an der Rueckwand
+    d.rectangle(box, fill=(54, 58, 66), outline=(130, 134, 144), width=4)
+    if augen_im_fenster:
+        for ex in (-9, 9):
+            im.paste(AUGE_LEISE, (470 + ex - 14, 390 - 14), AUGE_LEISE)
+    d.line((40, 500, 680, 500), fill=(180, 184, 194), width=10)  # Handlauf
+    d.polygon([(0, 900), (W, 900), (W + 260, H), (-260, H)], fill=(30, 30, 34))  # Riffelblech
+    for i in range(0, W + 300, 40):
+        d.line((i - 150, 900, i - 260, H), fill=(40, 40, 46), width=3)
+    _sitzbank(d, (70, 74, 82), (88, 92, 102))  # Klappsitz
+    for ax in (30, 690):
+        d.rectangle((ax - 6, 120, ax + 6, 900), fill=(60, 62, 70))
+
+
+def aufzug_draussen(im, t, lt, kz):
+    # Flur im Keller vor dem Aufzug: Neonroehre flackert, Tueren in der Tiefe, Notausgang-Schild
+    im.paste(WAND)
+    d = ImageDraw.Draw(im)
+    d.polygon([(0, 830), (W, 830), (W, H), (0, H)], fill=(22, 22, 26))
+    d.polygon([(250, 300), (470, 300), (470, 830), (250, 830)], fill=(8, 8, 10))  # Flur in die Tiefe
+    for i, y in enumerate((360, 470, 600)):
+        d.rectangle((250 + i * 6, y - 40, 300 - i * 4, y + 90), fill=(30, 30, 36))
+    an = int(t * 9) % 7 != 0
+    d.rectangle((260, 120, 460, 140), fill=(220, 230, 240) if an else (40, 40, 44))
+    if an:
+        im.paste(LAMPE, (360 - 220, 130 - 120), LAMPE)
+    d.rectangle((520, 180, 660, 240), fill=(20, 120, 60))
+    d.text((590, 210), kz or 'EXIT', font=KLEIN, fill=WEISS, anchor='mm')
+    for i in range(2):
+        nx = int((t * 20 + i * 400) % (W + 500)) - 400
+        im.paste(NEBEL, (nx, 760 + i * 30), NEBEL)
+
+
+def aufzug_rahmen(im, fuer_zettel=False):
+    # die Aufzugtueren stehen einen Spalt offen
+    d = ImageDraw.Draw(im)
+    for box in ((0, 0, W, 120), (0, 1060, W, H)):
+        d.rectangle(box, fill=(60, 62, 70))
+    d.rectangle((0, 120, 150, 1060), fill=(150, 154, 164))
+    d.rectangle((W - 150, 120, W, 1060), fill=(150, 154, 164))
+    for x in (150, W - 150):
+        d.line((x, 120, x, 1060), fill=(60, 62, 70), width=8)
+    d.rectangle((150, 120, W - 150, 1060), outline=(90, 92, 100), width=10)
+
+
+INNEN = {'zug': zug_innen, 'flugzeug': flugzeug_innen, 'haus': haus_innen, 'wald': wald_innen, 'aufzug': aufzug_innen}
+DRAUSSEN = {'zug': zug_draussen, 'flugzeug': flugzeug_draussen, 'haus': haus_draussen, 'wald': wald_draussen, 'aufzug': aufzug_draussen}
+RAHMEN = {'zug': zug_rahmen, 'flugzeug': flugzeug_rahmen, 'haus': haus_rahmen, 'wald': wald_rahmen, 'aufzug': aufzug_rahmen}
+SPIEGELBOX = {'zug': (386, 186, 674, 464), 'flugzeug': (506, 236, 644, 444), 'haus': (196, 176, 524, 464), 'wald': (386, 186, 674, 464), 'aufzug': (186, 300, 534, 470)}
 
 
 def innenraum(im, t, lt, licht=1.0, fahrt=True, augen_im_fenster=False):

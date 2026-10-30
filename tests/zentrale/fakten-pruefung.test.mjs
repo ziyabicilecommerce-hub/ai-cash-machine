@@ -34,6 +34,10 @@ test('doppelt: dasselbe Thema wie ein bekannter Fakt wird erkannt', async () => 
   assert.ok(doppelt({ titel: 'Olympus Mons', fakt: 'Der Olympus Mons ist riesig' }, bekannt));
   assert.ok(!doppelt({ titel: 'Honig wird nie schlecht', fakt: 'Honig verdirbt nicht, weil er kaum Wasser enthält' }, bekannt));
   assert.ok(!doppelt({ titel: 'Honig', fakt: 'Honig' }, []));
+  // kurze Wortanfaenge sind kein gleiches Thema
+  assert.ok(!doppelt({ titel: 'Magnetisches Meisterstück' }, ['Wir verlieren die meiste Körperwärme über den Kopf.']));
+  assert.ok(!doppelt({ titel: 'Warum schlafen Katzen so viel?' }, ['Was passiert bei einer Schlafparalyse?']));
+  assert.ok(doppelt({ titel: 'Wie viele Knochen hat ein Erwachsener?' }, ['Wie viele Knochen hat ein erwachsener Mensch? -> 206']));
 });
 
 test('echo: abgeschriebene Platzhalter ("max. 60 Zeichen", "...") werden erkannt', async () => {

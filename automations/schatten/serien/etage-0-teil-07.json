@@ -1,0 +1,112 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "aufzug",
+  "fahrgaeste": [],
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      70,
+      110,
+      90
+    ],
+    "oberteil": "jacke",
+    "kopf": "haare",
+    "haar": [
+      30,
+      24,
+      20
+    ],
+    "zopf": true,
+    "hose": [
+      40,
+      40,
+      52
+    ]
+  },
+  "titel": "Etage 0 – Teil 7",
+  "titelbild": "NUR WER ERSETZT WIRD, KOMMT RAUS.",
+  "titelbild_gelb": "ERSETZT",
+  "caption": "Teil sieben. Hier kommt nur raus, wen ein anderer ersetzt. Hättest du das Foto geschickt? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil sieben. Hier kommt nur raus, wen ein anderer ersetzt.",
+      "text": "TEIL 7: NUR WER ERSETZT WIRD, KOMMT RAUS.",
+      "gelb": "ERSETZT",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich warte im Aufzug. Und warte.",
+      "text": "ICH WARTE. UND WARTE.",
+      "gelb": "WARTE",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "handy",
+      "sprich": "Ich habe eine Idee. Ich schicke ein Foto vom Knopf. An alle.",
+      "text": "ICH SCHICKE DEN KNOPF AN ALLE.",
+      "gelb": "ALLE",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Jemand schreibt: Ich hab ihn gedrückt. Was passiert jetzt?",
+      "text": "UNBEKANNT: ICH HAB IHN GEDRÜCKT.",
+      "gelb": "GEDRÜCKT",
+      "absender": "Unbekannt",
+      "nachricht": "Ich hab ihn gedrückt. Was passiert jetzt?",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Der Aufzug fährt hoch. Ich bin frei.",
+      "text": "DER AUFZUG FÄHRT HOCH. ICH BIN FREI.",
+      "gelb": "FREI",
+      "angst": 0.3,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "tueren",
+      "sprich": "Die Türen gehen auf. Davor steht, wer gedrückt hat.",
+      "text": "DAVOR STEHT, WER GEDRÜCKT HAT.",
+      "gelb": "GEDRÜCKT",
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Wer drückt, tauscht. Jetzt ist jemand anderes unten. Wegen mir.",
+      "text": "WER DRÜCKT, TAUSCHT.",
+      "gelb": "TAUSCHT",
+      "schreck": true,
+      "monster": "Danke für die Neue.",
+      "monster_text": "DANKE FÜR DIE NEUE.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Finale: Hole ich sie zurück?",
+      "text": "FINALE: HOLE ICH SIE ZURÜCK?",
+      "gelb": "ZURÜCK",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

@@ -91,13 +91,20 @@ def tonspur(plan, gesamt, ordner, schlicht=False):
         hall = 'aecho=0.8:0.4:35:0.12' if schlicht else 'aecho=0.8:0.6:70|140:0.25|0.12'
         filter_ += f'[{i + 4}]aresample=44100,{hall},volume=2.4,adelay={ms}|{ms}[v{i}];'
         mix.append(f'[v{i}]')
-    nr = len(mix)
+    nr = eingaben.count('-i')  # Eingang der ersten Monster-Datei (nach den 4 Geraeusch-Quellen und allen Erzaehler-Saetzen)
     for j, s in enumerate(x for x in plan if x.get('mdatei')):
         eingaben += ['-i', s['mdatei']]
         ms = int((s['start'] + s['mbei']) * 1000)
         effekt = 'aecho=0.8:0.5:60:0.25' if schlicht else 'asetrate=44100*0.82,aresample=44100,aecho=0.8:0.85:40|90|170:0.5|0.35|0.22'
         filter_ += f'[{nr + j}]aresample=44100,{effekt},highpass=f=60,volume=2.6,adelay={ms}|{ms}[m{j}];'
         mix.append(f'[m{j}]')
+    angst = [x for x in plan if x.get('stille') or x.get('angst', 0) >= 0.8]
+    if schlicht and angst:  # Herzschlag in den stillen und panischen Szenen - eigene Quelle, damit die Stille ihn nicht wegdreht
+        zeit = '+'.join(f"between(t,{x['start']:.2f},{x['start'] + x['dauer']:.2f})" for x in angst)
+        herz = f"gt({zeit},0)*(exp(-22*mod(t,0.8))+0.7*exp(-22*mod(max(t-0.17,0),0.8)))*sin(2*PI*46*t)"
+        eingaben += ['-f', 'lavfi', '-i', f"aevalsrc='0.55*{herz}':s=44100:d={gesamt:.2f}"]
+        filter_ += f"[{eingaben.count('-i') - 1}]lowpass=f=120[hz];"
+        mix.append('[hz]')
     filter_ += f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,afade=t=out:st={gesamt - 1.5:.2f}:d=1.5,alimiter=limit=0.92[a]"
     ton = os.path.join(ordner, 'ton.m4a')
     subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', *eingaben, '-filter_complex', filter_, '-map', '[a]', '-ac', '2', '-c:a', 'aac', '-b:a', '192k', ton], check=True)

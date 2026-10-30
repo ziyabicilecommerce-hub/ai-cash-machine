@@ -1,0 +1,116 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "aufzug",
+  "fahrgaeste": [],
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      70,
+      110,
+      90
+    ],
+    "oberteil": "jacke",
+    "kopf": "haare",
+    "haar": [
+      30,
+      24,
+      20
+    ],
+    "zopf": true,
+    "hose": [
+      40,
+      40,
+      52
+    ]
+  },
+  "titel": "Etage 0 – Teil 3",
+  "titelbild": "AUF ETAGE NULL WOHNE ICH.",
+  "titelbild_gelb": "ICH",
+  "caption": "Teil drei. Auf Etage null wohnen Leute. Und eine davon bin ich. Würdest du die Tür aufmachen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil drei. Auf Etage null wohnen Leute. Und eine davon bin ich.",
+      "text": "TEIL 3: AUF ETAGE NULL WOHNE ICH.",
+      "gelb": "ICH",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "leer",
+      "sprich": "Die Türen gehen auf. Ein Flur voller Wohnungstüren.",
+      "text": "EIN FLUR VOLLER WOHNUNGSTÜREN.",
+      "gelb": "WOHNUNGSTÜREN",
+      "pause": 0.2
+    },
+    {
+      "art": "zettel2",
+      "sprich": "An einer Tür klebt ein Schild. Mit meinem Namen.",
+      "text": "AN EINER TÜR STEHT MEIN NAME.",
+      "gelb": "NAME",
+      "zettel": [
+        "WOHNUNG 0",
+        "DEIN NAME"
+      ],
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Hinter der Tür läuft mein Lieblingslied.",
+      "text": "HINTER DER TÜR LÄUFT MEIN LIED.",
+      "gelb": "LIED",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "klinke",
+      "sprich": "Die Klinke geht runter. Von innen.",
+      "text": "DIE KLINKE GEHT RUNTER. VON INNEN.",
+      "gelb": "INNEN",
+      "schreck_bei": 0.6,
+      "dauer": 6.0,
+      "pause": 0.2
+    },
+    {
+      "art": "dunkel",
+      "sprich": "In der Wohnung ist es dunkel. Jemand sitzt auf meinem Sofa.",
+      "text": "JEMAND SITZT AUF MEINEM SOFA.",
+      "gelb": "SOFA",
+      "dauer": 4.4,
+      "pause": 0.2,
+      "monster": "Du bist spät heute.",
+      "monster_text": "DU BIST SPÄT HEUTE."
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Da sitze ich. Seit Jahren. Ich habe hier immer gewohnt.",
+      "text": "ICH HABE HIER IMMER GEWOHNT.",
+      "gelb": "IMMER",
+      "schreck": true,
+      "monster": "Willkommen zu Hause.",
+      "monster_text": "WILLKOMMEN ZU HAUSE.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil vier: Wer lebt oben in meiner Wohnung?",
+      "text": "TEIL 4: WER LEBT OBEN IN MEINER WOHNUNG?",
+      "gelb": "OBEN",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

@@ -1,0 +1,124 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "aufzug",
+  "fahrgaeste": [],
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      70,
+      110,
+      90
+    ],
+    "oberteil": "jacke",
+    "kopf": "haare",
+    "haar": [
+      30,
+      24,
+      20
+    ],
+    "zopf": true,
+    "hose": [
+      40,
+      40,
+      52
+    ]
+  },
+  "titel": "Etage 0 – Teil 1",
+  "titelbild": "EIN KNOPF, DEN NIEMAND DRÜCKEN DARF.",
+  "titelbild_gelb": "NIEMAND",
+  "caption": "In unserem Hochhaus gibt es einen Knopf, den niemand drücken darf. Hättest du gedrückt? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "In unserem Hochhaus gibt es einen Knopf, den niemand drücken darf.",
+      "text": "EIN KNOPF, DEN NIEMAND DRÜCKEN DARF.",
+      "gelb": "NIEMAND",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich fahre nachts allein mit dem Aufzug nach Hause.",
+      "text": "NACHTS ALLEIN IM AUFZUG.",
+      "gelb": "ALLEIN",
+      "angst": 0.1,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Unter dem Keller-Knopf ist plötzlich ein neuer Knopf. Null.",
+      "text": "EIN NEUER KNOPF: NULL.",
+      "gelb": "NULL",
+      "angst": 0.6,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Daneben klebt ein Zettel: Nicht drücken.",
+      "text": "NICHT DRÜCKEN.",
+      "gelb": "DRÜCKEN",
+      "zettel": [
+        "NICHT",
+        "DRÜCKEN"
+      ],
+      "pause": 0.1,
+      "warnung": "NICHT DRÜCKEN"
+    },
+    {
+      "art": "licht",
+      "sprich": "Ich drücke trotzdem. Das Licht flackert.",
+      "text": "ICH DRÜCKE TROTZDEM.",
+      "gelb": "TROTZDEM",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "innen",
+      "sprich": "Wir fahren. Und fahren. Viel tiefer als der Keller.",
+      "text": "VIEL TIEFER ALS DER KELLER.",
+      "gelb": "TIEFER",
+      "angst": 0.7,
+      "pause": 0.1,
+      "naeher": 0.3
+    },
+    {
+      "art": "winken",
+      "sprich": "Die Türen gehen auf. Am Ende des Flurs winkt jemand.",
+      "text": "AM ENDE DES FLURS WINKT JEMAND.",
+      "gelb": "WINKT",
+      "pause": 0.1
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Die Türen gehen zu. Aber er ist schon drin.",
+      "text": "ER IST SCHON DRIN.",
+      "gelb": "DRIN",
+      "schreck": true,
+      "monster": "Etage null. Endstation.",
+      "monster_text": "ETAGE NULL. ENDSTATION.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil zwei: Komme ich wieder hoch?",
+      "text": "TEIL 2: KOMME ICH WIEDER HOCH?",
+      "gelb": "HOCH",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

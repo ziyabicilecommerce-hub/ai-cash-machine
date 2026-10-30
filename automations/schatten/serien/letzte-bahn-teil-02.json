@@ -1,0 +1,113 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "zug",
+  "fahrgaeste": [
+    "zeitung",
+    "schlaf"
+  ],
+  "boesewicht": "schatten",
+  "held": {},
+  "titel": "Letzte Bahn – Teil 2",
+  "titelbild": "JEDE NACHT FEHLT EINER MEHR.",
+  "titelbild_gelb": "MEHR",
+  "caption": "Teil zwei. Ich fahre jede Nacht die letzte Bahn. Jede Nacht fehlt einer mehr. Hättest du sie festgehalten? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil zwei. Ich fahre jede Nacht die letzte Bahn. Jede Nacht fehlt einer mehr.",
+      "text": "TEIL 2: JEDE NACHT FEHLT EINER MEHR.",
+      "gelb": "MEHR",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Heute sind wir nur noch zwei. Ich und die Frau mit den Kopfhörern.",
+      "text": "NUR NOCH ZWEI.",
+      "gelb": "ZWEI",
+      "angst": 0.4,
+      "pause": 0.1,
+      "fahrgaeste": [
+        "schlaf"
+      ]
+    },
+    {
+      "art": "handy",
+      "sprich": "Ich schreibe ihr: Steig bei Null nicht aus.",
+      "text": "ICH SCHREIBE IHR: STEIG NICHT AUS.",
+      "gelb": "NICHT",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Unbekannt: Sie kann dich nicht hören. Sie schläft schon seit Jahren.",
+      "text": "SIE SCHLÄFT SCHON SEIT JAHREN.",
+      "gelb": "JAHREN",
+      "absender": "Unbekannt",
+      "nachricht": "Sie kann dich nicht hören. Sie schläft schon seit Jahren.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "station",
+      "sprich": "Halt Null. Die Türen gehen auf.",
+      "text": "HALT NULL. DIE TÜREN GEHEN AUF.",
+      "gelb": "NULL",
+      "pause": 0.2
+    },
+    {
+      "art": "tueren",
+      "sprich": "Draußen ist es stockdunkel. Nur zwei Augen.",
+      "text": "DRAUSSEN: NUR ZWEI AUGEN.",
+      "gelb": "AUGEN",
+      "pause": 0.2
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Die Frau steht auf. Mit geschlossenen Augen.",
+      "text": "SIE STEHT AUF. MIT GESCHLOSSENEN AUGEN.",
+      "gelb": "GESCHLOSSENEN",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne zu ihr. Hinter mir geht das Licht aus.",
+      "text": "ICH RENNE. DAS LICHT GEHT AUS.",
+      "gelb": "RENNE",
+      "pause": 0.1
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Ich habe sie festgehalten. Jetzt hält er mich fest.",
+      "text": "JETZT HÄLT ER MICH FEST.",
+      "gelb": "MICH",
+      "schreck": true,
+      "monster": "Einer muss aussteigen.",
+      "monster_text": "EINER MUSS AUSSTEIGEN.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil drei: Wer steigt aus?",
+      "text": "TEIL 3: WER STEIGT AUS?",
+      "gelb": "AUS",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

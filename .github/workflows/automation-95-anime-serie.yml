@@ -69,6 +69,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      # Der Runner hat inzwischen Python 3.14 - dafuer gibt es noch kein fertiges "tokenizers"-Paket (transformers),
+      # pip muesste es mit Rust bauen und scheitert. Mit 3.12 kommen alle Pakete fertig gebaut.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: ffmpeg, Schrift und edge-tts installieren
         uses: ./.github/actions/video-werkzeug
         with:

@@ -344,6 +344,11 @@ def main():
                           '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-maxrate', '6M', '-bufsize', '12M', bildspur], stdin=subprocess.PIPE)
     cover = None
     uhr_bis = next((s['start'] for s in plan if s['art'] in ('station', 'zettel2')), gesamt)
+    # Unterschwellige Schocker: in Szene 4 und 7 blitzen fuer zwei Bilder nur leuchtende Augen im Dunkeln auf
+    augen_szenen = {id(x) for i, x in enumerate(plan) if i in (3, 6) and x['art'] not in ('fratze', 'teil2', 'nachricht', 'zeitung_nah')}
+    augenbild = Image.new('RGB', (W, H), (2, 2, 4))
+    for ex in (-70, 70):
+        augenbild.paste(AUGE_GROSS, (W // 2 + ex - 120, 520 - 120), AUGE_GROSS)
     for s in plan:
         n = int(round(s['dauer'] * FPS))
         worte = len(s.get('text', '').split())
@@ -362,6 +367,8 @@ def main():
                 fr = fratze_ki if fratze_ki is not None else Image.new('RGB', (W, H))
                 if fratze_ki is None: fratze(fr, 0.3)
                 im = Image.blend(im, fr, 0.75)
+            if id(s) in augen_szenen and 1.2 <= lt < 1.2 + 2 / FPS:
+                im = Image.blend(im, augenbild, 0.85)
             if s['art'] == 'fratze' and f < 3:
                 im = Image.blend(im, Image.new('RGB', (W, H), (255, 255, 255)), 0.7 - f * 0.25)
             if s['art'] == 'blitz' and f == int(0.35 * FPS):  # Titelbild ohne Spoiler

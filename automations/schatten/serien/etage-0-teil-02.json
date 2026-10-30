@@ -1,0 +1,125 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "aufzug",
+  "fahrgaeste": [],
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      70,
+      110,
+      90
+    ],
+    "oberteil": "jacke",
+    "kopf": "haare",
+    "haar": [
+      30,
+      24,
+      20
+    ],
+    "zopf": true,
+    "hose": [
+      40,
+      40,
+      52
+    ]
+  },
+  "titel": "Etage 0 – Teil 2",
+  "titelbild": "JEDER KNOPF FÜHRT NACH UNTEN.",
+  "titelbild_gelb": "UNTEN",
+  "caption": "Teil zwei. Jeder Knopf in diesem Aufzug führt jetzt nach unten. Hättest du nach oben geschaut? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil zwei. Jeder Knopf in diesem Aufzug führt jetzt nach unten.",
+      "text": "TEIL 2: JEDER KNOPF FÜHRT NACH UNTEN.",
+      "gelb": "UNTEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich drücke Etage zwölf. Die Anzeige zählt runter.",
+      "text": "ICH DRÜCKE 12. DIE ANZEIGE ZÄHLT RUNTER.",
+      "gelb": "RUNTER",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "handy",
+      "sprich": "Ein Balken Empfang. Ich rufe den Notruf.",
+      "text": "ICH RUFE DEN NOTRUF.",
+      "gelb": "NOTRUF",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Der Notruf schreibt: Dieses Gebäude hat keinen Aufzug.",
+      "text": "NOTRUF: DAS GEBÄUDE HAT KEINEN AUFZUG.",
+      "gelb": "KEINEN",
+      "absender": "Notruf",
+      "nachricht": "Dieses Gebäude hat keinen Aufzug.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Aber ich stehe doch drin.",
+      "text": "ABER ICH STEHE DOCH DRIN.",
+      "gelb": "DRIN",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "decke",
+      "sprich": "In der Decke ist eine Klappe. Sie öffnet sich.",
+      "text": "IN DER DECKE ÖFFNET SICH EINE KLAPPE.",
+      "gelb": "KLAPPE",
+      "stille": true,
+      "warnung": "NICHT HOCHSCHAUEN",
+      "monster": "Ich bin über dir.",
+      "monster_text": "ICH BIN ÜBER DIR.",
+      "pause": 0.3
+    },
+    {
+      "art": "licht",
+      "sprich": "Der Aufzug ruckelt. Das Licht geht aus.",
+      "text": "DER AUFZUG RUCKELT.",
+      "gelb": "RUCKELT",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Er hängt über mir. Die ganze Fahrt schon.",
+      "text": "ER HÄNGT ÜBER MIR. DIE GANZE FAHRT SCHON.",
+      "gelb": "ÜBER",
+      "schreck": true,
+      "monster": "Gleich sind wir da.",
+      "monster_text": "GLEICH SIND WIR DA.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil drei: Was wartet auf Etage null?",
+      "text": "TEIL 3: WAS WARTET AUF ETAGE NULL?",
+      "gelb": "NULL",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

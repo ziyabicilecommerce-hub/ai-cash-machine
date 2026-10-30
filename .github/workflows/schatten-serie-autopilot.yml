@@ -1,13 +1,14 @@
-name: "👤 Schatten-Serie Autopilot (alle 5 Std. je Konto ein Teil)"
+name: "👤 Schatten-Serie Autopilot (alle 3 Std. je Konto ein Teil)"
 
-# Alle 5 Stunden bekommt jedes TikTok-Konto den nächsten Teil seiner Horror-Serie (Teil 2 bis 12):
+# Tagsüber alle 3 Stunden bekommt jedes TikTok-Konto den nächsten Teil seiner Horror-Serien - nach dem Finale
+# einer Serie startet direkt die nächste (Reihenfolge je Konto in "folge" unten):
 # rendern (Stimme per edge-tts), als öffentlichen Download ablegen, über Buffer posten (KI-gekennzeichnet).
 # Welcher Teil dran ist, steht in den Releases: "serie-<serie>-teil-<n>" gibt es nur für schon gepostete Teile.
 # Klappt das Posten nicht, wird das Release wieder gelöscht - dann kommt derselbe Teil beim nächsten Lauf.
 
 on:
   schedule:
-    - cron: '13 1,6,11,16,21 * * *'
+    - cron: '13 5,8,11,14,17,20 * * *'  # UTC = 6/7 bis 21/22 Uhr deutscher Zeit, nachts Pause
   workflow_dispatch:
 
 permissions:
@@ -25,60 +26,61 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { serie: reihe-13, kanal: 6ac7cb606a5c39ccb6535fab }
-          - { serie: mach-nicht-auf, kanal: 6ac7cae66a5c39ccb6535c40 }
-          - { serie: geh-nicht-tiefer, kanal: 6ac7ca226a5c39ccb65356a5 }
+          - { konto: futureflowx3, kanal: 6ac7cb606a5c39ccb6535fab, folge: 'reihe-13 letzte-bahn' }
+          - { konto: zyx_7851, kanal: 6ac7cae66a5c39ccb6535c40, folge: 'mach-nicht-auf etage-0' }
+          - { konto: futureflowxx, kanal: 6ac7ca226a5c39ccb65356a5, folge: 'geh-nicht-tiefer babyphone' }
     env:
       GH_TOKEN: ${{ github.token }}
       REPO: ${{ github.repository }}
-      SERIE: ${{ matrix.serie }}
+      FOLGE: ${{ matrix.folge }}
       KANAL: ${{ matrix.kanal }}
       BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
     steps:
-      - name: Nächster Teil
-        id: teil
-        run: |
-          for n in $(seq 2 12); do
-            TAG="serie-$SERIE-teil-$n"
-            if ! gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
-              echo "n=$(printf %02d $n)" >> "$GITHUB_OUTPUT"; echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-              echo "Als Nächstes: $SERIE Teil $n"; exit 0
-            fi
-          done
-          echo "Serie $SERIE ist komplett gepostet." | tee -a "$GITHUB_STEP_SUMMARY"
       - uses: actions/checkout@v4
-        if: steps.teil.outputs.n != ''
         with:
           sparse-checkout: |
             automations/schatten
             automations/lib
+      - name: Nächster Teil
+        id: teil
+        run: |
+          for f in $(for s in $FOLGE; do ls automations/schatten/serien/$s-teil-*.json | sort; done); do
+            STEM=$(basename "$f" .json); SERIE=${STEM%-teil-*}; N=$((10#${STEM##*-teil-}))
+            TAG="serie-$SERIE-teil-$N"
+            if ! gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
+              echo "datei=$f" >> "$GITHUB_OUTPUT"; echo "tag=$TAG" >> "$GITHUB_OUTPUT"; echo "name=$STEM" >> "$GITHUB_OUTPUT"
+              echo "Als Nächstes: $STEM"; exit 0
+            fi
+          done
+          echo "Alle Serien für ${{ matrix.konto }} sind gepostet - neue Folgen in automations/schatten/serien anlegen." | tee -a "$GITHUB_STEP_SUMMARY"
       - uses: actions/setup-node@v4
-        if: steps.teil.outputs.n != ''
+        if: steps.teil.outputs.datei != ''
         with:
           node-version: '22'
       - name: Werkzeuge
-        if: steps.teil.outputs.n != ''
+        if: steps.teil.outputs.datei != ''
         run: |
           sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
           pip install -q pillow edge-tts
       - name: Rendern
-        if: steps.teil.outputs.n != ''
-        run: python3 automations/schatten/story.py "automations/schatten/serien/$SERIE-teil-${{ steps.teil.outputs.n }}.json" out
+        if: steps.teil.outputs.datei != ''
+        run: python3 automations/schatten/story.py "${{ steps.teil.outputs.datei }}" out
       - name: Ablegen und posten
-        if: steps.teil.outputs.n != ''
+        if: steps.teil.outputs.datei != ''
         env:
           TAG: ${{ steps.teil.outputs.tag }}
-          N: ${{ steps.teil.outputs.n }}
+          NAME: ${{ steps.teil.outputs.name }}
+          JSON: ${{ steps.teil.outputs.datei }}
         run: |
-          DATEI="$SERIE-teil-$N.mp4"
+          DATEI="$NAME.mp4"
           cp out/video.mp4 "out/$DATEI"
-          gh release create "$TAG" "out/$DATEI" -R "$REPO" --prerelease --title "Schatten-Serie: $SERIE Teil $N" \
+          gh release create "$TAG" "out/$DATEI" -R "$REPO" --prerelease --title "Schatten-Serie: $NAME" \
             --notes "KI-generiertes Horror-Video (frei erfundene Geschichte)."
           URL="https://github.com/$REPO/releases/download/$TAG/$DATEI"
-          if node automations/schatten/posten.mjs "automations/schatten/serien/$SERIE-teil-$N.json" "$URL" "$KANAL"; then
-            echo "✅ $SERIE Teil $N gepostet: $URL" >> "$GITHUB_STEP_SUMMARY"
+          if node automations/schatten/posten.mjs "$JSON" "$URL" "$KANAL"; then
+            echo "✅ $NAME gepostet: $URL" >> "$GITHUB_STEP_SUMMARY"
           else
             gh release delete "$TAG" -R "$REPO" --yes --cleanup-tag
-            echo "❌ $SERIE Teil $N nicht gepostet - kommt beim nächsten Lauf nochmal." >> "$GITHUB_STEP_SUMMARY"
+            echo "❌ $NAME nicht gepostet - kommt beim nächsten Lauf nochmal." >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi

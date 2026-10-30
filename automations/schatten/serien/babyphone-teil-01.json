@@ -1,0 +1,114 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "haus",
+  "fahrgaeste": [],
+  "boesewicht": "schatten",
+  "held": {
+    "farbe": [
+      200,
+      120,
+      60
+    ],
+    "oberteil": "hoodie",
+    "kopf": "haare",
+    "haar": [
+      214,
+      176,
+      100
+    ],
+    "hose": [
+      50,
+      56,
+      80
+    ]
+  },
+  "titel": "Babyphone – Teil 1",
+  "titelbild": "EINE ZWEITE STIMME.",
+  "titelbild_gelb": "ZWEITE",
+  "caption": "Beim Babysitten höre ich im Babyphone eine zweite Stimme. Wärst du ins Zimmer gegangen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Beim Babysitten höre ich im Babyphone eine zweite Stimme.",
+      "text": "IM BABYPHONE: EINE ZWEITE STIMME.",
+      "gelb": "ZWEITE",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich passe zum ersten Mal auf das Baby der Nachbarn auf.",
+      "text": "ZUM ERSTEN MAL BABYSITTEN.",
+      "gelb": "BABYSITTEN",
+      "angst": 0.1,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Die Mutter schreibt: Wenn im Babyphone jemand singt, geh nicht ins Zimmer.",
+      "text": "WENN JEMAND SINGT: GEH NICHT REIN.",
+      "gelb": "SINGT",
+      "absender": "Die Mutter",
+      "nachricht": "Wenn im Babyphone jemand singt: Geh nicht ins Zimmer.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Warum sollte jemand singen? Das Baby schläft.",
+      "text": "WARUM SOLLTE JEMAND SINGEN?",
+      "gelb": "SINGEN",
+      "angst": 0.5,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "live",
+      "sprich": "Das Babyphone hat eine Kamera. Sie zeigt nicht das Baby. Sie zeigt mich.",
+      "text": "SIE ZEIGT NICHT DAS BABY. SIE ZEIGT MICH.",
+      "gelb": "MICH",
+      "dauer": 4.6,
+      "pause": 0.2
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Dann singt jemand. Ganz leise. Direkt neben mir.",
+      "text": "JEMAND SINGT. DIREKT NEBEN MIR.",
+      "gelb": "NEBEN",
+      "dauer": 4.4,
+      "pause": 0.2,
+      "monster": "Schlaf, Kindlein, schlaf.",
+      "monster_text": "SCHLAF, KINDLEIN, SCHLAF."
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Die Kamera hat nie das Baby gefilmt. Sie hat ihn gefilmt. Hinter mir.",
+      "text": "SIE HAT IHN GEFILMT. HINTER MIR.",
+      "gelb": "HINTER",
+      "schreck": true,
+      "monster": "Psst. Das Baby schläft.",
+      "monster_text": "PSST. DAS BABY SCHLÄFT.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil zwei: Wer singt im Kinderzimmer?",
+      "text": "TEIL 2: WER SINGT IM KINDERZIMMER?",
+      "gelb": "SINGT",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

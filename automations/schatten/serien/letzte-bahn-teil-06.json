@@ -1,0 +1,106 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "zug",
+  "fahrgaeste": [
+    "zeitung",
+    "schlaf"
+  ],
+  "boesewicht": "schatten",
+  "held": {},
+  "titel": "Letzte Bahn – Teil 6",
+  "titelbild": "OHNE FAHRSCHEIN FÜR IMMER.",
+  "titelbild_gelb": "IMMER",
+  "caption": "Teil sechs. Wer keinen Fahrschein hat, fährt für immer mit. Hättest du ihm vertraut? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil sechs. Wer keinen Fahrschein hat, fährt für immer mit.",
+      "text": "TEIL 6: OHNE FAHRSCHEIN FÜR IMMER.",
+      "gelb": "IMMER",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Der Schaffner setzt sich hinter mich. Und wartet.",
+      "text": "ER SETZT SICH HINTER MICH.",
+      "gelb": "HINTER",
+      "angst": 0.7,
+      "pause": 0.1,
+      "naeher": 0.5
+    },
+    {
+      "art": "handy",
+      "sprich": "In meiner Handyhülle steckt ein alter Fahrschein. Von Mama.",
+      "text": "EIN ALTER FAHRSCHEIN. VON MAMA.",
+      "gelb": "MAMA",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Darauf steht: Für den Notfall. Steig bei Eins aus.",
+      "text": "STEIG BEI EINS AUS.",
+      "gelb": "EINS",
+      "zettel": [
+        "STEIG BEI",
+        "EINS AUS"
+      ],
+      "pause": 0.1,
+      "warnung": "NICHT VERLIEREN"
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Mama ist neunzehnhundertneunundneunzig auch mit dieser Bahn gefahren.",
+      "text": "MAMA FUHR 1999 AUCH MIT DIESER BAHN.",
+      "gelb": "1999",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "station",
+      "sprich": "Halt Eins. Ich springe raus.",
+      "text": "HALT EINS. ICH SPRINGE RAUS.",
+      "gelb": "EINS",
+      "pause": 0.2
+    },
+    {
+      "art": "winken",
+      "sprich": "Auf dem Bahnsteig wartet jemand und winkt. Ich denke: Mama.",
+      "text": "JEMAND WINKT. ICH DENKE: MAMA.",
+      "gelb": "MAMA",
+      "pause": 0.1
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Das war nicht Mama. Er hat ihren Fahrschein seit damals.",
+      "text": "ER HAT IHREN FAHRSCHEIN SEIT DAMALS.",
+      "gelb": "DAMALS",
+      "schreck": true,
+      "monster": "Danke fürs Zurückbringen.",
+      "monster_text": "DANKE FÜRS ZURÜCKBRINGEN.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil sieben: Was ist Mama damals passiert?",
+      "text": "TEIL 7: WAS IST MAMA DAMALS PASSIERT?",
+      "gelb": "MAMA",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

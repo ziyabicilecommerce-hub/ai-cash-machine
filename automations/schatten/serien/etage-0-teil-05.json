@@ -1,0 +1,115 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "aufzug",
+  "fahrgaeste": [],
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      70,
+      110,
+      90
+    ],
+    "oberteil": "jacke",
+    "kopf": "haare",
+    "haar": [
+      30,
+      24,
+      20
+    ],
+    "zopf": true,
+    "hose": [
+      40,
+      40,
+      52
+    ]
+  },
+  "titel": "Etage 0 – Teil 5",
+  "titelbild": "KEINE STUFEN NACH OBEN.",
+  "titelbild_gelb": "OBEN",
+  "caption": "Teil fünf. Ich nehme die Treppe. Sie hat keine Stufen nach oben. Treppe oder Aufzug? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil fünf. Ich nehme die Treppe. Sie hat keine Stufen nach oben.",
+      "text": "TEIL 5: KEINE STUFEN NACH OBEN.",
+      "gelb": "OBEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "leer",
+      "sprich": "Neben dem Aufzug: eine Tür zum Treppenhaus.",
+      "text": "EINE TÜR ZUM TREPPENHAUS.",
+      "gelb": "TREPPENHAUS",
+      "pause": 0.2
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne die Treppe hoch. Stockwerk für Stockwerk.",
+      "text": "STOCKWERK FÜR STOCKWERK.",
+      "gelb": "STOCKWERK",
+      "pause": 0.1
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Auf jeder Etage dasselbe Schild: Etage null.",
+      "text": "JEDE ETAGE: NULL.",
+      "gelb": "NULL",
+      "zettel": [
+        "ETAGE",
+        "NULL"
+      ],
+      "pause": 0.1,
+      "warnung": "NICHT STEHENBLEIBEN"
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ich laufe im Kreis. Seit einer Stunde.",
+      "text": "ICH LAUFE IM KREIS.",
+      "gelb": "KREIS",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "klopfen",
+      "sprich": "Dann klopft es. Von innen. An der Aufzugtür.",
+      "text": "ES KLOPFT AN DER AUFZUGTÜR.",
+      "gelb": "KLOPFT",
+      "schreck_bei": 1.0,
+      "pause": 0.2,
+      "monster": "Komm zurück in den Aufzug.",
+      "monster_text": "KOMM ZURÜCK IN DEN AUFZUG."
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Die Treppe führt immer zurück. Zu ihm.",
+      "text": "DIE TREPPE FÜHRT ZU IHM.",
+      "gelb": "IHM",
+      "schreck": true,
+      "monster": "Hier gibt es nur einen Weg.",
+      "monster_text": "HIER GIBT ES NUR EINEN WEG.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil sechs: Welcher Weg?",
+      "text": "TEIL 6: WELCHER WEG?",
+      "gelb": "WEG",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

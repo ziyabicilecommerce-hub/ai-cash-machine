@@ -1,0 +1,119 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "haus",
+  "fahrgaeste": [],
+  "boesewicht": "schatten",
+  "held": {
+    "farbe": [
+      200,
+      120,
+      60
+    ],
+    "oberteil": "hoodie",
+    "kopf": "haare",
+    "haar": [
+      214,
+      176,
+      100
+    ],
+    "hose": [
+      50,
+      56,
+      80
+    ]
+  },
+  "titel": "Babyphone – Teil 6",
+  "titelbild": "ICH RUFE DIE NUMMER AN.",
+  "titelbild_gelb": "NUMMER",
+  "caption": "Teil sechs. Ich rufe die Nummer an, die mich gebucht hat. Hättest du die Nummer angerufen? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil sechs. Ich rufe die Nummer an, die mich gebucht hat.",
+      "text": "TEIL 6: ICH RUFE DIE NUMMER AN.",
+      "gelb": "NUMMER",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "handy",
+      "sprich": "Es klingelt. Einmal. Zweimal.",
+      "text": "ES KLINGELT.",
+      "gelb": "KLINGELT",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ein Handy klingelt. Im Kinderzimmer.",
+      "text": "EIN HANDY KLINGELT. IM KINDERZIMMER.",
+      "gelb": "KINDERZIMMER",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "klinke",
+      "sprich": "Ich öffne die Tür zum Kinderzimmer.",
+      "text": "ICH ÖFFNE DIE TÜR.",
+      "gelb": "TÜR",
+      "schreck_bei": 0.6,
+      "dauer": 6.0,
+      "pause": 0.2
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Im Kinderbett liegt kein Baby. Nur ein Zettel.",
+      "text": "IM BETT: EIN ZETTEL.",
+      "gelb": "ZETTEL",
+      "zettel": [
+        "DANKE FÜRS",
+        "KOMMEN"
+      ],
+      "pause": 0.1,
+      "warnung": "NICHT UMDREHEN"
+    },
+    {
+      "art": "spiegel",
+      "sprich": "Im Fenster sehe ich mich. Und hinter mir ein Grinsen.",
+      "text": "HINTER MIR: EIN GRINSEN.",
+      "gelb": "GRINSEN",
+      "blitzbild": [
+        1.8
+      ],
+      "angst": 0.8,
+      "blick": 0.9,
+      "pause": 0.2
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Es gab nie ein Baby. Er hat mich gebucht.",
+      "text": "ER HAT MICH GEBUCHT.",
+      "gelb": "ER",
+      "schreck": true,
+      "monster": "Ich brauche immer eine Babysitterin.",
+      "monster_text": "ICH BRAUCHE IMMER EINE BABYSITTERIN.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil sieben: Wie komme ich hier raus?",
+      "text": "TEIL 7: WIE KOMME ICH HIER RAUS?",
+      "gelb": "RAUS",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

@@ -1,0 +1,118 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "aufzug",
+  "fahrgaeste": [],
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      70,
+      110,
+      90
+    ],
+    "oberteil": "jacke",
+    "kopf": "haare",
+    "haar": [
+      30,
+      24,
+      20
+    ],
+    "zopf": true,
+    "hose": [
+      40,
+      40,
+      52
+    ]
+  },
+  "titel": "Etage 0 – Teil 4",
+  "titelbild": "OBEN BRENNT LICHT. ICH BIN UNTEN.",
+  "titelbild_gelb": "UNTEN",
+  "caption": "Teil vier. Oben in meiner Wohnung brennt Licht. Aber ich bin hier unten. Wie viele Jahre würdest du riskieren? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil vier. Oben in meiner Wohnung brennt Licht. Aber ich bin hier unten.",
+      "text": "TEIL 4: OBEN BRENNT LICHT. ICH BIN UNTEN.",
+      "gelb": "UNTEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich renne zurück in den Aufzug.",
+      "text": "ZURÜCK IN DEN AUFZUG.",
+      "gelb": "AUFZUG",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Meine Nachbarin schreibt: Schön, dass du wieder da bist! Du warst ewig weg.",
+      "text": "NACHBARIN: DU WARST EWIG WEG.",
+      "gelb": "EWIG",
+      "absender": "Nachbarin",
+      "nachricht": "Schön, dass du wieder da bist! Du warst ja ewig weg.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Ich war nie weg. Ich war nur im Aufzug.",
+      "text": "ICH WAR NUR IM AUFZUG.",
+      "gelb": "AUFZUG",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "spiegel",
+      "sprich": "Im Spiegel des Aufzugs sehe ich älter aus. Viel älter.",
+      "text": "IM SPIEGEL SEHE ICH VIEL ÄLTER AUS.",
+      "gelb": "ÄLTER",
+      "blitzbild": [
+        1.8
+      ],
+      "angst": 0.75,
+      "blick": 0.9,
+      "pause": 0.2
+    },
+    {
+      "art": "innen",
+      "sprich": "Die Anzeige springt wild hin und her.",
+      "text": "DIE ANZEIGE SPRINGT WILD.",
+      "gelb": "WILD",
+      "angst": 0.8,
+      "pause": 0.1,
+      "naeher": 0.5
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Jede Fahrt kostet ein Jahr. Und ich fahre seit Stunden.",
+      "text": "JEDE FAHRT KOSTET EIN JAHR.",
+      "gelb": "JAHR",
+      "schreck": true,
+      "monster": "Noch eine Runde?",
+      "monster_text": "NOCH EINE RUNDE?",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil fünf: Wie viele Jahre habe ich noch?",
+      "text": "TEIL 5: WIE VIELE JAHRE HABE ICH NOCH?",
+      "gelb": "JAHRE",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}

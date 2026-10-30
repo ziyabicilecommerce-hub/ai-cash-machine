@@ -1,0 +1,119 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+16%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "ort": "zug",
+  "fahrgaeste": [
+    "zeitung",
+    "schlaf"
+  ],
+  "boesewicht": "schatten",
+  "held": {},
+  "titel": "Letzte Bahn – Teil 5",
+  "titelbild": "DIESE BAHN FÄHRT ZURÜCK.",
+  "titelbild_gelb": "ZURÜCK",
+  "caption": "Teil fünf. Diese Bahn fährt nicht nach Hause. Sie fährt zurück. In die Vergangenheit. Hättest du einen Fahrschein gehabt? 👇",
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil fünf. Diese Bahn fährt nicht nach Hause. Sie fährt zurück. In die Vergangenheit.",
+      "text": "TEIL 5: DIESE BAHN FÄHRT ZURÜCK.",
+      "gelb": "ZURÜCK",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.85
+    },
+    {
+      "art": "innen",
+      "sprich": "Draußen ziehen Stationen vorbei. Mit Namen von früher.",
+      "text": "STATIONEN MIT NAMEN VON FRÜHER.",
+      "gelb": "FRÜHER",
+      "angst": 0.5,
+      "pause": 0.1,
+      "fahrgaeste": [
+        "zeitung"
+      ]
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Die Zeitung neben mir ist von neunzehnhundertneunundneunzig. Letzte Bahn spurlos verschwunden.",
+      "text": "LETZTE BAHN SPURLOS VERSCHWUNDEN.",
+      "gelb": "SPURLOS",
+      "schreck": true,
+      "pause": 0.4,
+      "zeitung": {
+        "zeilen": [
+          "LETZTE BAHN",
+          "SPURLOS",
+          "VERSCHWUNDEN"
+        ],
+        "datum": "SAMSTAG, 30. OKTOBER 1999",
+        "unter": "Die Fahrgäste wurden nie gefunden"
+      }
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Wir sitzen in der Bahn, die damals verschwunden ist.",
+      "text": "WIR SIND IN DER BAHN VON DAMALS.",
+      "gelb": "DAMALS",
+      "angst": 0.8,
+      "augen_bei": 1.2,
+      "pause": 0.2
+    },
+    {
+      "art": "handy",
+      "sprich": "Mein Handy hat kein Netz. Es gibt noch kein Netz.",
+      "text": "ES GIBT NOCH KEIN NETZ.",
+      "gelb": "NETZ",
+      "angst": 0.6,
+      "pause": 0.1
+    },
+    {
+      "art": "scheibe",
+      "sprich": "Etwas schlägt gegen das Fenster. Das Glas zerspringt!",
+      "text": "DAS GLAS ZERSPRINGT!",
+      "gelb": "ZERSPRINGT",
+      "schlag": 0.3,
+      "schreck_bei": 2.0,
+      "pause": 0.4
+    },
+    {
+      "art": "decke",
+      "sprich": "Über mir kratzt etwas am Dach.",
+      "text": "ÜBER MIR KRATZT ETWAS.",
+      "gelb": "KRATZT",
+      "stille": true,
+      "warnung": "NICHT HOCHSCHAUEN",
+      "monster": "Fahrschein, bitte.",
+      "monster_text": "FAHRSCHEIN, BITTE.",
+      "pause": 0.3
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Der Schaffner hat kein Gesicht. Nur ein Grinsen.",
+      "text": "DER SCHAFFNER HAT NUR EIN GRINSEN.",
+      "gelb": "GRINSEN",
+      "schreck": true,
+      "monster": "Ihr Fahrschein ist abgelaufen.",
+      "monster_text": "IHR FAHRSCHEIN IST ABGELAUFEN.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil sechs: Was passiert ohne Fahrschein?",
+      "text": "TEIL 6: WAS PASSIERT OHNE FAHRSCHEIN?",
+      "gelb": "FAHRSCHEIN",
+      "pause": 0.8
+    }
+  ],
+  "teile": 8
+}
