@@ -5,7 +5,7 @@
 //  - Lagerstatus der Produkte aus GitHub-Issues mit dem Label "restock"; bei Restock kommt ein Kommentar ins Issue
 //    (= Push-Benachrichtigung über die GitHub-App) und die Uhrzeit wird für das Restock-Muster gespeichert.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { bildBegriffe, bingBild, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
+import { kurseFortschreiben, bildBegriffe, bingBild, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
 
 const ORDNER = 'automations-dashboard/reselling';
 const DATEN = `${ORDNER}/daten.json`;
@@ -228,6 +228,9 @@ async function main() {
   const pokeFrisch = alt.pokemon?.stand && Date.now() - Date.parse(alt.pokemon.stand) < 55 * 60000 && alt.pokemon.geprueft;
   const poke = pokeFrisch ? alt.pokemon
     : { ...(await teil('Pokémon-Preise', pokemon, alt.pokemon || { picks: [], sets: [] })), stand: new Date().toISOString() };
+  // Kursverlauf nur bei frischen Preisen fortschreiben (stündlich) und an die Picks hängen
+  if (!pokeFrisch) verlauf.kurse = kurseFortschreiben(verlauf.kurse, poke.picks || []);
+  for (const k of poke.picks || []) k.kurs = (verlauf.kurse?.[k.id] || []).map(([, v]) => v);
   const hype = await teil('Google Trends', trends, alt.trends || { ware: [], top: [] });
   const beobachtet = await teil('Beobachtungsliste', issues, []);
   const live = await teil('Live-Shops', liveShops, alt.live || { treffer: [], erreicht: [] });

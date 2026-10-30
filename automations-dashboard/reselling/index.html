@@ -76,6 +76,32 @@
   nav { position:fixed; left:10px; right:10px; bottom:calc(8px + env(safe-area-inset-bottom)); display:flex; background:#141829d9; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid var(--rand); border-radius:22px; max-width:700px; margin:0 auto; }
   nav button { flex:1; background:none; border:0; color:var(--leise); padding:9px 0 9px; font-size:11.5px; font-weight:650; display:flex; flex-direction:column; align-items:center; gap:2px; }
   nav button .ic { font-size:22px; transition:transform .15s; } nav button.aktiv { color:var(--text); } nav button.aktiv .ic { transform:scale(1.18); }
+  /* Pro-Terminal */
+  .rot { color:#ff5c7a; }
+  .ticker { overflow:hidden; white-space:nowrap; margin:8px 0 0; border-block:1px solid var(--rand); background:#0b0e1acc; font:600 12px ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .ticker .band { display:inline-block; padding:6px 0; animation:laufen 60s linear infinite; }
+  .ticker span { margin:0 18px; } .ticker .auf { color:var(--gruen); } .ticker .ab { color:#ff5c7a; }
+  @keyframes laufen { to { transform:translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .ticker .band { animation:none; } }
+  .karte-pro { background:var(--panel2); border:1px solid var(--rand); border-radius:18px; padding:14px; }
+  .lage { font-size:22px; font-weight:900; letter-spacing:.02em; } .lage.gruen { color:var(--gruen); } .lage.rot { color:#ff5c7a; } .lage.gelb { color:var(--gelb); }
+  .balken { display:flex; height:10px; border-radius:99px; overflow:hidden; margin:10px 0 8px; gap:2px; }
+  .balken i.g { background:var(--gruen); } .balken i.n { background:#58607e; } .balken i.r { background:#ff5c7a; }
+  .kpis { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin:8px 0; }
+  .kpi { background:var(--panel2); border:1px solid var(--rand); border-radius:16px; padding:12px; }
+  .kpi b { display:block; font-size:20px; font-weight:850; font-variant-numeric:tabular-nums; } .kpi span { color:var(--leise); font-size:12px; }
+  .signal { background:var(--panel2); border:1px solid var(--rand); border-radius:18px; padding:10px; margin-bottom:10px; }
+  .signal .oben { display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; }
+  .sig { font-size:11px; font-weight:900; padding:4px 9px; border-radius:8px; letter-spacing:.04em; white-space:nowrap; }
+  .sig.sb { background:#3ef2a0; color:#03140c; box-shadow:0 0 14px #3ef2a066; } .sig.b { background:#3ef2a033; color:var(--gruen); }
+  .sig.h { background:#ffd45c26; color:var(--gelb); } .sig.p { background:#ff5c7a26; color:#ff5c7a; }
+  .score { font-size:11px; color:var(--leise); font-variant-numeric:tabular-nums; }
+  .zahlen { display:grid; grid-template-columns:84px repeat(3,1fr); gap:8px 6px; align-items:center; margin-top:10px; font-variant-numeric:tabular-nums; }
+  .zahlen .spark { grid-row:span 2; width:84px; height:30px; }
+  .zahlen div span { display:block; font-size:10.5px; color:var(--leise); } .zahlen div b { font-size:13.5px; }
+  .mini { margin-top:8px; background:#ffffff0d; border:1px solid var(--rand); color:var(--text); border-radius:10px; padding:7px 10px; font-size:12.5px; font-weight:700; }
+  .mini.weg { margin:0; padding:4px 8px; }
+  @media (min-width:520px) { .kpis { grid-template-columns:repeat(4,1fr); } }
 </style>
 </head>
 <body>
@@ -85,6 +111,7 @@
   <button class="rund" id="teilen" type="button">📲 Teilen</button>
 </header>
 <p class="stand"><span class="puls"></span><span id="stand">Lade …</span></p>
+<div class="ticker" id="ticker" hidden></div>
 <main>
   <section id="hype" class="aktiv">
     <h2>🔥 Gerade im Hype</h2>
@@ -96,6 +123,26 @@
     <h2>🏆 Hype-Liste</h2>
     <div class="chips" id="hypefilter"></div>
     <div id="hypeliste"></div>
+  </section>
+
+  <section id="pro">
+    <h2>📈 Pro-Terminal</h2>
+    <div class="karte-pro" id="stimmung"></div>
+    <div class="kpis" id="kpis"></div>
+    <h2>🎯 Signale</h2>
+    <p class="klein">Einstieg = günstigstes Cardmarket-Angebot, Ziel = Marktpreis. Gewinn schon nach 5 % Gebühr und 1,50 € Versand.</p>
+    <div class="chips" id="prosort"></div>
+    <div id="signale"></div>
+    <h2>💼 Mein Depot</h2>
+    <div class="kpis" id="depotsumme"></div>
+    <div id="depot"></div>
+    <details><summary>🧠 Profi-Regeln</summary><div><ul class="tipp">
+      <li><b>Nie mehr als 10–20 %</b> vom Budget in einen Trade.</li>
+      <li><b>Spread prüfen:</b> das billigste Angebot ist oft schlechter Zustand oder andere Sprache - auf „Near Mint“ + Deutsch/Englisch filtern.</li>
+      <li><b>Stop-Loss:</b> fällt der Marktpreis 15 % unter deinen Einstand, verkaufen statt hoffen.</li>
+      <li><b>Kaufen bei Angst, verkaufen bei Hype:</b> 3–6 Wochen nach Release kaufen, vor Weihnachten verkaufen.</li>
+      <li>Signale sind Rechnungen aus echten Preisen - keine Garantie und keine Anlageberatung.</li>
+    </ul></div></details>
   </section>
 
   <section id="kalender">
@@ -156,11 +203,13 @@
 </main>
 <nav id="nav">
   <button data-ziel="hype" class="aktiv"><span class="ic">🔥</span>Hype</button>
+  <button data-ziel="pro"><span class="ic">📈</span>Pro</button>
   <button data-ziel="kalender"><span class="ic">🗓️</span>Saison</button>
   <button data-ziel="kaufen"><span class="ic">🛒</span>Lager</button>
   <button data-ziel="laeden"><span class="ic">📍</span>Läden</button>
   <button data-ziel="mehr"><span class="ic">☰</span>Mehr</button>
 </nav>
 <script src="app.js"></script>
+<script src="pro.js"></script>
 </body>
 </html>

@@ -67,10 +67,23 @@ test('linksAus: Produkt-Links aus dem Issue, ohne GitHub-Links und Dubletten', (
 
 test('kartenPicks: steigt nichts deutlich, kommen die besten Bewegungen markiert statt einer leeren Liste', async () => {
   const { kartenPicks: picks, kartenStatistik } = await import('../../automations/lib/resellingRadar.mjs');
-  const leicht = [karte('x', { lowPrice: 20, trendPrice: 22, avg1: 22, avg30: 21 }), karte('y', { lowPrice: 20, trendPrice: 20, avg1: 19, avg30: 21 })];
+  // x: günstiges Angebot unter Marktpreis (Spread) = Gewinn möglich; y: kein Gewinn nach Gebühren -> raus
+  const leicht = [karte('x', { lowPrice: 15, trendPrice: 22, avg1: 22, avg30: 21 }), karte('y', { lowPrice: 20, trendPrice: 20, avg1: 19, avg30: 21 })];
   const p = picks(leicht);
-  assert.deepEqual(p.map((k) => [k.id, k.nurBewegung]), [['x', true]]);
-  assert.deepEqual(kartenStatistik([...leicht, karte('z', {})]), { karten: 3, mitPreis: 2, imBudget: 2, steigend: 0 });
+  assert.deepEqual(p.map((k) => [k.id, k.nurBewegung, k.profi.signal]), [['x', true, 'HOLD']]);
+  assert.deepEqual(kartenStatistik([...leicht, karte('z', {})]), { karten: 3, mitPreis: 2, imBudget: 2, steigend: 0, fallend: 1 });
+});
+
+test('profiAnalyse: Gewinn nach Gebühren, ROI, Signal - und Kursverlauf', async () => {
+  const { profiAnalyse, kurseFortschreiben } = await import('../../automations/lib/resellingRadar.mjs');
+  const a = profiAnalyse({ prozent: 20, preis: { tief: 10, trend: 25, schnitt7: 24 } });
+  assert.equal(a.gewinn, 21.3 - 10);  // 24 * 0,95 - 1,5 Versand - 10 Einstieg
+  assert.equal(a.signal, 'STRONG BUY');
+  assert.equal(profiAnalyse({ prozent: -12, preis: { tief: 10, trend: 30 } }).signal, 'PASS');
+  assert.equal(profiAnalyse({ prozent: 0, preis: { tief: 20, trend: 21 } }).signal, 'PASS');
+  const jetzt = new Date('2026-10-30T12:00:00Z');
+  const k = kurseFortschreiben({ a: [['2026-10-01T00:00:00Z', 5], ['2026-10-30T11:00:00Z', 9]], weg: [['2026-10-30T11:00:00Z', 1]] }, [{ id: 'a', preis: { trend: 10 } }], jetzt);
+  assert.deepEqual(k, { a: [['2026-10-30T11:00:00Z', 9], ['2026-10-30T12:00:00.000Z', 10]] });
 });
 
 test('shopifyTreffer: nur verfügbare Artikel, absolute Kauflinks, Preis als Zahl', async () => {

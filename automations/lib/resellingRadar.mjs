@@ -24,21 +24,42 @@ export function kartenSignal(karte) {
   };
 }
 
-// Picks fürs Budget: kaufbar bis maxEuro, wiederverkaufbar (Trend über minEuro), stärkster Anstieg zuerst.
-// Steigt gerade nichts deutlich, kommen die Karten mit der besten Bewegung (markiert), statt einer leeren Liste.
-export function kartenPicks(karten, { minEuro = 8, maxEuro = 40, anzahl = 30 } = {}) {
-  const imBudget = karten.map(kartenSignal).filter(Boolean)
-    .filter((k) => k.preis.trend >= minEuro && (k.preis.tief ?? k.preis.trend) <= maxEuro)
-    .sort((a, b) => b.prozent - a.prozent || b.preis.trend - a.preis.trend);
-  const steigend = imBudget.filter((k) => k.signal === 'steigt');
-  return (steigend.length ? steigend : imBudget.filter((k) => k.prozent > 0).map((k) => ({ ...k, nurBewegung: true }))).slice(0, anzahl);
+// Profi-Analyse wie im Trading: Einstieg (günstigstes Angebot), Ziel (Marktpreis), Gewinn nach Cardmarket-Gebühr + Versand,
+// ROI, Momentum (7 gegen 30 Tage) und daraus ein Score 0-100 mit Signal STRONG BUY / BUY / HOLD / PASS.
+export function profiAnalyse(k, { gebuehr = 0.05, versand = 1.5 } = {}) {
+  const p = k.preis || {};
+  const einstieg = p.tief ?? p.trend;
+  const ziel = Math.min(p.trend, p.schnitt7 ?? p.trend);  // vorsichtig: das kleinere von Trend und Wochenschnitt
+  const gewinn = runden(ziel * (1 - gebuehr) - versand - einstieg);
+  const roi = Math.round((gewinn / einstieg) * 100);
+  const momentum = k.prozent ?? 0;
+  const score = Math.max(0, Math.min(100, Math.round(40 + Math.min(roi, 100) * 0.35 + momentum * 1.5 + (gewinn >= 5 ? 8 : 0))));
+  const signal = momentum <= -8 || gewinn < 1 ? 'PASS' : score >= 75 ? 'STRONG BUY' : score >= 60 ? 'BUY' : score >= 45 ? 'HOLD' : 'PASS';
+  return { einstieg, ziel: runden(ziel), gewinn, roi, momentum, spread: runden(p.trend - einstieg), score, signal };
 }
 
-// Zahlen zur Kontrolle: wie viele Karten hatten Preise, wie viele im Budget, wie viele steigen?
+// Picks fürs Budget: kaufbar bis maxEuro, wiederverkaufbar (Trend über minEuro), bester Profi-Score zuerst.
+export function kartenPicks(karten, { minEuro = 8, maxEuro = 40, anzahl = 30 } = {}) {
+  return karten.map(kartenSignal).filter(Boolean)
+    .filter((k) => k.preis.trend >= minEuro && (k.preis.tief ?? k.preis.trend) <= maxEuro && k.signal !== 'fällt')
+    .map((k) => ({ ...k, profi: profiAnalyse(k), nurBewegung: k.signal !== 'steigt' }))
+    .filter((k) => k.profi.signal !== 'PASS' || k.signal === 'steigt')
+    .sort((a, b) => b.profi.score - a.profi.score || b.prozent - a.prozent)
+    .slice(0, anzahl);
+}
+
+// Kursverlauf je Karte (stündlich, 7 Tage) für die Mini-Charts
+export function kurseFortschreiben(kurse = {}, picks = [], jetzt = new Date()) {
+  const grenze = jetzt.getTime() - 7 * 86400000, neu = {};
+  for (const k of picks) neu[k.id] = [...(kurse[k.id] || []).filter(([t]) => Date.parse(t) >= grenze), [jetzt.toISOString(), k.preis.trend]].slice(-168);
+  return neu;
+}
+
+// Zahlen zur Kontrolle: wie viele Karten hatten Preise, wie viele im Budget, wie viele steigen/fallen (= Markt-Stimmung)?
 export function kartenStatistik(karten, { minEuro = 8, maxEuro = 40 } = {}) {
   const bewertet = karten.map(kartenSignal).filter(Boolean);
   const budget = bewertet.filter((k) => k.preis.trend >= minEuro && (k.preis.tief ?? k.preis.trend) <= maxEuro);
-  return { karten: karten.length, mitPreis: bewertet.length, imBudget: budget.length, steigend: budget.filter((k) => k.signal === 'steigt').length };
+  return { karten: karten.length, mitPreis: bewertet.length, imBudget: budget.length, steigend: budget.filter((k) => k.signal === 'steigt').length, fallend: budget.filter((k) => k.signal === 'fällt').length };
 }
 
 // Wann kaufen? Faustregel aus dem Kartenmarkt: kurz nach Release sind Einzelkarten am teuersten,
