@@ -12,18 +12,18 @@
   ],
   "3": [
    { "aktion": "kaufen", "name": "Neue LEGO-Sets zum Frühjahrs-Release", "q": "lego neuheiten", "kaufen": ["lego", "smyths", "mueller"], "warum": "Gefragte Sets laufen nach 1–2 Jahren aus und steigen." },
-   { "aktion": "verkaufen", "name": "Fahrräder, Inliner & Outdoor-Sachen", "q": "fahrrad", "verkaufen": ["kleinanzeigen", "ebaynah"], "warum": "Mit dem ersten warmen Wochenende steigt die Nachfrage." }
+   { "aktion": "verkaufen", "name": "Fahrräder, Inliner & Outdoor-Sachen", "q": "fahrrad", "verkaufen": ["kleinanzeigen", "ebaynah"], "warum": "Mit dem ersten warmen Wochenende steigt die Nachfrage.", "bild": "fahrrad" }
   ],
   "4": [
    { "aktion": "verkaufen", "name": "Oster-Geschenke & Spielzeug", "q": "ostergeschenk kinder", "verkaufen": ["kleinanzeigen", "ebaynah"], "warum": "Vor Ostern kaufen Eltern und Großeltern." },
-   { "aktion": "verkaufen", "name": "Sneaker & Sommer-Klamotten", "q": "sneaker", "verkaufen": ["vinted", "kleinanzeigen", "stockx"], "warum": "Frühling = Sneaker-Saison." }
+   { "aktion": "verkaufen", "name": "Sneaker & Sommer-Klamotten", "q": "sneaker", "verkaufen": ["vinted", "kleinanzeigen", "stockx"], "warum": "Frühling = Sneaker-Saison.", "bild": "sneaker" }
   ],
   "5": [
    { "aktion": "verkaufen", "name": "Festival- & Camping-Ausrüstung", "q": "zelt festival", "verkaufen": ["kleinanzeigen", "ebaynah"], "warum": "Vor der Festival-Saison im Juni/Juli gefragt." },
    { "aktion": "kaufen", "name": "Fußball-Trikots der alten Saison im Sale", "q": "trikot sale", "kaufen": ["adidas", "nike", "zalando"], "warum": "Zum Saisonende reduziert - Kult-Trikots steigen später." }
   ],
   "6": [
-   { "aktion": "verkaufen", "name": "Ventilatoren, Pools, Sommer-Spielzeug", "q": "ventilator", "verkaufen": ["kleinanzeigen", "ebaynah"], "warum": "Bei der ersten Hitzewelle sind die Läden leer." },
+   { "aktion": "verkaufen", "name": "Ventilatoren, Pools, Sommer-Spielzeug", "q": "ventilator", "verkaufen": ["kleinanzeigen", "ebaynah"], "warum": "Bei der ersten Hitzewelle sind die Läden leer.", "bild": "standventilator" },
    { "aktion": "kaufen", "name": "Turnier-Sticker & Trikots (bei EM/WM)", "q": "panini sticker", "kaufen": ["mueller", "kaufland", "amazon"], "warum": "Vollständige Alben und Sondertrikots sind nach dem Turnier gesucht." }
   ],
   "7": [
@@ -40,19 +40,19 @@
   ],
   "10": [
    { "aktion": "kaufen", "name": "Adventskalender (letzte Chance zum Ladenpreis)", "q": "adventskalender", "kaufen": ["douglas", "lego", "smyths", "mueller", "amazon"], "warum": "Ab November knapp - Weiterverkauf über Ladenpreis möglich." },
-   { "aktion": "kaufen", "name": "Weihnachts-Spielzeughits vor dem Ansturm", "q": "spielzeug bestseller", "kaufen": ["smyths", "mueller", "amazon", "otto"], "warum": "Die Hits des Jahres sind im Dezember ausverkauft." },
+   { "aktion": "kaufen", "name": "Weihnachts-Spielzeughits vor dem Ansturm", "q": "spielzeug bestseller", "kaufen": ["smyths", "mueller", "amazon", "otto"], "warum": "Die Hits des Jahres sind im Dezember ausverkauft.", "bild": "spielzeug bestseller 2026" },
    { "aktion": "verkaufen", "name": "Halloween-Kostüme & Deko", "q": "halloween kostüm", "verkaufen": ["kleinanzeigen", "vinted", "ebaynah"], "warum": "Nur bis 31. Oktober gefragt." }
   ],
   "11": [
-   { "aktion": "kaufen", "name": "Black Friday: Konsolen, Technik, LEGO", "q": "black friday angebote", "kaufen": ["mediamarkt", "saturn", "amazon", "otto", "lego"], "warum": "Tiefstpreise des Jahres - im Dezember teurer weiterverkaufbar." },
+   { "aktion": "kaufen", "name": "Black Friday: Konsolen, Technik, LEGO", "q": "black friday angebote", "kaufen": ["mediamarkt", "saturn", "amazon", "otto", "lego"], "warum": "Tiefstpreise des Jahres - im Dezember teurer weiterverkaufbar.", "bild": "black friday" },
    { "aktion": "verkaufen", "name": "Adventskalender (ausverkaufte Modelle)", "q": "adventskalender", "verkaufen": ["kleinanzeigen", "ebaynah", "vinted"], "warum": "Ab Mitte November zahlen Nachzügler mehr als den Ladenpreis." },
    { "aktion": "kaufen", "name": "Pokémon Weihnachts-Kollektionen & Top Trainer Boxen", "q": "pokemon kollektion", "kaufen": ["smyths", "mueller", "amazon", "pokemoncenter"], "warum": "Beliebtestes Geschenk - Restbestände steigen im Dezember." },
    { "aktion": "kaufen", "name": "Winterjacken & Daunenjacken", "q": "daunenjacke", "kaufen": ["zalando", "snipes"], "warum": "Mit dem ersten Frost steigt die Nachfrage auf Vinted." }
   ],
   "12": [
-   { "aktion": "verkaufen", "name": "Spielzeug-Hits & Konsolen", "q": "spielzeug", "verkaufen": ["kleinanzeigen", "ebaynah", "ebay"], "warum": "Bis 22. Dezember zahlen Eltern fast jeden Preis." },
+   { "aktion": "verkaufen", "name": "Spielzeug-Hits & Konsolen", "q": "spielzeug", "verkaufen": ["kleinanzeigen", "ebaynah", "ebay"], "warum": "Bis 22. Dezember zahlen Eltern fast jeden Preis.", "bild": "spielzeug weihnachten" },
    { "aktion": "verkaufen", "name": "Parfum-Sets & Ugly Christmas Sweater", "q": "weihnachtspullover", "verkaufen": ["vinted", "kleinanzeigen"], "warum": "Last-Minute-Geschenke und Weihnachtsfeiern." },
-   { "aktion": "kaufen", "name": "Nach Weihnachten: Restposten & Sale", "q": "sale", "kaufen": ["zalando", "mediamarkt", "smyths"], "warum": "Ab 27. Dezember stark reduziert - später wieder voll verkaufbar." }
+   { "aktion": "kaufen", "name": "Nach Weihnachten: Restposten & Sale", "q": "sale", "kaufen": ["zalando", "mediamarkt", "smyths"], "warum": "Ab 27. Dezember stark reduziert - später wieder voll verkaufbar.", "bild": "sale schild laden" }
   ]
  }
 }

@@ -8,6 +8,15 @@ const euro = (n) => (n == null ? '' : new Intl.NumberFormat('de-DE', { style: 'c
 const https = (u) => (/^https:\/\//.test(String(u || '')) ? u : String(u || '').startsWith('//') ? `https:${u}` : '');
 const leer = (text) => el('p', 'leer-text', text);
 const BERLIN = { timeZone: 'Europe/Berlin' };
+// In-App-Browsern (TikTok, Instagram …) gehen neue Tabs oft nicht auf - dort im selben Fenster öffnen.
+const IN_APP = /Instagram|FBAN|FBAV|TikTok|musical_ly|Bytedance|Snapchat|Twitter|Line\//i.test(navigator.userAgent);
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[target="_blank"]'); if (!a || !/^https?:/.test(a.href)) return;
+  e.preventDefault();
+  if (IN_APP) { location.href = a.href; return; }
+  const w = window.open(a.href, '_blank');  // geblockt (null) -> im selben Fenster
+  if (w) { try { w.opener = null; } catch { /* egal */ } } else location.href = a.href;
+});
 const tagText = (iso) => {
   const d = new Date(iso), heute = new Date();
   const tag = (x) => new Intl.DateTimeFormat('de-DE', { ...BERLIN, year: 'numeric', month: '2-digit', day: '2-digit' }).format(x);
@@ -17,21 +26,57 @@ const tagText = (iso) => {
   return `${d.toLocaleDateString('de-DE', { ...BERLIN, weekday: 'short', day: '2-digit', month: '2-digit' })} ${uhr}`;
 };
 
-// Ein Eintrag: kleines Bild links, Name + Info, Preis rechts - tippen öffnet den Link
-function eintrag({ bild, emoji = '🛍️', name, info, preis, preisKlasse = '', marke, tag, link }) {
+// Bild mit Ersatz-Emoji, falls es nicht lädt
+function bildBox(cls, url, emoji) {
+  const b = el('div', `${cls} leer`, emoji);
+  const u = https(url);
+  if (u) {
+    const img = new Image(); img.loading = 'lazy'; img.alt = ''; img.referrerPolicy = 'no-referrer';
+    img.onload = () => { b.classList.remove('leer'); b.textContent = ''; b.style.backgroundImage = `url("${u.replace(/"/g, '')}")`; };
+    img.src = u;
+  }
+  return b;
+}
+// Ein Eintrag: Bild links, Name + Info, Preis rechts - tippen öffnet den Link
+function eintrag({ bild, emoji = '🛍️', name, info, preis, preisKlasse = '', marke, tag, tagKlasse = '', link }) {
   const a = el(link ? 'a' : 'div', 'eintrag');
   if (link) { a.href = link; a.target = '_blank'; a.rel = 'noopener'; }
-  const b = el('div', https(bild) ? 'bild' : 'bild leer', https(bild) ? '' : emoji);
-  if (https(bild)) b.style.backgroundImage = `url("${https(bild).replace(/"/g, '')}")`;
   const m = el('div', 'mitte'); m.append(el('div', 'name', name));
   if (info) m.append(el('div', 'info', info));
   if (marke) m.append(el('span', 'marke', marke));
   const r = el('div', 'rechts');
-  if (tag) r.append(el('span', 'tag', tag));
+  if (tag) r.append(el('span', `tag ${tagKlasse}`, tag));
   if (preis) r.append(el('div', `preis ${preisKlasse}`, preis));
-  a.append(b, m, r);
+  a.append(bildBox('bild', bild, emoji), m, r);
   return a;
 }
+// Große Kachel fürs Karussell
+function kachel({ bild, emoji = '🔥', name, preis, badge, link }) {
+  const a = el(link ? 'a' : 'div', 'kachel');
+  if (link) { a.href = link; a.target = '_blank'; a.rel = 'noopener'; }
+  const t = el('div', 'txt'); t.append(el('div', 'n', name));
+  if (preis) t.append(el('div', 'p', preis));
+  a.append(bildBox('gross', bild, emoji), t);
+  if (badge) a.append(el('span', 'flamme', badge));
+  return a;
+}
+// Shop-Suchlink ({q} kodiert, {q-} mit Bindestrichen) und Shop-Knöpfe mit Logo
+const suchLink = (vorlage, q) => String(vorlage).replace('{q-}', encodeURIComponent(String(q).trim().replace(/\s+/g, '-'))).replace('{q}', encodeURIComponent(q));
+const alleShops = () => ({ ...(KATALOG?.verkaufen || {}), ...(KATALOG?.shops || {}) });
+function shopKnoepfe(ids, q, klasse, vorsatz = '') {
+  const shops = alleShops(), l = el('div', 'links');
+  for (const id of ids || []) {
+    const s = shops[id]; if (!s) continue;
+    const a = el('a', klasse); a.href = suchLink(s.suche, q); a.target = '_blank'; a.rel = 'noopener';
+    const logo = new Image(); logo.alt = ''; logo.loading = 'lazy'; logo.src = `https://www.google.com/s2/favicons?sz=64&domain=${new URL(s.suche.replace(/\{q-?\}/g, 'x')).hostname}`;
+    a.append(logo, document.createTextNode(`${vorsatz}${s.name}`)); l.append(a);
+  }
+  return l;
+}
+const ersterLink = (t) => { const id = [...(t.kaufen || []), ...(t.verkaufen || [])].find((x) => alleShops()[x]); return id ? suchLink(alleShops()[id].suche, t.q) : ''; };
+const bildFuer = (t) => BILDER[t.bild || t.q]?.url || '';
+const flammen = (n) => '🔥'.repeat(Math.max(1, Math.min(5, n || 1)));
+
 function chips(ziel, werte, aktiv, wahl) {
   $(ziel).replaceChildren(...werte.map((w) => { const c = el('button', `chip ${w === aktiv ? 'an' : ''}`, w); c.type = 'button'; c.onclick = () => wahl(w); return c; }));
 }
@@ -46,20 +91,17 @@ $('nav').addEventListener('click', (e) => {
 });
 try { const t = localStorage.getItem('tab'); if (t) document.querySelector(`nav button[data-ziel="${t}"]`)?.click(); } catch {}
 
-let D = {}, LAEDEN = [], KATALOG = null;
-const zustand = { saison: 'Alle', kal: 'Alle', kauf: 'Im Budget', laden: 'Alle', ladenZahl: 15, kat: 'Alle' };
+let D = {}, LAEDEN = [], KATALOG = null, HYPE = null, BILDER = {};
+const zustand = { hype: 'Alle', saison: 'Alle', kal: 'Alle', kauf: 'Im Budget', laden: 'Alle', ladenZahl: 15, kat: 'Alle' };
 
 // Saison: was in diesem Monat zu kaufen/verkaufen lohnt - mit Shop-Links; dazu passende Google-Suchen von heute
 let SAISON = null;
 const MONATE = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 function tippZeile(t) {
-  const shops = { ...(KATALOG?.verkaufen || {}), ...(KATALOG?.shops || {}) };
-  const such = (s) => shops[s]?.suche.replace('{q}', encodeURIComponent(t.q));
-  const box = el('div'); box.style.margin = '0 0 12px';
-  box.append(eintrag({ emoji: t.aktion === 'kaufen' ? '🛒' : '💶', name: t.name, info: t.warum, tag: t.aktion === 'kaufen' ? 'Jetzt kaufen' : 'Jetzt verkaufen' }));
-  const l = el('div', 'links');
-  for (const s of [...(t.kaufen || []), ...(t.verkaufen || [])]) if (shops[s]) { const a = el('a', t.aktion === 'kaufen' ? 'kauf' : 'verk2', shops[s].name); a.href = such(s); a.target = '_blank'; a.rel = 'noopener'; l.append(a); }
-  box.append(l);
+  const kauf = t.aktion === 'kaufen';
+  const box = el('div', 'gruppe');
+  box.append(eintrag({ bild: bildFuer(t), emoji: kauf ? '🛒' : '💶', name: t.name, info: t.warum, tag: kauf ? 'Jetzt kaufen' : 'Jetzt verkaufen', tagKlasse: kauf ? 'kaufen' : 'verkaufen', link: ersterLink(t) }));
+  box.append(shopKnoepfe(t.kaufen, t.q, 'kauf'), shopKnoepfe(t.verkaufen, t.q, 'verk', '💶 '));
   return box;
 }
 function saison() {
@@ -76,6 +118,25 @@ function saison() {
   $('saison').replaceChildren(...gesucht, ...zeig.map(tippZeile));
   $('baldtitel').textContent = `Vorbereiten für ${MONATE[naechster - 1]}`;
   $('bald').replaceChildren(...(SAISON.monate[naechster] || []).map(tippZeile));
+}
+
+function hype() {
+  if (HYPE) {
+    $('hypeinfo').textContent = HYPE.hinweis || '';
+    const liste = [...HYPE.produkte].sort((a, b) => (b.hype || 0) - (a.hype || 0));
+    $('hypekarussell').replaceChildren(...liste.map((p) => kachel({ bild: bildFuer(p), emoji: '🔥', name: p.name, preis: p.ek, badge: flammen(p.hype), link: ersterLink(p) })));
+    chips('hypefilter', ['Alle', ...new Set(liste.map((p) => p.kat))], zustand.hype, (w) => { zustand.hype = w; hype(); });
+    $('hypeliste').replaceChildren(...liste.filter((p) => zustand.hype === 'Alle' || p.kat === zustand.hype).map((p) => {
+      const box = el('div', 'gruppe');
+      box.append(eintrag({ bild: bildFuer(p), emoji: '🔥', name: p.name, info: p.warum, marke: p.kat, tag: flammen(p.hype), preis: p.ek, link: ersterLink(p) }));
+      box.append(shopKnoepfe(p.kaufen, p.q, 'kauf'), shopKnoepfe(p.verkaufen, p.q, 'verk', '💶 '));
+      return box;
+    }));
+  }
+  const karten = (D.pokemon?.picks || []).filter((k) => k.prozent > 0).map((k) => ({ bild: k.bild, emoji: '🃏', name: k.name, preis: euro(k.preis.tief ?? k.preis.trend), badge: `▲ ${k.prozent} %`, link: https(k.link) }));
+  const schuhe = (D.live?.treffer || []).filter((t) => https(t.bild)).slice(0, 12).map((t) => ({ bild: t.bild, emoji: '👟', name: t.titel, preis: euro(t.preis), badge: t.laden, link: https(t.url) }));
+  const live = [...karten.slice(0, 12), ...schuhe];
+  $('livekarussell').replaceChildren(...(live.length ? live.map(kachel) : [leer('Lädt gleich …')]));
 }
 
 function kalender() {
@@ -127,15 +188,10 @@ function mehr() {
 function katalog() {
   if (!KATALOG) return;
   chips('katfilter', ['Alle', ...new Set(KATALOG.produkte.map((p) => p.kat))], zustand.kat, (w) => { zustand.kat = w; katalog(); });
-  const shops = { ...KATALOG.verkaufen, ...KATALOG.shops };
-  const such = (s, q) => s.suche.replace('{q}', encodeURIComponent(q));
   $('katalog').replaceChildren(...KATALOG.produkte.filter((p) => zustand.kat === 'Alle' || p.kat === zustand.kat).map((p) => {
-    const box = el('div'); box.style.margin = '0 0 14px';
-    box.append(eintrag({ emoji: '📦', name: p.name, info: p.warum, marke: p.kat, preis: p.ek }));
-    const l = el('div', 'links');
-    for (const s of p.kaufen) if (shops[s]) { const a = el('a', '', shops[s].name); a.href = such(shops[s], p.q); a.target = '_blank'; a.rel = 'noopener'; l.append(a); }
-    for (const s of p.verkaufen) if (KATALOG.verkaufen[s]) { const a = el('a', 'verk', `💶 ${KATALOG.verkaufen[s].name}`); a.href = such(KATALOG.verkaufen[s], p.q); a.target = '_blank'; a.rel = 'noopener'; l.append(a); }
-    box.append(l);
+    const box = el('div', 'gruppe');
+    box.append(eintrag({ bild: bildFuer(p), emoji: '📦', name: p.name, info: p.warum, marke: p.kat, preis: p.ek, link: ersterLink(p) }));
+    box.append(shopKnoepfe(p.kaufen, p.q, 'kauf'), shopKnoepfe(p.verkaufen.filter((v) => KATALOG.verkaufen[v]), p.q, 'verk', '💶 '));
     return box;
   }));
 }
@@ -160,14 +216,16 @@ async function json(name) {
 }
 async function laden() {
   $('stand').textContent = 'Aktualisiere …';
-  const [d, l, k, sa] = await Promise.all([json('daten.json'), LAEDEN.length ? null : json('laeden.json'), KATALOG ? null : json('katalog.json'), SAISON ? null : json('saison.json')]);
+  const [d, l, k, sa, h, bi] = await Promise.all([json('daten.json'), LAEDEN.length ? null : json('laeden.json'), KATALOG ? null : json('katalog.json'), SAISON ? null : json('saison.json'), json('hype.json'), json('bilder.json')]);
   if (d) D = d;
   if (sa) SAISON = sa;
   if (l) LAEDEN = l.laeden || [];
   if (k) KATALOG = k;
+  if (h) HYPE = h;
+  if (bi) BILDER = bi.bilder || {};
   const alter = D.stand ? Math.round((Date.now() - Date.parse(D.stand)) / 60000) : null;
   $('stand').replaceChildren(document.createTextNode(alter == null ? 'Noch keine Daten' : 'Stand: '), ...(alter == null ? [] : [el('b', '', alter < 1 ? 'gerade eben' : `vor ${alter} Min.`), document.createTextNode(' · aktualisiert sich alle 10 Min.')]));
-  saison(); kalender(); kaufen(); laeden(); mehr(); katalog();
+  hype(); saison(); kalender(); kaufen(); laeden(); mehr(); katalog();
 }
 $('neuladen').addEventListener('click', laden);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) laden(); });

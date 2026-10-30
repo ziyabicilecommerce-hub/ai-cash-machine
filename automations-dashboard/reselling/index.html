@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow, noarchive">
 <title>Reselling-Radar</title>
 <meta name="description" content="Was jetzt in der Saison lohnt, Release-Kalender, was auf Lager ist und Läden um Hattersheim - einfach zum Weiterverkaufen.">
-<meta name="theme-color" content="#0b0f1a">
+<meta name="theme-color" content="#07080f">
 <meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,62 +15,90 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
-  :root { --bg:#0a0d16; --panel:#141a2b; --rand:#222b44; --text:#eef2fb; --leise:#8d9ab6; --gruen:#3ef2a0; --gelb:#ffd45c; --akzent:#7c5cff; }
+  :root { --bg:#07080f; --panel:#11142280; --panel2:#151a2e; --rand:#ffffff14; --text:#f3f5ff; --leise:#9aa3c2; --gruen:#3ef2a0; --gelb:#ffd45c; --akzent:#8b5cff; --pink:#ff4fd8; --orange:#ff8a3d; }
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   [hidden] { display:none !important; }
-  body { background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
+  body { background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; padding-bottom:calc(84px + env(safe-area-inset-bottom)); min-height:100vh;
+    background-image:radial-gradient(600px 300px at 10% -5%, #8b5cff33, transparent 70%), radial-gradient(500px 280px at 100% 0%, #ff4fd825, transparent 70%); background-attachment:fixed; }
   header { padding:calc(14px + env(safe-area-inset-top)) 16px 2px; display:flex; align-items:center; gap:8px; max-width:720px; margin:0 auto; }
-  h1 { font-size:21px; letter-spacing:-.02em; flex:1; } h1 span { color:var(--akzent); }
-  .rund { background:var(--panel); border:1px solid var(--rand); color:var(--text); border-radius:99px; padding:7px 11px; font-size:13px; }
-  .stand { color:var(--leise); font-size:12px; padding:2px 16px 0; max-width:720px; margin:0 auto; }
-  .stand b { color:var(--gruen); font-weight:600; }
+  h1 { font-size:24px; font-weight:850; letter-spacing:-.03em; flex:1; }
+  h1 span { background:linear-gradient(90deg,var(--akzent),var(--pink),var(--orange)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .rund { background:var(--panel2); border:1px solid var(--rand); color:var(--text); border-radius:99px; padding:8px 12px; font-size:13px; font-weight:600; }
+  .stand { color:var(--leise); font-size:12px; padding:2px 16px 0; max-width:720px; margin:0 auto; display:flex; align-items:center; gap:6px; }
+  .stand b { color:var(--gruen); font-weight:650; }
+  .puls { width:8px; height:8px; border-radius:50%; background:var(--gruen); box-shadow:0 0 0 0 #3ef2a0aa; animation:puls 2s infinite; flex:none; }
+  @keyframes puls { 70% { box-shadow:0 0 0 8px #3ef2a000; } 100% { box-shadow:0 0 0 0 #3ef2a000; } }
   main { padding:0 16px; max-width:720px; margin:0 auto; }
-  section { display:none; } section.aktiv { display:block; }
-  h2 { font-size:17px; margin:16px 0 8px; }
-  .klein { color:var(--leise); font-size:12.5px; line-height:1.4; }
-  .chips { display:flex; gap:6px; overflow-x:auto; padding:2px 0 10px; scrollbar-width:none; } .chips::-webkit-scrollbar { display:none; }
-  .chip { flex:none; font-size:13px; padding:7px 12px; border-radius:99px; background:#1b2340; color:var(--leise); border:0; }
-  .chip.an { background:var(--akzent); color:#fff; }
-  .eintrag { display:flex; gap:12px; align-items:center; background:var(--panel); border:1px solid var(--rand); border-radius:14px; padding:9px; margin-bottom:8px; text-decoration:none; color:inherit; }
-  .eintrag:active { transform:scale(.99); }
-  .bild { width:64px; height:64px; flex:none; border-radius:10px; background:#1b2340 center/cover no-repeat; display:grid; place-items:center; font-size:26px; }
-  .bild.leer { background:#1b2340; }
+  section { display:none; } section.aktiv { display:block; animation:rein .25s ease; }
+  @keyframes rein { from { opacity:0; transform:translateY(6px); } }
+  h2 { font-size:19px; font-weight:800; margin:18px 0 8px; letter-spacing:-.02em; }
+  .klein { color:var(--leise); font-size:12.5px; line-height:1.45; }
+  .chips { display:flex; gap:6px; overflow-x:auto; padding:4px 0 10px; scrollbar-width:none; } .chips::-webkit-scrollbar { display:none; }
+  .chip { flex:none; font-size:13px; font-weight:600; padding:8px 13px; border-radius:99px; background:var(--panel2); color:var(--leise); border:1px solid var(--rand); }
+  .chip.an { background:linear-gradient(90deg,var(--akzent),var(--pink)); color:#fff; border-color:transparent; }
+  /* Hype-Karussell: große Bilder zum Wischen */
+  .karussell { display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; padding:4px 0 12px; scrollbar-width:none; } .karussell::-webkit-scrollbar { display:none; }
+  .kachel { flex:none; width:150px; scroll-snap-align:start; text-decoration:none; color:inherit; background:var(--panel2); border:1px solid var(--rand); border-radius:18px; overflow:hidden; position:relative; }
+  .kachel .gross { height:150px; background:#fff center/contain no-repeat; display:grid; place-items:center; font-size:46px; }
+  .kachel .gross.leer { background:linear-gradient(135deg,#2a1f55,#4a1d48); }
+  .kachel .txt { padding:8px 10px 10px; } .kachel .n { font-size:13px; font-weight:700; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .kachel .p { font-size:15px; font-weight:800; margin-top:4px; color:var(--gruen); }
+  .kachel .flamme { position:absolute; top:8px; left:8px; background:#000000b0; backdrop-filter:blur(6px); color:#fff; font-size:11px; font-weight:800; padding:3px 8px; border-radius:99px; }
+  .eintrag { display:flex; gap:12px; align-items:center; background:var(--panel2); border:1px solid var(--rand); border-radius:18px; padding:10px; margin-bottom:8px; text-decoration:none; color:inherit; transition:transform .1s; }
+  a.eintrag:active, .kachel:active { transform:scale(.97); }
+  .bild { width:72px; height:72px; flex:none; border-radius:14px; background:#fff center/cover no-repeat; display:grid; place-items:center; font-size:30px; box-shadow:0 4px 14px #0006; }
+  .bild.leer { background:linear-gradient(135deg,#2a1f55,#4a1d48); }
   .mitte { flex:1; min-width:0; }
-  .name { font-weight:650; font-size:14.5px; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .name { font-weight:750; font-size:15px; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .info { color:var(--leise); font-size:12.5px; margin-top:3px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .rechts { text-align:right; flex:none; }
-  .preis { font-weight:750; font-size:15px; }
-  .marke { display:inline-block; font-size:11px; color:#c9ccff; background:#262f55; padding:2px 7px; border-radius:99px; margin-top:4px; }
+  .rechts { text-align:right; flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+  .preis { font-weight:800; font-size:15px; }
+  .marke { display:inline-block; font-size:11px; color:#d9d0ff; background:#8b5cff2e; padding:2px 8px; border-radius:99px; margin-top:5px; font-weight:600; }
   .gruen { color:var(--gruen); } .gelb { color:var(--gelb); }
-  .kauf { background:#16302a !important; color:#9ff0cf !important; } .verk2 { background:#3a2a12 !important; color:#ffd59a !important; }
-  .tag { font-size:11px; font-weight:700; color:#fff; background:var(--akzent); padding:3px 7px; border-radius:99px; display:inline-block; }
-  .knopf { display:block; text-align:center; background:var(--akzent); color:#fff; text-decoration:none; font-weight:650; padding:12px; border-radius:12px; margin:10px 0; border:0; width:100%; font-size:15px; }
+  .tag { font-size:11px; font-weight:800; color:#fff; background:linear-gradient(90deg,var(--akzent),var(--pink)); padding:4px 9px; border-radius:99px; display:inline-block; white-space:nowrap; }
+  .tag.kaufen { background:linear-gradient(90deg,#11b981,#3ef2a0); color:#03140c; } .tag.verkaufen { background:linear-gradient(90deg,var(--orange),#ffcf5c); color:#2a1300; }
+  .knopf { display:block; text-align:center; background:linear-gradient(90deg,var(--akzent),var(--pink)); color:#fff; text-decoration:none; font-weight:750; padding:13px; border-radius:14px; margin:10px 0; border:0; width:100%; font-size:15px; }
   .knopf.zweit { background:transparent; border:1px solid var(--rand); color:var(--text); }
   .leer-text { color:var(--leise); font-size:14px; padding:14px 2px; }
-  details { background:var(--panel); border:1px solid var(--rand); border-radius:14px; margin-bottom:8px; }
-  summary { padding:14px; font-weight:650; font-size:15px; list-style:none; cursor:pointer; } summary::-webkit-details-marker { display:none; }
+  details { background:var(--panel2); border:1px solid var(--rand); border-radius:18px; margin-bottom:8px; }
+  summary { padding:14px; font-weight:750; font-size:15px; list-style:none; cursor:pointer; } summary::-webkit-details-marker { display:none; }
   summary::after { content:'›'; float:right; color:var(--leise); } details[open] summary::after { content:'⌄'; }
   details > div { padding:0 14px 14px; }
   label { display:block; font-size:13px; color:var(--leise); margin:10px 0 4px; }
-  input, select { width:100%; background:#0e1322; border:1px solid var(--rand); color:var(--text); border-radius:10px; padding:11px; font-size:16px; }
-  .ergebnis { font-size:26px; font-weight:750; margin-top:12px; }
-  .links { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; } .links a { font-size:12.5px; text-decoration:none; background:#1c2440; padding:6px 9px; border-radius:9px; color:#cdd8ff; }
-  .links a.verk { background:#16302a; color:#9ff0cf; }
+  input, select { width:100%; background:#0b0e1a; border:1px solid var(--rand); color:var(--text); border-radius:12px; padding:11px; font-size:16px; }
+  .ergebnis { font-size:28px; font-weight:850; margin-top:12px; }
+  .gruppe { margin:0 0 14px; }
+  .links { display:flex; flex-wrap:wrap; gap:6px; margin:-2px 0 0 4px; }
+  .links a { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:650; text-decoration:none; background:#ffffff0d; border:1px solid var(--rand); padding:6px 10px 6px 6px; border-radius:99px; color:#dfe5ff; }
+  .links a img { width:18px; height:18px; border-radius:5px; background:#fff; }
+  .links a.verk { color:#ffd9a8; border-color:#ff8a3d40; } .links a.kauf { color:#a8ffdb; border-color:#3ef2a040; }
   .tipp li { margin:6px 0 6px 18px; font-size:14px; line-height:1.45; }
-  nav { position:fixed; left:0; right:0; bottom:0; display:flex; background:rgba(10,13,22,.97); border-top:1px solid var(--rand); padding-bottom:env(safe-area-inset-bottom); }
-  nav button { flex:1; background:none; border:0; color:var(--leise); padding:9px 0 10px; font-size:12px; display:flex; flex-direction:column; align-items:center; gap:3px; }
-  nav button .ic { font-size:22px; } nav button.aktiv { color:var(--text); }
+  nav { position:fixed; left:10px; right:10px; bottom:calc(8px + env(safe-area-inset-bottom)); display:flex; background:#141829d9; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid var(--rand); border-radius:22px; max-width:700px; margin:0 auto; }
+  nav button { flex:1; background:none; border:0; color:var(--leise); padding:9px 0 9px; font-size:11.5px; font-weight:650; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  nav button .ic { font-size:22px; transition:transform .15s; } nav button.aktiv { color:var(--text); } nav button.aktiv .ic { transform:scale(1.18); }
 </style>
 </head>
 <body>
 <header>
-  <h1>Reselling-<span>Radar</span></h1>
+  <h1>Reselling <span>Radar</span></h1>
   <button class="rund" id="neuladen" type="button" aria-label="Neu laden">↻</button>
   <button class="rund" id="teilen" type="button">📲 Teilen</button>
 </header>
-<p class="stand" id="stand">Lade …</p>
+<p class="stand"><span class="puls"></span><span id="stand">Lade …</span></p>
 <main>
-  <section id="kalender" class="aktiv">
+  <section id="hype" class="aktiv">
+    <h2>🔥 Gerade im Hype</h2>
+    <p class="klein" id="hypeinfo"></p>
+    <div class="karussell" id="hypekarussell"></div>
+    <h2>⚡ Steigt gerade (live)</h2>
+    <p class="klein">Pokémon-Karten mit steigendem Cardmarket-Preis und Hype-Sneaker, die gerade auf Lager sind.</p>
+    <div class="karussell" id="livekarussell"></div>
+    <h2>🏆 Hype-Liste</h2>
+    <div class="chips" id="hypefilter"></div>
+    <div id="hypeliste"></div>
+  </section>
+
+  <section id="kalender">
     <h2 id="saisontitel">🗓️ Jetzt dran</h2>
     <p class="klein" id="saisoninfo"></p>
     <div class="chips" id="saisonfilter"></div>
@@ -82,7 +110,7 @@
   </section>
 
   <section id="kaufen">
-    <h2>🔥 Jetzt auf Lager</h2>
+    <h2>🛒 Jetzt auf Lager</h2>
     <p class="klein" id="kaufinfo"></p>
     <div class="chips" id="kauffilter"></div>
     <div id="kauf"></div>
@@ -127,8 +155,9 @@
   </section>
 </main>
 <nav id="nav">
-  <button data-ziel="kalender" class="aktiv"><span class="ic">🗓️</span>Jetzt</button>
-  <button data-ziel="kaufen"><span class="ic">🔥</span>Kaufen</button>
+  <button data-ziel="hype" class="aktiv"><span class="ic">🔥</span>Hype</button>
+  <button data-ziel="kalender"><span class="ic">🗓️</span>Saison</button>
+  <button data-ziel="kaufen"><span class="ic">🛒</span>Lager</button>
   <button data-ziel="laeden"><span class="ic">📍</span>Läden</button>
   <button data-ziel="mehr"><span class="ic">☰</span>Mehr</button>
 </nav>

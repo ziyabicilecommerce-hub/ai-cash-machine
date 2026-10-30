@@ -5,12 +5,13 @@
 //  - Lagerstatus der Produkte aus GitHub-Issues mit dem Label "restock"; bei Restock kommt ein Kommentar ins Issue
 //    (= Push-Benachrichtigung über die GitHub-App) und die Uhrzeit wird für das Restock-Muster gespeichert.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
+import { bildBegriffe, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
 
 const ORDNER = 'automations-dashboard/reselling';
 const DATEN = `${ORDNER}/daten.json`;
 const VERLAUF = `${ORDNER}/verlauf.json`;
 const LAEDEN = `${ORDNER}/laeden.json`;
+const BILDER = `${ORDNER}/bilder.json`;
 const REPO = process.env.GITHUB_REPOSITORY || '';
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
 const BUDGET = Number(process.env.RESELLING_BUDGET || 40);
@@ -136,10 +137,46 @@ async function liveShops() {
 }
 
 // Release-Kalender: kommende Nike-SNKRS-Drops in Deutschland (Bild, Modell, Preis, Uhrzeit).
+// Nike ändert die Feed-Parameter ab und zu - deshalb mehrere Varianten, die erste funktionierende gewinnt.
 async function sneakerDrops() {
-  const url = 'https://api.nike.com/product_feed/threads/v3/?anchor=0&count=60&filter=marketplace(DE)&filter=language(de)'
-    + '&filter=upcoming(true)&filter=channelId(010794e5-35fe-4e32-aaff-cd2c74f89d61)&filter=exclusiveAccess(true,false)&sort=effectiveStartSellDateAsc';
-  return nikeDrops(await nochmal(() => holen(url, { json: true, kopf: { accept: 'application/json' } }), 2));
+  const basis = 'https://api.nike.com/product_feed/threads/v3/?anchor=0&count=60&filter=marketplace(DE)&filter=language(de)'
+    + '&filter=channelId(010794e5-35fe-4e32-aaff-cd2c74f89d61)&filter=exclusiveAccess(true,false)';
+  const varianten = [`${basis}&filter=upcoming(true)&sort=effectiveStartSellDateAsc`, `${basis}&filter=upcoming(true)`, basis, `${basis.replace('/v3/', '/v2/')}&filter=upcoming(true)`];
+  let letzter;
+  for (const url of varianten) {
+    try { return nikeDrops(await holen(url, { json: true, kopf: { accept: 'application/json', 'nike-api-caller-id': 'com.nike.commerce.snkrs.web' } })); } catch (e) { letzter = e; }
+  }
+  throw letzter;
+}
+
+// Vorschaubilder für Saison-Tipps und Katalog (fehlende sofort, sonst alle 14 Tage neu) + wöchentlicher Check der Shop-Links.
+async function bilder() {
+  const alt = lesen(BILDER, { bilder: {}, links: {} });
+  const begriffe = bildBegriffe(lesen(`${ORDNER}/saison.json`, {}), lesen(`${ORDNER}/katalog.json`, {}), lesen(`${ORDNER}/hype.json`, {}));
+  const faellig = begriffe.filter((b) => !alt.bilder[b]?.url || Date.now() - Date.parse(alt.bilder[b].stand) > 14 * 86400000).slice(0, 25);
+  for (const b of faellig) {
+    let bild = null;
+    try {
+      const vqd = ddgVqd(await holen(`https://duckduckgo.com/?q=${encodeURIComponent(b)}&iax=images&ia=images`));
+      if (vqd) bild = ddgBild(await holen(`https://duckduckgo.com/i.js?l=de-de&o=json&q=${encodeURIComponent(b)}&vqd=${vqd}&f=,,,,,&p=1`, { json: true, kopf: { referer: 'https://duckduckgo.com/' } }));
+    } catch (e) { log('Bildsuche', b, e.message); }
+    if (!bild) {
+      try { bild = commonsBild(await holen(`https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=5&gsrsearch=${encodeURIComponent(`${b} filetype:bitmap`)}&prop=imageinfo&iiprop=url&iiurlwidth=240`, { json: true })); } catch (e) { log('Commons', b, e.message); }
+    }
+    if (bild) alt.bilder[b] = { ...bild, stand: new Date().toISOString() };
+    await new Promise((r) => setTimeout(r, 1500));
+  }
+  if (!alt.linksStand || Date.now() - Date.parse(alt.linksStand) > 7 * 86400000) {
+    const k = lesen(`${ORDNER}/katalog.json`, {});
+    alt.links = {};
+    for (const [id, s] of Object.entries({ ...k.shops, ...k.verkaufen })) {
+      try { const r = await fetch(suchLink(s.suche, 'lego'), { headers: BROWSER, redirect: 'follow', signal: AbortSignal.timeout(20000) }); alt.links[id] = r.status; } catch (e) { alt.links[id] = e.message.slice(0, 60); }
+    }
+    alt.linksStand = new Date().toISOString();
+    log('Link-Check:', JSON.stringify(alt.links));
+  }
+  writeFileSync(BILDER, `${JSON.stringify(alt, null, 1)}\n`);
+  return Object.keys(alt.bilder).length;
 }
 
 // Läden vor Ort (50 km um Hattersheim) aus OpenStreetMap - einmal pro Woche reicht (oder wenn sich die Abfrage ändert).
@@ -194,6 +231,7 @@ async function main() {
   const beobachtet = await teil('Beobachtungsliste', issues, []);
   const live = await teil('Live-Shops', liveShops, alt.live || { treffer: [], erreicht: [] });
   const vorOrt = await teil('Läden vor Ort', laedenVorOrt, null);
+  const bildZahl = await teil('Bilder', bilder, 0);
   const drops = await teil('Sneaker-Kalender', sneakerDrops, alt.kalender?.filter((k) => k.kat === 'Sneaker') || []);
   const setTermine = (poke.sets || []).filter((x) => ['vorverkauf', 'hype'].includes(x.phase)).map((x) => ({
     titel: `Pokémon: ${x.name}`, farbe: x.phase === 'vorverkauf' ? 'Neues Set - vorbestellen' : 'Gerade erschienen', preis: null,
@@ -221,7 +259,7 @@ async function main() {
   const daten = { stand: jetzt, budget: BUDGET, kalender, pokemon: poke, trends: hype, live, produkte, restocks: verlauf.restocks.slice(-20).reverse(), muster: restockMuster(verlauf.restocks), fehler };
   writeFileSync(DATEN, `${JSON.stringify(daten, null, 1)}\n`);
   writeFileSync(VERLAUF, `${JSON.stringify(verlauf, null, 1)}\n`);
-  log(`fertig: ${kalender.length} Kalender-Termine, ${vorOrt?.laeden?.length || 0} Läden vor Ort, ${poke.picks?.length || 0} Karten-Picks, ${hype.ware?.length || 0} Ware-Trends, ${live.treffer?.length || 0} Live-Treffer bei ${live.erreicht?.length || 0} Shops, ${produkte.length} beobachtete Produkte, Fehler: ${fehler.length}`);
+  log(`fertig: ${kalender.length} Kalender-Termine, ${vorOrt?.laeden?.length || 0} Läden vor Ort, ${bildZahl} Bilder, ${poke.picks?.length || 0} Karten-Picks, ${hype.ware?.length || 0} Ware-Trends, ${live.treffer?.length || 0} Live-Treffer bei ${live.erreicht?.length || 0} Shops, ${produkte.length} beobachtete Produkte, Fehler: ${fehler.length}`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

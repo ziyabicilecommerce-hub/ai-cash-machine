@@ -141,3 +141,15 @@ test('Saison-Plan: jeder Monat hat Tipps, alle Shops gibt es im Katalog', async 
     }
   }
 });
+
+test('Bilder: Suchbegriffe, DuckDuckGo, Commons und Shop-Suchlinks', async () => {
+  const { bildBegriffe, ddgVqd, ddgBild, commonsBild, suchLink } = await import('../../automations/lib/resellingRadar.mjs');
+  const b = bildBegriffe({ monate: { 1: [{ q: 'lego' }, { q: 'x', bild: 'lego set' }] } }, { produkte: [{ q: 'lego' }] }, { produkte: [{ q: 'labubu' }] });
+  assert.deepEqual(b, ['labubu', 'lego', 'lego set']);
+  assert.equal(ddgVqd('foo vqd="4-1234-5678" bar'), '4-1234-5678');
+  assert.equal(ddgBild({ results: [{ thumbnail: 'http://x' }, { thumbnail: 'https://tse1.mm.bing.net/th?id=1', url: 'https://shop' }] }).url, 'https://tse1.mm.bing.net/th?id=1');
+  assert.equal(ddgBild({ results: [] }), null);
+  assert.equal(commonsBild({ query: { pages: { 2: { index: 2, imageinfo: [{ thumburl: 'https://b' }] }, 1: { index: 1, imageinfo: [{ thumburl: 'https://a' }] } } } }).url, 'https://a');
+  assert.equal(suchLink('https://www.kleinanzeigen.de/s-{q-}/k0', 'halloween kostüm'), 'https://www.kleinanzeigen.de/s-halloween-kost%C3%BCm/k0');
+  assert.equal(suchLink('https://www.amazon.de/s?k={q}', 'a b'), 'https://www.amazon.de/s?k=a%20b');
+});
