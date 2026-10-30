@@ -186,10 +186,14 @@ export function nikeDrops(json, heute = new Date()) {
   return raus.filter((d) => !gesehen.has(d.titel + d.zeit) && gesehen.add(d.titel + d.zeit)).sort((a, b) => a.zeit.localeCompare(b.zeit));
 }
 
-// Bilder für Saison-Tipps und Katalog: pro Suchbegriff ein kleines Vorschaubild (DuckDuckGo-Bildersuche, sonst Wikimedia Commons).
+// Bilder für Hype, Saison und Katalog: pro Suchbegriff ein kleines Vorschaubild (Bing-Bildersuche, sonst DuckDuckGo, sonst Wikimedia Commons).
 export const bildBegriffe = (saison = {}, katalog = {}, hype = {}) => [...new Set([
   ...(hype.produkte || []), ...Object.values(saison.monate || {}).flat(), ...(katalog.produkte || []),
 ].map((t) => t.bild || t.q).filter(Boolean))];
+export function bingBild(html) {
+  const m = String(html || '').match(/&quot;murl&quot;:&quot;(https?:\/\/.*?)&quot;.*?&quot;turl&quot;:&quot;(https:\/\/.*?)&quot;/);
+  return m ? { url: m[2].replace(/&amp;/g, '&'), quelle: m[1].replace(/&amp;/g, '&') } : null;
+}
 export const ddgVqd = (html) => String(html || '').match(/vqd=["']?([\d-]+)["']?/)?.[1] || '';
 export function ddgBild(json) {
   const r = (json?.results || []).find((x) => /^https:\/\//.test(x.thumbnail || ''));
