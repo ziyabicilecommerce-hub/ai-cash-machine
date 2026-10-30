@@ -185,3 +185,19 @@ export function nikeDrops(json, heute = new Date()) {
   const gesehen = new Set();
   return raus.filter((d) => !gesehen.has(d.titel + d.zeit) && gesehen.add(d.titel + d.zeit)).sort((a, b) => a.zeit.localeCompare(b.zeit));
 }
+
+// Bilder für Saison-Tipps und Katalog: pro Suchbegriff ein kleines Vorschaubild (DuckDuckGo-Bildersuche, sonst Wikimedia Commons).
+export const bildBegriffe = (saison = {}, katalog = {}, hype = {}) => [...new Set([
+  ...(hype.produkte || []), ...Object.values(saison.monate || {}).flat(), ...(katalog.produkte || []),
+].map((t) => t.bild || t.q).filter(Boolean))];
+export const ddgVqd = (html) => String(html || '').match(/vqd=["']?([\d-]+)["']?/)?.[1] || '';
+export function ddgBild(json) {
+  const r = (json?.results || []).find((x) => /^https:\/\//.test(x.thumbnail || ''));
+  return r ? { url: r.thumbnail, quelle: r.url || '' } : null;
+}
+export function commonsBild(json) {
+  const p = Object.values(json?.query?.pages || {}).sort((a, b) => (a.index || 0) - (b.index || 0)).find((x) => x.imageinfo?.[0]?.thumburl);
+  return p ? { url: p.imageinfo[0].thumburl, quelle: p.imageinfo[0].descriptionurl || '' } : null;
+}
+// Shop-Suchlink: {q} = URL-kodiert, {q-} = mit Bindestrichen (z. B. Kleinanzeigen)
+export const suchLink = (vorlage, q) => String(vorlage).replace('{q-}', encodeURIComponent(String(q).trim().replace(/\s+/g, '-'))).replace('{q}', encodeURIComponent(q));

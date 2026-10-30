@@ -27,19 +27,19 @@
   },
   "smyths": {
    "name": "Smyths Toys",
-   "suche": "https://www.smythstoys.com/de/de-de/search?text={q}"
+   "suche": "https://www.smythstoys.com/de/de-de/search/?text={q}"
   },
   "lego": {
    "name": "LEGO Shop",
    "suche": "https://www.lego.com/de-de/search?q={q}"
   },
   "pokemoncenter": {
-   "name": "Pokémon Center",
-   "suche": "https://www.pokemoncenter.com/de-de"
+   "name": "Cardmarket-Händler",
+   "suche": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString={q}"
   },
   "popmart": {
    "name": "Pop Mart",
-   "suche": "https://www.popmart.com/de"
+   "suche": "https://www.popmart.com/de/search?keyword={q}"
   },
   "nike": {
    "name": "Nike",
@@ -81,7 +81,7 @@
   },
   "kleinanzeigen": {
    "name": "Kleinanzeigen",
-   "suche": "https://www.kleinanzeigen.de/s-{q}/k0"
+   "suche": "https://www.kleinanzeigen.de/s-{q-}/k0"
   },
   "vinted": {
    "name": "Vinted",
@@ -153,7 +153,8 @@
     "ebaynah",
     "ebay"
    ],
-   "warum": "Steigende Karten zeigt dir der Karten-Tab mit echten Preisen."
+   "warum": "Steigende Karten zeigt dir der Karten-Tab mit echten Preisen.",
+   "bild": "pokemon karte selten"
   },
   {
    "name": "One Piece Card Game Booster",
@@ -278,7 +279,8 @@
     "ebaynah",
     "kleinanzeigen"
    ],
-   "warum": "Ausgelaufene Sets steigen über die Jahre im Preis."
+   "warum": "Ausgelaufene Sets steigen über die Jahre im Preis.",
+   "bild": "lego ideas set"
   },
   {
    "name": "Hot Wheels Premium & Treasure Hunts",
@@ -385,7 +387,8 @@
     "kleinanzeigen",
     "ebay"
    ],
-   "warum": "Gefragte Modelle im Sale unter Marktpreis kaufen."
+   "warum": "Gefragte Modelle im Sale unter Marktpreis kaufen.",
+   "bild": "nike dunk low"
   },
   {
    "name": "Socken & Accessoires von Hype-Marken",
@@ -402,7 +405,8 @@
     "ebaynah",
     "ebay"
    ],
-   "warum": "Collabs und limitierte Farben verkaufen sich schnell."
+   "warum": "Collabs und limitierte Farben verkaufen sich schnell.",
+   "bild": "nike socken weiß"
   },
   {
    "name": "Caps & Mützen (New Era, Carhartt)",
@@ -437,7 +441,8 @@
     "ebay",
     "kleinanzeigen"
    ],
-   "warum": "Sondertrikots sind oft schnell ausverkauft."
+   "warum": "Sondertrikots sind oft schnell ausverkauft.",
+   "bild": "fußball trikot retro"
   },
   {
    "name": "Vintage-Teile aus Second-Hand",
@@ -453,7 +458,8 @@
     "ebaynah",
     "ebay"
    ],
-   "warum": "Günstig finden, sauber fotografieren, teurer weiterverkaufen."
+   "warum": "Günstig finden, sauber fotografieren, teurer weiterverkaufen.",
+   "bild": "carhartt vintage jacke"
   },
   {
    "name": "Spiele-Sondereditionen (Switch, PS5)",
@@ -471,7 +477,8 @@
     "ebaynah",
     "kleinanzeigen"
    ],
-   "warum": "Limitierte Editionen steigen nach Ausverkauf."
+   "warum": "Limitierte Editionen steigen nach Ausverkauf.",
+   "bild": "nintendo switch collectors edition"
   },
   {
    "name": "amiibo",
@@ -507,7 +514,8 @@
     "ebaynah",
     "kleinanzeigen"
    ],
-   "warum": "Sonderfarben und Angebote unter Marktpreis."
+   "warum": "Sonderfarben und Angebote unter Marktpreis.",
+   "bild": "ps5 dualsense controller"
   },
   {
    "name": "Manga-Sondereditionen",
@@ -524,7 +532,8 @@
     "kleinanzeigen",
     "vinted"
    ],
-   "warum": "Limitierte Auflagen sind oft nach Wochen vergriffen."
+   "warum": "Limitierte Auflagen sind oft nach Wochen vergriffen.",
+   "bild": "manga box set"
   },
   {
    "name": "Vinyl (limitierte Pressungen)",
@@ -541,7 +550,8 @@
     "ebaynah",
     "kleinanzeigen"
    ],
-   "warum": "Farbige Sonderpressungen steigen im Wert."
+   "warum": "Farbige Sonderpressungen steigen im Wert.",
+   "bild": "colored vinyl schallplatte"
   },
   {
    "name": "Parfum-Proben & Mini-Sets",
@@ -559,7 +569,8 @@
     "kleinanzeigen",
     "ebay"
    ],
-   "warum": "Ausverkaufte Sets und Adventskalender sind gefragt."
+   "warum": "Ausverkaufte Sets und Adventskalender sind gefragt.",
+   "bild": "parfum miniaturen set"
   },
   {
    "name": "Beauty-Adventskalender",
@@ -648,7 +659,8 @@
     "ebaynah",
     "kleinanzeigen"
    ],
-   "warum": "Ausgelaufene Sammlersets steigen oft um 30–100 %."
+   "warum": "Ausgelaufene Sammlersets steigen oft um 30–100 %.",
+   "bild": "lego star wars ultimate collector series"
   },
   {
    "name": "Apple AirPods & Kopfhörer im Angebot",
@@ -701,7 +713,8 @@
     "ebay",
     "kleinanzeigen"
    ],
-   "warum": "Versiegelte Displays steigen nach Ausverkauf am stärksten."
+   "warum": "Versiegelte Displays steigen nach Ausverkauf am stärksten.",
+   "bild": "pokemon booster display"
   },
   {
    "name": "Winter- & Daunenjacken (North Face, Carhartt)",
