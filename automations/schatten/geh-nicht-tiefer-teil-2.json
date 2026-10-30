@@ -1,0 +1,159 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+12%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Antworte ihm nicht – Teil 2",
+  "ort": "wald",
+  "fahrgaeste": [
+    {
+      "wer": "schlaf_sitz",
+      "farbe": [
+        70,
+        112,
+        156
+      ]
+    }
+  ],
+  "titelbild": "ICH BIN UNTER DIR",
+  "titelbild_gelb": "UNTER",
+  "boesewicht": "hirsch",
+  "held": {
+    "farbe": [
+      220,
+      112,
+      40
+    ],
+    "oberteil": "jacke",
+    "kopf": "muetze",
+    "muetze_farbe": [
+      38,
+      58,
+      112
+    ],
+    "hose": [
+      60,
+      72,
+      58
+    ]
+  },
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil zwei. Ich habe meinen echten Freund gefunden. Er war nicht allein.",
+      "text": "TEIL 2: ER WAR NICHT ALLEIN.",
+      "gelb": "ALLEIN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.8
+    },
+    {
+      "art": "innen",
+      "sprich": "Morgengrauen. Das Ding neben mir tut so, als würde es schlafen.",
+      "text": "DAS DING NEBEN MIR TUT SO, ALS OB ES SCHLÄFT.",
+      "gelb": "DING",
+      "angst": 0.6,
+      "blick": 0.8,
+      "pause": 0.1
+    },
+    {
+      "art": "taschenlampe",
+      "sprich": "Ich schleiche in den Wald. Ich suche meinen echten Freund.",
+      "text": "ICH SUCHE MEINEN ECHTEN FREUND.",
+      "gelb": "ECHTEN",
+      "stille": true,
+      "dauer": 5.0,
+      "pause": 0.2
+    },
+    {
+      "art": "zettel2",
+      "sprich": "An einem Baum hängt sein Schal. Und ein Zettel: Ich bin unter dir.",
+      "text": "SEIN ZETTEL: ICH BIN UNTER DIR.",
+      "gelb": "UNTER",
+      "zettel": [
+        "ICH BIN",
+        "UNTER DIR"
+      ],
+      "warnung": "NICHT GRABEN",
+      "pause": 0.1
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Unter mir? Hier ist nur Erde.",
+      "text": "UNTER MIR? HIER IST NUR ERDE.",
+      "gelb": "ERDE",
+      "angst": 0.85,
+      "augen_bei": 1.4,
+      "pause": 0.3
+    },
+    {
+      "art": "rufen",
+      "sprich": "Dann höre ich ihn. Ganz leise. Aus dem Boden.",
+      "text": "ICH HÖRE IHN. AUS DEM BODEN.",
+      "gelb": "BODEN",
+      "pause": 0.2,
+      "monster": "Hilf mir. Ich bin hier unten.",
+      "monster_text": "HILF MIR. ICH BIN HIER UNTEN."
+    },
+    {
+      "art": "zelt",
+      "sprich": "Zurück im Zelt. Draußen geht wieder etwas herum. Diesmal sind es zwei Schritte.",
+      "text": "DRAUSSEN GEHT WIEDER ETWAS HERUM.",
+      "gelb": "WIEDER",
+      "stille": true,
+      "dauer": 6.0,
+      "pause": 0.2
+    },
+    {
+      "art": "schatten",
+      "sprich": "Zwischen den Bäumen steht es. Und neben ihm mein Freund. Er lächelt genauso.",
+      "text": "NEBEN IHM: MEIN FREUND. ER LÄCHELT GENAUSO.",
+      "gelb": "GENAUSO",
+      "pause": 0.2
+    },
+    {
+      "art": "licht",
+      "sprich": "Die Taschenlampe geht aus.",
+      "text": "DIE TASCHENLAMPE GEHT AUS.",
+      "gelb": "AUS",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Zwei Stimmen flüstern meinen Namen. Beide klingen wie ich.",
+      "text": "ZWEI STIMMEN. BEIDE KLINGEN WIE ICH.",
+      "gelb": "ICH",
+      "dauer": 4.6,
+      "pause": 0.2,
+      "monster": "Jetzt sind wir drei.",
+      "monster_text": "JETZT SIND WIR DREI."
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Es macht nicht nur Stimmen nach. Es macht Menschen nach.",
+      "text": "ES MACHT MENSCHEN NACH.",
+      "gelb": "MENSCHEN",
+      "schreck": true,
+      "monster": "Bleib bei uns.",
+      "monster_text": "BLEIB BEI UNS.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil drei: Wer von uns verlässt den Wald?",
+      "text": "TEIL 3: WER VON UNS VERLÄSST DEN WALD?",
+      "gelb": "VERLÄSST",
+      "pause": 0.8
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "stimme": "de-DE-FlorianMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+12%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Passagier 41 – Teil 2",
+  "ort": "flugzeug",
+  "fahrgaeste": [
+    {
+      "wer": "zeitung",
+      "farbe": [
+        96,
+        96,
+        104
+      ]
+    }
+  ],
+  "titelbild": "SIE HAT MICH NICHT GEZÄHLT",
+  "titelbild_gelb": "NICHT",
+  "boesewicht": "gremlin",
+  "held": {
+    "farbe": [
+      44,
+      56,
+      92
+    ],
+    "oberteil": "anzug",
+    "kopf": "haare",
+    "haar": [
+      46,
+      34,
+      26
+    ],
+    "hose": [
+      38,
+      44,
+      70
+    ]
+  },
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil zwei. Die Stewardess hat wieder gezählt. Diesmal hat sie mich ausgelassen.",
+      "text": "TEIL 2: DIESMAL HAT SIE MICH AUSGELASSEN.",
+      "gelb": "AUSGELASSEN",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.8
+    },
+    {
+      "art": "innen",
+      "sprich": "Flug sieben dreizehn landet. Aber draußen ist kein Licht. Kein Flughafen. Nichts.",
+      "text": "WIR LANDEN. DRAUSSEN: NICHTS.",
+      "gelb": "NICHTS",
+      "angst": 0.3,
+      "pause": 0.1
+    },
+    {
+      "art": "zaehlen",
+      "sprich": "Die Stewardess zählt ein letztes Mal. Achtunddreißig. Neununddreißig. Vierzig.",
+      "text": "SIE ZÄHLT EIN LETZTES MAL ...",
+      "gelb": "LETZTES",
+      "bis": 40,
+      "dauer": 5.4,
+      "pause": 0.2
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Vierzig. Mich hat sie nicht mitgezählt.",
+      "text": "VIERZIG. MICH HAT SIE NICHT GEZÄHLT.",
+      "gelb": "NICHT",
+      "angst": 0.85,
+      "augen_bei": 1.4,
+      "pause": 0.3
+    },
+    {
+      "art": "handy",
+      "sprich": "Mein Handy geht wieder an. Datum: dreißigster Oktober. Neunzehnhundertneunundneunzig.",
+      "text": "DATUM: 30. OKTOBER 1999.",
+      "gelb": "1999",
+      "angst": 0.7,
+      "pause": 0.2
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Eine Nachricht von Flug sieben dreizehn: Bitte bleiben Sie sitzen. Sie sind angekommen.",
+      "text": "BLEIBEN SIE SITZEN. SIE SIND ANGEKOMMEN.",
+      "gelb": "ANGEKOMMEN",
+      "absender": "Flug 713",
+      "nachricht": "Bitte bleiben Sie sitzen. Sie sind angekommen.",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "tueren",
+      "sprich": "Die Kabinentür geht auf. Draußen wartet jemand.",
+      "text": "DIE TÜR GEHT AUF. DRAUSSEN WARTET JEMAND.",
+      "gelb": "JEMAND",
+      "pause": 0.3
+    },
+    {
+      "art": "rennen",
+      "sprich": "Ich renne zum Cockpit. Hinter mir stehen alle vierzig Passagiere gleichzeitig auf.",
+      "text": "ALLE 40 PASSAGIERE STEHEN AUF.",
+      "gelb": "40",
+      "pause": 0.1
+    },
+    {
+      "art": "dunkel",
+      "sprich": "Das Cockpit ist leer. Nur eine Stimme aus dem Lautsprecher.",
+      "text": "DAS COCKPIT IST LEER.",
+      "gelb": "LEER",
+      "dauer": 4.6,
+      "pause": 0.2,
+      "monster": "Willkommen zu Hause.",
+      "monster_text": "WILLKOMMEN ZU HAUSE."
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Er ist an meiner Stelle ausgestiegen. Mit meinem Gesicht.",
+      "text": "ER IST AN MEINER STELLE AUSGESTIEGEN.",
+      "gelb": "STELLE",
+      "schreck": true,
+      "monster": "Jetzt bist du verschollen.",
+      "monster_text": "JETZT BIST DU VERSCHOLLEN.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "zeitung_nah",
+      "sprich": "Die Zeitung von heute: Flug sieben dreizehn nach siebenundzwanzig Jahren gelandet. Ein Passagier fehlt.",
+      "text": "FLUG 713 GELANDET. EIN PASSAGIER FEHLT.",
+      "gelb": "FEHLT",
+      "schreck": true,
+      "pause": 0.5,
+      "zeitung": {
+        "zeilen": [
+          "FLUG 713",
+          "NACH 27 JAHREN",
+          "GELANDET"
+        ],
+        "datum": "DONNERSTAG, 30. OKTOBER",
+        "unter": "Ein Passagier fehlt: Platz 13A"
+      }
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil drei: Wer ist an meiner Stelle zu Hause?",
+      "text": "TEIL 3: WER IST AN MEINER STELLE ZU HAUSE?",
+      "gelb": "ZU HAUSE",
+      "pause": 0.8
+    }
+  ]
+}

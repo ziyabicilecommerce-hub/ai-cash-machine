@@ -204,7 +204,7 @@ def bild(s, t, lt):
     elif art == 'fernseher':
         return fernseher(im, t, lt, s.get('dauer', 4))
     elif art == 'zaehlen':
-        return zaehlen(im, t, lt, s.get('dauer', 4), s.get('fahrgaeste', FAHRGAESTE[0]))
+        return zaehlen(im, t, lt, s.get('dauer', 4), s.get('fahrgaeste', FAHRGAESTE[0]), s.get('bis', 41))
     elif art == 'turbulenz':
         return turbulenz(im, t, lt, s.get('fahrgaeste', FAHRGAESTE[0]))
     elif art == 'fluegel':

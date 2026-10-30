@@ -165,7 +165,7 @@ def taschenlampe(im, lt, dauer, hintergrund):
 STEWARDESS = {'farbe': (150, 28, 40), 'oberteil': 'anzug', 'kopf': 'haare', 'haar': (30, 22, 18), 'zopf': True, 'hose': (40, 30, 36)}
 
 
-def zaehlen(im, t, lt, dauer, gaeste):
+def zaehlen(im, t, lt, dauer, gaeste, bis=41):
     # Flugzeug: die Stewardess geht durch den Gang und zählt - 38, 39, 40 ... 41
     innenraum(im, t, lt, licht=0.8, fahrt=False)
     lage = Image.new('RGBA', im.size, (0, 0, 0, 0))
@@ -174,8 +174,8 @@ def zaehlen(im, t, lt, dauer, gaeste):
     mensch(lage, 250, 812, angst=0.2 + 0.7 * p, blick=0.8)
     mensch(lage, 760 - 300 * p, 1010, s=1.15, sitzen=False, lauf=lt * 7 if p < 1 else None, blick=-0.6, stil=STEWARDESS)
     im.paste(lage, (0, 0), lage)
-    n = 38 + min(int(p * 4), 3)
-    rot = n == 41
+    n = 38 + min(int(p * (bis - 37)), bis - 38)
+    rot = n == bis
     f = ImageFont.truetype(SCHRIFT, 150 if rot else 120)
     zit = random.randint(-6, 6) if rot else 0
     ImageDraw.Draw(im).text((360 + zit, 300 + zit), str(n), font=f, fill=(230, 20, 20) if rot else (240, 240, 240),

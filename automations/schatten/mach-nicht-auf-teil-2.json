@@ -1,0 +1,154 @@
+{
+  "stimme": "de-DE-SeraphinaMultilingualNeural",
+  "tonhoehe": "+0Hz",
+  "tempo": "+12%",
+  "ton": "schlicht",
+  "ki_bilder": false,
+  "titel": "Es klopft – Teil 2",
+  "ort": "haus",
+  "fahrgaeste": [],
+  "titelbild": "NICHT AUSSCHALTEN",
+  "titelbild_gelb": "NICHT",
+  "boesewicht": "frau",
+  "held": {
+    "farbe": [
+      232,
+      168,
+      194
+    ],
+    "oberteil": "pyjama",
+    "kopf": "haare",
+    "haar": [
+      128,
+      74,
+      34
+    ],
+    "zopf": true,
+    "hose": [
+      200,
+      140,
+      170
+    ]
+  },
+  "szenen": [
+    {
+      "art": "blitz",
+      "sprich": "Teil zwei. Hinter dem Sofa lag eine Kamera. Sie lief seit zwanzig Jahren.",
+      "text": "TEIL 2: DIE KAMERA LIEF SEIT 20 JAHREN.",
+      "gelb": "20",
+      "schreck": true,
+      "pause": 0.1,
+      "angst": 0.8
+    },
+    {
+      "art": "innen",
+      "sprich": "Ich schaue hinter das Sofa. Da ist niemand. Nur eine alte Kamera.",
+      "text": "HINTER DEM SOFA: EINE ALTE KAMERA.",
+      "gelb": "KAMERA",
+      "angst": 0.4,
+      "pause": 0.1
+    },
+    {
+      "art": "zettel2",
+      "sprich": "Auf der Kamera klebt ein Zettel: Nicht ausschalten. Sonst sieht sie dich.",
+      "text": "NICHT AUSSCHALTEN. SONST SIEHT SIE DICH.",
+      "gelb": "SIEHT",
+      "zettel": [
+        "NICHT",
+        "AUSSCHALTEN"
+      ],
+      "warnung": "NICHT AUSSCHALTEN",
+      "pause": 0.1
+    },
+    {
+      "art": "fernseher",
+      "sprich": "Ich schalte sie trotzdem aus. Der Fernseher geht sofort wieder an.",
+      "text": "ICH SCHALTE SIE AUS. DER FERNSEHER GEHT AN.",
+      "gelb": "AN",
+      "stille": true,
+      "dauer": 5.2,
+      "pause": 0.2
+    },
+    {
+      "art": "live",
+      "sprich": "Jetzt zeigt er mein Zimmer. Live. Von oben.",
+      "text": "JETZT: MEIN ZIMMER. LIVE. VON OBEN.",
+      "gelb": "OBEN",
+      "dauer": 4.6,
+      "pause": 0.3
+    },
+    {
+      "art": "gesicht",
+      "sprich": "Von oben? Da ist doch nur die Decke.",
+      "text": "VON OBEN? DA IST NUR DIE DECKE.",
+      "gelb": "DECKE",
+      "angst": 0.85,
+      "augen_bei": 1.5,
+      "pause": 0.3
+    },
+    {
+      "art": "decke",
+      "sprich": "Etwas tropft auf mich. Dann berühren mich lange, nasse Haare.",
+      "text": "LANGE, NASSE HAARE BERÜHREN MICH.",
+      "gelb": "HAARE",
+      "stille": true,
+      "warnung": "NICHT HOCHSCHAUEN",
+      "monster": "Schau mich an.",
+      "monster_text": "SCHAU MICH AN.",
+      "pause": 0.3
+    },
+    {
+      "art": "klinke",
+      "sprich": "Ich renne zur Tür. Abgeschlossen. Und die Klinke bewegt sich von selbst.",
+      "text": "ABGESCHLOSSEN. DIE KLINKE BEWEGT SICH.",
+      "gelb": "KLINKE",
+      "schreck_bei": 0.6,
+      "dauer": 6.0,
+      "pause": 0.3
+    },
+    {
+      "art": "nachricht",
+      "sprich": "Mama: Ich bin gleich zu Hause. Warum steht unsere Haustür offen?",
+      "text": "WARUM STEHT UNSERE HAUSTÜR OFFEN?",
+      "gelb": "OFFEN",
+      "absender": "Mama",
+      "nachricht": "Bin gleich da. Warum steht unsere Haustür offen??",
+      "schreck": true,
+      "pause": 0.3
+    },
+    {
+      "art": "licht",
+      "sprich": "Das Licht geht aus. Das Klopfen hört auf.",
+      "text": "DAS LICHT GEHT AUS.",
+      "gelb": "AUS",
+      "stille": true,
+      "angst": 0.9,
+      "pause": 0.4
+    },
+    {
+      "art": "fratze",
+      "dauer": 1.2,
+      "schreck": true
+    },
+    {
+      "art": "ende",
+      "sprich": "Sie hat nie jemanden gefilmt. Sie hat jemanden gesucht, der ihren Platz übernimmt.",
+      "text": "SIE SUCHT JEMANDEN FÜR IHREN PLATZ.",
+      "gelb": "PLATZ",
+      "schreck": true,
+      "monster": "Jetzt wohnst du hier.",
+      "monster_text": "JETZT WOHNST DU HIER.",
+      "angst": 1.0,
+      "blick": 1.0,
+      "pause": 0.2
+    },
+    {
+      "art": "teil2",
+      "sprich": "Teil drei: Wer kommt da gerade nach Hause?",
+      "text": "TEIL 3: WER KOMMT DA NACH HAUSE?",
+      "gelb": "HAUSE",
+      "pause": 0.8
+    }
+  ],
+  "monsterstimme": "de-DE-KatjaNeural"
+}
