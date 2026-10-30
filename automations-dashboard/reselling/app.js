@@ -53,6 +53,7 @@ function karten(poke, budget) {
 
 function restock(daten) {
   const body = encodeURIComponent('Link zum Produkt (eine Zeile pro Link):\n\n');
+  // Titel "Restock: ..." reicht - Freunde ohne Rechte am Repo koennen kein Label setzen
   $('neu').href = `https://github.com/${REPO}/issues/new?labels=restock&title=${encodeURIComponent('Restock: ')}&body=${body}`;
   const farbe = { 'auf Lager': 'gut', Vorbestellung: 'warn', ausverkauft: 'schlecht' };
   $('produkte').replaceChildren(...((daten.produkte || []).length ? daten.produkte.map((p) => {
@@ -83,5 +84,13 @@ fetch(`daten.json?t=${Date.now()}`).then((r) => r.json()).then((d) => {
   $('stand').textContent = `Stand: ${uhr(d.stand)} · aktualisiert sich jede Stunde`;
   heiss(d.trends); karten(d.pokemon, d.budget || 40); restock(d);
 }).catch(() => { $('stand').textContent = 'Keine Verbindung - zeige gespeicherte Daten, sobald vorhanden.'; restock({}); });
+
+$('teilen').addEventListener('click', async () => {
+  const daten = { title: 'Reselling-Radar', text: 'Was gerade hoch geht + Restock-Alarm, kostenlos:', url: location.href.split('?')[0] };
+  try {
+    if (navigator.share) await navigator.share(daten);
+    else { await navigator.clipboard.writeText(daten.url); $('teilen').textContent = '✅ Link kopiert – jetzt in WhatsApp einfügen'; }
+  } catch { /* Teilen abgebrochen */ }
+});
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});

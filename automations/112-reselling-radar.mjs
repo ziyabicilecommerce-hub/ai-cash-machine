@@ -23,7 +23,52 @@ async function holen(url, { json = false, kopf = {} } = {}) {
 }
 const lesen = (p, fallback) => { try { return JSON.parse(readFileSync(p, 'utf8')); } catch { return fallback; } };
 
+async function nochmal(f, versuche = 3) {
+  for (let i = 1; ; i++) {
+    try { return await f(); } catch (e) { if (i >= versuche) throw e; await new Promise((r) => setTimeout(r, 4000 * i)); }
+  }
+}
+
+// Ersatzquelle, falls pokemontcg.io ausfällt: TCGdex (kostenlos, deutsche Kartennamen, Cardmarket-Preise in EUR).
+async function pokemonTcgdex() {
+  const API = 'https://api.tcgdex.net/v2/de';
+  const liste = await holen(`${API}/sets`, { json: true });
+  const neueste = [];
+  for (const s of liste.slice(-10).reverse()) {
+    try { neueste.push(await holen(`${API}/sets/${s.id}`, { json: true })); } catch { /* Set ohne Details */ }
+    if (neueste.length >= 4) break;
+  }
+  neueste.sort((a, b) => String(b.releaseDate).localeCompare(String(a.releaseDate)));
+  const karten = [];
+  for (const set of neueste.slice(0, 3)) {
+    const ids = (set.cards || []).map((c) => c.id);
+    for (let i = 0; i < ids.length; i += 8) {
+      const stapel = await Promise.all(ids.slice(i, i + 8).map((id) => holen(`${API}/cards/${id}`, { json: true }).catch(() => null)));
+      for (const c of stapel.filter(Boolean)) {
+        const cm = c.pricing?.cardmarket;
+        if (!cm) continue;
+        karten.push({
+          id: c.id, name: c.name, number: c.localId, rarity: c.rarity || '', images: { small: c.image ? `${c.image}/low.webp` : '' },
+          set: { name: set.name, id: set.id, releaseDate: set.releaseDate },
+          cardmarket: { url: `https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=${encodeURIComponent(c.name)}`,
+            prices: { lowPrice: cm.low, trendPrice: cm.trend, avg1: cm.avg1, avg7: cm.avg7, avg30: cm.avg30 } },
+        });
+      }
+    }
+  }
+  if (!karten.length) throw new Error('TCGdex lieferte keine Preise');
+  return {
+    picks: kartenPicks(karten, { maxEuro: BUDGET }),
+    sets: neueste.map((s) => ({ name: s.name, id: s.id, release: s.releaseDate, logo: s.logo ? `${s.logo}.webp` : '', ...kaufZeitpunkt(s.releaseDate) })),
+    geprueft: karten.length, quelle: 'TCGdex',
+  };
+}
+
 async function pokemon() {
+  try { return await nochmal(pokemonTcgApi); } catch (e) { log('pokemontcg.io aus:', e.message, '- nehme TCGdex'); return pokemonTcgdex(); }
+}
+
+async function pokemonTcgApi() {
   const sets = (await holen('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=6', { json: true })).data || [];
   const karten = [];
   for (const s of sets) {
@@ -35,7 +80,7 @@ async function pokemon() {
   return {
     picks: kartenPicks(karten, { maxEuro: BUDGET }),
     sets: sets.map((s) => ({ name: s.name, id: s.id, release: s.releaseDate, logo: s.images?.logo || '', ...kaufZeitpunkt(s.releaseDate) })),
-    geprueft: karten.length,
+    geprueft: karten.length, quelle: 'pokemontcg.io',
   };
 }
 
@@ -46,7 +91,10 @@ async function trends() {
 
 async function issues() {
   if (!REPO || !TOKEN) return [];
-  const liste = await holen(`https://api.github.com/repos/${REPO}/issues?labels=restock&state=open&per_page=50`, { json: true, kopf: { authorization: `Bearer ${TOKEN}`, accept: 'application/vnd.github+json' } });
+  // Auch Freunde ohne Rechte am Repo: deren Issues haben kein Label, aber den Titel "Restock: ..."
+  const liste = (await holen(`https://api.github.com/repos/${REPO}/issues?state=open&per_page=100`, { json: true, kopf: { authorization: `Bearer ${TOKEN}`, accept: 'application/vnd.github+json' } }))
+    .filter((i) => !i.pull_request && ((i.labels || []).some((l) => l.name === 'restock') || /^restock:/i.test(i.title || '')))
+    .slice(0, 40);
   return liste.flatMap((i) => linksAus(`${i.title}\n${i.body}`).map((url) => ({ url, issue: i.number, titel: i.title.replace(/^restock:\s*/i, '') })));
 }
 
@@ -71,7 +119,7 @@ async function main() {
 
   const status = {};
   const produkte = [];
-  for (const p of beobachtet) {
+  for (const p of beobachtet.slice(0, 60)) {  // Obergrenze, damit niemand den Bot mit Links flutet
     const s = await teil(`Lager ${new URL(p.url).hostname}`, async () => verfuegbarkeit(await holen(p.url)), null);
     status[p.url] = s || verlauf.status[p.url] || 'unbekannt';
     produkte.push({ ...p, status: status[p.url], laden: new URL(p.url).hostname.replace(/^www\./, '') });
