@@ -225,7 +225,7 @@ async function laden() {
   if (bi) BILDER = bi.bilder || {};
   const alter = D.stand ? Math.round((Date.now() - Date.parse(D.stand)) / 60000) : null;
   $('stand').replaceChildren(document.createTextNode(alter == null ? 'Noch keine Daten' : 'Stand: '), ...(alter == null ? [] : [el('b', '', alter < 1 ? 'gerade eben' : `vor ${alter} Min.`), document.createTextNode(' · aktualisiert sich alle 10 Min.')]));
-  hype(); saison(); kalender(); kaufen(); laeden(); mehr(); katalog();
+  hype(); if (typeof pro === 'function') pro(); saison(); kalender(); kaufen(); laeden(); mehr(); katalog();
 }
 $('neuladen').addEventListener('click', laden);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) laden(); });
