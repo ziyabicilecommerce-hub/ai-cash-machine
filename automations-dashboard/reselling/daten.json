@@ -1,8 +1,48 @@
 {
- "stand": "2026-10-30T21:35:26.561Z",
+ "stand": "2026-10-30T21:37:02.033Z",
  "budget": 40,
  "pokemon": {
   "picks": [
+   {
+    "id": "me04-119",
+    "name": "Chillabell-ex",
+    "nummer": "119",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Wachsendes Chaos",
+    "setId": "me04",
+    "release": "2026-05-22",
+    "bild": "https://assets.tcgdex.net/de/me/me04/119/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Chillabell-ex",
+    "preis": {
+     "tief": 19.5,
+     "trend": 35.51,
+     "schnitt7": 36.89,
+     "schnitt30": 35.7
+    },
+    "prozent": 3,
+    "signal": "stabil",
+    "nurBewegung": true
+   },
+   {
+    "id": "me04-120",
+    "name": "Azetts Gelassenheit",
+    "nummer": "120",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Wachsendes Chaos",
+    "setId": "me04",
+    "release": "2026-05-22",
+    "bild": "https://assets.tcgdex.net/de/me/me04/120/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Azetts%20Gelassenheit",
+    "preis": {
+     "tief": 12,
+     "trend": 20.26,
+     "schnitt7": 20.53,
+     "schnitt30": 20.18
+    },
+    "prozent": 2,
+    "signal": "stabil",
+    "nurBewegung": true
+   },
    {
     "id": "me03-094",
     "name": "Piepi",
@@ -19,46 +59,9 @@
      "schnitt7": 18.04,
      "schnitt30": 17.84
     },
-    "prozent": 31,
-    "signal": "steigt"
-   },
-   {
-    "id": "me03-118",
-    "name": "Mega-Starmie-ex",
-    "nummer": "118",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/118/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Starmie-ex",
-    "preis": {
-     "tief": 24,
-     "trend": 34.68,
-     "schnitt7": 33.46,
-     "schnitt30": 34.58
-    },
-    "prozent": 19,
-    "signal": "steigt"
-   },
-   {
-    "id": "me03-122",
-    "name": "Violette",
-    "nummer": "122",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/122/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Violette",
-    "preis": {
-     "tief": 11.9,
-     "trend": 18.27,
-     "schnitt7": 18.49,
-     "schnitt30": 19.92
-    },
-    "prozent": 18,
-    "signal": "steigt"
+    "prozent": 1,
+    "signal": "stabil",
+    "nurBewegung": true
    }
   ],
   "sets": [
@@ -122,7 +125,7 @@
    "karten": 366,
    "mitPreis": 366,
    "imBudget": 20,
-   "steigend": 3
+   "steigend": 0
   },
   "quelle": "TCGdex"
  },
