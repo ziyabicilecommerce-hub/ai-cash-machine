@@ -268,22 +268,43 @@ async function filialRadar(alt, verlauf) {
     if (!fil.filialen.length) throw new Error(`dm-Filialen: 0 erkannt, Antwort: ${JSON.stringify(roh).slice(0, 300)}`);
     writeFileSync(FILIALEN, `${JSON.stringify(fil, null, 1)}\n`);
   }
+  // dm ändert seine (inoffiziellen) Adressen ab und zu: mehrere probieren, die funktionierende merken
+  const SUCHE = [
+    (q) => `https://product-search.services.dmtech.com/de/search/static?query=${q}&pageSize=24&currentPage=0`,
+    (q) => `https://product-search.services.dmtech.com/de/search?query=${q}&pageSize=24&currentPage=0`,
+    (q) => `https://products.dm.de/product/de/search?q=${q}&pageSize=24`,
+  ];
+  const BESTAND = [
+    (d, n) => `https://products.dm.de/store-availability/DE/availability?dans=${d}&storeNumbers=${n}`,
+    (d, n) => `https://products.dm.de/store-availability/DE/availabilities?dans=${d}&storeNumbers=${n}`,
+  ];
+  const reihe = (liste, gut) => [...(gut != null ? [gut] : []), ...liste.keys()].filter((v, i, a) => a.indexOf(v) === i);
   const produkte = [];
   for (const q of DM_SUCHE) {
-    try {
-      const roh = await holen(`https://products.dm.de/product/de/search?q=${encodeURIComponent(q)}&pageSize=24`, { json: true });
-      const p = dmProdukte(roh, q);
-      if (!p.length) log('dm-Suche ohne Treffer', q, JSON.stringify(roh).slice(0, 200));
-      for (const x of p.slice(0, 10)) if (!produkte.some((y) => y.dan === x.dan)) produkte.push(x);
-    } catch (e) { log('dm-Suche', q, e.message); }
+    for (const i of reihe(SUCHE, fil.suche)) {
+      try {
+        const roh = await holen(SUCHE[i](encodeURIComponent(q)), { json: true }), p = dmProdukte(roh, q);
+        if (!p.length) { log('dm-Suche leer', i, q, JSON.stringify(roh).slice(0, 300)); continue; }
+        fil.suche = i;
+        for (const x of p.slice(0, 10)) if (!produkte.some((y) => y.dan === x.dan)) produkte.push(x);
+        break;
+      } catch (e) { log('dm-Suche', i, q, e.message.slice(0, 120)); }
+    }
   }
   const nummern = fil.filialen.slice(0, 60).map((f) => f.nummer), bestand = {};
   for (let i = 0; i < produkte.length; i += 10) {
     for (let j = 0; j < nummern.length; j += 20) {
-      const url = `https://products.dm.de/store-availability/DE/availability?dans=${produkte.slice(i, i + 10).map((p) => p.dan).join(',')}&storeNumbers=${nummern.slice(j, j + 20).join(',')}`;
-      try { Object.assign(bestand, dmBestand(await holen(url, { json: true }))); } catch (e) { log('dm-Bestand', e.message); }
+      const d = produkte.slice(i, i + 10).map((p) => p.dan).join(','), n = nummern.slice(j, j + 20).join(',');
+      for (const k of reihe(BESTAND, fil.bestand)) {
+        try {
+          const roh = await holen(BESTAND[k](d, n), { json: true }), b = dmBestand(roh);
+          if (!Object.keys(b).length) { log('dm-Bestand leer', k, JSON.stringify(roh).slice(0, 200)); continue; }
+          fil.bestand = k; Object.assign(bestand, b); break;
+        } catch (e) { log('dm-Bestand', k, e.message.slice(0, 120)); }
+      }
     }
   }
+  writeFileSync(FILIALEN, `${JSON.stringify(fil, null, 1)}\n`);
   const altStatus = verlauf.filial || {};
   const ersterLauf = !Object.keys(altStatus).length;
   const meldungen = filialMeldungen(neuImBestand(altStatus, bestand, ersterLauf), produkte, fil.filialen, bestand).slice(0, 3);
