@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-31T06:51:07.065Z",
+ "stand": "2026-10-31T06:54:58.415Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -195,6 +195,7 @@
      34.99,
      34.99,
      34.99,
+     34.99,
      34.99
     ]
    },
@@ -228,6 +229,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     17.29,
      17.29,
      17.29,
      17.29,
@@ -275,6 +277,7 @@
      20.52,
      20.52,
      20.52,
+     20.52,
      20.52
     ]
    },
@@ -309,6 +312,7 @@
     "nurBewegung": true,
     "kurs": [
      52.12,
+     51.65,
      51.65,
      51.65,
      51.65,
@@ -355,6 +359,7 @@
      19.3,
      19.3,
      19.3,
+     19.3,
      19.3
     ]
    },
@@ -389,6 +394,7 @@
     "nurBewegung": true,
     "kurs": [
      13.21,
+     13.32,
      13.32,
      13.32,
      13.32,
@@ -435,6 +441,7 @@
      33.81,
      33.81,
      33.81,
+     33.81,
      33.81
     ]
    },
@@ -468,6 +475,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     13.17,
      13.17,
      13.17,
      13.17,
@@ -515,6 +523,7 @@
      33.4,
      33.4,
      33.4,
+     33.4,
      33.4
     ]
    },
@@ -548,6 +557,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     18.28,
      18.28,
      18.28,
      18.28,
@@ -614,22 +624,30 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 366,
+  "geprueft": 888,
   "statistik": {
-   "karten": 366,
+   "karten": 888,
    "mitPreis": 366,
    "imBudget": 19,
    "steigend": 0,
    "fallend": 6
   },
-  "quelle": "TCGdex",
-  "stand": "2026-10-31T05:57:15.251Z"
+  "quelle": "TCGdex + pokemontcg.io",
+  "stand": "2026-10-31T06:54:46.309Z"
  },
  "trends": {
   "ware": [],
   "top": [
    {
-    "titel": "gardasee",
+    "titel": "unter uns",
+    "menge": "100+"
+   },
+   {
+    "titel": "handelsblatt",
+    "menge": "200+"
+   },
+   {
+    "titel": "regal",
     "menge": "200+"
    },
    {
@@ -637,8 +655,8 @@
     "menge": "200+"
    },
    {
-    "titel": "regal",
-    "menge": "100+"
+    "titel": "gardasee",
+    "menge": "200+"
    },
    {
     "titel": "paderborn",
@@ -650,7 +668,7 @@
    },
    {
     "titel": "unicredit",
-    "menge": "100+"
+    "menge": "200+"
    },
    {
     "titel": "marcel sabitzer",
@@ -659,14 +677,6 @@
    {
     "titel": "in aller freundschaft",
     "menge": "200+"
-   },
-   {
-    "titel": "kunst",
-    "menge": "100+"
-   },
-   {
-    "titel": "министерство иностранных дел российской федерации",
-    "menge": "100+"
    }
   ]
  },
