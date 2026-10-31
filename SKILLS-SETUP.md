@@ -106,7 +106,7 @@
 **Categories:**
 - Figma Integration (9 skills)
 - GitHub Automation (2 skills)
-- Deployment Tools (Cloudflare, Netlify)
+- Deployment Tools (Cloudflare)
 - Development Tools (ASP.NET Core, Jupyter, CLI Creator)
 - ChatGPT Apps
 - Linear Issue Tracking
@@ -123,7 +123,6 @@
 /gh-address-comments      Auto-Reply Comments
 
 /cloudflare-deploy        Deploy to Cloudflare
-/netlify-deploy           Deploy to Netlify
 /aspnet-core              ASP.NET Core Development
 /chatgpt-apps             ChatGPT App Creation
 /jupyter-notebook         Jupyter Support
@@ -143,7 +142,6 @@
 /implement                # Code schreiben
 /code-review              # Review
 /github-fix-ci            # CI grün
-/netlify-deploy           # Deploy
 ```
 
 ### Szenario 2: Multi-Agent Refactoring
