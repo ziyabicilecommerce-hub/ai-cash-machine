@@ -138,7 +138,7 @@ function deal({ bild, emoji, titel, text, link, zeit }) {
 }
 function sofort() {
   const frisch = (D.alarme || []).filter((a) => Date.now() - Date.parse(a.zeit) < 24 * 3600000);
-  let liste = frisch.map((a) => ({ ...a, emoji: a.art === 'Drop' ? '👟' : a.art === 'Karte' ? '🃏' : '🆕', link: https(a.link) }));
+  let liste = frisch.map((a) => ({ ...a, emoji: a.art === 'Drop' ? '👟' : a.art === 'Karte' ? '🃏' : a.art === 'Filiale' ? '🏪' : '🆕', link: https(a.link) }));
   $('alarmtitel').textContent = liste.length ? `🚨 Sofort kaufen (${liste.length})` : '💎 Beste Deals gerade';
   $('alarminfo').textContent = liste.length ? 'Vom Bot in den letzten 24 Stunden gefunden - alle 5 Minuten neu geprüft.' : 'Gerade kein Alarm - das hier lohnt sich trotzdem jetzt:';
   if (!liste.length) {
@@ -242,6 +242,22 @@ $('installkopie').addEventListener('click', async (e) => { e.preventDefault(); t
 $('installweg').addEventListener('click', () => { $('install').hidden = true; try { localStorage.setItem('install-weg', '1'); } catch { /* privat */ } });
 installHinweis();
 
+// dm-Filialen im Umkreis: welche gefragten Produkte wo vorrätig sind (alle 15 Min. geprüft)
+function filialen() {
+  const f = D.filial;
+  if (!f?.produkte) { $('filialliste').replaceChildren(leer('Der Filial-Radar startet gerade - gleich sind die ersten Bestände da.')); return; }
+  const mitVorrat = f.produkte.filter((p) => p.vorrat?.length).sort((a, b) => b.vorrat.length - a.vorrat.length);
+  $('filialinfo').textContent = `${f.filialen} dm-Filialen im 50-km-Umkreis · ${mitVorrat.length} gefragte Produkte vorrätig · ${tagText(f.stand)}`;
+  $('filialliste').replaceChildren(...(mitVorrat.length ? mitVorrat.slice(0, 20).map((p) => {
+    const box = el('div', 'gruppe'), n = p.vorrat[0];
+    box.append(eintrag({ bild: p.bild, emoji: '🏪', name: p.name, info: `${n.name} · ${String(n.km).replace('.', ',')} km${n.menge ? ` · ${n.menge} Stück` : ''} - in ${p.vorrat.length} Filiale(n)`, tag: '🟢 Vorrätig', tagKlasse: 'kaufen', preis: euro(p.preis), link: https(p.link) }));
+    const l = el('div', 'links');
+    for (const v of p.vorrat.slice(0, 4)) { const a = el('a', 'kauf', `📍 ${v.name} ${String(v.km).replace('.', ',')} km`); a.href = `https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lon}`; a.target = '_blank'; a.rel = 'noopener'; l.append(a); }
+    box.append(l);
+    return box;
+  }) : [leer('Gerade nichts Gefragtes in den dm-Filialen im Umkreis vorrätig.')]));
+}
+
 function kaufen() {
   const budget = D.budget || 40;
   const shop = (D.live?.treffer || []).map((t) => ({ ...t, typ: 'Sneaker & Klamotten' }));
@@ -318,7 +334,7 @@ async function laden() {
   if (bi) BILDER = bi.bilder || {};
   const alter = D.stand ? Math.round((Date.now() - Date.parse(D.stand)) / 60000) : null;
   $('stand').replaceChildren(document.createTextNode(alter == null ? 'Noch keine Daten' : 'Stand: '), ...(alter == null ? [] : [el('b', '', alter < 1 ? 'gerade eben' : `vor ${alter} Min.`), document.createTextNode(' · Bot prüft alle 5 Min.')]));
-  sofort(); hype(); if (typeof pro === 'function') pro(); saison(); kalender(); kaufen(); laeden(); mehr(); katalog();
+  sofort(); filialen(); hype(); if (typeof pro === 'function') pro(); saison(); kalender(); kaufen(); laeden(); mehr(); katalog();
 }
 $('neuladen').addEventListener('click', laden);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) laden(); });
