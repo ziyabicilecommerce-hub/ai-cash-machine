@@ -60,3 +60,10 @@ test('dm-Suche: echtes Antwortformat (tileData) mit Preis "16,95 €", Bild und 
   assert.equal(p.link, 'https://www.dm.de/p/d/3118166/balea-adventskalender');
   assert.equal(p.name, 'Balea Adventskalender 2026 Warm Wishes, 1 St');
 });
+
+test('dm-Suche: fachfremde Treffer (Rasierer bei "lego") fliegen raus', async () => {
+  const { dmProdukte } = await import('../../automations/lib/filialRadar.mjs');
+  const p = dmProdukte({ products: [{ dan: 1, brandName: 'Gillette', title: 'Rasierer', price: { value: 19.95 } }, { dan: 2, brandName: 'LEGO', title: 'Adventskalender', price: { value: 29.95 } }] }, 'lego');
+  assert.deepEqual(p.map((x) => x.dan), ['2']);
+  assert.equal(dmProdukte({ products: [{ dan: 3, title: 'Pokémon Booster', price: { value: 12 } }] }, 'pokemon').length, 1);
+});
