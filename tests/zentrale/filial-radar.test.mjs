@@ -43,3 +43,11 @@ test('dm-Bestand: Prüffehler = unbekannt, Meldung nur bei echtem Wechsel auf "d
   assert.match(m[0].link, /google\.com\/maps\/dir/);
   assert.equal(m[0].shop, 'https://www.dm.de/x');
 });
+
+test('dm v2 tiles: Stückzahl aus dem Text, "nicht verfügbar" = leer', async () => {
+  const { dmTiles } = await import('../../automations/lib/filialRadar.mjs');
+  const b = dmTiles({ 123: { a11yLabel: 'In der Filiale verfügbar (3)' }, 456: { a11yLabel: 'In der Filiale nicht verfügbar' }, 789: { inStock: true } }, '1001');
+  assert.deepEqual(b['123|1001'], { da: true, menge: 3 });
+  assert.equal(b['456|1001'].da, false);
+  assert.equal(b['789|1001'].da, true);
+});

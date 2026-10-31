@@ -35,9 +35,12 @@ export function dmProdukte(json, begriff, maxEuro = 80) {
     const tpl = p.imageUrlTemplates?.[0] || p.images?.[0]?.src || p.imageUrl || p.image || '';
     const bild = String(tpl).replace('{transformations}', 'f_auto,q_auto,c_fit,h_270,w_270');
     const url = p.relativeProductUrl || p.productUrl || p.url || '';
-    return dan ? { dan, name: [p.brandName || p.brand?.name, p.title || p.name].filter(Boolean).join(' ').trim(), preis: Number.isFinite(preis) ? preis : null,
+    return dan ? { _roh: p, dan, name: [p.brandName || p.brand?.name, p.title || p.name].filter(Boolean).join(' ').trim(), preis: Number.isFinite(preis) ? preis : null,
       bild: /^https:\/\//.test(bild) ? bild : '', link: url ? (url.startsWith('http') ? url : `https://www.dm.de${url}`) : `https://www.dm.de/search?query=${encodeURIComponent(begriff)}`, begriff } : null;
   }).filter((p) => p && p.name && (p.preis == null || p.preis <= maxEuro));
+}
+export function ohneRoh(p) {
+  const { _roh, ...rest } = p; return rest;
 }
 
 // Bestand pro Produkt und Filiale. Prüffehler (checkStatus ERROR) zählen als "unbekannt", nicht als "leer".
@@ -76,4 +79,22 @@ export function filialMeldungen(neueSchluessel, produkte, filialen, bestand) {
       text: `${p.preis != null ? `${p.preis.toFixed(2).replace('.', ',')} € · ` : ''}${naechste.name} (${String(naechste.km).replace('.', ',')} km)${menge ? ` · ${menge} Stück` : ''}\n${naechste.adresse}\nIm Umkreis in ${vorrat.length} Filiale(n) vorrätig.`,
     };
   }).filter(Boolean);
+}
+
+// Neuere dm-Schnittstelle (v2 "tiles"): Bestand mehrerer Produkte für EINE Filiale. Die Antwort ist je Produkt
+// ein Eintrag; die Stückzahl steht u. a. im Text (a11yLabel), z. B. "… im Markt verfügbar (5)".
+export function dmTiles(json, nummer) {
+  const raus = {};
+  const eintraege = Array.isArray(json) ? json.map((e) => [e.dan ?? e.id, e]) : Object.entries(json?.tiles || json?.products || json || {});
+  for (const [schluessel, e] of eintraege) {
+    if (!e || typeof e !== 'object') continue;
+    const dan = String(e.dan ?? schluessel ?? '');
+    const text = JSON.stringify(e);
+    const label = String(e.a11yLabel ?? e.label ?? e.storeAvailability?.a11yLabel ?? '');
+    const zahlen = [...label.matchAll(/\((\d+)\)/g)].map((m) => Number(m[1]));
+    const menge = e.stockLevel ?? e.storeAvailability?.stockLevel ?? (zahlen.length ? zahlen.reduce((a, b) => a + b, 0) : null);
+    const da = menge != null ? menge > 0 : /"inStock":true|vorrätig|im markt verfügbar/i.test(text) && !/nicht (vorrätig|verfügbar)/i.test(label);
+    if (dan) raus[`${dan}|${nummer}`] = { da, menge };
+  }
+  return raus;
 }
