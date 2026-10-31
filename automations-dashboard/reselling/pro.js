@@ -138,7 +138,9 @@ function verfuegbar(e) {
 function dauerbrenner() {
   if (!EVER) return;
   $('dauerinfo').textContent = `${EVER.hinweis} „Einkauf ab“ ist das günstigste Angebot im Radar - kann auch eine Kinder-/Damengröße sein, Größe prüfen.`;
-  const karten = EVER.produkte.map((e) => {
+  PRO.dauerKat ||= 'Alle';
+  chips('dauerfilter', ['Alle', ...new Set(EVER.produkte.map((e) => e.kat))], PRO.dauerKat, (w) => { PRO.dauerKat = w; dauerbrenner(); });
+  const karten = EVER.produkte.filter((e) => PRO.dauerKat === 'Alle' || e.kat === PRO.dauerKat).map((e) => {
     const wo = verfuegbar(e);
     // Angebote unter 60 % vom normalen Preis sind oft Kinder-/Damengrößen oder andere Varianten - zählen nicht für den Gewinn
     const guenstig = Math.min(...wo.map((w) => w.preis).filter((x) => x != null && x >= e.ek * 0.6), e.ek);
