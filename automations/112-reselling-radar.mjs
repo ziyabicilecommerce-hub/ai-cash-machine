@@ -155,7 +155,7 @@ async function sneakerDrops() {
 // Vorschaubilder für Saison-Tipps und Katalog (fehlende sofort, sonst alle 14 Tage neu) + wöchentlicher Check der Shop-Links.
 async function bilder() {
   const alt = lesen(BILDER, { bilder: {}, links: {} });
-  const begriffe = bildBegriffe(lesen(`${ORDNER}/saison.json`, {}), lesen(`${ORDNER}/katalog.json`, {}), lesen(`${ORDNER}/hype.json`, {}));
+  const begriffe = bildBegriffe(lesen(`${ORDNER}/saison.json`, {}), lesen(`${ORDNER}/katalog.json`, {}), { produkte: [...(lesen(`${ORDNER}/hype.json`, {}).produkte || []), ...(lesen(`${ORDNER}/evergreen.json`, {}).produkte || [])] });
   const faellig = begriffe.filter((b) => !alt.bilder[b]?.url || Date.now() - Date.parse(alt.bilder[b].stand) > 14 * 86400000).slice(0, 25);
   for (const b of faellig) {
     let bild = null;

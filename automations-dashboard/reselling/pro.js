@@ -68,6 +68,7 @@ function pro() {
   const liste = [...picks].sort((a, b) => sortierer[PRO.sort](b) - sortierer[PRO.sort](a));
   $('signale').replaceChildren(...(liste.length ? liste.map(signalZeile) : [leer('Gerade kein Trade mit Gewinn nach Gebühren - Geduld ist auch eine Position.')]));
   depotZeigen();
+  dauerbrenner();
 }
 
 function signalZeile(k) {
@@ -114,4 +115,53 @@ function depotZeigen() {
   const pl = Math.round((wert - ein) * 100) / 100;
   $('depotsumme').replaceChildren(...(liste.length ? [kpi(euro(ein), 'Einsatz'), kpi(euro(wert), 'Wert netto'), kpi(`${pl >= 0 ? '+' : ''}${euro(pl)}`, 'Gewinn/Verlust', pl >= 0 ? 'gruen' : 'rot')] : []));
   $('depot').replaceChildren(...(zeilen.length ? zeilen : [leer('Noch leer - tippe bei einem Signal auf „＋ Depot“, wenn du gekauft hast.')]));
+}
+
+// Dauerbrenner: Sachen, die immer gefragt sind - Richtwert Einkauf/Verkauf und wo es GERADE zu haben ist
+// (online auf Lager, angekündigte Drops, dm-Filialen im Umkreis mit Stückzahl).
+const passt = (text, suche, ohne = []) => { const t = ` ${String(text || '').toLowerCase().replace(/é/g, 'e')} `; return suche.some((s) => t.includes(s)) && !ohne.some((o) => t.includes(o)); };
+function verfuegbar(e) {
+  const wo = [];
+  for (const t of (D.live?.treffer || []).filter((x) => passt(x.titel, e.suche, e.ohne)).sort((a, b) => (a.preis ?? 999) - (b.preis ?? 999)).slice(0, 3)) {
+    wo.push({ text: `🛒 ${t.laden.replace(/\.(com|de)$/, '')} ${euro(t.preis)} · ${String(t.titel).slice(0, 26)}`, link: https(t.url), preis: t.preis });
+  }
+  for (const k of (D.kalender || []).filter((x) => passt(x.titel, e.suche, e.ohne) && Date.parse(x.zeit) > Date.now() - 6 * 3600000).slice(0, 2)) {
+    wo.push({ text: `👟 Drop ${tagText(k.zeit)} ${euro(k.preis)}`, link: https(k.link), preis: k.preis });
+  }
+  for (const p of (D.filial?.produkte || []).filter((x) => x.vorrat?.length && passt(x.name, e.suche, e.ohne)).slice(0, 2)) {
+    const n = p.vorrat[0];
+    wo.push({ text: `🏪 ${n.name} ${String(n.km).replace('.', ',')} km${n.menge ? ` · ${n.menge} St.` : ''}${p.vorrat.length > 1 ? ` (+${p.vorrat.length - 1} Filialen)` : ''} · ${euro(p.preis)}`,
+      link: `https://www.google.com/maps/dir/?api=1&destination=${n.lat},${n.lon}`, preis: p.preis });
+  }
+  return wo;
+}
+function dauerbrenner() {
+  if (!EVER) return;
+  $('dauerinfo').textContent = `${EVER.hinweis} „Einkauf ab“ ist das günstigste Angebot im Radar - kann auch eine Kinder-/Damengröße sein, Größe prüfen.`;
+  const karten = EVER.produkte.map((e) => {
+    const wo = verfuegbar(e);
+    // Angebote unter 60 % vom normalen Preis sind oft Kinder-/Damengrößen oder andere Varianten - zählen nicht für den Gewinn
+    const guenstig = Math.min(...wo.map((w) => w.preis).filter((x) => x != null && x >= e.ek * 0.6), e.ek);
+    const mitte = (e.vk[0] + e.vk[1]) / 2, gewinn = Math.round((mitte * 0.9 - guenstig - 5) * 100) / 100;  // ~10 % Gebühren + 5 € Versand
+    return { e, wo, guenstig, gewinn };
+  }).sort((a, b) => b.wo.length - a.wo.length || b.gewinn - a.gewinn);
+  $('dauerbrenner').replaceChildren(...karten.map(({ e, wo, guenstig, gewinn }) => {
+    const z = el('div', 'signal');
+    const kopf = el('div', 'oben');
+    const m = el('div', 'mitte'); m.append(el('div', 'name', e.name), el('div', 'info', e.tipp));
+    const r = el('div', 'rechts');
+    r.append(el('span', `sig ${gewinn >= 15 ? 'sb' : gewinn >= 0 ? 'b' : 'p'}`, gewinn >= 15 ? 'LOHNT' : gewinn >= 0 ? 'KNAPP' : 'NUR SALE'), el('div', 'score', e.kat));
+    kopf.append(bildBox('bild', BILDER[e.bild]?.url, '♾️'), m, r);
+    const zahlen = el('div', 'zahlen');
+    const feld = (t, w, c = '') => { const f = el('div'); f.append(el('span', '', t), el('b', c, w)); return f; };
+    zahlen.style.gridTemplateColumns = 'repeat(3,1fr)';
+    zahlen.append(feld(wo.some((w) => w.preis != null) ? 'Einkauf ab' : 'Einkauf ca.', euro(guenstig)), feld('Verkauf für', `${e.vk[0]}–${e.vk[1]} €`, 'gruen'),
+      feld('Gewinn ca.', `${gewinn >= 0 ? '+' : ''}${euro(gewinn)}`, gewinn >= 0 ? 'gruen' : 'rot'));
+    const l = el('div', 'links'); l.style.margin = '10px 0 0';
+    if (wo.length) for (const w of wo) { const a = el('a', 'kauf', w.text); a.href = w.link; a.target = '_blank'; a.rel = 'noopener'; l.append(a); }
+    else l.append(el('span', 'klein', 'Gerade nirgends im Radar - Restock-Alarm im Business-Tab setzen.'));
+    const vk = el('a', 'verk', '💶 Verkaufte Preise'); vk.href = `https://www.ebay.de/sch/i.html?_nkw=${encodeURIComponent(e.suche[0])}&LH_Sold=1&LH_Complete=1`; vk.target = '_blank'; vk.rel = 'noopener'; l.append(vk);
+    z.append(kopf, zahlen, l);
+    return z;
+  }));
 }
