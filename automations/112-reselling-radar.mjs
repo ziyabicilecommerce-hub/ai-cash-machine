@@ -5,7 +5,7 @@
 //  - Lagerstatus der Produkte aus GitHub-Issues mit dem Label "restock"; bei Restock kommt ein Kommentar ins Issue
 //    (= Push-Benachrichtigung über die GitHub-App) und die Uhrzeit wird für das Restock-Muster gespeichert.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { DM_SUCHE, bbox, dmFilialen, dmProdukte, dmBestand, neuImBestand, filialMeldungen } from './lib/filialRadar.mjs';
+import { DM_SUCHE, bbox, dmFilialen, dmProdukte, dmTiles, ohneRoh, neuImBestand, filialMeldungen } from './lib/filialRadar.mjs';
 import { styleCode, alarme, bildVarianten, kurseFortschreiben, bildBegriffe, bingBild, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
 
 const ORDNER = 'automations-dashboard/reselling';
@@ -274,10 +274,6 @@ async function filialRadar(alt, verlauf) {
     (q) => `https://product-search.services.dmtech.com/de/search?query=${q}&pageSize=24&currentPage=0`,
     (q) => `https://products.dm.de/product/de/search?q=${q}&pageSize=24`,
   ];
-  const BESTAND = [
-    (d, n) => `https://products.dm.de/store-availability/DE/availability?dans=${d}&storeNumbers=${n}`,
-    (d, n) => `https://products.dm.de/store-availability/DE/availabilities?dans=${d}&storeNumbers=${n}`,
-  ];
   const reihe = (liste, gut) => [...(gut != null ? [gut] : []), ...liste.keys()].filter((v, i, a) => a.indexOf(v) === i);
   const produkte = [];
   for (const q of DM_SUCHE) {
@@ -291,17 +287,19 @@ async function filialRadar(alt, verlauf) {
       } catch (e) { log('dm-Suche', i, q, e.message.slice(0, 120)); }
     }
   }
-  const nummern = fil.filialen.slice(0, 60).map((f) => f.nummer), bestand = {};
-  for (let i = 0; i < produkte.length; i += 10) {
-    for (let j = 0; j < nummern.length; j += 20) {
-      const d = produkte.slice(i, i + 10).map((p) => p.dan).join(','), n = nummern.slice(j, j + 20).join(',');
-      for (const k of reihe(BESTAND, fil.bestand)) {
-        try {
-          const roh = await holen(BESTAND[k](d, n), { json: true }), b = dmBestand(roh);
-          if (!Object.keys(b).length) { log('dm-Bestand leer', k, JSON.stringify(roh).slice(0, 200)); continue; }
-          fil.bestand = k; Object.assign(bestand, b); break;
-        } catch (e) { log('dm-Bestand', k, e.message.slice(0, 120)); }
-      }
+  if (produkte.length && produkte[0].preis == null) log('dm-Produkt-Beispiel', JSON.stringify(produkte[0]._roh || {}).slice(0, 600));
+  // Bestand je Filiale (neuere v2-Schnittstelle), die 25 nächsten dm-Filialen; erst Filialnummer, sonst interne Filial-ID
+  const bestand = {}, dans = produkte.map((p) => p.dan).join(',');
+  let beispiel = false;
+  for (const f of fil.filialen.slice(0, 25)) {
+    for (const id of [...new Set([fil.idArt === 'id' ? f.id : f.nummer, f.nummer, f.id])]) {
+      try {
+        const roh = await holen(`https://products.dm.de/availability/api/v2/tiles/DE/${dans}?pickupStoreId=${encodeURIComponent(id)}`, { json: true });
+        if (!beispiel) { log('dm-Bestand-Beispiel', JSON.stringify(roh).slice(0, 500)); beispiel = true; }
+        const b = dmTiles(roh, f.nummer);
+        if (!Object.keys(b).length) continue;
+        fil.idArt = id === f.id && id !== f.nummer ? 'id' : 'nummer'; Object.assign(bestand, b); break;
+      } catch (e) { log('dm-Bestand', f.nummer, id, e.message.slice(0, 100)); }
     }
   }
   writeFileSync(FILIALEN, `${JSON.stringify(fil, null, 1)}\n`);
@@ -310,7 +308,7 @@ async function filialRadar(alt, verlauf) {
   const meldungen = filialMeldungen(neuImBestand(altStatus, bestand, ersterLauf), produkte, fil.filialen, bestand).slice(0, 3);
   for (const [k, v] of Object.entries(bestand)) if (v) altStatus[k] = v.da;  // unbekannt (null) ändert nichts
   verlauf.filial = altStatus;
-  const daten = { stand: new Date().toISOString(), filialen: fil.filialen.length, produkte: produkte.map((p) => ({ ...p,
+  const daten = { stand: new Date().toISOString(), filialen: fil.filialen.length, produkte: produkte.map((p) => ({ ...ohneRoh(p),
     vorrat: fil.filialen.filter((f) => bestand[`${p.dan}|${f.nummer}`]?.da).slice(0, 8).map((f) => ({ name: f.name, adresse: f.adresse, km: f.km, lat: f.lat, lon: f.lon, menge: bestand[`${p.dan}|${f.nummer}`]?.menge ?? null })) })) };
   log(`Filial-Radar: ${fil.filialen.length} dm-Filialen, ${produkte.length} Produkte, ${Object.values(bestand).filter((v) => v?.da).length} Treffer auf Lager, ${meldungen.length} neu`);
   return { daten, meldungen };
