@@ -5,7 +5,7 @@
 //  - Lagerstatus der Produkte aus GitHub-Issues mit dem Label "restock"; bei Restock kommt ein Kommentar ins Issue
 //    (= Push-Benachrichtigung über die GitHub-App) und die Uhrzeit wird für das Restock-Muster gespeichert.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { alarme, bildVarianten, kurseFortschreiben, bildBegriffe, bingBild, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
+import { styleCode, alarme, bildVarianten, kurseFortschreiben, bildBegriffe, bingBild, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
 
 const ORDNER = 'automations-dashboard/reselling';
 const DATEN = `${ORDNER}/daten.json`;
@@ -234,6 +234,26 @@ async function bildPruefen(url) {
   return url;
 }
 
+// Drop-Bilder: Nikes alte Bildadressen laden oft nicht mehr - prüfen, sonst Produktbild per Bildsuche (Style-Code), gemerkt in bilder.json
+async function ladbar(u) {
+  try { const r = await fetch(u, { headers: BROWSER, signal: AbortSignal.timeout(8000) }); return r.ok && /^image\//.test(r.headers.get('content-type') || ''); } catch { return false; }
+}
+async function dropBilder(drops) {
+  const datei = lesen(BILDER, { bilder: {}, links: {} });
+  for (const d of drops) {
+    const schluessel = `drop:${styleCode(d.bild) || d.titel}`;
+    if (datei.bilder[schluessel]?.url) { d.bild = datei.bilder[schluessel].url; continue; }
+    let neu = '';
+    for (const u of [d.bild && `${d.bild}?fmt=jpg&wid=400&hei=400`, d.bild].filter(Boolean)) if (await ladbar(u)) { neu = u; break; }
+    if (!neu) {
+      try { neu = bingBild(await holen(`https://www.bing.com/images/search?q=${encodeURIComponent(`nike ${styleCode(d.bild)} ${d.titel}`)}&form=HDRSC2&first=1&setlang=de&cc=DE`))?.url || ''; } catch (e) { log('Drop-Bild', d.titel, e.message); }
+    }
+    if (neu) { datei.bilder[schluessel] = { url: neu, stand: new Date().toISOString() }; d.bild = neu; }
+  }
+  writeFileSync(BILDER, `${JSON.stringify(datei, null, 1)}\n`);
+  return drops;
+}
+
 async function main() {
   mkdirSync(ORDNER, { recursive: true });
   const alt = lesen(DATEN, {});
@@ -255,6 +275,7 @@ async function main() {
   const vorOrt = await teil('Läden vor Ort', laedenVorOrt, null);
   const bildZahl = await teil('Bilder', bilder, 0);
   const drops = await teil('Sneaker-Kalender', sneakerDrops, alt.kalender?.filter((k) => k.kat === 'Sneaker') || []);
+  await teil('Drop-Bilder', () => dropBilder(drops), null);
   const setTermine = (poke.sets || []).filter((x) => ['vorverkauf', 'hype'].includes(x.phase)).map((x) => ({
     titel: `Pokémon: ${x.name}`, farbe: x.phase === 'vorverkauf' ? 'Neues Set - vorbestellen' : 'Gerade erschienen', preis: null,
     bild: x.logo, zeit: new Date(Date.parse(String(x.release).replace(/\//g, '-'))).toISOString(), link: 'https://www.pokemon.com/de/pokemon-sammelkartenspiel', marke: 'Pokémon', kat: 'Sammelkarten' }));
