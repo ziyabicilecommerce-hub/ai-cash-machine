@@ -37,7 +37,11 @@
    "monster2": "Jetzt bist du dran.",
    "ende": "Die zweite Zahnbürste ist nass. Und sie steht hinter mir.",
    "weiter": "Teil zwei: Wem gehört die zweite Zahnbürste?",
-   "frage": "Hättest du ins Bad geschaut?"
+   "frage": "Hättest du ins Bad geschaut?",
+   "wahl": [
+    "Ins Bad",
+    "Raus hier"
+   ]
   },
   {
    "titel": "Der Anrufer bin ich",
@@ -56,7 +60,11 @@
    "monster2": "Ich bin du. Nur schneller.",
    "ende": "Unter dem Bett liegt mein Handy. Und eine Hand hält es fest.",
    "weiter": "Teil zwei: Wer hat da angerufen?",
-   "frage": "Wärst du rangegangen?"
+   "frage": "Wärst du rangegangen?",
+   "wahl": [
+    "Rangehen",
+    "Handy aus"
+   ]
   },
   {
    "titel": "Ich sehe dich",
@@ -77,7 +85,11 @@
    "monster2": "Ich habe euch gezählt.",
    "ende": "Wir waren nie zu dritt. Ich bin allein hergekommen.",
    "weiter": "Teil zwei: Wer saß mit am Feuer?",
-   "frage": "Wärst du rausgegangen?"
+   "frage": "Wärst du rausgegangen?",
+   "wahl": [
+    "Rausgehen",
+    "Im Auto bleiben"
+   ]
   },
   {
    "titel": "Dreh dich nicht um",
@@ -96,7 +108,11 @@
    "monster2": "Du hast die Regel gebrochen.",
    "ende": "Im Fenster sitzt jemand neben mir. Neben mir ist der Platz leer.",
    "weiter": "Teil zwei: Regel Nummer zwei.",
-   "frage": "Hättest du dich umgedreht?"
+   "frage": "Hättest du dich umgedreht?",
+   "wahl": [
+    "Umdrehen",
+    "Weiterlaufen"
+   ]
   },
   {
    "titel": "Mach nicht auf",
@@ -117,7 +133,11 @@
    "monster2": "Ich hab einen Schlüssel.",
    "ende": "Das Klopfen hört auf. Dann dreht sich der Schlüssel im Schloss.",
    "weiter": "Teil zwei: Wer hat den Schlüssel?",
-   "frage": "Hättest du aufgemacht?"
+   "frage": "Hättest du aufgemacht?",
+   "wahl": [
+    "Aufmachen",
+    "Mama anrufen"
+   ]
   },
   {
    "titel": "Das Babyphone winkt",
@@ -138,7 +158,11 @@
    "monster2": "Jetzt winke ich dir.",
    "ende": "Mein Bruder steht neben mir. Wer liegt dann in seinem Bett?",
    "weiter": "Teil zwei: Wer liegt im Bett?",
-   "frage": "Wärst du ins Zimmer gegangen?"
+   "frage": "Wärst du ins Zimmer gegangen?",
+   "wahl": [
+    "Ins Zimmer",
+    "Polizei rufen"
+   ]
   },
   {
    "titel": "Etage minus vier",
@@ -157,7 +181,11 @@
    "monster2": "Hier unten ist es schön.",
    "ende": "Die Tür geht zu. Aber das Kratzen ist jetzt im Aufzug.",
    "weiter": "Teil zwei: Was lebt in Etage minus vier?",
-   "frage": "Wärst du ausgestiegen?"
+   "frage": "Wärst du ausgestiegen?",
+   "wahl": [
+    "Aussteigen",
+    "Tür zu drücken"
+   ]
   },
   {
    "titel": "Reihe 13",
@@ -176,7 +204,11 @@
    "monster2": "Das ist jetzt mein Platz.",
    "ende": "Auf meinem Ticket steht jetzt Reihe 13.",
    "weiter": "Teil zwei: Wer sitzt in Reihe 13?",
-   "frage": "Hättest du dich hingesetzt?"
+   "frage": "Hättest du dich hingesetzt?",
+   "wahl": [
+    "Hinsetzen",
+    "Crew rufen"
+   ]
   },
   {
    "titel": "Die Sprachnachricht",
@@ -196,7 +228,11 @@
    "monster": "Psst. Weiterschlafen.",
    "monster2": "Ich nehme dich gerade auf.",
    "ende": "Mein Handy nimmt auf. Ich habe es nicht angefasst.",
-   "frage": "Hättest du die Nachricht angehört?"
+   "frage": "Hättest du die Nachricht angehört?",
+   "wahl": [
+    "Anhören",
+    "Löschen"
+   ]
   },
   {
    "titel": "Der Fahrer schaut nicht",
@@ -214,7 +250,11 @@
    "monster": "Nicht umdrehen.",
    "monster2": "Zu spät.",
    "ende": "Der Zug hat keinen Fahrer. Die Stimme kam von hinten.",
-   "frage": "Hättest du nach hinten geschaut?"
+   "frage": "Hättest du nach hinten geschaut?",
+   "wahl": [
+    "Umschauen",
+    "Augen zu"
+   ]
   },
   {
    "titel": "Die Kamera im Flur",
@@ -234,7 +274,11 @@
    "monster": "Ich bin schon drin.",
    "monster2": "Ich wohne hier länger als du.",
    "ende": "Die letzte Aufnahme zeigt mein Bett. Und sie liegt neben mir.",
-   "frage": "Wärst du noch eine Nacht geblieben?"
+   "frage": "Wärst du noch eine Nacht geblieben?",
+   "wahl": [
+    "Bleiben",
+    "Sofort ausziehen"
+   ]
   },
   {
    "titel": "Der Nachbar winkt",
@@ -252,7 +296,11 @@
    "monster": "Ich komme rüber.",
    "monster2": "Danke fürs Zurückwinken.",
    "ende": "Gegenüber ist das Licht aus. Mein Flurlicht geht an.",
-   "frage": "Hättest du zurückgewinkt?"
+   "frage": "Hättest du zurückgewinkt?",
+   "wahl": [
+    "Zurückwinken",
+    "Vorhang zu"
+   ]
   },
   {
    "titel": "Etage 13",
@@ -270,7 +318,11 @@
    "monster": "Willkommen zu Hause.",
    "monster2": "Hier wohnst du jetzt.",
    "ende": "Auf der Klingel am Ende des Flurs steht mein Name.",
-   "frage": "Wärst du ausgestiegen?"
+   "frage": "Wärst du ausgestiegen?",
+   "wahl": [
+    "Aussteigen",
+    "Drinbleiben"
+   ]
   },
   {
    "titel": "Platz am Fenster",
@@ -288,7 +340,11 @@
    "monster": "Mach das Fenster auf.",
    "monster2": "Ich bin jetzt drin.",
    "ende": "Der Platz neben mir war leer. Jetzt ist er nass.",
-   "frage": "Hättest du die Crew gerufen?"
+   "frage": "Hättest du die Crew gerufen?",
+   "wahl": [
+    "Rausschauen",
+    "Rollo runter"
+   ]
   },
   {
    "titel": "Die Stimme im Wald",
@@ -308,7 +364,11 @@
    "monster": "Komm her, Schatz.",
    "monster2": "Ich kann jede Stimme.",
    "ende": "Hinter mir ruft jetzt meine eigene Stimme: Komm zurück zum Zelt.",
-   "frage": "Wärst du der Stimme gefolgt?"
+   "frage": "Wärst du der Stimme gefolgt?",
+   "wahl": [
+    "Folgen",
+    "Wegrennen"
+   ]
   },
   {
    "titel": "Das Foto von gestern",
@@ -326,7 +386,11 @@
    "monster": "Lächeln.",
    "monster2": "Jetzt noch eins.",
    "ende": "Der Blitz geht los. Aus der Zimmerecke.",
-   "frage": "Hättest du das Handy weggeworfen?"
+   "frage": "Hättest du das Handy weggeworfen?",
+   "wahl": [
+    "Handy weg",
+    "Kamera prüfen"
+   ]
   },
   {
    "titel": "Der Babysitter-Anruf",
@@ -344,7 +408,11 @@
    "monster": "Lies mir was vor.",
    "monster2": "Jetzt bist du dran.",
    "ende": "Unter der Decke ist kein Kind. Nur ein Grinsen.",
-   "frage": "Hättest du die Decke weggezogen?"
+   "frage": "Hättest du die Decke weggezogen?",
+   "wahl": [
+    "Decke weg",
+    "Rausrennen"
+   ]
   },
   {
    "titel": "Haltestelle ohne Namen",
@@ -362,7 +430,11 @@
    "monster": "Endstation.",
    "monster2": "Du bist sitzen geblieben.",
    "ende": "Alle anderen Fahrgäste sind weg. Nur sie und ich.",
-   "frage": "Wärst du ausgestiegen?"
+   "frage": "Wärst du ausgestiegen?",
+   "wahl": [
+    "Aussteigen",
+    "Sitzen bleiben"
+   ]
   },
   {
    "titel": "Zähl die Schritte",
@@ -380,7 +452,11 @@
    "monster": "Vierzehn.",
    "monster2": "Jetzt zähle ich dich.",
    "ende": "Am Morgen hat die Treppe vierzehn Stufen.",
-   "frage": "Hättest du die Tür aufgemacht?"
+   "frage": "Hättest du die Tür aufgemacht?",
+   "wahl": [
+    "Tür auf",
+    "Unters Bett"
+   ]
   },
   {
    "titel": "Live-Stream um drei",
@@ -400,7 +476,11 @@
    "monster": "Sag hallo zum Chat.",
    "monster2": "Du bist jetzt live.",
    "ende": "Der Stream zeigt jetzt mich. Von hinten. Ganz nah.",
-   "frage": "Hättest du dich umgedreht?"
+   "frage": "Hättest du dich umgedreht?",
+   "wahl": [
+    "Umdrehen",
+    "Stream schauen"
+   ]
   },
   {
    "titel": "Das Zelt atmet",
@@ -418,7 +498,11 @@
    "monster": "Mir ist kalt.",
    "monster2": "Rutsch rüber.",
    "ende": "Am Morgen sind zwei Schlafsäcke im Zelt. Ich habe nur einen mitgebracht.",
-   "frage": "Wärst du aus dem Zelt gerannt?"
+   "frage": "Wärst du aus dem Zelt gerannt?",
+   "wahl": [
+    "Rausrennen",
+    "Taschenlampe an"
+   ]
   },
   {
    "titel": "Notruf von mir",
@@ -436,7 +520,11 @@
    "monster": "Ich bin schon bei dir.",
    "monster2": "Mach Platz.",
    "ende": "Der Hausmeister findet den Aufzug leer. Der Notruf kam von innen.",
-   "frage": "Hättest du hochgeschaut?"
+   "frage": "Hättest du hochgeschaut?",
+   "wahl": [
+    "Hochschauen",
+    "Weiterreden"
+   ]
   },
   {
    "titel": "Gepäckfach",
@@ -454,7 +542,11 @@
    "monster": "Darf ich mitfliegen?",
    "monster2": "Ich lande bei dir.",
    "ende": "Bei der Landung ist mein Koffer viel zu schwer.",
-   "frage": "Hättest du das Fach aufgemacht?"
+   "frage": "Hättest du das Fach aufgemacht?",
+   "wahl": [
+    "Fach auf",
+    "Platz wechseln"
+   ]
   },
   {
    "titel": "Wer ist Nummer vier",
@@ -472,7 +564,266 @@
    "monster": "Noch ein Foto.",
    "monster2": "Jetzt sind wir zu viert.",
    "ende": "Das letzte Foto wurde aufgenommen, als wir alle schliefen.",
-   "frage": "Hättest du die Fotos gelöscht?"
+   "frage": "Hättest du die Fotos gelöscht?",
+   "wahl": [
+    "Fotos löschen",
+    "Weiterwandern"
+   ]
+  },
+  {
+   "titel": "Die Wetter-App",
+   "ort": "haus",
+   "boesewicht": "schatten",
+   "stimme": "frau",
+   "hook": "Meine Wetter-App zeigt für mein Schlafzimmer: Besuch, 3 Uhr.",
+   "saetze": [
+    "Ich lache und lege mich hin.",
+    "Um drei piept das Handy.",
+    "Neue Meldung: Besuch ist angekommen.",
+    "Die Matratze neben mir sinkt langsam ein."
+   ],
+   "monster": "Mach Platz.",
+   "monster2": "Ich bleibe über Nacht.",
+   "ende": "Die App aktualisiert sich: Besuch bleibt für immer.",
+   "frage": "Hättest du das Licht angemacht?",
+   "wahl": [
+    "Licht an",
+    "Augen zu"
+   ]
+  },
+  {
+   "titel": "Der Lieferdienst",
+   "ort": "haus",
+   "boesewicht": "frau",
+   "stimme": "mann",
+   "hook": "Ich habe nichts bestellt. Der Fahrer steht seit einer Stunde vor meiner Tür.",
+   "saetze": [
+    "Ich schaue durch den Spion.",
+    "Er lächelt und hält eine Tüte hoch.",
+    "Dann schreibt die App.",
+    "Ihr Fahrer wartet. Er hat Zeit.",
+    "Die Tüte bewegt sich."
+   ],
+   "absender": "Liefer-App",
+   "nachricht": "Ihr Fahrer wartet. Er hat sehr viel Zeit.",
+   "monster": "Bitte unterschreiben.",
+   "ende": "Auf dem Lieferschein steht mein Name. Und die Adresse vom Friedhof.",
+   "frage": "Hättest du die Tür aufgemacht?",
+   "wahl": [
+    "Tür auf",
+    "Polizei rufen"
+   ]
+  },
+  {
+   "titel": "Navi nach Hause",
+   "ort": "wald",
+   "boesewicht": "hirsch",
+   "stimme": "mann",
+   "hook": "Mein Navi sagt: In 300 Metern links. Links ist nur Wald.",
+   "saetze": [
+    "Ich fahre einfach weiter geradeaus.",
+    "Das Navi sagt: Bitte wenden.",
+    "Dann sagt es meinen Namen.",
+    "Im Scheinwerferlicht steht etwas mit Geweih.",
+    "Es zeigt nach links."
+   ],
+   "monster": "Hier entlang.",
+   "monster2": "Du bist angekommen.",
+   "ende": "Das Navi zeigt das Ziel. Mein eigenes Grab.",
+   "frage": "Wärst du links abgebogen?",
+   "wahl": [
+    "Links abbiegen",
+    "Rückwärts fahren"
+   ]
+  },
+  {
+   "titel": "Der letzte Wagen",
+   "ort": "zug",
+   "boesewicht": "schatten",
+   "stimme": "frau",
+   "hook": "In der letzten S-Bahn sitzen alle mit dem Gesicht zur Wand.",
+   "saetze": [
+    "Ich setze mich ganz nah an die Tür.",
+    "Keiner bewegt sich.",
+    "Dann dreht sich der Mann vor mir um.",
+    "Er hat kein Gesicht. Nur meinen Schal.",
+    "Alle anderen drehen sich jetzt auch um."
+   ],
+   "monster": "Setz dich richtig hin.",
+   "monster2": "Gesicht zur Wand.",
+   "ende": "Ich drehe mich zur Wand. Und die Wand dreht sich zu mir.",
+   "frage": "Wärst du an der nächsten Station raus?",
+   "wahl": [
+    "Aussteigen",
+    "Gesicht zur Wand"
+   ]
+  },
+  {
+   "titel": "Kühlschrank-Licht",
+   "ort": "haus",
+   "boesewicht": "gremlin",
+   "stimme": "mann",
+   "hook": "Nachts geht mein Kühlschrank von alleine auf. Von innen.",
+   "saetze": [
+    "Ich höre ein leises Klicken in der Küche.",
+    "Das Licht vom Kühlschrank fällt in den Flur.",
+    "Davor liegen kleine nasse Fußspuren.",
+    "Sie führen direkt zu meinem Bett."
+   ],
+   "monster": "Ich habe Hunger.",
+   "monster2": "Du bist das Abendessen.",
+   "ende": "Der Kühlschrank ist leer. Und unter meiner Decke kaut etwas.",
+   "frage": "Hättest du in die Küche geschaut?",
+   "wahl": [
+    "In die Küche",
+    "Decke über Kopf"
+   ]
+  },
+  {
+   "titel": "Die Klingel um drei",
+   "ort": "haus",
+   "boesewicht": "frau",
+   "stimme": "frau",
+   "hook": "Meine Video-Klingel zeigt eine Frau. Sie klingelt nie. Sie starrt nur.",
+   "saetze": [
+    "Jede Nacht um drei steht sie da.",
+    "Jede Nacht ein bisschen näher an der Linse.",
+    "Heute ist das Bild schwarz.",
+    "Dann höre ich ein Klopfen. Von innen am Schrank."
+   ],
+   "monster": "Ich bin schon drin.",
+   "ende": "Die Klingel zeigt wieder ein Bild. Mich, wie ich schlafe.",
+   "frage": "Hättest du die Tür geöffnet?",
+   "wahl": [
+    "Schrank auf",
+    "Rausrennen"
+   ]
+  },
+  {
+   "titel": "Aufzug ohne Knöpfe",
+   "ort": "aufzug",
+   "boesewicht": "schatten",
+   "stimme": "mann",
+   "hook": "Ich steige in den Aufzug. Es gibt keine Knöpfe. Nur einen Spiegel.",
+   "saetze": [
+    "Die Tür geht zu.",
+    "Der Aufzug fährt nach unten. Sehr lange.",
+    "Mein Spiegelbild hebt die Hand.",
+    "Ich habe meine Hand nicht gehoben."
+   ],
+   "monster": "Tausch mit mir.",
+   "monster2": "Jetzt bin ich du.",
+   "ende": "Die Tür geht auf. Ich stehe im Spiegel und schaue mir beim Aussteigen zu.",
+   "frage": "Hättest du in den Spiegel geschaut?",
+   "wahl": [
+    "Spiegel ansehen",
+    "Augen zu"
+   ]
+  },
+  {
+   "titel": "Durchsage für mich",
+   "ort": "flugzeug",
+   "boesewicht": "frau",
+   "stimme": "frau",
+   "hook": "Der Pilot sagt durch: Platz 22C, bitte nicht einschlafen. Das bin ich.",
+   "saetze": [
+    "Alle drehen sich zu mir um.",
+    "Die Stewardess bringt mir Kaffee.",
+    "Sie flüstert: Halte durch.",
+    "Neben mir sitzt plötzlich eine Frau mit sehr langem Hals."
+   ],
+   "monster": "Schlaf doch ein bisschen.",
+   "ende": "Ich blinzle einmal. Und das Flugzeug ist leer.",
+   "frage": "Wärst du wach geblieben?",
+   "wahl": [
+    "Wach bleiben",
+    "Einschlafen"
+   ]
+  },
+  {
+   "titel": "Der Waldweg zählt",
+   "ort": "wald",
+   "boesewicht": "gremlin",
+   "stimme": "mann",
+   "hook": "Am Waldweg steht ein Schild: Besucher heute 3. Wir sind zu zweit.",
+   "saetze": [
+    "Wir lachen darüber.",
+    "Nach einer Stunde kommt wieder ein Schild.",
+    "Besucher heute 4.",
+    "Hinter uns knackt es im Gebüsch.",
+    "Mein Freund ist plötzlich ganz still."
+   ],
+   "monster": "Ich zähle mit.",
+   "monster2": "Gleich nur noch einer.",
+   "ende": "Am Ausgang steht ein Schild: Besucher heute 1.",
+   "frage": "Wärst du umgekehrt?",
+   "wahl": [
+    "Umkehren",
+    "Weitergehen"
+   ]
+  },
+  {
+   "titel": "Die Puppe im Zug",
+   "ort": "zug",
+   "boesewicht": "gremlin",
+   "stimme": "frau",
+   "hook": "Im Zug liegt eine Puppe auf meinem Platz. Sie hat meine Jacke an.",
+   "saetze": [
+    "Ich lege sie auf den Sitz gegenüber.",
+    "Ich schaue kurz aufs Handy.",
+    "Die Puppe sitzt wieder neben mir.",
+    "Ihre Hand liegt jetzt auf meinem Bein."
+   ],
+   "monster": "Wir fahren zusammen.",
+   "ende": "Der Schaffner kontrolliert nur ein Ticket. Und gibt es der Puppe.",
+   "frage": "Hättest du die Puppe aus dem Fenster geworfen?",
+   "wahl": [
+    "Aus dem Fenster",
+    "Platz wechseln"
+   ]
+  },
+  {
+   "titel": "Familien-Chat",
+   "ort": "haus",
+   "boesewicht": "schatten",
+   "stimme": "frau",
+   "hook": "Im Familien-Chat schreibt Opa. Opa ist seit drei Jahren tot.",
+   "saetze": [
+    "Alle denken, es ist ein Scherz.",
+    "Dann schickt er ein Foto.",
+    "Es zeigt unser Wohnzimmer. Von heute Abend.",
+    "Auf dem Sofa sitzt jemand, der nicht zu uns gehört."
+   ],
+   "absender": "Opa",
+   "nachricht": "Ich bin wieder zu Hause. Macht mir einen Platz frei.",
+   "monster": "Rück mal ein Stück.",
+   "ende": "Ich drehe mich zum Sofa um. Der Platz neben mir ist warm.",
+   "frage": "Hättest du geantwortet?",
+   "wahl": [
+    "Antworten",
+    "Chat verlassen"
+   ]
+  },
+  {
+   "titel": "Kinderlachen im Keller",
+   "ort": "aufzug",
+   "boesewicht": "frau",
+   "stimme": "mann",
+   "hook": "Unser Aufzug fährt nachts allein in den Keller. Zurück kommt Kinderlachen.",
+   "saetze": [
+    "Ich bleibe nachts im Flur wach.",
+    "Um drei geht die Aufzugstür auf.",
+    "Drin ist niemand.",
+    "Nur kleine Handabdrücke am Spiegel. Von innen."
+   ],
+   "monster": "Spiel mit uns.",
+   "monster2": "Du bist dran mit Suchen.",
+   "ende": "Die Tür geht zu. Und ich bin plötzlich drin.",
+   "frage": "Wärst du eingestiegen?",
+   "wahl": [
+    "Einsteigen",
+    "Treppe nehmen"
+   ]
   }
  ]
 }

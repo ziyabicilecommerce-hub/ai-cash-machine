@@ -40,7 +40,7 @@ test('tippsAus: warnt bei kurzer Sehdauer, wenig Kommentaren, leerer Warteschlan
 });
 
 test('dashboardDaten: warnt, wenn Buffer für ältere Posts keine Zahlen mehr abholt', () => {
-  const alt = { id: 'x', status: 'sent', channelId: 'k1', sentAt: '2026-10-19T22:19:00Z', metricsUpdatedAt: '2026-10-19T22:18:00Z', text: 'a', metrics: m(0, 0) };
+  const alt = { id: 'x', status: 'sent', channelId: 'k1', sentAt: '2026-10-18T22:19:00Z', metricsUpdatedAt: '2026-10-18T22:18:00Z', text: 'a', metrics: m(0, 0) };
   const frisch = { id: 'y', status: 'sent', channelId: 'k1', sentAt: '2026-10-20T10:00:00Z', metricsUpdatedAt: '2026-10-20T09:59:00Z', text: 'b', metrics: m(0, 0) };
   const d = dashboardDaten({ posts: [alt, frisch], kanaele, jetzt });
   assert.equal(d.ohneZahlen, 1);

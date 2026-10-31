@@ -61,8 +61,8 @@ export function dashboardDaten({ posts = [], kanaele = [], nischen = {}, serien 
   });
   const geplant = posts.filter((p) => p.status === 'scheduled').sort((a, b) => zeit(a) - zeit(b)).map(zeile);
   const fehler = posts.filter((p) => p.status === 'error').length;
-  // Buffer aktualisiert die Zahlen eines Posts nach dem Senden; ist das nach 6 Stunden nie passiert, fehlen sie.
-  const ohneZahlen = gesendet.filter((p) => zeit(p) < jetzt - 6 * 3600000 && p.metricsUpdatedAt && Date.parse(p.metricsUpdatedAt) < zeit(p)).length;
+  // Buffer holt die Zahlen nur etwa einmal am Tag (bis ~24 h Verzug); erst wenn nach 30 Stunden nichts kam, fehlen sie wirklich.
+  const ohneZahlen = gesendet.filter((p) => zeit(p) < jetzt - 30 * 3600000 && p.metricsUpdatedAt && Date.parse(p.metricsUpdatedAt) < zeit(p)).length;
   const letzte = [...gesendet].sort((a, b) => zeit(b) - zeit(a)).slice(0, 30).map(zeile);
   return { stand: new Date(jetzt).toISOString(), gesamt, konten, geplant, letzte, fehler, ohneZahlen, lernen, tipps: tippsAus(gesamt, konten, geplant, fehler, ohneZahlen) };
 }
