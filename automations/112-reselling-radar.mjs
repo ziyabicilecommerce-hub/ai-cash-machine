@@ -5,6 +5,7 @@
 //  - Lagerstatus der Produkte aus GitHub-Issues mit dem Label "restock"; bei Restock kommt ein Kommentar ins Issue
 //    (= Push-Benachrichtigung über die GitHub-App) und die Uhrzeit wird für das Restock-Muster gespeichert.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { dauerDeals } from './lib/dauerbrenner.mjs';
 import { DM_SUCHE, bbox, dmFilialen, dmProdukte, dmTiles, ohneRoh, neuImBestand, filialMeldungen } from './lib/filialRadar.mjs';
 import { styleCode, alarme, bildVarianten, kurseFortschreiben, bildBegriffe, bingBild, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
 
@@ -363,7 +364,13 @@ async function main() {
   const liveNeu = alt.live?.treffer?.length ? (live.treffer || []).filter((x) => !bekannt.has(x.url)) : [];
   verlauf.gemeldet = verlauf.gemeldet || {};
   const filial = await teil('Filial-Radar', () => filialRadar(alt, verlauf), { daten: alt.filial || null, meldungen: [] });
-  const neueAlarme = [...filial.meldungen, ...alarme({ picks: poke.picks || [], kalender, liveNeu, budget: BUDGET }, verlauf.gemeldet)].slice(0, 7);
+  // Dauerbrenner-Deals: Live-Angebot mit mindestens 25 € Gewinn gegen den Richtwert -> Push (je Angebot nur einmal pro Woche)
+  const eu = (n) => `${Number(n).toFixed(2).replace('.', ',')} €`;
+  const deals = dauerDeals(lesen(`${ORDNER}/evergreen.json`, {}), live.treffer || [])
+    .filter((d) => d.gewinn >= 25 && !(verlauf.gemeldet[`deal:${d.t.url}`] && Date.now() - Date.parse(verlauf.gemeldet[`deal:${d.t.url}`]) < 7 * 86400000))
+    .slice(0, 2).map((d) => ({ schluessel: `deal:${d.t.url}`, art: 'Deal', titel: `💰 Deal: ${d.e.name} für ${eu(d.t.preis)}`, bild: d.t.bild, link: d.t.url,
+      text: `${d.t.laden} · ${d.t.titel}\nVerkauf ca. ${d.e.vk[0]}–${d.e.vk[1]} € → Gewinn ca. +${eu(d.gewinn)} (ROI ${d.roi} %)\nGröße prüfen, vorher verkaufte Preise checken.` }));
+  const neueAlarme = [...filial.meldungen, ...deals, ...alarme({ picks: poke.picks || [], kalender, liveNeu, budget: BUDGET }, verlauf.gemeldet)].slice(0, 7);
   for (const a of neueAlarme) {
     verlauf.gemeldet[a.schluessel] = jetzt;
     await teil('Push', () => pushen(a), null);

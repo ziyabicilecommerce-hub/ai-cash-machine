@@ -138,7 +138,7 @@ function deal({ bild, emoji, titel, text, link, zeit }) {
 }
 function sofort() {
   const frisch = (D.alarme || []).filter((a) => Date.now() - Date.parse(a.zeit) < 24 * 3600000);
-  let liste = frisch.map((a) => ({ ...a, emoji: a.art === 'Drop' ? '👟' : a.art === 'Karte' ? '🃏' : a.art === 'Filiale' ? '🏪' : '🆕', link: https(a.link) }));
+  let liste = frisch.map((a) => ({ ...a, emoji: a.art === 'Drop' ? '👟' : a.art === 'Karte' ? '🃏' : a.art === 'Filiale' ? '🏪' : a.art === 'Deal' ? '💰' : '🆕', link: https(a.link) }));
   $('alarmtitel').textContent = liste.length ? `🚨 Sofort kaufen (${liste.length})` : '💎 Beste Deals gerade';
   $('alarminfo').textContent = liste.length ? 'Vom Bot in den letzten 24 Stunden gefunden - alle 5 Minuten neu geprüft.' : 'Gerade kein Alarm - das hier lohnt sich trotzdem jetzt:';
   if (!liste.length) {

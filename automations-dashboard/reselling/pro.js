@@ -135,35 +135,55 @@ function verfuegbar(e) {
   }
   return wo;
 }
+const STRATEGIE = (kat) => (['Sammelkarten', 'Figuren', 'Bücher & Medien'].includes(kat) ? ['HALTEN', '⏳ Monate halten'] : ['FLIP', '⚡ sofort flippen']);
 function dauerbrenner() {
   if (!EVER) return;
-  $('dauerinfo').textContent = `${EVER.hinweis} „Einkauf ab“ ist das günstigste Angebot im Radar - kann auch eine Kinder-/Damengröße sein, Größe prüfen.`;
-  PRO.dauerKat ||= 'Alle';
+  $('dauerinfo').textContent = `${EVER.hinweis} „Einkauf ab“ ist das günstigste passende Angebot im Radar - Größe prüfen.`;
+  PRO.dauerKat ||= 'Alle'; PRO.dauerSort ||= 'Verfügbar';
   chips('dauerfilter', ['Alle', ...new Set(EVER.produkte.map((e) => e.kat))], PRO.dauerKat, (w) => { PRO.dauerKat = w; dauerbrenner(); });
-  const karten = EVER.produkte.filter((e) => PRO.dauerKat === 'Alle' || e.kat === PRO.dauerKat).map((e) => {
+  chips('dauersort', ['Verfügbar', 'Gewinn', 'ROI'], PRO.dauerSort, (w) => { PRO.dauerSort = w; dauerbrenner(); });
+  const alle = EVER.produkte.map((e) => {
     const wo = verfuegbar(e);
     // Angebote unter 60 % vom normalen Preis sind oft Kinder-/Damengrößen oder andere Varianten - zählen nicht für den Gewinn
-    const guenstig = Math.min(...wo.map((w) => w.preis).filter((x) => x != null && x >= e.ek * 0.6), e.ek);
+    const echt = wo.filter((w) => w.preis != null && w.preis >= e.ek * 0.6).sort((x, y) => x.preis - y.preis);
+    const guenstig = echt[0]?.preis ?? e.ek;
     const mitte = (e.vk[0] + e.vk[1]) / 2, gewinn = Math.round((mitte * 0.9 - guenstig - 5) * 100) / 100;  // ~10 % Gebühren + 5 € Versand
-    return { e, wo, guenstig, gewinn };
-  }).sort((a, b) => b.wo.length - a.wo.length || b.gewinn - a.gewinn);
-  $('dauerbrenner').replaceChildren(...karten.map(({ e, wo, guenstig, gewinn }) => {
-    const z = el('div', 'signal');
+    return { e, wo, echt, guenstig, gewinn, roi: Math.round((gewinn / guenstig) * 100) };
+  });
+  // Bester Deal, den es GERADE wirklich gibt - groß oben
+  const top = alle.filter((k) => k.echt.length).sort((x, y) => y.gewinn - x.gewinn)[0];
+  $('dauertop').replaceChildren(...(top && top.gewinn > 0 ? [(() => {
+    const d = el('div', 'deal topdeal');
+    const m = el('div', 'mitte');
+    m.append(el('div', 'zeit', '💰 BESTER DEAL GERADE'), el('div', 'name', top.e.name), el('div', 'info', `${top.echt[0].text} → Verkauf ${top.e.vk[0]}–${top.e.vk[1]} €`),
+      el('div', 'topgewinn', `+${euro(top.gewinn)} · ROI ${top.roi} %`));
+    const k = el('a', 'kaufen-knopf', 'Jetzt kaufen →'); k.href = top.echt[0].link; k.target = '_blank'; k.rel = 'noopener'; m.append(k);
+    d.append(bildBox('bild', BILDER[top.e.bild]?.url, '💰'), m);
+    return d;
+  })()] : []));
+  const sortierer = { Verfügbar: (x, y) => y.echt.length - x.echt.length || y.gewinn - x.gewinn, Gewinn: (x, y) => y.gewinn - x.gewinn, ROI: (x, y) => y.roi - x.roi };
+  const karten = alle.filter((k) => PRO.dauerKat === 'Alle' || k.e.kat === PRO.dauerKat).sort(sortierer[PRO.dauerSort]);
+  const maxGewinn = Math.max(1, ...karten.map((k) => k.gewinn));
+  $('dauerbrenner').replaceChildren(...karten.map(({ e, wo, echt, guenstig, gewinn, roi }) => {
+    const z = el('div', `signal ${gewinn >= 25 && echt.length ? 'heiss' : ''}`);
     const kopf = el('div', 'oben');
+    const [strat, stratText] = STRATEGIE(e.kat);
     const m = el('div', 'mitte'); m.append(el('div', 'name', e.name), el('div', 'info', e.tipp));
     const r = el('div', 'rechts');
-    r.append(el('span', `sig ${gewinn >= 15 ? 'sb' : gewinn >= 0 ? 'b' : 'p'}`, gewinn >= 15 ? 'LOHNT' : gewinn >= 0 ? 'KNAPP' : 'NUR SALE'), el('div', 'score', e.kat));
+    r.append(el('span', `sig ${gewinn >= 15 ? 'sb' : gewinn >= 0 ? 'b' : 'p'}`, gewinn >= 15 ? 'LOHNT' : gewinn >= 0 ? 'KNAPP' : 'NUR SALE'), el('div', 'score', `${strat} · ${e.kat}`));
     kopf.append(bildBox('bild', BILDER[e.bild]?.url, '♾️'), m, r);
     const zahlen = el('div', 'zahlen');
     const feld = (t, w, c = '') => { const f = el('div'); f.append(el('span', '', t), el('b', c, w)); return f; };
-    zahlen.style.gridTemplateColumns = 'repeat(3,1fr)';
-    zahlen.append(feld(wo.some((w) => w.preis != null) ? 'Einkauf ab' : 'Einkauf ca.', euro(guenstig)), feld('Verkauf für', `${e.vk[0]}–${e.vk[1]} €`, 'gruen'),
-      feld('Gewinn ca.', `${gewinn >= 0 ? '+' : ''}${euro(gewinn)}`, gewinn >= 0 ? 'gruen' : 'rot'));
+    zahlen.style.gridTemplateColumns = 'repeat(4,1fr)';
+    zahlen.append(feld(echt.length ? 'Einkauf ab' : 'Einkauf ca.', euro(guenstig)), feld('Verkauf', `${e.vk[0]}–${e.vk[1]} €`, 'gruen'),
+      feld('Gewinn', `${gewinn >= 0 ? '+' : ''}${Math.round(gewinn)} €`, gewinn >= 0 ? 'gruen' : 'rot'), feld('ROI', `${roi} %`, roi >= 0 ? 'gruen' : 'rot'));
+    const balken = el('div', 'gbalken'); const fuell = el('i'); fuell.style.width = `${Math.max(0, Math.min(100, (gewinn / maxGewinn) * 100))}%`; balken.append(fuell);
     const l = el('div', 'links'); l.style.margin = '10px 0 0';
+    l.append(el('span', 'strat', stratText));
     if (wo.length) for (const w of wo) { const a = el('a', 'kauf', w.text); a.href = w.link; a.target = '_blank'; a.rel = 'noopener'; l.append(a); }
     else l.append(el('span', 'klein', 'Gerade nirgends im Radar - Restock-Alarm im Business-Tab setzen.'));
     const vk = el('a', 'verk', '💶 Verkaufte Preise'); vk.href = `https://www.ebay.de/sch/i.html?_nkw=${encodeURIComponent(e.suche[0])}&LH_Sold=1&LH_Complete=1`; vk.target = '_blank'; vk.rel = 'noopener'; l.append(vk);
-    z.append(kopf, zahlen, l);
+    z.append(kopf, zahlen, balken, l);
     return z;
   }));
 }

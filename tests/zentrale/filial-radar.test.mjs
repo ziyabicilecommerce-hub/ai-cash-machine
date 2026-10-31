@@ -67,3 +67,18 @@ test('dm-Suche: fachfremde Treffer (Rasierer bei "lego") fliegen raus', async ()
   assert.deepEqual(p.map((x) => x.dan), ['2']);
   assert.equal(dmProdukte({ products: [{ dan: 3, title: 'Pokémon Booster', price: { value: 12 } }] }, 'pokemon').length, 1);
 });
+
+test('Dauerbrenner-Deals: richtiges Modell, Gewinn nach Gebühren, keine Kindergrößen', async () => {
+  const { dauerDeals, strategie } = await import('../../automations/lib/dauerbrenner.mjs');
+  const ev = { produkte: [{ name: 'Air Jordan 4 Retro', kat: 'Sneaker', ek: 210, vk: [220, 320], suche: ['jordan 4 retro'], ohne: ['gs'] }] };
+  const d = dauerDeals(ev, [
+    { titel: 'Air Jordan 4 Retro Bred', preis: 180, url: 'u1' },
+    { titel: 'Air Jordan 4 Retro (GS)', preis: 150, url: 'u2' },
+    { titel: 'Air Jordan 4 Retro Kids', preis: 90, url: 'u3' },
+    { titel: 'Jordan Socks', preis: 15, url: 'u4' },
+  ]);
+  assert.deepEqual(d.map((x) => x.t.url), ['u1']);
+  assert.equal(d[0].gewinn, 270 * 0.9 - 180 - 5);
+  assert.equal(strategie('Sammelkarten'), 'HALTEN');
+  assert.equal(strategie('Sneaker'), 'FLIP');
+});
