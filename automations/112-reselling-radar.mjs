@@ -5,6 +5,7 @@
 //  - Lagerstatus der Produkte aus GitHub-Issues mit dem Label "restock"; bei Restock kommt ein Kommentar ins Issue
 //    (= Push-Benachrichtigung über die GitHub-App) und die Uhrzeit wird für das Restock-Muster gespeichert.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { DM_SUCHE, bbox, dmFilialen, dmProdukte, dmBestand, neuImBestand, filialMeldungen } from './lib/filialRadar.mjs';
 import { styleCode, alarme, bildVarianten, kurseFortschreiben, bildBegriffe, bingBild, ddgVqd, ddgBild, commonsBild, suchLink, nikeDrops, overpassAbfrage, laedenAusOsm, HEIMAT, shopifyTreffer, kartenPicks, kartenStatistik, kaufZeitpunkt, trendsAusRss, wareTrends, verfuegbarkeit, restockMuster, neueRestocks, linksAus } from './lib/resellingRadar.mjs';
 
 const ORDNER = 'automations-dashboard/reselling';
@@ -12,6 +13,7 @@ const DATEN = `${ORDNER}/daten.json`;
 const VERLAUF = `${ORDNER}/verlauf.json`;
 const LAEDEN = `${ORDNER}/laeden.json`;
 const BILDER = `${ORDNER}/bilder.json`;
+const FILIALEN = `${ORDNER}/filialen.json`;
 const REPO = process.env.GITHUB_REPOSITORY || '';
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
 const BUDGET = Number(process.env.RESELLING_BUDGET || 40);
@@ -222,7 +224,7 @@ async function kommentieren(nr, text) {
 async function pushen(a) {
   const res = await fetch('https://ntfy.sh/', { method: 'POST', headers: { 'content-type': 'application/json' }, signal: AbortSignal.timeout(15000),
     body: JSON.stringify({ topic: PUSH_THEMA, title: a.titel, message: a.text, click: a.link, ...(a.bild ? { attach: a.bild } : {}), priority: 4, tags: ['moneybag'],
-      actions: a.link ? [{ action: 'view', label: 'Jetzt kaufen', url: a.link }] : [] }) });
+      actions: [a.link && { action: 'view', label: a.art === 'Filiale' ? 'Route' : 'Jetzt kaufen', url: a.link }, a.shop && { action: 'view', label: 'Zum Produkt', url: a.shop }].filter(Boolean) }) });
   if (!res.ok) throw new Error(`ntfy ${res.status}`);
 }
 
@@ -254,6 +256,43 @@ async function dropBilder(drops) {
   log('Drop-Bilder:', drops.filter((d) => d.bild).length, 'von', drops.length);
   writeFileSync(BILDER, `${JSON.stringify(datei, null, 1)}\n`);
   return drops;
+}
+
+// Filial-Radar: dm-Filialen im 50-km-Umkreis (wöchentlich), gefragte Produkte und deren Bestand (alle 15 Min.)
+async function filialRadar(alt, verlauf) {
+  if (alt.filial?.stand && Date.now() - Date.parse(alt.filial.stand) < 14 * 60000) return { daten: alt.filial, meldungen: [] };
+  let fil = lesen(FILIALEN, null);
+  if (!fil?.filialen?.length || Date.now() - Date.parse(fil.stand) > 7 * 86400000) {
+    const roh = await holen(`https://store-data-service.services.dmtech.com/stores/bbox/${bbox(HEIMAT)}`, { json: true });
+    fil = { stand: new Date().toISOString(), filialen: dmFilialen(roh, HEIMAT) };
+    if (!fil.filialen.length) throw new Error(`dm-Filialen: 0 erkannt, Antwort: ${JSON.stringify(roh).slice(0, 300)}`);
+    writeFileSync(FILIALEN, `${JSON.stringify(fil, null, 1)}\n`);
+  }
+  const produkte = [];
+  for (const q of DM_SUCHE) {
+    try {
+      const roh = await holen(`https://products.dm.de/product/de/search?q=${encodeURIComponent(q)}&pageSize=24`, { json: true });
+      const p = dmProdukte(roh, q);
+      if (!p.length) log('dm-Suche ohne Treffer', q, JSON.stringify(roh).slice(0, 200));
+      for (const x of p.slice(0, 10)) if (!produkte.some((y) => y.dan === x.dan)) produkte.push(x);
+    } catch (e) { log('dm-Suche', q, e.message); }
+  }
+  const nummern = fil.filialen.slice(0, 60).map((f) => f.nummer), bestand = {};
+  for (let i = 0; i < produkte.length; i += 10) {
+    for (let j = 0; j < nummern.length; j += 20) {
+      const url = `https://products.dm.de/store-availability/DE/availability?dans=${produkte.slice(i, i + 10).map((p) => p.dan).join(',')}&storeNumbers=${nummern.slice(j, j + 20).join(',')}`;
+      try { Object.assign(bestand, dmBestand(await holen(url, { json: true }))); } catch (e) { log('dm-Bestand', e.message); }
+    }
+  }
+  const altStatus = verlauf.filial || {};
+  const ersterLauf = !Object.keys(altStatus).length;
+  const meldungen = filialMeldungen(neuImBestand(altStatus, bestand, ersterLauf), produkte, fil.filialen, bestand).slice(0, 3);
+  for (const [k, v] of Object.entries(bestand)) if (v) altStatus[k] = v.da;  // unbekannt (null) ändert nichts
+  verlauf.filial = altStatus;
+  const daten = { stand: new Date().toISOString(), filialen: fil.filialen.length, produkte: produkte.map((p) => ({ ...p,
+    vorrat: fil.filialen.filter((f) => bestand[`${p.dan}|${f.nummer}`]?.da).slice(0, 8).map((f) => ({ name: f.name, adresse: f.adresse, km: f.km, lat: f.lat, lon: f.lon, menge: bestand[`${p.dan}|${f.nummer}`]?.menge ?? null })) })) };
+  log(`Filial-Radar: ${fil.filialen.length} dm-Filialen, ${produkte.length} Produkte, ${Object.values(bestand).filter((v) => v?.da).length} Treffer auf Lager, ${meldungen.length} neu`);
+  return { daten, meldungen };
 }
 
 async function main() {
@@ -306,7 +345,8 @@ async function main() {
   const bekannt = new Set((alt.live?.treffer || []).map((x) => x.url));
   const liveNeu = alt.live?.treffer?.length ? (live.treffer || []).filter((x) => !bekannt.has(x.url)) : [];
   verlauf.gemeldet = verlauf.gemeldet || {};
-  const neueAlarme = alarme({ picks: poke.picks || [], kalender, liveNeu, budget: BUDGET }, verlauf.gemeldet).slice(0, 6);
+  const filial = await teil('Filial-Radar', () => filialRadar(alt, verlauf), { daten: alt.filial || null, meldungen: [] });
+  const neueAlarme = [...filial.meldungen, ...alarme({ picks: poke.picks || [], kalender, liveNeu, budget: BUDGET }, verlauf.gemeldet)].slice(0, 7);
   for (const a of neueAlarme) {
     verlauf.gemeldet[a.schluessel] = jetzt;
     await teil('Push', () => pushen(a), null);
@@ -314,7 +354,7 @@ async function main() {
   for (const [k, z] of Object.entries(verlauf.gemeldet)) if (Date.now() - Date.parse(z) > 40 * 86400000) delete verlauf.gemeldet[k];
   const alarmListe = [...neueAlarme.map((a) => ({ ...a, zeit: jetzt })), ...(alt.alarme || [])].slice(0, 20);
 
-  const daten = { stand: jetzt, budget: BUDGET, push: { thema: PUSH_THEMA }, alarme: alarmListe, kalender, pokemon: poke, trends: hype, live, produkte, restocks: verlauf.restocks.slice(-20).reverse(), muster: restockMuster(verlauf.restocks), fehler };
+  const daten = { stand: jetzt, budget: BUDGET, push: { thema: PUSH_THEMA }, alarme: alarmListe, filial: filial.daten, kalender, pokemon: poke, trends: hype, live, produkte, restocks: verlauf.restocks.slice(-20).reverse(), muster: restockMuster(verlauf.restocks), fehler };
   writeFileSync(DATEN, `${JSON.stringify(daten, null, 1)}\n`);
   writeFileSync(VERLAUF, `${JSON.stringify(verlauf, null, 1)}\n`);
   log(`fertig: ${kalender.length} Kalender-Termine, ${vorOrt?.laeden?.length || 0} Läden vor Ort, ${bildZahl} Bilder, ${poke.picks?.length || 0} Karten-Picks, ${hype.ware?.length || 0} Ware-Trends, ${live.treffer?.length || 0} Live-Treffer bei ${live.erreicht?.length || 0} Shops, ${produkte.length} beobachtete Produkte, ${neueAlarme.length} Alarme, Fehler: ${fehler.length}`);

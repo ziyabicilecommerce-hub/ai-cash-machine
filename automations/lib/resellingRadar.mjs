@@ -249,7 +249,7 @@ export function alarme({ picks = [], kalender = [], liveNeu = [], budget = 40 },
   for (const w of liveNeu) {
     if (raus.filter((a) => a.art === 'Neu').length >= 2) break;  // nicht zuspammen
     if (w.preis == null || w.preis > budget || frisch(`neu:${w.url}`, 30)) continue;
-    raus.push({ schluessel: `neu:${w.url}`, art: 'Neu', titel: `🆕 Neu auf Lager: ${w.titel}`, bild: w.bild, link: w.url, text: `${eu(w.preis)} bei ${w.laden}` });
+    raus.push({ schluessel: `neu:${w.url}`, art: 'Neu', titel: `🟢 NEU im Bestand: ${w.titel}`, bild: w.bild, link: w.url, text: `${eu(w.preis)} · ${w.laden} (online)\nVerfügbar - jetzt bestellen, solange Größen da sind.` });
   }
   return raus;
 }
