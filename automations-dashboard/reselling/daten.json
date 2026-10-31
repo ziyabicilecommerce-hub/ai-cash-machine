@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-30T22:54:10.379Z",
+ "stand": "2026-10-31T00:14:13.019Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -173,26 +173,27 @@
     "bild": "https://assets.tcgdex.net/de/me/me04/119/low.webp",
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Chillabell-ex",
     "preis": {
-     "tief": 19.5,
-     "trend": 35.51,
+     "tief": 19.99,
+     "trend": 34.99,
      "schnitt7": 36.89,
      "schnitt30": 35.7
     },
     "prozent": 3,
     "signal": "stabil",
     "profi": {
-     "einstieg": 19.5,
-     "ziel": 35.51,
-     "gewinn": 12.73,
-     "roi": 65,
+     "einstieg": 19.99,
+     "ziel": 34.99,
+     "gewinn": 11.75,
+     "roi": 59,
      "momentum": 3,
-     "spread": 16.01,
-     "score": 75,
-     "signal": "STRONG BUY"
+     "spread": 15,
+     "score": 73,
+     "signal": "BUY"
     },
     "nurBewegung": true,
     "kurs": [
-     35.51
+     35.51,
+     34.99
     ]
    },
    {
@@ -206,7 +207,7 @@
     "bild": "https://assets.tcgdex.net/de/me/me03/094/low.webp",
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Piepi",
     "preis": {
-     "tief": 8.9,
+     "tief": 9.4,
      "trend": 17.29,
      "schnitt7": 18.04,
      "schnitt30": 17.84
@@ -214,17 +215,18 @@
     "prozent": 1,
     "signal": "stabil",
     "profi": {
-     "einstieg": 8.9,
+     "einstieg": 9.4,
      "ziel": 17.29,
-     "gewinn": 6.03,
-     "roi": 68,
+     "gewinn": 5.53,
+     "roi": 59,
      "momentum": 1,
-     "spread": 8.39,
-     "score": 73,
+     "spread": 7.89,
+     "score": 70,
      "signal": "BUY"
     },
     "nurBewegung": true,
     "kurs": [
+     17.29,
      17.29
     ]
    },
@@ -240,7 +242,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Azetts%20Gelassenheit",
     "preis": {
      "tief": 12,
-     "trend": 20.26,
+     "trend": 20.52,
      "schnitt7": 20.53,
      "schnitt30": 20.18
     },
@@ -248,17 +250,18 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 12,
-     "ziel": 20.26,
-     "gewinn": 5.75,
-     "roi": 48,
+     "ziel": 20.52,
+     "gewinn": 5.99,
+     "roi": 50,
      "momentum": 2,
-     "spread": 8.26,
-     "score": 68,
+     "spread": 8.52,
+     "score": 69,
      "signal": "BUY"
     },
     "nurBewegung": true,
     "kurs": [
-     20.26
+     20.26,
+     20.52
     ]
    },
    {
@@ -273,7 +276,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Morpeko-ex",
     "preis": {
      "tief": 32.9,
-     "trend": 52.12,
+     "trend": 51.65,
      "schnitt7": 53.39,
      "schnitt30": 55.08
     },
@@ -281,17 +284,18 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 32.9,
-     "ziel": 52.12,
-     "gewinn": 15.11,
-     "roi": 46,
+     "ziel": 51.65,
+     "gewinn": 14.67,
+     "roi": 45,
      "momentum": -3,
-     "spread": 19.22,
-     "score": 60,
-     "signal": "BUY"
+     "spread": 18.75,
+     "score": 59,
+     "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     52.12
+     52.12,
+     51.65
     ]
    },
    {
@@ -306,7 +310,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gladios%20Finalkampf",
     "preis": {
      "tief": 11,
-     "trend": 19.49,
+     "trend": 19.3,
      "schnitt7": 19.79,
      "schnitt30": 20.99
     },
@@ -314,17 +318,52 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 11,
-     "ziel": 19.49,
-     "gewinn": 6.02,
-     "roi": 55,
+     "ziel": 19.3,
+     "gewinn": 5.84,
+     "roi": 53,
      "momentum": -6,
-     "spread": 8.49,
+     "spread": 8.3,
      "score": 58,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     19.49
+     19.49,
+     19.3
+    ]
+   },
+   {
+    "id": "me04-121",
+    "name": "Micas Aufführung",
+    "nummer": "121",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Wachsendes Chaos",
+    "setId": "me04",
+    "release": "2026-05-22",
+    "bild": "https://assets.tcgdex.net/de/me/me04/121/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Micas%20Auff%C3%BChrung",
+    "preis": {
+     "tief": 7,
+     "trend": 13.32,
+     "schnitt7": 13.81,
+     "schnitt30": 14.18
+    },
+    "prozent": -3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 7,
+     "ziel": 13.32,
+     "gewinn": 4.15,
+     "roi": 59,
+     "momentum": -3,
+     "spread": 6.32,
+     "score": 56,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     13.21,
+     13.32
     ]
    },
    {
@@ -338,26 +377,27 @@
     "bild": "https://assets.tcgdex.net/de/me/me03/118/low.webp",
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Starmie-ex",
     "preis": {
-     "tief": 24,
-     "trend": 34.68,
+     "tief": 24.49,
+     "trend": 33.81,
      "schnitt7": 33.46,
      "schnitt30": 34.58
     },
     "prozent": -3,
     "signal": "stabil",
     "profi": {
-     "einstieg": 24,
+     "einstieg": 24.49,
      "ziel": 33.46,
-     "gewinn": 6.29,
-     "roi": 26,
+     "gewinn": 5.8,
+     "roi": 24,
      "momentum": -3,
-     "spread": 10.68,
-     "score": 53,
+     "spread": 9.32,
+     "score": 52,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     34.68
+     34.68,
+     33.81
     ]
    },
    {
@@ -390,6 +430,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     13.17,
      13.17
     ]
    },
@@ -404,59 +445,60 @@
     "bild": "https://assets.tcgdex.net/de/me/me03/119/low.webp",
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Pixi-ex",
     "preis": {
-     "tief": 23.95,
-     "trend": 34.79,
+     "tief": 23.5,
+     "trend": 33.4,
      "schnitt7": 37.03,
      "schnitt30": 39.54
     },
     "prozent": -6,
     "signal": "stabil",
     "profi": {
-     "einstieg": 23.95,
-     "ziel": 34.79,
-     "gewinn": 7.6,
-     "roi": 32,
+     "einstieg": 23.5,
+     "ziel": 33.4,
+     "gewinn": 6.73,
+     "roi": 29,
      "momentum": -6,
-     "spread": 10.84,
-     "score": 50,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     34.79
-    ]
-   },
-   {
-    "id": "me04-121",
-    "name": "Micas Aufführung",
-    "nummer": "121",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Wachsendes Chaos",
-    "setId": "me04",
-    "release": "2026-05-22",
-    "bild": "https://assets.tcgdex.net/de/me/me04/121/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Micas%20Auff%C3%BChrung",
-    "preis": {
-     "tief": 8,
-     "trend": 13.21,
-     "schnitt7": 13.81,
-     "schnitt30": 14.18
-    },
-    "prozent": -3,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 8,
-     "ziel": 13.21,
-     "gewinn": 3.05,
-     "roi": 38,
-     "momentum": -3,
-     "spread": 5.21,
+     "spread": 9.9,
      "score": 49,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     13.21
+     34.79,
+     33.4
+    ]
+   },
+   {
+    "id": "me03-122",
+    "name": "Violette",
+    "nummer": "122",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/122/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Violette",
+    "preis": {
+     "tief": 11,
+     "trend": 18.28,
+     "schnitt7": 18.49,
+     "schnitt30": 19.92
+    },
+    "prozent": -7,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 11,
+     "ziel": 18.28,
+     "gewinn": 4.87,
+     "roi": 44,
+     "momentum": -7,
+     "spread": 7.28,
+     "score": 45,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     18.28
     ]
    }
   ],
@@ -467,7 +509,7 @@
     "release": "2026-09-16",
     "logo": "",
     "phase": "kaufzeit",
-    "tage": 44,
+    "tage": 45,
     "rat": "Beste Kaufzeit: der Release-Hype ist vorbei, viele verkaufen ihre Karten günstig."
    },
    {
@@ -476,7 +518,7 @@
     "release": "2026-09-16",
     "logo": "",
     "phase": "kaufzeit",
-    "tage": 44,
+    "tage": 45,
     "rat": "Beste Kaufzeit: der Release-Hype ist vorbei, viele verkaufen ihre Karten günstig."
    },
    {
@@ -485,7 +527,7 @@
     "release": "2026-07-17",
     "logo": "https://assets.tcgdex.net/de/me/me05/logo.webp",
     "phase": "halten",
-    "tage": 105,
+    "tage": 106,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    },
    {
@@ -494,7 +536,7 @@
     "release": "2026-05-22",
     "logo": "https://assets.tcgdex.net/de/me/me04/logo.webp",
     "phase": "halten",
-    "tage": 161,
+    "tage": 162,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    },
    {
@@ -503,7 +545,7 @@
     "release": "2026-03-27",
     "logo": "https://assets.tcgdex.net/de/me/me03/logo.webp",
     "phase": "halten",
-    "tage": 217,
+    "tage": 218,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    },
    {
@@ -512,63 +554,63 @@
     "release": "2026-02-26",
     "logo": "",
     "phase": "halten",
-    "tage": 246,
+    "tage": 247,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 923,
+  "geprueft": 1016,
   "statistik": {
-   "karten": 923,
+   "karten": 1016,
    "mitPreis": 366,
-   "imBudget": 20,
+   "imBudget": 19,
    "steigend": 0,
    "fallend": 6
   },
   "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-10-30T22:53:39.049Z"
+  "stand": "2026-10-31T00:13:58.311Z"
  },
  "trends": {
   "ware": [],
   "top": [
    {
-    "titel": "tim raue",
-    "menge": "500+"
-   },
-   {
-    "titel": "nsu",
-    "menge": "200+"
-   },
-   {
-    "titel": "goldpreis aktuell",
-    "menge": "200+"
-   },
-   {
-    "titel": "andy kim",
-    "menge": "500+"
-   },
-   {
-    "titel": "zdf magazin vor ort",
-    "menge": "200+"
-   },
-   {
-    "titel": "micky beisenherz",
-    "menge": "500+"
-   },
-   {
-    "titel": "germersheim",
-    "menge": "200+"
-   },
-   {
-    "titel": "podcast",
-    "menge": "200+"
-   },
-   {
-    "titel": "suits",
+    "titel": "raptors – magic",
     "menge": "100+"
    },
    {
-    "titel": "insel",
+    "titel": "الهالوين",
+    "menge": "200+"
+   },
+   {
+    "titel": "76ers – knicks",
+    "menge": "200+"
+   },
+   {
+    "titel": "motsi mabuse",
     "menge": "500+"
+   },
+   {
+    "titel": "celtics – bulls",
+    "menge": "200+"
+   },
+   {
+    "titel": "elke sommer todesursache",
+    "menge": "200+"
+   },
+   {
+    "titel": "wizards – hornets",
+    "menge": "200+"
+   },
+   {
+    "titel": "leroy sané",
+    "menge": "200+"
+   },
+   {
+    "titel": "cate blanchett",
+    "menge": "200+"
+   },
+   {
+    "titel": "wings",
+    "menge": "200+"
    }
   ]
  },
