@@ -179,7 +179,7 @@ export function laedenAusOsm(json, h = HEIMAT) {
     if (lat == null || !t.name) return null;
     const adresse = [[t['addr:street'], t['addr:housenumber']].filter(Boolean).join(' '), [t['addr:postcode'], t['addr:city']].filter(Boolean).join(' ')].filter(Boolean).join(', ');
     return { name: t.name, art: ladenArt(t), km: entfernungKm(h, { lat, lon }), lat, lon, adresse, ort: t['addr:city'] || '',
-      zeiten: t.opening_hours || '', web: /^https?:\/\//.test(t.website || t['contact:website'] || '') ? (t.website || t['contact:website']) : '' };
+      zeiten: t.opening_hours || '', tel: String(t.phone || t['contact:phone'] || '').split(';')[0].replace(/[^\d+]/g, ''), web: /^https?:\/\//.test(t.website || t['contact:website'] || '') ? (t.website || t['contact:website']) : '' };
   }).filter((l) => l && !gesehen.has(`${l.name}|${l.adresse || l.lat}`) && gesehen.add(`${l.name}|${l.adresse || l.lat}`))
     .sort((a, b) => a.km - b.km);
 }
