@@ -1,6 +1,6 @@
 name: "112 · Reselling-Radar (App)"
 
-# Alle 5 Minuten (Pokémon-Preise stündlich, Läden wöchentlich): Release-Kalender, steigende Pokémon-Karten (Cardmarket-Preise), Google-Trends Deutschland und Lagerstatus der
+# Alle ~5 Minuten (Lauf-Kette + Zeitplan als Reserve) (Pokémon-Preise stündlich, Läden wöchentlich): Release-Kalender, steigende Pokémon-Karten (Cardmarket-Preise), Google-Trends Deutschland und Lagerstatus der
 # beobachteten Produkte (GitHub-Issues mit Label "restock") holen und die App automations-dashboard/reselling/ aktualisieren.
 # Bei einem Restock kommt ein Kommentar ins Issue = Benachrichtigung in der GitHub-App. Kostenlos, ohne Schlüssel.
 
@@ -55,3 +55,9 @@ jobs:
             sleep $((versuch * 5))
           done
           exit 1
+      # GitHub startet geplante Läufe oft gar nicht oder sehr spät - deshalb stößt jeder Lauf den nächsten selbst an (~alle 5 Min.)
+      - name: Nächsten Lauf anstoßen
+        if: always() && github.ref == 'refs/heads/main' && vars.RADAR_KETTE != 'aus'  # Notbremse: Repo-Variable RADAR_KETTE=aus
+        run: |
+          sleep 150
+          gh workflow run automation-112-reselling-radar.yml --ref main -R "$GITHUB_REPOSITORY"
