@@ -33,15 +33,24 @@ export function pruefen(skript) {
   return f;
 }
 
+// Kurz-Modus: unsere Zuschauer bleiben im Schnitt nur 3-6 s - also höchstens 3 Sätze (Start + die letzten zwei),
+// schnellere Stimme, kürzere Stille, kein zweiter Monster-Satz. Ziel ~25 s statt ~35 s, damit mehr Leute bis zur Pointe bleiben.
+export function kuerzen(saetze, max = 3) {
+  if (saetze.length <= max) return saetze;
+  return [...saetze.slice(0, max - 2), ...saetze.slice(-2)];
+}
+
 // Aufbau, der bei uns die beste Sehdauer hatte: Schock-Hook -> ruhiger Start -> Nachricht -> immer näher -> Stille -> Jumpscare -> Twist -> Cliffhanger
 export function baueFolge(skript) {
   const fehler = pruefen(skript);
   if (fehler.length) throw new Error(fehler.join('; '));
-  const saetze = skript.saetze.map((x) => satz(x)).filter(Boolean);
+  const kurz_ = !!skript.kurz;
+  const alle = skript.saetze.map((x) => satz(x)).filter(Boolean);
+  const saetze = kurz_ ? kuerzen(alle) : alle;
   const szenen = [{ art: 'blitz', ...zeile(skript.hook, { schreck: true, angst: 0.85, pause: 0.1 }, 80) }];  // Hook ganz zeigen - die Pointe steht oft am Ende
   saetze.forEach((s, i) => {
     const letzte = i === saetze.length - 1, anteil = (i + 1) / saetze.length;
-    if (letzte) { szenen.push({ art: 'dunkel', ...zeile(s, { dauer: 4.4, ...(skript.monster ? { monster: satz(skript.monster, 80), monster_text: kurz(skript.monster) } : {}) }) }); return; }
+    if (letzte) { szenen.push({ art: 'dunkel', ...zeile(s, { dauer: kurz_ ? 3 : 4.4, ...(skript.monster ? { monster: satz(skript.monster, 80), monster_text: kurz(skript.monster) } : {}) }) }); return; }
     if (i === 1 && skript.nachricht) {
       const absender = satz(skript.absender || 'Mama', 20);
       szenen.push({ art: 'nachricht', ...zeile(s, { absender, nachricht: satz(skript.nachricht, 90), schreck: true, pause: 0.3 }) }); return;
@@ -49,14 +58,14 @@ export function baueFolge(skript) {
     const art = /handy|anruf|ruf|nachricht|schreibt/i.test(s) ? 'handy' : i % 2 ? 'gesicht' : 'innen';
     szenen.push({ art, ...zeile(s, { angst: Math.round(Math.min(0.75, 0.1 + anteil * 0.7) * 100) / 100, ...(art === 'gesicht' ? { augen_bei: 1.2 } : {}) }) });
   });
-  szenen.push({ art: 'fratze', dauer: 1.2, schreck: true });
-  szenen.push({ art: 'ende', ...zeile(skript.ende, { schreck: true, angst: 1, blick: 1, ...(skript.monster2 ? { monster: satz(skript.monster2, 80), monster_text: kurz(skript.monster2) } : {}) }) });
+  szenen.push({ art: 'fratze', dauer: kurz_ ? 0.9 : 1.2, schreck: true });
+  szenen.push({ art: 'ende', ...zeile(skript.ende, { schreck: true, angst: 1, blick: 1, ...(skript.monster2 && !kurz_ ? { monster: satz(skript.monster2, 80), monster_text: kurz(skript.monster2) } : {}) }) });
   const weiter = satz(skript.weiter || '', 80);
   const frage = satz(skript.frage || 'Was hättest du gemacht?', 80);
   // Kommentar-Wahl "1 oder 2": eine Zahl tippen ist leichter als einen Satz schreiben - bringt mehr Kommentare
   const wahl = Array.isArray(skript.wahl) ? skript.wahl.map((w) => satz(w, 18)) : null;
   if (!weiter && wahl) {
-    szenen.push({ art: 'teil2', sprich: `${frage} Eins: ${wahl[0]}. Zwei: ${wahl[1]}. Schreib die Zahl in die Kommentare.`,
+    szenen.push({ art: 'teil2', sprich: `${frage} Eins: ${wahl[0]}. Zwei: ${wahl[1]}.${kurz_ ? '' : ' Schreib die Zahl in die Kommentare.'}`,
       text: '', wahl, frage, pause: 0.8, cta: 'KOMMENTIER 1 ODER 2' });  // story.py zeichnet die zwei Antwort-Karten
   } else {
     // Einzel-Video ohne Fortsetzung: kein falsches "Teil 2"-Versprechen, sondern die Frage für die Kommentare
@@ -66,7 +75,7 @@ export function baueFolge(skript) {
   const titel = satz(skript.titel || skript.hook, 60);
   const titelbild = kurz(skript.hook, 80);
   return {
-    stimme: STIMMEN[skript.stimme] || STIMMEN.mann, tonhoehe: '+0Hz', tempo: '+16%', ton: 'schlicht', ki_bilder: false,
+    stimme: STIMMEN[skript.stimme] || STIMMEN.mann, tonhoehe: '+0Hz', tempo: kurz_ ? '+24%' : '+16%', ton: 'schlicht', ki_bilder: false,
     ort: skript.ort || 'haus', fahrgaeste: [], boesewicht: skript.boesewicht || 'schatten',
     held: { farbe: [44, 56, 92], oberteil: 'hoodie', kopf: 'haare', haar: [46, 34, 26], hose: [38, 44, 70] },
     titel, titelbild, titelbild_gelb: gelbVon(titelbild), teile: 1,
@@ -74,17 +83,37 @@ export function baueFolge(skript) {
   };
 }
 
-// Skript aus dem Issue-Text holen: erster ```json-Block
+// GitHub-Formular (.github/ISSUE_TEMPLATE/videobot.yml): Abschnitte "### Überschrift" -> Skript-Felder
+const FELDER = { 'hook': 'hook', 'geschichte': 'saetze', 'twist am ende': 'ende', 'frage an die zuschauer': 'frage', 'antwort 1': 'wahl1', 'antwort 2': 'wahl2',
+  'handy-nachricht von': 'absender', 'nachricht': 'nachricht', 'monster flüstert': 'monster', 'ort': 'ort', 'bösewicht': 'boesewicht', 'stimme': 'stimme', 'länge': 'laenge', 'danach': 'posten' };
+export function formularAus(text) {
+  const roh = {};
+  for (const teil of String(text || '').split(/^###\s+/m).slice(1)) {
+    const [kopf, ...rest] = teil.split('\n');
+    const feld = FELDER[kopf.trim().toLowerCase()];
+    const wert = rest.join('\n').trim();
+    if (feld && wert && wert !== '_No response_') roh[feld] = wert;
+  }
+  if (!roh.hook) throw new Error('Formular ohne Hook - bitte das Videobot-Formular benutzen');
+  const s = { hook: roh.hook, saetze: String(roh.saetze || '').split('\n').map((x) => x.trim()).filter(Boolean), ende: roh.ende || '' };
+  for (const k of ['frage', 'absender', 'nachricht', 'monster', 'ort', 'boesewicht', 'stimme']) if (roh[k]) s[k] = roh[k];
+  if (roh.wahl1 && roh.wahl2) s.wahl = [roh.wahl1, roh.wahl2];
+  s.kurz = !/^lang/i.test(roh.laenge || '');
+  if (KONTEN[roh.posten]) s.posten = roh.posten;
+  return s;
+}
+
+// Skript aus dem Issue-Text holen: erster ```json-Block, sonst das ausgefüllte Formular
 export function skriptAus(text) {
   const m = String(text || '').match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (!m) throw new Error('Kein ```json-Block im Issue gefunden');
+  if (!m) return formularAus(text);
   return JSON.parse(m[1]);
 }
 
 // Autopilot: Skripte reihum auf die Konten verteilen (jedes Konto eigene Geschichten), ohne Fortsetzungs-Versprechen
 export const slug = (titel) => String(titel || '').toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 export function autopilotListe(skripte, kontoIndex, konten = 3) {
-  return skripte.map((s, i) => ({ s, i })).filter(({ i }) => i % konten === kontoIndex).map(({ s }) => ({ slug: slug(s.titel), skript: { ...s, weiter: '', posten: '' } }));
+  return skripte.map((s, i) => ({ s, i })).filter(({ i }) => i % konten === kontoIndex).map(({ s }) => ({ slug: slug(s.titel), skript: { ...s, weiter: '', posten: '', kurz: true } }));
 }
 
 if (process.argv[2] === '--auto') {

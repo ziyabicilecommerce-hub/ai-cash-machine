@@ -63,6 +63,6 @@ export function dashboardDaten({ posts = [], kanaele = [], nischen = {}, serien 
   const fehler = posts.filter((p) => p.status === 'error').length;
   // Buffer holt die Zahlen nur etwa einmal am Tag (bis ~24 h Verzug); erst wenn nach 30 Stunden nichts kam, fehlen sie wirklich.
   const ohneZahlen = gesendet.filter((p) => zeit(p) < jetzt - 30 * 3600000 && p.metricsUpdatedAt && Date.parse(p.metricsUpdatedAt) < zeit(p)).length;
-  const letzte = [...gesendet].sort((a, b) => zeit(b) - zeit(a)).slice(0, 30).map(zeile);
+  const letzte = [...gesendet].sort((a, b) => zeit(b) - zeit(a)).slice(0, 60).map(zeile);
   return { stand: new Date(jetzt).toISOString(), gesamt, konten, geplant, letzte, fehler, ohneZahlen, lernen, tipps: tippsAus(gesamt, konten, geplant, fehler, ohneZahlen) };
 }

@@ -24,6 +24,7 @@
     for (const k of ['absender', 'nachricht', 'monster', 'monster2']) if (q(`vb-${k}`).value.trim()) s[k] = q(`vb-${k}`).value.trim();
     const wahl = q('vb-wahl').value.split('/').map((x) => x.trim()).filter(Boolean);
     if (wahl.length === 2) s.wahl = wahl;
+    if (q('vb-kurz').value) s.kurz = true;
     return s;
   }
   // Viral-Check nach dem, was bei unseren Zahlen funktioniert hat
@@ -34,12 +35,13 @@
     if (s.saetze.length > 8) fehler.push('Höchstens 8 Sätze');
     if (!s.ende) fehler.push('Ende/Twist fehlt');
     const woerter = [s.hook, ...s.saetze, s.ende, s.weiter].join(' ').split(/\s+/).filter(Boolean).length;
-    const sek = Math.round(woerter / 2.6 + 6);
+    const sek = Math.round((s.kurz ? Math.min(woerter, 34) / 3 : woerter / 2.6) + 6);
     const ok = (bed, gut, schlecht) => punkte.push([bed, bed ? gut : schlecht]);
     ok(s.hook.length > 0 && s.hook.length <= 90, 'Hook kurz genug (in 2 Sekunden gelesen)', 'Hook kürzer machen - max. ~90 Zeichen');
     ok(!/^teil\s*\d/i.test(s.hook), 'Hook funktioniert ohne Vorwissen', 'Hook nicht mit „Teil …“ anfangen - neue Zuschauer wischen sonst weg');
     ok(/\.|:|„|"/.test(s.hook) && /(aber|trotzdem|nicht|kein|niemand|nur|allein|\d)/i.test(s.hook), 'Hook hat einen Widerspruch (macht neugierig)', 'Hook braucht einen Widerspruch: „…, aber …“, „kein …, trotzdem …“');
-    ok(sek >= 20 && sek <= 45, `Länge ca. ${sek} s - perfekt`, `Länge ca. ${sek} s - am besten 20-45 s`);
+    ok(sek >= 15 && sek <= 30, `Länge ca. ${sek} s - perfekt`, `Länge ca. ${sek} s - unsere Zuschauer bleiben nur kurz, am besten 15-30 s (Kurz-Modus)`);
+    ok(!!s.wahl, 'Kommentar-Wahl 1/2 drin (bringt Kommentare)', 'Kommentar-Wahl eintragen, z. B. „Tür auf / Wegrennen“');
     ok(!!s.nachricht, 'Handy-Nachricht drin (bei uns die stärksten Szenen)', 'Tipp: eine Handy-Nachricht einbauen (Absender + Text)');
     ok(!!s.monster, 'Monster spricht (Gänsehaut)', 'Tipp: Monster-Satz eintragen, z. B. „Dreh dich um.“');
     ok(/\?/.test(s.frage), 'Frage an die Zuschauer (bringt Kommentare)', 'Frage am Ende für Kommentare, z. B. „Hättest du aufgemacht?“');

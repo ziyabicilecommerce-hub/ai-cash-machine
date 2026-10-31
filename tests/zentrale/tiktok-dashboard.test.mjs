@@ -46,3 +46,10 @@ test('dashboardDaten: warnt, wenn Buffer für ältere Posts keine Zahlen mehr ab
   assert.equal(d.ohneZahlen, 1);
   assert.match(d.tipps.map((t) => t.text).join(' '), /Buffer holt für 1 Post/);
 });
+
+test('typAus: Horror zählt nicht als Quiz (sonst verfälscht es das Lernen)', async () => {
+  const { typAus } = await import('../../automations/lib/tiktokLernen.mjs');
+  assert.equal(typAus('Es klopft. 👇 (Teil 6/12)\n\n#horrortok'), 'serie');
+  assert.equal(typAus('Zwei Zahnbürsten 👇\n\n#horrortok #gruselgeschichte'), 'horror');
+  assert.equal(typAus('Welcher Planet ist am heißesten?'), 'quiz');
+});

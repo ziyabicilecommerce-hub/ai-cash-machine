@@ -1,0 +1,91 @@
+name: "🎬 Videobot: Horror-Video bauen"
+description: Formular ausfüllen und absenden - der Videobot baut daraus ein Horror-Video (3-6 Min.) und schickt den Link.
+title: "Videobot: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Einfach ausfüllen und unten auf **Create/Submit** tippen. Jedes Video wird automatisch als KI-generiert gekennzeichnet.
+        Nur frei erfundene Geschichten mit eigenen Figuren - keine echten Personen, keine fremden Marken.
+  - type: input
+    id: hook
+    attributes:
+      label: Hook
+      description: Erster Satz - entscheidet alles. Mit Widerspruch, z. B. „Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas.“
+    validations:
+      required: true
+  - type: textarea
+    id: saetze
+    attributes:
+      label: Geschichte
+      description: Ein Satz pro Zeile, 3 bis 8 Sätze.
+    validations:
+      required: true
+  - type: input
+    id: ende
+    attributes:
+      label: Twist am Ende
+      description: Der letzte Satz nach dem Jumpscare.
+    validations:
+      required: true
+  - type: input
+    id: frage
+    attributes:
+      label: Frage an die Zuschauer
+      placeholder: Hättest du aufgemacht?
+  - type: input
+    id: wahl1
+    attributes:
+      label: Antwort 1
+      description: Kommentar-Wahl, max. 18 Zeichen.
+      placeholder: Tür auf
+  - type: input
+    id: wahl2
+    attributes:
+      label: Antwort 2
+      description: Kommentar-Wahl, max. 18 Zeichen.
+      placeholder: Wegrennen
+  - type: input
+    id: absender
+    attributes:
+      label: Handy-Nachricht von
+      placeholder: Mama
+  - type: input
+    id: nachricht
+    attributes:
+      label: Nachricht
+  - type: input
+    id: monster
+    attributes:
+      label: Monster flüstert
+      placeholder: Dreh dich um.
+  - type: dropdown
+    id: ort
+    attributes:
+      label: Ort
+      options: [haus, wald, zug, flugzeug, aufzug]
+      default: 0
+  - type: dropdown
+    id: boesewicht
+    attributes:
+      label: Bösewicht
+      options: [schatten, frau, gremlin, hirsch]
+      default: 0
+  - type: dropdown
+    id: stimme
+    attributes:
+      label: Stimme
+      options: [mann, frau]
+      default: 0
+  - type: dropdown
+    id: laenge
+    attributes:
+      label: Länge
+      options: ["kurz (ca. 25 s, empfohlen)", "lang (ca. 35 s)"]
+      default: 0
+  - type: dropdown
+    id: posten
+    attributes:
+      label: Danach
+      options: ["nur Video-Link", futureflowx3, zyx_7851, futureflowxx]
+      default: 0

@@ -6,6 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TikTok Viral-Zentrale</title>
 <meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#020617">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root { --bg:#020617; --panel:rgba(15,23,42,.72); --rand:rgba(111,224,255,.18); --text:#c9edff; --leise:#7f9bb3;
@@ -58,6 +61,13 @@
   .vbcheck { font-family:'Orbitron',sans-serif; font-size:15px; color:#fff; margin:18px 0 8px; } #vb-score { color:var(--green); }
   button.knopf { background:none; color:var(--cyan); cursor:pointer; font:inherit; font-size:13px; } button.knopf.haupt { background:var(--pink); color:#fff; }
   .knopf.aus { opacity:.4; pointer-events:none; }
+  .vl-zeile { display:grid; grid-template-columns:140px 1fr auto; gap:10px; align-items:center; margin:6px 0; font-size:14px; }
+  .vl-spur { background:rgba(255,255,255,.08); border-radius:8px; height:14px; overflow:hidden; }
+  .vl-balken { height:100%; border-radius:8px; background:linear-gradient(90deg,#ff2d55,#7c4dff); }
+  .vl-wert { opacity:.8; font-size:13px; white-space:nowrap; }
+  .vl-raster { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; }
+  #vl-caption { width:100%; min-height:110px; }
+  @media (max-width:600px) { .vl-zeile { grid-template-columns:100px 1fr; } .vl-wert { grid-column:1/-1; } }
   @media (max-width:600px) { .liste .weg { display:none; } }
 </style>
 </head>
@@ -93,12 +103,33 @@
       <div><label for="vb-boese">Bösewicht</label><select id="vb-boese"></select></div>
       <div><label for="vb-stimme">Stimme</label><select id="vb-stimme"></select></div>
     </div>
-    <label for="vb-posten">Danach</label><select id="vb-posten"></select>
+    <div class="vbzwei">
+      <div><label for="vb-posten">Danach</label><select id="vb-posten"></select></div>
+      <div><label for="vb-kurz">Länge</label><select id="vb-kurz"><option value="1">⚡ Kurz (~25 s, empfohlen)</option><option value="">Lang (~35 s)</option></select></div>
+    </div>
     <h3 class="vbcheck">Viral-Check <span id="vb-score">–</span>/100</h3>
     <div id="vb-check"></div>
-    <div class="knoepfe" style="margin-top:12px"><button class="knopf haupt" id="vb-bauen" type="submit">▶️ Video bauen</button><a class="knopf" id="vb-meine" target="_blank" rel="noopener">📂 Meine Videos</a></div>
+    <div class="knoepfe" style="margin-top:12px"><button class="knopf haupt" id="vb-bauen" type="submit">▶️ Video bauen</button><a class="knopf" id="vb-meine" target="_blank" rel="noopener">📂 Meine Videos</a><a class="knopf" href="https://github.com/ziyabicilecommerce-hub/ai-cash-machine/issues/new?template=videobot.yml" target="_blank" rel="noopener">📝 Als Formular</a></div>
     <p class="unter" style="margin-top:8px">Jedes Video wird automatisch als KI-generiert gekennzeichnet. Look: echte Kamera-Aufnahme (REC, 03:12 Uhr, Nachtsicht), Schock nach 1 Sekunde, Jumpscare + Twist.</p>
   </form>
+
+  <h2>🧪 Viral-Labor</h2>
+  <p class="unter">Was bei unseren eigenen Videos funktioniert - aus den echten TikTok-Zahlen (nur Posts, die schon Zahlen haben).</p>
+  <div class="vl-raster">
+    <div class="karte"><b>Format-Duell (Ø pro Video)</b><div id="vl-duell"></div></div>
+    <div class="karte"><b>Beste Uhrzeit</b><div id="vl-zeit"></div></div>
+  </div>
+  <div class="karte" style="margin-top:12px"><b>Top 5 (Aufrufe × Sehdauer)</b><div id="vl-top"></div></div>
+  <div class="vl-raster" style="margin-top:12px">
+    <div class="karte"><b>Hook-Tester <span id="vl-hookscore">–</span>/100</b>
+      <label for="vl-hook">Dein Hook</label><textarea id="vl-hook" rows="2" maxlength="160"></textarea>
+      <div id="vl-hookcheck"></div></div>
+    <div class="karte"><b>Caption-Baukasten</b>
+      <label for="vl-frage">Frage</label><input id="vl-frage" maxlength="80">
+      <div class="vbzwei"><div><label for="vl-a">Antwort 1</label><input id="vl-a" maxlength="18"></div><div><label for="vl-b">Antwort 2</label><input id="vl-b" maxlength="18"></div></div>
+      <label for="vl-caption">Fertige Caption (mit KI-Hinweis)</label><textarea id="vl-caption" readonly></textarea>
+      <div class="knoepfe" style="margin-top:8px"><button type="button" class="knopf" id="vl-kopieren">📋 Kopieren</button></div></div>
+  </div>
 
   <h2>Was jetzt zu tun ist</h2>
   <div id="tipps"></div>
@@ -125,5 +156,6 @@
 </main>
 <script src="tiktok.js"></script>
 <script src="videobot.js"></script>
+<script src="viral.js"></script>
 </body>
 </html>
