@@ -824,6 +824,248 @@
     "Einsteigen",
     "Treppe nehmen"
    ]
+  },
+  {
+   "titel": "Der Schneemann",
+   "ort": "haus",
+   "boesewicht": "frau",
+   "stimme": "frau",
+   "hook": "Unser Schneemann stand im Garten. Heute Nacht steht er vor meinem Fenster.",
+   "saetze": [
+    "Ich ziehe die Vorhänge zu.",
+    "Morgens ist er wieder im Garten.",
+    "Aber seine Augen schauen jetzt zu meinem Zimmer.",
+    "Und vor der Haustür liegt nasser Schnee. Innen."
+   ],
+   "monster": "Mir ist so kalt.",
+   "ende": "Im Bett neben mir ist es eiskalt. Und es tropft.",
+   "frage": "Hättest du ihn umgeworfen?",
+   "wahl": [
+    "Umwerfen",
+    "Wegziehen"
+   ]
+  },
+  {
+   "titel": "Smart-Lautsprecher",
+   "ort": "haus",
+   "boesewicht": "schatten",
+   "stimme": "mann",
+   "hook": "Mein Smart-Lautsprecher sagt nachts: Er ist wach. Ich habe nichts gefragt.",
+   "saetze": [
+    "Ich ziehe den Stecker.",
+    "Er spricht weiter.",
+    "Wen meinst du, frage ich.",
+    "Er sagt: Den hinter dir."
+   ],
+   "monster": "Ich höre alles.",
+   "ende": "Das Licht am Lautsprecher geht an. Und im Flur antwortet jemand.",
+   "frage": "Hättest du dich umgedreht?",
+   "wahl": [
+    "Umdrehen",
+    "Rausrennen"
+   ]
+  },
+  {
+   "titel": "Das Kinderlied",
+   "ort": "wald",
+   "boesewicht": "gremlin",
+   "stimme": "frau",
+   "hook": "Im Wald singt ein Kind ein Lied. Es ist das Lied, das nur meine Oma kannte.",
+   "saetze": [
+    "Ich gehe dem Singen nach.",
+    "Es wird immer lauter.",
+    "Dann hört es mitten im Satz auf.",
+    "Direkt neben meinem Ohr singt es weiter."
+   ],
+   "monster": "Sing mit mir.",
+   "ende": "Das Lied endet. Mit meinem Namen.",
+   "frage": "Wärst du dem Lied gefolgt?",
+   "wahl": [
+    "Folgen",
+    "Wegrennen"
+   ]
+  },
+  {
+   "titel": "Die leere Bahn",
+   "ort": "zug",
+   "boesewicht": "frau",
+   "stimme": "mann",
+   "hook": "Die Bahn ist leer. Trotzdem sagt die Durchsage: Bitte machen Sie Platz.",
+   "saetze": [
+    "Ich rücke zum Fenster.",
+    "Der Sitz neben mir drückt sich ein.",
+    "Im Fenster sehe ich eine Frau neben mir.",
+    "Neben mir ist niemand."
+   ],
+   "monster": "Danke für den Platz.",
+   "ende": "An der Endstation steigt sie aus. Mit meinem Spiegelbild.",
+   "frage": "Wärst du sitzen geblieben?",
+   "wahl": [
+    "Sitzen bleiben",
+    "Aussteigen"
+   ]
+  },
+  {
+   "titel": "Kamera-Filter",
+   "ort": "haus",
+   "boesewicht": "frau",
+   "stimme": "frau",
+   "hook": "Mein Gesichtsfilter erkennt zwei Gesichter. Ich bin allein im Zimmer.",
+   "saetze": [
+    "Ich drehe die Kamera.",
+    "Der zweite Rahmen bleibt hinter meiner Schulter.",
+    "Ich mache ein Foto.",
+    "Auf dem Foto lächelt jemand. Nicht ich."
+   ],
+   "monster": "Mach noch eins.",
+   "ende": "Ich lösche das Foto. Es kommt zurück. Mit mehr Gesichtern.",
+   "frage": "Hättest du das Foto gepostet?",
+   "wahl": [
+    "Posten",
+    "Handy weg"
+   ]
+  },
+  {
+   "titel": "Der Wecker",
+   "ort": "haus",
+   "boesewicht": "schatten",
+   "stimme": "mann",
+   "hook": "Mein Wecker klingelt um 3:33. Ich habe ihn auf 7 Uhr gestellt.",
+   "saetze": [
+    "Ich schalte ihn aus.",
+    "Er klingelt sofort wieder.",
+    "Auf dem Display steht: Wach bleiben.",
+    "Aus dem Kleiderschrank kommt ein leises Ticken."
+   ],
+   "monster": "Noch nicht schlafen.",
+   "ende": "Der Wecker zählt jetzt runter. Bei null geht die Schranktür auf.",
+   "frage": "Hättest du den Schrank geöffnet?",
+   "wahl": [
+    "Schrank auf",
+    "Raus hier"
+   ]
+  },
+  {
+   "titel": "Fahrstuhl-Musik",
+   "ort": "aufzug",
+   "boesewicht": "gremlin",
+   "stimme": "frau",
+   "hook": "Im Aufzug läuft Musik. Aber nur, wenn ich nicht hinschaue.",
+   "saetze": [
+    "Ich schaue zur Decke.",
+    "Stille.",
+    "Ich schaue weg.",
+    "Die Musik ist jetzt direkt hinter mir. Und atmet."
+   ],
+   "monster": "Tanz mit mir.",
+   "ende": "Die Tür geht auf. Draußen steht der Aufzug noch mal. Mit mir drin.",
+   "frage": "Wärst du ausgestiegen?",
+   "wahl": [
+    "Aussteigen",
+    "Drinbleiben"
+   ]
+  },
+  {
+   "titel": "Die Gepäckwaage",
+   "ort": "flugzeug",
+   "boesewicht": "schatten",
+   "stimme": "mann",
+   "hook": "Am Gate wiegen sie mich. Die Waage zeigt 140 Kilo. Ich wiege 70.",
+   "saetze": [
+    "Die Frau am Schalter lächelt nicht.",
+    "Sie fragt, wer auf meinem Rücken sitzt.",
+    "Ich spüre nichts.",
+    "Im Flugzeug ist mein Sitz schon warm."
+   ],
+   "monster": "Ich reise mit.",
+   "ende": "Bei der Landung wiege ich wieder 70. Und neben mir steigt jemand aus.",
+   "frage": "Wärst du eingestiegen?",
+   "wahl": [
+    "Einsteigen",
+    "Flug canceln"
+   ]
+  },
+  {
+   "titel": "Das Laub flüstert",
+   "ort": "wald",
+   "boesewicht": "hirsch",
+   "stimme": "mann",
+   "hook": "Im Wald raschelt das Laub hinter mir. Immer genau dann, wenn ich stehen bleibe.",
+   "saetze": [
+    "Ich gehe schneller.",
+    "Es raschelt nicht mehr.",
+    "Ich bleibe stehen.",
+    "Es raschelt direkt vor mir."
+   ],
+   "monster": "Lauf weiter.",
+   "ende": "Vor mir liegen Spuren im Laub. Sie führen zu mir zurück.",
+   "frage": "Wärst du weitergelaufen?",
+   "wahl": [
+    "Weiterlaufen",
+    "Stehen bleiben"
+   ]
+  },
+  {
+   "titel": "Die Sprach-App",
+   "ort": "haus",
+   "boesewicht": "frau",
+   "stimme": "frau",
+   "hook": "Meine Übersetzer-App übersetzt nachts das Flüstern aus der Wand.",
+   "saetze": [
+    "Ich lasse sie laufen.",
+    "Morgens steht im Verlauf: Sie schläft.",
+    "Dann: Sie wacht gleich auf.",
+    "Der letzte Eintrag ist von gerade eben."
+   ],
+   "absender": "Übersetzer",
+   "nachricht": "Sie liest das gerade.",
+   "monster": "Ich bin in der Wand.",
+   "ende": "Die App übersetzt jetzt mich. Und die Wand antwortet.",
+   "frage": "Hättest du die App gelöscht?",
+   "wahl": [
+    "Löschen",
+    "Weiterhören"
+   ]
+  },
+  {
+   "titel": "Zugticket für morgen",
+   "ort": "zug",
+   "boesewicht": "gremlin",
+   "stimme": "mann",
+   "hook": "Der Schaffner kontrolliert mein Ticket. Er sagt: Das gilt erst für morgen.",
+   "saetze": [
+    "Ich zeige ihm das Datum. Es stimmt.",
+    "Er schüttelt den Kopf.",
+    "Heute fahren nur die, die nicht ankommen.",
+    "Alle anderen Fahrgäste schauen mich an."
+   ],
+   "monster": "Willkommen an Bord.",
+   "ende": "Am Fenster rauscht der Bahnhof vorbei. Mit meinem Namen auf der Anzeige.",
+   "frage": "Wärst du ausgestiegen?",
+   "wahl": [
+    "Notbremse",
+    "Sitzen bleiben"
+   ]
+  },
+  {
+   "titel": "Etage für Kinder",
+   "ort": "aufzug",
+   "boesewicht": "frau",
+   "stimme": "frau",
+   "hook": "Im Aufzug gibt es einen Knopf, der nur für Kinder erreichbar ist. Ganz unten.",
+   "saetze": [
+    "Ich drücke ihn aus Spaß.",
+    "Das Licht wird rot.",
+    "Die Tür öffnet sich in einen Flur voller Spielzeug.",
+    "Alle Puppen drehen den Kopf zu mir."
+   ],
+   "monster": "Komm spielen.",
+   "ende": "Die Tür geht zu. Der Aufzug fährt ohne mich.",
+   "frage": "Hättest du den Knopf gedrückt?",
+   "wahl": [
+    "Drücken",
+    "Finger weg"
+   ]
   }
  ]
 }

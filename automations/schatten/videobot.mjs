@@ -2,6 +2,7 @@
 // Aufruf im Workflow: node videobot.mjs <issue-text-datei> <ziel.json>  -> schreibt die Folge, gibt "konto=..." aus.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
+import { dirname, join } from 'node:path';
 
 export const ORTE = ['zug', 'flugzeug', 'haus', 'wald', 'aufzug'];
 export const BOESE = ['schatten', 'gremlin', 'frau', 'hirsch'];
@@ -112,14 +113,38 @@ export function skriptAus(text) {
 
 // Autopilot: Skripte reihum auf die Konten verteilen (jedes Konto eigene Geschichten), ohne Fortsetzungs-Versprechen
 export const slug = (titel) => String(titel || '').toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-export function autopilotListe(skripte, kontoIndex, konten = 3) {
-  return skripte.map((s, i) => ({ s, i })).filter(({ i }) => i % konten === kontoIndex).map(({ s }) => ({ slug: slug(s.titel), skript: { ...s, weiter: '', posten: '', kurz: true } }));
+// Gewinner-Bot: welche Geschichte lief auf welchem Konto wie gut (echte TikTok-Zahlen aus daten.json, Automation #103).
+// Zuordnung über den Hook - jede Caption beginnt mit dem Hook der Geschichte.
+export function gewinner(skripte, letzte = [], faktor = 1.2) {
+  const treffer = [];
+  for (const p of letzte) {
+    if (!(p.aufrufe > 0) || !['horror', 'serie'].includes(p.format)) continue;
+    const s = skripte.find((x) => String(p.text || '').startsWith(satz(x.hook).slice(0, 35)));
+    if (s) treffer.push({ slug: slug(s.titel), konto: String(p.konto || '').replace(/^@/, ''), aufrufe: p.aufrufe, sehdauer: p.sehdauer || 0 });
+  }
+  const horror = letzte.filter((p) => p.aufrufe > 0 && ['horror', 'serie'].includes(p.format));
+  const schnitt = horror.length ? horror.reduce((a, p) => a + p.aufrufe, 0) / horror.length : 0;
+  // Punkte = Aufrufe x Sehdauer: viele Leute UND die bleiben dran
+  return treffer.filter((t) => schnitt && t.aufrufe >= schnitt * faktor).sort((a, b) => b.aufrufe * (b.sehdauer || 1) - a.aufrufe * (a.sehdauer || 1));
+}
+
+// Autopilot: jedes Konto hat eigene Geschichten. Gewinner von den ANDEREN Konten kommen zuerst dran -
+// was dort viral ging, bekommt auf jedem Konto eine Chance (der Workflow verhindert per Release, dass ein Konto etwas doppelt postet).
+export function autopilotListe(skripte, kontoIndex, konten = 3, letzte = []) {
+  const eintrag = (s) => ({ slug: slug(s.titel), skript: { ...s, weiter: '', posten: '', kurz: true } });
+  const eigene = skripte.filter((_, i) => i % konten === kontoIndex).map(eintrag);
+  const ich = Object.keys(KONTEN)[kontoIndex];
+  const top = gewinner(skripte, letzte).filter((g) => g.konto !== ich).map((g) => g.slug);
+  const vorne = [...new Set(top)].map((sl) => eintrag(skripte.find((s) => slug(s.titel) === sl)));
+  return [...vorne, ...eigene.filter((e) => !top.includes(e.slug))];
 }
 
 if (process.argv[2] === '--auto') {
   // node videobot.mjs --auto <skripte.json> <konto-index> <slug> <ziel.json>
   const [, , , quelle, idx, gewuenscht, ziel] = process.argv;
-  const liste = autopilotListe(JSON.parse(readFileSync(quelle, 'utf8')).skripte, Number(idx));
+  let letzte = [];
+  try { letzte = JSON.parse(readFileSync(join(dirname(quelle), 'daten.json'), 'utf8')).letzte || []; } catch { /* ohne Zahlen: nur eigene Geschichten */ }
+  const liste = autopilotListe(JSON.parse(readFileSync(quelle, 'utf8')).skripte, Number(idx), 3, letzte);
   if (!gewuenscht) { console.log(liste.map((x) => x.slug).join('\n')); process.exit(0); }
   const treffer = liste.find((x) => x.slug === gewuenscht);
   if (!treffer) { console.error(`unbekannt: ${gewuenscht}`); process.exit(1); }
