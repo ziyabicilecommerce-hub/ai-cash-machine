@@ -29,6 +29,15 @@ test('Videobot lehnt kaputte oder gefährliche Skripte ab', () => {
   assert.ok(!/[`$<>]/.test(JSON.stringify(f.szenen[0])));
   assert.deepEqual(skriptAus('Text\n```json\n{"hook":"h"}\n```'), { hook: 'h' });
   assert.throws(() => skriptAus('kein block'));
+  const formular = '### Hook\n\nIch wohne allein. Trotzdem klopft es.\n\n### Geschichte\n\nEins.\nZwei.\n\nDrei.\nVier.\nFünf.\n\n### Twist am Ende\n\nEs ist innen.\n\n'
+    + '### Frage an die Zuschauer\n\n_No response_\n\n### Antwort 1\n\nTür auf\n\n### Antwort 2\n\nWegrennen\n\n### Ort\n\nwald\n\n### Länge\n\nkurz (ca. 25 s, empfohlen)\n\n### Danach\n\nnur Video-Link';
+  const fs_ = skriptAus(formular);
+  assert.deepEqual(fs_.saetze, ['Eins.', 'Zwei.', 'Drei.', 'Vier.', 'Fünf.']);
+  assert.deepEqual(fs_.wahl, ['Tür auf', 'Wegrennen']);
+  assert.equal(fs_.ort, 'wald'); assert.equal(fs_.kurz, true); assert.equal(fs_.posten, undefined); assert.equal(fs_.frage, undefined);
+  const folge = baueFolge(fs_);
+  assert.equal(folge.szenen.filter((x) => ['innen', 'gesicht', 'handy', 'nachricht', 'dunkel'].includes(x.art)).length, 3, 'Kurz-Modus: 3 Sätze');
+  assert.equal(folge.tempo, '+24%');
   assert.equal(Object.keys(KONTEN).length, 3);
 });
 
@@ -43,7 +52,7 @@ test('Autopilot: jedes Konto eigene Geschichten, keine Teil-2-Versprechen', asyn
       const ende = baueFolge(skript).szenen.at(-1);
       assert.equal(ende.cta, skript.wahl ? 'KOMMENTIER 1 ODER 2' : 'FOLG MIR FÜR MEHR');
       assert.ok(!/TEIL/.test(ende.text), ende.text);
-      if (skript.wahl) assert.ok(ende.wahl.length === 2 && ende.sprich.includes('Zahl'), ende.sprich);
+      if (skript.wahl) assert.ok(ende.wahl.length === 2 && ende.sprich.includes('Eins'), ende.sprich);
     }
   }
   assert.equal(slug('Zwei Zahnbürsten'), 'zwei-zahnbuersten');
