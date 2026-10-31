@@ -59,3 +59,21 @@ test('Autopilot: jedes Konto eigene Geschichten, keine Teil-2-Versprechen', asyn
   assert.ok(pruefen({ hook: 'x', saetze: ['a', 'b', 'c'], ende: 'e', wahl: ['nur eins'] }).some((f) => f.includes('wahl')));
   assert.ok(pruefen({ hook: 'x', saetze: ['a', 'b', 'c'], ende: 'e', wahl: ['viel zu lange Antwort hier', 'b'] }).some((f) => f.includes('wahl')));
 });
+
+test('Gewinner-Bot: was auf einem Konto viral ging, kommt auf den anderen Konten zuerst', async () => {
+  const { autopilotListe, gewinner } = await import('../../automations/schatten/videobot.mjs');
+  const [a, b] = SK.skripte;
+  const letzte = [
+    { konto: '@futureflowx3', format: 'horror', aufrufe: 900, sehdauer: 6, text: `${a.hook} ${a.frage} 👇` },
+    { konto: '@zyx_7851', format: 'horror', aufrufe: 100, sehdauer: 3, text: `${b.hook} 👇` },
+    { konto: '@zyx_7851', format: 'quiz', aufrufe: 5000, sehdauer: 9, text: 'Welcher Planet?' },
+  ];
+  const g = gewinner(SK.skripte, letzte);
+  assert.equal(g.length, 1, 'nur über dem Schnitt, Quiz zählt nicht');
+  assert.equal(g[0].konto, 'futureflowx3');
+  const zyx = autopilotListe(SK.skripte, 1, 3, letzte);
+  assert.equal(zyx[0].skript.titel, a.titel, 'Gewinner zuerst auf anderem Konto');
+  assert.equal(new Set(zyx.map((x) => x.slug)).size, zyx.length, 'nichts doppelt in der Liste');
+  assert.ok(!autopilotListe(SK.skripte, 0, 3, letzte).slice(1).some((x) => x.slug === zyx[0].slug), 'nicht nochmal auf dem eigenen Konto');
+  assert.deepEqual(autopilotListe(SK.skripte, 2, 3, []), autopilotListe(SK.skripte, 2));
+});

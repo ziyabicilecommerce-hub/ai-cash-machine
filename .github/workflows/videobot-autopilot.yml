@@ -1,12 +1,19 @@
-name: "🎬 Videobot Autopilot (jeden Abend ein Horror-Video pro Konto)"
+name: "🎬 Videobot Autopilot (abends + nachts ein Horror-Video pro Konto)"
 
-# Nimmt jeden Abend pro Konto die nächste noch nicht gepostete Geschichte aus automations-dashboard/tiktok/skripte.json
+# Nimmt abends und nachts pro Konto die nächste noch nicht gepostete Geschichte (Gewinner anderer Konten zuerst) aus automations-dashboard/tiktok/skripte.json
 # (jedes Konto hat eigene Geschichten), rendert sie mit dem Found-Footage-Look und postet über Buffer (mit KI-Hinweis).
 # Gepostete Geschichten erkennt er am Release "videobot-auto-<geschichte>-<konto>". Neue Geschichten = neue Einträge in skripte.json.
 
 on:
   schedule:
-    - cron: '43 18 * * *'  # 19:43 Uhr (Winterzeit) - beste Horror-Zeit, zwischen den Serien-Teilen
+    # GitHub startet Zeitpläne nicht zuverlässig - deshalb je Slot drei Versuche. Die Sperre unten sorgt dafür,
+    # dass pro Konto und Slot (5 Std.) trotzdem nur EIN Video rausgeht.
+    - cron: '43 17 * * *'  # Abend-Slot ab 18:43 Uhr (Winterzeit)
+    - cron: '43 18 * * *'
+    - cron: '43 19 * * *'
+    - cron: '13 0 * * *'   # Nacht-Bot ab 01:13 Uhr - laut Viral-Labor holen Nacht-Posts bei uns die meisten Aufrufe
+    - cron: '13 1 * * *'
+    - cron: '13 2 * * *'
   workflow_dispatch:
 
 permissions:
@@ -47,6 +54,11 @@ jobs:
         id: wahl
         run: |
           mkdir -p out
+          GRENZE=$(date -u -d '-5 hours' +%Y-%m-%dT%H:%M:%SZ)
+          LETZTES=$(gh release list -R "$REPO" --limit 100 --json tagName,createdAt --jq "[.[] | select(.tagName | startswith(\"videobot-auto-\")) | select(.tagName | endswith(\"-$KONTO\")) | select(.createdAt > \"$GRENZE\")] | length")
+          if [ "${LETZTES:-0}" -gt 0 ] && [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "@$KONTO hat in diesem Slot schon ein Video - übersprungen."; exit 0
+          fi
           for SLUG in $(node automations/schatten/videobot.mjs --auto automations-dashboard/tiktok/skripte.json ${{ matrix.nr }}); do
             TAG="videobot-auto-$SLUG-$KONTO"
             if ! gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
