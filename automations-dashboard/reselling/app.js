@@ -96,7 +96,7 @@ $('nav').addEventListener('click', (e) => {
 });
 try { const t = localStorage.getItem('tab'); if (t) document.querySelector(`nav button[data-ziel="${t}"]`)?.click(); } catch {}
 
-let D = {}, LAEDEN = [], KATALOG = null, HYPE = null, BILDER = {};
+let D = {}, LAEDEN = [], KATALOG = null, HYPE = null, BILDER = {}, EVER = null;
 const zustand = { hype: 'Alle', saison: 'Alle', kal: 'Alle', kauf: 'Im Budget', laden: 'Alle', ladenZahl: 15, kat: 'Alle' };
 
 // Saison: was in diesem Monat zu kaufen/verkaufen lohnt - mit Shop-Links; dazu passende Google-Suchen von heute
@@ -325,12 +325,13 @@ async function json(name) {
 }
 async function laden() {
   $('stand').textContent = 'Aktualisiere …';
-  const [d, l, k, sa, h, bi] = await Promise.all([json('daten.json'), LAEDEN.length ? null : json('laeden.json'), KATALOG ? null : json('katalog.json'), SAISON ? null : json('saison.json'), json('hype.json'), json('bilder.json')]);
+  const [d, l, k, sa, h, bi, ev] = await Promise.all([json('daten.json'), LAEDEN.length ? null : json('laeden.json'), KATALOG ? null : json('katalog.json'), SAISON ? null : json('saison.json'), json('hype.json'), json('bilder.json'), EVER ? null : json('evergreen.json')]);
   if (d) D = d;
   if (sa) SAISON = sa;
   if (l) LAEDEN = l.laeden || [];
   if (k) KATALOG = k;
   if (h) HYPE = h;
+  if (ev) EVER = ev;
   if (bi) BILDER = bi.bilder || {};
   const alter = D.stand ? Math.round((Date.now() - Date.parse(D.stand)) / 60000) : null;
   $('stand').replaceChildren(document.createTextNode(alter == null ? 'Noch keine Daten' : 'Stand: '), ...(alter == null ? [] : [el('b', '', alter < 1 ? 'gerade eben' : `vor ${alter} Min.`), document.createTextNode(' · Bot prüft alle 5 Min.')]));
