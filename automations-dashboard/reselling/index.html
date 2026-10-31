@@ -143,6 +143,22 @@
   .blase.sie { background:var(--panel2); border:1px solid var(--rand); border-bottom-left-radius:4px; }
   @media (min-width:520px) { .zellebuch { grid-template-columns:repeat(4,1fr); } }
   @media (prefers-reduced-motion: reduce) { .zellefab, .augen, .zellefigur.klingelt { animation:none; } }
+  /* Business */
+  .startbalken { height:10px; background:#ffffff12; border-radius:99px; overflow:hidden; } .startbalken i { display:block; height:100%; width:0; background:linear-gradient(90deg,var(--akzent),var(--pink),var(--orange)); transition:width .4s; }
+  #starttext { margin:6px 0 4px; }
+  .schritt { display:flex; gap:10px; align-items:flex-start; color:var(--text); font-size:14px; margin:10px 0 0; line-height:1.35; }
+  .gz { font-size:12.5px; font-weight:750; color:var(--leise); } .gz.gruen { color:var(--gruen); } .gz.rot { color:#ff5c7a; }
+  .schritt input:disabled { opacity:1; }
+  .schritt input { width:20px; height:20px; flex:none; accent-color:#3ef2a0; margin-top:1px; }
+  .zwei { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .artikel { background:var(--panel2); border:1px solid var(--rand); border-radius:18px; padding:10px; margin-bottom:8px; }
+  .artkopf { display:flex; gap:12px; align-items:center; cursor:pointer; }
+  .werkzeug { border-top:1px solid var(--rand); margin-top:10px; padding-top:4px; }
+  .werkzeug .knopf { margin:10px 0 4px; } .werkzeug input + input { margin-top:6px; }
+  .anzeigetext { width:100%; margin-top:8px; background:#0b0e1a; border:1px solid var(--rand); color:var(--text); border-radius:12px; padding:10px; font:14px/1.4 system-ui,sans-serif; resize:vertical; }
+  .dac { margin:8px 0; font-size:13px; } .dacbar { height:8px; background:#ffffff12; border-radius:99px; overflow:hidden; margin-top:4px; }
+  .dacbar i { display:block; height:100%; background:var(--gruen); } .dacbar i.warn { background:#ff5c7a; }
+  #bizkpis { grid-template-columns:repeat(2,1fr); } @media (min-width:520px) { #bizkpis { grid-template-columns:repeat(3,1fr); } }
 </style>
 </head>
 <body>
@@ -253,6 +269,31 @@
   </section>
 
   <section id="mehr">
+    <h2>🚀 Dein Start</h2>
+    <div class="karte-pro">
+      <div class="startbalken"><i id="startbalken"></i></div>
+      <p class="klein" id="starttext"></p>
+      <div id="startliste"></div>
+    </div>
+    <h2>📊 Dein Business</h2>
+    <div class="kpis" id="bizkpis"></div>
+    <details><summary>🏛️ Finanzamt-Grenze (pro Plattform)</summary><div id="dac7"></div></details>
+    <h2>➕ Kauf eintragen</h2>
+    <form class="karte-pro" id="neuartikel" autocomplete="off">
+      <label for="titel">Was hast du gekauft?</label><input id="titel" name="titel" required maxlength="120" placeholder="z. B. Nike Dunk Low Panda / Glurak-ex 199">
+      <div class="zwei"><div><label for="ekneu">Einkauf (€)</label><input id="ekneu" name="ek" type="number" inputmode="decimal" step="0.01" min="0" required></div>
+      <div><label for="groesse">Größe</label><input id="groesse" name="groesse" maxlength="20" placeholder="42 / M / -"></div></div>
+      <div class="zwei"><div><label for="zustand">Zustand</label><select id="zustand" name="zustand"><option>Neu & OVP</option><option>Neu ohne Etikett</option><option>Wie neu</option><option>Gebraucht</option><option>Near Mint</option></select></div>
+      <div><label for="kat">Kategorie</label><select id="kat" name="kat"><option>Sneaker</option><option>Pokémon</option><option>Sammelkarten</option><option>Figuren</option><option>Klamotten</option><option>Technik</option><option>Sonstiges</option></select></div></div>
+      <div class="zwei"><div><label for="datum">Gekauft am</label><input id="datum" name="datum" type="date"></div>
+      <div><label for="foto">📷 Foto</label><input id="foto" name="foto" type="file" accept="image/*" capture="environment"></div></div>
+      <button class="knopf" type="submit">＋ Ins Inventar</button>
+    </form>
+    <h2>📦 Mein Inventar</h2>
+    <p class="klein">Antippen = Anzeige erstellen (Kleinanzeigen, Vinted, eBay …), als verkauft eintragen. Bleibt nur auf deinem Handy.</p>
+    <div class="chips" id="bizfilter"></div>
+    <div id="inventar"></div>
+    <button class="knopf zweit" id="csv" type="button">⬇️ Export für Steuer/Buchhaltung (CSV)</button>
     <h2>☰ Mehr</h2>
     <details><summary>🧮 Lohnt sich das?</summary><div>
       <label for="ek">Einkauf (€)</label><input id="ek" type="number" inputmode="decimal" value="35">
@@ -302,10 +343,11 @@
   <button data-ziel="kalender"><span class="ic">🗓️</span>Saison</button>
   <button data-ziel="kaufen"><span class="ic">🛒</span>Lager</button>
   <button data-ziel="laeden"><span class="ic">📍</span>Läden</button>
-  <button data-ziel="mehr"><span class="ic">☰</span>Mehr</button>
+  <button data-ziel="mehr"><span class="ic">💼</span>Business</button>
 </nav>
 <script src="app.js"></script>
 <script src="pro.js"></script>
 <script src="zelle.js"></script>
+<script src="business.js"></script>
 </body>
 </html>
