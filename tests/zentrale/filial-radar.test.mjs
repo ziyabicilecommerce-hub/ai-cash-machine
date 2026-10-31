@@ -51,3 +51,12 @@ test('dm v2 tiles: Stückzahl aus dem Text, "nicht verfügbar" = leer', async ()
   assert.equal(b['456|1001'].da, false);
   assert.equal(b['789|1001'].da, true);
 });
+
+test('dm-Suche: echtes Antwortformat (tileData) mit Preis "16,95 €", Bild und Link', async () => {
+  const { dmProdukte } = await import('../../automations/lib/filialRadar.mjs');
+  const [p] = dmProdukte({ products: [{ dan: 3118166, brandName: 'Balea', title: 'Adventskalender 2026 Warm Wishes, 1 St', tileData: { self: '/p/d/3118166/balea-adventskalender', price: { price: { current: { value: '16,95 €' } } }, images: [{ tileSrc: 'https://products.dm-static.com/images/x.jpg' }] } }] }, 'adventskalender');
+  assert.equal(p.preis, 16.95);
+  assert.equal(p.bild, 'https://products.dm-static.com/images/x.jpg');
+  assert.equal(p.link, 'https://www.dm.de/p/d/3118166/balea-adventskalender');
+  assert.equal(p.name, 'Balea Adventskalender 2026 Warm Wishes, 1 St');
+});
