@@ -46,6 +46,18 @@
   .knopf { display:inline-block; padding:10px 14px; border-radius:10px; border:1px solid var(--cyan); text-decoration:none; font-size:13px; }
   .knopf.haupt { background:var(--pink); border-color:var(--pink); color:#fff; font-weight:700; }
   .leer { color:var(--leise); font-size:13px; padding:10px 0; }
+  .vb label { display:block; font-size:12px; color:var(--leise); margin:12px 0 4px; }
+  .vb input, .vb select, .vb textarea { width:100%; background:#0b1222; border:1px solid var(--rand); color:#fff; border-radius:10px; padding:10px; font:14px 'JetBrains Mono',monospace; }
+  .vb textarea { resize:vertical; line-height:1.45; }
+  .vbkopf { display:flex; gap:10px; align-items:flex-start; justify-content:space-between; } .vbkopf > div { flex:1; min-width:0; }
+  .vbzwei { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0 12px; }
+  .chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+  .chip { background:#13203a; color:var(--text); border:1px solid var(--rand); border-radius:99px; padding:7px 11px; font:12px 'JetBrains Mono',monospace; cursor:pointer; text-align:left; }
+  .chip:active { background:var(--pink); }
+  .vb details { margin-top:8px; font-size:13px; } .vb summary { cursor:pointer; color:var(--cyan); }
+  .vbcheck { font-family:'Orbitron',sans-serif; font-size:15px; color:#fff; margin:18px 0 8px; } #vb-score { color:var(--green); }
+  button.knopf { background:none; color:var(--cyan); cursor:pointer; font:inherit; font-size:13px; } button.knopf.haupt { background:var(--pink); color:#fff; }
+  .knopf.aus { opacity:.4; pointer-events:none; }
   @media (max-width:600px) { .liste .weg { display:none; } }
 </style>
 </head>
@@ -57,6 +69,35 @@
 
   <h2>Überblick</h2>
   <div class="raster" id="kpis"></div>
+
+  <h2>🎬 Videobot</h2>
+  <p class="unter">Virales Horror-Skript wählen, würfeln oder ändern → „Video bauen“ → GitHub baut das Video (3–6 Min.) und schickt dir den Link. Auf Wunsch postet er direkt auf TikTok.</p>
+  <form class="karte vb" id="vb-form" autocomplete="off">
+    <div class="vbkopf"><div><b>Fertige Skripte</b><div class="chips" id="vb-skripte"></div></div><button type="button" class="knopf" id="vb-wuerfel">🎲 Würfeln</button></div>
+    <label for="vb-hook">Hook (erster Satz - entscheidet alles)</label><textarea id="vb-hook" rows="2" maxlength="160"></textarea>
+    <details><summary>💡 Virale Hook-Formeln</summary><div class="chips" id="vb-hooks"></div></details>
+    <label for="vb-saetze">Geschichte (ein Satz pro Zeile, 4–6 Sätze)</label><textarea id="vb-saetze" rows="6"></textarea>
+    <div class="vbzwei">
+      <div><label for="vb-absender">Handy-Nachricht von</label><input id="vb-absender" maxlength="20" placeholder="Mama"></div>
+      <div><label for="vb-nachricht">Nachricht</label><input id="vb-nachricht" maxlength="90"></div>
+      <div><label for="vb-monster">Monster flüstert (Stille-Szene)</label><input id="vb-monster" maxlength="80"></div>
+      <div><label for="vb-monster2">Monster beim Twist</label><input id="vb-monster2" maxlength="80"></div>
+    </div>
+    <label for="vb-ende">Twist am Ende (nach dem Jumpscare)</label><textarea id="vb-ende" rows="2" maxlength="160"></textarea>
+    <div class="vbzwei">
+      <div><label for="vb-weiter">Cliffhanger (Teil 2)</label><input id="vb-weiter" maxlength="80"></div>
+      <div><label for="vb-frage">Frage an die Zuschauer</label><input id="vb-frage" maxlength="80"></div>
+      <div><label for="vb-titel">Titel</label><input id="vb-titel" maxlength="60"></div>
+      <div><label for="vb-ort">Ort</label><select id="vb-ort"></select></div>
+      <div><label for="vb-boese">Bösewicht</label><select id="vb-boese"></select></div>
+      <div><label for="vb-stimme">Stimme</label><select id="vb-stimme"></select></div>
+    </div>
+    <label for="vb-posten">Danach</label><select id="vb-posten"></select>
+    <h3 class="vbcheck">Viral-Check <span id="vb-score">–</span>/100</h3>
+    <div id="vb-check"></div>
+    <div class="knoepfe" style="margin-top:12px"><button class="knopf haupt" id="vb-bauen" type="submit">▶️ Video bauen</button><a class="knopf" id="vb-meine" target="_blank" rel="noopener">📂 Meine Videos</a></div>
+    <p class="unter" style="margin-top:8px">Jedes Video wird automatisch als KI-generiert gekennzeichnet. Look: echte Kamera-Aufnahme (REC, 03:12 Uhr, Nachtsicht), Schock nach 1 Sekunde, Jumpscare + Twist.</p>
+  </form>
 
   <h2>Was jetzt zu tun ist</h2>
   <div id="tipps"></div>
@@ -82,5 +123,6 @@
   <p class="unter" style="margin-top:10px">Auf GitHub jeweils „Run workflow“ drücken. Zahlen aktualisieren sich sonst alle 3 Stunden von allein.</p>
 </main>
 <script src="tiktok.js"></script>
+<script src="videobot.js"></script>
 </body>
 </html>

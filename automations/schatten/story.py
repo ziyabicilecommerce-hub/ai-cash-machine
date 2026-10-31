@@ -6,6 +6,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from ton import tonspur
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
 from ki import ki_bilder_laden, ki_szene
+import kamera
 from aktion import scheibe, decke_schatten, masken, fernseher, taschenlampe, zaehlen, turbulenz, fluegel, live, klinke, rufen, zelt
 from fahrgaeste import fahrgaeste_malen, zeitung_nah
 from orte import ORT, HIMMEL, NEBEL, AUGE, AUGE_LEISE, HANDYLICHT, AUGE_GROSS, sterne, innenraum, draussen, rahmen, SPIEGELBOX
@@ -305,6 +306,11 @@ def main():
     HELD[0] = story.get('held', {})
     FAHRGAESTE[0] = story.get('fahrgaeste', ['zeitung', 'schlaf'])
     szenen = story['szenen']
+    for sz in szenen:
+        if sz['art'] == 'blitz':  # Hook ohne "TEIL 3:" - und schon nach 1,1 s ein kurzer Schock, damit keiner wegwischt
+            sz['text'] = kamera.ohne_teil(sz.get('text'))
+            sz.setdefault('blitzbild', [1.1]); sz.setdefault('schreck_bei', 1.1)
+    teil, teile = kamera.teil_von(story.get('titel')), story.get('teile')
     for i, sz in enumerate(szenen):  # wer genau hinschaut, sieht ihn schon vor dem Jumpscare - von Szene zu Szene naeher
         if i > 0 and sz['art'] in ('innen', 'handy') and 'naeher' not in sz:
             sz['naeher'] = round(min(0.55, 0.1 + 0.6 * i / len(szenen)), 2)
@@ -396,6 +402,8 @@ def main():
             fortschritt = t / gesamt
             if fortschritt > 0.45 and s['art'] != 'teil2':
                 im = Image.blend(im, Image.new('RGB', (W, H), (45, 0, 4)), min(0.32, (fortschritt - 0.45) * 0.7))
+            if story.get('kamera', True):
+                im = kamera.overlay(im, t, s, story, teil, teile)
             if s.get('monster') and lt >= s['mbei']:
                 mt = s.get('monster_text', s['monster'].upper())
                 mw = len(mt.split())

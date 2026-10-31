@@ -1,0 +1,82 @@
+{
+ "hooks": [
+  "Mama schreibt: „Mach nicht auf.“ Aber Mama steht vor der Tür.",
+  "Um 3:12 Uhr klingelt mein Handy. Der Anrufer bin ich.",
+  "Kein Netz im Wald. Trotzdem kommt eine Nachricht: „Ich sehe dich.“",
+  "Regel Nummer eins: Wenn jemand deinen Namen flüstert, dreh dich nicht um.",
+  "Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas.",
+  "Mein Babyphone zeigt das Kinderzimmer. Und jemanden, der winkt.",
+  "Der Aufzug hält in Etage minus vier. Wir haben nur drei Kellergeschosse.",
+  "Im Flugzeug sitzt jemand auf Platz 13. Es gibt keine Reihe 13."
+ ],
+ "skripte": [
+  {
+   "titel": "Zwei Zahnbürsten", "ort": "haus", "boesewicht": "frau", "stimme": "frau",
+   "hook": "Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas.",
+   "saetze": ["Ich denke erst, ich habe eine doppelt gekauft.", "Dann schreibt meine Nachbarin.", "Sie fragt, wer die Frau an meinem Fenster ist.", "Ich schaue zum Fenster. Da ist niemand.", "Aber im Badezimmer läuft jetzt das Wasser."],
+   "absender": "Nachbarin", "nachricht": "Wer ist die Frau, die bei dir am Fenster steht?",
+   "monster": "Ich putze nur meine Zähne.", "monster2": "Jetzt bist du dran.",
+   "ende": "Die zweite Zahnbürste ist nass. Und sie steht hinter mir.",
+   "weiter": "Teil zwei: Wem gehört die zweite Zahnbürste?", "frage": "Hättest du ins Bad geschaut?"
+  },
+  {
+   "titel": "Der Anrufer bin ich", "ort": "haus", "boesewicht": "schatten", "stimme": "mann",
+   "hook": "Um 3:12 Uhr klingelt mein Handy. Der Anrufer bin ich.",
+   "saetze": ["Auf dem Display steht meine eigene Nummer.", "Ich gehe ran. Jemand atmet.", "Dann sagt meine eigene Stimme: Schau nicht unters Bett.", "Ich lege auf. Das Handy klingelt wieder.", "Diesmal kommt das Klingeln von unter dem Bett."],
+   "monster": "Geh ran.", "monster2": "Ich bin du. Nur schneller.",
+   "ende": "Unter dem Bett liegt mein Handy. Und eine Hand hält es fest.",
+   "weiter": "Teil zwei: Wer hat da angerufen?", "frage": "Wärst du rangegangen?"
+  },
+  {
+   "titel": "Ich sehe dich", "ort": "wald", "boesewicht": "hirsch", "stimme": "mann",
+   "hook": "Kein Netz im Wald. Trotzdem kommt eine Nachricht: Ich sehe dich.",
+   "saetze": ["Wir zelten zu dritt am See.", "Um Mitternacht vibriert mein Handy.", "Ich zähle meine Freunde. Eins. Zwei.", "Zwischen den Bäumen bewegt sich etwas Großes.", "Dann knackt ein Ast direkt neben dem Zelt."],
+   "absender": "Unbekannt", "nachricht": "Ich sehe dich. Ihr seid zu dritt. Bald zu viert.",
+   "monster": "Bleib im Zelt.", "monster2": "Ich habe euch gezählt.",
+   "ende": "Wir waren nie zu dritt. Ich bin allein hergekommen.",
+   "weiter": "Teil zwei: Wer saß mit am Feuer?", "frage": "Wärst du rausgegangen?"
+  },
+  {
+   "titel": "Dreh dich nicht um", "ort": "zug", "boesewicht": "schatten", "stimme": "mann",
+   "hook": "Regel Nummer eins: Wenn jemand deinen Namen flüstert, dreh dich nicht um.",
+   "saetze": ["Ich sitze in der letzten Bahn nach Hause.", "Der Wagen ist leer. Bis auf mich.", "Dann flüstert jemand meinen Namen.", "Die Stimme kommt von direkt hinter mir.", "Im Fenster sehe ich: Hinter mir sitzt niemand."],
+   "monster": "Dreh dich um.", "monster2": "Du hast die Regel gebrochen.",
+   "ende": "Im Fenster sitzt jemand neben mir. Neben mir ist der Platz leer.",
+   "weiter": "Teil zwei: Regel Nummer zwei.", "frage": "Hättest du dich umgedreht?"
+  },
+  {
+   "titel": "Mach nicht auf", "ort": "haus", "boesewicht": "frau", "stimme": "frau",
+   "hook": "Mama schreibt: Mach nicht auf. Aber Mama steht vor der Tür.",
+   "saetze": ["Ich bin allein zu Hause. Es klopft.", "Mama schreibt mir.", "Durch den Spion sehe ich Mama. Sie lächelt.", "Sie klopft wieder. Dreimal. Langsam.", "Dann ruft sie: Lass mich rein, Schatz."],
+   "absender": "Mama", "nachricht": "Mach NICHT auf. Ich bin noch bei der Arbeit.",
+   "monster": "Lass mich rein.", "monster2": "Ich hab einen Schlüssel.",
+   "ende": "Das Klopfen hört auf. Dann dreht sich der Schlüssel im Schloss.",
+   "weiter": "Teil zwei: Wer hat den Schlüssel?", "frage": "Hättest du aufgemacht?"
+  },
+  {
+   "titel": "Das Babyphone winkt", "ort": "haus", "boesewicht": "gremlin", "stimme": "frau",
+   "hook": "Mein Babyphone zeigt das Kinderzimmer. Und jemanden, der winkt.",
+   "saetze": ["Ich passe auf meinen kleinen Bruder auf.", "Die Eltern schreiben mir.", "Auf dem Bildschirm schläft er ruhig.", "Neben dem Bett steht etwas Kleines. Es winkt in die Kamera.", "Dann ist der Bildschirm schwarz."],
+   "absender": "Papa", "nachricht": "Alles ok? Die Kamera zeigt bei uns zwei Kinder.",
+   "monster": "Spiel mit mir.", "monster2": "Jetzt winke ich dir.",
+   "ende": "Mein Bruder steht neben mir. Wer liegt dann in seinem Bett?",
+   "weiter": "Teil zwei: Wer liegt im Bett?", "frage": "Wärst du ins Zimmer gegangen?"
+  },
+  {
+   "titel": "Etage minus vier", "ort": "aufzug", "boesewicht": "gremlin", "stimme": "mann",
+   "hook": "Der Aufzug hält in Etage minus vier. Wir haben nur drei Kellergeschosse.",
+   "saetze": ["Ich will nur zur Tiefgarage.", "Der Knopf minus vier leuchtet von allein.", "Die Tür geht auf. Es ist stockdunkel.", "Etwas kratzt an der Wand. Es kommt näher.", "Ich drücke immer wieder auf Tür zu."],
+   "monster": "Bleib noch.", "monster2": "Hier unten ist es schön.",
+   "ende": "Die Tür geht zu. Aber das Kratzen ist jetzt im Aufzug.",
+   "weiter": "Teil zwei: Was lebt in Etage minus vier?", "frage": "Wärst du ausgestiegen?"
+  },
+  {
+   "titel": "Reihe 13", "ort": "flugzeug", "boesewicht": "schatten", "stimme": "mann",
+   "hook": "Im Flugzeug sitzt jemand auf Platz 13. Es gibt keine Reihe 13.",
+   "saetze": ["Nachtflug nach Hause. Alle schlafen.", "Ich gehe zur Toilette. Nach Reihe 12 kommt eine Reihe ohne Nummer.", "Dort sitzt ein Mann. Er schaut mich an.", "Die Stewardess sagt: Diese Reihe gibt es nicht.", "Als ich zurückgehe, sitzt er auf meinem Platz."],
+   "monster": "Setz dich.", "monster2": "Das ist jetzt mein Platz.",
+   "ende": "Auf meinem Ticket steht jetzt Reihe 13.",
+   "weiter": "Teil zwei: Wer sitzt in Reihe 13?", "frage": "Hättest du dich hingesetzt?"
+  }
+ ]
+}
