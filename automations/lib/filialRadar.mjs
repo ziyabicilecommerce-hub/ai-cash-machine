@@ -27,7 +27,7 @@ export function dmFilialen(json, h = HEIMAT) {
 }
 
 // Produkte aus der dm-Suche: DAN, Name, Preis, Bild, Link
-export function dmProdukte(json, begriff, maxEuro = 80) {
+export function dmProdukte(json, begriff, maxEuro = 80, minEuro = 10) {  // unter 10 € lohnt Weiterverkauf nicht
   const liste = json?.items || json?.products || json?.results || [];
   return liste.map((p) => {
     const dan = String(p.dan ?? p.id ?? '').trim();
@@ -38,7 +38,7 @@ export function dmProdukte(json, begriff, maxEuro = 80) {
     const url = t.self || p.relativeProductUrl || p.productUrl || p.url || '';
     return dan ? { _roh: p, dan, name: [p.brandName || p.brand?.name || t.brand?.name, p.title || p.name || t.title?.tileHeadline].filter(Boolean).join(' ').trim(), preis: Number.isFinite(preis) ? preis : null,
       bild: /^https:\/\//.test(bild) ? bild : '', link: url ? (url.startsWith('http') ? url : `https://www.dm.de${url}`) : `https://www.dm.de/search?query=${encodeURIComponent(begriff)}`, begriff } : null;
-  }).filter((p) => p && p.name && (p.preis == null || p.preis <= maxEuro));
+  }).filter((p) => p && p.name && (p.preis == null || (p.preis <= maxEuro && p.preis >= minEuro)));
 }
 export function ohneRoh(p) {
   const { _roh, ...rest } = p; return rest;
