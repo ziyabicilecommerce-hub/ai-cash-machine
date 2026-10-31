@@ -116,9 +116,59 @@
   .installkopf div { flex:1; } .installkopf p { margin-top:3px; color:#e4dcff; }
   .installkopf button { background:none; border:0; color:var(--leise); font-size:18px; padding:2px 4px; }
   .install .links { margin:10px 0 0; }
+  /* Telefonzelle */
+  .zellefab { position:fixed; right:14px; bottom:calc(92px + env(safe-area-inset-bottom)); width:58px; height:78px; border:0; background:none; padding:0; z-index:5; filter:drop-shadow(0 6px 16px #ff4fd855); animation:schweben 3s ease-in-out infinite; }
+  .zellefab svg { width:100%; height:100%; }
+  @keyframes schweben { 50% { transform:translateY(-5px); } }
+  .augen { animation:blinzeln 4s infinite; transform-origin:60px 35px; }
+  @keyframes blinzeln { 0%,92%,100% { transform:scaleY(1); } 95% { transform:scaleY(.1); } }
+  .zelle { position:fixed; inset:0; z-index:20; background:#07080ff2; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); overflow-y:auto; padding:calc(10px + env(safe-area-inset-top)) 16px calc(30px + env(safe-area-inset-bottom)); animation:rein .2s ease; }
+  .zellekopf { display:flex; align-items:center; gap:8px; max-width:688px; margin:0 auto; } .zellekopf b { flex:1; font-size:18px; }
+  .zelleinhalt { max-width:688px; margin:0 auto; }
+  .zellebuehne { display:flex; flex-direction:column; align-items:center; text-align:center; padding:10px 0 4px; }
+  .zellefigur { width:120px; height:200px; filter:drop-shadow(0 0 24px #8b5cff66); transition:transform .2s; }
+  .zellefigur.klingelt { animation:klingeln .18s linear infinite; }
+  @keyframes klingeln { 25% { transform:rotate(-4deg); } 75% { transform:rotate(4deg); } }
+  .hoerer { transition:transform .3s; } .zellefigur.spricht .hoerer { transform:translate(0,-8px) rotate(-12deg); transform-origin:60px 108px; }
+  .zellefigur.spricht .augen circle { fill:#ffd45c; }
+  .zellelcd { display:inline-block; margin:8px 0 6px; font:700 14px ui-monospace,SFMono-Regular,Menlo,monospace; color:#3ef2a0; background:#04140d; border:1px solid #3ef2a055; border-radius:10px; padding:8px 14px; box-shadow:inset 0 0 12px #3ef2a022; }
+  .zellebuch { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:12px 0; }
+  .kontakt { background:var(--panel2); border:1px solid var(--rand); border-radius:16px; padding:10px 6px; color:var(--text); display:flex; flex-direction:column; align-items:center; gap:4px; font:inherit; }
+  .kontakt:active { transform:scale(.96); }
+  .kontakt img { width:32px; height:32px; border-radius:9px; background:#fff; } .kontakt .emo { font-size:26px; }
+  .kontakt b { font-size:12.5px; line-height:1.2; text-align:center; } .kontakt small { font-size:10.5px; color:var(--leise); }
+  .zellechat { scroll-margin-top:10px; }
+  .blase { max-width:85%; padding:10px 13px; border-radius:16px; margin:8px 0; font-size:14.5px; line-height:1.4; }
+  .blase.ich { margin-left:auto; background:linear-gradient(90deg,var(--akzent),var(--pink)); border-bottom-right-radius:4px; }
+  .blase.sie { background:var(--panel2); border:1px solid var(--rand); border-bottom-left-radius:4px; }
+  @media (min-width:520px) { .zellebuch { grid-template-columns:repeat(4,1fr); } }
+  @media (prefers-reduced-motion: reduce) { .zellefab, .augen, .zellefigur.klingelt { animation:none; } }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="zrahmen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cff"/><stop offset=".55" stop-color="#ff4fd8"/><stop offset="1" stop-color="#ff8a3d"/></linearGradient>
+    <linearGradient id="zglas" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe9ff" stop-opacity=".35"/><stop offset="1" stop-color="#8b5cff" stop-opacity=".12"/></linearGradient>
+  </defs>
+  <symbol id="kabine" viewBox="0 0 120 220">
+    <ellipse cx="60" cy="212" rx="50" ry="7" fill="#ff4fd8" opacity=".25"/>
+    <rect x="14" y="40" width="92" height="170" rx="10" fill="#141829" stroke="url(#zrahmen)" stroke-width="6"/>
+    <path d="M10 44 Q60 4 110 44 Z" fill="url(#zrahmen)"/>
+    <rect x="24" y="24" width="72" height="22" rx="8" fill="#0b0e1a" stroke="#ffffff30"/>
+    <g class="augen"><circle cx="49" cy="35" r="4.2" fill="#3ef2a0"/><circle cx="71" cy="35" r="4.2" fill="#3ef2a0"/></g>
+    <g fill="url(#zglas)" stroke="#ffffff22">
+      <rect x="22" y="58" width="34" height="34" rx="3"/><rect x="64" y="58" width="34" height="34" rx="3"/>
+      <rect x="22" y="98" width="34" height="34" rx="3"/><rect x="64" y="98" width="34" height="34" rx="3"/>
+      <rect x="22" y="138" width="34" height="34" rx="3"/><rect x="64" y="138" width="34" height="34" rx="3"/>
+    </g>
+    <rect x="44" y="100" width="32" height="40" rx="5" fill="#2a2f4a" stroke="#ffffff40"/>
+    <g fill="#8d9ab6"><circle cx="54" cy="122" r="2"/><circle cx="60" cy="122" r="2"/><circle cx="66" cy="122" r="2"/><circle cx="54" cy="129" r="2"/><circle cx="60" cy="129" r="2"/><circle cx="66" cy="129" r="2"/></g>
+    <g class="hoerer"><rect x="46" y="104" width="28" height="9" rx="4.5" fill="#ff4fd8"/><path d="M60 113 q-12 14 -2 26" stroke="#ff4fd8" stroke-width="2" fill="none"/></g>
+    <rect x="98" y="122" width="4" height="20" rx="2" fill="#ffd45c"/>
+    <text x="60" y="198" text-anchor="middle" font-size="11" font-weight="800" fill="#f3f5ff" font-family="system-ui">☎ RADAR</text>
+  </symbol>
+</svg>
 <header>
   <h1>Reselling <span>Radar</span></h1>
   <button class="rund" id="neuladen" type="button" aria-label="Neu laden">↻</button>
@@ -232,6 +282,20 @@
     <p class="klein">Daten: Nike SNKRS (Deutschland), Cardmarket-Preise, Online-Shops, OpenStreetMap, Saison-Plan. Kostenlos, ohne Werbung.</p>
   </section>
 </main>
+<button class="zellefab" id="zellefab" type="button" aria-label="Telefonzelle öffnen"><svg viewBox="0 0 120 220"><use href="#kabine"/></svg></button>
+<div class="zelle" id="zelle" hidden>
+  <div class="zellekopf"><b>📞 Radar-Telefonzelle</b><button type="button" class="rund" id="zelleton" aria-label="Ton an/aus">🔇</button><button type="button" class="rund" id="zellezu" aria-label="Schließen">✕</button></div>
+  <div class="zelleinhalt">
+    <div class="zellebuehne">
+      <svg class="zellefigur" id="zellefigur" viewBox="0 0 120 220" role="img" aria-label="Telefonzelle"><use href="#kabine"/></svg>
+      <div class="zellelcd" id="zellelcd">Wen rufen wir an?</div>
+      <p class="klein">Ich rufe für dich bei Firmen an und frage, was sie gerade da haben - mit Bild und Kauf-Link.</p>
+    </div>
+    <div class="zellechat" id="zellechat"></div>
+    <input id="zellesuche" type="search" placeholder="🔎 Firma suchen (Nike, Smyths, Overkill …)" autocomplete="off">
+    <div class="zellebuch" id="zellebuch"></div>
+  </div>
+</div>
 <nav id="nav">
   <button data-ziel="hype" class="aktiv"><span class="ic">🔥</span>Hype</button>
   <button data-ziel="pro"><span class="ic">📈</span>Pro</button>
@@ -242,5 +306,6 @@
 </nav>
 <script src="app.js"></script>
 <script src="pro.js"></script>
+<script src="zelle.js"></script>
 </body>
 </html>

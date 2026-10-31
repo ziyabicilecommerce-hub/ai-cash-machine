@@ -185,13 +185,13 @@ async function bilder() {
 async function laedenVorOrt() {
   const alt = lesen(LAEDEN, null);
   const abfrage = overpassAbfrage(HEIMAT);
-  if (alt?.abfrage === abfrage && Date.now() - Date.parse(alt.stand) < 7 * 86400000 && alt.laeden?.length) return alt;
+  if (alt?.abfrage === abfrage && alt.version === 2 && Date.now() - Date.parse(alt.stand) < 7 * 86400000 && alt.laeden?.length) return alt;
   for (const server of ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter']) {
     try {
       const res = await fetch(server, { method: 'POST', body: new URLSearchParams({ data: abfrage }), headers: { 'user-agent': 'reselling-radar (github actions)' }, signal: AbortSignal.timeout(200000) });
       if (!res.ok) throw new Error(`${res.status}`);
       const laeden = laedenAusOsm(await res.json(), HEIMAT);
-      const daten = { stand: new Date().toISOString(), heimat: HEIMAT, abfrage, laeden };
+      const daten = { stand: new Date().toISOString(), version: 2, heimat: HEIMAT, abfrage, laeden };
       writeFileSync(LAEDEN, `${JSON.stringify(daten, null, 1)}\n`);
       log('Läden vor Ort:', laeden.length);
       return daten;
