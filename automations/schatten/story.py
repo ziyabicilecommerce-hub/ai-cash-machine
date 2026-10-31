@@ -113,10 +113,27 @@ def bild(s, t, lt):
     if art == 'teil2':
         d = ImageDraw.Draw(im)
         sterne(d, t)
-        if s.get('cta') and lt > 0.4:  # Aufforderung zum Folgen, pulsiert leicht
-            f = ImageFont.truetype(FONTDATEI, int(44 + 4 * math.sin(lt * 6)))
-            d.rounded_rectangle((90, 1150, 630, 1240), 26, fill=(230, 20, 60))
-            d.text((W / 2, 1195), s['cta'], font=f, fill=(255, 255, 255), anchor='mm')
+        if s.get('wahl'):  # Kommentar-Wahl: zwei große Karten mitten im Bild (unten verdeckt TikTok den Rand)
+            frage, gr = str(s.get('frage', '')).upper(), 50
+            while gr > 28 and d.textlength(frage, font=ImageFont.truetype(FONTDATEI, gr)) > 640:
+                gr -= 2
+            d.text((W / 2, 250), frage, font=ImageFont.truetype(FONTDATEI, gr), fill=GELB, anchor='mm')
+            for i, antwort in enumerate(s['wahl'][:2]):
+                y = 330 + i * 190 + int(6 * math.sin(lt * 5 + i * 3))
+                d.rounded_rectangle((70, y, 650, y + 150), 30, fill=(20, 22, 34), outline=(230, 20, 60) if i == 0 else (60, 120, 255), width=6)
+                d.ellipse((95, y + 25, 195, y + 125), fill=(230, 20, 60) if i == 0 else (60, 120, 255))
+                d.text((145, y + 75), str(i + 1), font=ImageFont.truetype(FONTDATEI, 64), fill=(255, 255, 255), anchor='mm')
+                gr = 46
+                while gr > 26 and d.textlength(antwort.upper(), font=ImageFont.truetype(FONTDATEI, gr)) > 420:
+                    gr -= 2
+                d.text((220, y + 75), antwort.upper(), font=ImageFont.truetype(FONTDATEI, gr), fill=(255, 255, 255), anchor='lm')
+        if s.get('cta') and lt > 0.4:  # Aufforderung zum Folgen/Kommentieren, pulsiert leicht
+            y = 760 if s.get('wahl') else 1150
+            gr = int(44 + 4 * math.sin(lt * 6))
+            while gr > 24 and d.textlength(s['cta'], font=ImageFont.truetype(FONTDATEI, gr)) > 500:
+                gr -= 2
+            d.rounded_rectangle((90, y, 630, y + 90), 26, fill=(230, 20, 60))
+            d.text((W / 2, y + 45), s['cta'], font=ImageFont.truetype(FONTDATEI, gr), fill=(255, 255, 255), anchor='mm')
         return im
     if art == 'fratze':
         fratze(im, lt)

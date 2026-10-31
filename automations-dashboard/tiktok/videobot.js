@@ -13,6 +13,7 @@
   function fuellen(s) {
     for (const k of ['titel', 'hook', 'absender', 'nachricht', 'monster', 'monster2', 'ende', 'weiter', 'frage']) q(`vb-${k}`).value = s[k] || '';
     q('vb-saetze').value = (s.saetze || []).join('\n');
+    q('vb-wahl').value = (s.wahl || []).join(' / ');
     q('vb-ort').value = s.ort || 'haus'; q('vb-boese').value = s.boesewicht || 'schatten'; q('vb-stimme').value = s.stimme || 'mann';
     pruefen();
   }
@@ -21,6 +22,8 @@
       hook: q('vb-hook').value.trim(), saetze: q('vb-saetze').value.split('\n').map((x) => x.trim()).filter(Boolean), ende: q('vb-ende').value.trim(),
       frage: q('vb-frage').value.trim(), weiter: q('vb-weiter').value.trim(), posten: q('vb-posten').value };
     for (const k of ['absender', 'nachricht', 'monster', 'monster2']) if (q(`vb-${k}`).value.trim()) s[k] = q(`vb-${k}`).value.trim();
+    const wahl = q('vb-wahl').value.split('/').map((x) => x.trim()).filter(Boolean);
+    if (wahl.length === 2) s.wahl = wahl;
     return s;
   }
   // Viral-Check nach dem, was bei unseren Zahlen funktioniert hat

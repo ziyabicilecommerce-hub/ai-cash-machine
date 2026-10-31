@@ -41,9 +41,12 @@ test('Autopilot: jedes Konto eigene Geschichten, keine Teil-2-Versprechen', asyn
     assert.ok(l.length >= 6);
     for (const { skript } of l) {
       const ende = baueFolge(skript).szenen.at(-1);
-      assert.equal(ende.cta, 'FOLG MIR FÜR MEHR');
+      assert.equal(ende.cta, skript.wahl ? 'KOMMENTIER 1 ODER 2' : 'FOLG MIR FÜR MEHR');
       assert.ok(!/TEIL/.test(ende.text), ende.text);
+      if (skript.wahl) assert.ok(ende.wahl.length === 2 && ende.sprich.includes('Zahl'), ende.sprich);
     }
   }
   assert.equal(slug('Zwei Zahnbürsten'), 'zwei-zahnbuersten');
+  assert.ok(pruefen({ hook: 'x', saetze: ['a', 'b', 'c'], ende: 'e', wahl: ['nur eins'] }).some((f) => f.includes('wahl')));
+  assert.ok(pruefen({ hook: 'x', saetze: ['a', 'b', 'c'], ende: 'e', wahl: ['viel zu lange Antwort hier', 'b'] }).some((f) => f.includes('wahl')));
 });

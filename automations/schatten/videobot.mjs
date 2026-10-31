@@ -28,6 +28,7 @@ export function pruefen(skript) {
   if (!satz(skript?.ende)) f.push('ende fehlt');
   if (skript?.ort && !ORTE.includes(skript.ort)) f.push(`ort muss einer von ${ORTE.join(', ')} sein`);
   if (skript?.boesewicht && !BOESE.includes(skript.boesewicht)) f.push(`boesewicht muss einer von ${BOESE.join(', ')} sein`);
+  if (skript?.wahl !== undefined && !(Array.isArray(skript.wahl) && skript.wahl.length === 2 && skript.wahl.every((w) => satz(w) && satz(w).length <= 18))) f.push('wahl muss zwei kurze Antworten haben (je höchstens 18 Zeichen)');
   if (skript?.posten && !KONTEN[skript.posten]) f.push(`posten muss leer oder einer von ${Object.keys(KONTEN).join(', ')} sein`);
   return f;
 }
@@ -51,9 +52,17 @@ export function baueFolge(skript) {
   szenen.push({ art: 'fratze', dauer: 1.2, schreck: true });
   szenen.push({ art: 'ende', ...zeile(skript.ende, { schreck: true, angst: 1, blick: 1, ...(skript.monster2 ? { monster: satz(skript.monster2, 80), monster_text: kurz(skript.monster2) } : {}) }) });
   const weiter = satz(skript.weiter || '', 80);
-  // Einzel-Video ohne Fortsetzung: kein falsches "Teil 2"-Versprechen, sondern die Frage für die Kommentare
-  const schluss = weiter || `${satz(skript.frage || 'Was hättest du gemacht?', 80)} Schreib es in die Kommentare.`;
-  szenen.push({ art: 'teil2', ...zeile(schluss, { pause: 0.8, cta: weiter ? 'FOLG MIR FÜR TEIL 2' : 'FOLG MIR FÜR MEHR' }) });
+  const frage = satz(skript.frage || 'Was hättest du gemacht?', 80);
+  // Kommentar-Wahl "1 oder 2": eine Zahl tippen ist leichter als einen Satz schreiben - bringt mehr Kommentare
+  const wahl = Array.isArray(skript.wahl) ? skript.wahl.map((w) => satz(w, 18)) : null;
+  if (!weiter && wahl) {
+    szenen.push({ art: 'teil2', sprich: `${frage} Eins: ${wahl[0]}. Zwei: ${wahl[1]}. Schreib die Zahl in die Kommentare.`,
+      text: '', wahl, frage, pause: 0.8, cta: 'KOMMENTIER 1 ODER 2' });  // story.py zeichnet die zwei Antwort-Karten
+  } else {
+    // Einzel-Video ohne Fortsetzung: kein falsches "Teil 2"-Versprechen, sondern die Frage für die Kommentare
+    const schluss = weiter || `${frage} Schreib es in die Kommentare.`;
+    szenen.push({ art: 'teil2', ...zeile(schluss, { pause: 0.8, cta: weiter ? 'FOLG MIR FÜR TEIL 2' : 'FOLG MIR FÜR MEHR' }) });
+  }
   const titel = satz(skript.titel || skript.hook, 60);
   const titelbild = kurz(skript.hook, 80);
   return {
@@ -61,7 +70,7 @@ export function baueFolge(skript) {
     ort: skript.ort || 'haus', fahrgaeste: [], boesewicht: skript.boesewicht || 'schatten',
     held: { farbe: [44, 56, 92], oberteil: 'hoodie', kopf: 'haare', haar: [46, 34, 26], hose: [38, 44, 70] },
     titel, titelbild, titelbild_gelb: gelbVon(titelbild), teile: 1,
-    caption: `${satz(skript.hook, 120)} ${satz(skript.frage || 'Was hättest du gemacht?', 80)} 👇`, szenen,
+    caption: `${satz(skript.hook, 120)} ${frage}${wahl && !weiter ? ` 1️⃣ ${wahl[0]} oder 2️⃣ ${wahl[1]}? Zahl in die Kommentare` : ''} 👇`, szenen,
   };
 }
 
