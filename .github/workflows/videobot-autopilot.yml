@@ -1,0 +1,84 @@
+name: "🎬 Videobot Autopilot (jeden Abend ein Horror-Video pro Konto)"
+
+# Nimmt jeden Abend pro Konto die nächste noch nicht gepostete Geschichte aus automations-dashboard/tiktok/skripte.json
+# (jedes Konto hat eigene Geschichten), rendert sie mit dem Found-Footage-Look und postet über Buffer (mit KI-Hinweis).
+# Gepostete Geschichten erkennt er am Release "videobot-auto-<geschichte>-<konto>". Neue Geschichten = neue Einträge in skripte.json.
+
+on:
+  schedule:
+    - cron: '43 18 * * *'  # 19:43 Uhr (Winterzeit) - beste Horror-Zeit, zwischen den Serien-Teilen
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: videobot-autopilot
+  cancel-in-progress: false
+
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { nr: 0, konto: futureflowx3, kanal: 6ac7cb606a5c39ccb6535fab }
+          - { nr: 1, konto: zyx_7851, kanal: 6ac7cae66a5c39ccb6535c40 }
+          - { nr: 2, konto: futureflowxx, kanal: 6ac7ca226a5c39ccb65356a5 }
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      KONTO: ${{ matrix.konto }}
+      KANAL: ${{ matrix.kanal }}
+      BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            automations/schatten
+            automations/lib
+            automations-dashboard/tiktok
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Nächste Geschichte
+        id: wahl
+        run: |
+          mkdir -p out
+          for SLUG in $(node automations/schatten/videobot.mjs --auto automations-dashboard/tiktok/skripte.json ${{ matrix.nr }}); do
+            TAG="videobot-auto-$SLUG-$KONTO"
+            if ! gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
+              node automations/schatten/videobot.mjs --auto automations-dashboard/tiktok/skripte.json ${{ matrix.nr }} "$SLUG" out/folge.json
+              echo "slug=$SLUG" >> "$GITHUB_OUTPUT"; echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+              echo "Heute für @$KONTO: $SLUG"; exit 0
+            fi
+          done
+          echo "⚠️ Alle Geschichten für @$KONTO sind gepostet - neue in automations-dashboard/tiktok/skripte.json eintragen." | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Werkzeuge
+        if: steps.wahl.outputs.slug != ''
+        run: |
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
+          pip install -q pillow edge-tts
+      - name: Rendern
+        if: steps.wahl.outputs.slug != ''
+        run: python3 automations/schatten/story.py out/folge.json out
+      - name: Ablegen und posten
+        if: steps.wahl.outputs.slug != ''
+        env:
+          TAG: ${{ steps.wahl.outputs.tag }}
+          SLUG: ${{ steps.wahl.outputs.slug }}
+        run: |
+          DATEI="$SLUG.mp4"
+          cp out/video.mp4 "out/$DATEI"
+          gh release create "$TAG" "out/$DATEI" out/cover.jpg -R "$REPO" --prerelease --title "Videobot Autopilot: $SLUG (@$KONTO)" \
+            --notes "KI-generiertes Horror-Video (frei erfundene Geschichte)."
+          URL="https://github.com/$REPO/releases/download/$TAG/$DATEI"
+          if node automations/schatten/posten.mjs out/folge.json "$URL" "$KANAL"; then
+            echo "✅ $SLUG auf @$KONTO gepostet: $URL" >> "$GITHUB_STEP_SUMMARY"
+          else
+            gh release delete "$TAG" -R "$REPO" --yes --cleanup-tag
+            echo "❌ $SLUG nicht gepostet - kommt morgen nochmal." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi

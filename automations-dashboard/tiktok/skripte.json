@@ -7,76 +7,472 @@
   "Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas.",
   "Mein Babyphone zeigt das Kinderzimmer. Und jemanden, der winkt.",
   "Der Aufzug hält in Etage minus vier. Wir haben nur drei Kellergeschosse.",
-  "Im Flugzeug sitzt jemand auf Platz 13. Es gibt keine Reihe 13."
+  "Im Flugzeug sitzt jemand auf Platz 13. Es gibt keine Reihe 13.",
+  "Ich bekomme eine Sprachnachricht von mir. Aufgenommen um drei Uhr nachts.",
+  "Die Durchsage sagt: Nicht nach hinten schauen. Ich sitze ganz hinten.",
+  "Meine Überwachungskamera hat eine Person aufgenommen. Sie wohnt bei mir.",
+  "Mein Nachbar winkt mir jede Nacht zu. Er ist vor einem Jahr ausgezogen.",
+  "Im Aufzug gibt es einen Knopf für Etage 13. Das Haus hat zwölf Etagen.",
+  "Mitten im Flug klopft jemand ans Fenster. Von außen.",
+  "Im Wald ruft jemand meinen Namen. Mit der Stimme meiner Mutter.",
+  "Auf meinem Handy ist ein Foto von mir beim Schlafen. Ich wohne allein."
  ],
  "skripte": [
   {
-   "titel": "Zwei Zahnbürsten", "ort": "haus", "boesewicht": "frau", "stimme": "frau",
+   "titel": "Zwei Zahnbürsten",
+   "ort": "haus",
+   "boesewicht": "frau",
+   "stimme": "frau",
    "hook": "Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas.",
-   "saetze": ["Ich denke erst, ich habe eine doppelt gekauft.", "Dann schreibt meine Nachbarin.", "Sie fragt, wer die Frau an meinem Fenster ist.", "Ich schaue zum Fenster. Da ist niemand.", "Aber im Badezimmer läuft jetzt das Wasser."],
-   "absender": "Nachbarin", "nachricht": "Wer ist die Frau, die bei dir am Fenster steht?",
-   "monster": "Ich putze nur meine Zähne.", "monster2": "Jetzt bist du dran.",
+   "saetze": [
+    "Ich denke erst, ich habe eine doppelt gekauft.",
+    "Dann schreibt meine Nachbarin.",
+    "Sie fragt, wer die Frau an meinem Fenster ist.",
+    "Ich schaue zum Fenster. Da ist niemand.",
+    "Aber im Badezimmer läuft jetzt das Wasser."
+   ],
+   "absender": "Nachbarin",
+   "nachricht": "Wer ist die Frau, die bei dir am Fenster steht?",
+   "monster": "Ich putze nur meine Zähne.",
+   "monster2": "Jetzt bist du dran.",
    "ende": "Die zweite Zahnbürste ist nass. Und sie steht hinter mir.",
-   "weiter": "Teil zwei: Wem gehört die zweite Zahnbürste?", "frage": "Hättest du ins Bad geschaut?"
+   "weiter": "Teil zwei: Wem gehört die zweite Zahnbürste?",
+   "frage": "Hättest du ins Bad geschaut?"
   },
   {
-   "titel": "Der Anrufer bin ich", "ort": "haus", "boesewicht": "schatten", "stimme": "mann",
+   "titel": "Der Anrufer bin ich",
+   "ort": "haus",
+   "boesewicht": "schatten",
+   "stimme": "mann",
    "hook": "Um 3:12 Uhr klingelt mein Handy. Der Anrufer bin ich.",
-   "saetze": ["Auf dem Display steht meine eigene Nummer.", "Ich gehe ran. Jemand atmet.", "Dann sagt meine eigene Stimme: Schau nicht unters Bett.", "Ich lege auf. Das Handy klingelt wieder.", "Diesmal kommt das Klingeln von unter dem Bett."],
-   "monster": "Geh ran.", "monster2": "Ich bin du. Nur schneller.",
+   "saetze": [
+    "Auf dem Display steht meine eigene Nummer.",
+    "Ich gehe ran. Jemand atmet.",
+    "Dann sagt meine eigene Stimme: Schau nicht unters Bett.",
+    "Ich lege auf. Das Handy klingelt wieder.",
+    "Diesmal kommt das Klingeln von unter dem Bett."
+   ],
+   "monster": "Geh ran.",
+   "monster2": "Ich bin du. Nur schneller.",
    "ende": "Unter dem Bett liegt mein Handy. Und eine Hand hält es fest.",
-   "weiter": "Teil zwei: Wer hat da angerufen?", "frage": "Wärst du rangegangen?"
+   "weiter": "Teil zwei: Wer hat da angerufen?",
+   "frage": "Wärst du rangegangen?"
   },
   {
-   "titel": "Ich sehe dich", "ort": "wald", "boesewicht": "hirsch", "stimme": "mann",
+   "titel": "Ich sehe dich",
+   "ort": "wald",
+   "boesewicht": "hirsch",
+   "stimme": "mann",
    "hook": "Kein Netz im Wald. Trotzdem kommt eine Nachricht: Ich sehe dich.",
-   "saetze": ["Wir zelten zu dritt am See.", "Um Mitternacht vibriert mein Handy.", "Ich zähle meine Freunde. Eins. Zwei.", "Zwischen den Bäumen bewegt sich etwas Großes.", "Dann knackt ein Ast direkt neben dem Zelt."],
-   "absender": "Unbekannt", "nachricht": "Ich sehe dich. Ihr seid zu dritt. Bald zu viert.",
-   "monster": "Bleib im Zelt.", "monster2": "Ich habe euch gezählt.",
+   "saetze": [
+    "Wir zelten zu dritt am See.",
+    "Um Mitternacht vibriert mein Handy.",
+    "Ich zähle meine Freunde. Eins. Zwei.",
+    "Zwischen den Bäumen bewegt sich etwas Großes.",
+    "Dann knackt ein Ast direkt neben dem Zelt."
+   ],
+   "absender": "Unbekannt",
+   "nachricht": "Ich sehe dich. Ihr seid zu dritt. Bald zu viert.",
+   "monster": "Bleib im Zelt.",
+   "monster2": "Ich habe euch gezählt.",
    "ende": "Wir waren nie zu dritt. Ich bin allein hergekommen.",
-   "weiter": "Teil zwei: Wer saß mit am Feuer?", "frage": "Wärst du rausgegangen?"
+   "weiter": "Teil zwei: Wer saß mit am Feuer?",
+   "frage": "Wärst du rausgegangen?"
   },
   {
-   "titel": "Dreh dich nicht um", "ort": "zug", "boesewicht": "schatten", "stimme": "mann",
+   "titel": "Dreh dich nicht um",
+   "ort": "zug",
+   "boesewicht": "schatten",
+   "stimme": "mann",
    "hook": "Regel Nummer eins: Wenn jemand deinen Namen flüstert, dreh dich nicht um.",
-   "saetze": ["Ich sitze in der letzten Bahn nach Hause.", "Der Wagen ist leer. Bis auf mich.", "Dann flüstert jemand meinen Namen.", "Die Stimme kommt von direkt hinter mir.", "Im Fenster sehe ich: Hinter mir sitzt niemand."],
-   "monster": "Dreh dich um.", "monster2": "Du hast die Regel gebrochen.",
+   "saetze": [
+    "Ich sitze in der letzten Bahn nach Hause.",
+    "Der Wagen ist leer. Bis auf mich.",
+    "Dann flüstert jemand meinen Namen.",
+    "Die Stimme kommt von direkt hinter mir.",
+    "Im Fenster sehe ich: Hinter mir sitzt niemand."
+   ],
+   "monster": "Dreh dich um.",
+   "monster2": "Du hast die Regel gebrochen.",
    "ende": "Im Fenster sitzt jemand neben mir. Neben mir ist der Platz leer.",
-   "weiter": "Teil zwei: Regel Nummer zwei.", "frage": "Hättest du dich umgedreht?"
+   "weiter": "Teil zwei: Regel Nummer zwei.",
+   "frage": "Hättest du dich umgedreht?"
   },
   {
-   "titel": "Mach nicht auf", "ort": "haus", "boesewicht": "frau", "stimme": "frau",
+   "titel": "Mach nicht auf",
+   "ort": "haus",
+   "boesewicht": "frau",
+   "stimme": "frau",
    "hook": "Mama schreibt: Mach nicht auf. Aber Mama steht vor der Tür.",
-   "saetze": ["Ich bin allein zu Hause. Es klopft.", "Mama schreibt mir.", "Durch den Spion sehe ich Mama. Sie lächelt.", "Sie klopft wieder. Dreimal. Langsam.", "Dann ruft sie: Lass mich rein, Schatz."],
-   "absender": "Mama", "nachricht": "Mach NICHT auf. Ich bin noch bei der Arbeit.",
-   "monster": "Lass mich rein.", "monster2": "Ich hab einen Schlüssel.",
+   "saetze": [
+    "Ich bin allein zu Hause. Es klopft.",
+    "Mama schreibt mir.",
+    "Durch den Spion sehe ich Mama. Sie lächelt.",
+    "Sie klopft wieder. Dreimal. Langsam.",
+    "Dann ruft sie: Lass mich rein, Schatz."
+   ],
+   "absender": "Mama",
+   "nachricht": "Mach NICHT auf. Ich bin noch bei der Arbeit.",
+   "monster": "Lass mich rein.",
+   "monster2": "Ich hab einen Schlüssel.",
    "ende": "Das Klopfen hört auf. Dann dreht sich der Schlüssel im Schloss.",
-   "weiter": "Teil zwei: Wer hat den Schlüssel?", "frage": "Hättest du aufgemacht?"
+   "weiter": "Teil zwei: Wer hat den Schlüssel?",
+   "frage": "Hättest du aufgemacht?"
   },
   {
-   "titel": "Das Babyphone winkt", "ort": "haus", "boesewicht": "gremlin", "stimme": "frau",
+   "titel": "Das Babyphone winkt",
+   "ort": "haus",
+   "boesewicht": "gremlin",
+   "stimme": "frau",
    "hook": "Mein Babyphone zeigt das Kinderzimmer. Und jemanden, der winkt.",
-   "saetze": ["Ich passe auf meinen kleinen Bruder auf.", "Die Eltern schreiben mir.", "Auf dem Bildschirm schläft er ruhig.", "Neben dem Bett steht etwas Kleines. Es winkt in die Kamera.", "Dann ist der Bildschirm schwarz."],
-   "absender": "Papa", "nachricht": "Alles ok? Die Kamera zeigt bei uns zwei Kinder.",
-   "monster": "Spiel mit mir.", "monster2": "Jetzt winke ich dir.",
+   "saetze": [
+    "Ich passe auf meinen kleinen Bruder auf.",
+    "Die Eltern schreiben mir.",
+    "Auf dem Bildschirm schläft er ruhig.",
+    "Neben dem Bett steht etwas Kleines. Es winkt in die Kamera.",
+    "Dann ist der Bildschirm schwarz."
+   ],
+   "absender": "Papa",
+   "nachricht": "Alles ok? Die Kamera zeigt bei uns zwei Kinder.",
+   "monster": "Spiel mit mir.",
+   "monster2": "Jetzt winke ich dir.",
    "ende": "Mein Bruder steht neben mir. Wer liegt dann in seinem Bett?",
-   "weiter": "Teil zwei: Wer liegt im Bett?", "frage": "Wärst du ins Zimmer gegangen?"
+   "weiter": "Teil zwei: Wer liegt im Bett?",
+   "frage": "Wärst du ins Zimmer gegangen?"
   },
   {
-   "titel": "Etage minus vier", "ort": "aufzug", "boesewicht": "gremlin", "stimme": "mann",
+   "titel": "Etage minus vier",
+   "ort": "aufzug",
+   "boesewicht": "gremlin",
+   "stimme": "mann",
    "hook": "Der Aufzug hält in Etage minus vier. Wir haben nur drei Kellergeschosse.",
-   "saetze": ["Ich will nur zur Tiefgarage.", "Der Knopf minus vier leuchtet von allein.", "Die Tür geht auf. Es ist stockdunkel.", "Etwas kratzt an der Wand. Es kommt näher.", "Ich drücke immer wieder auf Tür zu."],
-   "monster": "Bleib noch.", "monster2": "Hier unten ist es schön.",
+   "saetze": [
+    "Ich will nur zur Tiefgarage.",
+    "Der Knopf minus vier leuchtet von allein.",
+    "Die Tür geht auf. Es ist stockdunkel.",
+    "Etwas kratzt an der Wand. Es kommt näher.",
+    "Ich drücke immer wieder auf Tür zu."
+   ],
+   "monster": "Bleib noch.",
+   "monster2": "Hier unten ist es schön.",
    "ende": "Die Tür geht zu. Aber das Kratzen ist jetzt im Aufzug.",
-   "weiter": "Teil zwei: Was lebt in Etage minus vier?", "frage": "Wärst du ausgestiegen?"
+   "weiter": "Teil zwei: Was lebt in Etage minus vier?",
+   "frage": "Wärst du ausgestiegen?"
   },
   {
-   "titel": "Reihe 13", "ort": "flugzeug", "boesewicht": "schatten", "stimme": "mann",
+   "titel": "Reihe 13",
+   "ort": "flugzeug",
+   "boesewicht": "schatten",
+   "stimme": "mann",
    "hook": "Im Flugzeug sitzt jemand auf Platz 13. Es gibt keine Reihe 13.",
-   "saetze": ["Nachtflug nach Hause. Alle schlafen.", "Ich gehe zur Toilette. Nach Reihe 12 kommt eine Reihe ohne Nummer.", "Dort sitzt ein Mann. Er schaut mich an.", "Die Stewardess sagt: Diese Reihe gibt es nicht.", "Als ich zurückgehe, sitzt er auf meinem Platz."],
-   "monster": "Setz dich.", "monster2": "Das ist jetzt mein Platz.",
+   "saetze": [
+    "Nachtflug nach Hause. Alle schlafen.",
+    "Ich gehe zur Toilette. Nach Reihe 12 kommt eine Reihe ohne Nummer.",
+    "Dort sitzt ein Mann. Er schaut mich an.",
+    "Die Stewardess sagt: Diese Reihe gibt es nicht.",
+    "Als ich zurückgehe, sitzt er auf meinem Platz."
+   ],
+   "monster": "Setz dich.",
+   "monster2": "Das ist jetzt mein Platz.",
    "ende": "Auf meinem Ticket steht jetzt Reihe 13.",
-   "weiter": "Teil zwei: Wer sitzt in Reihe 13?", "frage": "Hättest du dich hingesetzt?"
+   "weiter": "Teil zwei: Wer sitzt in Reihe 13?",
+   "frage": "Hättest du dich hingesetzt?"
+  },
+  {
+   "titel": "Die Sprachnachricht",
+   "ort": "haus",
+   "boesewicht": "schatten",
+   "stimme": "frau",
+   "hook": "Ich bekomme eine Sprachnachricht von mir. Aufgenommen um drei Uhr nachts.",
+   "saetze": [
+    "Ich habe um drei Uhr geschlafen. Ganz sicher.",
+    "Meine beste Freundin schreibt mir.",
+    "In der Nachricht flüstere ich: Er steht im Flur.",
+    "Ich höre im Hintergrund meinen eigenen Atem. Und noch einen.",
+    "Jetzt knarrt der Flur. Genau wie in der Aufnahme."
+   ],
+   "absender": "Lea",
+   "nachricht": "Warum schickst du mir nachts Flüster-Nachrichten?",
+   "monster": "Psst. Weiterschlafen.",
+   "monster2": "Ich nehme dich gerade auf.",
+   "ende": "Mein Handy nimmt auf. Ich habe es nicht angefasst.",
+   "frage": "Hättest du die Nachricht angehört?"
+  },
+  {
+   "titel": "Der Fahrer schaut nicht",
+   "ort": "zug",
+   "boesewicht": "gremlin",
+   "stimme": "mann",
+   "hook": "Die Durchsage sagt: Nicht nach hinten schauen. Ich sitze ganz hinten.",
+   "saetze": [
+    "Nachtzug. Nur ich im letzten Wagen.",
+    "Dann knackt der Lautsprecher.",
+    "Hinter mir ist nur die Rückwand. Dachte ich.",
+    "Etwas klopft gegen die Scheibe. Von außen. Bei voller Fahrt.",
+    "Die Durchsage wiederholt sich. Jetzt flüstert sie."
+   ],
+   "monster": "Nicht umdrehen.",
+   "monster2": "Zu spät.",
+   "ende": "Der Zug hat keinen Fahrer. Die Stimme kam von hinten.",
+   "frage": "Hättest du nach hinten geschaut?"
+  },
+  {
+   "titel": "Die Kamera im Flur",
+   "ort": "haus",
+   "boesewicht": "frau",
+   "stimme": "frau",
+   "hook": "Meine Überwachungskamera hat eine Person aufgenommen. Sie wohnt bei mir.",
+   "saetze": [
+    "Ich habe die Kamera nur wegen Paketdieben.",
+    "Die App schickt mir eine Meldung.",
+    "Im Video steht eine Frau im Flur. Jede Nacht.",
+    "Sie schaut immer genau in die Kamera.",
+    "Heute Nacht steht sie nicht im Flur."
+   ],
+   "absender": "Kamera-App",
+   "nachricht": "Bewegung erkannt: Schlafzimmer",
+   "monster": "Ich bin schon drin.",
+   "monster2": "Ich wohne hier länger als du.",
+   "ende": "Die letzte Aufnahme zeigt mein Bett. Und sie liegt neben mir.",
+   "frage": "Wärst du noch eine Nacht geblieben?"
+  },
+  {
+   "titel": "Der Nachbar winkt",
+   "ort": "haus",
+   "boesewicht": "schatten",
+   "stimme": "mann",
+   "hook": "Mein Nachbar winkt mir jede Nacht zu. Er ist vor einem Jahr ausgezogen.",
+   "saetze": [
+    "Gegenüber ist die Wohnung seit Monaten leer.",
+    "Trotzdem brennt dort jede Nacht Licht.",
+    "Ein Mann steht am Fenster und winkt.",
+    "Heute winke ich zurück. Ein Fehler.",
+    "Jetzt winkt er nicht mehr. Er zeigt auf meine Tür."
+   ],
+   "monster": "Ich komme rüber.",
+   "monster2": "Danke fürs Zurückwinken.",
+   "ende": "Gegenüber ist das Licht aus. Mein Flurlicht geht an.",
+   "frage": "Hättest du zurückgewinkt?"
+  },
+  {
+   "titel": "Etage 13",
+   "ort": "aufzug",
+   "boesewicht": "frau",
+   "stimme": "frau",
+   "hook": "Im Aufzug gibt es einen Knopf für Etage 13. Das Haus hat zwölf Etagen.",
+   "saetze": [
+    "Ich wohne im zwölften Stock.",
+    "Heute leuchtet ein neuer Knopf. Dreizehn.",
+    "Ich drücke ihn nicht. Er leuchtet trotzdem.",
+    "Der Aufzug fährt nach oben. Immer weiter.",
+    "Die Tür geht auf. Ein langer Flur. Jemand wartet."
+   ],
+   "monster": "Willkommen zu Hause.",
+   "monster2": "Hier wohnst du jetzt.",
+   "ende": "Auf der Klingel am Ende des Flurs steht mein Name.",
+   "frage": "Wärst du ausgestiegen?"
+  },
+  {
+   "titel": "Platz am Fenster",
+   "ort": "flugzeug",
+   "boesewicht": "gremlin",
+   "stimme": "mann",
+   "hook": "Mitten im Flug klopft jemand ans Fenster. Von außen.",
+   "saetze": [
+    "Wir fliegen in zehntausend Metern Höhe.",
+    "Alle schlafen. Nur ich bin wach.",
+    "Es klopft wieder. Dreimal. Leise.",
+    "Draußen hält sich etwas am Flügel fest.",
+    "Es sieht mich an. Und lächelt."
+   ],
+   "monster": "Mach das Fenster auf.",
+   "monster2": "Ich bin jetzt drin.",
+   "ende": "Der Platz neben mir war leer. Jetzt ist er nass.",
+   "frage": "Hättest du die Crew gerufen?"
+  },
+  {
+   "titel": "Die Stimme im Wald",
+   "ort": "wald",
+   "boesewicht": "hirsch",
+   "stimme": "mann",
+   "hook": "Im Wald ruft jemand meinen Namen. Mit der Stimme meiner Mutter.",
+   "saetze": [
+    "Ich sammle Holz für das Lagerfeuer.",
+    "Mama ruft mir eine Nachricht.",
+    "Ich bin keine hundert Meter vom Zelt weg.",
+    "Die Stimme ruft wieder. Diesmal von rechts.",
+    "Zwischen den Bäumen steht etwas mit Geweih."
+   ],
+   "absender": "Mama",
+   "nachricht": "Ich bin zu Hause. Wer ruft dich da?",
+   "monster": "Komm her, Schatz.",
+   "monster2": "Ich kann jede Stimme.",
+   "ende": "Hinter mir ruft jetzt meine eigene Stimme: Komm zurück zum Zelt.",
+   "frage": "Wärst du der Stimme gefolgt?"
+  },
+  {
+   "titel": "Das Foto von gestern",
+   "ort": "haus",
+   "boesewicht": "schatten",
+   "stimme": "frau",
+   "hook": "Auf meinem Handy ist ein Foto von mir beim Schlafen. Ich wohne allein.",
+   "saetze": [
+    "Ich scrolle durch meine Galerie.",
+    "Das Foto ist von gestern Nacht. 3 Uhr 12.",
+    "Es wurde aus der Zimmerecke gemacht.",
+    "Heute gibt es ein neues Foto.",
+    "Darauf bin ich wach. Und schaue genau dieses Foto an."
+   ],
+   "monster": "Lächeln.",
+   "monster2": "Jetzt noch eins.",
+   "ende": "Der Blitz geht los. Aus der Zimmerecke.",
+   "frage": "Hättest du das Handy weggeworfen?"
+  },
+  {
+   "titel": "Der Babysitter-Anruf",
+   "ort": "haus",
+   "boesewicht": "gremlin",
+   "stimme": "frau",
+   "hook": "Die Eltern rufen an: Das Kind ist bei uns. Wen bringe ich ins Bett?",
+   "saetze": [
+    "Ich babysitte zum ersten Mal.",
+    "Das Kind will nur im Dunkeln schlafen.",
+    "Dann klingelt mein Handy. Die Eltern.",
+    "Sie sagen, sie haben ihr Kind mitgenommen.",
+    "Aus dem Kinderzimmer kichert es."
+   ],
+   "monster": "Lies mir was vor.",
+   "monster2": "Jetzt bist du dran.",
+   "ende": "Unter der Decke ist kein Kind. Nur ein Grinsen.",
+   "frage": "Hättest du die Decke weggezogen?"
+  },
+  {
+   "titel": "Haltestelle ohne Namen",
+   "ort": "zug",
+   "boesewicht": "frau",
+   "stimme": "mann",
+   "hook": "Die Bahn hält an einer Station, die es nicht gibt. Die Tür bleibt offen.",
+   "saetze": [
+    "Ich fahre jeden Tag dieselbe Strecke.",
+    "Heute hält die Bahn im Dunkeln.",
+    "Auf dem Schild steht kein Name.",
+    "Auf dem Bahnsteig steht eine Frau. Ihr Hals ist viel zu lang.",
+    "Sie steigt ein. Und setzt sich mir gegenüber."
+   ],
+   "monster": "Endstation.",
+   "monster2": "Du bist sitzen geblieben.",
+   "ende": "Alle anderen Fahrgäste sind weg. Nur sie und ich.",
+   "frage": "Wärst du ausgestiegen?"
+  },
+  {
+   "titel": "Zähl die Schritte",
+   "ort": "haus",
+   "boesewicht": "schatten",
+   "stimme": "mann",
+   "hook": "Unsere Treppe hat dreizehn Stufen. Heute Nacht höre ich vierzehn Schritte.",
+   "saetze": [
+    "Ich bin allein zu Hause.",
+    "Jemand kommt die Treppe hoch.",
+    "Ich zähle mit. Eins, zwei, drei.",
+    "Bei dreizehn ist er oben. Dann kommt noch ein Schritt.",
+    "Der vierzehnte Schritt ist direkt vor meiner Tür."
+   ],
+   "monster": "Vierzehn.",
+   "monster2": "Jetzt zähle ich dich.",
+   "ende": "Am Morgen hat die Treppe vierzehn Stufen.",
+   "frage": "Hättest du die Tür aufgemacht?"
+  },
+  {
+   "titel": "Live-Stream um drei",
+   "ort": "haus",
+   "boesewicht": "frau",
+   "stimme": "frau",
+   "hook": "Jemand streamt live aus meiner Wohnung. 2.000 Leute schauen zu.",
+   "saetze": [
+    "Eine Freundin schickt mir einen Link.",
+    "Der Stream zeigt mein Wohnzimmer.",
+    "Ich stehe im Wohnzimmer. Im Stream bin ich nicht.",
+    "Im Stream sitzt eine Frau auf meinem Sofa.",
+    "Der Chat schreibt: Hinter dir."
+   ],
+   "absender": "Mia",
+   "nachricht": "Bist du das?? Jemand streamt aus deiner Wohnung!",
+   "monster": "Sag hallo zum Chat.",
+   "monster2": "Du bist jetzt live.",
+   "ende": "Der Stream zeigt jetzt mich. Von hinten. Ganz nah.",
+   "frage": "Hättest du dich umgedreht?"
+  },
+  {
+   "titel": "Das Zelt atmet",
+   "ort": "wald",
+   "boesewicht": "gremlin",
+   "stimme": "mann",
+   "hook": "Ich zelte allein. Heute Nacht atmet jemand neben mir im Zelt.",
+   "saetze": [
+    "Mein Schlafsack ist bis oben zu.",
+    "Neben mir hebt und senkt sich die Zeltwand.",
+    "Ich halte die Luft an. Das Atmen geht weiter.",
+    "Ich mache die Taschenlampe an. Niemand.",
+    "Ich mache sie aus. Das Atmen ist jetzt in meinem Schlafsack."
+   ],
+   "monster": "Mir ist kalt.",
+   "monster2": "Rutsch rüber.",
+   "ende": "Am Morgen sind zwei Schlafsäcke im Zelt. Ich habe nur einen mitgebracht.",
+   "frage": "Wärst du aus dem Zelt gerannt?"
+  },
+  {
+   "titel": "Notruf von mir",
+   "ort": "aufzug",
+   "boesewicht": "schatten",
+   "stimme": "frau",
+   "hook": "Aufzug steckt fest. Ich drücke den Notruf. Meine eigene Stimme geht ran.",
+   "saetze": [
+    "Ich fahre spät von der Arbeit nach Hause.",
+    "Zwischen zwei Etagen bleibt der Aufzug stehen.",
+    "Ich drücke den Notrufknopf.",
+    "Die Stimme sagt: Bleib ganz ruhig. Ich bin schon bei dir.",
+    "Dann geht über mir die Notluke auf."
+   ],
+   "monster": "Ich bin schon bei dir.",
+   "monster2": "Mach Platz.",
+   "ende": "Der Hausmeister findet den Aufzug leer. Der Notruf kam von innen.",
+   "frage": "Hättest du hochgeschaut?"
+  },
+  {
+   "titel": "Gepäckfach",
+   "ort": "flugzeug",
+   "boesewicht": "frau",
+   "stimme": "frau",
+   "hook": "Aus dem Gepäckfach über mir kommen Finger.",
+   "saetze": [
+    "Nachtflug, alle Lichter aus.",
+    "Über mir knarrt das Gepäckfach.",
+    "Es öffnet sich einen Spalt. Ganz langsam.",
+    "Lange, dünne Finger tasten nach meinen Haaren.",
+    "Die Stewardess sagt: Das Fach ist leer."
+   ],
+   "monster": "Darf ich mitfliegen?",
+   "monster2": "Ich lande bei dir.",
+   "ende": "Bei der Landung ist mein Koffer viel zu schwer.",
+   "frage": "Hättest du das Fach aufgemacht?"
+  },
+  {
+   "titel": "Wer ist Nummer vier",
+   "ort": "wald",
+   "boesewicht": "schatten",
+   "stimme": "mann",
+   "hook": "Wir sind zu dritt wandern gegangen. Auf jedem Foto sind wir zu viert.",
+   "saetze": [
+    "Drei Freunde, ein Wochenende im Wald.",
+    "Am Abend schauen wir die Fotos an.",
+    "Hinter uns steht auf jedem Bild eine vierte Person.",
+    "Auf jedem Foto steht sie ein Stück näher.",
+    "Auf dem letzten Foto hat sie den Arm um mich gelegt."
+   ],
+   "monster": "Noch ein Foto.",
+   "monster2": "Jetzt sind wir zu viert.",
+   "ende": "Das letzte Foto wurde aufgenommen, als wir alle schliefen.",
+   "frage": "Hättest du die Fotos gelöscht?"
   }
  ]
 }

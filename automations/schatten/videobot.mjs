@@ -51,7 +51,9 @@ export function baueFolge(skript) {
   szenen.push({ art: 'fratze', dauer: 1.2, schreck: true });
   szenen.push({ art: 'ende', ...zeile(skript.ende, { schreck: true, angst: 1, blick: 1, ...(skript.monster2 ? { monster: satz(skript.monster2, 80), monster_text: kurz(skript.monster2) } : {}) }) });
   const weiter = satz(skript.weiter || '', 80);
-  szenen.push({ art: 'teil2', ...zeile(weiter || 'Willst du wissen, wie es weitergeht?', { pause: 0.8, cta: weiter ? 'FOLG MIR FÜR TEIL 2' : 'FOLG MIR FÜR MEHR' }) });
+  // Einzel-Video ohne Fortsetzung: kein falsches "Teil 2"-Versprechen, sondern die Frage für die Kommentare
+  const schluss = weiter || `${satz(skript.frage || 'Was hättest du gemacht?', 80)} Schreib es in die Kommentare.`;
+  szenen.push({ art: 'teil2', ...zeile(schluss, { pause: 0.8, cta: weiter ? 'FOLG MIR FÜR TEIL 2' : 'FOLG MIR FÜR MEHR' }) });
   const titel = satz(skript.titel || skript.hook, 60);
   const titelbild = kurz(skript.hook, 80);
   return {
@@ -70,7 +72,21 @@ export function skriptAus(text) {
   return JSON.parse(m[1]);
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+// Autopilot: Skripte reihum auf die Konten verteilen (jedes Konto eigene Geschichten), ohne Fortsetzungs-Versprechen
+export const slug = (titel) => String(titel || '').toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+export function autopilotListe(skripte, kontoIndex, konten = 3) {
+  return skripte.map((s, i) => ({ s, i })).filter(({ i }) => i % konten === kontoIndex).map(({ s }) => ({ slug: slug(s.titel), skript: { ...s, weiter: '', posten: '' } }));
+}
+
+if (process.argv[2] === '--auto') {
+  // node videobot.mjs --auto <skripte.json> <konto-index> <slug> <ziel.json>
+  const [, , , quelle, idx, gewuenscht, ziel] = process.argv;
+  const liste = autopilotListe(JSON.parse(readFileSync(quelle, 'utf8')).skripte, Number(idx));
+  if (!gewuenscht) { console.log(liste.map((x) => x.slug).join('\n')); process.exit(0); }
+  const treffer = liste.find((x) => x.slug === gewuenscht);
+  if (!treffer) { console.error(`unbekannt: ${gewuenscht}`); process.exit(1); }
+  writeFileSync(ziel, JSON.stringify(baueFolge(treffer.skript), null, 1));
+} else if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [quelle, ziel] = process.argv.slice(2);
   try {
     const skript = skriptAus(readFileSync(quelle, 'utf8'));
