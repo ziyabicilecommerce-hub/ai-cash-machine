@@ -31,11 +31,12 @@ export function dmProdukte(json, begriff, maxEuro = 80) {
   const liste = json?.items || json?.products || json?.results || [];
   return liste.map((p) => {
     const dan = String(p.dan ?? p.id ?? '').trim();
-    const preis = zahl(p.price?.value ?? p.price?.current?.value ?? p.priceValue ?? p.price);
-    const tpl = p.imageUrlTemplates?.[0] || p.images?.[0]?.src || p.imageUrl || p.image || '';
+    const t = p.tileData || {};
+    const preis = zahl(t.price?.price?.current?.value ?? p.price?.value ?? p.price?.current?.value ?? p.priceValue ?? p.price);
+    const tpl = t.images?.[0]?.tileSrc || p.imageUrlTemplates?.[0] || p.images?.[0]?.src || p.imageUrl || p.image || '';
     const bild = String(tpl).replace('{transformations}', 'f_auto,q_auto,c_fit,h_270,w_270');
-    const url = p.relativeProductUrl || p.productUrl || p.url || '';
-    return dan ? { _roh: p, dan, name: [p.brandName || p.brand?.name, p.title || p.name].filter(Boolean).join(' ').trim(), preis: Number.isFinite(preis) ? preis : null,
+    const url = t.self || p.relativeProductUrl || p.productUrl || p.url || '';
+    return dan ? { _roh: p, dan, name: [p.brandName || p.brand?.name || t.brand?.name, p.title || p.name || t.title?.tileHeadline].filter(Boolean).join(' ').trim(), preis: Number.isFinite(preis) ? preis : null,
       bild: /^https:\/\//.test(bild) ? bild : '', link: url ? (url.startsWith('http') ? url : `https://www.dm.de${url}`) : `https://www.dm.de/search?query=${encodeURIComponent(begriff)}`, begriff } : null;
   }).filter((p) => p && p.name && (p.preis == null || p.preis <= maxEuro));
 }

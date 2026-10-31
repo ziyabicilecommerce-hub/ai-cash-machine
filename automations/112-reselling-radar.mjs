@@ -287,15 +287,13 @@ async function filialRadar(alt, verlauf) {
       } catch (e) { log('dm-Suche', i, q, e.message.slice(0, 120)); }
     }
   }
-  if (produkte.length && produkte[0].preis == null) log('dm-Produkt-Beispiel', JSON.stringify(produkte[0]._roh || {}).slice(0, 600));
+  if (produkte.length && produkte[0].preis == null && !produkte[0].bild) log('dm-Produkt-Beispiel', JSON.stringify(produkte[0]._roh || {}).slice(0, 600));
   // Bestand je Filiale (neuere v2-Schnittstelle), die 25 nächsten dm-Filialen; erst Filialnummer, sonst interne Filial-ID
   const bestand = {}, dans = produkte.map((p) => p.dan).join(',');
-  let beispiel = false;
   for (const f of fil.filialen.slice(0, 25)) {
-    for (const id of [...new Set([fil.idArt === 'id' ? f.id : f.nummer, f.nummer, f.id])]) {
+    for (const id of [...new Set([fil.idArt === 'nummer' ? f.nummer : f.id, f.id, f.nummer])]) {  // dm will die interne ID (z. B. D2ED)
       try {
         const roh = await holen(`https://products.dm.de/availability/api/v2/tiles/DE/${dans}?pickupStoreId=${encodeURIComponent(id)}`, { json: true });
-        if (!beispiel) { log('dm-Bestand-Beispiel', JSON.stringify(roh).slice(0, 500)); beispiel = true; }
         const b = dmTiles(roh, f.nummer);
         if (!Object.keys(b).length) continue;
         fil.idArt = id === f.id && id !== f.nummer ? 'id' : 'nummer'; Object.assign(bestand, b); break;
