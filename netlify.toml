@@ -1,4 +1,0 @@
-# Netlify ist abgeschaltet - alles läuft nur über GitHub Pages. Solange die Netlify-App noch verbunden ist, baut sie nichts (exit 0).
-# Nach dem Trennen der Netlify-App (GitHub → Settings → Applications) kann diese Datei weg.
-[build]
-  ignore = "exit 0"
