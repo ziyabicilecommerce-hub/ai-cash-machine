@@ -242,14 +242,16 @@ async function dropBilder(drops) {
   const datei = lesen(BILDER, { bilder: {}, links: {} });
   for (const d of drops) {
     const schluessel = `drop:${styleCode(d.bild) || d.titel}`;
+    if (/static\.nike\.com/.test(d.bild || '')) continue;  // schon ein gutes Bild aus dem Feed
     if (datei.bilder[schluessel]?.url) { d.bild = datei.bilder[schluessel].url; continue; }
     let neu = '';
     for (const u of [d.bild && `${d.bild}?fmt=jpg&wid=400&hei=400`, d.bild].filter(Boolean)) if (await ladbar(u)) { neu = u; break; }
     if (!neu) {
       try { neu = bingBild(await holen(`https://www.bing.com/images/search?q=${encodeURIComponent(`nike ${styleCode(d.bild)} ${d.titel}`)}&form=HDRSC2&first=1&setlang=de&cc=DE`))?.url || ''; } catch (e) { log('Drop-Bild', d.titel, e.message); }
     }
-    if (neu) { datei.bilder[schluessel] = { url: neu, stand: new Date().toISOString() }; d.bild = neu; }
+    if (neu) { datei.bilder[schluessel] = { url: neu, stand: new Date().toISOString() }; d.bild = neu; } else log('Drop ohne Bild:', d.titel);
   }
+  log('Drop-Bilder:', drops.filter((d) => d.bild).length, 'von', drops.length);
   writeFileSync(BILDER, `${JSON.stringify(datei, null, 1)}\n`);
   return drops;
 }

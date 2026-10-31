@@ -190,6 +190,8 @@ export function nikeDrops(json, heute = new Date()) {
   const raus = [];
   for (const o of json?.objects || []) {
     const slug = o.publishedContent?.properties?.seo?.slug;
+    // Bilder aus dem redaktionellen Teil (static.nike.com) laden zuverlässiger als die alten secure-images-Adressen
+    const feedBild = JSON.stringify(o.publishedContent || {}).match(/"(?:squarishURL|portraitURL)":"(https:\/\/static\.nike\.com[^"]+)"/)?.[1] || '';
     for (const p of o.productInfo || []) {
       const start = p.launchView?.startEntryDate || p.merchProduct?.commerceStartDate;
       const t = Date.parse(start);
@@ -198,7 +200,7 @@ export function nikeDrops(json, heute = new Date()) {
       if (!titel) continue;
       raus.push({
         titel, farbe: p.productContent?.colorDescription || '', preis: p.merchPrice?.currentPrice ?? p.merchPrice?.fullPrice ?? null,
-        bild: p.imageUrls?.productImageUrl || '', zeit: new Date(t).toISOString(), art: p.launchView?.method || '',
+        bild: feedBild || p.imageUrls?.productImageUrl || '', zeit: new Date(t).toISOString(), art: p.launchView?.method || '',
         link: slug ? `https://www.nike.com/de/launch/t/${slug}` : 'https://www.nike.com/de/launch', marke: 'Nike', kat: 'Sneaker',
       });
     }
