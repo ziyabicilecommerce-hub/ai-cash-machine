@@ -38,7 +38,9 @@ export function dmProdukte(json, begriff, maxEuro = 80, minEuro = 10) {  // unte
     const url = t.self || p.relativeProductUrl || p.productUrl || p.url || '';
     return dan ? { _roh: p, dan, name: [p.brandName || p.brand?.name || t.brand?.name, p.title || p.name || t.title?.tileHeadline].filter(Boolean).join(' ').trim(), preis: Number.isFinite(preis) ? preis : null,
       bild: /^https:\/\//.test(bild) ? bild : '', link: url ? (url.startsWith('http') ? url : `https://www.dm.de${url}`) : `https://www.dm.de/search?query=${encodeURIComponent(begriff)}`, begriff } : null;
-  }).filter((p) => p && p.name && (p.preis == null || (p.preis <= maxEuro && p.preis >= minEuro)));
+  }).filter((p) => p && p.name && (p.preis == null || (p.preis <= maxEuro && p.preis >= minEuro))
+    // dm liefert bei wenig Treffern irgendwas (z. B. Rasierer bei "lego") - nur Produkte, deren Name den Begriff enthält
+    && String(begriff).toLowerCase().split(/\s+/).every((w) => p.name.toLowerCase().replace(/é/g, 'e').includes(w)));
 }
 export function ohneRoh(p) {
   const { _roh, ...rest } = p; return rest;
