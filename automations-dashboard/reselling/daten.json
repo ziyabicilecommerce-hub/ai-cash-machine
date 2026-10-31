@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-31T14:24:33.122Z",
+ "stand": "2026-10-31T14:39:53.335Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -52,17 +52,378 @@
   }
  ],
  "filial": {
-  "stand": "2026-10-31T14:21:31.477Z",
+  "stand": "2026-10-31T14:36:51.971Z",
   "filialen": 148,
   "produkte": [
    {
-    "dan": "3135831",
-    "name": "NÉONAIL Adventskalender 2026 Touch Of Magic, 1 St",
+    "dan": "3118166",
+    "name": "Balea Adventskalender 2026 Warm Wishes, 1 St",
     "preis": null,
     "bild": "",
     "link": "https://www.dm.de/search?query=adventskalender",
     "begriff": "adventskalender",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 38
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 30
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 21
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 25
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 55
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 83
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 61
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 11
+     }
+    ]
+   },
+   {
+    "dan": "3118195",
+    "name": "dmBio Adventskalender 2026 Feine Teesorten, 1 St",
+    "preis": null,
+    "bild": "",
+    "link": "https://www.dm.de/search?query=adventskalender",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 41
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 172
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 58
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 67
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 110
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 254
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 244
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 198
+     }
+    ]
+   },
+   {
+    "dan": "3118196",
+    "name": "Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+    "preis": null,
+    "bild": "",
+    "link": "https://www.dm.de/search?query=adventskalender",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 5
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 9
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 1
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 19
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 63
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 13
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 30
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 11
+     }
+    ]
+   },
+   {
+    "dan": "1583368",
+    "name": "Yogi Adventskalender 2026, 24 ayurvedische Tee's, 1 St",
+    "preis": null,
+    "bild": "",
+    "link": "https://www.dm.de/search?query=adventskalender",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 31
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 12
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 13
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 5
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 50
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 90
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 29
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 104
+     }
+    ]
+   },
+   {
+    "dan": "3118197",
+    "name": "Balea MEN Adventskalender 2026 MERRY CHRISTMAS, 1 St",
+    "preis": null,
+    "bild": "",
+    "link": "https://www.dm.de/search?query=adventskalender",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 23
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 7
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 18
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 5
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 17
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 18
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 31
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 3
+     }
+    ]
    },
    {
     "dan": "3135932",
@@ -74,67 +435,78 @@
     "vorrat": []
    },
    {
-    "dan": "3118166",
-    "name": "Balea Adventskalender 2026 Warm Wishes, 1 St",
+    "dan": "3118201",
+    "name": "Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
     "preis": null,
     "bild": "",
     "link": "https://www.dm.de/search?query=adventskalender",
     "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
-    "dan": "3118195",
-    "name": "dmBio Adventskalender 2026 Feine Teesorten, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=adventskalender",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
-    "dan": "3118200",
-    "name": "Carlsen Adventskalender 2026 Pixi Leporello, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=adventskalender",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
-    "dan": "1583368",
-    "name": "Yogi Adventskalender 2026, 24 ayurvedische Tee's, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=adventskalender",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
-    "dan": "3162931",
-    "name": "Barebells Adventskalender 2026 Proteinriegel \"Twenty Four Days of Chocolate\", 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=adventskalender",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
-    "dan": "3135933",
-    "name": "AMORELIE Adventskalender 2026 Amorelie x Lovebox, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=adventskalender",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
-    "dan": "3118199",
-    "name": "Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=adventskalender",
-    "begriff": "adventskalender",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 6
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 1
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 8
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 7
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 6
+     },
+     {
+      "name": "dm Mörfelden-Walldorf",
+      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
+      "km": 9.6,
+      "lat": 50.0122615,
+      "lon": 8.5865417,
+      "menge": 4
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 4
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 6
+     }
+    ]
    },
    {
     "dan": "3118202",
@@ -143,7 +515,220 @@
     "bild": "",
     "link": "https://www.dm.de/search?query=adventskalender",
     "begriff": "adventskalender",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 3
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 8
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 9
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 13
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 3
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 1
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 6
+     }
+    ]
+   },
+   {
+    "dan": "3118199",
+    "name": "Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
+    "preis": null,
+    "bild": "",
+    "link": "https://www.dm.de/search?query=adventskalender",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 1
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 11
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 5
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 5
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 7
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 1
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 5
+     }
+    ]
+   },
+   {
+    "dan": "3118200",
+    "name": "Carlsen Adventskalender 2026 Pixi Leporello, 1 St",
+    "preis": null,
+    "bild": "",
+    "link": "https://www.dm.de/search?query=adventskalender",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 5
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 3
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 5
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 4
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 5
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Leipziger Straße 28, 60487 Frankfurt am Main",
+      "km": 12.9,
+      "lat": 50.121564,
+      "lon": 8.648177,
+      "menge": 4
+     },
+     {
+      "name": "dm Wiesbaden",
+      "adresse": "Berliner Straße 279, 65205 Wiesbaden",
+      "km": 13.4,
+      "lat": 50.0537018,
+      "lon": 8.3006459,
+      "menge": 2
+     }
+    ]
    },
    {
     "dan": "3143093",
@@ -152,34 +737,72 @@
     "bild": "",
     "link": "https://www.dm.de/search?query=pokemon",
     "begriff": "pokemon",
-    "vorrat": []
-   },
-   {
-    "dan": "2973647",
-    "name": "Bübchen Kinder Shampoo & Duschgel Pokemon Legends, 230 ml",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=pokemon",
-    "begriff": "pokemon",
-    "vorrat": []
-   },
-   {
-    "dan": "1674111",
-    "name": "Bübchen Kinder Shampoo & Duschgel 2in1 Pokémon Pikachu, 230 ml",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=pokemon",
-    "begriff": "pokemon",
-    "vorrat": []
-   },
-   {
-    "dan": "1674112",
-    "name": "Bübchen Kinder Shampoo & Duschgel 2in1 Schiggy Pokémon, 230 ml",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=pokemon",
-    "begriff": "pokemon",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 7
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 6
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 7
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 10
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 7
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 10
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 19
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 7
+     }
+    ]
    },
    {
     "dan": "3143094",
@@ -188,16 +811,220 @@
     "bild": "",
     "link": "https://www.dm.de/search?query=pokemon",
     "begriff": "pokemon",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 17
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 12
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 14
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 15
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 5
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 30
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 9
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 19
+     }
+    ]
    },
    {
-    "dan": "1689851",
-    "name": "Bübchen Kinder Shampoo & Duschgel 2in1 Pokémon Glumanda, 230 ml",
+    "dan": "2973647",
+    "name": "Bübchen Kinder Shampoo & Duschgel Pokemon Legends, 230 ml",
     "preis": null,
     "bild": "",
     "link": "https://www.dm.de/search?query=pokemon",
     "begriff": "pokemon",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 11
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 7
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 9
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 13
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 9
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 13
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 8
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 7
+     }
+    ]
+   },
+   {
+    "dan": "1674111",
+    "name": "Bübchen Kinder Shampoo & Duschgel 2in1 Pokémon Pikachu, 230 ml",
+    "preis": null,
+    "bild": "",
+    "link": "https://www.dm.de/search?query=pokemon",
+    "begriff": "pokemon",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 9
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 6
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 9
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 12
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 11
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 10
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 7
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 5
+     }
+    ]
    },
    {
     "dan": "1674113",
@@ -206,20 +1033,210 @@
     "bild": "",
     "link": "https://www.dm.de/search?query=pokemon",
     "begriff": "pokemon",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 7
+     },
+     {
+      "name": "dm Wiesbaden",
+      "adresse": "Rostocker Straße 2, 65191 Wiesbaden",
+      "km": 14.2,
+      "lat": 50.0881463,
+      "lon": 8.2897918,
+      "menge": 14
+     }
+    ]
    },
    {
-    "dan": "1709625",
-    "name": "Bübchen Schaumbad Pokémon Lapras, 40 ml",
+    "dan": "1674112",
+    "name": "Bübchen Kinder Shampoo & Duschgel 2in1 Schiggy Pokémon, 230 ml",
     "preis": null,
     "bild": "",
     "link": "https://www.dm.de/search?query=pokemon",
     "begriff": "pokemon",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 8
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 9
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 5
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 6
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 9
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 6
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 13
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 10
+     }
+    ]
+   },
+   {
+    "dan": "1689851",
+    "name": "Bübchen Kinder Shampoo & Duschgel 2in1 Pokémon Glumanda, 230 ml",
+    "preis": null,
+    "bild": "",
+    "link": "https://www.dm.de/search?query=pokemon",
+    "begriff": "pokemon",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 16
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 7
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 9
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 8
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 9
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 10
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 2
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 10
+     }
+    ]
    },
    {
     "dan": "2975420",
     "name": "Bübchen Kinder Pflegecreme Pokémon Dragoran, 75 ml",
+    "preis": null,
+    "bild": "",
+    "link": "https://www.dm.de/search?query=pokemon",
+    "begriff": "pokemon",
+    "vorrat": [
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 8
+     },
+     {
+      "name": "dm Mörfelden-Walldorf",
+      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
+      "km": 9.6,
+      "lat": 50.0122615,
+      "lon": 8.5865417,
+      "menge": 1
+     },
+     {
+      "name": "dm Wiesbaden",
+      "adresse": "Rostocker Straße 2, 65191 Wiesbaden",
+      "km": 14.2,
+      "lat": 50.0881463,
+      "lon": 8.2897918,
+      "menge": 8
+     }
+    ]
+   },
+   {
+    "dan": "1709625",
+    "name": "Bübchen Schaumbad Pokémon Lapras, 40 ml",
     "preis": null,
     "bild": "",
     "link": "https://www.dm.de/search?query=pokemon",
@@ -236,22 +1253,96 @@
     "vorrat": []
    },
    {
+    "dan": "3143255",
+    "name": "LEGO®DUPLO® duplo Disney Frozen Kreativbox Set 37tlg, 1 St",
+    "preis": null,
+    "bild": "",
+    "link": "https://www.dm.de/search?query=lego",
+    "begriff": "lego",
+    "vorrat": []
+   },
+   {
+    "dan": "3099985",
+    "name": "LEGO®DUPLO® duplo Kreative Fahrzeuge Set 42tlg, 1 St",
+    "preis": null,
+    "bild": "",
+    "link": "https://www.dm.de/search?query=lego",
+    "begriff": "lego",
+    "vorrat": []
+   },
+   {
     "dan": "3118676",
     "name": "MAYBELLINE NEW YORK Adventskalender 2026 Happy Holidays, 1 St",
     "preis": null,
     "bild": "",
     "link": "https://www.dm.de/search?query=beauty%20adventskalender",
     "begriff": "beauty adventskalender",
-    "vorrat": []
-   },
-   {
-    "dan": "3118151",
-    "name": "trend !t up Adventskalender 2026 Days of Glow, 24 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=beauty%20adventskalender",
-    "begriff": "beauty adventskalender",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 4
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 5
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 10
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 2
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 9
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 4
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 8
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 3
+     }
+    ]
    },
    {
     "dan": "3118686",
@@ -260,20 +1351,150 @@
     "bild": "",
     "link": "https://www.dm.de/search?query=beauty%20adventskalender",
     "begriff": "beauty adventskalender",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 2
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 3
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 5
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 1
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 27
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 4
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 4
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 1
+     }
+    ]
    },
    {
-    "dan": "3118196",
-    "name": "Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+    "dan": "3118151",
+    "name": "trend !t up Adventskalender 2026 Days of Glow, 24 St",
     "preis": null,
     "bild": "",
     "link": "https://www.dm.de/search?query=beauty%20adventskalender",
     "begriff": "beauty adventskalender",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 14
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 11
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 8
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 19
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 30
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 16
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 19
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 5
+     }
+    ]
    },
    {
-    "dan": "3135937",
-    "name": "WELEDA Adventskalender 2026 Naturkosmetik, 1 St",
+    "dan": "3135831",
+    "name": "NÉONAIL Adventskalender 2026 Touch Of Magic, 1 St",
     "preis": null,
     "bild": "",
     "link": "https://www.dm.de/search?query=beauty%20adventskalender",
@@ -287,7 +1508,72 @@
     "bild": "",
     "link": "https://www.dm.de/search?query=beauty%20adventskalender",
     "begriff": "beauty adventskalender",
-    "vorrat": []
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 3
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 6
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 2
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 4
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 4
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 2
+     }
+    ]
    },
    {
     "dan": "3135828",
@@ -299,183 +1585,12 @@
     "vorrat": []
    },
    {
-    "dan": "3134509",
-    "name": "Denkmit Waschmittel All-in-One Quick & Fresh, 25 Wl",
+    "dan": "3135937",
+    "name": "WELEDA Adventskalender 2026 Naturkosmetik, 1 St",
     "preis": null,
     "bild": "",
-    "link": "https://www.dm.de/search?query=one%20piece",
-    "begriff": "one piece",
-    "vorrat": []
-   },
-   {
-    "dan": "3143426",
-    "name": "everdrop Spülmaschinen-Tabs All in One, 24 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=one%20piece",
-    "begriff": "one piece",
-    "vorrat": []
-   },
-   {
-    "dan": "1039448",
-    "name": "One Drop Only Zungenreiniger professional deluxe, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=one%20piece",
-    "begriff": "one piece",
-    "vorrat": []
-   },
-   {
-    "dan": "1670569",
-    "name": "PURINA ONE Trockenfutter Katze sensitive mit Truthahn & Reis, Adult, 900 g",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=one%20piece",
-    "begriff": "one piece",
-    "vorrat": []
-   },
-   {
-    "dan": "3084496",
-    "name": "ECOVER Spülmaschinen-Tabs All-in-One Zero, 24 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=one%20piece",
-    "begriff": "one piece",
-    "vorrat": []
-   },
-   {
-    "dan": "1682844",
-    "name": "PURINA ONE Nassfutter Katze Sensitive mit Huhn & Karotten, Multipack (8x85 g), 680 g",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=one%20piece",
-    "begriff": "one piece",
-    "vorrat": []
-   },
-   {
-    "dan": "1670570",
-    "name": "PURINA ONE Trockenfutter Katze mit Rind & Weizen, Sterilcat, Adult, 900 g",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=one%20piece",
-    "begriff": "one piece",
-    "vorrat": []
-   },
-   {
-    "dan": "1369133",
-    "name": "treaclemoon Cremedusche one ginger morning, 500 ml",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=one%20piece",
-    "begriff": "one piece",
-    "vorrat": []
-   },
-   {
-    "dan": "1674085",
-    "name": "PURINA ONE Trockenfutter Katze mit Lachs & Vollkorn Getreide, Adult, 900 g",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=one%20piece",
-    "begriff": "one piece",
-    "vorrat": []
-   },
-   {
-    "dan": "3101008",
-    "name": "Philips Elektrische Haarschneidemaschine, Multigroomer S3000 All-in-One, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=one%20piece",
-    "begriff": "one piece",
-    "vorrat": []
-   },
-   {
-    "dan": "2486489",
-    "name": "fehn Kuscheltier Reh, rosa, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=labubu",
-    "begriff": "labubu",
-    "vorrat": []
-   },
-   {
-    "dan": "3080900",
-    "name": "fehn Activity-Tier Otter, beige, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=labubu",
-    "begriff": "labubu",
-    "vorrat": []
-   },
-   {
-    "dan": "3038865",
-    "name": "babylove Knistertier Teddy, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=labubu",
-    "begriff": "labubu",
-    "vorrat": []
-   },
-   {
-    "dan": "3137897",
-    "name": "Penaten Kuscheltier Biene Maja, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=labubu",
-    "begriff": "labubu",
-    "vorrat": []
-   },
-   {
-    "dan": "3080796",
-    "name": "fehn Schmusetuch Igel, grün, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=labubu",
-    "begriff": "labubu",
-    "vorrat": []
-   },
-   {
-    "dan": "3143101",
-    "name": "fehn Spieltier Affe, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=labubu",
-    "begriff": "labubu",
-    "vorrat": []
-   },
-   {
-    "dan": "3140286",
-    "name": "fehn Softbilderbuch Affe, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=labubu",
-    "begriff": "labubu",
-    "vorrat": []
-   },
-   {
-    "dan": "3123167",
-    "name": "fluffies Handpuppe Katze, grau, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=labubu",
-    "begriff": "labubu",
-    "vorrat": []
-   },
-   {
-    "dan": "3131220",
-    "name": "ALANA Püppchen mit Holzring & Herz-Muster, beige, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=labubu",
-    "begriff": "labubu",
-    "vorrat": []
-   },
-   {
-    "dan": "3038866",
-    "name": "babylove Knistertier Schmetterling, 1 St",
-    "preis": null,
-    "bild": "",
-    "link": "https://www.dm.de/search?query=labubu",
-    "begriff": "labubu",
+    "link": "https://www.dm.de/search?query=beauty%20adventskalender",
+    "begriff": "beauty adventskalender",
     "vorrat": []
    }
   ]
@@ -650,6 +1765,7 @@
      34.99,
      34.99,
      34.99,
+     34.99,
      34.99
     ]
    },
@@ -683,6 +1799,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     17.29,
      17.29,
      17.29,
      17.29,
@@ -746,6 +1863,7 @@
      20.52,
      20.52,
      20.52,
+     20.52,
      20.52
     ]
    },
@@ -780,6 +1898,7 @@
     "nurBewegung": true,
     "kurs": [
      52.12,
+     51.65,
      51.65,
      51.65,
      51.65,
@@ -842,6 +1961,7 @@
      19.3,
      19.3,
      19.3,
+     19.3,
      19.3
     ]
    },
@@ -876,6 +1996,7 @@
     "nurBewegung": true,
     "kurs": [
      13.21,
+     13.32,
      13.32,
      13.32,
      13.32,
@@ -938,6 +2059,7 @@
      33.81,
      33.81,
      33.81,
+     33.81,
      33.81
     ]
    },
@@ -971,6 +2093,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     13.17,
      13.17,
      13.17,
      13.17,
@@ -1034,6 +2157,7 @@
      33.4,
      33.4,
      33.4,
+     33.4,
      33.4
     ]
    },
@@ -1067,6 +2191,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     18.28,
      18.28,
      18.28,
      18.28,
@@ -1150,14 +2275,14 @@
    "fallend": 6
   },
   "quelle": "TCGdex",
-  "stand": "2026-10-31T13:38:53.627Z"
+  "stand": "2026-10-31T14:36:20.159Z"
  },
  "trends": {
   "ware": [],
   "top": [
    {
-    "titel": "wdr",
-    "menge": "1000+"
+    "titel": "audi quattro",
+    "menge": "200+"
    },
    {
     "titel": "schienenersatzverkehr",
@@ -1166,6 +2291,10 @@
    {
     "titel": "hajduk – gorica",
     "menge": "200+"
+   },
+   {
+    "titel": "wdr",
+    "menge": "1000+"
    },
    {
     "titel": "keira knightley",
@@ -1177,7 +2306,7 @@
    },
    {
     "titel": "wieczysta – jagiellonia białystok",
-    "menge": "100+"
+    "menge": "200+"
    },
    {
     "titel": "aue",
@@ -1190,10 +2319,6 @@
    {
     "titel": "offener immobilienfonds",
     "menge": "500+"
-   },
-   {
-    "titel": "jeremy bamber",
-    "menge": "200+"
    }
   ]
  },
@@ -1254,33 +2379,6 @@
     "begriff": "cap"
    },
    {
-    "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
-    "preis": 60,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khm051153-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051153-413-Front.jpg?v=1755618413",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Kith Vancouver Classic Cap - Nocturnal",
-    "preis": 60,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050248-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050248-413-Detail.jpg?v=1792086944",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Kith Botanical Twill Bay Low Pinch Crown Cap - Clever",
-    "preis": 60,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050129-3060",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050129-3060-Detail.jpg?v=1787167558",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Nike Dunk Low Retro SE *Panda*",
     "preis": 63,
     "verfuegbar": true,
@@ -1288,24 +2386,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/buJPTkZWbSEynbO0VZm3-IB2990-500-Nike-Dunk-Low-Retro-SE-Viotech-Dusty-Olive-Pale-Ivory-os-1.jpg?v=1760708051",
     "laden": "asphaltgold.com",
     "begriff": "dunk"
-   },
-   {
-    "titel": "Kith & New Era for the New York Yankees 59FIFTY Low Profile Cap - Black",
-    "preis": 64,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/kh5936-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KH5936-100-Front_9761d2a0-d3c8-4f2b-b1d3-ffbf195b9cb3.jpg?v=1755618429",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Kith & ‘47 for the New York Yankees Barre Stripe Franchise LS Cap - Apocalypse",
-    "preis": 64,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050122-020",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050122-020-Detail.jpg?v=1787348052",
-    "laden": "kith.com",
-    "begriff": "cap"
    },
    {
     "titel": "Asics GEL-1130",
@@ -1504,42 +2584,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/TFqHhlxwbcoFmOSQ0E87_U1906LAE-New-Balance-U1906LAE-Magnet-OS-1.jpg?v=1726225011",
     "laden": "asphaltgold.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "ASICS Gel-1130 - Black / Cream",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a609-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-023",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel-1130 - Black / Pure Silver",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1201a906-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1201A906-001AsicsGel1130BlackPureSilver_5029_f67d8690-a94e-490b-9b90-f18b2e59cae1.jpg?v=1785226746",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Evergreen / Black",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-301",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A609_301_SR_RT_GLB.jpg?v=1789458114",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "adidas Originals SAMBA OG",
@@ -1767,15 +2811,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "New Balance 740 - Slate Grey / Grey Matter",
-    "preis": 120,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu740n74f",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU740N74FNewBalance740SLATEGREYGREYMATTER_396.jpg?v=1785772266",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "adidas Originals SAMBA OG",
     "preis": 123.99,
     "verfuegbar": true,
@@ -1918,33 +2953,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-auco-bursie-kj2396-footwear_20_3E_20sneaker.jpg?v=1789371273",
     "laden": "afew-store.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "New Balance 204L - Silver Metallic / Black",
-    "preis": 130,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu204lswd",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU204LSWD-Front.jpg?v=1772636022",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "ASICS Gel-DS Trainer SP - Black / Gunmetal",
-    "preis": 130,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203b057-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B057-001_01.jpg?v=1791462815",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel-DS Trainer SP - Glacier Grey",
-    "preis": 130,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203b057-020",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B057-020_01.jpg?v=1791966157",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "Asics GEL-NYC",
@@ -2163,15 +3171,6 @@
     "begriff": "new era"
    },
    {
-    "titel": "ASICS GEL-NYC 2.0 - Umeboshi / Moonrock",
-    "preis": 160,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203b079-600",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B079_600_SR_RT_GLB-1.jpg?v=1789458097",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Nike Air Jordan 1 Retro High OG *Royal*",
     "preis": 161,
     "verfuegbar": true,
@@ -2289,15 +3288,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "ASICS Gel Kayano 12.1 - Cocoa Powder / Cream",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a759-200",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_200_SL_LT_GLB.jpg?v=1790063442",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 9060",
     "preis": 180.99,
     "verfuegbar": true,
@@ -2350,15 +3340,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/DC1788-100_1.jpg?v=1775041655",
     "laden": "overkillshop.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Duck Canvas Classic Cap - Blue Navy",
-    "preis": 195,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050223-5114",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050223-5114-Detail.jpg?v=1791551538",
-    "laden": "kith.com",
-    "begriff": "cap"
    },
    {
     "titel": "AIR JORDAN 4 RETRO 'Comic'",
@@ -2478,57 +3459,12 @@
     "begriff": "jordan"
    },
    {
-    "titel": "New Balance x Action Bronson 1890 - Brown / Blue",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu18901dp",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU18901DPNewBalanceActionBronson1890White_0388.jpg?v=1770653222",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance x Action Bronson 1890 - Blue / Grey",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu18908bn",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU18908BNNewBalanceActionBronson1890Blue_0381.jpg?v=1770653222",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance x JJJJound 1890 - Black / White",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu18907dn",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u18907dn_2.jpg?v=1782729390",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "New Balance 992 - Made in USA",
     "preis": 218.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-u992ny-nb-navy",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-u992ny-nb-navy-u992ny-footwear_20_3E_20sneaker.jpg?v=1747300420",
     "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "Kith & New Balance Made in USA 990v4 - Dusty Mauve",
-    "preis": 220,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu990tk4",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU990TK4-Front.jpg?v=1777988030",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "Kith & New Balance Made in USA 993 - Asteroid",
-    "preis": 220,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu993hk",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU993HK-Front.jpg?v=1777988030",
-    "laden": "kith.com",
     "begriff": "new balance"
    },
    {
@@ -2559,24 +3495,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Soft Leather SL Hitch Cap - Black",
-    "preis": 245,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050225-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050225-001-Detail.jpg?v=1791551535",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Soft Leather SL Hitch Cap - Blue Navy",
-    "preis": 245,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050225-5114",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050225-5114-Detail.jpg?v=1791551538",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Air Jordan 16 x Free The Youth SP",
     "preis": 250,
     "verfuegbar": true,
@@ -2593,23 +3511,13 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U991GL2_2__04065.1725457431.1280.1280.jpg?v=1742985463",
     "laden": "sneakersnstuff.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance x Amine Made in USA 992 - Chocolate / Amber",
-    "preis": 250,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu992ne",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u992ne_nb_02_i.jpg?v=1790595700",
-    "laden": "kith.com",
-    "begriff": "new balance"
    }
   ],
   "erreicht": [
    "afew-store.com",
    "overkillshop.com",
    "asphaltgold.com",
-   "sneakersnstuff.com",
-   "kith.com"
+   "sneakersnstuff.com"
   ]
  },
  "produkte": [],
