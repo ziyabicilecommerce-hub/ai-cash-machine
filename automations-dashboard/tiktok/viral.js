@@ -6,7 +6,7 @@
   const zahl = (n) => new Intl.NumberFormat('de-DE').format(Math.round(n || 0));
   const NAMEN = { horror: '👻 Horror einzeln', serie: '📺 Horror-Serie', quiz: '❓ Quiz', mythos: '🤔 Wahr/Mythos', waswaere: '🚀 Was wäre wenn' };
   const BLOECKE = [['🌙 Nachts', 0, 6], ['☀️ Vormittag', 6, 12], ['🌤️ Nachmittag', 12, 18], ['🌆 Abend', 18, 24]];
-  const stunde = (iso) => Number(new Date(iso).toLocaleString('de-DE', { timeZone: 'Europe/Berlin', hour: '2-digit', hour12: false }));
+  const stunde = (iso) => Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hour: 'numeric', hourCycle: 'h23' }).format(new Date(iso)));
   const schnitt = (liste, f) => (liste.length ? liste.reduce((a, x) => a + f(x), 0) / liste.length : 0);
 
   function balken(titel, wert, max, extra) {
