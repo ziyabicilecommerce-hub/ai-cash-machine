@@ -14,7 +14,7 @@ export function serienText(folge) {
   const kopf = String(folge.caption || folge.titel || '').trim();
   const gesamt = folge.teile || 12;
   const weiter = teil && Number(teil) < gesamt ? ` Folg mir, Teil ${Number(teil) + 1} kommt bald ⏰` : '';
-  return `${kopf}${teil ? ` (Teil ${teil}/${gesamt})` : ''}${weiter}\n\n${TAGS} ${serienTag(folge)} #teil${teil || ''}\n(KI-generiert, frei erfundene Geschichte)`.slice(0, 2200);
+  return `${kopf}${teil ? ` (Teil ${teil}/${gesamt})` : ''}${weiter}\n\n${TAGS} ${serienTag(folge)}${teil ? ` #teil${teil}` : ''}\n(KI-generiert, frei erfundene Geschichte)`.slice(0, 2200);
 }
 
 export const serienTitel = (folge) => String(folge.titel || '').slice(0, 90);

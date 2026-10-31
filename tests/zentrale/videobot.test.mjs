@@ -31,3 +31,19 @@ test('Videobot lehnt kaputte oder gefährliche Skripte ab', () => {
   assert.throws(() => skriptAus('kein block'));
   assert.equal(Object.keys(KONTEN).length, 3);
 });
+
+test('Autopilot: jedes Konto eigene Geschichten, keine Teil-2-Versprechen', async () => {
+  const { autopilotListe, slug } = await import('../../automations/schatten/videobot.mjs');
+  const listen = [0, 1, 2].map((i) => autopilotListe(SK.skripte, i));
+  const alle = listen.flat().map((x) => x.slug);
+  assert.equal(new Set(alle).size, SK.skripte.length, 'keine Geschichte doppelt');
+  for (const l of listen) {
+    assert.ok(l.length >= 6);
+    for (const { skript } of l) {
+      const ende = baueFolge(skript).szenen.at(-1);
+      assert.equal(ende.cta, 'FOLG MIR FÜR MEHR');
+      assert.ok(!/TEIL/.test(ende.text), ende.text);
+    }
+  }
+  assert.equal(slug('Zwei Zahnbürsten'), 'zwei-zahnbuersten');
+});
