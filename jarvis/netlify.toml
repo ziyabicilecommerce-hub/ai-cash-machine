@@ -1,15 +1,4 @@
+# Netlify ist abgeschaltet - alles läuft nur über GitHub. Solange die Netlify-App noch verbunden ist, baut sie hier nichts.
+# Nach dem Trennen der Netlify-App (GitHub → Settings → Applications) kann diese Datei weg.
 [build]
-  command = "echo 'No build needed'"
-  publish = "."
-  functions = "api"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  conditions = { NOT = [{path = "/api/*"}] }
+  ignore = "exit 0"
