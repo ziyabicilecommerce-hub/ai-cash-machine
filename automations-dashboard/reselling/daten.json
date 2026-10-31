@@ -1,5 +1,5 @@
 {
- "stand": "2026-10-31T16:27:57.116Z",
+ "stand": "2026-10-31T16:31:46.093Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -980,6 +980,7 @@
      34.99,
      34.99,
      34.99,
+     34.99,
      34.99
     ]
    },
@@ -1013,6 +1014,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     17.29,
      17.29,
      17.29,
      17.29,
@@ -1080,6 +1082,7 @@
      20.52,
      20.52,
      20.52,
+     20.52,
      20.52
     ]
    },
@@ -1114,6 +1117,7 @@
     "nurBewegung": true,
     "kurs": [
      52.12,
+     51.65,
      51.65,
      51.65,
      51.65,
@@ -1180,6 +1184,7 @@
      19.3,
      19.3,
      19.3,
+     19.3,
      19.3
     ]
    },
@@ -1214,6 +1219,7 @@
     "nurBewegung": true,
     "kurs": [
      13.21,
+     13.32,
      13.32,
      13.32,
      13.32,
@@ -1280,6 +1286,7 @@
      33.81,
      33.81,
      33.81,
+     33.81,
      33.81
     ]
    },
@@ -1313,6 +1320,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     13.17,
      13.17,
      13.17,
      13.17,
@@ -1380,6 +1388,7 @@
      33.4,
      33.4,
      33.4,
+     33.4,
      33.4
     ]
    },
@@ -1413,6 +1422,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     18.28,
      18.28,
      18.28,
      18.28,
@@ -1489,22 +1499,34 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 366,
+  "geprueft": 493,
   "statistik": {
-   "karten": 366,
+   "karten": 493,
    "mitPreis": 366,
    "imBudget": 19,
    "steigend": 0,
    "fallend": 6
   },
-  "quelle": "TCGdex",
-  "stand": "2026-10-31T15:34:02.731Z"
+  "quelle": "TCGdex + pokemontcg.io",
+  "stand": "2026-10-31T16:31:28.756Z"
  },
  "trends": {
   "ware": [],
   "top": [
    {
-    "titel": "criminal minds",
+    "titel": "alexander zverev",
+    "menge": "20000+"
+   },
+   {
+    "titel": "niclas füllkrug",
+    "menge": "2000+"
+   },
+   {
+    "titel": "ausschreitungen",
+    "menge": "200+"
+   },
+   {
+    "titel": "herten",
     "menge": "200+"
    },
    {
@@ -1512,36 +1534,24 @@
     "menge": "200+"
    },
    {
+    "titel": "criminal minds",
+    "menge": "200+"
+   },
+   {
     "titel": "rentenerhöhung 2027",
     "menge": "2000+"
    },
    {
-    "titel": "alex de minaur",
-    "menge": "10000+"
-   },
-   {
-    "titel": "atp basel",
-    "menge": "500+"
+    "titel": "halloween musik",
+    "menge": "200+"
    },
    {
     "titel": "lech poznań – wisła kraków",
     "menge": "200+"
    },
    {
-    "titel": "esteban ocon",
-    "menge": "200+"
-   },
-   {
-    "titel": "valentin vacherot",
-    "menge": "200+"
-   },
-   {
-    "titel": "west ham – west brom",
-    "menge": "100+"
-   },
-   {
-    "titel": "königsfamilie",
-    "menge": "2000+"
+    "titel": "atp basel",
+    "menge": "500+"
    }
   ]
  },
@@ -1971,15 +1981,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "New Balance 509",
-    "preis": 116,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/new-balance-509-bisque",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/ouP9r5e4mLueXBpBtyk8-U509BA-New-Balance-509-Bisque-os-1.jpg?v=1767104038",
-    "laden": "asphaltgold.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Jumpman Jack TR",
     "preis": 119,
     "verfuegbar": true,
@@ -2077,15 +2078,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/DuPB6FvkO9IZC9uLnZoz-JR0892-Adidas-Samba-OG-Fox-Brown-Off-White-Gum-4-os-1.jpg?v=1760624312",
     "laden": "asphaltgold.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "New Balance 740",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/new-balance-u740wn2-nb-navy-white-shadow-grey-silver-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/wmDp6cxLI8iptptrTMvA_U740WN2-New-Balance-U740WN2-_28NB-Navy-White-Shadow-Grey-Silver-Metallic-OS-1.jpg?v=1734627712",
-    "laden": "asphaltgold.com",
-    "begriff": "new balance"
    },
    {
     "titel": "New Balance 740",
@@ -2412,6 +2404,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "New Balance 90/60",
+    "preis": 149,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/new-balance-9060-nb-navy-linen",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/e3vz9mmm61j-U906089J_New-Balance_U90-60-NB-Navy-Linen_os-1.jpg?v=1791551952",
+    "laden": "asphaltgold.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Asics GEL-NYC",
     "preis": 149,
     "verfuegbar": true,
@@ -2499,6 +2500,15 @@
     "url": "https://www.overkillshop.com/products/new-balance-m1906rer-silver-metallic",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/M1906RER_1.jpg?v=1739539439",
     "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "New Balance M1906AD",
+    "preis": 159,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/new-balance-m1906ad-calm-taupe-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/fcda1258c967fb407a8693d44bdf46d3c5273986_M1906AD_New_Balance_M1906AD_Calm_Taupe_Angora_os_1.jpg?v=1735910213",
+    "laden": "asphaltgold.com",
     "begriff": "new balance"
    },
    {
