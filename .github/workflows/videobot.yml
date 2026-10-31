@@ -1,0 +1,76 @@
+name: "🎬 Videobot (Horror-Video aus Skript)"
+
+# Ein Issue mit dem Titel "Videobot: …" und einem ```json-Skript (kommt aus der TT-App) wird zum fertigen Horror-Video.
+# Nur der Repo-Besitzer und Mitarbeiter dürfen das auslösen. Das Video kommt als Download-Link ins Issue;
+# steht im Skript "posten": "<konto>", geht es zusätzlich über Buffer auf TikTok (mit KI-Hinweis).
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: videobot-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  video:
+    if: startsWith(github.event.issue.title, 'Videobot:') && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      NR: ${{ github.event.issue.number }}
+      BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            automations/schatten
+            automations/lib
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Skript prüfen
+        id: skript
+        env:
+          TEXT: ${{ github.event.issue.body }}
+        run: |
+          printf '%s' "$TEXT" > issue.txt
+          mkdir -p out
+          if ! node automations/schatten/videobot.mjs issue.txt out/folge.json > ergebnis.txt 2> fehler.txt; then
+            gh issue comment "$NR" -R "$REPO" --body "❌ Das Skript passt noch nicht: $(cat fehler.txt). Bitte in der App korrigieren und neu senden."
+            exit 1
+          fi
+          cat ergebnis.txt >> "$GITHUB_OUTPUT"
+          gh issue comment "$NR" -R "$REPO" --body "🎬 Skript ok - das Video wird jetzt gebaut (dauert ca. 3-6 Minuten)…"
+      - name: Werkzeuge
+        run: |
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
+          pip install -q pillow edge-tts
+      - name: Rendern
+        run: python3 automations/schatten/story.py out/folge.json out
+      - name: Ablegen, melden, optional posten
+        env:
+          KANAL: ${{ steps.skript.outputs.kanal }}
+          KONTO: ${{ steps.skript.outputs.konto }}
+        run: |
+          TAG="videobot-$NR"
+          gh release delete "$TAG" -R "$REPO" --yes --cleanup-tag 2>/dev/null || true
+          cp out/video.mp4 "out/videobot-$NR.mp4"
+          gh release create "$TAG" "out/videobot-$NR.mp4" out/cover.jpg -R "$REPO" --prerelease --title "Videobot #$NR" \
+            --notes "KI-generiertes Horror-Video (frei erfundene Geschichte)."
+          URL="https://github.com/$REPO/releases/download/$TAG/videobot-$NR.mp4"
+          TEXT="✅ **Dein Video ist fertig!**\n\n▶️ Video: $URL\n🖼️ Titelbild: https://github.com/$REPO/releases/download/$TAG/cover.jpg"
+          if [ -n "$KANAL" ]; then
+            if node automations/schatten/posten.mjs out/folge.json "$URL" "$KANAL"; then TEXT="$TEXT\n\n📲 Auf TikTok gepostet: @$KONTO (über Buffer, mit KI-Hinweis)."
+            else TEXT="$TEXT\n\n⚠️ Posten auf @$KONTO hat nicht geklappt - Video selbst hochladen."; fi
+          else
+            TEXT="$TEXT\n\nZum Posten: Video runterladen, in TikTok hochladen, als KI-generiert kennzeichnen."
+          fi
+          gh issue comment "$NR" -R "$REPO" --body "$(printf "$TEXT")"
+          gh issue close "$NR" -R "$REPO" --reason completed
