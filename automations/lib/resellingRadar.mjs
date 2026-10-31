@@ -254,3 +254,6 @@ export function alarme({ picks = [], kalender = [], liveNeu = [], budget = 40 },
 
 // Kartenbild: TCGdex hat neue Sets oft noch nicht auf Deutsch - dann die englische oder japanische Variante nehmen.
 export const bildVarianten = (url) => (/assets\.tcgdex\.net\/de\//.test(url || '') ? [url, url.replace('/de/', '/en/'), url.replace('/de/', '/ja/')] : [url].filter(Boolean));
+
+// Nike-Style-Code aus der Bildadresse (…/DotCom/IQ3922_001 -> IQ3922-001) für die Bildsuche
+export const styleCode = (url) => String(url || '').match(/\/([A-Z0-9]{5,8})_(\d{3})(?:[?/]|$)/)?.slice(1, 3).join('-') || '';

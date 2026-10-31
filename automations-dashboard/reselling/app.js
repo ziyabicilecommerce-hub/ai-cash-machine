@@ -191,15 +191,56 @@ function hype() {
   $('livekarussell').replaceChildren(...(live.length ? live.map(kachel) : [leer('Lädt gleich …')]));
 }
 
+// Erinnerung als Kalender-Termin (.ics) - 15 Minuten vorher klingelt das Handy
+function erinnern(k) {
+  const z = (d) => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const text = (t) => String(t || '').replace(/[,;\\]/g, ' ').replace(/\n/g, ' ');
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Reselling-Radar//DE', 'BEGIN:VEVENT', `UID:${z(k.zeit)}-${text(k.titel).slice(0, 40).replace(/\s/g, '')}@radar`,
+    `DTSTAMP:${z(Date.now())}`, `DTSTART:${z(k.zeit)}`, `DTEND:${z(Date.parse(k.zeit) + 30 * 60000)}`, `SUMMARY:Drop: ${text(k.titel)}`,
+    `DESCRIPTION:${text(k.farbe)} ${k.preis ? `${k.preis} EUR` : ''} - ${https(k.link)}`, `URL:${https(k.link)}`,
+    'BEGIN:VALARM', 'TRIGGER:-PT15M', 'ACTION:DISPLAY', 'DESCRIPTION:Drop in 15 Minuten!', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  const a = el('a'); a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })); a.download = 'drop.ics';
+  document.body.append(a); a.click(); a.remove();
+}
 function kalender() {
-  const liste = D.kalender || [];
+  // Vergangene Drops ausblenden (bis 6 Stunden nach Start bleiben sie als "läuft" stehen)
+  const liste = (D.kalender || []).filter((k) => Date.parse(k.zeit) > Date.now() - 6 * 3600000);
   const arten = ['Alle', ...new Set(liste.map((k) => k.kat))];
   chips('kalfilter', arten, zustand.kal, (w) => { zustand.kal = w; kalender(); });
   const zeig = liste.filter((k) => zustand.kal === 'Alle' || k.kat === zustand.kal);
-  $('kal').replaceChildren(...(zeig.length ? zeig.map((k) => eintrag({
-    bild: k.bild, emoji: k.kat === 'Sneaker' ? '👟' : '🃏', name: k.titel, info: k.farbe, marke: k.marke, tag: tagText(k.zeit), preis: euro(k.preis), link: https(k.link),
-  })) : [leer('Gerade keine angekündigten Drops - die Liste prüft sich alle 5 Minuten neu.')]));
+  $('kal').replaceChildren(...(zeig.length ? zeig.map((k) => {
+    const laeuft = Date.parse(k.zeit) <= Date.now();
+    const box = el('div', 'gruppe');
+    box.append(eintrag({ bild: k.bild, emoji: k.kat === 'Sneaker' ? '👟' : '🃏', name: k.titel, info: k.farbe, marke: k.marke,
+      tag: laeuft ? '🟢 Läuft jetzt' : tagText(k.zeit), tagKlasse: laeuft ? 'kaufen' : '', preis: euro(k.preis), link: https(k.link) }));
+    const l = el('div', 'links');
+    if (https(k.link)) { const zu = el('a', 'kauf', laeuft ? '🛒 Jetzt kaufen' : '👀 Zum Drop'); zu.href = https(k.link); zu.target = '_blank'; zu.rel = 'noopener'; l.append(zu); }
+    if (!laeuft) { const e = el('a', '', '⏰ Erinnern'); e.href = '#'; e.onclick = (ev) => { ev.preventDefault(); erinnern(k); }; l.append(e); }
+    const sx = el('a', 'verk', '💶 Wiederverkaufswert'); sx.href = `https://stockx.com/de-de/search?s=${encodeURIComponent(k.titel)}`; sx.target = '_blank'; sx.rel = 'noopener'; l.append(sx);
+    box.append(l);
+    return box;
+  }) : [leer('Gerade keine angekündigten Drops - die Liste prüft sich alle 5 Minuten neu.')]));
 }
+
+// Als App installieren: Hinweis passend zum Handy/Browser, verschwindet in der installierten App
+function installHinweis() {
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  let weg = false; try { weg = localStorage.getItem('install-weg') === '1'; } catch { /* privat */ }
+  if (standalone || weg) return;
+  const ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua), inApp = IN_APP || /WhatsApp|GSA\//.test(ua) || (ios && !/Safari\//.test(ua));
+  const box = $('install'), text = $('installtext');
+  if (inApp && ios) text.innerHTML = 'Du bist im WhatsApp-/In-App-Browser. Tippe unten rechts auf <b>🧭 (in Safari öffnen)</b>, dann <b>Teilen ⬆️ → „Zum Home-Bildschirm“</b>.';
+  else if (inApp) text.innerHTML = 'Du bist im In-App-Browser. Tippe oben rechts auf <b>⋮ → „Im Browser öffnen“</b>, dann <b>„App installieren“</b>.';
+  else if (ios) text.innerHTML = 'Tippe unten auf <b>Teilen ⬆️</b> und dann <b>„Zum Home-Bildschirm“</b> - fertig, die App liegt neben deinen anderen Apps.';
+  else text.innerHTML = 'Tippe auf <b>Installieren</b> oder im Browser-Menü <b>⋮ → „App installieren“</b>.';
+  box.hidden = false;
+}
+let installEvent = null;
+addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvent = e; $('installknopf').hidden = false; });
+$('installknopf').addEventListener('click', async (e) => { e.preventDefault(); if (!installEvent) return; installEvent.prompt(); await installEvent.userChoice; installEvent = null; $('install').hidden = true; });
+$('installkopie').addEventListener('click', async (e) => { e.preventDefault(); try { await navigator.clipboard.writeText(location.href.split('?')[0]); $('installkopie').textContent = '✅ Link kopiert - in Safari/Chrome einfügen'; } catch { /* egal */ } });
+$('installweg').addEventListener('click', () => { $('install').hidden = true; try { localStorage.setItem('install-weg', '1'); } catch { /* privat */ } });
+installHinweis();
 
 function kaufen() {
   const budget = D.budget || 40;

@@ -110,6 +110,12 @@
   .deal .zeit { font-size:11px; color:var(--leise); }
   .pushbox { background:var(--panel2); border:1px dashed #8b5cff80; border-radius:18px; padding:12px; margin:6px 0 4px; }
   .pushbox p { margin:4px 0 8px; } .pushbox .links { margin:0; }
+  .install { max-width:688px; margin:10px 16px 0; background:linear-gradient(135deg,#2a1f55,#4a1d48); border:1px solid #8b5cff80; border-radius:18px; padding:12px; }
+  @media (min-width:720px) { .install { margin:10px auto 0; } }
+  .installkopf { display:flex; gap:10px; align-items:flex-start; } .installkopf img { width:44px; height:44px; border-radius:11px; flex:none; }
+  .installkopf div { flex:1; } .installkopf p { margin-top:3px; color:#e4dcff; }
+  .installkopf button { background:none; border:0; color:var(--leise); font-size:18px; padding:2px 4px; }
+  .install .links { margin:10px 0 0; }
 </style>
 </head>
 <body>
@@ -120,6 +126,10 @@
 </header>
 <p class="stand"><span class="puls"></span><span id="stand">Lade …</span></p>
 <div class="ticker" id="ticker" hidden></div>
+<div class="install" id="install" hidden>
+  <div class="installkopf"><img src="icon-192.png" alt=""><div><b>Als App aufs Handy</b><p class="klein" id="installtext"></p></div><button type="button" id="installweg" aria-label="Schließen">✕</button></div>
+  <div class="links"><a href="#" id="installknopf" hidden>📲 Installieren</a><a href="#" id="installkopie">🔗 Link kopieren</a></div>
+</div>
 <main>
   <section id="hype" class="aktiv">
     <h2 id="alarmtitel">🚨 Sofort kaufen</h2>
