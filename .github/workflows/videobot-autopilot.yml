@@ -1,6 +1,6 @@
 name: "🎬 Videobot Autopilot (abends + nachts ein Horror-Video pro Konto)"
 
-# Nimmt abends und nachts pro Konto die nächste noch nicht gepostete Geschichte (Gewinner anderer Konten zuerst) aus automations-dashboard/tiktok/skripte.json
+# Nimmt abends und nachts pro Konto die nächste Geschichte: Teil 2 eigener Gewinner, dann Gewinner anderer Konten, dann eigene aus automations-dashboard/tiktok/skripte.json
 # (jedes Konto hat eigene Geschichten), rendert sie mit dem Found-Footage-Look und postet über Buffer (mit KI-Hinweis).
 # Gepostete Geschichten erkennt er am Release "videobot-auto-<geschichte>-<konto>". Neue Geschichten = neue Einträge in skripte.json.
 
@@ -15,6 +15,11 @@ on:
     - cron: '13 1 * * *'
     - cron: '13 2 * * *'
   workflow_dispatch:
+    inputs:
+      erzwingen:
+        description: 'Auch posten, wenn das Konto in diesem Slot schon ein Video hat'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -56,7 +61,7 @@ jobs:
           mkdir -p out
           GRENZE=$(date -u -d '-5 hours' +%Y-%m-%dT%H:%M:%SZ)
           LETZTES=$(gh release list -R "$REPO" --limit 100 --json tagName,createdAt --jq "[.[] | select(.tagName | startswith(\"videobot-auto-\")) | select(.tagName | endswith(\"-$KONTO\")) | select(.createdAt > \"$GRENZE\")] | length")
-          if [ "${LETZTES:-0}" -gt 0 ] && [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "${LETZTES:-0}" -gt 0 ] && [ "${{ inputs.erzwingen }}" != "true" ]; then
             echo "@$KONTO hat in diesem Slot schon ein Video - übersprungen."; exit 0
           fi
           for SLUG in $(node automations/schatten/videobot.mjs --auto automations-dashboard/tiktok/skripte.json ${{ matrix.nr }}); do

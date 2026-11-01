@@ -74,6 +74,25 @@ test('Gewinner-Bot: was auf einem Konto viral ging, kommt auf den anderen Konten
   const zyx = autopilotListe(SK.skripte, 1, 3, letzte);
   assert.equal(zyx[0].skript.titel, a.titel, 'Gewinner zuerst auf anderem Konto');
   assert.equal(new Set(zyx.map((x) => x.slug)).size, zyx.length, 'nichts doppelt in der Liste');
-  assert.ok(!autopilotListe(SK.skripte, 0, 3, letzte).slice(1).some((x) => x.slug === zyx[0].slug), 'nicht nochmal auf dem eigenen Konto');
+  const eigenes = autopilotListe(SK.skripte, 0, 3, letzte);
+  assert.equal(eigenes[0].slug, a.teil2 ? `${zyx[0].slug}-teil-2` : eigenes[0].slug, 'eigenes Konto bekommt Teil 2 statt Wiederholung');
   assert.deepEqual(autopilotListe(SK.skripte, 2, 3, []), autopilotListe(SK.skripte, 2));
+});
+
+test('Fortsetzungs-Bot: eigener Gewinner bekommt Teil 2 auf demselben Konto', async () => {
+  const { autopilotListe, baueFolge, pruefen } = await import('../../automations/schatten/videobot.mjs');
+  const { serienText } = await import('../../automations/schatten/posten.mjs');
+  const mit = SK.skripte.filter((s) => s.teil2);
+  assert.ok(mit.length >= 6);
+  for (const s of mit) assert.deepEqual(pruefen({ ...s, ...s.teil2 }), [], s.titel);
+  const s = mit[0], i = SK.skripte.indexOf(s) % 3, konto = ['futureflowx3', 'zyx_7851', 'futureflowxx'][i];
+  const letzte = [{ konto: `@${konto}`, format: 'horror', aufrufe: 900, sehdauer: 6, text: s.hook }, { konto: '@x', format: 'horror', aufrufe: 100, sehdauer: 3, text: 'egal' }];
+  const liste = autopilotListe(SK.skripte, i, 3, letzte);
+  assert.match(liste[0].slug, /-teil-2$/);
+  const f = baueFolge(liste[0].skript);
+  assert.equal(f.teile, 2);
+  assert.equal(f.szenen[0].sprich, s.teil2.hook);
+  const text = serienText(f);
+  assert.match(text, /\(Teil 2\/2\)/); assert.ok(!/Teil 3/.test(text)); assert.match(text, /KI-generiert/);
+  assert.ok(!autopilotListe(SK.skripte, (i + 1) % 3, 3, letzte).some((x) => /-teil-2$/.test(x.slug)), 'Teil 2 nur auf dem eigenen Konto');
 });
