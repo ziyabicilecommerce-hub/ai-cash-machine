@@ -79,7 +79,7 @@ export function baueFolge(skript) {
     stimme: STIMMEN[skript.stimme] || STIMMEN.mann, tonhoehe: '+0Hz', tempo: kurz_ ? '+24%' : '+16%', ton: 'schlicht', ki_bilder: false,
     ort: skript.ort || 'haus', fahrgaeste: [], boesewicht: skript.boesewicht || 'schatten',
     held: { farbe: [44, 56, 92], oberteil: 'hoodie', kopf: 'haare', haar: [46, 34, 26], hose: [38, 44, 70] },
-    titel, titelbild, titelbild_gelb: gelbVon(titelbild), teile: 1,
+    titel, titelbild, titelbild_gelb: gelbVon(titelbild), teile: skript.teil === 2 ? 2 : 1,
     caption: `${satz(skript.hook, 120)} ${frage}${wahl && !weiter ? ` 1️⃣ ${wahl[0]} oder 2️⃣ ${wahl[1]}? Zahl in die Kommentare` : ''} 👇`, szenen,
   };
 }
@@ -130,13 +130,23 @@ export function gewinner(skripte, letzte = [], faktor = 1.2) {
 
 // Autopilot: jedes Konto hat eigene Geschichten. Gewinner von den ANDEREN Konten kommen zuerst dran -
 // was dort viral ging, bekommt auf jedem Konto eine Chance (der Workflow verhindert per Release, dass ein Konto etwas doppelt postet).
+// Fortsetzungs-Bot: lief Teil 1 auf DIESEM Konto als Gewinner und es gibt einen Teil 2, kommt der zuerst -
+// die Leute, die Teil 1 gesehen haben, bekommen ihn als Nächstes ausgespielt.
+export function fortsetzung(s) {
+  const { teil2, ...basis } = s;
+  return { slug: `${slug(s.titel)}-teil-2`, skript: { ...basis, ...teil2, titel: `${s.titel} – Teil 2`, teil: 2, weiter: '', posten: '', kurz: true, nachricht: teil2.nachricht, absender: teil2.absender, monster: teil2.monster, monster2: teil2.monster2 } };
+}
+
 export function autopilotListe(skripte, kontoIndex, konten = 3, letzte = []) {
   const eintrag = (s) => ({ slug: slug(s.titel), skript: { ...s, weiter: '', posten: '', kurz: true } });
   const eigene = skripte.filter((_, i) => i % konten === kontoIndex).map(eintrag);
   const ich = Object.keys(KONTEN)[kontoIndex];
-  const top = gewinner(skripte, letzte).filter((g) => g.konto !== ich).map((g) => g.slug);
-  const vorne = [...new Set(top)].map((sl) => eintrag(skripte.find((s) => slug(s.titel) === sl)));
-  return [...vorne, ...eigene.filter((e) => !top.includes(e.slug))];
+  const alle = gewinner(skripte, letzte);
+  const finde = (sl) => skripte.find((s) => slug(s.titel) === sl);
+  const teil2 = [...new Set(alle.filter((g) => g.konto === ich).map((g) => g.slug))].map(finde).filter((s) => s?.teil2).map(fortsetzung);
+  const top = alle.filter((g) => g.konto !== ich).map((g) => g.slug);
+  const vorne = [...new Set(top)].map((sl) => eintrag(finde(sl)));
+  return [...teil2, ...vorne, ...eigene.filter((e) => !top.includes(e.slug))];
 }
 
 if (process.argv[2] === '--auto') {

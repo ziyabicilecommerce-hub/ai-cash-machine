@@ -59,5 +59,11 @@ jobs:
       - name: Nächsten Lauf anstoßen
         if: always() && github.ref == 'refs/heads/main' && vars.RADAR_KETTE != 'aus'  # Notbremse: Repo-Variable RADAR_KETTE=aus
         run: |
+          # Pünktlich-Bot: GitHub startet Zeitpläne oft Stunden zu spät - die Radar-Kette läuft alle ~3 Min.
+          # und stößt die Horror-Slots (19 Uhr und 2 Uhr Berlin) pünktlich an. Doppelte Posts verhindert die Sperre im Videobot.
+          JETZT=$(TZ=Europe/Berlin date +%H%M)
+          if [ "$JETZT" -ge 1900 -a "$JETZT" -lt 1908 ] || [ "$JETZT" -ge 0200 -a "$JETZT" -lt 0208 ]; then
+            gh workflow run videobot-autopilot.yml --ref main -R "$GITHUB_REPOSITORY" || true
+          fi
           sleep 150
           gh workflow run automation-112-reselling-radar.yml --ref main -R "$GITHUB_REPOSITORY"

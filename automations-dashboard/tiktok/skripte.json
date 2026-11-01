@@ -41,7 +41,23 @@
    "wahl": [
     "Ins Bad",
     "Raus hier"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich habe die zweite Zahnbürste weggeworfen. Heute lag sie auf meinem Kissen.",
+    "saetze": [
+     "Ich ziehe zu meiner Schwester.",
+     "Ich erzähle ihr nichts.",
+     "Abends putzt sie sich die Zähne.",
+     "Sie fragt, warum ich zwei Zahnbürsten mitgebracht habe."
+    ],
+    "monster": "Ich ziehe mit um.",
+    "ende": "Im Spiegel stehen wir zu dritt. Und nur zwei von uns atmen.",
+    "frage": "Wärst du geblieben?",
+    "wahl": [
+     "Bleiben",
+     "Weiter fliehen"
+    ]
+   }
   },
   {
    "titel": "Der Anrufer bin ich",
@@ -64,7 +80,23 @@
    "wahl": [
     "Rangehen",
     "Handy aus"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich gehe ran. Meine eigene Stimme sagt: Du hast noch drei Minuten.",
+    "saetze": [
+     "Ich lege sofort auf.",
+     "Das Handy klingelt wieder.",
+     "Jetzt flüstert die Stimme: Zwei Minuten.",
+     "Unter meinem Bett vibriert ein zweites Handy."
+    ],
+    "monster": "Eine Minute.",
+    "ende": "Ich schaue unters Bett. Da liege ich. Und ich lege gerade auf.",
+    "frage": "Hättest du nochmal abgenommen?",
+    "wahl": [
+     "Abnehmen",
+     "Handy zerstören"
+    ]
+   }
   },
   {
    "titel": "Ich sehe dich",
@@ -89,7 +121,25 @@
    "wahl": [
     "Rausgehen",
     "Im Auto bleiben"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich bin aus dem Wald raus. Die Nachrichten hören nicht auf.",
+    "saetze": [
+     "Ich fahre ohne Pause nach Hause.",
+     "Dann kommt ein Foto.",
+     "Zu Hause ist alles still.",
+     "Das Foto zeigt meine Rückbank. Von innen."
+    ],
+    "absender": "Unbekannt",
+    "nachricht": "Du hast mich vergessen. Ich sitze hinter dir.",
+    "monster": "Fahr weiter.",
+    "ende": "Im Rückspiegel ist die Rückbank leer. Aber der Gurt ist zu.",
+    "frage": "Hättest du dich umgedreht?",
+    "wahl": [
+     "Umdrehen",
+     "Aus dem Auto"
+    ]
+   }
   },
   {
    "titel": "Dreh dich nicht um",
@@ -112,7 +162,23 @@
    "wahl": [
     "Umdrehen",
     "Weiterlaufen"
-   ]
+   ],
+   "teil2": {
+    "hook": "Regel Nummer zwei: Wenn das Flüstern aufhört, steht es direkt hinter dir.",
+    "saetze": [
+     "Ich laufe weiter zum Ausgang.",
+     "Das Flüstern wird leiser.",
+     "Dann ist es still.",
+     "Auf meiner Schulter liegt eine kalte Hand."
+    ],
+    "monster": "Du hast nicht gezählt.",
+    "ende": "Regel Nummer drei steht an der Wand: Lauf.",
+    "frage": "Hättest du dich jetzt umgedreht?",
+    "wahl": [
+     "Umdrehen",
+     "Rennen"
+    ]
+   }
   },
   {
    "titel": "Mach nicht auf",
@@ -137,7 +203,23 @@
    "wahl": [
     "Aufmachen",
     "Mama anrufen"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich habe nicht aufgemacht. Morgens fragt Mama, warum ich sie ausgesperrt habe.",
+    "saetze": [
+     "Ich zeige ihr die Nachricht.",
+     "Sie sagt, sie hat nie geschrieben.",
+     "Ihr Handy war die ganze Nacht aus.",
+     "Die Nachricht kam von innen. Aus unserem WLAN."
+    ],
+    "monster": "Ich bin schon drin.",
+    "ende": "Im WLAN gibt es ein neues Gerät. Es heißt: Mama.",
+    "frage": "Wem hättest du geglaubt?",
+    "wahl": [
+     "Mama",
+     "Der Nachricht"
+    ]
+   }
   },
   {
    "titel": "Das Babyphone winkt",
@@ -162,7 +244,23 @@
    "wahl": [
     "Ins Zimmer",
     "Polizei rufen"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich habe das Babyphone ausgesteckt. Es winkt trotzdem weiter.",
+    "saetze": [
+     "Das Bild ist jetzt schwarz-weiß.",
+     "Die Gestalt hält meinen Sohn im Arm.",
+     "Ich renne ins Kinderzimmer.",
+     "Mein Sohn schläft. Allein."
+    ],
+    "monster": "Ich passe auf ihn auf.",
+    "ende": "Auf dem Babyphone winkt die Gestalt jetzt mir. Im Kinderzimmer.",
+    "frage": "Wärst du im Zimmer geblieben?",
+    "wahl": [
+     "Bleiben",
+     "Kind schnappen"
+    ]
+   }
   },
   {
    "titel": "Etage minus vier",
