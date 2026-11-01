@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-01T06:29:31.073Z",
+ "stand": "2026-11-01T06:32:31.096Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "drop:Nike Lahar Low Damenschuh:2026-11-01T08:00:00.000Z",
+   "art": "Drop",
+   "titel": "⏰ Drop gleich: Nike Lahar Low Damenschuh",
+   "bild": "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit/e72b36e2-6dbd-4400-8cb2-6bf890292c65/lahar-low-wheat-fr-damen-erscheinungsdatum.jpg",
+   "link": "https://www.nike.com/de/launch/t/womens-lahar-low-wheat",
+   "text": "Wheat/Orange/Wheat/Schwarz · 139,99 € · Start 09:00 Uhr",
+   "zeit": "2026-11-01T06:32:31.096Z"
+  },
   {
    "schluessel": "deal:https://www.asphaltgold.com/products/nikeair-jordan-3-retro-og-true-blue-white-varsity-red-true-blue-cement-grey-anthracite",
    "art": "Deal",
@@ -174,15 +183,6 @@
    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/empdlmujvp-IF4396-103_Nike_Air-Jordan-3-Retro-OG-Worlds-Best-Dad-Sail-Black-University-Red-Pale-Ivory-Palomino_os-1.jpg?v=1779369524",
    "link": "https://www.asphaltgold.com/products/nikeair-jordan-3-retro-worlds-best-dad-sail-black-university-red-pale-ivory-palomino",
    "text": "asphaltgold.com · Nike Air Jordan 3 Retro OG *World's Best Dad*\nVerkauf ca. 200–290 € → Gewinn ca. +86,50 € (ROI 67 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-10-31T16:58:21.007Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-air-jordan-4-retro-tour-yellow-white-tour-yellow-dark-blue-grey-black",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 4 Retro für 157,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/uf4ibrmnwh-IO2463-102_Nike_Air-Jordan-4-Retro-Tour-Yellow-White-Tour-Yellow-Dark-Blue-Grey-Black_os-1.jpg?v=1787660443",
-   "link": "https://www.asphaltgold.com/products/nike-air-jordan-4-retro-tour-yellow-white-tour-yellow-dark-blue-grey-black",
-   "text": "asphaltgold.com · Nike Air Jordan 4 Retro *Tour Yellow*\nVerkauf ca. 220–320 € → Gewinn ca. +81,00 € (ROI 52 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-10-31T16:58:21.007Z"
   }
  ],
@@ -1664,15 +1664,15 @@
   "top": [
    {
     "titel": "oe24",
-    "menge": "200+"
-   },
-   {
-    "titel": "einbruch",
     "menge": "500+"
    },
    {
+    "titel": "einbruch",
+    "menge": "1000+"
+   },
+   {
     "titel": "connewitz",
-    "menge": "100+"
+    "menge": "200+"
    },
    {
     "titel": "caren miosga caren miosga",
@@ -1684,6 +1684,10 @@
    },
    {
     "titel": "midterms",
+    "menge": "200+"
+   },
+   {
+    "titel": "протест",
     "menge": "100+"
    },
    {
@@ -1691,16 +1695,12 @@
     "menge": "1000+"
    },
    {
-    "titel": "bäckerei",
-    "menge": "2000+"
-   },
-   {
-    "titel": "brackwede",
-    "menge": "2000+"
-   },
-   {
-    "titel": "kulmbach",
+    "titel": "einbürgerung",
     "menge": "100+"
+   },
+   {
+    "titel": "bäckerei",
+    "menge": "5000+"
    }
   ]
  },
