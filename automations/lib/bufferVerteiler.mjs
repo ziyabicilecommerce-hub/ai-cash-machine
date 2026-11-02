@@ -48,7 +48,10 @@ export function postenJetzt(heute, letzter, jetzt = Date.now(), { ziel = ZIEL_PR
 
 // Text je Plattform: Instagram ohne nicht klickbaren Link (-> Link in Bio), YouTube mit Titel. Immer KI-Hinweis.
 export function beitrag(v, dienst) {
-  const roh = String(v.caption || v.titel || '').replace(/👉\s*https?:\/\/\S+/g, '🔗 Link in Bio').replace(/https?:\/\/\S+/g, '').trim();
+  let roh = String(v.caption || v.titel || '').replace(/👉\s*https?:\/\/\S+/g, '🔗 Link in Bio').replace(/https?:\/\/\S+/g, '')
+    .replace(/^.*jetzt auf YouTube!?\s*$/gim, '').trim();
+  // Caption besteht nur aus Hashtags? Dann steht der Titel davor - sonst weiß keiner, worum es geht
+  if (v.titel && (!roh || roh.startsWith('#'))) roh = `${v.titel}\n\n${roh}`.trim();
   if (dienst === 'youtube') {
     const titel = String(v.titel || 'Kage no Shiro').replace(/\s+/g, ' ').slice(0, 90);
     const beschreibung = `${roh || titel}\n\nEigene Anime-Serie mit eigenen Figuren. #anime #animeserie #shorts\n${KI_HINWEIS}`.slice(0, 4900);
