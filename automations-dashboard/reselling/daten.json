@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-02T12:59:51.464Z",
+ "stand": "2026-11-02T13:02:59.901Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -191,7 +191,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-02T12:47:39.259Z",
+  "stand": "2026-11-02T13:03:03.691Z",
   "filialen": 148,
   "produkte": [
    {
@@ -248,7 +248,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 83
+      "menge": 81
      },
      {
       "name": "dm Flörsheim am Main",
@@ -282,7 +282,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 3
+      "menge": 1
      },
      {
       "name": "dm Kriftel",
@@ -356,7 +356,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 23
+      "menge": 21
      },
      {
       "name": "dm Kriftel",
@@ -396,7 +396,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 18
+      "menge": 17
      },
      {
       "name": "dm Flörsheim am Main",
@@ -478,7 +478,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 4
+      "menge": 3
      },
      {
       "name": "dm Eschborn",
@@ -573,14 +573,6 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
-     },
-     {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
@@ -635,6 +627,14 @@
       "lat": 50.1401538,
       "lon": 8.5824016,
       "menge": 5
+     },
+     {
+      "name": "dm Hochheim am Main",
+      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
+      "km": 10.5,
+      "lat": 50.0155817,
+      "lon": 8.3658454,
+      "menge": 12
      }
     ]
    },
@@ -684,7 +684,7 @@
       "km": 9.3,
       "lat": 50.1237366,
       "lon": 8.5865988,
-      "menge": 4
+      "menge": 3
      },
      {
       "name": "dm Eschborn",
@@ -1525,15 +1525,11 @@
   "top": [
    {
     "titel": "witten",
-    "menge": "500+"
+    "menge": "1000+"
    },
    {
     "titel": "spiel 77",
     "menge": "200+"
-   },
-   {
-    "titel": "weltweite zeitänderung ab 2027",
-    "menge": "2000+"
    },
    {
     "titel": "formel 1 mexiko strafen",
@@ -1562,6 +1558,10 @@
    {
     "titel": "rhodos",
     "menge": "5000+"
+   },
+   {
+    "titel": "sternzeichen horoskop heute",
+    "menge": "2000+"
    }
   ]
  },
