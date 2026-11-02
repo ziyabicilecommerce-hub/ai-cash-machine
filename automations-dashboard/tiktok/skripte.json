@@ -283,7 +283,23 @@
    "wahl": [
     "Aussteigen",
     "Tür zu drücken"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich bin nicht ausgestiegen. Aber der Aufzug fährt jetzt auf minus fünf.",
+    "saetze": [
+     "Die Anzeige zählt weiter nach unten.",
+     "Minus sieben. Minus neun.",
+     "Dann hält er.",
+     "Draußen steht meine Nachbarin. Sie ist seit Jahren verschwunden."
+    ],
+    "monster": "Wir haben auf dich gewartet.",
+    "ende": "Die Tür geht zu. Der Knopf für oben ist verschwunden.",
+    "frage": "Wärst du jetzt ausgestiegen?",
+    "wahl": [
+     "Aussteigen",
+     "Notknopf"
+    ]
+   }
   },
   {
    "titel": "Reihe 13",
@@ -306,7 +322,23 @@
    "wahl": [
     "Hinsetzen",
     "Crew rufen"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich habe mich nicht in Reihe 13 gesetzt. Jetzt steht mein Name auf dem Sitz.",
+    "saetze": [
+     "Die Stewardess bringt mir Wasser.",
+     "Sie sagt: Für Platz 13A.",
+     "Ich sitze in Reihe 12.",
+     "Hinter mir atmet jemand an meinen Nacken."
+    ],
+    "monster": "Du bist dran.",
+    "ende": "Bei der Landung sitze ich in Reihe 13. Ich bin nie aufgestanden.",
+    "frage": "Hättest du dich umgedreht?",
+    "wahl": [
+     "Umdrehen",
+     "Crew rufen"
+    ]
+   }
   },
   {
    "titel": "Die Sprachnachricht",
@@ -330,7 +362,23 @@
    "wahl": [
     "Anhören",
     "Löschen"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich habe die Sprachnachricht von mir angehört. Jetzt kommt eine zweite.",
+    "saetze": [
+     "In der ersten flüstere ich nur meinen Namen.",
+     "In der zweiten höre ich mich schreien.",
+     "Sie wurde in fünf Minuten aufgenommen.",
+     "Ich schaue auf die Uhr. Noch vier."
+    ],
+    "monster": "Hör bis zum Ende.",
+    "ende": "Die Nachricht endet mit einem Klopfen. Jetzt klopft es an meiner Tür.",
+    "frage": "Hättest du die zweite angehört?",
+    "wahl": [
+     "Anhören",
+     "Handy aus"
+    ]
+   }
   },
   {
    "titel": "Der Fahrer schaut nicht",
@@ -352,7 +400,23 @@
    "wahl": [
     "Umschauen",
     "Augen zu"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich schaue nicht nach hinten. Jetzt sagt die Durchsage meinen Namen.",
+    "saetze": [
+     "Alle Fahrgäste stehen auf.",
+     "Sie gehen langsam nach hinten.",
+     "Keiner sagt ein Wort.",
+     "Nur ich sitze noch."
+    ],
+    "monster": "Komm nach hinten.",
+    "ende": "Die Bahn ist jetzt leer. Bis auf den letzten Platz. Da sitze ich auch.",
+    "frage": "Wärst du mitgegangen?",
+    "wahl": [
+     "Mitgehen",
+     "Sitzen bleiben"
+    ]
+   }
   },
   {
    "titel": "Die Kamera im Flur",
@@ -376,7 +440,23 @@
    "wahl": [
     "Bleiben",
     "Sofort ausziehen"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich habe die Kamera im Flur abgebaut. Die App zeigt trotzdem ein Live-Bild.",
+    "saetze": [
+     "Das Bild zeigt mein Schlafzimmer.",
+     "Von oben.",
+     "Ich liege im Bett und schlafe.",
+     "Aber ich sitze gerade auf dem Sofa."
+    ],
+    "monster": "Ich schaue dir zu.",
+    "ende": "Die Person im Bett öffnet die Augen. Und schaut in die Kamera.",
+    "frage": "Wärst du ins Schlafzimmer gegangen?",
+    "wahl": [
+     "Reingehen",
+     "Wegrennen"
+    ]
+   }
   },
   {
    "titel": "Der Nachbar winkt",
@@ -398,7 +478,23 @@
    "wahl": [
     "Zurückwinken",
     "Vorhang zu"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich habe zurückgewinkt. Heute Nacht steht der Nachbar in meinem Garten.",
+    "saetze": [
+     "Er winkt nicht mehr.",
+     "Er zeigt auf mein Fenster.",
+     "Ich drehe mich um.",
+     "In meinem Zimmer steht sein Umzugskarton."
+    ],
+    "monster": "Ich ziehe bei dir ein.",
+    "ende": "Auf dem Karton steht meine Adresse. In seiner Schrift.",
+    "frage": "Hättest du den Karton geöffnet?",
+    "wahl": [
+     "Aufmachen",
+     "Rausstellen"
+    ]
+   }
   },
   {
    "titel": "Etage 13",
@@ -420,7 +516,23 @@
    "wahl": [
     "Aussteigen",
     "Drinbleiben"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich bin auf Etage 13 ausgestiegen. Alle Türen haben meinen Namen.",
+    "saetze": [
+     "Ich klopfe an die erste Tür.",
+     "Von innen ruft meine Stimme: Herein.",
+     "Ich renne zurück zum Aufzug.",
+     "Er ist weg. Da ist nur eine Wand."
+    ],
+    "monster": "Welche Tür nimmst du?",
+    "ende": "Hinter mir gehen alle Türen gleichzeitig auf.",
+    "frage": "Welche Tür hättest du genommen?",
+    "wahl": [
+     "Erste Tür",
+     "Letzte Tür"
+    ]
+   }
   },
   {
    "titel": "Platz am Fenster",
@@ -442,7 +554,23 @@
    "wahl": [
     "Rausschauen",
     "Rollo runter"
-   ]
+   ],
+   "teil2": {
+    "hook": "Die Crew hat das Klopfen gehört. Sie sagt: Machen Sie bloß nicht auf.",
+    "saetze": [
+     "Die Rollos gehen überall runter.",
+     "Nur meins klemmt.",
+     "Das Klopfen wird zu einem Kratzen.",
+     "Dann ist es still."
+    ],
+    "monster": "Mach das Fenster auf.",
+    "ende": "Bei der Landung ist mein Fenster beschlagen. Von außen steht da: Bis morgen.",
+    "frage": "Hättest du hingeschaut?",
+    "wahl": [
+     "Hinschauen",
+     "Augen zu"
+    ]
+   }
   },
   {
    "titel": "Die Stimme im Wald",
@@ -466,7 +594,23 @@
    "wahl": [
     "Folgen",
     "Wegrennen"
-   ]
+   ],
+   "teil2": {
+    "hook": "Ich bin der Stimme nicht gefolgt. Jetzt ruft sie aus meinem Handy.",
+    "saetze": [
+     "Mama ruft an. Mit Video.",
+     "Sie steht im Wald.",
+     "Hinter ihr steht noch eine Mama.",
+     "Beide sagen gleichzeitig: Komm her."
+    ],
+    "monster": "Welche ist echt?",
+    "ende": "Dann ruft Mama an. Die echte. Sie fragt, wo ich bin.",
+    "frage": "Welche Mama ist echt?",
+    "wahl": [
+     "Die linke",
+     "Die rechte"
+    ]
+   }
   },
   {
    "titel": "Das Foto von gestern",

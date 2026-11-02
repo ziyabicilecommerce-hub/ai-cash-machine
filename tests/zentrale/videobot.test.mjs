@@ -96,3 +96,20 @@ test('Fortsetzungs-Bot: eigener Gewinner bekommt Teil 2 auf demselben Konto', as
   assert.match(text, /\(Teil 2\/2\)/); assert.ok(!/Teil 3/.test(text)); assert.match(text, /KI-generiert/);
   assert.ok(!autopilotListe(SK.skripte, (i + 1) % 3, 3, letzte).some((x) => /-teil-2$/.test(x.slug)), 'Teil 2 nur auf dem eigenen Konto');
 });
+
+test('Lern-Bot: eigene Geschichten mit erfolgreichem Ort/Bösewicht kommen zuerst', async () => {
+  const { lernen, autopilotListe } = await import('../../automations/schatten/videobot.mjs');
+  const zug = SK.skripte.find((s) => s.ort === 'zug'), haus = SK.skripte.find((s) => s.ort === 'haus');
+  const letzte = [
+    { konto: '@x', format: 'horror', aufrufe: 500, sehdauer: 6, text: zug.hook },
+    { konto: '@x', format: 'horror', aufrufe: 500, sehdauer: 2, text: haus.hook },
+  ];
+  const g = lernen(SK.skripte, letzte);
+  assert.ok(g['ort:zug'] > g['ort:haus']);
+  for (const i of [0, 1, 2]) {
+    const liste = autopilotListe(SK.skripte, i, 3, letzte).filter((x) => !/-teil-2$/.test(x.slug));
+    const ersterZug = liste.findIndex((x) => x.skript.ort === 'zug'), ersterHausOhneZug = liste.findIndex((x) => x.skript.ort === 'haus' && x.skript.boesewicht !== zug.boesewicht);
+    if (ersterZug >= 0 && ersterHausOhneZug >= 0) assert.ok(ersterZug < ersterHausOhneZug, `Konto ${i}: Zug vor Haus`);
+  }
+  assert.equal(SK.skripte.filter((s) => s.teil2).length, 15);
+});
