@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-02T20:45:10.794Z",
+ "stand": "2026-11-02T21:04:50.314Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "neu:https://afew-store.com/products/barbour-barbour-wax-cap-dark-brown",
+   "art": "Neu",
+   "titel": "🟢 NEU im Bestand: Barbour Barbour Wax Cap",
+   "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/barbour-barbour-wax-cap-dark-brown-mha0005br91-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1790755995",
+   "link": "https://afew-store.com/products/barbour-barbour-wax-cap-dark-brown",
+   "text": "37,99 € · afew-store.com (online)\nVerfügbar - jetzt bestellen, solange Größen da sind.",
+   "zeit": "2026-11-02T20:52:04.638Z"
+  },
   {
    "schluessel": "deal:https://afew-store.com/products/air-jordan-3-retro-sail-black-university-red-pale-ivory",
    "art": "Deal",
@@ -185,19 +194,10 @@
    "link": "https://www.overkillshop.com/products/new-balance-u1906lae-silver",
    "text": "overkillshop.com · U1906LAE\nVerkauf ca. 100–160 € → Gewinn ca. +28,00 € (ROI 33 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-10-31T17:16:40.318Z"
-  },
-  {
-   "schluessel": "deal:https://www.overkillshop.com/products/new-balance-u19068g9-u19068g9-black-angora",
-   "art": "Deal",
-   "titel": "💰 Deal: New Balance 1906R / 530 für 84,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U19068G9_1.jpg?v=1770898613",
-   "link": "https://www.overkillshop.com/products/new-balance-u19068g9-u19068g9-black-angora",
-   "text": "overkillshop.com · U19068G9\nVerkauf ca. 100–160 € → Gewinn ca. +28,00 € (ROI 33 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-10-31T17:16:40.318Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-02T20:38:40.463Z",
+  "stand": "2026-11-02T20:55:35.640Z",
   "filialen": 148,
   "produkte": [
    {
@@ -394,7 +394,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 16
+      "menge": 15
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -600,7 +600,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Flörsheim am Main",
@@ -1597,11 +1597,35 @@
   "ware": [],
   "top": [
    {
+    "titel": "andy burnham",
+    "menge": "5000+"
+   },
+   {
+    "titel": "marathon weltrekord",
+    "menge": "1000+"
+   },
+   {
+    "titel": "burnham",
+    "menge": "200+"
+   },
+   {
+    "titel": "trinkgeld",
+    "menge": "200+"
+   },
+   {
+    "titel": "nasdaq 100",
+    "menge": "200+"
+   },
+   {
+    "titel": "ahmet nazif zorlu",
+    "menge": "500+"
+   },
+   {
     "titel": "brandstiftung",
     "menge": "500+"
    },
    {
-    "titel": "ahmet nazif zorlu",
+    "titel": "südwest presse",
     "menge": "200+"
    },
    {
@@ -1609,37 +1633,22 @@
     "menge": "200+"
    },
    {
-    "titel": "a661",
-    "menge": "200+"
-   },
-   {
-    "titel": "benfica - alverca",
-    "menge": "200+"
-   },
-   {
-    "titel": "südwest presse",
-    "menge": "200+"
-   },
-   {
     "titel": "rudersberg",
     "menge": "200+"
-   },
-   {
-    "titel": "robert redford",
-    "menge": "500+"
-   },
-   {
-    "titel": "bremervörde ammoniak",
-    "menge": "200+"
-   },
-   {
-    "titel": "georg hack",
-    "menge": "500+"
    }
   ]
  },
  "live": {
   "treffer": [
+   {
+    "titel": "Barbour Barbour Wax Cap",
+    "preis": 37.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/barbour-barbour-wax-cap-dark-brown",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/barbour-barbour-wax-cap-dark-brown-mha0005br91-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1790755995",
+    "laden": "afew-store.com",
+    "begriff": "cap"
+   },
    {
     "titel": "T90",
     "preis": 45,
@@ -2712,20 +2721,20 @@
     "begriff": "jordan"
    },
    {
+    "titel": "Nike Air Jordan 3 Retro OG *True Blue*",
+    "preis": 179,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/nikeair-jordan-3-retro-og-true-blue-white-varsity-red-true-blue-cement-grey-anthracite",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/zaf63auwgf-IF4396-104_Nike_Air-Jordan-3-Retro-True-Blue-White-Varsity-Red-True-Blue-Cement-Grey-Anthracite_os-1.jpg?v=1783518064",
+    "laden": "asphaltgold.com",
+    "begriff": "jordan"
+   },
+   {
     "titel": "Air Jordan 1 High OG 'Royal'",
     "preis": 179.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/air-jordan-1-high-og-black-multi-color",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1793613734",
-    "laden": "afew-store.com",
-    "begriff": "jordan"
-   },
-   {
-    "titel": "Air Jordan 1 Retro High OG Flight Club",
-    "preis": 179.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-1-retro-high-og-flight-club-black-university-red-sail-gum-med-brown",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-retro-high-og-flight-club-black-university-red-sail-gum-med-brown-ii9811-001-footwear_20_3E_20sneaker.jpg?v=1778071717",
     "laden": "afew-store.com",
     "begriff": "jordan"
    },
