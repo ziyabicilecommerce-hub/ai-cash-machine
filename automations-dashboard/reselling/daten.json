@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-02T17:44:00.617Z",
+ "stand": "2026-11-02T17:47:07.203Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118196:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "text": "24,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 25 Filiale(n) vorrätig.",
+   "zeit": "2026-11-02T17:47:07.203Z"
+  },
   {
    "schluessel": "filiale:3118202:2040",
    "art": "Filiale",
@@ -183,19 +193,10 @@
    "link": "https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-royal-black-varsity-royal-black",
    "text": "asphaltgold.com · Nike Air Jordan 1 Retro High OG *Royal*\nVerkauf ca. 180–260 € → Gewinn ca. +32,00 € (ROI 20 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-10-31T17:13:42.454Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-flight-club-black-sail-gum-medium-brown-university-red",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 1 High OG für 140,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/oaolyxjb03-II9811-001_Nike_Air-Jordan-1-Retro-High-OG-Flight-Club-Black-Sail-Gum-Medium-Brown-University-Red_os-1.jpg?v=1779882086",
-   "link": "https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-flight-club-black-sail-gum-medium-brown-university-red",
-   "text": "asphaltgold.com · Nike Air Jordan 1 Retro High OG *Flight Club*\nVerkauf ca. 180–260 € → Gewinn ca. +53,00 € (ROI 38 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-10-31T17:10:34.191Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-02T17:31:32.872Z",
+  "stand": "2026-11-02T17:47:10.773Z",
   "filialen": 148,
   "produkte": [
    {
@@ -282,6 +283,14 @@
     "vorrat": [
      {
       "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
+      "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
       "km": 2.5,
       "lat": 50.0815926,
@@ -335,14 +344,6 @@
       "lat": 50.1434547,
       "lon": 8.5023642,
       "menge": 11
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 16
      }
     ]
    },
@@ -598,7 +599,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 4
+      "menge": 5
      },
      {
       "name": "dm Flörsheim am Main",
