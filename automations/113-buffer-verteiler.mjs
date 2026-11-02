@@ -57,9 +57,17 @@ async function main() {
       bericht(`- ❌ ${k.name}: ${String(e.message).slice(0, 200)}`);
     }
   }
+  let fehlt = false;
   for (const k of TIKTOK) {
     const { heute } = zaehlen(posts, k.id);
-    bericht(`- @${k.name} (TikTok): heute ${heute} Posts${heute < ZIEL_PRO_TAG ? ` (Ziel ${ZIEL_PRO_TAG}, kommt über Serie/Videobot/Fakten)` : ''}`);
+    if (heute < ZIEL_PRO_TAG) fehlt = true;
+    bericht(`- @${k.name} (TikTok): heute ${heute} Posts${heute < ZIEL_PRO_TAG ? ` (unter ${ZIEL_PRO_TAG})` : ''}`);
+  }
+  // Abends noch ein TikTok-Konto unter 5? Dann legt der Workflow ein Extra-Horror-Video vom Videobot nach.
+  const stunde = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hour: 'numeric', hourCycle: 'h23' }).format(new Date()));
+  if (fehlt && stunde >= 20 && process.env.GITHUB_OUTPUT) {
+    appendFileSync(process.env.GITHUB_OUTPUT, 'tiktok_auffuellen=ja\n');
+    bericht('- ➕ TikTok unter 5 Posts: Videobot legt ein Extra-Video nach.');
   }
   mkdirSync('buffer-verteiler', { recursive: true });
   writeFileSync(STAND, `${JSON.stringify(stand, null, 1)}\n`);
