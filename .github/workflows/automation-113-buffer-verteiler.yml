@@ -1,7 +1,7 @@
-name: "113 · Buffer-Verteiler (Instagram + YouTube, 5+ Posts am Tag)"
+name: "113 · Buffer-Verteiler (Horror, Fakten, Anime - 5+ Posts am Tag)"
 
-# Bespielt @desk.rebel, @purivelle.785 (Instagram) und giyuuu sama (YouTube) über Buffer mit eigenen Inhalten:
-# DeskRebel- bzw. Purivelle-Videos der Video-Fabrik und Shorts der eigenen Anime-Serie. Pro Lauf höchstens 1 Post
+# Bespielt über Buffer ohne Shop-Werbung: @desk.rebel (Instagram) mit jedes Mal neuen KI-Horror-Geschichten,
+# @purivelle.785 (Instagram) mit Fakten-Videos, giyuuu sama (YouTube) mit der eigenen Anime-Serie. Pro Lauf höchstens 1 Post
 # je Kanal, mindestens 90 Min. Abstand, bis zu 6 am Tag. Angestoßen von der Radar-Kette (pünktlich) und als Ersatz
 # per Zeitplan. Jeder Post ist als KI-generiert gekennzeichnet.
 
@@ -21,18 +21,44 @@ concurrency:
 jobs:
   posten:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Verteilen
+      - name: Eigene KI starten (kostenlos, für neue Horror-Geschichten)
+        uses: ./.github/actions/ki-lokal
+        with:
+          modell: ${{ vars.KI_LOKAL_MODELL || 'qwen2.5:7b' }}
+      - name: Vorbereiten (zählen, Horror-Geschichte schreiben)
         id: verteilen
         env:
           BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
           BUFFER_ORGANISATION: ${{ vars.BUFFER_ORGANISATION }}
-        run: node automations/113-buffer-verteiler.mjs
+          GITHUB_TOKEN: ${{ github.token }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: node automations/113-buffer-verteiler.mjs --vorbereiten
+      - name: Horror-Video rendern und ablegen
+        id: horror
+        if: steps.verteilen.outputs.horror == 'ja'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SLUG: ${{ steps.verteilen.outputs.slug }}
+        run: |
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
+          pip install -q pillow edge-tts
+          python3 automations/schatten/story.py out/folge.json out
+          TAG="horror-ig-$(date -u +%Y%m%d-%H%M)"
+          cp out/video.mp4 "out/$SLUG.mp4"
+          gh release create "$TAG" "out/$SLUG.mp4" out/cover.jpg -R "$GITHUB_REPOSITORY" --prerelease --title "Horror für Instagram: $SLUG" --notes "KI-generiertes Horror-Video (frei erfundene Geschichte)."
+          echo "url=https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$SLUG.mp4" >> "$GITHUB_OUTPUT"
+      - name: Posten
+        env:
+          BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
+          BUFFER_ORGANISATION: ${{ vars.BUFFER_ORGANISATION }}
+        run: node automations/113-buffer-verteiler.mjs --posten "${{ steps.horror.outputs.url }}"
       - name: TikTok auf 5 Posts auffüllen
         if: steps.verteilen.outputs.tiktok_auffuellen == 'ja'
         env:
