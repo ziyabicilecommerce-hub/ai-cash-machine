@@ -36,7 +36,10 @@ test('Texte: KI-Hinweis immer, Instagram als Reel ohne Link, YouTube mit Titel u
   const ig = beitrag({ caption: 'Tolles Teil #DeskRebel\n\n👉 https://www.deskrebel.store/products/x', titel: 'T' }, 'instagram');
   assert.match(ig.text, /KI-generiert/); assert.ok(!/https?:/.test(ig.text)); assert.match(ig.text, /Link in Bio/);
   assert.deepEqual(ig.metadata.instagram, { type: 'reel', shouldShareToFeed: true, isAiGenerated: true });
-  const yt = beitrag({ titel: 'Kage no Shiro – Folge 30 (Teaser)', caption: '' }, 'youtube');
+  const nurTags = beitrag({ caption: '#Purivelle #Massage', titel: 'Top 5 von Purivelle' }, 'instagram');
+  assert.match(nurTags.text, /^Top 5 von Purivelle\n\n#Purivelle/);
+  const yt = beitrag({ titel: 'Kage no Shiro – Folge 30 (Teaser)', caption: 'Die ganze Folge jetzt auf YouTube!\n\nDie Ninja kehren zurück.' }, 'youtube');
+  assert.ok(!/jetzt auf YouTube/.test(yt.text)); assert.match(yt.text, /^Die Ninja/);
   assert.match(yt.text, /KI-generiert/);
   assert.ok(yt.metadata.youtube.title.length <= 100 && yt.metadata.youtube.categoryId && yt.metadata.youtube.isAiGenerated);
 });
