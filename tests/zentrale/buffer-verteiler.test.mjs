@@ -68,3 +68,14 @@ test('Zählen und Tagesbeginn Berlin', () => {
   const z = zaehlen([{ channelId: 'k', status: 'sent', sentAt: '2026-11-02T08:00:00Z' }, { channelId: 'k', status: 'error', dueAt: '2026-11-02T09:00:00Z' }, { channelId: 'x', status: 'sent', sentAt: '2026-11-02T10:00:00Z' }], 'k');
   assert.deepEqual(z, { heute: 1, letzter: '2026-11-02T08:00:00Z' });
 });
+
+test('Hook-Wettbewerb: stärkster gültiger KI-Hook gewinnt, schwache fliegen raus', async () => {
+  const { neueGeschichte, hookPunkte, BEISPIEL } = await import('../../automations/schatten/horrorKi.mjs');
+  assert.ok(hookPunkte('Um 3:12 Uhr klingelt mein Handy. Der Anrufer bin ich.') >= 5);
+  assert.ok(hookPunkte('Es war einmal ein Wald?') <= 2);
+  const antworten = [{ ...BEISPIEL, titel: 'Schwach', hook: 'Es war dunkel im Wald und kalt.' }, { ...BEISPIEL, titel: 'Stark', hook: 'Um 3 Uhr nachts schreibt mir mein Handy: Ich bin allein.' }];
+  let i = 0;
+  const s = await neueGeschichte(async () => antworten[i++ % 2], []);
+  assert.equal(s.titel, 'Stark');
+  assert.equal(await neueGeschichte(async () => ({ ...BEISPIEL, hook: 'Es war dunkel und kalt im Wald.' }), []), null, 'nur schwache Hooks -> Vorrat');
+});

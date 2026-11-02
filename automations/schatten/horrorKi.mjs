@@ -38,10 +38,19 @@ export function saeubern(roh) {
   return ok ? s : null;
 }
 
-// Neue Geschichte von der KI (bis zu 3 Versuche), sonst null
-export async function neueGeschichte(kiJson, bekannt = []) {
-  for (let i = 0; i < 3; i++) {
-    try { const s = saeubern(await kiJson(prompt(bekannt))); if (s && !bekannt.includes(s.titel)) return s; } catch (e) { console.log(`[horror-ki] ${String(e.message).slice(0, 120)}`); }
+// Hook-Punkte (0-6) nach den Regeln aus dem Hook-Tester der App - was bei unseren Videos die Leute hält
+export function hookPunkte(h = '') {
+  return [h.length > 0 && h.length <= 70, /^(ich|mein|meine|um|im|heute|kein)\b/i.test(h), /(aber|trotzdem|nicht|kein|niemand|nur|allein|tot|gibt es)/i.test(h),
+    /\d|uhr|nacht|drei/i.test(h), /(handy|nachricht|anruf|kamera|foto|app|chat|klingel)/i.test(h), !/^teil\s*\d/i.test(h) && !/\?$/.test(h)].filter(Boolean).length;
+}
+
+// Hook-Wettbewerb: bis zu 3 gültige Geschichten von der KI, die mit dem stärksten Hook gewinnt (mind. 3 von 6 Punkten)
+export async function neueGeschichte(kiJson, bekannt = [], { versuche = 3, mindestens = 3 } = {}) {
+  const kandidaten = [];
+  for (let i = 0; i < versuche; i++) {
+    try { const s = saeubern(await kiJson(prompt(bekannt))); if (s && !bekannt.includes(s.titel)) kandidaten.push(s); } catch (e) { console.log(`[horror-ki] ${String(e.message).slice(0, 120)}`); }
+    if (kandidaten.some((k) => hookPunkte(k.hook) >= 5)) break;  // schon sehr stark - nicht weiter warten
   }
-  return null;
+  const best = kandidaten.sort((a, b) => hookPunkte(b.hook) - hookPunkte(a.hook))[0];
+  return best && hookPunkte(best.hook) >= mindestens ? best : null;
 }
