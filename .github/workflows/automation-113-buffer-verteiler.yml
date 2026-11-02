@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: buffer-verteiler
@@ -27,10 +28,16 @@ jobs:
         with:
           node-version: '22'
       - name: Verteilen
+        id: verteilen
         env:
           BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
           BUFFER_ORGANISATION: ${{ vars.BUFFER_ORGANISATION }}
         run: node automations/113-buffer-verteiler.mjs
+      - name: TikTok auf 5 Posts auffüllen
+        if: steps.verteilen.outputs.tiktok_auffuellen == 'ja'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run videobot-autopilot.yml --ref main -R "$GITHUB_REPOSITORY" -f erzwingen=true
       - name: Stand speichern
         if: always()
         run: |
