@@ -5,7 +5,7 @@ import { typAus } from './tiktokLernen.mjs';
 
 const wert = (p, typ) => Number((p.metrics || []).find((m) => m.type === typ)?.value) || 0;
 const ersteZeile = (t) => String(t || '').split('\n')[0].replace(/#[\p{L}\p{N}_]+/gu, '').trim().slice(0, 90);
-const sicherLink = (u) => (/^https:\/\/(www\.)?tiktok\.com\//.test(String(u || '')) ? u : '');
+const sicherLink = (u) => (/^https:\/\/(www\.)?(tiktok\.com|instagram\.com|youtube\.com|youtu\.be)\//.test(String(u || '')) ? u : '');
 const norm = (s) => String(s || '').replace(/^@/, '').toLowerCase();
 const runden = (x, n = 1) => Math.round(x * 10 ** n) / 10 ** n;
 
@@ -57,7 +57,7 @@ export function dashboardDaten({ posts = [], kanaele = [], nischen = {}, serien 
   const konten = kanaele.map((k) => {
     const eigene = gesendet.filter((p) => p.channelId === k.id);
     const bester = [...eigene].sort((a, b) => wert(b, 'views') - wert(a, 'views'))[0];
-    return { name: `@${norm(k.name)}`, nische: nischen[norm(k.name)] || [], serie: serien[`@${norm(k.name)}`] || 0, ...summe(eigene), bester: bester && wert(bester, 'views') ? zeile(bester) : null };
+    return { name: `@${norm(k.name)}`, dienst: k.dienst || 'tiktok', nische: nischen[norm(k.name)] || [], serie: serien[`@${norm(k.name)}`] || 0, ...summe(eigene), bester: bester && wert(bester, 'views') ? zeile(bester) : null };
   });
   const geplant = posts.filter((p) => p.status === 'scheduled').sort((a, b) => zeit(a) - zeit(b)).map(zeile);
   const fehler = posts.filter((p) => p.status === 'error').length;

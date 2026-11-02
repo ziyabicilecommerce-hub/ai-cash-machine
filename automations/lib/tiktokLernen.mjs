@@ -4,7 +4,7 @@
 
 // Format eines Posts aus seinem Text erkennen (Captions aus der Faktenliste).
 // Horror-Geschichten (Serie mit "(Teil n/m)" oder Einzel-Video vom Videobot) zählen nicht als Quiz - sonst verfälschen sie das Lernen
-export const typAus = (text) => (/#horrortok|gruselgeschichte/i.test(String(text)) ? (/\(Teil \d+\/\d+\)/.test(String(text)) ? 'serie' : 'horror') : /wahr oder mythos|mythos oder wahr/i.test(String(text)) ? 'mythos' : /^\W*(🚀 Echte NASA-Aufnahmen! )?Was (passiert|passierte|wäre)\b/i.test(String(text)) ? 'waswaere' : 'quiz');
+export const typAus = (text) => (/#anime\b/i.test(String(text)) ? 'anime' : /#horrortok|gruselgeschichte/i.test(String(text)) ? (/\(Teil \d+\/\d+\)/.test(String(text)) ? 'serie' : 'horror') : /wahr oder mythos|mythos oder wahr/i.test(String(text)) ? 'mythos' : /^\W*(🚀 Echte NASA-Aufnahmen! )?Was (passiert|passierte|wäre)\b/i.test(String(text)) ? 'waswaere' : 'quiz');
 
 const wert = (metrics, typ) => Number((metrics || []).find((m) => m.type === typ)?.value) || 0;
 

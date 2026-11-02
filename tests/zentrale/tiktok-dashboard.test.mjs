@@ -52,4 +52,6 @@ test('typAus: Horror zählt nicht als Quiz (sonst verfälscht es das Lernen)', a
   assert.equal(typAus('Es klopft. 👇 (Teil 6/12)\n\n#horrortok'), 'serie');
   assert.equal(typAus('Zwei Zahnbürsten 👇\n\n#horrortok #gruselgeschichte'), 'horror');
   assert.equal(typAus('Welcher Planet ist am heißesten?'), 'quiz');
+  assert.equal(typAus('Kage no Shiro Folge 30 #anime #shorts'), 'anime');
+  assert.equal(typAus('Ich wohne allein.\n\n#horror #gruselgeschichte'), 'horror', 'Instagram-Horror');
 });

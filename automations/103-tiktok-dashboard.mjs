@@ -22,7 +22,8 @@ async function main() {
   const konto = await gql('{ account { organizations { id } } }');
   const orgId = env('BUFFER_ORGANISATION') || konto.account.organizations[0]?.id;
   const { channels } = await gql('query($i: ChannelsInput!) { channels(input: $i) { id name service } }', { i: { organizationId: orgId } });
-  const kanaele = channels.filter((c) => c.service === 'tiktok').map(({ id, name }) => ({ id, name }));
+  // alle Video-Kanäle: TikTok, Instagram (Reels) und YouTube (Shorts) - so sieht das Viral-Labor, was wo zieht
+  const kanaele = channels.filter((c) => ['tiktok', 'instagram', 'youtube'].includes(c.service)).map(({ id, name, service }) => ({ id, name, dienst: service }));
   const seit = new Date(Date.now() - 30 * 86400000).toISOString();
   const posts = [];
   let after = null;

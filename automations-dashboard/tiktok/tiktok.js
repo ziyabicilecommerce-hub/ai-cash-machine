@@ -3,7 +3,7 @@ const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
 const zahl = (n) => new Intl.NumberFormat('de-DE').format(Math.round(n || 0));
 const uhr = (iso) => (iso ? new Date(iso).toLocaleString('de-DE', { timeZone: 'Europe/Berlin', weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '–');
-const sicher = (u) => (/^https:\/\/(www\.)?tiktok\.com\//.test(String(u || '')) ? u : '');
+const sicher = (u) => (/^https:\/\/(www\.)?(tiktok\.com|instagram\.com|youtube\.com|youtu\.be)\//.test(String(u || '')) ? u : '');
 
 function kpi(wert, name, trend) {
   const k = el('div', 'karte kpi');
