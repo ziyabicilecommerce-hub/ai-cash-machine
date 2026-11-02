@@ -99,9 +99,9 @@ async function posten(horrorUrl) {
     if (p.horror) {
       if (!/^https:\/\//.test(horrorUrl || '')) { bericht(`- ❌ ${k.name}: Horror-Video nicht gerendert`); continue; }
       const folge = json('out/folge.json', {});
-      v = { url: horrorUrl, titel: p.titel, caption: `${folge.caption || p.titel}\n\n#horror #gruselgeschichte #creepypasta #gänsehaut #horrorstory` };
+      v = { url: horrorUrl, titel: p.titel, caption: folge.caption || p.titel };
     }
-    const { text, metadata } = beitrag(v, k.dienst);
+    const { text, metadata } = beitrag(v, k.dienst, k.quelle);
     try {
       const d = await gql(POST_MUTATION, { input: { channelId: k.id, text, schedulingType: 'automatic', mode: 'shareNow', assets: [{ video: { url: v.url } }], metadata } });
       const r = d.createPost;

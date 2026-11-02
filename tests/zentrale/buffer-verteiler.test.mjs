@@ -48,6 +48,11 @@ test('posten nur mit Abstand und höchstens 6 am Tag', () => {
 test('Texte: KI-Hinweis immer, Instagram als Reel ohne Link, YouTube mit Titel und Kategorie', () => {
   const ig = beitrag({ caption: 'Honig verdirbt nie. Wahr?\n\nTag 26 von 100 🔥 Folge @futureflowx3! #wissen', titel: 'T' }, 'instagram');
   assert.match(ig.text, /KI-generiert/); assert.ok(!/Folge @|Tag 26/.test(ig.text), ig.text);
+  const h = beitrag({ caption: 'Ich wohne allein. 1️⃣ Ins Bad oder 2️⃣ Raus hier? Zahl in die Kommentare 👇 #horrortok', titel: 'Z' }, 'instagram', 'horror');
+  assert.equal(h.metadata.instagram.firstComment, 'Was machst du? 1️⃣ Ins Bad oder 2️⃣ Raus hier - schreib nur die Zahl 👇');
+  assert.match(h.text, /#gruselgeschichte/); assert.ok(!/#horrortok/.test(h.text), 'nur Nischen-Tags');
+  const f = beitrag({ caption: 'Fakt #12: Oktopus hat drei Herzen #tiere', titel: 'F' }, 'instagram', 'fakten');
+  assert.match(f.text, /^Fakt #12: Oktopus/); assert.match(f.metadata.instagram.firstComment, /Wusstest du/);
   assert.deepEqual(ig.metadata.instagram, { type: 'reel', shouldShareToFeed: true, isAiGenerated: true });
   const nurTags = beitrag({ caption: '#wissen #honig', titel: 'Honig verdirbt nie' }, 'instagram');
   assert.match(nurTags.text, /^Honig verdirbt nie\n\n#wissen/);

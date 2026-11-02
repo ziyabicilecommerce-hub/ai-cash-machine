@@ -55,18 +55,39 @@ export function postenJetzt(heute, letzter, jetzt = Date.now(), { ziel = ZIEL_PR
   return true;
 }
 
-// Text je Plattform: Instagram ohne nicht klickbaren Link (-> Link in Bio), YouTube mit Titel. Immer KI-Hinweis.
-export function beitrag(v, dienst) {
-  let roh = String(v.caption || v.titel || '').replace(/👉\s*https?:\/\/\S+/g, '🔗 Link in Bio').replace(/https?:\/\/\S+/g, '')
+// Viral-Taktik je Nische: wenige passende Hashtags (Nische + Reichweite DE) und ein erster Kommentar mit Frage -
+// Kommentare sind das stärkste Signal für Reels. Die 1/2-Wahl aus dem Horror-Video steht direkt als Antwort-Vorlage drin.
+export const TAGS = {
+  horror: '#horror #gruselgeschichte #creepypasta #gänsehaut #horrorstory #reelsdeutschland #fyp',
+  fakten: '#wusstestdu #fakten #wissen #krassefakten #lernen #reelsdeutschland #fyp',
+  anime: '#anime #animeserie #animeshorts #shorts',
+};
+export function ersterKommentar(v, quelle) {
+  if (quelle === 'horror') {
+    const w = String(v.caption || '').match(/1️⃣\s*(.+?)\s+oder\s+2️⃣\s*(.+?)\?/);
+    return w ? `Was machst du? 1️⃣ ${w[1]} oder 2️⃣ ${w[2]} - schreib nur die Zahl 👇` : 'Was hättest du gemacht? Schreib es hier rein 👇';
+  }
+  if (quelle === 'fakten') return 'Wusstest du das schon? Ja oder Nein 👇 Markier jemanden, der das wissen muss!';
+  return '';
+}
+
+// Text je Plattform: Instagram ohne nicht klickbaren Link, YouTube mit Titel. Immer KI-Hinweis.
+export function beitrag(v, dienst, quelle = '') {
+  let roh = String(v.caption || v.titel || '').replace(/👉\s*https?:\/\/\S+/g, '').replace(/https?:\/\/\S+/g, '')
     .replace(/^.*jetzt auf YouTube!?\s*$/gim, '').replace(/^.*Folge @.*$/gim, '').replace(/Tag \d+ von \d+ 🔥\s*/g, '').replace(/\n{3,}/g, '\n\n').trim();
   // Caption besteht nur aus Hashtags? Dann steht der Titel davor - sonst weiß keiner, worum es geht
   if (v.titel && (!roh || roh.startsWith('#'))) roh = `${v.titel}\n\n${roh}`.trim();
+  // vorhandene Hashtags durch die Nischen-Tags ersetzen (keine doppelten, keine fremden Kontonamen)
+  const tags = TAGS[quelle] || '';
+  if (tags) roh = roh.replace(/(^|\s)#\p{L}[\p{L}\p{N}_]*/gu, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
   if (dienst === 'youtube') {
     const titel = String(v.titel || 'Kage no Shiro').replace(/\s+/g, ' ').slice(0, 90);
-    const beschreibung = `${roh || titel}\n\nEigene Anime-Serie mit eigenen Figuren. #anime #animeserie #shorts\n${KI_HINWEIS}`.slice(0, 4900);
+    const beschreibung = `${roh || titel}\n\nEigene Anime-Serie mit eigenen Figuren. Abonnieren für die nächste Folge!\n${tags || '#anime #shorts'}\n${KI_HINWEIS}`.slice(0, 4900);
     return { text: beschreibung, metadata: { youtube: { title: `${titel} #shorts`.slice(0, 100), categoryId: '1', madeForKids: false, isAiGenerated: true, privacy: 'public' } } };
   }
-  return { text: `${roh}\n\n${KI_HINWEIS}`.slice(0, 2100), metadata: { instagram: { type: 'reel', shouldShareToFeed: true, isAiGenerated: true } } };
+  const kommentar = ersterKommentar(v, quelle);
+  return { text: `${roh}\n\n${tags}\n${KI_HINWEIS}`.replace(/\n{3,}/g, '\n\n').slice(0, 2100),
+    metadata: { instagram: { type: 'reel', shouldShareToFeed: true, isAiGenerated: true, ...(kommentar ? { firstComment: kommentar } : {}) } } };
 }
 
 // Beginn des heutigen Tages in Berlin als ISO (für die Zählung "Posts heute")
