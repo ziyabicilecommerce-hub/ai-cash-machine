@@ -128,6 +128,26 @@ export function gewinner(skripte, letzte = [], faktor = 1.2) {
   return treffer.filter((t) => schnitt && t.aufrufe >= schnitt * faktor).sort((a, b) => b.aufrufe * (b.sehdauer || 1) - a.aufrufe * (a.sehdauer || 1));
 }
 
+// Lern-Bot: welche Orte, Bösewichte und Stimmen bei uns ziehen (Ø Aufrufe x Sehdauer je Merkmal, alle Konten).
+// Damit werden die noch offenen eigenen Geschichten sortiert - was ähnlich ist wie unsere Hits, kommt zuerst.
+export function lernen(skripte, letzte = []) {
+  const summe = {};
+  for (const p of letzte) {
+    if (!(p.aufrufe > 0) || !['horror', 'serie'].includes(p.format)) continue;
+    const s = skripte.find((x) => String(p.text || '').startsWith(satz(x.hook).slice(0, 35)));
+    if (!s) continue;
+    for (const k of [`ort:${s.ort || 'haus'}`, `boese:${s.boesewicht || 'schatten'}`, `stimme:${s.stimme || 'mann'}`]) {
+      (summe[k] ||= { n: 0, punkte: 0 }).n++;
+      summe[k].punkte += p.aufrufe * (p.sehdauer || 1);
+    }
+  }
+  return Object.fromEntries(Object.entries(summe).map(([k, v]) => [k, Math.round(v.punkte / v.n)]));
+}
+export function lernPunkte(s, gelernt = {}) {
+  const w = [`ort:${s.ort || 'haus'}`, `boese:${s.boesewicht || 'schatten'}`, `stimme:${s.stimme || 'mann'}`].map((k) => gelernt[k]).filter((x) => x != null);
+  return w.length ? w.reduce((a, b) => a + b, 0) / w.length : 0;
+}
+
 // Autopilot: jedes Konto hat eigene Geschichten. Gewinner von den ANDEREN Konten kommen zuerst dran -
 // was dort viral ging, bekommt auf jedem Konto eine Chance (der Workflow verhindert per Release, dass ein Konto etwas doppelt postet).
 // Fortsetzungs-Bot: lief Teil 1 auf DIESEM Konto als Gewinner und es gibt einen Teil 2, kommt der zuerst -
@@ -146,7 +166,11 @@ export function autopilotListe(skripte, kontoIndex, konten = 3, letzte = []) {
   const teil2 = [...new Set(alle.filter((g) => g.konto === ich).map((g) => g.slug))].map(finde).filter((s) => s?.teil2).map(fortsetzung);
   const top = alle.filter((g) => g.konto !== ich).map((g) => g.slug);
   const vorne = [...new Set(top)].map((sl) => eintrag(finde(sl)));
-  return [...teil2, ...vorne, ...eigene.filter((e) => !top.includes(e.slug))];
+  // eigene Geschichten nach dem Gelernten sortieren (stabil: ohne Daten bleibt die Reihenfolge)
+  const gelernt = lernen(skripte, letzte);
+  const rest = eigene.filter((e) => !top.includes(e.slug)).map((e, i) => ({ e, i, p: lernPunkte(e.skript, gelernt) }))
+    .sort((a, b) => b.p - a.p || a.i - b.i).map((x) => x.e);
+  return [...teil2, ...vorne, ...rest];
 }
 
 if (process.argv[2] === '--auto') {
