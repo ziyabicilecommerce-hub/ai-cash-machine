@@ -7,7 +7,7 @@ name: "🎬 Videobot Autopilot (abends + nachts ein Horror-Video pro Konto)"
 on:
   schedule:
     # GitHub startet Zeitpläne nicht zuverlässig - deshalb je Slot drei Versuche. Die Sperre unten sorgt dafür,
-    # dass pro Konto und Slot (5 Std.) trotzdem nur EIN Video rausgeht.
+    # dass pro Konto und Slot (3 Std.) trotzdem nur EIN Video rausgeht.
     - cron: '43 17 * * *'  # Abend-Slot ab 18:43 Uhr (Winterzeit)
     - cron: '43 18 * * *'
     - cron: '43 19 * * *'
@@ -59,7 +59,13 @@ jobs:
         id: wahl
         run: |
           mkdir -p out
-          GRENZE=$(date -u -d '-5 hours' +%Y-%m-%dT%H:%M:%SZ)
+          # Verspätete Zeitpläne posten nur noch im eigentlichen Slot-Fenster (19-21 und 2-4 Uhr Berlin) -
+          # sonst blockiert ein Abend-Lauf um 23 Uhr den pünktlichen Nacht-Slot um 2 Uhr.
+          STUNDE=$(TZ=Europe/Berlin date +%H)
+          if [ "${{ github.event_name }}" = "schedule" ] && ! echo " 19 20 21 02 03 04 " | grep -q " $STUNDE "; then
+            echo "Zeitplan kam zu spät ($STUNDE Uhr Berlin) - übersprungen, der Pünktlich-Bot übernimmt."; exit 0
+          fi
+          GRENZE=$(date -u -d '-3 hours' +%Y-%m-%dT%H:%M:%SZ)
           LETZTES=$(gh release list -R "$REPO" --limit 100 --json tagName,createdAt --jq "[.[] | select(.tagName | startswith(\"videobot-auto-\")) | select(.tagName | endswith(\"-$KONTO\")) | select(.createdAt > \"$GRENZE\")] | length")
           if [ "${LETZTES:-0}" -gt 0 ] && [ "${{ inputs.erzwingen }}" != "true" ]; then
             echo "@$KONTO hat in diesem Slot schon ein Video - übersprungen."; exit 0
