@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-02T23:54:27.771Z",
+ "stand": "2026-11-02T23:58:32.535Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -954,25 +954,26 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Azetts%20Gelassenheit",
     "preis": {
      "tief": 10,
-     "trend": 20.76,
-     "schnitt7": 20.04,
+     "trend": 20.25,
+     "schnitt7": 20.02,
      "schnitt30": 19.99
     },
     "prozent": 0,
     "signal": "stabil",
     "profi": {
      "einstieg": 10,
-     "ziel": 20.04,
-     "gewinn": 7.54,
+     "ziel": 20.02,
+     "gewinn": 7.52,
      "roi": 75,
      "momentum": 0,
-     "spread": 10.76,
+     "spread": 10.25,
      "score": 74,
      "signal": "BUY"
     },
     "nurBewegung": true,
     "kurs": [
-     20.76
+     20.76,
+     20.25
     ]
    },
    {
@@ -987,25 +988,150 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mauzi-ex",
     "preis": {
      "tief": 7,
-     "trend": 13.17,
-     "schnitt7": 13.41,
-     "schnitt30": 13.26
+     "trend": 13,
+     "schnitt7": 13.38,
+     "schnitt30": 13.3
     },
     "prozent": 1,
     "signal": "stabil",
     "profi": {
      "einstieg": 7,
-     "ziel": 13.17,
-     "gewinn": 4.01,
-     "roi": 57,
+     "ziel": 13,
+     "gewinn": 3.85,
+     "roi": 55,
      "momentum": 1,
-     "spread": 6.17,
+     "spread": 6,
      "score": 61,
      "signal": "BUY"
     },
     "nurBewegung": true,
     "kurs": [
-     13.17
+     13.17,
+     13
+    ]
+   },
+   {
+    "id": "me04-119",
+    "name": "Chillabell-ex",
+    "nummer": "119",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Wachsendes Chaos",
+    "setId": "me04",
+    "release": "2026-05-22",
+    "bild": "https://assets.tcgdex.net/de/me/me04/119/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Chillabell-ex",
+    "preis": {
+     "tief": 19.99,
+     "trend": 34.06,
+     "schnitt7": 33.59,
+     "schnitt30": 35.23
+    },
+    "prozent": -5,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 19.99,
+     "ziel": 33.59,
+     "gewinn": 10.42,
+     "roi": 52,
+     "momentum": -5,
+     "spread": 14.07,
+     "score": 59,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     34.06
+    ]
+   },
+   {
+    "id": "me05-114",
+    "name": "Mega-Zeraora-ex",
+    "nummer": "114",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Dunkelnacht",
+    "setId": "me05",
+    "release": "2026-07-17",
+    "bild": "https://assets.tcgdex.net/de/me/me05/114/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zeraora-ex",
+    "preis": {
+     "tief": 27.19,
+     "trend": 37.53,
+     "schnitt7": 40.8,
+     "schnitt30": 41.39
+    },
+    "prozent": -1,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 27.19,
+     "ziel": 37.53,
+     "gewinn": 6.96,
+     "roi": 26,
+     "momentum": -1,
+     "spread": 10.34,
+     "score": 56,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     38.32,
+     37.53
+    ]
+   },
+   {
+    "id": "me05-118",
+    "name": "Gladios Finalkampf",
+    "nummer": "118",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Dunkelnacht",
+    "setId": "me05",
+    "release": "2026-07-17",
+    "bild": "https://assets.tcgdex.net/de/me/me05/118/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gladios%20Finalkampf",
+    "preis": {
+     "tief": 11,
+     "trend": 19.11,
+     "schnitt7": 19.08,
+     "schnitt30": 20.61
+    },
+    "prozent": -7,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 11,
+     "ziel": 19.08,
+     "gewinn": 5.63,
+     "roi": 51,
+     "momentum": -7,
+     "spread": 8.11,
+     "score": 55,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     19.11
     ]
    },
    {
@@ -1020,82 +1146,26 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Micas%20Auff%C3%BChrung",
     "preis": {
      "tief": 7,
-     "trend": 13.73,
-     "schnitt7": 13.49,
-     "schnitt30": 13.65
-    },
-    "prozent": -1,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 7,
-     "ziel": 13.49,
-     "gewinn": 4.32,
-     "roi": 62,
-     "momentum": -1,
-     "spread": 6.73,
-     "score": 60,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     13.73
-    ]
-   },
-   {
-    "id": "me05-114",
-    "name": "Mega-Zeraora-ex",
-    "nummer": "114",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Dunkelnacht",
-    "setId": "me05",
-    "release": "2026-07-17",
-    "bild": "https://assets.tcgdex.net/de/me/me05/114/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zeraora-ex",
-    "preis": {
-     "tief": 27,
-     "trend": 38.32,
-     "schnitt7": 40.5,
-     "schnitt30": 41.97
+     "trend": 13.45,
+     "schnitt7": 13.17,
+     "schnitt30": 13.77
     },
     "prozent": -4,
     "signal": "stabil",
     "profi": {
-     "einstieg": 27,
-     "ziel": 38.32,
-     "gewinn": 7.9,
-     "roi": 29,
+     "einstieg": 7,
+     "ziel": 13.17,
+     "gewinn": 4.01,
+     "roi": 57,
      "momentum": -4,
-     "spread": 11.32,
-     "score": 52,
+     "spread": 6.45,
+     "score": 54,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32,
-     38.32
+     13.73,
+     13.45
     ]
    },
    {
@@ -1110,58 +1180,59 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rosys%20Ermutigung",
     "preis": {
      "tief": 24.9,
-     "trend": 34.88,
-     "schnitt7": 35.97,
-     "schnitt30": 37.47
+     "trend": 35.11,
+     "schnitt7": 36.24,
+     "schnitt30": 37.33
     },
-    "prozent": -4,
+    "prozent": -3,
     "signal": "stabil",
     "profi": {
      "einstieg": 24.9,
-     "ziel": 34.88,
-     "gewinn": 6.74,
-     "roi": 27,
-     "momentum": -4,
-     "spread": 9.98,
+     "ziel": 35.11,
+     "gewinn": 6.95,
+     "roi": 28,
+     "momentum": -3,
+     "spread": 10.21,
+     "score": 53,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     34.88,
+     35.11
+    ]
+   },
+   {
+    "id": "me03-118",
+    "name": "Mega-Starmie-ex",
+    "nummer": "118",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/118/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Starmie-ex",
+    "preis": {
+     "tief": 24,
+     "trend": 32.51,
+     "schnitt7": 32.74,
+     "schnitt30": 33.88
+    },
+    "prozent": -3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 24,
+     "ziel": 32.51,
+     "gewinn": 5.38,
+     "roi": 22,
+     "momentum": -3,
+     "spread": 8.51,
      "score": 51,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     34.88
-    ]
-   },
-   {
-    "id": "me03-122",
-    "name": "Violette",
-    "nummer": "122",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/122/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Violette",
-    "preis": {
-     "tief": 11,
-     "trend": 18.55,
-     "schnitt7": 18.39,
-     "schnitt30": 19.13
-    },
-    "prozent": -4,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 11,
-     "ziel": 18.39,
-     "gewinn": 4.97,
-     "roi": 45,
-     "momentum": -4,
-     "spread": 7.55,
-     "score": 50,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     18.55
+     32.51
     ]
    },
    {
@@ -1176,25 +1247,26 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Piepi",
     "preis": {
      "tief": 8.99,
-     "trend": 16.7,
-     "schnitt7": 16.08,
-     "schnitt30": 17.26
+     "trend": 16.35,
+     "schnitt7": 15.95,
+     "schnitt30": 17.04
     },
-    "prozent": -7,
+    "prozent": -6,
     "signal": "stabil",
     "profi": {
      "einstieg": 8.99,
-     "ziel": 16.08,
-     "gewinn": 4.79,
-     "roi": 53,
-     "momentum": -7,
-     "spread": 7.71,
-     "score": 48,
+     "ziel": 15.95,
+     "gewinn": 4.66,
+     "roi": 52,
+     "momentum": -6,
+     "spread": 7.36,
+     "score": 49,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     16.7
+     16.7,
+     16.35
     ]
    }
   ],
@@ -1254,16 +1326,16 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 366,
+  "geprueft": 1053,
   "statistik": {
-   "karten": 366,
+   "karten": 1053,
    "mitPreis": 366,
    "imBudget": 19,
    "steigend": 0,
-   "fallend": 9
+   "fallend": 8
   },
-  "quelle": "TCGdex",
-  "stand": "2026-11-02T23:00:44.004Z"
+  "quelle": "TCGdex + pokemontcg.io",
+  "stand": "2026-11-02T23:58:20.893Z"
  },
  "trends": {
   "ware": [],
