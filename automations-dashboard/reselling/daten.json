@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-02T18:30:20.383Z",
+ "stand": "2026-11-02T18:33:21.069Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -196,7 +196,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-02T18:18:00.525Z",
+  "stand": "2026-11-02T18:33:23.374Z",
   "filialen": 148,
   "produkte": [
    {
@@ -283,14 +283,6 @@
     "vorrat": [
      {
       "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 1
-     },
-     {
-      "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
       "km": 2.5,
       "lat": 50.0815926,
@@ -344,6 +336,14 @@
       "lat": 50.1434547,
       "lon": 8.5023642,
       "menge": 11
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 16
      }
     ]
    },
@@ -599,7 +599,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Flörsheim am Main",
@@ -1582,15 +1582,15 @@
   "ware": [],
   "top": [
    {
+    "titel": "flugbegleiter",
+    "menge": "200+"
+   },
+   {
     "titel": "jüdische akademie frankfurt",
     "menge": "200+"
    },
    {
     "titel": "steinmeier",
-    "menge": "200+"
-   },
-   {
-    "titel": "flugbegleiter",
     "menge": "200+"
    },
    {
@@ -1603,18 +1603,18 @@
    },
    {
     "titel": "anthropic",
-    "menge": "1000+"
+    "menge": "2000+"
    },
    {
     "titel": "bärbel bas",
     "menge": "500+"
    },
    {
-    "titel": "andreas wolff",
-    "menge": "500+"
+    "titel": "weltraumteleskop",
+    "menge": "200+"
    },
    {
-    "titel": "messerangriff",
+    "titel": "andreas wolff",
     "menge": "500+"
    },
    {
@@ -1660,15 +1660,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/c2ypbmhf7s7-1201A906-001_Asics_GEL-1130-Black-Pure-Silver_os-1.jpg?v=1768574492",
     "laden": "asphaltgold.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "Y-3 x MERCEDES-AMG PETRONAS FORMULA 1 TEAM RUN CAP",
-    "preis": 59.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/y-3-performance-cap-black",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/y-3-performance-cap-black-kr4910-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1773826462",
-    "laden": "afew-store.com",
-    "begriff": "cap"
    },
    {
     "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
@@ -1768,15 +1759,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/WL574EVG-1__15228.1719435499.1280.1280.jpg?v=1742985395",
     "laden": "sneakersnstuff.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "Y-3 LOGO CAP",
-    "preis": 79.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/y-3-logo-cap-ngtred-black",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/y-3-logo-cap-ngtred-black-kw9699-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1792677789",
-    "laden": "afew-store.com",
-    "begriff": "cap"
    },
    {
     "titel": "Samba OG W",
