@@ -5,15 +5,28 @@ import { KANAELE, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen
 
 const VIDEOS = JSON.parse(readFileSync(new URL('../../video-feed/videos.json', import.meta.url), 'utf8')).videos;
 
-test('jeder Kanal bekommt eigene Inhalte - nichts doppelt zwischen den Kanälen', () => {
-  const listen = KANAELE.map((k) => passend(VIDEOS, k.quelle));
-  for (const [i, l] of listen.entries()) assert.ok(l.length >= 5, `${KANAELE[i].name}: genug Videos für einen Tag`);
-  const alle = listen.flat().map((v) => v.datei);
-  assert.equal(new Set(alle).size, alle.length, 'kein Video auf zwei Kanälen');
-  assert.ok(listen[0].every((v) => /deskrebel/i.test(`${v.caption}${v.url}${v.thema}`)));
-  assert.ok(listen[1].every((v) => /purivelle/i.test(`${v.caption}${v.url}${v.thema}`)));
-  assert.ok(listen[2].every((v) => v.format === 'hoch' && (v.dauer || 0) <= 180), 'YouTube: nur Shorts');
-  assert.ok(listen.flat().every((v) => !v.kanal), 'nie Fakten-Videos');
+test('keine Shop-Werbung, jeder Kanal etwas anderes', () => {
+  assert.deepEqual(KANAELE.map((k) => k.quelle), ['horror', 'fakten', 'anime']);
+  const fakten = passend(VIDEOS, 'fakten', 'purivelle.785'), anime = passend(VIDEOS, 'anime');
+  assert.ok(fakten.length >= 20 && anime.length >= 5);
+  for (const v of [...fakten, ...anime]) assert.ok(!/deskrebel\.store|purivelle\.store|#deskrebel|#purivelle/i.test(`${v.caption}${v.url}${v.titel}`), `Werbung: ${v.titel}`);
+  assert.ok(fakten.every((v) => v.kanal === 'fakten' && v.konto !== '@desk.rebel'), 'nur Fakten, nie die eines anderen Instagram-Kontos');
+  assert.equal(fakten[0].konto, '@purivelle.785', 'eigene Fakten-Videos zuerst');
+  assert.ok(anime.every((v) => v.format === 'hoch' && (v.dauer || 0) <= 180), 'YouTube: nur Shorts');
+  const fa = new Set(fakten.map((v) => v.datei));
+  assert.ok(!anime.some((v) => fa.has(v.datei)), 'nichts doppelt');
+});
+
+test('Horror-Generator: KI-Text wird streng geprüft', async () => {
+  const { saeubern, prompt, BEISPIEL } = await import('../../automations/schatten/horrorKi.mjs');
+  assert.ok(saeubern(BEISPIEL), 'Beispiel ist gültig');
+  assert.equal(saeubern({ ...BEISPIEL, ende: 'Überall ist Blut.' }), null, 'kein Blut');
+  assert.equal(saeubern({ ...BEISPIEL, hook: 'x'.repeat(120) }), null, 'Hook zu lang');
+  assert.equal(saeubern({ ...BEISPIEL, wahl: ['nur eins'] }), null);
+  assert.equal(saeubern({ ...BEISPIEL, frage: 'Keine Frage' }), null);
+  assert.equal(saeubern({ ...BEISPIEL, ort: 'mond' }).ort, 'haus', 'unbekannter Ort -> Haus');
+  assert.equal(saeubern('kaputt'), null);
+  assert.match(prompt(['zwei-zahnbuersten'], () => 0), /zwei-zahnbuersten/);
 });
 
 test('nächstes Video: erst neue (neueste zuerst), dann das am längsten nicht gepostete', () => {
@@ -33,11 +46,11 @@ test('posten nur mit Abstand und höchstens 6 am Tag', () => {
 });
 
 test('Texte: KI-Hinweis immer, Instagram als Reel ohne Link, YouTube mit Titel und Kategorie', () => {
-  const ig = beitrag({ caption: 'Tolles Teil #DeskRebel\n\n👉 https://www.deskrebel.store/products/x', titel: 'T' }, 'instagram');
-  assert.match(ig.text, /KI-generiert/); assert.ok(!/https?:/.test(ig.text)); assert.match(ig.text, /Link in Bio/);
+  const ig = beitrag({ caption: 'Honig verdirbt nie. Wahr?\n\nTag 26 von 100 🔥 Folge @futureflowx3! #wissen', titel: 'T' }, 'instagram');
+  assert.match(ig.text, /KI-generiert/); assert.ok(!/Folge @|Tag 26/.test(ig.text), ig.text);
   assert.deepEqual(ig.metadata.instagram, { type: 'reel', shouldShareToFeed: true, isAiGenerated: true });
-  const nurTags = beitrag({ caption: '#Purivelle #Massage', titel: 'Top 5 von Purivelle' }, 'instagram');
-  assert.match(nurTags.text, /^Top 5 von Purivelle\n\n#Purivelle/);
+  const nurTags = beitrag({ caption: '#wissen #honig', titel: 'Honig verdirbt nie' }, 'instagram');
+  assert.match(nurTags.text, /^Honig verdirbt nie\n\n#wissen/);
   const yt = beitrag({ titel: 'Kage no Shiro – Folge 30 (Teaser)', caption: 'Die ganze Folge jetzt auf YouTube!\n\nDie Ninja kehren zurück.' }, 'youtube');
   assert.ok(!/jetzt auf YouTube/.test(yt.text)); assert.match(yt.text, /^Die Ninja/);
   assert.match(yt.text, /KI-generiert/);
