@@ -65,5 +65,7 @@ jobs:
           if [ "$JETZT" -ge 1900 -a "$JETZT" -lt 1908 ] || [ "$JETZT" -ge 0200 -a "$JETZT" -lt 0208 ]; then
             gh workflow run videobot-autopilot.yml --ref main -R "$GITHUB_REPOSITORY" || true
           fi
+          # Buffer-Verteiler (Instagram + YouTube) 6x am Tag pünktlich anstoßen
+          case "$JETZT" in 080[0-7]|110[0-7]|140[0-7]|170[0-7]|200[0-7]|220[0-7]) gh workflow run automation-113-buffer-verteiler.yml --ref main -R "$GITHUB_REPOSITORY" || true;; esac
           sleep 150
           gh workflow run automation-112-reselling-radar.yml --ref main -R "$GITHUB_REPOSITORY"
