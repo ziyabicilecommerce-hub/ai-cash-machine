@@ -9,7 +9,7 @@
 import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
 import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen } from './lib/bufferVerteiler.mjs';
-import { baueFolge, slug } from './schatten/videobot.mjs';
+import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
 
 const TOKEN = (process.env.BUFFER_ACCESS_TOKEN || '').trim();
 const STAND = 'buffer-verteiler/stand.json';
@@ -40,16 +40,22 @@ async function postsHeute(ids) {
   return posts;
 }
 
-// Horror: neue KI-Geschichte, sonst eine aus dem Vorrat, die dieser Kanal noch nicht hatte
+// Horror: abwechselnd ein bewährter TikTok-Hit (Gewinner-Bot) und eine neue KI-Geschichte; sonst Vorrat
 async function horrorSkript(gepostet) {
-  const bekannt = Object.keys(gepostet).map((k) => k.replace(/^horror:/, ''));
+  const bekannt = Object.keys(gepostet).map((k) => k.replace(/^horror:(hit:)?/, ''));
+  const skripte = json('automations-dashboard/tiktok/skripte.json', { skripte: [] }).skripte;
+  const letzte = json('automations-dashboard/tiktok/daten.json', {}).letzte || [];
+  const hit = gewinner(skripte, letzte).map((g) => skripte.find((s) => slug(s.titel) === g.slug)).find((s) => s && !bekannt.includes(slug(s.titel)));
+  const zuletztHit = Object.entries(gepostet).sort((a, b) => String(b[1]).localeCompare(String(a[1])))[0]?.[0]?.startsWith('horror:hit:');
+  if (hit && !zuletztHit) return { skript: hit, herkunft: 'TikTok-Hit', schluessel: `hit:${slug(hit.titel)}` };
   try {
     const { kiJson } = await import('./lib/kiJson.mjs');
     const { neueGeschichte } = await import('./schatten/horrorKi.mjs');
     const s = await neueGeschichte(kiJson, bekannt);
     if (s) return { skript: s, herkunft: 'KI (neu)' };
   } catch (e) { console.log(`[113] KI nicht verfügbar: ${String(e.message).slice(0, 120)}`); }
-  const vorrat = json('automations-dashboard/tiktok/skripte.json', { skripte: [] }).skripte.filter((s) => !bekannt.includes(slug(s.titel)));
+  if (hit) return { skript: hit, herkunft: 'TikTok-Hit', schluessel: `hit:${slug(hit.titel)}` };
+  const vorrat = skripte.filter((s) => !bekannt.includes(slug(s.titel)));
   const s = vorrat[Math.floor(Math.random() * vorrat.length)];
   return s ? { skript: s, herkunft: 'Vorrat' } : null;
 }
@@ -70,7 +76,7 @@ async function vorbereiten() {
       mkdirSync('out', { recursive: true });
       writeFileSync('out/folge.json', JSON.stringify(folge, null, 1));
       ausgabe('horror=ja'); ausgabe(`slug=${slug(h.skript.titel)}`);
-      plan.push({ kanal: k.id, horror: true, schluessel: `horror:${slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft });
+      plan.push({ kanal: k.id, horror: true, schluessel: `horror:${h.schluessel || slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft });
       continue;
     }
     const v = naechstes(passend(videos, k.quelle, k.name), stand[k.id] || {});
