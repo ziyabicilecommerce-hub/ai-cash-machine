@@ -41,6 +41,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
+          HORROR_KI_LOKAL: ${{ vars.HORROR_KI_LOKAL }}
         run: node automations/114-trend-radar.mjs
       - name: Speichern
         run: |
