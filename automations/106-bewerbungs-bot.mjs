@@ -189,6 +189,8 @@ export const ZEITARBEIT = /personaldienstleist|zeitarbeit|zeitservice|zeit-servi
 const MEDIZIN = /physio|ergothera|logopäd|heilprakt|osteopath|massage|podolog|praxis|\btfa\b|\bmfa\b|\bzfa\b|tiermedizin|zahnmedizin|arzthelfer|zahnarzt|kieferorthop|pflegefach|pflegekraft|altenpfleg|krankenpfleg|therapeut|apothek/i;
 const HANDWERK = /montage|monteur|helfer\b|handwerk|elektriker|mechaniker|mechatroniker|schlosser|schweiß|tischler|schreiner|maler\b|lackierer|maurer|dachdecker|installateur|sanitär|heizung|klempner|fliesen|zimmerer|gärtner|garten|landschaftsbau|bauhelfer|bauarbeiter|reinigung|hauswirtschaft|haushaltshilfe|\bkoch\b|küchen|hausmeister|glaser\b|metallbau|produktionshelfer|fertigung|produktion\b|produktionsmitarbeit|maschinenbediener|lagerlogistik|lagermitarbeit|kommissionier|staplerfahrer/i;
 const BUERO = /büro|kaufm|sachbearbeit|assistenz|verwaltung|empfang|disposition|disponent|sekretär/i;
+// Lager/Logistik-Halle schließt Ziya ganz aus - auch wenn "kaufmännisch" oder "Büro" im Titel steht.
+const LAGER = /lager|wareneingang|warenausgang|versandmitarbeit|kommissionier|stapler|picker|packer|logistikmitarbeit|logistikhelfer/i;
 const FUEHRUNG = /geschäftsführ|leiter(in)?\b|leitung\b|head of|senior|teamlead|team lead|director|direktor/i;
 // Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
 const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freelance|freiberuf|selbstständig|selbständig|nebenjob|honorar|auf provisionsbasis|\b(520|538|556) ?(€|euro)/i;
@@ -441,6 +443,7 @@ async function main() {
     if (VERTRIEB.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb'; continue; }
     if (MEDIZIN.test(kopf)) { state.uebersprungen[refnr] = 'Praxis/Medizin'; continue; }
     if (HANDWERK.test(stelle.titel) && !BUERO.test(stelle.titel)) { state.uebersprungen[refnr] = 'Handwerk'; continue; }
+    if (LAGER.test(stelle.titel)) { state.uebersprungen[refnr] = 'Lager'; continue; }
     if (FUEHRUNG.test(stelle.titel)) { state.uebersprungen[refnr] = 'Führungsposition'; continue; }
     if (stelle.minijob || !stelle.vollzeit || KEIN_FIXGEHALT.test(kopf)) { state.uebersprungen[refnr] = 'kein Vollzeit-Fixgehalt'; continue; }
     // Vermittler/Zeitarbeit erst nach den Details entscheiden: nur wenn das Gehalt richtig gut ist.
