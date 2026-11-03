@@ -37,10 +37,10 @@ const ZUHAUSE = { breite: 50.0697, laenge: 8.4867 }; // Hattersheim am Main
 const AUSNAHME = new RegExp(env('BEWERBUNG_ORTE_EXTRA', 'offenbach'), 'i');
 const MIN_PASSUNG = 6;
 // Unter diesem Monatsbrutto wird nicht beworben (nur wenn die Anzeige ein Gehalt nennt). ~3.000 € ≈ 2.050 € netto (Stkl. 1).
-// Mindestens so viel wie das CONDOR-Angebot (Leitstelle, ~3.100 € brutto).
-const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '3100'), 10) || 3100;
+// Ziya hat die Grenze auf 2.800 € brutto gesenkt, damit mehr Büro-Stellen dazukommen.
+const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '2800'), 10) || 2800;
 // Personalvermittler/Zeitarbeit nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt (dann lohnt es sich).
-const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3100'), 10) || 3100;
+const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '2800'), 10) || 2800;
 // Wird nur genannt, wenn die Anzeige ausdrücklich nach einer Gehaltsvorstellung fragt.
 const GEHALTSWUNSCH = env('BEWERBUNG_GEHALTSWUNSCH', '36.000');
 const NACHFASS_NACH_TAGEN = 12;
@@ -434,6 +434,8 @@ async function main() {
     if (state.uebersprungen[refnr]?.startsWith('Ort ') && ortPasst(stelle)) delete state.uebersprungen[refnr];
     // Die Zeitarbeits-Grenze wurde gesenkt - früher aussortierte Vermittler-Stellen einmal neu bewerten.
     if (state.uebersprungen[refnr] === 'Zeitarbeit/Vermittler ohne Top-Gehalt') delete state.uebersprungen[refnr];
+    // Die Gehaltsgrenze wurde gesenkt - früher wegen zu wenig Gehalt aussortierte Stellen einmal neu bewerten.
+    if (state.uebersprungen[refnr]?.startsWith('zu wenig Gehalt')) delete state.uebersprungen[refnr];
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb'; continue; }

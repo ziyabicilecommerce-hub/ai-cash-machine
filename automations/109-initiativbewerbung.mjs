@@ -62,7 +62,7 @@ const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Ana
   'Office Manager', 'Teamassistenz', 'Buchhaltung', 'Lohnbuchhaltung', 'Debitorenbuchhaltung', 'Kreditorenbuchhaltung', 'Fakturierung', 'Rechnungsprüfung', 'Einkauf', 'Auftragsabwicklung',
   'Personalsachbearbeiter', 'Schadensachbearbeiter', 'Sachbearbeiter Versicherung', 'Immobilienverwaltung', 'Stammdatenpflege', 'Forderungsmanagement', 'Vertragsmanagement'];
 // Zeitarbeit/Personalvermittler nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt.
-const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3100'), 10) || 3100;
+const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '2800'), 10) || 2800;
 const REMOTE = /100 ?% ?(remote|homeoffice|home-office|mobil)|vollständig (remote|im homeoffice|mobil)|komplett (remote|im homeoffice|aus dem homeoffice)|full[ -]remote|fully remote|ortsunabhängig|remote aus ganz deutschland|deutschlandweit remote/i;
 // BA-Branchen mit eigener IT: 11 IT/Telekommunikation, 6 Banken/Versicherungen (ohne Immobilien),
 // 18 öffentliche Verwaltung, 22 Energie/Wasser/Entsorgung (kritische Infrastruktur), 25 Forschung, 3 Elektronik/Automatisierung.
@@ -167,8 +167,8 @@ async function main() {
     st.brutto = monatsBrutto(flags);
   });
 
-  // Nichts, was laut Anzeige weniger als das CONDOR-Angebot zahlt (~3.100 € brutto).
-  const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '3100'), 10) || 3100;
+  // Nichts, was laut Anzeige weniger als 2.800 € brutto zahlt.
+  const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '2800'), 10) || 2800;
 
   const cv = await holeLebenslauf();
   const transport = gmailTransport();
