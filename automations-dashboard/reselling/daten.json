@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-03T00:35:06.280Z",
+ "stand": "2026-11-03T00:38:15.149Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -198,7 +198,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-03T00:22:45.110Z",
+  "stand": "2026-11-03T00:38:18.381Z",
   "filialen": 148,
   "produkte": [
    {
@@ -285,14 +285,6 @@
     "vorrat": [
      {
       "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 1
-     },
-     {
-      "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
       "km": 2.5,
       "lat": 50.0815926,
@@ -346,6 +338,14 @@
       "lat": 50.1434547,
       "lon": 8.5023642,
       "menge": 11
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 16
      }
     ]
    },
@@ -395,7 +395,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 16
+      "menge": 15
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -601,7 +601,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Flörsheim am Main",
