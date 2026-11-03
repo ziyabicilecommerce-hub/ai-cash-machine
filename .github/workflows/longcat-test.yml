@@ -1,0 +1,44 @@
+name: "🎞️ LongCat-Video Test (kostenlos über Hugging Face ZeroGPU)"
+
+# Erkundet die öffentlichen LongCat-Video-Spaces auf Hugging Face (MIT-Lizenz) und versucht einen Test-Clip.
+# Postet nichts - der Clip landet nur als Artefakt am Lauf. Mit Secret HF_TOKEN (kostenloses HF-Konto) mehr GPU-Zeit.
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Clip-Beschreibung (englisch)'
+        required: false
+        default: 'found-footage horror, handheld phone POV at night, empty foggy country road, a tall shadow figure slowly steps out of the fog into the headlights, grainy, realistic, no text'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: automations/longcat
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -q gradio_client
+      - name: Spaces erkunden
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python3 automations/longcat/longcat.py --erkunden | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Test-Clip
+        continue-on-error: true
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          PROMPT: ${{ inputs.prompt }}
+        run: python3 automations/longcat/longcat.py --clip "$PROMPT" clip.mp4 | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: longcat-test-clip
+          path: clip.mp4
+          if-no-files-found: ignore
