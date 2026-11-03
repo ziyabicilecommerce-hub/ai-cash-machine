@@ -19,12 +19,18 @@ test('keine Shop-Werbung, jeder Kanal etwas anderes', () => {
 
 test('Horror-Generator: KI-Text wird streng geprüft', async () => {
   const { saeubern, prompt, BEISPIEL } = await import('../../automations/schatten/horrorKi.mjs');
-  assert.ok(saeubern(BEISPIEL), 'Beispiel ist gültig');
-  assert.equal(saeubern({ ...BEISPIEL, ende: 'Überall ist Blut.' }), null, 'kein Blut');
-  assert.equal(saeubern({ ...BEISPIEL, hook: 'x'.repeat(120) }), null, 'Hook zu lang');
-  assert.equal(saeubern({ ...BEISPIEL, wahl: ['nur eins'] }), null);
-  assert.equal(saeubern({ ...BEISPIEL, frage: 'Keine Frage' }), null);
-  assert.equal(saeubern({ ...BEISPIEL, ort: 'mond' }).ort, 'haus', 'unbekannter Ort -> Haus');
+  const EIGEN = { ...BEISPIEL, titel: 'Der Wecker', hook: 'Mein Wecker klingelt um 3:33. Ich habe ihn auf 7 gestellt.' };
+  assert.ok(saeubern(EIGEN), 'eigene Geschichte ist gültig');
+  assert.equal(saeubern(BEISPIEL), null); assert.match(saeubern.grund, /abgeschrieben/);
+  assert.equal(saeubern({ ...EIGEN, saetze: ['<Satz 1>', 'b', 'c'] }), null); assert.match(saeubern.grund, /Platzhalter/);
+  const rep = saeubern({ ...EIGEN, frage: 'Hättest du aufgemacht', wahl: ['Sofort die Tür aufmachen', 'Weg'] });
+  assert.equal(rep.frage, 'Hättest du aufgemacht?', 'Fragezeichen ergänzt');
+  assert.ok(rep.wahl[0].length <= 18 && !rep.wahl[0].endsWith(' '), `an Wortgrenze gekürzt: ${rep.wahl[0]}`);
+  assert.equal(saeubern({ ...EIGEN, ende: 'Überall ist Blut.' }), null, 'kein Blut'); assert.match(saeubern.grund, /verboten/);
+  assert.equal(saeubern({ ...EIGEN, hook: 'x'.repeat(120) }), null, 'Hook zu lang');
+  assert.equal(saeubern({ ...EIGEN, wahl: ['nur eins'] }), null);
+  
+  assert.equal(saeubern({ ...EIGEN, ort: 'mond' }).ort, 'haus', 'unbekannter Ort -> Haus');
   assert.equal(saeubern('kaputt'), null);
   assert.match(prompt(['zwei-zahnbuersten'], () => 0), /zwei-zahnbuersten/);
 });
