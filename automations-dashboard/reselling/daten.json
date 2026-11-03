@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-03T15:03:42.485Z",
+ "stand": "2026-11-03T15:06:48.645Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118686:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: ebelin Adventskalender Beauty & Hair 2026, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
+   "text": "32,95 € · dm Kriftel (1,3 km) · 2 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 23 Filiale(n) vorrätig.",
+   "zeit": "2026-11-03T15:06:48.645Z"
+  },
   {
    "schluessel": "filiale:3118686:1501",
    "art": "Filiale",
@@ -187,19 +197,10 @@
    "link": "https://www.asphaltgold.com/products/nikeair-jordan-3-retro-og-true-blue-white-varsity-red-true-blue-cement-grey-anthracite",
    "text": "asphaltgold.com · Nike Air Jordan 3 Retro OG *True Blue*\nVerkauf ca. 200–290 € → Gewinn ca. +36,50 € (ROI 20 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-01T03:38:58.108Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/asics-gelnyc-concrete-barely-rose",
-   "art": "Deal",
-   "titel": "💰 Deal: Asics Gel-NYC / Gel-Kahana für 90,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/3gjl9tjcl4f-1203A383-028_Asics_GEL-NYC-Concrete-Barely-Rose_os-1.jpg?v=1769786015",
-   "link": "https://www.asphaltgold.com/products/asics-gelnyc-concrete-barely-rose",
-   "text": "asphaltgold.com · Asics GEL-NYC\nVerkauf ca. 110–180 € → Gewinn ca. +35,50 € (ROI 39 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-10-31T23:06:14.182Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-03T14:51:22.342Z",
+  "stand": "2026-11-03T15:06:52.024Z",
   "filialen": 148,
   "produkte": [
    {
@@ -775,6 +776,14 @@
     "vorrat": [
      {
       "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 2
+     },
+     {
+      "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
       "km": 2.5,
       "lat": 50.0815926,
@@ -828,14 +837,6 @@
       "lat": 50.1434547,
       "lon": 8.5023642,
       "menge": 1
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 3
      }
     ]
    }
@@ -1476,15 +1477,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/c2ypbmhf7s7-1201A906-001_Asics_GEL-1130-Black-Pure-Silver_os-1.jpg?v=1768574492",
     "laden": "asphaltgold.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "Y-3 x MERCEDES-AMG PETRONAS FORMULA 1 TEAM RUN CAP",
-    "preis": 59.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/y-3-performance-cap-black",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/y-3-performance-cap-black-kr4910-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1773826462",
-    "laden": "afew-store.com",
-    "begriff": "cap"
    },
    {
     "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
