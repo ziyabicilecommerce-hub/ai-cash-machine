@@ -49,9 +49,8 @@ async function horrorSkript(gepostet) {
   const zuletztHit = Object.entries(gepostet).sort((a, b) => String(b[1]).localeCompare(String(a[1])))[0]?.[0]?.startsWith('horror:hit:');
   if (hit && !zuletztHit) return { skript: hit, herkunft: 'TikTok-Hit', schluessel: `hit:${slug(hit.titel)}` };
   try {
-    const { kiJson } = await import('./lib/kiJson.mjs');
-    const { neueGeschichte } = await import('./schatten/horrorKi.mjs');
-    const s = await neueGeschichte(kiJson, bekannt);
+    const { neueGeschichte, geschichtenKi } = await import('./schatten/horrorKi.mjs');
+    const s = await neueGeschichte(geschichtenKi, bekannt);
     if (s) return { skript: s, herkunft: 'KI (neu)' };
   } catch (e) { console.log(`[113] KI nicht verfügbar: ${String(e.message).slice(0, 120)}`); }
   if (hit) return { skript: hit, herkunft: 'TikTok-Hit', schluessel: `hit:${slug(hit.titel)}` };
