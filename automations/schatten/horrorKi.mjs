@@ -17,10 +17,10 @@ export function prompt(bekannt = [], zufall = Math.random, { thema = '', inspira
   const t = String(thema).replace(/["`$<>]/g, '').slice(0, 80), insp = String(inspiration).replace(/["`$<>]/g, '').slice(0, 80);
   return 'Schreibe eine NEUE, originelle, kurze Horror-Geschichte auf Deutsch für ein 25-Sekunden-Video (Ich-Perspektive, Alltag, Gänsehaut, kein Blut, keine Gewaltdetails, keine echten Personen/Marken/Orte, keine Kinder in Gefahr). '
     + (t ? `Aktuelles Thema, um das es gehen soll: ${t}. ` : '') + (insp ? `Nur als Stimmung (NICHT nacherzählen): ${insp}. ` : '')
-    + `Ort: ${ort}. Bösewicht: ${boese}. Der Hook ist ein einziger Satz mit Widerspruch (z. B. "Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas."), höchstens 75 Zeichen. `
+    + `Ort: ${ort}. Bösewicht: ${boese}. Der Hook (max. 75 Zeichen) besteht aus zwei kurzen Sätzen: erst eine ganz normale Alltagssituation, dann ein unmöglicher Widerspruch dazu - passend zum Thema, in Ich-Form, mit einem konkreten Detail (Uhrzeit, Zahl oder Gegenstand). `
     + 'Genau 4 kurze Sätze (je höchstens 60 Zeichen), dann ein Twist am Ende (höchstens 80 Zeichen), eine Frage an die Zuschauer und zwei Antworten (je höchstens 16 Zeichen). '
     + `Nicht diese Themen wiederholen: ${bekannt.slice(-40).join(', ')}. `
-    + 'Erfinde ALLES selbst - kopiere keine Beispiele. '
+    + 'Erfinde ALLES selbst. Schreibe natürliches, fehlerfreies Deutsch, deutscher Titel. '
     + `Antworte NUR mit JSON in dieser Form (Platzhalter durch eigene Texte ersetzen): ${JSON.stringify(VORLAGE(ort, boese))}`;
 }
 
@@ -28,6 +28,23 @@ export function prompt(bekannt = [], zufall = Math.random, { thema = '', inspira
 const VORLAGE = (ort, boesewicht) => ({ titel: '<2-4 Wörter>', ort, boesewicht, stimme: 'mann oder frau', hook: '<ein Satz mit Widerspruch, max 75 Zeichen>',
   saetze: ['<Satz 1>', '<Satz 2>', '<Satz 3>', '<Satz 4>'], monster: '<was das Wesen flüstert, max 40 Zeichen>', ende: '<Twist, max 80 Zeichen>',
   frage: '<Frage an die Zuschauer?>', wahl: ['<Antwort 1, max 16 Zeichen>', '<Antwort 2, max 16 Zeichen>'] });
+// Wort-Ähnlichkeit zweier Sätze (0-1): Anteil gemeinsamer Wörter ab 3 Buchstaben
+const woerter = (t) => new Set(String(t).toLowerCase().replace(/[^a-zäöüß0-9 ]/g, ' ').split(/\s+/).filter((w) => w.length >= 3));
+export function aehnlich(a, b) {
+  const x = woerter(a), y = woerter(b);
+  if (!x.size || !y.size) return 0;
+  let gemeinsam = 0; for (const w of x) if (y.has(w)) gemeinsam++;
+  return gemeinsam / Math.min(x.size, y.size);
+}
+// Greift die Geschichte das Thema auf? (ein Wortteil mit 5 Buchstaben aus dem Thema kommt im Text vor)
+export function passtZumThema(s, thema = '') {
+  // Wortteile mit 5 Buchstaben, damit auch zusammengesetzte Wörter passen ("Novembernebel" -> "nebel")
+  const teile = [...woerter(thema)].filter((w) => w.length >= 5).flatMap((w) => Array.from({ length: w.length - 4 }, (_, i) => w.slice(i, i + 5)));
+  if (!teile.length) return true;
+  const text = [s.hook, ...s.saetze, s.ende].join(' ').toLowerCase();
+  return teile.some((w) => text.includes(w));
+}
+
 const PLATZHALTER = /<[^>]*>|Satz \d|Antwort \d|Platzhalter/i;
 // Wortgrenze statt Abbruch mitten im Wort
 const kuerzen = (t, n) => { const x = String(t || '').trim(); return x.length <= n ? x : x.slice(0, n).replace(/\s+\S*$/, '').trim(); };
@@ -40,7 +57,7 @@ export function saeubern(roh) {
   const nein = (g) => { saeubern.grund = g; return null; };
   if (!roh || typeof roh !== 'object') return nein('keine JSON-Antwort');
   if (PLATZHALTER.test(JSON.stringify(roh))) return nein('Platzhalter nicht ersetzt');
-  if (String(roh.hook || '').trim() === BEISPIEL.hook) return nein('Beispiel abgeschrieben');
+  if (aehnlich(String(roh.hook || ''), BEISPIEL.hook) >= 0.5) return nein('Beispiel abgeschrieben');
   const saetze = (Array.isArray(roh.saetze) ? roh.saetze : []).map((x) => String(x).trim()).filter((x) => x && x.length <= 90).slice(0, 5);
   let frage = String(roh.frage || '').trim();
   if (frage && !frage.endsWith('?')) frage = `${frage.replace(/[.!]+$/, '')}?`;
@@ -69,13 +86,15 @@ export function hookPunkte(h = '') {
 }
 
 // Hook-Wettbewerb: bis zu 3 gültige Geschichten von der KI, die mit dem stärksten Hook gewinnt (mind. 3 von 6 Punkten)
-export async function neueGeschichte(kiJson, bekannt = [], { versuche = 3, mindestens = 3, thema = '', inspiration = '' } = {}) {
+export async function neueGeschichte(kiJson, bekannt = [], { versuche = 3, mindestens = 3, thema = '', inspiration = '', hooks = [] } = {}) {
   const kandidaten = [];
   for (let i = 0; i < versuche; i++) {
     try {
       const s = saeubern(await kiJson(prompt(bekannt, Math.random, { thema, inspiration })));
       if (!s) console.log(`[horror-ki] abgelehnt: ${saeubern.grund}`);
       else if (bekannt.includes(s.titel)) console.log(`[horror-ki] abgelehnt: Titel schon da (${s.titel})`);
+      else if (hooks.some((h) => aehnlich(s.hook, h) >= 0.6)) console.log(`[horror-ki] abgelehnt: Hook zu ähnlich wie ein vorhandener (${s.hook})`);
+      else if (!passtZumThema(s, thema)) console.log(`[horror-ki] abgelehnt: Thema „${thema}“ nicht aufgegriffen`);
       else { kandidaten.push(s); console.log(`[horror-ki] Kandidat „${s.titel}“, Hook ${hookPunkte(s.hook)}/6: ${s.hook}`); }
     } catch (e) { console.log(`[horror-ki] ${String(e.message).slice(0, 120)}`); }
     if (kandidaten.some((k) => hookPunkte(k.hook) >= 5)) break;  // schon sehr stark - nicht weiter warten
@@ -88,7 +107,12 @@ export async function neueGeschichte(kiJson, bekannt = [], { versuche = 3, minde
 // (Die allgemeine Kette fragt zuerst Pollinations - ohne Schlüssel gedrosselt, da kamen 0 Geschichten raus.)
 export async function geschichtenKi(prompt) {
   const { lokalBereit, kiLokal } = await import('../lib/kiLokal.mjs');
-  const { jsonAusText, kiJson } = await import('../lib/kiJson.mjs');
+  const { jsonAusText, kiJson, githubModels, githubModelsBereit } = await import('../lib/kiJson.mjs');
+  // 1. GitHub Models (gratis im Actions-Lauf, Workflow-Recht "models: read") - deutlich besseres Deutsch als das kleine Modell
+  if (githubModelsBereit()) {
+    try { return jsonAusText(await githubModels(`${prompt}\nGib nur das JSON zurück.`, 900)); } catch (e) { console.log(`[horror-ki] GitHub Models: ${String(e.message).slice(0, 120)}`); }
+  }
+  // 2. eigene KI im Lauf (Ollama, kein Limit, erzwungenes JSON)
   if (lokalBereit()) {
     try { return jsonAusText((await kiLokal(prompt, { maxTokens: 1200 })).antwort); } catch (e) { console.log(`[horror-ki] lokal: ${String(e.message).slice(0, 120)}`); }
   }

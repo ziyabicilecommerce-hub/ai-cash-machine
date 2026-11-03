@@ -50,7 +50,7 @@ async function horrorSkript(gepostet) {
   if (hit && !zuletztHit) return { skript: hit, herkunft: 'TikTok-Hit', schluessel: `hit:${slug(hit.titel)}` };
   try {
     const { neueGeschichte, geschichtenKi } = await import('./schatten/horrorKi.mjs');
-    const s = await neueGeschichte(geschichtenKi, bekannt);
+    const s = await neueGeschichte(geschichtenKi, bekannt, { hooks: skripte.map((x) => x.hook) });
     if (s) return { skript: s, herkunft: 'KI (neu)' };
   } catch (e) { console.log(`[113] KI nicht verfügbar: ${String(e.message).slice(0, 120)}`); }
   if (hit) return { skript: hit, herkunft: 'TikTok-Hit', schluessel: `hit:${slug(hit.titel)}` };
