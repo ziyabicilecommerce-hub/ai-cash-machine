@@ -4,8 +4,7 @@
 // Instagram-Verteiler und Fortsetzungen nutzen sie automatisch. Übersicht: automations-dashboard/tiktok/trends.json
 import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { rssTitel, redditTitel, themenHeute } from './lib/trendRadar.mjs';
-import { neueGeschichte } from './schatten/horrorKi.mjs';
-import { kiJson } from './lib/kiJson.mjs';
+import { neueGeschichte, geschichtenKi } from './schatten/horrorKi.mjs';
 import { slug } from './schatten/videobot.mjs';
 
 const SKRIPTE = 'automations-dashboard/tiktok/skripte.json';
@@ -31,7 +30,7 @@ async function main() {
   bericht(`### 📈 Trend-Radar: ${trends.length} Google-Trends, ${reddit.length} Reddit-Titel gelesen`);
   const neu = [];
   for (const t of themen) {
-    const s = await neueGeschichte(kiJson, bekannt, { thema: t.thema, inspiration: t.inspiration });
+    const s = await neueGeschichte(geschichtenKi, bekannt, { thema: t.thema, inspiration: t.inspiration });
     if (!s || bekannt.includes(slug(s.titel))) { bericht(`- ⚠️ ${t.thema}: keine gute Geschichte (Hook zu schwach oder KI aus)`); continue; }
     const eintrag = { ...s, trend: t.thema, quelle: t.quelle, erstellt: new Date().toISOString().slice(0, 10) };
     daten.skripte.push(eintrag); bekannt.push(slug(s.titel)); neu.push(eintrag);

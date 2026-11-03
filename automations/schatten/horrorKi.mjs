@@ -56,3 +56,14 @@ export async function neueGeschichte(kiJson, bekannt = [], { versuche = 3, minde
   const best = kandidaten.sort((a, b) => hookPunkte(b.hook) - hookPunkte(a.hook))[0];
   return best && hookPunkte(best.hook) >= mindestens ? best : null;
 }
+
+// KI für Geschichten: zuerst die eigene KI im GitHub-Lauf (Ollama, kein Limit, erzwungenes JSON), sonst die Gratis-Kette.
+// (Die allgemeine Kette fragt zuerst Pollinations - ohne Schlüssel gedrosselt, da kamen 0 Geschichten raus.)
+export async function geschichtenKi(prompt) {
+  const { lokalBereit, kiLokal } = await import('../lib/kiLokal.mjs');
+  const { jsonAusText, kiJson } = await import('../lib/kiJson.mjs');
+  if (lokalBereit()) {
+    try { return jsonAusText((await kiLokal(prompt, { maxTokens: 1200 })).antwort); } catch (e) { console.log(`[horror-ki] lokal: ${String(e.message).slice(0, 120)}`); }
+  }
+  return kiJson(prompt, { maxTokens: 3000 });
+}
