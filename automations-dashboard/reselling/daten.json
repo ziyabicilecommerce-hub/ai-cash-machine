@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-03T00:19:38.986Z",
+ "stand": "2026-11-03T00:22:40.600Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118196:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "text": "24,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 25 Filiale(n) vorrätig.",
+   "zeit": "2026-11-03T00:22:40.600Z"
+  },
   {
    "schluessel": "neu:https://afew-store.com/products/barbour-barbour-wax-cap-dark-brown",
    "art": "Neu",
@@ -185,19 +195,10 @@
    "link": "https://eu.kith.com/products/asi1203a609-023",
    "text": "kith.com · ASICS GEL-1130 - Glacier Grey / Pure Silver\nVerkauf ca. 110–180 € → Gewinn ca. +26,50 € (ROI 27 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-10-31T17:19:38.400Z"
-  },
-  {
-   "schluessel": "deal:https://www.overkillshop.com/products/new-balance-u1906lae-silver",
-   "art": "Deal",
-   "titel": "💰 Deal: New Balance 1906R / 530 für 84,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1906LAE_1.jpg?v=1746533291",
-   "link": "https://www.overkillshop.com/products/new-balance-u1906lae-silver",
-   "text": "overkillshop.com · U1906LAE\nVerkauf ca. 100–160 € → Gewinn ca. +28,00 € (ROI 33 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-10-31T17:16:40.318Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-03T00:07:36.381Z",
+  "stand": "2026-11-03T00:22:45.110Z",
   "filialen": 148,
   "produkte": [
    {
@@ -284,6 +285,14 @@
     "vorrat": [
      {
       "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
+      "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
       "km": 2.5,
       "lat": 50.0815926,
@@ -337,14 +346,6 @@
       "lat": 50.1434547,
       "lon": 8.5023642,
       "menge": 11
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 16
      }
     ]
    },
@@ -394,7 +395,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 15
+      "menge": 16
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -600,7 +601,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 4
+      "menge": 5
      },
      {
       "name": "dm Flörsheim am Main",
@@ -1341,12 +1342,12 @@
   "ware": [],
   "top": [
    {
-    "titel": "sibirien",
+    "titel": "jamal musiala",
     "menge": "200+"
    },
    {
-    "titel": "jamal musiala",
-    "menge": "200+"
+    "titel": "sibirien",
+    "menge": "500+"
    },
    {
     "titel": "jonathan frakes",
