@@ -20,24 +20,46 @@ export function prompt(bekannt = [], zufall = Math.random, { thema = '', inspira
     + `Ort: ${ort}. Bösewicht: ${boese}. Der Hook ist ein einziger Satz mit Widerspruch (z. B. "Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas."), höchstens 75 Zeichen. `
     + 'Genau 4 kurze Sätze (je höchstens 60 Zeichen), dann ein Twist am Ende (höchstens 80 Zeichen), eine Frage an die Zuschauer und zwei Antworten (je höchstens 16 Zeichen). '
     + `Nicht diese Themen wiederholen: ${bekannt.slice(-40).join(', ')}. `
-    + `Antworte NUR mit JSON genau in dieser Form: ${JSON.stringify({ ...BEISPIEL, ort, boesewicht: boese })}`;
+    + 'Erfinde ALLES selbst - kopiere keine Beispiele. '
+    + `Antworte NUR mit JSON in dieser Form (Platzhalter durch eigene Texte ersetzen): ${JSON.stringify(VORLAGE(ort, boese))}`;
 }
+
+// Vorlage mit Platzhaltern statt fertiger Geschichte - kleine Modelle schreiben sonst das Beispiel ab
+const VORLAGE = (ort, boesewicht) => ({ titel: '<2-4 Wörter>', ort, boesewicht, stimme: 'mann oder frau', hook: '<ein Satz mit Widerspruch, max 75 Zeichen>',
+  saetze: ['<Satz 1>', '<Satz 2>', '<Satz 3>', '<Satz 4>'], monster: '<was das Wesen flüstert, max 40 Zeichen>', ende: '<Twist, max 80 Zeichen>',
+  frage: '<Frage an die Zuschauer?>', wahl: ['<Antwort 1, max 16 Zeichen>', '<Antwort 2, max 16 Zeichen>'] });
+const PLATZHALTER = /<[^>]*>|Satz \d|Antwort \d|Platzhalter/i;
+// Wortgrenze statt Abbruch mitten im Wort
+const kuerzen = (t, n) => { const x = String(t || '').trim(); return x.length <= n ? x : x.slice(0, n).replace(/\s+\S*$/, '').trim(); };
 
 const kurzGenug = (s, n) => typeof s === 'string' && s.trim().length > 2 && s.trim().length <= n;
 
-// KI-Antwort säubern und prüfen. Gibt das Skript zurück oder null.
+// KI-Antwort säubern, kleine Fehler reparieren (Länge, Fragezeichen) und prüfen.
+// Gibt das Skript zurück oder null; der Grund steht dann in saeubern.grund (fürs Log).
 export function saeubern(roh) {
-  if (!roh || typeof roh !== 'object') return null;
-  const s = { titel: String(roh.titel || '').trim().slice(0, 50), ort: ORTE.includes(roh.ort) ? roh.ort : 'haus', boesewicht: BOESE.includes(roh.boesewicht) ? roh.boesewicht : 'schatten',
-    stimme: roh.stimme === 'frau' ? 'frau' : 'mann', hook: String(roh.hook || '').trim(), saetze: (Array.isArray(roh.saetze) ? roh.saetze : []).map((x) => String(x).trim()).filter(Boolean).slice(0, 5),
-    ende: String(roh.ende || '').trim(), frage: String(roh.frage || '').trim(), wahl: Array.isArray(roh.wahl) ? roh.wahl.slice(0, 2).map((x) => String(x).trim()) : [] };
+  const nein = (g) => { saeubern.grund = g; return null; };
+  if (!roh || typeof roh !== 'object') return nein('keine JSON-Antwort');
+  if (PLATZHALTER.test(JSON.stringify(roh))) return nein('Platzhalter nicht ersetzt');
+  if (String(roh.hook || '').trim() === BEISPIEL.hook) return nein('Beispiel abgeschrieben');
+  const saetze = (Array.isArray(roh.saetze) ? roh.saetze : []).map((x) => String(x).trim()).filter((x) => x && x.length <= 90).slice(0, 5);
+  let frage = String(roh.frage || '').trim();
+  if (frage && !frage.endsWith('?')) frage = `${frage.replace(/[.!]+$/, '')}?`;
+  const s = { titel: kuerzen(roh.titel, 50), ort: ORTE.includes(roh.ort) ? roh.ort : 'haus', boesewicht: BOESE.includes(roh.boesewicht) ? roh.boesewicht : 'schatten',
+    stimme: roh.stimme === 'frau' ? 'frau' : 'mann', hook: String(roh.hook || '').trim(), saetze, ende: kuerzen(roh.ende, 100), frage: kuerzen(frage, 80),
+    wahl: Array.isArray(roh.wahl) ? roh.wahl.slice(0, 2).map((x) => kuerzen(x, 18)) : [] };
   if (roh.nachricht && kurzGenug(roh.nachricht, 90)) { s.nachricht = String(roh.nachricht).trim(); s.absender = String(roh.absender || 'Unbekannt').trim().slice(0, 20); }
   if (roh.monster && kurzGenug(roh.monster, 60)) s.monster = String(roh.monster).trim();
-  if (!s.titel) s.titel = s.hook.split(/[.!?]/)[0].slice(0, 40);
-  const ok = kurzGenug(s.hook, 80) && s.saetze.length >= 3 && s.saetze.every((x) => x.length <= 80) && kurzGenug(s.ende, 100)
-    && kurzGenug(s.frage, 80) && s.frage.endsWith('?') && s.wahl.length === 2 && s.wahl.every((w) => kurzGenug(w, 18))
-    && !VERBOTEN.test(JSON.stringify(s)) && pruefen(s).length === 0;
-  return ok ? s : null;
+  if (!s.titel) s.titel = kuerzen(s.hook.split(/[.!?]/)[0], 40);
+  if (!kurzGenug(s.hook, 80)) return nein(`Hook fehlt oder zu lang (${s.hook.length})`);
+  if (s.saetze.length < 3) return nein(`nur ${s.saetze.length} brauchbare Sätze`);
+  if (!kurzGenug(s.ende, 100)) return nein('Twist fehlt');
+  if (!kurzGenug(s.frage, 80)) return nein('Frage fehlt');
+  if (s.wahl.length !== 2 || !s.wahl.every((w) => kurzGenug(w, 18))) return nein('Antworten fehlen');
+  if (VERBOTEN.test(JSON.stringify(s))) return nein(`verbotenes Wort: ${JSON.stringify(s).match(VERBOTEN)[0]}`);
+  const f = pruefen(s);
+  if (f.length) return nein(f.join('; '));
+  saeubern.grund = '';
+  return s;
 }
 
 // Hook-Punkte (0-6) nach den Regeln aus dem Hook-Tester der App - was bei unseren Videos die Leute hält
@@ -50,7 +72,12 @@ export function hookPunkte(h = '') {
 export async function neueGeschichte(kiJson, bekannt = [], { versuche = 3, mindestens = 3, thema = '', inspiration = '' } = {}) {
   const kandidaten = [];
   for (let i = 0; i < versuche; i++) {
-    try { const s = saeubern(await kiJson(prompt(bekannt, Math.random, { thema, inspiration }))); if (s && !bekannt.includes(s.titel)) kandidaten.push(s); } catch (e) { console.log(`[horror-ki] ${String(e.message).slice(0, 120)}`); }
+    try {
+      const s = saeubern(await kiJson(prompt(bekannt, Math.random, { thema, inspiration })));
+      if (!s) console.log(`[horror-ki] abgelehnt: ${saeubern.grund}`);
+      else if (bekannt.includes(s.titel)) console.log(`[horror-ki] abgelehnt: Titel schon da (${s.titel})`);
+      else { kandidaten.push(s); console.log(`[horror-ki] Kandidat „${s.titel}“, Hook ${hookPunkte(s.hook)}/6: ${s.hook}`); }
+    } catch (e) { console.log(`[horror-ki] ${String(e.message).slice(0, 120)}`); }
     if (kandidaten.some((k) => hookPunkte(k.hook) >= 5)) break;  // schon sehr stark - nicht weiter warten
   }
   const best = kandidaten.sort((a, b) => hookPunkte(b.hook) - hookPunkte(a.hook))[0];
