@@ -30,7 +30,7 @@ async function main() {
   bericht(`### 📈 Trend-Radar: ${trends.length} Google-Trends, ${reddit.length} Reddit-Titel gelesen`);
   const neu = [];
   for (const t of themen) {
-    const s = await neueGeschichte(geschichtenKi, bekannt, { thema: t.thema, inspiration: t.inspiration });
+    const s = await neueGeschichte(geschichtenKi, bekannt, { thema: t.thema, inspiration: t.inspiration, hooks: daten.skripte.map((x) => x.hook) });
     if (!s || bekannt.includes(slug(s.titel))) { bericht(`- ⚠️ ${t.thema}: keine gute Geschichte (Hook zu schwach oder KI aus)`); continue; }
     const eintrag = { ...s, trend: t.thema, quelle: t.quelle, erstellt: new Date().toISOString().slice(0, 10) };
     daten.skripte.push(eintrag); bekannt.push(slug(s.titel)); neu.push(eintrag);

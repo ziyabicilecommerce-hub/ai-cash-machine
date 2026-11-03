@@ -101,7 +101,7 @@ async function groq(prompt, maxTokens) {
 // GitHub Models: Gratis-KI direkt von GitHub - in jedem Actions-Lauf mit dem eingebauten GITHUB_TOKEN
 // (Workflow-Recht "models: read"), ohne Anmeldung und ohne eigenen Schlüssel. Tageslimit pro Konto - danach weiter.
 // Einschalten: Repo-Variable KI_GITHUB_MODELS=an (wird in den Workflows durchgereicht).
-async function githubModels(prompt, maxTokens) {
+export async function githubModels(prompt, maxTokens) {
   const res = await fetch('https://models.github.ai/inference/chat/completions', {
     method: 'POST', signal: AbortSignal.timeout(90000),
     headers: { 'content-type': 'application/json', accept: 'application/vnd.github+json', authorization: `Bearer ${envK('GITHUB_TOKEN')}` },

@@ -27,3 +27,14 @@ test('Thema landet im KI-Auftrag, ohne gefährliche Zeichen', async () => {
   assert.match(p, /NICHT nacherzählen/);
   assert.match(p, /keine Kinder in Gefahr/);
 });
+
+test('Ähnlichkeits- und Themen-Check gegen abgeschriebene oder unpassende Geschichten', async () => {
+  const { aehnlich, passtZumThema, saeubern, BEISPIEL } = await import('../../automations/schatten/horrorKi.mjs');
+  assert.ok(aehnlich('Ich wohne allein. Heute stehen drei Zahnbürsten im Glas.', BEISPIEL.hook) >= 0.6, 'fast gleicher Hook');
+  assert.ok(aehnlich('Mein Wecker klingelt um 3:33. Ich habe ihn auf 7 gestellt.', BEISPIEL.hook) < 0.5);
+  assert.equal(saeubern({ ...BEISPIEL, hook: 'Ich wohne allein. Heute stehen drei Zahnbürsten im Glas.' }), null);
+  const s = { hook: 'Im Nebel hält ein Auto neben mir. Am Steuer sitze ich.', saetze: ['a', 'b', 'c'], ende: 'x' };
+  assert.equal(passtZumThema(s, 'Novembernebel auf der Landstraße'), true);
+  assert.equal(passtZumThema({ ...s, hook: 'Ich wohne allein.' }, 'Novembernebel auf der Landstraße'), false);
+  assert.equal(passtZumThema(s, ''), true, 'ohne Thema immer ok');
+});
