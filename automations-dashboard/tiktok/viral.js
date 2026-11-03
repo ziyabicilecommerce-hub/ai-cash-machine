@@ -70,12 +70,26 @@
     q('vl-caption').value = h ? `${h} ${f}${wahl} 👇\n\n#horrortok #gruselgeschichte #creepypasta #gänsehaut #horrorstory\n(KI-generiert, frei erfundene Geschichte)` : '';
   }
 
+  // Trend-Radar (#114): welche aktuellen Themen heute zu neuen Geschichten wurden
+  async function trends() {
+    if (!q('vl-trends')) return;
+    let t = null;
+    try { t = await (await fetch(`trends.json?t=${Date.now()}`, { cache: 'no-store' })).json(); } catch { /* noch nie gelaufen */ }
+    if (!t) { q('vl-trends').replaceChildren(mk('div', 'tipp', 'Der Trend-Radar läuft jeden Morgen und füllt den Videobot mit neuen Geschichten.')); return; }
+    const neu = t.neu || [];
+    q('vl-trends').replaceChildren(
+      mk('div', 'unter', `Stand ${new Date(t.stand).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })} · Themen: ${(t.themen || []).map((x) => x.thema).join(' · ')}`),
+      ...(neu.length ? neu.map((s) => { const z = mk('div', 'tipp gut'); z.append(mk('b', '', `${s.quelle === 'google-trends' ? '📈' : '🍂'} ${s.trend}`), mk('div', '', `„${s.titel}“ – ${s.hook}`)); return z; })
+        : [mk('div', 'tipp', 'Heute keine neue Geschichte geschafft (KI aus oder Hooks zu schwach) - morgen wieder.')]));
+  }
+
   async function start() {
     if (!q('vl-duell')) return;
     for (const id of ['vl-hook', 'vl-frage', 'vl-a', 'vl-b']) q(id).addEventListener('input', hookTest);
     q('vl-kopieren').onclick = async () => { try { await navigator.clipboard.writeText(q('vl-caption').value); q('vl-kopieren').textContent = '✅ Kopiert'; } catch { q('vl-caption').select(); } };
     q('vl-hook').value = 'Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas.'; q('vl-frage').value = 'Hättest du ins Bad geschaut?'; q('vl-a').value = 'Ins Bad'; q('vl-b').value = 'Raus hier';
     hookTest();
+    trends();
     let d = null;
     try { d = await (await fetch(`daten.json?t=${Date.now()}`, { cache: 'no-store' })).json(); } catch { /* offline */ }
     const posts = (d?.letzte || []).filter((p) => p.aufrufe > 0);

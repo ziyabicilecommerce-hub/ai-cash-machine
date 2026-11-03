@@ -12,9 +12,11 @@ export const BEISPIEL = { titel: 'Zwei Zahnbürsten', ort: 'haus', boesewicht: '
   absender: 'Nachbarin', nachricht: 'Wer ist die Frau an deinem Fenster?', monster: 'Ich putze nur meine Zähne.',
   ende: 'Die zweite Zahnbürste ist nass. Und sie steht hinter mir.', frage: 'Hättest du ins Bad geschaut?', wahl: ['Ins Bad', 'Raus hier'] };
 
-export function prompt(bekannt = [], zufall = Math.random) {
+export function prompt(bekannt = [], zufall = Math.random, { thema = '', inspiration = '' } = {}) {
   const ort = ORTE[Math.floor(zufall() * ORTE.length)], boese = BOESE[Math.floor(zufall() * BOESE.length)];
-  return 'Schreibe eine NEUE, originelle, kurze Horror-Geschichte auf Deutsch für ein 25-Sekunden-Video (Ich-Perspektive, Alltag, Gänsehaut, kein Blut, keine Gewaltdetails, keine echten Personen/Marken/Orte). '
+  const t = String(thema).replace(/["`$<>]/g, '').slice(0, 80), insp = String(inspiration).replace(/["`$<>]/g, '').slice(0, 80);
+  return 'Schreibe eine NEUE, originelle, kurze Horror-Geschichte auf Deutsch für ein 25-Sekunden-Video (Ich-Perspektive, Alltag, Gänsehaut, kein Blut, keine Gewaltdetails, keine echten Personen/Marken/Orte, keine Kinder in Gefahr). '
+    + (t ? `Aktuelles Thema, um das es gehen soll: ${t}. ` : '') + (insp ? `Nur als Stimmung (NICHT nacherzählen): ${insp}. ` : '')
     + `Ort: ${ort}. Bösewicht: ${boese}. Der Hook ist ein einziger Satz mit Widerspruch (z. B. "Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas."), höchstens 75 Zeichen. `
     + 'Genau 4 kurze Sätze (je höchstens 60 Zeichen), dann ein Twist am Ende (höchstens 80 Zeichen), eine Frage an die Zuschauer und zwei Antworten (je höchstens 16 Zeichen). '
     + `Nicht diese Themen wiederholen: ${bekannt.slice(-40).join(', ')}. `
@@ -45,10 +47,10 @@ export function hookPunkte(h = '') {
 }
 
 // Hook-Wettbewerb: bis zu 3 gültige Geschichten von der KI, die mit dem stärksten Hook gewinnt (mind. 3 von 6 Punkten)
-export async function neueGeschichte(kiJson, bekannt = [], { versuche = 3, mindestens = 3 } = {}) {
+export async function neueGeschichte(kiJson, bekannt = [], { versuche = 3, mindestens = 3, thema = '', inspiration = '' } = {}) {
   const kandidaten = [];
   for (let i = 0; i < versuche; i++) {
-    try { const s = saeubern(await kiJson(prompt(bekannt))); if (s && !bekannt.includes(s.titel)) kandidaten.push(s); } catch (e) { console.log(`[horror-ki] ${String(e.message).slice(0, 120)}`); }
+    try { const s = saeubern(await kiJson(prompt(bekannt, Math.random, { thema, inspiration }))); if (s && !bekannt.includes(s.titel)) kandidaten.push(s); } catch (e) { console.log(`[horror-ki] ${String(e.message).slice(0, 120)}`); }
     if (kandidaten.some((k) => hookPunkte(k.hook) >= 5)) break;  // schon sehr stark - nicht weiter warten
   }
   const best = kandidaten.sort((a, b) => hookPunkte(b.hook) - hookPunkte(a.hook))[0];

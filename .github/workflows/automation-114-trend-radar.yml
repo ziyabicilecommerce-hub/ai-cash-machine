@@ -1,0 +1,57 @@
+name: "114 · Trend-Radar (neue Horror-Geschichten zu aktuellen Themen)"
+
+# Jeden Tag: was ist gerade gefragt (Google-Trends DE - nur harmlose Alltagsthemen -, Reddit-Horror als Stimmung,
+# Saison-Kalender) -> die lokale Gratis-KI schreibt daraus neue Horror-Geschichten (streng geprüft, Hook-Wettbewerb)
+# -> sie landen im Videobot-Vorrat. Videobot-Autopilot, Instagram-Verteiler und Fortsetzungen nutzen sie automatisch.
+
+on:
+  schedule:
+    - cron: '7 3 * * *'
+  workflow_dispatch:
+    inputs:
+      anzahl:
+        description: 'Wie viele neue Geschichten (1-6)'
+        required: false
+        default: '3'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trend-radar
+  cancel-in-progress: false
+
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Eigene KI starten (kostenlos)
+        uses: ./.github/actions/ki-lokal
+        with:
+          modell: ${{ vars.KI_LOKAL_MODELL || 'qwen2.5:7b' }}
+      - name: Trends holen und Geschichten schreiben
+        env:
+          TREND_ANZAHL: ${{ inputs.anzahl || '3' }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: node automations/114-trend-radar.mjs
+      - name: Speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          sicher=$(mktemp -d); cp automations-dashboard/tiktok/skripte.json automations-dashboard/tiktok/trends.json "$sicher/"
+          for versuch in 1 2 3 4 5; do
+            git fetch -q origin "$GITHUB_REF_NAME"
+            git reset -q --hard "origin/$GITHUB_REF_NAME"
+            cp "$sicher"/*.json automations-dashboard/tiktok/
+            git add automations-dashboard/tiktok/skripte.json automations-dashboard/tiktok/trends.json
+            git commit -qm "chore: Trend-Radar - neue Horror-Geschichten [skip ci]" || exit 0
+            git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((versuch * 5))
+          done
+          exit 1
