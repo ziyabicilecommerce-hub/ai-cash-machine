@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-03T09:33:05.030Z",
+ "stand": "2026-11-03T09:36:14.143Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -942,7 +942,305 @@
   }
  ],
  "pokemon": {
-  "picks": [],
+  "picks": [
+   {
+    "id": "me04-120",
+    "name": "Azetts Gelassenheit",
+    "nummer": "120",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Wachsendes Chaos",
+    "setId": "me04",
+    "release": "2026-05-22",
+    "bild": "https://assets.tcgdex.net/de/me/me04/120/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Azetts%20Gelassenheit",
+    "preis": {
+     "tief": 10,
+     "trend": 20.25,
+     "schnitt7": 20.02,
+     "schnitt30": 19.99
+    },
+    "prozent": 0,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 10,
+     "ziel": 20.02,
+     "gewinn": 7.52,
+     "roi": 75,
+     "momentum": 0,
+     "spread": 10.25,
+     "score": 74,
+     "signal": "BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     20.25
+    ]
+   },
+   {
+    "id": "me03-107",
+    "name": "Mauzi-ex",
+    "nummer": "107",
+    "seltenheit": "Ultra Selten",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/107/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mauzi-ex",
+    "preis": {
+     "tief": 7,
+     "trend": 13,
+     "schnitt7": 13.38,
+     "schnitt30": 13.3
+    },
+    "prozent": 1,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 7,
+     "ziel": 13,
+     "gewinn": 3.85,
+     "roi": 55,
+     "momentum": 1,
+     "spread": 6,
+     "score": 61,
+     "signal": "BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     13
+    ]
+   },
+   {
+    "id": "me04-119",
+    "name": "Chillabell-ex",
+    "nummer": "119",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Wachsendes Chaos",
+    "setId": "me04",
+    "release": "2026-05-22",
+    "bild": "https://assets.tcgdex.net/de/me/me04/119/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Chillabell-ex",
+    "preis": {
+     "tief": 19.99,
+     "trend": 34.06,
+     "schnitt7": 33.59,
+     "schnitt30": 35.23
+    },
+    "prozent": -5,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 19.99,
+     "ziel": 33.59,
+     "gewinn": 10.42,
+     "roi": 52,
+     "momentum": -5,
+     "spread": 14.07,
+     "score": 59,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     34.06
+    ]
+   },
+   {
+    "id": "me05-114",
+    "name": "Mega-Zeraora-ex",
+    "nummer": "114",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Dunkelnacht",
+    "setId": "me05",
+    "release": "2026-07-17",
+    "bild": "https://assets.tcgdex.net/de/me/me05/114/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zeraora-ex",
+    "preis": {
+     "tief": 27.19,
+     "trend": 37.53,
+     "schnitt7": 40.8,
+     "schnitt30": 41.39
+    },
+    "prozent": -1,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 27.19,
+     "ziel": 37.53,
+     "gewinn": 6.96,
+     "roi": 26,
+     "momentum": -1,
+     "spread": 10.34,
+     "score": 56,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     37.53
+    ]
+   },
+   {
+    "id": "me05-118",
+    "name": "Gladios Finalkampf",
+    "nummer": "118",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Dunkelnacht",
+    "setId": "me05",
+    "release": "2026-07-17",
+    "bild": "https://assets.tcgdex.net/de/me/me05/118/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gladios%20Finalkampf",
+    "preis": {
+     "tief": 11,
+     "trend": 19.11,
+     "schnitt7": 19.08,
+     "schnitt30": 20.61
+    },
+    "prozent": -7,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 11,
+     "ziel": 19.08,
+     "gewinn": 5.63,
+     "roi": 51,
+     "momentum": -7,
+     "spread": 8.11,
+     "score": 55,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     19.11
+    ]
+   },
+   {
+    "id": "me04-121",
+    "name": "Micas Aufführung",
+    "nummer": "121",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Wachsendes Chaos",
+    "setId": "me04",
+    "release": "2026-05-22",
+    "bild": "https://assets.tcgdex.net/de/me/me04/121/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Micas%20Auff%C3%BChrung",
+    "preis": {
+     "tief": 7,
+     "trend": 13.45,
+     "schnitt7": 13.17,
+     "schnitt30": 13.77
+    },
+    "prozent": -4,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 7,
+     "ziel": 13.17,
+     "gewinn": 4.01,
+     "roi": 57,
+     "momentum": -4,
+     "spread": 6.45,
+     "score": 54,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     13.45
+    ]
+   },
+   {
+    "id": "me03-123",
+    "name": "Rosys Ermutigung",
+    "nummer": "123",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/123/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rosys%20Ermutigung",
+    "preis": {
+     "tief": 24.9,
+     "trend": 35.11,
+     "schnitt7": 36.24,
+     "schnitt30": 37.33
+    },
+    "prozent": -3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 24.9,
+     "ziel": 35.11,
+     "gewinn": 6.95,
+     "roi": 28,
+     "momentum": -3,
+     "spread": 10.21,
+     "score": 53,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     35.11
+    ]
+   },
+   {
+    "id": "me03-118",
+    "name": "Mega-Starmie-ex",
+    "nummer": "118",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/118/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Starmie-ex",
+    "preis": {
+     "tief": 24,
+     "trend": 32.51,
+     "schnitt7": 32.74,
+     "schnitt30": 33.88
+    },
+    "prozent": -3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 24,
+     "ziel": 32.51,
+     "gewinn": 5.38,
+     "roi": 22,
+     "momentum": -3,
+     "spread": 8.51,
+     "score": 51,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     32.51
+    ]
+   },
+   {
+    "id": "me03-094",
+    "name": "Piepi",
+    "nummer": "094",
+    "seltenheit": "Selten, Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/094/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Piepi",
+    "preis": {
+     "tief": 8.99,
+     "trend": 16.35,
+     "schnitt7": 15.95,
+     "schnitt30": 17.04
+    },
+    "prozent": -6,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 8.99,
+     "ziel": 15.95,
+     "gewinn": 4.66,
+     "roi": 52,
+     "momentum": -6,
+     "spread": 7.36,
+     "score": 49,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     16.35
+    ]
+   }
+  ],
   "sets": [
    {
     "name": "30 Jahre: Klassische Sammlung",
@@ -999,16 +1297,16 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 69,
+  "geprueft": 366,
   "statistik": {
-   "karten": 69,
-   "mitPreis": 69,
-   "imBudget": 0,
+   "karten": 366,
+   "mitPreis": 366,
+   "imBudget": 19,
    "steigend": 0,
-   "fallend": 0
+   "fallend": 8
   },
   "quelle": "TCGdex",
-  "stand": "2026-11-03T08:37:57.805Z"
+  "stand": "2026-11-03T09:35:57.957Z"
  },
  "trends": {
   "ware": [],
@@ -1112,24 +1410,6 @@
     "begriff": "cap"
    },
    {
-    "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
-    "preis": 60,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khm051153-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051153-413-Front.jpg?v=1755618413",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Kith Vancouver Classic Cap - Nocturnal",
-    "preis": 60,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050248-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050248-413-Detail.jpg?v=1792086944",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Nike Dunk Low Retro SE *Panda*",
     "preis": 63,
     "verfuegbar": true,
@@ -1146,24 +1426,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/nlgyo0hc7xe-IQ1275-001_Nike_Air-Jordan-6-Retro-GS-Infrared-Salesman-Black-Light-Crimson_os-1.jpg?v=1770909494",
     "laden": "asphaltgold.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "Kith & New Era for the New York Yankees 59FIFTY Low Profile Cap - Black",
-    "preis": 64,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/kh5936-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KH5936-100-Front_9761d2a0-d3c8-4f2b-b1d3-ffbf195b9cb3.jpg?v=1755618429",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Kith & ‘47 for the New York Yankees Barre Stripe Franchise LS Cap - Apocalypse",
-    "preis": 64,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050122-020",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050122-020-Detail.jpg?v=1787348052",
-    "laden": "kith.com",
-    "begriff": "cap"
    },
    {
     "titel": "Dunk Low Retro Premium",
@@ -1382,42 +1644,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "ASICS Gel-1130 - Black / Cream",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a609-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-023",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel-1130 - Black / Pure Silver",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1201a906-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1201A906-001AsicsGel1130BlackPureSilver_5029_f67d8690-a94e-490b-9b90-f18b2e59cae1.jpg?v=1785226746",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Evergreen / Black",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-301",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A609_301_SR_RT_GLB.jpg?v=1789458114",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 740",
     "preis": 99.99,
     "verfuegbar": true,
@@ -1616,33 +1842,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "Gel-NYC",
-    "preis": 120,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-1203a383-303",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A383_303-1.jpg?v=1770746166",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "Gel-NYC",
-    "preis": 120,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-1203a383-404",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A383-404_01_5bc027ef-92d8-4b8b-b630-1f7d94868870.jpg?v=1770746258",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "New Balance 740 - Slate Grey / Grey Matter",
-    "preis": 120,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu740n74f",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU740N74FNewBalance740SLATEGREYGREYMATTER_396.jpg?v=1785772266",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Asics GEL-Kayano 14",
     "preis": 122,
     "verfuegbar": true,
@@ -1677,15 +1876,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR6333-100_01.jpg?v=1778490795",
     "laden": "sneakersnstuff.com",
     "begriff": "dunk"
-   },
-   {
-    "titel": "Gel-NYC 2.0",
-    "preis": 128,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203a895-102",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A895-102_01.jpg?v=1777547927",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
    },
    {
     "titel": "Samba OG",
@@ -1776,24 +1966,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U2000858_1.jpg?v=1779448098",
     "laden": "overkillshop.com",
     "begriff": "new era"
-   },
-   {
-    "titel": "ASICS Gel-DS Trainer SP - Black / Gunmetal",
-    "preis": 130,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203b057-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B057-001_01.jpg?v=1791462815",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel-DS Trainer SP - Glacier Grey",
-    "preis": 130,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203b057-020",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B057-020_01.jpg?v=1791966157",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "Asics GEL-NYC",
@@ -1958,15 +2130,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "Gel-Cumulus 16",
-    "preis": 150,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-201",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-201_01.jpg?v=1780653283",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Asics GEL-Kayano 14",
     "preis": 152,
     "verfuegbar": true,
@@ -1992,24 +2155,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/KH7164_1_6eb42902-7770-497b-9f93-d5f5e0777e10.jpg?v=1790087861",
     "laden": "overkillshop.com",
     "begriff": "new era"
-   },
-   {
-    "titel": "Gel-NYC 2.0",
-    "preis": 160,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203b079-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203B079-100_01.jpg?v=1780653397",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-NYC 2.0 - Umeboshi / Moonrock",
-    "preis": 160,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203b079-600",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B079_600_SR_RT_GLB-1.jpg?v=1789458097",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "Nike Air Jordan 1 Retro High OG *Royal*",
@@ -2075,33 +2220,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "Gel-Kayano 14",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-kayano-14-1203a537-111",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A537-111_1.jpg?v=1776271666",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "Gel-Kayano 14",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-kayano-14-1203a537-002",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A537-002_01.jpg?v=1780653193",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "Gel-Kayano 14",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-kayano-14-1203a537-115",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A537-115_1.jpg?v=1776271709",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 1890A",
     "preis": 171.99,
     "verfuegbar": true,
@@ -2147,15 +2265,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "ASICS Gel Kayano 12.1 - Cocoa Powder / Cream",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a759-200",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_200_SL_LT_GLB.jpg?v=1790063442",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 9060",
     "preis": 180.99,
     "verfuegbar": true,
@@ -2190,24 +2299,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1793698037",
     "laden": "afew-store.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Duck Canvas Classic Cap - Blue Navy",
-    "preis": 195,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050223-5114",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050223-5114-Detail.jpg?v=1791551538",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Wool Deconstructed Franchise LS Fitted Cap - Black",
-    "preis": 195,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050222-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050222-001-Detail.jpg?v=1791551534",
-    "laden": "kith.com",
-    "begriff": "cap"
    },
    {
     "titel": "Air Jordan 5 Retro",
@@ -2318,60 +2409,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "New Balance x Action Bronson 1890 - Brown / Blue",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu18901dp",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU18901DPNewBalanceActionBronson1890White_0388.jpg?v=1770653222",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance x Action Bronson 1890 - Blue / Grey",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu18908bn",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU18908BNNewBalanceActionBronson1890Blue_0381.jpg?v=1770653222",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "Ronnie Fieg & New Balance 2011 - Chocolate Truffle / Sepia Rose",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu20119uf",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU20119UF-Front.jpg?v=1782226127",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance x JJJJound 1890 - Black / White",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu18907dn",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u18907dn_2.jpg?v=1782729390",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "Kith & New Balance Made in USA 990v4 - Dusty Mauve",
-    "preis": 220,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu990tk4",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU990TK4-Front.jpg?v=1777988030",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "Kith & New Balance Made in USA 993 - Asteroid",
-    "preis": 220,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu993hk",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU993HK-Front.jpg?v=1777988030",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Made In USA 992",
     "preis": 230,
     "verfuegbar": true,
@@ -2408,24 +2445,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Soft Leather SL Hitch Cap - Black",
-    "preis": 245,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050225-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050225-001-Detail.jpg?v=1791551535",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Soft Leather SL Hitch Cap - Blue Navy",
-    "preis": 245,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050225-5114",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050225-5114-Detail.jpg?v=1791551538",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Air Jordan 16 x Free The Youth SP",
     "preis": 250,
     "verfuegbar": true,
@@ -2442,23 +2461,13 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U991GL2_2__04065.1725457431.1280.1280.jpg?v=1742985463",
     "laden": "sneakersnstuff.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance x Amine Made in USA 992 - Chocolate / Amber",
-    "preis": 250,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu992ne",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u992ne_nb_02_i.jpg?v=1790595700",
-    "laden": "kith.com",
-    "begriff": "new balance"
    }
   ],
   "erreicht": [
    "afew-store.com",
    "overkillshop.com",
    "asphaltgold.com",
-   "sneakersnstuff.com",
-   "kith.com"
+   "sneakersnstuff.com"
   ]
  },
  "produkte": [],
