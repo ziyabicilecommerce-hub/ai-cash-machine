@@ -37,10 +37,10 @@ const ZUHAUSE = { breite: 50.0697, laenge: 8.4867 }; // Hattersheim am Main
 const AUSNAHME = new RegExp(env('BEWERBUNG_ORTE_EXTRA', 'offenbach'), 'i');
 const MIN_PASSUNG = 6;
 // Unter diesem Monatsbrutto wird nicht beworben (nur wenn die Anzeige ein Gehalt nennt). ~3.000 € ≈ 2.050 € netto (Stkl. 1).
-// Mindestens so viel wie das CONDOR-Angebot (Leitstelle, ~3.100 € brutto).
-const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '3100'), 10) || 3100;
+// Ziya hat die Grenze auf 2.800 € brutto gesenkt, damit mehr Büro-Stellen dazukommen.
+const MIN_BRUTTO = parseInt(env('BEWERBUNG_MIN_BRUTTO', '2800'), 10) || 2800;
 // Personalvermittler/Zeitarbeit nur, wenn die Anzeige mindestens so viel Monatsbrutto nennt (dann lohnt es sich).
-const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '3100'), 10) || 3100;
+const ZEITARBEIT_AB = parseInt(env('BEWERBUNG_ZEITARBEIT_AB', '2800'), 10) || 2800;
 // Wird nur genannt, wenn die Anzeige ausdrücklich nach einer Gehaltsvorstellung fragt.
 const GEHALTSWUNSCH = env('BEWERBUNG_GEHALTSWUNSCH', '36.000');
 const NACHFASS_NACH_TAGEN = 12;
@@ -189,6 +189,8 @@ export const ZEITARBEIT = /personaldienstleist|zeitarbeit|zeitservice|zeit-servi
 const MEDIZIN = /physio|ergothera|logopäd|heilprakt|osteopath|massage|podolog|praxis|\btfa\b|\bmfa\b|\bzfa\b|tiermedizin|zahnmedizin|arzthelfer|zahnarzt|kieferorthop|pflegefach|pflegekraft|altenpfleg|krankenpfleg|therapeut|apothek/i;
 const HANDWERK = /montage|monteur|helfer\b|handwerk|elektriker|mechaniker|mechatroniker|schlosser|schweiß|tischler|schreiner|maler\b|lackierer|maurer|dachdecker|installateur|sanitär|heizung|klempner|fliesen|zimmerer|gärtner|garten|landschaftsbau|bauhelfer|bauarbeiter|reinigung|hauswirtschaft|haushaltshilfe|\bkoch\b|küchen|hausmeister|glaser\b|metallbau|produktionshelfer|fertigung|produktion\b|produktionsmitarbeit|maschinenbediener|lagerlogistik|lagermitarbeit|kommissionier|staplerfahrer/i;
 const BUERO = /büro|kaufm|sachbearbeit|assistenz|verwaltung|empfang|disposition|disponent|sekretär/i;
+// Lager/Logistik-Halle schließt Ziya ganz aus - auch wenn "kaufmännisch" oder "Büro" im Titel steht.
+const LAGER = /lager|wareneingang|warenausgang|versandmitarbeit|kommissionier|stapler|picker|packer|logistikmitarbeit|logistikhelfer/i;
 const FUEHRUNG = /geschäftsführ|leiter(in)?\b|leitung\b|head of|senior|teamlead|team lead|director|direktor/i;
 // Nur Vollzeit mit festem Gehalt - keine Minijobs, Aushilfen, Honorar-/Provisionsmodelle.
 const KEIN_FIXGEHALT = /minijob|aushilfe|werkstudent|praktikum|praktikant|freelance|freiberuf|selbstständig|selbständig|nebenjob|honorar|auf provisionsbasis|\b(520|538|556) ?(€|euro)/i;
@@ -434,11 +436,14 @@ async function main() {
     if (state.uebersprungen[refnr]?.startsWith('Ort ') && ortPasst(stelle)) delete state.uebersprungen[refnr];
     // Die Zeitarbeits-Grenze wurde gesenkt - früher aussortierte Vermittler-Stellen einmal neu bewerten.
     if (state.uebersprungen[refnr] === 'Zeitarbeit/Vermittler ohne Top-Gehalt') delete state.uebersprungen[refnr];
+    // Die Gehaltsgrenze wurde gesenkt - früher wegen zu wenig Gehalt aussortierte Stellen einmal neu bewerten.
+    if (state.uebersprungen[refnr]?.startsWith('zu wenig Gehalt')) delete state.uebersprungen[refnr];
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb'; continue; }
     if (MEDIZIN.test(kopf)) { state.uebersprungen[refnr] = 'Praxis/Medizin'; continue; }
     if (HANDWERK.test(stelle.titel) && !BUERO.test(stelle.titel)) { state.uebersprungen[refnr] = 'Handwerk'; continue; }
+    if (LAGER.test(stelle.titel)) { state.uebersprungen[refnr] = 'Lager'; continue; }
     if (FUEHRUNG.test(stelle.titel)) { state.uebersprungen[refnr] = 'Führungsposition'; continue; }
     if (stelle.minijob || !stelle.vollzeit || KEIN_FIXGEHALT.test(kopf)) { state.uebersprungen[refnr] = 'kein Vollzeit-Fixgehalt'; continue; }
     // Vermittler/Zeitarbeit erst nach den Details entscheiden: nur wenn das Gehalt richtig gut ist.

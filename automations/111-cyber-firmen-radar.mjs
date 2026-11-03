@@ -91,6 +91,8 @@ const FIRMEN = [
   { firma: 'Clatum Consulting Group', domain: 'clatum.com', ort: 'Eschborn', email: 'info@clatum.com' },
   { firma: 'Blue Logix GmbH', domain: 'blue-logix.de', ort: 'Eschborn', email: 'kontakt@blue-logix.de' },
   { firma: 'InfoGuard Deutschland GmbH', domain: 'infoguard.ch', ort: 'Neu-Isenburg', email: 'job@infoguard.ch' },
+  { firma: 'DWS Group', domain: 'dws.com', ort: 'Frankfurt am Main', email: 'info@dws.com' },
+  { firma: 'traffiQ Lokale Nahverkehrsgesellschaft Frankfurt', domain: 'traffiq.de', ort: 'Frankfurt am Main', email: 'info@traffiq.de' },
 ];
 
 async function main() {
