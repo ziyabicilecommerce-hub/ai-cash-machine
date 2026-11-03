@@ -91,6 +91,7 @@ export async function neueGeschichte(kiJson, bekannt = [], { versuche = 3, minde
   for (let i = 0; i < versuche; i++) {
     try {
       const s = saeubern(await kiJson(prompt(bekannt, Math.random, { thema, inspiration })));
+      if (kiJson.quelle === 'lokal' && !/^(1|ja|an|true)$/i.test(process.env.HORROR_KI_LOKAL || '')) { console.log('[horror-ki] abgelehnt: nur die kleine eigene KI erreichbar - zu holpriges Deutsch (Gemini/Groq-Schlüssel fehlt)'); break; }
       if (!s) console.log(`[horror-ki] abgelehnt: ${saeubern.grund}`);
       else if (bekannt.includes(s.titel)) console.log(`[horror-ki] abgelehnt: Titel schon da (${s.titel})`);
       else if (hooks.some((h) => aehnlich(s.hook, h) >= 0.6)) console.log(`[horror-ki] abgelehnt: Hook zu ähnlich wie ein vorhandener (${s.hook})`);
@@ -108,13 +109,19 @@ export async function neueGeschichte(kiJson, bekannt = [], { versuche = 3, minde
 export async function geschichtenKi(prompt) {
   const { lokalBereit, kiLokal } = await import('../lib/kiLokal.mjs');
   const { jsonAusText, kiJson, githubModels, githubModelsBereit } = await import('../lib/kiJson.mjs');
-  // 1. GitHub Models (gratis im Actions-Lauf, Workflow-Recht "models: read") - deutlich besseres Deutsch als das kleine Modell
+  const env = (k) => (process.env[k] || '').trim();
+  geschichtenKi.quelle = '';
+  // 1. GitHub Models (gratis im Actions-Lauf) - antwortet bei manchen Konten leer, dann weiter
   if (githubModelsBereit()) {
-    try { return jsonAusText(await githubModels(`${prompt}\nGib nur das JSON zurück.`, 900)); } catch (e) { console.log(`[horror-ki] GitHub Models: ${String(e.message).slice(0, 120)}`); }
+    try { const r = jsonAusText(await githubModels(`${prompt}\nGib nur das JSON zurück.`, 900)); geschichtenKi.quelle = 'github-models'; return r; } catch (e) { console.log(`[horror-ki] GitHub Models: ${String(e.message).slice(0, 120)}`); }
   }
-  // 2. eigene KI im Lauf (Ollama, kein Limit, erzwungenes JSON)
+  // 2. starke Gratis-KI mit eigenem Schlüssel (GEMINI_API_KEY oder GROQ_API_KEY als Repo-Secret)
+  if (env('GEMINI_API_KEY') || env('GROQ_API_KEY') || env('POLLINATIONS_TOKEN')) {
+    try { const r = await kiJson(prompt, { maxTokens: 3000 }); geschichtenKi.quelle = 'stark'; return r; } catch (e) { console.log(`[horror-ki] Gratis-KI: ${String(e.message).slice(0, 120)}`); }
+  }
+  // 3. eigene kleine KI im Lauf - schreibt holpriges Deutsch, deshalb werden ihre Geschichten nur mit HORROR_KI_LOKAL=an genommen
   if (lokalBereit()) {
-    try { return jsonAusText((await kiLokal(prompt, { maxTokens: 1200 })).antwort); } catch (e) { console.log(`[horror-ki] lokal: ${String(e.message).slice(0, 120)}`); }
+    const r = jsonAusText((await kiLokal(prompt, { maxTokens: 1200 })).antwort); geschichtenKi.quelle = 'lokal'; return r;
   }
-  return kiJson(prompt, { maxTokens: 3000 });
+  throw new Error('keine KI erreichbar');
 }

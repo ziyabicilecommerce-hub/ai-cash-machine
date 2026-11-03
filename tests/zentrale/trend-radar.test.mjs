@@ -38,3 +38,15 @@ test('Ähnlichkeits- und Themen-Check gegen abgeschriebene oder unpassende Gesch
   assert.equal(passtZumThema({ ...s, hook: 'Ich wohne allein.' }, 'Novembernebel auf der Landstraße'), false);
   assert.equal(passtZumThema(s, ''), true, 'ohne Thema immer ok');
 });
+
+test('Qualitäts-Sperre: Geschichten der kleinen eigenen KI werden ohne Freigabe nicht genommen', async () => {
+  const { neueGeschichte, BEISPIEL } = await import('../../automations/schatten/horrorKi.mjs');
+  const gut = { ...BEISPIEL, titel: 'Der Wecker', hook: 'Mein Wecker klingelt um 3:33. Ich habe ihn auf 7 gestellt.' };
+  const lokal = async () => gut; lokal.quelle = 'lokal';
+  const stark = async () => gut; stark.quelle = 'stark';
+  assert.equal(await neueGeschichte(lokal, []), null);
+  assert.equal((await neueGeschichte(stark, [])).titel, 'Der Wecker');
+  process.env.HORROR_KI_LOKAL = 'an';
+  assert.equal((await neueGeschichte(lokal, [])).titel, 'Der Wecker', 'mit Freigabe erlaubt');
+  delete process.env.HORROR_KI_LOKAL;
+});
