@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-03T16:41:10.397Z",
+ "stand": "2026-11-03T16:44:26.737Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118202:1080",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Dein Bestes Adventskalender 2026 - merry christmas für Katzen, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787554263/assets/pas/images/ba693b2b-2361-4c1c-a86d-45040e0c865b/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=49.984061,8.430174",
+   "shop": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
+   "text": "16,95 € · dm Rüsselsheim am Main (10,3 km) · 1 Stück\nAdam-Opel-Straße 59-61, 65428 Rüsselsheim am Main\nIm Umkreis in 14 Filiale(n) vorrätig.",
+   "zeit": "2026-11-03T16:44:26.737Z"
+  },
   {
    "schluessel": "filiale:3118686:1501",
    "art": "Filiale",
@@ -188,19 +198,10 @@
    "link": "https://www.nike.com/de/launch/t/womens-lahar-low-wheat",
    "text": "Wheat/Orange/Wheat/Schwarz · 139,99 € · Start 09:00 Uhr",
    "zeit": "2026-11-01T06:32:31.096Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nikeair-jordan-3-retro-og-true-blue-white-varsity-red-true-blue-cement-grey-anthracite",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 3 Retro für 179,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/zaf63auwgf-IF4396-104_Nike_Air-Jordan-3-Retro-True-Blue-White-Varsity-Red-True-Blue-Cement-Grey-Anthracite_os-1.jpg?v=1783518064",
-   "link": "https://www.asphaltgold.com/products/nikeair-jordan-3-retro-og-true-blue-white-varsity-red-true-blue-cement-grey-anthracite",
-   "text": "asphaltgold.com · Nike Air Jordan 3 Retro OG *True Blue*\nVerkauf ca. 200–290 € → Gewinn ca. +36,50 € (ROI 20 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-01T03:38:58.108Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-03T16:27:51.760Z",
+  "stand": "2026-11-03T16:44:30.959Z",
   "filialen": 148,
   "produkte": [
    {
@@ -556,20 +557,20 @@
       "menge": 3
      },
      {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 1
+     },
+     {
       "name": "dm Eschborn",
       "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
       "menge": 6
-     },
-     {
-      "name": "dm Hochheim am Main",
-      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
-      "km": 10.5,
-      "lat": 50.0155817,
-      "lon": 8.3658454,
-      "menge": 5
      }
     ]
    },
@@ -1399,8 +1400,16 @@
   "ware": [],
   "top": [
    {
+    "titel": "stuttgart galatasaray",
+    "menge": "200+"
+   },
+   {
     "titel": "vfb galatasaray",
-    "menge": "2000+"
+    "menge": "1000+"
+   },
+   {
+    "titel": "midterms live",
+    "menge": "200+"
    },
    {
     "titel": "tennis paris",
@@ -1412,7 +1421,7 @@
    },
    {
     "titel": "toilettenpapier",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "elder scrolls 6",
@@ -1424,18 +1433,10 @@
    },
    {
     "titel": "max hopp",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "rachel apa",
-    "menge": "200+"
-   },
-   {
-    "titel": "the rookie",
-    "menge": "2000+"
-   },
-   {
-    "titel": "tesla, inc.",
     "menge": "500+"
    }
   ]
