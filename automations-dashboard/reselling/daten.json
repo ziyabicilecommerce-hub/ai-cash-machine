@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-04T18:14:32.272Z",
+ "stand": "2026-11-04T18:17:39.148Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -197,7 +197,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-04T18:01:59.170Z",
+  "stand": "2026-11-04T18:17:51.471Z",
   "filialen": 148,
   "produkte": [
    {
@@ -263,7 +263,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 80
+      "menge": 78
      },
      {
       "name": "dm Flörsheim am Main",
@@ -271,7 +271,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 58
+      "menge": 57
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -330,7 +330,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Frankfurt am Main",
@@ -374,14 +374,6 @@
     "link": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
     "begriff": "adventskalender",
     "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 1
-     },
      {
       "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
@@ -437,17 +429,16 @@
       "lat": 50.0155817,
       "lon": 8.3658454,
       "menge": 5
+     },
+     {
+      "name": "dm Wiesbaden",
+      "adresse": "Borsigstraße 9, 65205 Wiesbaden",
+      "km": 10.9,
+      "lat": 50.057082,
+      "lon": 8.33478,
+      "menge": 1
      }
     ]
-   },
-   {
-    "dan": "3135931",
-    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
-    "preis": 29.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
-    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
-    "begriff": "adventskalender",
-    "vorrat": []
    },
    {
     "dan": "3118897",
@@ -524,6 +515,15 @@
     ]
    },
    {
+    "dan": "3135931",
+    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
+    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
+    "begriff": "adventskalender",
+    "vorrat": []
+   },
+   {
     "dan": "3119105",
     "name": "M. Asam Adventskalender 2026 Schönste Zeit, 1 St",
     "preis": 69.95,
@@ -598,6 +598,80 @@
     ]
    },
    {
+    "dan": "3118197",
+    "name": "Balea MEN Adventskalender 2026 MERRY CHRISTMAS, 1 St",
+    "preis": 16.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787609114/assets/pas/images/4e81a9d1-d42d-46e1-8769-1c8458d165fa/balea-men-adventskalender-2026-merry-christmas",
+    "link": "https://www.dm.de/p/d/3118197/balea-men-adventskalender-2026-merry-christmas",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 20
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 7
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 18
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 5
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 15
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 16
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 31
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 2
+     }
+    ]
+   },
+   {
     "dan": "3118201",
     "name": "Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
     "preis": 16.95,
@@ -635,7 +709,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 7
+      "menge": 6
      },
      {
       "name": "dm Flörsheim am Main",
@@ -672,29 +746,11 @@
     ]
    },
    {
-    "dan": "3135828",
-    "name": "M. Asam Adventskalender 2026 Pflege-Zeit, 1 St",
-    "preis": 69.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1792187322/assets/pas/images/a6a368ce-d1d1-4e52-a5fe-4dc308218e9a/m-asam-adventskalender-2026-pflege-zeit",
-    "link": "https://www.dm.de/p/d/3135828/m-asam-adventskalender-2026-pflege-zeit",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
     "dan": "3143255",
     "name": "LEGO®DUPLO® duplo Disney Frozen Kreativbox Set 37tlg, 1 St",
     "preis": 19.95,
     "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1778366813/assets/pas/images/49a53421-ad43-49bb-b53e-c1db74cc5b14/lego-duplo-duplo-disney-frozen-kreativbox-set-37tlg",
     "link": "https://www.dm.de/p/d/3143255/lego-duplo-duplo-disney-frozen-kreativbox-set-37tlg",
-    "begriff": "lego",
-    "vorrat": []
-   },
-   {
-    "dan": "3099985",
-    "name": "LEGO®DUPLO® duplo Kreative Fahrzeuge Set 42tlg, 1 St",
-    "preis": 19.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1778365855/assets/pas/images/abf2d2d8-0b70-4837-8ab8-d012e70b9fd4/lego-duplo-duplo-kreative-fahrzeuge-set-42tlg",
-    "link": "https://www.dm.de/p/d/3099985/lego-duplo-duplo-kreative-fahrzeuge-set-42tlg",
     "begriff": "lego",
     "vorrat": []
    },
@@ -744,7 +800,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 4
+      "menge": 3
      },
      {
       "name": "dm Flörsheim am Main",
@@ -818,7 +874,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 13
+      "menge": 12
      },
      {
       "name": "dm Flörsheim am Main",
@@ -1693,20 +1749,11 @@
  "live": {
   "treffer": [
    {
-    "titel": "Afew Goods Essential Cap",
-    "preis": 32.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/afew-goods-blanco-cap-green",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/afew-goods-blanco-cap-green-ag0046p01grn-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1767362961",
-    "laden": "afew-store.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Barbour Barbour Wax Cap",
     "preis": 37.99,
     "verfuegbar": true,
-    "url": "https://afew-store.com/products/barbour-barbour-wax-cap-olive",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/barbour-barbour-wax-cap-olive-mha0005ol71-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1790756115",
+    "url": "https://afew-store.com/products/barbour-barbour-wax-cap-dark-brown",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/barbour-barbour-wax-cap-dark-brown-mha0005br91-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1790755995",
     "laden": "afew-store.com",
     "begriff": "cap"
    },
@@ -1763,6 +1810,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/c2ypbmhf7s7-1201A906-001_Asics_GEL-1130-Black-Pure-Silver_os-1.jpg?v=1768574492",
     "laden": "asphaltgold.com",
     "begriff": "asics"
+   },
+   {
+    "titel": "Y-3 x MERCEDES-AMG PETRONAS FORMULA 1 TEAM RUN CAP",
+    "preis": 59.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/y-3-performance-cap-black",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/y-3-performance-cap-black-kr4910-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1773826462",
+    "laden": "afew-store.com",
+    "begriff": "cap"
    },
    {
     "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
@@ -1981,6 +2037,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "204L",
+    "preis": 98,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-204l-u204lmmc",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U204LMMC_01.jpg?v=1757919418",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Wmns Air Jordan 3 Retro Starfish",
     "preis": 99,
     "verfuegbar": true,
@@ -2049,15 +2114,6 @@
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/asi1203a609-023",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel-1130 - Black / Pure Silver",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1201a906-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1201A906-001AsicsGel1130BlackPureSilver_5029_f67d8690-a94e-490b-9b90-f18b2e59cae1.jpg?v=1785226746",
     "laden": "kith.com",
     "begriff": "asics"
    },
@@ -2141,6 +2197,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IH9373_1_cbfa4bbc-fd41-4011-9122-d94322d0b4a3.jpg?v=1776771212",
     "laden": "overkillshop.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "ASICS Gel-1130 - Cream / Carrier Grey",
+    "preis": 110,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a899-101",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_101_SR_RT_GLB.jpg?v=1780992709",
+    "laden": "kith.com",
+    "begriff": "asics"
    },
    {
     "titel": "New Balance 740",
@@ -2265,6 +2330,15 @@
     "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-tmvire-ftwwht-gum2",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-tmvire-ftwwht-gum2-kj2788-footwear_20_3E_20sneaker.jpg?v=1781618070",
+    "laden": "afew-store.com",
+    "begriff": "samba"
+   },
+   {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 119.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-carbon-warvan-gum5",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-carbon-warvan-gum5-kk2268-footwear_20_3E_20sneaker.jpg?v=1783936471",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
@@ -2431,15 +2505,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS Gel-DS Trainer SP - Glacier Grey",
-    "preis": 130,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203b057-020",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B057-020_01.jpg?v=1791966157",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Asics GEL-NYC",
     "preis": 134,
     "verfuegbar": true,
@@ -2482,6 +2547,15 @@
     "url": "https://www.overkillshop.com/products/air-jordan-1-mid-banned-554724-074-black-gym-red-white",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/554724-074-01.jpg?v=1774952882",
     "laden": "overkillshop.com",
+    "begriff": "jordan"
+   },
+   {
+    "titel": "Air Jordan 13 Retro \"University Red\"",
+    "preis": 140,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-13-retro-university-red-414571-102",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/414571-102-1.jpg?v=1773401029",
+    "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
    {
@@ -2647,15 +2721,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Made In UK W991",
-    "preis": 161,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/new-balance-991-w991gl",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/W991GL-1__52260.1719433604.1280.1280.jpg?v=1742985392",
-    "laden": "sneakersnstuff.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Women's Air Jordan 4 Retro \"Iced Carmine\"",
     "preis": 168,
     "verfuegbar": true,
@@ -2800,20 +2865,20 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Air Jordan 1 High OG “Royal”",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-1-high-og-royal-iq5495-005",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ5495-005_01.jpg?v=1790618946",
-    "laden": "sneakersnstuff.com",
-    "begriff": "jordan"
-   },
-   {
     "titel": "ASICS GEL KAYANO 12.1 - White / Cream",
     "preis": 180,
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/asi1203a759-106",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_106_SR_RT_GLB.jpg?v=1790170342",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS Gel Kayano 12.1 - Cocoa Powder / Cream",
+    "preis": 180,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a759-200",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_200_SL_LT_GLB.jpg?v=1790063442",
     "laden": "kith.com",
     "begriff": "asics"
    },
