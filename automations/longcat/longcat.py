@@ -24,8 +24,14 @@ def spaces():
         except Exception as e:
             print(f'[longcat] Suche "{q}": {e}')
     liste = []
-    for sid, s in gefunden.items():
+    for sid, s in list(gefunden.items())[:60]:
         rt = s.get('runtime') or {}
+        if not rt.get('stage'):  # die Suche liefert den Status nicht mit - einzeln nachfragen
+            try:
+                with urllib.request.urlopen(urllib.request.Request(f'https://huggingface.co/api/spaces/{sid}/runtime', headers={'User-Agent': 'longcat-erkunder'}), timeout=20) as r:
+                    rt = json.load(r)
+            except Exception as e:
+                rt = {'stage': f'unbekannt ({str(e)[:40]})'}
         liste.append({'id': sid, 'stufe': rt.get('stage'), 'hardware': (rt.get('hardware') or {}).get('current'),
                       'sdk': s.get('sdk'), 'likes': s.get('likes', 0)})
     return sorted(liste, key=lambda x: (x['stufe'] != 'RUNNING', -(x['likes'] or 0)))
