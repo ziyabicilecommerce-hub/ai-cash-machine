@@ -358,8 +358,46 @@
    "ok": 0,
    "repariert": 2,
    "abgelehnt": []
+  },
+  {
+   "datum": "2026-11-03T12:46:12.981Z",
+   "geprueft": 2,
+   "ok": 0,
+   "repariert": 1,
+   "abgelehnt": [
+    {
+     "datei": "2026-11-03-2-fehler-die-jeder-bei-gaming-setup-und-schreibtisch.mp4",
+     "thema": "Fehler, die jeder bei Gaming-Setup und Schreibtisch-Zubehoer macht",
+     "gruende": [
+      "Anfang schwarz – Bild 1 zeigt weder Produkt noch Hook"
+     ]
+    }
+   ]
+  },
+  {
+   "datum": "2026-11-04T12:55:53.802Z",
+   "geprueft": 2,
+   "ok": 0,
+   "repariert": 1,
+   "abgelehnt": [
+    {
+     "datei": "2026-11-04-2-trends-2026-gaming-setup-schreibtisch-zubehoer.mp4",
+     "thema": "Trends 2026: Gaming-Setup und Schreibtisch-Zubehoer",
+     "gruende": [
+      "Anfang schwarz – Bild 1 zeigt weder Produkt noch Hook"
+     ]
+    }
+   ]
   }
  ],
- "nachbauen": [],
- "stand": "2026-11-02T13:16:42.123Z"
+ "nachbauen": [
+  {
+   "thema": "Trends 2026: Gaming-Setup und Schreibtisch-Zubehoer",
+   "datum": "2026-11-04",
+   "gruende": [
+    "Anfang schwarz – Bild 1 zeigt weder Produkt noch Hook"
+   ]
+  }
+ ],
+ "stand": "2026-11-04T12:55:53.802Z"
 }
