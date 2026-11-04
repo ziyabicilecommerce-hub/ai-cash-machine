@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-04T20:03:51.812Z",
+ "stand": "2026-11-04T20:06:50.929Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118202:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Dein Bestes Adventskalender 2026 - merry christmas für Katzen, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787554263/assets/pas/images/ba693b2b-2361-4c1c-a86d-45040e0c865b/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
+   "text": "16,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 13 Filiale(n) vorrätig.",
+   "zeit": "2026-11-04T20:06:50.929Z"
+  },
   {
    "schluessel": "deal:https://www.overkillshop.com/products/nike-wmns-air-force-1-07-dd8959-100-white-white-white-white",
    "art": "Deal",
@@ -183,19 +193,10 @@
    "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
    "text": "24,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 25 Filiale(n) vorrätig.",
    "zeit": "2026-11-03T00:22:40.600Z"
-  },
-  {
-   "schluessel": "neu:https://afew-store.com/products/barbour-barbour-wax-cap-dark-brown",
-   "art": "Neu",
-   "titel": "🟢 NEU im Bestand: Barbour Barbour Wax Cap",
-   "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/barbour-barbour-wax-cap-dark-brown-mha0005br91-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1790755995",
-   "link": "https://afew-store.com/products/barbour-barbour-wax-cap-dark-brown",
-   "text": "37,99 € · afew-store.com (online)\nVerfügbar - jetzt bestellen, solange Größen da sind.",
-   "zeit": "2026-11-02T20:52:04.638Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-04T19:51:41.990Z",
+  "stand": "2026-11-04T20:06:55.356Z",
   "filialen": 148,
   "produkte": [
    {
@@ -212,7 +213,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 36
+      "menge": 37
      },
      {
       "name": "dm Kriftel",
@@ -220,7 +221,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 29
+      "menge": 30
      },
      {
       "name": "dm Kelsterbach",
@@ -228,7 +229,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 16
+      "menge": 17
      },
      {
       "name": "dm Frankfurt am Main",
@@ -236,7 +237,7 @@
       "km": 5.6,
       "lat": 50.1014043,
       "lon": 8.5485073,
-      "menge": 21
+      "menge": 22
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -252,7 +253,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 78
+      "menge": 81
      },
      {
       "name": "dm Flörsheim am Main",
@@ -268,7 +269,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 10
+      "menge": 11
      }
     ]
    },
@@ -318,7 +319,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 12
+      "menge": 13
      },
      {
       "name": "dm Flörsheim am Main",
@@ -360,7 +361,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 20
+      "menge": 21
      },
      {
       "name": "dm Kriftel",
@@ -400,7 +401,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 16
+      "menge": 17
      },
      {
       "name": "dm Flörsheim am Main",
@@ -416,7 +417,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 2
+      "menge": 3
      }
     ]
    },
@@ -434,7 +435,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 5
+      "menge": 6
      },
      {
       "name": "dm Kriftel",
@@ -458,7 +459,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 6
+      "menge": 7
      },
      {
       "name": "dm Flörsheim am Main",
@@ -474,7 +475,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -502,6 +503,14 @@
     "link": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
     "begriff": "adventskalender",
     "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
      {
       "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
@@ -557,14 +566,6 @@
       "lat": 50.0155817,
       "lon": 8.3658454,
       "menge": 5
-     },
-     {
-      "name": "dm Wiesbaden",
-      "adresse": "Borsigstraße 9, 65205 Wiesbaden",
-      "km": 10.9,
-      "lat": 50.057082,
-      "lon": 8.33478,
-      "menge": 1
      }
     ]
    },
@@ -582,7 +583,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 9
+      "menge": 10
      },
      {
       "name": "dm Frankfurt am Main",
@@ -598,7 +599,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 2
+      "menge": 4
      },
      {
       "name": "dm Flörsheim am Main",
@@ -643,20 +644,85 @@
     ]
    },
    {
+    "dan": "3118200",
+    "name": "Carlsen Adventskalender 2026 Pixi Leporello, 1 St",
+    "preis": 20,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1786752764/assets/pas/images/78d10d44-f2ad-4c77-bdda-33fb46aedcba/carlsen-adventskalender-2026-pixi-leporello",
+    "link": "https://www.dm.de/p/d/3118200/carlsen-adventskalender-2026-pixi-leporello",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 4
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 3
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 5
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 3
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 5
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Leipziger Straße 28, 60487 Frankfurt am Main",
+      "km": 12.9,
+      "lat": 50.121564,
+      "lon": 8.648177,
+      "menge": 4
+     },
+     {
+      "name": "dm Wiesbaden",
+      "adresse": "Berliner Straße 279, 65205 Wiesbaden",
+      "km": 13.4,
+      "lat": 50.0537018,
+      "lon": 8.3006459,
+      "menge": 2
+     }
+    ]
+   },
+   {
     "dan": "3135931",
     "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
     "preis": 29.95,
     "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
     "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
-    "dan": "3162931",
-    "name": "Barebells Adventskalender 2026 Proteinriegel \"Twenty Four Days of Chocolate\", 1 St",
-    "preis": 59.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790203300/assets/pas/images/96a77283-9a84-4c15-ab1d-f40243cb72a0/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
-    "link": "https://www.dm.de/p/d/3162931/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
     "begriff": "adventskalender",
     "vorrat": []
    },
@@ -742,7 +808,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Flörsheim am Main",
@@ -1689,15 +1755,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
-    "preis": 60,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khm051153-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051153-413-Front.jpg?v=1755618413",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Nike Dunk Low Retro SE *Panda*",
     "preis": 63,
     "verfuegbar": true,
@@ -1714,33 +1771,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/nlgyo0hc7xe-IQ1275-001_Nike_Air-Jordan-6-Retro-GS-Infrared-Salesman-Black-Light-Crimson_os-1.jpg?v=1770909494",
     "laden": "asphaltgold.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "Kith & New Era for the New York Yankees 59FIFTY Low Profile Cap - Black",
-    "preis": 64,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/kh5936-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KH5936-100-Front_9761d2a0-d3c8-4f2b-b1d3-ffbf195b9cb3.jpg?v=1755618429",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Kith & '47 for the New York Yankees Franchise LS Cap - Navy",
-    "preis": 64,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khm051547-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051547-413-Front.jpg?v=1772131115",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Kith for ‘47 for the New York Yankees Corduroy Franchise LS Cap - Nocturnal",
-    "preis": 64,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050120-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050120-413-Detail.jpg?v=1787348051",
-    "laden": "kith.com",
-    "begriff": "cap"
    },
    {
     "titel": "Dunk Low Retro Premium",
@@ -1986,33 +2016,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "ASICS Gel-1130 - Black / Cream",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a609-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-023",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Evergreen / Black",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-301",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A609_301_SR_RT_GLB.jpg?v=1789458114",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 740",
     "preis": 99.99,
     "verfuegbar": true,
@@ -2076,24 +2079,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "ASICS Gel-1130 - White / Taro Purple",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_100_SR_RT_GLB.jpg?v=1780992734",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel-1130 - Cream / Carrier Grey",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-101",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_101_SR_RT_GLB.jpg?v=1780992709",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 740",
     "preis": 113,
     "verfuegbar": true,
@@ -2155,15 +2140,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IH6820_1.jpg?v=1772531529",
     "laden": "overkillshop.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "U740BM2",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u740bm2-black-silver-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740BM2_1.jpg?v=1737122996",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
    },
    {
     "titel": "U740WM2",
@@ -2263,15 +2239,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A383_303-1.jpg?v=1770746166",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "New Balance 740 - Slate Grey / Grey Matter",
-    "preis": 120,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu740n74f",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU740N74FNewBalance740SLATEGREYGREYMATTER_396.jpg?v=1785772266",
-    "laden": "kith.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Asics GEL-Kayano 14",
@@ -2443,15 +2410,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/414571-102-1.jpg?v=1773401029",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "New Balance 204L - Mushroom / Arid Stone",
-    "preis": 140,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu204lmma",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/U204LMMA_2_8db7dc96-59a0-4070-becc-072556f74cb5.jpg?v=1754659968",
-    "laden": "kith.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 3 Retro OG \"World's Best Dad\"",
@@ -2715,15 +2673,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-118",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Nike Air Jordan 9 Retro OG *Space Jam*",
     "preis": 178,
     "verfuegbar": true,
@@ -2769,24 +2718,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "ASICS GEL KAYANO 12.1 - White / Cream",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a759-106",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_106_SR_RT_GLB.jpg?v=1790170342",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel Kayano 12.1 - Cocoa Powder / Cream",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a759-200",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_200_SL_LT_GLB.jpg?v=1790063442",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "U9060GRY",
     "preis": 189,
     "verfuegbar": true,
@@ -2805,6 +2736,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "Air Jordan 3 Retro 'World's Best'",
+    "preis": 189.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/air-jordan-3-retro-sail-black-university-red-pale-ivory",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-3-retro-sail-black-university-red-pale-ivory-if4396-103-footwear_20_3E_20sneaker.jpg?v=1793713512",
+    "laden": "afew-store.com",
+    "begriff": "jordan"
+   },
+   {
     "titel": "New Balance 9060",
     "preis": 189.99,
     "verfuegbar": true,
@@ -2812,33 +2752,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1793720357",
     "laden": "afew-store.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Duck Canvas Classic Cap - Blue Navy",
-    "preis": 195,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050223-5114",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050223-5114-Detail.jpg?v=1791551538",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Wool Deconstructed Franchise LS Fitted Cap - Black",
-    "preis": 195,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050222-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050222-001-Detail.jpg?v=1791551534",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Wool Deconstructed Franchise LS Fitted Cap - Cacao",
-    "preis": 195,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050222-237",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050222-237-Detail.jpg?v=1791551536",
-    "laden": "kith.com",
-    "begriff": "cap"
    },
    {
     "titel": "Air Jordan 5 Retro",
@@ -2874,6 +2787,15 @@
     "url": "https://afew-store.com/products/new-balance-1300-made-in-usa-angora-blue-oyster-mulled-wine",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-1300-made-in-usa-angora-blue-oyster-mulled-wine-u1300ss-footwear_20_3E_20sneaker.jpg?v=1793708171",
     "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "U990BL4",
+    "preis": 200,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u990bl4-u990bl4-black-grey-006-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U990BL4_1.jpg?v=1779447020",
+    "laden": "overkillshop.com",
     "begriff": "new balance"
    },
    {
@@ -2920,51 +2842,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV5678-102_01.jpg?v=1785762646",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "New Balance x Action Bronson 1890 - Brown / Blue",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu18901dp",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU18901DPNewBalanceActionBronson1890White_0388.jpg?v=1770653222",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "Ronnie Fieg & New Balance 2011 - Chocolate Truffle / Sepia Rose",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu20119uf",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU20119UF-Front.jpg?v=1782226127",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "Kith & New Balance Made in USA 990v4 - Dusty Mauve",
-    "preis": 220,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu990tk4",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU990TK4-Front.jpg?v=1777988030",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "Kith & New Balance Made in USA 993 - Asteroid",
-    "preis": 220,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu993hk",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU993HK-Front.jpg?v=1777988030",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "Kith & New Balance Made in USA 990v3 - Hallow",
-    "preis": 220,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu990kt3",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU990KT3-Front.jpg?v=1777988031",
-    "laden": "kith.com",
-    "begriff": "new balance"
    },
    {
     "titel": "4 OG \"Lemonade\"",
@@ -3021,29 +2898,11 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Soft Leather SL Hitch Cap - Black",
-    "preis": 245,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050225-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050225-001-Detail.jpg?v=1791551535",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Air Jordan 14 Retro SP 'Mowalola'",
     "preis": 249.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/air-jordan-x-mowalola-14-retro-sp-black-burnt-red",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-x-mowalola-14-retro-sp-black-burnt-red-iq5708-001-footwear_20_3E_20sneaker.jpg?v=1793804888",
-    "laden": "afew-store.com",
-    "begriff": "jordan"
-   },
-   {
-    "titel": "Air Jordan x Free The Youth 16 SP",
-    "preis": 249.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-16-fty-sp-metallic-silver-picante-red",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-16-fty-sp-metallic-silver-picante-red-iv7638-001-footwear_20_3E_20sneaker.jpg?v=1786486089",
     "laden": "afew-store.com",
     "begriff": "jordan"
    },
@@ -3055,23 +2914,13 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U991GL2_2__04065.1725457431.1280.1280.jpg?v=1742985463",
     "laden": "sneakersnstuff.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance x Amine Made in USA 992 - Chocolate / Amber",
-    "preis": 250,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu992ne",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u992ne_nb_02_i.jpg?v=1790595700",
-    "laden": "kith.com",
-    "begriff": "new balance"
    }
   ],
   "erreicht": [
    "afew-store.com",
    "overkillshop.com",
    "asphaltgold.com",
-   "sneakersnstuff.com",
-   "kith.com"
+   "sneakersnstuff.com"
   ]
  },
  "produkte": [],
