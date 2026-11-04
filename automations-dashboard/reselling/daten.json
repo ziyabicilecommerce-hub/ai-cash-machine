@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-04T07:07:10.310Z",
+ "stand": "2026-11-04T07:10:07.907Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "deal:https://www.asphaltgold.com/products/nike-wmns-air-jordan-3-retro-fireside-velvet-brown-pearl-white-gum-dark-brown",
+   "art": "Deal",
+   "titel": "💰 Deal: Air Jordan 3 Retro für 169,00 €",
+   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/CK9246_20200-Nike-Wmns-Air-Jordan-3-Retro-Fireside-Velvet-Brown-Pearl-White-Gum-Dark-Brown-os-1.jpg?v=1790172672",
+   "link": "https://www.asphaltgold.com/products/nike-wmns-air-jordan-3-retro-fireside-velvet-brown-pearl-white-gum-dark-brown",
+   "text": "asphaltgold.com · Nike Wmns Air Jordan 3 Retro *Fireside*\nVerkauf ca. 200–290 € → Gewinn ca. +46,50 € (ROI 28 %)\nGröße prüfen, vorher verkaufte Preise checken.",
+   "zeit": "2026-11-04T07:10:07.907Z"
+  },
   {
    "schluessel": "karte:me04-119",
    "art": "Karte",
@@ -188,16 +197,6 @@
    "shop": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
    "text": "16,95 € · dm Frankfurt am Main (10,9 km) · 1 Stück\nEuropa-Allee 130, 60486 Frankfurt am Main\nIm Umkreis in 15 Filiale(n) vorrätig.",
    "zeit": "2026-11-02T13:18:17.635Z"
-  },
-  {
-   "schluessel": "filiale:3118199:1364",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790893225/assets/pas/images/cc74b33e-9549-4968-992a-a79f50a7aa67/freche-freunde-adventskalender-2026-wichtelhaus",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0815926,8.4565918",
-   "shop": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
-   "text": "34,95 € · dm Kriftel (2,5 km) · 1 Stück\nKapellenstraße 48, 65830 Kriftel\nIm Umkreis in 14 Filiale(n) vorrätig.",
-   "zeit": "2026-11-02T12:47:35.414Z"
   }
  ],
  "filial": {
@@ -2542,15 +2541,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "Nike Air Jordan 1 Retro High OG *Royal*",
-    "preis": 161,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-royal-black-varsity-royal-black",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/mkzqpk84cx-IQ5495-005_Nike_Air-Jordan-1-Retro-High-OG-Royal-Black-Varsity-Royal-Black_os-1.jpg?v=1790858909",
-    "laden": "asphaltgold.com",
-    "begriff": "jordan"
-   },
-   {
     "titel": "Made In UK W991",
     "preis": 161,
     "verfuegbar": true,
@@ -2567,6 +2557,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IB6716-600_01.jpg?v=1778164149",
     "laden": "sneakersnstuff.com",
     "begriff": "dunk"
+   },
+   {
+    "titel": "Nike Wmns Air Jordan 3 Retro *Fireside*",
+    "preis": 169,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/nike-wmns-air-jordan-3-retro-fireside-velvet-brown-pearl-white-gum-dark-brown",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/CK9246_20200-Nike-Wmns-Air-Jordan-3-Retro-Fireside-Velvet-Brown-Pearl-White-Gum-Dark-Brown-os-1.jpg?v=1790172672",
+    "laden": "asphaltgold.com",
+    "begriff": "jordan"
    },
    {
     "titel": "Asics GEL-Kayano 14",
@@ -3025,5 +3024,7 @@
   "tage": [],
   "stunden": []
  },
- "fehler": []
+ "fehler": [
+  "Push: fetch failed"
+ ]
 }
