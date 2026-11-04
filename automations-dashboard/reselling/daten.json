@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-04T22:40:18.412Z",
+ "stand": "2026-11-04T22:43:26.090Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -196,7 +196,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-04T22:26:52.275Z",
+  "stand": "2026-11-04T22:43:30.624Z",
   "filialen": 148,
   "produkte": [
    {
@@ -213,7 +213,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 37
+      "menge": 36
      },
      {
       "name": "dm Kriftel",
@@ -221,7 +221,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 30
+      "menge": 29
      },
      {
       "name": "dm Kelsterbach",
@@ -229,7 +229,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 17
+      "menge": 16
      },
      {
       "name": "dm Frankfurt am Main",
@@ -237,7 +237,7 @@
       "km": 5.6,
       "lat": 50.1014043,
       "lon": 8.5485073,
-      "menge": 22
+      "menge": 21
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -253,7 +253,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 81
+      "menge": 78
      },
      {
       "name": "dm Flörsheim am Main",
@@ -261,7 +261,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 60
+      "menge": 57
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -269,7 +269,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 11
+      "menge": 10
      }
     ]
    },
@@ -327,7 +327,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 29
+      "menge": 28
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -361,7 +361,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 21
+      "menge": 20
      },
      {
       "name": "dm Kriftel",
@@ -417,7 +417,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 3
+      "menge": 2
      }
     ]
    },
@@ -435,7 +435,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 6
+      "menge": 5
      },
      {
       "name": "dm Kriftel",
@@ -475,7 +475,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 4
+      "menge": 3
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -503,14 +503,6 @@
     "link": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
     "begriff": "adventskalender",
     "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 1
-     },
      {
       "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
@@ -566,6 +558,14 @@
       "lat": 50.0155817,
       "lon": 8.3658454,
       "menge": 5
+     },
+     {
+      "name": "dm Wiesbaden",
+      "adresse": "Borsigstraße 9, 65205 Wiesbaden",
+      "km": 10.9,
+      "lat": 50.057082,
+      "lon": 8.33478,
+      "menge": 1
      }
     ]
    },
@@ -583,7 +583,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 10
+      "menge": 9
      },
      {
       "name": "dm Frankfurt am Main",
@@ -599,7 +599,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 4
+      "menge": 2
      },
      {
       "name": "dm Flörsheim am Main",
@@ -607,7 +607,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Frankfurt am Main",
@@ -808,7 +808,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 4
+      "menge": 3
      },
      {
       "name": "dm Flörsheim am Main",
@@ -1684,23 +1684,27 @@
   "ware": [],
   "top": [
    {
+    "titel": "freenet störungen",
+    "menge": "500+"
+   },
+   {
+    "titel": "markus feldenkirchen",
+    "menge": "200+"
+   },
+   {
+    "titel": "wetzlar",
+    "menge": "200+"
+   },
+   {
     "titel": "champions league",
-    "menge": "50000+"
+    "menge": "20000+"
    },
    {
     "titel": "foul de miguel",
-    "menge": "200+"
-   },
-   {
-    "titel": "como vs",
-    "menge": "100+"
+    "menge": "1000+"
    },
    {
     "titel": "eisenberg",
-    "menge": "200+"
-   },
-   {
-    "titel": "waldemar anton",
     "menge": "200+"
    },
    {
@@ -1708,7 +1712,7 @@
     "menge": "200+"
    },
    {
-    "titel": "morgan freeman",
+    "titel": "waldemar anton",
     "menge": "200+"
    },
    {
@@ -1717,10 +1721,6 @@
    },
    {
     "titel": "maga",
-    "menge": "200+"
-   },
-   {
-    "titel": "hyperos",
     "menge": "200+"
    }
   ]
@@ -1917,6 +1917,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 89.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-khathr-ftwwht-gum2",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-khathr-ftwwht-gum2-kk2272-footwear_20_3E_20sneaker.jpg?v=1781616746",
+    "laden": "afew-store.com",
+    "begriff": "samba"
+   },
+   {
     "titel": "Wmns Air Force 1 '07",
     "preis": 90,
     "verfuegbar": true,
@@ -1960,6 +1969,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/nike-dunk-low-retro-prm-qs-classic-brown-classic-brown-black-iq3342-200-footwear_20_3E_20sneaker.jpg?v=1768297828",
     "laden": "afew-store.com",
     "begriff": "dunk"
+   },
+   {
+    "titel": "New Balance 204L",
+    "preis": 90.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-204l-magnet",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-204l-magnet-u204l1rc-footwear_20_3E_20sneaker.jpg?v=1784931087",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Adidas Samba OG",
@@ -2223,6 +2241,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "U740BM2",
+    "preis": 119,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u740bm2-black-silver-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740BM2_1.jpg?v=1737122996",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "U740WM2",
     "preis": 119,
     "verfuegbar": true,
@@ -2291,15 +2318,6 @@
     "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-wonalu-owhite-hirblu",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-wonalu-owhite-hirblu-kk0008-footwear_20_3E_20sneaker.jpg?v=1791796528",
-    "laden": "afew-store.com",
-    "begriff": "samba"
-   },
-   {
-    "titel": "adidas Originals SAMBA OG",
-    "preis": 119.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-tmvire-ftwwht-gum2",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-tmvire-ftwwht-gum2-kj2788-footwear_20_3E_20sneaker.jpg?v=1781618070",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
@@ -2517,15 +2535,6 @@
     "url": "https://eu.kith.com/products/nbu204lmma",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/U204LMMA_2_8db7dc96-59a0-4070-becc-072556f74cb5.jpg?v=1754659968",
     "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 143.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-slate-grey-raincloud",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-slate-grey-raincloud-u9060erd-footwear_20_3E_20sneaker.jpg?v=1783409965",
-    "laden": "afew-store.com",
     "begriff": "new balance"
    },
    {
@@ -2967,15 +2976,6 @@
     "url": "https://afew-store.com/products/new-balance-1300-made-in-usa-angora-blue-oyster-mulled-wine",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-1300-made-in-usa-angora-blue-oyster-mulled-wine-u1300ss-footwear_20_3E_20sneaker.jpg?v=1793708171",
     "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "U990BL4",
-    "preis": 200,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u990bl4-u990bl4-black-grey-006-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U990BL4_1.jpg?v=1779447020",
-    "laden": "overkillshop.com",
     "begriff": "new balance"
    },
    {
