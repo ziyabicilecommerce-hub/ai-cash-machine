@@ -36,7 +36,7 @@ test('Videobot lehnt kaputte oder gefährliche Skripte ab', () => {
   assert.deepEqual(fs_.wahl, ['Tür auf', 'Wegrennen']);
   assert.equal(fs_.ort, 'wald'); assert.equal(fs_.kurz, true); assert.equal(fs_.posten, undefined); assert.equal(fs_.frage, undefined);
   const folge = baueFolge(fs_);
-  assert.equal(folge.szenen.filter((x) => ['innen', 'gesicht', 'handy', 'nachricht', 'dunkel'].includes(x.art)).length, 3, 'Kurz-Modus: 3 Sätze');
+  assert.equal(folge.szenen.filter((x) => ['innen', 'gesicht', 'handy', 'nachricht', 'dunkel'].includes(x.art)).length, 2, 'Kurz-Modus: 2 Sätze (~15-20 s)');
   assert.equal(folge.tempo, '+24%');
   assert.equal(Object.keys(KONTEN).length, 3);
 });
@@ -60,7 +60,7 @@ test('Autopilot: jedes Konto eigene Geschichten, keine Teil-2-Versprechen', asyn
   assert.ok(pruefen({ hook: 'x', saetze: ['a', 'b', 'c'], ende: 'e', wahl: ['viel zu lange Antwort hier', 'b'] }).some((f) => f.includes('wahl')));
 });
 
-test('Gewinner-Bot: was auf einem Konto viral ging, kommt auf den anderen Konten zuerst', async () => {
+test('Keine Kopien zwischen TikTok-Konten: Hits anderer Konten kommen nicht auf das eigene Konto', async () => {
   const { autopilotListe, gewinner } = await import('../../automations/schatten/videobot.mjs');
   const [a, b] = SK.skripte;
   const letzte = [
@@ -69,13 +69,12 @@ test('Gewinner-Bot: was auf einem Konto viral ging, kommt auf den anderen Konten
     { konto: '@zyx_7851', format: 'quiz', aufrufe: 5000, sehdauer: 9, text: 'Welcher Planet?' },
   ];
   const g = gewinner(SK.skripte, letzte);
-  assert.equal(g.length, 1, 'nur über dem Schnitt, Quiz zählt nicht');
-  assert.equal(g[0].konto, 'futureflowx3');
-  const zyx = autopilotListe(SK.skripte, 1, 3, letzte);
-  assert.equal(zyx[0].skript.titel, a.titel, 'Gewinner zuerst auf anderem Konto');
-  assert.equal(new Set(zyx.map((x) => x.slug)).size, zyx.length, 'nichts doppelt in der Liste');
-  const eigenes = autopilotListe(SK.skripte, 0, 3, letzte);
-  assert.equal(eigenes[0].slug, a.teil2 ? `${zyx[0].slug}-teil-2` : eigenes[0].slug, 'eigenes Konto bekommt Teil 2 statt Wiederholung');
+  assert.equal(g.length, 1, 'nur über dem Schnitt, Quiz zählt nicht (für Instagram-Weitergabe)');
+  for (const i of [1, 2]) {
+    const liste = autopilotListe(SK.skripte, i, 3, letzte);
+    assert.ok(liste.every((x) => SK.skripte.indexOf(SK.skripte.find((s) => s.titel === x.skript.titel.replace(/ – Teil 2$/, ''))) % 3 === i), `Konto ${i}: nur eigene Geschichten`);
+    assert.equal(new Set(liste.map((x) => x.slug)).size, liste.length);
+  }
   assert.deepEqual(autopilotListe(SK.skripte, 2, 3, []), autopilotListe(SK.skripte, 2));
 });
 

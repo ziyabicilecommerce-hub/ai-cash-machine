@@ -7,8 +7,10 @@ name: "👤 Schatten-Serie Autopilot (alle 3 Std. je Konto ein Teil)"
 # Klappt das Posten nicht, wird das Release wieder gelöscht - dann kommt derselbe Teil beim nächsten Lauf.
 
 on:
-  schedule:
-    - cron: '13 5,8,11,14,17,20 * * *'  # UTC = 6/7 bis 21/22 Uhr deutscher Zeit, nachts Pause
+  # PAUSIERT (04.11.): Serien-Teile holten zuletzt nur noch ~3 Aufrufe - zu viele ähnliche Posts drosseln die Konten.
+  # Wieder an: die zwei Zeilen unten einkommentieren.
+  # schedule:
+  #   - cron: '13 5,8,11,14,17,20 * * *'
   workflow_dispatch:
 
 permissions:

@@ -36,7 +36,7 @@ export function pruefen(skript) {
 
 // Kurz-Modus: unsere Zuschauer bleiben im Schnitt nur 3-6 s - also höchstens 3 Sätze (Start + die letzten zwei),
 // schnellere Stimme, kürzere Stille, kein zweiter Monster-Satz. Ziel ~25 s statt ~35 s, damit mehr Leute bis zur Pointe bleiben.
-export function kuerzen(saetze, max = 3) {
+export function kuerzen(saetze, max = 2) {
   if (saetze.length <= max) return saetze;
   return [...saetze.slice(0, max - 2), ...saetze.slice(-2)];
 }
@@ -148,7 +148,7 @@ export function lernPunkte(s, gelernt = {}) {
   return w.length ? w.reduce((a, b) => a + b, 0) / w.length : 0;
 }
 
-// Autopilot: jedes Konto hat eigene Geschichten. Gewinner von den ANDEREN Konten kommen zuerst dran -
+// Autopilot: jedes Konto hat eigene Geschichten (früher kamen Gewinner der ANDEREN Konten zuerst dran -
 // was dort viral ging, bekommt auf jedem Konto eine Chance (der Workflow verhindert per Release, dass ein Konto etwas doppelt postet).
 // Fortsetzungs-Bot: lief Teil 1 auf DIESEM Konto als Gewinner und es gibt einen Teil 2, kommt der zuerst -
 // die Leute, die Teil 1 gesehen haben, bekommen ihn als Nächstes ausgespielt.
@@ -164,13 +164,11 @@ export function autopilotListe(skripte, kontoIndex, konten = 3, letzte = []) {
   const alle = gewinner(skripte, letzte);
   const finde = (sl) => skripte.find((s) => slug(s.titel) === sl);
   const teil2 = [...new Set(alle.filter((g) => g.konto === ich).map((g) => g.slug))].map(finde).filter((s) => s?.teil2).map(fortsetzung);
-  const top = alle.filter((g) => g.konto !== ich).map((g) => g.slug);
-  const vorne = [...new Set(top)].map((sl) => eintrag(finde(sl)));
-  // eigene Geschichten nach dem Gelernten sortieren (stabil: ohne Daten bleibt die Reihenfolge)
+  // Keine Kopien zwischen den TikTok-Konten mehr (04.11.): TikTok drosselt doppelte Inhalte - Hits anderer Konten
+  // wandern nur noch nach Instagram (Buffer-Verteiler #113). Eigene Geschichten nach dem Gelernten sortiert.
   const gelernt = lernen(skripte, letzte);
-  const rest = eigene.filter((e) => !top.includes(e.slug)).map((e, i) => ({ e, i, p: lernPunkte(e.skript, gelernt) }))
-    .sort((a, b) => b.p - a.p || a.i - b.i).map((x) => x.e);
-  return [...teil2, ...vorne, ...rest];
+  const rest = eigene.map((e, i) => ({ e, i, p: lernPunkte(e.skript, gelernt) })).sort((a, b) => b.p - a.p || a.i - b.i).map((x) => x.e);
+  return [...teil2, ...rest];
 }
 
 if (process.argv[2] === '--auto') {
