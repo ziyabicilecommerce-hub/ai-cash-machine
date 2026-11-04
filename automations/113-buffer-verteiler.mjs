@@ -90,7 +90,8 @@ async function vorbereiten() {
   }
   // Abends noch ein TikTok-Konto unter 5? Dann legt der Workflow ein Extra-Horror-Video vom Videobot nach.
   const stunde = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hour: 'numeric', hourCycle: 'h23' }).format(new Date()));
-  if (fehlt && stunde >= 20) { ausgabe('tiktok_auffuellen=ja'); bericht('- ➕ TikTok unter 5 Posts: Videobot legt ein Extra-Video nach.'); }
+  // Kein Auffüllen mehr (04.11.): mehr TikTok-Posts drückten die Reichweite pro Video - Qualität vor Menge.
+  void fehlt; void stunde;
   mkdirSync('out', { recursive: true });
   writeFileSync(PLAN, JSON.stringify(plan, null, 1));
 }
