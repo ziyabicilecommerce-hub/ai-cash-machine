@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-04T20:50:12.310Z",
+ "stand": "2026-11-04T20:53:12.872Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -196,7 +196,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-04T20:37:18.071Z",
+  "stand": "2026-11-04T20:53:16.843Z",
   "filialen": 148,
   "produkte": [
    {
@@ -1731,23 +1731,27 @@
   "ware": [],
   "top": [
    {
+    "titel": "nico paz",
+    "menge": "500+"
+   },
+   {
+    "titel": "castello lukeba",
+    "menge": "200+"
+   },
+   {
+    "titel": "lens - como",
+    "menge": "200+"
+   },
+   {
     "titel": "bvb",
     "menge": "20000+"
    },
    {
-    "titel": "angelina jolie",
+    "titel": "br",
     "menge": "500+"
    },
    {
-    "titel": "hanau",
-    "menge": "200+"
-   },
-   {
-    "titel": "br",
-    "menge": "1000+"
-   },
-   {
-    "titel": "endometriose",
+    "titel": "sanna lindström getrennt",
     "menge": "200+"
    },
    {
@@ -1755,20 +1759,16 @@
     "menge": "200+"
    },
    {
+    "titel": "hanau",
+    "menge": "500+"
+   },
+   {
+    "titel": "endometriose",
+    "menge": "500+"
+   },
+   {
     "titel": "wiesloch",
     "menge": "2000+"
-   },
-   {
-    "titel": "böhmermann selenskyj",
-    "menge": "200+"
-   },
-   {
-    "titel": "sanna lindström getrennt",
-    "menge": "200+"
-   },
-   {
-    "titel": "tresoldi",
-    "menge": "200+"
    }
   ]
  },
@@ -2027,6 +2027,15 @@
     "begriff": "dunk"
    },
    {
+    "titel": "New Balance 204L",
+    "preis": 90.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-204l-magnet",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-204l-magnet-u204l1rc-footwear_20_3E_20sneaker.jpg?v=1784931087",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Adidas Samba OG",
     "preis": 94,
     "verfuegbar": true,
@@ -2117,33 +2126,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "ASICS Gel-1130 - Black / Cream",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a609-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-023",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Evergreen / Black",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-301",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A609_301_SR_RT_GLB.jpg?v=1789458114",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 740",
     "preis": 99.99,
     "verfuegbar": true,
@@ -2151,15 +2133,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-740-mushroom-timberwolf2-u7409hk-footwear_20_3E_20sneaker.jpg?v=1789974801",
     "laden": "afew-store.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "adidas Originals SAMBA OG",
-    "preis": 103.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-auco-bursie",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-auco-bursie-kj2396-footwear_20_3E_20sneaker.jpg?v=1789371273",
-    "laden": "afew-store.com",
-    "begriff": "samba"
    },
    {
     "titel": "Nike Dunk Low Retro Premium",
@@ -2205,24 +2178,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IH9373_1_cbfa4bbc-fd41-4011-9122-d94322d0b4a3.jpg?v=1776771212",
     "laden": "overkillshop.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "ASICS Gel-1130 - White / Taro Purple",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_100_SR_RT_GLB.jpg?v=1780992734",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel-1130 - Cream / Carrier Grey",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-101",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_101_SR_RT_GLB.jpg?v=1780992709",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "New Balance 740",
@@ -2286,6 +2241,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IH6820_1.jpg?v=1772531529",
     "laden": "overkillshop.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "U740BM2",
+    "preis": 119,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u740bm2-black-silver-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740BM2_1.jpg?v=1737122996",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "U740WM2",
@@ -2356,6 +2320,15 @@
     "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-wonalu-owhite-hirblu",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-wonalu-owhite-hirblu-kk0008-footwear_20_3E_20sneaker.jpg?v=1791796528",
+    "laden": "afew-store.com",
+    "begriff": "samba"
+   },
+   {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 119.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-tmvire-ftwwht-gum2",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-tmvire-ftwwht-gum2-kj2788-footwear_20_3E_20sneaker.jpg?v=1781618070",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
@@ -2573,15 +2546,6 @@
     "url": "https://eu.kith.com/products/nbu204lmma",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/U204LMMA_2_8db7dc96-59a0-4070-becc-072556f74cb5.jpg?v=1754659968",
     "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 143.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-slate-grey-raincloud",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-slate-grey-raincloud-u9060erd-footwear_20_3E_20sneaker.jpg?v=1783409965",
-    "laden": "afew-store.com",
     "begriff": "new balance"
    },
    {
@@ -2846,15 +2810,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-118",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Nike Air Jordan 9 Retro OG *Space Jam*",
     "preis": 178,
     "verfuegbar": true,
@@ -2898,24 +2853,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ5495-005_01.jpg?v=1790618946",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "ASICS GEL KAYANO 12.1 - White / Cream",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a759-106",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_106_SR_RT_GLB.jpg?v=1790170342",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel Kayano 12.1 - Cocoa Powder / Cream",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a759-200",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_200_SL_LT_GLB.jpg?v=1790063442",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "U9060GRY",
@@ -3014,15 +2951,6 @@
     "url": "https://afew-store.com/products/new-balance-1300-made-in-usa-angora-blue-oyster-mulled-wine",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-1300-made-in-usa-angora-blue-oyster-mulled-wine-u1300ss-footwear_20_3E_20sneaker.jpg?v=1793708171",
     "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "U990BL4",
-    "preis": 200,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u990bl4-u990bl4-black-grey-006-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U990BL4_1.jpg?v=1779447020",
-    "laden": "overkillshop.com",
     "begriff": "new balance"
    },
    {
