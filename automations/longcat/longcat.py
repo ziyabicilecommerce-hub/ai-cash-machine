@@ -39,7 +39,10 @@ def spaces():
 
 def endpunkte(sid):
     from gradio_client import Client
-    c = Client(sid, hf_token=TOKEN, verbose=False)
+    try:
+        c = Client(sid, token=TOKEN or None, verbose=False)
+    except TypeError:  # ältere gradio_client-Versionen
+        c = Client(sid, hf_token=TOKEN or None, verbose=False)
     api = c.view_api(return_format='dict', print_info=False) or {}
     return c, api.get('named_endpoints') or {}
 
