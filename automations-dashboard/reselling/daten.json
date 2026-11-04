@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-04T09:21:17.361Z",
+ "stand": "2026-11-04T09:24:18.248Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -200,7 +200,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-04T09:09:16.004Z",
+  "stand": "2026-11-04T09:24:21.159Z",
   "filialen": 148,
   "produkte": [
    {
@@ -894,7 +894,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 29
+      "menge": 28
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -1635,6 +1635,18 @@
   "ware": [],
   "top": [
    {
+    "titel": "janosch",
+    "menge": "2000+"
+   },
+   {
+    "titel": "straßenbahn",
+    "menge": "2000+"
+   },
+   {
+    "titel": "rasmus wallbridge",
+    "menge": "200+"
+   },
+   {
     "titel": "eishockey in russland",
     "menge": "2000+"
    },
@@ -1648,31 +1660,19 @@
    },
    {
     "titel": "hacker",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "halle (saale)",
     "menge": "2000+"
    },
    {
+    "titel": "alaska midterms",
+    "menge": "200+"
+   },
+   {
     "titel": "audi q9",
     "menge": "500+"
-   },
-   {
-    "titel": "mainz-kastel",
-    "menge": "200+"
-   },
-   {
-    "titel": "ski alpin",
-    "menge": "500+"
-   },
-   {
-    "titel": "kastration",
-    "menge": "200+"
-   },
-   {
-    "titel": "hamburg",
-    "menge": "5000+"
    }
   ]
  },
@@ -2570,15 +2570,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "New Balance 9060",
-    "preis": 150.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-angora-reflection",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-angora-reflection-u90609z4-footwear_20_3E_20sneaker.jpg?v=1783411160",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Asics GEL-Kayano 14",
     "preis": 152,
     "verfuegbar": true,
@@ -2791,6 +2782,15 @@
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-timberwolf-black-cement",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-black-cement-u90606h1-footwear_20_3E_20sneaker.jpg?v=1790201203",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "New Balance 9060",
+    "preis": 180.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-pistachio-butter-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-pistachio-butter-angora-u906072n-footwear_20_3E_20sneaker.jpg?v=1789993966",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
