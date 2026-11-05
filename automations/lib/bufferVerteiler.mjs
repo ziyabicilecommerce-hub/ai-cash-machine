@@ -4,7 +4,8 @@
 export const KANAELE = [
   { id: '6ae8f441e29c69a1713e44f3', name: 'desk.rebel', dienst: 'instagram', quelle: 'horror' },
   { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'fakten' },
-  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'anime' },
+  // YouTube: Anime holte im Schnitt ~7 Aufrufe, Horror auf Instagram ~110 - daher jetzt eigene Horror-Shorts (andere Geschichte als Instagram)
+  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror' },
 ];
 // Die TikTok-Konten werden von Serie, Videobot und Fakten-Kanal bespielt - hier nur gezählt.
 export const TIKTOK = [
@@ -58,12 +59,14 @@ export function postenJetzt(heute, letzter, jetzt = Date.now(), { ziel = ZIEL_PR
 // Viral-Taktik je Nische: wenige passende Hashtags (Nische + Reichweite DE) und ein erster Kommentar mit Frage -
 // Kommentare sind das stärkste Signal für Reels. Die 1/2-Wahl aus dem Horror-Video steht direkt als Antwort-Vorlage drin.
 export const TAGS = {
-  horror: '#horror #gruselgeschichte #creepypasta #gänsehaut #horrorstory #reelsdeutschland #fyp',
-  fakten: '#wusstestdu #fakten #wissen #krassefakten #lernen #reelsdeutschland #fyp',
+  // Instagram erlaubt höchstens 5 Hashtags pro Beitrag
+  horror: '#horror #gruselgeschichte #creepypasta #gänsehaut #horrorstory',
+  fakten: '#wusstestdu #fakten #wissen #krassefakten #lernen',
   anime: '#anime #animeserie #animeshorts #shorts',
 };
 export function ersterKommentar(v, quelle) {
   if (quelle === 'horror') {
+    if (/versteckt/i.test(v.caption || '')) return 'Bei welcher Sekunde hast du die Augen gesehen? 👀 Schreib die Zeit, z. B. 0:07 👇';
     const w = String(v.caption || '').match(/1️⃣\s*(.+?)\s+oder\s+2️⃣\s*(.+?)\?/);
     return w ? `Was machst du? 1️⃣ ${w[1]} oder 2️⃣ ${w[2]} - schreib nur die Zahl 👇` : 'Was hättest du gemacht? Schreib es hier rein 👇';
   }
@@ -80,6 +83,13 @@ export function beitrag(v, dienst, quelle = '') {
   // vorhandene Hashtags durch die Nischen-Tags ersetzen (keine doppelten, keine fremden Kontonamen)
   const tags = TAGS[quelle] || '';
   if (tags) roh = roh.replace(/(^|\s)#\p{L}[\p{L}\p{N}_]*/gu, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  if (dienst === 'youtube' && quelle === 'horror') {
+    // Shorts-Titel = der Hook (das, was neugierig macht), nicht der interne Geschichtenname
+    let hook = (roh.split(/\s*(?:👀|1️⃣|\n)/)[0] || v.titel || 'Horror').replace(/\s+/g, ' ').trim();
+    if (hook.length > 85) hook = hook.slice(0, 85).replace(/\s+\S*$/, '') + '…';
+    const beschreibung = `${roh}\n\nJeden Tag eine neue Gruselgeschichte – abonnieren, wenn du dich traust.\n#horror #gruselgeschichte #creepypasta #shorts\n${KI_HINWEIS}`.slice(0, 4900);
+    return { text: beschreibung, metadata: { youtube: { title: `${hook} 😨 #shorts`.slice(0, 100), categoryId: '24', madeForKids: false, isAiGenerated: true, privacy: 'public' } } };
+  }
   if (dienst === 'youtube') {
     const titel = String(v.titel || 'Kage no Shiro').replace(/\s+/g, ' ').slice(0, 90);
     const beschreibung = `${roh || titel}\n\nEigene Anime-Serie mit eigenen Figuren. Abonnieren für die nächste Folge!\n${tags || '#anime #shorts'}\n${KI_HINWEIS}`.slice(0, 4900);

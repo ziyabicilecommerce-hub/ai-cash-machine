@@ -2,10 +2,10 @@
 // jeder Kanal etwas anderes, mindestens 5 Posts am Tag:
 //   @desk.rebel (Instagram)    -> jedes Mal eine NEUE KI-Horror-Geschichte im Videobot-Look (Vorrat als Ersatz)
 //   @purivelle.785 (Instagram) -> Fakten / "Was wäre wenn?" aus dem Fakten-Kanal (#100)
-//   giyuuu sama (YouTube)      -> Shorts der eigenen Anime-Serie "Kage no Shiro" (#95)
+//   giyuuu sama (YouTube)      -> eigene Horror-Shorts (andere Geschichte als Instagram; Anime holte kaum Aufrufe)
 // Zwei Schritte (dazwischen rendert der Workflow das Horror-Video):
-//   node 113-buffer-verteiler.mjs --vorbereiten   -> out/verteiler-plan.json (+ out/folge.json, Ausgabe horror=ja)
-//   node 113-buffer-verteiler.mjs --posten [url]  -> postet laut Plan, [url] = gerendertes Horror-Video
+//   node 113-buffer-verteiler.mjs --vorbereiten -> out/verteiler-plan.json (+ out/folge-<kanal>.json je Horror-Kanal)
+//   node 113-buffer-verteiler.mjs --posten      -> postet laut Plan, Video-Links aus out/horror-urls.json
 import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
 import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen } from './lib/bufferVerteiler.mjs';
@@ -63,18 +63,20 @@ async function vorbereiten() {
   const posts = await postsHeute([...KANAELE, ...TIKTOK].map((k) => k.id));
   const videos = json('video-feed/videos.json', { videos: [] }).videos || [];
   const stand = json(STAND, {});
-  const plan = [];
+  const plan = [], horrorKanaele = [];
   bericht('### 📤 Buffer-Verteiler');
   for (const k of KANAELE) {
     const { heute, letzter } = zaehlen(posts, k.id);
     if (!postenJetzt(heute, letzter)) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
     if (k.quelle === 'horror') {
-      const h = await horrorSkript(stand[k.id] || {});
+      // jeder Horror-Kanal bekommt eine EIGENE Geschichte: was ein anderer Kanal schon hatte oder in diesem Lauf bekommt, ist tabu
+      const schonDa = Object.fromEntries([...Object.values(stand).flatMap((x) => Object.entries(x || {})), ...plan.map((x) => [x.schluessel, 'jetzt'])]);
+      const h = await horrorSkript({ ...schonDa, ...(stand[k.id] || {}) });
       if (!h) { bericht(`- ⚠️ ${k.name}: keine Horror-Geschichte`); continue; }
       const folge = baueFolge({ ...h.skript, weiter: '', posten: '', kurz: true });
       mkdirSync('out', { recursive: true });
-      writeFileSync('out/folge.json', JSON.stringify(folge, null, 1));
-      ausgabe('horror=ja'); ausgabe(`slug=${slug(h.skript.titel)}`);
+      writeFileSync(`out/folge-${k.id}.json`, JSON.stringify({ ...folge, _slug: slug(h.skript.titel) }, null, 1));
+      horrorKanaele.push(k.id);
       plan.push({ kanal: k.id, horror: true, schluessel: `horror:${h.schluessel || slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft });
       continue;
     }
@@ -92,19 +94,22 @@ async function vorbereiten() {
   const stunde = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hour: 'numeric', hourCycle: 'h23' }).format(new Date()));
   // Kein Auffüllen mehr (04.11.): mehr TikTok-Posts drückten die Reichweite pro Video - Qualität vor Menge.
   void fehlt; void stunde;
+  if (horrorKanaele.length) { ausgabe('horror=ja'); ausgabe(`horror_kanaele=${horrorKanaele.join(' ')}`); }
   mkdirSync('out', { recursive: true });
   writeFileSync(PLAN, JSON.stringify(plan, null, 1));
 }
 
-async function posten(horrorUrl) {
+async function posten() {
   const plan = json(PLAN, []);
+  const urls = json('out/horror-urls.json', {});
   const stand = json(STAND, {});
   for (const p of plan) {
     const k = KANAELE.find((x) => x.id === p.kanal);
     let v = p.video;
     if (p.horror) {
+      const horrorUrl = urls[k.id];
       if (!/^https:\/\//.test(horrorUrl || '')) { bericht(`- ❌ ${k.name}: Horror-Video nicht gerendert`); continue; }
-      const folge = json('out/folge.json', {});
+      const folge = json(`out/folge-${k.id}.json`, {});
       v = { url: horrorUrl, titel: p.titel, caption: folge.caption || p.titel };
     }
     const { text, metadata } = beitrag(v, k.dienst, k.quelle);
@@ -122,6 +127,6 @@ async function posten(horrorUrl) {
   writeFileSync(STAND, `${JSON.stringify(stand, null, 1)}\n`);
 }
 
-const [modus, arg] = process.argv.slice(2);
+const [modus] = process.argv.slice(2);
 if (!TOKEN) console.log('[113-buffer-verteiler] BUFFER_ACCESS_TOKEN fehlt - übersprungen.');
-else (modus === '--posten' ? posten(arg) : vorbereiten()).catch((e) => { console.error(`[113-buffer-verteiler] ${String(e.message).slice(0, 300)}`); process.exit(1); });
+else (modus === '--posten' ? posten() : vorbereiten()).catch((e) => { console.error(`[113-buffer-verteiler] ${String(e.message).slice(0, 300)}`); process.exit(1); });

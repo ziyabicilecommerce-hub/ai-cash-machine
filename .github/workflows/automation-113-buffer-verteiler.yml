@@ -1,7 +1,7 @@
-name: "113 · Buffer-Verteiler (Horror, Fakten, Anime - 5+ Posts am Tag)"
+name: "113 · Buffer-Verteiler (Horror IG+YT, Fakten - 5+ Posts am Tag)"
 
 # Bespielt über Buffer ohne Shop-Werbung: @desk.rebel (Instagram) mit jedes Mal neuen KI-Horror-Geschichten,
-# @purivelle.785 (Instagram) mit Fakten-Videos, giyuuu sama (YouTube) mit der eigenen Anime-Serie. Pro Lauf höchstens 1 Post
+# @purivelle.785 (Instagram) mit Fakten-Videos, giyuuu sama (YouTube) mit eigenen Horror-Shorts. Pro Lauf höchstens 1 Post
 # je Kanal, mindestens 90 Min. Abstand, bis zu 6 am Tag. Angestoßen von der Radar-Kette (pünktlich) und als Ersatz
 # per Zeitplan. Jeder Post ist als KI-generiert gekennzeichnet.
 
@@ -43,25 +43,29 @@ jobs:
           POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
           HORROR_KI_LOKAL: ${{ vars.HORROR_KI_LOKAL }}
         run: node automations/113-buffer-verteiler.mjs --vorbereiten
-      - name: Horror-Video rendern und ablegen
+      - name: Horror-Videos rendern und ablegen (je Kanal eine eigene Geschichte)
         id: horror
         if: steps.verteilen.outputs.horror == 'ja'
         env:
           GH_TOKEN: ${{ github.token }}
-          SLUG: ${{ steps.verteilen.outputs.slug }}
+          KANAELE: ${{ steps.verteilen.outputs.horror_kanaele }}
         run: |
           sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
           pip install -q pillow edge-tts
-          python3 automations/schatten/story.py out/folge.json out
-          TAG="horror-ig-$(date -u +%Y%m%d-%H%M)"
-          cp out/video.mp4 "out/$SLUG.mp4"
-          gh release create "$TAG" "out/$SLUG.mp4" out/cover.jpg -R "$GITHUB_REPOSITORY" --prerelease --title "Horror für Instagram: $SLUG" --notes "KI-generiertes Horror-Video (frei erfundene Geschichte)."
-          echo "url=https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$SLUG.mp4" >> "$GITHUB_OUTPUT"
+          echo '{}' > out/horror-urls.json
+          for K in $KANAELE; do
+            SLUG=$(jq -r '._slug' "out/folge-$K.json")
+            rm -rf "out/r-$K"; python3 automations/schatten/story.py "out/folge-$K.json" "out/r-$K" || continue
+            TAG="horror-$K-$(date -u +%Y%m%d-%H%M)"
+            cp "out/r-$K/video.mp4" "out/r-$K/$SLUG.mp4"
+            gh release create "$TAG" "out/r-$K/$SLUG.mp4" "out/r-$K/cover.jpg" -R "$GITHUB_REPOSITORY" --prerelease --title "Horror-Short: $SLUG" --notes "KI-generiertes Horror-Video (frei erfundene Geschichte)." || continue
+            jq --arg k "$K" --arg u "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$SLUG.mp4" '.[$k]=$u' out/horror-urls.json > out/u.json && mv out/u.json out/horror-urls.json
+          done
       - name: Posten
         env:
           BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
           BUFFER_ORGANISATION: ${{ vars.BUFFER_ORGANISATION }}
-        run: node automations/113-buffer-verteiler.mjs --posten "${{ steps.horror.outputs.url }}"
+        run: node automations/113-buffer-verteiler.mjs --posten
       - name: TikTok auf 5 Posts auffüllen
         if: steps.verteilen.outputs.tiktok_auffuellen == 'ja'
         env:
