@@ -136,7 +136,7 @@ export function alleSkripte() {
 export function musterWerte(letzte = [], alle = alleSkripte()) {
   const summe = {};
   for (const p of letzte) {
-    if (!/desk\.rebel|giyuuu/i.test(p.konto || '') || !(p.aufrufe >= 0)) continue;
+    if (!/desk\.rebel|giyuuu|english/i.test(p.konto || '') || !(p.aufrufe >= 0)) continue;
     const s = alle.find((x) => passt(p, x));
     if (s) (summe[s.muster] ||= []).push(p.aufrufe);
   }
