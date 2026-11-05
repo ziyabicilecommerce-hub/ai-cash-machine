@@ -10,6 +10,7 @@ import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs'
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
 import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, storyEingabe, abVariante, abSchluessel } from './lib/bufferVerteiler.mjs';
 import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
+import { naechstesSkriptEn } from './schatten/skripteEn.mjs';
 
 const TOKEN = (process.env.BUFFER_ACCESS_TOKEN || '').trim();
 const STAND = 'buffer-verteiler/stand.json';
@@ -69,6 +70,13 @@ async function horrorSkript(gepostet, konto = '') {
   return s ? { skript: s, herkunft: 'Vorrat' } : null;
 }
 
+// Englischer Kanal: eigene, von Hand geschriebene Geschichten (skripteEn.mjs)
+function horrorSkriptEn(gepostet) {
+  const bekannt = Object.keys(gepostet).map((key) => key.replace(/^horror:/, ''));
+  const s = naechstesSkriptEn(bekannt);
+  return s ? { skript: s, herkunft: 'English' } : null;
+}
+
 async function vorbereiten() {
   const posts = await postsHeute([...KANAELE, ...TIKTOK].map((k) => k.id));
   const videos = json('video-feed/videos.json', { videos: [] }).videos || [];
@@ -78,10 +86,10 @@ async function vorbereiten() {
   for (const k of KANAELE) {
     const { heute, letzter } = zaehlen(posts, k.id);
     if (!postenJetzt(heute, letzter)) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
-    if (k.quelle === 'horror') {
+    if (k.quelle.startsWith('horror')) {
       // jeder Horror-Kanal bekommt eine EIGENE Geschichte: was ein anderer Kanal schon hatte oder in diesem Lauf bekommt, ist tabu
       const schonDa = Object.fromEntries([...Object.values(stand).flatMap((x) => Object.entries(x || {})), ...plan.map((x) => [x.schluessel, 'jetzt'])]);
-      const h = await horrorSkript({ ...schonDa, ...(stand[k.id] || {}) }, k.name);
+      const h = k.quelle === 'horror-en' ? horrorSkriptEn({ ...schonDa, ...(stand[k.id] || {}) }) : await horrorSkript({ ...schonDa, ...(stand[k.id] || {}) }, k.name);
       if (!h) { bericht(`- ⚠️ ${k.name}: keine Horror-Geschichte`); continue; }
       const variante = abVariante();
       if (!h.skript.hook2) variante.duhook = false;  // nur Skript-Bot-Geschichten haben einen Du-Hook
@@ -140,7 +148,7 @@ async function posten() {
       const cover = urls[`${k.id}_cover`];
       if (p.horror && k.dienst === 'instagram' && /^https:\/\//.test(cover || '')) {
         try {  // Story ist nur ein Anstoß - schlägt sie fehl, bleibt das Reel trotzdem
-          const st = (await gql(POST_MUTATION, { input: storyEingabe(k.id, cover) })).createPost;
+          const st = (await gql(POST_MUTATION, { input: storyEingabe(k.id, cover, k.quelle === 'horror-en') })).createPost;
           bericht(st.__typename === 'PostActionSuccess' ? `  - 📲 Story dazu gepostet` : `  - ⚠️ Story nicht gepostet: ${st.message || st.__typename}`);
         } catch (e) { bericht(`  - ⚠️ Story nicht gepostet: ${String(e.message).slice(0, 150)}`); }
       }

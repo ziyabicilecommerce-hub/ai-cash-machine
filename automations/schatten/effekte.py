@@ -71,7 +71,7 @@ def raum_bild(im, z, t):
     return im
 
 
-def zurueckspulen(im, x):
+def zurueckspulen(im, x, sprache='de'):
     # Videokassetten-Rücklauf: Bild zittert, Streifen reißen, "◀◀ VORHER" oben links
     st = random.Random(int(x * 1000))
     im = rotverschiebung(im, 6)
@@ -80,22 +80,22 @@ def zurueckspulen(im, x):
         im.paste(im.crop((0, y, W, y + st.randint(8, 30))), (st.randint(-60, 60), y))
     d = ImageDraw.Draw(im)
     d.rectangle((0, H - 120 - st.randint(0, 40), W, H - 104), fill=(230, 230, 230))
-    d.text((28, 98), '◀◀ VORHER', font=ImageFont.truetype(FONTDATEI, 32), fill=(255, 255, 255), stroke_width=3, stroke_fill=(0, 0, 0))
+    d.text((28, 98), '◀◀ EARLIER' if sprache == 'en' else '◀◀ VORHER', font=ImageFont.truetype(FONTDATEI, 32), fill=(255, 255, 255), stroke_width=3, stroke_fill=(0, 0, 0))
     return im
 
 
-def kopfhoerer(im):
+def kopfhoerer(im, sprache='de'):
     d = ImageDraw.Draw(im)
     f = ImageFont.truetype(FONTDATEI, 28)
-    text = 'KOPFHÖRER AUF'
+    text = 'HEADPHONES ON' if sprache == 'en' else 'KOPFHÖRER AUF'
     b = d.textlength(text, font=f)
     d.rounded_rectangle(((W - b) / 2 - 14, 258, (W + b) / 2 + 14, 300), 12, fill=(20, 20, 20), outline=GELB, width=3)
     d.text((W / 2, 279), text, font=f, fill=GELB, anchor='mm')
 
 
-def suchbanner(im):
+def suchbanner(im, sprache='de'):
     d = ImageDraw.Draw(im)
-    text = 'SEINE AUGEN SIND 3x VERSTECKT'
+    text = 'HIS EYES ARE HIDDEN 3x' if sprache == 'en' else 'SEINE AUGEN SIND 3x VERSTECKT'
     f = ImageFont.truetype(FONTDATEI, 32)
     b = d.textlength(text, font=f)
     d.rounded_rectangle(((W - b) / 2 - 16, 196, (W + b) / 2 + 16, 246), 14, fill=GELB)

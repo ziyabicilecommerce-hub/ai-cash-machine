@@ -389,6 +389,7 @@ def main():
         augenbild.paste(AUGE_GROSS, (W // 2 + ex - 120, 520 - 120), AUGE_GROSS)
     kalt = next((x for x in plan if x['art'] == 'ende'), None) if story.get('kalt') else None
     raumz = raum_zeiten(plan) if story.get('raum') else None
+    sprache = story.get('sprache', 'de')
     for s in plan:
         n = int(round(s['dauer'] * FPS))
         worte = len(s.get('text', '').split())
@@ -442,7 +443,7 @@ def main():
             if fortschritt > 0.45 and s['art'] != 'teil2':
                 im = Image.blend(im, Image.new('RGB', (W, H), (45, 0, 4)), min(0.32, (fortschritt - 0.45) * 0.7))
             if kalt and s['art'] == 'blitz' and KALT_BIS - 0.3 <= lt < KALT_BIS + 0.12:
-                im = zurueckspulen(im, lt - (KALT_BIS - 0.3))
+                im = zurueckspulen(im, lt - (KALT_BIS - 0.3), sprache)
             if raumz:
                 im = raum_bild(im, raumz, t)
             if story.get('kamera', True):
@@ -459,9 +460,9 @@ def main():
                     k, pop = worte, 1.0
                 untertitel(im, s['text'], s.get('gelb', ''), k, pop=pop)
             if such and t < 2.6:
-                suchbanner(im)
+                suchbanner(im, sprache)
             if story.get('raum') and t < 2.6:
-                kopfhoerer(im)
+                kopfhoerer(im, sprache)
             if s.get('warnung'):
                 warnung(im, s['warnung'], lt)
             if story.get('uhr', True) and s['art'] not in ('fratze', 'teil2', 'nachricht'):
