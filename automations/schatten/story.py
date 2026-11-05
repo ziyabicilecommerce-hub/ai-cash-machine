@@ -3,7 +3,9 @@
 # Ohne Netz (oder STUMM=1) wird ohne Stimme gerendert - zum lokalen Testen.
 import asyncio, json, math, os, random, subprocess, sys
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
-from ton import tonspur
+from ton import tonspur, raum_zeiten
+from effekte import (W, H, rotverschiebung, weich, popfont, suchzeiten, KALT_BIS, SCHLEIFE, raum_bild, zurueckspulen,
+                     kopfhoerer, suchbanner)
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
 from ki import ki_bilder_laden, ki_szene
 import kamera
@@ -11,7 +13,7 @@ from aktion import scheibe, decke_schatten, masken, fernseher, taschenlampe, zae
 from fahrgaeste import fahrgaeste_malen, zeitung_nah
 from orte import ORT, HIMMEL, NEBEL, AUGE, AUGE_LEISE, HANDYLICHT, AUGE_GROSS, sterne, innenraum, draussen, rahmen, SPIEGELBOX
 
-W, H, FPS = 720, 1280, int(os.environ.get('FPS', '60'))  # 60 Bilder/s = flüssig; Effekte rechnen in Sekunden
+FPS = int(os.environ.get('FPS', '60'))  # 60 Bilder/s = flüssig; Effekte rechnen in Sekunden
 B = 1 / 30  # Dauer eines "Bildes" der alten 30-fps-Effekte (Blitze, Störungen) - bleibt gleich lang
 FAHRGAESTE = [['zeitung', 'schlaf']]  # pro Story: wer sonst noch da ist
 FONTDATEI = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
@@ -278,24 +280,6 @@ def bild(s, t, lt):
     return im
 
 
-def rotverschiebung(im, px):
-    r, g, b = im.split()
-    return Image.merge('RGB', (r.transform(im.size, Image.AFFINE, (1, 0, -px, 0, 1, 0)), g, b.transform(im.size, Image.AFFINE, (1, 0, px, 0, 1, 0))))
-
-
-def weich(x):
-    x = max(0.0, min(1.0, x))
-    return x * x * (3 - 2 * x)
-
-
-_POP = {}
-def popfont(groesse):
-    groesse = int(round(groesse))
-    if groesse not in _POP:
-        _POP[groesse] = ImageFont.truetype(FONTDATEI, groesse)
-    return _POP[groesse]
-
-
 def untertitel(im, satz, key, k=None, basis=WEISS, pop=1.0):
     # Wort für Wort: die Positionen stehen fest, sichtbar sind nur die ersten k Wörter (das neueste etwas größer)
     d = ImageDraw.Draw(im)
@@ -325,54 +309,6 @@ def untertitel(im, satz, key, k=None, basis=WEISS, pop=1.0):
 async def stimme(text, datei, sprecher, tempo, tonhoehe='-12Hz'):
     import edge_tts
     await edge_tts.Communicate(text, sprecher, rate=tempo, pitch=tonhoehe).save(datei)
-
-
-def suchzeiten(plan):
-    # 3 Zeitpunkte zwischen Hook (ab 2,8 s) und Jumpscare, nie in Fratze/Nachricht/Endkarte, mind. 0,8 s auseinander
-    bis = next((x['start'] for x in plan if x['art'] == 'fratze'), plan[-1]['start'])
-    gesperrt = [(x['start'], x['start'] + x['dauer']) for x in plan if x['art'] in ('fratze', 'teil2', 'nachricht', 'zeitung_nah')]
-    frei = [round(2.8 + i / 10, 1) for i in range(int((bis - 3.1) * 10))]
-    frei = [z for z in frei if not any(v - 0.2 <= z < b for v, b in gesperrt)]
-    zeiten = []
-    for ziel in (0.3, 0.58, 0.85):
-        for z in sorted(frei, key=lambda z: abs(z - bis * ziel)):
-            if all(abs(z - y) >= 0.8 for y in zeiten):
-                zeiten.append(z); break
-    return sorted(zeiten) if len(zeiten) == 3 else []
-
-
-KALT_BIS = 0.8  # so lange zeigt der kalte Einstieg das Ende
-
-
-def zurueckspulen(im, x):
-    # Videokassetten-Rücklauf: Bild zittert, Streifen reißen, "◀◀ VORHER" oben links
-    st = random.Random(int(x * 1000))
-    im = rotverschiebung(im, 6)
-    for _ in range(5):
-        y = st.randint(120, H - 200)
-        im.paste(im.crop((0, y, W, y + st.randint(8, 30))), (st.randint(-60, 60), y))
-    d = ImageDraw.Draw(im)
-    d.rectangle((0, H - 120 - st.randint(0, 40), W, H - 104), fill=(230, 230, 230))
-    d.text((28, 98), '◀◀ VORHER', font=ImageFont.truetype(FONTDATEI, 32), fill=(255, 255, 255), stroke_width=3, stroke_fill=(0, 0, 0))
-    return im
-
-
-def kopfhoerer(im):
-    d = ImageDraw.Draw(im)
-    f = ImageFont.truetype(FONTDATEI, 28)
-    text = 'KOPFHÖRER AUF'
-    b = d.textlength(text, font=f)
-    d.rounded_rectangle(((W - b) / 2 - 14, 258, (W + b) / 2 + 14, 300), 12, fill=(20, 20, 20), outline=GELB, width=3)
-    d.text((W / 2, 279), text, font=f, fill=GELB, anchor='mm')
-
-
-def suchbanner(im):
-    d = ImageDraw.Draw(im)
-    text = 'SEINE AUGEN SIND 3x VERSTECKT'
-    f = ImageFont.truetype(FONTDATEI, 32)
-    b = d.textlength(text, font=f)
-    d.rounded_rectangle(((W - b) / 2 - 16, 196, (W + b) / 2 + 16, 246), 14, fill=GELB)
-    d.text((W / 2, 221), text, font=f, fill=(10, 10, 10), anchor='mm')
 
 
 def dauer_von(datei):
@@ -429,6 +365,8 @@ def main():
         dauer = max(sprech + s.get('pause', 0.25), 1.8, (mbei + mdauer + 0.6) if s.get('monster') else 0)
         if s.get('dauer'):  # feste Länge für Animationen - aber nie kürzer als der gesprochene Satz
             dauer = max(s['dauer'], sprech + s.get('pause', 0.25) if sprech else 0)
+        if story.get('kalt') and s['art'] == 'teil2':
+            dauer += SCHLEIFE  # Platz für die Überblendung zurück zum Anfang
         plan.append({**s, 'start': start, 'dauer': dauer, 'sprech': sprech, 'datei': datei if (s.get('sprich') and not stumm) else None,
                      'mdatei': mdatei if (s.get('monster') and not stumm and os.path.exists(mdatei)) else None, 'mbei': mbei, 'mdauer': mdauer})
         start += dauer
@@ -450,6 +388,7 @@ def main():
     for ex in (-70, 70):
         augenbild.paste(AUGE_GROSS, (W // 2 + ex - 120, 520 - 120), AUGE_GROSS)
     kalt = next((x for x in plan if x['art'] == 'ende'), None) if story.get('kalt') else None
+    raumz = raum_zeiten(plan) if story.get('raum') else None
     for s in plan:
         n = int(round(s['dauer'] * FPS))
         worte = len(s.get('text', '').split())
@@ -462,6 +401,11 @@ def main():
                 ZEIT[0] = t
             else:
                 im = bild(s, t, lt)
+            if kalt and s['art'] == 'teil2' and lt > s['dauer'] - SCHLEIFE:  # Endlos-Schleife: weich ins erste Bild
+                ZEIT[0] = kalt['start'] + 0.6
+                anfang = bild(kalt, ZEIT[0], 0.6)
+                ZEIT[0] = t
+                im = Image.blend(im, anfang, weich((lt - (s['dauer'] - SCHLEIFE)) / SCHLEIFE))
             angespannt = s.get('stille') or s.get('angst', 0) >= 0.8
             # Kamera ohne Ruckeln: Zoom mit weichem Anlauf/Auslauf, Wackeln auf Bruchteile von Pixeln genau (keine ganzen Sprünge)
             zoom = 1.02 + (0.18 * weich(min(lt / 0.2, 1)) if s['art'] == 'fratze' else (0.15 if angespannt else 0.07) * weich(f / n))
@@ -499,6 +443,8 @@ def main():
                 im = Image.blend(im, Image.new('RGB', (W, H), (45, 0, 4)), min(0.32, (fortschritt - 0.45) * 0.7))
             if kalt and s['art'] == 'blitz' and KALT_BIS - 0.3 <= lt < KALT_BIS + 0.12:
                 im = zurueckspulen(im, lt - (KALT_BIS - 0.3))
+            if raumz:
+                im = raum_bild(im, raumz, t)
             if story.get('kamera', True):
                 im = kamera.overlay(im, t, s, story, teil, teile)
             if s.get('monster') and lt >= s['mbei']:

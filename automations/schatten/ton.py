@@ -1,20 +1,33 @@
 # Tonspur der Schatten-Story: alles kostenlos aus ffmpeg erzeugt, dazu Erzähler- und Monsterstimme.
-import os, subprocess
+import math, os, subprocess
+
+
+def raum_zeiten(plan):
+    # Gemeinsame Zeitpunkte für 3D-Ton UND Bild (story.py lässt Schatten und Zucken genau dazu laufen)
+    fr = next((x['start'] for x in plan if x['art'] == 'fratze'), 0)
+    if fr < 5:
+        return None
+    return {'fratze': fr, 'von': max(2.8, fr - 6), 'bis': fr - 0.4, 'dreh': 0.3, 'klopf_links': fr - 2.3, 'klopf_rechts': fr - 1.75}
+
+
+def raum_winkel(z, t):
+    # Winkel des Flüsterns: 0 = vorne, +90° = rechts (wie im Ton)
+    return 2 * math.pi * z['dreh'] * (t - z['von']) + math.pi / 2
 
 
 def raum3d(plan, gesamt, erster):
     # 3D-Ton für Kopfhörer (Stereo-Pegel + Ferne): Flüstern kreist um den Kopf, Klopfen links/rechts hinter dir,
     # Atem ganz nah am rechten Ohr - alles in den letzten Sekunden vor dem Jumpscare. Gibt (Eingänge, Filter, Label) zurück.
-    fr = next((x['start'] for x in plan if x['art'] == 'fratze'), 0)
-    if fr < 5:
+    z = raum_zeiten(plan)
+    if not z:
         return [], '', None
-    a, e = max(2.8, fr - 6), fr - 0.4
-    theta = f"(2*PI*0.3*(t-{a:.2f})+PI/2)"  # startet rechts, wandert nach hinten, links, vorne ...
+    fr, a, e = z['fratze'], z['von'], z['bis']
+    theta = f"(2*PI*{z['dreh']}*(t-{a:.2f})+PI/2)"  # startet rechts, wandert nach hinten, links, vorne ...
     huelle = f"between(t,{a:.2f},{e:.2f})*min((t-{a:.2f})/2,1)*(0.35+0.65*abs(sin(2*PI*2.3*t)))"
     hinten = f"(0.72+0.28*cos({theta}))"  # hinter dem Kopf etwas leiser und dumpfer
     links = f"1.8*{huelle}*{hinten}*sqrt((1-sin({theta}))/2)"
     rechts = f"1.8*{huelle}*{hinten}*sqrt((1+sin({theta}))/2)"
-    kl, kr = fr - 2.3, fr - 1.75  # zwei Klopfer: erst links hinten, dann rechts hinten
+    kl, kr = z['klopf_links'], z['klopf_rechts']  # zwei Klopfer: erst links hinten, dann rechts hinten
     klopf = lambda k, g: f"{g}*gte(t,{k:.2f})*exp(-30*max(t-{k:.2f},0))*sin(2*PI*90*t)"
     atem = f"between(t,{fr - 1.3:.2f},{e:.2f})*pow(max(sin(2*PI*1.1*(t-{fr - 1.3:.2f})),0),2)"
     eingaben = ['-f', 'lavfi', '-i', f'anoisesrc=color=pink:amplitude=0.7:d={gesamt:.2f}',
