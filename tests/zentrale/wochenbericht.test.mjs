@@ -24,3 +24,25 @@ test('Bericht: Woche gegen Vorwoche, frische Posts ohne Zahlen zählen nicht, Sc
   assert.ok(b.schritte.some((s) => s.includes('„anruf“')));
   assert.deepEqual(bericht([], JETZT).schritte, []);
 });
+
+test('A/B-Test: Varianten zufällig, Auswertung mit/ohne, Urteil erst ab je 3 Videos', async () => {
+  const { abVariante, abSchluessel } = await import('../../automations/lib/bufferVerteiler.mjs');
+  const { abAuswertung } = await import('../../automations/lib/wochenbericht.mjs');
+  assert.deepEqual(abVariante(() => 0.9), { kalt: true, raum: true, suchbild: true });
+  assert.deepEqual(abVariante(() => 0.1), { kalt: false, raum: false, suchbild: false });
+  assert.equal(abSchluessel('Ich wohne allein.  Heute stehen zwei Kaffeetassen auf dem Tisch. 🎧'), 'Ich wohne allein. Heute stehen zwei Kaff');
+  const posts = [...[6, 7, 8].map((s, i) => vor(2, { text: `mit${i}`, sehdauer: s })), ...[2, 3, 4].map((s, i) => vor(2, { text: `ohne${i}`, sehdauer: s }))];
+  const ab = abAuswertung(posts, (p) => ({ kalt: p.text.startsWith('mit') }));
+  assert.deepEqual(ab.kalt.an, { n: 3, schnitt: 100, sehdauer: 7 }); assert.equal(ab.kalt.aus.sehdauer, 3);
+  const b = bericht(posts, JETZT, () => '', (p) => ({ kalt: p.text.startsWith('mit') }));
+  assert.ok(b.schritte.some((s) => s.includes('Kalter Einstieg') && s.includes('wirkt')));
+  assert.ok(!bericht(posts.slice(0, 4), JETZT, () => '', (p) => ({ kalt: p.text.startsWith('mit') })).schritte.some((s) => s.includes('A/B')), 'zu wenig Daten');
+});
+
+test('Caption folgt der Variante', async () => {
+  const { baueFolge } = await import('../../automations/schatten/videobot.mjs');
+  const sk = { hook: 'Ich wohne allein.', saetze: ['Es klopft.', 'Ich schaue.', 'Niemand.'], ende: 'Er steht hinter mir.', kurz: true };
+  assert.match(baueFolge(sk).caption, /🎧.*3x im Video versteckt/);
+  const ohne = baueFolge({ ...sk, raum: false, suchbild: false });
+  assert.ok(!/🎧|versteckt/.test(ohne.caption) && !ohne.raum && !ohne.suchbild && ohne.kalt);
+});

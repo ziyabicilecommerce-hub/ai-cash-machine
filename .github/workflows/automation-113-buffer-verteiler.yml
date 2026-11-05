@@ -80,10 +80,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           sicher=$(mktemp); cp buffer-verteiler/stand.json "$sicher"
+          [ -f buffer-verteiler/varianten.json ] && cp buffer-verteiler/varianten.json "$sicher.v"
           for versuch in 1 2 3 4 5; do
             git fetch -q origin "$GITHUB_REF_NAME"
             git reset -q --hard "origin/$GITHUB_REF_NAME"
             mkdir -p buffer-verteiler; cp "$sicher" buffer-verteiler/stand.json
+            [ -f "$sicher.v" ] && cp "$sicher.v" buffer-verteiler/varianten.json && git add buffer-verteiler/varianten.json
             git add buffer-verteiler/stand.json
             git commit -qm "chore: Buffer-Verteiler Stand [skip ci]" || exit 0
             git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
