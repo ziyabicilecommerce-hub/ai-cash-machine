@@ -121,3 +121,20 @@ test('Suchbild: kurze Videos verstecken 3x Augen und fragen nach der Sekunde', (
   assert.equal(baueFolge({ ...sk, kurz: true, suchbild: false }).suchbild, false);
   assert.equal(baueFolge(sk).suchbild, false);
 });
+
+test('Skript-Bot: viele gültige Geschichten mit starkem Hook, keine doppelt, nächste überspringt Bekannte', async () => {
+  const { alleSkripte, naechstesSkript } = await import('../../automations/schatten/skriptBot.mjs');
+  const { hookPunkte } = await import('../../automations/schatten/horrorKi.mjs');
+  const { slug } = await import('../../automations/schatten/videobot.mjs');
+  const alle = alleSkripte();
+  assert.ok(alle.length >= 24, `nur ${alle.length}`);
+  assert.equal(new Set(alle.map((s) => slug(s.titel))).size, alle.length);
+  const vorrat = new Set(JSON.parse(readFileSync('automations-dashboard/tiktok/skripte.json', 'utf8')).skripte.map((s) => slug(s.titel)));
+  for (const s of alle) {
+    assert.deepEqual(pruefen(s), [], s.titel);
+    assert.ok(hookPunkte(s.hook) >= 4 && s.hook.length <= 70, s.hook);
+    assert.ok(!vorrat.has(slug(s.titel)), `schon im Vorrat: ${s.titel}`);
+    baueFolge({ ...s, kurz: true });
+  }
+  assert.equal(naechstesSkript([slug(alle[0].titel)]).titel, alle[1].titel);
+});
