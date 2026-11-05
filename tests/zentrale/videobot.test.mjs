@@ -138,3 +138,35 @@ test('Skript-Bot: viele gültige Geschichten mit starkem Hook, keine doppelt, n�
   }
   assert.equal(naechstesSkript([slug(alle[0].titel)]).titel, alle[1].titel);
 });
+
+test('Skript-Bot lernt: bestes Muster zuerst, ungetestete Muster bekommen eine Chance', async () => {
+  const { alleSkripte, naechstesSkript, musterWerte } = await import('../../automations/schatten/skriptBot.mjs');
+  const alle = alleSkripte();
+  assert.ok(alle.length >= 44 && alle.every((s) => s.muster && s.teil2));
+  const von = (m, i = 0) => alle.filter((s) => s.muster === m)[i];
+  const post = (s, aufrufe) => ({ konto: '@desk.rebel', aufrufe, text: `${s.hook} 👀 Seine Augen ...` });
+  const letzte = [post(von('anruf'), 400), post(von('anruf', 1), 300), post(von('allein'), 10), post(von('allein', 1), 20), post(von('kamera'), 900), { konto: '@zyx_7851', aufrufe: 9999, text: von('regel').hook }];
+  const w = musterWerte(letzte, alle);
+  assert.equal(w.anruf.schnitt, 350); assert.equal(w.allein.n, 2); assert.ok(!w.regel, 'TikTok zählt nicht');
+  assert.equal(naechstesSkript([], letzte).muster, 'anruf');
+  assert.equal(naechstesSkript([], []).titel, alle[0].titel, 'ohne Zahlen: einfach der Reihe nach');
+});
+
+test('Teil 2 nur bei echtem Hit und nur einmal', async () => {
+  const { alleSkripte, teil2Kandidat } = await import('../../automations/schatten/skriptBot.mjs');
+  const { slug } = await import('../../automations/schatten/videobot.mjs');
+  const s = alleSkripte()[3];
+  const normal = [50, 60, 40, 55].map((a) => ({ konto: '@desk.rebel', aufrufe: a, text: 'irgendwas' }));
+  assert.equal(teil2Kandidat('desk.rebel', [], [...normal, { konto: '@desk.rebel', aufrufe: 90, text: s.hook }]), null, 'kein Hit');
+  const t = teil2Kandidat('desk.rebel', [], [...normal, { konto: '@desk.rebel', aufrufe: 500, text: s.hook }]);
+  assert.equal(t.titel, `${s.titel} – Teil 2`); assert.deepEqual(pruefen(t), []); baueFolge({ ...t, kurz: true });
+  assert.equal(teil2Kandidat('giyuuu sama', [], [...normal, { konto: '@desk.rebel', aufrufe: 500, text: s.hook }]), null, 'anderes Konto');
+  assert.equal(teil2Kandidat('desk.rebel', [slug(t.titel)], [...normal, { konto: '@desk.rebel', aufrufe: 500, text: s.hook }]), null, 'schon gepostet');
+});
+
+test('KI wird nur mit starkem Schlüssel versucht', async () => {
+  const { kiVerfuegbar } = await import('../../automations/113-buffer-verteiler.mjs');
+  assert.equal(kiVerfuegbar({}), false);
+  assert.equal(kiVerfuegbar({ GEMINI_API_KEY: 'x' }), true);
+  assert.equal(kiVerfuegbar({ HORROR_KI_LOKAL: 'an' }), true);
+});

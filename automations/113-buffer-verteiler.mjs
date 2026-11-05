@@ -40,22 +40,27 @@ async function postsHeute(ids) {
   return posts;
 }
 
-// Horror: abwechselnd ein bewährter TikTok-Hit (Gewinner-Bot) und eine neue KI-Geschichte; sonst Vorrat
-async function horrorSkript(gepostet) {
+// KI nur, wenn ein starker Schlüssel da ist - die kleine eigene KI verwirft ihre Geschichten ohnehin (spart ~2 Min. pro Kanal)
+export const kiVerfuegbar = (env = process.env) => Boolean(env.GEMINI_API_KEY || env.GROQ_API_KEY || env.POLLINATIONS_TOKEN || /^(1|ja|an|true)$/i.test(env.HORROR_KI_LOKAL || ''));
+
+// Horror: 1) Teil 2 eines eigenen Hits, 2) abwechselnd ein TikTok-Hit, 3) KI (mit Schlüssel), 4) Skript-Bot (lernt, welches Muster läuft), 5) Vorrat
+async function horrorSkript(gepostet, konto = '') {
   const bekannt = Object.keys(gepostet).map((k) => k.replace(/^horror:(hit:)?/, ''));
   const skripte = json('automations-dashboard/tiktok/skripte.json', { skripte: [] }).skripte;
   const letzte = json('automations-dashboard/tiktok/daten.json', {}).letzte || [];
   const hit = gewinner(skripte, letzte).map((g) => skripte.find((s) => slug(s.titel) === g.slug)).find((s) => s && !bekannt.includes(slug(s.titel)));
   const zuletztHit = Object.entries(gepostet).sort((a, b) => String(b[1]).localeCompare(String(a[1])))[0]?.[0]?.startsWith('horror:hit:');
+  const { naechstesSkript, teil2Kandidat } = await import('./schatten/skriptBot.mjs');
+  const fortsetzung = teil2Kandidat(konto, bekannt, letzte);
+  if (fortsetzung) return { skript: fortsetzung, herkunft: 'Teil 2 eines Hits' };
   if (hit && !zuletztHit) return { skript: hit, herkunft: 'TikTok-Hit', schluessel: `hit:${slug(hit.titel)}` };
-  try {
+  if (kiVerfuegbar()) try {
     const { neueGeschichte, geschichtenKi } = await import('./schatten/horrorKi.mjs');
     const s = await neueGeschichte(geschichtenKi, bekannt, { hooks: skripte.map((x) => x.hook) });
     if (s) return { skript: s, herkunft: 'KI (neu)' };
   } catch (e) { console.log(`[113] KI nicht verfügbar: ${String(e.message).slice(0, 120)}`); }
-  // Skript-Bot: neue Geschichten aus bewährten Mustern, ohne KI
-  const { naechstesSkript } = await import('./schatten/skriptBot.mjs');
-  const bot = naechstesSkript(bekannt);
+  // Skript-Bot: neue Geschichten aus bewährten Mustern, ohne KI - das Muster mit den meisten Aufrufen zuerst
+  const bot = naechstesSkript(bekannt, letzte);
   if (bot) return { skript: bot, herkunft: 'Skript-Bot' };
   if (hit) return { skript: hit, herkunft: 'TikTok-Hit', schluessel: `hit:${slug(hit.titel)}` };
   const vorrat = skripte.filter((s) => !bekannt.includes(slug(s.titel)));
@@ -75,7 +80,7 @@ async function vorbereiten() {
     if (k.quelle === 'horror') {
       // jeder Horror-Kanal bekommt eine EIGENE Geschichte: was ein anderer Kanal schon hatte oder in diesem Lauf bekommt, ist tabu
       const schonDa = Object.fromEntries([...Object.values(stand).flatMap((x) => Object.entries(x || {})), ...plan.map((x) => [x.schluessel, 'jetzt'])]);
-      const h = await horrorSkript({ ...schonDa, ...(stand[k.id] || {}) });
+      const h = await horrorSkript({ ...schonDa, ...(stand[k.id] || {}) }, k.name);
       if (!h) { bericht(`- ⚠️ ${k.name}: keine Horror-Geschichte`); continue; }
       const folge = baueFolge({ ...h.skript, weiter: '', posten: '', kurz: true });
       mkdirSync('out', { recursive: true });
@@ -132,5 +137,5 @@ async function posten() {
 }
 
 const [modus] = process.argv.slice(2);
-if (!TOKEN) console.log('[113-buffer-verteiler] BUFFER_ACCESS_TOKEN fehlt - übersprungen.');
+if (import.meta.url !== `file://${process.argv[1]}`) { /* als Modul geladen (Tests) */ } else if (!TOKEN) console.log('[113-buffer-verteiler] BUFFER_ACCESS_TOKEN fehlt - übersprungen.');
 else (modus === '--posten' ? posten() : vorbereiten()).catch((e) => { console.error(`[113-buffer-verteiler] ${String(e.message).slice(0, 300)}`); process.exit(1); });
