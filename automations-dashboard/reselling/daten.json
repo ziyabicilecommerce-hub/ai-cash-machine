@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-05T21:38:05.643Z",
+ "stand": "2026-11-05T21:41:07.445Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -197,7 +197,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-05T21:25:01.732Z",
+  "stand": "2026-11-05T21:41:11.273Z",
   "filialen": 148,
   "produkte": [
    {
@@ -223,7 +223,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 36
+      "menge": 35
      },
      {
       "name": "dm Kriftel",
@@ -231,7 +231,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 29
+      "menge": 28
      },
      {
       "name": "dm Kelsterbach",
@@ -239,7 +239,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 16
+      "menge": 14
      },
      {
       "name": "dm Frankfurt am Main",
@@ -255,7 +255,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 53
+      "menge": 51
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -263,7 +263,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 78
+      "menge": 77
      },
      {
       "name": "dm Flörsheim am Main",
@@ -449,14 +449,6 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 1
-     },
-     {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
@@ -511,6 +503,14 @@
       "lat": 50.13488,
       "lon": 8.5572012,
       "menge": 3
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 8
      }
     ]
    },
@@ -627,7 +627,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 18
+      "menge": 17
      },
      {
       "name": "dm Frankfurt am Main",
@@ -651,7 +651,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 16
+      "menge": 14
      },
      {
       "name": "dm Flörsheim am Main",
@@ -733,7 +733,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Eschborn",
@@ -866,7 +866,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 63
+      "menge": 62
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -874,7 +874,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 12
+      "menge": 11
      },
      {
       "name": "dm Flörsheim am Main",
@@ -882,7 +882,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 27
+      "menge": 26
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -898,7 +898,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 15
+      "menge": 14
      }
     ]
    }
@@ -2444,6 +2444,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "Book 2 SP",
+    "preis": 105,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-book-2-sp-iq0050-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ0050-001-1.jpg?v=1770121671",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
+   },
+   {
     "titel": "Nike Wmns Dunk Low",
     "preis": 107,
     "verfuegbar": true,
@@ -2523,15 +2532,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-cblack-ntgrey-lucred-kk0006-footwear_20_3E_20sneaker.jpg?v=1790237496",
     "laden": "afew-store.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "Air Max 95 OG \"Slate\"",
-    "preis": 114,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH7855-100_01.jpg?v=1777549236",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
    },
    {
     "titel": "New Balance 509",
