@@ -1,7 +1,9 @@
 // Wochenbericht (#115): läuft nach jedem Zahlen-Abruf (#103) mit. Schreibt den Verlauf fort und erstellt den Bericht
 // für die App (automations-dashboard/tiktok/wochenbericht.json). Ohne Schlüssel, ohne Netz - liest nur Dateien.
 import { readFileSync, writeFileSync } from 'node:fs';
-import { verlaufMischen, bericht } from './lib/wochenbericht.mjs';
+import { verlaufMischen, bericht, vorrat } from './lib/wochenbericht.mjs';
+import { SKRIPTE_EN } from './schatten/skripteEn.mjs';
+import { slug } from './schatten/videobot.mjs';
 import { alleSkripte, passt } from './schatten/skriptBot.mjs';
 import { abSchluessel } from './lib/bufferVerteiler.mjs';
 
@@ -14,6 +16,11 @@ const musterVon = (p) => skripte.find((s) => passt(p, s))?.muster || '';
 const varianten = json('buffer-verteiler/varianten.json', {});
 const varianteVon = (p) => varianten[abSchluessel(p.text)] || null;  // Schlüssel = die ersten 40 Zeichen des Hooks
 const b = bericht(verlauf, Date.now(), musterVon, varianteVon);
+const gepostet = Object.values(json('buffer-verteiler/stand.json', {})).flatMap((k) => Object.keys(k || {}));
+b.vorrat = { de: vorrat(skripte.map((x) => slug(x.titel)), gepostet), en: vorrat(SKRIPTE_EN.map((x) => slug(x.titel)), gepostet) };
+for (const [sprache, v] of Object.entries(b.vorrat)) {
+  if (v.tage < 4) b.schritte.unshift(`⚠️ Geschichten-Vorrat ${sprache === 'de' ? 'Deutsch' : 'Englisch'}: nur noch ${v.rest} (≈ ${v.tage} Tage). Neue Muster bestellen oder GEMINI_API_KEY eintragen.`);
+}
 writeFileSync(`${ORDNER}/verlauf.json`, `${JSON.stringify(verlauf)}\n`);
 writeFileSync(`${ORDNER}/wochenbericht.json`, `${JSON.stringify(b, null, 1)}\n`);
 console.log(`[115] Verlauf: ${verlauf.length} Posts · Woche: ${b.gesamt.posts} Posts, ${b.gesamt.aufrufe} Aufrufe`);

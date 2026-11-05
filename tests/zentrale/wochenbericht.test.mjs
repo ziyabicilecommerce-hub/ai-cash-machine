@@ -47,3 +47,9 @@ test('Caption folgt der Variante', async () => {
   const ohne = baueFolge({ ...sk, raum: false, suchbild: false });
   assert.ok(!/🎧|versteckt/.test(ohne.caption) && !ohne.raum && !ohne.suchbild && ohne.kalt);
 });
+
+test('Vorrats-Wächter: zählt ungepostete Geschichten und Tage', async () => {
+  const { vorrat } = await import('../../automations/lib/wochenbericht.mjs');
+  assert.deepEqual(vorrat(['a', 'b', 'c', 'd', 'e', 'f', 'g'], ['horror:a', 'horror:hit:b', 'x.mp4']), { rest: 5, tage: 1 });
+  assert.deepEqual(vorrat([], []), { rest: 0, tage: 0 });
+});
