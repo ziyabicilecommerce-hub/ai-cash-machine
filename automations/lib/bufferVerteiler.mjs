@@ -85,7 +85,7 @@ export function beitrag(v, dienst, quelle = '') {
   if (tags) roh = roh.replace(/(^|\s)#\p{L}[\p{L}\p{N}_]*/gu, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
   if (dienst === 'youtube' && quelle === 'horror') {
     // Shorts-Titel = der Hook (das, was neugierig macht), nicht der interne Geschichtenname
-    let hook = (roh.split(/\s*(?:👀|1️⃣|\n)/)[0] || v.titel || 'Horror').replace(/\s+/g, ' ').trim();
+    let hook = (roh.split(/\s*(?:🎧|👀|1️⃣|\n)/)[0] || v.titel || 'Horror').replace(/\s+/g, ' ').trim();
     if (hook.length > 85) hook = hook.slice(0, 85).replace(/\s+\S*$/, '') + '…';
     const beschreibung = `${roh}\n\nJeden Tag eine neue Gruselgeschichte – abonnieren, wenn du dich traust.\n#horror #gruselgeschichte #creepypasta #shorts\n${KI_HINWEIS}`.slice(0, 4900);
     return { text: beschreibung, metadata: { youtube: { title: `${hook} 😨 #shorts`.slice(0, 100), categoryId: '24', madeForKids: false, isAiGenerated: true, privacy: 'public' } } };

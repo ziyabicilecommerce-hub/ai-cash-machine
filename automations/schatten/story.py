@@ -341,6 +341,15 @@ def suchzeiten(plan):
     return sorted(zeiten) if len(zeiten) == 3 else []
 
 
+def kopfhoerer(im):
+    d = ImageDraw.Draw(im)
+    f = ImageFont.truetype(FONTDATEI, 28)
+    text = 'KOPFHÖRER AUF'
+    b = d.textlength(text, font=f)
+    d.rounded_rectangle(((W - b) / 2 - 14, 258, (W + b) / 2 + 14, 300), 12, fill=(20, 20, 20), outline=GELB, width=3)
+    d.text((W / 2, 279), text, font=f, fill=GELB, anchor='mm')
+
+
 def suchbanner(im):
     d = ImageDraw.Draw(im)
     text = 'SEINE AUGEN SIND 3x VERSTECKT'
@@ -481,6 +490,8 @@ def main():
                 untertitel(im, s['text'], s.get('gelb', ''), k, pop=pop)
             if such and t < 2.6:
                 suchbanner(im)
+            if story.get('raum') and t < 2.6:
+                kopfhoerer(im)
             if s.get('warnung'):
                 warnung(im, s['warnung'], lt)
             if story.get('uhr', True) and s['art'] not in ('fratze', 'teil2', 'nachricht'):
@@ -492,7 +503,7 @@ def main():
     if cover:
         untertitel(cover, story.get('titelbild', 'ER SITZT HINTER DIR'), story.get('titelbild_gelb', 'HINTER'))
         cover.resize((1080, 1920), Image.LANCZOS).save(os.path.join(ordner, 'cover.jpg'), quality=90)
-    ton = tonspur(plan, gesamt, ordner, schlicht=story.get('ton') == 'schlicht')
+    ton = tonspur(plan, gesamt, ordner, schlicht=story.get('ton') == 'schlicht', raum=bool(story.get('raum')))
     subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', bildspur, '-i', ton, '-c', 'copy', '-shortest', '-movflags', '+faststart',
                     os.path.join(ordner, 'video.mp4')], check=True)
     print(f'fertig: {gesamt:.1f} s, Stimme: {"nein" if stumm else "ja"}')

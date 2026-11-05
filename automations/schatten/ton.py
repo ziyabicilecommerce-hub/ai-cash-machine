@@ -2,7 +2,35 @@
 import os, subprocess
 
 
-def tonspur(plan, gesamt, ordner, schlicht=False):
+def raum3d(plan, gesamt, erster):
+    # 3D-Ton für Kopfhörer (Stereo-Pegel + Ferne): Flüstern kreist um den Kopf, Klopfen links/rechts hinter dir,
+    # Atem ganz nah am rechten Ohr - alles in den letzten Sekunden vor dem Jumpscare. Gibt (Eingänge, Filter, Label) zurück.
+    fr = next((x['start'] for x in plan if x['art'] == 'fratze'), 0)
+    if fr < 5:
+        return [], '', None
+    a, e = max(2.8, fr - 6), fr - 0.4
+    theta = f"(2*PI*0.3*(t-{a:.2f})+PI/2)"  # startet rechts, wandert nach hinten, links, vorne ...
+    huelle = f"between(t,{a:.2f},{e:.2f})*min((t-{a:.2f})/2,1)*(0.35+0.65*abs(sin(2*PI*2.3*t)))"
+    hinten = f"(0.72+0.28*cos({theta}))"  # hinter dem Kopf etwas leiser und dumpfer
+    links = f"1.8*{huelle}*{hinten}*sqrt((1-sin({theta}))/2)"
+    rechts = f"1.8*{huelle}*{hinten}*sqrt((1+sin({theta}))/2)"
+    kl, kr = fr - 2.3, fr - 1.75  # zwei Klopfer: erst links hinten, dann rechts hinten
+    klopf = lambda k, g: f"{g}*gte(t,{k:.2f})*exp(-30*max(t-{k:.2f},0))*sin(2*PI*90*t)"
+    atem = f"between(t,{fr - 1.3:.2f},{e:.2f})*pow(max(sin(2*PI*1.1*(t-{fr - 1.3:.2f})),0),2)"
+    eingaben = ['-f', 'lavfi', '-i', f'anoisesrc=color=pink:amplitude=0.7:d={gesamt:.2f}',
+                '-f', 'lavfi', '-i', f"aevalsrc='{klopf(kl, 0.9)}+{klopf(kr, 0.25)}|{klopf(kl, 0.25)}+{klopf(kr, 0.9)}':s=44100:d={gesamt:.2f}",
+                '-f', 'lavfi', '-i', f'anoisesrc=color=white:amplitude=0.5:d={gesamt:.2f}']
+    n, k, w = erster, erster + 1, erster + 2
+    filter_ = (f"[{n}]bandpass=f=2600:t=h:w=2200,aecho=0.8:0.6:60:0.3,asplit=2[fl][fr];"
+               f"[fl]volume='{links}':eval=frame[fl2];[fr]volume='{rechts}':eval=frame[fr2];"
+               f"[fl2][fr2]join=inputs=2:channel_layout=stereo[flu];"
+               f"[{k}]lowpass=f=900[klo];"
+               f"[{w}]bandpass=f=900:t=h:w=1200,volume='0.8*{atem}':eval=frame,pan=stereo|c0=0.08*c0|c1=c0[atm];"
+               f"[flu][klo][atm]amix=inputs=3:normalize=0[raum];")
+    return eingaben, filter_, '[raum]'
+
+
+def tonspur(plan, gesamt, ordner, schlicht=False, raum=False):
     # Brummen + Rumpeln, Herzschlag wird schneller, Schläge bei Schrecks, Kreischen beim Jumpscare,
     # Flüstern, und Stille direkt vor dem Schreck (alles kostenlos aus ffmpeg erzeugt)
     herz = next((s['start'] for s in plan if s['art'] == 'schatten'), gesamt)
@@ -108,7 +136,13 @@ def tonspur(plan, gesamt, ordner, schlicht=False):
         eingaben += ['-f', 'lavfi', '-i', f"aevalsrc='0.55*{herz}':s=44100:d={gesamt:.2f}"]
         filter_ += f"[{eingaben.count('-i') - 1}]lowpass=f=120[hz];"
         mix.append('[hz]')
-    filter_ += f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,afade=t=out:st={gesamt - 1.5:.2f}:d=1.5,alimiter=limit=0.92[a]"
+    r_ein, r_filter, r_label = raum3d(plan, gesamt, eingaben.count('-i')) if raum else ([], '', None)
+    if r_label:  # Grundton (mono) auf Stereo, dann der 3D-Ton obendrauf
+        eingaben += r_ein
+        filter_ += r_filter + f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,aformat=channel_layouts=stereo[grund];[grund]{r_label}amix=inputs=2:normalize=0,"
+    else:
+        filter_ += f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,"
+    filter_ += f"afade=t=out:st={gesamt - 1.5:.2f}:d=1.5,alimiter=limit=0.92[a]"
     ton = os.path.join(ordner, 'ton.m4a')
     subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', *eingaben, '-filter_complex', filter_, '-map', '[a]', '-ac', '2', '-c:a', 'aac', '-b:a', '192k', ton], check=True)
     return ton
