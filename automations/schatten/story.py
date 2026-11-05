@@ -311,6 +311,29 @@ async def stimme(text, datei, sprecher, tempo, tonhoehe='-12Hz'):
     await edge_tts.Communicate(text, sprecher, rate=tempo, pitch=tonhoehe).save(datei)
 
 
+def suchzeiten(plan):
+    # 3 Zeitpunkte zwischen Hook (ab 2,8 s) und Jumpscare, nie in Fratze/Nachricht/Endkarte, mind. 0,8 s auseinander
+    bis = next((x['start'] for x in plan if x['art'] == 'fratze'), plan[-1]['start'])
+    gesperrt = [(x['start'], x['start'] + x['dauer']) for x in plan if x['art'] in ('fratze', 'teil2', 'nachricht', 'zeitung_nah')]
+    frei = [round(2.8 + i / 10, 1) for i in range(int((bis - 3.1) * 10))]
+    frei = [z for z in frei if not any(v - 0.2 <= z < b for v, b in gesperrt)]
+    zeiten = []
+    for ziel in (0.3, 0.58, 0.85):
+        for z in sorted(frei, key=lambda z: abs(z - bis * ziel)):
+            if all(abs(z - y) >= 0.8 for y in zeiten):
+                zeiten.append(z); break
+    return sorted(zeiten) if len(zeiten) == 3 else []
+
+
+def suchbanner(im):
+    d = ImageDraw.Draw(im)
+    text = 'SEINE AUGEN SIND 3x VERSTECKT'
+    f = ImageFont.truetype(FONTDATEI, 32)
+    b = d.textlength(text, font=f)
+    d.rounded_rectangle(((W - b) / 2 - 16, 196, (W + b) / 2 + 16, 246), 14, fill=GELB)
+    d.text((W / 2, 221), text, font=f, fill=(10, 10, 10), anchor='mm')
+
+
 def dauer_von(datei):
     return float(subprocess.check_output(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', datei]))
 
@@ -378,6 +401,10 @@ def main():
     uhr_bis = next((s['start'] for s in plan if s['art'] in ('station', 'zettel2')), gesamt)
     # Unterschwellige Schocker: in Szene 4 und 7 blitzen fuer zwei Bilder nur leuchtende Augen im Dunkeln auf
     augen_szenen = {id(x) for i, x in enumerate(plan) if i in (3, 6) and x['art'] not in ('fratze', 'teil2', 'nachricht', 'zeitung_nah')}
+    # Suchbild: genau 3 versteckte Augenpaare (je 5 Bilder) - beim ersten Mal kaum zu sehen, also schauen die Leute nochmal
+    such = suchzeiten(plan) if story.get('suchbild') else []
+    if such:
+        augen_szenen = set()
     augenbild = Image.new('RGB', (W, H), (2, 2, 4))
     for ex in (-70, 70):
         augenbild.paste(AUGE_GROSS, (W // 2 + ex - 120, 520 - 120), AUGE_GROSS)
@@ -412,6 +439,8 @@ def main():
                 im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.2)  # Licht flackert kurz weg
             if id(s) in augen_szenen and 1.2 <= lt < 1.2 + 2 / FPS:
                 im = Image.blend(im, augenbild, 0.85)
+            if any(0 <= t - x < 5 / FPS for x in such):
+                im = Image.blend(im, augenbild, 0.5)
             if s['art'] == 'fratze' and f < 3:
                 im = Image.blend(im, Image.new('RGB', (W, H), (255, 255, 255)), 0.7 - f * 0.25)
             if s['art'] == 'blitz' and f == int(0.35 * FPS):  # Titelbild ohne Spoiler
@@ -430,6 +459,8 @@ def main():
                 if s['start'] == 0:  # Hook: der ganze Satz steht sofort da - wer wischt, hat ihn schon gelesen
                     k = worte
                 untertitel(im, s['text'], s.get('gelb', ''), k)
+            if such and t < 2.6:
+                suchbanner(im)
             if s.get('warnung'):
                 warnung(im, s['warnung'], lt)
             if story.get('uhr', True) and s['art'] not in ('fratze', 'teil2', 'nachricht'):

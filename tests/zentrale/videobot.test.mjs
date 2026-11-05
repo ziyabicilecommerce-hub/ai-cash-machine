@@ -112,3 +112,12 @@ test('Lern-Bot: eigene Geschichten mit erfolgreichem Ort/Bösewicht kommen zuers
   }
   assert.equal(SK.skripte.filter((s) => s.teil2).length, 15);
 });
+
+test('Suchbild: kurze Videos verstecken 3x Augen und fragen nach der Sekunde', () => {
+  const sk = { hook: 'Ich wohne allein.', saetze: ['Es klopft.', 'Ich schaue zum Fenster.', 'Da ist niemand.'], ende: 'Er steht hinter mir.' };
+  const kurz = baueFolge({ ...sk, kurz: true });
+  assert.equal(kurz.suchbild, true);
+  assert.match(kurz.caption, /3x im Video versteckt/);
+  assert.equal(baueFolge({ ...sk, kurz: true, suchbild: false }).suchbild, false);
+  assert.equal(baueFolge(sk).suchbild, false);
+});
