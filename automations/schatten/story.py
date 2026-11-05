@@ -11,7 +11,8 @@ from aktion import scheibe, decke_schatten, masken, fernseher, taschenlampe, zae
 from fahrgaeste import fahrgaeste_malen, zeitung_nah
 from orte import ORT, HIMMEL, NEBEL, AUGE, AUGE_LEISE, HANDYLICHT, AUGE_GROSS, sterne, innenraum, draussen, rahmen, SPIEGELBOX
 
-W, H, FPS = 720, 1280, 30
+W, H, FPS = 720, 1280, int(os.environ.get('FPS', '60'))  # 60 Bilder/s = flüssig; Effekte rechnen in Sekunden
+B = 1 / 30  # Dauer eines "Bildes" der alten 30-fps-Effekte (Blitze, Störungen) - bleibt gleich lang
 FAHRGAESTE = [['zeitung', 'schlaf']]  # pro Story: wer sonst noch da ist
 FONTDATEI = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
 FONT, KLEIN, FONT_POP = ImageFont.truetype(FONTDATEI, 60), ImageFont.truetype(FONTDATEI, 34), ImageFont.truetype(FONTDATEI, 64)
@@ -282,7 +283,20 @@ def rotverschiebung(im, px):
     return Image.merge('RGB', (r.transform(im.size, Image.AFFINE, (1, 0, -px, 0, 1, 0)), g, b.transform(im.size, Image.AFFINE, (1, 0, px, 0, 1, 0))))
 
 
-def untertitel(im, satz, key, k=None, basis=WEISS):
+def weich(x):
+    x = max(0.0, min(1.0, x))
+    return x * x * (3 - 2 * x)
+
+
+_POP = {}
+def popfont(groesse):
+    groesse = int(round(groesse))
+    if groesse not in _POP:
+        _POP[groesse] = ImageFont.truetype(FONTDATEI, groesse)
+    return _POP[groesse]
+
+
+def untertitel(im, satz, key, k=None, basis=WEISS, pop=1.0):
     # Wort für Wort: die Positionen stehen fest, sichtbar sind nur die ersten k Wörter (das neueste etwas größer)
     d = ImageDraw.Draw(im)
     zeilen, z = [], ''
@@ -300,7 +314,9 @@ def untertitel(im, satz, key, k=None, basis=WEISS):
             nr += 1
             if k is None or nr <= k:
                 f = GELB if w.strip('".,:!?') == key else basis
-                gross = FONT_POP if (k is not None and nr == k) else FONT
+                gross = FONT
+                if k is not None and nr == k:  # das neueste Wort springt nicht, es federt von groß auf normal
+                    gross = popfont(76 - 12 * weich(pop))
                 d.text((x + d.textlength(w, font=FONT) / 2, y), w, font=gross, fill=f, stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
             x += d.textlength(w + ' ', font=FONT)
         y += 72
@@ -416,33 +432,35 @@ def main():
             ZEIT[0] = t
             im = bild(s, t, lt)
             angespannt = s.get('stille') or s.get('angst', 0) >= 0.8
-            zoom = 1.02 + (0.18 * min(lt / 0.2, 1) if s['art'] == 'fratze' else (0.15 if angespannt else 0.07) * (f / n))
-            cw, ch = int(W / zoom), int(H / zoom)
+            # Kamera ohne Ruckeln: Zoom mit weichem Anlauf/Auslauf, Wackeln auf Bruchteile von Pixeln genau (keine ganzen Sprünge)
+            zoom = 1.02 + (0.18 * weich(min(lt / 0.2, 1)) if s['art'] == 'fratze' else (0.15 if angespannt else 0.07) * weich(f / n))
             wack = 3 + (5 if angespannt else 0)  # Handkamera: nie ganz ruhig, bei Angst unruhiger
-            dx = int((math.sin(t * 1.7) + 0.6 * math.sin(t * 4.3)) * wack)
-            dy = int((math.sin(t * 1.3 + 1) + 0.5 * math.sin(t * 3.7)) * wack)
-            x0 = max(0, min(W - cw, (W - cw) // 2 + dx)); y0 = max(0, min(H - ch, (H - ch) // 2 + dy))
-            im = im.crop((x0, y0, x0 + cw, y0 + ch)).resize((W, H), Image.BILINEAR)
+            dx = (math.sin(t * 1.7) + 0.6 * math.sin(t * 4.3)) * wack
+            dy = (math.sin(t * 1.3 + 1) + 0.5 * math.sin(t * 3.7)) * wack
+            cw, ch = W / zoom, H / zoom
+            x0 = max(0.0, min(W - cw, (W - cw) / 2 + dx)); y0 = max(0.0, min(H - ch, (H - ch) / 2 + dy))
+            im = im.transform((W, H), Image.AFFINE, (1 / zoom, 0, x0, 0, 1 / zoom, y0), Image.BILINEAR)
             if (s.get('schreck') and lt < 0.6) or ('schreck_bei' in s and 0 <= lt - s['schreck_bei'] < 0.5):
                 st = 26 if s['art'] == 'fratze' else 12
                 im = im.rotate(random.uniform(-1.5, 1.5) if s['art'] == 'fratze' else 0, translate=(random.randint(-st, st), random.randint(-st, st)), fillcolor=NACHT)
                 im = rotverschiebung(im, 10 if s['art'] == 'fratze' else 5)
-            if any(0 <= lt - x < 2 / FPS for x in s.get('blitzbild', [])):
+            if any(0 <= lt - x < 2 * B for x in s.get('blitzbild', [])):
                 fr = fratze_ki if fratze_ki is not None else Image.new('RGB', (W, H))
                 if fratze_ki is None: fratze(fr, 0.3)
                 im = Image.blend(im, fr, 0.75)
-            if f < 2 and s['start'] > 0 and s['art'] not in ('fratze', 'teil2'):  # Bildstoerung beim Schnitt
-                im = rotverschiebung(im, 9 - f * 4)
+            b = int(lt / B)  # wievieltes 30-fps-Bild der Szene - Effekte dauern so lange wie vorher
+            if b < 2 and s['start'] > 0 and s['art'] not in ('fratze', 'teil2'):  # Bildstoerung beim Schnitt
+                im = rotverschiebung(im, 9 - b * 4)
                 band = random.randint(200, H - 300)
                 im.paste(im.crop((0, band, W, band + 70)), (random.randint(-40, 40), band))
             if t / gesamt > 0.4 and s['art'] not in ('fratze', 'teil2') and (int(t * 12) * 7919) % 89 == 0:
                 im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.2)  # Licht flackert kurz weg
-            if id(s) in augen_szenen and 1.2 <= lt < 1.2 + 2 / FPS:
+            if id(s) in augen_szenen and 1.2 <= lt < 1.2 + 2 * B:
                 im = Image.blend(im, augenbild, 0.85)
-            if any(0 <= t - x < 5 / FPS for x in such):
+            if any(0 <= t - x < 5 * B for x in such):
                 im = Image.blend(im, augenbild, 0.5)
-            if s['art'] == 'fratze' and f < 3:
-                im = Image.blend(im, Image.new('RGB', (W, H), (255, 255, 255)), 0.7 - f * 0.25)
+            if s['art'] == 'fratze' and lt < 3 * B:
+                im = Image.blend(im, Image.new('RGB', (W, H), (255, 255, 255)), 0.7 - lt / B * 0.25)
             if s['art'] == 'blitz' and f == int(0.35 * FPS):  # Titelbild ohne Spoiler
                 cover = im.copy()
             fortschritt = t / gesamt
@@ -455,18 +473,20 @@ def main():
                 mw = len(mt.split())
                 untertitel(im, mt, '', min(mw, 1 + int((lt - s['mbei']) / max(s['mdauer'], 0.3) * mw * 1.1)), basis=(230, 25, 25))
             elif s.get('text'):
-                k = worte if not s['sprech'] else min(worte, 1 + int(lt / max(s['sprech'], 0.3) * worte * 1.1))
+                takt = max(s['sprech'], 0.3) / (worte * 1.1) if worte else 1
+                k = worte if not s['sprech'] else min(worte, 1 + int(lt / takt))
+                pop = 1.0 if not s['sprech'] else min(1.0, (lt - (k - 1) * takt) / 0.12)  # neues Wort wächst weich rein
                 if s['start'] == 0:  # Hook: der ganze Satz steht sofort da - wer wischt, hat ihn schon gelesen
-                    k = worte
-                untertitel(im, s['text'], s.get('gelb', ''), k)
+                    k, pop = worte, 1.0
+                untertitel(im, s['text'], s.get('gelb', ''), k, pop=pop)
             if such and t < 2.6:
                 suchbanner(im)
             if s.get('warnung'):
                 warnung(im, s['warnung'], lt)
             if story.get('uhr', True) and s['art'] not in ('fratze', 'teil2', 'nachricht'):
                 uhr(im, t, uhr_bis, gesamt)
-            if f < 3 and s['start'] > 0 and s['art'] not in ('fratze', 'blitz'):
-                im = Image.blend(im, Image.new('RGB', (W, H), NACHT), 0.6 - f * 0.2)
+            if lt < 3 * B and s['start'] > 0 and s['art'] not in ('fratze', 'blitz'):  # weich aus dem Schwarz
+                im = Image.blend(im, Image.new('RGB', (W, H), NACHT), 0.6 - lt / B * 0.2)
             p.stdin.write(im.tobytes())
     p.stdin.close(); p.wait()
     if cover:
