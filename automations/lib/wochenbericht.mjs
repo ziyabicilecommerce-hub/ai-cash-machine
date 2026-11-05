@@ -63,3 +63,11 @@ export function bericht(verlauf = [], jetzt = Date.now(), musterVon = () => '', 
   const gesamt = { posts: woche.length, aufrufe: woche.reduce((a, p) => a + p.aufrufe, 0), vorherAufrufe: vorher.length ? vorher.reduce((a, p) => a + p.aufrufe, 0) : null };
   return { stand: new Date(jetzt).toISOString(), gesamt, konten, formate, muster, zeiten, top, ab, schritte };
 }
+
+// Vorrats-Wächter: wie viele Geschichten sind noch ungepostet und wie viele Tage reicht das (bei proTag Posts am Tag)?
+// gepostet = Schlüssel aus buffer-verteiler/stand.json ("horror:<slug>", "horror:hit:<slug>")
+export function vorrat(slugs = [], gepostet = [], proTag = 5) {
+  const weg = new Set(gepostet.map((k) => String(k).replace(/^horror:(hit:)?/, '')));
+  const rest = slugs.filter((x) => !weg.has(x)).length;
+  return { rest, tage: Math.floor(rest / proTag) };
+}

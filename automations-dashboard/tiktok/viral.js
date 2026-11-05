@@ -127,6 +127,7 @@
     const max = Math.max(...konten.map(([, w]) => w.schnitt), 1);
     q('vl-woche').replaceChildren(
       mk('div', 'unter', `${g.posts} Posts · ${zahl(g.aufrufe)} Aufrufe${trend}`),
+      ...(b.vorrat ? [mk('div', 'unter', `📚 Geschichten-Vorrat: Deutsch ${b.vorrat.de.rest} (≈ ${b.vorrat.de.tage} Tage) · Englisch ${b.vorrat.en.rest} (≈ ${b.vorrat.en.tage} Tage)`)] : []),
       ...konten.map(([k, w]) => balken(k, w.schnitt, max, `${zahl(w.schnitt)} Ø${w.vorher !== null && w.vorher !== undefined ? ` (vorher ${zahl(w.vorher)})` : ''} · ${w.n}`)),
       ...b.top.map((p, i) => { const z = mk('div', 'tipp'); z.append(mk('b', '', `🏆 #${i + 1} ${zahl(p.aufrufe)} · ${p.konto}`), mk('div', '', p.text)); return z; }),
       ...abZeilen(b.ab || {}),
