@@ -65,6 +65,11 @@ jobs:
           if [ "${{ github.event_name }}" = "schedule" ] && ! echo " 19 20 21 02 03 04 " | grep -q " $STUNDE "; then
             echo "Zeitplan kam zu spät ($STUNDE Uhr Berlin) - übersprungen, der Pünktlich-Bot übernimmt."; exit 0
           fi
+          # TikTok-Rettung (#116): Konten in Schonung posten nur das Abend-Video, bis sie Ø 50 Aufrufe schaffen
+          if [ "${{ inputs.erzwingen }}" != "true" ]; then
+            node automations/116-tiktok-rettung.mjs "$KONTO" > /tmp/rettung.txt; cat /tmp/rettung.txt
+            if grep -q "^darf=nein" /tmp/rettung.txt; then exit 0; fi
+          fi
           GRENZE=$(date -u -d '-3 hours' +%Y-%m-%dT%H:%M:%SZ)
           LETZTES=$(gh release list -R "$REPO" --limit 100 --json tagName,createdAt --jq "[.[] | select(.tagName | startswith(\"videobot-auto-\")) | select(.tagName | endswith(\"-$KONTO\")) | select(.createdAt > \"$GRENZE\")] | length")
           if [ "${LETZTES:-0}" -gt 0 ] && [ "${{ inputs.erzwingen }}" != "true" ]; then
