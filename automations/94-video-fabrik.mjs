@@ -369,7 +369,13 @@ function feedErgaenzen(basisUrl) {
 async function skripteSchreiben() {
   mkdirSync(OUT, { recursive: true });
   const produkte = await aktiveProdukte();
-  if (!produkte.length) throw new Error('Keine Produkte gefunden');
+  if (!produkte.length) {
+    // Shops gesperrt/passwortgeschützt (HTTP 401) oder leer: kein Fehler, der Welt-Bot pausiert heute (vorher jeden Tag rot)
+    console.log('[94-video-fabrik] Keine Produkte lesbar (Shops gesperrt?) - Welt-Bot pausiert heute.');
+    writeFileSync(join(OUT, 'skripte.json'), '[]');
+    writeFileSync(join(OUT, 'gruppen.json'), '[]');
+    return;
+  }
   const tag = Math.floor(Date.now() / 86400000);
   const auswahl = Array.from({ length: Math.min(WELT_ANZAHL, produkte.length) }, (_, i) => produkte[(tag * 7 + i) % produkte.length]);
   const fertig = [];

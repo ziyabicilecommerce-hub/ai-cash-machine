@@ -40,7 +40,7 @@ test('postInput: sofort, automatisch, Video-URL, TikTok-KI-Kennzeichnung', () =>
 });
 
 import { kontoFuer, zuordnen, nischenAus, nischeFuer } from '../../automations/lib/faktenKonten.mjs';
-import { BANK, bankNaechster } from '../../automations/lib/faktenBank.mjs';
+import { BANK, bankNaechster, laeuftGerade } from '../../automations/lib/faktenBank.mjs';
 
 test('kontoFuer: erste Videos auf die TikTok-Konten (alle verschieden), danach die weiteren; dreht täglich', () => {
   const t = ['@a', '@b', '@c'];
@@ -74,7 +74,8 @@ test('Nischen: jedes TikTok-Konto bekommt Fakten aus seinem Thema, sonst irgende
     assert.ok(BANK.filter((e) => kats.includes(e.kat)).length >= 15, `genug Fakten für ${kats}`);
     assert.ok(kats.includes(bankNaechster([], kats).kat));
   }
-  const alle = BANK.filter((e) => !e.saison).map((e) => e.id);
+  // nur Fakten, die heute laufen (zeitgebundene "aktuell"-Fakten sind außerhalb ihres Zeitraums zu Recht gesperrt)
+  const alle = BANK.filter((e) => laeuftGerade(e)).map((e) => e.id);
   assert.equal(bankNaechster(alle.slice(0, -1), ['GibtEsNicht']).id, alle.at(-1), 'Rückfall auf irgendeinen');
 });
 
