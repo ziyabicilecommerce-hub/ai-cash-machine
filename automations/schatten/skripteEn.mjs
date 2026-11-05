@@ -2,6 +2,7 @@
 // Same rules: hook <= 70 chars, the two key sentences come last (short mode keeps only those), answers <= 18 chars.
 // hook2 = "you" hook for the hook A/B test.
 import { pruefen, slug } from './videobot.mjs';
+import { musterWerte } from './skriptBot.mjs';
 
 const S = (titel, muster, ort, boesewicht, stimme, hook, hook2, saetze, ende, monster, frage, wahl, extra = {}) =>
   ({ titel, muster, ort, boesewicht, stimme, hook, hook2, saetze, ende, monster, frage, wahl, sprache: 'en', herkunft: 'skriptbot-en', ...extra });
@@ -81,11 +82,82 @@ export const SKRIPTE_EN = [
   S('Seat Taken', 'kind', 'zug', 'schatten', 'frau', 'On the night train a kid points at my seat: Someone is sitting there.', 'If a kid says your seat is already taken, believe them.',
     ['I laugh and ask about it.', 'The laugh does not last.', 'I sit down anyway.', 'The kid starts crying: Now you are sitting on him.'],
     'The seat under me is warm. And it is breathing.', 'Get up.', 'Would you have stood up?', ['Stand up', 'Stay seated']),
+  S('Strange Shoes', 'allein', 'haus', 'schatten', 'mann', 'I live alone. Today there are two pairs of shoes outside my door.', 'You live alone. Still, two pairs of shoes stand outside your door.',
+    ['At first I think I made a mistake.', 'Then my mom texts me.', 'She asks who the man outside my door is.', 'But in the hallway the floor creaks.'],
+    'The strange shoes are wet. And now they are standing next to my bed.', 'I live here now.', 'What would you have done?', RUN, { absender: 'Mom', nachricht: 'Who is the man waiting outside your door?' }),
+  S('Living Room Camera', 'kamera', 'haus', 'schatten', 'mann', 'My living room camera shows me asleep. I am not home.', 'Your camera shows you asleep at home. You are not home.',
+    ['I watch the stream.', 'At first there is nothing.', 'I am lying on the couch. And someone sits at my feet.', 'He has been sitting there for hours. He does not move.'],
+    'The stream is live. The person on the couch opens its eyes. It has my face.', 'I am waiting for you.', 'What would you have done?', RUN),
+  S('It Is Typing', 'spiegel', 'haus', 'frau', 'frau', 'In the mirror my reflection is typing on my phone. I am not.', 'Never look in the mirror while you hold your phone.',
+    ['I brush my teeth like always.', 'At first I notice nothing.', 'My phone lies next to the sink. The screen is on.', 'A new message from me to me: Let me out.'],
+    'I look back in the mirror. She holds up her phone. It says: Thank you.', 'Let me out.', 'Would you have stayed?', ['Stay', 'Lights off']),
+  S('Who Is Waving', 'kind', 'haus', 'frau', 'frau', 'My niece waves out the window every night. At nothing.', 'If your niece waves at nothing and something waves back, run.',
+    ['I laugh and ask about it.', 'The laugh does not last.', 'She says: The lady in the garden waves back.', 'Tonight she says: She is coming in now.'],
+    'Behind us the front door opens. And my niece waves. This time at me.', 'I am here.', 'Would you have looked?', ['Look', 'Do not look']),
+  S('Dying Flashlight', 'fremd', 'wald', 'hirsch', 'mann', 'At 3:12 AM a stranger texts me: Your flashlight is almost dead.', 'If you get a text alone in the woods at night, do not read it.',
+    ['I look around.', 'I text back: Who is this?', 'I am alone in the woods. My flashlight flickers.', 'The reply comes instantly: Do not turn around.'],
+    'The light dies. Something takes my hand. It has hooves.', 'Too late.', 'Would you have turned around?', ['Turn around', 'Run'], { absender: 'Unknown', nachricht: 'Your flashlight is almost dead.' }),
+  S('The Parrot', 'tier', 'haus', 'frau', 'mann', 'Since today my parrot keeps saying a name. I do not know it.', 'If your parrot keeps saying a name you never taught it, ask why.',
+    ['I think it heard it on TV.', 'I listen closely.', 'It keeps calling: Mary, come upstairs.', 'The old tenant tells me Mary vanished in this basement.'],
+    'Tonight someone answers from the basement. By name.', 'I am coming.', 'What would you have done?', RUN),
+  S('Steamed Mirror', 'spiegel', 'haus', 'schatten', 'frau', 'The mirror says at night: You are not alone. I did not write it.', 'Never read what appears on your steamed up mirror.',
+    ['I take a shower like always.', 'At first I notice nothing.', 'I live alone. I did not write anything.', 'Under the words a second handprint slowly appears.'],
+    'The handprint is on the inside. And it is getting bigger.', 'Behind you.', 'Would you have stayed?', ['Stay', 'Lights off']),
+  S('The Drawing', 'kind', 'haus', 'gremlin', 'frau', 'My brother draws our house. With three people. There are two of us.', 'If a kid draws your family, count the people.',
+    ['I laugh and ask about it.', 'The laugh does not last.', 'I ask who the third person is.', 'He points at it and says: He lives upstairs.'],
+    'We have no upstairs. But tonight we hear footsteps above the ceiling.', 'I live upstairs.', 'Would you have looked?', ['Look', 'Do not look']),
+  S('The Second Jacket', 'allein', 'haus', 'schatten', 'mann', 'I live alone. Today two wet jackets hang in my hallway.', 'You live alone. Still, a wet jacket is dripping in your hallway.',
+    ['At first I think I made a mistake.', 'Then my buddy texts me.', 'He asks who just opened my door for him.', 'But the strange jacket is still dripping.'],
+    'In the strange jacket is my house key. Mine is gone.', 'I let him in.', 'What would you have done?', RUN, { absender: 'Buddy', nachricht: 'Who just opened your door for me?' }),
+  S('Open Window', 'fremd', 'haus', 'frau', 'mann', 'At 3:12 AM a stranger texts me: Close the window.', 'If a stranger texts you: Close the window, do not do it.',
+    ['I look around.', 'I text back: Who is this?', 'Every window is closed. I checked twice.', 'The reply comes instantly: Do not turn around.'],
+    'I walk into the bedroom. The window is open. From the inside.', 'Too late.', 'Would you have turned around?', ['Turn around', 'Run'], { absender: 'Unknown', nachricht: 'Close the window.' }),
+  S('Trail Camera', 'kamera', 'wald', 'hirsch', 'mann', 'My trail camera in the woods took 300 photos last night.', 'Never set up a trail camera next to your tent.',
+    ['I scroll through the photos.', 'At first there is nothing.', 'A deer stands on two legs in front of the lens.', 'In every photo it is closer to my tent.'],
+    'The last photo is from inside my tent. And I am asleep in it.', 'I see you too.', 'What would you have done?', RUN),
+  S('He Is Next to Me', 'anruf', 'haus', 'schatten', 'mann', 'My boyfriend is calling me. But he is asleep next to me.', 'If your boyfriend calls while he sleeps next to you, do not open.',
+    ['I pick up.', 'At first it is silent.', 'I hear rain in the background.', 'He says: Please open up. I have been outside for an hour.'],
+    'I turn to him. His pillow is soaking wet.', 'Stay in bed.', 'Would you have picked up?', ANSWER),
+  S('Last Car', 'regel', 'zug', 'schatten', 'mann', 'A note on the night train says: Never sit in the last car.', 'If you take the night train, never sit in the last car. Never.',
+    ['I laugh about it.', 'At 3 AM I hear it.', 'The train stops. All cars ahead of me get uncoupled.', 'I follow the rule.'],
+    'Now I am in the last car. And it keeps moving. Without an engine.', 'Last stop.', 'Would you have followed the rule?', ['Follow it', 'Break it']),
+  S('Dog Will Not Come In', 'tier', 'haus', 'schatten', 'mann', 'My dog refuses to come into the house. Since last night.', 'If your dog will not come into the house, it has a reason.',
+    ['I think it is the weather.', 'I look closely. Nothing.', 'He barks at the bedroom window.', 'At the window the curtain moves. The window is closed.'],
+    'I look out the window. My dog is sitting next to a man. The man is me.', 'Leave him outside.', 'What would you have done?', RUN),
+  S('Under the Bed', 'kind', 'haus', 'schatten', 'frau', 'My nephew says: Someone lives under your bed too. At 3 AM.', 'If a kid says someone lives under your bed, do not look.',
+    ['I laugh and ask about it.', 'The laugh does not last.', 'I ask how he knows.', 'He says: He told me you never check.'],
+    'I look under the bed. It is empty. Above me something giggles on the ceiling.', 'Do not look.', 'Would you have looked?', ['Look', 'Do not look']),
+  S('Two Plates', 'allein', 'haus', 'frau', 'frau', 'I live alone. Today there are two plates on my dinner table.', 'You live alone. Still, someone took a bite from the second plate.',
+    ['At first I think I made a mistake.', 'Then my landlord texts me.', 'He asks who the second person in my apartment is.', 'But a bite is missing from the second plate.'],
+    'On the lease I am the second person. The first one has lived here longer.', 'You are the guest here.', 'What would you have done?', RUN, { absender: 'Landlord', nachricht: 'Who is the second person living with you?' }),
+  S('Seat 13', 'fremd', 'flugzeug', 'gremlin', 'mann', 'At 3:12 AM a stranger texts me: Bad seat.', 'If you sit in seat 13 on a plane, do not read your messages.',
+    ['I look around.', 'I text back: Who is this?', 'I am in seat 13. My phone is in airplane mode.', 'The reply comes instantly: Do not turn around.'],
+    'The message came without signal. And the seat next to me is not empty anymore.', 'Too late.', 'Would you have turned around?', ['Turn around', 'Run'], { absender: 'Unknown', nachricht: 'Bad seat.' }),
+  S('Photo at 3 AM', 'kamera', 'haus', 'gremlin', 'mann', 'My phone took a photo at 3:12 AM. I was asleep.', 'Check your gallery. There is a photo from last night, 3:12 AM.',
+    ['I open the photo.', 'At first there is nothing.', 'It shows me in bed. From above.', 'Above my bed there is only the ceiling.'],
+    'I look up. The flash goes off.', 'Smile.', 'What would you have done?', RUN),
+  S('Wet Photos', 'tier', 'haus', 'gremlin', 'mann', 'Every night my cat brings me a photo. Today I was in it.', 'If your cat brings you photos at night, do not look at them.',
+    ['I think it found them in the trash.', 'I look closely.', 'The photos are old and wet.', 'In the new photo I am asleep. It was taken last night.'],
+    'Behind me in the photo someone is standing. Holding my cat.', 'Smile.', 'What would you have done?', RUN),
+  S('Smart Lamp', 'geraet', 'haus', 'schatten', 'mann', 'My smart lamp turns on every night at 3:12 AM. In the guest room.', 'Check your light app and see who turns the lights on at night.',
+    ['I think it is a bug.', 'I restart everything.', 'The app says: Turned on by guest.', 'I have no guest. I never added one.'],
+    'Tonight the light goes out. And under my door it gets dark.', 'Thanks for the light.', 'What would you have done?', RUN),
 ];
 
 export const TAGS_EN = '#horror #scary #creepypasta #scarystories #horrorstory';
 
-export function naechstesSkriptEn(bekannt = []) {
+// Wie der deutsche Skript-Bot: Muster abwechselnd, und mit Zahlen das Muster mit den meisten Aufrufen zuerst
+export function naechstesSkriptEn(bekannt = [], letzte = []) {
   const weg = new Set(bekannt);
-  return SKRIPTE_EN.filter((s) => !pruefen(s).length).find((s) => !weg.has(slug(s.titel))) || null;
+  const gruppen = {};
+  for (const s of SKRIPTE_EN.filter((x) => !pruefen(x).length)) (gruppen[s.muster] ||= []).push(s);
+  const gemischt = [];
+  for (let i = 0; Object.values(gruppen).some((l) => l[i]); i++) for (const l of Object.values(gruppen)) if (l[i]) gemischt.push(l[i]);
+  const frei = gemischt.filter((s) => !weg.has(slug(s.titel)));
+  const werte = musterWerte(letzte.filter((p) => /giyuuu|english/i.test(p.konto || '')), SKRIPTE_EN);
+  const bekannteWerte = Object.values(werte).filter((w) => w.n >= 2);
+  if (!bekannteWerte.length) return frei[0] || null;
+  const mittel = bekannteWerte.reduce((a, w) => a + w.schnitt, 0) / bekannteWerte.length;
+  const punkte = (m) => (werte[m]?.n >= 2 ? werte[m].schnitt : mittel * 1.1);
+  return [...frei].sort((a, b) => punkte(b.muster) - punkte(a.muster))[0] || null;
 }

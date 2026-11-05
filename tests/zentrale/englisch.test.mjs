@@ -4,7 +4,7 @@ import { SKRIPTE_EN, naechstesSkriptEn } from '../../automations/schatten/skript
 import { baueFolge, pruefen, slug } from '../../automations/schatten/videobot.mjs';
 
 test('Englische Geschichten: gültig, kurze Hooks, Du-Hooks, keine doppelt, kein Deutsch im Video', () => {
-  assert.ok(SKRIPTE_EN.length >= 24);
+  assert.ok(SKRIPTE_EN.length >= 44);
   assert.equal(new Set(SKRIPTE_EN.map((s) => slug(s.titel))).size, SKRIPTE_EN.length);
   for (const s of SKRIPTE_EN) {
     assert.deepEqual(pruefen(s), [], s.titel);
@@ -15,7 +15,12 @@ test('Englische Geschichten: gültig, kurze Hooks, Du-Hooks, keine doppelt, kein
     const alles = JSON.stringify(f.szenen.map((x) => [x.sprich, x.text, x.cta, x.frage])) + f.caption;
     assert.ok(!/\b(und|nicht|ich|kommentier|folg|schreib|eins|zwei|kopfhörer|versteckt)\b/i.test(alles), `Deutsch in ${s.titel}: ${alles.slice(0, 200)}`);
   }
-  assert.equal(naechstesSkriptEn([slug(SKRIPTE_EN[0].titel)]).titel, SKRIPTE_EN[1].titel);
+  const erste = naechstesSkriptEn([]), zweite = naechstesSkriptEn([slug(erste.titel)]);
+  assert.notEqual(erste.muster, zweite.muster, 'Muster wechseln sich ab');
+  const anruf = SKRIPTE_EN.filter((s) => s.muster === 'anruf');
+  const letzte = [{ konto: '@giyuuu sama', aufrufe: 900, text: anruf[0].hook }, { konto: '@giyuuu sama', aufrufe: 800, text: anruf[1].hook2 },
+    { konto: '@giyuuu sama', aufrufe: 5, text: SKRIPTE_EN.find((s) => s.muster === 'allein').hook }, { konto: '@giyuuu sama', aufrufe: 5, text: SKRIPTE_EN.filter((s) => s.muster === 'allein')[1].hook }];
+  assert.equal(naechstesSkriptEn([slug(anruf[0].titel), slug(anruf[1].titel)], letzte).muster, 'anruf', 'lernt das beste Muster');
 });
 
 test('Englischer Kanal: nur mit Kanal-ID aktiv, englische Texte bei YouTube, Instagram und Story', async () => {

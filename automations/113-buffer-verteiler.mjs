@@ -73,7 +73,7 @@ async function horrorSkript(gepostet, konto = '') {
 // Englischer Kanal: eigene, von Hand geschriebene Geschichten (skripteEn.mjs)
 function horrorSkriptEn(gepostet) {
   const bekannt = Object.keys(gepostet).map((key) => key.replace(/^horror:/, ''));
-  const s = naechstesSkriptEn(bekannt);
+  const s = naechstesSkriptEn(bekannt, json('automations-dashboard/tiktok/daten.json', {}).letzte || []);
   return s ? { skript: s, herkunft: 'English' } : null;
 }
 
