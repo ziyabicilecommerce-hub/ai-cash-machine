@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-05T15:49:34.646Z",
+ "stand": "2026-11-05T16:01:49.730Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118897:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
+   "text": "44,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 22 Filiale(n) vorrätig.",
+   "zeit": "2026-11-05T16:01:49.730Z"
+  },
   {
    "schluessel": "filiale:3118897:1501",
    "art": "Filiale",
@@ -185,20 +195,10 @@
    "shop": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
    "text": "16,95 € · dm Rüsselsheim am Main (10,3 km) · 1 Stück\nAdam-Opel-Straße 59-61, 65428 Rüsselsheim am Main\nIm Umkreis in 14 Filiale(n) vorrätig.",
    "zeit": "2026-11-03T16:44:26.737Z"
-  },
-  {
-   "schluessel": "filiale:3118686:1501",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: ebelin Adventskalender Beauty & Hair 2026, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
-   "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
-   "text": "32,95 € · dm Kriftel (1,3 km) · 2 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 23 Filiale(n) vorrätig.",
-   "zeit": "2026-11-03T15:06:48.645Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-05T15:46:33.710Z",
+  "stand": "2026-11-05T16:01:53.663Z",
   "filialen": 148,
   "produkte": [
    {
@@ -224,7 +224,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 35
+      "menge": 36
      },
      {
       "name": "dm Kriftel",
@@ -232,7 +232,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 28
+      "menge": 29
      },
      {
       "name": "dm Kelsterbach",
@@ -240,7 +240,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 14
+      "menge": 16
      },
      {
       "name": "dm Frankfurt am Main",
@@ -256,7 +256,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 51
+      "menge": 53
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -264,7 +264,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 77
+      "menge": 78
      },
      {
       "name": "dm Flörsheim am Main",
@@ -450,6 +450,14 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
@@ -504,14 +512,6 @@
       "lat": 50.13488,
       "lon": 8.5572012,
       "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 8
      }
     ]
    },
@@ -628,7 +628,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 17
+      "menge": 18
      },
      {
       "name": "dm Frankfurt am Main",
@@ -867,7 +867,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 62
+      "menge": 63
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -1963,50 +1963,50 @@
   "ware": [
    {
     "titel": "playstation plus",
-    "menge": "500+",
+    "menge": "1000+",
     "kategorie": "Technik & Games"
    }
   ],
   "top": [
+   {
+    "titel": "bianca censori",
+    "menge": "200+"
+   },
+   {
+    "titel": "space x aktie",
+    "menge": "500+"
+   },
+   {
+    "titel": "börsencrash",
+    "menge": "200+"
+   },
+   {
+    "titel": "scalable",
+    "menge": "200+"
+   },
+   {
+    "titel": "infineon aktie",
+    "menge": "200+"
+   },
+   {
+    "titel": "basf aktie",
+    "menge": "200+"
+   },
    {
     "titel": "börse",
     "menge": "2000+"
    },
    {
     "titel": "playstation plus",
-    "menge": "500+"
-   },
-   {
-    "titel": "börse heute",
-    "menge": "5000+"
-   },
-   {
-    "titel": "s&p 500",
-    "menge": "200+"
-   },
-   {
-    "titel": "sp500",
-    "menge": "200+"
-   },
-   {
-    "titel": "aktien news",
-    "menge": "200+"
-   },
-   {
-    "titel": "nvidia stock",
-    "menge": "200+"
-   },
-   {
-    "titel": "die landarztpraxis",
     "menge": "1000+"
    },
    {
-    "titel": "amd aktie",
-    "menge": "200+"
+    "titel": "börse heute",
+    "menge": "500+"
    },
    {
-    "titel": "msci world",
-    "menge": "200+"
+    "titel": "s&p 500",
+    "menge": "2000+"
    }
   ]
  },
@@ -2056,6 +2056,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/c2ypbmhf7s7-1201A906-001_Asics_GEL-1130-Black-Pure-Silver_os-1.jpg?v=1768574492",
     "laden": "asphaltgold.com",
     "begriff": "asics"
+   },
+   {
+    "titel": "740",
+    "preis": 60,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-740-u740yg2",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U740YG2-01.jpg?v=1761576893",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Nike Dunk Low Retro SE *Panda*",
@@ -2121,6 +2130,15 @@
     "begriff": "dunk"
    },
    {
+    "titel": "574",
+    "preis": 76,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-574-wl574evb",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/WL574EVB-1__91324.1719435491.1280.1280.jpg?v=1742985394",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Y-3 LOGO CAP",
     "preis": 79.99,
     "verfuegbar": true,
@@ -2137,6 +2155,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/JR0914_1.jpg?v=1757060057",
     "laden": "overkillshop.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "740",
+    "preis": 84,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-740-u740wm2",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U740WM2-01__53937.1731666674.1280.1280.jpg?v=1742985378",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Adidas Samba OG W",
@@ -2265,6 +2292,24 @@
     "begriff": "new balance"
    },
    {
+    "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a609-023",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS Gel-1130 - Black / Cream",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a609-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "New Balance 740",
     "preis": 99.99,
     "verfuegbar": true,
@@ -2299,6 +2344,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U204L2SZ_1.jpg?v=1784620446",
     "laden": "overkillshop.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Book 2 SP",
+    "preis": 105,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-book-2-sp-iq0050-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ0050-001-1.jpg?v=1770121671",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Nike Wmns Dunk Low",
@@ -2346,6 +2400,24 @@
     "begriff": "samba"
    },
    {
+    "titel": "ASICS Gel-1130 - White / Taro Purple",
+    "preis": 110,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a899-100",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_100_SR_RT_GLB.jpg?v=1780992734",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS Gel-1130 - Cream / Carrier Grey",
+    "preis": 110,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a899-101",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_101_SR_RT_GLB.jpg?v=1780992709",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "New Balance 740",
     "preis": 113,
     "verfuegbar": true,
@@ -2362,15 +2434,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-cblack-ntgrey-lucred-kk0006-footwear_20_3E_20sneaker.jpg?v=1790237496",
     "laden": "afew-store.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "Air Max 95 OG \"Slate\"",
-    "preis": 114,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH7855-100_01.jpg?v=1777549236",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
    },
    {
     "titel": "New Balance 509",
@@ -2544,6 +2607,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "New Balance 740 - Slate Grey / Grey Matter",
+    "preis": 120,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu740n74f",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU740N74FNewBalance740SLATEGREYGREYMATTER_396.jpg?v=1785772266",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Asics GEL-Kayano 14",
     "preis": 122,
     "verfuegbar": true,
@@ -2697,6 +2769,15 @@
     "begriff": "jordan"
    },
    {
+    "titel": "New Balance 204L - Mushroom / Arid Stone",
+    "preis": 140,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu204lmma",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/U204LMMA_2_8db7dc96-59a0-4070-becc-072556f74cb5.jpg?v=1754659968",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "New Balance M1906AD",
     "preis": 145,
     "verfuegbar": true,
@@ -2787,6 +2868,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "ASICS GEL-NYC - White / Midnight",
+    "preis": 150,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a383-118",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_118_SR_RT_GLB.jpg?v=1785420543",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "New Balance 9060",
     "preis": 150.99,
     "verfuegbar": true,
@@ -2856,6 +2946,15 @@
     "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203b079-100",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203B079-100_01.jpg?v=1780653397",
     "laden": "sneakersnstuff.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS GEL-NYC 2.0 - Umeboshi / Moonrock",
+    "preis": 160,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203b079-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B079_600_SR_RT_GLB-1.jpg?v=1789458097",
+    "laden": "kith.com",
     "begriff": "asics"
    },
    {
@@ -2967,6 +3066,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
+    "preis": 170,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a537-118",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "Nike Air Jordan 9 Retro OG *Space Jam*",
     "preis": 178,
     "verfuegbar": true,
@@ -3010,6 +3118,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ5495-005_01.jpg?v=1790618946",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "ASICS GEL KAYANO 12.1 - White / Cream",
+    "preis": 180,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a759-106",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_106_SR_RT_GLB.jpg?v=1790170342",
+    "laden": "kith.com",
+    "begriff": "asics"
    },
    {
     "titel": "New Balance 9060",
@@ -3129,6 +3246,51 @@
     "begriff": "jordan"
    },
    {
+    "titel": "New Balance x Action Bronson 1890 - Brown / Blue",
+    "preis": 210,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu18901dp",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU18901DPNewBalanceActionBronson1890White_0388.jpg?v=1770653222",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "Ronnie Fieg & New Balance 2011 - Chocolate Truffle / Sepia Rose",
+    "preis": 210,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu20119uf",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU20119UF-Front.jpg?v=1782226127",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "Kith & New Balance Made in USA 990v4 - Dusty Mauve",
+    "preis": 220,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu990tk4",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU990TK4-Front.jpg?v=1777988030",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "Kith & New Balance Made in USA 993 - Asteroid",
+    "preis": 220,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu993hk",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU993HK-Front.jpg?v=1777988030",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "Kith & New Balance Made in USA 990v3 - Hallow",
+    "preis": 220,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu990kt3",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU990KT3-Front.jpg?v=1777988031",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "4 OG \"Lemonade\"",
     "preis": 225,
     "verfuegbar": true,
@@ -3156,13 +3318,40 @@
     "begriff": "jordan"
    },
    {
-    "titel": "AIR JORDAN 15 SP",
-    "preis": 239.99,
+    "titel": "Made In USA 992",
+    "preis": 230,
     "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-15-sp-muslin-muslin-black",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-15-sp-muslin-muslin-black-iv7637-100-footwear_20_3E_20sneaker.jpg?v=1784882911",
-    "laden": "afew-store.com",
-    "begriff": "jordan"
+    "url": "https://www.sneakersnstuff.com/products/new-balance-992-u992gy",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U992GY-1.jpg?v=1747047954",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "Made In USA 993",
+    "preis": 240,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-993-mr993gl",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/MR993GL-1__25216.1719441203.1280.1280.jpg?v=1742985445",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "Made in USA 990v4",
+    "preis": 240,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-made-in-usa-990v4-u990ic4",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U990IC4_01.jpg?v=1784296926",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "Made in USA 990v4",
+    "preis": 240,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-made-in-usa-990v4-u990lv4",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U990LV4_01.jpg?v=1787814615",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 14 Retro SP 'Mowalola'",
@@ -3172,13 +3361,32 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-x-mowalola-14-retro-sp-black-burnt-red-iq5708-001-footwear_20_3E_20sneaker.jpg?v=1793804888",
     "laden": "afew-store.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "Made in UK 991v2",
+    "preis": 250,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-made-in-uk-991v2-u991gl2",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U991GL2_2__04065.1725457431.1280.1280.jpg?v=1742985463",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "New Balance x Amine Made in USA 992 - Chocolate / Amber",
+    "preis": 250,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu992ne",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u992ne_nb_02_i.jpg?v=1790595700",
+    "laden": "kith.com",
+    "begriff": "new balance"
    }
   ],
   "erreicht": [
    "afew-store.com",
    "overkillshop.com",
    "asphaltgold.com",
-   "sneakersnstuff.com"
+   "sneakersnstuff.com",
+   "kith.com"
   ]
  },
  "produkte": [],
