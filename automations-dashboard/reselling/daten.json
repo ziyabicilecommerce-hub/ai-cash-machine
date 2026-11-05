@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-05T16:01:49.730Z",
+ "stand": "2026-11-05T19:58:31.428Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -198,7 +198,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-05T16:01:53.663Z",
+  "stand": "2026-11-05T19:52:32.399Z",
   "filialen": 148,
   "produkte": [
    {
@@ -224,7 +224,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 36
+      "menge": 35
      },
      {
       "name": "dm Kriftel",
@@ -232,7 +232,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 29
+      "menge": 28
      },
      {
       "name": "dm Kelsterbach",
@@ -240,7 +240,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 16
+      "menge": 14
      },
      {
       "name": "dm Frankfurt am Main",
@@ -256,7 +256,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 53
+      "menge": 51
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -264,7 +264,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 78
+      "menge": 77
      },
      {
       "name": "dm Flörsheim am Main",
@@ -450,14 +450,6 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 1
-     },
-     {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
@@ -512,6 +504,14 @@
       "lat": 50.13488,
       "lon": 8.5572012,
       "menge": 3
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 8
      }
     ]
    },
@@ -628,7 +628,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 18
+      "menge": 17
      },
      {
       "name": "dm Frankfurt am Main",
@@ -652,7 +652,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 16
+      "menge": 14
      },
      {
       "name": "dm Flörsheim am Main",
@@ -734,7 +734,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Eschborn",
@@ -867,7 +867,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 63
+      "menge": 62
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -875,7 +875,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 12
+      "menge": 11
      },
      {
       "name": "dm Flörsheim am Main",
@@ -883,7 +883,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 27
+      "menge": 26
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -899,7 +899,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 15
+      "menge": 14
      }
     ]
    }
@@ -1166,6 +1166,10 @@
      33.2,
      33.2,
      33.2,
+     33.2,
+     33.2,
+     33.2,
+     33.2,
      33.2
     ]
    },
@@ -1234,6 +1238,10 @@
      20.25,
      20.25,
      20.25,
+     19.99,
+     19.99,
+     19.99,
+     19.99,
      19.99,
      19.99,
      19.99,
@@ -1334,6 +1342,10 @@
      13.06,
      13.06,
      13.06,
+     13.06,
+     13.06,
+     13.06,
+     13.06,
      13.06
     ]
    },
@@ -1418,6 +1430,10 @@
      36.7,
      36.7,
      36.7,
+     36.7,
+     36.7,
+     36.7,
+     36.7,
      36.7
     ]
    },
@@ -1466,6 +1482,10 @@
      19.11,
      19.11,
      19.11,
+     19.59,
+     19.59,
+     19.59,
+     19.59,
      19.59,
      19.59,
      19.59,
@@ -1586,6 +1606,10 @@
      13.33,
      13.33,
      13.33,
+     13.33,
+     13.33,
+     13.33,
+     13.33,
      13.33
     ]
    },
@@ -1619,6 +1643,10 @@
     },
     "nurBewegung": true,
     "kurs": [
+     35.11,
+     35.11,
+     35.11,
+     35.11,
      35.11,
      35.11,
      35.11,
@@ -1754,6 +1782,10 @@
      32.88,
      32.88,
      32.88,
+     32.88,
+     32.88,
+     32.88,
+     32.88,
      32.88
     ]
    },
@@ -1838,6 +1870,10 @@
      15.6,
      15.6,
      15.6,
+     15.6,
+     15.6,
+     15.6,
+     15.6,
      15.6
     ]
    },
@@ -1871,6 +1907,10 @@
     },
     "nurBewegung": true,
     "kurs": [
+     21.91,
+     21.91,
+     21.91,
+     21.91,
      21.91,
      21.91,
      21.91,
@@ -1957,56 +1997,50 @@
    "fallend": 8
   },
   "quelle": "TCGdex",
-  "stand": "2026-11-05T15:46:14.964Z"
+  "stand": "2026-11-05T19:39:38.677Z"
  },
  "trends": {
-  "ware": [
-   {
-    "titel": "playstation plus",
-    "menge": "1000+",
-    "kategorie": "Technik & Games"
-   }
-  ],
+  "ware": [],
   "top": [
    {
-    "titel": "bianca censori",
-    "menge": "200+"
-   },
-   {
-    "titel": "space x aktie",
-    "menge": "500+"
-   },
-   {
-    "titel": "börsencrash",
-    "menge": "200+"
-   },
-   {
-    "titel": "scalable",
-    "menge": "200+"
-   },
-   {
-    "titel": "infineon aktie",
-    "menge": "200+"
-   },
-   {
-    "titel": "basf aktie",
-    "menge": "200+"
-   },
-   {
-    "titel": "börse",
-    "menge": "2000+"
-   },
-   {
-    "titel": "playstation plus",
+    "titel": "die bergretter",
     "menge": "1000+"
    },
    {
-    "titel": "börse heute",
+    "titel": "babenhausen",
     "menge": "500+"
    },
    {
-    "titel": "s&p 500",
-    "menge": "2000+"
+    "titel": "gzsz vorschau",
+    "menge": "500+"
+   },
+   {
+    "titel": "reiner calmund",
+    "menge": "200+"
+   },
+   {
+    "titel": "pro sieben",
+    "menge": "200+"
+   },
+   {
+    "titel": "bettina orlopp",
+    "menge": "200+"
+   },
+   {
+    "titel": "usedom krimi heute",
+    "menge": "200+"
+   },
+   {
+    "titel": "europa conference league",
+    "menge": "5000+"
+   },
+   {
+    "titel": "rudi völler",
+    "menge": "500+"
+   },
+   {
+    "titel": "take two",
+    "menge": "500+"
    }
   ]
  },
@@ -2067,6 +2101,24 @@
     "begriff": "new balance"
    },
    {
+    "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
+    "preis": 60,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khm051153-413",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051153-413-Front.jpg?v=1755618413",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
+    "titel": "Kith & '47 for the Los Angeles Dodgers Lightweight Suede Velour Long Bill Cap - Nocturnal",
+    "preis": 60,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khma050124-413",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050124-413-Detail.jpg?v=1787348051",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
     "titel": "Nike Dunk Low Retro SE *Panda*",
     "preis": 63,
     "verfuegbar": true,
@@ -2074,6 +2126,24 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/buJPTkZWbSEynbO0VZm3-IB2990-500-Nike-Dunk-Low-Retro-SE-Viotech-Dusty-Olive-Pale-Ivory-os-1.jpg?v=1760708051",
     "laden": "asphaltgold.com",
     "begriff": "dunk"
+   },
+   {
+    "titel": "Kith & New Era for the New York Yankees 59FIFTY Low Profile Cap - Black",
+    "preis": 64,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/kh5936-100",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KH5936-100-Front_9761d2a0-d3c8-4f2b-b1d3-ffbf195b9cb3.jpg?v=1755618429",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
+    "titel": "Kith & '47 for the New York Yankees Franchise LS Cap - Navy",
+    "preis": 64,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khm051547-413",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051547-413-Front.jpg?v=1772131115",
+    "laden": "kith.com",
+    "begriff": "cap"
    },
    {
     "titel": "Dunk Low Retro Premium",
@@ -2346,15 +2416,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Book 2 SP",
-    "preis": 105,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-2-sp-iq0050-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ0050-001-1.jpg?v=1770121671",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Nike Wmns Dunk Low",
     "preis": 107,
     "verfuegbar": true,
@@ -2436,6 +2497,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "Air Max 95 OG \"Slate\"",
+    "preis": 114,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH7855-100_01.jpg?v=1777549236",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
+   },
+   {
     "titel": "New Balance 509",
     "preis": 116,
     "verfuegbar": true,
@@ -2490,20 +2560,20 @@
     "begriff": "samba"
    },
    {
-    "titel": "U740BM2",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u740bm2-black-silver-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740BM2_1.jpg?v=1737122996",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "U740WM2",
     "preis": 119,
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-balance-u740wm2-white-silver-metallic-reflection",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WM2_1.jpg?v=1735819605",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "U740BM2",
+    "preis": 119,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u740bm2-black-silver-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740BM2_1.jpg?v=1737122996",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
@@ -2724,6 +2794,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "U18905UY",
+    "preis": 130,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u18905uy-u18905uy-slate-grey",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Asics GEL-NYC",
     "preis": 134,
     "verfuegbar": true,
@@ -2757,15 +2836,6 @@
     "url": "https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-flight-club-black-sail-gum-medium-brown-university-red",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/oaolyxjb03-II9811-001_Nike_Air-Jordan-1-Retro-High-OG-Flight-Club-Black-Sail-Gum-Medium-Brown-University-Red_os-1.jpg?v=1779882086",
     "laden": "asphaltgold.com",
-    "begriff": "jordan"
-   },
-   {
-    "titel": "Air Jordan 13 Retro \"University Red\"",
-    "preis": 140,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-13-retro-university-red-414571-102",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/414571-102-1.jpg?v=1773401029",
-    "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
    {
@@ -3088,7 +3158,7 @@
     "preis": 179.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/air-jordan-1-high-og-black-multi-color",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1793848755",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1793895126",
     "laden": "afew-store.com",
     "begriff": "jordan"
    },
@@ -3100,15 +3170,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-retro-high-og-flight-club-black-university-red-sail-gum-med-brown-ii9811-001-footwear_20_3E_20sneaker.jpg?v=1778071717",
     "laden": "afew-store.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "U13008BH",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u13008bh-u13008bh-drift-red-hay-afterglow",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U13008BH_1.jpg?v=1778671801",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 1 High OG “Royal”",
@@ -3154,6 +3215,33 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1793720357",
     "laden": "afew-store.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Giorgio Armani & Ronnie Fieg for '47 Duck Canvas Classic Cap - Blue Navy",
+    "preis": 195,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khma050223-5114",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050223-5114-Detail.jpg?v=1791551538",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
+    "titel": "Giorgio Armani & Ronnie Fieg for '47 Wool Deconstructed Franchise LS Fitted Cap - Black",
+    "preis": 195,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khma050222-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050222-001-Detail.jpg?v=1791551534",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
+    "titel": "Giorgio Armani & Ronnie Fieg for '47 Wool Deconstructed Franchise LS Fitted Cap - Cacao",
+    "preis": 195,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khma050222-237",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050222-237-Detail.jpg?v=1791551536",
+    "laden": "kith.com",
+    "begriff": "cap"
    },
    {
     "titel": "Air Jordan 5 Retro",
@@ -3219,11 +3307,11 @@
     "begriff": "jordan"
    },
    {
-    "titel": "U1300NY",
+    "titel": "U1300GY",
     "preis": 209,
     "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u1300ny-nb-navy-raincloud-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
+    "url": "https://www.overkillshop.com/products/new-balance-u1300gy-u1300gy-kool-gray-harbor-grey-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300GY_1.jpg?v=1779433831",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
@@ -3354,12 +3442,30 @@
     "begriff": "new balance"
    },
    {
+    "titel": "Giorgio Armani & Ronnie Fieg for '47 Soft Leather SL Hitch Cap - Black",
+    "preis": 245,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khma050225-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050225-001-Detail.jpg?v=1791551535",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
     "titel": "Air Jordan 14 Retro SP 'Mowalola'",
     "preis": 249.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/air-jordan-x-mowalola-14-retro-sp-black-burnt-red",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-x-mowalola-14-retro-sp-black-burnt-red-iq5708-001-footwear_20_3E_20sneaker.jpg?v=1793804888",
     "laden": "afew-store.com",
+    "begriff": "jordan"
+   },
+   {
+    "titel": "Air Jordan 16 x Free The Youth SP",
+    "preis": 250,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-16-x-for-the-youth-sp-iv7638-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV7638-001_01.jpg?v=1787837699",
+    "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
    {
