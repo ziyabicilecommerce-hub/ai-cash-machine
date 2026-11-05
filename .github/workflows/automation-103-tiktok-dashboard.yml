@@ -33,6 +33,9 @@ jobs:
         run: node automations/102-tiktok-lernen.mjs
       - name: Dashboard-Daten holen
         run: node automations/103-tiktok-dashboard.mjs
+      - name: Wochenbericht (#115)
+        continue-on-error: true
+        run: node automations/115-wochenbericht.mjs
       - name: Speichern und Seite neu bauen
         env:
           GH_TOKEN: ${{ github.token }}
@@ -41,11 +44,13 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           sicher=$(mktemp -d)
           cp automations-dashboard/tiktok/daten.json "$sicher/daten.json"
+          for f in verlauf wochenbericht; do [ -f "automations-dashboard/tiktok/$f.json" ] && cp "automations-dashboard/tiktok/$f.json" "$sicher/$f.json"; done
           [ -f fakten-kanal/lernen.json ] && cp fakten-kanal/lernen.json "$sicher/lernen.json"
           for versuch in 1 2 3 4 5; do
             git fetch -q origin "$GITHUB_REF_NAME"
             git reset -q --hard "origin/$GITHUB_REF_NAME"
             cp "$sicher/daten.json" automations-dashboard/tiktok/daten.json
+            for f in verlauf wochenbericht; do [ -f "$sicher/$f.json" ] && cp "$sicher/$f.json" "automations-dashboard/tiktok/$f.json" && git add "automations-dashboard/tiktok/$f.json"; done
             [ -f "$sicher/lernen.json" ] && cp "$sicher/lernen.json" fakten-kanal/lernen.json
             git add automations-dashboard/tiktok/daten.json fakten-kanal/lernen.json 2>/dev/null || git add automations-dashboard/tiktok/daten.json
             git commit -qm "chore: TikTok-Zahlen aktualisiert [skip ci]" || exit 0

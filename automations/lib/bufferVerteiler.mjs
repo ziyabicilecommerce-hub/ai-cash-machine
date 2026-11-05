@@ -108,8 +108,16 @@ export function heuteBerlin(jetzt = new Date()) {
 }
 
 // Buffer-Posts zählen: alles außer Fehlern/Entwürfen zählt (gesendet, wird gesendet, geplant)
+// Instagram-Story als Anstoß fürs neue Reel: Titelbild + Text-Sticker, ohne Beitragstext (zählt so nicht als Post)
+export function storyEingabe(kanalId, coverUrl) {
+  return { channelId: kanalId, text: '', schedulingType: 'automatic', mode: 'shareNow',
+    assets: [{ image: { url: coverUrl, metadata: { altText: 'Titelbild des neuen Horror-Videos' } } }],
+    metadata: { instagram: { type: 'story', shouldShareToFeed: false, isAiGenerated: true, stickerFields: { text: 'Neues Video 👀 Kopfhörer auf! Schau auf mein Profil' } } } };
+}
+
 export function zaehlen(posts, kanalId) {
-  const eigene = posts.filter((p) => p.channelId === kanalId && !['error', 'draft'].includes(p.status));
+  // Stories (ohne Text) zählen nicht als Post - sie begleiten nur das Reel
+  const eigene = posts.filter((p) => p.channelId === kanalId && !['error', 'draft'].includes(p.status) && (p.text === undefined || String(p.text).trim()));
   const zeiten = eigene.map((p) => p.sentAt || p.dueAt).filter(Boolean).sort();
   return { heute: eigene.length, letzter: zeiten.at(-1) || null };
 }

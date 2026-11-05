@@ -8,7 +8,7 @@
 //   node 113-buffer-verteiler.mjs --posten      -> postet laut Plan, Video-Links aus out/horror-urls.json
 import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
-import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen } from './lib/bufferVerteiler.mjs';
+import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, storyEingabe } from './lib/bufferVerteiler.mjs';
 import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
 
 const TOKEN = (process.env.BUFFER_ACCESS_TOKEN || '').trim();
@@ -31,7 +31,7 @@ async function postsHeute(ids) {
   let after = null;
   for (let seite = 0; seite < 4; seite++) {
     const d = await gql(`query($i: PostsInput!, $a: String) { posts(input: $i, first: 100, after: $a) {
-      edges { node { id status channelId dueAt sentAt } } pageInfo { hasNextPage endCursor } } }`,
+      edges { node { id status channelId dueAt sentAt text } } pageInfo { hasNextPage endCursor } } }`,
     { i: { organizationId: orgId, filter: { channelIds: ids, dueAt: { start: heuteBerlin() } } }, a: after });
     posts.push(...d.posts.edges.map((e) => e.node));
     if (!d.posts.pageInfo.hasNextPage) break;
@@ -123,11 +123,20 @@ async function posten() {
     }
     const { text, metadata } = beitrag(v, k.dienst, k.quelle);
     try {
-      const d = await gql(POST_MUTATION, { input: { channelId: k.id, text, schedulingType: 'automatic', mode: 'shareNow', assets: [{ video: { url: v.url } }], metadata } });
+      // Horror: Titelbild = Bild bei 0,35 s (Hook steht schon da) - so sieht das Profil einheitlich aus
+      const video = p.horror ? { url: v.url, metadata: { thumbnailOffset: 350 } } : { url: v.url };
+      const d = await gql(POST_MUTATION, { input: { channelId: k.id, text, schedulingType: 'automatic', mode: 'shareNow', assets: [{ video }], metadata } });
       const r = d.createPost;
       if (r.__typename !== 'PostActionSuccess') throw new Error(r.message || r.__typename);
       (stand[k.id] ||= {})[p.schluessel] = new Date().toISOString();
       bericht(`- ✅ ${k.name}: „${String(p.titel).slice(0, 60)}“${p.herkunft ? ` (${p.herkunft})` : ''} gepostet (heute dann ${p.heute + 1})`);
+      const cover = urls[`${k.id}_cover`];
+      if (p.horror && k.dienst === 'instagram' && /^https:\/\//.test(cover || '')) {
+        try {  // Story ist nur ein Anstoß - schlägt sie fehl, bleibt das Reel trotzdem
+          const st = (await gql(POST_MUTATION, { input: storyEingabe(k.id, cover) })).createPost;
+          bericht(st.__typename === 'PostActionSuccess' ? `  - 📲 Story dazu gepostet` : `  - ⚠️ Story nicht gepostet: ${st.message || st.__typename}`);
+        } catch (e) { bericht(`  - ⚠️ Story nicht gepostet: ${String(e.message).slice(0, 150)}`); }
+      }
     } catch (e) {
       bericht(`- ❌ ${k.name}: ${String(e.message).slice(0, 200)}`);
     }
