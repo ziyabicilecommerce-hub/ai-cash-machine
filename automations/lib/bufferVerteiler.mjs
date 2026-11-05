@@ -4,8 +4,8 @@
 export const KANAELE = [
   { id: '6ae8f441e29c69a1713e44f3', name: 'desk.rebel', dienst: 'instagram', quelle: 'horror' },
   { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'fakten' },
-  // YouTube: Anime holte im Schnitt ~7 Aufrufe, Horror auf Instagram ~110 - daher jetzt eigene Horror-Shorts (andere Geschichte als Instagram)
-  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror' },
+  // YouTube: englische Horror-Shorts (05.11.) - YouTube verteilt weltweit, Englisch erreicht ein vielfach größeres Publikum
+  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-en' },
   // Englischer Horror-Kanal: an, sobald seine Buffer-Kanal-ID eingetragen ist (Repo-Variable EN_KANAL, optional EN_DIENST)
   ...(/^[a-f\d]{24}$/.test(process.env.EN_KANAL || '') ? [{ id: process.env.EN_KANAL, name: 'english-horror', dienst: process.env.EN_DIENST || 'youtube', quelle: 'horror-en' }] : []),
 ];

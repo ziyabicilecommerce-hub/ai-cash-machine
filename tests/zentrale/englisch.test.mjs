@@ -20,11 +20,11 @@ test('Englische Geschichten: gültig, kurze Hooks, Du-Hooks, keine doppelt, kein
 
 test('Englischer Kanal: nur mit Kanal-ID aktiv, englische Texte bei YouTube, Instagram und Story', async () => {
   const ohne = await import(`../../automations/lib/bufferVerteiler.mjs?ohne=${Date.now()}`);
-  assert.ok(!ohne.KANAELE.some((k) => k.quelle === 'horror-en'));
+  assert.deepEqual(ohne.KANAELE.filter((k) => k.quelle === 'horror-en').map((k) => k.name), ['giyuuu sama'], 'YouTube ist englisch');
   process.env.EN_KANAL = 'aaaaaaaaaaaaaaaaaaaaaaaa';
   const mit = await import(`../../automations/lib/bufferVerteiler.mjs?mit=${Date.now()}`);
   delete process.env.EN_KANAL;
-  const k = mit.KANAELE.find((x) => x.quelle === 'horror-en');
+  const k = mit.KANAELE.find((x) => x.name === 'english-horror');
   assert.equal(k.dienst, 'youtube');
   const f = baueFolge({ ...SKRIPTE_EN[0], kurz: true });
   const yt = mit.beitrag({ caption: f.caption, titel: f.titel }, 'youtube', 'horror-en');

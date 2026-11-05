@@ -6,7 +6,7 @@ import { KANAELE, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen
 const VIDEOS = JSON.parse(readFileSync(new URL('../../video-feed/videos.json', import.meta.url), 'utf8')).videos;
 
 test('keine Shop-Werbung, jeder Kanal etwas anderes', () => {
-  assert.deepEqual(KANAELE.map((k) => k.quelle), ['horror', 'fakten', 'horror']);
+  assert.deepEqual(KANAELE.map((k) => k.quelle), ['horror', 'fakten', 'horror-en']);
   const fakten = passend(VIDEOS, 'fakten', 'purivelle.785'), anime = passend(VIDEOS, 'anime');
   assert.ok(fakten.length >= 20 && anime.length >= 5);
   for (const v of [...fakten, ...anime]) assert.ok(!/deskrebel\.store|purivelle\.store|#deskrebel|#purivelle/i.test(`${v.caption}${v.url}${v.titel}`), `Werbung: ${v.titel}`);

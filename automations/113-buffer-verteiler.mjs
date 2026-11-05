@@ -2,7 +2,7 @@
 // jeder Kanal etwas anderes, mindestens 5 Posts am Tag:
 //   @desk.rebel (Instagram)    -> jedes Mal eine NEUE KI-Horror-Geschichte im Videobot-Look (Vorrat als Ersatz)
 //   @purivelle.785 (Instagram) -> Fakten / "Was wäre wenn?" aus dem Fakten-Kanal (#100)
-//   giyuuu sama (YouTube)      -> eigene Horror-Shorts (andere Geschichte als Instagram; Anime holte kaum Aufrufe)
+//   giyuuu sama (YouTube)      -> englische Horror-Shorts (skripteEn.mjs) - YouTube verteilt weltweit
 // Zwei Schritte (dazwischen rendert der Workflow das Horror-Video):
 //   node 113-buffer-verteiler.mjs --vorbereiten -> out/verteiler-plan.json (+ out/folge-<kanal>.json je Horror-Kanal)
 //   node 113-buffer-verteiler.mjs --posten      -> postet laut Plan, Video-Links aus out/horror-urls.json
