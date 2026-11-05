@@ -41,6 +41,30 @@
     if (tot.length) q('vl-konten').append(mk('div', 'tipp', `⚠️ Unter 10 Aufrufen: ${tot.map((z) => z.k).join(', ')}. Konto wird wohl gedrosselt - in der App Kontostatus prüfen, selbst aktiv sein, Kommentare beantworten.`));
   }
 
+  // Kommentar-Helfer: wo gerade Kommentare reinkommen + fertige Antworten zum Kopieren (abschicken machst du selbst - echt, kein Bot)
+  const ANTWORTEN = [
+    ['Jemand hat die Sekunde gefunden', 'Richtig 👀 Hast du auch das zweite Mal gesehen?'],
+    ['„Teil 2?“', 'Teil 2 kommt, wenn das Video gut läuft 👀 Folg mir, damit du ihn nicht verpasst!'],
+    ['Antwort „1“ oder „2“', 'Mutig 😨 Was meinst du – hättest du die Nacht überlebt?'],
+    ['„Fake“ / „KI“', 'Ist eine erfundene Geschichte, ja 😄 Aber hättest du hingeschaut?'],
+    ['„Hab Gänsehaut“', 'Dann schau mal genau auf Sekunde 3 nochmal 👀'],
+  ];
+  function kommentare(posts) {
+    if (!q('vl-kommentare')) return;
+    const neu = posts.filter((p) => p.kommentare > 0 && Date.now() - new Date(p.zeit) < 3 * 864e5).sort((a, b) => b.kommentare - a.kommentare).slice(0, 5);
+    const liste = neu.length ? neu.map((p) => {
+      const z = mk('div', 'tipp'); z.append(mk('b', '', `💬 ${p.kommentare} · ${p.konto}`), mk('div', '', String(p.text || '').slice(0, 80)));
+      if (/^https:\/\/(www\.)?(tiktok\.com|instagram\.com|youtube\.com|youtu\.be)\//.test(p.link || '')) { const a = mk('a', '', 'Antworten ↗'); a.href = p.link; a.target = '_blank'; a.rel = 'noopener'; z.append(a); }
+      return z;
+    }) : [mk('div', 'tipp', 'Gerade keine neuen Kommentare - in den letzten 3 Tagen.')];
+    const vorlagen = ANTWORTEN.map(([wann, text]) => {
+      const z = mk('div', 'tipp gut'); const knopf = mk('button', '', '📋 Kopieren');
+      knopf.onclick = async () => { try { await navigator.clipboard.writeText(text); knopf.textContent = '✅ Kopiert'; } catch { /* kein Zugriff */ } };
+      z.append(mk('b', '', wann), mk('div', '', text), knopf); return z;
+    });
+    q('vl-kommentare').replaceChildren(...liste, mk('div', 'unter', 'Antwort-Vorlagen:'), ...vorlagen);
+  }
+
   function uhrzeit(posts) {
     const zeilen = BLOECKE.map(([name, von, bis]) => { const l = posts.filter((p) => { const h = stunde(p.zeit); return h >= von && h < bis; }); return { name, n: l.length, aufrufe: schnitt(l, (p) => p.aufrufe) }; })
       .filter((z) => z.n);
@@ -108,7 +132,7 @@
     try { d = await (await fetch(`daten.json?t=${Date.now()}`, { cache: 'no-store' })).json(); } catch { /* offline */ }
     const posts = (d?.letzte || []).filter((p) => p.aufrufe > 0);
     if (!posts.length) { q('vl-duell').replaceChildren(mk('div', 'tipp', 'Noch keine Zahlen - kommen 1-2 Tage nach dem Post.')); return; }
-    duell(posts); konten(posts); uhrzeit(posts); top(posts);
+    duell(posts); kommentare(d?.letzte || []); konten(posts); uhrzeit(posts); top(posts);
   }
   start();
 })();

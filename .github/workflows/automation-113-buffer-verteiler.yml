@@ -28,7 +28,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Eigene KI starten (kostenlos, für neue Horror-Geschichten)
+      - name: Eigene KI starten (nur wenn ausdrücklich erlaubt - sonst schreibt der Skript-Bot)
+        if: vars.HORROR_KI_LOKAL != ''
         uses: ./.github/actions/ki-lokal
         with:
           modell: ${{ vars.KI_LOKAL_MODELL || 'qwen2.5:7b' }}

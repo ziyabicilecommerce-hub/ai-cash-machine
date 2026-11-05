@@ -5,6 +5,7 @@
 //   node automations/schatten/skriptBot.mjs   -> zeigt alle Geschichten mit Hook-Punkten
 import { pruefen, slug } from './videobot.mjs';
 import { hookPunkte } from './horrorKi.mjs';
+import { MUSTER2, TEIL2 } from './skriptMuster2.mjs';
 
 const WAHL = { flucht: ['Nachsehen', 'Rausrennen'], tuer: ['Aufmachen', 'Zulassen'], handy: ['Antworten', 'Handy weg'], ran: ['Rangehen', 'Wegdrücken'] };
 
@@ -115,24 +116,60 @@ const REGEL = [
     reiz: 'Der Zug hält. Alle Wagen vor mir werden abgekoppelt.', monster: 'Endstation.', ende: 'Jetzt bin ich im letzten Wagen. Und er fährt weiter. Ohne Lok.' },
 ];
 
-const MUSTER = [[allein, ALLEIN], [fremd, FREMD], [kamera, KAMERA], [anruf, ANRUF], [regel, REGEL]];
+const MUSTER = { allein: [allein, ALLEIN], fremd: [fremd, FREMD], kamera: [kamera, KAMERA], anruf: [anruf, ANRUF], regel: [regel, REGEL], ...MUSTER2 };
 
-// Alle Geschichten, gemischt nach Muster (nie zweimal dasselbe Muster hintereinander)
+const gut = (s) => !pruefen(s).length && hookPunkte(s.hook) >= 4 && s.hook.length <= 70;
+
+// Alle Geschichten, gemischt nach Muster (nie zweimal dasselbe Muster hintereinander). Mit Teil 2 für den Fall eines Hits.
 export function alleSkripte() {
-  const listen = MUSTER.map(([bau, varianten]) => varianten.map((v) => ({ ...bau(v), herkunft: 'skriptbot' })));
+  const listen = Object.entries(MUSTER).map(([muster, [bau, varianten]]) => varianten.map((v) => ({ ...bau(v), muster, herkunft: 'skriptbot', teil2: TEIL2[muster]?.(v) })));
   const aus = [];
   for (let i = 0; listen.some((l) => l[i]); i++) for (const l of listen) if (l[i]) aus.push(l[i]);
-  return aus.filter((s) => !pruefen(s).length && hookPunkte(s.hook) >= 4);
+  return aus.filter(gut);
 }
 
-// Nächste noch nicht gepostete Geschichte (bekannt = Slugs, die schon liefen)
-export function naechstesSkript(bekannt = []) {
+// Lernen: Ø Aufrufe je Muster aus unseren Instagram-/YouTube-Posts (daten.json "letzte"). Erkannt wird die Geschichte am Hook im Text.
+export function musterWerte(letzte = [], alle = alleSkripte()) {
+  const summe = {};
+  for (const p of letzte) {
+    if (!/desk\.rebel|giyuuu/i.test(p.konto || '') || !(p.aufrufe >= 0)) continue;
+    const s = alle.find((x) => String(p.text || '').includes(x.hook.slice(0, 40)));
+    if (s) (summe[s.muster] ||= []).push(p.aufrufe);
+  }
+  return Object.fromEntries(Object.entries(summe).map(([m, l]) => [m, { schnitt: l.reduce((a, b) => a + b, 0) / l.length, n: l.length }]));
+}
+
+// Nächste noch nicht gepostete Geschichte (bekannt = Slugs, die schon liefen). Mit Zahlen: das beste Muster zuerst,
+// Muster mit weniger als 2 Posts gelten als "noch testen" (leicht über Schnitt), damit jedes eine Chance bekommt.
+export function naechstesSkript(bekannt = [], letzte = []) {
   const weg = new Set(bekannt);
-  return alleSkripte().find((s) => !weg.has(slug(s.titel))) || null;
+  const alle = alleSkripte(), frei = alle.filter((s) => !weg.has(slug(s.titel)));
+  const werte = musterWerte(letzte, alle);
+  const bekannteWerte = Object.values(werte).filter((w) => w.n >= 2);
+  if (!bekannteWerte.length) return frei[0] || null;
+  const mittel = bekannteWerte.reduce((a, w) => a + w.schnitt, 0) / bekannteWerte.length;
+  const punkte = (m) => (werte[m]?.n >= 2 ? werte[m].schnitt : mittel * 1.1);
+  return [...frei].sort((a, b) => punkte(b.muster) - punkte(a.muster))[0] || null;
+}
+
+// Hit erkannt? Dann Teil 2 dieser Geschichte (einmal). Hit = mind. doppelt so viele Aufrufe wie der Schnitt des Kontos und mind. 100.
+export function teil2Kandidat(konto, bekannt = [], letzte = []) {
+  const weg = new Set(bekannt), alle = alleSkripte();
+  const eigene = letzte.filter((p) => String(p.konto || '').includes(konto) && p.aufrufe > 0);
+  if (eigene.length < 3) return null;
+  const schnitt = eigene.reduce((a, p) => a + p.aufrufe, 0) / eigene.length;
+  for (const p of [...eigene].sort((a, b) => b.aufrufe - a.aufrufe)) {
+    if (p.aufrufe < Math.max(100, 2 * schnitt)) break;
+    const s = alle.find((x) => x.teil2 && String(p.text || '').includes(x.hook.slice(0, 40)));
+    if (!s) continue;
+    const t = { ...s, ...s.teil2, titel: `${s.titel} – Teil 2`, teil: 2, teil2: undefined, absender: undefined, nachricht: undefined, monster2: undefined };
+    if (!weg.has(slug(t.titel)) && !pruefen(t).length) return t;
+  }
+  return null;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const alle = alleSkripte();
-  for (const s of alle) console.log(`${hookPunkte(s.hook)}/6  ${s.titel}: ${s.hook}`);
-  console.log(`\n${alle.length} Geschichten bereit`);
+  for (const s of alle) console.log(`${hookPunkte(s.hook)}/6  [${s.muster}] ${s.titel}: ${s.hook}`);
+  console.log(`\n${alle.length} Geschichten bereit, ${alle.filter((s) => s.teil2).length} mit Teil 2`);
 }
