@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-05T21:28:02.024Z",
+ "stand": "2026-11-05T21:31:55.346Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -1170,6 +1170,7 @@
      33.2,
      33.2,
      33.2,
+     33.2,
      33.2
     ]
    },
@@ -1238,6 +1239,7 @@
      20.25,
      20.25,
      20.25,
+     19.99,
      19.99,
      19.99,
      19.99,
@@ -1348,6 +1350,7 @@
      13.06,
      13.06,
      13.06,
+     13.06,
      13.06
     ]
    },
@@ -1437,6 +1440,7 @@
      36.7,
      36.7,
      36.7,
+     36.7,
      36.7
     ]
    },
@@ -1485,6 +1489,7 @@
      19.11,
      19.11,
      19.11,
+     19.59,
      19.59,
      19.59,
      19.59,
@@ -1615,6 +1620,7 @@
      13.33,
      13.33,
      13.33,
+     13.33,
      13.33
     ]
    },
@@ -1648,6 +1654,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     35.11,
      35.11,
      35.11,
      35.11,
@@ -1793,6 +1800,7 @@
      32.88,
      32.88,
      32.88,
+     32.88,
      32.88
     ]
    },
@@ -1882,6 +1890,7 @@
      15.6,
      15.6,
      15.6,
+     15.6,
      15.6
     ]
    },
@@ -1915,6 +1924,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     21.91,
      21.91,
      21.91,
      21.91,
@@ -1997,16 +2007,16 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 366,
+  "geprueft": 662,
   "statistik": {
-   "karten": 366,
+   "karten": 662,
    "mitPreis": 366,
    "imBudget": 19,
    "steigend": 0,
    "fallend": 8
   },
-  "quelle": "TCGdex",
-  "stand": "2026-11-05T20:35:23.733Z"
+  "quelle": "TCGdex + pokemontcg.io",
+  "stand": "2026-11-05T21:31:43.463Z"
  },
  "trends": {
   "ware": [
@@ -2377,6 +2387,24 @@
     "begriff": "new balance"
    },
    {
+    "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a609-023",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS Gel-1130 - Black / Cream",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a609-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "New Balance 740",
     "preis": 99.99,
     "verfuegbar": true,
@@ -2411,6 +2439,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U204L2SZ_1.jpg?v=1784620446",
     "laden": "overkillshop.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Book 2 SP",
+    "preis": 105,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-book-2-sp-iq0050-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ0050-001-1.jpg?v=1770121671",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Nike Wmns Dunk Low",
@@ -2458,6 +2495,24 @@
     "begriff": "samba"
    },
    {
+    "titel": "ASICS Gel-1130 - White / Taro Purple",
+    "preis": 110,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a899-100",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_100_SR_RT_GLB.jpg?v=1780992734",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS Gel-1130 - Cream / Carrier Grey",
+    "preis": 110,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a899-101",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_101_SR_RT_GLB.jpg?v=1780992709",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "New Balance 740",
     "preis": 113,
     "verfuegbar": true,
@@ -2474,15 +2529,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-cblack-ntgrey-lucred-kk0006-footwear_20_3E_20sneaker.jpg?v=1790237496",
     "laden": "afew-store.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "Air Max 95 OG \"Slate\"",
-    "preis": 114,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH7855-100_01.jpg?v=1777549236",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
    },
    {
     "titel": "New Balance 509",
@@ -2908,6 +2954,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "ASICS GEL-NYC - White / Midnight",
+    "preis": 150,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a383-118",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_118_SR_RT_GLB.jpg?v=1785420543",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "New Balance 9060",
     "preis": 150.99,
     "verfuegbar": true,
@@ -2977,6 +3032,15 @@
     "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203b079-100",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203B079-100_01.jpg?v=1780653397",
     "laden": "sneakersnstuff.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS GEL-NYC 2.0 - Umeboshi / Moonrock",
+    "preis": 160,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203b079-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B079_600_SR_RT_GLB-1.jpg?v=1789458097",
+    "laden": "kith.com",
     "begriff": "asics"
    },
    {
@@ -3088,6 +3152,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
+    "preis": 170,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a537-118",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "Nike Air Jordan 9 Retro OG *Space Jam*",
     "preis": 178,
     "verfuegbar": true,
@@ -3131,6 +3204,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ5495-005_01.jpg?v=1790618946",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "ASICS GEL KAYANO 12.1 - White / Cream",
+    "preis": 180,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a759-106",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_106_SR_RT_GLB.jpg?v=1790170342",
+    "laden": "kith.com",
+    "begriff": "asics"
    },
    {
     "titel": "New Balance 9060",
@@ -3356,15 +3438,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U992GY-1.jpg?v=1747047954",
     "laden": "sneakersnstuff.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "AIR JORDAN 15 SP",
-    "preis": 239.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-15-sp-muslin-muslin-black",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-15-sp-muslin-muslin-black-iv7637-100-footwear_20_3E_20sneaker.jpg?v=1784882911",
-    "laden": "afew-store.com",
-    "begriff": "jordan"
    },
    {
     "titel": "Made In USA 993",
