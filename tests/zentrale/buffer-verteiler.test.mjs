@@ -97,3 +97,12 @@ test('YouTube-Horror: Hook als Titel, Instagram höchstens 5 Hashtags, Suchbild-
   assert.match(ig.metadata.instagram.firstComment, /Sekunde/);
   assert.ok((beitrag({ caption: 'Wusstest du?' }, 'instagram', 'fakten').text.match(/#/g) || []).length <= 5);
 });
+
+test('Story zum Reel: Titelbild, KI-Kennzeichnung, zählt nicht als Tages-Post', async () => {
+  const { storyEingabe, zaehlen } = await import('../../automations/lib/bufferVerteiler.mjs');
+  const s = storyEingabe('6ae8f441e29c69a1713e44f3', 'https://github.com/x/releases/download/t/cover.jpg');
+  assert.equal(s.metadata.instagram.type, 'story'); assert.equal(s.metadata.instagram.isAiGenerated, true);
+  assert.ok(s.assets[0].image.url.endsWith('cover.jpg')); assert.equal(s.text, '');
+  const posts = [{ channelId: 'a', status: 'sent', text: 'Reel', sentAt: '2026-11-05T08:00:00Z' }, { channelId: 'a', status: 'sent', text: '', sentAt: '2026-11-05T08:01:00Z' }];
+  assert.equal(zaehlen(posts, 'a').heute, 1);
+});

@@ -60,7 +60,8 @@ jobs:
             TAG="horror-$K-$(date -u +%Y%m%d-%H%M)"
             cp "out/r-$K/video.mp4" "out/r-$K/$SLUG.mp4"
             gh release create "$TAG" "out/r-$K/$SLUG.mp4" "out/r-$K/cover.jpg" -R "$GITHUB_REPOSITORY" --prerelease --title "Horror-Short: $SLUG" --notes "KI-generiertes Horror-Video (frei erfundene Geschichte)." || continue
-            jq --arg k "$K" --arg u "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$SLUG.mp4" '.[$k]=$u' out/horror-urls.json > out/u.json && mv out/u.json out/horror-urls.json
+            B="https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG"
+            jq --arg k "$K" --arg u "$B/$SLUG.mp4" --arg c "$B/cover.jpg" '.[$k]=$u | .[$k+"_cover"]=$c' out/horror-urls.json > out/u.json && mv out/u.json out/horror-urls.json
           done
       - name: Posten
         env:

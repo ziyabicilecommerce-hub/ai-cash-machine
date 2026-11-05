@@ -108,6 +108,23 @@
     q('vl-caption').value = h ? `${h} ${f}${wahl} 👇\n\n#horrortok #gruselgeschichte #creepypasta #gänsehaut #horrorstory\n(KI-generiert, frei erfundene Geschichte)` : '';
   }
 
+  // Wochenbericht (#115): was lief, was nicht, was als Nächstes
+  async function woche() {
+    if (!q('vl-woche')) return;
+    let b = null;
+    try { b = await (await fetch(`wochenbericht.json?t=${Date.now()}`, { cache: 'no-store' })).json(); } catch { /* noch nicht erstellt */ }
+    if (!b || !b.gesamt?.posts) { q('vl-woche').replaceChildren(mk('div', 'tipp', 'Der Bericht füllt sich, sobald Posts älter als 1 Tag Zahlen haben.')); return; }
+    const g = b.gesamt;
+    const trend = g.vorherAufrufe ? ` (Woche davor: ${zahl(g.vorherAufrufe)}${g.aufrufe >= g.vorherAufrufe ? ' 📈' : ' 📉'})` : '';
+    const konten = Object.entries(b.konten).sort((x, y) => y[1].schnitt - x[1].schnitt);
+    const max = Math.max(...konten.map(([, w]) => w.schnitt), 1);
+    q('vl-woche').replaceChildren(
+      mk('div', 'unter', `${g.posts} Posts · ${zahl(g.aufrufe)} Aufrufe${trend}`),
+      ...konten.map(([k, w]) => balken(k, w.schnitt, max, `${zahl(w.schnitt)} Ø${w.vorher !== null && w.vorher !== undefined ? ` (vorher ${zahl(w.vorher)})` : ''} · ${w.n}`)),
+      ...b.top.map((p, i) => { const z = mk('div', 'tipp'); z.append(mk('b', '', `🏆 #${i + 1} ${zahl(p.aufrufe)} · ${p.konto}`), mk('div', '', p.text)); return z; }),
+      ...b.schritte.map((s) => mk('div', 'tipp gut', `👉 ${s}`)));
+  }
+
   // Trend-Radar (#114): welche aktuellen Themen heute zu neuen Geschichten wurden
   async function trends() {
     if (!q('vl-trends')) return;
@@ -128,6 +145,7 @@
     q('vl-hook').value = 'Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas.'; q('vl-frage').value = 'Hättest du ins Bad geschaut?'; q('vl-a').value = 'Ins Bad'; q('vl-b').value = 'Raus hier';
     hookTest();
     trends();
+    woche();
     let d = null;
     try { d = await (await fetch(`daten.json?t=${Date.now()}`, { cache: 'no-store' })).json(); } catch { /* offline */ }
     const posts = (d?.letzte || []).filter((p) => p.aufrufe > 0);
