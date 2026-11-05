@@ -1,10 +1,29 @@
 {
- "stand": "2026-11-05T14:42:03.595Z",
+ "stand": "2026-11-05T14:45:09.381Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118897:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
+   "text": "44,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 22 Filiale(n) vorrätig.",
+   "zeit": "2026-11-05T14:45:09.381Z"
+  },
+  {
+   "schluessel": "deal:https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
+   "art": "Deal",
+   "titel": "💰 Deal: Nike Air Max 95 für 114,00 €",
+   "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH7855-100_01.jpg?v=1777549236",
+   "link": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
+   "text": "sneakersnstuff.com · Air Max 95 OG \"Slate\"\nVerkauf ca. 140–220 € → Gewinn ca. +43,00 € (ROI 38 %)\nGröße prüfen, vorher verkaufte Preise checken.",
+   "zeit": "2026-11-05T14:45:09.381Z"
+  },
   {
    "schluessel": "filiale:3118897:1501",
    "art": "Filiale",
@@ -176,28 +195,10 @@
    "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
    "text": "32,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 23 Filiale(n) vorrätig.",
    "zeit": "2026-11-03T14:04:47.559Z"
-  },
-  {
-   "schluessel": "deal:https://www.overkillshop.com/products/air-jordan-4-retro-birds-of-paradise-hv0823-101-coconut-milk-muslin-bright-mango",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 4 Retro für 170,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/HV0823-101_1.jpg?v=1785501631",
-   "link": "https://www.overkillshop.com/products/air-jordan-4-retro-birds-of-paradise-hv0823-101-coconut-milk-muslin-bright-mango",
-   "text": "overkillshop.com · Air Jordan 4 Retro Birds of Paradise\nVerkauf ca. 220–320 € → Gewinn ca. +68,00 € (ROI 40 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-03T13:02:55.743Z"
-  },
-  {
-   "schluessel": "deal:https://afew-store.com/products/air-jordan-4-retro-white-tour-yellow-dark-blue-grey-black",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 4 Retro für 199,99 €",
-   "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-4-retro-white-tour-yellow-dark-blue-grey-black-io2463-102-footwear_20_3E_20sneaker.jpg?v=1787954818",
-   "link": "https://afew-store.com/products/air-jordan-4-retro-white-tour-yellow-dark-blue-grey-black",
-   "text": "afew-store.com · Air Jordan 4 Retro\nVerkauf ca. 220–320 € → Gewinn ca. +38,01 € (ROI 19 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-03T12:07:17.082Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-05T14:30:01.227Z",
+  "stand": "2026-11-05T14:45:12.392Z",
   "filialen": 148,
   "produkte": [
    {
@@ -449,6 +450,14 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
@@ -503,14 +512,6 @@
       "lat": 50.13488,
       "lon": 8.5572012,
       "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 8
      }
     ]
    },
@@ -1942,12 +1943,16 @@
   "ware": [],
   "top": [
    {
-    "titel": "portugiesische fußballnationalmannschaft",
-    "menge": "500+"
+    "titel": "mark keller",
+    "menge": "200+"
    },
    {
     "titel": "russell brand",
-    "menge": "200+"
+    "menge": "1000+"
+   },
+   {
+    "titel": "portugiesische fußballnationalmannschaft",
+    "menge": "500+"
    },
    {
     "titel": "sandra flunger",
@@ -1955,7 +1960,7 @@
    },
    {
     "titel": "nasa satellit stürzt auf die erde",
-    "menge": "10000+"
+    "menge": "20000+"
    },
    {
     "titel": "champion of champions",
@@ -1963,7 +1968,7 @@
    },
    {
     "titel": "christian freuding",
-    "menge": "500+"
+    "menge": "1000+"
    },
    {
     "titel": "carmen hanken",
@@ -1976,10 +1981,6 @@
    {
     "titel": "joseph leijdekkers",
     "menge": "200+"
-   },
-   {
-    "titel": "tatort",
-    "menge": "1000+"
    }
   ]
  },
@@ -2085,6 +2086,15 @@
     "begriff": "cap"
    },
    {
+    "titel": "Kith for ‘47 for the New York Yankees Corduroy Franchise LS Cap - Nocturnal",
+    "preis": 64,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khma050120-413",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050120-413-Detail.jpg?v=1787348051",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
     "titel": "Dunk Low Retro Premium",
     "preis": 65,
     "verfuegbar": true,
@@ -2119,15 +2129,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/978oewsxluo-IB7746-200_Nike_Dunk-Low-Retro-Premium-Corduroy-Light-British-Tan-Light-British-Tan_os-1.jpg?v=1768918070",
     "laden": "asphaltgold.com",
     "begriff": "dunk"
-   },
-   {
-    "titel": "Kith & '47 for the New York Yankees Washed Suede Franchise LS Cap - Torpedo",
-    "preis": 74,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khm051390-402",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051390-402-Front.jpg?v=1787167609",
-    "laden": "kith.com",
-    "begriff": "cap"
    },
    {
     "titel": "Consortium Pant",
@@ -2364,15 +2365,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Book 2 SP",
-    "preis": 105,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-2-sp-iq0050-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ0050-001-1.jpg?v=1770121671",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Nike Wmns Dunk Low",
     "preis": 107,
     "verfuegbar": true,
@@ -2452,6 +2444,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-cblack-ntgrey-lucred-kk0006-footwear_20_3E_20sneaker.jpg?v=1790237496",
     "laden": "afew-store.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "Air Max 95 OG \"Slate\"",
+    "preis": 114,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH7855-100_01.jpg?v=1777549236",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "New Balance 509",
@@ -3361,6 +3362,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U992GY-1.jpg?v=1747047954",
     "laden": "sneakersnstuff.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "AIR JORDAN 15 SP",
+    "preis": 239.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/air-jordan-15-sp-muslin-muslin-black",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-15-sp-muslin-muslin-black-iv7637-100-footwear_20_3E_20sneaker.jpg?v=1784882911",
+    "laden": "afew-store.com",
+    "begriff": "jordan"
    },
    {
     "titel": "Made In USA 993",
