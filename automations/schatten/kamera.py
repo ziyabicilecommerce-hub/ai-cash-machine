@@ -24,7 +24,7 @@ def ohne_teil(text):
 
 
 def teil_von(titel):
-    m = re.search(r'Teil (\d+)', str(titel or ''))
+    m = re.search(r'(?:Teil|Part) (\d+)', str(titel or ''))
     return int(m.group(1)) if m else None
 
 
@@ -57,7 +57,7 @@ def overlay(im, t, s, story, teil=None, gesamt_teile=None):
     if int(t * 1.5) % 2 == 0:
         d.rectangle((x + 5, y + 5, x + 13, y + 19), fill=(235, 25, 25))
     if teil:
-        d.text((w - 28, 72), f'TEIL {teil}' + (f'/{gesamt_teile}' if gesamt_teile else ''), font=ImageFont.truetype(FONT, 20), fill=(255, 255, 255), anchor='ra', stroke_width=2, stroke_fill=(0, 0, 0))
+        d.text((w - 28, 72), f"{'PART' if story.get('sprache') == 'en' else 'TEIL'} {teil}" + (f'/{gesamt_teile}' if gesamt_teile else ''), font=ImageFont.truetype(FONT, 20), fill=(255, 255, 255), anchor='ra', stroke_width=2, stroke_fill=(0, 0, 0))
     # Sucher-Ecken
     for cx, cy, sx, sy in ((18, 18, 1, 1), (w - 18, 18, -1, 1), (18, h - 18, 1, -1), (w - 18, h - 18, -1, -1)):
         d.line((cx, cy, cx + 44 * sx, cy), fill=(255, 255, 255, 200), width=3)

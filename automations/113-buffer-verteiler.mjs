@@ -10,7 +10,8 @@ import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs'
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
 import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, storyEingabe, abVariante, abSchluessel } from './lib/bufferVerteiler.mjs';
 import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
-import { naechstesSkriptEn } from './schatten/skripteEn.mjs';
+import { naechstesSkriptEn, SKRIPTE_EN } from './schatten/skripteEn.mjs';
+import { teil2Kandidat as teil2KandidatSync } from './schatten/skriptBot.mjs';
 
 const TOKEN = (process.env.BUFFER_ACCESS_TOKEN || '').trim();
 const STAND = 'buffer-verteiler/stand.json';
@@ -73,7 +74,10 @@ async function horrorSkript(gepostet, konto = '') {
 // Englischer Kanal: eigene, von Hand geschriebene Geschichten (skripteEn.mjs)
 function horrorSkriptEn(gepostet) {
   const bekannt = Object.keys(gepostet).map((key) => key.replace(/^horror:/, ''));
-  const s = naechstesSkriptEn(bekannt, json('automations-dashboard/tiktok/daten.json', {}).letzte || []);
+  const letzte = json('automations-dashboard/tiktok/daten.json', {}).letzte || [];
+  const fortsetzung = teil2KandidatSync('giyuuu', bekannt, letzte, { alle: SKRIPTE_EN, suffix: ' – Part 2' });
+  if (fortsetzung) return { skript: fortsetzung, herkunft: 'Part 2 of a hit' };
+  const s = naechstesSkriptEn(bekannt, letzte);
   return s ? { skript: s, herkunft: 'English' } : null;
 }
 

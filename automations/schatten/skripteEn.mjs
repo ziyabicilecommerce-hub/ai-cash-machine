@@ -144,6 +144,30 @@ export const SKRIPTE_EN = [
     'Tonight the light goes out. And under my door it gets dark.', 'Thanks for the light.', 'What would you have done?', RUN),
 ];
 
+// Part 2 per pattern - posted automatically once, when a story becomes a hit (same rule as the German channel)
+const P2 = (hook, saetze, ende, monster, frage, wahl) => ({ hook, saetze, ende, monster, frage, wahl });
+export const TEIL2_EN = {
+  allein: P2('I moved out. Today it happened again in my new place.', ['I never gave anyone my new address.', 'Still, someone texts me.', 'The message says: You forgot me.', 'I count my keys. There are two.'],
+    'I never had a second key made. It fits my new door.', 'I always move with you.', 'Would you move again?', ['Move again', 'Stay']),
+  fremd: P2('I blocked the number. Now it texts me from my own phone.', ['The message is in my own chat.', 'I did not write it.', 'It says: You turned around.', 'My phone takes a photo. By itself.'],
+    'The photo shows me. And behind me someone is holding my phone.', 'Now I am you.', 'Would you throw the phone away?', ['Throw it', 'Keep it']),
+  kamera: P2('I took the camera down. Last night it still recorded.', ['It is switched off in a drawer.', 'Still, there is a new clip on it.', 'It shows my bedroom. From inside the drawer.', 'In the clip the drawer slowly opens.'],
+    'I look at the drawer. It is open. The camera is gone.', 'I film now.', 'Would you watch the clip?', ['Watch it', 'Delete it']),
+  anruf: P2('I turned my phone off. It is ringing again anyway.', ['The battery is out.', 'It keeps ringing.', 'I pick up so it stops.', 'The voice says: You did not let me finish last time.'],
+    'Then someone knocks on my door. To the same rhythm.', 'Open up.', 'Would you open the door?', ['Open it', 'Keep it shut']),
+  regel: P2('I checked out. Today the note is on my own front door.', ['It is the same handwriting.', 'Below it is a new rule.', 'Do not look in the mirror at night.', 'At 3 AM I have to use the bathroom.'],
+    'I keep my eyes shut. But inside the mirror someone knocks.', 'Open your eyes.', 'Would you have looked?', ['Look', 'Eyes shut']),
+  tier: P2('I gave the animal away. Tonight it is back.', ['It sits at the end of my bed.', 'The new owner texts me.', 'She sends a photo. The animal is asleep at her place.', 'At the end of my bed something moves.'],
+    'It raises its head. It is not an animal.', 'Now I am your pet.', 'Would you turn on the light?', ['Light on', 'Eyes shut']),
+  spiegel: P2('I covered every mirror. Tonight my phone screen reflects.', ['The screen is black.', 'In it I see my face.', 'It moves its mouth. I do not.', 'It says: You only turned me around.'],
+    'I put the phone down. Now she is standing in the window. Outside.', 'I always find a mirror.', 'Would you smash the phone?', ['Smash it', 'Keep it']),
+  geraet: P2('I deleted everything and unplugged the router. The app still runs.', ['No internet.', 'No power.', 'The screen says: New device connected.', 'The device has my name.'],
+    'Behind me my own voice says: Connection established.', 'Connected.', 'Would you turn around?', ['Turn around', 'Run']),
+  kind: P2('The kid calls me. It is the middle of the night.', ['She whispers very quietly.', 'She says she is not allowed to be loud.', 'I ask her why.', 'She says: Because now he is with you. Not with me.'],
+    'The closet in my room creaks. It was closed before.', 'With you now.', 'Would you open the closet?', ['Open it', 'Keep it shut']),
+};
+for (const s of SKRIPTE_EN) s.teil2 = TEIL2_EN[s.muster];
+
 export const TAGS_EN = '#horror #scary #creepypasta #scarystories #horrorstory';
 
 // Wie der deutsche Skript-Bot: Muster abwechselnd, und mit Zahlen das Muster mit den meisten Aufrufen zuerst

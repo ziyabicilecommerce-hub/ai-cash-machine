@@ -157,8 +157,9 @@ export function naechstesSkript(bekannt = [], letzte = []) {
 }
 
 // Hit erkannt? Dann Teil 2 dieser Geschichte (einmal). Hit = mind. doppelt so viele Aufrufe wie der Schnitt des Kontos und mind. 100.
-export function teil2Kandidat(konto, bekannt = [], letzte = []) {
-  const weg = new Set(bekannt), alle = alleSkripte();
+// alle/suffix: der englische Kanal nutzt dieselbe Logik mit seinen Geschichten und " – Part 2"
+export function teil2Kandidat(konto, bekannt = [], letzte = [], { alle = alleSkripte(), suffix = ' – Teil 2' } = {}) {
+  const weg = new Set(bekannt);
   const eigene = letzte.filter((p) => String(p.konto || '').includes(konto) && p.aufrufe > 0);
   if (eigene.length < 3) return null;
   const schnitt = eigene.reduce((a, p) => a + p.aufrufe, 0) / eigene.length;
@@ -166,7 +167,8 @@ export function teil2Kandidat(konto, bekannt = [], letzte = []) {
     if (p.aufrufe < Math.max(100, 2 * schnitt)) break;
     const s = alle.find((x) => x.teil2 && passt(p, x));
     if (!s) continue;
-    const t = { ...s, ...s.teil2, titel: `${s.titel} – Teil 2`, teil: 2, teil2: undefined, absender: undefined, nachricht: undefined, monster2: undefined };
+    // hook2 weg: der Du-Hook gehört zu Teil 1 - Teil 2 hat seinen eigenen Anfang
+    const t = { ...s, ...s.teil2, titel: `${s.titel}${suffix}`, teil: 2, teil2: undefined, hook2: undefined, absender: undefined, nachricht: undefined, monster2: undefined };
     if (!weg.has(slug(t.titel)) && !pruefen(t).length) return t;
   }
   return null;

@@ -39,3 +39,17 @@ test('Englischer Kanal: nur mit Kanal-ID aktiv, englische Texte bei YouTube, Ins
   assert.match(ig.text, /#scarystories/); assert.match(ig.metadata.instagram.firstComment, /second/);
   assert.match(mit.storyEingabe('a'.repeat(24), 'https://x/c.jpg', true).metadata.instagram.stickerFields.text, /New video/);
 });
+
+test('Part 2 auf Englisch bei einem Hit, ohne den Du-Hook von Teil 1', async () => {
+  const { teil2Kandidat, alleSkripte } = await import('../../automations/schatten/skriptBot.mjs');
+  const s = SKRIPTE_EN.find((x) => x.muster === 'kamera');
+  const normal = [40, 50, 60].map((a) => ({ konto: '@giyuuu sama', aufrufe: a, text: 'x' }));
+  const t = teil2Kandidat('giyuuu', [], [...normal, { konto: '@giyuuu sama', aufrufe: 600, text: s.hook2 }], { alle: SKRIPTE_EN, suffix: ' – Part 2' });
+  assert.equal(t.titel, `${s.titel} – Part 2`); assert.equal(t.hook2, undefined); assert.equal(t.sprache, 'en');
+  const f = baueFolge({ ...t, kurz: true });
+  assert.ok(!/\b(und|nicht|ich|teil)\b/i.test(JSON.stringify(f.szenen.map((x) => x.sprich)) + f.caption));
+  for (const m of new Set(SKRIPTE_EN.map((x) => x.muster))) assert.deepEqual(pruefen({ ...SKRIPTE_EN.find((x) => x.muster === m), ...SKRIPTE_EN.find((x) => x.muster === m).teil2 }), [], m);
+  const de = alleSkripte()[0];
+  const tde = teil2Kandidat('desk.rebel', [], [...normal.map((p) => ({ ...p, konto: '@desk.rebel' })), { konto: '@desk.rebel', aufrufe: 600, text: de.hook }]);
+  assert.equal(tde.hook2, undefined, 'deutscher Teil 2 erbt keinen Du-Hook');
+});
