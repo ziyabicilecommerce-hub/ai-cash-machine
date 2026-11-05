@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-05T17:31:23.681Z",
+ "stand": "2026-11-05T17:34:20.781Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -198,7 +198,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-05T17:19:13.304Z",
+  "stand": "2026-11-05T17:34:23.612Z",
   "filialen": 148,
   "produkte": [
    {
@@ -516,15 +516,6 @@
     ]
    },
    {
-    "dan": "3135931",
-    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
-    "preis": 29.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
-    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
     "dan": "3119105",
     "name": "M. Asam Adventskalender 2026 Schönste Zeit, 1 St",
     "preis": 69.95,
@@ -652,7 +643,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 15
+      "menge": 16
      },
      {
       "name": "dm Flörsheim am Main",
@@ -745,6 +736,15 @@
       "menge": 6
      }
     ]
+   },
+   {
+    "dan": "3139943",
+    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
+    "preis": 49.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
+    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3143255",
@@ -1973,12 +1973,24 @@
   "ware": [],
   "top": [
    {
+    "titel": "rundfunkbeitrag",
+    "menge": "1000+"
+   },
+   {
+    "titel": "hotelzimmer",
+    "menge": "200+"
+   },
+   {
+    "titel": "sparta prag – bournemouth",
+    "menge": "200+"
+   },
+   {
     "titel": "luca van assche",
     "menge": "200+"
    },
    {
     "titel": "unstrut-hainich-kreis",
-    "menge": "100+"
+    "menge": "200+"
    },
    {
     "titel": "sebastian klussmann",
@@ -1999,18 +2011,6 @@
    {
     "titel": "midtjylland – ajax",
     "menge": "200+"
-   },
-   {
-    "titel": "spiegel buchpreis",
-    "menge": "200+"
-   },
-   {
-    "titel": "crystal palace – hoffenheim",
-    "menge": "2000+"
-   },
-   {
-    "titel": "polizei mecklenburg-vorpommern",
-    "menge": "1000+"
    }
   ]
  },
@@ -2773,6 +2773,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "U18905UY",
+    "preis": 130,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u18905uy-u18905uy-slate-grey",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Asics GEL-NYC",
     "preis": 134,
     "verfuegbar": true,
@@ -3151,15 +3160,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "U13008BH",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u13008bh-u13008bh-drift-red-hay-afterglow",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U13008BH_1.jpg?v=1778671801",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Air Jordan 1 High OG “Royal”",
     "preis": 180,
     "verfuegbar": true,
@@ -3286,11 +3286,11 @@
     "begriff": "jordan"
    },
    {
-    "titel": "U1300NY",
+    "titel": "U1300GY",
     "preis": 209,
     "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u1300ny-nb-navy-raincloud-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
+    "url": "https://www.overkillshop.com/products/new-balance-u1300gy-u1300gy-kool-gray-harbor-grey-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300GY_1.jpg?v=1779433831",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
