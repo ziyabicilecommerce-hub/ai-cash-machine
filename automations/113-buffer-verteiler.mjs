@@ -84,11 +84,13 @@ async function vorbereiten() {
       const h = await horrorSkript({ ...schonDa, ...(stand[k.id] || {}) }, k.name);
       if (!h) { bericht(`- ⚠️ ${k.name}: keine Horror-Geschichte`); continue; }
       const variante = abVariante();
-      const folge = baueFolge({ ...h.skript, weiter: '', posten: '', kurz: true, ...variante });
+      if (!h.skript.hook2) variante.duhook = false;  // nur Skript-Bot-Geschichten haben einen Du-Hook
+      const hook = variante.duhook ? h.skript.hook2 : h.skript.hook;
+      const folge = baueFolge({ ...h.skript, hook, weiter: '', posten: '', kurz: true, ...variante });
       mkdirSync('out', { recursive: true });
       writeFileSync(`out/folge-${k.id}.json`, JSON.stringify({ ...folge, _slug: slug(h.skript.titel) }, null, 1));
       horrorKanaele.push(k.id);
-      plan.push({ kanal: k.id, horror: true, schluessel: `horror:${h.schluessel || slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft, variante, hook: h.skript.hook });
+      plan.push({ kanal: k.id, horror: true, schluessel: `horror:${h.schluessel || slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft, variante, hook });
       continue;
     }
     const v = naechstes(passend(videos, k.quelle, k.name), stand[k.id] || {});

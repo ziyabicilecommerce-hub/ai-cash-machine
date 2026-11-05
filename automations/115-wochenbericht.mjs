@@ -2,7 +2,7 @@
 // für die App (automations-dashboard/tiktok/wochenbericht.json). Ohne Schlüssel, ohne Netz - liest nur Dateien.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { verlaufMischen, bericht } from './lib/wochenbericht.mjs';
-import { alleSkripte } from './schatten/skriptBot.mjs';
+import { alleSkripte, passt } from './schatten/skriptBot.mjs';
 import { abSchluessel } from './lib/bufferVerteiler.mjs';
 
 const ORDNER = 'automations-dashboard/tiktok';
@@ -10,7 +10,7 @@ const json = (p, d) => { try { return JSON.parse(readFileSync(p, 'utf8')); } cat
 
 const verlauf = verlaufMischen(json(`${ORDNER}/verlauf.json`, []), json(`${ORDNER}/daten.json`, {}).letzte || []);
 const skripte = alleSkripte();
-const musterVon = (p) => skripte.find((s) => String(p.text || '').includes(s.hook.slice(0, 40)))?.muster || '';
+const musterVon = (p) => skripte.find((s) => passt(p, s))?.muster || '';
 const varianten = json('buffer-verteiler/varianten.json', {});
 const varianteVon = (p) => varianten[abSchluessel(p.text)] || null;  // Schlüssel = die ersten 40 Zeichen des Hooks
 const b = bericht(verlauf, Date.now(), musterVon, varianteVon);
