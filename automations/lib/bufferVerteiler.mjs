@@ -6,6 +6,8 @@ export const KANAELE = [
   { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'fakten' },
   // YouTube: Anime holte im Schnitt ~7 Aufrufe, Horror auf Instagram ~110 - daher jetzt eigene Horror-Shorts (andere Geschichte als Instagram)
   { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror' },
+  // Englischer Horror-Kanal: an, sobald seine Buffer-Kanal-ID eingetragen ist (Repo-Variable EN_KANAL, optional EN_DIENST)
+  ...(/^[a-f\d]{24}$/.test(process.env.EN_KANAL || '') ? [{ id: process.env.EN_KANAL, name: 'english-horror', dienst: process.env.EN_DIENST || 'youtube', quelle: 'horror-en' }] : []),
 ];
 // Die TikTok-Konten werden von Serie, Videobot und Fakten-Kanal bespielt - hier nur gezählt.
 export const TIKTOK = [
@@ -62,9 +64,15 @@ export const TAGS = {
   // Instagram erlaubt höchstens 5 Hashtags pro Beitrag
   horror: '#horror #gruselgeschichte #creepypasta #gänsehaut #horrorstory',
   fakten: '#wusstestdu #fakten #wissen #krassefakten #lernen',
+  'horror-en': '#horror #scary #creepypasta #scarystories #horrorstory',
   anime: '#anime #animeserie #animeshorts #shorts',
 };
 export function ersterKommentar(v, quelle) {
+  if (quelle === 'horror-en') {
+    if (/hidden/i.test(v.caption || '')) return 'At what second did you spot the eyes? 👀 Drop the time, e.g. 0:07 👇';
+    const w = String(v.caption || '').match(/1️⃣\s*(.+?)\s+or\s+2️⃣\s*(.+?)\?/);
+    return w ? `What do you do? 1️⃣ ${w[1]} or 2️⃣ ${w[2]} - just comment the number 👇` : 'What would you have done? 👇';
+  }
   if (quelle === 'horror') {
     if (/versteckt/i.test(v.caption || '')) return 'Bei welcher Sekunde hast du die Augen gesehen? 👀 Schreib die Zeit, z. B. 0:07 👇';
     const w = String(v.caption || '').match(/1️⃣\s*(.+?)\s+oder\s+2️⃣\s*(.+?)\?/);
@@ -83,11 +91,12 @@ export function beitrag(v, dienst, quelle = '') {
   // vorhandene Hashtags durch die Nischen-Tags ersetzen (keine doppelten, keine fremden Kontonamen)
   const tags = TAGS[quelle] || '';
   if (tags) roh = roh.replace(/(^|\s)#\p{L}[\p{L}\p{N}_]*/gu, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
-  if (dienst === 'youtube' && quelle === 'horror') {
+  const en = quelle === 'horror-en', hinweis = en ? '(AI-generated: image, voice and text were made with AI. Fictional story.)' : KI_HINWEIS;
+  if (dienst === 'youtube' && quelle.startsWith('horror')) {
     // Shorts-Titel = der Hook (das, was neugierig macht), nicht der interne Geschichtenname
     let hook = (roh.split(/\s*(?:🎧|👀|1️⃣|\n)/)[0] || v.titel || 'Horror').replace(/\s+/g, ' ').trim();
     if (hook.length > 85) hook = hook.slice(0, 85).replace(/\s+\S*$/, '') + '…';
-    const beschreibung = `${roh}\n\nJeden Tag eine neue Gruselgeschichte – abonnieren, wenn du dich traust.\n#horror #gruselgeschichte #creepypasta #shorts\n${KI_HINWEIS}`.slice(0, 4900);
+    const beschreibung = `${roh}\n\n${en ? 'A new scary story every day – subscribe if you dare.\n#horror #scary #creepypasta #shorts' : 'Jeden Tag eine neue Gruselgeschichte – abonnieren, wenn du dich traust.\n#horror #gruselgeschichte #creepypasta #shorts'}\n${hinweis}`.slice(0, 4900);
     return { text: beschreibung, metadata: { youtube: { title: `${hook} 😨 #shorts`.slice(0, 100), categoryId: '24', madeForKids: false, isAiGenerated: true, privacy: 'public' } } };
   }
   if (dienst === 'youtube') {
@@ -96,7 +105,7 @@ export function beitrag(v, dienst, quelle = '') {
     return { text: beschreibung, metadata: { youtube: { title: `${titel} #shorts`.slice(0, 100), categoryId: '1', madeForKids: false, isAiGenerated: true, privacy: 'public' } } };
   }
   const kommentar = ersterKommentar(v, quelle);
-  return { text: `${roh}\n\n${tags}\n${KI_HINWEIS}`.replace(/\n{3,}/g, '\n\n').slice(0, 2100),
+  return { text: `${roh}\n\n${tags}\n${hinweis}`.replace(/\n{3,}/g, '\n\n').slice(0, 2100),
     metadata: { instagram: { type: 'reel', shouldShareToFeed: true, isAiGenerated: true, ...(kommentar ? { firstComment: kommentar } : {}) } } };
 }
 
@@ -109,10 +118,10 @@ export function heuteBerlin(jetzt = new Date()) {
 
 // Buffer-Posts zählen: alles außer Fehlern/Entwürfen zählt (gesendet, wird gesendet, geplant)
 // Instagram-Story als Anstoß fürs neue Reel: Titelbild + Text-Sticker, ohne Beitragstext (zählt so nicht als Post)
-export function storyEingabe(kanalId, coverUrl) {
+export function storyEingabe(kanalId, coverUrl, en = false) {
   return { channelId: kanalId, text: '', schedulingType: 'automatic', mode: 'shareNow',
-    assets: [{ image: { url: coverUrl, metadata: { altText: 'Titelbild des neuen Horror-Videos' } } }],
-    metadata: { instagram: { type: 'story', shouldShareToFeed: false, isAiGenerated: true, stickerFields: { text: 'Neues Video 👀 Kopfhörer auf! Schau auf mein Profil' } } } };
+    assets: [{ image: { url: coverUrl, metadata: { altText: en ? 'Cover of the new horror video' : 'Titelbild des neuen Horror-Videos' } } }],
+    metadata: { instagram: { type: 'story', shouldShareToFeed: false, isAiGenerated: true, stickerFields: { text: en ? 'New video 👀 Headphones on! Check my profile' : 'Neues Video 👀 Kopfhörer auf! Schau auf mein Profil' } } } };
 }
 
 // A/B-Test: jedes Feature ist bei 30 % der Horror-Videos aus - so zeigt der Wochenbericht, was wirklich wirkt

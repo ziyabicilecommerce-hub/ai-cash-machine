@@ -8,6 +8,16 @@ export const ORTE = ['zug', 'flugzeug', 'haus', 'wald', 'aufzug'];
 export const BOESE = ['schatten', 'gremlin', 'frau', 'hirsch'];
 export const KONTEN = { futureflowx3: '6ac7cb606a5c39ccb6535fab', zyx_7851: '6ac7cae66a5c39ccb6535c40', futureflowxx: '6ac7ca226a5c39ccb65356a5' };
 const STIMMEN = { mann: 'de-DE-FlorianMultilingualNeural', frau: 'de-DE-SeraphinaMultilingualNeural' };
+const STIMMEN_EN = { mann: 'en-US-ChristopherNeural', frau: 'en-US-AriaNeural' };
+// Texte, die der Videobot selbst einsetzt - Deutsch ist Standard, sprache: 'en' für den englischen Kanal
+const TEXTE = {
+  de: { frage: 'Was hättest du gemacht?', eins: 'Eins', zwei: 'Zwei', schreibZahl: ' Schreib die Zahl in die Kommentare.', schreib: 'Schreib es in die Kommentare.',
+    cta: 'KOMMENTIER 1 ODER 2', folgT2: 'FOLG MIR FÜR TEIL 2', folg: 'FOLG MIR FÜR MEHR', kopf: ' 🎧 Mit Kopfhörern schauen!',
+    such: ' 👀 Seine Augen sind 3x im Video versteckt – bei welcher Sekunde hast du sie gesehen? 👇', wahl: (a, b) => ` 1️⃣ ${a} oder 2️⃣ ${b}? Zahl in die Kommentare` },
+  en: { frage: 'What would you have done?', eins: 'One', zwei: 'Two', schreibZahl: ' Comment the number.', schreib: 'Tell me in the comments.',
+    cta: 'COMMENT 1 OR 2', folgT2: 'FOLLOW FOR PART 2', folg: 'FOLLOW FOR MORE', kopf: ' 🎧 Watch with headphones!',
+    such: ' 👀 His eyes are hidden 3 times in this video – at what second did you spot them? 👇', wahl: (a, b) => ` 1️⃣ ${a} or 2️⃣ ${b}? Comment the number` },
+};
 
 const satz = (s, max = 160) => String(s || '').replace(/[<>{}`$\\]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
 // Bildschirmtext: Großbuchstaben, höchstens ~42 Zeichen an einer Wortgrenze
@@ -62,30 +72,30 @@ export function baueFolge(skript) {
   szenen.push({ art: 'fratze', dauer: kurz_ ? 0.9 : 1.2, schreck: true });
   szenen.push({ art: 'ende', ...zeile(skript.ende, { schreck: true, angst: 1, blick: 1, ...(skript.monster2 && !kurz_ ? { monster: satz(skript.monster2, 80), monster_text: kurz(skript.monster2) } : {}) }) });
   const weiter = satz(skript.weiter || '', 80);
-  const frage = satz(skript.frage || 'Was hättest du gemacht?', 80);
+  const en = skript.sprache === 'en', T = TEXTE[en ? 'en' : 'de'];
+  const frage = satz(skript.frage || T.frage, 80);
   // Kommentar-Wahl "1 oder 2": eine Zahl tippen ist leichter als einen Satz schreiben - bringt mehr Kommentare
   const wahl = Array.isArray(skript.wahl) ? skript.wahl.map((w) => satz(w, 18)) : null;
   if (!weiter && wahl) {
-    szenen.push({ art: 'teil2', sprich: `${frage} Eins: ${wahl[0]}. Zwei: ${wahl[1]}.${kurz_ ? '' : ' Schreib die Zahl in die Kommentare.'}`,
-      text: '', wahl, frage, pause: 0.8, cta: 'KOMMENTIER 1 ODER 2' });  // story.py zeichnet die zwei Antwort-Karten
+    szenen.push({ art: 'teil2', sprich: `${frage} ${T.eins}: ${wahl[0]}. ${T.zwei}: ${wahl[1]}.${kurz_ ? '' : T.schreibZahl}`,
+      text: '', wahl, frage, pause: 0.8, cta: T.cta });  // story.py zeichnet die zwei Antwort-Karten
   } else {
     // Einzel-Video ohne Fortsetzung: kein falsches "Teil 2"-Versprechen, sondern die Frage für die Kommentare
-    const schluss = weiter || `${frage} Schreib es in die Kommentare.`;
-    szenen.push({ art: 'teil2', ...zeile(schluss, { pause: 0.8, cta: weiter ? 'FOLG MIR FÜR TEIL 2' : 'FOLG MIR FÜR MEHR' }) });
+    const schluss = weiter || `${frage} ${T.schreib}`;
+    szenen.push({ art: 'teil2', ...zeile(schluss, { pause: 0.8, cta: weiter ? T.folgT2 : T.folg }) });
   }
   const titel = satz(skript.titel || skript.hook, 60);
   const titelbild = kurz(skript.hook, 80);
   return {
-    stimme: STIMMEN[skript.stimme] || STIMMEN.mann, tonhoehe: '+0Hz', tempo: kurz_ ? '+24%' : '+16%', ton: 'schlicht', ki_bilder: false,
+    stimme: (en ? STIMMEN_EN : STIMMEN)[skript.stimme] || (en ? STIMMEN_EN : STIMMEN).mann, sprache: en ? 'en' : 'de', tonhoehe: '+0Hz', tempo: kurz_ ? '+24%' : '+16%', ton: 'schlicht', ki_bilder: false,
     ort: skript.ort || 'haus', fahrgaeste: [], boesewicht: skript.boesewicht || 'schatten',
     held: { farbe: [44, 56, 92], oberteil: 'hoodie', kopf: 'haare', haar: [46, 34, 26], hose: [38, 44, 70] },
     titel, titelbild, titelbild_gelb: gelbVon(titelbild), teile: skript.teil === 2 ? 2 : 1,
     suchbild: kurz_ && skript.suchbild !== false,  // 3 versteckte Augenpaare + Sekunden-Frage
     raum: kurz_ && skript.raum !== false,  // 3D-Ton: Flüstern kreist um den Kopf (story.py/ton.py)
     kalt: kurz_ && skript.kalt !== false,  // kalter Einstieg: 0,8 s das Ende zeigen, dann zurückspulen
-    caption: `${satz(skript.hook, 120)}${kurz_ && skript.raum !== false ? ' 🎧 Mit Kopfhörern schauen!' : ''}${kurz_ && skript.suchbild !== false
-      ? ' 👀 Seine Augen sind 3x im Video versteckt – bei welcher Sekunde hast du sie gesehen? 👇'
-      : ` ${frage}${wahl && !weiter ? ` 1️⃣ ${wahl[0]} oder 2️⃣ ${wahl[1]}? Zahl in die Kommentare` : ''} 👇`}`, szenen,
+    caption: `${satz(skript.hook, 120)}${kurz_ && skript.raum !== false ? T.kopf : ''}${kurz_ && skript.suchbild !== false
+      ? T.such : ` ${frage}${wahl && !weiter ? T.wahl(wahl[0], wahl[1]) : ''} 👇`}`, szenen,
   };
 }
 
