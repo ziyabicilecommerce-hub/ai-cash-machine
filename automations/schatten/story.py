@@ -341,6 +341,22 @@ def suchzeiten(plan):
     return sorted(zeiten) if len(zeiten) == 3 else []
 
 
+KALT_BIS = 0.8  # so lange zeigt der kalte Einstieg das Ende
+
+
+def zurueckspulen(im, x):
+    # Videokassetten-Rücklauf: Bild zittert, Streifen reißen, "◀◀ VORHER" oben links
+    st = random.Random(int(x * 1000))
+    im = rotverschiebung(im, 6)
+    for _ in range(5):
+        y = st.randint(120, H - 200)
+        im.paste(im.crop((0, y, W, y + st.randint(8, 30))), (st.randint(-60, 60), y))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, H - 120 - st.randint(0, 40), W, H - 104), fill=(230, 230, 230))
+    d.text((28, 98), '◀◀ VORHER', font=ImageFont.truetype(FONTDATEI, 32), fill=(255, 255, 255), stroke_width=3, stroke_fill=(0, 0, 0))
+    return im
+
+
 def kopfhoerer(im):
     d = ImageDraw.Draw(im)
     f = ImageFont.truetype(FONTDATEI, 28)
@@ -433,13 +449,19 @@ def main():
     augenbild = Image.new('RGB', (W, H), (2, 2, 4))
     for ex in (-70, 70):
         augenbild.paste(AUGE_GROSS, (W // 2 + ex - 120, 520 - 120), AUGE_GROSS)
+    kalt = next((x for x in plan if x['art'] == 'ende'), None) if story.get('kalt') else None
     for s in plan:
         n = int(round(s['dauer'] * FPS))
         worte = len(s.get('text', '').split())
         for f in range(n):
             lt, t = f / FPS, s['start'] + f / FPS
             ZEIT[0] = t
-            im = bild(s, t, lt)
+            if kalt and s['art'] == 'blitz' and lt < KALT_BIS:  # kalter Einstieg: erst das Ende zeigen, dann zurückspulen
+                ZEIT[0] = kalt['start'] + 0.6 + lt
+                im = bild(kalt, ZEIT[0], 0.6 + lt)
+                ZEIT[0] = t
+            else:
+                im = bild(s, t, lt)
             angespannt = s.get('stille') or s.get('angst', 0) >= 0.8
             # Kamera ohne Ruckeln: Zoom mit weichem Anlauf/Auslauf, Wackeln auf Bruchteile von Pixeln genau (keine ganzen Sprünge)
             zoom = 1.02 + (0.18 * weich(min(lt / 0.2, 1)) if s['art'] == 'fratze' else (0.15 if angespannt else 0.07) * weich(f / n))
@@ -475,6 +497,8 @@ def main():
             fortschritt = t / gesamt
             if fortschritt > 0.45 and s['art'] != 'teil2':
                 im = Image.blend(im, Image.new('RGB', (W, H), (45, 0, 4)), min(0.32, (fortschritt - 0.45) * 0.7))
+            if kalt and s['art'] == 'blitz' and KALT_BIS - 0.3 <= lt < KALT_BIS + 0.12:
+                im = zurueckspulen(im, lt - (KALT_BIS - 0.3))
             if story.get('kamera', True):
                 im = kamera.overlay(im, t, s, story, teil, teile)
             if s.get('monster') and lt >= s['mbei']:
