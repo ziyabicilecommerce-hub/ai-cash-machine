@@ -80,7 +80,10 @@ export function baueFolge(skript) {
     ort: skript.ort || 'haus', fahrgaeste: [], boesewicht: skript.boesewicht || 'schatten',
     held: { farbe: [44, 56, 92], oberteil: 'hoodie', kopf: 'haare', haar: [46, 34, 26], hose: [38, 44, 70] },
     titel, titelbild, titelbild_gelb: gelbVon(titelbild), teile: skript.teil === 2 ? 2 : 1,
-    caption: `${satz(skript.hook, 120)} ${frage}${wahl && !weiter ? ` 1️⃣ ${wahl[0]} oder 2️⃣ ${wahl[1]}? Zahl in die Kommentare` : ''} 👇`, szenen,
+    suchbild: kurz_ && skript.suchbild !== false,
+    caption: kurz_ && skript.suchbild !== false
+      ? `${satz(skript.hook, 120)} 👀 Seine Augen sind 3x im Video versteckt – bei welcher Sekunde hast du sie gesehen? 👇`
+      : `${satz(skript.hook, 120)} ${frage}${wahl && !weiter ? ` 1️⃣ ${wahl[0]} oder 2️⃣ ${wahl[1]}? Zahl in die Kommentare` : ''} 👇`, szenen,
   };
 }
 
