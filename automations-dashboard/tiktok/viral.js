@@ -108,6 +108,13 @@
     q('vl-caption').value = h ? `${h} ${f}${wahl} 👇\n\n#horrortok #gruselgeschichte #creepypasta #gänsehaut #horrorstory\n(KI-generiert, frei erfundene Geschichte)` : '';
   }
 
+  // A/B-Test: Sehdauer mit und ohne Feature (erst ab je 3 Videos aussagekräftig)
+  function abZeilen(ab) {
+    const NAMEN = { kalt: '⏪ Kalter Einstieg', raum: '🎧 3D-Ton', suchbild: '👀 Versteckte Augen' };
+    const zeilen = Object.entries(ab).map(([f, w]) => mk('div', 'tipp', `🧪 ${NAMEN[f] || f}: mit ${w.an.sehdauer} s (${w.an.n}) · ohne ${w.aus.sehdauer} s (${w.aus.n})${w.an.n < 3 || w.aus.n < 3 ? ' – noch zu wenig Daten' : ''}`));
+    return zeilen.length ? [mk('div', 'unter', 'A/B-Test (Ø Sehdauer):'), ...zeilen] : [];
+  }
+
   // Wochenbericht (#115): was lief, was nicht, was als Nächstes
   async function woche() {
     if (!q('vl-woche')) return;
@@ -122,6 +129,7 @@
       mk('div', 'unter', `${g.posts} Posts · ${zahl(g.aufrufe)} Aufrufe${trend}`),
       ...konten.map(([k, w]) => balken(k, w.schnitt, max, `${zahl(w.schnitt)} Ø${w.vorher !== null && w.vorher !== undefined ? ` (vorher ${zahl(w.vorher)})` : ''} · ${w.n}`)),
       ...b.top.map((p, i) => { const z = mk('div', 'tipp'); z.append(mk('b', '', `🏆 #${i + 1} ${zahl(p.aufrufe)} · ${p.konto}`), mk('div', '', p.text)); return z; }),
+      ...abZeilen(b.ab || {}),
       ...b.schritte.map((s) => mk('div', 'tipp gut', `👉 ${s}`)));
   }
 

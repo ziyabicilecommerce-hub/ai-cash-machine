@@ -8,12 +8,13 @@
 //   node 113-buffer-verteiler.mjs --posten      -> postet laut Plan, Video-Links aus out/horror-urls.json
 import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
-import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, storyEingabe } from './lib/bufferVerteiler.mjs';
+import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, storyEingabe, abVariante, abSchluessel } from './lib/bufferVerteiler.mjs';
 import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
 
 const TOKEN = (process.env.BUFFER_ACCESS_TOKEN || '').trim();
 const STAND = 'buffer-verteiler/stand.json';
 const PLAN = 'out/verteiler-plan.json';
+const VARIANTEN = 'buffer-verteiler/varianten.json';  // A/B-Test: welches Video hatte welche Features
 const json = (p, d) => { try { return JSON.parse(readFileSync(p, 'utf8')); } catch { return d; } };
 const bericht = (z) => { console.log(z); if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${z}\n`); };
 const ausgabe = (z) => { if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `${z}\n`); };
@@ -82,11 +83,12 @@ async function vorbereiten() {
       const schonDa = Object.fromEntries([...Object.values(stand).flatMap((x) => Object.entries(x || {})), ...plan.map((x) => [x.schluessel, 'jetzt'])]);
       const h = await horrorSkript({ ...schonDa, ...(stand[k.id] || {}) }, k.name);
       if (!h) { bericht(`- ⚠️ ${k.name}: keine Horror-Geschichte`); continue; }
-      const folge = baueFolge({ ...h.skript, weiter: '', posten: '', kurz: true });
+      const variante = abVariante();
+      const folge = baueFolge({ ...h.skript, weiter: '', posten: '', kurz: true, ...variante });
       mkdirSync('out', { recursive: true });
       writeFileSync(`out/folge-${k.id}.json`, JSON.stringify({ ...folge, _slug: slug(h.skript.titel) }, null, 1));
       horrorKanaele.push(k.id);
-      plan.push({ kanal: k.id, horror: true, schluessel: `horror:${h.schluessel || slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft });
+      plan.push({ kanal: k.id, horror: true, schluessel: `horror:${h.schluessel || slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft, variante, hook: h.skript.hook });
       continue;
     }
     const v = naechstes(passend(videos, k.quelle, k.name), stand[k.id] || {});
@@ -112,6 +114,7 @@ async function posten() {
   const plan = json(PLAN, []);
   const urls = json('out/horror-urls.json', {});
   const stand = json(STAND, {});
+  const varianten = json(VARIANTEN, {});
   for (const p of plan) {
     const k = KANAELE.find((x) => x.id === p.kanal);
     let v = p.video;
@@ -129,7 +132,9 @@ async function posten() {
       const r = d.createPost;
       if (r.__typename !== 'PostActionSuccess') throw new Error(r.message || r.__typename);
       (stand[k.id] ||= {})[p.schluessel] = new Date().toISOString();
-      bericht(`- ✅ ${k.name}: „${String(p.titel).slice(0, 60)}“${p.herkunft ? ` (${p.herkunft})` : ''} gepostet (heute dann ${p.heute + 1})`);
+      if (p.variante) varianten[abSchluessel(p.hook)] = { kanal: k.name, zeit: new Date().toISOString(), ...p.variante };
+      const ab = p.variante ? ` [ohne: ${Object.entries(p.variante).filter(([, an]) => !an).map(([f]) => f).join(', ') || '–'}]` : '';
+      bericht(`- ✅ ${k.name}: „${String(p.titel).slice(0, 60)}“${p.herkunft ? ` (${p.herkunft})` : ''}${ab} gepostet (heute dann ${p.heute + 1})`);
       const cover = urls[`${k.id}_cover`];
       if (p.horror && k.dienst === 'instagram' && /^https:\/\//.test(cover || '')) {
         try {  // Story ist nur ein Anstoß - schlägt sie fehl, bleibt das Reel trotzdem
@@ -143,6 +148,7 @@ async function posten() {
   }
   mkdirSync('buffer-verteiler', { recursive: true });
   writeFileSync(STAND, `${JSON.stringify(stand, null, 1)}\n`);
+  writeFileSync(VARIANTEN, `${JSON.stringify(varianten, null, 1)}\n`);
 }
 
 const [modus] = process.argv.slice(2);

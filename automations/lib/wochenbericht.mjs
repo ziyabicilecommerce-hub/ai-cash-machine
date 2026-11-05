@@ -20,7 +20,19 @@ function gruppe(posts, nach) {
 }
 
 // musterVon(post) -> Muster-Name oder '' (kommt vom Skript-Bot, damit diese Datei ohne ihn testbar bleibt)
-export function bericht(verlauf = [], jetzt = Date.now(), musterVon = () => '') {
+// varianteVon(post) -> {kalt, raum, suchbild} oder null (A/B-Test aus buffer-verteiler/varianten.json)
+export function abAuswertung(posts, varianteVon = () => null) {
+  const aus = {};
+  for (const p of posts) {
+    const v = varianteVon(p);
+    if (!v) continue;
+    for (const [f, an] of Object.entries(v)) if (typeof an === 'boolean') ((aus[f] ||= { an: [], aus: [] })[an ? 'an' : 'aus']).push(p);
+  }
+  const kurz = (l) => ({ n: l.length, schnitt: Math.round(schnitt(l)), sehdauer: Math.round(schnitt(l, (p) => p.sehdauer || 0) * 10) / 10 });
+  return Object.fromEntries(Object.entries(aus).map(([f, g]) => [f, { an: kurz(g.an), aus: kurz(g.aus) }]));
+}
+
+export function bericht(verlauf = [], jetzt = Date.now(), musterVon = () => '', varianteVon = () => null) {
   const reif = verlauf.filter((p) => jetzt - new Date(p.zeit) >= TAG);  // Zahlen brauchen ~1 Tag
   const woche = reif.filter((p) => jetzt - new Date(p.zeit) < 8 * TAG);
   const vorher = reif.filter((p) => { const a = jetzt - new Date(p.zeit); return a >= 8 * TAG && a < 15 * TAG; });
@@ -41,6 +53,13 @@ export function bericht(verlauf = [], jetzt = Date.now(), musterVon = () => '') 
   if (bz) schritte.push(`Beste Tageszeit: ${bz[0]} (Ø ${bz[1].schnitt}).`);
   const kurz = schnitt(woche, (p) => p.sehdauer || 0);
   if (woche.length && kurz < 5) schritte.push(`Ø Sehdauer nur ${kurz.toFixed(1)} s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.`);
+  const ab = abAuswertung(woche, varianteVon);
+  const NAMEN = { kalt: 'Kalter Einstieg', raum: '3D-Ton', suchbild: 'Versteckte Augen' };
+  for (const [f, w] of Object.entries(ab)) {
+    if (w.an.n < 3 || w.aus.n < 3) continue;  // zu wenig Daten für ein Urteil
+    const besser = w.an.sehdauer - w.aus.sehdauer;
+    if (Math.abs(besser) >= 0.5) schritte.push(`A/B-Test ${NAMEN[f] || f}: mit ${w.an.sehdauer} s, ohne ${w.aus.sehdauer} s Sehdauer - ${besser > 0 ? 'wirkt, bleibt an' : 'bringt nichts, könnte weg'}.`);
+  }
   const gesamt = { posts: woche.length, aufrufe: woche.reduce((a, p) => a + p.aufrufe, 0), vorherAufrufe: vorher.length ? vorher.reduce((a, p) => a + p.aufrufe, 0) : null };
-  return { stand: new Date(jetzt).toISOString(), gesamt, konten, formate, muster, zeiten, top, schritte };
+  return { stand: new Date(jetzt).toISOString(), gesamt, konten, formate, muster, zeiten, top, ab, schritte };
 }

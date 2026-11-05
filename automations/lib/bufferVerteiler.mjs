@@ -115,6 +115,13 @@ export function storyEingabe(kanalId, coverUrl) {
     metadata: { instagram: { type: 'story', shouldShareToFeed: false, isAiGenerated: true, stickerFields: { text: 'Neues Video 👀 Kopfhörer auf! Schau auf mein Profil' } } } };
 }
 
+// A/B-Test: jedes Feature ist bei 30 % der Horror-Videos aus - so zeigt der Wochenbericht, was wirklich wirkt
+export const AB_FEATURES = ['kalt', 'raum', 'suchbild'];
+export function abVariante(zufall = Math.random, aus = 0.3) {
+  return Object.fromEntries(AB_FEATURES.map((f) => [f, zufall() >= aus]));
+}
+export const abSchluessel = (text) => String(text || '').replace(/\s+/g, ' ').trim().slice(0, 40);
+
 export function zaehlen(posts, kanalId) {
   // Stories (ohne Text) zählen nicht als Post - sie begleiten nur das Reel
   const eigene = posts.filter((p) => p.channelId === kanalId && !['error', 'draft'].includes(p.status) && (p.text === undefined || String(p.text).trim()));
