@@ -27,6 +27,20 @@
     if (zeilen[0]) q('vl-duell').append(mk('div', 'tipp gut', `🏆 ${NAMEN[zeilen[0].f] || zeilen[0].f} holt pro Video am meisten Aufrufe - davon mehr machen.`));
   }
 
+  // Konto-Duell: Ø Aufrufe je Konto mit Plattform - zeigt, wohin die Energie gehen sollte
+  const plattform = (k) => (/desk\.rebel|purivelle/i.test(k) ? '📸 Instagram' : /giyuuu/i.test(k) ? '▶️ YouTube' : '🎵 TikTok');
+  function konten(posts) {
+    if (!q('vl-konten')) return;
+    const gruppen = {};
+    for (const p of posts) (gruppen[p.konto] ||= []).push(p);
+    const zeilen = Object.entries(gruppen).map(([k, l]) => ({ k, n: l.length, aufrufe: schnitt(l, (p) => p.aufrufe) })).sort((a, b) => b.aufrufe - a.aufrufe);
+    const max = Math.max(...zeilen.map((z) => z.aufrufe), 1);
+    q('vl-konten').replaceChildren(...zeilen.map((z) => balken(`${plattform(z.k)} ${z.k}`, z.aufrufe, max, `${zahl(z.aufrufe)} Ø · ${z.n} Videos`)));
+    const tot = zeilen.filter((z) => z.n >= 5 && z.aufrufe < 10);
+    if (zeilen[0]) q('vl-konten').append(mk('div', 'tipp gut', `🏆 ${zeilen[0].k} läuft am besten - dort wirken neue Ideen zuerst.`));
+    if (tot.length) q('vl-konten').append(mk('div', 'tipp', `⚠️ Unter 10 Aufrufen: ${tot.map((z) => z.k).join(', ')}. Konto wird wohl gedrosselt - in der App Kontostatus prüfen, selbst aktiv sein, Kommentare beantworten.`));
+  }
+
   function uhrzeit(posts) {
     const zeilen = BLOECKE.map(([name, von, bis]) => { const l = posts.filter((p) => { const h = stunde(p.zeit); return h >= von && h < bis; }); return { name, n: l.length, aufrufe: schnitt(l, (p) => p.aufrufe) }; })
       .filter((z) => z.n);
@@ -94,7 +108,7 @@
     try { d = await (await fetch(`daten.json?t=${Date.now()}`, { cache: 'no-store' })).json(); } catch { /* offline */ }
     const posts = (d?.letzte || []).filter((p) => p.aufrufe > 0);
     if (!posts.length) { q('vl-duell').replaceChildren(mk('div', 'tipp', 'Noch keine Zahlen - kommen 1-2 Tage nach dem Post.')); return; }
-    duell(posts); uhrzeit(posts); top(posts);
+    duell(posts); konten(posts); uhrzeit(posts); top(posts);
   }
   start();
 })();

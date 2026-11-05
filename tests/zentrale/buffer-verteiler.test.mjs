@@ -6,7 +6,7 @@ import { KANAELE, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen
 const VIDEOS = JSON.parse(readFileSync(new URL('../../video-feed/videos.json', import.meta.url), 'utf8')).videos;
 
 test('keine Shop-Werbung, jeder Kanal etwas anderes', () => {
-  assert.deepEqual(KANAELE.map((k) => k.quelle), ['horror', 'fakten', 'anime']);
+  assert.deepEqual(KANAELE.map((k) => k.quelle), ['horror', 'fakten', 'horror']);
   const fakten = passend(VIDEOS, 'fakten', 'purivelle.785'), anime = passend(VIDEOS, 'anime');
   assert.ok(fakten.length >= 20 && anime.length >= 5);
   for (const v of [...fakten, ...anime]) assert.ok(!/deskrebel\.store|purivelle\.store|#deskrebel|#purivelle/i.test(`${v.caption}${v.url}${v.titel}`), `Werbung: ${v.titel}`);
@@ -84,4 +84,16 @@ test('Hook-Wettbewerb: stärkster gültiger KI-Hook gewinnt, schwache fliegen ra
   const s = await neueGeschichte(async () => antworten[i++ % 2], []);
   assert.equal(s.titel, 'Stark');
   assert.equal(await neueGeschichte(async () => ({ ...BEISPIEL, hook: 'Es war dunkel und kalt im Wald.' }), []), null, 'nur schwache Hooks -> Vorrat');
+});
+
+test('YouTube-Horror: Hook als Titel, Instagram höchstens 5 Hashtags, Suchbild-Kommentar', () => {
+  const v = { titel: 'Zahnbürsten', caption: 'Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas. 👀 Seine Augen sind 3x im Video versteckt – bei welcher Sekunde hast du sie gesehen? 👇' };
+  const yt = beitrag(v, 'youtube', 'horror');
+  assert.equal(yt.metadata.youtube.title, 'Ich wohne allein. Heute stehen zwei Zahnbürsten im Glas. 😨 #shorts');
+  assert.equal(yt.metadata.youtube.categoryId, '24');
+  assert.ok(yt.metadata.youtube.isAiGenerated && /KI/.test(yt.text));
+  const ig = beitrag(v, 'instagram', 'horror');
+  assert.ok((ig.text.match(/#/g) || []).length <= 5, 'Instagram: max. 5 Hashtags');
+  assert.match(ig.metadata.instagram.firstComment, /Sekunde/);
+  assert.ok((beitrag({ caption: 'Wusstest du?' }, 'instagram', 'fakten').text.match(/#/g) || []).length <= 5);
 });
