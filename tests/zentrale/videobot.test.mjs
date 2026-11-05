@@ -170,3 +170,18 @@ test('KI wird nur mit starkem Schlüssel versucht', async () => {
   assert.equal(kiVerfuegbar({ GEMINI_API_KEY: 'x' }), true);
   assert.equal(kiVerfuegbar({ HORROR_KI_LOKAL: 'an' }), true);
 });
+
+test('Hook-A/B: jede Bot-Geschichte hat einen gültigen Du-Hook, Posts mit beiden Hooks werden erkannt', async () => {
+  const { alleSkripte, passt, musterWerte } = await import('../../automations/schatten/skriptBot.mjs');
+  const alle = alleSkripte();
+  for (const s of alle) {
+    assert.ok(s.hook2 && s.hook2 !== s.hook, `Du-Hook fehlt: ${s.titel}`);
+    assert.ok(s.hook2.length <= 70 && /[.!]$/.test(s.hook2) && /\b(du|dich|dir|dein|deine|deinem|deinen|deiner)\b/i.test(s.hook2), s.hook2);
+    for (const z of s.saetze.slice(-2)) assert.notEqual(s.hook2, z, 'wiederholt keinen behaltenen Satz');
+    baueFolge({ ...s, hook: s.hook2, kurz: true });
+  }
+  const s = alle[0];
+  assert.ok(passt({ text: `${s.hook2} 🎧` }, s) && passt({ text: s.hook }, s) && !passt({ text: 'etwas anderes' }, s));
+  const w = musterWerte([{ konto: '@desk.rebel', aufrufe: 300, text: s.hook2 }, { konto: '@desk.rebel', aufrufe: 100, text: s.hook }], alle);
+  assert.deepEqual(w[s.muster], { schnitt: 200, n: 2 });
+});

@@ -6,6 +6,7 @@
 import { pruefen, slug } from './videobot.mjs';
 import { hookPunkte } from './horrorKi.mjs';
 import { MUSTER2, TEIL2 } from './skriptMuster2.mjs';
+import { DU_HOOKS } from './skriptHooks2.mjs';
 
 const WAHL = { flucht: ['Nachsehen', 'Rausrennen'], tuer: ['Aufmachen', 'Zulassen'], handy: ['Antworten', 'Handy weg'], ran: ['Rangehen', 'Wegdrücken'] };
 
@@ -118,11 +119,14 @@ const REGEL = [
 
 const MUSTER = { allein: [allein, ALLEIN], fremd: [fremd, FREMD], kamera: [kamera, KAMERA], anruf: [anruf, ANRUF], regel: [regel, REGEL], ...MUSTER2 };
 
+// Post gehört zur Geschichte, wenn sein Text mit einem ihrer beiden Hooks beginnt (Hook-A/B-Test)
+export const passt = (p, s) => [s.hook, s.hook2].some((h) => h && String(p.text || '').includes(h.slice(0, 40)));
+
 const gut = (s) => !pruefen(s).length && hookPunkte(s.hook) >= 4 && s.hook.length <= 70;
 
 // Alle Geschichten, gemischt nach Muster (nie zweimal dasselbe Muster hintereinander). Mit Teil 2 für den Fall eines Hits.
 export function alleSkripte() {
-  const listen = Object.entries(MUSTER).map(([muster, [bau, varianten]]) => varianten.map((v) => ({ ...bau(v), muster, herkunft: 'skriptbot', teil2: TEIL2[muster]?.(v) })));
+  const listen = Object.entries(MUSTER).map(([muster, [bau, varianten]]) => varianten.map((v) => { const s = bau(v); return { ...s, muster, herkunft: 'skriptbot', teil2: TEIL2[muster]?.(v), hook2: DU_HOOKS[s.titel] }; }));
   const aus = [];
   for (let i = 0; listen.some((l) => l[i]); i++) for (const l of listen) if (l[i]) aus.push(l[i]);
   return aus.filter(gut);
@@ -133,7 +137,7 @@ export function musterWerte(letzte = [], alle = alleSkripte()) {
   const summe = {};
   for (const p of letzte) {
     if (!/desk\.rebel|giyuuu/i.test(p.konto || '') || !(p.aufrufe >= 0)) continue;
-    const s = alle.find((x) => String(p.text || '').includes(x.hook.slice(0, 40)));
+    const s = alle.find((x) => passt(p, x));
     if (s) (summe[s.muster] ||= []).push(p.aufrufe);
   }
   return Object.fromEntries(Object.entries(summe).map(([m, l]) => [m, { schnitt: l.reduce((a, b) => a + b, 0) / l.length, n: l.length }]));
@@ -160,7 +164,7 @@ export function teil2Kandidat(konto, bekannt = [], letzte = []) {
   const schnitt = eigene.reduce((a, p) => a + p.aufrufe, 0) / eigene.length;
   for (const p of [...eigene].sort((a, b) => b.aufrufe - a.aufrufe)) {
     if (p.aufrufe < Math.max(100, 2 * schnitt)) break;
-    const s = alle.find((x) => x.teil2 && String(p.text || '').includes(x.hook.slice(0, 40)));
+    const s = alle.find((x) => x.teil2 && passt(p, x));
     if (!s) continue;
     const t = { ...s, ...s.teil2, titel: `${s.titel} – Teil 2`, teil: 2, teil2: undefined, absender: undefined, nachricht: undefined, monster2: undefined };
     if (!weg.has(slug(t.titel)) && !pruefen(t).length) return t;

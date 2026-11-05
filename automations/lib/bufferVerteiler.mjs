@@ -116,9 +116,10 @@ export function storyEingabe(kanalId, coverUrl) {
 }
 
 // A/B-Test: jedes Feature ist bei 30 % der Horror-Videos aus - so zeigt der Wochenbericht, was wirklich wirkt
-export const AB_FEATURES = ['kalt', 'raum', 'suchbild'];
-export function abVariante(zufall = Math.random, aus = 0.3) {
-  return Object.fromEntries(AB_FEATURES.map((f) => [f, zufall() >= aus]));
+// duhook: Anfangssatz im Du-Stil statt "Ich ..." - halbe-halbe, weil hier keine Variante die "normale" ist
+export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.5 };  // Wahrscheinlichkeit für "aus"
+export function abVariante(zufall = Math.random) {
+  return Object.fromEntries(Object.entries(AB_FEATURES).map(([f, aus]) => [f, zufall() >= aus]));
 }
 export const abSchluessel = (text) => String(text || '').replace(/\s+/g, ' ').trim().slice(0, 40);
 
