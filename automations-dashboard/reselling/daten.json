@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-05T13:56:36.558Z",
+ "stand": "2026-11-05T13:59:39.678Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118897:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
+   "text": "44,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 22 Filiale(n) vorrätig.",
+   "zeit": "2026-11-05T13:59:39.678Z"
+  },
   {
    "schluessel": "filiale:3118202:1501",
    "art": "Filiale",
@@ -184,19 +194,10 @@
    "link": "https://afew-store.com/products/air-jordan-4-retro-white-tour-yellow-dark-blue-grey-black",
    "text": "afew-store.com · Air Jordan 4 Retro\nVerkauf ca. 220–320 € → Gewinn ca. +38,01 € (ROI 19 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-03T12:07:17.082Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-air-force-1-07-white-white",
-   "art": "Deal",
-   "titel": "💰 Deal: Nike Air Force 1 (Collabs/Sonder) für 89,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/Nusj91x62r8WxoARKYwC_CW2288-111-Nike-Air-Force-1-_2707-White-White-os-1.jpg?v=1749649611",
-   "link": "https://www.asphaltgold.com/products/nike-air-force-1-07-white-white",
-   "text": "asphaltgold.com · Nike Air Force 1 '07\nVerkauf ca. 110–200 € → Gewinn ca. +45,50 € (ROI 51 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-03T01:08:52.211Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-05T13:44:19.734Z",
+  "stand": "2026-11-05T13:59:43.637Z",
   "filialen": 148,
   "produkte": [
    {
@@ -222,7 +223,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 35
+      "menge": 36
      },
      {
       "name": "dm Kriftel",
@@ -230,7 +231,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 28
+      "menge": 29
      },
      {
       "name": "dm Kelsterbach",
@@ -238,7 +239,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 14
+      "menge": 16
      },
      {
       "name": "dm Frankfurt am Main",
@@ -254,7 +255,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 51
+      "menge": 53
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -262,7 +263,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 77
+      "menge": 78
      },
      {
       "name": "dm Flörsheim am Main",
@@ -448,6 +449,14 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
@@ -502,25 +511,8 @@
       "lat": 50.13488,
       "lon": 8.5572012,
       "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 8
      }
     ]
-   },
-   {
-    "dan": "3135931",
-    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
-    "preis": 29.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
-    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
-    "begriff": "adventskalender",
-    "vorrat": []
    },
    {
     "dan": "3119105",
@@ -626,7 +618,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 17
+      "menge": 18
      },
      {
       "name": "dm Frankfurt am Main",
@@ -743,6 +735,15 @@
       "menge": 6
      }
     ]
+   },
+   {
+    "dan": "3139943",
+    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
+    "preis": 49.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
+    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3143255",
@@ -865,7 +866,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 62
+      "menge": 63
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -2741,6 +2742,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "U18905UY",
+    "preis": 130,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u18905uy-u18905uy-slate-grey",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Asics GEL-NYC",
     "preis": 134,
     "verfuegbar": true,
@@ -3128,15 +3138,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "U13008BH",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u13008bh-u13008bh-drift-red-hay-afterglow",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U13008BH_1.jpg?v=1778671801",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Air Jordan 1 High OG “Royal”",
     "preis": 180,
     "verfuegbar": true,
@@ -3360,6 +3361,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U992GY-1.jpg?v=1747047954",
     "laden": "sneakersnstuff.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "AIR JORDAN 15 SP",
+    "preis": 239.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/air-jordan-15-sp-muslin-muslin-black",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-15-sp-muslin-muslin-black-iv7637-100-footwear_20_3E_20sneaker.jpg?v=1784882911",
+    "laden": "afew-store.com",
+    "begriff": "jordan"
    },
    {
     "titel": "Made In USA 993",
