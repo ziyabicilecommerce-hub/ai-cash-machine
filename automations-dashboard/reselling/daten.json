@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-06T21:09:35.464Z",
+ "stand": "2026-11-06T21:12:36.499Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3119105:188",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: M. Asam Adventskalender 2026 Schönste Zeit, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1792187316/assets/pas/images/c410291f-0b83-4bcc-97d8-6bde5e78baa9/m-asam-adventskalender-2026-schoenste-zeit",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1202634,8.5251147",
+   "shop": "https://www.dm.de/p/d/3119105/m-asam-adventskalender-2026-schoenste-zeit",
+   "text": "69,95 € · dm Sulzbach (Taunus) (6,3 km) · 1 Stück\nMain-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)\nIm Umkreis in 15 Filiale(n) vorrätig.",
+   "zeit": "2026-11-06T21:12:36.499Z"
+  },
   {
    "schluessel": "deal:https://www.sneakersnstuff.com/products/jordan-air-jordan-4-retro-og-fc-im4002-100",
    "art": "Deal",
@@ -184,19 +194,10 @@
    "shop": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
    "text": "16,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 13 Filiale(n) vorrätig.",
    "zeit": "2026-11-04T18:01:56.732Z"
-  },
-  {
-   "schluessel": "neu:https://afew-store.com/products/afew-goods-blanco-cap-green",
-   "art": "Neu",
-   "titel": "🟢 NEU im Bestand: Afew Goods Essential Cap",
-   "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/afew-goods-blanco-cap-green-ag0046p01grn-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1767362961",
-   "link": "https://afew-store.com/products/afew-goods-blanco-cap-green",
-   "text": "32,99 € · afew-store.com (online)\nVerfügbar - jetzt bestellen, solange Größen da sind.",
-   "zeit": "2026-11-04T17:45:54.437Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-06T20:57:31.145Z",
+  "stand": "2026-11-06T21:12:40.240Z",
   "filialen": 148,
   "produkte": [
    {
@@ -262,7 +263,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 74
+      "menge": 77
      },
      {
       "name": "dm Flörsheim am Main",
@@ -278,7 +279,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 9
+      "menge": 10
      }
     ]
    },
@@ -485,7 +486,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 7
+      "menge": 8
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -512,6 +513,15 @@
       "menge": 8
      }
     ]
+   },
+   {
+    "dan": "3135931",
+    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
+    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3119105",
@@ -554,6 +564,14 @@
       "menge": 4
      },
      {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
       "name": "dm Flörsheim am Main",
       "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
       "km": 7.4,
@@ -576,14 +594,6 @@
       "lat": 50.1237366,
       "lon": 8.5865988,
       "menge": 2
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 5
      }
     ]
    },
@@ -736,15 +746,6 @@
     ]
    },
    {
-    "dan": "3139943",
-    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
-    "preis": 49.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
-    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
     "dan": "3143255",
     "name": "LEGO®DUPLO® duplo Disney Frozen Kreativbox Set 37tlg, 1 St",
     "preis": 19.95,
@@ -841,7 +842,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 7
+      "menge": 8
      },
      {
       "name": "dm Kelsterbach",
@@ -873,7 +874,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 10
+      "menge": 11
      },
      {
       "name": "dm Flörsheim am Main",
@@ -2008,16 +2009,36 @@
   "ware": [],
   "top": [
    {
+    "titel": "albert grønbæk",
+    "menge": "200+"
+   },
+   {
+    "titel": "sarah tacke",
+    "menge": "500+"
+   },
+   {
+    "titel": "ilka bessin",
+    "menge": "200+"
+   },
+   {
+    "titel": "wwe",
+    "menge": "200+"
+   },
+   {
+    "titel": "super league darts",
+    "menge": "200+"
+   },
+   {
     "titel": "ina müller",
     "menge": "500+"
    },
    {
     "titel": "3 nach 9",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "krawall",
-    "menge": "1000+"
+    "menge": "200+"
    },
    {
     "titel": "königslinie",
@@ -2025,26 +2046,6 @@
    },
    {
     "titel": "will trent",
-    "menge": "200+"
-   },
-   {
-    "titel": "shafiq nandja",
-    "menge": "500+"
-   },
-   {
-    "titel": "soko leipzig",
-    "menge": "1000+"
-   },
-   {
-    "titel": "pamela anderson",
-    "menge": "200+"
-   },
-   {
-    "titel": "bankkarte",
-    "menge": "200+"
-   },
-   {
-    "titel": "katzenberger",
     "menge": "200+"
    }
   ]
@@ -2328,6 +2329,15 @@
     "url": "https://www.asphaltgold.com/products/adidas-samba-og-brown-putty-grey-gold-metallic",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/D36Bb3Wic7MOBZSDkR16_ID1481-Adidas-Samba-OG-Brown-Putty-Grey-Gold-Metallic-os-1.jpg?v=1729867929",
     "laden": "asphaltgold.com",
+    "begriff": "samba"
+   },
+   {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 95.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-eqtyel-cblack-gum5",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-eqtyel-cblack-gum5-ih4385-footwear_20_3E_20sneaker.jpg?v=1775716296",
+    "laden": "afew-store.com",
     "begriff": "samba"
    },
    {
@@ -2651,15 +2661,6 @@
     "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-carbon-warvan-gum5",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-carbon-warvan-gum5-kk2268-footwear_20_3E_20sneaker.jpg?v=1783936471",
-    "laden": "afew-store.com",
-    "begriff": "samba"
-   },
-   {
-    "titel": "adidas Originals SAMBA OG",
-    "preis": 119.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-tmvire-ftwwht-gum2",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-tmvire-ftwwht-gum2-kj2788-footwear_20_3E_20sneaker.jpg?v=1781618070",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
