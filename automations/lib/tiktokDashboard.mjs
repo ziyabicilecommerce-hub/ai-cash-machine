@@ -44,7 +44,8 @@ export function tippsAus(gesamt, konten, geplant, fehler, ohneZahlen = 0) {
 
 export function dashboardDaten({ posts = [], kanaele = [], nischen = {}, serien = {}, lernen = null, jetzt = Date.now() }) {
   const name = Object.fromEntries(kanaele.map((k) => [k.id, `@${norm(k.name)}`]));
-  const gesendet = posts.filter((p) => p.status === 'sent');
+  // Instagram-Stories (ohne Text, nur Anstoß fürs Reel) zählen nicht - sonst drücken sie als "0 Aufrufe" jeden Schnitt
+  const gesendet = posts.filter((p) => p.status === 'sent' && String(p.text || '').trim());
   const tag = 86400000;
   const zeit = (p) => Date.parse(p.sentAt || p.dueAt || 0) || 0;
   const letzte7 = gesendet.filter((p) => zeit(p) >= jetzt - 7 * tag);
