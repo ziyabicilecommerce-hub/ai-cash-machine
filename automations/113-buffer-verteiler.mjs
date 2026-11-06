@@ -8,7 +8,7 @@
 //   node 113-buffer-verteiler.mjs --posten      -> postet laut Plan, Video-Links aus out/horror-urls.json
 import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
-import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, storyEingabe, abVariante, abGewichte, AB_FEATURES, abSchluessel } from './lib/bufferVerteiler.mjs';
+import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, storyEingabe, abVariante, abGewichte, AB_FEATURES, abSchluessel, sprachAnteil } from './lib/bufferVerteiler.mjs';
 import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
 import { naechstesSkriptEn, SKRIPTE_EN } from './schatten/skripteEn.mjs';
 import { teil2Kandidat as teil2KandidatSync } from './schatten/skriptBot.mjs';
@@ -86,17 +86,21 @@ async function vorbereiten() {
   const videos = json('video-feed/videos.json', { videos: [] }).videos || [];
   const stand = json(STAND, {});
   const plan = [], horrorKanaele = [];
-  const gewichte = abGewichte(json('automations-dashboard/tiktok/wochenbericht.json', {}).ab);
+  const wb = json('automations-dashboard/tiktok/wochenbericht.json', {});
+  const gewichte = abGewichte(wb.ab);
+  const enAnteil = sprachAnteil(wb.sprachTest);
   const angepasst = Object.entries(gewichte).filter(([f, aus]) => aus !== AB_FEATURES[f]);
   bericht('### 📤 Buffer-Verteiler');
   if (angepasst.length) bericht(`- 🧪 A/B-Gewinner übernommen: ${angepasst.map(([f, aus]) => `${f} ${aus < 0.5 ? 'meist an' : 'meist aus'}`).join(', ')}`);
   for (const k of KANAELE) {
     const { heute, letzter } = zaehlen(posts, k.id);
     if (!postenJetzt(heute, letzter)) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
-    if (k.quelle.startsWith('horror')) {
+    // Mix-Kanal: diesmal Deutsch oder Englisch (Sprach-Test)
+    const quelle = k.quelle === 'horror-mix' ? (Math.random() < enAnteil ? 'horror-en' : 'horror') : k.quelle;
+    if (quelle.startsWith('horror')) {
       // jeder Horror-Kanal bekommt eine EIGENE Geschichte: was ein anderer Kanal schon hatte oder in diesem Lauf bekommt, ist tabu
       const schonDa = Object.fromEntries([...Object.values(stand).flatMap((x) => Object.entries(x || {})), ...plan.map((x) => [x.schluessel, 'jetzt'])]);
-      const h = k.quelle === 'horror-en' ? horrorSkriptEn({ ...schonDa, ...(stand[k.id] || {}) }) : await horrorSkript({ ...schonDa, ...(stand[k.id] || {}) }, k.name);
+      const h = quelle === 'horror-en' ? horrorSkriptEn({ ...schonDa, ...(stand[k.id] || {}) }) : await horrorSkript({ ...schonDa, ...(stand[k.id] || {}) }, k.name);
       if (!h) { bericht(`- ⚠️ ${k.name}: keine Horror-Geschichte`); continue; }
       const variante = abVariante(Math.random, gewichte);
       if (!h.skript.hook2) variante.duhook = false;  // nur Skript-Bot-Geschichten haben einen Du-Hook
@@ -105,7 +109,7 @@ async function vorbereiten() {
       mkdirSync('out', { recursive: true });
       writeFileSync(`out/folge-${k.id}.json`, JSON.stringify({ ...folge, _slug: slug(h.skript.titel) }, null, 1));
       horrorKanaele.push(k.id);
-      plan.push({ kanal: k.id, horror: true, schluessel: `horror:${h.schluessel || slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft, variante, hook });
+      plan.push({ kanal: k.id, horror: true, schluessel: `horror:${h.schluessel || slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft, variante, hook, quelle });
       continue;
     }
     const v = naechstes(passend(videos, k.quelle, k.name), stand[k.id] || {});
@@ -141,7 +145,7 @@ async function posten() {
       const folge = json(`out/folge-${k.id}.json`, {});
       v = { url: horrorUrl, titel: p.titel, caption: folge.caption || p.titel };
     }
-    const { text, metadata } = beitrag(v, k.dienst, k.quelle);
+    const { text, metadata } = beitrag(v, k.dienst, p.quelle || k.quelle);
     try {
       // Horror: Titelbild = Bild bei 0,35 s (Hook steht schon da) - so sieht das Profil einheitlich aus
       const video = p.horror ? { url: v.url, metadata: { thumbnailOffset: 350 } } : { url: v.url };
@@ -150,12 +154,12 @@ async function posten() {
       if (r.__typename !== 'PostActionSuccess') throw new Error(r.message || r.__typename);
       (stand[k.id] ||= {})[p.schluessel] = new Date().toISOString();
       if (p.variante) varianten[abSchluessel(p.hook)] = { kanal: k.name, zeit: new Date().toISOString(), ...p.variante };
-      const ab = p.variante ? ` [ohne: ${Object.entries(p.variante).filter(([, an]) => !an).map(([f]) => f).join(', ') || '–'}]` : '';
+      const ab = (p.quelle === 'horror-en' && k.quelle === 'horror-mix' ? ' [EN]' : p.quelle === 'horror' && k.quelle === 'horror-mix' ? ' [DE]' : '') + (p.variante ? ` [ohne: ${Object.entries(p.variante).filter(([, an]) => !an).map(([f]) => f).join(', ') || '–'}]` : '');
       bericht(`- ✅ ${k.name}: „${String(p.titel).slice(0, 60)}“${p.herkunft ? ` (${p.herkunft})` : ''}${ab} gepostet (heute dann ${p.heute + 1})`);
       const cover = urls[`${k.id}_cover`];
       if (p.horror && k.dienst === 'instagram' && /^https:\/\//.test(cover || '')) {
         try {  // Story ist nur ein Anstoß - schlägt sie fehl, bleibt das Reel trotzdem
-          const st = (await gql(POST_MUTATION, { input: storyEingabe(k.id, cover, k.quelle === 'horror-en') })).createPost;
+          const st = (await gql(POST_MUTATION, { input: storyEingabe(k.id, cover, (p.quelle || k.quelle) === 'horror-en') })).createPost;
           bericht(st.__typename === 'PostActionSuccess' ? `  - 📲 Story dazu gepostet` : `  - ⚠️ Story nicht gepostet: ${st.message || st.__typename}`);
         } catch (e) { bericht(`  - ⚠️ Story nicht gepostet: ${String(e.message).slice(0, 150)}`); }
       }

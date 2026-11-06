@@ -71,3 +71,11 @@ export function vorrat(slugs = [], gepostet = [], proTag = 5) {
   const rest = slugs.filter((x) => !weg.has(x)).length;
   return { rest, tage: Math.floor(rest / proTag) };
 }
+
+// Sprach-Test auf dem YouTube-Mix-Kanal: Ø Aufrufe deutscher vs. englischer Shorts (nur Posts mit Zahlen)
+export function sprachTest(posts = [], istEnglisch = () => false, konto = /giyuuu/i) {
+  const g = { de: [], en: [] };
+  for (const p of posts) if (konto.test(p.konto || '') && p.aufrufe > 0 && p.format !== 'anime') g[istEnglisch(p) ? 'en' : 'de'].push(p.aufrufe);  // alte Anime-Posts zählen nicht
+  const k = (l) => ({ n: l.length, schnitt: l.length ? Math.round(l.reduce((a, b) => a + b, 0) / l.length) : 0 });
+  return { de: k(g.de), en: k(g.en) };
+}

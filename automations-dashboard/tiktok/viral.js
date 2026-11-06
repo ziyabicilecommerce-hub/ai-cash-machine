@@ -131,6 +131,7 @@
       ...konten.map(([k, w]) => balken(k, w.schnitt, max, `${zahl(w.schnitt)} Ø${w.vorher !== null && w.vorher !== undefined ? ` (vorher ${zahl(w.vorher)})` : ''} · ${w.n}`)),
       ...b.top.map((p, i) => { const z = mk('div', 'tipp'); z.append(mk('b', '', `🏆 #${i + 1} ${zahl(p.aufrufe)} · ${p.konto}`), mk('div', '', p.text)); return z; }),
       ...abZeilen(b.ab || {}),
+      ...(b.sprachTest && (b.sprachTest.de.n || b.sprachTest.en.n) ? [mk('div', 'tipp', `🌍 Sprach-Test YouTube: Deutsch Ø ${zahl(b.sprachTest.de.schnitt)} (${b.sprachTest.de.n}) · Englisch Ø ${zahl(b.sprachTest.en.schnitt)} (${b.sprachTest.en.n})${b.sprachTest.de.n < 4 || b.sprachTest.en.n < 4 ? ' – noch zu wenig Daten' : ''}`)] : []),
       ...b.schritte.map((s) => mk('div', 'tipp gut', `👉 ${s}`)));
   }
 
