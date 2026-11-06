@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-06T09:01:26.138Z",
+ "stand": "2026-11-06T09:04:26.326Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -195,7 +195,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-06T08:49:14.699Z",
+  "stand": "2026-11-06T09:04:30.348Z",
   "filialen": 148,
   "produkte": [
    {
@@ -513,15 +513,6 @@
     ]
    },
    {
-    "dan": "3135931",
-    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
-    "preis": 29.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
-    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
     "dan": "3119105",
     "name": "M. Asam Adventskalender 2026 Schönste Zeit, 1 St",
     "preis": 69.95,
@@ -731,7 +722,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Eschborn",
@@ -742,6 +733,15 @@
       "menge": 6
      }
     ]
+   },
+   {
+    "dan": "3139943",
+    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
+    "preis": 49.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
+    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3143255",
@@ -1877,6 +1877,10 @@
   "ware": [],
   "top": [
    {
+    "titel": "jazz open stuttgart 2027",
+    "menge": "200+"
+   },
+   {
     "titel": "pink floyd sheep (original radio edit)",
     "menge": "200+"
    },
@@ -1890,7 +1894,7 @@
    },
    {
     "titel": "elon musk",
-    "menge": "5000+"
+    "menge": "500+"
    },
    {
     "titel": "giovanni di lorenzo",
@@ -1911,10 +1915,6 @@
    {
     "titel": "eishockey-wm 2027",
     "menge": "200+"
-   },
-   {
-    "titel": "anne menden",
-    "menge": "1000+"
    }
   ]
  },
@@ -2317,6 +2317,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "Book 1 \"Solar Red\"",
+    "preis": 105,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-book-1-solar-red-ir0838-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR0838-001_01.jpg?v=1767860802",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
+   },
+   {
     "titel": "Nike Wmns Dunk Low",
     "preis": 107,
     "verfuegbar": true,
@@ -2686,6 +2695,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "2002R",
+    "preis": 136,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-2002r-m2002rdb",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/M2002RDB-1.jpg?v=1761575213",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Air Jordan 1 Mid \"Banned\"",
     "preis": 140,
     "verfuegbar": true,
@@ -2909,15 +2927,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/mkzqpk84cx-IQ5495-005_Nike_Air-Jordan-1-Retro-High-OG-Royal-Black-Varsity-Royal-Black_os-1.jpg?v=1790858909",
     "laden": "asphaltgold.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "Women's Air Jordan 4 Retro \"Iced Carmine\"",
-    "preis": 168,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-womens-air-jordan-4-retro-iced-carmine-ib6716-600",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IB6716-600_01.jpg?v=1778164149",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
    },
    {
     "titel": "Nike Wmns Air Jordan 3 Retro *Fireside*",
@@ -3341,15 +3350,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV7638-001_01.jpg?v=1787837699",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "Made in UK 991v2",
-    "preis": 250,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/new-balance-made-in-uk-991v2-u991gl2",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U991GL2_2__04065.1725457431.1280.1280.jpg?v=1742985463",
-    "laden": "sneakersnstuff.com",
-    "begriff": "new balance"
    },
    {
     "titel": "New Balance x Amine Made in USA 992 - Chocolate / Amber",
