@@ -101,7 +101,9 @@ export function baueFolge(skript) {
     const schluss = weiter || `${frage} ${T.schreib}`;
     szenen.push({ art: 'teil2', ...zeile(schluss, { pause: 0.8, cta: weiter ? T.folgT2 : T.folg }) });
   }
-  if (skript.ki === true) {  // KI-Hintergrund je Szene (Nachricht und Endkarte bleiben gezeichnet)
+  // KI-Bilder sind Standard für alle kurzen Horror-Videos (Wunsch 06.11.: keine gezeichneten Szenen mehr); ki: false schaltet ab
+  const kiAn = skript.ki === true || (kurz_ && skript.ki !== false);
+  if (kiAn) {  // KI-Hintergrund je Szene (Nachricht und Endkarte bleiben gezeichnet)
     szenen.forEach((sz, i) => { if (!['nachricht', 'teil2'].includes(sz.art)) sz.ki = kiPrompt(sz.art, skript.ort || 'haus', i / szenen.length); });
   }
   const titel = satz(skript.titel || skript.hook, 60);
@@ -111,7 +113,7 @@ export function baueFolge(skript) {
     ort: skript.ort || 'haus', fahrgaeste: [], boesewicht: skript.boesewicht || 'schatten',
     held: { farbe: [44, 56, 92], oberteil: 'hoodie', kopf: 'haare', haar: [46, 34, 26], hose: [38, 44, 70] },
     titel, titelbild, titelbild_gelb: gelbVon(titelbild), teile: skript.teil === 2 ? 2 : 1,
-    ...(skript.ki === true ? { ki_bilder: true, ki_stil: KI_STIL, ki_seed: [...String(skript.titel || '')].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 100000, 7) } : {}),
+    ...(kiAn ? { ki_bilder: true, ki_stil: KI_STIL, ki_seed: [...String(skript.titel || '')].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 100000, 7) } : {}),
     suchbild: kurz_ && skript.suchbild !== false,  // 3 versteckte Augenpaare + Sekunden-Frage
     raum: kurz_ && skript.raum !== false,  // 3D-Ton: Flüstern kreist um den Kopf (story.py/ton.py)
     kalt: kurz_ && skript.kalt !== false,  // kalter Einstieg: 0,8 s das Ende zeigen, dann zurückspulen

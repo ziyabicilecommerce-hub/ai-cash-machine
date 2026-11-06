@@ -186,10 +186,12 @@ test('Hook-A/B: jede Bot-Geschichte hat einen gültigen Du-Hook, Posts mit beide
   assert.deepEqual(w[s.muster], { schnitt: 200, n: 2 });
 });
 
-test('KI-Hintergründe nur wenn gewünscht, mit Prompt je Szene (außer Nachricht und Endkarte)', () => {
+test('KI-Hintergründe standardmäßig an, abschaltbar, mit Prompt je Szene (außer Nachricht und Endkarte)', () => {
   const sk = { hook: 'Ich wohne allein.', saetze: ['Es klopft.', 'Ich schaue.', 'Niemand.'], ende: 'Er steht hinter mir.', kurz: true, ort: 'zug', titel: 'Test' };
-  const aus = baueFolge(sk);
+  const aus = baueFolge({ ...sk, ki: false });
   assert.equal(aus.ki_bilder, false); assert.ok(aus.szenen.every((s) => !s.ki));
+  assert.equal(baueFolge(sk).ki_bilder, true, 'kurze Videos: KI-Bilder sind Standard');
+  assert.equal(baueFolge({ ...sk, kurz: false }).ki_bilder, false, 'lange Serien-Folgen bleiben wie sie sind');
   const an = baueFolge({ ...sk, ki: true });
   assert.equal(an.ki_bilder, true); assert.match(an.ki_stil, /no text/);
   assert.ok(an.szenen.filter((s) => !['nachricht', 'teil2'].includes(s.art)).every((s) => /train|face/.test(s.ki)));
