@@ -55,3 +55,13 @@ test('typAus: Horror zählt nicht als Quiz (sonst verfälscht es das Lernen)', a
   assert.equal(typAus('Kage no Shiro Folge 30 #anime #shorts'), 'anime');
   assert.equal(typAus('Ich wohne allein.\n\n#horror #gruselgeschichte'), 'horror', 'Instagram-Horror');
 });
+
+test('Instagram-Stories (ohne Text) zählen nicht als Post', () => {
+  const kan = [{ id: 'k', name: 'desk.rebel', dienst: 'instagram' }];
+  const t = '2026-11-05T10:00:00Z';
+  const d = dashboardDaten({ kanaele: kan, jetzt: Date.parse('2026-11-06T10:00:00Z'), posts: [
+    { status: 'sent', channelId: 'k', text: 'Reel', sentAt: t, metrics: [{ type: 'views', value: 130 }] },
+    { status: 'sent', channelId: 'k', text: '', sentAt: t, metrics: [{ type: 'views', value: 0 }] },
+  ] });
+  assert.equal(d.letzte.length, 1); assert.equal(d.letzte[0].aufrufe, 130);
+});
