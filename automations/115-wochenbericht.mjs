@@ -24,7 +24,8 @@ if (b.sprachTest.de.n >= 4 && b.sprachTest.en.n >= 4) {
   b.schritte.push(`Sprach-Test YouTube: Deutsch Ø ${de.schnitt} (${de.n}) · Englisch Ø ${en.schnitt} (${en.n})${en.schnitt >= 1.5 * Math.max(de.schnitt, 1) ? ' - Englisch gewinnt, bekommt jetzt 85 %.' : de.schnitt >= 1.5 * Math.max(en.schnitt, 1) ? ' - Deutsch gewinnt, bekommt jetzt 85 %.' : ' - noch kein klarer Sieger.'}`);
 }
 const gepostet = Object.values(json('buffer-verteiler/stand.json', {})).flatMap((k) => Object.keys(k || {}));
-b.vorrat = { de: vorrat(skripte.map((x) => slug(x.titel)), gepostet), en: vorrat(SKRIPTE_EN.map((x) => slug(x.titel)), gepostet) };
+// Verbrauch pro Tag: Deutsch = desk.rebel + purivelle (je bis 5) + halb YouTube; Englisch = halb YouTube
+b.vorrat = { de: vorrat(skripte.map((x) => slug(x.titel)), gepostet, 12), en: vorrat(SKRIPTE_EN.map((x) => slug(x.titel)), gepostet, 3) };
 for (const [sprache, v] of Object.entries(b.vorrat)) {
   if (v.tage < 4) b.schritte.unshift(`⚠️ Geschichten-Vorrat ${sprache === 'de' ? 'Deutsch' : 'Englisch'}: nur noch ${v.rest} (≈ ${v.tage} Tage). Neue Muster bestellen oder GEMINI_API_KEY eintragen.`);
 }
