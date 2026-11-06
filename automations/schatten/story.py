@@ -293,29 +293,32 @@ def bild(s, t, lt):
     return im
 
 
+LUECKE = 10  # Extra-Abstand zwischen Untertitel-Wörtern, damit das größer einfedernde Wort nie das Nachbarwort berührt
+
+
 def untertitel(im, satz, key, k=None, basis=WEISS, pop=1.0):
     # Wort für Wort: die Positionen stehen fest, sichtbar sind nur die ersten k Wörter (das neueste etwas größer)
     d = ImageDraw.Draw(im)
     zeilen, z = [], ''
     for w in satz.split():
         probe = (z + ' ' + w).strip()
-        if d.textlength(probe, font=FONT) > 620 and z:
+        if d.textlength(probe, font=FONT) + LUECKE * (len(probe.split()) - 1) > 620 and z:
             zeilen.append(z); z = w
         else:
             z = probe
     zeilen.append(z)
     y, nr = 980 - (len(zeilen) - 1) * 36, 0
     for zl in zeilen:
-        x = (W - d.textlength(zl, font=FONT)) / 2
+        x = (W - d.textlength(zl, font=FONT) - LUECKE * (len(zl.split()) - 1)) / 2
         for w in zl.split():
             nr += 1
             if k is None or nr <= k:
                 f = GELB if w.strip('".,:!?') == key else basis
                 gross = FONT
                 if k is not None and nr == k:  # das neueste Wort springt nicht, es federt von groß auf normal
-                    gross = popfont(70 - 6 * weich(pop))  # federt von 70 auf 64 - größer ragte es ins Nachbarwort ("IHREHAND")
+                    gross = popfont(68 - 4 * weich(pop))  # federt von 68 auf 64; dazu 10 px Extra-Abstand, sonst klebt es am Nachbarwort ("VORMEINER")
                 d.text((x + d.textlength(w, font=FONT) / 2, y), w, font=gross, fill=f, stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
-            x += d.textlength(w + ' ', font=FONT)
+            x += d.textlength(w + ' ', font=FONT) + LUECKE
         y += 72
 
 
