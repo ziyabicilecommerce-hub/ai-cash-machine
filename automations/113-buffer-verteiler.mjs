@@ -8,7 +8,7 @@
 //   node 113-buffer-verteiler.mjs --posten      -> postet laut Plan, Video-Links aus out/horror-urls.json
 import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
-import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, storyEingabe, abVariante, abGewichte, AB_FEATURES, abSchluessel, sprachAnteil } from './lib/bufferVerteiler.mjs';
+import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, storyEingabe, abVariante, abGewichte, AB_FEATURES, abSchluessel, sprachAnteil, formatWerte } from './lib/bufferVerteiler.mjs';
 import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
 import { naechstesSkriptEn, SKRIPTE_EN } from './schatten/skripteEn.mjs';
 import { teil2Kandidat as teil2KandidatSync } from './schatten/skriptBot.mjs';
@@ -112,7 +112,9 @@ async function vorbereiten() {
       plan.push({ kanal: k.id, horror: true, schluessel: `horror:${h.schluessel || slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft, variante, hook, quelle });
       continue;
     }
-    const v = naechstes(passend(videos, k.quelle, k.name), stand[k.id] || {});
+    // stärkstes Format dieses Kontos zuerst (z. B. "Wahr oder Mythos?" bei purivelle) - in 20 % der Fälle frei, damit andere weiter getestet werden
+    const fw = Math.random() < 0.8 ? formatWerte(json('automations-dashboard/tiktok/daten.json', {}).letzte || [], k.name) : null;
+    const v = naechstes(passend(videos, k.quelle, k.name), stand[k.id] || {}, fw);
     if (!v) { bericht(`- ⚠️ ${k.name}: keine passenden Videos`); continue; }
     plan.push({ kanal: k.id, video: v, schluessel: v.datei, titel: v.titel, heute });
   }

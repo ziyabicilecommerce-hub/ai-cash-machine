@@ -106,3 +106,15 @@ test('Story zum Reel: Titelbild, KI-Kennzeichnung, zählt nicht als Tages-Post',
   const posts = [{ channelId: 'a', status: 'sent', text: 'Reel', sentAt: '2026-11-05T08:00:00Z' }, { channelId: 'a', status: 'sent', text: '', sentAt: '2026-11-05T08:01:00Z' }];
   assert.equal(zaehlen(posts, 'a').heute, 1);
 });
+
+test('Fakten: stärkstes Format des Kontos zuerst, nur mit echtem Vergleich', async () => {
+  const { formatWerte, naechstes } = await import('../../automations/lib/bufferVerteiler.mjs');
+  const jetzt = Date.parse('2026-11-06T12:00:00Z'), z = '2026-11-05T08:00:00Z';
+  const letzte = [{ konto: '@purivelle.785', format: 'mythos', aufrufe: 125, zeit: z }, { konto: '@purivelle.785', format: 'mythos', aufrufe: 25, zeit: z },
+    { konto: '@purivelle.785', format: 'quiz', aufrufe: 10, zeit: z }, { konto: '@purivelle.785', format: 'quiz', aufrufe: 8, zeit: z }, { konto: '@desk.rebel', format: 'quiz', aufrufe: 999, zeit: z }];
+  assert.deepEqual(formatWerte(letzte, 'purivelle', jetzt), { mythos: 75, quiz: 9 });
+  assert.equal(formatWerte(letzte.slice(0, 2), 'purivelle', jetzt), null, 'nur ein Format = kein Vergleich');
+  const v = [{ datei: 'q', kanal: 'fakten', caption: 'Welcher Planet ist am heißesten?', erstellt: '2026-11-06' }, { datei: 'm', kanal: 'fakten', caption: 'Honig verdirbt nie. Wahr oder Mythos?', erstellt: '2026-11-01' }];
+  assert.equal(naechstes(v, {}).datei, 'q', 'ohne Werte: das neueste');
+  assert.equal(naechstes(v, {}, { mythos: 75, quiz: 9 }).datei, 'm', 'mit Werten: Mythos zuerst');
+});

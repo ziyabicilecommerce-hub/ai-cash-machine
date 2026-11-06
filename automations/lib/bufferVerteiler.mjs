@@ -1,6 +1,7 @@
 // Buffer-Verteiler (#113): jeder Buffer-Kanal bekommt EIGENE Inhalte, mindestens 5 Posts am Tag.
 // Reine Funktionen - ohne Netz testbar. Kanal-IDs sind keine Geheimnisse (stehen auch in Buffer-Links).
 // Keine Shop-Werbung: jeder Kanal bekommt allgemeine Inhalte, jeder etwas anderes.
+import { typAus } from './tiktokLernen.mjs';
 export const KANAELE = [
   { id: '6ae8f441e29c69a1713e44f3', name: 'desk.rebel', dienst: 'instagram', quelle: 'horror' },
   { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'fakten' },
@@ -42,17 +43,32 @@ export function passend(videos, quelle, konto = '') {
 const passendRang = (v) => (v.kanal === 'fakten' ? (v.konto && /desk\.rebel|purivelle/.test(v.konto) ? 0 : !v.konto ? 1 : 2) : 0);
 
 // Nächstes Video: noch nie auf diesem Kanal gepostet (neueste zuerst), sonst das am längsten nicht gepostete (Wiederholung)
-export function naechstes(videos, gepostet = {}) {
+// formatPunkte: Ø Aufrufe je Format auf diesem Konto (formatWerte) - das stärkste Format kommt zuerst
+export function naechstes(videos, gepostet = {}, formatPunkte = null) {
   if (!videos.length) return null;
   const rang = (v) => videos.indexOf(v);
   const neu = videos.filter((v) => !gepostet[v.datei]);
-  // Reihenfolge der Quelle zählt zuerst (z. B. eigene Fakten-Videos), innerhalb davon die neuesten
-  neu.sort((a, b) => (passendRang(a) - passendRang(b)) || String(b.erstellt || '').localeCompare(String(a.erstellt || '')) || rang(a) - rang(b));
+  const werte = Object.values(formatPunkte || {});
+  const mittel = werte.length ? werte.reduce((a, b) => a + b, 0) / werte.length : 0;
+  const fp = (v) => (formatPunkte ? formatPunkte[typAus(v.caption || v.titel)] ?? mittel : 0);
+  // Reihenfolge der Quelle zählt zuerst (z. B. eigene Fakten-Videos), dann das stärkste Format, dann die neuesten
+  neu.sort((a, b) => (passendRang(a) - passendRang(b)) || (fp(b) - fp(a)) || String(b.erstellt || '').localeCompare(String(a.erstellt || '')) || rang(a) - rang(b));
   if (neu.length) return neu[0];
   return [...videos].sort((a, b) => String(gepostet[a.datei]).localeCompare(String(gepostet[b.datei])))[0];
 }
 
 // Soll dieser Kanal jetzt posten? Höchstens ZIEL_PRO_TAG+1 am Tag und mit Abstand zum letzten Post.
+// Ø Aufrufe je Format für ein Konto aus daten.json "letzte" (nur Posts mit Zahlen, mind. 2 je Format)
+export function formatWerte(letzte = [], konto = '', jetzt = Date.now()) {
+  const g = {};
+  for (const p of letzte) {
+    if (!String(p.konto || '').includes(konto) || !(p.aufrufe > 0) || jetzt - new Date(p.zeit) < 864e5) continue;
+    (g[p.format] ||= []).push(p.aufrufe);
+  }
+  const aus = Object.fromEntries(Object.entries(g).filter(([, l]) => l.length >= 2).map(([f, l]) => [f, l.reduce((a, b) => a + b, 0) / l.length]));
+  return Object.keys(aus).length >= 2 ? aus : null;  // nur mit einem echten Vergleich
+}
+
 export function postenJetzt(heute, letzter, jetzt = Date.now(), { ziel = ZIEL_PRO_TAG, abstandMin = ABSTAND_MIN } = {}) {
   if (heute > ziel) return false;
   if (letzter && jetzt - Date.parse(letzter) < abstandMin * 60000) return false;
