@@ -127,8 +127,19 @@ export function storyEingabe(kanalId, coverUrl, en = false) {
 // A/B-Test: jedes Feature ist bei 30 % der Horror-Videos aus - so zeigt der Wochenbericht, was wirklich wirkt
 // duhook: Anfangssatz im Du-Stil statt "Ich ..." - halbe-halbe, weil hier keine Variante die "normale" ist
 export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.5 };  // Wahrscheinlichkeit für "aus"
-export function abVariante(zufall = Math.random) {
-  return Object.fromEntries(Object.entries(AB_FEATURES).map(([f, aus]) => [f, zufall() >= aus]));
+export function abVariante(zufall = Math.random, gewichte = AB_FEATURES) {
+  return Object.fromEntries(Object.entries(gewichte).map(([f, aus]) => [f, zufall() >= aus]));
+}
+// Selbst-Optimierung: hat der Wochenbericht ein klares Ergebnis (je >= 3 Videos, >= 0,5 s Unterschied in der Sehdauer),
+// läuft der Gewinner bei 85 % der Videos, der Verlierer nur noch bei 15 % - ein Rest bleibt zum Weitertesten.
+export function abGewichte(ab = {}) {
+  const g = { ...AB_FEATURES };
+  for (const [f, w] of Object.entries(ab || {})) {
+    if (!(f in g) || !(w?.an?.n >= 3) || !(w?.aus?.n >= 3)) continue;
+    const d = w.an.sehdauer - w.aus.sehdauer;
+    if (d >= 0.5) g[f] = 0.15; else if (d <= -0.5) g[f] = 0.85;
+  }
+  return g;
 }
 export const abSchluessel = (text) => String(text || '').replace(/\s+/g, ' ').trim().slice(0, 40);
 

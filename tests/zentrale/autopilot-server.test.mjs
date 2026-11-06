@@ -81,7 +81,8 @@ test('Ganzer Lauf gegen einen nachgebauten Shop: verschlüsselt, paginiert, Tele
   assert.match(out, /Verschlüsselte Live-Daten geschrieben/);
   assert.ok(!/€|\d+ Bestellungen/.test(out), 'Log darf keine Geschäftszahlen enthalten (öffentliches Repo)');
   const roh = readFileSync(ausgabe, 'utf8');
-  assert.ok(!roh.includes('LED') && !roh.includes('K-1'), 'Datei muss verschlüsselt sein');
+  // Klartext stünde in Anführungszeichen ("LED", "K-1000"); nackte 3 Buchstaben kommen im Zufalls-Chiffrat rein zufällig vor (~1 von 6 Läufen)
+  assert.ok(!roh.includes('"LED"') && !roh.includes('"K-1'), 'Datei muss verschlüsselt sein');
   const d = await ZTresor.entschluesseln(JSON.parse(roh), 'mein-geheimes-pw');
   assert.equal(d.bestellungen.length, 60, 'beide Seiten geholt');
   assert.equal(d.produkte.find((p) => p.id === 'p10').kosten, 9);

@@ -23,7 +23,7 @@ function gruppe(posts, nach) {
 // varianteVon(post) -> {kalt, raum, suchbild} oder null (A/B-Test aus buffer-verteiler/varianten.json)
 export function abAuswertung(posts, varianteVon = () => null) {
   const aus = {};
-  for (const p of posts) {
+  for (const p of posts.filter((x) => (x.sehdauer || 0) > 0)) {  // nur Posts mit Sehdauer (YouTube liefert keine)
     const v = varianteVon(p);
     if (!v) continue;
     for (const [f, an] of Object.entries(v)) if (typeof an === 'boolean') ((aus[f] ||= { an: [], aus: [] })[an ? 'an' : 'aus']).push(p);
