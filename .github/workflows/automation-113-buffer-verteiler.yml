@@ -33,6 +33,12 @@ jobs:
         uses: ./.github/actions/ki-lokal
         with:
           modell: ${{ vars.KI_LOKAL_MODELL || 'qwen2.5:7b' }}
+      - name: Neuesten Stand holen
+        # Der Checkout ist der Stand beim Anstoßen - ein Lauf kurz davor kann inzwischen gepostet und gespeichert haben.
+        # Ohne das hier würde dieser Lauf dessen Posts nicht kennen (doppelte Posts) und beim Speichern überschreiben.
+        run: |
+          git fetch -q origin "$GITHUB_REF_NAME"
+          git checkout -q "origin/$GITHUB_REF_NAME" -- buffer-verteiler/ 2>/dev/null || true
       - name: Vorbereiten (zählen, Horror-Geschichte schreiben)
         id: verteilen
         env:
@@ -88,8 +94,14 @@ jobs:
           for versuch in 1 2 3 4 5; do
             git fetch -q origin "$GITHUB_REF_NAME"
             git reset -q --hard "origin/$GITHUB_REF_NAME"
-            mkdir -p buffer-verteiler; cp "$sicher" buffer-verteiler/stand.json
-            [ -f "$sicher.v" ] && cp "$sicher.v" buffer-verteiler/varianten.json && git add buffer-verteiler/varianten.json
+            mkdir -p buffer-verteiler
+            # zusammenführen statt überschreiben: was andere Läufe inzwischen gespeichert haben, bleibt erhalten
+            if [ -f buffer-verteiler/stand.json ]; then jq -s '.[0] * .[1]' buffer-verteiler/stand.json "$sicher" > "$sicher.neu"; else cp "$sicher" "$sicher.neu"; fi
+            cp "$sicher.neu" buffer-verteiler/stand.json
+            if [ -f "$sicher.v" ]; then
+              if [ -f buffer-verteiler/varianten.json ]; then jq -s '.[0] * .[1]' buffer-verteiler/varianten.json "$sicher.v" > "$sicher.vneu"; else cp "$sicher.v" "$sicher.vneu"; fi
+              cp "$sicher.vneu" buffer-verteiler/varianten.json && git add buffer-verteiler/varianten.json
+            fi
             git add buffer-verteiler/stand.json
             git commit -qm "chore: Buffer-Verteiler Stand [skip ci]" || exit 0
             git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
