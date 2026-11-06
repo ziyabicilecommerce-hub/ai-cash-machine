@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-06T22:48:59.159Z",
+ "stand": "2026-11-06T22:52:44.717Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -1205,6 +1205,7 @@
      19.87,
      19.87,
      19.87,
+     19.87,
      19.87
     ]
    },
@@ -1318,6 +1319,7 @@
      33.35,
      33.35,
      33.35,
+     33.35,
      33.35
     ]
    },
@@ -1351,6 +1353,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     15.37,
      15.37,
      15.37,
      15.37,
@@ -1422,6 +1425,7 @@
      13.03,
      13.03,
      13.03,
+     13.03,
      13.03
     ]
    },
@@ -1455,6 +1459,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     32.5,
      32.5,
      32.5,
      32.5,
@@ -1566,6 +1571,7 @@
      36.7,
      36.7,
      36.7,
+     36.26,
      36.26,
      36.26,
      36.26,
@@ -1700,6 +1706,7 @@
      19.54,
      19.54,
      19.54,
+     19.54,
      19.54
     ]
    },
@@ -1813,6 +1820,7 @@
      13.72,
      13.72,
      13.72,
+     13.72,
      13.72
     ]
    },
@@ -1846,6 +1854,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     34.67,
      34.67,
      34.67,
      34.67,
@@ -1944,6 +1953,7 @@
      21.7,
      21.7,
      21.7,
+     21.7,
      21.7
     ]
    }
@@ -2004,16 +2014,16 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 366,
+  "geprueft": 796,
   "statistik": {
-   "karten": 366,
+   "karten": 796,
    "mitPreis": 366,
    "imBudget": 19,
    "steigend": 0,
    "fallend": 8
   },
-  "quelle": "TCGdex",
-  "stand": "2026-11-06T21:54:13.320Z"
+  "quelle": "TCGdex + pokemontcg.io",
+  "stand": "2026-11-06T22:52:33.342Z"
  },
  "trends": {
   "ware": [],
@@ -2029,6 +2039,10 @@
    {
     "titel": "hamburger dom",
     "menge": "100+"
+   },
+   {
+    "titel": "böhmermann selenskyj",
+    "menge": "1000+"
    },
    {
     "titel": "mckenna grace",
@@ -2053,10 +2067,6 @@
    {
     "titel": "alexander huber",
     "menge": "1000+"
-   },
-   {
-    "titel": "verkehrskontrolle",
-    "menge": "500+"
    }
   ]
  },
@@ -2954,6 +2964,15 @@
     "begriff": "dunk"
    },
    {
+    "titel": "Gel-Cumulus 16",
+    "preis": 150,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-002",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-002_01.jpg?v=1771589255",
+    "laden": "sneakersnstuff.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "ASICS GEL-NYC - White / Midnight",
     "preis": 150,
     "verfuegbar": true,
@@ -2968,6 +2987,15 @@
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-angora-reflection",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-angora-reflection-u90609z4-footwear_20_3E_20sneaker.jpg?v=1783411160",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "New Balance 9060",
+    "preis": 150.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-driftwood-sea-salt",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-driftwood-sea-salt-u906011m-footwear_20_3E_20sneaker.jpg?v=1783934007",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
@@ -3013,15 +3041,6 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203b079-100",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203B079-100_01.jpg?v=1780653397",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "Gel-NYC 2.0",
-    "preis": 160,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203b079-600",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203B079-600_01.jpg?v=1780653438",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
    },
@@ -3213,15 +3232,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_106_SR_RT_GLB.jpg?v=1790170342",
     "laden": "kith.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 180.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-timberwolf-black-cement",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-black-cement-u90606h1-footwear_20_3E_20sneaker.jpg?v=1790201203",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
    },
    {
     "titel": "New Balance 90/60",
