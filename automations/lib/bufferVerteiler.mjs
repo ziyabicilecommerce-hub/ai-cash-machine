@@ -144,7 +144,8 @@ export function storyEingabe(kanalId, coverUrl, en = false) {
 
 // A/B-Test: jedes Feature ist bei 30 % der Horror-Videos aus - so zeigt der Wochenbericht, was wirklich wirkt
 // duhook: Anfangssatz im Du-Stil statt "Ich ..." - halbe-halbe, weil hier keine Variante die "normale" ist
-export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.5 };  // Wahrscheinlichkeit für "aus"
+// ki: echt wirkende KI-Hintergründe (Pollinations/FLUX) statt gezeichneter Szenen - halbe-halbe, um die Wirkung zu messen
+export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.5, ki: 0.5 };  // Wahrscheinlichkeit für "aus"
 export function abVariante(zufall = Math.random, gewichte = AB_FEATURES) {
   return Object.fromEntries(Object.entries(gewichte).map(([f, aus]) => [f, zufall() >= aus]));
 }

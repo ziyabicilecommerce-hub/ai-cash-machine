@@ -1,0 +1,36 @@
+name: "🧪 Videobot KI-Bilder-Test (postet nichts)"
+
+# Rendert eine Skript-Bot-Geschichte mit KI-Hintergründen (Pollinations/FLUX, kostenlos) und legt das Video als
+# Vorab-Release "ki-test-..." ab - nur zum Anschauen, es wird nichts gepostet.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Werkzeuge
+        run: |
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
+          pip install -q pillow edge-tts
+      - name: Geschichte mit KI-Bildern rendern
+        run: |
+          mkdir -p out
+          node -e "Promise.all([import('./automations/schatten/skriptBot.mjs'),import('./automations/schatten/videobot.mjs')]).then(([b,v])=>{const s=b.alleSkripte()[2];require('fs').writeFileSync('out/folge.json',JSON.stringify(v.baueFolge({...s,kurz:true,ki:true})))})"
+          python3 automations/schatten/story.py out/folge.json out
+          ls out/ki-*.jpg 2>/dev/null | wc -l | xargs -I{} echo "KI-Bilder geladen: {}" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Als Vorab-Release ablegen
+        run: |
+          TAG="ki-test-$(date -u +%Y%m%d-%H%M)"
+          gh release create "$TAG" out/video.mp4 out/cover.jpg -R "$GITHUB_REPOSITORY" --prerelease --title "KI-Bilder-Test" --notes "Test-Render mit KI-Hintergründen, nicht gepostet."
+          echo "https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG" | tee -a "$GITHUB_STEP_SUMMARY"
