@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-06T08:55:18.390Z",
+ "stand": "2026-11-06T09:31:29.972Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -195,7 +195,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-06T08:49:14.699Z",
+  "stand": "2026-11-06T09:19:21.893Z",
   "filialen": 148,
   "produkte": [
    {
@@ -1189,6 +1189,7 @@
      19.87,
      19.87,
      19.87,
+     19.87,
      19.87
     ]
    },
@@ -1288,6 +1289,7 @@
      33.35,
      33.35,
      33.35,
+     33.35,
      33.35
     ]
    },
@@ -1321,6 +1323,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     15.37,
      15.37,
      15.37,
      15.37,
@@ -1364,6 +1367,7 @@
      13.03,
      13.03,
      13.03,
+     13.03,
      13.03
     ]
    },
@@ -1397,6 +1401,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     32.5,
      32.5,
      32.5,
      32.5,
@@ -1494,6 +1499,7 @@
      36.7,
      36.7,
      36.7,
+     36.26,
      36.26,
      36.26,
      36.26,
@@ -1600,6 +1606,7 @@
      19.54,
      19.54,
      19.54,
+     19.54,
      19.54
     ]
    },
@@ -1699,6 +1706,7 @@
      13.72,
      13.72,
      13.72,
+     13.72,
      13.72
     ]
    },
@@ -1732,6 +1740,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     34.67,
      34.67,
      34.67,
      34.67,
@@ -1802,6 +1811,7 @@
      21.7,
      21.7,
      21.7,
+     21.7,
      21.7
     ]
    }
@@ -1862,20 +1872,36 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 593,
+  "geprueft": 366,
   "statistik": {
-   "karten": 593,
+   "karten": 366,
    "mitPreis": 366,
    "imBudget": 19,
    "steigend": 0,
    "fallend": 8
   },
-  "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-11-06T08:27:50.699Z"
+  "quelle": "TCGdex",
+  "stand": "2026-11-06T09:25:15.442Z"
  },
  "trends": {
   "ware": [],
   "top": [
+   {
+    "titel": "rj mitte",
+    "menge": "500+"
+   },
+   {
+    "titel": "gefahrgutunfall in krefeld",
+    "menge": "20000+"
+   },
+   {
+    "titel": "weiße weihnachten",
+    "menge": "500+"
+   },
+   {
+    "titel": "jazz open stuttgart 2027",
+    "menge": "200+"
+   },
    {
     "titel": "pink floyd sheep (original radio edit)",
     "menge": "200+"
@@ -1890,7 +1916,7 @@
    },
    {
     "titel": "elon musk",
-    "menge": "5000+"
+    "menge": "1000+"
    },
    {
     "titel": "giovanni di lorenzo",
@@ -1898,23 +1924,7 @@
    },
    {
     "titel": "ticketmaster",
-    "menge": "1000+"
-   },
-   {
-    "titel": "ellhofen",
     "menge": "2000+"
-   },
-   {
-    "titel": "georgia",
-    "menge": "500+"
-   },
-   {
-    "titel": "eishockey-wm 2027",
-    "menge": "200+"
-   },
-   {
-    "titel": "anne menden",
-    "menge": "1000+"
    }
   ]
  },
@@ -1982,6 +1992,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050124-413-Detail.jpg?v=1787348051",
     "laden": "kith.com",
     "begriff": "cap"
+   },
+   {
+    "titel": "Asics GEL-1130 *Holiday Pack*",
+    "preis": 62,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/asics-gel1130-black-pure-silver",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/sh6elhb9ll-1203A997-001_Asics_GEL-1130-Black-Pure-Silver_os-1.jpg?v=1762351538",
+    "laden": "asphaltgold.com",
+    "begriff": "asics"
    },
    {
     "titel": "Nike Dunk Low Retro SE *Panda*",
@@ -2090,6 +2109,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/y-3-logo-cap-ngtred-black-kw9699-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1793851517",
     "laden": "afew-store.com",
     "begriff": "cap"
+   },
+   {
+    "titel": "Tennis Classic",
+    "preis": 80,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/nike-tennis-classic-iv2437-100-white-white-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IV2437-100_1.jpg?v=1785486761",
+    "laden": "overkillshop.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Samba OG",
@@ -2344,15 +2372,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "New Balance 530",
-    "preis": 109.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-mr-530-aa-beige",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-mr-530-aa-beige-mr530aa-footwear_20_3E_20sneaker_5e50c0d1-8db6-482f-a0b7-16cc540565aa.jpg?v=1737999904",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Samba OG W",
     "preis": 110,
     "verfuegbar": true,
@@ -2414,15 +2433,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cc1c86f0b9268f6b27add5b92548f1df272b48ac_1201A789_020_Asics_GEL_NYC_Graphite_Grey_Black_os_1_9d944940-9064-4615-9542-6bf02307a613.jpg?v=1745415111",
     "laden": "asphaltgold.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "Air Force 1 '07",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/nike-air-force-1-07-cw2288-111-white-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/CW2288-111_1_ab7621cd-ac0f-4726-abe1-c18686d747f1.jpg?v=1730107192",
-    "laden": "overkillshop.com",
-    "begriff": "dunk"
    },
    {
     "titel": "Samba OG",
@@ -2669,15 +2679,6 @@
    },
    {
     "titel": "Asics GEL-NYC",
-    "preis": 129,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/asics-gelnyc-cream-cream",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/gvKSREXYpVjDrjthqVg6_1203A739-100-Asics-GEL-NYC-Cream-Cream-os-1.jpg?v=1743088108",
-    "laden": "asphaltgold.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "Asics GEL-NYC",
     "preis": 134,
     "verfuegbar": true,
     "url": "https://www.asphaltgold.com/products/asics-gel-nyc-cream-oyster-grey",
@@ -2911,15 +2912,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Women's Air Jordan 4 Retro \"Iced Carmine\"",
-    "preis": 168,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-womens-air-jordan-4-retro-iced-carmine-ib6716-600",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IB6716-600_01.jpg?v=1778164149",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Nike Wmns Air Jordan 3 Retro *Fireside*",
     "preis": 169,
     "verfuegbar": true,
@@ -3082,6 +3074,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "New Balance 9060",
+    "preis": 180.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-timberwolf-black-cement",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-black-cement-u90606h1-footwear_20_3E_20sneaker.jpg?v=1790201203",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "New Balance 90/60",
     "preis": 189,
     "verfuegbar": true,
@@ -3095,7 +3096,7 @@
     "preis": 189.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1793915110",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1793955612",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
@@ -3206,6 +3207,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV5678-102_01.jpg?v=1785762646",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "Air Max Plus SP x One Piece \"Ope Ope\"",
+    "preis": 210,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-max-plus-sp-x-one-piece-ope-ope-iw1282-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IW1282-600_01_5de60272-5d1c-4e0a-8414-7f3e2e0be140.jpg?v=1789998227",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "New Balance x Action Bronson 1890 - Brown / Blue",
