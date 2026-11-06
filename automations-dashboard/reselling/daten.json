@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-06T16:21:36.859Z",
+ "stand": "2026-11-06T16:24:34.265Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -195,7 +195,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-06T16:09:40.263Z",
+  "stand": "2026-11-06T16:24:36.143Z",
   "filialen": 148,
   "produkte": [
    {
@@ -229,7 +229,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 28
+      "menge": 27
      },
      {
       "name": "dm Kelsterbach",
@@ -261,7 +261,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 77
+      "menge": 76
      },
      {
       "name": "dm Flörsheim am Main",
@@ -269,7 +269,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 57
+      "menge": 56
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -277,7 +277,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 10
+      "menge": 9
      }
     ]
    },
@@ -394,7 +394,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 6
+      "menge": 5
      },
      {
       "name": "dm Flörsheim am Main",
@@ -402,7 +402,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 13
+      "menge": 12
      },
      {
       "name": "dm Eschborn",
@@ -410,7 +410,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Eschborn",
@@ -484,7 +484,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 8
+      "menge": 7
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -511,15 +511,6 @@
       "menge": 8
      }
     ]
-   },
-   {
-    "dan": "3135931",
-    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
-    "preis": 29.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
-    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
-    "begriff": "adventskalender",
-    "vorrat": []
    },
    {
     "dan": "3119105",
@@ -609,7 +600,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 20
+      "menge": 19
      },
      {
       "name": "dm Kriftel",
@@ -657,7 +648,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 31
+      "menge": 30
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -683,7 +674,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Kriftel",
@@ -742,6 +733,15 @@
       "menge": 6
      }
     ]
+   },
+   {
+    "dan": "3139943",
+    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
+    "preis": 49.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
+    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3143255",
@@ -880,7 +880,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 26
+      "menge": 25
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -1957,11 +1957,15 @@
   "ware": [],
   "top": [
    {
-    "titel": "nachtcafé nachtcafé",
+    "titel": "max holzer",
     "menge": "200+"
    },
    {
     "titel": "arnstadt",
+    "menge": "200+"
+   },
+   {
+    "titel": "nachtcafé nachtcafé",
     "menge": "200+"
    },
    {
@@ -1991,10 +1995,6 @@
    {
     "titel": "letizia von spanien",
     "menge": "1000+"
-   },
-   {
-    "titel": "die rheinpfalz",
-    "menge": "200+"
    }
   ]
  },
