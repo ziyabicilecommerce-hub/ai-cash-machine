@@ -53,3 +53,19 @@ test('Vorrats-Wächter: zählt ungepostete Geschichten und Tage', async () => {
   assert.deepEqual(vorrat(['a', 'b', 'c', 'd', 'e', 'f', 'g'], ['horror:a', 'horror:hit:b', 'x.mp4']), { rest: 5, tage: 1 });
   assert.deepEqual(vorrat([], []), { rest: 0, tage: 0 });
 });
+
+test('A/B optimiert sich selbst: Gewinner meist an, Verlierer meist aus, erst ab klarem Ergebnis', async () => {
+  const { abGewichte, AB_FEATURES, abVariante } = await import('../../automations/lib/bufferVerteiler.mjs');
+  const w = (an, aus, n = 3) => ({ an: { n, sehdauer: an }, aus: { n, sehdauer: aus } });
+  const g = abGewichte({ kalt: w(7, 4), raum: w(3, 5), suchbild: w(5, 4.8), duhook: w(9, 2, 2) });
+  assert.equal(g.kalt, 0.15); assert.equal(g.raum, 0.85);
+  assert.equal(g.suchbild, AB_FEATURES.suchbild, 'zu kleiner Unterschied'); assert.equal(g.duhook, AB_FEATURES.duhook, 'zu wenig Videos');
+  assert.deepEqual(abGewichte(undefined), AB_FEATURES);
+  assert.equal(abVariante(() => 0.5, g).raum, false); assert.equal(abVariante(() => 0.5, g).kalt, true);
+});
+
+test('A/B-Auswertung ignoriert Posts ohne Sehdauer (YouTube)', async () => {
+  const { abAuswertung } = await import('../../automations/lib/wochenbericht.mjs');
+  const ab = abAuswertung([{ text: 'a', sehdauer: 6 }, { text: 'b', sehdauer: 0, aufrufe: 900 }], () => ({ kalt: true }));
+  assert.equal(ab.kalt.an.n, 1);
+});

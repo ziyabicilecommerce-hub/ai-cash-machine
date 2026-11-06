@@ -16,9 +16,25 @@ export function zustand(konto, verlauf = [], jetzt = Date.now(), haupt = HAUPTKO
 }
 
 // slot: 'abend' | 'nacht' (Videobot) oder 'fakten' (Fakten-Kanal)
-export function darf(modus, slot) {
+// bester: das Zeitfenster, das bei diesem Konto nachweislich mehr Aufrufe bringt (bestesFenster)
+export function darf(modus, slot, bester = 'nacht') {
   if (modus !== 'schonung') return true;
-  return slot === 'abend';  // Schonung: nur das Abend-Video, kein Nacht-Video, keine Fakten
+  return slot === bester;  // Schonung: nur EIN Video im besten Fenster, keine Fakten
+}
+
+// Bestes Zeitfenster aus den letzten 14 Tagen (nur Posts mit Zahlen). Ohne genug Daten: nachts -
+// dort holten die TikTok-Konten am 05.11. 753/671/252 Aufrufe.
+export function bestesFenster(konto, verlauf = [], jetzt = Date.now()) {
+  const k = name(konto);
+  const stunde = (iso) => Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hour: 'numeric', hourCycle: 'h23' }).format(new Date(iso)));
+  const g = { nacht: [], abend: [] };
+  for (const p of verlauf) {
+    const alt = jetzt - new Date(p.zeit);
+    if (name(p.konto) === k && p.aufrufe > 0 && alt >= TAG && alt < 15 * TAG) g[slotAus(stunde(p.zeit))].push(p.aufrufe);
+  }
+  const schnitt = (l) => l.reduce((a, b) => a + b, 0) / l.length;
+  if (g.nacht.length < 2 || g.abend.length < 2) return 'nacht';
+  return schnitt(g.abend) > schnitt(g.nacht) ? 'abend' : 'nacht';
 }
 
 export const slotAus = (stundeBerlin) => (stundeBerlin >= 12 ? 'abend' : 'nacht');
