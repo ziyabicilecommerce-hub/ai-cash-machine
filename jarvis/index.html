@@ -156,6 +156,11 @@
         @media (max-width: 480px) {
             .usage-badge { display: none; }
         }
+        /* Handy: die App-Navigation bricht um statt seitlich aus dem Bild zu laufen, das Chatfeld darf schrumpfen */
+        .hud-nav { flex-wrap: wrap; row-gap: 6px; max-width: calc(100vw - 56px); }
+        .top-left { max-width: calc(100vw - 56px); }
+        .chat-input { min-width: 0; }
+        @media (max-width: 480px) { .top-left { left: 16px; } .hud-nav { max-width: calc(100vw - 32px); } }
 
         .map-panel {
             position: absolute;

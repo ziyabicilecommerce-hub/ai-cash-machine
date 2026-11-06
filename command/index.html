@@ -58,6 +58,9 @@
   @media(max-width:820px){ .nav-links a { display:none; } }
 
   /* --- Live-Ticker-Band (unter der Nav, immer sichtbar) --- */
+  /* Handy: Status-Plakette im Kopf bricht um statt die Seite zu verbreitern */
+  #healthBadgeWrap { max-width:100%; min-width:0; }
+  #healthBadgeWrap * { max-width:100%; overflow-wrap:anywhere; white-space:normal; }
   .ticker-tape { position:fixed; top:57px; left:0; right:0; z-index:45; height:26px; overflow:hidden;
     background:rgba(3,5,18,.92); border-bottom:1px solid var(--line2); }
   .ticker-track { display:flex; width:max-content; gap:36px; white-space:nowrap; padding:0 18px;
@@ -72,6 +75,7 @@
     text-align:center; padding:136px 20px 16px; max-width:820px; margin:0 auto; }
   .hero-spotlight { position:absolute; inset:0; z-index:-1; pointer-events:none;
     background:radial-gradient(360px circle at var(--mx,50%) var(--my,15%), rgba(111,224,255,.10), transparent 68%); }
+  header.hero { overflow-x:clip; }  /* der 560-px-Leuchteffekt darf auf dem Handy nicht seitlich überstehen */
   header.hero::before { content:''; position:absolute; top:52%; left:50%; width:560px; height:560px; max-width:140vw;
     transform:translate(-50%,-58%); background:radial-gradient(circle,rgba(62,242,160,.15),transparent 65%);
     pointer-events:none; z-index:-1; animation:coreGlow 5s ease-in-out infinite; }
@@ -727,7 +731,7 @@
 
 <footer>
   <b>CASHMACHINE COMMAND</b> · das eine System der CASHMACHINE AI Suite ·
-  <a href="../">Jarvis</a>·<a href="../mission-control/">Mission Control</a>·<a href="../empire/">Empire</a>
+  <a href="../">Jarvis</a> · <a href="../mission-control/">Mission Control</a> · <a href="../empire/">Empire</a>
 </footer>
 
 <script>

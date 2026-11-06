@@ -53,12 +53,23 @@ async function portion(prompt) {
   }
 }
 
+// Die KI liefert manchmal kaputtes JSON (z. B. ein fehlendes Komma) - dann bis zu 3 Versuche, sonst ein schlichter Ablauf
+// statt dass die ganze Folge abbricht (vorher scheiterte #98 daran jeden Tag).
+async function planHolen(prompt, opt, thema = '') {
+  for (let i = 0; i < 3; i++) {
+    try { const p = await kiJson(prompt, opt); if (Array.isArray(p?.abschnitte) && p.abschnitte.length) return p; } catch (e) { console.log(`[98-podcast] Plan-Versuch ${i + 1}: ${String(e.message).slice(0, 120)}`); }
+  }
+  return { titel: thema, beschreibung: '', abschnitte: SPRACHE === 'en'
+    ? ['What is it about?', 'The key facts', 'Surprising details', 'What it means for us', 'Wrap-up']
+    : ['Worum geht es?', 'Die wichtigsten Fakten', 'Überraschende Details', 'Was das für uns bedeutet', 'Fazit'] };
+}
+
 async function skriptSchreiben(thema, nr) {
   const sprache = SPRACHE === 'en' ? 'Englisch' : 'Deutsch';
-  const plan = await kiJson(
+  const plan = await planHolen(
     `Plane Folge ${nr} des Wissens-Podcasts "${NAME}" (ca. ${MINUTEN} Minuten, ${sprache}) zum Thema "${thema}". Zwei Hosts: ${HOSTS.A.name} (erklaert) und ${HOSTS.B.name} (fragt neugierig nach, bringt Beispiele und Humor). ` +
       `Nur gesichertes Wissen, keine erfundenen Studien oder Zahlen. Antworte NUR mit JSON: {"titel":"packender Folgentitel","beschreibung":"2-3 Saetze fuer die Shownotes","abschnitte":["..."]} mit ${MINUTEN > 20 ? '6 bis 10' : '4 bis 6'} Abschnitten.`,
-    { maxTokens: 1000 }
+    { maxTokens: 1000 }, thema
   );
   const abschnitte = (Array.isArray(plan.abschnitte) ? plan.abschnitte : []).map((a) => String(typeof a === 'string' ? a : a?.titel || JSON.stringify(a)).slice(0, 200)).filter(Boolean).slice(0, 10);
   if (!abschnitte.length) throw new Error('Keine Abschnitte');

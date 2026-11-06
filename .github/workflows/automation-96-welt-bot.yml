@@ -75,6 +75,7 @@ jobs:
 
   rendern:
     needs: skripte
+    if: needs.skripte.outputs.gruppen != '[]' && needs.skripte.outputs.gruppen != ''
     runs-on: ubuntu-latest
     timeout-minutes: 340
     strategy:
@@ -123,7 +124,7 @@ jobs:
 
   veroeffentlichen:
     needs: rendern
-    if: always() && needs.rendern.result != 'cancelled'
+    if: always() && needs.rendern.result != 'cancelled' && needs.rendern.result != 'skipped'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
