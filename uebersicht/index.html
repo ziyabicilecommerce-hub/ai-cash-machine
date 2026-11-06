@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CASHMACHINE SYSTEMSTATUS</title>
+<meta name="description" content="Alle Workflows mit Ampel (rot ganz oben), alle Apps der Suite und die Kennzahlen – erstellt sich bei jedem Veröffentlichen selbst neu.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Jarvis-Leitstand: dunkel wie die ganze Suite. Erst was rot ist, dann die Zahlen, dann alles zum Durchsuchen. */
+  :root { --bg:#070b12; --fl:#0e1520; --fl2:#142030; --fg:#e4eef8; --leise:#8798ad; --linie:#1d2b3e; --cyan:#6fe0ff;
+    --gruen:#4fd28c; --gelb:#ffc94a; --rot:#ff6b5e; --ruhig:#5d6b7d; color-scheme:dark;
+    --display:"Chakra Petch","Arial Narrow",system-ui,sans-serif; --text:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:400 15px/1.55 var(--text); }
+  .seite { max-width:68rem; margin:0 auto; padding:28px max(16px, env(safe-area-inset-right, 0px)) 60px max(16px, env(safe-area-inset-left, 0px)); display:grid; gap:34px; }
+  a { color:inherit; }
+  h1, h2 { font-family:var(--display); margin:0; line-height:1.1; text-wrap:balance; }
+  h1 { font-size:clamp(1.9rem, 6vw, 3rem); letter-spacing:.02em; }
+  h2 { font-size:1.3rem; }
+  .etikett { font:500 .72rem/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--cyan); }
+  .leise { color:var(--leise); }
+  .zurueck { font:.8rem var(--mono); color:var(--cyan); text-decoration:none; }
+  .zahlen { display:grid; grid-template-columns:repeat(auto-fit, minmax(8.5rem, 1fr)); gap:1px; background:var(--linie); border:1px solid var(--linie); }
+  .zahl { background:var(--fl); padding:14px 16px; display:grid; gap:2px; }
+  .zahl b { font:600 1.9rem/1 var(--display); font-variant-numeric:tabular-nums; }
+  .zahl span { font-size:.8rem; color:var(--leise); }
+  .zahl.rot b { color:var(--rot); } .zahl.gelb b { color:var(--gelb); } .zahl.gruen b { color:var(--gruen); }
+  section { display:grid; gap:12px; }
+  .karten { display:grid; gap:8px; }
+  .wf { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; background:var(--fl); border:1px solid var(--linie); padding:10px 12px; min-width:0; }
+  .wf.rot { border-color:color-mix(in srgb, var(--rot) 55%, var(--linie)); }
+  .wf.gelb { border-color:color-mix(in srgb, var(--gelb) 45%, var(--linie)); }
+  .punkt { width:10px; height:10px; border-radius:50%; background:var(--ruhig); }
+  .gruen .punkt { background:var(--gruen); } .gelb .punkt { background:var(--gelb); } .rot .punkt { background:var(--rot); box-shadow:0 0 10px var(--rot); }
+  .wf-name { min-width:0; overflow-wrap:anywhere; }
+  .wf-name small { display:block; font:.72rem var(--mono); color:var(--leise); }
+  .wf a.lauf { font:.75rem var(--mono); color:var(--cyan); white-space:nowrap; text-decoration:none; }
+  .alles-gut { background:var(--fl); border:1px solid color-mix(in srgb, var(--gruen) 45%, var(--linie)); padding:14px 16px; color:var(--gruen); }
+  .werkzeug { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  input[type=search] { flex:1 1 14rem; min-width:0; background:var(--fl); border:1px solid var(--linie); color:var(--fg); padding:10px 12px; font:inherit; border-radius:0; }
+  input[type=search]:focus-visible { outline:2px solid var(--cyan); outline-offset:1px; }
+  .filter button { background:var(--fl); border:1px solid var(--linie); color:var(--leise); font:.8rem var(--mono); padding:9px 11px; cursor:pointer; }
+  .filter button[aria-pressed="true"] { color:var(--cyan); border-color:var(--cyan); }
+  .filter button:focus-visible { outline:2px solid var(--cyan); }
+  .liste { display:grid; grid-template-columns:repeat(auto-fill, minmax(19rem, 1fr)); gap:6px; }
+  .liste .wf { padding:8px 10px; font-size:.9rem; }
+  .apps { display:grid; grid-template-columns:repeat(auto-fill, minmax(15.5rem, 1fr)); gap:8px; }
+  .app { background:var(--fl); border:1px solid var(--linie); padding:11px 13px; display:grid; gap:3px; text-decoration:none; min-width:0; }
+  .app:hover, .app:focus-visible { border-color:var(--cyan); outline:none; }
+  .app b { font:600 .95rem/1.25 var(--display); overflow-wrap:anywhere; }
+  .app small { font-size:.82rem; color:var(--leise); }
+  .app code { font:.7rem var(--mono); color:var(--cyan); }
+  .fuss { font:.75rem/1.5 var(--mono); color:var(--leise); }
+  @media (prefers-reduced-motion:no-preference) { .rot .punkt { animation:puls 1.6s ease-in-out infinite; } @keyframes puls { 50% { opacity:.45; } } }
+</style>
+</head>
+<body>
+<main class="seite">
+  <header style="display:grid;gap:10px">
+    <a class="zurueck" href="../jarvis/">← J.A.R.V.I.S.</a>
+    <div class="etikett" id="stand">Systemstatus</div>
+    <h1>Systemstatus der Cash Machine</h1>
+    <p class="leise">Jeder Workflow mit seiner Ampel. Rot heißt: der letzte Lauf ist gescheitert. Gelb heißt: einmal gescheitert, davor ging es noch.</p>
+  </header>
+
+  <section aria-label="Kennzahlen"><div class="zahlen" id="zahlen"><div class="zahl"><b>…</b><span>lädt</span></div></div></section>
+
+  <section>
+    <div class="etikett">Braucht Aufmerksamkeit</div>
+    <div class="karten" id="achtung"></div>
+  </section>
+
+  <section>
+    <div class="etikett">Alle Workflows</div>
+    <div class="werkzeug">
+      <label for="suche" class="leise" style="position:absolute;left:-9999px">Workflows durchsuchen</label>
+      <input id="suche" type="search" placeholder="Workflow suchen, z. B. Videobot">
+      <div class="filter" id="filter" role="group" aria-label="Nach Ampel filtern">
+        <button type="button" data-f="" aria-pressed="true">alle</button>
+        <button type="button" data-f="rot" aria-pressed="false">rot</button>
+        <button type="button" data-f="gelb" aria-pressed="false">gelb</button>
+        <button type="button" data-f="gruen" aria-pressed="false">grün</button>
+        <button type="button" data-f="ruhig" aria-pressed="false">ruhig</button>
+      </div>
+    </div>
+    <div class="liste" id="liste"></div>
+  </section>
+
+  <section>
+    <div class="etikett">Alle Apps der Suite</div>
+    <div class="apps" id="apps"></div>
+  </section>
+
+  <p class="fuss" id="fuss"></p>
+</main>
+<script>
+(() => {
+  const q = (id) => document.getElementById(id);
+  const mk = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+  const zeit = (iso) => iso ? new Date(iso).toLocaleString('de-DE', { timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+  const NAMEN = { gruen: 'grün', gelb: 'gelb', rot: 'rot', ruhig: 'ruhig' };
+  let daten = null, filter = '';
+
+  function zeile(w) {
+    const z = mk('div', `wf ${w.status}`);
+    const name = mk('div', 'wf-name', w.name);
+    name.append(mk('small', '', `${NAMEN[w.status]}${w.zeit ? ` · ${zeit(w.zeit)}` : ''}${w.rotSeit ? ` · rot seit ${zeit(w.rotSeit)}` : ''}`));
+    z.append(mk('span', 'punkt'), name);
+    if (/^https:\/\/github\.com\//.test(w.link || '')) { const a = mk('a', 'lauf', 'Lauf ↗'); a.href = w.link; a.target = '_blank'; a.rel = 'noopener'; z.append(a); } else z.append(mk('span'));
+    return z;
+  }
+
+  function liste() {
+    const s = q('suche').value.trim().toLowerCase();
+    const l = daten.workflows.filter((w) => (!filter || w.status === filter) && (!s || w.name.toLowerCase().includes(s) || w.datei.includes(s)));
+    q('liste').replaceChildren(...(l.length ? l.map(zeile) : [mk('p', 'leise', 'Kein Workflow passt.')]));
+  }
+
+  async function start() {
+    try { daten = await (await fetch(`daten.json?t=${Date.now()}`, { cache: 'no-store' })).json(); } catch { /* noch nicht erstellt */ }
+    if (!daten) { q('zahlen').replaceChildren(mk('div', 'zahl', 'Noch keine Daten – sie entstehen beim nächsten Veröffentlichen der Seite.')); return; }
+    const z = daten.zahlen;
+    q('stand').textContent = `Systemstatus · Stand ${zeit(daten.stand)}`;
+    const k = (wert, text, cls = '') => { const d = mk('div', `zahl ${cls}`); d.append(mk('b', '', String(wert)), mk('span', '', text)); return d; };
+    q('zahlen').replaceChildren(k(z.apps, 'Apps'), k(z.workflows, 'Workflows'), k(z.automationen, 'Automationen'), k(z.testdateien, 'Testdateien'),
+      ...(daten.mitStatus ? [k(z.rot, 'rot', 'rot'), k(z.gelb, 'gelb', 'gelb'), k(z.gruen, 'grün', 'gruen'), k(z.ruhig, 'ruhig')] : []));
+    const achtung = daten.workflows.filter((w) => w.status === 'rot' || w.status === 'gelb');
+    q('achtung').replaceChildren(...(!daten.mitStatus ? [mk('p', 'leise', 'Ampeln brauchen den Lese-Zugriff auf GitHub Actions beim Veröffentlichen.')]
+      : achtung.length ? achtung.map(zeile) : [mk('div', 'alles-gut', '✓ Alles grün – kein Workflow ist zuletzt gescheitert.')]));
+    q('apps').replaceChildren(...daten.apps.map((a) => { const e = mk('a', 'app'); e.href = `../${a.ordner}/`; e.append(mk('b', '', a.titel), ...(a.text ? [mk('small', '', a.text)] : []), mk('code', '', `/${a.ordner}`)); return e; }));
+    q('fuss').textContent = 'Ruhig = in den letzten 500 Läufen nicht dabei (selten geplant, pausiert oder nur von Hand). Die Seite erstellt sich bei jedem Veröffentlichen der Suite selbst neu.';
+    liste();
+  }
+
+  q('suche').addEventListener('input', () => daten && liste());
+  q('filter').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b || !daten) return;
+    filter = b.dataset.f;
+    for (const x of q('filter').querySelectorAll('button')) x.setAttribute('aria-pressed', String(x === b));
+    liste();
+  });
+  start();
+})();
+</script>
+</body>
+</html>

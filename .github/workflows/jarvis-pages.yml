@@ -1,11 +1,14 @@
 name: Deploy Site to GitHub Pages
 
 on:
+  schedule:
+    - cron: '37 */3 * * *'  # Systemstatus spätestens alle 3 Std. frisch
   push:
     branches: [main]
     paths:
       - 'index.html'
       - 'jarvis/**'
+      - 'uebersicht/**'
       - 'brand-assassin/**'
       - 'automations-dashboard/**'
       - 'finance-cockpit/**'
@@ -53,6 +56,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read  # Systemstatus (#117) liest die letzten Läufe aller Workflows
 
 concurrency:
   group: pages
@@ -70,6 +74,11 @@ jobs:
 
       - name: Werbe-Check (blockierte Videos für Zentrale und Bio-Seite markieren)
         run: node automations/werbe-check.mjs || echo "Werbe-Check übersprungen"
+
+      - name: Systemstatus erstellen (#117)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node automations/117-suite-uebersicht.mjs || echo "Systemstatus übersprungen"
 
       - name: Assemble public site
         run: |
@@ -115,6 +124,7 @@ jobs:
           cp -r bio _site/bio
           cp -r neuland _site/neuland
           cp -r nachtwerk _site/nachtwerk
+          cp -r uebersicht _site/uebersicht
           mkdir -p _site/trading-bot-worker
           cp -r trading-bot-worker/lib _site/trading-bot-worker/lib
 
