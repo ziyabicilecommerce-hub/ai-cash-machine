@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-06T08:03:22.095Z",
+ "stand": "2026-11-06T08:55:18.390Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "drop:Nike Goadome Low Foam Schuh (Herren):2026-11-06T08:12:00.000Z",
+   "art": "Drop",
+   "titel": "⏰ Drop gleich: Nike Goadome Low Foam Schuh (Herren)",
+   "bild": "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit/ade22ad2-271d-4b33-8c57-55b1d6cf2647/goadome-low-foam-metallic-gold-and-black-%C2%A0-iv7693-700-%C2%A0%E2%80%93-erscheinungsdatum.jpg",
+   "link": "https://www.nike.com/de/launch/t/goadome-low-foam-metallic-gold-and-black",
+   "text": "Metallic Gold/Schwarz/Cargo Khaki · 199,99 € · Start 09:12 Uhr",
+   "zeit": "2026-11-06T08:18:14.272Z"
+  },
   {
    "schluessel": "drop:Nike Goadome Low Foam Schuh (Herren):2026-11-06T08:00:00.000Z",
    "art": "Drop",
@@ -183,20 +192,10 @@
    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Chillabell-ex",
    "text": "Kaufen ab 15,00 € · Ziel 33,59 € · +15,41 € nach Gebühren (ROI 103 %)",
    "zeit": "2026-11-03T23:44:17.756Z"
-  },
-  {
-   "schluessel": "filiale:3118202:1080",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: Dein Bestes Adventskalender 2026 - merry christmas für Katzen, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787554263/assets/pas/images/ba693b2b-2361-4c1c-a86d-45040e0c865b/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=49.984061,8.430174",
-   "shop": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
-   "text": "16,95 € · dm Rüsselsheim am Main (10,3 km) · 1 Stück\nAdam-Opel-Straße 59-61, 65428 Rüsselsheim am Main\nIm Umkreis in 14 Filiale(n) vorrätig.",
-   "zeit": "2026-11-03T21:38:18.243Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-06T08:03:25.739Z",
+  "stand": "2026-11-06T08:49:14.699Z",
   "filialen": 148,
   "produkte": [
    {
@@ -909,8 +908,8 @@
    "farbe": "Metallic Gold/Schwarz/Cargo Khaki",
    "preis": 199.99,
    "bild": "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit/ade22ad2-271d-4b33-8c57-55b1d6cf2647/goadome-low-foam-metallic-gold-and-black-%C2%A0-iv7693-700-%C2%A0%E2%80%93-erscheinungsdatum.jpg",
-   "zeit": "2026-11-06T08:00:00.000Z",
-   "art": "LEO",
+   "zeit": "2026-11-06T08:12:00.000Z",
+   "art": "",
    "link": "https://www.nike.com/de/launch/t/goadome-low-foam-metallic-gold-and-black",
    "marke": "Nike",
    "kat": "Sneaker"
@@ -1189,6 +1188,7 @@
      19.87,
      19.87,
      19.87,
+     19.87,
      19.87
     ]
    },
@@ -1287,6 +1287,7 @@
      33.35,
      33.35,
      33.35,
+     33.35,
      33.35
     ]
    },
@@ -1320,6 +1321,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     15.37,
      15.37,
      15.37,
      15.37,
@@ -1361,6 +1363,7 @@
      13.03,
      13.03,
      13.03,
+     13.03,
      13.03
     ]
    },
@@ -1394,6 +1397,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     32.5,
      32.5,
      32.5,
      32.5,
@@ -1490,6 +1494,7 @@
      36.7,
      36.7,
      36.7,
+     36.26,
      36.26,
      36.26,
      36.26,
@@ -1594,6 +1599,7 @@
      19.54,
      19.54,
      19.54,
+     19.54,
      19.54
     ]
    },
@@ -1692,6 +1698,7 @@
      13.72,
      13.72,
      13.72,
+     13.72,
      13.72
     ]
    },
@@ -1725,6 +1732,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     34.67,
      34.67,
      34.67,
      34.67,
@@ -1793,6 +1801,7 @@
      21.7,
      21.7,
      21.7,
+     21.7,
      21.7
     ]
    }
@@ -1853,59 +1862,59 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 366,
+  "geprueft": 593,
   "statistik": {
-   "karten": 366,
+   "karten": 593,
    "mitPreis": 366,
    "imBudget": 19,
    "steigend": 0,
    "fallend": 8
   },
-  "quelle": "TCGdex",
-  "stand": "2026-11-06T07:30:29.654Z"
+  "quelle": "TCGdex + pokemontcg.io",
+  "stand": "2026-11-06T08:27:50.699Z"
  },
  "trends": {
   "ware": [],
   "top": [
    {
+    "titel": "pink floyd sheep (original radio edit)",
+    "menge": "200+"
+   },
+   {
+    "titel": "antonio nusa",
+    "menge": "200+"
+   },
+   {
+    "titel": "wochenmarkt",
+    "menge": "200+"
+   },
+   {
+    "titel": "elon musk",
+    "menge": "5000+"
+   },
+   {
+    "titel": "giovanni di lorenzo",
+    "menge": "2000+"
+   },
+   {
+    "titel": "ticketmaster",
+    "menge": "1000+"
+   },
+   {
+    "titel": "ellhofen",
+    "menge": "2000+"
+   },
+   {
+    "titel": "georgia",
+    "menge": "500+"
+   },
+   {
     "titel": "eishockey-wm 2027",
     "menge": "200+"
    },
    {
-    "titel": "lemgo",
-    "menge": "200+"
-   },
-   {
-    "titel": "fabian reese",
-    "menge": "200+"
-   },
-   {
-    "titel": "schiffswrack",
-    "menge": "200+"
-   },
-   {
-    "titel": "hohen neuendorf",
-    "menge": "100+"
-   },
-   {
-    "titel": "godwin",
-    "menge": "100+"
-   },
-   {
-    "titel": "rentenversicherungsbericht",
-    "menge": "500+"
-   },
-   {
-    "titel": "der farang",
-    "menge": "500+"
-   },
-   {
-    "titel": "autódromo josé carlos pace",
-    "menge": "100+"
-   },
-   {
-    "titel": "erdrutsch",
-    "menge": "100+"
+    "titel": "anne menden",
+    "menge": "1000+"
    }
   ]
  },
@@ -1925,7 +1934,7 @@
     "preis": 47.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/barbour-wax-cap-sage",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/barbour-wax-cap-sage-mha0005sg91-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1793886849",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/barbour-wax-cap-sage-mha0005sg91-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1793955070",
     "laden": "afew-store.com",
     "begriff": "cap"
    },
@@ -1957,15 +1966,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "740",
-    "preis": 60,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/new-balance-740-u740yg2",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U740YG2-01.jpg?v=1761576893",
-    "laden": "sneakersnstuff.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
     "preis": 60,
     "verfuegbar": true,
@@ -1975,13 +1975,13 @@
     "begriff": "cap"
    },
    {
-    "titel": "Asics GEL-1130 *Holiday Pack*",
-    "preis": 62,
+    "titel": "Kith & '47 for the Los Angeles Dodgers Lightweight Suede Velour Long Bill Cap - Nocturnal",
+    "preis": 60,
     "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/asics-gel1130-black-pure-silver",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/sh6elhb9ll-1203A997-001_Asics_GEL-1130-Black-Pure-Silver_os-1.jpg?v=1762351538",
-    "laden": "asphaltgold.com",
-    "begriff": "asics"
+    "url": "https://eu.kith.com/products/khma050124-413",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050124-413-Detail.jpg?v=1787348051",
+    "laden": "kith.com",
+    "begriff": "cap"
    },
    {
     "titel": "Nike Dunk Low Retro SE *Panda*",
@@ -1998,15 +1998,6 @@
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/kh5936-100",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KH5936-100-Front_9761d2a0-d3c8-4f2b-b1d3-ffbf195b9cb3.jpg?v=1755618429",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
-    "titel": "Kith for ‘47 for the New York Yankees Corduroy Franchise LS Cap - Nocturnal",
-    "preis": 64,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050120-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050120-413-Detail.jpg?v=1787348051",
     "laden": "kith.com",
     "begriff": "cap"
    },
@@ -2072,6 +2063,24 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH1018-200_01.jpg?v=1762768495",
     "laden": "sneakersnstuff.com",
     "begriff": "dunk"
+   },
+   {
+    "titel": "Made In UK 991v2",
+    "preis": 75,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-991v2-u991kk2",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U991KK2-01.jpg?v=1748346961",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "574",
+    "preis": 77,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-574-wl574evg",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/WL574EVG-1__15228.1719435499.1280.1280.jpg?v=1742985395",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Y-3 LOGO CAP",
@@ -2200,15 +2209,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "204L",
-    "preis": 98,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/new-balance-204l-u204lmmc",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U204LMMC_01.jpg?v=1757919418",
-    "laden": "sneakersnstuff.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Wmns Air Jordan 3 Retro Starfish",
     "preis": 99,
     "verfuegbar": true,
@@ -2254,6 +2254,24 @@
     "begriff": "new balance"
    },
    {
+    "titel": "ASICS Gel-1130 - Black / Cream",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a609-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a609-023",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "New Balance 740",
     "preis": 99.99,
     "verfuegbar": true,
@@ -2279,6 +2297,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/chdxm0waki-IB7746-300_Nike_Dunk-Low-Retro-Premium-Cargo-Khaki-Medium-Olive-Sequoia-Cargo-Khaki_os-1.jpg?v=1788954624",
     "laden": "asphaltgold.com",
     "begriff": "dunk"
+   },
+   {
+    "titel": "GT-2160",
+    "preis": 104,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gt-2160-1203a275-103",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A275-103_01.jpg?v=1770746761",
+    "laden": "sneakersnstuff.com",
+    "begriff": "asics"
    },
    {
     "titel": "U204L2SZ",
@@ -2335,6 +2362,24 @@
     "begriff": "samba"
    },
    {
+    "titel": "ASICS Gel-1130 - White / Taro Purple",
+    "preis": 110,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a899-100",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_100_SR_RT_GLB.jpg?v=1780992734",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS Gel-1130 - Cream / Carrier Grey",
+    "preis": 110,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a899-101",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_101_SR_RT_GLB.jpg?v=1780992709",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "New Balance 740",
     "preis": 113,
     "verfuegbar": true,
@@ -2368,15 +2413,6 @@
     "url": "https://www.asphaltgold.com/products/asics-gel-nyc-graphite-grey-black",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cc1c86f0b9268f6b27add5b92548f1df272b48ac_1201A789_020_Asics_GEL_NYC_Graphite_Grey_Black_os_1_9d944940-9064-4615-9542-6bf02307a613.jpg?v=1745415111",
     "laden": "asphaltgold.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "Gel-Cumulus 16",
-    "preis": 116,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-002",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-002_01.jpg?v=1771589255",
-    "laden": "sneakersnstuff.com",
     "begriff": "asics"
    },
    {
@@ -2633,6 +2669,15 @@
    },
    {
     "titel": "Asics GEL-NYC",
+    "preis": 129,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/asics-gelnyc-cream-cream",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/gvKSREXYpVjDrjthqVg6_1203A739-100-Asics-GEL-NYC-Cream-Cream-os-1.jpg?v=1743088108",
+    "laden": "asphaltgold.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "Asics GEL-NYC",
     "preis": 134,
     "verfuegbar": true,
     "url": "https://www.asphaltgold.com/products/asics-gel-nyc-cream-oyster-grey",
@@ -2767,12 +2812,12 @@
     "begriff": "dunk"
    },
    {
-    "titel": "Gel-Cumulus 16",
+    "titel": "ASICS GEL-NYC - White / Midnight",
     "preis": 150,
     "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-201",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-201_01.jpg?v=1780653283",
-    "laden": "sneakersnstuff.com",
+    "url": "https://eu.kith.com/products/asi1203a383-118",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_118_SR_RT_GLB.jpg?v=1785420543",
+    "laden": "kith.com",
     "begriff": "asics"
    },
    {
@@ -2836,6 +2881,24 @@
     "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203b079-100",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203B079-100_01.jpg?v=1780653397",
     "laden": "sneakersnstuff.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "Gel-NYC 2.0",
+    "preis": 160,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203b079-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203B079-600_01.jpg?v=1780653438",
+    "laden": "sneakersnstuff.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS GEL-NYC 2.0 - Umeboshi / Moonrock",
+    "preis": 160,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203b079-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B079_600_SR_RT_GLB-1.jpg?v=1789458097",
+    "laden": "kith.com",
     "begriff": "asics"
    },
    {
@@ -2947,6 +3010,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
+    "preis": 170,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a537-118",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "Nike Air Jordan 9 Retro OG *Space Jam*",
     "preis": 178,
     "verfuegbar": true,
@@ -2960,7 +3032,7 @@
     "preis": 179.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/air-jordan-1-high-og-black-multi-color",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1793895126",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1793953387",
     "laden": "afew-store.com",
     "begriff": "jordan"
    },
@@ -2999,6 +3071,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ5495-005_01.jpg?v=1790618946",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "ASICS GEL KAYANO 12.1 - White / Cream",
+    "preis": 180,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a759-106",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_106_SR_RT_GLB.jpg?v=1790170342",
+    "laden": "kith.com",
+    "begriff": "asics"
    },
    {
     "titel": "New Balance 90/60",
@@ -3248,7 +3329,7 @@
     "preis": 249.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/air-jordan-x-mowalola-14-retro-sp-black-burnt-red",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-x-mowalola-14-retro-sp-black-burnt-red-iq5708-001-footwear_20_3E_20sneaker.jpg?v=1793804888",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-x-mowalola-14-retro-sp-black-burnt-red-iq5708-001-footwear_20_3E_20sneaker.jpg?v=1793953449",
     "laden": "afew-store.com",
     "begriff": "jordan"
    },
