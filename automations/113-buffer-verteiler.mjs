@@ -100,7 +100,20 @@ async function vorbereiten() {
     if (quelle.startsWith('horror')) {
       // jeder Horror-Kanal bekommt eine EIGENE Geschichte: was ein anderer Kanal schon hatte oder in diesem Lauf bekommt, ist tabu
       const schonDa = Object.fromEntries([...Object.values(stand).flatMap((x) => Object.entries(x || {})), ...plan.map((x) => [x.schluessel, 'jetzt'])]);
-      const h = quelle === 'horror-en' ? horrorSkriptEn({ ...schonDa, ...(stand[k.id] || {}) }) : await horrorSkript({ ...schonDa, ...(stand[k.id] || {}) }, k.name);
+      // Zweite Sicherung gegen doppelte Posts: was laut Buffer heute schon auf diesem Kanal lief (Hook im Text), ist tabu -
+      // auch wenn der gespeicherte Stand es aus irgendeinem Grund nicht kennt
+      const heuteTexte = posts.filter((x) => x.channelId === k.id).map((x) => String(x.text || ''));
+      const schonHeute = (sk) => [sk.hook, sk.hook2].some((hk) => hk && heuteTexte.some((t) => t.includes(String(hk).slice(0, 40))));
+      const extra = {};
+      let h = null;
+      for (let versuch = 0; versuch < 5; versuch++) {
+        const gepostet = { ...schonDa, ...(stand[k.id] || {}), ...extra };
+        h = quelle === 'horror-en' ? horrorSkriptEn(gepostet) : await horrorSkript(gepostet, k.name);
+        if (!h || !schonHeute(h.skript)) break;
+        bericht(`- ↩️ ${k.name}: „${h.skript.titel}“ lief heute schon - nehme eine andere`);
+        extra[`horror:${h.schluessel || slug(h.skript.titel)}`] = 'heute';
+        h = null;
+      }
       if (!h) { bericht(`- ⚠️ ${k.name}: keine Horror-Geschichte`); continue; }
       const variante = abVariante(Math.random, gewichte);
       if (!h.skript.hook2) variante.duhook = false;  // nur Skript-Bot-Geschichten haben einen Du-Hook
