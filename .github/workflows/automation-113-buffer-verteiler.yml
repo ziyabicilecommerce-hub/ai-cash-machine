@@ -22,7 +22,7 @@ concurrency:
 jobs:
   posten:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 70  # bis zu 3 Horror-Videos, mit KI-Bildern je ~3 Min. mehr
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

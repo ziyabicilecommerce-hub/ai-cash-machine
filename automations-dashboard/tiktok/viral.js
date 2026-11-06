@@ -110,7 +110,7 @@
 
   // A/B-Test: Sehdauer mit und ohne Feature (erst ab je 3 Videos aussagekräftig)
   function abZeilen(ab) {
-    const NAMEN = { kalt: '⏪ Kalter Einstieg', raum: '🎧 3D-Ton', suchbild: '👀 Versteckte Augen', duhook: '🫵 Du-Hook statt Ich-Hook' };
+    const NAMEN = { kalt: '⏪ Kalter Einstieg', raum: '🎧 3D-Ton', suchbild: '👀 Versteckte Augen', duhook: '🫵 Du-Hook statt Ich-Hook', ki: '🖼️ KI-Bilder statt Zeichnung' };
     const zeilen = Object.entries(ab).map(([f, w]) => mk('div', 'tipp', `🧪 ${NAMEN[f] || f}: mit ${w.an.sehdauer} s (${w.an.n}) · ohne ${w.aus.sehdauer} s (${w.aus.n})${w.an.n < 3 || w.aus.n < 3 ? ' – noch zu wenig Daten' : ''}`));
     return zeilen.length ? [mk('div', 'unter', 'A/B-Test (Ø Sehdauer):'), ...zeilen] : [];
   }

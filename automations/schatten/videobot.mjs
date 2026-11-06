@@ -51,6 +51,23 @@ export function kuerzen(saetze, max = 2) {
   return [...saetze.slice(0, max - 2), ...saetze.slice(-2)];
 }
 
+// KI-Hintergründe (kostenlos über Pollinations/FLUX, ki.py): echt wirkende Nachtbilder statt gezeichneter Szenen
+const KI_ORT = {
+  zug: 'empty night train carriage interior, dim flickering ceiling lights, dark windows',
+  haus: 'dark apartment hallway at night, bedroom door slightly open, dim light',
+  wald: 'dark pine forest at night, fog, weak flashlight beam',
+  aufzug: 'old narrow elevator interior at night, flickering light, scratched mirror',
+  flugzeug: 'dark airplane cabin at night, rows of empty seats, small window',
+};
+const KI_STIL = 'found footage, grainy realistic photo, low light, cinematic horror, vertical frame, no text, no watermark, no people in focus';
+function kiPrompt(art, ort, anteil) {
+  const raum = KI_ORT[ort] || KI_ORT.haus;
+  if (art === 'fratze') return 'pale ghostly face with hollow dark eyes emerging from total darkness, close up, unsettling';
+  if (art === 'dunkel') return `${raum}, almost pitch black, a faint tall silhouette barely visible`;
+  if (art === 'ende') return `${raum}, a tall dark silhouette standing very close to the camera`;
+  return `${raum}${anteil > 0.5 ? ', a shadowy figure barely visible far in the background' : ', unsettling, nobody there'}`;
+}
+
 // Aufbau, der bei uns die beste Sehdauer hatte: Schock-Hook -> ruhiger Start -> Nachricht -> immer näher -> Stille -> Jumpscare -> Twist -> Cliffhanger
 export function baueFolge(skript) {
   const fehler = pruefen(skript);
@@ -84,6 +101,9 @@ export function baueFolge(skript) {
     const schluss = weiter || `${frage} ${T.schreib}`;
     szenen.push({ art: 'teil2', ...zeile(schluss, { pause: 0.8, cta: weiter ? T.folgT2 : T.folg }) });
   }
+  if (skript.ki === true) {  // KI-Hintergrund je Szene (Nachricht und Endkarte bleiben gezeichnet)
+    szenen.forEach((sz, i) => { if (!['nachricht', 'teil2'].includes(sz.art)) sz.ki = kiPrompt(sz.art, skript.ort || 'haus', i / szenen.length); });
+  }
   const titel = satz(skript.titel || skript.hook, 60);
   const titelbild = kurz(skript.hook, 80);
   return {
@@ -91,6 +111,7 @@ export function baueFolge(skript) {
     ort: skript.ort || 'haus', fahrgaeste: [], boesewicht: skript.boesewicht || 'schatten',
     held: { farbe: [44, 56, 92], oberteil: 'hoodie', kopf: 'haare', haar: [46, 34, 26], hose: [38, 44, 70] },
     titel, titelbild, titelbild_gelb: gelbVon(titelbild), teile: skript.teil === 2 ? 2 : 1,
+    ...(skript.ki === true ? { ki_bilder: true, ki_stil: KI_STIL, ki_seed: [...String(skript.titel || '')].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 100000, 7) } : {}),
     suchbild: kurz_ && skript.suchbild !== false,  // 3 versteckte Augenpaare + Sekunden-Frage
     raum: kurz_ && skript.raum !== false,  // 3D-Ton: Flüstern kreist um den Kopf (story.py/ton.py)
     kalt: kurz_ && skript.kalt !== false,  // kalter Einstieg: 0,8 s das Ende zeigen, dann zurückspulen
