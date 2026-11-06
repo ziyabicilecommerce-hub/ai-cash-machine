@@ -1,21 +1,21 @@
 {
- "stand": "2026-11-06T01:46:12.366Z",
+ "stand": "2026-11-06T11:26:14.778Z",
  "gesamt": {
-  "posts": 83,
-  "aufrufe": 4375,
+  "posts": 97,
+  "aufrufe": 6230,
   "vorherAufrufe": null
  },
  "konten": {
   "@desk.rebel": {
-   "n": 9,
-   "schnitt": 127,
-   "sehdauer": 5,
+   "n": 15,
+   "schnitt": 107,
+   "sehdauer": 4.4,
    "vorher": null
   },
   "@purivelle.785": {
-   "n": 10,
-   "schnitt": 56,
-   "sehdauer": 3.6,
+   "n": 14,
+   "schnitt": 52,
+   "sehdauer": 4.2,
    "vorher": null
   },
   "@zyx_7851": {
@@ -25,8 +25,8 @@
    "vorher": null
   },
   "@giyuuu sama": {
-   "n": 9,
-   "schnitt": 9,
+   "n": 13,
+   "schnitt": 101,
    "sehdauer": 0,
    "vorher": null
   },
@@ -45,19 +45,19 @@
  },
  "formate": {
   "horror": {
-   "n": 36,
-   "schnitt": 79,
+   "n": 44,
+   "schnitt": 103,
    "sehdauer": 2.2
   },
   "mythos": {
-   "n": 7,
-   "schnitt": 60,
-   "sehdauer": 3.8
+   "n": 9,
+   "schnitt": 63,
+   "sehdauer": 4.1
   },
   "quiz": {
-   "n": 11,
-   "schnitt": 14,
-   "sehdauer": 1.9
+   "n": 15,
+   "schnitt": 12,
+   "sehdauer": 2.2
   },
   "anime": {
    "n": 9,
@@ -75,17 +75,38 @@
    "sehdauer": 3.8
   }
  },
- "muster": {},
+ "muster": {
+  "fremd": {
+   "n": 1,
+   "schnitt": 292,
+   "sehdauer": 0
+  },
+  "allein": {
+   "n": 1,
+   "schnitt": 57,
+   "sehdauer": 4.6
+  },
+  "anruf": {
+   "n": 2,
+   "schnitt": 380,
+   "sehdauer": 0
+  },
+  "kamera": {
+   "n": 2,
+   "schnitt": 132,
+   "sehdauer": 5.4
+  }
+ },
  "zeiten": {
   "nachts": {
-   "n": 14,
-   "schnitt": 139,
-   "sehdauer": 2.1
+   "n": 17,
+   "schnitt": 134,
+   "sehdauer": 2.2
   },
   "vormittags": {
-   "n": 14,
-   "schnitt": 55,
-   "sehdauer": 2.8
+   "n": 25,
+   "schnitt": 91,
+   "sehdauer": 3
   },
   "nachmittags": {
    "n": 23,
@@ -114,20 +135,30 @@
    "link": "https://www.tiktok.com/@futureflowx3/video/7704486624524012832?utm_campaign=tt4d_open_api&utm_source=7103819247981182978"
   },
   {
-   "konto": "@futureflowxx",
-   "text": "Im Wald ruft jemand meinen Namen. Mit der Stimme meiner Mutter. Wärst du der Stimme gefolg",
-   "aufrufe": 671,
-   "sehdauer": 4.4,
-   "link": "https://www.tiktok.com/@futureflowxx/video/7704486826190458144?utm_campaign=tt4d_open_api&utm_source=7103819247981182978"
+   "konto": "@giyuuu sama",
+   "text": "Wenn dich deine eigene Nummer anruft, geh nicht ran. 🎧 Mit Kopfhörern schauen! 👀 Seine A",
+   "aufrufe": 706,
+   "sehdauer": 0,
+   "link": "https://www.youtube.com/shorts/o9Gzd9JLJG0"
   }
  ],
  "ab": {},
  "schritte": [
-  "@desk.rebel läuft am besten (Ø 127) - neue Ideen dort zuerst testen.",
-  "Unter 10 Ø-Aufrufen: @giyuuu sama - Kontostatus prüfen, selbst aktiv sein, ein paar Tage weniger posten.",
-  "Beste Tageszeit: nachts (Ø 139).",
-  "Ø Sehdauer nur 2.0 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher."
+  "@desk.rebel läuft am besten (Ø 107) - neue Ideen dort zuerst testen.",
+  "Stärkstes Geschichten-Muster: „anruf“ (Ø 380) - der Skript-Bot nimmt es automatisch öfter.",
+  "Beste Tageszeit: nachts (Ø 134).",
+  "Ø Sehdauer nur 2.1 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher."
  ],
+ "sprachTest": {
+  "de": {
+   "n": 4,
+   "schnitt": 308
+  },
+  "en": {
+   "n": 0,
+   "schnitt": 0
+  }
+ },
  "vorrat": {
   "de": {
    "rest": 49,
