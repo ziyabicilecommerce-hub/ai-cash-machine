@@ -5,9 +5,10 @@ name: "100 · Fakten-Kanal"
 # (kanal: fakten - der Direkt-Poster schickt sie nie an die Shop-Konten).
 
 on:
-  schedule:
-    # Früh starten: GitHub verschiebt geplante Läufe oft um Stunden; gepostet wird zu festen Prime-Time-Zeiten (BUFFER_ZEITEN).
-    - cron: '17 4 * * *'
+  # PAUSIERT (06.11., Wunsch des Nutzers): auf allen Kanälen nur noch Horror-Geschichten, keine Fakten-Videos mehr.
+  # Wieder an: die zwei Zeilen unten einkommentieren.
+  # schedule:
+  #   - cron: '17 4 * * *'
     # Zweiter Lauf PAUSIERT (04.11.): weniger, aber bessere Posts - zu viele ähnliche Videos drosselten die Reichweite.
     # - cron: '17 12 * * *'
   workflow_dispatch:
