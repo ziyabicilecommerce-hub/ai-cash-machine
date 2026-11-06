@@ -73,3 +73,6 @@
 /* 2.9: clear browser-only hardware diagnostics without pretending to run inference. */
 .browser-runtime-card { margin: 0 0 22px; }
 .browser-runtime-status { white-space: pre-wrap; overflow-wrap: anywhere; padding: 16px; margin: 14px 0; border: 1px solid rgba(174,205,214,.25); border-radius: 12px; background: rgba(4,13,19,.62); color: #d3e4e8; font: 12px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace; }
+
+/* Handy: Knopfreihen brechen um statt seitlich aus dem Bild zu laufen */
+.record-actions{flex-wrap:wrap}.record-actions .button{flex:1 1 140px;width:auto;white-space:normal}
