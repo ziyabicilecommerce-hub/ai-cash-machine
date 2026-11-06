@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-06T18:53:02.067Z",
+ "stand": "2026-11-06T18:55:56.904Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3119105:188",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: M. Asam Adventskalender 2026 Schönste Zeit, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1792187316/assets/pas/images/c410291f-0b83-4bcc-97d8-6bde5e78baa9/m-asam-adventskalender-2026-schoenste-zeit",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1202634,8.5251147",
+   "shop": "https://www.dm.de/p/d/3119105/m-asam-adventskalender-2026-schoenste-zeit",
+   "text": "69,95 € · dm Sulzbach (Taunus) (6,3 km) · 1 Stück\nMain-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)\nIm Umkreis in 15 Filiale(n) vorrätig.",
+   "zeit": "2026-11-06T18:55:56.904Z"
+  },
   {
    "schluessel": "deal:https://www.overkillshop.com/products/jordan-air-jordan-4-retro-tour-yellow-io2463-102-white-tour-yellow-dark-blue-grey-black",
    "art": "Deal",
@@ -183,19 +193,10 @@
    "link": "https://afew-store.com/products/barbour-barbour-wax-cap-olive",
    "text": "37,99 € · afew-store.com (online)\nVerfügbar - jetzt bestellen, solange Größen da sind.",
    "zeit": "2026-11-04T15:56:39.421Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-wmns-air-jordan-3-retro-fireside-velvet-brown-pearl-white-gum-dark-brown",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 3 Retro für 169,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/CK9246_20200-Nike-Wmns-Air-Jordan-3-Retro-Fireside-Velvet-Brown-Pearl-White-Gum-Dark-Brown-os-1.jpg?v=1790172672",
-   "link": "https://www.asphaltgold.com/products/nike-wmns-air-jordan-3-retro-fireside-velvet-brown-pearl-white-gum-dark-brown",
-   "text": "asphaltgold.com · Nike Wmns Air Jordan 3 Retro *Fireside*\nVerkauf ca. 200–290 € → Gewinn ca. +46,50 € (ROI 28 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-04T07:10:07.907Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-06T18:41:07.994Z",
+  "stand": "2026-11-06T18:55:59.516Z",
   "filialen": 148,
   "produkte": [
    {
@@ -261,7 +262,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 74
+      "menge": 76
      },
      {
       "name": "dm Flörsheim am Main",
@@ -513,15 +514,6 @@
     ]
    },
    {
-    "dan": "3135931",
-    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
-    "preis": 29.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
-    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
     "dan": "3119105",
     "name": "M. Asam Adventskalender 2026 Schönste Zeit, 1 St",
     "preis": 69.95,
@@ -562,6 +554,14 @@
       "menge": 4
      },
      {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
       "name": "dm Flörsheim am Main",
       "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
       "km": 7.4,
@@ -584,14 +584,6 @@
       "lat": 50.1237366,
       "lon": 8.5865988,
       "menge": 2
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 5
      }
     ]
    },
@@ -683,7 +675,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Kriftel",
@@ -742,6 +734,15 @@
       "menge": 6
      }
     ]
+   },
+   {
+    "dan": "3139943",
+    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
+    "preis": 49.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
+    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3143255",
@@ -872,7 +873,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 10
+      "menge": 11
      },
      {
       "name": "dm Flörsheim am Main",
@@ -3101,11 +3102,11 @@
     "begriff": "asics"
    },
    {
-    "titel": "Nike Air Jordan 3 Retro OG *True Blue*",
-    "preis": 179,
+    "titel": "Nike Air Jordan 9 Retro OG *Space Jam*",
+    "preis": 178,
     "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/nikeair-jordan-3-retro-og-true-blue-white-varsity-red-true-blue-cement-grey-anthracite",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/zaf63auwgf-IF4396-104_Nike_Air-Jordan-3-Retro-True-Blue-White-Varsity-Red-True-Blue-Cement-Grey-Anthracite_os-1.jpg?v=1783518064",
+    "url": "https://www.asphaltgold.com/products/nike-air-jordan-9-retro-og-space-jam-white-true-red-black",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/70i3f9g33eq-IX6179-100_Nike_Air-Jordan-9-Retro-OG-Space-Jam-White-True-Red-Black_os-1.jpg?v=1788954651",
     "laden": "asphaltgold.com",
     "begriff": "jordan"
    },
