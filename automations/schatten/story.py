@@ -117,10 +117,23 @@ def bild(s, t, lt):
         d = ImageDraw.Draw(im)
         sterne(d, t)
         if s.get('wahl'):  # Kommentar-Wahl: zwei große Karten mitten im Bild (unten verdeckt TikTok den Rand)
+            # Frage auf höchstens 2 Zeilen umbrechen und so groß wie möglich setzen (vorher: lange Fragen liefen links/rechts aus dem Bild)
             frage, gr = str(s.get('frage', '')).upper(), 50
-            while gr > 28 and d.textlength(frage, font=ImageFont.truetype(FONTDATEI, gr)) > 640:
+            def zeilen_von(text, f):
+                zs, z = [], ''
+                for w in text.split():
+                    probe = f'{z} {w}'.strip()
+                    if z and d.textlength(probe, font=f) > 640:
+                        zs.append(z); z = w
+                    else:
+                        z = probe
+                return zs + [z]
+            while gr > 26 and len(zeilen_von(frage, ImageFont.truetype(FONTDATEI, gr))) > 2:
                 gr -= 2
-            d.text((W / 2, 250), frage, font=ImageFont.truetype(FONTDATEI, gr), fill=GELB, anchor='mm')
+            ff = ImageFont.truetype(FONTDATEI, gr)
+            zs = zeilen_von(frage, ff)
+            for j, z in enumerate(zs):
+                d.text((W / 2, 250 + (j - (len(zs) - 1) / 2) * gr * 1.15), z, font=ff, fill=GELB, anchor='mm', stroke_width=3, stroke_fill=(0, 0, 0))
             for i, antwort in enumerate(s['wahl'][:2]):
                 y = 330 + i * 190 + int(6 * math.sin(lt * 5 + i * 3))
                 d.rounded_rectangle((70, y, 650, y + 150), 30, fill=(20, 22, 34), outline=(230, 20, 60) if i == 0 else (60, 120, 255), width=6)
@@ -300,7 +313,7 @@ def untertitel(im, satz, key, k=None, basis=WEISS, pop=1.0):
                 f = GELB if w.strip('".,:!?') == key else basis
                 gross = FONT
                 if k is not None and nr == k:  # das neueste Wort springt nicht, es federt von groß auf normal
-                    gross = popfont(76 - 12 * weich(pop))
+                    gross = popfont(70 - 6 * weich(pop))  # federt von 70 auf 64 - größer ragte es ins Nachbarwort ("IHREHAND")
                 d.text((x + d.textlength(w, font=FONT) / 2, y), w, font=gross, fill=f, stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
             x += d.textlength(w + ' ', font=FONT)
         y += 72
@@ -374,8 +387,8 @@ def main():
 
     bildspur = os.path.join(ordner, 'bild.mp4')
     p = subprocess.Popen(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
-                          '-vf', 'scale=1080:1920:flags=lanczos,vignette=PI/4.5,noise=alls=6:allf=t+u,format=yuv420p',
-                          '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-maxrate', '6M', '-bufsize', '12M', bildspur], stdin=subprocess.PIPE)
+                          '-vf', 'scale=1080:1920:flags=lanczos,unsharp=5:5:0.5,vignette=PI/4.5,noise=alls=5:allf=t+u,format=yuv420p',
+                          '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-maxrate', '10M', '-bufsize', '20M', bildspur], stdin=subprocess.PIPE)
     cover = None
     uhr_bis = next((s['start'] for s in plan if s['art'] in ('station', 'zettel2')), gesamt)
     # Unterschwellige Schocker: in Szene 4 und 7 blitzen fuer zwei Bilder nur leuchtende Augen im Dunkeln auf

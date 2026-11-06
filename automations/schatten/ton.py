@@ -155,7 +155,8 @@ def tonspur(plan, gesamt, ordner, schlicht=False, raum=False):
         filter_ += r_filter + f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,aformat=channel_layouts=stereo[grund];[grund]{r_label}amix=inputs=2:normalize=0,"
     else:
         filter_ += f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0,"
-    filter_ += f"afade=t=out:st={gesamt - 1.5:.2f}:d=1.5,alimiter=limit=0.92[a]"
+    # Lautheit wie bei TikTok/Instagram/YouTube üblich (-14 LUFS) - vorher -19 LUFS, also deutlich leiser als andere Videos
+    filter_ += f"afade=t=out:st={gesamt - 1.5:.2f}:d=1.5,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=44100,alimiter=limit=0.89[a]"
     ton = os.path.join(ordner, 'ton.m4a')
     subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', *eingaben, '-filter_complex', filter_, '-map', '[a]', '-ac', '2', '-c:a', 'aac', '-b:a', '192k', ton], check=True)
     return ton
