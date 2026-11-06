@@ -1,7 +1,7 @@
 // Buffer-Verteiler (#113): bespielt die Buffer-Kanäle ohne eigenen Bot mit allgemeinen Inhalten (KEINE Shop-Werbung),
 // jeder Kanal etwas anderes, mindestens 5 Posts am Tag:
 //   @desk.rebel (Instagram)    -> jedes Mal eine NEUE KI-Horror-Geschichte im Videobot-Look (Vorrat als Ersatz)
-//   @purivelle.785 (Instagram) -> Fakten / "Was wäre wenn?" aus dem Fakten-Kanal (#100)
+//   @purivelle.785 (Instagram) -> ebenfalls Horror (eigene Geschichten, nie dieselbe wie desk.rebel) - seit 06.11. statt Fakten
 //   giyuuu sama (YouTube)      -> englische Horror-Shorts (skripteEn.mjs) - YouTube verteilt weltweit
 // Zwei Schritte (dazwischen rendert der Workflow das Horror-Video):
 //   node 113-buffer-verteiler.mjs --vorbereiten -> out/verteiler-plan.json (+ out/folge-<kanal>.json je Horror-Kanal)
