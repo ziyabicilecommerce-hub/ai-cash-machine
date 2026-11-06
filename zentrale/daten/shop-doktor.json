@@ -1,10 +1,10 @@
 {
- "stand": "2026-11-05T12:43:15.109Z",
+ "stand": "2026-11-06T12:25:51.175Z",
  "shops": [
   {
    "name": "DeskRebel",
    "url": "https://www.deskrebel.store",
-   "ladezeitMs": 944,
+   "ladezeitMs": 450,
    "produkte": [],
    "befunde": [
     {
@@ -30,7 +30,7 @@
   {
    "name": "Purivelle",
    "url": "https://purivelle.store",
-   "ladezeitMs": 824,
+   "ladezeitMs": 440,
    "produkte": [],
    "befunde": [
     {
@@ -246,6 +246,11 @@
   },
   {
    "datum": "2026-11-05",
+   "DeskRebel": 0,
+   "Purivelle": 0
+  },
+  {
+   "datum": "2026-11-06",
    "DeskRebel": 0,
    "Purivelle": 0
   }
