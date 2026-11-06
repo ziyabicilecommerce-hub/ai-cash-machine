@@ -1,10 +1,29 @@
 {
- "stand": "2026-11-06T19:38:50.129Z",
+ "stand": "2026-11-06T22:27:57.736Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3119105:188",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: M. Asam Adventskalender 2026 Schönste Zeit, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1792187316/assets/pas/images/c410291f-0b83-4bcc-97d8-6bde5e78baa9/m-asam-adventskalender-2026-schoenste-zeit",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1202634,8.5251147",
+   "shop": "https://www.dm.de/p/d/3119105/m-asam-adventskalender-2026-schoenste-zeit",
+   "text": "69,95 € · dm Sulzbach (Taunus) (6,3 km) · 1 Stück\nMain-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)\nIm Umkreis in 15 Filiale(n) vorrätig.",
+   "zeit": "2026-11-06T21:12:36.499Z"
+  },
+  {
+   "schluessel": "deal:https://www.sneakersnstuff.com/products/jordan-air-jordan-4-retro-og-fc-im4002-100",
+   "art": "Deal",
+   "titel": "💰 Deal: Air Jordan 4 Retro für 147,00 €",
+   "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IM4002-100_01.jpg?v=1767796058",
+   "link": "https://www.sneakersnstuff.com/products/jordan-air-jordan-4-retro-og-fc-im4002-100",
+   "text": "sneakersnstuff.com · Air Jordan 4 Retro OG FC\nVerkauf ca. 220–320 € → Gewinn ca. +91,00 € (ROI 62 %)\nGröße prüfen, vorher verkaufte Preise checken.",
+   "zeit": "2026-11-06T20:45:29.754Z"
+  },
   {
    "schluessel": "filiale:3119105:188",
    "art": "Filiale",
@@ -175,28 +194,10 @@
    "shop": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
    "text": "16,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 13 Filiale(n) vorrätig.",
    "zeit": "2026-11-04T18:01:56.732Z"
-  },
-  {
-   "schluessel": "neu:https://afew-store.com/products/afew-goods-blanco-cap-green",
-   "art": "Neu",
-   "titel": "🟢 NEU im Bestand: Afew Goods Essential Cap",
-   "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/afew-goods-blanco-cap-green-ag0046p01grn-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1767362961",
-   "link": "https://afew-store.com/products/afew-goods-blanco-cap-green",
-   "text": "32,99 € · afew-store.com (online)\nVerfügbar - jetzt bestellen, solange Größen da sind.",
-   "zeit": "2026-11-04T17:45:54.437Z"
-  },
-  {
-   "schluessel": "neu:https://afew-store.com/products/barbour-barbour-wax-cap-olive",
-   "art": "Neu",
-   "titel": "🟢 NEU im Bestand: Barbour Barbour Wax Cap",
-   "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/barbour-barbour-wax-cap-olive-mha0005ol71-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1790756115",
-   "link": "https://afew-store.com/products/barbour-barbour-wax-cap-olive",
-   "text": "37,99 € · afew-store.com (online)\nVerfügbar - jetzt bestellen, solange Größen da sind.",
-   "zeit": "2026-11-04T15:56:39.421Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-06T19:26:55.870Z",
+  "stand": "2026-11-06T22:28:00.846Z",
   "filialen": 148,
   "produkte": [
    {
@@ -222,7 +223,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 35
+      "menge": 33
      },
      {
       "name": "dm Kriftel",
@@ -514,6 +515,15 @@
     ]
    },
    {
+    "dan": "3135931",
+    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
+    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
+    "begriff": "adventskalender",
+    "vorrat": []
+   },
+   {
     "dan": "3119105",
     "name": "M. Asam Adventskalender 2026 Schönste Zeit, 1 St",
     "preis": 69.95,
@@ -554,14 +564,6 @@
       "menge": 4
      },
      {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 1
-     },
-     {
       "name": "dm Flörsheim am Main",
       "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
       "km": 7.4,
@@ -584,6 +586,14 @@
       "lat": 50.1237366,
       "lon": 8.5865988,
       "menge": 2
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 5
      }
     ]
    },
@@ -617,7 +627,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 17
+      "menge": 16
      },
      {
       "name": "dm Frankfurt am Main",
@@ -734,15 +744,6 @@
       "menge": 6
      }
     ]
-   },
-   {
-    "dan": "3139943",
-    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
-    "preis": 49.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
-    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
-    "begriff": "adventskalender",
-    "vorrat": []
    },
    {
     "dan": "3143255",
@@ -873,7 +874,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 11
+      "menge": 10
      },
      {
       "name": "dm Flörsheim am Main",
@@ -1201,6 +1202,9 @@
      19.87,
      19.87,
      19.87,
+     19.87,
+     19.87,
+     19.87,
      19.87
     ]
    },
@@ -1311,6 +1315,9 @@
      33.35,
      33.35,
      33.35,
+     33.35,
+     33.35,
+     33.35,
      33.35
     ]
    },
@@ -1344,6 +1351,9 @@
     },
     "nurBewegung": true,
     "kurs": [
+     15.37,
+     15.37,
+     15.37,
      15.37,
      15.37,
      15.37,
@@ -1409,6 +1419,9 @@
      13.03,
      13.03,
      13.03,
+     13.03,
+     13.03,
+     13.03,
      13.03
     ]
    },
@@ -1442,6 +1455,9 @@
     },
     "nurBewegung": true,
     "kurs": [
+     32.5,
+     32.5,
+     32.5,
      32.5,
      32.5,
      32.5,
@@ -1550,6 +1566,9 @@
      36.7,
      36.7,
      36.7,
+     36.26,
+     36.26,
+     36.26,
      36.26,
      36.26,
      36.26,
@@ -1678,6 +1697,9 @@
      19.54,
      19.54,
      19.54,
+     19.54,
+     19.54,
+     19.54,
      19.54
     ]
    },
@@ -1788,6 +1810,9 @@
      13.72,
      13.72,
      13.72,
+     13.72,
+     13.72,
+     13.72,
      13.72
     ]
    },
@@ -1821,6 +1846,9 @@
     },
     "nurBewegung": true,
     "kurs": [
+     34.67,
+     34.67,
+     34.67,
      34.67,
      34.67,
      34.67,
@@ -1913,6 +1941,9 @@
      21.7,
      21.7,
      21.7,
+     21.7,
+     21.7,
+     21.7,
      21.7
     ]
    }
@@ -1973,59 +2004,59 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 958,
+  "geprueft": 366,
   "statistik": {
-   "karten": 958,
+   "karten": 366,
    "mitPreis": 366,
    "imBudget": 19,
    "steigend": 0,
    "fallend": 8
   },
-  "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-11-06T19:02:12.781Z"
+  "quelle": "TCGdex",
+  "stand": "2026-11-06T21:54:13.320Z"
  },
  "trends": {
   "ware": [],
   "top": [
    {
-    "titel": "carlos alcaraz",
+    "titel": "selenskyj",
+    "menge": "100+"
+   },
+   {
+    "titel": "hamburger dom",
+    "menge": "100+"
+   },
+   {
+    "titel": "mckenna grace",
+    "menge": "200+"
+   },
+   {
+    "titel": "fc sevilla",
+    "menge": "100+"
+   },
+   {
+    "titel": "zdf programmänderung",
+    "menge": "50000+"
+   },
+   {
+    "titel": "bank job",
+    "menge": "500+"
+   },
+   {
+    "titel": "rene redo freundin",
+    "menge": "200+"
+   },
+   {
+    "titel": "alexander huber",
     "menge": "1000+"
    },
    {
-    "titel": "tv heute",
-    "menge": "1000+"
-   },
-   {
-    "titel": "michael jackson",
+    "titel": "verkehrskontrolle",
     "menge": "500+"
    },
    {
-    "titel": "deszcz",
-    "menge": "200+"
-   },
-   {
-    "titel": "sevilla – alaves",
+    "titel": "oleschky",
     "menge": "500+"
-   },
-   {
-    "titel": "wisła kraków – cracovia",
-    "menge": "200+"
-   },
-   {
-    "titel": "poppenbüttel",
-    "menge": "200+"
-   },
-   {
-    "titel": "susie wiles",
-    "menge": "10000+"
-   },
-   {
-    "titel": "durchsuchung",
-    "menge": "500+"
-   },
-   {
-    "titel": "a92",
-    "menge": "200+"
    }
   ]
  },
@@ -2314,6 +2345,15 @@
     "titel": "adidas Originals SAMBA OG",
     "preis": 95.99,
     "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-eqtyel-cblack-gum5",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-eqtyel-cblack-gum5-ih4385-footwear_20_3E_20sneaker.jpg?v=1775716296",
+    "laden": "afew-store.com",
+    "begriff": "samba"
+   },
+   {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 95.99,
+    "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-nindig-warvan-gum2",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-nindig-warvan-gum2-kk2273-footwear_20_3E_20sneaker.jpg?v=1782197486",
     "laden": "afew-store.com",
@@ -2453,6 +2493,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/shjupdpq6t-IH3979_Adidas_Samba-OG-W-Snake-Maroon-Crew-White-Gold-Metallic_os-1.jpg?v=1765977525",
     "laden": "asphaltgold.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "Air Jordan WMNS 1 Retro High OG",
+    "preis": 107.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/air-jordan-wmns-1-retro-high-og-pale-ivory-psychic-blue-coconut-milk",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-wmns-1-retro-high-og-pale-ivory-psychic-blue-coconut-milk-fd2596-102-footwear_20_3E_20sneaker.jpg?v=1772623597",
+    "laden": "afew-store.com",
+    "begriff": "jordan"
    },
    {
     "titel": "New Balance 740",
@@ -2620,15 +2669,6 @@
     "titel": "adidas Originals SAMBA OG",
     "preis": 119.99,
     "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-wonalu-owhite-hirblu",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-wonalu-owhite-hirblu-kk0008-footwear_20_3E_20sneaker.jpg?v=1791796528",
-    "laden": "afew-store.com",
-    "begriff": "samba"
-   },
-   {
-    "titel": "adidas Originals SAMBA OG",
-    "preis": 119.99,
-    "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-carbon-warvan-gum5",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-carbon-warvan-gum5-kk2268-footwear_20_3E_20sneaker.jpg?v=1783936471",
     "laden": "afew-store.com",
@@ -2638,8 +2678,8 @@
     "titel": "adidas Originals SAMBA OG",
     "preis": 119.99,
     "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-tmvire-ftwwht-gum2",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-tmvire-ftwwht-gum2-kj2788-footwear_20_3E_20sneaker.jpg?v=1781618070",
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-wonalu-owhite-hirblu",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-wonalu-owhite-hirblu-kk0008-footwear_20_3E_20sneaker.jpg?v=1791796528",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
@@ -2932,6 +2972,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "New Balance 9060",
+    "preis": 150.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-driftwood-sea-salt",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-driftwood-sea-salt-u906011m-footwear_20_3E_20sneaker.jpg?v=1783934007",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Nike Air Jordan 4 Retro *Tour Yellow*",
     "preis": 157,
     "verfuegbar": true,
@@ -3175,15 +3224,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "New Balance 9060",
-    "preis": 180.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-timberwolf-black-cement",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-black-cement-u90606h1-footwear_20_3E_20sneaker.jpg?v=1790201203",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "New Balance 90/60",
     "preis": 189,
     "verfuegbar": true,
@@ -3199,6 +3239,15 @@
     "url": "https://afew-store.com/products/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1793958846",
     "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "New Balance 9060 - Lone Star Grey / Stoneware",
+    "preis": 190,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu9060440",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU9060440-Detail_fd5d7188-a4d0-4c7c-91ac-dd7b546ec76b.jpg?v=1782325827",
+    "laden": "kith.com",
     "begriff": "new balance"
    },
    {
@@ -3274,15 +3323,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Air Jordan 5 Retro OG",
-    "preis": 209.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-5-retro-og-black-black-picante-red-glow-n-the-dark",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-5-retro-og-black-black-picante-red-glow-n-the-dark-hq7978-001-footwear_20_3E_20sneaker.jpg?v=1793114791",
-    "laden": "afew-store.com",
-    "begriff": "jordan"
-   },
-   {
     "titel": "Air Jordan 3 Retro",
     "preis": 210,
     "verfuegbar": true,
@@ -3299,15 +3339,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV5678-102_01.jpg?v=1785762646",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "New Balance x Action Bronson 1890 - Brown / Blue",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu18901dp",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU18901DPNewBalanceActionBronson1890White_0388.jpg?v=1770653222",
-    "laden": "kith.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Ronnie Fieg & New Balance 2011 - Chocolate Truffle / Sepia Rose",

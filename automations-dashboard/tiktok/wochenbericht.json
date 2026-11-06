@@ -1,53 +1,53 @@
 {
- "stand": "2026-11-06T11:26:14.778Z",
+ "stand": "2026-11-06T19:39:45.610Z",
  "gesamt": {
-  "posts": 97,
-  "aufrufe": 6230,
+  "posts": 108,
+  "aufrufe": 8484,
   "vorherAufrufe": null
  },
  "konten": {
   "@desk.rebel": {
-   "n": 15,
-   "schnitt": 107,
-   "sehdauer": 4.4,
+   "n": 19,
+   "schnitt": 93,
+   "sehdauer": 3.9,
    "vorher": null
   },
   "@purivelle.785": {
-   "n": 14,
-   "schnitt": 52,
-   "sehdauer": 4.2,
+   "n": 16,
+   "schnitt": 56,
+   "sehdauer": 3.9,
    "vorher": null
   },
   "@zyx_7851": {
-   "n": 18,
-   "schnitt": 16,
+   "n": 19,
+   "schnitt": 28,
    "sehdauer": 1.9,
    "vorher": null
   },
   "@giyuuu sama": {
-   "n": 13,
-   "schnitt": 101,
+   "n": 15,
+   "schnitt": 131,
    "sehdauer": 0,
    "vorher": null
   },
   "@futureflowxx": {
-   "n": 17,
-   "schnitt": 41,
-   "sehdauer": 1,
+   "n": 18,
+   "schnitt": 53,
+   "sehdauer": 1.1,
    "vorher": null
   },
   "@futureflowx3": {
-   "n": 20,
-   "schnitt": 80,
-   "sehdauer": 1.7,
+   "n": 21,
+   "schnitt": 112,
+   "sehdauer": 1.8,
    "vorher": null
   }
  },
  "formate": {
   "horror": {
-   "n": 44,
-   "schnitt": 103,
-   "sehdauer": 2.2
+   "n": 51,
+   "schnitt": 130,
+   "sehdauer": 2.3
   },
   "mythos": {
    "n": 9,
@@ -55,9 +55,9 @@
    "sehdauer": 4.1
   },
   "quiz": {
-   "n": 15,
-   "schnitt": 12,
-   "sehdauer": 2.2
+   "n": 19,
+   "schnitt": 18,
+   "sehdauer": 1.9
   },
   "anime": {
    "n": 9,
@@ -78,48 +78,60 @@
  "muster": {
   "fremd": {
    "n": 1,
-   "schnitt": 292,
+   "schnitt": 403,
    "sehdauer": 0
   },
   "allein": {
    "n": 1,
-   "schnitt": 57,
-   "sehdauer": 4.6
+   "schnitt": 97,
+   "sehdauer": 5.1
   },
   "anruf": {
-   "n": 2,
-   "schnitt": 380,
+   "n": 4,
+   "schnitt": 322,
    "sehdauer": 0
   },
   "kamera": {
-   "n": 2,
-   "schnitt": 132,
-   "sehdauer": 5.4
+   "n": 3,
+   "schnitt": 88,
+   "sehdauer": 4
+  },
+  "regel": {
+   "n": 1,
+   "schnitt": 131,
+   "sehdauer": 7.3
   }
  },
  "zeiten": {
   "nachts": {
    "n": 17,
-   "schnitt": 134,
+   "schnitt": 136,
    "sehdauer": 2.2
   },
   "vormittags": {
    "n": 25,
-   "schnitt": 91,
-   "sehdauer": 3
+   "schnitt": 107,
+   "sehdauer": 2.9
   },
   "nachmittags": {
-   "n": 23,
-   "schnitt": 59,
-   "sehdauer": 2.4
+   "n": 31,
+   "schnitt": 63,
+   "sehdauer": 2.3
   },
   "abends": {
-   "n": 32,
-   "schnitt": 9,
-   "sehdauer": 1.3
+   "n": 35,
+   "schnitt": 44,
+   "sehdauer": 1.4
   }
  },
  "top": [
+  {
+   "konto": "@giyuuu sama",
+   "text": "Wenn dich deine eigene Nummer anruft, geh nicht ran. 🎧 Mit Kopfhörern schauen! 👀 Seine A",
+   "aufrufe": 907,
+   "sehdauer": 0,
+   "link": "https://www.youtube.com/shorts/o9Gzd9JLJG0"
+  },
   {
    "konto": "@futureflowx3",
    "text": "Sie ist ausgestiegen. Ich nicht. Aber etwas von mir schon. Würdest du tauschen? 👇 (Teil 3",
@@ -133,26 +145,68 @@
    "aufrufe": 753,
    "sehdauer": 4.8,
    "link": "https://www.tiktok.com/@futureflowx3/video/7704486624524012832?utm_campaign=tt4d_open_api&utm_source=7103819247981182978"
-  },
-  {
-   "konto": "@giyuuu sama",
-   "text": "Wenn dich deine eigene Nummer anruft, geh nicht ran. 🎧 Mit Kopfhörern schauen! 👀 Seine A",
-   "aufrufe": 706,
-   "sehdauer": 0,
-   "link": "https://www.youtube.com/shorts/o9Gzd9JLJG0"
   }
  ],
- "ab": {},
+ "ab": {
+  "kalt": {
+   "an": {
+    "n": 3,
+    "schnitt": 519,
+    "sehdauer": 5.5
+   },
+   "aus": {
+    "n": 1,
+    "schnitt": 253,
+    "sehdauer": 5.7
+   }
+  },
+  "raum": {
+   "an": {
+    "n": 3,
+    "schnitt": 519,
+    "sehdauer": 5.5
+   },
+   "aus": {
+    "n": 1,
+    "schnitt": 253,
+    "sehdauer": 5.7
+   }
+  },
+  "suchbild": {
+   "an": {
+    "n": 3,
+    "schnitt": 519,
+    "sehdauer": 5.5
+   },
+   "aus": {
+    "n": 1,
+    "schnitt": 253,
+    "sehdauer": 5.7
+   }
+  },
+  "duhook": {
+   "an": {
+    "n": 0,
+    "schnitt": 0,
+    "sehdauer": 0
+   },
+   "aus": {
+    "n": 4,
+    "schnitt": 452,
+    "sehdauer": 5.6
+   }
+  }
+ },
  "schritte": [
-  "@desk.rebel läuft am besten (Ø 107) - neue Ideen dort zuerst testen.",
-  "Stärkstes Geschichten-Muster: „anruf“ (Ø 380) - der Skript-Bot nimmt es automatisch öfter.",
-  "Beste Tageszeit: nachts (Ø 134).",
+  "@giyuuu sama läuft am besten (Ø 131) - neue Ideen dort zuerst testen.",
+  "Stärkstes Geschichten-Muster: „anruf“ (Ø 322) - der Skript-Bot nimmt es automatisch öfter.",
+  "Beste Tageszeit: nachts (Ø 136).",
   "Ø Sehdauer nur 2.1 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher."
  ],
  "sprachTest": {
   "de": {
-   "n": 4,
-   "schnitt": 308
+   "n": 6,
+   "schnitt": 315
   },
   "en": {
    "n": 0,
@@ -161,12 +215,12 @@
  },
  "vorrat": {
   "de": {
-   "rest": 49,
-   "tage": 9
+   "rest": 62,
+   "tage": 5
   },
   "en": {
-   "rest": 54,
-   "tage": 10
+   "rest": 51,
+   "tage": 17
   }
  }
 }
