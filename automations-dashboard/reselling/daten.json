@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-06T21:51:26.290Z",
+ "stand": "2026-11-06T21:54:25.022Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -1204,6 +1204,7 @@
      19.87,
      19.87,
      19.87,
+     19.87,
      19.87
     ]
    },
@@ -1316,6 +1317,7 @@
      33.35,
      33.35,
      33.35,
+     33.35,
      33.35
     ]
    },
@@ -1349,6 +1351,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     15.37,
      15.37,
      15.37,
      15.37,
@@ -1418,6 +1421,7 @@
      13.03,
      13.03,
      13.03,
+     13.03,
      13.03
     ]
    },
@@ -1451,6 +1455,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     32.5,
      32.5,
      32.5,
      32.5,
@@ -1561,6 +1566,7 @@
      36.7,
      36.7,
      36.7,
+     36.26,
      36.26,
      36.26,
      36.26,
@@ -1693,6 +1699,7 @@
      19.54,
      19.54,
      19.54,
+     19.54,
      19.54
     ]
    },
@@ -1805,6 +1812,7 @@
      13.72,
      13.72,
      13.72,
+     13.72,
      13.72
     ]
    },
@@ -1838,6 +1846,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     34.67,
      34.67,
      34.67,
      34.67,
@@ -1934,6 +1943,7 @@
      21.7,
      21.7,
      21.7,
+     21.7,
      21.7
     ]
    }
@@ -2003,49 +2013,55 @@
    "fallend": 8
   },
   "quelle": "TCGdex",
-  "stand": "2026-11-06T20:57:17.809Z"
+  "stand": "2026-11-06T21:54:13.320Z"
  },
  "trends": {
-  "ware": [],
+  "ware": [
+   {
+    "titel": "campus drivers staffel 2",
+    "menge": "100+",
+    "kategorie": "Sneaker"
+   }
+  ],
   "top": [
+   {
+    "titel": "alexander huber",
+    "menge": "500+"
+   },
+   {
+    "titel": "verkehrskontrolle",
+    "menge": "200+"
+   },
+   {
+    "titel": "oleschky",
+    "menge": "500+"
+   },
+   {
+    "titel": "justin bieber",
+    "menge": "200+"
+   },
+   {
+    "titel": "nachtcafe heute",
+    "menge": "2000+"
+   },
+   {
+    "titel": "musk",
+    "menge": "200+"
+   },
+   {
+    "titel": "sevilla",
+    "menge": "200+"
+   },
+   {
+    "titel": "campus drivers staffel 2",
+    "menge": "100+"
+   },
    {
     "titel": "1. bundesliga spiele",
     "menge": "2000+"
    },
    {
     "titel": "ausgrabung",
-    "menge": "200+"
-   },
-   {
-    "titel": "chuck norris",
-    "menge": "100+"
-   },
-   {
-    "titel": "aybi era",
-    "menge": "2000+"
-   },
-   {
-    "titel": "sylvie meis",
-    "menge": "200+"
-   },
-   {
-    "titel": "schuby",
-    "menge": "100+"
-   },
-   {
-    "titel": "hollywood",
-    "menge": "1000+"
-   },
-   {
-    "titel": "susan link",
-    "menge": "200+"
-   },
-   {
-    "titel": "stefanie hubig",
-    "menge": "200+"
-   },
-   {
-    "titel": "tiger",
     "menge": "200+"
    }
   ]
@@ -2483,15 +2499,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/shjupdpq6t-IH3979_Adidas_Samba-OG-W-Snake-Maroon-Crew-White-Gold-Metallic_os-1.jpg?v=1765977525",
     "laden": "asphaltgold.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "Air Jordan WMNS 1 Retro High OG",
-    "preis": 107.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-wmns-1-retro-high-og-pale-ivory-psychic-blue-coconut-milk",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-wmns-1-retro-high-og-pale-ivory-psychic-blue-coconut-milk-fd2596-102-footwear_20_3E_20sneaker.jpg?v=1772623597",
-    "laden": "afew-store.com",
-    "begriff": "jordan"
    },
    {
     "titel": "New Balance 740",
@@ -3311,6 +3318,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
     "laden": "overkillshop.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Air Jordan 5 Retro OG",
+    "preis": 209.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/air-jordan-5-retro-og-black-black-picante-red-glow-n-the-dark",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-5-retro-og-black-black-picante-red-glow-n-the-dark-hq7978-001-footwear_20_3E_20sneaker.jpg?v=1793114791",
+    "laden": "afew-store.com",
+    "begriff": "jordan"
    },
    {
     "titel": "Air Jordan 3 Retro",
