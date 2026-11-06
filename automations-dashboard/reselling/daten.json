@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-06T06:27:51.454Z",
+ "stand": "2026-11-06T06:30:52.059Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "drop:Nike Goadome Low Foam Schuh (Herren):2026-11-06T08:00:00.000Z",
+   "art": "Drop",
+   "titel": "⏰ Drop gleich: Nike Goadome Low Foam Schuh (Herren)",
+   "bild": "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit/ade22ad2-271d-4b33-8c57-55b1d6cf2647/goadome-low-foam-metallic-gold-and-black-%C2%A0-iv7693-700-%C2%A0%E2%80%93-erscheinungsdatum.jpg",
+   "link": "https://www.nike.com/de/launch/t/goadome-low-foam-metallic-gold-and-black",
+   "text": "Metallic Gold/Schwarz/Cargo Khaki · 199,99 € · Start 09:00 Uhr",
+   "zeit": "2026-11-06T06:30:52.059Z"
+  },
   {
    "schluessel": "filiale:3118897:1501",
    "art": "Filiale",
@@ -183,16 +192,6 @@
    "link": "https://www.google.com/maps/dir/?api=1&destination=49.984061,8.430174",
    "shop": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
    "text": "16,95 € · dm Rüsselsheim am Main (10,3 km) · 1 Stück\nAdam-Opel-Straße 59-61, 65428 Rüsselsheim am Main\nIm Umkreis in 14 Filiale(n) vorrätig.",
-   "zeit": "2026-11-03T21:38:18.243Z"
-  },
-  {
-   "schluessel": "filiale:3118686:1501",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: ebelin Adventskalender Beauty & Hair 2026, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
-   "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
-   "text": "32,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 23 Filiale(n) vorrätig.",
    "zeit": "2026-11-03T21:38:18.243Z"
   }
  ],
@@ -1927,6 +1926,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "740",
+    "preis": 60,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-740-u740yg2",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U740YG2-01.jpg?v=1761576893",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
     "preis": 60,
     "verfuegbar": true,
@@ -1934,6 +1942,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051153-413-Front.jpg?v=1755618413",
     "laden": "kith.com",
     "begriff": "cap"
+   },
+   {
+    "titel": "Asics GEL-1130 *Holiday Pack*",
+    "preis": 62,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/asics-gel1130-black-pure-silver",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/sh6elhb9ll-1203A997-001_Asics_GEL-1130-Black-Pure-Silver_os-1.jpg?v=1762351538",
+    "laden": "asphaltgold.com",
+    "begriff": "asics"
    },
    {
     "titel": "Nike Dunk Low Retro SE *Panda*",
@@ -2024,15 +2041,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH1018-200_01.jpg?v=1762768495",
     "laden": "sneakersnstuff.com",
     "begriff": "dunk"
-   },
-   {
-    "titel": "574",
-    "preis": 76,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/new-balance-574-wl574evb",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/WL574EVB-1__91324.1719435491.1280.1280.jpg?v=1742985394",
-    "laden": "sneakersnstuff.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Y-3 LOGO CAP",
@@ -2224,24 +2232,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "ASICS Gel-1130 - Black / Cream",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a609-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-023",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 740",
     "preis": 99.99,
     "verfuegbar": true,
@@ -2330,24 +2320,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IH9373_1_cbfa4bbc-fd41-4011-9122-d94322d0b4a3.jpg?v=1776771212",
     "laden": "overkillshop.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "ASICS Gel-1130 - White / Taro Purple",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_100_SR_RT_GLB.jpg?v=1780992734",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel-1130 - Cream / Carrier Grey",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-101",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_101_SR_RT_GLB.jpg?v=1780992709",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "New Balance 740",
@@ -2630,15 +2602,6 @@
    },
    {
     "titel": "Asics GEL-NYC",
-    "preis": 129,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/asics-gelnyc-cream-cream",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/gvKSREXYpVjDrjthqVg6_1203A739-100-Asics-GEL-NYC-Cream-Cream-os-1.jpg?v=1743088108",
-    "laden": "asphaltgold.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "Asics GEL-NYC",
     "preis": 134,
     "verfuegbar": true,
     "url": "https://www.asphaltgold.com/products/asics-gel-nyc-cream-oyster-grey",
@@ -2791,15 +2754,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS GEL-NYC - White / Midnight",
-    "preis": 150,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a383-118",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_118_SR_RT_GLB.jpg?v=1785420543",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 9060",
     "preis": 150.99,
     "verfuegbar": true,
@@ -2860,15 +2814,6 @@
     "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203b079-100",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203B079-100_01.jpg?v=1780653397",
     "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-NYC 2.0 - Umeboshi / Moonrock",
-    "preis": 160,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203b079-600",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B079_600_SR_RT_GLB-1.jpg?v=1789458097",
-    "laden": "kith.com",
     "begriff": "asics"
    },
    {
@@ -2980,15 +2925,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-118",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Nike Air Jordan 9 Retro OG *Space Jam*",
     "preis": 178,
     "verfuegbar": true,
@@ -3041,15 +2977,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ5495-005_01.jpg?v=1790618946",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "ASICS GEL KAYANO 12.1 - White / Cream",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a759-106",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_106_SR_RT_GLB.jpg?v=1790170342",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "New Balance 90/60",
