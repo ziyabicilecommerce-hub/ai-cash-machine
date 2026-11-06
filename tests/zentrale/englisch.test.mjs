@@ -25,7 +25,7 @@ test('Englische Geschichten: gültig, kurze Hooks, Du-Hooks, keine doppelt, kein
 
 test('Englischer Kanal: nur mit Kanal-ID aktiv, englische Texte bei YouTube, Instagram und Story', async () => {
   const ohne = await import(`../../automations/lib/bufferVerteiler.mjs?ohne=${Date.now()}`);
-  assert.deepEqual(ohne.KANAELE.filter((k) => k.quelle === 'horror-en').map((k) => k.name), ['giyuuu sama'], 'YouTube ist englisch');
+  assert.equal(ohne.KANAELE.find((k) => k.name === 'giyuuu sama').quelle, 'horror-mix', 'YouTube testet Deutsch gegen Englisch');
   process.env.EN_KANAL = 'aaaaaaaaaaaaaaaaaaaaaaaa';
   const mit = await import(`../../automations/lib/bufferVerteiler.mjs?mit=${Date.now()}`);
   delete process.env.EN_KANAL;
@@ -52,4 +52,17 @@ test('Part 2 auf Englisch bei einem Hit, ohne den Du-Hook von Teil 1', async () 
   const de = alleSkripte()[0];
   const tde = teil2Kandidat('desk.rebel', [], [...normal.map((p) => ({ ...p, konto: '@desk.rebel' })), { konto: '@desk.rebel', aufrufe: 600, text: de.hook }]);
   assert.equal(tde.hook2, undefined, 'deutscher Teil 2 erbt keinen Du-Hook');
+});
+
+test('Sprach-Test: 50/50 bis ein klarer Sieger feststeht', async () => {
+  const { sprachAnteil } = await import('../../automations/lib/bufferVerteiler.mjs');
+  const { sprachTest } = await import('../../automations/lib/wochenbericht.mjs');
+  assert.equal(sprachAnteil(null), 0.5);
+  assert.equal(sprachAnteil({ de: { n: 4, schnitt: 200 }, en: { n: 4, schnitt: 400 } }), 0.85);
+  assert.equal(sprachAnteil({ de: { n: 4, schnitt: 400 }, en: { n: 4, schnitt: 200 } }), 0.15);
+  assert.equal(sprachAnteil({ de: { n: 4, schnitt: 300 }, en: { n: 3, schnitt: 900 } }), 0.5, 'zu wenig Daten');
+  assert.equal(sprachAnteil({ de: { n: 5, schnitt: 300 }, en: { n: 5, schnitt: 350 } }), 0.5, 'kein klarer Sieger');
+  const t = sprachTest([{ konto: '@giyuuu sama', aufrufe: 700, text: 'Wenn dich deine eigene Nummer anruft' }, { konto: '@giyuuu sama', aufrufe: 100, text: 'My phone rings.' }, { konto: '@desk.rebel', aufrufe: 999, text: 'x' }],
+    (p) => /\bmy\b/i.test(p.text));
+  assert.deepEqual(t, { de: { n: 1, schnitt: 700 }, en: { n: 1, schnitt: 100 } });
 });

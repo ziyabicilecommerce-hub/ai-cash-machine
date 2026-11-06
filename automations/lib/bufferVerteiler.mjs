@@ -4,8 +4,9 @@
 export const KANAELE = [
   { id: '6ae8f441e29c69a1713e44f3', name: 'desk.rebel', dienst: 'instagram', quelle: 'horror' },
   { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'fakten' },
-  // YouTube: englische Horror-Shorts (05.11.) - YouTube verteilt weltweit, Englisch erreicht ein vielfach größeres Publikum
-  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-en' },
+  // YouTube: Sprach-Test (06.11.) - deutsche Horror-Shorts holten hier 179-706 Aufrufe, Englisch erreicht weltweit mehr.
+  // Halbe-halbe, bis der Wochenbericht einen klaren Sieger hat; dann bekommt der 85 % (sprachAnteil).
+  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-mix' },
   // Englischer Horror-Kanal: an, sobald seine Buffer-Kanal-ID eingetragen ist (Repo-Variable EN_KANAL, optional EN_DIENST)
   ...(/^[a-f\d]{24}$/.test(process.env.EN_KANAL || '') ? [{ id: process.env.EN_KANAL, name: 'english-horror', dienst: process.env.EN_DIENST || 'youtube', quelle: 'horror-en' }] : []),
 ];
@@ -142,6 +143,13 @@ export function abGewichte(ab = {}) {
   return g;
 }
 export const abSchluessel = (text) => String(text || '').replace(/\s+/g, ' ').trim().slice(0, 40);
+
+// Anteil englischer Videos auf dem Mix-Kanal: 50 %, bis je >= 4 Videos mit Zahlen da sind und eine Sprache >= 1,5x so viele Aufrufe holt
+export function sprachAnteil(test = null) {
+  if (!(test?.de?.n >= 4) || !(test?.en?.n >= 4)) return 0.5;
+  const v = test.en.schnitt / Math.max(test.de.schnitt, 1);
+  return v >= 1.5 ? 0.85 : v <= 1 / 1.5 ? 0.15 : 0.5;
+}
 
 export function zaehlen(posts, kanalId) {
   // Stories (ohne Text) zählen nicht als Post - sie begleiten nur das Reel
