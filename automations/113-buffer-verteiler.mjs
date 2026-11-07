@@ -178,7 +178,7 @@ async function posten() {
       if (p.variante) varianten[abSchluessel(p.hook)] = { kanal: k.name, zeit: new Date().toISOString(), ...p.variante };
       const ab = (p.quelle === 'horror-en' && k.quelle === 'horror-mix' ? ' [EN]' : p.quelle === 'horror' && k.quelle === 'horror-mix' ? ' [DE]' : '') + (p.variante ? ` [ohne: ${Object.entries(p.variante).filter(([, an]) => !an).map(([f]) => f).join(', ') || '–'}]` : '');
       bericht(`- ✅ ${k.name}: „${String(p.titel).slice(0, 60)}“${p.herkunft ? ` (${p.herkunft})` : ''}${ab} gepostet (heute dann ${p.heute + 1})`);
-      const k1 = urls[`${k.id}_kachel1`], k2 = urls[`${k.id}_kachel2`];
+      const k1 = urls[`${k.id}_kachel1`], k2 = urls[`${k.id}_kachel2v`] || urls[`${k.id}_kachel2`];  // Video-Kachel bevorzugt
       if (p.kurz && /^https:\/\//.test(k1 || '') && /^https:\/\//.test(k2 || '')) {
         try {  // 2-Satz-Horror: Satz 1, dann Satz 2 mit Frage - danach folgt die Story zum neuen Reel
           const g = json(`out/kurz-${k.id}.json`, {});

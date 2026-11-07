@@ -139,7 +139,8 @@ export function heuteBerlin(jetzt = new Date()) {
 // sticker/alt: für die 2-Satz-Horror-Kacheln (kurzHorror.mjs) - sonst der Hinweis aufs neue Reel
 export function storyEingabe(kanalId, coverUrl, en = false, sticker = '', alt = '') {
   return { channelId: kanalId, text: '', schedulingType: 'automatic', mode: 'shareNow',
-    assets: [{ image: { url: coverUrl, metadata: { altText: alt || (en ? 'Cover of the new horror video' : 'Titelbild des neuen Horror-Videos') } } }],
+    // .mp4 -> Video-Story (2-Satz-Horror mit Schock), sonst Bild
+    assets: [/\.mp4$/i.test(coverUrl) ? { video: { url: coverUrl } } : { image: { url: coverUrl, metadata: { altText: alt || (en ? 'Cover of the new horror video' : 'Titelbild des neuen Horror-Videos') } } }],
     metadata: { instagram: { type: 'story', shouldShareToFeed: false, isAiGenerated: true, stickerFields: { text: sticker || (en ? 'New video 👀 Headphones on! Check my profile' : 'Neues Video 👀 Kopfhörer auf! Schau auf mein Profil') } } } };
 }
 

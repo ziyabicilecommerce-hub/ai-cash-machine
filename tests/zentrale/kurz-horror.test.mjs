@@ -31,3 +31,9 @@ test('storyEingabe nimmt eigenen Sticker, sonst den Reel-Hinweis', () => {
   assert.equal(s.assets[0].image.metadata.altText, 'Satz 1');
   assert.equal(s.text, '');  // zählt nicht als Post
 });
+
+test('storyEingabe: .mp4 wird zur Video-Story', () => {
+  const s = storyEingabe('x', 'https://a/kachel2.mp4', false, 'Frage');
+  assert.deepEqual(s.assets[0], { video: { url: 'https://a/kachel2.mp4' } });
+  assert.equal(s.metadata.instagram.type, 'story');
+});
