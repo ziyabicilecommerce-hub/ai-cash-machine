@@ -136,10 +136,11 @@ export function heuteBerlin(jetzt = new Date()) {
 
 // Buffer-Posts zählen: alles außer Fehlern/Entwürfen zählt (gesendet, wird gesendet, geplant)
 // Instagram-Story als Anstoß fürs neue Reel: Titelbild + Text-Sticker, ohne Beitragstext (zählt so nicht als Post)
-export function storyEingabe(kanalId, coverUrl, en = false) {
+// sticker/alt: für die 2-Satz-Horror-Kacheln (kurzHorror.mjs) - sonst der Hinweis aufs neue Reel
+export function storyEingabe(kanalId, coverUrl, en = false, sticker = '', alt = '') {
   return { channelId: kanalId, text: '', schedulingType: 'automatic', mode: 'shareNow',
-    assets: [{ image: { url: coverUrl, metadata: { altText: en ? 'Cover of the new horror video' : 'Titelbild des neuen Horror-Videos' } } }],
-    metadata: { instagram: { type: 'story', shouldShareToFeed: false, isAiGenerated: true, stickerFields: { text: en ? 'New video 👀 Headphones on! Check my profile' : 'Neues Video 👀 Kopfhörer auf! Schau auf mein Profil' } } } };
+    assets: [{ image: { url: coverUrl, metadata: { altText: alt || (en ? 'Cover of the new horror video' : 'Titelbild des neuen Horror-Videos') } } }],
+    metadata: { instagram: { type: 'story', shouldShareToFeed: false, isAiGenerated: true, stickerFields: { text: sticker || (en ? 'New video 👀 Headphones on! Check my profile' : 'Neues Video 👀 Kopfhörer auf! Schau auf mein Profil') } } } };
 }
 
 // A/B-Test: jedes Feature ist bei 30 % der Horror-Videos aus - so zeigt der Wochenbericht, was wirklich wirkt
