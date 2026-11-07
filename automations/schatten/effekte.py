@@ -100,3 +100,9 @@ def suchbanner(im, sprache='de'):
     b = d.textlength(text, font=f)
     d.rounded_rectangle(((W - b) / 2 - 16, 196, (W + b) / 2 + 16, 246), 14, fill=GELB)
     d.text((W / 2, 221), text, font=f, fill=(10, 10, 10), anchor='mm')
+
+# Kino-Look für die fertige Bildspur (ffmpeg -vf): Bloom (Lichter leuchten weich), Teal-Orange-Farbgebung,
+# leichte Linsen-Farbsäume, Filmkorn, Vignette - wirkt teurer, kostet beim Rendern nur Sekunden
+KINO_LOOK = ('split[a][b];[b]gblur=sigma=14[g];[a][g]blend=all_mode=screen:all_opacity=0.16,'
+             'colorbalance=rs=-0.05:gs=-0.01:bs=0.07:rh=0.06:gh=0.02:bh=-0.05,eq=contrast=1.07:saturation=0.88,'
+             'scale=1080:1920:flags=lanczos,rgbashift=rh=-2:bh=2,unsharp=5:5:0.5,vignette=PI/4.5,noise=alls=6:allf=t+u,format=yuv420p')

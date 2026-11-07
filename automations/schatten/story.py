@@ -5,7 +5,7 @@ import asyncio, json, math, os, random, subprocess, sys
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from ton import tonspur, raum_zeiten
 from effekte import (W, H, rotverschiebung, weich, popfont, suchzeiten, KALT_BIS, SCHLEIFE, raum_bild, zurueckspulen,
-                     kopfhoerer, suchbanner)
+                     kopfhoerer, suchbanner, KINO_LOOK)
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
 from ki import ki_bilder_laden, ki_szene
 import kamera
@@ -390,7 +390,7 @@ def main():
 
     bildspur = os.path.join(ordner, 'bild.mp4')
     p = subprocess.Popen(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
-                          '-vf', 'scale=1080:1920:flags=lanczos,unsharp=5:5:0.5,vignette=PI/4.5,noise=alls=5:allf=t+u,format=yuv420p',
+                          '-vf', KINO_LOOK,
                           '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-maxrate', '10M', '-bufsize', '20M', bildspur], stdin=subprocess.PIPE)
     cover = None
     uhr_bis = next((s['start'] for s in plan if s['art'] in ('station', 'zettel2')), gesamt)
