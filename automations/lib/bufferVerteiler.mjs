@@ -8,7 +8,8 @@ export const KANAELE = [
   { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'horror' },
   // YouTube: Sprach-Test (06.11.) - deutsche Horror-Shorts holten hier 179-706 Aufrufe, Englisch erreicht weltweit mehr.
   // Halbe-halbe, bis der Wochenbericht einen klaren Sieger hat; dann bekommt der 85 % (sprachAnteil).
-  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-mix' },
+  // ziel 8 (07.11.): YouTube ist unser stärkster Kanal (Ø 136, deutsche Horror-Shorts Ø 315) - dort mehr Videos
+  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-mix', ziel: 8 },
   // Englischer Horror-Kanal: an, sobald seine Buffer-Kanal-ID eingetragen ist (Repo-Variable EN_KANAL, optional EN_DIENST)
   ...(/^[a-f\d]{24}$/.test(process.env.EN_KANAL || '') ? [{ id: process.env.EN_KANAL, name: 'english-horror', dienst: process.env.EN_DIENST || 'youtube', quelle: 'horror-en' }] : []),
 ];

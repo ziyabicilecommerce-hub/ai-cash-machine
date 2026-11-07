@@ -95,7 +95,7 @@ async function vorbereiten() {
   if (angepasst.length) bericht(`- 🧪 A/B-Gewinner übernommen: ${angepasst.map(([f, aus]) => `${f} ${aus < 0.5 ? 'meist an' : 'meist aus'}`).join(', ')}`);
   for (const k of KANAELE) {
     const { heute, letzter } = zaehlen(posts, k.id);
-    if (!postenJetzt(heute, letzter)) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
+    if (!postenJetzt(heute, letzter, Date.now(), { ziel: k.ziel || ZIEL_PRO_TAG })) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
     // Mix-Kanal: diesmal Deutsch oder Englisch (Sprach-Test)
     const quelle = k.quelle === 'horror-mix' ? (Math.random() < enAnteil ? 'horror-en' : 'horror') : k.quelle;
     if (quelle.startsWith('horror')) {
@@ -114,6 +114,15 @@ async function vorbereiten() {
         bericht(`- ↩️ ${k.name}: „${h.skript.titel}“ lief heute schon - nehme eine andere`);
         extra[`horror:${h.schluessel || slug(h.skript.titel)}`] = 'heute';
         h = null;
+      }
+      // Sicherheitsnetz: alle Geschichten schon irgendwo gelaufen? Dann darf dieser Kanal eine nehmen, die bisher nur auf einem
+      // ANDEREN Kanal lief (anderes Publikum) - auf demselben Kanal nie zweimal, und nie dieselbe wie ein anderer Kanal heute.
+      if (!h) {
+        const heuteAndere = Object.fromEntries(Object.values(stand).flatMap((x) => Object.entries(x || {})).filter(([, t]) => String(t) >= heuteBerlin()));
+        const nurHier = { ...(stand[k.id] || {}), ...heuteAndere, ...Object.fromEntries(plan.map((x) => [x.schluessel, 'jetzt'])), ...extra };
+        h = quelle === 'horror-en' ? horrorSkriptEn(nurHier) : await horrorSkript(nurHier, k.name);
+        if (h && schonHeute(h.skript)) h = null;
+        if (h) h.herkunft = `${h.herkunft}, schon auf anderem Kanal gelaufen`;
       }
       if (!h) { bericht(`- ⚠️ ${k.name}: keine Horror-Geschichte`); continue; }
       const variante = abVariante(Math.random, gewichte);
