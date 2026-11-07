@@ -71,6 +71,8 @@ def tonspur(plan, gesamt, ordner, schlicht=False, raum=False):
     glas, rauschen = [], []
     if schlicht:
         teile = ['0'] + [f"0.9*gte(t,{s['start']:.2f})*exp(-5*max(t-{s['start']:.2f},0))*sin(2*PI*42*t)" for s in plan if s['art'] == 'fratze']
+        # Kino-Einschlag ("Braam") in den ersten 2 Sekunden: tiefer Akkord mit Obertönen, klingt wie ein Film-Trailer
+        teile.append("0.75*gte(t,0.05)*exp(-1.4*max(t-0.05,0))*(sin(2*PI*41*t)+0.55*sin(2*PI*61.5*t)+0.35*sin(2*PI*82*t)+0.18*sin(2*PI*123*t+2*sin(2*PI*3*t)))")
         fr = next((s['start'] for s in plan if s['art'] == 'fratze'), 0)
         if fr > 6:  # Spannung: Brummen wird bis zum Jumpscare lauter, kurz davor steigt ein Ton an
             teile.append(f"0.14*lt(t,{fr:.2f})*(t/{fr:.2f})*(0.6+0.4*sin(2*PI*0.5*t))*sin(2*PI*55*t)")
