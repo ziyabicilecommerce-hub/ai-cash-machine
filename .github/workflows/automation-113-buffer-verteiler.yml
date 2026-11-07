@@ -69,11 +69,12 @@ jobs:
             cp "out/r-$K/video.mp4" "out/r-$K/$SLUG.mp4"
             KACHELN=""
             # 2-Satz-Horror für die Instagram-Story (nur wenn geplant) - Hintergrund = Titelbild des Reels
-            if [ -f "out/kurz-$K.json" ] && python3 automations/schatten/storyKachel.py "out/kurz-$K.json" "out/r-$K/cover.jpg" "out/r-$K"; then KACHELN="out/r-$K/kachel1.jpg out/r-$K/kachel2.jpg"; fi
+            if [ -f "out/kurz-$K.json" ] && python3 automations/schatten/storyKachel.py "out/kurz-$K.json" "out/r-$K/cover.jpg" "out/r-$K"; then KACHELN="out/r-$K/kachel1.jpg out/r-$K/kachel2.jpg"; [ -s "out/r-$K/kachel2.mp4" ] && KACHELN="$KACHELN out/r-$K/kachel2.mp4"; fi
             gh release create "$TAG" "out/r-$K/$SLUG.mp4" "out/r-$K/cover.jpg" $KACHELN -R "$GITHUB_REPOSITORY" --prerelease --title "Horror-Short: $SLUG" --notes "KI-generiertes Horror-Video (frei erfundene Geschichte)." || continue
             B="https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG"
             jq --arg k "$K" --arg u "$B/$SLUG.mp4" --arg c "$B/cover.jpg" '.[$k]=$u | .[$k+"_cover"]=$c' out/horror-urls.json > out/u.json && mv out/u.json out/horror-urls.json
             if [ -n "$KACHELN" ]; then jq --arg k "$K" --arg a "$B/kachel1.jpg" --arg b "$B/kachel2.jpg" '.[$k+"_kachel1"]=$a | .[$k+"_kachel2"]=$b' out/horror-urls.json > out/u.json && mv out/u.json out/horror-urls.json; fi
+            if [ -s "out/r-$K/kachel2.mp4" ]; then jq --arg k "$K" --arg v "$B/kachel2.mp4" '.[$k+"_kachel2v"]=$v' out/horror-urls.json > out/u.json && mv out/u.json out/horror-urls.json; fi
           done
       - name: Posten
         env:
