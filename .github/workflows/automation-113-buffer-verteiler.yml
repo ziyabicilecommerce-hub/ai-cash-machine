@@ -7,7 +7,8 @@ name: "113 · Buffer-Verteiler (Horror IG+YT, Fakten - 5+ Posts am Tag)"
 
 on:
   schedule:
-    - cron: '23 7,10,13,16,19,21 * * *'
+    # dazu drei Nachtläufe (UTC 23, 0, 2 = 0, 1, 3 Uhr in Berlin): nachts laufen unsere Videos am besten (Wochenbericht)
+    - cron: '23 0,2,7,10,13,16,19,21,23 * * *'
   workflow_dispatch:
 
 permissions:

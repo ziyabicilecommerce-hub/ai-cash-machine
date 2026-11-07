@@ -37,3 +37,18 @@ test('storyEingabe: .mp4 wird zur Video-Story', () => {
   assert.deepEqual(s.assets[0], { video: { url: 'https://a/kachel2.mp4' } });
   assert.equal(s.metadata.instagram.type, 'story');
 });
+
+test('20 neue Anruf-Geschichten bestehen die Hook-Prüfung', async () => {
+  const { ANRUF4, DU_HOOKS4 } = await import('../../automations/schatten/skriptMuster4.mjs');
+  const { alleSkripte } = await import('../../automations/schatten/skriptBot.mjs');
+  const alle = alleSkripte();
+  assert.equal(ANRUF4.length, 20);
+  for (const v of ANRUF4) {
+    const s = alle.find((x) => x.titel === v.titel);
+    assert.ok(s, `${v.titel} fällt durch die Prüfung`);
+    assert.equal(s.muster, 'anruf');
+    assert.ok(s.hook2 && s.hook2.length <= 70, `Du-Hook ${v.titel}`);
+  }
+  assert.equal(Object.keys(DU_HOOKS4).length, 20);
+  assert.equal(new Set(alle.map((s) => slug(s.titel))).size, alle.length, 'keine doppelten Titel');
+});
