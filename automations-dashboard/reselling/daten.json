@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-07T21:50:39.493Z",
+ "stand": "2026-11-07T21:53:33.196Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -190,7 +190,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-07T21:38:49.777Z",
+  "stand": "2026-11-07T21:53:35.413Z",
   "filialen": 148,
   "produkte": [
    {
@@ -508,15 +508,6 @@
     ]
    },
    {
-    "dan": "3135931",
-    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
-    "preis": 29.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
-    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
     "dan": "3119105",
     "name": "M. Asam Adventskalender 2026 Schönste Zeit, 1 St",
     "preis": 69.95,
@@ -737,6 +728,15 @@
       "menge": 6
      }
     ]
+   },
+   {
+    "dan": "3139943",
+    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
+    "preis": 49.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
+    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3143255",
@@ -2227,23 +2227,27 @@
   ],
   "top": [
    {
-    "titel": "lothar matthäus",
-    "menge": "1000+"
+    "titel": "carney chukwuemeka",
+    "menge": "200+"
    },
    {
-    "titel": "bruce willis",
-    "menge": "200+"
+    "titel": "lothar matthäus",
+    "menge": "2000+"
    },
    {
     "titel": "tom hanks",
     "menge": "200+"
    },
    {
-    "titel": "michael film",
-    "menge": "100+"
+    "titel": "bruce willis",
+    "menge": "200+"
    },
    {
     "titel": "tatort morgen",
+    "menge": "200+"
+   },
+   {
+    "titel": "michael film",
     "menge": "100+"
    },
    {
@@ -2257,10 +2261,6 @@
    {
     "titel": "tatort münster",
     "menge": "1000+"
-   },
-   {
-    "titel": "frimpong",
-    "menge": "200+"
    },
    {
     "titel": "campus drivers staffel 2",
@@ -2460,6 +2460,15 @@
     "begriff": "cap"
    },
    {
+    "titel": "Tennis Classic",
+    "preis": 80,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/nike-tennis-classic-iv2437-100-white-white-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IV2437-100_1.jpg?v=1785486761",
+    "laden": "overkillshop.com",
+    "begriff": "dunk"
+   },
+   {
     "titel": "Samba OG",
     "preis": 80,
     "verfuegbar": true,
@@ -2520,7 +2529,16 @@
     "url": "https://www.overkillshop.com/products/new-balance-u1906lae-silver",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1906LAE_1.jpg?v=1746533291",
     "laden": "overkillshop.com",
-    "begriff": "new era"
+    "begriff": "new balance"
+   },
+   {
+    "titel": "U190663V",
+    "preis": 90,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u190663v-u190663v-silver-metallic-black-fire-cracker",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U190663V_1.jpg?v=1770208223",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Asics GEL-NYC",
@@ -2748,15 +2766,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "U20107Z3",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u20107z3-u20107z3tornado-faded-black-dark-silver-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U20107Z3_1.jpg?v=1770283928",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "ASICS Gel-1130 - White / Taro Purple",
     "preis": 110,
     "verfuegbar": true,
@@ -2809,6 +2818,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cc1c86f0b9268f6b27add5b92548f1df272b48ac_1201A789_020_Asics_GEL_NYC_Graphite_Grey_Black_os_1_9d944940-9064-4615-9542-6bf02307a613.jpg?v=1745415111",
     "laden": "asphaltgold.com",
     "begriff": "asics"
+   },
+   {
+    "titel": "Air Force 1 '07",
+    "preis": 119,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/nike-air-force-1-07-cw2288-111-white-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/CW2288-111_1_ab7621cd-ac0f-4726-abe1-c18686d747f1.jpg?v=1730107192",
+    "laden": "overkillshop.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Samba OG",
@@ -2881,15 +2899,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-wonalu-owhite-hirblu-kk0008-footwear_20_3E_20sneaker.jpg?v=1791796528",
     "laden": "afew-store.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "Air Max Plus VII",
-    "preis": 120,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/nike-air-max-plus-vll-iq0282-084-smoke-grey-metallic-silver-iron-grey",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IQ0282-084_1.jpg?v=1772206868",
-    "laden": "overkillshop.com",
-    "begriff": "dunk"
    },
    {
     "titel": "U201079X",
@@ -3016,6 +3025,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-auburn-warvan-magbei-ki0438-footwear_20_3E_20sneaker.jpg?v=1791796405",
     "laden": "afew-store.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "U18905UY",
+    "preis": 130,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u18905uy-u18905uy-slate-grey",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Asics GEL-NYC",
@@ -3205,15 +3223,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/M1906RER_1.jpg?v=1739539439",
     "laden": "overkillshop.com",
     "begriff": "new era"
-   },
-   {
-    "titel": "Air Max 95 SP",
-    "preis": 160,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/undefeated-x-nike-air-max-95-sp-ib4453-001-black-metallic-silver-gorge-green",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IB4453-001_1.jpg?v=1766138415",
-    "laden": "overkillshop.com",
-    "begriff": "dunk"
    },
    {
     "titel": "ZX 8094 \"The Missing Link\"",
@@ -3522,15 +3531,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "U990BL4",
-    "preis": 200,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u990bl4-u990bl4-black-grey-006-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U990BL4_1.jpg?v=1779447020",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Air Jordan 9 Retro OG \"Space Jam\"",
     "preis": 209,
     "verfuegbar": true,
@@ -3538,15 +3538,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IX6179-100_1.jpg?v=1789536414",
     "laden": "overkillshop.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "U1300NY",
-    "preis": 209,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u1300ny-nb-navy-raincloud-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 3 Retro",
