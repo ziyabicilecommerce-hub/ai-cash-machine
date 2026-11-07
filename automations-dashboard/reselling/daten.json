@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-07T23:48:16.909Z",
+ "stand": "2026-11-07T23:52:08.326Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -898,6 +898,16 @@
  },
  "kalender": [
   {
+   "titel": "Pokémon: Delta-Herrschaft",
+   "farbe": "Gerade erschienen",
+   "preis": null,
+   "bild": "",
+   "zeit": "2026-11-06T00:00:00.000Z",
+   "link": "https://www.pokemon.com/de/pokemon-sammelkartenspiel",
+   "marke": "Pokémon",
+   "kat": "Sammelkarten"
+  },
+  {
    "titel": "Nike First Sight Shadow Damenschuh",
    "farbe": "Cream II/Metallic Silver/Sail/Enigma Stone",
    "preis": 139.99,
@@ -1077,6 +1087,39 @@
  "pokemon": {
   "picks": [
    {
+    "id": "30th-c-009",
+    "name": "Quajutsu TURBO",
+    "nummer": "009",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Quajutsu%20TURBO",
+    "preis": {
+     "tief": 7,
+     "trend": 11.36,
+     "schnitt7": 10.79,
+     "schnitt30": 9.3
+    },
+    "prozent": 16,
+    "signal": "steigt",
+    "profi": {
+     "einstieg": 7,
+     "ziel": 10.79,
+     "gewinn": 1.75,
+     "roi": 25,
+     "momentum": 16,
+     "spread": 4.36,
+     "score": 73,
+     "signal": "BUY"
+    },
+    "nurBewegung": false,
+    "kurs": [
+     11.36
+    ]
+   },
+   {
     "id": "me04-120",
     "name": "Azetts Gelassenheit",
     "nummer": "120",
@@ -1088,7 +1131,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Azetts%20Gelassenheit",
     "preis": {
      "tief": 10,
-     "trend": 19.71,
+     "trend": 19.13,
      "schnitt7": 20.02,
      "schnitt30": 19.99
     },
@@ -1096,12 +1139,12 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 10,
-     "ziel": 19.71,
-     "gewinn": 7.22,
-     "roi": 72,
+     "ziel": 19.13,
+     "gewinn": 6.67,
+     "roi": 67,
      "momentum": 0,
-     "spread": 9.71,
-     "score": 73,
+     "spread": 9.13,
+     "score": 71,
      "signal": "BUY"
     },
     "nurBewegung": true,
@@ -1210,7 +1253,8 @@
      19.71,
      19.71,
      19.71,
-     19.71
+     19.71,
+     19.13
     ]
    },
    {
@@ -1225,7 +1269,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Chillabell-ex",
     "preis": {
      "tief": 18,
-     "trend": 33.25,
+     "trend": 34.7,
      "schnitt7": 33.59,
      "schnitt30": 35.23
     },
@@ -1233,12 +1277,12 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 18,
-     "ziel": 33.25,
-     "gewinn": 12.09,
-     "roi": 67,
+     "ziel": 33.59,
+     "gewinn": 12.41,
+     "roi": 69,
      "momentum": -5,
-     "spread": 15.25,
-     "score": 64,
+     "spread": 16.7,
+     "score": 65,
      "signal": "BUY"
     },
     "nurBewegung": true,
@@ -1347,83 +1391,41 @@
      33.25,
      33.25,
      33.25,
-     33.25
+     33.25,
+     34.7
     ]
    },
    {
-    "id": "me03-094",
-    "name": "Piepi",
-    "nummer": "094",
-    "seltenheit": "Selten, Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/094/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Piepi",
+    "id": "30th-c-016",
+    "name": "Rayquaza EX",
+    "nummer": "016",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rayquaza%20EX",
     "preis": {
-     "tief": 7.71,
-     "trend": 15.35,
-     "schnitt7": 15.95,
-     "schnitt30": 17.04
+     "tief": 23.99,
+     "trend": 28.91,
+     "schnitt7": 29.66,
+     "schnitt30": 26.06
     },
-    "prozent": -6,
-    "signal": "stabil",
+    "prozent": 14,
+    "signal": "steigt",
     "profi": {
-     "einstieg": 7.71,
-     "ziel": 15.35,
-     "gewinn": 5.37,
-     "roi": 70,
-     "momentum": -6,
-     "spread": 7.64,
+     "einstieg": 23.99,
+     "ziel": 28.91,
+     "gewinn": 1.97,
+     "roi": 8,
+     "momentum": 14,
+     "spread": 4.92,
      "score": 64,
      "signal": "BUY"
     },
-    "nurBewegung": true,
+    "nurBewegung": false,
     "kurs": [
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35,
-     15.35
+     28.91
     ]
    },
    {
@@ -1438,7 +1440,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mauzi-ex",
     "preis": {
      "tief": 7,
-     "trend": 13.2,
+     "trend": 13.11,
      "schnitt7": 13.38,
      "schnitt30": 13.3
     },
@@ -1446,12 +1448,12 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 7,
-     "ziel": 13.2,
-     "gewinn": 4.04,
-     "roi": 58,
+     "ziel": 13.11,
+     "gewinn": 3.95,
+     "roi": 56,
      "momentum": 1,
-     "spread": 6.2,
-     "score": 62,
+     "spread": 6.11,
+     "score": 61,
      "signal": "BUY"
     },
     "nurBewegung": true,
@@ -1499,83 +1501,107 @@
      13.2,
      13.2,
      13.2,
-     13.2
+     13.2,
+     13.11
     ]
    },
    {
-    "id": "me03-118",
-    "name": "Mega-Starmie-ex",
-    "nummer": "118",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/118/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Starmie-ex",
+    "id": "30th-c-027",
+    "name": "Arceus-VSTAR",
+    "nummer": "027",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Arceus-VSTAR",
     "preis": {
-     "tief": 20,
-     "trend": 32.29,
-     "schnitt7": 32.74,
-     "schnitt30": 33.88
+     "tief": 8.88,
+     "trend": 12.2,
+     "schnitt7": 11.54,
+     "schnitt30": 10.26
     },
-    "prozent": -3,
-    "signal": "stabil",
+    "prozent": 12,
+    "signal": "steigt",
     "profi": {
-     "einstieg": 20,
-     "ziel": 32.29,
-     "gewinn": 9.18,
-     "roi": 46,
-     "momentum": -3,
-     "spread": 12.29,
+     "einstieg": 8.88,
+     "ziel": 11.54,
+     "gewinn": 0.58,
+     "roi": 7,
+     "momentum": 12,
+     "spread": 3.32,
+     "score": 60,
+     "signal": "PASS"
+    },
+    "nurBewegung": false,
+    "kurs": [
+     12.2
+    ]
+   },
+   {
+    "id": "30th-c-028",
+    "name": "Zacian-V",
+    "nummer": "028",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Zacian-V",
+    "preis": {
+     "tief": 5.95,
+     "trend": 9.52,
+     "schnitt7": 9.3,
+     "schnitt30": 8.64
+    },
+    "prozent": 8,
+    "signal": "steigt",
+    "profi": {
+     "einstieg": 5.95,
+     "ziel": 9.3,
+     "gewinn": 1.39,
+     "roi": 23,
+     "momentum": 8,
+     "spread": 3.57,
      "score": 60,
      "signal": "BUY"
     },
+    "nurBewegung": false,
+    "kurs": [
+     9.52
+    ]
+   },
+   {
+    "id": "30th-c-018",
+    "name": "Gengar",
+    "nummer": "018",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gengar",
+    "preis": {
+     "tief": 39.99,
+     "trend": 51.52,
+     "schnitt7": 54.47,
+     "schnitt30": 53.67
+    },
+    "prozent": 1,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 39.99,
+     "ziel": 51.52,
+     "gewinn": 7.45,
+     "roi": 19,
+     "momentum": 1,
+     "spread": 11.53,
+     "score": 56,
+     "signal": "HOLD"
+    },
     "nurBewegung": true,
     "kurs": [
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.5,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29,
-     32.29
+     51.52
     ]
    },
    {
@@ -1590,7 +1616,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zeraora-ex",
     "preis": {
      "tief": 25,
-     "trend": 35.22,
+     "trend": 34.63,
      "schnitt7": 40.8,
      "schnitt30": 41.39
     },
@@ -1598,11 +1624,11 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 25,
-     "ziel": 35.22,
-     "gewinn": 6.96,
-     "roi": 28,
+     "ziel": 34.63,
+     "gewinn": 6.4,
+     "roi": 26,
      "momentum": -1,
-     "spread": 10.22,
+     "spread": 9.63,
      "score": 56,
      "signal": "HOLD"
     },
@@ -1712,7 +1738,8 @@
      35.22,
      35.22,
      35.22,
-     35.22
+     35.22,
+     34.63
     ]
    },
    {
@@ -1727,7 +1754,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gladios%20Finalkampf",
     "preis": {
      "tief": 11,
-     "trend": 19.31,
+     "trend": 19.06,
      "schnitt7": 19.08,
      "schnitt30": 20.61
     },
@@ -1735,11 +1762,11 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 11,
-     "ziel": 19.08,
-     "gewinn": 5.63,
+     "ziel": 19.06,
+     "gewinn": 5.61,
      "roi": 51,
      "momentum": -7,
-     "spread": 8.31,
+     "spread": 8.06,
      "score": 55,
      "signal": "HOLD"
     },
@@ -1849,7 +1876,8 @@
      19.31,
      19.31,
      19.31,
-     19.31
+     19.31,
+     19.06
     ]
    },
    {
@@ -1864,7 +1892,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Micas%20Auff%C3%BChrung",
     "preis": {
      "tief": 7,
-     "trend": 13.86,
+     "trend": 14.81,
      "schnitt7": 13.17,
      "schnitt30": 13.77
     },
@@ -1876,7 +1904,7 @@
      "gewinn": 4.01,
      "roi": 57,
      "momentum": -4,
-     "spread": 6.86,
+     "spread": 7.81,
      "score": 54,
      "signal": "HOLD"
     },
@@ -1986,7 +2014,118 @@
      13.86,
      13.86,
      13.86,
-     13.86
+     13.86,
+     14.81
+    ]
+   },
+   {
+    "id": "me03-094",
+    "name": "Piepi",
+    "nummer": "094",
+    "seltenheit": "Selten, Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/094/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Piepi",
+    "preis": {
+     "tief": 7.71,
+     "trend": 14.93,
+     "schnitt7": 15.95,
+     "schnitt30": 17.04
+    },
+    "prozent": -6,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 7.71,
+     "ziel": 14.93,
+     "gewinn": 4.97,
+     "roi": 64,
+     "momentum": -6,
+     "spread": 7.22,
+     "score": 53,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.37,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     15.35,
+     14.93
+    ]
+   },
+   {
+    "id": "30th-c-022",
+    "name": "Palkia",
+    "nummer": "022",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Palkia",
+    "preis": {
+     "tief": 8,
+     "trend": 12.21,
+     "schnitt7": 12.65,
+     "schnitt30": 12.45
+    },
+    "prozent": 2,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 8,
+     "ziel": 12.21,
+     "gewinn": 2.1,
+     "roi": 26,
+     "momentum": 2,
+     "spread": 4.21,
+     "score": 52,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     12.21
     ]
    },
    {
@@ -2001,7 +2140,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rosys%20Ermutigung",
     "preis": {
      "tief": 24.9,
-     "trend": 34.36,
+     "trend": 33.79,
      "schnitt7": 36.24,
      "schnitt30": 37.33
     },
@@ -2009,11 +2148,11 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 24.9,
-     "ziel": 34.36,
-     "gewinn": 6.24,
-     "roi": 25,
+     "ziel": 33.79,
+     "gewinn": 5.7,
+     "roi": 23,
      "momentum": -3,
-     "spread": 9.46,
+     "spread": 8.89,
      "score": 52,
      "signal": "HOLD"
     },
@@ -2062,7 +2201,118 @@
      34.36,
      34.36,
      34.36,
-     34.36
+     34.36,
+     33.79
+    ]
+   },
+   {
+    "id": "me03-118",
+    "name": "Mega-Starmie-ex",
+    "nummer": "118",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/118/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Starmie-ex",
+    "preis": {
+     "tief": 23,
+     "trend": 31.15,
+     "schnitt7": 32.74,
+     "schnitt30": 33.88
+    },
+    "prozent": -3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 23,
+     "ziel": 31.15,
+     "gewinn": 5.09,
+     "roi": 22,
+     "momentum": -3,
+     "spread": 8.15,
+     "score": 51,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.5,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     32.29,
+     31.15
+    ]
+   },
+   {
+    "id": "30th-c-003",
+    "name": "Metagross",
+    "nummer": "003",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Metagross",
+    "preis": {
+     "tief": 6,
+     "trend": 9.54,
+     "schnitt7": 9.39,
+     "schnitt30": 9.43
+    },
+    "prozent": 0,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 6,
+     "ziel": 9.39,
+     "gewinn": 1.42,
+     "roi": 24,
+     "momentum": 0,
+     "spread": 3.54,
+     "score": 48,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     9.54
     ]
    },
    {
@@ -2077,7 +2327,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gwynn",
     "preis": {
      "tief": 14.99,
-     "trend": 21.8,
+     "trend": 21.7,
      "schnitt7": 21.79,
      "schnitt30": 22.04
     },
@@ -2085,11 +2335,11 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 14.99,
-     "ziel": 21.79,
-     "gewinn": 4.21,
-     "roi": 28,
+     "ziel": 21.7,
+     "gewinn": 4.12,
+     "roi": 27,
      "momentum": -1,
-     "spread": 6.81,
+     "spread": 6.71,
      "score": 48,
      "signal": "HOLD"
     },
@@ -2165,11 +2415,54 @@
      21.8,
      21.8,
      21.8,
-     21.8
+     21.8,
+     21.7
+    ]
+   },
+   {
+    "id": "30th-158",
+    "name": "Mew-ex",
+    "nummer": "158",
+    "seltenheit": "Futuristic Rare",
+    "set": "30 Jahre",
+    "setId": "30th",
+    "release": "2026-09-16",
+    "bild": "https://assets.tcgdex.net/de/me/30th/158/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mew-ex",
+    "preis": {
+     "tief": 29.9,
+     "trend": 41.84,
+     "schnitt7": 43.13,
+     "schnitt30": 46.25
+    },
+    "prozent": -7,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 29.9,
+     "ziel": 41.84,
+     "gewinn": 8.35,
+     "roi": 28,
+     "momentum": -7,
+     "spread": 11.94,
+     "score": 47,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     41.84
     ]
    }
   ],
   "sets": [
+   {
+    "name": "Delta-Herrschaft",
+    "id": "me06",
+    "release": "2026-11-06",
+    "logo": "",
+    "phase": "hype",
+    "tage": 1,
+    "rat": "Gerade erschienen: Einzelkarten sind jetzt am teuersten - warten. Displays/Boxen zum UVP mitnehmen."
+   },
    {
     "name": "30 Jahre: Klassische Sammlung",
     "id": "30th-c",
@@ -2214,27 +2507,18 @@
     "phase": "halten",
     "tage": 225,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
-   },
-   {
-    "name": "Paldean Wonders",
-    "id": "B2a",
-    "release": "2026-02-26",
-    "logo": "",
-    "phase": "halten",
-    "tage": 254,
-    "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 366,
+  "geprueft": 1183,
   "statistik": {
-   "karten": 366,
-   "mitPreis": 366,
-   "imBudget": 19,
-   "steigend": 0,
-   "fallend": 8
+   "karten": 1183,
+   "mitPreis": 621,
+   "imBudget": 51,
+   "steigend": 4,
+   "fallend": 18
   },
-  "quelle": "TCGdex",
-  "stand": "2026-11-07T22:54:20.570Z"
+  "quelle": "TCGdex + pokemontcg.io",
+  "stand": "2026-11-07T23:51:54.054Z"
  },
  "trends": {
   "ware": [],
@@ -2252,12 +2536,12 @@
     "menge": "200+"
    },
    {
-    "titel": "eishockey wm 2027",
-    "menge": "100+"
-   },
-   {
     "titel": "jaafar jackson",
     "menge": "200+"
+   },
+   {
+    "titel": "eishockey wm 2027",
+    "menge": "100+"
    },
    {
     "titel": "chukwuemeka",
@@ -2419,6 +2703,15 @@
     "begriff": "dunk"
    },
    {
+    "titel": "Air Force 1 Low Retro Premium",
+    "preis": 70,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-force-1-low-retro-premium-im3078-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IM3078-001_01.jpg?v=1757577981",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
+   },
+   {
     "titel": "Nike Dunk Low Retro Premium *Corduroy*",
     "preis": 71,
     "verfuegbar": true,
@@ -2482,15 +2775,6 @@
     "begriff": "cap"
    },
    {
-    "titel": "Tennis Classic",
-    "preis": 80,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/nike-tennis-classic-iv2437-100-white-white-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IV2437-100_1.jpg?v=1785486761",
-    "laden": "overkillshop.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Samba OG",
     "preis": 80,
     "verfuegbar": true,
@@ -2507,6 +2791,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U740WM2-01__53937.1731666674.1280.1280.jpg?v=1742985378",
     "laden": "sneakersnstuff.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Samba OG W",
+    "preis": 85,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/adidas-samba-og-w-kj0996-wonder-white-dusky-bronze-gold-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/KJ0996_1.jpg?v=1770987713",
+    "laden": "overkillshop.com",
+    "begriff": "samba"
    },
    {
     "titel": "Adidas Samba OG W",
@@ -2542,16 +2835,7 @@
     "url": "https://www.overkillshop.com/products/new-balance-u1906lae-silver",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1906LAE_1.jpg?v=1746533291",
     "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "U190663V",
-    "preis": 90,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u190663v-u190663v-silver-metallic-black-fire-cracker",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U190663V_1.jpg?v=1770208223",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
+    "begriff": "new era"
    },
    {
     "titel": "Asics GEL-NYC",
@@ -2597,6 +2881,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/yosALS2hW6yOY11LVFJ8_JR0035-Adidas-Samba-OG-W-Silver-Metallic-Cloud-White-Core-White-OS-1.jpg?v=1748610522",
     "laden": "asphaltgold.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "Wmns Air Jordan 3 Retro Starfish",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/wmns-air-jordan-3-retro-starfish-ih7694-200-fossil-starfish-sail",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IH7694-200_1.jpg?v=1752154436",
+    "laden": "overkillshop.com",
+    "begriff": "jordan"
    },
    {
     "titel": "59Fifty Low Profile / Cap / Poly. Twill.",
@@ -2698,15 +2991,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Book 1 \"Solar Red\"",
-    "preis": 105,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-1-solar-red-ir0838-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR0838-001_01.jpg?v=1767860802",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Nike Wmns Dunk Low",
     "preis": 107,
     "verfuegbar": true,
@@ -2779,6 +3063,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "U20107Z3",
+    "preis": 110,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u20107z3-u20107z3tornado-faded-black-dark-silver-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U20107Z3_1.jpg?v=1770283928",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "ASICS Gel-1130 - White / Taro Purple",
     "preis": 110,
     "verfuegbar": true,
@@ -2831,15 +3124,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cc1c86f0b9268f6b27add5b92548f1df272b48ac_1201A789_020_Asics_GEL_NYC_Graphite_Grey_Black_os_1_9d944940-9064-4615-9542-6bf02307a613.jpg?v=1745415111",
     "laden": "asphaltgold.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "Air Force 1 '07",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/nike-air-force-1-07-cw2288-111-white-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/CW2288-111_1_ab7621cd-ac0f-4726-abe1-c18686d747f1.jpg?v=1730107192",
-    "laden": "overkillshop.com",
-    "begriff": "dunk"
    },
    {
     "titel": "Samba OG",
@@ -2912,6 +3196,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-wonalu-owhite-hirblu-kk0008-footwear_20_3E_20sneaker.jpg?v=1791796528",
     "laden": "afew-store.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "Air Max Plus VII",
+    "preis": 120,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/nike-air-max-plus-vll-iq0282-084-smoke-grey-metallic-silver-iron-grey",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IQ0282-084_1.jpg?v=1772206868",
+    "laden": "overkillshop.com",
+    "begriff": "dunk"
    },
    {
     "titel": "U201079X",
@@ -3004,15 +3297,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "Samba OG",
-    "preis": 129,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/song-for-the-mute-x-adidas-samba-og-hp8257-base-green-core-black-gold-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/HP8257_1.jpg?v=1791271845",
-    "laden": "overkillshop.com",
-    "begriff": "samba"
-   },
-   {
     "titel": "Nike Air Jordan 3 Retro OG *World's Best Dad*",
     "preis": 129,
     "verfuegbar": true,
@@ -3047,15 +3331,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-auburn-warvan-magbei-ki0438-footwear_20_3E_20sneaker.jpg?v=1791796405",
     "laden": "afew-store.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "U18905UY",
-    "preis": 130,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u18905uy-u18905uy-slate-grey",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Nike Air Jordan 13 Retro *Chicago*",
@@ -3205,8 +3480,8 @@
     "titel": "Gel-Cumulus 16",
     "preis": 150,
     "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-002",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-002_01.jpg?v=1771589255",
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-201",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-201_01.jpg?v=1780653283",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
    },
@@ -3245,6 +3520,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/M1906RER_1.jpg?v=1739539439",
     "laden": "overkillshop.com",
     "begriff": "new era"
+   },
+   {
+    "titel": "Air Max 95 SP",
+    "preis": 160,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/undefeated-x-nike-air-max-95-sp-ib4453-001-black-metallic-silver-gorge-green",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IB4453-001_1.jpg?v=1766138415",
+    "laden": "overkillshop.com",
+    "begriff": "dunk"
    },
    {
     "titel": "ZX 8094 \"The Missing Link\"",
@@ -3409,15 +3693,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Air Jordan 3 Retro True Blue",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/air-jordan-3-retro-true-blue-if4396-104-white-fire-red-true-blue",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IF4396-104_1.jpg?v=1785500585",
-    "laden": "overkillshop.com",
-    "begriff": "jordan"
-   },
-   {
     "titel": "U13008BH",
     "preis": 180,
     "verfuegbar": true,
@@ -3544,6 +3819,15 @@
     "begriff": "jordan"
    },
    {
+    "titel": "U990BL4",
+    "preis": 200,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u990bl4-u990bl4-black-grey-006-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U990BL4_1.jpg?v=1779447020",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Air Jordan 9 Retro OG \"Space Jam\"",
     "preis": 209,
     "verfuegbar": true,
@@ -3551,6 +3835,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IX6179-100_1.jpg?v=1789536414",
     "laden": "overkillshop.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "U1300NY",
+    "preis": 209,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u1300ny-nb-navy-raincloud-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 3 Retro",
