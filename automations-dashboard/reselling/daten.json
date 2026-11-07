@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-07T12:30:54.556Z",
+ "stand": "2026-11-07T12:33:54.217Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -198,7 +198,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-07T12:18:12.163Z",
+  "stand": "2026-11-07T12:33:57.342Z",
   "filialen": 148,
   "produkte": [
    {
@@ -264,7 +264,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 72
+      "menge": 71
      },
      {
       "name": "dm Flörsheim am Main",
@@ -495,7 +495,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Eschborn",
@@ -514,6 +514,15 @@
       "menge": 8
      }
     ]
+   },
+   {
+    "dan": "3135931",
+    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
+    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3119105",
@@ -736,15 +745,6 @@
       "menge": 6
      }
     ]
-   },
-   {
-    "dan": "3139943",
-    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
-    "preis": 49.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
-    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
-    "begriff": "adventskalender",
-    "vorrat": []
    },
    {
     "dan": "3143255",
@@ -2139,15 +2139,19 @@
   "ware": [],
   "top": [
    {
-    "titel": "hansa rostock – sonnenhof großaspach",
+    "titel": "rwe – alemannia",
     "menge": "200+"
    },
    {
-    "titel": "wrestling",
-    "menge": "200+"
+    "titel": "hansa rostock – sonnenhof großaspach",
+    "menge": "500+"
    },
    {
     "titel": "samsunspor – konyaspor",
+    "menge": "500+"
+   },
+   {
+    "titel": "wrestling",
     "menge": "200+"
    },
    {
@@ -2157,6 +2161,10 @@
    {
     "titel": "rené dost",
     "menge": "5000+"
+   },
+   {
+    "titel": "wetterprognose polarwirbel",
+    "menge": "20000+"
    },
    {
     "titel": "a73",
@@ -2169,14 +2177,6 @@
    {
     "titel": "leeds – tottenham",
     "menge": "1000+"
-   },
-   {
-    "titel": "der aktionär",
-    "menge": "500+"
-   },
-   {
-    "titel": "boeing 747 8",
-    "menge": "2000+"
    }
   ]
  },
@@ -2287,15 +2287,6 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/nike-a-one-fz8605-200",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/FZ8605-200_01.jpg?v=1767782426",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
-    "titel": "Air Force 1 Low Retro Premium",
-    "preis": 70,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-air-force-1-low-retro-premium-im3078-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IM3078-001_01.jpg?v=1757577981",
     "laden": "sneakersnstuff.com",
     "begriff": "dunk"
    },
@@ -2426,6 +2417,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "U190663V",
+    "preis": 90,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u190663v-u190663v-silver-metallic-black-fire-cracker",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U190663V_1.jpg?v=1770208223",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Asics GEL-NYC",
     "preis": 90,
     "verfuegbar": true,
@@ -2507,24 +2507,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "ASICS Gel-1130 - Black / Cream",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a609-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-023",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 740",
     "preis": 99.99,
     "verfuegbar": true,
@@ -2568,6 +2550,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U204L2SZ_1.jpg?v=1784620446",
     "laden": "overkillshop.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Book 1 \"Solar Red\"",
+    "preis": 105,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-book-1-solar-red-ir0838-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR0838-001_01.jpg?v=1767860802",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Nike Wmns Dunk Low",
@@ -2649,33 +2640,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IH9373_1_cbfa4bbc-fd41-4011-9122-d94322d0b4a3.jpg?v=1776771212",
     "laden": "overkillshop.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "U20107Z3",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u20107z3-u20107z3tornado-faded-black-dark-silver-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U20107Z3_1.jpg?v=1770283928",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "ASICS Gel-1130 - White / Taro Purple",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_100_SR_RT_GLB.jpg?v=1780992734",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel-1130 - Cream / Carrier Grey",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-101",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_101_SR_RT_GLB.jpg?v=1780992709",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "New Balance 740",
@@ -2897,8 +2861,8 @@
     "titel": "Samba OG",
     "preis": 129,
     "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/adidas-samba-og-kk2371-blanch-brown-khaki-three-silver-pebble",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/KK2371_1.jpg?v=1790760909",
+    "url": "https://www.overkillshop.com/products/song-for-the-mute-x-adidas-samba-og-hp8257-base-green-core-black-gold-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/HP8257_1.jpg?v=1791271845",
     "laden": "overkillshop.com",
     "begriff": "samba"
    },
@@ -2937,6 +2901,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-auburn-warvan-magbei-ki0438-footwear_20_3E_20sneaker.jpg?v=1791796405",
     "laden": "afew-store.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "U18905UY",
+    "preis": 130,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u18905uy-u18905uy-slate-grey",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Asics GEL-NYC",
@@ -3056,33 +3029,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "Gel-Cumulus 16",
-    "preis": 150,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-002",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-002_01.jpg?v=1771589255",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-NYC - White / Midnight",
-    "preis": 150,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a383-118",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_118_SR_RT_GLB.jpg?v=1785420543",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 150.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-angora-reflection",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-angora-reflection-u90609z4-footwear_20_3E_20sneaker.jpg?v=1783411160",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "New Balance 9060",
     "preis": 150.99,
     "verfuegbar": true,
@@ -3137,12 +3083,12 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS GEL-NYC 2.0 - Umeboshi / Moonrock",
+    "titel": "Gel-NYC 2.0",
     "preis": 160,
     "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203b079-600",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B079_600_SR_RT_GLB-1.jpg?v=1789458097",
-    "laden": "kith.com",
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203b079-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203B079-600_01.jpg?v=1780653438",
+    "laden": "sneakersnstuff.com",
     "begriff": "asics"
    },
    {
@@ -3254,15 +3200,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-118",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Nike Air Jordan 9 Retro OG *Space Jam*",
     "preis": 178,
     "verfuegbar": true,
@@ -3308,20 +3245,20 @@
     "begriff": "jordan"
    },
    {
-    "titel": "ASICS GEL KAYANO 12.1 - White / Cream",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a759-106",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_106_SR_RT_GLB.jpg?v=1790170342",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 9060",
     "preis": 180.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-timberwolf-black-cement",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-black-cement-u90606h1-footwear_20_3E_20sneaker.jpg?v=1790201203",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "New Balance 9060",
+    "preis": 180.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-pistachio-butter-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-pistachio-butter-angora-u906072n-footwear_20_3E_20sneaker.jpg?v=1789993966",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
@@ -3423,15 +3360,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IO2463-102_1.jpg?v=1789551503",
     "laden": "overkillshop.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "U1300NY",
-    "preis": 209,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u1300ny-nb-navy-raincloud-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 3 Retro",
