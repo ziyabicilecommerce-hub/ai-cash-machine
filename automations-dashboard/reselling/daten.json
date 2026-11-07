@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-07T13:46:27.162Z",
+ "stand": "2026-11-07T13:49:20.879Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -199,7 +199,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-07T13:34:35.799Z",
+  "stand": "2026-11-07T13:49:22.876Z",
   "filialen": 148,
   "produkte": [
    {
@@ -225,7 +225,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 32
+      "menge": 31
      },
      {
       "name": "dm Kriftel",
@@ -241,7 +241,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 14
+      "menge": 13
      },
      {
       "name": "dm Frankfurt am Main",
@@ -265,7 +265,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 74
+      "menge": 70
      },
      {
       "name": "dm Flörsheim am Main",
@@ -364,7 +364,7 @@
       "km": 10.5,
       "lat": 50.0155817,
       "lon": 8.3658454,
-      "menge": 12
+      "menge": 11
      }
     ]
    },
@@ -406,7 +406,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 12
+      "menge": 11
      },
      {
       "name": "dm Eschborn",
@@ -496,7 +496,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Eschborn",
@@ -612,7 +612,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 7
+      "menge": 6
      },
      {
       "name": "dm Kelsterbach",
@@ -636,7 +636,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 15
+      "menge": 14
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -694,7 +694,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 7
+      "menge": 6
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -710,7 +710,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 6
+      "menge": 5
      },
      {
       "name": "dm Mörfelden-Walldorf",
@@ -847,20 +847,12 @@
       "menge": 7
      },
      {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 1
-     },
-     {
       "name": "dm Frankfurt am Main",
       "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
       "km": 5.6,
       "lat": 50.1014043,
       "lon": 8.5485073,
-      "menge": 19
+      "menge": 18
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -900,6 +892,14 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
+      "menge": 14
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
       "menge": 14
      }
     ]
@@ -2662,6 +2662,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "U20107Z3",
+    "preis": 110,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u20107z3-u20107z3tornado-faded-black-dark-silver-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U20107Z3_1.jpg?v=1770283928",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "ASICS Gel-1130 - White / Taro Purple",
     "preis": 110,
     "verfuegbar": true,
@@ -2730,15 +2739,6 @@
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-balance-u740wm2-white-silver-metallic-reflection",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WM2_1.jpg?v=1735819605",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "U740BM2",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u740bm2-black-silver-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740BM2_1.jpg?v=1737122996",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
@@ -2899,8 +2899,8 @@
     "titel": "Samba OG",
     "preis": 129,
     "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/adidas-samba-og-kk2371-blanch-brown-khaki-three-silver-pebble",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/KK2371_1.jpg?v=1790760909",
+    "url": "https://www.overkillshop.com/products/song-for-the-mute-x-adidas-samba-og-hp8257-base-green-core-black-gold-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/HP8257_1.jpg?v=1791271845",
     "laden": "overkillshop.com",
     "begriff": "samba"
    },
@@ -2939,15 +2939,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-auburn-warvan-magbei-ki0438-footwear_20_3E_20sneaker.jpg?v=1791796405",
     "laden": "afew-store.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "U18905UY",
-    "preis": 130,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u18905uy-u18905uy-slate-grey",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Asics GEL-NYC",
@@ -3083,15 +3074,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_118_SR_RT_GLB.jpg?v=1785420543",
     "laden": "kith.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 150.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-angora-reflection",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-angora-reflection-u90609z4-footwear_20_3E_20sneaker.jpg?v=1783411160",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
    },
    {
     "titel": "New Balance 9060",
@@ -3346,6 +3328,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "New Balance 9060",
+    "preis": 180.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-pistachio-butter-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-pistachio-butter-angora-u906072n-footwear_20_3E_20sneaker.jpg?v=1789993966",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "New Balance 90/60",
     "preis": 189,
     "verfuegbar": true,
@@ -3443,6 +3434,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IO2463-102_1.jpg?v=1789551503",
     "laden": "overkillshop.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "U1300NY",
+    "preis": 209,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u1300ny-nb-navy-raincloud-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 3 Retro",
