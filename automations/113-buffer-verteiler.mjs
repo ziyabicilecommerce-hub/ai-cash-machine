@@ -12,6 +12,7 @@ import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag
 import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
 import { naechstesSkriptEn, SKRIPTE_EN } from './schatten/skripteEn.mjs';
 import { teil2Kandidat as teil2KandidatSync } from './schatten/skriptBot.mjs';
+import { naechsterKurzHorror, kurzHeuteSchon } from './schatten/kurzHorror.mjs';
 
 const TOKEN = (process.env.BUFFER_ACCESS_TOKEN || '').trim();
 const STAND = 'buffer-verteiler/stand.json';
@@ -52,7 +53,7 @@ async function horrorSkript(gepostet, konto = '') {
   const skripte = json('automations-dashboard/tiktok/skripte.json', { skripte: [] }).skripte;
   const letzte = json('automations-dashboard/tiktok/daten.json', {}).letzte || [];
   const hit = gewinner(skripte, letzte).map((g) => skripte.find((s) => slug(s.titel) === g.slug)).find((s) => s && !bekannt.includes(slug(s.titel)));
-  const zuletztHit = Object.entries(gepostet).sort((a, b) => String(b[1]).localeCompare(String(a[1])))[0]?.[0]?.startsWith('horror:hit:');
+  const zuletztHit = Object.entries(gepostet).filter(([k]) => !k.startsWith('kurz:')).sort((a, b) => String(b[1]).localeCompare(String(a[1])))[0]?.[0]?.startsWith('horror:hit:');
   const { naechstesSkript, teil2Kandidat } = await import('./schatten/skriptBot.mjs');
   const fortsetzung = teil2Kandidat(konto, bekannt, letzte);
   if (fortsetzung) return { skript: fortsetzung, herkunft: 'Teil 2 eines Hits' };
@@ -122,7 +123,13 @@ async function vorbereiten() {
       mkdirSync('out', { recursive: true });
       writeFileSync(`out/folge-${k.id}.json`, JSON.stringify({ ...folge, _slug: slug(h.skript.titel) }, null, 1));
       horrorKanaele.push(k.id);
-      plan.push({ kanal: k.id, horror: true, schluessel: `horror:${h.schluessel || slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft, variante, hook, quelle });
+      // Instagram (Deutsch): einmal am Tag zwei Story-Kacheln mit einer 2-Satz-Gruselgeschichte vor dem "Neues Video"-Hinweis
+      let kurz = null;
+      if (k.dienst === 'instagram' && quelle === 'horror' && !kurzHeuteSchon(stand[k.id], heuteBerlin())) {
+        const g = naechsterKurzHorror([...Object.values(stand).flatMap((x) => Object.keys(x || {})), ...plan.map((x) => x.kurz).filter(Boolean)]);
+        if (g) { kurz = `kurz:${slug(g.titel)}`; writeFileSync(`out/kurz-${k.id}.json`, JSON.stringify(g)); }
+      }
+      plan.push({ kanal: k.id, horror: true, schluessel: `horror:${h.schluessel || slug(h.skript.titel)}`, titel: h.skript.titel, heute, herkunft: h.herkunft, variante, hook, quelle, kurz });
       continue;
     }
     // stärkstes Format dieses Kontos zuerst (z. B. "Wahr oder Mythos?" bei purivelle) - in 20 % der Fälle frei, damit andere weiter getestet werden
@@ -171,6 +178,19 @@ async function posten() {
       if (p.variante) varianten[abSchluessel(p.hook)] = { kanal: k.name, zeit: new Date().toISOString(), ...p.variante };
       const ab = (p.quelle === 'horror-en' && k.quelle === 'horror-mix' ? ' [EN]' : p.quelle === 'horror' && k.quelle === 'horror-mix' ? ' [DE]' : '') + (p.variante ? ` [ohne: ${Object.entries(p.variante).filter(([, an]) => !an).map(([f]) => f).join(', ') || '–'}]` : '');
       bericht(`- ✅ ${k.name}: „${String(p.titel).slice(0, 60)}“${p.herkunft ? ` (${p.herkunft})` : ''}${ab} gepostet (heute dann ${p.heute + 1})`);
+      const k1 = urls[`${k.id}_kachel1`], k2 = urls[`${k.id}_kachel2`];
+      if (p.kurz && /^https:\/\//.test(k1 || '') && /^https:\/\//.test(k2 || '')) {
+        try {  // 2-Satz-Horror: Satz 1, dann Satz 2 mit Frage - danach folgt die Story zum neuen Reel
+          const g = json(`out/kurz-${k.id}.json`, {});
+          let ok = 0;
+          for (const [url, sticker, alt] of [[k1, 'Tippen für Satz 2 👀', g.a], [k2, `${g.frage || 'Was würdest du tun?'} 👇`, g.b]]) {
+            const st = (await gql(POST_MUTATION, { input: storyEingabe(k.id, url, false, sticker, String(alt || '').slice(0, 300)) })).createPost;
+            if (st.__typename === 'PostActionSuccess') ok++; else throw new Error(st.message || st.__typename);
+          }
+          if (ok) stand[k.id][p.kurz] = new Date().toISOString();
+          bericht(`  - 🩸 2-Satz-Horror als Story: „${g.titel}“`);
+        } catch (e) { bericht(`  - ⚠️ 2-Satz-Story nicht gepostet: ${String(e.message).slice(0, 150)}`); }
+      }
       const cover = urls[`${k.id}_cover`];
       if (p.horror && k.dienst === 'instagram' && /^https:\/\//.test(cover || '')) {
         try {  // Story ist nur ein Anstoß - schlägt sie fehl, bleibt das Reel trotzdem
