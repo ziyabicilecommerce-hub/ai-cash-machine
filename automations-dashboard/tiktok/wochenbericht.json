@@ -1,21 +1,21 @@
 {
- "stand": "2026-11-06T19:39:45.610Z",
+ "stand": "2026-11-07T10:39:01.233Z",
  "gesamt": {
-  "posts": 108,
-  "aufrufe": 8484,
+  "posts": 114,
+  "aufrufe": 9101,
   "vorherAufrufe": null
  },
  "konten": {
   "@desk.rebel": {
-   "n": 19,
-   "schnitt": 93,
+   "n": 21,
+   "schnitt": 96,
    "sehdauer": 3.9,
    "vorher": null
   },
   "@purivelle.785": {
-   "n": 16,
-   "schnitt": 56,
-   "sehdauer": 3.9,
+   "n": 18,
+   "schnitt": 52,
+   "sehdauer": 4.2,
    "vorher": null
   },
   "@zyx_7851": {
@@ -25,8 +25,8 @@
    "vorher": null
   },
   "@giyuuu sama": {
-   "n": 15,
-   "schnitt": 131,
+   "n": 17,
+   "schnitt": 136,
    "sehdauer": 0,
    "vorher": null
   },
@@ -45,9 +45,9 @@
  },
  "formate": {
   "horror": {
-   "n": 51,
-   "schnitt": 130,
-   "sehdauer": 2.3
+   "n": 53,
+   "schnitt": 129,
+   "sehdauer": 2.4
   },
   "mythos": {
    "n": 9,
@@ -55,9 +55,9 @@
    "sehdauer": 4.1
   },
   "quiz": {
-   "n": 19,
-   "schnitt": 18,
-   "sehdauer": 1.9
+   "n": 23,
+   "schnitt": 32,
+   "sehdauer": 2.2
   },
   "anime": {
    "n": 9,
@@ -109,9 +109,9 @@
    "sehdauer": 2.2
   },
   "vormittags": {
-   "n": 25,
-   "schnitt": 107,
-   "sehdauer": 2.9
+   "n": 31,
+   "schnitt": 106,
+   "sehdauer": 3
   },
   "nachmittags": {
    "n": 31,
@@ -150,9 +150,9 @@
  "ab": {
   "kalt": {
    "an": {
-    "n": 3,
-    "schnitt": 519,
-    "sehdauer": 5.5
+    "n": 6,
+    "schnitt": 423,
+    "sehdauer": 4.8
    },
    "aus": {
     "n": 1,
@@ -162,9 +162,9 @@
   },
   "raum": {
    "an": {
-    "n": 3,
-    "schnitt": 519,
-    "sehdauer": 5.5
+    "n": 6,
+    "schnitt": 423,
+    "sehdauer": 4.8
    },
    "aus": {
     "n": 1,
@@ -174,14 +174,14 @@
   },
   "suchbild": {
    "an": {
-    "n": 3,
-    "schnitt": 519,
-    "sehdauer": 5.5
+    "n": 5,
+    "schnitt": 358,
+    "sehdauer": 4.8
    },
    "aus": {
-    "n": 1,
-    "schnitt": 253,
-    "sehdauer": 5.7
+    "n": 2,
+    "schnitt": 500,
+    "sehdauer": 5.4
    }
   },
   "duhook": {
@@ -191,17 +191,17 @@
     "sehdauer": 0
    },
    "aus": {
-    "n": 4,
-    "schnitt": 452,
-    "sehdauer": 5.6
+    "n": 7,
+    "schnitt": 398,
+    "sehdauer": 5
    }
   }
  },
  "schritte": [
-  "@giyuuu sama läuft am besten (Ø 131) - neue Ideen dort zuerst testen.",
+  "@giyuuu sama läuft am besten (Ø 136) - neue Ideen dort zuerst testen.",
   "Stärkstes Geschichten-Muster: „anruf“ (Ø 322) - der Skript-Bot nimmt es automatisch öfter.",
   "Beste Tageszeit: nachts (Ø 136).",
-  "Ø Sehdauer nur 2.1 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher."
+  "Ø Sehdauer nur 2.2 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher."
  ],
  "sprachTest": {
   "de": {
@@ -209,18 +209,18 @@
    "schnitt": 315
   },
   "en": {
-   "n": 0,
-   "schnitt": 0
+   "n": 2,
+   "schnitt": 172
   }
  },
  "vorrat": {
   "de": {
-   "rest": 62,
-   "tage": 5
+   "rest": 57,
+   "tage": 4
   },
   "en": {
-   "rest": 51,
-   "tage": 17
+   "rest": 49,
+   "tage": 16
   }
  }
 }
