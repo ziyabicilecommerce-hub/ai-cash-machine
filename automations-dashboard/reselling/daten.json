@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-07T13:31:36.542Z",
+ "stand": "2026-11-07T13:34:32.184Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118196:2092",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0589893,8.5198272",
+   "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "text": "24,95 € · dm Kelsterbach (2,6 km) · 1 Stück\nAm Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach\nIm Umkreis in 24 Filiale(n) vorrätig.",
+   "zeit": "2026-11-07T13:34:32.184Z"
+  },
   {
    "schluessel": "filiale:3118196:2092",
    "art": "Filiale",
@@ -186,19 +196,10 @@
    "link": "https://www.sneakersnstuff.com/products/jordan-air-jordan-11-retro-low-university-blue-fv5104-100",
    "text": "sneakersnstuff.com · Air Jordan 11 Retro Low \"University Blue\"\nVerkauf ca. 230–330 € → Gewinn ca. +107,00 € (ROI 76 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-04T19:38:31.552Z"
-  },
-  {
-   "schluessel": "deal:https://www.sneakersnstuff.com/products/jordan-air-jordan-6-retro-ct8529-001",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 5 / 6 Retro für 147,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CT8529-001_01.jpg?v=1770644188",
-   "link": "https://www.sneakersnstuff.com/products/jordan-air-jordan-6-retro-ct8529-001",
-   "text": "sneakersnstuff.com · Air Jordan 6 Retro\nVerkauf ca. 190–280 € → Gewinn ca. +59,50 € (ROI 40 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-04T19:38:31.552Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-07T13:19:37.712Z",
+  "stand": "2026-11-07T13:34:35.799Z",
   "filialen": 148,
   "produkte": [
    {
@@ -240,7 +241,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 13
+      "menge": 14
      },
      {
       "name": "dm Frankfurt am Main",
@@ -264,7 +265,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 72
+      "menge": 74
      },
      {
       "name": "dm Flörsheim am Main",
@@ -363,7 +364,7 @@
       "km": 10.5,
       "lat": 50.0155817,
       "lon": 8.3658454,
-      "menge": 11
+      "menge": 12
      }
     ]
    },
@@ -405,7 +406,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 11
+      "menge": 12
      },
      {
       "name": "dm Eschborn",
@@ -611,7 +612,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 6
+      "menge": 7
      },
      {
       "name": "dm Kelsterbach",
@@ -635,7 +636,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 14
+      "menge": 15
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -693,7 +694,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 6
+      "menge": 7
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -846,6 +847,14 @@
       "menge": 7
      },
      {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 1
+     },
+     {
       "name": "dm Frankfurt am Main",
       "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
       "km": 5.6,
@@ -891,14 +900,6 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 14
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
       "menge": 14
      }
     ]
@@ -2149,8 +2150,12 @@
   "ware": [],
   "top": [
    {
-    "titel": "fcn",
-    "menge": "1000+"
+    "titel": "rwe spiel",
+    "menge": "200+"
+   },
+   {
+    "titel": "bayern mainz",
+    "menge": "200+"
    },
    {
     "titel": "leverkusen – hamburger sv",
@@ -2161,16 +2166,20 @@
     "menge": "500+"
    },
    {
+    "titel": "fcn",
+    "menge": "1000+"
+   },
+   {
     "titel": "hertha wolfsburg",
     "menge": "200+"
    },
    {
-    "titel": "lebensmittel",
-    "menge": "20000+"
+    "titel": "sv waldhof – fortuna köln",
+    "menge": "2000+"
    },
    {
-    "titel": "sv waldhof – fortuna köln",
-    "menge": "1000+"
+    "titel": "lebensmittel",
+    "menge": "20000+"
    },
    {
     "titel": "sv wehen – havelse",
@@ -2179,14 +2188,6 @@
    {
     "titel": "csikszereda - „u” cluj",
     "menge": "500+"
-   },
-   {
-    "titel": "wrexham – wolverhampton",
-    "menge": "200+"
-   },
-   {
-    "titel": "rotten tomatoes",
-    "menge": "200+"
    }
   ]
  },
@@ -2517,24 +2518,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "ASICS Gel-1130 - Black / Cream",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a609-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-023",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 740",
     "preis": 99.99,
     "verfuegbar": true,
@@ -2661,22 +2644,13 @@
     "begriff": "samba"
    },
    {
-    "titel": "ASICS Gel-1130 - White / Taro Purple",
+    "titel": "U20107Z3",
     "preis": 110,
     "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_100_SR_RT_GLB.jpg?v=1780992734",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel-1130 - Cream / Carrier Grey",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-101",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_101_SR_RT_GLB.jpg?v=1780992709",
-    "laden": "kith.com",
-    "begriff": "asics"
+    "url": "https://www.overkillshop.com/products/new-balance-u20107z3-u20107z3tornado-faded-black-dark-silver-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U20107Z3_1.jpg?v=1770283928",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "New Balance 740",
@@ -2729,15 +2703,6 @@
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-balance-u740wm2-white-silver-metallic-reflection",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WM2_1.jpg?v=1735819605",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "U740BM2",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u740bm2-black-silver-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740BM2_1.jpg?v=1737122996",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
@@ -2940,15 +2905,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "U18905UY",
-    "preis": 130,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u18905uy-u18905uy-slate-grey",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Asics GEL-NYC",
     "preis": 134,
     "verfuegbar": true,
@@ -3084,24 +3040,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS GEL-NYC - White / Midnight",
-    "preis": 150,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a383-118",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_118_SR_RT_GLB.jpg?v=1785420543",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 150.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-angora-reflection",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-angora-reflection-u90609z4-footwear_20_3E_20sneaker.jpg?v=1783411160",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "New Balance 9060",
     "preis": 150.99,
     "verfuegbar": true,
@@ -3153,15 +3091,6 @@
     "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203b079-100",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203B079-100_01.jpg?v=1780653397",
     "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-NYC 2.0 - Umeboshi / Moonrock",
-    "preis": 160,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203b079-600",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203B079_600_SR_RT_GLB-1.jpg?v=1789458097",
-    "laden": "kith.com",
     "begriff": "asics"
    },
    {
@@ -3273,15 +3202,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-118",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Nike Air Jordan 9 Retro OG *Space Jam*",
     "preis": 178,
     "verfuegbar": true,
@@ -3327,20 +3247,20 @@
     "begriff": "jordan"
    },
    {
-    "titel": "ASICS GEL KAYANO 12.1 - White / Cream",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a759-106",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_106_SR_RT_GLB.jpg?v=1790170342",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 9060",
     "preis": 180.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-timberwolf-black-cement",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-black-cement-u90606h1-footwear_20_3E_20sneaker.jpg?v=1790201203",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "New Balance 9060",
+    "preis": 180.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-pistachio-butter-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-pistachio-butter-angora-u906072n-footwear_20_3E_20sneaker.jpg?v=1789993966",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
@@ -3442,6 +3362,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IO2463-102_1.jpg?v=1789551503",
     "laden": "overkillshop.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "U1300NY",
+    "preis": 209,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u1300ny-nb-navy-raincloud-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 3 Retro",
