@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-08T23:34:44.394Z",
+ "stand": "2026-11-08T23:45:07.735Z",
  "themen": [
   {
    "thema": "Novembernebel auf der Landstraße",
@@ -52,6 +52,7 @@
    "en": []
   },
   "trendsDE": [
+   "задержание",
    "fahndung",
    "limbach-oberfrohna",
    "rheinmetall aktien",
@@ -60,21 +61,125 @@
    "pistons – lakers",
    "a92",
    "xrp",
-   "lidl ralf dümmel",
-   "gepäck"
+   "lidl ralf dümmel"
   ],
   "trendsUS": [
+   "cade cunningham",
+   "jadeveon clowney",
+   "william, prince of wales",
+   "rick hendrick",
+   "justin timberlake",
+   "world wide technology championship",
    "querétaro - puebla",
+   "tucker kraft",
    "israel iran war",
-   "budda baker",
-   "ryan blaney",
-   "paul bettany visionquest marvel",
-   "jalen milroe",
-   "patriots coach",
-   "bears game today",
-   "devils vs maple leafs",
-   "carson beck"
-  ]
+   "jalen milroe"
+  ],
+  "welt": [
+   {
+    "name": "China",
+    "flagge": "🇨🇳",
+    "horror": [],
+    "trends": [
+     "感悟五年规划的中国智慧",
+     "黄仁勋承认婚外情",
+     "老人数量第一次比孩子多",
+     "红色新闻人的浴血征程",
+     "大连文体旅：对山东老铁免费100天"
+    ],
+    "quelle": [
+     "baidu"
+    ]
+   },
+   {
+    "name": "Indien",
+    "flagge": "🇮🇳",
+    "horror": [],
+    "trends": [
+     "गैस",
+     "గుర్నూర్ బ్రార్",
+     "పింఛను",
+     "हार्दिक पांड्या",
+     "நீர்"
+    ],
+    "quelle": [
+     "google-trends"
+    ]
+   },
+   {
+    "name": "Tokio",
+    "flagge": "🇯🇵",
+    "horror": [],
+    "trends": [
+     "でっぱりん",
+     "pistons vs lakers",
+     "水卜アナ",
+     "杉田かおる",
+     "織田 裕二"
+    ],
+    "quelle": [
+     "google-trends"
+    ]
+   },
+   {
+    "name": "Paris",
+    "flagge": "🇫🇷",
+    "horror": [],
+    "trends": [
+     "hiver",
+     "raphael arnault",
+     "priscilla chan",
+     "julianne moore",
+     "rodrigo mora"
+    ],
+    "quelle": [
+     "google-trends"
+    ]
+   },
+   {
+    "name": "New York",
+    "flagge": "🇺🇸",
+    "horror": [
+     {
+      "name": "Schlafparalyse",
+      "anstieg": 0.91,
+      "proTag": 918
+     },
+     {
+      "name": "Doppelgänger",
+      "anstieg": 0.8,
+      "proTag": 1241
+     },
+     {
+      "name": "Backrooms",
+      "anstieg": 0.63,
+      "proTag": 4909
+     },
+     {
+      "name": "Creepypasta",
+      "anstieg": 0.62,
+      "proTag": 1782
+     },
+     {
+      "name": "Liminal Spaces",
+      "anstieg": 0.6,
+      "proTag": 381
+     }
+    ],
+    "trends": [
+     "jordan watkins",
+     "60 minutes tonight",
+     "60 minutes",
+     "jazz vs timberwolves",
+     "jessica pegula"
+    ],
+    "quelle": [
+     "wikipedia-en",
+     "google-trends"
+    ]
+   }
+  ],
+  "weltweit": []
  },
  "neu": []
 }
