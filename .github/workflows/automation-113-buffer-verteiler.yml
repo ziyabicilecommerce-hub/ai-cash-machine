@@ -59,9 +59,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           KANAELE: ${{ steps.verteilen.outputs.horror_kanaele }}
+          # Einstieg als echter KI-Clip (kostenlose Hugging-Face-GPUs); HF_TOKEN optional (kostenloses Konto = mehr Kontingent)
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
-          pip install -q pillow edge-tts
+          pip install -q pillow edge-tts gradio_client
           echo '{}' > out/horror-urls.json
           for K in $KANAELE; do
             SLUG=$(jq -r '._slug' "out/folge-$K.json")

@@ -1,5 +1,5 @@
 # KI-Bilder für die Schatten-Story: kostenlos über Pollinations/FLUX, mit Kamerafahrt; abschaltbar per "ki_bilder": false.
-import os, time, urllib.parse, urllib.request
+import os, subprocess, sys, time, urllib.parse, urllib.request
 from PIL import Image, ImageOps
 
 W, H = 720, 1280
@@ -31,11 +31,50 @@ def ki_bilder_laden(story, ordner):
             except Exception as e:
                 print(f'KI-Bild {i} Versuch {versuch + 1}: {e}')
                 time.sleep(30)
+    ki_clip_laden(story, ordner)
+
+
+CLIP_FPS = 15  # Einzelbilder des KI-Clips pro Sekunde (spart Speicher; der Renderer zeigt sie bei 60 fps je 4x)
+
+
+def ki_clip_laden(story, ordner):
+    # Einstieg (erste KI-Szene) als ECHTER bewegter KI-Clip: kostenlose Hugging-Face-GPUs (Wan 2.2 / LTX, Bild-zu-Video,
+    # scripts/ki_clip.py). Nur ein Clip pro Video - genau dort, wo die Leute sonst nach 2 s wegwischen.
+    # Tageskontingent leer, Space besetzt oder kein gradio_client -> Standbild mit Kamerafahrt wie bisher.
+    if os.environ.get('STUMM') == '1' or os.environ.get('HORROR_KI_CLIP', 'an').lower() in ('aus', '0', 'nein', 'false'):
+        return
+    s = next((x for x in story['szenen'] if x.get('_kibild') is not None), None)
+    skript = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'scripts', 'ki_clip.py')
+    if s is None or not os.path.exists(skript):
+        return
+    bild = os.path.join(ordner, 'ki-clip-start.jpg')
+    s['_kibild'].save(bild, quality=95)
+    ziel = os.path.join(ordner, 'ki-clip.mp4')
+    prompt = f"{s['ki']}, slow creeping camera push-in, subtle horror movement, flickering light, cinematic"
+    for modell in ('wan', 'ltx'):
+        try:
+            r = subprocess.run([sys.executable, skript, bild, prompt, ziel, modell], capture_output=True, text=True, timeout=300)
+        except Exception as e:
+            print(f'KI-Clip {modell}: {e}')
+            continue
+        if r.returncode == 0 and os.path.exists(ziel):
+            break
+        print(f'KI-Clip {modell}: {"Kontingent für heute leer" if r.returncode == 3 else (r.stderr or r.stdout).strip()[-160:]}')
+    if not os.path.exists(ziel):
+        return
+    roh = subprocess.run(['ffmpeg', '-loglevel', 'error', '-i', ziel, '-vf',
+                          f'scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={CLIP_FPS}',
+                          '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], capture_output=True).stdout
+    groesse = W * H * 3
+    s['_kiclip'] = [Image.frombytes('RGB', (W, H), roh[i:i + groesse]) for i in range(0, len(roh) - groesse + 1, groesse)][:CLIP_FPS * 6]
+    print(f'KI-Clip ok: {len(s["_kiclip"])} Bilder ({len(s["_kiclip"]) / CLIP_FPS:.1f} s) für Szene „{s["art"]}“')
 
 
 def ki_szene(s, lt):
     # echtes Bild mit langsamer Kamerafahrt; je nach Szene dunkler oder rot flackernd
-    bild_ = s['_kibild']
+    clip = s.get('_kiclip')
+    # echter KI-Clip: Bild für Bild abspielen, danach das letzte Bild stehen lassen (die Kamerafahrt läuft weiter)
+    bild_ = clip[min(int(lt * CLIP_FPS), len(clip) - 1)] if clip else s['_kibild']
     p = min(lt / max(s.get('dauer', 3), 0.5), 1)
     zoom = 1.02 + 0.12 * p
     cw, ch = int(W / zoom), int(H / zoom)
