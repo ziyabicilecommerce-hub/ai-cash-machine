@@ -3,8 +3,8 @@
 // als Inspiration (nie kopieren) und ein Saison-Kalender als sichere Grundlage. Reine Funktionen - ohne Netz testbar.
 
 // Nur Alltagsthemen, die sich für Gänsehaut eignen - nie echte Unglücke, Personen, Politik oder Marken.
-const SICHER = /(halloween|vollmond|neumond|nebel|sturm|gewitter|schnee|glatteis|stromausfall|zeitumstellung|winterzeit|sommerzeit|weihnachtsmarkt|adventskalender|silvester|feuerwerk|freitag der 13|blutmond|sonnenfinsternis|polarlicht|nordlicht|hitzewelle|eisregen|kältewelle|warnapp|cell broadcast|probealarm|warntag|sirene|funkloch|wlan|update)/i;
-const TABU = /(tot|tote|getötet|stirbt|gestorben|mord|unfall|anschlag|krieg|opfer|vermisst|polizei|prozess|wahl|partei|kanzler|präsident|trump|putin|selbstmord|suizid|missbrauch|kind|schule|amok|bombe|terror)/i;
+const SICHER = /(halloween|vollmond|neumond|nebel|sturm|gewitter|schnee|glatteis|stromausfall|zeitumstellung|winterzeit|sommerzeit|weihnachtsmarkt|adventskalender|silvester|feuerwerk|freitag der 13|blutmond|sonnenfinsternis|polarlicht|nordlicht|hitzewelle|eisregen|kältewelle|warnapp|cell broadcast|probealarm|warntag|sirene|funkloch|wlan|update|fog|storm|blackout|power outage|full moon|eclipse|aurora|northern lights|snowstorm|daylight saving|friday the 13th)/i;
+const TABU = /(tot|tote|getötet|stirbt|gestorben|mord|unfall|anschlag|krieg|opfer|vermisst|polizei|prozess|wahl|partei|kanzler|präsident|trump|putin|selbstmord|suizid|missbrauch|kind|schule|amok|bombe|terror|\b(?:dead|deaths?|dies|died|kill\w*|murder\w*|shooting|crash|war|victim|missing|police|election|suicide|child|school|bomb)\b)/i;
 
 export function rssTitel(xml = '') {
   return [...String(xml).matchAll(/<item>[\s\S]*?<title>(?:<!\[CDATA\[)?([^<\]]+)/g)].map((m) => m[1].trim()).filter(Boolean);
