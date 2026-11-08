@@ -14,7 +14,8 @@ export const REGIONEN = [
   { name: 'New York', flagge: '🇺🇸', wiki: 'en', trends: 'US-NY', ersatz: 'US' },
 ];
 
-const KOPF = { 'user-agent': 'ai-cash-machine-trend-radar/1.0 (github actions)' };
+// Wikipedia verlangt für die Such-Schnittstelle einen Absender mit Kontakt (sonst 403) - hier die Projektseite
+const KOPF = { 'user-agent': 'ai-cash-machine-trend-radar/1.0 (https://github.com/ziyabicilecommerce-hub/ai-cash-machine)', 'api-user-agent': 'ai-cash-machine-trend-radar/1.0' };
 const holen = async (laden, url, art = 'json') => {
   const res = await laden(url, { headers: KOPF, signal: AbortSignal.timeout(15000) });
   if (!res.ok) throw new Error(String(res.status));
@@ -44,8 +45,14 @@ async function regionMessen(region, { laden, jetzt, begriffe }) {
   try {
     let titel = (en) => norm(en);
     if (region.wiki !== 'en') {
-      const d = await holen(laden, `https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=langlinks&lllimit=500&lllang=${region.wiki}&titles=${encodeURIComponent(begriffe.map((b) => b.en).join('|'))}`);
-      titel = sprachlinksAus(d);
+      // in Päckchen zu 10 Titeln (kurze Adressen, ein kaputtes Päckchen kostet nicht alles)
+      const finder = [];
+      for (let i = 0; i < begriffe.length; i += 10) {
+        try {
+          finder.push(sprachlinksAus(await holen(laden, `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1&prop=langlinks&lllimit=500&lllang=${region.wiki}&titles=${encodeURIComponent(begriffe.slice(i, i + 10).map((b) => b.en).join('|'))}`)));
+        } catch (e) { r.fehler = `Sprachlinks ${region.wiki}: ${e.message}`; }
+      }
+      titel = (en) => finder.map((f) => f(en)).find(Boolean) || null;
     }
     const ende = new Date(jetzt.getTime() - 864e5), start = new Date(jetzt.getTime() - 19 * 864e5);
     const werte = await Promise.all(begriffe.map(async (b) => {
@@ -58,8 +65,9 @@ async function regionMessen(region, { laden, jetzt, begriffe }) {
       } catch { return null; }
     }));
     r.horror = werte.filter(Boolean).sort((a, b) => b.anstieg - a.anstieg).slice(0, 5);
+    r.gemessen = werte.filter(Boolean).length;
     r.quelle.push(`wikipedia-${region.wiki}`);
-  } catch { /* Wikipedia nicht erreichbar */ }
+  } catch (e) { r.fehler = `Wikipedia ${region.wiki}: ${e.message}`; }
   // 2) Was dort gerade gesucht wird
   try {
     if (region.baidu) {

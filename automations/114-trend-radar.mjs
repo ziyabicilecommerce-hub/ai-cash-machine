@@ -41,7 +41,7 @@ async function main() {
     const b = BEGRIFFE.find((x) => x.name === w.name);
     if (b) extra.push({ thema: b.thema, quelle: `welt (${w.wo.join(', ')})` });
   }
-  for (const r of welt) bericht(`- ${r.flagge} ${r.name}: Grusel ${r.horror.slice(0, 3).map((h) => `${h.name} ×${h.anstieg}`).join(', ') || '–'} · gesucht: ${r.trends.slice(0, 3).join(' · ') || '–'}`);
+  for (const r of welt) bericht(`- ${r.flagge} ${r.name}: Grusel ${r.horror.slice(0, 3).map((h) => `${h.name} ×${h.anstieg}`).join(', ') || '–'} · gesucht: ${r.trends.slice(0, 3).join(' · ') || '–'}${r.fehler ? ` · ⚠️ ${r.fehler}` : ''}`);
   const basis = themenHeute({ trends: [...trends, ...trendsUS], reddit: [...reddit, ...(youtube.de || []), ...(youtube.en || [])], anzahl: ANZAHL });
   // Radar-Themen zuerst (gemessen gefragt), dann Google-Trends/Saison - ohne doppelte, höchstens ANZAHL
   const themen = [...extra.map((t, i) => ({ ...t, inspiration: basis[i]?.inspiration || '' })), ...basis]
