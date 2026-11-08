@@ -52,7 +52,7 @@ export function anstieg(werte = []) {
 }
 
 async function holenJson(laden, url) {
-  const res = await laden(url, { headers: { 'user-agent': 'ai-cash-machine-trend-radar/1.0 (github actions)' }, signal: AbortSignal.timeout(15000) });
+  const res = await laden(url, { headers: { 'user-agent': 'ai-cash-machine-trend-radar/1.0 (https://github.com/ziyabicilecommerce-hub/ai-cash-machine)' }, signal: AbortSignal.timeout(15000) });
   if (!res.ok) throw new Error(String(res.status));
   return res.json();
 }
