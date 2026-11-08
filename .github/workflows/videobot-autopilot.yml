@@ -88,9 +88,11 @@ jobs:
         if: steps.wahl.outputs.slug != ''
         run: |
           sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
-          pip install -q pillow edge-tts
+          pip install -q pillow edge-tts gradio_client
       - name: Rendern
         if: steps.wahl.outputs.slug != ''
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}  # optional: Einstieg als echter KI-Clip mit mehr Gratis-Kontingent
         run: python3 automations/schatten/story.py out/folge.json out
       - name: Ablegen und posten
         if: steps.wahl.outputs.slug != ''
