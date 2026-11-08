@@ -3,6 +3,7 @@
 // hook2 = "you" hook for the hook A/B test.
 import { pruefen, slug } from './videobot.mjs';
 import { musterWerte } from './skriptBot.mjs';
+import { SKRIPTE_EN2 } from './skripteEn2.mjs';
 
 const S = (titel, muster, ort, boesewicht, stimme, hook, hook2, saetze, ende, monster, frage, wahl, extra = {}) =>
   ({ titel, muster, ort, boesewicht, stimme, hook, hook2, saetze, ende, monster, frage, wahl, sprache: 'en', herkunft: 'skriptbot-en', ...extra });
@@ -200,6 +201,7 @@ export const TEIL2_EN = {
   kind: P2('The kid calls me. It is the middle of the night.', ['She whispers very quietly.', 'She says she is not allowed to be loud.', 'I ask her why.', 'She says: Because now he is with you. Not with me.'],
     'The closet in my room creaks. It was closed before.', 'With you now.', 'Would you open the closet?', ['Open it', 'Keep it shut']),
 };
+SKRIPTE_EN.push(...SKRIPTE_EN2);  // 07.11.: 20 neue Anruf- und Kamera-Geschichten (stärkste Muster auf YouTube)
 for (const s of SKRIPTE_EN) s.teil2 = TEIL2_EN[s.muster];
 
 export const TAGS_EN = '#horror #scary #creepypasta #scarystories #horrorstory';
