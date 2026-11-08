@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-08T04:36:05.817Z",
+ "stand": "2026-11-08T04:39:02.401Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -983,6 +983,7 @@
      11.36,
      11.36,
      11.36,
+     11.36,
      11.36
     ]
    },
@@ -1121,6 +1122,7 @@
      19.71,
      19.71,
      19.71,
+     19.13,
      19.13,
      19.13,
      19.13,
@@ -1267,6 +1269,7 @@
      34.7,
      34.7,
      34.7,
+     34.7,
      34.7
     ]
    },
@@ -1300,6 +1303,7 @@
     },
     "nurBewegung": false,
     "kurs": [
+     28.91,
      28.91,
      28.91,
      28.91,
@@ -1385,6 +1389,7 @@
      13.11,
      13.11,
      13.11,
+     13.11,
      13.11
     ]
    },
@@ -1418,6 +1423,7 @@
     },
     "nurBewegung": false,
     "kurs": [
+     12.2,
      12.2,
      12.2,
      12.2,
@@ -1459,6 +1465,7 @@
      9.52,
      9.52,
      9.52,
+     9.52,
      9.52
     ]
    },
@@ -1492,6 +1499,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     51.52,
      51.52,
      51.52,
      51.52,
@@ -1638,6 +1646,7 @@
      34.63,
      34.63,
      34.63,
+     34.63,
      34.63
     ]
    },
@@ -1776,6 +1785,7 @@
      19.31,
      19.31,
      19.31,
+     19.06,
      19.06,
      19.06,
      19.06,
@@ -1922,6 +1932,7 @@
      14.81,
      14.81,
      14.81,
+     14.81,
      14.81
     ]
    },
@@ -2003,6 +2014,7 @@
      14.93,
      14.93,
      14.93,
+     14.93,
      14.93
     ]
    },
@@ -2036,6 +2048,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     12.21,
      12.21,
      12.21,
      12.21,
@@ -2121,6 +2134,7 @@
      33.79,
      33.79,
      33.79,
+     33.79,
      33.79
     ]
    },
@@ -2202,6 +2216,7 @@
      31.15,
      31.15,
      31.15,
+     31.15,
      31.15
     ]
    },
@@ -2235,6 +2250,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.54,
      9.54,
      9.54,
      9.54,
@@ -2347,6 +2363,7 @@
      21.7,
      21.7,
      21.7,
+     21.7,
      21.7
     ]
    },
@@ -2380,6 +2397,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     41.84,
      41.84,
      41.84,
      41.84,
@@ -2444,16 +2462,16 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 857,
+  "geprueft": 657,
   "statistik": {
-   "karten": 857,
+   "karten": 657,
    "mitPreis": 621,
    "imBudget": 51,
    "steigend": 4,
    "fallend": 18
   },
-  "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-11-08T03:41:51.786Z"
+  "quelle": "TCGdex",
+  "stand": "2026-11-08T04:38:52.400Z"
  },
  "trends": {
   "ware": [],
@@ -2638,6 +2656,15 @@
     "begriff": "dunk"
    },
    {
+    "titel": "Air Force 1 Low Retro Premium",
+    "preis": 70,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-force-1-low-retro-premium-im3078-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IM3078-001_01.jpg?v=1757577981",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
+   },
+   {
     "titel": "Nike Dunk Low Retro Premium *Corduroy*",
     "preis": 71,
     "verfuegbar": true,
@@ -2728,15 +2755,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Samba OG W",
-    "preis": 85,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/adidas-samba-og-w-kj0996-wonder-white-dusky-bronze-gold-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/KJ0996_1.jpg?v=1770987713",
-    "laden": "overkillshop.com",
-    "begriff": "samba"
-   },
-   {
     "titel": "Adidas Samba OG W",
     "preis": 86,
     "verfuegbar": true,
@@ -2770,7 +2788,7 @@
     "url": "https://www.overkillshop.com/products/new-balance-u1906lae-silver",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1906LAE_1.jpg?v=1746533291",
     "laden": "overkillshop.com",
-    "begriff": "new era"
+    "begriff": "new balance"
    },
    {
     "titel": "Asics GEL-NYC",
@@ -2926,15 +2944,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Book 1 \"Solar Red\"",
-    "preis": 105,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-1-solar-red-ir0838-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR0838-001_01.jpg?v=1767860802",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Nike Wmns Dunk Low",
     "preis": 107,
     "verfuegbar": true,
@@ -3005,15 +3014,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IH9373_1_cbfa4bbc-fd41-4011-9122-d94322d0b4a3.jpg?v=1776771212",
     "laden": "overkillshop.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "U20107Z3",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u20107z3-u20107z3tornado-faded-black-dark-silver-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U20107Z3_1.jpg?v=1770283928",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
    },
    {
     "titel": "ASICS Gel-1130 - White / Taro Purple",
@@ -3241,6 +3241,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "Samba OG",
+    "preis": 129,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/song-for-the-mute-x-adidas-samba-og-hp8257-base-green-core-black-gold-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/HP8257_1.jpg?v=1791271845",
+    "laden": "overkillshop.com",
+    "begriff": "samba"
+   },
+   {
     "titel": "Nike Air Jordan 3 Retro OG *World's Best Dad*",
     "preis": 129,
     "verfuegbar": true,
@@ -3275,6 +3284,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-auburn-warvan-magbei-ki0438-footwear_20_3E_20sneaker.jpg?v=1791796405",
     "laden": "afew-store.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "U18905UY",
+    "preis": 130,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u18905uy-u18905uy-slate-grey",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Nike Air Jordan 13 Retro *Chicago*",
@@ -3752,15 +3770,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-4-retro-white-tour-yellow-dark-blue-grey-black-io2463-102-footwear_20_3E_20sneaker.jpg?v=1787954818",
     "laden": "afew-store.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "U990BL4",
-    "preis": 200,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u990bl4-u990bl4-black-grey-006-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U990BL4_1.jpg?v=1779447020",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 9 Retro OG \"Space Jam\"",
