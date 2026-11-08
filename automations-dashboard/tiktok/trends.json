@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-08T23:45:07.735Z",
+ "stand": "2026-11-08T23:59:38.825Z",
  "themen": [
   {
    "thema": "Novembernebel auf der Landstraße",
@@ -10,34 +10,64 @@
  "radar": {
   "wiki": [
    {
+    "name": "Stromausfall",
+    "thema": "Stromausfall, aber ein Zimmer bleibt hell",
+    "anstieg": 1.01,
+    "proTag": 195
+   },
+   {
+    "name": "Polarlicht",
+    "thema": "Polarlicht über Deutschland - und etwas darin",
+    "anstieg": 0.99,
+    "proTag": 2232
+   },
+   {
+    "name": "Nahtoderfahrung",
+    "thema": "Am Ende des Tunnels wartet jemand",
+    "anstieg": 0.98,
+    "proTag": 556
+   },
+   {
+    "name": "Nebel",
+    "thema": "Nebel auf der Landstraße",
+    "anstieg": 0.97,
+    "proTag": 493
+   },
+   {
+    "name": "Mimic",
+    "thema": "Etwas lernt meine Stimme",
+    "anstieg": 0.96,
+    "proTag": 288
+   },
+   {
+    "name": "Moderne Sagen",
+    "thema": "Die Sage aus meiner Kindheit stimmt",
+    "anstieg": 0.94,
+    "proTag": 687
+   },
+   {
+    "name": "Klartraum",
+    "thema": "Ich wache auf - im Traum",
+    "anstieg": 0.93,
+    "proTag": 676
+   },
+   {
     "name": "Schlafparalyse",
     "thema": "Schlafparalyse: jemand sitzt nachts auf meiner Brust",
     "anstieg": 0.92,
     "proTag": 1043
    },
    {
-    "name": "Doppelgänger",
-    "thema": "Ich treffe mich selbst im Treppenhaus",
-    "anstieg": 0.81,
-    "proTag": 1272
+    "name": "Friedhof",
+    "thema": "Ein frisches Grab mit meinem Namen",
+    "anstieg": 0.9,
+    "proTag": 290
    },
    {
-    "name": "Backrooms",
-    "thema": "Endlose gelbe Flure hinter einer normalen Tür",
-    "anstieg": 0.63,
-    "proTag": 4929
-   },
-   {
-    "name": "Creepypasta",
-    "thema": "Eine Gruselgeschichte aus dem Internet wird wahr",
-    "anstieg": 0.62,
-    "proTag": 1848
-   },
-   {
-    "name": "Liminal Spaces",
-    "thema": "Leeres Einkaufszentrum um 3 Uhr nachts",
-    "anstieg": 0.61,
-    "proTag": 420
+    "name": "SCP",
+    "thema": "Ein Gegenstand, den man nicht ansehen darf",
+    "anstieg": 0.87,
+    "proTag": 1992
    }
   ],
   "himmel": {
@@ -52,6 +82,8 @@
    "en": []
   },
   "trendsDE": [
+   "pistons vs lakers",
+   "rachel weisz",
    "задержание",
    "fahndung",
    "limbach-oberfrohna",
@@ -59,27 +91,51 @@
    "elektromobilität",
    "asml",
    "pistons – lakers",
-   "a92",
-   "xrp",
-   "lidl ralf dümmel"
+   "a92"
   ],
   "trendsUS": [
-   "cade cunningham",
-   "jadeveon clowney",
-   "william, prince of wales",
-   "rick hendrick",
-   "justin timberlake",
-   "world wide technology championship",
-   "querétaro - puebla",
-   "tucker kraft",
-   "israel iran war",
-   "jalen milroe"
+   "nets vs mavericks",
+   "erin andrews",
+   "quentin grimes",
+   "nvidia stock price",
+   "quentin johnston",
+   "star wars ahsoka season 2",
+   "new york yankees mlb trades",
+   "nevada basketball",
+   "brock bowers",
+   "cade cunningham"
   ],
   "welt": [
    {
     "name": "China",
     "flagge": "🇨🇳",
-    "horror": [],
+    "horror": [
+     {
+      "name": "Polarlicht",
+      "anstieg": 1.33,
+      "proTag": 116
+     },
+     {
+      "name": "SCP",
+      "anstieg": 0.92,
+      "proTag": 130
+     },
+     {
+      "name": "Geister",
+      "anstieg": 0.92,
+      "proTag": 51
+     },
+     {
+      "name": "Backrooms",
+      "anstieg": 0.84,
+      "proTag": 198
+     },
+     {
+      "name": "Schlafparalyse",
+      "anstieg": 0.81,
+      "proTag": 51
+     }
+    ],
     "trends": [
      "感悟五年规划的中国智慧",
      "黄仁勋承认婚外情",
@@ -88,38 +144,70 @@
      "大连文体旅：对山东老铁免费100天"
     ],
     "quelle": [
+     "wikipedia-zh",
      "baidu"
-    ]
+    ],
+    "gemessen": 6
    },
    {
     "name": "Indien",
     "flagge": "🇮🇳",
     "horror": [],
     "trends": [
-     "गैस",
+     "बीबीसी",
+     "സായി പല്ലവി",
+     "अग्निपथ योजना",
      "గుర్నూర్ బ్రార్",
-     "పింఛను",
-     "हार्दिक पांड्या",
-     "நீர்"
+     "गैस"
     ],
     "quelle": [
+     "wikipedia-hi",
      "google-trends"
-    ]
+    ],
+    "gemessen": 0
    },
    {
     "name": "Tokio",
     "flagge": "🇯🇵",
-    "horror": [],
+    "horror": [
+     {
+      "name": "Doppelgänger",
+      "anstieg": 1.03,
+      "proTag": 188
+     },
+     {
+      "name": "Liminal Spaces",
+      "anstieg": 0.97,
+      "proTag": 156
+     },
+     {
+      "name": "Poltergeist",
+      "anstieg": 0.86,
+      "proTag": 52
+     },
+     {
+      "name": "Creepypasta",
+      "anstieg": 0.83,
+      "proTag": 83
+     },
+     {
+      "name": "Schlafparalyse",
+      "anstieg": 0.78,
+      "proTag": 61
+     }
+    ],
     "trends": [
+     "ナスダック先物",
+     "峯岸 みなみ",
+     "写真集",
      "でっぱりん",
-     "pistons vs lakers",
-     "水卜アナ",
-     "杉田かおる",
-     "織田 裕二"
+     "pistons vs lakers"
     ],
     "quelle": [
+     "wikipedia-ja",
      "google-trends"
-    ]
+    ],
+    "gemessen": 6
    },
    {
     "name": "Paris",
@@ -133,53 +221,64 @@
      "rodrigo mora"
     ],
     "quelle": [
+     "wikipedia-fr",
      "google-trends"
-    ]
+    ],
+    "fehler": "Sprachlinks fr: 429",
+    "gemessen": 0
    },
    {
     "name": "New York",
     "flagge": "🇺🇸",
     "horror": [
      {
-      "name": "Schlafparalyse",
-      "anstieg": 0.91,
-      "proTag": 918
+      "name": "Stromausfall",
+      "anstieg": 1.03,
+      "proTag": 164
      },
      {
-      "name": "Doppelgänger",
-      "anstieg": 0.8,
-      "proTag": 1241
+      "name": "Mimic",
+      "anstieg": 1,
+      "proTag": 228
      },
      {
-      "name": "Backrooms",
-      "anstieg": 0.63,
-      "proTag": 4909
+      "name": "Polarlicht",
+      "anstieg": 1,
+      "proTag": 1832
      },
      {
-      "name": "Creepypasta",
-      "anstieg": 0.62,
-      "proTag": 1782
+      "name": "Klartraum",
+      "anstieg": 0.96,
+      "proTag": 589
      },
      {
-      "name": "Liminal Spaces",
-      "anstieg": 0.6,
-      "proTag": 381
+      "name": "Nahtoderfahrung",
+      "anstieg": 0.92,
+      "proTag": 455
      }
     ],
     "trends": [
+     "nets vs mavericks",
+     "cade cunningham",
      "jordan watkins",
      "60 minutes tonight",
-     "60 minutes",
-     "jazz vs timberwolves",
-     "jessica pegula"
+     "60 minutes"
     ],
     "quelle": [
      "wikipedia-en",
      "google-trends"
-    ]
+    ],
+    "gemessen": 30
    }
   ],
-  "weltweit": []
+  "weltweit": [
+   {
+    "name": "Polarlicht",
+    "wo": [
+     "China"
+    ]
+   }
+  ]
  },
  "neu": []
 }
