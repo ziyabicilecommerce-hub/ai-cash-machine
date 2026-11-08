@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-07T22:15:26.634Z",
+ "stand": "2026-11-08T06:39:20.323Z",
  "gesamt": {
   "posts": 127,
   "aufrufe": 14651,
@@ -150,14 +150,14 @@
  "ab": {
   "kalt": {
    "an": {
-    "n": 12,
-    "schnitt": 261,
-    "sehdauer": 4.9
+    "n": 13,
+    "schnitt": 262,
+    "sehdauer": 4.8
    },
    "aus": {
-    "n": 2,
-    "schnitt": 172,
-    "sehdauer": 19.1
+    "n": 3,
+    "schnitt": 196,
+    "sehdauer": 13.5
    }
   },
   "raum": {
@@ -167,21 +167,21 @@
     "sehdauer": 5
    },
    "aus": {
-    "n": 3,
-    "schnitt": 129,
-    "sehdauer": 14.1
+    "n": 5,
+    "schnitt": 180,
+    "sehdauer": 9.6
    }
   },
   "suchbild": {
    "an": {
-    "n": 7,
-    "schnitt": 288,
-    "sehdauer": 4.8
+    "n": 8,
+    "schnitt": 283,
+    "sehdauer": 4.5
    },
    "aus": {
-    "n": 7,
-    "schnitt": 209,
-    "sehdauer": 9.1
+    "n": 8,
+    "schnitt": 216,
+    "sehdauer": 8.4
    }
   },
   "duhook": {
@@ -191,9 +191,9 @@
     "sehdauer": 6.4
    },
    "aus": {
-    "n": 13,
+    "n": 15,
     "schnitt": 258,
-    "sehdauer": 7
+    "sehdauer": 6.4
    }
   }
  },
@@ -202,8 +202,9 @@
   "Stärkstes Geschichten-Muster: „anruf“ (Ø 261) - der Skript-Bot nimmt es automatisch öfter.",
   "Beste Tageszeit: vormittags (Ø 155).",
   "Ø Sehdauer nur 2.5 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
-  "A/B-Test 3D-Ton: mit 5 s, ohne 14.1 s Sehdauer - bringt nichts, könnte weg.",
-  "A/B-Test Versteckte Augen: mit 4.8 s, ohne 9.1 s Sehdauer - bringt nichts, könnte weg.",
+  "A/B-Test Kalter Einstieg: mit 4.8 s, ohne 13.5 s Sehdauer - bringt nichts, könnte weg.",
+  "A/B-Test 3D-Ton: mit 5 s, ohne 9.6 s Sehdauer - bringt nichts, könnte weg.",
+  "A/B-Test Versteckte Augen: mit 4.5 s, ohne 8.4 s Sehdauer - bringt nichts, könnte weg.",
   "Sprach-Test YouTube: Deutsch Ø 336 (7) · Englisch Ø 785 (5) - Englisch gewinnt, bekommt jetzt 85 %."
  ],
  "sprachTest": {
@@ -218,12 +219,12 @@
  },
  "vorrat": {
   "de": {
-   "rest": 68,
+   "rest": 66,
    "tage": 5
   },
   "en": {
-   "rest": 49,
-   "tage": 16
+   "rest": 47,
+   "tage": 15
   }
  }
 }
