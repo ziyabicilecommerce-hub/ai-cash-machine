@@ -6,6 +6,7 @@ import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { rssTitel, redditTitel, themenHeute } from './lib/trendRadar.mjs';
 import { neueGeschichte, geschichtenKi } from './schatten/horrorKi.mjs';
 import { slug } from './schatten/videobot.mjs';
+import { wikiRadar, himmelRadar, youtubeRadar, radarThemen } from './lib/radarQuellen.mjs';
 
 const SKRIPTE = 'automations-dashboard/tiktok/skripte.json';
 const TRENDS = 'automations-dashboard/tiktok/trends.json';
@@ -24,7 +25,19 @@ async function main() {
   const trends = rssTitel(await holen('https://trends.google.de/trending/rss?geo=DE', 'text') || '');
   const reddit = [...redditTitel(await holen('https://www.reddit.com/r/creepypasta/top.json?t=week&limit=15', 'json')),
     ...redditTitel(await holen('https://www.reddit.com/r/nosleep/top.json?t=week&limit=15', 'json'))];
-  const themen = themenHeute({ trends, reddit, anzahl: ANZAHL });
+  const trendsUS = rssTitel(await holen('https://trends.google.com/trending/rss?geo=US', 'text') || '');
+  // Mega-Radar: Wikipedia-Aufsteiger, Satellit (Polarlicht), Mond, YouTube (nur mit eigenem Gratis-Schlüssel)
+  const [wiki, himmel, youtube] = await Promise.all([
+    wikiRadar().catch(() => []),
+    himmelRadar({ nasaKey: process.env.NASA_API_KEY || 'DEMO_KEY' }).catch(() => ({})),
+    youtubeRadar({ key: process.env.YOUTUBE_API_KEY || '' }).catch(() => ({ an: false, de: [], en: [] })),
+  ]);
+  const extra = radarThemen({ wiki, himmel });
+  const basis = themenHeute({ trends: [...trends, ...trendsUS], reddit: [...reddit, ...(youtube.de || []), ...(youtube.en || [])], anzahl: ANZAHL });
+  // Radar-Themen zuerst (gemessen gefragt), dann Google-Trends/Saison - ohne doppelte, höchstens ANZAHL
+  const themen = [...extra.map((t, i) => ({ ...t, inspiration: basis[i]?.inspiration || '' })), ...basis]
+    .filter((t, i, l) => l.findIndex((x) => x.thema === t.thema) === i).slice(0, ANZAHL);
+  bericht(`### 🛰️ Radar: ${wiki.length} Gruselbegriffe gemessen${wiki[0] ? ` (stärkster Anstieg: ${wiki[0].name} ×${wiki[0].anstieg})` : ''} · Kp ${himmel.kp ?? '–'}${himmel.polarlicht ? ' 🌌 Polarlicht möglich' : ''}${himmel.vollmond ? ' · 🌕 Vollmond' : ''} · YouTube ${youtube.an ? `${youtube.de.length + youtube.en.length} Titel` : 'aus (kein YOUTUBE_API_KEY)'}`);
   const daten = JSON.parse(readFileSync(SKRIPTE, 'utf8'));
   const bekannt = daten.skripte.map((s) => slug(s.titel));
   bericht(`### 📈 Trend-Radar: ${trends.length} Google-Trends, ${reddit.length} Reddit-Titel gelesen`);
@@ -37,7 +50,8 @@ async function main() {
     bericht(`- ✅ ${t.thema} → „${s.titel}“: ${s.hook}`);
   }
   if (neu.length) writeFileSync(SKRIPTE, `${JSON.stringify(daten, null, 1)}\n`);
-  writeFileSync(TRENDS, `${JSON.stringify({ stand: new Date().toISOString(), themen, neu: neu.map((s) => ({ titel: s.titel, hook: s.hook, trend: s.trend, quelle: s.quelle })) }, null, 1)}\n`);
+  const radar = { wiki: wiki.slice(0, 10), himmel, youtube: { an: youtube.an, de: (youtube.de || []).slice(0, 5), en: (youtube.en || []).slice(0, 5) }, trendsDE: trends.slice(0, 10), trendsUS: trendsUS.slice(0, 10) };
+  writeFileSync(TRENDS, `${JSON.stringify({ stand: new Date().toISOString(), themen, radar, neu: neu.map((s) => ({ titel: s.titel, hook: s.hook, trend: s.trend, quelle: s.quelle })) }, null, 1)}\n`);
   bericht(`${neu.length} neue Geschichten im Vorrat (jetzt ${daten.skripte.length}).`);
 }
 

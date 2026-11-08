@@ -142,7 +142,12 @@
     try { t = await (await fetch(`trends.json?t=${Date.now()}`, { cache: 'no-store' })).json(); } catch { /* noch nie gelaufen */ }
     if (!t) { q('vl-trends').replaceChildren(mk('div', 'tipp', 'Der Trend-Radar läuft jeden Morgen und füllt den Videobot mit neuen Geschichten.')); return; }
     const neu = t.neu || [];
-    q('vl-trends').replaceChildren(
+    const r = t.radar || {};
+    const radar = [];
+    if (r.wiki?.length) radar.push(mk('div', 'tipp gut', `🛰️ Gerade gefragt (Wikipedia, letzte 3 Tage): ${r.wiki.slice(0, 5).map((w) => `${w.name} ${w.anstieg >= 1 ? '▲' : '▼'}×${w.anstieg}`).join(' · ')}`));
+    if (r.himmel) radar.push(mk('div', 'tipp', `🌌 Satellit/Himmel: Kp ${r.himmel.kp ?? '–'}${r.himmel.polarlicht ? ' – Polarlicht möglich!' : ''}${r.himmel.vollmond ? ' · 🌕 Vollmond' : ''}${r.himmel.nasa ? ` · NASA: ${r.himmel.nasa}` : ''}`));
+    radar.push(mk('div', 'tipp', r.youtube?.an ? `▶️ YouTube-Hits (48 h): ${[...(r.youtube.en || []), ...(r.youtube.de || [])].slice(0, 4).join(' · ')}` : '▶️ YouTube-Radar aus - mit kostenlosem YOUTUBE_API_KEY (GitHub-Secret) an.'));
+    q('vl-trends').replaceChildren(...radar,
       mk('div', 'unter', `Stand ${new Date(t.stand).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })} · Themen: ${(t.themen || []).map((x) => x.thema).join(' · ')}`),
       ...(neu.length ? neu.map((s) => { const z = mk('div', 'tipp gut'); z.append(mk('b', '', `${s.quelle === 'google-trends' ? '📈' : '🍂'} ${s.trend}`), mk('div', '', `„${s.titel}“ – ${s.hook}`)); return z; })
         : [mk('div', 'tipp', 'Heute keine neue Geschichte geschafft (KI aus oder Hooks zu schwach) - morgen wieder.')]));
