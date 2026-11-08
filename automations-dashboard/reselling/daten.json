@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-08T01:07:38.864Z",
+ "stand": "2026-11-08T01:10:32.284Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -189,18 +189,9 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-08T00:55:44.406Z",
+  "stand": "2026-11-08T01:10:37.942Z",
   "filialen": 148,
   "produkte": [
-   {
-    "dan": "3135831",
-    "name": "NÉONAIL Adventskalender 2026 Touch Of Magic, 1 St",
-    "preis": 59.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1781225246/assets/pas/images/2a76c744-d465-4a81-9515-f64343237e0c/neonail-adventskalender-2026-touch-of-magic",
-    "link": "https://www.dm.de/p/d/3135831/neonail-adventskalender-2026-touch-of-magic",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
    {
     "dan": "3118166",
     "name": "Balea Adventskalender 2026 Warm Wishes, 1 St",
@@ -215,7 +206,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 33
+      "menge": 25
      },
      {
       "name": "dm Kriftel",
@@ -223,7 +214,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 27
+      "menge": 26
      },
      {
       "name": "dm Kelsterbach",
@@ -231,7 +222,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 14
+      "menge": 12
      },
      {
       "name": "dm Frankfurt am Main",
@@ -247,7 +238,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 51
+      "menge": 49
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -255,7 +246,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 74
+      "menge": 68
      },
      {
       "name": "dm Flörsheim am Main",
@@ -276,29 +267,110 @@
     ]
    },
    {
-    "dan": "3162931",
-    "name": "Barebells Adventskalender 2026 Proteinriegel \"Twenty Four Days of Chocolate\", 1 St",
-    "preis": 59.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790203300/assets/pas/images/96a77283-9a84-4c15-ab1d-f40243cb72a0/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
-    "link": "https://www.dm.de/p/d/3162931/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
-    "dan": "3118199",
-    "name": "Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
-    "preis": 34.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790893225/assets/pas/images/cc74b33e-9549-4968-992a-a79f50a7aa67/freche-freunde-adventskalender-2026-wichtelhaus",
-    "link": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
+    "dan": "3118196",
+    "name": "Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+    "preis": 24.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+    "link": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
     "begriff": "adventskalender",
     "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 6
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 18
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 62
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 8
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 24
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 11
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 13
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 14
+     }
+    ]
+   },
+   {
+    "dan": "3118197",
+    "name": "Balea MEN Adventskalender 2026 MERRY CHRISTMAS, 1 St",
+    "preis": 16.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787609114/assets/pas/images/4e81a9d1-d42d-46e1-8769-1c8458d165fa/balea-men-adventskalender-2026-merry-christmas",
+    "link": "https://www.dm.de/p/d/3118197/balea-men-adventskalender-2026-merry-christmas",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 18
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 6
+     },
      {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 9
+      "menge": 16
      },
      {
       "name": "dm Frankfurt am Main",
@@ -309,12 +381,20 @@
       "menge": 5
      },
      {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 13
+     },
+     {
       "name": "dm Sulzbach (Taunus)",
       "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 2
+      "menge": 11
      },
      {
       "name": "dm Flörsheim am Main",
@@ -322,15 +402,73 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
+      "menge": 29
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 2
+     }
+    ]
+   },
+   {
+    "dan": "3118201",
+    "name": "Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
+    "preis": 16.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787555270/assets/pas/images/5a32cdab-0120-4c77-bcc9-160de67cf462/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
+    "link": "https://www.dm.de/p/d/3118201/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 4
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
       "menge": 1
      },
      {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 7
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 5
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 6
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 5
+     },
+     {
+      "name": "dm Mörfelden-Walldorf",
+      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
+      "km": 9.6,
+      "lat": 50.0122615,
+      "lon": 8.5865417,
+      "menge": 3
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -338,7 +476,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 1
+      "menge": 2
      },
      {
       "name": "dm Eschborn",
@@ -346,15 +484,7 @@
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
-      "menge": 4
-     },
-     {
-      "name": "dm Hochheim am Main",
-      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
-      "km": 10.5,
-      "lat": 50.0155817,
-      "lon": 8.3658454,
-      "menge": 12
+      "menge": 6
      }
     ]
    },
@@ -396,7 +526,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 12
+      "menge": 11
      },
      {
       "name": "dm Eschborn",
@@ -431,6 +561,107 @@
       "menge": 1
      }
     ]
+   },
+   {
+    "dan": "3118199",
+    "name": "Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
+    "preis": 34.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790893225/assets/pas/images/cc74b33e-9549-4968-992a-a79f50a7aa67/freche-freunde-adventskalender-2026-wichtelhaus",
+    "link": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 9
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 5
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 1
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 7
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 1
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 3
+     },
+     {
+      "name": "dm Hochheim am Main",
+      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
+      "km": 10.5,
+      "lat": 50.0155817,
+      "lon": 8.3658454,
+      "menge": 11
+     }
+    ]
+   },
+   {
+    "dan": "3162931",
+    "name": "Barebells Adventskalender 2026 Proteinriegel \"Twenty Four Days of Chocolate\", 1 St",
+    "preis": 59.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790203300/assets/pas/images/96a77283-9a84-4c15-ab1d-f40243cb72a0/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
+    "link": "https://www.dm.de/p/d/3162931/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
+    "begriff": "adventskalender",
+    "vorrat": []
+   },
+   {
+    "dan": "3135831",
+    "name": "NÉONAIL Adventskalender 2026 Touch Of Magic, 1 St",
+    "preis": 59.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1781225246/assets/pas/images/2a76c744-d465-4a81-9515-f64343237e0c/neonail-adventskalender-2026-touch-of-magic",
+    "link": "https://www.dm.de/p/d/3135831/neonail-adventskalender-2026-touch-of-magic",
+    "begriff": "adventskalender",
+    "vorrat": []
+   },
+   {
+    "dan": "3139943",
+    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
+    "preis": 49.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
+    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3118897",
@@ -486,7 +717,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Eschborn",
@@ -505,237 +736,6 @@
       "menge": 8
      }
     ]
-   },
-   {
-    "dan": "3119105",
-    "name": "M. Asam Adventskalender 2026 Schönste Zeit, 1 St",
-    "preis": 69.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1792187316/assets/pas/images/c410291f-0b83-4bcc-97d8-6bde5e78baa9/m-asam-adventskalender-2026-schoenste-zeit",
-    "link": "https://www.dm.de/p/d/3119105/m-asam-adventskalender-2026-schoenste-zeit",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 3
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 6
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 2
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 4
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 3
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 2
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 2
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 5
-     }
-    ]
-   },
-   {
-    "dan": "3118197",
-    "name": "Balea MEN Adventskalender 2026 MERRY CHRISTMAS, 1 St",
-    "preis": 16.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787609114/assets/pas/images/4e81a9d1-d42d-46e1-8769-1c8458d165fa/balea-men-adventskalender-2026-merry-christmas",
-    "link": "https://www.dm.de/p/d/3118197/balea-men-adventskalender-2026-merry-christmas",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 19
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 7
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 16
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 5
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 14
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 14
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 30
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 2
-     }
-    ]
-   },
-   {
-    "dan": "3118201",
-    "name": "Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
-    "preis": 16.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787555270/assets/pas/images/5a32cdab-0120-4c77-bcc9-160de67cf462/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
-    "link": "https://www.dm.de/p/d/3118201/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 4
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 7
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 6
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 6
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 3
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 2
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
-      "km": 10.4,
-      "lat": 50.1401538,
-      "lon": 8.5824016,
-      "menge": 6
-     }
-    ]
-   },
-   {
-    "dan": "3139943",
-    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
-    "preis": 49.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
-    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
-    "begriff": "adventskalender",
-    "vorrat": []
    },
    {
     "dan": "3143255",
@@ -784,7 +784,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 27
+      "menge": 26
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -817,80 +817,6 @@
       "lat": 50.13488,
       "lon": 8.5572012,
       "menge": 3
-     }
-    ]
-   },
-   {
-    "dan": "3118196",
-    "name": "Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
-    "preis": 24.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
-    "link": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
-    "begriff": "beauty adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 7
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 1
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 19
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 62
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 10
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 25
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 11
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 14
      }
     ]
    }
@@ -2721,6 +2647,15 @@
     "begriff": "dunk"
    },
    {
+    "titel": "Air Force 1 Low Retro Premium",
+    "preis": 70,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-force-1-low-retro-premium-im3078-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IM3078-001_01.jpg?v=1757577981",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
+   },
+   {
     "titel": "Nike Dunk Low Retro Premium *Corduroy*",
     "preis": 71,
     "verfuegbar": true,
@@ -2784,15 +2719,6 @@
     "begriff": "cap"
    },
    {
-    "titel": "Tennis Classic",
-    "preis": 80,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/nike-tennis-classic-iv2437-100-white-white-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IV2437-100_1.jpg?v=1785486761",
-    "laden": "overkillshop.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Samba OG",
     "preis": 80,
     "verfuegbar": true,
@@ -2809,15 +2735,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U740WM2-01__53937.1731666674.1280.1280.jpg?v=1742985378",
     "laden": "sneakersnstuff.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "Samba OG W",
-    "preis": 85,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/adidas-samba-og-w-kj0996-wonder-white-dusky-bronze-gold-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/KJ0996_1.jpg?v=1770987713",
-    "laden": "overkillshop.com",
-    "begriff": "samba"
    },
    {
     "titel": "Adidas Samba OG W",
@@ -2853,7 +2770,16 @@
     "url": "https://www.overkillshop.com/products/new-balance-u1906lae-silver",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1906LAE_1.jpg?v=1746533291",
     "laden": "overkillshop.com",
-    "begriff": "new era"
+    "begriff": "new balance"
+   },
+   {
+    "titel": "U190663V",
+    "preis": 90,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u190663v-u190663v-silver-metallic-black-fire-cracker",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U190663V_1.jpg?v=1770208223",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Asics GEL-NYC",
@@ -3009,15 +2935,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Book 1 \"Solar Red\"",
-    "preis": 105,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-1-solar-red-ir0838-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR0838-001_01.jpg?v=1767860802",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Nike Wmns Dunk Low",
     "preis": 107,
     "verfuegbar": true,
@@ -3090,15 +3007,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "U20107Z3",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u20107z3-u20107z3tornado-faded-black-dark-silver-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U20107Z3_1.jpg?v=1770283928",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "ASICS Gel-1130 - White / Taro Purple",
     "preis": 110,
     "verfuegbar": true,
@@ -3151,15 +3059,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cc1c86f0b9268f6b27add5b92548f1df272b48ac_1201A789_020_Asics_GEL_NYC_Graphite_Grey_Black_os_1_9d944940-9064-4615-9542-6bf02307a613.jpg?v=1745415111",
     "laden": "asphaltgold.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "Air Force 1 '07",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/nike-air-force-1-07-cw2288-111-white-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/CW2288-111_1_ab7621cd-ac0f-4726-abe1-c18686d747f1.jpg?v=1730107192",
-    "laden": "overkillshop.com",
-    "begriff": "dunk"
    },
    {
     "titel": "Samba OG",
@@ -3232,6 +3131,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-wonalu-owhite-hirblu-kk0008-footwear_20_3E_20sneaker.jpg?v=1791796528",
     "laden": "afew-store.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "Air Max Plus VII",
+    "preis": 120,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/nike-air-max-plus-vll-iq0282-084-smoke-grey-metallic-silver-iron-grey",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IQ0282-084_1.jpg?v=1772206868",
+    "laden": "overkillshop.com",
+    "begriff": "dunk"
    },
    {
     "titel": "U201079X",
@@ -3324,6 +3232,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "Samba OG",
+    "preis": 129,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/song-for-the-mute-x-adidas-samba-og-hp8257-base-green-core-black-gold-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/HP8257_1.jpg?v=1791271845",
+    "laden": "overkillshop.com",
+    "begriff": "samba"
+   },
+   {
     "titel": "Nike Air Jordan 3 Retro OG *World's Best Dad*",
     "preis": 129,
     "verfuegbar": true,
@@ -3358,6 +3275,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-auburn-warvan-magbei-ki0438-footwear_20_3E_20sneaker.jpg?v=1791796405",
     "laden": "afew-store.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "U18905UY",
+    "preis": 130,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u18905uy-u18905uy-slate-grey",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Nike Air Jordan 13 Retro *Chicago*",
@@ -3507,8 +3433,8 @@
     "titel": "Gel-Cumulus 16",
     "preis": 150,
     "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-201",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-201_01.jpg?v=1780653283",
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-002",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-002_01.jpg?v=1771589255",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
    },
@@ -3547,6 +3473,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/M1906RER_1.jpg?v=1739539439",
     "laden": "overkillshop.com",
     "begriff": "new era"
+   },
+   {
+    "titel": "Air Max 95 SP",
+    "preis": 160,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/undefeated-x-nike-air-max-95-sp-ib4453-001-black-metallic-silver-gorge-green",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IB4453-001_1.jpg?v=1766138415",
+    "laden": "overkillshop.com",
+    "begriff": "dunk"
    },
    {
     "titel": "ZX 8094 \"The Missing Link\"",
@@ -3837,15 +3772,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "U990BL4",
-    "preis": 200,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u990bl4-u990bl4-black-grey-006-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U990BL4_1.jpg?v=1779447020",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Air Jordan 9 Retro OG \"Space Jam\"",
     "preis": 209,
     "verfuegbar": true,
@@ -3853,15 +3779,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IX6179-100_1.jpg?v=1789536414",
     "laden": "overkillshop.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "U1300NY",
-    "preis": 209,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u1300ny-nb-navy-raincloud-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 3 Retro",
