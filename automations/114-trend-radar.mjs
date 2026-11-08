@@ -6,7 +6,8 @@ import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { rssTitel, redditTitel, themenHeute } from './lib/trendRadar.mjs';
 import { neueGeschichte, geschichtenKi } from './schatten/horrorKi.mjs';
 import { slug } from './schatten/videobot.mjs';
-import { wikiRadar, himmelRadar, youtubeRadar, radarThemen } from './lib/radarQuellen.mjs';
+import { wikiRadar, himmelRadar, youtubeRadar, radarThemen, BEGRIFFE } from './lib/radarQuellen.mjs';
+import { weltRadar, weltweitHeiss } from './lib/weltRadar.mjs';
 
 const SKRIPTE = 'automations-dashboard/tiktok/skripte.json';
 const TRENDS = 'automations-dashboard/tiktok/trends.json';
@@ -32,7 +33,15 @@ async function main() {
     himmelRadar({ nasaKey: process.env.NASA_API_KEY || 'DEMO_KEY' }).catch(() => ({})),
     youtubeRadar({ key: process.env.YOUTUBE_API_KEY || '' }).catch(() => ({ an: false, de: [], en: [] })),
   ]);
+  const welt = await weltRadar().catch(() => []);
+  const weltweit = weltweitHeiss(welt);
   const extra = radarThemen({ wiki, himmel });
+  // Steigt ein Gruselthema in mehreren Weltregionen gleichzeitig? Dann ist es ein weltweiter Trend -> auch ein Thema
+  for (const w of weltweit.filter((x) => x.wo.length >= 2).slice(0, 2)) {
+    const b = BEGRIFFE.find((x) => x.name === w.name);
+    if (b) extra.push({ thema: b.thema, quelle: `welt (${w.wo.join(', ')})` });
+  }
+  for (const r of welt) bericht(`- ${r.flagge} ${r.name}: Grusel ${r.horror.slice(0, 3).map((h) => `${h.name} ×${h.anstieg}`).join(', ') || '–'} · gesucht: ${r.trends.slice(0, 3).join(' · ') || '–'}`);
   const basis = themenHeute({ trends: [...trends, ...trendsUS], reddit: [...reddit, ...(youtube.de || []), ...(youtube.en || [])], anzahl: ANZAHL });
   // Radar-Themen zuerst (gemessen gefragt), dann Google-Trends/Saison - ohne doppelte, höchstens ANZAHL
   const themen = [...extra.map((t, i) => ({ ...t, inspiration: basis[i]?.inspiration || '' })), ...basis]
@@ -50,7 +59,7 @@ async function main() {
     bericht(`- ✅ ${t.thema} → „${s.titel}“: ${s.hook}`);
   }
   if (neu.length) writeFileSync(SKRIPTE, `${JSON.stringify(daten, null, 1)}\n`);
-  const radar = { wiki: wiki.slice(0, 10), himmel, youtube: { an: youtube.an, de: (youtube.de || []).slice(0, 5), en: (youtube.en || []).slice(0, 5) }, trendsDE: trends.slice(0, 10), trendsUS: trendsUS.slice(0, 10) };
+  const radar = { wiki: wiki.slice(0, 10), himmel, youtube: { an: youtube.an, de: (youtube.de || []).slice(0, 5), en: (youtube.en || []).slice(0, 5) }, trendsDE: trends.slice(0, 10), trendsUS: trendsUS.slice(0, 10), welt, weltweit };
   writeFileSync(TRENDS, `${JSON.stringify({ stand: new Date().toISOString(), themen, radar, neu: neu.map((s) => ({ titel: s.titel, hook: s.hook, trend: s.trend, quelle: s.quelle })) }, null, 1)}\n`);
   bericht(`${neu.length} neue Geschichten im Vorrat (jetzt ${daten.skripte.length}).`);
 }

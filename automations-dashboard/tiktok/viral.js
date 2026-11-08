@@ -146,6 +146,8 @@
     const radar = [];
     if (r.wiki?.length) radar.push(mk('div', 'tipp gut', `🛰️ Gerade gefragt (Wikipedia, letzte 3 Tage): ${r.wiki.slice(0, 5).map((w) => `${w.name} ${w.anstieg >= 1 ? '▲' : '▼'}×${w.anstieg}`).join(' · ')}`));
     if (r.himmel) radar.push(mk('div', 'tipp', `🌌 Satellit/Himmel: Kp ${r.himmel.kp ?? '–'}${r.himmel.polarlicht ? ' – Polarlicht möglich!' : ''}${r.himmel.vollmond ? ' · 🌕 Vollmond' : ''}${r.himmel.nasa ? ` · NASA: ${r.himmel.nasa}` : ''}`));
+    if (r.weltweit?.length) radar.push(mk('div', 'tipp gut', `🌍 Weltweit im Kommen: ${r.weltweit.slice(0, 3).map((w) => `${w.name} (${w.wo.join(', ')})`).join(' · ')}`));
+    for (const w of r.welt || []) radar.push(mk('div', 'tipp', `${w.flagge} ${w.name}: 👻 ${(w.horror || []).slice(0, 3).map((h) => `${h.name} ×${h.anstieg}`).join(', ') || '–'} · 🔎 ${(w.trends || []).slice(0, 3).join(' · ') || '–'}`));
     radar.push(mk('div', 'tipp', r.youtube?.an ? `▶️ YouTube-Hits (48 h): ${[...(r.youtube.en || []), ...(r.youtube.de || [])].slice(0, 4).join(' · ')}` : '▶️ YouTube-Radar aus - mit kostenlosem YOUTUBE_API_KEY (GitHub-Secret) an.'));
     q('vl-trends').replaceChildren(...radar,
       mk('div', 'unter', `Stand ${new Date(t.stand).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })} · Themen: ${(t.themen || []).map((x) => x.thema).join(' · ')}`),

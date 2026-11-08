@@ -47,3 +47,32 @@ test('radarThemen: Polarlicht und starke Aufsteiger werden Themen', () => {
   const t = radarThemen({ wiki: [{ name: 'X', thema: 'x', anstieg: 2 }, { name: 'Y', thema: 'y', anstieg: 1.0 }], himmel: { polarlicht: true } });
   assert.deepEqual(t.map((x) => x.quelle), ['satellit', 'wikipedia']);
 });
+
+test('Welt-Radar: Sprachlinks, Baidu, Regionen, weltweite Trends', async () => {
+  const { REGIONEN, sprachlinksAus, baiduWoerter, weltRadar, weltweitHeiss } = await import('../../automations/lib/weltRadar.mjs');
+  assert.deepEqual(REGIONEN.map((r) => r.name), ['China', 'Indien', 'Tokio', 'Paris', 'New York']);
+  const zu = sprachlinksAus({ query: { normalized: [{ from: 'Sleep_paralysis', to: 'Sleep paralysis' }], redirects: [{ from: 'Sleep paralysis', to: 'Sleep paralysis disorder' }],
+    pages: { 1: { title: 'Sleep paralysis disorder', langlinks: [{ '*': '金縛り' }] } } } });
+  assert.equal(zu('Sleep_paralysis'), '金縛り');
+  assert.equal(zu('Unbekannt'), null);
+  assert.deepEqual(baiduWoerter({ data: { cards: [{ content: [{ content: [{ word: 'A' }, { word: 'B' }] }] }] } }), ['A', 'B']);
+  assert.deepEqual(baiduWoerter({ data: { cards: [{ content: [{ word: 'C' }] }] } }), ['C']);
+  const begriffe = [{ name: 'Geister', en: 'Ghost', de: 'Gespenst', thema: 'x' }];
+  const laden = async (url) => {
+    const ok = (d, art = 'json') => ({ ok: true, status: 200, json: async () => d, text: async () => d });
+    if (url.includes('langlinks')) return ok({ query: { pages: { 1: { title: 'Ghost', langlinks: [{ '*': 'Fantôme' }] } } } });
+    if (url.includes('pageviews')) return ok({ items: [...Array(14).fill(100), 300, 300, 300].map((views) => ({ views })) });
+    if (url.includes('baidu')) return ok({ data: { cards: [{ content: [{ word: '热搜' }] }] } });
+    if (url.includes('trends.google')) return ok('<rss><item><title>Trend X</title></item></rss>');
+    return { ok: false, status: 404 };
+  };
+  const welt = await weltRadar({ laden, begriffe, jetzt: new Date('2026-11-08T12:00:00Z') });
+  assert.equal(welt.length, 5);
+  assert.deepEqual(welt[0].trends, ['热搜']);
+  assert.deepEqual(welt[3].trends, ['Trend X']);
+  assert.equal(welt[3].horror[0].anstieg, 3);
+  assert.deepEqual(weltweitHeiss(welt)[0], { name: 'Geister', wo: ['China', 'Indien', 'Tokio', 'Paris', 'New York'] });
+  // alles offline -> leere Regionen, kein Absturz
+  const leer = await weltRadar({ laden: async () => { throw new Error('offline'); }, begriffe });
+  assert.ok(leer.every((r) => !r.horror.length && !r.trends.length));
+});
