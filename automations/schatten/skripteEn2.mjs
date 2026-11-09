@@ -51,3 +51,33 @@ export const SKRIPTE_EN2 = [
   cam('Selfie Mode', 'haus', 'gremlin', 'My front camera turned on by itself at 3 AM. I was in bed.', 'If your front camera turns on alone at night, do not look.',
     'It shows my face, asleep.', 'Behind my pillow a hand comes out of the wall.', 'The hand reaches for my phone. My phone is gone.', 'Say cheese.'),
 ];
+
+// Pattern "zahl" (one too many) - our TikTok hits of 07./08.11. (774 / 744 views), now in English too
+const zahl = (titel, ort, boese, hook, hook2, doubt, proof, then, ende, monster) =>
+  S(titel, 'zahl', ort, boese, 'mann', hook, hook2, ['I count again.', doubt, proof, then], ende, monster, 'Would you have counted again?', ['Count again', 'Run']);
+SKRIPTE_EN2.push(
+  zahl('One Extra on Every Photo', 'wald', 'schatten', 'We hiked as 3 people. On every photo there are 4 of us.', 'After a hike, count the people on your photos.',
+    'There really are only three of us.', 'On every photo someone stands behind me.', 'In every picture he is a little closer.', 'On the last photo there are only two of us. I am missing.', 'I belong here.'),
+  zahl('Fourteen Steps', 'haus', 'schatten', 'My stairs have 13 steps. Tonight I hear 14 footsteps.', 'Tonight, count the footsteps on your stairs.',
+    'I stop on step thirteen.', 'The footsteps keep going. One step more.', 'The extra step is right behind me.', 'In the morning my stairs have 14 steps. The new one is warm.', 'Fourteen.'),
+  zahl('The Class Photo', 'haus', 'gremlin', 'My class photo has 24 kids. The app counts 25 faces.', 'Let an app count the faces on your class photo.',
+    'I count the kids myself. Twenty-four.', 'The app marks a face in the very back.', 'It is my face. As a child.', 'On the photo the child slowly turns to the camera.', 'I am still at school.'),
+  zahl('The Third Plate', 'haus', 'frau', 'I set the table for 2. At night there is a 3rd plate.', 'If there is an extra plate on your table at night, do not touch it.',
+    'My boyfriend swears it was not him.', 'The third plate has been used.', 'Next to it lies a knife. Licked clean.', 'In the morning there are 3 toothbrushes. One is wet.', 'Delicious.'),
+  zahl('The Second Bed', 'haus', 'frau', 'My hotel room has 1 bed. My phone photo shows 2.', 'Take a photo of your hotel bed before you sleep.',
+    'There really is only one bed.', 'On the photo someone lies in the second bed.', 'The blanket is pulled up to the chin.', 'I look back into the room. Someone is lying in my bed now.', 'Good night.'),
+  zahl('Elevator Scale', 'aufzug', 'schatten', 'There are 2 of us in the elevator. The scale says 3 people.', 'If the elevator scale shows more than you weigh, get out.',
+    'My girlfriend and me. No one else.', 'The scale shows 80 kilos too many.', 'Something breathes on my neck.', 'The door opens. My girlfriend gets out. I do not.', 'Basement.'),
+  zahl('Sixth in the Chat', 'haus', 'gremlin', 'My group chat has 5 people. Tonight 6 are typing.', 'If one too many is typing in your group chat, do not read it.',
+    'There are only five of us in the group.', 'The sixth message comes from my phone.', 'I wrote nothing. I was asleep.', 'The message says: He is asleep. Come now.', 'Hi guys.'),
+  zahl('Two Tickets', 'haus', 'schatten', 'I sit alone in row 13 of the cinema. The app shows 2 tickets.', 'If the seat next to you folds down in an empty cinema, stay seated.',
+    'I really am alone in the room.', 'The seat next to me folds down.', 'Popcorn crackles. Right next to me.', 'In the credits I see my name. And next to it: plus one.', 'Shh, the movie is starting.'),
+  zahl('Thirty-One Candles', 'haus', 'frau', 'My cake has 30 candles. On the photo 31 are burning.', 'Count the candles on your birthday photo.',
+    'I am turning thirty. There were thirty candles.', 'On the photo one more candle is burning.', 'It is right in front of my face.', 'I blow them all out. The last one keeps burning.', 'Make a wish.'),
+  zahl('Third Sleeping Bag', 'wald', 'hirsch', 'There are 2 of us in the tent. At 3 AM I count 3 sleeping bags.', 'Never count the sleeping bags if you wake up in your tent at night.',
+    'My buddy is asleep next to me.', 'Three sleeping bags. One does not move.', 'A hoof sticks out of the third one.', 'In the morning the third bag is empty. So is my buddy.', 'Go back to sleep.'),
+  zahl('Fifth Window', 'haus', 'frau', 'My house has 4 windows at the front. At night 5 are lit.', 'Go outside and count the windows of your home.',
+    'I go out and count from the street.', 'The fifth window is between kitchen and bathroom.', 'Inside there is only a wall.', 'Someone stands in the fifth window and waves. With my hand.', 'I see you.'),
+  zahl('Fourth Key', 'haus', 'schatten', 'I own 3 keys. Tonight 4 are hanging on the hook.', 'If you have one more key than you ever made, run.',
+    'I only ever had three made.', 'The fourth key is still warm.', 'It fits my bedroom door. From the inside.', 'In the morning the fourth key is gone. And my door is locked.', 'I have one too.'),
+);
