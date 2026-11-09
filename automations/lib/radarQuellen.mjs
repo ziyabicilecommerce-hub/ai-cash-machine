@@ -42,12 +42,12 @@ export const BEGRIFFE = [
 
 const tag = (d) => d.toISOString().slice(0, 10).replace(/-/g, '');
 
-// Aufrufe -> Anstieg: Schnitt der letzten 3 Tage geteilt durch Schnitt der 14 Tage davor (mind. 50 Aufrufe/Tag zählen)
-export function anstieg(werte = []) {
+// Aufrufe -> Anstieg: Schnitt der letzten 3 Tage geteilt durch Schnitt der 14 Tage davor (mind. 50 Aufrufe/Tag zählen, kleine Wikipedias weniger)
+export function anstieg(werte = [], minimum = 50) {
   if (werte.length < 10) return null;
   const neu = werte.slice(-3), alt = werte.slice(-17, -3);
   const n = neu.reduce((a, b) => a + b, 0) / neu.length, a = alt.reduce((x, y) => x + y, 0) / Math.max(alt.length, 1);
-  if (n < 50) return null;
+  if (n < minimum) return null;
   return { anstieg: Math.round((n / Math.max(a, 1)) * 100) / 100, proTag: Math.round(n) };
 }
 
