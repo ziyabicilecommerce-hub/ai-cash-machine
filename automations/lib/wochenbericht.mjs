@@ -32,6 +32,18 @@ export function abAuswertung(posts, varianteVon = () => null) {
   return Object.fromEntries(Object.entries(aus).map(([f, g]) => [f, { an: kurz(g.an), aus: kurz(g.aus) }]));
 }
 
+// YouTube liefert keine Sehdauer -> dort entscheidet der A/B-Test nach Aufrufen (nur Posts mit Zahlen)
+export function abAuswertungAufrufe(posts, varianteVon = () => null) {
+  const aus = {};
+  for (const p of posts.filter((x) => (x.aufrufe || 0) > 0)) {
+    const v = varianteVon(p);
+    if (!v) continue;
+    for (const [f, an] of Object.entries(v)) if (typeof an === 'boolean') ((aus[f] ||= { an: [], aus: [] })[an ? 'an' : 'aus']).push(p);
+  }
+  const kurz = (l) => ({ n: l.length, schnitt: Math.round(schnitt(l)) });
+  return Object.fromEntries(Object.entries(aus).map(([f, g]) => [f, { an: kurz(g.an), aus: kurz(g.aus) }]));
+}
+
 export function bericht(verlauf = [], jetzt = Date.now(), musterVon = () => '', varianteVon = () => null) {
   const reif = verlauf.filter((p) => jetzt - new Date(p.zeit) >= TAG);  // Zahlen brauchen ~1 Tag
   const woche = reif.filter((p) => jetzt - new Date(p.zeit) < 8 * TAG);

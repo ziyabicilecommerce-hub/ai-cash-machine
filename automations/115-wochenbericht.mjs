@@ -1,7 +1,7 @@
 // Wochenbericht (#115): läuft nach jedem Zahlen-Abruf (#103) mit. Schreibt den Verlauf fort und erstellt den Bericht
 // für die App (automations-dashboard/tiktok/wochenbericht.json). Ohne Schlüssel, ohne Netz - liest nur Dateien.
 import { readFileSync, writeFileSync } from 'node:fs';
-import { verlaufMischen, bericht, vorrat, sprachTest } from './lib/wochenbericht.mjs';
+import { verlaufMischen, bericht, vorrat, sprachTest, abAuswertungAufrufe } from './lib/wochenbericht.mjs';
 import { SKRIPTE_EN } from './schatten/skripteEn.mjs';
 import { slug } from './schatten/videobot.mjs';
 import { alleSkripte, passt } from './schatten/skriptBot.mjs';
@@ -22,6 +22,14 @@ b.sprachTest = sprachTest(reif, (p) => SKRIPTE_EN.some((s) => passt(p, s)) || /\
 if (b.sprachTest.de.n >= 4 && b.sprachTest.en.n >= 4) {
   const { de, en } = b.sprachTest;
   b.schritte.push(`Sprach-Test YouTube: Deutsch Ø ${de.schnitt} (${de.n}) · Englisch Ø ${en.schnitt} (${en.n})${en.schnitt >= 1.5 * Math.max(de.schnitt, 1) ? ' - Englisch gewinnt, bekommt jetzt 85 %.' : de.schnitt >= 1.5 * Math.max(en.schnitt, 1) ? ' - Deutsch gewinnt, bekommt jetzt 85 %.' : ' - noch kein klarer Sieger.'}`);
+}
+// A/B-Test YouTube nach Aufrufen (letzte 2 Wochen, reife Posts): dort wirken Features anders als auf Instagram
+const ytReif = verlauf.filter((p) => /giyuuu/i.test(p.konto || '') && Date.now() - new Date(p.zeit) >= 864e5 && Date.now() - new Date(p.zeit) < 15 * 864e5);
+b.abYT = abAuswertungAufrufe(ytReif, varianteVon);
+for (const [f, w] of Object.entries(b.abYT)) {
+  if (w.an.n < 3 || w.aus.n < 3) continue;
+  const r = w.an.schnitt / Math.max(w.aus.schnitt, 1);
+  if (r >= 1.3 || r <= 1 / 1.3) b.schritte.push(`A/B-Test YouTube ${f}: mit Ø ${w.an.schnitt}, ohne Ø ${w.aus.schnitt} Aufrufe - ${r >= 1.3 ? 'wirkt, dort meist an' : 'bremst, dort meist aus'}.`);
 }
 const gepostet = Object.values(json('buffer-verteiler/stand.json', {})).flatMap((k) => Object.keys(k || {}));
 // Verbrauch pro Tag: Deutsch = desk.rebel + purivelle (je bis 6); Englisch = YouTube (bis 8, davon ~85 % Englisch)

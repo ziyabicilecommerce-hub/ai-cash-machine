@@ -163,6 +163,16 @@ export function abGewichte(ab = {}) {
   }
   return g;
 }
+// YouTube: Gewinner nach Aufrufen (>= 3 Videos je Seite, mindestens 1,3x so viele) - Sehdauer gibt es dort nicht
+export function abGewichteAufrufe(ab = {}) {
+  const g = { ...AB_FEATURES };
+  for (const [f, w] of Object.entries(ab || {})) {
+    if (!(f in g) || !(w?.an?.n >= 3) || !(w?.aus?.n >= 3)) continue;
+    const r = w.an.schnitt / Math.max(w.aus.schnitt, 1);
+    if (r >= 1.3) g[f] = 0.15; else if (r <= 1 / 1.3) g[f] = 0.85;
+  }
+  return g;
+}
 export const abSchluessel = (text) => String(text || '').replace(/\s+/g, ' ').trim().slice(0, 40);
 
 // Anteil englischer Videos auf dem Mix-Kanal: 50 %, bis je >= 4 Videos mit Zahlen da sind und eine Sprache >= 1,5x so viele Aufrufe holt
