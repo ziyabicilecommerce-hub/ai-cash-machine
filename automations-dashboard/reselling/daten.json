@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-09T16:53:11.339Z",
+ "stand": "2026-11-09T16:56:45.381Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -200,7 +200,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-09T16:41:05.015Z",
+  "stand": "2026-11-09T16:56:49.013Z",
   "filialen": 148,
   "produkte": [
    {
@@ -257,7 +257,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 68
+      "menge": 67
      },
      {
       "name": "dm Flörsheim am Main",
@@ -265,7 +265,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 52
+      "menge": 56
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -381,7 +381,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 16
+      "menge": 15
      },
      {
       "name": "dm Frankfurt am Main",
@@ -413,7 +413,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 26
+      "menge": 28
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -1121,6 +1121,7 @@
      11.36,
      11.36,
      11.36,
+     11.36,
      11.36
     ]
    },
@@ -1154,6 +1155,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     19.13,
      19.13,
      19.13,
      19.13,
@@ -1213,6 +1215,7 @@
      34.7,
      34.7,
      34.7,
+     34.7,
      34.7
     ]
    },
@@ -1246,6 +1249,7 @@
     },
     "nurBewegung": false,
     "kurs": [
+     28.91,
      28.91,
      28.91,
      28.91,
@@ -1305,6 +1309,7 @@
      13.11,
      13.11,
      13.11,
+     13.11,
      13.11
     ]
    },
@@ -1338,6 +1343,7 @@
     },
     "nurBewegung": false,
     "kurs": [
+     12.2,
      12.2,
      12.2,
      12.2,
@@ -1397,6 +1403,7 @@
      9.52,
      9.52,
      9.52,
+     9.52,
      9.52
     ]
    },
@@ -1430,6 +1437,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     51.52,
      51.52,
      51.52,
      51.52,
@@ -1489,6 +1497,7 @@
      34.63,
      34.63,
      34.63,
+     34.63,
      34.63
     ]
    },
@@ -1522,6 +1531,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     19.06,
      19.06,
      19.06,
      19.06,
@@ -1581,6 +1591,7 @@
      14.81,
      14.81,
      14.81,
+     14.81,
      14.81
     ]
    },
@@ -1614,6 +1625,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     14.93,
      14.93,
      14.93,
      14.93,
@@ -1673,6 +1685,7 @@
      12.21,
      12.21,
      12.21,
+     12.21,
      12.21
     ]
    },
@@ -1706,6 +1719,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     33.79,
      33.79,
      33.79,
      33.79,
@@ -1765,6 +1779,7 @@
      31.15,
      31.15,
      31.15,
+     31.15,
      31.15
     ]
    },
@@ -1798,6 +1813,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.54,
      9.54,
      9.54,
      9.54,
@@ -1857,6 +1873,7 @@
      21.7,
      21.7,
      21.7,
+     21.7,
      21.7
     ]
    },
@@ -1890,6 +1907,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     41.84,
      41.84,
      41.84,
      41.84,
@@ -1963,16 +1981,16 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 657,
+  "geprueft": 894,
   "statistik": {
-   "karten": 657,
+   "karten": 894,
    "mitPreis": 621,
    "imBudget": 51,
    "steigend": 4,
    "fallend": 18
   },
-  "quelle": "TCGdex",
-  "stand": "2026-11-09T16:00:48.368Z"
+  "quelle": "TCGdex + pokemontcg.io",
+  "stand": "2026-11-09T16:56:29.465Z"
  },
  "trends": {
   "ware": [],
@@ -2490,15 +2508,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "GT-2160",
-    "preis": 104,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gt-2160-1203a275-103",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A275-103_01.jpg?v=1770746761",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Nike Wmns Dunk Low",
     "preis": 107,
     "verfuegbar": true,
@@ -2868,6 +2877,15 @@
     "begriff": "jordan"
    },
    {
+    "titel": "U13008BH",
+    "preis": 135,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u13008bh-u13008bh-drift-red-hay-afterglow",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U13008BH_1.jpg?v=1778671801",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Nike DUNK LOW RETRO PRM QS",
     "preis": 139.99,
     "verfuegbar": true,
@@ -2938,15 +2956,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CK9246-101_1.jpg?v=1777463095",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "Allerdale",
-    "preis": 149,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-uadwlwo-uadwlwo-vaporous-grey-chipmunk",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/UADWLWO_1.jpg?v=1779434892",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
    },
    {
     "titel": "New Balance 90/60",
@@ -3136,6 +3145,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ5365-600_01.jpg?v=1788510918",
     "laden": "sneakersnstuff.com",
     "begriff": "dunk"
+   },
+   {
+    "titel": "Gel-Kayano 14",
+    "preis": 170,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-kayano-14-1203a537-111",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A537-111_1.jpg?v=1776271666",
+    "laden": "sneakersnstuff.com",
+    "begriff": "asics"
    },
    {
     "titel": "Gel-Kayano 14",
