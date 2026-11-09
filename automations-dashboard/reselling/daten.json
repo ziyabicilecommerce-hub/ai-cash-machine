@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-09T10:03:52.328Z",
+ "stand": "2026-11-09T10:07:05.362Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "deal:https://www.sneakersnstuff.com/products/nike-air-max-plus-vii-hq2197-002",
+   "art": "Deal",
+   "titel": "💰 Deal: Nike Air Max Plus (TN) für 114,00 €",
+   "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HQ2197-002_01.jpg?v=1773912286",
+   "link": "https://www.sneakersnstuff.com/products/nike-air-max-plus-vii-hq2197-002",
+   "text": "sneakersnstuff.com · Air Max Plus VII\nVerkauf ca. 140–210 € → Gewinn ca. +38,50 € (ROI 34 %)\nGröße prüfen, vorher verkaufte Preise checken.",
+   "zeit": "2026-11-09T10:07:05.362Z"
+  },
   {
    "schluessel": "deal:https://www.overkillshop.com/products/new-balance-u190663v-u190663v-silver-metallic-black-fire-cracker",
    "art": "Deal",
@@ -181,15 +190,6 @@
    "link": "https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-royal-black-varsity-royal-black",
    "text": "asphaltgold.com · Nike Air Jordan 1 Retro High OG *Royal*\nVerkauf ca. 180–260 € → Gewinn ca. +32,00 € (ROI 20 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-07T17:14:48.286Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-flight-club-black-sail-gum-medium-brown-university-red",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 1 High OG für 140,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/oaolyxjb03-II9811-001_Nike_Air-Jordan-1-Retro-High-OG-Flight-Club-Black-Sail-Gum-Medium-Brown-University-Red_os-1.jpg?v=1779882086",
-   "link": "https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-flight-club-black-sail-gum-medium-brown-university-red",
-   "text": "asphaltgold.com · Nike Air Jordan 1 Retro High OG *Flight Club*\nVerkauf ca. 180–260 € → Gewinn ca. +53,00 € (ROI 38 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-07T17:11:47.319Z"
   }
  ],
  "filial": {
@@ -2065,6 +2065,15 @@
    },
    {
     "titel": "574",
+    "preis": 76,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-574-wl574evb",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/WL574EVB-1__91324.1719435491.1280.1280.jpg?v=1742985394",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "574",
     "preis": 77,
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/new-balance-574-wl574evg",
@@ -2253,15 +2262,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "204L",
-    "preis": 98,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/new-balance-204l-u204lmmc",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U204LMMC_01.jpg?v=1757919418",
-    "laden": "sneakersnstuff.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Wmns Air Jordan 3 Retro Starfish",
     "preis": 99,
     "verfuegbar": true,
@@ -2359,15 +2359,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A275-103_01.jpg?v=1770746761",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "Book 1 \"Solar Red\"",
-    "preis": 105,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-1-solar-red-ir0838-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR0838-001_01.jpg?v=1767860802",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
    },
    {
     "titel": "Nike Wmns Dunk Low",
@@ -2476,6 +2467,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
     "laden": "overkillshop.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Air Max Plus VII",
+    "preis": 114,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-max-plus-vii-hq2197-002",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HQ2197-002_01.jpg?v=1773912286",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "New Balance 509",
@@ -2658,15 +2658,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "Gel-NYC 2.0",
-    "preis": 128,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-nyc-2-0-1203a895-102",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A895-102_01.jpg?v=1777547927",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Samba OG",
     "preis": 129,
     "verfuegbar": true,
@@ -2811,15 +2802,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Air Jordan 3 Retro \"Orange Citrus\"",
-    "preis": 147,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-orange-citrus-ck9246-101",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CK9246-101_1.jpg?v=1777463095",
-    "laden": "sneakersnstuff.com",
-    "begriff": "jordan"
-   },
-   {
     "titel": "Air Jordan 6 Retro",
     "preis": 147,
     "verfuegbar": true,
@@ -2877,8 +2859,17 @@
     "titel": "Gel-Cumulus 16",
     "preis": 150,
     "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-105",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-105_1.jpg?v=1776271531",
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-201",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-201_01.jpg?v=1780653283",
+    "laden": "sneakersnstuff.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "Gel-Cumulus 16",
+    "preis": 150,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-002",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-002_01.jpg?v=1771589255",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
    },
@@ -3194,6 +3185,15 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-5-retro-sunset-iv5678-102",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV5678-102_01.jpg?v=1785762646",
+    "laden": "sneakersnstuff.com",
+    "begriff": "jordan"
+   },
+   {
+    "titel": "Air Jordan 8 Retro \"Chrome\"",
+    "preis": 210,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-8-retro-chrome-305381-007",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/305381-007_01.jpg?v=1785766511",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
