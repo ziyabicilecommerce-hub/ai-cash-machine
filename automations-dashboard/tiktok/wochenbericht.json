@@ -1,53 +1,53 @@
 {
- "stand": "2026-11-09T01:11:30.951Z",
+ "stand": "2026-11-09T12:03:32.869Z",
  "gesamt": {
-  "posts": 153,
-  "aufrufe": 21400,
+  "posts": 164,
+  "aufrufe": 25705,
   "vorherAufrufe": null
  },
  "konten": {
   "@desk.rebel": {
-   "n": 32,
-   "schnitt": 93,
-   "sehdauer": 4.9,
+   "n": 34,
+   "schnitt": 92,
+   "sehdauer": 4.8,
    "vorher": null
   },
   "@purivelle.785": {
-   "n": 29,
-   "schnitt": 53,
+   "n": 31,
+   "schnitt": 57,
    "sehdauer": 4.1,
    "vorher": null
   },
   "@zyx_7851": {
-   "n": 20,
-   "schnitt": 38,
-   "sehdauer": 1.9,
+   "n": 21,
+   "schnitt": 48,
+   "sehdauer": 2,
    "vorher": null
   },
   "@giyuuu sama": {
-   "n": 28,
+   "n": 30,
    "schnitt": 358,
    "sehdauer": 0,
    "vorher": null
   },
   "@futureflowxx": {
-   "n": 20,
-   "schnitt": 94,
-   "sehdauer": 1.3,
+   "n": 22,
+   "schnitt": 155,
+   "sehdauer": 1.4,
    "vorher": null
   },
   "@futureflowx3": {
-   "n": 24,
-   "schnitt": 176,
+   "n": 26,
+   "schnitt": 218,
    "sehdauer": 2,
    "vorher": null
   }
  },
  "formate": {
   "horror": {
-   "n": 83,
-   "schnitt": 155,
-   "sehdauer": 3
+   "n": 91,
+   "schnitt": 173,
+   "sehdauer": 3.1
   },
   "mythos": {
    "n": 9,
@@ -55,9 +55,9 @@
    "sehdauer": 4.1
   },
   "quiz": {
-   "n": 31,
-   "schnitt": 206,
-   "sehdauer": 1.8
+   "n": 33,
+   "schnitt": 214,
+   "sehdauer": 1.7
   },
   "anime": {
    "n": 9,
@@ -65,9 +65,9 @@
    "sehdauer": 0
   },
   "serie": {
-   "n": 19,
-   "schnitt": 79,
-   "sehdauer": 1.7
+   "n": 20,
+   "schnitt": 112,
+   "sehdauer": 1.8
   },
   "waswaere": {
    "n": 2,
@@ -87,9 +87,9 @@
    "sehdauer": 5.1
   },
   "anruf": {
-   "n": 12,
-   "schnitt": 172,
-   "sehdauer": 2.6
+   "n": 15,
+   "schnitt": 156,
+   "sehdauer": 2.9
   },
   "kamera": {
    "n": 3,
@@ -149,14 +149,14 @@
  },
  "zeiten": {
   "nachts": {
-   "n": 23,
-   "schnitt": 179,
-   "sehdauer": 2.3
+   "n": 29,
+   "schnitt": 227,
+   "sehdauer": 2.5
   },
   "vormittags": {
-   "n": 37,
-   "schnitt": 150,
-   "sehdauer": 2.9
+   "n": 40,
+   "schnitt": 147,
+   "sehdauer": 2.8
   },
   "nachmittags": {
    "n": 43,
@@ -164,8 +164,8 @@
    "sehdauer": 2.5
   },
   "abends": {
-   "n": 50,
-   "schnitt": 148,
+   "n": 52,
+   "schnitt": 171,
    "sehdauer": 2.4
   }
  },
@@ -195,63 +195,62 @@
  "ab": {
   "kalt": {
    "an": {
-    "n": 20,
-    "schnitt": 191,
+    "n": 21,
+    "schnitt": 187,
     "sehdauer": 4.3
    },
    "aus": {
-    "n": 14,
-    "schnitt": 186,
-    "sehdauer": 5.4
+    "n": 21,
+    "schnitt": 255,
+    "sehdauer": 4.7
    }
   },
   "raum": {
    "an": {
-    "n": 19,
-    "schnitt": 185,
+    "n": 20,
+    "schnitt": 181,
     "sehdauer": 4.2
    },
    "aus": {
-    "n": 15,
-    "schnitt": 195,
-    "sehdauer": 5.5
+    "n": 22,
+    "schnitt": 258,
+    "sehdauer": 4.8
    }
   },
   "suchbild": {
    "an": {
-    "n": 17,
-    "schnitt": 208,
-    "sehdauer": 3.9
+    "n": 19,
+    "schnitt": 229,
+    "sehdauer": 3.8
    },
    "aus": {
-    "n": 17,
-    "schnitt": 171,
-    "sehdauer": 5.6
+    "n": 23,
+    "schnitt": 215,
+    "sehdauer": 5.1
    }
   },
   "duhook": {
    "an": {
-    "n": 6,
-    "schnitt": 50,
-    "sehdauer": 3.8
+    "n": 9,
+    "schnitt": 64,
+    "sehdauer": 3.9
    },
    "aus": {
-    "n": 28,
-    "schnitt": 219,
-    "sehdauer": 5
+    "n": 33,
+    "schnitt": 264,
+    "sehdauer": 4.7
    }
   }
  },
  "schritte": [
   "@giyuuu sama läuft am besten (Ø 358) - neue Ideen dort zuerst testen.",
-  "Stärkstes Geschichten-Muster: „anruf“ (Ø 172) - der Skript-Bot nimmt es automatisch öfter.",
-  "Beste Tageszeit: nachts (Ø 179).",
+  "Stärkstes Geschichten-Muster: „anruf“ (Ø 156) - der Skript-Bot nimmt es automatisch öfter.",
+  "Beste Tageszeit: nachts (Ø 227).",
   "Ø Sehdauer nur 2.5 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
-  "A/B-Test Kalter Einstieg: mit 4.3 s, ohne 5.4 s Sehdauer - bringt nichts, könnte weg.",
-  "A/B-Test 3D-Ton: mit 4.2 s, ohne 5.5 s Sehdauer - bringt nichts, könnte weg.",
-  "A/B-Test Versteckte Augen: mit 3.9 s, ohne 5.6 s Sehdauer - bringt nichts, könnte weg.",
-  "A/B-Test Du-Hook: mit 3.8 s, ohne 5 s Sehdauer - bringt nichts, könnte weg.",
-  "Sprach-Test YouTube: Deutsch Ø 400 (10) · Englisch Ø 661 (9) - Englisch gewinnt, bekommt jetzt 85 %."
+  "A/B-Test 3D-Ton: mit 4.2 s, ohne 4.8 s Sehdauer - bringt nichts, könnte weg.",
+  "A/B-Test Versteckte Augen: mit 3.8 s, ohne 5.1 s Sehdauer - bringt nichts, könnte weg.",
+  "A/B-Test Du-Hook: mit 3.9 s, ohne 4.7 s Sehdauer - bringt nichts, könnte weg.",
+  "Sprach-Test YouTube: Deutsch Ø 400 (10) · Englisch Ø 604 (11) - Englisch gewinnt, bekommt jetzt 85 %."
  ],
  "sprachTest": {
   "de": {
@@ -259,18 +258,18 @@
    "schnitt": 400
   },
   "en": {
-   "n": 9,
-   "schnitt": 661
+   "n": 11,
+   "schnitt": 604
   }
  },
  "vorrat": {
   "de": {
-   "rest": 59,
+   "rest": 54,
    "tage": 4
   },
   "en": {
-   "rest": 63,
-   "tage": 9
+   "rest": 62,
+   "tage": 8
   }
  }
 }
