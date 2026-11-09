@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-09T23:41:20.986Z",
+ "stand": "2026-11-09T23:45:12.014Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -1126,6 +1126,7 @@
      11.36,
      11.36,
      11.36,
+     11.36,
      11.36
     ]
    },
@@ -1159,6 +1160,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     19.13,
      19.13,
      19.13,
      19.13,
@@ -1228,6 +1230,7 @@
      34.7,
      34.7,
      34.7,
+     34.7,
      34.7
     ]
    },
@@ -1279,7 +1282,41 @@
      28.91,
      28.91,
      28.91,
+     28.91,
      28.91
+    ]
+   },
+   {
+    "id": "me03-107",
+    "name": "Mauzi-ex",
+    "nummer": "107",
+    "seltenheit": "Ultra Selten",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/107/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mauzi-ex",
+    "preis": {
+     "tief": 7,
+     "trend": 13.11,
+     "schnitt7": 13.38,
+     "schnitt30": 13.3
+    },
+    "prozent": 1,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 7,
+     "ziel": 13.11,
+     "gewinn": 3.95,
+     "roi": 56,
+     "momentum": 1,
+     "spread": 6.11,
+     "score": 61,
+     "signal": "BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     13.11
     ]
    },
    {
@@ -1312,6 +1349,7 @@
     },
     "nurBewegung": false,
     "kurs": [
+     12.2,
      12.2,
      12.2,
      12.2,
@@ -1381,6 +1419,7 @@
      9.52,
      9.52,
      9.52,
+     9.52,
      9.52
     ]
    },
@@ -1414,6 +1453,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     51.52,
      51.52,
      51.52,
      51.52,
@@ -1483,6 +1523,7 @@
      34.63,
      34.63,
      34.63,
+     34.63,
      34.63
     ]
    },
@@ -1516,6 +1557,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     19.06,
      19.06,
      19.06,
      19.06,
@@ -1585,7 +1627,41 @@
      14.81,
      14.81,
      14.81,
+     14.81,
      14.81
+    ]
+   },
+   {
+    "id": "me03-094",
+    "name": "Piepi",
+    "nummer": "094",
+    "seltenheit": "Selten, Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/094/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Piepi",
+    "preis": {
+     "tief": 7.71,
+     "trend": 14.93,
+     "schnitt7": 15.95,
+     "schnitt30": 17.04
+    },
+    "prozent": -6,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 7.71,
+     "ziel": 14.93,
+     "gewinn": 4.97,
+     "roi": 64,
+     "momentum": -6,
+     "spread": 7.22,
+     "score": 53,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     14.93
     ]
    },
    {
@@ -1636,7 +1712,74 @@
      12.21,
      12.21,
      12.21,
+     12.21,
      12.21
+    ]
+   },
+   {
+    "id": "me03-123",
+    "name": "Rosys Ermutigung",
+    "nummer": "123",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/123/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rosys%20Ermutigung",
+    "preis": {
+     "tief": 24.9,
+     "trend": 33.79,
+     "schnitt7": 36.24,
+     "schnitt30": 37.33
+    },
+    "prozent": -3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 24.9,
+     "ziel": 33.79,
+     "gewinn": 5.7,
+     "roi": 23,
+     "momentum": -3,
+     "spread": 8.89,
+     "score": 52,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     33.79
+    ]
+   },
+   {
+    "id": "me03-118",
+    "name": "Mega-Starmie-ex",
+    "nummer": "118",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/118/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Starmie-ex",
+    "preis": {
+     "tief": 23,
+     "trend": 31.15,
+     "schnitt7": 32.74,
+     "schnitt30": 33.88
+    },
+    "prozent": -3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 23,
+     "ziel": 31.15,
+     "gewinn": 5.09,
+     "roi": 22,
+     "momentum": -3,
+     "spread": 8.15,
+     "score": 51,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     31.15
     ]
    },
    {
@@ -1669,6 +1812,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.54,
      9.54,
      9.54,
      9.54,
@@ -1738,6 +1882,7 @@
      21.7,
      21.7,
      21.7,
+     21.7,
      21.7
     ]
    },
@@ -1771,6 +1916,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     41.84,
      41.84,
      41.84,
      41.84,
@@ -1849,26 +1995,30 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 623,
+  "geprueft": 1093,
   "statistik": {
-   "karten": 623,
-   "mitPreis": 587,
-   "imBudget": 43,
+   "karten": 1093,
+   "mitPreis": 621,
+   "imBudget": 51,
    "steigend": 4,
-   "fallend": 15
+   "fallend": 18
   },
-  "quelle": "TCGdex",
-  "stand": "2026-11-09T22:47:14.456Z"
+  "quelle": "TCGdex + pokemontcg.io",
+  "stand": "2026-11-09T23:45:00.045Z"
  },
  "trends": {
   "ware": [
    {
-    "titel": "jordan davis nfl",
+    "titel": "jordan davis",
     "menge": "200+",
     "kategorie": "Sneaker"
    }
   ],
   "top": [
+   {
+    "titel": "ярмарка",
+    "menge": "100+"
+   },
    {
     "titel": "deutschlandticket",
     "menge": "500+"
@@ -1886,6 +2036,10 @@
     "menge": "100+"
    },
    {
+    "titel": "jordan davis",
+    "menge": "200+"
+   },
+   {
     "titel": "ios 27.2 1 update",
     "menge": "200+"
    },
@@ -1895,19 +2049,11 @@
    },
    {
     "titel": "steffen henssler",
-    "menge": "200+"
-   },
-   {
-    "titel": "jordan davis nfl",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "dwayne johnson",
     "menge": "100+"
-   },
-   {
-    "titel": "boeing 777",
-    "menge": "200+"
    }
   ]
  },
@@ -2373,15 +2519,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "Book 1 \"Solar Red\"",
-    "preis": 105,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-1-solar-red-ir0838-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR0838-001_01.jpg?v=1767860802",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Nike Wmns Dunk Low",
     "preis": 107,
     "verfuegbar": true,
@@ -2803,6 +2940,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/u9060gry_1.jpg?v=1715976291",
     "laden": "overkillshop.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Kobe IX Elite Low EM Protro",
+    "preis": 144,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-kobe-ix-elite-low-em-protro-im6119-800",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IM6119-800_01.jpg?v=1778490724",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Air Jordan 3 Retro OG \"World's Best Dad\"",
