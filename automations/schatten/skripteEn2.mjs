@@ -81,3 +81,41 @@ SKRIPTE_EN2.push(
   zahl('Fourth Key', 'haus', 'schatten', 'I own 3 keys. Tonight 4 are hanging on the hook.', 'If you have one more key than you ever made, run.',
     'I only ever had three made.', 'The fourth key is still warm.', 'It fits my bedroom door. From the inside.', 'In the morning the fourth key is gone. And my door is locked.', 'I have one too.'),
 );
+
+// Patterns "traum" (lucid dream) and "himmel" (sky) from the world radar 09.11.: lucid dreams rising in Tokyo + Paris, aurora x6.8 in Tokyo
+const traum = (titel, boese, hook, hook2, a, b, c, ende, monster) =>
+  S(titel, 'traum', 'haus', boese, 'mann', hook, hook2, ['I know I am dreaming.', a, b, c], ende, monster, 'Would you have tried to wake up?', ['Wake up', 'Keep dreaming']);
+const himmel = (titel, boese, hook, hook2, a, b, c, ende, monster) =>
+  S(titel, 'himmel', 'haus', boese, 'mann', hook, hook2, ['I step outside.', a, b, c], ende, monster, 'Would you have stayed outside?', ['Stay outside', 'Go inside']);
+SKRIPTE_EN2.push(
+  traum('Waking Up Inside a Dream', 'schatten', 'I wake up at 3 AM. But I am still dreaming.', 'If you wake up inside a dream, lie completely still.',
+    'In the dream my phone rings.', 'The screen says: Wake up.', 'I wake up. The phone is still ringing.', 'Now the screen says: Too late.', 'Stay.'),
+  traum('The Dream Clock', 'gremlin', 'In my dream every clock says 3:12. Today it still does after I wake.', 'Check the clock in your dream. If it says 3:12, wake up.',
+    'They say you cannot read clocks in dreams.', 'I read them anyway. Every one says 3:12.', 'I wake up and check my phone.', 'It is 3:12 AM. And something next to me is breathing.', 'Go back to sleep.'),
+  traum('The Man From My Dream', 'schatten', 'Every night I dream of the same man. Tonight he is not in the dream.', 'If you see the same man in your dreams every night, never talk to him.',
+    'He always stands at the end of my bed.', 'Tonight I wake up. He is still standing there.', 'He is holding my phone.', 'He types something and puts it back. It says: Your turn.', 'Finally awake.'),
+  traum('The Dream Journal', 'frau', 'My dream journal has a new entry tonight. I did not write it.', 'Write down your dreams and read every entry in the morning.',
+    'I write down my dreams every morning.', 'The new entry is in my handwriting.', 'It describes how I sleep. From above.', 'The last line says: Tomorrow I write from your bed.', 'Keep reading.'),
+  traum('Sleep Paralysis', 'gremlin', 'I cannot move at 3 AM. But something is sitting on my chest.', 'If you cannot move at night, breathe very quietly.',
+    'My eyes are open.', 'It is heavy and cold.', 'It whispers: Breathe quieter.', 'In the morning there are two small handprints on my chest.', 'Breathe quieter.'),
+  traum('The Same Dream', 'frau', 'In my dream my sister says: Do not wake up. She dreamed it too.', 'If someone in your dream tells you not to wake up, wake up.',
+    'She says I am safe in the dream.', 'In the morning she texts me: Did you see me too?', 'I text back: Yes. Why should I not wake up?', 'She replies: Because out there it is not me waiting for you.', 'Stay here.'),
+  traum('The Dream House', 'schatten', 'I dream of a house every night. Tonight it is standing in front of me.', 'If the house from your dreams appears in real life, do not go in.',
+    'I know every door inside it.', 'I find it on the map. Two streets away.', 'The door is open. A light is on inside.', 'Someone lies in the bed upstairs. He is wearing my pajamas.', 'Welcome back.'),
+  traum('Woke Up Four Times', 'frau', 'I woke up 4 times in a row. But never for real.', 'If you wake up several times in a row, count your windows.',
+    'Every time the room is a little different.', 'The fourth time the window is gone.', 'Behind me my mom says: Finally you are awake.', 'My mom died ten years ago.', 'Finally.'),
+  traum('The Dream Mirror', 'frau', 'In my dream I look in the mirror. My reflection is not asleep.', 'Never look into your mirror in a dream.',
+    'In dreams mirrors always look wrong.', 'My reflection smiles. I do not.', 'I wake up and walk to the bathroom.', 'In the mirror my reflection is still lying in bed. It waves.', 'I stay here.'),
+  traum('Zero Minutes of Sleep', 'gremlin', 'My sleep app says: 0 minutes of sleep. But I had a dream.', 'If your sleep app says 0 minutes of sleep, check your basement.',
+    'I remember every detail.', 'The app shows movement at 3:12 AM.', 'I got up and walked into the basement.', 'My pillow is lying in the basement. It is still warm.', 'Sleepwalker.'),
+  himmel('Aurora Over My House', 'schatten', 'Tonight there is an aurora. But only over my house.', 'If the northern lights are only above your house, go inside.',
+    'All my neighbors are filming the sky.', 'Something moves inside the green light.', 'It is huge and it is looking down.', 'The light goes out. And my roof starts to creak.', 'Found you.'),
+  himmel('The Star That Moves Closer', 'gremlin', 'At 3 AM one star is brighter than all the others. It does not blink.', 'If a star above you is brighter than all others, look away.',
+    'It gets bigger every minute.', 'My camera app detects a face.', 'Now the star is right above my garden.', 'It goes out. And something knocks on my window.', 'Open up.'),
+  himmel('The Second Moon', 'frau', 'Tonight I see 2 moons. My phone photo only shows one.', 'If you see two moons at night, do not take a photo.',
+    'My girlfriend sees two as well.', 'The second one is smaller. And it blinks.', 'It slowly turns toward us.', 'In the morning there is only one moon. My girlfriend is gone.', 'One is enough.'),
+  himmel('The Shooting Star Answers', 'schatten', 'At 3 AM I make a wish on a shooting star. It answers.', 'Never make a wish on a shooting star at 3 AM, you will get it.',
+    'I wish to never be alone again.', 'My phone buzzes. A message with no sender.', 'It says: Wish granted.', 'Since that night I hear a second breath at night. Next to me.', 'Forever.'),
+  himmel('Dark at Noon', 'schatten', 'The radio says there is no eclipse today. But it is getting dark.', 'If it gets dark at noon without an eclipse, stay inside your home.',
+    'In the middle of the day everything turns black.', 'The street lights do not turn on.', 'In the dark all my neighbors whisper my name.', 'When it gets light, they all stand at my door. Eyes closed.', 'Come out.'),
+);
