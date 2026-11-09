@@ -137,3 +137,17 @@ test('zaehlenMitStand: eigenes Protokoll fängt verzögerte Buffer-Liste ab', as
   assert.equal(postenJetzt(r.heute, r.letzter, Date.parse('2026-11-08T10:05:00Z')), false, '47 Min. nach dem letzten Reel: warten');
   assert.deepEqual(zaehlenMitStand({ heute: 3, letzter: null }, {}, heute), { heute: 3, letzter: null });
 });
+
+test('YouTube-A/B nach Aufrufen: Du-Hook gewinnt dort, 3D-Ton bremst', async () => {
+  const { abGewichteAufrufe, AB_FEATURES } = await import('../../automations/lib/bufferVerteiler.mjs');
+  const { abAuswertungAufrufe } = await import('../../automations/lib/wochenbericht.mjs');
+  const g = abGewichteAufrufe({ duhook: { an: { n: 3, schnitt: 775 }, aus: { n: 13, schnitt: 337 } }, raum: { an: { n: 8, schnitt: 236 }, aus: { n: 8, schnitt: 603 } },
+    kalt: { an: { n: 9, schnitt: 403 }, aus: { n: 7, schnitt: 441 } }, suchbild: { an: { n: 2, schnitt: 900 }, aus: { n: 9, schnitt: 100 } } });
+  assert.equal(g.duhook, 0.15);
+  assert.equal(g.raum, 0.85);
+  assert.equal(g.kalt, AB_FEATURES.kalt, 'zu knapp - bleibt beim Test');
+  assert.equal(g.suchbild, AB_FEATURES.suchbild, 'zu wenig Videos');
+  const posts = [{ text: 'a', aufrufe: 100 }, { text: 'b', aufrufe: 300 }, { text: 'c', aufrufe: 0 }];
+  const v = { a: { raum: true }, b: { raum: false }, c: { raum: false } };
+  assert.deepEqual(abAuswertungAufrufe(posts, (p) => v[p.text]), { raum: { an: { n: 1, schnitt: 100 }, aus: { n: 1, schnitt: 300 } } });
+});
