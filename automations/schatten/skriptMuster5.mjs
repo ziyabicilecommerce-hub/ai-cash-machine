@@ -67,3 +67,90 @@ export const DU_HOOKS5 = {
   'Das fünfte Fenster': 'Geh raus und zähl die Fenster deiner Wohnung von außen.',
   'Der vierte Schlüssel': 'Hast du einen Schlüssel mehr, als du machen lassen hast, lauf.',
 };
+
+// Muster 16 + 17 aus dem Welt-Radar (09.11.): "Klartraum" steigt in Tokio und Paris, "Polarlicht" in Tokio (x6,8) und China.
+const traum = (v) => ({
+  titel: v.titel, ort: 'haus', boesewicht: v.boese, stimme: v.stimme || 'mann',
+  hook: v.hook, saetze: ['Ich weiß, dass ich träume.', v.a, v.b, v.c],
+  monster: v.monster, ende: v.ende, frage: 'Hättest du versucht aufzuwachen?', wahl: ['Aufwachen', 'Weiterträumen'],
+});
+const TRAUM = [
+  { titel: 'Aufwachen im Traum', boese: 'schatten', hook: 'Ich wache um 3 Uhr auf. Aber ich bin noch im Traum.',
+    a: 'Im Traum klingelt mein Handy.', b: 'Auf dem Display steht: Wach auf.', c: 'Ich wache auf. Das Handy klingelt immer noch.',
+    monster: 'Bleib.', ende: 'Auf dem Display steht jetzt: Zu spät.' },
+  { titel: 'Die Uhr im Traum', boese: 'gremlin', hook: 'Im Traum zeigt jede Uhr 3:12. Heute aber auch nach dem Aufwachen.',
+    a: 'Im Traum kann man Uhren nicht lesen, heißt es.', b: 'Ich lese sie trotzdem. Jede zeigt 3:12.', c: 'Ich wache auf und schaue aufs Handy.',
+    monster: 'Schlaf weiter.', ende: 'Es ist 3:12 Uhr. Und neben mir atmet jemand.' },
+  { titel: 'Der Mann aus dem Traum', boese: 'schatten', hook: 'Im Traum sehe ich jede Nacht einen Mann. Heute aber nicht im Traum.',
+    a: 'Er steht immer am Ende meines Bettes.', b: 'Heute wache ich auf. Er steht immer noch da.', c: 'Er hält mein Handy in der Hand.',
+    monster: 'Endlich wach.', ende: 'Er tippt etwas und legt es zurück. Da steht: Jetzt bist du dran.' },
+  { titel: 'Das Traumbuch', boese: 'frau', stimme: 'frau', hook: 'Mein Traumbuch hat heute Nacht einen Eintrag. Nicht von mir.',
+    a: 'Ich schreibe jeden Morgen meine Träume auf.', b: 'Der neue Eintrag ist in meiner Schrift.', c: 'Er beschreibt, wie ich schlafe. Von oben.',
+    monster: 'Lies weiter.', ende: 'Der letzte Satz lautet: Morgen schreibe ich aus deinem Bett.' },
+  { titel: 'Schlafparalyse', boese: 'gremlin', hook: 'Ich kann mich um 3 Uhr nicht bewegen. Aber jemand sitzt auf mir.',
+    a: 'Meine Augen sind offen.', b: 'Es ist schwer und kalt.', c: 'Es flüstert: Atme leiser.',
+    monster: 'Atme leiser.', ende: 'Am Morgen sind auf meiner Brust zwei kleine Handabdrücke.' },
+  { titel: 'Der gleiche Traum', boese: 'frau', stimme: 'frau', hook: 'Im Traum sagt meine Schwester: Wach nicht auf. Sie träumte es auch.',
+    a: 'Sie sagt, im Traum bin ich sicher.', b: 'Morgens schreibt sie mir: Hast du mich auch gesehen?', c: 'Ich schreibe: Ja. Warum soll ich nicht aufwachen?',
+    monster: 'Bleib hier.', ende: 'Sie antwortet: Weil draußen nicht mehr ich auf dich warte.' },
+  { titel: 'Das Haus aus dem Traum', boese: 'schatten', hook: 'Ich träume von einem Haus. Heute Nacht steht es aber vor mir.',
+    a: 'Ich kenne jede Tür darin.', b: 'Ich finde es auf der Karte. Zwei Straßen weiter.', c: 'Die Tür ist offen. Drinnen brennt Licht.',
+    monster: 'Willkommen zurück.', ende: 'Im Schlafzimmer liegt jemand im Bett. Er trägt meinen Schlafanzug.' },
+  { titel: 'Viermal aufgewacht', boese: 'frau', hook: 'Ich wache 4 Mal hintereinander auf. Aber nie wirklich.',
+    a: 'Jedes Mal ist das Zimmer ein bisschen anders.', b: 'Beim vierten Mal fehlt das Fenster.', c: 'Hinter mir sagt meine Mama: Endlich bist du wach.',
+    monster: 'Endlich.', ende: 'Meine Mama ist seit zehn Jahren tot.' },
+  { titel: 'Der Spiegel im Traum', boese: 'frau', stimme: 'frau', hook: 'Im Traum sehe ich in den Spiegel. Mein Spiegelbild schläft aber nicht.',
+    a: 'Im Traum sehen Spiegel immer falsch aus.', b: 'Mein Spiegelbild lächelt. Ich nicht.', c: 'Ich wache auf und gehe ins Bad.',
+    monster: 'Ich bleibe hier.', ende: 'Im Spiegel liegt mein Spiegelbild noch im Bett. Es winkt.' },
+  { titel: 'Null Minuten Schlaf', boese: 'gremlin', hook: 'Meine Schlaf-App sagt: 0 Minuten Schlaf. Ich habe aber geträumt.',
+    a: 'Ich weiß noch jedes Detail.', b: 'Die App zeigt eine Bewegung um 3:12 Uhr.', c: 'Ich bin aufgestanden und in den Keller gegangen.',
+    monster: 'Schlafwandler.', ende: 'Im Keller liegt mein Kissen. Es ist noch warm.' },
+];
+
+const himmel = (v) => ({
+  titel: v.titel, ort: 'haus', boesewicht: v.boese, stimme: v.stimme || 'mann',
+  hook: v.hook, saetze: ['Ich gehe nach draußen.', v.a, v.b, v.c],
+  monster: v.monster, ende: v.ende, frage: 'Wärst du draußen geblieben?', wahl: ['Draußen bleiben', 'Reingehen'],
+});
+const HIMMEL = [
+  { titel: 'Polarlicht über meinem Haus', boese: 'schatten', hook: 'Heute Nacht ist Polarlicht. Aber nur über meinem Haus.',
+    a: 'Alle Nachbarn filmen den Himmel.', b: 'In dem grünen Licht bewegt sich etwas.', c: 'Es ist groß und schaut nach unten.',
+    monster: 'Gefunden.', ende: 'Das Licht geht aus. Und auf meinem Dach knarzt es.' },
+  { titel: 'Der Stern, der näher kommt', boese: 'gremlin', hook: 'Um 3 Uhr ist ein Stern heller als alle anderen. Aber er blinkt nicht.',
+    a: 'Er wird jede Minute größer.', b: 'Meine Kamera-App erkennt ein Gesicht.', c: 'Der Stern steht jetzt über meinem Garten.',
+    monster: 'Mach auf.', ende: 'Er geht aus. Und es klopft an mein Fenster.' },
+  { titel: 'Der zweite Mond', boese: 'frau', hook: 'Heute Nacht sehe ich 2 Monde. Auf meinem Handy-Foto aber nur einen.',
+    a: 'Meine Freundin sieht auch zwei.', b: 'Der zweite ist kleiner. Und er blinzelt.', c: 'Er dreht sich langsam zu uns.',
+    monster: 'Eine reicht.', ende: 'Am Morgen gibt es nur einen Mond. Meine Freundin ist weg.' },
+  { titel: 'Die Sternschnuppe antwortet', boese: 'schatten', hook: 'Um 3 Uhr wünsche ich mir etwas. Die Sternschnuppe antwortet aber.',
+    a: 'Ich wünsche mir, nie mehr allein zu sein.', b: 'Mein Handy vibriert. Eine Nachricht ohne Absender.', c: 'Sie lautet: Wunsch erfüllt.',
+    monster: 'Für immer.', ende: 'Seitdem höre ich nachts ein zweites Atmen. Neben mir.' },
+  { titel: 'Dunkel am Mittag', boese: 'schatten', hook: 'Im Radio sagen sie: Heute keine Finsternis. Aber es wird dunkel.',
+    a: 'Mitten am Tag wird alles schwarz.', b: 'Die Straßenlaternen gehen nicht an.', c: 'Im Dunkeln flüstern alle Nachbarn meinen Namen.',
+    monster: 'Komm raus.', ende: 'Als es hell wird, stehen alle vor meiner Tür. Mit geschlossenen Augen.' },
+];
+MUSTER5.traum = [traum, TRAUM];
+MUSTER5.himmel = [himmel, HIMMEL];
+
+TEIL2_5.traum = () => ({ hook: 'Ich schlafe nicht mehr. Trotzdem träume ich weiter.', saetze: ['Ich sitze wach in der Küche.', 'Plötzlich ist die Küche falsch.', 'Die Fenster sind zugemauert.', 'Am Tisch sitzt der Mann aus meinem Traum.'],
+  ende: 'Er schiebt mir einen Kaffee hin. Es ist meine Tasse von morgen.', monster: 'Guten Morgen.', frage: 'Hättest du getrunken?', wahl: ['Trinken', 'Wegrennen'] });
+TEIL2_5.himmel = () => ({ hook: 'Seit dieser Nacht schaue ich nicht mehr nach oben. Heute schaut es runter.', saetze: ['Alle Fenster sind verhängt.', 'Trotzdem wird es im Zimmer grün.', 'Das Licht kommt durch die Decke.', 'Darin ein Gesicht. Ganz nah.'],
+  ende: 'Es flüstert: Du hast mich gesehen. Jetzt sehe ich dich.', monster: 'Hallo.', frage: 'Wärst du rausgerannt?', wahl: ['Rausrennen', 'Verstecken'] });
+
+Object.assign(DU_HOOKS5, {
+  'Aufwachen im Traum': 'Wenn du im Traum aufwachst, bleib still liegen.',
+  'Die Uhr im Traum': 'Schau im Traum auf deine Uhr. Steht sie auf 3:12, wach auf.',
+  'Der Mann aus dem Traum': 'Siehst du im Traum jede Nacht denselben Mann, sprich ihn nicht an.',
+  'Das Traumbuch': 'Schreib deine Träume auf und lies morgens jeden Eintrag.',
+  'Schlafparalyse': 'Kannst du dich nachts nicht bewegen, atme ganz leise.',
+  'Der gleiche Traum': 'Sagt dir im Traum jemand, du sollst nicht aufwachen, wach auf.',
+  'Das Haus aus dem Traum': 'Steht das Haus aus deinen Träumen vor dir, geh nicht rein.',
+  'Viermal aufgewacht': 'Wachst du mehrmals hintereinander auf, zähl deine Fenster.',
+  'Der Spiegel im Traum': 'Schau im Traum nie in deinen Spiegel.',
+  'Null Minuten Schlaf': 'Zeigt deine Schlaf-App 0 Minuten Schlaf, prüf deinen Keller.',
+  'Polarlicht über meinem Haus': 'Gibt es Polarlicht nur über deinem Haus, geh sofort rein.',
+  'Der Stern, der näher kommt': 'Ist ein Stern über dir heller als alle und blinkt nicht, schau weg.',
+  'Der zweite Mond': 'Siehst du nachts zwei Monde, mach kein Foto davon.',
+  'Die Sternschnuppe antwortet': 'Wünsch dir nie etwas von einer Sternschnuppe um 3 Uhr nachts.',
+  'Dunkel am Mittag': 'Wird es mittags bei dir dunkel, ohne Finsternis, bleib drinnen.',
+});

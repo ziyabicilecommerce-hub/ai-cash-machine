@@ -200,6 +200,10 @@ export const TEIL2_EN = {
     'Through the peephole I see no one. Just an eye, very close.', 'You did not knock back.', 'Would you have opened the door?', ['Open it', 'Keep it shut']),
   zahl: P2('I stopped counting. Tonight someone is counting me.', ['At night I hear a voice.', 'It counts very slowly.', 'One step for every number.', 'It is at three. I am the third.'],
     'I hold my breath. The voice says: One is missing.', 'Found you.', 'Would you have hidden?', ['Hide', 'Run']),
+  traum: P2('I stopped sleeping. I keep dreaming anyway.', ['I sit wide awake in the kitchen.', 'Suddenly the kitchen is wrong.', 'The windows are bricked up.', 'The man from my dream sits at the table.'],
+    'He pushes a coffee toward me. It is my mug from tomorrow.', 'Good morning.', 'Would you have taken a sip?', ['Drink it', 'Run']),
+  himmel: P2('Since that night I never look up. Tonight it looks down.', ['Every window is covered.', 'Still, the room turns green.', 'The light comes through the ceiling.', 'There is a face in it. Very close.'],
+    'It whispers: You saw me. Now I see you.', 'Hello.', 'Would you have run outside?', ['Run outside', 'Hide']),
   kind: P2('The kid calls me. It is the middle of the night.', ['She whispers very quietly.', 'She says she is not allowed to be loud.', 'I ask her why.', 'She says: Because now he is with you. Not with me.'],
     'The closet in my room creaks. It was closed before.', 'With you now.', 'Would you open the closet?', ['Open it', 'Keep it shut']),
 };
