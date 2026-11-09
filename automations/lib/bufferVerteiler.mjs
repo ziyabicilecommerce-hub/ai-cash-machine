@@ -172,6 +172,16 @@ export function sprachAnteil(test = null) {
   return v >= 1.5 ? 0.85 : v <= 1 / 1.5 ? 0.15 : 0.5;
 }
 
+// Zweite Quelle: unser eigenes Post-Protokoll (buffer-verteiler/stand.json, je Kanal { schluessel: ISO-Zeit }).
+// Buffer listet frische Posts verzögert - am 08.11. bekam desk.rebel so 8 statt höchstens 6 Reels, teils 15 Min. auseinander.
+// Es zählt immer der höhere Wert; Stories (kurz:) zählen nicht.
+export function zaehlenMitStand(buffer = { heute: 0, letzter: null }, standKanal = {}, heute = '') {
+  const zeiten = Object.entries(standKanal || {}).filter(([k, t]) => !k.startsWith('kurz:') && /^\d{4}-\d{2}-\d{2}T/.test(String(t))).map(([, t]) => String(t));
+  const heuteStand = zeiten.filter((t) => t >= heute).length;
+  const letzter = [buffer.letzter, ...zeiten].filter(Boolean).sort((a, b) => Date.parse(a) - Date.parse(b)).at(-1) || null;
+  return { heute: Math.max(buffer.heute, heuteStand), letzter };
+}
+
 export function zaehlen(posts, kanalId) {
   // Stories (ohne Text) zählen nicht als Post - sie begleiten nur das Reel
   const eigene = posts.filter((p) => p.channelId === kanalId && !['error', 'draft'].includes(p.status) && (p.text === undefined || String(p.text).trim()));

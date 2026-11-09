@@ -8,7 +8,7 @@
 //   node 113-buffer-verteiler.mjs --posten      -> postet laut Plan, Video-Links aus out/horror-urls.json
 import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
-import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, storyEingabe, abVariante, abGewichte, AB_FEATURES, abSchluessel, sprachAnteil, formatWerte } from './lib/bufferVerteiler.mjs';
+import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, zaehlenMitStand, storyEingabe, abVariante, abGewichte, AB_FEATURES, abSchluessel, sprachAnteil, formatWerte } from './lib/bufferVerteiler.mjs';
 import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
 import { naechstesSkriptEn, SKRIPTE_EN } from './schatten/skripteEn.mjs';
 import { teil2Kandidat as teil2KandidatSync } from './schatten/skriptBot.mjs';
@@ -94,7 +94,7 @@ async function vorbereiten() {
   bericht('### 📤 Buffer-Verteiler');
   if (angepasst.length) bericht(`- 🧪 A/B-Gewinner übernommen: ${angepasst.map(([f, aus]) => `${f} ${aus < 0.5 ? 'meist an' : 'meist aus'}`).join(', ')}`);
   for (const k of KANAELE) {
-    const { heute, letzter } = zaehlen(posts, k.id);
+    const { heute, letzter } = zaehlenMitStand(zaehlen(posts, k.id), stand[k.id], heuteBerlin());
     if (!postenJetzt(heute, letzter, Date.now(), { ziel: k.ziel || ZIEL_PRO_TAG })) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
     // Mix-Kanal: diesmal Deutsch oder Englisch (Sprach-Test)
     const quelle = k.quelle === 'horror-mix' ? (Math.random() < enAnteil ? 'horror-en' : 'horror') : k.quelle;

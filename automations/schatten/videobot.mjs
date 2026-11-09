@@ -218,7 +218,12 @@ if (process.argv[2] === '--auto') {
   if (!gewuenscht) { console.log(liste.map((x) => x.slug).join('\n')); process.exit(0); }
   const treffer = liste.find((x) => x.slug === gewuenscht);
   if (!treffer) { console.error(`unbekannt: ${gewuenscht}`); process.exit(1); }
-  writeFileSync(ziel, JSON.stringify(baueFolge(treffer.skript), null, 1));
+  // Gelernte A/B-Gewichte aus dem Wochenbericht auch für TikTok: was die Sehdauer drückt, ist meist aus
+  let wb = {};
+  try { wb = JSON.parse(readFileSync('automations-dashboard/tiktok/wochenbericht.json', 'utf8')); } catch { /* ohne Bericht: Standard */ }
+  const { abVariante, abGewichte } = await import('../lib/bufferVerteiler.mjs');
+  const { kalt, raum, suchbild } = abVariante(Math.random, abGewichte(wb.ab));
+  writeFileSync(ziel, JSON.stringify(baueFolge({ ...treffer.skript, kalt, raum, suchbild }), null, 1));
 } else if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [quelle, ziel] = process.argv.slice(2);
   try {
