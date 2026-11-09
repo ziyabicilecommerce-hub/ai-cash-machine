@@ -198,6 +198,8 @@ export const TEIL2_EN = {
     'On the mirror it says: Thanks for letting me stay.', 'I am staying.', 'Would you check the bathroom?', ['Check it', 'Get out']),
   wand: P2('I moved out. In my new place the knocking comes from the same spot.', ['Same time. Same rhythm.', 'I do not knock back.', 'Then someone knocks on my door.', 'To the beat of my heart.'],
     'Through the peephole I see no one. Just an eye, very close.', 'You did not knock back.', 'Would you have opened the door?', ['Open it', 'Keep it shut']),
+  zahl: P2('I stopped counting. Tonight someone is counting me.', ['At night I hear a voice.', 'It counts very slowly.', 'One step for every number.', 'It is at three. I am the third.'],
+    'I hold my breath. The voice says: One is missing.', 'Found you.', 'Would you have hidden?', ['Hide', 'Run']),
   kind: P2('The kid calls me. It is the middle of the night.', ['She whispers very quietly.', 'She says she is not allowed to be loud.', 'I ask her why.', 'She says: Because now he is with you. Not with me.'],
     'The closet in my room creaks. It was closed before.', 'With you now.', 'Would you open the closet?', ['Open it', 'Keep it shut']),
 };
