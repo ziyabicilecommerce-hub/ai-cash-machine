@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-09T06:27:06.757Z",
+ "stand": "2026-11-09T06:30:04.870Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "drop:Nike First Sight Shadow Damenschuh:2026-11-09T08:00:00.000Z",
+   "art": "Drop",
+   "titel": "⏰ Drop gleich: Nike First Sight Shadow Damenschuh",
+   "bild": "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit/119309ea-a2c6-4187-a3ca-f26379ae65c8/first-sight-shadow-cream%C2%A0ii-and-enigma-stone-f%C3%BCr-damen-hq2410-200-%C2%A0%E2%80%93-erscheinungsdatum.jpg",
+   "link": "https://www.nike.com/de/launch/t/womens-first-sight-shadow-cream-ii-and-enigma-stone",
+   "text": "Cream II/Metallic Silver/Sail/Enigma Stone · 139,99 € · Start 09:00 Uhr",
+   "zeit": "2026-11-09T06:30:04.870Z"
+  },
   {
    "schluessel": "filiale:3118202:2040",
    "art": "Filiale",
@@ -181,15 +190,6 @@
    "link": "https://www.sneakersnstuff.com/products/jordan-womens-air-jordan-4-retro-iced-carmine-ib6716-600",
    "text": "sneakersnstuff.com · Women's Air Jordan 4 Retro \"Iced Carmine\"\nVerkauf ca. 220–320 € → Gewinn ca. +70,00 € (ROI 42 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-07T17:05:43.139Z"
-  },
-  {
-   "schluessel": "deal:https://www.overkillshop.com/products/air-jordan-5-retro-iv5678-102-white-sunset-fire-red",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 5 / 6 Retro für 170,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IV5678-102_1.jpg?v=1785508909",
-   "link": "https://www.overkillshop.com/products/air-jordan-5-retro-iv5678-102-white-sunset-fire-red",
-   "text": "overkillshop.com · Air Jordan 5 Retro\nVerkauf ca. 190–280 € → Gewinn ca. +36,50 € (ROI 21 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-07T17:02:44.278Z"
   }
  ],
  "filial": {
@@ -1780,15 +1780,6 @@
  "live": {
   "treffer": [
    {
-    "titel": "Nike Nocta S.S.C. Cap CS",
-    "preis": 25.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/nike-nocta-s-s-c-cap-cs-alabaster-stealth",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/nike-nocta-s-s-c-cap-cs-alabaster-stealth-fv5541-744-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1778105187",
-    "laden": "afew-store.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "T90",
     "preis": 45,
     "verfuegbar": true,
@@ -1942,6 +1933,15 @@
     "begriff": "dunk"
    },
    {
+    "titel": "Made In UK 991v2",
+    "preis": 75,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-991v2-u991kk2",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U991KK2-01.jpg?v=1748346961",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "574",
     "preis": 77,
     "verfuegbar": true,
@@ -2057,15 +2057,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/yosALS2hW6yOY11LVFJ8_JR0035-Adidas-Samba-OG-W-Silver-Metallic-Cloud-White-Core-White-OS-1.jpg?v=1748610522",
     "laden": "asphaltgold.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "204L",
-    "preis": 98,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/new-balance-204l-u204lmmc",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U204LMMC_01.jpg?v=1757919418",
-    "laden": "sneakersnstuff.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Wmns Air Jordan 3 Retro Starfish",
@@ -2599,6 +2590,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "Air Max Moto 2K",
+    "preis": 139,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/nike-air-max-moto-2k-ir0072-002-black-black-black-anthracite",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IR0072-002_1.jpg?v=1785484013",
+    "laden": "overkillshop.com",
+    "begriff": "dunk"
+   },
+   {
     "titel": "Nike DUNK LOW RETRO PRM QS",
     "preis": 139.99,
     "verfuegbar": true,
@@ -2644,20 +2644,20 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Air Jordan 6 Retro",
-    "preis": 147,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-6-retro-ct8529-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CT8529-001_01.jpg?v=1770644188",
-    "laden": "sneakersnstuff.com",
-    "begriff": "jordan"
-   },
-   {
     "titel": "Air Jordan 3 Retro \"Orange Citrus\"",
     "preis": 147,
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-orange-citrus-ck9246-101",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CK9246-101_1.jpg?v=1777463095",
+    "laden": "sneakersnstuff.com",
+    "begriff": "jordan"
+   },
+   {
+    "titel": "Air Jordan 6 Retro",
+    "preis": 147,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-6-retro-ct8529-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CT8529-001_01.jpg?v=1770644188",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
@@ -2768,15 +2768,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/M1906RER_1.jpg?v=1739539439",
     "laden": "overkillshop.com",
     "begriff": "new era"
-   },
-   {
-    "titel": "Air Max 95 SP",
-    "preis": 160,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/undefeated-x-nike-air-max-95-sp-ib4453-001-black-metallic-silver-gorge-green",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IB4453-001_1.jpg?v=1766138415",
-    "laden": "overkillshop.com",
-    "begriff": "dunk"
    },
    {
     "titel": "ZX 8094 \"The Missing Link\"",
