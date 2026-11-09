@@ -126,3 +126,14 @@ test('YouTube darf mehr posten als Instagram (eigenes Tagesziel)', () => {
   assert.equal(postenJetzt(6, '2026-11-02T08:00:00Z', jetzt), false, 'Instagram: Schluss nach 6');
   assert.equal(postenJetzt(6, '2026-11-02T08:00:00Z', jetzt, { ziel: yt.ziel }), true, 'YouTube: weiter');
 });
+
+test('zaehlenMitStand: eigenes Protokoll fängt verzögerte Buffer-Liste ab', async () => {
+  const { zaehlenMitStand } = await import('../../automations/lib/bufferVerteiler.mjs');
+  const heute = '2026-11-08T00:00:00.000Z';
+  const stand = { 'horror:a': '2026-11-08T09:18:00.000Z', 'horror:b': '2026-11-08T07:09:00.000Z', 'horror:alt': '2026-11-07T20:00:00.000Z', 'kurz:x': '2026-11-08T09:19:00.000Z', 'horror:c': 'heute' };
+  const r = zaehlenMitStand({ heute: 1, letzter: '2026-11-08T07:09:30Z' }, stand, heute);
+  assert.equal(r.heute, 2);
+  assert.equal(r.letzter, '2026-11-08T09:18:00.000Z');
+  assert.equal(postenJetzt(r.heute, r.letzter, Date.parse('2026-11-08T10:05:00Z')), false, '47 Min. nach dem letzten Reel: warten');
+  assert.deepEqual(zaehlenMitStand({ heute: 3, letzter: null }, {}, heute), { heute: 3, letzter: null });
+});

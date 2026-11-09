@@ -83,7 +83,18 @@ jobs:
               echo "Heute für @$KONTO: $SLUG"; exit 0
             fi
           done
-          echo "⚠️ Alle Geschichten für @$KONTO sind gepostet - neue in automations-dashboard/tiktok/skripte.json eintragen." | tee -a "$GITHUB_STEP_SUMMARY"
+          # Nachschub: alle eigenen Videobot-Geschichten sind gepostet -> Skript-Bot-Geschichten (100+, bewährte Muster).
+          # Gleiche Verteilung (jedes Konto bekommt ein Drittel, keine Kopien zwischen den TikTok-Konten).
+          node -e "import('./automations/schatten/skriptBot.mjs').then((m) => require('fs').writeFileSync('out/nachschub.json', JSON.stringify({ skripte: m.alleSkripte() })))"
+          for SLUG in $(node automations/schatten/videobot.mjs --auto out/nachschub.json ${{ matrix.nr }}); do
+            TAG="videobot-auto-$SLUG-$KONTO"
+            if ! gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
+              node automations/schatten/videobot.mjs --auto out/nachschub.json ${{ matrix.nr }} "$SLUG" out/folge.json
+              echo "slug=$SLUG" >> "$GITHUB_OUTPUT"; echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+              echo "Heute für @$KONTO (Skript-Bot-Nachschub): $SLUG" | tee -a "$GITHUB_STEP_SUMMARY"; exit 0
+            fi
+          done
+          echo "⚠️ Alle Geschichten für @$KONTO sind gepostet - auch der Skript-Bot-Nachschub ist leer." | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Werkzeuge
         if: steps.wahl.outputs.slug != ''
         run: |
