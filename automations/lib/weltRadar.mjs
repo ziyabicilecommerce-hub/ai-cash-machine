@@ -7,19 +7,24 @@ import { BEGRIFFE, anstieg } from './radarQuellen.mjs';
 import { rssTitel } from './trendRadar.mjs';
 
 export const REGIONEN = [
-  { name: 'China', flagge: '🇨🇳', wiki: 'zh', baidu: true },
-  { name: 'Indien', flagge: '🇮🇳', wiki: 'hi', trends: 'IN' },
-  { name: 'Tokio', flagge: '🇯🇵', wiki: 'ja', trends: 'JP' },
-  { name: 'Paris', flagge: '🇫🇷', wiki: 'fr', trends: 'FR' },
+  { name: 'China', flagge: '🇨🇳', wiki: 'zh', baidu: true, minimum: 20 },
+  { name: 'Indien', flagge: '🇮🇳', wiki: 'hi', trends: 'IN', minimum: 5 },  // Hindi-Wikipedia ist klein
+  { name: 'Tokio', flagge: '🇯🇵', wiki: 'ja', trends: 'JP', minimum: 20 },
+  { name: 'Paris', flagge: '🇫🇷', wiki: 'fr', trends: 'FR', minimum: 20 },
   { name: 'New York', flagge: '🇺🇸', wiki: 'en', trends: 'US-NY', ersatz: 'US' },
 ];
 
 // Wikipedia verlangt für die Such-Schnittstelle einen Absender mit Kontakt (sonst 403) - hier die Projektseite
 const KOPF = { 'user-agent': 'ai-cash-machine-trend-radar/1.0 (https://github.com/ziyabicilecommerce-hub/ai-cash-machine)', 'api-user-agent': 'ai-cash-machine-trend-radar/1.0' };
-const holen = async (laden, url, art = 'json') => {
-  const res = await laden(url, { headers: KOPF, signal: AbortSignal.timeout(15000) });
-  if (!res.ok) throw new Error(String(res.status));
-  return art === 'json' ? res.json() : res.text();
+const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+// 429 (zu viele Anfragen) -> kurz warten und bis zu 2x nochmal; pauseMs=0 in Tests
+const holen = async (laden, url, art = 'json', pauseMs = Number(process.env.RADAR_PAUSE_MS ?? 4000)) => {
+  for (let versuch = 0; ; versuch++) {
+    const res = await laden(url, { headers: KOPF, signal: AbortSignal.timeout(15000) });
+    if (res.status === 429 && versuch < 2) { await pause(pauseMs * (versuch + 1)); continue; }
+    if (!res.ok) throw new Error(String(res.status));
+    return art === 'json' ? res.json() : res.text();
+  }
 };
 const tag = (d) => d.toISOString().slice(0, 10).replace(/-/g, '');
 const norm = (t) => String(t).replace(/_/g, ' ').trim();
@@ -39,7 +44,7 @@ export function baiduWoerter(d) {
   return liste.map((x) => String(x?.word || x?.query || '').trim()).filter(Boolean);
 }
 
-async function regionMessen(region, { laden, jetzt, begriffe }) {
+async function regionMessen(region, { laden, jetzt, begriffe, pauseMs = 1000 }) {
   const r = { name: region.name, flagge: region.flagge, horror: [], trends: [], quelle: [] };
   // 1) Gruselthemen in der Landessprache
   try {
@@ -51,6 +56,7 @@ async function regionMessen(region, { laden, jetzt, begriffe }) {
         try {
           finder.push(sprachlinksAus(await holen(laden, `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1&prop=langlinks&lllimit=500&lllang=${region.wiki}&titles=${encodeURIComponent(begriffe.slice(i, i + 10).map((b) => b.en).join('|'))}`)));
         } catch (e) { r.fehler = `Sprachlinks ${region.wiki}: ${e.message}`; }
+        await pause(pauseMs);  // Wikipedia schonen
       }
       titel = (en) => finder.map((f) => f(en)).find(Boolean) || null;
     }
@@ -60,7 +66,7 @@ async function regionMessen(region, { laden, jetzt, begriffe }) {
       if (!lokal) return null;
       try {
         const d = await holen(laden, `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/${region.wiki}.wikipedia/all-access/user/${encodeURIComponent(lokal.replace(/ /g, '_'))}/daily/${tag(start)}/${tag(ende)}`);
-        const w = anstieg((d.items || []).map((x) => x.views || 0));
+        const w = anstieg((d.items || []).map((x) => x.views || 0), region.minimum ?? 50);
         return w ? { name: b.name, ...w } : null;
       } catch { return null; }
     }));
@@ -83,9 +89,9 @@ async function regionMessen(region, { laden, jetzt, begriffe }) {
   return r;
 }
 
-export async function weltRadar({ laden = fetch, jetzt = new Date(), begriffe = BEGRIFFE, regionen = REGIONEN } = {}) {
+export async function weltRadar({ laden = fetch, jetzt = new Date(), begriffe = BEGRIFFE, regionen = REGIONEN, pauseMs = 1000 } = {}) {
   const aus = [];  // Regionen nacheinander (je Region 30 Abrufe parallel) - schont die Wikipedia-Server
-  for (const reg of regionen) aus.push(await regionMessen(reg, { laden, jetzt, begriffe }));
+  for (const reg of regionen) aus.push(await regionMessen(reg, { laden, jetzt, begriffe, pauseMs }));
   return aus;
 }
 

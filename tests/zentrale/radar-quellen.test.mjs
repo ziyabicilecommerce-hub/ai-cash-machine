@@ -66,13 +66,29 @@ test('Welt-Radar: Sprachlinks, Baidu, Regionen, weltweite Trends', async () => {
     if (url.includes('trends.google')) return ok('<rss><item><title>Trend X</title></item></rss>');
     return { ok: false, status: 404 };
   };
-  const welt = await weltRadar({ laden, begriffe, jetzt: new Date('2026-11-08T12:00:00Z') });
+  const welt = await weltRadar({ laden, begriffe, jetzt: new Date('2026-11-08T12:00:00Z'), pauseMs: 0 });
   assert.equal(welt.length, 5);
   assert.deepEqual(welt[0].trends, ['热搜']);
   assert.deepEqual(welt[3].trends, ['Trend X']);
   assert.equal(welt[3].horror[0].anstieg, 3);
   assert.deepEqual(weltweitHeiss(welt)[0], { name: 'Geister', wo: ['China', 'Indien', 'Tokio', 'Paris', 'New York'] });
   // alles offline -> leere Regionen, kein Absturz
-  const leer = await weltRadar({ laden: async () => { throw new Error('offline'); }, begriffe });
+  const leer = await weltRadar({ laden: async () => { throw new Error('offline'); }, begriffe, pauseMs: 0 });
   assert.ok(leer.every((r) => !r.horror.length && !r.trends.length));
+});
+
+test('Welt-Radar: kleine Wikipedia mit eigener Mindestgrenze, 429 wird wiederholt', async () => {
+  const { anstieg } = await import('../../automations/lib/radarQuellen.mjs');
+  const { weltRadar } = await import('../../automations/lib/weltRadar.mjs');
+  assert.equal(anstieg([...Array(14).fill(5), 10, 10, 10]), null);
+  assert.equal(anstieg([...Array(14).fill(5), 10, 10, 10], 5).anstieg, 2);
+  let erst429 = true;
+  const laden = async (url) => {
+    if (url.includes('langlinks') && erst429) { erst429 = false; return { ok: false, status: 429 }; }
+    if (url.includes('langlinks')) return { ok: true, status: 200, json: async () => ({ query: { pages: { 1: { title: 'Ghost', langlinks: [{ '*': 'भूत' }] } } } }) };
+    if (url.includes('pageviews')) return { ok: true, status: 200, json: async () => ({ items: [...Array(14).fill(5), 10, 10, 10].map((views) => ({ views })) }) };
+    return { ok: false, status: 404 };
+  };
+  const [indien] = await weltRadar({ laden, begriffe: [{ name: 'Geister', en: 'Ghost', de: 'Gespenst', thema: 'x' }], regionen: [{ name: 'Indien', flagge: '🇮🇳', wiki: 'hi', minimum: 5 }], pauseMs: 0 });
+  assert.equal(indien.horror[0].anstieg, 2);
 });
