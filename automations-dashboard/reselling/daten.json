@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-09T16:37:59.442Z",
+ "stand": "2026-11-09T16:41:01.199Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118897:1433",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.057082,8.33478",
+   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
+   "text": "44,95 € · dm Wiesbaden (10,9 km) · 1 Stück\nBorsigstraße 9, 65205 Wiesbaden\nIm Umkreis in 21 Filiale(n) vorrätig.",
+   "zeit": "2026-11-09T16:41:01.199Z"
+  },
   {
    "schluessel": "filiale:3118199:1433",
    "art": "Filiale",
@@ -187,19 +197,10 @@
    "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
    "text": "24,95 € · dm Kelsterbach (2,6 km) · 1 Stück\nAm Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach\nIm Umkreis in 24 Filiale(n) vorrätig.",
    "zeit": "2026-11-08T00:55:41.398Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/asics-gelnyc-concrete-barely-rose",
-   "art": "Deal",
-   "titel": "💰 Deal: Asics Gel-NYC / Gel-Kahana für 90,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/3gjl9tjcl4f-1203A383-028_Asics_GEL-NYC-Concrete-Barely-Rose_os-1.jpg?v=1769786015",
-   "link": "https://www.asphaltgold.com/products/asics-gelnyc-concrete-barely-rose",
-   "text": "asphaltgold.com · Asics GEL-NYC\nVerkauf ca. 110–180 € → Gewinn ca. +35,50 € (ROI 39 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-07T23:06:41.818Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-09T16:25:52.055Z",
+  "stand": "2026-11-09T16:41:05.015Z",
   "filialen": 148,
   "produkte": [
    {
@@ -256,7 +257,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 67
+      "menge": 68
      },
      {
       "name": "dm Flörsheim am Main",
@@ -298,7 +299,7 @@
       "km": 5.6,
       "lat": 50.1014043,
       "lon": 8.5485073,
-      "menge": 17
+      "menge": 18
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -380,7 +381,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 15
+      "menge": 16
      },
      {
       "name": "dm Frankfurt am Main",
@@ -499,80 +500,6 @@
     ]
    },
    {
-    "dan": "3118199",
-    "name": "Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
-    "preis": 34.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790893225/assets/pas/images/cc74b33e-9549-4968-992a-a79f50a7aa67/freche-freunde-adventskalender-2026-wichtelhaus",
-    "link": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 9
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 5
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 1
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 1
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 7
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 1
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
-      "km": 10.4,
-      "lat": 50.1401538,
-      "lon": 8.5824016,
-      "menge": 3
-     },
-     {
-      "name": "dm Hochheim am Main",
-      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
-      "km": 10.5,
-      "lat": 50.0155817,
-      "lon": 8.3658454,
-      "menge": 11
-     }
-    ]
-   },
-   {
     "dan": "3118202",
     "name": "Dein Bestes Adventskalender 2026 - merry christmas für Katzen, 1 St",
     "preis": 16.95,
@@ -643,6 +570,80 @@
       "lat": 50.1086268,
       "lon": 8.6273783,
       "menge": 1
+     }
+    ]
+   },
+   {
+    "dan": "3118199",
+    "name": "Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
+    "preis": 34.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790893225/assets/pas/images/cc74b33e-9549-4968-992a-a79f50a7aa67/freche-freunde-adventskalender-2026-wichtelhaus",
+    "link": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 9
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 5
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 1
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 7
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 1
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 3
+     },
+     {
+      "name": "dm Hochheim am Main",
+      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
+      "km": 10.5,
+      "lat": 50.0155817,
+      "lon": 8.3658454,
+      "menge": 11
      }
     ]
    },
@@ -2858,15 +2859,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "U13008BH",
-    "preis": 135,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u13008bh-u13008bh-drift-red-hay-afterglow",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U13008BH_1.jpg?v=1778671801",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Nike DUNK LOW RETRO PRM QS",
     "preis": 139.99,
     "verfuegbar": true,
@@ -2937,6 +2929,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CK9246-101_1.jpg?v=1777463095",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "Allerdale",
+    "preis": 149,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-uadwlwo-uadwlwo-vaporous-grey-chipmunk",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/UADWLWO_1.jpg?v=1779434892",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "New Balance 90/60",
@@ -3025,6 +3026,15 @@
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-driftwood-sea-salt",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-driftwood-sea-salt-u906011m-footwear_20_3E_20sneaker.jpg?v=1783934007",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "New Balance 9060",
+    "preis": 150.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-angora-reflection",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-angora-reflection-u90609z4-footwear_20_3E_20sneaker.jpg?v=1783411160",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
@@ -3241,15 +3251,6 @@
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1794216023",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 189.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-breakfast-tea-angora",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-breakfast-tea-angora-u90603eg-footwear_20_3E_20sneaker.jpg?v=1787225787",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
