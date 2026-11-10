@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-10T14:15:14.898Z",
+ "stand": "2026-11-10T14:18:16.174Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -200,7 +200,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-10T14:03:16.921Z",
+  "stand": "2026-11-10T14:18:20.051Z",
   "filialen": 148,
   "produkte": [
    {
@@ -500,80 +500,6 @@
     ]
    },
    {
-    "dan": "3118199",
-    "name": "Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
-    "preis": 34.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790893225/assets/pas/images/cc74b33e-9549-4968-992a-a79f50a7aa67/freche-freunde-adventskalender-2026-wichtelhaus",
-    "link": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 9
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 5
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 1
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 1
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 7
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 1
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
-      "km": 10.4,
-      "lat": 50.1401538,
-      "lon": 8.5824016,
-      "menge": 3
-     },
-     {
-      "name": "dm Hochheim am Main",
-      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
-      "km": 10.5,
-      "lat": 50.0155817,
-      "lon": 8.3658454,
-      "menge": 11
-     }
-    ]
-   },
-   {
     "dan": "3118202",
     "name": "Dein Bestes Adventskalender 2026 - merry christmas für Katzen, 1 St",
     "preis": 16.95,
@@ -644,6 +570,80 @@
       "lat": 50.1086268,
       "lon": 8.6273783,
       "menge": 1
+     }
+    ]
+   },
+   {
+    "dan": "3118199",
+    "name": "Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
+    "preis": 34.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790893225/assets/pas/images/cc74b33e-9549-4968-992a-a79f50a7aa67/freche-freunde-adventskalender-2026-wichtelhaus",
+    "link": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 9
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 5
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 1
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 7
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 1
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 3
+     },
+     {
+      "name": "dm Hochheim am Main",
+      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
+      "km": 10.5,
+      "lat": 50.0155817,
+      "lon": 8.3658454,
+      "menge": 11
      }
     ]
    },
@@ -3158,24 +3158,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "ASICS Gel-1130 - Black / Cream",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a609-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a609-023",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 740",
     "preis": 99.99,
     "verfuegbar": true,
@@ -3246,24 +3228,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-mr-530-aa-beige-mr530aa-footwear_20_3E_20sneaker_5e50c0d1-8db6-482f-a0b7-16cc540565aa.jpg?v=1737999904",
     "laden": "afew-store.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "ASICS Gel-1130 - White / Taro Purple",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_100_SR_RT_GLB.jpg?v=1780992734",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel-1130 - Cream / Carrier Grey",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-101",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_101_SR_RT_GLB.jpg?v=1780992709",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "adidas Originals SAMBA OG",
@@ -3761,24 +3725,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS GEL-NYC - Black Coffee / Sepia Brown",
-    "preis": 150,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a383-204",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_204_SR_RT_GLB.jpg?v=1792581013",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS GEL-NYC - White / Midnight",
-    "preis": 150,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a383-118",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_118_SR_RT_GLB.jpg?v=1785420543",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 9060",
     "preis": 150.99,
     "verfuegbar": true,
@@ -3923,15 +3869,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-118",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Nike Air Jordan 3 Retro OG *True Blue*",
     "preis": 179,
     "verfuegbar": true,
@@ -3975,15 +3912,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ5495-005_01.jpg?v=1790618946",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "ASICS GEL KAYANO 12.1 - White / Cream",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a759-106",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_106_SR_RT_GLB.jpg?v=1790170342",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "New Balance 9060",
