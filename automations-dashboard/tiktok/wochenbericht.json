@@ -1,21 +1,21 @@
 {
- "stand": "2026-11-10T17:15:12.096Z",
+ "stand": "2026-11-10T23:41:10.116Z",
  "gesamt": {
-  "posts": 197,
-  "aufrufe": 30940,
+  "posts": 205,
+  "aufrufe": 32348,
   "vorherAufrufe": null
  },
  "konten": {
   "@desk.rebel": {
-   "n": 42,
-   "schnitt": 86,
+   "n": 44,
+   "schnitt": 84,
    "sehdauer": 4.5,
    "vorher": null
   },
   "@purivelle.785": {
-   "n": 39,
-   "schnitt": 60,
-   "sehdauer": 3.9,
+   "n": 41,
+   "schnitt": 58,
+   "sehdauer": 3.8,
    "vorher": null
   },
   "@zyx_7851": {
@@ -25,28 +25,28 @@
    "vorher": null
   },
   "@giyuuu sama": {
-   "n": 39,
-   "schnitt": 312,
+   "n": 41,
+   "schnitt": 301,
    "sehdauer": 0,
    "vorher": null
   },
   "@futureflowxx": {
-   "n": 25,
-   "schnitt": 178,
-   "sehdauer": 1.5,
+   "n": 26,
+   "schnitt": 192,
+   "sehdauer": 1.6,
    "vorher": null
   },
   "@futureflowx3": {
-   "n": 29,
-   "schnitt": 246,
-   "sehdauer": 2,
+   "n": 30,
+   "schnitt": 256,
+   "sehdauer": 2.1,
    "vorher": null
   }
  },
  "formate": {
   "horror": {
-   "n": 120,
-   "schnitt": 165,
+   "n": 126,
+   "schnitt": 167,
    "sehdauer": 2.9
   },
   "mythos": {
@@ -55,9 +55,9 @@
    "sehdauer": 4.1
   },
   "quiz": {
-   "n": 37,
-   "schnitt": 222,
-   "sehdauer": 1.5
+   "n": 39,
+   "schnitt": 215,
+   "sehdauer": 1.4
   },
   "anime": {
    "n": 9,
@@ -87,9 +87,9 @@
    "sehdauer": 3.2
   },
   "anruf": {
-   "n": 20,
-   "schnitt": 136,
-   "sehdauer": 2.7
+   "n": 22,
+   "schnitt": 126,
+   "sehdauer": 2.6
   },
   "kamera": {
    "n": 4,
@@ -149,8 +149,8 @@
  },
  "zeiten": {
   "nachts": {
-   "n": 39,
-   "schnitt": 229,
+   "n": 42,
+   "schnitt": 216,
    "sehdauer": 2.5
   },
   "vormittags": {
@@ -164,8 +164,8 @@
    "sehdauer": 2.3
   },
   "abends": {
-   "n": 60,
-   "schnitt": 178,
+   "n": 65,
+   "schnitt": 185,
    "sehdauer": 2.3
   }
  },
@@ -195,38 +195,38 @@
  "ab": {
   "kalt": {
    "an": {
-    "n": 26,
-    "schnitt": 211,
-    "sehdauer": 4
+    "n": 32,
+    "schnitt": 181,
+    "sehdauer": 3.9
    },
    "aus": {
     "n": 34,
-    "schnitt": 186,
+    "schnitt": 217,
     "sehdauer": 4.2
    }
   },
   "raum": {
    "an": {
-    "n": 25,
-    "schnitt": 210,
-    "sehdauer": 3.9
+    "n": 30,
+    "schnitt": 218,
+    "sehdauer": 3.8
    },
    "aus": {
-    "n": 35,
-    "schnitt": 188,
+    "n": 36,
+    "schnitt": 184,
     "sehdauer": 4.3
    }
   },
   "suchbild": {
    "an": {
-    "n": 21,
-    "schnitt": 216,
-    "sehdauer": 3.8
+    "n": 24,
+    "schnitt": 219,
+    "sehdauer": 3.7
    },
    "aus": {
-    "n": 39,
-    "schnitt": 187,
-    "sehdauer": 4.3
+    "n": 42,
+    "schnitt": 188,
+    "sehdauer": 4.2
    }
   },
   "duhook": {
@@ -236,23 +236,35 @@
     "sehdauer": 3.7
    },
    "aus": {
-    "n": 48,
-    "schnitt": 230,
-    "sehdauer": 4.2
+    "n": 54,
+    "schnitt": 229,
+    "sehdauer": 4.1
+   }
+  },
+  "schlag": {
+   "an": {
+    "n": 0,
+    "schnitt": 0,
+    "sehdauer": 0
+   },
+   "aus": {
+    "n": 2,
+    "schnitt": 334,
+    "sehdauer": 3.1
    }
   }
  },
  "schritte": [
-  "@giyuuu sama läuft am besten (Ø 312) - neue Ideen dort zuerst testen.",
+  "@giyuuu sama läuft am besten (Ø 301) - neue Ideen dort zuerst testen.",
   "Stärkstes Geschichten-Muster: „fremd“ (Ø 345) - der Skript-Bot nimmt es automatisch öfter.",
-  "Beste Tageszeit: nachts (Ø 229).",
-  "Ø Sehdauer nur 2.5 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
-  "A/B-Test Versteckte Augen: mit 3.8 s, ohne 4.3 s Sehdauer - bringt nichts, könnte weg.",
-  "A/B-Test Du-Hook: mit 3.7 s, ohne 4.2 s Sehdauer - bringt nichts, könnte weg.",
-  "Sprach-Test YouTube: Deutsch Ø 287 (15) · Englisch Ø 518 (15) - Englisch gewinnt, bekommt jetzt 85 %.",
-  "A/B-Test YouTube kalt: mit Ø 416, ohne Ø 275 Aufrufe - wirkt, dort meist an.",
-  "A/B-Test YouTube raum: mit Ø 250, ohne Ø 376 Aufrufe - bremst, dort meist aus.",
-  "A/B-Test YouTube duhook: mit Ø 500, ohne Ø 282 Aufrufe - wirkt, dort meist an."
+  "Beste Tageszeit: nachts (Ø 216).",
+  "Ø Sehdauer nur 2.4 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
+  "A/B-Test 3D-Ton: mit 3.8 s, ohne 4.3 s Sehdauer - bringt nichts, könnte weg.",
+  "A/B-Test Versteckte Augen: mit 3.7 s, ohne 4.2 s Sehdauer - bringt nichts, könnte weg.",
+  "Sprach-Test YouTube: Deutsch Ø 287 (15) · Englisch Ø 468 (17) - Englisch gewinnt, bekommt jetzt 85 %.",
+  "A/B-Test YouTube kalt: mit Ø 355, ohne Ø 271 Aufrufe - wirkt, dort meist an.",
+  "A/B-Test YouTube raum: mit Ø 239, ohne Ø 356 Aufrufe - bremst, dort meist aus.",
+  "A/B-Test YouTube duhook: mit Ø 438, ohne Ø 271 Aufrufe - wirkt, dort meist an."
  ],
  "sprachTest": {
   "de": {
@@ -260,60 +272,72 @@
    "schnitt": 287
   },
   "en": {
-   "n": 15,
-   "schnitt": 518
+   "n": 17,
+   "schnitt": 468
+  }
+ },
+ "sprachTests": {
+  "desk.rebel": {
+   "de": {
+    "n": 39,
+    "schnitt": 95
+   },
+   "en": {
+    "n": 0,
+    "schnitt": 0
+   }
   }
  },
  "abYT": {
   "kalt": {
    "an": {
-    "n": 9,
-    "schnitt": 416
+    "n": 12,
+    "schnitt": 355
    },
    "aus": {
-    "n": 16,
-    "schnitt": 275
+    "n": 15,
+    "schnitt": 271
    }
   },
   "raum": {
    "an": {
-    "n": 10,
-    "schnitt": 250
+    "n": 11,
+    "schnitt": 239
    },
    "aus": {
-    "n": 15,
-    "schnitt": 376
+    "n": 16,
+    "schnitt": 356
    }
   },
   "suchbild": {
    "an": {
-    "n": 11,
-    "schnitt": 363
+    "n": 12,
+    "schnitt": 344
    },
    "aus": {
-    "n": 14,
-    "schnitt": 296
+    "n": 15,
+    "schnitt": 280
    }
   },
   "duhook": {
    "an": {
-    "n": 5,
-    "schnitt": 500
+    "n": 6,
+    "schnitt": 438
    },
    "aus": {
-    "n": 20,
-    "schnitt": 282
+    "n": 21,
+    "schnitt": 271
    }
   }
  },
  "vorrat": {
   "de": {
-   "rest": 65,
-   "tage": 5
+   "rest": 63,
+   "tage": 7
   },
   "en": {
    "rest": 84,
-   "tage": 12
+   "tage": 8
   }
  }
 }
