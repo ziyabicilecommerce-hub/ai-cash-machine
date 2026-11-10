@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-10T10:12:02.115Z",
+ "stand": "2026-11-10T10:14:57.917Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118686:2342",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: ebelin Adventskalender Beauty & Hair 2026, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0477414,8.6770512",
+   "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
+   "text": "32,95 € · dm Neu-Isenburg (13,8 km) · 1 Stück\nSchleussnerstraße 100b, 63263 Neu-Isenburg\nIm Umkreis in 22 Filiale(n) vorrätig.",
+   "zeit": "2026-11-10T10:14:57.917Z"
+  },
   {
    "schluessel": "filiale:3118686:2342",
    "art": "Filiale",
@@ -188,19 +198,10 @@
    "link": "https://www.overkillshop.com/products/new-balance-u190663v-u190663v-silver-metallic-black-fire-cracker",
    "text": "overkillshop.com · U190663V\nVerkauf ca. 100–160 € → Gewinn ca. +28,00 € (ROI 33 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-09T08:32:39.407Z"
-  },
-  {
-   "schluessel": "deal:https://www.overkillshop.com/products/new-balance-u1906lae-silver",
-   "art": "Deal",
-   "titel": "💰 Deal: New Balance 1906R / 530 für 84,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1906LAE_1.jpg?v=1746533291",
-   "link": "https://www.overkillshop.com/products/new-balance-u1906lae-silver",
-   "text": "overkillshop.com · U1906LAE\nVerkauf ca. 100–160 € → Gewinn ca. +28,00 € (ROI 33 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-09T08:29:43.046Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-10T09:59:54.986Z",
+  "stand": "2026-11-10T10:15:01.134Z",
   "filialen": 148,
   "produkte": [
    {
@@ -217,7 +218,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 23
+      "menge": 24
      },
      {
       "name": "dm Kriftel",
@@ -426,6 +427,80 @@
     ]
    },
    {
+    "dan": "3121431",
+    "name": "KoRo Adventskalender 2026 Advent Stories Classic Edition, 1 St",
+    "preis": 54.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787868464/assets/pas/images/0c6f0de7-78ee-4fb7-b502-84601ce30582/koro-adventskalender-2026-advent-stories-classic-edition",
+    "link": "https://www.dm.de/p/d/3121431/koro-adventskalender-2026-advent-stories-classic-edition",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 1
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 3
+     },
+     {
+      "name": "dm Mörfelden-Walldorf",
+      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
+      "km": 9.6,
+      "lat": 50.0122615,
+      "lon": 8.5865417,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Hahnstraße 39a, 60528 Frankfurt am Main",
+      "km": 10.6,
+      "lat": 50.0815275,
+      "lon": 8.6343098,
+      "menge": 10
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Europa-Allee 130, 60486 Frankfurt am Main",
+      "km": 10.9,
+      "lat": 50.1086268,
+      "lon": 8.6273783,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Europa-Allee 6, 60327 Frankfurt am Main",
+      "km": 12.7,
+      "lat": 50.1091183,
+      "lon": 8.6538929,
+      "menge": 10
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Leipziger Straße 28, 60487 Frankfurt am Main",
+      "km": 12.9,
+      "lat": 50.121564,
+      "lon": 8.648177,
+      "menge": 5
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Kaiserstraße 75, 60329 Frankfurt am Main",
+      "km": 13.5,
+      "lat": 50.107657,
+      "lon": 8.666246,
+      "menge": 2
+     }
+    ]
+   },
+   {
     "dan": "3118201",
     "name": "Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
     "preis": 16.95,
@@ -463,7 +538,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 5
+      "menge": 6
      },
      {
       "name": "dm Flörsheim am Main",
@@ -648,6 +723,80 @@
     ]
    },
    {
+    "dan": "3118200",
+    "name": "Carlsen Adventskalender 2026 Pixi Leporello, 1 St",
+    "preis": 20,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1786752764/assets/pas/images/78d10d44-f2ad-4c77-bdda-33fb46aedcba/carlsen-adventskalender-2026-pixi-leporello",
+    "link": "https://www.dm.de/p/d/3118200/carlsen-adventskalender-2026-pixi-leporello",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 2
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 5
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 2
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 4
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Leipziger Straße 28, 60487 Frankfurt am Main",
+      "km": 12.9,
+      "lat": 50.121564,
+      "lon": 8.648177,
+      "menge": 4
+     },
+     {
+      "name": "dm Wiesbaden",
+      "adresse": "Berliner Straße 279, 65205 Wiesbaden",
+      "km": 13.4,
+      "lat": 50.0537018,
+      "lon": 8.3006459,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Kaiserstraße 75, 60329 Frankfurt am Main",
+      "km": 13.5,
+      "lat": 50.107657,
+      "lon": 8.666246,
+      "menge": 6
+     }
+    ]
+   },
+   {
     "dan": "3162931",
     "name": "Barebells Adventskalender 2026 Proteinriegel \"Twenty Four Days of Chocolate\", 1 St",
     "preis": 59.95,
@@ -664,89 +813,6 @@
     "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
     "begriff": "adventskalender",
     "vorrat": []
-   },
-   {
-    "dan": "3135831",
-    "name": "NÉONAIL Adventskalender 2026 Touch Of Magic, 1 St",
-    "preis": 59.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1781225246/assets/pas/images/2a76c744-d465-4a81-9515-f64343237e0c/neonail-adventskalender-2026-touch-of-magic",
-    "link": "https://www.dm.de/p/d/3135831/neonail-adventskalender-2026-touch-of-magic",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
-    "dan": "3118897",
-    "name": "maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
-    "preis": 44.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
-    "link": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 5
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 4
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 16
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 3
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 7
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 1
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 8
-     }
-    ]
    },
    {
     "dan": "3143255",
@@ -2686,12 +2752,12 @@
     "menge": "500+"
    },
    {
-    "titel": "heated rivalry",
-    "menge": "200+"
-   },
-   {
     "titel": "davis cup",
     "menge": "500+"
+   },
+   {
+    "titel": "heated rivalry",
+    "menge": "200+"
    },
    {
     "titel": "xbox game pass",
@@ -3281,8 +3347,8 @@
     "titel": "Adidas Samba OG W *Snake*",
     "preis": 119,
     "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-snake-maroon-crew-white-gold-metallic",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/shjupdpq6t-IH3979_Adidas_Samba-OG-W-Snake-Maroon-Crew-White-Gold-Metallic_os-1.jpg?v=1765977525",
+    "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-snake-crew-white-earth-strata-maroon",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cp3zilo9k2t-IH3980_Adidas_Samba-OG-W_Snake_Crew-White-Earth-Strata-Maroon_os-1.jpg?v=1765978912",
     "laden": "asphaltgold.com",
     "begriff": "samba"
    },
@@ -3290,8 +3356,8 @@
     "titel": "Adidas Samba OG W *Snake*",
     "preis": 119,
     "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-snake-crew-white-earth-strata-maroon",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cp3zilo9k2t-IH3980_Adidas_Samba-OG-W_Snake_Crew-White-Earth-Strata-Maroon_os-1.jpg?v=1765978912",
+    "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-snake-maroon-crew-white-gold-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/shjupdpq6t-IH3979_Adidas_Samba-OG-W-Snake-Maroon-Crew-White-Gold-Metallic_os-1.jpg?v=1765977525",
     "laden": "asphaltgold.com",
     "begriff": "samba"
    },
