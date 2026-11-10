@@ -3,6 +3,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
+import { schlagzeile } from './schlagzeilen.mjs';
 
 export const ORTE = ['zug', 'flugzeug', 'haus', 'wald', 'aufzug'];
 export const BOESE = ['schatten', 'gremlin', 'frau', 'hirsch'];
@@ -117,6 +118,7 @@ export function baueFolge(skript) {
     suchbild: kurz_ && skript.suchbild !== false,  // 3 versteckte Augenpaare + Sekunden-Frage
     raum: kurz_ && skript.raum !== false,  // 3D-Ton: Flüstern kreist um den Kopf (story.py/ton.py)
     kalt: kurz_ && skript.kalt !== false,  // kalter Einstieg: 0,8 s das Ende zeigen, dann zurückspulen
+    schlag: kurz_ && skript.schlag === true ? schlagzeile(skript.muster, en ? 'en' : 'de') : '',  // große Schlagzeile in den ersten 2,6 s (A/B-Test)
     caption: `${satz(skript.hook, 120)}${kurz_ && skript.raum !== false ? T.kopf : ''}${kurz_ && skript.suchbild !== false
       ? T.such : ` ${frage}${wahl && !weiter ? T.wahl(wahl[0], wahl[1]) : ''} 👇`}`, szenen,
   };

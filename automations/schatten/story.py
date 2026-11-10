@@ -5,7 +5,7 @@ import asyncio, json, math, os, random, subprocess, sys
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from ton import tonspur, raum_zeiten
 from effekte import (W, H, rotverschiebung, weich, popfont, suchzeiten, KALT_BIS, SCHLEIFE, raum_bild, zurueckspulen,
-                     kopfhoerer, suchbanner, KINO_LOOK)
+                     hinweise, KINO_LOOK)
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
 from ki import ki_bilder_laden, ki_szene
 import kamera
@@ -475,10 +475,7 @@ def main():
                 if s['start'] == 0:  # Hook: der ganze Satz steht sofort da - wer wischt, hat ihn schon gelesen
                     k, pop = worte, 1.0
                 untertitel(im, s['text'], s.get('gelb', ''), k, pop=pop)
-            if such and 2.6 <= t < 5.2:  # Hinweise erst nach dem Einstieg - die ersten Sekunden gehören Bild + Hook
-                suchbanner(im, sprache)
-            if story.get('raum') and 2.6 <= t < 5.2:
-                kopfhoerer(im, sprache)
+            hinweise(im, t, story, such, sprache)  # Schlagzeile bis 2,6 s, danach Hinweise (Augen, Kopfhörer)
             if s.get('warnung'):
                 warnung(im, s['warnung'], lt)
             if story.get('uhr', True) and s['art'] not in ('fratze', 'teil2', 'nachricht'):
