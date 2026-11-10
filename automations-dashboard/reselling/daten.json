@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-10T17:20:08.464Z",
+ "stand": "2026-11-10T17:23:09.374Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -200,7 +200,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-10T17:06:56.665Z",
+  "stand": "2026-11-10T17:23:12.398Z",
   "filialen": 148,
   "produkte": [
    {
@@ -273,7 +273,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 9
+      "menge": 8
      }
     ]
    },
@@ -323,7 +323,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 8
+      "menge": 7
      },
      {
       "name": "dm Flörsheim am Main",
@@ -405,7 +405,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 10
+      "menge": 9
      },
      {
       "name": "dm Flörsheim am Main",
@@ -495,7 +495,7 @@
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
-      "menge": 6
+      "menge": 5
      }
     ]
    },
@@ -814,20 +814,20 @@
       "menge": 4
      },
      {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 1
-     },
-     {
       "name": "dm Eschborn",
       "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
       "menge": 3
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 4
      }
     ]
    }
@@ -2892,7 +2892,27 @@
   "ware": [],
   "top": [
    {
+    "titel": "radfahrer",
+    "menge": "500+"
+   },
+   {
+    "titel": "sc magdeburg",
+    "menge": "500+"
+   },
+   {
+    "titel": "wer weiß denn sowas heute",
+    "menge": "200+"
+   },
+   {
+    "titel": "real madrid – paris fc",
+    "menge": "200+"
+   },
+   {
     "titel": "johann andré forfang",
+    "menge": "200+"
+   },
+   {
+    "titel": "christian lell",
     "menge": "200+"
    },
    {
@@ -2910,26 +2930,6 @@
    {
     "titel": "konrad-wolf-straße",
     "menge": "500+"
-   },
-   {
-    "titel": "kamilla senjo",
-    "menge": "200+"
-   },
-   {
-    "titel": "stahlbau",
-    "menge": "2000+"
-   },
-   {
-    "titel": "unwetter portugal",
-    "menge": "2000+"
-   },
-   {
-    "titel": "bulgarien",
-    "menge": "1000+"
-   },
-   {
-    "titel": "alt-hohenschönhausen",
-    "menge": "1000+"
    }
   ]
  },
