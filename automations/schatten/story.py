@@ -475,9 +475,9 @@ def main():
                 if s['start'] == 0:  # Hook: der ganze Satz steht sofort da - wer wischt, hat ihn schon gelesen
                     k, pop = worte, 1.0
                 untertitel(im, s['text'], s.get('gelb', ''), k, pop=pop)
-            if such and t < 2.6:
+            if such and 2.6 <= t < 5.2:  # Hinweise erst nach dem Einstieg - die ersten Sekunden gehören Bild + Hook
                 suchbanner(im, sprache)
-            if story.get('raum') and t < 2.6:
+            if story.get('raum') and 2.6 <= t < 5.2:
                 kopfhoerer(im, sprache)
             if s.get('warnung'):
                 warnung(im, s['warnung'], lt)

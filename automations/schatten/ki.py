@@ -81,8 +81,10 @@ def ki_szene(s, lt):
     richtung = (hash(s.get('ki', '')) % 3) - 1
     x0 = int((W - cw) / 2 + richtung * (W - cw) / 2 * (p - 0.5))
     im = bild_.crop((x0, (H - ch) // 2, x0 + cw, (H - ch) // 2 + ch)).resize((W, H), Image.BILINEAR)
-    if s['art'] == 'blitz' and int(lt * 10) % 4 == 0:
+    # Einstieg (10.11.): das erste Bild war schwarz und die Szene blitzte alle 0,4 s dunkel - genau in den 2 Sekunden,
+    # in denen die Leute wegwischen. Jetzt: die ersten 1,5 s immer Bild; mit echtem KI-Clip gar kein Schwarz-Blitzen.
+    if s['art'] == 'blitz' and not clip and lt >= 1.5 and int(lt * 10) % 4 == 0:
         return Image.new('RGB', (W, H), NACHT)
     if s['art'] in ('dunkel', 'blitz'):
-        im = Image.blend(im, Image.new('RGB', (W, H), (40, 0, 0) if s['art'] == 'blitz' else NACHT), 0.35)
+        im = Image.blend(im, Image.new('RGB', (W, H), (40, 0, 0) if s['art'] == 'blitz' else NACHT), 0.15 if clip else 0.35)
     return im

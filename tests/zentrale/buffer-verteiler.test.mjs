@@ -119,12 +119,13 @@ test('Fakten: stärkstes Format des Kontos zuerst, nur mit echtem Vergleich', as
   assert.equal(naechstes(v, {}, { mythos: 75, quiz: 9 }).datei, 'm', 'mit Werten: Mythos zuerst');
 });
 
-test('YouTube darf mehr posten als Instagram (eigenes Tagesziel)', () => {
-  const yt = KANAELE.find((k) => k.dienst === 'youtube' && k.quelle === 'horror-mix');
-  assert.ok(yt.ziel > 5);
-  const jetzt = Date.parse('2026-11-02T12:00:00Z');
-  assert.equal(postenJetzt(6, '2026-11-02T08:00:00Z', jetzt), false, 'Instagram: Schluss nach 6');
-  assert.equal(postenJetzt(6, '2026-11-02T08:00:00Z', jetzt, { ziel: yt.ziel }), true, 'YouTube: weiter');
+test('Weniger, dafür zur besten Zeit: 3 Videos je Kanal, nur nachts und abends', async () => {
+  const { guteStunde, ZIEL_WENIGER } = await import('../../automations/lib/bufferVerteiler.mjs');
+  assert.ok(KANAELE.every((k) => k.ziel === ZIEL_WENIGER));
+  const jetzt = Date.parse('2026-11-02T22:00:00Z');
+  assert.equal(postenJetzt(2, '2026-11-02T08:00:00Z', jetzt, { ziel: ZIEL_WENIGER }), true, 'drittes Video geht noch');
+  assert.equal(postenJetzt(3, '2026-11-02T08:00:00Z', jetzt, { ziel: ZIEL_WENIGER }), false, 'nach 3 ist Schluss');
+  assert.deepEqual([0, 3, 8, 11, 14, 17, 20, 22].filter(guteStunde), [0, 3, 20, 22]);
 });
 
 test('zaehlenMitStand: eigenes Protokoll fängt verzögerte Buffer-Liste ab', async () => {
