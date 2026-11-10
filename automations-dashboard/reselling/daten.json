@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-10T19:52:00.567Z",
+ "stand": "2026-11-10T19:55:05.398Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "neu:https://afew-store.com/products/carhartt-wip-harlem-cap-wall-white",
+   "art": "Neu",
+   "titel": "🟢 NEU im Bestand: Carhartt WIP Harlem Cap",
+   "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/carhartt-wip-harlem-cap-wall-white-i037067.11dxx-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1787226446",
+   "link": "https://afew-store.com/products/carhartt-wip-harlem-cap-wall-white",
+   "text": "27,99 € · afew-store.com (online)\nVerfügbar - jetzt bestellen, solange Größen da sind.",
+   "zeit": "2026-11-10T19:55:05.398Z"
+  },
   {
    "schluessel": "filiale:3118166:2292",
    "art": "Filiale",
@@ -189,19 +198,10 @@
    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Solgaleo%20GX",
    "text": "Kaufen ab 2,00 € · Ziel 8,45 € · +4,53 € nach Gebühren (ROI 227 %)",
    "zeit": "2026-11-10T00:43:21.163Z"
-  },
-  {
-   "schluessel": "karte:me04-121",
-   "art": "Karte",
-   "titel": "🚨 STRONG BUY: Micas Aufführung",
-   "bild": "https://assets.tcgdex.net/de/me/me04/121/low.webp",
-   "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Micas%20Auff%C3%BChrung",
-   "text": "Kaufen ab 7,00 € · Ziel 14,43 € · +5,21 € nach Gebühren (ROI 74 %)",
-   "zeit": "2026-11-10T00:43:21.163Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-10T19:39:57.988Z",
+  "stand": "2026-11-10T19:55:08.967Z",
   "filialen": 148,
   "produkte": [
    {
@@ -218,7 +218,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 27
+      "menge": 26
      },
      {
       "name": "dm Kriftel",
@@ -250,7 +250,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 48
+      "menge": 47
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -258,7 +258,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 67
+      "menge": 66
      },
      {
       "name": "dm Flörsheim am Main",
@@ -274,7 +274,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 9
+      "menge": 8
      }
     ]
    },
@@ -324,7 +324,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 8
+      "menge": 6
      },
      {
       "name": "dm Flörsheim am Main",
@@ -332,7 +332,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 23
+      "menge": 22
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -570,7 +570,7 @@
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
-      "menge": 6
+      "menge": 4
      }
     ]
    },
@@ -776,7 +776,7 @@
       "km": 12.9,
       "lat": 50.121564,
       "lon": 8.648177,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Wiesbaden",
@@ -880,20 +880,20 @@
       "menge": 4
      },
      {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 1
-     },
-     {
       "name": "dm Eschborn",
       "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
       "menge": 3
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 4
      }
     ]
    }
@@ -3062,6 +3062,15 @@
  "live": {
   "treffer": [
    {
+    "titel": "Carhartt WIP Harlem Cap",
+    "preis": 27.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/carhartt-wip-harlem-cap-wall-white",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/carhartt-wip-harlem-cap-wall-white-i037067.11dxx-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1787226446",
+    "laden": "afew-store.com",
+    "begriff": "cap"
+   },
+   {
     "titel": "T90",
     "preis": 45,
     "verfuegbar": true,
@@ -3350,6 +3359,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 89.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-eqtyel-cblack-gum5",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-eqtyel-cblack-gum5-ih4385-footwear_20_3E_20sneaker.jpg?v=1775716296",
+    "laden": "afew-store.com",
+    "begriff": "samba"
+   },
+   {
     "titel": "Nike DUNK LOW RETRO PRM QS",
     "preis": 90.99,
     "verfuegbar": true,
@@ -3494,6 +3512,15 @@
     "begriff": "dunk"
    },
    {
+    "titel": "Air Jordan WMNS 1 Retro High OG",
+    "preis": 107.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/air-jordan-wmns-1-retro-high-og-pale-ivory-psychic-blue-coconut-milk",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-wmns-1-retro-high-og-pale-ivory-psychic-blue-coconut-milk-fd2596-102-footwear_20_3E_20sneaker.jpg?v=1772623597",
+    "laden": "afew-store.com",
+    "begriff": "jordan"
+   },
+   {
     "titel": "adidas Originals SAMBA OG",
     "preis": 107.99,
     "verfuegbar": true,
@@ -3629,20 +3656,20 @@
     "begriff": "samba"
    },
    {
-    "titel": "Adidas Samba OG",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/adidas-samba-og-dark-brown-off-white-gum-4",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/v1Rq5EN5CHNzUB00dWE0-JR0891-Adidas-Samba-OG-Dark-Brown-Off-White-Gum-4-os-1.jpg?v=1760363757",
-    "laden": "asphaltgold.com",
-    "begriff": "samba"
-   },
-   {
     "titel": "Adidas Samba OG W *Snake*",
     "preis": 119,
     "verfuegbar": true,
     "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-snake-maroon-crew-white-gold-metallic",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/shjupdpq6t-IH3979_Adidas_Samba-OG-W-Snake-Maroon-Crew-White-Gold-Metallic_os-1.jpg?v=1765977525",
+    "laden": "asphaltgold.com",
+    "begriff": "samba"
+   },
+   {
+    "titel": "Adidas Samba OG",
+    "preis": 119,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/adidas-samba-og-dark-brown-off-white-gum-4",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/v1Rq5EN5CHNzUB00dWE0-JR0891-Adidas-Samba-OG-Dark-Brown-Off-White-Gum-4-os-1.jpg?v=1760363757",
     "laden": "asphaltgold.com",
     "begriff": "samba"
    },
@@ -3800,15 +3827,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "adidas Originals SAMBA OG",
-    "preis": 129.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-auburn-warvan-magbei",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-auburn-warvan-magbei-ki0438-footwear_20_3E_20sneaker.jpg?v=1791796405",
-    "laden": "afew-store.com",
-    "begriff": "samba"
-   },
-   {
     "titel": "Air Jordan 3 Retro True Blue",
     "preis": 135,
     "verfuegbar": true,
@@ -3888,15 +3906,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/0rwj4hh32m9-CT8013-103_Nike_Air-Jordan-12-Retro-Bucks-Summit-White-Gorge-Green-Black-Fierce-Purple_os-1.jpg?v=1789036847",
     "laden": "asphaltgold.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 141.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-driftwood-sea-salt",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-driftwood-sea-salt-u906011m-footwear_20_3E_20sneaker.jpg?v=1783934007",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Kobe IX Elite Low EM Protro",
@@ -4223,6 +4232,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "New Balance 9060",
+    "preis": 180.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-pistachio-butter-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-pistachio-butter-angora-u906072n-footwear_20_3E_20sneaker.jpg?v=1789993966",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Nike Wmns Air Jordan 3 Retro *Fireside*",
     "preis": 186,
     "verfuegbar": true,
@@ -4239,15 +4257,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/O4uaUm1F4JFhwg3dltkQ_U9060ZGE-New-Balance-U90-60ZGE-Black-OS-1.jpg?v=1737647845",
     "laden": "asphaltgold.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "Air Jordan 4 Retro",
-    "preis": 189.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-4-retro-white-tour-yellow-dark-blue-grey-black",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-4-retro-white-tour-yellow-dark-blue-grey-black-io2463-102-footwear_20_3E_20sneaker.jpg?v=1787954818",
-    "laden": "afew-store.com",
-    "begriff": "jordan"
    },
    {
     "titel": "New Balance 9060",
