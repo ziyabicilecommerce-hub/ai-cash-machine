@@ -2,16 +2,20 @@
 // Reine Funktionen - ohne Netz testbar. Kanal-IDs sind keine Geheimnisse (stehen auch in Buffer-Links).
 // Keine Shop-Werbung: jeder Kanal bekommt allgemeine Inhalte, jeder etwas anderes.
 import { typAus } from './tiktokLernen.mjs';
+// Weniger, dafür zur besten Zeit (10.11., Test für eine Woche): alle Top-Videos blieben bei ~1.000 Aufrufen stehen,
+// mit 8 Shorts am Tag fiel YouTube von 4.435 auf 1.716 Aufrufe/Tag. Jetzt 3 Videos je Kanal und Tag (ziel 2 = bis zu 3),
+// nur nachts und abends (Ø 209 bzw. 175 Aufrufe; nachmittags Ø 101). Zurück: ZIEL_WENIGER = 5 und guteStunde = () => true.
+export const ZIEL_WENIGER = 2;
+export const guteStunde = (stunde) => stunde < 6 || stunde >= 19;
 export const KANAELE = [
   // desk.rebel (10.11.): Sprach-Test wie auf YouTube - Englisch erreicht weltweit mehr Leute, dort holt es Ø 519 statt 340.
   // Halbe-halbe, bis der Wochenbericht für diesen Kanal einen klaren Sieger hat (sprachTests); purivelle bleibt deutsch.
-  { id: '6ae8f441e29c69a1713e44f3', name: 'desk.rebel', dienst: 'instagram', quelle: 'horror-mix' },
+  { id: '6ae8f441e29c69a1713e44f3', name: 'desk.rebel', dienst: 'instagram', quelle: 'horror-mix', ziel: ZIEL_WENIGER },
   // purivelle (06.11., Wunsch des Nutzers): Horror statt "Wahr oder Mythos?" - eigene Geschichten, nie dieselbe wie desk.rebel
-  { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'horror' },
+  { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'horror', ziel: ZIEL_WENIGER },
   // YouTube: Sprach-Test (06.11.) - deutsche Horror-Shorts holten hier 179-706 Aufrufe, Englisch erreicht weltweit mehr.
   // Halbe-halbe, bis der Wochenbericht einen klaren Sieger hat; dann bekommt der 85 % (sprachAnteil).
-  // ziel 8 (07.11.): YouTube ist unser stärkster Kanal (Ø 136, deutsche Horror-Shorts Ø 315) - dort mehr Videos
-  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-mix', ziel: 8 },
+  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-mix', ziel: ZIEL_WENIGER },
   // Englischer Horror-Kanal: an, sobald seine Buffer-Kanal-ID eingetragen ist (Repo-Variable EN_KANAL, optional EN_DIENST)
   ...(/^[a-f\d]{24}$/.test(process.env.EN_KANAL || '') ? [{ id: process.env.EN_KANAL, name: 'english-horror', dienst: process.env.EN_DIENST || 'youtube', quelle: 'horror-en' }] : []),
 ];
