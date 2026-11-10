@@ -28,9 +28,9 @@ test('Bericht: Woche gegen Vorwoche, frische Posts ohne Zahlen zählen nicht, Sc
 test('A/B-Test: Varianten zufällig, Auswertung mit/ohne, Urteil erst ab je 3 Videos', async () => {
   const { abVariante, abSchluessel } = await import('../../automations/lib/bufferVerteiler.mjs');
   const { abAuswertung } = await import('../../automations/lib/wochenbericht.mjs');
-  assert.deepEqual(abVariante(() => 0.9), { kalt: true, raum: true, suchbild: true, duhook: true });
-  assert.deepEqual(abVariante(() => 0.1), { kalt: false, raum: false, suchbild: false, duhook: false });
-  assert.deepEqual(abVariante(() => 0.4), { kalt: true, raum: true, suchbild: true, duhook: false }, 'Du-Hook halbe-halbe');
+  assert.deepEqual(abVariante(() => 0.9), { kalt: true, raum: true, suchbild: true, duhook: true, schlag: true });
+  assert.deepEqual(abVariante(() => 0.1), { kalt: false, raum: false, suchbild: false, duhook: false, schlag: false });
+  assert.deepEqual(abVariante(() => 0.4), { kalt: true, raum: true, suchbild: true, duhook: false, schlag: false }, 'Du-Hook und Schlagzeile halbe-halbe');
   assert.equal(abSchluessel('Ich wohne allein.  Heute stehen zwei Kaffeetassen auf dem Tisch. 🎧'), 'Ich wohne allein. Heute stehen zwei Kaff');
   const posts = [...[6, 7, 8].map((s, i) => vor(2, { text: `mit${i}`, sehdauer: s })), ...[2, 3, 4].map((s, i) => vor(2, { text: `ohne${i}`, sehdauer: s }))];
   const ab = abAuswertung(posts, (p) => ({ kalt: p.text.startsWith('mit') }));

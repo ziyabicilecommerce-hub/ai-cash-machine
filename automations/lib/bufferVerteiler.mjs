@@ -154,7 +154,8 @@ export function storyEingabe(kanalId, coverUrl, en = false, sticker = '', alt = 
 // A/B-Test: jedes Feature ist bei 30 % der Horror-Videos aus - so zeigt der Wochenbericht, was wirklich wirkt
 // duhook: Anfangssatz im Du-Stil statt "Ich ..." - halbe-halbe, weil hier keine Variante die "normale" ist
 // KI-Bilder sind seit 06.11. immer an (Wunsch des Nutzers) und deshalb nicht mehr im A/B-Test
-export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.5 };  // Wahrscheinlichkeit für "aus"
+// schlag (11.11.): große Schlagzeile (höchstens 6 Wörter) in den ersten 2,6 s - halbe-halbe, bis Zahlen da sind
+export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.5, schlag: 0.5 };  // Wahrscheinlichkeit für "aus"
 export function abVariante(zufall = Math.random, gewichte = AB_FEATURES) {
   return Object.fromEntries(Object.entries(gewichte).map(([f, aus]) => [f, zufall() >= aus]));
 }

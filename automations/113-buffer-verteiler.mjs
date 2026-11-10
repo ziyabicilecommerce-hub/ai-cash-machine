@@ -13,6 +13,7 @@ import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
 import { naechstesSkriptEn, SKRIPTE_EN } from './schatten/skripteEn.mjs';
 import { teil2Kandidat as teil2KandidatSync } from './schatten/skriptBot.mjs';
 import { naechsterKurzHorror, kurzHeuteSchon } from './schatten/kurzHorror.mjs';
+import { schlagzeile } from './schatten/schlagzeilen.mjs';
 
 const TOKEN = (process.env.BUFFER_ACCESS_TOKEN || '').trim();
 const STAND = 'buffer-verteiler/stand.json';
@@ -133,6 +134,7 @@ async function vorbereiten() {
       if (!h) { bericht(`- ⚠️ ${k.name}: keine Horror-Geschichte`); continue; }
       const variante = abVariante(Math.random, k.dienst === 'youtube' ? gewichteYT : gewichte);
       if (!h.skript.hook2) variante.duhook = false;  // nur Skript-Bot-Geschichten haben einen Du-Hook
+      if (!schlagzeile(h.skript.muster, quelle === 'horror-en' ? 'en' : 'de')) variante.schlag = false;  // Schlagzeile gibt es nur für bekannte Muster
       const hook = variante.duhook ? h.skript.hook2 : h.skript.hook;
       const folge = baueFolge({ ...h.skript, hook, weiter: '', posten: '', kurz: true, ...variante });
       mkdirSync('out', { recursive: true });

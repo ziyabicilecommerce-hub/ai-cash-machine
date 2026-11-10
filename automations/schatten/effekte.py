@@ -101,6 +101,30 @@ def suchbanner(im, sprache='de'):
     d.rounded_rectangle(((W - b) / 2 - 16, 196, (W + b) / 2 + 16, 246), 14, fill=GELB)
     d.text((W / 2, 221), text, font=f, fill=(10, 10, 10), anchor='mm')
 
+
+def hinweise(im, t, story, such, sprache='de'):
+    """Oben im Bild: erst die Schlagzeile (bis 2,6 s, höchstens 6 Wörter), danach die Hinweise (Augen, Kopfhörer)."""
+    if t < 2.6:
+        text = story.get('schlag') or ''
+        if not text:
+            return
+        d = ImageDraw.Draw(im)
+        gr = 58
+        while gr > 34 and d.textlength(text, font=ImageFont.truetype(FONTDATEI, gr)) > W - 110:
+            gr -= 4
+        f = ImageFont.truetype(FONTDATEI, gr)
+        b = d.textlength(text, font=f)
+        wachs = min(1.0, 0.86 + t / 0.25 * 0.14)  # springt in den ersten 0,25 s leicht auf
+        hb, hh = (b / 2 + 26) * wachs, (gr / 2 + 20) * wachs
+        d.rounded_rectangle((W / 2 - hb, 250 - hh, W / 2 + hb, 250 + hh), 16, fill=(215, 20, 20))
+        d.text((W / 2, 250), text, font=f, fill=(255, 255, 255), stroke_width=2, stroke_fill=(90, 0, 0), anchor='mm')
+    elif t < 5.2:
+        if such:
+            suchbanner(im, sprache)
+        if story.get('raum'):
+            kopfhoerer(im, sprache)
+
+
 # Kino-Look für die fertige Bildspur (ffmpeg -vf): Bloom (Lichter leuchten weich), Teal-Orange-Farbgebung,
 # leichte Linsen-Farbsäume, Filmkorn, Vignette - wirkt teurer, kostet beim Rendern nur Sekunden
 KINO_LOOK = ('split[a][b];[b]gblur=sigma=14[g];[a][g]blend=all_mode=screen:all_opacity=0.16,'

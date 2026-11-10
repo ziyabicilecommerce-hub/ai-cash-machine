@@ -52,3 +52,17 @@ test('20 neue Anruf-Geschichten bestehen die Hook-Prüfung', async () => {
   assert.equal(Object.keys(DU_HOOKS4).length, 20);
   assert.equal(new Set(alle.map((s) => slug(s.titel))).size, alle.length, 'keine doppelten Titel');
 });
+
+test('Schlagzeile: je Muster höchstens 6 Wörter, deutsch und englisch, nur wenn eingeschaltet', async () => {
+  const { SCHLAGZEILEN, schlagzeile } = await import('../../automations/schatten/schlagzeilen.mjs');
+  const { alleSkripte } = await import('../../automations/schatten/skriptBot.mjs');
+  const { SKRIPTE_EN } = await import('../../automations/schatten/skripteEn.mjs');
+  const { baueFolge } = await import('../../automations/schatten/videobot.mjs');
+  for (const l of Object.values(SCHLAGZEILEN)) for (const t of Object.values(l)) assert.ok(t.split(' ').length <= 6 && t === t.toUpperCase(), t);
+  for (const s of alleSkripte()) assert.ok(schlagzeile(s.muster, 'de'), `fehlt (de): ${s.muster}`);
+  for (const s of SKRIPTE_EN) assert.ok(schlagzeile(s.muster, 'en'), `fehlt (en): ${s.muster}`);
+  const s = alleSkripte().find((x) => x.muster === 'anruf');
+  assert.equal(baueFolge({ ...s, kurz: true, schlag: true }).schlag, 'GEH NICHT RAN');
+  assert.equal(baueFolge({ ...s, kurz: true }).schlag, '');
+  assert.equal(baueFolge({ ...SKRIPTE_EN.find((x) => x.muster === 'anruf'), kurz: true, schlag: true }).schlag, 'DO NOT PICK UP');
+});
