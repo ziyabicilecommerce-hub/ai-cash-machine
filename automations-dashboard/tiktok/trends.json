@@ -1,88 +1,89 @@
 {
- "stand": "2026-11-09T11:16:25.907Z",
+ "stand": "2026-11-10T10:59:58.947Z",
  "themen": [
   {
-   "thema": "Polarlicht über Deutschland - und etwas darin",
-   "quelle": "welt (China, Tokio)",
+   "thema": "Nebel auf der Landstraße",
+   "quelle": "wikipedia",
+   "anstieg": 2.5,
    "inspiration": ""
   },
   {
-   "thema": "Ich wache auf - im Traum",
-   "quelle": "welt (Tokio, Paris)",
+   "thema": "Stromausfall, aber ein Zimmer bleibt hell",
+   "quelle": "welt (Tokio, New York)",
    "inspiration": ""
   },
   {
-   "thema": "winter storm",
+   "thema": "Novembernebel auf der Landstraße",
    "inspiration": "",
-   "quelle": "google-trends"
+   "quelle": "saison"
   }
  ],
  "radar": {
   "wiki": [
    {
-    "name": "Stromausfall",
-    "thema": "Stromausfall, aber ein Zimmer bleibt hell",
-    "anstieg": 1.01,
-    "proTag": 195
+    "name": "Nebel",
+    "thema": "Nebel auf der Landstraße",
+    "anstieg": 2.5,
+    "proTag": 1309
    },
    {
     "name": "Polarlicht",
     "thema": "Polarlicht über Deutschland - und etwas darin",
-    "anstieg": 0.99,
-    "proTag": 2232
+    "anstieg": 1.17,
+    "proTag": 2601
    },
    {
-    "name": "Nahtoderfahrung",
-    "thema": "Am Ende des Tunnels wartet jemand",
-    "anstieg": 0.98,
-    "proTag": 556
-   },
-   {
-    "name": "Nebel",
-    "thema": "Nebel auf der Landstraße",
-    "anstieg": 0.97,
-    "proTag": 493
+    "name": "Stromausfall",
+    "thema": "Stromausfall, aber ein Zimmer bleibt hell",
+    "anstieg": 1.15,
+    "proTag": 224
    },
    {
     "name": "Mimic",
     "thema": "Etwas lernt meine Stimme",
-    "anstieg": 0.96,
-    "proTag": 288
+    "anstieg": 1.12,
+    "proTag": 326
    },
    {
-    "name": "Moderne Sagen",
-    "thema": "Die Sage aus meiner Kindheit stimmt",
-    "anstieg": 0.94,
-    "proTag": 687
+    "name": "Nahtoderfahrung",
+    "thema": "Am Ende des Tunnels wartet jemand",
+    "anstieg": 1.06,
+    "proTag": 595
    },
    {
     "name": "Klartraum",
     "thema": "Ich wache auf - im Traum",
+    "anstieg": 0.99,
+    "proTag": 716
+   },
+   {
+    "name": "Zeitschleife",
+    "thema": "Derselbe Anruf jede Nacht um 3:12 Uhr",
+    "anstieg": 0.97,
+    "proTag": 222
+   },
+   {
+    "name": "SCP",
+    "thema": "Ein Gegenstand, den man nicht ansehen darf",
     "anstieg": 0.93,
-    "proTag": 676
+    "proTag": 2066
    },
    {
     "name": "Schlafparalyse",
     "thema": "Schlafparalyse: jemand sitzt nachts auf meiner Brust",
     "anstieg": 0.92,
-    "proTag": 1043
+    "proTag": 1030
    },
    {
-    "name": "Friedhof",
-    "thema": "Ein frisches Grab mit meinem Namen",
-    "anstieg": 0.9,
-    "proTag": 290
-   },
-   {
-    "name": "SCP",
-    "thema": "Ein Gegenstand, den man nicht ansehen darf",
-    "anstieg": 0.87,
-    "proTag": 1992
+    "name": "Doppelgänger",
+    "thema": "Ich treffe mich selbst im Treppenhaus",
+    "anstieg": 0.92,
+    "proTag": 1407
    }
   ],
   "himmel": {
    "vollmond": false,
-   "kp": 2.67,
+   "kp": 2.33,
    "polarlicht": false,
    "nasa": ""
   },
@@ -92,28 +93,28 @@
    "en": []
   },
   "trendsDE": [
-   "frédéric vasseur",
-   "hof",
    "bvb tickets",
-   "tim walter",
-   "münchen",
-   "pietro lombardi",
-   "unicredit",
-   "köditz",
-   "boxen",
-   "bitcoin news"
+   "andreas brehme",
+   "jemima goldsmith",
+   "loris karius bayern",
+   "aktueller rentenwert",
+   "dannii minogue",
+   "b30",
+   "horoskop tageshoroskop",
+   "liam lawson",
+   "hartmut engler"
   ],
   "trendsUS": [
-   "growth stock",
-   "steelers depot",
-   "irán",
-   "gta release date",
-   "who is elizabeth holmes",
-   "winter storm",
-   "servicio de ciudadanía e inmigración de los estados unidos",
-   "malik nabers fox broadcast criticism",
-   "notre dame fighting irish football",
-   "san antonio weather"
+   "ceedee lamb fourth quarter fumble",
+   "dancing with the stars grammy night",
+   "ice",
+   "tyler kolek",
+   "cardi b",
+   "mac jones trade deadline rumors",
+   "max verstappen",
+   "spectrum outage",
+   "mike evans",
+   "movie times"
   ],
   "welt": [
    {
@@ -121,43 +122,43 @@
     "flagge": "🇨🇳",
     "horror": [
      {
-      "name": "Polarlicht",
-      "anstieg": 1.33,
-      "proTag": 116
-     },
-     {
       "name": "Nebel",
-      "anstieg": 1.28,
-      "proTag": 33
+      "anstieg": 1.34,
+      "proTag": 37
      },
      {
-      "name": "Doppelgänger",
-      "anstieg": 1.22,
+      "name": "Skinwalker",
+      "anstieg": 1.29,
       "proTag": 27
      },
      {
-      "name": "Analog Horror",
-      "anstieg": 1.19,
+      "name": "Doppelgänger",
+      "anstieg": 1.18,
       "proTag": 28
      },
      {
-      "name": "Klartraum",
-      "anstieg": 1.16,
-      "proTag": 33
+      "name": "Mothman",
+      "anstieg": 1.07,
+      "proTag": 27
+     },
+     {
+      "name": "Polarlicht",
+      "anstieg": 1.06,
+      "proTag": 96
      }
     ],
     "trends": [
-     "永远做党和人民的忠诚卫士",
-     "寒潮结束后 超级大回暖要来了",
-     "中方回应特朗普政府请求中国帮助",
-     "入境游已是next level",
-     "主持人实测滴滴抽成"
+     "中国将始终是世界发展的重要机遇",
+     "700电话号码来了",
+     "理想汽车已向警方报案",
+     "从“四叶草”出发 下一站APEC",
+     "“租客退租后连空调外机都搬走了”"
     ],
     "quelle": [
      "wikipedia-zh",
      "baidu"
     ],
-    "gemessen": 15
+    "gemessen": 17
    },
    {
     "name": "Indien",
@@ -165,150 +166,145 @@
     "horror": [
      {
       "name": "Geister",
-      "anstieg": 0.89,
-      "proTag": 26
-     },
-     {
-      "name": "Nebel",
-      "anstieg": 0.32,
-      "proTag": 7
+      "anstieg": 0.84,
+      "proTag": 24
      }
     ],
     "trends": [
-     "gujarati news by divya bhaskar",
-     "rrb po admit card 2026",
-     "arrest",
-     "episode 12",
-     "ఓటీటీ"
+     "sthree sakthi lottery result today",
+     "bsf",
+     "দীপাবলি",
+     "digital arrest scam",
+     "divyanka tripathi"
     ],
     "quelle": [
      "wikipedia-hi",
      "google-trends"
     ],
-    "gemessen": 2
+    "gemessen": 1
    },
    {
     "name": "Tokio",
     "flagge": "🇯🇵",
     "horror": [
      {
-      "name": "Polarlicht",
-      "anstieg": 6.8,
-      "proTag": 1258
+      "name": "Stromausfall",
+      "anstieg": 1.44,
+      "proTag": 33
      },
      {
       "name": "Mothman",
-      "anstieg": 1.51,
-      "proTag": 88
-     },
-     {
-      "name": "Klartraum",
-      "anstieg": 1.34,
-      "proTag": 117
+      "anstieg": 1.41,
+      "proTag": 93
      },
      {
       "name": "Friedhof",
-      "anstieg": 1.29,
-      "proTag": 21
+      "anstieg": 1.37,
+      "proTag": 24
      },
      {
-      "name": "Uncanny Valley",
-      "anstieg": 1.16,
-      "proTag": 195
+      "name": "Zeitschleife",
+      "anstieg": 1.29,
+      "proTag": 38
+     },
+     {
+      "name": "Liminal Spaces",
+      "anstieg": 1.19,
+      "proTag": 188
      }
     ],
     "trends": [
-     "野々村友紀子",
-     "ななえママ",
-     "リュウジ 映画",
-     "大森元貴",
-     "具志堅用高"
+     "高嶋ちさ子",
+     "原子力潜水艦",
+     "石原慎太郎",
+     "斎藤佑樹",
+     "桃田賢斗"
     ],
     "quelle": [
      "wikipedia-ja",
      "google-trends"
     ],
-    "gemessen": 26
+    "gemessen": 25
    },
    {
     "name": "Paris",
     "flagge": "🇫🇷",
     "horror": [
      {
-      "name": "Moderne Sagen",
-      "anstieg": 1.26,
-      "proTag": 62
-     },
-     {
-      "name": "Klartraum",
-      "anstieg": 1.2,
-      "proTag": 52
-     },
-     {
       "name": "Nebel",
-      "anstieg": 1.15,
-      "proTag": 41
+      "anstieg": 2.65,
+      "proTag": 107
+     },
+     {
+      "name": "Nahtoderfahrung",
+      "anstieg": 1.44,
+      "proTag": 155
      },
      {
       "name": "Polarlicht",
-      "anstieg": 1,
-      "proTag": 208
+      "anstieg": 1.28,
+      "proTag": 262
      },
      {
-      "name": "Friedhof",
-      "anstieg": 1,
-      "proTag": 46
+      "name": "Klartraum",
+      "anstieg": 1.23,
+      "proTag": 56
+     },
+     {
+      "name": "Liminal Spaces",
+      "anstieg": 1.14,
+      "proTag": 99
      }
     ],
     "trends": [
-     "teddy riner",
-     "maxime lucu",
-     "psyllium",
-     "citerne",
-     "michel cymes"
+     "epic games store",
+     "playstation plus",
+     "la baule-escoublac",
+     "enzo zidane",
+     "paul mccartney"
     ],
     "quelle": [
      "wikipedia-fr",
      "google-trends"
     ],
-    "gemessen": 24
+    "gemessen": 25
    },
    {
     "name": "New York",
     "flagge": "🇺🇸",
     "horror": [
      {
-      "name": "Stromausfall",
-      "anstieg": 1.03,
-      "proTag": 164
+      "name": "Nebel",
+      "anstieg": 2.91,
+      "proTag": 1204
      },
      {
-      "name": "Mimic",
-      "anstieg": 1,
-      "proTag": 228
+      "name": "Stromausfall",
+      "anstieg": 1.23,
+      "proTag": 199
      },
      {
       "name": "Polarlicht",
-      "anstieg": 1,
-      "proTag": 1832
+      "anstieg": 1.2,
+      "proTag": 2165
+     },
+     {
+      "name": "Mimic",
+      "anstieg": 1.15,
+      "proTag": 255
      },
      {
       "name": "Klartraum",
-      "anstieg": 0.96,
-      "proTag": 589
-     },
-     {
-      "name": "Nahtoderfahrung",
-      "anstieg": 0.92,
-      "proTag": 455
+      "anstieg": 0.98,
+      "proTag": 602
      }
     ],
     "trends": [
-     "josh allen",
-     "malik nabers",
-     "the gilded age season 4",
-     "winter storm",
-     "north of north rotten tomatoes score"
+     "iran news",
+     "jemima goldsmith",
+     "instagram",
+     "when is veterans day 2026",
+     "nfl scores"
     ],
     "quelle": [
      "wikipedia-en",
@@ -319,27 +315,29 @@
   ],
   "weltweit": [
    {
-    "name": "Polarlicht",
-    "wo": [
-     "China",
-     "Tokio"
-    ]
-   },
-   {
-    "name": "Klartraum",
-    "wo": [
-     "Tokio",
-     "Paris"
-    ]
-   },
-   {
     "name": "Nebel",
     "wo": [
-     "China"
+     "China",
+     "Paris",
+     "New York"
     ]
    },
    {
-    "name": "Doppelgänger",
+    "name": "Stromausfall",
+    "wo": [
+     "Tokio",
+     "New York"
+    ]
+   },
+   {
+    "name": "Polarlicht",
+    "wo": [
+     "Paris",
+     "New York"
+    ]
+   },
+   {
+    "name": "Skinwalker",
     "wo": [
      "China"
     ]
@@ -357,7 +355,19 @@
     ]
    },
    {
-    "name": "Moderne Sagen",
+    "name": "Zeitschleife",
+    "wo": [
+     "Tokio"
+    ]
+   },
+   {
+    "name": "Nahtoderfahrung",
+    "wo": [
+     "Paris"
+    ]
+   },
+   {
+    "name": "Klartraum",
     "wo": [
      "Paris"
     ]
