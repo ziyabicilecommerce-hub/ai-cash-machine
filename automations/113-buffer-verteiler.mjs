@@ -90,7 +90,8 @@ async function vorbereiten() {
   const wb = json('automations-dashboard/tiktok/wochenbericht.json', {});
   const gewichte = abGewichte(wb.ab);
   const gewichteYT = abGewichteAufrufe(wb.abYT);  // YouTube lernt nach Aufrufen (keine Sehdauer)
-  const enAnteil = sprachAnteil(wb.sprachTest);
+  // Sprach-Test je Mix-Kanal: YouTube hat seinen eigenen (sprachTest), andere Kanäle stehen in sprachTests[name]
+  const enAnteilVon = (k) => sprachAnteil(/giyuuu/i.test(k.name) ? wb.sprachTest : wb.sprachTests?.[k.name]);
   const angepasst = Object.entries(gewichte).filter(([f, aus]) => aus !== AB_FEATURES[f]);
   bericht('### 📤 Buffer-Verteiler');
   const angepasstYT = Object.entries(gewichteYT).filter(([f, aus]) => aus !== AB_FEATURES[f]);
@@ -100,7 +101,7 @@ async function vorbereiten() {
     const { heute, letzter } = zaehlenMitStand(zaehlen(posts, k.id), stand[k.id], heuteBerlin());
     if (!postenJetzt(heute, letzter, Date.now(), { ziel: k.ziel || ZIEL_PRO_TAG })) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
     // Mix-Kanal: diesmal Deutsch oder Englisch (Sprach-Test)
-    const quelle = k.quelle === 'horror-mix' ? (Math.random() < enAnteil ? 'horror-en' : 'horror') : k.quelle;
+    const quelle = k.quelle === 'horror-mix' ? (Math.random() < enAnteilVon(k) ? 'horror-en' : 'horror') : k.quelle;
     if (quelle.startsWith('horror')) {
       // jeder Horror-Kanal bekommt eine EIGENE Geschichte: was ein anderer Kanal schon hatte oder in diesem Lauf bekommt, ist tabu
       const schonDa = Object.fromEntries([...Object.values(stand).flatMap((x) => Object.entries(x || {})), ...plan.map((x) => [x.schluessel, 'jetzt'])]);

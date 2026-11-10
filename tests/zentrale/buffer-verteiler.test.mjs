@@ -6,7 +6,7 @@ import { KANAELE, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen
 const VIDEOS = JSON.parse(readFileSync(new URL('../../video-feed/videos.json', import.meta.url), 'utf8')).videos;
 
 test('keine Shop-Werbung, jeder Kanal etwas anderes', () => {
-  assert.deepEqual(KANAELE.map((k) => k.quelle), ['horror', 'horror', 'horror-mix']);
+  assert.deepEqual(KANAELE.map((k) => k.quelle), ['horror-mix', 'horror', 'horror-mix']);  // desk.rebel + YouTube testen Deutsch gegen Englisch
   const fakten = passend(VIDEOS, 'fakten', 'purivelle.785'), anime = passend(VIDEOS, 'anime');
   assert.ok(fakten.length >= 20 && anime.length >= 5);
   for (const v of [...fakten, ...anime]) assert.ok(!/deskrebel\.store|purivelle\.store|#deskrebel|#purivelle/i.test(`${v.caption}${v.url}${v.titel}`), `Werbung: ${v.titel}`);
@@ -150,4 +150,12 @@ test('YouTube-A/B nach Aufrufen: Du-Hook gewinnt dort, 3D-Ton bremst', async () 
   const posts = [{ text: 'a', aufrufe: 100 }, { text: 'b', aufrufe: 300 }, { text: 'c', aufrufe: 0 }];
   const v = { a: { raum: true }, b: { raum: false }, c: { raum: false } };
   assert.deepEqual(abAuswertungAufrufe(posts, (p) => v[p.text]), { raum: { an: { n: 1, schnitt: 100 }, aus: { n: 1, schnitt: 300 } } });
+});
+
+test('Englisch auf Instagram: Reel mit englischem Text, Tags, KI-Hinweis und erstem Kommentar', () => {
+  const r = beitrag({ url: 'https://x/v.mp4', titel: 'Fourteen Steps', caption: 'My stairs have 13 steps. Tonight I hear 14 footsteps.\n1️⃣ Count again or 2️⃣ Run?' }, 'instagram', 'horror-en');
+  assert.match(r.text, /#scarystories/);
+  assert.match(r.text, /AI-generated/);
+  assert.ok(!/KI-generiert|gruselgeschichte/.test(r.text));
+  assert.match(r.metadata.instagram.firstComment, /comment the number/);
 });
