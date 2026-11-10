@@ -23,6 +23,12 @@ if (b.sprachTest.de.n >= 4 && b.sprachTest.en.n >= 4) {
   const { de, en } = b.sprachTest;
   b.schritte.push(`Sprach-Test YouTube: Deutsch Ø ${de.schnitt} (${de.n}) · Englisch Ø ${en.schnitt} (${en.n})${en.schnitt >= 1.5 * Math.max(de.schnitt, 1) ? ' - Englisch gewinnt, bekommt jetzt 85 %.' : de.schnitt >= 1.5 * Math.max(en.schnitt, 1) ? ' - Deutsch gewinnt, bekommt jetzt 85 %.' : ' - noch kein klarer Sieger.'}`);
 }
+// Sprach-Test auch auf Instagram (desk.rebel postet seit 10.11. halb Englisch): gleiche Regel, eigener Sieger je Kanal
+const istEn = (p) => SKRIPTE_EN.some((s) => passt(p, s)) || /\b(the|you|your|my|is)\b/i.test(String(p.text || ''));
+b.sprachTests = { 'desk.rebel': sprachTest(reif, istEn, /desk\.rebel/i) };
+for (const [name, t] of Object.entries(b.sprachTests)) {
+  if (t.de.n >= 4 && t.en.n >= 4) b.schritte.push(`Sprach-Test ${name}: Deutsch Ø ${t.de.schnitt} (${t.de.n}) · Englisch Ø ${t.en.schnitt} (${t.en.n})${t.en.schnitt >= 1.5 * Math.max(t.de.schnitt, 1) ? ' - Englisch gewinnt, bekommt 85 %.' : t.de.schnitt >= 1.5 * Math.max(t.en.schnitt, 1) ? ' - Deutsch gewinnt, bekommt 85 %.' : ' - noch kein klarer Sieger.'}`);
+}
 // A/B-Test YouTube nach Aufrufen (letzte 2 Wochen, reife Posts): dort wirken Features anders als auf Instagram
 const ytReif = verlauf.filter((p) => /giyuuu/i.test(p.konto || '') && Date.now() - new Date(p.zeit) >= 864e5 && Date.now() - new Date(p.zeit) < 15 * 864e5);
 b.abYT = abAuswertungAufrufe(ytReif, varianteVon);
@@ -32,8 +38,8 @@ for (const [f, w] of Object.entries(b.abYT)) {
   if (r >= 1.3 || r <= 1 / 1.3) b.schritte.push(`A/B-Test YouTube ${f}: mit Ø ${w.an.schnitt}, ohne Ø ${w.aus.schnitt} Aufrufe - ${r >= 1.3 ? 'wirkt, dort meist an' : 'bremst, dort meist aus'}.`);
 }
 const gepostet = Object.values(json('buffer-verteiler/stand.json', {})).flatMap((k) => Object.keys(k || {}));
-// Verbrauch pro Tag: Deutsch = desk.rebel + purivelle (je bis 6); Englisch = YouTube (bis 8, davon ~85 % Englisch)
-b.vorrat = { de: vorrat(skripte.map((x) => slug(x.titel)), gepostet, 12), en: vorrat(SKRIPTE_EN.map((x) => slug(x.titel)), gepostet, 7) };
+// Verbrauch pro Tag: Deutsch = purivelle (bis 6) + halb desk.rebel; Englisch = YouTube (bis 8, ~85 %) + halb desk.rebel
+b.vorrat = { de: vorrat(skripte.map((x) => slug(x.titel)), gepostet, 9), en: vorrat(SKRIPTE_EN.map((x) => slug(x.titel)), gepostet, 10) };
 for (const [sprache, v] of Object.entries(b.vorrat)) {
   if (v.tage < 4) b.schritte.unshift(`⚠️ Geschichten-Vorrat ${sprache === 'de' ? 'Deutsch' : 'Englisch'}: nur noch ${v.rest} (≈ ${v.tage} Tage). Neue Muster bestellen oder GEMINI_API_KEY eintragen.`);
 }
