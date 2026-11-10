@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-10T18:20:32.008Z",
+ "stand": "2026-11-10T18:23:31.147Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118686:1500",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: ebelin Adventskalender Beauty & Hair 2026, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1434547,8.5023642",
+   "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
+   "text": "32,95 € · dm Bad Soden am Taunus (8,3 km) · 1 Stück\nKönigsteiner Straße 76, 65812 Bad Soden am Taunus\nIm Umkreis in 21 Filiale(n) vorrätig.",
+   "zeit": "2026-11-10T18:23:31.147Z"
+  },
   {
    "schluessel": "filiale:3118686:1500",
    "art": "Filiale",
@@ -187,20 +197,10 @@
    "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
    "text": "32,95 € · dm Neu-Isenburg (13,8 km) · 1 Stück\nSchleussnerstraße 100b, 63263 Neu-Isenburg\nIm Umkreis in 22 Filiale(n) vorrätig.",
    "zeit": "2026-11-09T21:07:22.694Z"
-  },
-  {
-   "schluessel": "filiale:3118897:1433",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.057082,8.33478",
-   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
-   "text": "44,95 € · dm Wiesbaden (10,9 km) · 1 Stück\nBorsigstraße 9, 65205 Wiesbaden\nIm Umkreis in 21 Filiale(n) vorrätig.",
-   "zeit": "2026-11-09T21:07:22.694Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-10T18:08:12.513Z",
+  "stand": "2026-11-10T18:23:35.014Z",
   "filialen": 148,
   "produkte": [
    {
@@ -249,7 +249,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 47
+      "menge": 48
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -257,7 +257,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 66
+      "menge": 67
      },
      {
       "name": "dm Flörsheim am Main",
@@ -273,7 +273,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 8
+      "menge": 9
      }
     ]
    },
@@ -323,7 +323,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 6
+      "menge": 8
      },
      {
       "name": "dm Flörsheim am Main",
@@ -331,7 +331,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 22
+      "menge": 23
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -495,7 +495,7 @@
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
-      "menge": 4
+      "menge": 6
      }
     ]
    },
@@ -814,20 +814,20 @@
       "menge": 4
      },
      {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 1
+     },
+     {
       "name": "dm Eschborn",
       "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
       "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 4
      }
     ]
    }
@@ -2922,7 +2922,19 @@
   "ware": [],
   "top": [
    {
+    "titel": "schulleiter",
+    "menge": "200+"
+   },
+   {
+    "titel": "dfb team",
+    "menge": "200+"
+   },
+   {
     "titel": "thyssenkrupp",
+    "menge": "200+"
+   },
+   {
+    "titel": "länderspiele heute",
     "menge": "200+"
    },
    {
@@ -2947,19 +2959,7 @@
    },
    {
     "titel": "radfahrer",
-    "menge": "2000+"
-   },
-   {
-    "titel": "wer weiß denn sowas heute",
-    "menge": "1000+"
-   },
-   {
-    "titel": "sc magdeburg",
-    "menge": "500+"
-   },
-   {
-    "titel": "real madrid – paris fc",
-    "menge": "200+"
+    "menge": "5000+"
    }
   ]
  },
