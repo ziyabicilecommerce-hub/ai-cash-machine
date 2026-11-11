@@ -22,7 +22,10 @@ adapter = MotionAdapter()
 adapter.load_state_dict(load_file(hf_hub_download('ByteDance/AnimateDiff-Lightning', f'animatediff_lightning_{schritte}step_diffusers.safetensors')))
 pipe = AnimateDiffPipeline.from_pretrained('emilianJR/epiCRealism', motion_adapter=adapter, torch_dtype=torch.float32)
 pipe.scheduler = EulerDiscreteScheduler.from_config(pipe.scheduler.config, timestep_spacing='trailing', beta_schedule='linear')
-pipe.enable_vae_slicing()
+try:
+    pipe.vae.enable_slicing()  # Bilder einzeln entpacken - spart Arbeitsspeicher
+except Exception:
+    pass
 t1 = time.time()
 bilder = pipe(prompt=prompt, negative_prompt='text, watermark, logo, bright, cartoon', guidance_scale=1.0,
               num_inference_steps=schritte, num_frames=16, width=breite, height=hoehe,
