@@ -102,6 +102,48 @@ def suchbanner(im, sprache='de'):
     d.text((W / 2, 221), text, font=f, fill=(10, 10, 10), anchor='mm')
 
 
+FONT_UT = ImageFont.truetype(FONTDATEI, 60)
+LUECKE = 10  # Extra-Abstand zwischen Untertitel-Wörtern, damit das größer einfedernde Wort nie das Nachbarwort berührt
+SEITE = 4    # Zeilen pro Untertitel-Seite
+
+
+def untertitel(im, satz, key, k=None, basis=(245, 245, 245), pop=1.0):
+    """Wort für Wort: Positionen stehen fest, sichtbar sind die ersten k Wörter (das neueste federt etwas größer ein).
+    Lange Sätze laufen seitenweise mit der Stimme mit (je 4 Zeilen) - früher wurden sie nach 42 Zeichen abgeschnitten,
+    bei fast jeder Geschichte fehlte so die Pointe im Bild. k=None zeigt alles auf einmal (Hook, Titelbild)."""
+    d = ImageDraw.Draw(im)
+    zeilen, z = [], ''
+    for w in satz.split():
+        probe = (z + ' ' + w).strip()
+        if d.textlength(probe, font=FONT_UT) + LUECKE * (len(probe.split()) - 1) > 620 and z:
+            zeilen.append(z); z = w
+        else:
+            z = probe
+    zeilen.append(z)
+    if k is not None and len(zeilen) > SEITE:  # die Seite zeigen, auf der das gerade gesprochene Wort steht
+        n, seite = 0, (len(zeilen) - 1) // SEITE
+        for i, zl in enumerate(zeilen):
+            n += len(zl.split())
+            if n >= k:
+                seite = i // SEITE
+                break
+        k -= sum(len(zl.split()) for zl in zeilen[:seite * SEITE])
+        zeilen = zeilen[seite * SEITE:(seite + 1) * SEITE]
+    y, nr = 980 - (len(zeilen) - 1) * 36, 0
+    for zl in zeilen:
+        x = (W - d.textlength(zl, font=FONT_UT) - LUECKE * (len(zl.split()) - 1)) / 2
+        for w in zl.split():
+            nr += 1
+            if k is None or nr <= k:
+                f = GELB if w.strip('".,:!?') == key else basis
+                gross = FONT_UT
+                if k is not None and nr == k:  # federt von 68 auf 64 statt zu springen
+                    gross = popfont(68 - 4 * weich(pop))
+                d.text((x + d.textlength(w, font=FONT_UT) / 2, y), w, font=gross, fill=f, stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
+            x += d.textlength(w + ' ', font=FONT_UT) + LUECKE
+        y += 72
+
+
 def hinweise(im, t, story, such, sprache='de'):
     """Oben im Bild: erst die Schlagzeile (bis 2,6 s, höchstens 6 Wörter), danach die Hinweise (Augen, Kopfhörer)."""
     if t < 2.6:

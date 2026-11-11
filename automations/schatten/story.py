@@ -5,7 +5,7 @@ import asyncio, json, math, os, random, subprocess, sys
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from ton import tonspur, raum_zeiten
 from effekte import (W, H, rotverschiebung, weich, popfont, suchzeiten, KALT_BIS, SCHLEIFE, raum_bild, zurueckspulen,
-                     hinweise, KINO_LOOK)
+                     hinweise, untertitel, KINO_LOOK)
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
 from ki import ki_bilder_laden, ki_szene
 import kamera
@@ -293,35 +293,6 @@ def bild(s, t, lt):
     return im
 
 
-LUECKE = 10  # Extra-Abstand zwischen Untertitel-Wörtern, damit das größer einfedernde Wort nie das Nachbarwort berührt
-
-
-def untertitel(im, satz, key, k=None, basis=WEISS, pop=1.0):
-    # Wort für Wort: die Positionen stehen fest, sichtbar sind nur die ersten k Wörter (das neueste etwas größer)
-    d = ImageDraw.Draw(im)
-    zeilen, z = [], ''
-    for w in satz.split():
-        probe = (z + ' ' + w).strip()
-        if d.textlength(probe, font=FONT) + LUECKE * (len(probe.split()) - 1) > 620 and z:
-            zeilen.append(z); z = w
-        else:
-            z = probe
-    zeilen.append(z)
-    y, nr = 980 - (len(zeilen) - 1) * 36, 0
-    for zl in zeilen:
-        x = (W - d.textlength(zl, font=FONT) - LUECKE * (len(zl.split()) - 1)) / 2
-        for w in zl.split():
-            nr += 1
-            if k is None or nr <= k:
-                f = GELB if w.strip('".,:!?') == key else basis
-                gross = FONT
-                if k is not None and nr == k:  # das neueste Wort springt nicht, es federt von groß auf normal
-                    gross = popfont(68 - 4 * weich(pop))  # federt von 68 auf 64; dazu 10 px Extra-Abstand, sonst klebt es am Nachbarwort ("VORMEINER")
-                d.text((x + d.textlength(w, font=FONT) / 2, y), w, font=gross, fill=f, stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
-            x += d.textlength(w + ' ', font=FONT) + LUECKE
-        y += 72
-
-
 async def stimme(text, datei, sprecher, tempo, tonhoehe='-12Hz'):
     import edge_tts
     await edge_tts.Communicate(text, sprecher, rate=tempo, pitch=tonhoehe).save(datei)
@@ -473,7 +444,7 @@ def main():
                 k = worte if not s['sprech'] else min(worte, 1 + int(lt / takt))
                 pop = 1.0 if not s['sprech'] else min(1.0, (lt - (k - 1) * takt) / 0.12)  # neues Wort wächst weich rein
                 if s['start'] == 0:  # Hook: der ganze Satz steht sofort da - wer wischt, hat ihn schon gelesen
-                    k, pop = worte, 1.0
+                    k, pop = None, 1.0
                 untertitel(im, s['text'], s.get('gelb', ''), k, pop=pop)
             hinweise(im, t, story, such, sprache)  # Schlagzeile bis 2,6 s, danach Hinweise (Augen, Kopfhörer)
             if s.get('warnung'):
