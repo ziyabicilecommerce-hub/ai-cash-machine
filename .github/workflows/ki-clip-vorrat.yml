@@ -1,12 +1,12 @@
 name: "🎞️ KI-Clip-Vorrat (eigene Videogenerierung, postet nichts)"
 
-# Eigene Videogenerierung ohne Grafikkarte und ohne Tageslimit: der kostenlose GitHub-Rechner rechnet alle 2 Stunden
-# je Schauplatz einen kurzen KI-Clip vor (AnimateDiff-Lightning, ~12 min pro Clip) und legt ihn im Vorab-Release
-# "clip-vorrat" ab (feste Namen <ort>-<nr>.mp4, alte werden überschrieben). Der Renderer (ki.py) holt sich daraus
+# Eigene Videogenerierung ohne Grafikkarte und ohne Tageslimit: der kostenlose GitHub-Rechner rechnet jede Stunde
+# je Schauplatz zwei kurze KI-Clips vor (AnimateDiff-Lightning, ~12 min pro Clip) und legt ihn im Vorab-Release
+# "clip-vorrat" ab (24 feste Plätze <ort>-<nr>.mp4, alte werden überschrieben). Der Renderer (ki.py) holt sich daraus
 # den Einstiegs-Clip, wenn das Hugging-Face-Kontingent leer ist.
 on:
   schedule:
-    - cron: '17 */2 * * *'
+    - cron: '17 * * * *'
   workflow_dispatch:
   push:
     branches: [claude/softsware-230g7x]
@@ -36,7 +36,7 @@ jobs:
   rechnen:
     needs: vorbereiten
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -66,10 +66,12 @@ jobs:
           ORT: ${{ matrix.ort }}
         run: |
           mkdir -p out
-          # 12 Plätze pro Schauplatz, reihum überschrieben; jeder Lauf bekommt einen anderen Startwert (anderes Bild)
-          NR=$(( (GITHUB_RUN_NUMBER * ${{ matrix.stufe }} + ${{ matrix.versatz }}) % 12 ))
-          python3 scripts/ki_clip_cpu.py "$PROMPT, $STIL" out/roh.mp4 4 384 672 "$(( GITHUB_RUN_NUMBER * 10 + ${{ matrix.versatz }} ))" | tee out/zeit.txt
-          # 2 s -> 3 s strecken, Zwischenbilder rechnen (flüssig), auf Videogröße bringen
-          ffmpeg -loglevel error -y -i out/roh.mp4 -vf "setpts=1.5*PTS,minterpolate=fps=15,scale=720:1280:flags=lanczos" -c:v libx264 -crf 20 -pix_fmt yuv420p "out/$ORT-$NR.mp4"
-          gh release upload clip-vorrat "out/$ORT-$NR.mp4" -R "$GITHUB_REPOSITORY" --clobber
-          echo "- $ORT-$NR.mp4 · $(tail -1 out/zeit.txt)" | tee -a "$GITHUB_STEP_SUMMARY"
+          # 2 Clips pro Job; 24 Plätze pro Schauplatz, reihum überschrieben; jeder Clip bekommt einen anderen Startwert (anderes Bild)
+          for K in 0 1; do
+            NR=$(( (GITHUB_RUN_NUMBER * ${{ matrix.stufe }} * 2 + ${{ matrix.versatz }} * 2 + K) % 24 ))
+            python3 scripts/ki_clip_cpu.py "$PROMPT, $STIL" out/roh.mp4 4 384 672 "$(( GITHUB_RUN_NUMBER * 100 + ${{ matrix.versatz }} * 10 + K ))" | tee out/zeit.txt
+            # 2 s -> 3 s strecken, Zwischenbilder rechnen (flüssig), auf Videogröße bringen
+            ffmpeg -loglevel error -y -i out/roh.mp4 -vf "setpts=1.5*PTS,minterpolate=fps=15,scale=720:1280:flags=lanczos" -c:v libx264 -crf 20 -pix_fmt yuv420p "out/$ORT-$NR.mp4"
+            gh release upload clip-vorrat "out/$ORT-$NR.mp4" -R "$GITHUB_REPOSITORY" --clobber
+            echo "- $ORT-$NR.mp4 · $(tail -1 out/zeit.txt)" | tee -a "$GITHUB_STEP_SUMMARY"
+          done

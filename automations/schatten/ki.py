@@ -80,12 +80,12 @@ def vorrat_ort(prompt):
 
 def vorrat_clip(prompt, ziel, laden=urllib.request.urlopen, zufall=random):
     # Eigener Clip-Vorrat (Release "clip-vorrat", vom GitHub-Rechner ohne Grafikkarte vorgerechnet, kein Tageslimit):
-    # springt ein, wenn Hugging Face heute nichts mehr hergibt. Plätze <ort>-0..11.mp4, zufällig einen vorhandenen nehmen.
+    # springt ein, wenn Hugging Face heute nichts mehr hergibt. Plätze <ort>-0..23.mp4, zufällig einen vorhandenen nehmen.
     repo = os.environ.get('GITHUB_REPOSITORY')
     if not repo or os.environ.get('HORROR_KI_VORRAT', 'an').lower() in ('aus', '0', 'nein', 'false'):
         return False
     ort = vorrat_ort(prompt)
-    for nr in zufall.sample(range(12), 12):
+    for nr in zufall.sample(range(24), 24):
         try:
             with laden(f'https://github.com/{repo}/releases/download/clip-vorrat/{ort}-{nr}.mp4', timeout=60) as r:
                 daten = r.read()
