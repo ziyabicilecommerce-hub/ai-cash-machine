@@ -1,78 +1,78 @@
 {
- "stand": "2026-11-11T07:02:09.525Z",
+ "stand": "2026-11-11T17:25:46.743Z",
  "gesamt": {
-  "posts": 208,
-  "aufrufe": 33249,
-  "vorherAufrufe": 265
+  "posts": 201,
+  "aufrufe": 33623,
+  "vorherAufrufe": 1109
  },
  "konten": {
-  "@giyuuu sama": {
-   "n": 42,
-   "schnitt": 298,
-   "sehdauer": 0,
-   "vorher": null
-  },
-  "@desk.rebel": {
-   "n": 44,
-   "schnitt": 81,
-   "sehdauer": 4.4,
-   "vorher": 153
-  },
-  "@purivelle.785": {
-   "n": 41,
-   "schnitt": 55,
-   "sehdauer": 3.7,
-   "vorher": 110
-  },
   "@zyx_7851": {
-   "n": 23,
-   "schnitt": 65,
-   "sehdauer": 2.1,
-   "vorher": 2
-  },
-  "@futureflowxx": {
-   "n": 27,
-   "schnitt": 202,
-   "sehdauer": 1.6,
-   "vorher": null
+   "n": 22,
+   "schnitt": 68,
+   "sehdauer": 1.8,
+   "vorher": 4
   },
   "@futureflowx3": {
-   "n": 31,
-   "schnitt": 256,
+   "n": 30,
+   "schnitt": 286,
    "sehdauer": 2.1,
-   "vorher": null
+   "vorher": 5
+  },
+  "@futureflowxx": {
+   "n": 25,
+   "schnitt": 217,
+   "sehdauer": 1.4,
+   "vorher": 10
+  },
+  "@giyuuu sama": {
+   "n": 41,
+   "schnitt": 314,
+   "sehdauer": 0,
+   "vorher": 16
+  },
+  "@purivelle.785": {
+   "n": 40,
+   "schnitt": 54,
+   "sehdauer": 3.8,
+   "vorher": 56
+  },
+  "@desk.rebel": {
+   "n": 43,
+   "schnitt": 72,
+   "sehdauer": 4.2,
+   "vorher": 147
   }
  },
  "formate": {
+  "horror": {
+   "n": 132,
+   "schnitt": 167,
+   "sehdauer": 2.8
+  },
   "anime": {
-   "n": 9,
-   "schnitt": 9,
+   "n": 5,
+   "schnitt": 4,
    "sehdauer": 0
   },
-  "horror": {
-   "n": 130,
-   "schnitt": 168,
-   "sehdauer": 2.9
-  },
   "mythos": {
-   "n": 8,
-   "schnitt": 58,
-   "sehdauer": 4
-  },
-  "quiz": {
-   "n": 39,
-   "schnitt": 219,
-   "sehdauer": 1.4
+   "n": 7,
+   "schnitt": 61,
+   "sehdauer": 4.2
   },
   "serie": {
-   "n": 20,
-   "schnitt": 112,
-   "sehdauer": 1.8
+   "n": 17,
+   "schnitt": 131,
+   "sehdauer": 1.3
   },
   "waswaere": {
    "n": 2,
    "schnitt": 5,
    "sehdauer": 3.8
+  },
+  "quiz": {
+   "n": 38,
+   "schnitt": 233,
+   "sehdauer": 1.1
   }
  },
  "muster": {
@@ -83,12 +83,12 @@
   },
   "allein": {
    "n": 3,
-   "schnitt": 119,
-   "sehdauer": 3.2
+   "schnitt": 274,
+   "sehdauer": 3.1
   },
   "anruf": {
-   "n": 24,
-   "schnitt": 117,
+   "n": 28,
+   "schnitt": 103,
    "sehdauer": 2.6
   },
   "kamera": {
@@ -145,28 +145,38 @@
    "n": 1,
    "schnitt": 76,
    "sehdauer": 2.6
+  },
+  "zahl": {
+   "n": 1,
+   "schnitt": 34,
+   "sehdauer": 4.2
+  },
+  "traum": {
+   "n": 1,
+   "schnitt": 36,
+   "sehdauer": 4.1
   }
  },
  "zeiten": {
-  "vormittags": {
-   "n": 42,
-   "schnitt": 145,
-   "sehdauer": 2.8
-  },
-  "nachmittags": {
-   "n": 55,
-   "schnitt": 95,
-   "sehdauer": 2.3
-  },
   "abends": {
    "n": 65,
-   "schnitt": 187,
+   "schnitt": 191,
    "sehdauer": 2.3
   },
   "nachts": {
    "n": 46,
-   "schnitt": 213,
+   "schnitt": 230,
    "sehdauer": 2.4
+  },
+  "vormittags": {
+   "n": 39,
+   "schnitt": 145,
+   "sehdauer": 2.7
+  },
+  "nachmittags": {
+   "n": 51,
+   "schnitt": 99,
+   "sehdauer": 2.1
   }
  },
  "top": [
@@ -195,49 +205,49 @@
  "ab": {
   "kalt": {
    "an": {
-    "n": 35,
-    "schnitt": 173,
-    "sehdauer": 3.8
+    "n": 38,
+    "schnitt": 163,
+    "sehdauer": 3.9
    },
    "aus": {
-    "n": 34,
-    "schnitt": 223,
+    "n": 35,
+    "schnitt": 221,
     "sehdauer": 4.2
    }
   },
   "raum": {
    "an": {
-    "n": 32,
-    "schnitt": 212,
-    "sehdauer": 3.7
+    "n": 34,
+    "schnitt": 206,
+    "sehdauer": 3.8
    },
    "aus": {
-    "n": 37,
-    "schnitt": 185,
+    "n": 39,
+    "schnitt": 178,
     "sehdauer": 4.3
    }
   },
   "suchbild": {
    "an": {
-    "n": 24,
+    "n": 25,
     "schnitt": 219,
     "sehdauer": 3.7
    },
    "aus": {
-    "n": 45,
-    "schnitt": 186,
+    "n": 48,
+    "schnitt": 176,
     "sehdauer": 4.2
    }
   },
   "duhook": {
    "an": {
     "n": 13,
-    "schnitt": 64,
-    "sehdauer": 3.7
+    "schnitt": 65,
+    "sehdauer": 3.8
    },
    "aus": {
-    "n": 56,
-    "schnitt": 228,
+    "n": 60,
+    "schnitt": 218,
     "sehdauer": 4.1
    }
   },
@@ -249,38 +259,36 @@
    },
    "aus": {
     "n": 3,
-    "schnitt": 300,
+    "schnitt": 357,
     "sehdauer": 3.6
    }
   }
  },
  "schritte": [
-  "@giyuuu sama läuft am besten (Ø 298) - neue Ideen dort zuerst testen.",
+  "@giyuuu sama läuft am besten (Ø 314) - neue Ideen dort zuerst testen.",
   "Stärkstes Geschichten-Muster: „fremd“ (Ø 345) - der Skript-Bot nimmt es automatisch öfter.",
-  "Beste Tageszeit: nachts (Ø 213).",
-  "Ø Sehdauer nur 2.4 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
-  "A/B-Test 3D-Ton: mit 3.7 s, ohne 4.3 s Sehdauer - bringt nichts, könnte weg.",
+  "Beste Tageszeit: nachts (Ø 230).",
+  "Ø Sehdauer nur 2.3 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
+  "A/B-Test 3D-Ton: mit 3.8 s, ohne 4.3 s Sehdauer - bringt nichts, könnte weg.",
   "A/B-Test Versteckte Augen: mit 3.7 s, ohne 4.2 s Sehdauer - bringt nichts, könnte weg.",
-  "Sprach-Test YouTube: Deutsch Ø 287 (15) · Englisch Ø 452 (18) - Englisch gewinnt, bekommt jetzt 85 %.",
-  "A/B-Test YouTube kalt: mit Ø 355, ohne Ø 264 Aufrufe - wirkt, dort meist an.",
-  "A/B-Test YouTube raum: mit Ø 239, ohne Ø 345 Aufrufe - bremst, dort meist aus.",
-  "A/B-Test YouTube duhook: mit Ø 438, ohne Ø 266 Aufrufe - wirkt, dort meist an."
+  "Sprach-Test YouTube: Deutsch Ø 286 (15) · Englisch Ø 408 (21) - noch kein klarer Sieger.",
+  "A/B-Test YouTube raum: mit Ø 223, ohne Ø 328 Aufrufe - bremst, dort meist aus."
  ],
  "sprachTest": {
   "de": {
    "n": 15,
-   "schnitt": 287
+   "schnitt": 286
   },
   "en": {
-   "n": 18,
-   "schnitt": 452
+   "n": 21,
+   "schnitt": 408
   }
  },
  "sprachTests": {
   "desk.rebel": {
    "de": {
-    "n": 39,
-    "schnitt": 92
+    "n": 36,
+    "schnitt": 86
    },
    "en": {
     "n": 0,
@@ -291,42 +299,42 @@
  "abYT": {
   "kalt": {
    "an": {
-    "n": 12,
-    "schnitt": 355
+    "n": 14,
+    "schnitt": 313
    },
    "aus": {
-    "n": 16,
-    "schnitt": 264
+    "n": 17,
+    "schnitt": 267
    }
   },
   "raum": {
    "an": {
-    "n": 11,
-    "schnitt": 239
+    "n": 12,
+    "schnitt": 223
    },
    "aus": {
-    "n": 17,
-    "schnitt": 345
+    "n": 19,
+    "schnitt": 328
    }
   },
   "suchbild": {
    "an": {
-    "n": 13,
-    "schnitt": 330
+    "n": 15,
+    "schnitt": 314
    },
    "aus": {
-    "n": 15,
-    "schnitt": 280
+    "n": 16,
+    "schnitt": 263
    }
   },
   "duhook": {
    "an": {
-    "n": 6,
-    "schnitt": 438
+    "n": 8,
+    "schnitt": 344
    },
    "aus": {
-    "n": 22,
-    "schnitt": 266
+    "n": 23,
+    "schnitt": 268
    }
   }
  },
