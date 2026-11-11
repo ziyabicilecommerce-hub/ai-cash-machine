@@ -1,68 +1,68 @@
 {
- "stand": "2026-11-10T23:41:10.116Z",
+ "stand": "2026-11-11T07:02:09.525Z",
  "gesamt": {
-  "posts": 205,
-  "aufrufe": 32348,
-  "vorherAufrufe": null
+  "posts": 208,
+  "aufrufe": 33249,
+  "vorherAufrufe": 265
  },
  "konten": {
-  "@desk.rebel": {
-   "n": 44,
-   "schnitt": 84,
-   "sehdauer": 4.5,
-   "vorher": null
-  },
-  "@purivelle.785": {
-   "n": 41,
-   "schnitt": 58,
-   "sehdauer": 3.8,
-   "vorher": null
-  },
-  "@zyx_7851": {
-   "n": 23,
-   "schnitt": 54,
-   "sehdauer": 2,
-   "vorher": null
-  },
   "@giyuuu sama": {
-   "n": 41,
-   "schnitt": 301,
+   "n": 42,
+   "schnitt": 298,
    "sehdauer": 0,
    "vorher": null
   },
+  "@desk.rebel": {
+   "n": 44,
+   "schnitt": 81,
+   "sehdauer": 4.4,
+   "vorher": 153
+  },
+  "@purivelle.785": {
+   "n": 41,
+   "schnitt": 55,
+   "sehdauer": 3.7,
+   "vorher": 110
+  },
+  "@zyx_7851": {
+   "n": 23,
+   "schnitt": 65,
+   "sehdauer": 2.1,
+   "vorher": 2
+  },
   "@futureflowxx": {
-   "n": 26,
-   "schnitt": 192,
+   "n": 27,
+   "schnitt": 202,
    "sehdauer": 1.6,
    "vorher": null
   },
   "@futureflowx3": {
-   "n": 30,
+   "n": 31,
    "schnitt": 256,
    "sehdauer": 2.1,
    "vorher": null
   }
  },
  "formate": {
-  "horror": {
-   "n": 126,
-   "schnitt": 167,
-   "sehdauer": 2.9
-  },
-  "mythos": {
-   "n": 9,
-   "schnitt": 63,
-   "sehdauer": 4.1
-  },
-  "quiz": {
-   "n": 39,
-   "schnitt": 215,
-   "sehdauer": 1.4
-  },
   "anime": {
    "n": 9,
    "schnitt": 9,
    "sehdauer": 0
+  },
+  "horror": {
+   "n": 130,
+   "schnitt": 168,
+   "sehdauer": 2.9
+  },
+  "mythos": {
+   "n": 8,
+   "schnitt": 58,
+   "sehdauer": 4
+  },
+  "quiz": {
+   "n": 39,
+   "schnitt": 219,
+   "sehdauer": 1.4
   },
   "serie": {
    "n": 20,
@@ -82,13 +82,13 @@
    "sehdauer": 2.2
   },
   "allein": {
-   "n": 2,
-   "schnitt": 51,
+   "n": 3,
+   "schnitt": 119,
    "sehdauer": 3.2
   },
   "anruf": {
-   "n": 22,
-   "schnitt": 126,
+   "n": 24,
+   "schnitt": 117,
    "sehdauer": 2.6
   },
   "kamera": {
@@ -148,15 +148,10 @@
   }
  },
  "zeiten": {
-  "nachts": {
-   "n": 42,
-   "schnitt": 216,
-   "sehdauer": 2.5
-  },
   "vormittags": {
-   "n": 43,
-   "schnitt": 141,
-   "sehdauer": 2.7
+   "n": 42,
+   "schnitt": 145,
+   "sehdauer": 2.8
   },
   "nachmittags": {
    "n": 55,
@@ -165,8 +160,13 @@
   },
   "abends": {
    "n": 65,
-   "schnitt": 185,
+   "schnitt": 187,
    "sehdauer": 2.3
+  },
+  "nachts": {
+   "n": 46,
+   "schnitt": 213,
+   "sehdauer": 2.4
   }
  },
  "top": [
@@ -195,25 +195,25 @@
  "ab": {
   "kalt": {
    "an": {
-    "n": 32,
-    "schnitt": 181,
-    "sehdauer": 3.9
+    "n": 35,
+    "schnitt": 173,
+    "sehdauer": 3.8
    },
    "aus": {
     "n": 34,
-    "schnitt": 217,
+    "schnitt": 223,
     "sehdauer": 4.2
    }
   },
   "raum": {
    "an": {
-    "n": 30,
-    "schnitt": 218,
-    "sehdauer": 3.8
+    "n": 32,
+    "schnitt": 212,
+    "sehdauer": 3.7
    },
    "aus": {
-    "n": 36,
-    "schnitt": 184,
+    "n": 37,
+    "schnitt": 185,
     "sehdauer": 4.3
    }
   },
@@ -224,20 +224,20 @@
     "sehdauer": 3.7
    },
    "aus": {
-    "n": 42,
-    "schnitt": 188,
+    "n": 45,
+    "schnitt": 186,
     "sehdauer": 4.2
    }
   },
   "duhook": {
    "an": {
-    "n": 12,
-    "schnitt": 67,
+    "n": 13,
+    "schnitt": 64,
     "sehdauer": 3.7
    },
    "aus": {
-    "n": 54,
-    "schnitt": 229,
+    "n": 56,
+    "schnitt": 228,
     "sehdauer": 4.1
    }
   },
@@ -248,23 +248,23 @@
     "sehdauer": 0
    },
    "aus": {
-    "n": 2,
-    "schnitt": 334,
-    "sehdauer": 3.1
+    "n": 3,
+    "schnitt": 300,
+    "sehdauer": 3.6
    }
   }
  },
  "schritte": [
-  "@giyuuu sama läuft am besten (Ø 301) - neue Ideen dort zuerst testen.",
+  "@giyuuu sama läuft am besten (Ø 298) - neue Ideen dort zuerst testen.",
   "Stärkstes Geschichten-Muster: „fremd“ (Ø 345) - der Skript-Bot nimmt es automatisch öfter.",
-  "Beste Tageszeit: nachts (Ø 216).",
+  "Beste Tageszeit: nachts (Ø 213).",
   "Ø Sehdauer nur 2.4 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
-  "A/B-Test 3D-Ton: mit 3.8 s, ohne 4.3 s Sehdauer - bringt nichts, könnte weg.",
+  "A/B-Test 3D-Ton: mit 3.7 s, ohne 4.3 s Sehdauer - bringt nichts, könnte weg.",
   "A/B-Test Versteckte Augen: mit 3.7 s, ohne 4.2 s Sehdauer - bringt nichts, könnte weg.",
-  "Sprach-Test YouTube: Deutsch Ø 287 (15) · Englisch Ø 468 (17) - Englisch gewinnt, bekommt jetzt 85 %.",
-  "A/B-Test YouTube kalt: mit Ø 355, ohne Ø 271 Aufrufe - wirkt, dort meist an.",
-  "A/B-Test YouTube raum: mit Ø 239, ohne Ø 356 Aufrufe - bremst, dort meist aus.",
-  "A/B-Test YouTube duhook: mit Ø 438, ohne Ø 271 Aufrufe - wirkt, dort meist an."
+  "Sprach-Test YouTube: Deutsch Ø 287 (15) · Englisch Ø 452 (18) - Englisch gewinnt, bekommt jetzt 85 %.",
+  "A/B-Test YouTube kalt: mit Ø 355, ohne Ø 264 Aufrufe - wirkt, dort meist an.",
+  "A/B-Test YouTube raum: mit Ø 239, ohne Ø 345 Aufrufe - bremst, dort meist aus.",
+  "A/B-Test YouTube duhook: mit Ø 438, ohne Ø 266 Aufrufe - wirkt, dort meist an."
  ],
  "sprachTest": {
   "de": {
@@ -272,15 +272,15 @@
    "schnitt": 287
   },
   "en": {
-   "n": 17,
-   "schnitt": 468
+   "n": 18,
+   "schnitt": 452
   }
  },
  "sprachTests": {
   "desk.rebel": {
    "de": {
     "n": 39,
-    "schnitt": 95
+    "schnitt": 92
    },
    "en": {
     "n": 0,
@@ -295,8 +295,8 @@
     "schnitt": 355
    },
    "aus": {
-    "n": 15,
-    "schnitt": 271
+    "n": 16,
+    "schnitt": 264
    }
   },
   "raum": {
@@ -305,14 +305,14 @@
     "schnitt": 239
    },
    "aus": {
-    "n": 16,
-    "schnitt": 356
+    "n": 17,
+    "schnitt": 345
    }
   },
   "suchbild": {
    "an": {
-    "n": 12,
-    "schnitt": 344
+    "n": 13,
+    "schnitt": 330
    },
    "aus": {
     "n": 15,
@@ -325,8 +325,8 @@
     "schnitt": 438
    },
    "aus": {
-    "n": 21,
-    "schnitt": 271
+    "n": 22,
+    "schnitt": 266
    }
   }
  },
@@ -336,7 +336,7 @@
    "tage": 7
   },
   "en": {
-   "rest": 84,
+   "rest": 83,
    "tage": 8
   }
  }
