@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-11T16:29:24.462Z",
+ "stand": "2026-11-11T16:32:27.040Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -3606,23 +3606,31 @@
   "ware": [],
   "top": [
    {
+    "titel": "lokstedt",
+    "menge": "2000+"
+   },
+   {
+    "titel": "philipp amthor",
+    "menge": "200+"
+   },
+   {
     "titel": "wir in bayern",
     "menge": "200+"
    },
    {
     "titel": "thüringen",
-    "menge": "500+"
+    "menge": "1000+"
    },
    {
     "titel": "gera",
     "menge": "200+"
    },
    {
-    "titel": "b73",
+    "titel": "microsoft update",
     "menge": "200+"
    },
    {
-    "titel": "microsoft update",
+    "titel": "b73",
     "menge": "200+"
    },
    {
@@ -3635,14 +3643,6 @@
    },
    {
     "titel": "irmelin krause",
-    "menge": "1000+"
-   },
-   {
-    "titel": "taylor fritz",
-    "menge": "1000+"
-   },
-   {
-    "titel": "nachzahlung",
     "menge": "1000+"
    }
   ]
@@ -5132,5 +5132,7 @@
   "tage": [],
   "stunden": []
  },
- "fehler": []
+ "fehler": [
+  "Beobachtungsliste: 503 https://api.github.com/repos/ziyabicilecommerce-hub/ai-cash-machine/issues?state=open&per_page=100"
+ ]
 }
