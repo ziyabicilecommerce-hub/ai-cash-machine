@@ -1,6 +1,7 @@
 # KI-Bilder für die Schatten-Story: kostenlos über Pollinations/FLUX, mit Kamerafahrt; abschaltbar per "ki_bilder": false.
 import os, random, subprocess, sys, time, urllib.parse, urllib.request
 from PIL import Image, ImageOps
+import tiefe
 
 W, H = 720, 1280
 NACHT = (2, 3, 8)
@@ -32,6 +33,7 @@ def ki_bilder_laden(story, ordner):
                 print(f'KI-Bild {i} Versuch {versuch + 1}: {e}')
                 time.sleep(30)
     ki_clip_laden(story, ordner)
+    tiefe.tiefe_laden(story)
 
 
 CLIP_FPS = 15  # Einzelbilder des KI-Clips pro Sekunde (spart Speicher; der Renderer zeigt sie bei 60 fps je 4x)
@@ -109,7 +111,10 @@ def ki_szene(s, lt):
     cw, ch = int(W / zoom), int(H / zoom)
     richtung = (hash(s.get('ki', '')) % 3) - 1
     x0 = int((W - cw) / 2 + richtung * (W - cw) / 2 * (p - 0.5))
-    im = bild_.crop((x0, (H - ch) // 2, x0 + cw, (H - ch) // 2 + ch)).resize((W, H), Image.BILINEAR)
+    if not clip and s.get('_tiefe') is not None:
+        im = tiefe.fahrt(s, p, lt, richtung)  # 3D-Kamerafahrt: Nahes bewegt sich schneller als Fernes
+    else:
+        im = bild_.crop((x0, (H - ch) // 2, x0 + cw, (H - ch) // 2 + ch)).resize((W, H), Image.BILINEAR)
     # Einstieg (10.11.): das erste Bild war schwarz und die Szene blitzte alle 0,4 s dunkel - genau in den 2 Sekunden,
     # in denen die Leute wegwischen. Jetzt: die ersten 1,5 s immer Bild; mit echtem KI-Clip gar kein Schwarz-Blitzen.
     if s['art'] == 'blitz' and not clip and lt >= 1.5 and int(lt * 10) % 4 == 0:
