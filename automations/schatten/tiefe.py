@@ -92,12 +92,16 @@ def gestalt_malen(bild, t, fern, naehe):
     for s_, lang in ((-1, 0.60), (1, 0.64)):             # Arme hängen bis unters Knie, einer etwas länger
         d.line(((mx + s_ * sch * 0.95, sy + k), (mx + s_ * sch * 1.22, oben + hoehe * 0.42), (mx + s_ * sch * 1.12, oben + hoehe * lang)), fill=255, width=arm, joint='curve')
     d.ellipse((mx - sch * 1.5, fuss_y - hoehe * 0.02, mx + sch * 1.5, fuss_y + hoehe * 0.035), fill=150)  # Schatten am Boden
+    hof = np.asarray(m.filter(ImageFilter.GaussianBlur(max(hoehe * 0.07, 4))), dtype=np.float32) / 255  # schwacher kalter Lichthof
     m = np.asarray(m.filter(ImageFilter.GaussianBlur(max(hoehe * 0.016, 1.5))), dtype=np.float32) / 255
     zt = float(t[min(int(fy), h - 1), min(int(fx), w - 1)])
     z = zt + (0.62 - zt) * naehe + 0.05                  # Tiefe der Gestalt
     m = m * np.clip((z - t) / 0.06 + 1, 0, 1)            # nähere Bildteile verdecken sie (weicher Übergang)
     m = np.clip(m * (0.84 + 0.16 * naehe) * 1.15, 0, 0.97)[..., None]           # fern etwas durchscheinend (Dunst), nah satt schwarz
-    return (bild * (1 - m) + np.array((5, 5, 8), dtype=np.float32) * m).astype(np.uint8)
+    # Lichthof zuerst: in sehr dunklen Bildern verschwamm die Gestalt mit dem Boden - ein Hauch Gegenlicht hebt den Umriss ab
+    hof = (hof * np.clip((z - t) / 0.06 + 1, 0, 1) * 0.30)[..., None]
+    bild = bild * (1 - hof) + np.array((96, 108, 128), dtype=np.float32) * hof
+    return (bild * (1 - m) + np.array((3, 3, 6), dtype=np.float32) * m).astype(np.uint8)
 
 
 def fahrt(s, p, lt, richtung=0):
