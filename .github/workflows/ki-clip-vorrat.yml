@@ -56,8 +56,8 @@ jobs:
         with:
           python-version: '3.12'
       - name: Werkzeuge (nur Prozessor-Version von PyTorch)
+        # ffmpeg kommt aus dem pip-Paket imageio-ffmpeg: die Ubuntu-Paketserver fielen am 11.11. aus und der Lauf hing 40 min
         run: |
-          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg >/dev/null
           pip install -q torch --index-url https://download.pytorch.org/whl/cpu
           pip install -q diffusers transformers accelerate safetensors huggingface_hub imageio imageio-ffmpeg opencv-python-headless
       - name: Clip rechnen und ablegen
@@ -66,12 +66,13 @@ jobs:
           ORT: ${{ matrix.ort }}
         run: |
           mkdir -p out
+          FFMPEG=$(python3 -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())")
           # 2 Clips pro Job; 24 Plätze pro Schauplatz, reihum überschrieben; jeder Clip bekommt einen anderen Startwert (anderes Bild)
           for K in 0 1; do
             NR=$(( (GITHUB_RUN_NUMBER * ${{ matrix.stufe }} * 2 + ${{ matrix.versatz }} * 2 + K) % 24 ))
             python3 scripts/ki_clip_cpu.py "$PROMPT, $STIL" out/roh.mp4 4 384 672 "$(( GITHUB_RUN_NUMBER * 100 + ${{ matrix.versatz }} * 10 + K ))" | tee out/zeit.txt
             # 2 s -> 3 s strecken, Zwischenbilder rechnen (flüssig), auf Videogröße bringen
-            ffmpeg -loglevel error -y -i out/roh.mp4 -vf "setpts=1.5*PTS,minterpolate=fps=15,scale=720:1280:flags=lanczos" -c:v libx264 -crf 20 -pix_fmt yuv420p "out/$ORT-$NR.mp4"
+            "$FFMPEG" -loglevel error -y -i out/roh.mp4 -vf "setpts=1.5*PTS,minterpolate=fps=15,scale=720:1280:flags=lanczos" -c:v libx264 -crf 20 -pix_fmt yuv420p "out/$ORT-$NR.mp4"
             gh release upload clip-vorrat "out/$ORT-$NR.mp4" -R "$GITHUB_REPOSITORY" --clobber
             echo "- $ORT-$NR.mp4 · $(tail -1 out/zeit.txt)" | tee -a "$GITHUB_STEP_SUMMARY"
           done

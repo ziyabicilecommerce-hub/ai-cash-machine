@@ -25,14 +25,14 @@ jobs:
           python-version: '3.12'
       - name: Werkzeuge
         run: |
-          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg >/dev/null
           START=$(date +%s)
           pip install -q torch --index-url https://download.pytorch.org/whl/cpu
-          pip install -q transformers pillow numpy opencv-python-headless
+          pip install -q transformers pillow numpy opencv-python-headless imageio-ffmpeg
           echo "Installation: $(( $(date +%s) - START )) s" | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Bild holen und 3D-Fahrt rendern
         run: |
-          mkdir -p out && cd automations/schatten
+          mkdir -p out bin && ln -s "$(python3 -c 'import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())')" bin/ffmpeg && export PATH="$PWD/bin:$PATH"
+          cd automations/schatten
           for i in 1 2 3 4 5 6; do
             curl -sSL -A 'Mozilla/5.0' --max-time 180 -o ../../out/bild.jpg "https://image.pollinations.ai/prompt/dark%20apartment%20hallway%20at%20night%2C%20bedroom%20door%20slightly%20open%2C%20dim%20light%2C%20a%20tall%20dark%20silhouette%2C%20found%20footage%2C%20grainy%20realistic%20photo%2C%20cinematic%20horror?width=720&height=1280&model=flux&nologo=true&seed=11" && file ../../out/bild.jpg | grep -q image && break
             sleep 30
