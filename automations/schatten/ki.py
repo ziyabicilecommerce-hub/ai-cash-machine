@@ -1,5 +1,5 @@
 # KI-Bilder für die Schatten-Story: kostenlos über Pollinations/FLUX, mit Kamerafahrt; abschaltbar per "ki_bilder": false.
-import os, subprocess, sys, time, urllib.parse, urllib.request
+import os, random, subprocess, sys, time, urllib.parse, urllib.request
 from PIL import Image, ImageOps
 
 W, H = 720, 1280
@@ -40,7 +40,7 @@ CLIP_FPS = 15  # Einzelbilder des KI-Clips pro Sekunde (spart Speicher; der Rend
 def ki_clip_laden(story, ordner):
     # Einstieg (erste KI-Szene) als ECHTER bewegter KI-Clip: kostenlose Hugging-Face-GPUs (Wan 2.2 / LTX, Bild-zu-Video,
     # scripts/ki_clip.py). Nur ein Clip pro Video - genau dort, wo die Leute sonst nach 2 s wegwischen.
-    # Tageskontingent leer, Space besetzt oder kein gradio_client -> Standbild mit Kamerafahrt wie bisher.
+    # Tageskontingent leer, Space besetzt oder kein gradio_client -> Clip aus dem eigenen Vorrat, sonst Standbild mit Kamerafahrt.
     if os.environ.get('STUMM') == '1' or os.environ.get('HORROR_KI_CLIP', 'an').lower() in ('aus', '0', 'nein', 'false'):
         return
     s = next((x for x in story['szenen'] if x.get('_kibild') is not None), None)
@@ -60,7 +60,7 @@ def ki_clip_laden(story, ordner):
         if r.returncode == 0 and os.path.exists(ziel):
             break
         print(f'KI-Clip {modell}: {"Kontingent für heute leer" if r.returncode == 3 else (r.stderr or r.stdout).strip()[-160:]}')
-    if not os.path.exists(ziel):
+    if not os.path.exists(ziel) and not vorrat_clip(s['ki'], ziel):
         return
     roh = subprocess.run(['ffmpeg', '-loglevel', 'error', '-i', ziel, '-vf',
                           f'scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={CLIP_FPS}',
@@ -68,6 +68,35 @@ def ki_clip_laden(story, ordner):
     groesse = W * H * 3
     s['_kiclip'] = [Image.frombytes('RGB', (W, H), roh[i:i + groesse]) for i in range(0, len(roh) - groesse + 1, groesse)][:CLIP_FPS * 6]
     print(f'KI-Clip ok: {len(s["_kiclip"])} Bilder ({len(s["_kiclip"]) / CLIP_FPS:.1f} s) für Szene „{s["art"]}“')
+
+
+VORRAT_ORTE = (('train', 'zug'), ('forest', 'wald'), ('elevator', 'aufzug'), ('airplane', 'flugzeug'))
+
+
+def vorrat_ort(prompt):
+    # Schauplatz aus dem Bild-Prompt lesen (videobot.mjs KI_ORT); alles andere spielt im Haus
+    return next((ort for wort, ort in VORRAT_ORTE if wort in prompt.lower()), 'haus')
+
+
+def vorrat_clip(prompt, ziel, laden=urllib.request.urlopen, zufall=random):
+    # Eigener Clip-Vorrat (Release "clip-vorrat", vom GitHub-Rechner ohne Grafikkarte vorgerechnet, kein Tageslimit):
+    # springt ein, wenn Hugging Face heute nichts mehr hergibt. Plätze <ort>-0..11.mp4, zufällig einen vorhandenen nehmen.
+    repo = os.environ.get('GITHUB_REPOSITORY')
+    if not repo or os.environ.get('HORROR_KI_VORRAT', 'an').lower() in ('aus', '0', 'nein', 'false'):
+        return False
+    ort = vorrat_ort(prompt)
+    for nr in zufall.sample(range(12), 12):
+        try:
+            with laden(f'https://github.com/{repo}/releases/download/clip-vorrat/{ort}-{nr}.mp4', timeout=60) as r:
+                daten = r.read()
+            if len(daten) > 20000:
+                open(ziel, 'wb').write(daten)
+                print(f'KI-Clip aus dem eigenen Vorrat: {ort}-{nr}.mp4')
+                return True
+        except Exception:
+            continue  # Platz noch leer
+    print(f'KI-Clip: Vorrat für „{ort}“ noch leer')
+    return False
 
 
 def ki_szene(s, lt):

@@ -1,0 +1,75 @@
+name: "🎞️ KI-Clip-Vorrat (eigene Videogenerierung, postet nichts)"
+
+# Eigene Videogenerierung ohne Grafikkarte und ohne Tageslimit: der kostenlose GitHub-Rechner rechnet alle 2 Stunden
+# je Schauplatz einen kurzen KI-Clip vor (AnimateDiff-Lightning, ~12 min pro Clip) und legt ihn im Vorab-Release
+# "clip-vorrat" ab (feste Namen <ort>-<nr>.mp4, alte werden überschrieben). Der Renderer (ki.py) holt sich daraus
+# den Einstiegs-Clip, wenn das Hugging-Face-Kontingent leer ist.
+on:
+  schedule:
+    - cron: '17 */2 * * *'
+  workflow_dispatch:
+  push:
+    branches: [claude/softsware-230g7x]
+    paths: ['scripts/ki_clip_cpu.py', '.github/workflows/ki-clip-vorrat.yml']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ki-clip-vorrat
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  STIL: 'slow creeping camera push-in, flickering light, found footage, grainy, low light, cinematic horror'
+
+jobs:
+  vorbereiten:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Vorrats-Release anlegen (falls es fehlt)
+        run: |
+          gh release view clip-vorrat -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 || \
+            gh release create clip-vorrat -R "$GITHUB_REPOSITORY" --prerelease --title "KI-Clip-Vorrat" \
+              --notes "Vorgerechnete KI-Clips (nur Prozessor) für den Einstieg der Horror-Videos. Wird laufend überschrieben."
+
+  rechnen:
+    needs: vorbereiten
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # "haus" kommt in den meisten Geschichten vor -> zwei Plätze pro Lauf (stufe 2), die anderen einen
+          - { ort: haus, versatz: 0, stufe: 2, prompt: 'dark apartment hallway at night, bedroom door slowly opening, a tall shadow figure standing at the end of the hallway' }
+          - { ort: haus, versatz: 1, stufe: 2, prompt: 'dark bedroom at night seen from the bed, closet door slowly opening by itself, a pale hand on the door' }
+          - { ort: wald, versatz: 0, stufe: 1, prompt: 'dark pine forest at night, fog drifting, weak flashlight beam, a tall silhouette moving between the trees' }
+          - { ort: zug, versatz: 0, stufe: 1, prompt: 'empty night train carriage interior, flickering ceiling lights, a dark figure sitting motionless at the far end' }
+          - { ort: aufzug, versatz: 0, stufe: 1, prompt: 'old narrow elevator interior at night, doors slowly opening onto a pitch black corridor, a shadow standing there' }
+          - { ort: flugzeug, versatz: 0, stufe: 1, prompt: 'dark airplane cabin at night, rows of empty seats, a silhouette slowly standing up in the last row' }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Werkzeuge (nur Prozessor-Version von PyTorch)
+        run: |
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg >/dev/null
+          pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -q diffusers transformers accelerate safetensors huggingface_hub imageio imageio-ffmpeg opencv-python-headless
+      - name: Clip rechnen und ablegen
+        env:
+          PROMPT: ${{ matrix.prompt }}
+          ORT: ${{ matrix.ort }}
+        run: |
+          mkdir -p out
+          # 12 Plätze pro Schauplatz, reihum überschrieben; jeder Lauf bekommt einen anderen Startwert (anderes Bild)
+          NR=$(( (GITHUB_RUN_NUMBER * ${{ matrix.stufe }} + ${{ matrix.versatz }}) % 12 ))
+          python3 scripts/ki_clip_cpu.py "$PROMPT, $STIL" out/roh.mp4 4 384 672 "$(( GITHUB_RUN_NUMBER * 10 + ${{ matrix.versatz }} ))" | tee out/zeit.txt
+          # 2 s -> 3 s strecken, Zwischenbilder rechnen (flüssig), auf Videogröße bringen
+          ffmpeg -loglevel error -y -i out/roh.mp4 -vf "setpts=1.5*PTS,minterpolate=fps=15,scale=720:1280:flags=lanczos" -c:v libx264 -crf 20 -pix_fmt yuv420p "out/$ORT-$NR.mp4"
+          gh release upload clip-vorrat "out/$ORT-$NR.mp4" -R "$GITHUB_REPOSITORY" --clobber
+          echo "- $ORT-$NR.mp4 · $(tail -1 out/zeit.txt)" | tee -a "$GITHUB_STEP_SUMMARY"
