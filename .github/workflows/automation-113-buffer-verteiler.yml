@@ -64,6 +64,8 @@ jobs:
         run: |
           sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
           pip install -q pillow edge-tts gradio_client
+          # 3D-Kamerafahrt (tiefe.py): Tiefen-Modell auf dem Prozessor. Klappt die Installation nicht, bleibt die flache Kamerafahrt.
+          (pip install -q torch --index-url https://download.pytorch.org/whl/cpu && pip install -q transformers numpy opencv-python-headless) || echo "3D-Kamera: Installation fehlgeschlagen - flache Kamerafahrt"
           echo '{}' > out/horror-urls.json
           for K in $KANAELE; do
             SLUG=$(jq -r '._slug' "out/folge-$K.json")
