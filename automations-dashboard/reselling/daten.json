@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-11T18:39:18.290Z",
+ "stand": "2026-11-11T18:42:20.689Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -194,7 +194,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-11T18:26:39.856Z",
+  "stand": "2026-11-11T18:42:24.837Z",
   "filialen": 148,
   "produkte": [
    {
@@ -507,7 +507,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Kriftel",
@@ -745,7 +745,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 4
+      "menge": 5
      },
      {
       "name": "dm Frankfurt am Main",
@@ -3731,6 +3731,10 @@
   "ware": [],
   "top": [
    {
+    "titel": "mainz",
+    "menge": "500+"
+   },
+   {
     "titel": "forsthaus rampensau",
     "menge": "200+"
    },
@@ -3748,14 +3752,10 @@
    },
    {
     "titel": "chemnitz – napoli basket",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "casper ruud",
-    "menge": "200+"
-   },
-   {
-    "titel": "christina applegate",
     "menge": "200+"
    },
    {
@@ -3767,7 +3767,7 @@
     "menge": "200+"
    },
    {
-    "titel": "presseportal",
+    "titel": "christina applegate",
     "menge": "200+"
    }
   ]
@@ -3776,10 +3776,10 @@
   "treffer": [
    {
     "titel": "Carhartt WIP Harlem Cap",
-    "preis": 27.99,
+    "preis": 33.99,
     "verfuegbar": true,
-    "url": "https://afew-store.com/products/carhartt-wip-harlem-cap-wall-white",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/carhartt-wip-harlem-cap-wall-white-i037067.11dxx-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1787226446",
+    "url": "https://afew-store.com/products/carhartt-wip-harlem-cap-amarone-white",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/carhartt-wip-harlem-cap-amarone-white-i037067.3yaxx-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1787226463",
     "laden": "afew-store.com",
     "begriff": "cap"
    },
@@ -4108,15 +4108,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "adidas Originals SAMBA OG",
-    "preis": 95.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-wonalu-owhite-hirblu",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-wonalu-owhite-hirblu-kk0008-footwear_20_3E_20sneaker.jpg?v=1791796528",
-    "laden": "afew-store.com",
-    "begriff": "samba"
-   },
-   {
     "titel": "Samba OG",
     "preis": 96,
     "verfuegbar": true,
@@ -4295,6 +4286,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/ouP9r5e4mLueXBpBtyk8-U509BA-New-Balance-509-Bisque-os-1.jpg?v=1767104038",
     "laden": "asphaltgold.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 117.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-gretwo-owhite-gum4",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-gretwo-owhite-gum4-kk3274-footwear_20_3E_20sneaker.jpg?v=1782114325",
+    "laden": "afew-store.com",
+    "begriff": "samba"
    },
    {
     "titel": "M1906RER",
@@ -4747,6 +4747,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "ASICS GEL-NYC - Khaki / Pure Silver",
+    "preis": 160,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a739-302",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A739_302_SR_RT_GLB.jpg?v=1785944792",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "Women's Air Jordan 4 Retro \"Iced Carmine\"",
     "preis": 168,
     "verfuegbar": true,
@@ -4798,15 +4807,6 @@
     "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-kayano-14-1203a537-002",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A537-002_01.jpg?v=1780653193",
     "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "ASICS Gel Kayano 14 - Carrier Grey / Black",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-026",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A537_026_SR_RT_GLB.jpg?v=1790256109",
-    "laden": "kith.com",
     "begriff": "asics"
    },
    {
