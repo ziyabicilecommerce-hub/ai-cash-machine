@@ -28,7 +28,8 @@ function kurz(s, max = 42) {
   return `${t.slice(0, max).replace(/\s+\S*$/, '')} …`;
 }
 const gelbVon = (t) => String(t).replace(/[^A-ZÄÖÜß0-9 ]/g, ' ').split(/\s+/).filter((w) => w.length > 3).sort((a, b) => b.length - a.length)[0] || '';
-const zeile = (s, extra = {}, max = 42) => { const text = kurz(s, max); return { sprich: satz(s), text, gelb: gelbVon(text), pause: 0.15, ...extra }; };
+// max 140 (11.11.): der ganze Satz steht im Untertitel (story.py blättert lange Sätze seitenweise) - mit 42 fehlte bei 199 von 217 Geschichten die Pointe
+const zeile = (s, extra = {}, max = 140) => { const text = kurz(s, max); return { sprich: satz(s), text, gelb: gelbVon(text), pause: 0.15, ...extra }; };
 
 // Skript prüfen - kommt aus einem öffentlichen Issue, also streng begrenzen
 export function pruefen(skript) {
@@ -76,7 +77,7 @@ export function baueFolge(skript) {
   const kurz_ = !!skript.kurz;
   const alle = skript.saetze.map((x) => satz(x)).filter(Boolean);
   const saetze = kurz_ ? kuerzen(alle) : alle;
-  const szenen = [{ art: 'blitz', ...zeile(skript.hook, { schreck: true, angst: 0.85, pause: 0.1 }, 80) }];  // Hook ganz zeigen - die Pointe steht oft am Ende
+  const szenen = [{ art: 'blitz', ...zeile(skript.hook, { schreck: true, angst: 0.85, pause: 0.1 }) }];  // Hook ganz zeigen - die Pointe steht oft am Ende
   saetze.forEach((s, i) => {
     const letzte = i === saetze.length - 1, anteil = (i + 1) / saetze.length;
     if (letzte) { szenen.push({ art: 'dunkel', ...zeile(s, { dauer: kurz_ ? 3 : 4.4, ...(skript.monster ? { monster: satz(skript.monster, 80), monster_text: kurz(skript.monster) } : {}) }) }); return; }

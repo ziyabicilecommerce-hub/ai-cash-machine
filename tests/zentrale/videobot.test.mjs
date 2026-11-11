@@ -15,7 +15,7 @@ test('alle fertigen Skripte aus der App ergeben eine gültige Folge', () => {
     assert.deepEqual(f.szenen.slice(-3).map((x) => x.art), ['fratze', 'ende', 'teil2']);
     assert.ok(f.szenen.some((x) => x.art === 'dunkel'));
     if (s.nachricht) assert.equal(f.szenen.find((x) => x.art === 'nachricht').nachricht, s.nachricht);
-    assert.ok(f.szenen.slice(1).every((x) => !x.text || x.text.length <= 44), 'Bildschirmtext kurz');
+    assert.ok(f.szenen.slice(1).every((x) => !x.text || x.text.length <= 142 && !x.text.endsWith('…')), 'Bildschirmtext vollständig, nichts abgeschnitten');
     assert.ok(!f.szenen[0].text.endsWith('…'), `Hook ganz: ${f.szenen[0].text}`);
   }
 });
