@@ -5,12 +5,9 @@ name: "🎞️ KI-Clip-Vorrat (eigene Videogenerierung, postet nichts)"
 # "clip-vorrat" ab (24 feste Plätze <ort>-<nr>.mp4, alte werden überschrieben). Der Renderer (ki.py) holt sich daraus
 # den Einstiegs-Clip, wenn das Hugging-Face-Kontingent leer ist.
 on:
-  schedule:
-    - cron: '17 * * * *'
+  # Zeitplan AUS (11.11.): die ersten Clips waren zu schwach (kaum Bewegung, keine Gestalt, teils falscher Ort) - der Renderer
+  # nutzt den Vorrat deshalb vorerst nicht. Per Hand startbar; wieder einschalten: schedule mit cron '17 * * * *' + HORROR_KI_VORRAT=an.
   workflow_dispatch:
-  push:
-    branches: [claude/softsware-230g7x]
-    paths: ['scripts/ki_clip_cpu.py', '.github/workflows/ki-clip-vorrat.yml']
 
 permissions:
   contents: write

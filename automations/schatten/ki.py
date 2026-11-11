@@ -82,9 +82,10 @@ def vorrat_ort(prompt):
 
 def vorrat_clip(prompt, ziel, laden=urllib.request.urlopen, zufall=random):
     # Eigener Clip-Vorrat (Release "clip-vorrat", vom GitHub-Rechner ohne Grafikkarte vorgerechnet, kein Tageslimit):
-    # springt ein, wenn Hugging Face heute nichts mehr hergibt. Plätze <ort>-0..23.mp4, zufällig einen vorhandenen nehmen.
+    # springt ein, wenn Hugging Face heute nichts mehr hergibt - aber nur mit HORROR_KI_VORRAT=an. Standard ist AUS (11.11.):
+    # die Vorrats-Clips sind unscharf, fast ohne Bewegung und ohne Gestalt - das scharfe KI-Bild mit 3D-Kamerafahrt (tiefe.py) ist besser. Plätze <ort>-0..23.mp4, zufällig einen vorhandenen nehmen.
     repo = os.environ.get('GITHUB_REPOSITORY')
-    if not repo or os.environ.get('HORROR_KI_VORRAT', 'an').lower() in ('aus', '0', 'nein', 'false'):
+    if not repo or os.environ.get('HORROR_KI_VORRAT', 'aus').lower() not in ('an', '1', 'ja', 'true'):
         return False
     ort = vorrat_ort(prompt)
     for nr in zufall.sample(range(24), 24):
