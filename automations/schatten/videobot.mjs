@@ -119,6 +119,7 @@ export function baueFolge(skript) {
     suchbild: kurz_ && skript.suchbild !== false,  // 3 versteckte Augenpaare + Sekunden-Frage
     raum: kurz_ && skript.raum !== false,  // 3D-Ton: Flüstern kreist um den Kopf (story.py/ton.py)
     kalt: kurz_ && skript.kalt !== false,  // kalter Einstieg: 0,8 s das Ende zeigen, dann zurückspulen
+    gestalt: kurz_ && skript.gestalt !== false,  // Schattenfigur kommt in leeren KI-Szenen näher (tiefe.py, A/B-Test)
     schlag: kurz_ && skript.schlag === true ? schlagzeile(skript.muster, en ? 'en' : 'de') : '',  // große Schlagzeile in den ersten 2,6 s (A/B-Test)
     caption: `${satz(skript.hook, 120)}${kurz_ && skript.raum !== false ? T.kopf : ''}${kurz_ && skript.suchbild !== false
       ? T.such : ` ${frage}${wahl && !weiter ? T.wahl(wahl[0], wahl[1]) : ''} 👇`}`, szenen,

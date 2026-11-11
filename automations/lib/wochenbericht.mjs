@@ -66,7 +66,7 @@ export function bericht(verlauf = [], jetzt = Date.now(), musterVon = () => '', 
   const kurz = schnitt(woche, (p) => p.sehdauer || 0);
   if (woche.length && kurz < 5) schritte.push(`Ø Sehdauer nur ${kurz.toFixed(1)} s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.`);
   const ab = abAuswertung(woche, varianteVon);
-  const NAMEN = { kalt: 'Kalter Einstieg', raum: '3D-Ton', suchbild: 'Versteckte Augen', duhook: 'Du-Hook', ki: 'KI-Bilder', schlag: 'Schlagzeile' };
+  const NAMEN = { kalt: 'Kalter Einstieg', raum: '3D-Ton', suchbild: 'Versteckte Augen', duhook: 'Du-Hook', ki: 'KI-Bilder', schlag: 'Schlagzeile', gestalt: 'Gestalt kommt näher' };
   for (const [f, w] of Object.entries(ab)) {
     if (w.an.n < 3 || w.aus.n < 3) continue;  // zu wenig Daten für ein Urteil
     const besser = w.an.sehdauer - w.aus.sehdauer;
