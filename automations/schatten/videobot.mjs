@@ -64,7 +64,7 @@ const KI_ORT = {
 const KI_STIL = 'found footage, grainy realistic photo, low light, cinematic horror, vertical frame, no text, no watermark, no people in focus';
 function kiPrompt(art, ort, anteil) {
   const raum = KI_ORT[ort] || KI_ORT.haus;
-  if (art === 'fratze') return 'pale ghostly face with hollow dark eyes emerging from total darkness, close up, unsettling';
+  if (art === 'fratze') return 'terrifying inhuman face lunging out of pitch black darkness, mouth stretched wide open in a silent scream, empty black eye sockets, grey cracked skin, extreme close up, horror film still, not human, not pretty';
   if (art === 'dunkel') return `${raum}, almost pitch black, a faint tall silhouette barely visible`;
   if (art === 'ende') return `${raum}, a tall dark silhouette standing very close to the camera`;
   return `${raum}${anteil > 0.5 ? ', a shadowy figure barely visible far in the background' : ', unsettling, nobody there'}`;
@@ -96,8 +96,10 @@ export function baueFolge(skript) {
   // Kommentar-Wahl "1 oder 2": eine Zahl tippen ist leichter als einen Satz schreiben - bringt mehr Kommentare
   const wahl = Array.isArray(skript.wahl) ? skript.wahl.map((w) => satz(w, 18)) : null;
   if (!weiter && wahl) {
-    szenen.push({ art: 'teil2', sprich: `${frage} ${T.eins}: ${wahl[0]}. ${T.zwei}: ${wahl[1]}.${kurz_ ? '' : T.schreibZahl}`,
-      text: '', wahl, frage, pause: 0.8, cta: T.cta });  // story.py zeichnet die zwei Antwort-Karten
+    // Kurz-Videos (11.11.): nur die Frage sprechen - die zwei Antworten stehen auf den Karten. Vorher stand die Karte 6 von 20 s
+    // (30 % des Videos ohne Bewegung), das drückt die Quote "zu Ende gesehen".
+    szenen.push({ art: 'teil2', sprich: kurz_ ? frage : `${frage} ${T.eins}: ${wahl[0]}. ${T.zwei}: ${wahl[1]}.${T.schreibZahl}`,
+      text: '', wahl, frage, pause: kurz_ ? 0.4 : 0.8, cta: T.cta });  // story.py zeichnet die zwei Antwort-Karten
   } else {
     // Einzel-Video ohne Fortsetzung: kein falsches "Teil 2"-Versprechen, sondern die Frage für die Kommentare
     const schluss = weiter || `${frage} ${T.schreib}`;

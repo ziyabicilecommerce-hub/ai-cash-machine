@@ -52,7 +52,7 @@ test('Autopilot: jedes Konto eigene Geschichten, keine Teil-2-Versprechen', asyn
       const ende = baueFolge(skript).szenen.at(-1);
       assert.equal(ende.cta, skript.wahl ? 'KOMMENTIER 1 ODER 2' : 'FOLG MIR FÜR MEHR');
       assert.ok(!/TEIL/.test(ende.text), ende.text);
-      if (skript.wahl) assert.ok(ende.wahl.length === 2 && ende.sprich.includes('Eins'), ende.sprich);
+      if (skript.wahl) assert.ok(ende.wahl.length === 2 && ende.sprich === ende.frage, ende.sprich);  // kurz: nur die Frage sprechen, Antworten stehen auf den Karten
     }
   }
   assert.equal(slug('Zwei Zahnbürsten'), 'zwei-zahnbuersten');
