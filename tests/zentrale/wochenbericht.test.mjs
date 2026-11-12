@@ -69,3 +69,27 @@ test('A/B-Auswertung ignoriert Posts ohne Sehdauer (YouTube)', async () => {
   const ab = abAuswertung([{ text: 'a', sehdauer: 6 }, { text: 'b', sehdauer: 0, aufrufe: 900 }], () => ({ kalt: true }));
   assert.equal(ab.kalt.an.n, 1);
 });
+
+test('Trick-Radar: misst Kniffe gegen den Konto-Schnitt, erkennt Deckel und tote Videos', async () => {
+  const { trickRadar, deckel, trickSchritte, hookVon } = await import('../../automations/lib/trickRadar.mjs');
+  const jetzt = Date.parse('2026-11-12T12:00:00Z');
+  const post = (konto, tag, stunde, aufrufe, text) => ({ konto, zeit: `2026-11-${String(tag).padStart(2, '0')}T${String(stunde).padStart(2, '0')}:00:00Z`, aufrufe, text, format: 'horror' });
+  const v = [];
+  for (let i = 0; i < 10; i++) {
+    v.push(post('@a', 5 + (i % 5), 1 + i, 300, `Wenn es um 3 Uhr klingelt, renn. Nummer ${i}`));  // Du-Ansprache: stark
+    v.push(post('@a', 5 + (i % 5), 12 + i, 100, `Ich höre Schritte. Nummer ${i}`));
+  }
+  assert.equal(hookVon(v[0]), 'Wenn es um 3 Uhr klingelt, renn.');
+  const r = trickRadar(v, jetzt);
+  const du = r.find((x) => x.trick.startsWith('Du-Ansprache'));
+  assert.ok(du && du.n === 10 && du.faktor > 1.2 && du.ohne < 1, JSON.stringify(du));
+  assert.equal(r[0].faktor >= r.at(-1).faktor, true, 'bester Trick zuerst');
+  assert.deepEqual(trickRadar(v.slice(0, 6), jetzt), [], 'zu wenig Posts -> kein Urteil');
+  // Deckel: fast immer ~750, zwei Videos ohne Aufrufe
+  const k = [750, 745, 760, 0, 748, 752, 0, 749].map((a, i) => post('@b', 4 + i, 10, a, `Ich ${i}.`));
+  const d = deckel(k, jetzt)['@b'];
+  assert.ok(d.gedeckelt && d.tot === 2 && d.median === 750, JSON.stringify(d));
+  assert.equal(deckel(v, jetzt)['@a'].gedeckelt, false, '100 und 300 gemischt ist kein Deckel');
+  const s = trickSchritte(r, { '@b': d });
+  assert.ok(s.some((x) => x.includes('Du-Ansprache')) && s.some((x) => x.startsWith('Deckel: @b')), s.join(' | '));
+});

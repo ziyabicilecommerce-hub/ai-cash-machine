@@ -2,6 +2,7 @@
 // für die App (automations-dashboard/tiktok/wochenbericht.json). Ohne Schlüssel, ohne Netz - liest nur Dateien.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { verlaufMischen, bericht, vorrat, sprachTest, abAuswertungAufrufe } from './lib/wochenbericht.mjs';
+import { trickRadar, deckel, trickSchritte } from './lib/trickRadar.mjs';
 import { SKRIPTE_EN } from './schatten/skripteEn.mjs';
 import { slug } from './schatten/videobot.mjs';
 import { alleSkripte, passt } from './schatten/skriptBot.mjs';
@@ -37,6 +38,10 @@ for (const [f, w] of Object.entries(b.abYT)) {
   const r = w.an.schnitt / Math.max(w.aus.schnitt, 1);
   if (r >= 1.3 || r <= 1 / 1.3) b.schritte.push(`A/B-Test YouTube ${f}: mit Ø ${w.an.schnitt}, ohne Ø ${w.aus.schnitt} Aufrufe - ${r >= 1.3 ? 'wirkt, dort meist an' : 'bremst, dort meist aus'}.`);
 }
+// Trick-Radar: welche Kniffe im Hook bringen bei unseren Videos mehr (gegen den Konto-Schnitt gemessen) + Deckel je Konto
+b.tricks = trickRadar(verlauf);
+b.deckel = deckel(verlauf);
+b.schritte.push(...trickSchritte(b.tricks, b.deckel));
 const gepostet = Object.values(json('buffer-verteiler/stand.json', {})).flatMap((k) => Object.keys(k || {}));
 // Verbrauch pro Tag: Deutsch = purivelle (bis 6) + halb desk.rebel; Englisch = YouTube (bis 8, ~85 %) + halb desk.rebel
 b.vorrat = { de: vorrat(skripte.map((x) => slug(x.titel)), gepostet, 9), en: vorrat(SKRIPTE_EN.map((x) => slug(x.titel)), gepostet, 10) };
