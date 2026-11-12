@@ -55,10 +55,13 @@ STUFEN = ((0.28, 0.0), (0.50, 0.36), (0.72, 0.80))  # (ab Fortschritt p, wie nah
 FLACKERN = 0.035                                    # so lange (in p) wird das Licht beim Sprung dunkel
 
 
-def gestalt_stufe(p):
+STUFEN_EINSTIEG = ((0.10, 0.0), (0.40, 0.36), (0.68, 0.80))  # erste Szene: die Gestalt steht schon nach ~0,4 s da
+
+
+def gestalt_stufe(p, stufen=STUFEN):
     """-> (naehe oder None, licht 0..1). Vor der ersten Stufe ist der Flur leer."""
     naehe, licht = None, 1.0
-    for ab, n in STUFEN:
+    for ab, n in stufen:
         if p >= ab:
             naehe = n
         if ab - FLACKERN <= p < ab + FLACKERN * 0.5:
@@ -131,6 +134,26 @@ def fahrt(s, p, lt, richtung=0):
     if licht < 1:
         aus = (aus * licht).astype(np.uint8)
     return Image.fromarray(aus)
+
+
+def auf_clip(s, bild, p):
+    """Gestalt auf ein Bild des echten KI-Clips setzen (Einstieg). Tiefe und Fluchtpunkt kommen vom Standbild, aus dem
+    der Clip entstand - die Clip-Kamera bewegt sich nur wenig, und die Gestalt springt ohnehin von Stufe zu Stufe."""
+    import numpy as np
+    from PIL import Image
+    naehe, licht = gestalt_stufe(p, STUFEN_EINSTIEG)
+    if naehe is None and licht >= 1:
+        return bild
+    merk = s.get('_gclip')
+    if merk and merk[0] == (id(bild), naehe, licht):     # der Renderer fragt jedes Clip-Bild mehrmals ab
+        return merk[1]
+    aus = np.asarray(bild)
+    if naehe is not None:
+        aus = gestalt_malen(aus, s['_tiefe'], s['_fern'], naehe)
+    if licht < 1:
+        aus = (aus * licht).astype(np.uint8)
+    s['_gclip'] = ((id(bild), naehe, licht), Image.fromarray(aus))
+    return s['_gclip'][1]
 
 
 if __name__ == '__main__':  # Probe: python3 tiefe.py bild.jpg probe.mp4 -> 4 s Fahrt (zum Ansehen)

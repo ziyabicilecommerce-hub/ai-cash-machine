@@ -108,6 +108,8 @@ def ki_szene(s, lt):
     # echter KI-Clip: Bild für Bild abspielen, danach das letzte Bild stehen lassen (die Kamerafahrt läuft weiter)
     bild_ = clip[min(int(lt * CLIP_FPS), len(clip) - 1)] if clip else s['_kibild']
     p = min(lt / max(s.get('dauer', 3), 0.5), 1)
+    if clip and s.get('_gestalt') and s.get('_tiefe') is not None:
+        bild_ = tiefe.auf_clip(s, bild_, p)  # Einstieg: die Gestalt steht schon im echten KI-Clip und kommt näher
     zoom = 1.02 + 0.12 * p
     cw, ch = int(W / zoom), int(H / zoom)
     richtung = (hash(s.get('ki', '')) % 3) - 1
