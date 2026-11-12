@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-12T13:49:45.401Z",
+ "stand": "2026-11-12T13:52:58.436Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -897,17 +897,6 @@
    "kat": "Sneaker"
   },
   {
-   "titel": "Nike Air Max 90 SP Schuh (Herren)",
-   "farbe": "Medium Olive/Sequoia/Medium Olive",
-   "preis": 159.99,
-   "bild": "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit/fabd04b8-5819-444c-b085-a3fc40610800/air-max%C2%A090-medium-olive-and-sequoia-iv4504-201-%C2%A0%E2%80%93-erscheinungsdatum.jpg",
-   "zeit": "2026-11-13T08:00:00.000Z",
-   "art": "LEO",
-   "link": "https://www.nike.com/de/launch/t/air-max-90-medium-olive-and-sequoia",
-   "marke": "Nike",
-   "kat": "Sneaker"
-  },
-  {
    "titel": "Nike x Union Kurzarmshirt (Herren)",
    "farbe": "Schwarz/Weiß",
    "preis": 69.99,
@@ -959,6 +948,17 @@
    "zeit": "2026-11-13T08:00:00.000Z",
    "art": "LEO",
    "link": "https://www.nike.com/de/launch/t/nike-union-apparel-collection-static-emea",
+   "marke": "Nike",
+   "kat": "Sneaker"
+  },
+  {
+   "titel": "Nike Air Max 90 SP Schuh (Herren)",
+   "farbe": "Medium Olive/Sequoia/Medium Olive",
+   "preis": 159.99,
+   "bild": "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit/fabd04b8-5819-444c-b085-a3fc40610800/air-max%C2%A090-medium-olive-and-sequoia-iv4504-201-%C2%A0%E2%80%93-erscheinungsdatum.jpg",
+   "zeit": "2026-11-13T08:00:00.000Z",
+   "art": "LEO",
+   "link": "https://www.nike.com/de/launch/t/air-max-90-medium-olive-and-sequoia",
    "marke": "Nike",
    "kat": "Sneaker"
   },
@@ -3754,20 +3754,28 @@
   "ware": [],
   "top": [
    {
+    "titel": "bremen-ost",
+    "menge": "500+"
+   },
+   {
     "titel": "luis díaz",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "niklas süle",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "norwegische königsfamilie",
-    "menge": "5000+"
+    "menge": "200+"
    },
    {
     "titel": "ausländer",
     "menge": "200+"
+   },
+   {
+    "titel": "lidl gta6",
+    "menge": "5000+"
    },
    {
     "titel": "westerstede",
@@ -3775,7 +3783,7 @@
    },
    {
     "titel": "wael mohya",
-    "menge": "1000+"
+    "menge": "2000+"
    },
    {
     "titel": "pay-tv",
@@ -3784,14 +3792,6 @@
    {
     "titel": "levin öztunali",
     "menge": "200+"
-   },
-   {
-    "titel": "starshield",
-    "menge": "500+"
-   },
-   {
-    "titel": "nebius aktie",
-    "menge": "500+"
    }
   ]
  },
@@ -4428,20 +4428,20 @@
     "begriff": "samba"
    },
    {
-    "titel": "Adidas Samba OG W *Snake*",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-snake-crew-white-earth-strata-maroon",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cp3zilo9k2t-IH3980_Adidas_Samba-OG-W_Snake_Crew-White-Earth-Strata-Maroon_os-1.jpg?v=1765978912",
-    "laden": "asphaltgold.com",
-    "begriff": "samba"
-   },
-   {
     "titel": "Adidas Samba OG",
     "preis": 119,
     "verfuegbar": true,
     "url": "https://www.asphaltgold.com/products/adidas-samba-og-fox-brown-off-white-gum-4",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/DuPB6FvkO9IZC9uLnZoz-JR0892-Adidas-Samba-OG-Fox-Brown-Off-White-Gum-4-os-1.jpg?v=1760624312",
+    "laden": "asphaltgold.com",
+    "begriff": "samba"
+   },
+   {
+    "titel": "Adidas Samba OG W *Snake*",
+    "preis": 119,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-snake-crew-white-earth-strata-maroon",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cp3zilo9k2t-IH3980_Adidas_Samba-OG-W_Snake_Crew-White-Earth-Strata-Maroon_os-1.jpg?v=1765978912",
     "laden": "asphaltgold.com",
     "begriff": "samba"
    },
@@ -4748,15 +4748,6 @@
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-balance-u1300ny-nb-navy-raincloud-white",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "U1300GY",
-    "preis": 156,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u1300gy-u1300gy-kool-gray-harbor-grey-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300GY_1.jpg?v=1779433831",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
@@ -5227,6 +5218,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050225-001-Detail.jpg?v=1791551535",
     "laden": "kith.com",
     "begriff": "cap"
+   },
+   {
+    "titel": "U990GR7",
+    "preis": 249,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u990gr7-u990gr7-kool-gray-calcium-light-arctic-grey",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U990GR7_1.jpg?v=1793277202",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 14 Retro SP 'Mowalola'",
