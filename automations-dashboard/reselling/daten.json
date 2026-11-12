@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-12T01:31:06.163Z",
+ "stand": "2026-11-12T01:34:53.855Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "karte:30th-c-023",
+   "art": "Karte",
+   "titel": "🚨 STRONG BUY: M Guardevoir EX",
+   "bild": "",
+   "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=M%20Guardevoir%20EX",
+   "text": "Kaufen ab 2,00 € · Ziel 13,03 € · +8,88 € nach Gebühren (ROI 444 %)",
+   "zeit": "2026-11-12T01:34:53.855Z"
+  },
   {
    "schluessel": "deal:https://www.sneakersnstuff.com/products/jordan-air-jordan-11-retro-low-university-blue-fv5104-100",
    "art": "Deal",
@@ -180,16 +189,6 @@
    "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
    "text": "32,95 € · dm Bad Soden am Taunus (8,3 km) · 1 Stück\nKönigsteiner Straße 76, 65812 Bad Soden am Taunus\nIm Umkreis in 21 Filiale(n) vorrätig.",
    "zeit": "2026-11-10T19:39:53.576Z"
-  },
-  {
-   "schluessel": "filiale:3118686:1500",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: ebelin Adventskalender Beauty & Hair 2026, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1434547,8.5023642",
-   "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
-   "text": "32,95 € · dm Bad Soden am Taunus (8,3 km) · 1 Stück\nKönigsteiner Straße 76, 65812 Bad Soden am Taunus\nIm Umkreis in 21 Filiale(n) vorrätig.",
-   "zeit": "2026-11-10T19:09:03.480Z"
   }
  ],
  "filial": {
@@ -1137,6 +1136,39 @@
  "pokemon": {
   "picks": [
    {
+    "id": "30th-c-023",
+    "name": "M Guardevoir EX",
+    "nummer": "023",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=M%20Guardevoir%20EX",
+    "preis": {
+     "tief": 2,
+     "trend": 13.14,
+     "schnitt7": 13.03,
+     "schnitt30": 12.6
+    },
+    "prozent": 3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 2,
+     "ziel": 13.03,
+     "gewinn": 8.88,
+     "roi": 444,
+     "momentum": 3,
+     "spread": 11.14,
+     "score": 88,
+     "signal": "STRONG BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     13.14
+    ]
+   },
+   {
     "id": "me03-122",
     "name": "Violette",
     "nummer": "122",
@@ -1212,6 +1244,7 @@
      20.57,
      20.57,
      20.57,
+     20.11,
      20.11
     ]
    },
@@ -1291,6 +1324,7 @@
      8.61,
      8.61,
      8.61,
+     8.59,
      8.59
     ]
    },
@@ -1370,6 +1404,7 @@
      24.13,
      24.13,
      24.13,
+     24.04,
      24.04
     ]
    },
@@ -1469,6 +1504,7 @@
      14.43,
      14.43,
      14.43,
+     14.23,
      14.23
     ]
    },
@@ -1568,6 +1604,7 @@
      29.97,
      29.97,
      29.97,
+     30.32,
      30.32
     ]
    },
@@ -1667,6 +1704,7 @@
      34.06,
      34.06,
      34.06,
+     33.42,
      33.42
     ]
    },
@@ -1766,6 +1804,7 @@
      18.95,
      18.95,
      18.95,
+     19.64,
      19.64
     ]
    },
@@ -1865,6 +1904,7 @@
      18.56,
      18.56,
      18.56,
+     18.61,
      18.61
     ]
    },
@@ -1964,6 +2004,7 @@
      9.75,
      9.75,
      9.75,
+     9.72,
      9.72
     ]
    },
@@ -2043,6 +2084,7 @@
      33.15,
      33.15,
      33.15,
+     33.03,
      33.03
     ]
    },
@@ -2123,6 +2165,7 @@
      12.54,
      12.54,
      12.54,
+     12.75,
      12.75
     ]
    },
@@ -2203,6 +2246,7 @@
      31.53,
      31.53,
      31.53,
+     32.18,
      32.18
     ]
    },
@@ -2302,6 +2346,7 @@
      11.35,
      11.35,
      11.35,
+     11.27,
      11.27
     ]
    },
@@ -2381,6 +2426,7 @@
      35.52,
      35.52,
      35.52,
+     36.95,
      36.95
     ]
    },
@@ -2480,6 +2526,7 @@
      12.21,
      12.21,
      12.21,
+     12.14,
      12.14
     ]
    },
@@ -2513,6 +2560,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     32.02,
      32.02
     ]
    },
@@ -2546,6 +2594,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     8.63,
      8.63
     ]
    },
@@ -2625,6 +2674,7 @@
      17.84,
      17.84,
      17.84,
+     17.87,
      17.87
     ]
    },
@@ -2658,6 +2708,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     34.29,
      34.29
     ]
    },
@@ -2737,86 +2788,8 @@
      34.09,
      34.09,
      34.09,
+     34.3,
      34.3
-    ]
-   },
-   {
-    "id": "30th-155",
-    "name": "Jirachi-ex",
-    "nummer": "155",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/155/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Jirachi-ex",
-    "preis": {
-     "tief": 23,
-     "trend": 31.23,
-     "schnitt7": 33.28,
-     "schnitt30": 33.99
-    },
-    "prozent": -2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 23,
-     "ziel": 31.23,
-     "gewinn": 5.17,
-     "roi": 22,
-     "momentum": -2,
-     "spread": 8.23,
-     "score": 53,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23,
-     31.23
     ]
    },
    {
@@ -2915,6 +2888,7 @@
      9.59,
      9.59,
      9.59,
+     9.52,
      9.52
     ]
    },
@@ -2994,6 +2968,7 @@
      14.1,
      14.1,
      14.1,
+     13.94,
      13.94
     ]
    },
@@ -3073,6 +3048,7 @@
      42.59,
      42.59,
      42.59,
+     42.22,
      42.22
     ]
    },
@@ -3152,6 +3128,7 @@
      13.55,
      13.55,
      13.55,
+     13.48,
      13.48
     ]
    },
@@ -3231,6 +3208,7 @@
      18.62,
      18.62,
      18.62,
+     18.54,
      18.54
     ]
    },
@@ -3310,86 +3288,8 @@
      10.31,
      10.31,
      10.31,
+     10.08,
      10.08
-    ]
-   },
-   {
-    "id": "me03-113",
-    "name": "Poképad",
-    "nummer": "113",
-    "seltenheit": "Ultra Selten",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/113/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pok%C3%A9pad",
-    "preis": {
-     "tief": 6,
-     "trend": 9.79,
-     "schnitt7": 10.12,
-     "schnitt30": 10.27
-    },
-    "prozent": -1,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 6,
-     "ziel": 9.79,
-     "gewinn": 1.8,
-     "roi": 30,
-     "momentum": -1,
-     "spread": 3.79,
-     "score": 49,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79,
-     9.79
     ]
    },
    {
@@ -3422,6 +3322,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     24.57,
      24.57
     ]
    },
@@ -3455,7 +3356,41 @@
     },
     "nurBewegung": true,
     "kurs": [
+     47.08,
      47.08
+    ]
+   },
+   {
+    "id": "30th-c-025",
+    "name": "Scherox ex",
+    "nummer": "025",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Scherox%20ex",
+    "preis": {
+     "tief": 9,
+     "trend": 12.46,
+     "schnitt7": 12.33,
+     "schnitt30": 12.22
+    },
+    "prozent": 1,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 9,
+     "ziel": 12.33,
+     "gewinn": 1.21,
+     "roi": 13,
+     "momentum": 1,
+     "spread": 3.46,
+     "score": 46,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     12.46
     ]
    }
   ],
@@ -3515,16 +3450,16 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 657,
+  "geprueft": 999,
   "statistik": {
-   "karten": 657,
+   "karten": 999,
    "mitPreis": 657,
    "imBudget": 51,
    "steigend": 0,
    "fallend": 4
   },
-  "quelle": "TCGdex",
-  "stand": "2026-11-12T00:36:21.942Z"
+  "quelle": "TCGdex + pokemontcg.io",
+  "stand": "2026-11-12T01:34:40.686Z"
  },
  "trends": {
   "ware": [],
@@ -3543,7 +3478,7 @@
    },
    {
     "titel": "ben white",
-    "menge": "100+"
+    "menge": "200+"
    },
    {
     "titel": "happy hotty",
