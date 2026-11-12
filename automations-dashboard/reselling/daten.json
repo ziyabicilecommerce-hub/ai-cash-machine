@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-12T07:08:56.157Z",
+ "stand": "2026-11-12T07:11:55.834Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -194,7 +194,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-12T06:56:45.101Z",
+  "stand": "2026-11-12T07:11:58.513Z",
   "filialen": 148,
   "produkte": [
    {
@@ -285,7 +285,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 8
+      "menge": 2
      },
      {
       "name": "dm Kriftel",
@@ -433,7 +433,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 7
+      "menge": 2
      },
      {
       "name": "dm Kriftel",
@@ -503,14 +503,6 @@
     "vorrat": [
      {
       "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 5
-     },
-     {
-      "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
       "km": 2.5,
       "lat": 50.0815926,
@@ -564,6 +556,14 @@
       "lat": 50.0155817,
       "lon": 8.3658454,
       "menge": 4
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Europa-Allee 130, 60486 Frankfurt am Main",
+      "km": 10.9,
+      "lat": 50.1086268,
+      "lon": 8.6273783,
+      "menge": 1
      }
     ]
    },
@@ -741,15 +741,6 @@
       "menge": 8
      }
     ]
-   },
-   {
-    "dan": "3143255",
-    "name": "LEGO®DUPLO® duplo Disney Frozen Kreativbox Set 37tlg, 1 St",
-    "preis": 19.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1778366813/assets/pas/images/49a53421-ad43-49bb-b53e-c1db74cc5b14/lego-duplo-duplo-disney-frozen-kreativbox-set-37tlg",
-    "link": "https://www.dm.de/p/d/3143255/lego-duplo-duplo-disney-frozen-kreativbox-set-37tlg",
-    "begriff": "lego",
-    "vorrat": []
    },
    {
     "dan": "3118686",
@@ -3508,12 +3499,24 @@
   "ware": [],
   "top": [
    {
+    "titel": "goldie hawn",
+    "menge": "100+"
+   },
+   {
+    "titel": "avengers endgame encore",
+    "menge": "200+"
+   },
+   {
+    "titel": "lottozahlen mittwoch",
+    "menge": "2000+"
+   },
+   {
     "titel": "handball bundesliga",
     "menge": "200+"
    },
    {
     "titel": "australien",
-    "menge": "100+"
+    "menge": "200+"
    },
    {
     "titel": "baden-württemberg",
@@ -3521,27 +3524,15 @@
    },
    {
     "titel": "siemens aktie",
-    "menge": "100+"
+    "menge": "200+"
    },
    {
     "titel": "mein schiff",
     "menge": "100+"
    },
    {
-    "titel": "e roller",
-    "menge": "1000+"
-   },
-   {
-    "titel": "goldpreis aktuell",
-    "menge": "500+"
-   },
-   {
     "titel": "telekom",
-    "menge": "200+"
-   },
-   {
-    "titel": "fernsehen",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "adac",
