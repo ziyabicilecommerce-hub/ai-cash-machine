@@ -47,7 +47,7 @@ BEWEGUNG = {  # was sich im Clip bewegen soll, je Szene
 def ki_clip_laden(story, ordner):
     # ECHTE bewegte KI-Clips: kostenlose Hugging-Face-GPUs (Wan 2.2 / LTX, Bild-zu-Video, scripts/ki_clip.py).
     # 1. der Einstieg (erste KI-Szene) - dort wischen die Leute sonst nach 2 s weg
-    # 2. die Auflösung am Ende (Szene "ende", seit 12.11.) - nur wenn der erste Clip geklappt hat (sonst ist das Kontingent leer)
+    # 2. die Auflösung am Ende (Szene "ende") - nur mit HORROR_KI_CLIP_ENDE=an und wenn der erste Clip geklappt hat
     # Kontingent leer, Space besetzt oder kein gradio_client -> Standbild mit 3D-Kamerafahrt (tiefe.py).
     if os.environ.get('STUMM') == '1' or os.environ.get('HORROR_KI_CLIP', 'an').lower() in ('aus', '0', 'nein', 'false'):
         return
@@ -55,7 +55,10 @@ def ki_clip_laden(story, ordner):
     skript = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'scripts', 'ki_clip.py')
     if not mit_bild or not os.path.exists(skript):
         return
-    ziele = mit_bild[:1] + [x for x in mit_bild[1:] if x.get('art') == 'ende'][-1:]
+    # Der zweite Clip ist vorerst AUS (12.11.): im ersten echten Lauf war das Gratis-Kontingent beim dritten Video leer -
+    # der Einstieg ist wichtiger als das Ende. Einschalten: HORROR_KI_CLIP_ENDE=an.
+    ende_an = os.environ.get('HORROR_KI_CLIP_ENDE', 'aus').lower() in ('an', '1', 'ja', 'true')
+    ziele = mit_bild[:1] + ([x for x in mit_bild[1:] if x.get('art') == 'ende'][-1:] if ende_an else [])
     for nr, s in enumerate(ziele):
         if not ein_clip(s, ordner, nr, skript, vorrat=nr == 0):
             break

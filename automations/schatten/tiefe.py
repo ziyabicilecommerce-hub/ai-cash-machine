@@ -38,6 +38,8 @@ def tiefe_laden(story):
     if story.get('gestalt', True):
         for s in [x for x in szenen if x.get('_tiefe') is not None and 'nobody there' in str(x.get('ki', ''))][:2]:
             s['_gestalt'] = True
+        if szenen and szenen[0].get('_gestalt'):
+            szenen[0]['_einstieg'] = True                # im Einstieg steht sie schon nach ~0,4 s da (auch ohne KI-Clip)
     print(f"3D-Kamera: Tiefe für {n} Bilder, Gestalt in {sum(1 for x in szenen if x.get('_gestalt'))} Szenen")
     return n
 
@@ -138,7 +140,7 @@ def fahrt(s, p, lt, richtung=0):
     bild, t = s['_kinp'], s['_tiefe']
     licht = 1.0
     if s.get('_gestalt'):                                # Gestalt kommt bei jedem Flackern näher (nur in leeren Szenen)
-        naehe, licht = gestalt_stufe(p)
+        naehe, licht = gestalt_stufe(p, STUFEN_EINSTIEG if s.get('_einstieg') else STUFEN)
         if naehe is not None:
             if s.get('_gbild', (None,))[0] != naehe:     # pro Stufe einmal malen
                 s['_gbild'] = (naehe, gestalt_malen(bild, t, s['_fern'], naehe))
