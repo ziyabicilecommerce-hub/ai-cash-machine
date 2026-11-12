@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-12T05:21:33.621Z",
+ "stand": "2026-11-12T05:25:20.254Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -192,7 +192,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-12T05:09:40.530Z",
+  "stand": "2026-11-12T05:25:24.535Z",
   "filialen": 148,
   "produkte": [
    {
@@ -418,80 +418,6 @@
     ]
    },
    {
-    "dan": "3118199",
-    "name": "Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
-    "preis": 34.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790893225/assets/pas/images/cc74b33e-9549-4968-992a-a79f50a7aa67/freche-freunde-adventskalender-2026-wichtelhaus",
-    "link": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 9
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 4
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 1
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 1
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 7
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 1
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
-      "km": 10.4,
-      "lat": 50.1401538,
-      "lon": 8.5824016,
-      "menge": 3
-     },
-     {
-      "name": "dm Hochheim am Main",
-      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
-      "km": 10.5,
-      "lat": 50.0155817,
-      "lon": 8.3658454,
-      "menge": 11
-     }
-    ]
-   },
-   {
     "dan": "3118201",
     "name": "Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
     "preis": 16.95,
@@ -640,11 +566,94 @@
     ]
    },
    {
+    "dan": "3118199",
+    "name": "Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
+    "preis": 34.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790893225/assets/pas/images/cc74b33e-9549-4968-992a-a79f50a7aa67/freche-freunde-adventskalender-2026-wichtelhaus",
+    "link": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 9
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 4
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 1
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 7
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 1
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 3
+     },
+     {
+      "name": "dm Hochheim am Main",
+      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
+      "km": 10.5,
+      "lat": 50.0155817,
+      "lon": 8.3658454,
+      "menge": 11
+     }
+    ]
+   },
+   {
     "dan": "3162931",
     "name": "Barebells Adventskalender 2026 Proteinriegel \"Twenty Four Days of Chocolate\", 1 St",
     "preis": 59.95,
     "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790203300/assets/pas/images/96a77283-9a84-4c15-ab1d-f40243cb72a0/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
     "link": "https://www.dm.de/p/d/3162931/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
+    "begriff": "adventskalender",
+    "vorrat": []
+   },
+   {
+    "dan": "3139943",
+    "name": "NIVEA Adventskalender 2026 Verwöhnmomente, 1 St",
+    "preis": 49.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779921255/assets/pas/images/c0d1a6db-00cd-465c-b2c0-0e4f20e90054/nivea-adventskalender-2026-verwoehnmomente",
+    "link": "https://www.dm.de/p/d/3139943/nivea-adventskalender-2026-verwoehnmomente",
     "begriff": "adventskalender",
     "vorrat": []
    },
@@ -728,80 +737,6 @@
       "lat": 50.1237366,
       "lon": 8.5865988,
       "menge": 8
-     }
-    ]
-   },
-   {
-    "dan": "3118676",
-    "name": "MAYBELLINE NEW YORK Adventskalender 2026 Happy Holidays, 1 St",
-    "preis": 52.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1778844332/assets/pas/images/821685b1-d386-428e-8655-1eb7ad8b7561/maybelline-new-york-adventskalender-2026-happy-holidays",
-    "link": "https://www.dm.de/p/d/3118676/maybelline-new-york-adventskalender-2026-happy-holidays",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 2
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 2
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 7
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 7
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 5
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 1
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 13
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 9
      }
     ]
    },
@@ -1124,6 +1059,7 @@
      13.14,
      13.14,
      13.14,
+     13.14,
      13.14
     ]
    },
@@ -1203,6 +1139,7 @@
      20.57,
      20.57,
      20.57,
+     20.11,
      20.11,
      20.11,
      20.11,
@@ -1290,6 +1227,7 @@
      8.59,
      8.59,
      8.59,
+     8.59,
      8.59
     ]
    },
@@ -1369,6 +1307,7 @@
      24.13,
      24.13,
      24.13,
+     24.04,
      24.04,
      24.04,
      24.04,
@@ -1476,6 +1415,7 @@
      14.23,
      14.23,
      14.23,
+     14.23,
      14.23
     ]
    },
@@ -1575,6 +1515,7 @@
      29.97,
      29.97,
      29.97,
+     30.32,
      30.32,
      30.32,
      30.32,
@@ -1682,6 +1623,7 @@
      33.42,
      33.42,
      33.42,
+     33.42,
      33.42
     ]
    },
@@ -1781,6 +1723,7 @@
      18.95,
      18.95,
      18.95,
+     19.64,
      19.64,
      19.64,
      19.64,
@@ -1888,6 +1831,7 @@
      18.61,
      18.61,
      18.61,
+     18.61,
      18.61
     ]
    },
@@ -1991,6 +1935,7 @@
      9.72,
      9.72,
      9.72,
+     9.72,
      9.72
     ]
    },
@@ -2070,6 +2015,7 @@
      33.15,
      33.15,
      33.15,
+     33.03,
      33.03,
      33.03,
      33.03,
@@ -2158,6 +2104,7 @@
      12.75,
      12.75,
      12.75,
+     12.75,
      12.75
     ]
    },
@@ -2238,6 +2185,7 @@
      31.53,
      31.53,
      31.53,
+     32.18,
      32.18,
      32.18,
      32.18,
@@ -2345,6 +2293,7 @@
      11.27,
      11.27,
      11.27,
+     11.27,
      11.27
     ]
    },
@@ -2424,6 +2373,7 @@
      35.52,
      35.52,
      35.52,
+     36.95,
      36.95,
      36.95,
      36.95,
@@ -2531,6 +2481,7 @@
      12.14,
      12.14,
      12.14,
+     12.14,
      12.14
     ]
    },
@@ -2568,6 +2519,7 @@
      32.02,
      32.02,
      32.02,
+     32.02,
      32.02
     ]
    },
@@ -2601,6 +2553,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     8.63,
      8.63,
      8.63,
      8.63,
@@ -2688,6 +2641,7 @@
      17.87,
      17.87,
      17.87,
+     17.87,
      17.87
     ]
    },
@@ -2721,6 +2675,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     34.29,
      34.29,
      34.29,
      34.29,
@@ -2804,6 +2759,7 @@
      34.09,
      34.09,
      34.09,
+     34.3,
      34.3,
      34.3,
      34.3,
@@ -2911,6 +2867,7 @@
      9.52,
      9.52,
      9.52,
+     9.52,
      9.52
     ]
    },
@@ -2990,6 +2947,7 @@
      14.1,
      14.1,
      14.1,
+     13.94,
      13.94,
      13.94,
      13.94,
@@ -3077,6 +3035,7 @@
      42.22,
      42.22,
      42.22,
+     42.22,
      42.22
     ]
    },
@@ -3156,6 +3115,7 @@
      13.55,
      13.55,
      13.55,
+     13.48,
      13.48,
      13.48,
      13.48,
@@ -3243,6 +3203,7 @@
      18.54,
      18.54,
      18.54,
+     18.54,
      18.54
     ]
    },
@@ -3326,6 +3287,7 @@
      10.08,
      10.08,
      10.08,
+     10.08,
      10.08
     ]
    },
@@ -3359,6 +3321,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     24.57,
      24.57,
      24.57,
      24.57,
@@ -3400,6 +3363,7 @@
      47.08,
      47.08,
      47.08,
+     47.08,
      47.08
     ]
    },
@@ -3433,6 +3397,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     12.46,
      12.46,
      12.46,
      12.46,
@@ -3496,64 +3461,64 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 799,
+  "geprueft": 764,
   "statistik": {
-   "karten": 799,
+   "karten": 764,
    "mitPreis": 657,
    "imBudget": 51,
    "steigend": 0,
    "fallend": 4
   },
   "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-11-12T04:27:28.915Z"
+  "stand": "2026-11-12T05:25:01.872Z"
  },
  "trends": {
   "ware": [
    {
     "titel": "xbox series",
-    "menge": "100+",
+    "menge": "200+",
     "kategorie": "Technik & Games"
    }
   ],
   "top": [
    {
-    "titel": "beamter",
-    "menge": "500+"
+    "titel": "pelicans – nets",
+    "menge": "100+"
+   },
+   {
+    "titel": "armin papperger",
+    "menge": "100+"
+   },
+   {
+    "titel": "michael mronz",
+    "menge": "100+"
+   },
+   {
+    "titel": "mirjam meinhardt",
+    "menge": "200+"
    },
    {
     "titel": "deutscher fußball-bund",
     "menge": "500+"
    },
    {
-    "titel": "gold",
-    "menge": "200+"
-   },
-   {
     "titel": "bahnhof",
-    "menge": "100+"
+    "menge": "200+"
    },
    {
     "titel": "xbox series",
+    "menge": "200+"
+   },
+   {
+    "titel": "beamter",
+    "menge": "500+"
+   },
+   {
+    "titel": "lütmarser straße",
     "menge": "100+"
    },
    {
-    "titel": "grizzlies – nuggets",
-    "menge": "100+"
-   },
-   {
-    "titel": "alles was zählt",
-    "menge": "200+"
-   },
-   {
-    "titel": "nvidia-aktie",
-    "menge": "200+"
-   },
-   {
-    "titel": "leipzig",
-    "menge": "200+"
-   },
-   {
-    "titel": "fahrzeugbrand",
+    "titel": "gold",
     "menge": "200+"
    }
   ]
