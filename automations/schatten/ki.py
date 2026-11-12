@@ -39,20 +39,33 @@ def ki_bilder_laden(story, ordner):
 CLIP_FPS = 15  # Einzelbilder des KI-Clips pro Sekunde (spart Speicher; der Renderer zeigt sie bei 60 fps je 4x)
 
 
+BEWEGUNG = {  # was sich im Clip bewegen soll, je Szene
+    'ende': 'the dark silhouette slowly steps toward the camera and tilts its head, flickering light, cinematic horror',
+}
+
+
 def ki_clip_laden(story, ordner):
-    # Einstieg (erste KI-Szene) als ECHTER bewegter KI-Clip: kostenlose Hugging-Face-GPUs (Wan 2.2 / LTX, Bild-zu-Video,
-    # scripts/ki_clip.py). Nur ein Clip pro Video - genau dort, wo die Leute sonst nach 2 s wegwischen.
-    # Tageskontingent leer, Space besetzt oder kein gradio_client -> Clip aus dem eigenen Vorrat, sonst Standbild mit Kamerafahrt.
+    # ECHTE bewegte KI-Clips: kostenlose Hugging-Face-GPUs (Wan 2.2 / LTX, Bild-zu-Video, scripts/ki_clip.py).
+    # 1. der Einstieg (erste KI-Szene) - dort wischen die Leute sonst nach 2 s weg
+    # 2. die Auflösung am Ende (Szene "ende", seit 12.11.) - nur wenn der erste Clip geklappt hat (sonst ist das Kontingent leer)
+    # Kontingent leer, Space besetzt oder kein gradio_client -> Standbild mit 3D-Kamerafahrt (tiefe.py).
     if os.environ.get('STUMM') == '1' or os.environ.get('HORROR_KI_CLIP', 'an').lower() in ('aus', '0', 'nein', 'false'):
         return
-    s = next((x for x in story['szenen'] if x.get('_kibild') is not None), None)
+    mit_bild = [x for x in story['szenen'] if x.get('_kibild') is not None]
     skript = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'scripts', 'ki_clip.py')
-    if s is None or not os.path.exists(skript):
+    if not mit_bild or not os.path.exists(skript):
         return
-    bild = os.path.join(ordner, 'ki-clip-start.jpg')
+    ziele = mit_bild[:1] + [x for x in mit_bild[1:] if x.get('art') == 'ende'][-1:]
+    for nr, s in enumerate(ziele):
+        if not ein_clip(s, ordner, nr, skript, vorrat=nr == 0):
+            break
+
+
+def ein_clip(s, ordner, nr, skript, vorrat=False):
+    bild = os.path.join(ordner, f'ki-clip-start-{nr}.jpg')
     s['_kibild'].save(bild, quality=95)
-    ziel = os.path.join(ordner, 'ki-clip.mp4')
-    prompt = f"{s['ki']}, slow creeping camera push-in, subtle horror movement, flickering light, cinematic"
+    ziel = os.path.join(ordner, f'ki-clip-{nr}.mp4')
+    prompt = f"{s['ki']}, {BEWEGUNG.get(s.get('art'), 'slow creeping camera push-in, subtle horror movement, flickering light, cinematic')}"
     for modell in ('wan', 'ltx'):
         try:
             r = subprocess.run([sys.executable, skript, bild, prompt, ziel, modell], capture_output=True, text=True, timeout=300)
@@ -62,14 +75,18 @@ def ki_clip_laden(story, ordner):
         if r.returncode == 0 and os.path.exists(ziel):
             break
         print(f'KI-Clip {modell}: {"Kontingent für heute leer" if r.returncode == 3 else (r.stderr or r.stdout).strip()[-160:]}')
-    if not os.path.exists(ziel) and not vorrat_clip(s['ki'], ziel):
-        return
+    if not os.path.exists(ziel) and not (vorrat and vorrat_clip(s['ki'], ziel)):
+        return False
     roh = subprocess.run(['ffmpeg', '-loglevel', 'error', '-i', ziel, '-vf',
                           f'scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={CLIP_FPS}',
                           '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], capture_output=True).stdout
     groesse = W * H * 3
     s['_kiclip'] = [Image.frombytes('RGB', (W, H), roh[i:i + groesse]) for i in range(0, len(roh) - groesse + 1, groesse)][:CLIP_FPS * 6]
+    if not s['_kiclip']:
+        del s['_kiclip']
+        return False
     print(f'KI-Clip ok: {len(s["_kiclip"])} Bilder ({len(s["_kiclip"]) / CLIP_FPS:.1f} s) für Szene „{s["art"]}“')
+    return True
 
 
 VORRAT_ORTE = (('train', 'zug'), ('forest', 'wald'), ('elevator', 'aufzug'), ('airplane', 'flugzeug'))
