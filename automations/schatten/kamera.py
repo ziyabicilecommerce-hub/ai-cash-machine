@@ -28,18 +28,38 @@ def teil_von(titel):
     return int(m.group(1)) if m else None
 
 
-def nachtsicht(im, staerke):
-    """Grünstichige Nachtsicht wie bei einer Überwachungskamera."""
+TOENE = {'gruen': (0.35, 1.15, 0.4), 'blau': (0.45, 0.72, 1.2), 'grau': (0.92, 0.92, 0.92), 'rot': (1.15, 0.38, 0.34)}
+
+
+def nachtsicht(im, staerke, ton='gruen'):
+    """Einfarbiger Stich wie bei einer Überwachungskamera (grün), kaltes Mondlicht (blau), alter Film (grau), Notlicht (rot)."""
+    r, gr, b = TOENE.get(ton, TOENE['gruen'])
     g = im.convert('L').convert('RGB')
-    gruen = Image.merge('RGB', (g.getchannel(0).point(lambda v: v * 0.35), g.getchannel(1).point(lambda v: min(255, v * 1.15 + 12)), g.getchannel(2).point(lambda v: v * 0.4)))
-    return Image.blend(im, gruen, staerke)
+    stich = Image.merge('RGB', (g.getchannel(0).point(lambda v: min(255, v * r)), g.getchannel(1).point(lambda v: min(255, v * gr + 12 * (gr > 1))), g.getchannel(2).point(lambda v: min(255, v * b))))
+    return Image.blend(im, stich, staerke)
+
+
+# Aussehen je Video (12.11.): vorher sah jedes Video gleich aus (grüne Nachtsicht + REC). Jetzt wechselt es fest je Titel:
+#   kamera = wie bisher · kino = sauberes Filmbild ohne Einblendungen · mond = kaltes Blau ohne Einblendungen
+#   band = altes Schwarz-Weiß-Band mit REC · notlicht = roter Stich mit REC
+LOOKS = ('kamera', 'kino', 'mond', 'band', 'notlicht')
+
+
+def look_von(story):
+    return story.get('look') if story.get('look') in LOOKS else LOOKS[sum(ord(c) for c in str(story.get('titel', ''))) % len(LOOKS)]
 
 
 def overlay(im, t, s, story, teil=None, gesamt_teile=None):
     if s.get('art') in ('teil2',):
         return im
-    if s.get('angst', 0) >= 0.6 or s.get('art') in ('gesicht', 'dunkel'):
-        im = nachtsicht(im, 0.55)
+    look = look_von(story)
+    angst = s.get('angst', 0) >= 0.6 or s.get('art') in ('gesicht', 'dunkel')
+    if look == 'band':
+        im = nachtsicht(im, 0.85, 'grau')
+    elif angst and look != 'kino':
+        im = nachtsicht(im, 0.55, {'kamera': 'gruen', 'mond': 'blau', 'notlicht': 'rot'}[look])
+    if look in ('kino', 'mond'):   # Filmbild: keine REC-Anzeige, kein Akku, keine Sucher-Ecken
+        return im
     w, h = im.size
     im = im.convert('RGBA')
     im.alpha_composite(_bildzeilen(w, h))

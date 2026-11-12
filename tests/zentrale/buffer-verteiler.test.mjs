@@ -123,9 +123,9 @@ test('Weniger, dafür zur besten Zeit: 3 Videos je Kanal, nur nachts und abends'
   const { guteStunde, ZIEL_WENIGER } = await import('../../automations/lib/bufferVerteiler.mjs');
   assert.ok(KANAELE.every((k) => k.ziel === ZIEL_WENIGER));
   const jetzt = Date.parse('2026-11-02T22:00:00Z');
-  assert.equal(postenJetzt(2, '2026-11-02T08:00:00Z', jetzt, { ziel: ZIEL_WENIGER }), true, 'drittes Video geht noch');
-  assert.equal(postenJetzt(3, '2026-11-02T08:00:00Z', jetzt, { ziel: ZIEL_WENIGER }), false, 'nach 3 ist Schluss');
-  assert.deepEqual([0, 3, 8, 11, 14, 17, 20, 22].filter(guteStunde), [0, 3, 20, 22]);
+  assert.equal(postenJetzt(0, null, jetzt, { ziel: ZIEL_WENIGER }), true, 'das eine Video des Tages geht');
+  assert.equal(postenJetzt(1, '2026-11-02T08:00:00Z', jetzt, { ziel: ZIEL_WENIGER }), false, 'nach 1 ist Schluss (Schonkur)');
+  assert.deepEqual([0, 3, 8, 11, 14, 17, 20, 22].filter(guteStunde), [20, 22]);
 });
 
 test('zaehlenMitStand: eigenes Protokoll fängt verzögerte Buffer-Liste ab', async () => {
