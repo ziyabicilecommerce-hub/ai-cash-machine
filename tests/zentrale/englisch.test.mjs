@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { SKRIPTE_EN, naechstesSkriptEn } from '../../automations/schatten/skripteEn.mjs';
-import { baueFolge, pruefen, slug } from '../../automations/schatten/videobot.mjs';
+import { baueFolge as bauen, pruefen, slug } from '../../automations/schatten/videobot.mjs';
+const baueFolge = (s) => bauen(s && Object.keys(s).length ? { stil: 'studio', ...s } : s);  // diese Tests prüfen das alte Studio-Aussehen (Karten, Banner)
 
 test('Englische Geschichten: gültig, kurze Hooks, Du-Hooks, keine doppelt, kein Deutsch im Video', () => {
   assert.ok(SKRIPTE_EN.length >= 44);

@@ -57,7 +57,8 @@ test('Schlagzeile: je Muster höchstens 6 Wörter, deutsch und englisch, nur wen
   const { SCHLAGZEILEN, schlagzeile } = await import('../../automations/schatten/schlagzeilen.mjs');
   const { alleSkripte } = await import('../../automations/schatten/skriptBot.mjs');
   const { SKRIPTE_EN } = await import('../../automations/schatten/skripteEn.mjs');
-  const { baueFolge } = await import('../../automations/schatten/videobot.mjs');
+  const { baueFolge: bauen } = await import('../../automations/schatten/videobot.mjs');
+  const baueFolge = (s) => bauen(s && Object.keys(s).length ? { stil: 'studio', ...s } : s);  // diese Tests prüfen das alte Studio-Aussehen (Karten, Banner)
   for (const l of Object.values(SCHLAGZEILEN)) for (const t of Object.values(l)) assert.ok(t.split(' ').length <= 6 && t === t.toUpperCase(), t);
   for (const s of alleSkripte()) assert.ok(schlagzeile(s.muster, 'de'), `fehlt (de): ${s.muster}`);
   for (const s of SKRIPTE_EN) assert.ok(schlagzeile(s.muster, 'en'), `fehlt (en): ${s.muster}`);

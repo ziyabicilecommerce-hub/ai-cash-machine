@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { baueFolge, pruefen, skriptAus, KONTEN } from '../../automations/schatten/videobot.mjs';
+import { baueFolge as bauen, pruefen, skriptAus, KONTEN } from '../../automations/schatten/videobot.mjs';
+const baueFolge = (s) => bauen(s && Object.keys(s).length ? { stil: 'studio', ...s } : s);  // diese Tests prüfen das alte Studio-Aussehen (Karten, Banner)
 
 const SK = JSON.parse(readFileSync(new URL('../../automations-dashboard/tiktok/skripte.json', import.meta.url), 'utf8'));
 
@@ -79,7 +80,7 @@ test('Keine Kopien zwischen TikTok-Konten: Hits anderer Konten kommen nicht auf 
 });
 
 test('Fortsetzungs-Bot: eigener Gewinner bekommt Teil 2 auf demselben Konto', async () => {
-  const { autopilotListe, baueFolge, pruefen } = await import('../../automations/schatten/videobot.mjs');
+  const { autopilotListe, pruefen } = await import('../../automations/schatten/videobot.mjs');
   const { serienText } = await import('../../automations/schatten/posten.mjs');
   const mit = SK.skripte.filter((s) => s.teil2);
   assert.ok(mit.length >= 6);
@@ -196,4 +197,16 @@ test('KI-Hintergründe standardmäßig an, abschaltbar, mit Prompt je Szene (au�
   assert.equal(an.ki_bilder, true); assert.match(an.ki_stil, /no text/);
   assert.ok(an.szenen.filter((s) => !['nachricht', 'teil2'].includes(s.art)).every((s) => /train|face/.test(s.ki)));
   assert.ok(an.szenen.filter((s) => s.art === 'teil2').every((s) => !s.ki));
+});
+
+test('Nativer Stil: Standard für kurze Videos - keine Karte, keine Banner, Frage als letzter Untertitel', () => {
+  const sk = { titel: 'Probe', hook: 'Wenn es um 3 Uhr klingelt, renn.', saetze: ['Ich öffne.', 'Niemand da.', 'Es klingelt wieder.'], ende: 'Von innen.', frage: 'Hättest du geöffnet?', wahl: ['Öffnen', 'Rennen'], kurz: true };
+  const f = bauen(sk);
+  assert.equal(f.stil, 'nativ');
+  assert.equal(f.suchbild, false); assert.equal(f.schlag, '');
+  const ende = f.szenen.at(-1);
+  assert.equal(ende.art, 'dunkel'); assert.equal(ende.text, 'HÄTTEST DU GEÖFFNET?'); assert.equal(ende.wahl, undefined);
+  assert.ok(ende.ki, 'das Ende hat ein KI-Bild statt einer Karte');
+  assert.match(f.caption, /1️⃣ Öffnen oder 2️⃣ Rennen/, 'die Wahl steht weiter im Beitragstext');
+  assert.equal(bauen({ ...sk, stil: 'studio' }).szenen.at(-1).art, 'teil2', 'stil: studio stellt die Karte wieder her');
 });

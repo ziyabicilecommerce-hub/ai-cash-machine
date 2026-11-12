@@ -107,7 +107,13 @@ export function baueFolge(skript) {
   const frage = satz(skript.frage || T.frage, 80);
   // Kommentar-Wahl "1 oder 2": eine Zahl tippen ist leichter als einen Satz schreiben - bringt mehr Kommentare
   const wahl = Array.isArray(skript.wahl) ? skript.wahl.map((w) => satz(w, 18)) : null;
-  if (!weiter && wahl) {
+  // Nativer Stil (12.11.): Rückmeldung von außen - die Videos sahen aus wie Anzeigen (Banner, Knöpfe, Karten). Organisch
+  // laufen schlichte Videos: große Wort-Untertitel, sonst nichts. Die Frage steht am Ende als normaler Untertitel über dem
+  // letzten Bild, die 1/2-Wahl nur noch im Beitragstext. stil: 'studio' im Skript stellt das alte Aussehen wieder her.
+  const nativ = kurz_ && skript.stil !== 'studio';
+  if (nativ && !weiter) {
+    szenen.push({ art: 'dunkel', ...zeile(frage, { pause: 0.4, dauer: 2 }) });
+  } else if (!weiter && wahl) {
     // Kurz-Videos (11.11.): nur die Frage sprechen - die zwei Antworten stehen auf den Karten. Vorher stand die Karte 6 von 20 s
     // (30 % des Videos ohne Bewegung), das drückt die Quote "zu Ende gesehen".
     szenen.push({ art: 'teil2', sprich: kurz_ ? frage : `${frage} ${T.eins}: ${wahl[0]}. ${T.zwei}: ${wahl[1]}.${T.schreibZahl}`,
@@ -131,12 +137,13 @@ export function baueFolge(skript) {
     held: { farbe: [44, 56, 92], oberteil: 'hoodie', kopf: 'haare', haar: [46, 34, 26], hose: [38, 44, 70] },
     titel, titelbild, titelbild_gelb: gelbVon(titelbild), teile: skript.teil === 2 ? 2 : 1,
     ...(kiAn ? { ki_bilder: true, ki_stil: KI_STIL, ki_seed: [...String(skript.titel || '')].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 100000, 7) } : {}),
-    suchbild: kurz_ && skript.suchbild !== false,  // 3 versteckte Augenpaare + Sekunden-Frage
+    stil: nativ ? 'nativ' : 'studio',
+    suchbild: kurz_ && !nativ && skript.suchbild !== false,  // 3 versteckte Augenpaare + Sekunden-Frage
     raum: kurz_ && skript.raum !== false,  // 3D-Ton: Flüstern kreist um den Kopf (story.py/ton.py)
     kalt: kurz_ && skript.kalt !== false,  // kalter Einstieg: 0,8 s das Ende zeigen, dann zurückspulen
     gestalt: kurz_ && skript.gestalt !== false,  // Schattenfigur kommt in leeren KI-Szenen näher (tiefe.py, A/B-Test)
-    schlag: kurz_ && skript.schlag === true ? schlagzeile(skript.muster, en ? 'en' : 'de') : '',  // große Schlagzeile in den ersten 2,6 s (A/B-Test)
-    caption: `${satz(skript.hook, 120)}${kurz_ && skript.raum !== false ? T.kopf : ''}${kurz_ && skript.suchbild !== false
+    schlag: kurz_ && !nativ && skript.schlag === true ? schlagzeile(skript.muster, en ? 'en' : 'de') : '',  // große Schlagzeile in den ersten 2,6 s (A/B-Test)
+    caption: `${satz(skript.hook, 120)}${kurz_ && skript.raum !== false ? T.kopf : ''}${kurz_ && !nativ && skript.suchbild !== false
       ? T.such : ` ${frage}${wahl && !weiter ? T.wahl(wahl[0], wahl[1]) : ''} 👇`}`, szenen,
   };
 }

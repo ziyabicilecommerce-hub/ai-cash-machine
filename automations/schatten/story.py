@@ -9,6 +9,7 @@ from effekte import (W, H, rotverschiebung, weich, popfont, suchzeiten, KALT_BIS
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
 from ki import ki_bilder_laden, ki_szene
 import kamera
+import effekte
 from aktion import scheibe, decke_schatten, masken, fernseher, taschenlampe, zaehlen, turbulenz, fluegel, live, klinke, rufen, zelt
 from fahrgaeste import fahrgaeste_malen, zeitung_nah
 from orte import ORT, HIMMEL, NEBEL, AUGE, AUGE_LEISE, HANDYLICHT, AUGE_GROSS, sterne, innenraum, draussen, rahmen, SPIEGELBOX
@@ -315,6 +316,7 @@ def main():
             sz['text'] = kamera.ohne_teil(sz.get('text'))
             sz.setdefault('blitzbild', [1.1]); sz.setdefault('schreck_bei', 1.1)
     teil, teile = kamera.teil_von(story.get('titel')), story.get('teile')
+    effekte.NATIV['an'] = story.get('stil') == 'nativ'  # große Wort-Untertitel in der Mitte, keine Banner
     for i, sz in enumerate(szenen):  # wer genau hinschaut, sieht ihn schon vor dem Jumpscare - von Szene zu Szene naeher
         if i > 0 and sz['art'] in ('innen', 'handy') and 'naeher' not in sz:
             sz['naeher'] = round(min(0.55, 0.1 + 0.6 * i / len(szenen)), 2)

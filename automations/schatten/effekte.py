@@ -103,6 +103,41 @@ def suchbanner(im, sprache='de'):
 
 
 FONT_UT = ImageFont.truetype(FONTDATEI, 60)
+# Nativer Stil (12.11., Rückmeldung von außen: "sieht aus wie eine Anzeige, läuft organisch nicht"): so wie die großen
+# Horror-Kanäle - wenige große Wörter in der Bildmitte, die mit der Stimme mitlaufen, sonst nichts im Bild.
+# story.py schaltet das je Video ein (story["stil"] == "nativ").
+NATIV = {'an': False}
+FONT_NATIV = ImageFont.truetype(FONTDATEI, 84)
+
+
+def wort_gruppen(woerter, groesse=3):
+    """Wörter in kleine Gruppen teilen (höchstens 3, nach Satzzeichen ist Schluss) -> Liste von (start, ende)."""
+    gruppen, start = [], 0
+    for i, w in enumerate(woerter):
+        if i - start + 1 >= groesse or w[-1:] in '.,!?:' or i == len(woerter) - 1:
+            gruppen.append((start, i + 1)); start = i + 1
+    return gruppen
+
+
+def untertitel_nativ(im, satz, key, k, basis=(255, 255, 255), pop=1.0):
+    woerter = satz.split()
+    if not woerter:
+        return
+    k = max(1, min(k, len(woerter)))
+    a, e = next(g for g in wort_gruppen(woerter) if g[1] >= k)
+    d = ImageDraw.Draw(im)
+    f = FONT_NATIV
+    while f.size > 52 and d.textlength(' '.join(woerter[a:e]), font=f) > W - 70:
+        f = ImageFont.truetype(FONTDATEI, f.size - 6)
+    x = (W - d.textlength(' '.join(woerter[a:e]), font=f)) / 2
+    for i in range(a, e):
+        w = woerter[i]
+        if i < k:  # das gerade gesprochene Wort ist gelb und federt leicht ein
+            jetzt = i == k - 1
+            gross = ImageFont.truetype(FONTDATEI, int(f.size * (1.10 - 0.10 * weich(pop)))) if jetzt else f
+            farbe = GELB if jetzt or w.strip('".,:!?') == key else basis
+            d.text((x + d.textlength(w, font=f) / 2, 800), w, font=gross, fill=farbe, stroke_width=8, stroke_fill=(0, 0, 0), anchor='mm')
+        x += d.textlength(w + ' ', font=f)
 LUECKE = 10  # Extra-Abstand zwischen Untertitel-Wörtern, damit das größer einfedernde Wort nie das Nachbarwort berührt
 SEITE = 4    # Zeilen pro Untertitel-Seite
 
@@ -111,6 +146,8 @@ def untertitel(im, satz, key, k=None, basis=(245, 245, 245), pop=1.0):
     """Wort für Wort: Positionen stehen fest, sichtbar sind die ersten k Wörter (das neueste federt etwas größer ein).
     Lange Sätze laufen seitenweise mit der Stimme mit (je 4 Zeilen) - früher wurden sie nach 42 Zeichen abgeschnitten,
     bei fast jeder Geschichte fehlte so die Pointe im Bild. k=None zeigt alles auf einmal (Hook, Titelbild)."""
+    if NATIV['an'] and k is not None:
+        return untertitel_nativ(im, satz, key, k, basis, pop)
     d = ImageDraw.Draw(im)
     zeilen, z = [], ''
     for w in satz.split():
@@ -146,6 +183,8 @@ def untertitel(im, satz, key, k=None, basis=(245, 245, 245), pop=1.0):
 
 def hinweise(im, t, story, such, sprache='de'):
     """Oben im Bild: erst die Schlagzeile (bis 2,6 s, höchstens 6 Wörter), danach die Hinweise (Augen, Kopfhörer)."""
+    if NATIV['an']:  # nativer Stil: keine Banner, keine Schlagzeilen-Box - das Bild soll nicht wie Werbung aussehen
+        return
     if t < 2.6:
         text = story.get('schlag') or ''
         if not text:
