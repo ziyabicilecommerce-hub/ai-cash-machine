@@ -3,6 +3,8 @@
 # die Kamera fährt räumlich INS Bild statt nur zu zoomen. Kostenlos, ohne Grafikkarte, ohne Tageslimit, volle Schärfe.
 # Dazu die Gestalt: in leeren Szenen taucht hinten im Flur eine schwarze Figur auf und steht bei jedem Lichtflackern näher -
 # von Wänden und Türrahmen richtig verdeckt (die Tiefenkarte weiß, was davor liegt).
+# Und Dunst (nebel): zieht in zwei Schichten durch den Raum, hinten dicht, vorne dünn; das Licht flackert leicht.
+# Zusammen ist das ein eigener kleiner Videogenerator ohne Limit: Kamera, Figur, Dunst und Licht bewegen sich.
 # Fehlt etwas (kein torch/opencv, Modell nicht ladbar) oder HORROR_TIEFE=aus -> flache Kamerafahrt wie bisher.
 import math, os
 
@@ -107,6 +109,28 @@ def gestalt_malen(bild, t, fern, naehe):
     return (bild * (1 - m) + np.array((3, 3, 6), dtype=np.float32) * m).astype(np.uint8)
 
 
+_NEBEL = {}
+
+
+def nebel(bild, t, lt):
+    """Dunst, der durch den Raum zieht: hinten dicht, vorne fast nichts (die Tiefenkarte bestimmt, wo). Zwei Wolkenschichten
+    ziehen verschieden schnell - das Standbild lebt, ohne dass ein Videomodell rechnen muss. Dazu flackert das Licht leicht."""
+    import cv2, numpy as np
+    h, w = t.shape
+    if 'wolken' not in _NEBEL:                           # einmal: weiche Wolken, doppelt so breit wie das Bild (zum Verschieben)
+        zufall = np.random.default_rng(7)
+        klein = zufall.random((h // 40 + 2, w // 20 + 2)).astype(np.float32)
+        wolken = cv2.GaussianBlur(cv2.resize(klein, (w * 2, h), interpolation=cv2.INTER_CUBIC), (0, 0), 25)
+        _NEBEL['wolken'] = (wolken - wolken.min()) / max(float(wolken.max() - wolken.min()), 1e-6)
+    wolken = _NEBEL['wolken']
+    x1, x2 = int(lt * 34) % w, int(w - (lt * 19) % w) % w
+    schicht = (wolken[:, x1:x1 + w] + wolken[::-1, x2:x2 + w]) * 0.5
+    dichte = np.clip(1.0 - t, 0, 1) ** 1.6 * 0.42 * schicht          # fern = dicht
+    flackern = 1.0 - 0.10 * max(0.0, math.sin(lt * 23.0) * math.sin(lt * 7.3)) - 0.05 * max(0.0, math.sin(lt * 51.0))
+    aus = bild.astype(np.float32) * ((1.0 - dichte) * flackern)[..., None] + (np.array((74, 84, 96), dtype=np.float32) * flackern) * dichte[..., None]
+    return np.clip(aus, 0, 255).astype(np.uint8)
+
+
 def fahrt(s, p, lt, richtung=0):
     """Ein Bild der 3D-Fahrt. p = Fortschritt 0..1, lt = Sekunden in der Szene, richtung = -1/0/1 (seitliches Gleiten)."""
     import cv2, numpy as np
@@ -119,6 +143,8 @@ def fahrt(s, p, lt, richtung=0):
             if s.get('_gbild', (None,))[0] != naehe:     # pro Stufe einmal malen
                 s['_gbild'] = (naehe, gestalt_malen(bild, t, s['_fern'], naehe))
             bild = s['_gbild'][1]
+    if s.get('_nebel', True):
+        bild = nebel(bild, t, lt)                         # ziehender Dunst + Lichtflackern (jedes Bild neu)
     h, w = t.shape
     if '_netz' not in s:
         s['_netz'] = np.meshgrid(np.arange(w, dtype=np.float32), np.arange(h, dtype=np.float32))
