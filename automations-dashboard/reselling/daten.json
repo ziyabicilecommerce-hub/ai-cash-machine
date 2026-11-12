@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-12T17:41:03.513Z",
+ "stand": "2026-11-12T17:44:03.300Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -199,7 +199,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-12T17:29:00.027Z",
+  "stand": "2026-11-12T17:44:12.534Z",
   "filialen": 148,
   "produkte": [
    {
@@ -264,7 +264,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 50
+      "menge": 49
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -272,7 +272,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 8
+      "menge": 7
      }
     ]
    },
@@ -290,7 +290,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 8
+      "menge": 7
      },
      {
       "name": "dm Kriftel",
@@ -306,7 +306,7 @@
       "km": 5.6,
       "lat": 50.1014043,
       "lon": 8.5485073,
-      "menge": 17
+      "menge": 16
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -322,7 +322,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Flörsheim am Main",
@@ -346,7 +346,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 12
+      "menge": 11
      }
     ]
    },
@@ -494,7 +494,7 @@
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
-      "menge": 4
+      "menge": 3
      }
     ]
    },
@@ -746,6 +746,15 @@
       "menge": 8
      }
     ]
+   },
+   {
+    "dan": "3143255",
+    "name": "LEGO®DUPLO® duplo Disney Frozen Kreativbox Set 37tlg, 1 St",
+    "preis": 19.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1778366813/assets/pas/images/49a53421-ad43-49bb-b53e-c1db74cc5b14/lego-duplo-duplo-disney-frozen-kreativbox-set-37tlg",
+    "link": "https://www.dm.de/p/d/3143255/lego-duplo-duplo-disney-frozen-kreativbox-set-37tlg",
+    "begriff": "lego",
+    "vorrat": []
    },
    {
     "dan": "3118686",
@@ -3875,15 +3884,37 @@
   "stand": "2026-11-12T16:53:39.087Z"
  },
  "trends": {
-  "ware": [],
+  "ware": [
+   {
+    "titel": "lego star wars 2027",
+    "menge": "200+",
+    "kategorie": "Figuren & Spielzeug"
+   }
+  ],
   "top": [
    {
-    "titel": "michael olise",
-    "menge": "2000+"
+    "titel": "max dowman",
+    "menge": "500+"
+   },
+   {
+    "titel": "busfahrer",
+    "menge": "1000+"
+   },
+   {
+    "titel": "marchetti",
+    "menge": "200+"
+   },
+   {
+    "titel": "lego star wars 2027",
+    "menge": "200+"
    },
    {
     "titel": "greta thunberg lacht",
-    "menge": "1000+"
+    "menge": "2000+"
+   },
+   {
+    "titel": "michael olise",
+    "menge": "2000+"
    },
    {
     "titel": "u2",
@@ -3899,23 +3930,7 @@
    },
    {
     "titel": "sylvie meis",
-    "menge": "2000+"
-   },
-   {
-    "titel": "marijke amado",
-    "menge": "1000+"
-   },
-   {
-    "titel": "spd",
-    "menge": "2000+"
-   },
-   {
-    "titel": "hubschrauber",
-    "menge": "500+"
-   },
-   {
-    "titel": "kiel",
-    "menge": "500+"
+    "menge": "5000+"
    }
   ]
  },
@@ -4489,15 +4504,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Asics GEL-NYC",
-    "preis": 116,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/asics-gel-nyc-graphite-grey-black",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cc1c86f0b9268f6b27add5b92548f1df272b48ac_1201A789_020_Asics_GEL_NYC_Graphite_Grey_Black_os_1_9d944940-9064-4615-9542-6bf02307a613.jpg?v=1745415111",
-    "laden": "asphaltgold.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "adidas Originals SAMBA OG",
     "preis": 117.99,
     "verfuegbar": true,
@@ -4864,6 +4870,15 @@
     "url": "https://eu.kith.com/products/asi1203a383-118",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_118_SR_RT_GLB.jpg?v=1785420543",
     "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "Asics GEL-Kayano 14",
+    "preis": 152,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/asics-gelkayano-14-dried-leaf-green-pure-silver",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/9vtX1G8Qc61IUuG2GvfR-1203A537-300-Asics-GEL-Kayano-14-Dried-Leaf-Green-Pure-Silver-os-1.jpg?v=1759154596",
+    "laden": "asphaltgold.com",
     "begriff": "asics"
    },
    {
