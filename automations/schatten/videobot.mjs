@@ -62,8 +62,20 @@ const KI_ORT = {
   flugzeug: 'dark airplane cabin at night, rows of empty seats, small window',
 };
 const KI_STIL = 'found footage, grainy realistic photo, low light, cinematic horror, vertical frame, no text, no watermark, no people in focus';
-function kiPrompt(art, ort, anteil) {
-  const raum = KI_ORT[ort] || KI_ORT.haus;
+// Abwechslung (12.11.): fast alle Geschichten spielen im "haus" und sahen gleich aus (immer derselbe Flur). Jetzt bekommt
+// jedes Video einen von mehreren Räumen (fest je Titel, damit alle Szenen eines Videos zusammenpassen).
+export const HAUS_RAEUME = [
+  KI_ORT.haus,
+  'dark kitchen at night, open fridge casting cold light, chairs pulled out from the table',
+  'dark living room at night, old television showing static, empty sofa',
+  'narrow staircase in an old house at night seen from below, one lamp at the top',
+  'dark bathroom at night, fogged mirror above the sink, shower curtain half closed',
+  "child's bedroom at night, small night light, toys on the floor, closet door ajar",
+  'basement stairs leading down into darkness, bare bulb, concrete walls',
+  'front door of an apartment seen from inside at night, light under the door, coats on hooks',
+];
+function kiPrompt(art, ort, anteil, nr = 0) {
+  const raum = (ort || 'haus') === 'haus' || !KI_ORT[ort] ? HAUS_RAEUME[nr % HAUS_RAEUME.length] : KI_ORT[ort];
   if (art === 'fratze') return 'terrifying inhuman face lunging out of pitch black darkness, mouth stretched wide open in a silent scream, empty black eye sockets, grey cracked skin, extreme close up, horror film still, not human, not pretty';
   if (art === 'dunkel') return `${raum}, almost pitch black, a faint tall silhouette barely visible`;
   if (art === 'ende') return `${raum}, a tall dark silhouette standing very close to the camera`;
@@ -106,9 +118,10 @@ export function baueFolge(skript) {
     szenen.push({ art: 'teil2', ...zeile(schluss, { pause: 0.8, cta: weiter ? T.folgT2 : T.folg }) });
   }
   // KI-Bilder sind Standard für alle kurzen Horror-Videos (Wunsch 06.11.: keine gezeichneten Szenen mehr); ki: false schaltet ab
+  const titelZahl = [...String(skript.titel || '')].reduce((x, c) => (x * 31 + c.charCodeAt(0)) % 100000, 7);
   const kiAn = skript.ki === true || (kurz_ && skript.ki !== false);
   if (kiAn) {  // KI-Hintergrund je Szene (Nachricht und Endkarte bleiben gezeichnet)
-    szenen.forEach((sz, i) => { if (!['nachricht', 'teil2'].includes(sz.art)) sz.ki = kiPrompt(sz.art, skript.ort || 'haus', i / szenen.length); });
+    szenen.forEach((sz, i) => { if (!['nachricht', 'teil2'].includes(sz.art)) sz.ki = kiPrompt(sz.art, skript.ort || 'haus', i / szenen.length, titelZahl); });
   }
   const titel = satz(skript.titel || skript.hook, 60);
   const titelbild = kurz(skript.hook, 80);

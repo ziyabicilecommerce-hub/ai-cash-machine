@@ -65,15 +65,20 @@ jobs:
           if [ "${{ github.event_name }}" = "schedule" ] && ! echo " 19 20 21 02 03 04 " | grep -q " $STUNDE "; then
             echo "Zeitplan kam zu spät ($STUNDE Uhr Berlin) - übersprungen, der Pünktlich-Bot übernimmt."; exit 0
           fi
+          # Schonkur (12.11.): nur noch EIN Video pro Konto und Tag, abends (18-22 Uhr Berlin) - die Reichweite fiel auf allen
+          # Kanälen, vermutlich wegen zu vieler zu ähnlicher Videos. Zurück: diesen Block löschen und GRENZE wieder auf -3 hours.
+          if ! echo " 18 19 20 21 22 " | grep -q " $STUNDE "; then
+            echo "Schonkur: nur abends ein Video ($STUNDE Uhr Berlin) - übersprungen." | tee -a "$GITHUB_STEP_SUMMARY"; exit 0
+          fi
           # TikTok-Rettung (#116): Konten in Schonung posten nur das Abend-Video, bis sie Ø 50 Aufrufe schaffen
           if [ "${{ inputs.erzwingen }}" != "true" ]; then
             node automations/116-tiktok-rettung.mjs "$KONTO" > /tmp/rettung.txt; cat /tmp/rettung.txt
             if grep -q "^darf=nein" /tmp/rettung.txt; then exit 0; fi
           fi
-          GRENZE=$(date -u -d '-3 hours' +%Y-%m-%dT%H:%M:%SZ)
+          GRENZE=$(date -u -d '-20 hours' +%Y-%m-%dT%H:%M:%SZ)
           LETZTES=$(gh release list -R "$REPO" --limit 100 --json tagName,createdAt --jq "[.[] | select(.tagName | startswith(\"videobot-auto-\")) | select(.tagName | endswith(\"-$KONTO\")) | select(.createdAt > \"$GRENZE\")] | length")
-          if [ "${LETZTES:-0}" -gt 0 ] && [ "${{ inputs.erzwingen }}" != "true" ]; then
-            echo "@$KONTO hat in diesem Slot schon ein Video - übersprungen."; exit 0
+          if [ "${LETZTES:-0}" -gt 0 ]; then
+            echo "@$KONTO hat heute schon ein Video - übersprungen."; exit 0
           fi
           for SLUG in $(node automations/schatten/videobot.mjs --auto automations-dashboard/tiktok/skripte.json ${{ matrix.nr }}); do
             TAG="videobot-auto-$SLUG-$KONTO"
