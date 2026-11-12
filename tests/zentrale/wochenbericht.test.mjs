@@ -41,7 +41,8 @@ test('A/B-Test: Varianten zufällig, Auswertung mit/ohne, Urteil erst ab je 3 Vi
 });
 
 test('Caption folgt der Variante', async () => {
-  const { baueFolge } = await import('../../automations/schatten/videobot.mjs');
+  const { baueFolge: bauen } = await import('../../automations/schatten/videobot.mjs');
+  const baueFolge = (s) => bauen(s && Object.keys(s).length ? { stil: 'studio', ...s } : s);  // diese Tests prüfen das alte Studio-Aussehen (Karten, Banner)
   const sk = { hook: 'Ich wohne allein.', saetze: ['Es klopft.', 'Ich schaue.', 'Niemand.'], ende: 'Er steht hinter mir.', kurz: true };
   assert.match(baueFolge(sk).caption, /🎧.*3x im Video versteckt/);
   const ohne = baueFolge({ ...sk, raum: false, suchbild: false });
