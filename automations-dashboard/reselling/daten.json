@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-13T03:19:41.664Z",
+ "stand": "2026-11-13T03:22:39.802Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -3850,23 +3850,33 @@
   "stand": "2026-11-13T02:28:28.670Z"
  },
  "trends": {
-  "ware": [],
+  "ware": [
+   {
+    "titel": "trikot",
+    "menge": "500+",
+    "kategorie": "Klamotten"
+   }
+  ],
   "top": [
    {
+    "titel": "trikot",
+    "menge": "500+"
+   },
+   {
     "titel": "altersrente",
-    "menge": "5000+"
+    "menge": "2000+"
    },
    {
     "titel": "riccardo basile",
     "menge": "100+"
    },
    {
-    "titel": "giants – commanders",
-    "menge": "100+"
+    "titel": "tankstelle",
+    "menge": "1000+"
    },
    {
-    "titel": "tankstelle",
-    "menge": "500+"
+    "titel": "giants – commanders",
+    "menge": "100+"
    },
    {
     "titel": "öffentlich-rechtlicher rundfunk",
@@ -3874,7 +3884,7 @@
    },
    {
     "titel": "abschiebung",
-    "menge": "100+"
+    "menge": "200+"
    },
    {
     "titel": "nz vs ind",
@@ -3887,10 +3897,6 @@
    {
     "titel": "76ers – raptors",
     "menge": "100+"
-   },
-   {
-    "titel": "wirtschaft",
-    "menge": "2000+"
    }
   ]
  },
