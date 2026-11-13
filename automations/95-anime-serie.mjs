@@ -151,7 +151,7 @@ const sprechSekunden = (szenen) => szenen.reduce((n, s) => n + s.text.split(/\s+
 
 async function folgeSchreiben(serie) {
   const nr = serie.folgen.length + 1;
-  const vorher = serie.folgen.slice(-4).map((f) => `Folge ${f.nr} "${f.titel}": ${f.zusammenfassung}`).join('\n') || 'Noch keine - das ist die allererste Folge: stelle Welt und Held vor.';
+  const vorher = serie.folgen.slice(-4).map((f) => `Folge ${f.nr} „${f.titel}“: ${f.zusammenfassung}`).join('\n') || 'Noch keine - das ist die allererste Folge: stelle Welt und Held vor.';
   const plan = await kiJson(
     `Anime-Serie "${serie.titel}". ${serie.logline} Welt: ${serie.welt} Figuren: ${figurenText(serie)}.\nBisherige Folgen:\n${vorher}\n` +
       `Plane Folge ${nr} (ca. ${MINUTEN} Minuten). Erzaehle die Geschichte logisch weiter, mit Action, Gefuehl und Humor, und ende mit einem Cliffhanger. ${REGELN} ` +

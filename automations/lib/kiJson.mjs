@@ -17,8 +17,30 @@ export function jsonAusText(text) {
       .replace(/([{,]\s*)([A-Za-z_][\w]*)\s*:/g, '$1"$2":')
       .replace(/}\s*{/g, '},{')
       .replace(/"\s*\n\s*"/g, '","');
-    return JSON.parse(repariert);
+    try { return JSON.parse(repariert); } catch { /* letzter Versuch: Anführungszeichen mitten im Text */ }
+    return JSON.parse(innereZeichen(roh));
   }
+}
+
+// Die kostenlose KI schreibt oft Anführungszeichen mitten in einen Text ("Folge 3 "Der Sturm" beginnt") - danach ist das
+// ganze JSON kaputt (#95 Anime-Serie scheiterte so drei Abende hintereinander). Ein " innerhalb eines Textes, nach dem kein
+// , } ] oder : folgt, ist kein Ende des Textes - es wird zu einem typografischen Zeichen.
+export function innereZeichen(text) {
+  let aus = '', inText = false, esc = false, auf = true;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (!inText) { if (c === '"') { inText = true; auf = true; } aus += c; continue; }
+    if (esc) { esc = false; aus += c; continue; }
+    if (c === '\\') { esc = true; aus += c; continue; }
+    if (c === '\n') { aus += '\\n'; continue; }
+    if (c === '"') {
+      const rest = text.slice(i + 1).match(/^\s*(.)/);
+      if (!rest || ',}]:'.includes(rest[1])) { inText = false; aus += c; } else { aus += auf ? '„' : '“'; auf = !auf; }
+      continue;
+    }
+    aus += c;
+  }
+  return aus;
 }
 
 // Abgeschnittenes JSON (kleine KI, Token-Limit): bis zum letzten vollstaendigen Element behalten und
