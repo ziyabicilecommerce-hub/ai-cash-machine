@@ -9,6 +9,8 @@ export const hookVon = (p) => String(p.text || '').trim().split(/(?<=[.!?])\s/)[
 
 // name -> Prüfung(hook, anfang des Textes). Nur Dinge, die man am Text sicher erkennt.
 export const TRICKS = {
+  'Regel-Hook (Wenn …, geh nicht ran / renn)': (h) => /^(wenn|dankt|ruft|schreibt|steht|liegt|findest|hörst|siehst|zeigt|fragt|sagt)\b/i.test(h) && /,\s*[^,]*\b(nie|niemals|nicht|renn|lauf)\b[^,]*[.!]$/i.test(h),
+  'Zettel/Schild/Regel im Text': (h, t) => /zettel|schild|regel/i.test(t),
   'Du-Ansprache am Anfang (Wenn/Schau/Geh …)': (h) => /^(Wenn|Schau|Geh|Öffne|Lies|Dankt|Sag|Du|If|Never|Don't|When)\b/i.test(h),
   'Uhrzeit (3 Uhr, 3:12)': (h, t) => /\d ?Uhr|\d:\d\d|\d ?(a\.?m\.?|p\.?m\.?)/i.test(t),
   'Zahl im ersten Satz': (h) => /\d/.test(h),
