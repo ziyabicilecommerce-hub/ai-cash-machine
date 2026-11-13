@@ -160,3 +160,9 @@ test('Englisch auf Instagram: Reel mit englischem Text, Tags, KI-Hinweis und ers
   assert.ok(!/KI-generiert|gruselgeschichte/.test(r.text));
   assert.match(r.metadata.instagram.firstComment, /comment the number/);
 });
+
+test('Schonkur: das Tagesziel 0 wird nicht durch den Standard ersetzt (0 ist ein gültiges Ziel)', () => {
+  const quelle = readFileSync(new URL('../../automations/113-buffer-verteiler.mjs', import.meta.url), 'utf8');
+  assert.match(quelle, /ziel: k\.ziel \?\? ZIEL_PRO_TAG/, 'mit || würde aus ZIEL_WENIGER = 0 wieder das Standardziel');
+  assert.doesNotMatch(quelle, /k\.ziel \|\| ZIEL_PRO_TAG/);
+});
