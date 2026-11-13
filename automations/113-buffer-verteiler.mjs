@@ -102,7 +102,7 @@ async function vorbereiten() {
   if (!guteStunde(stundeJetzt)) bericht(`- 🕒 ${stundeJetzt} Uhr: Instagram/YouTube posten nur nachts und abends (beste Zeiten) - dieser Lauf pausiert.`);
   for (const k of guteStunde(stundeJetzt) ? KANAELE : []) {
     const { heute, letzter } = zaehlenMitStand(zaehlen(posts, k.id), stand[k.id], heuteBerlin());
-    if (!postenJetzt(heute, letzter, Date.now(), { ziel: k.ziel || ZIEL_PRO_TAG })) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
+    if (!postenJetzt(heute, letzter, Date.now(), { ziel: k.ziel ?? ZIEL_PRO_TAG })) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
     // Mix-Kanal: diesmal Deutsch oder Englisch (Sprach-Test)
     const quelle = k.quelle === 'horror-mix' ? (Math.random() < enAnteilVon(k) ? 'horror-en' : 'horror') : k.quelle;
     if (quelle.startsWith('horror')) {
