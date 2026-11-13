@@ -56,7 +56,7 @@
   .vbzwei { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0 12px; }
   .chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
   .chip { background:#13203a; color:var(--text); border:1px solid var(--rand); border-radius:99px; padding:7px 11px; font:12px 'JetBrains Mono',monospace; cursor:pointer; text-align:left; }
-  .chip:active { background:var(--pink); }
+  .chip:active, .chip.an { background:var(--pink); }
   .vb details { margin-top:8px; font-size:13px; } .vb summary { cursor:pointer; color:var(--cyan); }
   .vbcheck { font-family:'Orbitron',sans-serif; font-size:15px; color:#fff; margin:18px 0 8px; } #vb-score { color:var(--green); }
   button.knopf { background:none; color:var(--cyan); cursor:pointer; font:inherit; font-size:13px; } button.knopf.haupt { background:var(--pink); color:#fff; }
@@ -113,6 +113,14 @@
     <p class="unter" style="margin-top:8px">Jedes Video wird automatisch als KI-generiert gekennzeichnet. Look: echte Kamera-Aufnahme (REC, 03:12 Uhr, Nachtsicht), Schock nach 1 Sekunde, Jumpscare + Twist.</p>
   </form>
 
+  <h2>🪝 Hook-Maschine</h2>
+  <p class="unter">Thema antippen → fertige Horror-Hooks nach den Formeln, die bei deinen eigenen Videos am besten liefen (Du-Ansprache, Uhrzeit, Zahl). Kopieren oder direkt in den Videobot übernehmen.</p>
+  <div class="vl-raster">
+    <div class="karte"><div class="vbkopf"><div><b>Thema</b><div class="chips" id="hm-themen"></div></div><button type="button" class="knopf" id="hm-zufall">🎲 Zufall</button></div>
+      <div id="hm-liste" style="margin-top:10px"></div></div>
+    <div class="karte"><b>🏆 Deine Hit-Hooks (echte Zahlen)</b><p class="unter" style="margin:4px 0 8px">Erste Sätze deiner Videos, die deutlich mehr geholt haben als der Schnitt ihres Kontos.</p><div id="hm-hits"></div></div>
+  </div>
+
   <h2>🧪 Viral-Labor</h2>
   <p class="unter">Was bei unseren eigenen Videos funktioniert - aus den echten TikTok-Zahlen (nur Posts, die schon Zahlen haben).</p>
   <div class="vl-raster">
@@ -161,5 +169,6 @@
 <script src="tiktok.js"></script>
 <script src="videobot.js"></script>
 <script src="viral.js"></script>
+<script src="hooks.js"></script>
 </body>
 </html>
