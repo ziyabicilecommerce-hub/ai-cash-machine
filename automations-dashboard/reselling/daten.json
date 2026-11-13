@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-13T22:31:30.940Z",
+ "stand": "2026-11-13T22:35:16.440Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118897:1500",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1434547,8.5023642",
+   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
+   "text": "44,95 € · dm Bad Soden am Taunus (8,3 km) · 1 Stück\nKönigsteiner Straße 76, 65812 Bad Soden am Taunus\nIm Umkreis in 19 Filiale(n) vorrätig.",
+   "zeit": "2026-11-13T22:35:16.440Z"
+  },
   {
    "schluessel": "filiale:3118897:1500",
    "art": "Filiale",
@@ -177,19 +187,10 @@
    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Azetts%20Gelassenheit",
    "text": "Kaufen ab 8,00 € · Ziel 18,75 € · +8,31 € nach Gebühren (ROI 104 %)",
    "zeit": "2026-11-12T22:36:51.206Z"
-  },
-  {
-   "schluessel": "karte:me04-119",
-   "art": "Karte",
-   "titel": "🚨 STRONG BUY: Chillabell-ex",
-   "bild": "https://assets.tcgdex.net/de/me/me04/119/low.webp",
-   "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Chillabell-ex",
-   "text": "Kaufen ab 18,00 € · Ziel 33,92 € · +12,72 € nach Gebühren (ROI 71 %)",
-   "zeit": "2026-11-12T22:36:51.206Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-13T22:17:58.384Z",
+  "stand": "2026-11-13T22:35:21.384Z",
   "filialen": 148,
   "produkte": [
    {
@@ -230,7 +231,7 @@
       "km": 5.6,
       "lat": 50.1014043,
       "lon": 8.5485073,
-      "menge": 19
+      "menge": 20
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -246,7 +247,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 60
+      "menge": 61
      },
      {
       "name": "dm Flörsheim am Main",
@@ -312,7 +313,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Flörsheim am Main",
@@ -362,7 +363,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Kelsterbach",
@@ -646,6 +647,72 @@
     "vorrat": []
    },
    {
+    "dan": "3118200",
+    "name": "Carlsen Adventskalender 2026 Pixi Leporello, 1 St",
+    "preis": 20,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1786752764/assets/pas/images/78d10d44-f2ad-4c77-bdda-33fb46aedcba/carlsen-adventskalender-2026-pixi-leporello",
+    "link": "https://www.dm.de/p/d/3118200/carlsen-adventskalender-2026-pixi-leporello",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 4
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 3
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Leipziger Straße 28, 60487 Frankfurt am Main",
+      "km": 12.9,
+      "lat": 50.121564,
+      "lon": 8.648177,
+      "menge": 2
+     },
+     {
+      "name": "dm Wiesbaden",
+      "adresse": "Berliner Straße 279, 65205 Wiesbaden",
+      "km": 13.4,
+      "lat": 50.0537018,
+      "lon": 8.3006459,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Kaiserstraße 75, 60329 Frankfurt am Main",
+      "km": 13.5,
+      "lat": 50.107657,
+      "lon": 8.666246,
+      "menge": 6
+     }
+    ]
+   },
+   {
     "dan": "3135831",
     "name": "NÉONAIL Adventskalender 2026 Touch Of Magic, 1 St",
     "preis": 59.95,
@@ -703,6 +770,14 @@
       "menge": 7
      },
      {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 1
+     },
+     {
       "name": "dm Eschborn",
       "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
       "km": 8.8,
@@ -717,88 +792,6 @@
       "lat": 50.1237366,
       "lon": 8.5865988,
       "menge": 8
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 5
-     }
-    ]
-   },
-   {
-    "dan": "3118676",
-    "name": "MAYBELLINE NEW YORK Adventskalender 2026 Happy Holidays, 1 St",
-    "preis": 52.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1778844332/assets/pas/images/821685b1-d386-428e-8655-1eb7ad8b7561/maybelline-new-york-adventskalender-2026-happy-holidays",
-    "link": "https://www.dm.de/p/d/3118676/maybelline-new-york-adventskalender-2026-happy-holidays",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 6
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 5
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 6
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 5
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 1
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 12
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 7
      }
     ]
    },
@@ -840,7 +833,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 24
+      "menge": 25
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -4409,12 +4402,24 @@
   "ware": [],
   "top": [
    {
-    "titel": "axel prahl",
+    "titel": "ralf dümmel",
     "menge": "1000+"
    },
    {
-    "titel": "argentinien – uruguay",
+    "titel": "elina switolina",
     "menge": "200+"
+   },
+   {
+    "titel": "wta finals 2026",
+    "menge": "2000+"
+   },
+   {
+    "titel": "axel prahl",
+    "menge": "2000+"
+   },
+   {
+    "titel": "argentinien – uruguay",
+    "menge": "500+"
    },
    {
     "titel": "bayerische staatsregierung",
@@ -4425,28 +4430,16 @@
     "menge": "100+"
    },
    {
-    "titel": "nachrichten",
-    "menge": "2000+"
-   },
-   {
     "titel": "rampage",
     "menge": "200+"
    },
    {
+    "titel": "usa",
+    "menge": "20000+"
+   },
+   {
     "titel": "aryna sabalenka",
     "menge": "1000+"
-   },
-   {
-    "titel": "kimmich",
-    "menge": "500+"
-   },
-   {
-    "titel": "ufc 334",
-    "menge": "200+"
-   },
-   {
-    "titel": "julia scheib",
-    "menge": "100+"
    }
   ]
  },
@@ -4478,15 +4471,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/HQ2851-100_1.jpg?v=1752668253",
     "laden": "overkillshop.com",
     "begriff": "dunk"
-   },
-   {
-    "titel": "471",
-    "preis": 50,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/new-balance-471-u471ai",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U471AI-6.jpg?v=1747232804",
-    "laden": "sneakersnstuff.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Speedcat LTH",
@@ -4597,6 +4581,24 @@
     "begriff": "new era"
    },
    {
+    "titel": "574",
+    "preis": 77,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-574-wl574evg",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/WL574EVG-1__15228.1719435499.1280.1280.jpg?v=1742985395",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "Sabrina 3",
+    "preis": 78,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-sabrina-3-hf2881-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HF2881-600_01.jpg?v=1767790890",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
+   },
+   {
     "titel": "Y-3 LOGO CAP",
     "preis": 79.99,
     "verfuegbar": true,
@@ -4604,6 +4606,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/y-3-logo-cap-ngtred-black-kw9699-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1793851517",
     "laden": "afew-store.com",
     "begriff": "cap"
+   },
+   {
+    "titel": "740",
+    "preis": 84,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/new-balance-740-u740wm2",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U740WM2-01__53937.1731666674.1280.1280.jpg?v=1742985378",
+    "laden": "sneakersnstuff.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Adidas Samba OG W",
@@ -5844,15 +5855,6 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/new-balance-990v4-u990br4",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U990BR4_01.jpg?v=1790171437",
-    "laden": "sneakersnstuff.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "Made in USA 990v4",
-    "preis": 240,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/new-balance-made-in-usa-990v4-u990lv4",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/U990LV4_01.jpg?v=1787814615",
     "laden": "sneakersnstuff.com",
     "begriff": "new balance"
    },
