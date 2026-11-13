@@ -250,8 +250,10 @@ if (process.argv[2] === '--auto') {
   let wb = {};
   try { wb = JSON.parse(readFileSync('automations-dashboard/tiktok/wochenbericht.json', 'utf8')); } catch { /* ohne Bericht: Standard */ }
   const { abVariante, abGewichte } = await import('../lib/bufferVerteiler.mjs');
-  const { kalt, raum, suchbild } = abVariante(Math.random, abGewichte(wb.ab));
-  writeFileSync(ziel, JSON.stringify(baueFolge({ ...treffer.skript, kalt, raum, suchbild }), null, 1));
+  const { kalt, raum, suchbild, duhook } = abVariante(Math.random, abGewichte(wb.ab));
+  // TikTok bekommt jetzt auch den Du-Hook (13.11.): bei uns meist ein Regel-Hook ("Wenn …, geh nicht ran."), gemessen x2,2
+  const hook = duhook && treffer.skript.hook2 ? treffer.skript.hook2 : treffer.skript.hook;
+  writeFileSync(ziel, JSON.stringify(baueFolge({ ...treffer.skript, hook, kalt, raum, suchbild }), null, 1));
 } else if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [quelle, ziel] = process.argv.slice(2);
   try {
