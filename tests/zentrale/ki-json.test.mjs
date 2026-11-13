@@ -19,3 +19,12 @@ test('szenenAus versteht andere Namen und reine Texte', () => {
   assert.equal(szenenAus({ szenen: [{ satz: 'Mit Satz.' }] })[0].text, 'Mit Satz.');
   assert.deepEqual(szenenAus({ titel: 'x' }), []);
 });
+
+test('KI-JSON: Anführungszeichen mitten im Text werden repariert (Anime-Serie scheiterte daran)', async () => {
+  const { jsonAusText } = await import('../../automations/lib/kiJson.mjs');
+  const kaputt = 'Plan: {"titel":"Der Sturm","zusammenfassung":"Ren findet in Folge 3 "Das Siegel" einen Hinweis.\nDann kaempft er.","akte":["Akt 1: Ren sagt "Nie wieder".","Akt 2"]}';
+  const j = jsonAusText(kaputt);
+  assert.equal(j.titel, 'Der Sturm');
+  assert.equal(j.zusammenfassung, 'Ren findet in Folge 3 „Das Siegel“ einen Hinweis.\nDann kaempft er.');
+  assert.deepEqual(j.akte, ['Akt 1: Ren sagt „Nie wieder“.', 'Akt 2']);
+});
