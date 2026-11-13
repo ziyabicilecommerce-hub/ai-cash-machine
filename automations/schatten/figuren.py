@@ -80,7 +80,8 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
         S = s * A
         k = lambda px, py: T(x + px * s, y + py * s)
         hoodie, kante, jeans, schuh = farbe, _ton(farbe, 0.78), tuple(stil.get('hose', _ton(farbe, 0.58))), _ton(farbe, 0.22)
-        haut = _mix(farbe, (252, 238, 228), 0.6)
+        # Hauptfigur (hat einen Stil): natürliche Hautfarbe statt grauer Maske (13.11.). Nebenfiguren/Geister bleiben getönt.
+        haut = tuple(stil['haut']) if stil.get('haut') else (236, 196, 166) if stil else _mix(farbe, (252, 238, 228), 0.6)
         if sitzen:
             for dx, f in ((16, _ton(jeans, 0.85)), (-14, jeans)):
                 glied(d, k(dx, -120), k(dx + 80, -114), int(31 * S), f)
@@ -118,7 +119,8 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
         else:  # Jacke: Reißverschluss + Brusttasche
             d.line((*k(0, top + 4), *k(0, -118)), fill=kante, width=max(1, int(3 * S)))
             d.rounded_rectangle((*k(12, -200), *k(34, -182)), radius=int(3 * S), outline=kante, width=max(1, int(2 * S)))
-        kx, ky = k(blick * 7, -270 + atem * 0.4)
+        SK = S * 1.3  # Kopf 30 % größer (13.11.): das Gesicht ist auch klein im Bild lesbar
+        kx, ky = k(blick * 7, -279 + atem * 0.4)
         fx, fy = kx + blick * 5 * S, ky + 5 * S
         haende_vorm_mund = angst > 0.75
         if not haende_vorm_mund:
@@ -130,34 +132,37 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
                 hx, hy = k(hand_[0] - sx * 2, hand_[1] + 2)
                 d.ellipse((hx - 9 * S, hy - 8 * S, hx + 9 * S, hy + 8 * S), fill=haut)
         if kopfart == 'kapuze':
-            d.ellipse((kx - 36 * S, ky - 39 * S, kx + 36 * S, ky + 35 * S), fill=kante)
-            d.ellipse((kx - 33 * S, ky - 36 * S, kx + 33 * S, ky + 32 * S), fill=hoodie)
-            d.ellipse((fx - 22 * S, fy - 26 * S, fx + 22 * S, fy + 24 * S), fill=_ton(hoodie, 0.55))
-            d.ellipse((fx - 20 * S, fy - 23 * S, fx + 20 * S, fy + 23 * S), fill=haut)
-            d.chord((fx - 21 * S, fy - 32 * S, fx + 21 * S, fy - 10 * S), 180, 360, fill=_ton(haut, 0.82))
+            d.ellipse((kx - 36 * SK, ky - 39 * SK, kx + 36 * SK, ky + 35 * SK), fill=kante)
+            d.ellipse((kx - 33 * SK, ky - 36 * SK, kx + 33 * SK, ky + 32 * SK), fill=hoodie)
+            d.ellipse((fx - 22 * SK, fy - 26 * SK, fx + 22 * SK, fy + 24 * SK), fill=_ton(hoodie, 0.55))
+            d.ellipse((fx - 20 * SK, fy - 23 * SK, fx + 20 * SK, fy + 23 * SK), fill=haut)
+            d.chord((fx - 21 * SK, fy - 32 * SK, fx + 21 * SK, fy - 10 * SK), 180, 360, fill=_ton(haut, 0.82))
         else:
+            d.rounded_rectangle((fx - 8 * SK, fy + 14 * SK, fx + 8 * SK, fy + 34 * SK), radius=int(4 * SK), fill=_ton(haut, 0.86))  # Hals
+            for ox in (-1, 1):  # Ohren
+                d.ellipse((fx + ox * 20 * SK - 5 * SK, fy - 5 * SK, fx + ox * 20 * SK + 5 * SK, fy + 7 * SK), fill=_ton(haut, 0.92))
             if kopfart == 'haare':
                 if stil.get('zopf'):  # Pferdeschwanz schwingt mit
                     zx = fx + (26 - blick * 30) * S
-                    glied(d, (zx, fy - 18 * S), (zx + 8 * S + math.sin(z * 3) * 3 * S, fy + 34 * S), int(15 * S), _ton(haar, 0.9))
-                d.ellipse((fx - 26 * S, fy - 33 * S, fx + 26 * S, fy + 14 * S), fill=haar)
-            d.ellipse((fx - 21 * S, fy - 24 * S, fx + 21 * S, fy + 24 * S), fill=haut)
+                    glied(d, (zx, fy - 18 * SK), (zx + 8 * SK + math.sin(z * 3) * 3 * SK, fy + 34 * SK), int(15 * SK), _ton(haar, 0.9))
+                d.ellipse((fx - 26 * SK, fy - 33 * SK, fx + 26 * SK, fy + 14 * SK), fill=haar)
+            d.ellipse((fx - 21 * SK, fy - 24 * SK, fx + 21 * SK, fy + 24 * SK), fill=haut)
             if kopfart == 'haare':
-                d.chord((fx - 23 * S, fy - 34 * S, fx + 23 * S, fy - 2 * S), 180, 360, fill=haar)
+                d.chord((fx - 23 * SK, fy - 34 * SK, fx + 23 * SK, fy - 2 * SK), 180, 360, fill=haar)
             else:  # Wollmütze mit Umschlag und Bommel
-                d.chord((fx - 25 * S, fy - 44 * S, fx + 25 * S, fy + 2 * S), 180, 360, fill=muetze)
-                d.rounded_rectangle((fx - 25 * S, fy - 18 * S, fx + 25 * S, fy - 8 * S), radius=int(4 * S), fill=_ton(muetze, 0.75))
-                d.ellipse((fx - 9 * S, fy - 56 * S, fx + 9 * S, fy - 38 * S), fill=_ton(muetze, 1.3))
+                d.chord((fx - 25 * SK, fy - 44 * SK, fx + 25 * SK, fy + 2 * SK), 180, 360, fill=muetze)
+                d.rounded_rectangle((fx - 25 * SK, fy - 23 * SK, fx + 25 * SK, fy - 14 * SK), radius=int(4 * SK), fill=_ton(muetze, 0.75))
+                d.ellipse((fx - 9 * SK, fy - 56 * SK, fx + 9 * SK, fy - 38 * SK), fill=_ton(muetze, 1.3))
         if gesicht:
-            gesicht_malen(d, (fx, fy), S, angst, blick, verdeckt=haende_vorm_mund, schlaf=schlaf)
+            gesicht_malen(d, (fx, fy), SK, angst, blick, verdeckt=haende_vorm_mund, schlaf=schlaf)
         if haende_vorm_mund:
             for sx in (-1, 1):
                 _aermel(d, k(sx * 42, top + 8), k(sx * 44, -168), 21 * S, hoodie, kante)
-                _aermel(d, k(sx * 44, -168), (fx + sx * 11 * S, fy + 16 * S), 18 * S, hoodie, kante)
-                d.ellipse((fx + sx * 11 * S - 10 * S, fy + 8 * S, fx + sx * 11 * S + 10 * S, fy + 24 * S), fill=haut)
+                _aermel(d, k(sx * 44, -168), (fx + sx * 11 * SK, fy + 16 * SK), 18 * SK, hoodie, kante)
+                d.ellipse((fx + sx * 11 * SK - 10 * SK, fy + 8 * SK, fx + sx * 11 * SK + 10 * SK, fy + 24 * SK), fill=haut)
         return _schattieren(cv)
 
-    _ss(lage, (x - 110 * s, y - 330 * s, x + 150 * s, y + 10 * s), zeichne)
+    _ss(lage, (x - 110 * s, y - 372 * s, x + 150 * s, y + 10 * s), zeichne)
 
 
 def gesicht_malen(d, kopf, s, angst, blick, verdeckt=False, schlaf=False):
@@ -171,14 +176,16 @@ def gesicht_malen(d, kopf, s, angst, blick, verdeckt=False, schlaf=False):
     zitter = math.sin(ZEIT[0] * 60) * 1.2 * angst * s
     for ex in (-9, 9):
         ax, ay = kx + ex * s + blick * 4 * s, ky - 5 * s
-        r = (2.6 + 3.2 * angst) * s
-        d.ellipse((ax - r, ay - r * 1.15, ax + r, ay + r * 1.15), fill=(250, 250, 252))
-        pr = max(1.2, (2.2 - 0.9 * angst) * s)
-        px = ax + blick * 1.6 * s + zitter
+        r = (3.8 + 2.6 * angst) * s  # größere Augen: auch klein im Bild erkennbar
+        d.ellipse((ax - r, ay - r * 1.15, ax + r, ay + r * 1.15), fill=(252, 252, 255), outline=dunkel, width=max(1, int(0.8 * s)))
+        pr = max(1.4, (2.6 - 0.9 * angst) * s)
+        px = ax + blick * 1.9 * s + zitter
         d.ellipse((px - pr, ay - pr, px + pr, ay + pr), fill=dunkel)
+        d.ellipse((px - pr * 0.55, ay - pr * 0.7, px - pr * 0.05, ay - pr * 0.2), fill=(255, 255, 255))  # Glanzpunkt
         # Augenbrauen: innen hochgezogen = Angst
         innen = -1 if ex > 0 else 1
         d.line((ax - innen * 6 * s, ay - (7 + 2 * angst) * s, ax + innen * 2 * s, ay - (7 + 6 * angst) * s), fill=dunkel, width=max(1, int(2 * s)))
+    d.arc((kx - 3 * s + blick * 2 * s, ky + 1 * s, kx + 3 * s + blick * 2 * s, ky + 8 * s), 20, 160, fill=(150, 104, 84), width=max(1, int(1.6 * s)))  # Nase
     if not verdeckt:
         mh = (1.5 + 9 * angst) * s
         mw = (5 + 2 * angst) * s
