@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-13T21:59:33.073Z",
+ "stand": "2026-11-13T22:02:33.889Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118897:1500",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1434547,8.5023642",
+   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
+   "text": "44,95 € · dm Bad Soden am Taunus (8,3 km) · 1 Stück\nKönigsteiner Straße 76, 65812 Bad Soden am Taunus\nIm Umkreis in 19 Filiale(n) vorrätig.",
+   "zeit": "2026-11-13T22:02:33.889Z"
+  },
   {
    "schluessel": "deal:https://www.overkillshop.com/products/nike-wmns-air-force-1-07-dd8959-100-white-white-white-white",
    "art": "Deal",
@@ -176,20 +186,10 @@
    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Chillabell-ex",
    "text": "Kaufen ab 18,00 € · Ziel 33,92 € · +12,72 € nach Gebühren (ROI 71 %)",
    "zeit": "2026-11-12T22:36:51.206Z"
-  },
-  {
-   "schluessel": "filiale:3118686:1433",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: ebelin Adventskalender Beauty & Hair 2026, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.057082,8.33478",
-   "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
-   "text": "32,95 € · dm Wiesbaden (10,9 km) · 1 Stück\nBorsigstraße 9, 65205 Wiesbaden\nIm Umkreis in 20 Filiale(n) vorrätig.",
-   "zeit": "2026-11-12T21:35:34.645Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-13T21:47:20.855Z",
+  "stand": "2026-11-13T22:02:39.243Z",
   "filialen": 148,
   "produkte": [
    {
@@ -206,7 +206,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 23
+      "menge": 24
      },
      {
       "name": "dm Kriftel",
@@ -230,7 +230,7 @@
       "km": 5.6,
       "lat": 50.1014043,
       "lon": 8.5485073,
-      "menge": 19
+      "menge": 20
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -246,7 +246,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 60
+      "menge": 61
      },
      {
       "name": "dm Flörsheim am Main",
@@ -312,7 +312,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Flörsheim am Main",
@@ -362,7 +362,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Kelsterbach",
@@ -526,7 +526,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 4
+      "menge": 5
      },
      {
       "name": "dm Flörsheim am Main",
@@ -655,80 +655,6 @@
     "vorrat": []
    },
    {
-    "dan": "3118897",
-    "name": "maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
-    "preis": 44.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
-    "link": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 5
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 3
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 16
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 2
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 7
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 2
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 8
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 5
-     }
-    ]
-   },
-   {
     "dan": "3118676",
     "name": "MAYBELLINE NEW YORK Adventskalender 2026 Happy Holidays, 1 St",
     "preis": 52.95,
@@ -742,7 +668,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 6
+      "menge": 7
      },
      {
       "name": "dm Kriftel",
@@ -758,7 +684,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 5
+      "menge": 6
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -798,7 +724,81 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
+      "menge": 8
+     }
+    ]
+   },
+   {
+    "dan": "3118897",
+    "name": "maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
+    "preis": 44.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
+    "link": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 5
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 3
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 16
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 3
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
       "menge": 7
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 1
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 8
      }
     ]
    },
@@ -840,7 +840,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 24
+      "menge": 25
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -864,7 +864,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Frankfurt am Main",
@@ -4380,6 +4380,18 @@
   "ware": [],
   "top": [
    {
+    "titel": "aryna sabalenka",
+    "menge": "500+"
+   },
+   {
+    "titel": "ufc 334",
+    "menge": "100+"
+   },
+   {
+    "titel": "julia scheib",
+    "menge": "100+"
+   },
+   {
     "titel": "schiff",
     "menge": "5000+"
    },
@@ -4392,8 +4404,12 @@
     "menge": "2000+"
    },
    {
+    "titel": "andrija živković",
+    "menge": "1000+"
+   },
+   {
     "titel": "martin brambach",
-    "menge": "500+"
+    "menge": "1000+"
    },
    {
     "titel": "claudia schiffer",
@@ -4402,22 +4418,6 @@
    {
     "titel": "hamburg hauptbahnhof",
     "menge": "200+"
-   },
-   {
-    "titel": "jörg pilawa",
-    "menge": "200+"
-   },
-   {
-    "titel": "flugstopp usa",
-    "menge": "10000+"
-   },
-   {
-    "titel": "vanja dragojević",
-    "menge": "500+"
-   },
-   {
-    "titel": "nmecha",
-    "menge": "2000+"
    }
   ]
  },
