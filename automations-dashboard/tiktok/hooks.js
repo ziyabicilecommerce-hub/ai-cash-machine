@@ -1,5 +1,5 @@
 // Hook-Maschine (13.11.): Thema antippen -> fertige Horror-Hooks nach den Formeln, die bei UNSEREN Videos am besten liefen
-// (Trick-Radar: Du-Ansprache am Anfang x1,6, Uhrzeit x1,2, Zahl x1,1). Jeder Hook bekommt Punkte wie beim Skript-Bot.
+// (Trick-Radar: Regel-Hook "Wenn …, geh nicht ran" x2,2, Du-Ansprache x1,8). Jeder Hook bekommt Punkte wie beim Skript-Bot.
 // Dazu "Deine Hit-Hooks": die echten ersten Sätze, die gegen den Schnitt ihres Kontos am meisten geholt haben (verlauf.json).
 // Läuft komplett im Browser, ohne KI und ohne Schlüssel.
 (() => {
@@ -7,59 +7,74 @@
   const mk = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
   if (!q('hm-themen')) return;
 
-  // du = Subjekt in Du-Form, neben = Aussage im Nebensatz (Verb am Ende), inv = Aussage mit Verb vorn,
-  // twist = zweiter Satz (der Widerspruch), regel = Befehl (klein geschrieben)
+  // viral = von Hand geschrieben im Stil unserer echten Hits ("Wenn dich deine eigene Nummer anruft, geh nicht ran." x2,8;
+  // "Wenn es nachts an deiner Wand klopft, klopf nie zurück." x4,9; "Um 3:12 Uhr schreibt eine fremde Nummer: Falscher Knopf." x5,0).
+  // u = das Unmögliche als Nebensatz ohne "Wenn", regel = kurzer Befehl, inv/twist = Ich-Hook mit Uhrzeit
   const THEMEN = [
-    { name: 'Aufzug', du: 'dein Aufzug', neben: 'in Etage minus 4 hält', inv: 'hält mein Aufzug in Etage minus 4', twist: 'Kein Keller.', regel: 'steig nicht aus' },
-    { name: 'Babyphone', du: 'dein Babyphone', neben: 'deinen Namen ruft', inv: 'ruft mein Babyphone meinen Namen', twist: 'Mein Baby liegt hier.', regel: 'antworte nicht' },
-    { name: 'Türkamera', du: 'deine Türkamera', neben: 'jemanden zeigt', inv: 'zeigt meine Türkamera jemanden', twist: 'Er steht hinter mir.', regel: 'mach nicht auf' },
-    { name: 'Spiegel', du: 'dein Spiegelbild', neben: 'zu spät blinzelt', inv: 'blinzelt mein Spiegelbild zu spät', twist: 'Und es lächelt.', regel: 'schau weg' },
-    { name: 'Navi', du: 'dein Navi', neben: 'in den Wald führt', inv: 'führt mich mein Navi in den Wald', twist: 'Da ist keine Straße.', regel: 'fahr weiter' },
-    { name: 'Gruppenchat', du: 'dein Gruppenchat', neben: 'einen zu viel hat', inv: 'schreibt im Gruppenchat einer zu viel', twist: 'Wir sind nur 5.', regel: 'antworte nicht' },
-    { name: 'Oma', du: 'deine Oma', neben: 'anruft', inv: 'ruft meine Oma an', twist: 'Sie ist seit 2 Jahren tot.', regel: 'geh nicht ran' },
-    { name: 'Zelt', du: 'dein Zelt', neben: 'von außen aufgeht', inv: 'geht mein Zelt von außen auf', twist: 'Wir sind allein im Wald.', regel: 'bleib im Schlafsack' },
-    { name: 'Kinderzimmer', du: 'dein Kind', neben: 'mit dem Schrank redet', inv: 'redet mein Sohn mit dem Schrank', twist: 'Der Schrank antwortet.', regel: 'mach nicht auf' },
-    { name: 'Handy', du: 'dein Handy', neben: 'ein Foto von dir macht', inv: 'macht mein Handy ein Foto von mir', twist: 'Es liegt im Flur.', regel: 'schau nicht hin' },
-    { name: 'Hotel', du: 'dein Hotelschrank', neben: 'von innen klopft', inv: 'klopft mein Hotelschrank von innen', twist: 'Ich bin allein.', regel: 'zieh sofort um' },
-    { name: 'Nachbar', du: 'dein Nachbar', neben: 'aus dem Fenster winkt', inv: 'winkt mein Nachbar mir zu', twist: 'Er ist tot.', regel: 'wink nicht zurück' },
-    { name: 'Zug', du: 'dein Zug', neben: 'mitten im Wald hält', inv: 'hält mein Zug mitten im Wald', twist: 'Alle steigen aus.', regel: 'steig nicht aus' },
-    { name: 'Katze', du: 'deine Katze', neben: 'in die Ecke starrt', inv: 'starrt meine Katze in die Ecke', twist: 'Heute faucht sie.', regel: 'dreh dich nicht um' },
-    { name: 'Schlaf-App', du: 'deine Schlaf-App', neben: 'zwei Atmende aufnimmt', inv: 'nimmt meine Schlaf-App zwei Atmende auf', twist: 'Ich bin allein.', regel: 'hör nicht rein' },
-    { name: 'Hund', du: 'dein Hund', neben: 'am Waldrand stehen bleibt', inv: 'bleibt mein Hund am Waldrand stehen', twist: 'Da steht jemand.', regel: 'geh nicht weiter' },
+    { name: 'Aufzug', u: 'dein Aufzug eine Etage zu tief fährt', regel: 'steig nicht aus', inv: 'hält mein Aufzug in Etage minus 4', twist: 'Kein Keller.',
+      viral: ['Im Aufzug hängt ein Zettel: Drück nie die 13.', 'Wenn der Aufzug ohne dich nach unten fährt, ruf ihn nicht zurück.'] },
+    { name: 'Babyphone', u: 'das Babyphone atmet und dein Baby neben dir liegt', regel: 'renn', inv: 'ruft mein Babyphone meinen Namen', twist: 'Mein Baby liegt hier.',
+      viral: ['Um 3:12 Uhr flüstert das Babyphone: Er schläft jetzt.', 'Wenn dein Babyphone deinen Namen flüstert, antworte nie.'] },
+    { name: 'Türkamera', u: 'deine Türkamera dich selbst vor der Tür zeigt', regel: 'mach nicht auf', inv: 'zeigt meine Türkamera jemanden', twist: 'Er steht hinter mir.',
+      viral: ['Um 3 Uhr klingelt es. Die Kamera zeigt: niemand.', 'Wenn jemand klingelt und die Kamera schwarz ist, sag nichts.'] },
+    { name: 'Spiegel', u: 'dein Spiegelbild zu spät blinzelt', regel: 'schau nie wieder hin', inv: 'blinzelt mein Spiegelbild zu spät', twist: 'Und es lächelt.',
+      viral: ['Im Hotelbad hängt ein Zettel: Deck nachts den Spiegel ab.', 'Wenn dein Spiegelbild zuerst lächelt, lächle nicht zurück.'] },
+    { name: 'Navi', u: 'dein Navi um 3 Uhr Wenden sagt', regel: 'wende nicht', inv: 'führt mich mein Navi in den Wald', twist: 'Da ist keine Straße.',
+      viral: ['Um 3:12 Uhr sagt mein Navi: Bitte nicht aussteigen.', 'Wenn dein Navi deine alte Adresse kennt, fahr nicht hin.'] },
+    { name: 'Gruppenchat', u: 'dein Gruppenchat einen Teilnehmer mehr hat', regel: 'lies nichts', inv: 'schreibt im Gruppenchat einer zu viel', twist: 'Wir sind nur 5.',
+      viral: ['Um 3:12 Uhr schreibt jemand in unseren Chat: Er ist wach.', 'Wenn dein Gruppenchat um 3 Uhr still wird, schreib nichts.'] },
+    { name: 'Oma', u: 'dich deine tote Oma anruft', regel: 'geh nicht ran', inv: 'ruft meine Oma an', twist: 'Sie ist seit 2 Jahren tot.',
+      viral: ['Meine tote Oma schreibt um 3 Uhr: Mach nicht auf.', 'Wenn deine Oma nachts fragt, ob du allein bist, sag ja.'] },
+    { name: 'Zelt', u: 'jemand um 3 Uhr ins Zelt flüstert: Ich bin es', regel: 'antworte nicht', inv: 'geht mein Zelt von außen auf', twist: 'Wir sind allein.',
+      viral: ['Am Zeltplatz hängt ein Zettel: Antworte nachts niemandem.', 'Wenn dein Kumpel draußen um Hilfe ruft und neben dir liegt, bleib liegen.'] },
+    { name: 'Kinderzimmer', u: 'dein Kind sagt, der Mann im Schrank ist nett', regel: 'zieh aus', inv: 'redet mein Sohn mit dem Schrank', twist: 'Der Schrank antwortet.',
+      viral: ['Mein Sohn sagt: Der Mann im Schrank kennt dich.', 'Wenn dein Kind flüstert: Nicht jetzt, er schaut, schau nicht hin.'] },
+    { name: 'Handy', u: 'du ein Selfie findest, das du nie gemacht hast', regel: 'renn', inv: 'macht mein Handy ein Foto von mir', twist: 'Es liegt im Flur.',
+      viral: ['Um 3:12 Uhr schreibt eine fremde Nummer: Dreh dich nicht um.', 'Wenn dich deine eigene Nummer anruft, geh nie ran.'] },
+    { name: 'Hotel', u: 'dein Hotelzimmer eine Tür mehr hat als gestern', regel: 'schlaf nicht ein', inv: 'klopft mein Hotelschrank von innen', twist: 'Ich bin allein.',
+      viral: ['Im Hotel hängt ein Zettel: Öffne nachts nie den Schrank.', 'Wenn die Rezeption um 3 Uhr anruft, geh nicht ran.'] },
+    { name: 'Nachbar', u: 'dein toter Nachbar dir winkt', regel: 'wink nicht zurück', inv: 'winkt mein Nachbar mir zu', twist: 'Er ist tot.',
+      viral: ['Im Hausflur hängt ein Zettel: Nachts nie klingeln. Er schläft.', 'Wenn es nachts an deiner Wand klopft, klopf nie zurück.'] },
+    { name: 'Zug', u: 'dein Zug an einem Bahnhof ohne Namen hält', regel: 'steig nie aus', inv: 'hält mein Zug mitten im Wald', twist: 'Alle steigen aus.',
+      viral: ['Um 3:12 Uhr sagt die Durchsage meinen Namen.', 'Wenn im leeren Zug jemand neben dir Platz nimmt, schau nicht hin.'] },
+    { name: 'Katze', u: 'deine Katze in die leere Ecke faucht', regel: 'dreh dich nicht um', inv: 'starrt meine Katze in die Ecke', twist: 'Heute faucht sie.',
+      viral: ['Meine Katze faucht um 3 Uhr unter mein Bett.', 'Wenn deine Katze nachts auf die Tür starrt, mach nicht auf.'] },
+    { name: 'Schlaf-App', u: 'deine Schlaf-App zwei Atmende aufnimmt', regel: 'hör nie rein', inv: 'nimmt meine Schlaf-App zwei Atmende auf', twist: 'Ich bin allein.',
+      viral: ['Meine Schlaf-App zeigt um 3 Uhr: Sprechen erkannt.', 'Wenn deine Schlaf-App Schritte aufnimmt, schau nicht unters Bett.'] },
+    { name: 'Hund', u: 'dein Hund am Waldrand nicht weitergeht', regel: 'geh auch nicht weiter', inv: 'bleibt mein Hund am Waldrand stehen', twist: 'Da steht jemand.',
+      viral: ['Um 3 Uhr bellt mein Hund die Wand an. Die Wand klopft zurück.', 'Wenn dein Hund nachts das Fenster anknurrt, mach kein Licht.'] },
   ];
-  const gross = (t) => t.charAt(0).toUpperCase() + t.slice(1);
-  // Formeln - die ersten zwei mit Du-Ansprache (laufen bei uns am besten), dann Ich-Hooks mit Uhrzeit/Zahl
+  // Formeln: zuerst der Regel-Hook (bei uns x2,2), dann Ich-Hook mit Uhrzeit
   const FORMELN = [
-    (t) => `Wenn ${t.du} um 3 Uhr ${t.neben}, ${t.regel}.`,
-    (t) => `${gross(t.regel)}, wenn ${t.du} um 3 Uhr ${t.neben}.`,
+    (t) => `Wenn ${t.u}, ${t.regel}.`,
+    (t) => `Wenn ${t.u}, renn.`,
     (t) => `Um 3:12 Uhr ${t.inv}. ${t.twist}`,
-    (t) => `Seit 3 Nächten ${t.inv}. ${t.twist}`,
-    (t) => `Heute Nacht ${t.inv}. ${t.twist}`,
   ];
-  // Punkte wie der Skript-Bot (6 Regeln) + was das Trick-Radar bei uns gemessen hat
+  // Punkte nach dem, was das Trick-Radar bei unseren Videos gemessen hat (Stand 13.11.):
+  // Regel-Hook x2,2 · Du-Ansprache x1,8 · Zettel/Regel x1,1 · Uhrzeit x1,1 · dazu die Grundregeln des Skript-Bots
   const REGELN = [
-    [(h) => h.length <= 70, 'kurz genug (höchstens 70 Zeichen)'],
-    [(h) => /^(ich|mein|meine|um|im|heute|kein|wenn|seit)\b/i.test(h), 'starker Anfang'],
-    [(h) => /(aber|trotzdem|nicht|kein|niemand|nur|allein|tot)/i.test(h), 'Widerspruch (aber / nicht / allein)'],
-    [(h) => /\d|uhr|nacht/i.test(h), 'Uhrzeit oder Zahl'],
-    [(h) => /(handy|nachricht|kamera|foto|app|chat|klingel|babyphone|navi)/i.test(h), 'Alltags-Technik'],
+    [(h) => h.length <= 70, 'kurz genug'],
     [(h) => !/\?$/.test(h), 'keine Frage am Ende'],
+    [(h) => /(aber|trotzdem|nicht|nie|kein|niemand|nur|allein|tot)/i.test(h), 'Widerspruch oder Verbot'],
+    [(h) => /\d|uhr|nacht/i.test(h), 'Uhrzeit oder Zahl'],
   ];
+  const regelHook = (h) => /^(wenn|dankt|ruft|schreibt|steht|liegt|findest|hörst|siehst|zeigt|fragt|sagt)\b/i.test(h) && /,\s*[^,]*\b(nie|niemals|nicht|renn|lauf|kein|nichts)\b[^,]*[.!]$/i.test(h);
   const punkte = (h) => {
-    let p = REGELN.filter(([f]) => f(h)).length * 12;
-    if (/^(wenn|steig|mach|antworte|hör|lies|schau|bleib|geh|dreh|fahr|öffne|zieh|wink)\b/i.test(h) || /\b(du|dein|deine)\b/i.test(h)) p += 14;  // Du-Ansprache x1,6
-    if (/\d ?uhr|\d:\d\d/i.test(h)) p += 8;  // Uhrzeit x1,2
-    if (/\d/.test(h)) p += 6;                // Zahl x1,1
+    let p = REGELN.filter(([f]) => f(h)).length * 10;
+    if (regelHook(h)) p += 30;
+    if (/^(wenn|steig|mach|antworte|hör|lies|schau|bleib|geh|dreh|fahr|öffne|zieh|wink|wende|schlaf)\b/i.test(h) || /\b(du|dich|dein|deine|deinen)\b/i.test(h)) p += 18;
+    if (/:\s*\S/.test(h) || /zettel|schild/i.test(h)) p += 8;
+    if (/\d ?uhr|\d:\d\d/i.test(h)) p += 4;
     return Math.min(100, p);
   };
 
   let aktiv = THEMEN[0];
   function zeigen() {
-    const hooks = [...new Set(FORMELN.map((f) => f(aktiv)))].filter((h) => h.length <= 70)
+    const hooks = [...new Set([...aktiv.viral, ...FORMELN.map((f) => f(aktiv))])].filter((h) => h.length <= 70)
       .map((h) => ({ h, p: punkte(h) })).sort((a, b) => b.p - a.p);
     q('hm-liste').replaceChildren(...hooks.map(({ h, p }) => {
-      const z = mk('div', `tipp ${p >= 80 ? 'gut' : ''}`);
-      const kopf = mk('div', '', `${p >= 80 ? '🔥' : p >= 65 ? '👍' : '💡'} ${p}/100 · ${h.length} Zeichen`); kopf.style.opacity = '.75'; kopf.style.fontSize = '12px';
+      const z = mk('div', `tipp ${p >= 80 ? 'gut' : ''}`); const warum = regelHook(h) ? ' · Regel-Hook (bei dir x2,2)' : /^wenn|\bdu\b|\bdein/i.test(h) ? ' · Du-Ansprache (x1,8)' : '';
+      const kopf = mk('div', '', `${p >= 80 ? '🔥' : p >= 65 ? '👍' : '💡'} ${p}/100 · ${h.length} Zeichen${warum}`); kopf.style.opacity = '.75'; kopf.style.fontSize = '12px';
       const knoepfe = mk('div', 'knoepfe'); knoepfe.style.marginTop = '6px';
       const kopie = mk('button', 'knopf', '📋 Kopieren'); kopie.type = 'button';
       kopie.onclick = () => navigator.clipboard?.writeText(h).then(() => { kopie.textContent = '✅ Kopiert'; setTimeout(() => { kopie.textContent = '📋 Kopieren'; }, 1500); });
