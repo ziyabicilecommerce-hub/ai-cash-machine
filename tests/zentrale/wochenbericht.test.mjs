@@ -30,7 +30,7 @@ test('A/B-Test: Varianten zufällig, Auswertung mit/ohne, Urteil erst ab je 3 Vi
   const { abAuswertung } = await import('../../automations/lib/wochenbericht.mjs');
   assert.deepEqual(abVariante(() => 0.9), { kalt: true, raum: true, suchbild: true, duhook: true, schlag: true, gestalt: true });
   assert.deepEqual(abVariante(() => 0.1), { kalt: false, raum: false, suchbild: false, duhook: false, schlag: false, gestalt: false });
-  assert.deepEqual(abVariante(() => 0.4), { kalt: true, raum: true, suchbild: true, duhook: false, schlag: false, gestalt: false }, 'Du-Hook, Schlagzeile und Gestalt halbe-halbe');
+  assert.deepEqual(abVariante(() => 0.4), { kalt: true, raum: true, suchbild: true, duhook: true, schlag: false, gestalt: false }, 'Du-Hook bei 85 %, Schlagzeile und Gestalt halbe-halbe');
   assert.equal(abSchluessel('Ich wohne allein.  Heute stehen zwei Kaffeetassen auf dem Tisch. 🎧'), 'Ich wohne allein. Heute stehen zwei Kaff');
   const posts = [...[6, 7, 8].map((s, i) => vor(2, { text: `mit${i}`, sehdauer: s })), ...[2, 3, 4].map((s, i) => vor(2, { text: `ohne${i}`, sehdauer: s }))];
   const ab = abAuswertung(posts, (p) => ({ kalt: p.text.startsWith('mit') }));
@@ -93,4 +93,11 @@ test('Trick-Radar: misst Kniffe gegen den Konto-Schnitt, erkennt Deckel und tote
   assert.equal(deckel(v, jetzt)['@a'].gedeckelt, false, '100 und 300 gemischt ist kein Deckel');
   const s = trickSchritte(r, { '@b': d });
   assert.ok(s.some((x) => x.includes('Du-Ansprache')) && s.some((x) => x.startsWith('Deckel: @b')), s.join(' | '));
+});
+
+test('Du-Hook ist Standard (85 %): unter 0,15 Zufall aus, sonst an', async () => {
+  const { abVariante, AB_FEATURES } = await import('../../automations/lib/bufferVerteiler.mjs');
+  assert.equal(AB_FEATURES.duhook, 0.15);
+  assert.equal(abVariante(() => 0.1).duhook, false);
+  assert.equal(abVariante(() => 0.2).duhook, true);
 });

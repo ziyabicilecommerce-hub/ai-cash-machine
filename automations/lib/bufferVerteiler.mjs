@@ -159,7 +159,9 @@ export function storyEingabe(kanalId, coverUrl, en = false, sticker = '', alt = 
 // KI-Bilder sind seit 06.11. immer an (Wunsch des Nutzers) und deshalb nicht mehr im A/B-Test
 // schlag (11.11.): große Schlagzeile (höchstens 6 Wörter) in den ersten 2,6 s - halbe-halbe, bis Zahlen da sind
 // gestalt (11.11.): Schattenfigur kommt in leeren KI-Szenen bei jedem Flackern näher (tiefe.py) - halbe-halbe, bis Zahlen da sind
-export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.5, schlag: 0.5, gestalt: 0.5 };  // Wahrscheinlichkeit für "aus"
+// duhook 0.15 (13.11.): das Trick-Radar misst den Regel-Hook ("Wenn …, geh nicht ran / renn.") bei x2,2 und die Du-Ansprache
+// bei x1,8 gegen den Konto-Schnitt - der Du-Hook läuft jetzt bei 85 % der Videos, 15 % bleiben zum Weitermessen.
+export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.15, schlag: 0.5, gestalt: 0.5 };  // Wahrscheinlichkeit für "aus"
 export function abVariante(zufall = Math.random, gewichte = AB_FEATURES) {
   return Object.fromEntries(Object.entries(gewichte).map(([f, aus]) => [f, zufall() >= aus]));
 }
