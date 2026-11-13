@@ -187,11 +187,11 @@ test('Hook-A/B: jede Bot-Geschichte hat einen gültigen Du-Hook, Posts mit beide
   assert.deepEqual(w[s.muster], { schnitt: 200, n: 2 });
 });
 
-test('KI-Hintergründe standardmäßig an, abschaltbar, mit Prompt je Szene (außer Nachricht und Endkarte)', () => {
+test('KI-Hintergründe nur mit ki: true (Standard seit 13.11.: gezeichnete Schatten-Szenen), mit Prompt je Szene', () => {
   const sk = { hook: 'Ich wohne allein.', saetze: ['Es klopft.', 'Ich schaue.', 'Niemand.'], ende: 'Er steht hinter mir.', kurz: true, ort: 'zug', titel: 'Test' };
   const aus = baueFolge({ ...sk, ki: false });
   assert.equal(aus.ki_bilder, false); assert.ok(aus.szenen.every((s) => !s.ki));
-  assert.equal(baueFolge(sk).ki_bilder, true, 'kurze Videos: KI-Bilder sind Standard');
+  assert.equal(baueFolge(sk).ki_bilder, false, 'kurze Videos: gezeichnete Schatten-Szenen sind Standard');
   assert.equal(baueFolge({ ...sk, kurz: false }).ki_bilder, false, 'lange Serien-Folgen bleiben wie sie sind');
   const an = baueFolge({ ...sk, ki: true });
   assert.equal(an.ki_bilder, true); assert.match(an.ki_stil, /no text/);
@@ -206,7 +206,8 @@ test('Nativer Stil: Standard für kurze Videos - keine Karte, keine Banner, Frag
   assert.equal(f.suchbild, false); assert.equal(f.schlag, '');
   const ende = f.szenen.at(-1);
   assert.equal(ende.art, 'dunkel'); assert.equal(ende.text, 'HÄTTEST DU GEÖFFNET?'); assert.equal(ende.wahl, undefined);
-  assert.ok(ende.ki, 'das Ende hat ein KI-Bild statt einer Karte');
+  assert.equal(f.ki_bilder, false, 'Standard: gezeichnete Schatten-Szenen');
+  assert.ok(bauen({ ...sk, ki: true }).szenen.at(-1).ki, 'mit ki: true hat das Ende ein KI-Bild');
   assert.match(f.caption, /1️⃣ Öffnen oder 2️⃣ Rennen/, 'die Wahl steht weiter im Beitragstext');
   assert.equal(bauen({ ...sk, stil: 'studio' }).szenen.at(-1).art, 'teil2', 'stil: studio stellt die Karte wieder her');
 });
