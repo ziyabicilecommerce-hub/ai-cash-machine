@@ -108,6 +108,24 @@ def warnung(im, text, lt):
         ImageDraw.Draw(im).text((W / 2, 200), text, font=ImageFont.truetype(FONTDATEI, 46), fill=(225, 20, 20), stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
 
 
+NAH_AUS = ('teil2', 'gesicht', 'fratze', 'nachricht')  # Karten und Nahaufnahmen bleiben, wie sie sind
+
+
+def nah(im, s, lt):
+    """Gezeichnete Szenen näher heran (13.11., Wunsch: "mach die Personen besser"): vorher war die Figur nur ein Viertel
+    so hoch wie das Bild und die untere Bildhälfte leerer Boden. Jetzt fährt die Kamera auf Person und Schatten zu
+    (1,45x bis 1,6x; in ruhigen Szenen ohne großen Schatten 1,7x bis 1,85x). KI-Bilder haben ihre eigene Kamerafahrt."""
+    if s.get('_kibild') is not None or s.get('art') in NAH_AUS or s.get('nah') is False:
+        return im
+    p = min(lt / max(s.get('dauer', 3), 0.5), 1)
+    ruhig = s.get('art') in ('innen', 'handy')   # nur die Person im Raum (der Schatten steht noch nicht groß daneben)
+    zoom = (1.7 if ruhig else 1.45) + 0.15 * p
+    bw, bh = W / zoom, H / zoom
+    x0 = min(max((380 if ruhig else 345) - bw / 2, 0), W - bw)   # Person (x=250) und Schatten/Augen (x~505-560) im Bild
+    y0 = min(max(170 if ruhig else 560 - bh / 2, 0), H - bh)     # ruhig: Kopf über den Untertiteln, Augen im Fenster noch drin
+    return im.resize((W, H), Image.LANCZOS, box=(x0, y0, x0 + bw, y0 + bh))
+
+
 def bild(s, t, lt):
     art = s['art']
     if s.get('_kibild') is not None:
@@ -391,6 +409,7 @@ def main():
                 ZEIT[0] = t
             else:
                 im = bild(s, t, lt)
+                im = nah(im, s, lt)  # Personen groß im Bild (gezeichnete Szenen)
             if kalt and s['art'] == 'teil2' and lt > s['dauer'] - SCHLEIFE:  # Endlos-Schleife: weich ins erste Bild
                 ZEIT[0] = kalt['start'] + 0.6
                 anfang = bild(kalt, ZEIT[0], 0.6)
