@@ -125,7 +125,9 @@ export function baueFolge(skript) {
   }
   // KI-Bilder sind Standard für alle kurzen Horror-Videos (Wunsch 06.11.: keine gezeichneten Szenen mehr); ki: false schaltet ab
   const titelZahl = [...String(skript.titel || '')].reduce((x, c) => (x * 31 + c.charCodeAt(0)) % 100000, 7);
-  const kiAn = skript.ki === true || (kurz_ && skript.ki !== false);
+  // 13.11. (Wunsch des Nutzers: "mach wieder mit Schatten"): zurück zu den gezeichneten Schatten-Szenen. KI-Bilder nur noch,
+  // wenn das Skript ki: true setzt. Vorher (06.-12.11.) waren KI-Bilder Standard für alle kurzen Videos.
+  const kiAn = skript.ki === true;
   if (kiAn) {  // KI-Hintergrund je Szene (Nachricht und Endkarte bleiben gezeichnet)
     szenen.forEach((sz, i) => { if (!['nachricht', 'teil2'].includes(sz.art)) sz.ki = kiPrompt(sz.art, skript.ort || 'haus', i / szenen.length, titelZahl); });
   }
