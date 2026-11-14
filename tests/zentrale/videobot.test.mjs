@@ -137,7 +137,9 @@ test('Skript-Bot: viele gültige Geschichten mit starkem Hook, keine doppelt, n�
     assert.ok(!vorrat.has(slug(s.titel)), `schon im Vorrat: ${s.titel}`);
     baueFolge({ ...s, kurz: true });
   }
-  assert.equal(naechstesSkript([slug(alle[0].titel)]).titel, alle[1].titel);
+  const erste = naechstesSkript([]);
+  const zweite = naechstesSkript([slug(erste.titel)]);
+  assert.ok(zweite && zweite.titel !== erste.titel, 'Bekannte werden übersprungen');
 });
 
 test('Skript-Bot lernt: bestes Muster zuerst, ungetestete Muster bekommen eine Chance', async () => {
@@ -150,7 +152,17 @@ test('Skript-Bot lernt: bestes Muster zuerst, ungetestete Muster bekommen eine C
   const w = musterWerte(letzte, alle);
   assert.equal(w.anruf.schnitt, 350); assert.equal(w.allein.n, 2); assert.ok(!w.regel, 'TikTok zählt nicht');
   assert.equal(naechstesSkript([], letzte).muster, 'anruf');
-  assert.equal(naechstesSkript([], []).titel, alle[0].titel, 'ohne Zahlen: einfach der Reihe nach');
+  const { viralPunkte } = await import('../../automations/schatten/skriptBot.mjs');
+  const best = Math.max(...alle.map(viralPunkte));
+  assert.equal(viralPunkte(naechstesSkript([], [])), best, 'ohne Zahlen: die Geschichte mit den meisten Viral-Punkten');
+});
+
+test('Viral-Punkte: Regel-Hook und Du-Ansprache zählen mehr', async () => {
+  const { viralPunkte } = await import('../../automations/schatten/skriptBot.mjs');
+  const basis = { hook: 'Um 3 Uhr klingelt mein Handy. Aber keiner ist dran.' };
+  const du = { ...basis, hook2: 'Um 3 Uhr klingelt dein Handy. Keiner ist dran.' };
+  const regel = { ...basis, hook2: 'Wenn dein Handy um 3 Uhr klingelt, geh nicht ran.' };
+  assert.ok(viralPunkte(regel) > viralPunkte(du) && viralPunkte(du) > viralPunkte(basis));
 });
 
 test('Teil 2 nur bei echtem Hit und nur einmal', async () => {

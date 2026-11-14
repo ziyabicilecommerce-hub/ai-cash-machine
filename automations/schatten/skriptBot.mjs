@@ -156,10 +156,27 @@ export function naechstesSkript(bekannt = [], letzte = []) {
   const alle = alleSkripte(), frei = alle.filter((s) => !weg.has(slug(s.titel)));
   const werte = musterWerte(letzte, alle);
   const bekannteWerte = Object.values(werte).filter((w) => w.n >= 2);
-  if (!bekannteWerte.length) return frei[0] || null;
+  if (!bekannteWerte.length) return [...frei].sort((a, b) => viralPunkte(b) - viralPunkte(a))[0] || null;
   const mittel = bekannteWerte.reduce((a, w) => a + w.schnitt, 0) / bekannteWerte.length;
   const punkte = (m) => (werte[m]?.n >= 2 ? werte[m].schnitt : mittel * 1.1);
-  return [...frei].sort((a, b) => punkte(b.muster) - punkte(a.muster))[0] || null;
+  // Viral-Punkte geben je Geschichte bis ~+25 % - das gemessene Muster bleibt der wichtigste Faktor
+  const wert = (s) => punkte(s.muster) * (1 + 0.02 * viralPunkte(s));
+  return [...frei].sort((a, b) => wert(b) - wert(a))[0] || null;
+}
+
+// Viral-Punkte einer Geschichte aus dem, was bei uns gemessen besser lief (Trick-Radar): Regel-Hook x2,2, Du-Ansprache x1,8,
+// kurzer Hook mit Bruch ("aber"), Handy/Kamera im Hook, Teil 2 möglich. Nur zum Sortieren - nichts wird erfunden.
+const REGEL_A = /^(wenn|dankt|ruft|schreibt|steht|liegt|findest|hörst|siehst|zeigt|fragt|sagt)\b/i;
+const REGEL_E = /,\s*[^,]*\b(nie|niemals|nicht|renn|lauf)\b[^,]*[.!]$/i;
+export function viralPunkte(s = {}) {
+  const h = String(s.hook || ''), h2 = String(s.hook2 || '');
+  let p = hookPunkte(h);
+  if (REGEL_A.test(h2) && REGEL_E.test(h2)) p += 3;
+  if (/\b(du|dein\w*|dich|dir)\b/i.test(h2)) p += 1;
+  if (h.length <= 62) p += 1;
+  if (/\baber\b/i.test(h)) p += 1;
+  if (s.teil2) p += 1;
+  return p;
 }
 
 // Hit erkannt? Dann Teil 2 dieser Geschichte (einmal). Hit = mind. doppelt so viele Aufrufe wie der Schnitt des Kontos und mind. 100.
