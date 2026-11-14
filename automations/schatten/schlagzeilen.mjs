@@ -8,6 +8,7 @@ export const SCHLAGZEILEN = {
     zahl: 'ZÄHL NOCHMAL NACH', traum: 'WACH AUF', himmel: 'SCHAU NICHT NACH OBEN',
     verlauf: 'DEIN HANDY WAR WACH', fund: 'HEB ES NICHT AUF', nachbar: 'TRAU DEINEM NACHBARN NICHT',
     strasse: 'HALT NICHT AN', stimme: 'DAS IST NICHT SIE', internet: 'LÖSCH DEIN KONTO',
+    aufzug: 'STEIG NICHT AUS', hotel: 'MACH NICHT AUF', zelt: 'BLEIB IM ZELT',
   },
   en: {
     allein: 'YOU ARE NOT ALONE', fremd: 'DO NOT TURN AROUND', kamera: 'DO NOT WATCH THE CLIP', anruf: 'DO NOT PICK UP', regel: 'NEVER BREAK THIS RULE',
@@ -16,6 +17,7 @@ export const SCHLAGZEILEN = {
     zahl: 'COUNT AGAIN', traum: 'WAKE UP', himmel: 'DO NOT LOOK UP',
     verlauf: 'YOUR PHONE WAS AWAKE', fund: 'DO NOT PICK IT UP', nachbar: 'DO NOT TRUST YOUR NEIGHBOR',
     strasse: 'DO NOT STOP THE CAR', stimme: 'THAT IS NOT HER', internet: 'DELETE YOUR ACCOUNT',
+    aufzug: 'DO NOT STEP OUT', hotel: 'DO NOT OPEN THE DOOR', zelt: 'STAY IN THE TENT',
   },
 };
 export const schlagzeile = (muster, sprache = 'de') => SCHLAGZEILEN[sprache === 'en' ? 'en' : 'de'][muster] || '';
