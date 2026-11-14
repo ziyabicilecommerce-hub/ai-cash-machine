@@ -179,6 +179,14 @@ const STANDARD_SUCHE = [
   'Telefonzentrale:job',
   'Sachbearbeiter Vertragsmanagement:job',
   'Sachbearbeiter Rechnungswesen:job',
+  // Mehr Berufe (Ziya: "mehr Jobs rein") - Büro, Disposition, Zoll, Backoffice, E-Commerce, IT.
+  'Speditionskaufmann Quereinsteiger:job', 'Disponent Spedition:job', 'Disponent Luftfracht:job', 'Fuhrparkmanagement:job',
+  'Import Sachbearbeiter:job', 'Zollanmeldung:job', 'Exportkontrolle:job', 'Ground Operations:job', 'Crew Einsatzplanung:job',
+  'Flugplanung:job', 'Airline Kundenservice:job', 'Backoffice Bank:job', 'Kreditsachbearbeiter:job',
+  'Wertpapierabwicklung:job', 'KYC Analyst:job', 'Geldwäsche Sachbearbeiter:job', 'Compliance Assistenz:job',
+  'Kundenservice Versicherung:job', 'Kundenservice Energie:job', 'Inbound Kundenservice:job', 'Onlineshop Kundenservice:job',
+  'Produktdatenpflege:job', 'Marketplace Manager:job', 'Content Moderator:job', 'Datenpflege:job', 'IT-Asset Management:job',
+  'Technischer Support Quereinsteiger:job', 'Helpdesk:job', 'Terminplanung:job', 'Sachbearbeiter Logistik:job',
 ].join(';');
 
 export const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key\)? ?account|account manager|kundenberater|neukunden|d2d|door to door|fundraising/i;
