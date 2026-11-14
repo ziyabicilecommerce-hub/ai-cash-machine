@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-07T01:52:57.296Z",
+ "stand": "2026-11-14T01:54:14.781Z",
  "version": 2,
  "heimat": {
   "name": "Hattersheim am Main",
@@ -454,7 +454,7 @@
    "web": "https://filiale.kaufland.de/service/filiale/frankfurt-main-griesheim-1483.html"
   },
   {
-   "name": "Smyths Toys",
+   "name": "Smyths",
    "art": "Spielzeug & Figuren",
    "km": 8.1,
    "lat": 50.056895,
@@ -934,18 +934,6 @@
    "web": "https://www.rossmann.de"
   },
   {
-   "name": "JD Sports",
-   "art": "Sneaker & Klamotten",
-   "km": 14.2,
-   "lat": 50.1570468,
-   "lon": 8.6326122,
-   "adresse": "Limescorso 23, 60439 Frankfurt am Main",
-   "ort": "Frankfurt am Main",
-   "zeiten": "Mo-Sa 10:00-20:00",
-   "tel": "",
-   "web": "https://www.jdsports.de"
-  },
-  {
    "name": "Spielzeux",
    "art": "Spielzeug & Figuren",
    "km": 14.2,
@@ -1027,6 +1015,18 @@
    "ort": "Frankfurt am Main",
    "zeiten": "",
    "tel": "+4969284969",
+   "web": ""
+  },
+  {
+   "name": "Douglas",
+   "art": "Drogerie & Beauty",
+   "km": 14.3,
+   "lat": 50.1146522,
+   "lon": 8.675249,
+   "adresse": "Große Bockenheimer Straße 24, 60313 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "zeiten": "",
+   "tel": "",
    "web": ""
   },
   {
@@ -1731,7 +1731,7 @@
    "km": 15.9,
    "lat": 50.1951123,
    "lon": 8.3807184,
-   "adresse": "Im Buhles 11, 61479 Glashütten",
+   "adresse": "Im Buhles 11-13, 61479 Glashütten",
    "ort": "Glashütten",
    "zeiten": "Mo-Fr 07:30-17:00;Sa 08:00-13:00",
    "tel": "",
@@ -3077,7 +3077,7 @@
    "lon": 8.7634045,
    "adresse": "Große Marktstraße 12, 63065 Offenbach am Main",
    "ort": "Offenbach am Main",
-   "zeiten": "Mo-Fr 09:00-20:00; Sa 09:00-20:00; PH off",
+   "zeiten": "Mo-Sa 08:00-20:00; PH off",
    "tel": "+496980052482",
    "web": "https://www.rossmann.de"
   },
@@ -3164,18 +3164,6 @@
    "zeiten": "Mo-Fr 07:00-24:00; Sa 07:00-23:30",
    "tel": "+496151958470",
    "web": ""
-  },
-  {
-   "name": "Rossmann",
-   "art": "Drogerie & Beauty",
-   "km": 20.7,
-   "lat": 50.0446355,
-   "lon": 8.198817,
-   "adresse": "Reichsapfelstraße 3, 65201 Wiesbaden",
-   "ort": "Wiesbaden",
-   "zeiten": "Mo-Fr 09:00-19:00; Sa 09:00-15:00; PH off",
-   "tel": "+496115324874",
-   "web": "https://www.rossmann.de"
   },
   {
    "name": "Beinbrech GmbH & Co. KG",
@@ -3870,7 +3858,7 @@
    "adresse": "",
    "ort": "",
    "zeiten": "Mo-Sa 09:00-20:00",
-   "tel": "",
+   "tel": "+4961513943494",
    "web": ""
   },
   {
@@ -4568,18 +4556,6 @@
    "zeiten": "Mo-Fr 07:00-12:30,14:30-18:30; Sa 08:00-13:00",
    "tel": "",
    "web": ""
-  },
-  {
-   "name": "Rossmann",
-   "art": "Drogerie & Beauty",
-   "km": 31,
-   "lat": 50.1314953,
-   "lon": 8.9106481,
-   "adresse": "Am Steinheimer Tor 1, 63450 Hanau",
-   "ort": "Hanau",
-   "zeiten": "Mo-Fr 08:00-20:00; Sa 08:00-20:00; PH off",
-   "tel": "+4961814287896",
-   "web": "https://www.rossmann.de"
   },
   {
    "name": "Kaufland",
@@ -6104,6 +6080,18 @@
    "zeiten": "Mo-Fr 09:00-14:00; PH off",
    "tel": "",
    "web": ""
+  },
+  {
+   "name": "Thalia",
+   "art": "Bücher & Manga",
+   "km": 44.2,
+   "lat": 49.6817566,
+   "lon": 8.6220162,
+   "adresse": "Hauptstraße 17, 64625 Bensheim",
+   "ort": "Bensheim",
+   "zeiten": "Mo-Fr 09:30-18:30; Sa 09:30-16:00; Su off",
+   "tel": "+4962517706910",
+   "web": "https://www.thalia.de/buchhandlung/5876"
   },
   {
    "name": "Rossmann",
