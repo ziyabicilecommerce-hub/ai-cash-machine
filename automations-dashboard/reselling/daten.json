@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-14T18:46:45.953Z",
+ "stand": "2026-11-14T18:49:42.886Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118676:1500",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: MAYBELLINE NEW YORK Adventskalender 2026 Happy Holidays, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1778844332/assets/pas/images/821685b1-d386-428e-8655-1eb7ad8b7561/maybelline-new-york-adventskalender-2026-happy-holidays",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1434547,8.5023642",
+   "shop": "https://www.dm.de/p/d/3118676/maybelline-new-york-adventskalender-2026-happy-holidays",
+   "text": "52,95 € · dm Bad Soden am Taunus (8,3 km) · 1 Stück\nKönigsteiner Straße 76, 65812 Bad Soden am Taunus\nIm Umkreis in 22 Filiale(n) vorrätig.",
+   "zeit": "2026-11-14T18:49:42.886Z"
+  },
   {
    "schluessel": "deal:https://eu.kith.com/products/asi1203a609-023",
    "art": "Deal",
@@ -182,20 +192,10 @@
    "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
    "text": "44,95 € · dm Bad Soden am Taunus (8,3 km) · 1 Stück\nKönigsteiner Straße 76, 65812 Bad Soden am Taunus\nIm Umkreis in 19 Filiale(n) vorrätig.",
    "zeit": "2026-11-13T22:35:16.440Z"
-  },
-  {
-   "schluessel": "filiale:3118897:1500",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1434547,8.5023642",
-   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
-   "text": "44,95 € · dm Bad Soden am Taunus (8,3 km) · 1 Stück\nKönigsteiner Straße 76, 65812 Bad Soden am Taunus\nIm Umkreis in 19 Filiale(n) vorrätig.",
-   "zeit": "2026-11-13T22:02:33.889Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-14T18:34:40.319Z",
+  "stand": "2026-11-14T18:49:47.123Z",
   "filialen": 148,
   "produkte": [
    {
@@ -212,7 +212,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 20
+      "menge": 23
      },
      {
       "name": "dm Kriftel",
@@ -252,7 +252,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 59
+      "menge": 60
      },
      {
       "name": "dm Flörsheim am Main",
@@ -286,7 +286,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 5
+      "menge": 7
      },
      {
       "name": "dm Kriftel",
@@ -310,7 +310,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 60
+      "menge": 61
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -318,7 +318,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 1
+      "menge": 2
      },
      {
       "name": "dm Flörsheim am Main",
@@ -334,7 +334,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 8
+      "menge": 10
      },
      {
       "name": "dm Eschborn",
@@ -360,7 +360,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 15
+      "menge": 16
      },
      {
       "name": "dm Kriftel",
@@ -508,7 +508,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 5
+      "menge": 6
      },
      {
       "name": "dm Kriftel",
@@ -690,7 +690,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 15
+      "menge": 16
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -764,7 +764,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 4
+      "menge": 5
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -772,7 +772,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 5
+      "menge": 6
      },
      {
       "name": "dm Flörsheim am Main",
@@ -783,12 +783,20 @@
       "menge": 5
      },
      {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 1
+     },
+     {
       "name": "dm Frankfurt am Main",
       "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
       "km": 9.3,
       "lat": 50.1237366,
       "lon": 8.5865988,
-      "menge": 10
+      "menge": 12
      },
      {
       "name": "dm Mörfelden-Walldorf",
@@ -797,14 +805,6 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 7
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 10
      }
     ]
    },
@@ -822,7 +822,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Kelsterbach",
