@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-14T16:13:48.052Z",
+ "stand": "2026-11-14T16:16:52.804Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -193,7 +193,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-14T16:01:38.116Z",
+  "stand": "2026-11-14T16:16:56.877Z",
   "filialen": 148,
   "produkte": [
    {
@@ -688,7 +688,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 16
+      "menge": 15
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -770,7 +770,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 6
+      "menge": 5
      },
      {
       "name": "dm Flörsheim am Main",
@@ -779,14 +779,6 @@
       "lat": 50.0158924,
       "lon": 8.4247531,
       "menge": 5
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 1
      },
      {
       "name": "dm Frankfurt am Main",
@@ -803,6 +795,14 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 7
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 10
      }
     ]
    },
@@ -5334,20 +5334,20 @@
     "begriff": "samba"
    },
    {
-    "titel": "U740WW2",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u740ww2-nb-white-black",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WW2_1.jpg?v=1749023055",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "U740WM2",
     "preis": 119,
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-balance-u740wm2-white-silver-metallic-reflection",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WM2_1.jpg?v=1735819605",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "U740BM2",
+    "preis": 119,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u740bm2-black-silver-metallic",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740BM2_1.jpg?v=1737122996",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
