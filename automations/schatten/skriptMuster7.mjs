@@ -1,0 +1,155 @@
+// Muster 21-23 (14.11., Wunsch: "komplett neue Storys"): drei Themen, die es bisher nicht gab.
+//   strasse:  nachts unterwegs (Anhalter, Tankstelle, Nachtbus, Tunnel, Blitzerfoto ...)
+//   stimme:   etwas macht Stimmen nach, die man kennt (Mama aus dem Keller, Kumpel im Wald, Pilot ...)
+//   internet: Feed, Story, Videocall, Chatbot wissen mehr als sie dürften
+// Jede Geschichte hat ihren Du-Hook direkt als Regel-Hook ("Wenn …, mach nicht auf.") - bei uns x2,2 gegen den Konto-Schnitt.
+// Gleiche Regeln wie Muster 1-20: Hook höchstens 70 Zeichen, mindestens 4 von 6 Hook-Punkten, Twist am Ende, Teil 2.
+export const MUSTER7 = {};
+export const TEIL2_7 = {};
+export const DU_HOOKS7 = {};
+
+const bau = (frage, wahl) => (v) => ({
+  titel: v.titel, ort: v.ort || 'haus', boesewicht: v.boese, stimme: v.stimme || 'mann',
+  hook: v.hook, saetze: [v.a, v.b, v.c], monster: v.monster, ende: v.ende, frage, wahl,
+});
+
+const STRASSE = [
+  { titel: 'Der Anhalter', ort: 'wald', boese: 'schatten', hook: 'Um 3 Uhr filmt meine Kamera einen Anhalter. Aber zweimal denselben.',
+    du: 'Wenn du denselben Anhalter zweimal siehst, halte nicht an.',
+    a: 'Ich fahre weiter. Er schaut mir nach.', b: 'Nach zehn Minuten steht er wieder am Rand.', c: 'Beim dritten Mal sitzt er auf meinem Rücksitz.',
+    monster: 'Danke fürs Mitnehmen.', ende: 'Im Rückspiegel ist der Rücksitz leer. Aber der Gurt ist zu.' },
+  { titel: 'Der Beifahrer an der Tankstelle', boese: 'schatten', hook: 'Um 3 Uhr tanke ich. Der Kassierer sagt aber: Ihr Beifahrer zahlt.',
+    du: 'Wenn der Kassierer nach deinem Beifahrer fragt, steig nicht ein.',
+    a: 'Ich fahre allein.', b: 'Ich schaue zum Auto. Auf dem Beifahrersitz sitzt jemand.', c: 'Er winkt. Er trägt meine Jacke.',
+    monster: 'Steig ein.', ende: 'Ich bleibe drinnen. Er fährt los. Mit meinem Auto. Richtung meiner Wohnung.' },
+  { titel: 'Bitte wenden', ort: 'wald', boese: 'hirsch', hook: 'Mein Navi sagt um 3 Uhr: Bitte wenden. Ich bin aber auf einer Brücke.',
+    du: 'Wenn dein Navi nachts brüllt: Bitte wenden, fahr nicht weiter.',
+    a: 'Ich fahre weiter.', b: 'Das Navi wird lauter: Wenden. Jetzt.', c: 'Vor mir endet die Brücke im Nebel.',
+    monster: 'Ich hab dich gewarnt.', ende: 'Ich halte an. Mitten auf der Brücke steht jemand. Er wartet auf mich.' },
+  { titel: 'Das letzte Taxi', boese: 'frau', hook: 'Um 3 Uhr kennt mein Taxifahrer meinen Namen. Gesagt hab ich ihn nicht.',
+    du: 'Wenn dein Taxifahrer deinen Namen kennt, steig nicht ein.',
+    a: 'Er fährt nicht zu meiner Adresse.', b: 'Er sagt: Wir holen erst noch jemanden.', c: 'Wir halten vor meinem Elternhaus. Meine Mutter steigt ein.',
+    monster: 'Familienausflug.', ende: 'Meine Mutter lebt seit zehn Jahren nicht mehr. Sie schnallt mich an.' },
+  { titel: 'Der Nachtbus', ort: 'zug', boese: 'schatten', hook: 'Im Nachtbus schauen um 3 Uhr alle nach hinten. Da sitze nur ich.',
+    du: 'Wenn im Nachtbus alle zu dir schauen, dreh dich nicht um.',
+    a: 'Keiner blinzelt.', b: 'Ich drehe mich um. Hinter mir ist nur die Scheibe.', c: 'In der Scheibe sitzt jemand. Direkt hinter mir.',
+    monster: 'Nächster Halt: du.', ende: 'Der Bus hält. Alle steigen aus. In der Scheibe bleibt einer sitzen.' },
+  { titel: 'Der Hirsch auf zwei Beinen', ort: 'wald', boese: 'hirsch', hook: 'Um 3 Uhr steht ein Hirsch auf der Straße. Aber auf zwei Beinen.',
+    du: 'Wenn nachts ein Hirsch auf zwei Beinen vor dir steht, halte nie an.',
+    a: 'Ich bremse.', b: 'Er kommt langsam zum Fenster.', c: 'Er klopft an die Scheibe. Mit Fingern.',
+    monster: 'Mach auf.', ende: 'Ich gebe Gas. Im Rückspiegel rennt er. Neben dem Auto.' },
+  { titel: 'Das Vermisstenfoto', boese: 'frau', hook: 'Um 3 Uhr hängt ein Vermisstenfoto von mir an der Raststätte. Ich lebe.',
+    du: 'Wenn du dein eigenes Vermisstenfoto siehst, fahr nicht weiter.',
+    a: 'Vermisst seit: heute Nacht, 3 Uhr.', b: 'Es ist 2:55 Uhr.', c: 'Hinter mir öffnet sich die Toilettentür.',
+    monster: 'Pünktlich.', ende: 'Um 3 Uhr klebt jemand ein neues Foto daneben. Es zeigt mein Auto. Leer.' },
+  { titel: 'Das Blitzerfoto', ort: 'wald', boese: 'gremlin', hook: 'Mein Blitzerfoto kommt per Post. Neben mir sitzt aber jemand.',
+    du: 'Wenn auf deinem Blitzerfoto jemand neben dir sitzt, fahr nie wieder.',
+    a: 'Ich fuhr allein. Um 3 Uhr nachts.', b: 'Die Person hat keine Augen. Nur Löcher.', c: 'Auf dem zweiten Foto sitzt sie hinter mir.',
+    monster: 'Fahr vorsichtig.', ende: 'Heute kam ein drittes Foto. Es zeigt mein Schlafzimmer.' },
+  { titel: 'Einer mehr nach dem Tunnel', ort: 'zug', boese: 'schatten', hook: 'Im Tunnel geht um 3 Uhr das Licht aus. Danach sind wir einer mehr.',
+    du: 'Wenn nach dem Tunnel einer mehr neben dir sitzt, zähl nicht nach.',
+    a: 'Ich zähle die Leute im Wagen.', b: 'Vorher waren wir sieben.', c: 'Jetzt sind wir acht. Keiner sagt etwas.',
+    monster: 'Ich bleibe.', ende: 'Im nächsten Tunnel geht das Licht wieder aus. Neben mir flüstert jemand: Du bist dran.' },
+  { titel: 'Mein Auto kommt mir entgegen', ort: 'wald', boese: 'schatten', hook: 'Um 3 Uhr kommt mir mein eigenes Auto entgegen. Am Steuer sitze ich.',
+    du: 'Wenn dir dein eigenes Auto entgegenkommt, fahr nicht weiter.',
+    a: 'Wir fahren aneinander vorbei.', b: 'Der andere ich lacht.', c: 'Er blinkt dreimal.',
+    monster: 'Bis gleich.', ende: 'An der nächsten Kurve steht mein Auto im Graben. Ich sitze darin.' },
+];
+
+const STIMME = [
+  { titel: 'Mama ruft aus dem Keller', boese: 'frau', stimme: 'frau', hook: 'Um 3 Uhr ruft Mama aus dem Keller. Sie liegt aber neben mir im Bett.',
+    du: 'Wenn deine Mama aus dem Keller ruft und neben dir liegt, geh nicht.',
+    a: 'Komm runter, Schatz. Ich brauch dich.', b: 'Mama neben mir flüstert: Ich hab es auch gehört.', c: 'Die Stimme ruft wieder. Jetzt mit Mamas Lachen.',
+    monster: 'Komm runter.', ende: 'Mama neben mir dreht sich um. Und sagt mit fremder Stimme: Er glaubt es.' },
+  { titel: 'Der Hund vor der Tür', boese: 'gremlin', hook: 'Um 3 Uhr ruft draußen mein Hund meinen Namen. Er liegt unterm Bett.',
+    du: 'Wenn draußen dein Hund ruft und er unterm Bett liegt, mach nicht auf.',
+    a: 'Er zittert.', b: 'Draußen ruft es wieder. Diesmal mit meiner Stimme.', c: 'Dann kratzt es an der Tür.',
+    monster: 'Lass mich rein.', ende: 'Mein Hund unterm Bett flüstert: Nicht aufmachen.' },
+  { titel: 'Hilferuf im Wald', ort: 'wald', boese: 'hirsch', hook: 'Im Wald ruft mein Kumpel um 3 Uhr um Hilfe. Er steht aber neben mir.',
+    du: 'Wenn dein Kumpel im Wald um Hilfe ruft und neben dir steht, renn.',
+    a: 'Hilfe, ich bin gestürzt.', b: 'Mein Kumpel wird blass.', c: 'Die Stimme kommt näher. Sie lacht genau wie er.',
+    monster: 'Jetzt du.', ende: 'Wir rennen. Am Auto ist nur einer von uns außer Atem.' },
+  { titel: 'Das Baby vor der Tür', boese: 'frau', stimme: 'frau', hook: 'Um 3 Uhr weint vor meiner Tür ein Baby. Im Haus gibt es aber keins.',
+    du: 'Wenn nachts vor deiner Tür ein Baby weint, mach nicht auf.',
+    a: 'Es weint immer gleich. Wie eine Aufnahme.', b: 'Dann hört es auf. Und sagt: Mach auf.', c: 'Mit der Stimme eines alten Mannes.',
+    monster: 'Bitte.', ende: 'Im Türspion steht niemand. Unten am Boden lächelt etwas.' },
+  { titel: 'Papa im Flur', boese: 'schatten', hook: 'Um 3 Uhr ruft mein Papa aus dem Flur. Er ist aber auf Geschäftsreise.',
+    du: 'Wenn dein Papa ruft, während er verreist ist, antworte nicht.',
+    a: 'Ich schreibe ihm. Er antwortet sofort.', b: 'Bin im Hotel. Schlaf gut.', c: 'Im Flur fragt Papas Stimme: Wem schreibst du da?',
+    monster: 'Komm her.', ende: 'Mein Handy leuchtet. Papa schreibt: Wer ist bei dir?' },
+  { titel: 'Klopfen im 9. Stock', boese: 'frau', stimme: 'frau', hook: 'Im 9. Stock klopft um 3 Uhr meine Freundin ans Fenster. Von außen.',
+    du: 'Wenn dich im 9. Stock jemand ans Fenster klopft, mach nicht auf.',
+    a: 'Sie lächelt. Und winkt.', b: 'Lass mich rein, mir ist kalt.', c: 'Mein Handy klingelt. Es ist sie. Von zu Hause.',
+    monster: 'Mir ist kalt.', ende: 'Am Telefon flüstert sie: Ich sehe es auch. Es steht vor meinem Fenster.' },
+  { titel: 'Opa singt falsch', boese: 'schatten', hook: 'Um 3 Uhr singt mein toter Opa im Garten. Sein Lied, falsch gesungen.',
+    du: 'Wenn dein toter Opa nachts singt, sing nicht mit.',
+    a: 'Er sang es immer falsch. Absichtlich, sagte er.', b: 'Heute singt er es richtig.', c: 'Opa hat es nie richtig gesungen.',
+    monster: 'Komm raus, Kleiner.', ende: 'Das Lied bricht ab. Eine fremde Stimme fragt: Wie ging es weiter?' },
+  { titel: 'Die Stimme des Piloten', ort: 'flugzeug', boese: 'frau', stimme: 'frau', hook: 'Im Flugzeug spricht der Pilot um 3 Uhr mit der Stimme meiner Mutter.',
+    du: 'Wenn der Pilot wie deine Mutter klingt, schlaf nicht ein.',
+    a: 'Bitte bleib angeschnallt, Schatz.', b: 'Die anderen Passagiere schlafen alle.', c: 'Die Stimme sagt: Wir landen bald. Bei mir.',
+    monster: 'Willkommen zuhause.', ende: 'Meine Mutter ist vor einem Jahr abgestürzt. Mit genau diesem Flug.' },
+  { titel: 'Das falsche Echo', boese: 'schatten', hook: 'Um 3 Uhr antwortet im Treppenhaus ein Echo. Aber mit anderen Wörtern.',
+    du: 'Wenn dein Echo andere Wörter ruft, ruf nie wieder.',
+    a: 'Ich rufe: Hallo.', b: 'Das Echo ruft: Ich komme.', c: 'Schritte kommen die Treppe hoch.',
+    monster: 'Hallo.', ende: 'Vor meiner Tür ruft jemand: Hallo. Mit meiner Stimme.' },
+  { titel: 'Fernseher an', boese: 'gremlin', hook: 'Mein Fernseher geht um 3 Uhr an. Gesagt hat es aber nur meine Stimme.',
+    du: 'Wenn dein Fernseher nachts auf deine Stimme hört, sprich nicht.',
+    a: 'Die App zeigt den Befehl. Mit meiner Stimme.', b: 'Ich lag da im Bett. Mit geschlossenem Mund.', c: 'Der nächste Befehl kommt jetzt: Licht aus.',
+    monster: 'Gute Nacht.', ende: 'Es wird dunkel. Dann sagt meine Stimme aus der Küche: Tür auf.' },
+];
+
+const INTERNET = [
+  { titel: 'Schöne Vorhänge', boese: 'schatten', hook: 'Um 3 Uhr kommt im Chat: Schöne Vorhänge. Aber ich poste nie Fotos.',
+    du: 'Wenn ein Fremder deine Vorhänge lobt, schau nicht dahinter.',
+    a: 'Der Absender ist ein Fremder.', b: 'Er schickt ein Foto. Mein Fenster. Von innen.', c: 'Darunter steht: Gute Nacht. Ich bleibe noch.',
+    monster: 'Schlaf gut.', ende: 'Unter dem Foto kommt ein neuer Kommentar. Von meinem eigenen Konto.' },
+  { titel: 'Die Story um 2:58', boese: 'gremlin', hook: 'Meine Story hat um 3 Uhr einen Zuschauer. Gepostet hab ich nichts.',
+    du: 'Wenn deine Story online ist, während du schläfst, schau sie nicht an.',
+    a: 'Die Story ist ein Video. Von mir. Schlafend.', b: 'Gepostet um 2:58 Uhr.', c: 'Gefilmt aus meiner Zimmerecke.',
+    monster: 'Neuer Follower.', ende: 'Der Zuschauer ist mein eigenes Konto. Es schaut immer noch.' },
+  { titel: 'Heute vor einem Jahr', ort: 'wald', boese: 'hirsch', hook: 'Meine Foto-App zeigt: Heute vor 1 Jahr. Ich war aber nie dort.',
+    du: 'Wenn deine App dich an einen fremden Ort erinnert, öffne sie nicht.',
+    a: 'Ein Foto von mir. Im Wald. Nachts.', b: 'Neben mir steht eine große Gestalt.', c: 'Sie hat den Arm um mich gelegt.',
+    monster: 'Jahrestag.', ende: 'Heute zeigt die App: In 1 Jahr. Das Foto ist schwarz.' },
+  { titel: 'Sprachnachricht von mir', boese: 'schatten', hook: 'Um 3 Uhr kommt eine Sprachnachricht. Der Absender bin aber ich.',
+    du: 'Wenn du dir selbst eine Sprachnachricht schickst, hör sie nicht an.',
+    a: 'Ich höre nur Atmen. Meins.', b: 'Dann flüstere ich: Er hört zu.', c: 'Aufgenommen in meinem Kleiderschrank.',
+    monster: 'Psst.', ende: 'Eine zweite Nachricht kommt: Er hat sie angehört. Jetzt.' },
+  { titel: 'Das neue Profilbild', boese: 'frau', hook: 'Mein Profilbild zeigt seit 3 Uhr mein Bett. Geändert hab ich nichts.',
+    du: 'Wenn dein Profilbild dich schlafend zeigt, schau nicht nach oben.',
+    a: 'Das Foto ist von oben gemacht.', b: 'Ich liege darauf und schlafe.', c: 'Über mir hängt etwas an der Decke.',
+    monster: 'Schau hoch.', ende: 'Ich schaue hoch. Die Decke ist leer. Das Profilbild jetzt auch.' },
+  { titel: 'Jemand im Videocall', boese: 'schatten', hook: 'Mein Videocall zeigt um 3 Uhr jemanden hinter mir. Ich bin allein.',
+    du: 'Wenn im Videocall jemand hinter dir steht, dreh dich nicht um.',
+    a: 'Mein Freund am anderen Ende wird still.', b: 'Er tippt: Nicht umdrehen.', c: 'Dann friert sein Bild ein. Meins nicht.',
+    monster: 'Leg auf.', ende: 'Im Video legt mir die Gestalt die Hand auf die Schulter. Ich spüre nichts.' },
+  { titel: 'Zwei Meter entfernt', boese: 'frau', stimme: 'frau', hook: 'Meine Freunde-App zeigt meine Freundin in meinem Flur. Sie ist in Rom.',
+    du: 'Wenn dir eine App deine Freundin im Flur zeigt, geh nicht raus.',
+    a: 'Ich rufe sie an. Sie ist im Hotel in Rom.', b: 'Die App zeigt: zwei Meter entfernt.', c: 'Dann: ein Meter.',
+    monster: 'Gefunden.', ende: 'Die App piept: Ihr seid jetzt am selben Ort. Ich liege allein im Bett.' },
+  { titel: 'Live aus meinem Haus', boese: 'gremlin', hook: 'Um 3 Uhr zeigt mein Feed ein Video von meinem Haus. Gefilmt von innen.',
+    du: 'Wenn dein Feed dein Haus von innen zeigt, schau nicht weiter.',
+    a: 'Die Kamera geht den Flur entlang.', b: 'Sie bleibt vor meiner Tür stehen.', c: 'Das Video ist live.',
+    monster: 'Klopf klopf.', ende: 'Es klopft. Im Video und an meiner Tür. Gleichzeitig.' },
+  { titel: 'Fünf Sterne', boese: 'schatten', hook: 'Im Netz hat meine Wohnung 5 Sterne. Vermietet habe ich sie aber nie.',
+    du: 'Wenn deine Wohnung online Bewertungen hat, schlaf nicht ein.',
+    a: 'Die Bewertung lautet: Gastgeber schläft sehr tief.', b: 'Es gibt 40 Bewertungen. Seit Jahren.', c: 'Die neueste ist von heute Nacht.',
+    monster: 'Gerne wieder.', ende: 'Sie lautet: Morgen kommen wir zu zweit.' },
+  { titel: 'Der Chatbot schreibt zuerst', boese: 'gremlin', hook: 'Mein Chatbot schreibt um 3 Uhr zuerst. Ich habe die App aber gelöscht.',
+    du: 'Wenn dein Chatbot nachts zuerst schreibt, antworte nicht.',
+    a: 'Er schreibt: Du schläfst nicht.', b: 'Ich tippe: Woher weißt du das?', c: 'Er antwortet: Ich sehe dich doch.',
+    monster: 'Bleib wach.', ende: 'Dann schreibt er: Dreh dich nicht um. Ich bin nicht die App.' },
+];
+
+MUSTER7.strasse = [bau('Hättest du angehalten?', ['Anhalten', 'Weiterfahren']), STRASSE];
+MUSTER7.stimme = [bau('Hättest du geantwortet?', ['Antworten', 'Leise sein']), STIMME];
+MUSTER7.internet = [bau('Hättest du es angeschaut?', ['Anschauen', 'Löschen']), INTERNET];
+for (const l of [STRASSE, STIMME, INTERNET]) for (const v of l) DU_HOOKS7[v.titel] = v.du;
+
+TEIL2_7.strasse = () => ({ hook: 'Ich fahre nachts nicht mehr. Heute steht aber mein Auto vor der Tür.', saetze: ['Ich habe es vor einer Woche verkauft.', 'Der Motor läuft.', 'Auf dem Fahrersitz liegt mein Schlüssel. Noch warm.'],
+  ende: 'Im Navi ist ein Ziel eingegeben: Zuhause. Es zeigt auf den Wald.', monster: 'Steig ein.', frage: 'Wärst du eingestiegen?', wahl: ['Einsteigen', 'Drinnen bleiben'] });
+TEIL2_7.stimme = () => ({ hook: 'Ich antworte nicht mehr. Heute ruft es aber mit meiner Stimme.', saetze: ['Es ruft aus dem Keller.', 'Es ruft genau so, wie ich rufe.', 'Meine Mutter antwortet. Und geht runter.'],
+  ende: 'Unten wird es still. Dann ruft meine Mutter: Komm, es ist nichts.', monster: 'Komm runter.', frage: 'Wärst du runtergegangen?', wahl: ['Runtergehen', 'Oben bleiben'] });
+TEIL2_7.internet = () => ({ hook: 'Ich habe alle Konten gelöscht. Um 3 Uhr kommt aber eine Nachricht.', saetze: ['Sie kommt per SMS.', 'Darin ein Link zu einem neuen Konto.', 'Das Konto heißt wie ich. Und postet live.'],
+  ende: 'Im Livestream sitzt jemand in meinem Zimmer. Er winkt in die Kamera. In meine Richtung.', monster: 'Folg mir.', frage: 'Hättest du es angeschaut?', wahl: ['Anschauen', 'Handy weg'] });
