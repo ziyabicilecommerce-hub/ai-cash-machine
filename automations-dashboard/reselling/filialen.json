@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-07T14:19:28.634Z",
+ "stand": "2026-11-14T14:31:01.045Z",
  "filialen": [
   {
    "nummer": "1501",
@@ -152,16 +152,6 @@
    "km": 10.6
   },
   {
-   "nummer": "2040",
-   "id": "D3D0",
-   "name": "dm Frankfurt am Main",
-   "adresse": "Europa-Allee 130, 60486 Frankfurt am Main",
-   "ort": "Frankfurt am Main",
-   "lat": 50.1086268,
-   "lon": 8.6273783,
-   "km": 10.9
-  },
-  {
    "nummer": "1433",
    "id": "D2BH",
    "name": "dm Wiesbaden",
@@ -169,6 +159,16 @@
    "ort": "Wiesbaden",
    "lat": 50.057082,
    "lon": 8.33478,
+   "km": 10.9
+  },
+  {
+   "nummer": "2040",
+   "id": "D3D0",
+   "name": "dm Frankfurt am Main",
+   "adresse": "Europa-Allee 130, 60486 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "lat": 50.1086268,
+   "lon": 8.6273783,
    "km": 10.9
   },
   {
@@ -252,16 +252,6 @@
    "km": 14.3
   },
   {
-   "nummer": "2842",
-   "id": "D4MA",
-   "name": "dm Frankfurt am Main",
-   "adresse": "Tituscorso 11, 60439 Frankfurt am Main",
-   "ort": "Frankfurt am Main",
-   "lat": 50.1570945,
-   "lon": 8.6340124,
-   "km": 14.3
-  },
-  {
    "nummer": "1052",
    "id": "D1JK",
    "name": "dm Frankfurt am Main",
@@ -269,6 +259,16 @@
    "ort": "Frankfurt am Main",
    "lat": 50.101611,
    "lon": 8.68044,
+   "km": 14.3
+  },
+  {
+   "nummer": "2842",
+   "id": "D4MA",
+   "name": "dm Frankfurt am Main",
+   "adresse": "Tituscorso 11, 60439 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "lat": 50.1570945,
+   "lon": 8.6340124,
    "km": 14.3
   },
   {
@@ -342,16 +342,6 @@
    "km": 15
   },
   {
-   "nummer": "1274",
-   "id": "D252",
-   "name": "dm Frankfurt am Main",
-   "adresse": "Große Friedberger Straße 7-11, 60313 Frankfurt am Main",
-   "ort": "Frankfurt am Main",
-   "lat": 50.115108,
-   "lon": 8.686201,
-   "km": 15.1
-  },
-  {
    "nummer": "1209",
    "id": "D229",
    "name": "dm Frankfurt am Main",
@@ -359,6 +349,16 @@
    "ort": "Frankfurt am Main",
    "lat": 50.1032747,
    "lon": 8.691264,
+   "km": 15.1
+  },
+  {
+   "nummer": "1274",
+   "id": "D252",
+   "name": "dm Frankfurt am Main",
+   "adresse": "Große Friedberger Straße 7-11, 60313 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "lat": 50.115108,
+   "lon": 8.686201,
    "km": 15.1
   },
   {
@@ -422,16 +422,6 @@
    "km": 16.1
   },
   {
-   "nummer": "1907",
-   "id": "D37B",
-   "name": "dm Frankfurt am Main",
-   "adresse": "Louis-Appia-Passage 6, 60314 Frankfurt am Main",
-   "ort": "Frankfurt am Main",
-   "lat": 50.1118988,
-   "lon": 8.705568,
-   "km": 16.3
-  },
-  {
    "nummer": "2427",
    "id": "D453",
    "name": "dm Frankfurt am Main",
@@ -439,6 +429,16 @@
    "ort": "Frankfurt am Main",
    "lat": 50.1226638,
    "lon": 8.7003097,
+   "km": 16.3
+  },
+  {
+   "nummer": "1907",
+   "id": "D37B",
+   "name": "dm Frankfurt am Main",
+   "adresse": "Louis-Appia-Passage 6, 60314 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "lat": 50.1118988,
+   "lon": 8.705568,
    "km": 16.3
   },
   {
@@ -512,13 +512,13 @@
    "km": 17.6
   },
   {
-   "nummer": "667",
-   "id": "D13J",
-   "name": "dm Wiesbaden",
-   "adresse": "Langgasse 19, 65183 Wiesbaden",
-   "ort": "Wiesbaden",
-   "lat": 50.083781,
-   "lon": 8.239718,
+   "nummer": "1430",
+   "id": "D2BE",
+   "name": "dm Groß-Gerau",
+   "adresse": "Helvetiastraße 3, 64521 Groß-Gerau",
+   "ort": "Groß-Gerau",
+   "lat": 49.9109414,
+   "lon": 8.4954303,
    "km": 17.7
   },
   {
@@ -532,24 +532,14 @@
    "km": 17.7
   },
   {
-   "nummer": "1430",
-   "id": "D2BE",
-   "name": "dm Groß-Gerau",
-   "adresse": "Helvetiastraße 3, 64521 Groß-Gerau",
-   "ort": "Groß-Gerau",
-   "lat": 49.9109414,
-   "lon": 8.4954303,
-   "km": 17.7
-  },
-  {
-   "nummer": "1261",
-   "id": "D24D",
+   "nummer": "667",
+   "id": "D13J",
    "name": "dm Wiesbaden",
-   "adresse": "Kirchgasse 6, 65185 Wiesbaden",
+   "adresse": "Langgasse 19, 65183 Wiesbaden",
    "ort": "Wiesbaden",
-   "lat": 50.078785,
-   "lon": 8.2378583,
-   "km": 17.8
+   "lat": 50.083781,
+   "lon": 8.239718,
+   "km": 17.7
   },
   {
    "nummer": "643",
@@ -559,6 +549,16 @@
    "ort": "Egelsbach",
    "lat": 49.962379,
    "lon": 8.671062,
+   "km": 17.8
+  },
+  {
+   "nummer": "1261",
+   "id": "D24D",
+   "name": "dm Wiesbaden",
+   "adresse": "Kirchgasse 6, 65185 Wiesbaden",
+   "ort": "Wiesbaden",
+   "lat": 50.078785,
+   "lon": 8.2378583,
    "km": 17.8
   },
   {
@@ -632,16 +632,6 @@
    "km": 19.6
   },
   {
-   "nummer": "2146",
-   "id": "D3HA",
-   "name": "dm Bad Homburg v. d. Höhe",
-   "adresse": "Louisenstraße 14-16, 61348 Bad Homburg v. d. Höhe",
-   "ort": "Bad Homburg v. d. Höhe",
-   "lat": 50.2287063,
-   "lon": 8.6128755,
-   "km": 19.8
-  },
-  {
    "nummer": "1074",
    "id": "D1KI",
    "name": "dm Bad Homburg v. d. Höhe",
@@ -649,6 +639,16 @@
    "ort": "Bad Homburg v. d. Höhe",
    "lat": 50.226678,
    "lon": 8.616663,
+   "km": 19.8
+  },
+  {
+   "nummer": "2146",
+   "id": "D3HA",
+   "name": "dm Bad Homburg v. d. Höhe",
+   "adresse": "Louisenstraße 14-16, 61348 Bad Homburg v. d. Höhe",
+   "ort": "Bad Homburg v. d. Höhe",
+   "lat": 50.2287063,
+   "lon": 8.6128755,
    "km": 19.8
   },
   {
@@ -672,16 +672,6 @@
    "km": 20.2
   },
   {
-   "nummer": "3016",
-   "id": "D55G",
-   "name": "dm Wiesbaden",
-   "adresse": "Flachstraße 5a, 65199 Wiesbaden",
-   "ort": "Wiesbaden",
-   "lat": 50.0796217,
-   "lon": 8.201893,
-   "km": 20.4
-  },
-  {
    "nummer": "1016",
    "id": "D1I8",
    "name": "dm Frankfurt am Main",
@@ -689,6 +679,16 @@
    "ort": "Frankfurt am Main",
    "lat": 50.1402219,
    "lon": 8.7504757,
+   "km": 20.4
+  },
+  {
+   "nummer": "3016",
+   "id": "D55G",
+   "name": "dm Wiesbaden",
+   "adresse": "Flachstraße 5a, 65199 Wiesbaden",
+   "ort": "Wiesbaden",
+   "lat": 50.0796217,
+   "lon": 8.201893,
    "km": 20.4
   },
   {
@@ -872,16 +872,6 @@
    "km": 25.8
   },
   {
-   "nummer": "2660",
-   "id": "D4EK",
-   "name": "dm Oppenheim",
-   "adresse": "In den Weingärten 80, 55276 Oppenheim",
-   "ort": "Oppenheim",
-   "lat": 49.8470352,
-   "lon": 8.3608494,
-   "km": 26.3
-  },
-  {
    "nummer": "3160",
    "id": "D5BG",
    "name": "dm Neu-Anspach",
@@ -889,6 +879,16 @@
    "ort": "Neu-Anspach",
    "lat": 50.3058589,
    "lon": 8.5134251,
+   "km": 26.3
+  },
+  {
+   "nummer": "2660",
+   "id": "D4EK",
+   "name": "dm Oppenheim",
+   "adresse": "In den Weingärten 80, 55276 Oppenheim",
+   "ort": "Oppenheim",
+   "lat": 49.8470352,
+   "lon": 8.3608494,
    "km": 26.3
   },
   {
@@ -952,16 +952,6 @@
    "km": 28.4
   },
   {
-   "nummer": "2586",
-   "id": "D4BI",
-   "name": "dm Hanau",
-   "adresse": "Otto-Hahn Straße 18, 63456 Hanau",
-   "ort": "Hanau",
-   "lat": 50.1126668,
-   "lon": 8.8954827,
-   "km": 29.6
-  },
-  {
    "nummer": "2482",
    "id": "D47A",
    "name": "dm Usingen",
@@ -969,6 +959,16 @@
    "ort": "Usingen",
    "lat": 50.334467,
    "lon": 8.5334832,
+   "km": 29.6
+  },
+  {
+   "nummer": "2586",
+   "id": "D4BI",
+   "name": "dm Hanau",
+   "adresse": "Otto-Hahn Straße 18, 63456 Hanau",
+   "ort": "Hanau",
+   "lat": 50.1126668,
+   "lon": 8.8954827,
    "km": 29.6
   },
   {
@@ -1332,16 +1332,6 @@
    "km": 45.6
   },
   {
-   "nummer": "1465",
-   "id": "D2D1",
-   "name": "dm Limburg a. d. Lahn",
-   "adresse": "Joseph-Schneider-Straße 1, 65549 Limburg a. d. Lahn",
-   "ort": "Limburg a. d. Lahn",
-   "lat": 50.3838996,
-   "lon": 8.0569491,
-   "km": 46.4
-  },
-  {
    "nummer": "2161",
    "id": "D3I1",
    "name": "dm Limburg a. d. Lahn",
@@ -1349,6 +1339,16 @@
    "ort": "Limburg a. d. Lahn",
    "lat": 50.3866709,
    "lon": 8.0634851,
+   "km": 46.4
+  },
+  {
+   "nummer": "1465",
+   "id": "D2D1",
+   "name": "dm Limburg a. d. Lahn",
+   "adresse": "Joseph-Schneider-Straße 1, 65549 Limburg a. d. Lahn",
+   "ort": "Limburg a. d. Lahn",
+   "lat": 50.3838996,
+   "lon": 8.0569491,
    "km": 46.4
   },
   {
