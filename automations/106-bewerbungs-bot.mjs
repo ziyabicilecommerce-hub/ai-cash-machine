@@ -180,7 +180,7 @@ const STANDARD_SUCHE = [
   'Sachbearbeiter Vertragsmanagement:job',
   'Sachbearbeiter Rechnungswesen:job',
   // Mehr Berufe (Ziya: "mehr Jobs rein") - Büro, Disposition, Zoll, Backoffice, E-Commerce, IT.
-  'Speditionskaufmann Quereinsteiger:job', 'Disponent Spedition:job', 'Disponent Luftfracht:job', 'Fuhrparkmanagement:job',
+  'Disponent Luftfracht:job', 'Fuhrparkmanagement:job',
   'Import Sachbearbeiter:job', 'Zollanmeldung:job', 'Exportkontrolle:job', 'Ground Operations:job', 'Crew Einsatzplanung:job',
   'Flugplanung:job', 'Airline Kundenservice:job', 'Backoffice Bank:job', 'Kreditsachbearbeiter:job',
   'Wertpapierabwicklung:job', 'KYC Analyst:job', 'Geldwäsche Sachbearbeiter:job', 'Compliance Assistenz:job',
@@ -190,6 +190,8 @@ const STANDARD_SUCHE = [
 ].join(';');
 
 export const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key\)? ?account|account manager|kundenberater|neukunden|d2d|door to door|fundraising/i;
+// Ziya will nicht zu Speditionen (auch nicht ins Büro dort).
+export const SPEDITION = /spedition|freight ?forward|kühne|kuehne|schenker|dachser|rhenus|\bdsv\b|geodis|ceva logistics|expeditors|nippon express|hellmann|bolloré|bollore|logwin|fiege|global forwarding/i;
 export const ZEITARBEIT = /personaldienstleist|zeitarbeit|zeitservice|zeit-service|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt|\b(dis ag|tempworkers|randstad|adecco|manpower|hays|orizon|amadeus fire|ferchau|gulp|brunel|persona service|jobactive|piening|timepartner|startpeople|tempton|akkodis|allianz personal)\b|\bpersonal (gmbh|service|partner)/i;
 // Führungsjobs sind ohne Erfahrung sinnlos.
 // Kein Handwerk, keine Hilfs-/Haushaltsjobs - außer der Titel ist klar ein Büro-Job (z.B. "Bürokaufmann für Glaserei").
@@ -206,14 +208,17 @@ const FLUGHAFEN = /flughafen|airport|fraport|luftsicherheit|bodenverkehr|passagi
 
 // Nur diese Orte (Arbeitsort der Stelle): Wohnort-Nähe plus Umland mit S-Bahn/Zug. Griesheim bei Darmstadt (PLZ 64347) ist nicht gemeint.
 // Nur Orte bis ~20 km - greift, wenn eine Anzeige keine Koordinaten hat.
-const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|mainz|kastel|eschborn|kelsterbach|raunheim|rüsselsheim|mörfelden|flörsheim|sulzbach|schwalbach|bad soden|groß-gerau|liederbach|kelkheim|offenbach'), 'i');
+const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|eschborn|kelsterbach|raunheim|rüsselsheim|mörfelden|flörsheim|sulzbach|schwalbach|bad soden|groß-gerau|liederbach|kelkheim|offenbach'), 'i');
 export function entfernungKm(a, b = ZUHAUSE) {
   const rad = (g) => (g * Math.PI) / 180;
   const h = Math.sin(rad(b.breite - a.breite) / 2) ** 2 + Math.cos(rad(a.breite)) * Math.cos(rad(b.breite)) * Math.sin(rad(b.laenge - a.laenge) / 2) ** 2;
   return 12742 * Math.asin(Math.sqrt(h));
 }
+// Mainz und Ginsheim-Gustavsburg schließt Ziya aus, auch wenn sie im Radius liegen.
+const KEIN_ORT = /mainz|ginsheim|gustavsburg/i;
 export const ortPasst = (st) => {
   const o = st.arbeitsort || {};
+  if (KEIN_ORT.test(`${o.ort || ''} ${o.region || ''}`)) return false;
   if (o.breite && o.laenge) return entfernungKm(o) <= (AUSNAHME.test(o.ort || '') ? 25 : MAX_KM);
   return ORTE.test(`${o.ort || ''} ${o.region || ''}`) && o.plz !== '64347';
 };
@@ -449,6 +454,7 @@ async function main() {
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb'; continue; }
+    if (SPEDITION.test(kopf)) { state.uebersprungen[refnr] = 'Spedition'; continue; }
     if (MEDIZIN.test(kopf)) { state.uebersprungen[refnr] = 'Praxis/Medizin'; continue; }
     if (HANDWERK.test(stelle.titel) && !BUERO.test(stelle.titel)) { state.uebersprungen[refnr] = 'Handwerk'; continue; }
     if (LAGER.test(stelle.titel)) { state.uebersprungen[refnr] = 'Lager'; continue; }
