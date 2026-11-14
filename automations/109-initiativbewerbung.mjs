@@ -10,7 +10,7 @@ import {
 import { initiativAnschreiben } from './lib/anschreibenVorlage.mjs';
 import { websiteDomain, emailVonWebsite } from './lib/firmenWebsite.mjs';
 import {
-  STATE_BOT, STATE_POSTFACH, VERTRIEB, ZEITARBEIT, ortPasst, sucheStellen, holeDetails, findeEmail, parallel, monatsBrutto,
+  STATE_BOT, STATE_POSTFACH, VERTRIEB, SPEDITION, ZEITARBEIT, ortPasst, sucheStellen, holeDetails, findeEmail, parallel, monatsBrutto,
 } from './106-bewerbungs-bot.mjs';
 
 const MAX = LIVE ? Math.max(1, Math.min(60, parseInt(env('BEWERBUNG_INITIATIV_MAX', '50'), 10) || 50)) : 3;
@@ -55,7 +55,7 @@ const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bila
 // Zusätzlich das Umland mit vielen IT-, Cyber- und Cargo-Firmen (alles mit S-Bahn/Zug erreichbar).
 // Zusätzlich Suchzentren im Umland, die außerhalb des Standard-Umkreises liegen (alles mit S-Bahn/Zug erreichbar).
 // Nur Zentren innerhalb von 20 km um Hattersheim (ortPasst prüft die echte Entfernung).
-const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesbaden', 'Mainz', 'Hofheim am Taunus', 'Langen (Hessen)', 'Neu-Isenburg', 'Offenbach am Main'];
+const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesbaden', 'Hofheim am Taunus', 'Langen (Hessen)', 'Neu-Isenburg', 'Offenbach am Main'];
 // Bundesweit: IT-/Cyber-Stellen, die laut Anzeige komplett im Homeoffice laufen.
 const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Analyst', 'Security Analyst', 'Informationssicherheit', 'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', '2nd Level Support', 'Systemadministrator', 'IT-Administrator', 'Netzwerkadministrator', 'Cloud Support', 'IT Quereinsteiger', 'Junior IT',
   'Sachbearbeiter', 'Kundenservice', 'Kundenbetreuung', 'Backoffice', 'Datenerfassung', 'Assistenz', 'Verwaltung', 'Disposition',
@@ -122,7 +122,7 @@ async function main() {
         const key = firmaKey(st.arbeitgeber);
         if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !ortPasst(st)) continue;
         st.vermittlerFirma = st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber);
-        if (PRAXIS.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(RELEVANT.test(st.titel) || BUERO.test(st.titel))) continue;
+        if (PRAXIS.test(st.arbeitgeber) || SPEDITION.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(RELEVANT.test(st.titel) || BUERO.test(st.titel))) continue;
         proFirma.set(key, st);
       }
     } catch (e) { console.log(`[initiativ] Suche "${was}" ${wo || ''} fehlgeschlagen: ${e.message}`); }
@@ -133,7 +133,7 @@ async function main() {
         const key = firmaKey(st.arbeitgeber);
         if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || ortPasst(st)) continue;
         st.vermittlerFirma = st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber);
-        if (PRAXIS.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(CYBER.test(st.titel) || IT.test(st.titel) || BUERO.test(st.titel) || /disposition|disponent/i.test(st.titel))) continue;
+        if (PRAXIS.test(st.arbeitgeber) || SPEDITION.test(st.arbeitgeber) || VERTRIEB.test(st.titel) || FREMD.test(st.titel) || !(CYBER.test(st.titel) || IT.test(st.titel) || BUERO.test(st.titel) || /disposition|disponent/i.test(st.titel))) continue;
         st.nurRemote = true; // liegt außerhalb der Region - nur nehmen, wenn die Anzeige komplett Homeoffice bietet
         proFirma.set(key, st);
       }
@@ -146,7 +146,7 @@ async function main() {
       for (const st of await sucheStellen({ was: '', angebotsart: 1, branche, seiten: 7 })) {
         const key = firmaKey(st.arbeitgeber);
         if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !ortPasst(st)) continue;
-        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || PRAXIS.test(st.arbeitgeber)) continue;
+        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || PRAXIS.test(st.arbeitgeber) || SPEDITION.test(st.arbeitgeber)) continue;
         if ((name && !name.test(st.arbeitgeber)) || (nicht && nicht.test(st.arbeitgeber))) continue;
         st.itBranche = true;
         st.ohneAnzeige = ohneAnzeige;
