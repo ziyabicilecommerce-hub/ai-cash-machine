@@ -1,21 +1,22 @@
 {
- "stand": "2026-11-14T10:06:47.434Z",
+ "stand": "2026-11-15T10:41:33.234Z",
  "themen": [
   {
    "thema": "Ich treffe mich selbst im Treppenhaus",
    "quelle": "wikipedia",
-   "anstieg": 1.51,
+   "anstieg": 1.58,
    "inspiration": ""
   },
   {
-   "thema": "Ich wache auf - im Traum",
-   "quelle": "welt (China, Tokio)",
+   "thema": "Stromausfall, aber ein Zimmer bleibt hell",
+   "quelle": "wikipedia",
+   "anstieg": 1.26,
    "inspiration": ""
   },
   {
-   "thema": "Eine Stimme, die nicht zu meinem Mund passt",
-   "quelle": "welt (Indien, Tokio)",
-   "inspiration": ""
+   "thema": "winter storm",
+   "inspiration": "",
+   "quelle": "google-trends"
   }
  ],
  "radar": {
@@ -23,69 +24,69 @@
    {
     "name": "Doppelgänger",
     "thema": "Ich treffe mich selbst im Treppenhaus",
-    "anstieg": 1.51,
-    "proTag": 2227
-   },
-   {
-    "name": "Mimic",
-    "thema": "Etwas lernt meine Stimme",
-    "anstieg": 1.13,
-    "proTag": 335
+    "anstieg": 1.58,
+    "proTag": 2346
    },
    {
     "name": "Stromausfall",
     "thema": "Stromausfall, aber ein Zimmer bleibt hell",
-    "anstieg": 1.12,
-    "proTag": 233
+    "anstieg": 1.26,
+    "proTag": 260
    },
    {
     "name": "Wendigo",
     "thema": "Hunger im verschneiten Wald",
-    "anstieg": 1.07,
-    "proTag": 2751
+    "anstieg": 1.05,
+    "proTag": 2650
    },
    {
-    "name": "Schlafparalyse",
-    "thema": "Schlafparalyse: jemand sitzt nachts auf meiner Brust",
-    "anstieg": 1.06,
-    "proTag": 1164
+    "name": "Mimic",
+    "thema": "Etwas lernt meine Stimme",
+    "anstieg": 1.04,
+    "proTag": 312
    },
    {
     "name": "Polarlicht",
     "thema": "Polarlicht über Deutschland - und etwas darin",
-    "anstieg": 1.02,
-    "proTag": 2349
+    "anstieg": 1.03,
+    "proTag": 2364
    },
    {
     "name": "Klartraum",
     "thema": "Ich wache auf - im Traum",
     "anstieg": 0.98,
-    "proTag": 702
+    "proTag": 703
    },
    {
     "name": "Skinwalker",
     "thema": "Etwas imitiert die Stimme meiner Mutter im Wald",
     "anstieg": 0.96,
-    "proTag": 1551
+    "proTag": 1510
+   },
+   {
+    "name": "Zeitschleife",
+    "thema": "Derselbe Anruf jede Nacht um 3:12 Uhr",
+    "anstieg": 0.94,
+    "proTag": 200
+   },
+   {
+    "name": "Schlafparalyse",
+    "thema": "Schlafparalyse: jemand sitzt nachts auf meiner Brust",
+    "anstieg": 0.93,
+    "proTag": 1033
    },
    {
     "name": "Friedhof",
     "thema": "Ein frisches Grab mit meinem Namen",
-    "anstieg": 0.95,
-    "proTag": 307
-   },
-   {
-    "name": "Analog Horror",
-    "thema": "Eine alte Notfallsendung im Fernsehen",
-    "anstieg": 0.92,
-    "proTag": 885
+    "anstieg": 0.91,
+    "proTag": 294
    }
   ],
   "himmel": {
    "vollmond": false,
-   "kp": 1,
+   "kp": 0.67,
    "polarlicht": false,
-   "nasa": "NASA Science"
+   "nasa": ""
   },
   "youtube": {
    "an": false,
@@ -93,28 +94,28 @@
    "en": []
   },
   "trendsDE": [
-   "kardinal marx",
-   "günther steiner",
-   "narrentanz",
-   "japan – brasilien",
-   "br live",
-   "starlink",
-   "оріхів",
-   "john malkovich",
-   "davies",
-   "mitte-deutschland-verbindung"
+   "schwerte",
+   "bauernhof",
+   "sprengung brücke a14",
+   "heppenheim (bergstraße)",
+   "klimawandel",
+   "max verstappen",
+   "verbraucherzentrale",
+   "alina merkau",
+   "mbda",
+   "new orleans"
   ],
   "trendsUS": [
-   "japón - brasil",
-   "dune 3",
-   "angelina jolie",
-   "nyt games",
-   "hltv",
-   "norway vs wales",
-   "ana de armas",
-   "joseph zada",
-   "kobe bryant",
-   "natalie portman"
+   "robot",
+   "donald trump iran war",
+   "powerball winning numbers nov 14 2026",
+   "gta 6 pc release date",
+   "dp world tour championship",
+   "winter storm",
+   "san diego padres",
+   "shameless",
+   "australia vs new zealand",
+   "bills vs jets"
   ],
   "welt": [
    {
@@ -122,43 +123,43 @@
     "flagge": "🇨🇳",
     "horror": [
      {
-      "name": "Wendigo",
-      "anstieg": 1.3,
-      "proTag": 40
-     },
-     {
-      "name": "Klartraum",
-      "anstieg": 1.2,
-      "proTag": 32
-     },
-     {
-      "name": "Creepypasta",
-      "anstieg": 1.11,
-      "proTag": 20
-     },
-     {
       "name": "SCP",
-      "anstieg": 1.08,
-      "proTag": 157
+      "anstieg": 1.24,
+      "proTag": 181
      },
      {
-      "name": "Analog Horror",
-      "anstieg": 1.07,
-      "proTag": 29
+      "name": "Liminal Spaces",
+      "anstieg": 1.12,
+      "proTag": 48
+     },
+     {
+      "name": "Uncanny Valley",
+      "anstieg": 1.12,
+      "proTag": 103
+     },
+     {
+      "name": "Nahtoderfahrung",
+      "anstieg": 1.03,
+      "proTag": 23
+     },
+     {
+      "name": "Wendigo",
+      "anstieg": 1.02,
+      "proTag": 34
      }
     ],
     "trends": [
-     "亚太是我们的共同家园",
-     "美国为何发生航班大规模停飞事件",
-     "业内：山姆399元羽绒服是钩子商品",
-     "APEC深圳会议各项筹备工作已就绪",
-     "乌对俄发动近5年来最大规模空袭"
+     "中国携手亚太共启发展繁荣新航程",
+     "上海开始出现一批“个人学校”",
+     "见识到秋假的威力了",
+     "2分钟带你看APEC热词",
+     "夫妻都是B型血孩子户口簿上却是AB型"
     ],
     "quelle": [
      "wikipedia-zh",
      "baidu"
     ],
-    "gemessen": 15
+    "gemessen": 16
    },
    {
     "name": "Indien",
@@ -166,21 +167,21 @@
     "horror": [
      {
       "name": "Geister",
-      "anstieg": 1.41,
-      "proTag": 42
+      "anstieg": 1.09,
+      "proTag": 34
      },
      {
       "name": "Exorzismus",
-      "anstieg": 1.25,
-      "proTag": 6
+      "anstieg": 1.07,
+      "proTag": 5
      }
     ],
     "trends": [
-     "வழக்கு",
-     "wedding",
-     "टोयोटा फॉर्च्यूनर",
-     "स्टार्टअप कंपनी",
-     "shahrukh khan"
+     "donald trump iran war",
+     "పే కమిషన్",
+     "upessc",
+     "સલમાન ખાન",
+     "प्रिया सरोज"
     ],
     "quelle": [
      "wikipedia-hi",
@@ -194,36 +195,36 @@
     "horror": [
      {
       "name": "Analog Horror",
-      "anstieg": 5.06,
-      "proTag": 196
+      "anstieg": 2.99,
+      "proTag": 156
      },
      {
       "name": "Exorzismus",
-      "anstieg": 2.04,
-      "proTag": 30
+      "anstieg": 1.82,
+      "proTag": 26
      },
      {
-      "name": "Creepypasta",
-      "anstieg": 1.28,
-      "proTag": 117
-     },
-     {
-      "name": "Moderne Sagen",
-      "anstieg": 1.27,
-      "proTag": 193
+      "name": "Bloody Mary",
+      "anstieg": 1.26,
+      "proTag": 38
      },
      {
       "name": "Klartraum",
-      "anstieg": 1.21,
-      "proTag": 115
+      "anstieg": 1.18,
+      "proTag": 114
+     },
+     {
+      "name": "Creepypasta",
+      "anstieg": 1.14,
+      "proTag": 106
      }
     ],
     "trends": [
-     "上田綺世 怪我",
-     "鈴木ザイオン",
-     "埼玉パナソニックワイルドナイツ",
-     "fgo レイド",
-     "マンチェスター・シティfc"
+     "西川史礁",
+     "山口航輝",
+     "スペースx",
+     "吉田沙保里",
+     "琉球 対 高知"
     ],
     "quelle": [
      "wikipedia-ja",
@@ -236,43 +237,43 @@
     "flagge": "🇫🇷",
     "horror": [
      {
+      "name": "Geister",
+      "anstieg": 1.76,
+      "proTag": 141
+     },
+     {
       "name": "Schlafparalyse",
-      "anstieg": 1.18,
-      "proTag": 112
-     },
-     {
-      "name": "Uncanny Valley",
-      "anstieg": 1.16,
-      "proTag": 118
-     },
-     {
-      "name": "Klartraum",
-      "anstieg": 1.15,
-      "proTag": 55
+      "anstieg": 1.11,
+      "proTag": 107
      },
      {
       "name": "Polarlicht",
-      "anstieg": 1.12,
-      "proTag": 243
+      "anstieg": 1.11,
+      "proTag": 246
      },
      {
-      "name": "Moderne Sagen",
-      "anstieg": 1.06,
-      "proTag": 51
+      "name": "Uncanny Valley",
+      "anstieg": 1.1,
+      "proTag": 113
+     },
+     {
+      "name": "Vollmond",
+      "anstieg": 1.09,
+      "proTag": 41
      }
     ],
     "trends": [
-     "biathlon programme",
-     "vigilance forte inondations",
-     "severe rain flood warning",
-     "parcoursup",
-     "thaïlande"
+     "mayulu",
+     "peter phillips",
+     "piéton",
+     "emmanuel macron au cambodge",
+     "jon jones"
     ],
     "quelle": [
      "wikipedia-fr",
      "google-trends"
     ],
-    "gemessen": 24
+    "gemessen": 23
    },
    {
     "name": "New York",
@@ -280,36 +281,36 @@
     "horror": [
      {
       "name": "Doppelgänger",
-      "anstieg": 1.52,
-      "proTag": 2186
-     },
-     {
-      "name": "Mimic",
-      "anstieg": 1.23,
-      "proTag": 276
+      "anstieg": 1.58,
+      "proTag": 2296
      },
      {
       "name": "Stromausfall",
-      "anstieg": 1.17,
-      "proTag": 208
+      "anstieg": 1.34,
+      "proTag": 239
+     },
+     {
+      "name": "Mimic",
+      "anstieg": 1.12,
+      "proTag": 255
      },
      {
       "name": "Wendigo",
-      "anstieg": 1.08,
-      "proTag": 2657
+      "anstieg": 1.06,
+      "proTag": 2553
      },
      {
-      "name": "Schlafparalyse",
-      "anstieg": 1.06,
-      "proTag": 1030
+      "name": "Polarlicht",
+      "anstieg": 1.02,
+      "proTag": 1928
      }
     ],
     "trends": [
-     "peoria",
-     "ciryl gane",
-     "robert pattinson",
-     "jamie lee curtis",
-     "mega millions"
+     "gas prices",
+     "winter storm",
+     "sa vs ban",
+     "cfb",
+     "tesla"
     ],
     "quelle": [
      "wikipedia-en",
@@ -320,29 +321,9 @@
   ],
   "weltweit": [
    {
-    "name": "Klartraum",
-    "wo": [
-     "China",
-     "Tokio"
-    ]
-   },
-   {
-    "name": "Exorzismus",
-    "wo": [
-     "Indien",
-     "Tokio"
-    ]
-   },
-   {
-    "name": "Wendigo",
+    "name": "SCP",
     "wo": [
      "China"
-    ]
-   },
-   {
-    "name": "Geister",
-    "wo": [
-     "Indien"
     ]
    },
    {
@@ -352,15 +333,21 @@
     ]
    },
    {
-    "name": "Creepypasta",
+    "name": "Exorzismus",
     "wo": [
      "Tokio"
     ]
    },
    {
-    "name": "Moderne Sagen",
+    "name": "Bloody Mary",
     "wo": [
      "Tokio"
+    ]
+   },
+   {
+    "name": "Geister",
+    "wo": [
+     "Paris"
     ]
    },
    {
@@ -370,7 +357,7 @@
     ]
    },
    {
-    "name": "Mimic",
+    "name": "Stromausfall",
     "wo": [
      "New York"
     ]
