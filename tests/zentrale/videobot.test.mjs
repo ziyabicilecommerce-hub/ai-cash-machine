@@ -211,16 +211,16 @@ test('KI-Hintergründe nur mit ki: true (Standard seit 13.11.: gezeichnete Schat
   assert.ok(an.szenen.filter((s) => s.art === 'teil2').every((s) => !s.ki));
 });
 
-test('Nativer Stil: Standard für kurze Videos - keine Karte, keine Banner, Frage als letzter Untertitel', () => {
+test('Klassik: kurze Videos wieder wie am 7.11. (KI-Bilder, Suchbild, Wahl-Karte); nativer Stil nur noch auf Wunsch', () => {
   const sk = { titel: 'Probe', hook: 'Wenn es um 3 Uhr klingelt, renn.', saetze: ['Ich öffne.', 'Niemand da.', 'Es klingelt wieder.'], ende: 'Von innen.', frage: 'Hättest du geöffnet?', wahl: ['Öffnen', 'Rennen'], kurz: true };
   const f = bauen(sk);
-  assert.equal(f.stil, 'pov', 'kurze Videos: Ich-Perspektive');
-  assert.equal(bauen({ ...sk, stil: 'nativ' }).stil, 'nativ');
-  assert.equal(f.suchbild, false); assert.equal(f.schlag, '');
-  const ende = f.szenen.at(-1);
+  assert.equal(f.klassik, true); assert.equal(f.ki_bilder, true); assert.equal(f.suchbild, true);
+  assert.ok(f.szenen.some((s) => s.ki), 'KI-Hintergründe wie damals');
+  assert.equal(f.szenen.at(-1).art, 'teil2');
+  const n = bauen({ ...sk, stil: 'nativ' });
+  assert.equal(n.stil, 'nativ'); assert.equal(n.suchbild, false); assert.equal(n.schlag, '');
+  const ende = n.szenen.at(-1);
   assert.equal(ende.art, 'dunkel'); assert.equal(ende.text, 'HÄTTEST DU GEÖFFNET?'); assert.equal(ende.wahl, undefined);
-  assert.equal(f.ki_bilder, false, 'Standard: gezeichnete Schatten-Szenen');
-  assert.ok(bauen({ ...sk, ki: true }).szenen.at(-1).ki, 'mit ki: true hat das Ende ein KI-Bild');
-  assert.match(f.caption, /1️⃣ Öffnen oder 2️⃣ Rennen/, 'die Wahl steht weiter im Beitragstext');
+  assert.match(n.caption, /1️⃣ Öffnen oder 2️⃣ Rennen/, 'die Wahl steht weiter im Beitragstext');
   assert.equal(bauen({ ...sk, stil: 'studio' }).szenen.at(-1).art, 'teil2', 'stil: studio stellt die Karte wieder her');
 });
