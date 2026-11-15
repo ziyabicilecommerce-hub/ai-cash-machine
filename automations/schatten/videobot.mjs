@@ -2,6 +2,7 @@
 // Aufruf im Workflow: node videobot.mjs <issue-text-datei> <ziel.json>  -> schreibt die Folge, gibt "konto=..." aus.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
+import { baueFolge as baueFolgeKlassik } from './klassik/folgeKlassik.mjs';
 import { dirname, join } from 'node:path';
 import { schlagzeile } from './schlagzeilen.mjs';
 
@@ -84,6 +85,12 @@ function kiPrompt(art, ort, anteil, nr = 0) {
 
 // Aufbau, der bei uns die beste Sehdauer hatte: Schock-Hook -> ruhiger Start -> Nachricht -> immer näher -> Stille -> Jumpscare -> Twist -> Cliffhanger
 export function baueFolge(skript) {
+  // 15.11. (Wunsch: "mach wie ganz am Anfang, die derzeitigen sind alle Schrott"): kurze Videos wieder genau wie am 7.11.,
+  // als YouTube ~1000 Aufrufe holte - alter Aufbau, KI-Bilder, Suchbild, alter Renderer (klassik/). stil im Skript wählt die neueren Looks.
+  if (skript && skript.kurz && !['pov', 'nativ', 'studio', 'schatten'].includes(skript.stil)) {
+    const f = baueFolgeKlassik(skript);
+    return { ...f, klassik: true, stil: 'klassik', caption: f.caption };
+  }
   const fehler = pruefen(skript);
   if (fehler.length) throw new Error(fehler.join('; '));
   const kurz_ = !!skript.kurz;

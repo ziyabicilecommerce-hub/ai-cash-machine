@@ -327,6 +327,8 @@ _fort, _pose = posen.fort, posen.pose_kw
 
 def main():
     story, ordner = json.load(open(sys.argv[1], encoding='utf-8')), sys.argv[2]
+    if story.get('klassik'):  # Stand 7.11. (klassik/): eigener Renderer von damals
+        os.execv(sys.executable, [sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'klassik', 'story.py'), *sys.argv[1:]])
     os.makedirs(ordner, exist_ok=True)
     ORT[0] = story.get('ort', 'zug')
     BOESE[0] = story.get('boesewicht', 'schatten')

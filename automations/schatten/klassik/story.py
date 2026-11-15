@@ -1,0 +1,500 @@
+# Schatten-Horror-Story: Silhouetten im Nachtzug, Erzählerstimme (edge-tts), große Untertitel mit einem gelben Wort.
+# Aufruf: python3 story.py <story.json> <ausgabe-ordner>   ->  <ordner>/video.mp4 und cover.jpg
+# Ohne Netz (oder STUMM=1) wird ohne Stimme gerendert - zum lokalen Testen.
+import asyncio, json, math, os, random, subprocess, sys
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from ton import tonspur, raum_zeiten
+from effekte import (W, H, rotverschiebung, weich, popfont, suchzeiten, KALT_BIS, SCHLEIFE, raum_bild, zurueckspulen,
+                     kopfhoerer, suchbanner, KINO_LOOK)
+from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
+from ki import ki_bilder_laden, ki_szene
+import kamera
+from aktion import scheibe, decke_schatten, masken, fernseher, taschenlampe, zaehlen, turbulenz, fluegel, live, klinke, rufen, zelt
+from fahrgaeste import fahrgaeste_malen, zeitung_nah
+from orte import ORT, HIMMEL, NEBEL, AUGE, AUGE_LEISE, HANDYLICHT, AUGE_GROSS, sterne, innenraum, draussen, rahmen, SPIEGELBOX
+
+FPS = int(os.environ.get('FPS', '60'))  # 60 Bilder/s = flüssig; Effekte rechnen in Sekunden
+B = 1 / 30  # Dauer eines "Bildes" der alten 30-fps-Effekte (Blitze, Störungen) - bleibt gleich lang
+FAHRGAESTE = [['zeitung', 'schlaf']]  # pro Story: wer sonst noch da ist
+FONTDATEI = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
+FONT, KLEIN, FONT_POP = ImageFont.truetype(FONTDATEI, 60), ImageFont.truetype(FONTDATEI, 34), ImageFont.truetype(FONTDATEI, 64)
+WEISS, GELB, HAUT, NACHT = (245, 245, 245), (255, 212, 0), (214, 219, 230), (2, 3, 8)
+def zettel(im, t, lt, nah, zeilen):
+    draussen(im, t, lt, '? ? ?')
+    rahmen(im, fuer_zettel=True)
+    z = 1.0 + (0.4 * min(lt / 2.5, 1) if nah else 0)
+    blatt = Image.new('RGBA', (int(430 * z), int(80 * z + 62 * z * len(zeilen))), (228, 222, 204, 255))
+    f = ImageFont.truetype(FONTDATEI, int(40 * z))
+    bd = ImageDraw.Draw(blatt)
+    for i, zl in enumerate(zeilen):
+        bd.text((blatt.width / 2, 40 * z + 31 * z + i * 62 * z), zl, font=f, fill=(140, 0, 0), anchor='mm')
+    blatt = blatt.rotate(-4, expand=True, resample=Image.BICUBIC)
+    im.paste(blatt, (int(W / 2 - blatt.width / 2), int(560 - blatt.height / 2)), blatt)
+
+
+def handy_nah(im, lt, absender, nachricht):
+    d = ImageDraw.Draw(im)
+    im.paste(HANDYLICHT.resize((900, 1300)), (-90, -20), HANDYLICHT.resize((900, 1300)))
+    zit = (random.randint(-6, 6) if lt < 0.6 else 0)
+    x0, y0 = 120 + zit, 70
+    d.rounded_rectangle((x0, y0, x0 + 480, y0 + 720), 50, fill=(12, 12, 16), outline=(90, 90, 100), width=8)
+    d.rounded_rectangle((x0 + 20, y0 + 20, x0 + 460, y0 + 700), 36, fill=(232, 236, 244))
+    d.text((x0 + 240, y0 + 80), absender, font=KLEIN, fill=(20, 20, 30), anchor='mm')
+    d.line((x0 + 20, y0 + 120, x0 + 460, y0 + 120), fill=(200, 200, 210), width=2)
+    sichtbar = nachricht[:max(1, int(len(nachricht) * min(1, (lt - 0.4) / 1.4)))] if lt > 0.4 else ''
+    if lt <= 0.4 or len(sichtbar) < len(nachricht):
+        d.rounded_rectangle((x0 + 40, y0 + 160, x0 + 140, y0 + 210), 24, fill=(205, 208, 216))
+        for i in range(3):
+            a = 120 + int(80 * (0.5 + 0.5 * math.sin(lt * 9 - i)))
+            d.ellipse((x0 + 62 + i * 24, y0 + 178, x0 + 76 + i * 24, y0 + 192), fill=(a, a, a))
+    if sichtbar:
+        f = ImageFont.truetype(FONTDATEI, 34)
+        zeilen, z = [], ''
+        for w in sichtbar.split():
+            if d.textlength((z + ' ' + w).strip(), font=f) > 330 and z:
+                zeilen.append(z); z = w
+            else:
+                z = (z + ' ' + w).strip()
+        zeilen.append(z)
+        h = 30 + 44 * len(zeilen)
+        d.rounded_rectangle((x0 + 40, y0 + 240, x0 + 410, y0 + 240 + h), 26, fill=(205, 208, 216))
+        for i, zl in enumerate(zeilen):
+            d.text((x0 + 62, y0 + 262 + i * 44), zl, font=f, fill=(15, 15, 20))
+
+
+def fratze(im, lt):
+    # Jumpscare: riesiger Schattenkopf, Augen, aufgerissenes Maul (andere Bösewichte: eigene Fratze in boese.py)
+    if BOESE[0] != 'schatten':
+        from boese import FRATZEN
+        return FRATZEN[BOESE[0]](im, lt)
+    im.paste(Image.new('RGB', (W, H), (40, 0, 0) if int(lt * 12) % 2 else (0, 0, 0)))
+    lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(lage)
+    g = 1.0 + 0.25 * min(lt / 0.25, 1)
+    cx, cy = W / 2, 620
+    d.ellipse((cx - 330 * g, cy - 470 * g, cx + 330 * g, cy + 470 * g), fill=(10, 9, 12, 255), outline=(120, 0, 0, 255), width=8)
+    zacken = []
+    for i in range(15):
+        x = cx - 200 * g + i * (400 * g / 14)
+        zacken.append((x, cy + 60 * g + (0 if i % 2 else 50 * g)))
+    for i in range(14, -1, -1):
+        x = cx - 200 * g + i * (400 * g / 14)
+        zacken.append((x, cy + 260 * g - (0 if i % 2 else 50 * g)))
+    d.polygon(zacken, fill=(25, 0, 0, 255), outline=(235, 235, 235, 255), width=6)
+    im.paste(lage.filter(ImageFilter.GaussianBlur(4)), (0, 0), lage.filter(ImageFilter.GaussianBlur(4)))
+    gr = AUGE_GROSS.resize((int(240 * g), int(240 * g)))
+    for ex in (-130, 130):
+        ax, ay = cx + ex * g, cy - 150 * g
+        im.paste(gr, (int(ax - gr.width / 2), int(ay - gr.height / 2)), gr)
+        ad = ImageDraw.Draw(im)
+        ad.ellipse((ax - 52 * g, ay - 30 * g, ax + 52 * g, ay + 30 * g), fill=(255, 255, 255))
+        ad.ellipse((ax - 9 * g, ay - 9 * g, ax + 9 * g, ay + 9 * g), fill=(0, 0, 0))
+
+
+def uhr(im, t, bis, gesamt):
+    # tickende Uhr oben: läuft bis 00:00:00, bleibt dann stehen und blinkt rot
+    d = ImageDraw.Draw(im)
+    if t < bis:
+        sek = 23 * 3600 + 58 * 60 + 40 + int(80 * t / bis)
+        text, farbe = f'{sek // 3600:02d}:{sek // 60 % 60:02d}:{sek % 60:02d}', WEISS
+    else:
+        text, farbe = '00:00:00', (230, 30, 30) if int(t * 2.5) % 2 else (90, 0, 0)
+    d.text((W / 2, 140), text, font=KLEIN, fill=farbe, stroke_width=4, stroke_fill=(0, 0, 0), anchor='mm')
+
+
+def warnung(im, text, lt):
+    if int(lt * 3) % 2:
+        ImageDraw.Draw(im).text((W / 2, 200), text, font=ImageFont.truetype(FONTDATEI, 46), fill=(225, 20, 20), stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
+
+
+def bild(s, t, lt):
+    art = s['art']
+    if s.get('_kibild') is not None:
+        return ki_szene(s, lt)
+    im = Image.new('RGB', (W, H), NACHT)
+    lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    if art == 'teil2':
+        d = ImageDraw.Draw(im)
+        sterne(d, t)
+        if s.get('wahl'):  # Kommentar-Wahl: zwei große Karten mitten im Bild (unten verdeckt TikTok den Rand)
+            # Frage auf höchstens 2 Zeilen umbrechen und so groß wie möglich setzen (vorher: lange Fragen liefen links/rechts aus dem Bild)
+            frage, gr = str(s.get('frage', '')).upper(), 50
+            def zeilen_von(text, f):
+                zs, z = [], ''
+                for w in text.split():
+                    probe = f'{z} {w}'.strip()
+                    if z and d.textlength(probe, font=f) > 640:
+                        zs.append(z); z = w
+                    else:
+                        z = probe
+                return zs + [z]
+            while gr > 26 and len(zeilen_von(frage, ImageFont.truetype(FONTDATEI, gr))) > 2:
+                gr -= 2
+            ff = ImageFont.truetype(FONTDATEI, gr)
+            zs = zeilen_von(frage, ff)
+            for j, z in enumerate(zs):
+                d.text((W / 2, 250 + (j - (len(zs) - 1) / 2) * gr * 1.15), z, font=ff, fill=GELB, anchor='mm', stroke_width=3, stroke_fill=(0, 0, 0))
+            for i, antwort in enumerate(s['wahl'][:2]):
+                y = 330 + i * 190 + int(6 * math.sin(lt * 5 + i * 3))
+                d.rounded_rectangle((70, y, 650, y + 150), 30, fill=(20, 22, 34), outline=(230, 20, 60) if i == 0 else (60, 120, 255), width=6)
+                d.ellipse((95, y + 25, 195, y + 125), fill=(230, 20, 60) if i == 0 else (60, 120, 255))
+                d.text((145, y + 75), str(i + 1), font=ImageFont.truetype(FONTDATEI, 64), fill=(255, 255, 255), anchor='mm')
+                gr = 46
+                while gr > 26 and d.textlength(antwort.upper(), font=ImageFont.truetype(FONTDATEI, gr)) > 420:
+                    gr -= 2
+                d.text((220, y + 75), antwort.upper(), font=ImageFont.truetype(FONTDATEI, gr), fill=(255, 255, 255), anchor='lm')
+        if s.get('cta') and lt > 0.4:  # Aufforderung zum Folgen/Kommentieren, pulsiert leicht
+            y = 760 if s.get('wahl') else 1150
+            gr = int(44 + 4 * math.sin(lt * 6))
+            while gr > 24 and d.textlength(s['cta'], font=ImageFont.truetype(FONTDATEI, gr)) > 500:
+                gr -= 2
+            d.rounded_rectangle((90, y, 630, y + 90), 26, fill=(230, 20, 60))
+            d.text((W / 2, y + 45), s['cta'], font=ImageFont.truetype(FONTDATEI, gr), fill=(255, 255, 255), anchor='mm')
+        return im
+    if art == 'fratze':
+        fratze(im, lt)
+        return im
+    if art == 'zeitung_nah':
+        return zeitung_nah(im, lt, s.get('zeitung'))
+    if art == 'nachricht':
+        handy_nah(im, lt, s.get('absender', 'Mama'), s.get('nachricht', ''))
+        return im
+    if art == 'blitz':  # Einstieg: nur das panische Gesicht im roten Flackern - der Bösewicht wird noch nicht verraten
+        if lt > 0.6 and int(lt * 10) % 4 == 0:  # flackern, aber nie schwarz im allerersten Moment
+            return im
+        return Image.blend(bild({**s, 'art': 'gesicht', 'augen_bei': 99}, t, lt), Image.new('RGB', (W, H), (120, 0, 0)), 0.3)
+    if art == 'gesicht':
+        # Nahaufnahme der Person: zitternd, große Augen, schaut sich panisch um - hinter ihr leuchten seine Augen auf
+        innenraum(im, t, lt, licht=0.6, fahrt=False)
+        im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.5)
+        if lt > s.get('augen_bei', 1.4):
+            for ex in (-12, 12):
+                im.paste(AUGE, (int(585 + ex - 18), int(250 - 18)), AUGE)
+        mensch(lage, 360, 1600, s=4.2, sitzen=False, angst=s.get('angst', 0.72), blick=math.sin(lt * 2.4) * 0.9)
+        verlauf_maske = Image.linear_gradient('L').resize((W, H)).point(lambda v: 255 if v < 115 else max(0, 255 - (v - 115) * 6))
+        lage.putalpha(Image.composite(lage.split()[3], Image.new('L', (W, H), 0), verlauf_maske))
+        glow = lage.filter(ImageFilter.GaussianBlur(14))
+        im.paste(glow, (0, 0), glow); im.paste(lage, (0, 0), lage)
+        return im
+    if art == 'dunkel':
+        # die Figur im Dunkeln, seine Augen kommen langsam immer näher an ihren Kopf
+        mensch(lage, 250, 812, farbe=(52, 56, 68), angst=0.9, blick=min(lt / max(s.get('dauer', 4), 1) * 1.4, 1))
+        im.paste(lage, (0, 0), lage)
+        p = min(lt / max(s.get('dauer', 4), 1), 1) ** 1.5
+        a = AUGE.resize((int(36 + 50 * p), int(36 + 50 * p)))
+        for ex in (-10, 10):
+            ax, ay = 520 - 190 * p + ex * (1 + 2.5 * p), 330 + 190 * p
+            im.paste(a, (int(ax - a.width / 2), int(ay - a.height / 2)), a)
+        return Image.blend(im, Image.new('RGB', (W, H), NACHT), 0.3 + 0.3 * math.sin(lt * 3) ** 2)
+    if art in ('innen', 'ende', 'handy', 'spiegel'):
+        innenraum(im, t, lt, augen_im_fenster=(art == 'innen'), fahrt=(art != 'spiegel'))
+        if art == 'spiegel':
+            geist = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+            mensch(geist, 520, 470, s=0.55, farbe=(150, 160, 185), gesicht=False)
+            schatten(geist, 565, 470, s=0.5, alpha=int(230 * min(lt / 2.0, 1)))
+            maske = Image.new('L', (W, H), 0)
+            ImageDraw.Draw(maske).rounded_rectangle(SPIEGELBOX.get(ORT[0], SPIEGELBOX['zug']), 24, fill=110)
+            im.paste(geist, (0, 0), Image.composite(geist.split()[3], Image.new('L', (W, H), 0), maske).point(lambda v: min(v, 110)))
+        if s.get('naeher') is not None:  # er sitzt schon die ganze Zeit hinter ihr und kommt näher
+            v = s['naeher']
+            schatten(lage, 560 - 150 * v, 905, s=1.0 + 0.4 * v, alpha=int(35 + 120 * v), augen=v > 0.35)
+        fahrgaeste_malen(lage, t, s.get('fahrgaeste', FAHRGAESTE[0]))  # die anderen merken nichts
+        mensch(lage, 250, 812, angst=s.get('angst', 0.0), blick=s.get('blick', 0.0))
+        if art == 'handy':
+            zit = random.randint(-3, 3) if (lt % 0.8) < 0.3 else 0
+            im.paste(HANDYLICHT, (int(300 - 90 + zit), int(650 - 90)), HANDYLICHT)
+            ImageDraw.Draw(lage).rounded_rectangle((285 + zit, 640, 325 + zit, 700), 6, fill=(190, 215, 255, 255))
+        if art == 'ende' and lt > 0.5:
+            schatten(lage, 520, 905, s=1.45, wink=3.7, alpha=int(255 * min((lt - 0.5) / 0.3, 1)))
+    elif art in ('station', 'schatten', 'winken', 'leer'):
+        draussen(im, t, lt, '00:00' if art == 'station' else '? ? ?')
+        if art == 'schatten':
+            schatten(lage, 480, 830, s=0.95)
+        if art == 'winken':
+            nah = 0.95 + 0.45 * min(lt / 3.0, 1)
+            schatten(lage, 450, 830 + 140 * (nah - 0.95), s=nah, wink=0.55 * math.sin(lt * 7))
+        im.paste(lage, (0, 0), lage); lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+        rahmen(im)
+    elif art == 'klopfen':
+        draussen(im, t, lt, '? ? ?')
+        rahmen(im)
+        if lt >= s.get('schreck_bei', 0.55):
+            hand(im, 360, 560, min((lt - s.get('schreck_bei', 0.55)) / 0.08, 1))
+    elif art == 'scheibe':
+        draussen(im, t, lt, '? ? ?')
+        rahmen(im)
+        scheibe(im, lt, schlag=s.get('schlag', 0.25), bruch=s.get('schreck_bei', 1.0))
+    elif art == 'rennen':
+        flacker = 0.25 if int(lt * 9) % 4 == 0 else 1.0
+        innenraum(im, t * 2.2, lt, licht=flacker)
+        p = min(lt / max(s.get('dauer', 3), 1), 1)
+        px = 170 + 330 * p
+        schatten(lage, px - 250 + 40 * math.sin(lt * 6), 905, s=1.2, wink=1.25 + 0.15 * math.sin(lt * 8))
+        mensch(lage, px, 905, s=1.12, sitzen=False, angst=0.7, blick=-0.8, lauf=lt * 14)
+        im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.35 + 0.65 * flacker)
+    elif art == 'masken':  # Flugzeug: Strom weg, rotes Notlicht, Sauerstoffmasken fallen
+        innenraum(im, t, lt, licht=0.0, fahrt=False)
+        fahrgaeste_malen(lage, t, s.get('fahrgaeste', FAHRGAESTE[0]))
+        mensch(lage, 250, 812, angst=1.0, blick=0.3)
+        masken(lage, lt)
+        im.paste(lage, (0, 0), lage); lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+        rot = 0.35 + 0.25 * (int(lt * 6) % 2)
+        im = Image.blend(im, Image.new('RGB', (W, H), (110, 0, 0)), rot)
+    elif art == 'fernseher':
+        return fernseher(im, t, lt, s.get('dauer', 4))
+    elif art == 'zaehlen':
+        return zaehlen(im, t, lt, s.get('dauer', 4), s.get('fahrgaeste', FAHRGAESTE[0]), s.get('bis', 41))
+    elif art == 'turbulenz':
+        return turbulenz(im, t, lt, s.get('fahrgaeste', FAHRGAESTE[0]))
+    elif art == 'fluegel':
+        return fluegel(im, t, lt)
+    elif art == 'live':
+        return live(im, t, lt)
+    elif art == 'klinke':
+        return klinke(im, t, lt, s.get('dauer', 4), s.get('schreck_bei', 0.6))
+    elif art == 'rufen':
+        return rufen(im, t, lt, s.get('fahrgaeste', FAHRGAESTE[0]))
+    elif art == 'zelt':
+        return zelt(im, t, lt, s.get('dauer', 4))
+    elif art == 'taschenlampe':
+        draussen(im, t, lt, '')
+        return taschenlampe(im, lt, s.get('dauer', 4), im)
+    elif art == 'decke':
+        innenraum(im, t, lt, licht=0.55, fahrt=False)
+        fahrgaeste_malen(lage, t, s.get('fahrgaeste', FAHRGAESTE[0]))
+        mensch(lage, 250, 812, angst=min(1.0, 0.5 + lt / 3), blick=0.4)
+        decke_schatten(lage, 430, min(max((lt - 0.6) / 1.4, 0), 1) ** 0.7)
+    elif art in ('zettel', 'zettel2'):
+        zettel(im, t, lt, art == 'zettel2', s.get('zettel', ['STEIG', 'NICHT AUS']))
+    elif art == 'tueren':
+        im.paste(HIMMEL)
+        d = ImageDraw.Draw(im)
+        auf = min(lt / 1.8, 1) ** 2 * 300
+        d.rectangle((60, 120, 660, 1060), fill=(0, 0, 0))
+        im.paste(NEBEL, (100, 700), NEBEL)
+        if lt > 1.2:
+            for ex in (-10, 10):
+                im.paste(AUGE, (360 + ex - 18, 560 - 18), AUGE)
+        for x0, x1 in ((60 - auf, 360 - auf), (360 + auf, 660 + auf)):
+            d.rectangle((x0, 120, x1, 1060), fill=(70, 74, 86), outline=(170, 174, 186), width=6)
+            d.rounded_rectangle((x0 + 60, 250, x1 - 60, 560), 20, fill=(10, 12, 20))
+    elif art == 'licht':
+        flacker = 1.0 if lt < 0.6 else (0.0 if lt > 1.3 else float(int(lt * 20) % 3 != 0))
+        innenraum(im, t, lt, licht=flacker, fahrt=False)
+        mensch(lage, 250, 812, angst=s.get('angst', 0.6))
+        im.paste(lage, (0, 0), lage); lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+        im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.15 + 0.85 * flacker)
+        if lt > 1.3:
+            for ex in (-10, 10):
+                im.paste(AUGE, (430 + ex - 18, 470 - 18), AUGE)
+    glow = lage.filter(ImageFilter.GaussianBlur(10))
+    im.paste(glow, (0, 0), glow)
+    im.paste(lage, (0, 0), lage)
+    return im
+
+
+LUECKE = 10  # Extra-Abstand zwischen Untertitel-Wörtern, damit das größer einfedernde Wort nie das Nachbarwort berührt
+
+
+def untertitel(im, satz, key, k=None, basis=WEISS, pop=1.0):
+    # Wort für Wort: die Positionen stehen fest, sichtbar sind nur die ersten k Wörter (das neueste etwas größer)
+    d = ImageDraw.Draw(im)
+    zeilen, z = [], ''
+    for w in satz.split():
+        probe = (z + ' ' + w).strip()
+        if d.textlength(probe, font=FONT) + LUECKE * (len(probe.split()) - 1) > 620 and z:
+            zeilen.append(z); z = w
+        else:
+            z = probe
+    zeilen.append(z)
+    y, nr = 980 - (len(zeilen) - 1) * 36, 0
+    for zl in zeilen:
+        x = (W - d.textlength(zl, font=FONT) - LUECKE * (len(zl.split()) - 1)) / 2
+        for w in zl.split():
+            nr += 1
+            if k is None or nr <= k:
+                f = GELB if w.strip('".,:!?') == key else basis
+                gross = FONT
+                if k is not None and nr == k:  # das neueste Wort springt nicht, es federt von groß auf normal
+                    gross = popfont(68 - 4 * weich(pop))  # federt von 68 auf 64; dazu 10 px Extra-Abstand, sonst klebt es am Nachbarwort ("VORMEINER")
+                d.text((x + d.textlength(w, font=FONT) / 2, y), w, font=gross, fill=f, stroke_width=6, stroke_fill=(0, 0, 0), anchor='mm')
+            x += d.textlength(w + ' ', font=FONT) + LUECKE
+        y += 72
+
+
+async def stimme(text, datei, sprecher, tempo, tonhoehe='-12Hz'):
+    import edge_tts
+    await edge_tts.Communicate(text, sprecher, rate=tempo, pitch=tonhoehe).save(datei)
+
+
+def dauer_von(datei):
+    return float(subprocess.check_output(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', datei]))
+
+
+def main():
+    story, ordner = json.load(open(sys.argv[1], encoding='utf-8')), sys.argv[2]
+    os.makedirs(ordner, exist_ok=True)
+    ORT[0] = story.get('ort', 'zug')
+    BOESE[0] = story.get('boesewicht', 'schatten')
+    HELD[0] = story.get('held', {})
+    FAHRGAESTE[0] = story.get('fahrgaeste', ['zeitung', 'schlaf'])
+    szenen = story['szenen']
+    for sz in szenen:
+        if sz['art'] == 'blitz':  # Hook ohne "TEIL 3:" - und schon nach 1,1 s ein kurzer Schock, damit keiner wegwischt
+            sz['text'] = kamera.ohne_teil(sz.get('text'))
+            sz.setdefault('blitzbild', [1.1]); sz.setdefault('schreck_bei', 1.1)
+    teil, teile = kamera.teil_von(story.get('titel')), story.get('teile')
+    for i, sz in enumerate(szenen):  # wer genau hinschaut, sieht ihn schon vor dem Jumpscare - von Szene zu Szene naeher
+        if i > 0 and sz['art'] in ('innen', 'handy') and 'naeher' not in sz:
+            sz['naeher'] = round(min(0.55, 0.1 + 0.6 * i / len(szenen)), 2)
+    ki_bilder_laden(story, ordner)
+    fratze_ki = next((x['_kibild'] for x in story['szenen'] if x['art'] == 'fratze' and x.get('_kibild') is not None), None)
+    stumm = os.environ.get('STUMM') == '1'
+    plan, start = [], 0.0
+    for i, s in enumerate(story['szenen']):
+        datei, sprech = os.path.join(ordner, f'sprich-{i:02d}.mp3'), 0.0
+        if s.get('sprich') and not stumm:
+            try:
+                tempo, hoehe = s.get('tempo', story.get('tempo', '+0%')), story.get('tonhoehe', '-12Hz')
+                try:
+                    asyncio.run(stimme(s['sprich'], datei, story.get('stimme', 'de-DE-ConradNeural'), tempo, hoehe))
+                except Exception as e:  # Ersatzstimme, falls die gewünschte nicht verfügbar ist
+                    print('Stimme nicht verfügbar, nehme Conrad:', e)
+                    story['stimme'] = 'de-DE-ConradNeural'
+                    asyncio.run(stimme(s['sprich'], datei, 'de-DE-ConradNeural', tempo, hoehe))
+                sprech = dauer_von(datei)
+            except Exception as e:
+                print('Stimme fehlt:', e); stumm = True
+        if not sprech and s.get('sprich'):
+            sprech = len(s['sprich']) / 14
+        mdatei, mdauer = os.path.join(ordner, f'monster-{i:02d}.mp3'), 0.0
+        if s.get('monster') and not stumm:
+            try:
+                schlicht = story.get('ton') == 'schlicht'
+                asyncio.run(stimme(s['monster'], mdatei, story.get('monsterstimme', 'de-DE-KillianNeural'), '-15%' if schlicht else '-30%', '-18Hz' if schlicht else '-35Hz'))
+                mdauer = dauer_von(mdatei) / (1 if schlicht else 0.82)
+            except Exception as e:
+                print('Monsterstimme fehlt:', e)
+        if s.get('monster') and not mdauer:
+            mdauer = len(s['monster']) / 8
+        mbei = s.get('monster_bei', sprech + 0.3)
+        dauer = max(sprech + s.get('pause', 0.25), 1.8, (mbei + mdauer + 0.6) if s.get('monster') else 0)
+        if s.get('dauer'):  # feste Länge für Animationen - aber nie kürzer als der gesprochene Satz
+            dauer = max(s['dauer'], sprech + s.get('pause', 0.25) if sprech else 0)
+        if story.get('kalt') and s['art'] == 'teil2':
+            dauer += SCHLEIFE  # Platz für die Überblendung zurück zum Anfang
+        plan.append({**s, 'start': start, 'dauer': dauer, 'sprech': sprech, 'datei': datei if (s.get('sprich') and not stumm) else None,
+                     'mdatei': mdatei if (s.get('monster') and not stumm and os.path.exists(mdatei)) else None, 'mbei': mbei, 'mdauer': mdauer})
+        start += dauer
+    gesamt = start
+
+    bildspur = os.path.join(ordner, 'bild.mp4')
+    p = subprocess.Popen(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
+                          '-vf', KINO_LOOK,
+                          '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-maxrate', '10M', '-bufsize', '20M', bildspur], stdin=subprocess.PIPE)
+    cover = None
+    uhr_bis = next((s['start'] for s in plan if s['art'] in ('station', 'zettel2')), gesamt)
+    # Unterschwellige Schocker: in Szene 4 und 7 blitzen fuer zwei Bilder nur leuchtende Augen im Dunkeln auf
+    augen_szenen = {id(x) for i, x in enumerate(plan) if i in (3, 6) and x['art'] not in ('fratze', 'teil2', 'nachricht', 'zeitung_nah')}
+    # Suchbild: genau 3 versteckte Augenpaare (je 5 Bilder) - beim ersten Mal kaum zu sehen, also schauen die Leute nochmal
+    such = suchzeiten(plan) if story.get('suchbild') else []
+    if such:
+        augen_szenen = set()
+    augenbild = Image.new('RGB', (W, H), (2, 2, 4))
+    for ex in (-70, 70):
+        augenbild.paste(AUGE_GROSS, (W // 2 + ex - 120, 520 - 120), AUGE_GROSS)
+    kalt = next((x for x in plan if x['art'] == 'ende'), None) if story.get('kalt') else None
+    raumz = raum_zeiten(plan) if story.get('raum') else None
+    sprache = story.get('sprache', 'de')
+    for s in plan:
+        n = int(round(s['dauer'] * FPS))
+        worte = len(s.get('text', '').split())
+        for f in range(n):
+            lt, t = f / FPS, s['start'] + f / FPS
+            ZEIT[0] = t
+            if kalt and s['art'] == 'blitz' and lt < KALT_BIS:  # kalter Einstieg: erst das Ende zeigen, dann zurückspulen
+                ZEIT[0] = kalt['start'] + 0.6 + lt
+                im = bild(kalt, ZEIT[0], 0.6 + lt)
+                ZEIT[0] = t
+            else:
+                im = bild(s, t, lt)
+            if kalt and s['art'] == 'teil2' and lt > s['dauer'] - SCHLEIFE:  # Endlos-Schleife: weich ins erste Bild
+                ZEIT[0] = kalt['start'] + 0.6
+                anfang = bild(kalt, ZEIT[0], 0.6)
+                ZEIT[0] = t
+                im = Image.blend(im, anfang, weich((lt - (s['dauer'] - SCHLEIFE)) / SCHLEIFE))
+            angespannt = s.get('stille') or s.get('angst', 0) >= 0.8
+            # Kamera ohne Ruckeln: Zoom mit weichem Anlauf/Auslauf, Wackeln auf Bruchteile von Pixeln genau (keine ganzen Sprünge)
+            zoom = 1.02 + (0.18 * weich(min(lt / 0.2, 1)) if s['art'] == 'fratze' else (0.15 if angespannt else 0.07) * weich(f / n))
+            wack = 3 + (5 if angespannt else 0)  # Handkamera: nie ganz ruhig, bei Angst unruhiger
+            dx = (math.sin(t * 1.7) + 0.6 * math.sin(t * 4.3)) * wack
+            dy = (math.sin(t * 1.3 + 1) + 0.5 * math.sin(t * 3.7)) * wack
+            cw, ch = W / zoom, H / zoom
+            x0 = max(0.0, min(W - cw, (W - cw) / 2 + dx)); y0 = max(0.0, min(H - ch, (H - ch) / 2 + dy))
+            im = im.transform((W, H), Image.AFFINE, (1 / zoom, 0, x0, 0, 1 / zoom, y0), Image.BILINEAR)
+            if (s.get('schreck') and lt < 0.6) or ('schreck_bei' in s and 0 <= lt - s['schreck_bei'] < 0.5):
+                st = 26 if s['art'] == 'fratze' else 12
+                im = im.rotate(random.uniform(-1.5, 1.5) if s['art'] == 'fratze' else 0, translate=(random.randint(-st, st), random.randint(-st, st)), fillcolor=NACHT)
+                im = rotverschiebung(im, 10 if s['art'] == 'fratze' else 5)
+            if any(0 <= lt - x < 2 * B for x in s.get('blitzbild', [])):
+                fr = fratze_ki if fratze_ki is not None else Image.new('RGB', (W, H))
+                if fratze_ki is None: fratze(fr, 0.3)
+                im = Image.blend(im, fr, 0.75)
+            b = int(lt / B)  # wievieltes 30-fps-Bild der Szene - Effekte dauern so lange wie vorher
+            if b < 2 and s['start'] > 0 and s['art'] not in ('fratze', 'teil2'):  # Bildstoerung beim Schnitt
+                im = rotverschiebung(im, 9 - b * 4)
+                band = random.randint(200, H - 300)
+                im.paste(im.crop((0, band, W, band + 70)), (random.randint(-40, 40), band))
+            if t / gesamt > 0.4 and s['art'] not in ('fratze', 'teil2') and (int(t * 12) * 7919) % 89 == 0:
+                im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.2)  # Licht flackert kurz weg
+            if id(s) in augen_szenen and 1.2 <= lt < 1.2 + 2 * B:
+                im = Image.blend(im, augenbild, 0.85)
+            if any(0 <= t - x < 5 * B for x in such):
+                im = Image.blend(im, augenbild, 0.5)
+            if s['art'] == 'fratze' and lt < 3 * B:
+                im = Image.blend(im, Image.new('RGB', (W, H), (255, 255, 255)), 0.7 - lt / B * 0.25)
+            if s['art'] == 'blitz' and f == int(0.35 * FPS):  # Titelbild ohne Spoiler
+                cover = im.copy()
+            fortschritt = t / gesamt
+            if fortschritt > 0.45 and s['art'] != 'teil2':
+                im = Image.blend(im, Image.new('RGB', (W, H), (45, 0, 4)), min(0.32, (fortschritt - 0.45) * 0.7))
+            if kalt and s['art'] == 'blitz' and KALT_BIS - 0.3 <= lt < KALT_BIS + 0.12:
+                im = zurueckspulen(im, lt - (KALT_BIS - 0.3), sprache)
+            if raumz:
+                im = raum_bild(im, raumz, t)
+            if story.get('kamera', True):
+                im = kamera.overlay(im, t, s, story, teil, teile)
+            if s.get('monster') and lt >= s['mbei']:
+                mt = s.get('monster_text', s['monster'].upper())
+                mw = len(mt.split())
+                untertitel(im, mt, '', min(mw, 1 + int((lt - s['mbei']) / max(s['mdauer'], 0.3) * mw * 1.1)), basis=(230, 25, 25))
+            elif s.get('text'):
+                takt = max(s['sprech'], 0.3) / (worte * 1.1) if worte else 1
+                k = worte if not s['sprech'] else min(worte, 1 + int(lt / takt))
+                pop = 1.0 if not s['sprech'] else min(1.0, (lt - (k - 1) * takt) / 0.12)  # neues Wort wächst weich rein
+                if s['start'] == 0:  # Hook: der ganze Satz steht sofort da - wer wischt, hat ihn schon gelesen
+                    k, pop = worte, 1.0
+                untertitel(im, s['text'], s.get('gelb', ''), k, pop=pop)
+            if such and t < 2.6:
+                suchbanner(im, sprache)
+            if story.get('raum') and t < 2.6:
+                kopfhoerer(im, sprache)
+            if s.get('warnung'):
+                warnung(im, s['warnung'], lt)
+            if story.get('uhr', True) and s['art'] not in ('fratze', 'teil2', 'nachricht'):
+                uhr(im, t, uhr_bis, gesamt)
+            if lt < 3 * B and s['start'] > 0 and s['art'] not in ('fratze', 'blitz'):  # weich aus dem Schwarz
+                im = Image.blend(im, Image.new('RGB', (W, H), NACHT), 0.6 - lt / B * 0.2)
+            p.stdin.write(im.tobytes())
+    p.stdin.close(); p.wait()
+    if cover:
+        untertitel(cover, story.get('titelbild', 'ER SITZT HINTER DIR'), story.get('titelbild_gelb', 'HINTER'))
+        cover.resize((1080, 1920), Image.LANCZOS).save(os.path.join(ordner, 'cover.jpg'), quality=90)
+    ton = tonspur(plan, gesamt, ordner, schlicht=story.get('ton') == 'schlicht', raum=bool(story.get('raum')))
+    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', bildspur, '-i', ton, '-c', 'copy', '-shortest', '-movflags', '+faststart',
+                    os.path.join(ordner, 'video.mp4')], check=True)
+    print(f'fertig: {gesamt:.1f} s, Stimme: {"nein" if stumm else "ja"}')
+
+
+if __name__ == '__main__':
+    main()
