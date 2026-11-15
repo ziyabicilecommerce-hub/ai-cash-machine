@@ -33,7 +33,7 @@ def einrichten(story, g):
     ort = story.get('ort', 'haus')
     # 15.11. (Wunsch: "nicht immer Häuser, andere Orte auch"): Illustration nach Stichwörtern in der Geschichte
     alles = ' '.join(str(s.get('text') or s.get('sprich') or '') for s in szenen).lower()
-    for w, o in (('auto', 'strasse'), ('fahr', 'strasse'), ('straße', 'strasse'), ('anhalter', 'strasse'), ('taxi', 'strasse'), ('tunnel', 'strasse'),
+    for w, o in (('tankstelle', 'tankstelle'), ('raststätte', 'tankstelle'), ('hotel', 'hotel'), ('zimmerservice', 'hotel'), ('auto', 'strasse'), ('fahr', 'strasse'), ('straße', 'strasse'), ('anhalter', 'strasse'), ('taxi', 'strasse'), ('tunnel', 'strasse'),
                  ('tankstelle', 'tankstelle'), ('raststätte', 'tankstelle'), ('hotel', 'hotel'), ('zimmerservice', 'hotel'), ('ferienwohnung', 'hotel'),
                  ('see\\b', 'see'), ('steg\\b', 'see'), ('pilot', 'flugzeug'), ('flug', 'flugzeug'), ('aufzug', 'aufzug'),
                  ('zug\\b', 'zug'), ('nachtbus', 'zug'), ('car ', 'strasse'), ('road', 'strasse'), ('hotel', 'hotel'), ('lake', 'see')):
