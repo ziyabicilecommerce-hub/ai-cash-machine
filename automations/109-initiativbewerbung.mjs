@@ -7,7 +7,7 @@ import {
   env, LIVE, BEWERBER, emailOk, heute, gmailZugang, profil, ladeGeheim, speichereGeheim, firmenDomain,
   gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang,
 } from './lib/bewerbung.mjs';
-import { initiativAnschreiben } from './lib/anschreibenVorlage.mjs';
+import { initiativAnschreiben, vorlageAnschreiben } from './lib/anschreibenVorlage.mjs';
 import { websiteDomain, emailVonWebsite } from './lib/firmenWebsite.mjs';
 import {
   STATE_BOT, STATE_POSTFACH, VERTRIEB, SPEDITION, ZEITARBEIT, ortPasst, sucheStellen, holeDetails, findeEmail, parallel, monatsBrutto,
@@ -56,6 +56,14 @@ const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bila
 // Zusätzlich Suchzentren im Umland, die außerhalb des Standard-Umkreises liegen (alles mit S-Bahn/Zug erreichbar).
 // Nur Zentren innerhalb von 20 km um Hattersheim (ortPasst prüft die echte Entfernung).
 const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesbaden', 'Hofheim am Taunus', 'Langen (Hessen)', 'Neu-Isenburg', 'Offenbach am Main'];
+// Ziya will auch eine Ausbildung, wenn die Berufsschule die Konrad-Adenauer-Schule Kriftel ist: Betrieb im Main-Taunus-Kreis.
+const MTK = /hattersheim|hofheim|kriftel|flörsheim|hochheim|eppstein|kelkheim|liederbach|bad soden|sulzbach|schwalbach|eschborn/i;
+const AUSBILDUNG_KAS = [
+  ['Kaufmann Büromanagement', 'Kaufmann für Büromanagement'],
+  ['Groß- und Außenhandelsmanagement', 'Kaufmann für Groß- und Außenhandelsmanagement'],
+  ['Industriekaufmann', 'Industriekaufmann'],
+  ['Verwaltungsfachangestellter', 'Verwaltungsfachangestellter'],
+];
 // Bundesweit: IT-/Cyber-Stellen, die laut Anzeige komplett im Homeoffice laufen.
 const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Analyst', 'Security Analyst', 'Informationssicherheit', 'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', '2nd Level Support', 'Systemadministrator', 'IT-Administrator', 'Netzwerkadministrator', 'Cloud Support', 'IT Quereinsteiger', 'Junior IT',
   'Sachbearbeiter', 'Kundenservice', 'Kundenbetreuung', 'Backoffice', 'Datenerfassung', 'Assistenz', 'Verwaltung', 'Disposition',
@@ -154,9 +162,21 @@ async function main() {
       }
     } catch (e) { console.log(`[initiativ] Branchen-Suche ${branche} fehlgeschlagen: ${e.message}`); }
   }
+  // Ausbildungsplätze im Main-Taunus-Kreis in den Berufen, die an der Konrad-Adenauer-Schule Kriftel unterrichtet werden.
+  for (const [was, beruf] of AUSBILDUNG_KAS) {
+    try {
+      for (const st of await sucheStellen({ was, angebotsart: 4, wo: 'Hofheim am Taunus', umkreis: 15 })) {
+        const key = firmaKey(st.arbeitgeber);
+        if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !MTK.test(st.arbeitsort?.ort || '')) continue;
+        if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || SPEDITION.test(st.arbeitgeber)) continue;
+        st.ausbildung = beruf;
+        proFirma.set(key, st);
+      }
+    } catch (e) { console.log(`[initiativ] Ausbildungs-Suche "${was}" fehlgeschlagen: ${e.message}`); }
+  }
 
-  // IT und Cyber zuerst, damit sie sicher in die Auswahl kommen.
-  const rang = (st) => (CYBER.test(st.titel) ? 0 : IT.test(st.titel) || st.itBranche ? 1 : 2);
+  // Ausbildung (Berufsschule Kriftel) zuerst, dann IT und Cyber, damit sie sicher in die Auswahl kommen.
+  const rang = (st) => (st.ausbildung ? -1 : CYBER.test(st.titel) ? 0 : IT.test(st.titel) || st.itBranche ? 1 : 2);
   const auswahl = [...proFirma.entries()].sort(([, a], [, b]) => rang(a) - rang(b)).slice(0, 1500);
   console.log(`[initiativ] ${auswahl.length} neue Firmen im Wunschbereich.`);
   await parallel(auswahl, 6, async ([, st]) => {
@@ -176,16 +196,20 @@ async function main() {
   for (const [key, st] of auswahl) {
     if (gesendet.length >= MAX) break;
     // Keine Mail in der Anzeige: Bewerbungs-Adresse auf der Firmen-Website suchen (erst hier, damit nur so viele Seiten wie nötig geladen werden).
-    if (st.brutto && st.brutto.bis < MIN_BRUTTO) continue;
+    if (!st.ausbildung && st.brutto && st.brutto.bis < MIN_BRUTTO) continue; // Ausbildungsvergütung liegt immer darunter
     if (!st.email && st.website && !st.vermittler && !st.vermittlerFirma && !domains.has(st.website)) st.email = await emailVonWebsite(st.website);
     const { email } = st;
     if (!emailOk(email)) state.ohneMail[key] = heute();
     const zeitarbeit = st.vermittler || st.vermittlerFirma || VERMITTLER.test(email);
     if (zeitarbeit && !(st.brutto?.bis >= ZEITARBEIT_AB)) state.ohneMail[key] = heute(); // nicht jeden Lauf neu prüfen
     if (/aussendienst|außendienst|vertrieb|sales|^sbv|schwerbehind|betriebsrat|datenschutz|presse|kanzlei@|steuerberat/i.test(email) || (zeitarbeit && !(st.brutto?.bis >= ZEITARBEIT_AB)) || !emailOk(email) || state.emails[email] || postfach.zusatzEmails[email] || domains.has(firmenDomain(email))) continue;
-    const bereich = bereichVon(st);
-    const betreff = `Initiativbewerbung – Einstieg im Bereich ${bereich} – ${BEWERBER()}`;
-    const anschreiben = initiativAnschreiben({ bereich, firma: st.arbeitgeber, ohneAnzeige: !!st.ohneAnzeige });
+    const bereich = st.ausbildung ? 'Büro und Sachbearbeitung' : bereichVon(st);
+    const betreff = st.ausbildung
+      ? `Bewerbung um einen Ausbildungsplatz als ${st.ausbildung} – Start ab sofort möglich – ${BEWERBER()}`
+      : `Initiativbewerbung – Einstieg im Bereich ${bereich} – ${BEWERBER()}`;
+    const anschreiben = st.ausbildung
+      ? vorlageAnschreiben({ titel: st.titel || `Ausbildung ${st.ausbildung}`, firma: st.arbeitgeber })
+      : initiativAnschreiben({ bereich, firma: st.arbeitgeber, ohneAnzeige: !!st.ohneAnzeige });
     const brief = await anschreibenAnhang({ firma: st.arbeitgeber, ort: st.arbeitsort?.ort || '', betreff, anschreiben });
     const info = await transport.sendMail({
       from: `${BEWERBER()} <${user}>`,
@@ -196,7 +220,7 @@ async function main() {
     });
     if (LIVE) {
       state.beworben[`initiativ-${st.refnr}`] = {
-        datum: heute(), firma: st.arbeitgeber, email, titel: `Quereinsteiger im Bereich ${bereich}`, betreff, anschreiben,
+        datum: heute(), firma: st.arbeitgeber, email, titel: st.ausbildung ? `Ausbildung ${st.ausbildung}` : `Quereinsteiger im Bereich ${bereich}`, betreff, anschreiben,
         messageId: info?.messageId || '', ansprechpartner: '', initiativ: true,
       };
       state.emails[email] = heute();
@@ -204,7 +228,7 @@ async function main() {
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
     domains.add(firmenDomain(email));
-    gesendet.push(`✅ ${st.arbeitgeber} (${st.nurRemote ? '100 % Homeoffice' : st.arbeitsort?.ort || '?'}) · ${bereich} · an ${email}${st.website ? ' (von der Firmen-Website)' : ''}`);
+    gesendet.push(`✅ ${st.arbeitgeber} (${st.nurRemote ? '100 % Homeoffice' : st.arbeitsort?.ort || '?'}) · ${bereich}${st.ausbildung ? ' (Ausbildung)' : ''} · an ${email}${st.website ? ' (von der Firmen-Website)' : ''}`);
     console.log(`[initiativ] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${st.arbeitgeber}`);
     await pause(8000); // Gmail nicht fluten
   }
