@@ -50,15 +50,17 @@ def einrichten(story, g):
         s['akte_zahl'] = (re.findall(r'\d+', tx) or ['3'])[0]
     story['kamera'] = False
     story['uhr'] = False
-    story['hell'] = True  # klarer, farbiger Look wie die Vorlage: kein Kino-Filter, keine Rotfärbung, kein Flackern
+    story['hell'] = True
+    for s in szenen:  # Blitz-Bilder des alten Gesichts im Hook weg - der Schock kommt einmal, im eigenen Stil
+        s.pop('blitzbild', None)  # klarer, farbiger Look wie die Vorlage: kein Kino-Filter, keine Rotfärbung, kein Flackern
     alt_bild, alt_fratze = g['bild'], g['fratze']
     kopf = ORT_TEXT['en' if en else 'de'].get(ort, ORT_TEXT['de']['haus'])
     gesamt = [0.0]
 
     def bild(s, t, lt):
-        if s['art'] == 'fratze':
+        if s['art'] == 'fratze':  # eigener Schock im Akte-Look statt des alten Comic-Gesichts (passte nicht zum Stil)
             im = Image.new('RGB', (K.W, K.H))
-            alt_fratze(im, lt)
+            K.schock(im, lt, en)
             return im
         im = Image.new('RGB', (K.W, K.H), K.GRUND)
         art = s.get('akte', 'ort')
