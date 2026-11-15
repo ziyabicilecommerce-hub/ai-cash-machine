@@ -102,7 +102,8 @@ export function baueFolge(skript) {
     szenen.push({ art: 'teil2', ...zeile(schluss, { pause: 0.8, cta: weiter ? T.folgT2 : T.folg }) });
   }
   // KI-Bilder sind Standard für alle kurzen Horror-Videos (Wunsch 06.11.: keine gezeichneten Szenen mehr); ki: false schaltet ab
-  const kiAn = skript.ki === true || (kurz_ && skript.ki !== false);
+  // 15.11.: die Hits (5.-7.11., 900-1121 Aufrufe) hatten das GEZEICHNETE Gesicht ohne KI-Bilder - KI nur noch mit ki: true
+  const kiAn = skript.ki === true;
   if (kiAn) {  // KI-Hintergrund je Szene (Nachricht und Endkarte bleiben gezeichnet)
     szenen.forEach((sz, i) => { if (!['nachricht', 'teil2'].includes(sz.art)) sz.ki = kiPrompt(sz.art, skript.ort || 'haus', i / szenen.length); });
   }

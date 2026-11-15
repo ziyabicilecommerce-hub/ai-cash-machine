@@ -211,11 +211,11 @@ test('KI-Hintergründe nur mit ki: true (Standard seit 13.11.: gezeichnete Schat
   assert.ok(an.szenen.filter((s) => s.art === 'teil2').every((s) => !s.ki));
 });
 
-test('Klassik: kurze Videos wieder wie am 7.11. (KI-Bilder, Suchbild, Wahl-Karte); nativer Stil nur noch auf Wunsch', () => {
+test('Klassik: kurze Videos wieder wie bei den Hits (gezeichnet, Suchbild, Wahl-Karte); nativer Stil nur noch auf Wunsch', () => {
   const sk = { titel: 'Probe', hook: 'Wenn es um 3 Uhr klingelt, renn.', saetze: ['Ich öffne.', 'Niemand da.', 'Es klingelt wieder.'], ende: 'Von innen.', frage: 'Hättest du geöffnet?', wahl: ['Öffnen', 'Rennen'], kurz: true };
   const f = bauen(sk);
-  assert.equal(f.klassik, true); assert.equal(f.ki_bilder, true); assert.equal(f.suchbild, true);
-  assert.ok(f.szenen.some((s) => s.ki), 'KI-Hintergründe wie damals');
+  assert.equal(f.klassik, true); assert.equal(f.ki_bilder, false, 'gezeichnet wie die Hits'); assert.equal(f.suchbild, true);
+  assert.ok(bauen({ ...sk, ki: true }).szenen.some((s) => s.ki), 'KI nur auf Wunsch');
   assert.equal(f.szenen.at(-1).art, 'teil2');
   const n = bauen({ ...sk, stil: 'nativ' });
   assert.equal(n.stil, 'nativ'); assert.equal(n.suchbild, false); assert.equal(n.schlag, '');
