@@ -69,20 +69,20 @@ def handy(im, t, kopf, nachrichten, tippt, unten=0.0, sperr=None):
     else:
         d.rectangle((cx - 126, cy - 318, cx + 126, cy - 262), fill=(214, 219, 230))
         d.ellipse((cx - 112, cy - 306, cx - 80, cy - 274), fill=(30, 30, 36))
-        d.text((cx - 70, cy - 290), kopf, font=font(22), fill=(25, 25, 35), anchor='lm')
+        d.text((cx - 70, cy - 290), kopf, font=font(26), fill=(25, 25, 35), anchor='lm')
         y = cy + 140
         blasen = list(nachrichten) + ([('...', True)] if tippt else [])
         for txt, links in reversed(blasen):  # unten anfangen, wie im echten Chat
-            zs = zeilen(txt, font(19), 170)[:3]
-            h = 22 * len(zs) + 22
+            zs = zeilen(txt, font(25), 190)[:3]
+            h = 29 * len(zs) + 24
             y -= h + 10
             if y < cy - 255:
                 break
-            bw = max(font(19).getlength(z) for z in zs) + 28
+            bw = max(font(25).getlength(z) for z in zs) + 30
             x0 = cx - 116 if links else cx + 116 - bw
             d.rounded_rectangle((x0, y, x0 + bw, y + h), 16, fill=(222, 226, 236) if links else (52, 120, 246))
             for i, z in enumerate(zs):
-                d.text((x0 + 14, y + 11 + i * 22), z, font=font(19), fill=(20, 20, 30) if links else (255, 255, 255))
+                d.text((x0 + 15, y + 12 + i * 29), z, font=font(25), fill=(20, 20, 30) if links else (255, 255, 255))
     for sx in (-1, 1):  # Daumen über dem Rand
         d.ellipse((cx + sx * 124 - 30, cy + 10, cx + sx * 124 + 30, cy + 120), fill=sch)
         d.ellipse((cx + sx * 124 - 22, cy + 18, cx + sx * 124 + 22, cy + 70), fill=haut)
@@ -129,10 +129,10 @@ def einrichten(story, g):
             n = 1.0
         if n > 0.05:  # das Wesen: erst kaum zu sehen, dann immer größer und deutlicher
             lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
-            groesse = gr * (1 + 1.4 * n ** 2) * (1 + 0.15 * min(lt / 3, 1))
+            groesse = gr * 1.3 * (1 + 1.6 * n ** 2) * (1 + 0.15 * min(lt / 3, 1))
             schatten(lage, x, y + 60 * n ** 2, s=groesse, alpha=int(70 + 185 * n), augen=n > 0.25)
             im.paste(lage, (0, 0), lage)
-        dunkel = 0.35 + 0.25 * n
+        dunkel = 0.12 + 0.18 * n
         im = Image.blend(im, Image.new('RGB', (W, H), (2, 3, 8)), dunkel)
         k = s.get('pov_chat', 1)
         tippt = s['art'] != 'blitz' and k < 4 and lt % 1.4 < 0.7
