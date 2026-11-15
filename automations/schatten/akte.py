@@ -50,6 +50,7 @@ def einrichten(story, g):
         s['akte_zahl'] = (re.findall(r'\d+', tx) or ['3'])[0]
     story['kamera'] = False
     story['uhr'] = False
+    story['hell'] = True  # klarer, farbiger Look wie die Vorlage: kein Kino-Filter, keine Rotfärbung, kein Flackern
     alt_bild, alt_fratze = g['bild'], g['fratze']
     kopf = ORT_TEXT['en' if en else 'de'].get(ort, ORT_TEXT['de']['haus'])
     gesamt = [0.0]
@@ -82,6 +83,11 @@ def einrichten(story, g):
             K.checkliste(im, regeln, lt)
         else:
             K.portrait(im, lt, 'DU' if not en else 'YOU', angst=0.5 + 0.4 * min(lt / 2, 1))
+        if lt < 0.35 and s['art'] != 'blitz':  # Karte federt von unten rein (wie in der Vorlage)
+            e = 1 - (1 - lt / 0.35) ** 3
+            neu = Image.new('RGB', (K.W, K.H), K.GRUND)
+            neu.paste(im, (0, int((1 - e) * 140)))
+            im = Image.blend(Image.new('RGB', (K.W, K.H), K.GRUND), neu, 0.35 + 0.65 * e)
         kopfzeile(im, s, t, kopf, en)
         return im
 
