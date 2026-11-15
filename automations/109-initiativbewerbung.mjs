@@ -15,7 +15,7 @@ import {
 
 const MAX = LIVE ? Math.max(1, Math.min(60, parseInt(env('BEWERBUNG_INITIATIV_MAX', '50'), 10) || 50)) : 3;
 const SUCHE = ['Luftfracht', 'Air Cargo', 'Zoll', 'Zollabwicklung', 'Export', 'Import Export', 'Außenhandel',
-  'Spedition', 'Speditionskaufmann', 'Leitstelle', 'Sicherheitsleitstelle', 'Notrufleitstelle', 'Serviceleitstelle', 'Sicherheitszentrale', 'Alarmempfangsstelle', 'Überwachungszentrale', 'Leitstellendisponent', 'Disposition', 'Flughafen', 'Cargo', 'Logistik Sachbearbeiter',
+  'Leitstelle', 'Sicherheitsleitstelle', 'Notrufleitstelle', 'Serviceleitstelle', 'Sicherheitszentrale', 'Alarmempfangsstelle', 'Überwachungszentrale', 'Leitstellendisponent', 'Disposition', 'Flughafen', 'Cargo', 'Logistik Sachbearbeiter',
   'SOC Analyst', 'Cyber Security', 'IT-Security', 'IT-Sicherheit', 'Informationssicherheit', 'Penetration Tester', 'Security Analyst',
   'Security Engineer', 'Cloud Security', 'Netzwerksicherheit', 'IT-Forensik', 'Security Operations', 'Cyber Defense', 'Vulnerability', 'Identity Access Management', 'Firewall', 'IT-Security Consultant', 'Datenschutz',
   'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', 'IT-Administrator', 'Systemadministrator', 'IT-Techniker', 'Rechenzentrum', 'Netzwerk',
@@ -26,7 +26,12 @@ const SUCHE = ['Luftfracht', 'Air Cargo', 'Zoll', 'Zollabwicklung', 'Export', 'I
   'Lohnbuchhaltung', 'Buchhaltung', 'Finanzbuchhaltung', 'Debitorenbuchhaltung', 'Kreditorenbuchhaltung', 'Rechnungsprüfung', 'Fakturierung', 'Mahnwesen', 'Forderungsmanagement',
   'Schadensachbearbeiter', 'Sachbearbeiter Versicherung', 'Hausverwaltung', 'Immobilienverwaltung', 'Mietbuchhaltung', 'Verwaltungsangestellter', 'Verwaltungsfachangestellter',
   'Bürgerservice', 'Sachbearbeiter öffentlicher Dienst', 'Poststelle', 'Dokumentenmanagement', 'Stammdatenpflege', 'Datenpflege', 'Reklamationsmanagement', 'Kundenbetreuung',
-  'Telefonzentrale', 'Rezeption', 'Sachbearbeiter Logistik', 'Sachbearbeiter Vertragsmanagement', 'Sachbearbeiter Rechnungswesen', 'Controlling Assistenz'];
+  'Telefonzentrale', 'Rezeption', 'Sachbearbeiter Logistik', 'Sachbearbeiter Vertragsmanagement', 'Sachbearbeiter Rechnungswesen', 'Controlling Assistenz',
+  // Mehr Initiativ-Ziele: Bank-Backoffice, Kundenservice ohne Verkauf, E-Commerce, Airline-Büro, Planung.
+  'Kreditsachbearbeiter', 'Wertpapierabwicklung', 'KYC', 'Geldwäsche', 'Compliance', 'Zahlungsverkehr', 'Backoffice Bank',
+  'Kundenservice Versicherung', 'Kundenservice Energie', 'Onlineshop', 'E-Commerce', 'Produktdatenpflege', 'Marketplace',
+  'Content Moderator', 'IT-Asset', 'Ground Operations', 'Flugplanung', 'Crew Planung', 'Airline', 'Fuhrpark', 'Terminplanung',
+  'Einsatzplanung', 'Tracing', 'Helpdesk', 'Technischer Support'];
 // Echte IT-Sicherheit - nicht Luftsicherheit oder Objektschutz.
 const CYBER = /cyber|it-?secur|it-?sicherheit|informationssicherheit|\bisms\b|\bsoc\b|security (analyst|operations|engineer)|pentest|penetration|siem|forensi|cloud ?security|netzwerksicherheit|firewall|vulnerability|schwachstellen|identity|\biam\b|access management|datenschutz|security consultant|cyber ?defen/i;
 // IT-Einstieg (Support, Helpdesk, Admin, Rechenzentrum) - die Tür Richtung IT-Sicherheit.
@@ -57,6 +62,8 @@ const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bila
 // Nur Zentren innerhalb von 20 km um Hattersheim (ortPasst prüft die echte Entfernung).
 const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesbaden', 'Hofheim am Taunus', 'Langen (Hessen)', 'Neu-Isenburg', 'Offenbach am Main'];
 // Ziya will auch eine Ausbildung, wenn die Berufsschule die Konrad-Adenauer-Schule Kriftel ist: Betrieb im Main-Taunus-Kreis.
+// Höchstens so viele Ausbildungsbewerbungen pro Lauf - Ziya will vor allem Jobs mit richtigem Gehalt.
+const AUSBILDUNG_MAX = parseInt(env('BEWERBUNG_AUSBILDUNG_MAX', '6'), 10) || 6;
 const MTK = /hattersheim|hofheim|kriftel|flörsheim|hochheim|eppstein|kelkheim|liederbach|bad soden|sulzbach|schwalbach|eschborn/i;
 const AUSBILDUNG_KAS = [
   ['Kaufmann Büromanagement', 'Kaufmann für Büromanagement'],
@@ -193,8 +200,10 @@ async function main() {
   const cv = await holeLebenslauf();
   const transport = gmailTransport();
   const gesendet = [];
+  let ausbildungen = 0;
   for (const [key, st] of auswahl) {
     if (gesendet.length >= MAX) break;
+    if (st.ausbildung && ausbildungen >= AUSBILDUNG_MAX) continue;
     // Keine Mail in der Anzeige: Bewerbungs-Adresse auf der Firmen-Website suchen (erst hier, damit nur so viele Seiten wie nötig geladen werden).
     if (!st.ausbildung && st.brutto && st.brutto.bis < MIN_BRUTTO) continue; // Ausbildungsvergütung liegt immer darunter
     if (!st.email && st.website && !st.vermittler && !st.vermittlerFirma && !domains.has(st.website)) st.email = await emailVonWebsite(st.website);
@@ -228,6 +237,7 @@ async function main() {
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
     domains.add(firmenDomain(email));
+    if (st.ausbildung) ausbildungen++;
     gesendet.push(`✅ ${st.arbeitgeber} (${st.nurRemote ? '100 % Homeoffice' : st.arbeitsort?.ort || '?'}) · ${bereich}${st.ausbildung ? ' (Ausbildung)' : ''} · an ${email}${st.website ? ' (von der Firmen-Website)' : ''}`);
     console.log(`[initiativ] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${st.arbeitgeber}`);
     await pause(8000); // Gmail nicht fluten
