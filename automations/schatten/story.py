@@ -9,6 +9,7 @@ from effekte import (W, H, rotverschiebung, weich, popfont, suchzeiten, KALT_BIS
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
 from ki import ki_bilder_laden, ki_szene
 import kamera
+import posen
 import effekte
 from aktion import scheibe, decke_schatten, masken, fernseher, taschenlampe, zaehlen, turbulenz, fluegel, live, klinke, rufen, zelt
 from fahrgaeste import fahrgaeste_malen, zeitung_nah
@@ -197,7 +198,7 @@ def bild(s, t, lt):
         return im
     if art == 'dunkel':
         # die Figur im Dunkeln, seine Augen kommen langsam immer näher an ihren Kopf
-        mensch(lage, 250, 812, farbe=(52, 56, 68), angst=0.9, blick=min(lt / max(s.get('dauer', 4), 1) * 1.4, 1))
+        mensch(lage, 250, 812, angst=0.9, blick=min(lt / max(s.get('dauer', 4), 1) * 1.4, 1), **_pose(s, lt))
         im.paste(lage, (0, 0), lage)
         p = min(lt / max(s.get('dauer', 4), 1), 1) ** 1.5
         a = AUGE.resize((int(36 + 50 * p), int(36 + 50 * p)))
@@ -218,8 +219,8 @@ def bild(s, t, lt):
             v = s['naeher']
             schatten(lage, 560 - 150 * v, 905, s=1.0 + 0.4 * v, alpha=int(35 + 120 * v), augen=v > 0.35)
         fahrgaeste_malen(lage, t, s.get('fahrgaeste', FAHRGAESTE[0]))  # die anderen merken nichts
-        mensch(lage, 250, 812, angst=s.get('angst', 0.0), blick=s.get('blick', 0.0))
-        if art == 'handy':
+        mensch(lage, 250 - 70 * _fort(s, lt) * (s.get('pose') == 'zurueck'), 812, angst=s.get('angst', 0.0), blick=s.get('blick', 0.0), **_pose(s, lt))
+        if art == 'handy' and s.get('pose') != 'handy':
             zit = random.randint(-3, 3) if (lt % 0.8) < 0.3 else 0
             im.paste(HANDYLICHT, (int(300 - 90 + zit), int(650 - 90)), HANDYLICHT)
             ImageDraw.Draw(lage).rounded_rectangle((285 + zit, 640, 325 + zit, 700), 6, fill=(190, 215, 255, 255))
@@ -281,7 +282,7 @@ def bild(s, t, lt):
     elif art == 'decke':
         innenraum(im, t, lt, licht=0.55, fahrt=False)
         fahrgaeste_malen(lage, t, s.get('fahrgaeste', FAHRGAESTE[0]))
-        mensch(lage, 250, 812, angst=min(1.0, 0.5 + lt / 3), blick=0.4)
+        mensch(lage, 250, 812, angst=min(1.0, 0.5 + lt / 3), blick=0.4, **_pose(s, lt))
         decke_schatten(lage, 430, min(max((lt - 0.6) / 1.4, 0), 1) ** 0.7)
     elif art in ('zettel', 'zettel2'):
         zettel(im, t, lt, art == 'zettel2', s.get('zettel', ['STEIG', 'NICHT AUS']))
@@ -300,7 +301,7 @@ def bild(s, t, lt):
     elif art == 'licht':
         flacker = 1.0 if lt < 0.6 else (0.0 if lt > 1.3 else float(int(lt * 20) % 3 != 0))
         innenraum(im, t, lt, licht=flacker, fahrt=False)
-        mensch(lage, 250, 812, angst=s.get('angst', 0.6))
+        mensch(lage, 250, 812, angst=s.get('angst', 0.6), **_pose(s, lt))
         im.paste(lage, (0, 0), lage); lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
         im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.15 + 0.85 * flacker)
         if lt > 1.3:
@@ -321,6 +322,9 @@ def dauer_von(datei):
     return float(subprocess.check_output(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', datei]))
 
 
+_fort, _pose = posen.fort, posen.pose_kw
+
+
 def main():
     story, ordner = json.load(open(sys.argv[1], encoding='utf-8')), sys.argv[2]
     os.makedirs(ordner, exist_ok=True)
@@ -338,6 +342,7 @@ def main():
     for i, sz in enumerate(szenen):  # wer genau hinschaut, sieht ihn schon vor dem Jumpscare - von Szene zu Szene naeher
         if i > 0 and sz['art'] in ('innen', 'handy') and 'naeher' not in sz:
             sz['naeher'] = round(min(0.55, 0.1 + 0.6 * i / len(szenen)), 2)
+    posen.posen_verteilen(szenen)
     ki_bilder_laden(story, ordner)
     fratze_ki = next((x['_kibild'] for x in story['szenen'] if x['art'] == 'fratze' and x.get('_kibild') is not None), None)
     stumm = os.environ.get('STUMM') == '1'

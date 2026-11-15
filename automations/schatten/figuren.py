@@ -61,7 +61,7 @@ def _aermel(d, a, b, w, hell, dunkel):
     glied(d, a, b, int(w), hell)
 
 
-def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, gesicht=True, lauf=None, schlaf=False, stil=None):
+def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, gesicht=True, lauf=None, schlaf=False, stil=None, pose=None, fort=0.0):
     # Person mit Kleidung je nach Stil (Hoodie, Anzug, Schlafanzug, Jacke; Kapuze, Haare, Zopf, Mütze) -
     # zittert und atmet bei Angst. Ohne eigene Farbe und ohne Stil sieht sie aus wie die Hauptfigur der Story.
     if stil is None:
@@ -78,7 +78,7 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
     if stil:  # Hauptfigur und Nebenfiguren mit eigenem Stil: neuer Webtoon-Stil (held.py, 15.11.)
         from held import zeichne_held
         _ss(lage, (x - 110 * s, y - 372 * s, x + 150 * s, y + 10 * s),
-            lambda cv, T: zeichne_held(cv, T, x, y, s, stil, sitzen, angst, blick, gesicht, lauf, schlaf, atem, z))
+            lambda cv, T: zeichne_held(cv, T, x, y, s, stil, sitzen, angst, blick, gesicht, lauf, schlaf, atem, z, pose, fort))
         return
 
     def zeichne(cv, T):
