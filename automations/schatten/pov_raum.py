@@ -121,10 +121,11 @@ def raeume_fuer(ort, text=''):
     t = (text or '').lower()
     if ort == 'aufzug' or 'aufzug' in t or 'elevator' in t:
         return ['aufzug', 'flur']
-    if any(w in t for w in ('auto', 'fahr', 'straße', 'tankstelle', 'taxi', 'navi', 'car', 'road', 'driv')):
+    if any(w in t for w in ('auto', 'fahr', 'straße', 'tankstelle', 'taxi', 'navi', 'anhalter', 'rückspiegel', 'rücksitz', 'blitzer', 'tunnel',
+                            ' car', 'road', 'driv', 'hitchhik', 'mirror', 'highway')):
         return ['auto', 'auto']
     if ort == 'wald' or 'zelt' in t or 'tent' in t:
-        return ['zelt', 'auto'] if 'zelt' in t or 'tent' in t else ['auto', 'zelt']
+        return ['zelt', 'zelt']
     if ort in ('zug', 'flugzeug'):
         return ['flur', 'zimmer']
     return ['zimmer', 'flur']
