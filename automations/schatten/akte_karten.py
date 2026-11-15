@@ -1,0 +1,228 @@
+# Karten für den Akte-Stil (15.11., Vorlage vom Nutzer: "So ungefähr" - Analog-Horror im Infografik-Look).
+# Eigene Zeichnungen, nur das Format ist übernommen: Ort-Illustration, Bauplan mit markiertem Raum, Checkliste,
+# Lautsprecher mit Tonwelle, Porträt im Kreis, Chat mit Notfall-Meldung, Schild mit Zahl, Wahl-Karten, Teil-2-Karte.
+import math
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
+
+W, H = 720, 1280
+FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
+MONO = '/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf'
+GRUND, ROT, GELB, GRUEN = (22, 26, 38), (230, 40, 50), (255, 206, 40), (120, 220, 90)
+_F = {}
+
+
+def f(gr, mono=False):
+    k = (gr, mono)
+    if k not in _F:
+        _F[k] = ImageFont.truetype(MONO if mono else FONT, gr)
+    return _F[k]
+
+
+def schatten_rand(im, box, r=26):
+    s = Image.new('RGBA', im.size, (0, 0, 0, 0))
+    ImageDraw.Draw(s).rounded_rectangle((box[0] + 8, box[1] + 14, box[2] + 8, box[3] + 14), r, fill=(0, 0, 0, 140))
+    im.paste(s.filter(ImageFilter.GaussianBlur(12)), (0, 0), s.filter(ImageFilter.GaussianBlur(12)))
+
+
+def ort_bild(im, ort, t, dunkel=0.0, gestalt=0.0):
+    # flache Nacht-Illustration: Mond, Sterne, Haus / Zug / Wald / Hochhaus mit Aufzug; optional Gestalt im Fenster
+    d = ImageDraw.Draw(im)
+    for y in range(0, 760, 8):
+        k = y / 760
+        d.rectangle((0, y, W, y + 8), fill=(int(20 + 18 * k), int(24 + 22 * k), int(52 + 30 * k)))
+    for i in range(40):
+        x, y = (i * 137) % W, (i * 89) % 600 + 120
+        if (math.sin(t * 3 + i) > -0.6):
+            d.ellipse((x, y, x + 3, y + 3), fill=(220, 225, 255))
+    d.ellipse((540, 170, 610, 240), fill=(236, 236, 220))
+    d.rectangle((0, 760, W, H), fill=(18, 24, 22))
+    fenster = []
+    if ort == 'zug':
+        for i in range(5):
+            x = (i * 190 - t * 60) % (W + 190) - 190
+            d.rounded_rectangle((x, 600, x + 180, 740), 14, fill=(170, 176, 196))
+            d.rectangle((x, 700, x + 180, 712), fill=(196, 40, 52))
+            for j in range(3):
+                fenster.append((x + 14 + j * 56, 624, x + 56 + j * 56, 672))
+        d.rectangle((0, 742, W, 752), fill=(60, 60, 64))
+    elif ort == 'wald':
+        for i in range(14):
+            x = i * 56 - 20
+            hgt = 260 + (i * 47) % 160
+            d.polygon([(x + 30, 760 - hgt), (x - 20, 770), (x + 80, 770)], fill=(10 + i % 3 * 4, 30 + i % 4 * 5, 24))
+        d.polygon([(250, 770), (360, 640), (470, 770)], fill=(196, 132, 60))  # Zelt
+        fenster.append((338, 700, 382, 770))
+    elif ort == 'aufzug':
+        d.rectangle((220, 220, 500, 770), fill=(44, 48, 62))
+        for r in range(9):
+            for c in range(4):
+                if (r * 4 + c) % 3:
+                    fenster.append((240 + c * 64, 240 + r * 58, 284 + c * 64, 276 + r * 58))
+    else:  # Haus
+        d.polygon([(170, 470), (360, 330), (550, 470)], fill=(52, 46, 58))
+        d.rectangle((200, 470, 520, 770), fill=(70, 64, 78))
+        d.rectangle((330, 640, 390, 770), fill=(30, 26, 32))
+        fenster += [(230, 510, 300, 580), (420, 510, 490, 580), (230, 640, 300, 710), (420, 640, 490, 710)]
+    for i, (x0, y0, x1, y1) in enumerate(fenster):
+        an = (i * 7 + int(t * 0.5)) % 5 != 0
+        d.rectangle((x0, y0, x1, y1), fill=(255, 214, 120) if an and dunkel < 0.5 else (24, 26, 34))
+    if gestalt > 0 and fenster:
+        x0, y0, x1, y1 = fenster[len(fenster) // 2]
+        cx = (x0 + x1) / 2
+        d.ellipse((cx - 9, y0 + 4, cx + 9, y0 + 22), fill=(6, 6, 8))
+        d.rectangle((cx - 12, y0 + 20, cx + 12, y1), fill=(6, 6, 8))
+        for ex in (-4, 4):
+            d.ellipse((cx + ex - 2, y0 + 11, cx + ex + 2, y0 + 15), fill=(255, 255, 255))
+    if dunkel:
+        im.paste(Image.blend(im, Image.new('RGB', im.size, (4, 4, 10)), dunkel))
+
+
+def bauplan(im, ort, markiert, t):
+    # blaues Raster, weiße Strichzeichnung, ein Bereich gelb markiert und beschriftet
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, W, H), fill=(26, 52, 120))
+    for x in range(0, W, 40):
+        d.line((x, 0, x, H), fill=(40, 70, 146), width=1)
+    for y in range(0, H, 40):
+        d.line((0, y, W, y), fill=(40, 70, 146), width=1)
+    weiss = (236, 240, 255)
+    if ort == 'zug':
+        d.rounded_rectangle((70, 520, 650, 740), 30, outline=weiss, width=5)
+        for i in range(4):
+            d.rectangle((110 + i * 130, 560, 200 + i * 130, 630), outline=weiss, width=4)
+        ziel = (330, 540, 460, 720)
+    else:
+        d.rectangle((100, 360, 620, 860), outline=weiss, width=6)
+        d.line((360, 360, 360, 620), fill=weiss, width=5)
+        d.line((100, 620, 620, 620), fill=weiss, width=5)
+        d.arc((300, 560, 420, 680), 180, 270, fill=weiss, width=4)  # Tür
+        ziel = (370, 370, 610, 610)
+    p = 0.5 + 0.5 * math.sin(t * 5)
+    d.rectangle(ziel, outline=GELB, width=int(6 + 3 * p))
+    for i in range(4):
+        y = ziel[1] + 20 + i * (ziel[3] - ziel[1] - 40) / 3
+        d.line((ziel[0] + 10, y, ziel[2] - 10, y + 30), fill=GELB, width=3)
+    d.line((ziel[0], ziel[1], 150, 250), fill=weiss, width=3)
+    d.rectangle((110, 200, 110 + f(34).getlength(markiert) + 40, 260), fill=(10, 14, 30))
+    d.text((130, 212), markiert, font=f(34), fill=weiss)
+    d.text((W / 2, ziel[3] + 70), '— 12 400 mm —', font=f(20, True), fill=weiss, anchor='mm')
+
+
+def checkliste(im, punkte, t):
+    d = ImageDraw.Draw(im)
+    box = (90, 380, 630, 400 + 90 * len(punkte))
+    schatten_rand(im, box, 18)
+    d.rounded_rectangle(box, 18, fill=(246, 236, 210))
+    for i, p in enumerate(punkte):
+        y = 410 + i * 90
+        d.rounded_rectangle((120, y, 160, y + 40), 6, outline=(40, 40, 50), width=4)
+        if t > 0.4 + i * 0.5:
+            d.line((126, y + 20, 138, y + 34, 158, y + 4), fill=(30, 120, 60), width=7)
+        d.text((180, y + 2), p, font=f(32), fill=(30, 30, 40))
+
+
+def lautsprecher(im, t, label):
+    d = ImageDraw.Draw(im)
+    cx, cy = W / 2, 470
+    d.ellipse((cx - 190, cy - 190, cx + 190, cy + 190), fill=(54, 58, 72), outline=(120, 124, 140), width=6)
+    for r in range(10, 180, 18):
+        for k in range(0, 360, max(8, int(360 / (r / 3)))):
+            a = math.radians(k)
+            d.ellipse((cx + math.cos(a) * r - 4, cy + math.sin(a) * r - 4, cx + math.cos(a) * r + 4, cy + math.sin(a) * r + 4), fill=(24, 26, 34))
+    d.rectangle((150, 720, 570, 840), fill=(16, 22, 24), outline=(60, 90, 80), width=3)
+    d.text((165, 690), label, font=f(18, True), fill=GRUEN)
+    pts = [(160 + i * 4, 780 + math.sin(i * 0.3 + t * 9) * 26 * math.sin(i * 0.05 + t)) for i in range(100)]
+    d.line(pts, fill=GRUEN, width=3)
+
+
+def portrait(im, t, name, angst=0.7, held_gesicht=None):
+    d = ImageDraw.Draw(im)
+    cx, cy = W / 2, 480
+    d.ellipse((cx - 210, cy - 210, cx + 210, cy + 210), fill=(46, 120, 90))
+    d.ellipse((cx - 190, cy - 190, cx + 190, cy + 190), fill=(226, 230, 236))
+    d.ellipse((cx - 130, cy - 170, cx + 130, cy - 10), fill=(56, 40, 32))  # Haare
+    d.ellipse((cx - 110, cy - 120, cx + 110, cy + 120), fill=(240, 210, 188))
+    d.chord((cx - 120, cy - 175, cx + 120, cy - 30), 180, 360, fill=(56, 40, 32))
+    zitter = math.sin(t * 40) * 2 * angst
+    for ex in (-45, 45):
+        d.ellipse((cx + ex - 24, cy - 30, cx + ex + 24, cy + 18), fill=(255, 255, 255), outline=(30, 30, 40), width=3)
+        d.ellipse((cx + ex - 8 + zitter, cy - 14, cx + ex + 8 + zitter, cy + 2), fill=(20, 20, 26))
+    d.ellipse((cx - 14, cy + 50, cx + 14, cy + 50 + 30 * angst), fill=(60, 20, 26))
+    d.rounded_rectangle((cx - 150, cy + 230, cx + 150, cy + 290), 12, fill=(10, 12, 20))
+    d.text((cx, cy + 260), name, font=f(30), fill=(255, 255, 255), anchor='mm')
+
+
+def chat(im, t, absender, nachrichten, notfall=None):
+    d = ImageDraw.Draw(im)
+    x0, y0 = 110, 260
+    d.rounded_rectangle((x0, y0, x0 + 340, y0 + 560), 30, fill=(30, 32, 40), outline=(70, 72, 84), width=3)
+    d.ellipse((x0 + 150, y0 + 30, x0 + 190, y0 + 70), fill=(80, 84, 100))
+    d.text((x0 + 170, y0 + 50), absender[:1].upper(), font=f(22), fill=(255, 255, 255), anchor='mm')
+    d.text((x0 + 170, y0 + 92), absender, font=f(20), fill=(220, 220, 230), anchor='mm')
+    y = y0 + 130
+    for i, n in enumerate(nachrichten):
+        if t < 0.3 + i * 0.9:
+            break
+        zeilen = _umbruch(n, f(20), 240)
+        h = 26 * len(zeilen) + 20
+        d.rounded_rectangle((x0 + 20, y, x0 + 40 + max(f(20).getlength(z) for z in zeilen), y + h), 14, fill=(58, 60, 72))
+        for j, z in enumerate(zeilen):
+            d.text((x0 + 32, y + 10 + j * 26), z, font=f(20), fill=(240, 240, 245))
+        y += h + 14
+    if notfall and t > 0.3 + len(nachrichten) * 0.9:
+        d.rounded_rectangle((420, 280, 640, 840), 26, fill=(130, 20, 26))
+        d.rounded_rectangle((430, 300, 630, 380), 14, fill=(220, 50, 60))
+        d.text((445, 318), '⚠ NOTFALL', font=f(22), fill=(255, 255, 255))
+        for j, z in enumerate(_umbruch(notfall, f(17), 170)[:2]):
+            d.text((445, 348 + j * 20), z, font=f(17), fill=(255, 230, 230))
+        if int(t * 3) % 2:
+            d.text((530, 620), '!', font=f(140), fill=(240, 60, 70), anchor='mm')
+
+
+def schild(im, zahl, oben, unten):
+    d = ImageDraw.Draw(im)
+    d.rectangle((250, 300, 470, 370), fill=(210, 160, 40))
+    d.text((360, 335), oben, font=f(34), fill=(20, 20, 20), anchor='mm')
+    box = (170, 400, 550, 860)
+    schatten_rand(im, box, 30)
+    d.rounded_rectangle(box, 30, fill=(236, 238, 240), outline=(120, 124, 130), width=8)
+    d.text((360, 600), str(zahl), font=f(200), fill=(22, 24, 30), anchor='mm')
+    d.rectangle((200, 760, 520, 830), fill=(200, 40, 50))
+    d.text((360, 795), unten, font=f(36), fill=(255, 255, 255), anchor='mm')
+
+
+def warnung(im, t, text):
+    d = ImageDraw.Draw(im)
+    if int(t * 4) % 2 == 0:
+        d.text((W / 2, 560), text, font=f(42, True), fill=ROT, anchor='mm')
+        d.text((W / 2, 620), '• • •', font=f(34), fill=ROT, anchor='mm')
+
+
+def wahl_karten(im, t, a, b, hinweis):
+    d = ImageDraw.Draw(im)
+    for i, (txt, farbe, sym) in enumerate(((a, (120, 170, 255), '?'), (b, (255, 170, 60), '!'))):
+        if t < 0.2 + i * 0.6:
+            continue
+        x = 70 + i * 330
+        box = (x, 420, x + 250, 720)
+        schatten_rand(im, box, 22)
+        d.rounded_rectangle(box, 22, fill=(16, 20, 32), outline=farbe, width=5)
+        d.text((x + 125, 520), sym, font=f(110), fill=farbe, anchor='mm')
+        gr = 40
+        while gr > 22 and f(gr).getlength(txt.upper()) > 220:
+            gr -= 2
+        d.text((x + 125, 660), txt.upper(), font=f(gr), fill=(255, 255, 255), anchor='mm', stroke_width=2, stroke_fill=farbe)
+    d.text((W / 2, 570), 'oder', font=f(22), fill=(220, 220, 230), anchor='mm')
+    if t > 1.2:
+        d.rounded_rectangle((90, 790, 630, 860), 35, fill=(240, 240, 245))
+        d.text((W / 2, 825), hinweis, font=f(25), fill=(20, 20, 30), anchor='mm')
+
+
+def _umbruch(text, font_, breite):
+    aus, z = [], ''
+    for w in str(text).split():
+        if z and font_.getlength(f'{z} {w}') > breite:
+            aus.append(z); z = w
+        else:
+            z = f'{z} {w}'.strip()
+    return aus + ([z] if z else [])

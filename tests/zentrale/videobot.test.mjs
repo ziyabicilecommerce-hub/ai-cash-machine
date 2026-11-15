@@ -214,9 +214,10 @@ test('KI-Hintergründe nur mit ki: true (Standard seit 13.11.: gezeichnete Schat
 test('Klassik: kurze Videos wieder wie bei den Hits (gezeichnet, Suchbild, Wahl-Karte); nativer Stil nur noch auf Wunsch', () => {
   const sk = { titel: 'Probe', hook: 'Wenn es um 3 Uhr klingelt, renn.', saetze: ['Ich öffne.', 'Niemand da.', 'Es klingelt wieder.'], ende: 'Von innen.', frage: 'Hättest du geöffnet?', wahl: ['Öffnen', 'Rennen'], kurz: true };
   const f = bauen(sk);
-  assert.equal(f.klassik, true); assert.equal(f.ki_bilder, false, 'gezeichnet wie die Hits'); assert.equal(f.suchbild, true);
-  assert.ok(bauen({ ...sk, ki: true }).szenen.some((s) => s.ki), 'KI nur auf Wunsch');
-  assert.equal(f.szenen.at(-1).art, 'teil2');
+  assert.equal(f.stil, 'akte', 'Standard: Akte-Stil'); assert.equal(f.ki_bilder, false); assert.equal(f.schlag, '');
+  assert.equal(f.szenen.at(-1).art, 'teil2'); assert.deepEqual(f.szenen.at(-1).wahl, ['Öffnen', 'Rennen'], 'zwei Wahl-Karten am Ende');
+  const k = bauen({ ...sk, stil: 'klassik' });
+  assert.equal(k.klassik, true); assert.equal(k.ki_bilder, false, 'Klassik gezeichnet wie die Hits'); assert.equal(k.suchbild, true);
   const n = bauen({ ...sk, stil: 'nativ' });
   assert.equal(n.stil, 'nativ'); assert.equal(n.suchbild, false); assert.equal(n.schlag, '');
   const ende = n.szenen.at(-1);

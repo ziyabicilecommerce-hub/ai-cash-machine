@@ -345,8 +345,8 @@ def main():
         if i > 0 and sz['art'] in ('innen', 'handy') and 'naeher' not in sz:
             sz['naeher'] = round(min(0.55, 0.1 + 0.6 * i / len(szenen)), 2)
     posen.posen_verteilen(szenen)
-    if story.get('stil') == 'pov':  # Ich-Perspektive (pov.py): Hände mit Handy statt gezeichneter Figur
-        import pov; pov.einrichten(story, globals()); effekte.NATIV['an'] = True
+    if story.get('stil') in ('pov', 'akte'):  # pov.py: Ich-Perspektive; akte.py: Analog-Horror-Infografik (Uhr, Karten, VHS)
+        __import__(story['stil']).einrichten(story, globals()); effekte.NATIV['an'] = True
     ki_bilder_laden(story, ordner)
     fratze_ki = next((x['_kibild'] for x in story['szenen'] if x['art'] == 'fratze' and x.get('_kibild') is not None), None)
     stumm = os.environ.get('STUMM') == '1'
