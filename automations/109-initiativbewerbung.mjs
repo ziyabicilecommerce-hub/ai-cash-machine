@@ -61,7 +61,7 @@ const FREMD = /verkauf|pflege|arzt|ärzt|medizin|apothek|zahn|steuerfachang|bila
 // Zusätzlich Suchzentren im Umland, die außerhalb des Standard-Umkreises liegen (alles mit S-Bahn/Zug erreichbar).
 // Nur Zentren innerhalb von 20 km um Hattersheim (ortPasst prüft die echte Entfernung).
 const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesbaden', 'Hofheim am Taunus', 'Langen (Hessen)', 'Neu-Isenburg', 'Offenbach am Main'];
-// Ziya will auch eine Ausbildung, wenn die Berufsschule die Konrad-Adenauer-Schule Kriftel ist: Betrieb im Main-Taunus-Kreis.
+// Ausbildung: kaufmännisch im Main-Taunus-Kreis (Berufsschule Konrad-Adenauer-Schule Kriftel) oder Cyber/IT und Flughafen im Umkreis.
 // Höchstens so viele Ausbildungsbewerbungen pro Lauf - Ziya will vor allem Jobs mit richtigem Gehalt.
 const AUSBILDUNG_MAX = parseInt(env('BEWERBUNG_AUSBILDUNG_MAX', '6'), 10) || 6;
 const MTK = /hattersheim|hofheim|kriftel|flörsheim|hochheim|eppstein|kelkheim|liederbach|bad soden|sulzbach|schwalbach|eschborn/i;
@@ -70,6 +70,12 @@ const AUSBILDUNG_KAS = [
   ['Groß- und Außenhandelsmanagement', 'Kaufmann für Groß- und Außenhandelsmanagement'],
   ['Industriekaufmann', 'Industriekaufmann'],
   ['Verwaltungsfachangestellter', 'Verwaltungsfachangestellter'],
+  // Cyber/IT und Flughafen (gut bezahlte Ausbildungen) - hier zählt der normale Umkreis, nicht nur der Main-Taunus-Kreis.
+  ['Fachinformatiker', 'Fachinformatiker', 'umkreis'],
+  ['Kaufmann Digitalisierungsmanagement', 'Kaufmann für Digitalisierungsmanagement', 'umkreis'],
+  ['Kaufmann IT-System-Management', 'Kaufmann für IT-System-Management', 'umkreis'],
+  ['Luftverkehrskaufmann', 'Luftverkehrskaufmann', 'umkreis'],
+  ['Servicekaufmann Luftverkehr', 'Servicekaufmann im Luftverkehr', 'umkreis'],
 ];
 // Bundesweit: IT-/Cyber-Stellen, die laut Anzeige komplett im Homeoffice laufen.
 const REMOTE_SUCHE = ['IT-Security', 'Cyber Security', 'IT-Sicherheit', 'SOC Analyst', 'Security Analyst', 'Informationssicherheit', 'IT-Support', 'IT Helpdesk', 'Service Desk', '1st Level Support', '2nd Level Support', 'Systemadministrator', 'IT-Administrator', 'Netzwerkadministrator', 'Cloud Support', 'IT Quereinsteiger', 'Junior IT',
@@ -170,20 +176,21 @@ async function main() {
     } catch (e) { console.log(`[initiativ] Branchen-Suche ${branche} fehlgeschlagen: ${e.message}`); }
   }
   // Ausbildungsplätze im Main-Taunus-Kreis in den Berufen, die an der Konrad-Adenauer-Schule Kriftel unterrichtet werden.
-  for (const [was, beruf] of AUSBILDUNG_KAS) {
+  for (const [was, beruf, gebiet] of AUSBILDUNG_KAS) {
     try {
-      for (const st of await sucheStellen({ was, angebotsart: 4, wo: 'Hofheim am Taunus', umkreis: 15 })) {
+      for (const st of await sucheStellen({ was, angebotsart: 4, wo: gebiet ? 'Hattersheim am Main' : 'Hofheim am Taunus', umkreis: gebiet ? 20 : 15 })) {
         const key = firmaKey(st.arbeitgeber);
-        if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !MTK.test(st.arbeitsort?.ort || '')) continue;
+        if (!key || firmen.has(key) || state.ohneMail[key] || proFirma.has(key) || !(gebiet ? ortPasst(st) : MTK.test(st.arbeitsort?.ort || ''))) continue;
         if (st.zeitarbeit || ZEITARBEIT.test(st.arbeitgeber) || VERMITTLER.test(st.arbeitgeber) || SPEDITION.test(st.arbeitgeber)) continue;
         st.ausbildung = beruf;
+        st.ausbildungTop = !!gebiet;
         proFirma.set(key, st);
       }
     } catch (e) { console.log(`[initiativ] Ausbildungs-Suche "${was}" fehlgeschlagen: ${e.message}`); }
   }
 
-  // Ausbildung (Berufsschule Kriftel) zuerst, dann IT und Cyber, damit sie sicher in die Auswahl kommen.
-  const rang = (st) => (st.ausbildung ? -1 : CYBER.test(st.titel) ? 0 : IT.test(st.titel) || st.itBranche ? 1 : 2);
+  // Ausbildung Cyber/Flughafen zuerst, dann Berufsschule Kriftel, dann IT und Cyber, damit sie sicher in die Auswahl kommen.
+  const rang = (st) => (st.ausbildung ? (st.ausbildungTop ? -2 : -1) : CYBER.test(st.titel) ? 0 : IT.test(st.titel) || st.itBranche ? 1 : 2);
   const auswahl = [...proFirma.entries()].sort(([, a], [, b]) => rang(a) - rang(b)).slice(0, 1500);
   console.log(`[initiativ] ${auswahl.length} neue Firmen im Wunschbereich.`);
   await parallel(auswahl, 6, async ([, st]) => {
