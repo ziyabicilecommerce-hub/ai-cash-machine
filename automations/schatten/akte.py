@@ -41,11 +41,12 @@ ORT_WOERTER = [('tankstelle', 'tankstelle'), ('raststätte', 'tankstelle'), ('ho
                ('tür', 'flur'), ('door', 'flur')]
 
 
-def ort_von(text):
-    for w, o in ORT_WOERTER:
-        if re.search(rf'\b{w}', text):
-            return o
-    return None
+def ort_von(text, zuletzt=False):
+    # zuletzt=True: der Ort, der im Satz als letzter genannt wird ("nicht mehr an der Wand, sondern an meiner Tür" -> Tür)
+    treffer = [(m.start(), o) for w, o in ORT_WOERTER for m in [re.search(rf'\b{w}', text)] if m]
+    if not treffer:
+        return None
+    return max(treffer)[1] if zuletzt else next(o for w, o in ORT_WOERTER if re.search(rf'\b{w}', text))
 
 
 def einrichten(story, g):
@@ -60,7 +61,7 @@ def einrichten(story, g):
     elif ort == 'haus':  # Wohnungs-Geschichten ohne Stichwort: Hochhäuser, Haus am Waldrand oder Wohnblock
         ort = ['stadt', 'haus', 'wohnblock'][sum(map(ord, story.get('titel', ''))) % 3]
     for s in szenen:  # die Schluss-Szene darf woanders spielen, wenn ihr Satz es sagt ("...an meiner Tür" -> Hausflur)
-        s['akte_ort'] = (ort_von(str(s.get('text') or '').lower()) or ort) if s['art'] in ('ende', 'teil2') else ort
+        s['akte_ort'] = (ort_von(str(s.get('text') or '').lower(), zuletzt=True) or ort) if s['art'] in ('ende', 'teil2') else ort
     hook = next((s.get('text') or '' for s in szenen if s['art'] == 'blitz'), '')
     regel = hook.split(',')[-1].strip(' .!').capitalize() if ',' in hook else ('Nicht antworten' if not en else 'Do not answer')
     regeln = [regel[:22], 'Licht aus' if not en else 'Lights off', 'Warten bis 6:12' if not en else 'Wait until 6:12']
