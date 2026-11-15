@@ -226,3 +226,28 @@ def _umbruch(text, font_, breite):
         else:
             z = f'{z} {w}'.strip()
     return aus + ([z] if z else [])
+
+
+def schock(im, lt, en=False):
+    # Jumpscare im Akte-Stil (15.11., statt des alten Comic-Gesichts): Störung -> rotes Alarmbild -> schwarze Gestalt
+    # springt bis vor die Kamera, nur zwei weiße Punkte als Augen. Flach gezeichnet wie die Karten.
+    d = ImageDraw.Draw(im)
+    if lt < 0.12:  # Signal reißt ab
+        for y in range(0, H, 6):
+            g = (y * 7919 + int(lt * 1000)) % 255
+            d.rectangle((0, y, W, y + 6), fill=(g, g, g))
+        d.text((W / 2, 640), 'NO SIGNAL' if en else 'KEIN SIGNAL', font=f(56, True), fill=(255, 255, 255), anchor='mm',
+               stroke_width=4, stroke_fill=(0, 0, 0))
+        return
+    p = min(1.0, (lt - 0.12) / 0.25)
+    e = 1 - (1 - p) ** 3
+    d.rectangle((0, 0, W, H), fill=(150, 10, 18) if int(lt * 12) % 2 else (90, 6, 12))
+    s_ = 0.8 + 1.5 * e  # Gestalt springt nach vorn - die Augen bleiben in der Bildmitte
+    cx, cy = W / 2, 600 + 270 * s_
+    d.ellipse((cx - 110 * s_, cy - 380 * s_, cx + 110 * s_, cy - 130 * s_), fill=(4, 4, 6))  # Kopf
+    d.polygon([(cx - 70 * s_, cy - 160 * s_), (cx + 70 * s_, cy - 160 * s_), (cx + 260 * s_, cy + 300 * s_), (cx - 260 * s_, cy + 300 * s_)], fill=(4, 4, 6))
+    for ex in (-40, 40):
+        r = (9 + 4 * e) * s_
+        d.ellipse((cx + ex * s_ - r, cy - 270 * s_ - r, cx + ex * s_ + r, cy - 270 * s_ + r), fill=(255, 255, 255))
+    if int(lt * 8) % 2:
+        d.text((W / 2, 150), '⚠ ' + ('HE IS HERE' if en else 'ER IST DA'), font=f(48, True), fill=(255, 230, 230), anchor='mm')
