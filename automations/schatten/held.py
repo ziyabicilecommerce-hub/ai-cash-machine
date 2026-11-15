@@ -72,7 +72,28 @@ def gesicht(d, fx, fy, s, angst, blick, haut, verdeckt=False, schlaf=False, auge
         d.chord((fx - mw * 0.8 + blick * 2 * s, my - mh / 2, fx + mw * 0.8 + blick * 2 * s, my), 180, 360, fill=(236, 232, 226))
 
 
-def zeichne_held(cv, T, x, y, s, stil, sitzen, angst, blick, zeigen_gesicht, lauf, schlaf, atem, z):
+# Posen (15.11., Wunsch: "die sollen sich anders verhalten, nicht die ganze Zeit dieselbe Animation"):
+# sitzen, handy (schaut aufs Handy), umsehen (dreht sich nach hinten), lauschen (Hand am Ohr), zurueck (weicht mit erhobenen
+# Händen zurück), abwehr (steht, Hände hoch), zeigen (zeigt auf etwas), ducken (kauert am Boden, umklammert die Knie)
+SITZ_POSEN = ('sitzen', 'handy', 'umsehen')
+POSEN = SITZ_POSEN + ('lauschen', 'zurueck', 'abwehr', 'zeigen', 'ducken')
+HAENDE = {  # (Ellbogen, Hand) je Seite (-1 links, 1 rechts) im Körper-Koordinatensystem
+    'handy': {1: ((44, -170), (24, -236)), -1: ((-46, -172), (2, -228))},
+    'umsehen': {1: ((60, -184), (76, -214))},
+    'lauschen': {1: ((52, -246), (30, -282))},
+    'abwehr': {1: ((44, -196), (40, -244)), -1: ((-44, -196), (-4, -244))},
+    'zurueck': {1: ((44, -196), (40, -244)), -1: ((-44, -196), (-4, -244))},
+    'zeigen': {1: ((72, -222), (118, -252))},
+    'ducken': {1: ((40, -150), (58, -186)), -1: ((-36, -150), (42, -190))},
+}
+
+
+def zeichne_held(cv, T, x, y, s, stil, sitzen, angst, blick, zeigen_gesicht, lauf, schlaf, atem, z, pose=None, fort=0.0):
+    if pose in POSEN:
+        sitzen = pose in SITZ_POSEN
+        if pose == 'zurueck' and lauf is None:
+            lauf = fort * 9
+        blick = {'umsehen': -1.0, 'lauschen': 0.7, 'zeigen': 0.9, 'handy': 0.25}.get(pose, blick)
     d = ImageDraw.Draw(cv)
     S = s * A
     k = lambda px, py: T(x + px * s, y + py * s)
@@ -85,7 +106,16 @@ def zeichne_held(cv, T, x, y, s, stil, sitzen, angst, blick, zeigen_gesicht, lau
     haar = tuple(stil.get('haar', (38, 28, 24)))
     oberteil, kopfart = stil.get('oberteil', 'hoodie'), stil.get('kopf', 'haare')
     # Beine
-    if sitzen:
+    def knie_hoch():  # sitzt am Boden, Knie hochgezogen (vor dem Oberkörper gemalt)
+        for dx, f in ((12, _ton(hose, 0.8)), (-10, hose)):
+            _glied(d, k0(dx, -40), k0(dx + 46, -112), 34 * S, 27 * S, f)
+            _glied(d, k0(dx + 46, -112), k0(dx + 56, -16), 26 * S, 20 * S, f)
+            d.rounded_rectangle((*k0(dx + 44, -22), *k0(dx + 88, 0)), radius=int(9 * S), fill=(30, 30, 36))
+
+    k0 = k
+    if pose == 'ducken':
+        pass
+    elif sitzen:
         for dx, f in ((14, _ton(hose, 0.8)), (-12, hose)):
             _glied(d, k(dx, -122), k(dx + 78, -112), 34 * S, 27 * S, f)
             _glied(d, k(dx + 78, -112), k(dx + 82, -24), 26 * S, 20 * S, f)
@@ -100,6 +130,8 @@ def zeichne_held(cv, T, x, y, s, stil, sitzen, angst, blick, zeigen_gesicht, lau
             _glied(d, k(*knie), k(*fuss), 24 * S, 18 * S, f)
             d.rounded_rectangle((*k(fuss[0] - 15, fuss[1] - 4), *k(fuss[0] + 24, fuss[1] + 14)), radius=int(8 * S), fill=(30, 30, 36))
             d.rectangle((*k(fuss[0] - 15, fuss[1] + 9), *k(fuss[0] + 24, fuss[1] + 14)), fill=(220, 220, 224))
+    if pose == 'ducken':  # Oberkörper sinkt mit nach unten
+        k = lambda px, py: k0(px, py + 82)
     # Oberkörper: breite Schultern, schmalere Hüfte
     top = -236 + atem
     d.polygon([k(-42, top + 12), k(-30, top), k(30, top), k(42, top + 12), k(36, -128), k(32, -112), k(-32, -112), k(-36, -128)], fill=stoff)
@@ -118,10 +150,12 @@ def zeichne_held(cv, T, x, y, s, stil, sitzen, angst, blick, zeigen_gesicht, lau
             d.ellipse((bx - 3 * S, by - 3 * S, bx + 3 * S, by + 3 * S), fill=falte)
     else:
         d.line((*k(0, top + 4), *k(0, -116)), fill=falte, width=max(1, int(3 * S)))
+    if pose == 'ducken':
+        knie_hoch()
     SK = S * 1.25
     kx, ky = k(blick * 6, -282 + atem * 0.4)
     fx, fy = kx + blick * 4 * S, ky + 4 * S
-    vorm_mund = angst > 0.75
+    vorm_mund = angst > 0.75 and pose in (None, 'sitzen')
 
     def arme(vorn):
         for sx in (-1, 1):
@@ -130,6 +164,10 @@ def zeichne_held(cv, T, x, y, s, stil, sitzen, angst, blick, zeigen_gesicht, lau
             elif lauf is not None:
                 schw = math.sin(lauf + (sx > 0) * math.pi) * 34
                 ell, hand = k(sx * 52 + schw, -165), k(sx * 34 + schw * 1.6, -192)
+            elif sx in HAENDE.get(pose, {}):
+                ell, hand = (k(*p) for p in HAENDE[pose][sx])
+                if pose in ('abwehr', 'zurueck'):  # Hände zittern abwehrend
+                    hand = (hand[0] + math.sin(z * 31 + sx) * 2 * S, hand[1] + math.sin(z * 23) * 2 * S)
             else:
                 ell, hand = k(sx * 50, -176), k(sx * 46, -122)
             arm = _ton(stoff, 0.86)
@@ -142,6 +180,13 @@ def zeichne_held(cv, T, x, y, s, stil, sitzen, angst, blick, zeigen_gesicht, lau
 
     if not vorm_mund:
         arme(False)
+    if pose == 'handy':  # Handy zwischen den Händen, Bildschirm leuchtet
+        hx, hy = k(13, -246)
+        d.rounded_rectangle((hx - 12 * S, hy - 20 * S, hx + 12 * S, hy + 20 * S), radius=int(4 * S), fill=(20, 22, 28))
+        d.rounded_rectangle((hx - 10 * S, hy - 17 * S, hx + 10 * S, hy + 17 * S), radius=int(3 * S), fill=(200, 225, 255))
+    if pose == 'zeigen':  # Zeigefinger
+        hx, hy = k(118, -252)
+        d.line((hx, hy, hx + 16 * S, hy - 6 * S), fill=haut, width=max(1, int(5 * S)))
     # Hals + Kopf (Gesicht mit spitzerem Kinn)
     d.rectangle((fx - 6.5 * SK, fy + 14 * SK, fx + 6.5 * SK, fy + 32 * SK), fill=_ton(haut, 0.8))
     if kopfart == 'kapuze':
