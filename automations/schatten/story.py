@@ -338,11 +338,13 @@ def main():
             sz['text'] = kamera.ohne_teil(sz.get('text'))
             sz.setdefault('blitzbild', [1.1]); sz.setdefault('schreck_bei', 1.1)
     teil, teile = kamera.teil_von(story.get('titel')), story.get('teile')
-    effekte.NATIV['an'] = story.get('stil') == 'nativ'  # große Wort-Untertitel in der Mitte, keine Banner
+    effekte.NATIV['an'] = story.get('stil') in ('nativ', 'pov')  # große Wort-Untertitel in der Mitte, keine Banner
     for i, sz in enumerate(szenen):  # wer genau hinschaut, sieht ihn schon vor dem Jumpscare - von Szene zu Szene naeher
         if i > 0 and sz['art'] in ('innen', 'handy') and 'naeher' not in sz:
             sz['naeher'] = round(min(0.55, 0.1 + 0.6 * i / len(szenen)), 2)
     posen.posen_verteilen(szenen)
+    if story.get('stil') == 'pov':  # Ich-Perspektive (pov.py): Hände mit Handy statt gezeichneter Figur
+        import pov; pov.einrichten(story, globals()); effekte.NATIV['an'] = True
     ki_bilder_laden(story, ordner)
     fratze_ki = next((x['_kibild'] for x in story['szenen'] if x['art'] == 'fratze' and x.get('_kibild') is not None), None)
     stumm = os.environ.get('STUMM') == '1'

@@ -214,7 +214,8 @@ test('KI-Hintergründe nur mit ki: true (Standard seit 13.11.: gezeichnete Schat
 test('Nativer Stil: Standard für kurze Videos - keine Karte, keine Banner, Frage als letzter Untertitel', () => {
   const sk = { titel: 'Probe', hook: 'Wenn es um 3 Uhr klingelt, renn.', saetze: ['Ich öffne.', 'Niemand da.', 'Es klingelt wieder.'], ende: 'Von innen.', frage: 'Hättest du geöffnet?', wahl: ['Öffnen', 'Rennen'], kurz: true };
   const f = bauen(sk);
-  assert.equal(f.stil, 'nativ');
+  assert.equal(f.stil, 'pov', 'kurze Videos: Ich-Perspektive');
+  assert.equal(bauen({ ...sk, stil: 'nativ' }).stil, 'nativ');
   assert.equal(f.suchbild, false); assert.equal(f.schlag, '');
   const ende = f.szenen.at(-1);
   assert.equal(ende.art, 'dunkel'); assert.equal(ende.text, 'HÄTTEST DU GEÖFFNET?'); assert.equal(ende.wahl, undefined);
