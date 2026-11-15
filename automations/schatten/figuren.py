@@ -75,6 +75,12 @@ def mensch(lage, x, y, s=1.0, sitzen=True, farbe=HAUT, angst=0.0, blick=0.0, ges
     if lauf is not None:  # beim Rennen federt der ganze Körper
         y -= abs(math.sin(lauf)) * 10 * s
 
+    if stil:  # Hauptfigur und Nebenfiguren mit eigenem Stil: neuer Webtoon-Stil (held.py, 15.11.)
+        from held import zeichne_held
+        _ss(lage, (x - 110 * s, y - 372 * s, x + 150 * s, y + 10 * s),
+            lambda cv, T: zeichne_held(cv, T, x, y, s, stil, sitzen, angst, blick, gesicht, lauf, schlaf, atem, z))
+        return
+
     def zeichne(cv, T):
         d = ImageDraw.Draw(cv)
         S = s * A
@@ -246,24 +252,27 @@ def schatten(ziel, x, y, s=1.0, wink=0.0, alpha=255, augen=True):
             return cv
         g = ImageDraw.Draw(cv)
         ga = min(255, alpha + 60)
-        zu = (ZEIT[0] % 3.7) < 0.13  # blinzeln
+        # 15.11. neues Gesicht: Rippen, leere weiß glühende Augen, schief aufgerissenes Maul mit ungleichen Zähnen
+        for i in range(4):
+            ry = -360 + i * 26
+            g.arc((*k(-24, ry - 8), *k(30, ry + 14)), 200, 340, fill=(34, 32, 38, int(alpha * 0.9)), width=max(1, int(2.4 * S)))
+        zu = (ZEIT[0] % 3.7) < 0.13
         for ex in (-14, 14):
-            cx, cy = k(ex + 6, -458)
-            r = ROTGLUT.resize((max(8, int(70 * S)), max(8, int(70 * S))))
+            cx, cy = k(ex + 6, -462)
+            r = ROTGLUT.resize((max(8, int(78 * S)), max(8, int(78 * S))))
             cv.alpha_composite(r, (int(cx - r.width / 2), int(cy - r.height / 2)))
             if zu:
-                g.line((cx - 10 * S, cy, cx + 10 * S, cy), fill=(255, 240, 220, ga), width=max(1, int(2 * S)))
+                g.line((cx - 9 * S, cy, cx + 9 * S, cy), fill=(255, 255, 255, ga), width=max(1, int(2 * S)))
             else:
-                o = 1 if ex > 0 else -1  # schräg nach innen unten: böser Blick
-                g.polygon([(cx + o * 14 * S, cy - 5 * S), (cx, cy - 8 * S), (cx - o * 12 * S, cy + 3 * S), (cx, cy + 6 * S)], fill=(255, 245, 225, ga))
-                g.ellipse((cx - 1.6 * S, cy - 5 * S, cx + 1.6 * S, cy + 4 * S), fill=(0, 0, 0, ga))
-        mx, my = k(6, -425)
-        pts = [(mx + i * S, my - 0.016 * (i * i) * S) for i in range(-26, 27, 2)]
-        pts_u = [(px, py + 9 * S * (1 - abs(i) / 28)) for (px, py), i in zip(pts, range(-26, 27, 2))]
-        g.polygon(pts + pts_u[::-1], fill=(235, 230, 215, ga))
-        for (px, py), i in zip(pts, range(-26, 27, 2)):
-            if i % 4 == 0:
-                g.line((px, py, px, py + 9 * S), fill=(0, 0, 0, ga), width=max(1, int(1.5 * S)))
+                g.ellipse((cx - 4.5 * S, cy - 4.5 * S, cx + 4.5 * S, cy + 4.5 * S), fill=(255, 236, 220, ga))  # kleine stechende Pupille
+        mx, my = k(6, -424)
+        oben = [(mx + i * 0.8 * S, my - 0.006 * (i * i) * S + math.sin(i) * 2 * S) for i in range(-30, 31, 3)]
+        unten = [(px, py + (30 - abs(i) * 0.7) * S) for (px, py), i in zip(oben, range(-30, 31, 3))]
+        g.polygon(oben + unten[::-1], fill=(60, 8, 12, ga))
+        for (px, py), (ux, uy), i in zip(oben, unten, range(-30, 31, 3)):
+            lang = (8 + (i * 7) % 6) * S
+            g.polygon([(px - 2.2 * S, py), (px + 2.2 * S, py), (px, py + lang)], fill=(238, 232, 214, ga))
+            g.polygon([(ux - 1.6 * S, uy), (ux + 1.6 * S, uy), (ux, uy - lang * 0.8)], fill=(238, 232, 214, ga))
         return cv
 
     _ss(ziel, box, zeichne)
