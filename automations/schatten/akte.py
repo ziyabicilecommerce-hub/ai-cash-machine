@@ -5,8 +5,10 @@ import re
 from PIL import Image, ImageDraw
 import akte_karten as K
 
-ORT_TEXT = {'de': {'haus': 'WOHNUNG · 3. STOCK', 'zug': 'NACHTZUG · WAGEN 4', 'wald': 'WALD · ZELTPLATZ', 'aufzug': 'HOCHHAUS · AUFZUG B', 'flugzeug': 'FLUG 309 · REIHE 14'},
-            'en': {'haus': 'APARTMENT · 3RD FLOOR', 'zug': 'NIGHT TRAIN · CAR 4', 'wald': 'FOREST · CAMPSITE', 'aufzug': 'TOWER · ELEVATOR B', 'flugzeug': 'FLIGHT 309 · ROW 14'}}
+ORT_TEXT = {'de': {'strasse': 'LANDSTRASSE · KM 14', 'stadt': 'HOCHHAUS · 11. STOCK', 'hotel': 'HOTEL · ZIMMER 309', 'tankstelle': 'TANKSTELLE · A7', 'see': 'SEE · BOOTSSTEG',
+                   'haus': 'WOHNUNG · 3. STOCK', 'zug': 'NACHTZUG · WAGEN 4', 'wald': 'WALD · ZELTPLATZ', 'aufzug': 'HOCHHAUS · AUFZUG B', 'flugzeug': 'FLUG 309 · REIHE 14'},
+            'en': {'strasse': 'COUNTRY ROAD · MILE 9', 'stadt': 'TOWER · 11TH FLOOR', 'hotel': 'HOTEL · ROOM 309', 'tankstelle': 'GAS STATION · I-80', 'see': 'LAKE · DOCK',
+                   'haus': 'APARTMENT · 3RD FLOOR', 'zug': 'NIGHT TRAIN · CAR 4', 'wald': 'FOREST · CAMPSITE', 'aufzug': 'TOWER · ELEVATOR B', 'flugzeug': 'FLIGHT 309 · ROW 14'}}
 RAEUME = [('tür', 'TÜR'), ('fenster', 'FENSTER'), ('keller', 'KELLER'), ('flur', 'FLUR'), ('wand', 'WAND'), ('bett', 'BETT'),
           ('bad', 'BAD'), ('küche', 'KÜCHE'), ('zimmer', 'ZIMMER'), ('door', 'DOOR'), ('window', 'WINDOW'), ('wall', 'WALL'), ('room', 'ROOM')]
 
@@ -29,6 +31,18 @@ def einrichten(story, g):
     szenen = story['szenen']
     en = story.get('sprache') == 'en'
     ort = story.get('ort', 'haus')
+    # 15.11. (Wunsch: "nicht immer Häuser, andere Orte auch"): Illustration nach Stichwörtern in der Geschichte
+    alles = ' '.join(str(s.get('text') or s.get('sprich') or '') for s in szenen).lower()
+    for w, o in (('auto', 'strasse'), ('fahr', 'strasse'), ('straße', 'strasse'), ('anhalter', 'strasse'), ('taxi', 'strasse'), ('tunnel', 'strasse'),
+                 ('tankstelle', 'tankstelle'), ('raststätte', 'tankstelle'), ('hotel', 'hotel'), ('zimmerservice', 'hotel'), ('ferienwohnung', 'hotel'),
+                 ('see\\b', 'see'), ('steg\\b', 'see'), ('pilot', 'flugzeug'), ('flug', 'flugzeug'), ('aufzug', 'aufzug'),
+                 ('zug\\b', 'zug'), ('nachtbus', 'zug'), ('car ', 'strasse'), ('road', 'strasse'), ('hotel', 'hotel'), ('lake', 'see')):
+        if re.search(rf'\b{w}', alles):
+            ort = o
+            break
+    else:
+        if ort == 'haus':  # Wohnungs-Geschichten ohne Stichwort: abwechselnd Haus oder Hochhäuser
+            ort = 'stadt' if sum(map(ord, story.get('titel', ''))) % 2 else 'haus'
     hook = next((s.get('text') or '' for s in szenen if s['art'] == 'blitz'), '')
     regel = hook.split(',')[-1].strip(' .!').capitalize() if ',' in hook else ('Nicht antworten' if not en else 'Do not answer')
     regeln = [regel[:22], 'Licht aus' if not en else 'Lights off', 'Warten bis 6:12' if not en else 'Wait until 6:12']

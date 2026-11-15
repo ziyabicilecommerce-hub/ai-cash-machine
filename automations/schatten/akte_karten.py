@@ -58,6 +58,65 @@ def ort_bild(im, ort, t, dunkel=0.0, gestalt=0.0):
             for c in range(4):
                 if (r * 4 + c) % 3:
                     fenster.append((240 + c * 64, 240 + r * 58, 284 + c * 64, 276 + r * 58))
+    elif ort == 'strasse':  # Landstraße, Auto mit Scheinwerfern, Laternen ziehen vorbei
+        d.polygon([(330, 760), (390, 760), (W + 120, H), (-120, H)], fill=(34, 34, 40))
+        for i in range(6):
+            z = ((t * 0.7 + i / 6) % 1)
+            y0 = 760 + (H - 760) * z * z
+            d.rectangle((357 - 4 * z, y0, 363 + 4 * z, y0 + 30 * z + 4), fill=(220, 210, 150))
+            for sx in (-1, 1):
+                x = 360 + sx * (60 + 520 * z * z)
+                d.line((x, y0, x, y0 - 40 - 300 * z * z), fill=(70, 70, 80), width=max(2, int(8 * z)))
+                d.ellipse((x - 12 * z - 3, y0 - 46 - 300 * z * z, x + 12 * z + 3, y0 - 34 - 300 * z * z), fill=(255, 220, 140))
+        d.rounded_rectangle((250, 960, 470, 1080), 26, fill=(150, 30, 40))
+        d.rounded_rectangle((285, 900, 435, 980), 20, fill=(120, 24, 32))
+        d.rectangle((300, 912, 420, 960), fill=(30, 36, 52))
+        fenster.append((330, 916, 390, 958))
+        for sx in (-1, 1):
+            d.ellipse((360 + sx * 85 - 16, 1010, 360 + sx * 85 + 16, 1040), fill=(255, 240, 190))
+    elif ort == 'stadt':  # Hochhäuser, vereinzelt Licht
+        for i, (x, hh) in enumerate(((20, 420), (150, 560), (290, 380), (400, 620), (540, 470), (640, 520))):
+            d.rectangle((x, 760 - hh, x + 110, 770), fill=(40 + i % 2 * 8, 44, 60))
+            for r in range(hh // 46):
+                for c in range(3):
+                    fenster.append((x + 12 + c * 34, 780 - hh + r * 46, x + 34 + c * 34, 806 - hh + r * 46))
+    elif ort == 'hotel':  # Hotel mit Leuchtschrift
+        d.rectangle((150, 300, 570, 770), fill=(60, 50, 64))
+        d.rectangle((200, 230, 520, 300), fill=(20, 16, 24))
+        an = int(t * 3) % 7 != 0
+        d.text((360, 265), 'HOTEL', font=f(56, True), fill=(255, 70, 90) if an else (90, 30, 40), anchor='mm')
+        for r in range(6):
+            for c in range(5):
+                fenster.append((176 + c * 78, 330 + r * 68, 226 + c * 78, 374 + r * 68))
+    elif ort == 'tankstelle':
+        d.rectangle((90, 520, 630, 560), fill=(230, 230, 236))
+        d.rectangle((90, 560, 630, 572), fill=(200, 40, 50))
+        for x in (140, 560):
+            d.rectangle((x, 572, x + 22, 770), fill=(200, 200, 206))
+        for x in (260, 420):
+            d.rounded_rectangle((x, 640, x + 46, 770), 8, fill=(200, 40, 50))
+            d.rectangle((x + 8, 656, x + 38, 690), fill=(30, 36, 50))
+        licht = Image.new('RGBA', im.size, (0, 0, 0, 0))
+        ImageDraw.Draw(licht).polygon([(90, 572), (630, 572), (720, 900), (0, 900)], fill=(255, 250, 220, 60))
+        im.paste(licht.filter(ImageFilter.GaussianBlur(20)), (0, 0), licht.filter(ImageFilter.GaussianBlur(20)))
+        fenster.append((300, 600, 330, 640))
+    elif ort == 'see':  # See mit Steg, Spiegelung des Mondes
+        d.rectangle((0, 700, W, H), fill=(14, 22, 44))
+        for i in range(10):
+            d.line((560 + math.sin(t * 2 + i) * 20, 720 + i * 26, 600 - math.sin(t * 2 + i) * 20, 720 + i * 26), fill=(200, 200, 190), width=3)
+        for i in range(12):
+            x = i * 64 - 20
+            d.polygon([(x + 30, 700 - 180 - (i * 37) % 90), (x - 10, 704), (x + 70, 704)], fill=(8, 20, 18))
+        d.polygon([(250, H), (330, 820), (370, 820), (420, H)], fill=(80, 60, 44))
+        fenster.append((340, 760, 362, 818))
+    elif ort == 'flugzeug':  # Blick aus dem Flugzeugfenster über Wolken
+        d.rectangle((0, 0, W, H), fill=(30, 32, 40))
+        d.rounded_rectangle((150, 300, 570, 860), 200, fill=(40, 60, 110))
+        for i in range(5):
+            d.ellipse((150 + i * 90 - 60, 700 - (i % 2) * 40, 150 + i * 90 + 120, 820), fill=(200, 206, 220))
+        d.polygon([(330, 520), (600, 600), (600, 630), (330, 560)], fill=(180, 184, 196))  # Tragfläche
+        d.rounded_rectangle((150, 300, 570, 860), 200, outline=(70, 72, 84), width=26)
+        fenster.append((440, 560, 470, 600))
     else:  # Haus
         d.polygon([(170, 470), (360, 330), (550, 470)], fill=(52, 46, 58))
         d.rectangle((200, 470, 520, 770), fill=(70, 64, 78))
