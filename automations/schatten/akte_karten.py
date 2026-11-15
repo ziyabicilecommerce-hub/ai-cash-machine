@@ -25,6 +25,12 @@ def schatten_rand(im, box, r=26):
 
 
 def ort_bild(im, ort, t, dunkel=0.0, gestalt=0.0):
+    from akte_orte import ORTE
+    if ort in ORTE:  # detaillierte Orte (akte_orte.py): Wohnblock, Hausflur, Schlafzimmer, Haus am Waldrand
+        ORTE[ort](im, t, gestalt, dunkel)
+        if dunkel:
+            im.paste(Image.blend(im, Image.new('RGB', im.size, (4, 4, 10)), dunkel))
+        return
     # flache Nacht-Illustration: Mond, Sterne, Haus / Zug / Wald / Hochhaus mit Aufzug; optional Gestalt im Fenster
     d = ImageDraw.Draw(im)
     for y in range(0, 760, 8):

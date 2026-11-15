@@ -5,10 +5,12 @@ import re
 from PIL import Image, ImageDraw
 import akte_karten as K
 
-ORT_TEXT = {'de': {'strasse': 'LANDSTRASSE · KM 14', 'stadt': 'HOCHHAUS · 11. STOCK', 'hotel': 'HOTEL · ZIMMER 309', 'tankstelle': 'TANKSTELLE · A7', 'see': 'SEE · BOOTSSTEG',
-                   'haus': 'WOHNUNG · 3. STOCK', 'zug': 'NACHTZUG · WAGEN 4', 'wald': 'WALD · ZELTPLATZ', 'aufzug': 'HOCHHAUS · AUFZUG B', 'flugzeug': 'FLUG 309 · REIHE 14'},
-            'en': {'strasse': 'COUNTRY ROAD · MILE 9', 'stadt': 'TOWER · 11TH FLOOR', 'hotel': 'HOTEL · ROOM 309', 'tankstelle': 'GAS STATION · I-80', 'see': 'LAKE · DOCK',
-                   'haus': 'APARTMENT · 3RD FLOOR', 'zug': 'NIGHT TRAIN · CAR 4', 'wald': 'FOREST · CAMPSITE', 'aufzug': 'TOWER · ELEVATOR B', 'flugzeug': 'FLIGHT 309 · ROW 14'}}
+ORT_TEXT = {'de': {'wohnblock': 'WOHNBLOCK · 4. STOCK', 'flur': 'TREPPENHAUS · TÜR 3B', 'schlafzimmer': 'SCHLAFZIMMER · 3:12',
+                   'strasse': 'LANDSTRASSE · KM 14', 'stadt': 'HOCHHAUS · 11. STOCK', 'hotel': 'HOTEL · ZIMMER 309', 'tankstelle': 'TANKSTELLE · A7', 'see': 'SEE · BOOTSSTEG',
+                   'haus': 'HAUS AM WALDRAND', 'zug': 'NACHTZUG · WAGEN 4', 'wald': 'WALD · ZELTPLATZ', 'aufzug': 'HOCHHAUS · AUFZUG B', 'flugzeug': 'FLUG 309 · REIHE 14'},
+            'en': {'wohnblock': 'APARTMENT BLOCK · 4TH FLOOR', 'flur': 'STAIRWELL · DOOR 3B', 'schlafzimmer': 'BEDROOM · 3:12 AM',
+                   'strasse': 'COUNTRY ROAD · MILE 9', 'stadt': 'TOWER · 11TH FLOOR', 'hotel': 'HOTEL · ROOM 309', 'tankstelle': 'GAS STATION · I-80', 'see': 'LAKE · DOCK',
+                   'haus': 'HOUSE BY THE WOODS', 'zug': 'NIGHT TRAIN · CAR 4', 'wald': 'FOREST · CAMPSITE', 'aufzug': 'TOWER · ELEVATOR B', 'flugzeug': 'FLIGHT 309 · ROW 14'}}
 RAEUME = [('tür', 'TÜR'), ('fenster', 'FENSTER'), ('keller', 'KELLER'), ('flur', 'FLUR'), ('wand', 'WAND'), ('bett', 'BETT'),
           ('bad', 'BAD'), ('küche', 'KÜCHE'), ('zimmer', 'ZIMMER'), ('door', 'DOOR'), ('window', 'WINDOW'), ('wall', 'WALL'), ('room', 'ROOM')]
 
@@ -27,22 +29,38 @@ def karte_fuer(s, nr, gesamt):
     return ['portrait', 'regeln', 'plan', 'ton'][nr % 4]
 
 
+# Stichwort -> Ort; die genaueren zuerst (Tankstelle vor Auto, Auto vor Tür)
+ORT_WOERTER = [('tankstelle', 'tankstelle'), ('raststätte', 'tankstelle'), ('hotel', 'hotel'), ('zimmerservice', 'hotel'), ('ferienwohnung', 'hotel'),
+               ('auto', 'strasse'), ('fahr', 'strasse'), ('straße', 'strasse'), ('anhalter', 'strasse'), ('taxi', 'strasse'), ('tunnel', 'strasse'),
+               ('car\\b', 'strasse'), ('road', 'strasse'), ('pilot', 'flugzeug'), ('flug', 'flugzeug'), ('aufzug', 'aufzug'), ('elevator', 'aufzug'),
+               ('zug\\b', 'zug'), ('nachtbus', 'zug'), ('train', 'zug'), ('see\\b', 'see'), ('steg\\b', 'see'), ('lake', 'see'),
+               ('zelt', 'wald'), ('tent', 'wald'), ('wald', 'wald'), ('forest', 'wald'),
+               ('nebenan', 'wohnblock'), ('nachbar', 'wohnblock'), ('wand\\b', 'wohnblock'), ('neighbor', 'wohnblock'), ('wall\\b', 'wohnblock'),
+               ('treppenhaus', 'flur'), ('flur', 'flur'), ('hallway', 'flur'), ('bett', 'schlafzimmer'), ('schrank', 'schlafzimmer'),
+               ('schlaf', 'schlafzimmer'), ('kinderzimmer', 'schlafzimmer'), ('bed\\b', 'schlafzimmer'), ('closet', 'schlafzimmer'),
+               ('tür', 'flur'), ('door', 'flur')]
+
+
+def ort_von(text):
+    for w, o in ORT_WOERTER:
+        if re.search(rf'\b{w}', text):
+            return o
+    return None
+
+
 def einrichten(story, g):
     szenen = story['szenen']
     en = story.get('sprache') == 'en'
     ort = story.get('ort', 'haus')
     # 15.11. (Wunsch: "nicht immer Häuser, andere Orte auch"): Illustration nach Stichwörtern in der Geschichte
     alles = ' '.join(str(s.get('text') or s.get('sprich') or '') for s in szenen).lower()
-    for w, o in (('tankstelle', 'tankstelle'), ('raststätte', 'tankstelle'), ('hotel', 'hotel'), ('zimmerservice', 'hotel'), ('auto', 'strasse'), ('fahr', 'strasse'), ('straße', 'strasse'), ('anhalter', 'strasse'), ('taxi', 'strasse'), ('tunnel', 'strasse'),
-                 ('tankstelle', 'tankstelle'), ('raststätte', 'tankstelle'), ('hotel', 'hotel'), ('zimmerservice', 'hotel'), ('ferienwohnung', 'hotel'),
-                 ('see\\b', 'see'), ('steg\\b', 'see'), ('pilot', 'flugzeug'), ('flug', 'flugzeug'), ('aufzug', 'aufzug'),
-                 ('zug\\b', 'zug'), ('nachtbus', 'zug'), ('car ', 'strasse'), ('road', 'strasse'), ('hotel', 'hotel'), ('lake', 'see')):
-        if re.search(rf'\b{w}', alles):
-            ort = o
-            break
-    else:
-        if ort == 'haus':  # Wohnungs-Geschichten ohne Stichwort: abwechselnd Haus oder Hochhäuser
-            ort = 'stadt' if sum(map(ord, story.get('titel', ''))) % 2 else 'haus'
+    gefunden = ort_von(alles)
+    if gefunden:
+        ort = gefunden
+    elif ort == 'haus':  # Wohnungs-Geschichten ohne Stichwort: Hochhäuser, Haus am Waldrand oder Wohnblock
+        ort = ['stadt', 'haus', 'wohnblock'][sum(map(ord, story.get('titel', ''))) % 3]
+    for s in szenen:  # die Schluss-Szene darf woanders spielen, wenn ihr Satz es sagt ("...an meiner Tür" -> Hausflur)
+        s['akte_ort'] = (ort_von(str(s.get('text') or '').lower()) or ort) if s['art'] in ('ende', 'teil2') else ort
     hook = next((s.get('text') or '' for s in szenen if s['art'] == 'blitz'), '')
     regel = hook.split(',')[-1].strip(' .!').capitalize() if ',' in hook else ('Nicht antworten' if not en else 'Do not answer')
     regeln = [regel[:22], 'Licht aus' if not en else 'Lights off', 'Warten bis 6:12' if not en else 'Wait until 6:12']
@@ -81,11 +99,11 @@ def einrichten(story, g):
         if s['art'] == 'teil2' and s.get('wahl'):
             K.wahl_karten(im, lt, s['wahl'][0], s['wahl'][1], 'Schreib es in die Kommentare' if not en else 'Tell me in the comments')
         elif s['art'] == 'teil2':
-            K.ort_bild(im, ort, t, dunkel=0.5, gestalt=1)
+            K.ort_bild(im, s.get('akte_ort', ort), t, dunkel=0.35, gestalt=1)
         elif art == 'ort':
             K.ort_bild(im, ort, t, gestalt=0.0)
         elif art == 'warnung':
-            K.ort_bild(im, ort, t, dunkel=0.75, gestalt=1)
+            K.ort_bild(im, s.get('akte_ort', ort), t, dunkel=0.45, gestalt=1)
             K.warnung(im, lt, 'NOTFALLWARNUNG' if not en else 'EMERGENCY ALERT')
         elif art == 'chat':
             K.chat(im, lt, absender, chat_text, notfall=monster or ('Antworte nicht.' if not en else 'Do not reply.'))
