@@ -145,6 +145,8 @@ async function vorbereiten() {
       }
       if (!h) { bericht(`- ⚠️ ${k.name}: keine Horror-Geschichte`); continue; }
       const variante = abVariante(Math.random, k.dienst === 'youtube' ? gewichteYT : gewichte);
+      // YouTube (15.11.): Posts mit "Seine Augen sind 3x versteckt" holten Ø 460 statt Ø 181 Aufrufe (12 vs. 44 Posts) - dort fast immer an
+      if (k.dienst === 'youtube') variante.suchbild = Math.random() < 0.9;
       if (!h.skript.hook2) variante.duhook = false;  // nur Skript-Bot-Geschichten haben einen Du-Hook
       if (!schlagzeile(h.skript.muster, quelle === 'horror-en' ? 'en' : 'de')) variante.schlag = false;  // Schlagzeile gibt es nur für bekannte Muster
       const hook = variante.duhook ? h.skript.hook2 : h.skript.hook;
