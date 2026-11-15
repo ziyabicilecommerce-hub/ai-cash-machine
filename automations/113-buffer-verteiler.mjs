@@ -14,6 +14,7 @@ import { naechstesSkriptEn, SKRIPTE_EN } from './schatten/skripteEn.mjs';
 import { teil2Kandidat as teil2KandidatSync } from './schatten/skriptBot.mjs';
 import { naechsterKurzHorror, kurzHeuteSchon } from './schatten/kurzHorror.mjs';
 import { schlagzeile } from './schatten/schlagzeilen.mjs';
+import { remakeKandidat, zuletztRemake } from './schatten/ytHits.mjs';
 
 const TOKEN = (process.env.BUFFER_ACCESS_TOKEN || '').trim();
 const STAND = 'buffer-verteiler/stand.json';
@@ -65,7 +66,7 @@ async function horrorSkript(gepostet, konto = '') {
     if (s) return { skript: s, herkunft: 'KI (neu)' };
   } catch (e) { console.log(`[113] KI nicht verfügbar: ${String(e.message).slice(0, 120)}`); }
   // Skript-Bot: neue Geschichten aus bewährten Mustern, ohne KI - das Muster mit den meisten Aufrufen zuerst
-  const bot = naechstesSkript(bekannt, letzte);
+  const bot = naechstesSkript(bekannt, letzte, { hits: json('automations-dashboard/tiktok/verlauf.json', []) });
   if (bot) return { skript: bot, herkunft: 'Skript-Bot' };
   if (hit) return { skript: hit, herkunft: 'TikTok-Hit', schluessel: `hit:${slug(hit.titel)}` };
   const vorrat = skripte.filter((s) => !bekannt.includes(slug(s.titel)));
@@ -81,6 +82,13 @@ function horrorSkriptEn(gepostet) {
   if (fortsetzung) return { skript: fortsetzung, herkunft: 'Part 2 of a hit' };
   const s = naechstesSkriptEn(bekannt, letzte);
   return s ? { skript: s, herkunft: 'English' } : null;
+}
+
+async function ytRemake(gepostet) {
+  const { alleSkripte } = await import('./schatten/skriptBot.mjs');
+  const toepfe = [{ skripte: alleSkripte(), sprache: 'de' }, { skripte: json('automations-dashboard/tiktok/skripte.json', { skripte: [] }).skripte, sprache: 'de' },
+    { skripte: SKRIPTE_EN, sprache: 'en' }];
+  return remakeKandidat(json('automations-dashboard/tiktok/verlauf.json', []), toepfe, gepostet);
 }
 
 async function vorbereiten() {
@@ -104,7 +112,11 @@ async function vorbereiten() {
     const { heute, letzter } = zaehlenMitStand(zaehlen(posts, k.id), stand[k.id], heuteBerlin());
     if (!postenJetzt(heute, letzter, Date.now(), { ziel: k.ziel ?? ZIEL_PRO_TAG })) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
     // Mix-Kanal: diesmal Deutsch oder Englisch (Sprach-Test)
-    const quelle = k.quelle === 'horror-mix' ? (Math.random() < enAnteilVon(k) ? 'horror-en' : 'horror') : k.quelle;
+    let quelle = k.quelle === 'horror-mix' ? (Math.random() < enAnteilVon(k) ? 'horror-en' : 'horror') : k.quelle;
+    // YouTube: abwechselnd ein Remake eines eigenen YouTube-Hits (ab 500 Aufrufen, mind. 5 Tage alt, je Hit einmal) - ytHits.mjs
+    const remake = k.dienst === 'youtube' && quelle.startsWith('horror') && !zuletztRemake(stand[k.id])
+      ? await ytRemake(stand[k.id] || {}) : null;
+    if (remake) quelle = remake.sprache === 'en' ? 'horror-en' : 'horror';
     if (quelle.startsWith('horror')) {
       // jeder Horror-Kanal bekommt eine EIGENE Geschichte: was ein anderer Kanal schon hatte oder in diesem Lauf bekommt, ist tabu
       const schonDa = Object.fromEntries([...Object.values(stand).flatMap((x) => Object.entries(x || {})), ...plan.map((x) => [x.schluessel, 'jetzt'])]);
@@ -113,8 +125,8 @@ async function vorbereiten() {
       const heuteTexte = posts.filter((x) => x.channelId === k.id).map((x) => String(x.text || ''));
       const schonHeute = (sk) => [sk.hook, sk.hook2].some((hk) => hk && heuteTexte.some((t) => t.includes(String(hk).slice(0, 40))));
       const extra = {};
-      let h = null;
-      for (let versuch = 0; versuch < 5; versuch++) {
+      let h = remake;
+      for (let versuch = 0; !remake && versuch < 5; versuch++) {
         const gepostet = { ...schonDa, ...(stand[k.id] || {}), ...extra };
         h = quelle === 'horror-en' ? horrorSkriptEn(gepostet) : await horrorSkript(gepostet, k.name);
         if (!h || !schonHeute(h.skript)) break;
