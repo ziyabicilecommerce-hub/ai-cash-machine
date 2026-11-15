@@ -29,7 +29,8 @@ jobs:
       # bereits laufender Auftrag (z.B. eine gerade platzierte Trading-Order)
       # niemals mitten in der Ausführung abgebrochen wird, sondern der nächste
       # Lauf einfach wartet.
-      group: automation-${{ inputs.script }}
+      # Die Bewerbungs-Bots teilen sich einen verschlüsselten State - nie zwei davon gleichzeitig.
+      group: ${{ contains('automations/106-bewerbungs-bot.mjs automations/108-einzelbewerbung.mjs automations/109-initiativbewerbung.mjs automations/111-cyber-firmen-radar.mjs', inputs.script) && 'bewerbung-state' || format('automation-{0}', inputs.script) }}
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4

@@ -4,6 +4,8 @@ on:
   schedule:
     # Jeden Tag 06:00 UTC = 08:00 deutsche Sommerzeit / 07:00 Winterzeit
     - cron: '0 6 * * *'
+    # Zweiter Lauf am Nachmittag für Anzeigen, die tagsüber neu dazukommen.
+    - cron: '0 13 * * *'
   workflow_dispatch: {}
 
 permissions:
