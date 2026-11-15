@@ -5,7 +5,7 @@ import asyncio, json, math, os, random, subprocess, sys
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from ton import tonspur, raum_zeiten
 from effekte import (W, H, rotverschiebung, weich, popfont, suchzeiten, KALT_BIS, SCHLEIFE, raum_bild, zurueckspulen,
-                     hinweise, untertitel, KINO_LOOK)
+                     hinweise, untertitel, KINO_LOOK, HELL_LOOK)
 from figuren import leuchten, glied, mensch, schatten, hand, ZEIT, BOESE, HELD
 from ki import ki_bilder_laden, ki_szene
 import kamera
@@ -390,7 +390,7 @@ def main():
 
     bildspur = os.path.join(ordner, 'bild.mp4')
     p = subprocess.Popen(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
-                          '-vf', KINO_LOOK,
+                          '-vf', HELL_LOOK if story.get('hell') else KINO_LOOK,
                           '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-maxrate', '10M', '-bufsize', '20M', bildspur], stdin=subprocess.PIPE)
     cover = None
     uhr_bis = next((s['start'] for s in plan if s['art'] in ('station', 'zettel2')), gesamt)
@@ -446,7 +446,7 @@ def main():
                 im = rotverschiebung(im, 9 - b * 4)
                 band = random.randint(200, H - 300)
                 im.paste(im.crop((0, band, W, band + 70)), (random.randint(-40, 40), band))
-            if t / gesamt > 0.4 and s['art'] not in ('fratze', 'teil2') and (int(t * 12) * 7919) % 89 == 0:
+            if t / gesamt > 0.4 and s['art'] not in ('fratze', 'teil2') and (int(t * 12) * 7919) % 89 == 0 and not story.get('hell'):
                 im = Image.blend(Image.new('RGB', (W, H), NACHT), im, 0.2)  # Licht flackert kurz weg
             if id(s) in augen_szenen and 1.2 <= lt < 1.2 + 2 * B:
                 im = Image.blend(im, augenbild, 0.85)
@@ -457,7 +457,7 @@ def main():
             if s['art'] == 'blitz' and f == int(0.35 * FPS):  # Titelbild ohne Spoiler
                 cover = im.copy()
             fortschritt = t / gesamt
-            if fortschritt > 0.45 and s['art'] != 'teil2':
+            if fortschritt > 0.45 and s['art'] != 'teil2' and not story.get('hell'):
                 im = Image.blend(im, Image.new('RGB', (W, H), (45, 0, 4)), min(0.32, (fortschritt - 0.45) * 0.7))
             if kalt and s['art'] == 'blitz' and KALT_BIS - 0.3 <= lt < KALT_BIS + 0.12:
                 im = zurueckspulen(im, lt - (KALT_BIS - 0.3), sprache)

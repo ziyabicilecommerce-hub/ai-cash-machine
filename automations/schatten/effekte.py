@@ -130,13 +130,12 @@ def untertitel_nativ(im, satz, key, k, basis=(255, 255, 255), pop=1.0):
     while f.size > 52 and d.textlength(' '.join(woerter[a:e]), font=f) > W - 70:
         f = ImageFont.truetype(FONTDATEI, f.size - 6)
     x = (W - d.textlength(' '.join(woerter[a:e]), font=f)) / 2
-    for i in range(a, e):
+    for i in range(a, e):  # 15.11.: die ganze Gruppe (2-3 Wörter) steht da, das gesprochene Wort ist gelb und federt ein
         w = woerter[i]
-        if i < k:  # das gerade gesprochene Wort ist gelb und federt leicht ein
-            jetzt = i == k - 1
-            gross = ImageFont.truetype(FONTDATEI, int(f.size * (1.10 - 0.10 * weich(pop)))) if jetzt else f
-            farbe = GELB if jetzt or w.strip('".,:!?') == key else basis
-            d.text((x + d.textlength(w, font=f) / 2, 800), w, font=gross, fill=farbe, stroke_width=8, stroke_fill=(0, 0, 0), anchor='mm')
+        jetzt = i == k - 1
+        gross = ImageFont.truetype(FONTDATEI, int(f.size * (1.10 - 0.10 * weich(pop)))) if jetzt else f
+        farbe = GELB if jetzt or w.strip('".,:!?') == key else basis
+        d.text((x + d.textlength(w, font=f) / 2, 800), w, font=gross, fill=farbe, stroke_width=8, stroke_fill=(0, 0, 0), anchor='mm')
         x += d.textlength(w + ' ', font=f)
 LUECKE = 10  # Extra-Abstand zwischen Untertitel-Wörtern, damit das größer einfedernde Wort nie das Nachbarwort berührt
 SEITE = 4    # Zeilen pro Untertitel-Seite
@@ -208,6 +207,8 @@ def hinweise(im, t, story, such, sprache='de'):
 
 # Kino-Look für die fertige Bildspur (ffmpeg -vf): Bloom (Lichter leuchten weich), Teal-Orange-Farbgebung,
 # leichte Linsen-Farbsäume, Filmkorn, Vignette - wirkt teurer, kostet beim Rendern nur Sekunden
+# heller Look für den Akte-Stil (Vorlage ist klar und farbig): nur schärfen, leichtes Rauschen, keine Abdunklung
+HELL_LOOK = 'scale=1080:1920:flags=lanczos,eq=contrast=1.04:saturation=1.08,unsharp=5:5:0.4,noise=alls=4:allf=t+u,format=yuv420p'
 KINO_LOOK = ('split[a][b];[b]gblur=sigma=14[g];[a][g]blend=all_mode=screen:all_opacity=0.16,'
              'colorbalance=rs=-0.05:gs=-0.01:bs=0.07:rh=0.06:gh=0.02:bh=-0.05,eq=contrast=1.07:saturation=0.88,'
              'scale=1080:1920:flags=lanczos,rgbashift=rh=-2:bh=2,unsharp=5:5:0.5,vignette=PI/4.5,noise=alls=6:allf=t+u,format=yuv420p')

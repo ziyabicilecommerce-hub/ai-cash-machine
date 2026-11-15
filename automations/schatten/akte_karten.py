@@ -92,19 +92,19 @@ def bauplan(im, ort, markiert, t):
             d.rectangle((110 + i * 130, 560, 200 + i * 130, 630), outline=weiss, width=4)
         ziel = (330, 540, 460, 720)
     else:
-        d.rectangle((100, 360, 620, 860), outline=weiss, width=6)
-        d.line((360, 360, 360, 620), fill=weiss, width=5)
-        d.line((100, 620, 620, 620), fill=weiss, width=5)
-        d.arc((300, 560, 420, 680), 180, 270, fill=weiss, width=4)  # Tür
-        ziel = (370, 370, 610, 610)
+        d.rectangle((100, 300, 620, 720), outline=weiss, width=6)
+        d.line((360, 300, 360, 520), fill=weiss, width=5)
+        d.line((100, 520, 620, 520), fill=weiss, width=5)
+        d.arc((300, 460, 420, 580), 180, 270, fill=weiss, width=4)  # Tür
+        ziel = (370, 310, 610, 510)
     p = 0.5 + 0.5 * math.sin(t * 5)
     d.rectangle(ziel, outline=GELB, width=int(6 + 3 * p))
     for i in range(4):
         y = ziel[1] + 20 + i * (ziel[3] - ziel[1] - 40) / 3
         d.line((ziel[0] + 10, y, ziel[2] - 10, y + 30), fill=GELB, width=3)
-    d.line((ziel[0], ziel[1], 150, 250), fill=weiss, width=3)
-    d.rectangle((110, 200, 110 + f(34).getlength(markiert) + 40, 260), fill=(10, 14, 30))
-    d.text((130, 212), markiert, font=f(34), fill=weiss)
+    d.line((ziel[0], ziel[1], 150, 270), fill=weiss, width=3)
+    d.rectangle((110, 210, 110 + f(34).getlength(markiert) + 40, 260), fill=(10, 14, 30))
+    d.text((130, 222), markiert, font=f(34), fill=weiss)
     d.text((W / 2, ziel[3] + 70), '— 12 400 mm —', font=f(20, True), fill=weiss, anchor='mm')
 
 
@@ -123,21 +123,21 @@ def checkliste(im, punkte, t):
 
 def lautsprecher(im, t, label):
     d = ImageDraw.Draw(im)
-    cx, cy = W / 2, 470
+    cx, cy = W / 2, 420
     d.ellipse((cx - 190, cy - 190, cx + 190, cy + 190), fill=(54, 58, 72), outline=(120, 124, 140), width=6)
     for r in range(10, 180, 18):
         for k in range(0, 360, max(8, int(360 / (r / 3)))):
             a = math.radians(k)
             d.ellipse((cx + math.cos(a) * r - 4, cy + math.sin(a) * r - 4, cx + math.cos(a) * r + 4, cy + math.sin(a) * r + 4), fill=(24, 26, 34))
-    d.rectangle((150, 720, 570, 840), fill=(16, 22, 24), outline=(60, 90, 80), width=3)
-    d.text((165, 690), label, font=f(18, True), fill=GRUEN)
-    pts = [(160 + i * 4, 780 + math.sin(i * 0.3 + t * 9) * 26 * math.sin(i * 0.05 + t)) for i in range(100)]
+    d.rectangle((150, 630, 570, 730), fill=(16, 22, 24), outline=(60, 90, 80), width=3)
+    d.text((165, 600), label, font=f(18, True), fill=GRUEN)
+    pts = [(160 + i * 4, 680 + math.sin(i * 0.3 + t * 9) * 26 * math.sin(i * 0.05 + t)) for i in range(100)]
     d.line(pts, fill=GRUEN, width=3)
 
 
 def portrait(im, t, name, angst=0.7, held_gesicht=None):
     d = ImageDraw.Draw(im)
-    cx, cy = W / 2, 480
+    cx, cy = W / 2, 440
     d.ellipse((cx - 210, cy - 210, cx + 210, cy + 210), fill=(46, 120, 90))
     d.ellipse((cx - 190, cy - 190, cx + 190, cy + 190), fill=(226, 230, 236))
     d.ellipse((cx - 130, cy - 170, cx + 130, cy - 10), fill=(56, 40, 32))  # Haare
@@ -155,7 +155,7 @@ def portrait(im, t, name, angst=0.7, held_gesicht=None):
 def chat(im, t, absender, nachrichten, notfall=None):
     d = ImageDraw.Draw(im)
     x0, y0 = 110, 260
-    d.rounded_rectangle((x0, y0, x0 + 340, y0 + 560), 30, fill=(30, 32, 40), outline=(70, 72, 84), width=3)
+    d.rounded_rectangle((x0, y0, x0 + 340, y0 + 470), 30, fill=(30, 32, 40), outline=(70, 72, 84), width=3)
     d.ellipse((x0 + 150, y0 + 30, x0 + 190, y0 + 70), fill=(80, 84, 100))
     d.text((x0 + 170, y0 + 50), absender[:1].upper(), font=f(22), fill=(255, 255, 255), anchor='mm')
     d.text((x0 + 170, y0 + 92), absender, font=f(20), fill=(220, 220, 230), anchor='mm')
@@ -170,25 +170,25 @@ def chat(im, t, absender, nachrichten, notfall=None):
             d.text((x0 + 32, y + 10 + j * 26), z, font=f(20), fill=(240, 240, 245))
         y += h + 14
     if notfall and t > 0.3 + len(nachrichten) * 0.9:
-        d.rounded_rectangle((420, 280, 640, 840), 26, fill=(130, 20, 26))
+        d.rounded_rectangle((420, 280, 640, 730), 26, fill=(130, 20, 26))
         d.rounded_rectangle((430, 300, 630, 380), 14, fill=(220, 50, 60))
         d.text((445, 318), '⚠ NOTFALL', font=f(22), fill=(255, 255, 255))
         for j, z in enumerate(_umbruch(notfall, f(17), 170)[:2]):
             d.text((445, 348 + j * 20), z, font=f(17), fill=(255, 230, 230))
         if int(t * 3) % 2:
-            d.text((530, 620), '!', font=f(140), fill=(240, 60, 70), anchor='mm')
+            d.text((530, 580), '!', font=f(140), fill=(240, 60, 70), anchor='mm')
 
 
 def schild(im, zahl, oben, unten):
     d = ImageDraw.Draw(im)
-    d.rectangle((250, 300, 470, 370), fill=(210, 160, 40))
-    d.text((360, 335), oben, font=f(34), fill=(20, 20, 20), anchor='mm')
-    box = (170, 400, 550, 860)
+    d.rectangle((250, 260, 470, 330), fill=(210, 160, 40))
+    d.text((360, 295), oben, font=f(34), fill=(20, 20, 20), anchor='mm')
+    box = (190, 350, 530, 740)
     schatten_rand(im, box, 30)
     d.rounded_rectangle(box, 30, fill=(236, 238, 240), outline=(120, 124, 130), width=8)
-    d.text((360, 600), str(zahl), font=f(200), fill=(22, 24, 30), anchor='mm')
-    d.rectangle((200, 760, 520, 830), fill=(200, 40, 50))
-    d.text((360, 795), unten, font=f(36), fill=(255, 255, 255), anchor='mm')
+    d.text((360, 520), str(zahl), font=f(180), fill=(22, 24, 30), anchor='mm')
+    d.rectangle((215, 650, 505, 715), fill=(200, 40, 50))
+    d.text((360, 682), unten, font=f(36), fill=(255, 255, 255), anchor='mm')
 
 
 def warnung(im, t, text):
