@@ -4,6 +4,8 @@ on:
   schedule:
     # Täglich 08:15 UTC - nach #106 (06:00), damit beide nicht gleichzeitig den State schreiben
     - cron: '15 8 * * *'
+    # Zweiter Lauf am Abend.
+    - cron: '15 16 * * *'
   workflow_dispatch: {}
 
 permissions:
