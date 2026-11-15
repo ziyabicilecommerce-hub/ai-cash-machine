@@ -12,6 +12,7 @@ import { ANRUF4, DU_HOOKS4 } from './skriptMuster4.mjs';
 import { MUSTER5, TEIL2_5, DU_HOOKS5 } from './skriptMuster5.mjs';
 import { MUSTER6, TEIL2_6, DU_HOOKS6 } from './skriptMuster6.mjs';
 import { MUSTER7, TEIL2_7, DU_HOOKS7 } from './skriptMuster7.mjs';
+import { hitWoerter, hitBonus } from './ytHits.mjs';
 import { MUSTER8, TEIL2_8, DU_HOOKS8 } from './skriptMuster8.mjs';
 
 const WAHL = { flucht: ['Nachsehen', 'Rausrennen'], tuer: ['Aufmachen', 'Zulassen'], handy: ['Antworten', 'Handy weg'], ran: ['Rangehen', 'Wegdrücken'] };
@@ -151,16 +152,18 @@ export function musterWerte(letzte = [], alle = alleSkripte()) {
 
 // Nächste noch nicht gepostete Geschichte (bekannt = Slugs, die schon liefen). Mit Zahlen: das beste Muster zuerst,
 // Muster mit weniger als 2 Posts gelten als "noch testen" (leicht über Schnitt), damit jedes eine Chance bekommt.
-export function naechstesSkript(bekannt = [], letzte = []) {
+export function naechstesSkript(bekannt = [], letzte = [], { hits = [] } = {}) {
   const weg = new Set(bekannt);
   const alle = alleSkripte(), frei = alle.filter((s) => !weg.has(slug(s.titel)));
   const werte = musterWerte(letzte, alle);
   const bekannteWerte = Object.values(werte).filter((w) => w.n >= 2);
-  if (!bekannteWerte.length) return [...frei].sort((a, b) => viralPunkte(b) - viralPunkte(a))[0] || null;
+  const woerter = hitWoerter(hits);  // Wörter aus den YouTube-Hits (ytHits.mjs) geben bis zu 3 Bonus-Punkte
+  const vp = (s) => viralPunkte(s) + hitBonus(s, woerter);
+  if (!bekannteWerte.length) return [...frei].sort((a, b) => vp(b) - vp(a))[0] || null;
   const mittel = bekannteWerte.reduce((a, w) => a + w.schnitt, 0) / bekannteWerte.length;
   const punkte = (m) => (werte[m]?.n >= 2 ? werte[m].schnitt : mittel * 1.1);
   // Viral-Punkte geben je Geschichte bis ~+25 % - das gemessene Muster bleibt der wichtigste Faktor
-  const wert = (s) => punkte(s.muster) * (1 + 0.02 * viralPunkte(s));
+  const wert = (s) => punkte(s.muster) * (1 + 0.02 * vp(s));
   return [...frei].sort((a, b) => wert(b) - wert(a))[0] || null;
 }
 
