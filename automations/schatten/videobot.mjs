@@ -131,6 +131,8 @@ export function baueFolge(skript) {
   if (kiAn) {  // KI-Hintergrund je Szene (Nachricht und Endkarte bleiben gezeichnet)
     szenen.forEach((sz, i) => { if (!['nachricht', 'teil2'].includes(sz.art)) sz.ki = kiPrompt(sz.art, skript.ort || 'haus', i / szenen.length, titelZahl); });
   }
+  // Suchbild: im nativen/POV-Stil nur mit suchbild: 'immer' (YouTube, 15.11.: dort Ø 460 statt Ø 181 Aufrufe), sonst wie bisher
+  const such = kurz_ && (nativ ? skript.suchbild === 'immer' : skript.suchbild !== false);
   const titel = satz(skript.titel || skript.hook, 60);
   const titelbild = kurz(skript.hook, 80);
   return {
@@ -139,13 +141,14 @@ export function baueFolge(skript) {
     held: { farbe: [44, 56, 92], oberteil: 'hoodie', kopf: 'haare', haar: [46, 34, 26], hose: [38, 44, 70] },
     titel, titelbild, titelbild_gelb: gelbVon(titelbild), teile: skript.teil === 2 ? 2 : 1,
     ...(kiAn ? { ki_bilder: true, ki_stil: KI_STIL, ki_seed: [...String(skript.titel || '')].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 100000, 7) } : {}),
-    stil: nativ ? 'nativ' : 'studio',
-    suchbild: kurz_ && !nativ && skript.suchbild !== false,  // 3 versteckte Augenpaare + Sekunden-Frage
+    // 15.11. (Wunsch nach POV-Probe: "Ja mach so weiter"): kurze Videos in Ich-Perspektive (pov.py); stil: 'nativ'/'studio' im Skript bleibt möglich
+    stil: nativ ? (['nativ', 'schatten'].includes(skript.stil) ? 'nativ' : 'pov') : 'studio',
+    suchbild: such,  // 3 versteckte Augenpaare + Sekunden-Frage
     raum: kurz_ && skript.raum !== false,  // 3D-Ton: Flüstern kreist um den Kopf (story.py/ton.py)
     kalt: kurz_ && skript.kalt !== false,  // kalter Einstieg: 0,8 s das Ende zeigen, dann zurückspulen
     gestalt: kurz_ && skript.gestalt !== false,  // Schattenfigur kommt in leeren KI-Szenen näher (tiefe.py, A/B-Test)
     schlag: kurz_ && !nativ && skript.schlag === true ? schlagzeile(skript.muster, en ? 'en' : 'de') : '',  // große Schlagzeile in den ersten 2,6 s (A/B-Test)
-    caption: `${satz(skript.hook, 120)}${kurz_ && skript.raum !== false ? T.kopf : ''}${kurz_ && !nativ && skript.suchbild !== false
+    caption: `${satz(skript.hook, 120)}${kurz_ && skript.raum !== false ? T.kopf : ''}${such
       ? T.such : ` ${frage}${wahl && !weiter ? T.wahl(wahl[0], wahl[1]) : ''} 👇`}`, szenen,
   };
 }
