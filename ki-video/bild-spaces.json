@@ -1,35 +1,35 @@
 {
- "stand": "2026-11-09",
- "anzahl": 211,
+ "stand": "2026-11-16",
+ "anzahl": 196,
  "spaces": [
   {
    "space": "black-forest-labs/FLUX.1-dev",
    "endpoint": "/infer",
-   "likes": 9580,
+   "likes": 9586,
    "gpu": "zero-a10g"
   },
   {
    "space": "black-forest-labs/FLUX.1-schnell",
    "endpoint": "/infer",
-   "likes": 5160,
+   "likes": 5162,
    "gpu": "zero-a10g"
   },
   {
    "space": "mrfakename/Z-Image-Turbo",
    "endpoint": "/generate_image",
-   "likes": 3939,
+   "likes": 3949,
    "gpu": "zero-a10g"
   },
   {
    "space": "stabilityai/stable-diffusion-3.5-large",
    "endpoint": "/infer",
-   "likes": 2052,
+   "likes": 2053,
    "gpu": "zero-a10g"
   },
   {
    "space": "Tongyi-MAI/Z-Image-Turbo",
    "endpoint": "/generate",
-   "likes": 1938,
+   "likes": 1940,
    "gpu": "zero-a10g"
   },
   {
@@ -47,19 +47,7 @@
   {
    "space": "black-forest-labs/FLUX.2-dev",
    "endpoint": "/infer",
-   "likes": 1192,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "black-forest-labs/FLUX.2-klein-9B",
-   "endpoint": "/generate",
-   "likes": 944,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "Qwen/Qwen-Image",
-   "endpoint": "/infer",
-   "likes": 931,
+   "likes": 1197,
    "gpu": "zero-a10g"
   },
   {
@@ -83,13 +71,13 @@
   {
    "space": "Qwen/Qwen-Image-Edit-2511",
    "endpoint": "/infer",
-   "likes": 509,
+   "likes": 512,
    "gpu": "zero-a10g"
   },
   {
    "space": "Viggle/Qwen-Image-2.1-viggle-turbo",
    "endpoint": "/generate",
-   "likes": 440,
+   "likes": 446,
    "gpu": "zero-a10g"
   },
   {
@@ -113,7 +101,7 @@
   {
    "space": "Qwen/Qwen-Image-2512",
    "endpoint": "/infer",
-   "likes": 403,
+   "likes": 404,
    "gpu": "zero-a10g"
   },
   {
@@ -131,7 +119,7 @@
   {
    "space": "Qwen/Qwen-Image-Edit-2509",
    "endpoint": "/infer",
-   "likes": 344,
+   "likes": 345,
    "gpu": "zero-a10g"
   },
   {
@@ -147,15 +135,15 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "latentexplorers/latentnavigation-flux",
+   "space": "black-forest-labs/flux-3-image-klein",
    "endpoint": "/generate",
-   "likes": 282,
+   "likes": 291,
    "gpu": "zero-a10g"
   },
   {
-   "space": "black-forest-labs/flux-3-image-klein",
+   "space": "latentexplorers/latentnavigation-flux",
    "endpoint": "/generate",
-   "likes": 280,
+   "likes": 282,
    "gpu": "zero-a10g"
   },
   {
@@ -167,7 +155,7 @@
   {
    "space": "seawolf2357/REALVISXL-V5",
    "endpoint": "/generate",
-   "likes": 269,
+   "likes": 270,
    "gpu": "zero-a10g"
   },
   {
@@ -177,14 +165,20 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "Flux9665/MassivelyMultilingualTTS",
-   "endpoint": "/predict",
-   "likes": 244,
+   "space": "linoyts/qwen-image-2-1-realtime",
+   "endpoint": "/generate",
+   "likes": 248,
    "gpu": "zero-a10g"
   },
   {
    "space": "black-forest-labs/FLUX.2-klein-4B",
    "endpoint": "/infer",
+   "likes": 246,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "Flux9665/MassivelyMultilingualTTS",
+   "endpoint": "/predict",
    "likes": 244,
    "gpu": "zero-a10g"
   },
@@ -203,19 +197,13 @@
   {
    "space": "anycoderapps/Z-Image-Turbo",
    "endpoint": "/generate_image",
-   "likes": 239,
+   "likes": 240,
    "gpu": "zero-a10g"
   },
   {
    "space": "someone-in-the-world/FireRed-Experimental-Turbo",
    "endpoint": "/infer",
-   "likes": 211,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "linoyts/qwen-image-2-1-realtime",
-   "endpoint": "/generate",
-   "likes": 210,
+   "likes": 212,
    "gpu": "zero-a10g"
   },
   {
@@ -243,21 +231,21 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "artificialguybr/Pixart-Sigma",
-   "endpoint": "/generate",
-   "likes": 164,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "M3st3rJ4k3l/FLUX.2-Klein-Multi-LoRA-v2",
    "endpoint": "/bulk_infer",
-   "likes": 158,
+   "likes": 167,
    "gpu": "zero-a10g"
   },
   {
    "space": "hugging-apps/qwen-qwen-image-2-1-turbo",
    "endpoint": "/generate",
-   "likes": 156,
+   "likes": 165,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "artificialguybr/Pixart-Sigma",
+   "endpoint": "/generate",
+   "likes": 164,
    "gpu": "zero-a10g"
   },
   {
@@ -275,7 +263,7 @@
   {
    "space": "multimodalart/FLUX.2-dev-turbo",
    "endpoint": "/infer",
-   "likes": 134,
+   "likes": 135,
    "gpu": "zero-a10g"
   },
   {
@@ -389,7 +377,19 @@
   {
    "space": "Qdpie/Qdpie-Qwen-Image-Editor",
    "endpoint": "/infer",
+   "likes": 43,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "rafaaa2105/flux-ghibsky-illustration",
+   "endpoint": "/infer",
    "likes": 41,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "mcp-tools/FLUX.1-Krea-dev",
+   "endpoint": "/infer",
+   "likes": 40,
    "gpu": "zero-a10g"
   },
   {
@@ -405,27 +405,9 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "prithivMLmods/Qwen-Image-2512-LoRA-DLC",
-   "endpoint": "/process_adapter_generation",
-   "likes": 38,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "madebyollin/sd3-with-taesd3-previews",
    "endpoint": "/infer",
    "likes": 37,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "mcp-tools/FLUX.1-Krea-dev",
-   "endpoint": "/infer",
-   "likes": 36,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "dbaranchuk/SwD-SD3.5-Large",
-   "endpoint": "/infer",
-   "likes": 33,
    "gpu": "zero-a10g"
   },
   {
@@ -531,12 +513,6 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "AlekseyCalvin/Stabled_LoRAs_on_SD3.5_MERGED",
-   "endpoint": "/run_lora",
-   "likes": 15,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "mrfakename/Z-Image",
    "endpoint": "/generate_image",
    "likes": 15,
@@ -561,6 +537,12 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "akhaliq/Z-Image-Turbo",
+   "endpoint": "/generate_image",
+   "likes": 14,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "hugging-apps/turbo8-qwen-image-2-1",
    "endpoint": "/generate",
    "likes": 13,
@@ -569,12 +551,6 @@
   {
    "space": "artificialguybr/JUGGERNAUT-Z-IMAGE",
    "endpoint": "/generate",
-   "likes": 13,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "akhaliq/Z-Image-Turbo",
-   "endpoint": "/generate_image",
    "likes": 13,
    "gpu": "zero-a10g"
   },
@@ -615,9 +591,21 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "daniel-dona/Qwen-Image",
+   "endpoint": "/infer",
+   "likes": 10,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "surokpro2/Unboxing_SDXL_with_SAEs",
    "endpoint": "/image_gen",
    "likes": 9,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "cpuai/Qwen-Image-Edit-2511-LoRAs-Fast",
+   "endpoint": "/infer",
+   "likes": 8,
    "gpu": "zero-a10g"
   },
   {
@@ -633,15 +621,15 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "wikeeyang/krea2-turbo-hd-v1",
-   "endpoint": "/generate",
+   "space": "masterp3000/Z-Image-Turbo-Realism",
+   "endpoint": "/generate_image",
    "likes": 8,
    "gpu": "zero-a10g"
   },
   {
-   "space": "cpuai/Qwen-Image-Edit-2511-LoRAs-Fast",
-   "endpoint": "/infer",
-   "likes": 7,
+   "space": "wikeeyang/krea2-turbo-hd-v1",
+   "endpoint": "/generate",
+   "likes": 8,
    "gpu": "zero-a10g"
   },
   {
@@ -653,18 +641,6 @@
   {
    "space": "AlekseyCalvin/Z-Image-ReTurbo-ExpLoRAtorium",
    "endpoint": "/run_lora",
-   "likes": 7,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "masterp3000/Z-Image-Turbo-Realism",
-   "endpoint": "/generate_image",
-   "likes": 7,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "pentacoxian-dev/iris-3b-turbo",
-   "endpoint": "/infer",
    "likes": 7,
    "gpu": "zero-a10g"
   },
@@ -691,18 +667,6 @@
    "endpoint": "/generate_image",
    "likes": 6,
    "gpu": "zero-a10g"
-  },
-  {
-   "space": "shootstuff/FLUX-Unlimited",
-   "endpoint": "/generate_image",
-   "likes": 5,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "We-Want-GPU/diffusers-cross-attention-map-SDXL-t2i",
-   "endpoint": "/generate",
-   "likes": 5,
-   "gpu": "t4-medium"
   },
   {
    "space": "randomtable/Simple-SDXL-Image-Generator",
@@ -819,14 +783,32 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "Shimti/shimti-flux-schnell",
-   "endpoint": "/infer",
+   "space": "hugging-apps/flux3-klein-turbo-pdd",
+   "endpoint": "/generate",
+   "likes": 2,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "1inkusFace/sd3.5-large-lora",
+   "endpoint": "/run_inference_and_upload_30",
+   "likes": 2,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "Onise/qwen-image-2-1-realtime",
+   "endpoint": "/generate",
    "likes": 2,
    "gpu": "zero-a10g"
   },
   {
    "space": "PaulVodafone/Qwen-Image-2.1-studio",
    "endpoint": "/move_objects",
+   "likes": 2,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "mrfakename/qwen-image-2-1",
+   "endpoint": "/generate",
    "likes": 2,
    "gpu": "zero-a10g"
   },
@@ -843,12 +825,6 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "inoculatemedia/Z-Image-Turbo",
-   "endpoint": "/generate_image",
-   "likes": 2,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "Kutches/anima-turboV1",
    "endpoint": "/generate",
    "likes": 2,
@@ -856,6 +832,12 @@
   },
   {
    "space": "cbensimon/FLUX-1-schnell-mcp",
+   "endpoint": "/infer",
+   "likes": 2,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "Shimti/shimti-flux-schnell",
    "endpoint": "/infer",
    "likes": 2,
    "gpu": "zero-a10g"
@@ -879,19 +861,13 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "UX4567/Image-Generation",
-   "endpoint": "/generate_image",
+   "space": "multimodalart/flash-sd3-zerogpu",
+   "endpoint": "/infer",
    "likes": 1,
    "gpu": "zero-a10g"
   },
   {
    "space": "linoyts/qwen-image-ad-generator",
-   "endpoint": "/generate",
-   "likes": 1,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "Onise/qwen-image-2-1-realtime",
    "endpoint": "/generate",
    "likes": 1,
    "gpu": "zero-a10g"
@@ -910,12 +886,6 @@
   },
   {
    "space": "hugging-apps/qwen-image-sp",
-   "endpoint": "/generate",
-   "likes": 1,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "mrfakename/qwen-image-2-1",
    "endpoint": "/generate",
    "likes": 1,
    "gpu": "zero-a10g"
@@ -951,7 +921,19 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "Maynor996/z-image-turbo-demo",
+   "endpoint": "/generate",
+   "likes": 1,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "fantasticstar/Chroma1-HD",
+   "endpoint": "/generate_image",
+   "likes": 1,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "fantasticstar/Chroma-Extra",
    "endpoint": "/generate_image",
    "likes": 1,
    "gpu": "zero-a10g"
@@ -963,20 +945,32 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "tabrezahmed51/Qwen-Image-2.1-viggle-turbo",
-   "endpoint": "/generate",
+   "space": "1mviews3/Krea-2-Turbo-LoRA",
+   "endpoint": "/infer",
    "likes": 1,
    "gpu": "zero-a10g"
   },
   {
-   "space": "Priyamdave9078/FLUX2_klein_4B_worker",
+   "space": "josejar/FLUX.2-Klein-4B-Apache-2.0-RUNNING-ON-CPU",
    "endpoint": "/infer",
    "likes": 0,
    "gpu": "zero-a10g"
   },
   {
-   "space": "Veda-Labs/flux-image-studio",
-   "endpoint": "/generate_text_to_image",
+   "space": "douccana/flux2-klein-9b-kv-demo",
+   "endpoint": "/generate",
+   "likes": 0,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "douccana/flux-3-image-klein",
+   "endpoint": "/generate",
+   "likes": 0,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "Priyamdave9078/FLUX2_klein_4B_worker",
+   "endpoint": "/infer",
    "likes": 0,
    "gpu": "zero-a10g"
   },
@@ -1005,18 +999,6 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "aaaaa47080/flux-3-image-klein",
-   "endpoint": "/generate",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "allencgrant/flux-1-dev-demo",
-   "endpoint": "/generate",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "AhmedAbdelrazik/FLUX.1-schnell",
    "endpoint": "/infer",
    "likes": 0,
@@ -1035,20 +1017,8 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "douccana/flux-3-image-klein",
-   "endpoint": "/generate",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "bakerdas1/flux3-klein",
    "endpoint": "/run_generation",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "josejar/FLUX.2-Klein-4B-Apache-2.0-RUNNING-ON-CPU",
-   "endpoint": "/infer",
    "likes": 0,
    "gpu": "zero-a10g"
   },
@@ -1083,32 +1053,14 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "douccana/flux2-klein-9b-kv-demo",
-   "endpoint": "/generate",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "psikoma/sitemorph-flux-schnell",
    "endpoint": "/lambda_1",
    "likes": 0,
    "gpu": "zero-a10g"
   },
   {
-   "space": "coy2013/flux2-klein-base-9b-fp8-demo",
-   "endpoint": "/generate",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "radames/Flux-2-klein-Real-Time-Image-to-Image",
-   "endpoint": "/render",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "kushubu/FLUX.1-dev",
-   "endpoint": "/infer",
+   "space": "obacodes/text-to-image-inference",
+   "endpoint": "//generate_image",
    "likes": 0,
    "gpu": "zero-a10g"
   },
@@ -1131,43 +1083,37 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "adebnath/Text-to-Image_Generation_using_Stable_Diffusion",
+   "endpoint": "/predict",
+   "likes": 0,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "ehui-lab/simple-text-to-image",
    "endpoint": "/predict",
    "likes": 0,
    "gpu": "zero-a10g"
   },
   {
-   "space": "AnriLaran/stable-diffusion-1.4",
+   "space": "1inkusFace/StableDiffusion-3.5-Large-IP-B",
+   "endpoint": "/infer",
+   "likes": 0,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "Senoox/stable-diffusion-xl",
    "endpoint": "/generate_image",
    "likes": 0,
    "gpu": "zero-a10g"
   },
   {
+   "space": "happyfeilv/big-lust-sdxl-demo",
+   "endpoint": "/infer",
+   "likes": 0,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "Twinber/oldbook-illustrations-sdxl",
-   "endpoint": "/generate",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "hagi0404/sdxl-snapshot-gen",
-   "endpoint": "/generate",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "launch-calcium/zerogpu-sdxlTrainer2",
-   "endpoint": "/gpu_test_inference",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "raju-ai/sdxl-mithila-lora-demo",
-   "endpoint": "/predict",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "LangstKip/cooksy-sdxl",
    "endpoint": "/generate",
    "likes": 0,
    "gpu": "zero-a10g"
@@ -1180,12 +1126,6 @@
   },
   {
    "space": "Salem85/sdxl-living-room-generator",
-   "endpoint": "/generate",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "uthonn/ceritain-sdxl-worker",
    "endpoint": "/generate",
    "likes": 0,
    "gpu": "zero-a10g"
@@ -1215,56 +1155,26 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "multimodalart/perturbed-attention-guidance-sdxl-2",
-   "endpoint": "/run",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "muquanta-axel-v17/SDXL-Ghost-Demo",
-   "endpoint": "/generate",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "muquanta-axel-v17/SDXL-Marius-Demo",
-   "endpoint": "/generate",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "Senoox/controlnet-union-sdxl",
    "endpoint": "/generate_image",
    "likes": 0,
    "gpu": "zero-a10g"
   },
   {
-   "space": "sayasaya11/SDXL-Turbo",
+   "space": "miyuki17/creative-technology-image-generation",
    "endpoint": "/generate",
    "likes": 0,
    "gpu": "zero-a10g"
   },
   {
-   "space": "LWZ19/ecodiff_sdxl",
-   "endpoint": "/generate_image",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "mokmail/sd3-medium-demo",
+   "space": "elrplays/Peter-image-generation",
    "endpoint": "/infer",
    "likes": 0,
    "gpu": "zero-a10g"
   },
   {
-   "space": "RamvikasSV08/sample_image_generation8",
-   "endpoint": "/generate_image",
-   "likes": 0,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "eshitanarang07/image-generation-studio",
-   "endpoint": "/generate_image",
+   "space": "YUG0634/my-ai-image-video-generation",
+   "endpoint": "/run_scratch_mode",
    "likes": 0,
    "gpu": "zero-a10g"
   }
