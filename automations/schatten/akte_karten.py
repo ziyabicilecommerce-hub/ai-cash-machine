@@ -337,7 +337,7 @@ def schock(im, lt, en=False, variante=0):
     d.rectangle((0, 0, W, H), fill=(150, 10, 18) if int(lt * 12) % 2 else (90, 6, 12))
     from akte_geist import geist
     gs = 1.0 + 2.6 * e  # der Geist springt nach vorn, bis sein Kopf das Bild füllt
-    geist(im, W / 2, 640 + 470 * gs, s=gs, t=lt)
+    geist(im, W / 2, 640 + 470 * gs, s=gs, t=lt, boese=True)  # beim Schock: sein wahres Gesicht
     d = ImageDraw.Draw(im)
     if int(lt * 8) % 2:
         d.text((W / 2, 150), '⚠ ' + ('HE IS HERE' if en else 'ER IST DA'), font=f(48, True), fill=(255, 230, 230), anchor='mm')

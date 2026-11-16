@@ -7,53 +7,49 @@ from PIL import Image, ImageDraw, ImageFilter
 ART = ['schatten']  # Bösewicht der aktuellen Geschichte (akte.einrichten setzt ihn)
 
 
-def geist(im, x, y, s=1.0, t=0.0, alpha=255, art=None):
+def geist(im, x, y, s=1.0, t=0.0, alpha=255, art=None, boese=False):
     # x, y = Fußpunkt; s = Größe (1.0 ~ 560 px hoch)
     art = art or ART[0]
     lage = Image.new('RGBA', im.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(lage)
     k = lambda px, py: (x + px * s, y + py * s)
     wack = math.sin(t * 7) * 3
-    if art == 'mann':  # 16.11. (Nutzer: "mach einen Horror-Mann"): dürrer Mann im Mantel mit Hut, Hals zu lang, Grinsen zu breit
-        haut, mantel = (196, 200, 196, alpha), (40, 40, 46, alpha)
-        for sx in (-1, 1):  # dünne Beine unter dem Mantel
-            d.line([k(sx * 18, -150), k(sx * 22, 0)], fill=(16, 16, 18, alpha), width=max(2, int(12 * s)))
-            d.polygon([k(sx * 22 - 10, -6), k(sx * 22 + 26 * sx, -2), k(sx * 22 + 26 * sx, 6), k(sx * 22 - 10, 6)], fill=(10, 10, 12, alpha))
-        d.polygon([k(-46, -130), k(46, -130), k(40, -420), k(-40, -420)], fill=mantel)  # langer Mantel
-        d.line([k(0, -420), k(0, -140)], fill=(26, 26, 30, alpha), width=max(1, int(4 * s)))
-        for sx in (-1, 1):  # Arme bis unter die Knie, knochige Hände mit langen Fingern
-            d.line([k(sx * 40, -410), k(sx * 64, -260), k(sx * 60, -110)], fill=mantel, width=max(2, int(18 * s)))
-            for fi in range(4):
-                fx = sx * (52 + fi * 6)
-                d.line([k(sx * 60, -110), k(fx, -60 + fi * 4), k(fx + sx * 4, -30 + fi * 6)], fill=haut, width=max(1, int(4 * s)))
-        # Kopf auf eigener Ebene: hängt schief am viel zu langen Hals und zuckt ruckartig (verstörender, Wunsch 16.11.)
-        hx, hy = 14, -560
-        zuck = 28 + (18 if math.sin(t * 2.3) > 0.85 else 0) + (math.sin(t * 31) * 6 if math.sin(t * 1.7) > 0.6 else 0)
-        d.line([k(0, -420), k(hx * 0.6, hy + 70)], fill=haut, width=max(2, int(15 * s)))
-        R = int(150 * s) + 4
-        kopf = Image.new('RGBA', (R * 2, R * 2), (0, 0, 0, 0))
-        kd = ImageDraw.Draw(kopf)
-        q = lambda px, py: (R + px * s, R + py * s)
-        gruen = (184, 194, 180, alpha)
-        kd.ellipse((*q(-40, -66), *q(40, 70)), fill=gruen)  # langes, eingefallenes Gesicht
-        for (x1, y1), (x2, y2) in (((-34, -40), (-12, -10)), ((-12, -10), (-20, 20)), ((20, -60), (10, -30)), ((30, 10), (18, 40))):
-            kd.line((*q(x1, y1), *q(x2, y2)), fill=(110, 116, 106, alpha), width=max(1, int(2.5 * s)))  # Risse
-        for sx, gr_, yy in ((-1, 15, -18), (1, 9, -8)):  # ungleiche, leere Augen auf verschiedener Höhe
-            kd.ellipse((*q(sx * 15 - gr_, yy - gr_), *q(sx * 15 + gr_, yy + gr_)), fill=(2, 2, 4, alpha))
-            kd.ellipse((*q(sx * 15 - 2, yy - 2), *q(sx * 15 + 2, yy + 2)), fill=(255, 255, 255, alpha))
-            tropf = (t * 18 + sx * 7) % 50  # schwarze Flüssigkeit läuft aus den Augen
-            kd.line((*q(sx * 15, yy + gr_), *q(sx * 15 + sx * 2, yy + gr_ + 14 + tropf)), fill=(6, 4, 6, alpha), width=max(2, int(4 * s)))
-        kd.chord((*q(-46, 0), *q(46, 66)), 0, 180, fill=(120, 20, 28, alpha))  # Grinsen über das ganze Gesicht, rotes Zahnfleisch
-        kd.chord((*q(-40, 12), *q(40, 60)), 0, 180, fill=(14, 4, 6, alpha))
-        for reihe, y0, h_ in ((0, 34, 10), (1, 46, -9)):  # zwei Reihen spitzer Zähne
-            for i in range(12):
-                tx = -36 + i * 6.4
-                kd.polygon([q(tx, y0), q(tx + 5, y0), q(tx + 2.5, y0 + h_)], fill=(232, 226, 200, alpha))
-        kd.rectangle((*q(-30, -122), *q(30, -60)), fill=(14, 14, 16, alpha))  # hoher Hut
-        kd.rectangle((*q(-54, -64), *q(54, -54)), fill=(14, 14, 16, alpha))
-        kopf = kopf.rotate(-zuck, resample=Image.BICUBIC)
-        mx, my = k(hx, hy)
-        lage.paste(kopf, (int(mx - R), int(my - R)), kopf)
+    if art == 'mann':  # 16.11. (Nutzer: "wie die ganz anderen, als Unschuldiger"): ein ganz normaler, freundlicher Mann im
+        # Stil der anderen Figuren - kurze braune Haare, Hemd, Jeans, lächelt, blinzelt nie, starrt in die Kamera.
+        # Erst mit boese=True (Schock) zeigt er sein wahres Gesicht: schwarze Augen, Grinsen bis zu den Ohren.
+        haut, hemd, hose, haar = (240, 210, 188, alpha), (70, 96, 140, alpha), (44, 52, 76, alpha), (70, 50, 36, alpha)
+        for sx in (-1, 1):
+            d.rectangle((*k(sx * 26 - 16, -200), *k(sx * 26 + 16, -10)), fill=hose)
+            d.rounded_rectangle((*k(sx * 26 - 20, -16), *k(sx * 26 + 26, 4)), radius=max(1, int(6 * s)), fill=(30, 30, 36, alpha))
+        d.rounded_rectangle((*k(-62, -420), *k(62, -190)), radius=max(1, int(26 * s)), fill=hemd)  # Hemd
+        d.polygon([k(-18, -420), k(18, -420), k(0, -392)], fill=(236, 238, 242, alpha))  # Kragen
+        for i in range(4):
+            d.ellipse((*k(-3, -380 + i * 44), *k(3, -374 + i * 44)), fill=(236, 238, 242, alpha))
+        for sx in (-1, 1):  # Arme hängen ruhig herab
+            d.line([k(sx * 60, -400), k(sx * 74, -300), k(sx * 70, -210)], fill=hemd, width=max(2, int(26 * s)))
+            d.ellipse((*k(sx * 70 - 15, -224), *k(sx * 70 + 15, -194)), fill=haut)
+        hx, hy = 0, -510
+        d.rectangle((*k(-14, -440), *k(14, -410)), fill=(220, 186, 166, alpha))  # Hals
+        d.ellipse((*k(hx - 74, hy - 96), *k(hx + 74, hy + 62)), fill=haar)  # Haare
+        d.ellipse((*k(hx - 66, hy - 70), *k(hx + 66, hy + 80)), fill=haut)  # rundes Gesicht wie die anderen Figuren
+        d.chord((*k(hx - 72, hy - 100), *k(hx + 72, hy - 6)), 180, 360, fill=haar)
+        for sx in (-1, 1):
+            d.ellipse((*k(hx + sx * 70 - 10, hy - 4), *k(hx + sx * 70 + 10, hy + 26)), fill=(228, 196, 174, alpha))  # Ohren
+        if not boese:
+            for sx in (-1, 1):  # große freundliche Augen - die Pupillen schauen immer genau in die Kamera
+                d.ellipse((*k(hx + sx * 28 - 17, hy - 14), *k(hx + sx * 28 + 17, hy + 16)), fill=(255, 255, 255, alpha), outline=(30, 30, 40, alpha), width=max(1, int(2 * s)))
+                d.ellipse((*k(hx + sx * 28 - 6, hy - 5), *k(hx + sx * 28 + 6, hy + 7)), fill=(20, 20, 26, alpha))
+                d.line([k(hx + sx * 16, hy - 26), k(hx + sx * 42, hy - 24)], fill=(70, 50, 36, alpha), width=max(1, int(4 * s)))
+            d.arc((*k(hx - 26, hy + 18), *k(hx + 26, hy + 50)), 15, 165, fill=(150, 70, 70, alpha), width=max(1, int(4 * s)))  # nettes Lächeln
+        else:
+            for sx in (-1, 1):  # wahres Gesicht: Augen ganz schwarz, winziger Lichtpunkt
+                d.ellipse((*k(hx + sx * 28 - 20, hy - 18), *k(hx + sx * 28 + 20, hy + 18)), fill=(2, 2, 4, alpha))
+                d.ellipse((*k(hx + sx * 28 - 3, hy - 6), *k(hx + sx * 28 + 3, hy)), fill=(255, 255, 255, alpha))
+            d.chord((*k(hx - 60, hy + 4), *k(hx + 60, hy + 78)), 0, 180, fill=(110, 16, 22, alpha))  # Grinsen bis zu den Ohren
+            d.chord((*k(hx - 54, hy + 14), *k(hx + 54, hy + 70)), 0, 180, fill=(14, 4, 6, alpha))
+            for i in range(14):
+                tx = hx - 50 + i * 7.4
+                d.polygon([k(tx, hy + 42), k(tx + 6, hy + 42), k(tx + 3, hy + 56)], fill=(236, 230, 210, alpha))
     elif art == 'frau':  # weißes Kleid, lange schwarze Haare vorm Gesicht, ein Auge schaut durch, Kopf schief
         d.polygon([k(-70, 0), k(70, 0), k(40, -330), k(-40, -330)], fill=(226, 228, 232, alpha))
         for i in range(7):  # zerrissener Saum
@@ -115,14 +111,14 @@ def geist(im, x, y, s=1.0, t=0.0, alpha=255, art=None):
 
 # Herkunft: wer war der Geist? (Satz zum Vorlesen, Schlagzeile für den Zeitungsausschnitt)
 HERKUNFT_DE = {
-    'mann': ('verschwand {ort} ein Mann im grauen Mantel. Danach sahen ihn Zeugen noch jahrelang nachts am Fenster stehen.', 'MANN IM MANTEL VERMISST'),
+    'mann': ('verschwand {ort} ein freundlicher Nachbar. Danach sahen ihn Zeugen noch jahrelang nachts lächelnd am Fenster stehen.', 'NACHBAR SPURLOS VERSCHWUNDEN'),
     'frau': ('verschwand {ort} eine junge Frau. Gefunden hat man nur ihr weißes Kleid.', 'FRAU SPURLOS VERSCHWUNDEN'),
     'schatten': ('lebte {ort} ein Mann, der nie schlief. Eines Nachts war nur noch sein Schatten da.', 'MANN VERSCHWUNDEN'),
     'hirsch': ('verschwand {ort} ein Jäger. Man fand nur Hufspuren, die aufrecht gingen.', 'JÄGER VERMISST'),
     'gremlin': ('hörten Nachbarn {ort} jede Nacht Kratzen in den Wänden. Dann war die Familie weg.', 'FAMILIE VERSCHWUNDEN'),
 }
 HERKUNFT_EN = {
-    'mann': ('a man in a grey coat vanished {ort}. For years after, witnesses saw him standing at the window at night.', 'MAN IN GREY COAT MISSING'),
+    'mann': ('a friendly neighbor vanished {ort}. For years after, witnesses saw him smiling at the window at night.', 'NEIGHBOR VANISHES WITHOUT TRACE'),
     'frau': ('a young woman vanished {ort}. All they found was her white dress.', 'WOMAN VANISHES WITHOUT TRACE'),
     'schatten': ('a man who never slept lived {ort}. One night only his shadow was left.', 'MAN MISSING'),
     'hirsch': ('a hunter vanished {ort}. They only found hoof prints that walked upright.', 'HUNTER MISSING'),
