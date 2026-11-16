@@ -80,6 +80,16 @@ jobs:
           if [ "${LETZTES:-0}" -gt 0 ]; then
             echo "@$KONTO hat heute schon ein Video - übersprungen."; exit 0
           fi
+          # 16.11.: Akte-Geschichten zuerst (IG-Sehdauer 9-13 s statt ~3 s). Drittel je Konto -> jedes Konto eine andere; schon von Hand gepostete raus.
+          node -e "import('./automations/schatten/skriptBot.mjs').then((m) => require('fs').writeFileSync('out/akte.json', JSON.stringify({ skripte: m.alleSkripte().filter((s) => s.muster === 'akte' && !['Zimmer 309', 'Der nette Nachbar', 'Der Anhalter von der B12'].includes(s.titel)) })))"
+          for SLUG in $(node automations/schatten/videobot.mjs --auto out/akte.json ${{ matrix.nr }}); do
+            TAG="videobot-auto-$SLUG-$KONTO"
+            if ! gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
+              node automations/schatten/videobot.mjs --auto out/akte.json ${{ matrix.nr }} "$SLUG" out/folge.json
+              echo "slug=$SLUG" >> "$GITHUB_OUTPUT"; echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+              echo "Heute für @$KONTO (Akte): $SLUG" | tee -a "$GITHUB_STEP_SUMMARY"; exit 0
+            fi
+          done
           for SLUG in $(node automations/schatten/videobot.mjs --auto automations-dashboard/tiktok/skripte.json ${{ matrix.nr }}); do
             TAG="videobot-auto-$SLUG-$KONTO"
             if ! gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
