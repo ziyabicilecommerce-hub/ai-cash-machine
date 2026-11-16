@@ -94,13 +94,16 @@ export function baueFolge(skript) {
   // 15.11. (Vorlage vom Nutzer: "So ungefähr"): Standard für kurze Videos ist der Akte-Stil (akte.py) - Uhrzeit, Karten,
   // Bauplan, Chat, VHS-Balken, am Ende zwei Wahl-Karten. Aufbau wie "studio" (Wahl-Karte), ohne Schlagzeile und KI-Bilder.
   if (skript && skript.kurz && !['pov', 'nativ', 'studio', 'schatten'].includes(skript.stil)) {
-    return { ...baueFolge({ ...skript, stil: 'studio', ki: false, schlag: false }), stil: 'akte', schlag: '' };
+    return { ...baueFolge({ ...skript, stil: 'studio', ki: false, schlag: false, ganz: true }), stil: 'akte', schlag: '' };
   }
   const fehler = pruefen(skript);
   if (fehler.length) throw new Error(fehler.join('; '));
   const kurz_ = !!skript.kurz;
-  const alle = skript.saetze.map((x) => satz(x)).filter(Boolean);
-  const saetze = kurz_ ? kuerzen(alle) : alle;
+  // 16.11. (Nutzer: "du fängst gefühlt in der Mitte an"): der eigentliche Anfang (Ich-Hook) steht vorn, wenn das Video mit dem
+  // Du-Hook beginnt - und im Akte-Stil werden keine Sätze mehr weggekürzt (ganz=true), die Geschichte läuft von Anfang bis Ende.
+  const anfang = skript.anfang && satz(skript.anfang) !== satz(skript.hook) ? [skript.anfang] : [];
+  const alle = [...anfang, ...skript.saetze].map((x) => satz(x)).filter(Boolean);
+  const saetze = kurz_ && !skript.ganz ? kuerzen(alle) : alle;
   const szenen = [{ art: 'blitz', ...zeile(skript.hook, { schreck: true, angst: 0.85, pause: 0.1 }) }];  // Hook ganz zeigen - die Pointe steht oft am Ende
   saetze.forEach((s, i) => {
     const letzte = i === saetze.length - 1, anteil = (i + 1) / saetze.length;
@@ -268,7 +271,7 @@ if (process.argv[2] === '--auto') {
   const { kalt, raum, suchbild, duhook } = abVariante(Math.random, abGewichte(wb.ab));
   // TikTok bekommt jetzt auch den Du-Hook (13.11.): bei uns meist ein Regel-Hook ("Wenn …, geh nicht ran."), gemessen x2,2
   const hook = duhook && treffer.skript.hook2 ? treffer.skript.hook2 : treffer.skript.hook;
-  writeFileSync(ziel, JSON.stringify(baueFolge({ ...treffer.skript, hook, kalt, raum, suchbild }), null, 1));
+  writeFileSync(ziel, JSON.stringify(baueFolge({ ...treffer.skript, hook, anfang: hook !== treffer.skript.hook ? treffer.skript.hook : '', kalt, raum, suchbild }), null, 1));
 } else if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [quelle, ziel] = process.argv.slice(2);
   try {
