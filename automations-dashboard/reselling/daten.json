@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-16T20:11:47.444Z",
+ "stand": "2026-11-16T20:14:49.519Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "deal:https://afew-store.com/products/air-jordan-1-retro-high-og-flight-club-black-university-red-sail-gum-med-brown",
+   "art": "Deal",
+   "titel": "💰 Deal: Air Jordan 1 High OG für 143,99 €",
+   "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-retro-high-og-flight-club-black-university-red-sail-gum-med-brown-ii9811-001-footwear_20_3E_20sneaker.jpg?v=1778071717",
+   "link": "https://afew-store.com/products/air-jordan-1-retro-high-og-flight-club-black-university-red-sail-gum-med-brown",
+   "text": "afew-store.com · Air Jordan 1 Retro High OG Flight Club\nVerkauf ca. 180–260 € → Gewinn ca. +49,01 € (ROI 34 %)\nGröße prüfen, vorher verkaufte Preise checken.",
+   "zeit": "2026-11-16T20:14:49.519Z"
+  },
   {
    "schluessel": "deal:https://afew-store.com/products/air-jordan-1-high-og-black-multi-color",
    "art": "Deal",
@@ -185,15 +194,6 @@
    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-4-retro-off-white-fire-pink-anthracite1-ja1135-100-footwear_20_3E_20sneaker.jpg?v=1784637504",
    "link": "https://afew-store.com/products/air-jordan-4-retro-off-white-fire-pink-anthracite1",
    "text": "afew-store.com · AIR JORDAN 4 RETRO 'Comic'\nVerkauf ca. 220–320 € → Gewinn ca. +48,01 € (ROI 25 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-14T17:17:26.763Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-royal-black-varsity-royal-black",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 1 High OG für 161,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/mkzqpk84cx-IQ5495-005_Nike_Air-Jordan-1-Retro-High-OG-Royal-Black-Varsity-Royal-Black_os-1.jpg?v=1790858909",
-   "link": "https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-royal-black-varsity-royal-black",
-   "text": "asphaltgold.com · Nike Air Jordan 1 Retro High OG *Royal*\nVerkauf ca. 180–260 € → Gewinn ca. +32,00 € (ROI 20 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-14T17:17:26.763Z"
   }
  ],
@@ -1318,6 +1318,10 @@
     "menge": "5000+"
    },
    {
+    "titel": "fussball",
+    "menge": "5000+"
+   },
+   {
     "titel": "national league",
     "menge": "200+"
    },
@@ -1326,31 +1330,27 @@
     "menge": "200+"
    },
    {
+    "titel": "sportschau live",
+    "menge": "200+"
+   },
+   {
+    "titel": "tah",
+    "menge": "200+"
+   },
+   {
+    "titel": "mediathek ard",
+    "menge": "200+"
+   },
+   {
     "titel": "die toten vom bodensee heute",
     "menge": "200+"
    },
    {
-    "titel": "em 2028",
+    "titel": "aselsan",
     "menge": "200+"
    },
    {
-    "titel": "gruda",
-    "menge": "20000+"
-   },
-   {
-    "titel": "zdf",
-    "menge": "2000+"
-   },
-   {
-    "titel": "الطقس غدًا",
-    "menge": "2000+"
-   },
-   {
-    "titel": "kai havertz",
-    "menge": "1000+"
-   },
-   {
-    "titel": "tijjani reijnders",
+    "titel": "em 2028",
     "menge": "200+"
    }
   ]
@@ -2159,11 +2159,29 @@
     "begriff": "new balance"
    },
    {
+    "titel": "New Balance 9060",
+    "preis": 142.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-breakfast-tea-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-breakfast-tea-angora-u90603eg-footwear_20_3E_20sneaker.jpg?v=1787225787",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Air Jordan 1 High OG 'Royal'",
     "preis": 143.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/air-jordan-1-high-og-black-multi-color",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1794787817",
+    "laden": "afew-store.com",
+    "begriff": "jordan"
+   },
+   {
+    "titel": "Air Jordan 1 Retro High OG Flight Club",
+    "preis": 143.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/air-jordan-1-retro-high-og-flight-club-black-university-red-sail-gum-med-brown",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-retro-high-og-flight-club-black-university-red-sail-gum-med-brown-ii9811-001-footwear_20_3E_20sneaker.jpg?v=1778071717",
     "laden": "afew-store.com",
     "begriff": "jordan"
    },
@@ -2312,15 +2330,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "New Balance 9060",
-    "preis": 162.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-timberwolf",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-u9060152-footwear_20_3E_20sneaker.jpg?v=1781855495",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Nike Wmns Air Jordan 3 Retro *Fireside*",
     "preis": 169,
     "verfuegbar": true,
@@ -2417,15 +2426,6 @@
     "url": "https://www.asphaltgold.com/products/nike-air-jordan-9-retro-og-space-jam-white-true-red-black",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/70i3f9g33eq-IX6179-100_Nike_Air-Jordan-9-Retro-OG-Space-Jam-White-True-Red-Black_os-1.jpg?v=1788954651",
     "laden": "asphaltgold.com",
-    "begriff": "jordan"
-   },
-   {
-    "titel": "Air Jordan 1 Retro High OG Flight Club",
-    "preis": 179.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-1-retro-high-og-flight-club-black-university-red-sail-gum-med-brown",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-retro-high-og-flight-club-black-university-red-sail-gum-med-brown-ii9811-001-footwear_20_3E_20sneaker.jpg?v=1778071717",
-    "laden": "afew-store.com",
     "begriff": "jordan"
    },
    {
