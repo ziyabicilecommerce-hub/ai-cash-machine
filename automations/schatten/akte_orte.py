@@ -56,12 +56,16 @@ def baum(d, x, y, h, farbe=(8, 12, 14)):
 
 
 def gestalt_in(d, box, t):
-    x0, y0, x1, y1 = box
-    cx = (x0 + x1) / 2 + math.sin(t * 0.8) * 2
-    d.ellipse((cx - 11, y0 + 6, cx + 11, y0 + 28), fill=(4, 4, 6))
-    d.rectangle((cx - 15, y0 + 26, cx + 15, y1), fill=(4, 4, 6))
-    for ex in (-4, 4):
-        d.ellipse((cx + ex - 2, y0 + 14, cx + ex + 2, y0 + 18), fill=(255, 255, 255))
+    # der Geist der Geschichte (akte_geist.py) steht im Fenster - Kopf und Oberkörper, mit dem Fenster beschnitten
+    from akte_geist import geist
+    x0, y0, x1, y1 = (int(v) for v in box)
+    im = d._image
+    aus = im.crop((x0, y0, x1, y1))
+    tmp = Image.new('RGB', (x1 - x0, y1 - y0), (14, 16, 22))
+    tmp.paste(aus)
+    h = y1 - y0
+    geist(tmp, (x1 - x0) / 2, h * 2.6, s=h * 2.6 / 560, t=t)
+    im.paste(tmp, (x0, y0))
 
 
 def wohnblock(im, t, gestalt=0.0, dunkel=0.0):

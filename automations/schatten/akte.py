@@ -115,6 +115,15 @@ def einrichten(story, g):
     import effekte
     effekte.GELB = thema['akzent']
     nacht = 1 + zahl % 6
+    import akte_geist
+    akte_geist.ART[0] = story.get('boesewicht', 'schatten')
+    # Herkunft des Geistes als eigene Szene vor dem letzten Satz (Nutzer: "wie ist der Geist entstanden?")
+    jahr = 1971 + zahl % 29
+    satz_h, kopf_h = akte_geist.herkunft(akte_geist.ART[0], ort, jahr, en)
+    letzte = max((i for i, x in enumerate(szenen) if x['art'] == 'dunkel'), default=None)
+    if letzte is not None and not any(x.get('akte') == 'zeitung' for x in szenen):
+        szenen.insert(letzte, {'art': 'innen', 'akte': 'zeitung', 'sprich': satz_h, 'text': satz_h.upper(), 'gelb': str(jahr),
+                               'zeitung_kopf': kopf_h, 'jahr': jahr, 'pause': 0.3, 'akte_zeit': '', 'pov_text': ''})
     fall = 100 + zahl % 900
     for i, sz in enumerate([x for x in szenen if x['art'] not in ('blitz', 'fratze', 'teil2', 'ende')]):
         sz['akte_nr'] = i + 1
@@ -134,6 +143,10 @@ def einrichten(story, g):
         im.paste(lage, (K.W - lage.width - 30, 1000), lage)
     schock_art = (zahl // 3) % 3
     for nr, s in enumerate(szenen):
+        if s.get('akte') == 'zeitung':  # Herkunfts-Szene behält ihren Zeitungsausschnitt
+            s['akte_zeit'] = f'3:{minute:02d}'
+            vorher = 'zeitung'
+            continue
         k = karte_fuer(s, nr, len(szenen))
         if k is None or k == vorher or (k in benutzt and k != 'chat'):  # jede Karte höchstens einmal pro Video
             k = next((x for x in reihe if x != vorher and x not in benutzt), reihe[nr % len(reihe)])
@@ -175,6 +188,8 @@ def einrichten(story, g):
             K.chat(im, lt, absender, chat_text, notfall=monster or ('Antworte nicht.' if not en else 'Do not reply.'))
         elif art == 'ton':
             K.lautsprecher(im, lt, ('GERÄUSCH · ' if not en else 'SOUND · ') + kopf.split(' · ')[0])
+        elif art == 'zeitung':
+            K.zeitung(im, s.get('zeitung_kopf', ''), s.get('jahr', 1987), lt, en)
         elif art == 'spion':
             K.spion(im, t, lt)
         elif art in ('kamera', 'plan'):
