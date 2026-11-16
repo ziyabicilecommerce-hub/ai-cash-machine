@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-16T20:08:46.512Z",
+ "stand": "2026-11-16T20:11:47.444Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "deal:https://afew-store.com/products/air-jordan-1-high-og-black-multi-color",
+   "art": "Deal",
+   "titel": "💰 Deal: Air Jordan 1 High OG für 143,99 €",
+   "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1794787817",
+   "link": "https://afew-store.com/products/air-jordan-1-high-og-black-multi-color",
+   "text": "afew-store.com · Air Jordan 1 High OG 'Royal'\nVerkauf ca. 180–260 € → Gewinn ca. +49,01 € (ROI 34 %)\nGröße prüfen, vorher verkaufte Preise checken.",
+   "zeit": "2026-11-16T20:11:47.444Z"
+  },
   {
    "schluessel": "filiale:3118201:3021",
    "art": "Filiale",
@@ -186,15 +195,6 @@
    "link": "https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-royal-black-varsity-royal-black",
    "text": "asphaltgold.com · Nike Air Jordan 1 Retro High OG *Royal*\nVerkauf ca. 180–260 € → Gewinn ca. +32,00 € (ROI 20 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-14T17:17:26.763Z"
-  },
-  {
-   "schluessel": "deal:https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-og-world-s-best-dad-if4396-103",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 3 Retro für 147,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IF4396-103_01.jpg?v=1780302730",
-   "link": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-og-world-s-best-dad-if4396-103",
-   "text": "sneakersnstuff.com · Air Jordan 3 Retro OG \"World's Best Dad\"\nVerkauf ca. 200–290 € → Gewinn ca. +68,50 € (ROI 47 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-14T17:11:32.263Z"
   }
  ],
  "filial": {
@@ -1314,6 +1314,26 @@
   "ware": [],
   "top": [
    {
+    "titel": "musiala",
+    "menge": "5000+"
+   },
+   {
+    "titel": "national league",
+    "menge": "200+"
+   },
+   {
+    "titel": "xavi simons",
+    "menge": "200+"
+   },
+   {
+    "titel": "die toten vom bodensee heute",
+    "menge": "200+"
+   },
+   {
+    "titel": "em 2028",
+    "menge": "200+"
+   },
+   {
     "titel": "gruda",
     "menge": "20000+"
    },
@@ -1322,35 +1342,15 @@
     "menge": "2000+"
    },
    {
+    "titel": "الطقس غدًا",
+    "menge": "2000+"
+   },
+   {
     "titel": "kai havertz",
     "menge": "1000+"
    },
    {
-    "titel": "الطقس غدًا",
-    "menge": "5000+"
-   },
-   {
     "titel": "tijjani reijnders",
-    "menge": "200+"
-   },
-   {
-    "titel": "schlotterbeck",
-    "menge": "200+"
-   },
-   {
-    "titel": "aleksandar pavlović",
-    "menge": "200+"
-   },
-   {
-    "titel": "cody gakpo",
-    "menge": "200+"
-   },
-   {
-    "titel": "finn jeltsch",
-    "menge": "200+"
-   },
-   {
-    "titel": "xabi alonso",
     "menge": "200+"
    }
   ]
@@ -1599,15 +1599,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/yosALS2hW6yOY11LVFJ8_JR0035-Adidas-Samba-OG-W-Silver-Metallic-Cloud-White-Core-White-OS-1.jpg?v=1748610522",
     "laden": "asphaltgold.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "Women's Total 90 SE",
-    "preis": 96,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-womens-total-90-se-io2389-600",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IO2389-600_01.jpg?v=1778232311",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
    },
    {
     "titel": "204L",
@@ -2168,6 +2159,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "Air Jordan 1 High OG 'Royal'",
+    "preis": 143.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/air-jordan-1-high-og-black-multi-color",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1794787817",
+    "laden": "afew-store.com",
+    "begriff": "jordan"
+   },
+   {
     "titel": "Air Jordan 3 Retro OG \"World's Best Dad\"",
     "preis": 147,
     "verfuegbar": true,
@@ -2420,15 +2420,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Air Jordan 1 High OG 'Royal'",
-    "preis": 179.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-1-high-og-black-multi-color",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1794787817",
-    "laden": "afew-store.com",
-    "begriff": "jordan"
-   },
-   {
     "titel": "Air Jordan 1 Retro High OG Flight Club",
     "preis": 179.99,
     "verfuegbar": true,
@@ -2499,6 +2490,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1794563768",
     "laden": "afew-store.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Air Max 95 OG \"Pink Foam\"",
+    "preis": 190,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-pink-foam-hj5996-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HJ5996-001_1.jpg?v=1776939941",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "New Balance 1954R - Slate Grey / Castlerock",
