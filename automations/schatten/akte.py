@@ -113,6 +113,23 @@ def einrichten(story, g):
     import effekte
     effekte.GELB = thema['akzent']
     nacht = 1 + zahl % 6
+    fall = 100 + zahl % 900
+    for i, sz in enumerate([x for x in szenen if x['art'] not in ('blitz', 'fratze', 'teil2', 'ende')]):
+        sz['akte_nr'] = i + 1
+
+    def alt_ort(o, t, gestalt=0.0):
+        im2 = Image.new('RGB', (K.W, K.H), K.GRUND)
+        K.ort_bild(im2, o, t, gestalt=gestalt)
+        return im2
+
+    def stempel(im, text, farbe):
+        # schräger Stempel unten rechts auf Beweis-Karten
+        lage = Image.new('RGBA', (360, 110), (0, 0, 0, 0))
+        dd = ImageDraw.Draw(lage)
+        dd.rounded_rectangle((6, 6, 354, 104), 12, outline=farbe + (210,), width=6)
+        dd.text((180, 55), text, font=K.f(40, True), fill=farbe + (220,), anchor='mm')
+        lage = lage.rotate(-9, expand=True, resample=Image.BICUBIC)
+        im.paste(lage, (K.W - lage.width - 30, 1000), lage)
     schock_art = (zahl // 3) % 3
     for nr, s in enumerate(szenen):
         k = karte_fuer(s, nr, len(szenen))
@@ -146,8 +163,9 @@ def einrichten(story, g):
             K.wahl_karten(im, lt, s['wahl'][0], s['wahl'][1], 'Schreib es in die Kommentare' if not en else 'Tell me in the comments')
         elif s['art'] == 'teil2':
             K.ort_bild(im, s.get('akte_ort', ort), t, dunkel=0.35, gestalt=1)
-        elif art == 'ort':
-            K.ort_bild(im, ort, t, gestalt=0.0)
+        elif art == 'ort':  # Hook: die Gestalt ist schon schwach zu sehen - wer sie entdeckt, schaut weiter
+            K.ort_bild(im, ort, t, gestalt=1)
+            im = Image.blend(im, alt_ort(ort, t), 0.55)
         elif art == 'warnung':
             K.ort_bild(im, s.get('akte_ort', ort), t, dunkel=0.45, gestalt=1)
             K.warnung(im, lt, 'NOTFALLWARNUNG' if not en else 'EMERGENCY ALERT')
@@ -159,8 +177,9 @@ def einrichten(story, g):
             K.bauplan(im, ort, s.get('akte_raum', 'TÜR'), lt)
         elif art == 'schild':
             K.schild(im, s.get('akte_zahl', '3'), kopf.split(' · ')[-1][:12], ('UHR' if not en else 'AM') if s.get('akte_zahl') == '3' else ('NUMMER' if not en else 'NUMBER'))
-        elif art == 'ort_nah':  # der Ort, die Gestalt ist schon da - nur ein Detail fällt auf
+        elif art == 'ort_nah':  # der Ort, die Gestalt taucht langsam auf
             K.ort_bild(im, ort, t, dunkel=0.2, gestalt=1)
+            im = Image.blend(alt_ort(ort, t, 0.2), im, min(1.0, lt / 1.5))
         elif art == 'regeln':
             K.checkliste(im, regeln, lt)
         else:
@@ -181,6 +200,13 @@ def einrichten(story, g):
         d.text((40, 86), s.get('akte_zeit', '3:12'), font=K.f(76, True), fill=(236, 238, 244))
         d.text((40 + K.f(76, True).getlength(s.get('akte_zeit', '3:12')) + 8, 132), 'AM', font=K.f(26, True), fill=(236, 238, 244))
         d.text((40, 176), kopf_, font=K.f(20, True), fill=(160, 166, 184))
+        # Fallnummer oben rechts (Serien-Gefühl) + blinkender REC-Punkt
+        d.text((K.W - 36, 64), f'FALL #{fall}' if not en_ else f'CASE #{fall}', font=K.f(22, True), fill=(200, 204, 216), anchor='ra')
+        if int(t * 2) % 2 == 0:
+            d.ellipse((K.W - 150, 100, K.W - 132, 118), fill=(230, 30, 40))
+        d.text((K.W - 36, 98), 'REC', font=K.f(22, True), fill=(230, 230, 236), anchor='ra')
+        if s['art'] not in ('blitz', 'fratze', 'teil2') and s.get('akte') not in ('ort', 'ort_nah', 'warnung'):
+            stempel(im, ('BEWEIS' if not en_ else 'EVIDENCE') + f' #{s.get("akte_nr", 1)}', thema['akzent'])
         d.rectangle((0, K.H - 90, K.W, K.H - 60), fill=(0, 0, 0))
         d.text((30, K.H - 86), '▶ PLAY', font=K.f(20, True), fill=(220, 220, 220))
         sek = int(t)
