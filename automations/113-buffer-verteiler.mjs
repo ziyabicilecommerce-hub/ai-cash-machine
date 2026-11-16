@@ -150,7 +150,7 @@ async function vorbereiten() {
       if (!h.skript.hook2) variante.duhook = false;  // nur Skript-Bot-Geschichten haben einen Du-Hook
       if (!schlagzeile(h.skript.muster, quelle === 'horror-en' ? 'en' : 'de')) variante.schlag = false;  // Schlagzeile gibt es nur für bekannte Muster
       const hook = variante.duhook ? h.skript.hook2 : h.skript.hook;
-      const folge = baueFolge({ ...h.skript, hook, weiter: '', posten: '', kurz: true, ...variante });
+      const folge = baueFolge({ ...h.skript, hook, anfang: hook !== h.skript.hook ? h.skript.hook : '', weiter: '', posten: '', kurz: true, ...variante });
       mkdirSync('out', { recursive: true });
       writeFileSync(`out/folge-${k.id}.json`, JSON.stringify({ ...folge, _slug: slug(h.skript.titel) }, null, 1));
       horrorKanaele.push(k.id);
