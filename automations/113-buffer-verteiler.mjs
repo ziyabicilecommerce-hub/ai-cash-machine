@@ -8,7 +8,7 @@
 //   node 113-buffer-verteiler.mjs --posten      -> postet laut Plan, Video-Links aus out/horror-urls.json
 import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
-import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, zaehlenMitStand, storyEingabe, abVariante, abGewichte, abGewichteAufrufe, AB_FEATURES, abSchluessel, sprachAnteil, formatWerte, guteStunde } from './lib/bufferVerteiler.mjs';
+import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, zaehlenMitStand, storyEingabe, abVariante, abGewichte, abGewichteAufrufe, AB_FEATURES, abSchluessel, sprachAnteil, formatWerte, guteStunde, folgeFuer } from './lib/bufferVerteiler.mjs';
 import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
 import { naechstesSkriptEn, SKRIPTE_EN } from './schatten/skripteEn.mjs';
 import { teil2Kandidat as teil2KandidatSync } from './schatten/skriptBot.mjs';
@@ -150,7 +150,7 @@ async function vorbereiten() {
       if (!h.skript.hook2) variante.duhook = false;  // nur Skript-Bot-Geschichten haben einen Du-Hook
       if (!schlagzeile(h.skript.muster, quelle === 'horror-en' ? 'en' : 'de')) variante.schlag = false;  // Schlagzeile gibt es nur für bekannte Muster
       const hook = variante.duhook ? h.skript.hook2 : h.skript.hook;
-      const folge = baueFolge({ ...h.skript, hook, anfang: hook !== h.skript.hook ? h.skript.hook : '', weiter: '', posten: '', kurz: true, ...variante });
+      const folge = folgeFuer(k.dienst, { ...h.skript, hook, anfang: hook !== h.skript.hook ? h.skript.hook : '', weiter: '', posten: '', kurz: true, ...variante }, baueFolge);
       mkdirSync('out', { recursive: true });
       writeFileSync(`out/folge-${k.id}.json`, JSON.stringify({ ...folge, _slug: slug(h.skript.titel) }, null, 1));
       horrorKanaele.push(k.id);

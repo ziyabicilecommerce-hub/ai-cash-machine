@@ -22,6 +22,15 @@ export const KANAELE = [
   // Englischer Horror-Kanal: an, sobald seine Buffer-Kanal-ID eingetragen ist (Repo-Variable EN_KANAL, optional EN_DIENST)
   ...(/^[a-f\d]{24}$/.test(process.env.EN_KANAL || '') ? [{ id: process.env.EN_KANAL, name: 'english-horror', dienst: process.env.EN_DIENST || 'youtube', quelle: 'horror-en' }] : []),
 ];
+// YouTube (16.11.): die Hits vom 5.-8.11. (bis ~1.100 Aufrufe) waren ~20 s im Klassik-Look. Die neuen Akte-Videos sind ~41 s
+// und holten 0-1 Aufrufe, der Kanal fiel von Ø 332 (1.-7.11.) auf Ø 29 (12.-16.11.). Deshalb dort wieder Klassik.
+// Passt ein Skript nicht in den Klassik-Aufbau, wird es wie bisher gebaut - der Post fällt nie aus.
+export function folgeFuer(dienst, eingabe, baue) {
+  if (dienst === 'youtube') {
+    try { return baue({ ...eingabe, stil: 'klassik' }); } catch { /* Skript passt nicht -> Standard */ }
+  }
+  return baue(eingabe);
+}
 // Die TikTok-Konten werden von Serie, Videobot und Fakten-Kanal bespielt - hier nur gezählt.
 export const TIKTOK = [
   { id: '6ac7cb606a5c39ccb6535fab', name: 'futureflowx3' },

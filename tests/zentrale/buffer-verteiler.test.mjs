@@ -167,3 +167,20 @@ test('Schonkur: das Tagesziel 0 wird nicht durch den Standard ersetzt (0 ist ein
   assert.match(quelle, /ziel: k\.ziel \?\? ZIEL_PRO_TAG/, 'mit || würde aus ZIEL_WENIGER = 0 wieder das Standardziel');
   assert.doesNotMatch(quelle, /k\.ziel \|\| ZIEL_PRO_TAG/);
 });
+
+test('YouTube bekommt den Klassik-Look der Hits (~20 s), andere Kanäle bleiben, Fehler fallen zurück', async () => {
+  const { folgeFuer } = await import('../../automations/lib/bufferVerteiler.mjs');
+  const { baueFolge } = await import('../../automations/schatten/videobot.mjs');
+  const { SKRIPTE_EN } = await import('../../automations/schatten/skripteEn.mjs');
+  const { SKRIPTE_EN_AKTE } = await import('../../automations/schatten/skripteEnAkte.mjs');
+  const stil = [];
+  folgeFuer('instagram', { a: 1 }, (e) => stil.push(e.stil));
+  folgeFuer('youtube', { a: 1 }, (e) => stil.push(e.stil));
+  assert.deepEqual(stil, [undefined, 'klassik']);
+  const zurueck = folgeFuer('youtube', { a: 1 }, (e) => { if (e.stil === 'klassik') throw new Error('passt nicht'); return 'standard'; });
+  assert.equal(zurueck, 'standard');
+  for (const s of [...SKRIPTE_EN, ...SKRIPTE_EN_AKTE]) {
+    const f = folgeFuer('youtube', { ...s, kurz: true, weiter: '', posten: '' }, baueFolge);
+    assert.ok(f.klassik && f.szenen.length <= 8, `${s.titel}: ${f.szenen.length} Szenen`);
+  }
+});
