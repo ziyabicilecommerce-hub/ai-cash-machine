@@ -415,3 +415,40 @@ def zeitung(im, kopf, jahr, lt, en=False):
         d.line((110, 890 + i * 20, 610 - (i % 2) * 90, 890 + i * 20), fill=(110, 100, 86), width=6)
     if lt > 1.0:  # roter Kreis um die Gestalt auf dem Foto
         d.ellipse((W / 2 - 110, 560, W / 2 + 110, 860), outline=(200, 30, 40), width=7)
+
+
+def bericht(im, kopf, jahr, fall, lt, gestrichen=False, en=False):
+    # Polizeibericht von damals (Schreibmaschine, Foto mit Gestalt); gestrichen=True: schwarze Balken + roter Stempel
+    from akte_geist import geist
+    d = ImageDraw.Draw(im)
+    box = (70, 270, 650, 1010)
+    schatten_rand(im, box, 4)
+    d.rectangle(box, fill=(232, 228, 214))
+    d.text((100, 300), 'POLICE REPORT' if en else 'POLIZEIBERICHT', font=f(40, True), fill=(30, 30, 34))
+    d.text((100, 352), (f'CASE NO. {fall}/{jahr % 100:02d}' if en else f'AKTENZEICHEN {fall}/{jahr % 100:02d}'), font=f(22, True), fill=(80, 80, 86))
+    d.line((100, 388, 620, 388), fill=(30, 30, 34), width=3)
+    zeilen = [('DATE' if en else 'DATUM') + f': 14.11.{jahr}', ('TIME' if en else 'UHRZEIT') + ': 03:12', kopf,
+              'WITNESS: NONE' if en else 'ZEUGEN: KEINE', ('STATUS: OPEN' if en else 'STATUS: OFFEN')]
+    for i, z in enumerate(zeilen):
+        sicht = lt > 0.25 + i * 0.35 or gestrichen  # Schreibmaschine tippt Zeile für Zeile
+        if sicht:
+            d.text((100, 410 + i * 46), z[:30], font=f(26, True), fill=(30, 30, 34))
+    foto = (380, 640, 610, 960)
+    d.rectangle(foto, fill=(150, 146, 136))
+    bild = Image.new('RGB', (W, H), (160, 156, 146))
+    geist(bild, W / 2, 1040, s=0.62, t=lt)
+    im.paste(bild.convert('L').convert('RGB').crop((W / 2 - 115, 640, W / 2 + 115, 960)), (380, 640))
+    d.rectangle(foto, outline=(30, 30, 34), width=3)
+    d.text((110, 700), ('EVIDENCE PHOTO' if en else 'BEWEISFOTO') + ' →', font=f(22, True), fill=(80, 80, 86))
+    if gestrichen:
+        p = min(1.0, lt / 0.8)
+        for i, y in enumerate((410, 456, 502, 548, 594)):  # Zeilen werden nacheinander geschwärzt
+            if p > i * 0.18:
+                d.rectangle((96, y - 4, 96 + 470 * min(1, (p - i * 0.18) * 4), y + 34), fill=(8, 8, 10))
+        if lt > 0.9:
+            stempel = Image.new('RGBA', (500, 140), (0, 0, 0, 0))
+            sd = ImageDraw.Draw(stempel)
+            sd.rectangle((6, 6, 494, 134), outline=(200, 20, 30, 230), width=10)
+            sd.text((250, 70), 'CASE ERASED' if en else 'FALL GESTRICHEN', font=f(52, True), fill=(200, 20, 30, 235), anchor='mm')
+            stempel = stempel.rotate(12, expand=True, resample=Image.BICUBIC)
+            im.paste(stempel, (110, 520), stempel)
