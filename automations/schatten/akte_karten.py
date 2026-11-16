@@ -336,3 +336,56 @@ def schock(im, lt, en=False, variante=0):
         d.ellipse((cx + ex * s_ - r, cy - 270 * s_ - r, cx + ex * s_ + r, cy - 270 * s_ + r), fill=(255, 255, 255))
     if int(lt * 8) % 2:
         d.text((W / 2, 150), '⚠ ' + ('HE IS HERE' if en else 'ER IST DA'), font=f(48, True), fill=(255, 230, 230), anchor='mm')
+
+
+def spion(im, t, lt):
+    # 16.11. (statt Bauplan, Nutzer: "das juckt keinen"): Blick durch den Türspion - Fischauge auf den Flur,
+    # jemand steht direkt vor der Tür und kommt näher
+    import pov_raum
+    from figuren import schatten, ZEIT
+    flur = Image.new('RGB', (W, H))
+    pov_raum.flur(flur, t)
+    ZEIT[0] = t
+    lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    n = min(1.0, lt / 2.2)
+    gr = 0.5 + 0.9 * n
+    schatten(lage, W / 2, 400 + 505 * gr, s=gr, alpha=255)  # Kopf bleibt im Spion, er kommt näher
+    flur.paste(lage, (0, 0), lage)
+    from PIL import ImageEnhance
+    flur = ImageEnhance.Brightness(Image.blend(flur, Image.new('RGB', (W, H), (60, 44, 16)), 0.2)).enhance(1.6)
+    gross = flur.resize((int(W * 1.25), int(H * 1.25)))  # Linse vergrößert die Mitte
+    flur = gross.crop(((gross.width - W) // 2, (gross.height - H) // 2, (gross.width - W) // 2 + W, (gross.height - H) // 2 + H))
+    maske = Image.new('L', (W, H), 0)
+    ImageDraw.Draw(maske).ellipse((W / 2 - 300, 560 - 300, W / 2 + 300, 560 + 300), fill=255)
+    maske = maske.filter(ImageFilter.GaussianBlur(26))
+    im.paste((0, 0, 0), (0, 0, W, H))
+    im.paste(flur, (0, 0), maske)
+    d = ImageDraw.Draw(im)
+    d.ellipse((W / 2 - 304, 256, W / 2 + 304, 864), outline=(30, 30, 34), width=10)
+
+
+def kamera(im, t, lt, ort):
+    # Überwachungskamera: schwarz-weißes CAM-Bild mit Zeitstempel, nach ~1 s steht die Gestalt im Bild
+    from akte_orte import ORTE
+    from figuren import schatten, ZEIT
+    bild = Image.new('RGB', (W, H))
+    (ORTE.get(ort) or ORTE['flur'])(bild, t, 0.0, 0.0) if ort in ORTE else ORTE['flur'](bild, t, 0.0, 0.0)
+    if lt > 1.0 and int(lt * 10) % 7:
+        ZEIT[0] = t
+        lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+        schatten(lage, W * 0.72, 900, s=0.8, alpha=230)
+        bild.paste(lage, (0, 0), lage)
+    grau = bild.convert('L').convert('RGB')
+    bild = Image.blend(grau, Image.new('RGB', (W, H), (30, 60, 40)), 0.18)
+    bild = bild.crop((0, 120, W, 1000)).resize((W - 80, 780))
+    im.paste((10, 10, 12), (0, 0, W, H))
+    im.paste(bild, (40, 240))
+    d = ImageDraw.Draw(im)
+    for y in range(240, 1020, 6):
+        d.line((40, y, W - 40, y), fill=(0, 0, 0), width=1)
+    d.rectangle((40, 240, W - 40, 1020), outline=(80, 84, 90), width=4)
+    d.text((60, 256), 'CAM 02', font=f(30, True), fill=(240, 240, 240))
+    sek = int(lt * 10) % 60
+    d.text((W - 60, 256), f'03:12:{sek:02d}', font=f(30, True), fill=(240, 240, 240), anchor='ra')
+    if int(lt * 2) % 2 == 0:
+        d.ellipse((60, 980, 80, 1000), fill=(230, 30, 40))
