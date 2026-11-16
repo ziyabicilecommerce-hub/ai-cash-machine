@@ -16,7 +16,9 @@ MOTIVE = {
 
 
 def laden(seed=7, versuche=3):
-    if os.environ.get('STUMM') == '1' or os.environ.get('AKTE_KI') == 'aus':
+    # 16.11. (Nutzer: "du malst die Charaktere - nur der Bösewicht soll ein Mann sein, so in der Art"): Fotos aus, der
+    # gezeichnete Horror-Mann passt zum Rest. Nur mit AKTE_KI=an werden noch Fotos geholt.
+    if os.environ.get('STUMM') == '1' or os.environ.get('AKTE_KI') != 'an':
         return {}
     bilder = {}
     for name, motiv in MOTIVE.items():
