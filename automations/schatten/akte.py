@@ -33,6 +33,17 @@ for _r in (REGELN_DE, REGELN_EN):
         _r[_o] = _r['reise']
 
 
+# 16.11. (Wunsch: "änder alles bei jedem Video, hauptsächlich geil"): jede Geschichte bekommt ihre eigene Farbwelt
+THEMEN = [  # Hintergrund, Farbe des gesprochenen Worts, Farbstich über dem ganzen Bild
+    {'grund': (22, 26, 38), 'akzent': (255, 212, 0), 'stich': None},          # Mitternacht
+    {'grund': (34, 12, 16), 'akzent': (255, 86, 86), 'stich': (130, 10, 20)},  # Blutmond
+    {'grund': (8, 24, 14), 'akzent': (150, 255, 120), 'stich': (20, 130, 40)},  # Nachtsicht
+    {'grund': (26, 14, 40), 'akzent': (210, 150, 255), 'stich': (90, 30, 150)},  # Gift
+    {'grund': (30, 24, 18), 'akzent': (255, 170, 60), 'stich': (130, 80, 30)},  # VHS
+    {'grund': (12, 24, 36), 'akzent': (120, 220, 255), 'stich': (20, 90, 140)},  # Eis
+]
+
+
 def karte_fuer(s, nr, gesamt):
     # welche Karte zeigt diese Szene? Erst Stichwörter im Satz, sonst der Reihe nach, nie zweimal dieselbe hintereinander
     t = (s.get('text') or s.get('sprich') or '').lower()
@@ -97,6 +108,12 @@ def einrichten(story, g):
     monster = next((s['monster'] for s in szenen if s.get('monster')), None)
     chat_text = [nachricht or ('Bist du wach?' if not en else 'Are you awake?'), ('Geh nicht raus.' if not en else 'Do not go out.')]
     vorher, minute, benutzt = None, 7 + zahl % 20, set()
+    thema = THEMEN[(zahl * 7) % len(THEMEN)]
+    K.GRUND = thema['grund']
+    import effekte
+    effekte.GELB = thema['akzent']
+    nacht = 1 + zahl % 6
+    schock_art = (zahl // 3) % 3
     for nr, s in enumerate(szenen):
         k = karte_fuer(s, nr, len(szenen))
         if k is None or k == vorher or (k in benutzt and k != 'chat'):  # jede Karte höchstens einmal pro Video
@@ -121,7 +138,7 @@ def einrichten(story, g):
     def bild(s, t, lt):
         if s['art'] == 'fratze':  # eigener Schock im Akte-Look statt des alten Comic-Gesichts (passte nicht zum Stil)
             im = Image.new('RGB', (K.W, K.H))
-            K.schock(im, lt, en)
+            K.schock(im, lt, en, schock_art)
             return im
         im = Image.new('RGB', (K.W, K.H), K.GRUND)
         art = s.get('akte', 'ort')
@@ -153,12 +170,14 @@ def einrichten(story, g):
             neu = Image.new('RGB', (K.W, K.H), K.GRUND)
             neu.paste(im, (0, int((1 - e) * 140)))
             im = Image.blend(Image.new('RGB', (K.W, K.H), K.GRUND), neu, 0.35 + 0.65 * e)
+        if thema['stich']:  # Farbwelt dieser Geschichte über das ganze Bild
+            im = Image.blend(im, Image.new('RGB', (K.W, K.H), thema['stich']), 0.13)
         kopfzeile(im, s, t, kopf, en)
         return im
 
     def kopfzeile(im, s, t, kopf_, en_):
         d = ImageDraw.Draw(im)
-        d.text((40, 60), 'NACHT 1' if not en_ else 'NIGHT 1', font=K.f(22, True), fill=K.ROT)
+        d.text((40, 60), f'NACHT {nacht}' if not en_ else f'NIGHT {nacht}', font=K.f(22, True), fill=thema['akzent'])
         d.text((40, 86), s.get('akte_zeit', '3:12'), font=K.f(76, True), fill=(236, 238, 244))
         d.text((40 + K.f(76, True).getlength(s.get('akte_zeit', '3:12')) + 8, 132), 'AM', font=K.f(26, True), fill=(236, 238, 244))
         d.text((40, 176), kopf_, font=K.f(20, True), fill=(160, 166, 184))

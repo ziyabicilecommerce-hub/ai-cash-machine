@@ -293,7 +293,7 @@ def _umbruch(text, font_, breite):
     return aus + ([z] if z else [])
 
 
-def schock(im, lt, en=False):
+def schock(im, lt, en=False, variante=0):
     # Jumpscare im Akte-Stil (15.11., statt des alten Comic-Gesichts): Störung -> rotes Alarmbild -> schwarze Gestalt
     # springt bis vor die Kamera, nur zwei weiße Punkte als Augen. Flach gezeichnet wie die Karten.
     d = ImageDraw.Draw(im)
@@ -306,6 +306,26 @@ def schock(im, lt, en=False):
         return
     p = min(1.0, (lt - 0.12) / 0.25)
     e = 1 - (1 - p) ** 3
+    if variante == 1:  # nur Augen im Schwarz: erst winzig weit weg, dann riesig direkt vor dir
+        d.rectangle((0, 0, W, H), fill=(2, 2, 4))
+        r, ab = 6 + 70 * e, 30 + 150 * e
+        for ex in (-1, 1):
+            d.ellipse((W / 2 + ex * ab - r, 620 - r * 0.6, W / 2 + ex * ab + r, 620 + r * 0.6), fill=(255, 255, 255))
+            d.ellipse((W / 2 + ex * ab - r * 0.25, 620 - r * 0.25, W / 2 + ex * ab + r * 0.25, 620 + r * 0.25), fill=(0, 0, 0))
+        if e > 0.6:
+            d.text((W / 2, 1000), 'SIEHST DU MICH?' if not en else 'CAN YOU SEE ME?', font=f(52, True), fill=(230, 40, 50), anchor='mm')
+        return
+    if variante == 2:  # hinter dir: dein Porträt, über deiner Schulter taucht ein Kopf auf
+        d.rectangle((0, 0, W, H), fill=(18, 20, 28))
+        hx, hy = 500, 250 + 160 * (1 - e)  # Kopf hinter dem Porträt - er schaut über den Rand
+        d.ellipse((hx - 130, hy - 160, hx + 130, hy + 160), fill=(4, 4, 6))
+        d.polygon([(hx - 200, hy + 120), (hx + 200, hy + 120), (hx + 260, H), (hx - 260, H)], fill=(4, 4, 6))
+        for ex in (-45, 45):
+            d.ellipse((hx + ex - 10, hy - 50, hx + ex + 10, hy - 30), fill=(255, 255, 255))
+        portrait(im, lt * 4, 'DU' if not en else 'YOU', angst=1.0)
+        if int(lt * 8) % 2:
+            d.text((W / 2, 1000), 'DREH DICH UM' if not en else 'TURN AROUND', font=f(56, True), fill=(230, 40, 50), anchor='mm')
+        return
     d.rectangle((0, 0, W, H), fill=(150, 10, 18) if int(lt * 12) % 2 else (90, 6, 12))
     s_ = 0.8 + 1.5 * e  # Gestalt springt nach vorn - die Augen bleiben in der Bildmitte
     cx, cy = W / 2, 600 + 270 * s_
