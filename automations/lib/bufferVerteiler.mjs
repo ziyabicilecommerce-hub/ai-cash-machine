@@ -32,6 +32,14 @@ export function folgeFuer(eingabe, baue) {
   }
   return baue(eingabe);
 }
+// Früher Schock: nur im Klassik-Look (der Akte-Stil hat bewusst keine Blitzbilder). 0,5 s liegt hinter dem Titelbild (0,35 s),
+// die Fratze landet also nie auf dem Cover. Gibt null zurück, wenn es nicht passt - dann zählt der Post nicht im Test.
+export function fruehSchock(folge, an) {
+  if (!folge?.klassik || folge.szenen?.[0]?.art !== 'blitz') return { folge, frueh: null };
+  if (!an) return { folge, frueh: false };
+  const [erste, ...rest] = folge.szenen;
+  return { folge: { ...folge, szenen: [{ ...erste, blitzbild: [0.5, 1.1], schreck_bei: 0.5 }, ...rest] }, frueh: true };
+}
 // Die TikTok-Konten werden von Serie, Videobot und Fakten-Kanal bespielt - hier nur gezählt.
 export const TIKTOK = [
   { id: '6ac7cb606a5c39ccb6535fab', name: 'futureflowx3' },
@@ -171,8 +179,10 @@ export function storyEingabe(kanalId, coverUrl, en = false, sticker = '', alt = 
 // gestalt (11.11.): Schattenfigur kommt in leeren KI-Szenen bei jedem Flackern näher (tiefe.py) - halbe-halbe, bis Zahlen da sind
 // duhook 0.15 (13.11.): das Trick-Radar misst den Regel-Hook ("Wenn …, geh nicht ran / renn.") bei x2,2 und die Du-Ansprache
 // bei x1,8 gegen den Konto-Schnitt - der Du-Hook läuft jetzt bei 85 % der Videos, 15 % bleiben zum Weitermessen.
+// frueh (16.11., Nutzer: "mach es noch krasser"): im Hit-Look blitzt die Fratze schon nach 0,5 s auf (und nochmal bei 1,1 s) -
+// die Leute wischen im Schnitt nach ~4 s weg, der Schock soll davor sitzen. Halbe-halbe, bis Zahlen da sind (fruehSchock).
 // klassik (16.11.): Hit-Look vom 7.11. (~20 s) gegen den Akte-Stil - halbe-halbe, bis Zahlen da sind (folgeFuer)
-export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.15, schlag: 0.5, gestalt: 0.5, klassik: 0.5 };  // Wahrscheinlichkeit für "aus"
+export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.15, schlag: 0.5, gestalt: 0.5, klassik: 0.5, frueh: 0.5 };  // Wahrscheinlichkeit für "aus"
 export function abVariante(zufall = Math.random, gewichte = AB_FEATURES) {
   return Object.fromEntries(Object.entries(gewichte).map(([f, aus]) => [f, zufall() >= aus]));
 }

@@ -186,3 +186,18 @@ test('A/B-Test klassik: nur im Test-Arm der Hit-Look, Fehler fallen auf den Stan
     assert.ok(!folgeFuer({ ...basis, klassik: false }, baueFolge).klassik, `${s.titel}: ohne Test-Arm kein Klassik`);
   }
 });
+
+test('Früher Schock: nur im Hit-Look, nach dem Titelbild, sonst zählt der Post nicht im Test', async () => {
+  const { fruehSchock, folgeFuer } = await import('../../automations/lib/bufferVerteiler.mjs');
+  const { baueFolge } = await import('../../automations/schatten/videobot.mjs');
+  const { SKRIPTE_EN } = await import('../../automations/schatten/skripteEn.mjs');
+  const basis = { ...SKRIPTE_EN[0], kurz: true, weiter: '', posten: '' };
+  const hit = folgeFuer({ ...basis, klassik: true }, baueFolge), akte = folgeFuer({ ...basis, klassik: false }, baueFolge);
+  const an = fruehSchock(hit, true);
+  assert.equal(an.frueh, true);
+  assert.deepEqual(an.folge.szenen[0].blitzbild, [0.5, 1.1]);
+  assert.ok(an.folge.szenen[0].blitzbild[0] > 0.35 + 2 / 30, 'Fratze nie auf dem Titelbild (0,35 s)');
+  assert.equal(hit.szenen[0].blitzbild, undefined, 'Original bleibt unverändert');
+  assert.deepEqual(fruehSchock(hit, false), { folge: hit, frueh: false });
+  assert.deepEqual(fruehSchock(akte, true), { folge: akte, frueh: null });
+});
