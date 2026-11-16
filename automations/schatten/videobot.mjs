@@ -8,7 +8,9 @@ import { schlagzeile } from './schlagzeilen.mjs';
 
 export const ORTE = ['zug', 'flugzeug', 'haus', 'wald', 'aufzug'];
 export const BOESE = ['schatten', 'gremlin', 'frau', 'hirsch'];
-export const KONTEN = { futureflowx3: '6ac7cb606a5c39ccb6535fab', zyx_7851: '6ac7cae66a5c39ccb6535c40', futureflowxx: '6ac7ca226a5c39ccb65356a5' };
+export const KONTEN = { futureflowx3: '6ac7cb606a5c39ccb6535fab', zyx_7851: '6ac7cae66a5c39ccb6535c40', futureflowxx: '6ac7ca226a5c39ccb65356a5',
+  // 16.11. (Nutzer: "mach bei YT und Insta auch welche"): der Videobot kann auch auf Instagram und YouTube posten
+  'desk.rebel': '6ae8f441e29c69a1713e44f3', purivelle: '6ae8f3dbe29c69a1713e416a', giyuuu: '6ae8f39ae29c69a1713e3f33' };
 const STIMMEN = { mann: 'de-DE-FlorianMultilingualNeural', frau: 'de-DE-SeraphinaMultilingualNeural' };
 const STIMMEN_EN = { mann: 'en-US-ChristopherNeural', frau: 'en-US-AriaNeural' };
 // Texte, die der Videobot selbst einsetzt - Deutsch ist Standard, sprache: 'en' für den englischen Kanal
