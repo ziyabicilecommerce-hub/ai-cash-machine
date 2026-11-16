@@ -117,13 +117,29 @@ def einrichten(story, g):
     nacht = 1 + zahl % 6
     import akte_geist
     akte_geist.ART[0] = story.get('boesewicht', 'schatten')
-    # Herkunft des Geistes als eigene Szene vor dem letzten Satz (Nutzer: "wie ist der Geist entstanden?")
+    # 16.11. (Nutzer: "mach wie ein Bericht - früher ist es passiert, wurde dokumentiert, dann wurde der Vorfall gestrichen,
+    # ich habe davon gelesen und bin selbst hingefahren"): nach dem Hook drei Szenen - Polizeibericht von damals,
+    # derselbe Bericht geschwärzt (FALL GESTRICHEN), "also bin ich selbst hingefahren" - dann passiert es ihm.
     jahr = 1971 + zahl % 29
     satz_h, kopf_h = akte_geist.herkunft(akte_geist.ART[0], ort, jahr, en)
-    letzte = max((i for i, x in enumerate(szenen) if x['art'] == 'dunkel'), default=None)
-    if letzte is not None and not any(x.get('akte') == 'zeitung' for x in szenen):
-        szenen.insert(letzte, {'art': 'innen', 'akte': 'zeitung', 'sprich': satz_h, 'text': satz_h.upper(), 'gelb': str(jahr),
-                               'zeitung_kopf': kopf_h, 'jahr': jahr, 'pause': 0.3, 'akte_zeit': '', 'pov_text': ''})
+    roh = (akte_geist.HERKUNFT_EN if en else akte_geist.HERKUNFT_DE).get(akte_geist.ART[0], (akte_geist.HERKUNFT_EN if en else akte_geist.HERKUNFT_DE)['schatten'])[0]
+    o_ = (akte_geist.ORT_SATZ_EN if en else akte_geist.ORT_SATZ_DE).get(ort, 'here' if en else 'in diesem Haus')
+    was = ('Back then, ' if en else 'Damals ') + roh.format(ort=o_)
+    hin = (akte_geist.ORT_SATZ_EN if en else akte_geist.ORT_SATZ_DE).get(ort, 'there' if en else 'in dieses Haus')
+    hin_de = hin.replace('in diesem', 'in dieses').replace('auf dieser', 'auf diese').replace('an dieser', 'an diese').replace('an diesem', 'an diesen').replace('auf genau diesem', 'auf genau diesen')
+    if not any(x.get('akte') == 'bericht' for x in szenen):
+        neu = [
+            {'art': 'innen', 'akte': 'bericht', 'sprich': (f'There is a police report from {jahr}. ' if en else f'Es gibt einen Polizeibericht von {jahr}. ') + was,
+             'kopf': kopf_h, 'jahr': jahr},
+            {'art': 'innen', 'akte': 'gestrichen', 'sprich': 'A week later the case was erased. Nobody was allowed to talk about it.' if en
+             else 'Eine Woche später wurde der Fall gestrichen. Niemand durfte darüber reden.', 'kopf': kopf_h, 'jahr': jahr},
+            {'art': 'innen', 'akte': 'ort', 'sprich': (f'So I went there myself.' if en else f'Also bin ich selbst {hin_de} gefahren.')},
+        ]
+        for x in neu:
+            x.update({'text': x['sprich'].upper(), 'gelb': str(jahr), 'pause': 0.25, 'pov_text': ''})
+        start = next((i + 1 for i, x in enumerate(szenen) if x['art'] == 'blitz'), 0)
+        szenen[start:start] = neu
+    story['stimme'] = 'en-US-GuyNeural' if en else 'de-DE-ConradNeural'  # "mach ein Mann": immer ein Mann erzählt
     fall = 100 + zahl % 900
     for i, sz in enumerate([x for x in szenen if x['art'] not in ('blitz', 'fratze', 'teil2', 'ende')]):
         sz['akte_nr'] = i + 1
@@ -143,9 +159,9 @@ def einrichten(story, g):
         im.paste(lage, (K.W - lage.width - 30, 1000), lage)
     schock_art = (zahl // 3) % 3
     for nr, s in enumerate(szenen):
-        if s.get('akte') == 'zeitung':  # Herkunfts-Szene behält ihren Zeitungsausschnitt
+        if s.get('akte') in ('zeitung', 'bericht', 'gestrichen', 'ort'):  # Bericht-Szenen behalten ihre Karte
             s['akte_zeit'] = f'3:{minute:02d}'
-            vorher = 'zeitung'
+            vorher = s['akte']
             continue
         k = karte_fuer(s, nr, len(szenen))
         if k is None or k == vorher or (k in benutzt and k != 'chat'):  # jede Karte höchstens einmal pro Video
@@ -188,6 +204,8 @@ def einrichten(story, g):
             K.chat(im, lt, absender, chat_text, notfall=monster or ('Antworte nicht.' if not en else 'Do not reply.'))
         elif art == 'ton':
             K.lautsprecher(im, lt, ('GERÄUSCH · ' if not en else 'SOUND · ') + kopf.split(' · ')[0])
+        elif art in ('bericht', 'gestrichen'):
+            K.bericht(im, s.get('kopf', ''), s.get('jahr', 1987), fall, lt, art == 'gestrichen', en)
         elif art == 'zeitung':
             K.zeitung(im, s.get('zeitung_kopf', ''), s.get('jahr', 1987), lt, en)
         elif art == 'spion':
