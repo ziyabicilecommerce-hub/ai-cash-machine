@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-16T19:01:33.385Z",
+ "stand": "2026-11-16T19:04:51.514Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -954,6 +954,16 @@
  },
  "kalender": [
   {
+   "titel": "Pokémon: Delta-Herrschaft",
+   "farbe": "Gerade erschienen",
+   "preis": null,
+   "bild": "",
+   "zeit": "2026-11-06T00:00:00.000Z",
+   "link": "https://www.pokemon.com/de/pokemon-sammelkartenspiel",
+   "marke": "Pokémon",
+   "kat": "Sammelkarten"
+  },
+  {
    "titel": "Nike Air Max 95 Big Bubble Lux Schuh (Herren)",
    "farbe": "Schwarz/Schwarz/Gym Green/Schwarz",
    "preis": 199.99,
@@ -1184,6 +1194,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     13.28,
      13.28
     ]
    },
@@ -1217,6 +1228,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     35.06,
      35.06
     ]
    },
@@ -1250,6 +1262,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     19,
      19
     ]
    },
@@ -1283,40 +1296,8 @@
     },
     "nurBewegung": true,
     "kurs": [
+     19.53,
      19.53
-    ]
-   },
-   {
-    "id": "30th-156",
-    "name": "Brutalanda-ex",
-    "nummer": "156",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/156/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Brutalanda-ex",
-    "preis": {
-     "tief": 8,
-     "trend": 15.37,
-     "schnitt7": 15.5,
-     "schnitt30": 15.99
-    },
-    "prozent": -3,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 8,
-     "ziel": 15.37,
-     "gewinn": 5.1,
-     "roi": 64,
-     "momentum": -3,
-     "spread": 7.37,
-     "score": 66,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     15.37
     ]
    },
    {
@@ -1349,6 +1330,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     13.13,
      13.13
     ]
    },
@@ -1382,6 +1364,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     21.12,
      21.12
     ]
    },
@@ -1415,6 +1398,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     36.83,
      36.83
     ]
    },
@@ -1448,6 +1432,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     46.94,
      46.94
     ]
    },
@@ -1481,7 +1466,41 @@
     },
     "nurBewegung": true,
     "kurs": [
+     33.02,
      33.02
+    ]
+   },
+   {
+    "id": "30th-c-004",
+    "name": "Genesect EX",
+    "nummer": "004",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Genesect%20EX",
+    "preis": {
+     "tief": 5.49,
+     "trend": 8.68,
+     "schnitt7": 8.71,
+     "schnitt30": 8.27
+    },
+    "prozent": 5,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 5.49,
+     "ziel": 8.68,
+     "gewinn": 1.26,
+     "roi": 23,
+     "momentum": 5,
+     "spread": 3.19,
+     "score": 56,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     8.68
     ]
    },
    {
@@ -1514,6 +1533,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     33.85,
      33.85
     ]
    },
@@ -1547,7 +1567,41 @@
     },
     "nurBewegung": true,
     "kurs": [
+     34.73,
      34.73
+    ]
+   },
+   {
+    "id": "30th-c-016",
+    "name": "Rayquaza EX",
+    "nummer": "016",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rayquaza%20EX",
+    "preis": {
+     "tief": 21.99,
+     "trend": 30.07,
+     "schnitt7": 27.61,
+     "schnitt30": 25.72
+    },
+    "prozent": 7,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 21.99,
+     "ziel": 27.61,
+     "gewinn": 2.74,
+     "roi": 12,
+     "momentum": 7,
+     "spread": 8.08,
+     "score": 55,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     30.07
     ]
    },
    {
@@ -1580,40 +1634,8 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.46,
      9.46
-    ]
-   },
-   {
-    "id": "30th-157",
-    "name": "Mewtu-ex",
-    "nummer": "157",
-    "seltenheit": "Futuristic Rare",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/157/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mewtu-ex",
-    "preis": {
-     "tief": 19.9,
-     "trend": 32.85,
-     "schnitt7": 32.41,
-     "schnitt30": 34.51
-    },
-    "prozent": -6,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 19.9,
-     "ziel": 32.41,
-     "gewinn": 9.39,
-     "roi": 47,
-     "momentum": -6,
-     "spread": 12.95,
-     "score": 55,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     32.85
     ]
    },
    {
@@ -1646,40 +1668,8 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.21,
      9.21
-    ]
-   },
-   {
-    "id": "30th-149",
-    "name": "Pikachu-ex",
-    "nummer": "149",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/149/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pikachu-ex",
-    "preis": {
-     "tief": 28,
-     "trend": 41.48,
-     "schnitt7": 42.69,
-     "schnitt30": 44.98
-    },
-    "prozent": -5,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 28,
-     "ziel": 41.48,
-     "gewinn": 9.91,
-     "roi": 35,
-     "momentum": -5,
-     "spread": 13.48,
-     "score": 53,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     41.48
     ]
    },
    {
@@ -1712,40 +1702,8 @@
     },
     "nurBewegung": true,
     "kurs": [
+     12.61,
      12.61
-    ]
-   },
-   {
-    "id": "30th-150",
-    "name": "Pikachu-ex",
-    "nummer": "150",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/en/me/30th/150/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pikachu-ex",
-    "preis": {
-     "tief": 35,
-     "trend": 47.83,
-     "schnitt7": 50.22,
-     "schnitt30": 52.44
-    },
-    "prozent": -4,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 35,
-     "ziel": 47.83,
-     "gewinn": 8.94,
-     "roi": 26,
-     "momentum": -4,
-     "spread": 12.83,
-     "score": 51,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     47.83
     ]
    },
    {
@@ -1778,6 +1736,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     10.09,
      10.09
     ]
    },
@@ -1811,6 +1770,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     24.03,
      24.03
     ]
    },
@@ -1844,44 +1804,21 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.71,
      9.71
-    ]
-   },
-   {
-    "id": "30th-151",
-    "name": "Mewtu-ex",
-    "nummer": "151",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/151/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mewtu-ex",
-    "preis": {
-     "tief": 33.9,
-     "trend": 43.96,
-     "schnitt7": 44.55,
-     "schnitt30": 47.3
-    },
-    "prozent": -6,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 33.9,
-     "ziel": 43.96,
-     "gewinn": 6.36,
-     "roi": 19,
-     "momentum": -6,
-     "spread": 10.06,
-     "score": 46,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     43.96
     ]
    }
   ],
   "sets": [
+   {
+    "name": "Delta-Herrschaft",
+    "id": "me06",
+    "release": "2026-11-06",
+    "logo": "",
+    "phase": "hype",
+    "tage": 10,
+    "rat": "Gerade erschienen: Einzelkarten sind jetzt am teuersten - warten. Displays/Boxen zum UVP mitnehmen."
+   },
    {
     "name": "30 Jahre: Klassische Sammlung",
     "id": "30th-c",
@@ -1926,70 +1863,61 @@
     "phase": "halten",
     "tage": 234,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
-   },
-   {
-    "name": "Paldean Wonders",
-    "id": "B2a",
-    "release": "2026-02-26",
-    "logo": "",
-    "phase": "halten",
-    "tage": 263,
-    "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 923,
+  "geprueft": 526,
   "statistik": {
-   "karten": 923,
-   "mitPreis": 527,
-   "imBudget": 42,
+   "karten": 526,
+   "mitPreis": 526,
+   "imBudget": 40,
    "steigend": 0,
-   "fallend": 6
+   "fallend": 5
   },
-  "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-11-16T18:08:55.280Z"
+  "quelle": "TCGdex",
+  "stand": "2026-11-16T19:04:35.823Z"
  },
  "trends": {
   "ware": [],
   "top": [
    {
+    "titel": "deutschland – niederlande",
+    "menge": "50000+"
+   },
+   {
+    "titel": "griechenland – serbien",
+    "menge": "1000+"
+   },
+   {
+    "titel": "germany vs netherlands",
+    "menge": "1000+"
+   },
+   {
+    "titel": "das erste",
+    "menge": "500+"
+   },
+   {
+    "titel": "urlaub",
+    "menge": "200+"
+   },
+   {
+    "titel": "ألمانيا ضد هولندا",
+    "menge": "200+"
+   },
+   {
+    "titel": "ard programm",
+    "menge": "200+"
+   },
+   {
     "titel": "red bull racing",
+    "menge": "200+"
+   },
+   {
+    "titel": "großstadtrevier bankrott",
     "menge": "200+"
    },
    {
     "titel": "tsv havelse",
     "menge": "200+"
-   },
-   {
-    "titel": "fussball heute",
-    "menge": "50000+"
-   },
-   {
-    "titel": "bauer sucht frau",
-    "menge": "2000+"
-   },
-   {
-    "titel": "somalia national football team vs ghana national football team standings",
-    "menge": "2000+"
-   },
-   {
-    "titel": "a46",
-    "menge": "500+"
-   },
-   {
-    "titel": "katharina reiche",
-    "menge": "5000+"
-   },
-   {
-    "titel": "wo wird heute fußball übertragen",
-    "menge": "200+"
-   },
-   {
-    "titel": "abwehrspieler",
-    "menge": "200+"
-   },
-   {
-    "titel": "großstadtrevier",
-    "menge": "1000+"
    }
   ]
  },
@@ -2923,6 +2851,15 @@
     "begriff": "new era"
    },
    {
+    "titel": "New Balance 9060",
+    "preis": 159.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-driftwood-timberwolf",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-driftwood-timberwolf-u90608ap-footwear_20_3E_20sneaker.jpg?v=1784931022",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "ZX 8094 \"The Missing Link\"",
     "preis": 160,
     "verfuegbar": true,
@@ -3126,15 +3063,6 @@
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1794563768",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 189.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-slate-grey-black",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-slate-grey-black-u90605su-footwear_20_3E_20sneaker.jpg?v=1792057221",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
