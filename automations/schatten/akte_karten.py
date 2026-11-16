@@ -327,13 +327,10 @@ def schock(im, lt, en=False, variante=0):
             d.text((W / 2, 1000), 'DREH DICH UM' if not en else 'TURN AROUND', font=f(56, True), fill=(230, 40, 50), anchor='mm')
         return
     d.rectangle((0, 0, W, H), fill=(150, 10, 18) if int(lt * 12) % 2 else (90, 6, 12))
-    s_ = 0.8 + 1.5 * e  # Gestalt springt nach vorn - die Augen bleiben in der Bildmitte
-    cx, cy = W / 2, 600 + 270 * s_
-    d.ellipse((cx - 110 * s_, cy - 380 * s_, cx + 110 * s_, cy - 130 * s_), fill=(4, 4, 6))  # Kopf
-    d.polygon([(cx - 70 * s_, cy - 160 * s_), (cx + 70 * s_, cy - 160 * s_), (cx + 260 * s_, cy + 300 * s_), (cx - 260 * s_, cy + 300 * s_)], fill=(4, 4, 6))
-    for ex in (-40, 40):
-        r = (9 + 4 * e) * s_
-        d.ellipse((cx + ex * s_ - r, cy - 270 * s_ - r, cx + ex * s_ + r, cy - 270 * s_ + r), fill=(255, 255, 255))
+    from akte_geist import geist
+    gs = 1.0 + 2.6 * e  # der Geist springt nach vorn, bis sein Kopf das Bild füllt
+    geist(im, W / 2, 640 + 470 * gs, s=gs, t=lt)
+    d = ImageDraw.Draw(im)
     if int(lt * 8) % 2:
         d.text((W / 2, 150), '⚠ ' + ('HE IS HERE' if en else 'ER IST DA'), font=f(48, True), fill=(255, 230, 230), anchor='mm')
 
@@ -348,9 +345,9 @@ def spion(im, t, lt):
     ZEIT[0] = t
     lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
     n = min(1.0, lt / 2.2)
+    from akte_geist import geist
     gr = 0.5 + 0.9 * n
-    schatten(lage, W / 2, 400 + 505 * gr, s=gr, alpha=255)  # Kopf bleibt im Spion, er kommt näher
-    flur.paste(lage, (0, 0), lage)
+    geist(flur, W / 2, 380 + 420 * gr * 1.25, s=gr * 1.25, t=t)  # Kopf bleibt im Spion, er kommt näher
     from PIL import ImageEnhance
     flur = ImageEnhance.Brightness(Image.blend(flur, Image.new('RGB', (W, H), (60, 44, 16)), 0.2)).enhance(1.6)
     gross = flur.resize((int(W * 1.25), int(H * 1.25)))  # Linse vergrößert die Mitte
@@ -372,9 +369,8 @@ def kamera(im, t, lt, ort):
     (ORTE.get(ort) or ORTE['flur'])(bild, t, 0.0, 0.0) if ort in ORTE else ORTE['flur'](bild, t, 0.0, 0.0)
     if lt > 1.0 and int(lt * 10) % 7:
         ZEIT[0] = t
-        lage = Image.new('RGBA', (W, H), (0, 0, 0, 0))
-        schatten(lage, W * 0.72, 900, s=0.8, alpha=230)
-        bild.paste(lage, (0, 0), lage)
+        from akte_geist import geist
+        geist(bild, W * 0.72, 900, s=0.8, t=t, alpha=235)
     grau = bild.convert('L').convert('RGB')
     bild = Image.blend(grau, Image.new('RGB', (W, H), (30, 60, 40)), 0.18)
     bild = bild.crop((0, 120, W, 1000)).resize((W - 80, 780))
@@ -389,3 +385,33 @@ def kamera(im, t, lt, ort):
     d.text((W - 60, 256), f'03:12:{sek:02d}', font=f(30, True), fill=(240, 240, 240), anchor='ra')
     if int(lt * 2) % 2 == 0:
         d.ellipse((60, 980, 80, 1000), fill=(230, 30, 40))
+
+
+def zeitung(im, kopf, jahr, lt, en=False):
+    # vergilbter Zeitungsausschnitt: wer der Geist war (akte_geist.herkunft)
+    from akte_geist import geist
+    d = ImageDraw.Draw(im)
+    box = (70, 280, 650, 1000)
+    schatten_rand(im, box, 6)
+    d.rectangle(box, fill=(226, 214, 180))
+    d.text((W / 2, 320), 'NIGHT HERALD' if en else 'TAGESBLATT', font=f(44, True), fill=(40, 34, 28), anchor='mm')
+    d.line((100, 352, 620, 352), fill=(40, 34, 28), width=3)
+    d.text((W / 2, 372), f'{jahr}', font=f(22, True), fill=(80, 70, 60), anchor='mm')
+    gr = 46
+    zeilen = _umbruch(kopf, f(gr), 520)
+    while len(zeilen) > 2 and gr > 28:
+        gr -= 4
+        zeilen = _umbruch(kopf, f(gr), 520)
+    for i, z in enumerate(zeilen):
+        d.text((W / 2, 420 + i * (gr + 6)), z, font=f(gr), fill=(20, 16, 14), anchor='mm')
+    foto = (130, 540, 590, 860)
+    d.rectangle(foto, fill=(140, 132, 116))
+    bild = Image.new('RGB', (W, H), (150, 142, 126))
+    geist(bild, W / 2, 900, s=0.6, t=lt, alpha=int(120 + 100 * min(1, lt / 1.5)))
+    bild = bild.convert('L').convert('RGB').crop((W / 2 - 230, 540, W / 2 + 230, 860))
+    im.paste(bild, (130, 540))
+    d.rectangle(foto, outline=(40, 34, 28), width=3)
+    for i in range(5):
+        d.line((110, 890 + i * 20, 610 - (i % 2) * 90, 890 + i * 20), fill=(110, 100, 86), width=6)
+    if lt > 1.0:  # roter Kreis um die Gestalt auf dem Foto
+        d.ellipse((W / 2 - 110, 560, W / 2 + 110, 860), outline=(200, 30, 40), width=7)
