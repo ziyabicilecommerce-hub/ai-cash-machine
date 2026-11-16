@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-16T13:27:48.131Z",
+ "stand": "2026-11-16T14:11:48.634Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -196,7 +196,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-16T13:24:39.859Z",
+  "stand": "2026-11-16T14:11:53.767Z",
   "filialen": 148,
   "produkte": [
    {
@@ -343,7 +343,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 9
+      "menge": 8
      }
     ]
    },
@@ -1035,6 +1035,17 @@
    "zeit": "2026-11-19T08:00:00.000Z",
    "art": "LEO",
    "link": "https://www.nike.com/de/launch/t/nike-tiempo-streetgato-x-kids-of-immigrants-1",
+   "marke": "Nike",
+   "kat": "Sneaker"
+  },
+  {
+   "titel": "Nike x Corteiz Crossbody-Tasche (20 l)",
+   "farbe": "Schwarz/Schwarz/Reflective Silver",
+   "preis": 199.99,
+   "bild": "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit/e460ced4-59ce-44b0-92aa-c1db3421012d/nike-x-corteiz-crossbody-bag.jpg",
+   "zeit": "2026-11-20T08:00:00.000Z",
+   "art": "LEO",
+   "link": "https://www.nike.com/de/launch/t/iq2369-010-nike-corteiz-crossbody-bag-child-emea",
    "marke": "Nike",
    "kat": "Sneaker"
   },
@@ -2473,18 +2484,44 @@
   "stand": "2026-11-16T13:24:18.107Z"
  },
  "trends": {
-  "ware": [],
+  "ware": [
+   {
+    "titel": "gta 6, switch 2",
+    "menge": "100+",
+    "kategorie": "Technik & Games"
+   }
+  ],
   "top": [
    {
-    "titel": "windpark",
-    "menge": "500+"
+    "titel": "soldat",
+    "menge": "2000+"
    },
    {
-    "titel": "kalifornien",
-    "menge": "500+"
+    "titel": "carlos alcaraz",
+    "menge": "2000+"
+   },
+   {
+    "titel": "johnson & johnson",
+    "menge": "200+"
+   },
+   {
+    "titel": "olivia wilde",
+    "menge": "200+"
+   },
+   {
+    "titel": "gta 6, switch 2",
+    "menge": "100+"
+   },
+   {
+    "titel": "windpark",
+    "menge": "2000+"
    },
    {
     "titel": "phantombild",
+    "menge": "1000+"
+   },
+   {
+    "titel": "kalifornien",
     "menge": "500+"
    },
    {
@@ -2493,27 +2530,7 @@
    },
    {
     "titel": "flugzeug",
-    "menge": "10000+"
-   },
-   {
-    "titel": "netflix",
-    "menge": "2000+"
-   },
-   {
-    "titel": "grammy nominations 2027",
-    "menge": "200+"
-   },
-   {
-    "titel": "agrarheute",
-    "menge": "200+"
-   },
-   {
-    "titel": "fussball transfers",
-    "menge": "1000+"
-   },
-   {
-    "titel": "friedrich merz",
-    "menge": "10000+"
+    "menge": "20000+"
    }
   ]
  },
@@ -2695,7 +2712,7 @@
     "preis": 89.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-ftwwht-cblack-cgrani",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1794833771",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1794836769",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
@@ -2860,15 +2877,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A275-103_01.jpg?v=1770746761",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "Air Jordan 5 Retro OG",
-    "preis": 105,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-5-retro-og-hq7978-102",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HQ7978-102_01.jpg?v=1762208762",
-    "laden": "sneakersnstuff.com",
-    "begriff": "jordan"
    },
    {
     "titel": "Book 1 \"Solar Red\"",
@@ -3312,6 +3320,15 @@
     "begriff": "dunk"
    },
    {
+    "titel": "Air Jordan 40 \"Chicago\"",
+    "preis": 140,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-40-chicago-iq4087-100",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ4087-100_01.jpg?v=1765527981",
+    "laden": "sneakersnstuff.com",
+    "begriff": "jordan"
+   },
+   {
     "titel": "New Balance 9060",
     "preis": 141.99,
     "verfuegbar": true,
@@ -3445,15 +3462,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/M1906RER_1.jpg?v=1739539439",
     "laden": "overkillshop.com",
     "begriff": "new era"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 159.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-driftwood-timberwolf",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-driftwood-timberwolf-u90608ap-footwear_20_3E_20sneaker.jpg?v=1784931022",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
    },
    {
     "titel": "ZX 8094 \"The Missing Link\"",
@@ -3659,6 +3667,15 @@
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1794563768",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "New Balance 9060",
+    "preis": 189.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-slate-grey-black",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-slate-grey-black-u90605su-footwear_20_3E_20sneaker.jpg?v=1792057221",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
