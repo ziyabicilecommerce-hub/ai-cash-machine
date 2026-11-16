@@ -116,6 +116,9 @@ def einrichten(story, g):
     effekte.GELB = thema['akzent']
     nacht = 1 + zahl % 6
     import akte_geist
+    import akte_ki
+    K.KI.clear()
+    K.KI.update(akte_ki.laden(seed=zahl % 100000))  # echte Gruselbilder; ohne Netz bleibt die Zeichnung
     akte_geist.ART[0] = 'mann'  # 16.11. (Nutzer: "mach einen Horror-Mann, die sieht langweilig aus"): der Geist ist immer der Mann im Mantel
     # 16.11. (Nutzer: "mach wie ein Bericht - früher ist es passiert, wurde dokumentiert, dann wurde der Vorfall gestrichen,
     # ich habe davon gelesen und bin selbst hingefahren"): nach dem Hook drei Szenen - Polizeibericht von damals,
