@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-16T16:06:02.198Z",
+ "stand": "2026-11-16T17:13:00.148Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118201:3021",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787555270/assets/pas/images/5a32cdab-0120-4c77-bcc9-160de67cf462/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1401538,8.5824016",
+   "shop": "https://www.dm.de/p/d/3118201/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
+   "text": "16,95 € · dm Eschborn (10,4 km) · 2 Stück\nGinnheimer Straße 10-14, 65760 Eschborn\nIm Umkreis in 13 Filiale(n) vorrätig.",
+   "zeit": "2026-11-16T17:13:00.148Z"
+  },
   {
    "schluessel": "deal:https://www.sneakersnstuff.com/products/nike-air-max-plus-vii-hq2197-002",
    "art": "Deal",
@@ -184,19 +194,10 @@
    "link": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-orange-citrus-ck9246-101",
    "text": "sneakersnstuff.com · Air Jordan 3 Retro \"Orange Citrus\"\nVerkauf ca. 200–290 € → Gewinn ca. +68,50 € (ROI 47 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-14T17:11:32.263Z"
-  },
-  {
-   "schluessel": "deal:https://www.overkillshop.com/products/air-jordan-5-retro-iv5678-102-white-sunset-fire-red",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 5 / 6 Retro für 170,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IV5678-102_1.jpg?v=1785508909",
-   "link": "https://www.overkillshop.com/products/air-jordan-5-retro-iv5678-102-white-sunset-fire-red",
-   "text": "overkillshop.com · Air Jordan 5 Retro\nVerkauf ca. 190–280 € → Gewinn ca. +36,50 € (ROI 21 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-14T17:05:21.598Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-16T15:59:53.158Z",
+  "stand": "2026-11-16T17:13:03.389Z",
   "filialen": 148,
   "produkte": [
    {
@@ -213,7 +214,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 18
+      "menge": 19
      },
      {
       "name": "dm Kriftel",
@@ -221,7 +222,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 22
+      "menge": 23
      },
      {
       "name": "dm Kelsterbach",
@@ -343,7 +344,81 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 6
+      "menge": 8
+     }
+    ]
+   },
+   {
+    "dan": "3118197",
+    "name": "Balea MEN Adventskalender 2026 MERRY CHRISTMAS, 1 St",
+    "preis": 16.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787609114/assets/pas/images/4e81a9d1-d42d-46e1-8769-1c8458d165fa/balea-men-adventskalender-2026-merry-christmas",
+    "link": "https://www.dm.de/p/d/3118197/balea-men-adventskalender-2026-merry-christmas",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 14
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 3
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 13
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 5
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 8
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 4
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 22
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 1
      }
     ]
    },
@@ -361,7 +436,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 8
+      "menge": 9
      },
      {
       "name": "dm Frankfurt am Main",
@@ -486,12 +561,12 @@
       "menge": 2
      },
      {
-      "name": "dm Hochheim am Main",
-      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
-      "km": 10.5,
-      "lat": 50.0155817,
-      "lon": 8.3658454,
-      "menge": 11
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 2
      }
     ]
    },
@@ -557,7 +632,7 @@
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
-      "menge": 5
+      "menge": 6
      },
      {
       "name": "dm Hochheim am Main",
@@ -570,78 +645,13 @@
     ]
    },
    {
-    "dan": "3118676",
-    "name": "MAYBELLINE NEW YORK Adventskalender 2026 Happy Holidays, 1 St",
-    "preis": 52.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1778844332/assets/pas/images/821685b1-d386-428e-8655-1eb7ad8b7561/maybelline-new-york-adventskalender-2026-happy-holidays",
-    "link": "https://www.dm.de/p/d/3118676/maybelline-new-york-adventskalender-2026-happy-holidays",
+    "dan": "3162931",
+    "name": "Barebells Adventskalender 2026 Proteinriegel \"Twenty Four Days of Chocolate\", 1 St",
+    "preis": 59.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790203300/assets/pas/images/96a77283-9a84-4c15-ab1d-f40243cb72a0/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
+    "link": "https://www.dm.de/p/d/3162931/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
     "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 5
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 3
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 5
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 5
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 10
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 7
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 10
-     }
-    ]
+    "vorrat": []
    },
    {
     "dan": "3135831",
@@ -727,13 +737,21 @@
     ]
    },
    {
-    "dan": "3118148",
-    "name": "Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
-    "preis": 24.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "link": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
+    "dan": "3118676",
+    "name": "MAYBELLINE NEW YORK Adventskalender 2026 Happy Holidays, 1 St",
+    "preis": 52.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1778844332/assets/pas/images/821685b1-d386-428e-8655-1eb7ad8b7561/maybelline-new-york-adventskalender-2026-happy-holidays",
+    "link": "https://www.dm.de/p/d/3118676/maybelline-new-york-adventskalender-2026-happy-holidays",
     "begriff": "adventskalender",
     "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 5
+     },
      {
       "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
@@ -751,12 +769,12 @@
       "menge": 3
      },
      {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 3
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 5
      },
      {
       "name": "dm Flörsheim am Main",
@@ -764,14 +782,6 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 13
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
       "menge": 5
      },
      {
@@ -780,7 +790,7 @@
       "km": 9.3,
       "lat": 50.1237366,
       "lon": 8.5865988,
-      "menge": 9
+      "menge": 10
      },
      {
       "name": "dm Mörfelden-Walldorf",
@@ -788,7 +798,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 6
+      "menge": 7
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -796,81 +806,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 7
-     }
-    ]
-   },
-   {
-    "dan": "3118151",
-    "name": "trend !t up Adventskalender 2026 Days of Glow, 24 St",
-    "preis": 28.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784673576/assets/pas/images/9f3e9b87-6c3d-477b-99f0-25fa0632aac5/trend-t-up-adventskalender-2026-days-of-glow",
-    "link": "https://www.dm.de/p/d/3118151/trend-t-up-adventskalender-2026-days-of-glow",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 12
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 7
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 6
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 15
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 27
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 7
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 16
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 3
+      "menge": 10
      }
     ]
    },
@@ -952,10 +888,10 @@
  },
  "kalender": [
   {
-   "titel": "Pokémon: Delta-Herrschaft",
+   "titel": "Pokémon: Delta Reign",
    "farbe": "Gerade erschienen",
    "preis": null,
-   "bild": "",
+   "bild": "https://images.scrydex.com/pokemon/me6-logo/logo",
    "zeit": "2026-11-06T00:00:00.000Z",
    "link": "https://www.pokemon.com/de/pokemon-sammelkartenspiel",
    "marke": "Pokémon",
@@ -1161,1418 +1097,140 @@
   }
  ],
  "pokemon": {
-  "picks": [
-   {
-    "id": "30th-c-023",
-    "name": "M Guardevoir EX",
-    "nummer": "023",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
-    "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=M%20Guardevoir%20EX",
-    "preis": {
-     "tief": 2,
-     "trend": 13.28,
-     "schnitt7": 13.11,
-     "schnitt30": 12.8
-    },
-    "prozent": 2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 2,
-     "ziel": 13.11,
-     "gewinn": 8.95,
-     "roi": 447,
-     "momentum": 2,
-     "spread": 11.28,
-     "score": 86,
-     "signal": "STRONG BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.22,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28,
-     13.28
-    ]
-   },
-   {
-    "id": "me03-119",
-    "name": "Mega-Pixi-ex",
-    "nummer": "119",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/119/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Pixi-ex",
-    "preis": {
-     "tief": 20,
-     "trend": 35.06,
-     "schnitt7": 36.52,
-     "schnitt30": 35.94
-    },
-    "prozent": 2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 20,
-     "ziel": 35.06,
-     "gewinn": 11.81,
-     "roi": 59,
-     "momentum": 2,
-     "spread": 15.06,
-     "score": 72,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     33.89,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06,
-     35.06
-    ]
-   },
-   {
-    "id": "me04-120",
-    "name": "Azetts Gelassenheit",
-    "nummer": "120",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Wachsendes Chaos",
-    "setId": "me04",
-    "release": "2026-05-22",
-    "bild": "https://assets.tcgdex.net/de/me/me04/120/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Azetts%20Gelassenheit",
-    "preis": {
-     "tief": 10,
-     "trend": 19,
-     "schnitt7": 19.59,
-     "schnitt30": 19.79
-    },
-    "prozent": -1,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 10,
-     "ziel": 19,
-     "gewinn": 6.55,
-     "roi": 66,
-     "momentum": -1,
-     "spread": 9,
-     "score": 70,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     18.74,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19,
-     19
-    ]
-   },
-   {
-    "id": "me05-118",
-    "name": "Gladios Finalkampf",
-    "nummer": "118",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Dunkelnacht",
-    "setId": "me05",
-    "release": "2026-07-17",
-    "bild": "https://assets.tcgdex.net/de/me/me05/118/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gladios%20Finalkampf",
-    "preis": {
-     "tief": 11,
-     "trend": 19.53,
-     "schnitt7": 19.84,
-     "schnitt30": 19.66
-    },
-    "prozent": 1,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 11,
-     "ziel": 19.53,
-     "gewinn": 6.05,
-     "roi": 55,
-     "momentum": 1,
-     "spread": 8.53,
-     "score": 69,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     19.53,
-     19.53,
-     19.53,
-     19.53,
-     19.53,
-     19.53
-    ]
-   },
-   {
-    "id": "30th-156",
-    "name": "Brutalanda-ex",
-    "nummer": "156",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/156/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Brutalanda-ex",
-    "preis": {
-     "tief": 8,
-     "trend": 15.37,
-     "schnitt7": 15.5,
-     "schnitt30": 15.99
-    },
-    "prozent": -3,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 8,
-     "ziel": 15.37,
-     "gewinn": 5.1,
-     "roi": 64,
-     "momentum": -3,
-     "spread": 7.37,
-     "score": 66,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37,
-     15.37
-    ]
-   },
-   {
-    "id": "me03-107",
-    "name": "Mauzi-ex",
-    "nummer": "107",
-    "seltenheit": "Ultra Selten",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/107/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mauzi-ex",
-    "preis": {
-     "tief": 7,
-     "trend": 13.13,
-     "schnitt7": 13.62,
-     "schnitt30": 13.3
-    },
-    "prozent": 2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 7,
-     "ziel": 13.13,
-     "gewinn": 3.97,
-     "roi": 57,
-     "momentum": 2,
-     "spread": 6.13,
-     "score": 63,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     12.95,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13,
-     13.13
-    ]
-   },
-   {
-    "id": "me03-122",
-    "name": "Violette",
-    "nummer": "122",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/122/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Violette",
-    "preis": {
-     "tief": 10.99,
-     "trend": 21.12,
-     "schnitt7": 19.02,
-     "schnitt30": 19.31
-    },
-    "prozent": -2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 10.99,
-     "ziel": 19.02,
-     "gewinn": 5.58,
-     "roi": 51,
-     "momentum": -2,
-     "spread": 10.13,
-     "score": 63,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     20.39,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12,
-     21.12
-    ]
-   },
-   {
-    "id": "me03-120",
-    "name": "Mega-Zygarde-ex",
-    "nummer": "120",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/120/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zygarde-ex",
-    "preis": {
-     "tief": 24,
-     "trend": 36.83,
-     "schnitt7": 36.17,
-     "schnitt30": 36.93
-    },
-    "prozent": -2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 24,
-     "ziel": 36.17,
-     "gewinn": 8.86,
-     "roi": 37,
-     "momentum": -2,
-     "spread": 12.83,
-     "score": 58,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.72,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83,
-     36.83
-    ]
-   },
-   {
-    "id": "me05-117",
-    "name": "Morpeko-ex",
-    "nummer": "117",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Dunkelnacht",
-    "setId": "me05",
-    "release": "2026-07-17",
-    "bild": "https://assets.tcgdex.net/de/me/me05/117/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Morpeko-ex",
-    "preis": {
-     "tief": 30,
-     "trend": 46.94,
-     "schnitt7": 49.24,
-     "schnitt30": 51.16
-    },
-    "prozent": -4,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 30,
-     "ziel": 46.94,
-     "gewinn": 13.09,
-     "roi": 44,
-     "momentum": -4,
-     "spread": 16.94,
-     "score": 57,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     46.94,
-     46.94,
-     46.94,
-     46.94,
-     46.94,
-     46.94
-    ]
-   },
-   {
-    "id": "me04-119",
-    "name": "Chillabell-ex",
-    "nummer": "119",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Wachsendes Chaos",
-    "setId": "me04",
-    "release": "2026-05-22",
-    "bild": "https://assets.tcgdex.net/de/me/me04/119/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Chillabell-ex",
-    "preis": {
-     "tief": 20,
-     "trend": 33.02,
-     "schnitt7": 32.73,
-     "schnitt30": 34.4
-    },
-    "prozent": -5,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 20,
-     "ziel": 32.73,
-     "gewinn": 9.59,
-     "roi": 48,
-     "momentum": -5,
-     "spread": 13.02,
-     "score": 57,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.86,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02,
-     33.02
-    ]
-   },
-   {
-    "id": "30th-c-004",
-    "name": "Genesect EX",
-    "nummer": "004",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
-    "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Genesect%20EX",
-    "preis": {
-     "tief": 5.49,
-     "trend": 8.68,
-     "schnitt7": 8.71,
-     "schnitt30": 8.27
-    },
-    "prozent": 5,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 5.49,
-     "ziel": 8.68,
-     "gewinn": 1.26,
-     "roi": 23,
-     "momentum": 5,
-     "spread": 3.19,
-     "score": 56,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.76,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68,
-     8.68
-    ]
-   },
-   {
-    "id": "me03-123",
-    "name": "Rosys Ermutigung",
-    "nummer": "123",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/123/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rosys%20Ermutigung",
-    "preis": {
-     "tief": 24.9,
-     "trend": 33.85,
-     "schnitt7": 36.25,
-     "schnitt30": 36.42
-    },
-    "prozent": 0,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 24.9,
-     "ziel": 33.85,
-     "gewinn": 5.76,
-     "roi": 23,
-     "momentum": 0,
-     "spread": 8.95,
-     "score": 56,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.92,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85,
-     33.85
-    ]
-   },
-   {
-    "id": "me05-114",
-    "name": "Mega-Zeraora-ex",
-    "nummer": "114",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Dunkelnacht",
-    "setId": "me05",
-    "release": "2026-07-17",
-    "bild": "https://assets.tcgdex.net/de/me/me05/114/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zeraora-ex",
-    "preis": {
-     "tief": 24,
-     "trend": 34.73,
-     "schnitt7": 37.42,
-     "schnitt30": 38.01
-    },
-    "prozent": -2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 24,
-     "ziel": 34.73,
-     "gewinn": 7.49,
-     "roi": 31,
-     "momentum": -2,
-     "spread": 10.73,
-     "score": 56,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     34.73,
-     34.73,
-     34.73,
-     34.73,
-     34.73,
-     34.73
-    ]
-   },
-   {
-    "id": "30th-c-016",
-    "name": "Rayquaza EX",
-    "nummer": "016",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
-    "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rayquaza%20EX",
-    "preis": {
-     "tief": 21.99,
-     "trend": 30.07,
-     "schnitt7": 27.61,
-     "schnitt30": 25.72
-    },
-    "prozent": 7,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 21.99,
-     "ziel": 27.61,
-     "gewinn": 2.74,
-     "roi": 12,
-     "momentum": 7,
-     "spread": 8.08,
-     "score": 55,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.42,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07,
-     30.07
-    ]
-   },
-   {
-    "id": "30th-c-028",
-    "name": "Zacian-V",
-    "nummer": "028",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
-    "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Zacian-V",
-    "preis": {
-     "tief": 5.45,
-     "trend": 9.46,
-     "schnitt7": 9.29,
-     "schnitt30": 9.12
-    },
-    "prozent": 2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 5.45,
-     "ziel": 9.29,
-     "gewinn": 1.88,
-     "roi": 34,
-     "momentum": 2,
-     "spread": 4.01,
-     "score": 55,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.57,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46
-    ]
-   },
-   {
-    "id": "30th-157",
-    "name": "Mewtu-ex",
-    "nummer": "157",
-    "seltenheit": "Futuristic Rare",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/157/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mewtu-ex",
-    "preis": {
-     "tief": 19.9,
-     "trend": 32.85,
-     "schnitt7": 32.41,
-     "schnitt30": 34.51
-    },
-    "prozent": -6,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 19.9,
-     "ziel": 32.41,
-     "gewinn": 9.39,
-     "roi": 47,
-     "momentum": -6,
-     "spread": 12.95,
-     "score": 55,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     32.85,
-     32.85,
-     32.85,
-     32.85,
-     32.85,
-     32.85
-    ]
-   },
-   {
-    "id": "30th-c-003",
-    "name": "Metagross",
-    "nummer": "003",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
-    "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Metagross",
-    "preis": {
-     "tief": 4.95,
-     "trend": 9.21,
-     "schnitt7": 9.22,
-     "schnitt30": 9.41
-    },
-    "prozent": -2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 4.95,
-     "ziel": 9.21,
-     "gewinn": 2.3,
-     "roi": 46,
-     "momentum": -2,
-     "spread": 4.26,
-     "score": 53,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.73,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21,
-     9.21
-    ]
-   },
-   {
-    "id": "30th-149",
-    "name": "Pikachu-ex",
-    "nummer": "149",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/149/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pikachu-ex",
-    "preis": {
-     "tief": 28,
-     "trend": 41.48,
-     "schnitt7": 42.69,
-     "schnitt30": 44.98
-    },
-    "prozent": -5,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 28,
-     "ziel": 41.48,
-     "gewinn": 9.91,
-     "roi": 35,
-     "momentum": -5,
-     "spread": 13.48,
-     "score": 53,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     41.48,
-     41.48,
-     41.48,
-     41.48,
-     41.48,
-     41.48
-    ]
-   },
-   {
-    "id": "30th-c-022",
-    "name": "Palkia",
-    "nummer": "022",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
-    "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Palkia",
-    "preis": {
-     "tief": 8,
-     "trend": 12.61,
-     "schnitt7": 12.61,
-     "schnitt30": 12.51
-    },
-    "prozent": 1,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 8,
-     "ziel": 12.61,
-     "gewinn": 2.48,
-     "roi": 31,
-     "momentum": 1,
-     "spread": 4.61,
-     "score": 52,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.55,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61,
-     12.61
-    ]
-   },
-   {
-    "id": "30th-150",
-    "name": "Pikachu-ex",
-    "nummer": "150",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/150/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pikachu-ex",
-    "preis": {
-     "tief": 35,
-     "trend": 47.83,
-     "schnitt7": 50.22,
-     "schnitt30": 52.44
-    },
-    "prozent": -4,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 35,
-     "ziel": 47.83,
-     "gewinn": 8.94,
-     "roi": 26,
-     "momentum": -4,
-     "spread": 12.83,
-     "score": 51,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     47.83,
-     47.83,
-     47.83,
-     47.83,
-     47.83,
-     47.83
-    ]
-   },
-   {
-    "id": "me05-111",
-    "name": "Mistys Vitalität",
-    "nummer": "111",
-    "seltenheit": "Ultra Selten",
-    "set": "Dunkelnacht",
-    "setId": "me05",
-    "release": "2026-07-17",
-    "bild": "https://assets.tcgdex.net/de/me/me05/111/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mistys%20Vitalit%C3%A4t",
-    "preis": {
-     "tief": 5.9,
-     "trend": 10.09,
-     "schnitt7": 10.1,
-     "schnitt30": 10.36
-    },
-    "prozent": -3,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 5.9,
-     "ziel": 10.09,
-     "gewinn": 2.19,
-     "roi": 37,
-     "momentum": -3,
-     "spread": 4.19,
-     "score": 48,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     10.09,
-     10.09,
-     10.09,
-     10.09,
-     10.09,
-     10.09
-    ]
-   },
-   {
-    "id": "30th-c-026",
-    "name": "Mew-VMAX",
-    "nummer": "026",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
-    "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mew-VMAX",
-    "preis": {
-     "tief": 18.49,
-     "trend": 24.03,
-     "schnitt7": 23.57,
-     "schnitt30": 23.29
-    },
-    "prozent": 1,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 18.49,
-     "ziel": 23.57,
-     "gewinn": 2.4,
-     "roi": 13,
-     "momentum": 1,
-     "spread": 5.54,
-     "score": 46,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.3,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03,
-     24.03
-    ]
-   },
-   {
-    "id": "me03-113",
-    "name": "Poképad",
-    "nummer": "113",
-    "seltenheit": "Ultra Selten",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/113/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pok%C3%A9pad",
-    "preis": {
-     "tief": 5.99,
-     "trend": 9.71,
-     "schnitt7": 9.9,
-     "schnitt30": 10.18
-    },
-    "prozent": -3,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 5.99,
-     "ziel": 9.71,
-     "gewinn": 1.73,
-     "roi": 29,
-     "momentum": -3,
-     "spread": 3.72,
-     "score": 46,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71,
-     9.71
-    ]
-   },
-   {
-    "id": "30th-151",
-    "name": "Mewtu-ex",
-    "nummer": "151",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/151/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mewtu-ex",
-    "preis": {
-     "tief": 33.9,
-     "trend": 43.96,
-     "schnitt7": 44.55,
-     "schnitt30": 47.3
-    },
-    "prozent": -6,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 33.9,
-     "ziel": 43.96,
-     "gewinn": 6.36,
-     "roi": 19,
-     "momentum": -6,
-     "spread": 10.06,
-     "score": 46,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     43.96,
-     43.96,
-     43.96,
-     43.96,
-     43.96,
-     43.96
-    ]
-   }
-  ],
+  "picks": [],
   "sets": [
    {
-    "name": "Delta-Herrschaft",
-    "id": "me06",
-    "release": "2026-11-06",
-    "logo": "",
+    "name": "Delta Reign",
+    "id": "me6",
+    "release": "2026/11/06",
+    "logo": "https://images.scrydex.com/pokemon/me6-logo/logo",
     "phase": "hype",
     "tage": 10,
     "rat": "Gerade erschienen: Einzelkarten sind jetzt am teuersten - warten. Displays/Boxen zum UVP mitnehmen."
    },
    {
-    "name": "30 Jahre: Klassische Sammlung",
-    "id": "30th-c",
-    "release": "2026-09-16",
-    "logo": "",
+    "name": "30th Celebration",
+    "id": "me55",
+    "release": "2026/09/16",
+    "logo": "https://images.scrydex.com/pokemon/me55-logo/logo",
     "phase": "kaufzeit",
     "tage": 61,
     "rat": "Beste Kaufzeit: der Release-Hype ist vorbei, viele verkaufen ihre Karten günstig."
    },
    {
-    "name": "30 Jahre",
-    "id": "30th",
-    "release": "2026-09-16",
-    "logo": "",
+    "name": "30th Celebration: Classic Collection",
+    "id": "me55c",
+    "release": "2026/09/16",
+    "logo": "https://images.scrydex.com/pokemon/me55c-logo/logo",
     "phase": "kaufzeit",
     "tage": 61,
     "rat": "Beste Kaufzeit: der Release-Hype ist vorbei, viele verkaufen ihre Karten günstig."
    },
    {
-    "name": "Dunkelnacht",
-    "id": "me05",
-    "release": "2026-07-17",
-    "logo": "https://assets.tcgdex.net/de/me/me05/logo.webp",
+    "name": "Pitch Black",
+    "id": "me5",
+    "release": "2026/07/17",
+    "logo": "https://images.scrydex.com/pokemon/me5-logo/logo",
     "phase": "halten",
     "tage": 122,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    },
    {
-    "name": "Wachsendes Chaos",
-    "id": "me04",
-    "release": "2026-05-22",
-    "logo": "https://assets.tcgdex.net/de/me/me04/logo.webp",
+    "name": "Chaos Rising",
+    "id": "me4",
+    "release": "2026/05/22",
+    "logo": "https://images.scrydex.com/pokemon/me4-logo/logo",
     "phase": "halten",
     "tage": 178,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    },
    {
-    "name": "Optimale Ordnung",
-    "id": "me03",
-    "release": "2026-03-27",
-    "logo": "https://assets.tcgdex.net/de/me/me03/logo.webp",
+    "name": "Perfect Order",
+    "id": "me3",
+    "release": "2026/03/27",
+    "logo": "https://images.scrydex.com/pokemon/me3-logo/logo",
     "phase": "halten",
     "tage": 234,
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
+   },
+   {
+    "name": "Ascended Heroes",
+    "id": "me2pt5",
+    "release": "2026/01/30",
+    "logo": "https://images.scrydex.com/pokemon/me2pt5-logo/logo",
+    "phase": "halten",
+    "tage": 290,
+    "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
+   },
+   {
+    "name": "Phantasmal Flames",
+    "id": "me2",
+    "release": "2025/11/14",
+    "logo": "https://images.pokemontcg.io/me2/logo.png",
+    "phase": "halten",
+    "tage": 367,
+    "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 1088,
+  "geprueft": 466,
   "statistik": {
-   "karten": 1088,
-   "mitPreis": 657,
-   "imBudget": 50,
+   "karten": 466,
+   "mitPreis": 0,
+   "imBudget": 0,
    "steigend": 0,
-   "fallend": 7
+   "fallend": 0
   },
-  "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-11-16T15:44:05.533Z"
+  "quelle": "pokemontcg.io",
+  "stand": "2026-11-16T17:12:16.310Z"
  },
  "trends": {
-  "ware": [],
+  "ware": [
+   {
+    "titel": "nintendo weihnachtstour 2026",
+    "menge": "500+",
+    "kategorie": "Technik & Games"
+   }
+  ],
   "top": [
    {
-    "titel": "tenet",
+    "titel": "rudi cerne",
+    "menge": "1000+"
+   },
+   {
+    "titel": "война",
     "menge": "200+"
    },
    {
-    "titel": "роберт паттинсон",
+    "titel": "tom hiddleston",
     "menge": "200+"
    },
    {
-    "titel": "aaron taylor-johnson",
-    "menge": "200+"
-   },
-   {
-    "titel": "wochenhoroskop widder",
+    "titel": "peter giesel",
     "menge": "2000+"
    },
    {
-    "titel": "james bond kandidaten",
+    "titel": "polizei hessen",
     "menge": "200+"
    },
    {
-    "titel": "diallo",
-    "menge": "200+"
-   },
-   {
-    "titel": "josh o&apos;connor",
-    "menge": "200+"
-   },
-   {
-    "titel": "theo james",
-    "menge": "200+"
-   },
-   {
-    "titel": "dua lipa",
-    "menge": "200+"
-   },
-   {
-    "titel": "herford",
+    "titel": "jamal musiala",
     "menge": "2000+"
+   },
+   {
+    "titel": "nintendo weihnachtstour 2026",
+    "menge": "500+"
+   },
+   {
+    "titel": "harald krassnitzer",
+    "menge": "200+"
+   },
+   {
+    "titel": "ludwigsfelde",
+    "menge": "200+"
+   },
+   {
+    "titel": "allianz aktie",
+    "menge": "1000+"
    }
   ]
  },
@@ -2754,7 +1412,7 @@
     "preis": 89.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-ftwwht-cblack-cgrani",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1794842826",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1794847567",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
@@ -2820,6 +1478,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/yosALS2hW6yOY11LVFJ8_JR0035-Adidas-Samba-OG-W-Silver-Metallic-Cloud-White-Core-White-OS-1.jpg?v=1748610522",
     "laden": "asphaltgold.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "Women's Total 90 SE",
+    "preis": 96,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-womens-total-90-se-io2389-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IO2389-600_01.jpg?v=1778232311",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "204L",
@@ -3729,15 +2396,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-slate-grey-black-u90605su-footwear_20_3E_20sneaker.jpg?v=1792057221",
     "laden": "afew-store.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "Air Max 95 OG \"Pink Foam\"",
-    "preis": 190,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-pink-foam-hj5996-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HJ5996-001_1.jpg?v=1776939941",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
    },
    {
     "titel": "New Balance 1954R - Slate Grey / Castlerock",
