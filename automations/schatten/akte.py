@@ -253,5 +253,8 @@ def einrichten(story, g):
         sek = int(t)
         d.text((K.W - 30, K.H - 86), f'SP 0:{sek // 60:02d}:{sek % 60:02d}', font=K.f(20, True), fill=(220, 220, 220), anchor='ra')
 
-    g['bild'] = bild
+    # 16.11. ("mach's noch intensiver"): Steigerung zum Ende - Herzschlag-Rand, Zittern, kurze Störungen mit dem Gesicht
+    import akte_intens
+    intens = akte_intens.einrichten(szenen, lambda im, lt, v: K.schock(im, lt, en, v), schock_art)
+    g['bild'] = lambda s, t, lt: intens(bild(s, t, lt), s, t)
     g['nah'] = lambda im, s, lt: im
