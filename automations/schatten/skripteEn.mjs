@@ -4,6 +4,7 @@
 import { pruefen, slug } from './videobot.mjs';
 import { musterWerte } from './skriptBot.mjs';
 import { SKRIPTE_EN2 } from './skripteEn2.mjs';
+import { SKRIPTE_EN_AKTE } from './skripteEnAkte.mjs';
 
 const S = (titel, muster, ort, boesewicht, stimme, hook, hook2, saetze, ende, monster, frage, wahl, extra = {}) =>
   ({ titel, muster, ort, boesewicht, stimme, hook, hook2, saetze, ende, monster, frage, wahl, sprache: 'en', herkunft: 'skriptbot-en', ...extra });
@@ -207,7 +208,7 @@ export const TEIL2_EN = {
   kind: P2('The kid calls me. It is the middle of the night.', ['She whispers very quietly.', 'She says she is not allowed to be loud.', 'I ask her why.', 'She says: Because now he is with you. Not with me.'],
     'The closet in my room creaks. It was closed before.', 'With you now.', 'Would you open the closet?', ['Open it', 'Keep it shut']),
 };
-SKRIPTE_EN.push(...SKRIPTE_EN2);  // 07.11.: 20 neue Anruf- und Kamera-Geschichten (stärkste Muster auf YouTube)
+SKRIPTE_EN.push(...SKRIPTE_EN2, ...SKRIPTE_EN_AKTE);  // 16.11.: Akte-Geschichten auf Englisch  // 07.11.: 20 neue Anruf- und Kamera-Geschichten (stärkste Muster auf YouTube)
 for (const s of SKRIPTE_EN) s.teil2 = TEIL2_EN[s.muster];
 
 export const TAGS_EN = '#horror #scary #creepypasta #scarystories #horrorstory';
@@ -222,8 +223,10 @@ export function naechstesSkriptEn(bekannt = [], letzte = []) {
   const frei = gemischt.filter((s) => !weg.has(slug(s.titel)));
   const werte = musterWerte(letzte.filter((p) => /giyuuu|english/i.test(p.konto || '')), SKRIPTE_EN);
   const bekannteWerte = Object.values(werte).filter((w) => w.n >= 2);
-  if (!bekannteWerte.length) return frei[0] || null;
+  // 16.11.: Akte-Geschichten halten die Leute 9-13 s statt ~3 s - sie kommen zuerst dran
+  const akte = (x) => (x.muster === 'akte' ? 1.6 : 1);
+  if (!bekannteWerte.length) return frei.find((x) => x.muster === 'akte') || frei[0] || null;
   const mittel = bekannteWerte.reduce((a, w) => a + w.schnitt, 0) / bekannteWerte.length;
   const punkte = (m) => (werte[m]?.n >= 2 ? werte[m].schnitt : mittel * 1.1);
-  return [...frei].sort((a, b) => punkte(b.muster) - punkte(a.muster))[0] || null;
+  return [...frei].sort((a, b) => punkte(b.muster) * akte(b) - punkte(a.muster) * akte(a))[0] || null;
 }
