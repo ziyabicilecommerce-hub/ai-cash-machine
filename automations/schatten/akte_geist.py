@@ -14,7 +14,47 @@ def geist(im, x, y, s=1.0, t=0.0, alpha=255, art=None):
     d = ImageDraw.Draw(lage)
     k = lambda px, py: (x + px * s, y + py * s)
     wack = math.sin(t * 7) * 3
-    if art == 'frau':  # weißes Kleid, lange schwarze Haare vorm Gesicht, ein Auge schaut durch, Kopf schief
+    if art == 'mann':  # 16.11. (Nutzer: "mach einen Horror-Mann"): dürrer Mann im Mantel mit Hut, Hals zu lang, Grinsen zu breit
+        haut, mantel = (196, 200, 196, alpha), (40, 40, 46, alpha)
+        for sx in (-1, 1):  # dünne Beine unter dem Mantel
+            d.line([k(sx * 18, -150), k(sx * 22, 0)], fill=(16, 16, 18, alpha), width=max(2, int(12 * s)))
+            d.polygon([k(sx * 22 - 10, -6), k(sx * 22 + 26 * sx, -2), k(sx * 22 + 26 * sx, 6), k(sx * 22 - 10, 6)], fill=(10, 10, 12, alpha))
+        d.polygon([k(-46, -130), k(46, -130), k(40, -420), k(-40, -420)], fill=mantel)  # langer Mantel
+        d.line([k(0, -420), k(0, -140)], fill=(26, 26, 30, alpha), width=max(1, int(4 * s)))
+        for sx in (-1, 1):  # Arme bis unter die Knie, knochige Hände mit langen Fingern
+            d.line([k(sx * 40, -410), k(sx * 64, -260), k(sx * 60, -110)], fill=mantel, width=max(2, int(18 * s)))
+            for fi in range(4):
+                fx = sx * (52 + fi * 6)
+                d.line([k(sx * 60, -110), k(fx, -60 + fi * 4), k(fx + sx * 4, -30 + fi * 6)], fill=haut, width=max(1, int(4 * s)))
+        # Kopf auf eigener Ebene: hängt schief am viel zu langen Hals und zuckt ruckartig (verstörender, Wunsch 16.11.)
+        hx, hy = 14, -560
+        zuck = 28 + (18 if math.sin(t * 2.3) > 0.85 else 0) + (math.sin(t * 31) * 6 if math.sin(t * 1.7) > 0.6 else 0)
+        d.line([k(0, -420), k(hx * 0.6, hy + 70)], fill=haut, width=max(2, int(15 * s)))
+        R = int(150 * s) + 4
+        kopf = Image.new('RGBA', (R * 2, R * 2), (0, 0, 0, 0))
+        kd = ImageDraw.Draw(kopf)
+        q = lambda px, py: (R + px * s, R + py * s)
+        gruen = (184, 194, 180, alpha)
+        kd.ellipse((*q(-40, -66), *q(40, 70)), fill=gruen)  # langes, eingefallenes Gesicht
+        for (x1, y1), (x2, y2) in (((-34, -40), (-12, -10)), ((-12, -10), (-20, 20)), ((20, -60), (10, -30)), ((30, 10), (18, 40))):
+            kd.line((*q(x1, y1), *q(x2, y2)), fill=(110, 116, 106, alpha), width=max(1, int(2.5 * s)))  # Risse
+        for sx, gr_, yy in ((-1, 15, -18), (1, 9, -8)):  # ungleiche, leere Augen auf verschiedener Höhe
+            kd.ellipse((*q(sx * 15 - gr_, yy - gr_), *q(sx * 15 + gr_, yy + gr_)), fill=(2, 2, 4, alpha))
+            kd.ellipse((*q(sx * 15 - 2, yy - 2), *q(sx * 15 + 2, yy + 2)), fill=(255, 255, 255, alpha))
+            tropf = (t * 18 + sx * 7) % 50  # schwarze Flüssigkeit läuft aus den Augen
+            kd.line((*q(sx * 15, yy + gr_), *q(sx * 15 + sx * 2, yy + gr_ + 14 + tropf)), fill=(6, 4, 6, alpha), width=max(2, int(4 * s)))
+        kd.chord((*q(-46, 0), *q(46, 66)), 0, 180, fill=(120, 20, 28, alpha))  # Grinsen über das ganze Gesicht, rotes Zahnfleisch
+        kd.chord((*q(-40, 12), *q(40, 60)), 0, 180, fill=(14, 4, 6, alpha))
+        for reihe, y0, h_ in ((0, 34, 10), (1, 46, -9)):  # zwei Reihen spitzer Zähne
+            for i in range(12):
+                tx = -36 + i * 6.4
+                kd.polygon([q(tx, y0), q(tx + 5, y0), q(tx + 2.5, y0 + h_)], fill=(232, 226, 200, alpha))
+        kd.rectangle((*q(-30, -122), *q(30, -60)), fill=(14, 14, 16, alpha))  # hoher Hut
+        kd.rectangle((*q(-54, -64), *q(54, -54)), fill=(14, 14, 16, alpha))
+        kopf = kopf.rotate(-zuck, resample=Image.BICUBIC)
+        mx, my = k(hx, hy)
+        lage.paste(kopf, (int(mx - R), int(my - R)), kopf)
+    elif art == 'frau':  # weißes Kleid, lange schwarze Haare vorm Gesicht, ein Auge schaut durch, Kopf schief
         d.polygon([k(-70, 0), k(70, 0), k(40, -330), k(-40, -330)], fill=(226, 228, 232, alpha))
         for i in range(7):  # zerrissener Saum
             d.polygon([k(-70 + i * 20, 0), k(-60 + i * 20, 24 + (i % 2) * 14), k(-50 + i * 20, 0)], fill=(226, 228, 232, alpha))
@@ -75,12 +115,14 @@ def geist(im, x, y, s=1.0, t=0.0, alpha=255, art=None):
 
 # Herkunft: wer war der Geist? (Satz zum Vorlesen, Schlagzeile für den Zeitungsausschnitt)
 HERKUNFT_DE = {
+    'mann': ('verschwand {ort} ein Mann im grauen Mantel. Danach sahen ihn Zeugen noch jahrelang nachts am Fenster stehen.', 'MANN IM MANTEL VERMISST'),
     'frau': ('verschwand {ort} eine junge Frau. Gefunden hat man nur ihr weißes Kleid.', 'FRAU SPURLOS VERSCHWUNDEN'),
     'schatten': ('lebte {ort} ein Mann, der nie schlief. Eines Nachts war nur noch sein Schatten da.', 'MANN VERSCHWUNDEN'),
     'hirsch': ('verschwand {ort} ein Jäger. Man fand nur Hufspuren, die aufrecht gingen.', 'JÄGER VERMISST'),
     'gremlin': ('hörten Nachbarn {ort} jede Nacht Kratzen in den Wänden. Dann war die Familie weg.', 'FAMILIE VERSCHWUNDEN'),
 }
 HERKUNFT_EN = {
+    'mann': ('a man in a grey coat vanished {ort}. For years after, witnesses saw him standing at the window at night.', 'MAN IN GREY COAT MISSING'),
     'frau': ('a young woman vanished {ort}. All they found was her white dress.', 'WOMAN VANISHES WITHOUT TRACE'),
     'schatten': ('a man who never slept lived {ort}. One night only his shadow was left.', 'MAN MISSING'),
     'hirsch': ('a hunter vanished {ort}. They only found hoof prints that walked upright.', 'HUNTER MISSING'),
