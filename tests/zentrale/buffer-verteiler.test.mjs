@@ -168,22 +168,21 @@ test('Schonkur: das Tagesziel 0 wird nicht durch den Standard ersetzt (0 ist ein
   assert.doesNotMatch(quelle, /k\.ziel \|\| ZIEL_PRO_TAG/);
 });
 
-test('YouTube bekommt den Klassik-Look der Hits (~20 s), andere Kanäle bleiben, Fehler fallen zurück', async () => {
+test('A/B-Test klassik: nur im Test-Arm der Hit-Look, Fehler fallen auf den Standard zurück', async () => {
   const { folgeFuer } = await import('../../automations/lib/bufferVerteiler.mjs');
   const { baueFolge } = await import('../../automations/schatten/videobot.mjs');
   const { SKRIPTE_EN } = await import('../../automations/schatten/skripteEn.mjs');
   const { SKRIPTE_EN_AKTE } = await import('../../automations/schatten/skripteEnAkte.mjs');
   const stil = [];
-  folgeFuer('instagram', { a: 1 }, (e) => stil.push(e.stil));
-  folgeFuer('youtube', { a: 1 }, (e) => stil.push(e.stil));
-  assert.deepEqual(stil, [undefined, 'klassik']);
-  folgeFuer('instagram', { klassik: true }, (e) => stil.push(e.stil));
-  folgeFuer('instagram', { klassik: false }, (e) => stil.push(e.stil));
-  assert.deepEqual(stil.slice(2), ['klassik', undefined], 'Instagram: nur im A/B-Arm klassik');
-  const zurueck = folgeFuer('youtube', { a: 1 }, (e) => { if (e.stil === 'klassik') throw new Error('passt nicht'); return 'standard'; });
-  assert.equal(zurueck, 'standard');
+  folgeFuer({ klassik: true }, (e) => stil.push(e.stil));
+  folgeFuer({ klassik: false }, (e) => stil.push(e.stil));
+  folgeFuer({}, (e) => stil.push(e.stil));
+  assert.deepEqual(stil, ['klassik', undefined, undefined]);
+  assert.equal(folgeFuer({ klassik: true }, (e) => { if (e.stil === 'klassik') throw new Error('passt nicht'); return 'standard'; }), 'standard');
   for (const s of [...SKRIPTE_EN, ...SKRIPTE_EN_AKTE]) {
-    const f = folgeFuer('youtube', { ...s, kurz: true, weiter: '', posten: '' }, baueFolge);
+    const basis = { ...s, kurz: true, weiter: '', posten: '' };
+    const f = folgeFuer({ ...basis, klassik: true }, baueFolge);
     assert.ok(f.klassik && f.szenen.length <= 8, `${s.titel}: ${f.szenen.length} Szenen`);
+    assert.ok(!folgeFuer({ ...basis, klassik: false }, baueFolge).klassik, `${s.titel}: ohne Test-Arm kein Klassik`);
   }
 });
