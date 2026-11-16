@@ -116,3 +116,4 @@ export const SKRIPTE_EN_AKTE = [
     'In the new photo I am in my room. And he sits next to me on the bed.', 'Smile.',
     'Would you have looked?', ['Look', 'Delete it']),
 ];
+SKRIPTE_EN_AKTE.forEach((s, i) => { s.fall_nr = i + 1; });  // case-file universe: fixed numbers, append new stories at the end

@@ -8,7 +8,7 @@ export const DU_HOOKS_A = {};
 
 const bau = (v) => ({
   titel: v.titel, ort: v.ort, boesewicht: 'schatten', stimme: 'mann', hook: v.hook, saetze: v.saetze, monster: v.monster,
-  ende: v.ende, frage: v.frage, wahl: v.wahl, akte: v.akte,
+  ende: v.ende, frage: v.frage, wahl: v.wahl, akte: v.akte, fall_nr: v.fall_nr,
 });
 
 const AKTEN = [
@@ -129,6 +129,7 @@ const AKTEN = [
 ];
 
 AKTEN.push(...AKTEN2);  // 16.11.: 15 weitere Akte-Geschichten (Nachschub)
+AKTEN.forEach((v, i) => { v.fall_nr = i + 1; });  // Akte-Universum: feste Fallnummern, neue Geschichten hinten anhängen
 MUSTER_A.akte = [bau, AKTEN];
 for (const v of AKTEN) DU_HOOKS_A[v.titel] = v.du;
 TEIL2_A.akte = (v) => ({ hook: `Ich habe ${v.titel} angezeigt. Heute ist die Akte wieder offen.`.slice(0, 70),
