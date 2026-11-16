@@ -15,6 +15,24 @@ RAEUME = [('tür', 'TÜR'), ('fenster', 'FENSTER'), ('keller', 'KELLER'), ('flur
           ('bad', 'BAD'), ('küche', 'KÜCHE'), ('zimmer', 'ZIMMER'), ('door', 'DOOR'), ('window', 'WINDOW'), ('wall', 'WALL'), ('room', 'ROOM')]
 
 
+REGELN_DE = {
+    'haus': ['Tür abschließen', 'Nicht durch den Spion', 'Handy auf lautlos', 'Licht anlassen', 'Unter der Decke bleiben', 'Keinem antworten'],
+    'strasse': ['Nicht anhalten', 'Türen verriegeln', 'Nicht in den Spiegel', 'Fahren bis zum Licht', 'Fenster zu lassen'],
+    'wald': ['Zelt zu lassen', 'Kein Feuer machen', 'Nicht antworten', 'Taschenlampe aus', 'Bis zum Morgen warten'],
+    'reise': ['Nicht aussteigen', 'Keinem öffnen', 'Nicht umdrehen', 'Sitzen bleiben', 'Nicht einschlafen']}
+REGELN_EN = {
+    'haus': ['Lock the door', 'Do not use the peephole', 'Phone on silent', 'Keep the lights on', 'Stay under the blanket', 'Do not answer'],
+    'strasse': ['Do not stop', 'Lock the doors', 'Do not check the mirror', 'Drive to the light', 'Keep windows shut'],
+    'wald': ['Keep the tent shut', 'No fire', 'Do not answer', 'Flashlight off', 'Wait for sunrise'],
+    'reise': ['Do not get off', 'Do not open', 'Do not turn around', 'Stay seated', 'Do not fall asleep']}
+for _r in (REGELN_DE, REGELN_EN):
+    for _o in ('wohnblock', 'flur', 'schlafzimmer', 'stadt'):
+        _r[_o] = _r['haus']
+    _r['tankstelle'] = _r['strasse']; _r['see'] = _r['wald']
+    for _o in ('hotel', 'aufzug', 'zug', 'flugzeug'):
+        _r[_o] = _r['reise']
+
+
 def karte_fuer(s, nr, gesamt):
     # welche Karte zeigt diese Szene? Erst Stichwörter im Satz, sonst der Reihe nach, nie zweimal dieselbe hintereinander
     t = (s.get('text') or s.get('sprich') or '').lower()
@@ -26,7 +44,7 @@ def karte_fuer(s, nr, gesamt):
         return 'plan'
     if re.search(r'\d', t):
         return 'schild'
-    return ['portrait', 'regeln', 'plan', 'ton'][nr % 4]
+    return None  # kein Stichwort: einrichten() nimmt die nächste Karte aus der gemischten Reihe dieses Videos
 
 
 # Stichwort -> Ort; die genaueren zuerst (Tankstelle vor Auto, Auto vor Tür)
@@ -64,16 +82,26 @@ def einrichten(story, g):
         s['akte_ort'] = (ort_von(str(s.get('text') or '').lower(), zuletzt=True) or ort) if s['art'] in ('ende', 'teil2') else ort
     hook = next((s.get('text') or '' for s in szenen if s['art'] == 'blitz'), '')
     regel = hook.split(',')[-1].strip(' .!').capitalize() if ',' in hook else ('Nicht antworten' if not en else 'Do not answer')
-    regeln = [regel[:22], 'Licht aus' if not en else 'Lights off', 'Warten bis 6:12' if not en else 'Wait until 6:12']
+    # 16.11. (Nutzer: "bei jedem Video ist das"): Regeln je Geschichte verschieden - Regel aus dem Hook + zwei passende zum Ort
+    zahl = sum(map(ord, story.get('titel', '')))
+    pool = (REGELN_EN if en else REGELN_DE).get(ort, (REGELN_EN if en else REGELN_DE)['haus'])
+    regeln = [regel[:22]] + [pool[(zahl + i * 3) % len(pool)] for i in (1, 2)]
+    if len(set(regeln)) < 3:
+        regeln = list(dict.fromkeys(regeln + pool))[:3]
+    reihe = ['ort_nah', 'portrait', 'plan', 'ton', 'schild', 'regeln']
+    reihe = reihe[zahl % len(reihe):] + reihe[:zahl % len(reihe)]  # jede Geschichte mischt die Karten anders
+    if ',' not in hook:  # Checkliste nur bei echten Regel-Hooks
+        reihe.remove('regeln')
     absender = next((s['absender'] for s in szenen if s.get('absender')), 'Mama' if not en else 'Mom')
     nachricht = next((s['nachricht'] for s in szenen if s.get('nachricht')), None)
     monster = next((s['monster'] for s in szenen if s.get('monster')), None)
     chat_text = [nachricht or ('Bist du wach?' if not en else 'Are you awake?'), ('Geh nicht raus.' if not en else 'Do not go out.')]
-    vorher, minute = None, 12
+    vorher, minute, benutzt = None, 7 + zahl % 20, set()
     for nr, s in enumerate(szenen):
         k = karte_fuer(s, nr, len(szenen))
-        if k == vorher and s['art'] not in ('handy', 'nachricht'):
-            k = {'chat': 'ton', 'ton': 'plan', 'plan': 'portrait', 'schild': 'regeln', 'portrait': 'regeln', 'regeln': 'portrait'}[k]
+        if k is None or k == vorher or (k in benutzt and k != 'chat'):  # jede Karte höchstens einmal pro Video
+            k = next((x for x in reihe if x != vorher and x not in benutzt), reihe[nr % len(reihe)])
+        benutzt.add(k)
         s['akte'] = 'ort' if s['art'] == 'blitz' else 'warnung' if s['art'] == 'ende' else k
         vorher = s['akte']
         s['akte_zeit'] = f'3:{minute:02d}'
@@ -114,6 +142,8 @@ def einrichten(story, g):
             K.bauplan(im, ort, s.get('akte_raum', 'TÜR'), lt)
         elif art == 'schild':
             K.schild(im, s.get('akte_zahl', '3'), kopf.split(' · ')[-1][:12], ('UHR' if not en else 'AM') if s.get('akte_zahl') == '3' else ('NUMMER' if not en else 'NUMBER'))
+        elif art == 'ort_nah':  # der Ort, die Gestalt ist schon da - nur ein Detail fällt auf
+            K.ort_bild(im, ort, t, dunkel=0.2, gestalt=1)
         elif art == 'regeln':
             K.checkliste(im, regeln, lt)
         else:
