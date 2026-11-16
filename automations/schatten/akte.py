@@ -51,8 +51,10 @@ def karte_fuer(s, nr, gesamt):
         return 'chat'
     if re.search(r'hör|stimme|ruft|klopf|flüster|singt|lacht|durchsage|geräusch|hear|voice|knock|whisper', t):
         return 'ton'
+    if re.search(r'tür|klopf|klingel|spion|door|knock', t):
+        return 'spion'
     if any(w in t for w, _ in RAEUME):
-        return 'plan'
+        return 'kamera'
     if re.search(r'\d', t):
         return 'schild'
     return None  # kein Stichwort: einrichten() nimmt die nächste Karte aus der gemischten Reihe dieses Videos
@@ -99,7 +101,7 @@ def einrichten(story, g):
     regeln = [regel[:22]] + [pool[(zahl + i * 3) % len(pool)] for i in (1, 2)]
     if len(set(regeln)) < 3:
         regeln = list(dict.fromkeys(regeln + pool))[:3]
-    reihe = ['ort_nah', 'portrait', 'plan', 'ton', 'schild', 'regeln']
+    reihe = ['ort_nah', 'kamera', 'portrait', 'spion', 'ton', 'schild', 'regeln']
     reihe = reihe[zahl % len(reihe):] + reihe[:zahl % len(reihe)]  # jede Geschichte mischt die Karten anders
     if ',' not in hook:  # Checkliste nur bei echten Regel-Hooks
         reihe.remove('regeln')
@@ -173,8 +175,10 @@ def einrichten(story, g):
             K.chat(im, lt, absender, chat_text, notfall=monster or ('Antworte nicht.' if not en else 'Do not reply.'))
         elif art == 'ton':
             K.lautsprecher(im, lt, ('GERÄUSCH · ' if not en else 'SOUND · ') + kopf.split(' · ')[0])
-        elif art == 'plan':
-            K.bauplan(im, ort, s.get('akte_raum', 'TÜR'), lt)
+        elif art == 'spion':
+            K.spion(im, t, lt)
+        elif art in ('kamera', 'plan'):
+            K.kamera(im, t, lt, ort)
         elif art == 'schild':
             K.schild(im, s.get('akte_zahl', '3'), kopf.split(' · ')[-1][:12], ('UHR' if not en else 'AM') if s.get('akte_zahl') == '3' else ('NUMMER' if not en else 'NUMBER'))
         elif art == 'ort_nah':  # der Ort, die Gestalt taucht langsam auf
