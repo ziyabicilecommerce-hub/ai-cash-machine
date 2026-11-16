@@ -16,7 +16,9 @@ test('Englische Geschichten: gültig, kurze Hooks, Du-Hooks, keine doppelt, kein
     const alles = JSON.stringify(f.szenen.map((x) => [x.sprich, x.text, x.cta, x.frage])) + f.caption;
     assert.ok(!/\b(und|nicht|ich|kommentier|folg|schreib|eins|zwei|kopfhörer|versteckt)\b/i.test(alles), `Deutsch in ${s.titel}: ${alles.slice(0, 200)}`);
   }
-  const erste = naechstesSkriptEn([]), zweite = naechstesSkriptEn([slug(erste.titel)]);
+  assert.equal(naechstesSkriptEn([]).muster, 'akte', 'Akte-Geschichten zuerst (16.11.)');
+  const akten = SKRIPTE_EN.filter((x) => x.muster === 'akte').map((x) => slug(x.titel));
+  const erste = naechstesSkriptEn(akten), zweite = naechstesSkriptEn([...akten, slug(erste.titel)]);
   assert.notEqual(erste.muster, zweite.muster, 'Muster wechseln sich ab');
   const anruf = SKRIPTE_EN.filter((s) => s.muster === 'anruf');
   const letzte = [{ konto: '@giyuuu sama', aufrufe: 900, text: anruf[0].hook }, { konto: '@giyuuu sama', aufrufe: 800, text: anruf[1].hook2 },

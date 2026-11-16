@@ -8,8 +8,8 @@ import { typAus } from './tiktokLernen.mjs';
 // Schonkur (12.11., mit dem Nutzer abgesprochen): die Reichweite fiel in einer Woche auf allen Kanälen (YouTube ~1000 -> ~5,
 // Instagram ~115 -> ~10). Vermutung: zu viele zu ähnliche Videos. Deshalb nur noch EIN Video pro Kanal und Tag, abends.
 // Zurück zum Stand davor: ZIEL_WENIGER = 2 und guteStunde = (stunde) => stunde < 6 || stunde >= 19.
-export const ZIEL_WENIGER = 0;
-export const guteStunde = (stunde) => stunde >= 19;
+export const ZIEL_WENIGER = 1;  // 16.11. (Nutzer: "mach mehr Videos am Tag"): jetzt 2 je Kanal - abends und nachts, jede Geschichte anders
+export const guteStunde = (stunde) => stunde < 6 || stunde >= 19;
 export const KANAELE = [
   // desk.rebel (10.11.): Sprach-Test wie auf YouTube - Englisch erreicht weltweit mehr Leute, dort holt es Ø 519 statt 340.
   // Halbe-halbe, bis der Wochenbericht für diesen Kanal einen klaren Sieger hat (sprachTests); purivelle bleibt deutsch.
