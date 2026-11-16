@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-16T10:02:25.620Z",
+ "stand": "2026-11-16T10:22:15.979Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "deal:https://www.sneakersnstuff.com/products/nike-air-max-plus-vii-hq2197-002",
+   "art": "Deal",
+   "titel": "💰 Deal: Nike Air Max Plus (TN) für 114,00 €",
+   "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HQ2197-002_01.jpg?v=1773912286",
+   "link": "https://www.sneakersnstuff.com/products/nike-air-max-plus-vii-hq2197-002",
+   "text": "sneakersnstuff.com · Air Max Plus VII\nVerkauf ca. 140–210 € → Gewinn ca. +38,50 € (ROI 34 %)\nGröße prüfen, vorher verkaufte Preise checken.",
+   "zeit": "2026-11-16T10:22:15.979Z"
+  },
   {
    "schluessel": "filiale:3118148:1364",
    "art": "Filiale",
@@ -184,19 +193,10 @@
    "link": "https://www.overkillshop.com/products/air-jordan-5-retro-iv5678-102-white-sunset-fire-red",
    "text": "overkillshop.com · Air Jordan 5 Retro\nVerkauf ca. 190–280 € → Gewinn ca. +36,50 € (ROI 21 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-14T17:05:21.598Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nikeair-jordan-3-retro-worlds-best-dad-sail-black-university-red-pale-ivory-palomino",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 3 Retro für 129,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/empdlmujvp-IF4396-103_Nike_Air-Jordan-3-Retro-OG-Worlds-Best-Dad-Sail-Black-University-Red-Pale-Ivory-Palomino_os-1.jpg?v=1779369524",
-   "link": "https://www.asphaltgold.com/products/nikeair-jordan-3-retro-worlds-best-dad-sail-black-university-red-pale-ivory-palomino",
-   "text": "asphaltgold.com · Nike Air Jordan 3 Retro OG *World's Best Dad*\nVerkauf ca. 200–290 € → Gewinn ca. +86,50 € (ROI 67 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-14T17:02:18.102Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-16T09:55:53.517Z",
+  "stand": "2026-11-16T10:22:18.838Z",
   "filialen": 148,
   "produkte": [
    {
@@ -229,7 +229,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 8
+      "menge": 7
      },
      {
       "name": "dm Frankfurt am Main",
@@ -377,7 +377,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 14
+      "menge": 13
      },
      {
       "name": "dm Frankfurt am Main",
@@ -2328,20 +2328,24 @@
   "ware": [],
   "top": [
    {
-    "titel": "lkw unfall a3",
+    "titel": "finanzen.net",
+    "menge": "200+"
+   },
+   {
+    "titel": "placebo berlin",
+    "menge": "200+"
+   },
+   {
+    "titel": "magnus carlsen",
     "menge": "500+"
+   },
+   {
+    "titel": "niedrigwasser",
+    "menge": "200+"
    },
    {
     "titel": "nicolò tresoldi",
-    "menge": "500+"
-   },
-   {
-    "titel": "future combat air system",
-    "menge": "500+"
-   },
-   {
-    "titel": "placebo konzert berlin",
-    "menge": "200+"
+    "menge": "1000+"
    },
    {
     "titel": "krim-brücke",
@@ -2362,10 +2366,6 @@
    {
     "titel": "eigentum",
     "menge": "500+"
-   },
-   {
-    "titel": "foo fighters tour 2027",
-    "menge": "1000+"
    }
   ]
  },
@@ -2547,7 +2547,7 @@
     "preis": 89.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-ftwwht-cblack-cgrani",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1794823272",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1794823808",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
