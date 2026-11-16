@@ -25,8 +25,9 @@ export const KANAELE = [
 // YouTube (16.11.): die Hits vom 5.-8.11. (bis ~1.100 Aufrufe) waren ~20 s im Klassik-Look. Die neuen Akte-Videos sind ~41 s
 // und holten 0-1 Aufrufe, der Kanal fiel von Ø 332 (1.-7.11.) auf Ø 29 (12.-16.11.). Deshalb dort wieder Klassik.
 // Passt ein Skript nicht in den Klassik-Aufbau, wird es wie bisher gebaut - der Post fällt nie aus.
+// Instagram: A/B-Test "klassik" (variante.klassik) - so misst der Wochenbericht, ob der Hit-Look dort auch gewinnt.
 export function folgeFuer(dienst, eingabe, baue) {
-  if (dienst === 'youtube') {
+  if (dienst === 'youtube' || eingabe.klassik === true) {
     try { return baue({ ...eingabe, stil: 'klassik' }); } catch { /* Skript passt nicht -> Standard */ }
   }
   return baue(eingabe);
@@ -170,7 +171,8 @@ export function storyEingabe(kanalId, coverUrl, en = false, sticker = '', alt = 
 // gestalt (11.11.): Schattenfigur kommt in leeren KI-Szenen bei jedem Flackern näher (tiefe.py) - halbe-halbe, bis Zahlen da sind
 // duhook 0.15 (13.11.): das Trick-Radar misst den Regel-Hook ("Wenn …, geh nicht ran / renn.") bei x2,2 und die Du-Ansprache
 // bei x1,8 gegen den Konto-Schnitt - der Du-Hook läuft jetzt bei 85 % der Videos, 15 % bleiben zum Weitermessen.
-export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.15, schlag: 0.5, gestalt: 0.5 };  // Wahrscheinlichkeit für "aus"
+// klassik (16.11.): Hit-Look vom 7.11. (~20 s) gegen den Akte-Stil - auf Instagram halbe-halbe, YouTube hat ihn immer (folgeFuer)
+export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.15, schlag: 0.5, gestalt: 0.5, klassik: 0.5 };  // Wahrscheinlichkeit für "aus"
 export function abVariante(zufall = Math.random, gewichte = AB_FEATURES) {
   return Object.fromEntries(Object.entries(gewichte).map(([f, aus]) => [f, zufall() >= aus]));
 }

@@ -147,10 +147,12 @@ async function vorbereiten() {
       const variante = abVariante(Math.random, k.dienst === 'youtube' ? gewichteYT : gewichte);
       // YouTube (15.11.): Posts mit "Seine Augen sind 3x versteckt" holten Ø 460 statt Ø 181 Aufrufe (12 vs. 44 Posts) - dort fast immer an
       if (k.dienst === 'youtube') variante.suchbild = Math.random() < 0.9 ? 'immer' : false;
+      if (k.dienst === 'youtube') variante.klassik = 'immer';  // YouTube: immer der Hit-Look (zählt nicht im A/B-Test)
       if (!h.skript.hook2) variante.duhook = false;  // nur Skript-Bot-Geschichten haben einen Du-Hook
       if (!schlagzeile(h.skript.muster, quelle === 'horror-en' ? 'en' : 'de')) variante.schlag = false;  // Schlagzeile gibt es nur für bekannte Muster
       const hook = variante.duhook ? h.skript.hook2 : h.skript.hook;
       const folge = folgeFuer(k.dienst, { ...h.skript, hook, anfang: hook !== h.skript.hook ? h.skript.hook : '', weiter: '', posten: '', kurz: true, ...variante }, baueFolge);
+      if (variante.klassik === true && !folge.klassik) variante.klassik = false;  // Skript passte nicht -> ehrlich als Akte zählen
       mkdirSync('out', { recursive: true });
       writeFileSync(`out/folge-${k.id}.json`, JSON.stringify({ ...folge, _slug: slug(h.skript.titel) }, null, 1));
       horrorKanaele.push(k.id);
