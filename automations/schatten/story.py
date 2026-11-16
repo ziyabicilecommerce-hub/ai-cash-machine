@@ -461,7 +461,7 @@ def main():
                 im = Image.blend(im, Image.new('RGB', (W, H), (45, 0, 4)), min(0.32, (fortschritt - 0.45) * 0.7))
             if kalt and s['art'] == 'blitz' and KALT_BIS - 0.3 <= lt < KALT_BIS + 0.12:
                 im = zurueckspulen(im, lt - (KALT_BIS - 0.3), sprache)
-            if raumz:
+            if raumz and not story.get('hell'):
                 im = raum_bild(im, raumz, t)
             if story.get('kamera', True):
                 im = kamera.overlay(im, t, s, story, teil, teile)
