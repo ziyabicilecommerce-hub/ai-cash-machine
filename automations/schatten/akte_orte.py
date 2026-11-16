@@ -64,7 +64,7 @@ def gestalt_in(d, box, t):
     tmp = Image.new('RGB', (x1 - x0, y1 - y0), (14, 16, 22))
     tmp.paste(aus)
     h = y1 - y0
-    geist(tmp, (x1 - x0) / 2, h * 2.6, s=h * 2.6 / 560, t=t)
+    geist(tmp, (x1 - x0) / 2, h * 3.0, s=h * 2.6 / 560, t=t)
     im.paste(tmp, (x0, y0))
 
 

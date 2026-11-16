@@ -347,7 +347,7 @@ def spion(im, t, lt):
     n = min(1.0, lt / 2.2)
     from akte_geist import geist
     gr = 0.5 + 0.9 * n
-    geist(flur, W / 2, 380 + 420 * gr * 1.25, s=gr * 1.25, t=t)  # Kopf bleibt im Spion, er kommt näher
+    geist(flur, W / 2, 520 + 560 * gr * 1.25, s=gr * 1.25, t=t)  # sein Gesicht bleibt mitten im Spion, er kommt näher
     from PIL import ImageEnhance
     flur = ImageEnhance.Brightness(Image.blend(flur, Image.new('RGB', (W, H), (60, 44, 16)), 0.2)).enhance(1.6)
     gross = flur.resize((int(W * 1.25), int(H * 1.25)))  # Linse vergrößert die Mitte

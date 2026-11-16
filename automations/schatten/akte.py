@@ -116,7 +116,7 @@ def einrichten(story, g):
     effekte.GELB = thema['akzent']
     nacht = 1 + zahl % 6
     import akte_geist
-    akte_geist.ART[0] = story.get('boesewicht', 'schatten')
+    akte_geist.ART[0] = 'mann'  # 16.11. (Nutzer: "mach einen Horror-Mann, die sieht langweilig aus"): der Geist ist immer der Mann im Mantel
     # 16.11. (Nutzer: "mach wie ein Bericht - früher ist es passiert, wurde dokumentiert, dann wurde der Vorfall gestrichen,
     # ich habe davon gelesen und bin selbst hingefahren"): nach dem Hook drei Szenen - Polizeibericht von damals,
     # derselbe Bericht geschwärzt (FALL GESTRICHEN), "also bin ich selbst hingefahren" - dann passiert es ihm.
