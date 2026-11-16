@@ -123,20 +123,17 @@ def einrichten(story, g):
     # 16.11. (Nutzer: "mach wie ein Bericht - früher ist es passiert, wurde dokumentiert, dann wurde der Vorfall gestrichen,
     # ich habe davon gelesen und bin selbst hingefahren"): nach dem Hook drei Szenen - Polizeibericht von damals,
     # derselbe Bericht geschwärzt (FALL GESTRICHEN), "also bin ich selbst hingefahren" - dann passiert es ihm.
-    jahr = 1971 + zahl % 29
-    satz_h, kopf_h = akte_geist.herkunft(akte_geist.ART[0], ort, jahr, en)
-    roh = (akte_geist.HERKUNFT_EN if en else akte_geist.HERKUNFT_DE).get(akte_geist.ART[0], (akte_geist.HERKUNFT_EN if en else akte_geist.HERKUNFT_DE)['schatten'])[0]
-    o_ = (akte_geist.ORT_SATZ_EN if en else akte_geist.ORT_SATZ_DE).get(ort, 'here' if en else 'in diesem Haus')
-    was = ('Back then, ' if en else 'Damals ') + roh.format(ort=o_)
-    hin = (akte_geist.ORT_SATZ_EN if en else akte_geist.ORT_SATZ_DE).get(ort, 'there' if en else 'in dieses Haus')
-    hin_de = hin.replace('in diesem', 'in dieses').replace('auf dieser', 'auf diese').replace('an dieser', 'an diese').replace('an diesem', 'an diesen').replace('auf genau diesem', 'auf genau diesen')
-    if not any(x.get('akte') == 'bericht' for x in szenen):
+    # 16.11. (Nutzer: "die Geschichte ergibt keinen Sinn"): der Bericht kommt nur noch aus der Geschichte selbst (skriptAkte.mjs:
+    # Jahr, Schlagzeile, was damals passierte, warum gestrichen, warum er hingeht). Geschichten ohne eigene Akte bekommen keinen
+    # zusammengesetzten Bericht mehr - sie laufen ohne, damit nichts widersprüchlich wird.
+    akte_d = story.get('akte') or {}
+    jahr = int(akte_d.get('jahr', 1971 + zahl % 29))
+    if akte_d and not any(x.get('akte') == 'bericht' for x in szenen):
         neu = [
-            {'art': 'innen', 'akte': 'bericht', 'sprich': (f'There is a police report from {jahr}. ' if en else f'Es gibt einen Polizeibericht von {jahr}. ') + was,
-             'kopf': kopf_h, 'jahr': jahr},
-            {'art': 'innen', 'akte': 'gestrichen', 'sprich': 'A week later the case was erased. Nobody was allowed to talk about it.' if en
-             else 'Eine Woche später wurde der Fall gestrichen. Niemand durfte darüber reden.', 'kopf': kopf_h, 'jahr': jahr},
-            {'art': 'innen', 'akte': 'ort', 'sprich': (f'So I went there myself.' if en else f'Also bin ich selbst {hin_de} gefahren.')},
+            {'art': 'innen', 'akte': 'bericht', 'sprich': (f'There is a police report from {jahr}. ' if en else f'Es gibt einen Polizeibericht von {jahr}. ') + akte_d['satz'],
+             'kopf': akte_d['kopf'], 'jahr': jahr},
+            {'art': 'innen', 'akte': 'gestrichen', 'sprich': akte_d['gestrichen'], 'kopf': akte_d['kopf'], 'jahr': jahr},
+            {'art': 'innen', 'akte': 'ort', 'sprich': akte_d['hin']},
         ]
         for x in neu:
             x.update({'text': x['sprich'].upper(), 'gelb': str(jahr), 'pause': 0.25, 'pov_text': ''})

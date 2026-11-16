@@ -14,6 +14,7 @@ import { MUSTER6, TEIL2_6, DU_HOOKS6 } from './skriptMuster6.mjs';
 import { MUSTER7, TEIL2_7, DU_HOOKS7 } from './skriptMuster7.mjs';
 import { hitWoerter, hitBonus } from './ytHits.mjs';
 import { MUSTER8, TEIL2_8, DU_HOOKS8 } from './skriptMuster8.mjs';
+import { MUSTER_A, TEIL2_A, DU_HOOKS_A } from './skriptAkte.mjs';
 
 const WAHL = { flucht: ['Nachsehen', 'Rausrennen'], tuer: ['Aufmachen', 'Zulassen'], handy: ['Antworten', 'Handy weg'], ran: ['Rangehen', 'Wegdrücken'] };
 
@@ -124,7 +125,7 @@ const REGEL = [
     reiz: 'Der Zug hält. Alle Wagen vor mir werden abgekoppelt.', monster: 'Endstation.', ende: 'Jetzt bin ich im letzten Wagen. Und er fährt weiter. Ohne Lok.' },
 ];
 
-const MUSTER = { allein: [allein, ALLEIN], fremd: [fremd, FREMD], kamera: [kamera, KAMERA], anruf: [anruf, [...ANRUF, ...ANRUF4]], regel: [regel, REGEL], ...MUSTER2, ...MUSTER3, ...MUSTER5, ...MUSTER6, ...MUSTER7, ...MUSTER8 };
+const MUSTER = { allein: [allein, ALLEIN], fremd: [fremd, FREMD], kamera: [kamera, KAMERA], anruf: [anruf, [...ANRUF, ...ANRUF4]], regel: [regel, REGEL], ...MUSTER2, ...MUSTER3, ...MUSTER5, ...MUSTER6, ...MUSTER7, ...MUSTER8, ...MUSTER_A };
 
 // Post gehört zur Geschichte, wenn sein Text mit einem ihrer beiden Hooks beginnt (Hook-A/B-Test)
 export const passt = (p, s) => [s.hook, s.hook2].some((h) => h && String(p.text || '').includes(h.slice(0, 40)));
@@ -133,7 +134,7 @@ const gut = (s) => !pruefen(s).length && hookPunkte(s.hook) >= 4 && s.hook.lengt
 
 // Alle Geschichten, gemischt nach Muster (nie zweimal dasselbe Muster hintereinander). Mit Teil 2 für den Fall eines Hits.
 export function alleSkripte() {
-  const listen = Object.entries(MUSTER).map(([muster, [bau, varianten]]) => varianten.map((v) => { const s = bau(v); return { ...s, muster, herkunft: 'skriptbot', teil2: (TEIL2[muster] || TEIL2_3[muster] || TEIL2_5[muster] || TEIL2_6[muster] || TEIL2_7[muster] || TEIL2_8[muster])?.(v), hook2: DU_HOOKS[s.titel] || DU_HOOKS3[s.titel] || DU_HOOKS4[s.titel] || DU_HOOKS5[s.titel] || DU_HOOKS6[s.titel] || DU_HOOKS7[s.titel] || DU_HOOKS8[s.titel] }; }));
+  const listen = Object.entries(MUSTER).map(([muster, [bau, varianten]]) => varianten.map((v) => { const s = bau(v); return { ...s, muster, herkunft: 'skriptbot', teil2: (TEIL2[muster] || TEIL2_3[muster] || TEIL2_5[muster] || TEIL2_6[muster] || TEIL2_7[muster] || TEIL2_8[muster] || TEIL2_A[muster])?.(v), hook2: DU_HOOKS[s.titel] || DU_HOOKS3[s.titel] || DU_HOOKS4[s.titel] || DU_HOOKS5[s.titel] || DU_HOOKS6[s.titel] || DU_HOOKS7[s.titel] || DU_HOOKS8[s.titel] || DU_HOOKS_A[s.titel] }; }));
   const aus = [];
   for (let i = 0; listen.some((l) => l[i]); i++) for (const l of listen) if (l[i]) aus.push(l[i]);
   return aus.filter(gut);

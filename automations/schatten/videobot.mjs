@@ -94,7 +94,8 @@ export function baueFolge(skript) {
   // 15.11. (Vorlage vom Nutzer: "So ungefähr"): Standard für kurze Videos ist der Akte-Stil (akte.py) - Uhrzeit, Karten,
   // Bauplan, Chat, VHS-Balken, am Ende zwei Wahl-Karten. Aufbau wie "studio" (Wahl-Karte), ohne Schlagzeile und KI-Bilder.
   if (skript && skript.kurz && !['pov', 'nativ', 'studio', 'schatten'].includes(skript.stil)) {
-    return { ...baueFolge({ ...skript, stil: 'studio', ki: false, schlag: false, ganz: true }), stil: 'akte', schlag: '' };
+    // Akte-Geschichten erzählen ihren Anfang selbst (Bericht -> hingefahren -> was passiert), der Ich-Hook würde sich doppeln
+    return { ...baueFolge({ ...skript, stil: 'studio', ki: false, schlag: false, ganz: true, anfang: skript.akte ? '' : skript.anfang }), stil: 'akte', schlag: '', akte: skript.akte || null };
   }
   const fehler = pruefen(skript);
   if (fehler.length) throw new Error(fehler.join('; '));
