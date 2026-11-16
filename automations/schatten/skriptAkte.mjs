@@ -1,6 +1,7 @@
 // Akte-Geschichten (16.11., Nutzer: "Müll, die Geschichte ergibt keinen Sinn"): komplett von Hand geschrieben, jede Szene
 // hängt zusammen - was damals passiert ist (Polizeibericht), warum der Fall gestrichen wurde, warum er selbst hingeht,
 // was ihm dort passiert, und ein Ende, das sich auf den alten Fall bezieht. Bösewicht ist immer der "freundliche Mann".
+import { AKTEN2 } from './skriptAkte2.mjs';
 export const MUSTER_A = {};
 export const TEIL2_A = {};
 export const DU_HOOKS_A = {};
@@ -127,6 +128,7 @@ const AKTEN = [
     frage: 'Hättest du es angehört?', wahl: ['Anhören', 'Löschen'] },
 ];
 
+AKTEN.push(...AKTEN2);  // 16.11.: 15 weitere Akte-Geschichten (Nachschub)
 MUSTER_A.akte = [bau, AKTEN];
 for (const v of AKTEN) DU_HOOKS_A[v.titel] = v.du;
 TEIL2_A.akte = (v) => ({ hook: `Ich habe ${v.titel} angezeigt. Heute ist die Akte wieder offen.`.slice(0, 70),
