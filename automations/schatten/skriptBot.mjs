@@ -160,11 +160,12 @@ export function naechstesSkript(bekannt = [], letzte = [], { hits = [] } = {}) {
   const bekannteWerte = Object.values(werte).filter((w) => w.n >= 2);
   const woerter = hitWoerter(hits);  // Wörter aus den YouTube-Hits (ytHits.mjs) geben bis zu 3 Bonus-Punkte
   const vp = (s) => viralPunkte(s) + hitBonus(s, woerter);
-  if (!bekannteWerte.length) return [...frei].sort((a, b) => vp(b) - vp(a))[0] || null;
+  if (!bekannteWerte.length) return [...frei].sort((a, b) => vp(b) + (b.muster === 'akte') * 20 - vp(a) - (a.muster === 'akte') * 20)[0] || null;
   const mittel = bekannteWerte.reduce((a, w) => a + w.schnitt, 0) / bekannteWerte.length;
   const punkte = (m) => (werte[m]?.n >= 2 ? werte[m].schnitt : mittel * 1.1);
   // Viral-Punkte geben je Geschichte bis ~+25 % - das gemessene Muster bleibt der wichtigste Faktor
-  const wert = (s) => punkte(s.muster) * (1 + 0.02 * vp(s));
+  // 16.11.: Akte-Geschichten hielten die Leute auf Instagram 13,5 s und 9,4 s statt ~3 s - sie kommen bevorzugt dran
+  const wert = (s) => punkte(s.muster) * (1 + 0.02 * vp(s)) * (s.muster === 'akte' ? 1.6 : 1);
   return [...frei].sort((a, b) => wert(b) - wert(a))[0] || null;
 }
 
