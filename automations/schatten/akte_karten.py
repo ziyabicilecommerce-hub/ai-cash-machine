@@ -449,12 +449,13 @@ def bericht(im, kopf, jahr, fall, lt, gestrichen=False, en=False):
     d.text((100, 300), 'POLICE REPORT' if en else 'POLIZEIBERICHT', font=f(40, True), fill=(30, 30, 34))
     d.text((100, 352), (f'CASE NO. {fall}/{jahr % 100:02d}' if en else f'AKTENZEICHEN {fall}/{jahr % 100:02d}'), font=f(22, True), fill=(80, 80, 86))
     d.line((100, 388, 620, 388), fill=(30, 30, 34), width=3)
-    zeilen = [('DATE' if en else 'DATUM') + f': 14.11.{jahr}', ('TIME' if en else 'UHRZEIT') + ': 03:12', kopf,
+    kz = _umbruch(kopf, f(26, True), 500)[:2]  # Schlagzeile ganz, notfalls auf zwei Zeilen
+    zeilen = [('DATE' if en else 'DATUM') + f': 14.11.{jahr}', ('TIME' if en else 'UHRZEIT') + ': 03:12', *kz,
               'WITNESS: NONE' if en else 'ZEUGEN: KEINE', ('STATUS: OPEN' if en else 'STATUS: OFFEN')]
     for i, z in enumerate(zeilen):
         sicht = lt > 0.25 + i * 0.35 or gestrichen  # Schreibmaschine tippt Zeile für Zeile
         if sicht:
-            d.text((100, 410 + i * 46), z[:30], font=f(26, True), fill=(30, 30, 34))
+            d.text((100, 410 + i * 40), z, font=f(26, True), fill=(30, 30, 34))
     foto = (380, 640, 610, 960)
     d.rectangle(foto, fill=(150, 146, 136))
     if KI.get('ganz'):  # echtes Beweisfoto
@@ -468,7 +469,7 @@ def bericht(im, kopf, jahr, fall, lt, gestrichen=False, en=False):
     d.text((110, 700), ('EVIDENCE PHOTO' if en else 'BEWEISFOTO') + ' →', font=f(22, True), fill=(80, 80, 86))
     if gestrichen:
         p = min(1.0, lt / 0.8)
-        for i, y in enumerate((410, 456, 502, 548, 594)):  # Zeilen werden nacheinander geschwärzt
+        for i, y in enumerate((410, 450, 490, 530, 570, 610)):  # Zeilen werden nacheinander geschwärzt
             if p > i * 0.18:
                 d.rectangle((96, y - 4, 96 + 470 * min(1, (p - i * 0.18) * 4), y + 34), fill=(8, 8, 10))
         if lt > 0.9:
