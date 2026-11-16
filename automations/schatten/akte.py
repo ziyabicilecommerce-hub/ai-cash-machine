@@ -130,7 +130,7 @@ def einrichten(story, g):
     jahr = int(akte_d.get('jahr', 1971 + zahl % 29))
     if akte_d and not any(x.get('akte') == 'bericht' for x in szenen):
         neu = [
-            {'art': 'innen', 'akte': 'bericht', 'sprich': (f'There is a police report from {jahr}. ' if en else f'Es gibt einen Polizeibericht von {jahr}. ') + akte_d['satz'],
+            {'art': 'innen', 'akte': 'bericht', 'sprich': ((f'File {int(story["fall_nr"])}. ' if en else f'Akte {int(story["fall_nr"])}. ') if story.get('fall_nr') else '') + (f'There is a police report from {jahr}. ' if en else f'Es gibt einen Polizeibericht von {jahr}. ') + akte_d['satz'],
              'kopf': akte_d['kopf'], 'jahr': jahr},
             {'art': 'innen', 'akte': 'gestrichen', 'sprich': akte_d['gestrichen'], 'kopf': akte_d['kopf'], 'jahr': jahr},
             {'art': 'innen', 'akte': 'ort', 'sprich': akte_d['hin']},
@@ -140,7 +140,8 @@ def einrichten(story, g):
         start = next((i + 1 for i, x in enumerate(szenen) if x['art'] == 'blitz'), 0)
         szenen[start:start] = neu
     story['stimme'] = 'en-US-GuyNeural' if en else 'de-DE-ConradNeural'  # "mach ein Mann": immer ein Mann erzählt
-    fall = 100 + zahl % 900
+    # 16.11. Akte-Universum: feste Fallnummer je Geschichte (skriptAkte.mjs fall_nr) - Zuschauer erkennen die Serie wieder
+    fall = int(story.get('fall_nr') or 100 + zahl % 900)
     for i, sz in enumerate([x for x in szenen if x['art'] not in ('blitz', 'fratze', 'teil2', 'ende')]):
         sz['akte_nr'] = i + 1
 
@@ -200,6 +201,9 @@ def einrichten(story, g):
         elif art == 'warnung':
             K.ort_bild(im, s.get('akte_ort', ort), t, dunkel=0.45, gestalt=1)
             K.warnung(im, lt, 'NOTFALLWARNUNG' if not en else 'EMERGENCY ALERT')
+            if story.get('fall_nr'):  # Serien-Haken: die nächste Akte kommt morgen
+                ImageDraw.Draw(im).text((K.W // 2, K.H - 150), 'NEXT FILE: TOMORROW' if en else 'NÄCHSTE AKTE: MORGEN',
+                                        font=K.f(34, True), fill=thema['akzent'], anchor='mm')
         elif art == 'chat':
             K.chat(im, lt, absender, chat_text, notfall=monster or ('Antworte nicht.' if not en else 'Do not reply.'))
         elif art == 'ton':
@@ -238,7 +242,7 @@ def einrichten(story, g):
         d.text((40 + K.f(76, True).getlength(s.get('akte_zeit', '3:12')) + 8, 132), 'AM', font=K.f(26, True), fill=(236, 238, 244))
         d.text((40, 176), kopf_, font=K.f(20, True), fill=(160, 166, 184))
         # Fallnummer oben rechts (Serien-Gefühl) + blinkender REC-Punkt
-        d.text((K.W - 36, 64), f'FALL #{fall}' if not en_ else f'CASE #{fall}', font=K.f(22, True), fill=(200, 204, 216), anchor='ra')
+        d.text((K.W - 36, 64), f'AKTE {fall:03d}' if not en_ else f'FILE {fall:03d}', font=K.f(22, True), fill=(200, 204, 216), anchor='ra')
         if int(t * 2) % 2 == 0:
             d.ellipse((K.W - 150, 100, K.W - 132, 118), fill=(230, 30, 40))
         d.text((K.W - 36, 98), 'REC', font=K.f(22, True), fill=(230, 230, 236), anchor='ra')

@@ -97,7 +97,12 @@ export function baueFolge(skript) {
   // Bauplan, Chat, VHS-Balken, am Ende zwei Wahl-Karten. Aufbau wie "studio" (Wahl-Karte), ohne Schlagzeile und KI-Bilder.
   if (skript && skript.kurz && !['pov', 'nativ', 'studio', 'schatten'].includes(skript.stil)) {
     // Akte-Geschichten erzählen ihren Anfang selbst (Bericht -> hingefahren -> was passiert), der Ich-Hook würde sich doppeln
-    return { ...baueFolge({ ...skript, stil: 'studio', ki: false, schlag: false, ganz: true, anfang: skript.akte ? '' : skript.anfang }), stil: 'akte', schlag: '', akte: skript.akte || null };
+    const f = { ...baueFolge({ ...skript, stil: 'studio', ki: false, schlag: false, ganz: true, anfang: skript.akte ? '' : skript.anfang }), stil: 'akte', schlag: '', akte: skript.akte || null };
+    // 16.11. Akte-Universum: nummerierte Fälle als Serie ("AKTE 007"), am Ende der Haken auf die nächste Akte
+    const nr = Number(skript.fall_nr) || 0;
+    if (!nr) return f;
+    const en = skript.sprache === 'en', n3 = String(nr).padStart(3, '0');
+    return { ...f, fall_nr: nr, caption: `📁 ${en ? 'FILE' : 'AKTE'} ${n3} · ${f.caption} ${en ? 'Next file tomorrow.' : 'Nächste Akte morgen.'}` };
   }
   const fehler = pruefen(skript);
   if (fehler.length) throw new Error(fehler.join('; '));
