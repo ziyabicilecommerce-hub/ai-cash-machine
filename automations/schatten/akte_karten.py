@@ -7,6 +7,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 W, H = 720, 1280
 FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
 MONO = '/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf'
+KI = {}  # echte Gruselbilder je Geschichte (akte_ki.py): 'nah' = Gesicht, 'ganz' = Gestalt im Flur
 GRUND, ROT, GELB, GRUEN = (22, 26, 38), (230, 40, 50), (255, 206, 40), (120, 220, 90)
 _F = {}
 
@@ -306,6 +307,13 @@ def schock(im, lt, en=False, variante=0):
         return
     p = min(1.0, (lt - 0.12) / 0.25)
     e = 1 - (1 - p) ** 3
+    if KI.get('nah'):  # echtes Gesicht springt ins Bild, rot flackernd
+        z = 1.05 + 0.35 * e
+        g = KI['nah'].resize((int(W * z), int(H * z)))
+        im.paste(g.crop(((g.width - W) // 2, (g.height - H) // 2, (g.width - W) // 2 + W, (g.height - H) // 2 + H)))
+        if int(lt * 12) % 2:
+            im.paste(Image.blend(im, Image.new('RGB', (W, H), (150, 0, 10)), 0.35))
+        return
     if variante == 1:  # nur Augen im Schwarz: erst winzig weit weg, dann riesig direkt vor dir
         d.rectangle((0, 0, W, H), fill=(2, 2, 4))
         r, ab = 6 + 70 * e, 30 + 150 * e
@@ -340,6 +348,18 @@ def spion(im, t, lt):
     # jemand steht direkt vor der Tür und kommt näher
     import pov_raum
     from figuren import schatten, ZEIT
+    if KI.get('nah'):  # echtes Foto: das Gesicht kommt durch die Linse immer näher
+        z = 1.0 + 0.5 * min(1.0, lt / 2.2)
+        g = KI['nah'].resize((int(W * z), int(H * z)))
+        flur = g.crop(((g.width - W) // 2, (g.height - H) // 2 - 80, (g.width - W) // 2 + W, (g.height - H) // 2 - 80 + H))
+        from PIL import ImageEnhance
+        flur = ImageEnhance.Color(flur).enhance(0.6)
+        maske = Image.new('L', (W, H), 0)
+        ImageDraw.Draw(maske).ellipse((W / 2 - 300, 560 - 300, W / 2 + 300, 560 + 300), fill=255)
+        im.paste((0, 0, 0), (0, 0, W, H))
+        im.paste(flur, (0, 0), maske.filter(ImageFilter.GaussianBlur(26)))
+        ImageDraw.Draw(im).ellipse((W / 2 - 304, 256, W / 2 + 304, 864), outline=(30, 30, 34), width=10)
+        return
     flur = Image.new('RGB', (W, H))
     pov_raum.flur(flur, t)
     ZEIT[0] = t
@@ -367,7 +387,9 @@ def kamera(im, t, lt, ort):
     from figuren import schatten, ZEIT
     bild = Image.new('RGB', (W, H))
     (ORTE.get(ort) or ORTE['flur'])(bild, t, 0.0, 0.0) if ort in ORTE else ORTE['flur'](bild, t, 0.0, 0.0)
-    if lt > 1.0 and int(lt * 10) % 7:
+    if KI.get('ganz') and lt > 1.0 and int(lt * 10) % 7:  # echtes Foto: plötzlich steht er im Kamerabild
+        bild = KI['ganz'].copy()
+    elif lt > 1.0 and int(lt * 10) % 7:
         ZEIT[0] = t
         from akte_geist import geist
         geist(bild, W * 0.72, 900, s=0.8, t=t, alpha=235)
@@ -435,9 +457,13 @@ def bericht(im, kopf, jahr, fall, lt, gestrichen=False, en=False):
             d.text((100, 410 + i * 46), z[:30], font=f(26, True), fill=(30, 30, 34))
     foto = (380, 640, 610, 960)
     d.rectangle(foto, fill=(150, 146, 136))
-    bild = Image.new('RGB', (W, H), (160, 156, 146))
-    geist(bild, W / 2, 1040, s=0.62, t=lt)
-    im.paste(bild.convert('L').convert('RGB').crop((W / 2 - 115, 640, W / 2 + 115, 960)), (380, 640))
+    if KI.get('ganz'):  # echtes Beweisfoto
+        foto_bild = KI['ganz'].convert('L').convert('RGB').resize((230, 409)).crop((0, 40, 230, 360))
+        im.paste(foto_bild, (380, 640))
+    else:
+        bild = Image.new('RGB', (W, H), (160, 156, 146))
+        geist(bild, W / 2, 1040, s=0.62, t=lt)
+        im.paste(bild.convert('L').convert('RGB').crop((W / 2 - 115, 640, W / 2 + 115, 960)), (380, 640))
     d.rectangle(foto, outline=(30, 30, 34), width=3)
     d.text((110, 700), ('EVIDENCE PHOTO' if en else 'BEWEISFOTO') + ' →', font=f(22, True), fill=(80, 80, 86))
     if gestrichen:
