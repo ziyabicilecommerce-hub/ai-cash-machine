@@ -39,7 +39,7 @@ test('Videobot lehnt kaputte oder gefährliche Skripte ab', () => {
   const folge = baueFolge(fs_);
   assert.equal(folge.szenen.filter((x) => ['innen', 'gesicht', 'handy', 'nachricht', 'dunkel'].includes(x.art)).length, 2, 'Kurz-Modus: 2 Sätze (~15-20 s)');
   assert.equal(folge.tempo, '+24%');
-  assert.equal(Object.keys(KONTEN).length, 3);
+  assert.equal(Object.keys(KONTEN).length, 6, "3 TikTok + desk.rebel, purivelle (Instagram) + giyuuu (YouTube)");
 });
 
 test('Autopilot: jedes Konto eigene Geschichten, keine Teil-2-Versprechen', async () => {

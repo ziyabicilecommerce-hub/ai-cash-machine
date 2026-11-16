@@ -25,7 +25,12 @@ async function main() {
   if (!datei || !/^https:\/\//.test(url || '') || !/^[a-f\d]{24}$/.test(kanal || '')) throw new Error('Aufruf: node posten.mjs <folge.json> <https-video-url> <kanal-id>');
   if (!token) { console.log('[schatten] BUFFER_ACCESS_TOKEN fehlt - nicht gepostet.'); process.exit(2); }
   const folge = JSON.parse(readFileSync(datei, 'utf8'));
-  const input = postInput(kanal, serienText(folge), url, { titel: serienTitel(folge) });
+  // Instagram/YouTube-Kanal? Dann Text + Metadaten wie beim Buffer-Verteiler (Reel bzw. Short, KI-Hinweis), sonst TikTok
+  const { KANAELE, beitrag } = await import('../lib/bufferVerteiler.mjs');
+  const k = KANAELE.find((x) => x.id === kanal);
+  const input = k ? { channelId: kanal, schedulingType: 'automatic', mode: 'shareNow', assets: [{ video: { url } }],
+    ...beitrag({ caption: folge.caption, titel: folge.titel }, k.dienst, folge.sprache === 'en' ? 'horror-en' : 'horror') }
+    : postInput(kanal, serienText(folge), url, { titel: serienTitel(folge) });
   const res = await fetch(API, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
     body: JSON.stringify({ query: POST_MUTATION, variables: { input } }) });
   const daten = await res.json().catch(() => ({}));
