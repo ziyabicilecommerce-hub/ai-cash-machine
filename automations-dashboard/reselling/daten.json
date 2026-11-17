@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-17T17:06:09.412Z",
+ "stand": "2026-11-17T17:09:17.918Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -195,7 +195,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-17T16:53:58.837Z",
+  "stand": "2026-11-17T17:09:26.070Z",
   "filialen": 148,
   "produkte": [
    {
@@ -252,7 +252,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 57
+      "menge": 56
      },
      {
       "name": "dm Flörsheim am Main",
@@ -260,7 +260,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 43
+      "menge": 42
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -582,7 +582,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Kriftel",
@@ -641,6 +641,15 @@
       "menge": 10
      }
     ]
+   },
+   {
+    "dan": "3135931",
+    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
+    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3135831",
@@ -705,7 +714,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Frankfurt am Main",
@@ -722,80 +731,6 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 3
-     }
-    ]
-   },
-   {
-    "dan": "3118148",
-    "name": "Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
-    "preis": 24.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "link": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 3
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 13
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 5
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 9
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 5
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 7
      }
     ]
    },
@@ -1203,6 +1138,7 @@
     "nurBewegung": true,
     "kurs": [
      13.28,
+     13.28,
      13.28
     ]
    },
@@ -1236,6 +1172,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     35.24,
      35.24,
      35.24
     ]
@@ -1271,6 +1208,7 @@
     "nurBewegung": true,
     "kurs": [
      19,
+     19,
      19
     ]
    },
@@ -1304,6 +1242,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     19.22,
      19.22,
      19.22
     ]
@@ -1339,6 +1278,7 @@
     "nurBewegung": true,
     "kurs": [
      21.94,
+     21.94,
      21.94
     ]
    },
@@ -1372,6 +1312,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     15.34,
      15.34,
      15.34
     ]
@@ -1407,6 +1348,7 @@
     "nurBewegung": true,
     "kurs": [
      13.02,
+     13.02,
      13.02
     ]
    },
@@ -1440,6 +1382,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     46.94,
      46.94,
      46.94
     ]
@@ -1475,6 +1418,7 @@
     "nurBewegung": true,
     "kurs": [
      34.48,
+     34.48,
      34.48
     ]
    },
@@ -1508,6 +1452,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     33.02,
      33.02,
      33.02
     ]
@@ -1543,6 +1488,7 @@
     "nurBewegung": true,
     "kurs": [
      36.77,
+     36.77,
      36.77
     ]
    },
@@ -1576,6 +1522,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     8.66,
      8.66,
      8.66
     ]
@@ -1611,6 +1558,7 @@
     "nurBewegung": true,
     "kurs": [
      30.07,
+     30.07,
      30.07
     ]
    },
@@ -1644,6 +1592,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     32.19,
      32.19,
      32.19
     ]
@@ -1679,6 +1628,7 @@
     "nurBewegung": true,
     "kurs": [
      12.58,
+     12.58,
      12.58
     ]
    },
@@ -1712,6 +1662,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.46,
      9.46,
      9.46
     ]
@@ -1747,6 +1698,7 @@
     "nurBewegung": true,
     "kurs": [
      34.73,
+     34.73,
      34.73
     ]
    },
@@ -1780,6 +1732,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     41.48,
      41.48,
      41.48
     ]
@@ -1815,6 +1768,7 @@
     "nurBewegung": true,
     "kurs": [
      47.83,
+     47.83,
      47.83
     ]
    },
@@ -1848,6 +1802,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.13,
      9.13,
      9.13
     ]
@@ -1883,6 +1838,7 @@
     "nurBewegung": true,
     "kurs": [
      23.89,
+     23.89,
      23.89
     ]
    },
@@ -1916,6 +1872,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.61,
      9.61,
      9.61
     ]
@@ -1951,6 +1908,7 @@
     "nurBewegung": true,
     "kurs": [
      9.96,
+     9.96,
      9.96
     ]
    },
@@ -1985,6 +1943,7 @@
     "nurBewegung": true,
     "kurs": [
      43.41,
+     43.41,
      43.41
     ]
    },
@@ -2018,6 +1977,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     31.38,
      31.38,
      31.38
     ]
@@ -2079,16 +2039,16 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 964,
+  "geprueft": 657,
   "statistik": {
-   "karten": 964,
+   "karten": 657,
    "mitPreis": 657,
    "imBudget": 50,
    "steigend": 0,
    "fallend": 7
   },
-  "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-11-17T16:10:52.047Z"
+  "quelle": "TCGdex",
+  "stand": "2026-11-17T17:08:59.800Z"
  },
  "trends": {
   "ware": [],
