@@ -75,8 +75,9 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.posten }}" != "true" ]; then
             # Nur gebaut (posten aus): Release wieder löschen (sonst gilt es als gepostet), Vorschau unter eigenem Tag ablegen
             gh release delete "$SLUG" -R "$REPO" --yes --cleanup-tag || true
-            gh release create "vorschau-$SLUG" "out/$SLUG.mp4" -R "$REPO" --prerelease --title "Vorschau (nicht gepostet): $SLUG" --notes "Testlauf" || true
-            echo "👀 Vorschau: https://github.com/$REPO/releases/download/vorschau-$SLUG/$SLUG.mp4" >> "$GITHUB_STEP_SUMMARY"
+            V="vorschau-$(date -u +%m%d%H%M)-$SLUG"
+            gh release create "$V" "out/$SLUG.mp4" -R "$REPO" --prerelease --title "Vorschau (nicht gepostet): $SLUG" --notes "Testlauf" || true
+            echo "👀 Vorschau: https://github.com/$REPO/releases/download/$V/$SLUG.mp4" | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           if node automations/schatten/gta6.mjs --posten out/gta6.json "$URL" "$KANAL"; then
