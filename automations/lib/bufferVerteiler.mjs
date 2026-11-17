@@ -26,8 +26,11 @@ export const KANAELE = [
 // YouTube fiel von Ø 332 (1.-7.11.) auf Ø 29 (12.-16.11.) - aber schon mit kurzen Videos (16-19 s), bevor der Akte-Stil kam.
 // Die Länge allein erklärt es also nicht; deshalb entscheidet der Test (Instagram nach Sehdauer, YouTube nach Aufrufen).
 // Passt ein Skript nicht in den Klassik-Aufbau, wird es wie bisher gebaut - der Post fällt nie aus.
+// Akte-Universum (17.11.): nummerierte Fälle (fall_nr, "AKTE 007 ... Nächste Akte morgen") bleiben IMMER im Akte-Stil -
+// sonst fehlte der Serie jede zweite Folge. Sie zählen nicht im Test (serienFall).
+export const serienFall = (skript) => Number(skript?.fall_nr) > 0;
 export function folgeFuer(eingabe, baue) {
-  if (eingabe.klassik === true) {
+  if (eingabe.klassik === true && !serienFall(eingabe)) {
     try { return baue({ ...eingabe, stil: 'klassik' }); } catch { /* Skript passt nicht -> Standard */ }
   }
   return baue(eingabe);

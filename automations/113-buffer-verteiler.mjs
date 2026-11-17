@@ -8,7 +8,7 @@
 //   node 113-buffer-verteiler.mjs --posten      -> postet laut Plan, Video-Links aus out/horror-urls.json
 import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
-import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, zaehlenMitStand, storyEingabe, abVariante, abGewichte, abGewichteAufrufe, AB_FEATURES, abSchluessel, sprachAnteil, formatWerte, guteStunde, folgeFuer, fruehSchock } from './lib/bufferVerteiler.mjs';
+import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, zaehlenMitStand, storyEingabe, abVariante, abGewichte, abGewichteAufrufe, AB_FEATURES, abSchluessel, sprachAnteil, formatWerte, guteStunde, folgeFuer, fruehSchock, serienFall } from './lib/bufferVerteiler.mjs';
 import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
 import { naechstesSkriptEn, SKRIPTE_EN } from './schatten/skripteEn.mjs';
 import { teil2Kandidat as teil2KandidatSync } from './schatten/skriptBot.mjs';
@@ -151,7 +151,8 @@ async function vorbereiten() {
       if (!schlagzeile(h.skript.muster, quelle === 'horror-en' ? 'en' : 'de')) variante.schlag = false;  // Schlagzeile gibt es nur für bekannte Muster
       const hook = variante.duhook ? h.skript.hook2 : h.skript.hook;
       let folge = folgeFuer({ ...h.skript, hook, anfang: hook !== h.skript.hook ? h.skript.hook : '', weiter: '', posten: '', kurz: true, ...variante }, baueFolge);
-      if (variante.klassik === true && !folge.klassik) variante.klassik = false;  // Skript passte nicht -> ehrlich als Akte zählen
+      if (serienFall(h.skript)) variante.klassik = null;  // Serien-Fall: immer Akte-Stil, zählt nicht im Test
+      else if (variante.klassik === true && !folge.klassik) variante.klassik = false;  // Skript passte nicht -> ehrlich als Akte zählen
       ({ folge, frueh: variante.frueh } = fruehSchock(folge, variante.frueh === true));  // Schock schon nach 0,5 s (nur Hit-Look)
       mkdirSync('out', { recursive: true });
       writeFileSync(`out/folge-${k.id}.json`, JSON.stringify({ ...folge, _slug: slug(h.skript.titel) }, null, 1));

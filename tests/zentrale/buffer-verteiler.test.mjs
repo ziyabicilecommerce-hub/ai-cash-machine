@@ -179,7 +179,12 @@ test('A/B-Test klassik: nur im Test-Arm der Hit-Look, Fehler fallen auf den Stan
   folgeFuer({}, (e) => stil.push(e.stil));
   assert.deepEqual(stil, ['klassik', undefined, undefined]);
   assert.equal(folgeFuer({ klassik: true }, (e) => { if (e.stil === 'klassik') throw new Error('passt nicht'); return 'standard'; }), 'standard');
-  for (const s of [...SKRIPTE_EN, ...SKRIPTE_EN_AKTE]) {
+  for (const s of SKRIPTE_EN_AKTE) {  // Akte-Universum: nummerierte Fälle bleiben im Akte-Stil, auch im Test-Arm
+    const f = folgeFuer({ ...s, kurz: true, weiter: '', posten: '', klassik: true }, baueFolge);
+    assert.ok(s.fall_nr > 0 && !f.klassik && f.stil === 'akte' && /FILE \d{3}/.test(f.caption), `${s.titel}: Serie bleibt Akte`);
+  }
+  assert.ok(SKRIPTE_EN.some((s) => !s.fall_nr), 'es gibt Geschichten außerhalb der Serie');
+  for (const s of SKRIPTE_EN.filter((x) => !x.fall_nr)) {
     const basis = { ...s, kurz: true, weiter: '', posten: '' };
     const f = folgeFuer({ ...basis, klassik: true }, baueFolge);
     assert.ok(f.klassik && f.szenen.length <= 8, `${s.titel}: ${f.szenen.length} Szenen`);
