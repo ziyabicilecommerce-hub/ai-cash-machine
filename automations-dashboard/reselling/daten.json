@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-17T20:59:52.447Z",
+ "stand": "2026-11-17T21:02:51.950Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118897:188",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1202634,8.5251147",
+   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
+   "text": "44,95 € · dm Sulzbach (Taunus) (6,3 km) · 1 Stück\nMain-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)\nIm Umkreis in 17 Filiale(n) vorrätig.",
+   "zeit": "2026-11-17T21:02:51.950Z"
+  },
   {
    "schluessel": "filiale:3118897:188",
    "art": "Filiale",
@@ -185,20 +195,10 @@
    "link": "https://www.sneakersnstuff.com/products/nike-air-max-plus-vii-hq2197-002",
    "text": "sneakersnstuff.com · Air Max Plus VII\nVerkauf ca. 140–210 € → Gewinn ca. +38,50 € (ROI 34 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-16T10:22:15.979Z"
-  },
-  {
-   "schluessel": "filiale:3118148:1364",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0815926,8.4565918",
-   "shop": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
-   "text": "24,95 € · dm Kriftel (2,5 km) · 1 Stück\nKapellenstraße 48, 65830 Kriftel\nIm Umkreis in 18 Filiale(n) vorrätig.",
-   "zeit": "2026-11-16T03:54:14.495Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-17T20:47:31.777Z",
+  "stand": "2026-11-17T21:02:56.546Z",
   "filialen": 148,
   "produkte": [
    {
@@ -625,7 +625,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 6
+      "menge": 7
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -644,6 +644,15 @@
       "menge": 6
      }
     ]
+   },
+   {
+    "dan": "3135931",
+    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
+    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3135831",
@@ -687,6 +696,14 @@
       "menge": 12
      },
      {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
       "name": "dm Flörsheim am Main",
       "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
       "km": 7.4,
@@ -717,88 +734,6 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 3
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 2
-     }
-    ]
-   },
-   {
-    "dan": "3118148",
-    "name": "Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
-    "preis": 24.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "link": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 3
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 13
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 5
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 9
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 5
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 7
      }
     ]
    },
@@ -2195,11 +2130,37 @@
   "stand": "2026-11-17T20:53:22.158Z"
  },
  "trends": {
-  "ware": [],
+  "ware": [
+   {
+    "titel": "dfb nike trikot",
+    "menge": "200+",
+    "kategorie": "Sneaker"
+   }
+  ],
   "top": [
    {
+    "titel": "del2",
+    "menge": "500+"
+   },
+   {
+    "titel": "unter uns",
+    "menge": "200+"
+   },
+   {
+    "titel": "james wade",
+    "menge": "200+"
+   },
+   {
+    "titel": "tatort schweigen",
+    "menge": "200+"
+   },
+   {
+    "titel": "dfb nike trikot",
+    "menge": "200+"
+   },
+   {
     "titel": "lee reeves boxer",
-    "menge": "100+"
+    "menge": "200+"
    },
    {
     "titel": "koalitionsausschuss",
@@ -2210,31 +2171,11 @@
     "menge": "200+"
    },
    {
-    "titel": "النيجر ضد المغرب",
-    "menge": "200+"
-   },
-   {
-    "titel": "rasmus højlund",
-    "menge": "200+"
-   },
-   {
     "titel": "ncis",
     "menge": "200+"
    },
    {
-    "titel": "الدنمارك ضد النرويج",
-    "menge": "200+"
-   },
-   {
-    "titel": "carlo ancelotti",
-    "menge": "100+"
-   },
-   {
-    "titel": "tv total",
-    "menge": "200+"
-   },
-   {
-    "titel": "niger vs morocco",
+    "titel": "rasmus højlund",
     "menge": "200+"
    }
   ]
