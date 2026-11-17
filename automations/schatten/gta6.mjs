@@ -116,7 +116,7 @@ async function main() {
     mkdirSync(b, { recursive: true });
     const s = skript(e);
     const { videoBauen } = await import('../lib/videoFabrik.mjs');
-    const v = await videoBauen({ titel: s.titel, szenen: s.szenen }, join(b, 'bau'), { format: 'hoch', hook: s.hook, premium: true, sprache: 'de', stimme: 'de-DE-ConradNeural', stil: 'cinematic, photorealistic, vibrant' });
+    const v = await videoBauen({ titel: s.titel, szenen: s.szenen, cta: 'SCHREIB 1 ODER 2' }, join(b, 'bau'), { format: 'hoch', hook: s.hook, premium: true, sprache: 'de', stimme: 'de-DE-ConradNeural', stil: 'cinematic, photorealistic, vibrant' });
     copyFileSync(v.pfad, join(b, 'video.mp4'));
     writeFileSync(join(b, 'gta6.json'), JSON.stringify({ slug: e.slug, titel: s.titel, caption: s.caption }, null, 2));
     console.log(`[gta6] fertig: ${e.slug} (${Math.round(v.dauer)} s)`);
