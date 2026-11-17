@@ -119,13 +119,24 @@ test('Fakten: stärkstes Format des Kontos zuerst, nur mit echtem Vergleich', as
   assert.equal(naechstes(v, {}, { mythos: 75, quiz: 9 }).datei, 'm', 'mit Werten: Mythos zuerst');
 });
 
-test('Mehr Videos (16.11.): 2 je Kanal, nur nachts und abends', async () => {
-  const { guteStunde, ZIEL_WENIGER } = await import('../../automations/lib/bufferVerteiler.mjs');
-  assert.ok(KANAELE.every((k) => k.ziel === ZIEL_WENIGER));
+test('Masse runter (17.11.): YouTube 1 am Tag, Instagram ~4-5 pro Woche, nur nachts und abends', async () => {
+  const { guteStunde, ZIEL_EINS, IG_ABSTAND_MIN } = await import('../../automations/lib/bufferVerteiler.mjs');
+  assert.ok(KANAELE.every((k) => k.ziel === ZIEL_EINS), 'jeder Kanal höchstens 1 Video am Tag');
+  assert.ok(KANAELE.filter((k) => k.dienst === 'instagram').every((k) => k.abstandMin === IG_ABSTAND_MIN));
+  const yt = KANAELE.find((k) => k.dienst === 'youtube'), ig = KANAELE.find((k) => k.dienst === 'instagram');
   const jetzt = Date.parse('2026-11-02T22:00:00Z');
-  assert.equal(postenJetzt(0, null, jetzt, { ziel: ZIEL_WENIGER }), true, 'das eine Video des Tages geht');
-  assert.equal(postenJetzt(1, '2026-11-02T08:00:00Z', jetzt, { ziel: ZIEL_WENIGER }), true, 'das zweite geht auch');
-  assert.equal(postenJetzt(2, '2026-11-02T08:00:00Z', jetzt, { ziel: ZIEL_WENIGER }), false, 'nach 2 ist Schluss');
+  const opt = (k) => ({ ziel: k.ziel, abstandMin: k.abstandMin });
+  assert.equal(postenJetzt(0, null, jetzt, opt(yt)), true, 'YouTube: das eine Video des Tages geht');
+  assert.equal(postenJetzt(1, '2026-11-02T08:00:00Z', jetzt, opt(yt)), false, 'YouTube: kein zweites');
+  assert.equal(postenJetzt(0, '2026-11-01T22:00:00Z', jetzt, opt(ig)), false, 'Instagram: 24 Std. sind zu kurz');
+  assert.equal(postenJetzt(0, '2026-11-01T15:00:00Z', jetzt, opt(ig)), true, 'Instagram: nach 31 Std. wieder');
+  // eine Woche im Takt der Workflow-Läufe: Instagram landet bei 4-5 Reels
+  let letzter = null, n = 0;
+  for (let t = Date.parse('2026-11-02T00:00:00Z'); t < Date.parse('2026-11-09T00:00:00Z'); t += 3600000) {
+    const stunde = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hour: 'numeric', hourCycle: 'h23' }).format(new Date(t)));
+    if (guteStunde(stunde) && postenJetzt(0, letzter, t, opt(ig))) { letzter = new Date(t).toISOString(); n++; }
+  }
+  assert.ok(n >= 4 && n <= 5, `Instagram: ${n} Reels pro Woche`);
   assert.deepEqual([0, 3, 8, 11, 14, 17, 20, 22].filter(guteStunde), [0, 3, 20, 22]);
 });
 
@@ -166,4 +177,43 @@ test('Schonkur: das Tagesziel 0 wird nicht durch den Standard ersetzt (0 ist ein
   const quelle = readFileSync(new URL('../../automations/113-buffer-verteiler.mjs', import.meta.url), 'utf8');
   assert.match(quelle, /ziel: k\.ziel \?\? ZIEL_PRO_TAG/, 'mit || würde aus ZIEL_WENIGER = 0 wieder das Standardziel');
   assert.doesNotMatch(quelle, /k\.ziel \|\| ZIEL_PRO_TAG/);
+});
+
+test('A/B-Test klassik: nur im Test-Arm der Hit-Look, Fehler fallen auf den Standard zurück', async () => {
+  const { folgeFuer } = await import('../../automations/lib/bufferVerteiler.mjs');
+  const { baueFolge } = await import('../../automations/schatten/videobot.mjs');
+  const { SKRIPTE_EN } = await import('../../automations/schatten/skripteEn.mjs');
+  const { SKRIPTE_EN_AKTE } = await import('../../automations/schatten/skripteEnAkte.mjs');
+  const stil = [];
+  folgeFuer({ klassik: true }, (e) => stil.push(e.stil));
+  folgeFuer({ klassik: false }, (e) => stil.push(e.stil));
+  folgeFuer({}, (e) => stil.push(e.stil));
+  assert.deepEqual(stil, ['klassik', undefined, undefined]);
+  assert.equal(folgeFuer({ klassik: true }, (e) => { if (e.stil === 'klassik') throw new Error('passt nicht'); return 'standard'; }), 'standard');
+  for (const s of SKRIPTE_EN_AKTE) {  // Akte-Universum: nummerierte Fälle bleiben im Akte-Stil, auch im Test-Arm
+    const f = folgeFuer({ ...s, kurz: true, weiter: '', posten: '', klassik: true }, baueFolge);
+    assert.ok(s.fall_nr > 0 && !f.klassik && f.stil === 'akte' && /FILE \d{3}/.test(f.caption), `${s.titel}: Serie bleibt Akte`);
+  }
+  assert.ok(SKRIPTE_EN.some((s) => !s.fall_nr), 'es gibt Geschichten außerhalb der Serie');
+  for (const s of SKRIPTE_EN.filter((x) => !x.fall_nr)) {
+    const basis = { ...s, kurz: true, weiter: '', posten: '' };
+    const f = folgeFuer({ ...basis, klassik: true }, baueFolge);
+    assert.ok(f.klassik && f.szenen.length <= 8, `${s.titel}: ${f.szenen.length} Szenen`);
+    assert.ok(!folgeFuer({ ...basis, klassik: false }, baueFolge).klassik, `${s.titel}: ohne Test-Arm kein Klassik`);
+  }
+});
+
+test('Früher Schock: nur im Hit-Look, nach dem Titelbild, sonst zählt der Post nicht im Test', async () => {
+  const { fruehSchock, folgeFuer } = await import('../../automations/lib/bufferVerteiler.mjs');
+  const { baueFolge } = await import('../../automations/schatten/videobot.mjs');
+  const { SKRIPTE_EN } = await import('../../automations/schatten/skripteEn.mjs');
+  const basis = { ...SKRIPTE_EN[0], kurz: true, weiter: '', posten: '' };
+  const hit = folgeFuer({ ...basis, klassik: true }, baueFolge), akte = folgeFuer({ ...basis, klassik: false }, baueFolge);
+  const an = fruehSchock(hit, true);
+  assert.equal(an.frueh, true);
+  assert.deepEqual(an.folge.szenen[0].blitzbild, [0.5, 1.1]);
+  assert.ok(an.folge.szenen[0].blitzbild[0] > 0.35 + 2 / 30, 'Fratze nie auf dem Titelbild (0,35 s)');
+  assert.equal(hit.szenen[0].blitzbild, undefined, 'Original bleibt unverändert');
+  assert.deepEqual(fruehSchock(hit, false), { folge: hit, frueh: false });
+  assert.deepEqual(fruehSchock(akte, true), { folge: akte, frueh: null });
 });

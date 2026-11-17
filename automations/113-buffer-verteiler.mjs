@@ -8,7 +8,7 @@
 //   node 113-buffer-verteiler.mjs --posten      -> postet laut Plan, Video-Links aus out/horror-urls.json
 import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'node:fs';
 import { API, POST_MUTATION } from './lib/bufferPoster.mjs';
-import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, zaehlenMitStand, storyEingabe, abVariante, abGewichte, abGewichteAufrufe, AB_FEATURES, abSchluessel, sprachAnteil, formatWerte, guteStunde } from './lib/bufferVerteiler.mjs';
+import { KANAELE, TIKTOK, ZIEL_PRO_TAG, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen, zaehlenMitStand, storyEingabe, abVariante, abGewichte, abGewichteAufrufe, AB_FEATURES, abSchluessel, sprachAnteil, formatWerte, guteStunde, folgeFuer, fruehSchock, serienFall } from './lib/bufferVerteiler.mjs';
 import { baueFolge, slug, gewinner } from './schatten/videobot.mjs';
 import { naechstesSkriptEn, SKRIPTE_EN } from './schatten/skripteEn.mjs';
 import { teil2Kandidat as teil2KandidatSync } from './schatten/skriptBot.mjs';
@@ -110,7 +110,7 @@ async function vorbereiten() {
   if (!guteStunde(stundeJetzt)) bericht(`- 🕒 ${stundeJetzt} Uhr: Instagram/YouTube posten nur nachts und abends (beste Zeiten) - dieser Lauf pausiert.`);
   for (const k of guteStunde(stundeJetzt) ? KANAELE : []) {
     const { heute, letzter } = zaehlenMitStand(zaehlen(posts, k.id), stand[k.id], heuteBerlin());
-    if (!postenJetzt(heute, letzter, Date.now(), { ziel: k.ziel ?? ZIEL_PRO_TAG })) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
+    if (!postenJetzt(heute, letzter, Date.now(), { ziel: k.ziel ?? ZIEL_PRO_TAG, abstandMin: k.abstandMin })) { bericht(`- ${k.name}: heute ${heute} Posts - jetzt nicht (Abstand/Ziel)`); continue; }
     // Mix-Kanal: diesmal Deutsch oder Englisch (Sprach-Test)
     let quelle = k.quelle === 'horror-mix' ? (Math.random() < enAnteilVon(k) ? 'horror-en' : 'horror') : k.quelle;
     // YouTube: abwechselnd ein Remake eines eigenen YouTube-Hits (ab 500 Aufrufen, mind. 5 Tage alt, je Hit einmal) - ytHits.mjs
@@ -150,7 +150,10 @@ async function vorbereiten() {
       if (!h.skript.hook2) variante.duhook = false;  // nur Skript-Bot-Geschichten haben einen Du-Hook
       if (!schlagzeile(h.skript.muster, quelle === 'horror-en' ? 'en' : 'de')) variante.schlag = false;  // Schlagzeile gibt es nur für bekannte Muster
       const hook = variante.duhook ? h.skript.hook2 : h.skript.hook;
-      const folge = baueFolge({ ...h.skript, hook, anfang: hook !== h.skript.hook ? h.skript.hook : '', weiter: '', posten: '', kurz: true, ...variante });
+      let folge = folgeFuer({ ...h.skript, hook, anfang: hook !== h.skript.hook ? h.skript.hook : '', weiter: '', posten: '', kurz: true, ...variante }, baueFolge);
+      if (serienFall(h.skript)) variante.klassik = null;  // Serien-Fall: immer Akte-Stil, zählt nicht im Test
+      else if (variante.klassik === true && !folge.klassik) variante.klassik = false;  // Skript passte nicht -> ehrlich als Akte zählen
+      ({ folge, frueh: variante.frueh } = fruehSchock(folge, variante.frueh === true));  // Schock schon nach 0,5 s (nur Hit-Look)
       mkdirSync('out', { recursive: true });
       writeFileSync(`out/folge-${k.id}.json`, JSON.stringify({ ...folge, _slug: slug(h.skript.titel) }, null, 1));
       horrorKanaele.push(k.id);

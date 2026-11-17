@@ -9,19 +9,46 @@ import { typAus } from './tiktokLernen.mjs';
 // Instagram ~115 -> ~10). Vermutung: zu viele zu ähnliche Videos. Deshalb nur noch EIN Video pro Kanal und Tag, abends.
 // Zurück zum Stand davor: ZIEL_WENIGER = 2 und guteStunde = (stunde) => stunde < 6 || stunde >= 19.
 export const ZIEL_WENIGER = 1;  // 16.11. (Nutzer: "mach mehr Videos am Tag"): jetzt 2 je Kanal - abends und nachts, jede Geschichte anders
+// Masse runter (17.11., mit dem Nutzer abgesprochen): 530 Posts in 30 Tagen auf 6 Konten wirken wie eine Bot-Farm, die Plattformen
+// drosseln Massenware (YouTube 'inauthentic content'). Recherche: 3-5 Reels pro Woche schlagen tägliches Massenposten.
+// YouTube: 1 Short am Tag (ziel 0 = höchstens 1). Instagram: 1 Reel, dann mindestens 30 Std. Pause - mit den Abend-/Nachtfenstern
+// sind das ~4-5 Reels pro Woche. Zurück zum Stand davor: ziel: ZIEL_WENIGER und abstandMin weglassen.
+export const ZIEL_EINS = 0;
+export const IG_ABSTAND_MIN = 30 * 60;
 export const guteStunde = (stunde) => stunde < 6 || stunde >= 19;
 export const KANAELE = [
   // desk.rebel (10.11.): Sprach-Test wie auf YouTube - Englisch erreicht weltweit mehr Leute, dort holt es Ø 519 statt 340.
   // Halbe-halbe, bis der Wochenbericht für diesen Kanal einen klaren Sieger hat (sprachTests); purivelle bleibt deutsch.
-  { id: '6ae8f441e29c69a1713e44f3', name: 'desk.rebel', dienst: 'instagram', quelle: 'horror-mix', ziel: ZIEL_WENIGER },
+  { id: '6ae8f441e29c69a1713e44f3', name: 'desk.rebel', dienst: 'instagram', quelle: 'horror-mix', ziel: ZIEL_EINS, abstandMin: IG_ABSTAND_MIN },
   // purivelle (06.11., Wunsch des Nutzers): Horror statt "Wahr oder Mythos?" - eigene Geschichten, nie dieselbe wie desk.rebel
-  { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'horror', ziel: ZIEL_WENIGER },
+  { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'horror', ziel: ZIEL_EINS, abstandMin: IG_ABSTAND_MIN },
   // YouTube: Sprach-Test (06.11.) - deutsche Horror-Shorts holten hier 179-706 Aufrufe, Englisch erreicht weltweit mehr.
   // Halbe-halbe, bis der Wochenbericht einen klaren Sieger hat; dann bekommt der 85 % (sprachAnteil).
-  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-mix', ziel: ZIEL_WENIGER },
+  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-mix', ziel: ZIEL_EINS },
   // Englischer Horror-Kanal: an, sobald seine Buffer-Kanal-ID eingetragen ist (Repo-Variable EN_KANAL, optional EN_DIENST)
   ...(/^[a-f\d]{24}$/.test(process.env.EN_KANAL || '') ? [{ id: process.env.EN_KANAL, name: 'english-horror', dienst: process.env.EN_DIENST || 'youtube', quelle: 'horror-en' }] : []),
 ];
+// A/B-Test "klassik" (16.11.): Hit-Look vom 7.11. (~20 s) gegen den Akte-Stil (~40 s), auf Instagram UND YouTube halbe-halbe.
+// YouTube fiel von Ø 332 (1.-7.11.) auf Ø 29 (12.-16.11.) - aber schon mit kurzen Videos (16-19 s), bevor der Akte-Stil kam.
+// Die Länge allein erklärt es also nicht; deshalb entscheidet der Test (Instagram nach Sehdauer, YouTube nach Aufrufen).
+// Passt ein Skript nicht in den Klassik-Aufbau, wird es wie bisher gebaut - der Post fällt nie aus.
+// Akte-Universum (17.11.): nummerierte Fälle (fall_nr, "AKTE 007 ... Nächste Akte morgen") bleiben IMMER im Akte-Stil -
+// sonst fehlte der Serie jede zweite Folge. Sie zählen nicht im Test (serienFall).
+export const serienFall = (skript) => Number(skript?.fall_nr) > 0;
+export function folgeFuer(eingabe, baue) {
+  if (eingabe.klassik === true && !serienFall(eingabe)) {
+    try { return baue({ ...eingabe, stil: 'klassik' }); } catch { /* Skript passt nicht -> Standard */ }
+  }
+  return baue(eingabe);
+}
+// Früher Schock: nur im Klassik-Look (der Akte-Stil hat bewusst keine Blitzbilder). 0,5 s liegt hinter dem Titelbild (0,35 s),
+// die Fratze landet also nie auf dem Cover. Gibt null zurück, wenn es nicht passt - dann zählt der Post nicht im Test.
+export function fruehSchock(folge, an) {
+  if (!folge?.klassik || folge.szenen?.[0]?.art !== 'blitz') return { folge, frueh: null };
+  if (!an) return { folge, frueh: false };
+  const [erste, ...rest] = folge.szenen;
+  return { folge: { ...folge, szenen: [{ ...erste, blitzbild: [0.5, 1.1], schreck_bei: 0.5 }, ...rest] }, frueh: true };
+}
 // Die TikTok-Konten werden von Serie, Videobot und Fakten-Kanal bespielt - hier nur gezählt.
 export const TIKTOK = [
   { id: '6ac7cb606a5c39ccb6535fab', name: 'futureflowx3' },
@@ -161,7 +188,10 @@ export function storyEingabe(kanalId, coverUrl, en = false, sticker = '', alt = 
 // gestalt (11.11.): Schattenfigur kommt in leeren KI-Szenen bei jedem Flackern näher (tiefe.py) - halbe-halbe, bis Zahlen da sind
 // duhook 0.15 (13.11.): das Trick-Radar misst den Regel-Hook ("Wenn …, geh nicht ran / renn.") bei x2,2 und die Du-Ansprache
 // bei x1,8 gegen den Konto-Schnitt - der Du-Hook läuft jetzt bei 85 % der Videos, 15 % bleiben zum Weitermessen.
-export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.15, schlag: 0.5, gestalt: 0.5 };  // Wahrscheinlichkeit für "aus"
+// frueh (16.11., Nutzer: "mach es noch krasser"): im Hit-Look blitzt die Fratze schon nach 0,5 s auf (und nochmal bei 1,1 s) -
+// die Leute wischen im Schnitt nach ~4 s weg, der Schock soll davor sitzen. Halbe-halbe, bis Zahlen da sind (fruehSchock).
+// klassik (16.11.): Hit-Look vom 7.11. (~20 s) gegen den Akte-Stil - halbe-halbe, bis Zahlen da sind (folgeFuer)
+export const AB_FEATURES = { kalt: 0.3, raum: 0.3, suchbild: 0.3, duhook: 0.15, schlag: 0.5, gestalt: 0.5, klassik: 0.5, frueh: 0.5 };  // Wahrscheinlichkeit für "aus"
 export function abVariante(zufall = Math.random, gewichte = AB_FEATURES) {
   return Object.fromEntries(Object.entries(gewichte).map(([f, aus]) => [f, zufall() >= aus]));
 }
