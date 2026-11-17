@@ -73,9 +73,10 @@ jobs:
           URL="https://github.com/$REPO/releases/download/$SLUG/$SLUG.mp4"
           echo "🎬 $URL" >> "$GITHUB_STEP_SUMMARY"
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.posten }}" != "true" ]; then
-            echo "Nur gebaut (posten aus). Release wieder löschen, damit es später gepostet wird:" >> "$GITHUB_STEP_SUMMARY"
+            # Nur gebaut (posten aus): Release wieder löschen (sonst gilt es als gepostet), Vorschau unter eigenem Tag ablegen
             gh release delete "$SLUG" -R "$REPO" --yes --cleanup-tag || true
-            mkdir -p vorschau && cp "out/$SLUG.mp4" vorschau/
+            gh release create "vorschau-$SLUG" "out/$SLUG.mp4" -R "$REPO" --prerelease --title "Vorschau (nicht gepostet): $SLUG" --notes "Testlauf" || true
+            echo "👀 Vorschau: https://github.com/$REPO/releases/download/vorschau-$SLUG/$SLUG.mp4" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           if node automations/schatten/gta6.mjs --posten out/gta6.json "$URL" "$KANAL"; then
@@ -85,9 +86,3 @@ jobs:
             echo "❌ $SLUG nicht gepostet - kommt beim nächsten Lauf nochmal." >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
-      - name: Vorschau als Artefakt (nur Test)
-        if: steps.wahl.outputs.slug != '' && github.event_name == 'workflow_dispatch' && inputs.posten != true
-        uses: actions/upload-artifact@v4
-        with:
-          name: gta6-vorschau
-          path: vorschau/
