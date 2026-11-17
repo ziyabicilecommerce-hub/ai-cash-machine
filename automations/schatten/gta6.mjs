@@ -1,131 +1,145 @@
-// GTA-6-Kanal (17.11., Nutzer: "einer muss sich auf GTA 6 fokussieren - der, der am besten performt"): @futureflowx3.
-// GTA VI erscheint am 19.11.2026 (PS5, Xbox Series X|S, zum Start kein PC; Leonida/Vice City; Lucia und Jason).
-// Von Hand geschrieben: nur bestätigte Fakten, bekannte Spieler-Mythen aus alten Teilen (passt zum Grusel-Publikum des
-// Kontos) und Meinungsfragen für Kommentare. KEIN Material von Rockstar (keine Trailer, Logos, Musik, Figuren-Bilder):
-// eigene KI-Bilder im Stil "sonnige Küstenstadt/Neon", klar als Fan-Video und KI-generiert gekennzeichnet.
-//   node gta6.mjs --liste                       -> Slugs in Reihenfolge
-//   node gta6.mjs --bauen <slug> <ordner>        -> Video + <ordner>/gta6.json (Caption)
-//   node gta6.mjs --posten <gta6.json> <url> <kanal>
-import { mkdirSync, readFileSync, writeFileSync, copyFileSync } from 'node:fs';
+// GTA-6-Kanal (17.11.) auf @futureflowx3. Nutzer: "keine Mythen oder Wahrheiten, sondern Clips - so Trailer-Videos, wie es
+// aussieht, mit Musik". Deshalb: Fan-Trailer ohne Stimme - schnelle Schnitte aus eigenen KI-Bildern (Neon-Küstenstadt,
+// Highway, Sümpfe, Inseln), Kamerafahrten, Kino-Balken, Blitz-Schnitte, große Titelkarten und ein selbst erzeugter
+// Trap-Beat (videoExtras.mjs, synthetisch - keine Lizenzfragen). KEIN Material von Rockstar (keine Trailer, Logos,
+// Musik, Figuren). Caption sagt klar: Fan-Trailer, KI-generiert, kein echtes Spielmaterial.
+//   node gta6.mjs --liste | --bauen <slug> <ordner> | --posten <gta6.json> <url> <kanal>
+import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
-export const RELEASE = Date.parse('2026-11-19T00:00:00+01:00');
-const STADT = 'sunny neon coastal city at night, palm trees, art deco hotels, pink and teal lights, cinematic, photorealistic, no logos, no text';
-const BERG = 'misty forest mountain at night, full moon, eerie fog, cinematic, photorealistic, no text';
-const tageBis = (jetzt = Date.now()) => Math.ceil((RELEASE - jetzt) / 864e5);
+const W = 720, H = 1280, FPS = 30;
+const LOOK = 'cinematic film still, photorealistic, anamorphic, dramatic lighting, vibrant teal and magenta, no text, no logos, no watermark';
+const SCHRIFT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
 
-// Countdown-Hook passt sich dem Datum an (vor dem 19.11. "noch N Tage", danach "ist da")
-export function countdown(jetzt = Date.now()) {
-  const n = tageBis(jetzt);
-  return n > 1 ? `Noch ${n} Tage bis GTA 6.` : n === 1 ? 'Morgen kommt GTA 6.' : 'GTA 6 ist endlich da.';
-}
-
-export const GTA6 = [
-  { slug: 'gta6-alles-was-sicher-ist', titel: 'GTA 6: Alles, was sicher ist', hook: () => countdown(),
-    szenen: (h) => [
-      { text: h, bild: `${STADT}, sports car on an empty boulevard` },
-      { text: 'Erscheinungstag: der 19. November 2026.', bild: `${STADT}, sunrise over the ocean` },
-      { text: 'Nur für PlayStation 5 und Xbox Series. Eine PC-Version ist zum Start nicht angekündigt.', bild: 'dark gaming room, glowing game console, neon light, cinematic, no logos, no text' },
-      { text: 'Es spielt im Bundesstaat Leonida. Mit der Stadt Vice City.', bild: `${STADT}, aerial view` },
-      { text: 'Du spielst zwei Hauptfiguren: Lucia und Jason. Ein Gangster-Paar.', bild: 'two silhouettes walking at sunset next to a car, neon coastal city, cinematic, no faces, no text' },
-    ], frage: 'Holst du es dir am ersten Tag?', wahl: ['Day One', 'Ich warte'] },
-  { slug: 'gta6-geist-mount-gordo', titel: 'GTA-Mythos: Der Geist vom Mount Gordo', hook: () => 'In GTA 5 erscheint nachts ein Geist. Und er ist echt.',
-    szenen: (h) => [
-      { text: h, bild: `${BERG}, ghostly pale woman figure far away` },
-      { text: 'Auf dem Mount Gordo, zwischen 23 Uhr und Mitternacht im Spiel.', bild: `${BERG}, rocky cliff above the sea` },
-      { text: 'Eine bleiche Gestalt steht am Abhang. Kommst du näher, verschwindet sie.', bild: `${BERG}, translucent ghost at the edge of a cliff` },
-      { text: 'Im Boden davor steht ein Name. In Blut geschrieben.', bild: 'dark ground at night with faint red letters, horror, cinematic, unreadable text' },
-      { text: 'Rockstar hat das nie erklärt.', bild: `${BERG}, empty cliff, fog` },
-    ], frage: 'Welchen Geist versteckt Rockstar in GTA 6?', wahl: ['Einen Geist', 'Ein Monster'] },
-  { slug: 'gta6-wie-alt-warst-du', titel: 'GTA 5 kam 2013. Wie alt warst du?', hook: () => 'GTA 5 kam 2013 raus. Wie alt warst du?',
-    szenen: (h) => [
-      { text: h, bild: 'old crt tv in a 2013 teenager bedroom at night, game controller, nostalgic, cinematic, no logos, no text' },
-      { text: 'Seitdem sind 13 Jahre vergangen.', bild: 'calendar pages flying in a dark room, cinematic, no text' },
-      { text: 'Ganze Schuljahrgänge sind seitdem fertig geworden.', bild: 'empty school hallway at night, nostalgic, cinematic, no text' },
-      { text: 'Und jetzt, am 19. November, kommt endlich der nächste Teil.', bild: `${STADT}, fireworks over the beach` },
-    ], frage: 'Wie alt warst du bei GTA 5?', wahl: ['Unter 12', 'Über 12'] },
-  { slug: 'gta6-bigfoot-san-andreas', titel: 'GTA-Mythos: Bigfoot in San Andreas', hook: () => 'Jahrelang jagten Spieler Bigfoot in GTA San Andreas.',
-    szenen: (h) => [
-      { text: h, bild: 'dark pine forest at night, huge hairy silhouette between the trees, found footage, cinematic, no text' },
-      { text: 'Es gab Fotos. Videos. Angebliche Spuren im Wald.', bild: 'blurry old photo of a forest with a shadowy creature, grainy, no text' },
-      { text: 'Gefunden hat ihn dort nie jemand.', bild: 'empty foggy forest road at night, cinematic, no text' },
-      { text: 'Aber der Mythos war so groß, dass alle in GTA 6 wieder suchen werden.', bild: 'swamp at night with glowing eyes in the dark, cinematic, no text' },
-    ], frage: 'Gibt es in GTA 6 ein Monster?', wahl: ['Ja', 'Nein'] },
-  { slug: 'gta6-erste-stunde', titel: 'Was machst du als Erstes in GTA 6?', hook: () => 'Was machst du in der ersten Stunde GTA 6?',
-    szenen: (h) => [
-      { text: h, bild: `${STADT}, empty street, sports car with open door` },
-      { text: 'Option eins: Story spielen, wie es sich gehört.', bild: 'two silhouettes on a motel balcony at sunset, neon, cinematic, no faces, no text' },
-      { text: 'Option zwei: Sofort ein Auto klauen und die Stadt erkunden.', bild: `${STADT}, car speeding with motion blur` },
-      { text: 'Ehrlich. Wir wissen alle, was du wirklich machst.', bild: `${STADT}, police lights reflecting on wet street` },
-    ], frage: 'Story oder Chaos?', wahl: ['Story', 'Chaos'] },
-  { slug: 'gta6-mount-chiliad', titel: 'GTA-Mythos: Das Rätsel vom Mount Chiliad', hook: () => 'Ein Rätsel aus GTA 5 ist bis heute nicht gelöst.',
-    szenen: (h) => [
-      { text: h, bild: 'mountain peak at night with a strange glowing light in the sky, cinematic, no text' },
-      { text: 'Auf dem Mount Chiliad ist ein Wandbild: ein Ufo, ein Ei, ein Jetpack.', bild: 'old wall mural in a mountain cabin with ufo and strange symbols, flashlight, cinematic, no text' },
-      { text: 'Spieler suchen seit über zehn Jahren nach der Bedeutung.', bild: 'dark room full of maps and red strings, conspiracy board, cinematic, no text' },
-      { text: 'Viele glauben: Die Antwort steckt in GTA 6.', bild: `${STADT}, strange light in the sky above the city` },
-    ], frage: 'Wird das Rätsel in GTA 6 gelöst?', wahl: ['Ja', 'Nie'] },
-  { slug: 'gta6-spieler-typ', titel: 'Welcher GTA-Spieler bist du?', hook: () => 'Es gibt nur zwei Arten von GTA-Spielern.',
-    szenen: (h) => [
-      { text: h, bild: `${STADT}, split screen feeling, two cars side by side at a red light` },
-      { text: 'Die einen halten an jeder roten Ampel.', bild: `${STADT}, car waiting at a red traffic light, calm` },
-      { text: 'Die anderen nehmen den Gehweg.', bild: `${STADT}, car driving on a sidewalk, chaos, motion blur` },
-      { text: 'Am 19. November sehen wir, wer du wirklich bist.', bild: `${STADT}, sunrise, empty highway` },
-    ], frage: 'Welcher Typ bist du?', wahl: ['Ampel', 'Gehweg'] },
-  { slug: 'gta6-zurueck-nach-vice-city', titel: 'Zurück nach Vice City', hook: () => 'Nach über 20 Jahren geht es zurück nach Vice City.',
-    szenen: (h) => [
-      { text: h, bild: `${STADT}, retro 80s look` },
-      { text: 'GTA Vice City kam 2002 raus.', bild: 'retro 2002 living room, old tv glowing, nostalgic, cinematic, no logos, no text' },
-      { text: 'Jetzt kehrt die Reihe in die Stadt zurück. Größer als je zuvor.', bild: `${STADT}, aerial view, huge skyline` },
-      { text: 'Diesmal mit Sümpfen, Inseln und dem ganzen Bundesstaat Leonida.', bild: 'swamp with airboat at sunset, florida everglades style, cinematic, no text' },
-    ], frage: 'Hast du Vice City damals gespielt?', wahl: ['Ja', 'Zu jung'] },
-  { slug: 'gta6-geister-in-leonida', titel: 'Welcher Mythos kommt in GTA 6?', hook: () => 'Jedes GTA hatte seinen Mythos. Welcher kommt in GTA 6?',
-    szenen: (h) => [
-      { text: h, bild: 'swamp at night, fog, faint figure standing in the water, horror, cinematic, no text' },
-      { text: 'San Andreas hatte Bigfoot. GTA 5 hatte den Geist vom Mount Gordo.', bild: `${BERG}, ghost silhouette` },
-      { text: 'Leonida hat Sümpfe, Inseln und verlassene Motels.', bild: 'abandoned motel at night, flickering neon sign, horror, cinematic, unreadable text' },
-      { text: 'Perfekte Orte für etwas, das dort nicht sein sollte.', bild: 'dark swamp with glowing eyes, cinematic, no text' },
-    ], frage: 'Was versteckt sich in den Sümpfen?', wahl: ['Ein Geist', 'Ein Alligator'] },
-  { slug: 'gta6-ersten-tag', titel: 'Der erste Tag mit GTA 6', hook: () => 'Am 19. November ist keiner mehr erreichbar.',
-    szenen: (h) => [
-      { text: h, bild: 'phone with many unread messages on a desk, dark gaming room, neon, cinematic, no text' },
-      { text: 'Der Freundeskreis: offline.', bild: 'empty city park at night, cinematic, no text' },
-      { text: 'Die Gruppenchats: still.', bild: 'dark room lit only by a tv screen, silhouette on a couch, cinematic, no text' },
-      { text: 'Alle sind in Vice City.', bild: `${STADT}, crowded beach boulevard` },
-    ], frage: 'Wer ist am 19. offline?', wahl: ['Ich', 'Nicht ich'] },
+// Jeder Trailer: zwei Titelkarten (groß, zwischen den Schnitten) und sechs Bild-Motive. Am Ende immer Datum + Frage.
+export const TRAILER = [
+  { slug: 'gta6-trailer-vice-city-nacht', titel: 'Vice City bei Nacht', karten: ['VICE CITY', 'BEI NACHT'],
+    motive: ['neon coastal city skyline at night from the ocean, palm trees', 'sports car drifting on a wet neon street at night', 'art deco hotel with pink neon at night',
+      'crowded nightclub entrance with neon lights, silhouettes', 'aerial view of a glowing city at night, highways', 'motorbike speeding through a neon tunnel'],
+    frage: 'Welche Szene war die beste?', wahl: ['Auto', 'Club'] },
+  { slug: 'gta6-trailer-highway-jagd', titel: 'Die Jagd', karten: ['LEONIDA', 'KEIN ENTKOMMEN'],
+    motive: ['police helicopter spotlight on a highway at night', 'muscle car chased by police cars on a bridge at sunset', 'police lights reflecting on wet asphalt',
+      'car jumping over a drawbridge at sunset', 'roadblock with police cars at night, smoke', 'getaway car on an empty desert highway at dawn'],
+    frage: 'Abhauen oder aufgeben?', wahl: ['Abhauen', 'Aufgeben'] },
+  { slug: 'gta6-trailer-das-paar', titel: 'Das Paar', karten: ['ZU ZWEIT', 'GEGEN ALLE'],
+    motive: ['silhouettes of a man and a woman walking away from an explosion at night', 'couple silhouettes in a convertible on a coastal road at sunset',
+      'two masked silhouettes in front of a convenience store at night, neon', 'couple silhouettes on a motel balcony with neon sign glow',
+      'two silhouettes counting money in a dark car', 'man and woman silhouettes on a rooftop overlooking a neon city'],
+    frage: 'Wen spielst du lieber?', wahl: ['Ihn', 'Sie'] },
+  { slug: 'gta6-trailer-suempfe', titel: 'Die Sümpfe', karten: ['DIE SÜMPFE', 'GEFÄHRLICH'],
+    motive: ['airboat racing through a swamp at sunset', 'alligator in murky green water close up', 'abandoned shack in a foggy swamp',
+      'pickup truck on a muddy swamp road', 'flamingos over a swamp at golden hour', 'storm clouds over everglades style wetlands'],
+    frage: 'Würdest du da reinfahren?', wahl: ['Ja', 'Niemals'] },
+  { slug: 'gta6-trailer-inseln', titel: 'Die Inseln', karten: ['DIE KEYS', 'PARADIES'],
+    motive: ['turquoise ocean with small tropical islands from above', 'speedboat jumping waves near a long bridge over the sea', 'beach bar at sunset with palm trees',
+      'yacht party at night with lights on the water', 'long overseas highway bridge at sunset', 'lighthouse on a tiny island at dusk'],
+    frage: 'Boot oder Auto?', wahl: ['Boot', 'Auto'] },
+  { slug: 'gta6-trailer-luxus', titel: 'Das große Geld', karten: ['GROSSES GELD', 'GROSSE GEFAHR'],
+    motive: ['mansion with infinity pool overlooking the ocean at night', 'row of luxury sports cars in a neon garage', 'private jet on a runway at sunset',
+      'penthouse party with city lights behind', 'bag full of money on a car seat, dramatic light', 'helicopter landing on a skyscraper roof at night'],
+    frage: 'Was kaufst du zuerst?', wahl: ['Villa', 'Auto'] },
+  { slug: 'gta6-trailer-strand', titel: 'Der Strand', karten: ['OCEAN DRIVE', 'SOMMER'],
+    motive: ['busy beach boulevard with classic cars and palm trees, sunny', 'jet ski on a bright blue ocean near a beach', 'colorful lifeguard tower at sunrise',
+      'skater on a beach promenade at golden hour', 'beach volleyball silhouettes at sunset', 'sunset over the ocean with a city skyline behind'],
+    frage: 'Tag oder Nacht?', wahl: ['Tag', 'Nacht'] },
+  { slug: 'gta6-trailer-sturm', titel: 'Der Sturm', karten: ['HURRIKAN', 'ÜBER DER STADT'],
+    motive: ['hurricane storm clouds over a coastal city', 'palm trees bending in a violent storm at night', 'flooded neon street with a car driving through water',
+      'lightning over a skyscraper skyline', 'boats tossed in a stormy harbor', 'empty storm-damaged boulevard at dawn'],
+    frage: 'Wäre ein Sturm im Spiel geil?', wahl: ['Ja', 'Nein'] },
 ];
 
-const TAGS = '#gta6 #gtavi #vicecity #gaming #gta';
-export function caption(eintrag, hook) {
-  return `${hook} ${eintrag.frage} 1️⃣ ${eintrag.wahl[0]} oder 2️⃣ ${eintrag.wahl[1]}? 👇\n\n${TAGS}\n(Fan-Video, nicht von Rockstar. KI-generiert: Bilder, Stimme und Text.)`.slice(0, 2200);
+export function tageBis(jetzt = Date.now()) {
+  return Math.ceil((Date.parse('2026-11-19T00:00:00+01:00') - jetzt) / 864e5);
+}
+export const datumKarte = (jetzt = Date.now()) => (tageBis(jetzt) > 0 ? ['19.11.2026', tageBis(jetzt) === 1 ? 'MORGEN' : `NOCH ${tageBis(jetzt)} TAGE`] : ['GTA 6', 'IST DA']);
+
+const TAGS = '#gta6 #gtavi #vicecity #gaming #trailer';
+export function caption(t) {
+  return `So könnte GTA 6 aussehen 🔥 ${t.frage} 1️⃣ ${t.wahl[0]} oder 2️⃣ ${t.wahl[1]}? 👇\n\n${TAGS}\n(Fan-Trailer: KI-generierte Bilder, kein echtes Spielmaterial, nicht von Rockstar.)`.slice(0, 2200);
 }
 
-export function skript(eintrag, jetzt = Date.now()) {
-  const hook = eintrag.slug === 'gta6-alles-was-sicher-ist' ? countdown(jetzt) : eintrag.hook();
-  const szenen = [...eintrag.szenen(hook), { text: `${eintrag.frage} Eins: ${eintrag.wahl[0]}. Zwei: ${eintrag.wahl[1]}. Schreib es in die Kommentare.`, bild: `${STADT}, sunset` }];
-  return { titel: eintrag.titel, hook, szenen, caption: caption(eintrag, hook) };
+// Ablauf: Karte 1 -> 3 Schnitte -> Karte 2 -> 3 Schnitte -> Datum -> Frage. Längen auf den Trap-Takt (0,857 s).
+export function plan(t, jetzt = Date.now()) {
+  const T = 0.857, d = datumKarte(jetzt);
+  const shot = (i) => ({ art: 'bild', motiv: t.motive[i], dauer: T * 2 });
+  return [
+    { art: 'karte', text: t.karten[0], dauer: T * 2 }, shot(0), shot(1), shot(2),
+    { art: 'karte', text: t.karten[1], dauer: T }, shot(3), shot(4), shot(5),
+    { art: 'karte', text: d[0], unter: d[1], dauer: T * 3 },
+    { art: 'karte', text: t.frage.toUpperCase(), unter: `1 = ${t.wahl[0].toUpperCase()}   2 = ${t.wahl[1].toUpperCase()}`, dauer: T * 3, klein: true },
+  ];
+}
+
+const ff = (args) => execFileSync('ffmpeg', ['-loglevel', 'error', '-y', ...args], { stdio: 'pipe', timeout: 300000 });
+const esc = (s) => String(s).replace(/\\/g, '\\\\').replace(/:/g, '\\:').replace(/'/g, '\u2019').replace(/%/g, '\\%');
+
+function karteRendern(k, ziel, i) {
+  const fs = k.klein ? 54 : 104;
+  const unter = k.unter ? `,drawtext=fontfile=${SCHRIFT}:text='${esc(k.unter)}':fontsize=40:fontcolor=0x00E5FF:x=(w-tw)/2:y=h/2+110:alpha='min(1,t*3)'` : '';
+  const text = k.klein && k.text.length > 16 ? k.text.replace(/^(.{6,18}?)\s/, '$1\n') : k.text;
+  ff(['-f', 'lavfi', '-i', `color=c=0x07020c:s=${W}x${H}:r=${FPS}:d=${k.dauer.toFixed(3)}`,
+    '-vf', `drawtext=fontfile=${SCHRIFT}:text='${esc(text)}':fontsize=${fs}:fontcolor=white:line_spacing=12:x=(w-tw)/2:y=(h-th)/2:` +
+      `shadowcolor=0xFF2D95:shadowx=${i % 2 ? 5 : -5}:shadowy=0:alpha='min(1,t*4)'${unter},noise=alls=12:allf=t,vignette=PI/4`,
+    '-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', ziel]);
+}
+
+function bildRendern(bild, k, ziel, i) {
+  const n = Math.round(k.dauer * FPS);
+  const bewegung = [
+    `z='min(1.0+0.004*on,1.25)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'`,
+    `z='1.2':x='(iw-iw/zoom)*on/${n}':y='ih/2-(ih/zoom/2)'`,
+    `z='max(1.3-0.004*on,1.05)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'`,
+    `z='1.2':x='(iw-iw/zoom)*(1-on/${n})':y='(ih-ih/zoom)*on/${n}'`,
+  ][i % 4];
+  ff(['-loop', '1', '-i', bild, '-vf',
+    `scale=${W * 2}:${H * 2}:force_original_aspect_ratio=increase,crop=${W * 2}:${H * 2},zoompan=${bewegung}:d=${n}:s=${W}x${H}:fps=${FPS},` +
+    `eq=contrast=1.12:saturation=1.3,colorbalance=rs=0.08:bs=0.1:rh=0.06,noise=alls=8:allf=t,vignette=PI/5,` +
+    `drawbox=x=0:y=0:w=iw:h=150:color=black:t=fill,drawbox=x=0:y=ih-150:w=iw:h=150:color=black:t=fill,` +
+    `fade=t=in:st=0:d=0.08:color=white`, '-frames:v', String(n), '-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', ziel]);
+}
+
+export async function bauen(t, ordner, jetzt = Date.now()) {
+  mkdirSync(ordner, { recursive: true });
+  const { ladeBild } = await import('../lib/videoFabrik.mjs');
+  const { musikUnterlegen } = await import('../lib/videoExtras.mjs');
+  const teile = [], schnitte = [], karten = [];
+  let zeit = 0;
+  for (const [i, k] of plan(t, jetzt).entries()) {
+    const ziel = join(ordner, `t${i}.mp4`);
+    if (k.art === 'karte') { karteRendern(k, ziel, i); karten.push(zeit); } else {
+      const bild = join(ordner, `b${i}.jpg`);
+      const ok = process.env.GTA6_OFFLINE ? false : await ladeBild(`${k.motiv}, ${LOOK}`, bild, { breite: W, hoehe: H, seed: 1000 + i * 7 + t.slug.length });
+      if (!ok) ff(['-f', 'lavfi', '-i', `gradients=s=${W}x${H}:c0=0xff2d95:c1=0x00e5ff:d=1`, '-frames:v', '1', bild]);  // Notbild
+      bildRendern(bild, k, ziel, i);
+    }
+    teile.push(ziel); schnitte.push(zeit); zeit += k.dauer;
+  }
+  const liste = join(ordner, 'liste.txt');
+  writeFileSync(liste, teile.map((p) => `file '${p.replace(/'/g, "'\\''")}'`).join('\n'));
+  const roh = join(ordner, 'roh.mp4');
+  ff(['-f', 'concat', '-safe', '0', '-i', liste, '-f', 'lavfi', '-i', 'anullsrc=r=44100:cl=stereo', '-shortest', '-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', '-c:a', 'aac', roh]);
+  await musikUnterlegen(roh, zeit, { stimmung: 'beat', stil: 'trap', lautstaerke: 0.9, whoosh: schnitte.slice(1), boom: karten.slice(0, 3), riser: [karten[2]].filter(Boolean) });
+  return { pfad: roh, dauer: zeit };
 }
 
 async function main() {
   const [modus, a, b, c] = process.argv.slice(2);
-  if (modus === '--liste') { console.log(GTA6.map((x) => x.slug).join('\n')); return; }
+  if (modus === '--liste') { console.log(TRAILER.map((x) => x.slug).join('\n')); return; }
   if (modus === '--bauen') {
-    const e = GTA6.find((x) => x.slug === a);
-    if (!e) throw new Error(`unbekannt: ${a}`);
-    mkdirSync(b, { recursive: true });
-    const s = skript(e);
-    const { videoBauen } = await import('../lib/videoFabrik.mjs');
-    const v = await videoBauen({ titel: s.titel, szenen: s.szenen, cta: 'SCHREIB 1 ODER 2' }, join(b, 'bau'), { format: 'hoch', hook: s.hook, premium: true, sprache: 'de', stimme: 'de-DE-ConradNeural', stil: 'cinematic, photorealistic, vibrant' });
-    copyFileSync(v.pfad, join(b, 'video.mp4'));
-    writeFileSync(join(b, 'gta6.json'), JSON.stringify({ slug: e.slug, titel: s.titel, caption: s.caption }, null, 2));
-    console.log(`[gta6] fertig: ${e.slug} (${Math.round(v.dauer)} s)`);
+    const t = TRAILER.find((x) => x.slug === a);
+    if (!t) throw new Error(`unbekannt: ${a}`);
+    const v = await bauen(t, join(b, 'bau'));
+    execFileSync('cp', [v.pfad, join(b, 'video.mp4')]);
+    writeFileSync(join(b, 'gta6.json'), JSON.stringify({ slug: t.slug, titel: `GTA 6 Fan-Trailer: ${t.titel}`, caption: caption(t) }, null, 2));
+    console.log(`[gta6] fertig: ${t.slug} (${v.dauer.toFixed(1)} s)`);
     return;
   }
   if (modus === '--posten') {
     const token = process.env.BUFFER_ACCESS_TOKEN;
     if (!token) { console.log('[gta6] BUFFER_ACCESS_TOKEN fehlt - nicht gepostet.'); process.exit(2); }
-    if (!/^https:\/\//.test(b || '') || !/^[a-f\d]{24}$/.test(c || '')) throw new Error('Aufruf: --posten <gta6.json> <https-url> <kanal>');
+    if (!existsSync(a) || !/^https:\/\//.test(b || '') || !/^[a-f\d]{24}$/.test(c || '')) throw new Error('Aufruf: --posten <gta6.json> <https-url> <kanal>');
     const f = JSON.parse(readFileSync(a, 'utf8'));
     const { API, POST_MUTATION, postInput } = await import('../lib/bufferPoster.mjs');
     const res = await fetch(API, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
