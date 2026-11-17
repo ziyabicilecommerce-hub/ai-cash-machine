@@ -119,13 +119,24 @@ test('Fakten: stärkstes Format des Kontos zuerst, nur mit echtem Vergleich', as
   assert.equal(naechstes(v, {}, { mythos: 75, quiz: 9 }).datei, 'm', 'mit Werten: Mythos zuerst');
 });
 
-test('Mehr Videos (16.11.): 2 je Kanal, nur nachts und abends', async () => {
-  const { guteStunde, ZIEL_WENIGER } = await import('../../automations/lib/bufferVerteiler.mjs');
-  assert.ok(KANAELE.every((k) => k.ziel === ZIEL_WENIGER));
+test('Masse runter (17.11.): YouTube 1 am Tag, Instagram ~4-5 pro Woche, nur nachts und abends', async () => {
+  const { guteStunde, ZIEL_EINS, IG_ABSTAND_MIN } = await import('../../automations/lib/bufferVerteiler.mjs');
+  assert.ok(KANAELE.every((k) => k.ziel === ZIEL_EINS), 'jeder Kanal höchstens 1 Video am Tag');
+  assert.ok(KANAELE.filter((k) => k.dienst === 'instagram').every((k) => k.abstandMin === IG_ABSTAND_MIN));
+  const yt = KANAELE.find((k) => k.dienst === 'youtube'), ig = KANAELE.find((k) => k.dienst === 'instagram');
   const jetzt = Date.parse('2026-11-02T22:00:00Z');
-  assert.equal(postenJetzt(0, null, jetzt, { ziel: ZIEL_WENIGER }), true, 'das eine Video des Tages geht');
-  assert.equal(postenJetzt(1, '2026-11-02T08:00:00Z', jetzt, { ziel: ZIEL_WENIGER }), true, 'das zweite geht auch');
-  assert.equal(postenJetzt(2, '2026-11-02T08:00:00Z', jetzt, { ziel: ZIEL_WENIGER }), false, 'nach 2 ist Schluss');
+  const opt = (k) => ({ ziel: k.ziel, abstandMin: k.abstandMin });
+  assert.equal(postenJetzt(0, null, jetzt, opt(yt)), true, 'YouTube: das eine Video des Tages geht');
+  assert.equal(postenJetzt(1, '2026-11-02T08:00:00Z', jetzt, opt(yt)), false, 'YouTube: kein zweites');
+  assert.equal(postenJetzt(0, '2026-11-01T22:00:00Z', jetzt, opt(ig)), false, 'Instagram: 24 Std. sind zu kurz');
+  assert.equal(postenJetzt(0, '2026-11-01T15:00:00Z', jetzt, opt(ig)), true, 'Instagram: nach 31 Std. wieder');
+  // eine Woche im Takt der Workflow-Läufe: Instagram landet bei 4-5 Reels
+  let letzter = null, n = 0;
+  for (let t = Date.parse('2026-11-02T00:00:00Z'); t < Date.parse('2026-11-09T00:00:00Z'); t += 3600000) {
+    const stunde = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hour: 'numeric', hourCycle: 'h23' }).format(new Date(t)));
+    if (guteStunde(stunde) && postenJetzt(0, letzter, t, opt(ig))) { letzter = new Date(t).toISOString(); n++; }
+  }
+  assert.ok(n >= 4 && n <= 5, `Instagram: ${n} Reels pro Woche`);
   assert.deepEqual([0, 3, 8, 11, 14, 17, 20, 22].filter(guteStunde), [0, 3, 20, 22]);
 });
 

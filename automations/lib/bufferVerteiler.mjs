@@ -9,16 +9,22 @@ import { typAus } from './tiktokLernen.mjs';
 // Instagram ~115 -> ~10). Vermutung: zu viele zu ähnliche Videos. Deshalb nur noch EIN Video pro Kanal und Tag, abends.
 // Zurück zum Stand davor: ZIEL_WENIGER = 2 und guteStunde = (stunde) => stunde < 6 || stunde >= 19.
 export const ZIEL_WENIGER = 1;  // 16.11. (Nutzer: "mach mehr Videos am Tag"): jetzt 2 je Kanal - abends und nachts, jede Geschichte anders
+// Masse runter (17.11., mit dem Nutzer abgesprochen): 530 Posts in 30 Tagen auf 6 Konten wirken wie eine Bot-Farm, die Plattformen
+// drosseln Massenware (YouTube 'inauthentic content'). Recherche: 3-5 Reels pro Woche schlagen tägliches Massenposten.
+// YouTube: 1 Short am Tag (ziel 0 = höchstens 1). Instagram: 1 Reel, dann mindestens 30 Std. Pause - mit den Abend-/Nachtfenstern
+// sind das ~4-5 Reels pro Woche. Zurück zum Stand davor: ziel: ZIEL_WENIGER und abstandMin weglassen.
+export const ZIEL_EINS = 0;
+export const IG_ABSTAND_MIN = 30 * 60;
 export const guteStunde = (stunde) => stunde < 6 || stunde >= 19;
 export const KANAELE = [
   // desk.rebel (10.11.): Sprach-Test wie auf YouTube - Englisch erreicht weltweit mehr Leute, dort holt es Ø 519 statt 340.
   // Halbe-halbe, bis der Wochenbericht für diesen Kanal einen klaren Sieger hat (sprachTests); purivelle bleibt deutsch.
-  { id: '6ae8f441e29c69a1713e44f3', name: 'desk.rebel', dienst: 'instagram', quelle: 'horror-mix', ziel: ZIEL_WENIGER },
+  { id: '6ae8f441e29c69a1713e44f3', name: 'desk.rebel', dienst: 'instagram', quelle: 'horror-mix', ziel: ZIEL_EINS, abstandMin: IG_ABSTAND_MIN },
   // purivelle (06.11., Wunsch des Nutzers): Horror statt "Wahr oder Mythos?" - eigene Geschichten, nie dieselbe wie desk.rebel
-  { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'horror', ziel: ZIEL_WENIGER },
+  { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'horror', ziel: ZIEL_EINS, abstandMin: IG_ABSTAND_MIN },
   // YouTube: Sprach-Test (06.11.) - deutsche Horror-Shorts holten hier 179-706 Aufrufe, Englisch erreicht weltweit mehr.
   // Halbe-halbe, bis der Wochenbericht einen klaren Sieger hat; dann bekommt der 85 % (sprachAnteil).
-  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-mix', ziel: ZIEL_WENIGER },
+  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-mix', ziel: ZIEL_EINS },
   // Englischer Horror-Kanal: an, sobald seine Buffer-Kanal-ID eingetragen ist (Repo-Variable EN_KANAL, optional EN_DIENST)
   ...(/^[a-f\d]{24}$/.test(process.env.EN_KANAL || '') ? [{ id: process.env.EN_KANAL, name: 'english-horror', dienst: process.env.EN_DIENST || 'youtube', quelle: 'horror-en' }] : []),
 ];
