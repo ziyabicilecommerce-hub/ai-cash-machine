@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-17T16:20:17.005Z",
+ "stand": "2026-11-17T16:23:30.193Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -195,7 +195,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-17T16:07:07.519Z",
+  "stand": "2026-11-17T16:23:33.950Z",
   "filialen": 148,
   "produkte": [
    {
@@ -212,7 +212,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 18
+      "menge": 17
      },
      {
       "name": "dm Kriftel",
@@ -294,7 +294,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 3
+      "menge": 6
      },
      {
       "name": "dm Frankfurt am Main",
@@ -845,7 +845,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 27
+      "menge": 26
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -861,7 +861,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 16
+      "menge": 15
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -887,7 +887,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 2
+      "menge": 5
      },
      {
       "name": "dm Kelsterbach",
@@ -2094,6 +2094,14 @@
   "ware": [],
   "top": [
    {
+    "titel": "energie",
+    "menge": "2000+"
+   },
+   {
+    "titel": "kelly preston",
+    "menge": "200+"
+   },
+   {
     "titel": "sachsenpokal",
     "menge": "200+"
    },
@@ -2104,10 +2112,6 @@
    {
     "titel": "mumbai",
     "menge": "100+"
-   },
-   {
-    "titel": "malawi national football team vs egypt national football team standings",
-    "menge": "1000+"
    },
    {
     "titel": "michael van gerwen",
@@ -2128,10 +2132,6 @@
    {
     "titel": "the terminal list",
     "menge": "200+"
-   },
-   {
-    "titel": "fahndung",
-    "menge": "5000+"
    }
   ]
  },
@@ -2163,6 +2163,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/carhartt-wip-harlem-cap-amarone-white-i037067.3yaxx-accessoires_20_3E_20caps_20_26_20beanies.jpg?v=1787226463",
     "laden": "afew-store.com",
     "begriff": "cap"
+   },
+   {
+    "titel": "T90",
+    "preis": 45,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/nike-t90-hq2851-100-white-black-gym-red",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/HQ2851-100_1.jpg?v=1752668253",
+    "laden": "overkillshop.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Speedcat LTH",
@@ -2640,15 +2649,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cc1c86f0b9268f6b27add5b92548f1df272b48ac_1201A789_020_Asics_GEL_NYC_Graphite_Grey_Black_os_1_9d944940-9064-4615-9542-6bf02307a613.jpg?v=1745415111",
     "laden": "asphaltgold.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "Air Force 1 '07",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/nike-air-force-1-07-cw2288-111-white-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/CW2288-111_1_ab7621cd-ac0f-4726-abe1-c18686d747f1.jpg?v=1730107192",
-    "laden": "overkillshop.com",
-    "begriff": "dunk"
    },
    {
     "titel": "Air Force 1 '07",
@@ -3441,15 +3441,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u18907dn_2.jpg?v=1782729390",
     "laden": "kith.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "Air Jordan 14 Retro",
-    "preis": 219.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-14-retro-gorge-green-lt-graphite-white",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-14-retro-gorge-green-lt-graphite-white-487471-300-footwear_20_3E_20sneaker.jpg?v=1793261379",
-    "laden": "afew-store.com",
-    "begriff": "jordan"
    },
    {
     "titel": "Kith & New Balance Made in USA 990v4 - Dusty Mauve",
