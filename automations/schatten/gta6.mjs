@@ -5,7 +5,7 @@
 // Musik, Figuren). Caption sagt klar: Fan-Trailer, KI-generiert, kein echtes Spielmaterial.
 //   node gta6.mjs --liste | --bauen <slug> <ordner> | --posten <gta6.json> <url> <kanal>
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
@@ -100,7 +100,8 @@ function bildRendern(bild, k, ziel, i) {
     `fade=t=in:st=0:d=0.08:color=white`, '-frames:v', String(n), '-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', ziel]);
 }
 
-export async function bauen(t, ordner, jetzt = Date.now()) {
+export async function bauen(t, ordnerRoh, jetzt = Date.now()) {
+  const ordner = resolve(ordnerRoh);  // concat-Liste braucht absolute Pfade (relative gelten ab dem Listen-Ordner)
   mkdirSync(ordner, { recursive: true });
   const { ladeBild } = await import('../lib/videoFabrik.mjs');
   const { musikUnterlegen } = await import('../lib/videoExtras.mjs');
