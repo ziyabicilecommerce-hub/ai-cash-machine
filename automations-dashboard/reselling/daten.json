@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-17T04:32:16.202Z",
+ "stand": "2026-11-17T04:35:17.541Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118201:3021",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787555270/assets/pas/images/5a32cdab-0120-4c77-bcc9-160de67cf462/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1401538,8.5824016",
+   "shop": "https://www.dm.de/p/d/3118201/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
+   "text": "16,95 € · dm Eschborn (10,4 km) · 2 Stück\nGinnheimer Straße 10-14, 65760 Eschborn\nIm Umkreis in 13 Filiale(n) vorrätig.",
+   "zeit": "2026-11-17T04:35:17.541Z"
+  },
   {
    "schluessel": "filiale:3117665:1501",
    "art": "Filiale",
@@ -186,20 +196,10 @@
    "link": "https://eu.kith.com/products/ai1203a609-001",
    "text": "kith.com · ASICS Gel-1130 - Black / Cream\nVerkauf ca. 110–180 € → Gewinn ca. +26,50 € (ROI 27 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-14T17:23:29.963Z"
-  },
-  {
-   "schluessel": "filiale:3118197:1420",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: Balea MEN Adventskalender 2026 MERRY CHRISTMAS, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787609114/assets/pas/images/4e81a9d1-d42d-46e1-8769-1c8458d165fa/balea-men-adventskalender-2026-merry-christmas",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.107657,8.666246",
-   "shop": "https://www.dm.de/p/d/3118197/balea-men-adventskalender-2026-merry-christmas",
-   "text": "16,95 € · dm Frankfurt am Main (13,5 km) · 1 Stück\nKaiserstraße 75, 60329 Frankfurt am Main\nIm Umkreis in 23 Filiale(n) vorrätig.",
-   "zeit": "2026-11-14T17:17:26.763Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-17T04:20:10.684Z",
+  "stand": "2026-11-17T04:35:23.768Z",
   "filialen": 148,
   "produkte": [
    {
@@ -216,7 +216,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 18
+      "menge": 20
      },
      {
       "name": "dm Kriftel",
@@ -224,7 +224,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 22
+      "menge": 23
      },
      {
       "name": "dm Kelsterbach",
@@ -232,7 +232,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 7
+      "menge": 8
      },
      {
       "name": "dm Frankfurt am Main",
@@ -248,7 +248,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 44
+      "menge": 45
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -256,7 +256,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 58
+      "menge": 59
      },
      {
       "name": "dm Flörsheim am Main",
@@ -264,7 +264,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 47
+      "menge": 48
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -290,7 +290,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Kriftel",
@@ -346,7 +346,81 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 6
+      "menge": 9
+     }
+    ]
+   },
+   {
+    "dan": "3118197",
+    "name": "Balea MEN Adventskalender 2026 MERRY CHRISTMAS, 1 St",
+    "preis": 16.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787609114/assets/pas/images/4e81a9d1-d42d-46e1-8769-1c8458d165fa/balea-men-adventskalender-2026-merry-christmas",
+    "link": "https://www.dm.de/p/d/3118197/balea-men-adventskalender-2026-merry-christmas",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 15
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 3
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 14
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 5
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 9
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 4
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 22
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 1
      }
     ]
    },
@@ -364,7 +438,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 8
+      "menge": 9
      },
      {
       "name": "dm Frankfurt am Main",
@@ -489,14 +563,106 @@
       "menge": 2
      },
      {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 2
+     }
+    ]
+   },
+   {
+    "dan": "3118202",
+    "name": "Dein Bestes Adventskalender 2026 - merry christmas für Katzen, 1 St",
+    "preis": 16.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787554263/assets/pas/images/ba693b2b-2361-4c1c-a86d-45040e0c865b/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
+    "link": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 5
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 3
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 7
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 5
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 10
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 1
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 6
+     },
+     {
       "name": "dm Hochheim am Main",
       "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
       "km": 10.5,
       "lat": 50.0155817,
       "lon": 8.3658454,
-      "menge": 11
+      "menge": 4
      }
     ]
+   },
+   {
+    "dan": "3162931",
+    "name": "Barebells Adventskalender 2026 Proteinriegel \"Twenty Four Days of Chocolate\", 1 St",
+    "preis": 59.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790203300/assets/pas/images/96a77283-9a84-4c15-ab1d-f40243cb72a0/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
+    "link": "https://www.dm.de/p/d/3162931/barebells-adventskalender-2026-proteinriegel-twenty-four-days-of-chocolate",
+    "begriff": "adventskalender",
+    "vorrat": []
+   },
+   {
+    "dan": "3135831",
+    "name": "NÉONAIL Adventskalender 2026 Touch Of Magic, 1 St",
+    "preis": 59.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1781225246/assets/pas/images/2a76c744-d465-4a81-9515-f64343237e0c/neonail-adventskalender-2026-touch-of-magic",
+    "link": "https://www.dm.de/p/d/3135831/neonail-adventskalender-2026-touch-of-magic",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3118676",
@@ -512,7 +678,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 5
+      "menge": 6
      },
      {
       "name": "dm Kriftel",
@@ -536,7 +702,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 4
+      "menge": 5
      },
      {
       "name": "dm Flörsheim am Main",
@@ -571,15 +737,6 @@
       "menge": 10
      }
     ]
-   },
-   {
-    "dan": "3135831",
-    "name": "NÉONAIL Adventskalender 2026 Touch Of Magic, 1 St",
-    "preis": 59.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1781225246/assets/pas/images/2a76c744-d465-4a81-9515-f64343237e0c/neonail-adventskalender-2026-touch-of-magic",
-    "link": "https://www.dm.de/p/d/3135831/neonail-adventskalender-2026-touch-of-magic",
-    "begriff": "adventskalender",
-    "vorrat": []
    },
    {
     "dan": "3118897",
@@ -611,7 +768,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 13
+      "menge": 15
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -627,7 +784,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 6
+      "menge": 7
      },
      {
       "name": "dm Eschborn",
@@ -652,228 +809,6 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 4
-     }
-    ]
-   },
-   {
-    "dan": "3118148",
-    "name": "Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
-    "preis": 24.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "link": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 3
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 13
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 5
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 9
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 6
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 7
-     }
-    ]
-   },
-   {
-    "dan": "3118151",
-    "name": "trend !t up Adventskalender 2026 Days of Glow, 24 St",
-    "preis": 28.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784673576/assets/pas/images/9f3e9b87-6c3d-477b-99f0-25fa0632aac5/trend-t-up-adventskalender-2026-days-of-glow",
-    "link": "https://www.dm.de/p/d/3118151/trend-t-up-adventskalender-2026-days-of-glow",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 12
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 7
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 6
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 15
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 27
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 7
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 16
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 3
-     }
-    ]
-   },
-   {
-    "dan": "3117665",
-    "name": "alverde NATURKOSMETIK Adventskalender 2026 Frohe Weihnachten, 1 St",
-    "preis": 19.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787558077/assets/pas/images/260614bb-a00b-4ec8-b592-8e533005cf0e/alverde-naturkosmetik-adventskalender-2026-frohe-weihnachten",
-    "link": "https://www.dm.de/p/d/3117665/alverde-naturkosmetik-adventskalender-2026-frohe-weihnachten",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 20
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 8
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 9
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 28
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 10
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 16
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 5
      }
     ]
    },
