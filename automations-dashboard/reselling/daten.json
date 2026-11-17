@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-17T22:44:04.363Z",
+ "stand": "2026-11-17T22:47:16.133Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "karte:30th-c-028",
+   "art": "Karte",
+   "titel": "🚨 STRONG BUY: Zacian-V",
+   "bild": "",
+   "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Zacian-V",
+   "text": "Kaufen ab 3,00 € · Ziel 9,23 € · +4,27 € nach Gebühren (ROI 142 %)",
+   "zeit": "2026-11-17T22:47:16.133Z"
+  },
   {
    "schluessel": "filiale:3118676:1364",
    "art": "Filiale",
@@ -186,16 +195,6 @@
    "link": "https://afew-store.com/products/air-jordan-1-high-og-black-multi-color",
    "text": "afew-store.com · Air Jordan 1 High OG 'Royal'\nVerkauf ca. 180–260 € → Gewinn ca. +49,01 € (ROI 34 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-16T20:11:47.444Z"
-  },
-  {
-   "schluessel": "filiale:3118201:3021",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787555270/assets/pas/images/5a32cdab-0120-4c77-bcc9-160de67cf462/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1401538,8.5824016",
-   "shop": "https://www.dm.de/p/d/3118201/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
-   "text": "16,95 € · dm Eschborn (10,4 km) · 2 Stück\nGinnheimer Straße 10-14, 65760 Eschborn\nIm Umkreis in 13 Filiale(n) vorrätig.",
-   "zeit": "2026-11-16T18:01:08.029Z"
   }
  ],
  "filial": {
@@ -1148,47 +1147,49 @@
      13.28,
      13.28,
      13.28,
+     13.28,
      13.28
     ]
    },
    {
-    "id": "me03-119",
-    "name": "Mega-Pixi-ex",
-    "nummer": "119",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/119/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Pixi-ex",
+    "id": "30th-c-028",
+    "name": "Zacian-V",
+    "nummer": "028",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Zacian-V",
     "preis": {
-     "tief": 20,
-     "trend": 35.24,
-     "schnitt7": 36.21,
-     "schnitt30": 35.89
+     "tief": 3,
+     "trend": 9.43,
+     "schnitt7": 9.23,
+     "schnitt30": 9.18
     },
     "prozent": 1,
     "signal": "stabil",
     "profi": {
-     "einstieg": 20,
-     "ziel": 35.24,
-     "gewinn": 11.98,
-     "roi": 60,
+     "einstieg": 3,
+     "ziel": 9.23,
+     "gewinn": 4.27,
+     "roi": 142,
      "momentum": 1,
-     "spread": 15.24,
-     "score": 71,
-     "signal": "BUY"
+     "spread": 6.43,
+     "score": 77,
+     "signal": "STRONG BUY"
     },
     "nurBewegung": true,
     "kurs": [
-     35.24,
-     35.24,
-     35.24,
-     35.24,
-     35.24,
-     35.24,
-     35.24,
-     35.24
+     9.46,
+     9.46,
+     9.46,
+     9.46,
+     9.46,
+     9.46,
+     9.46,
+     9.46,
+     9.43
     ]
    },
    {
@@ -1224,7 +1225,86 @@
      19,
      19,
      19,
+     19,
      19
+    ]
+   },
+   {
+    "id": "me03-119",
+    "name": "Mega-Pixi-ex",
+    "nummer": "119",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/119/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Pixi-ex",
+    "preis": {
+     "tief": 20,
+     "trend": 34.96,
+     "schnitt7": 35.82,
+     "schnitt30": 35.99
+    },
+    "prozent": 0,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 20,
+     "ziel": 34.96,
+     "gewinn": 11.71,
+     "roi": 59,
+     "momentum": 0,
+     "spread": 14.96,
+     "score": 69,
+     "signal": "BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     35.24,
+     35.24,
+     35.24,
+     35.24,
+     35.24,
+     35.24,
+     35.24,
+     35.24,
+     34.96
+    ]
+   },
+   {
+    "id": "me05-117",
+    "name": "Morpeko-ex",
+    "nummer": "117",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Dunkelnacht",
+    "setId": "me05",
+    "release": "2026-07-17",
+    "bild": "https://assets.tcgdex.net/de/me/me05/117/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Morpeko-ex",
+    "preis": {
+     "tief": 30,
+     "trend": 49.18,
+     "schnitt7": 49.45,
+     "schnitt30": 49.44
+    },
+    "prozent": 0,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 30,
+     "ziel": 49.18,
+     "gewinn": 15.22,
+     "roi": 51,
+     "momentum": 0,
+     "spread": 19.18,
+     "score": 66,
+     "signal": "BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     46.94,
+     46.94,
+     46.94,
+     46.94,
+     49.18
     ]
    },
    {
@@ -1257,6 +1337,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     19.22,
      19.22,
      19.22,
      19.22,
@@ -1293,6 +1374,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     21.94,
      21.94,
      21.94,
      21.94,
@@ -1340,6 +1422,7 @@
      15.34,
      15.34,
      15.34,
+     15.34,
      15.34
     ]
    },
@@ -1380,43 +1463,8 @@
      13.02,
      13.02,
      13.02,
+     13.02,
      13.02
-    ]
-   },
-   {
-    "id": "me05-117",
-    "name": "Morpeko-ex",
-    "nummer": "117",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Dunkelnacht",
-    "setId": "me05",
-    "release": "2026-07-17",
-    "bild": "https://assets.tcgdex.net/de/me/me05/117/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Morpeko-ex",
-    "preis": {
-     "tief": 30,
-     "trend": 46.94,
-     "schnitt7": 48.55,
-     "schnitt30": 49.4
-    },
-    "prozent": -2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 30,
-     "ziel": 46.94,
-     "gewinn": 13.09,
-     "roi": 44,
-     "momentum": -2,
-     "spread": 16.94,
-     "score": 60,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     46.94,
-     46.94,
-     46.94,
-     46.94
     ]
    },
    {
@@ -1431,21 +1479,21 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rosys%20Ermutigung",
     "preis": {
      "tief": 24.9,
-     "trend": 34.48,
-     "schnitt7": 36.69,
-     "schnitt30": 36.5
+     "trend": 34.98,
+     "schnitt7": 36.08,
+     "schnitt30": 35.52
     },
-    "prozent": 1,
+    "prozent": 2,
     "signal": "stabil",
     "profi": {
      "einstieg": 24.9,
-     "ziel": 34.48,
-     "gewinn": 6.36,
-     "roi": 26,
-     "momentum": 1,
-     "spread": 9.58,
-     "score": 59,
-     "signal": "HOLD"
+     "ziel": 34.98,
+     "gewinn": 6.83,
+     "roi": 27,
+     "momentum": 2,
+     "spread": 10.08,
+     "score": 60,
+     "signal": "BUY"
     },
     "nurBewegung": true,
     "kurs": [
@@ -1456,7 +1504,8 @@
      34.48,
      34.48,
      34.48,
-     34.48
+     34.48,
+     34.98
     ]
    },
    {
@@ -1489,6 +1538,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     33.02,
      33.02,
      33.02,
      33.02,
@@ -1525,6 +1575,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     36.77,
      36.77,
      36.77,
      36.77,
@@ -1572,6 +1623,7 @@
      8.66,
      8.66,
      8.66,
+     8.66,
      8.66
     ]
    },
@@ -1605,6 +1657,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     30.07,
      30.07,
      30.07,
      30.07,
@@ -1652,87 +1705,8 @@
      32.19,
      32.19,
      32.19,
+     32.19,
      32.19
-    ]
-   },
-   {
-    "id": "30th-c-022",
-    "name": "Palkia",
-    "nummer": "022",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
-    "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Palkia",
-    "preis": {
-     "tief": 8,
-     "trend": 12.58,
-     "schnitt7": 12.75,
-     "schnitt30": 12.51
-    },
-    "prozent": 2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 8,
-     "ziel": 12.58,
-     "gewinn": 2.45,
-     "roi": 31,
-     "momentum": 2,
-     "spread": 4.58,
-     "score": 54,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     12.58,
-     12.58,
-     12.58,
-     12.58,
-     12.58,
-     12.58,
-     12.58,
-     12.58
-    ]
-   },
-   {
-    "id": "30th-c-028",
-    "name": "Zacian-V",
-    "nummer": "028",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
-    "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Zacian-V",
-    "preis": {
-     "tief": 5.45,
-     "trend": 9.46,
-     "schnitt7": 9.29,
-     "schnitt30": 9.17
-    },
-    "prozent": 1,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 5.45,
-     "ziel": 9.29,
-     "gewinn": 1.88,
-     "roi": 34,
-     "momentum": 1,
-     "spread": 4.01,
-     "score": 53,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46,
-     9.46
     ]
    },
    {
@@ -1768,47 +1742,49 @@
      34.73,
      34.73,
      34.73,
+     34.73,
      34.73
     ]
    },
    {
-    "id": "30th-149",
-    "name": "Pikachu-ex",
-    "nummer": "149",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
+    "id": "30th-c-022",
+    "name": "Palkia",
+    "nummer": "022",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
     "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/149/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pikachu-ex",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Palkia",
     "preis": {
-     "tief": 28,
-     "trend": 41.48,
-     "schnitt7": 42.21,
-     "schnitt30": 44.6
+     "tief": 8,
+     "trend": 12.53,
+     "schnitt7": 12.64,
+     "schnitt30": 12.55
     },
-    "prozent": -5,
+    "prozent": 1,
     "signal": "stabil",
     "profi": {
-     "einstieg": 28,
-     "ziel": 41.48,
-     "gewinn": 9.91,
-     "roi": 35,
-     "momentum": -5,
-     "spread": 13.48,
-     "score": 53,
+     "einstieg": 8,
+     "ziel": 12.53,
+     "gewinn": 2.4,
+     "roi": 30,
+     "momentum": 1,
+     "spread": 4.53,
+     "score": 52,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     41.48,
-     41.48,
-     41.48,
-     41.48,
-     41.48,
-     41.48,
-     41.48,
-     41.48
+     12.58,
+     12.58,
+     12.58,
+     12.58,
+     12.58,
+     12.58,
+     12.58,
+     12.58,
+     12.53
     ]
    },
    {
@@ -1848,47 +1824,49 @@
      47.83,
      47.83,
      47.83,
+     47.83,
      47.83
     ]
    },
    {
-    "id": "30th-c-003",
-    "name": "Metagross",
-    "nummer": "003",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
+    "id": "30th-149",
+    "name": "Pikachu-ex",
+    "nummer": "149",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "30 Jahre",
+    "setId": "30th",
     "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Metagross",
+    "bild": "https://assets.tcgdex.net/de/me/30th/149/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pikachu-ex",
     "preis": {
-     "tief": 4.95,
-     "trend": 9.13,
-     "schnitt7": 8.93,
-     "schnitt30": 9.33
+     "tief": 31.99,
+     "trend": 42.02,
+     "schnitt7": 42.58,
+     "schnitt30": 44.49
     },
     "prozent": -4,
     "signal": "stabil",
     "profi": {
-     "einstieg": 4.95,
-     "ziel": 8.93,
-     "gewinn": 2.03,
-     "roi": 41,
+     "einstieg": 31.99,
+     "ziel": 42.02,
+     "gewinn": 6.43,
+     "roi": 20,
      "momentum": -4,
-     "spread": 4.18,
-     "score": 48,
+     "spread": 10.03,
+     "score": 49,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     9.13,
-     9.13,
-     9.13,
-     9.13,
-     9.13,
-     9.13,
-     9.13,
-     9.13
+     41.48,
+     41.48,
+     41.48,
+     41.48,
+     41.48,
+     41.48,
+     41.48,
+     41.48,
+     42.02
     ]
    },
    {
@@ -1928,83 +1906,49 @@
      23.89,
      23.89,
      23.89,
+     23.89,
      23.89
     ]
    },
    {
-    "id": "me03-113",
-    "name": "Poképad",
-    "nummer": "113",
-    "seltenheit": "Ultra Selten",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/113/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pok%C3%A9pad",
+    "id": "30th-c-003",
+    "name": "Metagross",
+    "nummer": "003",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Metagross",
     "preis": {
-     "tief": 5.99,
-     "trend": 9.61,
-     "schnitt7": 9.98,
-     "schnitt30": 10.17
+     "tief": 4.95,
+     "trend": 9.06,
+     "schnitt7": 8.78,
+     "schnitt30": 9.27
     },
-    "prozent": -2,
+    "prozent": -5,
     "signal": "stabil",
     "profi": {
-     "einstieg": 5.99,
-     "ziel": 9.61,
-     "gewinn": 1.64,
-     "roi": 27,
-     "momentum": -2,
-     "spread": 3.62,
+     "einstieg": 4.95,
+     "ziel": 8.78,
+     "gewinn": 1.89,
+     "roi": 38,
+     "momentum": -5,
+     "spread": 4.11,
      "score": 46,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     9.61,
-     9.61,
-     9.61,
-     9.61,
-     9.61,
-     9.61,
-     9.61,
-     9.61
-    ]
-   },
-   {
-    "id": "me05-111",
-    "name": "Mistys Vitalität",
-    "nummer": "111",
-    "seltenheit": "Ultra Selten",
-    "set": "Dunkelnacht",
-    "setId": "me05",
-    "release": "2026-07-17",
-    "bild": "https://assets.tcgdex.net/de/me/me05/111/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mistys%20Vitalit%C3%A4t",
-    "preis": {
-     "tief": 5.9,
-     "trend": 9.96,
-     "schnitt7": 9.89,
-     "schnitt30": 10.28
-    },
-    "prozent": -4,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 5.9,
-     "ziel": 9.89,
-     "gewinn": 2,
-     "roi": 34,
-     "momentum": -4,
-     "spread": 4.06,
-     "score": 46,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     9.96,
-     9.96,
-     9.96,
-     9.96
+     9.13,
+     9.13,
+     9.13,
+     9.13,
+     9.13,
+     9.13,
+     9.13,
+     9.13,
+     9.06
     ]
    },
    {
@@ -2037,6 +1981,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     43.41,
      43.41,
      43.41,
      43.41,
@@ -2084,7 +2029,41 @@
      31.38,
      31.38,
      31.38,
+     31.38,
      31.38
+    ]
+   },
+   {
+    "id": "30th-c-018",
+    "name": "Gengar",
+    "nummer": "018",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gengar",
+    "preis": {
+     "tief": 34.99,
+     "trend": 46.37,
+     "schnitt7": 46.67,
+     "schnitt30": 50.06
+    },
+    "prozent": -7,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 34.99,
+     "ziel": 46.37,
+     "gewinn": 7.56,
+     "roi": 22,
+     "momentum": -7,
+     "spread": 11.38,
+     "score": 45,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     46.37
     ]
    }
   ],
@@ -2153,7 +2132,7 @@
    "fallend": 7
   },
   "quelle": "TCGdex",
-  "stand": "2026-11-17T21:49:12.363Z"
+  "stand": "2026-11-17T22:47:00.952Z"
  },
  "trends": {
   "ware": [],
@@ -2195,7 +2174,7 @@
     "menge": "200+"
    },
    {
-    "titel": "marokko fußball",
+    "titel": "jennifer aniston",
     "menge": "100+"
    }
   ]
