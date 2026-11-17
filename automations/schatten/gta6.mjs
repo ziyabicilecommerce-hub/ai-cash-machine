@@ -4,7 +4,7 @@
 // Trap-Beat (videoExtras.mjs, synthetisch - keine Lizenzfragen). KEIN Material von Rockstar (keine Trailer, Logos,
 // Musik, Figuren). Caption sagt klar: Fan-Trailer, KI-generiert, kein echtes Spielmaterial.
 //   node gta6.mjs --liste | --bauen <slug> <ordner> | --posten <gta6.json> <url> <kanal>
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync, existsSync, copyFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
@@ -76,12 +76,19 @@ const ff = (args) => execFileSync('ffmpeg', ['-loglevel', 'error', '-y', ...args
 const esc = (s) => String(s).replace(/\\/g, '\\\\').replace(/:/g, '\\:').replace(/'/g, '\u2019').replace(/%/g, '\\%');
 
 function karteRendern(k, ziel, i) {
-  const fs = k.klein ? 54 : 104;
-  const unter = k.unter ? `,drawtext=fontfile=${SCHRIFT}:text='${esc(k.unter)}':fontsize=40:fontcolor=0x00E5FF:x=(w-tw)/2:y=h/2+110:alpha='min(1,t*3)'` : '';
-  const text = k.klein && k.text.length > 16 ? k.text.replace(/^(.{6,18}?)\s/, '$1\n') : k.text;
+  // Lange Fragen auf zwei Zeilen; jede Zeile eigenes drawtext (ein "\n" im Text zeigt ffmpeg als Kästchen) und
+  // Schriftgröße so, dass die längste Zeile in 640 px passt
+  const woerter = k.text.split(' ');
+  const mitte = Math.ceil(woerter.length / 2);
+  const zeilen = k.klein && k.text.length > 14 ? [woerter.slice(0, mitte).join(' '), woerter.slice(mitte).join(' ')] : [k.text];
+  const fs = Math.min(k.klein ? 64 : 104, Math.floor(640 / (Math.max(...zeilen.map((z) => z.length)) * 0.68)));
+  const y0 = H / 2 - (zeilen.length * (fs + 14)) / 2;
+  const texte = zeilen.map((z, n) => `drawtext=fontfile=${SCHRIFT}:text='${esc(z)}':fontsize=${fs}:fontcolor=white:x=(w-tw)/2:y=${Math.round(y0 + n * (fs + 14))}:` +
+    `shadowcolor=0xFF2D95:shadowx=${i % 2 ? 5 : -5}:shadowy=0:alpha='min(1,t*4)'`).join(',');
+  const yu = Math.round(y0 + zeilen.length * (fs + 14) + 40);
+  const unter = k.unter ? `,drawtext=fontfile=${SCHRIFT}:text='${esc(k.unter)}':fontsize=40:fontcolor=0x00E5FF:x=(w-tw)/2:y=${yu}:alpha='min(1,t*3)'` : '';
   ff(['-f', 'lavfi', '-i', `color=c=0x07020c:s=${W}x${H}:r=${FPS}:d=${k.dauer.toFixed(3)}`,
-    '-vf', `drawtext=fontfile=${SCHRIFT}:text='${esc(text)}':fontsize=${fs}:fontcolor=white:line_spacing=12:x=(w-tw)/2:y=(h-th)/2:` +
-      `shadowcolor=0xFF2D95:shadowx=${i % 2 ? 5 : -5}:shadowy=0:alpha='min(1,t*4)'${unter},noise=alls=12:allf=t,vignette=PI/4`,
+    '-vf', `${texte}${unter},noise=alls=12:allf=t,vignette=PI/4`,
     '-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', ziel]);
 }
 
@@ -105,14 +112,21 @@ export async function bauen(t, ordnerRoh, jetzt = Date.now()) {
   mkdirSync(ordner, { recursive: true });
   const { ladeBild } = await import('../lib/videoFabrik.mjs');
   const { musikUnterlegen } = await import('../lib/videoExtras.mjs');
-  const teile = [], schnitte = [], karten = [];
+  const teile = [], schnitte = [], karten = [], gute = [];
   let zeit = 0;
   for (const [i, k] of plan(t, jetzt).entries()) {
     const ziel = join(ordner, `t${i}.mp4`);
     if (k.art === 'karte') { karteRendern(k, ziel, i); karten.push(zeit); } else {
       const bild = join(ordner, `b${i}.jpg`);
-      const ok = process.env.GTA6_OFFLINE ? false : await ladeBild(`${k.motiv}, ${LOOK}`, bild, { breite: W, hoehe: H, seed: 1000 + i * 7 + t.slug.length });
-      if (!ok) ff(['-f', 'lavfi', '-i', `gradients=s=${W}x${H}:c0=0xff2d95:c1=0x00e5ff:d=1`, '-frames:v', '1', bild]);  // Notbild
+      let ok = process.env.GTA6_OFFLINE ? false : await ladeBild(`${k.motiv}, ${LOOK}`, bild, { breite: W, hoehe: H, seed: 1000 + i * 7 + t.slug.length });
+      if (!ok && !process.env.GTA6_OFFLINE) {  // zweiter Anlauf mit anderem Seed, nach kurzer Pause (Bilddienst drosselt)
+        await new Promise((r) => setTimeout(r, 15000));
+        ok = await ladeBild(`${k.motiv}, ${LOOK}`, bild, { breite: W, hoehe: H, seed: 5000 + i * 13 });
+      }
+      if (ok) gute.push(bild);
+      else if (gute.length) copyFileSync(gute[i % gute.length], bild);  // lieber ein schon geladenes Bild mit anderer Fahrt
+      else ff(['-f', 'lavfi', '-i', `gradients=s=${W}x${H}:c0=0xff2d95:c1=0x00e5ff:d=1`, '-frames:v', '1', bild]);  // Notbild
+      if (!process.env.GTA6_OFFLINE) await new Promise((r) => setTimeout(r, 3000));
       bildRendern(bild, k, ziel, i);
     }
     teile.push(ziel); schnitte.push(zeit); zeit += k.dauer;
