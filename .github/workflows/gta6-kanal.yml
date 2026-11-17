@@ -1,0 +1,93 @@
+name: "🎮 GTA-6-Kanal (@futureflowx3, abends + nachts)"
+
+# 17.11. (Nutzer: "einer muss sich auf GTA 6 fokussieren - der, der am besten performt"): @futureflowx3 bekommt statt
+# Horror jeden Abend und jede Nacht ein GTA-6-Video (automations/schatten/gta6.mjs, von Hand geschrieben, KI-Bilder,
+# kein Rockstar-Material). Gepostete Videos erkennt er am Release "gta6-<slug>". Neue Videos = neue Einträge in gta6.mjs.
+
+on:
+  schedule:
+    - cron: '27 18 * * *'  # ~19:27 Uhr Berlin
+    - cron: '27 1 * * *'   # ~02:27 Uhr Berlin (Nacht-Posts holten bei uns die meisten Aufrufe)
+  workflow_dispatch:
+    inputs:
+      posten:
+        description: 'Auf TikTok posten (aus = nur bauen und als Release ablegen)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gta6-kanal
+  cancel-in-progress: false
+
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      KANAL: 6ac7cb606a5c39ccb6535fab
+      BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
+      POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Nächstes GTA-6-Video
+        id: wahl
+        run: |
+          # höchstens ein Video je Slot (3 Std.), damit verspätete Zeitpläne nicht doppelt posten
+          GRENZE=$(date -u -d '-3 hours' +%Y-%m-%dT%H:%M:%SZ)
+          N=$(gh api "repos/$REPO/releases?per_page=30" --jq "[.[] | select(.tag_name | startswith(\"gta6-\")) | select(.created_at > \"$GRENZE\")] | length")
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "${N:-0}" -gt 0 ]; then echo "In diesem Slot schon gepostet."; exit 0; fi
+          for SLUG in $(node automations/schatten/gta6.mjs --liste); do
+            if ! gh release view "$SLUG" -R "$REPO" >/dev/null 2>&1; then
+              echo "slug=$SLUG" >> "$GITHUB_OUTPUT"; echo "Heute: $SLUG" | tee -a "$GITHUB_STEP_SUMMARY"; exit 0
+            fi
+          done
+          echo "⚠️ Alle GTA-6-Videos sind gepostet - neue in gta6.mjs eintragen." | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/setup-python@v5
+        if: steps.wahl.outputs.slug != ''
+        with:
+          python-version: '3.10'
+      - name: Werkzeug
+        if: steps.wahl.outputs.slug != ''
+        uses: ./.github/actions/video-werkzeug
+        with:
+          pip: 'edge-tts==7.* opencv-python-headless gradio_client'
+      - name: Bauen
+        if: steps.wahl.outputs.slug != ''
+        run: node automations/schatten/gta6.mjs --bauen "${{ steps.wahl.outputs.slug }}" out
+      - name: Ablegen und posten
+        if: steps.wahl.outputs.slug != ''
+        env:
+          SLUG: ${{ steps.wahl.outputs.slug }}
+        run: |
+          cp out/video.mp4 "out/$SLUG.mp4"
+          gh release create "$SLUG" "out/$SLUG.mp4" -R "$REPO" --prerelease --title "GTA-6-Kanal: $SLUG" --notes "KI-generiertes Fan-Video (nicht von Rockstar)."
+          URL="https://github.com/$REPO/releases/download/$SLUG/$SLUG.mp4"
+          echo "🎬 $URL" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.posten }}" != "true" ]; then
+            echo "Nur gebaut (posten aus). Release wieder löschen, damit es später gepostet wird:" >> "$GITHUB_STEP_SUMMARY"
+            gh release delete "$SLUG" -R "$REPO" --yes --cleanup-tag || true
+            mkdir -p vorschau && cp "out/$SLUG.mp4" vorschau/
+            exit 0
+          fi
+          if node automations/schatten/gta6.mjs --posten out/gta6.json "$URL" "$KANAL"; then
+            echo "✅ $SLUG auf @futureflowx3 gepostet" >> "$GITHUB_STEP_SUMMARY"
+          else
+            gh release delete "$SLUG" -R "$REPO" --yes --cleanup-tag
+            echo "❌ $SLUG nicht gepostet - kommt beim nächsten Lauf nochmal." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+      - name: Vorschau als Artefakt (nur Test)
+        if: steps.wahl.outputs.slug != '' && github.event_name == 'workflow_dispatch' && inputs.posten != true
+        uses: actions/upload-artifact@v4
+        with:
+          name: gta6-vorschau
+          path: vorschau/

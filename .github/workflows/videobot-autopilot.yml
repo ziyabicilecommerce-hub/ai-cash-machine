@@ -36,7 +36,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { nr: 0, konto: futureflowx3, kanal: 6ac7cb606a5c39ccb6535fab }
+          # 17.11.: @futureflowx3 macht jetzt GTA 6 (gta6-kanal.yml) - zurück: diese Zeile wieder einkommentieren
+          # - { nr: 0, konto: futureflowx3, kanal: 6ac7cb606a5c39ccb6535fab }
           - { nr: 1, konto: zyx_7851, kanal: 6ac7cae66a5c39ccb6535c40 }
           - { nr: 2, konto: futureflowxx, kanal: 6ac7ca226a5c39ccb65356a5 }
     env:
