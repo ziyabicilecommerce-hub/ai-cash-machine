@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-18T04:18:49.923Z",
+ "stand": "2026-11-18T04:22:00.010Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -199,7 +199,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-18T04:07:01.155Z",
+  "stand": "2026-11-18T04:22:03.142Z",
   "filialen": 148,
   "produkte": [
    {
@@ -232,7 +232,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 6
+      "menge": 20
      },
      {
       "name": "dm Frankfurt am Main",
@@ -2306,6 +2306,10 @@
   "ware": [],
   "top": [
    {
+    "titel": "notlandung",
+    "menge": "100+"
+   },
+   {
     "titel": "staffel",
     "menge": "2000+"
    },
@@ -2318,6 +2322,10 @@
     "menge": "200+"
    },
    {
+    "titel": "xi jinping",
+    "menge": "100+"
+   },
+   {
     "titel": "spurs – pistons",
     "menge": "100+"
    },
@@ -2326,24 +2334,16 @@
     "menge": "100+"
    },
    {
-    "titel": "xi jinping",
+    "titel": "warnstreik",
     "menge": "100+"
    },
    {
     "titel": "rentenreform",
-    "menge": "500+"
+    "menge": "1000+"
    },
    {
     "titel": "bundeswehr",
     "menge": "200+"
-   },
-   {
-    "titel": "timberwolves – trail blazers",
-    "menge": "200+"
-   },
-   {
-    "titel": "apple störungen",
-    "menge": "1000+"
    }
   ]
  },
@@ -3151,6 +3151,15 @@
     "begriff": "jordan"
    },
    {
+    "titel": "New Balance 9060",
+    "preis": 142.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-breakfast-tea-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-breakfast-tea-angora-u90603eg-footwear_20_3E_20sneaker.jpg?v=1787225787",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Air Jordan 1 High OG 'Royal'",
     "preis": 143.99,
     "verfuegbar": true,
@@ -3338,15 +3347,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/mkzqpk84cx-IQ5495-005_Nike_Air-Jordan-1-Retro-High-OG-Royal-Black-Varsity-Royal-Black_os-1.jpg?v=1790858909",
     "laden": "asphaltgold.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 162.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-timberwolf",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-u9060152-footwear_20_3E_20sneaker.jpg?v=1781855495",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Women's Air Jordan 4 Retro \"Iced Carmine\"",
@@ -3779,6 +3779,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U990GR7_1.jpg?v=1793277202",
     "laden": "overkillshop.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Air Jordan x Free The Youth 16 SP",
+    "preis": 249.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/air-jordan-16-fty-sp-metallic-silver-picante-red",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-16-fty-sp-metallic-silver-picante-red-iv7638-001-footwear_20_3E_20sneaker.jpg?v=1786486089",
+    "laden": "afew-store.com",
+    "begriff": "jordan"
    },
    {
     "titel": "Made in UK 991v2",
