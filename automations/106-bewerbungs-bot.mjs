@@ -208,14 +208,14 @@ const FLUGHAFEN = /flughafen|airport|fraport|luftsicherheit|bodenverkehr|passagi
 
 // Nur diese Orte (Arbeitsort der Stelle): Wohnort-Nähe plus Umland mit S-Bahn/Zug. Griesheim bei Darmstadt (PLZ 64347) ist nicht gemeint.
 // Nur Orte bis ~20 km - greift, wenn eine Anzeige keine Koordinaten hat.
-const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|eschborn|kelsterbach|raunheim|rüsselsheim|mörfelden|flörsheim|sulzbach|schwalbach|bad soden|groß-gerau|liederbach|kelkheim|offenbach'), 'i');
+const ORTE = new RegExp(env('BEWERBUNG_ORTE', 'frankfurt|kriftel|hofheim|hattersheim|eddersheim|sindlingen|griesheim|wiesbaden|kelsterbach|raunheim|rüsselsheim|mörfelden|flörsheim|sulzbach|schwalbach|bad soden|groß-gerau|liederbach|kelkheim|offenbach'), 'i');
 export function entfernungKm(a, b = ZUHAUSE) {
   const rad = (g) => (g * Math.PI) / 180;
   const h = Math.sin(rad(b.breite - a.breite) / 2) ** 2 + Math.cos(rad(a.breite)) * Math.cos(rad(b.breite)) * Math.sin(rad(b.laenge - a.laenge) / 2) ** 2;
   return 12742 * Math.asin(Math.sqrt(h));
 }
-// Mainz und Ginsheim-Gustavsburg schließt Ziya aus, auch wenn sie im Radius liegen.
-const KEIN_ORT = /mainz|ginsheim|gustavsburg/i;
+// Mainz, Ginsheim-Gustavsburg und Eschborn schließt Ziya aus, auch wenn sie im Radius liegen.
+const KEIN_ORT = /mainz|ginsheim|gustavsburg|eschborn/i;
 export const ortPasst = (st) => {
   const o = st.arbeitsort || {};
   if (KEIN_ORT.test(`${o.ort || ''} ${o.region || ''}`)) return false;
