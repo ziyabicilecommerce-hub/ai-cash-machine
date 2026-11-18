@@ -80,3 +80,7 @@ test('Video-Bots: Einstellungen der laufenden Idee, Standard ohne Labor', () => 
   assert.equal(hookNachIdee({ hookArt: 'du' }, { hook: 'Ich', hook2: 'Wenn du' }, 'Ich'), 'Wenn du');
   assert.equal(hookNachIdee({}, { hook: 'Ich', hook2: 'Wenn du' }, 'Ich'), 'Ich');
 });
+
+test('Fehlersuche verträgt "fehler" als Zahl (so steht es in daten.json)', () => {
+  assert.doesNotThrow(() => tagAuswerten({ idee: 'akte', seit: new Date(JETZT - T).toISOString(), basis: 100, status: 'läuft', verlauf: [] }, alt, 'desk.rebel', JETZT, 1));
+});
