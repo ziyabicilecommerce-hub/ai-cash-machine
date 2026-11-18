@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-18T18:40:36.255Z",
+ "stand": "2026-11-18T18:43:33.238Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -2657,16 +2657,24 @@
   "ware": [],
   "top": [
    {
+    "titel": "sunrise on the reaping",
+    "menge": "200+"
+   },
+   {
+    "titel": "tüv report elektroautos",
+    "menge": "200+"
+   },
+   {
     "titel": "petersdom",
+    "menge": "200+"
+   },
+   {
+    "titel": "gegenverkehr",
     "menge": "200+"
    },
    {
     "titel": "gls",
     "menge": "500+"
-   },
-   {
-    "titel": "gegenverkehr",
-    "menge": "200+"
    },
    {
     "titel": "rosenheim-cops",
@@ -2687,14 +2695,6 @@
    {
     "titel": "marco grüll",
     "menge": "200+"
-   },
-   {
-    "titel": "pramac racing",
-    "menge": "100+"
-   },
-   {
-    "titel": "rtl.de",
-    "menge": "2000+"
    }
   ]
  },
@@ -2852,15 +2852,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/carhartt-wip-og-cargo-pant-cypress-i037585.6306-apparel_20_3E_20pants.jpg?v=1794899646",
     "laden": "afew-store.com",
     "begriff": "cap"
-   },
-   {
-    "titel": "Samba OG",
-    "preis": 80,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/adidas-samba-og-jr0914-sand-strata-core-white-gum-5",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/JR0914_1.jpg?v=1757060057",
-    "laden": "overkillshop.com",
-    "begriff": "samba"
    },
    {
     "titel": "740",
@@ -3043,6 +3034,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "U204L2SZ",
+    "preis": 105,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u204l2sz-u204l2sz-sea-salt-linen",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U204L2SZ_1.jpg?v=1784620446",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Book 2 SP",
     "preis": 105,
     "verfuegbar": true,
@@ -3205,15 +3205,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "U740WM2",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u740wm2-white-silver-metallic-reflection",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WM2_1.jpg?v=1735819605",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "U740BM2",
     "preis": 119,
     "verfuegbar": true,
@@ -3232,11 +3223,11 @@
     "begriff": "new balance"
    },
    {
-    "titel": "MR530EWB",
+    "titel": "U740WM2",
     "preis": 119,
     "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-mr530ewb-mr530ewb-white-black",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/mr530ewb_1.jpg?v=1715986430",
+    "url": "https://www.overkillshop.com/products/new-balance-u740wm2-white-silver-metallic-reflection",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WM2_1.jpg?v=1735819605",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
@@ -3565,6 +3556,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "Gel-Cumulus 16",
+    "preis": 150,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-002",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-002_01.jpg?v=1771589255",
+    "laden": "sneakersnstuff.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "ASICS GEL-NYC - Black Coffee / Sepia Brown",
     "preis": 150,
     "verfuegbar": true,
@@ -3610,13 +3610,22 @@
     "begriff": "jordan"
    },
    {
+    "titel": "Samba Bowling",
+    "preis": 159,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/adidas-samba-bowling-hp5198-preloved-brown-core-black-shadow-brown",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/HP5198_1.jpg?v=1790759279",
+    "laden": "overkillshop.com",
+    "begriff": "samba"
+   },
+   {
     "titel": "M1906RER",
     "preis": 159,
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-balance-m1906rer-silver-metallic",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/M1906RER_1.jpg?v=1739539439",
     "laden": "overkillshop.com",
-    "begriff": "new era"
+    "begriff": "new balance"
    },
    {
     "titel": "New Balance M1906AD",
@@ -3634,15 +3643,6 @@
     "url": "https://afew-store.com/products/new-balance-u9060wht-sea-salt",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-u9060wht-sea-salt-u9060wht-footwear_20_3E_20sneaker.jpg?v=1794996974",
     "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "U19543VU",
-    "preis": 160,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u19543vu-u19543vu-black-black",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U19543VU_1.jpg?v=1784016906",
-    "laden": "overkillshop.com",
     "begriff": "new balance"
    },
    {
@@ -3741,15 +3741,6 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-kayano-14-1203a537-111",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A537-111_1.jpg?v=1776271666",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
-    "titel": "Gel-Kayano 14",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-kayano-14-1203a537-118",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A537-118_01.jpg?v=1780653236",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
    },
@@ -3966,15 +3957,6 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-true-blue-if4396-104",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IF4396-104_01.jpg?v=1783592529",
-    "laden": "sneakersnstuff.com",
-    "begriff": "jordan"
-   },
-   {
-    "titel": "Air Jordan 3 Retro \"Fireside\"",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-fireside-ck9246-200",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CK9246-200_01.jpg?v=1791969600",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
