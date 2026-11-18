@@ -47,7 +47,8 @@ export function naechsteIdee(stand) {
 }
 
 // Fehlersuche: was an den Zahlen auffällt, in Klartext
-export function fehlerSuchen(verlauf, kanal, ergeb, basis, jetzt = Date.now(), botFehler = []) {
+export function fehlerSuchen(verlauf, kanal, ergeb, basis, jetzt = Date.now(), botFehler0 = []) {
+  const botFehler = Array.isArray(botFehler0) ? botFehler0 : [];  // daten.json: "fehler" ist eine Anzahl, keine Liste
   const f = [];
   const letzte24 = verlauf.filter((p) => vonKanal(p, kanal) && jetzt - Date.parse(p.zeit) <= TAG);
   if (!letzte24.length) f.push('Seit 24 Std. kein Video - Posten prüfen (Workflow, Buffer-Verbindung).');
