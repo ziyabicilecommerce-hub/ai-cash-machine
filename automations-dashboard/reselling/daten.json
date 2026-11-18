@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-18T21:23:38.865Z",
+ "stand": "2026-11-18T21:26:38.611Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118686:2292",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: ebelin Adventskalender Beauty & Hair 2026, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0815275,8.6343098",
+   "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
+   "text": "32,95 € · dm Frankfurt am Main (10,6 km) · 1 Stück\nHahnstraße 39a, 60528 Frankfurt am Main\nIm Umkreis in 19 Filiale(n) vorrätig.",
+   "zeit": "2026-11-18T21:26:38.611Z"
+  },
   {
    "schluessel": "filiale:3118196:1608",
    "art": "Filiale",
@@ -189,20 +199,10 @@
    "link": "https://www.nike.com/de/launch/t/nocta-air-modmax-pink-spell-and-amarillo",
    "text": "Pink Spell/Pink Spell/Amarillo/Volt · 179,99 € · Start 09:00 Uhr",
    "zeit": "2026-11-18T06:30:06.027Z"
-  },
-  {
-   "schluessel": "filiale:3118897:3021",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1401538,8.5824016",
-   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
-   "text": "44,95 € · dm Eschborn (10,4 km) · 1 Stück\nGinnheimer Straße 10-14, 65760 Eschborn\nIm Umkreis in 17 Filiale(n) vorrätig.",
-   "zeit": "2026-11-18T04:37:16.189Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-18T21:11:27.953Z",
+  "stand": "2026-11-18T21:26:43.046Z",
   "filialen": 148,
   "produkte": [
    {
@@ -235,7 +235,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 4
+      "menge": 20
      },
      {
       "name": "dm Frankfurt am Main",
@@ -259,7 +259,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 54
+      "menge": 55
      },
      {
       "name": "dm Flörsheim am Main",
@@ -301,7 +301,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 3
+      "menge": 5
      },
      {
       "name": "dm Frankfurt am Main",
@@ -317,7 +317,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 57
+      "menge": 59
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -333,7 +333,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 21
+      "menge": 22
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -423,7 +423,7 @@
       "km": 10.6,
       "lat": 50.0815275,
       "lon": 8.6343098,
-      "menge": 3
+      "menge": 5
      }
     ]
    },
@@ -465,7 +465,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Flörsheim am Main",
@@ -547,7 +547,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 9
+      "menge": 10
      },
      {
       "name": "dm Eschborn",
@@ -629,7 +629,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 5
+      "menge": 6
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -648,6 +648,15 @@
       "menge": 6
      }
     ]
+   },
+   {
+    "dan": "3135931",
+    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
+    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3135831",
@@ -729,80 +738,6 @@
       "lat": 49.984061,
       "lon": 8.430174,
       "menge": 2
-     }
-    ]
-   },
-   {
-    "dan": "3118148",
-    "name": "Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
-    "preis": 24.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "link": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 3
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 13
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 5
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 9
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 4
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 6
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
-      "km": 10.4,
-      "lat": 50.1401538,
-      "lon": 8.5824016,
-      "menge": 6
      }
     ]
    },
@@ -2819,20 +2754,20 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
-    "preis": 60,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khm051153-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051153-413-Front.jpg?v=1755618413",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Kith Script Two Tone Classic Cap - Canvas",
     "preis": 60,
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/khma050250-210",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050250-210-Detail.jpg?v=1787695610",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
+    "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
+    "preis": 60,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khm051153-413",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051153-413-Front.jpg?v=1755618413",
     "laden": "kith.com",
     "begriff": "cap"
    },
@@ -2864,15 +2799,6 @@
     "begriff": "cap"
    },
    {
-    "titel": "Kith & '47 for the New York Yankees Franchise LS Cap - Navy",
-    "preis": 64,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khm051547-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051547-413-Front.jpg?v=1772131115",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Dunk Low Retro Premium",
     "preis": 65,
     "verfuegbar": true,
@@ -2889,6 +2815,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/978oewsxluo-IB7746-200_Nike_Dunk-Low-Retro-Premium-Corduroy-Light-British-Tan-Light-British-Tan_os-1.jpg?v=1768918070",
     "laden": "asphaltgold.com",
     "begriff": "dunk"
+   },
+   {
+    "titel": "Kith & '47 for the New York Yankees Washed Suede Franchise LS Cap - Torpedo",
+    "preis": 74,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khm051390-402",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051390-402-Front.jpg?v=1787167609",
+    "laden": "kith.com",
+    "begriff": "cap"
    },
    {
     "titel": "Consortium Pant",
@@ -3314,6 +3249,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "U740WW2",
+    "preis": 119,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u740ww2-nb-white-black",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WW2_1.jpg?v=1749023055",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Nike Dunk Low Retro",
     "preis": 119,
     "verfuegbar": true,
@@ -3528,15 +3472,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/554724-074-01.jpg?v=1774952882",
     "laden": "overkillshop.com",
     "begriff": "jordan"
-   },
-   {
-    "titel": "New Balance 204L - Timberwolf / Linen",
-    "preis": 140,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu204lmmc",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU204LMMC-Detail.jpg?v=1792446731",
-    "laden": "kith.com",
-    "begriff": "new balance"
    },
    {
     "titel": "New Balance 9060",
@@ -3926,20 +3861,20 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Wool Deconstructed Franchise LS Fitted Cap - Black",
-    "preis": 195,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050222-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050222-001-Detail.jpg?v=1791551534",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Giorgio Armani & Ronnie Fieg for '47 Duck Canvas Classic Cap - Blue Navy",
     "preis": 195,
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/khma050223-5114",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050223-5114-Detail.jpg?v=1791551538",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
+    "titel": "Giorgio Armani & Ronnie Fieg for '47 Wool Deconstructed Franchise LS Fitted Cap - Black",
+    "preis": 195,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khma050222-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050222-001-Detail.jpg?v=1791551534",
     "laden": "kith.com",
     "begriff": "cap"
    },
@@ -3976,15 +3911,6 @@
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-balance-u1300ny-nb-navy-raincloud-white",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "U1300GY",
-    "preis": 209,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u1300gy-u1300gy-kool-gray-harbor-grey-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300GY_1.jpg?v=1779433831",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
@@ -4079,6 +4005,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "New Balance x Action Bronson 1890 - Blue / Grey",
+    "preis": 210,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu18908bn",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU18908BNNewBalanceActionBronson1890Blue_0381.jpg?v=1770653222",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Air Jordan 14 Retro",
     "preis": 219.99,
     "verfuegbar": true,
@@ -4093,6 +4028,15 @@
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/nbu990tk4",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU990TK4-Front.jpg?v=1777988030",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "Kith & New Balance Made in USA 993 - Asteroid",
+    "preis": 220,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu993hk",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU993HK-Front.jpg?v=1777988030",
     "laden": "kith.com",
     "begriff": "new balance"
    },
@@ -4210,15 +4154,6 @@
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/nbu992ne",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u992ne_nb_02_i.jpg?v=1790595700",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance x Salehe Bembury Made in USA 992 - Green / Blue",
-    "preis": 250,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu992sb",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/salehe-bembury-new-balance-992-3.jpg?v=1771234389",
     "laden": "kith.com",
     "begriff": "new balance"
    }
