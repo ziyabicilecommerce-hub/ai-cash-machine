@@ -100,6 +100,7 @@ export function baueFolge(skript) {
     const f = { ...baueFolge({ ...skript, stil: 'studio', ki: false, schlag: false, ganz: true, anfang: skript.akte ? '' : skript.anfang }), stil: 'akte', schlag: '', akte: skript.akte || null };
     // 16.11. Akte-Universum: nummerierte Fälle als Serie ("AKTE 007"), am Ende der Haken auf die nächste Akte
     const nr = Number(skript.fall_nr) || 0;
+    if (skript.ruhig) f.ruhig = true;  // Ideen-Labor: ohne Herzschlag/Zittern/Störungen
     if (!nr) return f;
     const en = skript.sprache === 'en', n3 = String(nr).padStart(3, '0');
     return { ...f, fall_nr: nr, caption: `📁 ${en ? 'FILE' : 'AKTE'} ${n3} · ${f.caption} ${en ? 'Next file tomorrow.' : 'Nächste Akte morgen.'}` };
@@ -278,8 +279,13 @@ if (process.argv[2] === '--auto') {
   const { abVariante, abGewichte } = await import('../lib/bufferVerteiler.mjs');
   const { kalt, raum, suchbild, duhook } = abVariante(Math.random, abGewichte(wb.ab));
   // TikTok bekommt jetzt auch den Du-Hook (13.11.): bei uns meist ein Regel-Hook ("Wenn …, geh nicht ran."), gemessen x2,2
-  const hook = duhook && treffer.skript.hook2 ? treffer.skript.hook2 : treffer.skript.hook;
-  writeFileSync(ziel, JSON.stringify(baueFolge({ ...treffer.skript, hook, anfang: hook !== treffer.skript.hook ? treffer.skript.hook : '', kalt, raum, suchbild }), null, 1));
+  // Ideen-Labor (#118): jedes Konto testet gerade eine Idee (Video-Variante) - die kommt obendrauf
+  const { ideeFuer, hookNachIdee } = await import('../lib/ideenLabor.mjs');
+  let labor = {};
+  try { labor = JSON.parse(readFileSync('automations-dashboard/tiktok/ideen.json', 'utf8')); } catch { /* ohne Labor: Standard */ }
+  const { hookArt, ...idee } = ideeFuer(labor, Object.keys(KONTEN)[Number(idx)]);
+  const hook = hookNachIdee({ hookArt }, treffer.skript, duhook && treffer.skript.hook2 ? treffer.skript.hook2 : treffer.skript.hook);
+  writeFileSync(ziel, JSON.stringify(baueFolge({ ...treffer.skript, hook, anfang: hook !== treffer.skript.hook ? treffer.skript.hook : '', kalt, raum, suchbild, ...idee }), null, 1));
 } else if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [quelle, ziel] = process.argv.slice(2);
   try {

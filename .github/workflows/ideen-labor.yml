@@ -1,0 +1,44 @@
+name: "🧪 Ideen-Labor (täglich: Views prüfen, Fehler suchen, Idee wechseln)"
+
+# 18.11. (Nutzer): jeden Tag die Aufrufe aller Horror-Kanäle (3x TikTok, 2x Instagram, YouTube) anschauen, Fehler suchen,
+# und alle 2 Tage die Idee wechseln, wenn sie nicht besser als normal läuft - klappt sie, bleibt sie (Jackpot).
+# Stand: automations-dashboard/tiktok/ideen.json - die Video-Bots (Autopilot, Buffer-Verteiler) lesen daraus die Idee.
+
+on:
+  schedule:
+    - cron: '17 11 * * *'  # mittags - die Nacht- und Abend-Videos haben dann ihre ersten Zahlen
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ideen-labor
+  cancel-in-progress: false
+
+jobs:
+  labor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Auswerten
+        run: node automations/118-ideen-labor.mjs
+      - name: Speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          sicher=$(mktemp -d); cp automations-dashboard/tiktok/ideen.json "$sicher/"
+          for versuch in 1 2 3 4 5; do
+            git fetch -q origin "$GITHUB_REF_NAME"
+            git reset -q --hard "origin/$GITHUB_REF_NAME"
+            cp "$sicher/ideen.json" automations-dashboard/tiktok/
+            git add automations-dashboard/tiktok/ideen.json
+            git commit -qm "chore: Ideen-Labor aktualisiert [skip ci]" || exit 0
+            if git push -q origin "HEAD:$GITHUB_REF_NAME"; then exit 0; fi
+            sleep $((versuch * 5))
+          done
+          exit 1
