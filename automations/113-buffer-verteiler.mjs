@@ -15,6 +15,7 @@ import { teil2Kandidat as teil2KandidatSync } from './schatten/skriptBot.mjs';
 import { naechsterKurzHorror, kurzHeuteSchon } from './schatten/kurzHorror.mjs';
 import { schlagzeile } from './schatten/schlagzeilen.mjs';
 import { remakeKandidat, zuletztRemake } from './schatten/ytHits.mjs';
+import { ideeFuer, hookNachIdee } from './lib/ideenLabor.mjs';
 
 const TOKEN = (process.env.BUFFER_ACCESS_TOKEN || '').trim();
 const STAND = 'buffer-verteiler/stand.json';
@@ -97,6 +98,7 @@ async function vorbereiten() {
   const stand = json(STAND, {});
   const plan = [], horrorKanaele = [];
   const wb = json('automations-dashboard/tiktok/wochenbericht.json', {});
+  const labor = json('automations-dashboard/tiktok/ideen.json', {});
   const gewichte = abGewichte(wb.ab);
   const gewichteYT = abGewichteAufrufe(wb.abYT);  // YouTube lernt nach Aufrufen (keine Sehdauer)
   // Sprach-Test je Mix-Kanal: YouTube hat seinen eigenen (sprachTest), andere Kanäle stehen in sprachTests[name]
@@ -149,8 +151,10 @@ async function vorbereiten() {
       if (k.dienst === 'youtube') variante.suchbild = Math.random() < 0.9 ? 'immer' : false;
       if (!h.skript.hook2) variante.duhook = false;  // nur Skript-Bot-Geschichten haben einen Du-Hook
       if (!schlagzeile(h.skript.muster, quelle === 'horror-en' ? 'en' : 'de')) variante.schlag = false;  // Schlagzeile gibt es nur für bekannte Muster
-      const hook = variante.duhook ? h.skript.hook2 : h.skript.hook;
-      const folge = baueFolge({ ...h.skript, hook, anfang: hook !== h.skript.hook ? h.skript.hook : '', weiter: '', posten: '', kurz: true, ...variante });
+      // Ideen-Labor (#118): die laufende Idee dieses Kanals (z. B. ohne Bericht, Du-Hook, Klassik) kommt obendrauf
+      const { hookArt, ...idee } = ideeFuer(labor, k.name);
+      const hook = hookNachIdee({ hookArt }, h.skript, variante.duhook ? h.skript.hook2 : h.skript.hook);
+      const folge = baueFolge({ ...h.skript, hook, anfang: hook !== h.skript.hook ? h.skript.hook : '', weiter: '', posten: '', kurz: true, ...variante, ...idee });
       mkdirSync('out', { recursive: true });
       writeFileSync(`out/folge-${k.id}.json`, JSON.stringify({ ...folge, _slug: slug(h.skript.titel) }, null, 1));
       horrorKanaele.push(k.id);
