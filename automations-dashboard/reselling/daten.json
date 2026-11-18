@@ -1,10 +1,30 @@
 {
- "stand": "2026-11-18T03:19:23.747Z",
+ "stand": "2026-11-18T03:22:23.236Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118676:1364",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: MAYBELLINE NEW YORK Adventskalender 2026 Happy Holidays, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1778844332/assets/pas/images/821685b1-d386-428e-8655-1eb7ad8b7561/maybelline-new-york-adventskalender-2026-happy-holidays",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0815926,8.4565918",
+   "shop": "https://www.dm.de/p/d/3118676/maybelline-new-york-adventskalender-2026-happy-holidays",
+   "text": "52,95 € · dm Kriftel (2,5 km) · 1 Stück\nKapellenstraße 48, 65830 Kriftel\nIm Umkreis in 21 Filiale(n) vorrätig.",
+   "zeit": "2026-11-18T03:22:23.236Z"
+  },
+  {
+   "schluessel": "filiale:3118897:188",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1202634,8.5251147",
+   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
+   "text": "44,95 € · dm Sulzbach (Taunus) (6,3 km) · 1 Stück\nMain-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)\nIm Umkreis in 17 Filiale(n) vorrätig.",
+   "zeit": "2026-11-18T03:22:23.236Z"
+  },
   {
    "schluessel": "karte:30th-c-023",
    "art": "Karte",
@@ -176,28 +196,10 @@
    "link": "https://afew-store.com/products/air-jordan-4-retro-white-tour-yellow-dark-blue-grey-black",
    "text": "afew-store.com · Air Jordan 4 Retro\nVerkauf ca. 220–320 € → Gewinn ca. +48,01 € (ROI 25 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-17T12:10:45.321Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-air-jordan-4-retro-comic-off-white-anthracite-light-arctic-pink",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 4 Retro für 127,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/sbi9cnrdphn-JA1135-100_Nike_Air-Jordan-4-Retro-Comic-Off-White-Anthracite-Light-Arctic-Pink_os-1.jpg?v=1784204404",
-   "link": "https://www.asphaltgold.com/products/nike-air-jordan-4-retro-comic-off-white-anthracite-light-arctic-pink",
-   "text": "asphaltgold.com · Nike Air Jordan 4 Retro *Comic*\nVerkauf ca. 220–320 € → Gewinn ca. +111,00 € (ROI 87 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-17T11:21:58.019Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-air-jordan-11-retro-green-screen-multicolor-gym-green-lucky-green",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 11 Retro für 209,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/t80lqf7g1lk-IQ5700-900_Nike_Air-Jordan-11-Retro-Green-Screen-Multicolor-Gym-Green-Lucky-Green_os-1.jpg?v=1793967231",
-   "link": "https://www.asphaltgold.com/products/nike-air-jordan-11-retro-green-screen-multicolor-gym-green-lucky-green",
-   "text": "asphaltgold.com · Nike Air Jordan 11 Retro *Green Screen*\nVerkauf ca. 230–330 € → Gewinn ca. +38,00 € (ROI 18 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-17T09:12:21.791Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-18T03:07:12.757Z",
+  "stand": "2026-11-18T03:22:27.309Z",
   "filialen": 148,
   "produkte": [
    {
@@ -312,7 +314,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 59
+      "menge": 60
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -484,7 +486,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 1
+      "menge": 2
      },
      {
       "name": "dm Hochheim am Main",
@@ -587,6 +589,14 @@
       "menge": 4
      },
      {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 1
+     },
+     {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
@@ -624,7 +634,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 6
+      "menge": 7
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -633,16 +643,17 @@
       "lat": 49.984061,
       "lon": 8.430174,
       "menge": 10
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
-      "km": 10.4,
-      "lat": 50.1401538,
-      "lon": 8.5824016,
-      "menge": 6
      }
     ]
+   },
+   {
+    "dan": "3135931",
+    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
+    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3135831",
@@ -686,6 +697,14 @@
       "menge": 12
      },
      {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
       "name": "dm Flörsheim am Main",
       "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
       "km": 7.4,
@@ -716,88 +735,6 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 3
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 2
-     }
-    ]
-   },
-   {
-    "dan": "3118148",
-    "name": "Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
-    "preis": 24.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "link": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 3
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 13
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 5
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 9
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 5
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 7
      }
     ]
    },
@@ -2281,7 +2218,7 @@
   "top": [
    {
     "titel": "wetter münchen",
-    "menge": "1000+"
+    "menge": "5000+"
    },
    {
     "titel": "fc bayern münchen fußball",
@@ -2305,7 +2242,7 @@
    },
    {
     "titel": "cutremur romania",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "sibirien",
@@ -2621,20 +2558,20 @@
     "begriff": "samba"
    },
    {
-    "titel": "59Fifty Low Profile / Cap / Poly. Twill.",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-era-x-wtaps-59fifty-low-profile-cap-poly-twill-261nened-ht02-charcoal",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/261NENED-HT02_1.jpg?v=1789476810",
-    "laden": "overkillshop.com",
-    "begriff": "new era"
-   },
-   {
     "titel": "59Fifty Cap",
     "preis": 99,
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-era-x-neighborhood-59fifty-cap-261nenen-ht01-black",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/261NENEN-HT01-BK_1.jpg?v=1780656019",
+    "laden": "overkillshop.com",
+    "begriff": "new era"
+   },
+   {
+    "titel": "59Fifty Low Profile / Cap / Poly. Twill.",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-era-x-wtaps-59fifty-low-profile-cap-poly-twill-261nened-ht02-charcoal",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/261NENED-HT02_1.jpg?v=1789476810",
     "laden": "overkillshop.com",
     "begriff": "new era"
    },
@@ -2682,6 +2619,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A275-103_01.jpg?v=1770746761",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
+   },
+   {
+    "titel": "Book 2 SP",
+    "preis": 105,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-book-2-sp-iq0050-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ0050-001-1.jpg?v=1770121671",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Book 1 \"Solar Red\"",
@@ -2801,15 +2747,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "Air Max 95 OG \"Slate\"",
-    "preis": 114,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH7855-100_01.jpg?v=1777549236",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "New Balance 509",
     "preis": 116,
     "verfuegbar": true,
@@ -2855,15 +2792,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "U740WW2",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u740ww2-nb-white-black",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WW2_1.jpg?v=1749023055",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "MR530SG",
     "preis": 119,
     "verfuegbar": true,
@@ -2878,6 +2806,15 @@
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-balance-u740wm2-white-silver-metallic-reflection",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WM2_1.jpg?v=1735819605",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "U740WW2",
+    "preis": 119,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u740ww2-nb-white-black",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WW2_1.jpg?v=1749023055",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
@@ -2999,6 +2936,15 @@
     "begriff": "jordan"
    },
    {
+    "titel": "Book 2 NRG \"WNBA 30th\"",
+    "preis": 128,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-book-2-nrg-wnba-30th-ir6333-100",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR6333-100_01.jpg?v=1778490795",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
+   },
+   {
     "titel": "Samba OG",
     "preis": 129,
     "verfuegbar": true,
@@ -3080,15 +3026,6 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Air Max Plus VII",
-    "preis": 133,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-air-max-plus-vii-iq0282-084",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ0282-084-1.jpg?v=1769684296",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Asics GEL-NYC",
     "preis": 134,
     "verfuegbar": true,
@@ -3123,6 +3060,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/554724-074-01.jpg?v=1774952882",
     "laden": "overkillshop.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "New Balance 9060",
+    "preis": 142.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-breakfast-tea-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-breakfast-tea-angora-u90603eg-footwear_20_3E_20sneaker.jpg?v=1787225787",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 1 High OG 'Royal'",
@@ -3200,8 +3146,8 @@
     "titel": "Gel-Cumulus 16",
     "preis": 150,
     "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-201",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-201_01.jpg?v=1780653283",
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-105",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-105_1.jpg?v=1776271531",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
    },
@@ -3209,8 +3155,8 @@
     "titel": "Gel-Cumulus 16",
     "preis": 150,
     "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-105",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-105_1.jpg?v=1776271531",
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-201",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-201_01.jpg?v=1780653283",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
    },
@@ -3314,13 +3260,13 @@
     "begriff": "jordan"
    },
    {
-    "titel": "New Balance 9060",
-    "preis": 162.99,
+    "titel": "Women's Air Jordan 4 Retro \"Iced Carmine\"",
+    "preis": 168,
     "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-timberwolf",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-u9060152-footwear_20_3E_20sneaker.jpg?v=1781855495",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
+    "url": "https://www.sneakersnstuff.com/products/jordan-womens-air-jordan-4-retro-iced-carmine-ib6716-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IB6716-600_01.jpg?v=1778164149",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Asics GEL-Kayano 14",
@@ -3437,7 +3383,7 @@
     "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-1-retro-high-og-love-letter-dz5485-201",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/DZ5485-201_1.jpg?v=1783931414",
     "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
+    "begriff": "jordan"
    },
    {
     "titel": "New Balance 90/60",
@@ -3483,15 +3429,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1794563768",
     "laden": "afew-store.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "Air Max 95 OG \"Pink Foam\"",
-    "preis": 190,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-pink-foam-hj5996-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HJ5996-001_1.jpg?v=1776939941",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
    },
    {
     "titel": "Giorgio Armani & Ronnie Fieg for '47 Duck Canvas Classic Cap - Blue Navy",
@@ -3580,15 +3517,6 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-8-retro-chrome-305381-007",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/305381-007_01.jpg?v=1785766511",
-    "laden": "sneakersnstuff.com",
-    "begriff": "jordan"
-   },
-   {
-    "titel": "Air Jordan 3 Retro \"True Blue\"",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-true-blue-if4396-104",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IF4396-104_01.jpg?v=1783592529",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
