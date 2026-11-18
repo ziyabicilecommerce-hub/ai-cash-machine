@@ -64,7 +64,7 @@ const UMLAND = ['Eschborn', 'Kelsterbach', 'Rüsselsheim', 'Groß-Gerau', 'Wiesb
 // Ausbildung nur, wenn die Berufsschule die Konrad-Adenauer-Schule Kriftel ist: KAS-Beruf und Betrieb im Main-Taunus-Kreis.
 // Höchstens so viele Ausbildungsbewerbungen pro Lauf - Ziya will vor allem Jobs mit richtigem Gehalt.
 const AUSBILDUNG_MAX = parseInt(env('BEWERBUNG_AUSBILDUNG_MAX', '6'), 10) || 6;
-const MTK = /hattersheim|hofheim|kriftel|flörsheim|hochheim|eppstein|kelkheim|liederbach|bad soden|sulzbach|schwalbach|eschborn/i;
+const MTK = /hattersheim|hofheim|kriftel|flörsheim|hochheim|eppstein|kelkheim|liederbach|bad soden|sulzbach|schwalbach/i;
 const AUSBILDUNG_KAS = [
   ['Kaufmann Büromanagement', 'Kaufmann für Büromanagement'],
   ['Groß- und Außenhandelsmanagement', 'Kaufmann für Groß- und Außenhandelsmanagement'],
