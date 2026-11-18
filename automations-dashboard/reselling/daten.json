@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-18T06:20:04.446Z",
+ "stand": "2026-11-18T06:23:01.189Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -200,7 +200,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-18T06:07:59.107Z",
+  "stand": "2026-11-18T06:23:05.578Z",
   "filialen": 148,
   "produkte": [
    {
@@ -233,7 +233,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 20
+      "menge": 6
      },
      {
       "name": "dm Frankfurt am Main",
@@ -648,6 +648,15 @@
     ]
    },
    {
+    "dan": "3135931",
+    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
+    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
+    "begriff": "adventskalender",
+    "vorrat": []
+   },
+   {
     "dan": "3135831",
     "name": "NÉONAIL Adventskalender 2026 Touch Of Magic, 1 St",
     "preis": 59.95,
@@ -727,80 +736,6 @@
       "lat": 49.984061,
       "lon": 8.430174,
       "menge": 2
-     }
-    ]
-   },
-   {
-    "dan": "3118148",
-    "name": "Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
-    "preis": 24.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "link": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 3
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 13
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 5
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 9
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 5
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 7
      }
     ]
    },
@@ -2355,6 +2290,18 @@
   "ware": [],
   "top": [
    {
+    "titel": "quentin grimes",
+    "menge": "100+"
+   },
+   {
+    "titel": "formnext",
+    "menge": "100+"
+   },
+   {
+    "titel": "telekom black friday",
+    "menge": "200+"
+   },
+   {
     "titel": "gta",
     "menge": "1000+"
    },
@@ -2367,6 +2314,10 @@
     "menge": "100+"
    },
    {
+    "titel": "hava durumu",
+    "menge": "1000+"
+   },
+   {
     "titel": "a24",
     "menge": "100+"
    },
@@ -2377,22 +2328,6 @@
    {
     "titel": "abschiebezentrum",
     "menge": "200+"
-   },
-   {
-    "titel": "steven spielberg",
-    "menge": "200+"
-   },
-   {
-    "titel": "wittlich",
-    "menge": "100+"
-   },
-   {
-    "titel": "hayden panettiere",
-    "menge": "100+"
-   },
-   {
-    "titel": "gta 6",
-    "menge": "10000+"
    }
   ]
  },
@@ -3828,15 +3763,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U990GR7_1.jpg?v=1793277202",
     "laden": "overkillshop.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "Air Jordan x Free The Youth 16 SP",
-    "preis": 249.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-16-fty-sp-metallic-silver-picante-red",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-16-fty-sp-metallic-silver-picante-red-iv7638-001-footwear_20_3E_20sneaker.jpg?v=1786486089",
-    "laden": "afew-store.com",
-    "begriff": "jordan"
    },
    {
     "titel": "Made in UK 991v2",
