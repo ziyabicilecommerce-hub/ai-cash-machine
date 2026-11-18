@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-18T11:55:31.362Z",
+ "stand": "2026-11-18T11:58:28.810Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118148:1364",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0815926,8.4565918",
+   "shop": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
+   "text": "24,95 € · dm Kriftel (2,5 km) · 1 Stück\nKapellenstraße 48, 65830 Kriftel\nIm Umkreis in 18 Filiale(n) vorrätig.",
+   "zeit": "2026-11-18T11:58:28.810Z"
+  },
   {
    "schluessel": "filiale:3118897:3021",
    "art": "Filiale",
@@ -186,20 +196,10 @@
    "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
    "text": "44,95 € · dm Sulzbach (Taunus) (6,3 km) · 1 Stück\nMain-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)\nIm Umkreis in 17 Filiale(n) vorrätig.",
    "zeit": "2026-11-17T21:02:51.950Z"
-  },
-  {
-   "schluessel": "filiale:3118897:188",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1202634,8.5251147",
-   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
-   "text": "44,95 € · dm Sulzbach (Taunus) (6,3 km) · 1 Stück\nMain-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)\nIm Umkreis in 18 Filiale(n) vorrätig.",
-   "zeit": "2026-11-17T20:16:43.451Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-18T11:43:33.814Z",
+  "stand": "2026-11-18T11:58:31.870Z",
   "filialen": 148,
   "produkte": [
    {
@@ -232,7 +232,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 20
+      "menge": 6
      },
      {
       "name": "dm Frankfurt am Main",
@@ -248,7 +248,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 43
+      "menge": 44
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -264,7 +264,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 41
+      "menge": 42
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -602,7 +602,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Flörsheim am Main",
@@ -645,6 +645,15 @@
       "menge": 6
      }
     ]
+   },
+   {
+    "dan": "3135931",
+    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
+    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
+    "begriff": "adventskalender",
+    "vorrat": []
    },
    {
     "dan": "3135831",
@@ -738,6 +747,14 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 1
+     },
+     {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
@@ -792,88 +809,6 @@
       "lat": 49.984061,
       "lon": 8.430174,
       "menge": 7
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
-      "km": 10.4,
-      "lat": 50.1401538,
-      "lon": 8.5824016,
-      "menge": 6
-     }
-    ]
-   },
-   {
-    "dan": "3118151",
-    "name": "trend !t up Adventskalender 2026 Days of Glow, 24 St",
-    "preis": 28.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784673576/assets/pas/images/9f3e9b87-6c3d-477b-99f0-25fa0632aac5/trend-t-up-adventskalender-2026-days-of-glow",
-    "link": "https://www.dm.de/p/d/3118151/trend-t-up-adventskalender-2026-days-of-glow",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 12
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 7
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 6
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 15
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 26
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 7
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 15
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 3
      }
     ]
    },
@@ -3174,6 +3109,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "Asics GEL-Kayano 14",
+    "preis": 122,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/asics-gel-kayano-14-black-pure-silver",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/3576f650b0c319be918f1cc9562ff3979035b339_1201A019_006_Asics_GEL_Kayano_14_Black_Pure_Silver_os_1.jpg?v=1761818792",
+    "laden": "asphaltgold.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "Book 2 NRG \"WNBA 30th\"",
     "preis": 128,
     "verfuegbar": true,
@@ -3331,7 +3275,7 @@
     "preis": 143.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/air-jordan-1-high-og-black-multi-color",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1794864612",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1795002967",
     "laden": "afew-store.com",
     "begriff": "jordan"
    },
@@ -3541,15 +3485,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IB6716-600_01.jpg?v=1778164149",
     "laden": "sneakersnstuff.com",
     "begriff": "dunk"
-   },
-   {
-    "titel": "Asics GEL-Kayano 14",
-    "preis": 169,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/asics-gelkayano-14-white-graphite-grey",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/1203A537-110-Asics-GEL-Kayano-14-White-Graphite-Grey-os-1.jpg?v=1752833446",
-    "laden": "asphaltgold.com",
-    "begriff": "asics"
    },
    {
     "titel": "New Balance 9060",
