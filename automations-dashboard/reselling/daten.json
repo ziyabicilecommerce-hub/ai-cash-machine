@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-18T23:25:13.122Z",
+ "stand": "2026-11-18T23:28:08.886Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118196:1608",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.122246,8.6463548",
+   "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "text": "24,95 € · dm Frankfurt am Main (12,8 km) · 1 Stück\nLeipziger Straße 41-43, 60487 Frankfurt am Main\nIm Umkreis in 24 Filiale(n) vorrätig.",
+   "zeit": "2026-11-18T23:28:08.886Z"
+  },
   {
    "schluessel": "filiale:3118196:1608",
    "art": "Filiale",
@@ -192,19 +202,10 @@
    "link": "https://www.nike.com/de/launch/t/nocta-air-modmax-pink-spell-and-amarillo",
    "text": "Pink Spell/Pink Spell/Amarillo/Volt · 179,99 € · Start 09:10 Uhr",
    "zeit": "2026-11-18T08:12:43.584Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-wmns-air-jordan-3-retro-fireside-velvet-brown-pearl-white-gum-dark-brown",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 3 Retro für 160,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/CK9246_20200-Nike-Wmns-Air-Jordan-3-Retro-Fireside-Velvet-Brown-Pearl-White-Gum-Dark-Brown-os-1.jpg?v=1790172672",
-   "link": "https://www.asphaltgold.com/products/nike-wmns-air-jordan-3-retro-fireside-velvet-brown-pearl-white-gum-dark-brown",
-   "text": "asphaltgold.com · Nike Wmns Air Jordan 3 Retro *Fireside*\nVerkauf ca. 200–290 € → Gewinn ca. +55,50 € (ROI 35 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-18T07:12:20.898Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-18T23:13:15.700Z",
+  "stand": "2026-11-18T23:28:12.276Z",
   "filialen": 148,
   "produkte": [
    {
@@ -335,7 +336,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 21
+      "menge": 22
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -467,7 +468,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Flörsheim am Main",
@@ -500,80 +501,6 @@
       "lat": 50.0155817,
       "lon": 8.3658454,
       "menge": 11
-     }
-    ]
-   },
-   {
-    "dan": "3118202",
-    "name": "Dein Bestes Adventskalender 2026 - merry christmas für Katzen, 1 St",
-    "preis": 16.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787554263/assets/pas/images/ba693b2b-2361-4c1c-a86d-45040e0c865b/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
-    "link": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 4
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 3
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 7
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 5
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 9
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 1
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
-      "km": 10.4,
-      "lat": 50.1401538,
-      "lon": 8.5824016,
-      "menge": 4
-     },
-     {
-      "name": "dm Hochheim am Main",
-      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
-      "km": 10.5,
-      "lat": 50.0155817,
-      "lon": 8.3658454,
-      "menge": 3
      }
     ]
    },
@@ -631,7 +558,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 4
+      "menge": 5
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -879,6 +806,80 @@
       "lat": 50.1434547,
       "lon": 8.5023642,
       "menge": 3
+     }
+    ]
+   },
+   {
+    "dan": "3117665",
+    "name": "alverde NATURKOSMETIK Adventskalender 2026 Frohe Weihnachten, 1 St",
+    "preis": 19.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787558077/assets/pas/images/260614bb-a00b-4ec8-b592-8e533005cf0e/alverde-naturkosmetik-adventskalender-2026-frohe-weihnachten",
+    "link": "https://www.dm.de/p/d/3117665/alverde-naturkosmetik-adventskalender-2026-frohe-weihnachten",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 19
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 1
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 8
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 9
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 25
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 9
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 16
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 5
      }
     ]
    },
@@ -3706,6 +3707,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "ASICS Gel-Cumulus 16 - Cinnamon / Pure Silver",
+    "preis": 150,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a733-200",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A733_200_SR_RT_GLB.jpg?v=1770997273",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "Nike Air Jordan 4 Retro *Tour Yellow*",
     "preis": 157,
     "verfuegbar": true,
@@ -3868,20 +3878,20 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS Gel Kayano 14 - Carrier Grey / Black",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-026",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A537_026_SR_RT_GLB.jpg?v=1790256109",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
     "preis": 170,
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/asi1203a537-118",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS Gel Kayano 14 - Carrier Grey / Black",
+    "preis": 170,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a537-026",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A537_026_SR_RT_GLB.jpg?v=1790256109",
     "laden": "kith.com",
     "begriff": "asics"
    },
@@ -3920,15 +3930,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/DZ5485-201_1.jpg?v=1783931414",
     "laden": "sneakersnstuff.com",
     "begriff": "dunk"
-   },
-   {
-    "titel": "ASICS Gel Kayano 12.1 - Cocoa Powder / Cream",
-    "preis": 180,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a759-200",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A759_200_SL_LT_GLB.jpg?v=1790063442",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "New Balance 90/60",
