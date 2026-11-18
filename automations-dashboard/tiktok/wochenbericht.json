@@ -1,28 +1,28 @@
 {
- "stand": "2026-11-18T01:16:17.201Z",
+ "stand": "2026-11-18T12:11:04.970Z",
  "gesamt": {
-  "posts": 104,
-  "aufrufe": 26012,
-  "vorherAufrufe": 36691
+  "posts": 101,
+  "aufrufe": 25742,
+  "vorherAufrufe": 36518
  },
  "konten": {
   "@giyuuu sama": {
-   "n": 19,
-   "schnitt": 70,
+   "n": 18,
+   "schnitt": 55,
    "sehdauer": 0,
-   "vorher": 301
+   "vorher": 313
   },
   "@desk.rebel": {
-   "n": 18,
-   "schnitt": 57,
-   "sehdauer": 5,
-   "vorher": 86
+   "n": 17,
+   "schnitt": 60,
+   "sehdauer": 4.9,
+   "vorher": 78
   },
   "@purivelle.785": {
-   "n": 18,
-   "schnitt": 57,
-   "sehdauer": 4,
-   "vorher": 58
+   "n": 17,
+   "schnitt": 65,
+   "sehdauer": 4.1,
+   "vorher": 54
   },
   "@futureflowx3": {
    "n": 17,
@@ -34,7 +34,7 @@
    "n": 16,
    "schnitt": 232,
    "sehdauer": 3.2,
-   "vorher": 70
+   "vorher": 73
   },
   "@futureflowxx": {
    "n": 16,
@@ -46,12 +46,12 @@
  "formate": {
   "quiz": {
    "n": 14,
-   "schnitt": 100,
-   "sehdauer": 1.2
+   "schnitt": 78,
+   "sehdauer": 1.9
   },
   "horror": {
-   "n": 88,
-   "schnitt": 271,
+   "n": 85,
+   "schnitt": 281,
    "sehdauer": 3.5
   },
   "serie": {
@@ -62,9 +62,9 @@
  },
  "muster": {
   "anruf": {
-   "n": 8,
-   "schnitt": 81,
-   "sehdauer": 4.3
+   "n": 4,
+   "schnitt": 145,
+   "sehdauer": 2.5
   },
   "zahl": {
    "n": 3,
@@ -108,7 +108,7 @@
   },
   "wand": {
    "n": 5,
-   "schnitt": 256,
+   "schnitt": 258,
    "sehdauer": 2.1
   },
   "lieferung": {
@@ -157,22 +157,12 @@
    "sehdauer": 3.8
   },
   "akte": {
-   "n": 12,
-   "schnitt": 379,
+   "n": 13,
+   "schnitt": 358,
    "sehdauer": 6.4
   }
  },
  "zeiten": {
-  "nachts": {
-   "n": 37,
-   "schnitt": 207,
-   "sehdauer": 3.6
-  },
-  "vormittags": {
-   "n": 3,
-   "schnitt": 29,
-   "sehdauer": 5.4
-  },
   "nachmittags": {
    "n": 6,
    "schnitt": 27,
@@ -182,6 +172,11 @@
    "n": 58,
    "schnitt": 312,
    "sehdauer": 3
+  },
+  "nachts": {
+   "n": 37,
+   "schnitt": 202,
+   "sehdauer": 3.8
   }
  },
  "top": [
@@ -210,57 +205,57 @@
  "ab": {
   "kalt": {
    "an": {
-    "n": 30,
-    "schnitt": 177,
-    "sehdauer": 4
+    "n": 28,
+    "schnitt": 196,
+    "sehdauer": 3.9
    },
    "aus": {
     "n": 23,
-    "schnitt": 204,
-    "sehdauer": 3.6
+    "schnitt": 237,
+    "sehdauer": 3.4
    }
   },
   "raum": {
    "an": {
-    "n": 33,
-    "schnitt": 160,
+    "n": 32,
+    "schnitt": 171,
     "sehdauer": 3.9
    },
    "aus": {
-    "n": 20,
-    "schnitt": 237,
-    "sehdauer": 3.8
+    "n": 19,
+    "schnitt": 288,
+    "sehdauer": 3.4
    }
   },
   "suchbild": {
    "an": {
     "n": 25,
-    "schnitt": 280,
-    "sehdauer": 4
+    "schnitt": 320,
+    "sehdauer": 3.7
    },
    "aus": {
-    "n": 26,
-    "schnitt": 95,
+    "n": 24,
+    "schnitt": 101,
     "sehdauer": 3.7
    }
   },
   "duhook": {
    "an": {
-    "n": 14,
-    "schnitt": 227,
-    "sehdauer": 4.2
+    "n": 15,
+    "schnitt": 276,
+    "sehdauer": 4.3
    },
    "aus": {
-    "n": 39,
-    "schnitt": 175,
-    "sehdauer": 3.7
+    "n": 36,
+    "schnitt": 189,
+    "sehdauer": 3.5
    }
   },
   "schlag": {
    "an": {
-    "n": 17,
-    "schnitt": 192,
-    "sehdauer": 3.8
+    "n": 19,
+    "schnitt": 225,
+    "sehdauer": 3.9
    },
    "aus": {
     "n": 14,
@@ -270,14 +265,14 @@
   },
   "gestalt": {
    "an": {
-    "n": 12,
-    "schnitt": 218,
-    "sehdauer": 4
+    "n": 13,
+    "schnitt": 221,
+    "sehdauer": 4.1
    },
    "aus": {
-    "n": 14,
-    "schnitt": 151,
-    "sehdauer": 3.6
+    "n": 15,
+    "schnitt": 191,
+    "sehdauer": 3.8
    }
   }
  },
@@ -286,33 +281,36 @@
   "Stärkstes Geschichten-Muster: „spiegel“ (Ø 577) - der Skript-Bot nimmt es automatisch öfter.",
   "Beste Tageszeit: abends (Ø 312).",
   "Ø Sehdauer nur 3.2 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
-  "A/B-Test Du-Hook: mit 4.2 s, ohne 3.7 s Sehdauer - wirkt, bleibt an.",
-  "Sprach-Test YouTube: Deutsch Ø 21 (9) · Englisch Ø 115 (10) - Englisch gewinnt, bekommt jetzt 85 %.",
-  "A/B-Test YouTube raum: mit Ø 177, ohne Ø 235 Aufrufe - bremst, dort meist aus.",
+  "A/B-Test Kalter Einstieg: mit 3.9 s, ohne 3.4 s Sehdauer - wirkt, bleibt an.",
+  "A/B-Test 3D-Ton: mit 3.9 s, ohne 3.4 s Sehdauer - wirkt, bleibt an.",
+  "A/B-Test Du-Hook: mit 4.3 s, ohne 3.5 s Sehdauer - wirkt, bleibt an.",
+  "Sprach-Test YouTube: Deutsch Ø 23 (9) · Englisch Ø 88 (9) - Englisch gewinnt, bekommt jetzt 85 %.",
+  "Sprach-Test desk.rebel: Deutsch Ø 56 (13) · Englisch Ø 71 (4) - noch kein klarer Sieger.",
+  "A/B-Test YouTube raum: mit Ø 178, ohne Ø 236 Aufrufe - bremst, dort meist aus.",
   "A/B-Test YouTube duhook: mit Ø 261, ohne Ø 198 Aufrufe - wirkt, dort meist an.",
-  "A/B-Test YouTube schlag: mit Ø 96, ohne Ø 62 Aufrufe - wirkt, dort meist an.",
-  "A/B-Test YouTube gestalt: mit Ø 9, ohne Ø 106 Aufrufe - bremst, dort meist aus.",
+  "A/B-Test YouTube schlag: mit Ø 99, ohne Ø 62 Aufrufe - wirkt, dort meist an.",
+  "A/B-Test YouTube gestalt: mit Ø 9, ohne Ø 108 Aufrufe - bremst, dort meist aus.",
   "Deckel: @futureflowxx (~727), @futureflowx3 (~719), @zyx_7851 (~252) - fast jedes Video bekommt dort gleich viele Aufrufe. Der Inhalt entscheidet nicht; die Videos kommen nicht über die erste Testrunde hinaus (zu kurz angesehen)."
  ],
  "sprachTest": {
   "de": {
    "n": 9,
-   "schnitt": 21
+   "schnitt": 23
   },
   "en": {
-   "n": 10,
-   "schnitt": 115
+   "n": 9,
+   "schnitt": 88
   }
  },
  "sprachTests": {
   "desk.rebel": {
    "de": {
-    "n": 14,
-    "schnitt": 55
+    "n": 13,
+    "schnitt": 56
    },
    "en": {
-    "n": 3,
-    "schnitt": 83
+    "n": 4,
+    "schnitt": 71
    }
   }
  },
@@ -320,7 +318,7 @@
   "kalt": {
    "an": {
     "n": 25,
-    "schnitt": 199
+    "schnitt": 200
    },
    "aus": {
     "n": 20,
@@ -330,11 +328,11 @@
   "raum": {
    "an": {
     "n": 16,
-    "schnitt": 177
+    "schnitt": 178
    },
    "aus": {
     "n": 29,
-    "schnitt": 235
+    "schnitt": 236
    }
   },
   "suchbild": {
@@ -360,7 +358,7 @@
   "schlag": {
    "an": {
     "n": 8,
-    "schnitt": 96
+    "schnitt": 99
    },
    "aus": {
     "n": 5,
@@ -374,7 +372,7 @@
    },
    "aus": {
     "n": 8,
-    "schnitt": 106
+    "schnitt": 108
    }
   }
  },
@@ -416,10 +414,10 @@
   },
   {
    "trick": "Zahl im ersten Satz",
-   "n": 52,
+   "n": 53,
    "faktor": 1,
    "ohne": 1,
-   "ueber": 50
+   "ueber": 51
   },
   {
    "trick": "Ich-Erzählung (Ich/Mein …)",
@@ -437,17 +435,17 @@
   },
   {
    "trick": "Technik (Handy, Kamera, App …)",
-   "n": 65,
+   "n": 66,
    "faktor": 1,
    "ohne": 1,
-   "ueber": 43
+   "ueber": 44
   },
   {
    "trick": "Zuhause (Wohnung, Bett, Tür)",
-   "n": 40,
+   "n": 41,
    "faktor": 1,
    "ohne": 1,
-   "ueber": 48
+   "ueber": 46
   },
   {
    "trick": "Aufzug",
@@ -466,23 +464,23 @@
  ],
  "deckel": {
   "@giyuuu sama": {
-   "posts": 32,
-   "tot": 2,
-   "median": 61,
+   "posts": 31,
+   "tot": 1,
+   "median": 55,
    "hoechst": 553,
    "gedeckelt": false
   },
   "@desk.rebel": {
-   "posts": 30,
+   "posts": 29,
    "tot": 2,
-   "median": 52,
+   "median": 44,
    "hoechst": 140,
    "gedeckelt": false
   },
   "@purivelle.785": {
-   "posts": 30,
+   "posts": 29,
    "tot": 3,
-   "median": 45,
+   "median": 44,
    "hoechst": 145,
    "gedeckelt": false
   },
@@ -510,11 +508,11 @@
  },
  "vorrat": {
   "de": {
-   "rest": 170,
+   "rest": 168,
    "tage": 18
   },
   "en": {
-   "rest": 94,
+   "rest": 93,
    "tage": 9
   }
  }
