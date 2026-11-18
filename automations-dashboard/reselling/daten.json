@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-18T03:34:24.194Z",
+ "stand": "2026-11-18T03:37:21.004Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -199,7 +199,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-18T03:22:27.309Z",
+  "stand": "2026-11-18T03:37:23.201Z",
   "filialen": 148,
   "produkte": [
    {
@@ -232,7 +232,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 6
+      "menge": 20
      },
      {
       "name": "dm Frankfurt am Main",
@@ -314,7 +314,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 60
+      "menge": 59
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -486,7 +486,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Hochheim am Main",
@@ -589,14 +589,6 @@
       "menge": 4
      },
      {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
-     },
-     {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
@@ -634,7 +626,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 7
+      "menge": 6
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -643,6 +635,14 @@
       "lat": 49.984061,
       "lon": 8.430174,
       "menge": 10
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 6
      }
     ]
    },
@@ -697,14 +697,6 @@
       "menge": 12
      },
      {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 1
-     },
-     {
       "name": "dm Flörsheim am Main",
       "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
       "km": 7.4,
@@ -735,32 +727,32 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 3
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 2
      }
     ]
    },
    {
-    "dan": "3118151",
-    "name": "trend !t up Adventskalender 2026 Days of Glow, 24 St",
-    "preis": 28.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784673576/assets/pas/images/9f3e9b87-6c3d-477b-99f0-25fa0632aac5/trend-t-up-adventskalender-2026-days-of-glow",
-    "link": "https://www.dm.de/p/d/3118151/trend-t-up-adventskalender-2026-days-of-glow",
+    "dan": "3118148",
+    "name": "Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
+    "preis": 24.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
+    "link": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
     "begriff": "adventskalender",
     "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 12
-     },
      {
       "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 7
+      "menge": 1
      },
      {
       "name": "dm Kelsterbach",
@@ -768,7 +760,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 6
+      "menge": 3
      },
      {
       "name": "dm Frankfurt am Main",
@@ -776,23 +768,7 @@
       "km": 5.6,
       "lat": 50.1014043,
       "lon": 8.5485073,
-      "menge": 15
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 26
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 7
+      "menge": 3
      },
      {
       "name": "dm Flörsheim am Main",
@@ -800,7 +776,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 15
+      "menge": 13
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -808,7 +784,31 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 3
+      "menge": 5
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 9
+     },
+     {
+      "name": "dm Mörfelden-Walldorf",
+      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
+      "km": 9.6,
+      "lat": 50.0122615,
+      "lon": 8.5865417,
+      "menge": 5
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 7
      }
     ]
    },
@@ -2582,20 +2582,20 @@
     "begriff": "samba"
    },
    {
-    "titel": "59Fifty Cap",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-era-x-neighborhood-59fifty-cap-261nenen-ht01-black",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/261NENEN-HT01-BK_1.jpg?v=1780656019",
-    "laden": "overkillshop.com",
-    "begriff": "new era"
-   },
-   {
     "titel": "59Fifty Low Profile / Cap / Poly. Twill.",
     "preis": 99,
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-era-x-wtaps-59fifty-low-profile-cap-poly-twill-261nened-ht02-charcoal",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/261NENED-HT02_1.jpg?v=1789476810",
+    "laden": "overkillshop.com",
+    "begriff": "new era"
+   },
+   {
+    "titel": "59Fifty Cap",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-era-x-neighborhood-59fifty-cap-261nenen-ht01-black",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/261NENEN-HT01-BK_1.jpg?v=1780656019",
     "laden": "overkillshop.com",
     "begriff": "new era"
    },
@@ -2643,15 +2643,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A275-103_01.jpg?v=1770746761",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "Book 2 SP",
-    "preis": 105,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-2-sp-iq0050-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ0050-001-1.jpg?v=1770121671",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
    },
    {
     "titel": "Book 1 \"Solar Red\"",
@@ -2767,6 +2758,15 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/nike-air-max-plus-vii-hq2197-002",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HQ2197-002_01.jpg?v=1773912286",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
+   },
+   {
+    "titel": "Air Max 95 OG \"Slate\"",
+    "preis": 114,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH7855-100_01.jpg?v=1777549236",
     "laden": "sneakersnstuff.com",
     "begriff": "dunk"
    },
@@ -2960,15 +2960,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Book 2 NRG \"WNBA 30th\"",
-    "preis": 128,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-2-nrg-wnba-30th-ir6333-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR6333-100_01.jpg?v=1778490795",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Samba OG",
     "preis": 129,
     "verfuegbar": true,
@@ -3048,6 +3039,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U18905UY_1.jpg?v=1778826998",
     "laden": "overkillshop.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Air Max Plus VII",
+    "preis": 133,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-max-plus-vii-iq0282-084",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ0282-084-1.jpg?v=1769684296",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Asics GEL-NYC",
@@ -3284,15 +3284,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Women's Air Jordan 4 Retro \"Iced Carmine\"",
-    "preis": 168,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-womens-air-jordan-4-retro-iced-carmine-ib6716-600",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IB6716-600_01.jpg?v=1778164149",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Asics GEL-Kayano 14",
     "preis": 169,
     "verfuegbar": true,
@@ -3407,7 +3398,7 @@
     "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-1-retro-high-og-love-letter-dz5485-201",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/DZ5485-201_1.jpg?v=1783931414",
     "laden": "sneakersnstuff.com",
-    "begriff": "jordan"
+    "begriff": "dunk"
    },
    {
     "titel": "New Balance 90/60",
@@ -3453,6 +3444,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-moonbeam-silver-metallic-driftwood-sea-salt-u9060erm-footwear_20_3E_20sneaker.jpg?v=1794563768",
     "laden": "afew-store.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Air Max 95 OG \"Pink Foam\"",
+    "preis": 190,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-pink-foam-hj5996-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HJ5996-001_1.jpg?v=1776939941",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Giorgio Armani & Ronnie Fieg for '47 Duck Canvas Classic Cap - Blue Navy",
@@ -3541,6 +3541,15 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-8-retro-chrome-305381-007",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/305381-007_01.jpg?v=1785766511",
+    "laden": "sneakersnstuff.com",
+    "begriff": "jordan"
+   },
+   {
+    "titel": "Air Jordan 3 Retro \"True Blue\"",
+    "preis": 210,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-true-blue-if4396-104",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IF4396-104_01.jpg?v=1783592529",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
