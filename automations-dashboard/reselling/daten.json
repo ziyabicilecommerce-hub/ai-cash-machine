@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-18T17:52:10.182Z",
+ "stand": "2026-11-18T17:55:19.480Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -2592,15 +2592,11 @@
   "ware": [],
   "top": [
    {
+    "titel": "priester",
+    "menge": "1000+"
+   },
+   {
     "titel": "mariah carey",
-    "menge": "200+"
-   },
-   {
-    "titel": "the game awards",
-    "menge": "500+"
-   },
-   {
-    "titel": "ina paule klink",
     "menge": "200+"
    },
    {
@@ -2608,12 +2604,20 @@
     "menge": "200+"
    },
    {
-    "titel": "lieblingsmenschen",
+    "titel": "ina paule klink",
+    "menge": "200+"
+   },
+   {
+    "titel": "the game awards",
     "menge": "500+"
    },
    {
     "titel": "ursula von der leyen",
     "menge": "200+"
+   },
+   {
+    "titel": "lieblingsmenschen",
+    "menge": "500+"
    },
    {
     "titel": "ps4",
@@ -2626,10 +2630,6 @@
    {
     "titel": "dürre",
     "menge": "100+"
-   },
-   {
-    "titel": "lou jeanmonnot",
-    "menge": "500+"
    }
   ]
  },
@@ -2681,20 +2681,20 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Kith Script Two Tone Classic Cap - Canvas",
-    "preis": 60,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050250-210",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050250-210-Detail.jpg?v=1787695610",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
     "preis": 60,
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/khm051153-413",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051153-413-Front.jpg?v=1755618413",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
+    "titel": "Kith Script Two Tone Classic Cap - Canvas",
+    "preis": 60,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khma050250-210",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050250-210-Detail.jpg?v=1787695610",
     "laden": "kith.com",
     "begriff": "cap"
    },
@@ -2726,6 +2726,15 @@
     "begriff": "cap"
    },
    {
+    "titel": "Kith & '47 for the New York Yankees Franchise LS Cap - Navy",
+    "preis": 64,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khm051547-413",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051547-413-Front.jpg?v=1772131115",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
     "titel": "Dunk Low Retro Premium",
     "preis": 65,
     "verfuegbar": true,
@@ -2742,15 +2751,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/978oewsxluo-IB7746-200_Nike_Dunk-Low-Retro-Premium-Corduroy-Light-British-Tan-Light-British-Tan_os-1.jpg?v=1768918070",
     "laden": "asphaltgold.com",
     "begriff": "dunk"
-   },
-   {
-    "titel": "Kith & '47 for the New York Yankees Washed Suede Franchise LS Cap - Torpedo",
-    "preis": 74,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khm051390-402",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051390-402-Front.jpg?v=1787167609",
-    "laden": "kith.com",
-    "begriff": "cap"
    },
    {
     "titel": "Consortium Pant",
@@ -2882,8 +2882,8 @@
     "titel": "adidas Originals SAMBA OG",
     "preis": 95.99,
     "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-nindig-warvan-gum2",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-nindig-warvan-gum2-kk2273-footwear_20_3E_20sneaker.jpg?v=1782197486",
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-tmvire-ftwwht-gum2",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-tmvire-ftwwht-gum2-kj2788-footwear_20_3E_20sneaker.jpg?v=1781618070",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
@@ -3392,24 +3392,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "New Balance 204L - Timberwolf / Linen",
-    "preis": 140,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu204lmmc",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU204LMMC-Detail.jpg?v=1792446731",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 142.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-breakfast-tea-angora",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-breakfast-tea-angora-u90603eg-footwear_20_3E_20sneaker.jpg?v=1787225787",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Air Jordan 1 High OG 'Royal'",
     "preis": 143.99,
     "verfuegbar": true,
@@ -3417,6 +3399,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1795011553",
     "laden": "afew-store.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "New Balance 9060",
+    "preis": 144.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-pistachio-butter-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-pistachio-butter-angora-u906072n-footwear_20_3E_20sneaker.jpg?v=1789993966",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 3 Retro OG \"World's Best Dad\"",
@@ -3518,20 +3509,20 @@
     "begriff": "asics"
    },
    {
-    "titel": "New Balance 9060",
-    "preis": 151.99,
+    "titel": "ASICS Gel-Cumulus 16 - Cinnamon / Pure Silver",
+    "preis": 150,
     "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-slate-grey-black",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-slate-grey-black-u90605su-footwear_20_3E_20sneaker.jpg?v=1792057221",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
+    "url": "https://eu.kith.com/products/ai1203a733-200",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A733_200_SR_RT_GLB.jpg?v=1770997273",
+    "laden": "kith.com",
+    "begriff": "asics"
    },
    {
     "titel": "New Balance 9060",
     "preis": 151.99,
     "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-turtledove-slate-grey",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-turtledove-slate-grey-u906016y-footwear_20_3E_20sneaker.jpg?v=1792141172",
+    "url": "https://afew-store.com/products/new-balance-9060-slate-grey-black",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-slate-grey-black-u90605su-footwear_20_3E_20sneaker.jpg?v=1792057221",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
@@ -3608,6 +3599,15 @@
     "begriff": "jordan"
    },
    {
+    "titel": "New Balance 9060",
+    "preis": 162.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-timberwolf",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-u9060152-footwear_20_3E_20sneaker.jpg?v=1781855495",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Women's Air Jordan 4 Retro \"Iced Carmine\"",
     "preis": 168,
     "verfuegbar": true,
@@ -3680,15 +3680,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS Gel Kayano 14 - Carrier Grey / Black",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-026",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A537_026_SR_RT_GLB.jpg?v=1790256109",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
     "preis": 170,
     "verfuegbar": true,
@@ -3698,11 +3689,11 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS GEL-KAYANO 14 - Black / Cream",
+    "titel": "ASICS Gel Kayano 14 - Carrier Grey / Black",
     "preis": 170,
     "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-002",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-002AsicsGel-Kayano14BlackCream_183.jpg?v=1787154085",
+    "url": "https://eu.kith.com/products/asi1203a537-026",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A537_026_SR_RT_GLB.jpg?v=1790256109",
     "laden": "kith.com",
     "begriff": "asics"
    },
@@ -3788,20 +3779,20 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Duck Canvas Classic Cap - Blue Navy",
-    "preis": 195,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050223-5114",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050223-5114-Detail.jpg?v=1791551538",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Giorgio Armani & Ronnie Fieg for '47 Wool Deconstructed Franchise LS Fitted Cap - Black",
     "preis": 195,
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/khma050222-001",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050222-001-Detail.jpg?v=1791551534",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
+    "titel": "Giorgio Armani & Ronnie Fieg for '47 Duck Canvas Classic Cap - Blue Navy",
+    "preis": 195,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khma050223-5114",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050223-5114-Detail.jpg?v=1791551538",
     "laden": "kith.com",
     "begriff": "cap"
    },
@@ -3941,6 +3932,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "New Balance x Action Bronson 1890 - Blue / Grey",
+    "preis": 210,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu18908bn",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU18908BNNewBalanceActionBronson1890Blue_0381.jpg?v=1770653222",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Air Jordan 14 Retro",
     "preis": 219.99,
     "verfuegbar": true,
@@ -3955,6 +3955,15 @@
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/nbu990tk4",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU990TK4-Front.jpg?v=1777988030",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "Kith & New Balance Made in USA 993 - Asteroid",
+    "preis": 220,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu993hk",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/NBU993HK-Front.jpg?v=1777988030",
     "laden": "kith.com",
     "begriff": "new balance"
    },
@@ -4072,15 +4081,6 @@
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/nbu992ne",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u992ne_nb_02_i.jpg?v=1790595700",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance x Salehe Bembury Made in USA 992 - Green / Blue",
-    "preis": 250,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu992sb",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/salehe-bembury-new-balance-992-3.jpg?v=1771234389",
     "laden": "kith.com",
     "begriff": "new balance"
    }
