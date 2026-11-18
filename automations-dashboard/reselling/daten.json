@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-18T18:04:16.772Z",
+ "stand": "2026-11-18T18:07:17.716Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "deal:https://www.overkillshop.com/products/air-jordan-3-retro-true-blue-if4396-104-white-fire-red-true-blue",
+   "art": "Deal",
+   "titel": "💰 Deal: Air Jordan 3 Retro für 180,00 €",
+   "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IF4396-104_1.jpg?v=1785500585",
+   "link": "https://www.overkillshop.com/products/air-jordan-3-retro-true-blue-if4396-104-white-fire-red-true-blue",
+   "text": "overkillshop.com · Air Jordan 3 Retro True Blue\nVerkauf ca. 200–290 € → Gewinn ca. +35,50 € (ROI 20 %)\nGröße prüfen, vorher verkaufte Preise checken.",
+   "zeit": "2026-11-18T18:07:17.716Z"
+  },
   {
    "schluessel": "filiale:3118686:2292",
    "art": "Filiale",
@@ -189,19 +198,10 @@
    "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
    "text": "44,95 € · dm Sulzbach (Taunus) (6,3 km) · 1 Stück\nMain-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)\nIm Umkreis in 17 Filiale(n) vorrätig.",
    "zeit": "2026-11-18T00:51:59.798Z"
-  },
-  {
-   "schluessel": "karte:me05-118",
-   "art": "Karte",
-   "titel": "🚨 STRONG BUY: Gladios Finalkampf",
-   "bild": "https://assets.tcgdex.net/de/me/me05/118/low.webp",
-   "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gladios%20Finalkampf",
-   "text": "Kaufen ab 9,00 € · Ziel 19,25 € · +7,79 € nach Gebühren (ROI 87 %)",
-   "zeit": "2026-11-17T23:45:21.319Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-18T17:52:13.033Z",
+  "stand": "2026-11-18T18:07:21.481Z",
   "filialen": 148,
   "produkte": [
    {
@@ -332,7 +332,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 21
+      "menge": 22
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -649,15 +649,6 @@
     ]
    },
    {
-    "dan": "3135931",
-    "name": "MOGLi Adventskalender 2026 wachse wild, 1 St",
-    "preis": 29.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1788990901/assets/pas/images/bf5bb363-984b-472d-9828-32e73c5cb0cf/mogli-adventskalender-2026-wachse-wild",
-    "link": "https://www.dm.de/p/d/3135931/mogli-adventskalender-2026-wachse-wild",
-    "begriff": "adventskalender",
-    "vorrat": []
-   },
-   {
     "dan": "3135831",
     "name": "NÉONAIL Adventskalender 2026 Touch Of Magic, 1 St",
     "preis": 59.95,
@@ -811,6 +802,80 @@
       "lat": 50.1401538,
       "lon": 8.5824016,
       "menge": 6
+     }
+    ]
+   },
+   {
+    "dan": "3118151",
+    "name": "trend !t up Adventskalender 2026 Days of Glow, 24 St",
+    "preis": 28.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784673576/assets/pas/images/9f3e9b87-6c3d-477b-99f0-25fa0632aac5/trend-t-up-adventskalender-2026-days-of-glow",
+    "link": "https://www.dm.de/p/d/3118151/trend-t-up-adventskalender-2026-days-of-glow",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 12
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 7
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 6
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 15
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 26
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 6
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 15
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 3
      }
     ]
    },
@@ -2681,20 +2746,20 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
-    "preis": 60,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khm051153-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051153-413-Front.jpg?v=1755618413",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Kith Script Two Tone Classic Cap - Canvas",
     "preis": 60,
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/khma050250-210",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050250-210-Detail.jpg?v=1787695610",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
+    "titel": "Kith Twill Two Tone New York Script Aaron Classic Cap - Nocturnal",
+    "preis": 60,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khm051153-413",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051153-413-Front.jpg?v=1755618413",
     "laden": "kith.com",
     "begriff": "cap"
    },
@@ -2726,15 +2791,6 @@
     "begriff": "cap"
    },
    {
-    "titel": "Kith & '47 for the New York Yankees Franchise LS Cap - Navy",
-    "preis": 64,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khm051547-413",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051547-413-Front.jpg?v=1772131115",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Dunk Low Retro Premium",
     "preis": 65,
     "verfuegbar": true,
@@ -2751,6 +2807,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/978oewsxluo-IB7746-200_Nike_Dunk-Low-Retro-Premium-Corduroy-Light-British-Tan-Light-British-Tan_os-1.jpg?v=1768918070",
     "laden": "asphaltgold.com",
     "begriff": "dunk"
+   },
+   {
+    "titel": "Kith & '47 for the New York Yankees Washed Suede Franchise LS Cap - Torpedo",
+    "preis": 74,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khm051390-402",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHM051390-402-Front.jpg?v=1787167609",
+    "laden": "kith.com",
+    "begriff": "cap"
    },
    {
     "titel": "Consortium Pant",
@@ -2882,8 +2947,8 @@
     "titel": "adidas Originals SAMBA OG",
     "preis": 95.99,
     "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-nindig-warvan-gum2",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-nindig-warvan-gum2-kk2273-footwear_20_3E_20sneaker.jpg?v=1782197486",
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-tmvire-ftwwht-gum2",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-tmvire-ftwwht-gum2-kj2788-footwear_20_3E_20sneaker.jpg?v=1781618070",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
@@ -2915,20 +2980,20 @@
     "begriff": "samba"
    },
    {
-    "titel": "59Fifty Low Profile / Cap / Poly. Twill.",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-era-x-wtaps-59fifty-low-profile-cap-poly-twill-261nened-ht02-charcoal",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/261NENED-HT02_1.jpg?v=1789476810",
-    "laden": "overkillshop.com",
-    "begriff": "new era"
-   },
-   {
     "titel": "59Fifty Cap",
     "preis": 99,
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-era-x-neighborhood-59fifty-cap-261nenen-ht01-black",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/261NENEN-HT01-BK_1.jpg?v=1780656019",
+    "laden": "overkillshop.com",
+    "begriff": "new era"
+   },
+   {
+    "titel": "59Fifty Low Profile / Cap / Poly. Twill.",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-era-x-wtaps-59fifty-low-profile-cap-poly-twill-261nened-ht02-charcoal",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/261NENED-HT02_1.jpg?v=1789476810",
     "laden": "overkillshop.com",
     "begriff": "new era"
    },
@@ -2967,6 +3032,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-auco-bursie-kj2396-footwear_20_3E_20sneaker.jpg?v=1789371273",
     "laden": "afew-store.com",
     "begriff": "samba"
+   },
+   {
+    "titel": "Nike Dunk Low Retro Premium",
+    "preis": 104,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/nike-dunk-low-retro-premium-cargo-khaki-medium-olive-sequoia-cargo-khaki",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/chdxm0waki-IB7746-300_Nike_Dunk-Low-Retro-Premium-Cargo-Khaki-Medium-Olive-Sequoia-Cargo-Khaki_os-1.jpg?v=1788954624",
+    "laden": "asphaltgold.com",
+    "begriff": "dunk"
    },
    {
     "titel": "GT-2160",
@@ -3057,6 +3131,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_100_SR_RT_GLB.jpg?v=1780992734",
     "laden": "kith.com",
     "begriff": "asics"
+   },
+   {
+    "titel": "Nike DUNK LOW RETRO PRM QS",
+    "preis": 111.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/nike-dunk-low-retro-prm-qs-black-black-black",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/nike-dunk-low-retro-prm-qs-black-black-black-iq3342-001-footwear_20_3E_20sneaker.jpg?v=1763939466",
+    "laden": "afew-store.com",
+    "begriff": "dunk"
    },
    {
     "titel": "adidas Originals SAMBA OG",
@@ -3185,15 +3268,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "Nike Dunk Low",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/nike-dunk-low-anthracite-pure-platinum-cool-grey",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/0aq6hmocnb0g-FV0384-001_Nike_Dunk-Low-Anthracite-Pure-Platinum-Cool-Grey_os-1.jpg?v=1793960851",
-    "laden": "asphaltgold.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "Adidas Samba OG",
     "preis": 119,
     "verfuegbar": true,
@@ -3226,15 +3300,6 @@
     "verfuegbar": true,
     "url": "https://www.asphaltgold.com/products/new-balance-u740wn2-nb-navy-white-shadow-grey-silver-metallic",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/wmDp6cxLI8iptptrTMvA_U740WN2-New-Balance-U740WN2-_28NB-Navy-White-Shadow-Grey-Silver-Metallic-OS-1.jpg?v=1734627712",
-    "laden": "asphaltgold.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance 740",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/new-balance-740-sea-salt-angora",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/2lcq547w0ur-U74071J_New-Balance_740-Sea-Salt-Angora_os-1.jpg?v=1790607690",
     "laden": "asphaltgold.com",
     "begriff": "new balance"
    },
@@ -3374,6 +3439,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "New Balance 90/60",
+    "preis": 138,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/new-balance-9060-driftwood",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/dx9vnpx0xno-U90608AP_New-Balance_U90-608AP-Driftwood_os-1.jpg?v=1784631922",
+    "laden": "asphaltgold.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Dunk Low",
     "preis": 139,
     "verfuegbar": true,
@@ -3392,15 +3466,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "New Balance 9060",
-    "preis": 142.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-breakfast-tea-angora",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-breakfast-tea-angora-u90603eg-footwear_20_3E_20sneaker.jpg?v=1787225787",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "Air Jordan 1 High OG 'Royal'",
     "preis": 143.99,
     "verfuegbar": true,
@@ -3408,6 +3473,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1795011553",
     "laden": "afew-store.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "New Balance 9060",
+    "preis": 144.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-pistachio-butter-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-pistachio-butter-angora-u906072n-footwear_20_3E_20sneaker.jpg?v=1789993966",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 3 Retro OG \"World's Best Dad\"",
@@ -3491,15 +3565,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "Gel-Cumulus 16",
-    "preis": 150,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-002",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-002_01.jpg?v=1771589255",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "ASICS GEL-NYC - Black Coffee / Sepia Brown",
     "preis": 150,
     "verfuegbar": true,
@@ -3518,29 +3583,11 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS Gel-Cumulus 16 - Cinnamon / Pure Silver",
-    "preis": 150,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a733-200",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A733_200_SR_RT_GLB.jpg?v=1770997273",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "New Balance 9060",
     "preis": 151.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-slate-grey-black",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-slate-grey-black-u90605su-footwear_20_3E_20sneaker.jpg?v=1792057221",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 151.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-turtledove-slate-grey",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-turtledove-slate-grey-u906016y-footwear_20_3E_20sneaker.jpg?v=1792141172",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
@@ -3617,6 +3664,15 @@
     "begriff": "jordan"
    },
    {
+    "titel": "New Balance 9060",
+    "preis": 162.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-timberwolf",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-u9060152-footwear_20_3E_20sneaker.jpg?v=1781855495",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Women's Air Jordan 4 Retro \"Iced Carmine\"",
     "preis": 168,
     "verfuegbar": true,
@@ -3674,9 +3730,27 @@
     "titel": "Gel-Kayano 14",
     "preis": 170,
     "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-kayano-14-1203a537-118",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A537-118_01.jpg?v=1780653236",
+    "laden": "sneakersnstuff.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "Gel-Kayano 14",
+    "preis": 170,
+    "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-kayano-14-1203a537-002",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A537-002_01.jpg?v=1780653193",
     "laden": "sneakersnstuff.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS Gel Kayano 14 - Carrier Grey / Black",
+    "preis": 170,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a537-026",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A537_026_SR_RT_GLB.jpg?v=1790256109",
+    "laden": "kith.com",
     "begriff": "asics"
    },
    {
@@ -3689,11 +3763,11 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS Gel Kayano 14 - Carrier Grey / Black",
+    "titel": "ASICS GEL-KAYANO 14 - Black / Cream",
     "preis": 170,
     "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-026",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A537_026_SR_RT_GLB.jpg?v=1790256109",
+    "url": "https://eu.kith.com/products/asi1203a537-002",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-002AsicsGel-Kayano14BlackCream_183.jpg?v=1787154085",
     "laden": "kith.com",
     "begriff": "asics"
    },
@@ -3779,20 +3853,20 @@
     "begriff": "new balance"
    },
    {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Wool Deconstructed Franchise LS Fitted Cap - Black",
-    "preis": 195,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050222-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050222-001-Detail.jpg?v=1791551534",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Giorgio Armani & Ronnie Fieg for '47 Duck Canvas Classic Cap - Blue Navy",
     "preis": 195,
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/khma050223-5114",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050223-5114-Detail.jpg?v=1791551538",
+    "laden": "kith.com",
+    "begriff": "cap"
+   },
+   {
+    "titel": "Giorgio Armani & Ronnie Fieg for '47 Wool Deconstructed Franchise LS Fitted Cap - Black",
+    "preis": 195,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/khma050222-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050222-001-Detail.jpg?v=1791551534",
     "laden": "kith.com",
     "begriff": "cap"
    },
@@ -3883,15 +3957,6 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-true-blue-if4396-104",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IF4396-104_01.jpg?v=1783592529",
-    "laden": "sneakersnstuff.com",
-    "begriff": "jordan"
-   },
-   {
-    "titel": "Air Jordan 3 Retro \"Fireside\"",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-fireside-ck9246-200",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CK9246-200_01.jpg?v=1791969600",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
