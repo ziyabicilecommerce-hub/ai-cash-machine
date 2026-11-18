@@ -5,9 +5,10 @@ name: "🎮 GTA-6-Kanal (@futureflowx3, abends + nachts)"
 # kein Rockstar-Material). Gepostete Videos erkennt er am Release "gta6-<slug>". Neue Videos = neue Einträge in gta6.mjs.
 
 on:
-  schedule:
-    - cron: '27 18 * * *'  # ~19:27 Uhr Berlin
-    - cron: '27 1 * * *'   # ~02:27 Uhr Berlin (Nacht-Posts holten bei uns die meisten Aufrufe)
+  # PAUSIERT (18.11., Nutzer: "nicht unsere eigenen Trailer"): wieder an = die drei Zeilen einkommentieren.
+  # schedule:
+  #   - cron: '27 18 * * *'  # ~19:27 Uhr Berlin
+  #   - cron: '27 1 * * *'   # ~02:27 Uhr Berlin
   workflow_dispatch:
     inputs:
       posten:
