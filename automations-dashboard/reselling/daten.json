@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-19T06:18:45.961Z",
+ "stand": "2026-11-19T06:21:44.822Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -2684,6 +2684,10 @@
   "ware": [],
   "top": [
    {
+    "titel": "van gogh",
+    "menge": "100+"
+   },
+   {
     "titel": "rock hard festival",
     "menge": "100+"
    },
@@ -2692,11 +2696,11 @@
     "menge": "100+"
    },
    {
-    "titel": "radio bielefeld",
+    "titel": "thời tiết",
     "menge": "100+"
    },
    {
-    "titel": "thời tiết",
+    "titel": "radio bielefeld",
     "menge": "100+"
    },
    {
@@ -2705,7 +2709,11 @@
    },
    {
     "titel": "времето",
-    "menge": "200+"
+    "menge": "500+"
+   },
+   {
+    "titel": "lakers vs jazz",
+    "menge": "100+"
    },
    {
     "titel": "cavaliers – grizzlies",
@@ -2714,14 +2722,6 @@
    {
     "titel": "x y ungelöst",
     "menge": "10000+"
-   },
-   {
-    "titel": "keyonte george",
-    "menge": "100+"
-   },
-   {
-    "titel": "καιρόσ",
-    "menge": "200+"
    }
   ]
  },
@@ -2962,15 +2962,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "adidas Originals SAMBA OG",
-    "preis": 95.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-nindig-warvan-gum2",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-nindig-warvan-gum2-kk2273-footwear_20_3E_20sneaker.jpg?v=1782197486",
-    "laden": "afew-store.com",
-    "begriff": "samba"
-   },
-   {
     "titel": "Adidas Samba OG W",
     "preis": 96,
     "verfuegbar": true,
@@ -3151,15 +3142,6 @@
     "begriff": "dunk"
    },
    {
-    "titel": "Air Max 95 OG \"Slate\"",
-    "preis": 114,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH7855-100_01.jpg?v=1777549236",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
-   },
-   {
     "titel": "New Balance 509",
     "preis": 116,
     "verfuegbar": true,
@@ -3311,6 +3293,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/wmDp6cxLI8iptptrTMvA_U740WN2-New-Balance-U740WN2-_28NB-Navy-White-Shadow-Grey-Silver-Metallic-OS-1.jpg?v=1734627712",
     "laden": "asphaltgold.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 119.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-carbon-warvan-gum5",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-carbon-warvan-gum5-kk2268-footwear_20_3E_20sneaker.jpg?v=1783936471",
+    "laden": "afew-store.com",
+    "begriff": "samba"
    },
    {
     "titel": "U201079X",
@@ -3490,6 +3481,15 @@
     "url": "https://www.overkillshop.com/products/air-jordan-1-mid-banned-554724-074-black-gym-red-white",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/554724-074-01.jpg?v=1774952882",
     "laden": "overkillshop.com",
+    "begriff": "jordan"
+   },
+   {
+    "titel": "Air Jordan 11 Retro Low \"University Blue\"",
+    "preis": 140,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-11-retro-low-university-blue-fv5104-100",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/FV5104-100_01.jpg?v=1776673410",
+    "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
    {
@@ -3799,20 +3799,20 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS Gel Kayano 14 - Carrier Grey / Black",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-026",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A537_026_SR_RT_GLB.jpg?v=1790256109",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
     "preis": 170,
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/asi1203a537-118",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS Gel Kayano 14 - Carrier Grey / Black",
+    "preis": 170,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a537-026",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A537_026_SR_RT_GLB.jpg?v=1790256109",
     "laden": "kith.com",
     "begriff": "asics"
    },
@@ -4006,15 +4006,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Air Jordan 3 Retro \"Fireside\"",
-    "preis": 210,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-fireside-ck9246-200",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CK9246-200_01.jpg?v=1791969600",
-    "laden": "sneakersnstuff.com",
-    "begriff": "jordan"
-   },
-   {
     "titel": "Air Jordan 5 Retro \"Sunset\"",
     "preis": 210,
     "verfuegbar": true,
@@ -4022,6 +4013,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV5678-102_01.jpg?v=1785762646",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "Air Max Plus SP x One Piece \"Ope Ope\"",
+    "preis": 210,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-max-plus-sp-x-one-piece-ope-ope-iw1282-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IW1282-600_01_5de60272-5d1c-4e0a-8414-7f3e2e0be140.jpg?v=1789998227",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Ronnie Fieg & New Balance 2011 - Chocolate Truffle / Sepia Rose",
