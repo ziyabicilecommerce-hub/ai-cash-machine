@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-19T06:30:48.592Z",
+ "stand": "2026-11-19T06:33:50.601Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -2674,47 +2674,53 @@
   "stand": "2026-11-19T06:18:36.386Z"
  },
  "trends": {
-  "ware": [],
+  "ware": [
+   {
+    "titel": "nike",
+    "menge": "500+",
+    "kategorie": "Sneaker"
+   }
+  ],
   "top": [
+   {
+    "titel": "meg ryan",
+    "menge": "200+"
+   },
+   {
+    "titel": "nike",
+    "menge": "500+"
+   },
+   {
+    "titel": "weltreligion",
+    "menge": "100+"
+   },
+   {
+    "titel": "weer",
+    "menge": "100+"
+   },
    {
     "titel": "van gogh",
     "menge": "100+"
    },
    {
-    "titel": "rock hard festival",
-    "menge": "100+"
+    "titel": "anthropic stock",
+    "menge": "200+"
    },
    {
     "titel": "nginx cve",
     "menge": "100+"
    },
    {
+    "titel": "radio bielefeld",
+    "menge": "200+"
+   },
+   {
+    "titel": "rock hard festival",
+    "menge": "100+"
+   },
+   {
     "titel": "thời tiết",
     "menge": "100+"
-   },
-   {
-    "titel": "radio bielefeld",
-    "menge": "100+"
-   },
-   {
-    "titel": "stonewars",
-    "menge": "100+"
-   },
-   {
-    "titel": "времето",
-    "menge": "500+"
-   },
-   {
-    "titel": "lakers vs jazz",
-    "menge": "100+"
-   },
-   {
-    "titel": "cavaliers – grizzlies",
-    "menge": "100+"
-   },
-   {
-    "titel": "x y ungelöst",
-    "menge": "10000+"
    }
   ]
  },
@@ -3162,6 +3168,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 117.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-focoli-owhite-gum4",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-focoli-owhite-gum4-kk3275-footwear_20_3E_20sneaker.jpg?v=1782287002",
+    "laden": "afew-store.com",
+    "begriff": "samba"
+   },
+   {
     "titel": "Air Force 1 '07",
     "preis": 119,
     "verfuegbar": true,
@@ -3286,15 +3301,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/wmDp6cxLI8iptptrTMvA_U740WN2-New-Balance-U740WN2-_28NB-Navy-White-Shadow-Grey-Silver-Metallic-OS-1.jpg?v=1734627712",
     "laden": "asphaltgold.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "adidas Originals SAMBA OG",
-    "preis": 119.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-carbon-warvan-gum5",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-carbon-warvan-gum5-kk2268-footwear_20_3E_20sneaker.jpg?v=1783936471",
-    "laden": "afew-store.com",
-    "begriff": "samba"
    },
    {
     "titel": "U201079X",
@@ -3783,20 +3789,20 @@
     "begriff": "asics"
    },
    {
-    "titel": "ASICS Gel Kayano 14 - Carrier Grey / Black",
-    "preis": 170,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/asi1203a537-026",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A537_026_SR_RT_GLB.jpg?v=1790256109",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "ASICS GEL-KAYANO 14 - Cream / Cocoa Powder",
     "preis": 170,
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/asi1203a537-118",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A537-118AsicsGel-Kayano14CreamCocoaPowder_21.jpg?v=1789458095",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS Gel Kayano 14 - Carrier Grey / Black",
+    "preis": 170,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/asi1203a537-026",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A537_026_SR_RT_GLB.jpg?v=1790256109",
     "laden": "kith.com",
     "begriff": "asics"
    },
