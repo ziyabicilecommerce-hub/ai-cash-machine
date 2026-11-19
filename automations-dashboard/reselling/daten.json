@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-19T09:59:41.577Z",
+ "stand": "2026-11-19T10:02:37.413Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -192,7 +192,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-19T09:47:53.912Z",
+  "stand": "2026-11-19T10:02:39.533Z",
   "filialen": 148,
   "produkte": [
    {
@@ -384,14 +384,6 @@
       "menge": 7
      },
      {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 1
-     },
-     {
       "name": "dm Eschborn",
       "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
       "km": 10.4,
@@ -414,6 +406,14 @@
       "lat": 50.0815275,
       "lon": 8.6343098,
       "menge": 3
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Europa-Allee 6, 60327 Frankfurt am Main",
+      "km": 12.7,
+      "lat": 50.1091183,
+      "lon": 8.6538929,
+      "menge": 2
      }
     ]
    },
@@ -619,7 +619,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 4
+      "menge": 3
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -981,6 +981,17 @@
    "kat": "Sneaker"
   },
   {
+   "titel": "Nike Shox R419 x Corteiz Schuh (Herren)",
+   "farbe": "Metallic Silver/University Red/Schwarz/Metallic Silver",
+   "preis": 189.99,
+   "bild": "https://static.nike.com/a/images/w_1536,c_limit/67dc3c7b-e1bb-4881-99cc-f005d7104824/shox-r419-x-corteiz-lookbook.jpg",
+   "zeit": "2026-11-20T08:00:00.000Z",
+   "art": "LEO",
+   "link": "https://www.nike.com/de/launch/t/shox-r419-x-corteiz-lookbook",
+   "marke": "Nike",
+   "kat": "Sneaker"
+  },
+  {
    "titel": "Air Max Goadome Low x Carhartt WIP Schuh (Herren)",
    "farbe": "Schwarz/Twilight Marsh/Light British Tan/Schwarz",
    "preis": 189.99,
@@ -988,17 +999,6 @@
    "zeit": "2026-11-20T08:00:00.000Z",
    "art": "LEO",
    "link": "https://www.nike.com/de/launch/t/air-max-goadome-low-carhartt-wip-black-and-twilight-marsh",
-   "marke": "Nike",
-   "kat": "Sneaker"
-  },
-  {
-   "titel": "Nike Shox R419 x Corteiz Schuh (Herren)",
-   "farbe": "Metallic Silver/University Red/Schwarz/Metallic Silver",
-   "preis": 189.99,
-   "bild": "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit/07f04e81-3501-4ef8-a5db-887aae9c2a2c/shox-r419%C2%A0x-corteiz-metallic-silver-and-university-red-iq9951-001-%C2%A0%E2%80%93-erscheinungsdatum.jpg",
-   "zeit": "2026-11-20T08:00:00.000Z",
-   "art": "LEO",
-   "link": "https://www.nike.com/de/launch/t/shox-r419-corteiz-metallic-silver-and-university-red",
    "marke": "Nike",
    "kat": "Sneaker"
   },
@@ -2700,16 +2700,20 @@
   "ware": [],
   "top": [
    {
+    "titel": "taiwan",
+    "menge": "200+"
+   },
+   {
     "titel": "doppelpass",
     "menge": "200+"
    },
    {
     "titel": "meg ryan heute",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "ingvild flugstad østberg",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "stefan effenberg",
@@ -2734,24 +2738,11 @@
    {
     "titel": "der brockenwirt",
     "menge": "200+"
-   },
-   {
-    "titel": "patrick heinrich",
-    "menge": "5000+"
    }
   ]
  },
  "live": {
   "treffer": [
-   {
-    "titel": "Issue 49",
-    "preis": 9.95,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/sneaker-freaker-issue-49-sfg0049",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/Sneaker-Freaker-ISSUE-49_1.jpg?v=1713974035",
-    "laden": "overkillshop.com",
-    "begriff": "new era"
-   },
    {
     "titel": "T90",
     "preis": 45,
@@ -2892,7 +2883,7 @@
     "preis": 79.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-ftwwht-cblack-cgrani",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1795081394",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1795082287",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
@@ -2931,6 +2922,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/carhartt-wip-og-cargo-pant-black-i037585.8906-apparel_20_3E_20pants.jpg?v=1795036219",
     "laden": "afew-store.com",
     "begriff": "cap"
+   },
+   {
+    "titel": "U1906LAE",
+    "preis": 90,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u1906lae-silver",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1906LAE_1.jpg?v=1746533291",
+    "laden": "overkillshop.com",
+    "begriff": "new era"
    },
    {
     "titel": "Asics GEL-NYC",
@@ -3519,15 +3519,6 @@
    },
    {
     "titel": "New Balance 9060",
-    "preis": 141.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-driftwood-sea-salt",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-driftwood-sea-salt-u906011m-footwear_20_3E_20sneaker.jpg?v=1783934007",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance 9060",
     "preis": 142.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-raincloud-dark-silver-metallic",
@@ -3552,6 +3543,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-1-high-og-black-multi-color-iq5495-005-footwear_20_3E_20sneaker.jpg?v=1795033512",
     "laden": "afew-store.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "New Balance 9060",
+    "preis": 144.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-pistachio-butter-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-pistachio-butter-angora-u906072n-footwear_20_3E_20sneaker.jpg?v=1789993966",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
    },
    {
     "titel": "Air Jordan 3 Retro OG \"World's Best Dad\"",
