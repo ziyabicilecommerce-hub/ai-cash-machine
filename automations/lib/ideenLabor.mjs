@@ -34,8 +34,10 @@ export function normal(verlauf, kanal, jetzt = Date.now()) {
 }
 
 // Ergebnis der laufenden Idee: alle reifen Videos seit dem Start der Idee
+// 0 Aufrufe UND 0 s Sehdauer = noch keine Zahlen (das Dashboard hängt bei TikTok bis zu einem Tag hinterher) - zählt nicht
+const mitZahlen = (p) => Number(p.aufrufe) > 0 || Number(p.sehdauer) > 0;
 export function ergebnis(verlauf, kanal, seit, jetzt = Date.now()) {
-  const l = einmal(verlauf.filter((p) => vonKanal(p, kanal) && Date.parse(p.zeit) >= Date.parse(seit) && reif(p, jetzt)));
+  const l = einmal(verlauf.filter((p) => vonKanal(p, kanal) && Date.parse(p.zeit) >= Date.parse(seit) && reif(p, jetzt) && mitZahlen(p)));
   return { n: l.length, aufrufe: Math.round(schnitt(l.map((p) => Number(p.aufrufe) || 0))), sehdauer: Math.round(schnitt(l.map((p) => Number(p.sehdauer) || 0)) * 10) / 10 };
 }
 

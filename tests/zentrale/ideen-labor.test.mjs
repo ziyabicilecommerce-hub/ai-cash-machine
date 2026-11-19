@@ -84,3 +84,10 @@ test('Video-Bots: Einstellungen der laufenden Idee, Standard ohne Labor', () => 
 test('Fehlersuche verträgt "fehler" als Zahl (so steht es in daten.json)', () => {
   assert.doesNotThrow(() => tagAuswerten({ idee: 'akte', seit: new Date(JETZT - T).toISOString(), basis: 100, status: 'läuft', verlauf: [] }, alt, 'desk.rebel', JETZT, 1));
 });
+
+test('Videos ohne Zahlen (0 Aufrufe, 0 s) zählen nicht als Ergebnis - das Dashboard hängt hinterher', () => {
+  const seit = new Date(JETZT - 3 * T).toISOString();
+  const e = ergebnis([post(2, 300, 5), post(1.5, 0, 0), post(1.2, 0, 0)], 'desk.rebel', seit, JETZT);
+  assert.equal(e.n, 1);
+  assert.equal(e.aufrufe, 300);
+});
