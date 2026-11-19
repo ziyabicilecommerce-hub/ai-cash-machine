@@ -102,7 +102,8 @@ async function vorbereiten() {
   const gewichte = abGewichte(wb.ab);
   const gewichteYT = abGewichteAufrufe(wb.abYT);  // YouTube lernt nach Aufrufen (keine Sehdauer)
   // Sprach-Test je Mix-Kanal: YouTube hat seinen eigenen (sprachTest), andere Kanäle stehen in sprachTests[name]
-  const enAnteilVon = (k) => sprachAnteil(/giyuuu/i.test(k.name) ? wb.sprachTest : wb.sprachTests?.[k.name]);
+  // 19.11. (Nutzer: "weiter"): YouTube nur noch Englisch - deutsche Shorts holten dort 5-25, englische 176-880 Aufrufe
+  const enAnteilVon = (k) => (/giyuuu/i.test(k.name) ? 1 : sprachAnteil(wb.sprachTests?.[k.name]));
   const angepasst = Object.entries(gewichte).filter(([f, aus]) => aus !== AB_FEATURES[f]);
   bericht('### 📤 Buffer-Verteiler');
   const angepasstYT = Object.entries(gewichteYT).filter(([f, aus]) => aus !== AB_FEATURES[f]);
@@ -116,8 +117,9 @@ async function vorbereiten() {
     // Mix-Kanal: diesmal Deutsch oder Englisch (Sprach-Test)
     let quelle = k.quelle === 'horror-mix' ? (Math.random() < enAnteilVon(k) ? 'horror-en' : 'horror') : k.quelle;
     // YouTube: abwechselnd ein Remake eines eigenen YouTube-Hits (ab 500 Aufrufen, mind. 5 Tage alt, je Hit einmal) - ytHits.mjs
-    const remake = k.dienst === 'youtube' && quelle.startsWith('horror') && !zuletztRemake(stand[k.id])
+    const remakeRoh = k.dienst === 'youtube' && quelle.startsWith('horror') && !zuletztRemake(stand[k.id])
       ? await ytRemake(stand[k.id] || {}) : null;
+    const remake = remakeRoh?.sprache === 'de' ? null : remakeRoh;  // YouTube nur Englisch (19.11.) - keine deutschen Remakes
     if (remake) quelle = remake.sprache === 'en' ? 'horror-en' : 'horror';
     if (quelle.startsWith('horror')) {
       // jeder Horror-Kanal bekommt eine EIGENE Geschichte: was ein anderer Kanal schon hatte oder in diesem Lauf bekommt, ist tabu
