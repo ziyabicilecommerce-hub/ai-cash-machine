@@ -6,7 +6,11 @@ name: "🧪 Ideen-Labor (täglich: Views prüfen, Fehler suchen, Idee wechseln)"
 
 on:
   schedule:
+    # GitHub startet Zeitpläne oft Stunden zu spät oder gar nicht - deshalb mehrere Versuche; ausgewertet wird
+    # trotzdem nur einmal am Tag (Sperre unten)
     - cron: '17 11 * * *'  # mittags - die Nacht- und Abend-Videos haben dann ihre ersten Zahlen
+    - cron: '47 13 * * *'
+    - cron: '23 16 * * *'
   workflow_dispatch:
 
 permissions:
@@ -25,9 +29,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Heute schon ausgewertet?
+        id: sperre
+        run: |
+          HEUTE=$(date -u +%Y-%m-%d)
+          LETZT=$(node -e "try{console.log(require('./automations-dashboard/tiktok/ideen.json').stand.slice(0,10))}catch{console.log('')}")
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$LETZT" = "$HEUTE" ]; then echo "Heute schon ausgewertet."; echo "fertig=ja" >> "$GITHUB_OUTPUT"; fi
       - name: Auswerten
+        if: steps.sperre.outputs.fertig != 'ja'
         run: node automations/118-ideen-labor.mjs
       - name: Speichern
+        if: steps.sperre.outputs.fertig != 'ja'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
