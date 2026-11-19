@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-19T19:51:32.867Z",
+ "stand": "2026-11-19T19:54:39.142Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118199:1080",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790893225/assets/pas/images/cc74b33e-9549-4968-992a-a79f50a7aa67/freche-freunde-adventskalender-2026-wichtelhaus",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=49.984061,8.430174",
+   "shop": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
+   "text": "34,95 € · dm Rüsselsheim am Main (10,3 km) · 1 Stück\nAdam-Opel-Straße 59-61, 65428 Rüsselsheim am Main\nIm Umkreis in 10 Filiale(n) vorrätig.",
+   "zeit": "2026-11-19T19:54:39.142Z"
+  },
   {
    "schluessel": "filiale:3118196:1501",
    "art": "Filiale",
@@ -184,19 +194,10 @@
    "link": "https://www.nike.com/de/launch/t/nike-one-block-down-italy-apparel-collection",
    "text": "Weiß · 29,99 € · Start 09:19 Uhr",
    "zeit": "2026-11-19T08:23:51.437Z"
-  },
-  {
-   "schluessel": "drop:Nike x One Block Down Trikot (Herren):2026-11-19T08:19:00.000Z",
-   "art": "Drop",
-   "titel": "⏰ Drop gleich: Nike x One Block Down Trikot (Herren)",
-   "bild": "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit/035bbc6e-b1c8-48cd-929d-340a47b2173e/nike%C2%A0x-one-block-down-italy-apparel-collection%C2%A0%E2%80%93-releasedatum.jpg",
-   "link": "https://www.nike.com/de/launch/t/nike-one-block-down-italy-apparel-collection",
-   "text": "Schwarz · 94,99 € · Start 09:19 Uhr",
-   "zeit": "2026-11-19T08:23:51.437Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-19T19:38:25.695Z",
+  "stand": "2026-11-19T19:54:42.973Z",
   "filialen": 148,
   "produkte": [
    {
@@ -229,7 +230,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Frankfurt am Main",
@@ -253,7 +254,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 51
+      "menge": 54
      },
      {
       "name": "dm Flörsheim am Main",
@@ -283,19 +284,11 @@
     "vorrat": [
      {
       "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 1
-     },
-     {
-      "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Frankfurt am Main",
@@ -311,7 +304,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 56
+      "menge": 57
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -327,7 +320,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 20
+      "menge": 21
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -344,6 +337,14 @@
       "lat": 50.13488,
       "lon": 8.5572012,
       "menge": 6
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 13
      }
     ]
    },
@@ -388,6 +389,14 @@
       "menge": 7
      },
      {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 1
+     },
+     {
       "name": "dm Eschborn",
       "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
       "km": 10.4,
@@ -410,14 +419,6 @@
       "lat": 50.0815275,
       "lon": 8.6343098,
       "menge": 3
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Europa-Allee 6, 60327 Frankfurt am Main",
-      "km": 12.7,
-      "lat": 50.1091183,
-      "lon": 8.6538929,
-      "menge": 2
      }
     ]
    },
@@ -459,7 +460,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 1
+      "menge": 3
      },
      {
       "name": "dm Flörsheim am Main",
@@ -467,7 +468,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 4
+      "menge": 5
      },
      {
       "name": "dm Mörfelden-Walldorf",
@@ -533,7 +534,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 4
+      "menge": 5
      },
      {
       "name": "dm Flörsheim am Main",
@@ -541,7 +542,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 7
+      "menge": 9
      },
      {
       "name": "dm Eschborn",
@@ -565,7 +566,7 @@
       "km": 10.5,
       "lat": 50.0155817,
       "lon": 8.3658454,
-      "menge": 2
+      "menge": 3
      }
     ]
    },
@@ -623,7 +624,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -631,7 +632,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 9
+      "menge": 10
      },
      {
       "name": "dm Eschborn",
@@ -639,7 +640,7 @@
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
-      "menge": 5
+      "menge": 6
      }
     ]
    },
@@ -736,20 +737,36 @@
     ]
    },
    {
-    "dan": "3118148",
-    "name": "Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
-    "preis": 24.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
-    "link": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
+    "dan": "3118151",
+    "name": "trend !t up Adventskalender 2026 Days of Glow, 24 St",
+    "preis": 28.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784673576/assets/pas/images/9f3e9b87-6c3d-477b-99f0-25fa0632aac5/trend-t-up-adventskalender-2026-days-of-glow",
+    "link": "https://www.dm.de/p/d/3118151/trend-t-up-adventskalender-2026-days-of-glow",
     "begriff": "adventskalender",
     "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 12
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 7
+     },
      {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 3
+      "menge": 6
      },
      {
       "name": "dm Frankfurt am Main",
@@ -757,7 +774,23 @@
       "km": 5.6,
       "lat": 50.1014043,
       "lon": 8.5485073,
-      "menge": 3
+      "menge": 15
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 26
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 6
      },
      {
       "name": "dm Flörsheim am Main",
@@ -765,7 +798,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 13
+      "menge": 15
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -773,39 +806,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 5
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 9
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 4
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 6
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
-      "km": 10.4,
-      "lat": 50.1401538,
-      "lon": 8.5824016,
-      "menge": 6
+      "menge": 3
      }
     ]
    },
@@ -2968,16 +2969,24 @@
   "ware": [],
   "top": [
    {
+    "titel": "yvonne",
+    "menge": "200+"
+   },
+   {
+    "titel": "husum",
+    "menge": "200+"
+   },
+   {
     "titel": "storm",
     "menge": "1000+"
    },
    {
-    "titel": "zverev heute",
+    "titel": "arthur fils",
     "menge": "200+"
    },
    {
-    "titel": "arthur fils",
-    "menge": "200+"
+    "titel": "zverev heute",
+    "menge": "500+"
    },
    {
     "titel": "fc barcelona – chênois",
@@ -2989,7 +2998,7 @@
    },
    {
     "titel": "wolfsland muttermord",
-    "menge": "500+"
+    "menge": "1000+"
    },
    {
     "titel": "jenke adhs",
@@ -2998,14 +3007,6 @@
    {
     "titel": "keanu reeves",
     "menge": "200+"
-   },
-   {
-    "titel": "jude bellingham",
-    "menge": "200+"
-   },
-   {
-    "titel": "der tag an dem die erde stillstand",
-    "menge": "1000+"
    }
   ]
  },
@@ -3507,11 +3508,11 @@
     "begriff": "new balance"
    },
    {
-    "titel": "U740WW2",
+    "titel": "MR530EWB",
     "preis": 119,
     "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u740ww2-nb-white-black",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U740WW2_1.jpg?v=1749023055",
+    "url": "https://www.overkillshop.com/products/new-balance-mr530ewb-mr530ewb-white-black",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/mr530ewb_1.jpg?v=1715986430",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
@@ -3903,6 +3904,15 @@
     "begriff": "jordan"
    },
    {
+    "titel": "New Balance 9060",
+    "preis": 144.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-pistachio-butter-angora",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-pistachio-butter-angora-u906072n-footwear_20_3E_20sneaker.jpg?v=1789993966",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Air Jordan 3 Retro \"True Blue\"",
     "preis": 147,
     "verfuegbar": true,
@@ -3982,15 +3992,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_118_SR_RT_GLB.jpg?v=1785420543",
     "laden": "kith.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 151.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-slate-grey-black",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-slate-grey-black-u90605su-footwear_20_3E_20sneaker.jpg?v=1792057221",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Nike Air Jordan 4 Retro *Tour Yellow*",
@@ -4461,11 +4462,11 @@
     "begriff": "new balance"
    },
    {
-    "titel": "New Balance Made in UK 991v2 - Black",
+    "titel": "New Balance x Salehe Bembury Made in USA 992 - Green / Blue",
     "preis": 250,
     "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu991kk2",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u991kk2_2.jpg?v=1779869713",
+    "url": "https://eu.kith.com/products/nbu992sb",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/salehe-bembury-new-balance-992-3.jpg?v=1771234389",
     "laden": "kith.com",
     "begriff": "new balance"
    }
