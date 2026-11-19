@@ -1,21 +1,21 @@
 {
- "stand": "2026-11-18T11:31:45.571Z",
+ "stand": "2026-11-19T11:30:12.015Z",
  "themen": [
   {
    "thema": "Stromausfall, aber ein Zimmer bleibt hell",
    "quelle": "wikipedia",
-   "anstieg": 1.81,
+   "anstieg": 1.84,
    "inspiration": ""
   },
   {
-   "thema": "Etwas imitiert die Stimme meiner Mutter im Wald",
-   "quelle": "welt (China, Paris)",
-   "inspiration": ""
+   "thema": "Novembernebel auf der Landstraße",
+   "inspiration": "",
+   "quelle": "saison"
   },
   {
-   "thema": "Ich wache auf - im Traum",
-   "quelle": "welt (China, Tokio)",
-   "inspiration": ""
+   "thema": "Laternenumzug, eine Laterne zu viel",
+   "inspiration": "",
+   "quelle": "saison"
   }
  ],
  "radar": {
@@ -23,67 +23,67 @@
    {
     "name": "Stromausfall",
     "thema": "Stromausfall, aber ein Zimmer bleibt hell",
-    "anstieg": 1.81,
-    "proTag": 403
-   },
-   {
-    "name": "Klartraum",
-    "thema": "Ich wache auf - im Traum",
-    "anstieg": 1.13,
-    "proTag": 807
-   },
-   {
-    "name": "Zeitschleife",
-    "thema": "Derselbe Anruf jede Nacht um 3:12 Uhr",
-    "anstieg": 1.13,
-    "proTag": 235
-   },
-   {
-    "name": "Doppelgänger",
-    "thema": "Ich treffe mich selbst im Treppenhaus",
-    "anstieg": 1.1,
-    "proTag": 1809
+    "anstieg": 1.84,
+    "proTag": 422
    },
    {
     "name": "Nahtoderfahrung",
     "thema": "Am Ende des Tunnels wartet jemand",
-    "anstieg": 1.07,
-    "proTag": 607
+    "anstieg": 1.11,
+    "proTag": 620
+   },
+   {
+    "name": "Klartraum",
+    "thema": "Ich wache auf - im Traum",
+    "anstieg": 1.09,
+    "proTag": 782
    },
    {
     "name": "Bloody Mary",
     "thema": "Dreimal einen Namen in den Spiegel sagen",
+    "anstieg": 1.08,
+    "proTag": 665
+   },
+   {
+    "name": "Vollmond",
+    "thema": "Vollmondnacht, der Hund heult",
+    "anstieg": 1.07,
+    "proTag": 293
+   },
+   {
+    "name": "Uncanny Valley",
+    "thema": "Ein Gesicht, das fast menschlich ist",
     "anstieg": 1.03,
-    "proTag": 654
+    "proTag": 1759
+   },
+   {
+    "name": "Liminal Spaces",
+    "thema": "Leeres Einkaufszentrum um 3 Uhr nachts",
+    "anstieg": 1.02,
+    "proTag": 470
+   },
+   {
+    "name": "Mothman",
+    "thema": "Rote Augen auf der Brücke",
+    "anstieg": 1.02,
+    "proTag": 1642
    },
    {
     "name": "Analog Horror",
     "thema": "Eine alte Notfallsendung im Fernsehen",
     "anstieg": 1.02,
-    "proTag": 927
+    "proTag": 896
    },
    {
-    "name": "Liminal Spaces",
-    "thema": "Leeres Einkaufszentrum um 3 Uhr nachts",
-    "anstieg": 1.01,
-    "proTag": 517
-   },
-   {
-    "name": "Schattenmenschen",
-    "thema": "Ein Schatten ohne Menschen dazu",
-    "anstieg": 1.01,
-    "proTag": 534
-   },
-   {
-    "name": "Moderne Sagen",
-    "thema": "Die Sage aus meiner Kindheit stimmt",
-    "anstieg": 1,
-    "proTag": 663
+    "name": "SCP",
+    "thema": "Ein Gegenstand, den man nicht ansehen darf",
+    "anstieg": 1.02,
+    "proTag": 2033
    }
   ],
   "himmel": {
    "vollmond": false,
-   "kp": 2.33,
+   "kp": 1.67,
    "polarlicht": false,
    "nasa": ""
   },
@@ -93,28 +93,28 @@
    "en": []
   },
   "trendsDE": [
-   "jean pierre kraemer",
-   "hanau",
-   "twitch zarbex",
-   "take two aktie",
-   "vice city",
-   "martin schindler",
-   "paderborn",
-   "großräschen",
-   "twitch",
-   "rente"
+   "gericht",
+   "motorsport",
+   "kirn",
+   "nachzahlung",
+   "myanmar",
+   "tischtennis",
+   "peres jepchirchir",
+   "waldemar anton",
+   "echtzeit-strategiespiel",
+   "corrado augias"
   ],
   "trendsUS": [
-   "alex tanguay",
-   "jared padalecki",
-   "xi jinping",
-   "ny lottery",
-   "black friday deals 2026",
-   "ga lottery",
-   "mariska hargitay",
-   "noaa weather",
-   "play store",
-   "nyt connections hints"
+   "patrick petty",
+   "the further mis-adventures of cliff booth",
+   "bowling",
+   "brooks nader",
+   "braden smith",
+   "weather near me",
+   "tampa weather",
+   "sri lanka vs pakistan",
+   "sc lottery",
+   "mta"
   ],
   "welt": [
    {
@@ -122,103 +122,108 @@
     "flagge": "🇨🇳",
     "horror": [
      {
+      "name": "Creepypasta",
+      "anstieg": 1.37,
+      "proTag": 24
+     },
+     {
+      "name": "Doppelgänger",
+      "anstieg": 1.3,
+      "proTag": 30
+     },
+     {
       "name": "Skinwalker",
-      "anstieg": 1.52,
-      "proTag": 32
+      "anstieg": 1.3,
+      "proTag": 28
      },
      {
       "name": "Analog Horror",
-      "anstieg": 1.42,
-      "proTag": 38
-     },
-     {
-      "name": "SCP",
-      "anstieg": 1.33,
-      "proTag": 204
-     },
-     {
-      "name": "Klartraum",
-      "anstieg": 1.22,
+      "anstieg": 1.25,
       "proTag": 35
      },
      {
-      "name": "Vollmond",
-      "anstieg": 1.22,
-      "proTag": 20
+      "name": "Uncanny Valley",
+      "anstieg": 1.24,
+      "proTag": 110
      }
     ],
     "trends": [
-     "习近平会见韩国总统李在明",
-     "APEC欢迎宴会",
-     "习近平迎接特朗普",
-     "共绘新图景 共话新机遇",
-     "特朗普：感谢习近平主席亲赴机场迎接"
+     "习近平对老龄工作作出重要指示",
+     "中俄美元首会晤",
+     "中俄美元首和平宣言",
+     "引领时代风气之先 锚定亚太合作方向",
+     "特朗普：美国不支持“台独”"
     ],
     "quelle": [
      "wikipedia-zh",
      "baidu"
     ],
-    "gemessen": 18
+    "gemessen": 17
    },
    {
     "name": "Indien",
     "flagge": "🇮🇳",
     "horror": [
      {
+      "name": "Exorzismus",
+      "anstieg": 1,
+      "proTag": 5
+     },
+     {
       "name": "Geister",
-      "anstieg": 1.01,
-      "proTag": 32
+      "anstieg": 0.9,
+      "proTag": 29
      }
     ],
     "trends": [
-     "ps6",
-     "googl",
-     "johannesburg weather",
-     "is gta 6 out",
-     "samantha ruth prabhu"
+     "marvel avengers doomsday",
+     "ದಂಡ",
+     "సునీల్ గవాస్కర్",
+     "why is gold dropping?",
+     "ગુજરાત"
     ],
     "quelle": [
      "wikipedia-hi",
      "google-trends"
     ],
-    "gemessen": 1
+    "gemessen": 2
    },
    {
     "name": "Tokio",
     "flagge": "🇯🇵",
     "horror": [
      {
-      "name": "Nebel",
-      "anstieg": 1.37,
-      "proTag": 93
-     },
-     {
-      "name": "Backrooms",
-      "anstieg": 1.33,
-      "proTag": 398
+      "name": "Moderne Sagen",
+      "anstieg": 1.52,
+      "proTag": 243
      },
      {
       "name": "Klartraum",
-      "anstieg": 1.29,
-      "proTag": 134
+      "anstieg": 1.38,
+      "proTag": 147
+     },
+     {
+      "name": "Backrooms",
+      "anstieg": 1.31,
+      "proTag": 388
      },
      {
       "name": "Schlafparalyse",
-      "anstieg": 1.23,
+      "anstieg": 1.22,
       "proTag": 82
      },
      {
-      "name": "Moderne Sagen",
-      "anstieg": 1.2,
-      "proTag": 187
+      "name": "Nebel",
+      "anstieg": 1.19,
+      "proTag": 86
      }
     ],
     "trends": [
-     "マンチェスターシティf.c",
-     "ケイティ・ペリー",
-     "マックフルーリー いちご",
-     "急ブレーキ",
-     "大井競馬場"
+     "wwe",
+     "ヒロミ",
+     "ジェラードン",
+     "指定暴力団",
+     "桑田真澄"
     ],
     "quelle": [
      "wikipedia-ja",
@@ -232,36 +237,36 @@
     "horror": [
      {
       "name": "Bloody Mary",
-      "anstieg": 1.27,
-      "proTag": 31
-     },
-     {
-      "name": "Liminal Spaces",
-      "anstieg": 1.21,
-      "proTag": 102
+      "anstieg": 1.47,
+      "proTag": 35
      },
      {
       "name": "Skinwalker",
-      "anstieg": 1.2,
-      "proTag": 34
+      "anstieg": 1.18,
+      "proTag": 33
      },
      {
-      "name": "Polarlicht",
-      "anstieg": 1.16,
-      "proTag": 264
+      "name": "Liminal Spaces",
+      "anstieg": 1.17,
+      "proTag": 96
+     },
+     {
+      "name": "Poltergeist",
+      "anstieg": 1.1,
+      "proTag": 48
      },
      {
       "name": "Exorzismus",
-      "anstieg": 1.14,
-      "proTag": 46
+      "anstieg": 1.07,
+      "proTag": 41
      }
     ],
     "trends": [
-     "bouss",
-     "juan mata",
-     "kick",
-     "edouard philippe",
-     "colère"
+     "ryan gosling",
+     "élève",
+     "fête nationale monégasque",
+     "koh-lanta all stars",
+     "corrado augias"
     ],
     "quelle": [
      "wikipedia-fr",
@@ -275,35 +280,35 @@
     "horror": [
      {
       "name": "Stromausfall",
-      "anstieg": 1.86,
-      "proTag": 365
+      "anstieg": 1.85,
+      "proTag": 376
      },
      {
       "name": "Klartraum",
-      "anstieg": 1.16,
-      "proTag": 712
-     },
-     {
-      "name": "Zeitschleife",
-      "anstieg": 1.15,
-      "proTag": 223
-     },
-     {
-      "name": "Doppelgänger",
       "anstieg": 1.1,
-      "proTag": 1764
+      "proTag": 686
      },
      {
       "name": "Bloody Mary",
-      "anstieg": 1.03,
-      "proTag": 654
+      "anstieg": 1.08,
+      "proTag": 665
+     },
+     {
+      "name": "Vollmond",
+      "anstieg": 1.07,
+      "proTag": 263
+     },
+     {
+      "name": "Uncanny Valley",
+      "anstieg": 1.04,
+      "proTag": 1616
      }
     ],
     "trends": [
-     "nylottery",
-     "mega millions",
-     "voyager 1",
-     "twitch",
+     "nyc gridlock alert",
+     "cyberattack",
+     "ny mets",
+     "sri lanka vs pakistan",
      "bangladesh vs south africa"
     ],
     "quelle": [
@@ -315,17 +320,21 @@
   ],
   "weltweit": [
    {
-    "name": "Skinwalker",
+    "name": "Creepypasta",
     "wo": [
-     "China",
-     "Paris"
+     "China"
     ]
    },
    {
-    "name": "Klartraum",
+    "name": "Doppelgänger",
     "wo": [
-     "China",
-     "Tokio"
+     "China"
+    ]
+   },
+   {
+    "name": "Skinwalker",
+    "wo": [
+     "China"
     ]
    },
    {
@@ -335,19 +344,19 @@
     ]
    },
    {
-    "name": "SCP",
+    "name": "Uncanny Valley",
     "wo": [
      "China"
     ]
    },
    {
-    "name": "Vollmond",
+    "name": "Moderne Sagen",
     "wo": [
-     "China"
+     "Tokio"
     ]
    },
    {
-    "name": "Nebel",
+    "name": "Klartraum",
     "wo": [
      "Tokio"
     ]
@@ -365,19 +374,7 @@
     ]
    },
    {
-    "name": "Moderne Sagen",
-    "wo": [
-     "Tokio"
-    ]
-   },
-   {
     "name": "Bloody Mary",
-    "wo": [
-     "Paris"
-    ]
-   },
-   {
-    "name": "Liminal Spaces",
     "wo": [
      "Paris"
     ]
