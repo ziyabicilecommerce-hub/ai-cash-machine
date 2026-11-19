@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-19T22:54:09.048Z",
+ "stand": "2026-11-19T22:57:07.759Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118196:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "text": "24,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 23 Filiale(n) vorrätig.",
+   "zeit": "2026-11-19T22:57:07.759Z"
+  },
   {
    "schluessel": "filiale:3118196:1501",
    "art": "Filiale",
@@ -187,19 +197,10 @@
    "shop": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
    "text": "34,95 € · dm Rüsselsheim am Main (10,3 km) · 1 Stück\nAdam-Opel-Straße 59-61, 65428 Rüsselsheim am Main\nIm Umkreis in 10 Filiale(n) vorrätig.",
    "zeit": "2026-11-19T12:02:36.959Z"
-  },
-  {
-   "schluessel": "deal:https://www.sneakersnstuff.com/products/jordan-air-jordan-5-retro-sunset-iv5678-102",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 5 / 6 Retro für 168,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV5678-102_01.jpg?v=1785762646",
-   "link": "https://www.sneakersnstuff.com/products/jordan-air-jordan-5-retro-sunset-iv5678-102",
-   "text": "sneakersnstuff.com · Air Jordan 5 Retro \"Sunset\"\nVerkauf ca. 190–280 € → Gewinn ca. +38,50 € (ROI 23 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-19T11:40:48.171Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-19T22:42:21.380Z",
+  "stand": "2026-11-19T22:57:11.127Z",
   "filialen": 148,
   "produkte": [
    {
@@ -216,7 +217,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 9
+      "menge": 12
      },
      {
       "name": "dm Kriftel",
@@ -286,6 +287,14 @@
     "vorrat": [
      {
       "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
+      "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
       "km": 2.5,
       "lat": 50.0815926,
@@ -339,14 +348,6 @@
       "lat": 50.13488,
       "lon": 8.5572012,
       "menge": 6
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 13
      }
     ]
    },
@@ -586,7 +587,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Kelsterbach",
@@ -850,7 +851,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 24
+      "menge": 23
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -4079,15 +4080,6 @@
     "begriff": "cap"
    },
    {
-    "titel": "Giorgio Armani & Ronnie Fieg for '47 Duck Canvas Classic Cap - Blue Navy",
-    "preis": 195,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/khma050223-5114",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050223-5114-Detail.jpg?v=1791551538",
-    "laden": "kith.com",
-    "begriff": "cap"
-   },
-   {
     "titel": "Air Jordan 5 Retro",
     "preis": 199.99,
     "verfuegbar": true,
@@ -4122,6 +4114,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300GY_1.jpg?v=1779433831",
     "laden": "overkillshop.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Nike Air Jordan 5 Retro OG *Halloween*",
+    "preis": 209,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/nike-air-jordan-5-retro-og-halloween-black-picante-red-green-glow-in-the-dark",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/j7uka32wphi-HQ7978-001_Nike_Air-Jordan-5-Retro-OG-Halloween-Black-Picante-Red-Green_os-1.jpg?v=1791376272",
+    "laden": "asphaltgold.com",
+    "begriff": "jordan"
    },
    {
     "titel": "Air Jordan 5 Retro OG",
@@ -4167,15 +4168,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u18907dn_2.jpg?v=1782729390",
     "laden": "kith.com",
     "begriff": "new balance"
-   },
-   {
-    "titel": "Nike Wmns Air Jordan 11 Retro *Magic Ball*",
-    "preis": 219,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/nike-wmns-air-jordan-11-retro-light-british-tan-off-noir-metallic-silver",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/6nn1ucfbc0x-IZ1800-200_Nike_Wmns-Air-Jordan-11-Retro-Light-British-Tan-Off-Noir-Metallic-Silver_os-1.jpg?v=1793967221",
-    "laden": "asphaltgold.com",
-    "begriff": "jordan"
    },
    {
     "titel": "Air Jordan 14 Retro",
@@ -4268,11 +4260,11 @@
     "begriff": "new balance"
    },
    {
-    "titel": "New Balance x Salehe Bembury Made in USA 992 - Green / Blue",
+    "titel": "New Balance Made in UK 991v2 - Black",
     "preis": 250,
     "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu992sb",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/salehe-bembury-new-balance-992-3.jpg?v=1771234389",
+    "url": "https://eu.kith.com/products/nbu991kk2",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u991kk2_2.jpg?v=1779869713",
     "laden": "kith.com",
     "begriff": "new balance"
    }
