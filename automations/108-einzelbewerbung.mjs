@@ -1,5 +1,6 @@
 // Einzelbewerbung - schickt gezielte Bewerbungen mit eigenem Anschreiben (manueller Start).
-// Auftrag kommt als JSON über AUTOMATION_AUFTRAG: {"email","firma","titel","anschreiben","betreff"?}
+// Auftrag kommt als JSON über AUTOMATION_AUFTRAG: {"email","firma","titel","anschreiben","betreff"?,"erneut"?}
+// "erneut": true schickt trotz früherer Bewerbung an dieselbe Adresse - nur wenn die Firma ausdrücklich darum gebeten hat.
 // oder als Liste solcher Aufträge (Sammel-Modus, max. 25 pro Lauf).
 // Gleiche Absender-Daten, PDFs und State wie #106, damit #107 Antworten darauf erkennt.
 import {
@@ -20,7 +21,7 @@ function pruefeAuftrag(a = {}) {
   const woerter = anschreiben.split(/\s+/).filter(Boolean).length;
   if (woerter < 80 || woerter > 450) throw new Error(`Anschreiben hat ${woerter} Wörter - erwartet 80 bis 450.`);
   const betreff = String(a.betreff || `Bewerbung als ${titel} – ${BEWERBER()}`).slice(0, 150);
-  return { email, firma, titel, anschreiben, betreff };
+  return { email, firma, titel, anschreiben, betreff, erneut: a.erneut === true };
 }
 
 function leseAuftraege() {
@@ -47,7 +48,7 @@ async function main() {
   const auftraege = leseAuftraege();
   const state = ladeGeheim(STATE_BOT, { beworben: {}, emails: {}, uebersprungen: {} });
   const offen = auftraege.filter((a) => {
-    const grund = LIVE && schonAngeschrieben(state, a.email);
+    const grund = LIVE && !a.erneut && schonAngeschrieben(state, a.email);
     if (grund) console.log(`[einzelbewerbung] ${grund} schon angeschrieben - nicht doppelt.`);
     return !grund;
   });
@@ -57,7 +58,7 @@ async function main() {
   const cv = await holeLebenslauf();
   const gesendet = [];
   for (const auftrag of offen) {
-    if (LIVE && schonAngeschrieben(state, auftrag.email)) continue; // zwei Aufträge an dieselbe Firma in einer Liste
+    if (LIVE && !auftrag.erneut && schonAngeschrieben(state, auftrag.email)) continue; // zwei Aufträge an dieselbe Firma in einer Liste
     const brief = await anschreibenAnhang({ firma: auftrag.firma, ort: '', betreff: auftrag.betreff, anschreiben: auftrag.anschreiben });
     const info = await transport.sendMail({
       from: `${BEWERBER()} <${user}>`,
