@@ -1,28 +1,28 @@
 {
- "stand": "2026-11-20T02:33:49.387Z",
+ "stand": "2026-11-20T12:07:42.603Z",
  "gesamt": {
-  "posts": 102,
-  "aufrufe": 31011,
-  "vorherAufrufe": 41538
+  "posts": 99,
+  "aufrufe": 31034,
+  "vorherAufrufe": 39246
  },
  "konten": {
   "@giyuuu sama": {
-   "n": 14,
-   "schnitt": 115,
+   "n": 13,
+   "schnitt": 132,
    "sehdauer": 0,
-   "vorher": 317
+   "vorher": 297
   },
   "@desk.rebel": {
-   "n": 14,
-   "schnitt": 97,
-   "sehdauer": 6.9,
-   "vorher": 63
+   "n": 13,
+   "schnitt": 100,
+   "sehdauer": 6.8,
+   "vorher": 61
   },
   "@purivelle.785": {
-   "n": 14,
-   "schnitt": 107,
-   "sehdauer": 6,
-   "vorher": 50
+   "n": 13,
+   "schnitt": 112,
+   "sehdauer": 6.2,
+   "vorher": 49
   },
   "@futureflowxx": {
    "n": 20,
@@ -44,23 +44,18 @@
   }
  },
  "formate": {
-  "quiz": {
-   "n": 14,
-   "schnitt": 130,
-   "sehdauer": 2.2
-  },
   "horror": {
-   "n": 88,
-   "schnitt": 332,
+   "n": 86,
+   "schnitt": 338,
    "sehdauer": 4.9
+  },
+  "quiz": {
+   "n": 13,
+   "schnitt": 148,
+   "sehdauer": 2.3
   }
  },
  "muster": {
-  "memo": {
-   "n": 3,
-   "schnitt": 175,
-   "sehdauer": 3.1
-  },
   "himmel": {
    "n": 2,
    "schnitt": 152,
@@ -91,6 +86,11 @@
    "schnitt": 299,
    "sehdauer": 3.6
   },
+  "memo": {
+   "n": 2,
+   "schnitt": 244,
+   "sehdauer": 2.9
+  },
   "doppel": {
    "n": 2,
    "schnitt": 733,
@@ -113,27 +113,27 @@
   },
   "akte": {
    "n": 47,
-   "schnitt": 316,
+   "schnitt": 317,
    "sehdauer": 6
   }
  },
  "zeiten": {
-  "nachts": {
-   "n": 48,
-   "schnitt": 262,
-   "sehdauer": 5.3
-  },
   "abends": {
    "n": 54,
    "schnitt": 341,
    "sehdauer": 3.9
+  },
+  "nachts": {
+   "n": 45,
+   "schnitt": 280,
+   "sehdauer": 5.4
   }
  },
  "top": [
   {
    "konto": "@giyuuu sama",
    "text": "If your own number calls you, do not pick up. 👀 His eyes are hidden 3 times in this video",
-   "aufrufe": 893,
+   "aufrufe": 982,
    "sehdauer": 0,
    "link": "https://www.youtube.com/shorts/_1w3GfjiG_0"
   },
@@ -155,20 +155,20 @@
  "ab": {
   "kalt": {
    "an": {
-    "n": 17,
-    "schnitt": 230,
-    "sehdauer": 4.9
+    "n": 16,
+    "schnitt": 239,
+    "sehdauer": 5
    },
    "aus": {
-    "n": 13,
-    "schnitt": 397,
-    "sehdauer": 4.2
+    "n": 12,
+    "schnitt": 427,
+    "sehdauer": 4.3
    }
   },
   "raum": {
    "an": {
-    "n": 20,
-    "schnitt": 193,
+    "n": 18,
+    "schnitt": 207,
     "sehdauer": 4.1
    },
    "aus": {
@@ -179,9 +179,9 @@
   },
   "suchbild": {
    "an": {
-    "n": 17,
-    "schnitt": 356,
-    "sehdauer": 5
+    "n": 15,
+    "schnitt": 395,
+    "sehdauer": 5.1
    },
    "aus": {
     "n": 11,
@@ -191,14 +191,14 @@
   },
   "duhook": {
    "an": {
-    "n": 18,
-    "schnitt": 356,
-    "sehdauer": 5
+    "n": 17,
+    "schnitt": 375,
+    "sehdauer": 5.1
    },
    "aus": {
-    "n": 12,
-    "schnitt": 222,
-    "sehdauer": 4.1
+    "n": 11,
+    "schnitt": 234,
+    "sehdauer": 4
    }
   },
   "schlag": {
@@ -208,9 +208,9 @@
     "sehdauer": 4.3
    },
    "aus": {
-    "n": 8,
-    "schnitt": 109,
-    "sehdauer": 5.4
+    "n": 6,
+    "schnitt": 123,
+    "sehdauer": 5.8
    }
   },
   "gestalt": {
@@ -220,8 +220,8 @@
     "sehdauer": 5.1
    },
    "aus": {
-    "n": 12,
-    "schnitt": 223,
+    "n": 10,
+    "schnitt": 254,
     "sehdauer": 4.4
    }
   }
@@ -230,35 +230,35 @@
   "@futureflowx3 läuft am besten (Ø 684) - neue Ideen dort zuerst testen.",
   "Stärkstes Geschichten-Muster: „kind“ (Ø 755) - der Skript-Bot nimmt es automatisch öfter.",
   "Beste Tageszeit: abends (Ø 341).",
-  "Ø Sehdauer nur 4.5 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
-  "A/B-Test Kalter Einstieg: mit 4.9 s, ohne 4.2 s Sehdauer - wirkt, bleibt an.",
+  "Ø Sehdauer nur 4.6 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
+  "A/B-Test Kalter Einstieg: mit 5 s, ohne 4.3 s Sehdauer - wirkt, bleibt an.",
   "A/B-Test 3D-Ton: mit 4.1 s, ohne 5.6 s Sehdauer - bringt nichts, könnte weg.",
-  "A/B-Test Versteckte Augen: mit 5 s, ohne 4.3 s Sehdauer - wirkt, bleibt an.",
-  "A/B-Test Du-Hook: mit 5 s, ohne 4.1 s Sehdauer - wirkt, bleibt an.",
-  "A/B-Test Schlagzeile: mit 4.3 s, ohne 5.4 s Sehdauer - bringt nichts, könnte weg.",
+  "A/B-Test Versteckte Augen: mit 5.1 s, ohne 4.3 s Sehdauer - wirkt, bleibt an.",
+  "A/B-Test Du-Hook: mit 5.1 s, ohne 4 s Sehdauer - wirkt, bleibt an.",
+  "A/B-Test Schlagzeile: mit 4.3 s, ohne 5.8 s Sehdauer - bringt nichts, könnte weg.",
   "A/B-Test Gestalt kommt näher: mit 5.1 s, ohne 4.4 s Sehdauer - wirkt, bleibt an.",
-  "Sprach-Test YouTube: Deutsch Ø 30 (6) · Englisch Ø 179 (8) - Englisch gewinnt, bekommt jetzt 85 %.",
-  "Sprach-Test desk.rebel: Deutsch Ø 109 (9) · Englisch Ø 74 (5) - noch kein klarer Sieger.",
-  "A/B-Test YouTube raum: mit Ø 178, ohne Ø 249 Aufrufe - bremst, dort meist aus.",
-  "A/B-Test YouTube schlag: mit Ø 170, ohne Ø 62 Aufrufe - wirkt, dort meist an.",
-  "A/B-Test YouTube gestalt: mit Ø 230, ohne Ø 98 Aufrufe - wirkt, dort meist an.",
+  "Sprach-Test YouTube: Deutsch Ø 34 (5) · Englisch Ø 194 (8) - Englisch gewinnt, bekommt jetzt 85 %.",
+  "Sprach-Test desk.rebel: Deutsch Ø 116 (8) · Englisch Ø 74 (5) - Deutsch gewinnt, bekommt 85 %.",
+  "A/B-Test YouTube raum: mit Ø 185, ohne Ø 243 Aufrufe - bremst, dort meist aus.",
+  "A/B-Test YouTube schlag: mit Ø 179, ohne Ø 62 Aufrufe - wirkt, dort meist an.",
+  "A/B-Test YouTube gestalt: mit Ø 252, ohne Ø 98 Aufrufe - wirkt, dort meist an.",
   "Deckel: @futureflowx3 (~721), @zyx_7851 (~250) - fast jedes Video bekommt dort gleich viele Aufrufe. Der Inhalt entscheidet nicht; die Videos kommen nicht über die erste Testrunde hinaus (zu kurz angesehen)."
  ],
  "sprachTest": {
   "de": {
-   "n": 6,
-   "schnitt": 30
+   "n": 5,
+   "schnitt": 34
   },
   "en": {
    "n": 8,
-   "schnitt": 179
+   "schnitt": 194
   }
  },
  "sprachTests": {
   "desk.rebel": {
    "de": {
-    "n": 9,
-    "schnitt": 109
+    "n": 8,
+    "schnitt": 116
    },
    "en": {
     "n": 5,
@@ -269,32 +269,32 @@
  "abYT": {
   "kalt": {
    "an": {
-    "n": 27,
-    "schnitt": 219
+    "n": 26,
+    "schnitt": 228
    },
    "aus": {
-    "n": 20,
-    "schnitt": 234
+    "n": 19,
+    "schnitt": 217
    }
   },
   "raum": {
    "an": {
-    "n": 16,
-    "schnitt": 178
+    "n": 15,
+    "schnitt": 185
    },
    "aus": {
-    "n": 31,
-    "schnitt": 249
+    "n": 30,
+    "schnitt": 243
    }
   },
   "suchbild": {
    "an": {
-    "n": 22,
-    "schnitt": 237
+    "n": 21,
+    "schnitt": 245
    },
    "aus": {
-    "n": 20,
-    "schnitt": 218
+    "n": 19,
+    "schnitt": 200
    }
   },
   "duhook": {
@@ -303,14 +303,14 @@
     "schnitt": 261
    },
    "aus": {
-    "n": 35,
-    "schnitt": 213
+    "n": 33,
+    "schnitt": 210
    }
   },
   "schlag": {
    "an": {
     "n": 10,
-    "schnitt": 170
+    "schnitt": 179
    },
    "aus": {
     "n": 5,
@@ -320,7 +320,7 @@
   "gestalt": {
    "an": {
     "n": 4,
-    "schnitt": 230
+    "schnitt": 252
    },
    "aus": {
     "n": 9,
@@ -416,23 +416,23 @@
  ],
  "deckel": {
   "@giyuuu sama": {
-   "posts": 23,
+   "posts": 22,
    "tot": 2,
-   "median": 45,
-   "hoechst": 893,
+   "median": 47,
+   "hoechst": 982,
    "gedeckelt": false
   },
   "@desk.rebel": {
-   "posts": 22,
-   "tot": 2,
-   "median": 83,
+   "posts": 21,
+   "tot": 1,
+   "median": 90,
    "hoechst": 174,
    "gedeckelt": false
   },
   "@purivelle.785": {
-   "posts": 22,
+   "posts": 21,
    "tot": 2,
-   "median": 103,
+   "median": 106,
    "hoechst": 181,
    "gedeckelt": false
   },
