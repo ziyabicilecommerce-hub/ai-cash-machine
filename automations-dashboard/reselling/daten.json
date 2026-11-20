@@ -1,10 +1,30 @@
 {
- "stand": "2026-11-20T18:36:46.279Z",
+ "stand": "2026-11-20T18:39:55.508Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118196:188",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1202634,8.5251147",
+   "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "text": "24,95 € · dm Sulzbach (Taunus) (6,3 km) · 1 Stück\nMain-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)\nIm Umkreis in 22 Filiale(n) vorrätig.",
+   "zeit": "2026-11-20T18:39:55.508Z"
+  },
+  {
+   "schluessel": "filiale:3118201:1420",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787555270/assets/pas/images/5a32cdab-0120-4c77-bcc9-160de67cf462/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.107657,8.666246",
+   "shop": "https://www.dm.de/p/d/3118201/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
+   "text": "16,95 € · dm Frankfurt am Main (13,5 km) · 1 Stück\nKaiserstraße 75, 60329 Frankfurt am Main\nIm Umkreis in 12 Filiale(n) vorrätig.",
+   "zeit": "2026-11-20T18:39:55.508Z"
+  },
   {
    "schluessel": "deal:https://www.asphaltgold.com/products/nikeair-jordan-3-retro-og-spring-is-in-the-air-sail-jade-aura-aura-iced-carmine",
    "art": "Deal",
@@ -174,28 +194,10 @@
    "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
    "text": "24,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 23 Filiale(n) vorrätig.",
    "zeit": "2026-11-19T21:40:57.619Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-wmns-air-jordan-11-retro-light-british-tan-off-noir-metallic-silver",
-   "art": "Deal",
-   "titel": "💰 Deal: Magic: The Gathering Collector Booster für 219,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/6nn1ucfbc0x-IZ1800-200_Nike_Wmns-Air-Jordan-11-Retro-Light-British-Tan-Off-Noir-Metallic-Silver_os-1.jpg?v=1793967221",
-   "link": "https://www.asphaltgold.com/products/nike-wmns-air-jordan-11-retro-light-british-tan-off-noir-metallic-silver",
-   "text": "asphaltgold.com · Nike Wmns Air Jordan 11 Retro *Magic Ball*\nVerkauf ca. 260–400 € → Gewinn ca. +73,00 € (ROI 33 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-19T21:31:40.437Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-wmns-air-jordan-11-retro-light-british-tan-off-noir-metallic-silver",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 11 Retro für 219,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/6nn1ucfbc0x-IZ1800-200_Nike_Wmns-Air-Jordan-11-Retro-Light-British-Tan-Off-Noir-Metallic-Silver_os-1.jpg?v=1793967221",
-   "link": "https://www.asphaltgold.com/products/nike-wmns-air-jordan-11-retro-light-british-tan-off-noir-metallic-silver",
-   "text": "asphaltgold.com · Nike Wmns Air Jordan 11 Retro *Magic Ball*\nVerkauf ca. 230–330 € → Gewinn ca. +28,00 € (ROI 13 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-19T21:31:40.437Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-20T18:24:26.543Z",
+  "stand": "2026-11-20T18:40:04.454Z",
   "filialen": 148,
   "produkte": [
    {
@@ -231,6 +233,14 @@
       "menge": 56
      },
      {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
       "name": "dm Flörsheim am Main",
       "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
       "km": 7.4,
@@ -261,14 +271,6 @@
       "lat": 50.1237366,
       "lon": 8.5865988,
       "menge": 12
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 22
      }
     ]
    },
@@ -556,7 +558,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -607,7 +609,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Frankfurt am Main",
@@ -739,7 +741,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 18
+      "menge": 19
      },
      {
       "name": "dm Kelsterbach",
@@ -807,6 +809,80 @@
     "link": "https://www.dm.de/p/d/3135923/craze-adventskalender-2026-kinder-top-fashion",
     "begriff": "adventskalender",
     "vorrat": []
+   },
+   {
+    "dan": "3118686",
+    "name": "ebelin Adventskalender Beauty & Hair 2026, 1 St",
+    "preis": 32.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
+    "link": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
+    "begriff": "beauty adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 5
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 4
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 1
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 23
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 2
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 2
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 4
+     }
+    ]
    }
   ]
  },
@@ -1053,6 +1129,7 @@
      13.2,
      13.2,
      13.2,
+     13.2,
      13.2
     ]
    },
@@ -1140,6 +1217,7 @@
      19.3,
      19.3,
      19.3,
+     19.46,
      19.46,
      19.46,
      19.46,
@@ -1271,6 +1349,7 @@
      9.46,
      9.46,
      9.46,
+     9.46,
      9.46
     ]
    },
@@ -1304,6 +1383,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     36.11,
      36.11,
      36.11,
      36.11,
@@ -1386,6 +1466,7 @@
      14.24,
      14.24,
      14.24,
+     14.24,
      14.24
     ]
    },
@@ -1431,6 +1512,7 @@
      35.92,
      35.92,
      35.92,
+     35.92,
      35.92
     ]
    },
@@ -1464,6 +1546,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     13.43,
      13.43,
      13.43,
      13.43,
@@ -1563,6 +1646,7 @@
      18.66,
      18.66,
      18.66,
+     18.44,
      18.44,
      18.44,
      18.44,
@@ -1694,6 +1778,7 @@
      15.26,
      15.26,
      15.26,
+     15.26,
      15.26
     ]
    },
@@ -1727,6 +1812,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     20.8,
      20.8,
      20.8,
      20.8,
@@ -1846,6 +1932,7 @@
      47.58,
      47.58,
      47.58,
+     47.58,
      47.58
     ]
    },
@@ -1879,6 +1966,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     36.71,
      36.71,
      36.71,
      36.71,
@@ -1944,6 +2032,7 @@
      20.87,
      20.87,
      20.87,
+     20.87,
      20.87
     ]
    },
@@ -1977,6 +2066,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     32.3,
      32.3,
      32.3,
      32.3,
@@ -2096,6 +2186,7 @@
      31.92,
      31.92,
      31.92,
+     31.92,
      31.92
     ]
    },
@@ -2129,6 +2220,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     25.22,
      25.22,
      25.22,
      25.22,
@@ -2260,6 +2352,7 @@
      29.34,
      29.34,
      29.34,
+     29.34,
      29.34
     ]
    },
@@ -2351,6 +2444,7 @@
      48.19,
      48.19,
      48.19,
+     47.93,
      47.93,
      47.93,
      47.93,
@@ -2482,6 +2576,7 @@
      8.46,
      8.46,
      8.46,
+     8.46,
      8.46
     ]
    },
@@ -2574,6 +2669,7 @@
      12.53,
      12.53,
      12.53,
+     12.19,
      12.19,
      12.19,
      12.19,
@@ -2704,6 +2800,7 @@
      42.52,
      42.52,
      42.52,
+     42.52,
      42.52
     ]
    },
@@ -2815,6 +2912,7 @@
      41.72,
      41.72,
      41.72,
+     41.72,
      41.72
     ]
    }
@@ -2884,7 +2982,7 @@
    "fallend": 10
   },
   "quelle": "TCGdex",
-  "stand": "2026-11-20T17:44:02.474Z"
+  "stand": "2026-11-20T18:39:43.144Z"
  },
  "trends": {
   "ware": [],
