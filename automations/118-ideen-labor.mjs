@@ -2,11 +2,41 @@
 // Fehler, und wechselt nach 2 Tagen die Idee eines Kanals, wenn sie nicht besser als normal läuft (Jackpot = bleibt).
 // Stand: automations-dashboard/tiktok/ideen.json (die Video-Bots lesen daraus die laufende Idee je Kanal).
 import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
-import { IDEEN, KANAELE, tagAuswerten } from './lib/ideenLabor.mjs';
+import { IDEEN, KANAELE, tagAuswerten, ausBuffer, zusammenfuehren } from './lib/ideenLabor.mjs';
+import { API } from './lib/bufferPoster.mjs';
 
 const DATEI = 'automations-dashboard/tiktok/ideen.json';
 const json = (p, d) => { try { return JSON.parse(readFileSync(p, 'utf8')); } catch { return d; } };
-const verlauf = json('automations-dashboard/tiktok/verlauf.json', []);
+const TOKEN = (process.env.BUFFER_ACCESS_TOKEN || '').trim();
+async function gql(query, variables) {
+  const res = await fetch(API, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${TOKEN}` }, body: JSON.stringify({ query, variables }) });
+  const d = await res.json().catch(() => ({}));
+  if (!res.ok || d.errors?.length) throw new Error(`Buffer ${res.status}: ${(d.errors || []).map((e) => e.message).join('; ').slice(0, 200)}`);
+  return d.data;
+}
+// Frische Zahlen der letzten 16 Tage direkt aus Buffer (ohne Schlüssel oder bei Fehler: nur verlauf.json)
+async function frischAusBuffer() {
+  if (!TOKEN) return [];
+  try {
+    const orgId = (await gql('{ account { organizations { id } } }')).account.organizations[0]?.id;
+    const { channels } = await gql('query($i: ChannelsInput!) { channels(input: $i) { id name service } }', { i: { organizationId: orgId } });
+    const kanaele = channels.filter((c) => ['tiktok', 'instagram', 'youtube'].includes(c.service));
+    const posts = [];
+    let after = null;
+    for (let seite = 0; seite < 6; seite++) {
+      const d = await gql(`query($i: PostsInput!, $a: String) { posts(input: $i, first: 50, after: $a) {
+        edges { node { id status text sentAt channelId metricsUpdatedAt metrics { type value } } } pageInfo { hasNextPage endCursor } } }`,
+      { i: { organizationId: orgId, filter: { channelIds: kanaele.map((k) => k.id), dueAt: { start: new Date(Date.now() - 16 * 864e5).toISOString() } } }, a: after });
+      posts.push(...(d.posts.edges || []).map((e) => e.node));
+      if (!d.posts.pageInfo.hasNextPage) break;
+      after = d.posts.pageInfo.endCursor;
+    }
+    const frisch = ausBuffer(posts, kanaele);
+    console.log(`[118] ${frisch.length} Videos mit frischen Zahlen aus Buffer`);
+    return frisch;
+  } catch (e) { console.log(`[118] Buffer nicht erreichbar - nur verlauf.json: ${String(e.message).slice(0, 150)}`); return []; }
+}
+const verlauf = zusammenfuehren(json('automations-dashboard/tiktok/verlauf.json', []), await frischAusBuffer());
 const daten = json('automations-dashboard/tiktok/daten.json', {});
 const labor = json(DATEI, { kanaele: {} });
 const jetzt = Date.now();

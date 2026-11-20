@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { IDEEN, tagAuswerten, naechsteIdee, normal, ergebnis, fehlerSuchen, ideeFuer, hookNachIdee } from '../../automations/lib/ideenLabor.mjs';
+import { IDEEN, tagAuswerten, naechsteIdee, normal, ergebnis, fehlerSuchen, ideeFuer, hookNachIdee, ausBuffer, zusammenfuehren } from '../../automations/lib/ideenLabor.mjs';
 
 const T = 864e5;
 const JETZT = Date.parse('2026-11-20T12:00:00Z');
@@ -90,4 +90,22 @@ test('Videos ohne Zahlen (0 Aufrufe, 0 s) zählen nicht als Ergebnis - das Dashb
   const e = ergebnis([post(2, 300, 5), post(1.5, 0, 0), post(1.2, 0, 0)], 'desk.rebel', seit, JETZT);
   assert.equal(e.n, 1);
   assert.equal(e.aufrufe, 300);
+});
+
+test('Buffer-Zahlen: nur gesendete Posts mit aktualisierten Zahlen, Buffer gewinnt gegen verlauf.json', () => {
+  const kanaele = [{ id: 'a1', name: 'futureflowx3' }];
+  const m = (views, sek) => [{ type: 'views', value: views }, { type: 'averageTimeWatched', value: sek }];
+  const posts = [
+    { status: 'sent', channelId: 'a1', text: 'AKTE 013 · Hook\n\n#horror', sentAt: '2026-11-18T01:19:00Z', metricsUpdatedAt: '2026-11-18T23:00:00Z', metrics: m(720, 5.09) },
+    { status: 'sent', channelId: 'a1', text: 'Ganz frisch', sentAt: '2026-11-19T01:12:00Z', metricsUpdatedAt: '2026-11-19T01:10:00Z', metrics: m(0, 0) },
+    { status: 'error', channelId: 'a1', text: 'Fehler', sentAt: '2026-11-18T01:00:00Z', metricsUpdatedAt: '2026-11-18T23:00:00Z', metrics: m(5, 1) },
+    { status: 'sent', channelId: 'fremd', text: 'Anderer Kanal', sentAt: '2026-11-18T01:00:00Z', metricsUpdatedAt: '2026-11-18T23:00:00Z', metrics: m(5, 1) },
+  ];
+  const frisch = ausBuffer(posts, kanaele);
+  assert.equal(frisch.length, 1);
+  assert.deepEqual([frisch[0].konto, frisch[0].text, frisch[0].aufrufe, frisch[0].sehdauer], ['@futureflowx3', 'AKTE 013 · Hook', 720, 5.1]);
+  const alt = [{ zeit: '2026-11-18T01:19:00Z', konto: '@futureflowx3', text: 'AKTE 013 · Hook', aufrufe: 0, sehdauer: 0 }, { zeit: '2026-11-10T01:00:00Z', konto: '@futureflowx3', text: 'Alt', aufrufe: 300 }];
+  const neu = zusammenfuehren(alt, frisch);
+  assert.equal(neu.length, 2);
+  assert.equal(neu.find((p) => p.text === 'AKTE 013 · Hook').aufrufe, 720);
 });
