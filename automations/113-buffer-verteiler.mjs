@@ -103,7 +103,8 @@ async function vorbereiten() {
   const gewichteYT = abGewichteAufrufe(wb.abYT);  // YouTube lernt nach Aufrufen (keine Sehdauer)
   // Sprach-Test je Mix-Kanal: YouTube hat seinen eigenen (sprachTest), andere Kanäle stehen in sprachTests[name]
   // 19.11. (Nutzer: "weiter"): YouTube nur noch Englisch - deutsche Shorts holten dort 5-25, englische 176-880 Aufrufe
-  const enAnteilVon = (k) => (/giyuuu/i.test(k.name) ? 1 : sprachAnteil(wb.sprachTests?.[k.name]));
+  // 20.11.: desk.rebel nur noch Deutsch - deutsche Akte-Videos 112-174 Aufrufe (Jackpot), englische dort 0-64
+  const enAnteilVon = (k) => (/giyuuu/i.test(k.name) ? 1 : /desk\.rebel/i.test(k.name) ? 0 : sprachAnteil(wb.sprachTests?.[k.name]));
   const angepasst = Object.entries(gewichte).filter(([f, aus]) => aus !== AB_FEATURES[f]);
   bericht('### 📤 Buffer-Verteiler');
   const angepasstYT = Object.entries(gewichteYT).filter(([f, aus]) => aus !== AB_FEATURES[f]);
