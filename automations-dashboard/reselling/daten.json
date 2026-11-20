@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-20T13:44:38.546Z",
+ "stand": "2026-11-20T13:47:35.999Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3117665:1364",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: alverde NATURKOSMETIK Adventskalender 2026 Frohe Weihnachten, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787558077/assets/pas/images/260614bb-a00b-4ec8-b592-8e533005cf0e/alverde-naturkosmetik-adventskalender-2026-frohe-weihnachten",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0815926,8.4565918",
+   "shop": "https://www.dm.de/p/d/3117665/alverde-naturkosmetik-adventskalender-2026-frohe-weihnachten",
+   "text": "19,95 € · dm Kriftel (2,5 km) · 1 Stück\nKapellenstraße 48, 65830 Kriftel\nIm Umkreis in 25 Filiale(n) vorrätig.",
+   "zeit": "2026-11-20T13:47:35.999Z"
+  },
   {
    "schluessel": "deal:https://www.overkillshop.com/products/air-jordan-4-retro-birds-of-paradise-hv0823-101-coconut-milk-muslin-bright-mango",
    "art": "Deal",
@@ -183,20 +193,10 @@
    "shop": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
    "text": "34,95 € · dm Neu-Isenburg (13,8 km) · 1 Stück\nSchleussnerstraße 100b, 63263 Neu-Isenburg\nIm Umkreis in 9 Filiale(n) vorrätig.",
    "zeit": "2026-11-19T21:10:35.632Z"
-  },
-  {
-   "schluessel": "filiale:3118199:1080",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790893225/assets/pas/images/cc74b33e-9549-4968-992a-a79f50a7aa67/freche-freunde-adventskalender-2026-wichtelhaus",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=49.984061,8.430174",
-   "shop": "https://www.dm.de/p/d/3118199/freche-freunde-adventskalender-2026-wichtelhaus",
-   "text": "34,95 € · dm Rüsselsheim am Main (10,3 km) · 1 Stück\nAdam-Opel-Straße 59-61, 65428 Rüsselsheim am Main\nIm Umkreis in 10 Filiale(n) vorrätig.",
-   "zeit": "2026-11-19T19:54:39.142Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-20T13:32:38.988Z",
+  "stand": "2026-11-20T13:47:43.002Z",
   "filialen": 148,
   "produkte": [
    {
@@ -261,7 +261,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 4
+      "menge": 6
      },
      {
       "name": "dm Frankfurt am Main",
@@ -525,7 +525,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 10
+      "menge": 12
      },
      {
       "name": "dm Flörsheim am Main",
@@ -632,7 +632,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 5
+      "menge": 6
      },
      {
       "name": "dm Flörsheim am Main",
@@ -706,7 +706,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -741,6 +741,14 @@
       "lat": 50.0769272,
       "lon": 8.4731447,
       "menge": 19
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 1
      },
      {
       "name": "dm Kelsterbach",
@@ -789,14 +797,6 @@
       "lat": 50.1434547,
       "lon": 8.5023642,
       "menge": 5
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 3
      }
     ]
    },
@@ -808,6 +808,80 @@
     "link": "https://www.dm.de/p/d/3135923/craze-adventskalender-2026-kinder-top-fashion",
     "begriff": "adventskalender",
     "vorrat": []
+   },
+   {
+    "dan": "3118686",
+    "name": "ebelin Adventskalender Beauty & Hair 2026, 1 St",
+    "preis": 32.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
+    "link": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
+    "begriff": "beauty adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 5
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 4
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 1
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 23
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 2
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 2
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 4
+     }
+    ]
    }
   ]
  },
@@ -896,17 +970,6 @@
    "zeit": "2026-11-27T08:00:00.000Z",
    "art": "LEO",
    "link": "https://www.nike.com/de/launch/t/air-jordan-4-bred",
-   "marke": "Nike",
-   "kat": "Sneaker"
-  },
-  {
-   "titel": "Nike SB Dunk Low Pro Premium Skateboardschuh",
-   "farbe": "Black Spruce/Schwarz/Bright Ceramic/Metallic Gold",
-   "preis": 119.99,
-   "bild": "https://static.nike.com/a/images/t_prod_ss/w_960,c_limit/7c0d8867-20c1-45d7-8db0-65ede993bca7/nike-sb-dunk-low-pro-black-spruce-and-metallic-gold-iq0431-300-%C2%A0%E2%80%93-erscheinungsdatum.jpg",
-   "zeit": "2026-11-27T08:00:00.000Z",
-   "art": "LEO",
-   "link": "https://www.nike.com/de/launch/t/nike-sb-dunk-low-pro-black-spruce-and-metallic-gold",
    "marke": "Nike",
    "kat": "Sneaker"
   },
@@ -3708,6 +3771,15 @@
    },
    {
     "titel": "New Balance 9060",
+    "preis": 141.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-driftwood-sea-salt",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-driftwood-sea-salt-u906011m-footwear_20_3E_20sneaker.jpg?v=1783934007",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "New Balance 9060",
     "preis": 142.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-raincloud-dark-silver-metallic",
@@ -3822,15 +3894,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A383_118_SR_RT_GLB.jpg?v=1785420543",
     "laden": "kith.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 151.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-slate-grey-black",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-slate-grey-black-u90605su-footwear_20_3E_20sneaker.jpg?v=1792057221",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
    },
    {
     "titel": "Nike Air Jordan 4 Retro *Tour Yellow*",
