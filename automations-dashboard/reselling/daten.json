@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-20T19:52:34.744Z",
+ "stand": "2026-11-20T19:55:30.044Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -197,7 +197,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-20T19:40:36.245Z",
+  "stand": "2026-11-20T19:55:45.022Z",
   "filialen": 148,
   "produkte": [
    {
@@ -233,14 +233,6 @@
       "menge": 56
      },
      {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 1
-     },
-     {
       "name": "dm Flörsheim am Main",
       "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
       "km": 7.4,
@@ -270,7 +262,15 @@
       "km": 9.3,
       "lat": 50.1237366,
       "lon": 8.5865988,
-      "menge": 13
+      "menge": 12
+     },
+     {
+      "name": "dm Mörfelden-Walldorf",
+      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
+      "km": 9.6,
+      "lat": 50.0122615,
+      "lon": 8.5865417,
+      "menge": 22
      }
     ]
    },
@@ -436,7 +436,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Kelsterbach",
@@ -510,7 +510,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Frankfurt am Main",
@@ -558,7 +558,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -569,15 +569,6 @@
       "menge": 2
      }
     ]
-   },
-   {
-    "dan": "3135831",
-    "name": "NÉONAIL Adventskalender 2026 Touch Of Magic, 1 St",
-    "preis": 59.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1781225246/assets/pas/images/2a76c744-d465-4a81-9515-f64343237e0c/neonail-adventskalender-2026-touch-of-magic",
-    "link": "https://www.dm.de/p/d/3135831/neonail-adventskalender-2026-touch-of-magic",
-    "begriff": "adventskalender",
-    "vorrat": []
    },
    {
     "dan": "3118151",
@@ -609,7 +600,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 4
+      "menge": 3
      },
      {
       "name": "dm Frankfurt am Main",
@@ -633,7 +624,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 5
+      "menge": 3
      },
      {
       "name": "dm Flörsheim am Main",
@@ -691,7 +682,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Frankfurt am Main",
@@ -741,7 +732,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 19
+      "menge": 18
      },
      {
       "name": "dm Kelsterbach",
@@ -809,6 +800,80 @@
     "link": "https://www.dm.de/p/d/3135923/craze-adventskalender-2026-kinder-top-fashion",
     "begriff": "adventskalender",
     "vorrat": []
+   },
+   {
+    "dan": "3119105",
+    "name": "M. Asam Adventskalender 2026 Schönste Zeit, 1 St",
+    "preis": 69.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1792187316/assets/pas/images/c410291f-0b83-4bcc-97d8-6bde5e78baa9/m-asam-adventskalender-2026-schoenste-zeit",
+    "link": "https://www.dm.de/p/d/3119105/m-asam-adventskalender-2026-schoenste-zeit",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 2
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 5
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 2
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 2
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 4
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 3
+     },
+     {
+      "name": "dm Wiesbaden",
+      "adresse": "Borsigstraße 9, 65205 Wiesbaden",
+      "km": 10.9,
+      "lat": 50.057082,
+      "lon": 8.33478,
+      "menge": 3
+     }
+    ]
    },
    {
     "dan": "3118686",
@@ -3046,7 +3111,7 @@
     "menge": "200+"
    },
    {
-    "titel": "paul walker",
+    "titel": "dschungelcamp",
     "menge": "1000+"
    }
   ]
