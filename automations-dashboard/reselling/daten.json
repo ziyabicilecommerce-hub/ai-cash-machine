@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-20T15:00:56.277Z",
+ "stand": "2026-11-20T15:04:21.671Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -196,7 +196,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-20T14:48:37.890Z",
+  "stand": "2026-11-20T15:04:30.892Z",
   "filialen": 148,
   "produkte": [
    {
@@ -435,7 +435,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Kelsterbach",
@@ -509,7 +509,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Frankfurt am Main",
@@ -706,7 +706,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 4
+      "menge": 3
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -741,14 +741,6 @@
       "lat": 50.0769272,
       "lon": 8.4731447,
       "menge": 19
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 1
      },
      {
       "name": "dm Kelsterbach",
@@ -797,6 +789,14 @@
       "lat": 50.1434547,
       "lon": 8.5023642,
       "menge": 5
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 3
      }
     ]
    },
@@ -2899,12 +2899,16 @@
   "ware": [],
   "top": [
    {
+    "titel": "rentenversicherungsbericht",
+    "menge": "200+"
+   },
+   {
     "titel": "russland ukraine",
     "menge": "2000+"
    },
    {
     "titel": "helene fischer video",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "werner reinke",
@@ -2916,7 +2920,7 @@
    },
    {
     "titel": "fahrzeugkontrolle",
-    "menge": "1000+"
+    "menge": "2000+"
    },
    {
     "titel": "selina grotian",
@@ -2933,10 +2937,6 @@
    {
     "titel": "s7 airlines",
     "menge": "200+"
-   },
-   {
-    "titel": "samsung exynos",
-    "menge": "100+"
    }
   ]
  },
