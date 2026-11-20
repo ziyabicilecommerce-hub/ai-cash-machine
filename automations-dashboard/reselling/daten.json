@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-20T03:20:17.000Z",
+ "stand": "2026-11-20T03:23:23.686Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -1268,6 +1268,7 @@
      13.2,
      13.2,
      13.2,
+     13.2,
      13.2
     ]
    },
@@ -1355,6 +1356,7 @@
      19.3,
      19.3,
      19.3,
+     19.46,
      19.46,
      19.46,
      19.46,
@@ -1454,6 +1456,7 @@
      9.46,
      9.46,
      9.46,
+     9.46,
      9.46
     ]
    },
@@ -1508,6 +1511,7 @@
      36.11,
      36.11,
      36.11,
+     36.11,
      36.11
     ]
    },
@@ -1558,6 +1562,7 @@
      13.61,
      13.61,
      13.61,
+     14.24,
      14.24,
      14.24,
      14.24,
@@ -1616,6 +1621,7 @@
      35.92,
      35.92,
      35.92,
+     35.92,
      35.92
     ]
    },
@@ -1667,6 +1673,7 @@
      13.04,
      13.04,
      13.04,
+     13.43,
      13.43,
      13.43,
      13.43,
@@ -1757,6 +1764,7 @@
      18.66,
      18.66,
      18.66,
+     18.44,
      18.44,
      18.44,
      18.44,
@@ -1856,6 +1864,7 @@
      15.26,
      15.26,
      15.26,
+     15.26,
      15.26
     ]
    },
@@ -1906,6 +1915,7 @@
      21.28,
      21.28,
      21.28,
+     20.8,
      20.8,
      20.8,
      20.8,
@@ -2001,6 +2011,7 @@
      47.58,
      47.58,
      47.58,
+     47.58,
      47.58
     ]
    },
@@ -2055,6 +2066,7 @@
      36.71,
      36.71,
      36.71,
+     36.71,
      36.71
     ]
    },
@@ -2088,6 +2100,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     20.87,
      20.87,
      20.87,
      20.87,
@@ -2142,6 +2155,7 @@
      33.03,
      33.03,
      33.03,
+     32.3,
      32.3,
      32.3,
      32.3,
@@ -2237,6 +2251,7 @@
      31.92,
      31.92,
      31.92,
+     31.92,
      31.92
     ]
    },
@@ -2270,6 +2285,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     25.22,
      25.22,
      25.22,
      25.22,
@@ -2369,6 +2385,7 @@
      29.34,
      29.34,
      29.34,
+     29.34,
      29.34
     ]
    },
@@ -2460,6 +2477,7 @@
      48.19,
      48.19,
      48.19,
+     47.93,
      47.93,
      47.93,
      47.93,
@@ -2559,6 +2577,7 @@
      8.46,
      8.46,
      8.46,
+     8.46,
      8.46
     ]
    },
@@ -2651,6 +2670,7 @@
      12.53,
      12.53,
      12.53,
+     12.19,
      12.19,
      12.19,
      12.19,
@@ -2749,6 +2769,7 @@
      42.52,
      42.52,
      42.52,
+     42.52,
      42.52
     ]
    },
@@ -2844,6 +2865,7 @@
      41.72,
      41.72,
      41.72,
+     41.72,
      41.72
     ]
    }
@@ -2913,7 +2935,7 @@
    "fallend": 10
   },
   "quelle": "TCGdex",
-  "stand": "2026-11-20T02:26:27.611Z"
+  "stand": "2026-11-20T03:23:09.022Z"
  },
  "trends": {
   "ware": [
@@ -2927,10 +2949,6 @@
    {
     "titel": "sc magdeburg",
     "menge": "1000+"
-   },
-   {
-    "titel": "goldpreis",
-    "menge": "5000+"
    },
    {
     "titel": "mütterrente",
@@ -2963,6 +2981,10 @@
    {
     "titel": "spital thun",
     "menge": "500+"
+   },
+   {
+    "titel": "augustusburger straße",
+    "menge": "100+"
    }
   ]
  },
@@ -3257,20 +3279,20 @@
     "begriff": "new era"
    },
    {
-    "titel": "ASICS Gel-1130 - Black / Cream",
-    "preis": 99,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a609-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
-    "laden": "kith.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
     "preis": 99,
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/asi1203a609-023",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/ASI1203A609-023AsicsGel-1130GlacierGreyPureSilver_178.jpg?v=1787154184",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
+    "titel": "ASICS Gel-1130 - Black / Cream",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1203a609-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1203A609-001Gel1130BlackCream_1835.jpg?v=1774633971",
     "laden": "kith.com",
     "begriff": "asics"
    },
@@ -3941,6 +3963,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "New Balance 9060",
+    "preis": 151.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/new-balance-9060-slate-grey-black",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-slate-grey-black-u90605su-footwear_20_3E_20sneaker.jpg?v=1792057221",
+    "laden": "afew-store.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Nike Air Jordan 4 Retro *Tour Yellow*",
     "preis": 157,
     "verfuegbar": true,
@@ -4031,11 +4062,11 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Air Jordan 5 Retro \"Sunset\"",
+    "titel": "Air Jordan 3 Retro \"Fireside\"",
     "preis": 168,
     "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-5-retro-sunset-iv5678-102",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV5678-102_01.jpg?v=1785762646",
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-fireside-ck9246-200",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CK9246-200_01.jpg?v=1791969600",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
@@ -4081,15 +4112,6 @@
     "verfuegbar": true,
     "url": "https://afew-store.com/products/new-balance-9060-timberwolf-black-cement",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-timberwolf-black-cement-u90606h1-footwear_20_3E_20sneaker.jpg?v=1790201203",
-    "laden": "afew-store.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance 9060",
-    "preis": 169.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/new-balance-9060-reflection-sea-salt",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/new-balance-9060-reflection-sea-salt-u90602fd-footwear_20_3E_20sneaker.jpg?v=1784931038",
     "laden": "afew-store.com",
     "begriff": "new balance"
    },
@@ -4407,6 +4429,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U990GR7_1.jpg?v=1793277202",
     "laden": "overkillshop.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "Air Jordan x Free The Youth 16 SP",
+    "preis": 249.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/air-jordan-16-fty-sp-metallic-silver-picante-red",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-16-fty-sp-metallic-silver-picante-red-iv7638-001-footwear_20_3E_20sneaker.jpg?v=1786486089",
+    "laden": "afew-store.com",
+    "begriff": "jordan"
    },
    {
     "titel": "Made in USA 990v7",
