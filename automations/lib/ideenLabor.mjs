@@ -96,3 +96,19 @@ export function hookNachIdee(flags, skript, vorschlag) {
   if (flags.hookArt === 'du' && skript.hook2) return skript.hook2;
   return vorschlag;
 }
+
+// Frische Zahlen direkt aus Buffer (20.11.): verlauf.json hängt bis zu einem Tag hinterher, Buffer hat die Aufrufe nach
+// wenigen Stunden. Macht aus Buffer-Posts Einträge im verlauf.json-Format; zusammenführen() lässt Buffer gewinnen.
+const bWert = (p, typ) => Number((p.metrics || []).find((m) => m.type === typ)?.value) || 0;
+export function ausBuffer(posts = [], kanaele = []) {
+  const name = Object.fromEntries(kanaele.map((k) => [k.id, `@${String(k.name || '').replace(/^@/, '')}`]));
+  return posts.filter((p) => p.status === 'sent' && name[p.channelId] && p.metricsUpdatedAt && Date.parse(p.metricsUpdatedAt) > Date.parse(p.sentAt || 0) + 3600e3)
+    .map((p) => ({ zeit: p.sentAt, konto: name[p.channelId], text: String(p.text || '').split('\n')[0].replace(/#[\p{L}\p{N}_]+/gu, '').trim().slice(0, 90),
+      aufrufe: bWert(p, 'views'), sehdauer: Math.round(bWert(p, 'averageTimeWatched') * 10) / 10, quelle: 'buffer' }));
+}
+export function zusammenfuehren(verlauf = [], frisch = []) {
+  const schluessel = (p) => `${String(p.konto || '').replace(/^@/, '')}|${String(p.text || '').slice(0, 60)}`;
+  const m = new Map(verlauf.map((p) => [schluessel(p), p]));
+  for (const p of frisch) m.set(schluessel(p), { ...(m.get(schluessel(p)) || {}), ...p });
+  return [...m.values()];
+}

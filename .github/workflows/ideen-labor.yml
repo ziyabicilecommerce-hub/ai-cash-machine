@@ -37,6 +37,8 @@ jobs:
           if [ "${{ github.event_name }}" = "schedule" ] && [ "$LETZT" = "$HEUTE" ]; then echo "Heute schon ausgewertet."; echo "fertig=ja" >> "$GITHUB_OUTPUT"; fi
       - name: Auswerten
         if: steps.sperre.outputs.fertig != 'ja'
+        env:
+          BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}  # frische Zahlen direkt aus Buffer (sonst nur verlauf.json)
         run: node automations/118-ideen-labor.mjs
       - name: Speichern
         if: steps.sperre.outputs.fertig != 'ja'
