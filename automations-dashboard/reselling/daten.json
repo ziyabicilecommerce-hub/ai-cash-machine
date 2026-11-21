@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-21T20:22:49.742Z",
+ "stand": "2026-11-21T20:25:46.521Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118686:1441",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: ebelin Adventskalender Beauty & Hair 2026, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1014043,8.5485073",
+   "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
+   "text": "32,95 € · dm Frankfurt am Main (5,6 km) · 1 Stück\nKönigsteiner Straße 11-13, 65929 Frankfurt am Main\nIm Umkreis in 17 Filiale(n) vorrätig.",
+   "zeit": "2026-11-21T20:25:46.521Z"
+  },
   {
    "schluessel": "filiale:3118686:1441",
    "art": "Filiale",
@@ -182,19 +192,10 @@
    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Violette",
    "text": "Kaufen ab 11,90 € · Ziel 20,56 € · +6,13 € nach Gebühren (ROI 52 %)",
    "zeit": "2026-11-20T23:28:47.056Z"
-  },
-  {
-   "schluessel": "karte:30th-c-028",
-   "art": "Karte",
-   "titel": "🚨 STRONG BUY: Zacian-V",
-   "bild": "",
-   "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Zacian-V",
-   "text": "Kaufen ab 3,00 € · Ziel 9,31 € · +4,34 € nach Gebühren (ROI 145 %)",
-   "zeit": "2026-11-20T22:48:37.324Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-21T20:10:50.402Z",
+  "stand": "2026-11-21T20:25:53.417Z",
   "filialen": 148,
   "produkte": [
    {
@@ -211,7 +212,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 1
+      "menge": 2
      },
      {
       "name": "dm Frankfurt am Main",
@@ -267,7 +268,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 20
+      "menge": 21
      }
     ]
    },
@@ -449,7 +450,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Flörsheim am Main",
@@ -465,7 +466,7 @@
       "km": 9.3,
       "lat": 50.1237366,
       "lon": 8.5865988,
-      "menge": 9
+      "menge": 10
      },
      {
       "name": "dm Mörfelden-Walldorf",
@@ -547,7 +548,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 13
+      "menge": 14
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -589,7 +590,7 @@
       "km": 5.6,
       "lat": 50.1014043,
       "lon": 8.5485073,
-      "menge": 1
+      "menge": 2
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -695,7 +696,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -812,7 +813,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Kriftel",
@@ -897,6 +898,14 @@
       "menge": 4
      },
      {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 1
+     },
+     {
       "name": "dm Liederbach am Taunus",
       "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
       "km": 5.8,
@@ -910,7 +919,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 1
+      "menge": 2
      },
      {
       "name": "dm Flörsheim am Main",
@@ -935,14 +944,6 @@
       "lat": 50.1237366,
       "lon": 8.5865988,
       "menge": 4
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 8
      }
     ]
    }
