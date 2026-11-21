@@ -6,6 +6,7 @@ import { API, POST_MUTATION, postInput } from '../lib/bufferPoster.mjs';
 
 // Wenige, gesuchte Nischen-Tags statt #fyp - dazu ein eigener Serien-Tag, über den man alle Teile findet.
 const TAGS = '#horrortok #gruselgeschichte #creepypasta #gänsehaut #horrorstory';
+const TAGS_EN = '#horrortok #scarystories #creepypasta #horrorstory #scary';  // 21.11.: englische Videos (Englisch-Test)
 export const serienTag = (folge) => `#${String(folge.titel || '').split(' – ')[0].toLowerCase().replace(/[^a-zäöüß0-9]+/g, '')}`;
 
 // Beschreibung: Hook + Frage an die Zuschauer (für Kommentare), Teil-Nummer, Hashtags und klarer KI-Hinweis.
@@ -14,6 +15,7 @@ export function serienText(folge) {
   const kopf = String(folge.caption || folge.titel || '').trim();
   const gesamt = folge.teile || 12;
   const weiter = teil && Number(teil) < gesamt ? ` Folg mir, Teil ${Number(teil) + 1} kommt bald ⏰` : '';
+  if (folge.sprache === 'en') return `${kopf}\n\n${TAGS_EN} ${serienTag(folge)}\n(AI-generated, fictional story)`.slice(0, 2200);
   return `${kopf}${teil ? ` (Teil ${teil}/${gesamt})` : ''}${weiter}\n\n${TAGS} ${serienTag(folge)}${teil ? ` #teil${teil}` : ''}\n(KI-generiert, frei erfundene Geschichte)`.slice(0, 2200);
 }
 
