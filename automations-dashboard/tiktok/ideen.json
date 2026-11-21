@@ -18,11 +18,11 @@
     }
    ],
    "fehler": [],
-   "letzteAuswertung": "2026-11-20T20:34:30.677Z",
+   "letzteAuswertung": "2026-11-21T17:58:06.762Z",
    "ergebnis": {
-    "n": 0,
-    "aufrufe": 0,
-    "sehdauer": 0
+    "n": 2,
+    "aufrufe": 451,
+    "sehdauer": 4.8
    }
   },
   "zyx_7851": {
@@ -43,11 +43,11 @@
     }
    ],
    "fehler": [],
-   "letzteAuswertung": "2026-11-20T20:34:30.677Z",
+   "letzteAuswertung": "2026-11-21T17:58:06.762Z",
    "ergebnis": {
-    "n": 0,
-    "aufrufe": 0,
-    "sehdauer": 0
+    "n": 1,
+    "aufrufe": 116,
+    "sehdauer": 3.9
    }
   },
   "futureflowxx": {
@@ -68,7 +68,7 @@
     }
    ],
    "fehler": [],
-   "letzteAuswertung": "2026-11-20T20:34:30.677Z",
+   "letzteAuswertung": "2026-11-21T17:58:06.762Z",
    "ergebnis": {
     "n": 0,
     "aufrufe": 0,
@@ -76,30 +76,41 @@
    }
   },
   "desk.rebel": {
-   "idee": "akte",
-   "seit": "2026-11-18T01:02:30.469Z",
-   "basis": 134,
-   "status": "jackpot",
-   "verlauf": [],
+   "idee": "akte-direkt",
+   "seit": "2026-11-21T17:58:06.762Z",
+   "basis": 53,
+   "status": "läuft",
+   "verlauf": [
+    {
+     "idee": "akte",
+     "seit": "2026-11-18T01:02:30.469Z",
+     "bis": "2026-11-21T17:58:06.762Z",
+     "n": 5,
+     "aufrufe": 107,
+     "sehdauer": 7.9,
+     "basis": 134,
+     "urteil": "abgestürzt"
+    }
+   ],
    "fehler": [],
-   "letzteAuswertung": "2026-11-20T20:34:30.677Z",
+   "letzteAuswertung": "2026-11-21T17:58:06.762Z",
    "ergebnis": {
-    "n": 4,
-    "aufrufe": 134,
-    "sehdauer": 9.8
+    "n": 5,
+    "aufrufe": 107,
+    "sehdauer": 7.9
    }
   },
   "purivelle.785": {
    "idee": "akte",
    "seit": "2026-11-18T01:02:30.469Z",
-   "basis": 129,
+   "basis": 133,
    "status": "jackpot",
    "verlauf": [],
    "fehler": [],
-   "letzteAuswertung": "2026-11-20T20:34:30.677Z",
+   "letzteAuswertung": "2026-11-21T17:58:06.762Z",
    "ergebnis": {
-    "n": 4,
-    "aufrufe": 125,
+    "n": 5,
+    "aufrufe": 133,
     "sehdauer": 8.4
    }
   },
@@ -121,13 +132,13 @@
     }
    ],
    "fehler": [],
-   "letzteAuswertung": "2026-11-20T20:34:30.677Z",
+   "letzteAuswertung": "2026-11-21T17:58:06.762Z",
    "ergebnis": {
-    "n": 0,
-    "aufrufe": 0,
+    "n": 1,
+    "aufrufe": 1019,
     "sehdauer": 0
    }
   }
  },
- "stand": "2026-11-20T20:34:30.677Z"
+ "stand": "2026-11-21T17:58:06.762Z"
 }
