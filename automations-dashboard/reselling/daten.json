@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-21T20:37:47.336Z",
+ "stand": "2026-11-21T20:40:55.344Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118151:188",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: trend !t up Adventskalender 2026 Days of Glow, 24 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784673576/assets/pas/images/9f3e9b87-6c3d-477b-99f0-25fa0632aac5/trend-t-up-adventskalender-2026-days-of-glow",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1202634,8.5251147",
+   "shop": "https://www.dm.de/p/d/3118151/trend-t-up-adventskalender-2026-days-of-glow",
+   "text": "28,95 € · dm Sulzbach (Taunus) (6,3 km) · 3 Stück\nMain-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)\nIm Umkreis in 25 Filiale(n) vorrätig.",
+   "zeit": "2026-11-21T20:40:55.344Z"
+  },
   {
    "schluessel": "filiale:3118686:1441",
    "art": "Filiale",
@@ -183,19 +193,10 @@
    "link": "https://www.nike.com/de/launch/t/nike-cactus-jack-af1-gta-vi-nike-cactus-jack-gta-vi",
    "text": "Weiß/Weiß/Fire Pink/Weiß · 139,99 € · Start 09:00 Uhr",
    "zeit": "2026-11-21T08:00:07.283Z"
-  },
-  {
-   "schluessel": "karte:me03-122",
-   "art": "Karte",
-   "titel": "🚨 STRONG BUY: Violette",
-   "bild": "https://assets.tcgdex.net/de/me/me03/122/low.webp",
-   "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Violette",
-   "text": "Kaufen ab 11,90 € · Ziel 20,56 € · +6,13 € nach Gebühren (ROI 52 %)",
-   "zeit": "2026-11-20T23:28:47.056Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-21T20:25:53.417Z",
+  "stand": "2026-11-21T20:41:06.698Z",
   "filialen": 148,
   "produkte": [
    {
@@ -228,7 +229,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 54
+      "menge": 56
      },
      {
       "name": "dm Flörsheim am Main",
@@ -268,7 +269,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 21
+      "menge": 22
      }
     ]
    },
@@ -286,7 +287,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 7
+      "menge": 8
      },
      {
       "name": "dm Frankfurt am Main",
@@ -342,7 +343,7 @@
       "km": 12.7,
       "lat": 50.1091183,
       "lon": 8.6538929,
-      "menge": 1
+      "menge": 2
      }
     ]
    },
@@ -392,7 +393,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Mörfelden-Walldorf",
@@ -474,7 +475,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -482,7 +483,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 8
+      "menge": 9
      },
      {
       "name": "dm Eschborn",
@@ -490,7 +491,7 @@
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
-      "menge": 3
+      "menge": 5
      }
     ]
    },
@@ -540,7 +541,15 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 25
+      "menge": 26
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 3
      },
      {
       "name": "dm Flörsheim am Main",
@@ -548,7 +557,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 14
+      "menge": 15
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -557,14 +566,6 @@
       "lat": 50.1434547,
       "lon": 8.5023642,
       "menge": 3
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 4
      }
     ]
    },
@@ -598,7 +599,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 9
+      "menge": 10
      },
      {
       "name": "dm Flörsheim am Main",
@@ -762,7 +763,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 8
+      "menge": 9
      },
      {
       "name": "dm Flörsheim am Main",
@@ -786,7 +787,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 2
+      "menge": 3
      }
     ]
    },
@@ -821,7 +822,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 5
+      "menge": 6
      },
      {
       "name": "dm Kelsterbach",
@@ -853,7 +854,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Frankfurt am Main",
@@ -869,80 +870,6 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 4
-     }
-    ]
-   },
-   {
-    "dan": "3118686",
-    "name": "ebelin Adventskalender Beauty & Hair 2026, 1 St",
-    "preis": 32.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
-    "link": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
-    "begriff": "beauty adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 5
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 4
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 1
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 23
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 2
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 2
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 2
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
       "menge": 4
      }
     ]
