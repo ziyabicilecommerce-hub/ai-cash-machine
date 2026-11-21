@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-21T02:16:16.042Z",
+ "stand": "2026-11-21T02:20:21.068Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -196,7 +196,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-21T02:04:05.334Z",
+  "stand": "2026-11-21T02:20:29.026Z",
   "filialen": 148,
   "produkte": [
    {
@@ -873,6 +873,80 @@
       "menge": 3
      }
     ]
+   },
+   {
+    "dan": "3118686",
+    "name": "ebelin Adventskalender Beauty & Hair 2026, 1 St",
+    "preis": 32.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
+    "link": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
+    "begriff": "beauty adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 5
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 4
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 1
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 23
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 2
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 2
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 4
+     }
+    ]
    }
   ]
  },
@@ -1043,6 +1117,7 @@
     "kurs": [
      35.62,
      35.62,
+     35.62,
      35.62
     ]
    },
@@ -1076,6 +1151,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     20.93,
      20.93,
      20.93,
      20.93
@@ -1197,6 +1273,7 @@
      9.46,
      9.52,
      9.52,
+     9.52,
      9.52
     ]
    },
@@ -1230,6 +1307,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     19.46,
      19.46,
      19.46,
      19.46
@@ -1267,6 +1345,7 @@
     "kurs": [
      13.57,
      13.57,
+     13.57,
      13.57
     ]
    },
@@ -1300,6 +1379,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     28.8,
      28.8,
      28.8,
      28.8
@@ -1337,6 +1417,7 @@
     "kurs": [
      20.85,
      20.85,
+     20.85,
      20.85
     ]
    },
@@ -1370,6 +1451,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     18.11,
      18.11,
      18.11,
      18.11
@@ -1407,6 +1489,7 @@
     "kurs": [
      36,
      36,
+     36,
      36
     ]
    },
@@ -1440,6 +1523,7 @@
     },
     "nurBewegung": false,
     "kurs": [
+     25.22,
      25.22,
      25.22,
      25.22
@@ -1477,6 +1561,7 @@
     "kurs": [
      25.24,
      25.24,
+     25.24,
      25.24
     ]
    },
@@ -1510,6 +1595,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     46.57,
      46.57,
      46.57,
      46.57
@@ -1547,6 +1633,7 @@
     "kurs": [
      37.13,
      37.13,
+     37.13,
      37.13
     ]
    },
@@ -1580,6 +1667,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     13.86,
      13.86,
      13.86,
      13.86
@@ -1701,6 +1789,7 @@
      15.26,
      14.99,
      14.99,
+     14.99,
      14.99
     ]
    },
@@ -1734,6 +1823,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     8.61,
      8.61,
      8.61,
      8.61,
@@ -1772,6 +1862,7 @@
     "kurs": [
      13.41,
      13.41,
+     13.41,
      13.41
     ]
    },
@@ -1807,6 +1898,7 @@
     "kurs": [
      31.47,
      31.47,
+     31.47,
      31.47
     ]
    },
@@ -1840,6 +1932,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     32.23,
      32.23,
      32.23,
      32.23
@@ -1958,6 +2051,7 @@
      41.72,
      41.72,
      41.72,
+     41.19,
      41.19,
      41.19,
      41.19,
@@ -2080,6 +2174,7 @@
      42.52,
      41.77,
      41.77,
+     41.77,
      41.77
     ]
    },
@@ -2113,6 +2208,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     30.21,
      30.21,
      30.21,
      30.21,
@@ -2235,6 +2331,7 @@
      47.93,
      47.47,
      47.47,
+     47.47,
      47.47
     ]
    },
@@ -2354,6 +2451,7 @@
      8.46,
      8.37,
      8.37,
+     8.37,
      8.37
     ]
    },
@@ -2387,6 +2485,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.59,
      9.59,
      9.59,
      9.59
@@ -2449,16 +2548,16 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 758,
+  "geprueft": 794,
   "statistik": {
-   "karten": 758,
+   "karten": 794,
    "mitPreis": 657,
    "imBudget": 50,
    "steigend": 1,
    "fallend": 12
   },
   "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-11-21T01:23:52.994Z"
+  "stand": "2026-11-21T02:20:03.997Z"
  },
  "trends": {
   "ware": [
@@ -2847,6 +2946,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "Adidas Samba OG W",
+    "preis": 96,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-silver-metallic-cloud-white-core-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/yosALS2hW6yOY11LVFJ8_JR0035-Adidas-Samba-OG-W-Silver-Metallic-Cloud-White-Core-White-OS-1.jpg?v=1748610522",
+    "laden": "asphaltgold.com",
+    "begriff": "samba"
+   },
+   {
     "titel": "Book 2 NRG \"WNBA 30th\"",
     "preis": 96,
     "verfuegbar": true,
@@ -2854,15 +2962,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR6333-100_01.jpg?v=1778490795",
     "laden": "sneakersnstuff.com",
     "begriff": "dunk"
-   },
-   {
-    "titel": "Adidas Samba OG W *Pony Hair Snake*",
-    "preis": 97,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-pony-hair-snake-core-black-core-black-off-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/oo85sqxuami-IH9149_Adidas_Samba-OG-W-Ponyhair-Croc-Core-Black-Core-Black-Off-White_os-1.jpg?v=1768399587",
-    "laden": "asphaltgold.com",
-    "begriff": "samba"
    },
    {
     "titel": "204L",
@@ -3801,20 +3900,20 @@
     "begriff": "jordan"
    },
    {
-    "titel": "U1300GY",
-    "preis": 209,
-    "verfuegbar": true,
-    "url": "https://www.overkillshop.com/products/new-balance-u1300gy-u1300gy-kool-gray-harbor-grey-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300GY_1.jpg?v=1779433831",
-    "laden": "overkillshop.com",
-    "begriff": "new balance"
-   },
-   {
     "titel": "U1300NY",
     "preis": 209,
     "verfuegbar": true,
     "url": "https://www.overkillshop.com/products/new-balance-u1300ny-nb-navy-raincloud-white",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300NY_1.jpg?v=1783058043",
+    "laden": "overkillshop.com",
+    "begriff": "new balance"
+   },
+   {
+    "titel": "U1300GY",
+    "preis": 209,
+    "verfuegbar": true,
+    "url": "https://www.overkillshop.com/products/new-balance-u1300gy-u1300gy-kool-gray-harbor-grey-white",
+    "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/U1300GY_1.jpg?v=1779433831",
     "laden": "overkillshop.com",
     "begriff": "new balance"
    },
