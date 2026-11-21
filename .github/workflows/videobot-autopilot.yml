@@ -86,6 +86,19 @@ jobs:
           if [ "${LETZTES:-0}" -gt 0 ]; then
             echo "@$KONTO hat in diesem Slot schon ein Video - übersprungen."; exit 0
           fi
+          # 21.11. Englisch-Test (Nutzer: "Englisch testen"): @zyx_7851 bekommt bis 23.11. mittags die englischen Akte-Geschichten
+          # (auf YouTube holten sie ~1000 statt ~50 Aufrufe). Danach automatisch wieder Deutsch - das Ideen-Labor vergleicht.
+          if [ "$KONTO" = "zyx_7851" ] && [ "$(date -u +%Y%m%d%H)" -lt 2026112312 ]; then
+            node -e "import('./automations/schatten/skripteEnAkte.mjs').then((m) => require('fs').writeFileSync('out/akte-en.json', JSON.stringify({ skripte: m.SKRIPTE_EN_AKTE })))"
+            for SLUG in $(node automations/schatten/videobot.mjs --auto out/akte-en.json 1); do
+              TAG="videobot-auto-$SLUG-$KONTO"
+              if ! gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
+                node automations/schatten/videobot.mjs --auto out/akte-en.json 1 "$SLUG" out/folge.json
+                echo "slug=$SLUG" >> "$GITHUB_OUTPUT"; echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+                echo "Heute für @$KONTO (Englisch-Test): $SLUG" | tee -a "$GITHUB_STEP_SUMMARY"; exit 0
+              fi
+            done
+          fi
           # 16.11.: Akte-Geschichten zuerst (IG-Sehdauer 9-13 s statt ~3 s). Drittel je Konto -> jedes Konto eine andere; schon von Hand gepostete raus.
           node -e "import('./automations/schatten/skriptBot.mjs').then((m) => require('fs').writeFileSync('out/akte.json', JSON.stringify({ skripte: m.alleSkripte().filter((s) => s.muster === 'akte' && !['Zimmer 309', 'Der nette Nachbar', 'Der Anhalter von der B12'].includes(s.titel)) })))"
           for SLUG in $(node automations/schatten/videobot.mjs --auto out/akte.json ${{ matrix.nr }}); do
