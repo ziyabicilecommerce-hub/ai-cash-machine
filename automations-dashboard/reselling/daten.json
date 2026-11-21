@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-21T15:50:34.512Z",
+ "stand": "2026-11-21T15:53:33.722Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -199,7 +199,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-21T15:37:54.433Z",
+  "stand": "2026-11-21T15:53:46.704Z",
   "filialen": 148,
   "produkte": [
    {
@@ -272,7 +272,7 @@
       "km": 12.7,
       "lat": 50.1091183,
       "lon": 8.6538929,
-      "menge": 2
+      "menge": 1
      }
     ]
    },
@@ -396,7 +396,7 @@
       "km": 9.3,
       "lat": 50.1237366,
       "lon": 8.5865988,
-      "menge": 10
+      "menge": 9
      },
      {
       "name": "dm Mörfelden-Walldorf",
@@ -412,7 +412,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 9
+      "menge": 8
      },
      {
       "name": "dm Eschborn",
@@ -420,7 +420,7 @@
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
-      "menge": 5
+      "menge": 3
      }
     ]
    },
@@ -446,7 +446,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 6
+      "menge": 5
      },
      {
       "name": "dm Kelsterbach",
@@ -478,7 +478,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Frankfurt am Main",
@@ -703,7 +703,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 55
+      "menge": 54
      },
      {
       "name": "dm Flörsheim am Main",
@@ -743,7 +743,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 22
+      "menge": 21
      }
     ]
    }
@@ -2723,6 +2723,18 @@
   "ware": [],
   "top": [
    {
+    "titel": "tischtennis",
+    "menge": "500+"
+   },
+   {
+    "titel": "nice vs psg",
+    "menge": "200+"
+   },
+   {
+    "titel": "cranger weihnachtszauber",
+    "menge": "100+"
+   },
+   {
     "titel": "biathlon-weltcup 2026/27",
     "menge": "200+"
    },
@@ -2731,12 +2743,12 @@
     "menge": "100+"
    },
    {
-    "titel": "poziții fk csikszereda vs corvinul hunedoara",
-    "menge": "1000+"
-   },
-   {
     "titel": "grundversorger",
     "menge": "200+"
+   },
+   {
+    "titel": "poziții fk csikszereda vs corvinul hunedoara",
+    "menge": "1000+"
    },
    {
     "titel": "tennis live",
@@ -2749,18 +2761,6 @@
    {
     "titel": "kocaelispor – fenerbahçe",
     "menge": "2000+"
-   },
-   {
-    "titel": "semino rossi",
-    "menge": "500+"
-   },
-   {
-    "titel": "rayo vallecano – valencia",
-    "menge": "200+"
-   },
-   {
-    "titel": "wochenhoroskop",
-    "menge": "200+"
    }
   ]
  },
