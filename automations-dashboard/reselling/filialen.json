@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-14T14:31:01.045Z",
+ "stand": "2026-11-21T14:37:09.722Z",
  "filialen": [
   {
    "nummer": "1501",
@@ -242,16 +242,6 @@
    "km": 14.2
   },
   {
-   "nummer": "927",
-   "id": "D1EF",
-   "name": "dm Frankfurt am Main",
-   "adresse": "Kaiserstraße 11, 60311 Frankfurt am Main",
-   "ort": "Frankfurt am Main",
-   "lat": 50.111022,
-   "lon": 8.676176,
-   "km": 14.3
-  },
-  {
    "nummer": "1052",
    "id": "D1JK",
    "name": "dm Frankfurt am Main",
@@ -259,6 +249,16 @@
    "ort": "Frankfurt am Main",
    "lat": 50.101611,
    "lon": 8.68044,
+   "km": 14.3
+  },
+  {
+   "nummer": "927",
+   "id": "D1EF",
+   "name": "dm Frankfurt am Main",
+   "adresse": "Kaiserstraße 11, 60311 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "lat": 50.111022,
+   "lon": 8.676176,
    "km": 14.3
   },
   {
@@ -292,16 +292,6 @@
    "km": 14.7
   },
   {
-   "nummer": "1423",
-   "id": "D2B7",
-   "name": "dm Frankfurt am Main",
-   "adresse": "Hedderichstraße 47-49, 60594 Frankfurt am Main",
-   "ort": "Frankfurt am Main",
-   "lat": 50.100472,
-   "lon": 8.687001,
-   "km": 14.7
-  },
-  {
    "nummer": "2131",
    "id": "D3GJ",
    "name": "dm Frankfurt am Main",
@@ -309,6 +299,16 @@
    "ort": "Frankfurt am Main",
    "lat": 50.1135541,
    "lon": 8.680395,
+   "km": 14.7
+  },
+  {
+   "nummer": "1423",
+   "id": "D2B7",
+   "name": "dm Frankfurt am Main",
+   "adresse": "Hedderichstraße 47-49, 60594 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "lat": 50.100472,
+   "lon": 8.687001,
    "km": 14.7
   },
   {
@@ -512,13 +512,13 @@
    "km": 17.6
   },
   {
-   "nummer": "1430",
-   "id": "D2BE",
-   "name": "dm Groß-Gerau",
-   "adresse": "Helvetiastraße 3, 64521 Groß-Gerau",
-   "ort": "Groß-Gerau",
-   "lat": 49.9109414,
-   "lon": 8.4954303,
+   "nummer": "667",
+   "id": "D13J",
+   "name": "dm Wiesbaden",
+   "adresse": "Langgasse 19, 65183 Wiesbaden",
+   "ort": "Wiesbaden",
+   "lat": 50.083781,
+   "lon": 8.239718,
    "km": 17.7
   },
   {
@@ -532,24 +532,14 @@
    "km": 17.7
   },
   {
-   "nummer": "667",
-   "id": "D13J",
-   "name": "dm Wiesbaden",
-   "adresse": "Langgasse 19, 65183 Wiesbaden",
-   "ort": "Wiesbaden",
-   "lat": 50.083781,
-   "lon": 8.239718,
+   "nummer": "1430",
+   "id": "D2BE",
+   "name": "dm Groß-Gerau",
+   "adresse": "Helvetiastraße 3, 64521 Groß-Gerau",
+   "ort": "Groß-Gerau",
+   "lat": 49.9109414,
+   "lon": 8.4954303,
    "km": 17.7
-  },
-  {
-   "nummer": "643",
-   "id": "D12J",
-   "name": "dm Egelsbach",
-   "adresse": "Kurt-Schumacher-Ring 1, 63329 Egelsbach",
-   "ort": "Egelsbach",
-   "lat": 49.962379,
-   "lon": 8.671062,
-   "km": 17.8
   },
   {
    "nummer": "1261",
@@ -559,6 +549,16 @@
    "ort": "Wiesbaden",
    "lat": 50.078785,
    "lon": 8.2378583,
+   "km": 17.8
+  },
+  {
+   "nummer": "643",
+   "id": "D12J",
+   "name": "dm Egelsbach",
+   "adresse": "Kurt-Schumacher-Ring 1, 63329 Egelsbach",
+   "ort": "Egelsbach",
+   "lat": 49.962379,
+   "lon": 8.671062,
    "km": 17.8
   },
   {
@@ -632,16 +632,6 @@
    "km": 19.6
   },
   {
-   "nummer": "1074",
-   "id": "D1KI",
-   "name": "dm Bad Homburg v. d. Höhe",
-   "adresse": "Louisenstraße 67, 61348 Bad Homburg v. d. Höhe",
-   "ort": "Bad Homburg v. d. Höhe",
-   "lat": 50.226678,
-   "lon": 8.616663,
-   "km": 19.8
-  },
-  {
    "nummer": "2146",
    "id": "D3HA",
    "name": "dm Bad Homburg v. d. Höhe",
@@ -649,6 +639,16 @@
    "ort": "Bad Homburg v. d. Höhe",
    "lat": 50.2287063,
    "lon": 8.6128755,
+   "km": 19.8
+  },
+  {
+   "nummer": "1074",
+   "id": "D1KI",
+   "name": "dm Bad Homburg v. d. Höhe",
+   "adresse": "Louisenstraße 67, 61348 Bad Homburg v. d. Höhe",
+   "ort": "Bad Homburg v. d. Höhe",
+   "lat": 50.226678,
+   "lon": 8.616663,
    "km": 19.8
   },
   {
@@ -672,16 +672,6 @@
    "km": 20.2
   },
   {
-   "nummer": "1016",
-   "id": "D1I8",
-   "name": "dm Frankfurt am Main",
-   "adresse": "Borsigallee 26, 60388 Frankfurt am Main",
-   "ort": "Frankfurt am Main",
-   "lat": 50.1402219,
-   "lon": 8.7504757,
-   "km": 20.4
-  },
-  {
    "nummer": "3016",
    "id": "D55G",
    "name": "dm Wiesbaden",
@@ -689,6 +679,16 @@
    "ort": "Wiesbaden",
    "lat": 50.0796217,
    "lon": 8.201893,
+   "km": 20.4
+  },
+  {
+   "nummer": "1016",
+   "id": "D1I8",
+   "name": "dm Frankfurt am Main",
+   "adresse": "Borsigallee 26, 60388 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "lat": 50.1402219,
+   "lon": 8.7504757,
    "km": 20.4
   },
   {
@@ -872,16 +872,6 @@
    "km": 25.8
   },
   {
-   "nummer": "3160",
-   "id": "D5BG",
-   "name": "dm Neu-Anspach",
-   "adresse": "Rudolf-Diesel-Straße 4, 61267 Neu-Anspach",
-   "ort": "Neu-Anspach",
-   "lat": 50.3058589,
-   "lon": 8.5134251,
-   "km": 26.3
-  },
-  {
    "nummer": "2660",
    "id": "D4EK",
    "name": "dm Oppenheim",
@@ -889,6 +879,16 @@
    "ort": "Oppenheim",
    "lat": 49.8470352,
    "lon": 8.3608494,
+   "km": 26.3
+  },
+  {
+   "nummer": "3160",
+   "id": "D5BG",
+   "name": "dm Neu-Anspach",
+   "adresse": "Rudolf-Diesel-Straße 4, 61267 Neu-Anspach",
+   "ort": "Neu-Anspach",
+   "lat": 50.3058589,
+   "lon": 8.5134251,
    "km": 26.3
   },
   {
@@ -952,16 +952,6 @@
    "km": 28.4
   },
   {
-   "nummer": "2482",
-   "id": "D47A",
-   "name": "dm Usingen",
-   "adresse": "Neuer Marktplatz 2, 61250 Usingen",
-   "ort": "Usingen",
-   "lat": 50.334467,
-   "lon": 8.5334832,
-   "km": 29.6
-  },
-  {
    "nummer": "2586",
    "id": "D4BI",
    "name": "dm Hanau",
@@ -979,6 +969,16 @@
    "ort": "Rosbach v. d. Höhe",
    "lat": 50.299585,
    "lon": 8.6951483,
+   "km": 29.6
+  },
+  {
+   "nummer": "2482",
+   "id": "D47A",
+   "name": "dm Usingen",
+   "adresse": "Neuer Marktplatz 2, 61250 Usingen",
+   "ort": "Usingen",
+   "lat": 50.334467,
+   "lon": 8.5334832,
    "km": 29.6
   },
   {
@@ -1252,16 +1252,6 @@
    "km": 43
   },
   {
-   "nummer": "2804",
-   "id": "D4KK",
-   "name": "dm Wölfersheim",
-   "adresse": "Biedrichstraße 14, 61200 Wölfersheim",
-   "ort": "Wölfersheim",
-   "lat": 50.396745,
-   "lon": 8.816997,
-   "km": 43.3
-  },
-  {
    "nummer": "2733",
    "id": "D4HL",
    "name": "dm Florstadt",
@@ -1269,6 +1259,16 @@
    "ort": "Florstadt",
    "lat": 50.3311054,
    "lon": 8.9374363,
+   "km": 43.3
+  },
+  {
+   "nummer": "2804",
+   "id": "D4KK",
+   "name": "dm Wölfersheim",
+   "adresse": "Biedrichstraße 14, 61200 Wölfersheim",
+   "ort": "Wölfersheim",
+   "lat": 50.396745,
+   "lon": 8.816997,
    "km": 43.3
   },
   {
@@ -1452,16 +1452,6 @@
    "km": 48.7
   },
   {
-   "nummer": "154",
-   "id": "D06A",
-   "name": "dm Worms",
-   "adresse": "Kämmererstraße 34, 67547 Worms",
-   "ort": "Worms",
-   "lat": 49.631756,
-   "lon": 8.363033,
-   "km": 49.5
-  },
-  {
    "nummer": "1897",
    "id": "D371",
    "name": "dm Bad Kreuznach",
@@ -1469,6 +1459,16 @@
    "ort": "Bad Kreuznach",
    "lat": 49.8476095,
    "lon": 7.8869652,
+   "km": 49.5
+  },
+  {
+   "nummer": "154",
+   "id": "D06A",
+   "name": "dm Worms",
+   "adresse": "Kämmererstraße 34, 67547 Worms",
+   "ort": "Worms",
+   "lat": 49.631756,
+   "lon": 8.363033,
    "km": 49.5
   },
   {
