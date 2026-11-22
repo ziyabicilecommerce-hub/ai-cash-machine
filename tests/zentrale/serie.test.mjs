@@ -60,6 +60,16 @@ test('Serie: YouTube bekommt Englisch, TikTok Deutsch', () => {
   assert.match(yt.metadata.youtube.title, /^Day 2 of 100: THIS BOT WORKS/);
 });
 
+test('Serie: Woche 2 setzt den Produktnamen ein (Großbuchstaben im Hook)', () => {
+  for (const n of [8, 9, 10, 11, 12, 13, 14]) assert.ok(FOLGEN[n], `Tag ${n} fehlt`);
+  const de = folgeFuer(8, { bots: 1, produkt: 'Deal-Radar' });
+  assert.equal(de.hook[1], 'DEAL-RADAR WIRD MEIN PRODUKT.');
+  assert.match(de.caption, /: Deal-Radar wird/);
+  const en = folgeFuer(11, { bots: 1, produkt: 'Deal-Radar' }, 'en');
+  assert.match(en.caption, /Deal-Radar is live/);
+  assert.match(folgeFuer(8, {}, 'en').hook[1], /^THE WINNING BOT/);
+});
+
 test('Serie-Kanäle laufen in keinem Horror-Bot mehr', () => {
   assert.ok(!LABOR.includes('futureflowx3') && !LABOR.includes('giyuuu sama'));
   assert.ok(!VERTEILER.some((k) => KANAELE.some((s) => s.id === k.id)));

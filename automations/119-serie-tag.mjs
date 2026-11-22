@@ -15,7 +15,9 @@ function zahlen() {
   const heute = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date());
   const alarme = json('automations-dashboard/reselling/daten.json', {}).alarme || [];
   const vonHeute = alarme.filter((a) => String(a.zeit || '').slice(0, 10) >= heute).length;
-  return { bots, deals: vonHeute || alarme.length };
+  // Gewinner der Abstimmung von Tag 6 (Repo-Variable SERIE_PRODUKT), sonst "der Gewinner-Bot"
+  const produkt = String(process.env.SERIE_PRODUKT || '').replace(/[^\p{L}\p{N} .\-]/gu, '').trim().slice(0, 30);
+  return { bots, deals: vonHeute || alarme.length, ...(produkt ? { produkt } : {}) };
 }
 
 if (process.argv.includes('--vorbereiten')) {

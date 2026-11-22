@@ -34,6 +34,8 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
       SERIE_TAG: ${{ inputs.tag }}
+      # Gewinner der Abstimmung von Tag 6 (Settings -> Variables -> SERIE_PRODUKT), z. B. "Deal-Radar"
+      SERIE_PRODUKT: ${{ vars.SERIE_PRODUKT }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

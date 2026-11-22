@@ -78,6 +78,56 @@ export const FOLGEN = {
     stimme: 'Tag sieben. Eine Woche Serie. {bots} Bots, sieben Videos, und ihr habt entschieden, welcher Bot mein erstes Produkt wird. Nächste Woche wird gebaut.',
     caption: 'Woche 1 ist rum. Nächste Woche baue ich das erste Produkt. Bleib dran.',
   },
+  // Woche 2: das erste Produkt. {produkt} = Gewinner der Abstimmung von Tag 6 (Repo-Variable SERIE_PRODUKT).
+  8: {
+    hook: ['IHR HABT GEWÄHLT.', '{produkt} WIRD MEIN PRODUKT.'],
+    szenen: [{ seite: 'automations-dashboard', titel: 'Gewonnen hat:', unter: '{produkt}' },
+      { seite: 'mission-control', titel: 'Ziel diese Woche:', unter: 'der erste Kunde.' }],
+    stimme: 'Tag acht. Ihr habt abgestimmt. Gewonnen hat {produkt}. Diese Woche mache ich daraus ein Produkt, das man kaufen kann. Ziel: der erste zahlende Kunde.',
+    caption: 'Ihr habt gewählt: {produkt} wird mein erstes Produkt. Ziel diese Woche: der erste Kunde.',
+  },
+  9: {
+    hook: ['WAS KOSTET', 'EIN KI-BOT?'],
+    szenen: [{ liste: ['Gratis-Version?', '9 € im Monat?', '29 € einmalig?', '99 € mit Einrichtung?'], titel: 'Was würdest du zahlen?', unter: 'Kommentar = Preis' },
+      { seite: 'automations-dashboard', titel: 'Der Preis', unter: 'entscheidet ihr.' }],
+    stimme: 'Tag neun. Ich muss einen Preis festlegen und habe keine Ahnung. Gratis, neun Euro im Monat oder neunundzwanzig einmalig? Schreib in die Kommentare, was du zahlen würdest.',
+    caption: 'Ich muss einen Preis für {produkt} festlegen. Was würdest du zahlen? 👇',
+  },
+  10: {
+    hook: ['EINE KI BAUT', 'MEINE VERKAUFSSEITE.'],
+    szenen: [{ seite: 'zentrale', titel: 'Prompt rein,', unter: 'Seite raus.' },
+      { seite: 'automations-dashboard', titel: 'Dauer:', unter: 'unter einer Stunde.' }],
+    stimme: 'Tag zehn. Ich lasse eine KI die Verkaufsseite für {produkt} bauen. Texte, Design, Bezahlknopf. Morgen geht sie online.',
+    caption: 'Eine KI baut die Verkaufsseite für {produkt}. Morgen geht sie online.',
+  },
+  11: {
+    hook: ['DIE SEITE IST LIVE.', 'JETZT KANN MAN KAUFEN.'],
+    szenen: [{ seite: 'mission-control', titel: 'Online seit heute.', unter: 'Link in der Bio.' },
+      { seite: 'automations-dashboard', titel: 'Verkäufe:', unter: 'noch 0.' }],
+    stimme: 'Tag elf. Die Seite ist online. Ab jetzt kann man {produkt} kaufen. Verkäufe bisher: null. Link ist in der Bio.',
+    caption: '{produkt} ist live. Verkäufe bisher: 0. Link in der Bio.',
+  },
+  12: {
+    hook: ['24 STUNDEN ONLINE.', 'SO VIELE HABEN GEKAUFT.'],
+    szenen: [{ seite: 'mission-control', titel: 'Besucher, Klicks,', unter: 'Verkäufe' },
+      { seite: 'automations-dashboard', titel: 'Was ich jetzt ändere:', unter: 'kommt morgen.' }],
+    stimme: 'Tag zwölf. Die Seite ist einen Tag online. Ich zeige euch ehrlich, wie viele geklickt und wie viele gekauft haben. Und was ich jetzt ändere.',
+    caption: '24 Stunden online. Hier die ehrlichen Zahlen von {produkt}.',
+  },
+  13: {
+    hook: ['MEIN BOT SUCHT', 'JETZT SELBST KUNDEN.'],
+    szenen: [{ seite: 'automations-dashboard/tiktok', titel: 'Der nächste Bot:', unter: 'macht Werbung.' },
+      { seite: 'automations-dashboard', titel: 'Bots verkaufen', unter: 'Bots.' }],
+    stimme: 'Tag dreizehn. Wenn ich schon hundert Bots habe, kann einer davon auch Werbung für {produkt} machen. Ab heute verkaufen Bots meine Bots.',
+    caption: 'Ab heute macht ein Bot Werbung für {produkt}. Bots verkaufen Bots.',
+  },
+  14: {
+    hook: ['ZWEI WOCHEN.', 'DER ERSTE EURO?'],
+    szenen: [{ seite: 'mission-control', titel: 'Woche 2', unter: 'Produkt gebaut + online' },
+      { seite: 'automations-dashboard', titel: 'Verdient:', unter: 'die Antwort im Video.' }],
+    stimme: 'Tag vierzehn. Zwei Wochen Serie. Das Produkt ist gebaut und online. Die große Frage: Habe ich den ersten Euro verdient? Die Antwort kommt jetzt.',
+    caption: 'Zwei Wochen. {produkt} ist online. Habe ich den ersten Euro verdient?',
+  },
 };
 
 // Folge für Tag n in einer Sprache ('de' | 'en'); ohne festen Eintrag eine Standard-Folge mit den aktuellen Zahlen
@@ -91,7 +141,12 @@ export function folgeFuer(tag, zahlen = {}, sprache = 'de') {
     caption: `{bots} Bots, {deals} Deals heute. Noch ${ZIEL_TAGE - tag} Tage.`,
   };
   const en = sprache === 'en';
-  const fuell = (s) => String(s).replace(/\{bots\}/g, zahlen.bots ?? '100+').replace(/\{deals\}/g, zahlen.deals ?? (en ? 'new' : 'neue'));
+  const produkt = zahlen.produkt || (en ? 'the winning bot' : 'der Gewinner-Bot');
+  const fuell = (s) => String(s).replace(/\{bots\}/g, zahlen.bots ?? '100+').replace(/\{deals\}/g, zahlen.deals ?? (en ? 'new' : 'neue'))
+    .replace(/\{produkt\}/g, (m, i, ganz) => {
+      const rest = ganz.replace(/\{\w+\}/g, '');  // Hook-Zeilen sind in Großbuchstaben -> Produktname auch
+      return /\p{L}/u.test(rest) && rest === rest.toUpperCase() ? produkt.toUpperCase() : produkt;
+    });
   const t = en ? (FOLGEN_EN[tag] || standardEn(tag, ZIEL_TAGE)) : null;
   // Englisch: gleiche Bilder, englische Titel; Text-Listen (z. B. die 8 Ideen) aus der englischen Fassung
   const szenen = roh.szenen.map((s, i) => {

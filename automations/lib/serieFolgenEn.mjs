@@ -46,6 +46,49 @@ export const FOLGEN_EN = {
     stimme: 'Day seven. One week of this series. {bots} bots, seven videos, and you picked my first product. Next week I build it.',
     caption: 'Week 1 is done. Next week I build the first product. Stay tuned.',
   },
+  8: {
+    hook: ['YOU VOTED.', '{produkt} BECOMES MY PRODUCT.'],
+    texte: [['The winner:', '{produkt}'], ['Goal this week:', 'the first customer.']],
+    stimme: 'Day eight. You voted, and {produkt} won. This week I turn it into something people can buy. Goal: the first paying customer.',
+    caption: 'You voted: {produkt} becomes my first product. Goal this week: the first customer.',
+  },
+  9: {
+    hook: ['HOW MUCH IS', 'AN AI BOT WORTH?'],
+    texte: [['What would you pay?', 'Your comment sets the price'], ['The price', 'is up to you.']],
+    liste: ['Free version?', '$9 a month?', '$29 one-time?', '$99 with setup?'],
+    stimme: 'Day nine. I need to set a price and I have no idea. Free, nine dollars a month, or twenty-nine one-time? Tell me in the comments what you would pay.',
+    caption: 'I need a price for {produkt}. What would you pay? 👇',
+  },
+  10: {
+    hook: ['AN AI BUILDS', 'MY SALES PAGE.'],
+    texte: [['Prompt in,', 'page out.'], ['Time:', 'under one hour.']],
+    stimme: 'Day ten. I am letting an AI build the sales page for {produkt}. Copy, design, checkout button. It goes live tomorrow.',
+    caption: 'An AI is building the sales page for {produkt}. Live tomorrow.',
+  },
+  11: {
+    hook: ['THE PAGE IS LIVE.', 'YOU CAN BUY IT NOW.'],
+    texte: [['Online since today.', 'Link in bio.'], ['Sales:', 'still 0.']],
+    stimme: 'Day eleven. The page is live. You can buy {produkt} now. Sales so far: zero. Link is in my bio.',
+    caption: '{produkt} is live. Sales so far: 0. Link in bio.',
+  },
+  12: {
+    hook: ['24 HOURS LIVE.', 'THIS MANY PEOPLE BOUGHT.'],
+    texte: [['Visitors, clicks,', 'sales'], ['What I change now:', 'coming tomorrow.']],
+    stimme: 'Day twelve. The page has been live for one day. I will show you honestly how many clicked and how many bought. And what I change next.',
+    caption: '24 hours live. The honest numbers behind {produkt}.',
+  },
+  13: {
+    hook: ['MY BOT NOW FINDS', 'CUSTOMERS ON ITS OWN.'],
+    texte: [['The next bot:', 'runs the ads.'], ['Bots selling', 'bots.']],
+    stimme: 'Day thirteen. If I have a hundred bots, one of them can market {produkt}. Starting today, bots sell my bots.',
+    caption: 'Starting today a bot markets {produkt}. Bots selling bots.',
+  },
+  14: {
+    hook: ['TWO WEEKS.', 'THE FIRST DOLLAR?'],
+    texte: [['Week 2', 'product built + live'], ['Money made:', 'the answer is in this video.']],
+    stimme: 'Day fourteen. Two weeks into the series. The product is built and live. The big question: did I make my first dollar? Here is the answer.',
+    caption: 'Two weeks. {produkt} is live. Did I make my first dollar?',
+  },
 };
 
 export function standardEn(tag, ziel) {
