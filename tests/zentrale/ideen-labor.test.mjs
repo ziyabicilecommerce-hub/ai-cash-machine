@@ -109,3 +109,11 @@ test('Buffer-Zahlen: nur gesendete Posts mit aktualisierten Zahlen, Buffer gewin
   assert.equal(neu.length, 2);
   assert.equal(neu.find((p) => p.text === 'AKTE 013 · Hook').aufrufe, 720);
 });
+
+test('Stories (ohne Text) zählen nicht - weder aus Buffer noch aus verlauf.json', () => {
+  const seit = new Date(JETZT - 3 * T).toISOString();
+  const story = { ...post(2, 0, 0), text: '' };
+  assert.equal(ergebnis([post(2, 130, 9), story, { ...post(1.5, 0, 0), text: '' }], 'desk.rebel', seit, JETZT).aufrufe, 130);
+  const b = ausBuffer([{ status: 'sent', channelId: 'd', text: '', sentAt: '2026-11-20T02:20:00Z', metricsUpdatedAt: '2026-11-20T23:00:00Z', metrics: [] }], [{ id: 'd', name: 'desk.rebel' }]);
+  assert.equal(b.length, 0);
+});

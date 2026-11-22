@@ -20,7 +20,7 @@ const REIF_STD = 20;                 // jüngere Videos haben noch nicht ihre Au
 const TAG = 864e5;
 
 export const KANAELE = ['futureflowx3', 'zyx_7851', 'futureflowxx', 'desk.rebel', 'purivelle.785', 'giyuuu sama'];
-const vonKanal = (p, k) => String(p.konto || '').replace(/^@/, '') === k;
+const vonKanal = (p, k) => String(p.konto || '').replace(/^@/, '') === k && String(p.text || '').trim() !== '';  // ohne Text = Story
 const reif = (p, jetzt) => jetzt - Date.parse(p.zeit) >= REIF_STD * 3600e3;
 const median = (l) => { const s = [...l].sort((a, b) => a - b); return s.length ? (s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2) : 0; };
 const schnitt = (l) => (l.length ? l.reduce((a, b) => a + b, 0) / l.length : 0);
@@ -102,7 +102,8 @@ export function hookNachIdee(flags, skript, vorschlag) {
 const bWert = (p, typ) => Number((p.metrics || []).find((m) => m.type === typ)?.value) || 0;
 export function ausBuffer(posts = [], kanaele = []) {
   const name = Object.fromEntries(kanaele.map((k) => [k.id, `@${String(k.name || '').replace(/^@/, '')}`]));
-  return posts.filter((p) => p.status === 'sent' && name[p.channelId] && p.metricsUpdatedAt && Date.parse(p.metricsUpdatedAt) > Date.parse(p.sentAt || 0) + 3600e3)
+  // Stories (ohne Text, 0-6 s) sind keine Videos fürs Urteil - sie haben fast nie Aufrufe und zogen desk.rebel unter die Grenze
+  return posts.filter((p) => p.status === 'sent' && String(p.text || '').trim() && name[p.channelId] && p.metricsUpdatedAt && Date.parse(p.metricsUpdatedAt) > Date.parse(p.sentAt || 0) + 3600e3)
     .map((p) => ({ zeit: p.sentAt, konto: name[p.channelId], text: String(p.text || '').split('\n')[0].replace(/#[\p{L}\p{N}_]+/gu, '').trim().slice(0, 90),
       aufrufe: bWert(p, 'views'), sehdauer: Math.round(bWert(p, 'averageTimeWatched') * 10) / 10, quelle: 'buffer' }));
 }
