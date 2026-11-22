@@ -54,11 +54,24 @@ jobs:
           else
             echo "weiter=ja" >> "$GITHUB_OUTPUT"
           fi
+      # Ersatz-Stimme (Piper, offline), falls die Microsoft-Stimme einmal nicht erreichbar ist
+      - name: Piper-Stimme aus dem Cache
+        if: steps.neu.outputs.weiter == 'ja'
+        uses: actions/cache@v4
+        with:
+          path: ~/piper
+          key: piper-de-thorsten-high-v1
       - name: Werkzeuge installieren
         if: steps.neu.outputs.weiter == 'ja'
         run: |
           sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
-          pip install -q pillow edge-tts
+          pip install -q pillow edge-tts piper-tts
+          mkdir -p ~/piper && cd ~/piper
+          for f in de_DE-thorsten-high.onnx de_DE-thorsten-high.onnx.json; do
+            [ -s "$f" ] || curl -sSL --fail -o "$f" "https://huggingface.co/rhasspy/piper-voices/resolve/main/de/de_DE/thorsten/high/$f" || echo "Piper-Modell fehlt - nur Microsoft-Stimme"
+          done
+          cd "$GITHUB_WORKSPACE"
+          echo "PIPER_MODELL=$HOME/piper/de_DE-thorsten-high.onnx" >> "$GITHUB_ENV"
           npm install --no-save --no-audit --no-fund playwright@1.49.1 >/dev/null
           npx playwright install --with-deps chromium >/dev/null
       - name: Video bauen

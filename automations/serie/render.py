@@ -102,13 +102,29 @@ def beat(sek, ziel):
 
 
 def stimme(text, ziel):
+    """Sprechertext als Audio. 1) Microsoft-Stimme (edge-tts, braucht WebSocket-Zugang),
+    2) Piper offline (Modell in PIPER_MODELL, z. B. de_DE-thorsten-high.onnx), sonst None = nur Beat."""
+    mp3 = ziel + '.mp3'
     try:
         subprocess.run([sys.executable, '-m', 'edge_tts', '--voice', 'de-DE-ConradNeural', '--rate', '+8%',
-                        '--text', text, '--write-media', ziel], check=True, timeout=120, capture_output=True)
-        return os.path.getsize(ziel) > 1000
-    except Exception as e:  # kein Netz zum Sprachdienst -> nur Beat
-        print('Stimme nicht verfügbar:', str(e)[:120])
-        return False
+                        '--text', text, '--write-media', mp3], check=True, timeout=120, capture_output=True)
+        if os.path.getsize(mp3) > 1000:
+            print('Stimme: Microsoft (Conrad)')
+            return mp3
+    except Exception as e:
+        print('Microsoft-Stimme nicht erreichbar:', str(e)[:100])
+    modell = os.environ.get('PIPER_MODELL', '')
+    if modell and os.path.exists(modell):
+        wav = ziel + '.wav'
+        try:
+            subprocess.run([sys.executable, '-m', 'piper', '-m', modell, '-f', wav, '--length-scale', '0.92'],
+                           input=text, text=True, check=True, timeout=300, capture_output=True)
+            if os.path.getsize(wav) > 1000:
+                print('Stimme: Piper offline')
+                return wav
+        except Exception as e:
+            print('Piper-Stimme fehlgeschlagen:', str(e)[:100])
+    return None
 
 
 def bots():
@@ -120,13 +136,13 @@ def main(folge_datei, ordner):
     os.makedirs(ordner, exist_ok=True)
     p = lambda n: os.path.join(ordner, n)
 
-    mit_stimme = stimme(folge['stimme'], p('stimme.mp3'))
+    mit_stimme = stimme(folge['stimme'], p('stimme'))
     # Szenen-Länge: ohne Stimme 2,6 s; mit Stimme so verteilt, dass die Stimme ganz reinpasst
     szenen = folge['szenen']
     hook_sek, ende_sek = 2.6, 3.0
     s_sek = 2.6
     if mit_stimme:
-        s_sek = max(2.4, (dauer(p('stimme.mp3')) + 0.6 - hook_sek - 1.0) / len(szenen))
+        s_sek = max(2.4, (dauer(mit_stimme) + 0.6 - hook_sek - 1.0) / len(szenen))
 
     clips = []
     karte([(folge['hook'][0], 120, WHITE), (folge['hook'][1], 110, RED)], p('hook.png'))
@@ -160,7 +176,7 @@ def main(folge_datei, ordner):
     beat(gesamt, p('beat.wav'))
 
     if mit_stimme:  # Beat leiser unter der Stimme, Stimme startet nach dem Hook-Einschlag
-        ton = ['-i', p('beat.wav'), '-i', p('stimme.mp3'), '-filter_complex',
+        ton = ['-i', p('beat.wav'), '-i', mit_stimme, '-filter_complex',
                '[1]volume=0.32[m];[2]adelay=900|900,volume=1.6[v];[m][v]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]']
     else:
         ton = ['-i', p('beat.wav'), '-filter_complex', '[1]volume=0.9[a]']
