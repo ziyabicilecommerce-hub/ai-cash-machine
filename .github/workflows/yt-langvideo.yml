@@ -1,0 +1,61 @@
+name: "📼 YouTube-Langvideo (wöchentlich: The Erased Files)"
+
+# 22.11.: einmal pro Woche die englischen YouTube-Shorts der letzten Tage zu einem 6-8-Minuten-Video zusammenschneiden
+# (automations/119-yt-langvideo.mjs) und auf YouTube (giyuuu) posten. Lange Videos sammeln Wiedergabezeit fürs
+# Partnerprogramm. Manuell mit posten=aus: nur bauen und als Release ablegen (zum Anschauen).
+
+on:
+  schedule:
+    - cron: '23 17 * * 0'  # sonntags ~18:23 Uhr Berlin
+  workflow_dispatch:
+    inputs:
+      posten:
+        description: 'Auf YouTube posten (aus = nur bauen und als Release ablegen)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yt-langvideo
+  cancel-in-progress: false
+
+jobs:
+  lang:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Werkzeug
+        run: sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
+      - name: Langvideo bauen
+        run: node automations/119-yt-langvideo.mjs out
+      - name: Ablegen und posten
+        run: |
+          [ -f out/lang.mp4 ] || { echo "Kein Langvideo gebaut."; exit 0; }
+          N=$(node -e "console.log(require('./out/lang.json').folge)")
+          POSTEN="${{ github.event_name == 'schedule' || inputs.posten }}"
+          TAG="yt-lang-$N"; [ "$POSTEN" = "true" ] || TAG="vorschau-yt-lang-$(date -u +%m%d%H%M)"
+          gh release create "$TAG" out/lang.mp4 --prerelease --title "The Erased Files #$N" --notes "KI-generiertes Langvideo aus den Shorts der Woche."
+          URL="https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/lang.mp4"
+          echo "🎬 $URL" | tee -a "$GITHUB_STEP_SUMMARY"
+          [ "$POSTEN" = "true" ] || { echo "Nur gebaut (posten aus)." | tee -a "$GITHUB_STEP_SUMMARY"; exit 0; }
+          node --input-type=module -e "
+            import { API, POST_MUTATION } from './automations/lib/bufferPoster.mjs';
+            import { YT_KANAL } from './automations/lib/ytLangvideo.mjs';
+            import { readFileSync } from 'node:fs';
+            const b = JSON.parse(readFileSync('out/lang.json', 'utf8'));
+            const input = { channelId: YT_KANAL, schedulingType: 'automatic', mode: 'shareNow', assets: [{ video: { url: process.argv[1] } }], text: b.text, metadata: b.metadata };
+            const r = await fetch(API, { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + process.env.BUFFER_ACCESS_TOKEN }, body: JSON.stringify({ query: POST_MUTATION, variables: { input } }) });
+            const d = await r.json().catch(() => ({}));
+            const e = d?.data?.createPost;
+            if (!r.ok || !e || e.__typename === 'MutationError' || d.errors) { console.log('Posten fehlgeschlagen:', r.status, e?.message || JSON.stringify(d.errors || d).slice(0, 300)); process.exit(1); }
+            console.log('gepostet:', b.titel, e.post?.id, e.post?.status);
+          " "$URL" | tee -a "$GITHUB_STEP_SUMMARY"
