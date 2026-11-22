@@ -3,6 +3,7 @@
 // The villain is always the friendly man. Hand-written, every scene follows from the last one.
 const A = (titel, ort, hook, hook2, akte, saetze, ende, monster, frage, wahl) =>
   ({ titel, muster: 'akte', ort, boesewicht: 'schatten', stimme: 'mann', hook, hook2, saetze, ende, monster, frage, wahl, akte, sprache: 'en', herkunft: 'skriptbot-en' });
+import { SKRIPTE_EN_AKTE2 } from './skripteEnAkte2.mjs';
 const QUIET = ['Open it', 'Stay quiet'];
 
 export const SKRIPTE_EN_AKTE = [
@@ -116,4 +117,5 @@ export const SKRIPTE_EN_AKTE = [
     'In the new photo I am in my room. And he sits next to me on the bed.', 'Smile.',
     'Would you have looked?', ['Look', 'Delete it']),
 ];
+SKRIPTE_EN_AKTE.push(...SKRIPTE_EN_AKTE2);  // 22.11.: 20 weitere (YouTube ~1000 Aufrufe auf Englisch)
 SKRIPTE_EN_AKTE.forEach((s, i) => { s.fall_nr = i + 1; });  // case-file universe: fixed numbers, append new stories at the end
