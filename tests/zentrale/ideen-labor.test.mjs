@@ -117,3 +117,13 @@ test('Stories (ohne Text) zählen nicht - weder aus Buffer noch aus verlauf.json
   const b = ausBuffer([{ status: 'sent', channelId: 'd', text: '', sentAt: '2026-11-20T02:20:00Z', metricsUpdatedAt: '2026-11-20T23:00:00Z', metrics: [] }], [{ id: 'd', name: 'desk.rebel' }]);
   assert.equal(b.length, 0);
 });
+
+test('Idee "Akte mit Meinung": Erzähler legt sich fest, die Frage steht in der Caption (Suchbild aus)', async () => {
+  const { baueFolge } = await import('../../automations/schatten/videobot.mjs');
+  const f = IDEEN.find((i) => i.id === 'akte-provokant').flags;
+  const s = { titel: 'T', hook: 'Um 3 Uhr klopft es. Aber keiner ist da.', saetze: ['Eins.', 'Zwei.', 'Drei.'], ende: 'Ende.', wahl: ['Aufmachen', 'Leise sein'], kurz: true };
+  const d = baueFolge({ ...s, ...f });
+  assert.match(d.caption, /Ich hätte „Aufmachen“ gewählt\. Und du\?/);
+  const e = baueFolge({ ...s, sprache: 'en', wahl: ['Open it', 'Stay quiet'], ...f });
+  assert.match(e.caption, /I would pick “Open it”\. And you\?/);
+});

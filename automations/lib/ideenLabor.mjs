@@ -11,6 +11,8 @@ export const IDEEN = [
   { id: 'akte-du', name: 'Akte mit Du-Hook', was: 'Erster Satz als Regel an den Zuschauer ("Wenn du …, mach nie …")', flags: { hookArt: 'du' } },
   { id: 'akte-ruhig', name: 'Akte ohne Effekte', was: 'Ohne roten Herzschlag, Zittern und Störungen', flags: { ruhig: true } },
   { id: 'klassik', name: 'Klassik', was: 'Der alte gezeichnete Stil vom Anfang', flags: { stil: 'klassik' } },
+  // 22.11.: fast alle Videos hatten 0-1 Kommentare - der Erzähler legt sich am Ende fest, die Zuschauer widersprechen
+  { id: 'akte-provokant', name: 'Akte mit Meinung', was: 'Schlussfrage mit eigener Meinung ("Ich hätte aufgemacht. Und du?")', flags: { provokant: true, suchbild: false } },
 ];
 export const IDEE_TAGE = 2;          // so lange läuft jede Idee mindestens
 export const MIN_VIDEOS = 3;         // so viele ausgewertete Videos braucht ein Urteil

@@ -128,9 +128,13 @@ export function baueFolge(skript) {
   szenen.push({ art: 'ende', ...zeile(skript.ende, { schreck: true, angst: 1, blick: 1, ...(skript.monster2 && !kurz_ ? { monster: satz(skript.monster2, 80), monster_text: kurz(skript.monster2) } : {}) }) });
   const weiter = satz(skript.weiter || '', 80);
   const en = skript.sprache === 'en', T = TEXTE[en ? 'en' : 'de'];
-  const frage = satz(skript.frage || T.frage, 80);
   // Kommentar-Wahl "1 oder 2": eine Zahl tippen ist leichter als einen Satz schreiben - bringt mehr Kommentare
   const wahl = Array.isArray(skript.wahl) ? skript.wahl.map((w) => satz(w, 18)) : null;
+  // Ideen-Labor 'akte-provokant' (22.11.): fast alle Videos hatten 0-1 Kommentare - der Erzähler legt sich fest
+  // ("Ich hätte aufgemacht. Und du?"), das reizt zum Widersprechen
+  const frage = skript.provokant && wahl
+    ? satz(en ? `I would pick “${wahl[0]}”. And you?` : `Ich hätte „${wahl[0]}“ gewählt. Und du?`, 80)
+    : satz(skript.frage || T.frage, 80);
   // Nativer Stil (12.11.): Rückmeldung von außen - die Videos sahen aus wie Anzeigen (Banner, Knöpfe, Karten). Organisch
   // laufen schlichte Videos: große Wort-Untertitel, sonst nichts. Die Frage steht am Ende als normaler Untertitel über dem
   // letzten Bild, die 1/2-Wahl nur noch im Beitragstext. stil: 'studio' im Skript stellt das alte Aussehen wieder her.
