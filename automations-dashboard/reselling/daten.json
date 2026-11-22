@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-22T22:32:23.453Z",
+ "stand": "2026-11-22T22:35:17.910Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "deal:https://www.sneakersnstuff.com/products/nike-air-force-1-01-iv4501-300",
+   "art": "Deal",
+   "titel": "💰 Deal: Nike Air Force 1 (Collabs/Sonder) für 91,00 €",
+   "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV4501-300_01.jpg?v=1788771177",
+   "link": "https://www.sneakersnstuff.com/products/nike-air-force-1-01-iv4501-300",
+   "text": "sneakersnstuff.com · Air Force 1 '01\nVerkauf ca. 110–200 € → Gewinn ca. +43,50 € (ROI 48 %)\nGröße prüfen, vorher verkaufte Preise checken.",
+   "zeit": "2026-11-22T22:35:17.910Z"
+  },
   {
    "schluessel": "deal:https://afew-store.com/products/air-jordan-11-retro-multi-color-gym-green-lucky-green",
    "art": "Deal",
@@ -188,15 +197,6 @@
    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-4-retro-off-white-fire-pink-anthracite1-ja1135-100-footwear_20_3E_20sneaker.jpg?v=1784637504",
    "link": "https://afew-store.com/products/air-jordan-4-retro-off-white-fire-pink-anthracite1",
    "text": "afew-store.com · AIR JORDAN 4 RETRO 'Comic'\nVerkauf ca. 220–320 € → Gewinn ca. +48,01 € (ROI 25 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-21T17:17:40.518Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-royal-black-varsity-royal-black",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 1 High OG für 161,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/mkzqpk84cx-IQ5495-005_Nike_Air-Jordan-1-Retro-High-OG-Royal-Black-Varsity-Royal-Black_os-1.jpg?v=1790858909",
-   "link": "https://www.asphaltgold.com/products/nike-air-jordan-1-retro-high-og-royal-black-varsity-royal-black",
-   "text": "asphaltgold.com · Nike Air Jordan 1 Retro High OG *Royal*\nVerkauf ca. 180–260 € → Gewinn ca. +32,00 € (ROI 20 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-21T17:17:40.518Z"
   }
  ],
@@ -3695,6 +3695,15 @@
     "begriff": "new era"
    },
    {
+    "titel": "Sabrina 3",
+    "preis": 65,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-sabrina-3-hf2881-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HF2881-600_01.jpg?v=1767790890",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
+   },
+   {
     "titel": "Samba OG W",
     "preis": 72,
     "verfuegbar": true,
@@ -3729,15 +3738,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/KF0684_1.jpg?v=1760951346",
     "laden": "overkillshop.com",
     "begriff": "new era"
-   },
-   {
-    "titel": "Book 2 SP",
-    "preis": 75,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-2-sp-iq0050-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IQ0050-001-1.jpg?v=1770121671",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
    },
    {
     "titel": "Samba OG",
@@ -3866,12 +3866,30 @@
     "begriff": "asics"
    },
    {
+    "titel": "Gel-Cumulus 16",
+    "preis": 90,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gel-cumulus-16-1203a733-700",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A733-700_01.jpg?v=1776271878",
+    "laden": "sneakersnstuff.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "Nike DUNK LOW RETRO PRM QS",
     "preis": 90.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/nike-dunk-low-retro-prm-qs-classic-brown-classic-brown-black",
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/nike-dunk-low-retro-prm-qs-classic-brown-classic-brown-black-iq3342-200-footwear_20_3E_20sneaker.jpg?v=1768297828",
     "laden": "afew-store.com",
+    "begriff": "dunk"
+   },
+   {
+    "titel": "Air Force 1 '01",
+    "preis": 91,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-force-1-01-iv4501-300",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV4501-300_01.jpg?v=1788771177",
+    "laden": "sneakersnstuff.com",
     "begriff": "dunk"
    },
    {
@@ -3911,6 +3929,15 @@
     "begriff": "samba"
    },
    {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 95.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-nindig-warvan-gum2",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-nindig-warvan-gum2-kk2273-footwear_20_3E_20sneaker.jpg?v=1782197486",
+    "laden": "afew-store.com",
+    "begriff": "samba"
+   },
+   {
     "titel": "Adidas Samba OG W",
     "preis": 96,
     "verfuegbar": true,
@@ -3918,15 +3945,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/yosALS2hW6yOY11LVFJ8_JR0035-Adidas-Samba-OG-W-Silver-Metallic-Cloud-White-Core-White-OS-1.jpg?v=1748610522",
     "laden": "asphaltgold.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "Book 2 NRG \"WNBA 30th\"",
-    "preis": 96,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-2-nrg-wnba-30th-ir6333-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR6333-100_01.jpg?v=1778490795",
-    "laden": "sneakersnstuff.com",
-    "begriff": "dunk"
    },
    {
     "titel": "204L",
@@ -4190,15 +4208,6 @@
     "begriff": "asics"
    },
    {
-    "titel": "adidas Originals SAMBA OG",
-    "preis": 119.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-carbon-warvan-gum5",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-carbon-warvan-gum5-kk2268-footwear_20_3E_20sneaker.jpg?v=1783936471",
-    "laden": "afew-store.com",
-    "begriff": "samba"
-   },
-   {
     "titel": "U19543VU",
     "preis": 120,
     "verfuegbar": true,
@@ -4388,15 +4397,6 @@
     "begriff": "cap"
    },
    {
-    "titel": "GT-2160",
-    "preis": 130,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/asics-sportstyle-gt-2160-1203a275-103",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A275-103_01.jpg?v=1770746761",
-    "laden": "sneakersnstuff.com",
-    "begriff": "asics"
-   },
-   {
     "titel": "Asics GEL-NYC",
     "preis": 134,
     "verfuegbar": true,
@@ -4520,15 +4520,6 @@
     "url": "https://www.overkillshop.com/products/nike-air-180-fj9259-101-summit-white-metallic-gold-concord-black",
     "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/FJ9259-101_1_0d3aee99-d61e-4fff-a3ba-24b9cbde9a73.jpg?v=1725528858",
     "laden": "overkillshop.com",
-    "begriff": "dunk"
-   },
-   {
-    "titel": "Book 1 \"Solar Red\"",
-    "preis": 150,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/nike-book-1-solar-red-ir0838-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IR0838-001_01.jpg?v=1767860802",
-    "laden": "sneakersnstuff.com",
     "begriff": "dunk"
    },
    {
@@ -4883,15 +4874,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Air Jordan 11 Retro 'Green Screen'",
-    "preis": 209.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/air-jordan-11-retro-multi-color-gym-green-lucky-green",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/air-jordan-11-retro-multi-color-gym-green-lucky-green-iq5700-900-footwear_20_3E_20sneaker.jpg?v=1795167728",
-    "laden": "afew-store.com",
-    "begriff": "jordan"
-   },
-   {
     "titel": "Air Jordan 6 Retro",
     "preis": 209.99,
     "verfuegbar": true,
@@ -4917,6 +4899,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/HQ7978-001_01.jpg?v=1794489107",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
+   },
+   {
+    "titel": "Air Max Plus SP x One Piece \"Ope Ope\"",
+    "preis": 210,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/nike-air-max-plus-sp-x-one-piece-ope-ope-iw1282-600",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IW1282-600_01_5de60272-5d1c-4e0a-8414-7f3e2e0be140.jpg?v=1789998227",
+    "laden": "sneakersnstuff.com",
+    "begriff": "dunk"
    },
    {
     "titel": "Ronnie Fieg & New Balance 2011 - Chocolate Truffle / Sepia Rose",
