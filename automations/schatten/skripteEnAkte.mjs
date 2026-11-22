@@ -118,4 +118,12 @@ export const SKRIPTE_EN_AKTE = [
     'Would you have looked?', ['Look', 'Delete it']),
 ];
 SKRIPTE_EN_AKTE.push(...SKRIPTE_EN_AKTE2);  // 22.11.: 20 weitere (YouTube ~1000 Aufrufe auf Englisch)
-SKRIPTE_EN_AKTE.forEach((s, i) => { s.fall_nr = i + 1; });  // case-file universe: fixed numbers, append new stories at the end
+SKRIPTE_EN_AKTE.forEach((s, i) => { s.fall_nr = i + 1; });
+// Part 2 (22.11.): posted once on the same channel when a case becomes a hit (2x the channel average). The file is
+// reopened - no police report again (akte: null), same case number, the friendly man comes back as the officer.
+for (const s of SKRIPTE_EN_AKTE) {
+  s.teil2 = { hook: `I reported ${s.titel}. Tonight the file is open again.`.slice(0, 70), akte: null,
+    saetze: ['The officer on the phone sounds like he is smiling.', 'He says: We will send someone over. Do not leave the house.', 'At 3 AM the doorbell rings.'],
+    ende: 'Through the peephole: a police uniform. The same smile as in the old file.', monster: 'Police. Open up.',
+    frage: 'Would you have opened the door?', wahl: ['Open it', 'Stay quiet'] };
+}  // case-file universe: fixed numbers, append new stories at the end
