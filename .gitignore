@@ -8,3 +8,6 @@ node_modules/
 *.db-wal
 .wrangler/
 __pycache__/
+
+# Build-Ausgaben der Bots (Videos, Bildschirmfotos, Pläne) - werden in den Workflows erzeugt
+out/
