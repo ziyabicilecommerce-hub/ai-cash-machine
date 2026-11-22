@@ -1,6 +1,6 @@
 // Serie "100 Tage KI-Firma" (#119): baut jeden Tag die Folge und plant sie in Buffer ein.
-//   node automations/119-serie-tag.mjs --vorbereiten        -> out/serie-folge.json (Tag, Hook, Szenen, Sprechertext)
-//   node automations/119-serie-tag.mjs --posten <video-url> -> plant die Folge auf TikTok + YouTube (18:30 Uhr deutsche Zeit)
+//   node automations/119-serie-tag.mjs --vorbereiten -> out/serie-folge.json (Deutsch) + out/serie-folge-en.json (Englisch)
+//   node automations/119-serie-tag.mjs --posten <url-de> <url-en> -> TikTok bekommt Deutsch, YouTube Englisch (18:30 Uhr)
 // Dazwischen rendert automations/serie/render.py das Video (Bildschirmfotos, Stimme, Beat).
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, appendFileSync } from 'node:fs';
 import { API, POST_MUTATION, berlinZeitpunkt } from './lib/bufferPoster.mjs';
@@ -8,7 +8,7 @@ import { tagNummer, folgeFuer, beitragFuer, KANAELE, POST_ZEIT, ZIEL_TAGE } from
 
 const json = (p, d) => { try { return JSON.parse(readFileSync(p, 'utf8')); } catch { return d; } };
 const bericht = (z) => { console.log(z); if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${z}\n`); };
-const FOLGE = 'out/serie-folge.json';
+const FOLGE = { de: 'out/serie-folge.json', en: 'out/serie-folge-en.json' };
 
 function zahlen() {
   const bots = readdirSync('automations').filter((f) => f.endsWith('.mjs')).length;
@@ -23,32 +23,36 @@ if (process.argv.includes('--vorbereiten')) {
   if (tag < 1 || tag > ZIEL_TAGE) { bericht(`Serie: Tag ${tag} liegt außerhalb von 1-${ZIEL_TAGE}, nichts zu tun.`); process.exit(0); }
   // Tag 1 wurde am 22.11. von Hand in Buffer eingeplant (docs/serie/tag-01.mp4) - nicht doppelt posten
   if (tag === 1 && !process.env.SERIE_TAG) { bericht('Serie: Tag 1 ist schon von Hand eingeplant.'); process.exit(0); }
-  const folge = folgeFuer(tag, zahlen());
+  const z = zahlen();
   mkdirSync('out', { recursive: true });
-  writeFileSync(FOLGE, JSON.stringify(folge, null, 1));
-  bericht(`🎬 Serie Tag ${tag}: „${folge.hook.join(' ')}“`);
+  for (const [sprache, datei] of Object.entries(FOLGE)) {
+    const folge = folgeFuer(tag, z, sprache);
+    writeFileSync(datei, JSON.stringify(folge, null, 1));
+    bericht(`🎬 Serie Tag ${tag} (${sprache}): „${folge.hook.join(' ')}“`);
+  }
   if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `tag=${tag}\n`);
 }
 
 if (process.argv.includes('--posten')) {
-  const url = process.argv[process.argv.indexOf('--posten') + 1];
+  const i = process.argv.indexOf('--posten');
+  const urls = { de: process.argv[i + 1], en: process.argv[i + 2] };
   const token = (process.env.BUFFER_ACCESS_TOKEN || '').trim();
-  if (!/^https:\/\//.test(url || '') || !token) { bericht('Serie: Video-Link oder BUFFER_ACCESS_TOKEN fehlt - nichts gepostet.'); process.exit(1); }
-  const folge = json(FOLGE, null);
-  if (!folge) { bericht('Serie: out/serie-folge.json fehlt.'); process.exit(1); }
+  if (!token) { bericht('Serie: BUFFER_ACCESS_TOKEN fehlt - nichts gepostet.'); process.exit(1); }
   const heute = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date());
   const ziel = berlinZeitpunkt(heute, POST_ZEIT);
   // Zu spät gestartet (GitHub verschiebt Zeitpläne manchmal)? Dann sofort posten statt gar nicht.
   const dueAt = ziel - Date.now() > 10 * 60000 ? new Date(ziel).toISOString().replace('.000Z', 'Z') : null;
   let fehler = 0;
   for (const k of KANAELE) {
+    const folge = json(FOLGE[k.sprache], null), url = urls[k.sprache];
     try {
+      if (!folge || !/^https:\/\//.test(url || '')) throw new Error(`Folge oder Video (${k.sprache}) fehlt`);
       const res = await fetch(API, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
         body: JSON.stringify({ query: POST_MUTATION, variables: { input: beitragFuer(folge, k, url, dueAt) } }) });
       const d = await res.json();
       const r = d.data?.createPost;
       if (!res.ok || d.errors?.length || r?.__typename !== 'PostActionSuccess') throw new Error(r?.message || (d.errors || []).map((e) => e.message).join('; ') || res.status);
-      bericht(`- ✅ ${k.name}: Tag ${folge.tag} ${dueAt ? `geplant für ${POST_ZEIT} Uhr` : 'sofort gepostet'}`);
+      bericht(`- ✅ ${k.name} (${k.sprache}): Tag ${folge.tag} ${dueAt ? `geplant für ${POST_ZEIT} Uhr` : 'sofort gepostet'}`);
     } catch (e) { fehler++; bericht(`- ⚠️ ${k.name}: ${String(e.message).slice(0, 200)}`); }
   }
   if (fehler === KANAELE.length) process.exit(1);

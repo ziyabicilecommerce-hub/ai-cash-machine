@@ -101,19 +101,23 @@ def beat(sek, ziel):
     ff('-f', 'lavfi', '-i', f"aevalsrc=exprs='{ausdruck}':s=44100:d={sek:.2f}", '-af', 'alimiter=limit=0.9', '-ac', '2', ziel)
 
 
-def stimme(text, ziel):
+STIMMEN = {'de': ('de-DE-ConradNeural', 'PIPER_MODELL'), 'en': ('en-US-AndrewNeural', 'PIPER_MODELL_EN')}
+
+
+def stimme(text, ziel, sprache='de'):
     """Sprechertext als Audio. 1) Microsoft-Stimme (edge-tts, braucht WebSocket-Zugang),
-    2) Piper offline (Modell in PIPER_MODELL, z. B. de_DE-thorsten-high.onnx), sonst None = nur Beat."""
+    2) Piper offline (Modell in PIPER_MODELL bzw. PIPER_MODELL_EN), sonst None = nur Beat."""
+    ms_stimme, piper_env = STIMMEN.get(sprache, STIMMEN['de'])
     mp3 = ziel + '.mp3'
     try:
-        subprocess.run([sys.executable, '-m', 'edge_tts', '--voice', 'de-DE-ConradNeural', '--rate', '+8%',
+        subprocess.run([sys.executable, '-m', 'edge_tts', '--voice', ms_stimme, '--rate', '+8%',
                         '--text', text, '--write-media', mp3], check=True, timeout=120, capture_output=True)
         if os.path.getsize(mp3) > 1000:
-            print('Stimme: Microsoft (Conrad)')
+            print('Stimme: Microsoft', ms_stimme)
             return mp3
     except Exception as e:
         print('Microsoft-Stimme nicht erreichbar:', str(e)[:100])
-    modell = os.environ.get('PIPER_MODELL', '')
+    modell = os.environ.get(piper_env, '')
     if modell and os.path.exists(modell):
         wav = ziel + '.wav'
         try:
@@ -136,7 +140,7 @@ def main(folge_datei, ordner):
     os.makedirs(ordner, exist_ok=True)
     p = lambda n: os.path.join(ordner, n)
 
-    mit_stimme = stimme(folge['stimme'], p('stimme'))
+    mit_stimme = stimme(folge['stimme'], p('stimme'), folge.get('sprache', 'de'))
     # Szenen-Länge: ohne Stimme 2,6 s; mit Stimme so verteilt, dass die Stimme ganz reinpasst
     szenen = folge['szenen']
     hook_sek, ende_sek = 2.6, 3.0

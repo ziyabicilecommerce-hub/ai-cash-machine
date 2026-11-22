@@ -2,7 +2,7 @@ name: "🎬 Serie: 100 Tage KI-Firma (@futureflowx3 + YouTube, 18:30)"
 
 # 22.11. (Nutzer: "mach das auf TikTok und so mit Buffer, das soll einen Sound haben"): jeden Tag eine Folge der Serie
 # "100 Tage KI-Firma". Bildschirmfotos der eigenen Dashboards, Text-Einblendungen, Stimme (edge-tts) + selbst erzeugter Beat.
-# Geplant für 18:30 Uhr deutsche Zeit auf @futureflowx3 (TikTok) und giyuuu sama (YouTube). Folgen: automations/lib/serieFolgen.mjs.
+# Geplant für 18:30 Uhr deutsche Zeit: @futureflowx3 (TikTok) auf Deutsch, giyuuu sama (YouTube) auf Englisch. Folgen: automations/lib/serieFolgen.mjs.
 # Jede Folge nur einmal: gepostet = Release "serie-tag-<NN>" existiert. Tag 1 wurde von Hand eingeplant.
 
 on:
@@ -60,18 +60,22 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/piper
-          key: piper-de-thorsten-high-v1
+          key: piper-de-thorsten-en-ryan-high-v1
       - name: Werkzeuge installieren
         if: steps.neu.outputs.weiter == 'ja'
         run: |
           sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
           pip install -q pillow edge-tts piper-tts
           mkdir -p ~/piper && cd ~/piper
-          for f in de_DE-thorsten-high.onnx de_DE-thorsten-high.onnx.json; do
-            [ -s "$f" ] || curl -sSL --fail -o "$f" "https://huggingface.co/rhasspy/piper-voices/resolve/main/de/de_DE/thorsten/high/$f" || echo "Piper-Modell fehlt - nur Microsoft-Stimme"
+          B=https://huggingface.co/rhasspy/piper-voices/resolve/main
+          for f in de/de_DE/thorsten/high/de_DE-thorsten-high en/en_US/ryan/high/en_US-ryan-high; do
+            for e in onnx onnx.json; do
+              n="$(basename "$f").$e"; [ -s "$n" ] || curl -sSL --fail -o "$n" "$B/$f.$e" || echo "Piper-Modell $n fehlt - nur Microsoft-Stimme"
+            done
           done
           cd "$GITHUB_WORKSPACE"
           echo "PIPER_MODELL=$HOME/piper/de_DE-thorsten-high.onnx" >> "$GITHUB_ENV"
+          echo "PIPER_MODELL_EN=$HOME/piper/en_US-ryan-high.onnx" >> "$GITHUB_ENV"
           npm install --no-save --no-audit --no-fund playwright@1.49.1 >/dev/null
           npx playwright install --with-deps chromium >/dev/null
       - name: Video bauen
@@ -79,15 +83,19 @@ jobs:
         run: |
           node automations/serie/screenshots.js out/serie-folge.json out/serie
           python3 automations/serie/render.py out/serie-folge.json out/serie
+          mkdir -p out/serie-en && cp out/serie/seite-*.png out/serie-en/ 2>/dev/null || true
+          python3 automations/serie/render.py out/serie-folge-en.json out/serie-en
       - name: Als Release ablegen
         if: steps.neu.outputs.weiter == 'ja'
         id: rel
         run: |
           R="${{ steps.neu.outputs.release }}"
           cp out/serie/video.mp4 "out/serie/$R.mp4"
-          gh release create "$R" "out/serie/$R.mp4" out/serie/cover.jpg -R "$GITHUB_REPOSITORY" --prerelease \
+          cp out/serie-en/video.mp4 "out/serie/$R-en.mp4"
+          gh release create "$R" "out/serie/$R.mp4" "out/serie/$R-en.mp4" out/serie/cover.jpg -R "$GITHUB_REPOSITORY" --prerelease \
             --title "Serie 100 Tage KI-Firma: Tag ${{ steps.folge.outputs.tag }}" --notes "Automatisch gebaute Folge (automations/119-serie-tag.mjs)."
           echo "url=https://github.com/$GITHUB_REPOSITORY/releases/download/$R/$R.mp4" >> "$GITHUB_OUTPUT"
+          echo "url_en=https://github.com/$GITHUB_REPOSITORY/releases/download/$R/$R-en.mp4" >> "$GITHUB_OUTPUT"
       - name: In Buffer einplanen
         if: steps.neu.outputs.weiter == 'ja' && (github.event_name == 'schedule' || inputs.posten)
-        run: node automations/119-serie-tag.mjs --posten "${{ steps.rel.outputs.url }}"
+        run: node automations/119-serie-tag.mjs --posten "${{ steps.rel.outputs.url }}" "${{ steps.rel.outputs.url_en }}"

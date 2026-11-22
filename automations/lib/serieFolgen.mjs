@@ -1,11 +1,13 @@
 // Serie "100 Tage KI-Firma" (#119): jeden Tag ein Video über die eigenen Bots, auf @futureflowx3 (TikTok) + giyuuu sama (YouTube).
-// Reine Funktionen - ohne Netz testbar. Neue Folgen = neue Einträge in FOLGEN (Tag -> Folge).
+// Reine Funktionen - ohne Netz testbar. Neue Folgen = neue Einträge in FOLGEN (Tag -> Folge) + FOLGEN_EN (serieFolgenEn.mjs).
+// Sprache je Kanal (Wochenbericht 22.11.): TikTok Deutsch, YouTube Englisch (Ø 359 statt 15 Aufrufe).
+import { FOLGEN_EN, standardEn } from './serieFolgenEn.mjs';
 export const START = '2026-11-22';  // Tag 1
 export const ZIEL_TAGE = 100;
 export const POST_ZEIT = '18:30';   // deutsche Zeit, abends ist auf TikTok am meisten los
 export const KANAELE = [
-  { id: '6ac7cb606a5c39ccb6535fab', name: 'futureflowx3', dienst: 'tiktok' },
-  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube' },
+  { id: '6ac7cb606a5c39ccb6535fab', name: 'futureflowx3', dienst: 'tiktok', sprache: 'de' },
+  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', sprache: 'en' },
 ];
 
 const berlinDatum = (d) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(d);
@@ -78,28 +80,38 @@ export const FOLGEN = {
   },
 };
 
-// Folge für Tag n; ohne festen Eintrag eine Standard-Folge mit den aktuellen Zahlen
-export function folgeFuer(tag, zahlen = {}) {
+// Folge für Tag n in einer Sprache ('de' | 'en'); ohne festen Eintrag eine Standard-Folge mit den aktuellen Zahlen
+export function folgeFuer(tag, zahlen = {}, sprache = 'de') {
   const roh = FOLGEN[tag] || {
     hook: [`TAG ${tag}.`, 'DER STAND HEUTE.'],
     szenen: [{ seite: 'automations-dashboard', titel: '{bots} Bots', unter: 'laufen weiter' },
       { seite: 'automations-dashboard/reselling', titel: '{deals} Deals', unter: 'heute gefunden' },
       { seite: 'mission-control', titel: `Noch ${ZIEL_TAGE - tag} Tage`, unter: 'bis zum Ziel' }],
     stimme: `Tag ${tag}. {bots} Bots laufen, heute haben sie {deals} Deals gefunden. Noch ${ZIEL_TAGE - tag} Tage. Folg mir, damit du siehst, wie es ausgeht.`,
-    caption: `Tag ${tag}: {bots} Bots, {deals} Deals heute. Noch ${ZIEL_TAGE - tag} Tage.`,
+    caption: `{bots} Bots, {deals} Deals heute. Noch ${ZIEL_TAGE - tag} Tage.`,
   };
-  const fuell = (s) => String(s).replace(/\{bots\}/g, zahlen.bots ?? '100+').replace(/\{deals\}/g, zahlen.deals ?? 'neue');
-  const szenen = roh.szenen.map((s) => ({ ...s, titel: fuell(s.titel), unter: fuell(s.unter) }));
+  const en = sprache === 'en';
+  const fuell = (s) => String(s).replace(/\{bots\}/g, zahlen.bots ?? '100+').replace(/\{deals\}/g, zahlen.deals ?? (en ? 'new' : 'neue'));
+  const t = en ? (FOLGEN_EN[tag] || standardEn(tag, ZIEL_TAGE)) : null;
+  // Englisch: gleiche Bilder, englische Titel; Text-Listen (z. B. die 8 Ideen) aus der englischen Fassung
+  const szenen = roh.szenen.map((s, i) => {
+    const [titel, unter] = t ? (t.texte[i] || [s.titel, s.unter]) : [s.titel, s.unter];
+    const liste = t && Array.isArray(s.liste) ? (t.liste || s.liste) : s.liste;
+    return { ...s, ...(liste ? { liste } : {}), titel: fuell(titel), unter: fuell(unter) };
+  });
+  const quelle = t || roh;
   return {
-    tag, hook: roh.hook.map(fuell), szenen, stimme: fuell(roh.stimme),
-    ende: [`TAG ${tag}`, `VON ${ZIEL_TAGE}`, tag === 1 ? 'Ab heute ändert sich das.' : 'Folg mir für morgen.'],
-    caption: `Tag ${tag} von ${ZIEL_TAGE}: ${fuell(roh.caption)}`,
+    tag, sprache, hook: quelle.hook.map(fuell), szenen, stimme: fuell(quelle.stimme),
+    ende: en ? [`DAY ${tag}`, `OF ${ZIEL_TAGE}`, tag === 1 ? 'Starting today, that changes.' : 'Follow for tomorrow.']
+      : [`TAG ${tag}`, `VON ${ZIEL_TAGE}`, tag === 1 ? 'Ab heute ändert sich das.' : 'Folg mir für morgen.'],
+    caption: en ? `Day ${tag} of ${ZIEL_TAGE}: ${fuell(quelle.caption)}` : `Tag ${tag} von ${ZIEL_TAGE}: ${fuell(quelle.caption)}`,
   };
 }
 
 // Buffer-Eingabe je Kanal (TikTok braucht nur Video + Text, YouTube Titel + Kategorie)
 export function beitragFuer(folge, kanal, videoUrl, dueAt) {
-  const tags = '#ki #kibots #automatisierung #nebenverdienst #100tage';
+  const en = folge.sprache === 'en';
+  const tags = en ? '#ai #aibots #automation #sidehustle #buildinpublic #100days' : '#ki #kibots #automatisierung #nebenverdienst #100tage';
   const zeit = dueAt ? { mode: 'customScheduled', dueAt } : { mode: 'shareNow' };
   const video = { url: videoUrl, metadata: { thumbnailOffset: 1000 } };
   if (kanal.dienst === 'youtube') {
@@ -107,6 +119,6 @@ export function beitragFuer(folge, kanal, videoUrl, dueAt) {
     return { channelId: kanal.id, schedulingType: 'automatic', ...zeit, assets: [{ video }], text: `${folge.caption}\n\n${tags} #shorts`,
       metadata: { youtube: { title: `${titel} #shorts`.slice(0, 100), categoryId: '28', madeForKids: false, privacy: 'public' } } };
   }
-  return { channelId: kanal.id, schedulingType: 'automatic', ...zeit, assets: [{ video }], text: `${folge.caption} Folg mir für Tag ${folge.tag + 1} 🤖💸 ${tags}`,
+  return { channelId: kanal.id, schedulingType: 'automatic', ...zeit, assets: [{ video }], text: `${folge.caption} ${en ? `Follow for day ${folge.tag + 1}` : `Folg mir für Tag ${folge.tag + 1}`} 🤖💸 ${tags}`,
     metadata: { tiktok: { title: folge.caption.slice(0, 90) } } };
 }

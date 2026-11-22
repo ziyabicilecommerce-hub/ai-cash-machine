@@ -43,6 +43,23 @@ test('Serie: Buffer-Eingabe für TikTok und YouTube', () => {
   assert.equal(beitragFuer(f, KANAELE[0], 'https://x/y.mp4', null).mode, 'shareNow');
 });
 
+test('Serie: YouTube bekommt Englisch, TikTok Deutsch', () => {
+  assert.deepEqual(KANAELE.map((k) => k.sprache), ['de', 'en']);
+  for (const n of [...Object.keys(FOLGEN).map(Number), 30]) {
+    const en = folgeFuer(n, { bots: 134, deals: 4 }, 'en');
+    const de = folgeFuer(n, { bots: 134, deals: 4 }, 'de');
+    assert.equal(en.szenen.length, de.szenen.length, `Tag ${n}: gleiche Szenen`);
+    assert.ok(!/\{\w+\}/.test(JSON.stringify(en)), `Tag ${n}: Platzhalter übrig`);
+    assert.match(en.caption, new RegExp(`^Day ${n} of 100: (?!Day)`));
+    assert.match(de.caption, new RegExp(`^Tag ${n} von 100: (?!Tag)`));
+    assert.ok(en.szenen.every((s, i) => s.seite === de.szenen[i].seite), `Tag ${n}: gleiche Bildschirmfotos`);
+  }
+  assert.ok(folgeFuer(4, {}, 'en').szenen[0].liste.every((z) => !/[äöüß]/.test(z)), 'englische Ideen-Liste');
+  const yt = beitragFuer(folgeFuer(2, { bots: 134, deals: 9 }, 'en'), KANAELE[1], 'https://x/y.mp4', null);
+  assert.match(yt.text, /#buildinpublic/);
+  assert.match(yt.metadata.youtube.title, /^Day 2 of 100: THIS BOT WORKS/);
+});
+
 test('Serie-Kanäle laufen in keinem Horror-Bot mehr', () => {
   assert.ok(!LABOR.includes('futureflowx3') && !LABOR.includes('giyuuu sama'));
   assert.ok(!VERTEILER.some((k) => KANAELE.some((s) => s.id === k.id)));
