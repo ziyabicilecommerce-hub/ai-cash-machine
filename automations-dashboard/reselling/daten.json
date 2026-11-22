@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-22T16:38:51.990Z",
+ "stand": "2026-11-22T16:41:46.973Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118897:1441",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1014043,8.5485073",
+   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
+   "text": "44,95 € · dm Frankfurt am Main (5,6 km) · 1 Stück\nKönigsteiner Straße 11-13, 65929 Frankfurt am Main\nIm Umkreis in 15 Filiale(n) vorrätig.",
+   "zeit": "2026-11-22T16:41:46.973Z"
+  },
   {
    "schluessel": "filiale:3118897:1441",
    "art": "Filiale",
@@ -187,19 +197,10 @@
    "link": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-orange-citrus-ck9246-101",
    "text": "sneakersnstuff.com · Air Jordan 3 Retro \"Orange Citrus\"\nVerkauf ca. 200–290 € → Gewinn ca. +89,50 € (ROI 71 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-21T17:11:47.041Z"
-  },
-  {
-   "schluessel": "deal:https://www.overkillshop.com/products/air-jordan-5-retro-iv5678-102-white-sunset-fire-red",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 5 / 6 Retro für 128,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0631/5514/2847/files/IV5678-102_1.jpg?v=1785508909",
-   "link": "https://www.overkillshop.com/products/air-jordan-5-retro-iv5678-102-white-sunset-fire-red",
-   "text": "overkillshop.com · Air Jordan 5 Retro\nVerkauf ca. 190–280 € → Gewinn ca. +78,50 € (ROI 61 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-21T17:05:36.785Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-22T16:26:57.248Z",
+  "stand": "2026-11-22T16:41:51.796Z",
   "filialen": 148,
   "produkte": [
    {
@@ -544,7 +545,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 24
+      "menge": 25
      },
      {
       "name": "dm Flörsheim am Main",
@@ -587,6 +588,14 @@
       "lat": 50.0589893,
       "lon": 8.5198272,
       "menge": 3
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 1
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -635,14 +644,6 @@
       "lat": 49.984061,
       "lon": 8.430174,
       "menge": 2
-     },
-     {
-      "name": "dm Hochheim am Main",
-      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
-      "km": 10.5,
-      "lat": 50.0155817,
-      "lon": 8.3658454,
-      "menge": 4
      }
     ]
    },
@@ -874,6 +875,80 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 4
+     }
+    ]
+   },
+   {
+    "dan": "3118686",
+    "name": "ebelin Adventskalender Beauty & Hair 2026, 1 St",
+    "preis": 32.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
+    "link": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
+    "begriff": "beauty adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 5
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 4
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 23
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 1
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 2
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 4
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 8
      }
     ]
    }
@@ -3508,7 +3583,7 @@
    },
    {
     "titel": "wrexham",
-    "menge": "500+"
+    "menge": "200+"
    },
    {
     "titel": "ливерпуль – манчестер юнайтед",
@@ -3731,7 +3806,7 @@
     "preis": 79.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-ftwwht-cblack-cgrani",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1795364826",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1795365366",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
@@ -4780,6 +4855,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "New Balance 9060 - Truffle Salt / Timber Wolf",
+    "preis": 190,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/nbu906029m",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/U906029M_2.jpg?v=1771421619",
+    "laden": "kith.com",
+    "begriff": "new balance"
+   },
+   {
     "titel": "Giorgio Armani & Ronnie Fieg for '47 Wool Deconstructed Franchise LS Fitted Cap - Black",
     "preis": 195,
     "verfuegbar": true,
@@ -4983,15 +5067,6 @@
     "verfuegbar": true,
     "url": "https://eu.kith.com/products/nbu991kk2",
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u991kk2_2.jpg?v=1779869713",
-    "laden": "kith.com",
-    "begriff": "new balance"
-   },
-   {
-    "titel": "New Balance Made in UK 991v2 - Licorice / Lavender Gray / Douglas Fir",
-    "preis": 250,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/nbu991rg2",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/u991rg2_2.jpg?v=1772198089",
     "laden": "kith.com",
     "begriff": "new balance"
    }
