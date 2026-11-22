@@ -1,0 +1,80 @@
+name: "🎬 Serie: 100 Tage KI-Firma (@futureflowx3 + YouTube, 18:30)"
+
+# 22.11. (Nutzer: "mach das auf TikTok und so mit Buffer, das soll einen Sound haben"): jeden Tag eine Folge der Serie
+# "100 Tage KI-Firma". Bildschirmfotos der eigenen Dashboards, Text-Einblendungen, Stimme (edge-tts) + selbst erzeugter Beat.
+# Geplant für 18:30 Uhr deutsche Zeit auf @futureflowx3 (TikTok) und giyuuu sama (YouTube). Folgen: automations/lib/serieFolgen.mjs.
+# Jede Folge nur einmal: gepostet = Release "serie-tag-<NN>" existiert. Tag 1 wurde von Hand eingeplant.
+
+on:
+  schedule:
+    - cron: '7 14 * * *'   # ~15:07 Uhr Berlin (Winterzeit) - genug Puffer, falls GitHub den Zeitplan verschiebt
+    - cron: '37 15 * * *'  # zweiter Versuch, falls der erste ausfällt
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag der Serie (leer = heute)'
+        required: false
+      posten:
+        description: 'In Buffer einplanen (aus = nur bauen und als Release ablegen)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: serie-100-tage
+  cancel-in-progress: false
+
+jobs:
+  folge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BUFFER_ACCESS_TOKEN: ${{ secrets.BUFFER_ACCESS_TOKEN }}
+      SERIE_TAG: ${{ inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Folge vorbereiten
+        id: folge
+        run: node automations/119-serie-tag.mjs --vorbereiten
+      - name: Schon gepostet?
+        id: neu
+        if: steps.folge.outputs.tag != ''
+        run: |
+          TAG="serie-tag-$(printf '%02d' ${{ steps.folge.outputs.tag }})"
+          echo "release=$TAG" >> "$GITHUB_OUTPUT"
+          if gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Tag ${{ steps.folge.outputs.tag }} ist schon draußen ($TAG) - nichts zu tun." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "weiter=nein" >> "$GITHUB_OUTPUT"
+          else
+            echo "weiter=ja" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Werkzeuge installieren
+        if: steps.neu.outputs.weiter == 'ja'
+        run: |
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y ffmpeg fonts-dejavu-core >/dev/null
+          pip install -q pillow edge-tts
+          npm install --no-save --no-audit --no-fund playwright@1.49.1 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+      - name: Video bauen
+        if: steps.neu.outputs.weiter == 'ja'
+        run: |
+          node automations/serie/screenshots.js out/serie-folge.json out/serie
+          python3 automations/serie/render.py out/serie-folge.json out/serie
+      - name: Als Release ablegen
+        if: steps.neu.outputs.weiter == 'ja'
+        id: rel
+        run: |
+          R="${{ steps.neu.outputs.release }}"
+          cp out/serie/video.mp4 "out/serie/$R.mp4"
+          gh release create "$R" "out/serie/$R.mp4" out/serie/cover.jpg -R "$GITHUB_REPOSITORY" --prerelease \
+            --title "Serie 100 Tage KI-Firma: Tag ${{ steps.folge.outputs.tag }}" --notes "Automatisch gebaute Folge (automations/119-serie-tag.mjs)."
+          echo "url=https://github.com/$GITHUB_REPOSITORY/releases/download/$R/$R.mp4" >> "$GITHUB_OUTPUT"
+      - name: In Buffer einplanen
+        if: steps.neu.outputs.weiter == 'ja' && (github.event_name == 'schedule' || inputs.posten)
+        run: node automations/119-serie-tag.mjs --posten "${{ steps.rel.outputs.url }}"

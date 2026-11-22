@@ -6,7 +6,8 @@ import { KANAELE, passend, naechstes, postenJetzt, beitrag, heuteBerlin, zaehlen
 const VIDEOS = JSON.parse(readFileSync(new URL('../../video-feed/videos.json', import.meta.url), 'utf8')).videos;
 
 test('keine Shop-Werbung, jeder Kanal etwas anderes', () => {
-  assert.deepEqual(KANAELE.map((k) => k.quelle), ['horror-mix', 'horror', 'horror-mix']);  // desk.rebel + YouTube testen Deutsch gegen Englisch
+  assert.deepEqual(KANAELE.map((k) => k.quelle), ['horror-mix', 'horror']);  // desk.rebel testet Deutsch gegen Englisch; YouTube gehört der Serie (#119)
+  assert.ok(!KANAELE.some((k) => k.name === 'giyuuu sama'), 'giyuuu sama ist für die Serie reserviert');
   const fakten = passend(VIDEOS, 'fakten', 'purivelle.785'), anime = passend(VIDEOS, 'anime');
   assert.ok(fakten.length >= 20 && anime.length >= 5);
   for (const v of [...fakten, ...anime]) assert.ok(!/deskrebel\.store|purivelle\.store|#deskrebel|#purivelle/i.test(`${v.caption}${v.url}${v.titel}`), `Werbung: ${v.titel}`);
