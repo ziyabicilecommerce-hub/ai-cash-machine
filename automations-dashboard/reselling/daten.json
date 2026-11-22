@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-22T14:53:23.886Z",
+ "stand": "2026-11-22T14:56:20.214Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118897:1441",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1014043,8.5485073",
+   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
+   "text": "44,95 € · dm Frankfurt am Main (5,6 km) · 1 Stück\nKönigsteiner Straße 11-13, 65929 Frankfurt am Main\nIm Umkreis in 15 Filiale(n) vorrätig.",
+   "zeit": "2026-11-22T14:56:20.214Z"
+  },
   {
    "schluessel": "filiale:3118897:1441",
    "art": "Filiale",
@@ -185,19 +195,10 @@
    "link": "https://www.asphaltgold.com/products/nikeair-jordan-3-retro-worlds-best-dad-sail-black-university-red-pale-ivory-palomino",
    "text": "asphaltgold.com · Nike Air Jordan 3 Retro OG *World's Best Dad*\nVerkauf ca. 200–290 € → Gewinn ca. +86,50 € (ROI 67 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-21T17:02:42.252Z"
-  },
-  {
-   "schluessel": "deal:https://www.asphaltgold.com/products/nike-air-jordan-4-retro-tour-yellow-white-tour-yellow-dark-blue-grey-black",
-   "art": "Deal",
-   "titel": "💰 Deal: Air Jordan 4 Retro für 157,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/uf4ibrmnwh-IO2463-102_Nike_Air-Jordan-4-Retro-Tour-Yellow-White-Tour-Yellow-Dark-Blue-Grey-Black_os-1.jpg?v=1787660443",
-   "link": "https://www.asphaltgold.com/products/nike-air-jordan-4-retro-tour-yellow-white-tour-yellow-dark-blue-grey-black",
-   "text": "asphaltgold.com · Nike Air Jordan 4 Retro *Tour Yellow*\nVerkauf ca. 220–320 € → Gewinn ca. +81,00 € (ROI 52 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-21T17:02:42.252Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-22T14:41:35.137Z",
+  "stand": "2026-11-22T14:56:29.686Z",
   "filialen": 148,
   "produkte": [
    {
@@ -587,6 +588,14 @@
       "menge": 3
      },
      {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 1
+     },
+     {
       "name": "dm Liederbach am Taunus",
       "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
       "km": 5.8,
@@ -633,14 +642,6 @@
       "lat": 49.984061,
       "lon": 8.430174,
       "menge": 2
-     },
-     {
-      "name": "dm Hochheim am Main",
-      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
-      "km": 10.5,
-      "lat": 50.0155817,
-      "lon": 8.3658454,
-      "menge": 4
      }
     ]
    },
@@ -872,80 +873,6 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 4
-     }
-    ]
-   },
-   {
-    "dan": "3118686",
-    "name": "ebelin Adventskalender Beauty & Hair 2026, 1 St",
-    "preis": 32.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
-    "link": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
-    "begriff": "beauty adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 5
-     },
-     {
-      "name": "dm Kelsterbach",
-      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
-      "km": 2.6,
-      "lat": 50.0589893,
-      "lon": 8.5198272,
-      "menge": 4
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 23
-     },
-     {
-      "name": "dm Sulzbach (Taunus)",
-      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
-      "km": 6.3,
-      "lat": 50.1202634,
-      "lon": 8.5251147,
-      "menge": 1
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 2
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 2
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 4
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 8
      }
     ]
    }
