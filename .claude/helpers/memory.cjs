@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Ruflo Memory Helper
+ * Claude Flow Memory Helper
  * Simple key-value memory for cross-session context
  */
 
