@@ -35,10 +35,10 @@ export const FOLGEN = {
   2: {
     hook: ['DIESER BOT ARBEITET,', 'WÄHREND ICH SCHLAFE.'],
     szenen: [{ seite: 'automations-dashboard/reselling', titel: 'Reselling-Radar', unter: 'scannt Shops + Filialen' },
-      { seite: 'automations-dashboard/reselling', titel: '{deals} Deals gefunden', unter: 'allein heute Nacht' },
+      { seite: 'automations-dashboard/reselling', titel: '{deals} Deals gefunden', unter: 'in nur 24 Stunden' },
       { seite: 'mission-control', titel: 'Verdient?', unter: 'immer noch 0 €. Noch.' }],
-    stimme: 'Tag zwei. Während ich schlafe, scannt dieser Bot Shops und Filialen nach Schnäppchen. Heute hat er {deals} Deals gefunden. Verdient habe ich trotzdem noch nichts. Noch nicht.',
-    caption: 'Dieser Bot sucht jede Nacht Deals für mich. {deals} Stück heute. Verdient: 0 €.',
+    stimme: 'Tag zwei. Während ich schlafe, scannt dieser Bot Shops und Filialen nach Schnäppchen. In den letzten 24 Stunden hat er {deals} Deals gefunden. Verdient habe ich trotzdem noch nichts. Noch nicht.',
+    caption: 'Dieser Bot sucht rund um die Uhr Deals für mich. {deals} in 24 Stunden. Verdient: 0 €.',
   },
   3: {
     hook: ['MEINE KI TESTET SELBST,', 'WELCHE TIKTOKS LAUFEN.'],
@@ -135,10 +135,10 @@ export function folgeFuer(tag, zahlen = {}, sprache = 'de') {
   const roh = FOLGEN[tag] || {
     hook: [`TAG ${tag}.`, 'DER STAND HEUTE.'],
     szenen: [{ seite: 'automations-dashboard', titel: '{bots} Bots', unter: 'laufen weiter' },
-      { seite: 'automations-dashboard/reselling', titel: '{deals} Deals', unter: 'heute gefunden' },
+      { seite: 'automations-dashboard/reselling', titel: '{deals} Deals', unter: 'in 24 Stunden' },
       { seite: 'mission-control', titel: `Noch ${ZIEL_TAGE - tag} Tage`, unter: 'bis zum Ziel' }],
-    stimme: `Tag ${tag}. {bots} Bots laufen, heute haben sie {deals} Deals gefunden. Noch ${ZIEL_TAGE - tag} Tage. Folg mir, damit du siehst, wie es ausgeht.`,
-    caption: `{bots} Bots, {deals} Deals heute. Noch ${ZIEL_TAGE - tag} Tage.`,
+    stimme: `Tag ${tag}. {bots} Bots laufen, in den letzten 24 Stunden haben sie {deals} Deals gefunden. Noch ${ZIEL_TAGE - tag} Tage. Folg mir, damit du siehst, wie es ausgeht.`,
+    caption: `{bots} Bots, {deals} Deals in 24 Stunden. Noch ${ZIEL_TAGE - tag} Tage.`,
   };
   const en = sprache === 'en';
   const produkt = zahlen.produkt || (en ? 'the winning bot' : 'der Gewinner-Bot');

@@ -12,9 +12,9 @@ const FOLGE = { de: 'out/serie-folge.json', en: 'out/serie-folge-en.json' };
 
 function zahlen() {
   const bots = readdirSync('automations').filter((f) => f.endsWith('.mjs')).length;
-  const heute = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date());
+  // Deals der letzten 24 Stunden (nicht "seit Mitternacht" - sonst sind es morgens fast keine)
   const alarme = json('automations-dashboard/reselling/daten.json', {}).alarme || [];
-  const vonHeute = alarme.filter((a) => String(a.zeit || '').slice(0, 10) >= heute).length;
+  const vonHeute = alarme.filter((a) => Date.now() - Date.parse(a.zeit || 0) < 86400000).length;
   // Gewinner der Abstimmung von Tag 6 (Repo-Variable SERIE_PRODUKT), sonst "der Gewinner-Bot"
   const produkt = String(process.env.SERIE_PRODUKT || '').replace(/[^\p{L}\p{N} .\-]/gu, '').trim().slice(0, 30);
   return { bots, deals: vonHeute || alarme.length, ...(produkt ? { produkt } : {}) };

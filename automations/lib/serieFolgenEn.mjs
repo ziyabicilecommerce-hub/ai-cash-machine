@@ -11,9 +11,9 @@ export const FOLGEN_EN = {
   },
   2: {
     hook: ['THIS BOT WORKS', 'WHILE I SLEEP.'],
-    texte: [['Reselling radar', 'scans shops + stores'], ['{deals} deals found', 'last night alone'], ['Money made?', 'Still $0. For now.']],
-    stimme: 'Day two. While I sleep, this bot scans shops and stores for deals. Today it found {deals}. I still have not made a single dollar. Not yet.',
-    caption: 'This bot hunts deals for me every night. {deals} today. Money made: $0.',
+    texte: [['Reselling radar', 'scans shops + stores'], ['{deals} deals found', 'in just 24 hours'], ['Money made?', 'Still $0. For now.']],
+    stimme: 'Day two. While I sleep, this bot scans shops and stores for deals. In the last 24 hours it found {deals}. I still have not made a single dollar. Not yet.',
+    caption: 'This bot hunts deals for me around the clock. {deals} in 24 hours. Money made: $0.',
   },
   3: {
     hook: ['MY AI DECIDES', 'WHICH TIKTOKS I POST.'],
@@ -94,8 +94,8 @@ export const FOLGEN_EN = {
 export function standardEn(tag, ziel) {
   return {
     hook: [`DAY ${tag}.`, 'WHERE I AM TODAY.'],
-    texte: [['{bots} bots', 'still running'], ['{deals} deals', 'found today'], [`${ziel - tag} days left`, 'until the goal']],
-    stimme: `Day ${tag}. {bots} bots are running, and today they found {deals} deals. ${ziel - tag} days left. Follow to see how it ends.`,
-    caption: `{bots} bots, {deals} deals today. ${ziel - tag} days to go.`,
+    texte: [['{bots} bots', 'still running'], ['{deals} deals', 'in 24 hours'], [`${ziel - tag} days left`, 'until the goal']],
+    stimme: `Day ${tag}. {bots} bots are running, and in the last 24 hours they found {deals} deals. ${ziel - tag} days left. Follow to see how it ends.`,
+    caption: `{bots} bots, {deals} deals in 24 hours. ${ziel - tag} days to go.`,
   };
 }
