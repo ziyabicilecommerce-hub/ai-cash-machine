@@ -209,7 +209,7 @@ export const TEIL2_EN = {
     'The closet in my room creaks. It was closed before.', 'With you now.', 'Would you open the closet?', ['Open it', 'Keep it shut']),
 };
 SKRIPTE_EN.push(...SKRIPTE_EN2, ...SKRIPTE_EN_AKTE);  // 16.11.: Akte-Geschichten auf Englisch  // 07.11.: 20 neue Anruf- und Kamera-Geschichten (stärkste Muster auf YouTube)
-for (const s of SKRIPTE_EN) s.teil2 = TEIL2_EN[s.muster];
+for (const s of SKRIPTE_EN) s.teil2 = s.teil2 || TEIL2_EN[s.muster];  // Akte-Fälle bringen ihren eigenen Part 2 mit
 
 export const TAGS_EN = '#horror #scary #creepypasta #scarystories #horrorstory';
 
