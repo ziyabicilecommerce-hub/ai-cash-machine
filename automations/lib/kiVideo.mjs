@@ -5,6 +5,7 @@ import { execFile, execFileSync } from 'node:child_process';
 import { promisify } from 'node:util';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { freeAiClip } from './freeAiVideo.mjs';
 
 const ausfuehren = promisify(execFile);
 const zustand = { aus: /^(0|nein|aus|false)$/i.test(String(process.env.VIDEO_KI_CLIPS || '').trim()), erschoepft: new Set(), ok: 0, fehler: 0 };
@@ -16,8 +17,9 @@ export const bewegungsPrompt = (bild) => `${String(bild || '').replace(/,?\s*no 
 // Hook-Szene bekommt das bessere Modell (Wan), der Rest das schnellere (LTX); ist eins erschöpft, das andere.
 // Mit ZHIPU_API_KEY (kostenloses Konto bei Zhipu AI) kommt CogVideoX-Flash als dritte, kostenlose Quelle dazu.
 // KI_CLIP_ANIME=ja (Anime-Serie): erst AnimeGen-I2V (auf Anime trainiert), dann die allgemeinen Modelle.
-export function modelleFuer(index, erschoepft = new Set(), { zhipu = !!process.env.ZHIPU_API_KEY, anime = /^(ja|1|an|true)$/i.test(String(process.env.KI_CLIP_ANIME || '').trim()) } = {}) {
-  return [...(anime ? ['animegen'] : []), ...(index === 0 ? ['wan', 'ltx'] : ['ltx', 'wan']), ...(zhipu ? ['zhipu'] : [])].filter((m) => !erschoepft.has(m));
+// Mit FREEAI_API_KEY (free.ai, ~1 Clip am Tag gratis) bekommt die Hook-Szene (index 0) zuerst Wan 2.2 von free.ai.
+export function modelleFuer(index, erschoepft = new Set(), { zhipu = !!process.env.ZHIPU_API_KEY, freeai = !!process.env.FREEAI_API_KEY, anime = /^(ja|1|an|true)$/i.test(String(process.env.KI_CLIP_ANIME || '').trim()) } = {}) {
+  return [...(anime ? ['animegen'] : []), ...(freeai && index === 0 ? ['freeai'] : []), ...(index === 0 ? ['wan', 'ltx'] : ['ltx', 'wan']), ...(zhipu ? ['zhipu'] : [])].filter((m) => !erschoepft.has(m));
 }
 
 // Zhipu AI (bigmodel.cn bzw. z.ai international): CogVideoX-Flash ist dort ein kostenloses Modell.
@@ -49,6 +51,7 @@ export async function kiClip(bild, prompt, ziel, { index = 0 } = {}) {
   for (const m of modelleFuer(index, zustand.erschoepft)) {
     try {
       if (m === 'zhipu') await zhipuClip(bild, bewegungsPrompt(prompt), ziel);
+      else if (m === 'freeai') await freeAiClip(bild, bewegungsPrompt(prompt), ziel);
       else await ausfuehren('python3', [resolve('scripts/ki_clip.py'), resolve(bild), bewegungsPrompt(prompt), resolve(ziel), m], { timeout: 240000 });
       if (existsSync(ziel)) { zustand.ok++; console.log(`[ki-video] ✓ Szene ${index + 1}: echter KI-Clip (${m})`); return ziel; }
     } catch (err) {
