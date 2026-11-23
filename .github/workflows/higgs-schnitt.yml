@@ -1,0 +1,42 @@
+name: "🎞️ Higgsfield-Schnitt (Vorschau, postet nichts)"
+
+# 23.11.: Bilder/Clips kommen aus Higgsfield (gleiche Figuren per Referenzbild), hier nur Stimme, Untertitel und Schnitt.
+# Ergebnis als Vorschau-Release - gepostet wird nichts.
+
+on:
+  workflow_dispatch:
+    inputs:
+      folge:
+        description: 'Folge-Datei'
+        default: 'automations/schatten/folgen/kerzenmutter-1.json'
+
+permissions:
+  contents: write
+
+jobs:
+  schnitt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      FOLGE: ${{ inputs.folge }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Werkzeug
+        uses: ./.github/actions/video-werkzeug
+        with:
+          pip: 'edge-tts==7.*'
+      - name: Schneiden
+        run: node automations/schatten/higgsSchnitt.mjs "$FOLGE" out
+      - name: Als Vorschau ablegen
+        run: |
+          SLUG=$(node -e "console.log(require(require('path').resolve(process.env.FOLGE)).slug)")
+          TAG="vorschau-$SLUG-$(date -u +%m%d%H%M)"
+          gh release create "$TAG" out/folge.mp4 --prerelease --title "Vorschau: $SLUG" --notes "Test, nicht gepostet."
+          echo "🎬 https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/folge.mp4" | tee -a "$GITHUB_STEP_SUMMARY"
