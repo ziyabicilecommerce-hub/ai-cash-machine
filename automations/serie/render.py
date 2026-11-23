@@ -50,6 +50,19 @@ def karte(zeilen, ziel):
     im.save(ziel)
 
 
+def hook_bild(hook, szenen, p):
+    """Hook auf dem ersten Bildschirmfoto der Folge (abgedunkelt), Text groß in der Mitte. Ohne Foto: dunkle Karte."""
+    src = next((p(f'seite-{i}.png') for i, s in enumerate(szenen) if s.get('seite') and os.path.exists(p(f'seite-{i}.png'))), None)
+    if not src:
+        return karte([(hook[0], 120, WHITE), (hook[1], 110, RED)], p('hook.png'))
+    im = Image.open(src).convert('RGB').resize((W, H))
+    im = Image.blend(im, Image.new('RGB', (W, H), BG), 0.55)
+    d = ImageDraw.Draw(im)
+    zentriert(d, 760, hook[0], 120, WHITE, rand=10)
+    zentriert(d, 920, hook[1], 110, RED, rand=10)
+    im.save(p('hook.png'))
+
+
 def band(im, titel, unter):
     d = ImageDraw.Draw(im, 'RGBA')
     d.rectangle([0, 1180, W, 1620], fill=(0, 0, 0, 180))
@@ -143,14 +156,16 @@ def main(folge_datei, ordner):
     mit_stimme = stimme(folge['stimme'], p('stimme'), folge.get('sprache', 'de'))
     # Szenen-Länge: ohne Stimme 2,6 s; mit Stimme so verteilt, dass die Stimme ganz reinpasst
     szenen = folge['szenen']
-    hook_sek, ende_sek = 2.6, 3.0
+    hook_sek, ende_sek = 2.0, 2.6
     s_sek = 2.6
     if mit_stimme:
-        s_sek = max(2.4, (dauer(mit_stimme) + 0.6 - hook_sek - 1.0) / len(szenen))
+        s_sek = max(2.4, (dauer(mit_stimme) + 0.4 - hook_sek - 0.6) / len(szenen))
 
     clips = []
-    karte([(folge['hook'][0], 120, WHITE), (folge['hook'][1], 110, RED)], p('hook.png'))
-    standbild_clip(p('hook.png'), hook_sek, p('c0.mp4'), zoom=False)
+    # Hook (23.11., Tag 1: Ø 1,9 s Sehdauer auf TikTok - die Leute wischen in den ersten 2 Sekunden weg):
+    # kein schwarzes Standbild mehr, sondern sofort ein bewegtes Dashboard mit großem Text, Stimme ab 0,15 s.
+    hook_bild(folge['hook'], szenen, p)
+    standbild_clip(p('hook.png'), hook_sek, p('c0.mp4'))
     clips.append(p('c0.mp4'))
     for i, s in enumerate(szenen):
         ziel = p(f'c{i + 1}.mp4')
@@ -181,7 +196,7 @@ def main(folge_datei, ordner):
 
     if mit_stimme:  # Beat leiser unter der Stimme, Stimme startet nach dem Hook-Einschlag
         ton = ['-i', p('beat.wav'), '-i', mit_stimme, '-filter_complex',
-               '[1]volume=0.32[m];[2]adelay=900|900,volume=1.6[v];[m][v]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]']
+               '[1]volume=0.32[m];[2]adelay=150|150,volume=1.6[v];[m][v]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]']
     else:
         ton = ['-i', p('beat.wav'), '-filter_complex', '[1]volume=0.9[a]']
     ff('-i', p('bild.mp4'), *ton, '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-preset', 'medium', '-crf', '21',
