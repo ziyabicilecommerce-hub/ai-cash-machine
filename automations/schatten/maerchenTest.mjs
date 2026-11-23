@@ -32,7 +32,7 @@ async function main() {
   mkdirSync(ordner, { recursive: true });
   const { videoBauen } = await import('../lib/videoFabrik.mjs');
   const v = await videoBauen({ titel: TEIL1.titel, szenen: TEIL1.szenen, cta: 'TEIL 2 MORGEN' }, join(ordner, 'bau'), {
-    format: 'hoch', hook: TEIL1.hook, premium: true, sprache: 'de', stimme: 'de-DE-GiselaNeural', stil: LOOK, kiClips: true });
+    format: 'hoch', hook: TEIL1.hook, premium: true, sprache: 'de', stimme: 'de-DE-SeraphinaMultilingualNeural', stil: LOOK, kiClips: true });
   copyFileSync(v.pfad, join(ordner, 'kerzenmutter-1.mp4'));
   writeFileSync(join(ordner, 'info.json'), JSON.stringify({ titel: TEIL1.titel, dauer: Math.round(v.dauer), szenen: v.szenen }, null, 1));
   console.log(`[maerchen] fertig: ${TEIL1.titel} (${Math.round(v.dauer)} s)`);
