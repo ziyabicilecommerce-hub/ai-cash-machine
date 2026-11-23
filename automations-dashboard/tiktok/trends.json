@@ -1,6 +1,11 @@
 {
- "stand": "2026-11-22T11:04:20.899Z",
+ "stand": "2026-11-23T12:09:09.363Z",
  "themen": [
+  {
+   "thema": "Vollmondnacht, der Hund heult",
+   "quelle": "mond",
+   "inspiration": ""
+  },
   {
    "thema": "Ich treffe mich selbst im Treppenhaus",
    "quelle": "welt (China, Tokio)",
@@ -10,11 +15,6 @@
    "thema": "Novembernebel auf der Landstraße",
    "inspiration": "",
    "quelle": "saison"
-  },
-  {
-   "thema": "Laternenumzug, eine Laterne zu viel",
-   "inspiration": "",
-   "quelle": "saison"
   }
  ],
  "radar": {
@@ -22,67 +22,67 @@
    {
     "name": "Vollmond",
     "thema": "Vollmondnacht, der Hund heult",
-    "anstieg": 1.18,
-    "proTag": 327
+    "anstieg": 1.44,
+    "proTag": 408
    },
    {
     "name": "Skinwalker",
     "thema": "Etwas imitiert die Stimme meiner Mutter im Wald",
-    "anstieg": 0.98,
-    "proTag": 1468
-   },
-   {
-    "name": "Uncanny Valley",
-    "thema": "Ein Gesicht, das fast menschlich ist",
-    "anstieg": 0.94,
-    "proTag": 1582
-   },
-   {
-    "name": "Bloody Mary",
-    "thema": "Dreimal einen Namen in den Spiegel sagen",
-    "anstieg": 0.93,
-    "proTag": 581
+    "anstieg": 1.06,
+    "proTag": 1574
    },
    {
     "name": "Exorzismus",
     "thema": "Eine Stimme, die nicht zu meinem Mund passt",
-    "anstieg": 0.93,
-    "proTag": 460
+    "anstieg": 0.99,
+    "proTag": 491
    },
    {
     "name": "Poltergeist",
     "thema": "Möbel stehen morgens anders",
-    "anstieg": 0.92,
-    "proTag": 407
+    "anstieg": 0.98,
+    "proTag": 432
    },
    {
     "name": "Moderne Sagen",
     "thema": "Die Sage aus meiner Kindheit stimmt",
-    "anstieg": 0.92,
-    "proTag": 590
+    "anstieg": 0.98,
+    "proTag": 618
    },
    {
     "name": "Schlafparalyse",
     "thema": "Schlafparalyse: jemand sitzt nachts auf meiner Brust",
-    "anstieg": 0.89,
-    "proTag": 943
+    "anstieg": 0.95,
+    "proTag": 1002
+   },
+   {
+    "name": "Nahtoderfahrung",
+    "thema": "Am Ende des Tunnels wartet jemand",
+    "anstieg": 0.92,
+    "proTag": 518
+   },
+   {
+    "name": "Bloody Mary",
+    "thema": "Dreimal einen Namen in den Spiegel sagen",
+    "anstieg": 0.91,
+    "proTag": 567
    },
    {
     "name": "Friedhof",
     "thema": "Ein frisches Grab mit meinem Namen",
-    "anstieg": 0.89,
-    "proTag": 248
+    "anstieg": 0.91,
+    "proTag": 252
    },
    {
     "name": "Slender Man",
     "thema": "Eine sehr große Gestalt am Waldrand",
-    "anstieg": 0.87,
-    "proTag": 933
+    "anstieg": 0.9,
+    "proTag": 951
    }
   ],
   "himmel": {
-   "vollmond": false,
-   "kp": 2.33,
+   "vollmond": true,
+   "kp": 1.33,
    "polarlicht": false,
    "nasa": ""
   },
@@ -92,28 +92,28 @@
    "en": []
   },
   "trendsDE": [
-   "autohaus könig",
-   "winter",
-   "josé mourinho",
-   "mike tyson",
-   "jan-christian dreesen",
-   "kevin kühnert",
-   "bo derek",
-   "35 stunden woche",
-   "hmong",
-   "franca lehfeldt"
+   "br24",
+   "bsg chemie leipzig",
+   "merzig",
+   "tobias gotthardt",
+   "tatort",
+   "news today",
+   "robert de niro",
+   "formnext",
+   "dieter nuhr",
+   "schaeffler"
   ],
   "trendsUS": [
-   "juventus vs venezia",
-   "philly marathon 2026",
-   "anne heche",
-   "espncricinfo",
-   "atomic clock",
-   "nancy guthrie",
-   "unemployment",
-   "jfk",
-   "nordvpn",
-   "how to auto drive gta 6"
+   "kaley cuoco",
+   "sam leavitt neyland stadium comments",
+   "meta stock price",
+   "price of silver",
+   "ncaa basketball rankings",
+   "widow&apos;s bay",
+   "mstr stock",
+   "victoria broderick",
+   "india",
+   "bernie sanders"
   ],
   "welt": [
    {
@@ -122,36 +122,36 @@
     "horror": [
      {
       "name": "Doppelgänger",
-      "anstieg": 1.74,
-      "proTag": 44
+      "anstieg": 1.78,
+      "proTag": 43
      },
      {
-      "name": "Mothman",
-      "anstieg": 1.36,
-      "proTag": 34
+      "name": "Backrooms",
+      "anstieg": 1.13,
+      "proTag": 170
      },
      {
       "name": "Moderne Sagen",
-      "anstieg": 1.14,
+      "anstieg": 1.13,
       "proTag": 46
      },
      {
-      "name": "Slender Man",
-      "anstieg": 0.98,
-      "proTag": 30
+      "name": "SCP",
+      "anstieg": 1.11,
+      "proTag": 179
      },
      {
-      "name": "Uncanny Valley",
-      "anstieg": 0.97,
-      "proTag": 91
+      "name": "Slender Man",
+      "anstieg": 1.06,
+      "proTag": 33
      }
     ],
     "trends": [
-     "习主席的深圳APEC时间",
-     "大雪暴雪来了！明起大降温",
-     "交易所打出稳市“组合拳”",
-     "10月份工业经济总体平稳",
-     "“星二代”集体上桌"
+     "从深圳出发 携手构建亚太共同体",
+     "央视网评“遇事就举报”",
+     "上海调整地铁票价",
+     "8000亿元“金融活水”投向了哪些项目",
+     "大风大雨暴雪 局地降温超10℃"
     ],
     "quelle": [
      "wikipedia-zh",
@@ -165,21 +165,21 @@
     "horror": [
      {
       "name": "Nebel",
-      "anstieg": 1.59,
-      "proTag": 5
+      "anstieg": 1.98,
+      "proTag": 6
      },
      {
       "name": "Geister",
-      "anstieg": 0.84,
-      "proTag": 26
+      "anstieg": 0.91,
+      "proTag": 28
      }
     ],
     "trends": [
-     "juventus vs venezia",
-     "sony liv",
-     "gta vi xbox series s",
-     "live match today",
-     "sony tv"
+     "gta vi game",
+     "bhel recruitment 2026 engineer trainee",
+     "khaled ahmed",
+     "stranger things",
+     "bangladesh national cricket team vs south africa national cricket team match scorecard"
     ],
     "quelle": [
      "wikipedia-hi",
@@ -192,43 +192,43 @@
     "flagge": "🇯🇵",
     "horror": [
      {
-      "name": "Klartraum",
-      "anstieg": 1.94,
-      "proTag": 224
-     },
-     {
       "name": "Wendigo",
-      "anstieg": 1.84,
-      "proTag": 80
+      "anstieg": 2,
+      "proTag": 91
      },
      {
       "name": "Doppelgänger",
-      "anstieg": 1.78,
-      "proTag": 333
-     },
-     {
-      "name": "Moderne Sagen",
-      "anstieg": 1.57,
-      "proTag": 285
+      "anstieg": 1.99,
+      "proTag": 364
      },
      {
       "name": "Friedhof",
-      "anstieg": 1.57,
+      "anstieg": 1.81,
+      "proTag": 36
+     },
+     {
+      "name": "Spukhaus",
+      "anstieg": 1.73,
       "proTag": 31
+     },
+     {
+      "name": "Moderne Sagen",
+      "anstieg": 1.35,
+      "proTag": 259
      }
     ],
     "trends": [
-     "ユヴェントス 対 ヴェネツィア",
-     "ドラム vivant",
-     "ブリッジ",
-     "よしこ",
-     "出川哲朗"
+     "旭富士",
+     "clima para amanhã",
+     "宝くじ 当選番号",
+     "weather tomorrow",
+     "cuaca besok"
     ],
     "quelle": [
      "wikipedia-ja",
      "google-trends"
     ],
-    "gemessen": 26
+    "gemessen": 25
    },
    {
     "name": "Paris",
@@ -236,36 +236,36 @@
     "horror": [
      {
       "name": "Skinwalker",
-      "anstieg": 2.07,
-      "proTag": 63
+      "anstieg": 2.13,
+      "proTag": 69
      },
      {
       "name": "Bloody Mary",
-      "anstieg": 1.68,
-      "proTag": 43
-     },
-     {
-      "name": "Mimic",
-      "anstieg": 1.25,
-      "proTag": 27
+      "anstieg": 1.83,
+      "proTag": 49
      },
      {
       "name": "Vollmond",
-      "anstieg": 1.25,
-      "proTag": 41
+      "anstieg": 1.35,
+      "proTag": 47
      },
      {
-      "name": "Uncanny Valley",
-      "anstieg": 1.02,
-      "proTag": 105
+      "name": "Doppelgänger",
+      "anstieg": 1.04,
+      "proTag": 102
+     },
+     {
+      "name": "Poltergeist",
+      "anstieg": 1.04,
+      "proTag": 44
      }
     ],
     "trends": [
-     "juventus – venezia",
-     "rabiot",
-     "médecine esthétique",
-     "pétanque",
-     "2030"
+     "chèque énergie",
+     "revenu",
+     "lydia bouchard star academy",
+     "brive festival",
+     "coupe d&apos;afrique des nations de football 2025"
     ],
     "quelle": [
      "wikipedia-fr",
@@ -279,36 +279,36 @@
     "horror": [
      {
       "name": "Vollmond",
-      "anstieg": 1.17,
-      "proTag": 290
+      "anstieg": 1.42,
+      "proTag": 355
      },
      {
       "name": "Skinwalker",
+      "anstieg": 1.05,
+      "proTag": 1497
+     },
+     {
+      "name": "Exorzismus",
+      "anstieg": 1,
+      "proTag": 389
+     },
+     {
+      "name": "Poltergeist",
+      "anstieg": 0.99,
+      "proTag": 392
+     },
+     {
+      "name": "Schlafparalyse",
       "anstieg": 0.98,
-      "proTag": 1399
-     },
-     {
-      "name": "Friedhof",
-      "anstieg": 0.94,
-      "proTag": 219
-     },
-     {
-      "name": "Bloody Mary",
-      "anstieg": 0.93,
-      "proTag": 581
-     },
-     {
-      "name": "Uncanny Valley",
-      "anstieg": 0.93,
-      "proTag": 1440
+      "proTag": 911
      }
     ],
     "trends": [
-     "darius acuff jr.",
-     "boise state football",
-     "wild vs canucks",
-     "wild horse nine theaters",
-     "jamal musiala"
+     "champions league",
+     "ukraine",
+     "dow jones stock markets",
+     "wgr550",
+     "tessa majors"
     ],
     "quelle": [
      "wikipedia-en",
@@ -326,9 +326,10 @@
     ]
    },
    {
-    "name": "Mothman",
+    "name": "Vollmond",
     "wo": [
-     "China"
+     "Paris",
+     "New York"
     ]
    },
    {
@@ -338,25 +339,25 @@
     ]
    },
    {
-    "name": "Klartraum",
-    "wo": [
-     "Tokio"
-    ]
-   },
-   {
     "name": "Wendigo",
     "wo": [
      "Tokio"
     ]
    },
    {
-    "name": "Moderne Sagen",
+    "name": "Friedhof",
     "wo": [
      "Tokio"
     ]
    },
    {
-    "name": "Friedhof",
+    "name": "Spukhaus",
+    "wo": [
+     "Tokio"
+    ]
+   },
+   {
+    "name": "Moderne Sagen",
     "wo": [
      "Tokio"
     ]
@@ -369,18 +370,6 @@
    },
    {
     "name": "Bloody Mary",
-    "wo": [
-     "Paris"
-    ]
-   },
-   {
-    "name": "Mimic",
-    "wo": [
-     "Paris"
-    ]
-   },
-   {
-    "name": "Vollmond",
     "wo": [
      "Paris"
     ]
