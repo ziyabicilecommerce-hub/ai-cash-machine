@@ -161,7 +161,7 @@ async function main() {
       body: JSON.stringify({ query: POST_MUTATION, variables: { input: postInput(c, f.caption, b, { titel: f.titel.slice(0, 90) }) } }) });
     const d = await res.json().catch(() => ({}));
     const r = d?.data?.createPost;
-    if (!res.ok || !r || r.__typename === 'MutationError' || d.errors) { console.log('[gta6] Posten fehlgeschlagen:', res.status, r?.message || JSON.stringify(d.errors || d).slice(0, 300)); process.exit(1); }
+    if (!res.ok || !r?.post?.id || d.errors) { console.log('[gta6] Posten fehlgeschlagen:', res.status, r?.message || JSON.stringify(d.errors || d).slice(0, 300)); process.exit(1); }
     console.log('[gta6] gepostet:', f.titel, r.post?.id, r.post?.status);
     return;
   }

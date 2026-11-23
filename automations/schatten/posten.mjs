@@ -37,7 +37,7 @@ async function main() {
     body: JSON.stringify({ query: POST_MUTATION, variables: { input } }) });
   const daten = await res.json().catch(() => ({}));
   const ergebnis = daten?.data?.createPost;
-  if (!res.ok || !ergebnis || ergebnis.__typename === 'MutationError' || daten.errors) {
+  if (!res.ok || !ergebnis?.post?.id || daten.errors) {  // Erfolg nur mit Post-ID - Fehler kommen mit eigenem Typnamen, nicht 'MutationError'
     console.log('[schatten] Posten fehlgeschlagen:', res.status, ergebnis?.message || JSON.stringify(daten.errors || daten).slice(0, 300));
     process.exit(1);
   }
