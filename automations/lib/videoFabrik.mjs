@@ -158,10 +158,14 @@ export async function szeneRendern({ bild, mp3, srt, ziel, breite, hoehe, index,
 
 // Grosse Schlagzeile oben in den ersten Sekunden (Hook fuer Kurzvideos).
 function hookFilter(text, ziel, breite, hoehe) {
-  const datei = `${ziel}.hook.txt`;
-  writeFileSync(datei, umbrechen(text.toUpperCase(), breite > hoehe ? 30 : 15));
+  // 23.11.: eine drawtext-Zeile pro Textzeile - neuere ffmpeg zeigen den Zeilenumbruch in textfile als Kästchen
   const groesse = Math.round((breite > hoehe ? hoehe : breite) * 0.058);
-  return `drawtext=fontfile=${SCHRIFT_FETT}:textfile='${filterPfad(datei)}':fontsize=${groesse}:fontcolor=white:line_spacing=${Math.round(groesse * 0.2)}:box=1:boxcolor=black@0.55:boxborderw=${Math.round(groesse * 0.4)}:x=(w-text_w)/2:y=h*0.12:enable='lt(t,3.5)':alpha='if(gt(t,3.0),(3.5-t)/0.5,1)'`;
+  const abstand = Math.round(groesse * 1.45);
+  return umbrechen(text.toUpperCase(), breite > hoehe ? 30 : 15).split('\n').map((z, n) => {
+    const datei = `${ziel}.hook${n}.txt`;
+    writeFileSync(datei, z);
+    return `drawtext=fontfile=${SCHRIFT_FETT}:textfile='${filterPfad(datei)}':fontsize=${groesse}:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=${Math.round(groesse * 0.4)}:x=(w-text_w)/2:y=h*0.12+${n * abstand}:enable='lt(t,3.5)':alpha='if(gt(t,3.0),(3.5-t)/0.5,1)'`;
+  }).join(',');
 }
 
 // Vorschaubild: erstes Szenenbild abgedunkelt plus Titel.
