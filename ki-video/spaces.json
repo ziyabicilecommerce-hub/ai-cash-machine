@@ -1,33 +1,40 @@
 {
- "stand": "2026-11-16",
- "anzahl": 54,
+ "stand": "2026-11-23",
+ "anzahl": 55,
  "spaces": [
   {
    "space": "zerogpu-aoti/wan2-2-fp8da-aoti-faster",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 3884,
+   "likes": 3909,
    "gpu": "zero-a10g"
   },
   {
    "space": "r3gm/wan2-2-fp8da-aoti-preview",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 3316,
+   "likes": 3336,
    "gpu": "zero-a10g"
   },
   {
    "space": "r3gm/wan2-2-fp8da-aoti-preview2",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 2198,
+   "likes": 2192,
    "gpu": "zero-a10g"
   },
   {
    "space": "multimodalart/wan2-1-fast",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 1628,
+   "likes": 1630,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "JCisHERE/wan2-2-i2v-v3",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 636,
    "gpu": "zero-a10g"
   },
   {
@@ -38,10 +45,10 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "JCisHERE/wan2-2-i2v-v3",
+   "space": "kulkas2pintu/wan222",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 407,
+   "likes": 279,
    "gpu": "zero-a10g"
   },
   {
@@ -52,17 +59,10 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "kulkas2pintu/wan222",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 260,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "obsxrver/wan22-i2v-omni-lora",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 231,
+   "likes": 233,
    "gpu": "zero-a10g"
   },
   {
@@ -73,17 +73,10 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "aaaa33311/wan2-2-fp8da-aoti-preview-2c-finishing",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 189,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "Lightricks/LTX-2.5",
    "typ": "ltx25",
    "endpoint": "/run",
-   "likes": 102,
+   "likes": 106,
    "gpu": "zero-a10g"
   },
   {
@@ -94,17 +87,10 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "makiblek/Wan_2.2_I2V_14B_Custom_Lora_Wow",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 85,
-   "gpu": "zero-a10g"
-  },
-  {
    "space": "amisima/Wan_2.2_I2V_Studio",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 80,
+   "likes": 91,
    "gpu": "zero-a10g"
   },
   {
@@ -125,7 +111,14 @@
    "space": "Upsampler/wan-2-2-14b-image-to-video",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 45,
+   "likes": 48,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "traderharikrishna/Wan_2.2_I2V_14B_Custom_Lora",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 44,
    "gpu": "zero-a10g"
   },
   {
@@ -136,17 +129,10 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "dayona/I2V-EXTENDED",
+   "space": "johnnysnowblind/wan2-2-fp8da-aoti-preview-2c-finishing",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 33,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "traderharikrishna/Wan_2.2_I2V_14B_Custom_Lora",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 31,
+   "likes": 35,
    "gpu": "zero-a10g"
   },
   {
@@ -167,14 +153,14 @@
    "space": "vml12/wan-video-studio",
    "typ": "wan",
    "endpoint": "/generate_video",
-   "likes": 17,
+   "likes": 18,
    "gpu": "zero-a10g"
   },
   {
    "space": "Upsampler/ltx-2-5",
    "typ": "ltx25",
    "endpoint": "/generate_video",
-   "likes": 15,
+   "likes": 18,
    "gpu": "zero-a10g"
   },
   {
@@ -199,6 +185,13 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "Ridinthatjawn/wan2-2-fp8da-aoti-preview-2c-finishing",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 6,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "ghjjhv/wan-i2v-kira",
    "typ": "wan",
    "endpoint": "/generate_video",
@@ -213,6 +206,20 @@
    "gpu": "zero-a10g"
   },
   {
+   "space": "AlexCdDg/ltx-2-5-opti",
+   "typ": "ltx25",
+   "endpoint": "/generate_video",
+   "likes": 4,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "hf-Asdqqq/wan2-2-i2v-v3",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 3,
+   "gpu": "zero-a10g"
+  },
+  {
    "space": "Mnichal/wan2-2-i2v-v3",
    "typ": "wan",
    "endpoint": "/generate_video",
@@ -220,14 +227,14 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "anshgoyalevil/wan2-2-i2v-v3-WOW",
+   "space": "ivannm/WAN2.2_I2V_LIGHTNING_4-8step_custom_copy",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 3,
    "gpu": "zero-a10g"
   },
   {
-   "space": "ivannm/WAN2.2_I2V_LIGHTNING_4-8step_custom_copy",
+   "space": "Cludo2/Wan_2.2_I2V_14B_Custom_Lora_Wow_HITMAN911",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 3,
@@ -276,10 +283,10 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "AlexCdDg/ltx-2-5-opti",
+   "space": "iis007/ltx-2-5-video-studio",
    "typ": "ltx25",
-   "endpoint": "/generate_video",
-   "likes": 3,
+   "endpoint": "/run",
+   "likes": 2,
    "gpu": "zero-a10g"
   },
   {
@@ -290,17 +297,17 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "observantdistressed/wan2-2-i2v-v3-audio",
+   "space": "anshgoyalevil/wan2-2-i2v-v3-WOW",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 2,
    "gpu": "zero-a10g"
   },
   {
-   "space": "iis007/ltx-2-5-video-studio",
-   "typ": "ltx25",
-   "endpoint": "/run",
-   "likes": 1,
+   "space": "cum4sucker/wan2-2-fp8da-aoti-preview-2c-finishing",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 2,
    "gpu": "zero-a10g"
   },
   {
@@ -319,13 +326,6 @@
   },
   {
    "space": "Panooleg/wan2-2-i2v-v3",
-   "typ": "wan",
-   "endpoint": "/generate_video",
-   "likes": 1,
-   "gpu": "zero-a10g"
-  },
-  {
-   "space": "hf-Asdqqq/wan2-2-i2v-v3",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 1,
@@ -360,7 +360,7 @@
    "gpu": "zero-a10g"
   },
   {
-   "space": "hy3dlab/video-i2v",
+   "space": "Quantumbraid/agent.video",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 0,
@@ -368,6 +368,13 @@
   },
   {
    "space": "iskandars/freeform-motion",
+   "typ": "wan",
+   "endpoint": "/generate_video",
+   "likes": 0,
+   "gpu": "zero-a10g"
+  },
+  {
+   "space": "Kraige/CGI-Motion",
    "typ": "wan",
    "endpoint": "/generate_video",
    "likes": 0,
