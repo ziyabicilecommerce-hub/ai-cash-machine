@@ -21,7 +21,9 @@ export const ABSTURZ = 0.8;          // ein Jackpot fällt unter 80 % von Normal
 const REIF_STD = 20;                 // jüngere Videos haben noch nicht ihre Aufrufe - zählen nicht
 const TAG = 864e5;
 
-export const KANAELE = ['futureflowx3', 'zyx_7851', 'futureflowxx', 'desk.rebel', 'purivelle.785', 'giyuuu sama'];
+// futureflowx3 + giyuuu sama gehören seit 22.11. der Serie "100 Tage KI-Firma" (#119) und laufen nicht mehr im Labor.
+export const SERIE_KANAELE = ['futureflowx3', 'giyuuu sama'];
+export const KANAELE = ['zyx_7851', 'futureflowxx', 'desk.rebel', 'purivelle.785'];
 const vonKanal = (p, k) => String(p.konto || '').replace(/^@/, '') === k && String(p.text || '').trim() !== '';  // ohne Text = Story
 const reif = (p, jetzt) => jetzt - Date.parse(p.zeit) >= REIF_STD * 3600e3;
 const median = (l) => { const s = [...l].sort((a, b) => a - b); return s.length ? (s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2) : 0; };

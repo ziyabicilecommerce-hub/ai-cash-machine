@@ -18,7 +18,9 @@ export const KANAELE = [
   { id: '6ae8f3dbe29c69a1713e416a', name: 'purivelle.785', dienst: 'instagram', quelle: 'horror', ziel: ZIEL_WENIGER },
   // YouTube: Sprach-Test (06.11.) - deutsche Horror-Shorts holten hier 179-706 Aufrufe, Englisch erreicht weltweit mehr.
   // Halbe-halbe, bis der Wochenbericht einen klaren Sieger hat; dann bekommt der 85 % (sprachAnteil).
-  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-mix', ziel: ZIEL_WENIGER },
+  // giyuuu sama (YouTube) ist seit 22.11. für die Serie "100 Tage KI-Firma" reserviert (#119) - kein Horror mehr dort.
+  // Zurück: die nächste Zeile wieder einkommentieren.
+  // { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', quelle: 'horror-mix', ziel: ZIEL_WENIGER },
   // Englischer Horror-Kanal: an, sobald seine Buffer-Kanal-ID eingetragen ist (Repo-Variable EN_KANAL, optional EN_DIENST)
   ...(/^[a-f\d]{24}$/.test(process.env.EN_KANAL || '') ? [{ id: process.env.EN_KANAL, name: 'english-horror', dienst: process.env.EN_DIENST || 'youtube', quelle: 'horror-en' }] : []),
 ];
