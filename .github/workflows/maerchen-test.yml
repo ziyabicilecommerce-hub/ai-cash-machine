@@ -18,6 +18,7 @@ jobs:
       POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
       ZHIPU_API_KEY: ${{ secrets.ZHIPU_API_KEY }}
+      FREEAI_API_KEY: ${{ secrets.FREEAI_API_KEY }}  # free.ai: ~1 echter Wan-2.2-Clip am Tag für die Hook-Szene
       ZHIPU_API_BASE: ${{ vars.ZHIPU_API_BASE }}
       VIDEO_KI_ALLE: 'ja'
     steps:
