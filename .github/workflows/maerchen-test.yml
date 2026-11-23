@@ -1,0 +1,43 @@
+name: "🕯️ Märchen-Test (Kerzenmutter, nur Vorschau)"
+
+# 23.11.: Test-Teil im Breadfolk-Format (eigene Welt: Kerzen-Menschen). Baut nur eine Vorschau als Release, postet nichts.
+# Jede Szene versucht einen echten KI-Clip (Hugging Face Wan/LTX, Zhipu CogVideoX-Flash falls ZHIPU_API_KEY gesetzt).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GH_TOKEN: ${{ github.token }}
+      POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      ZHIPU_API_KEY: ${{ secrets.ZHIPU_API_KEY }}
+      ZHIPU_API_BASE: ${{ vars.ZHIPU_API_BASE }}
+      VIDEO_KI_ALLE: 'ja'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Werkzeug
+        uses: ./.github/actions/video-werkzeug
+        with:
+          pip: 'edge-tts==7.* opencv-python-headless gradio_client'
+      - name: Test-Teil bauen
+        run: |
+          [ -n "$ZHIPU_API_KEY" ] && echo "Zhipu-Schlüssel: ja" || echo "Zhipu-Schlüssel: nein"
+          node automations/schatten/maerchenTest.mjs out
+      - name: Als Vorschau ablegen
+        run: |
+          TAG="vorschau-kerzenmutter-$(date -u +%m%d%H%M)"
+          gh release create "$TAG" out/kerzenmutter-1.mp4 out/info.json --prerelease --title "Vorschau: Die Kerzenmutter Teil 1" --notes "Test, nicht gepostet."
+          echo "🎬 https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/kerzenmutter-1.mp4" | tee -a "$GITHUB_STEP_SUMMARY"
