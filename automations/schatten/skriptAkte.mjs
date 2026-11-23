@@ -2,6 +2,7 @@
 // hängt zusammen - was damals passiert ist (Polizeibericht), warum der Fall gestrichen wurde, warum er selbst hingeht,
 // was ihm dort passiert, und ein Ende, das sich auf den alten Fall bezieht. Bösewicht ist immer der "freundliche Mann".
 import { AKTEN2 } from './skriptAkte2.mjs';
+import { AKTEN3 } from './skriptAkte3.mjs';
 export const MUSTER_A = {};
 export const TEIL2_A = {};
 export const DU_HOOKS_A = {};
@@ -129,6 +130,7 @@ const AKTEN = [
 ];
 
 AKTEN.push(...AKTEN2);  // 16.11.: 15 weitere Akte-Geschichten (Nachschub)
+AKTEN.push(...AKTEN3);  // 23.11.: 12 weitere (Vorrat lag unter 4 je Konto)
 AKTEN.forEach((v, i) => { v.fall_nr = i + 1; });  // Akte-Universum: feste Fallnummern, neue Geschichten hinten anhängen
 MUSTER_A.akte = [bau, AKTEN];
 for (const v of AKTEN) DU_HOOKS_A[v.titel] = v.du;
