@@ -24,19 +24,27 @@ export function dauerSekunden(datei) {
 }
 
 export async function ladeBild(prompt, ziel, { breite, hoehe, seed, enhance }) {
-  for (let versuch = 0; versuch < 4; versuch++) {
+  // 23.11.: ohne POLLINATIONS_TOKEN gilt das Gratis-Tempolimit (1 Bild gleichzeitig) - bei 402/429 länger warten,
+  // Browser-Kennung mitschicken (wie klassik/ki.py, das zuverlässig Bilder bekommt) und den Grund protokollieren.
+  let grund = '';
+  for (let versuch = 0; versuch < 6; versuch++) {
+    let warten = 5000 * (versuch + 1);
     try {
-      const res = await fetch(bildURL(prompt, { width: breite, height: hoehe, seed, enhance }), { headers: process.env.POLLINATIONS_TOKEN ? { Authorization: `Bearer ${process.env.POLLINATIONS_TOKEN.trim()}` } : {}, signal: AbortSignal.timeout(120000) });
+      const kopf = { 'User-Agent': 'Mozilla/5.0', ...(process.env.POLLINATIONS_TOKEN ? { Authorization: `Bearer ${process.env.POLLINATIONS_TOKEN.trim()}` } : {}) };
+      const res = await fetch(bildURL(prompt, { width: breite, height: hoehe, seed, enhance }), { headers: kopf, signal: AbortSignal.timeout(180000) });
       const typ = res.headers.get('content-type') || '';
       if (res.ok && typ.startsWith('image/')) {
         writeFileSync(ziel, Buffer.from(await res.arrayBuffer()));
         return true;
       }
-    } catch {
-      /* naechster Versuch */
+      grund = `${res.status} ${typ}`;
+      if (res.status === 402 || res.status === 429) warten = 30000;
+    } catch (err) {
+      grund = String(err.cause?.code || err.message).slice(0, 80);
     }
-    await warte(5000 * (versuch + 1));
+    await warte(warten);
   }
+  console.log(`[video-fabrik] KI-Bild fehlgeschlagen (${grund})`);
   return false;
 }
 
@@ -265,7 +273,7 @@ export async function videoBauen(skript, ordner, { format = 'hoch', stimme = 'de
       try {
         await sprechen(szene.text, join(ordner, `s${i}.mp3`), join(ordner, `s${i}.srt`), szene.stimme || stimme, { tonhoehe: szene.tonhoehe, tempo: szene.tempo || '+6%' });
         dauern[i] = dauerSekunden(join(ordner, `s${i}.mp3`)) + 0.3;
-      } catch { dauern[i] = 0; }
+      } catch (err) { dauern[i] = 0; console.log(`[video-fabrik] Stimme Szene ${i + 1} fehlgeschlagen: ${String(err.message).slice(0, 120)}`); }
     }
   }
   const gesamt = dauern.reduce((a, b) => a + (b || 0), 0) || 1;

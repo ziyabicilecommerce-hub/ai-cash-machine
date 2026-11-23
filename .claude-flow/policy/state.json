@@ -1,11 +1,54 @@
 {
-  "version": 1,
+  "version": 2,
   "mode": "legacy",
-  "migratedFrom": "pre-ADR-324; capabilities=.swarm/memory.db",
-  "migratedAt": 1785318540581,
   "rules": [],
   "budgets": [],
   "usage": [],
   "approvals": [],
-  "receipts": []
+  "receipts": [
+    {
+      "payload": {
+        "receiptId": "sha256:8cd8121de30f0a1f2bdf1efcff8018970db6043812ecf9be81d1ab2308f6e108",
+        "previousReceiptHash": null,
+        "sequence": 0,
+        "issuedAt": 1795405163581,
+        "request": {
+          "identity": {
+            "id": "legacy-cli",
+            "type": "legacy"
+          },
+          "action": {
+            "type": "mcp.tool.call",
+            "resource": "hooks_intelligence_verified-ingest",
+            "tool": "hooks_intelligence_verified-ingest",
+            "server": "ruflo",
+            "network": false,
+            "destructive": false
+          },
+          "context": {
+            "metadata": {
+              "inputDigest": "sha256:b72ed13cb525af2592de7b88e763277fa14592edc468666510c59a8cf02dd505"
+            },
+            "now": 1795405163581
+          },
+          "requestId": "71583b95-80b1-411c-b942-ab46ad2309be"
+        },
+        "decision": {
+          "requestId": "71583b95-80b1-411c-b942-ab46ad2309be",
+          "outcome": "allowed",
+          "enforcedOutcome": "allowed",
+          "mode": "legacy",
+          "reason": "legacy-default-allow",
+          "matchedRules": [],
+          "obligations": []
+        },
+        "policyHash": "sha256:00b63b2f746eb8b9095bbd5e1dbae4ddd74fd92a6740b72f59f4069fbfda4737"
+      },
+      "hash": "sha256:57c2c750b1e83ecfab475eef7feadc68f2f96ebd4d9cf7dca65dab0d0fb653bd"
+    }
+  ],
+  "migratedAt": 1785318540581,
+  "migratedFrom": "pre-ADR-324; capabilities=.swarm/memory.db",
+  "ledgerHead": "sha256:57c2c750b1e83ecfab475eef7feadc68f2f96ebd4d9cf7dca65dab0d0fb653bd",
+  "ledgerLength": 1
 }
