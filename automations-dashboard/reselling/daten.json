@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-23T16:22:07.354Z",
+ "stand": "2026-11-23T16:25:21.109Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -202,7 +202,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-23T16:09:17.826Z",
+  "stand": "2026-11-23T16:25:27.495Z",
   "filialen": 148,
   "produkte": [
    {
@@ -423,7 +423,7 @@
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
-      "menge": 6
+      "menge": 5
      }
     ]
    },
@@ -598,7 +598,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 30
+      "menge": 29
      }
     ]
    },
@@ -616,7 +616,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Kelsterbach",
@@ -3226,16 +3226,32 @@
   "ware": [],
   "top": [
    {
+    "titel": "fc bayern – hoffenheim",
+    "menge": "1000+"
+   },
+   {
+    "titel": "schwerin",
+    "menge": "200+"
+   },
+   {
+    "titel": "al shamal – al-ahli sfc",
+    "menge": "100+"
+   },
+   {
     "titel": "mindestlohn",
     "menge": "500+"
    },
    {
     "titel": "sofie lundgaard",
-    "menge": "100+"
+    "menge": "200+"
    },
    {
     "titel": "max verstappen",
     "menge": "1000+"
+   },
+   {
+    "titel": "wir in bayern",
+    "menge": "500+"
    },
    {
     "titel": "finn porath",
@@ -3248,22 +3264,6 @@
    {
     "titel": "suriname",
     "menge": "500+"
-   },
-   {
-    "titel": "kimmich frau",
-    "menge": "200+"
-   },
-   {
-    "titel": "sap aktie",
-    "menge": "500+"
-   },
-   {
-    "titel": "gta 6 patch notes",
-    "menge": "100+"
-   },
-   {
-    "titel": "leonida github",
-    "menge": "200+"
    }
   ]
  },
@@ -3313,6 +3313,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/KHMA050248-413-Detail.jpg?v=1792086944",
     "laden": "kith.com",
     "begriff": "cap"
+   },
+   {
+    "titel": "Asics GEL-1130 *Holiday Pack*",
+    "preis": 62,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/asics-gel1130-black-pure-silver",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/sh6elhb9ll-1203A997-001_Asics_GEL-1130-Black-Pure-Silver_os-1.jpg?v=1762351538",
+    "laden": "asphaltgold.com",
+    "begriff": "asics"
    },
    {
     "titel": "Kith & '47 for the New York Yankees Franchise LS Cap - Navy",
@@ -3936,15 +3945,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Air Jordan 3 Retro \"Orange Citrus\"",
-    "preis": 126,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-orange-citrus-ck9246-101",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CK9246-101_1.jpg?v=1777463095",
-    "laden": "sneakersnstuff.com",
-    "begriff": "jordan"
-   },
-   {
     "titel": "Air Jordan 1 Retro High OG \"Love Letter\"",
     "preis": 126,
     "verfuegbar": true,
@@ -4310,6 +4310,15 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-fireside-ck9246-200",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CK9246-200_01.jpg?v=1791969600",
+    "laden": "sneakersnstuff.com",
+    "begriff": "jordan"
+   },
+   {
+    "titel": "Air Jordan 5 Retro \"Sunset\"",
+    "preis": 168,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-5-retro-sunset-iv5678-102",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV5678-102_01.jpg?v=1785762646",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
