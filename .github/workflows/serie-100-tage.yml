@@ -6,9 +6,12 @@ name: "🎬 Serie: 100 Tage KI-Firma (@futureflowx3 + YouTube, 18:30)"
 # Jede Folge nur einmal: gepostet = Release "serie-tag-<NN>" existiert. Tag 1 wurde von Hand eingeplant.
 
 on:
+  # 23.11.: GitHub hat beide Zeitpläne (14:07 + 15:37 UTC) komplett ausgelassen - bei über 100 Workflows im Repo
+  # verwirft GitHub geplante Läufe unter Last. Deshalb 9 Versuche zwischen ~13 und ~17 Uhr Berlin; jeder Lauf
+  # prüft zuerst, ob das Release serie-tag-NN schon existiert, und hört dann sofort auf.
   schedule:
-    - cron: '7 14 * * *'   # ~15:07 Uhr Berlin (Winterzeit) - genug Puffer, falls GitHub den Zeitplan verschiebt
-    - cron: '37 15 * * *'  # zweiter Versuch, falls der erste ausfällt
+    - cron: '11,41 12-15 * * *'
+    - cron: '11 16 * * *'
   workflow_dispatch:
     inputs:
       tag:
