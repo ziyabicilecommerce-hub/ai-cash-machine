@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-24T16:25:26.346Z",
+ "stand": "2026-11-24T16:28:24.638Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118196:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "text": "24,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 21 Filiale(n) vorrätig.",
+   "zeit": "2026-11-24T16:28:24.638Z"
+  },
   {
    "schluessel": "filiale:3118196:1501",
    "art": "Filiale",
@@ -187,20 +197,10 @@
    "shop": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
    "text": "16,95 € · dm Frankfurt am Main (14,3 km) · 2 Stück\nSchweizer Platz 62, 60594 Frankfurt am Main\nIm Umkreis in 12 Filiale(n) vorrätig.",
    "zeit": "2026-11-23T17:27:18.339Z"
-  },
-  {
-   "schluessel": "filiale:3118148:1501",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
-   "shop": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
-   "text": "24,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 18 Filiale(n) vorrätig.",
-   "zeit": "2026-11-23T16:55:37.218Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-24T16:13:18.626Z",
+  "stand": "2026-11-24T16:28:30.694Z",
   "filialen": 148,
   "produkte": [
    {
@@ -265,7 +265,7 @@
       "km": 10.6,
       "lat": 50.0815275,
       "lon": 8.6343098,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Frankfurt am Main",
@@ -397,7 +397,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Frankfurt am Main",
@@ -504,7 +504,7 @@
       "km": 10.5,
       "lat": 50.0155817,
       "lon": 8.3658454,
-      "menge": 9
+      "menge": 10
      }
     ]
    },
@@ -534,6 +534,14 @@
     "link": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
     "begriff": "adventskalender",
     "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
      {
       "name": "dm Frankfurt am Main",
       "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
@@ -589,14 +597,6 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 20
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 29
      }
     ]
    },
@@ -654,7 +654,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 1
+      "menge": 2
      },
      {
       "name": "dm Frankfurt am Main",
@@ -744,7 +744,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 1
+      "menge": 2
      }
     ]
    }
