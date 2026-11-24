@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-24T16:09:27.609Z",
+ "stand": "2026-11-24T16:13:13.119Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -200,7 +200,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-24T15:57:18.559Z",
+  "stand": "2026-11-24T16:13:18.626Z",
   "filialen": 148,
   "produkte": [
    {
@@ -265,7 +265,7 @@
       "km": 10.6,
       "lat": 50.0815275,
       "lon": 8.6343098,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Frankfurt am Main",
@@ -389,7 +389,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 13
+      "menge": 8
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -397,7 +397,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Frankfurt am Main",
@@ -504,18 +504,9 @@
       "km": 10.5,
       "lat": 50.0155817,
       "lon": 8.3658454,
-      "menge": 10
+      "menge": 9
      }
     ]
-   },
-   {
-    "dan": "3139809",
-    "name": "CRAZE Adventskalender 2026 Kinder Badezusätze Unicorn, 1 St",
-    "preis": 19.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790981541/assets/pas/images/f752e497-d87f-4ab3-bc3d-b025e1dcb1a7/craze-adventskalender-2026-kinder-badezusaetze-unicorn",
-    "link": "https://www.dm.de/p/d/3139809/craze-adventskalender-2026-kinder-badezusaetze-unicorn",
-    "begriff": "adventskalender",
-    "vorrat": []
    },
    {
     "dan": "3135925",
@@ -544,14 +535,6 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 1
-     },
-     {
       "name": "dm Frankfurt am Main",
       "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
       "km": 5.6,
@@ -573,7 +556,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 20
+      "menge": 10
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -606,6 +589,14 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 20
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 29
      }
     ]
    },
@@ -663,7 +654,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Frankfurt am Main",
@@ -671,7 +662,7 @@
       "km": 9.3,
       "lat": 50.1237366,
       "lon": 8.5865988,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -680,6 +671,80 @@
       "lat": 49.984061,
       "lon": 8.430174,
       "menge": 8
+     }
+    ]
+   },
+   {
+    "dan": "3117665",
+    "name": "alverde NATURKOSMETIK Adventskalender 2026 Frohe Weihnachten, 1 St",
+    "preis": 19.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787558077/assets/pas/images/260614bb-a00b-4ec8-b592-8e533005cf0e/alverde-naturkosmetik-adventskalender-2026-frohe-weihnachten",
+    "link": "https://www.dm.de/p/d/3117665/alverde-naturkosmetik-adventskalender-2026-frohe-weihnachten",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 17
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 8
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 8
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 24
+     },
+     {
+      "name": "dm Sulzbach (Taunus)",
+      "adresse": "Main-Taunus-Zentrum 59, 65843 Sulzbach (Taunus)",
+      "km": 6.3,
+      "lat": 50.1202634,
+      "lon": 8.5251147,
+      "menge": 6
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 15
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 4
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 1
      }
     ]
    }
@@ -964,6 +1029,7 @@
      19.25,
      19.25,
      19.25,
+     19.25,
      19.25
     ]
    },
@@ -1072,6 +1138,7 @@
      22.38,
      22.38,
      22.38,
+     22.65,
      22.65,
      22.65,
      22.65,
@@ -1214,6 +1281,7 @@
      19.37,
      19.37,
      19.37,
+     19.37,
      19.37
     ]
    },
@@ -1339,6 +1407,7 @@
      37.85,
      37.85,
      37.85,
+     37.85,
      37.85
     ]
    },
@@ -1420,7 +1489,6 @@
      9.43,
      9.43,
      9.43,
-     9.43,
      9.46,
      9.46,
      9.46,
@@ -1523,6 +1591,7 @@
      9.29,
      9.29,
      9.29,
+     9.08,
      9.08,
      9.08,
      9.08,
@@ -1647,6 +1716,7 @@
      48.22,
      48.22,
      48.22,
+     48.8,
      48.8,
      48.8,
      48.8,
@@ -1789,6 +1859,7 @@
      24.66,
      24.66,
      24.66,
+     24.66,
      24.66
     ]
    },
@@ -1897,6 +1968,7 @@
      21.01,
      21.01,
      21.01,
+     20.84,
      20.84,
      20.84,
      20.84,
@@ -2039,6 +2111,7 @@
      13.33,
      13.33,
      13.33,
+     13.33,
      13.33
     ]
    },
@@ -2147,6 +2220,7 @@
      37.37,
      37.37,
      37.37,
+     38.42,
      38.42,
      38.42,
      38.42,
@@ -2289,6 +2363,7 @@
      17.94,
      17.94,
      17.94,
+     17.94,
      17.94
     ]
    },
@@ -2338,6 +2413,7 @@
      22.43,
      22.43,
      22.43,
+     22.43,
      22.43
     ]
    },
@@ -2349,7 +2425,7 @@
     "set": "30 Jahre",
     "setId": "30th",
     "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/150/low.webp",
+    "bild": "https://assets.tcgdex.net/en/me/30th/150/low.webp",
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pikachu-ex",
     "preis": {
      "tief": 29,
@@ -2419,7 +2495,6 @@
      48.19,
      48.19,
      48.19,
-     48.19,
      47.93,
      47.93,
      47.93,
@@ -2521,6 +2596,7 @@
      47.14,
      47.14,
      47.14,
+     46,
      46,
      46,
      46,
@@ -2663,6 +2739,7 @@
      34.4,
      34.4,
      34.4,
+     34.4,
      34.4
     ]
    },
@@ -2745,7 +2822,6 @@
      42.02,
      42.02,
      42.02,
-     42.02,
      41.72,
      41.72,
      41.72,
@@ -2846,6 +2922,7 @@
      41.09,
      41.09,
      41.09,
+     40.53,
      40.53,
      40.53,
      40.53,
@@ -2912,6 +2989,7 @@
      25.62,
      25.62,
      25.62,
+     25.62,
      25.62
     ]
    },
@@ -2945,6 +3023,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     29.12,
      29.12,
      29.12,
      29.12,
@@ -3012,6 +3091,7 @@
      9.61,
      9.61,
      9.61,
+     9.61,
      9.61
     ]
    },
@@ -3045,6 +3125,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     33.32,
      33.32,
      33.32,
      33.32,
@@ -3112,6 +3193,7 @@
      10.9,
      10.9,
      10.9,
+     10.9,
      10.9
     ]
    },
@@ -3161,6 +3243,7 @@
      13,
      13,
      13,
+     13,
      13
     ]
    },
@@ -3194,6 +3277,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     12.57,
      12.57,
      12.57,
      12.57,
@@ -3271,16 +3355,16 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 758,
+  "geprueft": 657,
   "statistik": {
-   "karten": 758,
+   "karten": 657,
    "mitPreis": 657,
    "imBudget": 48,
    "steigend": 2,
    "fallend": 18
   },
-  "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-11-24T15:17:08.195Z"
+  "quelle": "TCGdex",
+  "stand": "2026-11-24T16:12:23.049Z"
  },
  "trends": {
   "ware": [
@@ -3292,11 +3376,31 @@
   ],
   "top": [
    {
-    "titel": "norovirus",
-    "menge": "100+"
+    "titel": "snooker",
+    "menge": "500+"
+   },
+   {
+    "titel": "bauarbeiter",
+    "menge": "200+"
+   },
+   {
+    "titel": "hansi flick",
+    "menge": "200+"
+   },
+   {
+    "titel": "uefa champions league",
+    "menge": "200+"
+   },
+   {
+    "titel": "panenka",
+    "menge": "200+"
    },
    {
     "titel": "tus ferndorf",
+    "menge": "100+"
+   },
+   {
+    "titel": "norovirus",
     "menge": "100+"
    },
    {
@@ -3309,26 +3413,6 @@
    },
    {
     "titel": "black friday ps5",
-    "menge": "200+"
-   },
-   {
-    "titel": "luis díaz",
-    "menge": "2000+"
-   },
-   {
-    "titel": "deutscher handballbund",
-    "menge": "500+"
-   },
-   {
-    "titel": "b217",
-    "menge": "200+"
-   },
-   {
-    "titel": "grand theft auto: vice city",
-    "menge": "100+"
-   },
-   {
-    "titel": "auseinandersetzungen um die 35-stunden-woche",
     "menge": "200+"
    }
   ]
