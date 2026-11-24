@@ -148,6 +148,42 @@ def bots():
     return sorted(f for f in os.listdir(os.path.join(REPO, 'automations')) if f.endswith('.mjs'))
 
 
+INTRO_ORDNER = os.path.join(REPO, 'docs', 'serie', 'intro')
+INTRO_MAX = 3.5
+
+
+def intro_datei(tag, sprache):
+    """Eigener Clip des Nutzers (Gesicht/Stimme) für den Einstieg: tag-NN[-en].mp4, sonst standard[-en].mp4.
+    Die englische Fassung nimmt nur ausdrücklich englische Clips (ein deutscher Clip passt nicht zu YouTube EN)."""
+    endung = '-en' if sprache == 'en' else ''
+    for name in (f'tag-{int(tag):02d}{endung}', f'standard{endung}'):
+        for ext in ('.mp4', '.mov', '.MOV', '.MP4'):
+            pfad = os.path.join(INTRO_ORDNER, name + ext)
+            if os.path.exists(pfad):
+                return pfad
+    return None
+
+
+def intro_clip(src, hook, p):
+    """Clip auf 1080x1920 zuschneiden, höchstens 3,5 s, Hook-Text oben drüber. Ton getrennt als WAV."""
+    sek = min(dauer(src), INTRO_MAX)
+    leer = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(leer, 'RGBA')
+    d.rectangle([0, 150, W, 450], fill=(0, 0, 0, 140))
+    zentriert(d, 190, hook[0], 96, WHITE, rand=8)
+    zentriert(d, 320, hook[1], 88, RED, rand=8)
+    leer.save(p('intro-text.png'))
+    ff('-i', src, '-loop', '1', '-i', p('intro-text.png'), '-t', f'{sek:.2f}', '-filter_complex',
+       f'[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={FPS}[v];[v][1]overlay=0:0[o]',
+       '-map', '[o]', '-an', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-r', str(FPS), p('c0.mp4'))
+    try:
+        ff('-i', src, '-t', f'{sek:.2f}', '-vn', '-ac', '2', '-ar', '44100', p('intro.wav'))
+        ton = p('intro.wav')
+    except subprocess.CalledProcessError:  # Clip ohne Ton
+        ton = None
+    return sek, ton
+
+
 def main(folge_datei, ordner):
     folge = json.load(open(folge_datei, encoding='utf8'))
     os.makedirs(ordner, exist_ok=True)
@@ -157,16 +193,23 @@ def main(folge_datei, ordner):
     # Szenen-Länge: ohne Stimme 2,6 s; mit Stimme so verteilt, dass die Stimme ganz reinpasst
     szenen = folge['szenen']
     hook_sek, ende_sek = 2.0, 2.6
+    intro = intro_datei(folge.get('tag', 0), folge.get('sprache', 'de'))
+    intro_ton = None
+    clips = []
+    if intro:
+        # 24.11.: eigener Clip des Nutzers (Gesicht/Stimme) als Einstieg - ein Mensch hält die Leute länger als Screenshots
+        hook_sek, intro_ton = intro_clip(intro, folge['hook'], p)
+        print('Einstieg: eigener Clip', os.path.basename(intro), f'({hook_sek:.1f} s)')
+    else:
+        # Hook (23.11., Tag 1: Ø 1,9 s Sehdauer auf TikTok - die Leute wischen in den ersten 2 Sekunden weg):
+        # kein schwarzes Standbild mehr, sondern sofort ein bewegtes Dashboard mit großem Text, Stimme ab 0,15 s.
+        hook_bild(folge['hook'], szenen, p)
+        standbild_clip(p('hook.png'), hook_sek, p('c0.mp4'))
+    clips.append(p('c0.mp4'))
+    stimme_ab = hook_sek + 0.1 if intro else 0.15  # KI-Stimme erst nach dem eigenen Clip
     s_sek = 2.6
     if mit_stimme:
-        s_sek = max(2.4, (dauer(mit_stimme) + 0.4 - hook_sek - 0.6) / len(szenen))
-
-    clips = []
-    # Hook (23.11., Tag 1: Ø 1,9 s Sehdauer auf TikTok - die Leute wischen in den ersten 2 Sekunden weg):
-    # kein schwarzes Standbild mehr, sondern sofort ein bewegtes Dashboard mit großem Text, Stimme ab 0,15 s.
-    hook_bild(folge['hook'], szenen, p)
-    standbild_clip(p('hook.png'), hook_sek, p('c0.mp4'))
-    clips.append(p('c0.mp4'))
+        s_sek = max(2.4, (dauer(mit_stimme) + 0.4 + stimme_ab - hook_sek - 0.6) / len(szenen))
     for i, s in enumerate(szenen):
         ziel = p(f'c{i + 1}.mp4')
         if s.get('liste'):
@@ -194,11 +237,16 @@ def main(folge_datei, ordner):
     gesamt = dauer(p('bild.mp4'))
     beat(gesamt, p('beat.wav'))
 
-    if mit_stimme:  # Beat leiser unter der Stimme, Stimme startet nach dem Hook-Einschlag
-        ton = ['-i', p('beat.wav'), '-i', mit_stimme, '-filter_complex',
-               '[1]volume=0.32[m];[2]adelay=150|150,volume=1.6[v];[m][v]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]']
-    else:
-        ton = ['-i', p('beat.wav'), '-filter_complex', '[1]volume=0.9[a]']
+    # Beat leiser unter Stimme(n); eigener Clip-Ton ab 0 s, KI-Stimme ab stimme_ab
+    eingaben, spuren, nr = ['-i', p('beat.wav')], [], 2
+    filter_ = ['[1]volume=' + ('0.32' if (mit_stimme or intro_ton) else '0.9') + '[m]']
+    if intro_ton:
+        eingaben += ['-i', intro_ton]; filter_.append(f'[{nr}]volume=1.4[i]'); spuren.append('[i]'); nr += 1
+    if mit_stimme:
+        ms = int(stimme_ab * 1000)
+        eingaben += ['-i', mit_stimme]; filter_.append(f'[{nr}]adelay={ms}|{ms},volume=1.6[v]'); spuren.append('[v]')
+    filter_.append('[m]' + ''.join(spuren) + f'amix=inputs={1 + len(spuren)}:duration=first:normalize=0,alimiter=limit=0.95[a]')
+    ton = eingaben + ['-filter_complex', ';'.join(filter_)]
     ff('-i', p('bild.mp4'), *ton, '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-preset', 'medium', '-crf', '21',
        '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-shortest', '-movflags', '+faststart', p('video.mp4'))
     ff('-ss', '1', '-i', p('video.mp4'), '-frames:v', '1', p('cover.jpg'))
