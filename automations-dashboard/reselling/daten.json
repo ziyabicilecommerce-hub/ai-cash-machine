@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-24T23:42:39.407Z",
+ "stand": "2026-11-24T23:45:47.932Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -941,6 +941,7 @@
      19.25,
      19.25,
      19.25,
+     18.66,
      18.66
     ]
    },
@@ -977,6 +978,7 @@
      22.65,
      22.65,
      22.65,
+     22.28,
      22.28
     ]
    },
@@ -992,28 +994,29 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gladios%20Finalkampf",
     "preis": {
      "tief": 9,
-     "trend": 19.37,
-     "schnitt7": 19.24,
-     "schnitt30": 19.36
+     "trend": 19.06,
+     "schnitt7": 18.76,
+     "schnitt30": 19.18
     },
-    "prozent": -1,
+    "prozent": -2,
     "signal": "stabil",
     "profi": {
      "einstieg": 9,
-     "ziel": 19.24,
-     "gewinn": 7.78,
-     "roi": 86,
-     "momentum": -1,
-     "spread": 10.37,
-     "score": 77,
-     "signal": "STRONG BUY"
+     "ziel": 18.76,
+     "gewinn": 7.32,
+     "roi": 81,
+     "momentum": -2,
+     "spread": 10.06,
+     "score": 73,
+     "signal": "BUY"
     },
     "nurBewegung": true,
     "kurs": [
      19.37,
      19.37,
      19.37,
-     19.37
+     19.37,
+     19.06
     ]
    },
    {
@@ -1049,43 +1052,8 @@
      37.85,
      37.85,
      37.85,
+     37.84,
      37.84
-    ]
-   },
-   {
-    "id": "30th-c-028",
-    "name": "Zacian-V",
-    "nummer": "028",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
-    "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Zacian-V",
-    "preis": {
-     "tief": 3,
-     "trend": 9.08,
-     "schnitt7": 8.98,
-     "schnitt30": 9.17
-    },
-    "prozent": -2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 3,
-     "ziel": 8.98,
-     "gewinn": 4.03,
-     "roi": 134,
-     "momentum": -2,
-     "spread": 6.08,
-     "score": 72,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     9.08,
-     9.08,
-     9.08,
-     9.08
     ]
    },
    {
@@ -1121,7 +1089,82 @@
      48.8,
      48.8,
      48.8,
+     48.8,
      48.8
+    ]
+   },
+   {
+    "id": "30th-c-028",
+    "name": "Zacian-V",
+    "nummer": "028",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Zacian-V",
+    "preis": {
+     "tief": 3,
+     "trend": 8.87,
+     "schnitt7": 8.8,
+     "schnitt30": 9.17
+    },
+    "prozent": -4,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 3,
+     "ziel": 8.8,
+     "gewinn": 3.86,
+     "roi": 129,
+     "momentum": -4,
+     "spread": 5.87,
+     "score": 69,
+     "signal": "BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     9.08,
+     9.08,
+     9.08,
+     9.08,
+     8.87
+    ]
+   },
+   {
+    "id": "me05-115",
+    "name": "Mega-Skelabra-ex",
+    "nummer": "115",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Dunkelnacht",
+    "setId": "me05",
+    "release": "2026-07-17",
+    "bild": "https://assets.tcgdex.net/de/me/me05/115/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Skelabra-ex",
+    "preis": {
+     "tief": 18,
+     "trend": 24.92,
+     "schnitt7": 26.31,
+     "schnitt30": 23.41
+    },
+    "prozent": 12,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 18,
+     "ziel": 24.92,
+     "gewinn": 4.17,
+     "roi": 23,
+     "momentum": 12,
+     "spread": 6.92,
+     "score": 66,
+     "signal": "BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     24.66,
+     24.66,
+     24.66,
+     24.66,
+     24.92
     ]
    },
    {
@@ -1157,43 +1200,8 @@
      38.42,
      38.42,
      38.42,
+     38.09,
      38.09
-    ]
-   },
-   {
-    "id": "me05-115",
-    "name": "Mega-Skelabra-ex",
-    "nummer": "115",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Dunkelnacht",
-    "setId": "me05",
-    "release": "2026-07-17",
-    "bild": "https://assets.tcgdex.net/de/me/me05/115/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Skelabra-ex",
-    "preis": {
-     "tief": 18,
-     "trend": 24.66,
-     "schnitt7": 26.22,
-     "schnitt30": 23.56
-    },
-    "prozent": 11,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 18,
-     "ziel": 24.66,
-     "gewinn": 3.93,
-     "roi": 22,
-     "momentum": 11,
-     "spread": 6.66,
-     "score": 64,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     24.66,
-     24.66,
-     24.66,
-     24.66
     ]
    },
    {
@@ -1229,6 +1237,7 @@
      20.84,
      20.84,
      20.84,
+     20.39,
      20.39
     ]
    },
@@ -1265,6 +1274,7 @@
      17.94,
      17.94,
      17.94,
+     18.22,
      18.22
     ]
    },
@@ -1301,43 +1311,8 @@
      22.43,
      22.43,
      22.43,
+     22.05,
      22.05
-    ]
-   },
-   {
-    "id": "30th-150",
-    "name": "Pikachu-ex",
-    "nummer": "150",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/150/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pikachu-ex",
-    "preis": {
-     "tief": 29,
-     "trend": 46,
-     "schnitt7": 46.44,
-     "schnitt30": 49.45
-    },
-    "prozent": -6,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 29,
-     "ziel": 46,
-     "gewinn": 13.2,
-     "roi": 46,
-     "momentum": -6,
-     "spread": 17,
-     "score": 55,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     46,
-     46,
-     46,
-     46
     ]
    },
    {
@@ -1351,21 +1326,21 @@
     "bild": "https://assets.tcgdex.net/de/me/me03/123/low.webp",
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rosys%20Ermutigung",
     "preis": {
-     "tief": 24.9,
-     "trend": 34.4,
-     "schnitt7": 35.24,
-     "schnitt30": 35.95
+     "tief": 25,
+     "trend": 33.83,
+     "schnitt7": 35.19,
+     "schnitt30": 35.85
     },
     "prozent": -2,
     "signal": "stabil",
     "profi": {
-     "einstieg": 24.9,
-     "ziel": 34.4,
-     "gewinn": 6.28,
-     "roi": 25,
+     "einstieg": 25,
+     "ziel": 33.83,
+     "gewinn": 5.64,
+     "roi": 23,
      "momentum": -2,
-     "spread": 9.5,
-     "score": 54,
+     "spread": 8.83,
+     "score": 53,
      "signal": "HOLD"
     },
     "nurBewegung": true,
@@ -1373,7 +1348,8 @@
      34.4,
      34.4,
      34.4,
-     34.4
+     34.4,
+     33.83
     ]
    },
    {
@@ -1406,6 +1382,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     31.28,
      31.28
     ]
    },
@@ -1442,6 +1419,7 @@
      13.33,
      13.33,
      13.33,
+     13.31,
      13.31
     ]
    },
@@ -1478,43 +1456,8 @@
      9.61,
      9.61,
      9.61,
+     9.62,
      9.62
-    ]
-   },
-   {
-    "id": "me05-114",
-    "name": "Mega-Zeraora-ex",
-    "nummer": "114",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Dunkelnacht",
-    "setId": "me05",
-    "release": "2026-07-17",
-    "bild": "https://assets.tcgdex.net/de/me/me05/114/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zeraora-ex",
-    "preis": {
-     "tief": 22,
-     "trend": 33.32,
-     "schnitt7": 33.98,
-     "schnitt30": 36.39
-    },
-    "prozent": -7,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 22,
-     "ziel": 33.32,
-     "gewinn": 8.15,
-     "roi": 37,
-     "momentum": -7,
-     "spread": 11.32,
-     "score": 50,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     33.32,
-     33.32,
-     33.32,
-     33.32
     ]
    },
    {
@@ -1550,7 +1493,45 @@
      29.12,
      29.12,
      29.12,
+     28.51,
      28.51
+    ]
+   },
+   {
+    "id": "me05-114",
+    "name": "Mega-Zeraora-ex",
+    "nummer": "114",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Dunkelnacht",
+    "setId": "me05",
+    "release": "2026-07-17",
+    "bild": "https://assets.tcgdex.net/de/me/me05/114/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zeraora-ex",
+    "preis": {
+     "tief": 22,
+     "trend": 31.77,
+     "schnitt7": 33.88,
+     "schnitt30": 36.3
+    },
+    "prozent": -7,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 22,
+     "ziel": 31.77,
+     "gewinn": 6.68,
+     "roi": 30,
+     "momentum": -7,
+     "spread": 9.77,
+     "score": 48,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     33.32,
+     33.32,
+     33.32,
+     33.32,
+     31.77
     ]
    },
    {
@@ -1586,6 +1567,7 @@
      40.53,
      40.53,
      40.53,
+     40.09,
      40.09
     ]
    },
@@ -1622,6 +1604,7 @@
      12.57,
      12.57,
      12.57,
+     12.5,
      12.5
     ]
    }
@@ -1686,12 +1669,12 @@
   "statistik": {
    "karten": 657,
    "mitPreis": 657,
-   "imBudget": 48,
+   "imBudget": 47,
    "steigend": 0,
-   "fallend": 19
+   "fallend": 20
   },
   "quelle": "TCGdex",
-  "stand": "2026-11-24T22:49:01.476Z"
+  "stand": "2026-11-24T23:45:34.893Z"
  },
  "trends": {
   "ware": [],
