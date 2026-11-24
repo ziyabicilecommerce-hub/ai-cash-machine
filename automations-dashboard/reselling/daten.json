@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-24T19:15:43.307Z",
+ "stand": "2026-11-24T19:18:40.802Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118196:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "text": "24,95 € · dm Kriftel (1,3 km) · 2 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 21 Filiale(n) vorrätig.",
+   "zeit": "2026-11-24T19:18:40.802Z"
+  },
   {
    "schluessel": "filiale:3118196:1501",
    "art": "Filiale",
@@ -187,20 +197,10 @@
    "shop": "https://www.dm.de/p/d/3143417/vito-und-joe-adventskalender-stoff-zum-haengen-weiss-rot-gruen-gold-100x60-cm",
    "text": "14,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 2 Filiale(n) vorrätig.",
    "zeit": "2026-11-23T17:57:35.704Z"
-  },
-  {
-   "schluessel": "filiale:3118202:1052",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: Dein Bestes Adventskalender 2026 - merry christmas für Katzen, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787554263/assets/pas/images/ba693b2b-2361-4c1c-a86d-45040e0c865b/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.101611,8.68044",
-   "shop": "https://www.dm.de/p/d/3118202/dein-bestes-adventskalender-2026-merry-christmas-fuer-katzen",
-   "text": "16,95 € · dm Frankfurt am Main (14,3 km) · 2 Stück\nSchweizer Platz 62, 60594 Frankfurt am Main\nIm Umkreis in 12 Filiale(n) vorrätig.",
-   "zeit": "2026-11-23T17:27:18.339Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-24T19:02:57.254Z",
+  "stand": "2026-11-24T19:18:45.396Z",
   "filialen": 148,
   "produkte": [
    {
@@ -265,7 +265,7 @@
       "km": 10.6,
       "lat": 50.0815275,
       "lon": 8.6343098,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Frankfurt am Main",
@@ -389,7 +389,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 8
+      "menge": 13
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -397,7 +397,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Frankfurt am Main",
@@ -504,18 +504,9 @@
       "km": 10.5,
       "lat": 50.0155817,
       "lon": 8.3658454,
-      "menge": 9
+      "menge": 10
      }
     ]
-   },
-   {
-    "dan": "3139809",
-    "name": "CRAZE Adventskalender 2026 Kinder Badezusätze Unicorn, 1 St",
-    "preis": 19.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790981541/assets/pas/images/f752e497-d87f-4ab3-bc3d-b025e1dcb1a7/craze-adventskalender-2026-kinder-badezusaetze-unicorn",
-    "link": "https://www.dm.de/p/d/3139809/craze-adventskalender-2026-kinder-badezusaetze-unicorn",
-    "begriff": "adventskalender",
-    "vorrat": []
    },
    {
     "dan": "3135925",
@@ -544,6 +535,14 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 2
+     },
+     {
       "name": "dm Frankfurt am Main",
       "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
       "km": 5.6,
@@ -565,7 +564,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 10
+      "menge": 20
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -598,14 +597,32 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 20
+     }
+    ]
+   },
+   {
+    "dan": "3143417",
+    "name": "Vito & Joe Adventskalender Stoff zum Hängen, weiß-rot-grün-gold (100x60 cm), 1 St",
+    "preis": 14.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1790633218/assets/pas/images/09f57098-3fc1-4cde-ae28-1073a01907b1/vito-und-joe-adventskalender-stoff-zum-haengen-weiss-rot-gruen-gold-100x60-cm",
+    "link": "https://www.dm.de/p/d/3143417/vito-und-joe-adventskalender-stoff-zum-haengen-weiss-rot-gruen-gold-100x60-cm",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
      },
      {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 29
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 1
      }
     ]
    },
@@ -663,7 +680,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 1
+      "menge": 2
      },
      {
       "name": "dm Frankfurt am Main",
@@ -671,7 +688,7 @@
       "km": 9.3,
       "lat": 50.1237366,
       "lon": 8.5865988,
-      "menge": 2
+      "menge": 3
      },
      {
       "name": "dm Rüsselsheim am Main",
@@ -679,7 +696,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 7
+      "menge": 8
      }
     ]
    }
@@ -1173,6 +1190,15 @@
     "begriff": "new balance"
    },
    {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 89.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-shared-warvan-gum4",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-shared-warvan-gum4-kk2267-footwear_20_3E_20sneaker.jpg?v=1784898861",
+    "laden": "afew-store.com",
+    "begriff": "samba"
+   },
+   {
     "titel": "Carhartt WIP OG Cargo Pant",
     "preis": 89.99,
     "verfuegbar": true,
@@ -1567,15 +1593,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/1203A537-118_01.jpg?v=1780653236",
     "laden": "sneakersnstuff.com",
     "begriff": "asics"
-   },
-   {
-    "titel": "adidas Originals SAMBA OG",
-    "preis": 119.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-carbon-warvan-gum5",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-carbon-warvan-gum5-kk2268-footwear_20_3E_20sneaker.jpg?v=1783936471",
-    "laden": "afew-store.com",
-    "begriff": "samba"
    },
    {
     "titel": "U19543VU",
