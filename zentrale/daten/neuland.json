@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-23T13:30:59.371Z",
+ "stand": "2026-11-24T14:10:02.234Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,21 +9,42 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 15,
+     "value": 17,
      "unit": ""
     },
     {
      "label": "Prüfung offen",
-     "value": 2,
+     "value": 1,
      "unit": ""
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 13,
+     "value": 16,
      "unit": ""
     }
    ],
    "rows": [
+    {
+     "Aussage": "Klimmzug‑Upgrade für alle",
+     "Beleglink": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Purivelle Cinta – Dein neue Helfer für den Alltag",
+     "Beleglink": "https://purivelle.store/products/backease-rueckenguertel",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
     {
      "Aussage": "Purivelle Loto – Massagehammer zur Klopfmassage",
      "Beleglink": "https://purivelle.store/products/lotustap-massagehammer",
@@ -37,13 +58,6 @@
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Beleglink": "https://purivelle.store",
-     "Von dir geprüft": "Nein",
-     "Status": "Prüfung offen",
-     "Hinweise": "Menschliche Prüfung ausstehend."
     },
     {
      "Aussage": "Bizeps Curls, Schulterdrücken, Rudern – überall mit deinem neuen Doppelzug-Band.",
@@ -141,7 +155,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 15,
+     "value": 17,
      "unit": ""
     },
     {
@@ -157,6 +171,24 @@
    ],
    "rows": [
     {
+     "Aussage": "Klimmzug‑Upgrade für alle",
+     "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Purivelle Cinta – Dein neue Helfer für den Alltag",
+     "Quellenverweis": "https://purivelle.store/products/backease-rueckenguertel",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
      "Aussage": "Purivelle Loto – Massagehammer zur Klopfmassage",
      "Quellenverweis": "https://purivelle.store/products/lotustap-massagehammer",
      "Prüfmarkierung ohne Quelle": "Nein",
@@ -165,12 +197,6 @@
     {
      "Aussage": "Top 5 von DeskRebel",
      "Quellenverweis": "https://www.deskrebel.store",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Quellenverweis": "https://purivelle.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -349,7 +375,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-11-23",
+     "value": "2026-11-24",
      "unit": ""
     }
    ],
