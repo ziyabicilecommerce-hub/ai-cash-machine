@@ -8,6 +8,7 @@ import { anwendungEinbauen, anwendungBild, anwendungURL, vergleichEinbauen } fro
 
 // Bearbeitungs-Modelle sind standardmaessig aus - hier eingeschaltet, um den Modell-Weg zu pruefen.
 process.env.VIDEO_ANWENDUNG_MODELLE = 'kontext,gptimage,nanobanana,seedream';
+process.env.VIDEO_ANWENDUNG = 'ja';  // Tests prüfen die Logik; im Betrieb ist es standardmäßig aus
 
 const skript = () => ({ szenen: ['Hook', 'Problem', 'Vorteil', 'Vorteil 2', 'Link in der Bio'].map((text) => ({ text, foto: 'f.png' })) });
 const fotos = ['https://cdn.shopify.com/a.png', 'https://cdn.shopify.com/b.png'];
@@ -150,4 +151,14 @@ test('Standard ohne VIDEO_ANWENDUNG_MODELLE: kein Bearbeitungs-Modell, direkt ko
   assert.ok(!urls.some((u) => /model=(kontext|gptimage|nanobanana|seedream)/.test(u)), 'kein Bearbeitungs-Modell gefragt');
   assert.ok(urls.some((u) => u.startsWith('https://cdn.shopify.com/')), 'Komponieren laedt das echte Produktfoto');
   process.env.VIDEO_ANWENDUNG_MODELLE = alt;
+});
+
+test('Szenen mit KI-Menschen sind ohne VIDEO_ANWENDUNG=ja aus (Nacktheits-Risiko des freien Bilddienstes)', async () => {
+  const { anwendungAn } = await import('../../automations/lib/anwendung.mjs');
+  const alt = process.env.VIDEO_ANWENDUNG;
+  delete process.env.VIDEO_ANWENDUNG;
+  assert.equal(anwendungAn(), false);
+  process.env.VIDEO_ANWENDUNG = 'ja';
+  assert.equal(anwendungAn(), true);
+  process.env.VIDEO_ANWENDUNG = alt;
 });
