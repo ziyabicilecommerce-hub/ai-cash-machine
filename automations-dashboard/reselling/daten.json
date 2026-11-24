@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-24T22:46:02.592Z",
+ "stand": "2026-11-24T22:49:11.817Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -872,27 +872,28 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Piepi",
     "preis": {
      "tief": 7.71,
-     "trend": 19.25,
-     "schnitt7": 17.32,
-     "schnitt30": 15.76
+     "trend": 18.66,
+     "schnitt7": 16.94,
+     "schnitt30": 15.71
     },
-    "prozent": 10,
-    "signal": "steigt",
+    "prozent": 8,
+    "signal": "stabil",
     "profi": {
      "einstieg": 7.71,
-     "ziel": 17.32,
-     "gewinn": 7.24,
-     "roi": 94,
-     "momentum": 10,
-     "spread": 11.54,
-     "score": 96,
+     "ziel": 16.94,
+     "gewinn": 6.88,
+     "roi": 89,
+     "momentum": 8,
+     "spread": 10.95,
+     "score": 91,
      "signal": "STRONG BUY"
     },
-    "nurBewegung": false,
+    "nurBewegung": true,
     "kurs": [
      19.25,
      19.25,
-     19.25
+     19.25,
+     18.66
     ]
    },
    {
@@ -907,27 +908,28 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Floette-ex",
     "preis": {
      "tief": 12,
-     "trend": 22.65,
-     "schnitt7": 23.39,
-     "schnitt30": 21.7
+     "trend": 22.28,
+     "schnitt7": 23.7,
+     "schnitt30": 21.62
     },
-    "prozent": 8,
-    "signal": "steigt",
+    "prozent": 10,
+    "signal": "stabil",
     "profi": {
      "einstieg": 12,
-     "ziel": 22.65,
-     "gewinn": 8.02,
-     "roi": 67,
-     "momentum": 8,
-     "spread": 10.65,
-     "score": 83,
+     "ziel": 22.28,
+     "gewinn": 7.67,
+     "roi": 64,
+     "momentum": 10,
+     "spread": 10.28,
+     "score": 85,
      "signal": "STRONG BUY"
     },
-    "nurBewegung": false,
+    "nurBewegung": true,
     "kurs": [
      22.65,
      22.65,
-     22.65
+     22.65,
+     22.28
     ]
    },
    {
@@ -962,6 +964,7 @@
     "kurs": [
      19.37,
      19.37,
+     19.37,
      19.37
     ]
    },
@@ -977,19 +980,19 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Pixi-ex",
     "preis": {
      "tief": 20,
-     "trend": 37.85,
-     "schnitt7": 35.45,
-     "schnitt30": 34.73
+     "trend": 37.84,
+     "schnitt7": 35.29,
+     "schnitt30": 34.62
     },
     "prozent": 2,
     "signal": "stabil",
     "profi": {
      "einstieg": 20,
-     "ziel": 35.45,
-     "gewinn": 12.18,
-     "roi": 61,
+     "ziel": 35.29,
+     "gewinn": 12.03,
+     "roi": 60,
      "momentum": 2,
-     "spread": 17.85,
+     "spread": 17.84,
      "score": 72,
      "signal": "BUY"
     },
@@ -997,7 +1000,8 @@
     "kurs": [
      37.85,
      37.85,
-     37.85
+     37.85,
+     37.84
     ]
    },
    {
@@ -1030,6 +1034,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.08,
      9.08,
      9.08,
      9.08
@@ -1067,7 +1072,44 @@
     "kurs": [
      48.8,
      48.8,
+     48.8,
      48.8
+    ]
+   },
+   {
+    "id": "me03-120",
+    "name": "Mega-Zygarde-ex",
+    "nummer": "120",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/120/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zygarde-ex",
+    "preis": {
+     "tief": 25,
+     "trend": 38.09,
+     "schnitt7": 37.74,
+     "schnitt30": 36.47
+    },
+    "prozent": 3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 25,
+     "ziel": 37.74,
+     "gewinn": 9.35,
+     "roi": 37,
+     "momentum": 3,
+     "spread": 13.09,
+     "score": 65,
+     "signal": "BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     38.42,
+     38.42,
+     38.42,
+     38.09
     ]
    },
    {
@@ -1102,6 +1144,7 @@
     "kurs": [
      24.66,
      24.66,
+     24.66,
      24.66
     ]
    },
@@ -1117,97 +1160,28 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Violette",
     "preis": {
      "tief": 11.9,
-     "trend": 20.84,
-     "schnitt7": 19.86,
-     "schnitt30": 19.77
+     "trend": 20.39,
+     "schnitt7": 19.5,
+     "schnitt30": 19.67
     },
-    "prozent": 0,
+    "prozent": -1,
     "signal": "stabil",
     "profi": {
      "einstieg": 11.9,
-     "ziel": 19.86,
-     "gewinn": 5.47,
-     "roi": 46,
-     "momentum": 0,
-     "spread": 8.94,
-     "score": 64,
+     "ziel": 19.5,
+     "gewinn": 5.12,
+     "roi": 43,
+     "momentum": -1,
+     "spread": 8.49,
+     "score": 62,
      "signal": "BUY"
     },
     "nurBewegung": true,
     "kurs": [
      20.84,
      20.84,
-     20.84
-    ]
-   },
-   {
-    "id": "me03-107",
-    "name": "Mauzi-ex",
-    "nummer": "107",
-    "seltenheit": "Ultra Selten",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/107/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mauzi-ex",
-    "preis": {
-     "tief": 7,
-     "trend": 13.33,
-     "schnitt7": 13.59,
-     "schnitt30": 13.39
-    },
-    "prozent": 1,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 7,
-     "ziel": 13.33,
-     "gewinn": 4.16,
-     "roi": 59,
-     "momentum": 1,
-     "spread": 6.33,
-     "score": 62,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     13.33,
-     13.33,
-     13.33
-    ]
-   },
-   {
-    "id": "me03-120",
-    "name": "Mega-Zygarde-ex",
-    "nummer": "120",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/120/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zygarde-ex",
-    "preis": {
-     "tief": 25,
-     "trend": 38.42,
-     "schnitt7": 37.01,
-     "schnitt30": 36.68
-    },
-    "prozent": 1,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 25,
-     "ziel": 37.01,
-     "gewinn": 8.66,
-     "roi": 35,
-     "momentum": 1,
-     "spread": 13.42,
-     "score": 62,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     38.42,
-     38.42,
-     38.42
+     20.84,
+     20.39
     ]
    },
    {
@@ -1222,27 +1196,28 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Azetts%20Gelassenheit",
     "preis": {
      "tief": 10,
-     "trend": 17.94,
-     "schnitt7": 18.31,
-     "schnitt30": 19.32
+     "trend": 18.22,
+     "schnitt7": 18.54,
+     "schnitt30": 19.29
     },
-    "prozent": -5,
+    "prozent": -4,
     "signal": "stabil",
     "profi": {
      "einstieg": 10,
-     "ziel": 17.94,
-     "gewinn": 5.54,
-     "roi": 55,
-     "momentum": -5,
-     "spread": 7.94,
-     "score": 60,
+     "ziel": 18.22,
+     "gewinn": 5.81,
+     "roi": 58,
+     "momentum": -4,
+     "spread": 8.22,
+     "score": 62,
      "signal": "BUY"
     },
     "nurBewegung": true,
     "kurs": [
      17.94,
      17.94,
-     17.94
+     17.94,
+     18.22
     ]
    },
    {
@@ -1257,27 +1232,28 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mew-VMAX",
     "preis": {
      "tief": 12.89,
-     "trend": 22.43,
-     "schnitt7": 21.68,
-     "schnitt30": 22.91
+     "trend": 22.05,
+     "schnitt7": 21.46,
+     "schnitt30": 22.82
     },
-    "prozent": -5,
+    "prozent": -6,
     "signal": "stabil",
     "profi": {
      "einstieg": 12.89,
-     "ziel": 21.68,
-     "gewinn": 6.21,
-     "roi": 48,
-     "momentum": -5,
-     "spread": 9.54,
-     "score": 57,
+     "ziel": 21.46,
+     "gewinn": 6,
+     "roi": 47,
+     "momentum": -6,
+     "spread": 9.16,
+     "score": 55,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
      22.43,
      22.43,
-     22.43
+     22.43,
+     22.05
     ]
    },
    {
@@ -1310,6 +1286,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     46,
      46,
      46,
      46
@@ -1347,112 +1324,77 @@
     "kurs": [
      34.4,
      34.4,
+     34.4,
      34.4
     ]
    },
    {
-    "id": "30th-149",
-    "name": "Pikachu-ex",
-    "nummer": "149",
+    "id": "me04-119",
+    "name": "Chillabell-ex",
+    "nummer": "119",
     "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/149/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pikachu-ex",
-    "preis": {
-     "tief": 28.5,
-     "trend": 40.53,
-     "schnitt7": 41.16,
-     "schnitt30": 42.98
-    },
-    "prozent": -4,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 28.5,
-     "ziel": 40.53,
-     "gewinn": 8.5,
-     "roi": 30,
-     "momentum": -4,
-     "spread": 12.03,
-     "score": 53,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     40.53,
-     40.53,
-     40.53
-    ]
-   },
-   {
-    "id": "30th-c-016",
-    "name": "Rayquaza EX",
-    "nummer": "016",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
-    "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rayquaza%20EX",
-    "preis": {
-     "tief": 16,
-     "trend": 25.62,
-     "schnitt7": 25.7,
-     "schnitt30": 27.76
-    },
-    "prozent": -7,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 16,
-     "ziel": 25.62,
-     "gewinn": 6.84,
-     "roi": 43,
-     "momentum": -7,
-     "spread": 9.62,
-     "score": 53,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     25.62,
-     25.62,
-     25.62
-    ]
-   },
-   {
-    "id": "30th-155",
-    "name": "Jirachi-ex",
-    "nummer": "155",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "30 Jahre",
-    "setId": "30th",
-    "release": "2026-09-16",
-    "bild": "https://assets.tcgdex.net/de/me/30th/155/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Jirachi-ex",
+    "set": "Wachsendes Chaos",
+    "setId": "me04",
+    "release": "2026-05-22",
+    "bild": "https://assets.tcgdex.net/de/me/me04/119/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Chillabell-ex",
     "preis": {
      "tief": 20,
-     "trend": 29.12,
-     "schnitt7": 29.2,
-     "schnitt30": 30.77
+     "trend": 31.28,
+     "schnitt7": 31.63,
+     "schnitt30": 33.66
     },
-    "prozent": -5,
+    "prozent": -6,
     "signal": "stabil",
     "profi": {
      "einstieg": 20,
-     "ziel": 29.12,
-     "gewinn": 6.16,
-     "roi": 31,
-     "momentum": -5,
-     "spread": 9.12,
-     "score": 51,
+     "ziel": 31.28,
+     "gewinn": 8.22,
+     "roi": 41,
+     "momentum": -6,
+     "spread": 11.28,
+     "score": 53,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     29.12,
-     29.12,
-     29.12
+     31.28
+    ]
+   },
+   {
+    "id": "me03-107",
+    "name": "Mauzi-ex",
+    "nummer": "107",
+    "seltenheit": "Ultra Selten",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/107/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mauzi-ex",
+    "preis": {
+     "tief": 8.9,
+     "trend": 13.31,
+     "schnitt7": 13.52,
+     "schnitt30": 13.39
+    },
+    "prozent": 1,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 8.9,
+     "ziel": 13.31,
+     "gewinn": 2.24,
+     "roi": 25,
+     "momentum": 1,
+     "spread": 4.41,
+     "score": 50,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     13.33,
+     13.33,
+     13.33,
+     13.31
     ]
    },
    {
@@ -1467,9 +1409,9 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mistys%20Vitalit%C3%A4t",
     "preis": {
      "tief": 5,
-     "trend": 9.61,
+     "trend": 9.62,
      "schnitt7": 9.5,
-     "schnitt30": 10.03
+     "schnitt30": 10
     },
     "prozent": -5,
     "signal": "stabil",
@@ -1479,7 +1421,7 @@
      "gewinn": 2.53,
      "roi": 51,
      "momentum": -5,
-     "spread": 4.61,
+     "spread": 4.62,
      "score": 50,
      "signal": "HOLD"
     },
@@ -1487,7 +1429,8 @@
     "kurs": [
      9.61,
      9.61,
-     9.61
+     9.61,
+     9.62
     ]
    },
    {
@@ -1522,77 +1465,80 @@
     "kurs": [
      33.32,
      33.32,
+     33.32,
      33.32
     ]
    },
    {
-    "id": "30th-c-027",
-    "name": "Arceus-VSTAR",
-    "nummer": "027",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
+    "id": "30th-155",
+    "name": "Jirachi-ex",
+    "nummer": "155",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "30 Jahre",
+    "setId": "30th",
     "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Arceus-VSTAR",
+    "bild": "https://assets.tcgdex.net/de/me/30th/155/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Jirachi-ex",
     "preis": {
-     "tief": 6,
-     "trend": 10.9,
-     "schnitt7": 10.68,
-     "schnitt30": 11.32
+     "tief": 20,
+     "trend": 28.51,
+     "schnitt7": 28.85,
+     "schnitt30": 30.53
     },
     "prozent": -6,
     "signal": "stabil",
     "profi": {
-     "einstieg": 6,
-     "ziel": 10.68,
-     "gewinn": 2.65,
-     "roi": 44,
+     "einstieg": 20,
+     "ziel": 28.51,
+     "gewinn": 5.58,
+     "roi": 28,
      "momentum": -6,
-     "spread": 4.9,
-     "score": 46,
+     "spread": 8.51,
+     "score": 49,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     10.9,
-     10.9,
-     10.9
+     29.12,
+     29.12,
+     29.12,
+     28.51
     ]
    },
    {
-    "id": "30th-c-023",
-    "name": "M Guardevoir EX",
-    "nummer": "023",
-    "seltenheit": "Keine",
-    "set": "30 Jahre: Klassische Sammlung",
-    "setId": "30th-c",
+    "id": "30th-149",
+    "name": "Pikachu-ex",
+    "nummer": "149",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "30 Jahre",
+    "setId": "30th",
     "release": "2026-09-16",
-    "bild": "",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=M%20Guardevoir%20EX",
+    "bild": "https://assets.tcgdex.net/de/me/30th/149/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Pikachu-ex",
     "preis": {
-     "tief": 9,
-     "trend": 13,
-     "schnitt7": 12.72,
-     "schnitt30": 12.88
+     "tief": 28.5,
+     "trend": 40.09,
+     "schnitt7": 39.93,
+     "schnitt30": 42.72
     },
-    "prozent": -1,
+    "prozent": -7,
     "signal": "stabil",
     "profi": {
-     "einstieg": 9,
-     "ziel": 12.72,
-     "gewinn": 1.58,
-     "roi": 18,
-     "momentum": -1,
-     "spread": 4,
-     "score": 45,
+     "einstieg": 28.5,
+     "ziel": 39.93,
+     "gewinn": 7.93,
+     "roi": 28,
+     "momentum": -7,
+     "spread": 11.59,
+     "score": 47,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
-     13,
-     13,
-     13
+     40.53,
+     40.53,
+     40.53,
+     40.09
     ]
    },
    {
@@ -1607,27 +1553,28 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Micas%20Auff%C3%BChrung",
     "preis": {
      "tief": 8,
-     "trend": 12.57,
-     "schnitt7": 12.74,
-     "schnitt30": 13.31
+     "trend": 12.5,
+     "schnitt7": 12.87,
+     "schnitt30": 13.29
     },
-    "prozent": -4,
+    "prozent": -3,
     "signal": "stabil",
     "profi": {
      "einstieg": 8,
-     "ziel": 12.57,
-     "gewinn": 2.44,
-     "roi": 31,
-     "momentum": -4,
-     "spread": 4.57,
-     "score": 45,
+     "ziel": 12.5,
+     "gewinn": 2.38,
+     "roi": 30,
+     "momentum": -3,
+     "spread": 4.5,
+     "score": 46,
      "signal": "HOLD"
     },
     "nurBewegung": true,
     "kurs": [
      12.57,
      12.57,
-     12.57
+     12.57,
+     12.5
     ]
    }
   ],
@@ -1692,11 +1639,11 @@
    "karten": 657,
    "mitPreis": 657,
    "imBudget": 48,
-   "steigend": 2,
-   "fallend": 18
+   "steigend": 0,
+   "fallend": 19
   },
   "quelle": "TCGdex",
-  "stand": "2026-11-24T21:53:01.225Z"
+  "stand": "2026-11-24T22:49:01.476Z"
  },
  "trends": {
   "ware": [],
