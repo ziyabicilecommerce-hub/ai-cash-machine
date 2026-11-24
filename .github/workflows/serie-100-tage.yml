@@ -12,6 +12,13 @@ on:
   schedule:
     - cron: '11,41 12-15 * * *'
     - cron: '11 16 * * *'
+  # 24.11.: Auch die 9 Zeitplan-Versuche hat GitHub komplett ausgelassen (0 Läufe) - die Zeitpläne dieses Workflows
+  # feuern schlicht nicht. Deshalb hängt er sich zusätzlich an zwei Bots, die nachweislich alle 3 Stunden laufen.
+  # Doppelt gepostet wird nie: jeder Lauf hört sofort auf, wenn das Release serie-tag-NN schon existiert.
+  # Läuft er nachts nach Mitternacht, baut er die Folge des neuen Tages schon vor und plant sie für 18:30 ein.
+  workflow_run:
+    workflows: ["System-Wächter", "103 · TikTok-Viral-Zentrale"]
+    types: [completed]
   workflow_dispatch:
     inputs:
       tag:
@@ -102,5 +109,5 @@ jobs:
           echo "url=https://github.com/$GITHUB_REPOSITORY/releases/download/$R/$R.mp4" >> "$GITHUB_OUTPUT"
           echo "url_en=https://github.com/$GITHUB_REPOSITORY/releases/download/$R/$R-en.mp4" >> "$GITHUB_OUTPUT"
       - name: In Buffer einplanen
-        if: steps.neu.outputs.weiter == 'ja' && (github.event_name == 'schedule' || inputs.posten)
+        if: steps.neu.outputs.weiter == 'ja' && (github.event_name != 'workflow_dispatch' || inputs.posten)
         run: node automations/119-serie-tag.mjs --posten "${{ steps.rel.outputs.url }}" "${{ steps.rel.outputs.url_en }}"
