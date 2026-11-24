@@ -1,10 +1,30 @@
 {
- "stand": "2026-11-24T03:29:36.663Z",
+ "stand": "2026-11-24T03:32:34.080Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118148:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
+   "text": "24,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 18 Filiale(n) vorrätig.",
+   "zeit": "2026-11-24T03:32:34.080Z"
+  },
+  {
+   "schluessel": "filiale:3118196:1501",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
+   "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "text": "24,95 € · dm Kriftel (1,3 km) · 2 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 21 Filiale(n) vorrätig.",
+   "zeit": "2026-11-24T03:32:34.080Z"
+  },
   {
    "schluessel": "karte:me03-094",
    "art": "Karte",
@@ -177,30 +197,10 @@
    "link": "https://afew-store.com/products/air-jordan-11-retro-multi-color-gym-green-lucky-green",
    "text": "afew-store.com · Air Jordan 11 Retro 'Green Screen'\nVerkauf ca. 230–330 € → Gewinn ca. +37,01 € (ROI 18 %)\nGröße prüfen, vorher verkaufte Preise checken.",
    "zeit": "2026-11-22T22:26:14.395Z"
-  },
-  {
-   "schluessel": "filiale:3118897:1441",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1014043,8.5485073",
-   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
-   "text": "44,95 € · dm Frankfurt am Main (5,6 km) · 1 Stück\nKönigsteiner Straße 11-13, 65929 Frankfurt am Main\nIm Umkreis in 15 Filiale(n) vorrätig.",
-   "zeit": "2026-11-22T17:27:32.453Z"
-  },
-  {
-   "schluessel": "filiale:3118897:1441",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: maxi NUTRITION Adventskalender 2026 Protein Advent, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784081195/assets/pas/images/c418c710-ae22-48c9-beb1-910e4120a1e8/maxi-nutrition-adventskalender-2026-protein-advent",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1014043,8.5485073",
-   "shop": "https://www.dm.de/p/d/3118897/maxi-nutrition-adventskalender-2026-protein-advent",
-   "text": "44,95 € · dm Frankfurt am Main (5,6 km) · 1 Stück\nKönigsteiner Straße 11-13, 65929 Frankfurt am Main\nIm Umkreis in 15 Filiale(n) vorrätig.",
-   "zeit": "2026-11-22T16:41:46.973Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-24T03:17:40.614Z",
+  "stand": "2026-11-24T03:32:40.272Z",
   "filialen": 148,
   "produkte": [
    {
@@ -211,6 +211,14 @@
     "link": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
     "begriff": "adventskalender",
     "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 2
+     },
      {
       "name": "dm Frankfurt am Main",
       "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
@@ -266,14 +274,6 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 20
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 29
      }
     ]
    },
@@ -508,6 +508,14 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
@@ -562,14 +570,6 @@
       "lat": 49.984061,
       "lon": 8.430174,
       "menge": 6
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
-      "km": 10.4,
-      "lat": 50.1401538,
-      "lon": 8.5824016,
-      "menge": 5
      }
     ]
    },
@@ -3155,8 +3155,16 @@
   "ware": [],
   "top": [
    {
-    "titel": "estland",
+    "titel": "oberhausen",
     "menge": "100+"
+   },
+   {
+    "titel": "hofdame",
+    "menge": "2000+"
+   },
+   {
+    "titel": "estland",
+    "menge": "200+"
    },
    {
     "titel": "commanders – bengals",
@@ -3169,10 +3177,6 @@
    {
     "titel": "jeanine grasmeijer",
     "menge": "100+"
-   },
-   {
-    "titel": "bauer sucht frau tobias pankow",
-    "menge": "2000+"
    },
    {
     "titel": "wwe",
@@ -3189,10 +3193,6 @@
    {
     "titel": "kaufland",
     "menge": "2000+"
-   },
-   {
-    "titel": "preis",
-    "menge": "200+"
    }
   ]
  },
