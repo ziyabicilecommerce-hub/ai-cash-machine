@@ -15,7 +15,9 @@ const BASIS = 'https://image.pollinations.ai/prompt';
 // im Test 10/2026 lieferten sie 402/500 oder - gptimage - ein Bild OHNE das Produkt. Standard ist daher das Komponieren
 // (KI-Szene + echtes, freigestelltes Produktfoto) - garantiert das richtige Produkt. VIDEO_ANWENDUNG=0 schaltet ab.
 const modelle = () => String(process.env.VIDEO_ANWENDUNG_MODELLE || '').split(',').map((m) => m.trim()).filter(Boolean);
-export const anwendungAn = () => !/^(0|nein|aus|false)$/i.test(String(process.env.VIDEO_ANWENDUNG || '').trim());
+// 24.11.: standardmäßig AUS - der freie Bilddienst hat trotz "fully clothed" eine nackte Person in eine Anwendungs-Szene
+// gemalt (Rückenstrecker-Video, nicht gepostet). Szenen mit KI-Menschen nur noch mit VIDEO_ANWENDUNG=ja.
+export const anwendungAn = () => /^(1|ja|an|true)$/i.test(String(process.env.VIDEO_ANWENDUNG || '').trim());
 
 export const ANWENDUNG_REGEL =
   'Zeige in GENAU einer Szene (Index 2 oder 3, nicht die erste, nicht die letzte) ein Anwendungs-Beispiel: eine Person benutzt das Produkt ' +
