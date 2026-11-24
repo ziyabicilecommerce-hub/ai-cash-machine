@@ -5,8 +5,11 @@ import { FOLGEN_EN, standardEn } from './serieFolgenEn.mjs';
 export const START = '2026-11-22';  // Tag 1
 export const ZIEL_TAGE = 100;
 export const POST_ZEIT = '18:30';   // deutsche Zeit, abends ist auf TikTok am meisten los
+// TikTok-Kanal der Serie: Standard futureflowx3. Eigener neuer Account (24.11., Horror-Publikum wischt weg):
+// Buffer-Kanal-ID als Repo-Variable SERIE_TIKTOK_KANAL eintragen - dann postet die Serie nur noch dort.
+const TIKTOK_KANAL = /^[a-f\d]{24}$/.test(process.env.SERIE_TIKTOK_KANAL || '') ? process.env.SERIE_TIKTOK_KANAL : '6ac7cb606a5c39ccb6535fab';
 export const KANAELE = [
-  { id: '6ac7cb606a5c39ccb6535fab', name: 'futureflowx3', dienst: 'tiktok', sprache: 'de' },
+  { id: TIKTOK_KANAL, name: TIKTOK_KANAL === '6ac7cb606a5c39ccb6535fab' ? 'futureflowx3' : 'serie-tiktok', dienst: 'tiktok', sprache: 'de' },
   { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', sprache: 'en' },
 ];
 
@@ -50,7 +53,7 @@ export const FOLGEN = {
   },
   4: {
     hook: ['EINE KI HAT MIR', '8 GESCHÄFTSIDEEN GEPITCHT.'],
-    szenen: [{ liste: ['❌ Reselling-Alerts', '❌ KI-Telefonistin', '❌ Kunden-Radar', '❌ Postkarten-Automat', '❌ Anime-Shop', '❌ Virale App', '❌ Agenten-Kasse', '❌ Streitgericht'], titel: 'Alle abgelehnt.', unter: 'Ich weiß.' },
+    szenen: [{ liste: ['✗ Reselling-Alerts', '✗ KI-Telefonistin', '✗ Kunden-Radar', '✗ Postkarten-Automat', '✗ Anime-Shop', '✗ Virale App', '✗ Agenten-Kasse', '✗ Streitgericht'], titel: 'Alle abgelehnt.', unter: 'Ich weiß.' },
       { seite: 'automations-dashboard', titel: 'Was ich stattdessen mache:', unter: 'diese Serie.' }],
     stimme: 'Tag vier. Ich habe mir von einer KI acht Geschäftsideen pitchen lassen. Telefon-KI, Anime-Shop, virale App. Ich habe alle abgelehnt. Welche hättest du genommen? Schreib es in die Kommentare.',
     caption: 'Eine KI hat mir 8 Geschäftsideen gepitcht. Ich hab alle abgelehnt. Welche hättest du genommen? 👇',

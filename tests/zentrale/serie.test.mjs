@@ -74,3 +74,24 @@ test('Serie-Kanäle laufen in keinem Horror-Bot mehr', () => {
   assert.ok(!LABOR.includes('futureflowx3') && !LABOR.includes('giyuuu sama'));
   assert.ok(!VERTEILER.some((k) => KANAELE.some((s) => s.id === k.id)));
 });
+
+test('Serie: Bild-Texte ohne Emojis (die Video-Schrift hat keine - sie würden als leere Kästchen erscheinen)', () => {
+  const emoji = /[\u{1F000}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{2716}\u{2718}-\u{27BF}]/u;
+  for (const n of [...Object.keys(FOLGEN).map(Number), 30]) {
+    for (const sprache of ['de', 'en']) {
+      const f = folgeFuer(n, { bots: 1, deals: 1 }, sprache);
+      const bild = [...f.hook, ...f.ende, ...f.szenen.flatMap((s) => [s.titel, s.unter, ...(Array.isArray(s.liste) ? s.liste : [])])];
+      for (const t of bild) assert.ok(!emoji.test(String(t)), `Tag ${n} (${sprache}): Emoji im Bild-Text "${t}"`);
+    }
+  }
+});
+
+test('Serie: eigener TikTok-Account per SERIE_TIKTOK_KANAL', async () => {
+  process.env.SERIE_TIKTOK_KANAL = 'abcdefabcdefabcdefabcdef';
+  const mit = await import(`../../automations/lib/serieFolgen.mjs?kanal=${Date.now()}`);
+  assert.equal(mit.KANAELE[0].id, 'abcdefabcdefabcdefabcdef');
+  process.env.SERIE_TIKTOK_KANAL = 'kaputt';
+  const ohne = await import(`../../automations/lib/serieFolgen.mjs?kanal2=${Date.now()}`);
+  assert.equal(ohne.KANAELE[0].id, '6ac7cb606a5c39ccb6535fab');
+  delete process.env.SERIE_TIKTOK_KANAL;
+});

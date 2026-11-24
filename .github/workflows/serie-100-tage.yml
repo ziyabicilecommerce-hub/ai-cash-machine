@@ -46,6 +46,8 @@ jobs:
       SERIE_TAG: ${{ inputs.tag }}
       # Gewinner der Abstimmung von Tag 6 (Settings -> Variables -> SERIE_PRODUKT), z. B. "Deal-Radar"
       SERIE_PRODUKT: ${{ vars.SERIE_PRODUKT }}
+      # Eigener TikTok-Account für die Serie (Buffer-Kanal-ID). Leer = futureflowx3.
+      SERIE_TIKTOK_KANAL: ${{ vars.SERIE_TIKTOK_KANAL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

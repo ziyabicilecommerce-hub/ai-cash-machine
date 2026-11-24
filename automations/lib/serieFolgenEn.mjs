@@ -24,7 +24,7 @@ export const FOLGEN_EN = {
   4: {
     hook: ['AN AI PITCHED ME', '8 BUSINESS IDEAS.'],
     texte: [['I said no to all of them.', 'I know.'], ['What I do instead:', 'this series.']],
-    liste: ['❌ Reselling alerts', '❌ AI receptionist', '❌ Lead radar', '❌ Postcard robot', '❌ Anime shop', '❌ Viral app', '❌ Agent checkout', '❌ AI court'],
+    liste: ['✗ Reselling alerts', '✗ AI receptionist', '✗ Lead radar', '✗ Postcard robot', '✗ Anime shop', '✗ Viral app', '✗ Agent checkout', '✗ AI court'],
     stimme: 'Day four. An AI pitched me eight business ideas. AI receptionist, anime shop, viral app. I rejected every single one. Which one would you have picked? Tell me in the comments.',
     caption: 'An AI pitched me 8 business ideas. I said no to all of them. Which one would you pick? 👇',
   },
