@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-24T10:50:43.858Z",
+ "stand": "2026-11-24T10:53:41.236Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118686:2040",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: ebelin Adventskalender Beauty & Hair 2026, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.1086268,8.6273783",
+   "shop": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
+   "text": "32,95 € · dm Frankfurt am Main (10,9 km) · 1 Stück\nEuropa-Allee 130, 60486 Frankfurt am Main\nIm Umkreis in 16 Filiale(n) vorrätig.",
+   "zeit": "2026-11-24T10:53:41.236Z"
+  },
   {
    "schluessel": "deal:https://www.asphaltgold.com/products/nike-air-jordan-11-retro-green-screen-multicolor-gym-green-lucky-green",
    "art": "Deal",
@@ -188,19 +198,10 @@
    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Gladios%20Finalkampf",
    "text": "Kaufen ab 9,00 € · Ziel 19,46 € · +7,99 € nach Gebühren (ROI 89 %)",
    "zeit": "2026-11-22T23:08:00.445Z"
-  },
-  {
-   "schluessel": "deal:https://www.sneakersnstuff.com/products/nike-air-force-1-01-iv4501-300",
-   "art": "Deal",
-   "titel": "💰 Deal: Nike Air Force 1 (Collabs/Sonder) für 91,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV4501-300_01.jpg?v=1788771177",
-   "link": "https://www.sneakersnstuff.com/products/nike-air-force-1-01-iv4501-300",
-   "text": "sneakersnstuff.com · Air Force 1 '01\nVerkauf ca. 110–200 € → Gewinn ca. +43,50 € (ROI 48 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-22T22:35:17.910Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-24T10:39:09.968Z",
+  "stand": "2026-11-24T10:53:46.825Z",
   "filialen": 148,
   "produkte": [
    {
@@ -257,7 +258,7 @@
       "km": 10.5,
       "lat": 50.0155817,
       "lon": 8.3658454,
-      "menge": 9
+      "menge": 11
      },
      {
       "name": "dm Frankfurt am Main",
@@ -397,7 +398,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Frankfurt am Main",
@@ -556,7 +557,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 51
+      "menge": 53
      },
      {
       "name": "dm Flörsheim am Main",
@@ -614,7 +615,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 4
+      "menge": 5
      },
      {
       "name": "dm Kelsterbach",
@@ -720,7 +721,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 6
+      "menge": 7
      },
      {
       "name": "dm Flörsheim am Main",
@@ -3256,12 +3257,16 @@
   "ware": [],
   "top": [
    {
+    "titel": "max müller",
+    "menge": "500+"
+   },
+   {
     "titel": "kalt",
-    "menge": "5000+"
+    "menge": "10000+"
    },
    {
     "titel": "wollnys",
-    "menge": "200+"
+    "menge": "500+"
    },
    {
     "titel": "sinner",
@@ -3269,14 +3274,14 @@
    },
    {
     "titel": "haushalt der europäischen union",
-    "menge": "1000+"
-   },
-   {
-    "titel": "marburg",
-    "menge": "200+"
+    "menge": "2000+"
    },
    {
     "titel": "kirchhain",
+    "menge": "200+"
+   },
+   {
+    "titel": "marburg",
     "menge": "200+"
    },
    {
@@ -3290,10 +3295,6 @@
    {
     "titel": "raumsonde",
     "menge": "200+"
-   },
-   {
-    "titel": "miro muheim",
-    "menge": "500+"
    }
   ]
  },
