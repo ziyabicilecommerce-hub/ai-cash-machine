@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-24T16:41:05.271Z",
+ "stand": "2026-11-24T16:44:04.666Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -200,7 +200,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-24T16:28:30.694Z",
+  "stand": "2026-11-24T16:44:09.484Z",
   "filialen": 148,
   "produkte": [
    {
@@ -265,7 +265,7 @@
       "km": 10.6,
       "lat": 50.0815275,
       "lon": 8.6343098,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Frankfurt am Main",
@@ -397,7 +397,7 @@
       "km": 8.3,
       "lat": 50.1434547,
       "lon": 8.5023642,
-      "menge": 3
+      "menge": 2
      },
      {
       "name": "dm Frankfurt am Main",
@@ -504,7 +504,7 @@
       "km": 10.5,
       "lat": 50.0155817,
       "lon": 8.3658454,
-      "menge": 10
+      "menge": 9
      }
     ]
    },
@@ -535,14 +535,6 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 1
-     },
-     {
       "name": "dm Frankfurt am Main",
       "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
       "km": 5.6,
@@ -556,7 +548,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 51
+      "menge": 50
      },
      {
       "name": "dm Flörsheim am Main",
@@ -597,6 +589,14 @@
       "lat": 50.0122615,
       "lon": 8.5865417,
       "menge": 20
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 29
      }
     ]
    },
@@ -654,7 +654,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Frankfurt am Main",
@@ -670,7 +670,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 8
+      "menge": 7
      }
     ]
    },
@@ -744,7 +744,7 @@
       "km": 8.8,
       "lat": 50.13488,
       "lon": 8.5572012,
-      "menge": 2
+      "menge": 1
      }
     ]
    }
@@ -3370,8 +3370,16 @@
   "ware": [],
   "top": [
    {
-    "titel": "unternehmen",
+    "titel": "könig",
     "menge": "1000+"
+   },
+   {
+    "titel": "maximilian krauß",
+    "menge": "200+"
+   },
+   {
+    "titel": "aston villa",
+    "menge": "200+"
    },
    {
     "titel": "danni büchner",
@@ -3380,6 +3388,10 @@
    {
     "titel": "angela merkel",
     "menge": "500+"
+   },
+   {
+    "titel": "unternehmen",
+    "menge": "1000+"
    },
    {
     "titel": "liga",
@@ -3395,19 +3407,7 @@
    },
    {
     "titel": "snooker",
-    "menge": "500+"
-   },
-   {
-    "titel": "hansi flick",
-    "menge": "500+"
-   },
-   {
-    "titel": "uefa champions league",
-    "menge": "500+"
-   },
-   {
-    "titel": "panenka",
-    "menge": "200+"
+    "menge": "1000+"
    }
   ]
  },
