@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-24T14:10:02.234Z",
+ "stand": "2026-11-25T13:22:49.714Z",
  "wartetAufZahlen": true,
  "ergebnisse": {
   "PromiseCheck": {
@@ -9,7 +9,7 @@
    "metrics": [
     {
      "label": "Aussagen",
-     "value": 17,
+     "value": 20,
      "unit": ""
     },
     {
@@ -19,11 +19,39 @@
     },
     {
      "label": "Prüfliste erfüllt",
-     "value": 16,
+     "value": 19,
      "unit": ""
     }
    ],
    "rows": [
+    {
+     "Aussage": "DeskRebel Feierabend – Massagegurt für den unteren Rücken",
+     "Beleglink": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "30 Sek. Wohlfühl‑Pause mit Holz‑Massageroller",
+     "Beleglink": "https://purivelle.store/products/fingerflow-handroller",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "**Top 5 von DeskRebel – Dein neues Workout-Tuch**",
+     "Beleglink": "https://www.deskrebel.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Beleglink": "https://purivelle.store",
+     "Von dir geprüft": "Ja",
+     "Status": "Prüfliste erfüllt",
+     "Hinweise": "Keine offenen Prüfpunkte."
+    },
     {
      "Aussage": "Klimmzug‑Upgrade für alle",
      "Beleglink": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
@@ -34,13 +62,6 @@
     {
      "Aussage": "Purivelle Cinta – Dein neue Helfer für den Alltag",
      "Beleglink": "https://purivelle.store/products/backease-rueckenguertel",
-     "Von dir geprüft": "Ja",
-     "Status": "Prüfliste erfüllt",
-     "Hinweise": "Keine offenen Prüfpunkte."
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Beleglink": "https://purivelle.store",
      "Von dir geprüft": "Ja",
      "Status": "Prüfliste erfüllt",
      "Hinweise": "Keine offenen Prüfpunkte."
@@ -155,7 +176,7 @@
    "metrics": [
     {
      "label": "Aussagen mit Quellenverweis",
-     "value": 17,
+     "value": 20,
      "unit": ""
     },
     {
@@ -171,6 +192,30 @@
    ],
    "rows": [
     {
+     "Aussage": "DeskRebel Feierabend – Massagegurt für den unteren Rücken",
+     "Quellenverweis": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "30 Sek. Wohlfühl‑Pause mit Holz‑Massageroller",
+     "Quellenverweis": "https://purivelle.store/products/fingerflow-handroller",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "**Top 5 von DeskRebel – Dein neues Workout-Tuch**",
+     "Quellenverweis": "https://www.deskrebel.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
+     "Aussage": "Top 5 von Purivelle",
+     "Quellenverweis": "https://purivelle.store",
+     "Prüfmarkierung ohne Quelle": "Nein",
+     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
+    },
+    {
      "Aussage": "Klimmzug‑Upgrade für alle",
      "Quellenverweis": "https://www.deskrebel.store/products/powerband-klimmzugband-widerstandsband",
      "Prüfmarkierung ohne Quelle": "Nein",
@@ -179,12 +224,6 @@
     {
      "Aussage": "Purivelle Cinta – Dein neue Helfer für den Alltag",
      "Quellenverweis": "https://purivelle.store/products/backease-rueckenguertel",
-     "Prüfmarkierung ohne Quelle": "Nein",
-     "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
-    },
-    {
-     "Aussage": "Top 5 von Purivelle",
-     "Quellenverweis": "https://purivelle.store",
      "Prüfmarkierung ohne Quelle": "Nein",
      "Linkformat": "HTTP/HTTPS ohne Zugangsdaten"
     },
@@ -375,7 +414,7 @@
     },
     {
      "label": "Prüftag",
-     "value": "2026-11-24",
+     "value": "2026-11-25",
      "unit": ""
     }
    ],
