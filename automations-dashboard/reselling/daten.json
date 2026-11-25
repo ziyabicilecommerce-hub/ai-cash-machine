@@ -1,10 +1,30 @@
 {
- "stand": "2026-11-25T22:58:42.676Z",
+ "stand": "2026-11-25T23:01:47.514Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118148:1364",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0815926,8.4565918",
+   "shop": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
+   "text": "24,95 € · dm Kriftel (2,5 km) · 5 Stück\nKapellenstraße 48, 65830 Kriftel\nIm Umkreis in 19 Filiale(n) vorrätig.",
+   "zeit": "2026-11-25T23:01:47.514Z"
+  },
+  {
+   "schluessel": "filiale:3118196:1364",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0815926,8.4565918",
+   "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
+   "text": "24,95 € · dm Kriftel (2,5 km) · 10 Stück\nKapellenstraße 48, 65830 Kriftel\nIm Umkreis in 21 Filiale(n) vorrätig.",
+   "zeit": "2026-11-25T23:01:47.514Z"
+  },
   {
    "schluessel": "deal:https://www.asphaltgold.com/products/nike-wmns-air-jordan-3-retro-fireside-velvet-brown-pearl-white-gum-dark-brown",
    "art": "Deal",
@@ -177,29 +197,10 @@
    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Piepi",
    "text": "Kaufen ab 7,71 € · Ziel 17,32 € · +7,24 € nach Gebühren (ROI 94 %)",
    "zeit": "2026-11-23T23:02:16.456Z"
-  },
-  {
-   "schluessel": "karte:30th-c-028",
-   "art": "Karte",
-   "titel": "🚨 STRONG BUY: Zacian-V",
-   "bild": "",
-   "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Zacian-V",
-   "text": "Kaufen ab 3,00 € · Ziel 9,14 € · +4,18 € nach Gebühren (ROI 139 %)",
-   "zeit": "2026-11-23T22:50:16.123Z"
-  },
-  {
-   "schluessel": "filiale:3118196:1364",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0815926,8.4565918",
-   "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
-   "text": "24,95 € · dm Kriftel (2,5 km) · 1 Stück\nKapellenstraße 48, 65830 Kriftel\nIm Umkreis in 22 Filiale(n) vorrätig.",
-   "zeit": "2026-11-23T21:31:50.009Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-25T22:46:46.925Z",
+  "stand": "2026-11-25T23:01:50.519Z",
   "filialen": 148,
   "produkte": [
    {
@@ -216,7 +217,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Frankfurt am Main",
@@ -346,7 +347,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 4
+      "menge": 3
      }
     ]
    },
@@ -367,12 +368,20 @@
       "menge": 1
      },
      {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 5
+     },
+     {
       "name": "dm Kelsterbach",
       "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Frankfurt am Main",
@@ -412,15 +421,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 2
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 6
+      "menge": 1
      }
     ]
    },
@@ -443,14 +444,6 @@
     "vorrat": [
      {
       "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 1
-     },
-     {
-      "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
       "km": 2.5,
       "lat": 50.0815926,
@@ -463,7 +456,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 4
+      "menge": 3
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -504,6 +497,14 @@
       "lat": 50.0155817,
       "lon": 8.3658454,
       "menge": 9
+     },
+     {
+      "name": "dm Wiesbaden",
+      "adresse": "Berliner Straße 279, 65205 Wiesbaden",
+      "km": 13.4,
+      "lat": 50.0537018,
+      "lon": 8.3006459,
+      "menge": 3
      }
     ]
    },
@@ -534,6 +535,14 @@
     "begriff": "adventskalender",
     "vorrat": [
      {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 10
+     },
+     {
       "name": "dm Frankfurt am Main",
       "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
       "km": 5.6,
@@ -555,7 +564,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 10
+      "menge": 9
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -587,15 +596,7 @@
       "km": 9.6,
       "lat": 50.0122615,
       "lon": 8.5865417,
-      "menge": 19
-     },
-     {
-      "name": "dm Rüsselsheim am Main",
-      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
-      "km": 10.3,
-      "lat": 49.984061,
-      "lon": 8.430174,
-      "menge": 28
+      "menge": 17
      }
     ]
    },
@@ -719,7 +720,7 @@
       "km": 6.3,
       "lat": 50.1202634,
       "lon": 8.5251147,
-      "menge": 6
+      "menge": 5
      },
      {
       "name": "dm Flörsheim am Main",
@@ -1947,6 +1948,10 @@
   "ware": [],
   "top": [
    {
+    "titel": "kalkbuster lidl",
+    "menge": "500+"
+   },
+   {
     "titel": "opus 5.6",
     "menge": "100+"
    },
@@ -1979,11 +1984,7 @@
     "menge": "200+"
    },
    {
-    "titel": "como 1907",
-    "menge": "200+"
-   },
-   {
-    "titel": "دوري ابطال اوروبا",
+    "titel": "دوري الأبطال",
     "menge": "500+"
    }
   ]
