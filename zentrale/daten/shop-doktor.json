@@ -1,10 +1,10 @@
 {
- "stand": "2026-11-24T15:14:31.029Z",
+ "stand": "2026-11-25T14:54:26.065Z",
  "shops": [
   {
    "name": "DeskRebel",
    "url": "https://www.deskrebel.store",
-   "ladezeitMs": 169,
+   "ladezeitMs": 370,
    "produkte": [
     {
      "id": 15896078319990,
@@ -49,20 +49,6 @@
       {
        "stufe": "tipp",
        "was": "26 Bild(er) ohne Alt-Text",
-       "tipp": "Alt-Texte helfen bei Google Bilder und Barrierefreiheit."
-      }
-     ]
-    },
-    {
-     "id": 15898374308214,
-     "titel": "DeskRebel Feierabend – Massagegurt für den unteren Rücken",
-     "url": "https://www.deskrebel.store/products/lumbarease-massagegurt-ruecken",
-     "bild": "https://cdn.shopify.com/s/files/1/1019/2368/4726/files/hf_20260924_231847_c7622f9e-7178-432b-b965-5666c4a6fa77.png?v=1790292343",
-     "punkte": 99,
-     "befunde": [
-      {
-       "stufe": "tipp",
-       "was": "19 Bild(er) ohne Alt-Text",
        "tipp": "Alt-Texte helfen bei Google Bilder und Barrierefreiheit."
       }
      ]
@@ -193,7 +179,7 @@
   {
    "name": "Purivelle",
    "url": "https://purivelle.store",
-   "ladezeitMs": 283,
+   "ladezeitMs": 326,
    "produkte": [
     {
      "id": 11638691529045,
@@ -496,7 +482,7 @@
  ],
  "feeds": {
   "DeskRebel": {
-   "eintraege": 75,
+   "eintraege": 66,
    "google": "feeds/deskrebel-google.xml",
    "meta": "feeds/deskrebel-meta.csv",
    "pinterest": "feeds/deskrebel-meta.csv"
@@ -783,9 +769,21 @@
    "datum": "2026-11-24",
    "DeskRebel": 99,
    "Purivelle": 91
+  },
+  {
+   "datum": "2026-11-25",
+   "DeskRebel": 99,
+   "Purivelle": 91
   }
  ],
  "aenderungen": [
+  {
+   "shop": "DeskRebel",
+   "art": "entfernt",
+   "titel": "DeskRebel Feierabend – Massagegurt für den unteren Rücken",
+   "text": "Nicht mehr im Shop",
+   "datum": "2026-11-25"
+  },
   {
    "shop": "DeskRebel",
    "art": "neu",
