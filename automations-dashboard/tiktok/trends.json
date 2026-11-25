@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-24T13:34:34.613Z",
+ "stand": "2026-11-25T12:32:01.127Z",
  "themen": [
   {
    "thema": "Vollmondnacht, der Hund heult",
@@ -7,14 +7,16 @@
    "inspiration": ""
   },
   {
-   "thema": "Novembernebel auf der Landstraße",
-   "inspiration": "",
-   "quelle": "saison"
+   "thema": "Eine sehr große Gestalt am Waldrand",
+   "quelle": "wikipedia",
+   "anstieg": 1.33,
+   "inspiration": ""
   },
   {
-   "thema": "Laternenumzug, eine Laterne zu viel",
-   "inspiration": "",
-   "quelle": "saison"
+   "thema": "Etwas imitiert die Stimme meiner Mutter im Wald",
+   "quelle": "wikipedia",
+   "anstieg": 1.23,
+   "inspiration": ""
   }
  ],
  "radar": {
@@ -22,67 +24,67 @@
    {
     "name": "Vollmond",
     "thema": "Vollmondnacht, der Hund heult",
-    "anstieg": 2.47,
-    "proTag": 696
-   },
-   {
-    "name": "Skinwalker",
-    "thema": "Etwas imitiert die Stimme meiner Mutter im Wald",
-    "anstieg": 1.14,
-    "proTag": 1695
+    "anstieg": 4.33,
+    "proTag": 1244
    },
    {
     "name": "Slender Man",
     "thema": "Eine sehr große Gestalt am Waldrand",
-    "anstieg": 1.12,
-    "proTag": 1169
+    "anstieg": 1.33,
+    "proTag": 1377
+   },
+   {
+    "name": "Skinwalker",
+    "thema": "Etwas imitiert die Stimme meiner Mutter im Wald",
+    "anstieg": 1.23,
+    "proTag": 1822
    },
    {
     "name": "Exorzismus",
     "thema": "Eine Stimme, die nicht zu meinem Mund passt",
     "anstieg": 1.1,
-    "proTag": 533
-   },
-   {
-    "name": "Schlafparalyse",
-    "thema": "Schlafparalyse: jemand sitzt nachts auf meiner Brust",
-    "anstieg": 0.99,
-    "proTag": 1035
-   },
-   {
-    "name": "Poltergeist",
-    "thema": "Möbel stehen morgens anders",
-    "anstieg": 0.98,
-    "proTag": 430
-   },
-   {
-    "name": "Mothman",
-    "thema": "Rote Augen auf der Brücke",
-    "anstieg": 0.97,
-    "proTag": 1484
+    "proTag": 529
    },
    {
     "name": "Moderne Sagen",
     "thema": "Die Sage aus meiner Kindheit stimmt",
-    "anstieg": 0.97,
-    "proTag": 614
+    "anstieg": 1.03,
+    "proTag": 650
+   },
+   {
+    "name": "Schlafparalyse",
+    "thema": "Schlafparalyse: jemand sitzt nachts auf meiner Brust",
+    "anstieg": 1.02,
+    "proTag": 1057
+   },
+   {
+    "name": "Schattenmenschen",
+    "thema": "Ein Schatten ohne Menschen dazu",
+    "anstieg": 1.02,
+    "proTag": 493
+   },
+   {
+    "name": "Poltergeist",
+    "thema": "Möbel stehen morgens anders",
+    "anstieg": 1.01,
+    "proTag": 436
    },
    {
     "name": "Nahtoderfahrung",
     "thema": "Am Ende des Tunnels wartet jemand",
-    "anstieg": 0.96,
-    "proTag": 537
+    "anstieg": 1.01,
+    "proTag": 562
    },
    {
-    "name": "Backrooms",
-    "thema": "Endlose gelbe Flure hinter einer normalen Tür",
-    "anstieg": 0.94,
-    "proTag": 4543
+    "name": "Mothman",
+    "thema": "Rote Augen auf der Brücke",
+    "anstieg": 1,
+    "proTag": 1502
    }
   ],
   "himmel": {
    "vollmond": true,
-   "kp": 1,
+   "kp": 2,
    "polarlicht": false,
    "nasa": ""
   },
@@ -92,28 +94,28 @@
    "en": []
   },
   "trendsDE": [
-   "iptv",
-   "gianni infantino",
-   "monday night football",
-   "wetten, dass",
-   "marie-agnes strack-zimmermann",
-   "gzsz",
-   "arsenal u-19 – bvb-u19",
-   "андрей белоусов",
-   "pieniądze",
-   "george russell"
+   "mindestlohn",
+   "delitzscher straße",
+   "borussia mönchengladbach",
+   "photovoltaik",
+   "gespräch",
+   "bankkarte",
+   "kalt",
+   "die bergretter",
+   "schalke news",
+   "zwickau"
   ],
   "trendsUS": [
-   "méxico sub-17 - selección de fútbol sub-17 de camerún",
-   "mexico u-17 vs cameroon u-17",
-   "electrek",
-   "katherine heigl",
-   "billy horschel",
-   "elly de la cruz",
-   "lexie hull",
-   "sandisk stock price",
-   "袁家军",
-   "习近平"
+   "ice detainee habeas corpus petitions",
+   "breeze airways new routes 2026",
+   "is kenneth walker playing this week",
+   "minnesota wild calvin pickard waivers",
+   "hailey bieber",
+   "flood cleanup",
+   "citi",
+   "star wars ahsoka season 2",
+   "jensen huang nvidia stock",
+   "inés gómez mont"
   ],
   "welt": [
    {
@@ -122,102 +124,107 @@
     "horror": [
      {
       "name": "Vollmond",
-      "anstieg": 1.56,
-      "proTag": 24
+      "anstieg": 2.01,
+      "proTag": 31
      },
      {
       "name": "SCP",
-      "anstieg": 1.29,
-      "proTag": 206
-     },
-     {
-      "name": "Backrooms",
-      "anstieg": 1.21,
-      "proTag": 174
+      "anstieg": 1.28,
+      "proTag": 210
      },
      {
       "name": "Liminal Spaces",
-      "anstieg": 1.2,
-      "proTag": 49
+      "anstieg": 1.25,
+      "proTag": 51
      },
      {
-      "name": "Moderne Sagen",
-      "anstieg": 1.08,
-      "proTag": 44
+      "name": "Skinwalker",
+      "anstieg": 1.25,
+      "proTag": 29
+     },
+     {
+      "name": "Nahtoderfahrung",
+      "anstieg": 1.15,
+      "proTag": 24
      }
     ],
     "trends": [
-     "培养更多高技能人才和大国工匠",
-     "上海市委书记陈吉宁被查",
-     "太平洋暖得“失控”了",
-     "中国人登月又近一步",
-     "国产可口可乐不再标生产日期"
+     "习近平对党内法规工作作出重要指示",
+     "陈吉宁被查 上海市政府党组等表态",
+     "“转人工转人工 给我转人工”",
+     "中外航天员在中国空间站合影",
+     "中产在山姆捡漏MaxMara平替"
     ],
     "quelle": [
      "wikipedia-zh",
      "baidu"
     ],
-    "gemessen": 16
+    "gemessen": 17
    },
    {
     "name": "Indien",
     "flagge": "🇮🇳",
     "horror": [
      {
+      "name": "Exorzismus",
+      "anstieg": 1.08,
+      "proTag": 5
+     },
+     {
       "name": "Geister",
-      "anstieg": 0.95,
-      "proTag": 30
+      "anstieg": 0.82,
+      "proTag": 26
      }
     ],
     "trends": [
-     "northeast united vs sc delhi",
-     "దాదా",
-     "sreenidi deccan vs chanmari",
-     "east bengal vs al hussein",
-     "sarfaraz khan"
+     "rahul gandhi",
+     "టీవీ9 - తెలుగు",
+     "ബെന് സ്റ്റോക്സ്",
+     "jaker ali",
+     "महाराष्ट्र"
     ],
     "quelle": [
      "wikipedia-hi",
      "google-trends"
     ],
-    "gemessen": 1
+    "gemessen": 2
    },
    {
     "name": "Tokio",
     "flagge": "🇯🇵",
     "horror": [
      {
-      "name": "Spukhaus",
-      "anstieg": 2.19,
-      "proTag": 38
-     },
-     {
       "name": "Vollmond",
-      "anstieg": 1.75,
-      "proTag": 62
+      "anstieg": 2.89,
+      "proTag": 103
      },
      {
-      "name": "Wendigo",
-      "anstieg": 1.7,
-      "proTag": 84
+      "name": "Klartraum",
+      "anstieg": 2.01,
+      "proTag": 279
      },
      {
-      "name": "Doppelgänger",
-      "anstieg": 1.56,
-      "proTag": 314
+      "name": "Bloody Mary",
+      "anstieg": 1.42,
+      "proTag": 44
      },
      {
-      "name": "Ouija",
-      "anstieg": 1.47,
-      "proTag": 47
+      "name": "Friedhof",
+      "anstieg": 1.42,
+      "proTag": 31
+     },
+     {
+      "name": "Spukhaus",
+      "anstieg": 1.41,
+      "proTag": 29
      }
     ],
     "trends": [
-     "いろはの恋は時代を駆ける",
-     "陳吉寧",
-     "レアル・マドリード",
-     "u17 ワールドカップ",
-     "イムジヨン イドヒョン"
+     "能條愛未",
+     "いわきfc 対 カターレ富山 順位",
+     "あの",
+     "グラニフ ヒグチユウコ",
+     "速水もこみち"
     ],
     "quelle": [
      "wikipedia-ja",
@@ -231,42 +238,42 @@
     "horror": [
      {
       "name": "Vollmond",
-      "anstieg": 2.39,
-      "proTag": 81
+      "anstieg": 3.51,
+      "proTag": 123
      },
      {
       "name": "Skinwalker",
-      "anstieg": 1.82,
-      "proTag": 66
-     },
-     {
-      "name": "Bloody Mary",
-      "anstieg": 1.61,
-      "proTag": 46
-     },
-     {
-      "name": "Doppelgänger",
-      "anstieg": 1.09,
-      "proTag": 105
+      "anstieg": 1.89,
+      "proTag": 71
      },
      {
       "name": "Mothman",
-      "anstieg": 1.06,
-      "proTag": 41
+      "anstieg": 1.18,
+      "proTag": 43
+     },
+     {
+      "name": "Bloody Mary",
+      "anstieg": 1.17,
+      "proTag": 36
+     },
+     {
+      "name": "Doppelgänger",
+      "anstieg": 1.16,
+      "proTag": 108
      }
     ],
     "trends": [
-     "équipe cycliste decathlon cma cgm",
-     "mayotte",
-     "adriana karembeu",
-     "présomption",
-     "royaume-uni"
+     "divorce",
+     "michel-édouard leclerc",
+     "steven hack",
+     "2026",
+     "garmin"
     ],
     "quelle": [
      "wikipedia-fr",
      "google-trends"
     ],
-    "gemessen": 24
+    "gemessen": 23
    },
    {
     "name": "New York",
@@ -274,36 +281,36 @@
     "horror": [
      {
       "name": "Vollmond",
-      "anstieg": 2.32,
-      "proTag": 581
-     },
-     {
-      "name": "Exorzismus",
-      "anstieg": 1.16,
-      "proTag": 439
-     },
-     {
-      "name": "Skinwalker",
-      "anstieg": 1.13,
-      "proTag": 1612
+      "anstieg": 4.03,
+      "proTag": 1027
      },
      {
       "name": "Slender Man",
-      "anstieg": 1.13,
-      "proTag": 1066
+      "anstieg": 1.37,
+      "proTag": 1279
      },
      {
-      "name": "Schlafparalyse",
-      "anstieg": 1.02,
-      "proTag": 944
+      "name": "Skinwalker",
+      "anstieg": 1.22,
+      "proTag": 1731
+     },
+     {
+      "name": "Exorzismus",
+      "anstieg": 1.13,
+      "proTag": 426
+     },
+     {
+      "name": "Nahtoderfahrung",
+      "anstieg": 1.08,
+      "proTag": 490
      }
     ],
     "trends": [
-     "slog",
-     "aldi boxed pasta product recall",
-     "sophie cunningham wnba family planning",
-     "storm watch",
-     "陈吉宁"
+     "bob seger &amp; the silver bullet band",
+     "royal caribbean cruise man overboard",
+     "nfl schedule",
+     "tiempo",
+     "wegmans"
     ],
     "quelle": [
      "wikipedia-en",
@@ -323,13 +330,15 @@
     ]
    },
    {
-    "name": "SCP",
+    "name": "Skinwalker",
     "wo": [
-     "China"
+     "China",
+     "Paris",
+     "New York"
     ]
    },
    {
-    "name": "Backrooms",
+    "name": "SCP",
     "wo": [
      "China"
     ]
@@ -341,39 +350,33 @@
     ]
    },
    {
+    "name": "Klartraum",
+    "wo": [
+     "Tokio"
+    ]
+   },
+   {
+    "name": "Bloody Mary",
+    "wo": [
+     "Tokio"
+    ]
+   },
+   {
+    "name": "Friedhof",
+    "wo": [
+     "Tokio"
+    ]
+   },
+   {
     "name": "Spukhaus",
     "wo": [
      "Tokio"
     ]
    },
    {
-    "name": "Wendigo",
+    "name": "Slender Man",
     "wo": [
-     "Tokio"
-    ]
-   },
-   {
-    "name": "Doppelgänger",
-    "wo": [
-     "Tokio"
-    ]
-   },
-   {
-    "name": "Ouija",
-    "wo": [
-     "Tokio"
-    ]
-   },
-   {
-    "name": "Skinwalker",
-    "wo": [
-     "Paris"
-    ]
-   },
-   {
-    "name": "Bloody Mary",
-    "wo": [
-     "Paris"
+     "New York"
     ]
    }
   ]
