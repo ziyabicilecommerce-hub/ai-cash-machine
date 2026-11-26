@@ -60,3 +60,35 @@ test('Story-Fabrik: Klick-Liste mit Startbild und Prompt je Szene', async () => 
   assert.ok(k.includes('✅ Clip schon da'));
   assert.ok(k.includes('wan.video'));
 });
+
+test('Seedance (BytePlus): Auftrag 9:16 ohne Wasserzeichen, Fehlerarten, Modell-Wechsel', async () => {
+  const { auftrag, leer, unbekannt, arkClip } = await import('../../automations/lib/arkVideo.mjs');
+  const { writeFileSync, mkdtempSync, readFileSync } = await import('node:fs');
+  const { join } = await import('node:path');
+  const { tmpdir } = await import('node:os');
+  const dir = mkdtempSync(join(tmpdir(), 'ark-'));
+  const bild = join(dir, 'b.jpg');
+  writeFileSync(bild, 'JPG');
+  const a = auftrag('m1', 'wax drips', bild);
+  assert.match(a.content[0].text, /--ratio 9:16 .*--watermark false/);
+  assert.ok(a.content[1].image_url.url.startsWith('data:image/jpeg;base64,'));
+  assert.ok(leer(429, '') && leer(400, 'insufficient balance') && !leer(400, 'bad prompt'));
+  assert.ok(unbekannt(404, '') && unbekannt(400, 'InvalidEndpointOrModel.NotFound'));
+  process.env.ARK_API_KEY = 'x';
+  process.env.ARK_VIDEO_MODELL = 'gibts-nicht';
+  const aufrufe = [];
+  const laden = async (url, o = {}) => {
+    aufrufe.push(url);
+    if (o.method === 'POST') {
+      const m = JSON.parse(o.body).model;
+      return m === 'gibts-nicht' ? new Response('{"error":{"code":"InvalidEndpointOrModel.NotFound"}}', { status: 404 }) : new Response('{"id":"t1"}');
+    }
+    if (url.endsWith('/tasks/t1')) return new Response('{"status":"succeeded","content":{"video_url":"https://v/clip.mp4"}}');
+    return new Response('MP4');
+  };
+  const r = await arkClip(bild, 'p', join(dir, 'c.mp4'), { warten: 1, laden });
+  assert.equal(r.model, 'seedance-1-0-pro-fast-251015');
+  assert.equal(readFileSync(join(dir, 'c.mp4'), 'utf8'), 'MP4');
+  delete process.env.ARK_API_KEY;
+  delete process.env.ARK_VIDEO_MODELL;
+});

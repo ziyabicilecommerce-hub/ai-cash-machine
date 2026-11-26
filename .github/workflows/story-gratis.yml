@@ -32,6 +32,8 @@ jobs:
       STORY_KAGGLE: ${{ inputs.kaggle && 'an' || 'aus' }}
       CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      ARK_API_KEY: ${{ secrets.ARK_API_KEY }}
+      ARK_VIDEO_MODELL: ${{ vars.ARK_VIDEO_MODELL }}
       KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
       KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
       POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
@@ -50,6 +52,7 @@ jobs:
       - name: Bilder und Clips erzeugen
         run: |
           [ -n "$CF_API_TOKEN" ] && echo "Cloudflare-Schlüssel: ja" || echo "Cloudflare-Schlüssel: nein (Bilder ohne Figurenblatt)"
+          [ -n "$ARK_API_KEY" ] && echo "BytePlus-Seedance-Schlüssel: ja" || echo "BytePlus-Seedance-Schlüssel: nein"
           [ -n "$KAGGLE_KEY" ] && echo "Kaggle-Schlüssel: ja" || echo "Kaggle-Schlüssel: nein"
           node automations/schatten/storyGratis.mjs "$FOLGE" out/story
       - name: Schneiden
