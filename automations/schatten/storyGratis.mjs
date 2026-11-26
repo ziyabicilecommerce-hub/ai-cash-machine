@@ -3,7 +3,7 @@
 //  1. Figurenblätter: vorhandenes Bild (blattUrl) oder neu per Cloudflare FLUX.2 (Gratis-Kontingent pro Tag)
 //  2. Szenenbilder: Cloudflare FLUX.2 [klein] MIT Figurenblatt als Referenz -> gleiche Figuren in jeder Szene
 //     (ohne Cloudflare-Schlüssel: Pollinations ohne Referenz - Figuren dann weniger einheitlich)
-//  3. Clips: Wan 2.2 auf der kostenlosen Kaggle-GPU (30 h/Woche), eigener Kernel "story-fabrik"
+//  3. Clips: Seedance über BytePlus (Gratis-Tokens, mit ARK_API_KEY), sonst/danach Wan 2.2 auf der Kaggle-GPU
 //  4. schnitt.json für higgsSchnitt.mjs (Stimme, Untertitel, Hook)
 //   node automations/schatten/storyGratis.mjs <folge.json> <ordner>
 //   node automations/schatten/storyGratis.mjs eintragen <folge.json> <neu.json> <release-basis-url>  (Fortschritt merken)
@@ -96,10 +96,27 @@ async function main() {
     } catch (err) { console.log(`[story-gratis] Szene ${i + 1}: kein Bild - ${String(err.message).slice(0, 120)}`); }
   }
 
-  // 3. Clips auf der Kaggle-GPU
+  // 3a. Clips in Top-Qualität: Seedance über BytePlus ModelArk (Gratis-Kontingent, solange es reicht)
   const clipLokal = [];
+  const { arkBereit, arkClip } = await import('../lib/arkVideo.mjs');
+  if (arkBereit()) {
+    for (const [i, s] of (ep.szenen || []).entries()) {
+      if (s.clip || !lokal[i]) continue;
+      const ziel = join(ordner, `s${i + 1}.mp4`);
+      try {
+        const { model } = await arkClip(lokal[i], s.clipPrompt || BEWEGUNG, ziel);
+        clipLokal[i] = ziel;
+        neu.clips[i] = `s${i + 1}.mp4`;
+        console.log(`[story-gratis] Szene ${i + 1}: Seedance-Clip (${model})`);
+      } catch (err) {
+        console.log(`[story-gratis] Szene ${i + 1}: ${String(err.message).slice(0, 200)}`);
+        if (err.leer) break;
+      }
+    }
+  }
+  // 3b. Rest auf der Kaggle-GPU (Wan 2.2, 30 h/Woche gratis)
   const { kaggleBereit, kaggleClips } = await import('../lib/kaggleTurbo.mjs');
-  const shots = (ep.szenen || []).map((s, i) => (!s.clip && lokal[i] ? { nr: i + 1, bildB64: readFileSync(lokal[i]).toString('base64'), bewegung: s.clipPrompt || BEWEGUNG } : null)).filter(Boolean);
+  const shots = (ep.szenen || []).map((s, i) => (!s.clip && !clipLokal[i] && lokal[i] ? { nr: i + 1, bildB64: readFileSync(lokal[i]).toString('base64'), bewegung: s.clipPrompt || BEWEGUNG } : null)).filter(Boolean);
   if (shots.length && kaggleBereit() && !/^(aus|nein|0)$/i.test(process.env.STORY_KAGGLE || '')) {
     const clips = await kaggleClips(shots, ordner, { sekunden: 3.5, qualitaet: 'kino', kernel: 'story-fabrik', maxMinuten: Number(process.env.STORY_KAGGLE_MIN) || 150 });
     for (const [nr, p] of clips) {
