@@ -457,6 +457,8 @@ async function main() {
     if (state.uebersprungen[refnr]?.startsWith('zu wenig Gehalt')) delete state.uebersprungen[refnr];
     // Neu: ohne Mail in der Anzeige wird die Firmen-Website durchsucht - alte "keine E-Mail"-Fälle einmal neu prüfen.
     if (state.uebersprungen[refnr] === 'keine E-Mail') delete state.uebersprungen[refnr];
+    // Früher bei KI-Ausfall mit der Vorlage aussortiert - einmal mit KI neu prüfen.
+    if (state.uebersprungen[refnr] === 'verlangt Ausbildung/Erfahrung (Vorlage)') delete state.uebersprungen[refnr];
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb'; continue; }
@@ -520,7 +522,8 @@ async function main() {
     if (b === KI_AUS) { kiAus = true; b = null; }
     // KI überlastet → Profi-Vorlage aus deinen echten Daten statt gar keiner Bewerbung.
     if (!b) {
-      if (!vorlagePasst(text, stelle.titel || '')) { state.uebersprungen[refnr] = 'verlangt Ausbildung/Erfahrung (Vorlage)'; continue; }
+      // Ist nur die Gratis-KI für heute durch, bleibt die Stelle liegen und wird mit KI nochmal geprüft.
+      if (!vorlagePasst(text, stelle.titel || '')) { if (!kiAus) state.uebersprungen[refnr] = 'verlangt Ausbildung/Erfahrung (Vorlage, KI lief)'; continue; }
       b = { passung: MIN_PASSUNG, perMail: true, vorlage: true, anschreiben: vorlageAnschreiben({ titel: stelle.titel, firma: stelle.arbeitgeber, text }) };
     }
     if (b.perMail === false) { state.uebersprungen[refnr] = 'laut Anzeige nur Portal'; selbst('laut Anzeige nur online'); continue; }
