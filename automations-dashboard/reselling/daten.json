@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-26T22:35:43.964Z",
+ "stand": "2026-11-26T22:39:38.381Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "karte:me03-120",
+   "art": "Karte",
+   "titel": "🚨 STRONG BUY: Mega-Zygarde-ex",
+   "bild": "https://assets.tcgdex.net/de/me/me03/120/low.webp",
+   "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zygarde-ex",
+   "text": "Kaufen ab 20,00 € · Ziel 37,74 € · +14,35 € nach Gebühren (ROI 72 %)",
+   "zeit": "2026-11-26T22:39:38.381Z"
+  },
   {
    "schluessel": "filiale:3117665:1831",
    "art": "Filiale",
@@ -189,15 +198,6 @@
    "shop": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
    "text": "24,95 € · dm Mörfelden-Walldorf (9,6 km) · 1 Stück\nFarmstraße 101, 64546 Mörfelden-Walldorf\nIm Umkreis in 18 Filiale(n) vorrätig.",
    "zeit": "2026-11-26T14:53:30.348Z"
-  },
-  {
-   "schluessel": "deal:https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
-   "art": "Deal",
-   "titel": "💰 Deal: Nike Air Max 95 für 114,00 €",
-   "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IH7855-100_01.jpg?v=1777549236",
-   "link": "https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
-   "text": "sneakersnstuff.com · Air Max 95 OG \"Slate\"\nVerkauf ca. 140–220 € → Gewinn ca. +43,00 € (ROI 38 %)\nGröße prüfen, vorher verkaufte Preise checken.",
-   "zeit": "2026-11-26T14:50:30.938Z"
   }
  ],
  "filial": {
@@ -1057,6 +1057,7 @@
      18.39,
      18.39,
      18.39,
+     18.39,
      18.39
     ]
    },
@@ -1071,21 +1072,21 @@
     "bild": "https://assets.tcgdex.net/de/me/me04/117/low.webp",
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Floette-ex",
     "preis": {
-     "tief": 12,
-     "trend": 22.54,
+     "tief": 13,
+     "trend": 23.21,
      "schnitt7": 23.7,
      "schnitt30": 21.62
     },
     "prozent": 10,
     "signal": "stabil",
     "profi": {
-     "einstieg": 12,
-     "ziel": 22.54,
-     "gewinn": 7.91,
-     "roi": 66,
+     "einstieg": 13,
+     "ziel": 23.21,
+     "gewinn": 7.55,
+     "roi": 58,
      "momentum": 10,
-     "spread": 10.54,
-     "score": 86,
+     "spread": 10.21,
+     "score": 83,
      "signal": "STRONG BUY"
     },
     "nurBewegung": true,
@@ -1135,7 +1136,87 @@
      22.54,
      22.54,
      22.54,
-     22.54
+     22.54,
+     23.21
+    ]
+   },
+   {
+    "id": "me03-120",
+    "name": "Mega-Zygarde-ex",
+    "nummer": "120",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/120/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zygarde-ex",
+    "preis": {
+     "tief": 20,
+     "trend": 39.46,
+     "schnitt7": 37.74,
+     "schnitt30": 36.47
+    },
+    "prozent": 3,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 20,
+     "ziel": 37.74,
+     "gewinn": 14.35,
+     "roi": 72,
+     "momentum": 3,
+     "spread": 19.46,
+     "score": 78,
+     "signal": "STRONG BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     38.42,
+     38.42,
+     38.42,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.09,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     38.53,
+     39.46
     ]
    },
    {
@@ -1213,6 +1294,7 @@
      18.71,
      18.71,
      18.71,
+     18.71,
      18.71
     ]
    },
@@ -1228,7 +1310,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Pixi-ex",
     "preis": {
      "tief": 20,
-     "trend": 38.53,
+     "trend": 37.38,
      "schnitt7": 35.29,
      "schnitt30": 34.62
     },
@@ -1240,7 +1322,7 @@
      "gewinn": 12.03,
      "roi": 60,
      "momentum": 2,
-     "spread": 18.53,
+     "spread": 17.38,
      "score": 72,
      "signal": "BUY"
     },
@@ -1291,7 +1373,8 @@
      38.53,
      38.53,
      38.53,
-     38.53
+     38.53,
+     37.38
     ]
    },
    {
@@ -1305,21 +1388,21 @@
     "bild": "https://assets.tcgdex.net/de/me/me05/117/low.webp",
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Morpeko-ex",
     "preis": {
-     "tief": 29.9,
-     "trend": 47.99,
+     "tief": 29.89,
+     "trend": 57.05,
      "schnitt7": 49.76,
      "schnitt30": 48.11
     },
     "prozent": 3,
     "signal": "stabil",
     "profi": {
-     "einstieg": 29.9,
-     "ziel": 47.99,
-     "gewinn": 14.19,
-     "roi": 47,
+     "einstieg": 29.89,
+     "ziel": 49.76,
+     "gewinn": 15.88,
+     "roi": 53,
      "momentum": 3,
-     "spread": 18.09,
-     "score": 69,
+     "spread": 27.16,
+     "score": 71,
      "signal": "BUY"
     },
     "nurBewegung": true,
@@ -1369,7 +1452,8 @@
      47.99,
      47.99,
      47.99,
-     47.99
+     47.99,
+     57.05
     ]
    },
    {
@@ -1384,7 +1468,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Zacian-V",
     "preis": {
      "tief": 3,
-     "trend": 8.82,
+     "trend": 8.57,
      "schnitt7": 8.8,
      "schnitt30": 9.17
     },
@@ -1392,11 +1476,11 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 3,
-     "ziel": 8.8,
-     "gewinn": 3.86,
-     "roi": 129,
+     "ziel": 8.57,
+     "gewinn": 3.64,
+     "roi": 121,
      "momentum": -4,
-     "spread": 5.82,
+     "spread": 5.57,
      "score": 69,
      "signal": "BUY"
     },
@@ -1409,7 +1493,41 @@
      8.82,
      8.82,
      8.82,
-     8.82
+     8.82,
+     8.57
+    ]
+   },
+   {
+    "id": "30th-c-026",
+    "name": "Mew-VMAX",
+    "nummer": "026",
+    "seltenheit": "Keine",
+    "set": "30 Jahre: Klassische Sammlung",
+    "setId": "30th-c",
+    "release": "2026-09-16",
+    "bild": "",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mew-VMAX",
+    "preis": {
+     "tief": 10,
+     "trend": 20.8,
+     "schnitt7": 21.46,
+     "schnitt30": 22.82
+    },
+    "prozent": -6,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 10,
+     "ziel": 20.8,
+     "gewinn": 8.26,
+     "roi": 83,
+     "momentum": -6,
+     "spread": 10.8,
+     "score": 68,
+     "signal": "BUY"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     20.8
     ]
    },
    {
@@ -1424,7 +1542,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Skelabra-ex",
     "preis": {
      "tief": 18,
-     "trend": 25.05,
+     "trend": 24.6,
      "schnitt7": 26.31,
      "schnitt30": 23.41
     },
@@ -1432,11 +1550,11 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 18,
-     "ziel": 25.05,
-     "gewinn": 4.3,
-     "roi": 24,
+     "ziel": 24.6,
+     "gewinn": 3.87,
+     "roi": 22,
      "momentum": 12,
-     "spread": 7.05,
+     "spread": 6.6,
      "score": 66,
      "signal": "BUY"
     },
@@ -1487,85 +1605,8 @@
      25.05,
      25.05,
      25.05,
-     25.05
-    ]
-   },
-   {
-    "id": "me03-120",
-    "name": "Mega-Zygarde-ex",
-    "nummer": "120",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/120/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Mega-Zygarde-ex",
-    "preis": {
-     "tief": 25,
-     "trend": 38.53,
-     "schnitt7": 37.74,
-     "schnitt30": 36.47
-    },
-    "prozent": 3,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 25,
-     "ziel": 37.74,
-     "gewinn": 9.35,
-     "roi": 37,
-     "momentum": 3,
-     "spread": 13.53,
-     "score": 65,
-     "signal": "BUY"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     38.42,
-     38.42,
-     38.42,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.09,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53,
-     38.53
+     25.05,
+     24.6
     ]
    },
    {
@@ -1619,6 +1660,7 @@
      18.22,
      18.22,
      18.22,
+     18.47,
      18.47,
      18.47,
      18.47,
@@ -1721,6 +1763,7 @@
      20.99,
      20.99,
      20.99,
+     20.99,
      20.99
     ]
    },
@@ -1761,7 +1804,87 @@
      59.07,
      59.07,
      59.07,
+     59.07,
      59.07
+    ]
+   },
+   {
+    "id": "me03-123",
+    "name": "Rosys Ermutigung",
+    "nummer": "123",
+    "seltenheit": "Selten, besondere Illustration",
+    "set": "Optimale Ordnung",
+    "setId": "me03",
+    "release": "2026-03-27",
+    "bild": "https://assets.tcgdex.net/de/me/me03/123/low.webp",
+    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rosys%20Ermutigung",
+    "preis": {
+     "tief": 25,
+     "trend": 35.22,
+     "schnitt7": 35.19,
+     "schnitt30": 35.85
+    },
+    "prozent": -2,
+    "signal": "stabil",
+    "profi": {
+     "einstieg": 25,
+     "ziel": 35.19,
+     "gewinn": 6.93,
+     "roi": 28,
+     "momentum": -2,
+     "spread": 10.22,
+     "score": 55,
+     "signal": "HOLD"
+    },
+    "nurBewegung": true,
+    "kurs": [
+     34.4,
+     34.4,
+     34.4,
+     34.4,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     33.83,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     34.75,
+     35.22
     ]
    },
    {
@@ -1836,85 +1959,8 @@
      31.4,
      31.4,
      31.4,
+     31.4,
      31.4
-    ]
-   },
-   {
-    "id": "me03-123",
-    "name": "Rosys Ermutigung",
-    "nummer": "123",
-    "seltenheit": "Selten, besondere Illustration",
-    "set": "Optimale Ordnung",
-    "setId": "me03",
-    "release": "2026-03-27",
-    "bild": "https://assets.tcgdex.net/de/me/me03/123/low.webp",
-    "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Rosys%20Ermutigung",
-    "preis": {
-     "tief": 25,
-     "trend": 34.75,
-     "schnitt7": 35.19,
-     "schnitt30": 35.85
-    },
-    "prozent": -2,
-    "signal": "stabil",
-    "profi": {
-     "einstieg": 25,
-     "ziel": 34.75,
-     "gewinn": 6.51,
-     "roi": 26,
-     "momentum": -2,
-     "spread": 9.75,
-     "score": 54,
-     "signal": "HOLD"
-    },
-    "nurBewegung": true,
-    "kurs": [
-     34.4,
-     34.4,
-     34.4,
-     34.4,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     33.83,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75,
-     34.75
     ]
    },
    {
@@ -1947,6 +1993,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     28.12,
      28.12,
      28.12,
      28.12,
@@ -2008,6 +2055,7 @@
      13.31,
      13.31,
      13.31,
+     13.14,
      13.14,
      13.14,
      13.14,
@@ -2110,6 +2158,7 @@
      9.28,
      9.28,
      9.28,
+     9.28,
      9.28
     ]
    },
@@ -2143,6 +2192,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     39.37,
      39.37,
      39.37,
      39.37,
@@ -2228,6 +2278,7 @@
      30.49,
      30.49,
      30.49,
+     30.49,
      30.49
     ]
    },
@@ -2243,7 +2294,7 @@
     "link": "https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=Micas%20Auff%C3%BChrung",
     "preis": {
      "tief": 8,
-     "trend": 12.4,
+     "trend": 12.38,
      "schnitt7": 12.87,
      "schnitt30": 13.29
     },
@@ -2251,11 +2302,11 @@
     "signal": "stabil",
     "profi": {
      "einstieg": 8,
-     "ziel": 12.4,
-     "gewinn": 2.28,
+     "ziel": 12.38,
+     "gewinn": 2.26,
      "roi": 28,
      "momentum": -3,
-     "spread": 4.4,
+     "spread": 4.38,
      "score": 45,
      "signal": "HOLD"
     },
@@ -2306,7 +2357,8 @@
      12.4,
      12.4,
      12.4,
-     12.4
+     12.4,
+     12.38
     ]
    }
   ],
@@ -2366,16 +2418,16 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 768,
+  "geprueft": 799,
   "statistik": {
-   "karten": 768,
+   "karten": 799,
    "mitPreis": 657,
-   "imBudget": 47,
+   "imBudget": 46,
    "steigend": 0,
-   "fallend": 20
+   "fallend": 19
   },
   "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-11-26T21:41:42.630Z"
+  "stand": "2026-11-26T22:39:23.445Z"
  },
  "trends": {
   "ware": [],
@@ -2582,7 +2634,7 @@
     "preis": 79.99,
     "verfuegbar": true,
     "url": "https://afew-store.com/products/adidas-originals-samba-og-ftwwht-cblack-cgrani",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1795721526",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-ftwwht-cblack-cgrani-b75806-footwear_20_3E_20sneaker_d1eeee06-9854-42ed-93ac-a66a2d01fd20.jpg?v=1795732447",
     "laden": "afew-store.com",
     "begriff": "samba"
    },
@@ -2767,15 +2819,6 @@
     "begriff": "samba"
    },
    {
-    "titel": "adidas Originals SAMBA OG",
-    "preis": 95.99,
-    "verfuegbar": true,
-    "url": "https://afew-store.com/products/adidas-originals-samba-og-nindig-warvan-gum2",
-    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-nindig-warvan-gum2-kk2273-footwear_20_3E_20sneaker.jpg?v=1782197486",
-    "laden": "afew-store.com",
-    "begriff": "samba"
-   },
-   {
     "titel": "Book 2 NRG \"WNBA 30th\"",
     "preis": 96,
     "verfuegbar": true,
@@ -2909,6 +2952,15 @@
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/ouP9r5e4mLueXBpBtyk8-U509BA-New-Balance-509-Bisque-os-1.jpg?v=1767104038",
     "laden": "asphaltgold.com",
     "begriff": "new balance"
+   },
+   {
+    "titel": "adidas Originals SAMBA OG",
+    "preis": 117.99,
+    "verfuegbar": true,
+    "url": "https://afew-store.com/products/adidas-originals-samba-og-blabro-khathr-silpeb",
+    "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-blabro-khathr-silpeb-kk2371-footwear_20_3E_20sneaker.jpg?v=1789370364",
+    "laden": "afew-store.com",
+    "begriff": "samba"
    },
    {
     "titel": "Nike Wmns Dunk Low",
