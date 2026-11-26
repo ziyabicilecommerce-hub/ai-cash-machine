@@ -70,6 +70,7 @@ jobs:
           for K in $KANAELE; do
             SLUG=$(jq -r '._slug' "out/folge-$K.json")
             rm -rf "out/r-$K"; python3 automations/schatten/story.py "out/folge-$K.json" "out/r-$K" || continue
+            python3 automations/lib/intro_vorne.py "out/r-$K/video.mp4" "$K" || true
             TAG="horror-$K-$(date -u +%Y%m%d-%H%M)"
             cp "out/r-$K/video.mp4" "out/r-$K/$SLUG.mp4"
             KACHELN=""

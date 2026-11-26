@@ -7,11 +7,15 @@ export const ZIEL_TAGE = 100;
 export const POST_ZEIT = '18:30';   // deutsche Zeit, abends ist auf TikTok am meisten los
 // TikTok-Kanal der Serie: Standard futureflowx3. Eigener neuer Account (24.11., Horror-Publikum wischt weg):
 // Buffer-Kanal-ID als Repo-Variable SERIE_TIKTOK_KANAL eintragen - dann postet die Serie nur noch dort.
-const TIKTOK_KANAL = /^[a-f\d]{24}$/.test(process.env.SERIE_TIKTOK_KANAL || '') ? process.env.SERIE_TIKTOK_KANAL : '6ac7cb606a5c39ccb6535fab';
+// 26.11. Strategie-Umbau (Wochenbericht): futureflowx3 war mit Ø 588 der stärkste Horror-Kanal, die Serie holte dort ~200,
+// auf YouTube nur 2-20. Deshalb läuft die Serie jetzt auf zyx_7851 (gedeckelt bei ~224) und nicht mehr auf YouTube.
+export const STANDARD_TIKTOK = '6ac7cae66a5c39ccb6535c40';
+const TIKTOK_KANAL = /^[a-f\d]{24}$/.test(process.env.SERIE_TIKTOK_KANAL || '') ? process.env.SERIE_TIKTOK_KANAL : STANDARD_TIKTOK;
 export const KANAELE = [
-  { id: TIKTOK_KANAL, name: TIKTOK_KANAL === '6ac7cb606a5c39ccb6535fab' ? 'futureflowx3' : 'serie-tiktok', dienst: 'tiktok', sprache: 'de' },
-  { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', sprache: 'en' },
+  { id: TIKTOK_KANAL, name: TIKTOK_KANAL === STANDARD_TIKTOK ? 'zyx_7851' : 'serie-tiktok', dienst: 'tiktok', sprache: 'de' },
 ];
+// Englische Fassung bleibt im Code (serieFolgenEn.mjs) - für einen späteren eigenen englischen Kanal
+export const YOUTUBE_EN = { id: '6ae8f39ae29c69a1713e3f33', name: 'giyuuu sama', dienst: 'youtube', sprache: 'en' };
 
 const berlinDatum = (d) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(d);
 
