@@ -135,6 +135,7 @@ export async function anschreibenAnhang({ firma, ort, betreff, anschreiben }) {
 export async function anhaenge({ firma, strasse = '', plz = '', ort = '', titel = '', ausbildung = false, betreff, anschreiben, cv }) {
   const { mappeAnhang } = await import('./mappe.mjs');
   const mappe = await mappeAnhang({ firma, strasse, plz, ort, titel, ausbildung });
+  console.log(`[anhang] ${mappe ? 'Bewerbungsmappe (Seite 2: ' + firma + ')' : 'Anschreiben + Lebenslauf (kein BEWERBUNG_MAPPE_KEY)'}`);
   if (mappe) return [mappe];
   return [await anschreibenAnhang({ firma, ort, betreff, anschreiben }), cvAnhang(cv)];
 }
