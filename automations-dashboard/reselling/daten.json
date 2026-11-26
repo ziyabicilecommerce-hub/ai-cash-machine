@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-26T15:21:19.876Z",
+ "stand": "2026-11-26T15:24:17.006Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -200,7 +200,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-26T15:09:10.060Z",
+  "stand": "2026-11-26T15:24:21.052Z",
   "filialen": 148,
   "produkte": [
    {
@@ -274,6 +274,24 @@
       "lat": 50.1091183,
       "lon": 8.6538929,
       "menge": 1
+     }
+    ]
+   },
+   {
+    "dan": "3118150",
+    "name": "essence Adventskalender 2026 Baked With Love, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779239321/assets/pas/images/e545b6b0-1c2a-4151-bd65-cd5106e14c0e/essence-adventskalender-2026-baked-with-love",
+    "link": "https://www.dm.de/p/d/3118150/essence-adventskalender-2026-baked-with-love",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Europa-Allee 130, 60486 Frankfurt am Main",
+      "km": 10.9,
+      "lat": 50.1086268,
+      "lon": 8.6273783,
+      "menge": 15
      }
     ]
    },
@@ -439,7 +457,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 1
+      "menge": 2
      },
      {
       "name": "dm Kriftel",
@@ -680,7 +698,7 @@
     "preis": 32.95,
     "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
     "link": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
-    "begriff": "adventskalender",
+    "begriff": "beauty adventskalender",
     "vorrat": [
      {
       "name": "dm Kriftel",
@@ -2247,8 +2265,24 @@
   "ware": [],
   "top": [
    {
-    "titel": "biathlon heute live zdf",
+    "titel": "hannover 96",
+    "menge": "1000+"
+   },
+   {
+    "titel": "belästigung",
+    "menge": "200+"
+   },
+   {
+    "titel": "familienserie",
     "menge": "100+"
+   },
+   {
+    "titel": "münchen wetter",
+    "menge": "100+"
+   },
+   {
+    "titel": "biathlon heute live zdf",
+    "menge": "200+"
    },
    {
     "titel": "bulgarien",
@@ -2269,22 +2303,6 @@
    {
     "titel": "feuer elmshorn",
     "menge": "200+"
-   },
-   {
-    "titel": "d-wave systems",
-    "menge": "200+"
-   },
-   {
-    "titel": "hünxe",
-    "menge": "200+"
-   },
-   {
-    "titel": "bsw europaabgeordnete moskau",
-    "menge": "1000+"
-   },
-   {
-    "titel": "patricia schlesinger",
-    "menge": "500+"
    }
   ]
  },
@@ -2858,20 +2876,20 @@
     "begriff": "samba"
    },
    {
-    "titel": "Adidas Samba OG",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/adidas-samba-og-fox-brown-off-white-gum-4",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/DuPB6FvkO9IZC9uLnZoz-JR0892-Adidas-Samba-OG-Fox-Brown-Off-White-Gum-4-os-1.jpg?v=1760624312",
-    "laden": "asphaltgold.com",
-    "begriff": "samba"
-   },
-   {
     "titel": "Adidas Samba OG W *Snake*",
     "preis": 119,
     "verfuegbar": true,
     "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-snake-crew-white-earth-strata-maroon",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cp3zilo9k2t-IH3980_Adidas_Samba-OG-W_Snake_Crew-White-Earth-Strata-Maroon_os-1.jpg?v=1765978912",
+    "laden": "asphaltgold.com",
+    "begriff": "samba"
+   },
+   {
+    "titel": "Adidas Samba OG",
+    "preis": 119,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/adidas-samba-og-fox-brown-off-white-gum-4",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/DuPB6FvkO9IZC9uLnZoz-JR0892-Adidas-Samba-OG-Fox-Brown-Off-White-Gum-4-os-1.jpg?v=1760624312",
     "laden": "asphaltgold.com",
     "begriff": "samba"
    },
