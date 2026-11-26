@@ -1,10 +1,20 @@
 {
- "stand": "2026-11-26T14:50:30.938Z",
+ "stand": "2026-11-26T14:53:30.348Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "filiale:3118148:1228",
+   "art": "Filiale",
+   "titel": "🟢 NEU im Bestand: Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
+   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1793920561/assets/pas/images/826a9d99-6ccc-47b3-a8a6-7a95a8e564de/tinti-adventskalender-2026-kinder-badeueberraschungen",
+   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0122615,8.5865417",
+   "shop": "https://www.dm.de/p/d/3118148/tinti-adventskalender-2026-kinder-badeueberraschungen",
+   "text": "24,95 € · dm Mörfelden-Walldorf (9,6 km) · 1 Stück\nFarmstraße 101, 64546 Mörfelden-Walldorf\nIm Umkreis in 18 Filiale(n) vorrätig.",
+   "zeit": "2026-11-26T14:53:30.348Z"
+  },
   {
    "schluessel": "deal:https://www.sneakersnstuff.com/products/nike-air-max-95-og-slate-ih7855-100",
    "art": "Deal",
@@ -190,22 +200,86 @@
    "shop": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
    "text": "24,95 € · dm Kriftel (2,5 km) · 10 Stück\nKapellenstraße 48, 65830 Kriftel\nIm Umkreis in 21 Filiale(n) vorrätig.",
    "zeit": "2026-11-26T03:31:33.505Z"
-  },
-  {
-   "schluessel": "filiale:3118201:1501",
-   "art": "Filiale",
-   "titel": "🟢 NEU im Bestand: Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
-   "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787555270/assets/pas/images/5a32cdab-0120-4c77-bcc9-160de67cf462/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
-   "link": "https://www.google.com/maps/dir/?api=1&destination=50.0769272,8.4731447",
-   "shop": "https://www.dm.de/p/d/3118201/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
-   "text": "16,95 € · dm Kriftel (1,3 km) · 1 Stück\nBeyerbachstraße 2-6, 65830 Kriftel\nIm Umkreis in 12 Filiale(n) vorrätig.",
-   "zeit": "2026-11-26T03:16:11.039Z"
   }
  ],
  "filial": {
-  "stand": "2026-11-26T14:38:37.234Z",
+  "stand": "2026-11-26T14:53:35.966Z",
   "filialen": 148,
   "produkte": [
+   {
+    "dan": "3118196",
+    "name": "Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
+    "preis": 24.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
+    "link": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 10
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 14
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 46
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 9
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 5
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
+      "km": 8.8,
+      "lat": 50.13488,
+      "lon": 8.5572012,
+      "menge": 3
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 10
+     },
+     {
+      "name": "dm Mörfelden-Walldorf",
+      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
+      "km": 9.6,
+      "lat": 50.0122615,
+      "lon": 8.5865417,
+      "menge": 17
+     }
+    ]
+   },
    {
     "dan": "3118199",
     "name": "Freche Freunde Adventskalender 2026 Wichtelhaus, 1 St",
@@ -220,7 +294,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Frankfurt am Main",
@@ -277,98 +351,6 @@
       "lat": 50.1091183,
       "lon": 8.6538929,
       "menge": 1
-     }
-    ]
-   },
-   {
-    "dan": "3118150",
-    "name": "essence Adventskalender 2026 Baked With Love, 1 St",
-    "preis": 29.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779239321/assets/pas/images/e545b6b0-1c2a-4151-bd65-cd5106e14c0e/essence-adventskalender-2026-baked-with-love",
-    "link": "https://www.dm.de/p/d/3118150/essence-adventskalender-2026-baked-with-love",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Europa-Allee 130, 60486 Frankfurt am Main",
-      "km": 10.9,
-      "lat": 50.1086268,
-      "lon": 8.6273783,
-      "menge": 15
-     }
-    ]
-   },
-   {
-    "dan": "3118151",
-    "name": "trend !t up Adventskalender 2026 Days of Glow, 24 St",
-    "preis": 28.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784673576/assets/pas/images/9f3e9b87-6c3d-477b-99f0-25fa0632aac5/trend-t-up-adventskalender-2026-days-of-glow",
-    "link": "https://www.dm.de/p/d/3118151/trend-t-up-adventskalender-2026-days-of-glow",
-    "begriff": "adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 2
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 6
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 14
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 21
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 10
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
-      "menge": 1
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 16
-     },
-     {
-      "name": "dm Mörfelden-Walldorf",
-      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
-      "km": 9.6,
-      "lat": 50.0122615,
-      "lon": 8.5865417,
-      "menge": 6
      }
     ]
    },
@@ -447,6 +429,80 @@
     ]
    },
    {
+    "dan": "3118151",
+    "name": "trend !t up Adventskalender 2026 Days of Glow, 24 St",
+    "preis": 28.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784673576/assets/pas/images/9f3e9b87-6c3d-477b-99f0-25fa0632aac5/trend-t-up-adventskalender-2026-days-of-glow",
+    "link": "https://www.dm.de/p/d/3118151/trend-t-up-adventskalender-2026-days-of-glow",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 6
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
+      "km": 5.6,
+      "lat": 50.1014043,
+      "lon": 8.5485073,
+      "menge": 14
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 21
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 10
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 2
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 16
+     },
+     {
+      "name": "dm Mörfelden-Walldorf",
+      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
+      "km": 9.6,
+      "lat": 50.0122615,
+      "lon": 8.5865417,
+      "menge": 6
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 4
+     }
+    ]
+   },
+   {
     "dan": "3118148",
     "name": "Tinti Adventskalender 2026 Kinder Badeüberraschungen, 1 St",
     "preis": 24.95,
@@ -460,7 +516,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Kriftel",
@@ -503,20 +559,20 @@
       "menge": 8
      },
      {
+      "name": "dm Mörfelden-Walldorf",
+      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
+      "km": 9.6,
+      "lat": 50.0122615,
+      "lon": 8.5865417,
+      "menge": 1
+     },
+     {
       "name": "dm Rüsselsheim am Main",
       "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
       "menge": 6
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
-      "km": 10.4,
-      "lat": 50.1401538,
-      "lon": 8.5824016,
-      "menge": 5
      }
     ]
    },
@@ -558,7 +614,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 22
+      "menge": 23
      },
      {
       "name": "dm Sulzbach (Taunus)",
@@ -717,7 +773,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 3
+      "menge": 4
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -765,81 +821,7 @@
       "km": 10.4,
       "lat": 50.1401538,
       "lon": 8.5824016,
-      "menge": 4
-     }
-    ]
-   },
-   {
-    "dan": "3118196",
-    "name": "Balea Adventskalender 2026 XMAS Face Beauty Collection, 1 St",
-    "preis": 24.95,
-    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1784083019/assets/pas/images/5dc5a57a-5749-4b89-80e4-d9a2bdd9f248/balea-adventskalender-2026-xmas-face-beauty-collection",
-    "link": "https://www.dm.de/p/d/3118196/balea-adventskalender-2026-xmas-face-beauty-collection",
-    "begriff": "beauty adventskalender",
-    "vorrat": [
-     {
-      "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 10
-     },
-     {
-      "name": "dm Kriftel",
-      "adresse": "Kapellenstraße 48, 65830 Kriftel",
-      "km": 2.5,
-      "lat": 50.0815926,
-      "lon": 8.4565918,
-      "menge": 10
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Königsteiner Straße 11-13, 65929 Frankfurt am Main",
-      "km": 5.6,
-      "lat": 50.1014043,
-      "lon": 8.5485073,
-      "menge": 14
-     },
-     {
-      "name": "dm Liederbach am Taunus",
-      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
-      "km": 5.8,
-      "lat": 50.1216443,
-      "lon": 8.479672,
-      "menge": 46
-     },
-     {
-      "name": "dm Flörsheim am Main",
-      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
-      "km": 7.4,
-      "lat": 50.0158924,
-      "lon": 8.4247531,
-      "menge": 8
-     },
-     {
-      "name": "dm Bad Soden am Taunus",
-      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
-      "km": 8.3,
-      "lat": 50.1434547,
-      "lon": 8.5023642,
       "menge": 5
-     },
-     {
-      "name": "dm Eschborn",
-      "adresse": "Elly-Beinhorn-Straße 11, 65760 Eschborn",
-      "km": 8.8,
-      "lat": 50.13488,
-      "lon": 8.5572012,
-      "menge": 2
-     },
-     {
-      "name": "dm Frankfurt am Main",
-      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
-      "km": 9.3,
-      "lat": 50.1237366,
-      "lon": 8.5865988,
-      "menge": 10
      }
     ]
    }
@@ -2121,7 +2103,19 @@
   "ware": [],
   "top": [
    {
+    "titel": "charlotte arnould",
+    "menge": "200+"
+   },
+   {
+    "titel": "سوريا",
+    "menge": "200+"
+   },
+   {
     "titel": "feuer elmshorn",
+    "menge": "200+"
+   },
+   {
+    "titel": "d-wave systems",
     "menge": "200+"
    },
    {
@@ -2130,7 +2124,7 @@
    },
    {
     "titel": "bsw europaabgeordnete moskau",
-    "menge": "500+"
+    "menge": "1000+"
    },
    {
     "titel": "patricia schlesinger",
@@ -2147,18 +2141,6 @@
    {
     "titel": "wetter wien",
     "menge": "100+"
-   },
-   {
-    "titel": "ibu-cup",
-    "menge": "2000+"
-   },
-   {
-    "titel": "aktenzeichen xy … ungelöst",
-    "menge": "2000+"
-   },
-   {
-    "titel": "darts",
-    "menge": "1000+"
    }
   ]
  },
@@ -2984,15 +2966,6 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Air Jordan 3 Retro \"True Blue\"",
-    "preis": 147,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-true-blue-if4396-104",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IF4396-104_01.jpg?v=1783592529",
-    "laden": "sneakersnstuff.com",
-    "begriff": "jordan"
-   },
-   {
     "titel": "New Balance 90/60",
     "preis": 149,
     "verfuegbar": true,
@@ -3485,6 +3458,15 @@
     "url": "https://www.asphaltgold.com/products/nike-x-j-balvin-air-jordan-4-retro-lemonade-lemonade-multicolor",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/IW2872_20700-Nike-x-J-Balvin-Air-Jordan-4-Retro-Lemonade-Lemonade-Multicolor-os-1.jpg?v=1790172674",
     "laden": "asphaltgold.com",
+    "begriff": "jordan"
+   },
+   {
+    "titel": "Air Jordan 14 Low “Black Pack”",
+    "preis": 240,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-14-low-black-pack-iz3884-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IZ3884-001_01.jpg?v=1794385000",
+    "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
    {
