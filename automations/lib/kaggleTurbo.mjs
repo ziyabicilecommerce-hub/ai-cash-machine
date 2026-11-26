@@ -9,8 +9,9 @@ export const kaggleBereit = () => !!(process.env.KAGGLE_USERNAME && process.env.
 export const KERNEL_NAME = 'ziya-turbo';
 
 // Kernel-Metadaten: privat, mit GPU und Internet (für Modell-Download und Startbilder).
-export const kernelMeta = (nutzer) => ({
-  id: `${nutzer}/${KERNEL_NAME}`, title: KERNEL_NAME, code_file: 'turbo.py', language: 'python', kernel_type: 'script',
+// name: eigener Kernel je Bot (26.11.) - sonst überschreiben sich Drachen-Bot und Story-Fabrik gegenseitig
+export const kernelMeta = (nutzer, name = KERNEL_NAME) => ({
+  id: `${nutzer}/${name}`, title: name, code_file: 'turbo.py', language: 'python', kernel_type: 'script',
   is_private: true, enable_gpu: true, enable_internet: true, dataset_sources: [], competition_sources: [], kernel_sources: [], model_sources: [],
 });
 
@@ -94,9 +95,10 @@ export async function kaggleClips(shots, ordner, opts = {}) {
   const ergebnis = new Map();
   if (!kaggleBereit() || !shots.length) return ergebnis;
   const nutzer = process.env.KAGGLE_USERNAME.trim();
+  const kernel = opts.kernel || KERNEL_NAME;
   const kdir = join(ordner, 'kaggle-kernel');
   mkdirSync(kdir, { recursive: true });
-  writeFileSync(join(kdir, 'kernel-metadata.json'), JSON.stringify(kernelMeta(nutzer), null, 2));
+  writeFileSync(join(kdir, 'kernel-metadata.json'), JSON.stringify(kernelMeta(nutzer, kernel), null, 2));
   const mitBild = bildBudget((await bilderMitschicken(shots)).map((s) => (s.bildB64 ? { ...s, bildB64: bildVerkleinern(s.bildB64) } : s)));
   const kb = Math.round(mitBild.reduce((n, s) => n + (s.bildB64?.length || 0), 0) / 1024);
   console.log(`[kaggle-turbo] ${mitBild.filter((s) => s.bildB64).length}/${shots.length} Startbilder mitgeschickt (${kb} KB)`);
@@ -113,13 +115,13 @@ export async function kaggleClips(shots, ordner, opts = {}) {
   let status = '';
   while (Date.now() < bis) {
     await new Promise((r) => setTimeout(r, 60000));
-    try { status = kaggle(['kernels', 'status', `${nutzer}/${KERNEL_NAME}`]).toLowerCase(); } catch { continue; }
+    try { status = kaggle(['kernels', 'status', `${nutzer}/${kernel}`]).toLowerCase(); } catch { continue; }
     if (/complete|error|cancel/.test(status)) break;
   }
   console.log(`[kaggle-turbo] Status: ${status.trim().slice(0, 200)}`);
   const ziel = join(ordner, 'kaggle-out');
   mkdirSync(ziel, { recursive: true });
-  try { kaggle(['kernels', 'output', `${nutzer}/${KERNEL_NAME}`, '-p', ziel], { timeout: 900000 }); } catch (err) {
+  try { kaggle(['kernels', 'output', `${nutzer}/${kernel}`, '-p', ziel], { timeout: 900000 }); } catch (err) {
     console.log(`[kaggle-turbo] Abholen fehlgeschlagen: ${fehlerText(err)}`);
   }
   if (existsSync(join(ziel, 'bericht.json'))) console.log(`[kaggle-turbo] Bericht: ${readFileSync(join(ziel, 'bericht.json'), 'utf8').slice(0, 3000)}`);

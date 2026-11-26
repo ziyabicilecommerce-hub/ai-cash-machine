@@ -29,3 +29,26 @@ test('Story-Fabrik: Plan gibt Figurenblatt als Referenz mit, Clips nur für fert
   assert.deepEqual(figurenIn('{MAMA} und {SOHN}', ep.figuren), ['MAMA', 'SOHN']);
   assert.ok(promptBauen('{SOHN} eats', ep.figuren).includes('from the reference image'));
 });
+
+test('Gratis-Story-Fabrik: offene Arbeit, Prompt ohne Referenz, Fortschritt eintragen', async () => {
+  const { offen, promptOhneRef, eintragen } = await import('../../automations/schatten/storyGratis.mjs');
+  const o = offen(ep);
+  assert.deepEqual(o.blaetter, ['MADAME']);
+  assert.equal(o.bilder.length, 8);
+  assert.ok(!o.clips.includes(2));
+  assert.ok(promptOhneRef('{MADAME} smiles', ep.figuren).includes('lavender'));
+  const neu = eintragen(ep, { blaetter: { MADAME: 'blatt-MADAME.jpg' }, bilder: { 3: 's4.jpg' }, clips: { 0: 's1.mp4' } }, 'https://x/dl/T/');
+  assert.equal(neu.figuren.MADAME.blattUrl, 'https://x/dl/T/blatt-MADAME.jpg');
+  assert.equal(neu.szenen[3].bild, 'https://x/dl/T/s4.jpg');
+  assert.equal(neu.szenen[0].clip, 'https://x/dl/T/s1.mp4');
+  assert.equal(offen(neu).bilder.length, 7);
+});
+
+test('Cloudflare-Bild: Antwort als JSON-base64 oder Bilddaten', async () => {
+  const { bildAusAntwort } = await import('../../automations/lib/cfBild.mjs');
+  const json = new Response(JSON.stringify({ result: { image: Buffer.from('BILD').toString('base64') } }), { headers: { 'content-type': 'application/json' } });
+  assert.equal((await bildAusAntwort(json)).toString(), 'BILD');
+  const roh = new Response(Buffer.from('PNG'), { headers: { 'content-type': 'image/png' } });
+  assert.equal((await bildAusAntwort(roh)).toString(), 'PNG');
+  await assert.rejects(bildAusAntwort(new Response('{"errors":[{"message":"nope"}]}', { status: 400, headers: { 'content-type': 'application/json' } })), /nope/);
+});

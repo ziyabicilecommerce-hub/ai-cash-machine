@@ -1,0 +1,71 @@
+name: "🕯️ Story-Fabrik gratis (Cloudflare-Bilder + Kaggle-Clips, nur Vorschau)"
+
+# 26.11.: produziert eine Folge im Story-Format kostenlos: Bilder mit Figurenblatt (Cloudflare FLUX.2, Gratis-Kontingent),
+# Clips mit Wan 2.2 auf der Kaggle-GPU, Schnitt mit Stimme und Untertiteln. Legt eine Vorschau als Release ab und merkt
+# sich fertige Bilder/Clips in der Folge-Datei (nächster Lauf macht nur den Rest). Postet nichts.
+
+on:
+  workflow_dispatch:
+    inputs:
+      folge:
+        description: 'Folge-Datei'
+        default: 'automations/schatten/folgen/mutterwaerme-1.json'
+      kaggle:
+        description: 'Clips auf der Kaggle-GPU erzeugen'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: story-gratis
+  cancel-in-progress: false
+
+jobs:
+  folge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      GH_TOKEN: ${{ github.token }}
+      FOLGE: ${{ inputs.folge }}
+      STORY_KAGGLE: ${{ inputs.kaggle && 'an' || 'aus' }}
+      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+      POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Werkzeug
+        uses: ./.github/actions/video-werkzeug
+        with:
+          pip: 'edge-tts==7.* kaggle'
+      - name: Bilder und Clips erzeugen
+        run: |
+          [ -n "$CF_API_TOKEN" ] && echo "Cloudflare-Schlüssel: ja" || echo "Cloudflare-Schlüssel: nein (Bilder ohne Figurenblatt)"
+          [ -n "$KAGGLE_KEY" ] && echo "Kaggle-Schlüssel: ja" || echo "Kaggle-Schlüssel: nein"
+          node automations/schatten/storyGratis.mjs "$FOLGE" out/story
+      - name: Schneiden
+        run: node automations/schatten/higgsSchnitt.mjs out/story/schnitt.json out/schnitt
+      - name: Als Vorschau ablegen und Fortschritt merken
+        run: |
+          SLUG=$(node -e "console.log(require(require('path').resolve(process.env.FOLGE)).slug)")
+          TAG="vorschau-$SLUG-$(date -u +%m%d%H%M)"
+          DATEIEN=$(node -e "const n=require('./out/story/neu.json');console.log([...Object.values(n.blaetter),...Object.values(n.bilder),...Object.values(n.clips)].map(f=>'out/story/'+f).join(' '))")
+          gh release create "$TAG" out/schnitt/folge.mp4 $DATEIEN --prerelease --title "Vorschau: $SLUG" --notes "Gratis-Story-Fabrik, nicht gepostet."
+          echo "🎬 https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/folge.mp4" | tee -a "$GITHUB_STEP_SUMMARY"
+          node automations/schatten/storyGratis.mjs eintragen "$FOLGE" out/story/neu.json "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$FOLGE"
+          if ! git diff --cached --quiet; then
+            git commit -m "Story-Fabrik: Fortschritt $SLUG [skip ci]"
+            for v in 1 2 3; do git push && break; git pull --rebase -X theirs origin "$GITHUB_REF_NAME" || true; sleep $((v * 3)); done
+          fi
