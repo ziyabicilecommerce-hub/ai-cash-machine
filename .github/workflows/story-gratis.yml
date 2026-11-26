@@ -1,7 +1,7 @@
-name: "🕯️ Story-Fabrik gratis (Cloudflare-Bilder + Kaggle-Clips, nur Vorschau)"
+name: "🕯️ Story-Fabrik gratis (Cloudflare-Bilder + Seedance-Clips, nur Vorschau)"
 
 # 26.11.: produziert eine Folge im Story-Format kostenlos: Bilder mit Figurenblatt (Cloudflare FLUX.2, Gratis-Kontingent),
-# Clips mit Wan 2.2 auf der Kaggle-GPU, Schnitt mit Stimme und Untertiteln. Legt eine Vorschau als Release ab und merkt
+# Clips mit Seedance (BytePlus-Gratis-Tokens, kein Kaggle), Schnitt mit Stimme und Untertiteln. Legt eine Vorschau als Release ab und merkt
 # sich fertige Bilder/Clips in der Folge-Datei (nächster Lauf macht nur den Rest). Postet nichts.
 
 on:
@@ -10,10 +10,6 @@ on:
       folge:
         description: 'Folge-Datei'
         default: 'automations/schatten/folgen/mutterwaerme-1.json'
-      kaggle:
-        description: 'Clips auf der Kaggle-GPU erzeugen'
-        type: boolean
-        default: true
 
 permissions:
   contents: write
@@ -25,17 +21,14 @@ concurrency:
 jobs:
   folge:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 120
     env:
       GH_TOKEN: ${{ github.token }}
       FOLGE: ${{ inputs.folge }}
-      STORY_KAGGLE: ${{ inputs.kaggle && 'an' || 'aus' }}
       CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
       ARK_API_KEY: ${{ secrets.ARK_API_KEY }}
       ARK_VIDEO_MODELL: ${{ vars.ARK_VIDEO_MODELL }}
-      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
-      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
       POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
     steps:
       - uses: actions/checkout@v4
@@ -48,12 +41,11 @@ jobs:
       - name: Werkzeug
         uses: ./.github/actions/video-werkzeug
         with:
-          pip: 'edge-tts==7.* kaggle'
+          pip: 'edge-tts==7.*'
       - name: Bilder und Clips erzeugen
         run: |
           [ -n "$CF_API_TOKEN" ] && echo "Cloudflare-Schlüssel: ja" || echo "Cloudflare-Schlüssel: nein (Bilder ohne Figurenblatt)"
           [ -n "$ARK_API_KEY" ] && echo "BytePlus-Seedance-Schlüssel: ja" || echo "BytePlus-Seedance-Schlüssel: nein"
-          [ -n "$KAGGLE_KEY" ] && echo "Kaggle-Schlüssel: ja" || echo "Kaggle-Schlüssel: nein"
           node automations/schatten/storyGratis.mjs "$FOLGE" out/story
       - name: Schneiden
         run: node automations/schatten/higgsSchnitt.mjs out/story/schnitt.json out/schnitt
