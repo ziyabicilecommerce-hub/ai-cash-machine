@@ -36,8 +36,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # futureflowx3 (nr 0) gehört seit 22.11. der Serie "100 Tage KI-Firma" (serie-100-tage.yml)
-          - { nr: 1, konto: zyx_7851, kanal: 6ac7cae66a5c39ccb6535c40 }
+          # 26.11. Strategie-Umbau (Wochenbericht): futureflowx3 war mit Ø 588 der stärkste Horror-Kanal - zurück zu Storys.
+          # zyx_7851 (gedeckelt bei ~224) bekommt dafür die Serie "100 Tage KI-Firma" (serie-100-tage.yml).
+          - { nr: 0, konto: futureflowx3, kanal: 6ac7cb606a5c39ccb6535fab }
           - { nr: 2, konto: futureflowxx, kanal: 6ac7ca226a5c39ccb65356a5 }
     env:
       GH_TOKEN: ${{ github.token }}
@@ -68,8 +69,10 @@ jobs:
           # Schonkur (12.11.): nur noch EIN Video pro Konto und Tag, abends (18-22 Uhr Berlin) - die Reichweite fiel auf allen
           # Kanälen, vermutlich wegen zu vieler zu ähnlicher Videos. Zurück: diesen Block löschen und GRENZE wieder auf -3 hours.
           # 16.11. (Nutzer: "mach mehr Videos am Tag"): wieder abends UND nachts je ein Video - jede Geschichte anders (Akte zuerst).
-          if ! echo " 18 19 20 21 22 01 02 03 04 " | grep -q " $STUNDE "; then
-            echo "Nur abends und nachts ($STUNDE Uhr Berlin) - übersprungen." | tee -a "$GITHUB_STEP_SUMMARY"; exit 0
+          # 26.11. Strategie-Umbau: nur noch EIN Video pro Konto und Tag, nachts - Sehdauer nachts Ø 4,7 s statt 3,6 s abends,
+          # und mehr Videos haben die Reichweite schon zweimal gedrückt. Zurück: " 18 19 20 21 22 01 02 03 04 " eintragen.
+          if ! echo " 01 02 03 04 " | grep -q " $STUNDE "; then
+            echo "Nur nachts ($STUNDE Uhr Berlin) - übersprungen." | tee -a "$GITHUB_STEP_SUMMARY"; exit 0
           fi
           # 19.11. (Nutzer: "weiter"): @futureflowxx fiel mit 2 Videos am Tag von ~750 auf ~150 Aufrufe (Sehdauer bleibt gut,
           # TikTok spielt nur weniger aus) - dieses Konto postet nur noch nachts. Zurück: diesen Block löschen.
@@ -140,7 +143,10 @@ jobs:
         if: steps.wahl.outputs.slug != ''
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}  # optional: Einstieg als echter KI-Clip mit mehr Gratis-Kontingent
-        run: python3 automations/schatten/story.py out/folge.json out
+        run: |
+          python3 automations/schatten/story.py out/folge.json out
+          # Eigener Clip des Nutzers vorne dran, falls docs/intro/<konto>.mp4 existiert (sonst unverändert)
+          python3 automations/lib/intro_vorne.py out/video.mp4 "$KONTO" || true
       - name: Ablegen und posten
         if: steps.wahl.outputs.slug != ''
         env:

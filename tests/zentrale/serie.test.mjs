@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { tagNummer, folgeFuer, beitragFuer, KANAELE, FOLGEN, ZIEL_TAGE } from '../../automations/lib/serieFolgen.mjs';
+import { tagNummer, folgeFuer, beitragFuer, KANAELE, YOUTUBE_EN, FOLGEN, ZIEL_TAGE } from '../../automations/lib/serieFolgen.mjs';
 import { KANAELE as LABOR } from '../../automations/lib/ideenLabor.mjs';
 import { KANAELE as VERTEILER } from '../../automations/lib/bufferVerteiler.mjs';
 
@@ -34,7 +34,7 @@ test('Serie: ohne festen Eintrag gibt es eine Standard-Folge', () => {
 
 test('Serie: Buffer-Eingabe für TikTok und YouTube', () => {
   const f = folgeFuer(3, { bots: 134 });
-  const [tt, yt] = KANAELE.map((k) => beitragFuer(f, k, 'https://github.com/x/y/releases/download/a/b.mp4', '2026-11-24T17:30:00Z'));
+  const [tt, yt] = [KANAELE[0], YOUTUBE_EN].map((k) => beitragFuer(f, k, 'https://github.com/x/y/releases/download/a/b.mp4', '2026-11-24T17:30:00Z'));
   assert.equal(tt.mode, 'customScheduled');
   assert.equal(tt.metadata.tiktok.title.length <= 90, true);
   assert.match(tt.text, /Tag 4/);
@@ -44,7 +44,7 @@ test('Serie: Buffer-Eingabe für TikTok und YouTube', () => {
 });
 
 test('Serie: YouTube bekommt Englisch, TikTok Deutsch', () => {
-  assert.deepEqual(KANAELE.map((k) => k.sprache), ['de', 'en']);
+  assert.deepEqual(KANAELE.map((k) => [k.name, k.sprache]), [['zyx_7851', 'de']]);  // 26.11.: Serie nur noch auf zyx_7851
   for (const n of [...Object.keys(FOLGEN).map(Number), 30]) {
     const en = folgeFuer(n, { bots: 134, deals: 4 }, 'en');
     const de = folgeFuer(n, { bots: 134, deals: 4 }, 'de');
@@ -55,7 +55,7 @@ test('Serie: YouTube bekommt Englisch, TikTok Deutsch', () => {
     assert.ok(en.szenen.every((s, i) => s.seite === de.szenen[i].seite), `Tag ${n}: gleiche Bildschirmfotos`);
   }
   assert.ok(folgeFuer(4, {}, 'en').szenen[0].liste.every((z) => !/[äöüß]/.test(z)), 'englische Ideen-Liste');
-  const yt = beitragFuer(folgeFuer(2, { bots: 134, deals: 9 }, 'en'), KANAELE[1], 'https://x/y.mp4', null);
+  const yt = beitragFuer(folgeFuer(2, { bots: 134, deals: 9 }, 'en'), YOUTUBE_EN, 'https://x/y.mp4', null);
   assert.match(yt.text, /#buildinpublic/);
   assert.match(yt.metadata.youtube.title, /^Day 2 of 100: THIS BOT WORKS/);
 });
@@ -71,7 +71,7 @@ test('Serie: Woche 2 setzt den Produktnamen ein (Großbuchstaben im Hook)', () =
 });
 
 test('Serie-Kanäle laufen in keinem Horror-Bot mehr', () => {
-  assert.ok(!LABOR.includes('futureflowx3') && !LABOR.includes('giyuuu sama'));
+  assert.ok(!LABOR.includes('zyx_7851') && LABOR.includes('futureflowx3') && LABOR.includes('giyuuu sama'));
   assert.ok(!VERTEILER.some((k) => KANAELE.some((s) => s.id === k.id)));
 });
 
@@ -92,6 +92,6 @@ test('Serie: eigener TikTok-Account per SERIE_TIKTOK_KANAL', async () => {
   assert.equal(mit.KANAELE[0].id, 'abcdefabcdefabcdefabcdef');
   process.env.SERIE_TIKTOK_KANAL = 'kaputt';
   const ohne = await import(`../../automations/lib/serieFolgen.mjs?kanal2=${Date.now()}`);
-  assert.equal(ohne.KANAELE[0].id, '6ac7cb606a5c39ccb6535fab');
+  assert.equal(ohne.KANAELE[0].id, '6ac7cae66a5c39ccb6535c40');  // Standard seit 26.11.: zyx_7851
   delete process.env.SERIE_TIKTOK_KANAL;
 });

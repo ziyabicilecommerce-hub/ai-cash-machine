@@ -28,7 +28,7 @@ test('Englische Geschichten: gültig, kurze Hooks, Du-Hooks, keine doppelt, kein
 
 test('Englischer Kanal: nur mit Kanal-ID aktiv, englische Texte bei YouTube, Instagram und Story', async () => {
   const ohne = await import(`../../automations/lib/bufferVerteiler.mjs?ohne=${Date.now()}`);
-  assert.equal(ohne.KANAELE.find((k) => k.name === 'giyuuu sama'), undefined, 'giyuuu sama gehört der Serie (#119)');
+  assert.equal(ohne.KANAELE.find((k) => k.name === 'giyuuu sama').quelle, 'horror-mix', 'YouTube testet Deutsch gegen Englisch');
   process.env.EN_KANAL = 'aaaaaaaaaaaaaaaaaaaaaaaa';
   const mit = await import(`../../automations/lib/bufferVerteiler.mjs?mit=${Date.now()}`);
   delete process.env.EN_KANAL;
