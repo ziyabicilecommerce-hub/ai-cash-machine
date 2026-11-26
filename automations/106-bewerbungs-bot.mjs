@@ -14,9 +14,10 @@ import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { vorlageAnschreiben, vorlagePasst, nurAnzeige } from './lib/anschreibenVorlage.mjs';
 import {
   env, LIVE, BEWERBER, emailOk, heute, tageSeit, gmailZugang, profil, ladeGeheim, speichereGeheim,
-  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang, anhaenge, wohnort,
+  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang, anhaenge, wohnort, firmenDomain,
 } from './lib/bewerbung.mjs';
 import { mappeAnhang, anschriftAus } from './lib/mappe.mjs';
+import { websiteDomain, emailVonWebsite } from './lib/firmenWebsite.mjs';
 import { config } from './lib/config.mjs';
 
 // 100 Bewerbungen/Tag brauchen mehr als das geteilte KI-Tageslimit - nur für diesen Lauf aufheben.
@@ -28,6 +29,7 @@ const API = 'https://rest.arbeitsagentur.de/jobboerse/jobsuche-service';
 const API_HEADERS = { 'X-API-Key': 'jobboerse-jobsuche', 'User-Agent': 'Jobsuche/2.9.2 (de.arbeitsagentur.jobboerse)' };
 const MAX_LIVE = Math.max(1, Math.min(200, parseInt(env('BEWERBUNG_MAX_PRO_TAG', '150'), 10) || 150));
 // Testmodus: nur ein paar Probe-Bewerbungen an dich selbst, damit du sie in Ruhe anschauen kannst.
+const WEB_MAX = parseInt(env('BEWERBUNG_WEB_MAX', '300'), 10) || 300;
 const MAX_PRO_TAG = LIVE ? MAX_LIVE : Math.min(MAX_LIVE, parseInt(env('BEWERBUNG_TEST_MAX', '5'), 10) || 5);
 const ORT = wohnort();
 const UMKREIS = parseInt(env('BEWERBUNG_UMKREIS_KM', '20'), 10) || 20;
@@ -440,6 +442,7 @@ async function main() {
   const manuell = [];
   let geprueft = 0;
   let kiAus = false;
+  const domains = new Set([...Object.keys(state.emails), ...Object.keys(postfach.zusatzEmails || {})].map(firmenDomain).filter(Boolean));
   const heuteAngeschrieben = new Set(); // auch im Testmodus jede Firma nur einmal
 
   // Schritt 1: billige Filter ohne Netzwerk.
@@ -452,6 +455,8 @@ async function main() {
     if (state.uebersprungen[refnr] === 'Zeitarbeit/Vermittler ohne Top-Gehalt') delete state.uebersprungen[refnr];
     // Die Gehaltsgrenze wurde gesenkt - früher wegen zu wenig Gehalt aussortierte Stellen einmal neu bewerten.
     if (state.uebersprungen[refnr]?.startsWith('zu wenig Gehalt')) delete state.uebersprungen[refnr];
+    // Neu: ohne Mail in der Anzeige wird die Firmen-Website durchsucht - alte "keine E-Mail"-Fälle einmal neu prüfen.
+    if (state.uebersprungen[refnr] === 'keine E-Mail') delete state.uebersprungen[refnr];
     if (state.beworben[refnr] || state.uebersprungen[refnr]) continue;
     const kopf = `${stelle.titel} ${stelle.beruf || ''} ${stelle.arbeitgeber || ''}`;
     if (VERTRIEB.test(kopf)) { state.uebersprungen[refnr] = 'vertrieb'; continue; }
@@ -475,6 +480,13 @@ async function main() {
   await parallel(auswahl, 6, async (st) => { st.details = await holeDetails(st.refnr); st.brutto = monatsBrutto(st.details.flags); });
   const geldScore = (x) => attraktivitaet(x) + gehaltsBonus(x.brutto) + (hatSchicht(x.details) ? 2 : 0);
   auswahl.sort((a, b) => geldScore(b) - geldScore(a));
+  // Anzeigen ohne Mail: Bewerbungs-Adresse parallel auf der Firmen-Website suchen.
+  const ohneMail = auswahl.filter((x) => !emailOk(findeEmail(x.details.text)) && !NUR_PORTAL.test(x.details.text)).slice(0, WEB_MAX);
+  await parallel(ohneMail, 8, async (st) => {
+    const domain = websiteDomain(st.details.text, st.details.externeUrl || st.externeUrl || '', st.arbeitgeber || '');
+    st.webEmail = domain ? ((await emailVonWebsite(domain).catch(() => '')) || '').toLowerCase() : '';
+  });
+  console.log(`[bewerbungs-bot] ${ohneMail.length} Anzeigen ohne Mail auf der Website geprüft, ${ohneMail.filter((x) => emailOk(x.webEmail)).length} Adressen gefunden.`);
   console.log(`[bewerbungs-bot] ${kandidaten.length} Kandidaten nach Filtern, ${auswahl.filter((x) => x.brutto).length} davon mit Gehaltsangabe.`);
 
   for (const stelle of auswahl) {
@@ -487,11 +499,18 @@ async function main() {
     if ((stelle.vermittler || flags.istArbeitnehmerUeberlassung) && !(stelle.brutto?.bis >= ZEITARBEIT_AB)) { state.uebersprungen[refnr] = 'Zeitarbeit/Vermittler ohne Top-Gehalt'; continue; }
     if (VERTRIEB.test(text.slice(0, 3000)) && /vertrieb|au(ß|ss)endienst|akquise|provision/i.test(text)) { state.uebersprungen[refnr] = 'vertrieb (Text)'; continue; }
     if (stelle.brutto && stelle.brutto.bis < MIN_BRUTTO) { state.uebersprungen[refnr] = `zu wenig Gehalt (${gehalt})`; continue; }
-    const email = findeEmail(text);
+    let email = findeEmail(text);
+    let vonWebsite = false;
     // Nur echte Anzeigen-Links nehmen, keine reinen Startseiten ("http://www.arbeitsagentur.de").
     const link = [externeUrl, stelle.externeUrl].find((u) => /^https?:\/\/[^/]+\/.+/.test(u || '')) || `https://www.arbeitsagentur.de/jobsuche/jobdetail/${encodeURIComponent(refnr)}`;
     const selbst = (grund) => { if (manuell.length < 15) manuell.push(`• ${stelle.titel} – ${stelle.arbeitgeber}${gehalt ? ` (${gehalt})` : ''} [${grund}]\n  ${link}`); };
-    if (!emailOk(email)) { state.uebersprungen[refnr] = 'keine E-Mail'; selbst('keine E-Mail in der Anzeige'); continue; }
+    // Keine Mail in der Anzeige: vorher auf der Firmen-Website gesuchte Adresse nehmen (nicht bei "nur über Portal").
+    if (!emailOk(email) && !NUR_PORTAL.test(text)) {
+      if (stelle.webEmail === undefined) continue; // Website noch nicht durchsucht -> nächster Lauf
+      if (emailOk(stelle.webEmail)) { email = stelle.webEmail; vonWebsite = true; }
+    }
+    if (!emailOk(email)) { state.uebersprungen[refnr] = 'keine E-Mail (auch nicht auf der Website)'; selbst('keine E-Mail in der Anzeige'); continue; }
+    if (vonWebsite && domains.has(firmenDomain(email))) { state.uebersprungen[refnr] = 'Firma schon angeschrieben'; continue; }
     // Steht "nur über unser Portal" in der Anzeige und ist die Adresse kein Bewerbungspostfach, wäre die Mail verschenkt.
     if (NUR_PORTAL.test(text) && !BEWERBUNGS_POSTFACH.test(email)) { state.uebersprungen[refnr] = 'nur Online-Portal'; selbst('nur Online-Bewerbung'); continue; }
     if (state.emails[email] || postfach.zusatzEmails[email] || heuteAngeschrieben.has(email)) { state.uebersprungen[refnr] = 'Firma schon angeschrieben'; continue; }
@@ -533,6 +552,7 @@ async function main() {
     const plus = [...(hatSchicht(stelle.details) ? ['🌙 Schichtzulagen (steuerfrei)'] : []), ...extras(`${kopf} ${nurAnzeige(text)}`), ...(stelle.quereinstieg && !QUEREINSTEIGER.test(text) ? ['🎓 Quereinstieg geeignet'] : []), ...(gehalt ? [`💶 ${gehalt}`] : [])];
     gesendet.push(`✅ ${stelle.titel} – ${stelle.arbeitgeber} (${stelle.arbeitsort?.ort || '?'}) · ${b.vorlage ? '✍️ Vorlage' : `${b.passung}/10`}${plus.length ? `  ${plus.join(' ')}` : ''}`);
     heuteAngeschrieben.add(email);
+    if (firmenDomain(email)) domains.add(firmenDomain(email));
     console.log(`[bewerbungs-bot] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${refnr}`);
     await pause(8000); // Gmail nicht fluten
   }
