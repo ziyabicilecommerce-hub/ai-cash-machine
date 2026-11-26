@@ -45,10 +45,50 @@
         "policyHash": "sha256:00b63b2f746eb8b9095bbd5e1dbae4ddd74fd92a6740b72f59f4069fbfda4737"
       },
       "hash": "sha256:57c2c750b1e83ecfab475eef7feadc68f2f96ebd4d9cf7dca65dab0d0fb653bd"
+    },
+    {
+      "payload": {
+        "receiptId": "sha256:c4a55affc92424e87046d00c93cd7ecdb4fb3df79e8fa4c6be2bebce7cff57cd",
+        "previousReceiptHash": "sha256:57c2c750b1e83ecfab475eef7feadc68f2f96ebd4d9cf7dca65dab0d0fb653bd",
+        "sequence": 1,
+        "issuedAt": 1795653222165,
+        "request": {
+          "identity": {
+            "id": "legacy-cli",
+            "type": "legacy"
+          },
+          "action": {
+            "type": "mcp.tool.call",
+            "resource": "hooks_intelligence_verified-ingest",
+            "tool": "hooks_intelligence_verified-ingest",
+            "server": "ruflo",
+            "network": false,
+            "destructive": false
+          },
+          "context": {
+            "metadata": {
+              "inputDigest": "sha256:b72ed13cb525af2592de7b88e763277fa14592edc468666510c59a8cf02dd505"
+            },
+            "now": 1795653222165
+          },
+          "requestId": "3edca72b-d8c8-41bf-9d6f-2ec9a610a71f"
+        },
+        "decision": {
+          "requestId": "3edca72b-d8c8-41bf-9d6f-2ec9a610a71f",
+          "outcome": "allowed",
+          "enforcedOutcome": "allowed",
+          "mode": "legacy",
+          "reason": "legacy-default-allow",
+          "matchedRules": [],
+          "obligations": []
+        },
+        "policyHash": "sha256:00b63b2f746eb8b9095bbd5e1dbae4ddd74fd92a6740b72f59f4069fbfda4737"
+      },
+      "hash": "sha256:70e755d4581c6bcccfc1b96092afd0b88a01ea37e911ad3b3f6d04b8f96488ce"
     }
   ],
   "migratedAt": 1785318540581,
   "migratedFrom": "pre-ADR-324; capabilities=.swarm/memory.db",
-  "ledgerHead": "sha256:57c2c750b1e83ecfab475eef7feadc68f2f96ebd4d9cf7dca65dab0d0fb653bd",
-  "ledgerLength": 1
+  "ledgerLength": 2,
+  "ledgerHead": "sha256:70e755d4581c6bcccfc1b96092afd0b88a01ea37e911ad3b3f6d04b8f96488ce"
 }
