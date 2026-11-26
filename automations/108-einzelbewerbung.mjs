@@ -5,7 +5,7 @@
 // Gleiche Absender-Daten, PDFs und State wie #106, damit #107 Antworten darauf erkennt.
 import {
   env, LIVE, BEWERBER, emailOk, heute, gmailZugang, ladeGeheim, speichereGeheim, firmenDomain,
-  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang,
+  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang, anhaenge,
 } from './lib/bewerbung.mjs';
 import { STATE_BOT } from './106-bewerbungs-bot.mjs';
 
@@ -21,7 +21,8 @@ function pruefeAuftrag(a = {}) {
   const woerter = anschreiben.split(/\s+/).filter(Boolean).length;
   if (woerter < 80 || woerter > 450) throw new Error(`Anschreiben hat ${woerter} Wörter - erwartet 80 bis 450.`);
   const betreff = String(a.betreff || `Bewerbung als ${titel} – ${BEWERBER()}`).slice(0, 150);
-  return { email, firma, titel, anschreiben, betreff, erneut: a.erneut === true };
+  const adr = (k) => String(a[k] || '').trim().slice(0, 120);
+  return { email, firma, titel, anschreiben, betreff, erneut: a.erneut === true, strasse: adr('strasse'), plz: adr('plz'), ort: adr('ort'), ausbildung: a.ausbildung === true };
 }
 
 function leseAuftraege() {
@@ -59,13 +60,12 @@ async function main() {
   const gesendet = [];
   for (const auftrag of offen) {
     if (LIVE && !auftrag.erneut && schonAngeschrieben(state, auftrag.email)) continue; // zwei Aufträge an dieselbe Firma in einer Liste
-    const brief = await anschreibenAnhang({ firma: auftrag.firma, ort: '', betreff: auftrag.betreff, anschreiben: auftrag.anschreiben });
     const info = await transport.sendMail({
       from: `${BEWERBER()} <${user}>`,
       to: LIVE ? auftrag.email : user,
       subject: LIVE ? auftrag.betreff : `[TEST → ${auftrag.email}] ${auftrag.betreff}`,
       text: `${auftrag.anschreiben}\n${signatur()}`,
-      attachments: [brief, cvAnhang(cv)],
+      attachments: await anhaenge({ ...auftrag, cv }),
     });
 
     if (LIVE) {

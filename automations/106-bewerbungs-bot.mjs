@@ -14,8 +14,9 @@ import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import { vorlageAnschreiben, vorlagePasst, nurAnzeige } from './lib/anschreibenVorlage.mjs';
 import {
   env, LIVE, BEWERBER, emailOk, heute, tageSeit, gmailZugang, profil, ladeGeheim, speichereGeheim,
-  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang, wohnort,
+  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang, anhaenge, wohnort,
 } from './lib/bewerbung.mjs';
+import { mappeAnhang, anschriftAus } from './lib/mappe.mjs';
 import { config } from './lib/config.mjs';
 
 // 100 Bewerbungen/Tag brauchen mehr als das geteilte KI-Tageslimit - nur für diesen Lauf aufheben.
@@ -399,10 +400,10 @@ async function nachfassen(state, postfach, transport, user, cv) {
   for (const [refnr, b] of Object.entries(state.beworben)) {
     if (raus.length >= 5) break;
     if (b.nachfass || ['einladung', 'absage', 'rueckfrage', 'weiterleitung', 'unzustellbar'].includes(postfach.antworten[refnr]?.typ) || tageSeit(b.datum) < NACHFASS_NACH_TAGEN || !b.messageId) continue;
-    const text = `${b.ansprechpartner || 'Sehr geehrte Damen und Herren'},\n\nvor knapp zwei Wochen habe ich mich bei Ihnen als ${b.titel} beworben. Ich möchte mich kurz erkundigen, ob meine Unterlagen gut angekommen sind und wie der aktuelle Stand ist.\n\nIch bin nach wie vor sehr motiviert, bei ${b.firma} anzufangen, und kann kurzfristig starten. Für Rückfragen bin ich jederzeit erreichbar. Meinen Lebenslauf hänge ich der Einfachheit halber noch einmal an.\n${signatur()}`;
+    const text = `${b.ansprechpartner || 'Sehr geehrte Damen und Herren'},\n\nvor knapp zwei Wochen habe ich mich bei Ihnen als ${b.titel} beworben. Ich möchte mich kurz erkundigen, ob meine Unterlagen gut angekommen sind und wie der aktuelle Stand ist.\n\nIch bin nach wie vor sehr motiviert, bei ${b.firma} anzufangen, und kann kurzfristig starten. Für Rückfragen bin ich jederzeit erreichbar. Meine Bewerbungsunterlagen hänge ich der Einfachheit halber noch einmal an.\n${signatur()}`;
     await transport.sendMail({
       from: `${BEWERBER()} <${user}>`, to: b.email, subject: `Re: ${b.betreff}`, text,
-      inReplyTo: b.messageId, references: [b.messageId], attachments: [cvAnhang(cv)],
+      inReplyTo: b.messageId, references: [b.messageId], attachments: [(await mappeAnhang({ firma: b.firma, titel: b.titel, ausbildung: /^ausbildung/i.test(b.titel || '') })) || cvAnhang(cv)],
     });
     b.nachfass = heute();
     raus.push(`🔁 Nachgefasst: ${b.titel} – ${b.firma}`);
@@ -513,13 +514,12 @@ async function main() {
 
     const betreff = String(b.betreff || `Bewerbung als ${stelle.titel} – ${BEWERBER()}`).slice(0, 150);
     const anschreiben = b.anschreiben.trim();
-    const brief = await anschreibenAnhang({ firma: stelle.arbeitgeber, ort: stelle.arbeitsort?.ort || '', betreff, anschreiben });
     const info = await transport.sendMail({
       from: `${BEWERBER()} <${user}>`,
       to: LIVE ? email : user,
       subject: LIVE ? betreff : `[TEST → ${email}] ${betreff}`,
       text: `${anschreiben}\n${signatur()}`,
-      attachments: [brief, cvAnhang(cv)],
+      attachments: await anhaenge({ firma: stelle.arbeitgeber, ...anschriftAus(stelle), titel: stelle.titel, ausbildung: stelle.angebotsart === 4, betreff, anschreiben, cv }),
     });
     if (LIVE) {
       const anrede = anschreiben.split('\n')[0].replace(/,\s*$/, '');

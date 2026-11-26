@@ -4,7 +4,7 @@
 // keine Firma doppelt, #107 erkennt die Antworten. Optional: BEWERBUNG_CYBER_MAX (Standard 25 pro Lauf).
 import {
   env, LIVE, BEWERBER, emailOk, heute, gmailZugang, profil, ladeGeheim, speichereGeheim, firmenDomain,
-  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang,
+  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang, anhaenge,
 } from './lib/bewerbung.mjs';
 import { initiativAnschreiben } from './lib/anschreibenVorlage.mjs';
 import { emailVonWebsite } from './lib/firmenWebsite.mjs';
@@ -105,13 +105,12 @@ async function main() {
     if (!emailOk(email) || state.emails[email] || postfach.zusatzEmails[email] || domains.has(firmenDomain(email))) { ohne.push(f.firma); continue; }
     const betreff = `Initiativbewerbung – Einstieg im Bereich ${BEREICH} – ${BEWERBER()}`;
     const anschreiben = initiativAnschreiben({ bereich: BEREICH, firma: f.firma, ohneAnzeige: true });
-    const brief = await anschreibenAnhang({ firma: f.firma, ort: f.ort, betreff, anschreiben });
     const info = await transport.sendMail({
       from: `${BEWERBER()} <${user}>`,
       to: LIVE ? email : user,
       subject: LIVE ? betreff : `[TEST → ${email}] ${betreff}`,
       text: `${anschreiben}\n${signatur()}`,
-      attachments: [brief, cvAnhang(cv)],
+      attachments: await anhaenge({ firma: f.firma, ort: f.ort, titel: `Quereinsteiger im Bereich ${BEREICH}`, betreff, anschreiben, cv }),
     });
     if (LIVE) {
       state.beworben[`cyber-${f.domain}`] = {

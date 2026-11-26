@@ -13,7 +13,7 @@ import MailComposer from 'nodemailer/lib/mail-composer/index.js';
 import { askKI, parseJsonFromText } from './lib/ki.mjs';
 import {
   LIVE, BEWERBER, emailOk, heute, gmailZugang, profil, ladeGeheim, speichereGeheim,
-  gmailTransport, holeLebenslauf, cvAnhang, signatur, firmenDomain, meldeMir, anschreibenAnhang,
+  gmailTransport, holeLebenslauf, cvAnhang, signatur, firmenDomain, meldeMir, anschreibenAnhang, anhaenge,
 } from './lib/bewerbung.mjs';
 import { STATE_BOT, STATE_POSTFACH } from './106-bewerbungs-bot.mjs';
 
@@ -158,7 +158,7 @@ async function main() {
         const neu = String(k.neueEmail || '').toLowerCase().trim();
         if (LIVE && !k.ohneKI && emailOk(neu) && neu !== b.email && !st.zusatzEmails[neu]) {
           transport ||= gmailTransport(); cv ||= await holeLebenslauf();
-          await transport.sendMail({ from: `${BEWERBER()} <${user}>`, to: neu, subject: b.betreff, text: `${b.anschreiben}\n${signatur()}`, attachments: [await anschreibenAnhang({ firma: b.firma, ort: '', betreff: b.betreff, anschreiben: b.anschreiben }), cvAnhang(cv)] });
+          await transport.sendMail({ from: `${BEWERBER()} <${user}>`, to: neu, subject: b.betreff, text: `${b.anschreiben}\n${signatur()}`, attachments: await anhaenge({ firma: b.firma, titel: b.titel, ausbildung: /^ausbildung/i.test(b.titel || ''), betreff: b.betreff, anschreiben: b.anschreiben, cv }) });
           st.zusatzEmails[neu] = heute();
           index.perEmail.set(neu, refnr);
           meldungen.push(`↪️ ${kopf}: wollte die Bewerbung an ${neu} – automatisch nachgeschickt ✅`);
