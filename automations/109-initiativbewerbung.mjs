@@ -5,8 +5,9 @@
 // Optional: BEWERBUNG_INITIATIV_MAX (Standard 50 pro Lauf).
 import {
   env, LIVE, BEWERBER, emailOk, heute, gmailZugang, profil, ladeGeheim, speichereGeheim, firmenDomain,
-  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang,
+  gmailTransport, holeLebenslauf, cvAnhang, signatur, meldeMir, anschreibenAnhang, anhaenge,
 } from './lib/bewerbung.mjs';
+import { anschriftAus } from './lib/mappe.mjs';
 import { initiativAnschreiben, vorlageAnschreiben } from './lib/anschreibenVorlage.mjs';
 import { websiteDomain, emailVonWebsite } from './lib/firmenWebsite.mjs';
 import {
@@ -219,13 +220,12 @@ async function main() {
     const anschreiben = st.ausbildung
       ? vorlageAnschreiben({ titel: st.titel || `Ausbildung ${st.ausbildung}`, firma: st.arbeitgeber })
       : initiativAnschreiben({ bereich, firma: st.arbeitgeber, ohneAnzeige: !!st.ohneAnzeige });
-    const brief = await anschreibenAnhang({ firma: st.arbeitgeber, ort: st.arbeitsort?.ort || '', betreff, anschreiben });
     const info = await transport.sendMail({
       from: `${BEWERBER()} <${user}>`,
       to: LIVE ? email : user,
       subject: LIVE ? betreff : `[TEST → ${email}] ${betreff}`,
       text: `${anschreiben}\n${signatur()}`,
-      attachments: [brief, cvAnhang(cv)],
+      attachments: await anhaenge({ firma: st.arbeitgeber, ...anschriftAus(st), titel: st.ausbildung || `Quereinsteiger im Bereich ${bereich}`, ausbildung: !!st.ausbildung, betreff, anschreiben, cv }),
     });
     if (LIVE) {
       state.beworben[`initiativ-${st.refnr}`] = {

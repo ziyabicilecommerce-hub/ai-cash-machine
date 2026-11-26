@@ -129,3 +129,12 @@ export async function anschreibenAnhang({ firma, ort, betreff, anschreiben }) {
   const content = await anschreibenPdf({ absender, empfaenger: [firma, ort], ort: (adresse().match(/\d{5}\s+(.+)$/) || [])[1] || wohnort(), betreff, text: anschreiben });
   return { filename: `Anschreiben_${BEWERBER().replace(/\s+/g, '_')}.pdf`, content, contentType: 'application/pdf' };
 }
+
+// Anhänge für eine Bewerbung: die komplette Bewerbungsmappe mit Anschrift der Firma auf
+// Seite 2 (falls hinterlegt), sonst wie bisher Anschreiben-PDF + Lebenslauf.
+export async function anhaenge({ firma, strasse = '', plz = '', ort = '', titel = '', ausbildung = false, betreff, anschreiben, cv }) {
+  const { mappeAnhang } = await import('./mappe.mjs');
+  const mappe = await mappeAnhang({ firma, strasse, plz, ort, titel, ausbildung });
+  if (mappe) return [mappe];
+  return [await anschreibenAnhang({ firma, ort, betreff, anschreiben }), cvAnhang(cv)];
+}
