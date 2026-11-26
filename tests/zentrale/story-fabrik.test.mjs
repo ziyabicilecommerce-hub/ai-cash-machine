@@ -52,3 +52,11 @@ test('Cloudflare-Bild: Antwort als JSON-base64 oder Bilddaten', async () => {
   assert.equal((await bildAusAntwort(roh)).toString(), 'PNG');
   await assert.rejects(bildAusAntwort(new Response('{"errors":[{"message":"nope"}]}', { status: 400, headers: { 'content-type': 'application/json' } })), /nope/);
 });
+
+test('Story-Fabrik: Klick-Liste mit Startbild und Prompt je Szene', async () => {
+  const { klickliste } = await import('../../automations/schatten/storyFabrik.mjs');
+  const k = klickliste(ep);
+  assert.ok(k.includes('### Szene 13'));
+  assert.ok(k.includes('✅ Clip schon da'));
+  assert.ok(k.includes('wan.video'));
+});

@@ -73,6 +73,18 @@ export function plan(ep) {
   return { blaetter, bilder, clips, schaetzungCredits: kosten, erzeugungen: blaetter.length + bilder.length * 2 + clips.length };
 }
 
+// Klick-Liste für die Gratis-Kontingente der Top-Apps (Wan Relax, Dreamina/Seedance, Kling, PixVerse): pro Szene
+// Startbild + Bewegungs-Prompt zum Reinkopieren. Automatisch geht das nicht (keine Gratis-Schnittstelle).
+export const APPS = ['wan.video (Relax-Modus, gratis ohne Limit, langsam)', 'Dreamina (Seedance, Tages-Credits)', 'Kling (Tages-Credits)', 'PixVerse (Tages-Credits)'];
+export function klickliste(ep) {
+  const zeilen = (ep.szenen || []).map((s, i) => {
+    const bild = s.bild ? `[Bild ${i + 1} öffnen](${s.bild})` : '⏳ Bild wird noch erzeugt';
+    const fertig = s.clip ? '✅ Clip schon da' : '';
+    return `### Szene ${i + 1} ${fertig}\n- Text: „${s.text}“\n- Startbild: ${bild}\n- Prompt (reinkopieren):\n\n\`\`\`\n${s.clipPrompt || 'subtle natural movement, slow camera push-in'}, Pixar-style 3D animation, consistent character, smooth motion, 9:16\n\`\`\`\n`;
+  });
+  return `# ${ep.titel} – Klick-Liste\n\nSo geht's: Startbild herunterladen → in einer App „Bild zu Video“ wählen → Bild hochladen, Prompt einfügen, 9:16, 5 s →\nClip herunterladen und hier im Chat hochladen (Dateiname mit Szenen-Nummer, z. B. s4.mp4). Den Schnitt mache ich.\n\nApps mit Gratis-Kontingent: ${APPS.join(' · ')}\n\n${zeilen.join('\n')}`;
+}
+
 if (process.argv[1]?.endsWith('storyFabrik.mjs')) {
   const [, , befehl, datei] = process.argv;
   const ep = JSON.parse(readFileSync(datei, 'utf8'));
@@ -82,4 +94,5 @@ if (process.argv[1]?.endsWith('storyFabrik.mjs')) {
     process.exit(f.length ? 1 : 0);
   }
   if (befehl === 'plan') console.log(JSON.stringify(plan(ep), null, 1));
+  if (befehl === 'klickliste') console.log(klickliste(ep));
 }
