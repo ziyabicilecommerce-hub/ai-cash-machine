@@ -192,7 +192,7 @@ const STANDARD_SUCHE = [
   'Technischer Support Quereinsteiger:job', 'Helpdesk:job', 'Terminplanung:job', 'Sachbearbeiter Logistik:job',
 ].join(';');
 
-export const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key\)? ?account|account manager|kundenberater|neukunden|d2d|door to door|fundraising/i;
+export const VERTRIEB = /vertrieb|au(ß|ss)endienst|verkäufer|verkauf\b|sales|akquise|akquisition|call ?center|telefonverkauf|outbound|provision|promoter|haustür|key\)? ?account|account manager|kundenberater|neukunden|d2d|door to door|fundraising|\bwerber|mitgliederwerb|spendenwerb|mitgliedergewinn|spendensamml|dialoger|face ?to ?face|infostand/i;
 // Ziya will nicht zu Speditionen (auch nicht ins Büro dort).
 export const SPEDITION = /spedition|freight ?forward|kühne|kuehne|schenker|dachser|rhenus|\bdsv\b|geodis|ceva logistics|expeditors|nippon express|hellmann|bolloré|bollore|logwin|fiege|global forwarding/i;
 export const ZEITARBEIT = /personaldienstleist|zeitarbeit|zeitservice|zeit-service|arbeitnehmerüberlassung|personalvermittlung|personalberatung|recruitment|recruiting agency|headhunt|\b(dis ag|tempworkers|randstad|adecco|manpower|hays|orizon|amadeus fire|ferchau|gulp|brunel|persona service|jobactive|piening|timepartner|startpeople|tempton|akkodis|allianz personal)\b|\bpersonal (gmbh|service|partner)/i;
