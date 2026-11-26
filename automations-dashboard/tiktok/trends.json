@@ -1,21 +1,21 @@
 {
- "stand": "2026-11-25T12:32:01.127Z",
+ "stand": "2026-11-26T12:12:43.603Z",
  "themen": [
   {
    "thema": "Vollmondnacht, der Hund heult",
-   "quelle": "mond",
+   "quelle": "wikipedia",
+   "anstieg": 5,
    "inspiration": ""
   },
   {
    "thema": "Eine sehr große Gestalt am Waldrand",
    "quelle": "wikipedia",
-   "anstieg": 1.33,
+   "anstieg": 1.38,
    "inspiration": ""
   },
   {
    "thema": "Etwas imitiert die Stimme meiner Mutter im Wald",
-   "quelle": "wikipedia",
-   "anstieg": 1.23,
+   "quelle": "welt (China, Paris)",
    "inspiration": ""
   }
  ],
@@ -24,69 +24,69 @@
    {
     "name": "Vollmond",
     "thema": "Vollmondnacht, der Hund heult",
-    "anstieg": 4.33,
-    "proTag": 1244
+    "anstieg": 5,
+    "proTag": 1539
    },
    {
     "name": "Slender Man",
     "thema": "Eine sehr große Gestalt am Waldrand",
-    "anstieg": 1.33,
-    "proTag": 1377
+    "anstieg": 1.38,
+    "proTag": 1412
    },
    {
     "name": "Skinwalker",
     "thema": "Etwas imitiert die Stimme meiner Mutter im Wald",
-    "anstieg": 1.23,
-    "proTag": 1822
+    "anstieg": 1.15,
+    "proTag": 1736
    },
    {
     "name": "Exorzismus",
     "thema": "Eine Stimme, die nicht zu meinem Mund passt",
-    "anstieg": 1.1,
-    "proTag": 529
-   },
-   {
-    "name": "Moderne Sagen",
-    "thema": "Die Sage aus meiner Kindheit stimmt",
-    "anstieg": 1.03,
-    "proTag": 650
-   },
-   {
-    "name": "Schlafparalyse",
-    "thema": "Schlafparalyse: jemand sitzt nachts auf meiner Brust",
-    "anstieg": 1.02,
-    "proTag": 1057
-   },
-   {
-    "name": "Schattenmenschen",
-    "thema": "Ein Schatten ohne Menschen dazu",
     "anstieg": 1.02,
     "proTag": 493
    },
    {
-    "name": "Poltergeist",
-    "thema": "Möbel stehen morgens anders",
-    "anstieg": 1.01,
-    "proTag": 436
+    "name": "Schattenmenschen",
+    "thema": "Ein Schatten ohne Menschen dazu",
+    "anstieg": 0.99,
+    "proTag": 480
+   },
+   {
+    "name": "Moderne Sagen",
+    "thema": "Die Sage aus meiner Kindheit stimmt",
+    "anstieg": 0.99,
+    "proTag": 628
    },
    {
     "name": "Nahtoderfahrung",
     "thema": "Am Ende des Tunnels wartet jemand",
-    "anstieg": 1.01,
-    "proTag": 562
+    "anstieg": 0.99,
+    "proTag": 550
    },
    {
-    "name": "Mothman",
-    "thema": "Rote Augen auf der Brücke",
-    "anstieg": 1,
-    "proTag": 1502
+    "name": "Mimic",
+    "thema": "Etwas lernt meine Stimme",
+    "anstieg": 0.99,
+    "proTag": 280
+   },
+   {
+    "name": "Uncanny Valley",
+    "thema": "Ein Gesicht, das fast menschlich ist",
+    "anstieg": 0.97,
+    "proTag": 1616
+   },
+   {
+    "name": "Geister",
+    "thema": "Jemand steht am Fußende des Bettes",
+    "anstieg": 0.94,
+    "proTag": 958
    }
   ],
   "himmel": {
-   "vollmond": true,
-   "kp": 2,
+   "vollmond": false,
+   "kp": 0.67,
    "polarlicht": false,
-   "nasa": ""
+   "nasa": "NASA Science"
   },
   "youtube": {
    "an": false,
@@ -94,28 +94,28 @@
    "en": []
   },
   "trendsDE": [
-   "mindestlohn",
-   "delitzscher straße",
-   "borussia mönchengladbach",
-   "photovoltaik",
-   "gespräch",
-   "bankkarte",
-   "kalt",
-   "die bergretter",
-   "schalke news",
-   "zwickau"
+   "könig",
+   "essen motor show",
+   "köln",
+   "para cezası",
+   "michael giles",
+   "kündigungsschutz",
+   "zelda ocarina of time update",
+   "braunschweig",
+   "merlin polzin",
+   "europska unija"
   ],
   "trendsUS": [
-   "ice detainee habeas corpus petitions",
-   "breeze airways new routes 2026",
-   "is kenneth walker playing this week",
-   "minnesota wild calvin pickard waivers",
-   "hailey bieber",
-   "flood cleanup",
-   "citi",
-   "star wars ahsoka season 2",
-   "jensen huang nvidia stock",
-   "inés gómez mont"
+   "northampton catasauqua thanksgiving game postponed",
+   "météo",
+   "derrick white celtics trade rumors",
+   "天气",
+   "погода",
+   "fiona hippo cincinnati zoo",
+   "trust",
+   "westworld",
+   "winter weather advisory",
+   "sunrise"
   ],
   "welt": [
    {
@@ -124,36 +124,36 @@
     "horror": [
      {
       "name": "Vollmond",
-      "anstieg": 2.01,
-      "proTag": 31
-     },
-     {
-      "name": "SCP",
-      "anstieg": 1.28,
-      "proTag": 210
-     },
-     {
-      "name": "Liminal Spaces",
-      "anstieg": 1.25,
-      "proTag": 51
+      "anstieg": 2.36,
+      "proTag": 35
      },
      {
       "name": "Skinwalker",
-      "anstieg": 1.25,
-      "proTag": 29
+      "anstieg": 1.46,
+      "proTag": 33
+     },
+     {
+      "name": "Geister",
+      "anstieg": 1.28,
+      "proTag": 61
      },
      {
       "name": "Nahtoderfahrung",
-      "anstieg": 1.15,
-      "proTag": 24
+      "anstieg": 1.22,
+      "proTag": 26
+     },
+     {
+      "name": "Moderne Sagen",
+      "anstieg": 1.18,
+      "proTag": 49
      }
     ],
     "trends": [
-     "习近平对党内法规工作作出重要指示",
-     "陈吉宁被查 上海市政府党组等表态",
-     "“转人工转人工 给我转人工”",
-     "中外航天员在中国空间站合影",
-     "中产在山姆捡漏MaxMara平替"
+     "大河奔涌启新章",
+     "中纪委连打三“虎”",
+     "高铁里程第一省 又要换了",
+     "外国游客为啥爱上“中国购”",
+     "王忠林被罢免全国人大代表职务"
     ],
     "quelle": [
      "wikipedia-zh",
@@ -166,22 +166,22 @@
     "flagge": "🇮🇳",
     "horror": [
      {
-      "name": "Exorzismus",
-      "anstieg": 1.08,
+      "name": "Polarlicht",
+      "anstieg": 2.87,
       "proTag": 5
      },
      {
       "name": "Geister",
-      "anstieg": 0.82,
-      "proTag": 26
+      "anstieg": 0.73,
+      "proTag": 24
      }
     ],
     "trends": [
-     "rahul gandhi",
-     "టీవీ9 - తెలుగు",
-     "ബെന് സ്റ്റോക്സ്",
-     "jaker ali",
-     "महाराष्ट्र"
+     "kumar kushagra",
+     "கார்த்தி சிதம்பரம்",
+     "employees provident fund organisation upi payment",
+     "ಹಣ",
+     "amit shah ramayana film meeting"
     ],
     "quelle": [
      "wikipedia-hi",
@@ -195,36 +195,36 @@
     "horror": [
      {
       "name": "Vollmond",
-      "anstieg": 2.89,
-      "proTag": 103
+      "anstieg": 3.86,
+      "proTag": 140
      },
      {
       "name": "Klartraum",
-      "anstieg": 2.01,
-      "proTag": 279
-     },
-     {
-      "name": "Bloody Mary",
-      "anstieg": 1.42,
-      "proTag": 44
-     },
-     {
-      "name": "Friedhof",
-      "anstieg": 1.42,
-      "proTag": 31
+      "anstieg": 2,
+      "proTag": 286
      },
      {
       "name": "Spukhaus",
-      "anstieg": 1.41,
-      "proTag": 29
+      "anstieg": 1.39,
+      "proTag": 27
+     },
+     {
+      "name": "Bloody Mary",
+      "anstieg": 1.27,
+      "proTag": 40
+     },
+     {
+      "name": "Ouija",
+      "anstieg": 1.21,
+      "proTag": 41
      }
     ],
     "trends": [
-     "能條愛未",
-     "いわきfc 対 カターレ富山 順位",
-     "あの",
-     "グラニフ ヒグチユウコ",
-     "速水もこみち"
+     "夜行新幹線",
+     "島本浩也",
+     "国立競技場",
+     "加藤あい",
+     "jfa 全日本u-12サッカー選手権大会"
     ],
     "quelle": [
      "wikipedia-ja",
@@ -238,42 +238,42 @@
     "horror": [
      {
       "name": "Vollmond",
-      "anstieg": 3.51,
-      "proTag": 123
+      "anstieg": 3.48,
+      "proTag": 131
      },
      {
       "name": "Skinwalker",
-      "anstieg": 1.89,
-      "proTag": 71
+      "anstieg": 1.96,
+      "proTag": 78
      },
      {
       "name": "Mothman",
-      "anstieg": 1.18,
-      "proTag": 43
+      "anstieg": 1.26,
+      "proTag": 45
      },
      {
-      "name": "Bloody Mary",
-      "anstieg": 1.17,
-      "proTag": 36
+      "name": "Slender Man",
+      "anstieg": 1.13,
+      "proTag": 61
      },
      {
-      "name": "Doppelgänger",
-      "anstieg": 1.16,
-      "proTag": 108
+      "name": "Poltergeist",
+      "anstieg": 1.12,
+      "proTag": 46
      }
     ],
     "trends": [
-     "divorce",
-     "michel-édouard leclerc",
-     "steven hack",
-     "2026",
-     "garmin"
+     "lycée en france",
+     "leila bekhti",
+     "xpeng",
+     "vaucluse",
+     "équipe de france féminine de handball"
     ],
     "quelle": [
      "wikipedia-fr",
      "google-trends"
     ],
-    "gemessen": 23
+    "gemessen": 24
    },
    {
     "name": "New York",
@@ -281,36 +281,36 @@
     "horror": [
      {
       "name": "Vollmond",
-      "anstieg": 4.03,
-      "proTag": 1027
+      "anstieg": 4.74,
+      "proTag": 1286
      },
      {
       "name": "Slender Man",
-      "anstieg": 1.37,
-      "proTag": 1279
+      "anstieg": 1.43,
+      "proTag": 1324
      },
      {
       "name": "Skinwalker",
-      "anstieg": 1.22,
-      "proTag": 1731
+      "anstieg": 1.15,
+      "proTag": 1650
      },
      {
       "name": "Exorzismus",
-      "anstieg": 1.13,
-      "proTag": 426
+      "anstieg": 1.05,
+      "proTag": 398
      },
      {
       "name": "Nahtoderfahrung",
-      "anstieg": 1.08,
-      "proTag": 490
+      "anstieg": 1.03,
+      "proTag": 469
      }
     ],
     "trends": [
-     "bob seger &amp; the silver bullet band",
-     "royal caribbean cruise man overboard",
-     "nfl schedule",
-     "tiempo",
-     "wegmans"
+     "shane gillis",
+     "weather",
+     "clima",
+     "날씨",
+     "météo"
     ],
     "quelle": [
      "wikipedia-en",
@@ -333,24 +333,35 @@
     "name": "Skinwalker",
     "wo": [
      "China",
-     "Paris",
-     "New York"
+     "Paris"
     ]
    },
    {
-    "name": "SCP",
+    "name": "Geister",
     "wo": [
      "China"
     ]
    },
    {
-    "name": "Liminal Spaces",
+    "name": "Nahtoderfahrung",
     "wo": [
      "China"
+    ]
+   },
+   {
+    "name": "Polarlicht",
+    "wo": [
+     "Indien"
     ]
    },
    {
     "name": "Klartraum",
+    "wo": [
+     "Tokio"
+    ]
+   },
+   {
+    "name": "Spukhaus",
     "wo": [
      "Tokio"
     ]
@@ -362,15 +373,15 @@
     ]
    },
    {
-    "name": "Friedhof",
+    "name": "Ouija",
     "wo": [
      "Tokio"
     ]
    },
    {
-    "name": "Spukhaus",
+    "name": "Mothman",
     "wo": [
-     "Tokio"
+     "Paris"
     ]
    },
    {
