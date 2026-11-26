@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-25T13:22:49.414Z",
+ "stand": "2026-11-26T13:01:35.803Z",
  "ziel": 5,
  "agenten": [
   {
@@ -44,7 +44,7 @@
   }
  ],
  "kanaele": [],
- "laborQuote": 41,
+ "laborQuote": 44,
  "engpass": {
   "id": "poster",
   "name": "Poster"
@@ -639,6 +639,16 @@
   },
   {
    "datum": "2026-11-25",
+   "durchsatz": 0,
+   "engpass": "poster",
+   "labor": 1,
+   "fabrik": 4.9,
+   "pruefer": 4.9,
+   "poster": 0,
+   "sammler": 0
+  },
+  {
+   "datum": "2026-11-26",
    "durchsatz": 0,
    "engpass": "poster",
    "labor": 1,
