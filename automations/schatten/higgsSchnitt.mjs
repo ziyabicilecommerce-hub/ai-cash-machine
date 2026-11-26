@@ -7,9 +7,11 @@ import { join, resolve } from 'node:path';
 
 const B = 1080, H = 1920;
 export const istVideo = (url) => /\.(mp4|webm|mov)(\?|$)/i.test(String(url));
-export const gueltigeSzenen = (folge) => (folge.szenen || []).filter((s) => String(s.text || '').trim() && /^https:\/\//.test(String(s.clip || s.bild || '')));
+// Quelle: https-Adresse (Higgsfield/Release) oder lokale Datei (Gratis-Story-Fabrik, 26.11.)
+export const gueltigeSzenen = (folge) => (folge.szenen || []).filter((s) => String(s.text || '').trim() && /^(https:\/\/|\/|\.\/|out\/)/.test(String(s.clip || s.bild || '')));
 
 async function laden(url, ziel) {
+  if (!/^https:\/\//.test(url)) { copyFileSync(resolve(url), ziel); return; }
   const r = await fetch(url, { signal: AbortSignal.timeout(120000) });
   if (!r.ok) throw new Error(`Download ${r.status}: ${url.slice(0, 80)}`);
   writeFileSync(ziel, Buffer.from(await r.arrayBuffer()));
