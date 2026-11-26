@@ -22,7 +22,7 @@ function pruefeAuftrag(a = {}) {
   if (woerter < 80 || woerter > 450) throw new Error(`Anschreiben hat ${woerter} Wörter - erwartet 80 bis 450.`);
   const betreff = String(a.betreff || `Bewerbung als ${titel} – ${BEWERBER()}`).slice(0, 150);
   const adr = (k) => String(a[k] || '').trim().slice(0, 120);
-  return { email, firma, titel, anschreiben, betreff, erneut: a.erneut === true, strasse: adr('strasse'), plz: adr('plz'), ort: adr('ort'), ausbildung: a.ausbildung === true };
+  return { email, firma, titel, anschreiben, betreff, erneut: a.erneut === true, strasse: adr('strasse'), plz: adr('plz'), ort: adr('ort'), ausbildung: a.ausbildung === true, nurMerken: a.nurMerken === true };
 }
 
 function leseAuftraege() {
@@ -60,7 +60,8 @@ async function main() {
   const gesendet = [];
   for (const auftrag of offen) {
     if (LIVE && !auftrag.erneut && schonAngeschrieben(state, auftrag.email)) continue; // zwei Aufträge an dieselbe Firma in einer Liste
-    const info = await transport.sendMail({
+    // nurMerken: schon verschickte Bewerbung nachträglich in den State eintragen, ohne neue Mail.
+    const info = auftrag.nurMerken ? { messageId: '' } : await transport.sendMail({
       from: `${BEWERBER()} <${user}>`,
       to: LIVE ? auftrag.email : user,
       subject: LIVE ? auftrag.betreff : `[TEST → ${auftrag.email}] ${auftrag.betreff}`,
@@ -78,9 +79,9 @@ async function main() {
       state.emails[auftrag.email] = heute();
       speichereGeheim(STATE_BOT, state); // sofort sichern: bricht der Lauf ab, wird niemand doppelt angeschrieben
     }
-    console.log(`[einzelbewerbung] ${LIVE ? 'Gesendet' : 'TEST gesendet'}: ${auftrag.titel} – ${auftrag.firma}`);
+    console.log(`[einzelbewerbung] ${auftrag.nurMerken ? 'Nur gemerkt (keine Mail)' : LIVE ? 'Gesendet' : 'TEST gesendet'}: ${auftrag.titel} – ${auftrag.firma}`);
     gesendet.push(`✅ ${auftrag.titel} – ${auftrag.firma} (an ${auftrag.email})`);
-    if (offen.length > 1) await new Promise((r) => setTimeout(r, 8000)); // Gmail nicht fluten
+    if (offen.length > 1 && !auftrag.nurMerken) await new Promise((r) => setTimeout(r, 8000)); // Gmail nicht fluten
   }
   if (gesendet.length) {
     await meldeMir(`✉️ Einzelbewerbung ${LIVE ? 'raus' : '(TEST)'}: ${gesendet.length}`, gesendet.join('\n'), transport);

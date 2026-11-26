@@ -33,7 +33,11 @@ jobs:
       group: ${{ contains('automations/106-bewerbungs-bot.mjs automations/108-einzelbewerbung.mjs automations/109-initiativbewerbung.mjs automations/111-cyber-firmen-radar.mjs', inputs.script) && 'bewerbung-state' || format('automation-{0}', inputs.script) }}
       cancel-in-progress: false
     steps:
+      # Immer den aktuellen Stand des Branches holen, nicht den beim Auslösen: wartet ein Lauf in der
+      # Warteschlange, hat ein Lauf davor den State schon weitergeschrieben (sonst überschreibt er ihn).
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - uses: actions/setup-node@v4
         with:
