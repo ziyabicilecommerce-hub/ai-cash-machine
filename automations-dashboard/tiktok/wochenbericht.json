@@ -1,27 +1,27 @@
 {
- "stand": "2026-11-26T03:44:42.436Z",
+ "stand": "2026-11-26T17:16:10.171Z",
  "gesamt": {
-  "posts": 102,
-  "aufrufe": 33680,
+  "posts": 113,
+  "aufrufe": 38125,
   "vorherAufrufe": 31505
  },
  "konten": {
   "@futureflowxx": {
-   "n": 15,
-   "schnitt": 548,
-   "sehdauer": 4,
+   "n": 18,
+   "schnitt": 567,
+   "sehdauer": 4.2,
    "vorher": 484
   },
   "@futureflowx3": {
-   "n": 23,
-   "schnitt": 577,
-   "sehdauer": 4.2,
+   "n": 26,
+   "schnitt": 564,
+   "sehdauer": 4,
    "vorher": 688
   },
   "@zyx_7851": {
-   "n": 23,
-   "schnitt": 192,
-   "sehdauer": 3.8,
+   "n": 28,
+   "schnitt": 195,
+   "sehdauer": 3.9,
    "vorher": 238
   },
   "@desk.rebel": {
@@ -45,20 +45,20 @@
  },
  "formate": {
   "horror": {
-   "n": 84,
-   "schnitt": 324,
+   "n": 93,
+   "schnitt": 332,
    "sehdauer": 5.1
   },
   "quiz": {
-   "n": 18,
-   "schnitt": 358,
-   "sehdauer": 0.5
+   "n": 20,
+   "schnitt": 362,
+   "sehdauer": 0.7
   }
  },
  "muster": {
   "akte": {
-   "n": 76,
-   "schnitt": 339,
+   "n": 84,
+   "schnitt": 348,
    "sehdauer": 5.2
   },
   "wand": {
@@ -69,14 +69,14 @@
  },
  "zeiten": {
   "abends": {
-   "n": 33,
-   "schnitt": 351,
-   "sehdauer": 3.6
+   "n": 37,
+   "schnitt": 345,
+   "sehdauer": 3.5
   },
   "nachts": {
-   "n": 69,
-   "schnitt": 320,
-   "sehdauer": 4.6
+   "n": 76,
+   "schnitt": 334,
+   "sehdauer": 4.7
   }
  },
  "top": [
@@ -104,9 +104,9 @@
  ],
  "ab": {},
  "schritte": [
-  "@futureflowx3 läuft am besten (Ø 577) - neue Ideen dort zuerst testen.",
-  "Stärkstes Geschichten-Muster: „akte“ (Ø 339) - der Skript-Bot nimmt es automatisch öfter.",
-  "Beste Tageszeit: abends (Ø 351).",
+  "@futureflowxx läuft am besten (Ø 567) - neue Ideen dort zuerst testen.",
+  "Stärkstes Geschichten-Muster: „akte“ (Ø 348) - der Skript-Bot nimmt es automatisch öfter.",
+  "Beste Tageszeit: abends (Ø 345).",
   "Ø Sehdauer nur 4.3 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
   "A/B-Test YouTube kalt: mit Ø 133, ohne Ø 406 Aufrufe - bremst, dort meist aus.",
   "A/B-Test YouTube raum: mit Ø 41, ohne Ø 307 Aufrufe - bremst, dort meist aus.",
@@ -114,7 +114,7 @@
   "A/B-Test YouTube duhook: mit Ø 58, ohne Ø 278 Aufrufe - bremst, dort meist aus.",
   "A/B-Test YouTube schlag: mit Ø 284, ohne Ø 34 Aufrufe - wirkt, dort meist an.",
   "A/B-Test YouTube gestalt: mit Ø 485, ohne Ø 40 Aufrufe - wirkt, dort meist an.",
-  "Deckel: @zyx_7851 (~223), @futureflowx3 (~708) - fast jedes Video bekommt dort gleich viele Aufrufe. Der Inhalt entscheidet nicht; die Videos kommen nicht über die erste Testrunde hinaus (zu kurz angesehen).",
+  "Deckel: @zyx_7851 (~220), @futureflowx3 (~703) - fast jedes Video bekommt dort gleich viele Aufrufe. Der Inhalt entscheidet nicht; die Videos kommen nicht über die erste Testrunde hinaus (zu kurz angesehen).",
   "Ohne Aufrufe: @desk.rebel (6 von 19) - diese Videos wurden gar nicht ausgespielt."
  ],
  "sprachTest": {
@@ -124,7 +124,7 @@
   },
   "en": {
    "n": 12,
-   "schnitt": 426
+   "schnitt": 427
   }
  },
  "sprachTests": {
@@ -232,10 +232,10 @@
   },
   {
    "trick": "Zahl im ersten Satz",
-   "n": 155,
+   "n": 165,
    "faktor": 1,
    "ohne": 1,
-   "ueber": 46
+   "ueber": 45
   },
   {
    "trick": "Ich-Erzählung (Ich/Mein …)",
@@ -253,31 +253,31 @@
   },
   {
    "trick": "Technik (Handy, Kamera, App …)",
-   "n": 87,
+   "n": 88,
    "faktor": 1,
    "ohne": 1,
-   "ueber": 41
+   "ueber": 42
   },
   {
    "trick": "Zuhause (Wohnung, Bett, Tür)",
-   "n": 56,
+   "n": 58,
    "faktor": 1,
    "ohne": 1,
-   "ueber": 46
+   "ueber": 45
   },
   {
    "trick": "Aufzug",
    "n": 18,
    "faktor": 1,
    "ohne": 1,
-   "ueber": 33
+   "ueber": 39
   },
   {
    "trick": "Familie (Mama, Oma, Kind)",
-   "n": 32,
-   "faktor": 0.95,
+   "n": 33,
+   "faktor": 0.91,
    "ohne": 1,
-   "ueber": 41
+   "ueber": 39
   },
   {
    "trick": "Wald",
@@ -289,23 +289,23 @@
  ],
  "deckel": {
   "@zyx_7851": {
-   "posts": 31,
+   "posts": 36,
    "tot": 1,
-   "median": 223,
+   "median": 220,
    "hoechst": 264,
    "gedeckelt": true
   },
   "@futureflowxx": {
-   "posts": 23,
+   "posts": 26,
    "tot": 1,
-   "median": 467,
+   "median": 628,
    "hoechst": 813,
    "gedeckelt": false
   },
   "@futureflowx3": {
-   "posts": 31,
+   "posts": 34,
    "tot": 1,
-   "median": 708,
+   "median": 703,
    "hoechst": 774,
    "gedeckelt": true
   },
