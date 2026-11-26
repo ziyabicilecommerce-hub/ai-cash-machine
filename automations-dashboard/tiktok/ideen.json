@@ -26,9 +26,9 @@
    }
   },
   "zyx_7851": {
-   "idee": "akte-du",
-   "seit": "2026-11-23T22:39:31.448Z",
-   "basis": 242,
+   "idee": "akte-ruhig",
+   "seit": "2026-11-26T00:32:04.897Z",
+   "basis": 225,
    "status": "läuft",
    "verlauf": [
     {
@@ -50,14 +50,24 @@
      "sehdauer": 3.6,
      "basis": 252,
      "urteil": "kein Erfolg"
+    },
+    {
+     "idee": "akte-du",
+     "seit": "2026-11-23T22:39:31.448Z",
+     "bis": "2026-11-26T00:32:04.897Z",
+     "n": 3,
+     "aufrufe": 206,
+     "sehdauer": 5.2,
+     "basis": 242,
+     "urteil": "kein Erfolg"
     }
    ],
    "fehler": [],
-   "letzteAuswertung": "2026-11-25T00:54:12.031Z",
+   "letzteAuswertung": "2026-11-26T00:32:04.897Z",
    "ergebnis": {
-    "n": 1,
-    "aufrufe": 219,
-    "sehdauer": 4.9
+    "n": 3,
+    "aufrufe": 206,
+    "sehdauer": 5.2
    }
   },
   "futureflowxx": {
@@ -88,18 +98,18 @@
     }
    ],
    "fehler": [],
-   "letzteAuswertung": "2026-11-25T00:54:12.031Z",
+   "letzteAuswertung": "2026-11-26T00:32:04.897Z",
    "ergebnis": {
-    "n": 1,
-    "aufrufe": 676,
-    "sehdauer": 5.4
+    "n": 2,
+    "aufrufe": 651,
+    "sehdauer": 5.7
    }
   },
   "desk.rebel": {
    "idee": "akte-direkt",
    "seit": "2026-11-23T22:39:31.448Z",
-   "basis": 37,
-   "status": "läuft",
+   "basis": 180,
+   "status": "jackpot",
    "verlauf": [
     {
      "idee": "akte",
@@ -112,14 +122,12 @@
      "urteil": "abgestürzt"
     }
    ],
-   "fehler": [
-    "2 Videos der letzten 3 Tage mit 0 Aufrufen - womöglich nicht veröffentlicht oder gesperrt."
-   ],
-   "letzteAuswertung": "2026-11-25T00:54:12.031Z",
+   "fehler": [],
+   "letzteAuswertung": "2026-11-26T00:32:04.897Z",
    "ergebnis": {
-    "n": 2,
-    "aufrufe": 154,
-    "sehdauer": 7.8
+    "n": 4,
+    "aufrufe": 180,
+    "sehdauer": 9.6
    }
   },
   "purivelle.785": {
@@ -128,8 +136,10 @@
    "basis": 136,
    "status": "jackpot",
    "verlauf": [],
-   "fehler": [],
-   "letzteAuswertung": "2026-11-25T00:54:12.031Z",
+   "fehler": [
+    "2 Videos der letzten 3 Tage mit 0 Aufrufen - womöglich nicht veröffentlicht oder gesperrt."
+   ],
+   "letzteAuswertung": "2026-11-26T00:32:04.897Z",
    "ergebnis": {
     "n": 11,
     "aufrufe": 136,
@@ -162,5 +172,5 @@
    }
   }
  },
- "stand": "2026-11-25T00:54:12.031Z"
+ "stand": "2026-11-26T00:32:04.897Z"
 }
