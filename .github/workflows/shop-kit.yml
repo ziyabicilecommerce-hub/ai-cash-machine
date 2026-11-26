@@ -1,0 +1,28 @@
+name: "📦 Shop-Autopilot-Kit bauen (ZIP zum Verkaufen)"
+
+# 26.11.: packt 10 Shopify-Bots + Anleitung zu einem ZIP (scripts/shop-kit-bauen.mjs) und legt es als Release ab.
+# Bricht ab, falls persönliche Daten im Code stehen. Postet und verkauft nichts.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bauen:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Kit bauen
+        run: node scripts/shop-kit-bauen.mjs dist/shop-autopilot-kit
+      - name: Als Release ablegen
+        run: |
+          TAG="shop-autopilot-kit-$(date -u +%Y%m%d%H%M)"
+          gh release create "$TAG" dist/shop-autopilot-kit.zip --prerelease --title "Shop-Autopilot-Kit" --notes "10 Shopify-Bots + Anleitung. Zum Verkauf auf Gumroad."
+          echo "📦 https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/shop-autopilot-kit.zip" | tee -a "$GITHUB_STEP_SUMMARY"
