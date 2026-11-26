@@ -3,7 +3,7 @@
 //  1. Figurenblätter: vorhandenes Bild (blattUrl) oder neu per Cloudflare FLUX.2 (Gratis-Kontingent pro Tag)
 //  2. Szenenbilder: Cloudflare FLUX.2 [klein] MIT Figurenblatt als Referenz -> gleiche Figuren in jeder Szene
 //     (ohne Cloudflare-Schlüssel: Pollinations ohne Referenz - Figuren dann weniger einheitlich)
-//  3. Clips: Seedance über BytePlus (Gratis-Tokens, mit ARK_API_KEY), sonst/danach Wan 2.2 auf der Kaggle-GPU
+//  3. Clips: Seedance über BytePlus (Gratis-Tokens, mit ARK_API_KEY) - kein Kaggle (Nutzer-Wunsch 27.11.)
 //  4. schnitt.json für higgsSchnitt.mjs (Stimme, Untertitel, Hook)
 //   node automations/schatten/storyGratis.mjs <folge.json> <ordner>
 //   node automations/schatten/storyGratis.mjs eintragen <folge.json> <neu.json> <release-basis-url>  (Fortschritt merken)
@@ -91,7 +91,7 @@ async function main() {
         const refs = [...new Set(figurenIn(s.bildPrompt, ep.figuren).map((k) => blatt[k]).filter(Boolean))];
         lokal[i] = await bildErzeugen(s.bildPrompt, refs, datei, ep.figuren, werkzeug);
         neu.bilder[i] = `s${i + 1}.jpg`;
-        console.log(`[story-gratis] Szene ${i + 1}: Bild erzeugt (${refs.length} Referenz${refs.length === 1 ? '' : 'en'})`);
+        console.log(`[story-gratis] Szene ${i + 1}: Bild erzeugt (${cf ? `${refs.length} Figurenblatt-Vorlage${refs.length === 1 ? '' : 'n'}` : 'ohne Vorlage'})`);
       }
     } catch (err) { console.log(`[story-gratis] Szene ${i + 1}: kein Bild - ${String(err.message).slice(0, 120)}`); }
   }
@@ -114,18 +114,9 @@ async function main() {
       }
     }
   }
-  // 3b. Rest auf der Kaggle-GPU (Wan 2.2, 30 h/Woche gratis)
-  const { kaggleBereit, kaggleClips } = await import('../lib/kaggleTurbo.mjs');
-  const shots = (ep.szenen || []).map((s, i) => (!s.clip && !clipLokal[i] && lokal[i] ? { nr: i + 1, bildB64: readFileSync(lokal[i]).toString('base64'), bewegung: s.clipPrompt || BEWEGUNG } : null)).filter(Boolean);
-  if (shots.length && kaggleBereit() && !/^(aus|nein|0)$/i.test(process.env.STORY_KAGGLE || '')) {
-    const clips = await kaggleClips(shots, ordner, { sekunden: 3.5, qualitaet: 'kino', kernel: 'story-fabrik', maxMinuten: Number(process.env.STORY_KAGGLE_MIN) || 150 });
-    for (const [nr, p] of clips) {
-      const ziel = join(ordner, `s${nr}.mp4`);
-      copyFileSync(p, ziel);
-      clipLokal[nr - 1] = ziel;
-      neu.clips[nr - 1] = `s${nr}.mp4`;
-    }
-  } else if (shots.length) console.log('[story-gratis] Keine Clips: Kaggle nicht eingerichtet oder aus - Szenen bekommen eine Kamerafahrt');
+  // 3b. Kein Kaggle (27.11., Nutzer: "benutz kein Kaggle") - Szenen ohne Clip bekommen im Schnitt eine Kamerafahrt
+  const ohneClip = (ep.szenen || []).filter((s, i) => !s.clip && !clipLokal[i] && lokal[i]).length;
+  if (ohneClip) console.log(`[story-gratis] ${ohneClip} Szenen ohne Clip - im Schnitt mit Kamerafahrt durchs Bild`);
 
   // 4. Für den Schnitt: lokale Dateien bevorzugen
   const schnitt = { ...ep, szenen: (ep.szenen || []).map((s, i) => ({ text: s.text, bild: lokal[i] || '', clip: clipLokal[i] || s.clip || '' })) };
