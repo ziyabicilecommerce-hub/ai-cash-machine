@@ -1,10 +1,19 @@
 {
- "stand": "2026-11-27T16:14:28.023Z",
+ "stand": "2026-11-27T16:17:32.030Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
  },
  "alarme": [
+  {
+   "schluessel": "deal:https://eu.kith.com/products/ai1201a906-001",
+   "art": "Deal",
+   "titel": "💰 Deal: Asics Gel-1130 / Gel-Kayano 14 für 99,00 €",
+   "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1201A906-001AsicsGel1130BlackPureSilver_5029_f67d8690-a94e-490b-9b90-f18b2e59cae1.jpg?v=1785226746",
+   "link": "https://eu.kith.com/products/ai1201a906-001",
+   "text": "kith.com · ASICS Gel-1130 - Black / Pure Silver\nVerkauf ca. 110–180 € → Gewinn ca. +26,50 € (ROI 27 %)\nGröße prüfen, vorher verkaufte Preise checken.",
+   "zeit": "2026-11-27T16:17:32.030Z"
+  },
   {
    "schluessel": "filiale:3118196:1205",
    "art": "Filiale",
@@ -189,15 +198,6 @@
    "bild": "https://static.nike.com/a/images/w_1536,c_limit/954b663e-10a5-4b5a-975a-9ee608ec819a/air-jordan%C2%A04-bred-ix8180-001-%C2%A0%E2%80%93-erscheinungsdatum.jpg",
    "link": "https://www.nike.com/de/launch/t/air-jordan-4-bred",
    "text": "Schwarz/Cement Grey/Summit White/Fire Red · 69,99 € · Start 09:36 Uhr",
-   "zeit": "2026-11-27T08:39:56.798Z"
-  },
-  {
-   "schluessel": "drop:Air Jordan 4 Retro OG \"Bred\" Schuh (Herren):2026-11-27T08:36:00.000Z",
-   "art": "Drop",
-   "titel": "⏰ Drop gleich: Air Jordan 4 Retro OG \"Bred\" Schuh (Herren)",
-   "bild": "https://static.nike.com/a/images/w_1536,c_limit/954b663e-10a5-4b5a-975a-9ee608ec819a/air-jordan%C2%A04-bred-ix8180-001-%C2%A0%E2%80%93-erscheinungsdatum.jpg",
-   "link": "https://www.nike.com/de/launch/t/air-jordan-4-bred",
-   "text": "Schwarz/Cement Grey/Summit White/Fire Red · 209,99 € · Start 09:36 Uhr",
    "zeit": "2026-11-27T08:39:56.798Z"
   }
  ],
@@ -3084,6 +3084,15 @@
     "begriff": "asics"
    },
    {
+    "titel": "ASICS Gel-1130 - Black / Pure Silver",
+    "preis": 99,
+    "verfuegbar": true,
+    "url": "https://eu.kith.com/products/ai1201a906-001",
+    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/AI1201A906-001AsicsGel1130BlackPureSilver_5029_f67d8690-a94e-490b-9b90-f18b2e59cae1.jpg?v=1785226746",
+    "laden": "kith.com",
+    "begriff": "asics"
+   },
+   {
     "titel": "ASICS GEL-1130 - Glacier Grey / Pure Silver",
     "preis": 99,
     "verfuegbar": true,
@@ -3118,15 +3127,6 @@
     "bild": "https://cdn.shopify.com/s/files/1/2718/4356/files/adidas-originals-samba-og-cblack-ntgrey-lucred-kk0006-footwear_20_3E_20sneaker.jpg?v=1790237496",
     "laden": "afew-store.com",
     "begriff": "samba"
-   },
-   {
-    "titel": "ASICS Gel-1130 - Cream / Carrier Grey",
-    "preis": 110,
-    "verfuegbar": true,
-    "url": "https://eu.kith.com/products/ai1203a899-101",
-    "bild": "https://cdn.shopify.com/s/files/1/0274/7469/0125/files/1203A899_101_SR_RT_GLB.jpg?v=1780992709",
-    "laden": "kith.com",
-    "begriff": "asics"
    },
    {
     "titel": "New Balance 740",
@@ -3255,20 +3255,20 @@
     "begriff": "samba"
    },
    {
-    "titel": "Adidas Samba OG W *Snake*",
-    "preis": 119,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-snake-crew-white-earth-strata-maroon",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cp3zilo9k2t-IH3980_Adidas_Samba-OG-W_Snake_Crew-White-Earth-Strata-Maroon_os-1.jpg?v=1765978912",
-    "laden": "asphaltgold.com",
-    "begriff": "samba"
-   },
-   {
     "titel": "Adidas Samba OG",
     "preis": 119,
     "verfuegbar": true,
     "url": "https://www.asphaltgold.com/products/adidas-samba-og-fox-brown-off-white-gum-4",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/DuPB6FvkO9IZC9uLnZoz-JR0892-Adidas-Samba-OG-Fox-Brown-Off-White-Gum-4-os-1.jpg?v=1760624312",
+    "laden": "asphaltgold.com",
+    "begriff": "samba"
+   },
+   {
+    "titel": "Adidas Samba OG W *Snake*",
+    "preis": 119,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/adidas-samba-og-w-snake-crew-white-earth-strata-maroon",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/cp3zilo9k2t-IH3980_Adidas_Samba-OG-W_Snake_Crew-White-Earth-Strata-Maroon_os-1.jpg?v=1765978912",
     "laden": "asphaltgold.com",
     "begriff": "samba"
    },
@@ -3930,6 +3930,15 @@
     "begriff": "jordan"
    },
    {
+    "titel": "Nike Air Jordan 6 Retro",
+    "preis": 209,
+    "verfuegbar": true,
+    "url": "https://www.asphaltgold.com/products/nike-air-jordan-6-retro-white-white-light-crimson-black",
+    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/6iq83manvxt-CT8529-105_Nike_Air-Jordan-6-Retro-White-White-Light-Crimson-Black_os-1.jpg?v=1793286393",
+    "laden": "asphaltgold.com",
+    "begriff": "jordan"
+   },
+   {
     "titel": "Air Jordan 11 Retro 'Green Screen'",
     "preis": 209.99,
     "verfuegbar": true,
@@ -4007,15 +4016,6 @@
     "verfuegbar": true,
     "url": "https://www.asphaltgold.com/products/nike-wmns-air-jordan-11-retro-light-british-tan-off-noir-metallic-silver",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/6nn1ucfbc0x-IZ1800-200_Nike_Wmns-Air-Jordan-11-Retro-Light-British-Tan-Off-Noir-Metallic-Silver_os-1.jpg?v=1793967221",
-    "laden": "asphaltgold.com",
-    "begriff": "jordan"
-   },
-   {
-    "titel": "Nike Air Jordan 14 Retro *Forest Green*",
-    "preis": 219,
-    "verfuegbar": true,
-    "url": "https://www.asphaltgold.com/products/nike-air-jordan-14-retro-forest-green-gorge-green-light-graphite-white",
-    "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/9mbgp2ibfb7-487471-300_Nike_Air-Jordan-14-Retro-Forest-Green-Gorge-Green-Light-Graphite-White_os-1.jpg?v=1792676608",
     "laden": "asphaltgold.com",
     "begriff": "jordan"
    },
