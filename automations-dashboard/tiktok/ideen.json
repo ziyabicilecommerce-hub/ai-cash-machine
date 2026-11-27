@@ -1,9 +1,9 @@
 {
  "kanaele": {
   "futureflowx3": {
-   "idee": "akte-direkt",
-   "seit": "2026-11-20T01:08:25.606Z",
-   "basis": 722,
+   "idee": "akte-du",
+   "seit": "2026-11-27T00:41:36.951Z",
+   "basis": 716,
    "status": "läuft",
    "verlauf": [
     {
@@ -15,14 +15,24 @@
      "sehdauer": 5.7,
      "basis": 718,
      "urteil": "kein Erfolg"
+    },
+    {
+     "idee": "akte-direkt",
+     "seit": "2026-11-20T01:08:25.606Z",
+     "bis": "2026-11-27T00:41:36.951Z",
+     "n": 12,
+     "aufrufe": 602,
+     "sehdauer": 3.9,
+     "basis": 722,
+     "urteil": "kein Erfolg"
     }
    ],
    "fehler": [],
-   "letzteAuswertung": "2026-11-22T00:15:05.453Z",
+   "letzteAuswertung": "2026-11-27T00:41:36.951Z",
    "ergebnis": {
-    "n": 3,
-    "aufrufe": 680,
-    "sehdauer": 4.4
+    "n": 12,
+    "aufrufe": 602,
+    "sehdauer": 3.9
    }
   },
   "zyx_7851": {
@@ -71,9 +81,9 @@
    }
   },
   "futureflowxx": {
-   "idee": "akte-du",
-   "seit": "2026-11-23T22:39:31.448Z",
-   "basis": 711,
+   "idee": "akte-ruhig",
+   "seit": "2026-11-27T00:41:36.951Z",
+   "basis": 678,
    "status": "läuft",
    "verlauf": [
     {
@@ -95,20 +105,30 @@
      "sehdauer": 4.3,
      "basis": 726,
      "urteil": "kein Erfolg"
+    },
+    {
+     "idee": "akte-du",
+     "seit": "2026-11-23T22:39:31.448Z",
+     "bis": "2026-11-27T00:41:36.951Z",
+     "n": 3,
+     "aufrufe": 502,
+     "sehdauer": 5.2,
+     "basis": 711,
+     "urteil": "kein Erfolg"
     }
    ],
    "fehler": [],
-   "letzteAuswertung": "2026-11-26T00:32:04.897Z",
+   "letzteAuswertung": "2026-11-27T00:41:36.951Z",
    "ergebnis": {
-    "n": 2,
-    "aufrufe": 651,
-    "sehdauer": 5.7
+    "n": 3,
+    "aufrufe": 502,
+    "sehdauer": 5.2
    }
   },
   "desk.rebel": {
    "idee": "akte-direkt",
    "seit": "2026-11-23T22:39:31.448Z",
-   "basis": 180,
+   "basis": 181,
    "status": "jackpot",
    "verlauf": [
     {
@@ -123,11 +143,11 @@
     }
    ],
    "fehler": [],
-   "letzteAuswertung": "2026-11-26T00:32:04.897Z",
+   "letzteAuswertung": "2026-11-27T00:41:36.951Z",
    "ergebnis": {
-    "n": 4,
-    "aufrufe": 180,
-    "sehdauer": 9.6
+    "n": 6,
+    "aufrufe": 181,
+    "sehdauer": 10.4
    }
   },
   "purivelle.785": {
@@ -139,18 +159,18 @@
    "fehler": [
     "2 Videos der letzten 3 Tage mit 0 Aufrufen - womöglich nicht veröffentlicht oder gesperrt."
    ],
-   "letzteAuswertung": "2026-11-26T00:32:04.897Z",
+   "letzteAuswertung": "2026-11-27T00:41:36.951Z",
    "ergebnis": {
-    "n": 11,
-    "aufrufe": 136,
-    "sehdauer": 11.2
+    "n": 15,
+    "aufrufe": 115,
+    "sehdauer": 9.5
    }
   },
   "giyuuu sama": {
    "idee": "akte-direkt",
    "seit": "2026-11-20T01:08:25.606Z",
-   "basis": 92,
-   "status": "läuft",
+   "basis": 369,
+   "status": "jackpot",
    "verlauf": [
     {
      "idee": "akte",
@@ -163,14 +183,16 @@
      "urteil": "kein Erfolg"
     }
    ],
-   "fehler": [],
-   "letzteAuswertung": "2026-11-22T00:15:05.453Z",
+   "fehler": [
+    "Seit 24 Std. kein Video - Posten prüfen (Workflow, Buffer-Verbindung)."
+   ],
+   "letzteAuswertung": "2026-11-27T00:41:36.951Z",
    "ergebnis": {
-    "n": 3,
-    "aufrufe": 995,
+    "n": 11,
+    "aufrufe": 369,
     "sehdauer": 0
    }
   }
  },
- "stand": "2026-11-26T00:32:04.897Z"
+ "stand": "2026-11-27T00:41:36.951Z"
 }
