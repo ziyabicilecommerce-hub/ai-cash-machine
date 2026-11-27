@@ -1,65 +1,65 @@
 {
- "stand": "2026-11-27T13:03:25.299Z",
+ "stand": "2026-11-27T23:42:25.969Z",
  "gesamt": {
-  "posts": 106,
-  "aufrufe": 36749,
-  "vorherAufrufe": 31088
+  "posts": 103,
+  "aufrufe": 33891,
+  "vorherAufrufe": 35447
  },
  "konten": {
   "@futureflowxx": {
-   "n": 16,
-   "schnitt": 638,
-   "sehdauer": 4.4,
-   "vorher": 423
-  },
-  "@futureflowx3": {
-   "n": 26,
-   "schnitt": 533,
-   "sehdauer": 3.7,
-   "vorher": 684
+   "n": 14,
+   "schnitt": 615,
+   "sehdauer": 4.3,
+   "vorher": 458
   },
   "@zyx_7851": {
-   "n": 24,
-   "schnitt": 210,
+   "n": 22,
+   "schnitt": 209,
    "sehdauer": 4,
    "vorher": 222
   },
-  "@desk.rebel": {
-   "n": 14,
-   "schnitt": 95,
-   "sehdauer": 6,
-   "vorher": 100
+  "@futureflowx3": {
+   "n": 25,
+   "schnitt": 526,
+   "sehdauer": 3.5,
+   "vorher": 686
   },
   "@giyuuu sama": {
-   "n": 12,
-   "schnitt": 414,
+   "n": 14,
+   "schnitt": 354,
    "sehdauer": 0,
-   "vorher": 135
+   "vorher": 217
+  },
+  "@desk.rebel": {
+   "n": 14,
+   "schnitt": 88,
+   "sehdauer": 6,
+   "vorher": 113
   },
   "@purivelle.785": {
    "n": 14,
-   "schnitt": 96,
-   "sehdauer": 8.1,
-   "vorher": 112
+   "schnitt": 97,
+   "sehdauer": 8.4,
+   "vorher": 120
   }
  },
  "formate": {
   "horror": {
-   "n": 85,
-   "schnitt": 342,
-   "sehdauer": 5.2
+   "n": 79,
+   "schnitt": 324,
+   "sehdauer": 5.3
   },
   "quiz": {
-   "n": 21,
-   "schnitt": 366,
+   "n": 24,
+   "schnitt": 346,
    "sehdauer": 0.8
   }
  },
  "muster": {
   "akte": {
-   "n": 76,
-   "schnitt": 360,
-   "sehdauer": 5.4
+   "n": 70,
+   "schnitt": 341,
+   "sehdauer": 5.5
   },
   "wand": {
    "n": 1,
@@ -68,15 +68,15 @@
   }
  },
  "zeiten": {
-  "abends": {
-   "n": 34,
-   "schnitt": 352,
-   "sehdauer": 3.2
-  },
   "nachts": {
    "n": 72,
-   "schnitt": 344,
-   "sehdauer": 4.9
+   "schnitt": 343,
+   "sehdauer": 5
+  },
+  "abends": {
+   "n": 31,
+   "schnitt": 297,
+   "sehdauer": 2.7
   }
  },
  "top": [
@@ -104,33 +104,30 @@
  ],
  "ab": {},
  "schritte": [
-  "@futureflowxx läuft am besten (Ø 638) - neue Ideen dort zuerst testen.",
-  "Stärkstes Geschichten-Muster: „akte“ (Ø 360) - der Skript-Bot nimmt es automatisch öfter.",
-  "Beste Tageszeit: abends (Ø 352).",
+  "@futureflowxx läuft am besten (Ø 615) - neue Ideen dort zuerst testen.",
+  "Stärkstes Geschichten-Muster: „akte“ (Ø 341) - der Skript-Bot nimmt es automatisch öfter.",
+  "Beste Tageszeit: nachts (Ø 343).",
   "Ø Sehdauer nur 4.3 s - die ersten 2 Sekunden entscheiden: Hook kürzer, Schock früher.",
-  "A/B-Test YouTube kalt: mit Ø 194, ohne Ø 406 Aufrufe - bremst, dort meist aus.",
-  "A/B-Test YouTube raum: mit Ø 52, ohne Ø 380 Aufrufe - bremst, dort meist aus.",
-  "A/B-Test YouTube duhook: mit Ø 58, ohne Ø 378 Aufrufe - bremst, dort meist aus.",
-  "A/B-Test YouTube schlag: mit Ø 387, ohne Ø 34 Aufrufe - wirkt, dort meist an.",
-  "A/B-Test YouTube gestalt: mit Ø 723, ohne Ø 44 Aufrufe - wirkt, dort meist an.",
-  "Deckel: @futureflowx3 (~682), @zyx_7851 (~219) - fast jedes Video bekommt dort gleich viele Aufrufe. Der Inhalt entscheidet nicht; die Videos kommen nicht über die erste Testrunde hinaus (zu kurz angesehen).",
+  "A/B-Test YouTube kalt: mit Ø 194, ohne Ø 659 Aufrufe - bremst, dort meist aus.",
+  "A/B-Test YouTube gestalt: mit Ø 961, ohne Ø 43 Aufrufe - wirkt, dort meist an.",
+  "Deckel: @futureflowxx (~677), @zyx_7851 (~219), @futureflowx3 (~674), @purivelle.785 (~123) - fast jedes Video bekommt dort gleich viele Aufrufe. Der Inhalt entscheidet nicht; die Videos kommen nicht über die erste Testrunde hinaus (zu kurz angesehen).",
   "Ohne Aufrufe: @desk.rebel (6 von 18) - diese Videos wurden gar nicht ausgespielt."
  ],
  "sprachTest": {
   "de": {
    "n": 2,
-   "schnitt": 20
+   "schnitt": 24
   },
   "en": {
-   "n": 10,
-   "schnitt": 493
+   "n": 12,
+   "schnitt": 409
   }
  },
  "sprachTests": {
   "desk.rebel": {
    "de": {
     "n": 9,
-    "schnitt": 148
+    "schnitt": 136
    },
    "en": {
     "n": 0,
@@ -145,24 +142,24 @@
     "schnitt": 194
    },
    "aus": {
-    "n": 5,
-    "schnitt": 406
+    "n": 3,
+    "schnitt": 659
    }
   },
   "raum": {
    "an": {
-    "n": 3,
-    "schnitt": 52
+    "n": 2,
+    "schnitt": 54
    },
    "aus": {
-    "n": 8,
-    "schnitt": 380
+    "n": 7,
+    "schnitt": 434
    }
   },
   "suchbild": {
    "an": {
-    "n": 2,
-    "schnitt": 28
+    "n": 0,
+    "schnitt": 0
    },
    "aus": {
     "n": 2,
@@ -171,12 +168,12 @@
   },
   "duhook": {
    "an": {
-    "n": 3,
-    "schnitt": 58
+    "n": 2,
+    "schnitt": 64
    },
    "aus": {
-    "n": 8,
-    "schnitt": 378
+    "n": 7,
+    "schnitt": 431
    }
   },
   "schlag": {
@@ -185,18 +182,18 @@
     "schnitt": 387
    },
    "aus": {
-    "n": 3,
-    "schnitt": 34
+    "n": 1,
+    "schnitt": 45
    }
   },
   "gestalt": {
    "an": {
-    "n": 4,
-    "schnitt": 723
+    "n": 3,
+    "schnitt": 961
    },
    "aus": {
-    "n": 7,
-    "schnitt": 44
+    "n": 6,
+    "schnitt": 43
    }
   }
  },
@@ -224,14 +221,14 @@
   },
   {
    "trick": "Uhrzeit (3 Uhr, 3:12)",
-   "n": 61,
+   "n": 62,
    "faktor": 1,
    "ohne": 1,
-   "ueber": 46
+   "ueber": 47
   },
   {
    "trick": "Zahl im ersten Satz",
-   "n": 173,
+   "n": 175,
    "faktor": 1,
    "ohne": 1,
    "ueber": 44
@@ -252,10 +249,10 @@
   },
   {
    "trick": "Technik (Handy, Kamera, App …)",
-   "n": 90,
+   "n": 91,
    "faktor": 1,
    "ohne": 1,
-   "ueber": 42
+   "ueber": 43
   },
   {
    "trick": "Zuhause (Wohnung, Bett, Tür)",
@@ -272,46 +269,46 @@
    "ueber": 39
   },
   {
-   "trick": "Familie (Mama, Oma, Kind)",
-   "n": 33,
-   "faktor": 0.93,
+   "trick": "Wald",
+   "n": 19,
+   "faktor": 1,
    "ohne": 1,
-   "ueber": 39
+   "ueber": 47
   },
   {
-   "trick": "Wald",
-   "n": 18,
-   "faktor": 0.9,
+   "trick": "Familie (Mama, Oma, Kind)",
+   "n": 33,
+   "faktor": 0.94,
    "ohne": 1,
-   "ueber": 44
+   "ueber": 39
   }
  ],
  "deckel": {
-  "@futureflowx3": {
-   "posts": 34,
-   "tot": 3,
-   "median": 682,
-   "hoechst": 774,
+  "@futureflowxx": {
+   "posts": 22,
+   "tot": 2,
+   "median": 677,
+   "hoechst": 813,
    "gedeckelt": true
   },
   "@zyx_7851": {
-   "posts": 32,
+   "posts": 30,
    "tot": 1,
    "median": 219,
-   "hoechst": 252,
+   "hoechst": 250,
    "gedeckelt": true
   },
-  "@futureflowxx": {
-   "posts": 24,
-   "tot": 2,
-   "median": 676,
-   "hoechst": 813,
-   "gedeckelt": false
+  "@futureflowx3": {
+   "posts": 33,
+   "tot": 3,
+   "median": 674,
+   "hoechst": 774,
+   "gedeckelt": true
   },
   "@giyuuu sama": {
-   "posts": 16,
+   "posts": 18,
    "tot": 1,
-   "median": 183,
+   "median": 84,
    "hoechst": 1087,
    "gedeckelt": false
   },
@@ -325,15 +322,15 @@
   "@purivelle.785": {
    "posts": 18,
    "tot": 4,
-   "median": 124,
+   "median": 123,
    "hoechst": 181,
-   "gedeckelt": false
+   "gedeckelt": true
   }
  },
  "vorrat": {
   "de": {
-   "rest": 163,
-   "tage": 18
+   "rest": 161,
+   "tage": 17
   },
   "en": {
    "rest": 106,
