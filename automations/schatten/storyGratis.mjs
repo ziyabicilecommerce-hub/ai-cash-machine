@@ -1,9 +1,9 @@
 // Gratis-Story-Fabrik (26.11., Nutzer: "kostenlose Variante für immer"): produziert eine Folge im Story-Format
 // ohne Higgsfield und ohne Kosten.
-//  1. Figurenblätter: vorhandenes Bild (blattUrl) oder neu per Cloudflare FLUX.2 (Gratis-Kontingent pro Tag)
-//  2. Szenenbilder: Cloudflare FLUX.2 [klein] MIT Figurenblatt als Referenz -> gleiche Figuren in jeder Szene
-//     (ohne Cloudflare-Schlüssel: Pollinations ohne Referenz - Figuren dann weniger einheitlich)
-//  3. Clips über das Quellen-Netz (lib/quellenNetz.mjs): Seedance -> Modal -> Zhipu/free.ai/Hugging Face -> Kamerafahrt
+//  1. Figurenblätter: vorhandenes Bild (blattUrl) oder neu (Agnes -> Cloudflare FLUX.2 -> Pollinations)
+//  2. Szenenbilder MIT Figurenblatt als Vorlage -> gleiche Figuren in jeder Szene: Agnes (27.11., gratis ohne Tageslimit)
+//     oder Cloudflare FLUX.2 [klein]; ohne beide Schlüssel Pollinations ohne Vorlage (Figuren dann weniger einheitlich)
+//  3. Clips über das Quellen-Netz (lib/quellenNetz.mjs): Seedance -> Agnes -> Modal -> Zhipu/free.ai/Hugging Face -> Kamerafahrt
 //  4. schnitt.json für higgsSchnitt.mjs (Stimme, Untertitel, Hook)
 //   node automations/schatten/storyGratis.mjs <folge.json> <ordner>
 //   node automations/schatten/storyGratis.mjs eintragen <folge.json> <neu.json> <release-basis-url>  (Fortschritt merken)
@@ -53,13 +53,21 @@ async function holen(url, ziel) {
   return ziel;
 }
 
-async function bildErzeugen(prompt, refs, ziel, figuren, { cf, cfBild, ladeBild }) {
+// -> { datei, url } (url = öffentlicher Link, falls die Quelle einen liefert - Agnes-Clips brauchen ihn als Startbild)
+async function bildErzeugen(prompt, refs, ziel, figuren, { cf, cfBild, ladeBild, agnes, agnesBild }) {
+  if (agnes) {
+    try {
+      const p = refs.length ? promptBauen(prompt, figuren).replace(/\{[A-Z]+\}/g, '') : promptOhneRef(prompt, figuren);
+      const { url } = await agnesBild(p, refs, ziel);
+      return { datei: ziel, url, quelle: 'Agnes' };
+    } catch (err) { console.log(`[story-gratis] Agnes-Bild: ${String(err.message).slice(0, 160)} - nächste Quelle`); }
+  }
   if (cf) {
-    try { return await cfBild(promptBauen(prompt, figuren).replace(/\{[A-Z]+\}/g, ''), refs, ziel); } catch (err) {
+    try { return { datei: await cfBild(promptBauen(prompt, figuren).replace(/\{[A-Z]+\}/g, ''), refs, ziel), quelle: 'Cloudflare' }; } catch (err) {
       console.log(`[story-gratis] Cloudflare: ${String(err.message).slice(0, 160)} - Ersatz ohne Referenz`);
     }
   }
-  if (await ladeBild(promptOhneRef(prompt, figuren), ziel, { breite: 720, hoehe: 1280 })) return ziel;
+  if (await ladeBild(promptOhneRef(prompt, figuren), ziel, { breite: 720, hoehe: 1280 })) return { datei: ziel, quelle: 'Pollinations' };
   throw new Error('kein Bild bekommen');
 }
 
@@ -71,11 +79,13 @@ async function main() {
   const { cfBereit, cfBild } = await import('../lib/cfBild.mjs');
   const { ladeBild } = await import('../lib/videoFabrik.mjs');
   const cf = cfBereit();
+  const { agnesBereit, agnesBild, agnesClips } = await import('../lib/agnes.mjs');
+  const agnes = agnesBereit();
   const { netzBericht, aktiv, quellenZaehlen } = await import('../lib/quellenNetz.mjs');
   console.log(`[story-gratis] ${ep.titel}\n${netzBericht()}`);
   const neu = { blaetter: {}, bilder: {}, clips: {} };
   const quelleJe = {};
-  const werkzeug = { cf, cfBild, ladeBild };
+  const werkzeug = { cf, cfBild, ladeBild, agnes, agnesBild };
 
   // 1. Figurenblätter
   const blatt = {};
@@ -84,7 +94,7 @@ async function main() {
     try {
       if (f.blattUrl) blatt[k] = await holen(f.blattUrl, datei);
       else if (f.blattPrompt) {
-        blatt[k] = await bildErzeugen(`Character reference sheet, full body, front view, plain warm grey background: ${f.blattPrompt}`, [], datei, {}, werkzeug);
+        blatt[k] = (await bildErzeugen(`Character reference sheet, full body, front view, plain warm grey background: ${f.blattPrompt}`, [], datei, {}, werkzeug)).datei;
         neu.blaetter[k] = `blatt-${k}.jpg`;
       }
     } catch (err) { console.log(`[story-gratis] Figurenblatt ${k}: ${String(err.message).slice(0, 120)}`); }
@@ -92,15 +102,19 @@ async function main() {
 
   // 2. Szenenbilder (fertige laden, fehlende erzeugen)
   const lokal = [];
+  const link = [];  // öffentliche Bild-Links (Startbild für Agnes-Clips)
   for (const [i, s] of (ep.szenen || []).entries()) {
     const datei = join(ordner, `s${i + 1}.jpg`);
     try {
-      if (s.bild) lokal[i] = await holen(s.bild, datei);
+      if (s.bild) { lokal[i] = await holen(s.bild, datei); if (/^https:\/\//.test(s.bild)) link[i] = s.bild; }
       else if (s.bildPrompt) {
         const refs = [...new Set(figurenIn(s.bildPrompt, ep.figuren).map((k) => blatt[k]).filter(Boolean))];
-        lokal[i] = await bildErzeugen(s.bildPrompt, refs, datei, ep.figuren, werkzeug);
+        const b = await bildErzeugen(s.bildPrompt, refs, datei, ep.figuren, werkzeug);
+        lokal[i] = b.datei;
+        if (b.url) link[i] = b.url;
         neu.bilder[i] = `s${i + 1}.jpg`;
-        console.log(`[story-gratis] Szene ${i + 1}: Bild erzeugt (${cf ? `${refs.length} Figurenblatt-Vorlage${refs.length === 1 ? '' : 'n'}` : 'ohne Vorlage'})`);
+        const vorlage = b.quelle === 'Pollinations' ? 'ohne Vorlage' : `${refs.length} Figurenblatt-Vorlage${refs.length === 1 ? '' : 'n'}`;
+        console.log(`[story-gratis] Szene ${i + 1}: Bild erzeugt (${b.quelle}, ${vorlage})`);
       }
     } catch (err) { console.log(`[story-gratis] Szene ${i + 1}: kein Bild - ${String(err.message).slice(0, 120)}`); }
   }
@@ -122,6 +136,17 @@ async function main() {
         console.log(`[story-gratis] Szene ${i + 1}: ${String(err.message).slice(0, 200)}`);
         if (err.leer) break;
       }
+    }
+  }
+  // 3a2. Agnes (gratis ohne Tageslimit, 1 Auftrag pro Minute): alle restlichen Szenen, Aufträge im Minutentakt
+  if (agnes) {
+    const auftraege = (ep.szenen || []).map((s, i) => (!s.clip && !clipLokal[i] && lokal[i]
+      ? { nr: i + 1, prompt: `${s.clipPrompt || BEWEGUNG}, Pixar-style 3D animation, consistent characters, smooth natural motion`, bild: link[i] || lokal[i], ziel: join(ordner, `s${i + 1}.mp4`) } : null)).filter(Boolean);
+    const fertig = await agnesClips(auftraege, { maxMinuten: Number(process.env.STORY_AGNES_MIN) || 70 });
+    for (const [nr, ziel] of fertig) {
+      clipLokal[nr - 1] = ziel;
+      neu.clips[nr - 1] = `s${nr}.mp4`;
+      quelleJe[nr - 1] = 'Agnes';
     }
   }
   // 3b. Modal (Wan 2.2 auf eigener Gratis-GPU, 30 $ im Monat): alle restlichen Szenen in einem Rutsch

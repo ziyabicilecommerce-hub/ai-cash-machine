@@ -6,10 +6,12 @@ const hat = (env, ...keys) => keys.every((k) => String(env[k] || '').trim());
 
 export const QUELLEN = [
   // Bilder (Szenen mit gleichen Figuren)
+  { id: 'agnes-bild', art: 'bild', name: 'Agnes Image 2.1 (mit Figuren-Vorlage)', gratis: 'ohne Tageslimit, 20 Bilder/Minute', bereit: (e) => hat(e, 'AGNES_API_KEY'), fehlt: 'AGNES_API_KEY' },
   { id: 'cloudflare', art: 'bild', name: 'Cloudflare FLUX.2 (mit Figuren-Vorlage)', gratis: 'Tageskontingent', bereit: (e) => hat(e, 'CF_ACCOUNT_ID', 'CF_API_TOKEN'), fehlt: 'CF_ACCOUNT_ID + CF_API_TOKEN' },
   { id: 'pollinations', art: 'bild', name: 'Pollinations (ohne Vorlage)', gratis: 'ohne Schlüssel', bereit: () => true },
   // Clips (beste Qualität zuerst)
   { id: 'seedance', art: 'clip', name: 'BytePlus Seedance', gratis: 'einmaliges Startguthaben', bereit: (e) => hat(e, 'ARK_API_KEY'), fehlt: 'ARK_API_KEY' },
+  { id: 'agnes', art: 'clip', name: 'Agnes Video 2.0', gratis: 'ohne Tageslimit, 1 Clip/Minute', bereit: (e) => hat(e, 'AGNES_API_KEY'), fehlt: 'AGNES_API_KEY' },
   { id: 'modal', art: 'clip', name: 'Modal (Wan 2.2, 30 $ Gratis-Guthaben im Monat)', gratis: 'monatlich neu', bereit: (e) => hat(e, 'MODAL_TOKEN_ID', 'MODAL_TOKEN_SECRET'), fehlt: 'MODAL_TOKEN_ID + MODAL_TOKEN_SECRET' },
   { id: 'zhipu', art: 'clip', name: 'Zhipu CogVideoX-Flash', gratis: 'Gratis-Modell', bereit: (e) => hat(e, 'ZHIPU_API_KEY'), fehlt: 'ZHIPU_API_KEY' },
   { id: 'freeai', art: 'clip', name: 'free.ai (Wan 2.2)', gratis: '~1 Clip am Tag', bereit: (e) => hat(e, 'FREEAI_API_KEY'), fehlt: 'FREEAI_API_KEY' },
