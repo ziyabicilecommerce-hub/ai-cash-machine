@@ -127,7 +127,7 @@ test('Kerzenmutter englisch: ein Text je Szene, kurz genug, Hook vorne', async (
 test('Quellen-Netz: Reihenfolge, aktive Quellen je nach Schlüssel, kein Kaggle', async () => {
   const { QUELLEN, netzStatus, netzBericht, aktiv, quellenZaehlen } = await import('../../automations/lib/quellenNetz.mjs');
   const clips = QUELLEN.filter((q) => q.art === 'clip').map((q) => q.id);
-  assert.deepEqual(clips, ['seedance', 'modal', 'zhipu', 'freeai', 'huggingface', 'kamerafahrt']);
+  assert.deepEqual(clips, ['seedance', 'agnes', 'modal', 'zhipu', 'freeai', 'huggingface', 'kamerafahrt']);
   assert.ok(!QUELLEN.some((q) => /kaggle/i.test(q.id + q.name)));
   const ohne = netzStatus({});
   assert.ok(ohne.find((q) => q.id === 'huggingface').aktiv && !ohne.find((q) => q.id === 'modal').aktiv);

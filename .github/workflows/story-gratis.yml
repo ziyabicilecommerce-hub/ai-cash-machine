@@ -21,13 +21,14 @@ concurrency:
 jobs:
   folge:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 170
     env:
       GH_TOKEN: ${{ github.token }}
       FOLGE: ${{ inputs.folge }}
       CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
       ARK_API_KEY: ${{ secrets.ARK_API_KEY }}
+      AGNES_API_KEY: ${{ secrets.AGNES_API_KEY }}
       ARK_VIDEO_MODELL: ${{ vars.ARK_VIDEO_MODELL }}
       POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
