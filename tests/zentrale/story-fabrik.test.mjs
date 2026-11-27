@@ -92,3 +92,28 @@ test('Seedance (BytePlus): Auftrag 9:16 ohne Wasserzeichen, Fehlerarten, Modell-
   delete process.env.ARK_API_KEY;
   delete process.env.ARK_VIDEO_MODELL;
 });
+
+test('Sprachfassung: Bilder aus der Basis, Texte und Stimme aus der Fassung', async () => {
+  const { mitBasis } = await import('../../automations/schatten/storyGratis.mjs');
+  const { pruefen } = await import('../../automations/schatten/storyFabrik.mjs');
+  const en = JSON.parse(readFileSync('automations/schatten/folgen/mutterwaerme-1-en.json', 'utf8'));
+  const e = mitBasis(en, 'automations/schatten/folgen/mutterwaerme-1-en.json');
+  assert.equal(e.szenen.length, 13);
+  assert.equal(e.szenen[0].text, en.hook);
+  assert.equal(e.szenen[0].bild, ep.szenen[0].bild);
+  assert.equal(e.stimme, 'en-US-AnaNeural');
+  assert.deepEqual(pruefen(e), []);
+});
+
+test('Quellen-Netz: Reihenfolge, aktive Quellen je nach Schlüssel, kein Kaggle', async () => {
+  const { QUELLEN, netzStatus, netzBericht, aktiv, quellenZaehlen } = await import('../../automations/lib/quellenNetz.mjs');
+  const clips = QUELLEN.filter((q) => q.art === 'clip').map((q) => q.id);
+  assert.deepEqual(clips, ['seedance', 'modal', 'zhipu', 'freeai', 'huggingface', 'kamerafahrt']);
+  assert.ok(!QUELLEN.some((q) => /kaggle/i.test(q.id + q.name)));
+  const ohne = netzStatus({});
+  assert.ok(ohne.find((q) => q.id === 'huggingface').aktiv && !ohne.find((q) => q.id === 'modal').aktiv);
+  assert.ok(aktiv('modal', { MODAL_TOKEN_ID: 'a', MODAL_TOKEN_SECRET: 'b' }));
+  assert.ok(!aktiv('modal', { MODAL_TOKEN_ID: 'a' }));
+  assert.match(netzBericht({ ARK_API_KEY: 'x' }), /✓ Clip: BytePlus Seedance/);
+  assert.equal(quellenZaehlen({ 0: 'Modal', 1: 'Modal', 2: 'Seedance' }), 'Modal 2x, Seedance 1x');
+});
