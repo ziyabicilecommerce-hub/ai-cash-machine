@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-27T10:21:01.506Z",
+ "stand": "2026-11-27T10:23:56.170Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -192,7 +192,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-27T10:09:19.185Z",
+  "stand": "2026-11-27T10:23:59.042Z",
   "filialen": 148,
   "produkte": [
    {
@@ -209,7 +209,7 @@
       "km": 2.6,
       "lat": 50.0589893,
       "lon": 8.5198272,
-      "menge": 2
+      "menge": 1
      },
      {
       "name": "dm Frankfurt am Main",
@@ -654,7 +654,7 @@
       "km": 10.3,
       "lat": 49.984061,
       "lon": 8.430174,
-      "menge": 7
+      "menge": 6
      },
      {
       "name": "dm Eschborn",
@@ -2549,8 +2549,24 @@
   "ware": [],
   "top": [
    {
+    "titel": "gzsz-vorschau",
+    "menge": "500+"
+   },
+   {
+    "titel": "alice weidel",
+    "menge": "200+"
+   },
+   {
+    "titel": "ingvar jonsson",
+    "menge": "100+"
+   },
+   {
     "titel": "marc marquez",
     "menge": "1000+"
+   },
+   {
+    "titel": "brennerautobahn",
+    "menge": "5000+"
    },
    {
     "titel": "vw id. polo",
@@ -2562,7 +2578,7 @@
    },
    {
     "titel": "essen",
-    "menge": "1000+"
+    "menge": "2000+"
    },
    {
     "titel": "mark keller",
@@ -2571,22 +2587,6 @@
    {
     "titel": "nachtcafé",
     "menge": "200+"
-   },
-   {
-    "titel": "burj khalifa",
-    "menge": "100+"
-   },
-   {
-    "titel": "krankheit",
-    "menge": "200+"
-   },
-   {
-    "titel": "schüsse regensburg",
-    "menge": "500+"
-   },
-   {
-    "titel": "silvia wollny schwiegersohn",
-    "menge": "2000+"
    }
   ]
  },
