@@ -1,4 +1,4 @@
-name: "🕯️ Story-Fabrik gratis (Cloudflare-Bilder + Seedance-Clips, nur Vorschau)"
+name: "🕯️ Story-Fabrik gratis (Quellen-Netz aller Gratis-Dienste, nur Vorschau)"
 
 # 26.11.: produziert eine Folge im Story-Format kostenlos: Bilder mit Figurenblatt (Cloudflare FLUX.2, Gratis-Kontingent),
 # Clips mit Seedance (BytePlus-Gratis-Tokens, kein Kaggle), Schnitt mit Stimme und Untertiteln. Legt eine Vorschau als Release ab und merkt
@@ -15,7 +15,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: story-gratis
+  group: story-gratis-${{ inputs.folge }}  # verschiedene Folgen laufen parallel
   cancel-in-progress: false
 
 jobs:
@@ -30,8 +30,17 @@ jobs:
       ARK_API_KEY: ${{ secrets.ARK_API_KEY }}
       ARK_VIDEO_MODELL: ${{ vars.ARK_VIDEO_MODELL }}
       POLLINATIONS_TOKEN: ${{ secrets.POLLINATIONS_TOKEN }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+      MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+      FREEAI_API_KEY: ${{ secrets.FREEAI_API_KEY }}
+      ZHIPU_API_KEY: ${{ secrets.ZHIPU_API_KEY }}
+      VIDEO_KI_ALLE: 'ja'
+      STORY_HF_MAX: '4'
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}  # neuester Stand: Sprachfassungen nutzen die Bilder des vorherigen Laufs
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -41,7 +50,7 @@ jobs:
       - name: Werkzeug
         uses: ./.github/actions/video-werkzeug
         with:
-          pip: 'edge-tts==7.*'
+          pip: 'edge-tts==7.* gradio_client opencv-python-headless modal'
       - name: Bilder und Clips erzeugen
         run: |
           [ -n "$CF_API_TOKEN" ] && echo "Cloudflare-Schlüssel: ja" || echo "Cloudflare-Schlüssel: nein (Bilder ohne Figurenblatt)"
@@ -56,10 +65,12 @@ jobs:
           DATEIEN=$(node -e "const n=require('./out/story/neu.json');console.log([...Object.values(n.blaetter),...Object.values(n.bilder),...Object.values(n.clips)].map(f=>'out/story/'+f).join(' '))")
           gh release create "$TAG" out/schnitt/folge.mp4 $DATEIEN --prerelease --title "Vorschau: $SLUG" --notes "Gratis-Story-Fabrik, nicht gepostet."
           echo "🎬 https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/folge.mp4" | tee -a "$GITHUB_STEP_SUMMARY"
-          node automations/schatten/storyGratis.mjs eintragen "$FOLGE" out/story/neu.json "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add "$FOLGE"
+          BASIS=$(node -e "const e=require(require('path').resolve(process.env.FOLGE));console.log(e.basis?require('path').join(require('path').dirname(process.env.FOLGE),e.basis):process.env.FOLGE)")
+          # Sprachfassung: Fortschritt (neue Bilder/Clips) gehört in die Basis-Folge, die Fassung selbst bleibt unverändert
+          node automations/schatten/storyGratis.mjs eintragen "$BASIS" out/story/neu.json "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG"
+          git add "$FOLGE" "$BASIS"
           if ! git diff --cached --quiet; then
             git commit -m "Story-Fabrik: Fortschritt $SLUG [skip ci]"
             for v in 1 2 3; do git push && break; git pull --rebase -X theirs origin "$GITHUB_REF_NAME" || true; sleep $((v * 3)); done
