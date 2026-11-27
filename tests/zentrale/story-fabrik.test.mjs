@@ -4,6 +4,13 @@ import { readFileSync } from 'node:fs';
 import { pruefen, plan, promptBauen, figurenIn } from '../../automations/schatten/storyFabrik.mjs';
 
 const ep = JSON.parse(readFileSync('automations/schatten/folgen/mutterwaerme-1.json', 'utf8'));
+// Die Gratis-Fabrik trägt fertige Bilder/Clips (Release-Links) in die Datei ein -> Plan-Tests mit dem Ausgangsstand
+const istRelease = (u) => /\/releases\/download\//.test(String(u || ''));
+const frisch = {
+  ...ep,
+  figuren: Object.fromEntries(Object.entries(ep.figuren).map(([k, f]) => [k, istRelease(f.blattUrl) ? { ...f, blattUrl: undefined } : f])),
+  szenen: ep.szenen.map((s) => (istRelease(s.bild) ? { ...s, bild: undefined, clip: undefined } : istRelease(s.clip) ? { ...s, clip: undefined } : s)),
+};
 
 test('Story-Fabrik: Mutterwärme Teil 1 erfüllt das Format (Hook zuerst, 10-16 Schnitte, Cliffhanger)', () => {
   assert.deepEqual(pruefen(ep), []);
@@ -18,7 +25,7 @@ test('Story-Fabrik: Format-Verstöße werden erkannt', () => {
 });
 
 test('Story-Fabrik: Plan gibt Figurenblatt als Referenz mit, Clips nur für fertige Bilder', () => {
-  const p = plan(ep);
+  const p = plan(frisch);
   assert.equal(p.blaetter.length, 1);
   assert.equal(p.blaetter[0].figur, 'MADAME');
   const tuer = p.bilder.find((b) => b.index === 4);
@@ -32,12 +39,12 @@ test('Story-Fabrik: Plan gibt Figurenblatt als Referenz mit, Clips nur für fert
 
 test('Gratis-Story-Fabrik: offene Arbeit, Prompt ohne Referenz, Fortschritt eintragen', async () => {
   const { offen, promptOhneRef, eintragen } = await import('../../automations/schatten/storyGratis.mjs');
-  const o = offen(ep);
+  const o = offen(frisch);
   assert.deepEqual(o.blaetter, ['MADAME']);
   assert.equal(o.bilder.length, 8);
   assert.ok(!o.clips.includes(2));
   assert.ok(promptOhneRef('{MADAME} smiles', ep.figuren).includes('lavender'));
-  const neu = eintragen(ep, { blaetter: { MADAME: 'blatt-MADAME.jpg' }, bilder: { 3: 's4.jpg' }, clips: { 0: 's1.mp4' } }, 'https://x/dl/T/');
+  const neu = eintragen(frisch, { blaetter: { MADAME: 'blatt-MADAME.jpg' }, bilder: { 3: 's4.jpg' }, clips: { 0: 's1.mp4' } }, 'https://x/dl/T/');
   assert.equal(neu.figuren.MADAME.blattUrl, 'https://x/dl/T/blatt-MADAME.jpg');
   assert.equal(neu.szenen[3].bild, 'https://x/dl/T/s4.jpg');
   assert.equal(neu.szenen[0].clip, 'https://x/dl/T/s1.mp4');
@@ -103,6 +110,18 @@ test('Sprachfassung: Bilder aus der Basis, Texte und Stimme aus der Fassung', as
   assert.equal(e.szenen[0].bild, ep.szenen[0].bild);
   assert.equal(e.stimme, 'en-US-AnaNeural');
   assert.deepEqual(pruefen(e), []);
+});
+
+test('Kerzenmutter englisch: ein Text je Szene, kurz genug, Hook vorne', async () => {
+  const { mitBasis } = await import('../../automations/schatten/storyGratis.mjs');
+  const datei = 'automations/schatten/folgen/kerzenmutter-1-en.json';
+  const en = JSON.parse(readFileSync(datei, 'utf8'));
+  const de = JSON.parse(readFileSync('automations/schatten/folgen/kerzenmutter-1.json', 'utf8'));
+  const e = mitBasis(en, datei);
+  assert.equal(en.texte.length, de.szenen.length);
+  assert.equal(e.szenen[0].text, en.hook);
+  assert.ok(en.texte.every((t) => t.length <= 80));
+  assert.equal(e.szenen[2].clip, de.szenen[2].clip);
 });
 
 test('Quellen-Netz: Reihenfolge, aktive Quellen je nach Schlüssel, kein Kaggle', async () => {
