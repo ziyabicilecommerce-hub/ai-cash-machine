@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-21T01:54:57.477Z",
+ "stand": "2026-11-28T02:04:32.519Z",
  "version": 2,
  "heimat": {
   "name": "Hattersheim am Main",
@@ -154,6 +154,18 @@
    "web": ""
   },
   {
+   "name": "BreakTheCase",
+   "art": "Technik & Games",
+   "km": 5.2,
+   "lat": 50.1042189,
+   "lon": 8.5366479,
+   "adresse": "Peter-Bied-Straße 47, 65929",
+   "ort": "",
+   "zeiten": "",
+   "tel": "+4915225739244",
+   "web": "https://www.breakthecase.de/"
+  },
+  {
    "name": "Rossmann",
    "art": "Drogerie & Beauty",
    "km": 5.7,
@@ -226,6 +238,18 @@
    "web": "https://www.snipes.com/"
   },
   {
+   "name": "Lego",
+   "art": "Spielzeug & Figuren",
+   "km": 6.2,
+   "lat": 50.1185902,
+   "lon": 8.5282383,
+   "adresse": "Am Main-Taunus-Zentrum, 65843 Sulzbach (Taunus)",
+   "ort": "Sulzbach (Taunus)",
+   "zeiten": "closed",
+   "tel": "",
+   "web": "https://www.lego.com/de-de/stores/store/frankfurt-mtz"
+  },
+  {
    "name": "Foot Locker",
    "art": "Sneaker & Klamotten",
    "km": 6.2,
@@ -234,18 +258,6 @@
    "adresse": "65843",
    "ort": "",
    "zeiten": "",
-   "tel": "",
-   "web": ""
-  },
-  {
-   "name": "Miniso Frankfurt",
-   "art": "Spielzeug & Figuren",
-   "km": 6.2,
-   "lat": 50.119794,
-   "lon": 8.5257256,
-   "adresse": "Main-Taunus-Zentrum",
-   "ort": "",
-   "zeiten": "Mo-Th 10:00-20:00; Fr-Sa 10:00-22:00",
    "tel": "",
    "web": ""
   },
@@ -260,18 +272,6 @@
    "zeiten": "Mo-Th 10:00-20:00; Fr-Sa 10:00-22:00",
    "tel": "+496924004570",
    "web": "https://www.thalia.de/"
-  },
-  {
-   "name": "Steiff",
-   "art": "Spielzeug & Figuren",
-   "km": 6.3,
-   "lat": 50.1199601,
-   "lon": 8.5261675,
-   "adresse": "Am Main-Taunus-Zentrum, 65843 Sulzbach (Taunus)",
-   "ort": "Sulzbach (Taunus)",
-   "zeiten": "Mo-Th 10:00-20:00; Fr-Sa 10:00-22:00",
-   "tel": "+496930088744",
-   "web": "https://www.steiff.com/"
   },
   {
    "name": "Faix",
@@ -373,8 +373,8 @@
    "name": "Rossmann",
    "art": "Drogerie & Beauty",
    "km": 7.6,
-   "lat": 50.1353851,
-   "lon": 8.4551994,
+   "lat": 50.1353886,
+   "lon": 8.4552222,
    "adresse": "Wilhelm-Dichmann-Straße 2-4, 65779 Kelkheim (Taunus)",
    "ort": "Kelkheim (Taunus)",
    "zeiten": "Mo-Fr 08:00-20:00; Sa 08:00-20:00; Su off; PH off",
@@ -402,7 +402,7 @@
    "adresse": "65479",
    "ort": "",
    "zeiten": "Mo-Sa 07:00-22:00",
-   "tel": "",
+   "tel": "+4961429429330",
    "web": "https://www.kaufland.de/?cid=F3183B02C1200K01000W01030000D1000E1000F1000G1000H1000"
   },
   {
@@ -454,7 +454,7 @@
    "web": "https://filiale.kaufland.de/service/filiale/frankfurt-main-griesheim-1483.html"
   },
   {
-   "name": "Smyths Toys",
+   "name": "Smyths",
    "art": "Spielzeug & Figuren",
    "km": 8.1,
    "lat": 50.056895,
@@ -523,7 +523,7 @@
    "ort": "Schwalbach am Taunus",
    "zeiten": "Mo,Tu,Th,Fr 10:00-18:00, We 10:00-14:00",
    "tel": "",
-   "web": ""
+   "web": "https://www.caritas-taunus.de/menschen-mit-unterstuetzungsbedarf/second-hand-shops/anziehpunkt-schwalbach/"
   },
   {
    "name": "BlueBrixx",
@@ -605,7 +605,7 @@
    "lon": 8.3976958,
    "adresse": "",
    "ort": "",
-   "zeiten": "Do-Fr 11:00-17:00",
+   "zeiten": "Th-Fr 11:00-17:00",
    "tel": "",
    "web": ""
   },
@@ -641,7 +641,7 @@
    "lon": 8.6115217,
    "adresse": "",
    "ort": "",
-   "zeiten": "Mo - Sa: 08:00-20:00",
+   "zeiten": "Mo-Sa 08:00-20:00",
    "tel": "",
    "web": "https://www.rossmann.de/de/filialen/hessen/frankfurt-am-main/radilostr--1.html"
   },
@@ -661,8 +661,8 @@
    "name": "Rossmann",
    "art": "Drogerie & Beauty",
    "km": 11.2,
-   "lat": 50.1020123,
-   "lon": 8.6361216,
+   "lat": 50.1020298,
+   "lon": 8.6361118,
    "adresse": "Mainzer Landstraße 341, 60326 Frankfurt am Main",
    "ort": "Frankfurt am Main",
    "zeiten": "Mo-Fr 08:00-21:00; Sa 08:00-21:00; PH off",
@@ -690,7 +690,7 @@
    "adresse": "Alzeyer Straße 11, 65428 Rüsselsheim am Main",
    "ort": "Rüsselsheim am Main",
    "zeiten": "Mo-Sa 07:00-22:00",
-   "tel": "",
+   "tel": "+4961428369370",
    "web": "https://www.kaufland.de/"
   },
   {
@@ -857,7 +857,7 @@
    "lon": 8.6429062,
    "adresse": "",
    "ort": "",
-   "zeiten": "Mo-Fr 10:00-18:00; Sa 10:00-16:00",
+   "zeiten": "Sa 10:00-15:00, Mo-Th 11:00-18:00, Fr 11:00-13:00, Fr 15:00-18:00",
    "tel": "+496977039894",
    "web": "https://www.yasmini.de/"
   },
@@ -900,6 +900,18 @@
   {
    "name": "Rossmann",
    "art": "Drogerie & Beauty",
+   "km": 13.3,
+   "lat": 50.1080415,
+   "lon": 8.6631864,
+   "adresse": "",
+   "ort": "",
+   "zeiten": "Mo-Su,PH 06:00-22:00",
+   "tel": "",
+   "web": "https://www.rossmann.de/de/filialen/hessen/frankfurt/im-hauptbahnhof-1.html"
+  },
+  {
+   "name": "Rossmann",
+   "art": "Drogerie & Beauty",
    "km": 13.6,
    "lat": 50.1083981,
    "lon": 8.6677279,
@@ -920,18 +932,6 @@
    "zeiten": "Mo-Fr 09:00-20:00; Sa 09:00-20:00; PH off",
    "tel": "+496925616549",
    "web": "https://www.rossmann.de"
-  },
-  {
-   "name": "JD Sports",
-   "art": "Sneaker & Klamotten",
-   "km": 14.2,
-   "lat": 50.1570468,
-   "lon": 8.6326122,
-   "adresse": "Limescorso 23, 60439 Frankfurt am Main",
-   "ort": "Frankfurt am Main",
-   "zeiten": "Mo-Sa 10:00-20:00",
-   "tel": "",
-   "web": "https://www.jdsports.de"
   },
   {
    "name": "Spielzeux",
@@ -1006,6 +1006,30 @@
    "web": ""
   },
   {
+   "name": "Douglas",
+   "art": "Drogerie & Beauty",
+   "km": 14.3,
+   "lat": 50.111639,
+   "lon": 8.6768983,
+   "adresse": "Kaiserstraße 1, 60311 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "zeiten": "",
+   "tel": "+4969284969",
+   "web": ""
+  },
+  {
+   "name": "Douglas",
+   "art": "Drogerie & Beauty",
+   "km": 14.3,
+   "lat": 50.1146522,
+   "lon": 8.675249,
+   "adresse": "Große Bockenheimer Straße 24, 60313 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "zeiten": "",
+   "tel": "",
+   "web": ""
+  },
+  {
    "name": "MediaMarkt",
    "art": "Technik & Games",
    "km": 14.4,
@@ -1049,7 +1073,7 @@
    "lon": 8.6870237,
    "adresse": "",
    "ort": "",
-   "zeiten": "Fr 15:00-19:00; Sa 09:00-14:00; PH,Su-Th off",
+   "zeiten": "\"Termine nach Vereinbarung\"",
    "tel": "",
    "web": "https://www.steine-kiste.de"
   },
@@ -1078,6 +1102,18 @@
    "web": ""
   },
   {
+   "name": "Card Culture",
+   "art": "Karten & Sammeln",
+   "km": 14.4,
+   "lat": 50.1122683,
+   "lon": 8.6777656,
+   "adresse": "Roßmarkt 15, 60311 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "zeiten": "Mo-Sa 10:00-18:00",
+   "tel": "",
+   "web": "https://cardculture.com"
+  },
+  {
    "name": "Müller",
    "art": "Drogerie & Beauty",
    "km": 14.4,
@@ -1097,7 +1133,7 @@
    "lon": 8.6775094,
    "adresse": "",
    "ort": "",
-   "zeiten": "Mo-Sa 09:30-20:00; Su,PH off",
+   "zeiten": "Mo-Sa 09:30-20:00",
    "tel": "",
    "web": ""
   },
@@ -1112,6 +1148,18 @@
    "zeiten": "We,Th,Sa 10:00-14:00; Fr 10:00-17:00",
    "tel": "",
    "web": ""
+  },
+  {
+   "name": "Warhammer",
+   "art": "Karten & Sammeln",
+   "km": 14.6,
+   "lat": 50.1122915,
+   "lon": 8.680846,
+   "adresse": "Sandhofpassage 29, 60311 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "zeiten": "Mo 10:30-13:00, 13:30-18:00, Tu 13:30-18:00, We-Sa 10:30-13:00",
+   "tel": "+496921999266",
+   "web": "https://warhammer.com"
   },
   {
    "name": "Foot Locker",
@@ -1184,6 +1232,18 @@
    "zeiten": "Mo-We 10:00-20:00; Th-Sa 10:00-21:00",
    "tel": "",
    "web": ""
+  },
+  {
+   "name": "Thalia",
+   "art": "Bücher & Manga",
+   "km": 14.7,
+   "lat": 50.1137318,
+   "lon": 8.6806179,
+   "adresse": "Zeil 121, 60313 Frankfurt am Main",
+   "ort": "Frankfurt am Main",
+   "zeiten": "Mo-We 10:00-20:00; Th-Sa 10:00-21:00",
+   "tel": "",
+   "web": "https://www.thalia.de"
   },
   {
    "name": "Galeria",
@@ -1390,18 +1450,6 @@
    "web": "https://www.rossmann.de/de/filialen/hessen/gross-gerau/muenchener-str--2a.html"
   },
   {
-   "name": "Warhammer",
-   "art": "Karten & Sammeln",
-   "km": 15.1,
-   "lat": 50.1159745,
-   "lon": 8.6863403,
-   "adresse": "",
-   "ort": "",
-   "zeiten": "We-Fr 11:00-14:30,15:00-18:30; Tu 14:00-18:30; Mo 12:00-14:30,15:00-18:30",
-   "tel": "",
-   "web": ""
-  },
-  {
    "name": "Rossmann",
    "art": "Drogerie & Beauty",
    "km": 15.2,
@@ -1426,7 +1474,7 @@
    "web": "https://www.mueller.de/"
   },
   {
-   "name": "Saturn",
+   "name": "MediaMarkt",
    "art": "Technik & Games",
    "km": 15.2,
    "lat": 50.0491725,
@@ -1434,20 +1482,8 @@
    "adresse": "",
    "ort": "",
    "zeiten": "Mo-Sa 10:00-19:00",
-   "tel": "+49610279940",
-   "web": "https://www.saturn.de/de/store/neu-isenburg-67"
-  },
-  {
-   "name": "JD Sports",
-   "art": "Sneaker & Klamotten",
-   "km": 15.2,
-   "lat": 50.0494528,
-   "lon": 8.6975888,
-   "adresse": "",
-   "ort": "",
-   "zeiten": "Mo-Sa 10:00-20:00",
-   "tel": "+4961028154482",
-   "web": "https://www.jdsports.de/store-locator/neu-isenburg-isenburg-zentrum/918/"
+   "tel": "",
+   "web": ""
   },
   {
    "name": "Snipes",
@@ -1467,23 +1503,11 @@
    "km": 15.2,
    "lat": 50.0079815,
    "lon": 8.297348,
-   "adresse": "",
-   "ort": "",
-   "zeiten": "Mo-Sa 08:00-20:00",
-   "tel": "",
-   "web": ""
-  },
-  {
-   "name": "Rossmann",
-   "art": "Drogerie & Beauty",
-   "km": 15.2,
-   "lat": 50.0082752,
-   "lon": 8.2973462,
    "adresse": "Hochheimer Straße 51",
    "ort": "",
-   "zeiten": "",
-   "tel": "",
-   "web": "https://www.rossmann.de/de/filialen/hessen/mainz-kostheim/index.html"
+   "zeiten": "Mo-Sa 08:00-20:00; Su, PH off",
+   "tel": "+4961349454999",
+   "web": "https://www.rossmann.de/de/filialen/hessen/wiesbaden/hochheimer-str--51.html"
   },
   {
    "name": "Rossmann",
@@ -1505,7 +1529,7 @@
    "lon": 8.6994738,
    "adresse": "Hermesstraße 4, 63263 Neu-Isenburg",
    "ort": "Neu-Isenburg",
-   "zeiten": "Mo-Fr 09:30-20:00; Sa 09:30-20:00; PH off",
+   "zeiten": "Mo-Sa 09:30-20:00; PH off",
    "tel": "+4961023065990",
    "web": "https://www.rossmann.de"
   },
@@ -1529,7 +1553,7 @@
    "lon": 8.6991435,
    "adresse": "",
    "ort": "",
-   "zeiten": "Mo-Sa 10:00-20:00",
+   "zeiten": "Mo-Sa 09:30-20:00",
    "tel": "+496980881188",
    "web": "https://www.hugendubel.de/"
   },
@@ -1563,7 +1587,7 @@
    "km": 15.5,
    "lat": 50.1272457,
    "lon": 8.6850181,
-   "adresse": "",
+   "adresse": "Eckenheimer Landstraße 119",
    "ort": "",
    "zeiten": "We-Fr 14:00-18:00; Sa 14:00-15:00; Mo,Tu off",
    "tel": "",
@@ -1573,8 +1597,8 @@
    "name": "M.D. Modellbau",
    "art": "Spielzeug & Figuren",
    "km": 15.5,
-   "lat": 50.1546209,
-   "lon": 8.6596377,
+   "lat": 50.1546388,
+   "lon": 8.6596028,
    "adresse": "Eschersheimer Landstraße 512, 60433 Frankfurt am Main",
    "ort": "Frankfurt am Main",
    "zeiten": "Th,Fr 09:30-13:00,14:00-18:30, Sa 09:30-14:00",
@@ -1707,9 +1731,9 @@
    "km": 15.9,
    "lat": 50.1951123,
    "lon": 8.3807184,
-   "adresse": "Im Buhles 11, 61479 Glashütten",
+   "adresse": "Im Buhles 11-13, 61479 Glashütten",
    "ort": "Glashütten",
-   "zeiten": "Mo-Fr 07:30-17:00 / Sa 08:00-13:00",
+   "zeiten": "Mo-Fr 07:30-17:00;Sa 08:00-13:00",
    "tel": "",
    "web": ""
   },
@@ -1865,7 +1889,7 @@
    "lon": 8.7145434,
    "adresse": "Martin-Behaim-Straße 15b, 63263 Neu-Isenburg",
    "ort": "Neu-Isenburg",
-   "zeiten": "Mo-Do 07:00-17:00, Fr 07:00-15:00",
+   "zeiten": "Mo-Th 07:00-17:00, Fr 07:00-15:00",
    "tel": "+496102370360",
    "web": ""
   },
@@ -1921,8 +1945,8 @@
    "name": "Rossmann",
    "art": "Drogerie & Beauty",
    "km": 16.7,
-   "lat": 50.1244437,
-   "lon": 8.7042018,
+   "lat": 50.1244692,
+   "lon": 8.7042651,
    "adresse": "Berger Straße 145, 60385 Frankfurt am Main",
    "ort": "Frankfurt am Main",
    "zeiten": "Mo-Sa 08:00-20:00; Su,PH off",
@@ -1993,8 +2017,8 @@
    "name": "Rossmann",
    "art": "Drogerie & Beauty",
    "km": 17.1,
-   "lat": 50.1400926,
-   "lon": 8.6996355,
+   "lat": 50.1401388,
+   "lon": 8.6995938,
    "adresse": "Valentin-Senger-Straße 140, 60389 Frankfurt am Main",
    "ort": "Frankfurt am Main",
    "zeiten": "Mo-Sa 08:00-20:00; Su,PH off",
@@ -2017,13 +2041,13 @@
    "name": "Douglas",
    "art": "Drogerie & Beauty",
    "km": 17.2,
-   "lat": 49.9993618,
-   "lon": 8.2718934,
-   "adresse": "",
-   "ort": "",
+   "lat": 49.9993214,
+   "lon": 8.2719242,
+   "adresse": "Gutenbergplatz 9;11, 55116 Mainz",
+   "ort": "Mainz",
    "zeiten": "Mo-Sa 10:00-19:30",
    "tel": "",
-   "web": ""
+   "web": "https://www.douglas.de"
   },
   {
    "name": "Müller",
@@ -2038,6 +2062,18 @@
    "web": ""
   },
   {
+   "name": "Thalia",
+   "art": "Bücher & Manga",
+   "km": 17.2,
+   "lat": 49.9998081,
+   "lon": 8.2720648,
+   "adresse": "Schöfferstraße 12, 55116 Mainz",
+   "ort": "Mainz",
+   "zeiten": "Mo-Sa 10:00-19:00; Su 13:00-18:00",
+   "tel": "",
+   "web": ""
+  },
+  {
    "name": "JD Sports",
    "art": "Sneaker & Klamotten",
    "km": 17.2,
@@ -2048,18 +2084,6 @@
    "zeiten": "Mo-Sa 10:00-20:00",
    "tel": "+4961313274409",
    "web": "https://www.jdsports.de/store-locator/mainz/1993/"
-  },
-  {
-   "name": "Müller Kaffeerösterei",
-   "art": "Drogerie & Beauty",
-   "km": 17.2,
-   "lat": 49.9990391,
-   "lon": 8.2725533,
-   "adresse": "",
-   "ort": "",
-   "zeiten": "Mo-Fr 07:30-18:00; Sa 07:30-16:00",
-   "tel": "",
-   "web": "https://mueller-kaffee.com/mainzer-kaffeehaus-am-dom/"
   },
   {
    "name": "Galeria",
@@ -2086,6 +2110,18 @@
    "web": "https://www.raabkarcher.de/oberursel/"
   },
   {
+   "name": "Müller Kaffeerösterei",
+   "art": "Drogerie & Beauty",
+   "km": 17.2,
+   "lat": 49.9990487,
+   "lon": 8.2725716,
+   "adresse": "",
+   "ort": "",
+   "zeiten": "Mo-Fr 07:30-18:00; Sa 07:30-16:00",
+   "tel": "",
+   "web": "https://mueller-kaffee.com/mainzer-kaffeehaus-am-dom/"
+  },
+  {
    "name": "Snipes",
    "art": "Sneaker & Klamotten",
    "km": 17.3,
@@ -2095,18 +2131,6 @@
    "ort": "",
    "zeiten": "Mo-Sa 10:00-20:00",
    "tel": "",
-   "web": ""
-  },
-  {
-   "name": "Kleider Schrank",
-   "art": "Second-Hand",
-   "km": 17.3,
-   "lat": 49.9965808,
-   "lon": 8.2723372,
-   "adresse": "Kirschgarten 1, 55116 Mainz",
-   "ort": "Mainz",
-   "zeiten": "Tu-Fr 12:00-16:00; Sa 12:00-18:00",
-   "tel": "+491629571171",
    "web": ""
   },
   {
@@ -2120,6 +2144,18 @@
    "zeiten": "Mo-Fr 09:00-17:00; Sa 09:00-14:00",
    "tel": "+4961039885170",
    "web": "https://www.collect-it.de/"
+  },
+  {
+   "name": "Kleider Schrank",
+   "art": "Second-Hand",
+   "km": 17.3,
+   "lat": 49.9965682,
+   "lon": 8.272343,
+   "adresse": "Kirschgarten 1, 55116 Mainz",
+   "ort": "Mainz",
+   "zeiten": "Tu-Fr 12:00-16:00; Sa 12:00-18:00",
+   "tel": "+491629571171",
+   "web": ""
   },
   {
    "name": "Rossmann",
@@ -2189,7 +2225,7 @@
    "lon": 8.2672144,
    "adresse": "Spritzengasse 5, 55116",
    "ort": "",
-   "zeiten": "Mo-Fr 10:00-13:30,14:00-18:00; Sa 10:00-16:00",
+   "zeiten": "Mo-Fr 10:00-18:00; Sa 10:00-16:00",
    "tel": "+496131233349",
    "web": "https://www.merlins-spiele.de/i/ladengeschaefte-anfahrt-und-oeffnungszeiten"
   },
@@ -2311,7 +2347,7 @@
    "ort": "Mainz",
    "zeiten": "Mo-Fr 08:00-20:00; Sa 08:00-20:00; Su off; PH off",
    "tel": "+4961314810999",
-   "web": "https://www.rossmann.de"
+   "web": "https://www.rossmann.de/de/filialen/rheinland-pfalz/mainz/annemarie-renger-str--3-a.html"
   },
   {
    "name": "Hugendubel",
@@ -2333,21 +2369,9 @@
    "lon": 8.2389665,
    "adresse": "Schützenhofstraße 3, 65183 Wiesbaden",
    "ort": "Wiesbaden",
-   "zeiten": "",
+   "zeiten": "Mo-Fr 10:30-19:00; Sa 10:00-19:30",
    "tel": "+4961136094840",
    "web": "https://manga-mafia.de/store-wiesbaden"
-  },
-  {
-   "name": "ROFU Kinderland",
-   "art": "Spielzeug & Figuren",
-   "km": 17.7,
-   "lat": 49.9619392,
-   "lon": 8.6699365,
-   "adresse": "",
-   "ort": "",
-   "zeiten": "Mo-Sa 09:00-20:00",
-   "tel": "",
-   "web": "https://www.rofu.de/filialen/#!/l/egelsbach/kurt-schumacher-ring-1/1198071"
   },
   {
    "name": "Mollywood",
@@ -2357,7 +2381,7 @@
    "lon": 8.2625999,
    "adresse": "",
    "ort": "",
-   "zeiten": "",
+   "zeiten": "Mo-Th 11:00-18:00; Fr 11:00-14:00",
    "tel": "",
    "web": ""
   },
@@ -2398,6 +2422,18 @@
    "web": "https://www.saturn.de/de/store/wiesbaden-1196"
   },
   {
+   "name": "snipes",
+   "art": "Sneaker & Klamotten",
+   "km": 17.8,
+   "lat": 50.0792654,
+   "lon": 8.2379425,
+   "adresse": "",
+   "ort": "",
+   "zeiten": "",
+   "tel": "",
+   "web": ""
+  },
+  {
    "name": "Douglas",
    "art": "Drogerie & Beauty",
    "km": 17.8,
@@ -2420,18 +2456,6 @@
    "zeiten": "Mo-Sa 10:00-20:00; Su,PH off",
    "tel": "",
    "web": "https://www.footlocker.de"
-  },
-  {
-   "name": "JD Sports",
-   "art": "Sneaker & Klamotten",
-   "km": 17.8,
-   "lat": 50.0791851,
-   "lon": 8.2379491,
-   "adresse": "Kirchgasse 20, 65185 Wiesbaden",
-   "ort": "Wiesbaden",
-   "zeiten": "Mo-Sa 10:00-20:00",
-   "tel": "+4961194917862",
-   "web": "https://www.runnerspoint.com"
   },
   {
    "name": "Foxter Games",
@@ -2489,7 +2513,7 @@
    "lon": 8.4980821,
    "adresse": "Helvetiastraße 5, 64521 Groß-Gerau",
    "ort": "Groß-Gerau",
-   "zeiten": "",
+   "zeiten": "Mo-Sa 10:00-19:00",
    "tel": "",
    "web": "https://www.mediamarkt.de/de/store/gross-gerau-7000"
   },
@@ -2528,18 +2552,6 @@
    "zeiten": "Mo-Sa 06:30-22:00; Su 08:00-22:00; PH 08:00-22:00",
    "tel": "+4961316279037",
    "web": "https://www.rossmann.de"
-  },
-  {
-   "name": "Oxfam Shop",
-   "art": "Second-Hand",
-   "km": 18.1,
-   "lat": 50.0788458,
-   "lon": 8.2340343,
-   "adresse": "Dotzheimer Straße 19, 65185 Wiesbaden",
-   "ort": "Wiesbaden",
-   "zeiten": "Mo-Fr 10:00-18:00; Sa 10:00-14:00",
-   "tel": "",
-   "web": "https://shops.oxfam.de/shops/wiesbaden"
   },
   {
    "name": "Albin Stapf GmbH Stahlhandel",
@@ -2629,8 +2641,8 @@
    "name": "Holzland Klein",
    "art": "Karten & Sammeln",
    "km": 18.5,
-   "lat": 50.0090917,
-   "lon": 8.245301,
+   "lat": 50.0090912,
+   "lon": 8.2452995,
    "adresse": "Mombacher Straße 91, 55122 Mainz",
    "ort": "Mainz",
    "zeiten": "Mo-Fr 08:00-13:00; Sa 09:00-13:00",
@@ -2686,30 +2698,6 @@
    "web": ""
   },
   {
-   "name": "Dr. Mertens Edelstahlhandel",
-   "art": "Karten & Sammeln",
-   "km": 19.1,
-   "lat": 50.1114784,
-   "lon": 8.7463504,
-   "adresse": "",
-   "ort": "",
-   "zeiten": "",
-   "tel": "+49698200020",
-   "web": "https://www.thyssenkrupp-schulte.de/de/dr-mertens-edelstahlhandel"
-  },
-  {
-   "name": "Holzhandlung Blum",
-   "art": "Karten & Sammeln",
-   "km": 19.1,
-   "lat": 50.0733252,
-   "lon": 8.2185531,
-   "adresse": "",
-   "ort": "",
-   "zeiten": "Sa 09:00-13:00; Mo-Fr 08:00-17:00",
-   "tel": "",
-   "web": ""
-  },
-  {
    "name": "Rath Haustechnik",
    "art": "Karten & Sammeln",
    "km": 19.2,
@@ -2753,33 +2741,21 @@
    "lon": 8.5245314,
    "adresse": "Hessenring 17, 64572 Büttelborn",
    "ort": "Büttelborn",
-   "zeiten": "Mo,We,Fr 14:30-19:30; Tu,Th 14:30-17:00; Sa 10:00 – 14:00; 14:30 – 19:30",
+   "zeiten": "Mo,We,Fr 14:30-19:30; Tu,Th 14:30-17:00; Sa 10:00-14:00; 14:30-19:30",
    "tel": "+4915140149791",
    "web": "https://www.nerds-interactive.de/"
   },
   {
-   "name": "LiviPur",
-   "art": "Spielzeug & Figuren",
+   "name": "fast wie neu.",
+   "art": "Second-Hand",
    "km": 19.4,
-   "lat": 50.2229309,
-   "lon": 8.6170412,
-   "adresse": "",
-   "ort": "",
-   "zeiten": "Mo-Fr 10:00-18:30; Sa 10:00-16:00",
-   "tel": "",
-   "web": ""
-  },
-  {
-   "name": "MediaMarkt",
-   "art": "Technik & Games",
-   "km": 19.5,
-   "lat": 50.0459913,
-   "lon": 8.2158482,
-   "adresse": "Äppelallee 69",
-   "ort": "",
-   "zeiten": "Mo-Sa 10:00-20:00",
-   "tel": "+49611174320",
-   "web": "https://www.mediamarkt.de/de/store/wiesbaden-aeppelallee-798"
+   "lat": 50.0434917,
+   "lon": 8.2186937,
+   "adresse": "Otto-Wallach-Straße 16, 65203 Wiesbaden",
+   "ort": "Wiesbaden",
+   "zeiten": "Mo-Fr 10:00-18:30; Sa 10:00-15:00",
+   "tel": "+49611953050",
+   "web": "https://fastwieneu-wiesbaden.de/"
   },
   {
    "name": "Kaufland",
@@ -2797,8 +2773,8 @@
    "name": "Rossmann",
    "art": "Drogerie & Beauty",
    "km": 19.5,
-   "lat": 50.0461419,
-   "lon": 8.2158181,
+   "lat": 50.0461048,
+   "lon": 8.2157717,
    "adresse": "",
    "ort": "",
    "zeiten": "",
@@ -2816,6 +2792,18 @@
    "zeiten": "Mo-Sa 08:00-20:00; Su,PH off",
    "tel": "+4961316170531",
    "web": "https://www.rossmann.de/de/filialen/rheinland-pfalz/mainz/alte-markthalle-4.html"
+  },
+  {
+   "name": "MediaMarkt",
+   "art": "Technik & Games",
+   "km": 19.6,
+   "lat": 50.0459602,
+   "lon": 8.2153249,
+   "adresse": "Äppelallee 69",
+   "ort": "",
+   "zeiten": "Mo-Sa 10:00-20:00",
+   "tel": "+49611174320",
+   "web": "https://www.mediamarkt.de/de/store/wiesbaden-aeppelallee-798"
   },
   {
    "name": "Galeria Reisen",
@@ -2933,7 +2921,7 @@
    "lon": 8.3156705,
    "adresse": "",
    "ort": "",
-   "zeiten": "Tu-Fr 10:00-19:00; Sa 10:00-14:00",
+   "zeiten": "Tu-Fr 10:00-18:00; Sa 10:00-14:00",
    "tel": "",
    "web": "https://mueller-kaffee.com/"
   },
@@ -3010,27 +2998,15 @@
    "web": "https://www.proaurum.de/"
   },
   {
-   "name": "Douglas",
-   "art": "Drogerie & Beauty",
-   "km": 20,
-   "lat": 50.1049382,
-   "lon": 8.7622543,
-   "adresse": "",
-   "ort": "",
-   "zeiten": "",
-   "tel": "",
-   "web": ""
-  },
-  {
-   "name": "ZMO Second Hand für Geschirr und Haushaltswaren",
+   "name": "ZMO Second Hand GuG – Geschirr und Gerät",
    "art": "Second-Hand",
    "km": 20,
    "lat": 49.9767718,
    "lon": 8.2463851,
-   "adresse": "",
-   "ort": "",
-   "zeiten": "Tu,We,Fr 11:00-18:00; Sa 10:00-14:00; Mo,Th 11:00-18:00",
-   "tel": "",
+   "adresse": "Hans-Böckler-Straße 6, 55128 Mainz",
+   "ort": "Mainz",
+   "zeiten": "Mo-Fr 11:00-18:00; Sa 10:00-14:00",
+   "tel": "+4961319322726",
    "web": "https://zmo-mainz.de/secondhand/"
   },
   {
@@ -3046,6 +3022,18 @@
    "web": ""
   },
   {
+   "name": "ZMO Second Hand",
+   "art": "Second-Hand",
+   "km": 20,
+   "lat": 49.9772206,
+   "lon": 8.2462037,
+   "adresse": "Karl-Zörgiebel-Straße 2, 55128 Mainz",
+   "ort": "Mainz",
+   "zeiten": "Mo-Fr 11:00-18:00; Sa 10:00-14:00",
+   "tel": "+4961312176801",
+   "web": "https://zmo-mainz.de/secondhand/"
+  },
+  {
    "name": "Kaufland",
    "art": "Kaufhaus & Markt",
    "km": 20,
@@ -3054,7 +3042,7 @@
    "adresse": "Wächtersbacher Straße 83, 60386 Frankfurt am Main",
    "ort": "Frankfurt am Main",
    "zeiten": "Mo-Fr 07:00-24:00; Sa 07:00-23:30",
-   "tel": "",
+   "tel": "+4969408998990",
    "web": "https://filiale.kaufland.de/service/filiale/frankfurt-am-main-2553.html"
   },
   {
@@ -3065,7 +3053,7 @@
    "lon": 8.7634988,
    "adresse": "",
    "ort": "",
-   "zeiten": "Mo-Sa 10:00-13:00, We,Th 15:00-17:00",
+   "zeiten": "Mo-Sa 10:00-13:00, Mo,We,Th 15:00-17:00",
    "tel": "",
    "web": ""
   },
@@ -3077,7 +3065,7 @@
    "lon": 8.7634045,
    "adresse": "Große Marktstraße 12, 63065 Offenbach am Main",
    "ort": "Offenbach am Main",
-   "zeiten": "Mo-Fr 09:00-20:00; Sa 09:00-20:00; PH off",
+   "zeiten": "Mo-Sa 08:00-20:00; PH off",
    "tel": "+496980052482",
    "web": "https://www.rossmann.de"
   },
@@ -3094,16 +3082,16 @@
    "web": "https://www.mediamarkt.de/de/store/frankfurt-borsigallee-555"
   },
   {
-   "name": "JD Sports",
-   "art": "Sneaker & Klamotten",
+   "name": "Douglas",
+   "art": "Drogerie & Beauty",
    "km": 20.2,
    "lat": 50.1048962,
    "lon": 8.7639501,
    "adresse": "",
    "ort": "",
-   "zeiten": "Mo-Sa 10:00-20:00",
-   "tel": "",
-   "web": ""
+   "zeiten": "Mo-Fr 10:00-19:00; Sa 10:00-18:00",
+   "tel": "+4969815952",
+   "web": "https://www.douglas.de/de/l/offenbach/frankfurter-str/00020416"
   },
   {
    "name": "Familien-Markt",
@@ -3137,7 +3125,7 @@
    "lon": 8.2608107,
    "adresse": "Robert-Koch-Straße 32, 55129 Mainz",
    "ort": "Mainz",
-   "zeiten": "Mo-Fr 6:30-17:30,Sa 7:00-12:30",
+   "zeiten": "Mo-Fr 06:30-17:30, Sa 07:00-12:30",
    "tel": "",
    "web": ""
   },
@@ -3176,18 +3164,6 @@
    "zeiten": "Mo-Fr 07:00-24:00; Sa 07:00-23:30",
    "tel": "+496151958470",
    "web": ""
-  },
-  {
-   "name": "Rossmann",
-   "art": "Drogerie & Beauty",
-   "km": 20.7,
-   "lat": 50.0446355,
-   "lon": 8.198817,
-   "adresse": "Reichsapfelstraße 3, 65201 Wiesbaden",
-   "ort": "Wiesbaden",
-   "zeiten": "Mo-Fr 09:00-19:00; Sa 09:00-15:00; PH off",
-   "tel": "+496115324874",
-   "web": "https://www.rossmann.de"
   },
   {
    "name": "Beinbrech GmbH & Co. KG",
@@ -3310,7 +3286,7 @@
    "web": "https://www.rossmann.de"
   },
   {
-   "name": "Bluebrixx",
+   "name": "Blue Brixx Megastore",
    "art": "Spielzeug & Figuren",
    "km": 21.6,
    "lat": 49.8909973,
@@ -3319,7 +3295,7 @@
    "ort": "Weiterstadt",
    "zeiten": "Mo-Sa 10:00-20:00",
    "tel": "",
-   "web": ""
+   "web": "https://www.bluebrixx.com/de/"
   },
   {
    "name": "Kaufland",
@@ -3466,7 +3442,7 @@
    "web": ""
   },
   {
-   "name": "ROSSMANN",
+   "name": "Rossmann",
    "art": "Drogerie & Beauty",
    "km": 22.4,
    "lat": 50.2686496,
@@ -3502,18 +3478,6 @@
    "web": ""
   },
   {
-   "name": "Hilti",
-   "art": "Karten & Sammeln",
-   "km": 22.7,
-   "lat": 49.8912991,
-   "lon": 8.6400887,
-   "adresse": "Daimlerweg 5, 64293 Darmstadt",
-   "ort": "Darmstadt",
-   "zeiten": "Mo-Fr 07:30-12:30",
-   "tel": "08008885522",
-   "web": "https://www.hilti.de/"
-  },
-  {
    "name": "Natursteine Fliesen Raas",
    "art": "Karten & Sammeln",
    "km": 22.7,
@@ -3524,18 +3488,6 @@
    "zeiten": "",
    "tel": "+49615578673",
    "web": "https://www.natursteine-raas.de/"
-  },
-  {
-   "name": "Würth",
-   "art": "Karten & Sammeln",
-   "km": 22.7,
-   "lat": 49.8912253,
-   "lon": 8.6407989,
-   "adresse": "Daimlerweg 7, 64293 Darmstadt",
-   "ort": "Darmstadt",
-   "zeiten": "",
-   "tel": "",
-   "web": ""
   },
   {
    "name": "Dyckerhoff Beton",
@@ -3577,10 +3529,10 @@
    "name": "Seppl's Holzkiste",
    "art": "Spielzeug & Figuren",
    "km": 22.9,
-   "lat": 50.2215964,
-   "lon": 8.2698455,
-   "adresse": "König-Adolf-Platz 4, 65510 Idstein",
-   "ort": "Idstein",
+   "lat": 50.2215759,
+   "lon": 8.2698508,
+   "adresse": "",
+   "ort": "",
    "zeiten": "Tu-Fr 10:00-12:00,15:00-18:00; Sa 10:00-13:00; Mo off",
    "tel": "+49612671848",
    "web": ""
@@ -3634,14 +3586,14 @@
    "web": "https://www.mueller.de/"
   },
   {
-   "name": "Ka-Gel",
+   "name": "KAGEL Kaufhaus der Gelegenheiten gGmbH",
    "art": "Second-Hand",
    "km": 23.5,
    "lat": 49.8822867,
    "lon": 8.6386541,
    "adresse": "",
    "ort": "",
-   "zeiten": "Mo,Sa 10:00-16:00; Tu-Fr 9:00-17:00",
+   "zeiten": "Mo,Sa 10:00-16:00; Tu-Fr 09:00-17:00",
    "tel": "+4961518001912",
    "web": "https://ka-gel.de/"
   },
@@ -3882,7 +3834,7 @@
    "adresse": "",
    "ort": "",
    "zeiten": "Mo-Sa 09:00-20:00",
-   "tel": "",
+   "tel": "+4961513943494",
    "web": ""
   },
   {
@@ -3917,7 +3869,7 @@
    "lon": 8.6530716,
    "adresse": "Schuchardstraße 8, 64283 Darmstadt",
    "ort": "Darmstadt",
-   "zeiten": "Mo-Sa 10:00-20:00; Su,PH off",
+   "zeiten": "Mo-Sa 10:00-20:00",
    "tel": "+496151918500",
    "web": "https://www.thalia.de"
   },
@@ -3953,7 +3905,7 @@
    "lon": 8.6518523,
    "adresse": "Elisabethenstraße 15, 64283 Darmstadt",
    "ort": "Darmstadt",
-   "zeiten": "Mo-Sa 09:30-20:00; Su,PH off",
+   "zeiten": "",
    "tel": "+496151109491",
    "web": "https://www.galeria.de/filialen/l/darmstadt/elisabethenstr-15/001232"
   },
@@ -3965,7 +3917,7 @@
    "lon": 8.6536505,
    "adresse": "Ludwigsplatz 6, 64283 Darmstadt",
    "ort": "Darmstadt",
-   "zeiten": "Mo-Sa 10:00-19:00",
+   "zeiten": "Mo-Sa 10:00-19:00; Su,PH off",
    "tel": "+49615117530",
    "web": ""
   },
@@ -3977,7 +3929,7 @@
    "lon": 8.656542,
    "adresse": "Kirchstraße 21, 64283 Darmstadt",
    "ort": "Darmstadt",
-   "zeiten": "Mo-Fr 12:00-18:30; Sa 11:00-17:00",
+   "zeiten": "Mo, We-Fr 12:00-18:30; Sa 11:00-17:00; Tu 12:00-19:30",
    "tel": "+496151293911",
    "web": "https://paladins-place.de/"
   },
@@ -4028,6 +3980,18 @@
    "zeiten": "Mo-Fr 08:00-20:00; Sa 08:00-19:00",
    "tel": "+4960814493234",
    "web": "https://www.rossmann.de/de/filialen/hessen/neu-anspach/hans-boeckler-str--9.html"
+  },
+  {
+   "name": "Bau Natura",
+   "art": "Karten & Sammeln",
+   "km": 25.8,
+   "lat": 49.8573058,
+   "lon": 8.6316606,
+   "adresse": "Eschollbrücker Straße 41, 64295 Darmstadt",
+   "ort": "Darmstadt",
+   "zeiten": "Mo-Fr 09:00-12:30; Mo-Fr 14:30-18:00; Sa 10:00-13:00; PH Su off",
+   "tel": "",
+   "web": "https://bau-natura.de"
   },
   {
    "name": "Verkaufsbüro",
@@ -4129,8 +4093,8 @@
    "name": "SECONDHAND LAGERVERKAUF",
    "art": "Second-Hand",
    "km": 26.3,
-   "lat": 50.1521972,
-   "lon": 8.8322674,
+   "lat": 50.1521633,
+   "lon": 8.832233,
    "adresse": "Ringstraße Süd 38, 63477 Maintal",
    "ort": "Maintal",
    "zeiten": "Sa 10:00-14:00; PH off",
@@ -4253,7 +4217,7 @@
    "lon": 8.1786674,
    "adresse": "Am Giener 23, 55268 Nieder-Olm",
    "ort": "Nieder-Olm",
-   "zeiten": "Mo-Fr 9:00-19:00; Sa 9:00-18:00",
+   "zeiten": "Mo-Fr 09:00-19:00; Sa 09:00-18:00",
    "tel": "+496136919660",
    "web": "https://www.rofu.de/filialen/#!/l/nieder-olm/am-giener-23/1198026"
   },
@@ -4441,8 +4405,8 @@
    "name": "Spielwaren Hofmann",
    "art": "Spielzeug & Figuren",
    "km": 30.1,
-   "lat": 49.8187697,
-   "lon": 8.6440093,
+   "lat": 49.8187943,
+   "lon": 8.6439704,
    "adresse": "",
    "ort": "",
    "zeiten": "Mo-Fr 09:30-13:00,14:30-18:00; Sa 09:00-13:00",
@@ -4517,9 +4481,9 @@
    "lon": 8.7647199,
    "adresse": "Theodor-Clausen-Straße 4, 64380 Roßdorf",
    "ort": "Roßdorf",
-   "zeiten": "Mo-Sa 08:00-20:00; PH off",
+   "zeiten": "Mo-Sa 08:00-20:00; Su,PH off",
    "tel": "+4961547009991",
-   "web": ""
+   "web": "https://www.rossmann.de/de/filialen/hessen/rossdorf/theodor-clausen-str--4.html"
   },
   {
    "name": "Lokomotion",
@@ -4565,21 +4529,9 @@
    "lon": 8.5976135,
    "adresse": "Eberstädter Straße 15, 64319 Pfungstadt",
    "ort": "Pfungstadt",
-   "zeiten": "MO-FR 07:00-12:30,14:30-18:30; SA 08:00-13:00",
+   "zeiten": "Mo-Fr 07:00-12:30,14:30-18:30; Sa 08:00-13:00",
    "tel": "",
    "web": ""
-  },
-  {
-   "name": "Rossmann",
-   "art": "Drogerie & Beauty",
-   "km": 31,
-   "lat": 50.1314953,
-   "lon": 8.9106481,
-   "adresse": "Am Steinheimer Tor 1, 63450 Hanau",
-   "ort": "Hanau",
-   "zeiten": "Mo-Fr 08:00-20:00; Sa 08:00-20:00; PH off",
-   "tel": "+4961814287896",
-   "web": "https://www.rossmann.de"
   },
   {
    "name": "Kaufland",
@@ -4606,6 +4558,18 @@
    "web": "https://www.rossmann.de/de/filialen/hessen/hanau/geleitstr--66-a.html"
   },
   {
+   "name": "Woolworth",
+   "art": "Drogerie & Beauty",
+   "km": 31.1,
+   "lat": 50.1308377,
+   "lon": 8.9122457,
+   "adresse": "",
+   "ort": "",
+   "zeiten": "",
+   "tel": "",
+   "web": ""
+  },
+  {
    "name": "Rossmann",
    "art": "Drogerie & Beauty",
    "km": 31.2,
@@ -4614,7 +4578,7 @@
    "adresse": "Rheinstraße 45, 64367 Mühltal",
    "ort": "Mühltal",
    "zeiten": "Mo-Sa 08:00-20:00",
-   "tel": "",
+   "tel": "+4961512748309",
    "web": "https://www.rossmann.de/de/filialen/hessen/muehltal/rheinstr--45.html"
   },
   {
@@ -4657,13 +4621,13 @@
    "name": "Gebrüder Ott GmbH",
    "art": "Karten & Sammeln",
    "km": 31.4,
-   "lat": 50.1322454,
-   "lon": 8.9167206,
+   "lat": 50.1322524,
+   "lon": 8.9167227,
    "adresse": "Am Markt 9, 63450 Hanau",
    "ort": "Hanau",
    "zeiten": "Mo-Fr 08:30-12:30",
    "tel": "+49618124322",
-   "web": ""
+   "web": "https://www.gebr-ott-gmbh.com/"
   },
   {
    "name": "Douglas",
@@ -4702,16 +4666,16 @@
    "web": ""
   },
   {
-   "name": "Brachmann",
+   "name": "Glück‘s Spielzeugkiste",
    "art": "Spielzeug & Figuren",
    "km": 31.6,
    "lat": 50.1330445,
    "lon": 8.9191218,
    "adresse": "Rosenstraße 9-11, 63450 Hanau",
    "ort": "Hanau",
-   "zeiten": "",
-   "tel": "",
-   "web": ""
+   "zeiten": "Mo-Fr 10:00-18:00; Sa 10:00-17:00",
+   "tel": "+496181923520",
+   "web": "https://gluecks-spielzeugkiste.con"
   },
   {
    "name": "Rossmann",
@@ -4729,8 +4693,8 @@
    "name": "JD Sports",
    "art": "Sneaker & Klamotten",
    "km": 31.6,
-   "lat": 50.1347584,
-   "lon": 8.917709,
+   "lat": 50.134734,
+   "lon": 8.9177055,
    "adresse": "",
    "ort": "",
    "zeiten": "Mo-Sa 09:30-20:00",
@@ -4846,6 +4810,18 @@
    "web": ""
   },
   {
+   "name": "Brett-Geflüster",
+   "art": "Spielzeug & Figuren",
+   "km": 32.3,
+   "lat": 50.0811353,
+   "lon": 8.9389054,
+   "adresse": "",
+   "ort": "",
+   "zeiten": "",
+   "tel": "",
+   "web": "https://allgo-games.com"
+  },
+  {
    "name": "Müller",
    "art": "Drogerie & Beauty",
    "km": 32.6,
@@ -4896,9 +4872,9 @@
   {
    "name": "Kaufland",
    "art": "Kaufhaus & Markt",
-   "km": 32.8,
-   "lat": 49.8877492,
-   "lon": 8.8468624,
+   "km": 32.7,
+   "lat": 49.8877689,
+   "lon": 8.8467814,
    "adresse": "Im Flürchen 3, 64807 Dieburg",
    "ort": "Dieburg",
    "zeiten": "Mo-Fr 07:00-22:00; Sa 07:00-22:00",
@@ -4997,7 +4973,7 @@
    "lon": 8.7484995,
    "adresse": "",
    "ort": "",
-   "zeiten": "Di,Th,Fr 11:00-18:30; Sa 11:00-14:00",
+   "zeiten": "Tu,Th,Fr 11:00-18:30; Sa 11:00-14:00",
    "tel": "",
    "web": "https://www.brettspielparadies.de"
   },
@@ -5122,6 +5098,18 @@
    "web": "https://www.rossmann.de"
   },
   {
+   "name": "Tecinox",
+   "art": "Karten & Sammeln",
+   "km": 34.7,
+   "lat": 50.3257951,
+   "lon": 8.7647811,
+   "adresse": "",
+   "ort": "",
+   "zeiten": "",
+   "tel": "",
+   "web": ""
+  },
+  {
    "name": "Rossmann",
    "art": "Drogerie & Beauty",
    "km": 34.8,
@@ -5146,18 +5134,6 @@
    "web": "https://www.katies-spielewelt.de/"
   },
   {
-   "name": "Spielsinn",
-   "art": "Spielzeug & Figuren",
-   "km": 35.1,
-   "lat": 50.0423773,
-   "lon": 8.9764062,
-   "adresse": "Freihofplatz 1, 63500 Seligenstadt",
-   "ort": "Seligenstadt",
-   "zeiten": "Tu,Th,Fr 10:00-18:00; We 10:00-13:00; Sa 10:00-14:00",
-   "tel": "",
-   "web": ""
-  },
-  {
    "name": "Zip Zap",
    "art": "Second-Hand",
    "km": 35.3,
@@ -5165,7 +5141,7 @@
    "lon": 8.6425495,
    "adresse": "Beethovenring 59, 64342 Seeheim-Jugenheim",
    "ort": "Seeheim-Jugenheim",
-   "zeiten": "Mo,Tu,Th,Fr,Sa 10:00-12:30; Mo,Th 15:00-17:30; We,Su off;",
+   "zeiten": "Mo,Tu,Th,Fr,Sa 10:00-12:30; Mo,Th 15:00-17:30; We,Su off",
    "tel": "+49625786318",
    "web": ""
   },
@@ -5309,7 +5285,7 @@
    "lon": 8.736799,
    "adresse": "Reinhardstraße 7-9, 61231 Bad Nauheim",
    "ort": "Bad Nauheim",
-   "zeiten": "Mo-Fr 08:30-20:00; Sa 08:30-19:00; Su off; PH off",
+   "zeiten": "Mo-Fr 09:00-20:00; Sa 09:00-19:00; Su off; PH off",
    "tel": "+496032345898",
    "web": "https://www.rossmann.de"
   },
@@ -5408,6 +5384,18 @@
    "zeiten": "Mo-Fr 08:00-20:00; Sa 08:00-20:00; Su off; PH off",
    "tel": "+4961829559983",
    "web": "https://www.rossmann.de/de/filialen/hessen/mainhausen/ginkgoring-62-64.html"
+  },
+  {
+   "name": "Müller",
+   "art": "Drogerie & Beauty",
+   "km": 38.3,
+   "lat": 50.3180562,
+   "lon": 8.8586092,
+   "adresse": "",
+   "ort": "",
+   "zeiten": "",
+   "tel": "",
+   "web": ""
   },
   {
    "name": "Reichwein Bauzentrum SteinReich",
@@ -5564,6 +5552,18 @@
    "zeiten": "Mo-Fr 08:00-20:00; Sa 08:00-20:00; Su off; PH off",
    "tel": "+4964309239994",
    "web": "https://www.rossmann.de"
+  },
+  {
+   "name": "Rossmann",
+   "art": "Drogerie & Beauty",
+   "km": 39.7,
+   "lat": 50.0347068,
+   "lon": 9.0400603,
+   "adresse": "Am Sportplatz 6b, 63791 Karlstein am Main",
+   "ort": "Karlstein am Main",
+   "zeiten": "Mo-Sa 08:00-20:00",
+   "tel": "",
+   "web": ""
   },
   {
    "name": "Fine Models",
@@ -5842,11 +5842,11 @@
    "web": ""
   },
   {
-   "name": "Spielzeug Kiste",
-   "art": "Spielzeug & Figuren",
-   "km": 42.6,
-   "lat": 50.2679646,
-   "lon": 7.9745331,
+   "name": "second hand",
+   "art": "Second-Hand",
+   "km": 42.5,
+   "lat": 49.9779199,
+   "lon": 9.0635893,
    "adresse": "",
    "ort": "",
    "zeiten": "",
@@ -5993,9 +5993,9 @@
    "lon": 7.8926842,
    "adresse": "Basilikastraße 3, 55411 Bingen am Rhein",
    "ort": "Bingen am Rhein",
-   "zeiten": "Mo-Fr 09:00-19:00",
+   "zeiten": "Mo-Fr 09:00-19:00; Sa 09:00-18:00",
    "tel": "+4967219886740",
-   "web": ""
+   "web": "https://www.mueller.de/s/bingen-rhein-basilikastr-3706/"
   },
   {
    "name": "Thalia",
@@ -6006,6 +6006,18 @@
    "adresse": "",
    "ort": "",
    "zeiten": "Mo-Fr 09:30-19:00; Sa 09:30-18:00",
+   "tel": "",
+   "web": ""
+  },
+  {
+   "name": "Kunterbung",
+   "art": "Second-Hand",
+   "km": 43.9,
+   "lat": 49.9672555,
+   "lon": 7.8932329,
+   "adresse": "",
+   "ort": "",
+   "zeiten": "Tu-Fr 10:30-12:30, Tu 14:30-17:00, We,Th 14:30-18:00, Fr 15:15-18:00",
    "tel": "",
    "web": ""
   },
@@ -6046,6 +6058,18 @@
    "web": ""
   },
   {
+   "name": "Thalia",
+   "art": "Bücher & Manga",
+   "km": 44.2,
+   "lat": 49.6817566,
+   "lon": 8.6220162,
+   "adresse": "Hauptstraße 17, 64625 Bensheim",
+   "ort": "Bensheim",
+   "zeiten": "Mo-Fr 09:30-18:30; Sa 09:30-16:00; Su off",
+   "tel": "+4962517706910",
+   "web": "https://www.thalia.de/buchhandlung/5876"
+  },
+  {
    "name": "Rossmann",
    "art": "Drogerie & Beauty",
    "km": 44.3,
@@ -6073,8 +6097,8 @@
    "name": "Dodo Kinderladen",
    "art": "Second-Hand",
    "km": 44.4,
-   "lat": 49.6793481,
-   "lon": 8.6200064,
+   "lat": 49.679317,
+   "lon": 8.6200189,
    "adresse": "Aulstraße 10, 64625 Bensheim",
    "ort": "Bensheim",
    "zeiten": "Mo-Fr 09:15-12:15, Mo,Tu,Th 14:30-18:00; Sa 09:30-12:30",
@@ -6265,8 +6289,8 @@
    "name": "TAKE-OFF Model Shop",
    "art": "Spielzeug & Figuren",
    "km": 46.4,
-   "lat": 49.6558617,
-   "lon": 8.565865,
+   "lat": 49.6558702,
+   "lon": 8.5658772,
    "adresse": "Alexanderstraße 22, 64653 Lorsch",
    "ort": "Lorsch",
    "zeiten": "",
@@ -6593,7 +6617,7 @@
    "lon": 9.1462274,
    "adresse": "",
    "ort": "",
-   "zeiten": "",
+   "zeiten": "Mo-Fr 09:30-13:00,14:00-18:00",
    "tel": "+4960214542399",
    "web": ""
   },
@@ -6650,7 +6674,7 @@
    "art": "Karten & Sammeln",
    "km": 48.4,
    "lat": 50.2160311,
-   "lon": 7.8470948,
+   "lon": 7.8471374,
    "adresse": "Laubornstraße 9, 56357 Miehlen",
    "ort": "Miehlen",
    "zeiten": "",
@@ -6665,7 +6689,7 @@
    "lon": 8.0468891,
    "adresse": "Elzer Straße 22-24, 65556 Limburg an der Lahn",
    "ort": "Limburg an der Lahn",
-   "zeiten": "Mo-Fr 06:30 - 18:00 Sa 07:00 - 13:00",
+   "zeiten": "Mo-Fr 06:30-18:00;Sa 07:00-13:00",
    "tel": "+49643191220",
    "web": ""
   },
@@ -6730,7 +6754,7 @@
    "web": "https://www.mediamarkt.de/de/store/heppenheim-546"
   },
   {
-   "name": "Galeria Kaufhof",
+   "name": "Galeria",
    "art": "Kaufhaus & Markt",
    "km": 48.6,
    "lat": 49.9781204,
@@ -6797,7 +6821,7 @@
    "lon": 9.152202,
    "adresse": "",
    "ort": "",
-   "zeiten": "",
+   "zeiten": "Mo-Sa 09:00-20:00",
    "tel": "",
    "web": ""
   },
@@ -6848,18 +6872,6 @@
    "zeiten": "Mo-Fr 09:00-19:00; Sa 09:00-16:00",
    "tel": "+496022681480",
    "web": "https://www.rofu.de/ueber-rofu/filial-finder/#!/l/momlingen/bahnhofstrasse-24/1198018"
-  },
-  {
-   "name": "Autoteile Zöller",
-   "art": "Karten & Sammeln",
-   "km": 48.8,
-   "lat": 50.2201803,
-   "lon": 7.8428806,
-   "adresse": "Industriestraße 13",
-   "ort": "",
-   "zeiten": "",
-   "tel": "",
-   "web": ""
   },
   {
    "name": "Module 24",
@@ -6975,8 +6987,8 @@
    "km": 49.4,
    "lat": 49.6340273,
    "lon": 8.3499185,
-   "adresse": "Friedrich-Ebert-Straße 50",
-   "ort": "",
+   "adresse": "Friedrich-Ebert-Straße 50, 67549 Worms",
+   "ort": "Worms",
    "zeiten": "We-Fr 13:00-18:00; Sa 10:00-14:00",
    "tel": "",
    "web": ""
@@ -6985,8 +6997,8 @@
    "name": "Kaufhaus der Wiederkehr",
    "art": "Second-Hand",
    "km": 49.4,
-   "lat": 49.634416,
-   "lon": 8.3497525,
+   "lat": 49.634418,
+   "lon": 8.3497101,
    "adresse": "",
    "ort": "",
    "zeiten": "Fr 13:00-18:00; Sa 10:00-14:00",
@@ -7035,8 +7047,8 @@
    "km": 49.5,
    "lat": 49.631193,
    "lon": 8.364877,
-   "adresse": "Am Römischen Kaiser 24",
-   "ort": "",
+   "adresse": "Am Römischen Kaiser 24, 67547 Worms",
+   "ort": "Worms",
    "zeiten": "",
    "tel": "",
    "web": "https://philatelie-magin.de"
@@ -7059,8 +7071,8 @@
    "km": 49.8,
    "lat": 49.6317736,
    "lon": 8.3438389,
-   "adresse": "Brauereistraße 2",
-   "ort": "",
+   "adresse": "Brauereistraße 2, 67549 Worms",
+   "ort": "Worms",
    "zeiten": "Mo-Fr 11:00-18:00; Sa 10:00-14:00",
    "tel": "",
    "web": "https://spielgetuschel.de/unser-ladenlokal-in-worms"
