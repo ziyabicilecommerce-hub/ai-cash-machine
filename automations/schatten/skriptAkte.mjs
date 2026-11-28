@@ -4,6 +4,7 @@
 import { AKTEN2 } from './skriptAkte2.mjs';
 import { AKTEN3 } from './skriptAkte3.mjs';
 import { AKTEN4 } from './skriptAkte4.mjs';
+import { AKTEN5 } from './skriptAkte5.mjs';
 export const MUSTER_A = {};
 export const TEIL2_A = {};
 export const DU_HOOKS_A = {};
@@ -133,6 +134,7 @@ const AKTEN = [
 AKTEN.push(...AKTEN2);  // 16.11.: 15 weitere Akte-Geschichten (Nachschub)
 AKTEN.push(...AKTEN3);  // 23.11.: 12 weitere (Vorrat lag unter 4 je Konto)
 AKTEN.push(...AKTEN4);  // 26.11.: 6 weitere (@zyx_7851 nur noch 3)
+AKTEN.push(...AKTEN5);  // 28.11.: 9 weitere (@futureflowx3 und @futureflowxx nur noch je 3)
 AKTEN.forEach((v, i) => { v.fall_nr = i + 1; });  // Akte-Universum: feste Fallnummern, neue Geschichten hinten anhängen
 MUSTER_A.akte = [bau, AKTEN];
 for (const v of AKTEN) DU_HOOKS_A[v.titel] = v.du;
