@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-28T12:27:51.267Z",
+ "stand": "2026-11-28T12:30:48.267Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -204,7 +204,7 @@
   }
  ],
  "filial": {
-  "stand": "2026-11-28T12:15:57.684Z",
+  "stand": "2026-11-28T12:30:51.059Z",
   "filialen": 148,
   "produkte": [
    {
@@ -258,6 +258,15 @@
     ]
    },
    {
+    "dan": "3118150",
+    "name": "essence Adventskalender 2026 Baked With Love, 1 St",
+    "preis": 29.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779239321/assets/pas/images/e545b6b0-1c2a-4151-bd65-cd5106e14c0e/essence-adventskalender-2026-baked-with-love",
+    "link": "https://www.dm.de/p/d/3118150/essence-adventskalender-2026-baked-with-love",
+    "begriff": "adventskalender",
+    "vorrat": []
+   },
+   {
     "dan": "3118151",
     "name": "trend !t up Adventskalender 2026 Days of Glow, 24 St",
     "preis": 28.95,
@@ -267,19 +276,11 @@
     "vorrat": [
      {
       "name": "dm Kriftel",
-      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
-      "km": 1.3,
-      "lat": 50.0769272,
-      "lon": 8.4731447,
-      "menge": 1
-     },
-     {
-      "name": "dm Kriftel",
       "adresse": "Kapellenstraße 48, 65830 Kriftel",
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 5
+      "menge": 4
      },
      {
       "name": "dm Frankfurt am Main",
@@ -287,7 +288,7 @@
       "km": 5.6,
       "lat": 50.1014043,
       "lon": 8.5485073,
-      "menge": 11
+      "menge": 9
      },
      {
       "name": "dm Liederbach am Taunus",
@@ -295,7 +296,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 20
+      "menge": 21
      },
      {
       "name": "dm Flörsheim am Main",
@@ -303,7 +304,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 9
+      "menge": 8
      },
      {
       "name": "dm Frankfurt am Main",
@@ -328,6 +329,88 @@
       "lat": 49.984061,
       "lon": 8.430174,
       "menge": 1
+     },
+     {
+      "name": "dm Eschborn",
+      "adresse": "Ginnheimer Straße 10-14, 65760 Eschborn",
+      "km": 10.4,
+      "lat": 50.1401538,
+      "lon": 8.5824016,
+      "menge": 9
+     }
+    ]
+   },
+   {
+    "dan": "3118201",
+    "name": "Dein Bestes Adventskalender 2026 - merry christmas für Hunde, 1 St",
+    "preis": 16.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787555270/assets/pas/images/5a32cdab-0120-4c77-bcc9-160de67cf462/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
+    "link": "https://www.dm.de/p/d/3118201/dein-bestes-adventskalender-2026-merry-christmas-fuer-hunde",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 1
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 2
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 1
+     },
+     {
+      "name": "dm Flörsheim am Main",
+      "adresse": "Wickerer Straße 50, 65439 Flörsheim am Main",
+      "km": 7.4,
+      "lat": 50.0158924,
+      "lon": 8.4247531,
+      "menge": 1
+     },
+     {
+      "name": "dm Mörfelden-Walldorf",
+      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
+      "km": 9.6,
+      "lat": 50.0122615,
+      "lon": 8.5865417,
+      "menge": 1
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 1
+     },
+     {
+      "name": "dm Hochheim am Main",
+      "adresse": "Holger-Crafoord-Straße 2, 65239 Hochheim am Main",
+      "km": 10.5,
+      "lat": 50.0155817,
+      "lon": 8.3658454,
+      "menge": 6
+     },
+     {
+      "name": "dm Wiesbaden",
+      "adresse": "Berliner Straße 279, 65205 Wiesbaden",
+      "km": 13.4,
+      "lat": 50.0537018,
+      "lon": 8.3006459,
+      "menge": 3
      }
     ]
    },
@@ -369,7 +452,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 7
+      "menge": 6
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -419,7 +502,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 15
+      "menge": 13
      },
      {
       "name": "dm Kelsterbach",
@@ -480,6 +563,80 @@
     ]
    },
    {
+    "dan": "3118178",
+    "name": "share Adventskalender 2026 Teilen macht glücklich, 1 St",
+    "preis": 49.95,
+    "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1779260728/assets/pas/images/11789cd3-4ff2-4ea6-b978-f8afef2eac0b/share-adventskalender-2026-teilen-macht-gluecklich",
+    "link": "https://www.dm.de/p/d/3118178/share-adventskalender-2026-teilen-macht-gluecklich",
+    "begriff": "adventskalender",
+    "vorrat": [
+     {
+      "name": "dm Kriftel",
+      "adresse": "Beyerbachstraße 2-6, 65830 Kriftel",
+      "km": 1.3,
+      "lat": 50.0769272,
+      "lon": 8.4731447,
+      "menge": 1
+     },
+     {
+      "name": "dm Kriftel",
+      "adresse": "Kapellenstraße 48, 65830 Kriftel",
+      "km": 2.5,
+      "lat": 50.0815926,
+      "lon": 8.4565918,
+      "menge": 3
+     },
+     {
+      "name": "dm Kelsterbach",
+      "adresse": "Am Graf-de-Chardonnet-Platz 1-11, 65451 Kelsterbach",
+      "km": 2.6,
+      "lat": 50.0589893,
+      "lon": 8.5198272,
+      "menge": 4
+     },
+     {
+      "name": "dm Liederbach am Taunus",
+      "adresse": "Höchster Straße 1, 65835 Liederbach am Taunus",
+      "km": 5.8,
+      "lat": 50.1216443,
+      "lon": 8.479672,
+      "menge": 15
+     },
+     {
+      "name": "dm Bad Soden am Taunus",
+      "adresse": "Königsteiner Straße 76, 65812 Bad Soden am Taunus",
+      "km": 8.3,
+      "lat": 50.1434547,
+      "lon": 8.5023642,
+      "menge": 1
+     },
+     {
+      "name": "dm Frankfurt am Main",
+      "adresse": "Westerbachstraße 152, 65936 Frankfurt am Main",
+      "km": 9.3,
+      "lat": 50.1237366,
+      "lon": 8.5865988,
+      "menge": 8
+     },
+     {
+      "name": "dm Mörfelden-Walldorf",
+      "adresse": "Farmstraße 101, 64546 Mörfelden-Walldorf",
+      "km": 9.6,
+      "lat": 50.0122615,
+      "lon": 8.5865417,
+      "menge": 3
+     },
+     {
+      "name": "dm Rüsselsheim am Main",
+      "adresse": "Adam-Opel-Straße 59-61, 65428 Rüsselsheim am Main",
+      "km": 10.3,
+      "lat": 49.984061,
+      "lon": 8.430174,
+      "menge": 6
+     }
+    ]
+   },
+   {
     "dan": "3135923",
     "name": "CRAZE Adventskalender 2026 Kinder Top Fashion, 1 St",
     "preis": 29.95,
@@ -512,7 +669,7 @@
     "preis": 32.95,
     "bild": "https://products.dm-static.com/images/f_auto,q_auto,c_fit,h_320,w_320/v1787437413/assets/pas/images/af75788d-1716-4786-a254-08b0dc46ca08/ebelin-adventskalender-beauty-und-hair-2026",
     "link": "https://www.dm.de/p/d/3118686/ebelin-adventskalender-beauty-und-hair-2026",
-    "begriff": "adventskalender",
+    "begriff": "beauty adventskalender",
     "vorrat": [
      {
       "name": "dm Liederbach am Taunus",
@@ -594,7 +751,7 @@
       "km": 1.3,
       "lat": 50.0769272,
       "lon": 8.4731447,
-      "menge": 4
+      "menge": 2
      },
      {
       "name": "dm Kriftel",
@@ -602,7 +759,7 @@
       "km": 2.5,
       "lat": 50.0815926,
       "lon": 8.4565918,
-      "menge": 9
+      "menge": 8
      },
      {
       "name": "dm Frankfurt am Main",
@@ -618,7 +775,7 @@
       "km": 5.8,
       "lat": 50.1216443,
       "lon": 8.479672,
-      "menge": 45
+      "menge": 44
      },
      {
       "name": "dm Flörsheim am Main",
@@ -626,7 +783,7 @@
       "km": 7.4,
       "lat": 50.0158924,
       "lon": 8.4247531,
-      "menge": 7
+      "menge": 6
      },
      {
       "name": "dm Bad Soden am Taunus",
@@ -3128,11 +3285,11 @@
     "begriff": "jordan"
    },
    {
-    "titel": "Air Jordan 4 Retro \"Comic\"",
+    "titel": "Air Jordan 3 Retro \"True Blue\"",
     "preis": 147,
     "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-4-retro-comic-ja1135-100",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/JA1135-100_1.jpg?v=1783931481",
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-true-blue-if4396-104",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IF4396-104_01.jpg?v=1783592529",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
@@ -3286,6 +3443,15 @@
     "verfuegbar": true,
     "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-3-retro-fireside-ck9246-200",
     "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/CK9246-200_01.jpg?v=1791969600",
+    "laden": "sneakersnstuff.com",
+    "begriff": "jordan"
+   },
+   {
+    "titel": "Air Jordan 5 Retro \"Sunset\"",
+    "preis": 168,
+    "verfuegbar": true,
+    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-5-retro-sunset-iv5678-102",
+    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IV5678-102_01.jpg?v=1785762646",
     "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
@@ -3611,15 +3777,6 @@
     "url": "https://www.asphaltgold.com/products/nike-x-j-balvin-air-jordan-4-retro-lemonade-lemonade-multicolor",
     "bild": "https://cdn.shopify.com/s/files/1/0473/6965/0340/files/IW2872_20700-Nike-x-J-Balvin-Air-Jordan-4-Retro-Lemonade-Lemonade-Multicolor-os-1.jpg?v=1790172674",
     "laden": "asphaltgold.com",
-    "begriff": "jordan"
-   },
-   {
-    "titel": "Air Jordan 14 Low “Black Pack”",
-    "preis": 240,
-    "verfuegbar": true,
-    "url": "https://www.sneakersnstuff.com/products/jordan-air-jordan-14-low-black-pack-iz3884-001",
-    "bild": "https://cdn.shopify.com/s/files/1/0939/9055/1893/files/IZ3884-001_01.jpg?v=1794385000",
-    "laden": "sneakersnstuff.com",
     "begriff": "jordan"
    },
    {
