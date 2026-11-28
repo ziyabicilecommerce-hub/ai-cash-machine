@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-28T11:40:02.227Z",
+ "stand": "2026-11-28T11:43:10.718Z",
  "budget": 40,
  "push": {
   "thema": "reselling-radar-hattersheim"
@@ -862,6 +862,7 @@
      18.58,
      18.58,
      18.58,
+     18.58,
      18.58
     ]
    },
@@ -979,6 +980,7 @@
      38.09,
      38.09,
      38.09,
+     38.09,
      38.09
     ]
    },
@@ -1025,6 +1027,7 @@
      56.55,
      56.55,
      56.55,
+     56.55,
      56.55
     ]
    },
@@ -1059,6 +1062,7 @@
     "nurBewegung": true,
     "kurs": [
      19.11,
+     18.97,
      18.97,
      18.97,
      18.97,
@@ -1151,6 +1155,7 @@
      18.47,
      18.47,
      18.47,
+     18.44,
      18.44,
      18.44,
      18.44,
@@ -1305,6 +1310,7 @@
      22.9,
      22.9,
      22.9,
+     22.9,
      22.9
     ]
    },
@@ -1422,6 +1428,7 @@
      37.48,
      37.48,
      37.48,
+     37.48,
      37.48
     ]
    },
@@ -1481,6 +1488,7 @@
      20.8,
      20.8,
      20.8,
+     21.02,
      21.02,
      21.02,
      21.02,
@@ -1610,6 +1618,7 @@
      34.84,
      34.84,
      34.84,
+     34.84,
      34.84
     ]
    },
@@ -1724,6 +1733,7 @@
      30.89,
      30.89,
      30.89,
+     30.89,
      30.89
     ]
    },
@@ -1758,6 +1768,7 @@
     "nurBewegung": true,
     "kurs": [
      32.02,
+     31.59,
      31.59,
      31.59,
      31.59,
@@ -1816,6 +1827,7 @@
      24.75,
      24.75,
      24.75,
+     24.75,
      24.75
     ]
    },
@@ -1849,6 +1861,7 @@
     },
     "nurBewegung": true,
     "kurs": [
+     9.56,
      9.56,
      9.56,
      9.56,
@@ -1978,6 +1991,7 @@
      20.1,
      20.1,
      20.1,
+     20.1,
      20.1
     ]
    },
@@ -2012,6 +2026,7 @@
     "nurBewegung": true,
     "kurs": [
      9.18,
+     9.17,
      9.17,
      9.17,
      9.17,
@@ -2141,6 +2156,7 @@
      12.47,
      12.47,
      12.47,
+     12.47,
      12.47
     ]
    }
@@ -2201,35 +2217,47 @@
     "rat": "Älteres Set: Nachschub wird knapp - gefragte Karten und versiegelte Ware steigen eher."
    }
   ],
-  "geprueft": 958,
+  "geprueft": 657,
   "statistik": {
-   "karten": 958,
+   "karten": 657,
    "mitPreis": 657,
    "imBudget": 46,
    "steigend": 0,
    "fallend": 25
   },
-  "quelle": "TCGdex + pokemontcg.io",
-  "stand": "2026-11-28T10:46:24.171Z"
+  "quelle": "TCGdex",
+  "stand": "2026-11-28T11:42:58.303Z"
  },
  "trends": {
   "ware": [],
   "top": [
+   {
+    "titel": "alexandria",
+    "menge": "200+"
+   },
+   {
+    "titel": "dani pedrosa",
+    "menge": "200+"
+   },
+   {
+    "titel": "andrea nahles",
+    "menge": "100+"
+   },
    {
     "titel": "hertha – ksc",
     "menge": "5000+"
    },
    {
     "titel": "holstein – fck",
-    "menge": "2000+"
+    "menge": "5000+"
+   },
+   {
+    "titel": "hartz rot gold",
+    "menge": "200+"
    },
    {
     "titel": "ethan hawke",
     "menge": "200+"
-   },
-   {
-    "titel": "hartz rot gold",
-    "menge": "100+"
    },
    {
     "titel": "sprengung kraftwerk voerde",
@@ -2242,18 +2270,6 @@
    {
     "titel": "fachkräftemangel",
     "menge": "100+"
-   },
-   {
-    "titel": "qantas airways",
-    "menge": "200+"
-   },
-   {
-    "titel": "ceuta",
-    "menge": "500+"
-   },
-   {
-    "titel": "qualifying",
-    "menge": "500+"
    }
   ]
  },
